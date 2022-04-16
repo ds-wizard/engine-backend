@@ -79,6 +79,7 @@ library:
   - text
   - text-replace
   - time
+  - time-manager
   - transformers
   - unix
   - unordered-containers
