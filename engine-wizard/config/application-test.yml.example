@@ -25,3 +25,6 @@ analytics:
 logging:
   level: ERROR
   httpClientDebug: false
+
+cloud:
+  publicRegistrationEnabled: true

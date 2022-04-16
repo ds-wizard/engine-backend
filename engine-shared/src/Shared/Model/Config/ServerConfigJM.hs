@@ -62,7 +62,9 @@ instance FromJSON LogLevel where
 
 instance FromJSON ServerConfigCloud where
   parseJSON (Object o) = do
-    _serverConfigCloudEnabled <- o .: "enabled"
-    _serverConfigCloudDomain <- o .:? "domain" .!= Nothing
+    _serverConfigCloudEnabled <- o .:? "enabled" .!= (defaultCloud ^. enabled)
+    _serverConfigCloudDomain <- o .:? "domain" .!= (defaultCloud ^. domain)
+    _serverConfigCloudPublicRegistrationEnabled <-
+      o .:? "publicRegistrationEnabled" .!= (defaultCloud ^. publicRegistrationEnabled)
     return ServerConfigCloud {..}
   parseJSON _ = mzero

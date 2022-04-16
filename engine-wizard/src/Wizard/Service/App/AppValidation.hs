@@ -18,9 +18,15 @@ import Wizard.Database.DAO.App.AppDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.App.App
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Common
 
 validateAppCreateDTO :: AppCreateDTO -> AppContextM ()
-validateAppCreateDTO reqDto = validateAppId (reqDto ^. appId)
+validateAppCreateDTO reqDto = do
+  validatePublicRegistrationEnabled
+  validateAppId (reqDto ^. appId)
+
+validatePublicRegistrationEnabled :: AppContextM ()
+validatePublicRegistrationEnabled = checkIfServerFeatureIsEnabled "App Registration" (cloud . publicRegistrationEnabled)
 
 validateAppId :: String -> AppContextM ()
 validateAppId appId = do

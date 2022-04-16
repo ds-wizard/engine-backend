@@ -39,4 +39,9 @@ defaultLogging =
     }
 
 defaultCloud :: ServerConfigCloud
-defaultCloud = ServerConfigCloud {_serverConfigCloudEnabled = False, _serverConfigCloudDomain = Nothing}
+defaultCloud =
+  ServerConfigCloud
+    { _serverConfigCloudEnabled = False
+    , _serverConfigCloudDomain = Nothing
+    , _serverConfigCloudPublicRegistrationEnabled = False
+    }
