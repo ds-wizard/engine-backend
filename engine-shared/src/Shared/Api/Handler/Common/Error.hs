@@ -77,7 +77,7 @@ sendToSentry message = do
         sentryService <- liftIO $ initRaven sentryDsn id sendRecord stderrFallback
         let buildVersion = context ^. buildInfoConfig' . version
         let sentryError = f' "GeneralServerError: %s" [message]
-        liftIO $ register sentryService "appLogger" Error sentryError (recordUpdate buildVersion))
+        liftIO $ register sentryService "sendErrorLogger" Error sentryError (recordUpdate buildVersion))
 
 recordUpdate :: String -> SentryRecord -> SentryRecord
 recordUpdate buildVersion record =

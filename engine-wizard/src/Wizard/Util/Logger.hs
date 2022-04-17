@@ -10,11 +10,10 @@ module Wizard.Util.Logger
 
 import Control.Lens ((^.))
 import Control.Monad (when)
-import Control.Monad.Logger (MonadLogger, logWithoutLoc)
-import Control.Monad.Reader (MonadReader, asks, liftIO)
-import Data.Aeson (Value(..))
+import Control.Monad.Logger (logWithoutLoc)
+import Control.Monad.Reader (asks, liftIO)
+import Data.Aeson (Value(..), toJSON)
 import qualified Data.HashMap.Strict as HashMap
-import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Data.UUID as U
 import Prelude hiding (log)
@@ -28,13 +27,13 @@ import Shared.Util.Logger
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Context.AppContext
 
-logDebugU :: (MonadReader AppContext m, MonadLogger m) => String -> String -> m ()
+logDebugU :: String -> String -> AppContextM ()
 logDebugU = logU LevelDebug
 
-logInfoU :: (MonadReader AppContext m, MonadLogger m) => String -> String -> m ()
+logInfoU :: String -> String -> AppContextM ()
 logInfoU = logU LevelInfo
 
-logWarnU :: (MonadReader AppContext m, MonadLogger m) => String -> String -> m ()
+logWarnU :: String -> String -> AppContextM ()
 logWarnU = logU LevelWarn
 
 logErrorU :: String -> String -> AppContextM ()
@@ -43,7 +42,7 @@ logErrorU component message = do
   sendToSentry component message
 
 -- ---------------------------------------------------------------------------
-logU :: (MonadReader AppContext m, MonadLogger m) => LogLevel -> String -> String -> m ()
+logU :: LogLevel -> String -> String -> AppContextM ()
 logU logLevel component message = do
   mUser <- asks _appContextCurrentUser
   traceUuid <- asks _appContextTraceUuid
@@ -56,7 +55,6 @@ sendToSentry :: String -> String -> AppContextM ()
 sendToSentry component message = do
   mUser <- asks _appContextCurrentUser
   traceUuid <- asks _appContextTraceUuid
-  let mIdentityUuid = fmap (U.toString . _userDTOUuid) mUser
   serverConfig <- asks _appContextServerConfig
   when
     (serverConfig ^. sentry . enabled)
@@ -66,22 +64,23 @@ sendToSentry component message = do
         let buildVersion = buildInfoConfig ^. version
         appUuid <- asks _appContextAppUuid
         liftIO $
-          register sentryService "appLogger" Error message (recordUpdate buildVersion mIdentityUuid traceUuid appUuid))
+          register sentryService "messageLogger" Error message (recordUpdate buildVersion mUser traceUuid appUuid))
 
-recordUpdate :: String -> Maybe String -> U.UUID -> U.UUID -> SentryRecord -> SentryRecord
-recordUpdate buildVersion mIdentityUuid traceUuid appUuid record =
-  record
-    { srRelease = Just buildVersion
-    , srExtra =
-        HashMap.fromList
-          [ ("identityUuid", String . T.pack . fromMaybe "" $ mIdentityUuid)
-          , ("traceUuid", String . T.pack . U.toString $ traceUuid)
-          , ("appUuid", String . T.pack . U.toString $ appUuid)
-          ]
-    , srTags =
-        HashMap.fromList
-          [ ("identityUuid", fromMaybe "" mIdentityUuid)
-          , ("traceUuid", U.toString traceUuid)
-          , ("appUuid", U.toString appUuid)
-          ]
-    }
+recordUpdate :: String -> Maybe UserDTO -> U.UUID -> U.UUID -> SentryRecord -> SentryRecord
+recordUpdate buildVersion mUser traceUuid appUuid record =
+  let userUuid = T.pack . maybe "" (U.toString . _userDTOUuid) $ mUser
+      userEmail = T.pack . maybe "" _userDTOEmail $ mUser
+   in record
+        { srRelease = Just buildVersion
+        , srInterfaces =
+            HashMap.fromList
+              [ ( "sentry.interfaces.User"
+                , toJSON $ HashMap.fromList [("id", String userUuid), ("email", String userEmail)])
+              ]
+        , srTags = HashMap.fromList [("traceUuid", U.toString traceUuid), ("appUuid", U.toString appUuid)]
+        , srExtra =
+            HashMap.fromList
+              [ ("traceUuid", String . T.pack . U.toString $ traceUuid)
+              , ("appUuid", String . T.pack . U.toString $ appUuid)
+              ]
+        }
