@@ -24,7 +24,7 @@ jobs:
       TAG_DEVELOP: develop
       TAG_LATEST: latest
       STACK_VERSION: ${{ matrix.stack }}
-      GHC_OPTIONS: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+      GHC_OPTIONS: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations
 
     services:
       postgres:

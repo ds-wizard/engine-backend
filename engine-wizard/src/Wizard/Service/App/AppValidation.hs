@@ -18,11 +18,20 @@ import Wizard.Database.DAO.App.AppDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.App.App
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Common
 
 validateAppCreateDTO :: AppCreateDTO -> AppContextM ()
 validateAppCreateDTO reqDto = do
-  validateAppIdFormat (reqDto ^. appId)
-  validateAppIdUniqueness (reqDto ^. appId)
+  validatePublicRegistrationEnabled
+  validateAppId (reqDto ^. appId)
+
+validatePublicRegistrationEnabled :: AppContextM ()
+validatePublicRegistrationEnabled = checkIfServerFeatureIsEnabled "App Registration" (cloud . publicRegistrationEnabled)
+
+validateAppId :: String -> AppContextM ()
+validateAppId appId = do
+  validateAppIdFormat appId
+  validateAppIdUniqueness appId
 
 validateAppChangeDTO :: App -> AppChangeDTO -> AppContextM ()
 validateAppChangeDTO app reqDto = do
@@ -38,7 +47,7 @@ isValidAppIdFormat appId =
     then Nothing
     else Just $ ValidationError [] (M.singleton "appId" [_ERROR_VALIDATION__FORBIDDEN_CHARACTERS appId])
   where
-    validationRegex = mkRegex "^[a-z0-9-]*$"
+    validationRegex = mkRegex "^[a-z0-9-]+$"
 
 validateAppIdUniqueness :: String -> AppContextM ()
 validateAppIdUniqueness aId = do
@@ -83,4 +92,5 @@ forbiddenAppIds =
   , "storage-costs-evaluator"
   , "submit"
   , "swarmpit"
+  , "www"
   ]

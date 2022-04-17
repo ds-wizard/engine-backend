@@ -84,10 +84,7 @@ create_test_201 title appContext reqDto authHeaders persistentCommandCount userA
 -- ----------------------------------------------------
 test_400 appContext = do
   createInvalidJsonTest reqMethod reqUrl "lastName"
-  create_test_400_app_id_uniqueness
-    "HTTP 400 BAD REQUEST if appId is already used (anonymous)"
-    appContext
-    [reqAuthHeader]
+  create_test_400_app_id_uniqueness "HTTP 400 BAD REQUEST if appId is already used (anonymous)" appContext []
   create_test_400_app_id_uniqueness "HTTP 400 BAD REQUEST if appId is already used (admin)" appContext [reqAuthHeader]
 
 create_test_400_app_id_uniqueness title appContext authHeaders =

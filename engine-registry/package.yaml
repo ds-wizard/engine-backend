@@ -1,5 +1,5 @@
 name: engine-registry
-version: '3.10.0'
+version: '3.10.1'
 synopsis: Engine Registry
 description: Engine Registry
 category: Web
@@ -19,7 +19,7 @@ library:
     then:
       ghc-options: -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
     else:
-      ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations
   dependencies:
   - base
   - aeson
@@ -81,7 +81,7 @@ executables:
       then:
         ghc-options: -threaded -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -threaded -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - engine-registry
@@ -94,7 +94,7 @@ tests:
       then:
         ghc-options: -threaded -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -threaded -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - aeson

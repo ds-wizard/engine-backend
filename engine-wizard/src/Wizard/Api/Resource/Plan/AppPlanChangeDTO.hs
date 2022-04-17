@@ -7,8 +7,8 @@ data AppPlanChangeDTO =
   AppPlanChangeDTO
     { _appPlanChangeDTOName :: String
     , _appPlanChangeDTOUsers :: Maybe Int
-    , _appPlanChangeDTOSince :: UTCTime
-    , _appPlanChangeDTOUntil :: UTCTime
+    , _appPlanChangeDTOSince :: Maybe UTCTime
+    , _appPlanChangeDTOUntil :: Maybe UTCTime
     , _appPlanChangeDTOTest :: Bool
     }
   deriving (Generic)
