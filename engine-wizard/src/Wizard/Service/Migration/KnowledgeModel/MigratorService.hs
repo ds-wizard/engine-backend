@@ -1,6 +1,6 @@
 module Wizard.Service.Migration.KnowledgeModel.MigratorService where
 
-import Control.Lens ((.~), (?~), (^.))
+import Control.Lens ((&), (.~), (?~), (^.))
 import Control.Monad (when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
@@ -123,6 +123,36 @@ solveConflictAndMigrate branchUuid reqDto =
                (reqDto ^. action == MCAEdited && isNothing (reqDto ^. event))
                (throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT)
         else throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__EVENT_UUIDS_MISMATCH
+
+solveAllConflicts :: String -> AppContextM ()
+solveAllConflicts branchUuid =
+  runInTransaction $ do
+    checkPermission _KM_UPGRADE_PERM
+    migratorState <- getCurrentMigration branchUuid
+    updatedState <- go migratorState
+    updateMigratorState updatedState
+    return ()
+  where
+    go migratorState = do
+      case migratorState ^. migrationState of
+        RunningState -> return migratorState
+        ConflictState (CorrectorConflict mEvent) ->
+          case mEvent of
+            Just event -> do
+              let conflictDto =
+                    MigratorConflictDTO
+                      { _migratorConflictDTOOriginalEventUuid = event ^. uuid'
+                      , _migratorConflictDTOAction = MCAApply
+                      , _migratorConflictDTOEvent = Just event
+                      }
+              nextState <- liftIO $ migrate (solveConflict migratorState conflictDto)
+              go nextState
+            Nothing -> do
+              let updatedMigratorState = migratorState & migrationState .~ ErrorState
+              updateMigratorState updatedMigratorState
+              return updatedMigratorState
+        ErrorState -> return migratorState
+        CompletedState -> return migratorState
 
 migrateState :: MigratorState -> AppContextM MigratorState
 migrateState ms =
