@@ -27,6 +27,10 @@ toDTO doc mQtn submissions tml =
     , _documentDTOFileName = doc ^. fileName
     , _documentDTOContentType = doc ^. contentType
     , _documentDTOFileSize = doc ^. fileSize
+    , _documentDTOWorkerLog =
+        case doc ^. state of
+          ErrorDocumentState -> doc ^. workerLog
+          _ -> Nothing
     , _documentDTOSubmissions = submissions
     , _documentDTOCreatorUuid = doc ^. creatorUuid
     , _documentDTOCreatedAt = doc ^. createdAt

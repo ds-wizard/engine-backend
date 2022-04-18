@@ -24,6 +24,7 @@ data DocumentDTO =
     , _documentDTOFileName :: Maybe String
     , _documentDTOContentType :: Maybe String
     , _documentDTOFileSize :: Maybe Int64
+    , _documentDTOWorkerLog :: Maybe String
     , _documentDTOSubmissions :: [SubmissionDTO]
     , _documentDTOCreatorUuid :: Maybe U.UUID
     , _documentDTOCreatedAt :: UTCTime
