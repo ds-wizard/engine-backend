@@ -103,7 +103,9 @@ defaultRegistry :: AppConfigRegistry
 defaultRegistry = AppConfigRegistry {_appConfigRegistryEnabled = False, _appConfigRegistryToken = ""}
 
 defaultKnowledgeModel :: AppConfigKnowledgeModel
-defaultKnowledgeModel = AppConfigKnowledgeModel {_appConfigKnowledgeModelPublic = defaultKnowledgeModelPublic}
+defaultKnowledgeModel =
+  AppConfigKnowledgeModel
+    {_appConfigKnowledgeModelPublic = defaultKnowledgeModelPublic, _appConfigKnowledgeModelIntegrationConfig = ""}
 
 defaultKnowledgeModelPublic :: AppConfigKnowledgeModelPublic
 defaultKnowledgeModelPublic =

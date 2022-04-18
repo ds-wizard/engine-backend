@@ -149,7 +149,15 @@ defaultRegistry :: AppConfigRegistry
 defaultRegistry = AppConfigRegistry {_appConfigRegistryEnabled = True, _appConfigRegistryToken = "GlobalToken"}
 
 defaultKnowledgeModel :: AppConfigKnowledgeModel
-defaultKnowledgeModel = AppConfigKnowledgeModel {_appConfigKnowledgeModelPublic = defaultKnowledgeModelPublic}
+defaultKnowledgeModel =
+  AppConfigKnowledgeModel
+    { _appConfigKnowledgeModelPublic = defaultKnowledgeModelPublic
+    , _appConfigKnowledgeModelIntegrationConfig =
+        "ontologyPortal: \n\
+        \  path: ontology-portal.json \n\
+        \bioPortal: \n\
+        \  path: bio-portal.json "
+    }
 
 defaultKnowledgeModelPublic :: AppConfigKnowledgeModelPublic
 defaultKnowledgeModelPublic =

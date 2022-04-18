@@ -23,6 +23,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0013_branchWebso
 import qualified Wizard.Database.Migration.Production.Migration_0014_appLimit.Migration as M_0014
 import qualified Wizard.Database.Migration.Production.Migration_0015_prefab.Migration as M_0015
 import qualified Wizard.Database.Migration.Production.Migration_0016_appPlan.Migration as M_0016
+import qualified Wizard.Database.Migration.Production.Migration_0017_integrationYaml.Migration as M_0017
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
 
@@ -49,4 +50,5 @@ migrationDefinitions =
   , M_0014.definition
   , M_0015.definition
   , M_0016.definition
+  , M_0017.definition
   ]

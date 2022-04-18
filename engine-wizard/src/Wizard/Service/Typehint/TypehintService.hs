@@ -27,10 +27,11 @@ getTypehints reqDto =
     integration' <- getIntegration km (question ^. integrationUuid)
     case integration' of
       ApiIntegration' integration -> do
-        fileConfig <- getIntegrationConfig (integration ^. iId)
+        fileIntConfig <- getFileIntegrationConfig (integration ^. iId)
+        appIntConfig <- getAppIntegrationConfig (integration ^. iId)
         let kmQuestionConfig = question ^. props
         let userRequest = M.singleton "q" (encode $ reqDto ^. q)
-        let variables = M.union userRequest . M.union kmQuestionConfig $ fileConfig
+        let variables = M.union userRequest . M.union kmQuestionConfig . M.union appIntConfig $ fileIntConfig
         iDtos <- retrieveTypehints integration variables
         return . fmap (toDTO (integration ^. itemUrl)) $ iDtos
       WidgetIntegration' _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION
