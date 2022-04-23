@@ -102,6 +102,7 @@ resetDB appContext = do
   runInContext deleteSubmissions appContext
   runInContext deleteAppConfigs appContext
   runInContext (insertAppConfig defaultAppConfigEncrypted) appContext
+  runInContext (insertAppConfig differentAppConfigEncrypted) appContext
   runInContext KM_MigratorDAO.deleteMigratorStates appContext
   runInContext QTN_MigratorDAO.deleteMigratorStates appContext
   runInContext deleteFeedbacks appContext

@@ -32,8 +32,8 @@ toDTO app mLogoUrl mPrimaryColor =
     , _appDTOUpdatedAt = app ^. updatedAt
     }
 
-toDetailDTO :: App -> [AppPlan] -> UsageDTO -> [User] -> AppDetailDTO
-toDetailDTO app plans usage users =
+toDetailDTO :: App -> Maybe String -> Maybe String -> [AppPlan] -> UsageDTO -> [User] -> AppDetailDTO
+toDetailDTO app mLogoUrl mPrimaryColor plans usage users =
   AppDetailDTO
     { _appDetailDTOUuid = app ^. uuid
     , _appDetailDTOAppId = app ^. appId
@@ -42,6 +42,8 @@ toDetailDTO app plans usage users =
     , _appDetailDTOServerUrl = app ^. serverUrl
     , _appDetailDTOClientUrl = app ^. clientUrl
     , _appDetailDTOEnabled = app ^. enabled
+    , _appDetailDTOLogoUrl = mLogoUrl
+    , _appDetailDTOPrimaryColor = mPrimaryColor
     , _appDetailDTOPlans = plans
     , _appDetailDTOUsage = usage
     , _appDetailDTOUsers = fmap U_Mapper.toDTO users

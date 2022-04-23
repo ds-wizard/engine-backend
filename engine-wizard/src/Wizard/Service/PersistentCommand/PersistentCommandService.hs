@@ -61,7 +61,11 @@ runPersistentCommands = do
 runPersistentCommandById :: String -> AppContextM PersistentCommandDetailDTO
 runPersistentCommandById uuid = do
   command <- findPersistentCommandByUuid uuid
-  runPersistentCommand (toSimple command)
+  if command ^. internal
+    then runPersistentCommand (toSimple command)
+    else do
+      notifySpecificPersistentCommandQueue command
+      return ()
   getPersistentCommandById uuid
 
 runPersistentCommand :: PersistentCommandSimple -> AppContextM ()

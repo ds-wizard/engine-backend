@@ -35,6 +35,7 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppMapper
 import Wizard.Service.App.AppUtil
 import Wizard.Service.App.AppValidation
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Limit.AppLimitService
 import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PCM
 import Wizard.Service.Usage.UsageService
@@ -90,7 +91,10 @@ getAppById aUuid = do
   plans <- findAppPlansForAppUuid aUuid
   usage <- getUsage aUuid
   users <- findUsersWithAppFiltered aUuid [("role", _USER_ROLE_ADMIN)]
-  return $ toDetailDTO app plans usage users
+  appConfig <- getAppConfigByUuid (app ^. uuid)
+  let mLogoUrl = appConfig ^. lookAndFeel . logoUrl
+  let mPrimaryColor = appConfig ^. lookAndFeel . primaryColor
+  return $ toDetailDTO app mLogoUrl mPrimaryColor plans usage users
 
 modifyApp :: String -> AppChangeDTO -> AppContextM App
 modifyApp aUuid reqDto = do

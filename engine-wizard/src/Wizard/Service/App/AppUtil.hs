@@ -11,5 +11,5 @@ import Wizard.Service.Config.AppConfigService
 
 enhanceApp :: App -> AppContextM AppDTO
 enhanceApp app = do
-  appConfig <- getAppConfig
+  appConfig <- getAppConfigByUuid (app ^. uuid)
   return $ toDTO app (appConfig ^. lookAndFeel . logoUrl) (appConfig ^. lookAndFeel . primaryColor)
