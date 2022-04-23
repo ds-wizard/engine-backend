@@ -16,8 +16,21 @@ import Wizard.Model.Plan.AppPlan
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 
-toDTO :: App -> AppDTO
-toDTO app = AppDTO {_appDTOClientUrl = app ^. clientUrl}
+toDTO :: App -> Maybe String -> Maybe String -> AppDTO
+toDTO app mLogoUrl mPrimaryColor =
+  AppDTO
+    { _appDTOUuid = app ^. uuid
+    , _appDTOAppId = app ^. appId
+    , _appDTOName = app ^. name
+    , _appDTOServerDomain = app ^. serverDomain
+    , _appDTOServerUrl = app ^. serverUrl
+    , _appDTOClientUrl = app ^. clientUrl
+    , _appDTOEnabled = app ^. enabled
+    , _appDTOLogoUrl = mLogoUrl
+    , _appDTOPrimaryColor = mPrimaryColor
+    , _appDTOCreatedAt = app ^. createdAt
+    , _appDTOUpdatedAt = app ^. updatedAt
+    }
 
 toDetailDTO :: App -> [AppPlan] -> UsageDTO -> [User] -> AppDetailDTO
 toDetailDTO app plans usage users =

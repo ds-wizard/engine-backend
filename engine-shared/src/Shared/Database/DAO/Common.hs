@@ -304,7 +304,7 @@ createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort fields 
   let sql =
         fromString $
         f'
-          "SELECT %s FROM %s WHERE %s %s OFFSET %s LIMIT %s"
+          "SELECT %s FROM %s %s %s OFFSET %s LIMIT %s"
           [fields, entityName, condition, mapSort sort, show skip, show sizeI]
   logQuery sql conditionParams
   let action conn = query conn sql conditionParams
@@ -456,7 +456,7 @@ createCountByFn ::
   -> q
   -> m Int
 createCountByFn entityName condition queryParams = do
-  let sql = fromString $ f' "SELECT COUNT(*) FROM %s WHERE %s" [entityName, condition]
+  let sql = fromString $ f' "SELECT COUNT(*) FROM %s %s" [entityName, condition]
   let params = queryParams
   logQuery sql params
   let action conn = query conn sql params
@@ -501,7 +501,7 @@ createSumByFn ::
   -> q
   -> m Int64
 createSumByFn entityName field condition queryParams = do
-  let sql = fromString $ f' "SELECT COALESCE(SUM(%s)::bigint, 0) FROM %s WHERE %s" [field, entityName, condition]
+  let sql = fromString $ f' "SELECT COALESCE(SUM(%s)::bigint, 0) FROM %s %s" [field, entityName, condition]
   let params = queryParams
   logQuery sql params
   let action conn = query conn sql params
@@ -584,7 +584,7 @@ appQueryString :: String -> (String, String)
 appQueryString appUuid = ("app_uuid", appUuid)
 
 appCondition :: String
-appCondition = "app_uuid = ?"
+appCondition = "WHERE app_uuid = ?"
 
 appSelector :: U.UUID -> String
 appSelector appUuid = "app_uuid = '" ++ U.toString appUuid ++ "'"

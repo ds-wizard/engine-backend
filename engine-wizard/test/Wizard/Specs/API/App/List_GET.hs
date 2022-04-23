@@ -13,6 +13,7 @@ import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.Context.AppContext
+import Wizard.Service.App.AppMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -47,7 +48,8 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = Page "apps" (PageMetadata 20 2 1 0) [defaultApp, differentApp]
+    let expDto =
+          Page "apps" (PageMetadata 20 2 1 0) [toDTO defaultApp Nothing Nothing, toDTO differentApp Nothing Nothing]
     let expBody = encode expDto
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

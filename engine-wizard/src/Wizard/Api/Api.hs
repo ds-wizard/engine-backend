@@ -16,6 +16,7 @@ import Wizard.Api.Handler.Info.Api
 import Wizard.Api.Handler.KnowledgeModel.Api
 import Wizard.Api.Handler.Migration.Api
 import Wizard.Api.Handler.Package.Api
+import Wizard.Api.Handler.PersistentCommand.Api
 import Wizard.Api.Handler.Prefab.Api
 import Wizard.Api.Handler.Questionnaire.Api
 import Wizard.Api.Handler.Registry.Api
@@ -43,6 +44,7 @@ type ApplicationAPI
      :<|> KnowledgeModelAPI
      :<|> MigrationAPI
      :<|> PackageAPI
+     :<|> PersistentCommandAPI
      :<|> PrefabAPI
      :<|> QuestionnaireAPI
      :<|> RegistryAPI
@@ -68,6 +70,7 @@ applicationServer =
   knowledgeModelServer :<|>
   migrationServer :<|>
   packageServer :<|>
+  persistentCommandServer :<|>
   prefabServer :<|>
   questionnaireServer :<|>
   registryServer :<|>

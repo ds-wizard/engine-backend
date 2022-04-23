@@ -33,17 +33,19 @@ import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.User.User
 import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppMapper
+import Wizard.Service.App.AppUtil
 import Wizard.Service.App.AppValidation
 import Wizard.Service.Limit.AppLimitService
-import Wizard.Service.PersistentCommand.PersistentCommandMapper
+import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PCM
 import Wizard.Service.Usage.UsageService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import Wizard.Service.User.UserService
 
-getAppsPage :: Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page App)
+getAppsPage :: Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page AppDTO)
 getAppsPage mQuery mEnabled pageable sort = do
   checkPermission _APP_PERM
-  findAppsPage mQuery mEnabled pageable sort
+  apps <- findAppsPage mQuery mEnabled pageable sort
+  traverse enhanceApp apps
 
 registerApp :: AppCreateDTO -> AppContextM AppDTO
 registerApp reqDto = do
@@ -60,7 +62,7 @@ registerApp reqDto = do
     createAppConfig aUuid now
     createAppLimit aUuid now
     createSeederPersistentCommand aUuid (user ^. uuid) now
-    return . toDTO $ app
+    return $ toDTO app Nothing Nothing
 
 createAppByAdmin :: AppCreateDTO -> AppContextM AppDTO
 createAppByAdmin reqDto = do
@@ -79,7 +81,7 @@ createAppByAdmin reqDto = do
     createAppConfig aUuid now
     createAppLimit aUuid now
     createSeederPersistentCommand aUuid (user ^. uuid) now
-    return . toDTO $ app
+    return $ toDTO app Nothing Nothing
 
 getAppById :: String -> AppContextM AppDetailDTO
 getAppById aUuid = do
@@ -121,7 +123,7 @@ createSeederPersistentCommand aUuid createdBy now =
   runInTransaction $ do
     pUuid <- liftIO generateUuid
     let command =
-          toPersistentCommand
+          PCM.toPersistentCommand
             pUuid
             "data_seeder"
             "importDefaultData"

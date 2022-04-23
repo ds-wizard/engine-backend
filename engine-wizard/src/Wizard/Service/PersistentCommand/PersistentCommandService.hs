@@ -16,27 +16,59 @@ import System.Log.Raven.Transport.HttpConduit (sendRecord)
 import System.Log.Raven.Types (SentryLevel(Error), SentryRecord(..))
 
 import LensesConfig
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
+import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
+import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
+import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.PersistentCommand.PersistentCommandSimple
+import Wizard.Service.Acl.AclService
+import Wizard.Service.App.AppUtil
 import qualified Wizard.Service.Config.AppConfigCommandExecutor as AppConfigCommandExecutor
-import Wizard.Service.User.UserMapper
+import Wizard.Service.PersistentCommand.PersistentCommandMapper
+import Wizard.Service.PersistentCommand.PersistentCommandUtil
+import qualified Wizard.Service.User.UserMapper as UM
 import Wizard.Util.Context
 import Wizard.Util.Logger
 
+getPersistentCommandsPage :: [String] -> Pageable -> [Sort] -> AppContextM (Page PersistentCommandDTO)
+getPersistentCommandsPage states pageable sort = do
+  checkPermission _DEV_PERM
+  commands <- findPersistentCommandsPage states pageable sort
+  traverse enhancePersistentCommand commands
+
+getPersistentCommandById :: String -> AppContextM PersistentCommandDetailDTO
+getPersistentCommandById uuid = do
+  checkPermission _DEV_PERM
+  command <- findPersistentCommandByUuid uuid
+  mUser <- findUserByIdSystem' (U.toString $ command ^. createdBy)
+  app <- findAppById (U.toString $ command ^. appUuid)
+  appDto <- enhanceApp app
+  return $ toDetailDTO command mUser appDto
+
 runPersistentCommands :: AppContextM ()
 runPersistentCommands = do
+  checkPermission _DEV_PERM
   commands <- findPersistentCommandsByStates
   traverse_ runPersistentCommand commands
+
+runPersistentCommandById :: String -> AppContextM PersistentCommandDetailDTO
+runPersistentCommandById uuid = do
+  command <- findPersistentCommandByUuid uuid
+  runPersistentCommand (toSimple command)
+  getPersistentCommandById uuid
 
 runPersistentCommand :: PersistentCommandSimple -> AppContextM ()
 runPersistentCommand command = do
   user <- findUserByIdSystem . U.toString $ command ^. createdBy
   context <- ask
-  let updatedContext = (appUuid .~ (command ^. appUuid)) . (currentUser ?~ toDTO user) $ context
+  let updatedContext = (appUuid .~ (command ^. appUuid)) . (currentUser ?~ UM.toDTO user) $ context
   executePersistentCommandByUuid (U.toString $ command ^. uuid) updatedContext
 
 executePersistentCommandByUuid :: String -> AppContext -> AppContextM ()

@@ -6,8 +6,8 @@ import Shared.Api.Handler.Common
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Wizard.Api.Handler.Common
+import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.App.AppJM ()
-import Wizard.Model.App.App
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.App.AppService
 
@@ -20,7 +20,7 @@ type List_GET
      :> QueryParam "page" Int
      :> QueryParam "size" Int
      :> QueryParam "sort" String
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] (Page App))
+     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] (Page AppDTO))
 
 list_GET ::
      Maybe String
@@ -30,7 +30,7 @@ list_GET ::
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page App))
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page AppDTO))
 list_GET mTokenHeader mServerUrl mQuery mEnabled mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< getAppsPage mQuery mEnabled (Pageable mPage mSize) (parseSortQuery mSort)

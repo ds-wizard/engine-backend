@@ -10,17 +10,20 @@ import LensesConfig
 import Shared.Constant.App
 import Shared.Util.Uuid
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
+import Wizard.Service.User.UserMapper
 import Wizard.Util.Logger
 
 runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO (Either String a)
 runAppContextWithBaseContext function baseContext =
-  appContextFromBaseContext defaultAppUuid Nothing baseContext >>= runAppContextWithAppContext function
+  appContextFromBaseContext defaultAppUuid (Just . toDTO $ userSystem) baseContext >>=
+  runAppContextWithAppContext function
 
 runAppContextWithBaseContext' :: AppContextM a -> BaseContext -> U.UUID -> IO (Either String a)
 runAppContextWithBaseContext' function baseContext appUuid =
-  appContextFromBaseContext appUuid Nothing baseContext >>= runAppContextWithAppContext function
+  appContextFromBaseContext appUuid (Just . toDTO $ userSystem) baseContext >>= runAppContextWithAppContext function
 
 runAppContextWithAppContext :: AppContextM a -> AppContext -> IO (Either String a)
 runAppContextWithAppContext function appContext = do
