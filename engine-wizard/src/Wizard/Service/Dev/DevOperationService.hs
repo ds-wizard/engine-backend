@@ -1,28 +1,30 @@
-module Wizard.Service.Admin.AdminService
-  ( getAdminOperations
+module Wizard.Service.Dev.DevOperationService
+  ( getDevOperations
   , executeOperation
   ) where
 
 import Control.Lens ((^.))
 
 import LensesConfig hiding (action, branch, cache, config, feedback, persistentCommand, questionnaire)
-import Wizard.Api.Resource.Admin.AdminExecutionDTO
-import Wizard.Api.Resource.Admin.AdminExecutionResultDTO
-import Wizard.Model.Admin.Admin
+import Wizard.Api.Resource.Dev.DevExecutionDTO
+import Wizard.Api.Resource.Dev.DevExecutionResultDTO
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Dev.Dev
 import Wizard.Service.Acl.AclService
-import Wizard.Service.Admin.AdminDefinition
+import Wizard.Service.Dev.DevOperationDefinitions
 
-getAdminOperations :: AppContextM [AdminSection]
-getAdminOperations = return [branch, cache, config, feedback, persistentCommand, questionnaire]
+getDevOperations :: AppContextM [DevSection]
+getDevOperations = do
+  checkPermission _DEV_PERM
+  return [branch, cache, config, feedback, persistentCommand, questionnaire]
 
-executeOperation :: AdminExecutionDTO -> AppContextM AdminExecutionResultDTO
+executeOperation :: DevExecutionDTO -> AppContextM AdminExecutionResultDTO
 executeOperation reqDto = do
-  checkPermission _ADMIN_PERM
+  checkPermission _DEV_PERM
   result <- execute reqDto
   return . AdminExecutionResultDTO $ result
 
-execute :: AdminExecutionDTO -> AppContextM String
+execute :: DevExecutionDTO -> AppContextM String
 execute reqDto
   | action reqDto branch branch_squashAllEvents = branch_squashAllEventsFn reqDto
   | action reqDto branch branch_squashEventsForBranch = branch_squashEventsForBranchFn reqDto
@@ -38,6 +40,6 @@ execute reqDto
   | action reqDto questionnaire questionnaire_squashEventsForQuestionnaire =
     questionnaire_squashEventsForQuestionnaireFn reqDto
 
-action :: AdminExecutionDTO -> AdminSection -> AdminOperation -> Bool
+action :: DevExecutionDTO -> DevSection -> DevOperation -> Bool
 action reqDto section operation =
   (reqDto ^. sectionName) == (section ^. name) && (reqDto ^. operationName) == (operation ^. name)

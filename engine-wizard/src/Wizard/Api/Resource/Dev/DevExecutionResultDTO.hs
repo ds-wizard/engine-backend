@@ -1,9 +1,9 @@
-module Wizard.Api.Resource.Admin.AdminExecutionResultDTO where
+module Wizard.Api.Resource.Dev.DevExecutionResultDTO where
 
 import GHC.Generics
 
 data AdminExecutionResultDTO =
   AdminExecutionResultDTO
-    { _adminExecutionResultDTOOutput :: String
+    { _devExecutionResultDTOOutput :: String
     }
   deriving (Show, Eq, Generic)

@@ -56,8 +56,7 @@ defaultRoles :: ServerConfigRoles
 defaultRoles =
   ServerConfigRoles
     { _serverConfigRolesAdmin =
-        [ "ADMIN_PERM"
-        , "UM_PERM"
+        [ "UM_PERM"
         , "KM_PERM"
         , "KM_UPGRADE_PERM"
         , "KM_PUBLISH_PERM"

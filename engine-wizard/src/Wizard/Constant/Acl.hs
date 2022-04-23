@@ -2,7 +2,7 @@ module Wizard.Constant.Acl where
 
 _APP_PERM = "APP_PERM"
 
-_ADMIN_PERM = "ADMIN_PERM"
+_DEV_PERM = "DEV_PERM"
 
 _UM_PERM = "UM_PERM"
 

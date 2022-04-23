@@ -1,9 +1,9 @@
-module Wizard.Api.Resource.Admin.AdminExecutionResultJM where
+module Wizard.Api.Resource.Dev.DevExecutionResultJM where
 
 import Data.Aeson
 
 import Shared.Util.JSON
-import Wizard.Api.Resource.Admin.AdminExecutionResultDTO
+import Wizard.Api.Resource.Dev.DevExecutionResultDTO
 
 instance FromJSON AdminExecutionResultDTO where
   parseJSON = genericParseJSON simpleOptions
