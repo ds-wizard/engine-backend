@@ -190,14 +190,7 @@ jobs:
       env:
         FEEDBACK_TOKEN: ${{ secrets.FEEDBACK_TOKEN }}
 
-# (4) -> Build Docker image
-    - name: Docker build
-      run: |
-        cd engine-$COMPONENT
-        docker pull $PUBLIC_IMAGE:$TAG_DEVELOP
-        docker build --cache-from $PUBLIC_IMAGE:$TAG_DEVELOP -t $PRIVATE_IMAGE:$GITHUB_SHA .
-
-# (5) -> Docker image tagging
+# (4) -> Docker login
     - name: Docker login
       if: github.event_name == 'push'
       run: |
@@ -209,6 +202,13 @@ jobs:
         PRIVATE_REGISTRY_URL: ${{ secrets.PRIVATE_REGISTRY_URL }}
         PRIVATE_REGISTRY_USERNAME: ${{ secrets.PRIVATE_REGISTRY_USERNAME }}
         PRIVATE_REGISTRY_PASSWORD: ${{ secrets.PRIVATE_REGISTRY_PASSWORD }}
+
+# (5) -> Build Docker image
+    - name: Docker build
+      run: |
+        cd engine-$COMPONENT
+        docker pull $PRIVATE_IMAGE:$TAG_DEVELOP
+        docker build --cache-from $PRIVATE_IMAGE:$TAG_DEVELOP -t $PRIVATE_IMAGE:$GITHUB_SHA .
 
     - name: Docker push - commit SHA (private)
       if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')
@@ -222,14 +222,8 @@ jobs:
         docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $PRIVATE_IMAGE:$GITHUB_BRANCH
         docker push $PRIVATE_IMAGE:$GITHUB_BRANCH
 
-    - name: Docker tag and push - develop (public)
-      if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-      run: |
-        docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $PUBLIC_IMAGE:$TAG_DEVELOP
-        docker push $PUBLIC_IMAGE:$TAG_DEVELOP
-
     - name: Docker tag and push - latest (public)
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $PUBLIC_IMAGE:$TAG_LATEST
         docker push $PUBLIC_IMAGE:$TAG_LATEST

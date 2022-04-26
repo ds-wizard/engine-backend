@@ -38,7 +38,7 @@ method with the owners of this repository before making a change.
 
 We use the standard [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow):
 
-* __master__ branch is used only for releases (and eventually hotfixes), this branch is also protected on GitHub (pull
+* __main__ branch is used only for releases (and eventually hotfixes), this branch is also protected on GitHub (pull
   requests with review and all checks must pass)
 * __develop__ branch is used for development and as a base for following development branches of features, support
   stuff, and as a base for releases
@@ -46,8 +46,8 @@ We use the standard [Gitflow Workflow](https://www.atlassian.com/git/tutorials/c
 * __chore/*__ (like the feature but semantically different, not the feature but some chore, e.g., cleanup or update of
   Dockerfile)
 * __fix/*__ (like the feature but semantically different, not something new but fix of a non-critical bug)
-* __release/*__ (base develop, merged to master and develop when ready for release+tag)
-* __hotfix/*__ (base master, merged to master and develop)
+* __release/*__ (base develop, merged to main and develop when ready for release+tag)
+* __hotfix/*__ (base main, merged to main and develop)
 
 Please note, that for tasks from [our Jira](https://ds-wizard.atlassian.net/projects/DSW/issues), we use such
 as `[DSW-XXX]` identifying the project and task number.
