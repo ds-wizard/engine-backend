@@ -19,9 +19,11 @@ import Wizard.Integration.Http.Common.ResponseMapper
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Util.Template
 
-toRetrieveTypehintsResponse :: ApiIntegration -> Response BSL.ByteString -> Either AppError [TypehintIDTO]
+toRetrieveTypehintsResponse :: ApiIntegration -> Response BSL.ByteString -> Either String [TypehintIDTO]
 toRetrieveTypehintsResponse intConfig response =
-  extractResponseBody response >>= extractNestedField listField >>= convertToArray >>= mapRecords
+  case extractResponseBody response >>= extractNestedField listField >>= convertToArray >>= mapRecords of
+    Right dto -> Right dto
+    Left error -> Left . show $ error
   where
     listField = splitOn "." (intConfig ^. responseListField)
     mapRecords :: [Value] -> Either AppError [TypehintIDTO]

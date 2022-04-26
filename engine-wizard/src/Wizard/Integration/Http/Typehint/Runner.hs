@@ -11,6 +11,6 @@ import Wizard.Integration.Http.Typehint.ResponseMapper
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Model.Context.AppContext
 
-retrieveTypehints :: ApiIntegration -> M.Map String String -> AppContextM [TypehintIDTO]
+retrieveTypehints :: ApiIntegration -> M.Map String String -> AppContextM (Either String [TypehintIDTO])
 retrieveTypehints integrationConfig variables =
-  runRequest (toRetrieveTypehintsRequest integrationConfig variables) (toRetrieveTypehintsResponse integrationConfig)
+  runRequest' (toRetrieveTypehintsRequest integrationConfig variables) (toRetrieveTypehintsResponse integrationConfig)

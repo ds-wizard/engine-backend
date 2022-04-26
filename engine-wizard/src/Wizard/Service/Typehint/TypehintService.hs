@@ -18,6 +18,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.IntegrationConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Typehint.TypehintMapper
+import Wizard.Util.Logger
 
 getTypehints :: TypehintRequestDTO -> AppContextM [TypehintDTO]
 getTypehints reqDto =
@@ -32,8 +33,12 @@ getTypehints reqDto =
         let kmQuestionConfig = question ^. props
         let userRequest = M.singleton "q" (encode $ reqDto ^. q)
         let variables = M.union userRequest . M.union kmQuestionConfig . M.union appIntConfig $ fileIntConfig
-        iDtos <- retrieveTypehints integration variables
-        return . fmap (toDTO (integration ^. itemUrl)) $ iDtos
+        eiDtos <- retrieveTypehints integration variables
+        case eiDtos of
+          Right iDtos -> return . fmap (toDTO (integration ^. itemUrl)) $ iDtos
+          Left error -> do
+            logWarnU _CMP_SERVICE error
+            throwError . UserError $ _ERROR_SERVICE_TYPEHINT__INTEGRATION_RETURNS_ERROR
       WidgetIntegration' _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION
   where
     getQuestion km questionUuid =
