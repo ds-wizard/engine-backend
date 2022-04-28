@@ -29,6 +29,7 @@ library:
   - bytestring
   - cache
   - case-insensitive
+  - clock
   - conduit
   - containers
   - cron

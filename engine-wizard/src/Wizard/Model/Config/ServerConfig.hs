@@ -16,6 +16,7 @@ data ServerConfig =
     , _serverConfigAnalytics :: ServerConfigAnalytics
     , _serverConfigSentry :: ServerConfigSentry
     , _serverConfigBranch :: ServerConfigBranch
+    , _serverConfigCache :: ServerConfigCache
     , _serverConfigDocument :: ServerConfigDocument
     , _serverConfigFeedback :: ServerConfigFeedback
     , _serverConfigPersistentCommand :: ServerConfigPersistentCommand
@@ -74,6 +75,14 @@ data ServerConfigRegistry =
 data ServerConfigBranch =
   ServerConfigBranch
     { _serverConfigBranchSquash :: ServerConfigCronWorker
+    }
+  deriving (Generic, Show)
+
+data ServerConfigCache =
+  ServerConfigCache
+    { _serverConfigCacheDataExpiration :: Integer
+    , _serverConfigCacheWebsocketExpiration :: Integer
+    , _serverConfigCachePurgeExpired :: ServerConfigCronWorker
     }
   deriving (Generic, Show)
 

@@ -25,6 +25,7 @@ instance FromJSON ServerConfig where
     _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
     _serverConfigSentry <- o .:? "sentry" .!= defaultSentry
     _serverConfigBranch <- o .:? "branch" .!= defaultBranch
+    _serverConfigCache <- o .:? "cache" .!= defaultCache
     _serverConfigDocument <- o .:? "document" .!= defaultDocument
     _serverConfigFeedback <- o .:? "feedback" .!= defaultFeedback
     _serverConfigPersistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
@@ -86,6 +87,14 @@ instance FromJSON ServerConfigBranch where
   parseJSON (Object o) = do
     _serverConfigBranchSquash <- o .:? "squash" .!= (defaultBranch ^. squash)
     return ServerConfigBranch {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigCache where
+  parseJSON (Object o) = do
+    _serverConfigCacheDataExpiration <- o .:? "dataExpiration" .!= (defaultCache ^. dataExpiration)
+    _serverConfigCacheWebsocketExpiration <- o .:? "websocketExpiration" .!= (defaultCache ^. websocketExpiration)
+    _serverConfigCachePurgeExpired <- o .:? "purgeExpired" .!= (defaultCache ^. purgeExpired)
+    return ServerConfigCache {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigDocument where

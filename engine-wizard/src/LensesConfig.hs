@@ -261,6 +261,8 @@ makeFields ''ServerConfigSentry
 
 makeFields ''ServerConfigBranch
 
+makeFields ''ServerConfigCache
+
 makeFields ''ServerConfigDocument
 
 makeFields ''ServerConfigFeedback
