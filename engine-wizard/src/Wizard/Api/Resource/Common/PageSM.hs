@@ -16,6 +16,7 @@ import Shared.Model.Common.PageMetadata
 import qualified Shared.Service.Package.PackageMapper as SP_Mapper
 import Shared.Service.Template.TemplateMapper
 import Shared.Util.Swagger
+import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.App.AppSM ()
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchSM ()
@@ -23,6 +24,8 @@ import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentSM ()
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
+import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
+import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSM ()
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
@@ -34,11 +37,13 @@ import Wizard.Api.Resource.User.UserSuggestionSM ()
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Document.Data.Documents
+import Wizard.Database.Migration.Development.PersistentCommand.Data.PersistentCommands
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.App.App
+import qualified Wizard.Service.App.AppMapper as A_Mapper
 import qualified Wizard.Service.Package.PackageMapper as P_Mapper
+import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PC_Mapper
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 
 instance ToSchema (Page String) where
@@ -93,5 +98,16 @@ instance ToSchema (Page TemplateSuggestionDTO) where
 instance ToSchema (Page DocumentDTO) where
   declareNamedSchema = simpleToSchema''''' "_page" "Page DocumentDTO" (Page "documents" pageMetadata [doc1Dto])
 
-instance ToSchema (Page App) where
-  declareNamedSchema = simpleToSchema''''' "_page" "Page App" (Page "apps" pageMetadata [defaultApp])
+instance ToSchema (Page PersistentCommandDTO) where
+  declareNamedSchema =
+    simpleToSchema'''''
+      "_page"
+      "Page PersistentCommandDTO"
+      (Page
+         "persistentCommands"
+         pageMetadata
+         [PC_Mapper.toDTO command1 (Just userAlbert) (A_Mapper.toDTO defaultApp Nothing Nothing)])
+
+instance ToSchema (Page AppDTO) where
+  declareNamedSchema =
+    simpleToSchema''''' "_page" "Page AppDTO" (Page "apps" pageMetadata [A_Mapper.toDTO defaultApp Nothing Nothing])

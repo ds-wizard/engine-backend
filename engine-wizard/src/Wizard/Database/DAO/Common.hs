@@ -19,7 +19,7 @@ import Wizard.Model.Context.ContextLenses ()
 import Wizard.Util.Logger
 
 runInTransaction :: AppContextM a -> AppContextM a
-runInTransaction = S.runInTransaction logInfoU
+runInTransaction = S.runInTransaction logInfoU logErrorU
 
 createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel pageable sort fields entityId mQuery mOrganizationId mEntityId
   -- 1. Prepare variables

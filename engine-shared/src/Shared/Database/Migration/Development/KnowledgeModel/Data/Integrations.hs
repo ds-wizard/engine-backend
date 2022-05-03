@@ -16,7 +16,7 @@ ontologyPortal =
     , _apiIntegrationProps = ["domain", "country"]
     , _apiIntegrationLogo = ""
     , _apiIntegrationRequestMethod = "GET"
-    , _apiIntegrationRequestUrl = "${baseurl}/ontology-portal.json?domain=${domain}&country=${country}&q=${q}"
+    , _apiIntegrationRequestUrl = "${baseurl}/${path}?domain=${domain}&country=${country}&q=${q}"
     , _apiIntegrationRequestHeaders = [MapEntry "Api-Key" "${apikey}"]
     , _apiIntegrationRequestBody = ""
     , _apiIntegrationRequestEmptySearch = True
@@ -38,8 +38,7 @@ ontologyPortalEdited =
     , _apiIntegrationProps = ["domain", "language"]
     , _apiIntegrationLogo = ""
     , _apiIntegrationRequestMethod = "PUT"
-    , _apiIntegrationRequestUrl =
-        "${baseurl}/ontology-portal-edited.json?domain=${domain}&language=${language}&q=${q}&edited"
+    , _apiIntegrationRequestUrl = "${baseurl}/edited-${path}?domain=${domain}&language=${language}&q=${q}&edited"
     , _apiIntegrationRequestHeaders = [MapEntry "Api-Key-Edited" "${apikey}-EDITED"]
     , _apiIntegrationRequestBody = "{}"
     , _apiIntegrationRequestEmptySearch = False
@@ -62,7 +61,7 @@ bioPortal =
     , _apiIntegrationProps = ["domain", "branch"]
     , _apiIntegrationLogo = ""
     , _apiIntegrationRequestMethod = "GET"
-    , _apiIntegrationRequestUrl = "${baseurl}/bio-portal.json?domain=${domain}&branch=${branch}&q=${q}"
+    , _apiIntegrationRequestUrl = "${baseurl}/${path}?domain=${domain}&branch=${branch}&q=${q}"
     , _apiIntegrationRequestHeaders = [MapEntry "Api-Key" "${apikey}"]
     , _apiIntegrationRequestBody = ""
     , _apiIntegrationRequestEmptySearch = False

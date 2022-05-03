@@ -11,6 +11,9 @@ import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
 import LensesConfig
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.PersistentCommand.PersistentCommand ()
 import Wizard.Database.Mapping.PersistentCommand.PersistentCommandSimple ()
@@ -24,8 +27,19 @@ entityName = "persistent_command"
 
 channelName = "persistent_command_channel"
 
+pageLabel = "persistentCommands"
+
 findPersistentCommands :: AppContextM [PersistentCommand]
 findPersistentCommands = createFindEntitiesFn entityName
+
+findPersistentCommandsPage :: [String] -> Pageable -> [Sort] -> AppContextM (Page PersistentCommand)
+findPersistentCommandsPage states pageable sort = do
+  logInfoU "" (show states)
+  let condition =
+        case states of
+          [] -> ""
+          _ -> f' "WHERE state in (%s) " [generateQuestionMarks states]
+  createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort "*" condition states
 
 findPersistentCommandsByStates :: AppContextM [PersistentCommandSimple]
 findPersistentCommandsByStates = do
@@ -33,7 +47,7 @@ findPersistentCommandsByStates = do
         "SELECT uuid, app_uuid, created_by \
           \FROM persistent_command \
           \WHERE (state = 'NewPersistentCommandState' \
-          \  OR (state = 'ErrorPersistentCommandState' AND attempts <= max_attempts)) \
+          \  OR (state = 'ErrorPersistentCommandState' AND attempts <= max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
           \  AND internal = true"
   logInfoU _CMP_DATABASE sql
   let action conn = query_ conn (fromString sql)

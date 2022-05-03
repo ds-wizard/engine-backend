@@ -42,8 +42,8 @@ findDocumentsPage mQtnUuid mQuery pageable sort = do
     sort
     "*"
     (if isJust mQtnUuid
-       then "app_uuid = ? AND name ~* ? AND questionnaire_uuid = ? AND durability='PersistentDocumentDurability'"
-       else "app_uuid = ? AND name ~* ? AND durability='PersistentDocumentDurability'")
+       then "WHERE app_uuid = ? AND name ~* ? AND questionnaire_uuid = ? AND durability='PersistentDocumentDurability'"
+       else "WHERE app_uuid = ? AND name ~* ? AND durability='PersistentDocumentDurability'")
     (U.toString appUuid : regex mQuery : maybeToList mQtnUuid)
 
 findDocumentsByQuestionnaireUuidPage :: String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page Document)
@@ -55,7 +55,7 @@ findDocumentsByQuestionnaireUuidPage qtnUuid mQuery pageable sort = do
     pageable
     sort
     "*"
-    "app_uuid = ? AND name ~* ? AND questionnaire_uuid = ? AND durability='PersistentDocumentDurability'"
+    "WHERE app_uuid = ? AND name ~* ? AND questionnaire_uuid = ? AND durability='PersistentDocumentDurability'"
     (U.toString appUuid : regex mQuery : [qtnUuid])
 
 findDocumentsByTemplateId :: String -> AppContextM [Document]

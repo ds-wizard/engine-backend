@@ -13,4 +13,4 @@ instance ToSchema App where
   declareNamedSchema = simpleToSchema' "_app" defaultApp
 
 instance ToSchema AppDTO where
-  declareNamedSchema = simpleToSchema (toDTO defaultApp)
+  declareNamedSchema = simpleToSchema (toDTO defaultApp Nothing Nothing)

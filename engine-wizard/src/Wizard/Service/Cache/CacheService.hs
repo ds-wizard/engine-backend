@@ -17,3 +17,14 @@ purgeCache = do
   liftIO . C.purge $ cache ^. user
   liftIO . C.purge $ cache ^. package
   return ()
+
+purgeExpiredCache :: AppContextM ()
+purgeExpiredCache = do
+  cache <- asks _appContextCache
+  liftIO . C.purgeExpired $ cache ^. knowledgeModel
+  liftIO . C.purgeExpired $ cache ^. questionnaireContent
+  liftIO . C.purgeExpired $ cache ^. questionnaireReportIndications
+  liftIO . C.purgeExpired $ cache ^. questionnaireWebsocket
+  liftIO . C.purgeExpired $ cache ^. user
+  liftIO . C.purgeExpired $ cache ^. package
+  return ()

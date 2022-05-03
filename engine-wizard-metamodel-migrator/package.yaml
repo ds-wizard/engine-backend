@@ -1,9 +1,9 @@
 name:                engine-wizard-metamodel-migrator
-version:             "3.10.1"
+version:             "3.11.0"
 license:             Apache-2.0
 author:              "Marek Suchánek"
 maintainer:          "suchama4@fit.cvut.cz"
-copyright:           "2019 Marek Suchánek"
+copyright:           "2022 Marek Suchánek"
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
@@ -18,7 +18,6 @@ dependencies:
 - base >= 4.7 && < 5
 - aeson
 - containers
-- lens
 - text
 - time
 - vector
@@ -63,21 +62,8 @@ tests:
     - aeson-qq
     - hspec
     - hspec-expectations-json
-
+    default-extensions:
+    - QuasiQuotes
 
 default-extensions:
-- QuasiQuotes
-- KindSignatures
-- TemplateHaskell
 - OverloadedStrings
-- DeriveGeneric
-- ExtendedDefaultRules
-- RecordWildCards
-- ExistentialQuantification
-- TypeOperators
-- TypeSynonymInstances
-- FlexibleInstances
-- ScopedTypeVariables
-- MultiParamTypeClasses
-- FlexibleContexts
-- FunctionalDependencies

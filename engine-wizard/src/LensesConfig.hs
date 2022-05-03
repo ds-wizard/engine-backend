@@ -39,7 +39,6 @@ import Shared.Model.PackageBundle.PackageBundle
 import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateGroup
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
-import Wizard.Api.Resource.Admin.AdminExecutionDTO
 import Wizard.Api.Resource.App.AppChangeDTO
 import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Api.Resource.App.AppDTO
@@ -50,6 +49,7 @@ import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.Branch.Event.BranchEventDTO
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Api.Resource.Config.ClientConfigDTO
+import Wizard.Api.Resource.Dev.DevExecutionDTO
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
@@ -102,7 +102,6 @@ import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Model.Acl.Acl
 import Wizard.Model.ActionKey.ActionKey
-import Wizard.Model.Admin.Admin
 import Wizard.Model.App.App
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
@@ -113,6 +112,7 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
+import Wizard.Model.Dev.Dev
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Feedback.Feedback
@@ -156,13 +156,6 @@ makeFields ''Member
 
 -- Model / ActionKey
 makeFields ''ActionKey
-
--- Model / Admin
-makeFields ''AdminSection
-
-makeFields ''AdminOperation
-
-makeFields ''AdminOperationParameter
 
 -- Model / App
 makeFields ''App
@@ -268,6 +261,8 @@ makeFields ''ServerConfigSentry
 
 makeFields ''ServerConfigBranch
 
+makeFields ''ServerConfigCache
+
 makeFields ''ServerConfigDocument
 
 makeFields ''ServerConfigFeedback
@@ -294,6 +289,13 @@ makeFields ''InvokeClientCssCompilationCommand
 makeFields ''BaseContext
 
 makeFields ''AppContext
+
+-- Model / Dev
+makeFields ''DevSection
+
+makeFields ''DevOperation
+
+makeFields ''DevOperationParameter
 
 -- Model / Document
 makeFields ''Document
@@ -591,9 +593,6 @@ makeFields ''WebsocketRecord
 -- Api / Resource / ActionKey
 makeFields ''ActionKeyDTO
 
--- Api / Resource / Admin
-makeFields ''AdminExecutionDTO
-
 -- Api / Resource / App
 makeFields ''AppDTO
 
@@ -622,6 +621,9 @@ makeFields ''ClientConfigDTO
 makeFields ''ClientConfigRegistryDTO
 
 makeFields ''ClientConfigQuestionnaireDTO
+
+-- Api / Resource / Dev
+makeFields ''DevExecutionDTO
 
 -- Api / Resource / Document
 makeFields ''DocumentDTO

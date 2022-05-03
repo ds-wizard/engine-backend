@@ -4,6 +4,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Wizard.Specs.API.Common
+import Wizard.Specs.API.Migration.KnowledgeModel.List_Current_Conflict_All_POST
 import Wizard.Specs.API.Migration.KnowledgeModel.List_Current_Conflict_POST
 import Wizard.Specs.API.Migration.KnowledgeModel.List_Current_DELETE
 import Wizard.Specs.API.Migration.KnowledgeModel.List_Current_GET
@@ -16,3 +17,4 @@ migrationAPI appContext =
     list_current_POST appContext
     list_current_DELETE appContext
     list_current_conflict_POST appContext
+    list_Current_Conflict_All_POST appContext

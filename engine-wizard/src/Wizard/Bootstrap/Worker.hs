@@ -13,6 +13,7 @@ import LensesConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
 import Wizard.Worker.Cron.Branch.SquashBranchEventsWorker
+import Wizard.Worker.Cron.Cache.CacheWorker
 import Wizard.Worker.Cron.Document.DocumentWorker
 import Wizard.Worker.Cron.Feedback.FeedbackWorker
 import Wizard.Worker.Cron.PersistentCommand.PersistentCommandRetryWorker
@@ -42,6 +43,7 @@ cronJob context = do
   threadIds <-
     liftIO . execSchedule $ do
       squashBranchEventsWorker context
+      cacheWorker context
       feedbackWorker context
       documentWorker context
       persistentCommandRetryWorker context

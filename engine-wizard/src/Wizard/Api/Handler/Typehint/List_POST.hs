@@ -23,4 +23,6 @@ list_POST ::
   -> Maybe String
   -> TypehintRequestDTO
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TypehintDTO])
-list_POST mTokenHeader mServerUrl reqDto = runInUnauthService mServerUrl $ addTraceUuidHeader =<< getTypehints reqDto
+list_POST mTokenHeader mServerUrl reqDto =
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
+    runInMaybeAuthService $ addTraceUuidHeader =<< getTypehints reqDto

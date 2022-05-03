@@ -1,5 +1,5 @@
 name: engine-wizard
-version: '3.10.1'
+version: '3.11.0'
 synopsis: Engine Wizard
 description: Engine Wizard
 category: Web
@@ -29,6 +29,7 @@ library:
   - bytestring
   - cache
   - case-insensitive
+  - clock
   - conduit
   - containers
   - cron

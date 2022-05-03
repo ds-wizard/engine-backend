@@ -50,7 +50,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = toDetailDTO defaultApp [] defaultUsage [userAlbert]
+    let expDto = toDetailDTO defaultApp Nothing Nothing [] defaultUsage [userAlbert]
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

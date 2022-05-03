@@ -1,5 +1,5 @@
 name: engine-registry
-version: '3.10.1'
+version: '3.11.0'
 synopsis: Engine Registry
 description: Engine Registry
 category: Web
@@ -60,6 +60,7 @@ library:
   - text
   - text-replace
   - time
+  - time-manager
   - transformers
   - unordered-containers
   - uri-encode

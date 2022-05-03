@@ -14,4 +14,5 @@ import Wizard.Database.Migration.Development.Usage.Data.Usages
 import Wizard.Service.App.AppMapper
 
 instance ToSchema AppDetailDTO where
-  declareNamedSchema = simpleToSchema (toDetailDTO defaultApp [standardPlan, standardPlanExpired] defaultUsage [])
+  declareNamedSchema =
+    simpleToSchema (toDetailDTO defaultApp Nothing Nothing [standardPlan, standardPlanExpired] defaultUsage [])

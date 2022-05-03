@@ -33,17 +33,20 @@ import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.User.User
 import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppMapper
+import Wizard.Service.App.AppUtil
 import Wizard.Service.App.AppValidation
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Limit.AppLimitService
-import Wizard.Service.PersistentCommand.PersistentCommandMapper
+import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PCM
 import Wizard.Service.Usage.UsageService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import Wizard.Service.User.UserService
 
-getAppsPage :: Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page App)
+getAppsPage :: Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page AppDTO)
 getAppsPage mQuery mEnabled pageable sort = do
   checkPermission _APP_PERM
-  findAppsPage mQuery mEnabled pageable sort
+  apps <- findAppsPage mQuery mEnabled pageable sort
+  traverse enhanceApp apps
 
 registerApp :: AppCreateDTO -> AppContextM AppDTO
 registerApp reqDto = do
@@ -60,7 +63,7 @@ registerApp reqDto = do
     createAppConfig aUuid now
     createAppLimit aUuid now
     createSeederPersistentCommand aUuid (user ^. uuid) now
-    return . toDTO $ app
+    return $ toDTO app Nothing Nothing
 
 createAppByAdmin :: AppCreateDTO -> AppContextM AppDTO
 createAppByAdmin reqDto = do
@@ -79,7 +82,7 @@ createAppByAdmin reqDto = do
     createAppConfig aUuid now
     createAppLimit aUuid now
     createSeederPersistentCommand aUuid (user ^. uuid) now
-    return . toDTO $ app
+    return $ toDTO app Nothing Nothing
 
 getAppById :: String -> AppContextM AppDetailDTO
 getAppById aUuid = do
@@ -88,7 +91,10 @@ getAppById aUuid = do
   plans <- findAppPlansForAppUuid aUuid
   usage <- getUsage aUuid
   users <- findUsersWithAppFiltered aUuid [("role", _USER_ROLE_ADMIN)]
-  return $ toDetailDTO app plans usage users
+  appConfig <- getAppConfigByUuid (app ^. uuid)
+  let mLogoUrl = appConfig ^. lookAndFeel . logoUrl
+  let mPrimaryColor = appConfig ^. lookAndFeel . primaryColor
+  return $ toDetailDTO app mLogoUrl mPrimaryColor plans usage users
 
 modifyApp :: String -> AppChangeDTO -> AppContextM App
 modifyApp aUuid reqDto = do
@@ -121,7 +127,7 @@ createSeederPersistentCommand aUuid createdBy now =
   runInTransaction $ do
     pUuid <- liftIO generateUuid
     let command =
-          toPersistentCommand
+          PCM.toPersistentCommand
             pUuid
             "data_seeder"
             "importDefaultData"

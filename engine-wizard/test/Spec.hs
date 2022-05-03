@@ -107,7 +107,7 @@ prepareWebApp runCallback =
       putStrLn "S3_CLIENT: created"
       registryClient <- createRegistryClient serverConfig httpClientManager
       putStrLn "REGISTRY_CLIENT: created"
-      cache <- createServerCache
+      cache <- createServerCache serverConfig
       putStrLn "CACHE: created"
       let appContext =
             AppContext

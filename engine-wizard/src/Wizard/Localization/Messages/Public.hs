@@ -180,6 +180,9 @@ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION =
 _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION =
   LocaleRecord "error.service.typehint.bad_type_of_integration" "Desired integration has to be API integration" []
 
+_ERROR_SERVICE_TYPEHINT__INTEGRATION_RETURNS_ERROR =
+  LocaleRecord "error.service.typehint.integration_request_failed" "Integration request failed" []
+
 -- User
 _ERROR_SERVICE_USER__MISSING_USER =
   LocaleRecord "error.service.user.missing_user" "You have to be log in to perform this request." []

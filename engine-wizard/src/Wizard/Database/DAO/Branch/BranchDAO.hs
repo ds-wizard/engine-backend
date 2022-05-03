@@ -42,7 +42,7 @@ findBranchesPage mQuery pageable sort = do
     pageable
     sort
     "*"
-    "(name ~* ? OR km_id ~* ?) AND app_uuid = ?"
+    "WHERE (name ~* ? OR km_id ~* ?) AND app_uuid = ?"
     [regex mQuery, regex mQuery, U.toString appUuid]
 
 findBranchById :: String -> AppContextM Branch

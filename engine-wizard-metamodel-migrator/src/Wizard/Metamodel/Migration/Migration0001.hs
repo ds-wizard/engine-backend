@@ -1,54 +1,24 @@
-module Wizard.Metamodel.Migration.Migration0001 where
+module Wizard.Metamodel.Migration.Migration0001
+  ( migrateEventValue
+  ) where
 
 import Data.Aeson
+import qualified Data.Text as T
 
-import qualified Wizard.Metamodel.Event.Version0001 as V1
-import qualified Wizard.Metamodel.Event.Version0001.Common as V1
-import qualified Wizard.Metamodel.Event.Version0001.KnowledgeModel as V1
-import qualified Wizard.Metamodel.Event.Version0002 as V2
-import qualified Wizard.Metamodel.Event.Version0002.Common as V2
-import qualified Wizard.Metamodel.Event.Version0002.KnowledgeModel as V2
 import Wizard.Metamodel.Migration.MigrationContext
+import Wizard.Metamodel.Migration.Utils
 
-result2Either :: Result a -> Either String a
-result2Either (Error msg) = Left msg
-result2Either (Success x) = Right x
-
-class Upgradeable f t where
-  upgrade :: f -> Either String t
-
-instance Upgradeable V1.EventPathDTO V2.EventPathDTO where
-  upgrade = result2Either . fromJSON . toJSON
-
-instance (FromJSON a, ToJSON a) => Upgradeable (V1.EventFieldDTO a) (V2.EventFieldDTO a) where
-  upgrade V1.NothingChangedDTO = Right V2.NothingChangedDTO
-  upgrade (V1.ChangedValueDTO x) = Right (V2.ChangedValueDTO x)
-
-instance Upgradeable V1.EditKnowledgeModelEventDTO V2.EditKnowledgeModelEventDTO where
-  upgrade V1.EditKnowledgeModelEventDTO {..} = do
-    newPath <- upgrade _editKnowledgeModelEventDTOPath
-    newName <- upgrade _editKnowledgeModelEventDTOName
-    newChapterUuids <- upgrade _editKnowledgeModelEventDTOChapterUuids
-    newTagUuids <- upgrade _editKnowledgeModelEventDTOTagUuids
-    return
-      V2.EditKnowledgeModelEventDTO
-        { V2._editKnowledgeModelEventDTOUuid = _editKnowledgeModelEventDTOUuid
-        , V2._editKnowledgeModelEventDTOPath = newPath
-        , V2._editKnowledgeModelEventDTOKmUuid = _editKnowledgeModelEventDTOKmUuid
-        , V2._editKnowledgeModelEventDTOName = newName
-        , V2._editKnowledgeModelEventDTOChapterUuids = newChapterUuids
-        , V2._editKnowledgeModelEventDTOTagUuids = newTagUuids
-        , V2._editKnowledgeModelEventDTOIntegrationUuids = V2.NothingChangedDTO
-        }
-
-instance Upgradeable V1.EventDTO V2.EventDTO where
-  upgrade (V1.EditKnowledgeModelEventDTO' oldEvent) = do
-    newEvent <- upgrade oldEvent
-    return $ V2.EditKnowledgeModelEventDTO' newEvent
-  upgrade x = result2Either . fromJSON . toJSON $ x
-
+-- Migration #0001 (KM v1 -> v2)
+-- * Add integrations to KM
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
-migrateEventValue _ input = do
-  oldEvent <- result2Either (fromJSON input)
-  newEvent <- upgrade (oldEvent :: V1.EventDTO)
-  return [toJSON (newEvent :: V2.EventDTO)]
+migrateEventValue _ input = Right [migrate input]
+
+migrateEditKnowledgeModelEvent :: Object -> Object
+migrateEditKnowledgeModelEvent = runBasicOp $ Insert "integrationUuids" unchangedValue
+
+migrateEvents :: T.Text -> Object -> Object
+migrateEvents "EditKnowledgeModelEvent" = migrateEditKnowledgeModelEvent
+migrateEvents _ = id
+
+migrate :: Value -> Value
+migrate = migrateByEventType migrateEvents

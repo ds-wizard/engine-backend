@@ -34,7 +34,7 @@ userAlbert =
     , _userRole = _USER_ROLE_ADMIN
     , _userPermissions =
         [ "APP_PERM"
-        , "ADMIN_PERM"
+        , "DEV_PERM"
         , "UM_PERM"
         , "KM_PERM"
         , "KM_UPGRADE_PERM"

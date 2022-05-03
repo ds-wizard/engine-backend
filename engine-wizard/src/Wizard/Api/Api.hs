@@ -3,12 +3,12 @@ module Wizard.Api.Api where
 import Servant
 
 import Wizard.Api.Handler.ActionKey.Api
-import Wizard.Api.Handler.Admin.Api
 import Wizard.Api.Handler.App.Api
 import Wizard.Api.Handler.Auth.Api
 import Wizard.Api.Handler.BookReference.Api
 import Wizard.Api.Handler.Branch.Api
 import Wizard.Api.Handler.Config.Api
+import Wizard.Api.Handler.Dev.Api
 import Wizard.Api.Handler.Document.Api
 import Wizard.Api.Handler.Domain.Api
 import Wizard.Api.Handler.Feedback.Api
@@ -16,6 +16,7 @@ import Wizard.Api.Handler.Info.Api
 import Wizard.Api.Handler.KnowledgeModel.Api
 import Wizard.Api.Handler.Migration.Api
 import Wizard.Api.Handler.Package.Api
+import Wizard.Api.Handler.PersistentCommand.Api
 import Wizard.Api.Handler.Prefab.Api
 import Wizard.Api.Handler.Questionnaire.Api
 import Wizard.Api.Handler.Registry.Api
@@ -30,12 +31,12 @@ import Wizard.Model.Context.BaseContext
 
 type ApplicationAPI
    = ActionKeyAPI
-     :<|> AdminAPI
      :<|> AppAPI
      :<|> AuthAPI
      :<|> BookReferenceAPI
      :<|> BranchAPI
      :<|> ConfigAPI
+     :<|> DevAPI
      :<|> DocumentAPI
      :<|> DomainAPI
      :<|> FeedbackAPI
@@ -43,6 +44,7 @@ type ApplicationAPI
      :<|> KnowledgeModelAPI
      :<|> MigrationAPI
      :<|> PackageAPI
+     :<|> PersistentCommandAPI
      :<|> PrefabAPI
      :<|> QuestionnaireAPI
      :<|> RegistryAPI
@@ -59,8 +61,8 @@ applicationApi = Proxy
 
 applicationServer :: ServerT ApplicationAPI BaseContextM
 applicationServer =
-  actionKeyServer :<|> adminServer :<|> appServer :<|> authServer :<|> bookReferenceServer :<|> branchServer :<|>
-  configServer :<|>
+  actionKeyServer :<|> appServer :<|> authServer :<|> bookReferenceServer :<|> branchServer :<|> configServer :<|>
+  devServer :<|>
   documentServer :<|>
   domainServer :<|>
   feedbackServer :<|>
@@ -68,6 +70,7 @@ applicationServer =
   knowledgeModelServer :<|>
   migrationServer :<|>
   packageServer :<|>
+  persistentCommandServer :<|>
   prefabServer :<|>
   questionnaireServer :<|>
   registryServer :<|>

@@ -129,14 +129,7 @@ jobs:
           mkdir -p /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/postgresql-migration
           mv vendor/postgresql-migration/.stack-work /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/postgresql-migration/.stack-work
 
-      # (4) -> Build Docker image
-      - name: Docker build
-        run: |
-          cd engine-$COMPONENT
-          docker pull $PUBLIC_IMAGE:$TAG_DEVELOP
-          docker build --network=host --cache-from $PUBLIC_IMAGE:$TAG_DEVELOP -t $PRIVATE_IMAGE:$GITHUB_SHA .
-
-      # (5) -> Docker image tagging
+      # (5) -> Docker login
       - name: Docker login
         if: github.event_name == 'push'
         run: |
@@ -148,6 +141,13 @@ jobs:
           PRIVATE_REGISTRY_URL: ${{ secrets.PRIVATE_REGISTRY_URL }}
           PRIVATE_REGISTRY_USERNAME: ${{ secrets.PRIVATE_REGISTRY_USERNAME }}
           PRIVATE_REGISTRY_PASSWORD: ${{ secrets.PRIVATE_REGISTRY_PASSWORD }}
+
+      # (6) -> Build Docker image
+      - name: Docker build
+        run: |
+          cd engine-$COMPONENT
+          docker pull $PRIVATE_IMAGE:$TAG_DEVELOP
+          docker build --network=host --cache-from $PRIVATE_IMAGE:$TAG_DEVELOP -t $PRIVATE_IMAGE:$GITHUB_SHA .
 
       - name: Docker push - commit SHA (private)
         if: github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/')

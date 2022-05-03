@@ -10,11 +10,10 @@ module Registry.Util.Logger
 
 import Control.Lens ((^.))
 import Control.Monad (when)
-import Control.Monad.Logger (MonadLogger, logWithoutLoc)
-import Control.Monad.Reader (MonadReader, asks, liftIO)
-import Data.Aeson (Value(..))
+import Control.Monad.Logger (logWithoutLoc)
+import Control.Monad.Reader (asks, liftIO)
+import Data.Aeson (Value(..), toJSON)
 import qualified Data.HashMap.Strict as HashMap
-import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Data.UUID as U
 import Prelude hiding (log)
@@ -43,7 +42,7 @@ logErrorU component message = do
   sendToSentry component message
 
 -- ---------------------------------------------------------------------------
-logU :: (MonadReader AppContext m, MonadLogger m) => LogLevel -> String -> String -> m ()
+logU :: LogLevel -> String -> String -> AppContextM ()
 logU logLevel component message = do
   mOrg <- asks _appContextCurrentOrganization
   traceUuid <- asks _appContextTraceUuid
@@ -56,7 +55,6 @@ sendToSentry :: String -> String -> AppContextM ()
 sendToSentry component message = do
   mOrg <- asks _appContextCurrentOrganization
   traceUuid <- asks _appContextTraceUuid
-  let mIdentityUuid = fmap _organizationToken mOrg
   serverConfig <- asks _appContextServerConfig
   when
     (serverConfig ^. sentry . enabled)
@@ -64,16 +62,19 @@ sendToSentry component message = do
         sentryService <- liftIO $ initRaven sentryDsn id sendRecord stderrFallback
         buildInfoConfig <- asks _appContextBuildInfoConfig
         let buildVersion = buildInfoConfig ^. version
-        liftIO $ register sentryService "appLogger" Error message (recordUpdate buildVersion mIdentityUuid traceUuid))
+        liftIO $ register sentryService "messageLogger" Error message (recordUpdate buildVersion mOrg traceUuid))
 
-recordUpdate :: String -> Maybe String -> U.UUID -> SentryRecord -> SentryRecord
-recordUpdate buildVersion mIdentityUuid traceUuid record =
-  record
-    { srRelease = Just buildVersion
-    , srExtra =
-        HashMap.fromList
-          [ ("identityUuid", String . T.pack . fromMaybe "" $ mIdentityUuid)
-          , ("traceUuid", String . T.pack . U.toString $ traceUuid)
-          ]
-    , srTags = HashMap.fromList [("identityUuid", fromMaybe "" mIdentityUuid), ("traceUuid", U.toString traceUuid)]
-    }
+recordUpdate :: String -> Maybe Organization -> U.UUID -> SentryRecord -> SentryRecord
+recordUpdate buildVersion mOrg traceUuid record =
+  let orgUuid = T.pack . maybe "" _organizationOrganizationId $ mOrg
+      orgEmail = T.pack . maybe "" _organizationEmail $ mOrg
+   in record
+        { srRelease = Just buildVersion
+        , srInterfaces =
+            HashMap.fromList
+              [ ( "sentry.interfaces.User"
+                , toJSON $ HashMap.fromList [("id", String orgUuid), ("email", String orgEmail)])
+              ]
+        , srTags = HashMap.fromList [("traceUuid", U.toString traceUuid)]
+        , srExtra = HashMap.fromList [("traceUuid", String . T.pack . U.toString $ traceUuid)]
+        }

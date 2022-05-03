@@ -34,7 +34,7 @@ findAppsPage mQuery mEnabled pageable sort = do
           Nothing -> ""
           Just True -> " AND enabled = true"
           Just False -> " AND enabled = false"
-  let condition = f' "(name ~* ? OR app_id ~* ?) %s" [enabledCondition]
+  let condition = f' "WHERE (name ~* ? OR app_id ~* ?) %s" [enabledCondition]
   createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort "*" condition [regex mQuery, regex mQuery]
 
 findAppById :: String -> AppContextM App

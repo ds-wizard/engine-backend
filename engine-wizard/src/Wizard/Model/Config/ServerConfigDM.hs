@@ -17,6 +17,7 @@ defaultConfig =
     , _serverConfigAnalytics = defaultAnalytics
     , _serverConfigSentry = defaultSentry
     , _serverConfigBranch = defaultBranch
+    , _serverConfigCache = defaultCache
     , _serverConfigDocument = defaultDocument
     , _serverConfigFeedback = defaultFeedback
     , _serverConfigPersistentCommand = defaultPersistentCommand
@@ -56,8 +57,7 @@ defaultRoles :: ServerConfigRoles
 defaultRoles =
   ServerConfigRoles
     { _serverConfigRolesAdmin =
-        [ "ADMIN_PERM"
-        , "UM_PERM"
+        [ "UM_PERM"
         , "KM_PERM"
         , "KM_UPGRADE_PERM"
         , "KM_PUBLISH_PERM"
@@ -99,6 +99,18 @@ defaultBranch = ServerConfigBranch {_serverConfigBranchSquash = defaultBranchSqu
 defaultBranchSquash :: ServerConfigCronWorker
 defaultBranchSquash =
   ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "15 2 * * *"}
+
+defaultCache :: ServerConfigCache
+defaultCache =
+  ServerConfigCache
+    { _serverConfigCacheDataExpiration = 12
+    , _serverConfigCacheWebsocketExpiration = 24
+    , _serverConfigCachePurgeExpired = defaultCachePurgeExpired
+    }
+
+defaultCachePurgeExpired :: ServerConfigCronWorker
+defaultCachePurgeExpired =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "45 * * * *"}
 
 defaultDocument :: ServerConfigDocument
 defaultDocument = ServerConfigDocument {_serverConfigDocumentClean = defaultDocumentClean}

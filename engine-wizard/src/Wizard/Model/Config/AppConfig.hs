@@ -156,6 +156,7 @@ data AppConfigRegistry =
 data AppConfigKnowledgeModel =
   AppConfigKnowledgeModel
     { _appConfigKnowledgeModelPublic :: AppConfigKnowledgeModelPublic
+    , _appConfigKnowledgeModelIntegrationConfig :: String
     }
   deriving (Generic, Eq, Show)
 

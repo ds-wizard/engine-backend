@@ -48,7 +48,7 @@ findUsersPage mQuery mRole pageable sort = do
     pageable
     sort
     "*"
-    "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role ~* ? AND app_uuid = ? AND machine = false"
+    "WHERE (concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role ~* ? AND app_uuid = ? AND machine = false"
     [regex mQuery, regex mQuery, regex mRole, U.toString appUuid]
 
 findUserSuggestionsPage ::
@@ -67,7 +67,7 @@ findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
           Just excludeUuids -> f' "AND uuid NOT IN (%s)" [generateQuestionMarks excludeUuids]
   let condition =
         f'
-          "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND active = true AND app_uuid = ? AND machine = false %s %s"
+          "WHERE (concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND active = true AND app_uuid = ? AND machine = false %s %s"
           [selectCondition, excludeCondition]
   createFindEntitiesPageableQuerySortFn
     entityName
@@ -94,6 +94,9 @@ findUserById' = getFromCacheOrDb' getFromCache addToCache go
 
 findUserByIdSystem :: String -> AppContextM User
 findUserByIdSystem uuid = createFindEntityByFn entityName [("uuid", uuid)]
+
+findUserByIdSystem' :: String -> AppContextM (Maybe User)
+findUserByIdSystem' uuid = createFindEntityByFn' entityName [("uuid", uuid)]
 
 findUserByEmail :: String -> AppContextM User
 findUserByEmail email = do

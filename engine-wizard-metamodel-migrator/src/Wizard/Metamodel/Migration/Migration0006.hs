@@ -1,23 +1,22 @@
-module Wizard.Metamodel.Migration.Migration0006 where
+module Wizard.Metamodel.Migration.Migration0006
+  ( migrateEventValue
+  ) where
 
 import Data.Aeson
+import qualified Data.Text as T
 
-import qualified Wizard.Metamodel.Event.Version0006 as V6
-import qualified Wizard.Metamodel.Event.Version0007 as V7
 import Wizard.Metamodel.Migration.MigrationContext
+import Wizard.Metamodel.Migration.Utils
 
-result2Either :: Result a -> Either String a
-result2Either (Error msg) = Left msg
-result2Either (Success x) = Right x
-
-class Upgradeable f t where
-  upgrade :: f -> Either String t
-
-instance Upgradeable V6.Event V7.Event where
-  upgrade = result2Either . fromJSON . toJSON
-
+-- Migration #0006 (KM v6 -> v7)
+-- * Delete "name" to add/edit KM events
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
-migrateEventValue _ input = do
-  oldEvent <- result2Either (fromJSON input)
-  newEvent <- upgrade (oldEvent :: V6.Event)
-  return [toJSON (newEvent :: V7.Event)]
+migrateEventValue _ input = Right [migrate input]
+
+migrateKnowledgeModelEvents :: T.Text -> Object -> Object
+migrateKnowledgeModelEvents "AddKnowledgeModelEvent" = runBasicOp (Delete "name")
+migrateKnowledgeModelEvents "EditKnowledgeModelEvent" = runBasicOp (Delete "name")
+migrateKnowledgeModelEvents _ = id
+
+migrate :: Value -> Value
+migrate = migrateByEventType migrateKnowledgeModelEvents

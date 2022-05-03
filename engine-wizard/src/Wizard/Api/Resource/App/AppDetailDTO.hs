@@ -17,6 +17,8 @@ data AppDetailDTO =
     , _appDetailDTOServerUrl :: String
     , _appDetailDTOClientUrl :: String
     , _appDetailDTOEnabled :: Bool
+    , _appDetailDTOLogoUrl :: Maybe String
+    , _appDetailDTOPrimaryColor :: Maybe String
     , _appDetailDTOPlans :: [AppPlan]
     , _appDetailDTOUsage :: UsageDTO
     , _appDetailDTOUsers :: [UserDTO]

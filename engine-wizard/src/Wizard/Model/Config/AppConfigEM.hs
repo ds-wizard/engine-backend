@@ -9,6 +9,7 @@ instance SensitiveData AppConfig where
     entity
       { _appConfigAuthentication = process key (_appConfigAuthentication entity)
       , _appConfigRegistry = process key (_appConfigRegistry entity)
+      , _appConfigKnowledgeModel = process key (_appConfigKnowledgeModel entity)
       , _appConfigQuestionnaire = process key (_appConfigQuestionnaire entity)
       }
 
@@ -47,6 +48,13 @@ instance SensitiveData AppConfigLookAndFeelCustomMenuLink
 
 instance SensitiveData AppConfigRegistry where
   process key entity = entity {_appConfigRegistryToken = encryptAES256WithB64 key (_appConfigRegistryToken entity)}
+
+instance SensitiveData AppConfigKnowledgeModel where
+  process key entity =
+    entity
+      { _appConfigKnowledgeModelIntegrationConfig =
+          encryptAES256WithB64 key (_appConfigKnowledgeModelIntegrationConfig entity)
+      }
 
 instance SensitiveData AppConfigQuestionnaire where
   process key entity = entity {_appConfigQuestionnaireFeedback = process key (_appConfigQuestionnaireFeedback entity)}
