@@ -8,8 +8,9 @@ import Wizard.Service.KnowledgeModel.Squash.Event.Common
 
 instance SimpleEventSquash EditMetricEvent where
   isSimpleEventSquashApplicable _ = True
+  isReorderEventSquashApplicable _ _ = False
   isTypeChanged _ _ = False
-  simpleSquashEvent oldEvent newEvent =
+  simpleSquashEvent mPreviousEvent oldEvent newEvent =
     EditMetricEvent
       { _editMetricEventUuid = newEvent ^. uuid
       , _editMetricEventParentUuid = newEvent ^. parentUuid
