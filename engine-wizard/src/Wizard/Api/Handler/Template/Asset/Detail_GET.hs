@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Template.Asset.Detail_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -15,14 +16,14 @@ type Detail_GET
      :> "templates"
      :> Capture "templateId" String
      :> "assets"
-     :> Capture "assetUuid" String
+     :> Capture "assetUuid" U.UUID
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] TemplateAsset)
 
 detail_GET ::
      Maybe String
   -> Maybe String
   -> String
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateAsset)
 detail_GET mTokenHeader mServerUrl tmlId assetUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->

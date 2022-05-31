@@ -25,11 +25,11 @@ getTemplateAssets tmlId =
     checkPermission _TML_PERM
     findTemplateAssetsByTemplateId tmlId
 
-getTemplateAsset :: String -> AppContextM TemplateAsset
+getTemplateAsset :: U.UUID -> AppContextM TemplateAsset
 getTemplateAsset assetUuid =
   runInTransaction $ do
     checkPermission _TML_PERM
-    findTemplateAssetById assetUuid
+    findTemplateAssetById (U.toString assetUuid)
 
 getTemplateAssetContent :: String -> String -> AppContextM (TemplateAsset, BS.ByteString)
 getTemplateAssetContent tmlId assetUuid =

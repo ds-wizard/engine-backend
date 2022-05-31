@@ -23,11 +23,11 @@ getTemplateFiles tmlId =
     checkPermission _TML_PERM
     findTemplateFilesByTemplateId tmlId
 
-getTemplateFile :: String -> AppContextM TemplateFile
+getTemplateFile :: U.UUID -> AppContextM TemplateFile
 getTemplateFile fileUuid =
   runInTransaction $ do
     checkPermission _TML_PERM
-    findTemplateFileById fileUuid
+    findTemplateFileById (U.toString fileUuid)
 
 createTemplateFile :: String -> TemplateFileChangeDTO -> AppContextM TemplateFile
 createTemplateFile tmlId reqDto =
