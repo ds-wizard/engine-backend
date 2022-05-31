@@ -30,7 +30,7 @@ squashQuestionnaireEventsForQuestionnaire qtnUuid =
     logInfoU _CMP_SERVICE (f' "Squashing events for questionnaire (qtnUuid: '%s')" [qtnUuid])
     (QuestionnaireSquash _ events versions) <- findQuestionnaireSquashById qtnUuid
     let squashedEvents = squash versions events
-    updateQuestionnaireEventsByUuid qtnUuid squashedEvents
+    updateQuestionnaireEventsByUuid qtnUuid True squashedEvents
     logInfoU
       _CMP_SERVICE
       (f'
