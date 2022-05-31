@@ -4,7 +4,9 @@ import Control.Lens ((^.))
 
 import LensesConfig
 import Shared.Model.Event.EventField
+import Shared.Model.Event.EventLenses
 import Shared.Model.Event.Question.QuestionEvent
+import Shared.Model.Event.Question.QuestionEventLenses ()
 import Wizard.Service.KnowledgeModel.Squash.Event.Common
 
 instance SimpleEventSquash EditQuestionEvent where
@@ -33,6 +35,8 @@ instance SimpleEventSquash EditQuestionEvent where
     isChanged tagUuids event ||
     isChanged expertUuids event || isChanged referenceUuids event || isChanged integrationUuid event
   --  --------------------------------------
+  isReorderEventSquashApplicable previousEvent newEvent = previousEvent ^. entityUuid' == newEvent ^. entityUuid'
+  --  --------------------------------------
   isTypeChanged (EditOptionsQuestionEvent' oldEvent) (EditOptionsQuestionEvent' newEvent) = False
   isTypeChanged (EditMultiChoiceQuestionEvent' oldEvent) (EditMultiChoiceQuestionEvent' newEvent) = False
   isTypeChanged (EditListQuestionEvent' oldEvent) (EditListQuestionEvent' newEvent) = False
@@ -40,7 +44,7 @@ instance SimpleEventSquash EditQuestionEvent where
   isTypeChanged (EditIntegrationQuestionEvent' oldEvent) (EditIntegrationQuestionEvent' newEvent) = False
   isTypeChanged _ _ = True
   --  --------------------------------------
-  simpleSquashEvent (EditOptionsQuestionEvent' oldEvent) (EditOptionsQuestionEvent' newEvent) =
+  simpleSquashEvent mPreviousEvent (EditOptionsQuestionEvent' oldEvent) (EditOptionsQuestionEvent' newEvent) =
     EditOptionsQuestionEvent' $
     EditOptionsQuestionEvent
       { _editOptionsQuestionEventUuid = newEvent ^. uuid
@@ -50,13 +54,13 @@ instance SimpleEventSquash EditQuestionEvent where
       , _editOptionsQuestionEventText = applyValue oldEvent newEvent text
       , _editOptionsQuestionEventRequiredPhaseUuid = applyValue oldEvent newEvent requiredPhaseUuid
       , _editOptionsQuestionEventAnnotations = applyValue oldEvent newEvent annotations
-      , _editOptionsQuestionEventTagUuids = NothingChanged
-      , _editOptionsQuestionEventExpertUuids = NothingChanged
-      , _editOptionsQuestionEventReferenceUuids = NothingChanged
-      , _editOptionsQuestionEventAnswerUuids = NothingChanged
+      , _editOptionsQuestionEventTagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent tagUuids
+      , _editOptionsQuestionEventExpertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent expertUuids
+      , _editOptionsQuestionEventReferenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent referenceUuids
+      , _editOptionsQuestionEventAnswerUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent answerUuids
       , _editOptionsQuestionEventCreatedAt = newEvent ^. createdAt
       }
-  simpleSquashEvent (EditMultiChoiceQuestionEvent' oldEvent) (EditMultiChoiceQuestionEvent' newEvent) =
+  simpleSquashEvent mPreviousEvent (EditMultiChoiceQuestionEvent' oldEvent) (EditMultiChoiceQuestionEvent' newEvent) =
     EditMultiChoiceQuestionEvent' $
     EditMultiChoiceQuestionEvent
       { _editMultiChoiceQuestionEventUuid = newEvent ^. uuid
@@ -66,13 +70,14 @@ instance SimpleEventSquash EditQuestionEvent where
       , _editMultiChoiceQuestionEventText = applyValue oldEvent newEvent text
       , _editMultiChoiceQuestionEventRequiredPhaseUuid = applyValue oldEvent newEvent requiredPhaseUuid
       , _editMultiChoiceQuestionEventAnnotations = applyValue oldEvent newEvent annotations
-      , _editMultiChoiceQuestionEventTagUuids = NothingChanged
-      , _editMultiChoiceQuestionEventExpertUuids = NothingChanged
-      , _editMultiChoiceQuestionEventReferenceUuids = NothingChanged
-      , _editMultiChoiceQuestionEventChoiceUuids = NothingChanged
+      , _editMultiChoiceQuestionEventTagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent tagUuids
+      , _editMultiChoiceQuestionEventExpertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent expertUuids
+      , _editMultiChoiceQuestionEventReferenceUuids =
+          applyValueIfSameEntity mPreviousEvent oldEvent newEvent referenceUuids
+      , _editMultiChoiceQuestionEventChoiceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent choiceUuids
       , _editMultiChoiceQuestionEventCreatedAt = newEvent ^. createdAt
       }
-  simpleSquashEvent (EditListQuestionEvent' oldEvent) (EditListQuestionEvent' newEvent) =
+  simpleSquashEvent mPreviousEvent (EditListQuestionEvent' oldEvent) (EditListQuestionEvent' newEvent) =
     EditListQuestionEvent' $
     EditListQuestionEvent
       { _editListQuestionEventUuid = newEvent ^. uuid
@@ -82,13 +87,14 @@ instance SimpleEventSquash EditQuestionEvent where
       , _editListQuestionEventText = applyValue oldEvent newEvent text
       , _editListQuestionEventRequiredPhaseUuid = applyValue oldEvent newEvent requiredPhaseUuid
       , _editListQuestionEventAnnotations = applyValue oldEvent newEvent annotations
-      , _editListQuestionEventTagUuids = NothingChanged
-      , _editListQuestionEventExpertUuids = NothingChanged
-      , _editListQuestionEventReferenceUuids = NothingChanged
-      , _editListQuestionEventItemTemplateQuestionUuids = NothingChanged
+      , _editListQuestionEventTagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent tagUuids
+      , _editListQuestionEventExpertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent expertUuids
+      , _editListQuestionEventReferenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent referenceUuids
+      , _editListQuestionEventItemTemplateQuestionUuids =
+          applyValueIfSameEntity mPreviousEvent oldEvent newEvent itemTemplateQuestionUuids
       , _editListQuestionEventCreatedAt = newEvent ^. createdAt
       }
-  simpleSquashEvent (EditValueQuestionEvent' oldEvent) (EditValueQuestionEvent' newEvent) =
+  simpleSquashEvent mPreviousEvent (EditValueQuestionEvent' oldEvent) (EditValueQuestionEvent' newEvent) =
     EditValueQuestionEvent' $
     EditValueQuestionEvent
       { _editValueQuestionEventUuid = newEvent ^. uuid
@@ -98,13 +104,13 @@ instance SimpleEventSquash EditQuestionEvent where
       , _editValueQuestionEventText = applyValue oldEvent newEvent text
       , _editValueQuestionEventRequiredPhaseUuid = applyValue oldEvent newEvent requiredPhaseUuid
       , _editValueQuestionEventAnnotations = applyValue oldEvent newEvent annotations
-      , _editValueQuestionEventTagUuids = NothingChanged
-      , _editValueQuestionEventExpertUuids = NothingChanged
-      , _editValueQuestionEventReferenceUuids = NothingChanged
+      , _editValueQuestionEventTagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent tagUuids
+      , _editValueQuestionEventExpertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent expertUuids
+      , _editValueQuestionEventReferenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent referenceUuids
       , _editValueQuestionEventValueType = applyValue oldEvent newEvent valueType
       , _editValueQuestionEventCreatedAt = newEvent ^. createdAt
       }
-  simpleSquashEvent (EditIntegrationQuestionEvent' oldEvent) (EditIntegrationQuestionEvent' newEvent) =
+  simpleSquashEvent mPreviousEvent (EditIntegrationQuestionEvent' oldEvent) (EditIntegrationQuestionEvent' newEvent) =
     EditIntegrationQuestionEvent' $
     EditIntegrationQuestionEvent
       { _editIntegrationQuestionEventUuid = newEvent ^. uuid
@@ -114,9 +120,10 @@ instance SimpleEventSquash EditQuestionEvent where
       , _editIntegrationQuestionEventText = applyValue oldEvent newEvent text
       , _editIntegrationQuestionEventRequiredPhaseUuid = applyValue oldEvent newEvent requiredPhaseUuid
       , _editIntegrationQuestionEventAnnotations = applyValue oldEvent newEvent annotations
-      , _editIntegrationQuestionEventTagUuids = NothingChanged
-      , _editIntegrationQuestionEventExpertUuids = NothingChanged
-      , _editIntegrationQuestionEventReferenceUuids = NothingChanged
+      , _editIntegrationQuestionEventTagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent tagUuids
+      , _editIntegrationQuestionEventExpertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent expertUuids
+      , _editIntegrationQuestionEventReferenceUuids =
+          applyValueIfSameEntity mPreviousEvent oldEvent newEvent referenceUuids
       , _editIntegrationQuestionEventIntegrationUuid = NothingChanged
       , _editIntegrationQuestionEventProps = applyValue oldEvent newEvent props
       , _editIntegrationQuestionEventCreatedAt = newEvent ^. createdAt

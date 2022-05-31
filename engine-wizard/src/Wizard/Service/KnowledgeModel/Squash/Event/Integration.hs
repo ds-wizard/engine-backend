@@ -8,12 +8,13 @@ import Wizard.Service.KnowledgeModel.Squash.Event.Common
 
 instance SimpleEventSquash EditIntegrationEvent where
   isSimpleEventSquashApplicable _ = True
+  isReorderEventSquashApplicable _ _ = False
   --  --------------------------------------
   isTypeChanged (EditApiIntegrationEvent' oldEvent) (EditApiIntegrationEvent' newEvent) = False
   isTypeChanged (EditWidgetIntegrationEvent' oldEvent) (EditWidgetIntegrationEvent' newEvent) = False
   isTypeChanged _ _ = True
   --  --------------------------------------
-  simpleSquashEvent (EditApiIntegrationEvent' oldEvent) (EditApiIntegrationEvent' newEvent) =
+  simpleSquashEvent previousEvent (EditApiIntegrationEvent' oldEvent) (EditApiIntegrationEvent' newEvent) =
     EditApiIntegrationEvent' $
     EditApiIntegrationEvent
       { _editApiIntegrationEventUuid = newEvent ^. uuid
@@ -35,7 +36,7 @@ instance SimpleEventSquash EditIntegrationEvent where
       , _editApiIntegrationEventAnnotations = applyValue oldEvent newEvent annotations
       , _editApiIntegrationEventCreatedAt = newEvent ^. createdAt
       }
-  simpleSquashEvent (EditWidgetIntegrationEvent' oldEvent) (EditWidgetIntegrationEvent' newEvent) =
+  simpleSquashEvent previousEvent (EditWidgetIntegrationEvent' oldEvent) (EditWidgetIntegrationEvent' newEvent) =
     EditWidgetIntegrationEvent' $
     EditWidgetIntegrationEvent
       { _editWidgetIntegrationEventUuid = newEvent ^. uuid

@@ -53,7 +53,12 @@ data QuestionValueType
   = StringQuestionValueType
   | NumberQuestionValueType
   | DateQuestionValueType
+  | DateTimeQuestionValueType
+  | TimeQuestionValueType
   | TextQuestionValueType
+  | EmailQuestionValueType
+  | UrlQuestionValueType
+  | ColorQuestionValueType
   deriving (Show, Eq, Generic, Read)
 
 data Question

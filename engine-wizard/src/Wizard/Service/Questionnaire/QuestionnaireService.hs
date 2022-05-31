@@ -327,7 +327,7 @@ modifyContent qtnUuid reqDto =
     mCurrentUser <- asks _appContextCurrentUser
     now <- liftIO getCurrentTime
     let updatedQtn = fromContentChangeDTO qtn reqDto mCurrentUser now
-    updateQuestionnaireById updatedQtn
+    updateQuestionnaireEventsByUuid qtnUuid False (updatedQtn ^. events)
     return reqDto
 
 cleanQuestionnaires :: AppContextM ()

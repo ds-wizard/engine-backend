@@ -8,13 +8,14 @@ import Wizard.Service.KnowledgeModel.Squash.Event.Common
 
 instance SimpleEventSquash EditReferenceEvent where
   isSimpleEventSquashApplicable _ = True
+  isReorderEventSquashApplicable _ _ = False
   --  --------------------------------------
   isTypeChanged (EditResourcePageReferenceEvent' oldEvent) (EditResourcePageReferenceEvent' newEvent) = False
   isTypeChanged (EditURLReferenceEvent' oldEvent) (EditURLReferenceEvent' newEvent) = False
   isTypeChanged (EditCrossReferenceEvent' oldEvent) (EditCrossReferenceEvent' newEvent) = False
   isTypeChanged _ _ = True
   --  --------------------------------------
-  simpleSquashEvent (EditResourcePageReferenceEvent' oldEvent) (EditResourcePageReferenceEvent' newEvent) =
+  simpleSquashEvent previousEvent (EditResourcePageReferenceEvent' oldEvent) (EditResourcePageReferenceEvent' newEvent) =
     EditResourcePageReferenceEvent' $
     EditResourcePageReferenceEvent
       { _editResourcePageReferenceEventUuid = newEvent ^. uuid
@@ -24,7 +25,7 @@ instance SimpleEventSquash EditReferenceEvent where
       , _editResourcePageReferenceEventAnnotations = applyValue oldEvent newEvent annotations
       , _editResourcePageReferenceEventCreatedAt = newEvent ^. createdAt
       }
-  simpleSquashEvent (EditURLReferenceEvent' oldEvent) (EditURLReferenceEvent' newEvent) =
+  simpleSquashEvent previousEvent (EditURLReferenceEvent' oldEvent) (EditURLReferenceEvent' newEvent) =
     EditURLReferenceEvent' $
     EditURLReferenceEvent
       { _editURLReferenceEventUuid = newEvent ^. uuid
@@ -35,7 +36,7 @@ instance SimpleEventSquash EditReferenceEvent where
       , _editURLReferenceEventAnnotations = applyValue oldEvent newEvent annotations
       , _editURLReferenceEventCreatedAt = newEvent ^. createdAt
       }
-  simpleSquashEvent (EditCrossReferenceEvent' oldEvent) (EditCrossReferenceEvent' newEvent) =
+  simpleSquashEvent previousEvent (EditCrossReferenceEvent' oldEvent) (EditCrossReferenceEvent' newEvent) =
     EditCrossReferenceEvent' $
     EditCrossReferenceEvent
       { _editCrossReferenceEventUuid = newEvent ^. uuid

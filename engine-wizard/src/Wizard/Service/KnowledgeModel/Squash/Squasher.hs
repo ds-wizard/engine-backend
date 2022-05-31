@@ -19,11 +19,11 @@ instance Ord Event where
 squash :: [Event] -> [Event]
 squash events =
   let groupedEvents = groupBy (\e1 e2 -> utctDay (e1 ^. createdAt') == utctDay (e2 ^. createdAt')) events
-      squashedEvents = fmap squashOnePeriod groupedEvents
+      squashedEvents = fmap (squashReorderEvents . squashSimple) groupedEvents
    in concat squashedEvents
 
-squashOnePeriod :: [Event] -> [Event]
-squashOnePeriod events =
+squashSimple :: [Event] -> [Event]
+squashSimple events =
   let (entities, eventsToDeleted, squashedEvents) = foldl go (M.empty, [], []) events
    in foldr deleteEvent (reverse squashedEvents) eventsToDeleted
   where
@@ -38,7 +38,7 @@ squashOnePeriod events =
                      eventsToDeleted' = eventsToDeleted
                      events' = newEvent : events
                   in (entities', eventsToDeleted', events')
-            else let squashedEvent = simpleSquashEvent oldEvent newEvent
+            else let squashedEvent = simpleSquashEvent Nothing oldEvent newEvent
                      entities' = M.insert (newEvent ^. entityUuid') squashedEvent entities
                      eventsToDeleted' = oldEvent : eventsToDeleted
                      events' = squashedEvent : events
@@ -53,3 +53,27 @@ squashOnePeriod events =
                      eventsToDeleted' = eventsToDeleted
                      events' = newEvent : events
                   in (entities', eventsToDeleted', events')
+
+squashReorderEvents :: [Event] -> [Event]
+squashReorderEvents events =
+  let (eventsToDeleted, squashedEvents, _) = foldl go ([], [], Nothing) events
+   in foldr deleteEvent (reverse squashedEvents) eventsToDeleted
+  where
+    deleteEvent :: Event -> [Event] -> [Event]
+    deleteEvent = L.deleteBy (\e1 e2 -> e1 ^. uuid' == e2 ^. uuid')
+    go :: ([Event], [Event], Maybe Event) -> Event -> ([Event], [Event], Maybe Event)
+    go (eventsToDeleted, events, mPreviousEvent) newEvent =
+      case mPreviousEvent of
+        Just previousEvent ->
+          if isTypeChanged previousEvent newEvent || not (isReorderEventSquashApplicable previousEvent newEvent)
+            then let eventsToDeleted' = eventsToDeleted
+                     events' = newEvent : events
+                  in (eventsToDeleted', events', Just newEvent)
+            else let squashedEvent = simpleSquashEvent mPreviousEvent previousEvent newEvent
+                     eventsToDeleted' = previousEvent : eventsToDeleted
+                     events' = squashedEvent : events
+                  in (eventsToDeleted', events', Just newEvent)
+        Nothing ->
+          let eventsToDeleted' = eventsToDeleted
+              events' = newEvent : events
+           in (eventsToDeleted', events', Just newEvent)

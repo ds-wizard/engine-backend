@@ -8,8 +8,9 @@ import Wizard.Service.KnowledgeModel.Squash.Event.Common
 
 instance SimpleEventSquash EditPhaseEvent where
   isSimpleEventSquashApplicable _ = True
+  isReorderEventSquashApplicable _ _ = False
   isTypeChanged _ _ = False
-  simpleSquashEvent oldEvent newEvent =
+  simpleSquashEvent mPreviousEvent oldEvent newEvent =
     EditPhaseEvent
       { _editPhaseEventUuid = newEvent ^. uuid
       , _editPhaseEventParentUuid = newEvent ^. parentUuid
