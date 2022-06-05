@@ -9,8 +9,8 @@ import Wizard.Specs.API.Questionnaire.Version.Detail_PUT
 import Wizard.Specs.API.Questionnaire.Version.List_GET
 import Wizard.Specs.API.Questionnaire.Version.List_POST
 
-questionnaireVersionAPI appContext =
-  with (startWebApp appContext) $
+questionnaireVersionAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "QUESTIONNAIRE VERSION API Spec" $ do
     list_GET appContext
     list_POST appContext

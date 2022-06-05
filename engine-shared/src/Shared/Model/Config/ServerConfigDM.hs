@@ -10,7 +10,7 @@ defaultDatabase =
     { _serverConfigDatabaseConnectionString = "postgresql://posgres:posgres@postgres:5432/engine-wizard"
     , _serverConfigDatabaseStripeSize = 1
     , _serverConfigDatabaseConnectionTimeout = 10
-    , _serverConfigDatabaseMaxConnections = 10
+    , _serverConfigDatabaseMaxConnections = 90
     }
 
 defaultS3 :: ServerConfigS3

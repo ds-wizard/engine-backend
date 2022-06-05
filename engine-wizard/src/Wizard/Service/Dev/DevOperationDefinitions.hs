@@ -1,13 +1,9 @@
 module Wizard.Service.Dev.DevOperationDefinitions where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (ask, liftIO)
-import Data.Foldable (traverse_)
 
 import LensesConfig hiding (action, cache, feedback)
 import Wizard.Api.Resource.Dev.DevExecutionDTO
-import Wizard.Database.DAO.App.AppDAO
-import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Dev.Dev
 import Wizard.Service.Branch.Event.BranchEventService
@@ -16,9 +12,7 @@ import qualified Wizard.Service.Cache.KnowledgeModelCache as KnowledgeModelCache
 import Wizard.Service.Config.AppConfigCommandExecutor
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Feedback.FeedbackService
-import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
-import Wizard.Util.Context
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- BRANCH
@@ -177,49 +171,48 @@ feedback_synchronizeFeedbacksFn reqDto = do
 -- ---------------------------------------------------------------------------------------------------------------------
 -- PERSISTENT COMMAND
 -- ---------------------------------------------------------------------------------------------------------------------
-persistentCommand :: DevSection
-persistentCommand =
-  DevSection
-    { _devSectionName = "Persistent Command"
-    , _devSectionDescription = Nothing
-    , _devSectionOperations = [persistentCommand_runAll, persistentCommand_run]
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-persistentCommand_runAll :: DevOperation
-persistentCommand_runAll =
-  DevOperation
-    { _devOperationName = "Run All Persistent Commands"
-    , _devOperationDescription = Nothing
-    , _devOperationParameters = []
-    }
-
-persistentCommand_runAllFn :: DevExecutionDTO -> AppContextM String
-persistentCommand_runAllFn reqDto = do
-  context <- ask
-  apps <- findApps
-  let appUuids = fmap (^. uuid) apps
-  liftIO $ traverse_ (runAppContextWithBaseContext' runPersistentCommands (baseContextFromAppContext context)) appUuids
-  return "Done"
-
--- ---------------------------------------------------------------------------------------------------------------------
-persistentCommand_run :: DevOperation
-persistentCommand_run =
-  DevOperation
-    { _devOperationName = "Run Persistent Command"
-    , _devOperationDescription = Nothing
-    , _devOperationParameters =
-        [ DevOperationParameter
-            {_devOperationParameterName = "uuid", _devOperationParameterAType = StringDevOperationParameterType}
-        ]
-    }
-
-persistentCommand_runFn :: DevExecutionDTO -> AppContextM String
-persistentCommand_runFn reqDto = do
-  command <- findPersistentCommandSimpleByUuid (head (reqDto ^. parameters))
-  runPersistentCommand command
-  return "Done"
-
+--persistentCommand :: DevSection
+--persistentCommand =
+--  DevSection
+--    { _devSectionName = "Persistent Command"
+--    , _devSectionDescription = Nothing
+--    , _devSectionOperations = [persistentCommand_runAll, persistentCommand_run]
+--    }
+--
+---- ---------------------------------------------------------------------------------------------------------------------
+--persistentCommand_runAll :: DevOperation
+--persistentCommand_runAll =
+--  DevOperation
+--    { _devOperationName = "Run All Persistent Commands"
+--    , _devOperationDescription = Nothing
+--    , _devOperationParameters = []
+--    }
+--
+--persistentCommand_runAllFn :: DevExecutionDTO -> AppContextM String
+--persistentCommand_runAllFn reqDto = do
+--  context <- ask
+--  apps <- findApps
+--  let appUuids = fmap (^. uuid) apps
+--  liftIO $ traverse_ (runAppContextWithBaseContext' runPersistentCommands (baseContextFromAppContext context)) appUuids
+--  return "Done"
+--
+---- ---------------------------------------------------------------------------------------------------------------------
+--persistentCommand_run :: DevOperation
+--persistentCommand_run =
+--  DevOperation
+--    { _devOperationName = "Run Persistent Command"
+--    , _devOperationDescription = Nothing
+--    , _devOperationParameters =
+--        [ DevOperationParameter
+--            {_devOperationParameterName = "uuid", _devOperationParameterAType = StringDevOperationParameterType}
+--        ]
+--    }
+--
+--persistentCommand_runFn :: DevExecutionDTO -> AppContextM String
+--persistentCommand_runFn reqDto = do
+--  command <- findPersistentCommandSimpleByUuid (head (reqDto ^. parameters))
+--  runPersistentCommand command
+--  return "Done"
 -- ---------------------------------------------------------------------------------------------------------------------
 -- QUESTIONNAIRE
 -- ---------------------------------------------------------------------------------------------------------------------

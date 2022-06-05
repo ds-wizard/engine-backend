@@ -8,8 +8,8 @@ import Wizard.Specs.API.App.Plan.Detail_PUT
 import Wizard.Specs.API.App.Plan.List_POST
 import Wizard.Specs.API.Common
 
-appPlanAPI appContext =
-  with (startWebApp appContext) $
+appPlanAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "APP PLAN API Spec" $ do
     list_POST appContext
     detail_PUT appContext

@@ -13,8 +13,8 @@ import Registry.Specs.API.Organization.List_GET
 import Registry.Specs.API.Organization.List_POST
 import Registry.Specs.API.Organization.List_Simple_GET
 
-organizationAPI appContext =
-  with (startWebApp appContext) $
+organizationAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "ORGANIZATION API Spec" $ do
     list_get appContext
     list_simple_get appContext

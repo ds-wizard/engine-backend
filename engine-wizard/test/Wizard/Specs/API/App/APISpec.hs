@@ -9,8 +9,8 @@ import Wizard.Specs.API.App.List_GET
 import Wizard.Specs.API.App.List_POST
 import Wizard.Specs.API.Common
 
-appAPI appContext =
-  with (startWebApp appContext) $
+appAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "APP API Spec" $ do
     list_GET appContext
     list_POST appContext

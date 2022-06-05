@@ -6,4 +6,5 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Registry.Specs.API.ActionKey.List_POST
 import Registry.Specs.API.Common
 
-actionKeyAPI appContext = with (startWebApp appContext) $ describe "ACTIONKEY API Spec" $ list_post appContext
+actionKeyAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $ describe "ACTIONKEY API Spec" $ list_post appContext

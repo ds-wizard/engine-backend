@@ -17,8 +17,8 @@ import Wizard.Specs.API.Questionnaire.List_POST
 import Wizard.Specs.API.Questionnaire.List_POST_CloneUuid
 import Wizard.Specs.API.Questionnaire.List_POST_FromTemplate
 
-questionnaireAPI appContext =
-  with (startWebApp appContext) $
+questionnaireAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "QUESTIONNAIRE API Spec" $ do
     list_get appContext
     list_post appContext

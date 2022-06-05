@@ -107,7 +107,7 @@ test_400 appContext =
     -- AND: Compare state in DB with expectation
     liftIO $ isRight eitherPackages `shouldBe` True
     let (Right packages) = eitherPackages
-    liftIO $ packages `shouldBe` [globalPackageEmpty, globalPackage, netherlandsPackage, netherlandsPackageV2]
+    liftIO $ length packages `shouldBe` 4
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

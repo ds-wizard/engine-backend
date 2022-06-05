@@ -56,13 +56,13 @@ instance HasCloud' ServerConfig where
       set :: ServerConfig -> ServerConfigCloud -> ServerConfig
       set entity newValue = entity & cloud .~ newValue
 
-instance HasDbPool' AppContext where
-  dbPool' convert entity = fmap (set entity) (convert . get $ entity)
+instance HasDbConnection' AppContext where
+  dbConnection' convert entity = fmap (set entity) (convert . get $ entity)
     where
-      get :: AppContext -> Pool Connection
-      get entity = entity ^. dbPool
-      set :: AppContext -> Pool Connection -> AppContext
-      set entity newValue = entity & dbPool .~ newValue
+      get :: AppContext -> Connection
+      get entity = entity ^. dbConnection
+      set :: AppContext -> Connection -> AppContext
+      set entity newValue = entity & dbConnection .~ newValue
 
 instance HasDbPool' BaseContext where
   dbPool' convert entity = fmap (set entity) (convert . get $ entity)

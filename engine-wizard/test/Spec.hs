@@ -4,6 +4,7 @@ import Control.Concurrent.MVar
 import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
+import Data.Pool
 import qualified Data.UUID as U
 import Test.Hspec
 
@@ -18,6 +19,7 @@ import Wizard.Constant.Resource
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.ServantClient
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.BaseContext
 import Wizard.Service.Config.ServerConfigService
 import Wizard.Service.User.UserMapper
 
@@ -109,30 +111,43 @@ prepareWebApp runCallback =
       putStrLn "REGISTRY_CLIENT: created"
       cache <- createServerCache serverConfig
       putStrLn "CACHE: created"
-      let appContext =
-            AppContext
-              { _appContextServerConfig = serverConfig
-              , _appContextLocalization = M.empty
-              , _appContextBuildInfoConfig = buildInfoConfig
-              , _appContextDbPool = dbPool
-              , _appContextS3Client = s3Client
-              , _appContextHttpClientManager = httpClientManager
-              , _appContextRegistryClient = registryClient
-              , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
-              , _appContextAppUuid = defaultAppUuid
-              , _appContextCurrentUser = Just . toDTO $ userAlbert
-              , _appContextShutdownFlag = shutdownFlag
-              , _appContextCache = cache
+      let baseContext =
+            BaseContext
+              { _baseContextServerConfig = serverConfig
+              , _baseContextLocalization = M.empty
+              , _baseContextBuildInfoConfig = buildInfoConfig
+              , _baseContextDbPool = dbPool
+              , _baseContextS3Client = s3Client
+              , _baseContextHttpClientManager = httpClientManager
+              , _baseContextRegistryClient = registryClient
+              , _baseContextShutdownFlag = shutdownFlag
+              , _baseContextCache = cache
               }
-      putStrLn "DB: start creating schema"
-      buildSchema appContext
-      putStrLn "DB: schema created"
-      runWebserver appContext (runCallback appContext)
+      withResource dbPool $ \dbConnection -> do
+        let appContext =
+              AppContext
+                { _appContextServerConfig = serverConfig
+                , _appContextLocalization = M.empty
+                , _appContextBuildInfoConfig = buildInfoConfig
+                , _appContextDbConnection = dbConnection
+                , _appContextS3Client = s3Client
+                , _appContextHttpClientManager = httpClientManager
+                , _appContextRegistryClient = registryClient
+                , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
+                , _appContextAppUuid = defaultAppUuid
+                , _appContextCurrentUser = Just . toDTO $ userAlbert
+                , _appContextShutdownFlag = shutdownFlag
+                , _appContextCache = cache
+                }
+        putStrLn "DB: start creating schema"
+        buildSchema appContext
+        putStrLn "DB: schema created"
+        runWebserver dbPool appContext (runCallback baseContext appContext)
 
 main :: IO ()
 main =
   prepareWebApp
-    (\appContext ->
+    (\baseContext appContext ->
        hspec $ do
          describe "UNIT TESTING" $ do
            describe "INTEGRATION" $ describe "Http" $ do
@@ -164,33 +179,33 @@ main =
              describe "Template" templateUtilSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "API" $ do
-             appAPI appContext
-             appPlanAPI appContext
-             bookReferenceAPI appContext
-             branchAPI appContext
-             configAPI appContext
-             documentAPI appContext
-             domainAPI appContext
-             feedbackAPI appContext
-             infoAPI appContext
-             knowledgeModelAPI appContext
-             KM_MigrationAPI.migrationAPI appContext
-             QTN_MigrationAPI.migrationAPI appContext
-             packageAPI appContext
-             prefabAPI appContext
-             questionnaireAPI appContext
-             questionnaireProjectTagAPI appContext
-             questionnaireVersionAPI appContext
-             submissionAPI appContext
-             swaggerAPI appContext
-             templateAPI appContext
-             templateAssetAPI appContext
-             templateFileAPI appContext
-             typehintAPI appContext
-             tokenAPI appContext
-             usageAPI appContext
-             userAPI appContext
-             versionAPI appContext
+             appAPI baseContext appContext
+             appPlanAPI baseContext appContext
+             bookReferenceAPI baseContext appContext
+             branchAPI baseContext appContext
+             configAPI baseContext appContext
+             documentAPI baseContext appContext
+             domainAPI baseContext appContext
+             feedbackAPI baseContext appContext
+             infoAPI baseContext appContext
+             knowledgeModelAPI baseContext appContext
+             KM_MigrationAPI.migrationAPI baseContext appContext
+             QTN_MigrationAPI.migrationAPI baseContext appContext
+             packageAPI baseContext appContext
+             prefabAPI baseContext appContext
+             questionnaireAPI baseContext appContext
+             questionnaireProjectTagAPI baseContext appContext
+             questionnaireVersionAPI baseContext appContext
+             submissionAPI baseContext appContext
+             swaggerAPI baseContext appContext
+             templateAPI baseContext appContext
+             templateAssetAPI baseContext appContext
+             templateFileAPI baseContext appContext
+             typehintAPI baseContext appContext
+             tokenAPI baseContext appContext
+             usageAPI baseContext appContext
+             userAPI baseContext appContext
+             versionAPI baseContext appContext
            describe "SERVICE" $ do
              branchServiceIntegrationSpec appContext
              coordinateValidationSpec appContext

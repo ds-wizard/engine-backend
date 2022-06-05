@@ -1,5 +1,5 @@
 name: engine-wizard
-version: '3.12.0'
+version: '3.12.1'
 synopsis: Engine Wizard
 description: Engine Wizard
 category: Web
@@ -143,6 +143,7 @@ tests:
     - pwstore-fast
     - random
     - regex-compat
+    - resource-pool
     - servant
     - servant-server
     - servant-errors

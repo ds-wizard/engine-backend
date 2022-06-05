@@ -8,8 +8,8 @@ import Wizard.Specs.API.Config.List_App_GET
 import Wizard.Specs.API.Config.List_App_PUT
 import Wizard.Specs.API.Config.List_Bootstrap_GET
 
-configAPI appContext =
-  with (startWebApp appContext) $
+configAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "CONFIG API Spec" $ do
     list_app_GET appContext
     list_app_PUT appContext

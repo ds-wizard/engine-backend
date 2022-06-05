@@ -14,8 +14,8 @@ import Wizard.Specs.API.Template.List_GET
 import Wizard.Specs.API.Template.List_POST
 import Wizard.Specs.API.Template.List_Suggestions_GET
 
-templateAPI appContext =
-  with (startWebApp appContext) $
+templateAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "TEMPLATE API Spec" $ do
     list_GET appContext
     list_all_get appContext

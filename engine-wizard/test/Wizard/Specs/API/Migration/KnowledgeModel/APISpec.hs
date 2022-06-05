@@ -10,8 +10,8 @@ import Wizard.Specs.API.Migration.KnowledgeModel.List_Current_DELETE
 import Wizard.Specs.API.Migration.KnowledgeModel.List_Current_GET
 import Wizard.Specs.API.Migration.KnowledgeModel.List_Current_POST
 
-migrationAPI appContext =
-  with (startWebApp appContext) $
+migrationAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "MIGRATION KNOWLEDGE MODEL API Spec" $ do
     list_current_GET appContext
     list_current_POST appContext

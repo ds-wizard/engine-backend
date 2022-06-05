@@ -8,8 +8,8 @@ import Wizard.Specs.API.Feedback.Detail_GET
 import Wizard.Specs.API.Feedback.List_GET
 import Wizard.Specs.API.Feedback.List_POST
 
-feedbackAPI appContext =
-  with (startWebApp appContext) $
+feedbackAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "FEEDBACK API Spec" $ do
     list_get appContext
     list_post appContext

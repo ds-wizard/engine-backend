@@ -26,7 +26,7 @@ findPackages ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -41,7 +41,7 @@ findPackageWithEvents ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -56,7 +56,7 @@ findPackageWithEventsRawById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -72,7 +72,7 @@ findPackagesFiltered ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -88,7 +88,7 @@ findPackagesByOrganizationIdAndKmId ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -105,7 +105,7 @@ findPackagesByPreviousPackageId ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -121,7 +121,7 @@ findPackagesByForkOfPackageId ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -137,7 +137,7 @@ findVersionsForPackage ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -159,7 +159,7 @@ findPackageById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -175,7 +175,7 @@ findPackageById' ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -191,7 +191,7 @@ findPackageWithEventsById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -207,7 +207,7 @@ countPackages ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -222,7 +222,7 @@ countPackagesGroupedByOrganizationIdAndKmId ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -237,7 +237,7 @@ countPackagesGroupedByOrganizationIdAndKmIdWithApp ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -264,7 +264,7 @@ insertPackage ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -278,7 +278,7 @@ deletePackages ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -291,7 +291,7 @@ deletePackagesFiltered ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -307,7 +307,7 @@ deletePackageById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s

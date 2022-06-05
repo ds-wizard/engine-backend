@@ -9,8 +9,8 @@ import Registry.Specs.API.Template.Detail_Bundle_GET
 import Registry.Specs.API.Template.Detail_GET
 import Registry.Specs.API.Template.List_GET
 
-templateAPI appContext =
-  with (startWebApp appContext) $
+templateAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "TEMPLATE API Spec" $ do
     list_get appContext
     detail_get appContext

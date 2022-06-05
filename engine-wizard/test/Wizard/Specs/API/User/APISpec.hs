@@ -17,8 +17,8 @@ import Wizard.Specs.API.User.List_GET
 import Wizard.Specs.API.User.List_POST
 import Wizard.Specs.API.User.List_Suggestions_GET
 
-userAPI appContext =
-  with (startWebApp appContext) $
+userAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "USER API Spec" $ do
     list_GET appContext
     list_suggestions_GET appContext

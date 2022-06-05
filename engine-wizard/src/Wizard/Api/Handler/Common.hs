@@ -41,9 +41,10 @@ runIn app mUser function = do
   if app ^. enabled
     then do
       baseContext <- ask
-      appContext <- liftIO $ appContextFromBaseContext (app ^. uuid) mUser baseContext
       let loggingLevel = baseContext ^. serverConfig . logging . level
-      eResult <- liftIO $ runMonads (runAppContextM function) appContext
+      eResult <-
+        liftIO $ appContextFromBaseContext (app ^. uuid) mUser baseContext $ \appContext -> do
+          liftIO $ runMonads (runAppContextM function) appContext
       case eResult of
         Right result -> return result
         Left error -> throwError =<< sendError error
@@ -53,9 +54,10 @@ runIn app mUser function = do
 runWithSystemUser :: AppContextM a -> BaseContextM a
 runWithSystemUser function = do
   baseContext <- ask
-  appContext <- liftIO $ appContextFromBaseContext defaultAppUuid (Just . toDTO $ userSystem) baseContext
   let loggingLevel = baseContext ^. serverConfig . logging . level
-  eResult <- liftIO $ runMonads (runAppContextM function) appContext
+  eResult <-
+    liftIO $ appContextFromBaseContext defaultAppUuid (Just . toDTO $ userSystem) baseContext $ \appContext -> do
+      liftIO $ runMonads (runAppContextM function) appContext
   case eResult of
     Right result -> return result
     Left error -> throwError =<< sendError error
