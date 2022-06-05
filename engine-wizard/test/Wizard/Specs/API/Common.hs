@@ -28,20 +28,8 @@ import Wizard.Service.User.UserService
 import SharedTest.Specs.API.Common
 import Wizard.Specs.Common
 
-startWebApp :: AppContext -> IO Application
-startWebApp appContext = do
-  let baseContext =
-        BaseContext
-          { _baseContextServerConfig = appContext ^. serverConfig
-          , _baseContextLocalization = appContext ^. localization
-          , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
-          , _baseContextDbPool = appContext ^. dbPool
-          , _baseContextS3Client = appContext ^. s3Client
-          , _baseContextHttpClientManager = appContext ^. httpClientManager
-          , _baseContextRegistryClient = appContext ^. registryClient
-          , _baseContextShutdownFlag = appContext ^. shutdownFlag
-          , _baseContextCache = appContext ^. cache
-          }
+startWebApp :: BaseContext -> AppContext -> IO Application
+startWebApp baseContext appContext = do
   let config = appContext ^. serverConfig
   let webPort = config ^. general . serverPort
   let env = config ^. general . environment

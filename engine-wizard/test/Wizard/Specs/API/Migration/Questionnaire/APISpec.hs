@@ -10,8 +10,8 @@ import Wizard.Specs.API.Migration.Questionnaire.List_Current_GET
 import Wizard.Specs.API.Migration.Questionnaire.List_Current_PUT
 import Wizard.Specs.API.Migration.Questionnaire.List_POST
 
-migrationAPI appContext =
-  with (startWebApp appContext) $
+migrationAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "MIGRATION QUESTIONNAIRE API Spec" $ do
     list_POST appContext
     list_current_GET appContext

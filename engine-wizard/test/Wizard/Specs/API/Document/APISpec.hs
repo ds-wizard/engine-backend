@@ -9,8 +9,8 @@ import Wizard.Specs.API.Document.Detail_DELETE
 import Wizard.Specs.API.Document.List_GET
 import Wizard.Specs.API.Document.List_POST
 
-documentAPI appContext =
-  with (startWebApp appContext) $
+documentAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "DOCUMENT API Spec" $ do
     list_GET appContext
     list_POST appContext

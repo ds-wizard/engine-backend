@@ -26,24 +26,21 @@ import Wizard.Service.Config.AppConfigValidation
 import Wizard.Util.Logger
 
 getAppConfig :: AppContextM AppConfig
-getAppConfig =
-  runInTransaction $ do
-    serverConfig <- asks _appContextServerConfig
-    encryptedAppConfig <- findAppConfig
-    return $ process (serverConfig ^. general . secret) encryptedAppConfig
+getAppConfig = do
+  serverConfig <- asks _appContextServerConfig
+  encryptedAppConfig <- findAppConfig
+  return $ process (serverConfig ^. general . secret) encryptedAppConfig
 
 getAppConfigByUuid :: U.UUID -> AppContextM AppConfig
-getAppConfigByUuid appUuid =
-  runInTransaction $ do
-    serverConfig <- asks _appContextServerConfig
-    encryptedAppConfig <- findAppConfigByUuid appUuid
-    return $ process (serverConfig ^. general . secret) encryptedAppConfig
+getAppConfigByUuid appUuid = do
+  serverConfig <- asks _appContextServerConfig
+  encryptedAppConfig <- findAppConfigByUuid appUuid
+  return $ process (serverConfig ^. general . secret) encryptedAppConfig
 
 getAppConfigDto :: AppContextM AppConfig
-getAppConfigDto =
-  runInTransaction $ do
-    checkPermission _CFG_PERM
-    getAppConfig
+getAppConfigDto = do
+  checkPermission _CFG_PERM
+  getAppConfig
 
 modifyAppConfig :: AppConfig -> AppContextM AppConfig
 modifyAppConfig appConfig =

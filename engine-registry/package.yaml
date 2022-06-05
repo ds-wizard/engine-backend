@@ -115,6 +115,7 @@ tests:
     - pwstore-fast
     - random
     - regex-compat
+    - resource-pool
     - servant
     - servant-server
     - servant-errors

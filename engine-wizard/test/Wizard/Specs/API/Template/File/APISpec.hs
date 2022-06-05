@@ -10,8 +10,8 @@ import Wizard.Specs.API.Template.File.Detail_PUT
 import Wizard.Specs.API.Template.File.List_GET
 import Wizard.Specs.API.Template.File.List_POST
 
-templateFileAPI appContext =
-  with (startWebApp appContext) $
+templateFileAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "TEMPLATE FILE API Spec" $ do
     list_get appContext
     list_post appContext

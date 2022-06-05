@@ -7,7 +7,6 @@ import Control.Monad.Logger (MonadLogger)
 import Control.Monad.Reader (MonadReader, ask, liftIO)
 import qualified Data.ByteString.Char8 as BS
 import Data.Maybe
-import Data.Pool
 import Data.String
 import qualified Data.UUID as U
 import qualified Database.PostgreSQL.LibPQ as LibPQ
@@ -31,49 +30,58 @@ import Shared.Util.ByteString (toByteString)
 import Shared.Util.Logger
 import Shared.Util.String (toSnake)
 
-runDB :: (MonadReader s m, HasDbPool' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m) => (Connection -> IO b) -> m b
+runDB ::
+     (MonadReader s m, HasDbConnection' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m)
+  => (Connection -> IO b)
+  -> m b
 runDB action = do
   context <- ask
-  let dbPool = context ^. dbPool'
-  liftIO $ withResource dbPool action
+  liftIO $ action (context ^. dbConnection')
 
 runRawDB ::
-     (MonadReader s m, HasDbPool' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m)
+     (MonadReader s m, HasDbConnection' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m)
   => (LibPQ.Connection -> IO b)
   -> m b
 runRawDB action = do
   context <- ask
-  let dbPool = context ^. dbPool'
-  liftIO $ withResource dbPool (`withConnection` action)
+  liftIO $ (context ^. dbConnection') `withConnection` action
 
 logQuery ::
-     (MonadReader s m, HasDbPool' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m, ToRow q, MonadLogger m)
+     (MonadReader s m, HasDbConnection' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m, ToRow q, MonadLogger m)
   => Query
   -> q
   -> m ()
 logQuery sql params = do
   context <- ask
-  let dbPool = context ^. dbPool'
-  exploded <- liftIO $ withResource dbPool (\c -> formatQuery c sql params)
+  let dbConnection = context ^. dbConnection'
+  exploded <- liftIO $ formatQuery dbConnection sql params
   logInfoI _CMP_DATABASE (BS.unpack exploded)
 
 logInsertAndUpdate ::
-     (MonadReader s m, HasDbPool' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m, ToRow q, MonadLogger m)
+     (MonadReader s m, HasDbConnection' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m, ToRow q, MonadLogger m)
   => Query
   -> q
   -> m ()
 logInsertAndUpdate sql params = do
   context <- ask
-  let dbPool = context ^. dbPool'
+  let dbConnection = context ^. dbConnection'
   let cut p =
         if length p > 50
           then take 50 p ++ "..."
           else p
   let paramsS = show . fmap (cut . showAction) . toRow $ params
-  logInfoI _CMP_DATABASE (show sql ++ " with params" ++ paramsS)
+  logInfoI _CMP_DATABASE $ f' "%s  with params %s" [show sql, paramsS]
 
 runInTransaction ::
-     (Show e, MonadIO m, MonadReader s m, MonadIO m, MonadError e m, HasDbPool' s, HasIdentityUuid' s, HasTraceUuid' s)
+     ( Show e
+     , MonadIO m
+     , MonadReader s m
+     , MonadIO m
+     , MonadError e m
+     , HasDbConnection' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     )
   => (String -> String -> m ())
   -> (String -> String -> m ())
   -> m a
@@ -102,7 +110,7 @@ createFindEntitiesFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -121,7 +129,7 @@ createFindEntitiesSortedFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -141,7 +149,7 @@ createFindEntitiesByFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -163,7 +171,7 @@ createFindEntitiesBySortedFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -186,7 +194,7 @@ createFindEntityByFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -201,7 +209,7 @@ createFindEntityWithFieldsByFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -236,7 +244,7 @@ createFindEntityByFn' ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -251,7 +259,7 @@ createFindEntityWithFieldsByFn' ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -284,7 +292,7 @@ createFindEntitiesPageableQuerySortFn ::
      , MonadIO m
      , MonadError AppError m
      , MonadLogger m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      )
@@ -325,7 +333,7 @@ createFindColumnBySqlPageFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -356,7 +364,7 @@ createFindColumnBySqlPageFn pageLabel pageable sql params count
   return $ Page pageLabel metadata (concat entities)
 
 createInsertFn ::
-     (ToRow q, MonadLogger m, MonadReader s m, HasDbPool' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m)
+     (ToRow q, MonadLogger m, MonadReader s m, HasDbConnection' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m)
   => String
   -> q
   -> m Int64
@@ -371,7 +379,7 @@ createDeleteEntitiesFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -388,7 +396,7 @@ createDeleteEntitiesByFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -408,7 +416,7 @@ createDeleteEntityByFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -427,7 +435,7 @@ createCountFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -447,7 +455,7 @@ createCountByFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -471,7 +479,7 @@ createCountWithSqlFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m
@@ -491,7 +499,7 @@ createSumByFn ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , MonadIO m

@@ -25,16 +25,8 @@ import Shared.Model.Error.Error
 import Registry.Specs.Common
 import SharedTest.Specs.API.Common
 
-startWebApp :: AppContext -> IO Application
-startWebApp appContext = do
-  let baseContext =
-        BaseContext
-          { _baseContextServerConfig = appContext ^. serverConfig
-          , _baseContextLocalization = appContext ^. localization
-          , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
-          , _baseContextDbPool = appContext ^. dbPool
-          , _baseContextS3Client = appContext ^. s3Client
-          }
+startWebApp :: BaseContext -> AppContext -> IO Application
+startWebApp baseContext appContext = do
   let config = appContext ^. serverConfig
   let webPort = config ^. general . serverPort
   let env = config ^. general . environment

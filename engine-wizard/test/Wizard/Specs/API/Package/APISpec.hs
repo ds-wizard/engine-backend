@@ -12,8 +12,8 @@ import Wizard.Specs.API.Package.List_GET
 import Wizard.Specs.API.Package.List_POST
 import Wizard.Specs.API.Package.List_Suggestions_GET
 
-packageAPI appContext =
-  with (startWebApp appContext) $
+packageAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "PACKAGE API Spec" $ do
     list_get appContext
     list_suggestions_GET appContext
