@@ -3,6 +3,7 @@ module Registry.Api.Handler.Common where
 import Control.Lens ((^.))
 import Control.Monad.Except (runExceptT)
 import Control.Monad.Reader (asks, liftIO, runReaderT)
+import Data.Pool
 import Servant (throwError)
 
 import LensesConfig
@@ -33,18 +34,20 @@ runIn mOrganization function = do
   buildInfoConfig <- asks _baseContextBuildInfoConfig
   dbPool <- asks _baseContextDbPool
   s3Client <- asks _baseContextS3Client
-  let appContext =
-        AppContext
-          { _appContextServerConfig = serverConfig
-          , _appContextLocalization = localization
-          , _appContextBuildInfoConfig = buildInfoConfig
-          , _appContextDbPool = dbPool
-          , _appContextS3Client = s3Client
-          , _appContextTraceUuid = traceUuid
-          , _appContextCurrentOrganization = mOrganization
-          }
-  let loggingLevel = serverConfig ^. logging . level
-  eResult <- liftIO . runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
+  eResult <-
+    liftIO $ withResource dbPool $ \dbConnection -> do
+      let appContext =
+            AppContext
+              { _appContextServerConfig = serverConfig
+              , _appContextLocalization = localization
+              , _appContextBuildInfoConfig = buildInfoConfig
+              , _appContextDbConnection = dbConnection
+              , _appContextS3Client = s3Client
+              , _appContextTraceUuid = traceUuid
+              , _appContextCurrentOrganization = mOrganization
+              }
+      let loggingLevel = serverConfig ^. logging . level
+      liftIO $ runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
   case eResult of
     Right result -> return result
     Left error -> throwError =<< sendError error

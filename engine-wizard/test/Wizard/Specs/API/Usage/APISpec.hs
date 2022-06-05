@@ -6,4 +6,5 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Usage.List_Current_GET
 
-usageAPI appContext = with (startWebApp appContext) $ describe "USAGE API Spec" $ list_current_GET appContext
+usageAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $ describe "USAGE API Spec" $ list_current_GET appContext

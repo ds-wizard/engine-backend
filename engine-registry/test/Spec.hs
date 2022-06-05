@@ -3,6 +3,7 @@ module Main where
 import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
+import Data.Pool
 import qualified Data.UUID as U
 import Test.Hspec
 
@@ -10,6 +11,7 @@ import LensesConfig
 import Registry.Constant.Resource
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
+import Registry.Model.Context.BaseContext
 import Registry.Service.Config.ServerConfigService
 import Shared.Database.Connection
 import Shared.Integration.Http.Common.HttpClientFactory
@@ -46,30 +48,39 @@ prepareWebApp runCallback =
       putStrLn "HTTP_CLIENT: created"
       s3Client <- createS3Client (serverConfig ^. s3) httpClientManager
       putStrLn "S3_CLIENT: created"
-      let appContext =
-            AppContext
-              { _appContextServerConfig = serverConfig
-              , _appContextLocalization = M.empty
-              , _appContextBuildInfoConfig = buildInfoConfig
-              , _appContextDbPool = dbPool
-              , _appContextS3Client = s3Client
-              , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
-              , _appContextCurrentOrganization = Just orgGlobal
+      let baseContext =
+            BaseContext
+              { _baseContextServerConfig = serverConfig
+              , _baseContextLocalization = M.empty
+              , _baseContextBuildInfoConfig = buildInfoConfig
+              , _baseContextDbPool = dbPool
+              , _baseContextS3Client = s3Client
               }
-      buildSchema appContext
-      runCallback appContext
+      withResource dbPool $ \dbConnection -> do
+        let appContext =
+              AppContext
+                { _appContextServerConfig = serverConfig
+                , _appContextLocalization = M.empty
+                , _appContextBuildInfoConfig = buildInfoConfig
+                , _appContextDbConnection = dbConnection
+                , _appContextS3Client = s3Client
+                , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
+                , _appContextCurrentOrganization = Just orgGlobal
+                }
+        buildSchema appContext
+        runCallback baseContext appContext
 
 main :: IO ()
 main =
   prepareWebApp
-    (\appContext ->
+    (\baseContext appContext ->
        hspec $ do
          describe "UNIT TESTING" $ describe "SERVICE" $ do
            describe "Organization" organizationValidationSpec
            describe "Package" packageValidationSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ describe "API" $ do
-           actionKeyAPI appContext
-           infoAPI appContext
-           organizationAPI appContext
-           packageAPI appContext
-           templateAPI appContext)
+           actionKeyAPI baseContext appContext
+           infoAPI baseContext appContext
+           organizationAPI baseContext appContext
+           packageAPI baseContext appContext
+           templateAPI baseContext appContext)

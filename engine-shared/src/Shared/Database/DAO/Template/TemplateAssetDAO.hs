@@ -25,7 +25,7 @@ findTemplateAssetsByTemplateId ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -41,7 +41,7 @@ findTemplateAssetsByTemplateIdAndFileName ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -58,7 +58,7 @@ findTemplateAssetById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -74,7 +74,7 @@ sumTemplateAssetFileSize ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -89,7 +89,7 @@ sumTemplateAssetFileSizeWithApp ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -103,7 +103,7 @@ insertTemplateAsset ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -117,7 +117,7 @@ updateTemplateAssetById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -139,7 +139,7 @@ deleteTemplateAssets ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -152,7 +152,7 @@ deleteTemplateAssetsByTemplateId ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -168,7 +168,7 @@ deleteTemplateAssetById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s

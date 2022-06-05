@@ -8,8 +8,8 @@ import Wizard.Specs.API.Template.Asset.Detail_DELETE
 import Wizard.Specs.API.Template.Asset.Detail_GET
 import Wizard.Specs.API.Template.Asset.List_GET
 
-templateAssetAPI appContext =
-  with (startWebApp appContext) $
+templateAssetAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "TEMPLATE ASSET API Spec" $ do
     list_get appContext
     detail_get appContext

@@ -6,4 +6,5 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Prefab.List_GET
 
-prefabAPI appContext = with (startWebApp appContext) $ describe "PREFAB API Spec" $ list_GET appContext
+prefabAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $ describe "PREFAB API Spec" $ list_GET appContext

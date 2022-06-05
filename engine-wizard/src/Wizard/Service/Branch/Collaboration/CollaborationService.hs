@@ -14,7 +14,6 @@ import Wizard.Api.Resource.Websocket.BranchActionJM ()
 import Wizard.Api.Resource.Websocket.WebsocketActionJM ()
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
-import Wizard.Database.DAO.Common
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Websocket.WebsocketMessage
@@ -26,35 +25,31 @@ import Wizard.Service.Websocket.WebsocketService
 import Wizard.Util.Websocket
 
 putUserOnline :: String -> U.UUID -> Connection -> AppContextM ()
-putUserOnline branchUuid connectionUuid connection =
-  runInTransaction $ do
-    myself <- createRecord connectionUuid connection branchUuid EditorWebsocketPerm
-    checkViewPermission myself
-    _ <- findBranchById branchUuid
-    addToCache myself
-    logWS connectionUuid "New user added to the list"
-    setUserList branchUuid connectionUuid
+putUserOnline branchUuid connectionUuid connection = do
+  myself <- createRecord connectionUuid connection branchUuid EditorWebsocketPerm
+  checkViewPermission myself
+  _ <- findBranchById branchUuid
+  addToCache myself
+  logWS connectionUuid "New user added to the list"
+  setUserList branchUuid connectionUuid
 
 deleteUser :: String -> U.UUID -> AppContextM ()
-deleteUser branchUuid connectionUuid =
-  runInTransaction $ do
-    deleteFromCache connectionUuid
-    setUserList branchUuid connectionUuid
+deleteUser branchUuid connectionUuid = do
+  deleteFromCache connectionUuid
+  setUserList branchUuid connectionUuid
 
 setUserList :: String -> U.UUID -> AppContextM ()
-setUserList branchUuid connectionUuid =
-  runInTransaction $ do
-    logWS connectionUuid "Informing other users about user list changes"
-    records <- getAllFromCache
-    broadcast branchUuid records (toSetUserListMessage records) disconnectUser
-    logWS connectionUuid "Informed completed"
+setUserList branchUuid connectionUuid = do
+  logWS connectionUuid "Informing other users about user list changes"
+  records <- getAllFromCache
+  broadcast branchUuid records (toSetUserListMessage records) disconnectUser
+  logWS connectionUuid "Informed completed"
 
 logOutOnlineUsersWhenBranchDramaticallyChanged :: String -> AppContextM ()
-logOutOnlineUsersWhenBranchDramaticallyChanged branchUuid =
-  runInTransaction $ do
-    records <- getAllFromCache
-    let error = NotExistsError $ _ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT branchUuid
-    traverse_ (logOut error) records
+logOutOnlineUsersWhenBranchDramaticallyChanged branchUuid = do
+  records <- getAllFromCache
+  let error = NotExistsError $ _ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT branchUuid
+  traverse_ (logOut error) records
   where
     logOut :: AppError -> WebsocketRecord -> AppContextM ()
     logOut error record =
@@ -65,7 +60,6 @@ logOutOnlineUsersWhenBranchDramaticallyChanged branchUuid =
 -- --------------------------------
 setContent :: String -> U.UUID -> BranchEventDTO -> AppContextM ()
 setContent branchUuid connectionUuid reqDto =
-  runInTransaction $
   case reqDto of
     AddBranchEventDTO' event -> addBranchEvent branchUuid connectionUuid event
 

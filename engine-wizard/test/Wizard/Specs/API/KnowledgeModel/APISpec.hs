@@ -6,5 +6,5 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.KnowledgeModel.Preview_POST
 
-knowledgeModelAPI appContext =
-  with (startWebApp appContext) $ describe "KNOWLEDGE MODEL API Spec" $ preview_post appContext
+knowledgeModelAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $ describe "KNOWLEDGE MODEL API Spec" $ preview_post appContext

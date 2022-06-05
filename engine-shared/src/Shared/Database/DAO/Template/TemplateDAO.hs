@@ -28,7 +28,7 @@ findTemplates ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -43,7 +43,7 @@ findTemplatesFiltered ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -59,7 +59,7 @@ findTemplatesByOrganizationIdAndKmId ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -78,7 +78,7 @@ findTemplateById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -94,7 +94,7 @@ findTemplateById' ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -110,7 +110,7 @@ countTemplatesGroupedByOrganizationIdAndKmId ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -125,7 +125,7 @@ countTemplatesGroupedByOrganizationIdAndKmIdWithApp ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -152,7 +152,7 @@ insertTemplate ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -166,7 +166,7 @@ updateTemplateById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -188,7 +188,7 @@ deleteTemplates ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -204,7 +204,7 @@ deleteTemplatesFiltered ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s
@@ -223,7 +223,7 @@ deleteTemplateById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
+     , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
      , HasAppUuid' s

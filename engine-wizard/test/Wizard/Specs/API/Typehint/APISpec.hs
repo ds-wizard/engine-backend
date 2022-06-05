@@ -6,4 +6,5 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Typehint.List_POST
 
-typehintAPI appContext = with (startWebApp appContext) $ describe "TYPEHINT API Spec" $ list_post appContext
+typehintAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $ describe "TYPEHINT API Spec" $ list_post appContext

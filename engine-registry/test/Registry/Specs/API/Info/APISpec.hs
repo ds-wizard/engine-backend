@@ -6,4 +6,5 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Registry.Specs.API.Common
 import Registry.Specs.API.Info.List_GET
 
-infoAPI appContext = with (startWebApp appContext) $ describe "INFO API Spec" $ list_get appContext
+infoAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $ describe "INFO API Spec" $ list_get appContext

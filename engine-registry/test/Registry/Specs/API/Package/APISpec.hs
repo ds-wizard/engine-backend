@@ -8,8 +8,8 @@ import Registry.Specs.API.Package.Detail_Bundle_GET
 import Registry.Specs.API.Package.Detail_GET
 import Registry.Specs.API.Package.List_GET
 
-packageAPI appContext =
-  with (startWebApp appContext) $
+packageAPI baseContext appContext =
+  with (startWebApp baseContext appContext) $
   describe "PACKAGE API Spec" $ do
     list_get appContext
     detail_get appContext
