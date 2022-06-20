@@ -16,6 +16,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireState
+import Wizard.Model.Template.TemplateState
 
 data QuestionnaireDetailDTO =
   QuestionnaireDetailDTO
@@ -33,6 +34,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOTemplate :: Maybe TemplateDTO
     , _questionnaireDetailDTOFormatUuid :: Maybe U.UUID
     , _questionnaireDetailDTOFormat :: Maybe TemplateFormatDTO
+    , _questionnaireDetailDTOTemplateState :: Maybe TemplateState
     , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModel
     , _questionnaireDetailDTOReplies :: M.Map String Reply
     , _questionnaireDetailDTOCommentThreadsMap :: M.Map String [QuestionnaireCommentThread]
@@ -64,6 +66,7 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOTemplate a == _questionnaireDetailDTOTemplate b &&
     _questionnaireDetailDTOFormatUuid a == _questionnaireDetailDTOFormatUuid b &&
     _questionnaireDetailDTOFormat a == _questionnaireDetailDTOFormat b &&
+    _questionnaireDetailDTOTemplateState a == _questionnaireDetailDTOTemplateState b &&
     _questionnaireDetailDTOKnowledgeModel a == _questionnaireDetailDTOKnowledgeModel b &&
     _questionnaireDetailDTOReplies a == _questionnaireDetailDTOReplies b &&
     _questionnaireDetailDTOCommentThreadsMap a == _questionnaireDetailDTOCommentThreadsMap b &&
