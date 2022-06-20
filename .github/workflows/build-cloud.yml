@@ -192,7 +192,6 @@ jobs:
 
 # (4) -> Docker login
     - name: Docker login
-      if: github.event_name == 'push'
       run: |
         docker login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_PASSWORD"
         docker login -u "$PRIVATE_REGISTRY_USERNAME" -p "$PRIVATE_REGISTRY_PASSWORD" "$PRIVATE_REGISTRY_URL"
