@@ -17,19 +17,20 @@ import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
+import Shared.Util.JSON
 import Shared.Util.List
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
-import Wizard.Database.DAO.Document.DocumentQueueDAO
+import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Document.Document
-import Wizard.Model.Document.DocumentQueue
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.S3.Document.DocumentS3
@@ -39,6 +40,7 @@ import Wizard.Service.Document.DocumentContextService
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Document.DocumentUtils
 import Wizard.Service.Limit.AppLimitService
+import Wizard.Service.PersistentCommand.PersistentCommandMapper (toPersistentCommand)
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Template.TemplateService
@@ -85,7 +87,7 @@ createDocumentWithDurability dto durability =
     let repliesHash = computeHash qtnCtn
     let doc = fromCreateDTO dto dUuid durability repliesHash mCurrentUser appUuid now
     insertDocument doc
-    publishToDocumentQueue doc
+    publishToPersistentCommandQueue doc
     return $ toDTO doc (Just qtnSimple) [] tml
 
 deleteDocument :: String -> AppContextM ()
@@ -165,22 +167,17 @@ createDocumentPreview qtnUuid =
           return (doc, BS.empty)
         _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP
 
-publishToDocumentQueue :: Document -> AppContextM ()
-publishToDocumentQueue doc = do
-  now <- liftIO getCurrentTime
-  appUuid <- asks _appContextAppUuid
+publishToPersistentCommandQueue :: Document -> AppContextM ()
+publishToPersistentCommandQueue doc = do
   docContext <- createDocumentContext doc
-  let dq =
-        DocumentQueue
-          { _documentQueueDId = 0
-          , _documentQueueDocumentUuid = doc ^. uuid
-          , _documentQueueDocumentContext = docContext
-          , _documentQueueAppUuid = appUuid
-          , _documentQueueCreatedBy = doc ^. creatorUuid
-          , _documentQueueCreatedAt = now
-          }
-  dId <- insertDocumentQueue dq
-  notifyDocumentQueue dId
+  appUuid <- asks _appContextAppUuid
+  pUuid <- liftIO generateUuid
+  currentUser <- getCurrentUser
+  now <- liftIO getCurrentTime
+  let body = encodeJsonToString docContext
+  let command =
+        toPersistentCommand pUuid "doc_worker" "generateDocument" body 10 False appUuid (currentUser ^. uuid) now
+  insertPersistentCommand command
   return ()
 
 -- --------------------------------

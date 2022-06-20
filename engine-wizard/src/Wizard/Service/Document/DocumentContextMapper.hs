@@ -35,9 +35,9 @@ toDocumentContext ::
   -> Maybe User
   -> UTCTime
   -> DocumentContext
-toDocumentContext dmpUuid serverConfig appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos qtnProjectTags mPhase km report pkg org mCreatedBy now =
+toDocumentContext docUuid serverConfig appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos qtnProjectTags mPhase km report pkg org mCreatedBy now =
   DocumentContext
-    { _documentContextUuid = dmpUuid
+    { _documentContextUuid = docUuid
     , _documentContextConfig = DocumentContextConfig {_documentContextConfigClientUrl = appClientUrl}
     , _documentContextQuestionnaireUuid = U.toString $ qtn ^. uuid
     , _documentContextQuestionnaireName = qtn ^. name
