@@ -86,7 +86,7 @@ runInTransaction ::
   -> (String -> String -> m ())
   -> m a
   -> m a
-runInTransaction logInfoFn logErrorFn action = do
+runInTransaction logInfoFn logWarnFn action = do
   status <- runRawDB LibPQ.transactionStatus
   case status of
     LibPQ.TransInTrans -> do
@@ -103,7 +103,7 @@ runInTransaction logInfoFn logErrorFn action = do
     handleError error = do
       runDB PostgresTransaction.rollback
       logInfoFn _CMP_DATABASE "Transaction rollback"
-      logErrorFn _CMP_DATABASE (show error)
+      logWarnFn _CMP_DATABASE (show error)
       throwError error
 
 createFindEntitiesFn ::

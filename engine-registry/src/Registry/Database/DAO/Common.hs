@@ -10,4 +10,4 @@ import qualified Shared.Database.DAO.Common as S
 import Shared.Database.DAO.Common hiding (runInTransaction)
 
 runInTransaction :: AppContextM a -> AppContextM a
-runInTransaction = S.runInTransaction logInfoU logErrorU
+runInTransaction = S.runInTransaction logInfoU logWarnU

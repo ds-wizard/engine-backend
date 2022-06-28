@@ -9,7 +9,6 @@ import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.Document.DocumentDAO
-import Wizard.Database.DAO.Document.DocumentQueueDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Database.DAO.Limit.AppLimitDAO
 import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_MigratorDAO
@@ -109,7 +108,6 @@ resetDB appContext = do
   runInContext deleteActionKeys appContext
   runInContext deleteBranchDatas appContext
   runInContext deleteBranches appContext
-  runInContext deleteDocumentQueues appContext
   runInContext deleteDocuments appContext
   runInContext deleteQuestionnaires appContext
   runInContext deleteTemplates appContext

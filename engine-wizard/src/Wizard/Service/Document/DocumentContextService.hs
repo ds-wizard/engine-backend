@@ -12,7 +12,6 @@ import qualified Data.UUID as U
 import LensesConfig
 import Shared.Model.Common.Lens
 import Shared.Util.List
-import Shared.Util.Uuid
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
@@ -39,7 +38,6 @@ createDocumentContext doc = do
   serverConfig <- asks _appContextServerConfig
   clientUrl <- getAppClientUrl
   let org = appConfig ^. organization
-  dmpUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
   let qtnEvents =
         case doc ^. questionnaireEventUuid of
@@ -54,7 +52,7 @@ createDocumentContext doc = do
   qtnVersionDtos <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
   return $
     toDocumentContext
-      dmpUuid
+      (doc ^. uuid)
       serverConfig
       clientUrl
       qtn

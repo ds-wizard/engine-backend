@@ -6,6 +6,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Constant.Template
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
@@ -38,6 +39,7 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Report.Report
+import Wizard.Model.Template.TemplateState
 import Wizard.Model.User.User
 import Wizard.Service.Acl.AclMapper
 import qualified Wizard.Service.Package.PackageMapper as PM
@@ -143,6 +145,7 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , _questionnaireDetailDTOTemplate = fmap STM.toDTO mTemplate
     , _questionnaireDetailDTOFormatUuid = qtn ^. formatUuid
     , _questionnaireDetailDTOFormat = fmap toFormatDTO mFormat
+    , _questionnaireDetailDTOTemplateState = toQuestionnaireDetailTemplateState mTemplate
     , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
     , _questionnaireDetailDTOReplies = replies
     , _questionnaireDetailDTOCommentThreadsMap = threads
@@ -188,6 +191,7 @@ toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFo
     , _questionnaireDetailDTOTemplate = fmap STM.toDTO mTemplate
     , _questionnaireDetailDTOFormatUuid = qtn ^. formatUuid
     , _questionnaireDetailDTOFormat = fmap toFormatDTO mFormat
+    , _questionnaireDetailDTOTemplateState = toQuestionnaireDetailTemplateState mTemplate
     , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
     , _questionnaireDetailDTOReplies = replies
     , _questionnaireDetailDTOCommentThreadsMap = threads
@@ -280,6 +284,14 @@ toCreateFromTemplateDTO qtn =
     { _questionnaireCreateFromTemplateDTOName = qtn ^. name
     , _questionnaireCreateFromTemplateDTOQuestionnaireUuid = qtn ^. uuid
     }
+
+toQuestionnaireDetailTemplateState :: Maybe Template -> Maybe TemplateState
+toQuestionnaireDetailTemplateState =
+  fmap
+    (\template ->
+       if template ^. metamodelVersion /= templateMetamodelVersion
+         then UnsupportedMetamodelVersionTemplateState
+         else UnknownTemplateState)
 
 fromChangeDTO ::
      Questionnaire

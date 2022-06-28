@@ -1,9 +1,12 @@
 module Wizard.Service.Config.ClientConfigService where
 
 import Control.Lens ((^.))
+import Control.Monad (unless)
+import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks)
 
 import LensesConfig
+import Shared.Model.Error.Error
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Model.Context.AppContext
@@ -18,6 +21,7 @@ getClientConfig mClientUrl = do
     if serverConfig ^. cloud . enabled
       then maybe getCurrentApp findAppByClientUrl mClientUrl
       else getCurrentApp
+  unless (app ^. enabled) (throwError LockedError)
   appConfig <-
     if serverConfig ^. cloud . enabled
       then case mClientUrl of

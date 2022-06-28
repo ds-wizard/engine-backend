@@ -15,26 +15,12 @@ runMigration = do
   logInfo _CMP_MIGRATION "(Table/Document) ended"
 
 dropTables = do
-  dropDocumentQueueTable
-  dropDocumentTable
-
-dropDocumentTable = do
   logInfo _CMP_MIGRATION "(Table/Document) drop tables"
   let sql = "drop table if exists document cascade;"
   let action conn = execute_ conn sql
   runDB action
 
-dropDocumentQueueTable = do
-  logInfo _CMP_MIGRATION "(Table/DocumentQueue) drop tables"
-  let sql = "drop table if exists document_queue;"
-  let action conn = execute_ conn sql
-  runDB action
-
 createTables = do
-  createDocumentTable
-  createDocumentQueueTable
-
-createDocumentTable = do
   logInfo _CMP_MIGRATION "(Table/Document) create table"
   let sql =
         " create table document \
@@ -80,31 +66,5 @@ createDocumentTable = do
         \  \
         \ create index document_questionnaire_uuid_index \
         \   on document (questionnaire_uuid);"
-  let action conn = execute_ conn sql
-  runDB action
-
-createDocumentQueueTable = do
-  logInfo _CMP_MIGRATION "(Table/DocumentQueue) create table"
-  let sql =
-        " create table document_queue \
-        \ ( \
-        \   id serial not null, \
-        \   document_uuid uuid not null \
-        \      constraint document_queue_document_uuid_fk \
-        \         references document, \
-        \   document_context json not null, \
-        \   created_by uuid, \
-        \   created_at timestamptz not null, \
-        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \      constraint branch_app_uuid_fk \
-        \         references app \
-        \ ); \
-        \  \
-        \ create unique index document_queue_id_uindex \
-        \   on document_queue (id); \
-        \  \
-        \ alter table document_queue \
-        \   add constraint document_queue_pk \
-        \      primary key (id); "
   let action conn = execute_ conn sql
   runDB action

@@ -16,6 +16,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireStateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionJM ()
+import Wizard.Api.Resource.Template.TemplateStateJM ()
 
 instance FromJSON QuestionnaireDetailDTO where
   parseJSON = genericParseJSON simpleOptions

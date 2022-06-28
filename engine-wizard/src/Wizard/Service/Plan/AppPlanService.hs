@@ -4,19 +4,23 @@ import Control.Lens ((&), (.~), (^.))
 import Control.Monad (void, when)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Foldable (traverse_)
+import Data.Maybe (isJust)
 import Data.Time
 import qualified Data.UUID as U
 import Prelude hiding (until)
 
 import LensesConfig
+import Shared.Util.List
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Plan.AppPlanChangeDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Plan.AppPlanDAO
 import Wizard.Model.App.App
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Plan.AppPlan
 import Wizard.Service.Acl.AclService
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Plan.AppPlanMapper
 
 getPlansForCurrentApp :: AppContextM [AppPlan]
@@ -63,8 +67,17 @@ recomputePlansForApp :: App -> AppContextM ()
 recomputePlansForApp app = do
   now <- liftIO getCurrentTime
   plans <- findAppPlansForAppUuid (U.toString $ app ^. uuid)
-  let active = foldl (\acc plan -> acc || isPlanActive now plan) False plans
+  let mActivePlan = headSafe . filter (isPlanActive now) $ plans
+  -- Recompute active flag
+  let active = isJust mActivePlan
   when (app ^. enabled /= active) (void $ updateAppById (app & enabled .~ active))
+  -- Recompute features
+  case mActivePlan of
+    Just activePlan -> do
+      appConfig <- getAppConfigByUuid (app ^. uuid)
+      let updatedAppConfig = turnTestPlanFeature (activePlan ^. test) appConfig
+      when (appConfig ^. feature /= updatedAppConfig ^. feature) (void $ modifyAppConfig updatedAppConfig)
+    Nothing -> return ()
 
 -- --------------------------------
 -- PRIVATE
@@ -76,3 +89,6 @@ isPlanActive now plan =
     (Just since, Nothing) -> since <= now
     (Nothing, Just until) -> now <= until
     (Nothing, Nothing) -> True
+
+turnTestPlanFeature :: Bool -> AppConfig -> AppConfig
+turnTestPlanFeature enabled = ((feature . pdfOnlyEnabled) .~ enabled) . ((feature . pdfWatermarkEnabled) .~ enabled)
