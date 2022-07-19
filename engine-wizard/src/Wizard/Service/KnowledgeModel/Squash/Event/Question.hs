@@ -3,7 +3,6 @@ module Wizard.Service.KnowledgeModel.Squash.Event.Question where
 import Control.Lens ((^.))
 
 import LensesConfig
-import Shared.Model.Event.EventField
 import Shared.Model.Event.EventLenses
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Question.QuestionEventLenses ()
@@ -124,7 +123,8 @@ instance SimpleEventSquash EditQuestionEvent where
       , _editIntegrationQuestionEventExpertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent expertUuids
       , _editIntegrationQuestionEventReferenceUuids =
           applyValueIfSameEntity mPreviousEvent oldEvent newEvent referenceUuids
-      , _editIntegrationQuestionEventIntegrationUuid = NothingChanged
+      , _editIntegrationQuestionEventIntegrationUuid =
+          applyValueIfSameEntity mPreviousEvent oldEvent newEvent integrationUuid
       , _editIntegrationQuestionEventProps = applyValue oldEvent newEvent props
       , _editIntegrationQuestionEventCreatedAt = newEvent ^. createdAt
       }
