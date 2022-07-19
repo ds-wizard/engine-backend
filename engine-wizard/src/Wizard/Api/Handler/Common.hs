@@ -10,6 +10,7 @@ import Shared.Api.Handler.Common
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.App
 import Shared.Localization.Messages.Public
+import Shared.Model.Context.TransactionState
 import Shared.Model.Error.Error
 import Shared.Util.Token
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
@@ -26,24 +27,24 @@ import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
 import Wizard.Util.Context
 
-runInUnauthService :: Maybe String -> AppContextM a -> BaseContextM a
-runInUnauthService mServerUrl function = do
+runInUnauthService :: Maybe String -> TransactionState -> AppContextM a -> BaseContextM a
+runInUnauthService mServerUrl transactionState function = do
   app <- getCurrentApp mServerUrl
-  runIn app Nothing function
+  runIn app Nothing transactionState function
 
-runInAuthService :: Maybe String -> UserDTO -> AppContextM a -> BaseContextM a
-runInAuthService mServerUrl user function = do
+runInAuthService :: Maybe String -> UserDTO -> TransactionState -> AppContextM a -> BaseContextM a
+runInAuthService mServerUrl user transactionState function = do
   app <- getCurrentApp mServerUrl
-  runIn app (Just user) function
+  runIn app (Just user) transactionState function
 
-runIn :: App -> Maybe UserDTO -> AppContextM a -> BaseContextM a
-runIn app mUser function = do
+runIn :: App -> Maybe UserDTO -> TransactionState -> AppContextM a -> BaseContextM a
+runIn app mUser transactionState function = do
   if app ^. enabled
     then do
       baseContext <- ask
       let loggingLevel = baseContext ^. serverConfig . logging . level
       eResult <-
-        liftIO $ appContextFromBaseContext (app ^. uuid) mUser baseContext $ \appContext -> do
+        liftIO $ appContextFromBaseContext (app ^. uuid) mUser transactionState baseContext $ \appContext -> do
           liftIO $ runMonads (runAppContextM function) appContext
       case eResult of
         Right result -> return result
@@ -56,21 +57,27 @@ runWithSystemUser function = do
   baseContext <- ask
   let loggingLevel = baseContext ^. serverConfig . logging . level
   eResult <-
-    liftIO $ appContextFromBaseContext defaultAppUuid (Just . toDTO $ userSystem) baseContext $ \appContext -> do
+    liftIO $ appContextFromBaseContext defaultAppUuid (Just . toDTO $ userSystem) NoTransaction baseContext $ \appContext -> do
       liftIO $ runMonads (runAppContextM function) appContext
   case eResult of
     Right result -> return result
     Left error -> throwError =<< sendError error
 
 getMaybeAuthServiceExecutor ::
-     Maybe String -> Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+     Maybe String
+  -> Maybe String
+  -> ((TransactionState -> AppContextM a -> BaseContextM a) -> BaseContextM b)
+  -> BaseContextM b
 getMaybeAuthServiceExecutor (Just tokenHeader) mServerUrl callback = do
   user <- getCurrentUser tokenHeader mServerUrl
   callback (runInAuthService mServerUrl user)
 getMaybeAuthServiceExecutor Nothing mServerUrl callback = callback (runInUnauthService mServerUrl)
 
 getAuthServiceExecutor ::
-     Maybe String -> Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+     Maybe String
+  -> Maybe String
+  -> ((TransactionState -> AppContextM a -> BaseContextM a) -> BaseContextM b)
+  -> BaseContextM b
 getAuthServiceExecutor (Just token) mServerUrl callback = do
   user <- getCurrentUser token mServerUrl
   callback (runInAuthService mServerUrl user)
@@ -80,7 +87,7 @@ getAuthServiceExecutor Nothing _ _ =
 getCurrentUser :: String -> Maybe String -> BaseContextM UserDTO
 getCurrentUser tokenHeader mServerUrl = do
   userUuid <- getCurrentUserUuid tokenHeader
-  runInUnauthService mServerUrl $ catchError (getUserById userUuid) (handleError userUuid)
+  runInUnauthService mServerUrl NoTransaction $ catchError (getUserById userUuid) (handleError userUuid)
   where
     handleError userUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__USER_ABSENCE userUuid)
     handleError userUuid error = throwError error

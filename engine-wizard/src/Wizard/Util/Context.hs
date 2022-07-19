@@ -1,15 +1,15 @@
 module Wizard.Util.Context where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (?~), (^.))
 import Control.Monad.Except (runExceptT)
 import Control.Monad.Reader (liftIO, runReaderT)
 import Data.Pool
 import Data.Time
 import qualified Data.UUID as U
-import Database.PostgreSQL.Simple (Connection)
 
 import LensesConfig
 import Shared.Constant.App
+import Shared.Model.Context.TransactionState
 import Shared.Util.Uuid
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
@@ -19,12 +19,13 @@ import Wizard.Util.Logger
 
 runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO (Either String a)
 runAppContextWithBaseContext function baseContext =
-  appContextFromBaseContext defaultAppUuid (Just . toDTO $ userSystem) baseContext $
+  appContextFromBaseContext defaultAppUuid (Just . toDTO $ userSystem) Transactional baseContext $
   runAppContextWithAppContext function
 
 runAppContextWithBaseContext' :: AppContextM a -> BaseContext -> U.UUID -> IO (Either String a)
 runAppContextWithBaseContext' function baseContext appUuid =
-  appContextFromBaseContext appUuid (Just . toDTO $ userSystem) baseContext $ runAppContextWithAppContext function
+  appContextFromBaseContext appUuid (Just . toDTO $ userSystem) Transactional baseContext $
+  runAppContextWithAppContext function
 
 runAppContextWithAppContext :: AppContextM a -> AppContext -> IO (Either String a)
 runAppContextWithAppContext function appContext = do
@@ -42,34 +43,40 @@ runLogging' context =
   let loggingLevel = context ^. serverConfig . logging . level
    in runLogging loggingLevel
 
-appContextFromBaseContext appUuid mUser baseContext callback = do
+appContextFromBaseContext appUuid mUser transactionState baseContext callback = do
   cTraceUuid <- generateUuid
   now <- liftIO getCurrentTime
-  withResource (baseContext ^. dbPool) $ \dbConnection -> do
-    let appContext =
-          AppContext
-            { _appContextServerConfig = baseContext ^. serverConfig
-            , _appContextLocalization = baseContext ^. localization
-            , _appContextBuildInfoConfig = baseContext ^. buildInfoConfig
-            , _appContextDbConnection = dbConnection
-            , _appContextS3Client = baseContext ^. s3Client
-            , _appContextHttpClientManager = baseContext ^. httpClientManager
-            , _appContextRegistryClient = baseContext ^. registryClient
-            , _appContextTraceUuid = cTraceUuid
-            , _appContextAppUuid = appUuid
-            , _appContextCurrentUser = mUser
-            , _appContextShutdownFlag = baseContext ^. shutdownFlag
-            , _appContextCache = baseContext ^. cache
-            }
-    callback appContext
+  let appContext =
+        AppContext
+          { _appContextServerConfig = baseContext ^. serverConfig
+          , _appContextLocalization = baseContext ^. localization
+          , _appContextBuildInfoConfig = baseContext ^. buildInfoConfig
+          , _appContextDbPool = baseContext ^. dbPool
+          , _appContextDbConnection = Nothing
+          , _appContextS3Client = baseContext ^. s3Client
+          , _appContextHttpClientManager = baseContext ^. httpClientManager
+          , _appContextRegistryClient = baseContext ^. registryClient
+          , _appContextTraceUuid = cTraceUuid
+          , _appContextAppUuid = appUuid
+          , _appContextCurrentUser = mUser
+          , _appContextShutdownFlag = baseContext ^. shutdownFlag
+          , _appContextCache = baseContext ^. cache
+          }
+  case transactionState of
+    Transactional -> do
+      withResource (baseContext ^. dbPool) $ \dbConn -> do
+        let appContextWithConn = appContext & dbConnection ?~ dbConn
+        callback appContextWithConn
+    NoTransaction -> do
+      callback appContext
 
-baseContextFromAppContext :: Pool Connection -> AppContext -> BaseContext
-baseContextFromAppContext dbPool appContext =
+baseContextFromAppContext :: AppContext -> BaseContext
+baseContextFromAppContext appContext =
   BaseContext
     { _baseContextServerConfig = appContext ^. serverConfig
     , _baseContextLocalization = appContext ^. localization
     , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
-    , _baseContextDbPool = dbPool
+    , _baseContextDbPool = appContext ^. dbPool
     , _baseContextS3Client = appContext ^. s3Client
     , _baseContextHttpClientManager = appContext ^. httpClientManager
     , _baseContextRegistryClient = appContext ^. registryClient

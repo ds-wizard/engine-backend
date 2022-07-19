@@ -24,6 +24,7 @@ findTemplateFilesByTemplateId ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
+     , HasDbPool' s
      , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
@@ -40,6 +41,7 @@ findTemplateFilesByTemplateIdAndFileName ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
+     , HasDbPool' s
      , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
@@ -57,6 +59,7 @@ findTemplateFileById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
+     , HasDbPool' s
      , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
@@ -73,6 +76,7 @@ insertTemplateFile ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
+     , HasDbPool' s
      , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
@@ -87,6 +91,7 @@ updateTemplateFileById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
+     , HasDbPool' s
      , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
@@ -109,6 +114,7 @@ deleteTemplateFiles ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
+     , HasDbPool' s
      , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
@@ -122,6 +128,7 @@ deleteTemplateFilesByTemplateId ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
+     , HasDbPool' s
      , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s
@@ -138,6 +145,7 @@ deleteTemplateFileById ::
      ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
+     , HasDbPool' s
      , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s

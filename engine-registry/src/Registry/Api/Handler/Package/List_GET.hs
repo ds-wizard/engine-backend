@@ -11,6 +11,7 @@ import Registry.Model.Context.ContextLenses ()
 import Registry.Service.Package.PackageService
 import Shared.Api.Handler.Common
 import Shared.Constant.Api
+import Shared.Model.Context.TransactionState
 
 type List_GET
    = Header "Authorization" String
@@ -35,7 +36,7 @@ list_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
 list_GET mTokenHeader xUserCountHeaderValue xPkgCountHeaderValue xQtnCountHeaderValue organizationId kmId =
   getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
-    runInMaybeAuthService $
+    runInMaybeAuthService Transactional $
     addTraceUuidHeader =<< do
       let queryParams = catMaybes [(,) "organization_id" <$> organizationId, (,) "km_id" <$> kmId]
       let headers =

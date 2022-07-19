@@ -129,7 +129,8 @@ prepareWebApp runCallback =
                 { _appContextServerConfig = serverConfig
                 , _appContextLocalization = M.empty
                 , _appContextBuildInfoConfig = buildInfoConfig
-                , _appContextDbConnection = dbConnection
+                , _appContextDbPool = dbPool
+                , _appContextDbConnection = Just dbConnection
                 , _appContextS3Client = s3Client
                 , _appContextHttpClientManager = httpClientManager
                 , _appContextRegistryClient = registryClient
@@ -142,7 +143,7 @@ prepareWebApp runCallback =
         putStrLn "DB: start creating schema"
         buildSchema appContext
         putStrLn "DB: schema created"
-        runWebserver dbPool appContext (runCallback baseContext appContext)
+        runWebserver appContext (runCallback baseContext appContext)
 
 main :: IO ()
 main =

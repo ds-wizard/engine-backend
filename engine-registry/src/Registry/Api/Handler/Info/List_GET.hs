@@ -12,12 +12,13 @@ import Registry.Model.Context.ContextLenses ()
 import Shared.Api.Handler.Common
 import Shared.Api.Resource.Info.InfoDTO
 import Shared.Api.Resource.Info.InfoJM ()
+import Shared.Model.Context.TransactionState
 
 type List_GET = Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] InfoDTO)
 
 list_GET :: BaseContextM (Headers '[ Header "x-trace-uuid" String] InfoDTO)
 list_GET =
-  runInUnauthService $
+  runInUnauthService NoTransaction $
   addTraceUuidHeader =<< do
     buildInfoConfig <- asks _appContextBuildInfoConfig
     return

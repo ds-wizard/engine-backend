@@ -5,6 +5,7 @@ import Servant
 import Shared.Api.Handler.Common
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
+import Shared.Model.Context.TransactionState
 import Shared.Util.String (splitOn)
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
@@ -34,7 +35,7 @@ list_suggestions_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page String))
 list_suggestions_GET mTokenHeader mServerUrl mQuery mExclude mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService NoTransaction $
     addTraceUuidHeader =<< do
       let excludeTags = maybe [] (splitOn ",") mExclude
       getProjectTagSuggestions mQuery excludeTags (Pageable mPage mSize) (parseSortQuery mSort)

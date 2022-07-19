@@ -20,23 +20,20 @@ import Wizard.Service.Template.Asset.TemplateAssetMapper
 import Wizard.Service.Template.TemplateValidation
 
 getTemplateAssets :: String -> AppContextM [TemplateAsset]
-getTemplateAssets tmlId =
-  runInTransaction $ do
-    checkPermission _TML_PERM
-    findTemplateAssetsByTemplateId tmlId
+getTemplateAssets tmlId = do
+  checkPermission _TML_PERM
+  findTemplateAssetsByTemplateId tmlId
 
 getTemplateAsset :: U.UUID -> AppContextM TemplateAsset
-getTemplateAsset assetUuid =
-  runInTransaction $ do
-    checkPermission _TML_PERM
-    findTemplateAssetById (U.toString assetUuid)
+getTemplateAsset assetUuid = do
+  checkPermission _TML_PERM
+  findTemplateAssetById (U.toString assetUuid)
 
 getTemplateAssetContent :: String -> String -> AppContextM (TemplateAsset, BS.ByteString)
-getTemplateAssetContent tmlId assetUuid =
-  runInTransaction $ do
-    asset <- findTemplateAssetById assetUuid
-    content <- getAsset tmlId (U.toString $ asset ^. uuid)
-    return (asset, content)
+getTemplateAssetContent tmlId assetUuid = do
+  asset <- findTemplateAssetById assetUuid
+  content <- getAsset tmlId (U.toString $ asset ^. uuid)
+  return (asset, content)
 
 createAsset :: String -> String -> String -> BS.ByteString -> AppContextM TemplateAsset
 createAsset tmlId fileName contentType content =

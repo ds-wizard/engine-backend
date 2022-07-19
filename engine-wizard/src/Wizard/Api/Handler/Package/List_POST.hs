@@ -4,6 +4,7 @@ import Servant
 
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
@@ -24,4 +25,4 @@ list_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
 list_POST mTokenHeader mServerUrl reqBody =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< importAndConvertPackageBundle (BSL.pack reqBody)
+    runInAuthService Transactional $ addTraceUuidHeader =<< importAndConvertPackageBundle (BSL.pack reqBody)

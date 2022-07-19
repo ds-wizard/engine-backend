@@ -4,6 +4,7 @@ import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateJM ()
 import Wizard.Api.Handler.Common
@@ -27,4 +28,4 @@ detail_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateAsset)
 detail_GET mTokenHeader mServerUrl tmlId assetUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getTemplateAsset assetUuid
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getTemplateAsset assetUuid

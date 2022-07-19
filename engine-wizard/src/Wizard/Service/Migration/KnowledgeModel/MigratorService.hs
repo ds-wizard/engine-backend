@@ -30,24 +30,22 @@ import Wizard.Service.Migration.KnowledgeModel.MigratorValidation
 import Wizard.Service.Package.PackageService
 
 getCurrentMigrationDto :: String -> AppContextM MigratorStateDTO
-getCurrentMigrationDto branchUuid =
-  runInTransaction $ do
-    checkPermission _KM_UPGRADE_PERM
-    ms <- getCurrentMigration branchUuid
-    branch <- findBranchById branchUuid
-    return $ toDTO ms branch
+getCurrentMigrationDto branchUuid = do
+  checkPermission _KM_UPGRADE_PERM
+  ms <- getCurrentMigration branchUuid
+  branch <- findBranchById branchUuid
+  return $ toDTO ms branch
 
 getCurrentMigration :: String -> AppContextM MigratorState
-getCurrentMigration branchUuid =
-  runInTransaction $ do
-    ms <- findMigratorStateByBranchUuid branchUuid
-    knowledgeModel <- compileKnowledgeModel (ms ^. resultEvents) (Just $ ms ^. branchPreviousPackageId) []
-    let stateWithEvent =
-          case ms ^. migrationState of
-            (ConflictState (CorrectorConflict Nothing)) ->
-              ConflictState . CorrectorConflict . Just . head $ ms ^. targetPackageEvents
-            state -> state
-    return . (currentKnowledgeModel ?~ knowledgeModel) . (migrationState .~ stateWithEvent) $ ms
+getCurrentMigration branchUuid = do
+  ms <- findMigratorStateByBranchUuid branchUuid
+  knowledgeModel <- compileKnowledgeModel (ms ^. resultEvents) (Just $ ms ^. branchPreviousPackageId) []
+  let stateWithEvent =
+        case ms ^. migrationState of
+          (ConflictState (CorrectorConflict Nothing)) ->
+            ConflictState . CorrectorConflict . Just . head $ ms ^. targetPackageEvents
+          state -> state
+  return . (currentKnowledgeModel ?~ knowledgeModel) . (migrationState .~ stateWithEvent) $ ms
 
 createMigration :: String -> MigratorStateCreateDTO -> AppContextM MigratorStateDTO
 createMigration bUuid reqDto =

@@ -3,6 +3,7 @@ module Wizard.Api.Handler.App.List_POST where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Api.Resource.App.AppCreateJM ()
@@ -22,7 +23,7 @@ list_POST ::
      Maybe String -> Maybe String -> AppCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppDTO)
 list_POST mTokenHeader mServerUrl reqDto =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService Transactional $
     addTraceUuidHeader =<< do
       ia <- isAdmin
       if ia

@@ -44,21 +44,20 @@ import Wizard.Service.Package.PackageValidation
 import Wizard.Util.Logger
 
 exportPackageBundle :: String -> AppContextM PackageBundleDTO
-exportPackageBundle pbId =
-  runInTransaction $ do
-    packages <- getSeriesOfPackages pbId
-    let newestPackage = last packages
-    let pb =
-          PackageBundle
-            { _packageBundleBundleId = newestPackage ^. pId
-            , _packageBundleName = newestPackage ^. name
-            , _packageBundleOrganizationId = newestPackage ^. organizationId
-            , _packageBundleKmId = newestPackage ^. kmId
-            , _packageBundleVersion = newestPackage ^. version
-            , _packageBundleMetamodelVersion = kmMetamodelVersion
-            , _packageBundlePackages = packages
-            }
-    return . toDTO $ pb
+exportPackageBundle pbId = do
+  packages <- getSeriesOfPackages pbId
+  let newestPackage = last packages
+  let pb =
+        PackageBundle
+          { _packageBundleBundleId = newestPackage ^. pId
+          , _packageBundleName = newestPackage ^. name
+          , _packageBundleOrganizationId = newestPackage ^. organizationId
+          , _packageBundleKmId = newestPackage ^. kmId
+          , _packageBundleVersion = newestPackage ^. version
+          , _packageBundleMetamodelVersion = kmMetamodelVersion
+          , _packageBundlePackages = packages
+          }
+  return . toDTO $ pb
 
 pullPackageBundleFromRegistry :: String -> AppContextM ()
 pullPackageBundleFromRegistry pkgId =

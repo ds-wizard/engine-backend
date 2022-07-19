@@ -5,6 +5,7 @@ import Servant
 import Shared.Api.Handler.Common
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentJM ()
@@ -34,5 +35,5 @@ detail_documents_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page DocumentDTO))
 detail_documents_GET mTokenHeader mServerUrl qtnUuid mQuery mPage mSize mSort =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService NoTransaction $
     addTraceUuidHeader =<< getDocumentsForQuestionnaire qtnUuid mQuery (Pageable mPage mSize) (parseSortQuery mSort)

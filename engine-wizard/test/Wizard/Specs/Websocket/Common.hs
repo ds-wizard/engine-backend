@@ -13,7 +13,7 @@ import LensesConfig
 import Wizard.Bootstrap.Web
 import Wizard.Util.Context
 
-runWebserver dbPool appContext = race_ (runWebServer (baseContextFromAppContext dbPool appContext))
+runWebserver appContext = race_ (runWebServer (baseContextFromAppContext appContext))
 
 createConnection appContext reqUrl = do
   let port = read (show $ appContext ^. serverConfig . general . serverPort) :: PortNumber

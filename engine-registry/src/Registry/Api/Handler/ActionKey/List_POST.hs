@@ -9,6 +9,7 @@ import Registry.Model.Context.BaseContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.Service.Organization.OrganizationService
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 
 type List_POST
    = ReqBody '[ SafeJSON] ActionKeyDTO
@@ -17,7 +18,7 @@ type List_POST
 
 list_POST :: ActionKeyDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 list_POST reqDto =
-  runInUnauthService $
+  runInUnauthService Transactional $
   addTraceUuidHeader =<< do
     resetOrganizationToken reqDto
     return NoContent

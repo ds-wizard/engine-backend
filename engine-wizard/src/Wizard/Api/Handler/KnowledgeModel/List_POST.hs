@@ -6,6 +6,7 @@ import Shared.Api.Handler.Common
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeJM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
+import Shared.Model.Context.TransactionState
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
@@ -26,4 +27,4 @@ list_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] KnowledgeModel)
 list_POST mTokenHeader mServerUrl reqDto =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
-    runInMaybeAuthService $ addTraceUuidHeader =<< createKnowledgeModelPreview reqDto
+    runInMaybeAuthService Transactional $ addTraceUuidHeader =<< createKnowledgeModelPreview reqDto

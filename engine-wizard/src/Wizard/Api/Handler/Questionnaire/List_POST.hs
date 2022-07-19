@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Questionnaire.List_POST where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
@@ -25,4 +26,4 @@ list_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
 list_POST mTokenHeader mServerUrl reqDto =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
-    runInMaybeAuthService $ addTraceUuidHeader =<< createQuestionnaire reqDto
+    runInMaybeAuthService Transactional $ addTraceUuidHeader =<< createQuestionnaire reqDto

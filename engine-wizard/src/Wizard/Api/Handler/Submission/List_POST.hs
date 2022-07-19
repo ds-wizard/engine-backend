@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Submission.List_POST where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionCreateJM ()
@@ -28,4 +29,4 @@ list_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] SubmissionDTO)
 list_POST mTokenHeader mServerUrl reqDto docUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< submitDocument docUuid reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< submitDocument docUuid reqDto

@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Migration.KnowledgeModel.List_Current_Conflict_POST wh
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictJM ()
@@ -28,7 +29,7 @@ list_current_conflict_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 list_current_conflict_POST mTokenHeader mServerUrl reqDto bUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService Transactional $
     addTraceUuidHeader =<< do
       solveConflictAndMigrate bUuid reqDto
       return NoContent

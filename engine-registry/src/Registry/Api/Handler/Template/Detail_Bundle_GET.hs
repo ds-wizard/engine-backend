@@ -9,6 +9,7 @@ import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Service.TemplateBundle.TemplateBundleService
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 
 type Detail_Bundle_GET
    = Header "Authorization" String
@@ -23,7 +24,7 @@ detail_bundle_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStreamLazy)
 detail_bundle_GET mTokenHeader tmlId =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $ do
+    runInAuthService NoTransaction $ do
       zipFile <- exportTemplateBundle tmlId
       let cdHeader = "attachment;filename=\"template.zip\""
       traceUuid <- asks _appContextTraceUuid

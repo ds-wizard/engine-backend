@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Template.Asset.List_GET where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateJM ()
 import Wizard.Api.Handler.Common
@@ -21,4 +22,4 @@ list_GET ::
      Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TemplateAsset])
 list_GET mTokenHeader mServerUrl tmlId =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getTemplateAssets tmlId
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getTemplateAssets tmlId

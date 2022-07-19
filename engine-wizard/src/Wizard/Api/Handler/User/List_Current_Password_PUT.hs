@@ -6,6 +6,7 @@ import Servant
 
 import LensesConfig
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common hiding (getCurrentUser)
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserPasswordJM ()
@@ -29,7 +30,7 @@ list_current_password_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 list_current_password_PUT mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService Transactional $
     addTraceUuidHeader =<< do
       user <- getCurrentUser
       changeUserProfilePassword (U.toString $ user ^. uuid) reqDto

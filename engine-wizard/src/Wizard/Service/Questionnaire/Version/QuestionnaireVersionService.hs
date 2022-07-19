@@ -33,11 +33,10 @@ import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionValidation
 
 getVersions :: String -> AppContextM [QuestionnaireVersionDTO]
-getVersions qtnUuid =
-  runInTransaction $ do
-    qtn <- findQuestionnaireById qtnUuid
-    checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
-    traverse enhanceQuestionnaireVersion (qtn ^. versions)
+getVersions qtnUuid = do
+  qtn <- findQuestionnaireById qtnUuid
+  checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
+  traverse enhanceQuestionnaireVersion (qtn ^. versions)
 
 createVersion :: String -> QuestionnaireVersionChangeDTO -> AppContextM QuestionnaireVersionDTO
 createVersion qtnUuid reqDto =

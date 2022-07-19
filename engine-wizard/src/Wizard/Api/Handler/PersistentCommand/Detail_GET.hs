@@ -3,6 +3,7 @@ module Wizard.Api.Handler.PersistentCommand.Detail_GET where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailJM ()
@@ -23,4 +24,4 @@ detail_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] PersistentCommandDetailDTO)
 detail_GET mTokenHeader mServerUrl pcUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getPersistentCommandById pcUuid
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getPersistentCommandById pcUuid

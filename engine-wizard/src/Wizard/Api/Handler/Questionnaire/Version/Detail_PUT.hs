@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Questionnaire.Version.Detail_PUT where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeJM ()
@@ -30,4 +31,4 @@ detail_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireVersionDTO)
 detail_PUT mTokenHeader mServerUrl reqDto qtnUuid vUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< modifyVersion qtnUuid vUuid reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< modifyVersion qtnUuid vUuid reqDto

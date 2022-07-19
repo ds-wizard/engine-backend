@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Questionnaire.Version.List_POST where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeJM ()
@@ -28,4 +29,4 @@ list_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireVersionDTO)
 list_POST mTokenHeader mServerUrl reqDto qtnUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< createVersion qtnUuid reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< createVersion qtnUuid reqDto

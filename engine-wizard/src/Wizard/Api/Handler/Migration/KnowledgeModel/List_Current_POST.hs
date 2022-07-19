@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Migration.KnowledgeModel.List_Current_POST where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateJM ()
@@ -29,4 +30,4 @@ list_current_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] MigratorStateDTO)
 list_current_POST mTokenHeader mServerUrl reqDto bUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< createMigration bUuid reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< createMigration bUuid reqDto

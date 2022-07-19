@@ -49,18 +49,16 @@ import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
 
 getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
-getUsersPage mQuery mRole pageable sort =
-  runInTransaction $ do
-    checkPermission _UM_PERM
-    userPage <- findUsersPage mQuery mRole pageable sort
-    return . fmap toDTO $ userPage
+getUsersPage mQuery mRole pageable sort = do
+  checkPermission _UM_PERM
+  userPage <- findUsersPage mQuery mRole pageable sort
+  return . fmap toDTO $ userPage
 
 getUserSuggestionsPage ::
      Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)
-getUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort =
-  runInTransaction $ do
-    suggestionPage <- findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort
-    return . fmap toSuggestionDTO $ suggestionPage
+getUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
+  suggestionPage <- findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort
+  return . fmap toSuggestionDTO $ suggestionPage
 
 createUserByAdmin :: UserCreateDTO -> AppContextM UserDTO
 createUserByAdmin reqDto =
@@ -155,16 +153,14 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl =
         return $ toDTO user
 
 getUserById :: String -> AppContextM UserDTO
-getUserById userUuid =
-  runInTransaction $ do
-    user <- findUserById userUuid
-    return $ toDTO user
+getUserById userUuid = do
+  user <- findUserById userUuid
+  return $ toDTO user
 
 getUserDetailById :: String -> AppContextM UserDTO
-getUserDetailById userUuid =
-  runInTransaction $ do
-    checkPermission _UM_PERM
-    getUserById userUuid
+getUserDetailById userUuid = do
+  checkPermission _UM_PERM
+  getUserById userUuid
 
 modifyUser :: String -> UserChangeDTO -> AppContextM UserDTO
 modifyUser userUuid reqDto =

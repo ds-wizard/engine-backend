@@ -7,6 +7,7 @@ import Servant hiding (contentType)
 
 import LensesConfig
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
@@ -30,7 +31,7 @@ detail_content_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
 detail_content_GET mTokenHeader mServerUrl tmlId assetUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ do
+    runInAuthService NoTransaction $ do
       (asset, result) <- getTemplateAssetContent tmlId assetUuid
       let cdHeader = asset ^. contentType
       traceUuid <- asks _appContextTraceUuid

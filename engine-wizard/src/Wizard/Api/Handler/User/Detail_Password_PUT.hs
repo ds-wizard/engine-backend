@@ -3,6 +3,7 @@ module Wizard.Api.Handler.User.Detail_Password_PUT where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserPasswordJM ()
@@ -28,7 +29,7 @@ detail_password_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 detail_password_PUT mTokenHeader mServerUrl reqDto uUuid mHash =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService Transactional $
     addTraceUuidHeader =<< do
       ia <- isAdmin
       if ia

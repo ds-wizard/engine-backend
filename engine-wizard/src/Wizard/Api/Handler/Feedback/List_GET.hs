@@ -4,6 +4,7 @@ import Data.Maybe (catMaybes)
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Feedback.FeedbackDTO
 import Wizard.Api.Resource.Feedback.FeedbackJM ()
@@ -23,7 +24,7 @@ list_GET ::
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [FeedbackDTO])
 list_GET mServerUrl mPackageId mQuestionUuid =
-  runInUnauthService mServerUrl $
+  runInUnauthService mServerUrl NoTransaction $
   addTraceUuidHeader =<< do
     let queryParams = catMaybes [(,) "package_id" <$> mPackageId, (,) "question_uuid" <$> mQuestionUuid]
     getFeedbacksFiltered queryParams

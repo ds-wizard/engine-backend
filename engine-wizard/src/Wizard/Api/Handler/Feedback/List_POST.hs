@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Feedback.List_POST where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackCreateJM ()
@@ -18,4 +19,4 @@ type List_POST
      :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] FeedbackDTO)
 
 list_POST :: Maybe String -> FeedbackCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] FeedbackDTO)
-list_POST mServerUrl reqDto = runInUnauthService mServerUrl $ addTraceUuidHeader =<< createFeedback reqDto
+list_POST mServerUrl reqDto = runInUnauthService mServerUrl Transactional $ addTraceUuidHeader =<< createFeedback reqDto

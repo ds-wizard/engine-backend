@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Questionnaire.List_POST_FromTemplate where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateJM ()
@@ -26,4 +27,4 @@ list_POST_FromTemplate ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
 list_POST_FromTemplate mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< createQuestionnaireFromTemplate reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< createQuestionnaireFromTemplate reqDto

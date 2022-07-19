@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Questionnaire.Detail_PUT where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeJM ()
@@ -27,4 +28,4 @@ detail_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDetailDTO)
 detail_PUT mTokenHeader mServerUrl reqDto qtnUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< modifyQuestionnaire qtnUuid reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< modifyQuestionnaire qtnUuid reqDto

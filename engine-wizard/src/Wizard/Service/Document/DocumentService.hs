@@ -51,18 +51,16 @@ import Wizard.Service.Template.TemplateValidation
 import Wizard.Util.Logger
 
 getDocumentsPageDto :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
-getDocumentsPageDto mQuestionnaireUuid mQuery pageable sort =
-  runInTransaction $ do
-    checkPermission _DOC_PERM
-    docPage <- findDocumentsPage mQuestionnaireUuid mQuery pageable sort
-    traverse enhanceDocument docPage
+getDocumentsPageDto mQuestionnaireUuid mQuery pageable sort = do
+  checkPermission _DOC_PERM
+  docPage <- findDocumentsPage mQuestionnaireUuid mQuery pageable sort
+  traverse enhanceDocument docPage
 
 getDocumentsForQuestionnaire :: String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
-getDocumentsForQuestionnaire qtnUuid mQuery pageable sort =
-  runInTransaction $ do
-    checkViewPermissionToDoc qtnUuid
-    docPage <- findDocumentsByQuestionnaireUuidPage qtnUuid mQuery pageable sort
-    traverse enhanceDocument docPage
+getDocumentsForQuestionnaire qtnUuid mQuery pageable sort = do
+  checkViewPermissionToDoc qtnUuid
+  docPage <- findDocumentsByQuestionnaireUuidPage qtnUuid mQuery pageable sort
+  traverse enhanceDocument docPage
 
 createDocument :: DocumentCreateDTO -> AppContextM DocumentDTO
 createDocument reqDto =
@@ -104,11 +102,10 @@ deleteDocument docUuid =
     removeDocumentContent docUuid
 
 downloadDocument :: String -> AppContextM (Document, BS.ByteString)
-downloadDocument docUuid =
-  runInTransaction $ do
-    doc <- findDocumentById docUuid
-    content <- getDocumentContent docUuid
-    return (doc, content)
+downloadDocument docUuid = do
+  doc <- findDocumentById docUuid
+  content <- getDocumentContent docUuid
+  return (doc, content)
 
 cleanDocuments :: AppContextM ()
 cleanDocuments =

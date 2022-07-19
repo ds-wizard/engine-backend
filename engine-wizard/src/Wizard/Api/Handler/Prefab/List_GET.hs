@@ -4,6 +4,7 @@ import Data.Maybe (catMaybes)
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Prefab.PrefabJM ()
 import Wizard.Model.Context.BaseContext
@@ -21,7 +22,7 @@ list_GET ::
      Maybe String -> Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [Prefab])
 list_GET mTokenHeader mServerUrl prefabType =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService NoTransaction $
     addTraceUuidHeader =<< do
       let queryParams = catMaybes [(,) "type" <$> prefabType]
       getPrefabsFiltered queryParams

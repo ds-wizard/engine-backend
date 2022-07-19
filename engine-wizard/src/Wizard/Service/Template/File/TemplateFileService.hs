@@ -18,16 +18,14 @@ import Wizard.Service.Template.File.TemplateFileMapper
 import Wizard.Service.Template.TemplateValidation
 
 getTemplateFiles :: String -> AppContextM [TemplateFile]
-getTemplateFiles tmlId =
-  runInTransaction $ do
-    checkPermission _TML_PERM
-    findTemplateFilesByTemplateId tmlId
+getTemplateFiles tmlId = do
+  checkPermission _TML_PERM
+  findTemplateFilesByTemplateId tmlId
 
 getTemplateFile :: U.UUID -> AppContextM TemplateFile
-getTemplateFile fileUuid =
-  runInTransaction $ do
-    checkPermission _TML_PERM
-    findTemplateFileById (U.toString fileUuid)
+getTemplateFile fileUuid = do
+  checkPermission _TML_PERM
+  findTemplateFileById (U.toString fileUuid)
 
 createTemplateFile :: String -> TemplateFileChangeDTO -> AppContextM TemplateFile
 createTemplateFile tmlId reqDto =

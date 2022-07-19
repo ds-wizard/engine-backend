@@ -62,6 +62,7 @@ resolvePackageId ::
      ( MonadError AppError m
      , MonadLogger m
      , MonadReader s m
+     , HasDbPool' s
      , HasDbConnection' s
      , HasIdentityUuid' s
      , HasTraceUuid' s

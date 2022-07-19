@@ -36,17 +36,16 @@ createQuestionnaireMigration oldQtnUuid reqDto =
     getQuestionnaireMigration (U.toString $ newQtn ^. uuid)
 
 getQuestionnaireMigration :: String -> AppContextM MigratorStateDTO
-getQuestionnaireMigration qtnUuid =
-  runInTransaction $ do
-    checkPermission _QTN_PERM
-    state <- findMigratorStateByNewQuestionnaireId qtnUuid
-    oldQtnDto <- getQuestionnaireDetailById (U.toString $ state ^. oldQuestionnaireUuid)
-    newQtnDto <- getQuestionnaireDetailById (U.toString $ state ^. newQuestionnaireUuid)
-    oldQtn <- findQuestionnaireById (U.toString $ state ^. oldQuestionnaireUuid)
-    newQtn <- findQuestionnaireById (U.toString $ state ^. newQuestionnaireUuid)
-    checkMigrationPermissionToQtn (oldQtn ^. visibility) (oldQtn ^. permissions)
-    checkMigrationPermissionToQtn (newQtn ^. visibility) (newQtn ^. permissions)
-    return $ toDTO oldQtnDto newQtnDto (state ^. resolvedQuestionUuids) (state ^. appUuid)
+getQuestionnaireMigration qtnUuid = do
+  checkPermission _QTN_PERM
+  state <- findMigratorStateByNewQuestionnaireId qtnUuid
+  oldQtnDto <- getQuestionnaireDetailById (U.toString $ state ^. oldQuestionnaireUuid)
+  newQtnDto <- getQuestionnaireDetailById (U.toString $ state ^. newQuestionnaireUuid)
+  oldQtn <- findQuestionnaireById (U.toString $ state ^. oldQuestionnaireUuid)
+  newQtn <- findQuestionnaireById (U.toString $ state ^. newQuestionnaireUuid)
+  checkMigrationPermissionToQtn (oldQtn ^. visibility) (oldQtn ^. permissions)
+  checkMigrationPermissionToQtn (newQtn ^. visibility) (newQtn ^. permissions)
+  return $ toDTO oldQtnDto newQtnDto (state ^. resolvedQuestionUuids) (state ^. appUuid)
 
 modifyQuestionnaireMigration :: String -> MigratorStateChangeDTO -> AppContextM MigratorStateDTO
 modifyQuestionnaireMigration qtnUuid reqDto =

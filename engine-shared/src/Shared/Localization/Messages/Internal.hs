@@ -5,6 +5,8 @@ module Shared.Localization.Messages.Internal where
 -- --------------------------------------
 _ERROR_DATABASE__DESERIALIZATION_FAILED = "Problem with deserialization of entity from database"
 
+_ERROR_DATABASE__TRANSACTION_REQUIRED_DB_CONN = "Transaction requires reserved DB connection"
+
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------

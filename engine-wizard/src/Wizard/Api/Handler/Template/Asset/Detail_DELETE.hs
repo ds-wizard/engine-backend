@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Template.Asset.Detail_DELETE where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Template.Asset.TemplateAssetService
@@ -24,7 +25,7 @@ detail_DELETE ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 detail_DELETE mTokenHeader mServerUrl tmlId assetUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService Transactional $
     addTraceUuidHeader =<< do
       deleteTemplateAsset tmlId assetUuid
       return NoContent

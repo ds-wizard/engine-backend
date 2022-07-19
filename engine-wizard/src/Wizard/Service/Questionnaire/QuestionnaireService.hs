@@ -62,21 +62,20 @@ getQuestionnairesForCurrentUserPageDto ::
   -> Pageable
   -> [Sort]
   -> AppContextM (Page QuestionnaireDTO)
-getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp pageable sort =
-  runInTransaction $ do
-    checkPermission _QTN_PERM
-    currentUser <- getCurrentUser
-    qtnPage <-
-      findQuestionnairesForCurrentUserPage
-        mQuery
-        mIsTemplate
-        mProjectTags
-        mProjectTagsOp
-        mUserUuids
-        mUserUuidsOp
-        pageable
-        sort
-    traverse enhanceQuestionnaireDetail qtnPage
+getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp pageable sort = do
+  checkPermission _QTN_PERM
+  currentUser <- getCurrentUser
+  qtnPage <-
+    findQuestionnairesForCurrentUserPage
+      mQuery
+      mIsTemplate
+      mProjectTags
+      mProjectTagsOp
+      mUserUuids
+      mUserUuidsOp
+      pageable
+      sort
+  traverse enhanceQuestionnaireDetail qtnPage
 
 createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM QuestionnaireDTO
 createQuestionnaire questionnaireCreateDto =
@@ -175,69 +174,66 @@ cloneQuestionnaire cloneUuid =
     return $ toSimpleDTO newQtn qtnCtn pkg state report permissionDtos
 
 getQuestionnaireById :: String -> AppContextM QuestionnaireDTO
-getQuestionnaireById qtnUuid =
-  runInTransaction $ do
-    mQtn <- getQuestionnaireById' qtnUuid
-    case mQtn of
-      Just qtn -> return qtn
-      Nothing -> throwError $ NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "questionnaire" [("uuid", qtnUuid)]
+getQuestionnaireById qtnUuid = do
+  mQtn <- getQuestionnaireById' qtnUuid
+  case mQtn of
+    Just qtn -> return qtn
+    Nothing -> throwError $ NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "questionnaire" [("uuid", qtnUuid)]
 
 getQuestionnaireById' :: String -> AppContextM (Maybe QuestionnaireDTO)
-getQuestionnaireById' qtnUuid =
-  runInTransaction $ do
-    mQtn <- findQuestionnaireById' qtnUuid
-    case mQtn of
-      Just qtn -> do
-        checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
-        package <- getPackageById (qtn ^. packageId)
-        state <- getQuestionnaireState qtnUuid (package ^. pId)
-        report <- getQuestionnaireReport qtn
-        permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
-        qtnCtn <- compileQuestionnaire qtn
-        return . Just $ toDTO qtn qtnCtn package state report permissionDtos
-      Nothing -> return Nothing
+getQuestionnaireById' qtnUuid = do
+  mQtn <- findQuestionnaireById' qtnUuid
+  case mQtn of
+    Just qtn -> do
+      checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
+      package <- getPackageById (qtn ^. packageId)
+      state <- getQuestionnaireState qtnUuid (package ^. pId)
+      report <- getQuestionnaireReport qtn
+      permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
+      qtnCtn <- compileQuestionnaire qtn
+      return . Just $ toDTO qtn qtnCtn package state report permissionDtos
+    Nothing -> return Nothing
 
 getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
-getQuestionnaireDetailById qtnUuid =
-  runInTransaction $ do
-    qtn <- findQuestionnaireById qtnUuid
-    checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
-    pkg <- getPackageById (qtn ^. packageId)
-    pkgVersions <- getPackageVersions pkg
-    knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedQuestionTagUuids)
-    state <- getQuestionnaireState qtnUuid (qtn ^. packageId)
-    mTemplate <-
-      case qtn ^. templateId of
-        Just tId -> do
-          template <- findTemplateById tId
-          return $ Just template
-        _ -> return Nothing
-    mFormat <-
-      case (mTemplate, qtn ^. formatUuid) of
-        (Just template, Just fUuid) -> return $ L.find (\f -> f ^. uuid == fUuid) (template ^. formats)
-        _ -> return Nothing
-    permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
-    qtnCtn <- compileQuestionnaire qtn
-    eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
-    versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
-    filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
-    migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
-    return $
-      toDetailWithPackageWithEventsDTO
-        qtn
-        qtnCtn
-        pkg
-        pkgVersions
-        knowledgeModel
-        state
-        mTemplate
-        mFormat
-        (qtnCtn ^. replies)
-        filteredCommentThreadsMap
-        permissionDtos
-        eventsDto
-        versionDto
-        (fmap (^. newQuestionnaireUuid) . headSafe $ migrations)
+getQuestionnaireDetailById qtnUuid = do
+  qtn <- findQuestionnaireById qtnUuid
+  checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
+  pkg <- getPackageById (qtn ^. packageId)
+  pkgVersions <- getPackageVersions pkg
+  knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedQuestionTagUuids)
+  state <- getQuestionnaireState qtnUuid (qtn ^. packageId)
+  mTemplate <-
+    case qtn ^. templateId of
+      Just tId -> do
+        template <- findTemplateById tId
+        return $ Just template
+      _ -> return Nothing
+  mFormat <-
+    case (mTemplate, qtn ^. formatUuid) of
+      (Just template, Just fUuid) -> return $ L.find (\f -> f ^. uuid == fUuid) (template ^. formats)
+      _ -> return Nothing
+  permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
+  qtnCtn <- compileQuestionnaire qtn
+  eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
+  versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
+  filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
+  migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
+  return $
+    toDetailWithPackageWithEventsDTO
+      qtn
+      qtnCtn
+      pkg
+      pkgVersions
+      knowledgeModel
+      state
+      mTemplate
+      mFormat
+      (qtnCtn ^. replies)
+      filteredCommentThreadsMap
+      permissionDtos
+      eventsDto
+      versionDto
+      (fmap (^. newQuestionnaireUuid) . headSafe $ migrations)
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto =

@@ -6,7 +6,6 @@ import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.UUID as U
 
 import LensesConfig
-import Registry.Database.DAO.Common
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.S3.Template.TemplateS3
@@ -17,13 +16,12 @@ import Shared.Model.Template.Template
 import Shared.Service.TemplateBundle.TemplateBundleMapper
 
 exportTemplateBundle :: String -> AppContextM BSL.ByteString
-exportTemplateBundle tmlId =
-  runInTransaction $ do
-    template <- findTemplateById tmlId
-    files <- findTemplateFilesByTemplateId tmlId
-    assets <- findTemplateAssetsByTemplateId tmlId
-    assetContents <- traverse (findAsset (template ^. tId)) assets
-    return $ toTemplateArchive (toTemplateBundle template files assets) assetContents
+exportTemplateBundle tmlId = do
+  template <- findTemplateById tmlId
+  files <- findTemplateFilesByTemplateId tmlId
+  assets <- findTemplateAssetsByTemplateId tmlId
+  assetContents <- traverse (findAsset (template ^. tId)) assets
+  return $ toTemplateArchive (toTemplateBundle template files assets) assetContents
 
 -- --------------------------------
 -- PRIVATE

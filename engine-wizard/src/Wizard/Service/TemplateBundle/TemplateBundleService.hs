@@ -28,13 +28,12 @@ import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Template.TemplateValidation
 
 exportTemplateBundle :: String -> AppContextM BSL.ByteString
-exportTemplateBundle tmlId =
-  runInTransaction $ do
-    template <- findTemplateById tmlId
-    files <- findTemplateFilesByTemplateId tmlId
-    assets <- findTemplateAssetsByTemplateId tmlId
-    assetContents <- traverse (findAsset (template ^. tId)) assets
-    return $ toTemplateArchive (toTemplateBundle template files assets) assetContents
+exportTemplateBundle tmlId = do
+  template <- findTemplateById tmlId
+  files <- findTemplateFilesByTemplateId tmlId
+  assets <- findTemplateAssetsByTemplateId tmlId
+  assetContents <- traverse (findAsset (template ^. tId)) assets
+  return $ toTemplateArchive (toTemplateBundle template files assets) assetContents
 
 pullTemplateBundleFromRegistry :: String -> AppContextM ()
 pullTemplateBundleFromRegistry tmlId =

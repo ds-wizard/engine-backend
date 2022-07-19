@@ -30,17 +30,15 @@ import Shared.Model.Error.Error
 import Shared.Util.Crypto (generateRandomString)
 
 getOrganizations :: AppContextM [OrganizationDTO]
-getOrganizations =
-  runInTransaction $ do
-    _ <- checkPermissionToListOrganizations
-    organizations <- findOrganizations
-    return . fmap toDTO $ organizations
+getOrganizations = do
+  _ <- checkPermissionToListOrganizations
+  organizations <- findOrganizations
+  return . fmap toDTO $ organizations
 
 getSimpleOrganizations :: AppContextM [OrganizationSimpleDTO]
-getSimpleOrganizations =
-  runInTransaction $ do
-    organizations <- findOrganizations
-    return . fmap toSimpleDTO $ organizations
+getSimpleOrganizations = do
+  organizations <- findOrganizations
+  return . fmap toSimpleDTO $ organizations
 
 createOrganization :: OrganizationCreateDTO -> Maybe String -> AppContextM OrganizationDTO
 createOrganization reqDto mCallbackUrl =
@@ -62,18 +60,16 @@ createOrganization reqDto mCallbackUrl =
       when (serverConfig ^. analytics . enabled) $ sendRegistrationCreatedAnalyticsMail (toDTO org)
 
 getOrganizationByOrgId :: String -> AppContextM OrganizationDTO
-getOrganizationByOrgId orgId =
-  runInTransaction $ do
-    organization <- findOrganizationByOrgId orgId
-    _ <- checkPermissionToOrganization organization
-    return . toDTO $ organization
+getOrganizationByOrgId orgId = do
+  organization <- findOrganizationByOrgId orgId
+  _ <- checkPermissionToOrganization organization
+  return . toDTO $ organization
 
 getOrganizationByToken :: String -> AppContextM OrganizationDTO
-getOrganizationByToken token =
-  runInTransaction $ do
-    organization <- findOrganizationByToken token
-    _ <- checkPermissionToOrganization organization
-    return . toDTO $ organization
+getOrganizationByToken token = do
+  organization <- findOrganizationByToken token
+  _ <- checkPermissionToOrganization organization
+  return . toDTO $ organization
 
 modifyOrganization :: String -> OrganizationChangeDTO -> AppContextM OrganizationDTO
 modifyOrganization orgId reqDto =

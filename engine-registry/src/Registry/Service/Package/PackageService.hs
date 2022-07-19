@@ -37,23 +37,21 @@ getSimplePackagesFiltered queryParams headers =
            return $ toSimpleDTO pkg org)
 
 getPackageById :: String -> AppContextM PackageDetailDTO
-getPackageById pkgId =
-  runInTransaction $ do
-    resolvedPkgId <- resolvePackageId pkgId
-    pkg <- findPackageById resolvedPkgId
-    versions <- getPackageVersions pkg
-    org <- findOrganizationByOrgId (pkg ^. organizationId)
-    return $ toDetailDTO pkg versions org
+getPackageById pkgId = do
+  resolvedPkgId <- resolvePackageId pkgId
+  pkg <- findPackageById resolvedPkgId
+  versions <- getPackageVersions pkg
+  org <- findOrganizationByOrgId (pkg ^. organizationId)
+  return $ toDetailDTO pkg versions org
 
 getSeriesOfPackages :: String -> AppContextM [PackageWithEventsRaw]
-getSeriesOfPackages pkgId =
-  runInTransaction $ do
-    package <- findPackageWithEventsRawById pkgId
-    case package ^. previousPackageId of
-      Just parentPkgId -> do
-        parentPackages <- getSeriesOfPackages parentPkgId
-        return $ parentPackages ++ [package]
-      Nothing -> return [package]
+getSeriesOfPackages pkgId = do
+  package <- findPackageWithEventsRawById pkgId
+  case package ^. previousPackageId of
+    Just parentPkgId -> do
+      parentPackages <- getSeriesOfPackages parentPkgId
+      return $ parentPackages ++ [package]
+    Nothing -> return [package]
 
 -- --------------------------------
 -- PRIVATE
