@@ -44,8 +44,7 @@ instance ToSchema AppConfigPrivacyAndSupport where
 instance ToSchema AppConfigDashboard where
   declareNamedSchema = simpleToSchema' "_appConfigDashboard" defaultDashboard
 
-instance ToSchema AppConfigDashboardWidgets where
-  declareNamedSchema = simpleToSchema' "_appConfigDashboardWidgets" defaultDashboardWidgets
+instance ToSchema AppConfigDashboardDashboardType
 
 instance ToSchema AppConfigLookAndFeel where
   declareNamedSchema = simpleToSchema' "_appConfigLookAndFeel" defaultLookAndFeel

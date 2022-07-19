@@ -73,17 +73,9 @@ defaultPrivacyAndSupport =
 defaultDashboard :: AppConfigDashboard
 defaultDashboard =
   AppConfigDashboard
-    { _appConfigDashboardWidgets = Just defaultDashboardWidgets
+    { _appConfigDashboardDashboardType = RoleBasedDashboardType
     , _appConfigDashboardWelcomeWarning = Nothing
     , _appConfigDashboardWelcomeInfo = Nothing
-    }
-
-defaultDashboardWidgets :: AppConfigDashboardWidgets
-defaultDashboardWidgets =
-  AppConfigDashboardWidgets
-    { _appConfigDashboardWidgetsAdmin = ["DMPWorkflow", "LevelsQuestionnaire"]
-    , _appConfigDashboardWidgetsDataSteward = ["DMPWorkflow", "LevelsQuestionnaire"]
-    , _appConfigDashboardWidgetsResearcher = ["DMPWorkflow", "LevelsQuestionnaire"]
     }
 
 defaultLookAndFeel :: AppConfigLookAndFeel

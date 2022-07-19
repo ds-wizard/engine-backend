@@ -40,7 +40,7 @@ instance SensitiveData AppConfigPrivacyAndSupport
 
 instance SensitiveData AppConfigDashboard
 
-instance SensitiveData AppConfigDashboardWidgets
+instance SensitiveData AppConfigDashboardDashboardType
 
 instance SensitiveData AppConfigLookAndFeel
 
