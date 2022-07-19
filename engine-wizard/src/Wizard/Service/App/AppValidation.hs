@@ -1,7 +1,7 @@
 module Wizard.Service.App.AppValidation where
 
 import Control.Lens ((^.))
-import Control.Monad (when)
+import Control.Monad (unless, when)
 import Control.Monad.Except (throwError)
 import Data.Foldable (forM_)
 import qualified Data.Map.Strict as M
@@ -20,9 +20,9 @@ import Wizard.Model.App.App
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Common
 
-validateAppCreateDTO :: AppCreateDTO -> AppContextM ()
-validateAppCreateDTO reqDto = do
-  validatePublicRegistrationEnabled
+validateAppCreateDTO :: AppCreateDTO -> Bool -> AppContextM ()
+validateAppCreateDTO reqDto isAdmin = do
+  unless isAdmin validatePublicRegistrationEnabled
   validateAppId (reqDto ^. appId)
 
 validatePublicRegistrationEnabled :: AppContextM ()
