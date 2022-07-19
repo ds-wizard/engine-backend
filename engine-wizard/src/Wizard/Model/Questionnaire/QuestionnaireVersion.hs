@@ -1,8 +1,11 @@
 module Wizard.Model.Questionnaire.QuestionnaireVersion where
 
+import Data.Hashable
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
+
+import Wizard.Util.Hashable ()
 
 data QuestionnaireVersion =
   QuestionnaireVersion
@@ -23,3 +26,5 @@ instance Eq QuestionnaireVersion where
     _questionnaireVersionDescription a == _questionnaireVersionDescription b &&
     _questionnaireVersionEventUuid a == _questionnaireVersionEventUuid b &&
     _questionnaireVersionCreatedBy a == _questionnaireVersionCreatedBy b
+
+instance Hashable QuestionnaireVersion

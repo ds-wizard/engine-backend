@@ -1,5 +1,6 @@
 module Wizard.Model.Config.AppConfig where
 
+import Data.Hashable
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
@@ -50,6 +51,8 @@ data AppConfigOrganization =
     , _appConfigOrganizationAffiliations :: [String]
     }
   deriving (Generic, Eq, Show)
+
+instance Hashable AppConfigOrganization
 
 data AppConfigAuth =
   AppConfigAuth

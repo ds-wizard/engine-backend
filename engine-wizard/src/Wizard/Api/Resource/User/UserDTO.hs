@@ -1,11 +1,13 @@
 module Wizard.Api.Resource.User.UserDTO where
 
+import Data.Hashable
 import Data.Time
 import Data.UUID
 import GHC.Generics
 
 import Wizard.Api.Resource.User.UserSubmissionPropsJM ()
 import Wizard.Model.Acl.Acl
+import Wizard.Util.Hashable ()
 
 data UserDTO =
   UserDTO
@@ -37,3 +39,5 @@ instance Eq UserDTO where
     _userDTOPermissions a == _userDTOPermissions b &&
     _userDTOActive a == _userDTOActive b &&
     _userDTOImageUrl a == _userDTOImageUrl b && _userDTOGroups a == _userDTOGroups b
+
+instance Hashable UserDTO
