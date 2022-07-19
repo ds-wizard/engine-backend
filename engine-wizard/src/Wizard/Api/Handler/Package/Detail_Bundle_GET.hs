@@ -19,16 +19,19 @@ type Detail_Bundle_GET
      :> "packages"
      :> Capture "pkgId" String
      :> "bundle"
+     :> QueryParam "Authorization" String
      :> Get '[ OctetStream] (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
 
 detail_bundle_GET ::
      Maybe String
   -> String
+  -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
-detail_bundle_GET mServerUrl pkgId =
-  runInUnauthService mServerUrl NoTransaction $ do
-    dto <- exportPackageBundle pkgId
-    let result = encode dto
-    let cdHeader = "attachment;filename=" ++ pkgId ++ ".km"
-    traceUuid <- asks _appContextTraceUuid
-    return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStream . BSL.toStrict $ result
+detail_bundle_GET mServerUrl pkgId mTokenHeader =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
+    runInAuthService NoTransaction $ do
+      dto <- exportPackageBundle pkgId
+      let result = encode dto
+      let cdHeader = "attachment;filename=" ++ pkgId ++ ".km"
+      traceUuid <- asks _appContextTraceUuid
+      return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStream . BSL.toStrict $ result

@@ -19,15 +19,18 @@ type Detail_Download_GET
      :> "documents"
      :> Capture "docUuid" String
      :> "download"
+     :> QueryParam "Authorization" String
      :> Get '[ OctetStream] (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
 
 detail_download_GET ::
      Maybe String
   -> String
+  -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
-detail_download_GET mServerUrl docUuid =
-  runInUnauthService mServerUrl NoTransaction $ do
-    (doc, result) <- downloadDocument docUuid
-    let cdHeader = "attachment;filename=\"" ++ fromMaybe "export" (doc ^. fileName) ++ "\""
-    traceUuid <- asks _appContextTraceUuid
-    return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStream $ result
+detail_download_GET mServerUrl docUuid mTokenHeader =
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
+    runInMaybeAuthService NoTransaction $ do
+      (doc, result) <- downloadDocument docUuid
+      let cdHeader = "attachment;filename=\"" ++ fromMaybe "export" (doc ^. fileName) ++ "\""
+      traceUuid <- asks _appContextTraceUuid
+      return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStream $ result

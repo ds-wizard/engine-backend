@@ -104,6 +104,7 @@ deleteDocument docUuid =
 downloadDocument :: String -> AppContextM (Document, BS.ByteString)
 downloadDocument docUuid = do
   doc <- findDocumentById docUuid
+  checkViewPermissionToDoc (U.toString $ doc ^. questionnaireUuid)
   content <- getDocumentContent docUuid
   return (doc, content)
 
