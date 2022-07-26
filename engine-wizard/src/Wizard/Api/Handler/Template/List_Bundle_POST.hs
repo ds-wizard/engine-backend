@@ -35,5 +35,5 @@ list_bundle_POST mTokenHeader mServerUrl multipartData =
       case L.find (\file -> fdInputName file == "file") fs of
         Just file -> do
           let content = fdPayload file
-          importAndConvertTemplateBundle content
+          importAndConvertTemplateBundle content False
         Nothing -> throwError $ UserError _ERROR_VALIDATION__FILE_ABSENCE

@@ -1,7 +1,6 @@
 module Wizard.Service.PackageBundle.PackageBundleService
   ( exportPackageBundle
   , pullPackageBundleFromRegistry
-  , importPackageBundleFromFile
   , importAndConvertPackageBundle
   , importPackageBundle
   ) where
@@ -41,6 +40,7 @@ import Wizard.Service.Migration.Metamodel.MigratorService
 import qualified Wizard.Service.Package.PackageMapper as PM
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Package.PackageValidation
+import Wizard.Service.PackageBundle.PackageBundleAudit
 import Wizard.Util.Logger
 
 exportPackageBundle :: String -> AppContextM PackageBundleDTO
@@ -57,6 +57,7 @@ exportPackageBundle pbId = do
           , _packageBundleMetamodelVersion = kmMetamodelVersion
           , _packageBundlePackages = packages
           }
+  auditPackageBundleExport pbId
   return . toDTO $ pb
 
 pullPackageBundleFromRegistry :: String -> AppContextM ()
@@ -65,7 +66,7 @@ pullPackageBundleFromRegistry pkgId =
     checkPermission _PM_WRITE_PERM
     checkPackageLimit
     pb <- catchError (retrievePackageBundleById pkgId) handleError
-    _ <- importAndConvertPackageBundle pb
+    _ <- importAndConvertPackageBundle pb True
     return ()
   where
     handleError error =
@@ -73,11 +74,8 @@ pullPackageBundleFromRegistry pkgId =
         then throwError . UserError $ _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId
         else throwError error
 
-importPackageBundleFromFile :: BS.ByteString -> AppContextM [PackageSimpleDTO]
-importPackageBundleFromFile = importAndConvertPackageBundle
-
-importAndConvertPackageBundle :: BS.ByteString -> AppContextM [PackageSimpleDTO]
-importAndConvertPackageBundle contentS =
+importAndConvertPackageBundle :: BS.ByteString -> Bool -> AppContextM [PackageSimpleDTO]
+importAndConvertPackageBundle contentS fromRegistry =
   runInTransaction $ do
     checkPermission _PM_WRITE_PERM
     checkPackageLimit
@@ -85,7 +83,11 @@ importAndConvertPackageBundle contentS =
       Right content -> do
         encodedPb <- migratePackageBundle content
         case eitherDecode . encode $ encodedPb of
-          Right pb -> importPackageBundle pb
+          Right pb -> do
+            if fromRegistry
+              then auditPackageBundlePullFromRegistry (pb ^. bundleId)
+              else auditPackageBundleImportFromFile (pb ^. bundleId)
+            importPackageBundle pb
           Left error -> do
             logWarnU _CMP_SERVICE ("Couln't deserialize migrated PackageBundle content (" ++ show error ++ ")")
             throwError . UserError $ _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ

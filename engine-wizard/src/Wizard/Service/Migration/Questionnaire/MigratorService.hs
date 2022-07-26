@@ -18,6 +18,7 @@ import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Acl.AclService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
+import Wizard.Service.Migration.Questionnaire.MigratorAudit
 import Wizard.Service.Migration.Questionnaire.MigratorMapper
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireService
@@ -33,6 +34,7 @@ createQuestionnaireMigration oldQtnUuid reqDto =
     appUuid <- asks _appContextAppUuid
     let state = fromCreateDTO (oldQtn ^. uuid) (newQtn ^. uuid) appUuid
     insertMigratorState state
+    auditQuestionnaireMigrationCreate reqDto oldQtn newQtn
     getQuestionnaireMigration (U.toString $ newQtn ^. uuid)
 
 getQuestionnaireMigration :: String -> AppContextM MigratorStateDTO
@@ -54,6 +56,7 @@ modifyQuestionnaireMigration qtnUuid reqDto =
     state <- getQuestionnaireMigration qtnUuid
     let updatedState = fromChangeDTO reqDto state
     updateMigratorStateByNewQuestionnaireId updatedState
+    auditQuestionnaireMigrationModify state reqDto
     return $
       toDTO
         (state ^. oldQuestionnaire)
@@ -78,6 +81,7 @@ finishQuestionnaireMigration qtnUuid =
           oldQtn
     updateQuestionnaireById updatedQtn
     deleteQuestionnaire (U.toString $ newQtn ^. uuid) False
+    auditQuestionnaireMigrationFinish oldQtn newQtn
     return ()
 
 cancelQuestionnaireMigration :: String -> AppContextM ()
@@ -87,6 +91,7 @@ cancelQuestionnaireMigration qtnUuid =
     state <- getQuestionnaireMigration qtnUuid
     deleteQuestionnaire (U.toString $ state ^. newQuestionnaire . uuid) True
     deleteMigratorStateByNewQuestionnaireId qtnUuid
+    auditQuestionnaireMigrationCancel state
     return ()
 
 -- --------------------------------

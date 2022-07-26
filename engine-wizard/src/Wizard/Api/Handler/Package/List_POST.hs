@@ -25,4 +25,4 @@ list_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
 list_POST mTokenHeader mServerUrl reqBody =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< importAndConvertPackageBundle (BSL.pack reqBody)
+    runInAuthService Transactional $ addTraceUuidHeader =<< importAndConvertPackageBundle (BSL.pack reqBody) False

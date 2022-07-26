@@ -20,10 +20,12 @@ import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchData
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Acl.AclService
+import Wizard.Service.Branch.BranchAudit
 import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Branch.Collaboration.CollaborationService
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.KnowledgeModel.Squash.Squasher
+import Wizard.Service.Migration.KnowledgeModel.MigratorAudit
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Version.VersionMapper
 import Wizard.Service.Version.VersionValidation
@@ -38,6 +40,7 @@ publishPackage bUuid pkgVersion reqDto =
     case mMs of
       Just ms -> do
         deleteMigratorStateByBranchUuid (U.toString $ branch ^. uuid)
+        auditKmMigrationFinish bUuid
         doPublishPackage
           pkgVersion
           reqDto
@@ -49,6 +52,7 @@ publishPackage bUuid pkgVersion reqDto =
       Nothing -> do
         mMergeCheckpointPkgId <- getBranchForkOfPackageId branch
         mForkOfPkgId <- getBranchMergeCheckpointPackageId branch
+        auditBranchPublish branch branchData mForkOfPkgId
         doPublishPackage pkgVersion reqDto branch branchData (branchData ^. events) mForkOfPkgId mMergeCheckpointPkgId
 
 -- --------------------------------

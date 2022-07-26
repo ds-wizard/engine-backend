@@ -43,6 +43,14 @@ runDB action = do
     Just dbConnection -> liftIO $ action dbConnection
     Nothing -> liftIO $ withResource (context ^. dbPool') action
 
+runDBImmediately ::
+     (MonadReader s m, HasDbPool' s, HasDbConnection' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m)
+  => (Connection -> IO b)
+  -> m b
+runDBImmediately action = do
+  context <- ask
+  liftIO $ withResource (context ^. dbPool') action
+
 runRawDB ::
      (MonadReader s m, HasDbPool' s, HasDbConnection' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m)
   => (LibPQ.Connection -> IO b)
@@ -421,6 +429,26 @@ createInsertFn entityName entity = do
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
+
+createInsertWithoutTransactionFn ::
+     ( ToRow q
+     , MonadLogger m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasDbConnection' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , MonadIO m
+     )
+  => String
+  -> q
+  -> m Int64
+createInsertWithoutTransactionFn entityName entity = do
+  let sql = fromString $ f' "INSERT INTO %s VALUES (%s)" [entityName, generateQuestionMarks' entity]
+  let params = entity
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
+  runDBImmediately action
 
 createDeleteEntitiesFn ::
      ( MonadLogger m

@@ -45,6 +45,7 @@ import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Questionnaire.QuestionnaireService
+import Wizard.Service.User.UserAudit
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
 
@@ -77,7 +78,9 @@ createUserByAdminWithUuid reqDto uUuid appUuid clientUrl shouldSendRegistrationE
     appConfig <- getAppConfig
     let uRole = fromMaybe (appConfig ^. authentication . defaultRole) (reqDto ^. role)
     let uPermissions = getPermissionForRole serverConfig uRole
-    createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl shouldSendRegistrationEmail
+    userDto <- createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl shouldSendRegistrationEmail
+    auditUserCreateByAdmin userDto
+    return userDto
 
 registerUser :: UserCreateDTO -> AppContextM UserDTO
 registerUser reqDto =
