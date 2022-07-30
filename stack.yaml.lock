@@ -12,20 +12,6 @@ packages:
   original:
     hackage: pwstore-fast-2.4.4
 - completed:
-    hackage: pretty-terminal-0.1.0.0@sha256:e9135d86ebb2a8e3aaf5a79088de4628dbd49988388e0fbfc26c5ecb3c399ad9,1638
-    pantry-tree:
-      size: 385
-      sha256: fecec01e618890c284e57cb873b8f9531f479562b7cf08497aef097da3ef90ec
-  original:
-    hackage: pretty-terminal-0.1.0.0
-- completed:
-    hackage: cron-0.7.0@sha256:2a9e5637d4ebfd8db34444d340be8bd7f1968aa8b1078cc0bc7bef47a8b5af8e,3878
-    pantry-tree:
-      size: 1680
-      sha256: bcc8ad18105b96d09caf8bb6fcbe09d69145d8486cc7c67ecafb7524a47f047f
-  original:
-    hackage: cron-0.7.0
-- completed:
     hackage: ginger-0.10.0.5@sha256:b36f68c19186911b71b6e26f88fe2ceaa87c291321d76e7882b16594c6a7b2fb,3767
     pantry-tree:
       size: 1430
@@ -89,24 +75,6 @@ packages:
   original:
     hackage: oidc-client-0.5.0.0
 - completed:
-    hackage: HaskellNet-SSL-0.3.4.1@sha256:3ca14dd69460a380cf69aed40654fb10c4c03e344632b6a9986568c87feda157,1843
-    pantry-tree:
-      size: 577
-      sha256: 33fbfd0d8bbaa689f0169d442861dafcdcd4fe795a4b42aa0bedbfa41aa65b23
-  original:
-    hackage: HaskellNet-SSL-0.3.4.1
-- completed:
-    size: 55439
-    url: https://github.com/jtdaugherty/HaskellNet/archive/5aa1f3b.tar.gz
-    name: HaskellNet
-    version: 0.5.1
-    sha256: 84a2fec1b8e2e69568484854a4baa52e7a267059ad60389929e71b4b309dadbd
-    pantry-tree:
-      size: 4011
-      sha256: 921b437ef18ccb04f889301c407263d6b5b72c5864803a000b1e61328988ce70
-  original:
-    url: https://github.com/jtdaugherty/HaskellNet/archive/5aa1f3b.tar.gz
-- completed:
     hackage: network-2.8.0.1@sha256:0f165dffa752d8cde30c2bde86f80609c4f1dc5eeb3182d593041f97839c5b3b,3011
     pantry-tree:
       size: 2488
@@ -136,7 +104,7 @@ packages:
     hackage: rdf4h-5.0.1
 snapshots:
 - completed:
-    size: 585817
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/5.yaml
-    sha256: 22d24d0dacad9c1450b9a174c28d203f9bb482a2a8da9710a2f2a9f4afee2887
-  original: lts-18.5
+    size: 590100
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/28.yaml
+    sha256: 428ec8d5ce932190d3cbe266b9eb3c175cd81e984babf876b64019e2cbe4ea68
+  original: lts-18.28
