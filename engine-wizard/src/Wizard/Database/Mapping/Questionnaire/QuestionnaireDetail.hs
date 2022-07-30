@@ -1,5 +1,6 @@
 module Wizard.Database.Mapping.Questionnaire.QuestionnaireDetail where
 
+import qualified Data.List as L
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromField
@@ -40,7 +41,7 @@ instance FromRow QuestionnaireDetail where
     mPermissions <- fieldWith (optionalField fromField)
     let _questionnaireDetailPermissions =
           case mPermissions of
-            Just permissions -> fmap (parsePermission _questionnaireDetailUuid) . fromPGArray $ permissions
+            Just permissions -> L.sort . fmap (parsePermission _questionnaireDetailUuid) . fromPGArray $ permissions
             Nothing -> []
     return $ QuestionnaireDetail {..}
     where

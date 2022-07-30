@@ -13,3 +13,6 @@ data QuestionnairePermRecordDTO =
     , _questionnairePermRecordDTOPerms :: [String]
     }
   deriving (Generic, Eq, Show)
+
+instance Ord QuestionnairePermRecordDTO where
+  compare a b = compare (_questionnairePermRecordDTOUuid a) (_questionnairePermRecordDTOUuid b)
