@@ -18,6 +18,9 @@ type List_GET
      :> Header "x-user-count" String
      :> Header "x-pkg-count" String
      :> Header "x-qtn-count" String
+     :> Header "x-branch-count" String
+     :> Header "x-doc-count" String
+     :> Header "x-tml-count" String
      :> "packages"
      :> QueryParam "organizationId" String
      :> QueryParam "kmId" String
@@ -33,8 +36,11 @@ list_GET ::
   -> Maybe String
   -> Maybe String
   -> Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
-list_GET mTokenHeader xUserCountHeaderValue xPkgCountHeaderValue xQtnCountHeaderValue organizationId kmId =
+list_GET mTokenHeader xUserCountHeaderValue xPkgCountHeaderValue xQtnCountHeaderValue xBranchCountHeaderValue xDocCountHeaderValue xTmlCountHeaderValue organizationId kmId =
   getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
     runInMaybeAuthService Transactional $
     addTraceUuidHeader =<< do
@@ -44,5 +50,8 @@ list_GET mTokenHeader xUserCountHeaderValue xPkgCountHeaderValue xQtnCountHeader
               [ (,) xUserCountHeaderName <$> xUserCountHeaderValue
               , (,) xPkgCountHeaderName <$> xPkgCountHeaderValue
               , (,) xQtnCountHeaderName <$> xQtnCountHeaderValue
+              , (,) xBranchCountHeaderName <$> xBranchCountHeaderValue
+              , (,) xDocCountHeaderName <$> xDocCountHeaderValue
+              , (,) xTmlCountHeaderName <$> xTmlCountHeaderValue
               ]
       getSimplePackagesFiltered queryParams headers

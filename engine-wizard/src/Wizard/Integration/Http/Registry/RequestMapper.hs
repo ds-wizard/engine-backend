@@ -56,6 +56,9 @@ toRetrievePackagesRequest appConfig iStat =
     xUserCountHeaderName
     xPkgCountHeaderName
     xQtnCountHeaderName
+    xBranchCountHeaderName
+    xDocCountHeaderName
+    xTmlCountHeaderName
     organizationId
     kmId
   where
@@ -63,6 +66,9 @@ toRetrievePackagesRequest appConfig iStat =
     xUserCountHeaderName = Just . show $ iStat ^. userCount
     xPkgCountHeaderName = Just . show $ iStat ^. pkgCount
     xQtnCountHeaderName = Just . show $ iStat ^. qtnCount
+    xBranchCountHeaderName = Just . show $ iStat ^. branchCount
+    xDocCountHeaderName = Just . show $ iStat ^. docCount
+    xTmlCountHeaderName = Just . show $ iStat ^. tmlCount
     organizationId = Nothing
     kmId = Nothing
 
