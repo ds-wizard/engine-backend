@@ -21,11 +21,14 @@ import Shared.Service.Package.PackageUtil
 import Shared.Util.List
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentListDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireHistoryDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelListDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
@@ -234,6 +237,29 @@ getQuestionnaireDetailById qtnUuid = do
       eventsDto
       versionDto
       (fmap (^. newQuestionnaireUuid) . headSafe $ migrations)
+
+getQuestionnaireCommentsForQtnUuid :: String -> AppContextM QuestionnaireCommentListDTO
+getQuestionnaireCommentsForQtnUuid qtnUuid = do
+  qtn <- findQuestionnaireById qtnUuid
+  checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
+  qtnCtn <- compileQuestionnaire qtn
+  filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
+  return . toCommentListDTO $ filteredCommentThreadsMap
+
+getQuestionnaireLabelsForQtnUuid :: String -> AppContextM QuestionnaireLabelListDTO
+getQuestionnaireLabelsForQtnUuid qtnUuid = do
+  qtn <- findQuestionnaireById qtnUuid
+  checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
+  qtnCtn <- compileQuestionnaire qtn
+  return . toLabelListDTO $ qtnCtn ^. labels
+
+getQuestionnaireHistoryForQtnUuid :: String -> AppContextM QuestionnaireHistoryDTO
+getQuestionnaireHistoryForQtnUuid qtnUuid = do
+  qtn <- findQuestionnaireById qtnUuid
+  checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
+  eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
+  versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
+  return $ toHistoryDTO eventsDto versionDto
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto =
