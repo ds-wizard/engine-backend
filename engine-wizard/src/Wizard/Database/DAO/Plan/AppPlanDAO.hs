@@ -39,7 +39,7 @@ updateAppPlanById app = do
   let sql =
         fromString
           "UPDATE app_plan SET uuid = ?, name = ?, users = ?, since = ?, until = ?, test = ?, app_uuid = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
-  let params = toRow app ++ [toField $ updatedApp ^. uuid]
+  let params = toRow updatedApp ++ [toField $ updatedApp ^. uuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
