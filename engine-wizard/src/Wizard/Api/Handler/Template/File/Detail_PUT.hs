@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Template.File.Detail_PUT where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateJM ()
 import Wizard.Api.Handler.Common
@@ -30,4 +31,4 @@ detail_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateFile)
 detail_PUT mTokenHeader mServerUrl reqDto tmlId fileUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< modifyTemplateFile fileUuid reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< modifyTemplateFile fileUuid reqDto

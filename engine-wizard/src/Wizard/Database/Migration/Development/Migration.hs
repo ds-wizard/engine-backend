@@ -9,6 +9,8 @@ import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigrat
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Wizard.Database.Migration.Development.App.AppMigration as A
 import qualified Wizard.Database.Migration.Development.App.AppSchemaMigration as A_Schema
+import qualified Wizard.Database.Migration.Development.Audit.AuditMigration as ADT
+import qualified Wizard.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
@@ -45,6 +47,7 @@ import Wizard.Util.Logger
 runMigration = do
   logInfo _CMP_MIGRATION "started"
   -- 1. Drop schema
+  ADT_Schema.dropTables
   PF_Schema.dropTables
   PC_Schema.dropTables
   SUB_Schema.dropTables
@@ -84,6 +87,7 @@ runMigration = do
   SUB_Schema.createTables
   PC_Schema.createTables
   PF_Schema.createTables
+  ADT_Schema.createTables
   -- 3. Load S3 fixtures
   TML.runS3Migration
   -- 4. Load fixtures
@@ -105,5 +109,6 @@ runMigration = do
   ACK.runMigration
   PC.runMigration
   PF.runMigration
+  ADT.runMigration
   logInfo _CMP_MIGRATION "ended"
   return Nothing

@@ -5,6 +5,7 @@ import Servant
 
 import Shared.Api.Handler.Common
 import Shared.Api.Resource.Template.TemplateSuggestionDTO
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Template.TemplateService
@@ -26,7 +27,7 @@ list_all_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TemplateSuggestionDTO])
 list_all_GET mTokenHeader mServerUrl mOrganizationId mTmlId =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService NoTransaction $
     addTraceUuidHeader =<< do
       let queryParams = catMaybes [(,) "organization_id" <$> mOrganizationId, (,) "template_id" <$> mTmlId]
       getTemplatesDto queryParams

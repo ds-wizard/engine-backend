@@ -17,7 +17,6 @@ import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Api.Resource.Websocket.QuestionnaireActionJM ()
 import Wizard.Api.Resource.Websocket.WebsocketActionJM ()
-import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -34,34 +33,30 @@ import Wizard.Service.Websocket.WebsocketService
 import Wizard.Util.Websocket
 
 putUserOnline :: String -> U.UUID -> Connection -> AppContextM ()
-putUserOnline qtnUuid connectionUuid connection =
-  runInTransaction $ do
-    myself <- createQuestionnaireRecord connectionUuid connection qtnUuid
-    checkViewPermission myself
-    addToCache myself
-    logWS connectionUuid "New user added to the list"
-    setUserList qtnUuid connectionUuid
+putUserOnline qtnUuid connectionUuid connection = do
+  myself <- createQuestionnaireRecord connectionUuid connection qtnUuid
+  checkViewPermission myself
+  addToCache myself
+  logWS connectionUuid "New user added to the list"
+  setUserList qtnUuid connectionUuid
 
 deleteUser :: String -> U.UUID -> AppContextM ()
-deleteUser qtnUuid connectionUuid =
-  runInTransaction $ do
-    deleteFromCache connectionUuid
-    setUserList qtnUuid connectionUuid
+deleteUser qtnUuid connectionUuid = do
+  deleteFromCache connectionUuid
+  setUserList qtnUuid connectionUuid
 
 setUserList :: String -> U.UUID -> AppContextM ()
-setUserList qtnUuid connectionUuid =
-  runInTransaction $ do
-    logWS connectionUuid "Informing other users about user list changes"
-    records <- getAllFromCache
-    broadcast qtnUuid records (toSetUserListMessage records) disconnectUser
-    logWS connectionUuid "Informed completed"
+setUserList qtnUuid connectionUuid = do
+  logWS connectionUuid "Informing other users about user list changes"
+  records <- getAllFromCache
+  broadcast qtnUuid records (toSetUserListMessage records) disconnectUser
+  logWS connectionUuid "Informed completed"
 
 updatePermsForOnlineUsers ::
      String -> QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM ()
-updatePermsForOnlineUsers qtnUuid visibility sharing permissions =
-  runInTransaction $ do
-    records <- getAllFromCache
-    traverse_ updatePerm records
+updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
+  records <- getAllFromCache
+  traverse_ updatePerm records
   where
     updatePerm :: WebsocketRecord -> AppContextM ()
     updatePerm record =
@@ -81,11 +76,10 @@ updatePermsForOnlineUsers qtnUuid visibility sharing permissions =
             disconnectUserIfLostPermission updatedRecord)
 
 logOutOnlineUsersWhenQtnDramaticallyChanged :: String -> AppContextM ()
-logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid =
-  runInTransaction $ do
-    records <- getAllFromCache
-    let error = NotExistsError $ _ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT qtnUuid
-    traverse_ (logOut error) records
+logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid = do
+  records <- getAllFromCache
+  let error = NotExistsError $ _ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT qtnUuid
+  traverse_ (logOut error) records
   where
     logOut :: AppError -> WebsocketRecord -> AppContextM ()
     logOut error record =
@@ -96,7 +90,6 @@ logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid =
 -- --------------------------------
 setContent :: String -> U.UUID -> QuestionnaireEventChangeDTO -> AppContextM ()
 setContent qtnUuid connectionUuid reqDto =
-  runInTransaction $
   case reqDto of
     SetReplyEventChangeDTO' event -> setReply qtnUuid connectionUuid event
     ClearReplyEventChangeDTO' event -> clearReply qtnUuid connectionUuid event
@@ -255,19 +248,18 @@ disconnectUserIfLostPermission record = catchError (checkViewPermission record) 
     handleError = sendError (record ^. connectionUuid) (record ^. connection) (record ^. entityId) disconnectUser
 
 createQuestionnaireRecord :: U.UUID -> Connection -> String -> AppContextM WebsocketRecord
-createQuestionnaireRecord connectionUuid connection qtnUuid =
-  runInTransaction $ do
-    mCurrentUser <- asks _appContextCurrentUser
-    qtn <- findQuestionnaireById qtnUuid
-    let permission =
-          getPermission
-            (qtn ^. visibility)
-            (qtn ^. sharing)
-            (qtn ^. permissions)
-            (mCurrentUser ^? _Just . uuid)
-            (mCurrentUser ^? _Just . role)
-            (mCurrentUser ^? _Just . groups)
-    createRecord connectionUuid connection qtnUuid permission
+createQuestionnaireRecord connectionUuid connection qtnUuid = do
+  mCurrentUser <- asks _appContextCurrentUser
+  qtn <- findQuestionnaireById qtnUuid
+  let permission =
+        getPermission
+          (qtn ^. visibility)
+          (qtn ^. sharing)
+          (qtn ^. permissions)
+          (mCurrentUser ^? _Just . uuid)
+          (mCurrentUser ^? _Just . role)
+          (mCurrentUser ^? _Just . groups)
+  createRecord connectionUuid connection qtnUuid permission
 
 getMaybeCreatedBy :: WebsocketRecord -> Maybe UserSuggestionDTO
 getMaybeCreatedBy myself =

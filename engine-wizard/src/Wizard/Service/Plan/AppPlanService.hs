@@ -21,6 +21,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Plan.AppPlan
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Plan.AppPlanMapper
 
 getPlansForCurrentApp :: AppContextM [AppPlan]
@@ -71,12 +72,14 @@ recomputePlansForApp app = do
   -- Recompute active flag
   let active = isJust mActivePlan
   when (app ^. enabled /= active) (void $ updateAppById (app & enabled .~ active))
-  -- Recompute features
+  -- Recompute features & limits
   case mActivePlan of
     Just activePlan -> do
       appConfig <- getAppConfigByUuid (app ^. uuid)
       let updatedAppConfig = turnTestPlanFeature (activePlan ^. test) appConfig
       when (appConfig ^. feature /= updatedAppConfig ^. feature) (void $ modifyAppConfig updatedAppConfig)
+      recomputeAppLimit (activePlan ^. users)
+      return ()
     Nothing -> return ()
 
 -- --------------------------------

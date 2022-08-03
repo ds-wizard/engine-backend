@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Migration.Questionnaire.List_Current_Completion_POST w
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Migration.Questionnaire.MigratorService
@@ -21,7 +22,7 @@ list_current_completion_POST ::
      Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 list_current_completion_POST mTokenHeader mServerUrl qtnUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService Transactional $
     addTraceUuidHeader =<< do
       finishQuestionnaireMigration qtnUuid
       return NoContent

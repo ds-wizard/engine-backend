@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Template.Detail_GET where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateDetailJM ()
@@ -20,4 +21,4 @@ detail_GET ::
      Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateDetailDTO)
 detail_GET mTokenHeader mServerUrl tmlId =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
-    runInMaybeAuthService $ addTraceUuidHeader =<< getTemplateByUuidDto tmlId
+    runInMaybeAuthService NoTransaction $ addTraceUuidHeader =<< getTemplateByUuidDto tmlId

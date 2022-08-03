@@ -1,4 +1,4 @@
-resolver: lts-18.5
+resolver: lts-18.28
 
 packages:
 - engine-registry
@@ -9,8 +9,6 @@ packages:
 extra-deps:
   - vendor/postgresql-migration
   - pwstore-fast-2.4.4
-  - pretty-terminal-0.1.0.0
-  - cron-0.7.0
   - ginger-0.10.0.5
   - text-replace-0.0.0.4
   - servant-errors-0.1.3.1
@@ -20,10 +18,6 @@ extra-deps:
   - servant-websockets-2.0.0
   - fsutils-0.1.2
   - oidc-client-0.5.0.0
-  # Hack for mail
-  - HaskellNet-SSL-0.3.4.1
-  - github: jtdaugherty/HaskellNet
-    commit: "5aa1f3b"
   - network-2.8.0.1
   - network-bsd-2.8.0.0
   - raven-haskell-0.1.4.0

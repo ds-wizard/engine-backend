@@ -3,6 +3,7 @@ module Wizard.Api.Handler.PersistentCommand.Detail_Attempts_POST where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailJM ()
@@ -24,4 +25,4 @@ detail_attempts_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] PersistentCommandDetailDTO)
 detail_attempts_POST mTokenHeader mServerUrl uuid =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< runPersistentCommandById uuid
+    runInAuthService Transactional $ addTraceUuidHeader =<< runPersistentCommandById uuid

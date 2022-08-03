@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Config.List_App_PUT where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Api.Resource.Config.AppConfigJM ()
@@ -25,4 +26,4 @@ list_app_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppConfig)
 list_app_PUT mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< modifyAppConfigDto reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< modifyAppConfigDto reqDto

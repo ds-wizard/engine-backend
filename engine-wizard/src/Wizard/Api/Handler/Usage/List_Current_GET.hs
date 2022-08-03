@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Usage.List_Current_GET where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Usage.UsageDTO
 import Wizard.Api.Resource.Usage.UsageJM ()
@@ -18,4 +19,4 @@ type List_Current_GET
 list_current_GET :: Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UsageDTO)
 list_current_GET mTokenHeader mServerUrl =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getUsageForCurrentApp
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getUsageForCurrentApp

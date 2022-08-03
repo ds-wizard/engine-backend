@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Version.Detail_Version_Detail_PUT where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
@@ -30,4 +31,4 @@ detail_version_detail_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] PackageSimpleDTO)
 detail_version_detail_PUT mTokenHeader mServerUrl reqDto bUuid version =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< publishPackage bUuid version reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< publishPackage bUuid version reqDto

@@ -110,17 +110,9 @@ defaultPrivacyAndSupport =
 defaultDashboard :: AppConfigDashboard
 defaultDashboard =
   AppConfigDashboard
-    { _appConfigDashboardWidgets = Just defaultDashboardWidgets
+    { _appConfigDashboardDashboardType = WelcomeDashboardType
     , _appConfigDashboardWelcomeWarning = Nothing
     , _appConfigDashboardWelcomeInfo = Nothing
-    }
-
-defaultDashboardWidgets :: AppConfigDashboardWidgets
-defaultDashboardWidgets =
-  AppConfigDashboardWidgets
-    { _appConfigDashboardWidgetsAdmin = ["Welcome"]
-    , _appConfigDashboardWidgetsDataSteward = ["Welcome"]
-    , _appConfigDashboardWidgetsResearcher = ["Welcome"]
     }
 
 defaultLookAndFeel :: AppConfigLookAndFeel

@@ -201,7 +201,7 @@ makeFields ''AppConfigPrivacyAndSupport
 
 makeFields ''AppConfigDashboard
 
-makeFields ''AppConfigDashboardWidgets
+makeFields ''AppConfigDashboardDashboardType
 
 makeFields ''AppConfigLookAndFeel
 

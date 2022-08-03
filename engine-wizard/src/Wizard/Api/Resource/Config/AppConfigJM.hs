@@ -75,11 +75,9 @@ instance FromJSON AppConfigDashboard where
 instance ToJSON AppConfigDashboard where
   toJSON = simpleToJSON "_appConfigDashboard"
 
-instance FromJSON AppConfigDashboardWidgets where
-  parseJSON = simpleParseJSON "_appConfigDashboardWidgets"
+instance FromJSON AppConfigDashboardDashboardType
 
-instance ToJSON AppConfigDashboardWidgets where
-  toJSON = simpleToJSON "_appConfigDashboardWidgets"
+instance ToJSON AppConfigDashboardDashboardType
 
 instance FromJSON AppConfigLookAndFeel where
   parseJSON = simpleParseJSON "_appConfigLookAndFeel"

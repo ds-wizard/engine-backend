@@ -4,6 +4,7 @@ import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Plan.AppPlanChangeDTO
 import Wizard.Api.Resource.Plan.AppPlanChangeJM ()
@@ -29,4 +30,4 @@ list_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppPlan)
 list_POST mTokenHeader mServerUrl reqDto appUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< createPlan appUuid reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< createPlan appUuid reqDto

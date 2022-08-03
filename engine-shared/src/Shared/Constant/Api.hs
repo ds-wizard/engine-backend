@@ -18,5 +18,14 @@ xPkgCountHeaderName = "x-pkg-count"
 xQtnCountHeaderName :: String
 xQtnCountHeaderName = "x-qtn-count"
 
+xBranchCountHeaderName :: String
+xBranchCountHeaderName = "x-branch-count"
+
+xDocCountHeaderName :: String
+xDocCountHeaderName = "x-doc-count"
+
+xTmlCountHeaderName :: String
+xTmlCountHeaderName = "x-tml-count"
+
 contentTypeHeaderJSON :: (HeaderName, BS.ByteString)
 contentTypeHeaderJSON = ("Content-Type", "application/json")

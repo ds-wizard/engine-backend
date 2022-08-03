@@ -43,6 +43,9 @@ reqStatisticsHeader =
   [ (CI.mk . BS.pack $ xUserCountHeaderName, BS.pack . show $ iStat ^. userCount)
   , (CI.mk . BS.pack $ xPkgCountHeaderName, BS.pack . show $ iStat ^. pkgCount)
   , (CI.mk . BS.pack $ xQtnCountHeaderName, BS.pack . show $ iStat ^. qtnCount)
+  , (CI.mk . BS.pack $ xBranchCountHeaderName, BS.pack . show $ iStat ^. branchCount)
+  , (CI.mk . BS.pack $ xDocCountHeaderName, BS.pack . show $ iStat ^. docCount)
+  , (CI.mk . BS.pack $ xTmlCountHeaderName, BS.pack . show $ iStat ^. tmlCount)
   ]
 
 -- ----------------------------------------------------

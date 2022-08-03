@@ -5,6 +5,7 @@ import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
@@ -15,15 +16,18 @@ type Detail_Bundle_GET
      :> "templates"
      :> Capture "templateId" String
      :> "bundle"
+     :> QueryParam "Authorization" String
      :> Get '[ OctetStream] (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStreamLazy)
 
 detail_bundle_GET ::
      Maybe String
   -> String
+  -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStreamLazy)
-detail_bundle_GET mServerUrl tmlId =
-  runInUnauthService mServerUrl $ do
-    zipFile <- exportTemplateBundle tmlId
-    let cdHeader = "attachment;filename=\"template.zip\""
-    traceUuid <- asks _appContextTraceUuid
-    return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStreamLazy $ zipFile
+detail_bundle_GET mServerUrl tmlId mTokenHeader =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
+    runInAuthService NoTransaction $ do
+      zipFile <- exportTemplateBundle tmlId
+      let cdHeader = "attachment;filename=\"template.zip\""
+      traceUuid <- asks _appContextTraceUuid
+      return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStreamLazy $ zipFile

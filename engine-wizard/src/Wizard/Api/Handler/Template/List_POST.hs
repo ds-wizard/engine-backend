@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Template.List_POST where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateJM ()
 import Wizard.Api.Handler.Common
@@ -25,4 +26,4 @@ list_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] Template)
 list_POST mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< createTemplate reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< createTemplate reqDto

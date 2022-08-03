@@ -16,7 +16,7 @@ import Wizard.Service.Dev.DevOperationDefinitions
 getDevOperations :: AppContextM [DevSection]
 getDevOperations = do
   checkPermission _DEV_PERM
-  return [branch, cache, config, feedback, questionnaire]
+  return [branch, cache, config, feedback, persistentCommand, questionnaire]
 
 executeOperation :: DevExecutionDTO -> AppContextM AdminExecutionResultDTO
 executeOperation reqDto = do
@@ -34,6 +34,8 @@ execute reqDto
   | action reqDto config config_switchClientCustomizationOn = config_switchClientCustomizationOnFn reqDto
   | action reqDto config config_switchClientCustomizationOff = config_switchClientCustomizationOffFn reqDto
   | action reqDto feedback feedback_synchronizeFeedbacks = feedback_synchronizeFeedbacksFn reqDto
+  | action reqDto persistentCommand persistentCommand_runAll = persistentCommand_runAllFn reqDto
+  | action reqDto persistentCommand persistentCommand_run = persistentCommand_runFn reqDto
   | action reqDto questionnaire questionnaire_squashAllEvents = questionnaire_squashAllEventsFn reqDto
   | action reqDto questionnaire questionnaire_squashEventsForQuestionnaire =
     questionnaire_squashEventsForQuestionnaireFn reqDto

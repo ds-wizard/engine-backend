@@ -5,6 +5,7 @@ import Servant
 import Shared.Api.Handler.Common
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
+import Shared.Model.Context.TransactionState
 import Shared.Util.String (splitOn)
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
@@ -32,7 +33,7 @@ list_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page PersistentCommandDTO))
 list_GET mTokenHeader mServerUrl mStatesL mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService NoTransaction $
     addTraceUuidHeader =<< do
       let states =
             case mStatesL of

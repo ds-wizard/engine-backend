@@ -11,6 +11,7 @@ import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Package.PackageAudit
 
 validateIsVersionHigher :: String -> String -> AppContextM ()
 validateIsVersionHigher newVersion oldVersion =
@@ -48,9 +49,10 @@ validatePackagesDeletation pkgIds = forM_ pkgIds validateOnePackage
       pkgs <- findPackagesByForkOfPackageId pkgId
       case pkgs of
         [] -> return ()
-        _ ->
+        _ -> do
+          auditPackageFailedToDeleteDueParentPackages pkgId pkgs
           throwError . UserError $
-          _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
+            _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
 
 validatePackageDeletation :: String -> AppContextM ()
 validatePackageDeletation pkgId = do
@@ -65,27 +67,31 @@ validatePackageDeletation pkgId = do
           pkgs <- findPackagesByForkOfPackageId pkgId
           case pkgs of
             [] -> return ()
-            _ ->
+            _ -> do
+              auditPackageFailedToDeleteDueParentPackages pkgId pkgs
               throwError . UserError $
-              _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
-        _ ->
+                _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
+        _ -> do
+          auditPackageFailedToDeleteDuePreviousPackages pkgId pkgs
           throwError . UserError $
-          _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
+            _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
 
 validateUsageBySomeBranch :: String -> AppContextM ()
 validateUsageBySomeBranch pkgId = do
   branches <- findBranchesByPreviousPackageId pkgId
   case branches of
     [] -> return ()
-    _ ->
+    _ -> do
+      auditPackageFailedToDeleteDueBranches pkgId branches
       throwError . UserError $
-      _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "knowledge model"
+        _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "knowledge model"
 
 validateUsageBySomeQuestionnaire :: String -> AppContextM ()
 validateUsageBySomeQuestionnaire pkgId = do
   questionnaires <- findQuestionnairesByPackageId pkgId
   case questionnaires of
     [] -> return ()
-    _ ->
+    _ -> do
+      auditPackageFailedToDeleteDueQuestionnaires pkgId questionnaires
       throwError . UserError $
-      _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "questionnaire"
+        _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "questionnaire"

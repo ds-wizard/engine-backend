@@ -26,15 +26,16 @@ import Wizard.S3.Template.TemplateS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Template.TemplateValidation
+import Wizard.Service.TemplateBundle.TemplateBundleAudit
 
 exportTemplateBundle :: String -> AppContextM BSL.ByteString
-exportTemplateBundle tmlId =
-  runInTransaction $ do
-    template <- findTemplateById tmlId
-    files <- findTemplateFilesByTemplateId tmlId
-    assets <- findTemplateAssetsByTemplateId tmlId
-    assetContents <- traverse (findAsset (template ^. tId)) assets
-    return $ toTemplateArchive (toTemplateBundle template files assets) assetContents
+exportTemplateBundle tmlId = do
+  template <- findTemplateById tmlId
+  files <- findTemplateFilesByTemplateId tmlId
+  assets <- findTemplateAssetsByTemplateId tmlId
+  assetContents <- traverse (findAsset (template ^. tId)) assets
+  auditTemplateBundleExport tmlId
+  return $ toTemplateArchive (toTemplateBundle template files assets) assetContents
 
 pullTemplateBundleFromRegistry :: String -> AppContextM ()
 pullTemplateBundleFromRegistry tmlId =
@@ -42,7 +43,7 @@ pullTemplateBundleFromRegistry tmlId =
     checkPermission _TML_PERM
     checkTemplateLimit
     tb <- catchError (retrieveTemplateBundleById tmlId) handleError
-    _ <- importAndConvertTemplateBundle tb
+    _ <- importAndConvertTemplateBundle tb True
     return ()
   where
     handleError error =
@@ -50,8 +51,8 @@ pullTemplateBundleFromRegistry tmlId =
         then throwError . UserError $ _ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId
         else throwError error
 
-importAndConvertTemplateBundle :: BSL.ByteString -> AppContextM TemplateBundleDTO
-importAndConvertTemplateBundle contentS =
+importAndConvertTemplateBundle :: BSL.ByteString -> Bool -> AppContextM TemplateBundleDTO
+importAndConvertTemplateBundle contentS fromRegistry =
   case fromTemplateArchive contentS of
     Right (bundle, assetContents) -> do
       checkTemplateLimit
@@ -68,6 +69,9 @@ importAndConvertTemplateBundle contentS =
         (\(assetDto, content) ->
            insertTemplateAsset $ fromAssetDTO (template ^. tId) (fromIntegral . BS.length $ content) appUuid assetDto)
         assetContents
+      if fromRegistry
+        then auditTemplateBundlePullFromRegistry (template ^. tId)
+        else auditTemplateBundleImportFromFile (template ^. tId)
       return bundle
     Left error -> throwError error
 

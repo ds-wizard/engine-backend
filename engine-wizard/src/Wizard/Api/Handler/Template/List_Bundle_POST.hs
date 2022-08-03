@@ -8,6 +8,7 @@ import Shared.Api.Handler.Common
 import Shared.Api.Resource.TemplateBundle.TemplateBundleDTO
 import Shared.Api.Resource.TemplateBundle.TemplateBundleJM ()
 import Shared.Localization.Messages.Public
+import Shared.Model.Context.TransactionState
 import Shared.Model.Error.Error
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
@@ -28,11 +29,11 @@ list_bundle_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateBundleDTO)
 list_bundle_POST mTokenHeader mServerUrl multipartData =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService Transactional $
     addTraceUuidHeader =<< do
       let fs = files multipartData
       case L.find (\file -> fdInputName file == "file") fs of
         Just file -> do
           let content = fdPayload file
-          importAndConvertTemplateBundle content
+          importAndConvertTemplateBundle content False
         Nothing -> throwError $ UserError _ERROR_VALIDATION__FILE_ABSENCE

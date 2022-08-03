@@ -11,6 +11,7 @@ import Registry.Model.Context.BaseContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.Service.Organization.OrganizationService
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 
 type List_POST
    = ReqBody '[ SafeJSON] OrganizationCreateDTO
@@ -23,4 +24,5 @@ list_POST_Api = Proxy
 
 list_POST ::
      OrganizationCreateDTO -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
-list_POST reqDto mCallbackUrl = runInUnauthService $ addTraceUuidHeader =<< createOrganization reqDto mCallbackUrl
+list_POST reqDto mCallbackUrl =
+  runInUnauthService Transactional $ addTraceUuidHeader =<< createOrganization reqDto mCallbackUrl

@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Branch.Detail_GET where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.Branch.BranchDetailJM ()
@@ -20,4 +21,4 @@ detail_GET ::
      Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] BranchDetailDTO)
 detail_GET mTokenHeader mServerUrl bUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getBranchById bUuid
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getBranchById bUuid

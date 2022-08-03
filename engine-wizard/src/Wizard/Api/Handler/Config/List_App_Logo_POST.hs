@@ -7,6 +7,7 @@ import Servant.Multipart
 
 import Shared.Api.Handler.Common
 import Shared.Localization.Messages.Public
+import Shared.Model.Context.TransactionState
 import Shared.Model.Error.Error
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
@@ -28,7 +29,7 @@ list_app_logo_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 list_app_logo_POST mTokenHeader mServerUrl multipartData =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService Transactional $
     addTraceUuidHeader =<< do
       let fs = files multipartData
       case L.find (\file -> fdInputName file == "file") fs of

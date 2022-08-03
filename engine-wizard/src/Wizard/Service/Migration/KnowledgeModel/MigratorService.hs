@@ -25,29 +25,28 @@ import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Branch.Collaboration.CollaborationService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.KnowledgeModel.Migrator.Migrator
+import Wizard.Service.Migration.KnowledgeModel.MigratorAudit
 import Wizard.Service.Migration.KnowledgeModel.MigratorMapper
 import Wizard.Service.Migration.KnowledgeModel.MigratorValidation
 import Wizard.Service.Package.PackageService
 
 getCurrentMigrationDto :: String -> AppContextM MigratorStateDTO
-getCurrentMigrationDto branchUuid =
-  runInTransaction $ do
-    checkPermission _KM_UPGRADE_PERM
-    ms <- getCurrentMigration branchUuid
-    branch <- findBranchById branchUuid
-    return $ toDTO ms branch
+getCurrentMigrationDto branchUuid = do
+  checkPermission _KM_UPGRADE_PERM
+  ms <- getCurrentMigration branchUuid
+  branch <- findBranchById branchUuid
+  return $ toDTO ms branch
 
 getCurrentMigration :: String -> AppContextM MigratorState
-getCurrentMigration branchUuid =
-  runInTransaction $ do
-    ms <- findMigratorStateByBranchUuid branchUuid
-    knowledgeModel <- compileKnowledgeModel (ms ^. resultEvents) (Just $ ms ^. branchPreviousPackageId) []
-    let stateWithEvent =
-          case ms ^. migrationState of
-            (ConflictState (CorrectorConflict Nothing)) ->
-              ConflictState . CorrectorConflict . Just . head $ ms ^. targetPackageEvents
-            state -> state
-    return . (currentKnowledgeModel ?~ knowledgeModel) . (migrationState .~ stateWithEvent) $ ms
+getCurrentMigration branchUuid = do
+  ms <- findMigratorStateByBranchUuid branchUuid
+  knowledgeModel <- compileKnowledgeModel (ms ^. resultEvents) (Just $ ms ^. branchPreviousPackageId) []
+  let stateWithEvent =
+        case ms ^. migrationState of
+          (ConflictState (CorrectorConflict Nothing)) ->
+            ConflictState . CorrectorConflict . Just . head $ ms ^. targetPackageEvents
+          state -> state
+  return . (currentKnowledgeModel ?~ knowledgeModel) . (migrationState .~ stateWithEvent) $ ms
 
 createMigration :: String -> MigratorStateCreateDTO -> AppContextM MigratorStateDTO
 createMigration bUuid reqDto =
@@ -70,6 +69,7 @@ createMigration bUuid reqDto =
     let ms = fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km appUuid now
     insertMigratorState ms
     migratedMs <- migrateState ms
+    auditKmMigrationCreate reqDto branch
     return $ toDTO migratedMs branch
   where
     getBranchEvents = getAllPreviousEventsSincePackageIdAndUntilPackageId
@@ -95,6 +95,7 @@ deleteCurrentMigration branchUuid =
     checkPermission _KM_UPGRADE_PERM
     _ <- getCurrentMigration branchUuid
     deleteMigratorStateByBranchUuid branchUuid
+    auditKmMigrationCancel branchUuid
     return ()
 
 solveConflictAndMigrate :: String -> MigratorConflictDTO -> AppContextM ()
@@ -107,6 +108,7 @@ solveConflictAndMigrate branchUuid reqDto =
     validateReqDto (ms ^. migrationState) reqDto
     let stateWithSolvedConflicts = solveConflict ms reqDto
     migrateState stateWithSolvedConflicts
+    auditKmMigrationSolve branchUuid reqDto
     return ()
   where
     validateMigrationState ms =
@@ -131,6 +133,7 @@ solveAllConflicts branchUuid =
     migratorState <- getCurrentMigration branchUuid
     updatedState <- go migratorState
     updateMigratorState updatedState
+    auditKmMigrationApplyAll branchUuid
     return ()
   where
     go migratorState = do

@@ -7,6 +7,7 @@ import Shared.Api.Resource.Package.PackageSuggestionDTO
 import Shared.Api.Resource.Package.PackageSuggestionJM ()
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Package.PackageService
@@ -32,4 +33,5 @@ list_suggestions_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page PackageSuggestionDTO))
 list_suggestions_GET mTokenHeader mServerUrl mQuery mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getPackageSuggestions mQuery (Pageable mPage mSize) (parseSortQuery mSort)
+    runInAuthService NoTransaction $
+    addTraceUuidHeader =<< getPackageSuggestions mQuery (Pageable mPage mSize) (parseSortQuery mSort)

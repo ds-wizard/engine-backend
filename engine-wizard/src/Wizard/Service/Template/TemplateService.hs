@@ -39,30 +39,27 @@ import Wizard.Service.Template.TemplateUtil
 import Wizard.Service.Template.TemplateValidation
 
 getTemplates :: [(String, String)] -> Maybe String -> AppContextM [Template]
-getTemplates queryParams mPkgId =
-  runInTransaction $ do
-    validateCoordinateFormat' False mPkgId
-    tmls <- findTemplatesFiltered queryParams
-    return $ filterTemplates mPkgId tmls
+getTemplates queryParams mPkgId = do
+  validateCoordinateFormat' False mPkgId
+  tmls <- findTemplatesFiltered queryParams
+  return $ filterTemplates mPkgId tmls
 
 getTemplatesPage ::
      Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page TemplateSimpleDTO)
-getTemplatesPage mOrganizationId mTemplateId mQuery pageable sort =
-  runInTransaction $ do
-    checkPermission _DMP_PERM
-    tmls <- findTemplatesPage mOrganizationId mTemplateId mQuery pageable sort
-    tmlRs <- retrieveTemplates
-    orgRs <- retrieveOrganizations
-    pkgs <- findPackages
-    return . fmap (toSimpleDTO' tmlRs orgRs pkgs) $ tmls
+getTemplatesPage mOrganizationId mTemplateId mQuery pageable sort = do
+  checkPermission _DMP_PERM
+  tmls <- findTemplatesPage mOrganizationId mTemplateId mQuery pageable sort
+  tmlRs <- retrieveTemplates
+  orgRs <- retrieveOrganizations
+  pkgs <- findPackages
+  return . fmap (toSimpleDTO' tmlRs orgRs pkgs) $ tmls
 
 getTemplateSuggestions :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page TemplateSuggestionDTO)
-getTemplateSuggestions mPkgId mQuery pageable sort =
-  runInTransaction $ do
-    checkPermission _DMP_PERM
-    validateCoordinateFormat' False mPkgId
-    page <- findTemplatesPage Nothing Nothing mQuery (Pageable (Just 0) (Just 999999999)) sort
-    return . fmap toSuggestionDTO . updatePage page . filterTemplatesInGroup $ page
+getTemplateSuggestions mPkgId mQuery pageable sort = do
+  checkPermission _DMP_PERM
+  validateCoordinateFormat' False mPkgId
+  page <- findTemplatesPage Nothing Nothing mQuery (Pageable (Just 0) (Just 999999999)) sort
+  return . fmap toSuggestionDTO . updatePage page . filterTemplatesInGroup $ page
   where
     updatePage :: Page Template -> [Template] -> Page Template
     updatePage (Page name _ _) array =
@@ -76,32 +73,29 @@ getTemplateSuggestions mPkgId mQuery pageable sort =
     filterTemplatesInGroup page = filter isTemplateSupported . filterTemplates mPkgId $ (page ^. entities)
 
 getTemplatesDto :: [(String, String)] -> AppContextM [TemplateSuggestionDTO]
-getTemplatesDto queryParams =
-  runInTransaction $ do
-    checkPermission _DMP_PERM
-    tmls <- findTemplatesFiltered queryParams
-    return . fmap toSuggestionDTO $ tmls
+getTemplatesDto queryParams = do
+  checkPermission _DMP_PERM
+  tmls <- findTemplatesFiltered queryParams
+  return . fmap toSuggestionDTO $ tmls
 
 getTemplateByUuidAndPackageId :: String -> Maybe String -> AppContextM Template
-getTemplateByUuidAndPackageId templateId mPkgId =
-  runInTransaction $ do
-    templates <- getTemplates [] mPkgId
-    case L.find (\t -> (t ^. tId) == templateId) templates of
-      Just template -> return template
-      Nothing -> throwError . NotExistsError $ _ERROR_VALIDATION__TEMPLATE_ABSENCE
+getTemplateByUuidAndPackageId templateId mPkgId = do
+  templates <- getTemplates [] mPkgId
+  case L.find (\t -> (t ^. tId) == templateId) templates of
+    Just template -> return template
+    Nothing -> throwError . NotExistsError $ _ERROR_VALIDATION__TEMPLATE_ABSENCE
 
 getTemplateByUuidDto :: String -> AppContextM TemplateDetailDTO
-getTemplateByUuidDto templateId =
-  runInTransaction $ do
-    tml <- findTemplateById templateId
-    pkgs <- findPackages
-    versions <- getTemplateVersions tml
-    tmlRs <- retrieveTemplates
-    orgRs <- retrieveOrganizations
-    serverConfig <- asks _appContextServerConfig
-    let registryLink = buildTemplateUrl (serverConfig ^. registry . clientUrl) templateId
-    let usablePackages = getUsablePackagesForTemplate tml pkgs
-    return $ toDetailDTO tml tmlRs orgRs versions registryLink usablePackages
+getTemplateByUuidDto templateId = do
+  tml <- findTemplateById templateId
+  pkgs <- findPackages
+  versions <- getTemplateVersions tml
+  tmlRs <- retrieveTemplates
+  orgRs <- retrieveOrganizations
+  serverConfig <- asks _appContextServerConfig
+  let registryLink = buildTemplateUrl (serverConfig ^. registry . clientUrl) templateId
+  let usablePackages = getUsablePackagesForTemplate tml pkgs
+  return $ toDetailDTO tml tmlRs orgRs versions registryLink usablePackages
 
 createTemplate :: TemplateChangeDTO -> AppContextM Template
 createTemplate reqDto =
@@ -150,7 +144,6 @@ deleteTemplate tmlId =
 -- PRIVATE
 -- --------------------------------
 getTemplateVersions :: Template -> AppContextM [String]
-getTemplateVersions tml =
-  runInTransaction $ do
-    allTmls <- findTemplatesByOrganizationIdAndKmId (tml ^. organizationId) (tml ^. templateId)
-    return . fmap _templateVersion $ allTmls
+getTemplateVersions tml = do
+  allTmls <- findTemplatesByOrganizationIdAndKmId (tml ^. organizationId) (tml ^. templateId)
+  return . fmap _templateVersion $ allTmls

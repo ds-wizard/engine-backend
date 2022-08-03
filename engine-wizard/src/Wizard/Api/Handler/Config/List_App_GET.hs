@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Config.List_App_GET where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Model.Config.AppConfig
@@ -19,4 +20,4 @@ type List_App_GET
 list_app_GET :: Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppConfig)
 list_app_GET mTokenHeader mServerUrl =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getAppConfigDto
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getAppConfigDto

@@ -5,7 +5,6 @@ import Control.Lens ((^.))
 import LensesConfig
 import Registry.Api.Resource.Template.TemplateDetailDTO
 import Registry.Api.Resource.Template.TemplateSimpleDTO
-import Registry.Database.DAO.Common
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Model.Context.AppContext
 import Registry.Service.Template.TemplateMapper
@@ -15,19 +14,17 @@ import Shared.Service.Template.TemplateUtil
 import Shared.Util.Coordinate
 
 getTemplates :: [(String, String)] -> AppContextM [TemplateSimpleDTO]
-getTemplates queryParams =
-  runInTransaction $ do
-    tmpls <- findTemplatesFiltered queryParams
-    orgs <- findOrganizations
-    return . fmap (toSimpleDTO orgs) . chooseTheNewest . groupTemplates $ tmpls
+getTemplates queryParams = do
+  tmpls <- findTemplatesFiltered queryParams
+  orgs <- findOrganizations
+  return . fmap (toSimpleDTO orgs) . chooseTheNewest . groupTemplates $ tmpls
 
 getTemplateById :: String -> AppContextM TemplateDetailDTO
-getTemplateById tId =
-  runInTransaction $ do
-    tml <- findTemplateById tId
-    versions <- getTemplateVersions tml
-    org <- findOrganizationByOrgId (tml ^. organizationId)
-    return $ toDetailDTO tml versions org
+getTemplateById tId = do
+  tml <- findTemplateById tId
+  versions <- getTemplateVersions tml
+  org <- findOrganizationByOrgId (tml ^. organizationId)
+  return $ toDetailDTO tml versions org
 
 -- --------------------------------
 -- PRIVATE

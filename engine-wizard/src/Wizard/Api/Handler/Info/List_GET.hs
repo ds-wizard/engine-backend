@@ -8,6 +8,7 @@ import LensesConfig
 import Shared.Api.Handler.Common
 import Shared.Api.Resource.Info.InfoDTO
 import Shared.Api.Resource.Info.InfoJM ()
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
@@ -18,7 +19,7 @@ type List_GET
 
 list_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] InfoDTO)
 list_GET mServerUrl =
-  runInUnauthService mServerUrl $
+  runInUnauthService mServerUrl NoTransaction $
   addTraceUuidHeader =<< do
     buildInfoConfig <- asks _appContextBuildInfoConfig
     return

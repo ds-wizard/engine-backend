@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Submission.List_GET where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.Submission.SubmissionJM ()
@@ -21,4 +22,4 @@ list_GET ::
      Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [SubmissionDTO])
 list_GET mTokenHeader mServerUrl docUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getSubmissionsForDocument docUuid
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getSubmissionsForDocument docUuid

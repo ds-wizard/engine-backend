@@ -4,6 +4,7 @@ import Data.Maybe (fromMaybe)
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.App.AppValidation
@@ -16,7 +17,7 @@ type List_GET
 
 list_GET :: Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 list_GET mServerUrl mAppId =
-  runInUnauthService mServerUrl $
+  runInUnauthService mServerUrl NoTransaction $
   addTraceUuidHeader =<< do
     validateAppId (fromMaybe "" mAppId)
     return NoContent

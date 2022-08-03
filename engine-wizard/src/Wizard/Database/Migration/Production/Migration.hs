@@ -25,6 +25,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0015_prefab.Migr
 import qualified Wizard.Database.Migration.Production.Migration_0016_appPlan.Migration as M_0016
 import qualified Wizard.Database.Migration.Production.Migration_0017_integrationYaml.Migration as M_0017
 import qualified Wizard.Database.Migration.Production.Migration_0018_dropDocumentQueue.Migration as M_0018
+import qualified Wizard.Database.Migration.Production.Migration_0019_dashboardAndAudit.Migration as M_0019
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
 
@@ -53,4 +54,5 @@ migrationDefinitions =
   , M_0016.definition
   , M_0017.definition
   , M_0018.definition
+  , M_0019.definition
   ]

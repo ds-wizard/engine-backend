@@ -5,6 +5,7 @@ import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.App.AppDAO
+import Wizard.Database.DAO.Audit.AuditDAO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Config.AppConfigDAO
@@ -23,6 +24,7 @@ import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Wizard.Database.Migration.Development.App.AppSchemaMigration as A_Schema
 import Wizard.Database.Migration.Development.App.Data.Apps
+import qualified Wizard.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
 import qualified Wizard.Database.Migration.Development.Config.AppConfigSchemaMigration as CFG_Schema
@@ -51,6 +53,7 @@ buildSchema appContext
     -- 1. Drop
  = do
   putStrLn "DB: dropping schema"
+  runInContext ADT_Schema.dropTables appContext
   runInContext PF_Schema.dropTables appContext
   runInContext PC_Schema.dropTables appContext
   runInContext SUB_Schema.dropTables appContext
@@ -91,11 +94,13 @@ buildSchema appContext
   runInContext SUB_Schema.createTables appContext
   runInContext PC_Schema.createTables appContext
   runInContext PF_Schema.createTables appContext
+  runInContext ADT_Schema.createTables appContext
   -- 3. Purge and put files into S3
   putStrLn "DB-S3: Purging and creating schema"
   runInContext TML.runS3Migration appContext
 
 resetDB appContext = do
+  runInContext deleteAudits appContext
   runInContext deletePrefabs appContext
   runInContext deletePersistentCommands appContext
   runInContext deleteSubmissions appContext

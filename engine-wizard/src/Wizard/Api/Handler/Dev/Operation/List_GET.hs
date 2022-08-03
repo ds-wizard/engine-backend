@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Dev.Operation.List_GET where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Dev.DevJM ()
 import Wizard.Model.Context.BaseContext
@@ -18,4 +19,4 @@ type List_GET
 list_GET :: Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [DevSection])
 list_GET mTokenHeader mServerUrl =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getDevOperations
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getDevOperations

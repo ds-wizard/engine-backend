@@ -6,6 +6,7 @@ import Servant
 
 import LensesConfig
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common hiding (getCurrentUser)
 import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Api.Resource.User.UserProfileDTO
@@ -24,7 +25,7 @@ list_current_GET ::
      Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UserProfileDTO)
 list_current_GET mTokenHeader mServerUrl =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService NoTransaction $
     addTraceUuidHeader =<< do
       user <- getCurrentUser
       getUserProfile (U.toString $ user ^. uuid)

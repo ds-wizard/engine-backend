@@ -5,6 +5,7 @@ import Servant
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Api.Resource.Registry.RegistryCreateJM ()
@@ -20,4 +21,5 @@ type List_Signup_POST
 
 list_signup_POST ::
      Maybe String -> RegistryCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
-list_signup_POST mServerUrl reqDto = runInUnauthService mServerUrl $ addTraceUuidHeader =<< signUpToRegistry reqDto
+list_signup_POST mServerUrl reqDto =
+  runInUnauthService mServerUrl Transactional $ addTraceUuidHeader =<< signUpToRegistry reqDto

@@ -39,11 +39,10 @@ import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Limit.AppLimitService
 
 getBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchDTO)
-getBranchesPage mQuery pageable sort =
-  runInTransaction $ do
-    checkPermission _KM_PERM
-    bs <- findBranchesPage mQuery pageable sort
-    traverse enhanceBranch bs
+getBranchesPage mQuery pageable sort = do
+  checkPermission _KM_PERM
+  bs <- findBranchesPage mQuery pageable sort
+  traverse enhanceBranch bs
 
 createBranch :: BranchCreateDTO -> AppContextM BranchDTO
 createBranch reqDto =
@@ -87,21 +86,20 @@ createBranchWithParams bUuid now currentUser reqDto =
           return ()
 
 getBranchById :: String -> AppContextM BranchDetailDTO
-getBranchById branchUuid =
-  runInTransaction $ do
-    checkPermission _KM_PERM
-    branch <- findBranchById branchUuid
-    branchData <- findBranchDataById branchUuid
-    mForkOfPackageId <- getBranchForkOfPackageId branch
-    branchState <- getBranchState branch branchData
-    knowledgeModel <- compileKnowledgeModel [] (branch ^. previousPackageId) []
-    mForkOfPackage <-
-      case mForkOfPackageId of
-        Just pkgId -> do
-          pkg <- findPackageById pkgId
-          return . Just $ pkg
-        Nothing -> return Nothing
-    return $ toDetailDTO branch branchData knowledgeModel mForkOfPackageId mForkOfPackage branchState
+getBranchById branchUuid = do
+  checkPermission _KM_PERM
+  branch <- findBranchById branchUuid
+  branchData <- findBranchDataById branchUuid
+  mForkOfPackageId <- getBranchForkOfPackageId branch
+  branchState <- getBranchState branch branchData
+  knowledgeModel <- compileKnowledgeModel [] (branch ^. previousPackageId) []
+  mForkOfPackage <-
+    case mForkOfPackageId of
+      Just pkgId -> do
+        pkg <- findPackageById pkgId
+        return . Just $ pkg
+      Nothing -> return Nothing
+  return $ toDetailDTO branch branchData knowledgeModel mForkOfPackageId mForkOfPackage branchState
 
 modifyBranch :: String -> BranchChangeDTO -> AppContextM BranchDetailDTO
 modifyBranch branchUuid reqDto =

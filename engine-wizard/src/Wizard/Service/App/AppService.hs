@@ -51,7 +51,7 @@ getAppsPage mQuery mEnabled pageable sort = do
 registerApp :: AppCreateDTO -> AppContextM AppDTO
 registerApp reqDto = do
   runInTransaction $ do
-    validateAppCreateDTO reqDto
+    validateAppCreateDTO reqDto False
     aUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     cloudDomain <- getCloudDomain
@@ -69,7 +69,7 @@ createAppByAdmin :: AppCreateDTO -> AppContextM AppDTO
 createAppByAdmin reqDto = do
   runInTransaction $ do
     checkPermission _APP_PERM
-    validateAppCreateDTO reqDto
+    validateAppCreateDTO reqDto True
     aUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     cloudDomain <- getCloudDomain

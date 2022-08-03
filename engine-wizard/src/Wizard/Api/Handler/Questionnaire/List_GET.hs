@@ -5,6 +5,7 @@ import Servant
 import Shared.Api.Handler.Common
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
+import Shared.Model.Context.TransactionState
 import Shared.Util.String (splitOn)
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
@@ -42,7 +43,7 @@ list_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page QuestionnaireDTO))
 list_GET mTokenHeader mServerUrl mQuery mIsTemplate mProjectTagsL mProjectTagsOp mUserUuidsL mUserUuidsOp mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService NoTransaction $
     addTraceUuidHeader =<< do
       let mUserUuids = fmap (splitOn ",") mUserUuidsL
       let mProjectTags = fmap (splitOn ",") mProjectTagsL

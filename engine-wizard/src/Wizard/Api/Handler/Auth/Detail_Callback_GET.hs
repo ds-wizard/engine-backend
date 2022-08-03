@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Auth.Detail_Callback_GET where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Token.TokenDTO
 import Wizard.Model.Context.BaseContext
@@ -28,4 +29,4 @@ detail_callback_GET ::
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TokenDTO)
 detail_callback_GET mServerUrl authId mClientUrl mError mCode mIdToken =
-  runInUnauthService mServerUrl $ addTraceUuidHeader =<< loginUser authId mClientUrl mError mCode mIdToken
+  runInUnauthService mServerUrl Transactional $ addTraceUuidHeader =<< loginUser authId mClientUrl mError mCode mIdToken

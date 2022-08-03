@@ -18,12 +18,15 @@ import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentListDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireHistoryDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelListDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
@@ -221,6 +224,17 @@ toContentDTO qtnCtn threads events versions =
     , _questionnaireContentDTOEvents = events
     , _questionnaireContentDTOVersions = versions
     }
+
+toCommentListDTO :: M.Map String [QuestionnaireCommentThread] -> QuestionnaireCommentListDTO
+toCommentListDTO commentThreadsMap =
+  QuestionnaireCommentListDTO {_questionnaireCommentListDTOCommentThreadsMap = commentThreadsMap}
+
+toLabelListDTO :: M.Map String [U.UUID] -> QuestionnaireLabelListDTO
+toLabelListDTO labels = QuestionnaireLabelListDTO {_questionnaireLabelListDTOLabelThreadsMap = labels}
+
+toHistoryDTO :: [QuestionnaireEventDTO] -> [QuestionnaireVersionDTO] -> QuestionnaireHistoryDTO
+toHistoryDTO events versions =
+  QuestionnaireHistoryDTO {_questionnaireHistoryDTOEvents = events, _questionnaireHistoryDTOVersions = versions}
 
 toQuestionnaireReportDTO :: [Indication] -> QuestionnaireReportDTO
 toQuestionnaireReportDTO indications = QuestionnaireReportDTO {_questionnaireReportDTOIndications = indications}

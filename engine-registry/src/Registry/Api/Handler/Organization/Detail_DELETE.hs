@@ -7,6 +7,7 @@ import Registry.Model.Context.BaseContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.Service.Organization.OrganizationService
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 
 type Detail_DELETE
    = Header "Authorization" String
@@ -17,7 +18,7 @@ type Detail_DELETE
 detail_DELETE :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 detail_DELETE mTokenHeader orgId =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService Transactional $
     addTraceUuidHeader =<< do
       deleteOrganization orgId
       return NoContent

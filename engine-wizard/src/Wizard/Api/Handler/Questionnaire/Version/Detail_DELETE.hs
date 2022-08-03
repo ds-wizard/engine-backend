@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Questionnaire.Version.Detail_DELETE where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionService
@@ -24,7 +25,7 @@ detail_DELETE ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 detail_DELETE mTokenHeader mServerUrl qtnUuid vUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService Transactional $
     addTraceUuidHeader =<< do
       deleteVersion qtnUuid vUuid
       return NoContent

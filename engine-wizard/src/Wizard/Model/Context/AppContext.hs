@@ -6,6 +6,7 @@ import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (LoggingT, MonadLogger)
 import Control.Monad.Reader (MonadReader, ReaderT)
 import qualified Data.Map.Strict as M
+import Data.Pool (Pool)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple (Connection)
 import Network.HTTP.Client (Manager)
@@ -23,7 +24,8 @@ data AppContext =
     { _appContextServerConfig :: ServerConfig
     , _appContextLocalization :: M.Map String String
     , _appContextBuildInfoConfig :: BuildInfoConfig
-    , _appContextDbConnection :: Connection
+    , _appContextDbPool :: Pool Connection
+    , _appContextDbConnection :: Maybe Connection
     , _appContextS3Client :: MinioConn
     , _appContextHttpClientManager :: Manager
     , _appContextRegistryClient :: ClientEnv

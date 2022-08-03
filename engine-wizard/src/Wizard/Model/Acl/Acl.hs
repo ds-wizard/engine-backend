@@ -1,5 +1,6 @@
 module Wizard.Model.Acl.Acl where
 
+import Data.Hashable
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -18,10 +19,14 @@ data GroupMembership =
     }
   deriving (Generic, Eq, Show)
 
+instance Hashable GroupMembership
+
 data GroupMembershipType
   = OwnerGroupMembershipType
   | MemberGroupMembershipType
   deriving (Generic, Eq, Show, Read)
+
+instance Hashable GroupMembershipType
 
 data Member
   = GroupMember

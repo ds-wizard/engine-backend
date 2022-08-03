@@ -1,5 +1,6 @@
 module Wizard.Model.Config.AppConfig where
 
+import Data.Hashable
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
@@ -50,6 +51,8 @@ data AppConfigOrganization =
     , _appConfigOrganizationAffiliations :: [String]
     }
   deriving (Generic, Eq, Show)
+
+instance Hashable AppConfigOrganization
 
 data AppConfigAuth =
   AppConfigAuth
@@ -110,18 +113,15 @@ data AppConfigPrivacyAndSupport =
 
 data AppConfigDashboard =
   AppConfigDashboard
-    { _appConfigDashboardWidgets :: Maybe AppConfigDashboardWidgets
+    { _appConfigDashboardDashboardType :: AppConfigDashboardDashboardType
     , _appConfigDashboardWelcomeWarning :: Maybe String
     , _appConfigDashboardWelcomeInfo :: Maybe String
     }
   deriving (Generic, Eq, Show)
 
-data AppConfigDashboardWidgets =
-  AppConfigDashboardWidgets
-    { _appConfigDashboardWidgetsAdmin :: [String]
-    , _appConfigDashboardWidgetsDataSteward :: [String]
-    , _appConfigDashboardWidgetsResearcher :: [String]
-    }
+data AppConfigDashboardDashboardType
+  = WelcomeDashboardType
+  | RoleBasedDashboardType
   deriving (Generic, Eq, Show)
 
 data AppConfigLookAndFeel =

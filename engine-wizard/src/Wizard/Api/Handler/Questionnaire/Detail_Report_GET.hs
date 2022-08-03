@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Questionnaire.Detail_Report_GET where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Model.Context.BaseContext
@@ -21,4 +22,4 @@ detail_report_GET ::
      Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] Report)
 detail_report_GET mTokenHeader mServerUrl qtnUuid =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getReportByQuestionnaireUuid qtnUuid
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getReportByQuestionnaireUuid qtnUuid

@@ -34,14 +34,13 @@ import Wizard.Service.Submission.SubmissionUtil
 import Wizard.Service.User.UserProfileService
 
 getAvailableServicesForSubmission :: String -> AppContextM [SubmissionServiceSimpleDTO]
-getAvailableServicesForSubmission docUuid =
-  runInTransaction $ do
-    checkIfSubmissionIsEnabled
-    checkPermissionToSubmission docUuid
-    appConfig <- getAppConfig
-    doc <- findDocumentById docUuid
-    checkEditPermissionToDoc (U.toString $ doc ^. questionnaireUuid)
-    return . fmap toSubmissionServiceSimpleDTO . filter (filterService doc) $ appConfig ^. submission . services
+getAvailableServicesForSubmission docUuid = do
+  checkIfSubmissionIsEnabled
+  checkPermissionToSubmission docUuid
+  appConfig <- getAppConfig
+  doc <- findDocumentById docUuid
+  checkEditPermissionToDoc (U.toString $ doc ^. questionnaireUuid)
+  return . fmap toSubmissionServiceSimpleDTO . filter (filterService doc) $ appConfig ^. submission . services
   where
     filterService :: Document -> AppConfigSubmissionService -> Bool
     filterService doc service = any (filterServiceFormat doc) $ service ^. supportedFormats
@@ -50,13 +49,12 @@ getAvailableServicesForSubmission docUuid =
       (supportedFormat ^. templateId == doc ^. templateId) && (supportedFormat ^. formatUuid == doc ^. formatUuid)
 
 getSubmissionsForDocument :: String -> AppContextM [SubmissionDTO]
-getSubmissionsForDocument docUuid =
-  runInTransaction $ do
-    checkIfSubmissionIsEnabled
-    doc <- findDocumentById docUuid
-    checkViewPermissionToDoc (U.toString $ doc ^. questionnaireUuid)
-    submissions <- findSubmissionsByDocumentUuid docUuid
-    traverse enhanceSubmission submissions
+getSubmissionsForDocument docUuid = do
+  checkIfSubmissionIsEnabled
+  doc <- findDocumentById docUuid
+  checkViewPermissionToDoc (U.toString $ doc ^. questionnaireUuid)
+  submissions <- findSubmissionsByDocumentUuid docUuid
+  traverse enhanceSubmission submissions
 
 submitDocument :: String -> SubmissionCreateDTO -> AppContextM SubmissionDTO
 submitDocument docUuid reqDto =

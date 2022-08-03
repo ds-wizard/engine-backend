@@ -9,6 +9,7 @@ import Servant hiding (contentType)
 
 import LensesConfig
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Shared.Model.Error.Error
 import Wizard.Api.Handler.Common
 import Wizard.Localization.Messages.Public
@@ -35,7 +36,7 @@ detail_documents_preview_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
 detail_documents_preview_GET mTokenHeader mServerUrl qtnUuid mTokenQueryHeader =
   getMaybeAuthServiceExecutor (msum [mTokenHeader, mTokenQueryHeader]) mServerUrl $ \runInMaybeAuthService ->
-    runInMaybeAuthService $ do
+    runInMaybeAuthService Transactional $ do
       (doc, result) <- createDocumentPreview qtnUuid
       case doc ^. state of
         DoneDocumentState -> do

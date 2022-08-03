@@ -9,6 +9,7 @@ import Registry.Model.Context.BaseContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.Service.PackageBundle.PackageBundleService
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 
 type Detail_Bundle_GET
    = Header "Authorization" String
@@ -20,4 +21,4 @@ type Detail_Bundle_GET
 detail_bundle_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] PackageBundleDTO)
 detail_bundle_GET mTokenHeader pkgId =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getPackageBundle pkgId
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getPackageBundle pkgId

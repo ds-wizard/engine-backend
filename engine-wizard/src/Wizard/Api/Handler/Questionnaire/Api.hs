@@ -3,11 +3,14 @@ module Wizard.Api.Handler.Questionnaire.Api where
 import Servant
 import Servant.Swagger.Tags
 
+import Wizard.Api.Handler.Questionnaire.Detail_Comments_GET
 import Wizard.Api.Handler.Questionnaire.Detail_Content_PUT
 import Wizard.Api.Handler.Questionnaire.Detail_DELETE
 import Wizard.Api.Handler.Questionnaire.Detail_Documents_GET
 import Wizard.Api.Handler.Questionnaire.Detail_Documents_Preview_GET
 import Wizard.Api.Handler.Questionnaire.Detail_GET
+import Wizard.Api.Handler.Questionnaire.Detail_History_GET
+import Wizard.Api.Handler.Questionnaire.Detail_Labels_GET
 import Wizard.Api.Handler.Questionnaire.Detail_PUT
 import Wizard.Api.Handler.Questionnaire.Detail_Report_GET
 import Wizard.Api.Handler.Questionnaire.Detail_Revert_POST
@@ -30,6 +33,9 @@ type QuestionnaireAPI
          :<|> Detail_GET
          :<|> Detail_PUT
          :<|> Detail_DELETE
+         :<|> Detail_Comments_GET
+         :<|> Detail_Labels_GET
+         :<|> Detail_History_GET
          :<|> Detail_Content_PUT
          :<|> Detail_Report_GET
          :<|> Detail_Documents_GET
@@ -47,6 +53,9 @@ questionnaireServer :: ServerT QuestionnaireAPI BaseContextM
 questionnaireServer =
   list_GET :<|> list_POST :<|> list_POST_FromTemplate :<|> list_POST_CloneUuid :<|> detail_GET :<|> detail_PUT :<|>
   detail_DELETE :<|>
+  detail_comments_GET :<|>
+  detail_labels_GET :<|>
+  detail_history_GET :<|>
   detail_content_PUT :<|>
   detail_report_GET :<|>
   detail_documents_GET :<|>

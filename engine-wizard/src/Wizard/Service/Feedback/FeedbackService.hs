@@ -33,14 +33,13 @@ import Wizard.Util.Interpolation (interpolateString)
 import Wizard.Util.Logger
 
 getFeedbacksFiltered :: [(String, String)] -> AppContextM [FeedbackDTO]
-getFeedbacksFiltered queryParams =
-  runInTransaction $ do
-    checkIfFeedbackIsEnabled
-    fbks <- findFeedbacksFiltered queryParams
-    serverConfig <- asks _appContextServerConfig
-    appConfig <- getAppConfig
-    return $ (\f -> toDTO f (createIssueUrl (serverConfig ^. feedback) (appConfig ^. questionnaire . feedback) f)) <$>
-      fbks
+getFeedbacksFiltered queryParams = do
+  checkIfFeedbackIsEnabled
+  fbks <- findFeedbacksFiltered queryParams
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  return $ (\f -> toDTO f (createIssueUrl (serverConfig ^. feedback) (appConfig ^. questionnaire . feedback) f)) <$>
+    fbks
 
 createFeedback :: FeedbackCreateDTO -> AppContextM FeedbackDTO
 createFeedback reqDto =
@@ -64,14 +63,13 @@ createFeedbackWithGivenUuid fUuid reqDto =
     return $ toDTO fbk iUrl
 
 getFeedbackByUuid :: String -> AppContextM FeedbackDTO
-getFeedbackByUuid fUuid =
-  runInTransaction $ do
-    checkIfFeedbackIsEnabled
-    fbk <- findFeedbackById fUuid
-    serverConfig <- asks _appContextServerConfig
-    appConfig <- getAppConfig
-    let iUrl = createIssueUrl (serverConfig ^. feedback) (appConfig ^. questionnaire . feedback) fbk
-    return $ toDTO fbk iUrl
+getFeedbackByUuid fUuid = do
+  checkIfFeedbackIsEnabled
+  fbk <- findFeedbackById fUuid
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  let iUrl = createIssueUrl (serverConfig ^. feedback) (appConfig ^. questionnaire . feedback) fbk
+  return $ toDTO fbk iUrl
 
 synchronizeFeedbacks :: AppContextM ()
 synchronizeFeedbacks =

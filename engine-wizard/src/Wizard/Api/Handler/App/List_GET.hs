@@ -5,6 +5,7 @@ import Servant
 import Shared.Api.Handler.Common
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.App.AppJM ()
@@ -33,4 +34,5 @@ list_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page AppDTO))
 list_GET mTokenHeader mServerUrl mQuery mEnabled mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getAppsPage mQuery mEnabled (Pageable mPage mSize) (parseSortQuery mSort)
+    runInAuthService NoTransaction $
+    addTraceUuidHeader =<< getAppsPage mQuery mEnabled (Pageable mPage mSize) (parseSortQuery mSort)

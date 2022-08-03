@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Branch.Detail_PUT where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchChangeJM ()
@@ -27,4 +28,4 @@ detail_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] BranchDetailDTO)
 detail_PUT mTokenHeader mServerUrl reqDto bUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< modifyBranch bUuid reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< modifyBranch bUuid reqDto

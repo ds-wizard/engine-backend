@@ -3,6 +3,7 @@ module Wizard.Api.Handler.User.Detail_State_PUT where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserStateJM ()
@@ -28,4 +29,4 @@ detail_state_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UserStateDTO)
 detail_state_PUT mTokenHeader mServerUrl reqDto uUuid mHash =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< changeUserState uUuid mHash reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< changeUserState uUuid mHash reqDto

@@ -7,6 +7,7 @@ import Prelude hiding (log)
 import Servant
 import Servant.API.WebSocket
 
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Handler.Websocket
 import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
@@ -27,7 +28,7 @@ type Detail_WS
 detail_WS :: Maybe String -> String -> Maybe String -> Connection -> BaseContextM ()
 detail_WS mServerUrl qtnUuid mTokenHeader connection =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
-    runInMaybeAuthService $ do
+    runInMaybeAuthService NoTransaction $ do
       connectionUuid <- initConnection
       catchError
         (putUserOnline qtnUuid connectionUuid connection)

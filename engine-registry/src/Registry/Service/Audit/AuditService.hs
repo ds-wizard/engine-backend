@@ -61,4 +61,7 @@ getInstanceStaticsFromHeaders headers =
         { _instanceStatisticsUserCount = get xUserCountHeaderName
         , _instanceStatisticsPkgCount = get xPkgCountHeaderName
         , _instanceStatisticsQtnCount = get xQtnCountHeaderName
+        , _instanceStatisticsBranchCount = get xBranchCountHeaderName
+        , _instanceStatisticsDocCount = get xDocCountHeaderName
+        , _instanceStatisticsTmlCount = get xTmlCountHeaderName
         }

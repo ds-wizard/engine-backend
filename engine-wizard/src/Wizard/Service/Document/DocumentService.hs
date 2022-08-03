@@ -22,12 +22,14 @@ import Shared.Util.List
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Public
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Document.Document
@@ -35,6 +37,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Acl.AclService
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Document.DocumentAcl
 import Wizard.Service.Document.DocumentContextService
 import Wizard.Service.Document.DocumentMapper
@@ -48,18 +51,16 @@ import Wizard.Service.Template.TemplateValidation
 import Wizard.Util.Logger
 
 getDocumentsPageDto :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
-getDocumentsPageDto mQuestionnaireUuid mQuery pageable sort =
-  runInTransaction $ do
-    checkPermission _DOC_PERM
-    docPage <- findDocumentsPage mQuestionnaireUuid mQuery pageable sort
-    traverse enhanceDocument docPage
+getDocumentsPageDto mQuestionnaireUuid mQuery pageable sort = do
+  checkPermission _DOC_PERM
+  docPage <- findDocumentsPage mQuestionnaireUuid mQuery pageable sort
+  traverse enhanceDocument docPage
 
 getDocumentsForQuestionnaire :: String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
-getDocumentsForQuestionnaire qtnUuid mQuery pageable sort =
-  runInTransaction $ do
-    checkViewPermissionToDoc qtnUuid
-    docPage <- findDocumentsByQuestionnaireUuidPage qtnUuid mQuery pageable sort
-    traverse enhanceDocument docPage
+getDocumentsForQuestionnaire qtnUuid mQuery pageable sort = do
+  checkViewPermissionToDoc qtnUuid
+  docPage <- findDocumentsByQuestionnaireUuidPage qtnUuid mQuery pageable sort
+  traverse enhanceDocument docPage
 
 createDocument :: DocumentCreateDTO -> AppContextM DocumentDTO
 createDocument reqDto =
@@ -84,7 +85,8 @@ createDocumentWithDurability dto durability =
             Just eventUuid -> takeWhileInclusive (\e -> e ^. uuid' /= eventUuid) (qtn ^. events)
             Nothing -> qtn ^. events
     qtnCtn <- compileQuestionnairePreview qtnEvents
-    let repliesHash = computeHash qtnCtn
+    appConfig <- getAppConfig
+    let repliesHash = computeHash qtn qtnCtn appConfig mCurrentUser
     let doc = fromCreateDTO dto dUuid durability repliesHash mCurrentUser appUuid now
     insertDocument doc
     publishToPersistentCommandQueue doc
@@ -100,11 +102,11 @@ deleteDocument docUuid =
     removeDocumentContent docUuid
 
 downloadDocument :: String -> AppContextM (Document, BS.ByteString)
-downloadDocument docUuid =
-  runInTransaction $ do
-    doc <- findDocumentById docUuid
-    content <- getDocumentContent docUuid
-    return (doc, content)
+downloadDocument docUuid = do
+  doc <- findDocumentById docUuid
+  checkViewPermissionToDoc (U.toString $ doc ^. questionnaireUuid)
+  content <- getDocumentContent docUuid
+  return (doc, content)
 
 cleanDocuments :: AppContextM ()
 cleanDocuments =
@@ -124,7 +126,9 @@ createDocumentPreview qtnUuid =
     checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
     docs <- findDocumentsFiltered [("questionnaire_uuid", qtnUuid), ("durability", "TemporallyDocumentDurability")]
     qtnCtn <- compileQuestionnaire qtn
-    let repliesHash = computeHash qtnCtn
+    appConfig <- getAppConfig
+    mCurrentUser <- asks _appContextCurrentUser
+    let repliesHash = computeHash qtn qtnCtn appConfig mCurrentUser
     logDebugU _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
     let matchingDocs = filter (\d -> d ^. questionnaireRepliesHash == repliesHash) docs
     case filter (filterAlreadyDone qtn) matchingDocs of
@@ -183,5 +187,15 @@ publishToPersistentCommandQueue doc = do
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-computeHash :: QuestionnaireContent -> Int
-computeHash qtnCtn = (hash . M.toList $ qtnCtn ^. replies) + maybe 0 hash (qtnCtn ^. phaseUuid)
+computeHash :: Questionnaire -> QuestionnaireContent -> AppConfig -> Maybe UserDTO -> Int
+computeHash qtn qtnCtn appConfig mCurrentUser =
+  sum
+    [ hash $ qtn ^. name
+    , hash $ qtn ^. description
+    , hash $ qtn ^. versions
+    , hash $ qtn ^. projectTags
+    , hash $ appConfig ^. organization
+    , hash . M.toList $ qtnCtn ^. replies
+    , maybe 0 hash (qtnCtn ^. phaseUuid)
+    , maybe 0 hash mCurrentUser
+    ]

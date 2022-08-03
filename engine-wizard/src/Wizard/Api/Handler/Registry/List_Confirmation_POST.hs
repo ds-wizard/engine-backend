@@ -5,6 +5,7 @@ import Servant
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryConfirmationJM ()
@@ -21,4 +22,4 @@ type List_Confirmation_POST
 list_confirmation_POST ::
      Maybe String -> RegistryConfirmationDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
 list_confirmation_POST mServerUrl reqDto =
-  runInUnauthService mServerUrl $ addTraceUuidHeader =<< confirmRegistration reqDto
+  runInUnauthService mServerUrl Transactional $ addTraceUuidHeader =<< confirmRegistration reqDto

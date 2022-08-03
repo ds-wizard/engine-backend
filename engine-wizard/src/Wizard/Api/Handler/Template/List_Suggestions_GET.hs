@@ -6,6 +6,7 @@ import Shared.Api.Handler.Common
 import Shared.Api.Resource.Template.TemplateSuggestionDTO
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Template.TemplateService
@@ -33,5 +34,5 @@ list_suggestions_GET ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page TemplateSuggestionDTO))
 list_suggestions_GET mTokenHeader mServerUrl mPkgId mQuery mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $
+    runInAuthService NoTransaction $
     addTraceUuidHeader =<< getTemplateSuggestions mPkgId mQuery (Pageable mPage mSize) (parseSortQuery mSort)

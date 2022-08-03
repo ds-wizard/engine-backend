@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Migration.Questionnaire.List_Current_GET where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateJM ()
@@ -22,4 +23,4 @@ list_current_GET ::
      Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] MigratorStateDTO)
 list_current_GET mTokenHeader mServerUrl qtnUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getQuestionnaireMigration qtnUuid
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getQuestionnaireMigration qtnUuid

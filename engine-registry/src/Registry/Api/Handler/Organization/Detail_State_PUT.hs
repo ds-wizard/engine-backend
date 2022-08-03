@@ -11,6 +11,7 @@ import Registry.Model.Context.BaseContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.Service.Organization.OrganizationService
 import Shared.Api.Handler.Common
+import Shared.Model.Context.TransactionState
 
 type Detail_State_PUT
    = ReqBody '[ SafeJSON] OrganizationStateDTO
@@ -29,4 +30,4 @@ detail_state_PUT ::
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
 detail_state_PUT reqDto orgId mHash =
-  runInUnauthService $ addTraceUuidHeader =<< changeOrganizationState orgId mHash reqDto
+  runInUnauthService Transactional $ addTraceUuidHeader =<< changeOrganizationState orgId mHash reqDto

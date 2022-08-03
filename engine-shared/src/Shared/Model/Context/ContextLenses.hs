@@ -28,19 +28,19 @@ class HasSentry' entity where
 class HasCloud' entity where
   cloud' :: Functor f => (ServerConfigCloud -> f ServerConfigCloud) -> entity -> f entity
 
-class HasDbConnection' entity where
-  dbConnection' :: Functor f => (Connection -> f Connection) -> entity -> f entity
-
 class HasDbPool' entity where
   dbPool' :: Functor f => (Pool Connection -> f (Pool Connection)) -> entity -> f entity
 
-instance HasDbConnection' AppContext where
-  dbConnection' convert entity = fmap (set entity) (convert . get $ entity)
+class HasDbConnection' entity where
+  dbConnection' :: Functor f => (Maybe Connection -> f (Maybe Connection)) -> entity -> f entity
+
+instance HasDbPool' AppContext where
+  dbPool' convert entity = fmap (set entity) (convert . get $ entity)
     where
-      get :: AppContext -> Connection
-      get entity = entity ^. dbConnection
-      set :: AppContext -> Connection -> AppContext
-      set entity newValue = entity & dbConnection .~ newValue
+      get :: AppContext -> Pool Connection
+      get entity = entity ^. dbPool
+      set :: AppContext -> Pool Connection -> AppContext
+      set entity newValue = entity & dbPool .~ newValue
 
 instance HasDbPool' BaseContext where
   dbPool' convert entity = fmap (set entity) (convert . get $ entity)
@@ -49,6 +49,14 @@ instance HasDbPool' BaseContext where
       get entity = entity ^. dbPool
       set :: BaseContext -> Pool Connection -> BaseContext
       set entity newValue = entity & dbPool .~ newValue
+
+instance HasDbConnection' AppContext where
+  dbConnection' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AppContext -> Maybe Connection
+      get entity = entity ^. dbConnection
+      set :: AppContext -> Maybe Connection -> AppContext
+      set entity newValue = entity & dbConnection .~ newValue
 
 class HasS3Client' entity where
   s3Client' :: Functor f => (MinioConn -> f MinioConn) -> entity -> f entity
