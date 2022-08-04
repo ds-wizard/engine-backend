@@ -1,7 +1,7 @@
 module Wizard.Service.PersistentCommand.PersistentCommandService where
 
 import qualified Control.Exception.Base as E
-import Control.Lens ((.~), (?~), (^.))
+import Control.Lens ((.~), (^.))
 import Control.Monad (forever, when)
 import Control.Monad.Reader (ask, asks, liftIO)
 import Data.Aeson (Value(..), toJSON)
@@ -47,7 +47,10 @@ getPersistentCommandById :: String -> AppContextM PersistentCommandDetailDTO
 getPersistentCommandById uuid = do
   checkPermission _DEV_PERM
   command <- findPersistentCommandByUuid uuid
-  mUser <- findUserByIdSystem' (U.toString $ command ^. createdBy)
+  mUser <-
+    case command ^. createdBy of
+      Just userUuid -> findUserByIdSystem' (U.toString userUuid)
+      Nothing -> return Nothing
   app <- findAppById (U.toString $ command ^. appUuid)
   appDto <- enhanceApp app
   return $ toDetailDTO command mUser appDto
@@ -70,9 +73,12 @@ runPersistentCommandById uuid = do
 
 runPersistentCommand :: PersistentCommandSimple -> AppContextM ()
 runPersistentCommand command = do
-  user <- findUserByIdSystem . U.toString $ command ^. createdBy
+  user <-
+    case command ^. createdBy of
+      Just userUuid -> findUserByIdSystem' . U.toString $ userUuid
+      Nothing -> return Nothing
   context <- ask
-  let updatedContext = (appUuid .~ (command ^. appUuid)) . (currentUser ?~ UM.toDTO user) $ context
+  let updatedContext = (appUuid .~ (command ^. appUuid)) . (currentUser .~ fmap UM.toDTO user) $ context
   executePersistentCommandByUuid (U.toString $ command ^. uuid) updatedContext
 
 executePersistentCommandByUuid :: String -> AppContext -> AppContextM ()
@@ -123,7 +129,7 @@ sendToSentry command = do
 
 recordUpdate :: String -> PersistentCommand -> SentryRecord -> SentryRecord
 recordUpdate buildVersion command record =
-  let commandUserUuid = U.toString $ command ^. createdBy
+  let commandUserUuid = maybe "anonymous" U.toString (command ^. createdBy)
       commandUuid = U.toString $ command ^. uuid
       commandAppUuid = U.toString $ command ^. appUuid
    in record

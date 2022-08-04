@@ -120,6 +120,6 @@ sendEmail function dto createdBy = do
     pUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let body = encodeJsonToString dto
-    let command = toPersistentCommand pUuid "mailer" function body 10 False appUuid createdBy now
+    let command = toPersistentCommand pUuid "mailer" function body 10 False appUuid (Just createdBy) now
     insertPersistentCommand command
     return ()

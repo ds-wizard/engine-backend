@@ -31,7 +31,6 @@ import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
@@ -176,11 +175,20 @@ publishToPersistentCommandQueue doc = do
   docContext <- createDocumentContext doc
   appUuid <- asks _appContextAppUuid
   pUuid <- liftIO generateUuid
-  currentUser <- getCurrentUser
+  mCurrentUser <- asks _appContextCurrentUser
   now <- liftIO getCurrentTime
   let body = encodeJsonToString docContext
   let command =
-        toPersistentCommand pUuid "doc_worker" "generateDocument" body 10 False appUuid (currentUser ^. uuid) now
+        toPersistentCommand
+          pUuid
+          "doc_worker"
+          "generateDocument"
+          body
+          10
+          False
+          appUuid
+          (fmap (^. uuid) mCurrentUser)
+          now
   insertPersistentCommand command
   return ()
 

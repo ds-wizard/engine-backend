@@ -22,7 +22,7 @@ command1 =
     , _persistentCommandMaxAttempts = 10
     , _persistentCommandInternal = True
     , _persistentCommandAppUuid = defaultAppUuid
-    , _persistentCommandCreatedBy = userAlbert ^. uuid
+    , _persistentCommandCreatedBy = Just $ userAlbert ^. uuid
     , _persistentCommandCreatedAt = dt' 2018 1 25
     , _persistentCommandUpdatedAt = dt' 2018 1 25
     }

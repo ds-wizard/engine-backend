@@ -7,6 +7,6 @@ data PersistentCommandSimple =
   PersistentCommandSimple
     { _persistentCommandSimpleUuid :: U.UUID
     , _persistentCommandSimpleAppUuid :: U.UUID
-    , _persistentCommandSimpleCreatedBy :: U.UUID
+    , _persistentCommandSimpleCreatedBy :: Maybe U.UUID
     }
   deriving (Show, Eq, Generic)
