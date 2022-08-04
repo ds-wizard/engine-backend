@@ -36,7 +36,7 @@ createTables = do
         \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
         \       constraint persistent_command_app_uuid_fk \
         \         references app, \
-        \     created_by uuid not null \
+        \     created_by uuid \
         \       constraint persistent_command_created_by_fk \
         \         references user_entity, \
         \     created_at timestamptz not null, \

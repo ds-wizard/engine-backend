@@ -23,7 +23,7 @@ data PersistentCommand =
     , _persistentCommandMaxAttempts :: Int
     , _persistentCommandInternal :: Bool
     , _persistentCommandAppUuid :: U.UUID
-    , _persistentCommandCreatedBy :: U.UUID
+    , _persistentCommandCreatedBy :: Maybe U.UUID
     , _persistentCommandCreatedAt :: UTCTime
     , _persistentCommandUpdatedAt :: UTCTime
     }

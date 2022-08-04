@@ -14,7 +14,10 @@ import Wizard.Service.PersistentCommand.PersistentCommandMapper
 
 enhancePersistentCommand :: PersistentCommand -> AppContextM PersistentCommandDTO
 enhancePersistentCommand command = do
-  mUser <- findUserByIdSystem' (U.toString $ command ^. createdBy)
+  mUser <-
+    case command ^. createdBy of
+      Just userUuid -> findUserByIdSystem' (U.toString userUuid)
+      Nothing -> return Nothing
   app <- findAppById (U.toString $ command ^. appUuid)
   appDto <- enhanceApp app
   return $ toDTO command mUser appDto

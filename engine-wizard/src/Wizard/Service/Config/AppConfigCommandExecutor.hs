@@ -47,7 +47,7 @@ recompileCssInApplication appUuid = do
           1
           True
           appUuid
-          (user ^. uuid)
+          (Just $ user ^. uuid)
           now
   insertPersistentCommand command
   return ()

@@ -135,7 +135,7 @@ createSeederPersistentCommand aUuid createdBy now =
             1
             False
             aUuid
-            createdBy
+            (Just createdBy)
             now
     insertPersistentCommand command
     return command

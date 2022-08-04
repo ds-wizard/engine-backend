@@ -46,8 +46,8 @@ toDetailDTO command user app =
     }
 
 toPersistentCommand ::
-     U.UUID -> String -> String -> String -> Int -> Bool -> U.UUID -> U.UUID -> UTCTime -> PersistentCommand
-toPersistentCommand uuid component function body maxAttempts internal appUuid createdBy now =
+     U.UUID -> String -> String -> String -> Int -> Bool -> U.UUID -> Maybe U.UUID -> UTCTime -> PersistentCommand
+toPersistentCommand uuid component function body maxAttempts internal appUuid mCreatedBy now =
   PersistentCommand
     { _persistentCommandUuid = uuid
     , _persistentCommandState = NewPersistentCommandState
@@ -59,7 +59,7 @@ toPersistentCommand uuid component function body maxAttempts internal appUuid cr
     , _persistentCommandMaxAttempts = maxAttempts
     , _persistentCommandInternal = internal
     , _persistentCommandAppUuid = appUuid
-    , _persistentCommandCreatedBy = createdBy
+    , _persistentCommandCreatedBy = mCreatedBy
     , _persistentCommandCreatedAt = now
     , _persistentCommandUpdatedAt = now
     }
