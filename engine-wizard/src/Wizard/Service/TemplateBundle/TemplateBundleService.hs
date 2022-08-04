@@ -91,7 +91,6 @@ deleteOldTemplateIfPresent bundle =
 -- PRIVATE
 -- --------------------------------
 findAsset :: String -> TemplateAsset -> AppContextM (TemplateAsset, BS.ByteString)
-findAsset tmlId asset =
-  runInTransaction $ do
-    content <- getAsset tmlId (U.toString $ asset ^. uuid)
-    return (asset, content)
+findAsset tmlId asset = do
+  content <- getAsset tmlId (U.toString $ asset ^. uuid)
+  return (asset, content)

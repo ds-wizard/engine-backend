@@ -29,18 +29,17 @@ import Wizard.Service.Token.TokenService
 import Wizard.Service.User.UserService
 
 createAuthenticationUrl :: String -> Maybe String -> Maybe String -> AppContextM ()
-createAuthenticationUrl authId mFlow mClientUrl =
-  runInTransaction $ do
-    state <- liftIO $ generateRandomString 40
-    (service, openIDClient) <- createOpenIDClient authId mClientUrl
-    let params = fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameteres)
-    loc <-
-      liftIO $
-      case mFlow of
-        Just "id_token" ->
-          O_ID.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
-        _ -> O.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
-    throwError $ FoundError (show loc)
+createAuthenticationUrl authId mFlow mClientUrl = do
+  state <- liftIO $ generateRandomString 40
+  (service, openIDClient) <- createOpenIDClient authId mClientUrl
+  let params = fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameteres)
+  loc <-
+    liftIO $
+    case mFlow of
+      Just "id_token" ->
+        O_ID.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
+      _ -> O.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
+  throwError $ FoundError (show loc)
 
 loginUser :: String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> AppContextM TokenDTO
 loginUser authId mClientUrl mError mCode mIdToken =
