@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Questionnaire.Detail_History_GET
-  ( detail_history_GET
+module Wizard.Specs.API.Questionnaire.Event.List_GET
+  ( list_GET
   ) where
 
 import Control.Lens ((&), (.~), (^.))
@@ -18,7 +18,6 @@ import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
-import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
@@ -26,18 +25,17 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires/{qtnUuid}/history
+-- GET /questionnaires/{qtnUuid}/events
 -- ------------------------------------------------------------------------
-detail_history_GET :: AppContext -> SpecWith ((), Application)
-detail_history_GET appContext =
-  describe "GET /questionnaires/{qtnUuid}/history" $ do
+list_GET :: AppContext -> SpecWith ((), Application)
+list_GET appContext =
+  describe "GET /questionnaires/{qtnUuid}/events" $ do
     test_200 appContext
     test_403 appContext
     test_404 appContext
@@ -47,7 +45,7 @@ detail_history_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/history"
+reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/events"
 
 reqHeadersT authHeader = authHeader
 
@@ -83,7 +81,7 @@ create_test_200 title appContext qtn authHeader =
      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = toHistoryDTO fEventsWithoutCommentsDto qVersionsDto
+    let expDto = fEventsWithoutCommentsDto
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
@@ -149,7 +147,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/history"
+    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/events"
     [reqHeadersT reqAuthHeader]
     reqBody
     "questionnaire"

@@ -7,7 +7,6 @@ import Shared.Api.Resource.Template.TemplateJM ()
 import Shared.Model.Template.TemplateJM ()
 import Shared.Util.JSON
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO

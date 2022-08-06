@@ -9,7 +9,6 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import qualified Shared.Service.Package.PackageMapper as PM
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
@@ -40,7 +39,6 @@ instance ToSchema QuestionnaireDetailDTO where
          Nothing
          fReplies
          qtnThreads
-         []
          []
          []
          Nothing)

@@ -4,13 +4,10 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Wizard.Specs.API.Common
-import Wizard.Specs.API.Questionnaire.Detail_Comments_GET
 import Wizard.Specs.API.Questionnaire.Detail_Content_PUT
 import Wizard.Specs.API.Questionnaire.Detail_DELETE
 import Wizard.Specs.API.Questionnaire.Detail_Documents_GET
 import Wizard.Specs.API.Questionnaire.Detail_GET
-import Wizard.Specs.API.Questionnaire.Detail_History_GET
-import Wizard.Specs.API.Questionnaire.Detail_Labels_GET
 import Wizard.Specs.API.Questionnaire.Detail_PUT
 import Wizard.Specs.API.Questionnaire.Detail_Report_GET
 import Wizard.Specs.API.Questionnaire.Detail_Revert_POST
@@ -30,9 +27,6 @@ questionnaireAPI baseContext appContext =
     detail_get appContext
     detail_put appContext
     detail_delete appContext
-    detail_comments_GET appContext
-    detail_labels_GET appContext
-    detail_history_GET appContext
     detail_content_put appContext
     detail_report_get appContext
     detail_documents_get appContext

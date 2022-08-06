@@ -22,7 +22,6 @@ import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -137,7 +136,6 @@ create_test_200 title appContext qtn qtnCtn authHeader permissions =
             fReplies
             (qtnCtn ^. commentThreadsMap)
             permissions
-            fEventsWithoutCommentsDto
             qVersionsDto
             Nothing
     let expBody = encode expDto
