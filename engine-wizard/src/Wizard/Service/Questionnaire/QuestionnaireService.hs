@@ -50,6 +50,7 @@ import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
+import Wizard.Service.Questionnaire.QuestionnaireAudit
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireUtils
 import Wizard.Service.Questionnaire.QuestionnaireValidation
@@ -240,12 +241,14 @@ getQuestionnaireEventsForQtnUuid :: String -> AppContextM [QuestionnaireEventDTO
 getQuestionnaireEventsForQtnUuid qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
   checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
+  auditQuestionnaireListEvents qtnUuid
   traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
 
 getQuestionnaireEventForQtnUuid :: String -> String -> AppContextM QuestionnaireEventDTO
 getQuestionnaireEventForQtnUuid qtnUuid eventUuid = do
   qtn <- findQuestionnaireById qtnUuid
   checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
+  auditQuestionnaireDetailEvent qtnUuid
   case L.find (\e -> U.toString (e ^. uuid') == eventUuid) (qtn ^. events) of
     Just event -> enhanceQuestionnaireEvent event
     Nothing ->
