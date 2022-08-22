@@ -23,5 +23,6 @@ findTemplatesPage mOrganizationId mTemplateId mQuery pageable sort =
     "*"
     "template_id"
     mQuery
+    Nothing
     mOrganizationId
     mTemplateId

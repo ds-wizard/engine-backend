@@ -19,6 +19,7 @@ import Wizard.Api.Handler.Package.Api
 import Wizard.Api.Handler.PersistentCommand.Api
 import Wizard.Api.Handler.Prefab.Api
 import Wizard.Api.Handler.Questionnaire.Api
+import Wizard.Api.Handler.QuestionnaireImporter.Api
 import Wizard.Api.Handler.Registry.Api
 import Wizard.Api.Handler.Submission.Api
 import Wizard.Api.Handler.Template.Api
@@ -47,6 +48,7 @@ type ApplicationAPI
      :<|> PersistentCommandAPI
      :<|> PrefabAPI
      :<|> QuestionnaireAPI
+     :<|> QuestionnaireImporterAPI
      :<|> RegistryAPI
      :<|> SubmissionAPI
      :<|> TemplateAPI
@@ -73,6 +75,7 @@ applicationServer =
   persistentCommandServer :<|>
   prefabServer :<|>
   questionnaireServer :<|>
+  questionnaireImporterServer :<|>
   registryServer :<|>
   submissionServer :<|>
   templateServer :<|>

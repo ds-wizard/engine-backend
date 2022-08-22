@@ -47,6 +47,7 @@ jsonSpecialFields "dId" = "id"
 jsonSpecialFields "gId" = "id"
 jsonSpecialFields "iId" = "id"
 jsonSpecialFields "pId" = "id"
+jsonSpecialFields "qiId" = "id"
 jsonSpecialFields "sId" = "id"
 jsonSpecialFields "tId" = "id"
 jsonSpecialFields field = field

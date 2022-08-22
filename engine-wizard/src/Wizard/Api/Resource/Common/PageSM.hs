@@ -28,6 +28,8 @@ import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSM ()
+import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
+import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterSM ()
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Api.Resource.Template.TemplateSimpleSM ()
 import Wizard.Api.Resource.User.UserDTO
@@ -39,6 +41,7 @@ import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.PersistentCommand.Data.PersistentCommands
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Service.App.AppMapper as A_Mapper
@@ -83,6 +86,13 @@ instance ToSchema (Page BranchDTO) where
 instance ToSchema (Page QuestionnaireDTO) where
   declareNamedSchema =
     simpleToSchema''''' "_page" "Page QuestionnaireDTO" (Page "questionnaires" pageMetadata [questionnaire1Dto])
+
+instance ToSchema (Page QuestionnaireImporterDTO) where
+  declareNamedSchema =
+    simpleToSchema'''''
+      "_page"
+      "Page QuestionnaireImporterDTO"
+      (Page "questionnaireImporters" pageMetadata [questionnaireImporterBio3Dto])
 
 instance ToSchema (Page TemplateSimpleDTO) where
   declareNamedSchema =

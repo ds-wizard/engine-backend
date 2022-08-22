@@ -42,6 +42,7 @@ userAlbert =
         , "PM_READ_PERM"
         , "PM_WRITE_PERM"
         , "QTN_PERM"
+        , "QTN_IMPORTER_PERM"
         , "QTN_TML_PERM"
         , "DMP_PERM"
         , "CFG_PERM"

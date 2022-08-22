@@ -23,5 +23,6 @@ findPackagesPage mOrganizationId mKmId mQuery pageable sort =
     "*"
     "km_id"
     mQuery
+    Nothing
     mOrganizationId
     mKmId

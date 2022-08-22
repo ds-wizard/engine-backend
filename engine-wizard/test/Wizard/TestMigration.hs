@@ -18,6 +18,7 @@ import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.Plan.AppPlanDAO
 import Wizard.Database.DAO.Prefab.PrefabDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.QuestionnaireImporter.QuestionnaireImporterDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.DAO.User.UserDAO
 import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
@@ -41,6 +42,7 @@ import qualified Wizard.Database.Migration.Development.PersistentCommand.Persist
 import qualified Wizard.Database.Migration.Development.Plan.AppPlanSchemaMigration as AP_Schema
 import qualified Wizard.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
+import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QI_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.Template.TemplateSchemaMigration as TML_Schema
@@ -53,6 +55,7 @@ buildSchema appContext
     -- 1. Drop
  = do
   putStrLn "DB: dropping schema"
+  runInContext QI_Schema.dropTables appContext
   runInContext ADT_Schema.dropTables appContext
   runInContext PF_Schema.dropTables appContext
   runInContext PC_Schema.dropTables appContext
@@ -95,6 +98,7 @@ buildSchema appContext
   runInContext PC_Schema.createTables appContext
   runInContext PF_Schema.createTables appContext
   runInContext ADT_Schema.createTables appContext
+  runInContext QI_Schema.createTables appContext
   -- 3. Purge and put files into S3
   putStrLn "DB-S3: Purging and creating schema"
   runInContext TML.runS3Migration appContext
@@ -115,6 +119,7 @@ resetDB appContext = do
   runInContext deleteBranches appContext
   runInContext deleteDocuments appContext
   runInContext deleteQuestionnaires appContext
+  runInContext deleteQuestionnaireImporters appContext
   runInContext deleteTemplates appContext
   runInContext deletePackages appContext
   runInContext deleteUsers appContext

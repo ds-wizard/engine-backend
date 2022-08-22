@@ -76,6 +76,8 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionRevertDTO
+import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterChangeDTO
+import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
@@ -134,6 +136,7 @@ import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireVersion
+import Wizard.Model.QuestionnaireImporter.QuestionnaireImporter
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
 import Wizard.Model.Submission.Submission
@@ -541,6 +544,9 @@ makeFields ''QuestionnaireCommentThread
 
 makeFields ''QuestionnaireComment
 
+-- Model / QuestionnaireImporter
+makeFields ''QuestionnaireImporter
+
 -- Model / Report
 makeFields ''Indication
 
@@ -733,6 +739,11 @@ makeFields ''QuestionnaireVersionDTO
 makeFields ''QuestionnaireVersionChangeDTO
 
 makeFields ''QuestionnaireVersionRevertDTO
+
+-- Api / Resource / QuestionnaireImporter
+makeFields ''QuestionnaireImporterDTO
+
+makeFields ''QuestionnaireImporterChangeDTO
 
 -- Api / Resource / Registry
 makeFields ''RegistryConfirmationDTO
