@@ -16,9 +16,9 @@ import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
-import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.User.Data.Users
+import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Branch.BranchService
 
@@ -67,15 +67,15 @@ test_200 appContext =
      -- AND: Run migrations
     runInContextIO
       (createBranchWithParams
-         (amsterdamBranchDto ^. uuid)
-         (amsterdamBranchDto ^. createdAt)
+         (amsterdamBranchList ^. uuid)
+         (amsterdamBranchList ^. createdAt)
          (fromJust $ appContext ^. currentUser)
          amsterdamBranchCreate)
       appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, BranchDTO)
+    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, BranchList)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
     compareBranchDtos
@@ -114,8 +114,8 @@ test_400_not_valid_kmId appContext =
      -- AND: Run migrations
     runInContextIO
       (createBranchWithParams
-         (amsterdamBranchDto ^. uuid)
-         (amsterdamBranchDto ^. createdAt)
+         (amsterdamBranchList ^. uuid)
+         (amsterdamBranchList ^. createdAt)
          (fromJust $ appContext ^. currentUser)
          amsterdamBranchCreate)
       appContext
@@ -128,9 +128,9 @@ test_400_not_valid_kmId appContext =
      -- AND: Find result in DB and compare with expectation state
     assertExistenceOfBranchInDB
       appContext
-      amsterdamBranchDto
-      (amsterdamBranchDto ^. previousPackageId)
-      (amsterdamBranchDto ^. previousPackageId)
+      amsterdamBranchList
+      (amsterdamBranchList ^. previousPackageId)
+      (amsterdamBranchList ^. previousPackageId)
       (Just $ userAlbert ^. uuid)
 
 -- ----------------------------------------------------
@@ -150,8 +150,8 @@ test_400_already_taken_kmId appContext =
      -- AND: Run migrations
     runInContextIO
       (createBranchWithParams
-         (amsterdamBranchDto ^. uuid)
-         (amsterdamBranchDto ^. createdAt)
+         (amsterdamBranchList ^. uuid)
+         (amsterdamBranchList ^. createdAt)
          (fromJust $ appContext ^. currentUser)
          amsterdamBranchCreate)
       appContext
@@ -171,9 +171,9 @@ test_400_already_taken_kmId appContext =
      -- AND: Find result in DB and compare with expectation state
     assertExistenceOfBranchInDB
       appContext
-      amsterdamBranchDto
-      (amsterdamBranchDto ^. previousPackageId)
-      (amsterdamBranchDto ^. previousPackageId)
+      amsterdamBranchList
+      (amsterdamBranchList ^. previousPackageId)
+      (amsterdamBranchList ^. previousPackageId)
       (Just $ userAlbert ^. uuid)
 
 -- ----------------------------------------------------

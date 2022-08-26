@@ -127,8 +127,8 @@ test_400 appContext = do
     let expBody = encode expDto
     -- AND: Prepare database
     let branch = amsterdamBranchCreate {_branchCreateDTOPreviousPackageId = Nothing}
-    let branchUuid = amsterdamBranchDto ^. uuid
-    let timestamp = amsterdamBranchDto ^. createdAt
+    let branchUuid = amsterdamBranchList ^. uuid
+    let timestamp = amsterdamBranchList ^. createdAt
     let user = U_Mapper.toDTO userAlbert
     runInContextIO (createBranchWithParams branchUuid timestamp user branch) appContext
     -- WHEN: Call API

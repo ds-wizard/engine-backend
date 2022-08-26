@@ -48,7 +48,10 @@ import Wizard.Util.Logger
 
 runMigration = do
   logInfo _CMP_MIGRATION "started"
-  -- 1. Drop schema
+  -- 1. Drop DB functions
+  B_Schema.dropFunctions
+  PKG_Schema.dropFunctions
+  -- 2. Drop schema
   QI_Schema.dropTables
   ADT_Schema.dropTables
   PF_Schema.dropTables
@@ -64,13 +67,14 @@ runMigration = do
   QTN_Schema.dropTables
   TML_Schema.dropTables
   PKG_Schema.dropTables
+  PKG_Schema.dropFunctions
   ACL_Schema.dropTables
   U_Schema.dropTables
   CFG_Schema.dropTables
   AP_Schema.dropTables
   AL_Schema.dropTables
   A_Schema.dropTables
-  -- 2. Create schema
+  -- 3. Create schema
   A_Schema.createTables
   AL_Schema.createTables
   AP_Schema.createTables
@@ -92,9 +96,12 @@ runMigration = do
   PF_Schema.createTables
   ADT_Schema.createTables
   QI_Schema.createTables
-  -- 3. Load S3 fixtures
+  -- 4. Create DB functions
+  PKG_Schema.createFunctions
+  B_Schema.createFunctions
+  -- 5. Load S3 fixtures
   TML.runS3Migration
-  -- 4. Load fixtures
+  -- 6. Load fixtures
   A.runMigration
   AL.runMigration
   AP.runMigration

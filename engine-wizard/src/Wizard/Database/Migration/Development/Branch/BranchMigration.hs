@@ -17,10 +17,10 @@ runMigration = do
   logInfo _CMP_MIGRATION "(KnowledgeModel/Branch) started"
   deleteBranches
   createBranchWithParams
-    (amsterdamBranchDto ^. uuid)
-    (amsterdamBranchDto ^. createdAt)
+    (amsterdamBranchList ^. uuid)
+    (amsterdamBranchList ^. createdAt)
     (toDTO userAlbert)
     amsterdamBranchCreate
-  appendBranchEventByUuid (U.toString $ amsterdamBranchDto ^. uuid) (amsterdamBranchData ^. events)
+  appendBranchEventByUuid (U.toString $ amsterdamBranchList ^. uuid) (amsterdamBranchData ^. events)
   insertBranch differentBranch
   logInfo _CMP_MIGRATION "(KnowledgeModel/Branch) ended"

@@ -22,6 +22,12 @@ migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   createQtnImporterTable dbPool
   addQtnImporterPermission dbPool
+  createGetNewestPackageFn dbPool
+  createGetNewestPackage2Fn dbPool
+  createGetOrganizationIdFn dbPool
+  createGetKmIdFn dbPool
+  createGetBranchForkOfPackageIdFn dbPool
+  createGetBranchStateFn dbPool
   return Nothing
 
 createQtnImporterTable dbPool = do
@@ -59,5 +65,148 @@ addQtnImporterPermission dbPool = do
   let sql =
         "UPDATE user_entity set permissions = permissions || '{QTN_IMPORTER_PERM}' WHERE role = 'admin' OR role = 'dataSteward'"
   let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createGetNewestPackageFn dbPool = do
+  let sql =
+        "CREATE or REPLACE FUNCTION get_newest_package(req_organization_id varchar, req_km_id varchar, req_app_uuid uuid) \
+        \    RETURNS varchar \
+        \    LANGUAGE plpgsql \
+        \AS \
+        \$$ \
+        \DECLARE \
+        \    p_id varchar; \
+        \BEGIN \
+        \    SELECT CONCAT(organization_id, ':', km_id, ':', \
+        \                  (max(string_to_array(version, '.')::int[]))[1] || \
+        \                  '.' || \
+        \                  (max(string_to_array(version, '.')::int[]))[2] || \
+        \                  '.' || \
+        \                  (max(string_to_array(version, '.')::int[]))[3]) \
+        \    INTO p_id \
+        \    FROM package \
+        \    WHERE organization_id = req_organization_id \
+        \      AND km_id = req_km_id \
+        \      AND app_uuid = req_app_uuid \
+        \    GROUP BY organization_id, km_id; \
+        \    RETURN p_id; \
+        \END; \
+        \$$;"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createGetNewestPackage2Fn dbPool = do
+  let sql =
+        "CREATE or REPLACE FUNCTION get_newest_package_2(req_p_id varchar, req_app_uuid uuid) \
+        \    RETURNS varchar \
+        \    LANGUAGE plpgsql \
+        \AS \
+        \$$ \
+        \DECLARE \
+        \    p_id varchar; \
+        \BEGIN \
+        \    SELECT CASE \
+        \        WHEN req_p_id IS NULL THEN NULL \
+        \        ELSE get_newest_package(get_organization_id(req_p_id), get_km_id(req_p_id), req_app_uuid) \
+        \        END as newest_package_id \
+        \    INTO p_id; \
+        \    RETURN p_id; \
+        \END; \
+        \$$;"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createGetOrganizationIdFn dbPool = do
+  let sql =
+        "CREATE or REPLACE FUNCTION get_organization_id(req_p_id varchar) \
+        \    RETURNS varchar \
+        \    LANGUAGE plpgsql \
+        \AS \
+        \$$ \
+        \DECLARE \
+        \    organization_id varchar; \
+        \BEGIN \
+        \    SELECT split_part(req_p_id, ':', 1) \
+        \    INTO organization_id; \
+        \    RETURN organization_id; \
+        \END; \
+        \$$;"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createGetKmIdFn dbPool = do
+  let sql =
+        "CREATE or REPLACE FUNCTION get_km_id(req_p_id varchar) \
+        \    RETURNS varchar \
+        \    LANGUAGE plpgsql \
+        \AS \
+        \$$ \
+        \DECLARE \
+        \    km_id varchar; \
+        \BEGIN \
+        \    SELECT split_part(req_p_id, ':', 2) \
+        \    INTO km_id; \
+        \    RETURN km_id; \
+        \END; \
+        \$$;"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createGetBranchForkOfPackageIdFn dbPool = do
+  let sql =
+        "CREATE or REPLACE FUNCTION get_branch_fork_of_package_id(app_config app_config, \
+        \                                                         previous_pkg package, \
+        \                                                         branch branch) \
+        \    RETURNS varchar \
+        \    LANGUAGE plpgsql \
+        \AS \
+        \$$ \
+        \DECLARE \
+        \    fork_of_package_id varchar; \
+        \BEGIN \
+        \    SELECT CASE \
+        \               WHEN branch.previous_package_id IS NULL THEN NULL \
+        \               WHEN previous_pkg.organization_id = app_config.organization ->> 'organizationId' AND \
+        \                    previous_pkg.km_id = branch.km_id THEN previous_pkg.fork_of_package_id \
+        \               WHEN True THEN branch.previous_package_id END as fork_of_package_id \
+        \    INTO fork_of_package_id; \
+        \    RETURN fork_of_package_id; \
+        \END; \
+        \$$;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createGetBranchStateFn dbPool = do
+  let sql =
+        "CREATE or REPLACE FUNCTION get_branch_state(knowledge_model_migration knowledge_model_migration, \
+        \                                           branch_data branch_data, \
+        \                                           fork_of_package_id varchar, \
+        \                                           app_uuid uuid) \
+        \    RETURNS varchar \
+        \    LANGUAGE plpgsql \
+        \AS \
+        \$$ \
+        \DECLARE \
+        \    state varchar; \
+        \BEGIN \
+        \    SELECT CASE \
+        \               WHEN knowledge_model_migration.migration_state ->> 'stateType' IS NOT NULL AND \
+        \                    knowledge_model_migration.migration_state ->> 'stateType' != 'CompletedState' THEN 'BSMigrating' \
+        \               WHEN json_array_length(branch_data.events) > 0 THEN 'BSEdited' \
+        \               WHEN knowledge_model_migration.migration_state ->> 'stateType' IS NOT NULL AND \
+        \                    knowledge_model_migration.migration_state ->> 'stateType' = 'CompletedState' THEN 'BSMigrated' \
+        \               WHEN fork_of_package_id != get_newest_package_2(fork_of_package_id, app_uuid) THEN 'BSOutdated' \
+        \               WHEN True THEN 'BSDefault' END \
+        \    INTO state; \
+        \    RETURN state; \
+        \END; \
+        \$$;"
+  let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

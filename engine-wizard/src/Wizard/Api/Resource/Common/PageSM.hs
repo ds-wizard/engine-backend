@@ -18,8 +18,7 @@ import Shared.Service.Template.TemplateMapper
 import Shared.Util.Swagger
 import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.App.AppSM ()
-import Wizard.Api.Resource.Branch.BranchDTO
-import Wizard.Api.Resource.Branch.BranchSM ()
+import Wizard.Api.Resource.Branch.BranchListSM ()
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentSM ()
 import Wizard.Api.Resource.Package.PackageSimpleDTO
@@ -44,6 +43,7 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
+import Wizard.Model.Branch.BranchList
 import qualified Wizard.Service.App.AppMapper as A_Mapper
 import qualified Wizard.Service.Package.PackageMapper as P_Mapper
 import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PC_Mapper
@@ -80,8 +80,9 @@ instance ToSchema (Page PackageSuggestionDTO) where
       "Page PackageSuggestionDTO"
       (Page "packages" pageMetadata [P_Mapper.toSimpleDTO (SP_Mapper.toPackage globalPackage)])
 
-instance ToSchema (Page BranchDTO) where
-  declareNamedSchema = simpleToSchema''''' "_page" "Page BranchDTO" (Page "branches" pageMetadata [amsterdamBranchDto])
+instance ToSchema (Page BranchList) where
+  declareNamedSchema =
+    simpleToSchema''''' "_page" "Page BranchList" (Page "branches" pageMetadata [amsterdamBranchList])
 
 instance ToSchema (Page QuestionnaireDTO) where
   declareNamedSchema =

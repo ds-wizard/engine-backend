@@ -51,9 +51,10 @@ import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration 
 
 import Wizard.Specs.Common
 
-buildSchema appContext
-    -- 1. Drop
- = do
+buildSchema appContext = do
+  putStrLn "DB: dropping DB functions"
+  runInContext B_Schema.dropFunctions appContext
+  runInContext PKG_Schema.dropFunctions appContext
   putStrLn "DB: dropping schema"
   runInContext QI_Schema.dropTables appContext
   runInContext ADT_Schema.dropTables appContext
@@ -76,7 +77,6 @@ buildSchema appContext
   runInContext AP_Schema.dropTables appContext
   runInContext AL_Schema.dropTables appContext
   runInContext A_Schema.dropTables appContext
-  -- 2. Create
   putStrLn "DB: Creating schema"
   runInContext A_Schema.createTables appContext
   runInContext AL_Schema.createTables appContext
@@ -99,7 +99,9 @@ buildSchema appContext
   runInContext PF_Schema.createTables appContext
   runInContext ADT_Schema.createTables appContext
   runInContext QI_Schema.createTables appContext
-  -- 3. Purge and put files into S3
+  putStrLn "DB: Creating DB functions"
+  runInContext PKG_Schema.createFunctions appContext
+  runInContext B_Schema.createFunctions appContext
   putStrLn "DB-S3: Purging and creating schema"
   runInContext TML.runS3Migration appContext
 

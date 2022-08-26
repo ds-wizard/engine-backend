@@ -10,25 +10,25 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
-import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchData
+import Wizard.Model.Branch.BranchList
 import Wizard.Model.Branch.BranchState
 import Wizard.Service.Package.PackageMapper
 
-toDTO :: Branch -> Maybe String -> BranchState -> BranchDTO
-toDTO branch mForkOfPackageId state =
-  BranchDTO
-    { _branchDTOUuid = branch ^. uuid
-    , _branchDTOName = branch ^. name
-    , _branchDTOKmId = branch ^. kmId
-    , _branchDTOState = state
-    , _branchDTOPreviousPackageId = branch ^. previousPackageId
-    , _branchDTOForkOfPackageId = mForkOfPackageId
-    , _branchDTOOwnerUuid = branch ^. ownerUuid
-    , _branchDTOCreatedAt = branch ^. createdAt
-    , _branchDTOUpdatedAt = branch ^. updatedAt
+toList :: Branch -> Maybe String -> BranchState -> BranchList
+toList branch mForkOfPackageId state =
+  BranchList
+    { _branchListUuid = branch ^. uuid
+    , _branchListName = branch ^. name
+    , _branchListKmId = branch ^. kmId
+    , _branchListState = state
+    , _branchListPreviousPackageId = branch ^. previousPackageId
+    , _branchListForkOfPackageId = mForkOfPackageId
+    , _branchListOwnerUuid = branch ^. ownerUuid
+    , _branchListCreatedAt = branch ^. createdAt
+    , _branchListUpdatedAt = branch ^. updatedAt
     }
 
 toDetailDTO :: Branch -> BranchData -> KnowledgeModel -> Maybe String -> Maybe Package -> BranchState -> BranchDetailDTO
