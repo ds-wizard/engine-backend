@@ -105,7 +105,7 @@ defaultBranchSquash =
 defaultCache :: ServerConfigCache
 defaultCache =
   ServerConfigCache
-    { _serverConfigCacheDataExpiration = 12
+    { _serverConfigCacheDataExpiration = 14 * 24
     , _serverConfigCacheWebsocketExpiration = 24
     , _serverConfigCachePurgeExpired = defaultCachePurgeExpired
     }
