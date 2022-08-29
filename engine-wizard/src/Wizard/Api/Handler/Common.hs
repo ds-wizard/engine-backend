@@ -68,9 +68,8 @@ getMaybeAuthServiceExecutor ::
   -> Maybe String
   -> ((TransactionState -> AppContextM a -> BaseContextM a) -> BaseContextM b)
   -> BaseContextM b
-getMaybeAuthServiceExecutor (Just tokenHeader) mServerUrl callback = do
-  user <- getCurrentUser tokenHeader mServerUrl
-  callback (runInAuthService mServerUrl user)
+getMaybeAuthServiceExecutor (Just tokenHeader) mServerUrl callback =
+  getAuthServiceExecutor (Just tokenHeader) mServerUrl callback
 getMaybeAuthServiceExecutor Nothing mServerUrl callback = callback (runInUnauthService mServerUrl)
 
 getAuthServiceExecutor ::
@@ -80,7 +79,9 @@ getAuthServiceExecutor ::
   -> BaseContextM b
 getAuthServiceExecutor (Just token) mServerUrl callback = do
   user <- getCurrentUser token mServerUrl
-  callback (runInAuthService mServerUrl user)
+  if user ^. active
+    then callback (runInAuthService mServerUrl user)
+    else throwError =<< (sendError . UnauthorizedError $ _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED)
 getAuthServiceExecutor Nothing _ _ =
   throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
 
