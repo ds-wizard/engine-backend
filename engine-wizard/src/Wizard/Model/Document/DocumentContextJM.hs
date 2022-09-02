@@ -17,3 +17,6 @@ instance ToJSON DocumentContext where
 
 instance ToJSON DocumentContextConfig where
   toJSON = simpleToJSON "_documentContextConfig"
+
+instance ToJSON DocumentContextPackage where
+  toJSON = simpleToJSON "_documentContextPackage"

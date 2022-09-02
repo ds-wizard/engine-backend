@@ -65,6 +65,7 @@ import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterChangeSM (
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterSM ()
 import Wizard.Api.Resource.Registry.RegistryConfirmationSM ()
 import Wizard.Api.Resource.Registry.RegistryCreateSM ()
+import Wizard.Api.Resource.Registry.RegistryOrganizationSM ()
 import Wizard.Api.Resource.Report.ReportSM ()
 import Wizard.Api.Resource.Submission.SubmissionCreateSM ()
 import Wizard.Api.Resource.Submission.SubmissionSM ()

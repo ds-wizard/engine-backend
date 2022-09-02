@@ -5,7 +5,7 @@ module Wizard.Service.Dev.DevOperationService
 
 import Control.Lens ((^.))
 
-import LensesConfig hiding (action, branch, cache, config, feedback, persistentCommand, questionnaire)
+import LensesConfig hiding (action, branch, cache, config, feedback, persistentCommand, questionnaire, registry)
 import Wizard.Api.Resource.Dev.DevExecutionDTO
 import Wizard.Api.Resource.Dev.DevExecutionResultDTO
 import Wizard.Model.Context.AppContext
@@ -16,7 +16,7 @@ import Wizard.Service.Dev.DevOperationDefinitions
 getDevOperations :: AppContextM [DevSection]
 getDevOperations = do
   checkPermission _DEV_PERM
-  return [branch, cache, config, feedback, persistentCommand, questionnaire]
+  return [branch, cache, config, feedback, persistentCommand, registry, questionnaire]
 
 executeOperation :: DevExecutionDTO -> AppContextM AdminExecutionResultDTO
 executeOperation reqDto = do
@@ -36,6 +36,7 @@ execute reqDto
   | action reqDto feedback feedback_synchronizeFeedbacks = feedback_synchronizeFeedbacksFn reqDto
   | action reqDto persistentCommand persistentCommand_runAll = persistentCommand_runAllFn reqDto
   | action reqDto persistentCommand persistentCommand_run = persistentCommand_runFn reqDto
+  | action reqDto registry registry_syncWithRegistry = registry_syncWithRegistryFn reqDto
   | action reqDto questionnaire questionnaire_squashAllEvents = questionnaire_squashAllEventsFn reqDto
   | action reqDto questionnaire questionnaire_squashEventsForQuestionnaire =
     questionnaire_squashEventsForQuestionnaireFn reqDto

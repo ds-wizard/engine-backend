@@ -13,12 +13,13 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Service.Package.PackageMapper
 import Shared.Util.Coordinate
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
+import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
+import Wizard.Database.Migration.Development.Registry.Data.RegistryPackages
+import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper
 
@@ -76,13 +77,14 @@ create_test_200 title appContext authHeader pkgId =
     let expDto =
           toDetailDTO
             (toPackage globalPackage)
-            [globalRemotePackage]
-            [orgGlobalSimple, orgNetherlandsSimple]
+            [globalRegistryPackage]
+            [globalRegistryOrganization, nlRegistryOrganization]
             ["0.0.1", "1.0.0"]
             ("https://registry-test.ds-wizard.org/knowledge-models/" ++ (globalPackage ^. pId))
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext
+    runInContextIO R.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

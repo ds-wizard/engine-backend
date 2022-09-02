@@ -1,6 +1,7 @@
 module Wizard.Service.Questionnaire.QuestionnaireMapper where
 
 import Control.Lens ((&), (.~), (^.), (^?), _Just)
+import qualified Data.List as L
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
@@ -14,7 +15,7 @@ import Shared.Model.Template.Template
 import qualified Shared.Service.Package.PackageMapper as SPM
 import qualified Shared.Service.Template.TemplateMapper as STM
 import Shared.Service.Template.TemplateMapper
-import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Shared.Util.Coordinate
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
@@ -137,7 +138,8 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , _questionnaireDetailDTOVisibility = qtn ^. visibility
     , _questionnaireDetailDTOSharing = qtn ^. sharing
     , _questionnaireDetailDTOState = state
-    , _questionnaireDetailDTOPackage = PM.toSimpleDTO' [] [] pkgVersions pkg
+    , _questionnaireDetailDTOPackage = PM.toSimpleDTO' [] [] pkg
+    , _questionnaireDetailDTOPackageVersions = L.sortBy compareVersion pkgVersions
     , _questionnaireDetailDTOSelectedQuestionTagUuids = qtn ^. selectedQuestionTagUuids
     , _questionnaireDetailDTOProjectTags = qtn ^. projectTags
     , _questionnaireDetailDTOTemplateId = qtn ^. templateId
@@ -149,50 +151,6 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , _questionnaireDetailDTOReplies = replies
     , _questionnaireDetailDTOCommentThreadsMap = threads
     , _questionnaireDetailDTOLabels = qtnCtn ^. labels
-    , _questionnaireDetailDTOPermissions = records
-    , _questionnaireDetailDTOVersions = versions
-    , _questionnaireDetailDTOCreatorUuid = qtn ^. creatorUuid
-    , _questionnaireDetailDTOIsTemplate = qtn ^. isTemplate
-    , _questionnaireDetailDTOMigrationUuid = mMigrationUuid
-    , _questionnaireDetailDTOCreatedAt = qtn ^. createdAt
-    , _questionnaireDetailDTOUpdatedAt = qtn ^. updatedAt
-    }
-
-toDetailWithPackageDTO ::
-     Questionnaire
-  -> QuestionnaireContent
-  -> PackageSimpleDTO
-  -> KnowledgeModel
-  -> QuestionnaireState
-  -> Maybe Template
-  -> Maybe TemplateFormat
-  -> M.Map String Reply
-  -> M.Map String [QuestionnaireCommentThread]
-  -> [QuestionnairePermRecordDTO]
-  -> [QuestionnaireVersionDTO]
-  -> Maybe U.UUID
-  -> QuestionnaireDetailDTO
-toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFormat replies threads records versions mMigrationUuid =
-  QuestionnaireDetailDTO
-    { _questionnaireDetailDTOUuid = qtn ^. uuid
-    , _questionnaireDetailDTOName = qtn ^. name
-    , _questionnaireDetailDTODescription = qtn ^. description
-    , _questionnaireDetailDTOPhaseUuid = qtnContent ^. phaseUuid
-    , _questionnaireDetailDTOVisibility = qtn ^. visibility
-    , _questionnaireDetailDTOSharing = qtn ^. sharing
-    , _questionnaireDetailDTOState = state
-    , _questionnaireDetailDTOPackage = package
-    , _questionnaireDetailDTOSelectedQuestionTagUuids = qtn ^. selectedQuestionTagUuids
-    , _questionnaireDetailDTOProjectTags = qtn ^. projectTags
-    , _questionnaireDetailDTOTemplateId = qtn ^. templateId
-    , _questionnaireDetailDTOTemplate = fmap STM.toDTO mTemplate
-    , _questionnaireDetailDTOFormatUuid = qtn ^. formatUuid
-    , _questionnaireDetailDTOFormat = fmap toFormatDTO mFormat
-    , _questionnaireDetailDTOTemplateState = toQuestionnaireDetailTemplateState mTemplate
-    , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
-    , _questionnaireDetailDTOReplies = replies
-    , _questionnaireDetailDTOCommentThreadsMap = threads
-    , _questionnaireDetailDTOLabels = qtnContent ^. labels
     , _questionnaireDetailDTOPermissions = records
     , _questionnaireDetailDTOVersions = versions
     , _questionnaireDetailDTOCreatorUuid = qtn ^. creatorUuid

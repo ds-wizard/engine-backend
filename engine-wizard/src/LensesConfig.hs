@@ -123,6 +123,7 @@ import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Limit.AppLimit
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
+import Wizard.Model.Package.PackageList
 import Wizard.Model.PersistentCommand.Config.InvokeClientCssCompilationCommand
 import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.PersistentCommand.PersistentCommandSimple
@@ -138,9 +139,13 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.QuestionnaireImporter.QuestionnaireImporter
+import Wizard.Model.Registry.RegistryOrganization
+import Wizard.Model.Registry.RegistryPackage
+import Wizard.Model.Registry.RegistryTemplate
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
 import Wizard.Model.Submission.Submission
+import Wizard.Model.Template.TemplateList
 import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
 import Wizard.Model.Websocket.WebsocketMessage
@@ -490,6 +495,8 @@ makeFields ''Package
 
 makeFields ''PackageWithEvents
 
+makeFields ''PackageList
+
 makeFields ''PackageGroup
 
 makeFields ''PackagePattern
@@ -552,6 +559,13 @@ makeFields ''QuestionnaireComment
 -- Model / QuestionnaireImporter
 makeFields ''QuestionnaireImporter
 
+-- Model / Registry
+makeFields ''RegistryPackage
+
+makeFields ''RegistryOrganization
+
+makeFields ''RegistryTemplate
+
 -- Model / Report
 makeFields ''Indication
 
@@ -583,6 +597,8 @@ makeFields ''TemplateFormatStep
 makeFields ''TemplateFile
 
 makeFields ''TemplateAsset
+
+makeFields ''TemplateList
 
 makeFields ''TemplateGroup
 

@@ -2,6 +2,7 @@ module Wizard.Database.DAO.Common
   ( module Shared.Database.DAO.Common
   , runInTransaction
   , createFindEntitiesGroupByCoordinatePageableQuerySortFn
+  , createCountGroupByCoordinateFn
   ) where
 
 import Control.Monad.Reader (asks)
@@ -38,6 +39,8 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
         f'
           "SELECT %s \
            \FROM %s \
+           \LEFT JOIN registry_%s ON %s.organization_id = registry_%s.organization_id AND %s.%s = registry_%s.%s \
+           \LEFT JOIN registry_organization ON %s.organization_id = registry_organization.organization_id \
            \WHERE app_uuid = ? AND id IN ( \
            \    SELECT CONCAT(organization_id, ':', %s, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
            \                                                    (max(string_to_array(version, '.')::int[]))[2] || '.' || \
@@ -51,6 +54,14 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
            \limit %s"
           [ fields
           , entityName
+          , entityName
+          , entityName
+          , entityName
+          , entityName
+          , entityId
+          , entityName
+          , entityId
+          , entityName
           , entityId
           , entityName
           , enabledCondition
@@ -60,7 +71,7 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
           , show skip
           , show sizeI
           ]
-  logInfo _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE sql
   let action conn =
         query
           conn

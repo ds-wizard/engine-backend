@@ -269,6 +269,8 @@ modifyQuestionnaire qtnUuid reqDto =
     qSharing <- extractSharing reqDto
     let updatedQtn = fromChangeDTO qtn reqDto qVisibility qSharing currentUser now
     let pkgId = qtnDto ^. package . pId
+    pkg <- getPackageById (qtn ^. packageId)
+    pkgVersions <- getPackageVersions pkg
     updateQuestionnaireById updatedQtn
     knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (updatedQtn ^. selectedQuestionTagUuids)
     state <- getQuestionnaireState qtnUuid pkgId
@@ -285,10 +287,11 @@ modifyQuestionnaire qtnUuid reqDto =
     deleteTemporalDocumentsByQuestionnaireUuid qtnUuid
     migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
     return $
-      toDetailWithPackageDTO
+      toDetailWithPackageWithEventsDTO
         updatedQtn
         qtnCtn
-        (qtnDto ^. package)
+        pkg
+        pkgVersions
         knowledgeModel
         state
         Nothing

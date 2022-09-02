@@ -10,6 +10,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Model.Template.TemplateJM ()
+import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
@@ -57,6 +58,7 @@ create_test_200 title appContext reqAuthHeader =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO TML_Migration.runMigration appContext
+    runInContextIO R_Migration.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

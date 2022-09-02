@@ -1,37 +1,62 @@
 module Wizard.Service.Template.TemplateMapper where
 
-import Control.Lens ((^.))
+import Control.Lens ((^.), (^?), _Just)
 import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
-import qualified Registry.Api.Resource.Template.TemplateSimpleDTO as R_TemplateSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Api.Resource.Template.TemplateSuggestionDTO
 import Shared.Model.Package.Package
 import Shared.Model.Template.Template
+import Shared.Service.Template.TemplateMapper
 import Shared.Util.Coordinate
 import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
+import Wizard.Model.Registry.RegistryOrganization
+import Wizard.Model.Registry.RegistryTemplate
+import Wizard.Model.Template.TemplateList
 import qualified Wizard.Service.Package.PackageMapper as PM_Mapper
 import Wizard.Service.Template.TemplateUtil
 
-toSimpleDTO :: Template -> TemplateSimpleDTO
-toSimpleDTO = toSimpleDTO' [] [] []
+toTemplateList :: Template -> Maybe RegistryTemplate -> Maybe RegistryOrganization -> TemplateList
+toTemplateList tml mTmlR mOrgR =
+  TemplateList
+    { _templateListTId = tml ^. tId
+    , _templateListName = tml ^. name
+    , _templateListOrganizationId = tml ^. organizationId
+    , _templateListTemplateId = tml ^. templateId
+    , _templateListVersion = tml ^. version
+    , _templateListMetamodelVersion = tml ^. metamodelVersion
+    , _templateListDescription = tml ^. description
+    , _templateListReadme = tml ^. readme
+    , _templateListLicense = tml ^. license
+    , _templateListAllowedPackages = tml ^. allowedPackages
+    , _templateListRecommendedPackageId = tml ^. recommendedPackageId
+    , _templateListFormats = tml ^. formats
+    , _templateListRemoteVersion = mTmlR ^? _Just . remoteVersion
+    , _templateListRemoteOrganizationName = mOrgR ^? _Just . name
+    , _templateListRemoteOrganizationLogo =
+        case mOrgR of
+          Just orgR -> orgR ^. logo
+          Nothing -> Nothing
+    , _templateListAppUuid = tml ^. appUuid
+    , _templateListCreatedAt = tml ^. createdAt
+    }
 
-toSimpleDTO' ::
-     [R_TemplateSimpleDTO.TemplateSimpleDTO] -> [OrganizationSimpleDTO] -> [Package] -> Template -> TemplateSimpleDTO
-toSimpleDTO' tmlRs orgRs pkgs tml =
+toSimpleDTO :: Template -> TemplateSimpleDTO
+toSimpleDTO tml = toSimpleDTO' [] $ toTemplateList tml Nothing Nothing
+
+toSimpleDTO' :: [Package] -> TemplateList -> TemplateSimpleDTO
+toSimpleDTO' pkgs tml =
   TemplateSimpleDTO
     { _templateSimpleDTOTId = tml ^. tId
     , _templateSimpleDTOName = tml ^. name
     , _templateSimpleDTOOrganizationId = tml ^. organizationId
     , _templateSimpleDTOTemplateId = tml ^. templateId
     , _templateSimpleDTOVersion = tml ^. version
-    , _templateSimpleDTORemoteLatestVersion =
-        case selectTemplateByOrgIdAndTmlId tml tmlRs of
-          Just tmlR -> Just $ tmlR ^. version
-          Nothing -> Nothing
+    , _templateSimpleDTORemoteLatestVersion = tml ^. remoteVersion
     , _templateSimpleDTOMetamodelVersion = tml ^. metamodelVersion
     , _templateSimpleDTODescription = tml ^. description
     , _templateSimpleDTOReadme = tml ^. readme
@@ -40,19 +65,32 @@ toSimpleDTO' tmlRs orgRs pkgs tml =
     , _templateSimpleDTORecommendedPackageId = tml ^. recommendedPackageId
     , _templateSimpleDTOFormats = tml ^. formats
     , _templateSimpleDTOUsablePackages = fmap PM_Mapper.toSimpleDTO . getUsablePackagesForTemplate tml $ pkgs
-    , _templateSimpleDTOState = computeTemplateState tmlRs tml
-    , _templateSimpleDTOOrganization = selectOrganizationByOrgId tml orgRs
+    , _templateSimpleDTOState = computeTemplateState' tml
+    , _templateSimpleDTOOrganization =
+        case tml ^. remoteOrganizationName of
+          Just orgName ->
+            Just $
+            OrganizationSimpleDTO
+              { _organizationSimpleDTOOrganizationId = tml ^. organizationId
+              , _organizationSimpleDTOName = orgName
+              , _organizationSimpleDTOLogo = tml ^. remoteOrganizationLogo
+              }
+          Nothing -> Nothing
     , _templateSimpleDTOCreatedAt = tml ^. createdAt
     }
 
+toSuggestionDTO :: TemplateList -> TemplateSuggestionDTO
+toSuggestionDTO tml =
+  TemplateSuggestionDTO
+    { _templateSuggestionDTOTId = tml ^. tId
+    , _templateSuggestionDTOName = tml ^. name
+    , _templateSuggestionDTOVersion = tml ^. version
+    , _templateSuggestionDTODescription = tml ^. description
+    , _templateSuggestionDTOFormats = fmap toFormatDTO (tml ^. formats)
+    }
+
 toDetailDTO ::
-     Template
-  -> [R_TemplateSimpleDTO.TemplateSimpleDTO]
-  -> [OrganizationSimpleDTO]
-  -> [String]
-  -> String
-  -> [Package]
-  -> TemplateDetailDTO
+     Template -> [RegistryTemplate] -> [RegistryOrganization] -> [String] -> String -> [Package] -> TemplateDetailDTO
 toDetailDTO tml tmlRs orgRs versionLs registryLink pkgs =
   TemplateDetailDTO
     { _templateDetailDTOTId = tml ^. tId
@@ -71,7 +109,7 @@ toDetailDTO tml tmlRs orgRs versionLs registryLink pkgs =
     , _templateDetailDTOVersions = versionLs
     , _templateDetailDTORemoteLatestVersion =
         case selectTemplateByOrgIdAndTmlId tml tmlRs of
-          Just tmlR -> Just $ tmlR ^. version
+          Just tmlR -> Just $ tmlR ^. remoteVersion
           Nothing -> Nothing
     , _templateDetailDTOState = computeTemplateState tmlRs tml
     , _templateDetailDTORegistryLink =

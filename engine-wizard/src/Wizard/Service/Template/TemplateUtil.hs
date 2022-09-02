@@ -4,21 +4,33 @@ import Control.Lens ((^.))
 import qualified Data.List as L
 
 import LensesConfig
-import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Shared.Constant.Template
-import Shared.Model.Package.Package
 import Shared.Model.Template.Template
 import Shared.Service.Package.PackageUtil
 import Shared.Util.Coordinate
+import Wizard.Model.Registry.RegistryTemplate
+import Wizard.Model.Template.TemplateList
 import Wizard.Model.Template.TemplateState
 
-computeTemplateState :: [TemplateSimpleDTO] -> Template -> TemplateState
+computeTemplateState :: [RegistryTemplate] -> Template -> TemplateState
 computeTemplateState tmlsFromRegistry tml =
   if not (isTemplateSupported tml)
     then UnsupportedMetamodelVersionTemplateState
     else case selectTemplateByOrgIdAndTmlId tml tmlsFromRegistry of
            Just tmlFromRegistry ->
-             case compareVersion (tmlFromRegistry ^. version) (tml ^. version) of
+             case compareVersion (tmlFromRegistry ^. remoteVersion) (tml ^. version) of
+               LT -> UnpublishedTemplateState
+               EQ -> UpToDateTemplateState
+               GT -> OutdatedTemplateState
+           Nothing -> UnknownTemplateState
+
+computeTemplateState' :: TemplateList -> TemplateState
+computeTemplateState' tml =
+  if not (isTemplateSupported tml)
+    then UnsupportedMetamodelVersionTemplateState
+    else case tml ^. remoteVersion of
+           Just rVersion ->
+             case compareVersion rVersion (tml ^. version) of
                LT -> UnpublishedTemplateState
                EQ -> UpToDateTemplateState
                GT -> OutdatedTemplateState
@@ -29,20 +41,20 @@ selectTemplateByOrgIdAndTmlId tml =
 
 selectOrganizationByOrgId tml = L.find (\org -> (org ^. organizationId) == (tml ^. organizationId))
 
-getUsablePackagesForTemplate :: Template -> [Package] -> [Package]
+--getUsablePackagesForTemplate :: Template -> [Package] -> [Package]
 getUsablePackagesForTemplate tml = chooseTheNewest . groupPackages . filterPackages tml
   where
-    filterPackages :: Template -> [Package] -> [Package]
     filterPackages tml = filter (\pkg -> not . null $ filterTemplates (Just $ pkg ^. pId) [tml])
 
-isTemplateSupported :: Template -> Bool
+--    filterPackages :: TemplateList -> [Package] -> [Package]
+--isTemplateSupported :: TemplateList -> Bool
 isTemplateSupported tml = tml ^. metamodelVersion == templateMetamodelVersion
 
-filterTemplates :: Maybe String -> [Template] -> [Template]
+--filterTemplates :: Maybe String -> [TemplateList] -> [TemplateList]
 filterTemplates mPkgId tmls =
   case mPkgId of
     Just pkgId -> filter (filterTemplate . splitCoordinate $ pkgId) tmls
     Nothing -> tmls
+--    filterTemplate :: [String] -> TemplateList -> Bool
   where
-    filterTemplate :: [String] -> Template -> Bool
     filterTemplate pkgIdSplit template = fitsIntoKMSpecs pkgIdSplit (template ^. allowedPackages)

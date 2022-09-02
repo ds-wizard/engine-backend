@@ -49,9 +49,26 @@ toDocumentContext docUuid serverConfig appClientUrl qtn qtnCtn qtnVersion qtnVer
     , _documentContextPhaseUuid = mPhase
     , _documentContextKnowledgeModel = km
     , _documentContextReport = report
-    , _documentContextPackage = toSimpleDTO pkg
+    , _documentContextPackage = toDocumentContextPackage pkg
     , _documentContextOrganization = org
     , _documentContextCreatedBy = USR_Mapper.toDTO <$> mCreatedBy
     , _documentContextCreatedAt = now
     , _documentContextUpdatedAt = now
     }
+
+toDocumentContextPackage :: Package -> DocumentContextPackage
+toDocumentContextPackage pkg =
+  let dto = toSimpleDTO pkg
+   in DocumentContextPackage
+        { _documentContextPackagePId = dto ^. pId
+        , _documentContextPackageName = dto ^. name
+        , _documentContextPackageOrganizationId = dto ^. organizationId
+        , _documentContextPackageKmId = pkg ^. kmId
+        , _documentContextPackageVersion = dto ^. version
+        , _documentContextPackageVersions = []
+        , _documentContextPackageRemoteLatestVersion = dto ^. remoteLatestVersion
+        , _documentContextPackageDescription = dto ^. description
+        , _documentContextPackageState = dto ^. state
+        , _documentContextPackageOrganization = dto ^. organization
+        , _documentContextPackageCreatedAt = dto ^. createdAt
+        }

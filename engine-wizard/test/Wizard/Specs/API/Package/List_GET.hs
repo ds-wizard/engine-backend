@@ -10,14 +10,15 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Service.Package.PackageMapper
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
+import Wizard.Database.Migration.Development.Registry.Data.RegistryPackages
+import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper
@@ -51,23 +52,23 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  let expOrgRs = [orgGlobalSimple, orgNetherlandsSimple]
+  let expOrgRs = [globalRegistryOrganization, nlRegistryOrganization]
   create_test_200
     "HTTP 200 OK"
     appContext
-    "/packages?sort=kmId,asc"
+    "/packages?sort=name,asc"
     (Page
        "packages"
        (PageMetadata 20 3 1 0)
-       [ toSimpleDTO' [globalRemotePackage] expOrgRs ["0.0.1", "1.0.0"] (toPackage globalPackage)
-       , toSimpleDTO' [] expOrgRs ["1.0.0"] (toPackage germanyPackage)
-       , toSimpleDTO' [globalNetherlandsPackage] expOrgRs ["1.0.0", "2.0.0"] (toPackage netherlandsPackageV2)
+       [ toSimpleDTO' [] expOrgRs (toPackage germanyPackage)
+       , toSimpleDTO' [globalRegistryPackage] expOrgRs (toPackage globalPackage)
+       , toSimpleDTO' [nlRegistryPackage] expOrgRs (toPackage netherlandsPackageV2)
        ])
   create_test_200
     "HTTP 200 OK (query - q)"
     appContext
     "/packages?q=Germany Knowledge Model"
-    (Page "packages" (PageMetadata 20 1 1 0) [toSimpleDTO' [] expOrgRs ["1.0.0"] (toPackage germanyPackage)])
+    (Page "packages" (PageMetadata 20 1 1 0) [toSimpleDTO' [] expOrgRs (toPackage germanyPackage)])
   create_test_200
     "HTTP 200 OK (query - kmId)"
     appContext
@@ -75,7 +76,7 @@ test_200 appContext = do
     (Page
        "packages"
        (PageMetadata 20 1 1 0)
-       [toSimpleDTO' [globalNetherlandsPackage] expOrgRs ["1.0.0", "2.0.0"] (toPackage netherlandsPackageV2)])
+       [toSimpleDTO' [nlRegistryPackage] expOrgRs (toPackage netherlandsPackageV2)])
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext
@@ -90,6 +91,7 @@ create_test_200 title appContext reqUrl expDto =
     let expHeaders = resCtHeader : resCorsHeaders
     let expBody = encode expDto
      -- AND: Run migrations
+    runInContextIO R_Migration.runMigration appContext
     runInContextIO PKG.runMigration appContext
     runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext

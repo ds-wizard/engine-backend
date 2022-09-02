@@ -5,9 +5,7 @@ import Data.Maybe (fromJust)
 import Data.Time
 
 import LensesConfig
-import qualified Registry.Database.Migration.Development.Template.Data.Templates as R_Templates
 import Shared.Constant.Template
-import Shared.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.DefaultTemplate (html)
 import Shared.Database.Migration.Development.Template.Data.Templates
@@ -19,6 +17,8 @@ import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Database.Migration.Development.App.Data.Apps
+import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
+import Wizard.Database.Migration.Development.Registry.Data.RegistryTemplates
 import Wizard.Service.Template.TemplateMapper
 
 templateFileDefaultHtmlEditedChangeDto :: TemplateFileChangeDTO
@@ -38,17 +38,15 @@ templateFileNewFileChangeDto =
 commonWizardTemplateSimpleDTO :: TemplateSimpleDTO
 commonWizardTemplateSimpleDTO =
   toSimpleDTO'
-    [R_Templates.commonWizardTemplateSimpleDTO]
-    [orgGlobalSimple]
     [SPM.toPackage globalPackage, SPM.toPackage netherlandsPackageV2]
-    commonWizardTemplate
+    (toTemplateList commonWizardTemplate (Just commonWizardRegistryTemplate) (Just globalRegistryOrganization))
 
 commonWizardTemplateDetailDTO :: TemplateDetailDTO
 commonWizardTemplateDetailDTO =
   toDetailDTO
     commonWizardTemplate
-    [R_Templates.commonWizardTemplateSimpleDTO]
-    [orgGlobalSimple]
+    [commonWizardRegistryTemplate]
+    [globalRegistryOrganization]
     ["1.0.0"]
     "https://registry-test.ds-wizard.org/templates/global:questionnaire-report:1.0.0"
     [SPM.toPackage globalPackage, SPM.toPackage netherlandsPackageV2]

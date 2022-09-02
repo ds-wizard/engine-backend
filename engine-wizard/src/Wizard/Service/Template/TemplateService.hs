@@ -21,16 +21,18 @@ import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
 import Shared.Model.Template.Template
 import Shared.Service.Coordinate.CoordinateValidation
-import Shared.Service.Template.TemplateMapper
+import qualified Shared.Service.Template.TemplateMapper as STM
 import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
+import Wizard.Database.DAO.Registry.RegistryTemplateDAO
 import Wizard.Database.DAO.Template.TemplateDAO (findTemplatesPage)
-import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Template.TemplateList
 import Wizard.S3.Template.TemplateS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Limit.AppLimitService
@@ -49,10 +51,8 @@ getTemplatesPage ::
 getTemplatesPage mOrganizationId mTemplateId mQuery pageable sort = do
   checkPermission _DMP_PERM
   tmls <- findTemplatesPage mOrganizationId mTemplateId mQuery pageable sort
-  tmlRs <- retrieveTemplates
-  orgRs <- retrieveOrganizations
   pkgs <- findPackages
-  return . fmap (toSimpleDTO' tmlRs orgRs pkgs) $ tmls
+  return . fmap (toSimpleDTO' pkgs) $ tmls
 
 getTemplateSuggestions :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page TemplateSuggestionDTO)
 getTemplateSuggestions mPkgId mQuery pageable sort = do
@@ -61,7 +61,7 @@ getTemplateSuggestions mPkgId mQuery pageable sort = do
   page <- findTemplatesPage Nothing Nothing mQuery (Pageable (Just 0) (Just 999999999)) sort
   return . fmap toSuggestionDTO . updatePage page . filterTemplatesInGroup $ page
   where
-    updatePage :: Page Template -> [Template] -> Page Template
+    updatePage :: Page TemplateList -> [TemplateList] -> Page TemplateList
     updatePage (Page name _ _) array =
       let updatedArray = take updatedSize array
           updatedSize = fromMaybe 20 $ pageable ^. size
@@ -69,14 +69,14 @@ getTemplateSuggestions mPkgId mQuery pageable sort = do
           updatedTotalPages = computeTotalPage updatedTotalElements updatedSize
           updatedNumber = fromMaybe 0 $ pageable ^. page
        in Page name (PageMetadata updatedSize updatedTotalElements updatedTotalPages updatedNumber) updatedArray
-    filterTemplatesInGroup :: Page Template -> [Template]
+    filterTemplatesInGroup :: Page TemplateList -> [TemplateList]
     filterTemplatesInGroup page = filter isTemplateSupported . filterTemplates mPkgId $ (page ^. entities)
 
 getTemplatesDto :: [(String, String)] -> AppContextM [TemplateSuggestionDTO]
 getTemplatesDto queryParams = do
   checkPermission _DMP_PERM
   tmls <- findTemplatesFiltered queryParams
-  return . fmap toSuggestionDTO $ tmls
+  return . fmap STM.toSuggestionDTO $ tmls
 
 getTemplateByUuidAndPackageId :: String -> Maybe String -> AppContextM Template
 getTemplateByUuidAndPackageId templateId mPkgId = do
@@ -90,8 +90,8 @@ getTemplateByUuidDto templateId = do
   tml <- findTemplateById templateId
   pkgs <- findPackages
   versions <- getTemplateVersions tml
-  tmlRs <- retrieveTemplates
-  orgRs <- retrieveOrganizations
+  tmlRs <- findRegistryTemplates
+  orgRs <- findRegistryOrganizations
   serverConfig <- asks _appContextServerConfig
   let registryLink = buildTemplateUrl (serverConfig ^. registry . clientUrl) templateId
   let usablePackages = getUsablePackagesForTemplate tml pkgs

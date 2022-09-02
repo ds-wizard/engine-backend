@@ -27,6 +27,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOSharing :: QuestionnaireSharing
     , _questionnaireDetailDTOState :: QuestionnaireState
     , _questionnaireDetailDTOPackage :: PackageSimpleDTO
+    , _questionnaireDetailDTOPackageVersions :: [String]
     , _questionnaireDetailDTOSelectedQuestionTagUuids :: [U.UUID]
     , _questionnaireDetailDTOProjectTags :: [String]
     , _questionnaireDetailDTOTemplateId :: Maybe String
@@ -58,6 +59,7 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOSharing a == _questionnaireDetailDTOSharing b &&
     _questionnaireDetailDTOState a == _questionnaireDetailDTOState b &&
     _questionnaireDetailDTOPackage a == _questionnaireDetailDTOPackage b &&
+    _questionnaireDetailDTOPackageVersions a == _questionnaireDetailDTOPackageVersions b &&
     _questionnaireDetailDTOSelectedQuestionTagUuids a == _questionnaireDetailDTOSelectedQuestionTagUuids b &&
     _questionnaireDetailDTOProjectTags a == _questionnaireDetailDTOProjectTags b &&
     _questionnaireDetailDTOTemplateId a == _questionnaireDetailDTOTemplateId b &&

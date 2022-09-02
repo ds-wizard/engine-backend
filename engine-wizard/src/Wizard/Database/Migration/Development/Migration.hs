@@ -39,6 +39,8 @@ import qualified Wizard.Database.Migration.Development.Questionnaire.Questionnai
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterMigration as QI
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QI_Schema
+import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R
+import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as R_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.Template.TemplateSchemaMigration as TML_Schema
@@ -52,6 +54,7 @@ runMigration = do
   B_Schema.dropFunctions
   PKG_Schema.dropFunctions
   -- 2. Drop schema
+  R_Schema.dropTables
   QI_Schema.dropTables
   ADT_Schema.dropTables
   PF_Schema.dropTables
@@ -96,6 +99,7 @@ runMigration = do
   PF_Schema.createTables
   ADT_Schema.createTables
   QI_Schema.createTables
+  R_Schema.createTables
   -- 4. Create DB functions
   PKG_Schema.createFunctions
   B_Schema.createFunctions
@@ -122,5 +126,6 @@ runMigration = do
   PF.runMigration
   ADT.runMigration
   QI.runMigration
+  R.runMigration
   logInfo _CMP_MIGRATION "ended"
   return Nothing

@@ -93,7 +93,12 @@ defaultRegistry =
   ServerConfigRegistry
     { _serverConfigRegistryUrl = "https://api.registry.ds-wizard.org"
     , _serverConfigRegistryClientUrl = "https://registry.ds-wizard.org"
+    , _serverConfigRegistrySync = defaultRegistrySyncJob
     }
+
+defaultRegistrySyncJob :: ServerConfigCronWorker
+defaultRegistrySyncJob =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "*/15 * * * *"}
 
 defaultBranch :: ServerConfigBranch
 defaultBranch = ServerConfigBranch {_serverConfigBranchSquash = defaultBranchSquash}

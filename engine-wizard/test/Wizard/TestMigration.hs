@@ -19,6 +19,9 @@ import Wizard.Database.DAO.Plan.AppPlanDAO
 import Wizard.Database.DAO.Prefab.PrefabDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.QuestionnaireImporter.QuestionnaireImporterDAO
+import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
+import Wizard.Database.DAO.Registry.RegistryPackageDAO
+import Wizard.Database.DAO.Registry.RegistryTemplateDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.DAO.User.UserDAO
 import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
@@ -43,6 +46,7 @@ import qualified Wizard.Database.Migration.Development.Plan.AppPlanSchemaMigrati
 import qualified Wizard.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QI_Schema
+import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as R_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.Template.TemplateSchemaMigration as TML_Schema
@@ -56,6 +60,7 @@ buildSchema appContext = do
   runInContext B_Schema.dropFunctions appContext
   runInContext PKG_Schema.dropFunctions appContext
   putStrLn "DB: dropping schema"
+  runInContext R_Schema.dropTables appContext
   runInContext QI_Schema.dropTables appContext
   runInContext ADT_Schema.dropTables appContext
   runInContext PF_Schema.dropTables appContext
@@ -99,6 +104,7 @@ buildSchema appContext = do
   runInContext PF_Schema.createTables appContext
   runInContext ADT_Schema.createTables appContext
   runInContext QI_Schema.createTables appContext
+  runInContext R_Schema.createTables appContext
   putStrLn "DB: Creating DB functions"
   runInContext PKG_Schema.createFunctions appContext
   runInContext B_Schema.createFunctions appContext
@@ -106,6 +112,9 @@ buildSchema appContext = do
   runInContext TML.runS3Migration appContext
 
 resetDB appContext = do
+  runInContext deleteRegistryOrganizations appContext
+  runInContext deleteRegistryPackages appContext
+  runInContext deleteRegistryTemplates appContext
   runInContext deleteAudits appContext
   runInContext deletePrefabs appContext
   runInContext deletePersistentCommands appContext

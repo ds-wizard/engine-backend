@@ -18,6 +18,7 @@ import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
+import Wizard.Service.Registry.RegistryService
 import Wizard.Util.Context
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -218,6 +219,28 @@ persistentCommand_runFn :: DevExecutionDTO -> AppContextM String
 persistentCommand_runFn reqDto = do
   command <- findPersistentCommandSimpleByUuid (head (reqDto ^. parameters))
   runPersistentCommand command
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- REGISTRY
+-- ---------------------------------------------------------------------------------------------------------------------
+registry :: DevSection
+registry =
+  DevSection
+    { _devSectionName = "Registry"
+    , _devSectionDescription = Nothing
+    , _devSectionOperations = [registry_syncWithRegistry]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+registry_syncWithRegistry :: DevOperation
+registry_syncWithRegistry =
+  DevOperation
+    {_devOperationName = "Sync with registry", _devOperationDescription = Nothing, _devOperationParameters = []}
+
+registry_syncWithRegistryFn :: DevExecutionDTO -> AppContextM String
+registry_syncWithRegistryFn reqDto = do
+  synchronizeData
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------

@@ -28,11 +28,14 @@ migrate dbPool = do
   createGetKmIdFn dbPool
   createGetBranchForkOfPackageIdFn dbPool
   createGetBranchStateFn dbPool
+  createRegistryOrganizationTable dbPool
+  createRegistryPackageTable dbPool
+  createRegistryTemplateTable dbPool
   return Nothing
 
 createQtnImporterTable dbPool = do
   let sql =
-        "create table questionnaire_importer \
+        "CREATE TABLE questionnaire_importer \
           \ ( \
           \     id                     varchar                  not null, \
           \     name                   varchar                  not null, \
@@ -53,8 +56,8 @@ createQtnImporterTable dbPool = do
           \     updated_at             timestamp with time zone not null \
           \ ); \
           \ \
-          \alter table questionnaire_importer \
-          \    add constraint questionnaire_importer_pk primary key (id, app_uuid); \
+          \ALTER TABLE questionnaire_importer \
+          \    ADD CONSTRAINT questionnaire_importer_pk PRIMARY KEY (id, app_uuid); \
           \create unique index questionnaire_importer_id_uindex \
           \     on questionnaire_importer (id, app_uuid); "
   let action conn = execute_ conn sql
@@ -207,6 +210,57 @@ createGetBranchStateFn dbPool = do
         \    RETURN state; \
         \END; \
         \$$;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createRegistryOrganizationTable dbPool = do
+  let sql =
+        "CREATE TABLE registry_organization \
+        \ ( \
+        \     organization_id varchar                  not null, \
+        \     name            varchar                  not null, \
+        \     logo            varchar, \
+        \     created_at      timestamp with time zone not null \
+        \ ); \
+        \ALTER TABLE registry_organization\
+        \     ADD CONSTRAINT registry_organization_pk PRIMARY KEY (organization_id);\
+        \CREATE UNIQUE INDEX registry_organization_id_uindex \
+        \     ON registry_organization (organization_id); "
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createRegistryPackageTable dbPool = do
+  let sql =
+        "CREATE TABLE registry_package \
+        \ ( \
+        \     organization_id varchar                  not null, \
+        \     km_id           varchar                  not null, \
+        \     remote_version  varchar                  not null, \
+        \     created_at      timestamp with time zone not null \
+        \ ); \
+        \ALTER TABLE registry_package\
+        \     ADD CONSTRAINT registry_package_pk PRIMARY KEY (organization_id, km_id);\
+        \CREATE UNIQUE INDEX registry_package_id_uindex \
+        \     ON registry_package (organization_id, km_id); "
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createRegistryTemplateTable dbPool = do
+  let sql =
+        "CREATE TABLE registry_template \
+        \ ( \
+        \     organization_id varchar                  not null, \
+        \     template_id     varchar                  not null, \
+        \     remote_version  varchar                  not null, \
+        \     created_at      timestamp with time zone not null \
+        \ ); \
+        \ALTER TABLE registry_template\
+        \     ADD CONSTRAINT registry_template_pk PRIMARY KEY (organization_id, template_id);\
+        \CREATE UNIQUE INDEX registry_template_id_uindex \
+        \     ON registry_template (organization_id, template_id); "
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

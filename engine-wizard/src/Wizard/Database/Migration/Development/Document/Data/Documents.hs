@@ -25,8 +25,8 @@ import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Service.Document.DocumentContextMapper
 import Wizard.Service.Document.DocumentMapper
-import qualified Wizard.Service.Package.PackageMapper as WPM
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
@@ -79,7 +79,7 @@ dmp1 =
     , _documentContextPhaseUuid = questionnaire1Ctn ^. phaseUuid
     , _documentContextKnowledgeModel = km1WithQ4
     , _documentContextReport = report1
-    , _documentContextPackage = WPM.toSimpleDTO . SPM.toPackage $ germanyPackage
+    , _documentContextPackage = toDocumentContextPackage . SPM.toPackage $ germanyPackage
     , _documentContextOrganization = defaultOrganization
     , _documentContextCreatedBy = Just . USR_Mapper.toDTO $ userAlbert
     , _documentContextCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
