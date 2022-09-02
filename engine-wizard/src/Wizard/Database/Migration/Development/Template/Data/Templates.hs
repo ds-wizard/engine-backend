@@ -48,7 +48,7 @@ commonWizardTemplateDetailDTO =
     [commonWizardRegistryTemplate]
     [globalRegistryOrganization]
     ["1.0.0"]
-    "https://registry-test.ds-wizard.org/templates/global:questionnaire-report:1.0.0"
+    (Just "https://registry-test.ds-wizard.org/templates/global:questionnaire-report:1.0.0")
     [SPM.toPackage globalPackage, SPM.toPackage netherlandsPackageV2]
 
 commonWizardTemplateEditedChangeDto :: TemplateChangeDTO

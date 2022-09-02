@@ -63,7 +63,7 @@ toSimpleDTO'' pkg =
     , _packageSimpleDTOCreatedAt = pkg ^. createdAt
     }
 
-toDetailDTO :: Package -> [RegistryPackage] -> [RegistryOrganization] -> [String] -> String -> PackageDetailDTO
+toDetailDTO :: Package -> [RegistryPackage] -> [RegistryOrganization] -> [String] -> Maybe String -> PackageDetailDTO
 toDetailDTO pkg pkgRs orgRs versionLs registryLink =
   PackageDetailDTO
     { _packageDetailDTOPId = pkg ^. pId
@@ -84,10 +84,7 @@ toDetailDTO pkg pkgRs orgRs versionLs registryLink =
           Just pkgR -> Just $ pkgR ^. remoteVersion
           Nothing -> Nothing
     , _packageDetailDTOState = computePackageState pkgRs pkg
-    , _packageDetailDTORegistryLink =
-        case selectPackageByOrgIdAndKmId pkg pkgRs of
-          Just pkgR -> Just registryLink
-          Nothing -> Nothing
+    , _packageDetailDTORegistryLink = registryLink
     , _packageDetailDTOOrganization = selectOrganizationByOrgId pkg orgRs
     , _packageDetailDTOCreatedAt = pkg ^. createdAt
     }
@@ -122,5 +119,11 @@ fromDTO dto appUuid =
     , _packageWithEventsCreatedAt = dto ^. createdAt
     }
 
-buildPackageUrl :: String -> String -> String
-buildPackageUrl clientRegistryUrl pkgId = clientRegistryUrl ++ "/knowledge-models/" ++ pkgId
+buildPackageUrl :: String -> Package -> [RegistryPackage] -> Maybe String
+buildPackageUrl clientRegistryUrl pkg pkgRs =
+  case selectPackageByOrgIdAndKmId pkg pkgRs of
+    Just pkgR ->
+      Just $
+      clientRegistryUrl ++
+      "/knowledge-models/" ++ buildCoordinate (pkgR ^. organizationId) (pkgR ^. kmId) (pkgR ^. remoteVersion)
+    Nothing -> Nothing

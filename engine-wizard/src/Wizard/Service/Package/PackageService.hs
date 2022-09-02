@@ -63,7 +63,7 @@ getPackageDetailById pkgId = do
   versions <- getPackageVersions pkg
   pkgRs <- findRegistryPackages
   orgRs <- findRegistryOrganizations
-  return $ toDetailDTO pkg pkgRs orgRs versions (buildPackageUrl (serverConfig ^. registry . clientUrl) (pkg ^. pId))
+  return $ toDetailDTO pkg pkgRs orgRs versions (buildPackageUrl (serverConfig ^. registry . clientUrl) pkg pkgRs)
 
 getSeriesOfPackages :: String -> AppContextM [PackageWithEvents]
 getSeriesOfPackages pkgId = do

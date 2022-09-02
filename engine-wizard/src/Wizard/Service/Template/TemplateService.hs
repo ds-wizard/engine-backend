@@ -93,7 +93,7 @@ getTemplateByUuidDto templateId = do
   tmlRs <- findRegistryTemplates
   orgRs <- findRegistryOrganizations
   serverConfig <- asks _appContextServerConfig
-  let registryLink = buildTemplateUrl (serverConfig ^. registry . clientUrl) templateId
+  let registryLink = buildTemplateUrl (serverConfig ^. registry . clientUrl) tml tmlRs
   let usablePackages = getUsablePackagesForTemplate tml pkgs
   return $ toDetailDTO tml tmlRs orgRs versions registryLink usablePackages
 

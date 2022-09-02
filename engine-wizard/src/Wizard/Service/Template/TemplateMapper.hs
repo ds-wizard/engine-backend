@@ -90,7 +90,13 @@ toSuggestionDTO tml =
     }
 
 toDetailDTO ::
-     Template -> [RegistryTemplate] -> [RegistryOrganization] -> [String] -> String -> [Package] -> TemplateDetailDTO
+     Template
+  -> [RegistryTemplate]
+  -> [RegistryOrganization]
+  -> [String]
+  -> Maybe String
+  -> [Package]
+  -> TemplateDetailDTO
 toDetailDTO tml tmlRs orgRs versionLs registryLink pkgs =
   TemplateDetailDTO
     { _templateDetailDTOTId = tml ^. tId
@@ -112,10 +118,7 @@ toDetailDTO tml tmlRs orgRs versionLs registryLink pkgs =
           Just tmlR -> Just $ tmlR ^. remoteVersion
           Nothing -> Nothing
     , _templateDetailDTOState = computeTemplateState tmlRs tml
-    , _templateDetailDTORegistryLink =
-        case selectTemplateByOrgIdAndTmlId tml tmlRs of
-          Just tmlR -> Just registryLink
-          Nothing -> Nothing
+    , _templateDetailDTORegistryLink = registryLink
     , _templateDetailDTOOrganization = selectOrganizationByOrgId tml orgRs
     , _templateDetailDTOCreatedAt = tml ^. createdAt
     }
@@ -174,5 +177,10 @@ fromChangeDTO dto template =
     , _templateCreatedAt = template ^. createdAt
     }
 
-buildTemplateUrl :: String -> String -> String
-buildTemplateUrl clientRegistryUrl tmlId = clientRegistryUrl ++ "/templates/" ++ tmlId
+buildTemplateUrl :: String -> Template -> [RegistryTemplate] -> Maybe String
+buildTemplateUrl clientRegistryUrl tml tmlRs =
+  case selectTemplateByOrgIdAndTmlId tml tmlRs of
+    Just tmlR ->
+      Just $ clientRegistryUrl ++ "/templates/" ++
+      buildCoordinate (tmlR ^. organizationId) (tmlR ^. templateId) (tmlR ^. remoteVersion)
+    Nothing -> Nothing

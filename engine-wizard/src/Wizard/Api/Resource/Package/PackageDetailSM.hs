@@ -21,4 +21,4 @@ instance ToSchema PackageDetailDTO where
          [globalRegistryPackage]
          [globalRegistryOrganization]
          ["1.0.0"]
-         "https://registry.example.org")
+         (Just "https://registry.example.org"))

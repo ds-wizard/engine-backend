@@ -80,7 +80,7 @@ create_test_200 title appContext authHeader pkgId =
             [globalRegistryPackage]
             [globalRegistryOrganization, nlRegistryOrganization]
             ["0.0.1", "1.0.0"]
-            ("https://registry-test.ds-wizard.org/knowledge-models/" ++ (globalPackage ^. pId))
+            (Just $ "https://registry-test.ds-wizard.org/knowledge-models/" ++ (globalPackage ^. pId))
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext
