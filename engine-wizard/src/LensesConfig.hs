@@ -44,7 +44,6 @@ import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
-import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.Branch.Event.BranchEventDTO
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
@@ -76,6 +75,8 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionRevertDTO
+import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterChangeDTO
+import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
@@ -106,6 +107,8 @@ import Wizard.Model.App.App
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchData
+import Wizard.Model.Branch.BranchDataLength
+import Wizard.Model.Branch.BranchList
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
@@ -120,6 +123,7 @@ import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Limit.AppLimit
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
+import Wizard.Model.Package.PackageList
 import Wizard.Model.PersistentCommand.Config.InvokeClientCssCompilationCommand
 import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.PersistentCommand.PersistentCommandSimple
@@ -134,9 +138,14 @@ import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireVersion
+import Wizard.Model.QuestionnaireImporter.QuestionnaireImporter
+import Wizard.Model.Registry.RegistryOrganization
+import Wizard.Model.Registry.RegistryPackage
+import Wizard.Model.Registry.RegistryTemplate
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
 import Wizard.Model.Submission.Submission
+import Wizard.Model.Template.TemplateList
 import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
 import Wizard.Model.Websocket.WebsocketMessage
@@ -166,7 +175,11 @@ makeFields ''BookReference
 -- Model / Branch
 makeFields ''Branch
 
+makeFields ''BranchList
+
 makeFields ''BranchData
+
+makeFields ''BranchDataLength
 
 -- Model / Cache
 makeFields ''ServerCache
@@ -482,6 +495,8 @@ makeFields ''Package
 
 makeFields ''PackageWithEvents
 
+makeFields ''PackageList
+
 makeFields ''PackageGroup
 
 makeFields ''PackagePattern
@@ -541,6 +556,16 @@ makeFields ''QuestionnaireCommentThread
 
 makeFields ''QuestionnaireComment
 
+-- Model / QuestionnaireImporter
+makeFields ''QuestionnaireImporter
+
+-- Model / Registry
+makeFields ''RegistryPackage
+
+makeFields ''RegistryOrganization
+
+makeFields ''RegistryTemplate
+
 -- Model / Report
 makeFields ''Indication
 
@@ -573,6 +598,8 @@ makeFields ''TemplateFile
 
 makeFields ''TemplateAsset
 
+makeFields ''TemplateList
+
 makeFields ''TemplateGroup
 
 -- Model / User
@@ -604,8 +631,6 @@ makeFields ''AppChangeDTO
 makeFields ''BranchChangeDTO
 
 makeFields ''BranchCreateDTO
-
-makeFields ''BranchDTO
 
 makeFields ''BranchDetailDTO
 
@@ -733,6 +758,11 @@ makeFields ''QuestionnaireVersionDTO
 makeFields ''QuestionnaireVersionChangeDTO
 
 makeFields ''QuestionnaireVersionRevertDTO
+
+-- Api / Resource / QuestionnaireImporter
+makeFields ''QuestionnaireImporterDTO
+
+makeFields ''QuestionnaireImporterChangeDTO
 
 -- Api / Resource / Registry
 makeFields ''RegistryConfirmationDTO

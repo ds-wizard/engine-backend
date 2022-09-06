@@ -5,8 +5,6 @@ import qualified Data.List as L
 import qualified Data.UUID as U
 
 import LensesConfig
-import qualified Registry.Api.Resource.Package.PackageSimpleDTO as R_PackageSimpleDTO
-import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.Package.PackageSuggestionDTO
 import Shared.Model.Package.Package
@@ -14,24 +12,25 @@ import Shared.Model.Package.PackageWithEvents
 import Shared.Util.Coordinate
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Wizard.Model.Package.PackageList
+import Wizard.Model.Registry.RegistryOrganization
+import Wizard.Model.Registry.RegistryPackage
 import Wizard.Service.Package.PackageUtil
 
 toSimpleDTO :: Package -> PackageSimpleDTO
-toSimpleDTO = toSimpleDTO' [] [] []
+toSimpleDTO = toSimpleDTO' [] []
 
-toSimpleDTO' ::
-     [R_PackageSimpleDTO.PackageSimpleDTO] -> [OrganizationSimpleDTO] -> [String] -> Package -> PackageSimpleDTO
-toSimpleDTO' pkgRs orgRs localVersions pkg =
+toSimpleDTO' :: [RegistryPackage] -> [RegistryOrganization] -> Package -> PackageSimpleDTO
+toSimpleDTO' pkgRs orgRs pkg =
   PackageSimpleDTO
     { _packageSimpleDTOPId = pkg ^. pId
     , _packageSimpleDTOName = pkg ^. name
     , _packageSimpleDTOOrganizationId = pkg ^. organizationId
     , _packageSimpleDTOKmId = pkg ^. kmId
     , _packageSimpleDTOVersion = pkg ^. version
-    , _packageSimpleDTOVersions = L.sortBy compareVersion localVersions
     , _packageSimpleDTORemoteLatestVersion =
         case selectPackageByOrgIdAndKmId pkg pkgRs of
-          Just pkgR -> Just $ pkgR ^. version
+          Just pkgR -> Just $ pkgR ^. remoteVersion
           Nothing -> Nothing
     , _packageSimpleDTODescription = pkg ^. description
     , _packageSimpleDTOState = computePackageState pkgRs pkg
@@ -39,33 +38,32 @@ toSimpleDTO' pkgRs orgRs localVersions pkg =
     , _packageSimpleDTOCreatedAt = pkg ^. createdAt
     }
 
-toSimpleDTO'' ::
-     [R_PackageSimpleDTO.PackageSimpleDTO] -> [OrganizationSimpleDTO] -> (Package, [String]) -> PackageSimpleDTO
-toSimpleDTO'' pkgRs orgRs (pkg, localVersions) =
+toSimpleDTO'' :: PackageList -> PackageSimpleDTO
+toSimpleDTO'' pkg =
   PackageSimpleDTO
     { _packageSimpleDTOPId = pkg ^. pId
     , _packageSimpleDTOName = pkg ^. name
     , _packageSimpleDTOOrganizationId = pkg ^. organizationId
     , _packageSimpleDTOKmId = pkg ^. kmId
     , _packageSimpleDTOVersion = pkg ^. version
-    , _packageSimpleDTOVersions = L.sortBy compareVersion localVersions
-    , _packageSimpleDTORemoteLatestVersion =
-        case selectPackageByOrgIdAndKmId pkg pkgRs of
-          Just pkgR -> Just $ pkgR ^. version
-          Nothing -> Nothing
+    , _packageSimpleDTORemoteLatestVersion = pkg ^. remoteVersion
     , _packageSimpleDTODescription = pkg ^. description
-    , _packageSimpleDTOState = computePackageState pkgRs pkg
-    , _packageSimpleDTOOrganization = selectOrganizationByOrgId pkg orgRs
+    , _packageSimpleDTOState = computePackageState' pkg
+    , _packageSimpleDTOOrganization =
+        case pkg ^. remoteOrganizationName of
+          Just orgName ->
+            Just $
+            RegistryOrganization
+              { _registryOrganizationOrganizationId = pkg ^. organizationId
+              , _registryOrganizationName = orgName
+              , _registryOrganizationLogo = pkg ^. remoteOrganizationLogo
+              , _registryOrganizationCreatedAt = pkg ^. createdAt
+              }
+          Nothing -> Nothing
     , _packageSimpleDTOCreatedAt = pkg ^. createdAt
     }
 
-toDetailDTO ::
-     Package
-  -> [R_PackageSimpleDTO.PackageSimpleDTO]
-  -> [OrganizationSimpleDTO]
-  -> [String]
-  -> String
-  -> PackageDetailDTO
+toDetailDTO :: Package -> [RegistryPackage] -> [RegistryOrganization] -> [String] -> Maybe String -> PackageDetailDTO
 toDetailDTO pkg pkgRs orgRs versionLs registryLink =
   PackageDetailDTO
     { _packageDetailDTOPId = pkg ^. pId
@@ -83,18 +81,15 @@ toDetailDTO pkg pkgRs orgRs versionLs registryLink =
     , _packageDetailDTOVersions = L.sort versionLs
     , _packageDetailDTORemoteLatestVersion =
         case selectPackageByOrgIdAndKmId pkg pkgRs of
-          Just pkgR -> Just $ pkgR ^. version
+          Just pkgR -> Just $ pkgR ^. remoteVersion
           Nothing -> Nothing
     , _packageDetailDTOState = computePackageState pkgRs pkg
-    , _packageDetailDTORegistryLink =
-        case selectPackageByOrgIdAndKmId pkg pkgRs of
-          Just pkgR -> Just registryLink
-          Nothing -> Nothing
+    , _packageDetailDTORegistryLink = registryLink
     , _packageDetailDTOOrganization = selectOrganizationByOrgId pkg orgRs
     , _packageDetailDTOCreatedAt = pkg ^. createdAt
     }
 
-toSuggestionDTO :: (Package, [String]) -> PackageSuggestionDTO
+toSuggestionDTO :: (PackageList, [String]) -> PackageSuggestionDTO
 toSuggestionDTO (pkg, localVersions) =
   PackageSuggestionDTO
     { _packageSuggestionDTOPId = pkg ^. pId
@@ -124,5 +119,11 @@ fromDTO dto appUuid =
     , _packageWithEventsCreatedAt = dto ^. createdAt
     }
 
-buildPackageUrl :: String -> String -> String
-buildPackageUrl clientRegistryUrl pkgId = clientRegistryUrl ++ "/knowledge-models/" ++ pkgId
+buildPackageUrl :: String -> Package -> [RegistryPackage] -> Maybe String
+buildPackageUrl clientRegistryUrl pkg pkgRs =
+  case selectPackageByOrgIdAndKmId pkg pkgRs of
+    Just pkgR ->
+      Just $
+      clientRegistryUrl ++
+      "/knowledge-models/" ++ buildCoordinate (pkgR ^. organizationId) (pkgR ^. kmId) (pkgR ^. remoteVersion)
+    Nothing -> Nothing

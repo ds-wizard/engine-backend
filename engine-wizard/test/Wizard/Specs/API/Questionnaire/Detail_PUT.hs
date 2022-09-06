@@ -23,7 +23,6 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
-import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -130,7 +129,6 @@ create_test_200 title appContext qtn qtnEdited qtnCtn permissions authHeader ano
             fReplies
             qtnThreads
             permissions
-            fEventsWithoutCommentsDto
             qVersionsDto
             Nothing
     let expType (a :: QuestionnaireDetailDTO) = a

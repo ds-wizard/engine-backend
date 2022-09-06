@@ -2,6 +2,7 @@ module Wizard.Database.DAO.Common
   ( module Shared.Database.DAO.Common
   , runInTransaction
   , createFindEntitiesGroupByCoordinatePageableQuerySortFn
+  , createCountGroupByCoordinateFn
   ) where
 
 import Control.Monad.Reader (asks)
@@ -21,24 +22,31 @@ import Wizard.Util.Logger
 runInTransaction :: AppContextM a -> AppContextM a
 runInTransaction = S.runInTransaction logInfoU logWarnU
 
-createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel pageable sort fields entityId mQuery mOrganizationId mEntityId
+createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel pageable sort fields entityId mQuery mEnabled mOrganizationId mEntityId
   -- 1. Prepare variables
  = do
   appUuid <- asks _appContextAppUuid
   let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
+  let enabledCondition =
+        case mEnabled of
+          Just True -> "enabled = true AND"
+          Just False -> "enabled = false AND"
+          _ -> ""
   -- 2. Get total count
-  count <- createCountGroupByCoordinateFn entityName entityId mQuery mOrganizationId mEntityId
+  count <- createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrganizationId mEntityId
   -- 3. Get entities
   let sql =
         f'
           "SELECT %s \
            \FROM %s \
+           \LEFT JOIN registry_%s ON %s.organization_id = registry_%s.organization_id AND %s.%s = registry_%s.%s \
+           \LEFT JOIN registry_organization ON %s.organization_id = registry_organization.organization_id \
            \WHERE app_uuid = ? AND id IN ( \
            \    SELECT CONCAT(organization_id, ':', %s, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
            \                                                    (max(string_to_array(version, '.')::int[]))[2] || '.' || \
            \                                                    (max(string_to_array(version, '.')::int[]))[3]) \
            \    FROM %s \
-           \    WHERE app_uuid = ? AND (name ~* ? OR id ~* ?) %s \
+           \    WHERE %s app_uuid = ? AND (name ~* ? OR id ~* ?) %s \
            \    GROUP BY organization_id, %s \
            \) \
            \%s \
@@ -46,15 +54,24 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
            \limit %s"
           [ fields
           , entityName
+          , entityName
+          , entityName
+          , entityName
+          , entityName
           , entityId
           , entityName
+          , entityId
+          , entityName
+          , entityId
+          , entityName
+          , enabledCondition
           , mapToDBCoordinatesSql entityId mOrganizationId mEntityId
           , entityId
           , mapSort sort
           , show skip
           , show sizeI
           ]
-  logInfo _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE sql
   let action conn =
         query
           conn
@@ -72,17 +89,18 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
           }
   return $ Page pageLabel metadata entities
 
-createCountGroupByCoordinateFn :: String -> String -> Maybe String -> Maybe String -> Maybe String -> AppContextM Int
-createCountGroupByCoordinateFn entityName entityId mQuery mOrganizationId mEntityId = do
+createCountGroupByCoordinateFn ::
+     String -> String -> Maybe String -> String -> Maybe String -> Maybe String -> AppContextM Int
+createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrganizationId mEntityId = do
   appUuid <- asks _appContextAppUuid
   let sql =
         f'
           "SELECT COUNT(*) \
           \ FROM (SELECT COUNT(*) \
           \   FROM %s \
-          \   WHERE app_uuid = ? AND name ~* ? %s \
+          \   WHERE %s app_uuid = ? AND name ~* ? %s \
           \   GROUP BY organization_id, %s) p"
-          [entityName, mapToDBCoordinatesSql entityId mOrganizationId mEntityId, entityId]
+          [entityName, enabledCondition, mapToDBCoordinatesSql entityId mOrganizationId mEntityId, entityId]
   logInfo _CMP_DATABASE sql
   let action conn =
         query

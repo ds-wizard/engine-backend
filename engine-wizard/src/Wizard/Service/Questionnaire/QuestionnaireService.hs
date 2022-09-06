@@ -13,6 +13,7 @@ import LensesConfig
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Localization.Messages.Public
+import Shared.Model.Common.Lens
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
@@ -20,15 +21,13 @@ import Shared.Model.Error.Error
 import Shared.Service.Package.PackageUtil
 import Shared.Util.List
 import Shared.Util.Uuid
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentListDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireHistoryDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelListDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
@@ -40,6 +39,7 @@ import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
+import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Config.AppConfigService
@@ -50,6 +50,7 @@ import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
+import Wizard.Service.Questionnaire.QuestionnaireAudit
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireUtils
 import Wizard.Service.Questionnaire.QuestionnaireValidation
@@ -217,7 +218,6 @@ getQuestionnaireDetailById qtnUuid = do
       _ -> return Nothing
   permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
   qtnCtn <- compileQuestionnaire qtn
-  eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
   versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
   filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
   migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
@@ -234,32 +234,26 @@ getQuestionnaireDetailById qtnUuid = do
       (qtnCtn ^. replies)
       filteredCommentThreadsMap
       permissionDtos
-      eventsDto
       versionDto
       (fmap (^. newQuestionnaireUuid) . headSafe $ migrations)
 
-getQuestionnaireCommentsForQtnUuid :: String -> AppContextM QuestionnaireCommentListDTO
-getQuestionnaireCommentsForQtnUuid qtnUuid = do
+getQuestionnaireEventsForQtnUuid :: String -> AppContextM [QuestionnaireEventDTO]
+getQuestionnaireEventsForQtnUuid qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
   checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
-  qtnCtn <- compileQuestionnaire qtn
-  filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
-  return . toCommentListDTO $ filteredCommentThreadsMap
+  auditQuestionnaireListEvents qtnUuid
+  traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
 
-getQuestionnaireLabelsForQtnUuid :: String -> AppContextM QuestionnaireLabelListDTO
-getQuestionnaireLabelsForQtnUuid qtnUuid = do
+getQuestionnaireEventForQtnUuid :: String -> String -> AppContextM QuestionnaireEventDTO
+getQuestionnaireEventForQtnUuid qtnUuid eventUuid = do
   qtn <- findQuestionnaireById qtnUuid
   checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
-  qtnCtn <- compileQuestionnaire qtn
-  return . toLabelListDTO $ qtnCtn ^. labels
-
-getQuestionnaireHistoryForQtnUuid :: String -> AppContextM QuestionnaireHistoryDTO
-getQuestionnaireHistoryForQtnUuid qtnUuid = do
-  qtn <- findQuestionnaireById qtnUuid
-  checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
-  eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
-  versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
-  return $ toHistoryDTO eventsDto versionDto
+  auditQuestionnaireDetailEvent qtnUuid
+  case L.find (\e -> U.toString (e ^. uuid') == eventUuid) (qtn ^. events) of
+    Just event -> enhanceQuestionnaireEvent event
+    Nothing ->
+      throwError . NotExistsError $
+      _ERROR_DATABASE__ENTITY_NOT_FOUND "questionnaire_event" [("questionnaireUuid", qtnUuid), ("eventUuid", eventUuid)]
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto =
@@ -275,6 +269,8 @@ modifyQuestionnaire qtnUuid reqDto =
     qSharing <- extractSharing reqDto
     let updatedQtn = fromChangeDTO qtn reqDto qVisibility qSharing currentUser now
     let pkgId = qtnDto ^. package . pId
+    pkg <- getPackageById (qtn ^. packageId)
+    pkgVersions <- getPackageVersions pkg
     updateQuestionnaireById updatedQtn
     knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (updatedQtn ^. selectedQuestionTagUuids)
     state <- getQuestionnaireState qtnUuid pkgId
@@ -286,16 +282,16 @@ modifyQuestionnaire qtnUuid reqDto =
          (sendQuestionnaireInvitationMail qtn updatedQtn)
          (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT))
     qtnCtn <- compileQuestionnaire updatedQtn
-    eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (updatedQtn ^. events))
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
     filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
     deleteTemporalDocumentsByQuestionnaireUuid qtnUuid
     migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
     return $
-      toDetailWithPackageDTO
+      toDetailWithPackageWithEventsDTO
         updatedQtn
         qtnCtn
-        (qtnDto ^. package)
+        pkg
+        pkgVersions
         knowledgeModel
         state
         Nothing
@@ -303,7 +299,6 @@ modifyQuestionnaire qtnUuid reqDto =
         (qtnCtn ^. replies)
         filteredCommentThreadsMap
         permissionDtos
-        eventsDto
         versionDto
         Nothing
 

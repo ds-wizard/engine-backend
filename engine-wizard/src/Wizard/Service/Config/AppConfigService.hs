@@ -21,6 +21,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.S3.Public.PublicS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppHelper
+import Wizard.Service.Config.AppConfigAudit
 import Wizard.Service.Config.AppConfigMapper
 import Wizard.Service.Config.AppConfigValidation
 import Wizard.Util.Logger
@@ -67,7 +68,9 @@ modifyAppConfigDto reqDto
     -- 5. Compile client CSS
     updatedAppConfigWithCss <-
       if colorsChanged appConfig updatedAppConfig && appConfig ^. feature . clientCustomizationEnabled
-        then invokeClientCssCompilation appConfig updatedAppConfig
+        then do
+          auditAppConfigChangeColors $ appConfig ^. uuid
+          invokeClientCssCompilation appConfig updatedAppConfig
         else return updatedAppConfig
     -- 6. Update
     modifyAppConfig updatedAppConfigWithCss

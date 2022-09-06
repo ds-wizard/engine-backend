@@ -154,15 +154,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
                  \qtn.updated_at, \
                  \CASE \
                  \  WHEN qtn_mig.new_questionnaire_uuid IS NOT NULL THEN 'Migrating' \
-                 \  WHEN qtn.package_id != (SELECT CONCAT(organization_id, ':', km_id, ':', \
-                 \          (max(string_to_array(version, '.')::int[]))[1] || '.' || \
-                 \          (max(string_to_array(version, '.')::int[]))[2] || '.' || \
-                 \          (max(string_to_array(version, '.')::int[]))[3]) \
-                 \      FROM package \
-                 \      WHERE organization_id = pkg.organization_id \
-                 \        AND km_id = pkg.km_id \
-                 \        AND app_uuid = '%s' \
-                 \      GROUP BY organization_id, km_id) THEN 'Outdated' \
+                 \  WHEN qtn.package_id != get_newest_package(pkg.organization_id, pkg.km_id, '%s') THEN 'Outdated' \
                  \  WHEN qtn_mig.new_questionnaire_uuid IS NULL THEN 'Default' \
                  \  END, \
                  \pkg.id, \

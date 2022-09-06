@@ -9,7 +9,6 @@ import Shared.Api.Resource.Template.TemplateDTO
 import Shared.Api.Resource.Template.TemplateFormatDTO
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.Questionnaire.Questionnaire
@@ -28,6 +27,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOSharing :: QuestionnaireSharing
     , _questionnaireDetailDTOState :: QuestionnaireState
     , _questionnaireDetailDTOPackage :: PackageSimpleDTO
+    , _questionnaireDetailDTOPackageVersions :: [String]
     , _questionnaireDetailDTOSelectedQuestionTagUuids :: [U.UUID]
     , _questionnaireDetailDTOProjectTags :: [String]
     , _questionnaireDetailDTOTemplateId :: Maybe String
@@ -41,7 +41,6 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOLabels :: M.Map String [U.UUID]
     , _questionnaireDetailDTOCreatorUuid :: Maybe U.UUID
     , _questionnaireDetailDTOPermissions :: [QuestionnairePermRecordDTO]
-    , _questionnaireDetailDTOEvents :: [QuestionnaireEventDTO]
     , _questionnaireDetailDTOVersions :: [QuestionnaireVersionDTO]
     , _questionnaireDetailDTOIsTemplate :: Bool
     , _questionnaireDetailDTOMigrationUuid :: Maybe U.UUID
@@ -60,6 +59,7 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOSharing a == _questionnaireDetailDTOSharing b &&
     _questionnaireDetailDTOState a == _questionnaireDetailDTOState b &&
     _questionnaireDetailDTOPackage a == _questionnaireDetailDTOPackage b &&
+    _questionnaireDetailDTOPackageVersions a == _questionnaireDetailDTOPackageVersions b &&
     _questionnaireDetailDTOSelectedQuestionTagUuids a == _questionnaireDetailDTOSelectedQuestionTagUuids b &&
     _questionnaireDetailDTOProjectTags a == _questionnaireDetailDTOProjectTags b &&
     _questionnaireDetailDTOTemplateId a == _questionnaireDetailDTOTemplateId b &&
@@ -71,7 +71,6 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOReplies a == _questionnaireDetailDTOReplies b &&
     _questionnaireDetailDTOCommentThreadsMap a == _questionnaireDetailDTOCommentThreadsMap b &&
     _questionnaireDetailDTOPermissions a == _questionnaireDetailDTOPermissions b &&
-    _questionnaireDetailDTOEvents a == _questionnaireDetailDTOEvents b &&
     _questionnaireDetailDTOVersions a == _questionnaireDetailDTOVersions b &&
     _questionnaireDetailDTOCreatorUuid a == _questionnaireDetailDTOCreatorUuid b &&
     _questionnaireDetailDTOIsTemplate a == _questionnaireDetailDTOIsTemplate b &&

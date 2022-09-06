@@ -2,10 +2,10 @@ module Wizard.Api.Resource.Template.TemplateDetailJM where
 
 import Data.Aeson
 
-import Shared.Api.Resource.Organization.OrganizationSimpleJM ()
 import Shared.Model.Template.TemplateJM ()
 import Shared.Util.JSON
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
+import Wizard.Api.Resource.Registry.RegistryOrganizationJM ()
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateStateJM ()
 

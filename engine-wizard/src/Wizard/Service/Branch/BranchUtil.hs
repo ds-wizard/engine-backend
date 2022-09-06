@@ -5,15 +5,11 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Model.Package.Package
-import Wizard.Api.Resource.Branch.BranchDTO
-import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Model.Branch.Branch
-import Wizard.Model.Branch.BranchData
 import Wizard.Model.Branch.BranchState
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Service.Branch.BranchMapper
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Package.PackageService
 
@@ -49,18 +45,12 @@ getBranchMergeCheckpointPackageId branch = do
         else return . Just $ previousPkg ^. pId
     Nothing -> return Nothing
 
-enhanceBranch :: Branch -> AppContextM BranchDTO
-enhanceBranch branch = do
-  mForkOfPackageId <- getBranchForkOfPackageId branch
-  branchData <- findBranchDataById (U.toString $ branch ^. uuid)
-  state <- getBranchState branch branchData
-  return $ toDTO branch mForkOfPackageId state
-
-getBranchState :: Branch -> BranchData -> AppContextM BranchState
-getBranchState branch branchData = isMigrating $ isEditing $ isMigrated $ isOutdated isDefault
+getBranchState :: Branch -> Int -> Maybe String -> AppContextM BranchState
+getBranchState branch eventSize mForkOfPackageId = do
+  mMs <- findMigratorStateByBranchUuid' (U.toString $ branch ^. uuid)
+  isMigrating mMs $ isEditing $ isMigrated mMs $ isOutdated isDefault
   where
-    isMigrating continue = do
-      mMs <- findMigratorStateByBranchUuid' (U.toString $ branch ^. uuid)
+    isMigrating mMs continue =
       case mMs of
         Just ms ->
           if ms ^. migrationState == CompletedState
@@ -68,19 +58,17 @@ getBranchState branch branchData = isMigrating $ isEditing $ isMigrated $ isOutd
             else return BSMigrating
         Nothing -> continue
     isEditing continue =
-      if not (null $ branchData ^. events)
+      if eventSize > 0
         then return BSEdited
         else continue
-    isMigrated continue = do
-      mMs <- findMigratorStateByBranchUuid' (U.toString $ branch ^. uuid)
+    isMigrated mMs continue =
       case mMs of
         Just ms ->
           if ms ^. migrationState == CompletedState
             then return BSMigrated
             else continue
         Nothing -> continue
-    isOutdated continue = do
-      mForkOfPackageId <- getBranchForkOfPackageId branch
+    isOutdated continue =
       case mForkOfPackageId of
         Just forkOfPackageId -> do
           newerPackages <- getNewerPackages forkOfPackageId

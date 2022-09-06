@@ -16,7 +16,6 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.QuestionnaireState
-import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 
@@ -45,7 +44,6 @@ nlQtnMigrationStateDto =
           (questionnaire4Ctn ^. replies)
           (questionnaire4Ctn ^. commentThreadsMap)
           []
-          (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4 ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4 ^. versions))
           (Just $ questionnaire4Upgraded ^. uuid)
     , _migratorStateDTONewQuestionnaire =
@@ -61,7 +59,6 @@ nlQtnMigrationStateDto =
           (questionnaire4Ctn ^. replies)
           (questionnaire4Ctn ^. commentThreadsMap)
           []
-          (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4Upgraded ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4Upgraded ^. versions))
           Nothing
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid]
@@ -84,7 +81,6 @@ nlQtnMigrationStateVisibleViewDto =
           (questionnaire4Ctn ^. replies)
           (questionnaire4Ctn ^. commentThreadsMap)
           []
-          (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleView ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleView ^. versions))
           (Just $ questionnaire4Upgraded ^. uuid)
     , _migratorStateDTONewQuestionnaire =
@@ -100,7 +96,6 @@ nlQtnMigrationStateVisibleViewDto =
           (questionnaire4Ctn ^. replies)
           (questionnaire4Ctn ^. commentThreadsMap)
           []
-          (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleViewUpgraded ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleViewUpgraded ^. versions))
           Nothing
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
@@ -123,7 +118,6 @@ nlQtnMigrationStateVisibleEditDto =
           (questionnaire4Ctn ^. replies)
           (questionnaire4Ctn ^. commentThreadsMap)
           []
-          (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleEdit ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleEdit ^. versions))
           (Just $ questionnaire4Upgraded ^. uuid)
     , _migratorStateDTONewQuestionnaire =
@@ -139,7 +133,6 @@ nlQtnMigrationStateVisibleEditDto =
           (questionnaire4Ctn ^. replies)
           (questionnaire4Ctn ^. commentThreadsMap)
           []
-          (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleEditUpgraded ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleEditUpgraded ^. versions))
           Nothing
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids

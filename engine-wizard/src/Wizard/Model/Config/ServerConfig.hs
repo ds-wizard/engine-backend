@@ -69,6 +69,7 @@ data ServerConfigRegistry =
   ServerConfigRegistry
     { _serverConfigRegistryUrl :: String
     , _serverConfigRegistryClientUrl :: String
+    , _serverConfigRegistrySync :: ServerConfigCronWorker
     }
   deriving (Generic, Show)
 

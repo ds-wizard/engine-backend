@@ -38,8 +38,10 @@ import qualified Wizard.Specs.API.Migration.Questionnaire.APISpec as QTN_Migrati
 import Wizard.Specs.API.Package.APISpec
 import Wizard.Specs.API.Prefab.APISpec
 import Wizard.Specs.API.Questionnaire.APISpec
+import Wizard.Specs.API.Questionnaire.Event.APISpec
 import Wizard.Specs.API.Questionnaire.ProjectTag.APISpec
 import Wizard.Specs.API.Questionnaire.Version.APISpec
+import Wizard.Specs.API.QuestionnaireImporter.APISpec
 import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Swagger.APISpec
 import Wizard.Specs.API.Template.APISpec
@@ -195,8 +197,10 @@ main =
              packageAPI baseContext appContext
              prefabAPI baseContext appContext
              questionnaireAPI baseContext appContext
+             questionnaireEventAPI baseContext appContext
              questionnaireProjectTagAPI baseContext appContext
              questionnaireVersionAPI baseContext appContext
+             questionnaireImporterAPI baseContext appContext
              submissionAPI baseContext appContext
              swaggerAPI baseContext appContext
              templateAPI baseContext appContext

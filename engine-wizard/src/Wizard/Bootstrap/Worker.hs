@@ -20,6 +20,7 @@ import Wizard.Worker.Cron.PersistentCommand.PersistentCommandRetryWorker
 import Wizard.Worker.Cron.Plan.AppPlanWorker
 import Wizard.Worker.Cron.Questionnaire.CleanQuestionnaireWorker
 import Wizard.Worker.Cron.Questionnaire.SquashQuestionnaireEventsWorker
+import Wizard.Worker.Cron.Registry.RegistrySyncWorker
 import Wizard.Worker.Permanent.PersistentCommand.PersistentCommandListenerWorker
 
 worker :: MVar () -> BaseContext -> IO ()
@@ -50,6 +51,7 @@ cronJob context = do
       appPlanWorker context
       cleanQuestionnaireWorker context
       squashQuestionnaireEventsWorker context
+      registrySyncWorker context
   logInfo _CMP_WORKER "scheduling workers completed"
   return threadIds
 

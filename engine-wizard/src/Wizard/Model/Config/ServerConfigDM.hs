@@ -64,6 +64,7 @@ defaultRoles =
         , "PM_READ_PERM"
         , "PM_WRITE_PERM"
         , "QTN_PERM"
+        , "QTN_IMPORTER_PERM"
         , "QTN_TML_PERM"
         , "DMP_PERM"
         , "CFG_PERM"
@@ -78,6 +79,7 @@ defaultRoles =
         , "PM_READ_PERM"
         , "PM_WRITE_PERM"
         , "QTN_PERM"
+        , "QTN_IMPORTER_PERM"
         , "QTN_TML_PERM"
         , "DMP_PERM"
         , "SUBM_PERM"
@@ -91,7 +93,12 @@ defaultRegistry =
   ServerConfigRegistry
     { _serverConfigRegistryUrl = "https://api.registry.ds-wizard.org"
     , _serverConfigRegistryClientUrl = "https://registry.ds-wizard.org"
+    , _serverConfigRegistrySync = defaultRegistrySyncJob
     }
+
+defaultRegistrySyncJob :: ServerConfigCronWorker
+defaultRegistrySyncJob =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "*/15 * * * *"}
 
 defaultBranch :: ServerConfigBranch
 defaultBranch = ServerConfigBranch {_serverConfigBranchSquash = defaultBranchSquash}
@@ -103,7 +110,7 @@ defaultBranchSquash =
 defaultCache :: ServerConfigCache
 defaultCache =
   ServerConfigCache
-    { _serverConfigCacheDataExpiration = 12
+    { _serverConfigCacheDataExpiration = 14 * 24
     , _serverConfigCacheWebsocketExpiration = 24
     , _serverConfigCachePurgeExpired = defaultCachePurgeExpired
     }

@@ -79,6 +79,9 @@ sre_rQ1Updated =
     , _setReplyEventCreatedAt = snd rQ1Updated ^. createdAt
     }
 
+sre_rQ1Dto' :: QuestionnaireEventDTO
+sre_rQ1Dto' = toEventDTO sre_rQ1' (Just userAlbert)
+
 sre_rQ2' :: QuestionnaireEvent
 sre_rQ2' = SetReplyEvent' sre_rQ2
 

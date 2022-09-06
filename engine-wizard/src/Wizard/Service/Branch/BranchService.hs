@@ -20,13 +20,13 @@ import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
-import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
+import Wizard.Model.Branch.BranchList
 import Wizard.Model.Branch.BranchState
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
@@ -38,13 +38,12 @@ import Wizard.Service.Branch.Collaboration.CollaborationService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Limit.AppLimitService
 
-getBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchDTO)
+getBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchList)
 getBranchesPage mQuery pageable sort = do
   checkPermission _KM_PERM
-  bs <- findBranchesPage mQuery pageable sort
-  traverse enhanceBranch bs
+  findBranchesPage mQuery pageable sort
 
-createBranch :: BranchCreateDTO -> AppContextM BranchDTO
+createBranch :: BranchCreateDTO -> AppContextM BranchList
 createBranch reqDto =
   runInTransaction $ do
     bUuid <- liftIO generateUuid
@@ -52,7 +51,7 @@ createBranch reqDto =
     currentUser <- getCurrentUser
     createBranchWithParams bUuid now currentUser reqDto
 
-createBranchWithParams :: U.UUID -> UTCTime -> UserDTO -> BranchCreateDTO -> AppContextM BranchDTO
+createBranchWithParams :: U.UUID -> UTCTime -> UserDTO -> BranchCreateDTO -> AppContextM BranchList
 createBranchWithParams bUuid now currentUser reqDto =
   runInTransaction $ do
     checkBranchLimit
@@ -64,7 +63,7 @@ createBranchWithParams bUuid now currentUser reqDto =
     insertBranch branch
     insertBranchData (toBranchData branch)
     createDefaultEventIfPreviousPackageIsNotPresent branch
-    return $ toDTO branch Nothing BSDefault
+    return $ toList branch Nothing BSDefault
   where
     createDefaultEventIfPreviousPackageIsNotPresent branch = do
       let branchUuid = U.toString $ branch ^. uuid
@@ -91,7 +90,7 @@ getBranchById branchUuid = do
   branch <- findBranchById branchUuid
   branchData <- findBranchDataById branchUuid
   mForkOfPackageId <- getBranchForkOfPackageId branch
-  branchState <- getBranchState branch branchData
+  branchState <- getBranchState branch (length $ branchData ^. events) mForkOfPackageId
   knowledgeModel <- compileKnowledgeModel [] (branch ^. previousPackageId) []
   mForkOfPackage <-
     case mForkOfPackageId of
@@ -120,7 +119,7 @@ modifyBranch branchUuid reqDto =
     updateBranchById branch
     mForkOfPackageId <- getBranchForkOfPackageId branch
     branchData <- findBranchDataById (U.toString $ branch ^. uuid)
-    branchState <- getBranchState branch branchData
+    branchState <- getBranchState branch (length $ branchData ^. events) mForkOfPackageId
     knowledgeModel <- compileKnowledgeModel (branchData ^. events) (branch ^. previousPackageId) []
     mForkOfPackage <-
       case mForkOfPackageId of

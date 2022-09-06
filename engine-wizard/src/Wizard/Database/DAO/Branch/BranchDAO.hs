@@ -11,13 +11,17 @@ import GHC.Int
 
 import LensesConfig
 import Shared.Model.Common.Page
+import Shared.Model.Common.PageMetadata
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Branch.Branch ()
+import Wizard.Database.Mapping.Branch.BranchList ()
 import Wizard.Model.Branch.Branch
+import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
+import Wizard.Util.Logger
 
 entityName = "branch"
 
@@ -33,17 +37,50 @@ findBranchesByPreviousPackageId previousPackageId = do
   appUuid <- asks _appContextAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("previous_package_id", previousPackageId)]
 
-findBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page Branch)
-findBranchesPage mQuery pageable sort = do
+findBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchList)
+findBranchesPage mQuery pageable sort
+    -- 1. Prepare variables
+ = do
   appUuid <- asks _appContextAppUuid
-  createFindEntitiesPageableQuerySortFn
-    entityName
-    pageLabel
-    pageable
-    sort
-    "*"
-    "WHERE (name ~* ? OR km_id ~* ?) AND app_uuid = ?"
-    [regex mQuery, regex mQuery, U.toString appUuid]
+  let condition = "WHERE (name ~* ? OR km_id ~* ?) AND app_uuid = ?"
+  let conditionParams = [regex mQuery, regex mQuery, U.toString appUuid]
+  let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
+    -- 2. Get total count
+  count <- createCountByFn entityName condition conditionParams
+    -- 3. Get entities
+  let sql =
+        fromString $
+        f'
+          "SELECT branch.uuid, \
+          \       branch.name, \
+          \       branch.km_id, \
+          \       get_branch_state(knowledge_model_migration, branch_data, get_branch_fork_of_package_id(app_config, previous_pkg, branch), '%s') as state, \
+          \       branch.previous_package_id, \
+          \       get_branch_fork_of_package_id(app_config, previous_pkg, branch) as fork_of_package_id, \
+          \       branch.owner_uuid, \
+          \       branch.created_at, \
+          \       branch.updated_at  \
+          \FROM branch \
+          \         JOIN branch_data ON branch.uuid = branch_data.branch_uuid \
+          \         JOIN app_config ON branch.app_uuid = app_config.uuid \
+          \         LEFT JOIN knowledge_model_migration ON branch.uuid = knowledge_model_migration.branch_uuid \
+          \         LEFT JOIN package previous_pkg \
+          \                   ON branch.previous_package_id = previous_pkg.id and branch.app_uuid = previous_pkg.app_uuid \
+          \WHERE (branch.name ~* ? OR branch.km_id ~* ?) AND branch.app_uuid = ? \
+          \%s OFFSET %s LIMIT %s"
+          [U.toString appUuid, mapSort sort, show skip, show sizeI]
+  logQuery sql conditionParams
+  let action conn = query conn sql conditionParams
+  entities <- runDB action
+    -- 4. Constructor response
+  let metadata =
+        PageMetadata
+          { _pageMetadataSize = sizeI
+          , _pageMetadataTotalElements = count
+          , _pageMetadataTotalPages = computeTotalPage count sizeI
+          , _pageMetadataNumber = pageI
+          }
+  return $ Page pageLabel metadata entities
 
 findBranchById :: String -> AppContextM Branch
 findBranchById uuid = do

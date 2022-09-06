@@ -49,12 +49,12 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK" appContext "/branches" (Page "branches" (PageMetadata 20 1 1 0) [amsterdamBranchDto])
+  create_test_200 "HTTP 200 OK" appContext "/branches" (Page "branches" (PageMetadata 20 1 1 0) [amsterdamBranchList])
   create_test_200
     "HTTP 200 OK (query)"
     appContext
     "/branches?q=Amsterdam Knowledge Model"
-    (Page "branches" (PageMetadata 20 1 1 0) [amsterdamBranchDto])
+    (Page "branches" (PageMetadata 20 1 1 0) [amsterdamBranchList])
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext

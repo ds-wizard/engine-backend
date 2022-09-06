@@ -31,7 +31,7 @@ import Shared.Model.Context.ContextLenses
 import Shared.Model.Error.Error
 import Shared.Util.ByteString (toByteString)
 import Shared.Util.Logger
-import Shared.Util.String (toSnake)
+import Shared.Util.String (toSnake, trim)
 
 runDB ::
      (MonadReader s m, HasDbPool' s, HasDbConnection' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m)
@@ -80,7 +80,8 @@ logQuery sql params = do
     case context ^. dbConnection' of
       Just dbConnection -> liftIO $ formatQuery dbConnection sql params
       Nothing -> liftIO $ withResource (context ^. dbPool') (\c -> formatQuery c sql params)
-  logInfoI _CMP_DATABASE (BS.unpack exploded)
+  let formatted = trim . BS.unpack $ exploded
+  logInfoI _CMP_DATABASE formatted
 
 logInsertAndUpdate ::
      ( MonadReader s m

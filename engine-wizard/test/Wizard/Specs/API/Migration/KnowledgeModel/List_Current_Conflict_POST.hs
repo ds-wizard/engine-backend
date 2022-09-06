@@ -121,7 +121,7 @@ test_400 appContext = do
     let expDto = UserError _ERROR_SERVICE_MIGRATION_KM__NO_CONFLICTS_TO_SOLVE
     let expBody = encode expDto
     -- AND: Prepare database
-    let branchUuid = U.toString $ amsterdamBranchDto ^. uuid
+    let branchUuid = U.toString $ amsterdamBranchList ^. uuid
     runMigrationWithFullDB appContext
     runInContextIO (solveConflictAndMigrate branchUuid reqDto) appContext
     -- WHEN: Call API

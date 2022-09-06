@@ -37,10 +37,12 @@ branchServiceIntegrationSpec appContext =
         -- AND: Prepare branch
         let branch = amsterdamBranch
         let branchData = amsterdamBranchData & events .~ []
+        let forkOfPackageId = Just $ netherlandsPackage ^. pId
         -- AND: Prepare expectations
         let expState = BSDefault
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branch branchData) appContext
+        eitherResState <-
+          runInContext (getBranchState branch (length $ branchData ^. events) forkOfPackageId) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -53,10 +55,12 @@ branchServiceIntegrationSpec appContext =
         -- AND: Prepare branch
         let branch = amsterdamBranch
         let branchData = amsterdamBranchData
+        let forkOfPackageId = Just $ netherlandsPackage ^. pId
         -- AND: Prepare expectations
         let expState = BSEdited
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branch branchData) appContext
+        eitherResState <-
+          runInContext (getBranchState branch (length $ branchData ^. events) forkOfPackageId) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -69,10 +73,12 @@ branchServiceIntegrationSpec appContext =
         -- AND: Prepare branch
         let branch = amsterdamBranch
         let branchData = amsterdamBranchData
+        let forkOfPackageId = Just $ netherlandsPackage ^. pId
         -- AND: Prepare expectations
         let expState = BSEdited
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branch branchData) appContext
+        eitherResState <-
+          runInContext (getBranchState branch (length $ branchData ^. events) forkOfPackageId) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -85,10 +91,12 @@ branchServiceIntegrationSpec appContext =
         -- AND: Prepare branch
         let branch = amsterdamBranch
         let branchData = amsterdamBranchData & events .~ []
+        let forkOfPackageId = Just $ netherlandsPackage ^. pId
         -- AND: Prepare expectations
         let expState = BSOutdated
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branch branchData) appContext
+        eitherResState <-
+          runInContext (getBranchState branch (length $ branchData ^. events) forkOfPackageId) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -105,10 +113,12 @@ branchServiceIntegrationSpec appContext =
         -- AND: Prepare branch
         let branch = amsterdamBranch
         let branchData = amsterdamBranchData
+        let forkOfPackageId = Just $ netherlandsPackage ^. pId
         -- AND: Prepare expectations
         let expState = BSMigrating
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branch branchData) appContext
+        eitherResState <-
+          runInContext (getBranchState branch (length $ branchData ^. events) forkOfPackageId) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -131,10 +141,12 @@ branchServiceIntegrationSpec appContext =
         -- AND: Prepare branch
         let branch = amsterdamBranch
         let branchData = amsterdamBranchData & events .~ []
+        let forkOfPackageId = Just $ netherlandsPackage ^. pId
         -- AND: Prepare expectations
         let expState = BSMigrated
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branch branchData) appContext
+        eitherResState <-
+          runInContext (getBranchState branch (length $ branchData ^. events) forkOfPackageId) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState

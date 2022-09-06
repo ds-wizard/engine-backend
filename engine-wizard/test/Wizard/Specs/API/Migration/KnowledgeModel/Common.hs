@@ -21,14 +21,14 @@ import Wizard.Specs.Common
 -- MIGRATION
 -- --------------------------------
 runMigrationWithEmptyDB appContext = do
-  let branchUuid = U.toString $ amsterdamBranchDto ^. uuid
+  let branchUuid = U.toString $ amsterdamBranchList ^. uuid
   runInContextIO B.runMigration appContext
   runInContextIO (updateBranchEventsByUuid branchUuid []) appContext
   runInContextIO KM_MIG.runMigration appContext
 
 runMigrationWithFullDB appContext = do
   runMigrationWithEmptyDB appContext
-  let branchUuid = U.toString $ amsterdamBranchDto ^. uuid
+  let branchUuid = U.toString $ amsterdamBranchList ^. uuid
   runInContextIO (createMigration branchUuid migratorStateCreate) appContext
 
 -- --------------------------------

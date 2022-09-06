@@ -5,6 +5,7 @@ import Data.Swagger
 import Shared.Api.Resource.Template.TemplateSM ()
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
+import Wizard.Api.Resource.Registry.RegistryOrganizationSM ()
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateDetailJM ()
 import Wizard.Api.Resource.Template.TemplateStateSM ()

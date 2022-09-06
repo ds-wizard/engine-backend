@@ -16,11 +16,11 @@ import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
-import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Localization.Messages.Public
+import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Branch.BranchService
 
@@ -69,7 +69,7 @@ test_201 appContext =
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, BranchDTO)
+    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, BranchList)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
     compareBranchDtos
@@ -129,8 +129,8 @@ test_400_already_taken_kmId appContext =
      -- AND: Run migrations
     runInContextIO
       (createBranchWithParams
-         (amsterdamBranchDto ^. uuid)
-         (amsterdamBranchDto ^. createdAt)
+         (amsterdamBranchList ^. uuid)
+         (amsterdamBranchList ^. createdAt)
          (fromJust $ appContext ^. currentUser)
          amsterdamBranchCreate)
       appContext

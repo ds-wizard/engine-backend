@@ -15,6 +15,7 @@ import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Model.Template.TemplateJM ()
 import Shared.Service.Template.TemplateMapper
+import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
@@ -91,6 +92,7 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
      -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
     runInContextIO TML_Migration.runMigration appContext
+    runInContextIO R_Migration.runMigration appContext
     runInContextIO (updateTemplateById commonWizardTemplateEdited) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

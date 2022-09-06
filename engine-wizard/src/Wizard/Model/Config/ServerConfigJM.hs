@@ -80,6 +80,7 @@ instance FromJSON ServerConfigRegistry where
   parseJSON (Object o) = do
     _serverConfigRegistryUrl <- o .:? "url" .!= (defaultRegistry ^. url)
     _serverConfigRegistryClientUrl <- o .:? "clientUrl" .!= (defaultRegistry ^. clientUrl)
+    _serverConfigRegistrySync <- o .:? "sync" .!= (defaultRegistry ^. sync)
     return ServerConfigRegistry {..}
   parseJSON _ = mzero
 

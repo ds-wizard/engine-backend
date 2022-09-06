@@ -13,7 +13,9 @@ import LensesConfig
 import Shared.Model.Event.Event
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Branch.BranchData ()
+import Wizard.Database.Mapping.Branch.BranchDataLength ()
 import Wizard.Model.Branch.BranchData
+import Wizard.Model.Branch.BranchDataLength
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Util.Logger
@@ -36,6 +38,10 @@ findBranchDataById branchUuid = do
 findBranchDataByIdForSquashingLocked :: String -> AppContextM BranchData
 findBranchDataByIdForSquashingLocked branchUuid =
   createFindEntityWithFieldsByFn "*" True entityName [("branch_uuid", branchUuid)]
+
+findBranchDataLengthById :: String -> AppContextM BranchDataLength
+findBranchDataLengthById branchUuid =
+  createFindEntityWithFieldsByFn "branch_uuid, json_array_length(events)" True entityName [("branch_uuid", branchUuid)]
 
 insertBranchData :: BranchData -> AppContextM Int64
 insertBranchData = createInsertFn entityName

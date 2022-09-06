@@ -19,8 +19,8 @@ import Wizard.Model.Migration.KnowledgeModel.MigratorState
 migratorState :: MigratorStateDTO
 migratorState =
   MigratorStateDTO
-    { _migratorStateDTOBranchUuid = amsterdamBranchDto ^. uuid
-    , _migratorStateDTOBranchName = amsterdamBranchDto ^. name
+    { _migratorStateDTOBranchUuid = amsterdamBranchList ^. uuid
+    , _migratorStateDTOBranchName = amsterdamBranchList ^. name
     , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
     , _migratorStateDTOMigrationState =
         ConflictState . CorrectorConflict . Just . Prelude.head $ netherlandsPackageV2 ^. events

@@ -6,11 +6,12 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Config.AppConfig
+import Wizard.Model.Package.PackageState
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Report.Report
 
 data DocumentContext =
@@ -27,7 +28,7 @@ data DocumentContext =
     , _documentContextPhaseUuid :: Maybe U.UUID
     , _documentContextKnowledgeModel :: KnowledgeModel
     , _documentContextReport :: Report
-    , _documentContextPackage :: PackageSimpleDTO
+    , _documentContextPackage :: DocumentContextPackage
     , _documentContextOrganization :: AppConfigOrganization
     , _documentContextCreatedBy :: Maybe UserDTO
     , _documentContextCreatedAt :: UTCTime
@@ -56,5 +57,21 @@ instance Eq DocumentContext where
 data DocumentContextConfig =
   DocumentContextConfig
     { _documentContextConfigClientUrl :: String
+    }
+  deriving (Show, Eq, Generic)
+
+data DocumentContextPackage =
+  DocumentContextPackage
+    { _documentContextPackagePId :: String
+    , _documentContextPackageName :: String
+    , _documentContextPackageOrganizationId :: String
+    , _documentContextPackageKmId :: String
+    , _documentContextPackageVersion :: String
+    , _documentContextPackageVersions :: [String]
+    , _documentContextPackageRemoteLatestVersion :: Maybe String
+    , _documentContextPackageDescription :: String
+    , _documentContextPackageState :: PackageState
+    , _documentContextPackageOrganization :: Maybe RegistryOrganization
+    , _documentContextPackageCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
