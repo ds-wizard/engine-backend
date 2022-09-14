@@ -31,8 +31,11 @@ import Wizard.Service.User.UserService
 createAuthenticationUrl :: String -> Maybe String -> Maybe String -> AppContextM ()
 createAuthenticationUrl authId mFlow mClientUrl = do
   state <- liftIO $ generateRandomString 40
+  let nonce = "FtEIbRdfFc7z2bNjCTaZKDcWNeUKUelvs13K21VL"
   (service, openIDClient) <- createOpenIDClient authId mClientUrl
-  let params = fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameteres)
+  let params =
+        fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameteres) ++
+        [("nonce", Just . BS.pack $ nonce)]
   loc <-
     liftIO $
     case mFlow of
@@ -41,8 +44,9 @@ createAuthenticationUrl authId mFlow mClientUrl = do
       _ -> O.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
   throwError $ FoundError (show loc)
 
-loginUser :: String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> AppContextM TokenDTO
-loginUser authId mClientUrl mError mCode mIdToken =
+loginUser ::
+     String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> AppContextM TokenDTO
+loginUser authId mClientUrl mError mCode mNonce mIdToken =
   runInTransaction $ do
     token <-
       case mIdToken of
@@ -53,7 +57,7 @@ loginUser authId mClientUrl mError mCode mIdToken =
               httpClientManager <- asks _appContextHttpClientManager
               (_, openIDClient) <- createOpenIDClient authId mClientUrl
               tokens <-
-                liftIO $ O.requestTokens openIDClient Nothing (BS.pack code) httpClientManager :: AppContextM (OT.Tokens Value)
+                liftIO $ O.requestTokens openIDClient (fmap BS.pack mNonce) (BS.pack code) httpClientManager :: AppContextM (OT.Tokens Value)
               return . O.idToken $ tokens
             Nothing -> throwError . UserError $ _ERROR_VALIDATION__OPENID_CODE_ABSENCE
     let claims = O.otherClaims token
