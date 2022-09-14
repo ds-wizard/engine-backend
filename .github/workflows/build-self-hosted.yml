@@ -146,11 +146,10 @@ jobs:
       - name: Docker build
         run: |
           cd engine-$COMPONENT
-          docker pull $PRIVATE_IMAGE:$TAG_DEVELOP
-          docker build --network=host --cache-from $PRIVATE_IMAGE:$TAG_DEVELOP -t $PRIVATE_IMAGE:$GITHUB_SHA .
+          docker build --network=host -t $PRIVATE_IMAGE:$GITHUB_SHA .
 
       - name: Docker tag and push - branch (private)
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && !contains(github.ref, 'release')
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/')
         run: |
           GITHUB_BRANCH=`echo $GITHUB_REF | cut -d/ -f3- | sed 's#/#-#g'`
           docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $PRIVATE_IMAGE:$GITHUB_BRANCH
