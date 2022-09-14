@@ -21,6 +21,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
@@ -52,7 +53,9 @@ reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/conten
 
 reqHeadersT authHeader = reqCtHeader : authHeader
 
-reqDto = QuestionnaireContentChangeDTO {_questionnaireContentChangeDTOEvents = [toEventChangeDTO slble_rQ2']}
+reqDto =
+  QuestionnaireContentChangeDTO
+    {_questionnaireContentChangeDTOEvents = [toEventChangeDTO slble_rQ2' samplePhasesAnsweredIndication]}
 
 reqBody = encode reqDto
 

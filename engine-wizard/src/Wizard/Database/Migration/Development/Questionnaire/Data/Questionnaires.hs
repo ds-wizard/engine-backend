@@ -61,6 +61,8 @@ questionnaire1 =
     , _questionnaireVersions = qVersions
     , _questionnaireIsTemplate = True
     , _questionnaireSquashed = True
+    , _questionnaireAnsweredQuestions = 3
+    , _questionnaireUnansweredQuestions = 1
     , _questionnaireAppUuid = defaultApp ^. uuid
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -100,14 +102,7 @@ questionnaire1CtnRevertedDto =
     }
 
 questionnaire1Dto :: QuestionnaireDTO
-questionnaire1Dto =
-  toSimpleDTO
-    questionnaire1
-    questionnaire1Ctn
-    germanyPackage
-    QSDefault
-    questionnaireReport
-    [qtn1AlbertEditPermRecordDto]
+questionnaire1Dto = toSimpleDTO questionnaire1 germanyPackage QSDefault [qtn1AlbertEditPermRecordDto]
 
 questionnaire1Create :: QuestionnaireCreateDTO
 questionnaire1Create =
@@ -171,6 +166,8 @@ questionnaire2 =
     , _questionnaireVersions = qVersions
     , _questionnaireIsTemplate = False
     , _questionnaireSquashed = True
+    , _questionnaireAnsweredQuestions = 3
+    , _questionnaireUnansweredQuestions = 1
     , _questionnaireAppUuid = defaultApp ^. uuid
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
@@ -195,6 +192,8 @@ questionnaire2Edited =
     , _questionnaireVersions = questionnaire2 ^. versions
     , _questionnaireIsTemplate = False
     , _questionnaireSquashed = True
+    , _questionnaireAnsweredQuestions = 3
+    , _questionnaireUnansweredQuestions = 1
     , _questionnaireAppUuid = defaultApp ^. uuid
     , _questionnaireCreatedAt = questionnaire2 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
@@ -213,14 +212,7 @@ questionnaire2ContentEdited :: Questionnaire
 questionnaire2ContentEdited = questionnaire2 {_questionnaireEvents = fEventsEdited}
 
 questionnaire2Dto :: QuestionnaireDTO
-questionnaire2Dto =
-  toSimpleDTO
-    questionnaire2
-    questionnaire2Ctn
-    germanyPackage
-    QSDefault
-    questionnaireReport
-    [qtn2AlbertEditPermRecordDto]
+questionnaire2Dto = toSimpleDTO questionnaire2 germanyPackage QSDefault [qtn2AlbertEditPermRecordDto]
 
 qtn2AlbertEditPermRecord :: QuestionnairePermRecord
 qtn2AlbertEditPermRecord =
@@ -258,6 +250,8 @@ questionnaire3 =
     , _questionnaireVersions = qVersions
     , _questionnaireIsTemplate = False
     , _questionnaireSquashed = True
+    , _questionnaireAnsweredQuestions = 3
+    , _questionnaireUnansweredQuestions = 1
     , _questionnaireAppUuid = defaultApp ^. uuid
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 28) 0
@@ -276,7 +270,7 @@ questionnaire3ContentEdited :: Questionnaire
 questionnaire3ContentEdited = questionnaire1 {_questionnaireEvents = fEventsEdited}
 
 questionnaire3Dto :: QuestionnaireDTO
-questionnaire3Dto = toSimpleDTO questionnaire3 questionnaire3Ctn germanyPackage QSDefault questionnaireReport []
+questionnaire3Dto = toSimpleDTO questionnaire3 germanyPackage QSDefault []
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -299,6 +293,8 @@ questionnaire4 =
     , _questionnaireVersions = []
     , _questionnaireIsTemplate = False
     , _questionnaireSquashed = True
+    , _questionnaireAnsweredQuestions = 3
+    , _questionnaireUnansweredQuestions = 1
     , _questionnaireAppUuid = defaultApp ^. uuid
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -381,14 +377,7 @@ questionnaire6ContentEdited :: Questionnaire
 questionnaire6ContentEdited = questionnaire6 {_questionnaireEvents = fEventsEdited}
 
 questionnaire6Dto :: QuestionnaireDTO
-questionnaire6Dto =
-  toSimpleDTO
-    questionnaire6
-    questionnaire6Ctn
-    germanyPackage
-    QSDefault
-    questionnaireReport
-    [qtn6AlbertEditPermRecordDto]
+questionnaire6Dto = toSimpleDTO questionnaire6 germanyPackage QSDefault [qtn6AlbertEditPermRecordDto]
 
 qtn6AlbertEditPermRecord :: QuestionnairePermRecord
 qtn6AlbertEditPermRecord =
@@ -541,14 +530,7 @@ questionnaire11Ctn :: QuestionnaireContent
 questionnaire11Ctn = questionnaire1Ctn
 
 questionnaire11Dto :: QuestionnaireDTO
-questionnaire11Dto =
-  toSimpleDTO
-    questionnaire11
-    questionnaire11Ctn
-    germanyPackage
-    QSDefault
-    questionnaireReport
-    [qtn11AlbertEditPermRecordDto]
+questionnaire11Dto = toSimpleDTO questionnaire11 germanyPackage QSDefault [qtn11AlbertEditPermRecordDto]
 
 qtn11AlbertEditPermRecord :: QuestionnairePermRecord
 qtn11AlbertEditPermRecord =
@@ -579,13 +561,7 @@ questionnaire12Ctn = questionnaire1Ctn
 
 questionnaire12Dto :: QuestionnaireDTO
 questionnaire12Dto =
-  toSimpleDTO
-    questionnaire12
-    questionnaire12Ctn
-    germanyPackage
-    QSDefault
-    questionnaireReport
-    [qtn12AlbertEditPermRecordDto, qtn12NikolaEditPermRecordDto]
+  toSimpleDTO questionnaire12 germanyPackage QSDefault [qtn12AlbertEditPermRecordDto, qtn12NikolaEditPermRecordDto]
 
 qtn12AlbertEditPermRecord :: QuestionnairePermRecord
 qtn12AlbertEditPermRecord =
@@ -626,14 +602,7 @@ questionnaire13Ctn :: QuestionnaireContent
 questionnaire13Ctn = questionnaire1Ctn
 
 questionnaire13Dto :: QuestionnaireDTO
-questionnaire13Dto =
-  toSimpleDTO
-    questionnaire13
-    questionnaire13Ctn
-    germanyPackage
-    QSDefault
-    questionnaireReport
-    [qtn13NikolaCommentPermRecordDto]
+questionnaire13Dto = toSimpleDTO questionnaire13 germanyPackage QSDefault [qtn13NikolaCommentPermRecordDto]
 
 qtn13NikolaCommentPermRecord :: QuestionnairePermRecord
 qtn13NikolaCommentPermRecord =
@@ -668,6 +637,8 @@ differentQuestionnaire =
     , _questionnaireVersions = []
     , _questionnaireIsTemplate = True
     , _questionnaireSquashed = True
+    , _questionnaireAnsweredQuestions = 3
+    , _questionnaireUnansweredQuestions = 1
     , _questionnaireAppUuid = differentApp ^. uuid
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -685,7 +656,9 @@ differentQtnCharlesOwnerPermRecord =
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 contentChangeDTO :: QuestionnaireContentChangeDTO
-contentChangeDTO = QuestionnaireContentChangeDTO {_questionnaireContentChangeDTOEvents = fmap toEventChangeDTO fEvents}
+contentChangeDTO =
+  QuestionnaireContentChangeDTO
+    {_questionnaireContentChangeDTOEvents = fmap (`toEventChangeDTO` samplePhasesAnsweredIndication) fEvents}
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

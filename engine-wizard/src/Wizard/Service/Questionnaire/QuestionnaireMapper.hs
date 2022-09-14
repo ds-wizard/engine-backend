@@ -46,43 +46,36 @@ import Wizard.Service.Acl.AclMapper
 import qualified Wizard.Service.Package.PackageMapper as PM
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 
-toDTO ::
-     Questionnaire
-  -> QuestionnaireContent
-  -> Package
-  -> QuestionnaireState
-  -> QuestionnaireReportDTO
-  -> [QuestionnairePermRecordDTO]
-  -> QuestionnaireDTO
-toDTO qtn qtnCtn package state report permissions =
+toDTO :: Questionnaire -> Package -> QuestionnaireState -> [QuestionnairePermRecordDTO] -> QuestionnaireDTO
+toDTO qtn package state permissions =
   QuestionnaireDTO
     { _questionnaireDTOUuid = qtn ^. uuid
     , _questionnaireDTOName = qtn ^. name
     , _questionnaireDTODescription = qtn ^. description
-    , _questionnaireDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = state
     , _questionnaireDTOPackage = SPM.toSimple package
-    , _questionnaireDTOReport = report
+    , _questionnaireDTOAnsweredQuestions = qtn ^. answeredQuestions
+    , _questionnaireDTOUnansweredQuestions = qtn ^. unansweredQuestions
     , _questionnaireDTOPermissions = permissions
     , _questionnaireDTOIsTemplate = qtn ^. isTemplate
     , _questionnaireDTOCreatedAt = qtn ^. createdAt
     , _questionnaireDTOUpdatedAt = qtn ^. updatedAt
     }
 
-toDTO' :: QuestionnaireDetail -> QuestionnaireContent -> QuestionnaireReportDTO -> QuestionnaireDTO
-toDTO' qtn qtnCtn report =
+toDTO' :: QuestionnaireDetail -> QuestionnaireDTO
+toDTO' qtn =
   QuestionnaireDTO
     { _questionnaireDTOUuid = qtn ^. uuid
     , _questionnaireDTOName = qtn ^. name
     , _questionnaireDTODescription = qtn ^. description
-    , _questionnaireDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = qtn ^. state
     , _questionnaireDTOPackage = qtn ^. package
-    , _questionnaireDTOReport = report
+    , _questionnaireDTOAnsweredQuestions = qtn ^. answeredQuestions
+    , _questionnaireDTOUnansweredQuestions = qtn ^. unansweredQuestions
     , _questionnaireDTOPermissions = qtn ^. permissions
     , _questionnaireDTOIsTemplate = qtn ^. isTemplate
     , _questionnaireDTOCreatedAt = qtn ^. createdAt
@@ -90,24 +83,18 @@ toDTO' qtn qtnCtn report =
     }
 
 toSimpleDTO ::
-     Questionnaire
-  -> QuestionnaireContent
-  -> PackageWithEvents
-  -> QuestionnaireState
-  -> QuestionnaireReportDTO
-  -> [QuestionnairePermRecordDTO]
-  -> QuestionnaireDTO
-toSimpleDTO qtn qtnCtn package state report permissions =
+     Questionnaire -> PackageWithEvents -> QuestionnaireState -> [QuestionnairePermRecordDTO] -> QuestionnaireDTO
+toSimpleDTO qtn package state permissions =
   QuestionnaireDTO
     { _questionnaireDTOUuid = qtn ^. uuid
     , _questionnaireDTOName = qtn ^. name
     , _questionnaireDTODescription = qtn ^. description
-    , _questionnaireDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = state
     , _questionnaireDTOPackage = SPM.toSimple . SPM.toPackage $ package
-    , _questionnaireDTOReport = report
+    , _questionnaireDTOAnsweredQuestions = qtn ^. answeredQuestions
+    , _questionnaireDTOUnansweredQuestions = qtn ^. unansweredQuestions
     , _questionnaireDTOPermissions = permissions
     , _questionnaireDTOIsTemplate = qtn ^. isTemplate
     , _questionnaireDTOCreatedAt = qtn ^. createdAt
@@ -276,6 +263,8 @@ fromChangeDTO qtn dto visibility sharing currentUser now =
           then dto ^. isTemplate
           else qtn ^. isTemplate
     , _questionnaireSquashed = qtn ^. squashed
+    , _questionnaireAnsweredQuestions = qtn ^. answeredQuestions
+    , _questionnaireUnansweredQuestions = qtn ^. unansweredQuestions
     , _questionnaireAppUuid = qtn ^. appUuid
     , _questionnaireCreatedAt = qtn ^. createdAt
     , _questionnaireUpdatedAt = now
@@ -328,6 +317,8 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId
     , _questionnaireVersions = []
     , _questionnaireIsTemplate = False
     , _questionnaireSquashed = True
+    , _questionnaireAnsweredQuestions = 0
+    , _questionnaireUnansweredQuestions = 0
     , _questionnaireAppUuid = appUuid
     , _questionnaireCreatedAt = now
     , _questionnaireUpdatedAt = now

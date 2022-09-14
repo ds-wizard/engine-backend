@@ -6,6 +6,7 @@ import Data.Aeson
 import Shared.Util.JSON
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
+import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Api.Resource.User.UserSuggestionJM ()
 
 instance ToJSON QuestionnaireEventChangeDTO where

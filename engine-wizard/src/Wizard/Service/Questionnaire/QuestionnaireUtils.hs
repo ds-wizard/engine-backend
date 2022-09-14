@@ -21,11 +21,11 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireComment
-import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Questionnaire.QuestionnaireVersion
+import Wizard.Model.Report.Report
 import Wizard.Service.Cache.QuestionnaireReportCache
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
@@ -53,16 +53,8 @@ enhanceQuestionnaire :: Questionnaire -> AppContextM QuestionnaireDTO
 enhanceQuestionnaire qtn = do
   pkg <- getPackageById (qtn ^. packageId)
   state <- getQuestionnaireState (U.toString $ qtn ^. uuid) (pkg ^. pId)
-  report <- getQuestionnaireReport qtn
   permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
-  qtnCtn <- compileQuestionnaire qtn
-  return $ toDTO qtn qtnCtn pkg state report permissionDtos
-
-enhanceQuestionnaireDetail :: QuestionnaireDetail -> AppContextM QuestionnaireDTO
-enhanceQuestionnaireDetail qtnDetail = do
-  report <- getQuestionnaireReport qtnDetail
-  qtnCtn <- compileQuestionnaire qtnDetail
-  return $ toDTO' qtnDetail qtnCtn report
+  return $ toDTO qtn pkg state permissionDtos
 
 enhanceQuestionnairePermRecord :: QuestionnairePermRecord -> AppContextM QuestionnairePermRecordDTO
 enhanceQuestionnairePermRecord record =
@@ -129,6 +121,21 @@ getQuestionnaireReport qtn = do
       qtnCtn <- compileQuestionnaire qtn
       addToCache qtn qtnCtn indications
       return . toQuestionnaireReportDTO $ indications
+
+getPhasesAnsweredIndication ::
+     ( HasEvents questionnaire [QuestionnaireEvent]
+     , HasUuid questionnaire U.UUID
+     , HasPackageId questionnaire String
+     , HasSelectedQuestionTagUuids questionnaire [U.UUID]
+     )
+  => questionnaire
+  -> AppContextM (Maybe PhasesAnsweredIndication)
+getPhasesAnsweredIndication qtn = do
+  report <- getQuestionnaireReport qtn
+  return $ foldl go Nothing (report ^. indications)
+  where
+    go acc (PhasesAnsweredIndication' indication) = Just indication
+    go acc _ = acc
 
 skipIfAssigningProject :: Questionnaire -> AppContextM () -> AppContextM ()
 skipIfAssigningProject qtn action = do

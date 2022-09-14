@@ -142,3 +142,10 @@ questionnaireReport =
           AnsweredIndication {_answeredIndicationAnsweredQuestions = 13, _answeredIndicationUnansweredQuestions = 2}
         ]
     }
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+samplePhasesAnsweredIndication :: PhasesAnsweredIndication
+samplePhasesAnsweredIndication =
+  PhasesAnsweredIndication
+    {_phasesAnsweredIndicationAnsweredQuestions = 3, _phasesAnsweredIndicationUnansweredQuestions = 1}

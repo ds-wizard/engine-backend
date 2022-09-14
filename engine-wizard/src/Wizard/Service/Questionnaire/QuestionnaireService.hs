@@ -79,7 +79,7 @@ getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mProjectTags mProjectT
       mUserUuidsOp
       pageable
       sort
-  traverse enhanceQuestionnaireDetail qtnPage
+  return . fmap toDTO' $ qtnPage
 
 createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM QuestionnaireDTO
 createQuestionnaire questionnaireCreateDto =
@@ -118,7 +118,7 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
     report <- getQuestionnaireReport qtn
     permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
     qtnCtn <- compileQuestionnaire qtn
-    return $ toSimpleDTO qtn qtnCtn package qtnState report permissionDtos
+    return $ toSimpleDTO qtn package qtnState permissionDtos
 
 createQuestionnaireFromTemplate :: QuestionnaireCreateFromTemplateDTO -> AppContextM QuestionnaireDTO
 createQuestionnaireFromTemplate reqDto =
@@ -149,7 +149,7 @@ createQuestionnaireFromTemplate reqDto =
     report <- getQuestionnaireReport newQtn
     permissionDtos <- traverse enhanceQuestionnairePermRecord (newQtn ^. permissions)
     qtnCtn <- compileQuestionnaire newQtn
-    return $ toSimpleDTO newQtn qtnCtn pkg state report permissionDtos
+    return $ toSimpleDTO newQtn pkg state permissionDtos
 
 cloneQuestionnaire :: String -> AppContextM QuestionnaireDTO
 cloneQuestionnaire cloneUuid =
@@ -172,10 +172,8 @@ cloneQuestionnaire cloneUuid =
           originQtn
     insertQuestionnaire newQtn
     state <- getQuestionnaireState (U.toString newUuid) (pkg ^. pId)
-    report <- getQuestionnaireReport newQtn
     permissionDtos <- traverse enhanceQuestionnairePermRecord (newQtn ^. permissions)
-    qtnCtn <- compileQuestionnaire newQtn
-    return $ toSimpleDTO newQtn qtnCtn pkg state report permissionDtos
+    return $ toSimpleDTO newQtn pkg state permissionDtos
 
 getQuestionnaireById :: String -> AppContextM QuestionnaireDTO
 getQuestionnaireById qtnUuid = do
@@ -194,8 +192,7 @@ getQuestionnaireById' qtnUuid = do
       state <- getQuestionnaireState qtnUuid (package ^. pId)
       report <- getQuestionnaireReport qtn
       permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
-      qtnCtn <- compileQuestionnaire qtn
-      return . Just $ toDTO qtn qtnCtn package state report permissionDtos
+      return . Just $ toDTO qtn package state permissionDtos
     Nothing -> return Nothing
 
 getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
@@ -344,7 +341,11 @@ modifyContent qtnUuid reqDto =
     mCurrentUser <- asks _appContextCurrentUser
     now <- liftIO getCurrentTime
     let updatedQtn = fromContentChangeDTO qtn reqDto mCurrentUser now
-    updateQuestionnaireEventsByUuid qtnUuid False (updatedQtn ^. events)
+    mPhasesAnsweredIndication <- getPhasesAnsweredIndication qtn
+    case mPhasesAnsweredIndication of
+      Just phasesAnsweredIndication ->
+        updateQuestionnaireEventsWithIndicationByUuid qtnUuid False (updatedQtn ^. events) phasesAnsweredIndication
+      Nothing -> updateQuestionnaireEventsByUuid qtnUuid False (updatedQtn ^. events)
     return reqDto
 
 cleanQuestionnaires :: AppContextM ()
@@ -357,3 +358,17 @@ cleanQuestionnaires =
          logInfoU _CMP_SERVICE (f' "Clean questionnaire with empty ACL (qtnUuid: '%s')" [qtnUuid])
          deleteQuestionnaire qtnUuid False)
       qtns
+
+recomputeQuestionnaireIndications :: AppContextM ()
+recomputeQuestionnaireIndications = do
+  qtnUuids <- findQuestionnaireUuids
+  traverse_ recomputeQuestionnaireIndication qtnUuids
+
+recomputeQuestionnaireIndication :: U.UUID -> AppContextM ()
+recomputeQuestionnaireIndication qtnUuid = do
+  qtn <- findQuestionnaireById (U.toString qtnUuid)
+  mPhasesAnsweredIndication <- getPhasesAnsweredIndication qtn
+  case mPhasesAnsweredIndication of
+    Just phasesAnsweredIndication -> updateQuestionnaireIndicationByUuid (U.toString qtnUuid) phasesAnsweredIndication
+    Nothing ->
+      logErrorU _CMP_SERVICE (f' "Can not get phasesAnsweredIndication for the qtn uuid: %s" [U.toString qtnUuid])

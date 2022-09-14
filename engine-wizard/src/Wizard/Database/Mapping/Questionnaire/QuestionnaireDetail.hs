@@ -30,6 +30,8 @@ instance FromRow QuestionnaireDetail where
     _questionnaireDetailSelectedQuestionTagUuids <- fieldWith fromJSONField
     _questionnaireDetailEvents <- fieldWith fromJSONField
     _questionnaireDetailIsTemplate <- field
+    _questionnaireDetailAnsweredQuestions <- field
+    _questionnaireDetailUnansweredQuestions <- field
     _questionnaireDetailCreatedAt <- field
     _questionnaireDetailUpdatedAt <- field
     _questionnaireDetailState <- field

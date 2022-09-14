@@ -123,6 +123,7 @@ data ServerConfigPlan =
 data ServerConfigQuestionnaire =
   ServerConfigQuestionnaire
     { _serverConfigQuestionnaireClean :: ServerConfigCronWorker
+    , _serverConfigQuestionnaireRecomputeIndication :: ServerConfigCronWorker
     , _serverConfigQuestionnaireSquash :: ServerConfigCronWorker
     }
   deriving (Generic, Show)

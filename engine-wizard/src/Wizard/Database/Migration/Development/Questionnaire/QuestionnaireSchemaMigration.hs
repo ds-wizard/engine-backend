@@ -60,7 +60,9 @@ createQtnTable = do
         \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
         \         constraint questionnaire_app_uuid_fk \
         \             references app, \
-        \     project_tags text[] not null default '{}' \
+        \     project_tags text[] not null default '{}', \
+        \     answered_questions int not null default 0, \
+        \     unanswered_questions int not null default 0 \
         \ ); \
         \  \
         \ create unique index questionnaire_uuid_uindex \

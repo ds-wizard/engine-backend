@@ -13,7 +13,6 @@ import Network.WebSockets (Connection)
 import LensesConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Api.Resource.Websocket.QuestionnaireActionJM ()
 import Wizard.Api.Resource.Websocket.WebsocketActionJM ()
@@ -108,8 +107,12 @@ setReply qtnUuid connectionUuid reqDto = do
   checkEditPermission myself
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
+  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  appendQuestionnaireEventByUuid
+    qtnUuid
+    [fromEventChangeDTO (SetReplyEventChangeDTO' reqDto) mCreatedByUuid now]
+    (reqDto ^. phasesAnsweredIndication)
   let resDto = toSetReplyEventDTO' reqDto mCreatedBy now
-  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ SetReplyEventDTO' resDto]
   records <- getAllFromCache
   broadcast qtnUuid records (toSetReplyMessage resDto) disconnectUser
 
@@ -119,8 +122,12 @@ clearReply qtnUuid connectionUuid reqDto = do
   checkEditPermission myself
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
+  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  appendQuestionnaireEventByUuid
+    qtnUuid
+    [fromEventChangeDTO (ClearReplyEventChangeDTO' reqDto) mCreatedByUuid now]
+    (reqDto ^. phasesAnsweredIndication)
   let resDto = toClearReplyEventDTO' reqDto mCreatedBy now
-  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ ClearReplyEventDTO' resDto]
   records <- getAllFromCache
   broadcast qtnUuid records (toClearReplyMessage resDto) disconnectUser
 
@@ -130,8 +137,12 @@ setPhase qtnUuid connectionUuid reqDto = do
   checkEditPermission myself
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
+  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  appendQuestionnaireEventByUuid
+    qtnUuid
+    [fromEventChangeDTO (SetPhaseEventChangeDTO' reqDto) mCreatedByUuid now]
+    (reqDto ^. phasesAnsweredIndication)
   let resDto = toSetPhaseEventDTO' reqDto mCreatedBy now
-  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ SetPhaseEventDTO' resDto]
   records <- getAllFromCache
   broadcast qtnUuid records (toSetPhaseMessage resDto) disconnectUser
 
@@ -141,8 +152,12 @@ setLabel qtnUuid connectionUuid reqDto = do
   checkEditPermission myself
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
+  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  appendQuestionnaireEventByUuid
+    qtnUuid
+    [fromEventChangeDTO (SetLabelsEventChangeDTO' reqDto) mCreatedByUuid now]
+    (reqDto ^. phasesAnsweredIndication)
   let resDto = toSetLabelsEventDTO' reqDto mCreatedBy now
-  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ SetLabelsEventDTO' resDto]
   records <- getAllFromCache
   broadcast qtnUuid records (toSetLabelMessage resDto) disconnectUser
 
@@ -152,8 +167,11 @@ resolveCommentThread qtnUuid connectionUuid reqDto = do
   checkCommentPermission myself
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
+  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  appendQuestionnaireEventByUuid'
+    qtnUuid
+    [fromEventChangeDTO (ResolveCommentThreadEventChangeDTO' reqDto) mCreatedByUuid now]
   let resDto = toResolveCommentThreadEventDTO' reqDto mCreatedBy now
-  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ ResolveCommentThreadEventDTO' resDto]
   records <- getAllFromCache
   let filteredRecords =
         if reqDto ^. private
@@ -167,8 +185,11 @@ reopenCommentThread qtnUuid connectionUuid reqDto = do
   checkCommentPermission myself
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
+  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  appendQuestionnaireEventByUuid'
+    qtnUuid
+    [fromEventChangeDTO (ReopenCommentThreadEventChangeDTO' reqDto) mCreatedByUuid now]
   let resDto = toReopenCommentThreadEventDTO' reqDto mCreatedBy now
-  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ ReopenCommentThreadEventDTO' resDto]
   records <- getAllFromCache
   let filteredRecords =
         if reqDto ^. private
@@ -182,8 +203,11 @@ deleteCommentThread qtnUuid connectionUuid reqDto = do
   checkCommentPermission myself
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
+  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  appendQuestionnaireEventByUuid'
+    qtnUuid
+    [fromEventChangeDTO (DeleteCommentThreadEventChangeDTO' reqDto) mCreatedByUuid now]
   let resDto = toDeleteCommentThreadEventDTO' reqDto mCreatedBy now
-  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ DeleteCommentThreadEventDTO' resDto]
   records <- getAllFromCache
   let filteredRecords =
         if reqDto ^. private
@@ -197,8 +221,9 @@ addComment qtnUuid connectionUuid reqDto = do
   checkCommentPermission myself
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
+  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  appendQuestionnaireEventByUuid' qtnUuid [fromEventChangeDTO (AddCommentEventChangeDTO' reqDto) mCreatedByUuid now]
   let resDto = toAddCommentEventDTO' reqDto mCreatedBy now
-  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ AddCommentEventDTO' resDto]
   records <- getAllFromCache
   let filteredRecords =
         if reqDto ^. private
@@ -212,8 +237,9 @@ editComment qtnUuid connectionUuid reqDto = do
   checkCommentPermission myself
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
+  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  appendQuestionnaireEventByUuid' qtnUuid [fromEventChangeDTO (EditCommentEventChangeDTO' reqDto) mCreatedByUuid now]
   let resDto = toEditCommentEventDTO' reqDto mCreatedBy now
-  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ EditCommentEventDTO' resDto]
   records <- getAllFromCache
   let filteredRecords =
         if reqDto ^. private
@@ -227,8 +253,9 @@ deleteComment qtnUuid connectionUuid reqDto = do
   checkCommentPermission myself
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
+  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  appendQuestionnaireEventByUuid' qtnUuid [fromEventChangeDTO (DeleteCommentEventChangeDTO' reqDto) mCreatedByUuid now]
   let resDto = toDeleteCommentEventDTO' reqDto mCreatedBy now
-  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ DeleteCommentEventDTO' resDto]
   records <- getAllFromCache
   let filteredRecords =
         if reqDto ^. private
@@ -278,4 +305,10 @@ getMaybeCreatedBy myself =
         , _userSuggestionDTOGravatarHash = gravatarHash
         , _userSuggestionDTOImageUrl = imageUrl
         }
+    u@AnonymousOnlineUserInfo {..} -> Nothing
+
+getMaybeCreatedByUuid :: WebsocketRecord -> Maybe U.UUID
+getMaybeCreatedByUuid myself =
+  case myself ^. user of
+    u@LoggedOnlineUserInfo {_loggedOnlineUserInfoUuid = uuid} -> Just uuid
     u@AnonymousOnlineUserInfo {..} -> Nothing

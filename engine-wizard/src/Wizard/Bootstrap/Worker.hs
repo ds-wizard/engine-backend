@@ -19,6 +19,7 @@ import Wizard.Worker.Cron.Feedback.FeedbackWorker
 import Wizard.Worker.Cron.PersistentCommand.PersistentCommandRetryWorker
 import Wizard.Worker.Cron.Plan.AppPlanWorker
 import Wizard.Worker.Cron.Questionnaire.CleanQuestionnaireWorker
+import Wizard.Worker.Cron.Questionnaire.RecomputeQuestionnaireIndicationWorker
 import Wizard.Worker.Cron.Questionnaire.SquashQuestionnaireEventsWorker
 import Wizard.Worker.Cron.Registry.RegistrySyncWorker
 import Wizard.Worker.Permanent.PersistentCommand.PersistentCommandListenerWorker
@@ -50,6 +51,7 @@ cronJob context = do
       persistentCommandRetryWorker context
       appPlanWorker context
       cleanQuestionnaireWorker context
+      recomputeQuestionnaireIndicationWorker context
       squashQuestionnaireEventsWorker context
       registrySyncWorker context
   logInfo _CMP_WORKER "scheduling workers completed"

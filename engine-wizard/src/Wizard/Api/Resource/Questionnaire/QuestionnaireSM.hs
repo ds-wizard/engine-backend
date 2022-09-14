@@ -15,17 +15,9 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireStateSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 instance ToSchema QuestionnaireDTO where
   declareNamedSchema =
-    simpleToSchema
-      (toDTO
-         questionnaire1
-         questionnaire1Ctn
-         (PM.toPackage germanyPackage)
-         QSDefault
-         questionnaireReport
-         [qtn1AlbertEditPermRecordDto])
+    simpleToSchema (toDTO questionnaire1 (PM.toPackage germanyPackage) QSDefault [qtn1AlbertEditPermRecordDto])

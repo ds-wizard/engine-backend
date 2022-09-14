@@ -3,7 +3,7 @@ module Wizard.Api.Resource.Report.ReportSM where
 import Control.Lens ((^.))
 import Data.Swagger
 
-import LensesConfig
+import LensesConfig hiding (phasesAnsweredIndication)
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Report.ReportJM ()

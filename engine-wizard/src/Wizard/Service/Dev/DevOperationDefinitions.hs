@@ -18,6 +18,7 @@ import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
+import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
 import Wizard.Util.Context
 
@@ -251,8 +252,26 @@ questionnaire =
   DevSection
     { _devSectionName = "Questionnaire"
     , _devSectionDescription = Nothing
-    , _devSectionOperations = [questionnaire_squashAllEvents, questionnaire_squashEventsForQuestionnaire]
+    , _devSectionOperations =
+        [ questionnaire_recomputeQuestionnaireIndications
+        , questionnaire_squashAllEvents
+        , questionnaire_squashEventsForQuestionnaire
+        ]
     }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+questionnaire_recomputeQuestionnaireIndications :: DevOperation
+questionnaire_recomputeQuestionnaireIndications =
+  DevOperation
+    { _devOperationName = "Recompute Quetionnaire Indications"
+    , _devOperationDescription = Nothing
+    , _devOperationParameters = []
+    }
+
+questionnaire_recomputeQuestionnaireIndicationsFn :: DevExecutionDTO -> AppContextM String
+questionnaire_recomputeQuestionnaireIndicationsFn reqDto = do
+  recomputeQuestionnaireIndications
+  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 questionnaire_squashAllEvents :: DevOperation
