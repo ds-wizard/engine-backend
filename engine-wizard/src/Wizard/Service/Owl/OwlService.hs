@@ -23,9 +23,11 @@ import Wizard.Service.Owl.Convertor.OwlConvertor
 import Wizard.Service.Owl.Diff.Differ
 import Wizard.Service.Owl.OwlMapper
 import Wizard.Service.Package.PackageMapper
+import Wizard.Util.Logger
 
 importOwl :: [Input] -> BSL.ByteString -> AppContextM [PackageSimpleDTO]
 importOwl inputs content = do
+  logInfoU _CMP_SERVICE "Importing OWL..."
   rootElement <- getTextFromInput "rootElement" inputs
   name <- getStringFromInput "name" inputs
   organizationId <- getStringFromInput "organizationId" inputs
