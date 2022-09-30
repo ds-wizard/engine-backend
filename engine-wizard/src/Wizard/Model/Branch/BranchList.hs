@@ -18,4 +18,13 @@ data BranchList =
     , _branchListCreatedAt :: UTCTime
     , _branchListUpdatedAt :: UTCTime
     }
-  deriving (Show, Eq, Generic)
+  deriving (Show, Generic)
+
+instance Eq BranchList where
+  a == b =
+    _branchListUuid a == _branchListUuid b &&
+    _branchListName a == _branchListName b &&
+    _branchListKmId a == _branchListKmId b &&
+    _branchListState a == _branchListState b &&
+    _branchListPreviousPackageId a == _branchListPreviousPackageId b &&
+    _branchListForkOfPackageId a == _branchListForkOfPackageId b && _branchListOwnerUuid a == _branchListOwnerUuid b

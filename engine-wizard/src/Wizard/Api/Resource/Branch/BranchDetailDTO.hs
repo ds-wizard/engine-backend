@@ -24,4 +24,17 @@ data BranchDetailDTO =
     , _branchDetailDTOCreatedAt :: UTCTime
     , _branchDetailDTOUpdatedAt :: UTCTime
     }
-  deriving (Generic)
+  deriving (Show, Generic)
+
+instance Eq BranchDetailDTO where
+  a == b =
+    _branchDetailDTOUuid a == _branchDetailDTOUuid b &&
+    _branchDetailDTOName a == _branchDetailDTOName b &&
+    _branchDetailDTOKmId a == _branchDetailDTOKmId b &&
+    _branchDetailDTOState a == _branchDetailDTOState b &&
+    _branchDetailDTOPreviousPackageId a == _branchDetailDTOPreviousPackageId b &&
+    _branchDetailDTOForkOfPackageId a == _branchDetailDTOForkOfPackageId b &&
+    _branchDetailDTOForkOfPackage a == _branchDetailDTOForkOfPackage b &&
+    _branchDetailDTOOwnerUuid a == _branchDetailDTOOwnerUuid b &&
+    _branchDetailDTOEvents a == _branchDetailDTOEvents b &&
+    _branchDetailDTOKnowledgeModel a == _branchDetailDTOKnowledgeModel b

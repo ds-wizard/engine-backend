@@ -369,9 +369,7 @@ updateQuestionnaireEventsByUuid qtnUuid squashed events = do
 
 updateQuestionnaireIndicationByUuid :: String -> PhasesAnsweredIndication -> AppContextM ()
 updateQuestionnaireIndicationByUuid qtnUuid phasesAnsweredIndication = do
-  let sql =
-        fromString
-          "UPDATE questionnaire SET answered_questions = ?, unanswered_questions = ?, updated_at = now() WHERE uuid = ?"
+  let sql = fromString "UPDATE questionnaire SET answered_questions = ?, unanswered_questions = ? WHERE uuid = ?"
   let params =
         [ toField $ phasesAnsweredIndication ^. answeredQuestions
         , toField $ phasesAnsweredIndication ^. unansweredQuestions
@@ -405,7 +403,7 @@ appendQuestionnaireEventByUuid qtnUuid events phasesAnsweredIndication = do
   appUuid <- asks _appContextAppUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb, answered_questions = ?, unanswered_questions = ? WHERE app_uuid = ? AND uuid = ?"
+          "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb, answered_questions = ?, unanswered_questions = ?, updated_at = now() WHERE app_uuid = ? AND uuid = ?"
   let params =
         [ toJSONField events
         , toField $ phasesAnsweredIndication ^. answeredQuestions
@@ -423,7 +421,7 @@ appendQuestionnaireEventByUuid' qtnUuid events = do
   appUuid <- asks _appContextAppUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb WHERE app_uuid = ? AND uuid = ?"
+          "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb, updated_at = now() WHERE app_uuid = ? AND uuid = ?"
   let params = [toJSONField events, toField appUuid, toField qtnUuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
