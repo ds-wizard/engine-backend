@@ -30,6 +30,7 @@ data DocumentContext =
     , _documentContextReport :: Report
     , _documentContextPackage :: DocumentContextPackage
     , _documentContextOrganization :: AppConfigOrganization
+    , _documentContextTemplateMetamodelVersion :: Int
     , _documentContextCreatedBy :: Maybe UserDTO
     , _documentContextCreatedAt :: UTCTime
     , _documentContextUpdatedAt :: UTCTime
@@ -52,6 +53,7 @@ instance Eq DocumentContext where
     _documentContextReport a == _documentContextReport b &&
     _documentContextPackage a == _documentContextPackage b &&
     _documentContextOrganization a == _documentContextOrganization b &&
+    _documentContextTemplateMetamodelVersion a == _documentContextTemplateMetamodelVersion b &&
     _documentContextCreatedBy a == _documentContextCreatedBy b
 
 data DocumentContextConfig =

@@ -6,7 +6,7 @@ import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
+import LensesConfig hiding (templateMetamodelVersion)
 import Shared.Constant.Template
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package

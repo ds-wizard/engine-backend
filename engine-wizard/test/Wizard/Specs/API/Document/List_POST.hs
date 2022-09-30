@@ -10,7 +10,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
+import LensesConfig hiding (request, templateMetamodelVersion)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Template
 import Shared.Database.DAO.Template.TemplateDAO

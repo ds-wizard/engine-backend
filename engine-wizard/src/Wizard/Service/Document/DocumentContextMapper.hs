@@ -4,7 +4,8 @@ import Control.Lens ((^.))
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
+import LensesConfig hiding (templateMetamodelVersion)
+import Shared.Constant.Template
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
@@ -51,6 +52,7 @@ toDocumentContext docUuid serverConfig appClientUrl qtn qtnCtn qtnVersion qtnVer
     , _documentContextReport = report
     , _documentContextPackage = toDocumentContextPackage pkg
     , _documentContextOrganization = org
+    , _documentContextTemplateMetamodelVersion = templateMetamodelVersion
     , _documentContextCreatedBy = USR_Mapper.toDTO <$> mCreatedBy
     , _documentContextCreatedAt = now
     , _documentContextUpdatedAt = now
