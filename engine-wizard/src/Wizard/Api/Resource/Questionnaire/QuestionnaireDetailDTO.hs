@@ -10,9 +10,9 @@ import Shared.Api.Resource.Template.TemplateFormatDTO
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Template.TemplateState
@@ -37,7 +37,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOTemplateState :: Maybe TemplateState
     , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModel
     , _questionnaireDetailDTOReplies :: M.Map String Reply
-    , _questionnaireDetailDTOCommentThreadsMap :: M.Map String [QuestionnaireCommentThread]
+    , _questionnaireDetailDTOCommentThreadsMap :: M.Map String [QuestionnaireCommentThreadDTO]
     , _questionnaireDetailDTOLabels :: M.Map String [U.UUID]
     , _questionnaireDetailDTOCreatorUuid :: Maybe U.UUID
     , _questionnaireDetailDTOPermissions :: [QuestionnairePermRecordDTO]

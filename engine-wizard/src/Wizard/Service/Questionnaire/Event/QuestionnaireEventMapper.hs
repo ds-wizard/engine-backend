@@ -8,7 +8,6 @@ import LensesConfig
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
-import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
@@ -314,10 +313,7 @@ toClearReplyEventChangeDTO event phasesAnsweredIndication =
 toSetPhaseEventChangeDTO :: SetPhaseEvent -> PhasesAnsweredIndication -> SetPhaseEventChangeDTO
 toSetPhaseEventChangeDTO event phasesAnsweredIndication =
   SetPhaseEventChangeDTO
-    { _setPhaseEventChangeDTOUuid = event ^. uuid
-    , _setPhaseEventChangeDTOPhaseUuid = event ^. phaseUuid
-    , _setPhaseEventChangeDTOPhasesAnsweredIndication = phasesAnsweredIndication
-    }
+    {_setPhaseEventChangeDTOUuid = event ^. uuid, _setPhaseEventChangeDTOPhaseUuid = event ^. phaseUuid}
 
 toSetLabelsEventChangeDTO :: SetLabelsEvent -> PhasesAnsweredIndication -> SetLabelsEventChangeDTO
 toSetLabelsEventChangeDTO event phasesAnsweredIndication =
@@ -325,7 +321,6 @@ toSetLabelsEventChangeDTO event phasesAnsweredIndication =
     { _setLabelsEventChangeDTOUuid = event ^. uuid
     , _setLabelsEventChangeDTOPath = event ^. path
     , _setLabelsEventChangeDTOValue = event ^. value
-    , _setLabelsEventChangeDTOPhasesAnsweredIndication = phasesAnsweredIndication
     }
 
 toResolveCommentThreadEventChangeDTO :: ResolveCommentThreadEvent -> ResolveCommentThreadEventChangeDTO
@@ -364,6 +359,7 @@ toAddCommentEventChangeDTO event =
     , _addCommentEventChangeDTOCommentUuid = event ^. commentUuid
     , _addCommentEventChangeDTOText = event ^. text
     , _addCommentEventChangeDTOPrivate = event ^. private
+    , _addCommentEventChangeDTONewThread = True
     }
 
 toEditCommentEventChangeDTO :: EditCommentEvent -> EditCommentEventChangeDTO
@@ -528,26 +524,4 @@ toReply event mUser =
     { _replyValue = event ^. value
     , _replyCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mUser
     , _replyCreatedAt = event ^. createdAt
-    }
-
-toCommentThread :: AddCommentEvent -> Maybe User -> QuestionnaireCommentThread
-toCommentThread event mUser =
-  QuestionnaireCommentThread
-    { _questionnaireCommentThreadUuid = event ^. threadUuid
-    , _questionnaireCommentThreadResolved = False
-    , _questionnaireCommentThreadComments = [toComment event mUser]
-    , _questionnaireCommentThreadPrivate = event ^. private
-    , _questionnaireCommentThreadCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mUser
-    , _questionnaireCommentThreadCreatedAt = event ^. createdAt
-    , _questionnaireCommentThreadUpdatedAt = event ^. createdAt
-    }
-
-toComment :: AddCommentEvent -> Maybe User -> QuestionnaireComment
-toComment event mUser =
-  QuestionnaireComment
-    { _questionnaireCommentUuid = event ^. commentUuid
-    , _questionnaireCommentText = event ^. text
-    , _questionnaireCommentCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mUser
-    , _questionnaireCommentCreatedAt = event ^. createdAt
-    , _questionnaireCommentUpdatedAt = event ^. createdAt
     }

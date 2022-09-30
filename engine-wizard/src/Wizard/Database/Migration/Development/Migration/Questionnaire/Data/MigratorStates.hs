@@ -1,6 +1,7 @@
 module Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates where
 
 import Control.Lens ((^.))
+import qualified Data.Map.Strict as M
 
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
@@ -42,7 +43,7 @@ nlQtnMigrationStateDto =
           (Just commonWizardTemplate)
           (Just templateFormatJson)
           (questionnaire4Ctn ^. replies)
-          (questionnaire4Ctn ^. commentThreadsMap)
+          M.empty
           []
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4 ^. versions))
           (Just $ questionnaire4Upgraded ^. uuid)
@@ -57,7 +58,7 @@ nlQtnMigrationStateDto =
           (Just commonWizardTemplate)
           (Just templateFormatJson)
           (questionnaire4Ctn ^. replies)
-          (questionnaire4Ctn ^. commentThreadsMap)
+          M.empty
           []
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4Upgraded ^. versions))
           Nothing
@@ -79,7 +80,7 @@ nlQtnMigrationStateVisibleViewDto =
           (Just commonWizardTemplate)
           (Just templateFormatJson)
           (questionnaire4Ctn ^. replies)
-          (questionnaire4Ctn ^. commentThreadsMap)
+          M.empty
           []
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleView ^. versions))
           (Just $ questionnaire4Upgraded ^. uuid)
@@ -94,7 +95,7 @@ nlQtnMigrationStateVisibleViewDto =
           (Just commonWizardTemplate)
           (Just templateFormatJson)
           (questionnaire4Ctn ^. replies)
-          (questionnaire4Ctn ^. commentThreadsMap)
+          M.empty
           []
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleViewUpgraded ^. versions))
           Nothing
@@ -116,7 +117,7 @@ nlQtnMigrationStateVisibleEditDto =
           (Just commonWizardTemplate)
           (Just templateFormatJson)
           (questionnaire4Ctn ^. replies)
-          (questionnaire4Ctn ^. commentThreadsMap)
+          M.empty
           []
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleEdit ^. versions))
           (Just $ questionnaire4Upgraded ^. uuid)
@@ -131,7 +132,7 @@ nlQtnMigrationStateVisibleEditDto =
           (Just commonWizardTemplate)
           (Just templateFormatJson)
           (questionnaire4Ctn ^. replies)
-          (questionnaire4Ctn ^. commentThreadsMap)
+          M.empty
           []
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleEditUpgraded ^. versions))
           Nothing

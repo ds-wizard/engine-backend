@@ -2,13 +2,16 @@ module Wizard.Specs.API.Questionnaire.Detail_Revert_Preview_POST
   ( detail_revert_preview_POST
   ) where
 
+import Control.Lens ((&), (.~))
 import Data.Aeson (encode)
+import qualified Data.Map.Strict as M
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -47,10 +50,10 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (logged user)" appContext [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (anonymous)" appContext []
+  create_test_200 "HTTP 200 OK (logged user)" appContext True [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (anonymous)" appContext False []
 
-create_test_200 title appContext authHeader =
+create_test_200 title appContext showComments authHeader =
   it title $
      -- GIVEN: Prepare request
    do
@@ -58,7 +61,10 @@ create_test_200 title appContext authHeader =
      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = questionnaire1CtnRevertedDto
+    let expDto =
+          if showComments
+            then questionnaire1CtnRevertedDto
+            else questionnaire1CtnRevertedDto & commentThreadsMap .~ M.empty
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO TML.runMigration appContext

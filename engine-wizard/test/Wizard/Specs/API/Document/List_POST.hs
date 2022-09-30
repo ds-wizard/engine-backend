@@ -4,7 +4,6 @@ module Wizard.Specs.API.Document.List_POST
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
-import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -24,7 +23,6 @@ import Wizard.Api.Resource.Document.DocumentCreateJM ()
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
@@ -91,8 +89,6 @@ create_test_201 title appContext qtn authHeader =
     runInContextIO U_Migration.runMigration appContext
     runInContextIO TML_Migration.runMigration appContext
     runInContextIO QTN_Migration.runMigration appContext
-    runInContextIO (deleteQuestionnairesFiltered [("uuid", U.toString $ qtn ^. uuid)]) appContext
-    runInContextIO (insertQuestionnaire qtn) appContext
     runInContextIO deleteDocuments appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -176,8 +172,6 @@ create_test_403 title appContext qtn authHeader errorMessage =
     runInContextIO U_Migration.runMigration appContext
     runInContextIO TML_Migration.runMigration appContext
     runInContextIO QTN_Migration.runMigration appContext
-    runInContextIO (deleteQuestionnairesFiltered [("uuid", U.toString $ qtn ^. uuid)]) appContext
-    runInContextIO (insertQuestionnaire qtn) appContext
     runInContextIO deleteDocuments appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
