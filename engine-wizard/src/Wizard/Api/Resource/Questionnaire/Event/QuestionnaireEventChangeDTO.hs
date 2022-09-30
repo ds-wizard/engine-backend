@@ -40,7 +40,6 @@ data SetPhaseEventChangeDTO =
   SetPhaseEventChangeDTO
     { _setPhaseEventChangeDTOUuid :: U.UUID
     , _setPhaseEventChangeDTOPhaseUuid :: Maybe U.UUID
-    , _setPhaseEventChangeDTOPhasesAnsweredIndication :: PhasesAnsweredIndication
     }
   deriving (Show, Eq, Generic)
 
@@ -49,7 +48,6 @@ data SetLabelsEventChangeDTO =
     { _setLabelsEventChangeDTOUuid :: U.UUID
     , _setLabelsEventChangeDTOPath :: String
     , _setLabelsEventChangeDTOValue :: [U.UUID]
-    , _setLabelsEventChangeDTOPhasesAnsweredIndication :: PhasesAnsweredIndication
     }
   deriving (Show, Eq, Generic)
 
@@ -88,6 +86,7 @@ data AddCommentEventChangeDTO =
     , _addCommentEventChangeDTOCommentUuid :: U.UUID
     , _addCommentEventChangeDTOText :: String
     , _addCommentEventChangeDTOPrivate :: Bool
+    , _addCommentEventChangeDTONewThread :: Bool
     }
   deriving (Show, Eq, Generic)
 

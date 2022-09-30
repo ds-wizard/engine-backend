@@ -25,6 +25,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
+import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -102,5 +103,5 @@ revertToEvent qtnUuid reqDto shouldSave =
     eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (updatedQtn ^. events))
     versionDto <- traverse enhanceQuestionnaireVersion (updatedQtn ^. versions)
     when shouldSave (logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid)
-    filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
-    return $ toContentDTO qtnCtn filteredCommentThreadsMap eventsDto versionDto
+    commentThreadsMap <- getQuestionnaireComments qtn
+    return $ toContentDTO qtnCtn commentThreadsMap eventsDto versionDto

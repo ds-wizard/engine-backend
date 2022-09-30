@@ -66,7 +66,9 @@ import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
@@ -713,6 +715,8 @@ makeFields ''QuestionnaireReportDTO
 
 makeFields ''QuestionnairePermRecordDTO
 
+makeFields ''QuestionnaireContentDTO
+
 makeFields ''SetReplyEventDTO
 
 makeFields ''ClearReplyEventDTO
@@ -758,6 +762,8 @@ makeFields ''QuestionnaireVersionDTO
 makeFields ''QuestionnaireVersionChangeDTO
 
 makeFields ''QuestionnaireVersionRevertDTO
+
+makeFields ''QuestionnaireCommentThreadDTO
 
 -- Api / Resource / QuestionnaireImporter
 makeFields ''QuestionnaireImporterDTO

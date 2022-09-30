@@ -1,5 +1,6 @@
 module Wizard.Api.Resource.Questionnaire.QuestionnaireDetailSM where
 
+import qualified Data.Map.Strict as M
 import Data.Swagger
 
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
@@ -19,7 +20,6 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireStateSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionSM ()
 import Wizard.Api.Resource.Template.TemplateStateSM ()
-import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Questionnaire.QuestionnaireState
@@ -38,7 +38,7 @@ instance ToSchema QuestionnaireDetailDTO where
          Nothing
          Nothing
          fReplies
-         qtnThreads
+         M.empty
          []
          []
          Nothing)

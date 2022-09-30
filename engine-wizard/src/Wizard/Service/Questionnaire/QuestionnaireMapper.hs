@@ -19,6 +19,7 @@ import Shared.Util.Coordinate
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
@@ -32,7 +33,6 @@ import Wizard.Constant.Acl
 import Wizard.Model.Acl.Acl
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
-import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireEvent
@@ -111,7 +111,7 @@ toDetailWithPackageWithEventsDTO ::
   -> Maybe Template
   -> Maybe TemplateFormat
   -> M.Map String Reply
-  -> M.Map String [QuestionnaireCommentThread]
+  -> M.Map String [QuestionnaireCommentThreadDTO]
   -> [QuestionnairePermRecordDTO]
   -> [QuestionnaireVersionDTO]
   -> Maybe U.UUID
@@ -149,7 +149,7 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
 
 toContentDTO ::
      QuestionnaireContent
-  -> M.Map String [QuestionnaireCommentThread]
+  -> M.Map String [QuestionnaireCommentThreadDTO]
   -> [QuestionnaireEventDTO]
   -> [QuestionnaireVersionDTO]
   -> QuestionnaireContentDTO

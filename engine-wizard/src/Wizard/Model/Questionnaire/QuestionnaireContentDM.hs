@@ -9,6 +9,5 @@ defaultQuestionnaireContent =
   QuestionnaireContent
     { _questionnaireContentPhaseUuid = Nothing
     , _questionnaireContentReplies = M.empty
-    , _questionnaireContentCommentThreadsMap = M.empty
     , _questionnaireContentLabels = M.empty
     }

@@ -367,6 +367,24 @@ updateQuestionnaireEventsByUuid qtnUuid squashed events = do
   runDB action
   return ()
 
+updateQuestionnaireEventsByUuid' :: String -> Bool -> [QuestionnaireEvent] -> AppContextM ()
+updateQuestionnaireEventsByUuid' qtnUuid squashed events = do
+  let sql = fromString "UPDATE questionnaire SET squashed = ?, events = ? WHERE uuid = ?"
+  let params = [toField squashed, toJSONField events, toField qtnUuid]
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
+  runDB action
+  return ()
+
+updateQuestionnaireEventsByUuid'' :: String -> [QuestionnaireEvent] -> AppContextM ()
+updateQuestionnaireEventsByUuid'' qtnUuid events = do
+  let sql = fromString "UPDATE questionnaire SET events = ? WHERE uuid = ?"
+  let params = [toJSONField events, toField qtnUuid]
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
+  runDB action
+  return ()
+
 updateQuestionnaireIndicationByUuid :: String -> PhasesAnsweredIndication -> AppContextM ()
 updateQuestionnaireIndicationByUuid qtnUuid phasesAnsweredIndication = do
   let sql = fromString "UPDATE questionnaire SET answered_questions = ?, unanswered_questions = ? WHERE uuid = ?"

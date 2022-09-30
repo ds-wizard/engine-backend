@@ -31,6 +31,8 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Internal
@@ -48,6 +50,7 @@ import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
+import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireAudit
@@ -216,7 +219,7 @@ getQuestionnaireDetailById qtnUuid = do
   permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
   qtnCtn <- compileQuestionnaire qtn
   versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
-  filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
+  commentThreadsMap <- getQuestionnaireComments qtn
   migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
   return $
     toDetailWithPackageWithEventsDTO
@@ -229,7 +232,7 @@ getQuestionnaireDetailById qtnUuid = do
       mTemplate
       mFormat
       (qtnCtn ^. replies)
-      filteredCommentThreadsMap
+      commentThreadsMap
       permissionDtos
       versionDto
       (fmap (^. newQuestionnaireUuid) . headSafe $ migrations)
@@ -280,7 +283,7 @@ modifyQuestionnaire qtnUuid reqDto =
          (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT))
     qtnCtn <- compileQuestionnaire updatedQtn
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
-    filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
+    commentThreadsMap <- getQuestionnaireComments qtn
     deleteTemporalDocumentsByQuestionnaireUuid qtnUuid
     migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
     return $
@@ -294,7 +297,7 @@ modifyQuestionnaire qtnUuid reqDto =
         Nothing
         Nothing
         (qtnCtn ^. replies)
-        filteredCommentThreadsMap
+        commentThreadsMap
         permissionDtos
         versionDto
         Nothing
@@ -306,6 +309,12 @@ deleteQuestionnaire qtnUuid shouldValidatePermission =
     validateQuestionnaireDeletation qtnUuid
     when shouldValidatePermission (checkOwnerPermissionToQtn (qtn ^. visibility) (qtn ^. permissions))
     deleteMigratorStateByNewQuestionnaireId qtnUuid
+    threads <- findQuestionnaireCommentThreads qtnUuid
+    traverse_
+      (\t -> do
+         deleteQuestionnaireCommentsByThreadUuid (t ^. uuid)
+         deleteQuestionnaireCommentThreadById (t ^. uuid))
+      threads
     documents <- findDocumentsFiltered [("questionnaire_uuid", qtnUuid)]
     traverse_
       (\d -> do
