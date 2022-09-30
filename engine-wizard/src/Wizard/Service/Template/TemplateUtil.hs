@@ -3,7 +3,7 @@ module Wizard.Service.Template.TemplateUtil where
 import Control.Lens ((^.))
 import qualified Data.List as L
 
-import LensesConfig
+import LensesConfig hiding (templateMetamodelVersion)
 import Shared.Constant.Template
 import Shared.Model.Template.Template
 import Shared.Service.Package.PackageUtil

@@ -5,7 +5,7 @@ import Control.Monad (when)
 import Control.Monad.Except (throwError)
 import qualified Data.UUID as U
 
-import LensesConfig
+import LensesConfig hiding (templateMetamodelVersion)
 import Shared.Constant.Template
 import Shared.Database.DAO.Template.TemplateAssetDAO
 import Shared.Database.DAO.Template.TemplateDAO
