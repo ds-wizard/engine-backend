@@ -8,7 +8,8 @@ import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig hiding (hash)
+import LensesConfig hiding (hash, templateMetamodelVersion)
+import Shared.Constant.Template
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
@@ -81,6 +82,7 @@ dmp1 =
     , _documentContextReport = report1
     , _documentContextPackage = toDocumentContextPackage . SPM.toPackage $ germanyPackage
     , _documentContextOrganization = defaultOrganization
+    , _documentContextTemplateMetamodelVersion = templateMetamodelVersion
     , _documentContextCreatedBy = Just . USR_Mapper.toDTO $ userAlbert
     , _documentContextCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _documentContextUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0

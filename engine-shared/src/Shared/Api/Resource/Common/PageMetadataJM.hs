@@ -7,3 +7,6 @@ import Shared.Util.JSON
 
 instance ToJSON PageMetadata where
   toJSON = simpleToJSON "_pageMetadata"
+
+instance FromJSON PageMetadata where
+  parseJSON = simpleParseJSON "_pageMetadata"

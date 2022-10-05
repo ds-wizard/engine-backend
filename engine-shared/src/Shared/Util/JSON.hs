@@ -1,6 +1,7 @@
 module Shared.Util.JSON where
 
 import Data.Aeson
+import Data.Aeson.Types
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.HashMap.Strict as HashMap
 import qualified Data.HashMap.Strict as HM
@@ -147,3 +148,8 @@ obj = Object . HM.fromList
 arr = Array . V.fromList
 
 str = String . T.pack
+
+(.->) :: FromJSON a => Parser Object -> T.Text -> Parser a
+(.->) parser key = do
+  obj <- parser
+  obj .: key

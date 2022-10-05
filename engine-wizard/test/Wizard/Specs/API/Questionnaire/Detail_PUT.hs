@@ -5,6 +5,7 @@ module Wizard.Specs.API.Questionnaire.Detail_PUT
 import Control.Lens ((^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -85,6 +86,7 @@ test_200 appContext = do
     questionnaire1Edited
     questionnaire1Ctn
     []
+    True
     [reqAuthHeader]
     False
   create_test_200
@@ -94,6 +96,7 @@ test_200 appContext = do
     questionnaire2Edited
     questionnaire2Ctn
     []
+    False
     [reqAuthHeader]
     False
   create_test_200
@@ -103,10 +106,11 @@ test_200 appContext = do
     questionnaire10Edited
     questionnaire10Ctn
     [qtn10NikolaEditPermRecordDto]
+    False
     [reqNonAdminAuthHeader]
     True
 
-create_test_200 title appContext qtn qtnEdited qtnCtn permissions authHeader anonymousEnabled =
+create_test_200 title appContext qtn qtnEdited qtnCtn permissions showComments authHeader anonymousEnabled =
   it title $
      -- GIVEN: Prepare request
    do
@@ -127,7 +131,9 @@ create_test_200 title appContext qtn qtnEdited qtnCtn permissions authHeader ano
             Nothing
             Nothing
             fReplies
-            qtnThreads
+            (if showComments
+               then qtnThreadsDto
+               else M.empty)
             permissions
             qVersionsDto
             Nothing

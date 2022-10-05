@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 
-import LensesConfig
+import LensesConfig hiding (templateMetamodelVersion)
 import Shared.Constant.Template
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.DefaultTemplate (html)

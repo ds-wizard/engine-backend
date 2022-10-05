@@ -48,7 +48,6 @@ assertAbsenceOfQuestionnaireInDB appContext qtn = do
 -- --------------------------------
 compareQuestionnaireCreateDtos resDto expDto = do
   liftIO $ resDto ^. name `shouldBe` expDto ^. name
-  liftIO $ resDto ^. phaseUuid `shouldBe` expDto ^. phaseUuid
   liftIO $ resDto ^. visibility `shouldBe` expDto ^. visibility
   liftIO $ resDto ^. sharing `shouldBe` expDto ^. sharing
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
@@ -56,7 +55,6 @@ compareQuestionnaireCreateDtos resDto expDto = do
 compareQuestionnaireCreateFromTemplateDtos resDto expDto = do
   liftIO $ resDto ^. uuid `shouldNotBe` expDto ^. uuid
   liftIO $ resDto ^. name `shouldBe` (expDto ^. name)
-  liftIO $ resDto ^. phaseUuid `shouldBe` expDto ^. phaseUuid
   liftIO $ resDto ^. visibility `shouldBe` expDto ^. visibility
   liftIO $ resDto ^. sharing `shouldBe` expDto ^. sharing
   liftIO $ resDto ^. state `shouldBe` expDto ^. state
@@ -65,7 +63,6 @@ compareQuestionnaireCreateFromTemplateDtos resDto expDto = do
 compareQuestionnaireCloneDtos resDto expDto = do
   liftIO $ resDto ^. uuid `shouldNotBe` expDto ^. uuid
   liftIO $ resDto ^. name `shouldBe` ("Copy of " ++ expDto ^. name)
-  liftIO $ resDto ^. phaseUuid `shouldBe` expDto ^. phaseUuid
   liftIO $ resDto ^. visibility `shouldBe` expDto ^. visibility
   liftIO $ resDto ^. sharing `shouldBe` expDto ^. sharing
   liftIO $ resDto ^. state `shouldBe` expDto ^. state

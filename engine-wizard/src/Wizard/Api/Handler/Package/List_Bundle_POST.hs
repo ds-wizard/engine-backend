@@ -39,7 +39,7 @@ list_bundle_POST mTokenHeader mServerUrl multipartData =
         Just file -> do
           let content = fdPayload file
           let fileName = T.unpack . fdFileName $ file
-          if L.isSubsequenceOf ".owl" fileName
+          if L.isSubsequenceOf ".ttl" fileName
             then importOwl is content
             else importAndConvertPackageBundle content False
         Nothing -> throwError $ UserError _ERROR_VALIDATION__FILE_ABSENCE

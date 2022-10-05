@@ -31,6 +31,8 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Internal
@@ -48,6 +50,7 @@ import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
+import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireAudit
@@ -79,7 +82,7 @@ getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mProjectTags mProjectT
       mUserUuidsOp
       pageable
       sort
-  traverse enhanceQuestionnaireDetail qtnPage
+  return . fmap toDTO' $ qtnPage
 
 createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM QuestionnaireDTO
 createQuestionnaire questionnaireCreateDto =
@@ -118,7 +121,7 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
     report <- getQuestionnaireReport qtn
     permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
     qtnCtn <- compileQuestionnaire qtn
-    return $ toSimpleDTO qtn qtnCtn package qtnState report permissionDtos
+    return $ toSimpleDTO qtn package qtnState permissionDtos
 
 createQuestionnaireFromTemplate :: QuestionnaireCreateFromTemplateDTO -> AppContextM QuestionnaireDTO
 createQuestionnaireFromTemplate reqDto =
@@ -145,11 +148,12 @@ createQuestionnaireFromTemplate reqDto =
           (uuid .~ newUuid) $
           originQtn
     insertQuestionnaire newQtn
+    duplicateCommentThreads (U.toString $ reqDto ^. questionnaireUuid) newUuid
     state <- getQuestionnaireState (U.toString newUuid) (pkg ^. pId)
     report <- getQuestionnaireReport newQtn
     permissionDtos <- traverse enhanceQuestionnairePermRecord (newQtn ^. permissions)
     qtnCtn <- compileQuestionnaire newQtn
-    return $ toSimpleDTO newQtn qtnCtn pkg state report permissionDtos
+    return $ toSimpleDTO newQtn pkg state permissionDtos
 
 cloneQuestionnaire :: String -> AppContextM QuestionnaireDTO
 cloneQuestionnaire cloneUuid =
@@ -171,11 +175,10 @@ cloneQuestionnaire cloneUuid =
           now $
           originQtn
     insertQuestionnaire newQtn
+    duplicateCommentThreads cloneUuid newUuid
     state <- getQuestionnaireState (U.toString newUuid) (pkg ^. pId)
-    report <- getQuestionnaireReport newQtn
     permissionDtos <- traverse enhanceQuestionnairePermRecord (newQtn ^. permissions)
-    qtnCtn <- compileQuestionnaire newQtn
-    return $ toSimpleDTO newQtn qtnCtn pkg state report permissionDtos
+    return $ toSimpleDTO newQtn pkg state permissionDtos
 
 getQuestionnaireById :: String -> AppContextM QuestionnaireDTO
 getQuestionnaireById qtnUuid = do
@@ -194,8 +197,7 @@ getQuestionnaireById' qtnUuid = do
       state <- getQuestionnaireState qtnUuid (package ^. pId)
       report <- getQuestionnaireReport qtn
       permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
-      qtnCtn <- compileQuestionnaire qtn
-      return . Just $ toDTO qtn qtnCtn package state report permissionDtos
+      return . Just $ toDTO qtn package state permissionDtos
     Nothing -> return Nothing
 
 getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
@@ -219,7 +221,7 @@ getQuestionnaireDetailById qtnUuid = do
   permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
   qtnCtn <- compileQuestionnaire qtn
   versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
-  filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
+  commentThreadsMap <- getQuestionnaireComments qtn
   migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
   return $
     toDetailWithPackageWithEventsDTO
@@ -232,7 +234,7 @@ getQuestionnaireDetailById qtnUuid = do
       mTemplate
       mFormat
       (qtnCtn ^. replies)
-      filteredCommentThreadsMap
+      commentThreadsMap
       permissionDtos
       versionDto
       (fmap (^. newQuestionnaireUuid) . headSafe $ migrations)
@@ -283,7 +285,7 @@ modifyQuestionnaire qtnUuid reqDto =
          (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT))
     qtnCtn <- compileQuestionnaire updatedQtn
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
-    filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
+    commentThreadsMap <- getQuestionnaireComments qtn
     deleteTemporalDocumentsByQuestionnaireUuid qtnUuid
     migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
     return $
@@ -297,7 +299,7 @@ modifyQuestionnaire qtnUuid reqDto =
         Nothing
         Nothing
         (qtnCtn ^. replies)
-        filteredCommentThreadsMap
+        commentThreadsMap
         permissionDtos
         versionDto
         Nothing
@@ -309,6 +311,12 @@ deleteQuestionnaire qtnUuid shouldValidatePermission =
     validateQuestionnaireDeletation qtnUuid
     when shouldValidatePermission (checkOwnerPermissionToQtn (qtn ^. visibility) (qtn ^. permissions))
     deleteMigratorStateByNewQuestionnaireId qtnUuid
+    threads <- findQuestionnaireCommentThreads qtnUuid
+    traverse_
+      (\t -> do
+         deleteQuestionnaireCommentsByThreadUuid (t ^. uuid)
+         deleteQuestionnaireCommentThreadById (t ^. uuid))
+      threads
     documents <- findDocumentsFiltered [("questionnaire_uuid", qtnUuid)]
     traverse_
       (\d -> do
@@ -344,7 +352,11 @@ modifyContent qtnUuid reqDto =
     mCurrentUser <- asks _appContextCurrentUser
     now <- liftIO getCurrentTime
     let updatedQtn = fromContentChangeDTO qtn reqDto mCurrentUser now
-    updateQuestionnaireEventsByUuid qtnUuid False (updatedQtn ^. events)
+    mPhasesAnsweredIndication <- getPhasesAnsweredIndication qtn
+    case mPhasesAnsweredIndication of
+      Just phasesAnsweredIndication ->
+        updateQuestionnaireEventsWithIndicationByUuid qtnUuid False (updatedQtn ^. events) phasesAnsweredIndication
+      Nothing -> updateQuestionnaireEventsByUuid qtnUuid False (updatedQtn ^. events)
     return reqDto
 
 cleanQuestionnaires :: AppContextM ()
@@ -357,3 +369,17 @@ cleanQuestionnaires =
          logInfoU _CMP_SERVICE (f' "Clean questionnaire with empty ACL (qtnUuid: '%s')" [qtnUuid])
          deleteQuestionnaire qtnUuid False)
       qtns
+
+recomputeQuestionnaireIndications :: AppContextM ()
+recomputeQuestionnaireIndications = do
+  qtnUuids <- findQuestionnaireUuids
+  traverse_ recomputeQuestionnaireIndication qtnUuids
+
+recomputeQuestionnaireIndication :: U.UUID -> AppContextM ()
+recomputeQuestionnaireIndication qtnUuid = do
+  qtn <- findQuestionnaireById (U.toString qtnUuid)
+  mPhasesAnsweredIndication <- getPhasesAnsweredIndication qtn
+  case mPhasesAnsweredIndication of
+    Just phasesAnsweredIndication -> updateQuestionnaireIndicationByUuid (U.toString qtnUuid) phasesAnsweredIndication
+    Nothing ->
+      logErrorU _CMP_SERVICE (f' "Can not get phasesAnsweredIndication for the qtn uuid: %s" [U.toString qtnUuid])

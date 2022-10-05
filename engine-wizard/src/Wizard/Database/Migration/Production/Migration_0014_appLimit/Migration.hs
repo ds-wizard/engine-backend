@@ -104,27 +104,3 @@ addMachineFlagToUser dbPool = do
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing
-
-addSystemUser dbPool = do
-  let sql =
-        "INSERT INTO user_entity \
-        \VALUES ('00000000-0000-0000-0000-000000000000', \
-        \        'System', \
-        \        'User', \
-        \        'system@example.com', \
-        \        'pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4=', \
-        \        null, '[\"internal\"]', \
-        \        'admin',  \
-        \        '{ADMIN_PERM,UM_PERM,KM_PERM,KM_UPGRADE_PERM,KM_PUBLISH_PERM,PM_READ_PERM,PM_WRITE_PERM,QTN_PERM,QTN_TML_PERM,DMP_PERM,CFG_PERM,SUBM_PERM,TML_PERM,DOC_PERM}', \
-        \        true, \
-        \        '[]', \
-        \        null, \
-        \        '[]', \
-        \        '2018-01-20 00:00:00.000000 +00:00', \
-        \        '2018-01-20 00:00:00.000000 +00:00', \
-        \        '2018-01-25 00:00:00.000000 +00:00', \
-        \        '00000000-0000-0000-0000-000000000000', \
-        \        true);"
-  let action conn = execute_ conn (fromString sql)
-  liftIO $ withResource dbPool action
-  return Nothing

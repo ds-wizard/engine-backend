@@ -334,7 +334,7 @@ rte_rQ1_t1 =
     { _resolveCommentThreadEventUuid = u' "ad5ffe15-d895-4452-af31-3b952db0b8a8"
     , _resolveCommentThreadEventPath = cmtQ1_path
     , _resolveCommentThreadEventThreadUuid = cmtQ1_t1 ^. uuid
-    , _resolveCommentThreadEventCreatedBy = cmtQ1_t1Resolved ^. createdBy ^? _Just . uuid
+    , _resolveCommentThreadEventCreatedBy = cmtQ1_t1Resolved ^. createdBy
     , _resolveCommentThreadEventCreatedAt = cmtQ1_t1Resolved ^. createdAt
     }
 
@@ -347,7 +347,7 @@ ote_rQ1_t1 =
     { _reopenCommentThreadEventUuid = u' "444c89c8-ead9-44c7-9621-0c0c43ff5f9f"
     , _reopenCommentThreadEventPath = cmtQ1_path
     , _reopenCommentThreadEventThreadUuid = cmtQ1_t1 ^. uuid
-    , _reopenCommentThreadEventCreatedBy = cmtQ1_t1 ^. createdBy ^? _Just . uuid
+    , _reopenCommentThreadEventCreatedBy = cmtQ1_t1 ^. createdBy
     , _reopenCommentThreadEventCreatedAt = cmtQ1_t1 ^. createdAt
     }
 
@@ -360,7 +360,7 @@ dte_rQ1_t1 =
     { _deleteCommentThreadEventUuid = u' "0e8a5812-90da-43b1-bb20-dbf8a95aa00d"
     , _deleteCommentThreadEventPath = cmtQ1_path
     , _deleteCommentThreadEventThreadUuid = cmtQ1_t1 ^. uuid
-    , _deleteCommentThreadEventCreatedBy = cmtQ1_t1 ^. createdBy ^? _Just . uuid
+    , _deleteCommentThreadEventCreatedBy = cmtQ1_t1 ^. createdBy
     , _deleteCommentThreadEventCreatedAt = cmtQ1_t1 ^. createdAt
     }
 
@@ -376,7 +376,7 @@ ace_rQ1_t1_1 =
     , _addCommentEventCommentUuid = cmtQ1_t1_1 ^. uuid
     , _addCommentEventText = cmtQ1_t1_1 ^. text
     , _addCommentEventPrivate = cmtQ1_t1 ^. private
-    , _addCommentEventCreatedBy = cmtQ1_t1_1 ^. createdBy ^? _Just . uuid
+    , _addCommentEventCreatedBy = cmtQ1_t1_1 ^. createdBy
     , _addCommentEventCreatedAt = cmtQ1_t1_1 ^. createdAt
     }
 
@@ -392,7 +392,7 @@ ace_rQ1_t1_2 =
     , _addCommentEventCommentUuid = cmtQ1_t1_2 ^. uuid
     , _addCommentEventText = cmtQ1_t1_2 ^. text
     , _addCommentEventPrivate = cmtQ1_t1 ^. private
-    , _addCommentEventCreatedBy = cmtQ1_t1_2 ^. createdBy ^? _Just . uuid
+    , _addCommentEventCreatedBy = cmtQ1_t1_2 ^. createdBy
     , _addCommentEventCreatedAt = cmtQ1_t1_2 ^. createdAt
     }
 
@@ -408,7 +408,7 @@ ace_rQ2_t1_1 =
     , _addCommentEventCommentUuid = cmtQ2_t1_1 ^. uuid
     , _addCommentEventText = cmtQ2_t1_1 ^. text
     , _addCommentEventPrivate = cmtQ2_t1 ^. private
-    , _addCommentEventCreatedBy = cmtQ2_t1_1 ^. createdBy ^? _Just . uuid
+    , _addCommentEventCreatedBy = cmtQ2_t1_1 ^. createdBy
     , _addCommentEventCreatedAt = cmtQ2_t1_1 ^. createdAt
     }
 
@@ -423,7 +423,7 @@ ece_rQ1_t1_1 =
     , _editCommentEventThreadUuid = cmtQ1_t1 ^. uuid
     , _editCommentEventCommentUuid = cmtQ1_t1_1Edited ^. uuid
     , _editCommentEventText = cmtQ1_t1_1Edited ^. text
-    , _editCommentEventCreatedBy = cmtQ1_t1_1Edited ^. createdBy ^? _Just . uuid
+    , _editCommentEventCreatedBy = cmtQ1_t1_1Edited ^. createdBy
     , _editCommentEventCreatedAt = cmtQ1_t1_1Edited ^. updatedAt
     }
 
@@ -437,6 +437,6 @@ dce_rQ1_t1_1 =
     , _deleteCommentEventPath = cmtQ1_path
     , _deleteCommentEventThreadUuid = cmtQ1_t1 ^. uuid
     , _deleteCommentEventCommentUuid = cmtQ1_t1_1 ^. uuid
-    , _deleteCommentEventCreatedBy = cmtQ1_t1_1 ^. createdBy ^? _Just . uuid
+    , _deleteCommentEventCreatedBy = cmtQ1_t1_1 ^. createdBy
     , _deleteCommentEventCreatedAt = cmtQ1_t1_1 ^. createdAt
     }

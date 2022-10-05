@@ -2,7 +2,6 @@ module Wizard.Service.Questionnaire.QuestionnaireUtils where
 
 import Control.Lens ((^.))
 import Control.Monad (when)
-import Control.Monad.Except (catchError)
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
@@ -20,19 +19,17 @@ import Wizard.Model.Acl.Acl
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
-import Wizard.Model.Questionnaire.QuestionnaireComment
-import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Questionnaire.QuestionnaireVersion
+import Wizard.Model.Report.Report
 import Wizard.Service.Cache.QuestionnaireReportCache
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
-import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import Wizard.Service.Report.ReportGenerator
@@ -53,16 +50,8 @@ enhanceQuestionnaire :: Questionnaire -> AppContextM QuestionnaireDTO
 enhanceQuestionnaire qtn = do
   pkg <- getPackageById (qtn ^. packageId)
   state <- getQuestionnaireState (U.toString $ qtn ^. uuid) (pkg ^. pId)
-  report <- getQuestionnaireReport qtn
   permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
-  qtnCtn <- compileQuestionnaire qtn
-  return $ toDTO qtn qtnCtn pkg state report permissionDtos
-
-enhanceQuestionnaireDetail :: QuestionnaireDetail -> AppContextM QuestionnaireDTO
-enhanceQuestionnaireDetail qtnDetail = do
-  report <- getQuestionnaireReport qtnDetail
-  qtnCtn <- compileQuestionnaire qtnDetail
-  return $ toDTO' qtnDetail qtnCtn report
+  return $ toDTO qtn pkg state permissionDtos
 
 enhanceQuestionnairePermRecord :: QuestionnairePermRecord -> AppContextM QuestionnairePermRecordDTO
 enhanceQuestionnairePermRecord record =
@@ -130,6 +119,21 @@ getQuestionnaireReport qtn = do
       addToCache qtn qtnCtn indications
       return . toQuestionnaireReportDTO $ indications
 
+getPhasesAnsweredIndication ::
+     ( HasEvents questionnaire [QuestionnaireEvent]
+     , HasUuid questionnaire U.UUID
+     , HasPackageId questionnaire String
+     , HasSelectedQuestionTagUuids questionnaire [U.UUID]
+     )
+  => questionnaire
+  -> AppContextM (Maybe PhasesAnsweredIndication)
+getPhasesAnsweredIndication qtn = do
+  report <- getQuestionnaireReport qtn
+  return $ foldl go Nothing (report ^. indications)
+  where
+    go acc (PhasesAnsweredIndication' indication) = Just indication
+    go acc _ = acc
+
 skipIfAssigningProject :: Questionnaire -> AppContextM () -> AppContextM ()
 skipIfAssigningProject qtn action = do
   appConfig <- getAppConfig
@@ -138,17 +142,3 @@ skipIfAssigningProject qtn action = do
   when
     (not (questionnaireSharingEnabled && questionnaireSharingAnonymousEnabled) || (not . null $ qtn ^. permissions))
     action
-
-filterComments ::
-     Questionnaire
-  -> M.Map String [QuestionnaireCommentThread]
-  -> AppContextM (M.Map String [QuestionnaireCommentThread])
-filterComments qtn commentThreadsMap =
-  catchError
-    (do checkEditPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
-        return commentThreadsMap)
-    (\_ ->
-       catchError
-         (do checkCommentPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
-             return $ M.map (filter (\t -> not (t ^. private))) commentThreadsMap)
-         (\_ -> return M.empty))

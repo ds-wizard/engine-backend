@@ -51,18 +51,27 @@ updateBranchDataById branchData = do
   appUuid <- asks _appContextAppUuid
   let sql =
         fromString
-          "UPDATE branch_data SET branch_uuid = ?, metamodel_version = ?, events = ?, app_uuid = ?, created_at = ?, updated_at = ? WHERE app_uuid = ? AND branch_uuid = ?"
-  let params = toRow branchData ++ [toField appUuid, toField . U.toText $ branchData ^. branchUuid]
+          "BEGIN TRANSACTION; \
+          \UPDATE branch_data SET branch_uuid = ?, metamodel_version = ?, events = ?, app_uuid = ?, created_at = ?, updated_at = ? WHERE app_uuid = ? AND branch_uuid = ?; \
+          \UPDATE branch SET updated_at = now() where uuid = ?; \
+          \COMMIT;"
+  let params =
+        toRow branchData ++
+        [toField appUuid, toField . U.toText $ branchData ^. branchUuid, toField . U.toText $ branchData ^. branchUuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
 
 appendBranchEventByUuid :: String -> [Event] -> AppContextM ()
-appendBranchEventByUuid qtnUuid events = do
+appendBranchEventByUuid branchUuid events = do
   appUuid <- asks _appContextAppUuid
   let sql =
-        fromString "UPDATE branch_data SET events = events::jsonb || ?::jsonb WHERE app_uuid = ? AND branch_uuid = ?"
-  let params = [toJSONField events, toField appUuid, toField qtnUuid]
+        fromString
+          "BEGIN TRANSACTION; \
+          \UPDATE branch_data SET events = events::jsonb || ?::jsonb WHERE app_uuid = ? AND branch_uuid = ?; \
+          \UPDATE branch SET updated_at = now() where uuid = ?; \
+          \COMMIT;"
+  let params = [toJSONField events, toField appUuid, toField branchUuid, toField branchUuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action

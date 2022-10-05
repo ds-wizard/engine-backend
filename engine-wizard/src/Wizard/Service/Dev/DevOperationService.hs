@@ -37,6 +37,8 @@ execute reqDto
   | action reqDto persistentCommand persistentCommand_runAll = persistentCommand_runAllFn reqDto
   | action reqDto persistentCommand persistentCommand_run = persistentCommand_runFn reqDto
   | action reqDto registry registry_syncWithRegistry = registry_syncWithRegistryFn reqDto
+  | action reqDto questionnaire questionnaire_recomputeQuestionnaireIndications =
+    questionnaire_recomputeQuestionnaireIndicationsFn reqDto
   | action reqDto questionnaire questionnaire_squashAllEvents = questionnaire_squashAllEventsFn reqDto
   | action reqDto questionnaire questionnaire_squashEventsForQuestionnaire =
     questionnaire_squashEventsForQuestionnaireFn reqDto

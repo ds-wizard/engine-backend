@@ -24,6 +24,8 @@ data QuestionnaireDetail =
     , _questionnaireDetailPackage :: PackageSimple
     , _questionnaireDetailPermissions :: [QuestionnairePermRecordDTO]
     , _questionnaireDetailIsTemplate :: Bool
+    , _questionnaireDetailAnsweredQuestions :: Int
+    , _questionnaireDetailUnansweredQuestions :: Int
     , _questionnaireDetailCreatedAt :: UTCTime
     , _questionnaireDetailUpdatedAt :: UTCTime
     }
@@ -42,4 +44,6 @@ instance Eq QuestionnaireDetail where
     _questionnaireDetailPackageId a == _questionnaireDetailPackageId b &&
     _questionnaireDetailPackage a == _questionnaireDetailPackage b &&
     _questionnaireDetailPermissions a == _questionnaireDetailPermissions b &&
-    _questionnaireDetailIsTemplate a == _questionnaireDetailIsTemplate b
+    _questionnaireDetailIsTemplate a == _questionnaireDetailIsTemplate b &&
+    _questionnaireDetailAnsweredQuestions a == _questionnaireDetailAnsweredQuestions b &&
+    _questionnaireDetailUnansweredQuestions a == _questionnaireDetailUnansweredQuestions b

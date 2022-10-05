@@ -164,12 +164,17 @@ defaultQuestionnaire :: ServerConfigQuestionnaire
 defaultQuestionnaire =
   ServerConfigQuestionnaire
     { _serverConfigQuestionnaireClean = defaultQuestionnaireClean
+    , _serverConfigQuestionnaireRecomputeIndication = defaultQuestionnaireRecomputeIndication
     , _serverConfigQuestionnaireSquash = defaultQuestionnaireSquash
     }
 
 defaultQuestionnaireClean :: ServerConfigCronWorker
 defaultQuestionnaireClean =
   ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "15 */4 * * *"}
+
+defaultQuestionnaireRecomputeIndication :: ServerConfigCronWorker
+defaultQuestionnaireRecomputeIndication =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "20 * * * *"}
 
 defaultQuestionnaireSquash :: ServerConfigCronWorker
 defaultQuestionnaireSquash =

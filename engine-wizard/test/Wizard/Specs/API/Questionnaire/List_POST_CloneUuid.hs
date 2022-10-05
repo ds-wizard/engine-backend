@@ -2,7 +2,7 @@ module Wizard.Specs.API.Questionnaire.List_POST_CloneUuid
   ( list_post_cloneUuid
   ) where
 
-import Control.Lens ((&), (?~), (^.))
+import Control.Lens ((^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.UUID as U
@@ -14,7 +14,6 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
@@ -70,7 +69,7 @@ create_test_201 title appContext qtn =
      -- AND: Prepare expectation
     let expStatus = 201
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = qtn & phaseUuid ?~ (phase1 ^. uuid)
+    let expDto = qtn
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO TML.runMigration appContext

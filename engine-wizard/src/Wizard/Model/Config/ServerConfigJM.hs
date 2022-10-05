@@ -135,6 +135,8 @@ instance FromJSON ServerConfigPlan where
 instance FromJSON ServerConfigQuestionnaire where
   parseJSON (Object o) = do
     _serverConfigQuestionnaireClean <- o .:? "clean" .!= (defaultQuestionnaire ^. clean)
+    _serverConfigQuestionnaireRecomputeIndication <-
+      o .:? "recomputeIndication" .!= (defaultQuestionnaire ^. recomputeIndication)
     _serverConfigQuestionnaireSquash <- o .:? "squash" .!= (defaultQuestionnaire ^. squash)
     return ServerConfigQuestionnaire {..}
   parseJSON _ = mzero

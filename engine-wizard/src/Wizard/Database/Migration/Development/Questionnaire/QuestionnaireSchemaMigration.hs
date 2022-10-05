@@ -15,26 +15,20 @@ runMigration = do
   logInfo _CMP_MIGRATION "(Table/Questionnaire) ended"
 
 dropTables = do
-  dropQtnPermTable
-  dropQtnTable
-
-dropQtnTable = do
   logInfo _CMP_MIGRATION "(Table/Questionnaire) drop tables"
-  let sql = "drop table if exists questionnaire cascade;"
-  let action conn = execute_ conn sql
-  runDB action
-
-dropQtnPermTable = do
-  logInfo _CMP_MIGRATION "(Table/QuestionnaireAcl) drop tables"
   let sql =
-        "drop table if exists questionnaire_acl_user cascade; \
-            \drop table if exists questionnaire_acl_group cascade;"
+        "drop table if exists questionnaire_comment cascade; \
+        \drop table if exists questionnaire_comment_thread cascade; \
+        \drop table if exists questionnaire_acl_user cascade; \
+        \drop table if exists questionnaire_acl_group cascade; \
+        \drop table if exists questionnaire cascade; "
   let action conn = execute_ conn sql
   runDB action
 
 createTables = do
   createQtnTable
   createQtnPermTable
+  createQtnCommentTable
 
 createQtnTable = do
   logInfo _CMP_MIGRATION "(Table/Questionnaire) create table"
@@ -60,7 +54,9 @@ createQtnTable = do
         \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
         \         constraint questionnaire_app_uuid_fk \
         \             references app, \
-        \     project_tags text[] not null default '{}' \
+        \     project_tags text[] not null default '{}', \
+        \     answered_questions int not null default 0, \
+        \     unanswered_questions int not null default 0 \
         \ ); \
         \  \
         \ create unique index questionnaire_uuid_uindex \
@@ -118,5 +114,50 @@ createQtnPermTable = do
          \  \
          \ create unique index questionnaire_acl_group_uuid_uindex \
          \     on questionnaire_acl_group (uuid); "
+  let action conn = execute_ conn sql
+  runDB action
+
+createQtnCommentTable = do
+  logInfo _CMP_MIGRATION "(Table/QuestionnaireComment) create table"
+  let sql =
+        "create table questionnaire_comment_thread \
+        \( \
+        \    uuid       uuid        not null \
+        \        constraint questionnaire_comment_thread_pk \
+        \            primary key, \
+        \    path       text        not null, \
+        \    resolved   bool        not null, \
+        \    private    bool        not null, \
+        \    questionnaire_uuid uuid   not null \
+        \        constraint questionnaire_comment_thread_questionnaire_uuid_fk \
+        \            references questionnaire, \
+        \    created_by uuid \
+        \        constraint questionnaire_comment_thread_user_entity_uuid_fk \
+        \            references user_entity, \
+        \    created_at timestamptz not null, \
+        \    updated_at timestamptz not null \
+        \); \
+        \ \
+        \create unique index questionnaire_comment_thread_uuid_uindex \
+        \    on questionnaire_comment_thread (uuid); \
+        \ \
+        \create table questionnaire_comment \
+        \( \
+        \    uuid       uuid        not null \
+        \        constraint questionnaire_comment_pk \
+        \            primary key, \
+        \    text   text        not null, \
+        \    comment_thread_uuid uuid \
+        \        constraint questionnaire_comment_questionnaire_comment_thread_uuid_fk \
+        \            references questionnaire_comment_thread, \
+        \    created_by uuid \
+        \        constraint questionnaire_comment_user_entity_uuid_fk \
+        \            references user_entity, \
+        \    created_at timestamptz not null, \
+        \    updated_at timestamptz not null \
+        \); \
+        \ \
+        \create unique index questionnaire_comment_uuid_uindex \
+        \    on questionnaire_comment (uuid); "
   let action conn = execute_ conn sql
   runDB action

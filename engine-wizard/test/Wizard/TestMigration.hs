@@ -17,6 +17,8 @@ import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.Plan.AppPlanDAO
 import Wizard.Database.DAO.Prefab.PrefabDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.QuestionnaireImporter.QuestionnaireImporterDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
@@ -129,6 +131,8 @@ resetDB appContext = do
   runInContext deleteBranchDatas appContext
   runInContext deleteBranches appContext
   runInContext deleteDocuments appContext
+  runInContext deleteQuestionnaireComments appContext
+  runInContext deleteQuestionnaireCommentThreads appContext
   runInContext deleteQuestionnaires appContext
   runInContext deleteQuestionnaireImporters appContext
   runInContext deleteTemplates appContext

@@ -5,7 +5,7 @@ import Data.Maybe (fromJust)
 import Data.Time
 import Test.Hspec
 
-import LensesConfig
+import LensesConfig hiding (templateMetamodelVersion)
 import Shared.Constant.Template
 import Shared.Model.Package.PackagePattern
 import Shared.Model.Template.Template

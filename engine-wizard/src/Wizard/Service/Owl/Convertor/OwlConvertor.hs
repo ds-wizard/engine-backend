@@ -99,6 +99,18 @@ convertDataTypeToEvent parentUuid (RdfDataType nameT rdfType) = do
   entityUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
   let name = T.unpack nameT
+  let valueType =
+        case rdfType of
+          "http://www.w3.org/2001/XMLSchema#anyURI" -> UrlQuestionValueType
+          "http://www.w3.org/2001/XMLSchema#date" -> DateQuestionValueType
+          "http://www.w3.org/2001/XMLSchema#dateTime" -> DateTimeQuestionValueType
+          "http://www.w3.org/2001/XMLSchema#time" -> TimeQuestionValueType
+          "http://www.w3.org/2001/XMLSchema#decimal" -> NumberQuestionValueType
+          "http://www.w3.org/2001/XMLSchema#double" -> NumberQuestionValueType
+          "http://www.w3.org/2001/XMLSchema#float" -> NumberQuestionValueType
+          "http://www.w3.org/2001/XMLSchema#integer" -> NumberQuestionValueType
+          "http://www.w3.org/2001/XMLSchema#string" -> StringQuestionValueType
+          _ -> StringQuestionValueType
   return $
     AddQuestionEvent' $
     AddValueQuestionEvent' $
@@ -111,7 +123,7 @@ convertDataTypeToEvent parentUuid (RdfDataType nameT rdfType) = do
       , _addValueQuestionEventRequiredPhaseUuid = Nothing
       , _addValueQuestionEventTagUuids = []
       , _addValueQuestionEventAnnotations = [MapEntry _MAP_ENTRY_RDF_TYPE name]
-      , _addValueQuestionEventValueType = StringQuestionValueType
+      , _addValueQuestionEventValueType = valueType
       , _addValueQuestionEventCreatedAt = now
       }
 
@@ -142,4 +154,7 @@ convertObjectToEvent parentUuid (RdfObject objName rdfType (RdfClass nameT dataT
   return $ [entityEvent] ++ dataTypeEvents ++ concat objectEvents
 
 getTitle :: T.Text -> String
-getTitle name = T.unpack . T.toTitle . T.pack . unwords . fromHumps . T.unpack $ T.splitOn "#" name !! 1
+getTitle name =
+  if '#' `elem` T.unpack name
+    then T.unpack . T.toTitle . T.pack . unwords . fromHumps . T.unpack $ T.splitOn "#" name !! 1
+    else T.unpack . T.toTitle . T.pack . unwords . fromHumps . T.unpack . last $ T.splitOn "/" name

@@ -1,9 +1,8 @@
 module Wizard.Api.Resource.Questionnaire.QuestionnaireContentSM where
 
-import Control.Lens ((^.))
+import qualified Data.Map.Strict as M
 import Data.Swagger
 
-import LensesConfig
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentSM ()
@@ -15,4 +14,4 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 instance ToSchema QuestionnaireContentDTO where
-  declareNamedSchema = simpleToSchema (toContentDTO questionnaire1Ctn (questionnaire1Ctn ^. commentThreadsMap) [] [])
+  declareNamedSchema = simpleToSchema (toContentDTO questionnaire1Ctn M.empty [] [])

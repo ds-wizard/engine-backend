@@ -7,24 +7,30 @@ import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeJM ()
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM ()
+import Wizard.Api.Resource.Report.ReportSM ()
 import Wizard.Api.Resource.User.UserSuggestionSM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
+import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 
 instance ToSchema QuestionnaireEventChangeDTO where
   declareNamedSchema = genericDeclareNamedSchemaUnrestricted defaultSchemaOptions
 
 instance ToSchema SetReplyEventChangeDTO where
-  declareNamedSchema = simpleToSchema' "_setReplyEventChangeDTO" (toSetReplyEventChangeDTO sre_rQ1)
+  declareNamedSchema =
+    simpleToSchema' "_setReplyEventChangeDTO" (toSetReplyEventChangeDTO sre_rQ1 samplePhasesAnsweredIndication)
 
 instance ToSchema ClearReplyEventChangeDTO where
-  declareNamedSchema = simpleToSchema' "_clearReplyEventChangeDTO" (toClearReplyEventChangeDTO cre_rQ1)
+  declareNamedSchema =
+    simpleToSchema' "_clearReplyEventChangeDTO" (toClearReplyEventChangeDTO cre_rQ1 samplePhasesAnsweredIndication)
 
 instance ToSchema SetPhaseEventChangeDTO where
-  declareNamedSchema = simpleToSchema' "_setPhaseEventChangeDTO" (toSetPhaseEventChangeDTO sphse_1)
+  declareNamedSchema =
+    simpleToSchema' "_setPhaseEventChangeDTO" (toSetPhaseEventChangeDTO sphse_1 samplePhasesAnsweredIndication)
 
 instance ToSchema SetLabelsEventChangeDTO where
-  declareNamedSchema = simpleToSchema' "_setLabelsEventChangeDTO" (toSetLabelsEventChangeDTO slble_rQ2)
+  declareNamedSchema =
+    simpleToSchema' "_setLabelsEventChangeDTO" (toSetLabelsEventChangeDTO slble_rQ2 samplePhasesAnsweredIndication)
 
 instance ToSchema ResolveCommentThreadEventChangeDTO where
   declareNamedSchema =

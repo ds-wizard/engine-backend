@@ -2,7 +2,7 @@ module Wizard.Specs.API.Questionnaire.List_POST_FromTemplate
   ( list_post_fromTemplate
   ) where
 
-import Control.Lens ((&), (.~), (?~), (^.))
+import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -12,7 +12,6 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
@@ -71,7 +70,7 @@ test_201 appContext =
     -- AND: Prepare expectation
     let expStatus = 201
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = questionnaire11Dto & phaseUuid ?~ (phase1 ^. uuid)
+    let expDto = questionnaire11Dto
     let expBody = encode expDto
     -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext

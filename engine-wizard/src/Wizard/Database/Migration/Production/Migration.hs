@@ -28,6 +28,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0018_dropDocumen
 import qualified Wizard.Database.Migration.Production.Migration_0019_dashboardAndAudit.Migration as M_0019
 import qualified Wizard.Database.Migration.Production.Migration_0020_persistentCommandCreatedBy.Migration as M_0020
 import qualified Wizard.Database.Migration.Production.Migration_0021_qtnImporter.Migration as M_0021
+import qualified Wizard.Database.Migration.Production.Migration_0022_optimizeProjectList.Migration as M_0022
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
 
@@ -59,4 +60,5 @@ migrationDefinitions =
   , M_0019.definition
   , M_0020.definition
   , M_0021.definition
+  , M_0022.definition
   ]
