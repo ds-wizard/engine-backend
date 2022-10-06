@@ -30,7 +30,7 @@ cMoveQuestionnaireCommentsToSeparateTableName = "moveQuestionnaireCommentsToSepa
 
 cMoveQuestionnaireCommentsToSeparateTable :: PersistentCommand -> AppContextM (PersistentCommandState, Maybe String)
 cMoveQuestionnaireCommentsToSeparateTable persistentCommand = do
-  qtnUuids <- findQuestionnaireUuids
+  qtnUuids <- findQuestionnaireUuids'
   traverse_ moveForOneQuestionnaire qtnUuids
   return (DonePersistentCommandState, Nothing)
 
