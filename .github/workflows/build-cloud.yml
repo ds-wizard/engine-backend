@@ -206,8 +206,7 @@ jobs:
     - name: Docker build
       run: |
         cd engine-$COMPONENT
-        docker pull $PRIVATE_IMAGE:$TAG_DEVELOP
-        docker build --cache-from $PRIVATE_IMAGE:$TAG_DEVELOP -t $PRIVATE_IMAGE:$GITHUB_SHA .
+        docker build -t $PRIVATE_IMAGE:$GITHUB_SHA .
 
     - name: Docker tag and push - branch (private)
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && !contains(github.ref, 'release')
