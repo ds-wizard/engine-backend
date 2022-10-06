@@ -277,6 +277,16 @@ findQuestionnaireWithZeroAcl = do
 
 findQuestionnaireUuids :: AppContextM [U.UUID]
 findQuestionnaireUuids = do
+  appUuid <- asks _appContextAppUuid
+  let sql = fromString $ f' "SELECT %s FROM %s WHERE app_uuid = ?" ["uuid", entityName]
+  let params = [toField appUuid]
+  logQuery sql params
+  let action conn = query conn sql params
+  entities <- runDB action
+  return . concat $ entities
+
+findQuestionnaireUuids' :: AppContextM [U.UUID]
+findQuestionnaireUuids' = do
   let sql = f' "SELECT %s FROM %s" ["uuid", entityName]
   logInfoU _CMP_DATABASE sql
   let action conn = query_ conn (fromString sql)
