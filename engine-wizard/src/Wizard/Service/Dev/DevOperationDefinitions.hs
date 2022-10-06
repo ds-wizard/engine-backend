@@ -173,7 +173,7 @@ feedback_synchronizeFeedbacks =
 
 feedback_synchronizeFeedbacksFn :: DevExecutionDTO -> AppContextM String
 feedback_synchronizeFeedbacksFn reqDto = do
-  synchronizeFeedbacks
+  synchronizeFeedbacksInAllApplications
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------

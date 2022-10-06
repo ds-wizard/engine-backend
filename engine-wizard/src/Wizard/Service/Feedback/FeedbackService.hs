@@ -3,43 +3,42 @@ module Wizard.Service.Feedback.FeedbackService
   , createFeedback
   , createFeedbackWithGivenUuid
   , getFeedbackByUuid
-  , synchronizeFeedbacks
-  , createIssueUrl
+  , synchronizeFeedbacksInAllApplications
   ) where
 
 import Control.Lens ((^.))
+import Control.Monad.Except (catchError)
 import Control.Monad.Reader (asks, liftIO)
+import Data.Foldable (traverse_)
 import qualified Data.List as L
-import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 import Prelude hiding (id)
 
 import LensesConfig
+import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Integration.Http.GitHub.Runner
-import Wizard.Model.Config.AppConfig
-import Wizard.Model.Config.ServerConfig
+import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Feedback.Feedback
+import Wizard.Model.Context.ContextResult
 import Wizard.Service.Common
 import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Context.ContextService
 import Wizard.Service.Feedback.FeedbackMapper
-import Wizard.Util.Interpolation (interpolateString)
 import Wizard.Util.Logger
 
 getFeedbacksFiltered :: [(String, String)] -> AppContextM [FeedbackDTO]
 getFeedbacksFiltered queryParams = do
   checkIfFeedbackIsEnabled
-  fbks <- findFeedbacksFiltered queryParams
+  feedbacks <- findFeedbacksFiltered queryParams
   serverConfig <- asks _appContextServerConfig
   appConfig <- getAppConfig
-  return $ (\f -> toDTO f (createIssueUrl (serverConfig ^. feedback) (appConfig ^. questionnaire . feedback) f)) <$>
-    fbks
+  return . fmap (toDTO serverConfig appConfig) $ feedbacks
 
 createFeedback :: FeedbackCreateDTO -> AppContextM FeedbackDTO
 createFeedback reqDto =
@@ -55,48 +54,48 @@ createFeedbackWithGivenUuid fUuid reqDto =
     issue <- createIssue (reqDto ^. packageId) (reqDto ^. questionUuid) (reqDto ^. title) (reqDto ^. content)
     now <- liftIO getCurrentTime
     appUuid <- asks _appContextAppUuid
-    let fbk = fromCreateDTO reqDto fUuid (issue ^. number) appUuid now
-    insertFeedback fbk
+    let feedback = fromCreateDTO reqDto fUuid (issue ^. number) appUuid now
+    insertFeedback feedback
     serverConfig <- asks _appContextServerConfig
     appConfig <- getAppConfig
-    let iUrl = createIssueUrl (serverConfig ^. feedback) (appConfig ^. questionnaire . feedback) fbk
-    return $ toDTO fbk iUrl
+    return $ toDTO serverConfig appConfig feedback
 
 getFeedbackByUuid :: String -> AppContextM FeedbackDTO
 getFeedbackByUuid fUuid = do
   checkIfFeedbackIsEnabled
-  fbk <- findFeedbackById fUuid
+  feedback <- findFeedbackById fUuid
   serverConfig <- asks _appContextServerConfig
   appConfig <- getAppConfig
-  let iUrl = createIssueUrl (serverConfig ^. feedback) (appConfig ^. questionnaire . feedback) fbk
-  return $ toDTO fbk iUrl
+  return $ toDTO serverConfig appConfig feedback
 
-synchronizeFeedbacks :: AppContextM ()
-synchronizeFeedbacks =
-  runInTransaction $ do
-    appConfig <- getAppConfig
-    if appConfig ^. questionnaire . feedback . enabled
-      then do
-        logInfoU _CMP_WORKER "synchronizing feedback"
-        issues <- getIssues
-        fbks <- findFeedbacks
-        now <- liftIO getCurrentTime
-        sequence_ $ updateOrDeleteFeedback issues now <$> fbks
-      else logInfoU _CMP_WORKER "synchronization is disabled"
-  where
-    updateOrDeleteFeedback issues now fbk =
-      case L.find (\issue -> fbk ^. issueId == issue ^. number) issues of
-        Just issue -> updateFeedbackById $ fromSimpleIssue fbk issue now
-        Nothing -> deleteFeedbackById (U.toString $ fbk ^. uuid)
-
-createIssueUrl :: ServerConfigFeedback -> AppConfigQuestionnaireFeedback -> Feedback -> String
-createIssueUrl serverConfig appConfig fbk =
-  let urlTemplate = (serverConfig ^. webUrl) ++ "/${owner}/${repo}/issues/${issueId}"
-      variables =
-        M.fromList [("owner", appConfig ^. owner), ("repo", appConfig ^. repo), ("issueId", show $ fbk ^. issueId)]
-   in interpolateString variables urlTemplate
+synchronizeFeedbacksInAllApplications :: AppContextM ()
+synchronizeFeedbacksInAllApplications = runFunctionForAllApps "synchronizeFeedbacks" synchronizeFeedbacks
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
+synchronizeFeedbacks :: AppContextM (ContextResult, Maybe String)
+synchronizeFeedbacks =
+  catchError
+    (do runInTransaction $ do
+          appConfig <- getAppConfig
+          if appConfig ^. questionnaire . feedback . enabled
+            then do
+              logInfoU _CMP_WORKER "synchronizing feedback"
+              issues <- getIssues
+              feedbacks <- findFeedbacks
+              now <- liftIO getCurrentTime
+              traverse_ (updateOrDeleteFeedback issues now) feedbacks
+            else logInfoU _CMP_WORKER "synchronization is disabled"
+          return (SuccessContextResult, Nothing))
+    (\error -> do
+       if error == GeneralServerError (_ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR "statusCode: 401")
+         then return (SuccessContextResult, Just "Wrong GitHub token")
+         else return (ErrorContextResult, Just . show $ error))
+  where
+    updateOrDeleteFeedback issues now feedback =
+      case L.find (\issue -> feedback ^. issueId == issue ^. number) issues of
+        Just issue -> updateFeedbackById $ fromSimpleIssue feedback issue now
+        Nothing -> deleteFeedbackById (U.toString $ feedback ^. uuid)
+
 checkIfFeedbackIsEnabled = checkIfAppFeatureIsEnabled "Feedback" (questionnaire . feedback . enabled)

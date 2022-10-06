@@ -9,20 +9,23 @@ import LensesConfig
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
 import Wizard.Integration.Resource.GitHub.IssueIDTO
+import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Feedback.Feedback
+import Wizard.Service.Feedback.FeedbackUtil
 
-toDTO :: Feedback -> String -> FeedbackDTO
-toDTO feedback issueUrl =
+toDTO :: ServerConfig -> AppConfig -> Feedback -> FeedbackDTO
+toDTO serverConfig appConfig f =
   FeedbackDTO
-    { _feedbackDTOUuid = feedback ^. uuid
-    , _feedbackDTOIssueId = feedback ^. issueId
-    , _feedbackDTOIssueUrl = issueUrl
-    , _feedbackDTOQuestionUuid = feedback ^. questionUuid
-    , _feedbackDTOPackageId = feedback ^. packageId
-    , _feedbackDTOTitle = feedback ^. title
-    , _feedbackDTOContent = feedback ^. content
-    , _feedbackDTOCreatedAt = feedback ^. createdAt
-    , _feedbackDTOUpdatedAt = feedback ^. updatedAt
+    { _feedbackDTOUuid = f ^. uuid
+    , _feedbackDTOIssueId = f ^. issueId
+    , _feedbackDTOIssueUrl = createIssueUrl (serverConfig ^. feedback) (appConfig ^. questionnaire . feedback) f
+    , _feedbackDTOQuestionUuid = f ^. questionUuid
+    , _feedbackDTOPackageId = f ^. packageId
+    , _feedbackDTOTitle = f ^. title
+    , _feedbackDTOContent = f ^. content
+    , _feedbackDTOCreatedAt = f ^. createdAt
+    , _feedbackDTOUpdatedAt = f ^. updatedAt
     }
 
 fromCreateDTO :: FeedbackCreateDTO -> U.UUID -> Int -> U.UUID -> UTCTime -> Feedback
