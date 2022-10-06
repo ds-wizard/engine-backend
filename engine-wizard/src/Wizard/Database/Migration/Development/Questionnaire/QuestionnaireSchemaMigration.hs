@@ -43,7 +43,7 @@ createQtnTable = do
         \     selected_question_tag_uuids json not null, \
         \     template_id varchar, \
         \     format_uuid uuid, \
-        \     creator_uuid uuid, \
+        \     created_by uuid, \
         \     events json not null, \
         \     versions json not null, \
         \     created_at timestamptz not null, \
@@ -74,7 +74,7 @@ createQtnTable = do
         \      foreign key (template_id, app_uuid) references template (id, app_uuid); \
         \ alter table questionnaire \
         \   add constraint questionnaire_user_entity_uuid_fk \
-        \      foreign key (creator_uuid) references user_entity;"
+        \      foreign key (created_by) references user_entity;"
   let action conn = execute_ conn sql
   runDB action
 

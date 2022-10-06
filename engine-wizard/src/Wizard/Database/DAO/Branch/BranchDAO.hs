@@ -57,7 +57,7 @@ findBranchesPage mQuery pageable sort
           \       get_branch_state(knowledge_model_migration, branch_data, get_branch_fork_of_package_id(app_config, previous_pkg, branch), '%s') as state, \
           \       branch.previous_package_id, \
           \       get_branch_fork_of_package_id(app_config, previous_pkg, branch) as fork_of_package_id, \
-          \       branch.owner_uuid, \
+          \       branch.created_by, \
           \       branch.created_at, \
           \       branch.updated_at  \
           \FROM branch \
@@ -113,11 +113,20 @@ updateBranchById branch = do
   appUuid <- asks _appContextAppUuid
   let sql =
         fromString
-          "UPDATE branch SET uuid = ?, name = ?, km_id = ?, previous_package_id = ?, owner_uuid = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
+          "UPDATE branch SET uuid = ?, name = ?, km_id = ?, previous_package_id = ?, created_by = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
   let params = toRow branch ++ [toField appUuid, toField . U.toText $ branch ^. uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
+
+clearBranchCreatedBy :: U.UUID -> AppContextM ()
+clearBranchCreatedBy userUuid = do
+  let sql = fromString "UPDATE branch SET created_by = null WHERE created_by = ?"
+  let params = [toField userUuid]
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
+  runDB action
+  return ()
 
 deleteBranches :: AppContextM Int64
 deleteBranches = createDeleteEntitiesFn entityName

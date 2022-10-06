@@ -14,7 +14,7 @@ data BranchList =
     , _branchListState :: BranchState
     , _branchListPreviousPackageId :: Maybe String
     , _branchListForkOfPackageId :: Maybe String
-    , _branchListOwnerUuid :: Maybe U.UUID
+    , _branchListCreatedBy :: Maybe U.UUID
     , _branchListCreatedAt :: UTCTime
     , _branchListUpdatedAt :: UTCTime
     }
@@ -27,4 +27,4 @@ instance Eq BranchList where
     _branchListKmId a == _branchListKmId b &&
     _branchListState a == _branchListState b &&
     _branchListPreviousPackageId a == _branchListPreviousPackageId b &&
-    _branchListForkOfPackageId a == _branchListForkOfPackageId b && _branchListOwnerUuid a == _branchListOwnerUuid b
+    _branchListForkOfPackageId a == _branchListForkOfPackageId b && _branchListCreatedBy a == _branchListCreatedBy b

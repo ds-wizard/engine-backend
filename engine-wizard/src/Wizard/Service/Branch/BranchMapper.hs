@@ -26,7 +26,7 @@ toList branch mForkOfPackageId state =
     , _branchListState = state
     , _branchListPreviousPackageId = branch ^. previousPackageId
     , _branchListForkOfPackageId = mForkOfPackageId
-    , _branchListOwnerUuid = branch ^. ownerUuid
+    , _branchListCreatedBy = branch ^. createdBy
     , _branchListCreatedAt = branch ^. createdAt
     , _branchListUpdatedAt = branch ^. updatedAt
     }
@@ -43,32 +43,32 @@ toDetailDTO branch branchData knowledgeModel mForkOfPackageId mForkOfPackage sta
     , _branchDetailDTOForkOfPackage = fmap toSimpleDTO mForkOfPackage
     , _branchDetailDTOEvents = branchData ^. events
     , _branchDetailDTOKnowledgeModel = knowledgeModel
-    , _branchDetailDTOOwnerUuid = branch ^. ownerUuid
+    , _branchDetailDTOCreatedBy = branch ^. createdBy
     , _branchDetailDTOCreatedAt = branch ^. createdAt
     , _branchDetailDTOUpdatedAt = branch ^. updatedAt
     }
 
 fromChangeDTO :: BranchChangeDTO -> U.UUID -> Maybe String -> Maybe U.UUID -> U.UUID -> UTCTime -> UTCTime -> Branch
-fromChangeDTO dto bUuid bPackageId mOwnerUuid appUuid bCreatedAt bUpdatedAt =
+fromChangeDTO dto bUuid bPackageId mCreatedBy appUuid bCreatedAt bUpdatedAt =
   Branch
     { _branchUuid = bUuid
     , _branchName = dto ^. name
     , _branchKmId = dto ^. kmId
     , _branchPreviousPackageId = bPackageId
-    , _branchOwnerUuid = mOwnerUuid
+    , _branchCreatedBy = mCreatedBy
     , _branchAppUuid = appUuid
     , _branchCreatedAt = bCreatedAt
     , _branchUpdatedAt = bUpdatedAt
     }
 
 fromCreateDTO :: BranchCreateDTO -> U.UUID -> Maybe U.UUID -> U.UUID -> UTCTime -> UTCTime -> Branch
-fromCreateDTO dto bUuid mOwnerUuid appUuid bCreatedAt bUpdatedAt =
+fromCreateDTO dto bUuid mCreatedBy appUuid bCreatedAt bUpdatedAt =
   Branch
     { _branchUuid = bUuid
     , _branchName = dto ^. name
     , _branchKmId = dto ^. kmId
     , _branchPreviousPackageId = dto ^. previousPackageId
-    , _branchOwnerUuid = mOwnerUuid
+    , _branchCreatedBy = mCreatedBy
     , _branchAppUuid = appUuid
     , _branchCreatedAt = bCreatedAt
     , _branchUpdatedAt = bUpdatedAt
