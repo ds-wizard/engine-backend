@@ -14,7 +14,7 @@ instance FromRow BranchList where
     _branchListState <- field
     _branchListPreviousPackageId <- field
     _branchListForkOfPackageId <- field
-    _branchListOwnerUuid <- field
+    _branchListCreatedBy <- field
     _branchListCreatedAt <- field
     _branchListUpdatedAt <- field
     return $ BranchList {..}

@@ -38,6 +38,7 @@ import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
+import Wizard.Model.Context.ContextResult
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
@@ -45,6 +46,7 @@ import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Context.ContextService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Mail.Mailer
@@ -370,10 +372,15 @@ cleanQuestionnaires =
          deleteQuestionnaire qtnUuid False)
       qtns
 
-recomputeQuestionnaireIndications :: AppContextM ()
+recomputeQuestionnaireIndicationsInAllApplications :: AppContextM ()
+recomputeQuestionnaireIndicationsInAllApplications =
+  runFunctionForAllApps "recomputeQuestionnaireIndications" recomputeQuestionnaireIndications
+
+recomputeQuestionnaireIndications :: AppContextM (ContextResult, Maybe String)
 recomputeQuestionnaireIndications = do
   qtnUuids <- findQuestionnaireUuids
   traverse_ recomputeQuestionnaireIndication qtnUuids
+  return (SuccessContextResult, Nothing)
 
 recomputeQuestionnaireIndication :: U.UUID -> AppContextM ()
 recomputeQuestionnaireIndication qtnUuid = do

@@ -43,7 +43,7 @@ createTables = do
         \     name varchar not null, \
         \     km_id varchar not null, \
         \     previous_package_id varchar, \
-        \     owner_uuid uuid not null \
+        \     created_by uuid not null \
         \         constraint branch_user_entity_uuid_fk \
         \             references user_entity, \
         \     created_at timestamptz not null, \

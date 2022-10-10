@@ -25,9 +25,11 @@ import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
+import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
@@ -228,7 +230,9 @@ deleteUser userUuid =
   runInTransaction $ do
     checkPermission _UM_PERM
     user <- findUserById userUuid
+    clearBranchCreatedBy (user ^. uuid)
     removeOwnerFromQuestionnaire (user ^. uuid)
+    clearQuestionnaireCreatedBy (user ^. uuid)
     deletePersistentCommandByCreatedBy userUuid
     documents <- findDocumentsFiltered [("creator_uuid", userUuid)]
     forM_

@@ -173,7 +173,7 @@ feedback_synchronizeFeedbacks =
 
 feedback_synchronizeFeedbacksFn :: DevExecutionDTO -> AppContextM String
 feedback_synchronizeFeedbacksFn reqDto = do
-  synchronizeFeedbacks
+  synchronizeFeedbacksInAllApplications
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -263,14 +263,14 @@ questionnaire =
 questionnaire_recomputeQuestionnaireIndications :: DevOperation
 questionnaire_recomputeQuestionnaireIndications =
   DevOperation
-    { _devOperationName = "Recompute Quetionnaire Indications"
+    { _devOperationName = "Recompute Questionnaire Indications"
     , _devOperationDescription = Nothing
     , _devOperationParameters = []
     }
 
 questionnaire_recomputeQuestionnaireIndicationsFn :: DevExecutionDTO -> AppContextM String
 questionnaire_recomputeQuestionnaireIndicationsFn reqDto = do
-  recomputeQuestionnaireIndications
+  recomputeQuestionnaireIndicationsInAllApplications
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------

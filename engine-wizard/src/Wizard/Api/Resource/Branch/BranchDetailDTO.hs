@@ -18,7 +18,7 @@ data BranchDetailDTO =
     , _branchDetailDTOPreviousPackageId :: Maybe String
     , _branchDetailDTOForkOfPackageId :: Maybe String
     , _branchDetailDTOForkOfPackage :: Maybe PackageSimpleDTO
-    , _branchDetailDTOOwnerUuid :: Maybe U.UUID
+    , _branchDetailDTOCreatedBy :: Maybe U.UUID
     , _branchDetailDTOEvents :: [Event]
     , _branchDetailDTOKnowledgeModel :: KnowledgeModel
     , _branchDetailDTOCreatedAt :: UTCTime
@@ -35,6 +35,6 @@ instance Eq BranchDetailDTO where
     _branchDetailDTOPreviousPackageId a == _branchDetailDTOPreviousPackageId b &&
     _branchDetailDTOForkOfPackageId a == _branchDetailDTOForkOfPackageId b &&
     _branchDetailDTOForkOfPackage a == _branchDetailDTOForkOfPackage b &&
-    _branchDetailDTOOwnerUuid a == _branchDetailDTOOwnerUuid b &&
+    _branchDetailDTOCreatedBy a == _branchDetailDTOCreatedBy b &&
     _branchDetailDTOEvents a == _branchDetailDTOEvents b &&
     _branchDetailDTOKnowledgeModel a == _branchDetailDTOKnowledgeModel b

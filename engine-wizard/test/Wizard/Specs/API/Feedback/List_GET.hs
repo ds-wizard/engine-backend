@@ -18,7 +18,6 @@ import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as F
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Feedback.FeedbackMapper
-import Wizard.Service.Feedback.FeedbackService
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Feedback.Common
@@ -50,10 +49,10 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let feedbackConfig = appContext ^. serverConfig . feedback
-    let iUrl1 = createIssueUrl feedbackConfig defaultFeedback feedback1
-    let iUrl2 = createIssueUrl feedbackConfig defaultFeedback feedback2
-    let expDto = [toDTO feedback1 iUrl1, toDTO feedback2 iUrl2]
+    let expDto =
+          [ toDTO (appContext ^. serverConfig) defaultAppConfig feedback1
+          , toDTO (appContext ^. serverConfig) defaultAppConfig feedback2
+          ]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO loadFeedbackTokenFromEnv appContext

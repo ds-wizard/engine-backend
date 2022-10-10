@@ -277,6 +277,16 @@ findQuestionnaireWithZeroAcl = do
 
 findQuestionnaireUuids :: AppContextM [U.UUID]
 findQuestionnaireUuids = do
+  appUuid <- asks _appContextAppUuid
+  let sql = fromString $ f' "SELECT %s FROM %s WHERE app_uuid = ?" ["uuid", entityName]
+  let params = [toField appUuid]
+  logQuery sql params
+  let action conn = query conn sql params
+  entities <- runDB action
+  return . concat $ entities
+
+findQuestionnaireUuids' :: AppContextM [U.UUID]
+findQuestionnaireUuids' = do
   let sql = f' "SELECT %s FROM %s" ["uuid", entityName]
   logInfoU _CMP_DATABASE sql
   let action conn = query_ conn (fromString sql)
@@ -350,7 +360,7 @@ updateQuestionnaireById qtn = do
   appUuid <- asks _appContextAppUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, template_id = ?, format_uuid = ?, creator_uuid = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, app_uuid = ?, project_tags = ?, answered_questions = ?, unanswered_questions = ? WHERE  app_uuid = ? AND uuid = ?"
+          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, template_id = ?, format_uuid = ?, created_by = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, app_uuid = ?, project_tags = ?, answered_questions = ?, unanswered_questions = ? WHERE  app_uuid = ? AND uuid = ?"
   let params = toRow qtn ++ [toField appUuid, toField . U.toText $ qtn ^. uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
@@ -441,6 +451,15 @@ appendQuestionnaireEventByUuid' qtnUuid events = do
         fromString
           "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb, updated_at = now() WHERE app_uuid = ? AND uuid = ?"
   let params = [toJSONField events, toField appUuid, toField qtnUuid]
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
+  runDB action
+  return ()
+
+clearQuestionnaireCreatedBy :: U.UUID -> AppContextM ()
+clearQuestionnaireCreatedBy userUuid = do
+  let sql = fromString "UPDATE questionnaire SET created_by = null WHERE created_by = ?"
+  let params = [toField userUuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action

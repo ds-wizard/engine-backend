@@ -13,7 +13,7 @@ instance FromRow Branch where
     _branchName <- field
     _branchKmId <- field
     _branchPreviousPackageId <- field
-    _branchOwnerUuid <- field
+    _branchCreatedBy <- field
     _branchCreatedAt <- field
     _branchUpdatedAt <- field
     _branchAppUuid <- field
@@ -25,7 +25,7 @@ instance ToRow Branch where
     , toField _branchName
     , toField _branchKmId
     , toField _branchPreviousPackageId
-    , toField _branchOwnerUuid
+    , toField _branchCreatedBy
     , toField _branchCreatedAt
     , toField _branchUpdatedAt
     , toField _branchAppUuid

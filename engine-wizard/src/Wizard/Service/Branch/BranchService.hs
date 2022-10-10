@@ -112,7 +112,7 @@ modifyBranch branchUuid reqDto =
             reqDto
             (branchFromDB ^. uuid)
             (branchFromDB ^. previousPackageId)
-            (branchFromDB ^. ownerUuid)
+            (branchFromDB ^. createdBy)
             (branchFromDB ^. appUuid)
             (branchFromDB ^. createdAt)
             now

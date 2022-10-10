@@ -10,7 +10,7 @@ data Branch =
     , _branchName :: String
     , _branchKmId :: String
     , _branchPreviousPackageId :: Maybe String
-    , _branchOwnerUuid :: Maybe U.UUID
+    , _branchCreatedBy :: Maybe U.UUID
     , _branchAppUuid :: U.UUID
     , _branchCreatedAt :: UTCTime
     , _branchUpdatedAt :: UTCTime

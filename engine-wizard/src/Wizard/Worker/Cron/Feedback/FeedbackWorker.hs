@@ -18,8 +18,8 @@ import Wizard.Util.Logger
 feedbackWorker :: (MonadSchedule m, Applicative m) => BaseContext -> m ()
 feedbackWorker context =
   when
-    (context ^. serverConfig . questionnaire . clean . enabled)
-    (addJob (job context) (T.pack $ context ^. serverConfig . questionnaire . clean . cron))
+    (context ^. serverConfig . feedback . sync . enabled)
+    (addJob (job context) (T.pack $ context ^. serverConfig . feedback . sync . cron))
 
 -- -----------------------------------------------------------------------------
 -- -----------------------------------------------------------------------------
@@ -28,7 +28,7 @@ job context =
   let loggingLevel = context ^. serverConfig . logging . level
    in runLogging loggingLevel $ do
         log "starting"
-        liftIO $ runAppContextWithBaseContext synchronizeFeedbacks context
+        liftIO $ runAppContextWithBaseContext synchronizeFeedbacksInAllApplications context
         log "ended"
 
 -- -----------------------------------------------------------------------------
