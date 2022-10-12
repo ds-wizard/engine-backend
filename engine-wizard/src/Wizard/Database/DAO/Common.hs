@@ -98,7 +98,7 @@ createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrga
           "SELECT COUNT(*) \
           \ FROM (SELECT COUNT(*) \
           \   FROM %s \
-          \   WHERE %s app_uuid = ? AND name ~* ? %s \
+          \   WHERE %s app_uuid = ? AND (name ~* ? OR id ~* ?) %s \
           \   GROUP BY organization_id, %s) p"
           [entityName, enabledCondition, mapToDBCoordinatesSql entityId mOrganizationId mEntityId, entityId]
   logInfo _CMP_DATABASE sql
@@ -106,7 +106,7 @@ createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrga
         query
           conn
           (fromString sql)
-          (U.toString appUuid : regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
+          (U.toString appUuid : regex mQuery : regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
   result <- runDB action
   case result of
     [count] -> return . fromOnly $ count

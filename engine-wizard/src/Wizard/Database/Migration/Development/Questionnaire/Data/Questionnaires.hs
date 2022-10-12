@@ -611,6 +611,39 @@ qtn13NikolaCommentPermRecordDto = toUserPermRecordDTO qtn13NikolaCommentPermReco
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
+questionnaire14 :: Questionnaire
+questionnaire14 =
+  questionnaire1
+    { _questionnaireUuid = u' "8355fe3c-47b9-4078-b5b6-08aa0188e85f"
+    , _questionnaireName = "My different KM Questionnaire"
+    , _questionnairePermissions = [qtn14NikolaEditPermRecord]
+    , _questionnairePackageId = amsterdamPackage ^. pId
+    , _questionnaireEvents = []
+    , _questionnaireAnsweredQuestions = 0
+    , _questionnaireUnansweredQuestions = 0
+    , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
+    }
+
+questionnaire14Ctn :: QuestionnaireContent
+questionnaire14Ctn = questionnaire1Ctn
+
+questionnaire14Dto :: QuestionnaireDTO
+questionnaire14Dto = toSimpleDTO questionnaire14 amsterdamPackage QSDefault [qtn14NikolaEditPermRecordDto]
+
+qtn14NikolaEditPermRecord :: QuestionnairePermRecord
+qtn14NikolaEditPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "2508a8fd-016f-48b5-afd4-6d1694ae8192"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire14 ^. uuid
+    , _questionnairePermRecordMember = nikolaMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
+
+qtn14NikolaEditPermRecordDto :: QuestionnairePermRecordDTO
+qtn14NikolaEditPermRecordDto = toUserPermRecordDTO qtn14NikolaEditPermRecord userNikola
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
 differentQuestionnaire :: Questionnaire
 differentQuestionnaire =
   Questionnaire

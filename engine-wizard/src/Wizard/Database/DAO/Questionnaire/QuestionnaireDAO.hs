@@ -17,6 +17,7 @@ import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
+import Shared.Util.String (replace)
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Questionnaire.QuestionnaireAclDAO
   ( deleteQuestionnairePermRecordsFiltered
@@ -64,10 +65,12 @@ findQuestionnairesForCurrentUserPage ::
   -> Maybe String
   -> Maybe [String]
   -> Maybe String
+  -> Maybe [String]
+  -> Maybe String
   -> Pageable
   -> [Sort]
   -> AppContextM (Page QuestionnaireDetail)
-findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp pageable sort
+findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mPackageIds mPackageIdsOp pageable sort
   -- 1. Prepare variables
  = do
   appUuid <- asks _appContextAppUuid
@@ -105,6 +108,16 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
                      [show . length $ userUuids, generateQuestionMarks userUuids]
               else let mapFn _ = " qtn_acl_user.user_uuid = ? "
                     in " AND (" ++ L.intercalate " OR " (fmap mapFn userUuids) ++ ")"
+  let mPackageIdsLike = fmap (fmap (replace "all" "%")) mPackageIds
+  let packageCondition =
+        case mPackageIds of
+          Nothing -> ""
+          Just [] -> ""
+          Just packageIds ->
+            let mapFn _ = " qtn.package_id LIKE ?"
+             in if isAndOperator mPackageIdsOp
+                  then " AND (" ++ L.intercalate " AND " (fmap mapFn packageIds) ++ ")"
+                  else " AND (" ++ L.intercalate " OR " (fmap mapFn packageIds) ++ ")"
   currentUser <- getCurrentUser
   let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
   -- 2. Get total count
@@ -112,27 +125,29 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
         fromString $
         if currentUser ^. role == _USER_ROLE_ADMIN
           then f'
-                 "SELECT COUNT(DISTINCT qtn.uuid) FROM questionnaire qtn %s WHERE %s %s %s %s %s"
+                 "SELECT COUNT(DISTINCT qtn.uuid) FROM questionnaire qtn %s WHERE %s %s %s %s %s %s"
                  [ userUuidsJoin
                  , f' "qtn.app_uuid = '%s' AND" [U.toString appUuid]
                  , nameCondition
                  , isTemplateCondition
                  , projectTagsCondition
                  , userUuidsCondition
+                 , packageCondition
                  ]
           else f'
                  "SELECT COUNT(DISTINCT qtn.uuid) \
                   \FROM questionnaire qtn \
                   \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
                   \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
-                  \WHERE %s AND %s %s %s %s"
+                  \WHERE %s AND %s %s %s %s %s"
                  [ qtnWhereSql (U.toString appUuid) (U.toString $ currentUser ^. uuid) "['VIEW']"
                  , nameCondition
                  , isTemplateCondition
                  , projectTagsCondition
                  , userUuidsCondition
+                 , packageCondition
                  ]
-  let params = [regex mQuery] ++ fromMaybe [] mProjectTags ++ fromMaybe [] mUserUuids
+  let params = [regex mQuery] ++ fromMaybe [] mProjectTags ++ fromMaybe [] mUserUuids ++ fromMaybe [] mPackageIdsLike
   logQuery sql params
   let action conn = query conn sql params
   result <- runDB action
@@ -179,7 +194,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
         if currentUser ^. role == _USER_ROLE_ADMIN
           then f'
                  "%s %s \
-                 \WHERE %s %s %s %s %s %s \
+                 \WHERE %s %s %s %s %s %s  %s \
                  \OFFSET %s LIMIT %s"
                  [ sqlBase
                  , userUuidsJoin
@@ -188,6 +203,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
                  , isTemplateCondition
                  , projectTagsCondition
                  , userUuidsCondition
+                 , packageCondition
                  , mapSortWithPrefix "qtn" sort
                  , show skip
                  , show sizeI
@@ -199,7 +215,9 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
                  \WHERE %s %s OFFSET %s LIMIT %s"
                  [ sqlBase
                  , qtnWhereSql (U.toString appUuid) (U.toString $ currentUser ^. uuid) "['VIEW']" ++
-                   " AND " ++ nameCondition ++ isTemplateCondition ++ projectTagsCondition ++ userUuidsCondition
+                   " AND " ++
+                   nameCondition ++
+                   isTemplateCondition ++ projectTagsCondition ++ userUuidsCondition ++ packageCondition
                  , mapSortWithPrefix "qtn" sort
                  , show skip
                  , show sizeI

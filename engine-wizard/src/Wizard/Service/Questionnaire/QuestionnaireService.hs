@@ -68,10 +68,12 @@ getQuestionnairesForCurrentUserPageDto ::
   -> Maybe String
   -> Maybe [String]
   -> Maybe String
+  -> Maybe [String]
+  -> Maybe String
   -> Pageable
   -> [Sort]
   -> AppContextM (Page QuestionnaireDTO)
-getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp pageable sort = do
+getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mPackageIds mPackageIdsOp pageable sort = do
   checkPermission _QTN_PERM
   currentUser <- getCurrentUser
   qtnPage <-
@@ -82,6 +84,8 @@ getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mProjectTags mProjectT
       mProjectTagsOp
       mUserUuids
       mUserUuidsOp
+      mPackageIds
+      mPackageIdsOp
       pageable
       sort
   return . fmap toDTO' $ qtnPage
