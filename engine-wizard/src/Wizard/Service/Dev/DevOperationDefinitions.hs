@@ -12,7 +12,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Dev.Dev
 import Wizard.Service.Branch.Event.BranchEventService
 import Wizard.Service.Cache.CacheService
-import qualified Wizard.Service.Cache.KnowledgeModelCache as KnowledgeModelCache
 import Wizard.Service.Config.AppConfigCommandExecutor
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Feedback.FeedbackService
@@ -66,11 +65,7 @@ branch_squashEventsForBranchFn reqDto = do
 -- ---------------------------------------------------------------------------------------------------------------------
 cache :: DevSection
 cache =
-  DevSection
-    { _devSectionName = "Cache"
-    , _devSectionDescription = Nothing
-    , _devSectionOperations = [cache_purgeCache, cache_KnowledgeModelCache_deleteFromCache']
-    }
+  DevSection {_devSectionName = "Cache", _devSectionDescription = Nothing, _devSectionOperations = [cache_purgeCache]}
 
 -- ---------------------------------------------------------------------------------------------------------------------
 cache_purgeCache :: DevOperation
@@ -81,23 +76,6 @@ cache_purgeCache =
 cache_purgeCacheFn :: DevExecutionDTO -> AppContextM String
 cache_purgeCacheFn reqDto = do
   purgeCache
-  return "Done"
-
--- ---------------------------------------------------------------------------------------------------------------------
-cache_KnowledgeModelCache_deleteFromCache' :: DevOperation
-cache_KnowledgeModelCache_deleteFromCache' =
-  DevOperation
-    { _devOperationName = "Purge Knowledge Model Cache"
-    , _devOperationDescription = Nothing
-    , _devOperationParameters =
-        [ DevOperationParameter
-            {_devOperationParameterName = "pkgId", _devOperationParameterAType = StringDevOperationParameterType}
-        ]
-    }
-
-cache_KnowledgeModelCache_deleteFromCacheFn' :: DevExecutionDTO -> AppContextM String
-cache_KnowledgeModelCache_deleteFromCacheFn' reqDto = do
-  KnowledgeModelCache.deleteFromCache' (head (reqDto ^. parameters))
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------

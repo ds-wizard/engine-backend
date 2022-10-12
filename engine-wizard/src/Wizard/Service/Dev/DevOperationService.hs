@@ -29,7 +29,6 @@ execute reqDto
   | action reqDto branch branch_squashAllEvents = branch_squashAllEventsFn reqDto
   | action reqDto branch branch_squashEventsForBranch = branch_squashEventsForBranchFn reqDto
   | action reqDto cache cache_purgeCache = cache_purgeCacheFn reqDto
-  | action reqDto cache cache_KnowledgeModelCache_deleteFromCache' = cache_KnowledgeModelCache_deleteFromCacheFn' reqDto
   | action reqDto config config_recompileCssInAllApplications = config_recompileCssInAllApplicationsFn reqDto
   | action reqDto config config_switchClientCustomizationOn = config_switchClientCustomizationOnFn reqDto
   | action reqDto config config_switchClientCustomizationOff = config_switchClientCustomizationOffFn reqDto

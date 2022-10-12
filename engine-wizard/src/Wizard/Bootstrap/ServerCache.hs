@@ -19,21 +19,13 @@ createServerCache serverConfig = do
   let dataExp = toExpiration (serverConfig ^. cache . dataExpiration)
   let websocketExp = toExpiration (serverConfig ^. cache . websocketExpiration)
   branchCache <- C.newCache (Just websocketExp)
-  kmCache <- C.newCache (Just dataExp)
-  qcCache <- C.newCache (Just dataExp)
-  qriCache <- C.newCache (Just dataExp)
   qwCache <- C.newCache (Just websocketExp)
   uCache <- C.newCache (Just dataExp)
-  pCache <- C.newCache (Just dataExp)
   return $
     ServerCache
       { _serverCacheBranchWebsocket = branchCache
-      , _serverCacheKnowledgeModel = kmCache
-      , _serverCacheQuestionnaireContent = qcCache
-      , _serverCacheQuestionnaireReportIndications = qriCache
       , _serverCacheQuestionnaireWebsocket = qwCache
       , _serverCacheUser = uCache
-      , _serverCachePackage = pCache
       }
 
 toExpiration hours = fromNanoSecs $ hours * 60 * 60 * 1000 * 1000 * 1000

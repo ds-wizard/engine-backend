@@ -11,7 +11,6 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Service.Package.PackageUtil
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Acl.AclService
-import Wizard.Service.Cache.KnowledgeModelCache
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.KnowledgeModel.KnowledgeModelFilter
 import Wizard.Service.Package.PackageService
@@ -26,19 +25,10 @@ createKnowledgeModelPreview reqDto = do
 compileKnowledgeModel :: [Event] -> Maybe String -> [U.UUID] -> AppContextM KnowledgeModel
 compileKnowledgeModel events mPackageId tagUuids = do
   mResolvedPackageId <- traverse resolvePackageId mPackageId
-  mKm <- getFromCache events mResolvedPackageId tagUuids
-  case mKm of
-    Just km -> return km
-    Nothing -> do
-      km <- compileFromScratch
-      addToCache events mPackageId tagUuids km
-      return km
+  allEvents <- getEvents mPackageId
+  km <- liftEither $ compile Nothing allEvents
+  return $ filterKnowledgeModel tagUuids km
   where
-    compileFromScratch :: AppContextM KnowledgeModel
-    compileFromScratch = do
-      allEvents <- getEvents mPackageId
-      km <- liftEither $ compile Nothing allEvents
-      return $ filterKnowledgeModel tagUuids km
     getEvents :: Maybe String -> AppContextM [Event]
     getEvents Nothing = return events
     getEvents (Just packageId) = do
