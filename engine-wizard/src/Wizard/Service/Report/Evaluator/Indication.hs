@@ -67,7 +67,7 @@ evaluateOptionsQuestion q found notFound mQtnPhase km replies path =
       let currentPath = composePathUuid path _answerReplyValue
           qs = getQuestionsForAnswerUuid km _answerReplyValue
        in sum . fmap (evaluateQuestion found notFound mQtnPhase km replies currentPath) $ qs
-    Nothing -> isRequiredNow (km ^. phaseUuids) (q ^. requiredPhaseUuid) mQtnPhase notFound
+    _ -> isRequiredNow (km ^. phaseUuids) (q ^. requiredPhaseUuid) mQtnPhase notFound
 
 evaluateListQuestion :: Int -> Int -> Maybe U.UUID -> KnowledgeModel -> [ReplyTuple] -> String -> ListQuestion -> Int
 evaluateListQuestion found notFound mQtnPhase km replies currentPath q =
@@ -93,4 +93,4 @@ evaluateMultiChoiceQuestion q found notFound mQtnPhase km replies path =
       if not (null _multiChoiceReplyValue)
         then isRequiredNow (km ^. phaseUuids) (q ^. requiredPhaseUuid) mQtnPhase found
         else isRequiredNow (km ^. phaseUuids) (q ^. requiredPhaseUuid) mQtnPhase notFound
-    Nothing -> isRequiredNow (km ^. phaseUuids) (q ^. requiredPhaseUuid) mQtnPhase notFound
+    _ -> isRequiredNow (km ^. phaseUuids) (q ^. requiredPhaseUuid) mQtnPhase notFound
