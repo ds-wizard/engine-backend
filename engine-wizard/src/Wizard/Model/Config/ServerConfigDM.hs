@@ -174,7 +174,7 @@ defaultQuestionnaireClean =
 
 defaultQuestionnaireRecomputeIndication :: ServerConfigCronWorker
 defaultQuestionnaireRecomputeIndication =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "20 * * * *"}
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "20 1 * * *"}
 
 defaultQuestionnaireSquash :: ServerConfigCronWorker
 defaultQuestionnaireSquash =

@@ -2,7 +2,6 @@ module Wizard.Service.Package.PackageService where
 
 import Control.Lens ((^.), (^..))
 import Control.Monad.Reader (asks)
-import Data.Foldable (traverse_)
 
 import LensesConfig
 import Shared.Api.Resource.Package.PackageSuggestionDTO
@@ -24,13 +23,10 @@ import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Acl.AclService
-import qualified Wizard.Service.Cache.KnowledgeModelCache as KM_Cache
-import qualified Wizard.Service.Cache.PackageCache as PKG_Cache
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageUtil
 import Wizard.Service.Package.PackageValidation
-import Wizard.Util.Cache
 
 getPackagesPage ::
      Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page PackageSimpleDTO)
@@ -51,8 +47,7 @@ getPackageSuggestions mQuery pageable sort = do
       return (pkg, versions)
 
 getPackageById :: String -> AppContextM Package
-getPackageById pkgId =
-  resolvePackageId pkgId >>= getFromCacheOrDb PKG_Cache.getFromCache PKG_Cache.addToCache findPackageById
+getPackageById pkgId = resolvePackageId pkgId >>= findPackageById
 
 getPackageDetailById :: String -> AppContextM PackageDetailDTO
 getPackageDetailById pkgId = do
@@ -127,8 +122,7 @@ deletePackagesByQueryParams queryParams =
     let pIds = packages ^.. traverse . pId
     validatePackagesDeletation pIds
     deletePackagesFiltered queryParams
-    traverse_ PKG_Cache.deleteFromCache pIds
-    traverse_ KM_Cache.deleteFromCache' pIds
+    return ()
 
 deletePackage :: String -> AppContextM ()
 deletePackage pkgId =
@@ -137,8 +131,7 @@ deletePackage pkgId =
     package <- findPackageById pkgId
     validatePackageDeletation pkgId
     deletePackageById pkgId
-    PKG_Cache.deleteFromCache pkgId
-    KM_Cache.deleteFromCache' pkgId
+    return ()
 
 -- --------------------------------
 -- PRIVATE

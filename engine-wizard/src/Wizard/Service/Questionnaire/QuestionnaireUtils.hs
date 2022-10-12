@@ -24,7 +24,6 @@ import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Report.Report
-import Wizard.Service.Cache.QuestionnaireReportCache
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
@@ -106,18 +105,13 @@ getQuestionnaireReport ::
   -> AppContextM QuestionnaireReportDTO
 getQuestionnaireReport qtn = do
   qtnCtn <- compileQuestionnaire qtn
-  mIndications <- getFromCache qtn qtnCtn
-  case mIndications of
-    Just indications -> return . toQuestionnaireReportDTO $ indications
-    Nothing -> do
-      appConfig <- getAppConfig
-      let _requiredPhaseUuid = qtnCtn ^. phaseUuid
-      let _replies = M.toList $ qtnCtn ^. replies
-      km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedQuestionTagUuids)
-      let indications = computeTotalReportIndications _requiredPhaseUuid km _replies
-      qtnCtn <- compileQuestionnaire qtn
-      addToCache qtn qtnCtn indications
-      return . toQuestionnaireReportDTO $ indications
+  appConfig <- getAppConfig
+  let _requiredPhaseUuid = qtnCtn ^. phaseUuid
+  let _replies = M.toList $ qtnCtn ^. replies
+  km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedQuestionTagUuids)
+  let indications = computeTotalReportIndications _requiredPhaseUuid km _replies
+  qtnCtn <- compileQuestionnaire qtn
+  return . toQuestionnaireReportDTO $ indications
 
 getPhasesAnsweredIndication ::
      ( HasEvents questionnaire [QuestionnaireEvent]

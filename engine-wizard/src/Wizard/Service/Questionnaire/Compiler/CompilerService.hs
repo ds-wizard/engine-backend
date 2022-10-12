@@ -10,28 +10,13 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireContentDM
 import Wizard.Model.Questionnaire.QuestionnaireEvent
-import Wizard.Service.Cache.QuestionnaireContentCache
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 
 compileQuestionnaire :: HasEvents s [QuestionnaireEvent] => s -> AppContextM QuestionnaireContent
-compileQuestionnaire qtn = do
-  mQtnCtn <- getFromCache (qtn ^. events)
-  case mQtnCtn of
-    Just qtnCtn -> return qtnCtn
-    Nothing -> do
-      qtnCtn <- foldl applyEvent (return defaultQuestionnaireContent) (qtn ^. events)
-      addToCache (qtn ^. events) qtnCtn
-      return qtnCtn
+compileQuestionnaire qtn = foldl applyEvent (return defaultQuestionnaireContent) (qtn ^. events)
 
 compileQuestionnairePreview :: [QuestionnaireEvent] -> AppContextM QuestionnaireContent
-compileQuestionnairePreview qtnEvents = do
-  mQtnCtn <- getFromCache qtnEvents
-  case mQtnCtn of
-    Just qtnCtn -> return qtnCtn
-    Nothing -> do
-      qtnCtn <- foldl applyEvent (return defaultQuestionnaireContent) qtnEvents
-      addToCache qtnEvents qtnCtn
-      return qtnCtn
+compileQuestionnairePreview = foldl applyEvent (return defaultQuestionnaireContent)
 
 applyEvent :: AppContextM QuestionnaireContent -> QuestionnaireEvent -> AppContextM QuestionnaireContent
 applyEvent qtnCtn' (SetReplyEvent' event) = do
