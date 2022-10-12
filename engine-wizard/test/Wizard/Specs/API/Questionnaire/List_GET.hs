@@ -102,6 +102,21 @@ test_200 appContext = do
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
   create_test_200
+    "HTTP 200 OK (Admin - isMigrating - true)"
+    appContext
+    "/questionnaires?sort=uuid,asc&isMigrating=true"
+    reqAuthHeader
+    (Page "questionnaires" (PageMetadata 20 0 0 0) [])
+  create_test_200
+    "HTTP 200 OK (Admin - isMigrating - false)"
+    appContext
+    "/questionnaires?sort=uuid,asc&isMigrating=false"
+    reqAuthHeader
+    (Page
+       "questionnaires"
+       (PageMetadata 20 5 1 0)
+       [questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire2Dto, questionnaire12Dto])
+  create_test_200
     "HTTP 200 OK (Admin - projectTags)"
     appContext
     "/questionnaires?sort=uuid,asc&projectTags=projectTag1"
@@ -194,6 +209,21 @@ test_200 appContext = do
     "/questionnaires?isTemplate=false&sort=uuid,asc"
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
+  create_test_200
+    "HTTP 200 OK (Non-Admin - isMigrating - true)"
+    appContext
+    "/questionnaires?sort=uuid,asc&isMigrating=true"
+    reqNonAdminAuthHeader
+    (Page "questionnaires" (PageMetadata 20 0 0 0) [])
+  create_test_200
+    "HTTP 200 OK (Non-Admin - isMigrating - false)"
+    appContext
+    "/questionnaires?sort=uuid,asc&isMigrating=false"
+    reqNonAdminAuthHeader
+    (Page
+       "questionnaires"
+       (PageMetadata 20 4 1 0)
+       [questionnaire3Dto, questionnaire14Dto, questionnaire2Dto, questionnaire12Dto])
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
   it title $

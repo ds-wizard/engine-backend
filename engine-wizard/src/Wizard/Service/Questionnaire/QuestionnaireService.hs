@@ -64,6 +64,7 @@ import Wizard.Util.Logger
 getQuestionnairesForCurrentUserPageDto ::
      Maybe String
   -> Maybe Bool
+  -> Maybe Bool
   -> Maybe [String]
   -> Maybe String
   -> Maybe [String]
@@ -73,13 +74,14 @@ getQuestionnairesForCurrentUserPageDto ::
   -> Pageable
   -> [Sort]
   -> AppContextM (Page QuestionnaireDTO)
-getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mPackageIds mPackageIdsOp pageable sort = do
+getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mPackageIds mPackageIdsOp pageable sort = do
   checkPermission _QTN_PERM
   currentUser <- getCurrentUser
   qtnPage <-
     findQuestionnairesForCurrentUserPage
       mQuery
       mIsTemplate
+      mIsMigrating
       mProjectTags
       mProjectTagsOp
       mUserUuids

@@ -61,6 +61,7 @@ findQuestionnaires = do
 findQuestionnairesForCurrentUserPage ::
      Maybe String
   -> Maybe Bool
+  -> Maybe Bool
   -> Maybe [String]
   -> Maybe String
   -> Maybe [String]
@@ -70,7 +71,7 @@ findQuestionnairesForCurrentUserPage ::
   -> Pageable
   -> [Sort]
   -> AppContextM (Page QuestionnaireDetail)
-findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mPackageIds mPackageIdsOp pageable sort
+findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mPackageIds mPackageIdsOp pageable sort
   -- 1. Prepare variables
  = do
   appUuid <- asks _appContextAppUuid
@@ -80,6 +81,11 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
           Nothing -> ""
           Just True -> " AND qtn.is_template = true"
           Just False -> " AND qtn.is_template = false"
+  let isMigratingCondition =
+        case mIsMigrating of
+          Nothing -> ""
+          Just True -> " AND qtn_mig.new_questionnaire_uuid IS NOT NULL"
+          Just False -> " AND qtn_mig.new_questionnaire_uuid IS NULL"
   let projectTagsCondition =
         case mProjectTags of
           Nothing -> ""
@@ -94,6 +100,10 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
           Nothing -> ""
           Just [] -> ""
           Just _ -> "LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid "
+  let qtnMigrationJoin =
+        case mIsMigrating of
+          Nothing -> ""
+          Just _ -> "LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.new_questionnaire_uuid "
   let userUuidsCondition =
         case mUserUuids of
           Nothing -> ""
@@ -125,11 +135,13 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
         fromString $
         if currentUser ^. role == _USER_ROLE_ADMIN
           then f'
-                 "SELECT COUNT(DISTINCT qtn.uuid) FROM questionnaire qtn %s WHERE %s %s %s %s %s %s"
+                 "SELECT COUNT(DISTINCT qtn.uuid) FROM questionnaire qtn %s %s WHERE %s %s %s %s %s %s %s"
                  [ userUuidsJoin
+                 , qtnMigrationJoin
                  , f' "qtn.app_uuid = '%s' AND" [U.toString appUuid]
                  , nameCondition
                  , isTemplateCondition
+                 , isMigratingCondition
                  , projectTagsCondition
                  , userUuidsCondition
                  , packageCondition
@@ -139,10 +151,13 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
                   \FROM questionnaire qtn \
                   \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
                   \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
-                  \WHERE %s AND %s %s %s %s %s"
-                 [ qtnWhereSql (U.toString appUuid) (U.toString $ currentUser ^. uuid) "['VIEW']"
+                  \%s \
+                  \WHERE %s AND %s %s %s %s %s %s"
+                 [ qtnMigrationJoin
+                 , qtnWhereSql (U.toString appUuid) (U.toString $ currentUser ^. uuid) "['VIEW']"
                  , nameCondition
                  , isTemplateCondition
+                 , isMigratingCondition
                  , projectTagsCondition
                  , userUuidsCondition
                  , packageCondition
@@ -194,13 +209,14 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
         if currentUser ^. role == _USER_ROLE_ADMIN
           then f'
                  "%s %s \
-                 \WHERE %s %s %s %s %s %s  %s \
+                 \WHERE %s %s %s %s %s %s %s  %s \
                  \OFFSET %s LIMIT %s"
                  [ sqlBase
                  , userUuidsJoin
                  , f' "qtn.app_uuid = '%s' AND" [U.toString appUuid]
                  , nameCondition
                  , isTemplateCondition
+                 , isMigratingCondition
                  , projectTagsCondition
                  , userUuidsCondition
                  , packageCondition
@@ -217,7 +233,8 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
                  , qtnWhereSql (U.toString appUuid) (U.toString $ currentUser ^. uuid) "['VIEW']" ++
                    " AND " ++
                    nameCondition ++
-                   isTemplateCondition ++ projectTagsCondition ++ userUuidsCondition ++ packageCondition
+                   isTemplateCondition ++
+                   isMigratingCondition ++ projectTagsCondition ++ userUuidsCondition ++ packageCondition
                  , mapSortWithPrefix "qtn" sort
                  , show skip
                  , show sizeI
