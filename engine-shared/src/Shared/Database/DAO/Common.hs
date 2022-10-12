@@ -620,6 +620,7 @@ regex :: Maybe String -> String
 regex mQuery = ".*" ++ fromMaybe "" mQuery ++ ".*"
 
 mapToDBQuerySql :: [(String, String)] -> String
+mapToDBQuerySql [] = ""
 mapToDBQuerySql [(queryParamKey, queryParamValue)] = queryParamKey ++ " = ? "
 mapToDBQuerySql ((queryParamKey, queryParamValue):xs) = queryParamKey ++ " = ? AND " ++ mapToDBQuerySql xs
 

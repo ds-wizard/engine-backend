@@ -6,16 +6,17 @@ import LensesConfig
 import Registry.Api.Resource.Template.TemplateDetailDTO
 import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Registry.Database.DAO.Organization.OrganizationDAO
+import Registry.Database.DAO.Template.TemplateDAO
 import Registry.Model.Context.AppContext
 import Registry.Service.Template.TemplateMapper
-import Shared.Database.DAO.Template.TemplateDAO
+import Shared.Database.DAO.Template.TemplateDAO hiding (findTemplatesFiltered)
 import Shared.Model.Template.Template
 import Shared.Service.Template.TemplateUtil
 import Shared.Util.Coordinate
 
-getTemplates :: [(String, String)] -> AppContextM [TemplateSimpleDTO]
-getTemplates queryParams = do
-  tmpls <- findTemplatesFiltered queryParams
+getTemplates :: [(String, String)] -> Maybe Int -> AppContextM [TemplateSimpleDTO]
+getTemplates queryParams mMetamodelVersion = do
+  tmpls <- findTemplatesFiltered queryParams mMetamodelVersion
   orgs <- findOrganizations
   return . fmap (toSimpleDTO orgs) . chooseTheNewest . groupTemplates $ tmpls
 
