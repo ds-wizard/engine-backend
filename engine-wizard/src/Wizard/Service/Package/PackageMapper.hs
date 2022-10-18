@@ -38,8 +38,8 @@ toSimpleDTO' pkgRs orgRs pkg =
     , _packageSimpleDTOCreatedAt = pkg ^. createdAt
     }
 
-toSimpleDTO'' :: PackageList -> PackageSimpleDTO
-toSimpleDTO'' pkg =
+toSimpleDTO'' :: Bool -> PackageList -> PackageSimpleDTO
+toSimpleDTO'' registryEnabled pkg =
   PackageSimpleDTO
     { _packageSimpleDTOPId = pkg ^. pId
     , _packageSimpleDTOName = pkg ^. name
@@ -48,7 +48,7 @@ toSimpleDTO'' pkg =
     , _packageSimpleDTOVersion = pkg ^. version
     , _packageSimpleDTORemoteLatestVersion = pkg ^. remoteVersion
     , _packageSimpleDTODescription = pkg ^. description
-    , _packageSimpleDTOState = computePackageState' pkg
+    , _packageSimpleDTOState = computePackageState' registryEnabled pkg
     , _packageSimpleDTOOrganization =
         case pkg ^. remoteOrganizationName of
           Just orgName ->

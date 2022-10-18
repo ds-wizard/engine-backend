@@ -38,6 +38,7 @@ templateFileNewFileChangeDto =
 commonWizardTemplateSimpleDTO :: TemplateSimpleDTO
 commonWizardTemplateSimpleDTO =
   toSimpleDTO'
+    True
     [SPM.toPackage globalPackage, SPM.toPackage netherlandsPackageV2]
     (toTemplateList commonWizardTemplate (Just commonWizardRegistryTemplate) (Just globalRegistryOrganization))
 

@@ -46,10 +46,10 @@ toTemplateList tml mTmlR mOrgR =
     }
 
 toSimpleDTO :: Template -> TemplateSimpleDTO
-toSimpleDTO tml = toSimpleDTO' [] $ toTemplateList tml Nothing Nothing
+toSimpleDTO tml = toSimpleDTO' False [] $ toTemplateList tml Nothing Nothing
 
-toSimpleDTO' :: [Package] -> TemplateList -> TemplateSimpleDTO
-toSimpleDTO' pkgs tml =
+toSimpleDTO' :: Bool -> [Package] -> TemplateList -> TemplateSimpleDTO
+toSimpleDTO' registryEnabled pkgs tml =
   TemplateSimpleDTO
     { _templateSimpleDTOTId = tml ^. tId
     , _templateSimpleDTOName = tml ^. name
@@ -65,7 +65,7 @@ toSimpleDTO' pkgs tml =
     , _templateSimpleDTORecommendedPackageId = tml ^. recommendedPackageId
     , _templateSimpleDTOFormats = tml ^. formats
     , _templateSimpleDTOUsablePackages = fmap PM_Mapper.toSimpleDTO . getUsablePackagesForTemplate tml $ pkgs
-    , _templateSimpleDTOState = computeTemplateState' tml
+    , _templateSimpleDTOState = computeTemplateState' registryEnabled tml
     , _templateSimpleDTOOrganization =
         case tml ^. remoteOrganizationName of
           Just orgName ->

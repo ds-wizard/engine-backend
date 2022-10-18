@@ -24,17 +24,17 @@ computeTemplateState tmlsFromRegistry tml =
                GT -> OutdatedTemplateState
            Nothing -> UnknownTemplateState
 
-computeTemplateState' :: TemplateList -> TemplateState
-computeTemplateState' tml =
+computeTemplateState' :: Bool -> TemplateList -> TemplateState
+computeTemplateState' registryEnabled tml =
   if not (isTemplateSupported tml)
     then UnsupportedMetamodelVersionTemplateState
-    else case tml ^. remoteVersion of
-           Just rVersion ->
+    else case (registryEnabled, tml ^. remoteVersion) of
+           (True, Just rVersion) ->
              case compareVersion rVersion (tml ^. version) of
                LT -> UnpublishedTemplateState
                EQ -> UpToDateTemplateState
                GT -> OutdatedTemplateState
-           Nothing -> UnknownTemplateState
+           (_, Nothing) -> UnknownTemplateState
 
 selectTemplateByOrgIdAndTmlId tml =
   L.find (\t -> (t ^. organizationId) == (tml ^. organizationId) && (t ^. templateId) == (tml ^. templateId))

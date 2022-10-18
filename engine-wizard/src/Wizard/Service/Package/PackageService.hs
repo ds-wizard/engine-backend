@@ -23,6 +23,7 @@ import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Package.PackageSuggestion
 import Wizard.Service.Acl.AclService
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageUtil
@@ -32,8 +33,9 @@ getPackagesPage ::
      Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page PackageSimpleDTO)
 getPackagesPage mOrganizationId mKmId mQuery pageable sort = do
   checkPermission _PM_READ_PERM
+  appConfig <- getAppConfig
   pkgs <- findPackagesPage mOrganizationId mKmId mQuery pageable sort
-  return . fmap toSimpleDTO'' $ pkgs
+  return . fmap (toSimpleDTO'' (appConfig ^. registry . enabled)) $ pkgs
 
 getPackageSuggestions ::
      Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)

@@ -35,6 +35,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Template.TemplateList
 import Wizard.S3.Template.TemplateS3
 import Wizard.Service.Acl.AclService
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Template.TemplateMapper
 import Wizard.Service.Template.TemplateUtil
@@ -50,9 +51,10 @@ getTemplatesPage ::
      Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page TemplateSimpleDTO)
 getTemplatesPage mOrganizationId mTemplateId mQuery pageable sort = do
   checkPermission _DMP_PERM
+  appConfig <- getAppConfig
   tmls <- findTemplatesPage mOrganizationId mTemplateId mQuery pageable sort
   pkgs <- findPackages
-  return . fmap (toSimpleDTO' pkgs) $ tmls
+  return . fmap (toSimpleDTO' (appConfig ^. registry . enabled) pkgs) $ tmls
 
 getTemplateSuggestions :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page TemplateSuggestionDTO)
 getTemplateSuggestions mPkgId mQuery pageable sort = do
