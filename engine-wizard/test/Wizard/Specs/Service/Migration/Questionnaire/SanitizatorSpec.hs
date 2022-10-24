@@ -29,9 +29,9 @@ sanitizatorIntegrationSpec appContext =
          -- WHEN:
     (Right result) <- runInContext (sanitizeQuestionnaireEvents oldKm newKm qtnEvents) appContext
          -- THEN:
-    extractEventPath (result !! 18) `shouldBe` fst rQ1
-    extractEventPath (result !! 19) `shouldBe` fst rQ9
-    extractSetEventValue (result !! 19) `shouldBe` snd rQ9WithNewType ^. value
+    extractEventPath (result !! 16) `shouldBe` fst rQ1
+    extractEventPath (result !! 17) `shouldBe` fst rQ9
+    extractSetEventValue (result !! 17) `shouldBe` snd rQ9WithNewType ^. value
 
 extractEventPath :: QuestionnaireEvent -> String
 extractEventPath (ClearReplyEvent' event) = event ^. path

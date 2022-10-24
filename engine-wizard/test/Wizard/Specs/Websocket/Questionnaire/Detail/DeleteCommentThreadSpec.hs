@@ -14,11 +14,8 @@ import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
-import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
-import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 
 import Wizard.Specs.Common
 import Wizard.Specs.Websocket.Common
@@ -43,11 +40,11 @@ test200 appContext =
     ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext (questionnaire10 ^. uuid)
     ((c4, s4), (c5, s5), (c6, s6)) <- connectTestWebsocketUsers appContext (questionnaire7 ^. uuid)
     -- WHEN:
-    write_DeleteCommentThread c1 (toEventChangeDTO dte_rQ1_t1' samplePhasesAnsweredIndication)
+    write_DeleteCommentThread c1 dtche_rQ1_t1'
     -- THEN:
-    read_DeleteCommentThread c1 (toEventDTO dte_rQ1_t1' (Just userAlbert))
-    read_DeleteCommentThread c2 (toEventDTO dte_rQ1_t1' (Just userAlbert))
-    read_DeleteCommentThread c3 (toEventDTO dte_rQ1_t1' (Just userAlbert))
+    read_DeleteCommentThread c1 dte_rQ1_t1'
+    read_DeleteCommentThread c2 dte_rQ1_t1'
+    read_DeleteCommentThread c3 dte_rQ1_t1'
     nothingWasReceived c4
     nothingWasReceived c5
     nothingWasReceived c6

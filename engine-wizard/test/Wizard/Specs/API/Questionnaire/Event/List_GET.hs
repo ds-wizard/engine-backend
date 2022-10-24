@@ -83,7 +83,7 @@ create_test_200 title appContext qtn authHeader =
      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = fEventsWithoutCommentsDto
+    let expDto = fEventsDto
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

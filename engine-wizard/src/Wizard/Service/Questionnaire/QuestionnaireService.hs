@@ -252,7 +252,7 @@ getQuestionnaireEventsForQtnUuid qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
   checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
   auditQuestionnaireListEvents qtnUuid
-  traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
+  traverse enhanceQuestionnaireEvent (qtn ^. events)
 
 getQuestionnaireEventForQtnUuid :: String -> String -> AppContextM QuestionnaireEventDTO
 getQuestionnaireEventForQtnUuid qtnUuid eventUuid = do

@@ -100,7 +100,7 @@ revertToEvent qtnUuid reqDto shouldSave =
     let updatedQtn = (events .~ updatedEvents) . (versions .~ updatedVersions) $ qtn
     when shouldSave (updateQuestionnaireById updatedQtn)
     qtnCtn <- compileQuestionnaire updatedQtn
-    eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (updatedQtn ^. events))
+    eventsDto <- traverse enhanceQuestionnaireEvent (updatedQtn ^. events)
     versionDto <- traverse enhanceQuestionnaireVersion (updatedQtn ^. versions)
     when shouldSave (logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid)
     commentThreadsMap <- getQuestionnaireComments qtn

@@ -39,7 +39,6 @@ applyEvent qtnCtn' (SetLabelsEvent' event) = do
           [] -> M.delete (event ^. path) (qtnCtn ^. labels)
           newValue -> M.insert (event ^. path) newValue (qtnCtn ^. labels)
   return $ qtnCtn & labels .~ newLabels
-applyEvent qtnCtn' _ = qtnCtn'
 
 getUser mUserUuid =
   case mUserUuid of

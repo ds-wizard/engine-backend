@@ -27,22 +27,19 @@ instance ToSchema SetLabelsEventDTO where
   declareNamedSchema = simpleToSchema' "_setLabelsEventDTO" (toSetLabelsEventDTO slble_rQ2 (Just userAlbert))
 
 instance ToSchema ResolveCommentThreadEventDTO where
-  declareNamedSchema =
-    simpleToSchema' "_resolveCommentThreadEventDTO" (toResolveCommentThreadEventDTO rte_rQ1_t1 (Just userAlbert))
+  declareNamedSchema = simpleToSchema' "_resolveCommentThreadEventDTO" rte_rQ1_t1
 
 instance ToSchema ReopenCommentThreadEventDTO where
-  declareNamedSchema =
-    simpleToSchema' "_reopenCommentThreadEventDTO" (toReopenCommentThreadEventDTO ote_rQ1_t1 (Just userAlbert))
+  declareNamedSchema = simpleToSchema' "_reopenCommentThreadEventDTO" ote_rQ1_t1
 
 instance ToSchema DeleteCommentThreadEventDTO where
-  declareNamedSchema =
-    simpleToSchema' "_deleteCommentThreadEventDTO" (toDeleteCommentThreadEventDTO dte_rQ1_t1 (Just userAlbert))
+  declareNamedSchema = simpleToSchema' "_deleteCommentThreadEventDTO" dte_rQ1_t1
 
 instance ToSchema AddCommentEventDTO where
-  declareNamedSchema = simpleToSchema' "_addCommentEventDTO" (toAddCommentEventDTO ace_rQ1_t1_1 (Just userAlbert))
+  declareNamedSchema = simpleToSchema' "_addCommentEventDTO" ace_rQ1_t1_1
 
 instance ToSchema EditCommentEventDTO where
-  declareNamedSchema = simpleToSchema' "_editCommentEventDTO" (toEditCommentEventDTO ece_rQ1_t1_1 (Just userAlbert))
+  declareNamedSchema = simpleToSchema' "_editCommentEventDTO" ece_rQ1_t1_1
 
 instance ToSchema DeleteCommentEventDTO where
-  declareNamedSchema = simpleToSchema' "_deleteCommentEventDTO" (toDeleteCommentEventDTO dce_rQ1_t1_1 (Just userAlbert))
+  declareNamedSchema = simpleToSchema' "_deleteCommentEventDTO" dce_rQ1_t1_1

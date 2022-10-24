@@ -75,15 +75,6 @@ enhanceQuestionnaireVersion version = do
   mUser <- findUserById' (U.toString $ version ^. createdBy)
   return $ toVersionDTO version mUser
 
-excludeQuestionnaireCommentEvent :: QuestionnaireEvent -> Bool
-excludeQuestionnaireCommentEvent (ResolveCommentThreadEvent' _) = False
-excludeQuestionnaireCommentEvent (ReopenCommentThreadEvent' _) = False
-excludeQuestionnaireCommentEvent (DeleteCommentThreadEvent' _) = False
-excludeQuestionnaireCommentEvent (AddCommentEvent' _) = False
-excludeQuestionnaireCommentEvent (EditCommentEvent' _) = False
-excludeQuestionnaireCommentEvent (DeleteCommentEvent' _) = False
-excludeQuestionnaireCommentEvent _ = True
-
 getQuestionnaireState :: String -> String -> AppContextM QuestionnaireState
 getQuestionnaireState qtnUuid pkgId = do
   mMs <- findMigratorStateByNewQuestionnaireId' qtnUuid

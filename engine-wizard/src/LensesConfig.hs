@@ -536,18 +536,6 @@ makeFields ''SetPhaseEvent
 
 makeFields ''SetLabelsEvent
 
-makeFields ''ResolveCommentThreadEvent
-
-makeFields ''ReopenCommentThreadEvent
-
-makeFields ''DeleteCommentThreadEvent
-
-makeFields ''AddCommentEvent
-
-makeFields ''EditCommentEvent
-
-makeFields ''DeleteCommentEvent
-
 makeFields ''QuestionnaireVersion
 
 makeFields ''QuestionnaireSimple

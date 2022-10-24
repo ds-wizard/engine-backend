@@ -21,16 +21,6 @@ toEventDTO event' mCreatedBy =
     ClearReplyEvent' event@ClearReplyEvent {..} -> ClearReplyEventDTO' $ toClearReplyEventDTO event mCreatedBy
     SetPhaseEvent' event@SetPhaseEvent {..} -> SetPhaseEventDTO' $ toSetPhaseEventDTO event mCreatedBy
     SetLabelsEvent' event@SetLabelsEvent {..} -> SetLabelsEventDTO' $ toSetLabelsEventDTO event mCreatedBy
-    ResolveCommentThreadEvent' event@ResolveCommentThreadEvent {..} ->
-      ResolveCommentThreadEventDTO' $ toResolveCommentThreadEventDTO event mCreatedBy
-    ReopenCommentThreadEvent' event@ReopenCommentThreadEvent {..} ->
-      ReopenCommentThreadEventDTO' $ toReopenCommentThreadEventDTO event mCreatedBy
-    DeleteCommentThreadEvent' event@DeleteCommentThreadEvent {..} ->
-      DeleteCommentThreadEventDTO' $ toDeleteCommentThreadEventDTO event mCreatedBy
-    AddCommentEvent' event@AddCommentEvent {..} -> AddCommentEventDTO' $ toAddCommentEventDTO event mCreatedBy
-    EditCommentEvent' event@EditCommentEvent {..} -> EditCommentEventDTO' $ toEditCommentEventDTO event mCreatedBy
-    DeleteCommentEvent' event@DeleteCommentEvent {..} ->
-      DeleteCommentEventDTO' $ toDeleteCommentEventDTO event mCreatedBy
 
 toSetReplyEventDTO :: SetReplyEvent -> Maybe User -> SetReplyEventDTO
 toSetReplyEventDTO event user =
@@ -68,72 +58,6 @@ toSetLabelsEventDTO event user =
     , _setLabelsEventDTOValue = event ^. value
     , _setLabelsEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
     , _setLabelsEventDTOCreatedAt = event ^. createdAt
-    }
-
-toResolveCommentThreadEventDTO :: ResolveCommentThreadEvent -> Maybe User -> ResolveCommentThreadEventDTO
-toResolveCommentThreadEventDTO event user =
-  ResolveCommentThreadEventDTO
-    { _resolveCommentThreadEventDTOUuid = event ^. uuid
-    , _resolveCommentThreadEventDTOPath = event ^. path
-    , _resolveCommentThreadEventDTOThreadUuid = event ^. threadUuid
-    , _resolveCommentThreadEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
-    , _resolveCommentThreadEventDTOCreatedAt = event ^. createdAt
-    }
-
-toReopenCommentThreadEventDTO :: ReopenCommentThreadEvent -> Maybe User -> ReopenCommentThreadEventDTO
-toReopenCommentThreadEventDTO event user =
-  ReopenCommentThreadEventDTO
-    { _reopenCommentThreadEventDTOUuid = event ^. uuid
-    , _reopenCommentThreadEventDTOPath = event ^. path
-    , _reopenCommentThreadEventDTOThreadUuid = event ^. threadUuid
-    , _reopenCommentThreadEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
-    , _reopenCommentThreadEventDTOCreatedAt = event ^. createdAt
-    }
-
-toDeleteCommentThreadEventDTO :: DeleteCommentThreadEvent -> Maybe User -> DeleteCommentThreadEventDTO
-toDeleteCommentThreadEventDTO event user =
-  DeleteCommentThreadEventDTO
-    { _deleteCommentThreadEventDTOUuid = event ^. uuid
-    , _deleteCommentThreadEventDTOPath = event ^. path
-    , _deleteCommentThreadEventDTOThreadUuid = event ^. threadUuid
-    , _deleteCommentThreadEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
-    , _deleteCommentThreadEventDTOCreatedAt = event ^. createdAt
-    }
-
-toAddCommentEventDTO :: AddCommentEvent -> Maybe User -> AddCommentEventDTO
-toAddCommentEventDTO event user =
-  AddCommentEventDTO
-    { _addCommentEventDTOUuid = event ^. uuid
-    , _addCommentEventDTOPath = event ^. path
-    , _addCommentEventDTOThreadUuid = event ^. threadUuid
-    , _addCommentEventDTOCommentUuid = event ^. commentUuid
-    , _addCommentEventDTOText = event ^. text
-    , _addCommentEventDTOPrivate = event ^. private
-    , _addCommentEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
-    , _addCommentEventDTOCreatedAt = event ^. createdAt
-    }
-
-toEditCommentEventDTO :: EditCommentEvent -> Maybe User -> EditCommentEventDTO
-toEditCommentEventDTO event user =
-  EditCommentEventDTO
-    { _editCommentEventDTOUuid = event ^. uuid
-    , _editCommentEventDTOPath = event ^. path
-    , _editCommentEventDTOThreadUuid = event ^. threadUuid
-    , _editCommentEventDTOCommentUuid = event ^. commentUuid
-    , _editCommentEventDTOText = event ^. text
-    , _editCommentEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
-    , _editCommentEventDTOCreatedAt = event ^. createdAt
-    }
-
-toDeleteCommentEventDTO :: DeleteCommentEvent -> Maybe User -> DeleteCommentEventDTO
-toDeleteCommentEventDTO event user =
-  DeleteCommentEventDTO
-    { _deleteCommentEventDTOUuid = event ^. uuid
-    , _deleteCommentEventDTOPath = event ^. path
-    , _deleteCommentEventDTOThreadUuid = event ^. threadUuid
-    , _deleteCommentEventDTOCommentUuid = event ^. commentUuid
-    , _deleteCommentEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
-    , _deleteCommentEventDTOCreatedAt = event ^. createdAt
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -282,16 +206,6 @@ toEventChangeDTO event phasesAnsweredIndication =
       SetPhaseEventChangeDTO' $ toSetPhaseEventChangeDTO event phasesAnsweredIndication
     SetLabelsEvent' event@SetLabelsEvent {..} ->
       SetLabelsEventChangeDTO' $ toSetLabelsEventChangeDTO event phasesAnsweredIndication
-    ResolveCommentThreadEvent' event@ResolveCommentThreadEvent {..} ->
-      ResolveCommentThreadEventChangeDTO' $ toResolveCommentThreadEventChangeDTO event
-    ReopenCommentThreadEvent' event@ReopenCommentThreadEvent {..} ->
-      ReopenCommentThreadEventChangeDTO' $ toReopenCommentThreadEventChangeDTO event
-    DeleteCommentThreadEvent' event@DeleteCommentThreadEvent {..} ->
-      DeleteCommentThreadEventChangeDTO' $ toDeleteCommentThreadEventChangeDTO event
-    AddCommentEvent' event@AddCommentEvent {..} -> AddCommentEventChangeDTO' $ toAddCommentEventChangeDTO event
-    EditCommentEvent' event@EditCommentEvent {..} -> EditCommentEventChangeDTO' $ toEditCommentEventChangeDTO event
-    DeleteCommentEvent' event@DeleteCommentEvent {..} ->
-      DeleteCommentEventChangeDTO' $ toDeleteCommentEventChangeDTO event
 
 toSetReplyEventChangeDTO :: SetReplyEvent -> PhasesAnsweredIndication -> SetReplyEventChangeDTO
 toSetReplyEventChangeDTO event phasesAnsweredIndication =
@@ -323,66 +237,6 @@ toSetLabelsEventChangeDTO event phasesAnsweredIndication =
     , _setLabelsEventChangeDTOValue = event ^. value
     }
 
-toResolveCommentThreadEventChangeDTO :: ResolveCommentThreadEvent -> ResolveCommentThreadEventChangeDTO
-toResolveCommentThreadEventChangeDTO event =
-  ResolveCommentThreadEventChangeDTO
-    { _resolveCommentThreadEventChangeDTOUuid = event ^. uuid
-    , _resolveCommentThreadEventChangeDTOPath = event ^. path
-    , _resolveCommentThreadEventChangeDTOThreadUuid = event ^. threadUuid
-    , _resolveCommentThreadEventChangeDTOPrivate = False
-    }
-
-toReopenCommentThreadEventChangeDTO :: ReopenCommentThreadEvent -> ReopenCommentThreadEventChangeDTO
-toReopenCommentThreadEventChangeDTO event =
-  ReopenCommentThreadEventChangeDTO
-    { _reopenCommentThreadEventChangeDTOUuid = event ^. uuid
-    , _reopenCommentThreadEventChangeDTOPath = event ^. path
-    , _reopenCommentThreadEventChangeDTOThreadUuid = event ^. threadUuid
-    , _reopenCommentThreadEventChangeDTOPrivate = False
-    }
-
-toDeleteCommentThreadEventChangeDTO :: DeleteCommentThreadEvent -> DeleteCommentThreadEventChangeDTO
-toDeleteCommentThreadEventChangeDTO event =
-  DeleteCommentThreadEventChangeDTO
-    { _deleteCommentThreadEventChangeDTOUuid = event ^. uuid
-    , _deleteCommentThreadEventChangeDTOPath = event ^. path
-    , _deleteCommentThreadEventChangeDTOThreadUuid = event ^. threadUuid
-    , _deleteCommentThreadEventChangeDTOPrivate = False
-    }
-
-toAddCommentEventChangeDTO :: AddCommentEvent -> AddCommentEventChangeDTO
-toAddCommentEventChangeDTO event =
-  AddCommentEventChangeDTO
-    { _addCommentEventChangeDTOUuid = event ^. uuid
-    , _addCommentEventChangeDTOPath = event ^. path
-    , _addCommentEventChangeDTOThreadUuid = event ^. threadUuid
-    , _addCommentEventChangeDTOCommentUuid = event ^. commentUuid
-    , _addCommentEventChangeDTOText = event ^. text
-    , _addCommentEventChangeDTOPrivate = event ^. private
-    , _addCommentEventChangeDTONewThread = True
-    }
-
-toEditCommentEventChangeDTO :: EditCommentEvent -> EditCommentEventChangeDTO
-toEditCommentEventChangeDTO event =
-  EditCommentEventChangeDTO
-    { _editCommentEventChangeDTOUuid = event ^. uuid
-    , _editCommentEventChangeDTOPath = event ^. path
-    , _editCommentEventChangeDTOThreadUuid = event ^. threadUuid
-    , _editCommentEventChangeDTOCommentUuid = event ^. commentUuid
-    , _editCommentEventChangeDTOText = event ^. text
-    , _editCommentEventChangeDTOPrivate = False
-    }
-
-toDeleteCommentEventChangeDTO :: DeleteCommentEvent -> DeleteCommentEventChangeDTO
-toDeleteCommentEventChangeDTO event =
-  DeleteCommentEventChangeDTO
-    { _deleteCommentEventChangeDTOUuid = event ^. uuid
-    , _deleteCommentEventChangeDTOPath = event ^. path
-    , _deleteCommentEventChangeDTOThreadUuid = event ^. threadUuid
-    , _deleteCommentEventChangeDTOCommentUuid = event ^. commentUuid
-    , _deleteCommentEventChangeDTOPrivate = False
-    }
-
 -- ---------------------------------------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------------------------
 fromEventChangeDTO :: QuestionnaireEventChangeDTO -> Maybe U.UUID -> UTCTime -> QuestionnaireEvent
@@ -396,18 +250,6 @@ fromEventChangeDTO event createdBy now =
       SetPhaseEvent' $ fromSetPhaseEventChangeDTO event createdBy now
     SetLabelsEventChangeDTO' event@SetLabelsEventChangeDTO {..} ->
       SetLabelsEvent' $ fromSetLabelsEventChangeDTO event createdBy now
-    ResolveCommentThreadEventChangeDTO' event@ResolveCommentThreadEventChangeDTO {..} ->
-      ResolveCommentThreadEvent' $ fromResolveCommentThreadEventChangeDTO event createdBy now
-    ReopenCommentThreadEventChangeDTO' event@ReopenCommentThreadEventChangeDTO {..} ->
-      ReopenCommentThreadEvent' $ fromReopenCommentThreadEventChangeDTO event createdBy now
-    DeleteCommentThreadEventChangeDTO' event@DeleteCommentThreadEventChangeDTO {..} ->
-      DeleteCommentThreadEvent' $ fromDeleteCommentThreadEventChangeDTO event createdBy now
-    AddCommentEventChangeDTO' event@AddCommentEventChangeDTO {..} ->
-      AddCommentEvent' $ fromAddCommentEventChangeDTO event createdBy now
-    EditCommentEventChangeDTO' event@EditCommentEventChangeDTO {..} ->
-      EditCommentEvent' $ fromEditCommentEventChangeDTO event createdBy now
-    DeleteCommentEventChangeDTO' event@DeleteCommentEventChangeDTO {..} ->
-      DeleteCommentEvent' $ fromDeleteCommentEventChangeDTO event createdBy now
 
 fromSetReplyEventChangeDTO :: SetReplyEventChangeDTO -> Maybe U.UUID -> UTCTime -> SetReplyEvent
 fromSetReplyEventChangeDTO event createdBy now =
@@ -445,75 +287,6 @@ fromSetLabelsEventChangeDTO event createdBy now =
     , _setLabelsEventValue = event ^. value
     , _setLabelsEventCreatedBy = createdBy
     , _setLabelsEventCreatedAt = now
-    }
-
-fromResolveCommentThreadEventChangeDTO ::
-     ResolveCommentThreadEventChangeDTO -> Maybe U.UUID -> UTCTime -> ResolveCommentThreadEvent
-fromResolveCommentThreadEventChangeDTO event createdBy now =
-  ResolveCommentThreadEvent
-    { _resolveCommentThreadEventUuid = event ^. uuid
-    , _resolveCommentThreadEventPath = event ^. path
-    , _resolveCommentThreadEventThreadUuid = event ^. threadUuid
-    , _resolveCommentThreadEventCreatedBy = createdBy
-    , _resolveCommentThreadEventCreatedAt = now
-    }
-
-fromReopenCommentThreadEventChangeDTO ::
-     ReopenCommentThreadEventChangeDTO -> Maybe U.UUID -> UTCTime -> ReopenCommentThreadEvent
-fromReopenCommentThreadEventChangeDTO event createdBy now =
-  ReopenCommentThreadEvent
-    { _reopenCommentThreadEventUuid = event ^. uuid
-    , _reopenCommentThreadEventPath = event ^. path
-    , _reopenCommentThreadEventThreadUuid = event ^. threadUuid
-    , _reopenCommentThreadEventCreatedBy = createdBy
-    , _reopenCommentThreadEventCreatedAt = now
-    }
-
-fromDeleteCommentThreadEventChangeDTO ::
-     DeleteCommentThreadEventChangeDTO -> Maybe U.UUID -> UTCTime -> DeleteCommentThreadEvent
-fromDeleteCommentThreadEventChangeDTO event createdBy now =
-  DeleteCommentThreadEvent
-    { _deleteCommentThreadEventUuid = event ^. uuid
-    , _deleteCommentThreadEventPath = event ^. path
-    , _deleteCommentThreadEventThreadUuid = event ^. threadUuid
-    , _deleteCommentThreadEventCreatedBy = createdBy
-    , _deleteCommentThreadEventCreatedAt = now
-    }
-
-fromAddCommentEventChangeDTO :: AddCommentEventChangeDTO -> Maybe U.UUID -> UTCTime -> AddCommentEvent
-fromAddCommentEventChangeDTO event createdBy now =
-  AddCommentEvent
-    { _addCommentEventUuid = event ^. uuid
-    , _addCommentEventPath = event ^. path
-    , _addCommentEventThreadUuid = event ^. threadUuid
-    , _addCommentEventCommentUuid = event ^. commentUuid
-    , _addCommentEventText = event ^. text
-    , _addCommentEventPrivate = event ^. private
-    , _addCommentEventCreatedBy = createdBy
-    , _addCommentEventCreatedAt = now
-    }
-
-fromEditCommentEventChangeDTO :: EditCommentEventChangeDTO -> Maybe U.UUID -> UTCTime -> EditCommentEvent
-fromEditCommentEventChangeDTO event createdBy now =
-  EditCommentEvent
-    { _editCommentEventUuid = event ^. uuid
-    , _editCommentEventPath = event ^. path
-    , _editCommentEventThreadUuid = event ^. threadUuid
-    , _editCommentEventCommentUuid = event ^. commentUuid
-    , _editCommentEventText = event ^. text
-    , _editCommentEventCreatedBy = createdBy
-    , _editCommentEventCreatedAt = now
-    }
-
-fromDeleteCommentEventChangeDTO :: DeleteCommentEventChangeDTO -> Maybe U.UUID -> UTCTime -> DeleteCommentEvent
-fromDeleteCommentEventChangeDTO event createdBy now =
-  DeleteCommentEvent
-    { _deleteCommentEventUuid = event ^. uuid
-    , _deleteCommentEventPath = event ^. path
-    , _deleteCommentEventThreadUuid = event ^. threadUuid
-    , _deleteCommentEventCommentUuid = event ^. commentUuid
-    , _deleteCommentEventCreatedBy = createdBy
-    , _deleteCommentEventCreatedAt = now
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
