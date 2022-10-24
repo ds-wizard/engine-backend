@@ -1,4 +1,4 @@
-module Wizard.Database.Migration.Production.Migration_0024_commonFn.Migration
+module Wizard.Database.Migration.Production.Migration_0024_commonFn_and_token.Migration
   ( definition
   ) where
 
@@ -12,7 +12,10 @@ definition = (meta, migrate)
 
 meta =
   MigrationMeta
-    {mmNumber = 24, mmName = "Common Functions", mmDescription = "Add common functions, package and template state"}
+    { mmNumber = 24
+    , mmName = "Common Functions & user token"
+    , mmDescription = "Add common functions, package and template state and user token"
+    }
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
@@ -22,6 +25,7 @@ migrate dbPool = do
   createCompareVersionFn dbPool
   createGetPackageStateFn dbPool
   createGetTemplateStateFn dbPool
+  createUserTokenTable dbPool
 
 createMajorVersionFn dbPool = do
   let sql =
@@ -158,6 +162,30 @@ createGetTemplateStateFn dbPool = do
         \    RETURN state; \
         \END; \
         \$$;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createUserTokenTable dbPool = do
+  let sql =
+        "CREATE TABLE user_token \
+        \ ( \
+        \     uuid              uuid    not null \
+        \         CONSTRAINT user_token_pk \
+        \             PRIMARY KEY, \
+        \     user_uuid uuid not null \
+        \         constraint user_token_user_uuid_fk \
+        \             references user_entity, \
+        \     value             varchar not null, \
+        \     session_state     varchar, \
+        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \         CONSTRAINT user_entity_app_uuid_fk \
+        \             REFERENCES app, \
+        \     created_at        timestamp with time zone not null \
+        \ ); \
+        \  \
+        \ CREATE UNIQUE INDEX user_token_uuid_uindex \
+        \     ON user_entity (uuid, app_uuid);"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

@@ -31,6 +31,7 @@ instance FromJSON ServerConfig where
     _serverConfigPersistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
     _serverConfigPlan <- o .:? "plan" .!= defaultPlan
     _serverConfigQuestionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
+    _serverConfigUserToken <- o .:? "userToken" .!= defaultUserToken
     _serverConfigLogging <- o .:? "logging" .!= defaultLogging
     _serverConfigCloud <- o .:? "cloud" .!= defaultCloud
     return ServerConfig {..}
@@ -139,6 +140,12 @@ instance FromJSON ServerConfigQuestionnaire where
       o .:? "recomputeIndication" .!= (defaultQuestionnaire ^. recomputeIndication)
     _serverConfigQuestionnaireSquash <- o .:? "squash" .!= (defaultQuestionnaire ^. squash)
     return ServerConfigQuestionnaire {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigUserToken where
+  parseJSON (Object o) = do
+    _serverConfigUserTokenClean <- o .:? "clean" .!= (defaultUserToken ^. clean)
+    return ServerConfigUserToken {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigCronWorker where

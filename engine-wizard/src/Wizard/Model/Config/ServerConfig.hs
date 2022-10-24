@@ -22,6 +22,7 @@ data ServerConfig =
     , _serverConfigPersistentCommand :: ServerConfigPersistentCommand
     , _serverConfigPlan :: ServerConfigPlan
     , _serverConfigQuestionnaire :: ServerConfigQuestionnaire
+    , _serverConfigUserToken :: ServerConfigUserToken
     , _serverConfigLogging :: ServerConfigLogging
     , _serverConfigCloud :: ServerConfigCloud
     }
@@ -125,6 +126,12 @@ data ServerConfigQuestionnaire =
     { _serverConfigQuestionnaireClean :: ServerConfigCronWorker
     , _serverConfigQuestionnaireRecomputeIndication :: ServerConfigCronWorker
     , _serverConfigQuestionnaireSquash :: ServerConfigCronWorker
+    }
+  deriving (Generic, Show)
+
+data ServerConfigUserToken =
+  ServerConfigUserToken
+    { _serverConfigUserTokenClean :: ServerConfigCronWorker
     }
   deriving (Generic, Show)
 

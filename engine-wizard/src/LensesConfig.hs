@@ -87,8 +87,6 @@ import Wizard.Api.Resource.Template.File.TemplateFileChangeDTO
 import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
-import Wizard.Api.Resource.Token.TokenCreateDTO
-import Wizard.Api.Resource.Token.TokenDTO
 import Wizard.Api.Resource.Typehint.TypehintDTO
 import Wizard.Api.Resource.Typehint.TypehintRequestDTO
 import Wizard.Api.Resource.User.UserChangeDTO
@@ -100,6 +98,8 @@ import Wizard.Api.Resource.User.UserProfileDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
+import Wizard.Api.Resource.UserToken.UserTokenCreateDTO
+import Wizard.Api.Resource.UserToken.UserTokenDTO
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
@@ -150,6 +150,7 @@ import Wizard.Model.Submission.Submission
 import Wizard.Model.Template.TemplateList
 import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
+import Wizard.Model.User.UserToken
 import Wizard.Model.Websocket.WebsocketMessage
 import Wizard.Model.Websocket.WebsocketRecord
 
@@ -291,6 +292,8 @@ makeFields ''ServerConfigPersistentCommandListenerJob
 makeFields ''ServerConfigPlan
 
 makeFields ''ServerConfigQuestionnaire
+
+makeFields ''ServerConfigUserToken
 
 makeFields ''ServerConfigCronWorker
 
@@ -599,6 +602,8 @@ makeFields ''UserSubmissionProps
 
 makeFields ''UserSuggestion
 
+makeFields ''UserToken
+
 -- Model / Websocket
 makeFields ''WebsocketMessage
 
@@ -783,9 +788,9 @@ makeFields ''TemplateAssetDTO
 makeFields ''TemplateBundleDTO
 
 -- Api / Resource / Token
-makeFields ''TokenDTO
+makeFields ''UserTokenDTO
 
-makeFields ''TokenCreateDTO
+makeFields ''UserTokenCreateDTO
 
 -- Api / Resource / Typehint
 makeFields ''TypehintDTO

@@ -23,6 +23,7 @@ defaultConfig =
     , _serverConfigPersistentCommand = defaultPersistentCommand
     , _serverConfigPlan = defaultPlan
     , _serverConfigQuestionnaire = defaultQuestionnaire
+    , _serverConfigUserToken = defaultUserToken
     , _serverConfigLogging = defaultLogging
     , _serverConfigCloud = defaultCloud
     }
@@ -51,7 +52,7 @@ defaultMessaging =
     }
 
 defaultJwt :: ServerConfigJwt
-defaultJwt = ServerConfigJwt {_serverConfigJwtVersion = 2, _serverConfigJwtExpiration = 14}
+defaultJwt = ServerConfigJwt {_serverConfigJwtVersion = 3, _serverConfigJwtExpiration = 14}
 
 defaultRoles :: ServerConfigRoles
 defaultRoles =
@@ -179,3 +180,10 @@ defaultQuestionnaireRecomputeIndication =
 defaultQuestionnaireSquash :: ServerConfigCronWorker
 defaultQuestionnaireSquash =
   ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "15 2 * * *"}
+
+defaultUserToken :: ServerConfigUserToken
+defaultUserToken = ServerConfigUserToken {_serverConfigUserTokenClean = defaultUserTokenClean}
+
+defaultUserTokenClean :: ServerConfigCronWorker
+defaultUserTokenClean =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "0 3 * * *"}

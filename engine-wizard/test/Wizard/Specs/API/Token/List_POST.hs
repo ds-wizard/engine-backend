@@ -13,8 +13,8 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Model.Error.Error
-import Wizard.Api.Resource.Token.TokenDTO
-import Wizard.Database.Migration.Development.Token.Data.Tokens
+import Wizard.Api.Resource.UserToken.UserTokenDTO
+import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
@@ -55,7 +55,7 @@ test_201 appContext =
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, TokenDTO)
+    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, UserTokenDTO)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
     liftIO $ (resBody ^. token) `shouldStartWith` "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"

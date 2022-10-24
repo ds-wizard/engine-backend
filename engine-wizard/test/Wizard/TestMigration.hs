@@ -26,6 +26,7 @@ import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Database.DAO.Registry.RegistryTemplateDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.DAO.User.UserTokenDAO
 import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Wizard.Database.Migration.Development.App.AppSchemaMigration as A_Schema
@@ -53,6 +54,7 @@ import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMi
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.Template.TemplateSchemaMigration as TML_Schema
+import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as U_Schema
 
@@ -142,6 +144,7 @@ resetDB appContext = do
   runInContext deleteQuestionnaireImporters appContext
   runInContext deleteTemplates appContext
   runInContext deletePackages appContext
+  runInContext deleteUserTokens appContext
   runInContext deleteUsers appContext
   runInContext deleteAppLimits appContext
   runInContext deleteAppPlans appContext
@@ -152,6 +155,7 @@ resetDB appContext = do
   runInContext (insertAppLimit differentAppLimit) appContext
   runInContext (insertUser userSystem) appContext
   runInContext (insertUser userAlbert) appContext
+  runInContext (insertUserToken albertToken) appContext
   runInContext (insertUser userCharles) appContext
   runInContext (insertPackage globalPackageEmpty) appContext
   runInContext (insertPackage globalPackage) appContext

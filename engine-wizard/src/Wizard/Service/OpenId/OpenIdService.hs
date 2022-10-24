@@ -1,4 +1,4 @@
-module Wizard.Service.Auth.OpenIdService where
+module Wizard.Service.OpenId.OpenIdService where
 
 import Control.Lens ((^.), (^?))
 import Control.Monad.Except (throwError)
@@ -18,15 +18,16 @@ import qualified Web.OIDC.Client.Tokens as OT
 import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Crypto (generateRandomString)
-import Wizard.Api.Resource.Token.TokenDTO
+import Wizard.Api.Resource.UserToken.UserTokenDTO
 import Wizard.Database.DAO.Common
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.AppConfigService
-import Wizard.Service.Token.TokenService
 import Wizard.Service.User.UserService
+import Wizard.Service.UserToken.UserTokenMapper
+import Wizard.Service.UserToken.UserTokenService
 
 createAuthenticationUrl :: String -> Maybe String -> Maybe String -> AppContextM ()
 createAuthenticationUrl authId mFlow mClientUrl = do
@@ -45,8 +46,15 @@ createAuthenticationUrl authId mFlow mClientUrl = do
   throwError $ FoundError (show loc)
 
 loginUser ::
-     String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> AppContextM TokenDTO
-loginUser authId mClientUrl mError mCode mNonce mIdToken =
+     String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> AppContextM UserTokenDTO
+loginUser authId mClientUrl mError mCode mNonce mIdToken mSessionState =
   runInTransaction $ do
     token <-
       case mIdToken of
@@ -67,8 +75,9 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken =
     let mPicture = T.unpack <$> claims ^? key "picture" . _String
     case (mEmail, mFirstName, mLastName) of
       (Just email, Just firstName, Just lastName) -> do
-        userDto <- createUserFromExternalService authId firstName lastName email mPicture
-        generateTokenFromUser userDto
+        user <- createUserFromExternalService authId firstName lastName email mPicture
+        userToken <- createToken user mSessionState
+        return . toDTO $ userToken
       _ -> throwError . UserError $ _ERROR_VALIDATION__OPENID_PROFILE_INFO_ABSENCE
 
 parseToken :: FromJSON a => String -> O.IdTokenClaims a

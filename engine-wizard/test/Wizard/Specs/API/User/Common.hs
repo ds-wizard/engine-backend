@@ -11,8 +11,9 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.DAO.User.UserTokenDAO
 import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Service.Token.TokenService
+import Wizard.Service.User.UserUtil
 
 import Wizard.Specs.Common
 
@@ -43,6 +44,18 @@ assertAbsenceOfUserInDB appContext user = do
     error `shouldBe`
     NotExistsError
       (_ERROR_DATABASE__ENTITY_NOT_FOUND "user_entity" [("app_uuid", U.toString $ defaultApp ^. uuid), ("uuid", uUuid)])
+
+assertUserTokenInDB appContext user size = do
+  eUserTokens <- runInContextIO (findUserTokensByUserUuid (user ^. uuid)) appContext
+  liftIO $ isRight eUserTokens `shouldBe` True
+  let (Right userTokens) = eUserTokens
+  liftIO $ length userTokens `shouldBe` size
+
+assertExistenceOfUserTokenInDB appContext user token = do
+  eUserTokens <- runInContextIO (findUserTokensByUserUuid (user ^. uuid)) appContext
+  liftIO $ isRight eUserTokens `shouldBe` True
+  let (Right [userToken]) = eUserTokens
+  liftIO $ userToken ^. value `shouldBe` token
 
 -- --------------------------------
 -- COMPARATORS

@@ -53,20 +53,6 @@ _ERROR_SERVICE_TEMPLATE__NO_TEMPLATES_IN_SYSTEM = "There are no specified templa
 -- Token
 _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN = "Unable to get token"
 
-_ERROR_SERVICE_TOKEN__UNABLE_TO_DECODE_AND_VERIFY_TOKEN = "Unable to decode and verify token"
-
-_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_VERSION = "Unable to get token version from token"
-
-_ERROR_SERVICE_TOKEN__OBSOLETE_TOKEN_VERSION = "Obsolete token version"
-
-_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_EXPIRATION = "Unable to get token expiration from token"
-
-_ERROR_SERVICE_TOKEN__TOKEN_IS_EXPIRED = "Token is expired"
-
-_ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES = "Unknown technical difficulties"
-
-_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SERVICE_TOKEN' = "Unable to get or verify service token"
-
 -- User
 _ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT = "The activation email could not be sent. Please contact administrator."
 

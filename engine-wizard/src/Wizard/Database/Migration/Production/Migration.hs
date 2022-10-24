@@ -30,7 +30,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0020_persistentC
 import qualified Wizard.Database.Migration.Production.Migration_0021_qtnImporter.Migration as M_0021
 import qualified Wizard.Database.Migration.Production.Migration_0022_optimizeProjectList.Migration as M_0022
 import qualified Wizard.Database.Migration.Production.Migration_0023_createdBy.Migration as M_0023
-import qualified Wizard.Database.Migration.Production.Migration_0024_commonFn.Migration as M_0024
+import qualified Wizard.Database.Migration.Production.Migration_0024_commonFn_and_token.Migration as M_0024
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
 

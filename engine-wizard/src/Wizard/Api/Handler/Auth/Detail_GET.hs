@@ -6,7 +6,7 @@ import Shared.Api.Handler.Common
 import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Auth.OpenIdService
+import Wizard.Service.OpenId.OpenIdService
 
 type Detail_GET
    = Header "Host" String

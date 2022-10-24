@@ -50,6 +50,7 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.User.UserAudit
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
+import Wizard.Service.UserToken.UserTokenService
 
 getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
 getUsersPage mQuery mRole pageable sort = do
@@ -116,7 +117,7 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl shoul
     sendAnalyticsEmailIfEnabled user
     return $ toDTO user
 
-createUserFromExternalService :: String -> String -> String -> String -> Maybe String -> AppContextM UserDTO
+createUserFromExternalService :: String -> String -> String -> String -> Maybe String -> AppContextM User
 createUserFromExternalService serviceId firstName lastName email mImageUrl =
   runInTransaction $ do
     mUserFromDb <- findUserByEmail' email
@@ -128,7 +129,7 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl =
           then do
             let updatedUser = fromUpdateUserExternalDTO user firstName lastName mImageUrl serviceId now
             updateUserById updatedUser
-            return $ toDTO updatedUser
+            return updatedUser
           else throwError $ UserError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
       Nothing -> do
         checkUserLimit
@@ -155,7 +156,7 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl =
                 now
         insertUser user
         sendAnalyticsEmailIfEnabled user
-        return $ toDTO user
+        return user
 
 getUserById :: String -> AppContextM UserDTO
 getUserById userUuid = do
@@ -240,6 +241,7 @@ deleteUser userUuid =
       (\d -> do
          deleteDocumentsFiltered [("uuid", U.toString $ d ^. uuid)]
          removeDocumentContent (U.toString $ d ^. uuid))
+    deleteTokenByUserUuid (user ^. uuid)
     deleteUserById userUuid
     return ()
 
