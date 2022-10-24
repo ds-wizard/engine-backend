@@ -7,4 +7,4 @@ data PackageState
   | OutdatedPackageState
   | UpToDatePackageState
   | UnpublishedPackageState
-  deriving (Show, Eq, Generic)
+  deriving (Show, Eq, Generic, Read)

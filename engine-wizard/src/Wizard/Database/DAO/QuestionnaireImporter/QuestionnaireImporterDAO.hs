@@ -11,11 +11,12 @@ import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
 import LensesConfig
+import Shared.Database.DAO.Common hiding (runInTransaction)
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
-import Wizard.Database.DAO.Common hiding (createFindEntitiesGroupByCoordinatePageableQuerySortFn)
+import Shared.Util.String
 import Wizard.Database.Mapping.QuestionnaireImporter.QuestionnaireImporter ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
@@ -119,7 +120,7 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
           , entityId
           , entityName
           , enabledCondition
-          , mapToDBCoordinatesSql entityId mOrganizationId mEntityId
+          , mapToDBCoordinatesSql entityName entityId mOrganizationId mEntityId
           , entityId
           , mapSort sort
           , show skip
@@ -142,3 +143,26 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
           , _pageMetadataNumber = pageI
           }
   return $ Page pageLabel metadata entities
+
+createCountGroupByCoordinateFn ::
+     String -> String -> Maybe String -> String -> Maybe String -> Maybe String -> AppContextM Int
+createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrganizationId mEntityId = do
+  appUuid <- asks _appContextAppUuid
+  let sql =
+        f'
+          "SELECT COUNT(*) \
+          \ FROM (SELECT COUNT(*) \
+          \   FROM %s \
+          \   WHERE %s app_uuid = ? AND (name ~* ? OR id ~* ?) %s \
+          \   GROUP BY organization_id, %s) p"
+          [entityName, enabledCondition, mapToDBCoordinatesSql entityName entityId mOrganizationId mEntityId, entityId]
+  logInfo _CMP_DATABASE sql
+  let action conn =
+        query
+          conn
+          (fromString sql)
+          (U.toString appUuid : regex mQuery : regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
+  result <- runDB action
+  case result of
+    [count] -> return . fromOnly $ count
+    _ -> return 0

@@ -624,11 +624,12 @@ mapToDBQuerySql [] = ""
 mapToDBQuerySql [(queryParamKey, queryParamValue)] = queryParamKey ++ " = ? "
 mapToDBQuerySql ((queryParamKey, queryParamValue):xs) = queryParamKey ++ " = ? AND " ++ mapToDBQuerySql xs
 
-mapToDBCoordinatesSql :: String -> Maybe String -> Maybe String -> String
-mapToDBCoordinatesSql entityId (Just orgId) (Just eId) = f' "and organization_id = ? and %s = ? " [entityId]
-mapToDBCoordinatesSql entityId (Just orgId) _ = f' "and organization_id = ? " [entityId]
-mapToDBCoordinatesSql entityId _ (Just eId) = f' "and %s = ? " [entityId]
-mapToDBCoordinatesSql entityId _ _ = ""
+mapToDBCoordinatesSql :: String -> String -> Maybe String -> Maybe String -> String
+mapToDBCoordinatesSql entityName entityId (Just orgId) (Just eId) =
+  f' "and %s.organization_id = ? and %s.%s = ? " [entityName, entityName, entityId]
+mapToDBCoordinatesSql entityName entityId (Just orgId) _ = f' "and %s.organization_id = ? " [entityName]
+mapToDBCoordinatesSql entityName entityId _ (Just eId) = f' "and %s.%s = ? " [entityName, entityId]
+mapToDBCoordinatesSql _ _ _ _ = ""
 
 mapToDBCoordinatesParams :: Maybe String -> Maybe String -> [String]
 mapToDBCoordinatesParams (Just orgId) (Just eId) = [orgId, eId]

@@ -32,13 +32,9 @@ computePackageState pkgsFromRegistry pkg =
 
 computePackageState' :: Bool -> PackageList -> PackageState
 computePackageState' registryEnabled pkg =
-  case (registryEnabled, pkg ^. remoteVersion) of
-    (True, Just rVersion) ->
-      case compareVersion rVersion (pkg ^. version) of
-        LT -> UnpublishedPackageState
-        EQ -> UpToDatePackageState
-        GT -> OutdatedPackageState
-    (_, Nothing) -> UnknownPackageState
+  if registryEnabled
+    then pkg ^. state
+    else UnknownPackageState
 
 checkIfPackageIsPublic Nothing orCheckThisPerm = checkPermission orCheckThisPerm
 checkIfPackageIsPublic (Just pkgId) orCheckThisPerm = do

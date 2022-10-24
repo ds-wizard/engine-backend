@@ -13,8 +13,10 @@ import Wizard.Util.Logger
 runMigration :: AppContextM ()
 runMigration = do
   logInfo _CMP_MIGRATION "(Table/Template) started"
+  dropFunctions
   dropTables
   createTables
+  createFunctions
   logInfo _CMP_MIGRATION "(Table/Template) ended"
 
 dropTables = do
@@ -39,6 +41,12 @@ dropTemplateFileTable = do
 dropTemplateAssetTable = do
   logInfo _CMP_MIGRATION "(Table/TemplateAsset) drop tables"
   let sql = "drop table if exists template_asset cascade;"
+  let action conn = execute_ conn sql
+  runDB action
+
+dropFunctions = do
+  logInfo _CMP_MIGRATION "(Function/Template) drop functions"
+  let sql = "DROP FUNCTION IF EXISTS get_template_state;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -134,5 +142,33 @@ createTemplateAssetTable = do
         \ alter table template_asset \
         \   add constraint template_asset_pk \
         \      primary key (uuid); "
+  let action conn = execute_ conn sql
+  runDB action
+
+createFunctions = do
+  logInfo _CMP_MIGRATION "(Function/Template) create functions"
+  createGetTemplateStateFn
+
+createGetTemplateStateFn = do
+  let sql =
+        "CREATE or REPLACE FUNCTION get_template_state(remote_version varchar, local_version varchar, actual_metamodel_version int, template_metamodel_version int) \
+        \    RETURNS varchar \
+        \    LANGUAGE plpgsql \
+        \AS \
+        \$$ \
+        \DECLARE \
+        \    state varchar; \
+        \BEGIN \
+        \    SELECT CASE \
+        \               WHEN actual_metamodel_version != template_metamodel_version IS NULL THEN 'UnsupportedMetamodelVersionTemplateState' \
+        \               WHEN remote_version IS NULL THEN 'UnknownTemplateState' \
+        \               WHEN compare_version(remote_version, local_version) = 'LT' THEN 'UnpublishedTemplateState' \
+        \               WHEN compare_version(remote_version, local_version) = 'EQ' THEN 'UpToDateTemplateState' \
+        \               WHEN compare_version(remote_version, local_version) = 'GT' THEN 'OutdatedTemplateState' \
+        \               END \
+        \    INTO state; \
+        \    RETURN state; \
+        \END; \
+        \$$;"
   let action conn = execute_ conn sql
   runDB action

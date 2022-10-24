@@ -25,19 +25,30 @@ entityName = "package"
 
 pageLabel = "packages"
 
-findPackagesPage :: Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page PackageList)
-findPackagesPage mOrganizationId mKmId mQuery pageable sort =
+findPackagesPage ::
+     Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Pageable
+  -> [Sort]
+  -> AppContextM (Page PackageList)
+findPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort =
   createFindEntitiesGroupByCoordinatePageableQuerySortFn
     entityName
     pageLabel
     pageable
     sort
-    "id, package.name, package.organization_id, package.km_id, version, description, registry_package.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, package.created_at"
+    "id, package.name, package.organization_id, package.km_id, version, description, get_package_state(registry_package.remote_version, version), registry_package.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, package.created_at"
     "km_id"
     mQuery
     Nothing
     mOrganizationId
     mKmId
+    mPackageState
+    (case mPackageState of
+       Just _ -> " AND get_package_state(registry_package.remote_version, version) = ?"
+       Nothing -> "")
 
 findPackageSuggestionsPage ::
      Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)

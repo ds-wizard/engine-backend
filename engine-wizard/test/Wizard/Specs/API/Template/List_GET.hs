@@ -76,6 +76,18 @@ test_200 appContext = do
     "/templates?templateId=non-existing-template"
     reqAuthHeader
     (Page "templates" (PageMetadata 20 0 0 0) [])
+  create_test_200
+    "HTTP 200 OK (state - UpToDateTemplateState)"
+    appContext
+    "/templates?state=UpToDateTemplateState"
+    reqAuthHeader
+    (Page "templates" (PageMetadata 20 1 1 0) [commonWizardTemplateSimpleDTO])
+  create_test_200
+    "HTTP 200 OK (state - OutdatedTemplateState)"
+    appContext
+    "/templates?state=OutdatedTemplateState"
+    reqAuthHeader
+    (Page "templates" (PageMetadata 20 0 0 0) [])
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
   it title $

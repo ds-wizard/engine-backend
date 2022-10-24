@@ -33,6 +33,7 @@ import Wizard.Database.Migration.Development.App.Data.Apps
 import qualified Wizard.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
+import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
 import qualified Wizard.Database.Migration.Development.Config.AppConfigSchemaMigration as CFG_Schema
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
@@ -60,7 +61,9 @@ import Wizard.Specs.Common
 buildSchema appContext = do
   putStrLn "DB: dropping DB functions"
   runInContext B_Schema.dropFunctions appContext
+  runInContext TML_Schema.dropFunctions appContext
   runInContext PKG_Schema.dropFunctions appContext
+  runInContext CMN_Schema.dropFunctions appContext
   putStrLn "DB: dropping schema"
   runInContext R_Schema.dropTables appContext
   runInContext QI_Schema.dropTables appContext
@@ -108,7 +111,9 @@ buildSchema appContext = do
   runInContext QI_Schema.createTables appContext
   runInContext R_Schema.createTables appContext
   putStrLn "DB: Creating DB functions"
+  runInContext CMN_Schema.createFunctions appContext
   runInContext PKG_Schema.createFunctions appContext
+  runInContext TML_Schema.createFunctions appContext
   runInContext B_Schema.createFunctions appContext
   putStrLn "DB-S3: Purging and creating schema"
   runInContext TML.runS3Migration appContext

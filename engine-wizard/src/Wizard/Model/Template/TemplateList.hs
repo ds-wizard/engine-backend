@@ -6,6 +6,7 @@ import GHC.Generics
 
 import Shared.Model.Package.PackagePattern
 import Shared.Model.Template.Template
+import Wizard.Model.Template.TemplateState
 
 data TemplateList =
   TemplateList
@@ -21,6 +22,7 @@ data TemplateList =
     , _templateListAllowedPackages :: [PackagePattern]
     , _templateListRecommendedPackageId :: Maybe String
     , _templateListFormats :: [TemplateFormat]
+    , _templateListState :: TemplateState
     , _templateListRemoteVersion :: Maybe String
     , _templateListRemoteOrganizationName :: Maybe String
     , _templateListRemoteOrganizationLogo :: Maybe String

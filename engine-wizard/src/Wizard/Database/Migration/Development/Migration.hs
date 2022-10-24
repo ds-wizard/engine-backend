@@ -15,6 +15,7 @@ import qualified Wizard.Database.Migration.Development.BookReference.BookReferen
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
+import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
 import qualified Wizard.Database.Migration.Development.Config.AppConfigMigration as CFG
 import qualified Wizard.Database.Migration.Development.Config.AppConfigSchemaMigration as CFG_Schema
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
@@ -53,6 +54,8 @@ runMigration = do
   -- 1. Drop DB functions
   B_Schema.dropFunctions
   PKG_Schema.dropFunctions
+  TML_Schema.dropFunctions
+  CMN_Schema.dropFunctions
   -- 2. Drop schema
   R_Schema.dropTables
   QI_Schema.dropTables
@@ -101,7 +104,9 @@ runMigration = do
   QI_Schema.createTables
   R_Schema.createTables
   -- 4. Create DB functions
+  CMN_Schema.createFunctions
   PKG_Schema.createFunctions
+  TML_Schema.createFunctions
   B_Schema.createFunctions
   -- 5. Load S3 fixtures
   TML.runS3Migration
