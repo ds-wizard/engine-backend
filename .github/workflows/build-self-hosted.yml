@@ -16,7 +16,7 @@ jobs:
       matrix:
         component: [registry, wizard]
         type: [self-hosted]
-        stack: [2.5.1]
+        stack: [2.9.1]
 
     env:
       COMPONENT: ${{ matrix.component }}
