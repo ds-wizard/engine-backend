@@ -1,6 +1,5 @@
 module Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO where
 
-import Data.Hashable
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
@@ -21,8 +20,6 @@ data QuestionnaireCommentThreadDTO =
     }
   deriving (Show, Eq, Generic)
 
-instance Hashable QuestionnaireCommentThreadDTO
-
 data QuestionnaireCommentDTO =
   QuestionnaireCommentDTO
     { _questionnaireCommentDTOUuid :: U.UUID
@@ -32,5 +29,3 @@ data QuestionnaireCommentDTO =
     , _questionnaireCommentDTOUpdatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
-
-instance Hashable QuestionnaireCommentDTO

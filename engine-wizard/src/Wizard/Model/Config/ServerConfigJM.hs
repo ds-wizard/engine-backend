@@ -3,7 +3,7 @@ module Wizard.Model.Config.ServerConfigJM where
 import Control.Lens ((^.))
 import Control.Monad
 import Data.Aeson
-import qualified Data.Text as T
+import Data.String (fromString)
 
 import LensesConfig
 import Shared.Model.Config.EnvironmentJM ()
@@ -71,9 +71,9 @@ instance FromJSON ServerConfigJwt where
 
 instance FromJSON ServerConfigRoles where
   parseJSON (Object o) = do
-    _serverConfigRolesAdmin <- o .:? T.pack _USER_ROLE_ADMIN .!= (defaultRoles ^. admin)
-    _serverConfigRolesDataSteward <- o .:? T.pack _USER_ROLE_DATA_STEWARD .!= (defaultRoles ^. dataSteward)
-    _serverConfigRolesResearcher <- o .:? T.pack _USER_ROLE_RESEARCHER .!= (defaultRoles ^. researcher)
+    _serverConfigRolesAdmin <- o .:? fromString _USER_ROLE_ADMIN .!= (defaultRoles ^. admin)
+    _serverConfigRolesDataSteward <- o .:? fromString _USER_ROLE_DATA_STEWARD .!= (defaultRoles ^. dataSteward)
+    _serverConfigRolesResearcher <- o .:? fromString _USER_ROLE_RESEARCHER .!= (defaultRoles ^. researcher)
     return ServerConfigRoles {..}
   parseJSON _ = mzero
 

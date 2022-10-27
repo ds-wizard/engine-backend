@@ -47,7 +47,7 @@ validateJwtToken jwtToken secret currentJwtVersion now =
             else Just _ERROR_SERVICE_TOKEN__OBSOLETE_TOKEN_VERSION
         Nothing -> Just _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_VERSION
     verifySignature jwtToken secret callback =
-      case JWT.decodeAndVerifySignature (JWT.hmacSecret (T.pack secret)) (T.pack jwtToken) of
+      case JWT.decodeAndVerifySignature (JWT.toVerify . JWT.hmacSecret . T.pack $ secret) (T.pack jwtToken) of
         Just _ -> callback ()
         Nothing -> Just _ERROR_SERVICE_TOKEN__UNABLE_TO_DECODE_AND_VERIFY_TOKEN
     verifyExpiration jwtToken now callback =

@@ -5,10 +5,10 @@ module Wizard.Database.Migration.Production.Migration_0008_packageFkAndBase64.Mi
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
 import Data.Aeson
+import qualified Data.Aeson.KeyMap as KM
 import qualified Data.ByteString.Base64 as B64
 import qualified Data.ByteString.Char8 as BS
 import Data.Foldable (traverse_)
-import qualified Data.HashMap.Strict as HM
 import Data.Int
 import qualified Data.Map.Strict as M
 import Data.Pool (Pool, withResource)
@@ -79,7 +79,7 @@ updateSubmissionPropsInUser dbPool user = do
 updateSubmissionProp :: M.Map String Value -> M.Map String Value
 updateSubmissionProp prop =
   case M.lookup "values" prop of
-    Just (Object values) -> M.insert "values" (Object . HM.map (\(String a) -> convertToBase64 a) $ values) prop
+    Just (Object values) -> M.insert "values" (Object . KM.map (\(String a) -> convertToBase64 a) $ values) prop
     _ -> prop
 
 data User =
@@ -125,17 +125,17 @@ updateAuthentication = updateEntity
         Just (Object external) -> M.insert "external" (Object . updateExternal $ external) entity
         _ -> entity
     updateExternal external =
-      case HM.lookup "services" external of
-        Just (Array services) -> HM.insert "services" (Array . fmap updateService $ services) external
+      case KM.lookup "services" external of
+        Just (Array services) -> KM.insert "services" (Array . fmap updateService $ services) external
         _ -> external
     updateService (Object service) = Object . updateClientSecret . updateClientId $ service
     updateClientId service =
-      case HM.lookup "clientId" service of
-        Just (String clientId) -> HM.insert "clientId" (convertToBase64 clientId) service
+      case KM.lookup "clientId" service of
+        Just (String clientId) -> KM.insert "clientId" (convertToBase64 clientId) service
         _ -> service
     updateClientSecret service =
-      case HM.lookup "clientSecret" service of
-        Just (String clientSecret) -> HM.insert "clientSecret" (convertToBase64 clientSecret) service
+      case KM.lookup "clientSecret" service of
+        Just (String clientSecret) -> KM.insert "clientSecret" (convertToBase64 clientSecret) service
         _ -> service
 
 updateRegistry :: M.Map String Value -> M.Map String Value
@@ -152,8 +152,8 @@ updateQuestionnaire = updateEntity
         Just (Object feedback) -> M.insert "feedback" (Object . updateFeedback $ feedback) entity
         _ -> entity
     updateFeedback feedback =
-      case HM.lookup "token" feedback of
-        Just (String token) -> HM.insert "token" (convertToBase64 token) feedback
+      case KM.lookup "token" feedback of
+        Just (String token) -> KM.insert "token" (convertToBase64 token) feedback
         _ -> feedback
 
 data AppConfig =

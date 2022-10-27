@@ -3,7 +3,7 @@ module Wizard.Metamodel.Migration.Migration0008
   ) where
 
 import Data.Aeson
-import qualified Data.HashMap.Strict as HM
+import qualified Data.Aeson.KeyMap as KM
 import qualified Data.Text as T
 
 import Wizard.Metamodel.Migration.MigrationContext
@@ -16,7 +16,7 @@ migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ input = Right [migrate input]
 
 emptyAnnotations :: Value
-emptyAnnotations = Object HM.empty
+emptyAnnotations = Object KM.empty
 
 migrateAnyAddEventChangeAnnotations :: Object -> Object
 migrateAnyAddEventChangeAnnotations = runBasicOp (Insert "annotations" emptyAnnotations)

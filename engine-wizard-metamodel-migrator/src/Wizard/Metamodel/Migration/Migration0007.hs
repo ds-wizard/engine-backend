@@ -3,7 +3,8 @@ module Wizard.Metamodel.Migration.Migration0007
   ) where
 
 import Data.Aeson
-import qualified Data.HashMap.Strict as HM
+import qualified Data.Aeson.KeyMap as KM
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 
 import Wizard.Metamodel.Migration.MigrationContext
@@ -18,7 +19,7 @@ migrateEventValue _ = Right . migrate
 mkPhaseEvent :: T.Text -> T.Text -> T.Text -> T.Text -> Value
 mkPhaseEvent title eventUuid entityUuid parentUuid =
   Object $
-  HM.fromList
+  KM.fromList
     [ ("uuid", String eventUuid)
     , ("entityUuid", String entityUuid)
     , ("parentUuid", String parentUuid)
@@ -31,7 +32,7 @@ mkPhaseEvent title eventUuid entityUuid parentUuid =
 mkMetricEvent :: T.Text -> T.Text -> T.Text -> T.Text -> T.Text -> T.Text -> Value
 mkMetricEvent title abbr description eventUuid entityUuid parentUuid =
   Object $
-  HM.fromList
+  KM.fromList
     [ ("uuid", String eventUuid)
     , ("entityUuid", String entityUuid)
     , ("parentUuid", String parentUuid)
@@ -125,7 +126,7 @@ transformPhase _ = Null
 
 migrateAddKnowledgeModelEvent :: Object -> [Value]
 migrateAddKnowledgeModelEvent obj =
-  case HM.lookup "entityUuid" obj of
+  case KM.lookup "entityUuid" obj of
     (Just (String kmUuid)) -> [Object obj] ++ addPhases kmUuid ++ addMetrics kmUuid
     _ -> [Object obj]
 
@@ -149,5 +150,5 @@ migrate v@(Object obj)
   | eventType == "EditQuestionEvent" = [Object $ migrateEditQuestionEvent obj]
   | otherwise = [v]
   where
-    eventType = HM.findWithDefault "" "eventType" obj
+    eventType = fromMaybe "" . KM.lookup "eventType" $ obj
 migrate v = [v]

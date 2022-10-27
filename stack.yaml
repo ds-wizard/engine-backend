@@ -1,4 +1,4 @@
-resolver: lts-18.28
+resolver: lts-19.30
 
 packages:
 - engine-registry
@@ -8,19 +8,15 @@ packages:
 
 extra-deps:
   - vendor/postgresql-migration
+  - vendor/servant-errors
   - pwstore-fast-2.4.4
-  - ginger-0.10.0.5
   - text-replace-0.0.0.4
-  - servant-errors-0.1.3.1
   - servant-mock-0.8.7
-  - servant-multipart-0.11.4
   - servant-swagger-tags-0.1.0.1
-  - servant-websockets-2.0.0
   - fsutils-0.1.2
-  - oidc-client-0.5.0.0
-  - network-2.8.0.1
-  - network-bsd-2.8.0.0
-  - raven-haskell-0.1.4.0
+  - oidc-client-0.6.1.0
+  - raven-haskell-0.1.4.1
   - rdf4h-5.0.1
+  - jose-jwt-0.9.4
 
 allow-newer: true

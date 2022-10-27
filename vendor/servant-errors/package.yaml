@@ -1,0 +1,37 @@
+name: servant-errors
+version: 0.1.7.0
+synopsis: Servant Errors wai-middlware
+description: A Wai middleware that uniformly structures errors with in a servant application. The library assumes all HTTP responses with status code greater than 200 and without an HTTP content type are error responses. This assumption is derived from servant server error handling implementation.
+category: Web
+author: Lukwago Allan <epicallan.al@gmail.com>
+maintainer: Lukwago Allan <epicallan.al@gmail.com>
+copyright: 2021 Lukwago Allan <epicallan.al@gmail.com>
+license: MIT
+license-file: LICENSE
+homepage: https://github.com/epicallan/servant-errors
+git: git@github.com:epicallan/servant-errors.git
+bug-reports: https://github.com/epicallan/servant-errors/issues
+tested-with: GHC==9.0.2
+library:
+  source-dirs: lib
+  when:
+  - condition: os(darwin)
+    then:
+      ghc-options: -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+    else:
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations
+  dependencies:
+    - base
+    - base-compat
+    - aeson
+    - bytestring
+    - http-types
+    - http-api-data
+    - http-media
+    - scientific
+    - servant
+    - string-conversions
+    - text
+    - unordered-containers
+    - wai
+

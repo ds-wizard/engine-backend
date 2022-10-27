@@ -79,6 +79,11 @@ jobs:
         run: |
           cp -R /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/postgresql-migration/.stack-work vendor/postgresql-migration/.stack-work
 
+      - name: Move vendor/servant-errors/.stack-work
+        continue-on-error: true
+        run: |
+          cp -R /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/servant-errors/.stack-work vendor/servant-errors/.stack-work
+
       - name: Update config and build info
         run: |
           ./scripts/update-file-timestamps.sh
@@ -128,6 +133,11 @@ jobs:
         run: |
           mkdir -p /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/postgresql-migration
           mv vendor/postgresql-migration/.stack-work /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/postgresql-migration/.stack-work
+      - name: Cache vendor/servant-errors/.stack-work
+        continue-on-error: true
+        run: |
+          mkdir -p /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/servant-errors
+          mv vendor/servant-errors/.stack-work /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/servant-errors/.stack-work
 
       # (5) -> Docker login
       - name: Docker login

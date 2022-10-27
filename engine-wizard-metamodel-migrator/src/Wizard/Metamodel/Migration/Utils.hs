@@ -1,7 +1,8 @@
 module Wizard.Metamodel.Migration.Utils where
 
-import Data.Aeson
-import qualified Data.HashMap.Strict as HM
+import Data.Aeson hiding (Key)
+import Data.Aeson.Key (fromText)
+import qualified Data.Aeson.KeyMap as KM
 import qualified Data.Text as T
 
 type Key = T.Text
@@ -17,38 +18,38 @@ runBasicOps ops obj = foldl (flip runBasicOp) obj ops
 
 runBasicOp :: BasicOp -> Object -> Object
 runBasicOp (Rename oldKey newKey) = renameKey oldKey newKey
-runBasicOp (Insert key value) = HM.insert key value
-runBasicOp (Delete key) = HM.delete key
+runBasicOp (Insert key value) = KM.insert (fromText key) value
+runBasicOp (Delete key) = KM.delete (fromText key)
 runBasicOp (Change key fn) = change
   where
     change obj =
-      case HM.lookup key obj of
-        (Just value) -> HM.insert key (fn value) obj
+      case KM.lookup (fromText key) obj of
+        (Just value) -> KM.insert (fromText key) (fn value) obj
         _ -> obj
 
 renameKey :: Key -> Key -> Object -> Object
 renameKey oldKey newKey obj =
-  case HM.lookup oldKey obj of
-    (Just v) -> HM.insert newKey v . HM.delete oldKey $ obj
+  case KM.lookup (fromText oldKey) obj of
+    (Just v) -> KM.insert (fromText newKey) v . KM.delete (fromText oldKey) $ obj
     _ -> obj
 
 migrateByEventType :: (T.Text -> Object -> Object) -> Value -> Value
 migrateByEventType migrationFn v@(Object obj) =
-  case HM.lookup "eventType" obj of
+  case KM.lookup "eventType" obj of
     (Just (String eventType)) -> Object (migrationFn eventType obj)
     _ -> v
 migrateByEventType _ v = v
 
 unchangedValue :: Value
-unchangedValue = Object (HM.singleton "changed" (Bool False))
+unchangedValue = Object (KM.singleton "changed" (Bool False))
 
 nullUuid :: Value
 nullUuid = String "00000000-0000-0000-0000-000000000000"
 
 applyOnEventField :: (Value -> Value) -> Value -> Value
 applyOnEventField fn v@(Object obj) =
-  case HM.lookup "value" obj of
-    (Just value) -> Object $ HM.insert "value" (fn value) obj
+  case KM.lookup "value" obj of
+    (Just value) -> Object $ KM.insert "value" (fn value) obj
     _ -> v
 applyOnEventField _ v = v
 
