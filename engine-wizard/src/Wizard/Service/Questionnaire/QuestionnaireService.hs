@@ -57,7 +57,7 @@ import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireAudit
 import Wizard.Service.Questionnaire.QuestionnaireMapper
-import Wizard.Service.Questionnaire.QuestionnaireUtils
+import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Questionnaire.QuestionnaireValidation
 import Wizard.Util.Logger
 

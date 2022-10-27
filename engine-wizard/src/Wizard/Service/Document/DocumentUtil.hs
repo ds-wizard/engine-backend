@@ -1,4 +1,4 @@
-module Wizard.Service.Document.DocumentUtils where
+module Wizard.Service.Document.DocumentUtil where
 
 import Control.Lens ((^.))
 import Control.Monad.Except (catchError)

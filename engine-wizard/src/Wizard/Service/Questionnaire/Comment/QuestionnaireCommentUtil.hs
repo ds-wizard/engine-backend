@@ -1,4 +1,4 @@
-module Wizard.Service.Questionnaire.Comment.QuestionnaireCommentUtils where
+module Wizard.Service.Questionnaire.Comment.QuestionnaireCommentUtil where
 
 import Control.Lens ((^.))
 import Control.Monad.Except (catchError)

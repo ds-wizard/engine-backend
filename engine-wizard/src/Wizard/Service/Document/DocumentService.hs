@@ -40,7 +40,7 @@ import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Document.DocumentAcl
 import Wizard.Service.Document.DocumentContextService
 import Wizard.Service.Document.DocumentMapper
-import Wizard.Service.Document.DocumentUtils
+import Wizard.Service.Document.DocumentUtil
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.PersistentCommand.PersistentCommandMapper (toPersistentCommand)
 import Wizard.Service.Questionnaire.Compiler.CompilerService

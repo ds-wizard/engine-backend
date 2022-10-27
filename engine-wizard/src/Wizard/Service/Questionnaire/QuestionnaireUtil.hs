@@ -1,4 +1,4 @@
-module Wizard.Service.Questionnaire.QuestionnaireUtils where
+module Wizard.Service.Questionnaire.QuestionnaireUtil where
 
 import Control.Lens ((^.))
 import Control.Monad (when)

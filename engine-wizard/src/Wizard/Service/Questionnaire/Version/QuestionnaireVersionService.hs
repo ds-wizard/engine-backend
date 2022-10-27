@@ -29,7 +29,7 @@ import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireMapper
-import Wizard.Service.Questionnaire.QuestionnaireUtils
+import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionValidation
 
