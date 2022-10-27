@@ -48,6 +48,6 @@ instance FromRow QuestionnaireCommentThread where
                   case parts !! 3 of
                     "" -> Nothing
                     uuid -> Just . u' $ uuid
-              , _questionnaireCommentCreatedAt = parsePostgresDateTime $ parts !! 4
-              , _questionnaireCommentUpdatedAt = parsePostgresDateTime $ parts !! 5
+              , _questionnaireCommentCreatedAt = parsePostgresDateTime' $ parts !! 4
+              , _questionnaireCommentUpdatedAt = parsePostgresDateTime' $ parts !! 5
               }

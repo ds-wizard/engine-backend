@@ -25,6 +25,7 @@ library:
   dependencies:
   - base
   - aeson
+  - attoparsec
   - base64
   - bytestring
   - case-insensitive
@@ -57,6 +58,7 @@ library:
   - servant-swagger
   - swagger2
   - time
+  - time-parsers
   - text
   - text-replace
   - unordered-containers
