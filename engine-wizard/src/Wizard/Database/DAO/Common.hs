@@ -84,7 +84,7 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
           , show skip
           , show sizeI
           ]
-  logInfoU _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE (trim sql)
   let action conn =
         query
           conn

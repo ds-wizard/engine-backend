@@ -17,7 +17,7 @@ import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
-import Shared.Util.String (replace)
+import Shared.Util.String (replace, trim)
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Questionnaire.QuestionnaireAclDAO
   ( deleteQuestionnairePermRecordsFiltered
@@ -289,7 +289,7 @@ findQuestionnairesOwnedByUser userUuid = do
   appUuid <- asks _appContextAppUuid
   currentUser <- getCurrentUser
   let sql = f' (qtnSelectSql (U.toString appUuid) (U.toString $ currentUser ^. uuid) "[]::text[]") [""]
-  logInfoU _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   entities <- runDB action
   traverse enhance entities
@@ -306,7 +306,7 @@ findQuestionnaireWithZeroAcl = do
                \AND qtn_acl_group.uuid IS NULL \
                \AND qtn.updated_at < now() - INTERVAL '30 days'"
           [entityName]
-  logInfoU _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   runDB action
 
@@ -323,7 +323,7 @@ findQuestionnaireUuids = do
 findQuestionnaireUuids' :: AppContextM [U.UUID]
 findQuestionnaireUuids' = do
   let sql = f' "SELECT %s FROM %s" ["uuid", entityName]
-  logInfoU _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   entities <- runDB action
   return . concat $ entities
@@ -367,7 +367,7 @@ findQuestionnaireEventsById uuid = do
 findQuestionnaireForSquashing :: AppContextM [U.UUID]
 findQuestionnaireForSquashing = do
   let sql = "SELECT uuid FROM questionnaire qtn WHERE squashed = false"
-  logInfoU _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   entities <- runDB action
   return . concat $ entities

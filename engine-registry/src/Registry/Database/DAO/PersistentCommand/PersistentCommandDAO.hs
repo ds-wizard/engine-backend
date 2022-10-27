@@ -13,6 +13,7 @@ import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.Model.PersistentCommand.PersistentCommand
 import Registry.Util.Logger
+import Shared.Util.String (trim)
 
 entityName = "persistent_command"
 
@@ -38,6 +39,6 @@ deletePersistentCommandByUuid uuid = createDeleteEntityByFn entityName [("uuid",
 notifySpecificPersistentCommandQueue :: PersistentCommand -> AppContextM Int64
 notifySpecificPersistentCommandQueue command = do
   let sql = f' "NOTIFY %s__%s, '%s'" [channelName, command ^. component, U.toString $ command ^. uuid]
-  logInfoU _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE (trim sql)
   let action conn = execute_ conn (fromString sql)
   runDB action
