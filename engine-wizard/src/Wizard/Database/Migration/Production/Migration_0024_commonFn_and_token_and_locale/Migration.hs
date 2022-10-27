@@ -1,4 +1,4 @@
-module Wizard.Database.Migration.Production.Migration_0024_commonFn_and_token.Migration
+module Wizard.Database.Migration.Production.Migration_0024_commonFn_and_token_and_locale.Migration
   ( definition
   ) where
 
@@ -13,8 +13,8 @@ definition = (meta, migrate)
 meta =
   MigrationMeta
     { mmNumber = 24
-    , mmName = "Common Functions & user token"
-    , mmDescription = "Add common functions, package and template state and user token"
+    , mmName = "Common Functions & user token & locale"
+    , mmDescription = "Add common functions, package and template state, user token, and locale"
     }
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
@@ -26,6 +26,7 @@ migrate dbPool = do
   createGetPackageStateFn dbPool
   createGetTemplateStateFn dbPool
   createUserTokenTable dbPool
+  createLocaleTable dbPool
 
 createMajorVersionFn dbPool = do
   let sql =
@@ -186,6 +187,30 @@ createUserTokenTable dbPool = do
         \  \
         \ CREATE UNIQUE INDEX user_token_uuid_uindex \
         \     ON user_entity (uuid, app_uuid);"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createLocaleTable dbPool = do
+  let sql =
+        "create table locale \
+         \ ( \
+         \     uuid              uuid              not null \
+         \         constraint locale_pk \
+         \             primary key, \
+         \     name              varchar not null,\
+         \     shortcut          varchar not null,\
+         \     fallback          bool not null,\
+         \     enabled           bool not null,\
+         \     app_uuid          uuid not null \
+         \       constraint locale_app_uuid_fk \
+         \         references app, \
+         \     created_at timestamp with time zone not null,\
+         \     updated_at timestamp with time zone not null \
+         \ ); \
+         \  \
+         \ create unique index locale_uuid_uindex \
+         \     on locale (uuid);"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

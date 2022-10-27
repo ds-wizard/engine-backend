@@ -9,6 +9,7 @@ import LensesConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Database.DAO.App.AppDAO
+import Wizard.Database.DAO.Locale.LocaleDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.AppConfigService
@@ -28,4 +29,5 @@ getClientConfig mClientUrl = do
              Just clientUrl -> getAppConfigByUuid (app ^. uuid)
              Nothing -> getAppConfig
       else getAppConfig
-  return $ toClientConfigDTO serverConfig appConfig app
+  locales <- findLocales
+  return $ toClientConfigDTO serverConfig appConfig app locales

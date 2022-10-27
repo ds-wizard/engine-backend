@@ -13,7 +13,7 @@ import qualified Wizard.Model.Config.ServerConfigDM as S
 import Wizard.Service.Config.ClientConfigMapper
 
 instance ToSchema ClientConfigDTO where
-  declareNamedSchema = simpleToSchema (toClientConfigDTO S.defaultConfig A.defaultAppConfig defaultApp)
+  declareNamedSchema = simpleToSchema (toClientConfigDTO S.defaultConfig A.defaultAppConfig defaultApp [])
 
 instance ToSchema ClientConfigAuthDTO where
   declareNamedSchema = simpleToSchema (toClientAuthDTO A.defaultAuth)

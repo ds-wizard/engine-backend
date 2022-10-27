@@ -7,6 +7,7 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.API.Config.List_App_GET
 import Wizard.Specs.API.Config.List_App_PUT
 import Wizard.Specs.API.Config.List_Bootstrap_GET
+import Wizard.Specs.API.Config.List_Locale_GET
 
 configAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
@@ -14,3 +15,4 @@ configAPI baseContext appContext =
     list_app_GET appContext
     list_app_PUT appContext
     list_bootstrap_GET appContext
+    list_locale_GET appContext

@@ -12,6 +12,7 @@ import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Database.DAO.Limit.AppLimitDAO
+import Wizard.Database.DAO.Locale.LocaleDAO
 import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_MigratorDAO
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
@@ -41,6 +42,8 @@ import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMi
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
 import qualified Wizard.Database.Migration.Development.Limit.AppLimitSchemaMigration as AL_Schema
 import Wizard.Database.Migration.Development.Limit.Data.AppLimits
+import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC
+import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as LOC_Schema
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KM_MIG_Schema
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorSchemaMigration as QTN_MIG_Schema
 import Wizard.Database.Migration.Development.Package.Data.Packages
@@ -67,6 +70,7 @@ buildSchema appContext = do
   runInContext PKG_Schema.dropFunctions appContext
   runInContext CMN_Schema.dropFunctions appContext
   putStrLn "DB: dropping schema"
+  runInContext LOC_Schema.dropTables appContext
   runInContext R_Schema.dropTables appContext
   runInContext QI_Schema.dropTables appContext
   runInContext ADT_Schema.dropTables appContext
@@ -112,6 +116,7 @@ buildSchema appContext = do
   runInContext ADT_Schema.createTables appContext
   runInContext QI_Schema.createTables appContext
   runInContext R_Schema.createTables appContext
+  runInContext LOC_Schema.createTables appContext
   putStrLn "DB: Creating DB functions"
   runInContext CMN_Schema.createFunctions appContext
   runInContext PKG_Schema.createFunctions appContext
@@ -119,8 +124,10 @@ buildSchema appContext = do
   runInContext B_Schema.createFunctions appContext
   putStrLn "DB-S3: Purging and creating schema"
   runInContext TML.runS3Migration appContext
+  runInContext LOC.runS3Migration appContext
 
 resetDB appContext = do
+  runInContext deleteLocales appContext
   runInContext deleteRegistryOrganizations appContext
   runInContext deleteRegistryPackages appContext
   runInContext deleteRegistryTemplates appContext

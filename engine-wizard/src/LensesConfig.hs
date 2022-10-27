@@ -123,6 +123,7 @@ import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Limit.AppLimit
+import Wizard.Model.Locale.Locale
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
 import Wizard.Model.Package.PackageList
@@ -488,6 +489,9 @@ makeFields ''WidgetIntegration
 
 -- Model / Limit
 makeFields ''AppLimit
+
+-- Model / Locale
+makeFields ''Locale
 
 -- Model / Migration / KnowledgeModel
 makeFields ''KM_MigratorState.MigratorState

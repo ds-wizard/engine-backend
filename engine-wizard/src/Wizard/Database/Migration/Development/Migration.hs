@@ -24,6 +24,8 @@ import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigratio
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
 import qualified Wizard.Database.Migration.Development.Limit.AppLimitMigration as AL
 import qualified Wizard.Database.Migration.Development.Limit.AppLimitSchemaMigration as AL_Schema
+import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC
+import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as LOC_Schema
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorMigration as KM_MIG
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KM_MIG_Schema
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration as QTN_MIG
@@ -57,6 +59,7 @@ runMigration = do
   TML_Schema.dropFunctions
   CMN_Schema.dropFunctions
   -- 2. Drop schema
+  LOC_Schema.dropTables
   R_Schema.dropTables
   QI_Schema.dropTables
   ADT_Schema.dropTables
@@ -103,6 +106,7 @@ runMigration = do
   ADT_Schema.createTables
   QI_Schema.createTables
   R_Schema.createTables
+  LOC_Schema.createTables
   -- 4. Create DB functions
   CMN_Schema.createFunctions
   PKG_Schema.createFunctions
@@ -110,6 +114,7 @@ runMigration = do
   B_Schema.createFunctions
   -- 5. Load S3 fixtures
   TML.runS3Migration
+  LOC.runS3Migration
   -- 6. Load fixtures
   A.runMigration
   AL.runMigration
@@ -132,5 +137,6 @@ runMigration = do
   ADT.runMigration
   QI.runMigration
   R.runMigration
+  LOC.runMigration
   logInfo _CMP_MIGRATION "ended"
   return Nothing

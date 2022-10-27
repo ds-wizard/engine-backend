@@ -18,6 +18,7 @@ data ClientConfigDTO =
     , _clientConfigDTOTemplate :: AppConfigTemplate
     , _clientConfigDTOSubmission :: SimpleFeature
     , _clientConfigDTOCloud :: ClientConfigCloudDTO
+    , _clientConfigDTOLocales :: [String]
     , _clientConfigDTOOwl :: AppConfigOwl
     }
   deriving (Show, Eq, Generic)
