@@ -87,8 +87,6 @@ import Wizard.Api.Resource.Template.File.TemplateFileChangeDTO
 import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
-import Wizard.Api.Resource.Token.TokenCreateDTO
-import Wizard.Api.Resource.Token.TokenDTO
 import Wizard.Api.Resource.Typehint.TypehintDTO
 import Wizard.Api.Resource.Typehint.TypehintRequestDTO
 import Wizard.Api.Resource.User.UserChangeDTO
@@ -100,6 +98,8 @@ import Wizard.Api.Resource.User.UserProfileDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
+import Wizard.Api.Resource.UserToken.UserTokenCreateDTO
+import Wizard.Api.Resource.UserToken.UserTokenDTO
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
@@ -123,6 +123,7 @@ import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Limit.AppLimit
+import Wizard.Model.Locale.Locale
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
 import Wizard.Model.Package.PackageList
@@ -150,6 +151,7 @@ import Wizard.Model.Submission.Submission
 import Wizard.Model.Template.TemplateList
 import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
+import Wizard.Model.User.UserToken
 import Wizard.Model.Websocket.WebsocketMessage
 import Wizard.Model.Websocket.WebsocketRecord
 
@@ -291,6 +293,8 @@ makeFields ''ServerConfigPersistentCommandListenerJob
 makeFields ''ServerConfigPlan
 
 makeFields ''ServerConfigQuestionnaire
+
+makeFields ''ServerConfigUserToken
 
 makeFields ''ServerConfigCronWorker
 
@@ -486,6 +490,9 @@ makeFields ''WidgetIntegration
 -- Model / Limit
 makeFields ''AppLimit
 
+-- Model / Locale
+makeFields ''Locale
+
 -- Model / Migration / KnowledgeModel
 makeFields ''KM_MigratorState.MigratorState
 
@@ -535,18 +542,6 @@ makeFields ''ClearReplyEvent
 makeFields ''SetPhaseEvent
 
 makeFields ''SetLabelsEvent
-
-makeFields ''ResolveCommentThreadEvent
-
-makeFields ''ReopenCommentThreadEvent
-
-makeFields ''DeleteCommentThreadEvent
-
-makeFields ''AddCommentEvent
-
-makeFields ''EditCommentEvent
-
-makeFields ''DeleteCommentEvent
 
 makeFields ''QuestionnaireVersion
 
@@ -610,6 +605,8 @@ makeFields ''User
 makeFields ''UserSubmissionProps
 
 makeFields ''UserSuggestion
+
+makeFields ''UserToken
 
 -- Model / Websocket
 makeFields ''WebsocketMessage
@@ -795,9 +792,9 @@ makeFields ''TemplateAssetDTO
 makeFields ''TemplateBundleDTO
 
 -- Api / Resource / Token
-makeFields ''TokenDTO
+makeFields ''UserTokenDTO
 
-makeFields ''TokenCreateDTO
+makeFields ''UserTokenCreateDTO
 
 -- Api / Resource / Typehint
 makeFields ''TypehintDTO

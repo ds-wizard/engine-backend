@@ -22,6 +22,7 @@ import Wizard.Worker.Cron.Questionnaire.CleanQuestionnaireWorker
 import Wizard.Worker.Cron.Questionnaire.RecomputeQuestionnaireIndicationWorker
 import Wizard.Worker.Cron.Questionnaire.SquashQuestionnaireEventsWorker
 import Wizard.Worker.Cron.Registry.RegistrySyncWorker
+import Wizard.Worker.Cron.UserToken.CleanUserTokenWorker
 import Wizard.Worker.Permanent.PersistentCommand.PersistentCommandListenerWorker
 
 worker :: MVar () -> BaseContext -> IO ()
@@ -54,6 +55,7 @@ cronJob context = do
       recomputeQuestionnaireIndicationWorker context
       squashQuestionnaireEventsWorker context
       registrySyncWorker context
+      cleanUserTokenWorker context
   logInfo _CMP_WORKER "scheduling workers completed"
   return threadIds
 

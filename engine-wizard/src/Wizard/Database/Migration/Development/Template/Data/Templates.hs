@@ -19,6 +19,7 @@ import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Database.Migration.Development.Registry.Data.RegistryTemplates
+import Wizard.Model.Template.TemplateState
 import Wizard.Service.Template.TemplateMapper
 
 templateFileDefaultHtmlEditedChangeDto :: TemplateFileChangeDTO
@@ -38,8 +39,13 @@ templateFileNewFileChangeDto =
 commonWizardTemplateSimpleDTO :: TemplateSimpleDTO
 commonWizardTemplateSimpleDTO =
   toSimpleDTO'
+    True
     [SPM.toPackage globalPackage, SPM.toPackage netherlandsPackageV2]
-    (toTemplateList commonWizardTemplate (Just commonWizardRegistryTemplate) (Just globalRegistryOrganization))
+    (toTemplateList
+       commonWizardTemplate
+       (Just commonWizardRegistryTemplate)
+       (Just globalRegistryOrganization)
+       UpToDateTemplateState)
 
 commonWizardTemplateDetailDTO :: TemplateDetailDTO
 commonWizardTemplateDetailDTO =

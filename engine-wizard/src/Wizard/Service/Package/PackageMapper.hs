@@ -6,13 +6,13 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Api.Resource.Package.PackageDTO
-import Shared.Api.Resource.Package.PackageSuggestionDTO
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Util.Coordinate
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Model.Package.PackageList
+import Wizard.Model.Package.PackageSuggestion
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Registry.RegistryPackage
 import Wizard.Service.Package.PackageUtil
@@ -38,8 +38,8 @@ toSimpleDTO' pkgRs orgRs pkg =
     , _packageSimpleDTOCreatedAt = pkg ^. createdAt
     }
 
-toSimpleDTO'' :: PackageList -> PackageSimpleDTO
-toSimpleDTO'' pkg =
+toSimpleDTO'' :: Bool -> PackageList -> PackageSimpleDTO
+toSimpleDTO'' registryEnabled pkg =
   PackageSimpleDTO
     { _packageSimpleDTOPId = pkg ^. pId
     , _packageSimpleDTOName = pkg ^. name
@@ -48,7 +48,7 @@ toSimpleDTO'' pkg =
     , _packageSimpleDTOVersion = pkg ^. version
     , _packageSimpleDTORemoteLatestVersion = pkg ^. remoteVersion
     , _packageSimpleDTODescription = pkg ^. description
-    , _packageSimpleDTOState = computePackageState' pkg
+    , _packageSimpleDTOState = computePackageState' registryEnabled pkg
     , _packageSimpleDTOOrganization =
         case pkg ^. remoteOrganizationName of
           Just orgName ->
@@ -89,14 +89,14 @@ toDetailDTO pkg pkgRs orgRs versionLs registryLink =
     , _packageDetailDTOCreatedAt = pkg ^. createdAt
     }
 
-toSuggestionDTO :: (PackageList, [String]) -> PackageSuggestionDTO
-toSuggestionDTO (pkg, localVersions) =
-  PackageSuggestionDTO
-    { _packageSuggestionDTOPId = pkg ^. pId
-    , _packageSuggestionDTOName = pkg ^. name
-    , _packageSuggestionDTOVersion = pkg ^. version
-    , _packageSuggestionDTODescription = pkg ^. description
-    , _packageSuggestionDTOVersions = L.sortBy compareVersion localVersions
+toSuggestion :: (Package, [String]) -> PackageSuggestion
+toSuggestion (pkg, localVersions) =
+  PackageSuggestion
+    { _packageSuggestionPId = pkg ^. pId
+    , _packageSuggestionName = pkg ^. name
+    , _packageSuggestionVersion = pkg ^. version
+    , _packageSuggestionDescription = pkg ^. description
+    , _packageSuggestionVersions = L.sortBy compareVersion localVersions
     }
 
 fromDTO :: PackageDTO -> U.UUID -> PackageWithEvents

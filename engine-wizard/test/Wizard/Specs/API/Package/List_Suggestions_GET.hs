@@ -14,11 +14,13 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Service.Package.PackageMapper
+import Wizard.Api.Resource.Package.PackageSuggestionJM ()
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Package.PackageMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -56,20 +58,30 @@ test_200 appContext = do
     (Page
        "packages"
        (PageMetadata 20 3 1 0)
-       [ toSuggestionDTO (toPackage globalPackage) (Page "packages" (PageMetadata 1 1 1 0) [globalPackageGroup])
-       , toSuggestionDTO (toPackage germanyPackage) (Page "packages" (PageMetadata 1 1 1 0) [germanyPackageGroup])
-       , toSuggestionDTO
-           (toPackage netherlandsPackageV2)
-           (Page "packages" (PageMetadata 1 1 1 0) [netherlandsPackageGroup])
+       [ toSuggestion (toPackage globalPackage, ["0.0.1", "1.0.0"])
+       , toSuggestion (toPackage germanyPackage, ["1.0.0"])
+       , toSuggestion (toPackage netherlandsPackageV2, ["1.0.0", "2.0.0"])
        ])
+  create_test_200
+    "HTTP 200 OK (select)"
+    appContext
+    "/packages/suggestions?sort=organizationId,asc&select=org.de:core-de:all,org.nl:core-nl:all"
+    (Page
+       "packages"
+       (PageMetadata 20 2 1 0)
+       [ toSuggestion (toPackage germanyPackage, ["1.0.0"])
+       , toSuggestion (toPackage netherlandsPackageV2, ["1.0.0", "2.0.0"])
+       ])
+  create_test_200
+    "HTTP 200 OK (exclude)"
+    appContext
+    "/packages/suggestions?sort=organizationId,asc&exclude=org.de:core-de:all,org.nl:core-nl:all"
+    (Page "packages" (PageMetadata 20 1 1 0) [toSuggestion (toPackage globalPackage, ["0.0.1", "1.0.0"])])
   create_test_200
     "HTTP 200 OK (query - q)"
     appContext
     "/packages/suggestions?q=Germany Knowledge Model"
-    (Page
-       "packages"
-       (PageMetadata 20 1 1 0)
-       [toSuggestionDTO (toPackage germanyPackage) (Page "packages" (PageMetadata 1 1 1 0) [germanyPackageGroup])])
+    (Page "packages" (PageMetadata 20 1 1 0) [toSuggestion (toPackage germanyPackage, ["1.0.0"])])
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext

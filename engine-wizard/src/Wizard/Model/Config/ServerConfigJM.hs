@@ -3,7 +3,7 @@ module Wizard.Model.Config.ServerConfigJM where
 import Control.Lens ((^.))
 import Control.Monad
 import Data.Aeson
-import qualified Data.Text as T
+import Data.String (fromString)
 
 import LensesConfig
 import Shared.Model.Config.EnvironmentJM ()
@@ -31,6 +31,7 @@ instance FromJSON ServerConfig where
     _serverConfigPersistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
     _serverConfigPlan <- o .:? "plan" .!= defaultPlan
     _serverConfigQuestionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
+    _serverConfigUserToken <- o .:? "userToken" .!= defaultUserToken
     _serverConfigLogging <- o .:? "logging" .!= defaultLogging
     _serverConfigCloud <- o .:? "cloud" .!= defaultCloud
     return ServerConfig {..}
@@ -70,9 +71,9 @@ instance FromJSON ServerConfigJwt where
 
 instance FromJSON ServerConfigRoles where
   parseJSON (Object o) = do
-    _serverConfigRolesAdmin <- o .:? T.pack _USER_ROLE_ADMIN .!= (defaultRoles ^. admin)
-    _serverConfigRolesDataSteward <- o .:? T.pack _USER_ROLE_DATA_STEWARD .!= (defaultRoles ^. dataSteward)
-    _serverConfigRolesResearcher <- o .:? T.pack _USER_ROLE_RESEARCHER .!= (defaultRoles ^. researcher)
+    _serverConfigRolesAdmin <- o .:? fromString _USER_ROLE_ADMIN .!= (defaultRoles ^. admin)
+    _serverConfigRolesDataSteward <- o .:? fromString _USER_ROLE_DATA_STEWARD .!= (defaultRoles ^. dataSteward)
+    _serverConfigRolesResearcher <- o .:? fromString _USER_ROLE_RESEARCHER .!= (defaultRoles ^. researcher)
     return ServerConfigRoles {..}
   parseJSON _ = mzero
 
@@ -139,6 +140,12 @@ instance FromJSON ServerConfigQuestionnaire where
       o .:? "recomputeIndication" .!= (defaultQuestionnaire ^. recomputeIndication)
     _serverConfigQuestionnaireSquash <- o .:? "squash" .!= (defaultQuestionnaire ^. squash)
     return ServerConfigQuestionnaire {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigUserToken where
+  parseJSON (Object o) = do
+    _serverConfigUserTokenClean <- o .:? "clean" .!= (defaultUserToken ^. clean)
+    return ServerConfigUserToken {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigCronWorker where

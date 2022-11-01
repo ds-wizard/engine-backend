@@ -57,13 +57,16 @@ import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireAudit
 import Wizard.Service.Questionnaire.QuestionnaireMapper
-import Wizard.Service.Questionnaire.QuestionnaireUtils
+import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Questionnaire.QuestionnaireValidation
 import Wizard.Util.Logger
 
 getQuestionnairesForCurrentUserPageDto ::
      Maybe String
   -> Maybe Bool
+  -> Maybe Bool
+  -> Maybe [String]
+  -> Maybe String
   -> Maybe [String]
   -> Maybe String
   -> Maybe [String]
@@ -71,17 +74,20 @@ getQuestionnairesForCurrentUserPageDto ::
   -> Pageable
   -> [Sort]
   -> AppContextM (Page QuestionnaireDTO)
-getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp pageable sort = do
+getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mPackageIds mPackageIdsOp pageable sort = do
   checkPermission _QTN_PERM
   currentUser <- getCurrentUser
   qtnPage <-
     findQuestionnairesForCurrentUserPage
       mQuery
       mIsTemplate
+      mIsMigrating
       mProjectTags
       mProjectTagsOp
       mUserUuids
       mUserUuidsOp
+      mPackageIds
+      mPackageIdsOp
       pageable
       sort
   return . fmap toDTO' $ qtnPage
@@ -246,7 +252,7 @@ getQuestionnaireEventsForQtnUuid qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
   checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
   auditQuestionnaireListEvents qtnUuid
-  traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
+  traverse enhanceQuestionnaireEvent (qtn ^. events)
 
 getQuestionnaireEventForQtnUuid :: String -> String -> AppContextM QuestionnaireEventDTO
 getQuestionnaireEventForQtnUuid qtnUuid eventUuid = do

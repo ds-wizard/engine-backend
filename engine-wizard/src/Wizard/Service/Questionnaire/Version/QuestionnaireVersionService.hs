@@ -29,7 +29,7 @@ import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireMapper
-import Wizard.Service.Questionnaire.QuestionnaireUtils
+import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionValidation
 
@@ -100,7 +100,7 @@ revertToEvent qtnUuid reqDto shouldSave =
     let updatedQtn = (events .~ updatedEvents) . (versions .~ updatedVersions) $ qtn
     when shouldSave (updateQuestionnaireById updatedQtn)
     qtnCtn <- compileQuestionnaire updatedQtn
-    eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (updatedQtn ^. events))
+    eventsDto <- traverse enhanceQuestionnaireEvent (updatedQtn ^. events)
     versionDto <- traverse enhanceQuestionnaireVersion (updatedQtn ^. versions)
     when shouldSave (logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid)
     commentThreadsMap <- getQuestionnaireComments qtn

@@ -14,6 +14,7 @@ import LensesConfig
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
+import Shared.Util.String (trim)
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.PersistentCommand.PersistentCommand ()
 import Wizard.Database.Mapping.PersistentCommand.PersistentCommandSimple ()
@@ -49,7 +50,7 @@ findPersistentCommandsByStates = do
           \WHERE (state = 'NewPersistentCommandState' \
           \  OR (state = 'ErrorPersistentCommandState' AND attempts <= max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
           \  AND internal = true"
-  logInfoU _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   runDB action
 
@@ -92,7 +93,7 @@ listenPersistentCommandChannel = createChannelListener channelName
 createChannelListener :: String -> AppContextM ()
 createChannelListener name = do
   let sql = f' "listen %s" [name]
-  logInfoU _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE (trim sql)
   let action conn = execute_ conn (fromString sql)
   runDB action
   logInfoU _CMP_DATABASE (f' "Listening for '%s' channel" [name])
@@ -107,13 +108,13 @@ getChannelNotification = do
 notifyPersistentCommandQueue :: AppContextM Int64
 notifyPersistentCommandQueue = do
   let sql = f' "NOTIFY %s" [channelName]
-  logInfoU _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE (trim sql)
   let action conn = execute_ conn (fromString sql)
   runDB action
 
 notifySpecificPersistentCommandQueue :: PersistentCommand -> AppContextM Int64
 notifySpecificPersistentCommandQueue command = do
   let sql = f' "NOTIFY %s__%s, '%s'" [channelName, command ^. component, U.toString $ command ^. uuid]
-  logInfoU _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE (trim sql)
   let action conn = execute_ conn (fromString sql)
   runDB action

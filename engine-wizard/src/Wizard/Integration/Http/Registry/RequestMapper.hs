@@ -7,7 +7,7 @@ import Prelude hiding (lookup)
 import Servant
 import Servant.Client
 
-import LensesConfig
+import LensesConfig hiding (templateMetamodelVersion)
 import Registry.Api.Handler.Organization.Detail_State_PUT
 import Registry.Api.Handler.Organization.List_POST
 import Registry.Api.Handler.Organization.List_Simple_GET
@@ -22,6 +22,8 @@ import Registry.Api.Resource.Package.PackageSimpleDTO
 import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Constant.Api
+import Shared.Constant.KnowledgeModel
+import Shared.Constant.Template
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
@@ -61,6 +63,7 @@ toRetrievePackagesRequest appConfig iStat =
     xTmlCountHeaderName
     organizationId
     kmId
+    metamodelVersion
   where
     mTokenHeader = Just $ "Bearer " ++ (appConfig ^. token)
     xUserCountHeaderName = Just . show $ iStat ^. userCount
@@ -71,14 +74,17 @@ toRetrievePackagesRequest appConfig iStat =
     xTmlCountHeaderName = Just . show $ iStat ^. tmlCount
     organizationId = Nothing
     kmId = Nothing
+    metamodelVersion = Just kmMetamodelVersion
 
 toRetrieveTemplatesRequest ::
      AppConfigRegistry -> ClientM (Headers '[ Header "x-trace-uuid" String] [TemplateSimpleDTO])
-toRetrieveTemplatesRequest appConfig = client TML_List_GET.list_GET_Api mTokenHeader organizationId tmlId
+toRetrieveTemplatesRequest appConfig =
+  client TML_List_GET.list_GET_Api mTokenHeader organizationId tmlId metamodelVersion
   where
     mTokenHeader = Just $ "Bearer " ++ (appConfig ^. token)
     organizationId = Nothing
     tmlId = Nothing
+    metamodelVersion = Just templateMetamodelVersion
 
 toRetrievePackageBundleByIdRequest :: ServerConfigRegistry -> AppConfigRegistry -> String -> HttpRequest
 toRetrievePackageBundleByIdRequest serverConfig appConfig pkgId =

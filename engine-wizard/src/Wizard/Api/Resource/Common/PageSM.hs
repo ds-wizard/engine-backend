@@ -4,15 +4,12 @@ import Data.Swagger
 
 import Shared.Api.Resource.Common.PageJM ()
 import Shared.Api.Resource.Common.PageMetadataSM ()
-import Shared.Api.Resource.Package.PackageSuggestionDTO
-import Shared.Api.Resource.Package.PackageSuggestionSM ()
 import Shared.Api.Resource.Template.TemplateSuggestionDTO
 import Shared.Api.Resource.Template.TemplateSuggestionSM ()
 import Shared.Database.Migration.Development.Common.Data.Pages
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Common.Page
-import Shared.Model.Common.PageMetadata
 import qualified Shared.Service.Package.PackageMapper as SP_Mapper
 import Shared.Service.Template.TemplateMapper
 import Shared.Util.Swagger
@@ -23,6 +20,7 @@ import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentSM ()
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
+import Wizard.Api.Resource.Package.PackageSuggestionSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
@@ -44,6 +42,7 @@ import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.Question
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Branch.BranchList
+import Wizard.Model.Package.PackageSuggestion
 import qualified Wizard.Service.App.AppMapper as A_Mapper
 import qualified Wizard.Service.Package.PackageMapper as P_Mapper
 import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PC_Mapper
@@ -68,17 +67,14 @@ instance ToSchema (Page PackageSimpleDTO) where
     simpleToSchema'''''
       "_page"
       "Page PackageSimpleDTO"
-      (Page
-         "packages"
-         pageMetadata
-         [SP_Mapper.toSuggestionDTO (SP_Mapper.toPackage globalPackage) (Page "packages" (PageMetadata 20 0 0 0) [])])
+      (Page "packages" pageMetadata [P_Mapper.toSimpleDTO (SP_Mapper.toPackage globalPackage)])
 
-instance ToSchema (Page PackageSuggestionDTO) where
+instance ToSchema (Page PackageSuggestion) where
   declareNamedSchema =
     simpleToSchema'''''
       "_page"
-      "Page PackageSuggestionDTO"
-      (Page "packages" pageMetadata [P_Mapper.toSimpleDTO (SP_Mapper.toPackage globalPackage)])
+      "Page PackageSuggestion"
+      (Page "packages" pageMetadata [P_Mapper.toSuggestion (SP_Mapper.toPackage globalPackage, [])])
 
 instance ToSchema (Page BranchList) where
   declareNamedSchema =

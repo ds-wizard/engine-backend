@@ -7,6 +7,7 @@ import Data.Time
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Util.Uuid
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireLabels
@@ -14,12 +15,10 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireRep
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
+import Wizard.Service.User.UserMapper
 
 fEvents :: [QuestionnaireEvent]
-fEvents = fEventsWithoutComments ++ [ace_rQ1_t1_1', ace_rQ1_t1_2']
-
-fEventsWithoutComments :: [QuestionnaireEvent]
-fEventsWithoutComments =
+fEvents =
   [ sre_rQ1'
   , sre_rQ2'
   , sre_rQ2_aYes_fuQ1'
@@ -40,9 +39,6 @@ fEventsWithoutComments =
 
 fEventsDto :: [QuestionnaireEventDTO]
 fEventsDto = fmap (\event -> toEventDTO event (Just userAlbert)) fEvents
-
-fEventsWithoutCommentsDto :: [QuestionnaireEventDTO]
-fEventsWithoutCommentsDto = fmap (\event -> toEventDTO event (Just userAlbert)) fEventsWithoutComments
 
 fEventsWithUpdated :: [QuestionnaireEvent]
 fEventsWithUpdated = fEvents ++ [sre_rQ1Updated']
@@ -325,118 +321,196 @@ slble_rQ2 =
     , _setLabelsEventCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
-rte_rQ1_t1' :: QuestionnaireEvent
-rte_rQ1_t1' = ResolveCommentThreadEvent' rte_rQ1_t1
+rte_rQ1_t1' :: QuestionnaireEventDTO
+rte_rQ1_t1' = ResolveCommentThreadEventDTO' rte_rQ1_t1
 
-rte_rQ1_t1 :: ResolveCommentThreadEvent
+rte_rQ1_t1 :: ResolveCommentThreadEventDTO
 rte_rQ1_t1 =
-  ResolveCommentThreadEvent
-    { _resolveCommentThreadEventUuid = u' "ad5ffe15-d895-4452-af31-3b952db0b8a8"
-    , _resolveCommentThreadEventPath = cmtQ1_path
-    , _resolveCommentThreadEventThreadUuid = cmtQ1_t1 ^. uuid
-    , _resolveCommentThreadEventCreatedBy = cmtQ1_t1Resolved ^. createdBy
-    , _resolveCommentThreadEventCreatedAt = cmtQ1_t1Resolved ^. createdAt
+  ResolveCommentThreadEventDTO
+    { _resolveCommentThreadEventDTOUuid = u' "ad5ffe15-d895-4452-af31-3b952db0b8a8"
+    , _resolveCommentThreadEventDTOPath = cmtQ1_path
+    , _resolveCommentThreadEventDTOThreadUuid = cmtQ1_t1 ^. uuid
+    , _resolveCommentThreadEventDTOCreatedBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , _resolveCommentThreadEventDTOCreatedAt = cmtQ1_t1Resolved ^. createdAt
     }
 
-ote_rQ1_t1' :: QuestionnaireEvent
-ote_rQ1_t1' = ReopenCommentThreadEvent' ote_rQ1_t1
+rtche_rQ1_t1' :: QuestionnaireEventChangeDTO
+rtche_rQ1_t1' = ResolveCommentThreadEventChangeDTO' rtche_rQ1_t1
 
-ote_rQ1_t1 :: ReopenCommentThreadEvent
+rtche_rQ1_t1 :: ResolveCommentThreadEventChangeDTO
+rtche_rQ1_t1 =
+  ResolveCommentThreadEventChangeDTO
+    { _resolveCommentThreadEventChangeDTOUuid = rte_rQ1_t1 ^. uuid
+    , _resolveCommentThreadEventChangeDTOPath = rte_rQ1_t1 ^. path
+    , _resolveCommentThreadEventChangeDTOThreadUuid = rte_rQ1_t1 ^. threadUuid
+    , _resolveCommentThreadEventChangeDTOPrivate = False
+    }
+
+ote_rQ1_t1' :: QuestionnaireEventDTO
+ote_rQ1_t1' = ReopenCommentThreadEventDTO' ote_rQ1_t1
+
+ote_rQ1_t1 :: ReopenCommentThreadEventDTO
 ote_rQ1_t1 =
-  ReopenCommentThreadEvent
-    { _reopenCommentThreadEventUuid = u' "444c89c8-ead9-44c7-9621-0c0c43ff5f9f"
-    , _reopenCommentThreadEventPath = cmtQ1_path
-    , _reopenCommentThreadEventThreadUuid = cmtQ1_t1 ^. uuid
-    , _reopenCommentThreadEventCreatedBy = cmtQ1_t1 ^. createdBy
-    , _reopenCommentThreadEventCreatedAt = cmtQ1_t1 ^. createdAt
+  ReopenCommentThreadEventDTO
+    { _reopenCommentThreadEventDTOUuid = u' "444c89c8-ead9-44c7-9621-0c0c43ff5f9f"
+    , _reopenCommentThreadEventDTOPath = cmtQ1_path
+    , _reopenCommentThreadEventDTOThreadUuid = cmtQ1_t1 ^. uuid
+    , _reopenCommentThreadEventDTOCreatedBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , _reopenCommentThreadEventDTOCreatedAt = cmtQ1_t1 ^. createdAt
     }
 
-dte_rQ1_t1' :: QuestionnaireEvent
-dte_rQ1_t1' = DeleteCommentThreadEvent' dte_rQ1_t1
+otche_rQ1_t1' :: QuestionnaireEventChangeDTO
+otche_rQ1_t1' = ReopenCommentThreadEventChangeDTO' otche_rQ1_t1
 
-dte_rQ1_t1 :: DeleteCommentThreadEvent
+otche_rQ1_t1 :: ReopenCommentThreadEventChangeDTO
+otche_rQ1_t1 =
+  ReopenCommentThreadEventChangeDTO
+    { _reopenCommentThreadEventChangeDTOUuid = ote_rQ1_t1 ^. uuid
+    , _reopenCommentThreadEventChangeDTOPath = ote_rQ1_t1 ^. path
+    , _reopenCommentThreadEventChangeDTOThreadUuid = ote_rQ1_t1 ^. threadUuid
+    , _reopenCommentThreadEventChangeDTOPrivate = False
+    }
+
+dte_rQ1_t1' :: QuestionnaireEventDTO
+dte_rQ1_t1' = DeleteCommentThreadEventDTO' dte_rQ1_t1
+
+dte_rQ1_t1 :: DeleteCommentThreadEventDTO
 dte_rQ1_t1 =
-  DeleteCommentThreadEvent
-    { _deleteCommentThreadEventUuid = u' "0e8a5812-90da-43b1-bb20-dbf8a95aa00d"
-    , _deleteCommentThreadEventPath = cmtQ1_path
-    , _deleteCommentThreadEventThreadUuid = cmtQ1_t1 ^. uuid
-    , _deleteCommentThreadEventCreatedBy = cmtQ1_t1 ^. createdBy
-    , _deleteCommentThreadEventCreatedAt = cmtQ1_t1 ^. createdAt
+  DeleteCommentThreadEventDTO
+    { _deleteCommentThreadEventDTOUuid = u' "0e8a5812-90da-43b1-bb20-dbf8a95aa00d"
+    , _deleteCommentThreadEventDTOPath = cmtQ1_path
+    , _deleteCommentThreadEventDTOThreadUuid = cmtQ1_t1 ^. uuid
+    , _deleteCommentThreadEventDTOCreatedBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , _deleteCommentThreadEventDTOCreatedAt = cmtQ1_t1 ^. createdAt
     }
 
-ace_rQ1_t1_1' :: QuestionnaireEvent
-ace_rQ1_t1_1' = AddCommentEvent' ace_rQ1_t1_1
+dtche_rQ1_t1' :: QuestionnaireEventChangeDTO
+dtche_rQ1_t1' = DeleteCommentThreadEventChangeDTO' dtche_rQ1_t1
 
-ace_rQ1_t1_1 :: AddCommentEvent
+dtche_rQ1_t1 :: DeleteCommentThreadEventChangeDTO
+dtche_rQ1_t1 =
+  DeleteCommentThreadEventChangeDTO
+    { _deleteCommentThreadEventChangeDTOUuid = dte_rQ1_t1 ^. uuid
+    , _deleteCommentThreadEventChangeDTOPath = dte_rQ1_t1 ^. path
+    , _deleteCommentThreadEventChangeDTOThreadUuid = dte_rQ1_t1 ^. threadUuid
+    , _deleteCommentThreadEventChangeDTOPrivate = False
+    }
+
+ace_rQ1_t1_1' :: QuestionnaireEventDTO
+ace_rQ1_t1_1' = AddCommentEventDTO' ace_rQ1_t1_1
+
+ace_rQ1_t1_1 :: AddCommentEventDTO
 ace_rQ1_t1_1 =
-  AddCommentEvent
-    { _addCommentEventUuid = u' "471ef7d8-5164-44ba-9d28-8aad036458fd"
-    , _addCommentEventPath = cmtQ1_path
-    , _addCommentEventThreadUuid = cmtQ1_t1 ^. uuid
-    , _addCommentEventCommentUuid = cmtQ1_t1_1 ^. uuid
-    , _addCommentEventText = cmtQ1_t1_1 ^. text
-    , _addCommentEventPrivate = cmtQ1_t1 ^. private
-    , _addCommentEventCreatedBy = cmtQ1_t1_1 ^. createdBy
-    , _addCommentEventCreatedAt = cmtQ1_t1_1 ^. createdAt
+  AddCommentEventDTO
+    { _addCommentEventDTOUuid = u' "471ef7d8-5164-44ba-9d28-8aad036458fd"
+    , _addCommentEventDTOPath = cmtQ1_path
+    , _addCommentEventDTOThreadUuid = cmtQ1_t1 ^. uuid
+    , _addCommentEventDTOCommentUuid = cmtQ1_t1_1 ^. uuid
+    , _addCommentEventDTOText = cmtQ1_t1_1 ^. text
+    , _addCommentEventDTOPrivate = cmtQ1_t1 ^. private
+    , _addCommentEventDTOCreatedBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , _addCommentEventDTOCreatedAt = cmtQ1_t1_1 ^. createdAt
     }
 
-ace_rQ1_t1_2' :: QuestionnaireEvent
-ace_rQ1_t1_2' = AddCommentEvent' ace_rQ1_t1_2
+ace_rQ1_t1_2' :: QuestionnaireEventDTO
+ace_rQ1_t1_2' = AddCommentEventDTO' ace_rQ1_t1_2
 
-ace_rQ1_t1_2 :: AddCommentEvent
+ace_rQ1_t1_2 :: AddCommentEventDTO
 ace_rQ1_t1_2 =
-  AddCommentEvent
-    { _addCommentEventUuid = u' "3450c5ca-a267-4be0-b112-92f5c0d2e2a8"
-    , _addCommentEventPath = cmtQ1_path
-    , _addCommentEventThreadUuid = cmtQ1_t1 ^. uuid
-    , _addCommentEventCommentUuid = cmtQ1_t1_2 ^. uuid
-    , _addCommentEventText = cmtQ1_t1_2 ^. text
-    , _addCommentEventPrivate = cmtQ1_t1 ^. private
-    , _addCommentEventCreatedBy = cmtQ1_t1_2 ^. createdBy
-    , _addCommentEventCreatedAt = cmtQ1_t1_2 ^. createdAt
+  AddCommentEventDTO
+    { _addCommentEventDTOUuid = u' "3450c5ca-a267-4be0-b112-92f5c0d2e2a8"
+    , _addCommentEventDTOPath = cmtQ1_path
+    , _addCommentEventDTOThreadUuid = cmtQ1_t1 ^. uuid
+    , _addCommentEventDTOCommentUuid = cmtQ1_t1_2 ^. uuid
+    , _addCommentEventDTOText = cmtQ1_t1_2 ^. text
+    , _addCommentEventDTOPrivate = cmtQ1_t1 ^. private
+    , _addCommentEventDTOCreatedBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , _addCommentEventDTOCreatedAt = cmtQ1_t1_2 ^. createdAt
     }
 
-ace_rQ2_t1_1' :: QuestionnaireEvent
-ace_rQ2_t1_1' = AddCommentEvent' ace_rQ2_t1_1
+ace_rQ2_t1_1' :: QuestionnaireEventDTO
+ace_rQ2_t1_1' = AddCommentEventDTO' ace_rQ2_t1_1
 
-ace_rQ2_t1_1 :: AddCommentEvent
+ace_rQ2_t1_1 :: AddCommentEventDTO
 ace_rQ2_t1_1 =
-  AddCommentEvent
-    { _addCommentEventUuid = u' "b46c4ff7-8af2-4164-8e94-841b4f8c312b"
-    , _addCommentEventPath = cmtQ2_path
-    , _addCommentEventThreadUuid = cmtQ2_t1 ^. uuid
-    , _addCommentEventCommentUuid = cmtQ2_t1_1 ^. uuid
-    , _addCommentEventText = cmtQ2_t1_1 ^. text
-    , _addCommentEventPrivate = cmtQ2_t1 ^. private
-    , _addCommentEventCreatedBy = cmtQ2_t1_1 ^. createdBy
-    , _addCommentEventCreatedAt = cmtQ2_t1_1 ^. createdAt
+  AddCommentEventDTO
+    { _addCommentEventDTOUuid = u' "b46c4ff7-8af2-4164-8e94-841b4f8c312b"
+    , _addCommentEventDTOPath = cmtQ2_path
+    , _addCommentEventDTOThreadUuid = cmtQ2_t1 ^. uuid
+    , _addCommentEventDTOCommentUuid = cmtQ2_t1_1 ^. uuid
+    , _addCommentEventDTOText = cmtQ2_t1_1 ^. text
+    , _addCommentEventDTOPrivate = cmtQ2_t1 ^. private
+    , _addCommentEventDTOCreatedBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , _addCommentEventDTOCreatedAt = cmtQ2_t1_1 ^. createdAt
     }
 
-ece_rQ1_t1_1' :: QuestionnaireEvent
-ece_rQ1_t1_1' = EditCommentEvent' ece_rQ1_t1_1
+acche_rQ2_t1_1' :: QuestionnaireEventChangeDTO
+acche_rQ2_t1_1' = AddCommentEventChangeDTO' acche_rQ2_t1_1
 
-ece_rQ1_t1_1 :: EditCommentEvent
+acche_rQ2_t1_1 :: AddCommentEventChangeDTO
+acche_rQ2_t1_1 =
+  AddCommentEventChangeDTO
+    { _addCommentEventChangeDTOUuid = ace_rQ2_t1_1 ^. uuid
+    , _addCommentEventChangeDTOPath = ace_rQ2_t1_1 ^. path
+    , _addCommentEventChangeDTOThreadUuid = ace_rQ2_t1_1 ^. threadUuid
+    , _addCommentEventChangeDTOCommentUuid = ace_rQ2_t1_1 ^. commentUuid
+    , _addCommentEventChangeDTOText = ace_rQ2_t1_1 ^. text
+    , _addCommentEventChangeDTOPrivate = False
+    , _addCommentEventChangeDTONewThread = True
+    }
+
+ece_rQ1_t1_1' :: QuestionnaireEventDTO
+ece_rQ1_t1_1' = EditCommentEventDTO' ece_rQ1_t1_1
+
+ece_rQ1_t1_1 :: EditCommentEventDTO
 ece_rQ1_t1_1 =
-  EditCommentEvent
-    { _editCommentEventUuid = u' "6a598663-4bce-48e9-83d0-422ae753f60d"
-    , _editCommentEventPath = cmtQ1_path
-    , _editCommentEventThreadUuid = cmtQ1_t1 ^. uuid
-    , _editCommentEventCommentUuid = cmtQ1_t1_1Edited ^. uuid
-    , _editCommentEventText = cmtQ1_t1_1Edited ^. text
-    , _editCommentEventCreatedBy = cmtQ1_t1_1Edited ^. createdBy
-    , _editCommentEventCreatedAt = cmtQ1_t1_1Edited ^. updatedAt
+  EditCommentEventDTO
+    { _editCommentEventDTOUuid = u' "6a598663-4bce-48e9-83d0-422ae753f60d"
+    , _editCommentEventDTOPath = cmtQ1_path
+    , _editCommentEventDTOThreadUuid = cmtQ1_t1 ^. uuid
+    , _editCommentEventDTOCommentUuid = cmtQ1_t1_1Edited ^. uuid
+    , _editCommentEventDTOText = cmtQ1_t1_1Edited ^. text
+    , _editCommentEventDTOCreatedBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , _editCommentEventDTOCreatedAt = cmtQ1_t1_1Edited ^. updatedAt
     }
 
-dce_rQ1_t1_1' :: QuestionnaireEvent
-dce_rQ1_t1_1' = DeleteCommentEvent' dce_rQ1_t1_1
+ecche_rQ1_t1_1' :: QuestionnaireEventChangeDTO
+ecche_rQ1_t1_1' = EditCommentEventChangeDTO' ecche_rQ1_t1_1
 
-dce_rQ1_t1_1 :: DeleteCommentEvent
+ecche_rQ1_t1_1 :: EditCommentEventChangeDTO
+ecche_rQ1_t1_1 =
+  EditCommentEventChangeDTO
+    { _editCommentEventChangeDTOUuid = ece_rQ1_t1_1 ^. uuid
+    , _editCommentEventChangeDTOPath = ece_rQ1_t1_1 ^. path
+    , _editCommentEventChangeDTOThreadUuid = ece_rQ1_t1_1 ^. threadUuid
+    , _editCommentEventChangeDTOCommentUuid = ece_rQ1_t1_1 ^. commentUuid
+    , _editCommentEventChangeDTOText = ece_rQ1_t1_1 ^. text
+    , _editCommentEventChangeDTOPrivate = False
+    }
+
+dce_rQ1_t1_1' :: QuestionnaireEventDTO
+dce_rQ1_t1_1' = DeleteCommentEventDTO' dce_rQ1_t1_1
+
+dce_rQ1_t1_1 :: DeleteCommentEventDTO
 dce_rQ1_t1_1 =
-  DeleteCommentEvent
-    { _deleteCommentEventUuid = u' "0e8a5812-90da-43b1-bb20-dbf8a95aa00d"
-    , _deleteCommentEventPath = cmtQ1_path
-    , _deleteCommentEventThreadUuid = cmtQ1_t1 ^. uuid
-    , _deleteCommentEventCommentUuid = cmtQ1_t1_1 ^. uuid
-    , _deleteCommentEventCreatedBy = cmtQ1_t1_1 ^. createdBy
-    , _deleteCommentEventCreatedAt = cmtQ1_t1_1 ^. createdAt
+  DeleteCommentEventDTO
+    { _deleteCommentEventDTOUuid = u' "0e8a5812-90da-43b1-bb20-dbf8a95aa00d"
+    , _deleteCommentEventDTOPath = cmtQ1_path
+    , _deleteCommentEventDTOThreadUuid = cmtQ1_t1 ^. uuid
+    , _deleteCommentEventDTOCommentUuid = cmtQ1_t1_1 ^. uuid
+    , _deleteCommentEventDTOCreatedBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , _deleteCommentEventDTOCreatedAt = cmtQ1_t1_1 ^. createdAt
+    }
+
+dcche_rQ1_t1_1' :: QuestionnaireEventChangeDTO
+dcche_rQ1_t1_1' = DeleteCommentEventChangeDTO' dcche_rQ1_t1_1
+
+dcche_rQ1_t1_1 :: DeleteCommentEventChangeDTO
+dcche_rQ1_t1_1 =
+  DeleteCommentEventChangeDTO
+    { _deleteCommentEventChangeDTOUuid = dce_rQ1_t1_1 ^. uuid
+    , _deleteCommentEventChangeDTOPath = dce_rQ1_t1_1 ^. path
+    , _deleteCommentEventChangeDTOThreadUuid = dce_rQ1_t1_1 ^. threadUuid
+    , _deleteCommentEventChangeDTOCommentUuid = dce_rQ1_t1_1 ^. commentUuid
+    , _deleteCommentEventChangeDTOPrivate = False
     }

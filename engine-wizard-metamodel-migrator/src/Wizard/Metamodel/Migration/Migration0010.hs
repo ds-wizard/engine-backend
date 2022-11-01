@@ -3,7 +3,8 @@ module Wizard.Metamodel.Migration.Migration0010
   ) where
 
 import Data.Aeson
-import qualified Data.HashMap.Strict as HM
+import Data.Aeson.Key (toText)
+import qualified Data.Aeson.KeyMap as KM
 import qualified Data.Text as T
 import qualified Data.Vector as V
 
@@ -18,10 +19,11 @@ migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue ctx input = Right [migrate ctx input]
 
 transformMapToList :: Value -> Value
-transformMapToList (Object obj) = Array . V.fromList . map (uncurry tupleToEntry) . HM.toList $ obj
+transformMapToList (Object obj) =
+  Array . V.fromList . map (uncurry tupleToEntry) . fmap (\(f, s) -> (toText f, s)) . KM.toList $ obj
   where
     tupleToEntry :: T.Text -> Value -> Value
-    tupleToEntry key value = Object . HM.insert "key" (String key) $ HM.singleton "value" value
+    tupleToEntry key value = Object . KM.insert "key" (String key) $ KM.singleton "value" value
 
 migrateAnyEventAddCreatedAt :: Value -> Object -> Object
 migrateAnyEventAddCreatedAt createdAt = runBasicOp (Insert "createdAt" createdAt)

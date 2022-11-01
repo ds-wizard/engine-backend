@@ -24,6 +24,7 @@ type List_GET
      :> "packages"
      :> QueryParam "organizationId" String
      :> QueryParam "kmId" String
+     :> QueryParam "metamodelVersion" Int
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
 
 list_GET_Api :: Proxy List_GET
@@ -39,12 +40,13 @@ list_GET ::
   -> Maybe String
   -> Maybe String
   -> Maybe String
+  -> Maybe Int
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
-list_GET mTokenHeader xUserCountHeaderValue xPkgCountHeaderValue xQtnCountHeaderValue xBranchCountHeaderValue xDocCountHeaderValue xTmlCountHeaderValue organizationId kmId =
+list_GET mTokenHeader xUserCountHeaderValue xPkgCountHeaderValue xQtnCountHeaderValue xBranchCountHeaderValue xDocCountHeaderValue xTmlCountHeaderValue mOrganizationId mKmId mMetamodelVersion =
   getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
     runInMaybeAuthService Transactional $
     addTraceUuidHeader =<< do
-      let queryParams = catMaybes [(,) "organization_id" <$> organizationId, (,) "km_id" <$> kmId]
+      let queryParams = catMaybes [(,) "organization_id" <$> mOrganizationId, (,) "km_id" <$> mKmId]
       let headers =
             catMaybes
               [ (,) xUserCountHeaderName <$> xUserCountHeaderValue
@@ -54,4 +56,4 @@ list_GET mTokenHeader xUserCountHeaderValue xPkgCountHeaderValue xQtnCountHeader
               , (,) xDocCountHeaderName <$> xDocCountHeaderValue
               , (,) xTmlCountHeaderName <$> xTmlCountHeaderValue
               ]
-      getSimplePackagesFiltered queryParams headers
+      getSimplePackagesFiltered queryParams mMetamodelVersion headers

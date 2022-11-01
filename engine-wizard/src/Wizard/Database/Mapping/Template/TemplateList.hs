@@ -6,6 +6,7 @@ import Database.PostgreSQL.Simple.FromRow
 
 import Shared.Api.Resource.Template.TemplateJM ()
 import Shared.Model.Template.TemplateJM ()
+import Wizard.Database.Mapping.Template.TemplateState ()
 import Wizard.Model.Template.TemplateList
 
 instance FromRow TemplateList where
@@ -24,6 +25,7 @@ instance FromRow TemplateList where
     _templateListFormats <- fieldWith fromJSONField
     _templateListCreatedAt <- field
     _templateListAppUuid <- field
+    _templateListState <- field
     _templateListRemoteVersion <- field
     _templateListRemoteOrganizationName <- field
     _templateListRemoteOrganizationLogo <- field

@@ -1,11 +1,18 @@
 module Shared.Localization.Messages.Internal where
 
+import Shared.Util.String (f')
+
 -- --------------------------------------
 -- DATABASE
 -- --------------------------------------
 _ERROR_DATABASE__DESERIALIZATION_FAILED = "Problem with deserialization of entity from database"
 
 _ERROR_DATABASE__TRANSACTION_REQUIRED_DB_CONN = "Transaction requires reserved DB connection"
+
+-- --------------------------------------
+-- DATABASE
+-- --------------------------------------
+_ERROR_S3__GENERIC_ERROR error = f' "Error in S3: %s" [error]
 
 -- --------------------------------------
 -- SERVICE
@@ -19,4 +26,4 @@ _ERROR_SERVICE_CONFIG__VALIDATION_SERVER_PORT =
 
 -- File
 _ERROR_SERVICE_FILE__CANT_READ_JSON filename =
-  "Server was unable to decode a file ('" ++ filename ++ "') to a JSON object"
+  f' "Server was unable to decode a file ('%s') to a JSON object" [filename]

@@ -102,7 +102,7 @@ logInsertAndUpdate sql params = do
           then take 50 p ++ "..."
           else p
   let paramsS = show . fmap (cut . showAction) . toRow $ params
-  logInfoI _CMP_DATABASE $ f' "%s  with params %s" [show sql, paramsS]
+  logInfoI _CMP_DATABASE $ f' "%s  with params %s" [trim . show $ sql, paramsS]
 
 runInTransaction ::
      ( Show e
@@ -160,7 +160,7 @@ createFindEntitiesFn ::
   -> m [entity]
 createFindEntitiesFn entityName = do
   let sql = f' "SELECT * FROM %s" [entityName]
-  logInfoI _CMP_DATABASE sql
+  logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   runDB action
 
@@ -181,7 +181,7 @@ createFindEntitiesSortedFn ::
   -> m [entity]
 createFindEntitiesSortedFn entityName sort = do
   let sql = f' "SELECT * FROM %s %s" [entityName, mapSort sort]
-  logInfoI _CMP_DATABASE sql
+  logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   runDB action
 
@@ -465,7 +465,7 @@ createDeleteEntitiesFn ::
   -> m Int64
 createDeleteEntitiesFn entityName = do
   let sql = f' "DELETE FROM %s" [entityName]
-  logInfoI _CMP_DATABASE sql
+  logInfoI _CMP_DATABASE (trim sql)
   let action conn = execute_ conn (fromString sql)
   runDB action
 
@@ -524,7 +524,7 @@ createCountFn ::
   -> m Int
 createCountFn entityName = do
   let sql = f' "SELECT COUNT(*) FROM %s" [entityName]
-  logInfoI _CMP_DATABASE sql
+  logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   result <- runDB action
   case result of
@@ -620,14 +620,16 @@ regex :: Maybe String -> String
 regex mQuery = ".*" ++ fromMaybe "" mQuery ++ ".*"
 
 mapToDBQuerySql :: [(String, String)] -> String
+mapToDBQuerySql [] = ""
 mapToDBQuerySql [(queryParamKey, queryParamValue)] = queryParamKey ++ " = ? "
 mapToDBQuerySql ((queryParamKey, queryParamValue):xs) = queryParamKey ++ " = ? AND " ++ mapToDBQuerySql xs
 
-mapToDBCoordinatesSql :: String -> Maybe String -> Maybe String -> String
-mapToDBCoordinatesSql entityId (Just orgId) (Just eId) = f' "and organization_id = ? and %s = ? " [entityId]
-mapToDBCoordinatesSql entityId (Just orgId) _ = f' "and organization_id = ? " [entityId]
-mapToDBCoordinatesSql entityId _ (Just eId) = f' "and %s = ? " [entityId]
-mapToDBCoordinatesSql entityId _ _ = ""
+mapToDBCoordinatesSql :: String -> String -> Maybe String -> Maybe String -> String
+mapToDBCoordinatesSql entityName entityId (Just orgId) (Just eId) =
+  f' "and %s.organization_id = ? and %s.%s = ? " [entityName, entityName, entityId]
+mapToDBCoordinatesSql entityName entityId (Just orgId) _ = f' "and %s.organization_id = ? " [entityName]
+mapToDBCoordinatesSql entityName entityId _ (Just eId) = f' "and %s.%s = ? " [entityName, entityId]
+mapToDBCoordinatesSql _ _ _ _ = ""
 
 mapToDBCoordinatesParams :: Maybe String -> Maybe String -> [String]
 mapToDBCoordinatesParams (Just orgId) (Just eId) = [orgId, eId]

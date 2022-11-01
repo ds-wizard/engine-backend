@@ -3,6 +3,8 @@ module Wizard.Model.Package.PackageList where
 import Data.Time
 import GHC.Generics
 
+import Wizard.Model.Package.PackageState
+
 data PackageList =
   PackageList
     { _packageListPId :: String
@@ -11,6 +13,7 @@ data PackageList =
     , _packageListKmId :: String
     , _packageListVersion :: String
     , _packageListDescription :: String
+    , _packageListState :: PackageState
     , _packageListRemoteVersion :: Maybe String
     , _packageListRemoteOrganizationName :: Maybe String
     , _packageListRemoteOrganizationLogo :: Maybe String

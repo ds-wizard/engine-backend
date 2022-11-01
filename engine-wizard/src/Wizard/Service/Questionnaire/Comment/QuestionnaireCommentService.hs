@@ -15,7 +15,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentMapper
-import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentUtils
+import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentUtil
 
 getQuestionnaireComments :: Questionnaire -> AppContextM (M.Map String [QuestionnaireCommentThreadDTO])
 getQuestionnaireComments qtn = do

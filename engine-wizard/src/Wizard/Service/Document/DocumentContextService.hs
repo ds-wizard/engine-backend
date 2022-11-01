@@ -25,7 +25,7 @@ import Wizard.Service.Document.DocumentContextMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
-import Wizard.Service.Questionnaire.QuestionnaireUtils
+import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Report.ReportGenerator
 
 createDocumentContext :: Document -> AppContextM DocumentContext

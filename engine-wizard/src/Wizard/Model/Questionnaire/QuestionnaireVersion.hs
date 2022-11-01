@@ -1,5 +1,6 @@
 module Wizard.Model.Questionnaire.QuestionnaireVersion where
 
+import Data.Aeson ()
 import Data.Hashable
 import Data.Time
 import qualified Data.UUID as U

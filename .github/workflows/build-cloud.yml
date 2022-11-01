@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         component: [registry, wizard]
-        stack: [2.5.1]
+        stack: [2.9.1]
     
     env:
       COMPONENT: ${{ matrix.component }}
@@ -83,6 +83,22 @@ jobs:
       if: github.event_name == 'push' && github.event.forced && steps.cache-postgresql-migration.outputs.cache-hit != 'true'
       run: |
         rm -rf vendor/postgresql-migration/.stack-work
+
+    - name: Cache servant-errors
+      id: cache-servant-errors
+      uses: actions/cache@v3
+      with:
+        path: vendor/servant-errors/.stack-work
+        key: servant-errors-ubuntu18-${{ hashFiles('vendor/servant-errors/package.yaml')}}-${{ hashFiles('vendor/servant-errors/**/*.hs') }}
+        restore-keys: |
+          servant-errors-ubuntu18-${{ hashFiles('vendor/servant-errors/package.yaml')}}-
+          servant-errors-ubuntu18-
+
+    - name: Invalidate servant-errors cache (force push)
+      id: invalidate-cache-servant-errors
+      if: github.event_name == 'push' && github.event.forced && steps.cache-servant-errors.outputs.cache-hit != 'true'
+      run: |
+        rm -rf vendor/servant-errors/.stack-work
 
     - name: Cache engine-shared
       id: cache-engine-shared

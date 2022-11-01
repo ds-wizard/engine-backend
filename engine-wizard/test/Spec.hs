@@ -80,7 +80,6 @@ import Wizard.Specs.Service.Questionnaire.QuestionnaireServiceSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireValidationSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Template.TemplateUtilSpec
-import Wizard.Specs.Service.Token.TokenServiceSpec
 import Wizard.Specs.Service.User.UserServiceSpec
 import Wizard.Specs.Websocket.Branch.Detail.WebsocketSpec
 import Wizard.Specs.Websocket.Common
@@ -178,7 +177,6 @@ main =
                describe "Event" questionnaireEventServiceSpec
                questionnaireValidationSpec
              describe "Report" reportGeneratorSpec
-             describe "Token" tokenServiceSpec
              describe "Template" templateUtilSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "API" $ do

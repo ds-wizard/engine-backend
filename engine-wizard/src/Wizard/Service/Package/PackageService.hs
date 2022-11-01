@@ -4,9 +4,9 @@ import Control.Lens ((^.), (^..))
 import Control.Monad.Reader (asks)
 
 import LensesConfig
-import Shared.Api.Resource.Package.PackageSuggestionDTO
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Model.Common.Page
+import Shared.Model.Common.PageMetadata
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Shared.Model.Event.Event
@@ -22,29 +22,37 @@ import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Package.PackageState
+import Wizard.Model.Package.PackageSuggestion
 import Wizard.Service.Acl.AclService
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageUtil
 import Wizard.Service.Package.PackageValidation
 
 getPackagesPage ::
-     Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page PackageSimpleDTO)
-getPackagesPage mOrganizationId mKmId mQuery pageable sort = do
+     Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Pageable
+  -> [Sort]
+  -> AppContextM (Page PackageSimpleDTO)
+getPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort = do
   checkPermission _PM_READ_PERM
-  pkgs <- findPackagesPage mOrganizationId mKmId mQuery pageable sort
-  return . fmap toSimpleDTO'' $ pkgs
+  appConfig <- getAppConfig
+  if mPackageState == (Just . show $ OutdatedPackageState) && not (appConfig ^. registry . enabled)
+    then return $ Page "packages" (PageMetadata 0 0 0 0) []
+    else do
+      packages <- findPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort
+      return . fmap (toSimpleDTO'' (appConfig ^. registry . enabled)) $ packages
 
-getPackageSuggestions :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestionDTO)
-getPackageSuggestions mQuery pageable sort = do
+getPackageSuggestions ::
+     Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)
+getPackageSuggestions mQuery mSelectIds mExcludeIds pageable sort = do
   checkPermission _PM_READ_PERM
-  pkgs <- findPackagesPage Nothing Nothing mQuery pageable sort
-  pkgsWithVersions <- traverse enhance pkgs
-  return . fmap toSuggestionDTO $ pkgsWithVersions
-  where
-    enhance pkg = do
-      versions <- findVersionsForPackage (pkg ^. organizationId) (pkg ^. kmId)
-      return (pkg, versions)
+  findPackageSuggestionsPage mQuery mSelectIds mExcludeIds pageable sort
 
 getPackageById :: String -> AppContextM Package
 getPackageById pkgId = resolvePackageId pkgId >>= findPackageById

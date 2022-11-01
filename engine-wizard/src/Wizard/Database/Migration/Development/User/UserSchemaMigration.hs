@@ -16,14 +16,20 @@ runMigration = do
 
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/User) drop tables"
-  let sql = "drop table if exists user_entity cascade;"
+  let sql =
+        "drop table if exists user_token cascade;\
+        \drop table if exists user_entity cascade;"
   let action conn = execute_ conn sql
   runDB action
 
 createTables = do
+  createUserTable
+  createUserTokenTable
+
+createUserTable = do
   logInfo _CMP_MIGRATION "(Table/User) create tables"
   let sql =
-        " create table user_entity \
+        "create table user_entity \
         \ ( \
         \     uuid              uuid    not null \
         \         constraint user_pk \
@@ -54,5 +60,29 @@ createTables = do
         \  \
         \ create unique index user_email_uindex \
         \     on user_entity (email, app_uuid); "
+  let action conn = execute_ conn sql
+  runDB action
+
+createUserTokenTable = do
+  logInfo _CMP_MIGRATION "(Table/UserToken) create tables"
+  let sql =
+        "create table user_token \
+        \ ( \
+        \     uuid              uuid    not null \
+        \         constraint user_token_pk \
+        \             primary key, \
+        \     user_uuid uuid not null \
+        \         constraint user_token_user_uuid_fk \
+        \             references user_entity, \
+        \     value             varchar not null, \
+        \     session_state     varchar, \
+        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \         constraint user_entity_app_uuid_fk \
+        \             references app, \
+        \     created_at        timestamp with time zone not null \
+        \ ); \
+        \  \
+        \ create unique index user_token_uuid_uindex \
+        \     on user_entity (uuid, app_uuid);"
   let action conn = execute_ conn sql
   runDB action

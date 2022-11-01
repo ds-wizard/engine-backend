@@ -1,11 +1,11 @@
 module Shared.Util.JSON where
 
 import Data.Aeson
+import qualified Data.Aeson.KeyMap as KM
 import Data.Aeson.Types
 import qualified Data.ByteString.Lazy.Char8 as BSL
-import qualified Data.HashMap.Strict as HashMap
-import qualified Data.HashMap.Strict as HM
 import Data.Maybe (fromMaybe)
+import Data.String (fromString)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
 import qualified Data.Vector as V
@@ -25,7 +25,7 @@ convertValueToOject value callback =
     _ -> Left . UserError $ _ERROR_UTIL_JSON__VALUE_IS_NOT_OBJECT
 
 getField fieldName object callback =
-  case HashMap.lookup (T.pack fieldName) object of
+  case KM.lookup (fromString fieldName) object of
     Just field ->
       case eitherDecode . encode $ field of
         Right value -> callback value
@@ -68,18 +68,21 @@ simpleParseJSON' fieldPrefix typeFieldName = genericToJSON (createOptions' field
 toSumJSON :: (Generic a, GToJSON Zero (Rep a)) => a -> Value
 toSumJSON = genericToJSON (defaultOptions {sumEncoding = UntaggedValue})
 
-toSumJSON' :: (Generic a, GToJSON Zero (Rep a), HasConstructor (Rep a)) => T.Text -> a -> Value
+toSumJSON' :: (Generic a, GToJSON Zero (Rep a), HasConstructor (Rep a)) => String -> a -> Value
 toSumJSON' typeFieldName dto =
   case genericToJSON (defaultOptions {sumEncoding = UntaggedValue}) dto of
     Object o ->
-      Object $ HM.union o (HM.fromList [(typeFieldName, String . T.pack . stripDTOSuffix . constructorName $ dto)])
+      Object $
+      KM.union o (KM.fromList [(fromString typeFieldName, String . T.pack . stripDTOSuffix . constructorName $ dto)])
 
-toSumJSON'' :: (Generic a, GToJSON Zero (Rep a), HasConstructor (Rep a)) => T.Text -> String -> a -> Value
+toSumJSON'' :: (Generic a, GToJSON Zero (Rep a), HasConstructor (Rep a)) => String -> String -> a -> Value
 toSumJSON'' typeFieldName suffix dto =
   case genericToJSON (defaultOptions {sumEncoding = UntaggedValue}) dto of
     Object o ->
       Object $
-      HM.union o (HM.fromList [(typeFieldName, String . T.pack . stripCustomSuffix suffix . constructorName $ dto)])
+      KM.union
+        o
+        (KM.fromList [(fromString typeFieldName, String . T.pack . stripCustomSuffix suffix . constructorName $ dto)])
 
 simpleToJSON fieldPrefix = genericToJSON (createOptions fieldPrefix)
 
@@ -87,7 +90,7 @@ simpleToJSON' fieldPrefix typeFieldName = genericToJSON (createOptions' fieldPre
 
 simpleToJSON'' fieldPrefix additionalData dto =
   case simpleToJSON fieldPrefix dto of
-    Object o -> Object $ HM.union o (HM.fromList additionalData)
+    Object o -> Object $ KM.union o (KM.fromList additionalData)
 
 simpleToJSON''' fieldPrefix typeFieldName suffix = genericToJSON (createOptions'' fieldPrefix typeFieldName suffix)
 
@@ -143,13 +146,13 @@ fieldLabelModifierFnWithParentEntityNameDTO :: String -> String -> String
 fieldLabelModifierFnWithParentEntityNameDTO parentEntityName value =
   jsonSpecialFields . lowerFirst $ splitOn parentEntityName value !! 1
 
-obj = Object . HM.fromList
+obj = Object . KM.fromList
 
 arr = Array . V.fromList
 
 str = String . T.pack
 
-(.->) :: FromJSON a => Parser Object -> T.Text -> Parser a
+(.->) :: FromJSON a => Parser Object -> String -> Parser a
 (.->) parser key = do
   obj <- parser
-  obj .: key
+  obj .: fromString key

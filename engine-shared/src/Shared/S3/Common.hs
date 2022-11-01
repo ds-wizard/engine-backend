@@ -21,6 +21,7 @@ import Network.Minio
 import Network.Minio.S3API
 
 import LensesConfig
+import Shared.Localization.Messages.Internal
 import Shared.Model.Context.ContextLenses
 import Shared.Model.Error.Error
 import Shared.Util.JSON
@@ -60,6 +61,30 @@ createGetObjectFn object = do
         let foldFn = CL.fold BS.append "" :: C.ConduitT BS.ByteString C.Void Minio BS.ByteString
         C.connect (gorObjectStream src) foldFn
   runMinioClient action
+
+createGetObjectFn' ::
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => String
+  -> m (Either MinioErr BS.ByteString)
+createGetObjectFn' object = do
+  bucketName <- getBucketName
+  sanitizedObject <- sanitizeObject object
+  logInfoI _CMP_S3 (f' "Get object: '%s'" [sanitizedObject])
+  let action = do
+        src <- getObject (T.pack bucketName) (T.pack sanitizedObject) defaultGetObjectOptions
+        let srcStream = gorObjectStream src :: C.ConduitM () BS.ByteString Minio ()
+        let foldFn = CL.fold BS.append "" :: C.ConduitT BS.ByteString C.Void Minio BS.ByteString
+        C.connect (gorObjectStream src) foldFn
+  runMinioClient' action
 
 createPutObjectFn ::
      ( MonadReader s m
@@ -311,8 +336,26 @@ runMinioClient action = do
   case res of
     Left e -> do
       logInfoI _CMP_S3 (show e)
-      throwError $ GeneralServerError ("Error in s3 connection: " ++ show e)
+      throwError . GeneralServerError $ _ERROR_S3__GENERIC_ERROR (show e)
     Right e -> return e
+
+runMinioClient' ::
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => Minio a
+  -> m (Either MinioErr a)
+runMinioClient' action = do
+  context <- ask
+  let s3Client = context ^. s3Client'
+  liftIO $ runMinioWith s3Client action
 
 getS3Url :: (MonadReader s m, HasAppUuid' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m) => m String
 getS3Url = do

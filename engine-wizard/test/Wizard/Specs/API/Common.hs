@@ -18,6 +18,7 @@ import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Bootstrap.Web
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
@@ -36,22 +37,19 @@ startWebApp baseContext appContext = do
   return $ runMiddleware env $ runApp baseContext
 
 reqAuthToken :: String
-reqAuthToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsImV4cCI6MjQ1Njk4MjMyMCwidmVyc2lvbiI6IjIifQ.QFwvynp-TcEckL2wIQ5hgX71DVrsUMWrSTY9uzADnLU"
+reqAuthToken = albertToken ^. value
 
 reqAuthHeader :: Header
 reqAuthHeader = ("Authorization", BS.pack $ "Bearer " ++ reqAuthToken)
 
 reqNonAdminAuthToken :: String
-reqNonAdminAuthToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6IjMwZDQ4Y2Y0LThjOGEtNDk2Zi1iYWZlLTU4NWJkMjM4Zjc5OCIsImV4cCI6MjQ1Njk4MjI1OSwidmVyc2lvbiI6IjIifQ.bk1qLv7CTgROvc9ncTV5WD9sdYb5qEabIlWss7lQ87k"
+reqNonAdminAuthToken = nikolaToken ^. value
 
 reqNonAdminAuthHeader :: Header
 reqNonAdminAuthHeader = ("Authorization", BS.pack $ "Bearer " ++ reqNonAdminAuthToken)
 
 reqIsaacAuthToken :: String
-reqIsaacAuthToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImUxYzU4ZTUyLTA4MjQtNDUyNi04ZWJlLWVjMzhlZWM2NzAzMCIsImV4cCI6MjQ1Njk4MjI1OSwidmVyc2lvbiI6IjIifQ.CW9Sp2qBAxaNH-eqrT-iAuWCLfddzFtDe82niPJ27m4"
+reqIsaacAuthToken = isaacToken ^. value
 
 reqIsaacAuthTokenHeader :: Header
 reqIsaacAuthTokenHeader = ("Authorization", BS.pack $ "Bearer " ++ reqIsaacAuthToken)

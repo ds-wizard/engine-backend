@@ -14,10 +14,13 @@ import LensesConfig hiding (request)
 import Wizard.Api.Resource.Config.ClientConfigJM ()
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
+import Wizard.Database.Migration.Development.Locale.Data.Locales
+import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.ClientConfigMapper
 
 import SharedTest.Specs.API.Common
+import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- GET /configs/bootstrap
@@ -45,8 +48,10 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = toClientConfigDTO (appContext ^. serverConfig) defaultAppConfig defaultApp
+    let expDto = toClientConfigDTO (appContext ^. serverConfig) defaultAppConfig defaultApp [localeCz]
     let expBody = encode expDto
+     -- AND: Run migrations
+    runInContextIO LOC.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

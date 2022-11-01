@@ -3,6 +3,7 @@ module Wizard.Api.Handler.Common where
 import Control.Lens ((^.))
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (ask, asks, liftIO)
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -16,15 +17,18 @@ import Shared.Util.Token
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.App.AppDAO
+import Wizard.Database.DAO.User.UserTokenDAO
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Localization.Messages.Public
 import Wizard.Model.App.App
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
-import Wizard.Service.Token.TokenService
+import Wizard.Model.User.UserToken
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
+import Wizard.Service.UserToken.UserTokenUtil
+import Wizard.Service.UserToken.UserTokenValidation
 import Wizard.Util.Context
 
 runInUnauthService :: Maybe String -> TransactionState -> AppContextM a -> BaseContextM a
@@ -78,6 +82,8 @@ getAuthServiceExecutor ::
   -> ((TransactionState -> AppContextM a -> BaseContextM a) -> BaseContextM b)
   -> BaseContextM b
 getAuthServiceExecutor (Just token) mServerUrl callback = do
+  isValidJwtToken token
+  isTokenExistsInDb token mServerUrl
   user <- getCurrentUser token mServerUrl
   if user ^. active
     then callback (runInAuthService mServerUrl user)
@@ -91,6 +97,25 @@ getCurrentUser tokenHeader mServerUrl = do
   runInUnauthService mServerUrl NoTransaction $ catchError (getUserById userUuid) (handleError userUuid)
   where
     handleError userUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__USER_ABSENCE userUuid)
+    handleError userUuid error = throwError error
+
+isValidJwtToken :: String -> BaseContextM ()
+isValidJwtToken tokenHeader = do
+  serverConfig <- asks _baseContextServerConfig
+  now <- liftIO getCurrentTime
+  case separateToken tokenHeader of
+    Just jwtToken ->
+      case validateJwtToken jwtToken (serverConfig ^. general . secret) (serverConfig ^. jwt . version) now of
+        Nothing -> return ()
+        Just error -> throwError =<< sendError (UnauthorizedError error)
+    Nothing -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
+
+isTokenExistsInDb :: String -> Maybe String -> BaseContextM UserToken
+isTokenExistsInDb tokenHeader mServerUrl = do
+  tokenUuid <- getCurrentTokenUuid tokenHeader
+  runInUnauthService mServerUrl NoTransaction $ catchError (findUserTokenById tokenUuid) (handleError tokenUuid)
+  where
+    handleError userUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__TOKEN_ABSENCE userUuid)
     handleError userUuid error = throwError error
 
 getCurrentApp :: Maybe String -> BaseContextM App
@@ -112,6 +137,13 @@ getCurrentUserUuid tokenHeader = do
   let userUuidMaybe = separateToken tokenHeader >>= getUserUuidFromToken
   case userUuidMaybe of
     Just userUuid -> return userUuid
+    Nothing -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
+
+getCurrentTokenUuid :: String -> BaseContextM String
+getCurrentTokenUuid tokenHeader = do
+  let tokenUuidMaybe = separateToken tokenHeader >>= getTokenUuidFromToken
+  case tokenUuidMaybe of
+    Just tokenUuid -> return tokenUuid
     Nothing -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
 
 isAdmin :: AppContextM Bool

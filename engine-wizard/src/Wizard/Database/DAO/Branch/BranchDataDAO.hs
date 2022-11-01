@@ -11,6 +11,7 @@ import GHC.Int
 
 import LensesConfig
 import Shared.Model.Event.Event
+import Shared.Util.String (trim)
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Branch.BranchData ()
 import Wizard.Database.Mapping.Branch.BranchDataLength ()
@@ -25,7 +26,7 @@ entityName = "branch_data"
 findBranchesForSquashing :: AppContextM [U.UUID]
 findBranchesForSquashing = do
   let sql = "SELECT branch_uuid FROM branch_data"
-  logInfoU _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   entities <- runDB action
   return . concat $ entities

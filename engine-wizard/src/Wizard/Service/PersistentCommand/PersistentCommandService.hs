@@ -33,7 +33,6 @@ import Wizard.Service.App.AppUtil
 import qualified Wizard.Service.Config.AppConfigCommandExecutor as AppConfigCommandExecutor
 import Wizard.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Service.PersistentCommand.PersistentCommandUtil
-import qualified Wizard.Service.Questionnaire.QuestionnaireCommandExecutor as QuestionnaireCommandExecutor
 import qualified Wizard.Service.User.UserMapper as UM
 import Wizard.Util.Context
 import Wizard.Util.Logger
@@ -105,7 +104,6 @@ executePersistentCommandByUuid uuid context =
 execute :: PersistentCommand -> AppContextM (PersistentCommandState, Maybe String)
 execute command
   | command ^. component == AppConfigCommandExecutor.cComponent = AppConfigCommandExecutor.execute command
-  | command ^. component == QuestionnaireCommandExecutor.cComponent = QuestionnaireCommandExecutor.execute command
 
 runPersistentCommandChannelListener :: AppContextM ()
 runPersistentCommandChannelListener = do

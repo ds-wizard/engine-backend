@@ -9,7 +9,6 @@ import LensesConfig
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Model.Questionnaire.QuestionnaireComment
-import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as UM
 
@@ -56,20 +55,6 @@ toCommentThread event qtnUuid mCreatedByUuid now =
     , _questionnaireCommentThreadUpdatedAt = now
     }
 
-toCommentThread' :: AddCommentEvent -> U.UUID -> QuestionnaireCommentThread
-toCommentThread' event qtnUuid =
-  QuestionnaireCommentThread
-    { _questionnaireCommentThreadUuid = event ^. threadUuid
-    , _questionnaireCommentThreadPath = event ^. path
-    , _questionnaireCommentThreadResolved = False
-    , _questionnaireCommentThreadComments = [toComment' event]
-    , _questionnaireCommentThreadPrivate = event ^. private
-    , _questionnaireCommentThreadQuestionnaireUuid = qtnUuid
-    , _questionnaireCommentThreadCreatedBy = event ^. createdBy
-    , _questionnaireCommentThreadCreatedAt = event ^. createdAt
-    , _questionnaireCommentThreadUpdatedAt = event ^. createdAt
-    }
-
 toCommentDTO :: QuestionnaireComment -> Maybe User -> QuestionnaireCommentDTO
 toCommentDTO comment mUser =
   QuestionnaireCommentDTO
@@ -89,15 +74,4 @@ toComment event mCreatedByUuid now =
     , _questionnaireCommentCreatedBy = mCreatedByUuid
     , _questionnaireCommentCreatedAt = now
     , _questionnaireCommentUpdatedAt = now
-    }
-
-toComment' :: AddCommentEvent -> QuestionnaireComment
-toComment' event =
-  QuestionnaireComment
-    { _questionnaireCommentUuid = event ^. commentUuid
-    , _questionnaireCommentText = event ^. text
-    , _questionnaireCommentThreadUuid = event ^. threadUuid
-    , _questionnaireCommentCreatedBy = event ^. createdBy
-    , _questionnaireCommentCreatedAt = event ^. createdAt
-    , _questionnaireCommentUpdatedAt = event ^. createdAt
     }

@@ -8,4 +8,4 @@ data TemplateState
   | UpToDateTemplateState
   | UnpublishedTemplateState
   | UnsupportedMetamodelVersionTemplateState
-  deriving (Show, Eq, Generic)
+  deriving (Show, Eq, Generic, Read)

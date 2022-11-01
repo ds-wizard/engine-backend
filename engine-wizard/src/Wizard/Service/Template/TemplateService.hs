@@ -33,8 +33,10 @@ import Wizard.Database.DAO.Template.TemplateDAO (findTemplatesPage)
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Template.TemplateList
+import Wizard.Model.Template.TemplateState
 import Wizard.S3.Template.TemplateS3
 import Wizard.Service.Acl.AclService
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Template.TemplateMapper
 import Wizard.Service.Template.TemplateUtil
@@ -43,22 +45,32 @@ import Wizard.Service.Template.TemplateValidation
 getTemplates :: [(String, String)] -> Maybe String -> AppContextM [Template]
 getTemplates queryParams mPkgId = do
   validateCoordinateFormat' False mPkgId
-  tmls <- findTemplatesFiltered queryParams
-  return $ filterTemplates mPkgId tmls
+  templates <- findTemplatesFiltered queryParams
+  return $ filterTemplates mPkgId templates
 
 getTemplatesPage ::
-     Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page TemplateSimpleDTO)
-getTemplatesPage mOrganizationId mTemplateId mQuery pageable sort = do
+     Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Pageable
+  -> [Sort]
+  -> AppContextM (Page TemplateSimpleDTO)
+getTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState pageable sort = do
   checkPermission _DMP_PERM
-  tmls <- findTemplatesPage mOrganizationId mTemplateId mQuery pageable sort
-  pkgs <- findPackages
-  return . fmap (toSimpleDTO' pkgs) $ tmls
+  appConfig <- getAppConfig
+  if mTemplateState == (Just . show $ OutdatedTemplateState) && not (appConfig ^. registry . enabled)
+    then return $ Page "templates" (PageMetadata 0 0 0 0) []
+    else do
+      templates <- findTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState pageable sort
+      packages <- findPackages
+      return . fmap (toSimpleDTO' (appConfig ^. registry . enabled) packages) $ templates
 
 getTemplateSuggestions :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page TemplateSuggestionDTO)
 getTemplateSuggestions mPkgId mQuery pageable sort = do
   checkPermission _DMP_PERM
   validateCoordinateFormat' False mPkgId
-  page <- findTemplatesPage Nothing Nothing mQuery (Pageable (Just 0) (Just 999999999)) sort
+  page <- findTemplatesPage Nothing Nothing mQuery Nothing (Pageable (Just 0) (Just 999999999)) sort
   return . fmap toSuggestionDTO . updatePage page . filterTemplatesInGroup $ page
   where
     updatePage :: Page TemplateList -> [TemplateList] -> Page TemplateList

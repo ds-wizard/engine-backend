@@ -21,11 +21,13 @@ createServerCache serverConfig = do
   branchCache <- C.newCache (Just websocketExp)
   qwCache <- C.newCache (Just websocketExp)
   uCache <- C.newCache (Just dataExp)
+  uTokenCache <- C.newCache (Just dataExp)
   return $
     ServerCache
       { _serverCacheBranchWebsocket = branchCache
       , _serverCacheQuestionnaireWebsocket = qwCache
       , _serverCacheUser = uCache
+      , _serverCacheUserToken = uTokenCache
       }
 
 toExpiration hours = fromNanoSecs $ hours * 60 * 60 * 1000 * 1000 * 1000

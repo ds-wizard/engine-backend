@@ -102,12 +102,6 @@ instance FromJSON QuestionnaireEvent where
       "ClearReplyEvent" -> parseJSON (Object o) >>= \event -> return (ClearReplyEvent' event)
       "SetPhaseEvent" -> parseJSON (Object o) >>= \event -> return (SetPhaseEvent' event)
       "SetLabelsEvent" -> parseJSON (Object o) >>= \event -> return (SetLabelsEvent' event)
-      "ResolveCommentThreadEvent" -> parseJSON (Object o) >>= \event -> return (ResolveCommentThreadEvent' event)
-      "ReopenCommentThreadEvent" -> parseJSON (Object o) >>= \event -> return (ReopenCommentThreadEvent' event)
-      "DeleteCommentThreadEvent" -> parseJSON (Object o) >>= \event -> return (DeleteCommentThreadEvent' event)
-      "AddCommentEvent" -> parseJSON (Object o) >>= \event -> return (AddCommentEvent' event)
-      "EditCommentEvent" -> parseJSON (Object o) >>= \event -> return (EditCommentEvent' event)
-      "DeleteCommentEvent" -> parseJSON (Object o) >>= \event -> return (DeleteCommentEvent' event)
       _ -> fail "One of the events has unsupported type"
   parseJSON _ = mzero
 
@@ -134,39 +128,3 @@ instance FromJSON SetLabelsEvent where
 
 instance ToJSON SetLabelsEvent where
   toJSON = simpleToJSON' "_setLabelsEvent" "type"
-
-instance FromJSON ResolveCommentThreadEvent where
-  parseJSON = simpleParseJSON "_resolveCommentThreadEvent"
-
-instance ToJSON ResolveCommentThreadEvent where
-  toJSON = simpleToJSON' "_resolveCommentThreadEvent" "type"
-
-instance FromJSON ReopenCommentThreadEvent where
-  parseJSON = simpleParseJSON "_reopenCommentThreadEvent"
-
-instance ToJSON ReopenCommentThreadEvent where
-  toJSON = simpleToJSON' "_reopenCommentThreadEvent" "type"
-
-instance FromJSON DeleteCommentThreadEvent where
-  parseJSON = simpleParseJSON "_deleteCommentThreadEvent"
-
-instance ToJSON DeleteCommentThreadEvent where
-  toJSON = simpleToJSON' "_deleteCommentThreadEvent" "type"
-
-instance FromJSON AddCommentEvent where
-  parseJSON = simpleParseJSON "_addCommentEvent"
-
-instance ToJSON AddCommentEvent where
-  toJSON = simpleToJSON' "_addCommentEvent" "type"
-
-instance FromJSON EditCommentEvent where
-  parseJSON = simpleParseJSON "_editCommentEvent"
-
-instance ToJSON EditCommentEvent where
-  toJSON = simpleToJSON' "_editCommentEvent" "type"
-
-instance FromJSON DeleteCommentEvent where
-  parseJSON = simpleParseJSON "_deleteCommentEvent"
-
-instance ToJSON DeleteCommentEvent where
-  toJSON = simpleToJSON' "_deleteCommentEvent" "type"

@@ -3,7 +3,8 @@ module Wizard.Service.Migration.Metamodel.Migrator.PackageBundleMigrator
   ) where
 
 import Data.Aeson
-import qualified Data.HashMap.Strict as HashMap
+import qualified Data.Aeson.KeyMap as KM
+import Data.String (fromString)
 import qualified Data.Vector as Vector
 
 import Shared.Model.Error.Error
@@ -21,7 +22,7 @@ migratePackagesField value =
   convertValueToOject value $ \object ->
     getArrayField "packages" object $ \packages ->
       case foldEither $ migratePackage <$> Vector.toList packages of
-        Right updatedPackages -> Right . Object $ HashMap.insert "packages" (toJSON updatedPackages) object
+        Right updatedPackages -> Right . Object $ KM.insert (fromString "packages") (toJSON updatedPackages) object
         Left error -> Left error
 
 migratePackage :: Value -> Either AppError Value

@@ -2,10 +2,10 @@ module SharedTest.Specs.API.Common where
 
 import Control.Monad.IO.Class
 import Data.Aeson (FromJSON, Object, ToJSON, Value, eitherDecode, encode)
+import qualified Data.Aeson.KeyMap as KM
 import Data.Foldable
-import qualified Data.HashMap.Strict as HashMap
 import Data.Maybe (fromMaybe)
-import qualified Data.Text as T
+import Data.String (fromString)
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai.Test hiding (request)
@@ -115,8 +115,7 @@ assertResponse ::
   -> WaiSession () ()
 assertResponse = createAssertResponse fieldModifier fieldModifier
   where
-    fieldModifier body =
-      fmap (\(k, v) -> (T.unpack k, v)) . HashMap.toList . foldl (\acc f -> HashMap.delete (T.pack f) acc) body
+    fieldModifier body = fmap (\(k, v) -> (show k, v)) . KM.toList . foldl (\acc f -> KM.delete (fromString f) acc) body
 
 assertResponse' ::
      (ToJSON expDto, FromJSON expType)
@@ -129,8 +128,8 @@ assertResponse' ::
   -> WaiSession () ()
 assertResponse' = createAssertResponse expFieldModifier resFieldModifier
   where
-    expFieldModifier expBody = fmap (\f -> (f, fromMaybe "EXPECTED_FIELD_MISSING" $ HashMap.lookup (T.pack f) expBody))
-    resFieldModifier resBody = fmap (\f -> (f, fromMaybe "RESULT_FIELD_MISSING" $ HashMap.lookup (T.pack f) resBody))
+    expFieldModifier expBody = fmap (\f -> (f, fromMaybe "EXPECTED_FIELD_MISSING" $ KM.lookup (fromString f) expBody))
+    resFieldModifier resBody = fmap (\f -> (f, fromMaybe "RESULT_FIELD_MISSING" $ KM.lookup (fromString f) resBody))
 
 createAssertResponse ::
      (ToJSON expDto, FromJSON expType)

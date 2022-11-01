@@ -17,11 +17,12 @@ import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Registry.RegistryTemplate
 import Wizard.Model.Template.TemplateList
+import Wizard.Model.Template.TemplateState
 import qualified Wizard.Service.Package.PackageMapper as PM_Mapper
 import Wizard.Service.Template.TemplateUtil
 
-toTemplateList :: Template -> Maybe RegistryTemplate -> Maybe RegistryOrganization -> TemplateList
-toTemplateList tml mTmlR mOrgR =
+toTemplateList :: Template -> Maybe RegistryTemplate -> Maybe RegistryOrganization -> TemplateState -> TemplateList
+toTemplateList tml mTmlR mOrgR state =
   TemplateList
     { _templateListTId = tml ^. tId
     , _templateListName = tml ^. name
@@ -35,6 +36,7 @@ toTemplateList tml mTmlR mOrgR =
     , _templateListAllowedPackages = tml ^. allowedPackages
     , _templateListRecommendedPackageId = tml ^. recommendedPackageId
     , _templateListFormats = tml ^. formats
+    , _templateListState = state
     , _templateListRemoteVersion = mTmlR ^? _Just . remoteVersion
     , _templateListRemoteOrganizationName = mOrgR ^? _Just . name
     , _templateListRemoteOrganizationLogo =
@@ -46,10 +48,10 @@ toTemplateList tml mTmlR mOrgR =
     }
 
 toSimpleDTO :: Template -> TemplateSimpleDTO
-toSimpleDTO tml = toSimpleDTO' [] $ toTemplateList tml Nothing Nothing
+toSimpleDTO tml = toSimpleDTO' False [] $ toTemplateList tml Nothing Nothing UnknownTemplateState
 
-toSimpleDTO' :: [Package] -> TemplateList -> TemplateSimpleDTO
-toSimpleDTO' pkgs tml =
+toSimpleDTO' :: Bool -> [Package] -> TemplateList -> TemplateSimpleDTO
+toSimpleDTO' registryEnabled pkgs tml =
   TemplateSimpleDTO
     { _templateSimpleDTOTId = tml ^. tId
     , _templateSimpleDTOName = tml ^. name
@@ -65,7 +67,7 @@ toSimpleDTO' pkgs tml =
     , _templateSimpleDTORecommendedPackageId = tml ^. recommendedPackageId
     , _templateSimpleDTOFormats = tml ^. formats
     , _templateSimpleDTOUsablePackages = fmap PM_Mapper.toSimpleDTO . getUsablePackagesForTemplate tml $ pkgs
-    , _templateSimpleDTOState = computeTemplateState' tml
+    , _templateSimpleDTOState = computeTemplateState' registryEnabled tml
     , _templateSimpleDTOOrganization =
         case tml ^. remoteOrganizationName of
           Just orgName ->

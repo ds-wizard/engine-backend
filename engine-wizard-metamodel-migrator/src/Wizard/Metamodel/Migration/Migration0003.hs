@@ -3,7 +3,7 @@ module Wizard.Metamodel.Migration.Migration0003
   ) where
 
 import Data.Aeson
-import qualified Data.HashMap.Strict as HM
+import qualified Data.Aeson.KeyMap as KM
 import qualified Data.Text as T
 import qualified Data.Vector as V
 
@@ -18,7 +18,7 @@ migrateEventValue _ input = Right [migrate input]
 
 extractPathItemUuid :: Value -> Value
 extractPathItemUuid v@(Object obj) =
-  case HM.lookup "uuid" obj of
+  case KM.lookup "uuid" obj of
     (Just value) -> value
     _ -> nullUuid
 extractPathItemUuid v = nullUuid

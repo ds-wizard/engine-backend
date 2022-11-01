@@ -17,6 +17,7 @@ type List_GET
      :> "templates"
      :> QueryParam "organizationId" String
      :> QueryParam "templateId" String
+     :> QueryParam "metamodelVersion" Int
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [TemplateSimpleDTO])
 
 list_GET_Api :: Proxy List_GET
@@ -26,10 +27,11 @@ list_GET ::
      Maybe String
   -> Maybe String
   -> Maybe String
+  -> Maybe Int
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TemplateSimpleDTO])
-list_GET mTokenHeader mOrganizationId mTmlId =
+list_GET mTokenHeader mOrganizationId mTmlId mMetamodelVersion =
   getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
     runInMaybeAuthService NoTransaction $
     addTraceUuidHeader =<< do
       let queryParams = catMaybes [(,) "organization_id" <$> mOrganizationId, (,) "template_id" <$> mTmlId]
-      getTemplates queryParams
+      getTemplates queryParams mMetamodelVersion

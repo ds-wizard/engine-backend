@@ -82,6 +82,21 @@ test_200 appContext = do
     appContext
     "/packages?q=Non-existing Knowledge Model"
     (Page "packages" (PageMetadata 20 0 0 0) [])
+  create_test_200
+    "HTTP 200 OK (state - UpToDatePackageState)"
+    appContext
+    "/packages?state=UpToDatePackageState"
+    (Page
+       "packages"
+       (PageMetadata 20 2 1 0)
+       [ toSimpleDTO' [globalRegistryPackage] expOrgRs (toPackage globalPackage)
+       , toSimpleDTO' [nlRegistryPackage] expOrgRs (toPackage netherlandsPackageV2)
+       ])
+  create_test_200
+    "HTTP 200 OK (state - OutdatedPackageState)"
+    appContext
+    "/packages?state=OutdatedPackageState"
+    (Page "packages" (PageMetadata 20 0 0 0) [])
 
 create_test_200 title appContext reqUrl expDto =
   it title $

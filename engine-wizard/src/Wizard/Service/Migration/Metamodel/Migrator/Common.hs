@@ -7,8 +7,8 @@ module Wizard.Service.Migration.Metamodel.Migrator.Common
   ) where
 
 import Data.Aeson
-import qualified Data.HashMap.Strict as HashMap
-import qualified Data.Text as T
+import qualified Data.Aeson.KeyMap as KM
+import Data.String (fromString)
 import qualified Data.Vector as Vector
 
 import Shared.Constant.KnowledgeModel
@@ -21,7 +21,7 @@ import qualified Wizard.Metamodel.Migrator.EventMigrator as EventMigrator
 migrateMetamodelVersionField :: Value -> Either AppError Value
 migrateMetamodelVersionField value =
   convertValueToOject value $ \object ->
-    Right . Object $ HashMap.insert "metamodelVersion" (toJSON kmMetamodelVersion) object
+    Right . Object $ KM.insert "metamodelVersion" (toJSON kmMetamodelVersion) object
 
 migrateEventsField :: String -> Value -> Either AppError Value
 migrateEventsField eventsFieldName value =
@@ -33,5 +33,5 @@ migrateEventsField eventsFieldName value =
                EventMigrator.migrate (EventMigrator.MigrationContext createdAt) oldMetamodelVersion kmMetamodelVersion <$>
                Vector.toList events of
             Right updatedEvents ->
-              Right . Object $ HashMap.insert (T.pack eventsFieldName) (toJSON . concat $ updatedEvents) object
+              Right . Object $ KM.insert (fromString eventsFieldName) (toJSON . concat $ updatedEvents) object
             Left error -> Left . GeneralServerError $ error
