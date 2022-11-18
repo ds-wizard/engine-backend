@@ -5,9 +5,8 @@ import Data.Pool (Pool)
 import Database.PostgreSQL.Simple (Connection)
 import Network.Minio (MinioConn)
 
-data BaseContext =
-  BaseContext
-    { _baseContextDbPool :: Pool Connection
-    , _baseContextS3Client :: MinioConn
-    , _baseContextLocalization :: M.Map String String
-    }
+data BaseContext = BaseContext
+  { dbPool :: Pool Connection
+  , s3Client :: MinioConn
+  , localization :: M.Map String String
+  }

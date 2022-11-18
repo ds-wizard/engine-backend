@@ -1,6 +1,6 @@
-module Wizard.Metamodel.Migration.Migration0011
-  ( migrateEventValue
-  ) where
+module Wizard.Metamodel.Migration.Migration0011 (
+  migrateEventValue,
+) where
 
 import Data.Aeson
 import qualified Data.Text as T
@@ -9,8 +9,11 @@ import Wizard.Metamodel.Migration.MigrationContext
 import Wizard.Metamodel.Migration.Utils
 
 -- Migration #0011 (KM v11 -> v12)
+
 -- * Add "integrationType" (older = "ApiIntegration") to integration events
+
 -- * Add "requestEmptySearch" field to integration events
+
 -- * Rename "responseItemUrl" to "itemUrl" in integration events
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ input = Right [migrate input]

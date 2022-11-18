@@ -12,91 +12,91 @@ import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Model.Config.AppConfig
 
 instance ToSchema AppConfig where
-  declareNamedSchema = simpleToSchema' "_appConfig" defaultAppConfig
+  declareNamedSchema = toSwagger defaultAppConfig
 
 instance ToSchema AppConfigOrganization where
-  declareNamedSchema = simpleToSchema' "_appConfigOrganization" defaultOrganization
+  declareNamedSchema = toSwagger defaultOrganization
 
 instance ToSchema AppConfigFeature where
-  declareNamedSchema = simpleToSchema' "_appConfigFeature" defaultFeature
+  declareNamedSchema = toSwagger defaultFeature
 
 instance ToSchema AppConfigAuth where
-  declareNamedSchema = simpleToSchema' "_appConfigAuth" defaultAuth
+  declareNamedSchema = toSwagger defaultAuth
 
 instance ToSchema AppConfigAuthInternal where
-  declareNamedSchema = simpleToSchema' "_appConfigAuthInternal" defaultAuthInternal
+  declareNamedSchema = toSwagger defaultAuthInternal
 
 instance ToSchema AppConfigAuthExternal where
-  declareNamedSchema = simpleToSchema' "_appConfigAuthExternal" defaultAuthExternal
+  declareNamedSchema = toSwagger defaultAuthExternal
 
 instance ToSchema AppConfigAuthExternalService where
-  declareNamedSchema = simpleToSchema' "_appConfigAuthExternalService" defaultAuthExternalService
+  declareNamedSchema = toSwagger defaultAuthExternalService
 
 instance ToSchema AppConfigAuthExternalServiceParameter where
-  declareNamedSchema = simpleToSchema' "_appConfigAuthExternalServiceParameter" defaultAuthExternalServiceParameter
+  declareNamedSchema = toSwagger defaultAuthExternalServiceParameter
 
 instance ToSchema AppConfigAuthExternalServiceStyle where
-  declareNamedSchema = simpleToSchema' "_appConfigAuthExternalServiceStyle" defaultAuthExternalServiceStyle
+  declareNamedSchema = toSwagger defaultAuthExternalServiceStyle
 
 instance ToSchema AppConfigPrivacyAndSupport where
-  declareNamedSchema = simpleToSchema' "_appConfigPrivacyAndSupport" defaultPrivacyAndSupport
+  declareNamedSchema = toSwagger defaultPrivacyAndSupport
 
 instance ToSchema AppConfigDashboard where
-  declareNamedSchema = simpleToSchema' "_appConfigDashboard" defaultDashboard
+  declareNamedSchema = toSwagger defaultDashboard
 
 instance ToSchema AppConfigDashboardDashboardType
 
 instance ToSchema AppConfigLookAndFeel where
-  declareNamedSchema = simpleToSchema' "_appConfigLookAndFeel" defaultLookAndFeel
+  declareNamedSchema = toSwagger defaultLookAndFeel
 
 instance ToSchema AppConfigLookAndFeelCustomMenuLink where
-  declareNamedSchema = simpleToSchema' "_appConfigLookAndFeelCustomMenuLink" defaultLookAndFeelCustomLink
+  declareNamedSchema = toSwagger defaultLookAndFeelCustomLink
 
 instance ToSchema AppConfigRegistry where
-  declareNamedSchema = simpleToSchema' "_appConfigRegistry" defaultRegistry
+  declareNamedSchema = toSwagger defaultRegistry
 
 instance ToSchema AppConfigKnowledgeModel where
-  declareNamedSchema = simpleToSchema' "_appConfigKnowledgeModel" defaultKnowledgeModel
+  declareNamedSchema = toSwagger defaultKnowledgeModel
 
 instance ToSchema AppConfigKnowledgeModelPublic where
-  declareNamedSchema = simpleToSchema' "_appConfigKnowledgeModelPublic" defaultKnowledgeModelPublic
+  declareNamedSchema = toSwagger defaultKnowledgeModelPublic
 
 instance ToSchema AppConfigQuestionnaire where
-  declareNamedSchema = simpleToSchema' "_appConfigQuestionnaire" defaultQuestionnaire
+  declareNamedSchema = toSwagger defaultQuestionnaire
 
 instance ToSchema AppConfigQuestionnaireVisibility where
-  declareNamedSchema = simpleToSchema' "_appConfigQuestionnaireVisibility" defaultQuestionnaireVisibility
+  declareNamedSchema = toSwagger defaultQuestionnaireVisibility
 
 instance ToSchema AppConfigQuestionnaireSharing where
-  declareNamedSchema = simpleToSchema' "_appConfigQuestionnaireSharing" defaultQuestionnaireSharing
+  declareNamedSchema = toSwagger defaultQuestionnaireSharing
 
 instance ToSchema QuestionnaireCreation
 
 instance ToSchema AppConfigQuestionnaireProjectTagging where
-  declareNamedSchema = simpleToSchema' "_appConfigQuestionnaireProjectTagging" defaultQuestionnaireProjectTagging
+  declareNamedSchema = toSwagger defaultQuestionnaireProjectTagging
 
 instance ToSchema AppConfigQuestionnaireFeedback where
-  declareNamedSchema = simpleToSchema' "_appConfigQuestionnaireFeedback" defaultFeedback
+  declareNamedSchema = toSwagger defaultFeedback
 
 instance ToSchema AppConfigTemplate where
-  declareNamedSchema = simpleToSchema' "_appConfigTemplate" defaultTemplate
+  declareNamedSchema = toSwagger defaultTemplate
 
 instance ToSchema AppConfigSubmission where
-  declareNamedSchema = simpleToSchema' "_appConfigSubmission" defaultSubmission
+  declareNamedSchema = toSwagger defaultSubmission
 
 instance ToSchema AppConfigSubmissionService where
-  declareNamedSchema = simpleToSchema' "_appConfigSubmissionService" defaultSubmissionService
+  declareNamedSchema = toSwagger defaultSubmissionService
 
 instance ToSchema AppConfigSubmissionServiceSupportedFormat where
   declareNamedSchema =
-    simpleToSchema' "_appConfigSubmissionServiceSupportedFormat" defaultSubmissionServiceSupportedFormat
+    toSwagger defaultSubmissionServiceSupportedFormat
 
 instance ToSchema AppConfigSubmissionServiceRequest where
-  declareNamedSchema = simpleToSchema' "_appConfigSubmissionServiceRequest" defaultSubmissionServiceRequest
+  declareNamedSchema = toSwagger defaultSubmissionServiceRequest
 
 instance ToSchema AppConfigSubmissionServiceRequestMultipart where
   declareNamedSchema =
-    simpleToSchema' "_appConfigSubmissionServiceRequestMultipart" defaultSubmissionServiceRequestMultipart
+    toSwagger defaultSubmissionServiceRequestMultipart
 
 instance ToSchema AppConfigOwl where
-  declareNamedSchema = simpleToSchema' "_appConfigOwl" defaultOwl
+  declareNamedSchema = toSwagger defaultOwl

@@ -10,7 +10,7 @@ import Shared.Model.Error.Error
 
 getCurrentOrganization :: AppContextM Organization
 getCurrentOrganization = do
-  mCurrentOrganization <- asks _appContextCurrentOrganization
+  mCurrentOrganization <- asks currentOrganization
   case mCurrentOrganization of
     Just org -> return org
     Nothing -> throwError $ ForbiddenError _ERROR_MODEL_APPCONTEXT__MISSING_ORGANIZATION

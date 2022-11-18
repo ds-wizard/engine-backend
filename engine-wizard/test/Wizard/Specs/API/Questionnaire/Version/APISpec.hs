@@ -11,8 +11,8 @@ import Wizard.Specs.API.Questionnaire.Version.List_POST
 
 questionnaireVersionAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "QUESTIONNAIRE VERSION API Spec" $ do
-    list_GET appContext
-    list_POST appContext
-    detail_PUT appContext
-    detail_delete appContext
+    describe "QUESTIONNAIRE VERSION API Spec" $ do
+      list_GET appContext
+      list_POST appContext
+      detail_PUT appContext
+      detail_delete appContext

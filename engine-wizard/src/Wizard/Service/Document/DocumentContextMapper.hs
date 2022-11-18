@@ -1,13 +1,12 @@
 module Wizard.Service.Document.DocumentContextMapper where
 
-import Control.Lens ((^.))
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig hiding (templateMetamodelVersion)
-import Shared.Constant.Template
+import qualified Shared.Constant.Template as TemplateConstant
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
+import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
@@ -19,8 +18,8 @@ import Wizard.Model.User.User
 import Wizard.Service.Package.PackageMapper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
 
-toDocumentContext ::
-     U.UUID
+toDocumentContext
+  :: U.UUID
   -> ServerConfig
   -> String
   -> Questionnaire
@@ -38,39 +37,39 @@ toDocumentContext ::
   -> DocumentContext
 toDocumentContext docUuid serverConfig appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos qtnProjectTags mPhase km report pkg org mCreatedBy now =
   DocumentContext
-    { _documentContextUuid = docUuid
-    , _documentContextConfig = DocumentContextConfig {_documentContextConfigClientUrl = appClientUrl}
-    , _documentContextQuestionnaireUuid = U.toString $ qtn ^. uuid
-    , _documentContextQuestionnaireName = qtn ^. name
-    , _documentContextQuestionnaireDescription = qtn ^. description
-    , _documentContextQuestionnaireReplies = qtnCtn ^. replies
-    , _documentContextQuestionnaireVersion = qtnVersion
-    , _documentContextQuestionnaireVersions = qtnVersionDtos
-    , _documentContextQuestionnaireProjectTags = qtnProjectTags
-    , _documentContextPhaseUuid = mPhase
-    , _documentContextKnowledgeModel = km
-    , _documentContextReport = report
-    , _documentContextPackage = toDocumentContextPackage pkg
-    , _documentContextOrganization = org
-    , _documentContextTemplateMetamodelVersion = templateMetamodelVersion
-    , _documentContextCreatedBy = USR_Mapper.toDTO <$> mCreatedBy
-    , _documentContextCreatedAt = now
-    , _documentContextUpdatedAt = now
+    { uuid = docUuid
+    , config = DocumentContextConfig {clientUrl = appClientUrl}
+    , questionnaireUuid = U.toString $ qtn.uuid
+    , questionnaireName = qtn.name
+    , questionnaireDescription = qtn.description
+    , questionnaireReplies = qtnCtn.replies
+    , questionnaireVersion = qtnVersion
+    , questionnaireVersions = qtnVersionDtos
+    , questionnaireProjectTags = qtnProjectTags
+    , phaseUuid = mPhase
+    , knowledgeModel = km
+    , report = report
+    , package = toDocumentContextPackage pkg
+    , organization = org
+    , templateMetamodelVersion = TemplateConstant.templateMetamodelVersion
+    , createdBy = USR_Mapper.toDTO <$> mCreatedBy
+    , createdAt = now
+    , updatedAt = now
     }
 
 toDocumentContextPackage :: Package -> DocumentContextPackage
 toDocumentContextPackage pkg =
   let dto = toSimpleDTO pkg
    in DocumentContextPackage
-        { _documentContextPackagePId = dto ^. pId
-        , _documentContextPackageName = dto ^. name
-        , _documentContextPackageOrganizationId = dto ^. organizationId
-        , _documentContextPackageKmId = pkg ^. kmId
-        , _documentContextPackageVersion = dto ^. version
-        , _documentContextPackageVersions = []
-        , _documentContextPackageRemoteLatestVersion = dto ^. remoteLatestVersion
-        , _documentContextPackageDescription = dto ^. description
-        , _documentContextPackageState = dto ^. state
-        , _documentContextPackageOrganization = dto ^. organization
-        , _documentContextPackageCreatedAt = dto ^. createdAt
+        { pId = dto.pId
+        , name = dto.name
+        , organizationId = dto.organizationId
+        , kmId = pkg.kmId
+        , version = dto.version
+        , versions = []
+        , remoteLatestVersion = dto.remoteLatestVersion
+        , description = dto.description
+        , state = dto.state
+        , organization = dto.organization
+        , createdAt = dto.createdAt
         }

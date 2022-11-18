@@ -1,6 +1,6 @@
-module Wizard.Specs.API.App.Plan.List_POST
-  ( list_POST
-  ) where
+module Wizard.Specs.API.App.Plan.List_POST (
+  list_POST,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -47,18 +47,18 @@ reqBody = encode reqDto
 test_201 appContext = do
   it "HTTP 201 CREATED" $
     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 201
-    let expHeaders = resCorsHeadersPlain
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, AppPlan)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    -- AND: Find result in DB and compare with expectation state
-    comparePlanDtos resDto standardPlan
-    assertExistenceOfPlanInDB appContext standardPlan
+    do
+      let expStatus = 201
+      let expHeaders = resCorsHeadersPlain
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, AppPlan)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      -- AND: Find result in DB and compare with expectation state
+      comparePlanDtos resDto standardPlan
+      assertExistenceOfPlanInDB appContext standardPlan
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

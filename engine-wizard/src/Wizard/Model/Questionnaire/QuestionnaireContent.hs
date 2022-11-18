@@ -6,10 +6,9 @@ import GHC.Generics
 
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
-data QuestionnaireContent =
-  QuestionnaireContent
-    { _questionnaireContentPhaseUuid :: Maybe U.UUID
-    , _questionnaireContentReplies :: M.Map String Reply
-    , _questionnaireContentLabels :: M.Map String [U.UUID]
-    }
+data QuestionnaireContent = QuestionnaireContent
+  { phaseUuid :: Maybe U.UUID
+  , replies :: M.Map String Reply
+  , labels :: M.Map String [U.UUID]
+  }
   deriving (Generic, Eq, Show)

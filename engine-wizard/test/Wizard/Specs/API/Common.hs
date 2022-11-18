@@ -1,7 +1,6 @@
 module Wizard.Specs.API.Common where
 
-import Control.Lens ((&), (.~), (^.))
-import Data.Aeson ((.=), encode, object)
+import Data.Aeson (encode, object, (.=))
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Either (isRight)
@@ -13,7 +12,6 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Bootstrap.Web
@@ -24,6 +22,7 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
+import Wizard.Model.User.UserToken
 import Wizard.Service.User.UserService
 
 import SharedTest.Specs.API.Common
@@ -31,25 +30,25 @@ import Wizard.Specs.Common
 
 startWebApp :: BaseContext -> AppContext -> IO Application
 startWebApp baseContext appContext = do
-  let config = appContext ^. serverConfig
-  let webPort = config ^. general . serverPort
-  let env = config ^. general . environment
+  let config = appContext.serverConfig
+  let webPort = config.general.serverPort
+  let env = config.general.environment
   return $ runMiddleware env $ runApp baseContext
 
 reqAuthToken :: String
-reqAuthToken = albertToken ^. value
+reqAuthToken = albertToken.value
 
 reqAuthHeader :: Header
 reqAuthHeader = ("Authorization", BS.pack $ "Bearer " ++ reqAuthToken)
 
 reqNonAdminAuthToken :: String
-reqNonAdminAuthToken = nikolaToken ^. value
+reqNonAdminAuthToken = nikolaToken.value
 
 reqNonAdminAuthHeader :: Header
 reqNonAdminAuthHeader = ("Authorization", BS.pack $ "Bearer " ++ reqNonAdminAuthToken)
 
 reqIsaacAuthToken :: String
-reqIsaacAuthToken = isaacToken ^. value
+reqIsaacAuthToken = isaacToken.value
 
 reqIsaacAuthTokenHeader :: Header
 reqIsaacAuthTokenHeader = ("Authorization", BS.pack $ "Bearer " ++ reqIsaacAuthToken)
@@ -57,20 +56,20 @@ reqIsaacAuthTokenHeader = ("Authorization", BS.pack $ "Bearer " ++ reqIsaacAuthT
 userWithoutPerm :: ServerConfig -> String -> User
 userWithoutPerm serverConfig perm =
   let allPerms = getPermissionForRole serverConfig _USER_ROLE_ADMIN
-   in userAlbert & permissions .~ L.delete perm allPerms
+   in userAlbert {permissions = L.delete perm allPerms}
 
 createInvalidJsonTest reqMethod reqUrl missingField =
   it "HTTP 400 BAD REQUEST when json is not valid" $ do
     let reqHeaders = [reqAuthHeader, reqCtHeader]
     let reqBody = BSL.pack "{}"
-      -- GIVEN: Prepare expectation
+    -- GIVEN: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeaderUtf8 : resCorsHeaders
     let expDto = object ["status" .= 400, "message" .= "Problem in deserialization of JSON"]
     let expBody = encode expDto
-      -- WHEN: Call API
+    -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-      -- THEN: Compare response with expectation
+    -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -78,21 +77,21 @@ createInvalidJsonTest reqMethod reqUrl missingField =
 createNoPermissionTest appContext reqMethod reqUrl otherHeaders reqBody missingPerm =
   it "HTTP 403 FORBIDDEN - no required permission" $
     -- GIVEN: Prepare request
-   do
-    let user = userWithoutPerm (appContext ^. serverConfig) missingPerm
-    runInContextIO (updateUserById user) appContext
-    let reqHeaders = reqAuthHeader : otherHeaders
-    -- GIVEN: Prepare expectation
-    let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ missingPerm)
-    let expBody = encode expDto
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expStatus = 403
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    do
+      let user = userWithoutPerm appContext.serverConfig missingPerm
+      runInContextIO (updateUserById user) appContext
+      let reqHeaders = reqAuthHeader : otherHeaders
+      -- GIVEN: Prepare expectation
+      let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ missingPerm)
+      let expBody = encode expDto
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expStatus = 403
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 assertCountInDB dbFunction appContext count = do
   eitherList <- runInContextIO dbFunction appContext

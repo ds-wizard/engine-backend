@@ -1,12 +1,11 @@
 module Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Chapter where
 
-import Control.Lens
+import qualified Data.List as L
 import Prelude hiding (lookup)
 
-import LensesConfig
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.EventLenses
-import Shared.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()
@@ -19,19 +18,18 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Phase ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Tag ()
-import Wizard.Util.Lens
 
 instance ApplyEvent AddChapterEvent where
   apply event = Right . addEntity . addEntityReference
     where
-      addEntityReference km = km & ap chapterUuids .~ (event ^. entityUuid')
-      addEntity km = km & chaptersM . at (event ^. entityUuid') ?~ createEntity event
+      addEntityReference km = km {chapterUuids = km.chapterUuids ++ [getEntityUuid event]}
+      addEntity = putInChaptersM (getEntityUuid event) (createEntity event)
 
 instance ApplyEvent EditChapterEvent where
-  apply = applyEditEvent (entities . chapters) "Chapter"
+  apply = applyEditEvent getChaptersM setChaptersM
 
 instance ApplyEvent DeleteChapterEvent where
   apply event = Right . deleteEntity . deleteEntityReference
     where
-      deleteEntityReference km = km & del chapterUuids .~ (event ^. entityUuid')
-      deleteEntity km = deleteChapter km (event ^. entityUuid')
+      deleteEntityReference km = km {chapterUuids = L.delete (getEntityUuid event) km.chapterUuids}
+      deleteEntity km = deleteChapter km (getEntityUuid event)

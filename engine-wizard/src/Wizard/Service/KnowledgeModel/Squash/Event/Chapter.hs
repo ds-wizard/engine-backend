@@ -1,24 +1,25 @@
 module Wizard.Service.KnowledgeModel.Squash.Event.Chapter where
 
-import Control.Lens ((^.))
+import qualified Data.UUID as U
 
-import LensesConfig
+import Shared.Model.Common.MapEntry
 import Shared.Model.Event.Chapter.ChapterEvent
+import Shared.Model.Event.EventField
 import Shared.Model.Event.EventLenses
 import Wizard.Service.KnowledgeModel.Squash.Event.Common
 
 instance SimpleEventSquash EditChapterEvent where
   isSimpleEventSquashApplicable = not . isChanged questionUuids
-  isReorderEventSquashApplicable previousEvent newEvent = previousEvent ^. entityUuid' == newEvent ^. entityUuid'
+  isReorderEventSquashApplicable previousEvent newEvent = getEntityUuid previousEvent == getEntityUuid newEvent
   isTypeChanged _ _ = False
   simpleSquashEvent mPreviousEvent oldEvent newEvent =
     EditChapterEvent
-      { _editChapterEventUuid = newEvent ^. uuid
-      , _editChapterEventParentUuid = newEvent ^. parentUuid
-      , _editChapterEventEntityUuid = newEvent ^. entityUuid
-      , _editChapterEventTitle = applyValue oldEvent newEvent title
-      , _editChapterEventText = applyValue oldEvent newEvent text
-      , _editChapterEventAnnotations = applyValue oldEvent newEvent annotations
-      , _editChapterEventQuestionUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent questionUuids
-      , _editChapterEventCreatedAt = newEvent ^. createdAt
+      { uuid = newEvent.uuid
+      , parentUuid = newEvent.parentUuid
+      , entityUuid = newEvent.entityUuid
+      , title = applyValue oldEvent newEvent (title :: EditChapterEvent -> EventField String)
+      , text = applyValue oldEvent newEvent (text :: EditChapterEvent -> EventField (Maybe String))
+      , annotations = applyValue oldEvent newEvent (annotations :: EditChapterEvent -> EventField [MapEntry String String])
+      , questionUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (questionUuids :: EditChapterEvent -> EventField [U.UUID])
+      , createdAt = newEvent.createdAt
       }

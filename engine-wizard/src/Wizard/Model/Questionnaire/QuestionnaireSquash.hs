@@ -6,10 +6,9 @@ import GHC.Generics
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 
-data QuestionnaireSquash =
-  QuestionnaireSquash
-    { _questionnaireSquashUuid :: U.UUID
-    , _questionnaireSquashEvents :: [QuestionnaireEvent]
-    , _questionnaireSquashVersions :: [QuestionnaireVersion]
-    }
+data QuestionnaireSquash = QuestionnaireSquash
+  { uuid :: U.UUID
+  , events :: [QuestionnaireEvent]
+  , versions :: [QuestionnaireVersion]
+  }
   deriving (Generic, Show)

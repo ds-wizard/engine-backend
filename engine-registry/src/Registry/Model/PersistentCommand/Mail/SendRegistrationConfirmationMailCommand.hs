@@ -3,22 +3,21 @@ module Registry.Model.PersistentCommand.Mail.SendRegistrationConfirmationMailCom
 import Data.Aeson
 import GHC.Generics
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
-data SendRegistrationConfirmationMailCommand =
-  SendRegistrationConfirmationMailCommand
-    { _sendRegistrationConfirmationMailCommandEmail :: String
-    , _sendRegistrationConfirmationMailCommandOrganizationId :: String
-    , _sendRegistrationConfirmationMailCommandOrganizationName :: String
-    , _sendRegistrationConfirmationMailCommandOrganizationEmail :: String
-    , _sendRegistrationConfirmationMailCommandHash :: String
-    , _sendRegistrationConfirmationMailCommandClientUrl :: String
-    , _sendRegistrationConfirmationMailCommandCallbackUrl :: Maybe String
-    }
+data SendRegistrationConfirmationMailCommand = SendRegistrationConfirmationMailCommand
+  { email :: String
+  , organizationId :: String
+  , organizationName :: String
+  , organizationEmail :: String
+  , hash :: String
+  , clientUrl :: String
+  , callbackUrl :: Maybe String
+  }
   deriving (Show, Eq, Generic)
 
 instance FromJSON SendRegistrationConfirmationMailCommand where
-  parseJSON = simpleParseJSON "_sendRegistrationConfirmationMailCommand"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SendRegistrationConfirmationMailCommand where
-  toJSON = simpleToJSON "_sendRegistrationConfirmationMailCommand"
+  toJSON = genericToJSON jsonOptions

@@ -1,12 +1,10 @@
 module Wizard.Service.UserToken.UserTokenValidation where
 
-import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
 import qualified Data.Text as T
 import Data.Time
 import qualified Web.JWT as JWT
 
-import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Model.Localization.LocaleRecord
 import Wizard.Api.Resource.UserToken.UserTokenCreateDTO
@@ -24,13 +22,13 @@ validate reqDto user = do
 
 validateIsUserActive :: User -> AppContextM ()
 validateIsUserActive user =
-  if user ^. active
+  if user.active
     then return ()
     else throwError $ UserError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
 
 validateUserPassword :: UserTokenCreateDTO -> User -> AppContextM ()
 validateUserPassword reqDto user =
-  if verifyPassword (reqDto ^. password) (user ^. passwordHash)
+  if verifyPassword reqDto.password user.passwordHash
     then return ()
     else throwError $ UserError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
 

@@ -17,10 +17,10 @@ import Shared.Api.Resource.Event.QuestionEventJM ()
 import Shared.Api.Resource.Event.ReferenceEventJM ()
 import Shared.Api.Resource.Event.TagEventJM ()
 import Shared.Model.Event.Event
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance ToJSON Event where
-  toJSON = toSumJSON' "eventType"
+  toJSON = toSumJSONWithTypeField "eventType" ""
 
 instance FromJSON Event where
   parseJSON (Object o) = do

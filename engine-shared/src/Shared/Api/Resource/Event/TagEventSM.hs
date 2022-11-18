@@ -11,10 +11,10 @@ import Shared.Model.Event.Tag.TagEvent
 import Shared.Util.Swagger
 
 instance ToSchema AddTagEvent where
-  declareNamedSchema = simpleToSchema'' "_addTagEvent" "eventType" a_km1_tds
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_tds
 
 instance ToSchema EditTagEvent where
-  declareNamedSchema = simpleToSchema'' "_editTagEvent" "eventType" e_km1_tds
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_tds
 
 instance ToSchema DeleteTagEvent where
-  declareNamedSchema = simpleToSchema'' "_deleteTagEvent" "eventType" d_km1_tds
+  declareNamedSchema = toSwaggerWithType "eventType" d_km1_tds

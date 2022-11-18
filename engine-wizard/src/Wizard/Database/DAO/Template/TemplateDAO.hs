@@ -15,8 +15,8 @@ entityName = "template"
 
 pageLabel = "templates"
 
-findTemplatesPage ::
-     Maybe String
+findTemplatesPage
+  :: Maybe String
   -> Maybe String
   -> Maybe String
   -> Maybe String
@@ -29,18 +29,20 @@ findTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState pageable sor
     pageLabel
     pageable
     sort
-    (f'
-       "template.*, get_template_state(registry_template.remote_version, template.version, %s, template.metamodel_version), registry_template.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo"
-       [show templateMetamodelVersion])
+    ( f'
+        "template.*, get_template_state(registry_template.remote_version, template.version, %s, template.metamodel_version), registry_template.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo"
+        [show templateMetamodelVersion]
+    )
     "template_id"
     mQuery
     Nothing
     mOrganizationId
     mTemplateId
     mTemplateState
-    (case mTemplateState of
-       Just _ ->
-         f'
-           " AND get_template_state(registry_template.remote_version, template.version, %s, template.metamodel_version) = ?"
-           [show templateMetamodelVersion]
-       Nothing -> "")
+    ( case mTemplateState of
+        Just _ ->
+          f'
+            " AND get_template_state(registry_template.remote_version, template.version, %s, template.metamodel_version) = ?"
+            [show templateMetamodelVersion]
+        Nothing -> ""
+    )

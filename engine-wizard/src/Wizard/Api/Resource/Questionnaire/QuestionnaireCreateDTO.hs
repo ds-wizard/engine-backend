@@ -5,14 +5,13 @@ import GHC.Generics
 
 import Wizard.Model.Questionnaire.Questionnaire
 
-data QuestionnaireCreateDTO =
-  QuestionnaireCreateDTO
-    { _questionnaireCreateDTOName :: String
-    , _questionnaireCreateDTOPackageId :: String
-    , _questionnaireCreateDTOVisibility :: QuestionnaireVisibility
-    , _questionnaireCreateDTOSharing :: QuestionnaireSharing
-    , _questionnaireCreateDTOQuestionTagUuids :: [U.UUID]
-    , _questionnaireCreateDTOTemplateId :: Maybe String
-    , _questionnaireCreateDTOFormatUuid :: Maybe U.UUID
-    }
+data QuestionnaireCreateDTO = QuestionnaireCreateDTO
+  { name :: String
+  , packageId :: String
+  , visibility :: QuestionnaireVisibility
+  , sharing :: QuestionnaireSharing
+  , questionTagUuids :: [U.UUID]
+  , templateId :: Maybe String
+  , formatUuid :: Maybe U.UUID
+  }
   deriving (Show, Eq, Generic)

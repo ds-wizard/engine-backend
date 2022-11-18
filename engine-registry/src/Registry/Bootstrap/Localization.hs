@@ -1,6 +1,6 @@
-module Registry.Bootstrap.Localization
-  ( loadLocalization
-  ) where
+module Registry.Bootstrap.Localization (
+  loadLocalization,
+) where
 
 import Control.Lens ((^.), (^?))
 import Control.Monad.Reader (liftIO)
@@ -9,7 +9,6 @@ import Data.Aeson.Lens (_Value)
 import qualified Data.Map.Strict as M
 import Network.Wreq (get, responseBody)
 
-import LensesConfig hiding (headers)
 import Registry.Constant.Resource
 import Registry.Util.Logger
 import Shared.Model.Error.Error
@@ -39,7 +38,7 @@ loadLocalLocalization serverConfig = do
 
 loadRemoteLocalization serverConfig = do
   logInfo _CMP_LOCALIZATION "start loading remote localization"
-  let mUrl = serverConfig ^. general . remoteLocalizationUrl
+  let mUrl = serverConfig.general.remoteLocalizationUrl
   case mUrl of
     Just url -> do
       response <- liftIO $ get url

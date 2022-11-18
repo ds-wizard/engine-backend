@@ -8,10 +8,10 @@ import Shared.Model.Template.Template
 fromChangeDTO :: String -> U.UUID -> String -> String -> Int64 -> U.UUID -> TemplateAsset
 fromChangeDTO tmlId aUuid fileName contentType fileSize appUuid =
   TemplateAsset
-    { _templateAssetTemplateId = tmlId
-    , _templateAssetUuid = aUuid
-    , _templateAssetFileName = fileName
-    , _templateAssetContentType = contentType
-    , _templateAssetFileSize = fileSize
-    , _templateAssetAppUuid = appUuid
+    { templateId = tmlId
+    , uuid = aUuid
+    , fileName = fileName
+    , contentType = contentType
+    , fileSize = fileSize
+    , appUuid = appUuid
     }

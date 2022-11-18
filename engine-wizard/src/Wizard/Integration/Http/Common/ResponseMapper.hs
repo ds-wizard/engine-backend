@@ -1,19 +1,19 @@
-module Wizard.Integration.Http.Common.ResponseMapper
-  ( getResponseBody
-  , deserializeResponseBody
-  , extractResponseHeader
-  , extractResponseBody
-  , extractResponseBodyRaw
-  , extractNestedField
-  , extractNestedStringField
-  , extractStringField
-  , extractIntField
-  , convertToArray
-  ) where
+module Wizard.Integration.Http.Common.ResponseMapper (
+  getResponseBody,
+  deserializeResponseBody,
+  extractResponseHeader,
+  extractResponseBody,
+  extractResponseBodyRaw,
+  extractNestedField,
+  extractNestedStringField,
+  extractStringField,
+  extractIntField,
+  convertToArray,
+) where
 
 import Control.Lens ((^.), (^?))
 import Data.Aeson (FromJSON, Value, eitherDecode)
-import Data.Aeson.Lens (Primitive(..), _Array, _Primitive, _String, _Value, key)
+import Data.Aeson.Lens (Primitive (..), key, _Array, _Primitive, _String, _Value)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.CaseInsensitive as CI
@@ -55,14 +55,14 @@ extractResponseBodyRaw response =
 
 extractNestedField :: [String] -> Value -> Either AppError Value
 extractNestedField [] response = Right response
-extractNestedField (k:ks) response =
+extractNestedField (k : ks) response =
   case response ^? key (T.pack k) of
     Just field -> extractNestedField ks field
     Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS (k : ks)
 
 extractNestedStringField :: [String] -> Value -> Either AppError String
 extractNestedStringField [k] response = extractStringField k response
-extractNestedStringField (k:ks) response =
+extractNestedStringField (k : ks) response =
   case response ^? key (T.pack k) of
     Just field -> extractNestedStringField ks field
     Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS (k : ks)

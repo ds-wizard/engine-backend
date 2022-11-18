@@ -3,11 +3,11 @@ module Wizard.Api.Resource.Typehint.TypehintRequestJM where
 import Data.Aeson
 
 import Shared.Api.Resource.Event.EventJM ()
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Typehint.TypehintRequestDTO
 
 instance FromJSON TypehintRequestDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TypehintRequestDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

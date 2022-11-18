@@ -9,4 +9,4 @@ import Wizard.Database.Migration.Development.Prefab.Data.Prefabs
 import Wizard.Model.Prefab.Prefab
 
 instance ToSchema Prefab where
-  declareNamedSchema = simpleToSchema' "_prefab" kmIntegrationBioPortalPrefab
+  declareNamedSchema = toSwagger kmIntegrationBioPortalPrefab

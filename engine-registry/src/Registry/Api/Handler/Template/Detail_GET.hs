@@ -11,10 +11,10 @@ import Registry.Service.Template.TemplateService
 import Shared.Api.Handler.Common
 import Shared.Model.Context.TransactionState
 
-type Detail_GET
-   = "templates"
-     :> Capture "tmlId" String
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] TemplateDetailDTO)
+type Detail_GET =
+  "templates"
+    :> Capture "tmlId" String
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] TemplateDetailDTO)
 
-detail_GET :: String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateDetailDTO)
+detail_GET :: String -> BaseContextM (Headers '[Header "x-trace-uuid" String] TemplateDetailDTO)
 detail_GET tmlId = runInUnauthService NoTransaction $ addTraceUuidHeader =<< getTemplateById tmlId

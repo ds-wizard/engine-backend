@@ -1,10 +1,8 @@
 module Wizard.Specs.API.Branch.Common where
 
-import Control.Lens ((^.))
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.DAO.Branch.BranchDAO
 
@@ -21,7 +19,7 @@ assertExistenceOfBranchInDB appContext branch bPreviousPackageId bForkOfPackageI
 -- COMPARATORS
 -- --------------------------------
 compareBranchDtos resDto expDto bPreviousPackageId bForkOfPackageId bCreatedBy = do
-  liftIO $ (resDto ^. name) `shouldBe` (expDto ^. name)
-  liftIO $ (resDto ^. kmId) `shouldBe` (expDto ^. kmId)
-  liftIO $ (resDto ^. previousPackageId) `shouldBe` bPreviousPackageId
-  liftIO $ (resDto ^. createdBy) `shouldBe` bCreatedBy
+  liftIO $ resDto.name `shouldBe` expDto.name
+  liftIO $ resDto.kmId `shouldBe` expDto.kmId
+  liftIO $ resDto.previousPackageId `shouldBe` bPreviousPackageId
+  liftIO $ resDto.createdBy `shouldBe` bCreatedBy

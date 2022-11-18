@@ -12,30 +12,30 @@ import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
 instance ToRow MigratorState where
   toRow MigratorState {..} =
-    [ toField _migratorStateBranchUuid
-    , toField _migratorStateMetamodelVersion
-    , toJSONField _migratorStateMigrationState
-    , toField _migratorStateBranchPreviousPackageId
-    , toField _migratorStateTargetPackageId
-    , toJSONField _migratorStateBranchEvents
-    , toJSONField _migratorStateTargetPackageEvents
-    , toJSONField _migratorStateResultEvents
-    , toJSONField _migratorStateCurrentKnowledgeModel
-    , toField _migratorStateAppUuid
-    , toField _migratorStateCreatedAt
+    [ toField branchUuid
+    , toField metamodelVersion
+    , toJSONField migrationState
+    , toField branchPreviousPackageId
+    , toField targetPackageId
+    , toJSONField branchEvents
+    , toJSONField targetPackageEvents
+    , toJSONField resultEvents
+    , toJSONField currentKnowledgeModel
+    , toField appUuid
+    , toField createdAt
     ]
 
 instance FromRow MigratorState where
   fromRow = do
-    _migratorStateBranchUuid <- field
-    _migratorStateMetamodelVersion <- field
-    _migratorStateMigrationState <- fieldWith fromJSONField
-    _migratorStateBranchPreviousPackageId <- field
-    _migratorStateTargetPackageId <- field
-    _migratorStateBranchEvents <- fieldWith fromJSONField
-    _migratorStateTargetPackageEvents <- fieldWith fromJSONField
-    _migratorStateResultEvents <- fieldWith fromJSONField
-    _migratorStateCurrentKnowledgeModel <- fieldWith fromJSONField
-    _migratorStateAppUuid <- field
-    _migratorStateCreatedAt <- field
+    branchUuid <- field
+    metamodelVersion <- field
+    migrationState <- fieldWith fromJSONField
+    branchPreviousPackageId <- field
+    targetPackageId <- field
+    branchEvents <- fieldWith fromJSONField
+    targetPackageEvents <- fieldWith fromJSONField
+    resultEvents <- fieldWith fromJSONField
+    currentKnowledgeModel <- fieldWith fromJSONField
+    appUuid <- field
+    createdAt <- field
     return $ MigratorState {..}

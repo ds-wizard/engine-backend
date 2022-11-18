@@ -5,22 +5,22 @@ import Data.Aeson
 import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Model.Event.Chapter.ChapterEvent
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON AddChapterEvent where
-  parseJSON = simpleParseJSON "_addChapterEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON AddChapterEvent where
-  toJSON = simpleToJSON' "_addChapterEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 instance FromJSON EditChapterEvent where
-  parseJSON = simpleParseJSON "_editChapterEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON EditChapterEvent where
-  toJSON = simpleToJSON' "_editChapterEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 instance FromJSON DeleteChapterEvent where
-  parseJSON = simpleParseJSON "_deleteChapterEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON DeleteChapterEvent where
-  toJSON = simpleToJSON' "_deleteChapterEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")

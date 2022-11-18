@@ -4,16 +4,15 @@ import Data.Aeson
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
-data InvokeClientCssCompilationCommand =
-  InvokeClientCssCompilationCommand
-    { _invokeClientCssCompilationCommandAppUuid :: U.UUID
-    }
+data InvokeClientCssCompilationCommand = InvokeClientCssCompilationCommand
+  { appUuid :: U.UUID
+  }
   deriving (Show, Eq, Generic)
 
 instance FromJSON InvokeClientCssCompilationCommand where
-  parseJSON = simpleParseJSON "_invokeClientCssCompilationCommand"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON InvokeClientCssCompilationCommand where
-  toJSON = simpleToJSON "_invokeClientCssCompilationCommand"
+  toJSON = genericToJSON jsonOptions

@@ -12,13 +12,13 @@ import Wizard.Specs.Common
 
 questionnaireServiceSpec appContext =
   describe "Questionnaire Service" $
-  it "cleanQuestionnaires works" $
+    it "cleanQuestionnaires works" $
       -- GIVEN:
-   do
-    runInContextIO TML_Migration.runMigration appContext
-    runInContextIO QTN_Migration.runMigration appContext
-    assertCountInDB findQuestionnaires appContext 3
-      -- WHEN:
-    (Right ()) <- runInContext cleanQuestionnaires appContext
-      -- THEN:
-    assertCountInDB findQuestionnaires appContext 2
+      do
+        runInContextIO TML_Migration.runMigration appContext
+        runInContextIO QTN_Migration.runMigration appContext
+        assertCountInDB findQuestionnaires appContext 3
+        -- WHEN:
+        (Right ()) <- runInContext cleanQuestionnaires appContext
+        -- THEN:
+        assertCountInDB findQuestionnaires appContext 2

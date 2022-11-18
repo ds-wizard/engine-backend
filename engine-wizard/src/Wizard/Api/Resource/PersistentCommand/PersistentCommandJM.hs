@@ -2,7 +2,7 @@ module Wizard.Api.Resource.PersistentCommand.PersistentCommandJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.App.AppJM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Api.Resource.User.UserSuggestionJM ()
@@ -13,7 +13,7 @@ instance FromJSON PersistentCommandState
 instance ToJSON PersistentCommandState
 
 instance FromJSON PersistentCommandDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON PersistentCommandDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

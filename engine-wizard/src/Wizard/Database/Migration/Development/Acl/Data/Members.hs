@@ -1,20 +1,18 @@
 module Wizard.Database.Migration.Development.Acl.Data.Members where
 
-import Control.Lens ((^.))
-
-import LensesConfig
 import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Acl.Acl
+import Wizard.Model.User.User
 
 bioGroupMember :: Member
-bioGroupMember = GroupMember {_groupMemberGId = bioGroup ^. gId}
+bioGroupMember = GroupMember {gId = bioGroup.gId}
 
 albertMember :: Member
-albertMember = UserMember {_userMemberUuid = userAlbert ^. uuid}
+albertMember = UserMember {uuid = userAlbert.uuid}
 
 nikolaMember :: Member
-nikolaMember = UserMember {_userMemberUuid = userNikola ^. uuid}
+nikolaMember = UserMember {uuid = userNikola.uuid}
 
 charlesMember :: Member
-charlesMember = UserMember {_userMemberUuid = userCharles ^. uuid}
+charlesMember = UserMember {uuid = userCharles.uuid}

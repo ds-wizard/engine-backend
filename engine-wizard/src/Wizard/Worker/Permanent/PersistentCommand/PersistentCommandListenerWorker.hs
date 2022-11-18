@@ -1,13 +1,13 @@
-module Wizard.Worker.Permanent.PersistentCommand.PersistentCommandListenerWorker
-  ( persistentCommandListenerJob
-  ) where
+module Wizard.Worker.Permanent.PersistentCommand.PersistentCommandListenerWorker (
+  persistentCommandListenerJob,
+) where
 
-import Control.Lens ((^.))
 import Control.Monad (when)
 import Control.Monad.Reader (liftIO)
 import Prelude hiding (log)
 
-import LensesConfig
+import Shared.Model.Config.ServerConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Util.Context
@@ -15,13 +15,13 @@ import Wizard.Util.Logger
 
 persistentCommandListenerJob :: BaseContext -> IO ()
 persistentCommandListenerJob context =
-  when (context ^. serverConfig . persistentCommand . listenerJob . enabled) (job context)
+  when context.serverConfig.persistentCommand.listenerJob.enabled (job context)
 
 -- -----------------------------------------------------------------------------
 -- -----------------------------------------------------------------------------
 job :: BaseContext -> IO ()
 job context =
-  let loggingLevel = context ^. serverConfig . logging . level
+  let loggingLevel = context.serverConfig.logging.level
    in runLogging loggingLevel $ do
         log "starting"
         liftIO $ runAppContextWithBaseContext runPersistentCommandChannelListener context

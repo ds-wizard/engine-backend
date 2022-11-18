@@ -9,35 +9,35 @@ import Wizard.Api.Resource.User.UserSubmissionPropsJM ()
 import Wizard.Model.Acl.Acl
 import Wizard.Util.Hashable ()
 
-data UserDTO =
-  UserDTO
-    { _userDTOUuid :: UUID
-    , _userDTOFirstName :: String
-    , _userDTOLastName :: String
-    , _userDTOEmail :: String
-    , _userDTOAffiliation :: Maybe String
-    , _userDTOSources :: [String]
-    , _userDTORole :: String
-    , _userDTOPermissions :: [String]
-    , _userDTOActive :: Bool
-    , _userDTOImageUrl :: Maybe String
-    , _userDTOGroups :: [GroupMembership]
-    , _userDTOCreatedAt :: UTCTime
-    , _userDTOUpdatedAt :: UTCTime
-    }
+data UserDTO = UserDTO
+  { uuid :: UUID
+  , firstName :: String
+  , lastName :: String
+  , email :: String
+  , affiliation :: Maybe String
+  , sources :: [String]
+  , uRole :: String
+  , permissions :: [String]
+  , active :: Bool
+  , imageUrl :: Maybe String
+  , groups :: [GroupMembership]
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq UserDTO where
   a == b =
-    _userDTOUuid a == _userDTOUuid b &&
-    _userDTOFirstName a == _userDTOFirstName b &&
-    _userDTOLastName a == _userDTOLastName b &&
-    _userDTOEmail a == _userDTOEmail b &&
-    _userDTOAffiliation a == _userDTOAffiliation b &&
-    _userDTOSources a == _userDTOSources b &&
-    _userDTORole a == _userDTORole b &&
-    _userDTOPermissions a == _userDTOPermissions b &&
-    _userDTOActive a == _userDTOActive b &&
-    _userDTOImageUrl a == _userDTOImageUrl b && _userDTOGroups a == _userDTOGroups b
+    a.uuid == b.uuid
+      && a.firstName == b.firstName
+      && a.lastName == b.lastName
+      && a.email == b.email
+      && a.affiliation == b.affiliation
+      && a.sources == b.sources
+      && a.uRole == b.uRole
+      && a.permissions == b.permissions
+      && a.active == b.active
+      && a.imageUrl == b.imageUrl
+      && a.groups == b.groups
 
 instance Hashable UserDTO

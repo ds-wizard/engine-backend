@@ -12,9 +12,9 @@ import Wizard.Specs.API.Template.File.List_POST
 
 templateFileAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "TEMPLATE FILE API Spec" $ do
-    list_get appContext
-    list_post appContext
-    detail_get appContext
-    detail_put appContext
-    detail_delete appContext
+    describe "TEMPLATE FILE API Spec" $ do
+      list_get appContext
+      list_post appContext
+      detail_get appContext
+      detail_put appContext
+      detail_delete appContext

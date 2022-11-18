@@ -7,22 +7,21 @@ import Shared.Api.Resource.Template.TemplateDTO
 import Shared.Model.Package.PackagePattern
 import Shared.Model.Template.Template
 
-data TemplateBundleDTO =
-  TemplateBundleDTO
-    { _templateBundleDTOTId :: String
-    , _templateBundleDTOName :: String
-    , _templateBundleDTOOrganizationId :: String
-    , _templateBundleDTOTemplateId :: String
-    , _templateBundleDTOVersion :: String
-    , _templateBundleDTOMetamodelVersion :: Int
-    , _templateBundleDTODescription :: String
-    , _templateBundleDTOReadme :: String
-    , _templateBundleDTOLicense :: String
-    , _templateBundleDTOAllowedPackages :: [PackagePattern]
-    , _templateBundleDTORecommendedPackageId :: Maybe String
-    , _templateBundleDTOFormats :: [TemplateFormat]
-    , _templateBundleDTOFiles :: [TemplateFileDTO]
-    , _templateBundleDTOAssets :: [TemplateAssetDTO]
-    , _templateBundleDTOCreatedAt :: UTCTime
-    }
+data TemplateBundleDTO = TemplateBundleDTO
+  { tId :: String
+  , name :: String
+  , organizationId :: String
+  , templateId :: String
+  , version :: String
+  , metamodelVersion :: Int
+  , description :: String
+  , readme :: String
+  , license :: String
+  , allowedPackages :: [PackagePattern]
+  , recommendedPackageId :: Maybe String
+  , formats :: [TemplateFormat]
+  , files :: [TemplateFileDTO]
+  , assets :: [TemplateAssetDTO]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

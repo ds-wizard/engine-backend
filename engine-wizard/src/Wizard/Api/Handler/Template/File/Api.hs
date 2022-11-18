@@ -10,13 +10,14 @@ import Wizard.Api.Handler.Template.File.List_GET
 import Wizard.Api.Handler.Template.File.List_POST
 import Wizard.Model.Context.BaseContext
 
-type TemplateFileAPI
-   = Tags "Template File"
-     :> (List_GET
-         :<|> List_POST
-         :<|> Detail_GET
-         :<|> Detail_PUT
-         :<|> Detail_DELETE)
+type TemplateFileAPI =
+  Tags "Template File"
+    :> ( List_GET
+          :<|> List_POST
+          :<|> Detail_GET
+          :<|> Detail_PUT
+          :<|> Detail_DELETE
+       )
 
 templateFileApi :: Proxy TemplateFileAPI
 templateFileApi = Proxy

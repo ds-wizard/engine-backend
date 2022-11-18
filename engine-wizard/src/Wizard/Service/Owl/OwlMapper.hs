@@ -11,19 +11,19 @@ import Shared.Util.Coordinate
 fromOwl :: String -> String -> String -> String -> Maybe String -> [Event] -> U.UUID -> UTCTime -> PackageWithEvents
 fromOwl name organizationId kmId version mPreviousPackageId events appUuid now =
   PackageWithEvents
-    { _packageWithEventsPId = buildCoordinate organizationId kmId version
-    , _packageWithEventsName = name
-    , _packageWithEventsOrganizationId = organizationId
-    , _packageWithEventsKmId = kmId
-    , _packageWithEventsVersion = version
-    , _packageWithEventsMetamodelVersion = kmMetamodelVersion
-    , _packageWithEventsDescription = ""
-    , _packageWithEventsReadme = ""
-    , _packageWithEventsLicense = ""
-    , _packageWithEventsPreviousPackageId = mPreviousPackageId
-    , _packageWithEventsForkOfPackageId = Nothing
-    , _packageWithEventsMergeCheckpointPackageId = Nothing
-    , _packageWithEventsEvents = events
-    , _packageWithEventsAppUuid = appUuid
-    , _packageWithEventsCreatedAt = now
+    { pId = buildCoordinate organizationId kmId version
+    , name = name
+    , organizationId = organizationId
+    , kmId = kmId
+    , version = version
+    , metamodelVersion = kmMetamodelVersion
+    , description = ""
+    , readme = ""
+    , license = ""
+    , previousPackageId = mPreviousPackageId
+    , forkOfPackageId = Nothing
+    , mergeCheckpointPackageId = Nothing
+    , events = events
+    , appUuid = appUuid
+    , createdAt = now
     }

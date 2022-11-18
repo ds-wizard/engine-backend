@@ -1,15 +1,14 @@
 module Wizard.Service.Migration.KnowledgeModel.MigratorService where
 
-import Control.Lens ((&), (.~), (?~), (^.))
 import Control.Monad (when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Maybe
 import Data.Time
 
-import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Model.Event.EventLenses
+import Shared.Model.Package.Package
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
@@ -18,6 +17,8 @@ import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Localization.Messages.Public
+import Wizard.Model.Branch.Branch
+import Wizard.Model.Branch.BranchData
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Acl.AclService
@@ -40,20 +41,19 @@ getCurrentMigrationDto branchUuid = do
 getCurrentMigration :: String -> AppContextM MigratorState
 getCurrentMigration branchUuid = do
   ms <- findMigratorStateByBranchUuid branchUuid
-  knowledgeModel <- compileKnowledgeModel (ms ^. resultEvents) (Just $ ms ^. branchPreviousPackageId) []
+  knowledgeModel <- compileKnowledgeModel ms.resultEvents (Just ms.branchPreviousPackageId) []
   let stateWithEvent =
-        case ms ^. migrationState of
-          (ConflictState (CorrectorConflict Nothing)) ->
-            ConflictState . CorrectorConflict . Just . head $ ms ^. targetPackageEvents
+        case ms.migrationState of
+          (ConflictState (CorrectorConflict Nothing)) -> ConflictState . CorrectorConflict . Just . head $ ms.targetPackageEvents
           state -> state
-  return . (currentKnowledgeModel ?~ knowledgeModel) . (migrationState .~ stateWithEvent) $ ms
+  return $ ms {currentKnowledgeModel = Just knowledgeModel, migrationState = stateWithEvent} :: AppContextM MigratorState
 
 createMigration :: String -> MigratorStateCreateDTO -> AppContextM MigratorStateDTO
 createMigration bUuid reqDto =
   runInTransaction $ do
     checkPermission _KM_UPGRADE_PERM
     logOutOnlineUsersWhenBranchDramaticallyChanged bUuid
-    let targetPkgId = reqDto ^. targetPackageId
+    let targetPkgId = reqDto.targetPackageId
     branch <- findBranchById bUuid
     branchData <- findBranchDataById bUuid
     previousPkg <- getPreviousPkg branch
@@ -61,10 +61,10 @@ createMigration bUuid reqDto =
     forkOfPkgId <- getForkOfPackageId branch
     validateMigrationUniqueness bUuid
     validateIfTargetPackageVersionIsHigher forkOfPkgId targetPkgId
-    branchEvents <- getBranchEvents (previousPkg ^. pId) mergeCheckpointPkgId
+    branchEvents <- getBranchEvents previousPkg.pId mergeCheckpointPkgId
     targetPkgEvents <- getTargetPackageEvents targetPkgId forkOfPkgId
-    km <- compileKnowledgeModel (branchData ^. events) (branch ^. previousPackageId) []
-    appUuid <- asks _appContextAppUuid
+    km <- compileKnowledgeModel branchData.events branch.previousPackageId []
+    appUuid <- asks currentAppUuid
     now <- liftIO getCurrentTime
     let ms = fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km appUuid now
     insertMigratorState ms
@@ -75,7 +75,7 @@ createMigration bUuid reqDto =
     getBranchEvents = getAllPreviousEventsSincePackageIdAndUntilPackageId
     getTargetPackageEvents = getAllPreviousEventsSincePackageIdAndUntilPackageId
     getPreviousPkg branch =
-      case branch ^. previousPackageId of
+      case branch.previousPackageId of
         Just previousPkgId -> getPackageById previousPkgId
         Nothing -> throwError . UserError $ _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE
     getMergeCheckpointPackageId branch = do
@@ -105,25 +105,26 @@ solveConflictAndMigrate branchUuid reqDto =
     ms <- getCurrentMigration branchUuid
     validateMigrationState ms
     validateTargetPackageEvent ms
-    validateReqDto (ms ^. migrationState) reqDto
+    validateReqDto ms.migrationState reqDto
     let stateWithSolvedConflicts = solveConflict ms reqDto
     migrateState stateWithSolvedConflicts
     auditKmMigrationSolve branchUuid reqDto
     return ()
   where
     validateMigrationState ms =
-      case ms ^. migrationState of
+      case ms.migrationState of
         ConflictState (CorrectorConflict _) -> return ()
         _ -> throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__NO_CONFLICTS_TO_SOLVE
     validateTargetPackageEvent ms =
-      case length (ms ^. targetPackageEvents) of
+      case length ms.targetPackageEvents of
         0 -> throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE
         _ -> return ()
     validateReqDto (ConflictState (CorrectorConflict (Just e))) reqDto =
-      if e ^. uuid' == reqDto ^. originalEventUuid
-        then when
-               (reqDto ^. action == MCAEdited && isNothing (reqDto ^. event))
-               (throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT)
+      if getUuid e == reqDto.originalEventUuid
+        then
+          when
+            (reqDto.action == MCAEdited && isNothing reqDto.event)
+            (throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT)
         else throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__EVENT_UUIDS_MISMATCH
 
 solveAllConflicts :: String -> AppContextM ()
@@ -137,21 +138,21 @@ solveAllConflicts branchUuid =
     return ()
   where
     go migratorState = do
-      case migratorState ^. migrationState of
+      case migratorState.migrationState of
         RunningState -> return migratorState
         ConflictState (CorrectorConflict mEvent) ->
           case mEvent of
             Just event -> do
               let conflictDto =
                     MigratorConflictDTO
-                      { _migratorConflictDTOOriginalEventUuid = event ^. uuid'
-                      , _migratorConflictDTOAction = MCAApply
-                      , _migratorConflictDTOEvent = Just event
+                      { originalEventUuid = getUuid event
+                      , action = MCAApply
+                      , event = Just event
                       }
               nextState <- liftIO $ migrate (solveConflict migratorState conflictDto)
               go nextState
             Nothing -> do
-              let updatedMigratorState = migratorState & migrationState .~ ErrorState
+              let updatedMigratorState = migratorState {migrationState = ErrorState} :: MigratorState
               updateMigratorState updatedMigratorState
               return updatedMigratorState
         ErrorState -> return migratorState

@@ -1,8 +1,7 @@
-module Wizard.Specs.API.Questionnaire.Detail_Report_GET
-  ( detail_report_get
-  ) where
+module Wizard.Specs.API.Questionnaire.Detail_Report_GET (
+  detail_report_get,
+) where
 
-import Control.Lens ((^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.UUID as U
@@ -12,7 +11,6 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
@@ -25,6 +23,7 @@ import qualified Wizard.Database.Migration.Development.Template.TemplateMigratio
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Report.Report
 
 import SharedTest.Specs.API.Common
@@ -65,28 +64,29 @@ test_200 appContext = do
 
 create_test_200 title appContext qtn authHeader =
   it title $
-     -- GIVEN: Prepare request
-   do
-    let reqUrl = reqUrlT $ qtn ^. uuid
-    let reqHeaders = reqHeadersT authHeader
-     -- GIVEN: Prepare expectation
-    let expStatus = 200
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = report1
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO U.runMigration appContext
-    runInContextIO TML.runMigration appContext
-    runInContextIO QTN.runMigration appContext
-    runInContextIO (insertQuestionnaire questionnaire7) appContext
-    runInContextIO (insertQuestionnaire questionnaire10) appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, Report)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    compareReportDtos resBody expDto
+    -- GIVEN: Prepare request
+    do
+      let reqUrl = reqUrlT $ qtn.uuid
+      let reqHeaders = reqHeadersT authHeader
+      -- GIVEN: Prepare expectation
+      let expStatus = 200
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = report1
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO U.runMigration appContext
+      runInContextIO TML.runMigration appContext
+      runInContextIO QTN.runMigration appContext
+      runInContextIO (insertQuestionnaire questionnaire7) appContext
+      runInContextIO (insertQuestionnaire questionnaire10) appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      result <- destructResponse' response
+      let (status, headers, resBody) = result :: (Int, ResponseHeaders, Report)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      compareReportDtos resBody expDto
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -113,25 +113,25 @@ test_403 appContext = do
 
 create_test_403 title appContext qtn authHeader errorMessage =
   it title $
-     -- GIVEN: Prepare request
-   do
-    let reqUrl = reqUrlT (qtn ^. uuid)
-    let reqHeaders = reqHeadersT authHeader
-     -- AND: Prepare expectation
-    let expStatus = 403
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = ForbiddenError errorMessage
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO U.runMigration appContext
-    runInContextIO TML.runMigration appContext
-    runInContextIO QTN.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare request
+    do
+      let reqUrl = reqUrlT qtn.uuid
+      let reqHeaders = reqHeadersT authHeader
+      -- AND: Prepare expectation
+      let expStatus = 403
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = ForbiddenError errorMessage
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO U.runMigration appContext
+      runInContextIO TML.runMigration appContext
+      runInContextIO QTN.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

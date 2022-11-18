@@ -13,21 +13,21 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Model.Plan.AppPlan
 import Wizard.Service.Plan.AppPlanService
 
-type List_POST
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> ReqBody '[ SafeJSON] AppPlanChangeDTO
-     :> "apps"
-     :> Capture "aUuid" U.UUID
-     :> "plans"
-     :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] AppPlan)
+type List_POST =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> ReqBody '[SafeJSON] AppPlanChangeDTO
+    :> "apps"
+    :> Capture "aUuid" U.UUID
+    :> "plans"
+    :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] AppPlan)
 
-list_POST ::
-     Maybe String
+list_POST
+  :: Maybe String
   -> Maybe String
   -> AppPlanChangeDTO
   -> U.UUID
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppPlan)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] AppPlan)
 list_POST mTokenHeader mServerUrl reqDto appUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< createPlan appUuid reqDto

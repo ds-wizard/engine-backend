@@ -10,17 +10,16 @@ data SubmissionState
   | ErrorSubmissionState
   deriving (Show, Eq, Generic, Read)
 
-data Submission =
-  Submission
-    { _submissionUuid :: U.UUID
-    , _submissionState :: SubmissionState
-    , _submissionLocation :: Maybe String
-    , _submissionReturnedData :: Maybe String
-    , _submissionServiceId :: String
-    , _submissionDocumentUuid :: U.UUID
-    , _submissionAppUuid :: U.UUID
-    , _submissionCreatedBy :: U.UUID
-    , _submissionCreatedAt :: UTCTime
-    , _submissionUpdatedAt :: UTCTime
-    }
+data Submission = Submission
+  { uuid :: U.UUID
+  , state :: SubmissionState
+  , location :: Maybe String
+  , returnedData :: Maybe String
+  , serviceId :: String
+  , documentUuid :: U.UUID
+  , appUuid :: U.UUID
+  , createdBy :: U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

@@ -1,11 +1,9 @@
 module Wizard.Database.Migration.Development.User.Data.AlbertEinstein where
 
-import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import Data.Time
 
-import LensesConfig
 import Shared.Util.Uuid
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileDTO
@@ -15,7 +13,9 @@ import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
+import Wizard.Model.App.App
 import Wizard.Model.Common.SensitiveData
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
@@ -25,14 +25,14 @@ import Wizard.Service.User.UserProfileMapper
 userAlbert :: User
 userAlbert =
   User
-    { _userUuid = u' "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-    , _userFirstName = "Albert"
-    , _userLastName = "Einstein"
-    , _userEmail = "albert.einstein@example.com"
-    , _userAffiliation = Just "My University"
-    , _userSources = [_USER_SOURCE_INTERNAL]
-    , _userRole = _USER_ROLE_ADMIN
-    , _userPermissions =
+    { uuid = u' "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
+    , firstName = "Albert"
+    , lastName = "Einstein"
+    , email = "albert.einstein@example.com"
+    , affiliation = Just "My University"
+    , sources = [_USER_SOURCE_INTERNAL]
+    , uRole = _USER_ROLE_ADMIN
+    , permissions =
         [ "APP_PERM"
         , "DEV_PERM"
         , "UM_PERM"
@@ -50,26 +50,26 @@ userAlbert =
         , "TML_PERM"
         , "DOC_PERM"
         ]
-    , _userActive = True
-    , _userPasswordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
-    , _userSubmissionProps = [userAlbertApiTokenEncrypted]
-    , _userImageUrl = Nothing
-    , _userGroups = [ownerBioGroup, ownerPlantGroup]
-    , _userMachine = False
-    , _userAppUuid = defaultApp ^. uuid
-    , _userLastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , _userCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , _userUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    , active = True
+    , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
+    , submissionProps = [userAlbertApiTokenEncrypted]
+    , imageUrl = Nothing
+    , groups = [ownerBioGroup, ownerPlantGroup]
+    , machine = False
+    , appUuid = defaultApp.uuid
+    , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
 
 userAlbertEdited :: User
 userAlbertEdited =
   userAlbert
-    { _userFirstName = "EDITED: Isaac"
-    , _userLastName = "EDITED: Einstein"
-    , _userEmail = "albert.einstein@example-edited.com"
-    , _userAffiliation = Just "EDITED: My University"
-    , _userSubmissionProps = [userAlbertApiTokenEditedEncrypted]
+    { firstName = "EDITED: Isaac"
+    , lastName = "EDITED: Einstein"
+    , email = "albert.einstein@example-edited.com"
+    , affiliation = Just "EDITED: My University"
+    , submissionProps = [userAlbertApiTokenEditedEncrypted]
     }
 
 userAlbertDecrypted :: User
@@ -81,24 +81,24 @@ userAlbertProfile = toUserProfileDTO userAlbert [userAlbertApiTokenDto]
 userAlbertProfileEdited :: UserProfileDTO
 userAlbertProfileEdited =
   userAlbertProfile
-    { _userProfileDTOFirstName = userAlbertEdited ^. firstName
-    , _userProfileDTOLastName = userAlbertEdited ^. lastName
-    , _userProfileDTOEmail = userAlbertEdited ^. email
-    , _userProfileDTOAffiliation = userAlbertEdited ^. affiliation
-    , _userProfileDTOSubmissionProps = [userAlbertApiTokenEditedDto]
+    { firstName = userAlbertEdited.firstName
+    , lastName = userAlbertEdited.lastName
+    , email = userAlbertEdited.email
+    , affiliation = userAlbertEdited.affiliation
+    , submissionProps = [userAlbertApiTokenEditedDto]
     }
 
 userPassword :: UserPasswordDTO
-userPassword = UserPasswordDTO {_userPasswordDTOPassword = "newPassword"}
+userPassword = UserPasswordDTO {password = "newPassword"}
 
 userState :: UserStateDTO
-userState = UserStateDTO {_userStateDTOActive = True}
+userState = UserStateDTO {active = True}
 
 userAlbertApiToken :: UserSubmissionProps
 userAlbertApiToken =
   UserSubmissionProps
-    { _userSubmissionPropsSId = defaultSubmissionService ^. sId
-    , _userSubmissionPropsValues = M.fromList [(defaultSubmissionServiceApiTokenProp, "Some Token")]
+    { sId = defaultSubmissionService.sId
+    , values = M.fromList [(defaultSubmissionServiceApiTokenProp, "Some Token")]
     }
 
 userAlbertApiTokenEncrypted :: UserSubmissionProps
@@ -107,16 +107,17 @@ userAlbertApiTokenEncrypted = process defaultSecret userAlbertApiToken
 userAlbertApiTokenDto :: UserSubmissionPropsDTO
 userAlbertApiTokenDto =
   UserSubmissionPropsDTO
-    { _userSubmissionPropsDTOSId = defaultSubmissionService ^. sId
-    , _userSubmissionPropsDTOName = defaultSubmissionService ^. name
-    , _userSubmissionPropsDTOValues =
+    { sId = defaultSubmissionService.sId
+    , name = defaultSubmissionService.name
+    , values =
         M.fromList [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "Some Token")]
     }
 
 userAlbertApiTokenEdited :: UserSubmissionProps
 userAlbertApiTokenEdited =
   userAlbertApiToken
-    {_userSubmissionPropsValues = M.fromList [(defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]}
+    { values = M.fromList [(defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]
+    }
 
 userAlbertApiTokenEditedEncrypted :: UserSubmissionProps
 userAlbertApiTokenEditedEncrypted = process defaultSecret userAlbertApiTokenEdited
@@ -124,9 +125,9 @@ userAlbertApiTokenEditedEncrypted = process defaultSecret userAlbertApiTokenEdit
 userAlbertApiTokenEditedDto :: UserSubmissionPropsDTO
 userAlbertApiTokenEditedDto =
   UserSubmissionPropsDTO
-    { _userSubmissionPropsDTOSId = defaultSubmissionService ^. sId
-    , _userSubmissionPropsDTOName = defaultSubmissionService ^. name
-    , _userSubmissionPropsDTOValues =
+    { sId = defaultSubmissionService.sId
+    , name = defaultSubmissionService.name
+    , values =
         M.fromList
           [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]
     }

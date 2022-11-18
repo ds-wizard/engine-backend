@@ -13,21 +13,21 @@ import Wizard.Api.Resource.User.UserSuggestionJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.User.UserService
 
-type List_Suggestions_GET
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> "users"
-     :> "suggestions"
-     :> QueryParam "q" String
-     :> QueryParam "select" String
-     :> QueryParam "exclude" String
-     :> QueryParam "page" Int
-     :> QueryParam "size" Int
-     :> QueryParam "sort" String
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] (Page UserSuggestionDTO))
+type List_Suggestions_GET =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> "users"
+    :> "suggestions"
+    :> QueryParam "q" String
+    :> QueryParam "select" String
+    :> QueryParam "exclude" String
+    :> QueryParam "page" Int
+    :> QueryParam "size" Int
+    :> QueryParam "sort" String
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] (Page UserSuggestionDTO))
 
-list_suggestions_GET ::
-     Maybe String
+list_suggestions_GET
+  :: Maybe String
   -> Maybe String
   -> Maybe String
   -> Maybe String
@@ -35,11 +35,11 @@ list_suggestions_GET ::
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page UserSuggestionDTO))
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page UserSuggestionDTO))
 list_suggestions_GET mTokenHeader mServerUrl mQuery mSelect mExclude mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
-    addTraceUuidHeader =<< do
-      let mSelectUuids = fmap (splitOn ",") mSelect
-      let mExcludeUuids = fmap (splitOn ",") mExclude
-      getUserSuggestionsPage mQuery mSelectUuids mExcludeUuids (Pageable mPage mSize) (parseSortQuery mSort)
+      addTraceUuidHeader =<< do
+        let mSelectUuids = fmap (splitOn ",") mSelect
+        let mExcludeUuids = fmap (splitOn ",") mExclude
+        getUserSuggestionsPage mQuery mSelectUuids mExcludeUuids (Pageable mPage mSize) (parseSortQuery mSort)

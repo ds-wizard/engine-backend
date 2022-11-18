@@ -5,14 +5,14 @@ import GHC.Generics
 
 data MemberDTO
   = GroupMemberDTO
-      { _groupMemberDTOGId :: String
-      , _groupMemberDTOName :: String
+      { gId :: String
+      , name :: String
       }
   | UserMemberDTO
-      { _userMemberDTOUuid :: U.UUID
-      , _userMemberDTOFirstName :: String
-      , _userMemberDTOLastName :: String
-      , _userMemberDTOGravatarHash :: String
-      , _userMemberDTOImageUrl :: Maybe String
+      { uuid :: U.UUID
+      , firstName :: String
+      , lastName :: String
+      , gravatarHash :: String
+      , imageUrl :: Maybe String
       }
   deriving (Generic, Eq, Show)

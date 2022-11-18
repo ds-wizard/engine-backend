@@ -8,7 +8,7 @@ import Wizard.Api.Resource.Usage.UsageJM ()
 import Wizard.Database.Migration.Development.Usage.Data.Usages
 
 instance ToSchema UsageDTO where
-  declareNamedSchema = simpleToSchema defaultUsage
+  declareNamedSchema = toSwagger defaultUsage
 
 instance ToSchema UsageEntryDTO where
-  declareNamedSchema = simpleToSchema defaultUsageUsers
+  declareNamedSchema = toSwagger defaultUsageUsers

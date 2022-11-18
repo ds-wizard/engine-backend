@@ -6,4 +6,4 @@ import Shared.Model.Common.MapEntry
 import Shared.Util.Swagger
 
 instance (ToSchema key, ToSchema value) => ToSchema (MapEntry key value) where
-  declareNamedSchema = simpleToSchema' "_mapEntry" (MapEntry "key" "value")
+  declareNamedSchema = toSwagger (MapEntry "key" "value")

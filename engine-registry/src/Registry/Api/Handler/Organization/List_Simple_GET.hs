@@ -11,13 +11,13 @@ import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleJM ()
 import Shared.Model.Context.TransactionState
 
-type List_Simple_GET
-   = "organizations"
-     :> "simple"
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [OrganizationSimpleDTO])
+type List_Simple_GET =
+  "organizations"
+    :> "simple"
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] [OrganizationSimpleDTO])
 
 list_simple_GET_Api :: Proxy List_Simple_GET
 list_simple_GET_Api = Proxy
 
-list_simple_GET :: BaseContextM (Headers '[ Header "x-trace-uuid" String] [OrganizationSimpleDTO])
+list_simple_GET :: BaseContextM (Headers '[Header "x-trace-uuid" String] [OrganizationSimpleDTO])
 list_simple_GET = runInUnauthService NoTransaction $ addTraceUuidHeader =<< getSimpleOrganizations

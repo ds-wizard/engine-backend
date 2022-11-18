@@ -4,11 +4,11 @@ import Control.Monad
 import Data.Aeson
 
 import Shared.Api.Resource.Event.EventJM ()
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Branch.Event.BranchEventDTO
 
 instance ToJSON BranchEventDTO where
-  toJSON = toSumJSON' "type"
+  toJSON = toSumJSON
 
 instance FromJSON BranchEventDTO where
   parseJSON (Object o) = do
@@ -19,7 +19,7 @@ instance FromJSON BranchEventDTO where
   parseJSON _ = mzero
 
 instance FromJSON AddBranchEventDTO where
-  parseJSON = simpleParseJSON "_addBranchEventDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddBranchEventDTO where
-  toJSON = simpleToJSON' "_addBranchEventDTO" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")

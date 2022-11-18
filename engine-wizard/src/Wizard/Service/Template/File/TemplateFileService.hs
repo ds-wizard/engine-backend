@@ -1,10 +1,8 @@
 module Wizard.Service.Template.File.TemplateFileService where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Database.DAO.Template.TemplateFileDAO
 import Shared.Model.Template.Template
 import Shared.Util.Uuid
@@ -31,9 +29,9 @@ createTemplateFile :: String -> TemplateFileChangeDTO -> AppContextM TemplateFil
 createTemplateFile tmlId reqDto =
   runInTransaction $ do
     checkPermission _TML_PERM
-    validateTemplateFileAndAssetUniqueness Nothing tmlId (reqDto ^. fileName)
+    validateTemplateFileAndAssetUniqueness Nothing tmlId reqDto.fileName
     fUuid <- liftIO generateUuid
-    appUuid <- asks _appContextAppUuid
+    appUuid <- asks currentAppUuid
     let newFile = fromChangeDTO reqDto tmlId fUuid appUuid
     insertTemplateFile newFile
     deleteTemporalDocumentsByTemplateFileId (U.toString fUuid)
@@ -44,8 +42,8 @@ modifyTemplateFile fileUuid reqDto =
   runInTransaction $ do
     checkPermission _TML_PERM
     file <- findTemplateFileById fileUuid
-    validateTemplateFileAndAssetUniqueness (Just $ file ^. uuid) (file ^. templateId) (reqDto ^. fileName)
-    let updatedFile = fromChangeDTO reqDto (file ^. templateId) (file ^. uuid) (file ^. appUuid)
+    validateTemplateFileAndAssetUniqueness (Just file.uuid) file.templateId reqDto.fileName
+    let updatedFile = fromChangeDTO reqDto file.templateId file.uuid file.appUuid
     updateTemplateFileById updatedFile
     deleteTemporalDocumentsByTemplateFileId fileUuid
     return updatedFile
@@ -55,6 +53,6 @@ deleteTemplateFile fileUuid =
   runInTransaction $ do
     checkPermission _TML_PERM
     file <- findTemplateFileById fileUuid
-    deleteTemplateFileById (U.toString $ file ^. uuid)
+    deleteTemplateFileById (U.toString file.uuid)
     deleteTemporalDocumentsByTemplateFileId fileUuid
     return ()

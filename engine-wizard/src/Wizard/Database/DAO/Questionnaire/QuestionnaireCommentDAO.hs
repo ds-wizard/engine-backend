@@ -1,6 +1,5 @@
 module Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO where
 
-import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (liftIO)
 import Data.String
 import Data.Time
@@ -10,7 +9,6 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
-import LensesConfig
 import Shared.Util.String
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireComment ()
@@ -34,12 +32,12 @@ insertQuestionnaireThreadAndComment :: QuestionnaireCommentThread -> Questionnai
 insertQuestionnaireThreadAndComment thread comment = do
   let sql =
         fromString $
-        f'
-          "BEGIN TRANSACTION; \
-          \INSERT INTO %s VALUES (%s); \
-          \INSERT INTO %s VALUES (%s); \
-          \COMMIT;"
-          ["questionnaire_comment_thread", generateQuestionMarks' thread, entityName, generateQuestionMarks' comment]
+          f'
+            "BEGIN TRANSACTION; \
+            \INSERT INTO %s VALUES (%s); \
+            \INSERT INTO %s VALUES (%s); \
+            \COMMIT;"
+            ["questionnaire_comment_thread", generateQuestionMarks' thread, entityName, generateQuestionMarks' comment]
   let params = toRow thread ++ toRow comment
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
@@ -49,27 +47,27 @@ insertQuestionnaireThreadAndComment' :: QuestionnaireCommentThread -> Questionna
 insertQuestionnaireThreadAndComment' thread comment = do
   let sql =
         fromString $
-        f'
-          "INSERT INTO %s VALUES (%s); \
-           \INSERT INTO %s VALUES (%s); "
-          ["questionnaire_comment_thread", generateQuestionMarks' thread, entityName, generateQuestionMarks' comment]
+          f'
+            "INSERT INTO %s VALUES (%s); \
+            \INSERT INTO %s VALUES (%s); "
+            ["questionnaire_comment_thread", generateQuestionMarks' thread, entityName, generateQuestionMarks' comment]
   let params = toRow thread ++ toRow comment
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
 
 updateQuestionnaireCommentById :: QuestionnaireComment -> AppContextM QuestionnaireComment
-updateQuestionnaireCommentById app = do
+updateQuestionnaireCommentById entity = do
   now <- liftIO getCurrentTime
-  let updatedApp = app & updatedAt .~ now
+  let updatedEntity = entity {updatedAt = now} :: QuestionnaireComment
   let sql =
         fromString
           "UPDATE questionnaire_comment SET uuid = ?, text = ?, created_by = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
-  let params = toRow updatedApp ++ [toField $ updatedApp ^. uuid]
+  let params = toRow updatedEntity ++ [toField updatedEntity.uuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
-  return updatedApp
+  return updatedEntity
 
 updateQuestionnaireCommentTextById :: U.UUID -> String -> AppContextM Int64
 updateQuestionnaireCommentTextById uuid text = do

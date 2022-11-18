@@ -1,20 +1,19 @@
-module Wizard.Specs.API.Questionnaire.Version.Detail_DELETE
-  ( detail_delete
-  ) where
+module Wizard.Specs.API.Questionnaire.Version.Detail_DELETE (
+  detail_delete,
+) where
 
-import Control.Lens ((&), (.~))
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Questionnaire.Questionnaire
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -47,22 +46,22 @@ reqBody = ""
 -- ----------------------------------------------------
 test_204 appContext =
   it "HTTP 204 NO CONTENT" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 204
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expBody = ""
-     -- AND: Run migrations
-    runInContextIO TML.runMigration appContext
-    runInContextIO QTN.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-    -- AND: Find a result in DB
-    assertExistenceOfQuestionnaireInDB appContext (questionnaire1 & versions .~ [])
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 204
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expBody = ""
+      -- AND: Run migrations
+      runInContextIO TML.runMigration appContext
+      runInContextIO QTN.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
+      -- AND: Find a result in DB
+      assertExistenceOfQuestionnaireInDB appContext (questionnaire1 {versions = []})
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

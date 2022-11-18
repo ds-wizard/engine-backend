@@ -11,10 +11,10 @@ import Shared.Model.Event.Choice.ChoiceEvent
 import Shared.Util.Swagger
 
 instance ToSchema AddChoiceEvent where
-  declareNamedSchema = simpleToSchema'' "_addChoiceEvent" "eventType" a_km1_ch3_q11_cho1
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_ch3_q11_cho1
 
 instance ToSchema EditChoiceEvent where
-  declareNamedSchema = simpleToSchema'' "_editChoiceEvent" "eventType" e_km1_ch3_q11_cho1
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_ch3_q11_cho1
 
 instance ToSchema DeleteChoiceEvent where
-  declareNamedSchema = simpleToSchema'' "_deleteChoiceEvent" "eventType" d_km1_ch3_q11_cho1
+  declareNamedSchema = toSwaggerWithType "eventType" d_km1_ch3_q11_cho1

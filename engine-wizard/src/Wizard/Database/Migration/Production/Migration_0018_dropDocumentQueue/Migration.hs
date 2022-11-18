@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0018_dropDocumentQueue.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0018_dropDocumentQueue.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -13,7 +13,10 @@ definition = (meta, migrate)
 
 meta =
   MigrationMeta
-    {mmNumber = 18, mmName = "Drop document queue", mmDescription = "Replace document queue with persistent command"}
+    { mmNumber = 18
+    , mmName = "Drop document queue"
+    , mmDescription = "Replace document queue with persistent command"
+    }
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do

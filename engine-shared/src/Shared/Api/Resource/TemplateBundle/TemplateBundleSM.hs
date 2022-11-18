@@ -10,4 +10,4 @@ import Shared.Service.TemplateBundle.TemplateBundleMapper
 import Shared.Util.Swagger
 
 instance ToSchema TemplateBundleDTO where
-  declareNamedSchema = simpleToSchema (toTemplateBundle commonWizardTemplate [] [])
+  declareNamedSchema = toSwagger (toTemplateBundle commonWizardTemplate [] [])

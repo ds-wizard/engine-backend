@@ -1,9 +1,8 @@
 module Wizard.Service.KnowledgeModel.Squash.Event.Choice where
 
-import Control.Lens ((^.))
-
-import LensesConfig
+import Shared.Model.Common.MapEntry
 import Shared.Model.Event.Choice.ChoiceEvent
+import Shared.Model.Event.EventField
 import Wizard.Service.KnowledgeModel.Squash.Event.Common
 
 instance SimpleEventSquash EditChoiceEvent where
@@ -12,10 +11,10 @@ instance SimpleEventSquash EditChoiceEvent where
   isTypeChanged _ _ = False
   simpleSquashEvent mPreviousEvent oldEvent newEvent =
     EditChoiceEvent
-      { _editChoiceEventUuid = newEvent ^. uuid
-      , _editChoiceEventParentUuid = newEvent ^. parentUuid
-      , _editChoiceEventEntityUuid = newEvent ^. entityUuid
-      , _editChoiceEventLabel = applyValue oldEvent newEvent label
-      , _editChoiceEventAnnotations = applyValue oldEvent newEvent annotations
-      , _editChoiceEventCreatedAt = newEvent ^. createdAt
+      { uuid = newEvent.uuid
+      , parentUuid = newEvent.parentUuid
+      , entityUuid = newEvent.entityUuid
+      , aLabel = applyValue oldEvent newEvent (aLabel :: EditChoiceEvent -> EventField String)
+      , annotations = applyValue oldEvent newEvent (annotations :: EditChoiceEvent -> EventField [MapEntry String String])
+      , createdAt = newEvent.createdAt
       }

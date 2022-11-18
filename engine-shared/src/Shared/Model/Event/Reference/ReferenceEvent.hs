@@ -13,39 +13,36 @@ data AddReferenceEvent
   | AddCrossReferenceEvent' AddCrossReferenceEvent
   deriving (Show, Eq, Generic)
 
-data AddResourcePageReferenceEvent =
-  AddResourcePageReferenceEvent
-    { _addResourcePageReferenceEventUuid :: U.UUID
-    , _addResourcePageReferenceEventParentUuid :: U.UUID
-    , _addResourcePageReferenceEventEntityUuid :: U.UUID
-    , _addResourcePageReferenceEventShortUuid :: String
-    , _addResourcePageReferenceEventAnnotations :: [MapEntry String String]
-    , _addResourcePageReferenceEventCreatedAt :: UTCTime
-    }
+data AddResourcePageReferenceEvent = AddResourcePageReferenceEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , shortUuid :: String
+  , annotations :: [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data AddURLReferenceEvent =
-  AddURLReferenceEvent
-    { _addURLReferenceEventUuid :: U.UUID
-    , _addURLReferenceEventParentUuid :: U.UUID
-    , _addURLReferenceEventEntityUuid :: U.UUID
-    , _addURLReferenceEventUrl :: String
-    , _addURLReferenceEventLabel :: String
-    , _addURLReferenceEventAnnotations :: [MapEntry String String]
-    , _addURLReferenceEventCreatedAt :: UTCTime
-    }
+data AddURLReferenceEvent = AddURLReferenceEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , url :: String
+  , aLabel :: String
+  , annotations :: [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data AddCrossReferenceEvent =
-  AddCrossReferenceEvent
-    { _addCrossReferenceEventUuid :: U.UUID
-    , _addCrossReferenceEventParentUuid :: U.UUID
-    , _addCrossReferenceEventEntityUuid :: U.UUID
-    , _addCrossReferenceEventTargetUuid :: U.UUID
-    , _addCrossReferenceEventDescription :: String
-    , _addCrossReferenceEventAnnotations :: [MapEntry String String]
-    , _addCrossReferenceEventCreatedAt :: UTCTime
-    }
+data AddCrossReferenceEvent = AddCrossReferenceEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , targetUuid :: U.UUID
+  , description :: String
+  , annotations :: [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
 -- --------------------------------------------
@@ -55,47 +52,43 @@ data EditReferenceEvent
   | EditCrossReferenceEvent' EditCrossReferenceEvent
   deriving (Show, Eq, Generic)
 
-data EditResourcePageReferenceEvent =
-  EditResourcePageReferenceEvent
-    { _editResourcePageReferenceEventUuid :: U.UUID
-    , _editResourcePageReferenceEventParentUuid :: U.UUID
-    , _editResourcePageReferenceEventEntityUuid :: U.UUID
-    , _editResourcePageReferenceEventShortUuid :: EventField String
-    , _editResourcePageReferenceEventAnnotations :: EventField [MapEntry String String]
-    , _editResourcePageReferenceEventCreatedAt :: UTCTime
-    }
+data EditResourcePageReferenceEvent = EditResourcePageReferenceEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , shortUuid :: EventField String
+  , annotations :: EventField [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditURLReferenceEvent =
-  EditURLReferenceEvent
-    { _editURLReferenceEventUuid :: U.UUID
-    , _editURLReferenceEventParentUuid :: U.UUID
-    , _editURLReferenceEventEntityUuid :: U.UUID
-    , _editURLReferenceEventUrl :: EventField String
-    , _editURLReferenceEventLabel :: EventField String
-    , _editURLReferenceEventAnnotations :: EventField [MapEntry String String]
-    , _editURLReferenceEventCreatedAt :: UTCTime
-    }
+data EditURLReferenceEvent = EditURLReferenceEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , url :: EventField String
+  , aLabel :: EventField String
+  , annotations :: EventField [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditCrossReferenceEvent =
-  EditCrossReferenceEvent
-    { _editCrossReferenceEventUuid :: U.UUID
-    , _editCrossReferenceEventParentUuid :: U.UUID
-    , _editCrossReferenceEventEntityUuid :: U.UUID
-    , _editCrossReferenceEventTargetUuid :: EventField U.UUID
-    , _editCrossReferenceEventDescription :: EventField String
-    , _editCrossReferenceEventAnnotations :: EventField [MapEntry String String]
-    , _editCrossReferenceEventCreatedAt :: UTCTime
-    }
+data EditCrossReferenceEvent = EditCrossReferenceEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , targetUuid :: EventField U.UUID
+  , description :: EventField String
+  , annotations :: EventField [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
 -- --------------------------------------------
-data DeleteReferenceEvent =
-  DeleteReferenceEvent
-    { _deleteReferenceEventUuid :: U.UUID
-    , _deleteReferenceEventParentUuid :: U.UUID
-    , _deleteReferenceEventEntityUuid :: U.UUID
-    , _deleteReferenceEventCreatedAt :: UTCTime
-    }
+data DeleteReferenceEvent = DeleteReferenceEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

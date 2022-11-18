@@ -9,12 +9,12 @@ import Registry.Api.Handler.Package.Api
 import Registry.Api.Handler.Template.Api
 import Registry.Model.Context.BaseContext
 
-type ApplicationAPI
-   = InfoAPI
-     :<|> ActionKeyAPI
-     :<|> OrganizationAPI
-     :<|> PackageAPI
-     :<|> TemplateAPI
+type ApplicationAPI =
+  InfoAPI
+    :<|> ActionKeyAPI
+    :<|> OrganizationAPI
+    :<|> PackageAPI
+    :<|> TemplateAPI
 
 applicationApi :: Proxy ApplicationAPI
 applicationApi = Proxy

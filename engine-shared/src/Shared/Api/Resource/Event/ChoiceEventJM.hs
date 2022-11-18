@@ -5,22 +5,22 @@ import Data.Aeson
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Shared.Model.Event.Choice.ChoiceEvent
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON AddChoiceEvent where
-  parseJSON = simpleParseJSON "_addChoiceEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON AddChoiceEvent where
-  toJSON = simpleToJSON' "_addChoiceEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 instance FromJSON EditChoiceEvent where
-  parseJSON = simpleParseJSON "_editChoiceEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON EditChoiceEvent where
-  toJSON = simpleToJSON' "_editChoiceEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 instance FromJSON DeleteChoiceEvent where
-  parseJSON = simpleParseJSON "_deleteChoiceEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON DeleteChoiceEvent where
-  toJSON = simpleToJSON' "_deleteChoiceEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")

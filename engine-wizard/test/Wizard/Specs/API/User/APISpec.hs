@@ -20,17 +20,17 @@ import Wizard.Specs.API.User.List_Suggestions_GET
 
 userAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "USER API Spec" $ do
-    list_GET appContext
-    list_suggestions_GET appContext
-    list_POST appContext
-    list_current_GET appContext
-    list_current_PUT appContext
-    list_current_password_PUT appContext
-    list_current_token_DELETE appContext
-    detail_GET appContext
-    detail_PUT appContext
-    detail_DELETE appContext
-    detail_password_PUT appContext
-    detail_password_hash_PUT appContext
-    detail_state_PUT appContext
+    describe "USER API Spec" $ do
+      list_GET appContext
+      list_suggestions_GET appContext
+      list_POST appContext
+      list_current_GET appContext
+      list_current_PUT appContext
+      list_current_password_PUT appContext
+      list_current_token_DELETE appContext
+      detail_GET appContext
+      detail_PUT appContext
+      detail_DELETE appContext
+      detail_password_PUT appContext
+      detail_password_hash_PUT appContext
+      detail_state_PUT appContext

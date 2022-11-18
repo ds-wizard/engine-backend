@@ -19,94 +19,84 @@ data QuestionnaireEventChangeDTO
   | DeleteCommentEventChangeDTO' DeleteCommentEventChangeDTO
   deriving (Show, Eq, Generic)
 
-data SetReplyEventChangeDTO =
-  SetReplyEventChangeDTO
-    { _setReplyEventChangeDTOUuid :: U.UUID
-    , _setReplyEventChangeDTOPath :: String
-    , _setReplyEventChangeDTOValue :: ReplyValue
-    , _setReplyEventChangeDTOPhasesAnsweredIndication :: PhasesAnsweredIndication
-    }
+data SetReplyEventChangeDTO = SetReplyEventChangeDTO
+  { uuid :: U.UUID
+  , path :: String
+  , value :: ReplyValue
+  , phasesAnsweredIndication :: PhasesAnsweredIndication
+  }
   deriving (Show, Eq, Generic)
 
-data ClearReplyEventChangeDTO =
-  ClearReplyEventChangeDTO
-    { _clearReplyEventChangeDTOUuid :: U.UUID
-    , _clearReplyEventChangeDTOPath :: String
-    , _clearReplyEventChangeDTOPhasesAnsweredIndication :: PhasesAnsweredIndication
-    }
+data ClearReplyEventChangeDTO = ClearReplyEventChangeDTO
+  { uuid :: U.UUID
+  , path :: String
+  , phasesAnsweredIndication :: PhasesAnsweredIndication
+  }
   deriving (Show, Eq, Generic)
 
-data SetPhaseEventChangeDTO =
-  SetPhaseEventChangeDTO
-    { _setPhaseEventChangeDTOUuid :: U.UUID
-    , _setPhaseEventChangeDTOPhaseUuid :: Maybe U.UUID
-    }
+data SetPhaseEventChangeDTO = SetPhaseEventChangeDTO
+  { uuid :: U.UUID
+  , phaseUuid :: Maybe U.UUID
+  }
   deriving (Show, Eq, Generic)
 
-data SetLabelsEventChangeDTO =
-  SetLabelsEventChangeDTO
-    { _setLabelsEventChangeDTOUuid :: U.UUID
-    , _setLabelsEventChangeDTOPath :: String
-    , _setLabelsEventChangeDTOValue :: [U.UUID]
-    }
+data SetLabelsEventChangeDTO = SetLabelsEventChangeDTO
+  { uuid :: U.UUID
+  , path :: String
+  , value :: [U.UUID]
+  }
   deriving (Show, Eq, Generic)
 
-data ResolveCommentThreadEventChangeDTO =
-  ResolveCommentThreadEventChangeDTO
-    { _resolveCommentThreadEventChangeDTOUuid :: U.UUID
-    , _resolveCommentThreadEventChangeDTOThreadUuid :: U.UUID
-    , _resolveCommentThreadEventChangeDTOPath :: String
-    , _resolveCommentThreadEventChangeDTOPrivate :: Bool
-    }
+data ResolveCommentThreadEventChangeDTO = ResolveCommentThreadEventChangeDTO
+  { uuid :: U.UUID
+  , threadUuid :: U.UUID
+  , path :: String
+  , private :: Bool
+  }
   deriving (Show, Eq, Generic)
 
-data ReopenCommentThreadEventChangeDTO =
-  ReopenCommentThreadEventChangeDTO
-    { _reopenCommentThreadEventChangeDTOUuid :: U.UUID
-    , _reopenCommentThreadEventChangeDTOThreadUuid :: U.UUID
-    , _reopenCommentThreadEventChangeDTOPath :: String
-    , _reopenCommentThreadEventChangeDTOPrivate :: Bool
-    }
+data ReopenCommentThreadEventChangeDTO = ReopenCommentThreadEventChangeDTO
+  { uuid :: U.UUID
+  , threadUuid :: U.UUID
+  , path :: String
+  , private :: Bool
+  }
   deriving (Show, Eq, Generic)
 
-data DeleteCommentThreadEventChangeDTO =
-  DeleteCommentThreadEventChangeDTO
-    { _deleteCommentThreadEventChangeDTOUuid :: U.UUID
-    , _deleteCommentThreadEventChangeDTOPath :: String
-    , _deleteCommentThreadEventChangeDTOThreadUuid :: U.UUID
-    , _deleteCommentThreadEventChangeDTOPrivate :: Bool
-    }
+data DeleteCommentThreadEventChangeDTO = DeleteCommentThreadEventChangeDTO
+  { uuid :: U.UUID
+  , path :: String
+  , threadUuid :: U.UUID
+  , private :: Bool
+  }
   deriving (Show, Eq, Generic)
 
-data AddCommentEventChangeDTO =
-  AddCommentEventChangeDTO
-    { _addCommentEventChangeDTOUuid :: U.UUID
-    , _addCommentEventChangeDTOPath :: String
-    , _addCommentEventChangeDTOThreadUuid :: U.UUID
-    , _addCommentEventChangeDTOCommentUuid :: U.UUID
-    , _addCommentEventChangeDTOText :: String
-    , _addCommentEventChangeDTOPrivate :: Bool
-    , _addCommentEventChangeDTONewThread :: Bool
-    }
+data AddCommentEventChangeDTO = AddCommentEventChangeDTO
+  { uuid :: U.UUID
+  , path :: String
+  , threadUuid :: U.UUID
+  , commentUuid :: U.UUID
+  , text :: String
+  , private :: Bool
+  , newThread :: Bool
+  }
   deriving (Show, Eq, Generic)
 
-data EditCommentEventChangeDTO =
-  EditCommentEventChangeDTO
-    { _editCommentEventChangeDTOUuid :: U.UUID
-    , _editCommentEventChangeDTOPath :: String
-    , _editCommentEventChangeDTOThreadUuid :: U.UUID
-    , _editCommentEventChangeDTOCommentUuid :: U.UUID
-    , _editCommentEventChangeDTOText :: String
-    , _editCommentEventChangeDTOPrivate :: Bool
-    }
+data EditCommentEventChangeDTO = EditCommentEventChangeDTO
+  { uuid :: U.UUID
+  , path :: String
+  , threadUuid :: U.UUID
+  , commentUuid :: U.UUID
+  , text :: String
+  , private :: Bool
+  }
   deriving (Show, Eq, Generic)
 
-data DeleteCommentEventChangeDTO =
-  DeleteCommentEventChangeDTO
-    { _deleteCommentEventChangeDTOUuid :: U.UUID
-    , _deleteCommentEventChangeDTOPath :: String
-    , _deleteCommentEventChangeDTOThreadUuid :: U.UUID
-    , _deleteCommentEventChangeDTOCommentUuid :: U.UUID
-    , _deleteCommentEventChangeDTOPrivate :: Bool
-    }
+data DeleteCommentEventChangeDTO = DeleteCommentEventChangeDTO
+  { uuid :: U.UUID
+  , path :: String
+  , threadUuid :: U.UUID
+  , commentUuid :: U.UUID
+  , private :: Bool
+  }
   deriving (Show, Eq, Generic)

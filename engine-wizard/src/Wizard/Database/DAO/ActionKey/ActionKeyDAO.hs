@@ -13,12 +13,12 @@ entityName = "action_key"
 
 findActionKeys :: AppContextM [ActionKey]
 findActionKeys = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findActionKeyByHash' :: String -> AppContextM (Maybe ActionKey)
 findActionKeyByHash' hash = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createFindEntityByFn' entityName [appQueryUuid appUuid, ("hash", hash)]
 
 insertActionKey :: ActionKey -> AppContextM Int64
@@ -29,5 +29,5 @@ deleteActionKeys = createDeleteEntitiesFn entityName
 
 deleteActionKeyByHash :: String -> AppContextM Int64
 deleteActionKeyByHash hash = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createDeleteEntityByFn entityName [appQueryUuid appUuid, ("hash", hash)]

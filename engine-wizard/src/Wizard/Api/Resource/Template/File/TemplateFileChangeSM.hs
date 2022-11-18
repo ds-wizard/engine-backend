@@ -8,4 +8,4 @@ import Wizard.Api.Resource.Template.File.TemplateFileChangeJM ()
 import Wizard.Database.Migration.Development.Template.Data.Templates
 
 instance ToSchema TemplateFileChangeDTO where
-  declareNamedSchema = simpleToSchema templateFileDefaultHtmlEditedChangeDto
+  declareNamedSchema = toSwagger templateFileDefaultHtmlEditedChangeDto

@@ -1,10 +1,8 @@
 module Wizard.Service.Owl.Diff.EventFactory.Choice where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 import Data.Time
 
-import LensesConfig
 import Shared.Model.Event.Choice.ChoiceEvent
 import Shared.Model.Event.Event
 import Shared.Model.Event.EventField
@@ -20,25 +18,25 @@ instance EventFactory Choice where
     now <- liftIO getCurrentTime
     return $
       AddChoiceEvent' $
-      AddChoiceEvent
-        { _addChoiceEventUuid = eventUuid
-        , _addChoiceEventParentUuid = parentUuid
-        , _addChoiceEventEntityUuid = entity ^. uuid
-        , _addChoiceEventLabel = entity ^. label
-        , _addChoiceEventAnnotations = entity ^. annotations
-        , _addChoiceEventCreatedAt = now
-        }
+        AddChoiceEvent
+          { uuid = eventUuid
+          , parentUuid = parentUuid
+          , entityUuid = entity.uuid
+          , aLabel = entity.aLabel
+          , annotations = entity.annotations
+          , createdAt = now
+          }
   createEditEvent (oldKm, newKm) parentUuid oldEntity newEntity = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let event =
           EditChoiceEvent
-            { _editChoiceEventUuid = eventUuid
-            , _editChoiceEventParentUuid = parentUuid
-            , _editChoiceEventEntityUuid = newEntity ^. uuid
-            , _editChoiceEventLabel = diffField (oldEntity ^. label) (newEntity ^. label)
-            , _editChoiceEventAnnotations = diffField (oldEntity ^. annotations) (newEntity ^. annotations)
-            , _editChoiceEventCreatedAt = now
+            { uuid = eventUuid
+            , parentUuid = parentUuid
+            , entityUuid = newEntity.uuid
+            , aLabel = diffField oldEntity.aLabel newEntity.aLabel
+            , annotations = diffField oldEntity.annotations newEntity.annotations
+            , createdAt = now
             }
     if isEmptyEvent event
       then return . Just . EditChoiceEvent' $ event
@@ -48,9 +46,9 @@ instance EventFactory Choice where
     now <- liftIO getCurrentTime
     return $
       DeleteChoiceEvent' $
-      DeleteChoiceEvent
-        { _deleteChoiceEventUuid = eventUuid
-        , _deleteChoiceEventParentUuid = parentUuid
-        , _deleteChoiceEventEntityUuid = entity ^. uuid
-        , _deleteChoiceEventCreatedAt = now
-        }
+        DeleteChoiceEvent
+          { uuid = eventUuid
+          , parentUuid = parentUuid
+          , entityUuid = entity.uuid
+          , createdAt = now
+          }

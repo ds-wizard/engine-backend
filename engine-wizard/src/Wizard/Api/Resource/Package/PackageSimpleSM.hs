@@ -13,7 +13,7 @@ import Wizard.Api.Resource.Registry.RegistryOrganizationSM ()
 import Wizard.Service.Package.PackageMapper
 
 instance ToSchema PackageSimpleDTO where
-  declareNamedSchema = simpleToSchema (toSimpleDTO (toPackage globalPackage))
+  declareNamedSchema = toSwagger (toSimpleDTO (toPackage globalPackage))
 
 instance ToSchema PackageSimple where
-  declareNamedSchema = simpleToSchema' "_packageSimple" (toSimple . toPackage $ globalPackage)
+  declareNamedSchema = toSwagger (toSimple . toPackage $ globalPackage)

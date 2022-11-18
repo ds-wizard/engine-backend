@@ -8,4 +8,4 @@ import Wizard.Api.Resource.UserToken.UserTokenCreateJM ()
 import Wizard.Database.Migration.Development.User.Data.UserTokens
 
 instance ToSchema UserTokenCreateDTO where
-  declareNamedSchema = simpleToSchema albertCreateToken
+  declareNamedSchema = toSwagger albertCreateToken

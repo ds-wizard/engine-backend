@@ -12,4 +12,4 @@ import Wizard.Api.Resource.Template.TemplateStateSM ()
 import Wizard.Database.Migration.Development.Template.Data.Templates
 
 instance ToSchema TemplateSimpleDTO where
-  declareNamedSchema = simpleToSchema commonWizardTemplateSimpleDTO
+  declareNamedSchema = toSwagger commonWizardTemplateSimpleDTO

@@ -10,13 +10,14 @@ import Wizard.Api.Handler.Document.List_GET
 import Wizard.Api.Handler.Document.List_POST
 import Wizard.Model.Context.BaseContext
 
-type DocumentAPI
-   = Tags "Document"
-     :> (List_GET
-         :<|> List_POST
-         :<|> Detail_DELETE
-         :<|> Detail_Download_GET
-         :<|> Detail_Available_Submission_Services_GET)
+type DocumentAPI =
+  Tags "Document"
+    :> ( List_GET
+          :<|> List_POST
+          :<|> Detail_DELETE
+          :<|> Detail_Download_GET
+          :<|> Detail_Available_Submission_Services_GET
+       )
 
 documentApi :: Proxy DocumentAPI
 documentApi = Proxy

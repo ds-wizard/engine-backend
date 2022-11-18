@@ -1,13 +1,12 @@
 module Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Tag where
 
-import Control.Lens
-import qualified Data.Map as M
+import qualified Data.List as L
+import qualified Data.Map.Strict as M
 import Prelude hiding (lookup)
 
-import LensesConfig
 import Shared.Model.Event.EventLenses
 import Shared.Model.Event.Tag.TagEvent
-import Shared.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()
@@ -20,21 +19,19 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Phase ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Question
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Tag ()
-import Wizard.Util.Lens
 
 instance ApplyEvent AddTagEvent where
   apply event = Right . addEntity . addEntityReference
     where
-      addEntityReference km = km & ap tagUuids .~ (event ^. entityUuid')
-      addEntity km = km & tagsM . at (event ^. entityUuid') ?~ createEntity event
+      addEntityReference km = km {tagUuids = km.tagUuids ++ [getEntityUuid event]} :: KnowledgeModel
+      addEntity km = setTagsM km $ M.insert (getEntityUuid event) (createEntity event) km.entities.tags :: KnowledgeModel
 
 instance ApplyEvent EditTagEvent where
-  apply = applyEditEvent (entities . tags) "Tag"
+  apply = applyEditEvent getTagsM setTagsM
 
 instance ApplyEvent DeleteTagEvent where
   apply event = Right . deleteEntity . deleteEntityReference . deleteEntityChildrenReference
     where
-      deleteEntityReference km = km & del tagUuids .~ (event ^. entityUuid')
-      deleteEntity km = km & tagsM .~ M.delete (event ^. entityUuid') (km ^. tagsM)
-      deleteEntityChildrenReference km =
-        km & entities . questions .~ M.map (deleteTagReference event) (km ^. entities . questions)
+      deleteEntityReference km = km {tagUuids = L.delete (getEntityUuid event) km.tagUuids} :: KnowledgeModel
+      deleteEntity km = setTagsM km $ M.delete (getEntityUuid event) (getTagsM km)
+      deleteEntityChildrenReference km = setQuestionsM km $ M.map (deleteTagReference event) km.entities.questions

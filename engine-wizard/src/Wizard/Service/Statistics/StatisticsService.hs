@@ -19,10 +19,10 @@ getInstanceStatistics = do
   tmlCount <- countTemplatesGroupedByOrganizationIdAndKmId
   return
     InstanceStatistics
-      { _instanceStatisticsUserCount = uCount
-      , _instanceStatisticsPkgCount = pCount
-      , _instanceStatisticsQtnCount = qCount
-      , _instanceStatisticsBranchCount = bCount
-      , _instanceStatisticsDocCount = docCount
-      , _instanceStatisticsTmlCount = tmlCount
+      { userCount = uCount
+      , pkgCount = pCount
+      , qtnCount = qCount
+      , branchCount = bCount
+      , docCount = docCount
+      , tmlCount = tmlCount
       }

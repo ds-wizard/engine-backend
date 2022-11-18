@@ -11,22 +11,22 @@ import Wizard.Model.Template.TemplateList
 
 instance FromRow TemplateList where
   fromRow = do
-    _templateListTId <- field
-    _templateListName <- field
-    _templateListOrganizationId <- field
-    _templateListTemplateId <- field
-    _templateListVersion <- field
-    _templateListMetamodelVersion <- field
-    _templateListDescription <- field
-    _templateListReadme <- field
-    _templateListLicense <- field
-    _templateListAllowedPackages <- fieldWith fromJSONField
-    _templateListRecommendedPackageId <- field
-    _templateListFormats <- fieldWith fromJSONField
-    _templateListCreatedAt <- field
-    _templateListAppUuid <- field
-    _templateListState <- field
-    _templateListRemoteVersion <- field
-    _templateListRemoteOrganizationName <- field
-    _templateListRemoteOrganizationLogo <- field
+    tId <- field
+    name <- field
+    organizationId <- field
+    templateId <- field
+    version <- field
+    metamodelVersion <- field
+    description <- field
+    readme <- field
+    license <- field
+    allowedPackages <- fieldWith fromJSONField
+    recommendedPackageId <- field
+    formats <- fieldWith fromJSONField
+    createdAt <- field
+    appUuid <- field
+    state <- field
+    remoteVersion <- field
+    remoteOrganizationName <- field
+    remoteOrganizationLogo <- field
     return $ TemplateList {..}

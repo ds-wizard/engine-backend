@@ -100,6 +100,22 @@ jobs:
       run: |
         rm -rf vendor/servant-errors/.stack-work
 
+    - name: Cache servant-mock
+      id: cache-servant-mock
+      uses: actions/cache@v3
+      with:
+        path: vendor/servant-mock/.stack-work
+        key: servant-mock-ubuntu18-${{ hashFiles('vendor/servant-mock/package.yaml')}}-${{ hashFiles('vendor/servant-mock/**/*.hs') }}
+        restore-keys: |
+          servant-mock-ubuntu18-${{ hashFiles('vendor/servant-mock/package.yaml')}}-
+          servant-mock-ubuntu18-
+
+    - name: Invalidate servant-mock cache (force push)
+      id: invalidate-cache-servant-mock
+      if: github.event_name == 'push' && github.event.forced && steps.cache-servant-mock.outputs.cache-hit != 'true'
+      run: |
+        rm -rf vendor/servant-mock/.stack-work
+
     - name: Cache engine-shared
       id: cache-engine-shared
       uses: actions/cache@v3

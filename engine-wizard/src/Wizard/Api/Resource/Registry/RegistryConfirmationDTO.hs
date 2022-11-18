@@ -2,9 +2,8 @@ module Wizard.Api.Resource.Registry.RegistryConfirmationDTO where
 
 import GHC.Generics
 
-data RegistryConfirmationDTO =
-  RegistryConfirmationDTO
-    { _registryConfirmationDTOOrganizationId :: String
-    , _registryConfirmationDTOHash :: String
-    }
+data RegistryConfirmationDTO = RegistryConfirmationDTO
+  { organizationId :: String
+  , hash :: String
+  }
   deriving (Show, Eq, Generic)

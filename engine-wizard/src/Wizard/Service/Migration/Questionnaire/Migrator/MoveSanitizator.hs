@@ -1,15 +1,15 @@
 module Wizard.Service.Migration.Questionnaire.Migrator.MoveSanitizator where
 
-import Control.Lens ((^.))
 import qualified Data.List as L
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
+import GHC.Records
 import Prelude hiding (id)
 import qualified Prelude
 
-import LensesConfig
 import Shared.Model.Event.Event
+import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelUtil
 import Shared.Model.Questionnaire.QuestionnaireUtil
@@ -28,15 +28,15 @@ sanitizeRepliesWithEvents oldKm newKm = foldl (processReplies oldKm newKm)
 -- PRIVATE
 -- --------------------------------
 processReplies :: KnowledgeModel -> KnowledgeModel -> [ReplyTuple] -> Event -> [ReplyTuple]
-processReplies oldKm newKm replies (MoveAnswerEvent' event) = deleteUnwantedReplies (event ^. entityUuid) replies
+processReplies oldKm newKm replies (MoveAnswerEvent' event) = deleteUnwantedReplies event.entityUuid replies
 processReplies oldKm newKm replies (MoveQuestionEvent' event) = processRepliesForQuestionMove oldKm newKm event replies
 processReplies _ _ replies _ = replies
 
 deleteUnwantedReplies :: U.UUID -> [ReplyTuple] -> [ReplyTuple]
 deleteUnwantedReplies entUuid = filter (\(path, _) -> not $ U.toString entUuid `L.isInfixOf` path)
 
-processRepliesForQuestionMove ::
-     (HasParentUuid event U.UUID, HasTargetUuid event U.UUID, HasEntityUuid event U.UUID)
+processRepliesForQuestionMove
+  :: (HasField "parentUuid" event U.UUID, HasField "targetUuid" event U.UUID, HasField "entityUuid" event U.UUID)
   => KnowledgeModel
   -> KnowledgeModel
   -> event
@@ -45,12 +45,12 @@ processRepliesForQuestionMove ::
 processRepliesForQuestionMove oldKm newKm event replies =
   let oldParentMap = makeParentMap oldKm
       newParentMap = makeParentMap newKm
-      parentParentPath = computeParentPath oldParentMap (event ^. parentUuid)
-      targetParentPath = computeParentPath newParentMap (event ^. targetUuid)
+      parentParentPath = computeParentPath oldParentMap event.parentUuid
+      targetParentPath = computeParentPath newParentMap event.targetUuid
       sharedNode = computeSharedNode parentParentPath targetParentPath
       pPathDiff = takeDiffSuffix sharedNode parentParentPath
       tPathDiff = takeDiffSuffix sharedNode targetParentPath
-   in doMigration newKm (event ^. entityUuid) pPathDiff tPathDiff replies
+   in doMigration newKm event.entityUuid pPathDiff tPathDiff replies
 
 computeParentPath :: KMParentMap -> U.UUID -> [U.UUID]
 computeParentPath parentMap entUuid =
@@ -86,13 +86,14 @@ computeDesiredPath entityUuid pPathDiff tPathDiff = fmap replaceReply
     replaceReply :: ReplyTuple -> ReplyTuple
     replaceReply reply@(path, value) =
       if path `replyKeyContains` entityUuid
-        then let old =
-                   if null pPathDiff
-                     then U.toString entityUuid
-                     else f' "%s.%s" [createReplyKey pPathDiff, U.toString entityUuid]
-                 new =
-                   if null tPathDiff
-                     then U.toString entityUuid
-                     else f' "%s.%s" [createReplyKey tPathDiff, U.toString entityUuid]
-              in (replace old new path, value)
+        then
+          let old =
+                if null pPathDiff
+                  then U.toString entityUuid
+                  else f' "%s.%s" [createReplyKey pPathDiff, U.toString entityUuid]
+              new =
+                if null tPathDiff
+                  then U.toString entityUuid
+                  else f' "%s.%s" [createReplyKey tPathDiff, U.toString entityUuid]
+           in (replace old new path, value)
         else reply

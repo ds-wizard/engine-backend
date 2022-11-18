@@ -1,6 +1,6 @@
-module Wizard.Specs.API.QuestionnaireImporter.List_Suggestions_GET
-  ( list_suggestions_GET
-  ) where
+module Wizard.Specs.API.QuestionnaireImporter.List_Suggestions_GET (
+  list_suggestions_GET,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -53,10 +53,11 @@ test_200 appContext = do
     appContext
     "/questionnaire-importers/suggestions?enabled=true"
     reqAuthHeader
-    (Page
-       "questionnaireImporters"
-       (PageMetadata 20 2 1 0)
-       (fmap toDTO [questionnaireImporterBio2, questionnaireExtImporter1]))
+    ( Page
+        "questionnaireImporters"
+        (PageMetadata 20 2 1 0)
+        (fmap toDTO [questionnaireImporterBio2, questionnaireExtImporter1])
+    )
   create_test_200
     "HTTP 200 OK (query 'q')"
     appContext
@@ -78,23 +79,23 @@ test_200 appContext = do
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
   it title $
-       -- GIVEN: Prepare request
-   do
-    let reqHeaders = reqHeadersT reqAuthHeader
+    -- GIVEN: Prepare request
+    do
+      let reqHeaders = reqHeadersT reqAuthHeader
       -- AND: Prepare expectation
-    let expStatus = 200
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO TML_Migration.runMigration appContext
-    runInContextIO QTN_Migration.runMigration appContext
-    runInContextIO QI_Migration.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+      let expStatus = 200
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO QTN_Migration.runMigration appContext
+      runInContextIO QI_Migration.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

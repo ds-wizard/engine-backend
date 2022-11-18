@@ -5,24 +5,24 @@ import Data.Aeson
 import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Model.Event.Tag.TagEvent
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON AddTagEvent where
-  parseJSON = simpleParseJSON "_addTagEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON AddTagEvent where
-  toJSON = simpleToJSON' "_addTagEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 -- --------------------------------------------
 instance FromJSON EditTagEvent where
-  parseJSON = simpleParseJSON "_editTagEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON EditTagEvent where
-  toJSON = simpleToJSON' "_editTagEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 -- --------------------------------------------
 instance FromJSON DeleteTagEvent where
-  parseJSON = simpleParseJSON "_deleteTagEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON DeleteTagEvent where
-  toJSON = simpleToJSON' "_deleteTagEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")

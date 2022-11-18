@@ -6,7 +6,7 @@ import Data.Aeson
 import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Model.Event.Integration.IntegrationEvent
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance ToJSON AddIntegrationEvent where
   toJSON = toSumJSON
@@ -22,17 +22,17 @@ instance FromJSON AddIntegrationEvent where
 
 -- --------------------------------------------
 instance FromJSON AddApiIntegrationEvent where
-  parseJSON = simpleParseJSON "_addApiIntegrationEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddApiIntegrationEvent where
-  toJSON = simpleToJSON'' "_addApiIntegrationEvent" [("integrationType", "ApiIntegration")]
+  toJSON = toJSONWithAdditionalData [("integrationType", "ApiIntegration")]
 
 -- --------------------------------------------
 instance FromJSON AddWidgetIntegrationEvent where
-  parseJSON = simpleParseJSON "_addWidgetIntegrationEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddWidgetIntegrationEvent where
-  toJSON = simpleToJSON'' "_addWidgetIntegrationEvent" [("integrationType", "WidgetIntegration")]
+  toJSON = toJSONWithAdditionalData [("integrationType", "WidgetIntegration")]
 
 -- --------------------------------------------
 -- --------------------------------------------
@@ -50,22 +50,22 @@ instance FromJSON EditIntegrationEvent where
 
 -- --------------------------------------------
 instance FromJSON EditApiIntegrationEvent where
-  parseJSON = simpleParseJSON "_editApiIntegrationEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON EditApiIntegrationEvent where
-  toJSON = simpleToJSON'' "_editApiIntegrationEvent" [("integrationType", "ApiIntegration")]
+  toJSON = toJSONWithAdditionalData [("integrationType", "ApiIntegration")]
 
 -- --------------------------------------------
 instance FromJSON EditWidgetIntegrationEvent where
-  parseJSON = simpleParseJSON "_editWidgetIntegrationEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON EditWidgetIntegrationEvent where
-  toJSON = simpleToJSON'' "_editWidgetIntegrationEvent" [("integrationType", "WidgetIntegration")]
+  toJSON = toJSONWithAdditionalData [("integrationType", "WidgetIntegration")]
 
 -- --------------------------------------------
 -- --------------------------------------------
 instance FromJSON DeleteIntegrationEvent where
-  parseJSON = simpleParseJSON "_deleteIntegrationEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON DeleteIntegrationEvent where
-  toJSON = simpleToJSON' "_deleteIntegrationEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")

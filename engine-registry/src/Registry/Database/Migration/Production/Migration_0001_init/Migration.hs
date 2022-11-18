@@ -1,6 +1,6 @@
-module Registry.Database.Migration.Production.Migration_0001_init.Migration
-  ( definition
-  ) where
+module Registry.Database.Migration.Production.Migration_0001_init.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -26,19 +26,19 @@ migrate dbPool = do
 createActionKeyTable dbPool = do
   let sql =
         "create table action_key \
-            \     ( \
-            \         uuid            uuid not null \
-            \             constraint action_key_pk \
-            \                 primary key, \
-            \         organization_id varchar, \
-            \         type            varchar, \
-            \         hash            varchar, \
-            \         created_at      timestamp with time zone \
-            \     ); \
-            \     create unique index action_key_uuid_uindex \
-            \         on action_key (uuid); \
-            \     create unique index action_key_hash_uindex \
-            \         on action_key (hash); "
+        \     ( \
+        \         uuid            uuid not null \
+        \             constraint action_key_pk \
+        \                 primary key, \
+        \         organization_id varchar, \
+        \         type            varchar, \
+        \         hash            varchar, \
+        \         created_at      timestamp with time zone \
+        \     ); \
+        \     create unique index action_key_uuid_uindex \
+        \         on action_key (uuid); \
+        \     create unique index action_key_hash_uindex \
+        \         on action_key (hash); "
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
@@ -60,24 +60,24 @@ createAuditTable dbPool = do
 createOrganizationTable dbPool = do
   let sql =
         "create table organization \
-            \ ( \
-            \     organization_id varchar                  not null \
-            \         constraint organization_pk \
-            \             primary key, \
-            \     name            varchar                  not null, \
-            \     description     varchar                  not null, \
-            \     email           varchar                  not null, \
-            \     role            varchar                  not null, \
-            \     token           varchar                  not null, \
-            \     active          boolean                  not null, \
-            \     logo            varchar, \
-            \     created_at      timestamp with time zone not null, \
-            \     updated_at      timestamp with time zone not null \
-            \ ); \
-            \create unique index organization_organization_id_uindex \
-            \    on organization (organization_id); \
-            \create unique index organization_token_uindex \
-            \    on organization (token); "
+        \ ( \
+        \     organization_id varchar                  not null \
+        \         constraint organization_pk \
+        \             primary key, \
+        \     name            varchar                  not null, \
+        \     description     varchar                  not null, \
+        \     email           varchar                  not null, \
+        \     role            varchar                  not null, \
+        \     token           varchar                  not null, \
+        \     active          boolean                  not null, \
+        \     logo            varchar, \
+        \     created_at      timestamp with time zone not null, \
+        \     updated_at      timestamp with time zone not null \
+        \ ); \
+        \create unique index organization_organization_id_uindex \
+        \    on organization (organization_id); \
+        \create unique index organization_token_uindex \
+        \    on organization (token); "
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

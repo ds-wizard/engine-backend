@@ -1,12 +1,10 @@
 module Registry.Database.DAO.PersistentCommand.PersistentCommandDAO where
 
-import Control.Lens ((^.))
 import Data.String
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import GHC.Int
 
-import LensesConfig
 import Registry.Database.DAO.Common
 import Registry.Database.Mapping.PersistentCommand.PersistentCommand ()
 import Registry.Model.Context.AppContext
@@ -38,7 +36,7 @@ deletePersistentCommandByUuid uuid = createDeleteEntityByFn entityName [("uuid",
 
 notifySpecificPersistentCommandQueue :: PersistentCommand -> AppContextM Int64
 notifySpecificPersistentCommandQueue command = do
-  let sql = f' "NOTIFY %s__%s, '%s'" [channelName, command ^. component, U.toString $ command ^. uuid]
+  let sql = f' "NOTIFY %s__%s, '%s'" [channelName, command.component, U.toString $ command.uuid]
   logInfoU _CMP_DATABASE (trim sql)
   let action conn = execute_ conn (fromString sql)
   runDB action

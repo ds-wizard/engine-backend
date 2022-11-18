@@ -23,10 +23,9 @@ fromFieldGenericEnum f dat =
 toStringField :: String -> Action
 toStringField = Escape . BS.pack
 
-data PostgresEmbedded a =
-  PostgresEmbedded
-    { _postgresEmbeddedData :: a
-    }
+data PostgresEmbedded a = PostgresEmbedded
+  { _postgresEmbeddedData :: a
+  }
   deriving (Generic)
 
 instance (FromJSON a, Generic a) => FromJSON (PostgresEmbedded a)

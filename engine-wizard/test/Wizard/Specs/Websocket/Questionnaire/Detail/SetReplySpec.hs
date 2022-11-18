@@ -1,12 +1,10 @@
 module Wizard.Specs.Websocket.Questionnaire.Detail.SetReplySpec where
 
-import Control.Lens ((^.))
 import Data.Aeson
 import Network.WebSockets
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
-import LensesConfig
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
@@ -20,6 +18,9 @@ import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Context.AppContext
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 
 import Wizard.Specs.API.Common
@@ -38,27 +39,27 @@ setReplySpec appContext =
 test200 appContext =
   it "WS 200 OK" $
     -- GIVEN: Prepare database
-   do
-    let qtn = questionnaire10
-    runInContext U.runMigration appContext
-    runInContextIO TML_Migration.runMigration appContext
-    runInContextIO (insertPackage germanyPackage) appContext
-    runInContextIO (insertQuestionnaire questionnaire10) appContext
-    runInContextIO (insertQuestionnaire questionnaire7) appContext
-    -- AND: Connect to websocket
-    ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext (questionnaire10 ^. uuid)
-    ((c4, s4), (c5, s5), (c6, s6)) <- connectTestWebsocketUsers appContext (questionnaire7 ^. uuid)
-    -- WHEN:
-    write_SetReply c1 (toEventChangeDTO sre_rQ1Updated' samplePhasesAnsweredIndication)
-    -- THEN:
-    read_SetReply c1 (toEventDTO sre_rQ1Updated' (Just userAlbert))
-    read_SetReply c2 (toEventDTO sre_rQ1Updated' (Just userAlbert))
-    read_SetReply c3 (toEventDTO sre_rQ1Updated' (Just userAlbert))
-    nothingWasReceived c4
-    nothingWasReceived c5
-    nothingWasReceived c6
-    -- AND: Close sockets
-    closeSockets [s1, s2, s3, s4, s5, s6]
+    do
+      let qtn = questionnaire10
+      runInContext U.runMigration appContext
+      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertQuestionnaire questionnaire10) appContext
+      runInContextIO (insertQuestionnaire questionnaire7) appContext
+      -- AND: Connect to websocket
+      ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext questionnaire10.uuid
+      ((c4, s4), (c5, s5), (c6, s6)) <- connectTestWebsocketUsers appContext questionnaire7.uuid
+      -- WHEN:
+      write_SetReply c1 (toEventChangeDTO sre_rQ1Updated' samplePhasesAnsweredIndication)
+      -- THEN:
+      read_SetReply c1 (toEventDTO sre_rQ1Updated' (Just userAlbert))
+      read_SetReply c2 (toEventDTO sre_rQ1Updated' (Just userAlbert))
+      read_SetReply c3 (toEventDTO sre_rQ1Updated' (Just userAlbert))
+      nothingWasReceived c4
+      nothingWasReceived c5
+      nothingWasReceived c6
+      -- AND: Close sockets
+      closeSockets [s1, s2, s3, s4, s5, s6]
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -80,19 +81,19 @@ test403 appContext = do
 create_403_no_perm title appContext qtn authToken errorMessage =
   it title $
     -- GIVEN: Prepare database
-   do
-    insertQuestionnaireAndUsers appContext qtn
-    -- AND: Prepare expectation
-    let expError = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN errorMessage
-    -- AND: Connect to websocket
-    (c1, s1) <- createConnection appContext (reqUrlT (qtn ^. uuid) authToken)
-    read_SetUserList c1 0
-    -- WHEN: Send setReply
-    write_SetReply c1 (toEventChangeDTO sre_rQ1Updated' samplePhasesAnsweredIndication)
-    -- THEN: Read response
-    read_Error c1 expError
-    -- AND: Close sockets
-    closeSockets [s1]
+    do
+      insertQuestionnaireAndUsers appContext qtn
+      -- AND: Prepare expectation
+      let expError = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN errorMessage
+      -- AND: Connect to websocket
+      (c1, s1) <- createConnection appContext (reqUrlT qtn.uuid authToken)
+      read_SetUserList c1 0
+      -- WHEN: Send setReply
+      write_SetReply c1 (toEventChangeDTO sre_rQ1Updated' samplePhasesAnsweredIndication)
+      -- THEN: Read response
+      read_Error c1 expError
+      -- AND: Close sockets
+      closeSockets [s1]
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

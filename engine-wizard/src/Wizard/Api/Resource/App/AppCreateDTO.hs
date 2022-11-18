@@ -2,13 +2,12 @@ module Wizard.Api.Resource.App.AppCreateDTO where
 
 import GHC.Generics
 
-data AppCreateDTO =
-  AppCreateDTO
-    { _appCreateDTOAppId :: String
-    , _appCreateDTOAppName :: String
-    , _appCreateDTOFirstName :: String
-    , _appCreateDTOLastName :: String
-    , _appCreateDTOEmail :: String
-    , _appCreateDTOPassword :: String
-    }
+data AppCreateDTO = AppCreateDTO
+  { appId :: String
+  , appName :: String
+  , firstName :: String
+  , lastName :: String
+  , email :: String
+  , password :: String
+  }
   deriving (Generic)

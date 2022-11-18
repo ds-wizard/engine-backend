@@ -9,6 +9,6 @@ import Wizard.Specs.API.Questionnaire.Event.List_GET
 
 questionnaireEventAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "QUESTIONNAIRE EVENT API Spec" $ do
-    list_GET appContext
-    detail_GET appContext
+    describe "QUESTIONNAIRE EVENT API Spec" $ do
+      list_GET appContext
+      detail_GET appContext

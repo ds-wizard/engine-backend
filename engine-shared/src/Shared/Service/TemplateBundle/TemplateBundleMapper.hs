@@ -1,13 +1,11 @@
 module Shared.Service.TemplateBundle.TemplateBundleMapper where
 
 import Codec.Archive.Zip
-import Control.Lens ((^.))
 import Data.Aeson
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Api.Resource.Template.TemplateDTO
 import Shared.Api.Resource.TemplateBundle.TemplateBundleDTO
 import Shared.Api.Resource.TemplateBundle.TemplateBundleJM ()
@@ -32,26 +30,26 @@ toTemplateEntry tb =
    in toEntry "template/template.json" 0 templateJson
 
 toAssetEntry :: (TemplateAsset, BS.ByteString) -> Entry
-toAssetEntry (asset, content) = toEntry ("template/assets/" ++ asset ^. fileName) 0 (BSL.fromStrict content)
+toAssetEntry (asset, content) = toEntry ("template/assets/" ++ asset.fileName) 0 (BSL.fromStrict content)
 
 toTemplateBundle :: Template -> [TemplateFile] -> [TemplateAsset] -> TemplateBundleDTO
 toTemplateBundle template files assets =
   TemplateBundleDTO
-    { _templateBundleDTOTId = template ^. tId
-    , _templateBundleDTOName = template ^. name
-    , _templateBundleDTOOrganizationId = template ^. organizationId
-    , _templateBundleDTOTemplateId = template ^. templateId
-    , _templateBundleDTOVersion = template ^. version
-    , _templateBundleDTOMetamodelVersion = template ^. metamodelVersion
-    , _templateBundleDTODescription = template ^. description
-    , _templateBundleDTOReadme = template ^. readme
-    , _templateBundleDTOLicense = template ^. license
-    , _templateBundleDTOAllowedPackages = template ^. allowedPackages
-    , _templateBundleDTORecommendedPackageId = template ^. recommendedPackageId
-    , _templateBundleDTOFormats = template ^. formats
-    , _templateBundleDTOFiles = fmap toFileDTO files
-    , _templateBundleDTOAssets = fmap toAssetDTO assets
-    , _templateBundleDTOCreatedAt = template ^. createdAt
+    { tId = template.tId
+    , name = template.name
+    , organizationId = template.organizationId
+    , templateId = template.templateId
+    , version = template.version
+    , metamodelVersion = template.metamodelVersion
+    , description = template.description
+    , readme = template.readme
+    , license = template.license
+    , allowedPackages = template.allowedPackages
+    , recommendedPackageId = template.recommendedPackageId
+    , formats = template.formats
+    , files = fmap toFileDTO files
+    , assets = fmap toAssetDTO assets
+    , createdAt = template.createdAt
     }
 
 fromTemplateArchive :: BSL.ByteString -> Either AppError (TemplateBundleDTO, [(TemplateAssetDTO, BS.ByteString)])
@@ -60,7 +58,7 @@ fromTemplateArchive = fromTemplateZip . toArchive
 fromTemplateZip :: Archive -> Either AppError (TemplateBundleDTO, [(TemplateAssetDTO, BS.ByteString)])
 fromTemplateZip archive = do
   tb <- fromTemplateEntry archive
-  assets <- traverse (fromAssetEntry tb archive) (tb ^. assets)
+  assets <- traverse (fromAssetEntry tb archive) tb.assets
   Right (tb, assets)
 
 fromTemplateEntry :: Archive -> Either AppError TemplateBundleDTO
@@ -74,25 +72,25 @@ fromTemplateEntry archive =
 
 fromAssetEntry :: TemplateBundleDTO -> Archive -> TemplateAssetDTO -> Either AppError (TemplateAssetDTO, BS.ByteString)
 fromAssetEntry tb archive asset =
-  case findEntryByPath ("template/assets/" ++ asset ^. fileName) archive of
+  case findEntryByPath ("template/assets/" ++ asset.fileName) archive of
     Just assetEntry -> Right (asset, BSL.toStrict . fromEntry $ assetEntry)
-    Nothing -> Left $ UserError (_ERROR_SERVICE_TB__MISSING_ASSET (asset ^. fileName))
+    Nothing -> Left $ UserError (_ERROR_SERVICE_TB__MISSING_ASSET asset.fileName)
 
 fromTemplateBundle :: TemplateBundleDTO -> U.UUID -> Template
 fromTemplateBundle tb appUuid =
   Template
-    { _templateTId = tb ^. tId
-    , _templateName = tb ^. name
-    , _templateOrganizationId = tb ^. organizationId
-    , _templateTemplateId = tb ^. templateId
-    , _templateVersion = tb ^. version
-    , _templateMetamodelVersion = tb ^. metamodelVersion
-    , _templateDescription = tb ^. description
-    , _templateReadme = tb ^. readme
-    , _templateLicense = tb ^. license
-    , _templateAllowedPackages = tb ^. allowedPackages
-    , _templateRecommendedPackageId = tb ^. recommendedPackageId
-    , _templateFormats = tb ^. formats
-    , _templateAppUuid = appUuid
-    , _templateCreatedAt = tb ^. createdAt
+    { tId = tb.tId
+    , name = tb.name
+    , organizationId = tb.organizationId
+    , templateId = tb.templateId
+    , version = tb.version
+    , metamodelVersion = tb.metamodelVersion
+    , description = tb.description
+    , readme = tb.readme
+    , license = tb.license
+    , allowedPackages = tb.allowedPackages
+    , recommendedPackageId = tb.recommendedPackageId
+    , formats = tb.formats
+    , appUuid = appUuid
+    , createdAt = tb.createdAt
     }

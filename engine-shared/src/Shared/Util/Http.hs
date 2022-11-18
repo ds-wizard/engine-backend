@@ -4,8 +4,8 @@ import qualified Data.ByteString.Char8 as BS
 import Data.CaseInsensitive (mk)
 import Data.List (find)
 import Network.HTTP.Types (Header, Status)
-import Network.Wai (Request(..), Response)
-import Network.Wai.Internal (Response(..))
+import Network.Wai (Request (..), Response)
+import Network.Wai.Internal (Response (..))
 
 findHeader :: String -> [Header] -> Maybe String
 findHeader headerNameToFind headers =

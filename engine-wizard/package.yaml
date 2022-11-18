@@ -17,9 +17,9 @@ library:
   when:
   - condition: os(darwin)
     then:
-      ghc-options: -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+      ghc-options: -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
     else:
-      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
   dependencies:
   - base
   - aeson
@@ -104,9 +104,9 @@ executables:
     when:
     - condition: os(darwin)
       then:
-        ghc-options: -threaded -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -threaded -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
       else:
-        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
     dependencies:
     - base
     - engine-wizard
@@ -117,9 +117,9 @@ tests:
     when:
     - condition: os(darwin)
       then:
-        ghc-options: -threaded -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -threaded -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
       else:
-        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
     dependencies:
     - base
     - aeson
@@ -185,3 +185,5 @@ default-extensions:
   - TypeOperators
   - TypeSynonymInstances
   - UnicodeSyntax
+  - OverloadedRecordDot
+  - DuplicateRecordFields

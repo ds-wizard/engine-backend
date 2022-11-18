@@ -1,26 +1,24 @@
 module Wizard.Service.KnowledgeModel.Compilator.Modifier.Metric where
 
-import Control.Lens ((^.))
-
-import LensesConfig
 import Shared.Model.Event.Metric.MetricEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance CreateEntity AddMetricEvent Metric where
-  createEntity e =
+  createEntity event =
     Metric
-      { _metricUuid = e ^. entityUuid
-      , _metricTitle = e ^. title
-      , _metricAbbreviation = e ^. abbreviation
-      , _metricDescription = e ^. description
-      , _metricAnnotations = e ^. annotations
+      { uuid = event.entityUuid
+      , title = event.title
+      , abbreviation = event.abbreviation
+      , description = event.description
+      , annotations = event.annotations
       }
 
 instance EditEntity EditMetricEvent Metric where
-  editEntity e = applyAnnotations . applyDescription . applyAbbreviation . applyTitle
-    where
-      applyTitle m = applyValue (e ^. title) m title
-      applyAbbreviation m = applyValue (e ^. abbreviation) m abbreviation
-      applyDescription m = applyValue (e ^. description) m description
-      applyAnnotations m = applyValue (e ^. annotations) m annotations
+  editEntity event entity =
+    entity
+      { title = applyValue entity.title event.title
+      , abbreviation = applyValue entity.abbreviation event.abbreviation
+      , description = applyValue entity.description event.description
+      , annotations = applyValue entity.annotations event.annotations
+      }

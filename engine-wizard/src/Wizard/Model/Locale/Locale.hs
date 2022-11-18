@@ -4,15 +4,14 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-data Locale =
-  Locale
-    { _localeUuid :: U.UUID
-    , _localeName :: String
-    , _localeCode :: String
-    , _localeFallback :: Bool
-    , _localeEnabled :: Bool
-    , _localeAppUuid :: U.UUID
-    , _localeCreatedAt :: UTCTime
-    , _localeUpdatedAt :: UTCTime
-    }
+data Locale = Locale
+  { uuid :: U.UUID
+  , name :: String
+  , code :: String
+  , fallback :: Bool
+  , enabled :: Bool
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

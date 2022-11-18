@@ -1,28 +1,28 @@
-module Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
-  ( sanitizeQuestionnaireEvents
-  ) where
+module Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator (
+  sanitizeQuestionnaireEvents,
+) where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 import qualified Data.Map.Strict as M
 import Data.Time
 
-import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Util.Uuid
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
+import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import qualified Wizard.Service.Migration.Questionnaire.Migrator.ChangeQTypeSanitizator as CTS
 import qualified Wizard.Service.Migration.Questionnaire.Migrator.MoveSanitizator as MS
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 
-sanitizeQuestionnaireEvents ::
-     KnowledgeModel -> KnowledgeModel -> [QuestionnaireEvent] -> AppContextM [QuestionnaireEvent]
+sanitizeQuestionnaireEvents
+  :: KnowledgeModel -> KnowledgeModel -> [QuestionnaireEvent] -> AppContextM [QuestionnaireEvent]
 sanitizeQuestionnaireEvents oldKm newKm events = do
   oldQtnContent <- compileQuestionnairePreview events
-  let oldReplies = oldQtnContent ^. replies
+  let oldReplies = oldQtnContent.replies
   now <- liftIO getCurrentTime
   let sanitizedReplies = M.fromList . sanitizeReplies now oldKm newKm . M.toList $ oldReplies
   clearReplyEvents <- generateClearReplyEvents oldReplies sanitizedReplies
@@ -45,7 +45,7 @@ generateClearReplyEvents oldReplies sanitizedReplies = traverse generateEvent re
       eUuid <- liftIO generateUuid
       now <- liftIO getCurrentTime
       user <- getCurrentUser
-      return . ClearReplyEvent' $ ClearReplyEvent eUuid k (Just $ user ^. uuid) now
+      return . ClearReplyEvent' $ ClearReplyEvent eUuid k (Just user.uuid) now
 
 generateSetReplyEvents :: M.Map String Reply -> M.Map String Reply -> AppContextM [QuestionnaireEvent]
 generateSetReplyEvents oldReplies sanitizedReplies = foldl generateEvent (return []) (M.toList sanitizedReplies)
@@ -59,19 +59,20 @@ generateSetReplyEvents oldReplies sanitizedReplies = foldl generateEvent (return
       return $
         case M.lookup keyFromSanitizedReply oldReplies of
           Just valueFromOldReply ->
-            if valueFromOldReply ^. value == valueFromSanitizedReply ^. value
+            if valueFromOldReply.value == valueFromSanitizedReply.value
               then acc
-              else acc ++
-                   [ SetReplyEvent' $
-                     SetReplyEvent
-                       eUuid
-                       keyFromSanitizedReply
-                       (valueFromSanitizedReply ^. value)
-                       (Just $ user ^. uuid)
-                       now
-                   ]
+              else
+                acc
+                  ++ [ SetReplyEvent' $
+                        SetReplyEvent
+                          eUuid
+                          keyFromSanitizedReply
+                          valueFromSanitizedReply.value
+                          (Just user.uuid)
+                          now
+                     ]
           Nothing ->
-            acc ++
-            [ SetReplyEvent' $
-              SetReplyEvent eUuid keyFromSanitizedReply (valueFromSanitizedReply ^. value) (Just $ user ^. uuid) now
-            ]
+            acc
+              ++ [ SetReplyEvent' $
+                    SetReplyEvent eUuid keyFromSanitizedReply valueFromSanitizedReply.value (Just user.uuid) now
+                 ]

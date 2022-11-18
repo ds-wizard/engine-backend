@@ -1,11 +1,9 @@
 module Wizard.Service.Registry.RegistryService where
 
-import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (liftIO)
 import Data.Foldable (traverse_)
 import Data.Time
 
-import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
@@ -34,8 +32,8 @@ confirmRegistration reqDto =
   runInTransaction $ do
     org <- confirmOrganizationRegistration reqDto
     appConfig <- getAppConfig
-    let updatedRegistry = AppConfigRegistry {_appConfigRegistryEnabled = True, _appConfigRegistryToken = org ^. token}
-    let updatedAppConfig = appConfig & registry .~ updatedRegistry
+    let updatedRegistry = AppConfigRegistry {enabled = True, token = org.token}
+    let updatedAppConfig = appConfig {registry = updatedRegistry}
     modifyAppConfig updatedAppConfig
     return org
 
@@ -79,4 +77,4 @@ synchronizeTemplates now = do
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-checkIfRegistryIsEnabled = checkIfAppFeatureIsEnabled "Registry" (registry . enabled)
+checkIfRegistryIsEnabled = checkIfAppFeatureIsEnabled "Registry" (\c -> c.registry.enabled)

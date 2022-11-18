@@ -1,6 +1,6 @@
-module Wizard.Metamodel.Migrator.EventMigrator
-  ( migrate
-  ) where
+module Wizard.Metamodel.Migrator.EventMigrator (
+  migrate,
+) where
 
 import Data.Aeson (Value)
 import Data.Maybe (fromJust, isJust)
@@ -45,8 +45,8 @@ migrate ctx vSrc vDst input
   | vSrc > vDst = Left "Downgrade not supported"
   | vSrc == vDst = Right [input]
   | isJust migration = do
-    migrated <- fromJust migration ctx input
-    fmap concat . foldEither . fmap (migrate ctx (vSrc + 1) vDst) $ migrated
+      migrated <- fromJust migration ctx input
+      fmap concat . foldEither . fmap (migrate ctx (vSrc + 1) vDst) $ migrated
   | otherwise = Left "Unsupported metamodel version"
   where
     migration = lookup vSrc migrations

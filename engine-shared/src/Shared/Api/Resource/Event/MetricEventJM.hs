@@ -5,24 +5,24 @@ import Data.Aeson
 import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Model.Event.Metric.MetricEvent
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON AddMetricEvent where
-  parseJSON = simpleParseJSON "_addMetricEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON AddMetricEvent where
-  toJSON = simpleToJSON' "_addMetricEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 -- --------------------------------------------
 instance FromJSON EditMetricEvent where
-  parseJSON = simpleParseJSON "_editMetricEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON EditMetricEvent where
-  toJSON = simpleToJSON' "_editMetricEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 -- --------------------------------------------
 instance FromJSON DeleteMetricEvent where
-  parseJSON = simpleParseJSON "_deleteMetricEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON DeleteMetricEvent where
-  toJSON = simpleToJSON' "_deleteMetricEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")

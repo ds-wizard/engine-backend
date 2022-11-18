@@ -1,152 +1,66 @@
 module Wizard.Model.Context.ContextLenses where
 
-import Control.Lens ((&), (.~), (^.), (^?), _Just)
 import qualified Data.Map.Strict as M
 import Data.Pool (Pool)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple (Connection)
+import GHC.Records
 import Network.Minio (MinioConn)
 
-import LensesConfig
 import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Config.ServerConfig
-import Shared.Model.Context.ContextLenses
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 
-instance HasServerConfig' AppContext ServerConfig where
-  serverConfig' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AppContext -> ServerConfig
-      get entity = entity ^. serverConfig
-      set :: AppContext -> ServerConfig -> AppContext
-      set entity newValue = entity & serverConfig .~ newValue
+instance HasField "serverConfig'" AppContext ServerConfig where
+  getField = (.serverConfig)
 
-instance HasServerConfig' BaseContext ServerConfig where
-  serverConfig' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: BaseContext -> ServerConfig
-      get entity = entity ^. serverConfig
-      set :: BaseContext -> ServerConfig -> BaseContext
-      set entity newValue = entity & serverConfig .~ newValue
+instance HasField "serverConfig'" BaseContext ServerConfig where
+  getField = (.serverConfig)
 
-instance HasS3' ServerConfig where
-  s3' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: ServerConfig -> ServerConfigS3
-      get entity = entity ^. s3
-      set :: ServerConfig -> ServerConfigS3 -> ServerConfig
-      set entity newValue = entity & s3 .~ newValue
+instance HasField "s3'" ServerConfig ServerConfigS3 where
+  getField = (.s3)
 
-instance HasSentry' ServerConfig where
-  sentry' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: ServerConfig -> ServerConfigSentry
-      get entity = entity ^. sentry
-      set :: ServerConfig -> ServerConfigSentry -> ServerConfig
-      set entity newValue = entity & sentry .~ newValue
+instance HasField "sentry'" ServerConfig ServerConfigSentry where
+  getField = (.sentry)
 
-instance HasCloud' ServerConfig where
-  cloud' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: ServerConfig -> ServerConfigCloud
-      get entity = entity ^. cloud
-      set :: ServerConfig -> ServerConfigCloud -> ServerConfig
-      set entity newValue = entity & cloud .~ newValue
+instance HasField "cloud'" ServerConfig ServerConfigCloud where
+  getField = (.cloud)
 
-instance HasDbPool' AppContext where
-  dbPool' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AppContext -> Pool Connection
-      get entity = entity ^. dbPool
-      set :: AppContext -> Pool Connection -> AppContext
-      set entity newValue = entity & dbPool .~ newValue
+instance HasField "dbPool'" AppContext (Pool Connection) where
+  getField = (.dbPool)
 
-instance HasDbPool' BaseContext where
-  dbPool' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: BaseContext -> Pool Connection
-      get entity = entity ^. dbPool
-      set :: BaseContext -> Pool Connection -> BaseContext
-      set entity newValue = entity & dbPool .~ newValue
+instance HasField "dbPool'" BaseContext (Pool Connection) where
+  getField = (.dbPool)
 
-instance HasDbConnection' AppContext where
-  dbConnection' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AppContext -> Maybe Connection
-      get entity = entity ^. dbConnection
-      set :: AppContext -> Maybe Connection -> AppContext
-      set entity newValue = entity & dbConnection .~ newValue
+instance HasField "dbConnection'" AppContext (Maybe Connection) where
+  getField = (.dbConnection)
 
-instance HasS3Client' AppContext where
-  s3Client' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AppContext -> MinioConn
-      get entity = entity ^. s3Client
-      set :: AppContext -> MinioConn -> AppContext
-      set entity newValue = entity & s3Client .~ newValue
+instance HasField "s3Client'" AppContext MinioConn where
+  getField = (.s3Client)
 
-instance HasS3Client' BaseContext where
-  s3Client' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: BaseContext -> MinioConn
-      get entity = entity ^. s3Client
-      set :: BaseContext -> MinioConn -> BaseContext
-      set entity newValue = entity & s3Client .~ newValue
+instance HasField "s3Client'" BaseContext MinioConn where
+  getField = (.s3Client)
 
-instance HasLocalization' AppContext where
-  localization' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AppContext -> M.Map String String
-      get entity = entity ^. localization
-      set :: AppContext -> M.Map String String -> AppContext
-      set entity newValue = entity & localization .~ newValue
+instance HasField "localization'" AppContext (M.Map String String) where
+  getField = (.localization)
 
-instance HasLocalization' BaseContext where
-  localization' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: BaseContext -> M.Map String String
-      get entity = entity ^. localization
-      set :: BaseContext -> M.Map String String -> BaseContext
-      set entity newValue = entity & localization .~ newValue
+instance HasField "localization'" BaseContext (M.Map String String) where
+  getField = (.localization)
 
-instance HasBuildInfoConfig' AppContext where
-  buildInfoConfig' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AppContext -> BuildInfoConfig
-      get entity = entity ^. buildInfoConfig
-      set :: AppContext -> BuildInfoConfig -> AppContext
-      set entity newValue = entity & buildInfoConfig .~ newValue
+instance HasField "buildInfoConfig'" AppContext BuildInfoConfig where
+  getField = (.buildInfoConfig)
 
-instance HasBuildInfoConfig' BaseContext where
-  buildInfoConfig' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: BaseContext -> BuildInfoConfig
-      get entity = entity ^. buildInfoConfig
-      set :: BaseContext -> BuildInfoConfig -> BaseContext
-      set entity newValue = entity & buildInfoConfig .~ newValue
+instance HasField "buildInfoConfig'" BaseContext BuildInfoConfig where
+  getField = (.buildInfoConfig)
 
-instance HasIdentityUuid' AppContext where
-  identityUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AppContext -> Maybe String
-      get entity = fmap U.toString $ entity ^. currentUser ^? _Just . uuid
-      set :: AppContext -> Maybe String -> AppContext
-      set entity newValue = entity
+instance HasField "identityUuid'" AppContext (Maybe String) where
+  getField entity = fmap (U.toString . (.uuid)) $ entity.currentUser
 
-instance HasTraceUuid' AppContext where
-  traceUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AppContext -> U.UUID
-      get entity = entity ^. traceUuid
-      set :: AppContext -> U.UUID -> AppContext
-      set entity newValue = entity & traceUuid .~ newValue
+instance HasField "traceUuid'" AppContext U.UUID where
+  getField = (.traceUuid)
 
-instance HasAppUuid' AppContext where
-  appUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AppContext -> U.UUID
-      get entity = entity ^. appUuid
-      set :: AppContext -> U.UUID -> AppContext
-      set entity newValue = entity & appUuid .~ newValue
+instance HasField "appUuid'" AppContext U.UUID where
+  getField = (.currentAppUuid)

@@ -1,20 +1,17 @@
 module Shared.Database.Connection where
 
-import Control.Lens ((^.))
 import Data.ByteString.Char8 as BS
 import qualified Data.Pool as Pool
 import qualified Database.PostgreSQL.Simple as Postgres
 
-import LensesConfig
-
 createDatabaseConnectionPool serverConfig = do
   dbPool <-
     Pool.createPool
-      (Postgres.connectPostgreSQL (BS.pack $ serverConfig ^. connectionString))
+      (Postgres.connectPostgreSQL (BS.pack serverConfig.connectionString))
       Postgres.close
-      (serverConfig ^. stripeSize)
-      (realToFrac $ serverConfig ^. connectionTimeout)
-      (serverConfig ^. maxConnections)
+      serverConfig.stripeSize
+      (realToFrac serverConfig.connectionTimeout)
+      serverConfig.maxConnections
   verifyDatabaseConnectionPool dbPool
   return dbPool
 

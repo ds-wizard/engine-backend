@@ -1,12 +1,10 @@
 module Shared.Database.Migration.Development.Package.Data.Packages where
 
-import Control.Lens ((^.))
 import qualified Data.List as L
 import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Constant.KnowledgeModel
 import Shared.Database.Migration.Development.Event.Data.Events
@@ -19,39 +17,39 @@ import Shared.Service.Package.PackageMapper
 globalPackageEmpty :: PackageWithEvents
 globalPackageEmpty =
   PackageWithEvents
-    { _packageWithEventsPId = "global:core:0.0.1"
-    , _packageWithEventsName = "Global Knowledge Model"
-    , _packageWithEventsOrganizationId = "global"
-    , _packageWithEventsKmId = "core"
-    , _packageWithEventsVersion = "0.0.1"
-    , _packageWithEventsMetamodelVersion = kmMetamodelVersion
-    , _packageWithEventsDescription = "Empty package"
-    , _packageWithEventsReadme = "# Global Knowledge Model"
-    , _packageWithEventsLicense = "Apache-2.0"
-    , _packageWithEventsPreviousPackageId = Nothing
-    , _packageWithEventsForkOfPackageId = Nothing
-    , _packageWithEventsMergeCheckpointPackageId = Nothing
-    , _packageWithEventsEvents = [AddQuestionEvent' a_km1_ch1_q1']
-    , _packageWithEventsAppUuid = U.nil
-    , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    { pId = "global:core:0.0.1"
+    , name = "Global Knowledge Model"
+    , organizationId = "global"
+    , kmId = "core"
+    , version = "0.0.1"
+    , metamodelVersion = kmMetamodelVersion
+    , description = "Empty package"
+    , readme = "# Global Knowledge Model"
+    , license = "Apache-2.0"
+    , previousPackageId = Nothing
+    , forkOfPackageId = Nothing
+    , mergeCheckpointPackageId = Nothing
+    , events = [AddQuestionEvent' a_km1_ch1_q1']
+    , appUuid = U.nil
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
 globalPackage :: PackageWithEvents
 globalPackage =
   PackageWithEvents
-    { _packageWithEventsPId = "global:core:1.0.0"
-    , _packageWithEventsName = "Global Knowledge Model"
-    , _packageWithEventsOrganizationId = "global"
-    , _packageWithEventsKmId = "core"
-    , _packageWithEventsVersion = "1.0.0"
-    , _packageWithEventsMetamodelVersion = kmMetamodelVersion
-    , _packageWithEventsDescription = "First Release"
-    , _packageWithEventsReadme = "# Global Knowledge Model"
-    , _packageWithEventsLicense = "Apache-2.0"
-    , _packageWithEventsPreviousPackageId = Nothing
-    , _packageWithEventsForkOfPackageId = Nothing
-    , _packageWithEventsMergeCheckpointPackageId = Nothing
-    , _packageWithEventsEvents =
+    { pId = "global:core:1.0.0"
+    , name = "Global Knowledge Model"
+    , organizationId = "global"
+    , kmId = "core"
+    , version = "1.0.0"
+    , metamodelVersion = kmMetamodelVersion
+    , description = "First Release"
+    , readme = "# Global Knowledge Model"
+    , license = "Apache-2.0"
+    , previousPackageId = Nothing
+    , forkOfPackageId = Nothing
+    , mergeCheckpointPackageId = Nothing
+    , events =
         [ AddKnowledgeModelEvent' a_km1
         , AddMetricEvent' a_km1_mtrF
         , AddMetricEvent' a_km1_mtrA
@@ -68,8 +66,8 @@ globalPackage =
         , AddIntegrationEvent' a_km1_ibp'
         , AddIntegrationEvent' a_km1_iwp'
         ]
-    , _packageWithEventsAppUuid = U.nil
-    , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , appUuid = U.nil
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
 globalPackageDto :: PackageDTO
@@ -78,95 +76,95 @@ globalPackageDto = toDTO globalPackage
 globalPackageGroup :: PackageGroup
 globalPackageGroup =
   PackageGroup
-    { _packageGroupOrganizationId = globalPackage ^. organizationId
-    , _packageGroupKmId = globalPackage ^. kmId
-    , _packageGroupVersions = L.intercalate "," [globalPackageEmpty ^. version, globalPackage ^. version]
+    { organizationId = globalPackage.organizationId
+    , kmId = globalPackage.kmId
+    , versions = L.intercalate "," [globalPackageEmpty.version, globalPackage.version]
     }
 
 netherlandsPackage :: PackageWithEvents
 netherlandsPackage =
   PackageWithEvents
-    { _packageWithEventsPId = "org.nl:core-nl:1.0.0"
-    , _packageWithEventsName = "Netherlands Knowledge Model"
-    , _packageWithEventsOrganizationId = "org.nl"
-    , _packageWithEventsKmId = "core-nl"
-    , _packageWithEventsVersion = "1.0.0"
-    , _packageWithEventsMetamodelVersion = kmMetamodelVersion
-    , _packageWithEventsDescription = "First Release"
-    , _packageWithEventsReadme = "# Netherlands Knowledge Model"
-    , _packageWithEventsLicense = "Apache-2.0"
-    , _packageWithEventsPreviousPackageId = Just $ globalPackage ^. pId
-    , _packageWithEventsForkOfPackageId = Just $ globalPackage ^. pId
-    , _packageWithEventsMergeCheckpointPackageId = Just $ globalPackage ^. pId
-    , _packageWithEventsEvents = [AddChapterEvent' a_km1_ch1]
-    , _packageWithEventsAppUuid = U.nil
-    , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    { pId = "org.nl:core-nl:1.0.0"
+    , name = "Netherlands Knowledge Model"
+    , organizationId = "org.nl"
+    , kmId = "core-nl"
+    , version = "1.0.0"
+    , metamodelVersion = kmMetamodelVersion
+    , description = "First Release"
+    , readme = "# Netherlands Knowledge Model"
+    , license = "Apache-2.0"
+    , previousPackageId = Just $ globalPackage.pId
+    , forkOfPackageId = Just $ globalPackage.pId
+    , mergeCheckpointPackageId = Just $ globalPackage.pId
+    , events = [AddChapterEvent' a_km1_ch1]
+    , appUuid = U.nil
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
 netherlandsPackageV2 :: PackageWithEvents
 netherlandsPackageV2 =
   PackageWithEvents
-    { _packageWithEventsPId = "org.nl:core-nl:2.0.0"
-    , _packageWithEventsName = "Netherlands Knowledge Model"
-    , _packageWithEventsOrganizationId = "org.nl"
-    , _packageWithEventsKmId = "core-nl"
-    , _packageWithEventsVersion = "2.0.0"
-    , _packageWithEventsMetamodelVersion = kmMetamodelVersion
-    , _packageWithEventsDescription = "Second Release"
-    , _packageWithEventsReadme = "# Netherlands Knowledge Model"
-    , _packageWithEventsLicense = "Apache-2.0"
-    , _packageWithEventsPreviousPackageId = Just $ netherlandsPackage ^. pId
-    , _packageWithEventsForkOfPackageId = Just $ globalPackage ^. pId
-    , _packageWithEventsMergeCheckpointPackageId = Just $ globalPackage ^. pId
-    , _packageWithEventsEvents = [AddChapterEvent' a_km1_ch4]
-    , _packageWithEventsAppUuid = U.nil
-    , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    { pId = "org.nl:core-nl:2.0.0"
+    , name = "Netherlands Knowledge Model"
+    , organizationId = "org.nl"
+    , kmId = "core-nl"
+    , version = "2.0.0"
+    , metamodelVersion = kmMetamodelVersion
+    , description = "Second Release"
+    , readme = "# Netherlands Knowledge Model"
+    , license = "Apache-2.0"
+    , previousPackageId = Just netherlandsPackage.pId
+    , forkOfPackageId = Just $ globalPackage.pId
+    , mergeCheckpointPackageId = Just $ globalPackage.pId
+    , events = [AddChapterEvent' a_km1_ch4]
+    , appUuid = U.nil
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
 netherlandsPackageGroup :: PackageGroup
 netherlandsPackageGroup =
   PackageGroup
-    { _packageGroupOrganizationId = netherlandsPackageV2 ^. organizationId
-    , _packageGroupKmId = netherlandsPackageV2 ^. kmId
-    , _packageGroupVersions = L.intercalate "," [netherlandsPackage ^. version, netherlandsPackageV2 ^. version]
+    { organizationId = netherlandsPackageV2.organizationId
+    , kmId = netherlandsPackageV2.kmId
+    , versions = L.intercalate "," [netherlandsPackage.version, netherlandsPackageV2.version]
     }
 
 amsterdamPackage :: PackageWithEvents
 amsterdamPackage =
   PackageWithEvents
-    { _packageWithEventsPId = "org.nl.amsterdam:core-amsterdam:1.0.0"
-    , _packageWithEventsName = "Amsterdam Knowledge Model"
-    , _packageWithEventsOrganizationId = "org.nl.amsterdam"
-    , _packageWithEventsKmId = "core-amsterdam"
-    , _packageWithEventsVersion = "1.0.0"
-    , _packageWithEventsMetamodelVersion = kmMetamodelVersion
-    , _packageWithEventsDescription = "First Release"
-    , _packageWithEventsReadme = "# Amsterdam Knowledge Model"
-    , _packageWithEventsLicense = "Apache-2.0"
-    , _packageWithEventsPreviousPackageId = Just $ netherlandsPackage ^. pId
-    , _packageWithEventsForkOfPackageId = Just $ netherlandsPackage ^. pId
-    , _packageWithEventsMergeCheckpointPackageId = Just $ netherlandsPackage ^. pId
-    , _packageWithEventsEvents = []
-    , _packageWithEventsAppUuid = U.nil
-    , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    { pId = "org.nl.amsterdam:core-amsterdam:1.0.0"
+    , name = "Amsterdam Knowledge Model"
+    , organizationId = "org.nl.amsterdam"
+    , kmId = "core-amsterdam"
+    , version = "1.0.0"
+    , metamodelVersion = kmMetamodelVersion
+    , description = "First Release"
+    , readme = "# Amsterdam Knowledge Model"
+    , license = "Apache-2.0"
+    , previousPackageId = Just netherlandsPackage.pId
+    , forkOfPackageId = Just netherlandsPackage.pId
+    , mergeCheckpointPackageId = Just netherlandsPackage.pId
+    , events = []
+    , appUuid = U.nil
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
 germanyPackage :: PackageWithEvents
 germanyPackage =
   PackageWithEvents
-    { _packageWithEventsPId = "org.de:core-de:1.0.0"
-    , _packageWithEventsName = "Germany Knowledge Model"
-    , _packageWithEventsOrganizationId = "org.de"
-    , _packageWithEventsKmId = "core-de"
-    , _packageWithEventsVersion = "1.0.0"
-    , _packageWithEventsMetamodelVersion = kmMetamodelVersion
-    , _packageWithEventsDescription = "First Release"
-    , _packageWithEventsReadme = "# Germany Knowledge Model"
-    , _packageWithEventsLicense = "Apache-2.0"
-    , _packageWithEventsPreviousPackageId = Just $ globalPackageEmpty ^. pId
-    , _packageWithEventsForkOfPackageId = Just $ globalPackageEmpty ^. pId
-    , _packageWithEventsMergeCheckpointPackageId = Just $ globalPackageEmpty ^. pId
-    , _packageWithEventsEvents =
+    { pId = "org.de:core-de:1.0.0"
+    , name = "Germany Knowledge Model"
+    , organizationId = "org.de"
+    , kmId = "core-de"
+    , version = "1.0.0"
+    , metamodelVersion = kmMetamodelVersion
+    , description = "First Release"
+    , readme = "# Germany Knowledge Model"
+    , license = "Apache-2.0"
+    , previousPackageId = Just $ globalPackageEmpty.pId
+    , forkOfPackageId = Just $ globalPackageEmpty.pId
+    , mergeCheckpointPackageId = Just $ globalPackageEmpty.pId
+    , events =
         [ AddKnowledgeModelEvent' a_km1
         , AddMetricEvent' a_km1_mtrF
         , AddMetricEvent' a_km1_mtrA
@@ -224,41 +222,41 @@ germanyPackage =
         , AddChoiceEvent' a_km1_ch3_q11_cho2
         , AddQuestionEvent' a_km1_ch3_q12'
         ]
-    , _packageWithEventsAppUuid = U.nil
-    , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , appUuid = U.nil
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
 germanyPackageGroup :: PackageGroup
 germanyPackageGroup =
   PackageGroup
-    { _packageGroupOrganizationId = germanyPackage ^. organizationId
-    , _packageGroupKmId = germanyPackage ^. kmId
-    , _packageGroupVersions = L.intercalate "," [germanyPackage ^. version]
+    { organizationId = germanyPackage.organizationId
+    , kmId = germanyPackage.kmId
+    , versions = L.intercalate "," [germanyPackage.version]
     }
 
 packagePatternAll :: PackagePattern
 packagePatternAll =
   PackagePattern
-    { _packagePatternOrgId = Nothing
-    , _packagePatternKmId = Nothing
-    , _packagePatternMinVersion = Nothing
-    , _packagePatternMaxVersion = Nothing
+    { orgId = Nothing
+    , kmId = Nothing
+    , minVersion = Nothing
+    , maxVersion = Nothing
     }
 
 packagePatternAllEdited :: PackagePattern
 packagePatternAllEdited =
   PackagePattern
-    { _packagePatternOrgId = Just "global"
-    , _packagePatternKmId = Nothing
-    , _packagePatternMinVersion = Nothing
-    , _packagePatternMaxVersion = Nothing
+    { orgId = Just "global"
+    , kmId = Nothing
+    , minVersion = Nothing
+    , maxVersion = Nothing
     }
 
 packagePatternGlobal :: PackagePattern
 packagePatternGlobal =
   PackagePattern
-    { _packagePatternOrgId = Just "global"
-    , _packagePatternKmId = Just "core"
-    , _packagePatternMinVersion = Just "1.0.0"
-    , _packagePatternMaxVersion = Just "1.0.0"
+    { orgId = Just "global"
+    , kmId = Just "core"
+    , minVersion = Just "1.0.0"
+    , maxVersion = Just "1.0.0"
     }

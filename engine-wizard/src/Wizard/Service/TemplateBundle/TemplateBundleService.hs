@@ -1,6 +1,5 @@
 module Wizard.Service.TemplateBundle.TemplateBundleService where
 
-import Control.Lens ((^.))
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks)
 import qualified Data.ByteString.Char8 as BS
@@ -8,7 +7,7 @@ import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Foldable (traverse_)
 import qualified Data.UUID as U
 
-import LensesConfig
+import Shared.Api.Resource.Template.TemplateDTO
 import Shared.Api.Resource.TemplateBundle.TemplateBundleDTO
 import Shared.Database.DAO.Template.TemplateAssetDAO
 import Shared.Database.DAO.Template.TemplateDAO
@@ -33,7 +32,7 @@ exportTemplateBundle tmlId = do
   template <- findTemplateById tmlId
   files <- findTemplateFilesByTemplateId tmlId
   assets <- findTemplateAssetsByTemplateId tmlId
-  assetContents <- traverse (findAsset (template ^. tId)) assets
+  assetContents <- traverse (findAsset template.tId) assets
   auditTemplateBundleExport tmlId
   return $ toTemplateArchive (toTemplateBundle template files assets) assetContents
 
@@ -58,32 +57,33 @@ importAndConvertTemplateBundle contentS fromRegistry =
       checkTemplateLimit
       let assetSize = foldl (\acc (_, content) -> acc + (fromIntegral . BS.length $ content)) 0 assetContents
       checkStorageSize assetSize
-      appUuid <- asks _appContextAppUuid
+      appUuid <- asks currentAppUuid
       let template = fromTemplateBundle bundle appUuid
       validateNewTemplate template
       deleteOldTemplateIfPresent bundle
-      traverse_ (\(a, content) -> putAsset (template ^. tId) (U.toString $ a ^. uuid) content) assetContents
+      traverse_ (\(a, content) -> putAsset template.tId (U.toString a.uuid) content) assetContents
       insertTemplate template
-      traverse_ (insertTemplateFile . fromFileDTO (template ^. tId) appUuid) (bundle ^. files)
+      traverse_ (insertTemplateFile . fromFileDTO template.tId appUuid) bundle.files
       traverse_
-        (\(assetDto, content) ->
-           insertTemplateAsset $ fromAssetDTO (template ^. tId) (fromIntegral . BS.length $ content) appUuid assetDto)
+        ( \(assetDto, content) ->
+            insertTemplateAsset $ fromAssetDTO template.tId (fromIntegral . BS.length $ content) appUuid assetDto
+        )
         assetContents
       if fromRegistry
-        then auditTemplateBundlePullFromRegistry (template ^. tId)
-        else auditTemplateBundleImportFromFile (template ^. tId)
+        then auditTemplateBundlePullFromRegistry template.tId
+        else auditTemplateBundleImportFromFile template.tId
       return bundle
     Left error -> throwError error
 
 deleteOldTemplateIfPresent :: TemplateBundleDTO -> AppContextM ()
 deleteOldTemplateIfPresent bundle =
   runInTransaction $ do
-    mOldTemplate <- findTemplateById' (bundle ^. tId)
-    mOldAssets <- findTemplateAssetsByTemplateId (bundle ^. tId)
+    mOldTemplate <- findTemplateById' bundle.tId
+    mOldAssets <- findTemplateAssetsByTemplateId bundle.tId
     case mOldTemplate of
       Just oldTemplate -> do
-        traverse_ (\a -> removeAsset (oldTemplate ^. tId) (U.toString $ a ^. uuid)) mOldAssets
-        deleteTemplateById (oldTemplate ^. tId)
+        traverse_ (\a -> removeAsset oldTemplate.tId (U.toString a.uuid)) mOldAssets
+        deleteTemplateById oldTemplate.tId
         return ()
       Nothing -> return ()
 
@@ -92,5 +92,5 @@ deleteOldTemplateIfPresent bundle =
 -- --------------------------------
 findAsset :: String -> TemplateAsset -> AppContextM (TemplateAsset, BS.ByteString)
 findAsset tmlId asset = do
-  content <- getAsset tmlId (U.toString $ asset ^. uuid)
+  content <- getAsset tmlId (U.toString asset.uuid)
   return (asset, content)

@@ -17,21 +17,19 @@ import Shared.Model.Config.BuildInfoConfig
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 
-data BaseContext =
-  BaseContext
-    { _baseContextServerConfig :: ServerConfig
-    , _baseContextLocalization :: M.Map String String
-    , _baseContextBuildInfoConfig :: BuildInfoConfig
-    , _baseContextDbPool :: Pool Connection
-    , _baseContextS3Client :: MinioConn
-    , _baseContextHttpClientManager :: Manager
-    , _baseContextRegistryClient :: ClientEnv
-    , _baseContextShutdownFlag :: MVar ()
-    , _baseContextCache :: ServerCache
-    }
+data BaseContext = BaseContext
+  { serverConfig :: ServerConfig
+  , localization :: M.Map String String
+  , buildInfoConfig :: BuildInfoConfig
+  , dbPool :: Pool Connection
+  , s3Client :: MinioConn
+  , httpClientManager :: Manager
+  , registryClient :: ClientEnv
+  , shutdownFlag :: MVar ()
+  , cache :: ServerCache
+  }
 
-newtype BaseContextM a =
-  BaseContextM
-    { runBaseContextM :: ReaderT BaseContext (LoggingT (ExceptT ServerError IO)) a
-    }
+newtype BaseContextM a = BaseContextM
+  { runBaseContextM :: ReaderT BaseContext (LoggingT (ExceptT ServerError IO)) a
+  }
   deriving (Applicative, Functor, Monad, MonadIO, MonadReader BaseContext, MonadError ServerError, MonadLogger)

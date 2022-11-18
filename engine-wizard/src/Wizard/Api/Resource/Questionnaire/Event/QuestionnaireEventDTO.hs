@@ -20,178 +20,169 @@ data QuestionnaireEventDTO
   | DeleteCommentEventDTO' DeleteCommentEventDTO
   deriving (Show, Eq, Generic)
 
-data SetReplyEventDTO =
-  SetReplyEventDTO
-    { _setReplyEventDTOUuid :: U.UUID
-    , _setReplyEventDTOPath :: String
-    , _setReplyEventDTOValue :: ReplyValue
-    , _setReplyEventDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _setReplyEventDTOCreatedAt :: UTCTime
-    }
+data SetReplyEventDTO = SetReplyEventDTO
+  { uuid :: U.UUID
+  , path :: String
+  , value :: ReplyValue
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq SetReplyEventDTO where
   a == b =
-    _setReplyEventDTOUuid a == _setReplyEventDTOUuid b &&
-    _setReplyEventDTOPath a == _setReplyEventDTOPath b &&
-    _setReplyEventDTOValue a == _setReplyEventDTOValue b && _setReplyEventDTOCreatedBy a == _setReplyEventDTOCreatedBy b
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.value == b.value
+      && a.createdBy == b.createdBy
 
-data ClearReplyEventDTO =
-  ClearReplyEventDTO
-    { _clearReplyEventDTOUuid :: U.UUID
-    , _clearReplyEventDTOPath :: String
-    , _clearReplyEventDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _clearReplyEventDTOCreatedAt :: UTCTime
-    }
+data ClearReplyEventDTO = ClearReplyEventDTO
+  { uuid :: U.UUID
+  , path :: String
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq ClearReplyEventDTO where
   a == b =
-    _clearReplyEventDTOUuid a == _clearReplyEventDTOUuid b &&
-    _clearReplyEventDTOPath a == _clearReplyEventDTOPath b &&
-    _clearReplyEventDTOCreatedBy a == _clearReplyEventDTOCreatedBy b
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.createdBy == b.createdBy
 
-data SetPhaseEventDTO =
-  SetPhaseEventDTO
-    { _setPhaseEventDTOUuid :: U.UUID
-    , _setPhaseEventDTOPhaseUuid :: Maybe U.UUID
-    , _setPhaseEventDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _setPhaseEventDTOCreatedAt :: UTCTime
-    }
+data SetPhaseEventDTO = SetPhaseEventDTO
+  { uuid :: U.UUID
+  , phaseUuid :: Maybe U.UUID
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq SetPhaseEventDTO where
   a == b =
-    _setPhaseEventDTOUuid a == _setPhaseEventDTOUuid b &&
-    _setPhaseEventDTOPhaseUuid a == _setPhaseEventDTOPhaseUuid b &&
-    _setPhaseEventDTOCreatedBy a == _setPhaseEventDTOCreatedBy b
+    a.uuid == b.uuid
+      && a.phaseUuid == b.phaseUuid
+      && a.createdBy == b.createdBy
 
-data SetLabelsEventDTO =
-  SetLabelsEventDTO
-    { _setLabelsEventDTOUuid :: U.UUID
-    , _setLabelsEventDTOPath :: String
-    , _setLabelsEventDTOValue :: [U.UUID]
-    , _setLabelsEventDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _setLabelsEventDTOCreatedAt :: UTCTime
-    }
+data SetLabelsEventDTO = SetLabelsEventDTO
+  { uuid :: U.UUID
+  , path :: String
+  , value :: [U.UUID]
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq SetLabelsEventDTO where
   a == b =
-    _setLabelsEventDTOUuid a == _setLabelsEventDTOUuid b &&
-    _setLabelsEventDTOPath a == _setLabelsEventDTOPath b &&
-    _setLabelsEventDTOValue a == _setLabelsEventDTOValue b &&
-    _setLabelsEventDTOCreatedBy a == _setLabelsEventDTOCreatedBy b
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.value == b.value
+      && a.createdBy == b.createdBy
 
-data ResolveCommentThreadEventDTO =
-  ResolveCommentThreadEventDTO
-    { _resolveCommentThreadEventDTOUuid :: U.UUID
-    , _resolveCommentThreadEventDTOPath :: String
-    , _resolveCommentThreadEventDTOThreadUuid :: U.UUID
-    , _resolveCommentThreadEventDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _resolveCommentThreadEventDTOCreatedAt :: UTCTime
-    }
+data ResolveCommentThreadEventDTO = ResolveCommentThreadEventDTO
+  { uuid :: U.UUID
+  , path :: String
+  , threadUuid :: U.UUID
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq ResolveCommentThreadEventDTO where
   a == b =
-    _resolveCommentThreadEventDTOUuid a == _resolveCommentThreadEventDTOUuid b &&
-    _resolveCommentThreadEventDTOPath a == _resolveCommentThreadEventDTOPath b &&
-    _resolveCommentThreadEventDTOThreadUuid a == _resolveCommentThreadEventDTOThreadUuid b &&
-    _resolveCommentThreadEventDTOCreatedBy a == _resolveCommentThreadEventDTOCreatedBy b
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.threadUuid == b.threadUuid
+      && a.createdBy == b.createdBy
 
-data ReopenCommentThreadEventDTO =
-  ReopenCommentThreadEventDTO
-    { _reopenCommentThreadEventDTOUuid :: U.UUID
-    , _reopenCommentThreadEventDTOPath :: String
-    , _reopenCommentThreadEventDTOThreadUuid :: U.UUID
-    , _reopenCommentThreadEventDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _reopenCommentThreadEventDTOCreatedAt :: UTCTime
-    }
+data ReopenCommentThreadEventDTO = ReopenCommentThreadEventDTO
+  { uuid :: U.UUID
+  , path :: String
+  , threadUuid :: U.UUID
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq ReopenCommentThreadEventDTO where
   a == b =
-    _reopenCommentThreadEventDTOUuid a == _reopenCommentThreadEventDTOUuid b &&
-    _reopenCommentThreadEventDTOPath a == _reopenCommentThreadEventDTOPath b &&
-    _reopenCommentThreadEventDTOThreadUuid a == _reopenCommentThreadEventDTOThreadUuid b &&
-    _reopenCommentThreadEventDTOCreatedBy a == _reopenCommentThreadEventDTOCreatedBy b
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.threadUuid == b.threadUuid
+      && a.createdBy == b.createdBy
 
-data DeleteCommentThreadEventDTO =
-  DeleteCommentThreadEventDTO
-    { _deleteCommentThreadEventDTOUuid :: U.UUID
-    , _deleteCommentThreadEventDTOPath :: String
-    , _deleteCommentThreadEventDTOThreadUuid :: U.UUID
-    , _deleteCommentThreadEventDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _deleteCommentThreadEventDTOCreatedAt :: UTCTime
-    }
+data DeleteCommentThreadEventDTO = DeleteCommentThreadEventDTO
+  { uuid :: U.UUID
+  , path :: String
+  , threadUuid :: U.UUID
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq DeleteCommentThreadEventDTO where
   a == b =
-    _deleteCommentThreadEventDTOUuid a == _deleteCommentThreadEventDTOUuid b &&
-    _deleteCommentThreadEventDTOPath a == _deleteCommentThreadEventDTOPath b &&
-    _deleteCommentThreadEventDTOThreadUuid a == _deleteCommentThreadEventDTOThreadUuid b &&
-    _deleteCommentThreadEventDTOCreatedBy a == _deleteCommentThreadEventDTOCreatedBy b
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.threadUuid == b.threadUuid
+      && a.createdBy == b.createdBy
 
-data AddCommentEventDTO =
-  AddCommentEventDTO
-    { _addCommentEventDTOUuid :: U.UUID
-    , _addCommentEventDTOPath :: String
-    , _addCommentEventDTOThreadUuid :: U.UUID
-    , _addCommentEventDTOCommentUuid :: U.UUID
-    , _addCommentEventDTOText :: String
-    , _addCommentEventDTOPrivate :: Bool
-    , _addCommentEventDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _addCommentEventDTOCreatedAt :: UTCTime
-    }
+data AddCommentEventDTO = AddCommentEventDTO
+  { uuid :: U.UUID
+  , path :: String
+  , threadUuid :: U.UUID
+  , commentUuid :: U.UUID
+  , text :: String
+  , private :: Bool
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq AddCommentEventDTO where
   a == b =
-    _addCommentEventDTOUuid a == _addCommentEventDTOUuid b &&
-    _addCommentEventDTOPath a == _addCommentEventDTOPath b &&
-    _addCommentEventDTOThreadUuid a == _addCommentEventDTOThreadUuid b &&
-    _addCommentEventDTOCommentUuid a == _addCommentEventDTOCommentUuid b &&
-    _addCommentEventDTOText a == _addCommentEventDTOText b &&
-    _addCommentEventDTOCreatedBy a == _addCommentEventDTOCreatedBy b
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.threadUuid == b.threadUuid
+      && a.commentUuid == b.commentUuid
+      && a.text == b.text
+      && a.createdBy == b.createdBy
 
-data EditCommentEventDTO =
-  EditCommentEventDTO
-    { _editCommentEventDTOUuid :: U.UUID
-    , _editCommentEventDTOPath :: String
-    , _editCommentEventDTOThreadUuid :: U.UUID
-    , _editCommentEventDTOCommentUuid :: U.UUID
-    , _editCommentEventDTOText :: String
-    , _editCommentEventDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _editCommentEventDTOCreatedAt :: UTCTime
-    }
+data EditCommentEventDTO = EditCommentEventDTO
+  { uuid :: U.UUID
+  , path :: String
+  , threadUuid :: U.UUID
+  , commentUuid :: U.UUID
+  , text :: String
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq EditCommentEventDTO where
   a == b =
-    _editCommentEventDTOUuid a == _editCommentEventDTOUuid b &&
-    _editCommentEventDTOPath a == _editCommentEventDTOPath b &&
-    _editCommentEventDTOThreadUuid a == _editCommentEventDTOThreadUuid b &&
-    _editCommentEventDTOCommentUuid a == _editCommentEventDTOCommentUuid b &&
-    _editCommentEventDTOText a == _editCommentEventDTOText b &&
-    _editCommentEventDTOCreatedBy a == _editCommentEventDTOCreatedBy b
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.threadUuid == b.threadUuid
+      && a.commentUuid == b.commentUuid
+      && a.text == b.text
+      && a.createdBy == b.createdBy
 
-data DeleteCommentEventDTO =
-  DeleteCommentEventDTO
-    { _deleteCommentEventDTOUuid :: U.UUID
-    , _deleteCommentEventDTOPath :: String
-    , _deleteCommentEventDTOThreadUuid :: U.UUID
-    , _deleteCommentEventDTOCommentUuid :: U.UUID
-    , _deleteCommentEventDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _deleteCommentEventDTOCreatedAt :: UTCTime
-    }
+data DeleteCommentEventDTO = DeleteCommentEventDTO
+  { uuid :: U.UUID
+  , path :: String
+  , threadUuid :: U.UUID
+  , commentUuid :: U.UUID
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq DeleteCommentEventDTO where
   a == b =
-    _deleteCommentEventDTOUuid a == _deleteCommentEventDTOUuid b &&
-    _deleteCommentEventDTOPath a == _deleteCommentEventDTOPath b &&
-    _deleteCommentEventDTOThreadUuid a == _deleteCommentEventDTOThreadUuid b &&
-    _deleteCommentEventDTOCommentUuid a == _deleteCommentEventDTOCommentUuid b &&
-    _deleteCommentEventDTOCreatedBy a == _deleteCommentEventDTOCreatedBy b
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.threadUuid == b.threadUuid
+      && a.commentUuid == b.commentUuid
+      && a.createdBy == b.createdBy

@@ -9,4 +9,4 @@ import Wizard.Database.Migration.Development.Plan.Data.AppPlans
 import Wizard.Model.Plan.AppPlan
 
 instance ToSchema AppPlan where
-  declareNamedSchema = simpleToSchema' "_appPlan" standardPlan
+  declareNamedSchema = toSwagger standardPlan

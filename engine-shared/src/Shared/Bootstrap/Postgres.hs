@@ -10,11 +10,11 @@ connectPostgresDB serverConfigLogging serverConfigDatabase = do
   logInfo _CMP_DATABASE "connecting to the postgres database"
   dbPool <-
     liftIO $
-    withRetry
-      serverConfigLogging
-      retryBackoff
-      _CMP_DATABASE
-      "failed to connect to the postgres database"
-      (createDatabaseConnectionPool serverConfigDatabase)
+      withRetry
+        serverConfigLogging
+        retryBackoff
+        _CMP_DATABASE
+        "failed to connect to the postgres database"
+        (createDatabaseConnectionPool serverConfigDatabase)
   logInfo _CMP_DATABASE "connected"
   return dbPool

@@ -4,19 +4,17 @@ import Data.Hashable
 import qualified Data.UUID as U
 import GHC.Generics
 
-data Group =
-  Group
-    { _groupGId :: String
-    , _groupName :: String
-    , _groupDescription :: String
-    }
+data Group = Group
+  { gId :: String
+  , name :: String
+  , description :: String
+  }
   deriving (Generic, Eq, Show)
 
-data GroupMembership =
-  GroupMembership
-    { _groupMembershipGroupId :: String
-    , _groupMembershipGType :: GroupMembershipType
-    }
+data GroupMembership = GroupMembership
+  { groupId :: String
+  , gType :: GroupMembershipType
+  }
   deriving (Generic, Eq, Show)
 
 instance Hashable GroupMembership
@@ -30,10 +28,10 @@ instance Hashable GroupMembershipType
 
 data Member
   = GroupMember
-      { _groupMemberGId :: String
+      { gId :: String
       }
   | UserMember
-      { _userMemberUuid :: U.UUID
+      { uuid :: U.UUID
       }
   deriving (Generic, Eq, Show)
 

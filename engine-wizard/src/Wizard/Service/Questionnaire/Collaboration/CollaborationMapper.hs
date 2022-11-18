@@ -1,8 +1,5 @@
 module Wizard.Service.Questionnaire.Collaboration.CollaborationMapper where
 
-import Control.Lens ((^.))
-
-import LensesConfig
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
@@ -13,81 +10,91 @@ import Wizard.Util.Websocket
 toWebsocketMessage :: WebsocketRecord -> content -> WebsocketMessage content
 toWebsocketMessage record content =
   WebsocketMessage
-    { _websocketMessageConnectionUuid = record ^. connectionUuid
-    , _websocketMessageConnection = record ^. connection
-    , _websocketMessageEntityId = record ^. entityId
-    , _websocketMessageContent = content
+    { connectionUuid = record.connectionUuid
+    , connection = record.connection
+    , entityId = record.entityId
+    , content = content
     }
 
-toSetUserListMessage ::
-     [WebsocketRecord] -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
+toSetUserListMessage
+  :: [WebsocketRecord] -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toSetUserListMessage records record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetUserList_ServerQuestionnaireActionDTO $
-  getCollaborators (record ^. connectionUuid) (record ^. entityId) records
+    Success_ServerActionDTO . SetUserList_ServerQuestionnaireActionDTO $
+      getCollaborators record.connectionUuid record.entityId records
 
-toSetReplyMessage ::
-     SetReplyEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
+toSetReplyMessage
+  :: SetReplyEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toSetReplyMessage reqDto record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . SetReplyEventDTO' $ reqDto
+    Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . SetReplyEventDTO' $
+      reqDto
 
-toClearReplyMessage ::
-     ClearReplyEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
+toClearReplyMessage
+  :: ClearReplyEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toClearReplyMessage reqDto record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . ClearReplyEventDTO' $ reqDto
+    Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . ClearReplyEventDTO' $
+      reqDto
 
-toSetPhaseMessage ::
-     SetPhaseEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
+toSetPhaseMessage
+  :: SetPhaseEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toSetPhaseMessage reqDto record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . SetPhaseEventDTO' $ reqDto
+    Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . SetPhaseEventDTO' $
+      reqDto
 
-toSetLabelMessage ::
-     SetLabelsEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
+toSetLabelMessage
+  :: SetLabelsEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toSetLabelMessage reqDto record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . SetLabelsEventDTO' $ reqDto
+    Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . SetLabelsEventDTO' $
+      reqDto
 
-toResolveCommentThreadMessage ::
-     ResolveCommentThreadEventDTO
+toResolveCommentThreadMessage
+  :: ResolveCommentThreadEventDTO
   -> WebsocketRecord
   -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toResolveCommentThreadMessage reqDto record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . ResolveCommentThreadEventDTO' $ reqDto
+    Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . ResolveCommentThreadEventDTO' $
+      reqDto
 
-toReopenCommentThreadMessage ::
-     ReopenCommentThreadEventDTO
+toReopenCommentThreadMessage
+  :: ReopenCommentThreadEventDTO
   -> WebsocketRecord
   -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toReopenCommentThreadMessage reqDto record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . ReopenCommentThreadEventDTO' $ reqDto
+    Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . ReopenCommentThreadEventDTO' $
+      reqDto
 
-toDeleteCommentThreadMessage ::
-     DeleteCommentThreadEventDTO
+toDeleteCommentThreadMessage
+  :: DeleteCommentThreadEventDTO
   -> WebsocketRecord
   -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toDeleteCommentThreadMessage reqDto record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . DeleteCommentThreadEventDTO' $ reqDto
+    Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . DeleteCommentThreadEventDTO' $
+      reqDto
 
-toAddCommentMessage ::
-     AddCommentEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
+toAddCommentMessage
+  :: AddCommentEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toAddCommentMessage reqDto record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . AddCommentEventDTO' $ reqDto
+    Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . AddCommentEventDTO' $
+      reqDto
 
-toEditCommentMessage ::
-     EditCommentEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
+toEditCommentMessage
+  :: EditCommentEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toEditCommentMessage reqDto record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . EditCommentEventDTO' $ reqDto
+    Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . EditCommentEventDTO' $
+      reqDto
 
-toDeleteCommentMessage ::
-     DeleteCommentEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
+toDeleteCommentMessage
+  :: DeleteCommentEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toDeleteCommentMessage reqDto record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . DeleteCommentEventDTO' $ reqDto
+    Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . DeleteCommentEventDTO' $
+      reqDto

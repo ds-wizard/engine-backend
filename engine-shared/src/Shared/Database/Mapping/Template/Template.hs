@@ -12,36 +12,36 @@ import Shared.Model.Template.TemplateJM ()
 
 instance ToRow Template where
   toRow Template {..} =
-    [ toField _templateTId
-    , toField _templateName
-    , toField _templateOrganizationId
-    , toField _templateTemplateId
-    , toField _templateVersion
-    , toField _templateMetamodelVersion
-    , toField _templateDescription
-    , toField _templateReadme
-    , toField _templateLicense
-    , toJSONField _templateAllowedPackages
-    , toField _templateRecommendedPackageId
-    , toJSONField _templateFormats
-    , toField _templateCreatedAt
-    , toField _templateAppUuid
+    [ toField tId
+    , toField name
+    , toField organizationId
+    , toField templateId
+    , toField version
+    , toField metamodelVersion
+    , toField description
+    , toField readme
+    , toField license
+    , toJSONField allowedPackages
+    , toField recommendedPackageId
+    , toJSONField formats
+    , toField createdAt
+    , toField appUuid
     ]
 
 instance FromRow Template where
   fromRow = do
-    _templateTId <- field
-    _templateName <- field
-    _templateOrganizationId <- field
-    _templateTemplateId <- field
-    _templateVersion <- field
-    _templateMetamodelVersion <- field
-    _templateDescription <- field
-    _templateReadme <- field
-    _templateLicense <- field
-    _templateAllowedPackages <- fieldWith fromJSONField
-    _templateRecommendedPackageId <- field
-    _templateFormats <- fieldWith fromJSONField
-    _templateCreatedAt <- field
-    _templateAppUuid <- field
+    tId <- field
+    name <- field
+    organizationId <- field
+    templateId <- field
+    version <- field
+    metamodelVersion <- field
+    description <- field
+    readme <- field
+    license <- field
+    allowedPackages <- fieldWith fromJSONField
+    recommendedPackageId <- field
+    formats <- fieldWith fromJSONField
+    createdAt <- field
+    appUuid <- field
     return $ Template {..}

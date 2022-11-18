@@ -2,11 +2,11 @@ module Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterChangeJM w
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterChangeDTO
 
 instance FromJSON QuestionnaireImporterChangeDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON QuestionnaireImporterChangeDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

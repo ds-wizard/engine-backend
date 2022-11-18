@@ -10,7 +10,7 @@ import Wizard.Specs.API.Common
 
 appPlanAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "APP PLAN API Spec" $ do
-    list_POST appContext
-    detail_PUT appContext
-    detail_DELETE appContext
+    describe "APP PLAN API Spec" $ do
+      list_POST appContext
+      detail_PUT appContext
+      detail_DELETE appContext

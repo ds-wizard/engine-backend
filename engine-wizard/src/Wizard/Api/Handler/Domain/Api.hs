@@ -6,9 +6,9 @@ import Servant.Swagger.Tags
 import Wizard.Api.Handler.Domain.List_GET
 import Wizard.Model.Context.BaseContext
 
-type DomainAPI
-   = Tags "Domain"
-     :> List_GET
+type DomainAPI =
+  Tags "Domain"
+    :> List_GET
 
 domainApi :: Proxy DomainAPI
 domainApi = Proxy

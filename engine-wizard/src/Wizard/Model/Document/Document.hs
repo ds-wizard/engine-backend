@@ -17,25 +17,24 @@ data DocumentDurability
   | TemporallyDocumentDurability
   deriving (Show, Eq, Generic, Read)
 
-data Document =
-  Document
-    { _documentUuid :: U.UUID
-    , _documentName :: String
-    , _documentState :: DocumentState
-    , _documentDurability :: DocumentDurability
-    , _documentQuestionnaireUuid :: U.UUID
-    , _documentQuestionnaireEventUuid :: Maybe U.UUID
-    , _documentQuestionnaireRepliesHash :: Int
-    , _documentTemplateId :: String
-    , _documentFormatUuid :: U.UUID
-    , _documentCreatorUuid :: Maybe U.UUID
-    , _documentFileName :: Maybe String
-    , _documentContentType :: Maybe String
-    , _documentFileSize :: Maybe Int64
-    , _documentWorkerLog :: Maybe String
-    , _documentAppUuid :: U.UUID
-    , _documentRetrievedAt :: Maybe UTCTime
-    , _documentFinishedAt :: Maybe UTCTime
-    , _documentCreatedAt :: UTCTime
-    }
+data Document = Document
+  { uuid :: U.UUID
+  , name :: String
+  , state :: DocumentState
+  , durability :: DocumentDurability
+  , questionnaireUuid :: U.UUID
+  , questionnaireEventUuid :: Maybe U.UUID
+  , questionnaireRepliesHash :: Int
+  , templateId :: String
+  , formatUuid :: U.UUID
+  , creatorUuid :: Maybe U.UUID
+  , fileName :: Maybe String
+  , contentType :: Maybe String
+  , fileSize :: Maybe Int64
+  , workerLog :: Maybe String
+  , appUuid :: U.UUID
+  , retrievedAt :: Maybe UTCTime
+  , finishedAt :: Maybe UTCTime
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

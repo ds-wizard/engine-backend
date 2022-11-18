@@ -3,9 +3,8 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO wher
 import qualified Data.UUID as U
 import GHC.Generics
 
-data QuestionnaireCreateFromTemplateDTO =
-  QuestionnaireCreateFromTemplateDTO
-    { _questionnaireCreateFromTemplateDTOName :: String
-    , _questionnaireCreateFromTemplateDTOQuestionnaireUuid :: U.UUID
-    }
+data QuestionnaireCreateFromTemplateDTO = QuestionnaireCreateFromTemplateDTO
+  { name :: String
+  , questionnaireUuid :: U.UUID
+  }
   deriving (Show, Eq, Generic)

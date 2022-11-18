@@ -61,7 +61,7 @@ html =
       <b>External Links:</b>
       {% for reference in urlReferences %}
         {% if reference.referenceType == "URLReference" %}
-          <a id="{{reference.uuid}}" class="reference url-link" href="{{reference.url}}" target="_blank"><i>{{reference.label}}</i></a>
+          <a id="{{reference.uuid}}" class="reference url-link" href="{{reference.url}}" target="_blank"><i>{{reference.aLabel}}</i></a>
         {% endif %}
       {% endfor %}
     </div>
@@ -112,7 +112,7 @@ html =
   <div class="answer-block answer-option" id="{{path}}" data-path="{{reply.path}}" data-uuid="{{answer.uuid}}" data-type="answer">
     <p class="answer">
       <svg aria-hidden="true" data-prefix="fas" data-icon="check" class="svg-inline--fa fa-check fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg>
-      <span>{{ hi|of_alphabet }}. {{answer.label}}</span>
+      <span>{{ hi|of_alphabet }}. {{answer.aLabel}}</span>
     </p>
     {% if answer.advice %}
       <p class="text-muted"><i>{{answer.advice|markdown}}</i></p>
@@ -199,7 +199,7 @@ html =
     <p class="text text-light">{{question.text|markdown}}</p>
 
     {{ renderQuestionExtras(question) }}
-    
+
     {{ renderQuestionReply(question, path, humanIdentifier) }}
   </div>
 {%- endmacro -%}
@@ -266,7 +266,7 @@ html =
       <section class="chapter" id="{{chapter.uuid}}" data-uuid="{{chapter.uuid}}" data-type="chapter">
         <h2 class="title">{{humanIdentifier|roman}}. {{chapter.title}}</h2>
         <p class="text-light">{{chapter.text|markdown}}</p>
-        
+
         {{ renderChapterReport(chapter) }}
 
         <section class="questions">

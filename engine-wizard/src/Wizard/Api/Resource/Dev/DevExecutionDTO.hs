@@ -2,10 +2,9 @@ module Wizard.Api.Resource.Dev.DevExecutionDTO where
 
 import GHC.Generics
 
-data DevExecutionDTO =
-  DevExecutionDTO
-    { _devExecutionDTOSectionName :: String
-    , _devExecutionDTOOperationName :: String
-    , _devExecutionDTOParameters :: [String]
-    }
+data DevExecutionDTO = DevExecutionDTO
+  { sectionName :: String
+  , operationName :: String
+  , parameters :: [String]
+  }
   deriving (Show, Eq, Generic)

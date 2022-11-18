@@ -1,12 +1,11 @@
-module Wizard.Service.Feedback.FeedbackService
-  ( getFeedbacksFiltered
-  , createFeedback
-  , createFeedbackWithGivenUuid
-  , getFeedbackByUuid
-  , synchronizeFeedbacksInAllApplications
-  ) where
+module Wizard.Service.Feedback.FeedbackService (
+  getFeedbacksFiltered,
+  createFeedback,
+  createFeedbackWithGivenUuid,
+  getFeedbackByUuid,
+  synchronizeFeedbacksInAllApplications,
+) where
 
-import Control.Lens ((^.))
 import Control.Monad.Except (catchError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Foldable (traverse_)
@@ -15,7 +14,6 @@ import Data.Time
 import qualified Data.UUID as U
 import Prelude hiding (id)
 
-import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
@@ -23,9 +21,12 @@ import Wizard.Api.Resource.Feedback.FeedbackDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Integration.Http.GitHub.Runner
+import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Localization.Messages.Internal
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextResult
+import Wizard.Model.Feedback.Feedback
 import Wizard.Service.Common
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Context.ContextService
@@ -36,7 +37,7 @@ getFeedbacksFiltered :: [(String, String)] -> AppContextM [FeedbackDTO]
 getFeedbacksFiltered queryParams = do
   checkIfFeedbackIsEnabled
   feedbacks <- findFeedbacksFiltered queryParams
-  serverConfig <- asks _appContextServerConfig
+  serverConfig <- asks serverConfig
   appConfig <- getAppConfig
   return . fmap (toDTO serverConfig appConfig) $ feedbacks
 
@@ -51,12 +52,12 @@ createFeedbackWithGivenUuid :: U.UUID -> FeedbackCreateDTO -> AppContextM Feedba
 createFeedbackWithGivenUuid fUuid reqDto =
   runInTransaction $ do
     checkIfFeedbackIsEnabled
-    issue <- createIssue (reqDto ^. packageId) (reqDto ^. questionUuid) (reqDto ^. title) (reqDto ^. content)
+    issue <- createIssue reqDto.packageId reqDto.questionUuid reqDto.title reqDto.content
     now <- liftIO getCurrentTime
-    appUuid <- asks _appContextAppUuid
-    let feedback = fromCreateDTO reqDto fUuid (issue ^. number) appUuid now
+    appUuid <- asks currentAppUuid
+    let feedback = fromCreateDTO reqDto fUuid issue.number appUuid now
     insertFeedback feedback
-    serverConfig <- asks _appContextServerConfig
+    serverConfig <- asks serverConfig
     appConfig <- getAppConfig
     return $ toDTO serverConfig appConfig feedback
 
@@ -64,7 +65,7 @@ getFeedbackByUuid :: String -> AppContextM FeedbackDTO
 getFeedbackByUuid fUuid = do
   checkIfFeedbackIsEnabled
   feedback <- findFeedbackById fUuid
-  serverConfig <- asks _appContextServerConfig
+  serverConfig <- asks serverConfig
   appConfig <- getAppConfig
   return $ toDTO serverConfig appConfig feedback
 
@@ -77,9 +78,10 @@ synchronizeFeedbacksInAllApplications = runFunctionForAllApps "synchronizeFeedba
 synchronizeFeedbacks :: AppContextM (ContextResult, Maybe String)
 synchronizeFeedbacks =
   catchError
-    (do runInTransaction $ do
+    ( do
+        runInTransaction $ do
           appConfig <- getAppConfig
-          if appConfig ^. questionnaire . feedback . enabled
+          if appConfig.questionnaire.feedback.enabled
             then do
               logInfoU _CMP_WORKER "synchronizing feedback"
               issues <- getIssues
@@ -87,15 +89,17 @@ synchronizeFeedbacks =
               now <- liftIO getCurrentTime
               traverse_ (updateOrDeleteFeedback issues now) feedbacks
             else logInfoU _CMP_WORKER "synchronization is disabled"
-          return (SuccessContextResult, Nothing))
-    (\error -> do
-       if error == GeneralServerError (_ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR "statusCode: 401")
-         then return (SuccessContextResult, Just "Wrong GitHub token")
-         else return (ErrorContextResult, Just . show $ error))
+          return (SuccessContextResult, Nothing)
+    )
+    ( \error -> do
+        if error == GeneralServerError (_ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR "statusCode: 401")
+          then return (SuccessContextResult, Just "Wrong GitHub token")
+          else return (ErrorContextResult, Just . show $ error)
+    )
   where
     updateOrDeleteFeedback issues now feedback =
-      case L.find (\issue -> feedback ^. issueId == issue ^. number) issues of
+      case L.find (\issue -> feedback.issueId == issue.number) issues of
         Just issue -> updateFeedbackById $ fromSimpleIssue feedback issue now
-        Nothing -> deleteFeedbackById (U.toString $ feedback ^. uuid)
+        Nothing -> deleteFeedbackById (U.toString feedback.uuid)
 
-checkIfFeedbackIsEnabled = checkIfAppFeatureIsEnabled "Feedback" (questionnaire . feedback . enabled)
+checkIfFeedbackIsEnabled = checkIfAppFeatureIsEnabled "Feedback" (\c -> c.questionnaire.feedback.enabled)

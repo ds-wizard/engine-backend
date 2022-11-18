@@ -5,24 +5,24 @@ import Data.Aeson
 import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Model.Event.Phase.PhaseEvent
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON AddPhaseEvent where
-  parseJSON = simpleParseJSON "_addPhaseEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON AddPhaseEvent where
-  toJSON = simpleToJSON' "_addPhaseEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 -- --------------------------------------------
 instance FromJSON EditPhaseEvent where
-  parseJSON = simpleParseJSON "_editPhaseEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON EditPhaseEvent where
-  toJSON = simpleToJSON' "_editPhaseEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 -- --------------------------------------------
 instance FromJSON DeletePhaseEvent where
-  parseJSON = simpleParseJSON "_deletePhaseEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON DeletePhaseEvent where
-  toJSON = simpleToJSON' "_deletePhaseEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")

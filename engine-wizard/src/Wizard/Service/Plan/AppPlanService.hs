@@ -1,6 +1,5 @@
 module Wizard.Service.Plan.AppPlanService where
 
-import Control.Lens ((&), (.~), (^.))
 import Control.Monad (void, when)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Foldable (traverse_)
@@ -9,7 +8,6 @@ import Data.Time
 import qualified Data.UUID as U
 import Prelude hiding (until)
 
-import LensesConfig
 import Shared.Util.List
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Plan.AppPlanChangeDTO
@@ -26,7 +24,7 @@ import Wizard.Service.Plan.AppPlanMapper
 
 getPlansForCurrentApp :: AppContextM [AppPlan]
 getPlansForCurrentApp = do
-  appUUid <- asks _appContextAppUuid
+  appUUid <- asks currentAppUuid
   findAppPlansForAppUuid (U.toString appUUid)
 
 createPlan :: U.UUID -> AppPlanChangeDTO -> AppContextM AppPlan
@@ -45,7 +43,7 @@ modifyPlan aUuid pUuid reqDto = do
   checkPermission _APP_PERM
   app <- findAppById aUuid
   plan <- findAppPlanById pUuid
-  let updatedPlan = fromChangeDTO reqDto (plan ^. uuid) (plan ^. appUuid) (plan ^. createdAt) (plan ^. updatedAt)
+  let updatedPlan = fromChangeDTO reqDto plan.uuid plan.appUuid plan.createdAt plan.updatedAt
   updateAppPlanById updatedPlan
   recomputePlansForApp app
   return updatedPlan
@@ -67,18 +65,18 @@ recomputePlansForApps = do
 recomputePlansForApp :: App -> AppContextM ()
 recomputePlansForApp app = do
   now <- liftIO getCurrentTime
-  plans <- findAppPlansForAppUuid (U.toString $ app ^. uuid)
+  plans <- findAppPlansForAppUuid (U.toString app.uuid)
   let mActivePlan = headSafe . filter (isPlanActive now) $ plans
   -- Recompute active flag
   let active = isJust mActivePlan
-  when (app ^. enabled /= active) (void $ updateAppById (app & enabled .~ active))
+  when (app.enabled /= active) (void $ updateAppById (app {enabled = active}))
   -- Recompute features & limits
   case mActivePlan of
     Just activePlan -> do
-      appConfig <- getAppConfigByUuid (app ^. uuid)
-      let updatedAppConfig = turnTestPlanFeature (activePlan ^. test) appConfig
-      when (appConfig ^. feature /= updatedAppConfig ^. feature) (void $ modifyAppConfig updatedAppConfig)
-      recomputeAppLimit (activePlan ^. users)
+      appConfig <- getAppConfigByUuid app.uuid
+      let updatedAppConfig = turnTestPlanFeature activePlan.test appConfig
+      when (appConfig.feature /= updatedAppConfig.feature) (void $ modifyAppConfig updatedAppConfig)
+      recomputeAppLimit activePlan.users
       return ()
     Nothing -> return ()
 
@@ -87,11 +85,18 @@ recomputePlansForApp app = do
 -- --------------------------------
 isPlanActive :: UTCTime -> AppPlan -> Bool
 isPlanActive now plan =
-  case (plan ^. since, plan ^. until) of
+  case (plan.since, plan.until) of
     (Just since, Just until) -> since <= now && now <= until
     (Just since, Nothing) -> since <= now
     (Nothing, Just until) -> now <= until
     (Nothing, Nothing) -> True
 
 turnTestPlanFeature :: Bool -> AppConfig -> AppConfig
-turnTestPlanFeature enabled = ((feature . pdfOnlyEnabled) .~ enabled) . ((feature . pdfWatermarkEnabled) .~ enabled)
+turnTestPlanFeature enabled appConfig =
+  appConfig
+    { feature =
+        appConfig.feature
+          { pdfOnlyEnabled = enabled
+          , pdfWatermarkEnabled = enabled
+          }
+    }

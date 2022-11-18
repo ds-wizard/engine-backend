@@ -1,6 +1,6 @@
-module Wizard.Integration.Http.Typehint.Runner
-  ( retrieveTypehints
-  ) where
+module Wizard.Integration.Http.Typehint.Runner (
+  retrieveTypehints,
+) where
 
 import Data.Map.Strict as M
 

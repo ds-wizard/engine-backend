@@ -1,140 +1,83 @@
 module Shared.Model.Event.Integration.IntegrationEventLenses where
 
-import Control.Lens ((&), (.~), (^.))
-import Data.Time
-import qualified Data.UUID as U
-
-import LensesConfig
 import Shared.Model.Common.Lens
 import Shared.Model.Event.EventField
 import Shared.Model.Event.Integration.IntegrationEvent
 
 instance HasUuid' AddIntegrationEvent where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AddIntegrationEvent -> U.UUID
-      get (AddApiIntegrationEvent' entity) = entity ^. uuid
-      get (AddWidgetIntegrationEvent' entity) = entity ^. uuid
-      set :: AddIntegrationEvent -> U.UUID -> AddIntegrationEvent
-      set (AddApiIntegrationEvent' entity) newUuid = AddApiIntegrationEvent' $ entity & uuid .~ newUuid
-      set (AddWidgetIntegrationEvent' entity) newUuid = AddWidgetIntegrationEvent' $ entity & uuid .~ newUuid
+  getUuid (AddApiIntegrationEvent' entity) = entity.uuid
+  getUuid (AddWidgetIntegrationEvent' entity) = entity.uuid
+  setUuid (AddApiIntegrationEvent' entity) newValue = AddApiIntegrationEvent' $ entity {uuid = newValue}
+  setUuid (AddWidgetIntegrationEvent' entity) newValue = AddWidgetIntegrationEvent' $ entity {uuid = newValue}
 
 instance HasUuid' EditIntegrationEvent where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: EditIntegrationEvent -> U.UUID
-      get (EditApiIntegrationEvent' entity) = entity ^. uuid
-      get (EditWidgetIntegrationEvent' entity) = entity ^. uuid
-      set :: EditIntegrationEvent -> U.UUID -> EditIntegrationEvent
-      set (EditApiIntegrationEvent' entity) newValue = EditApiIntegrationEvent' $ entity & uuid .~ newValue
-      set (EditWidgetIntegrationEvent' entity) newValue = EditWidgetIntegrationEvent' $ entity & uuid .~ newValue
+  getUuid (EditApiIntegrationEvent' entity) = entity.uuid
+  getUuid (EditWidgetIntegrationEvent' entity) = entity.uuid
+  setUuid (EditApiIntegrationEvent' entity) newValue = EditApiIntegrationEvent' $ entity {uuid = newValue}
+  setUuid (EditWidgetIntegrationEvent' entity) newValue = EditWidgetIntegrationEvent' $ entity {uuid = newValue}
 
 instance HasUuid' DeleteIntegrationEvent where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: DeleteIntegrationEvent -> U.UUID
-      get entity = entity ^. uuid
-      set :: DeleteIntegrationEvent -> U.UUID -> DeleteIntegrationEvent
-      set entity newValue = entity & uuid .~ newValue
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
 instance HasParentUuid' AddIntegrationEvent where
-  parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AddIntegrationEvent -> U.UUID
-      get (AddApiIntegrationEvent' entity) = entity ^. parentUuid
-      get (AddWidgetIntegrationEvent' entity) = entity ^. parentUuid
-      set :: AddIntegrationEvent -> U.UUID -> AddIntegrationEvent
-      set (AddApiIntegrationEvent' entity) newUuid = AddApiIntegrationEvent' $ entity & parentUuid .~ newUuid
-      set (AddWidgetIntegrationEvent' entity) newUuid = AddWidgetIntegrationEvent' $ entity & parentUuid .~ newUuid
+  getParentUuid (AddApiIntegrationEvent' entity) = entity.parentUuid
+  getParentUuid (AddWidgetIntegrationEvent' entity) = entity.parentUuid
+  setParentUuid (AddApiIntegrationEvent' entity) newValue = AddApiIntegrationEvent' $ entity {parentUuid = newValue}
+  setParentUuid (AddWidgetIntegrationEvent' entity) newValue = AddWidgetIntegrationEvent' $ entity {parentUuid = newValue}
 
 instance HasParentUuid' EditIntegrationEvent where
-  parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: EditIntegrationEvent -> U.UUID
-      get (EditApiIntegrationEvent' entity) = entity ^. parentUuid
-      get (EditWidgetIntegrationEvent' entity) = entity ^. parentUuid
-      set :: EditIntegrationEvent -> U.UUID -> EditIntegrationEvent
-      set (EditApiIntegrationEvent' entity) newValue = EditApiIntegrationEvent' $ entity & parentUuid .~ newValue
-      set (EditWidgetIntegrationEvent' entity) newValue = EditWidgetIntegrationEvent' $ entity & parentUuid .~ newValue
+  getParentUuid (EditApiIntegrationEvent' entity) = entity.parentUuid
+  getParentUuid (EditWidgetIntegrationEvent' entity) = entity.parentUuid
+  setParentUuid (EditApiIntegrationEvent' entity) newValue = EditApiIntegrationEvent' $ entity {parentUuid = newValue}
+  setParentUuid (EditWidgetIntegrationEvent' entity) newValue = EditWidgetIntegrationEvent' $ entity {parentUuid = newValue}
 
 instance HasParentUuid' DeleteIntegrationEvent where
-  parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: DeleteIntegrationEvent -> U.UUID
-      get entity = entity ^. parentUuid
-      set :: DeleteIntegrationEvent -> U.UUID -> DeleteIntegrationEvent
-      set entity newValue = entity & parentUuid .~ newValue
+  getParentUuid entity = entity.parentUuid
+  setParentUuid entity newValue = entity {parentUuid = newValue}
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
 instance HasEntityUuid' AddIntegrationEvent where
-  entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AddIntegrationEvent -> U.UUID
-      get (AddApiIntegrationEvent' entity) = entity ^. entityUuid
-      get (AddWidgetIntegrationEvent' entity) = entity ^. entityUuid
-      set :: AddIntegrationEvent -> U.UUID -> AddIntegrationEvent
-      set (AddApiIntegrationEvent' entity) newUuid = AddApiIntegrationEvent' $ entity & entityUuid .~ newUuid
-      set (AddWidgetIntegrationEvent' entity) newUuid = AddWidgetIntegrationEvent' $ entity & entityUuid .~ newUuid
+  getEntityUuid (AddApiIntegrationEvent' entity) = entity.entityUuid
+  getEntityUuid (AddWidgetIntegrationEvent' entity) = entity.entityUuid
+  setEntityUuid (AddApiIntegrationEvent' entity) newValue = AddApiIntegrationEvent' $ entity {entityUuid = newValue}
+  setEntityUuid (AddWidgetIntegrationEvent' entity) newValue = AddWidgetIntegrationEvent' $ entity {entityUuid = newValue}
 
 instance HasEntityUuid' EditIntegrationEvent where
-  entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: EditIntegrationEvent -> U.UUID
-      get (EditApiIntegrationEvent' entity) = entity ^. entityUuid
-      get (EditWidgetIntegrationEvent' entity) = entity ^. entityUuid
-      set :: EditIntegrationEvent -> U.UUID -> EditIntegrationEvent
-      set (EditApiIntegrationEvent' entity) newValue = EditApiIntegrationEvent' $ entity & entityUuid .~ newValue
-      set (EditWidgetIntegrationEvent' entity) newValue = EditWidgetIntegrationEvent' $ entity & entityUuid .~ newValue
+  getEntityUuid (EditApiIntegrationEvent' entity) = entity.entityUuid
+  getEntityUuid (EditWidgetIntegrationEvent' entity) = entity.entityUuid
+  setEntityUuid (EditApiIntegrationEvent' entity) newValue = EditApiIntegrationEvent' $ entity {entityUuid = newValue}
+  setEntityUuid (EditWidgetIntegrationEvent' entity) newValue = EditWidgetIntegrationEvent' $ entity {entityUuid = newValue}
 
 instance HasEntityUuid' DeleteIntegrationEvent where
-  entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: DeleteIntegrationEvent -> U.UUID
-      get entity = entity ^. entityUuid
-      set :: DeleteIntegrationEvent -> U.UUID -> DeleteIntegrationEvent
-      set entity newValue = entity & entityUuid .~ newValue
+  getEntityUuid entity = entity.entityUuid
+  setEntityUuid entity newValue = entity {entityUuid = newValue}
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
 instance HasProps' EditIntegrationEvent (EventField [String]) where
-  props' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: EditIntegrationEvent -> EventField [String]
-      get (EditApiIntegrationEvent' e) = e ^. props
-      get (EditWidgetIntegrationEvent' e) = e ^. props
-      set :: EditIntegrationEvent -> EventField [String] -> EditIntegrationEvent
-      set (EditApiIntegrationEvent' e) newValue = EditApiIntegrationEvent' $ e & props .~ newValue
-      set (EditWidgetIntegrationEvent' e) newValue = EditWidgetIntegrationEvent' $ e & props .~ newValue
+  getProps (EditApiIntegrationEvent' e) = e.props
+  getProps (EditWidgetIntegrationEvent' e) = e.props
+  setProps (EditApiIntegrationEvent' e) newValue = EditApiIntegrationEvent' $ e {props = newValue}
+  setProps (EditWidgetIntegrationEvent' e) newValue = EditWidgetIntegrationEvent' $ e {props = newValue}
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
 instance HasCreatedAt' AddIntegrationEvent where
-  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AddIntegrationEvent -> UTCTime
-      get (AddApiIntegrationEvent' entity) = entity ^. createdAt
-      get (AddWidgetIntegrationEvent' entity) = entity ^. createdAt
-      set :: AddIntegrationEvent -> UTCTime -> AddIntegrationEvent
-      set (AddApiIntegrationEvent' entity) newUuid = AddApiIntegrationEvent' $ entity & createdAt .~ newUuid
-      set (AddWidgetIntegrationEvent' entity) newUuid = AddWidgetIntegrationEvent' $ entity & createdAt .~ newUuid
+  getCreatedAt (AddApiIntegrationEvent' entity) = entity.createdAt
+  getCreatedAt (AddWidgetIntegrationEvent' entity) = entity.createdAt
+  setCreatedAt (AddApiIntegrationEvent' entity) newValue = AddApiIntegrationEvent' $ entity {createdAt = newValue}
+  setCreatedAt (AddWidgetIntegrationEvent' entity) newValue = AddWidgetIntegrationEvent' $ entity {createdAt = newValue}
 
 instance HasCreatedAt' EditIntegrationEvent where
-  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: EditIntegrationEvent -> UTCTime
-      get (EditApiIntegrationEvent' entity) = entity ^. createdAt
-      get (EditWidgetIntegrationEvent' entity) = entity ^. createdAt
-      set :: EditIntegrationEvent -> UTCTime -> EditIntegrationEvent
-      set (EditApiIntegrationEvent' entity) newValue = EditApiIntegrationEvent' $ entity & createdAt .~ newValue
-      set (EditWidgetIntegrationEvent' entity) newValue = EditWidgetIntegrationEvent' $ entity & createdAt .~ newValue
+  getCreatedAt (EditApiIntegrationEvent' entity) = entity.createdAt
+  getCreatedAt (EditWidgetIntegrationEvent' entity) = entity.createdAt
+  setCreatedAt (EditApiIntegrationEvent' entity) newValue = EditApiIntegrationEvent' $ entity {createdAt = newValue}
+  setCreatedAt (EditWidgetIntegrationEvent' entity) newValue = EditWidgetIntegrationEvent' $ entity {createdAt = newValue}
 
 instance HasCreatedAt' DeleteIntegrationEvent where
-  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: DeleteIntegrationEvent -> UTCTime
-      get entity = entity ^. createdAt
-      set :: DeleteIntegrationEvent -> UTCTime -> DeleteIntegrationEvent
-      set entity newValue = entity & createdAt .~ newValue
+  getCreatedAt entity = entity.createdAt
+  setCreatedAt entity newValue = entity {createdAt = newValue}

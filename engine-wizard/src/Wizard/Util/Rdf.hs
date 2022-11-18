@@ -17,16 +17,16 @@ owlObjectProperty = Just (unode "http://www.w3.org/2002/07/owl#ObjectProperty")
 
 owlDataTypeProperty = Just (unode "http://www.w3.org/2002/07/owl#DatatypeProperty")
 
-data RdfClass =
-  RdfClass T.Text [RdfDataType] [RdfObject]
+data RdfClass
+  = RdfClass T.Text [RdfDataType] [RdfObject]
   deriving (Show)
 
-data RdfObject =
-  RdfObject T.Text (Maybe T.Text) RdfClass
+data RdfObject
+  = RdfObject T.Text (Maybe T.Text) RdfClass
   deriving (Show)
 
-data RdfDataType =
-  RdfDataType T.Text T.Text
+data RdfDataType
+  = RdfDataType T.Text T.Text
   deriving (Show)
 
 subUriOf t =

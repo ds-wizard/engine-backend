@@ -1,12 +1,10 @@
 module Wizard.Service.Questionnaire.Collaboration.CollaborationAcl where
 
-import Control.Lens ((^.), (^..))
 import Control.Monad.Except (throwError)
 import Data.Maybe (isJust)
 import qualified Data.UUID as U
 import Prelude hiding (log)
 
-import LensesConfig
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Model.Acl.Acl
@@ -16,8 +14,8 @@ import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
 import Wizard.Model.User.User
 import Wizard.Model.Websocket.WebsocketRecord
 
-getPermission ::
-     QuestionnaireVisibility
+getPermission
+  :: QuestionnaireVisibility
   -> QuestionnaireSharing
   -> [QuestionnairePermRecord]
   -> Maybe U.UUID
@@ -26,26 +24,29 @@ getPermission ::
   -> WebsocketPerm
 getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserRole mCurrentUserGroups
   | or
-     [ isAdmin
-     , isLogged && isExplicitlyOwner
-     , isLogged && isExplicitlyEditor
-     , isLogged && isInOwnerGroup
-     , isLogged && isInEditorGroup
-     , isLogged && visibility == VisibleEditQuestionnaire
-     , sharing == AnyoneWithLinkEditQuestionnaire
-     ] = EditorWebsocketPerm
+      [ isAdmin
+      , isLogged && isExplicitlyOwner
+      , isLogged && isExplicitlyEditor
+      , isLogged && isInOwnerGroup
+      , isLogged && isInEditorGroup
+      , isLogged && visibility == VisibleEditQuestionnaire
+      , sharing == AnyoneWithLinkEditQuestionnaire
+      ] =
+      EditorWebsocketPerm
   | or
-     [ isLogged && isExplicitlyCommentator
-     , isLogged && isInCommentatorGroup
-     , isLogged && visibility == VisibleCommentQuestionnaire
-     , sharing == AnyoneWithLinkCommentQuestionnaire
-     ] = CommentatorWebsocketPerm
+      [ isLogged && isExplicitlyCommentator
+      , isLogged && isInCommentatorGroup
+      , isLogged && visibility == VisibleCommentQuestionnaire
+      , sharing == AnyoneWithLinkCommentQuestionnaire
+      ] =
+      CommentatorWebsocketPerm
   | or
-     [ isLogged && isExplicitlyViewer
-     , isLogged && isInViewerGroup
-     , isLogged && visibility == VisibleViewQuestionnaire
-     , sharing == AnyoneWithLinkViewQuestionnaire
-     ] = ViewerWebsocketPerm
+      [ isLogged && isExplicitlyViewer
+      , isLogged && isInViewerGroup
+      , isLogged && visibility == VisibleViewQuestionnaire
+      , sharing == AnyoneWithLinkViewQuestionnaire
+      ] =
+      ViewerWebsocketPerm
   | otherwise = NoWebsocketPerm
   where
     isExplicitlyOwner = maybe False (`elem` getUserUuidsForOwnerPerm permissions) mCurrentUserUuid
@@ -58,21 +59,19 @@ getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserRole m
     isInViewerGroup = or (fmap (`elem` getGroupIdsForViewerPerm permissions) mCurrentUserGroupIds)
     isLogged = isJust mCurrentUserUuid
     isAdmin = mCurrentUserRole == Just _USER_ROLE_ADMIN
-    mCurrentUserGroupIds = maybe [] (\membership -> membership ^.. traverse . groupId) mCurrentUserGroups
+    mCurrentUserGroupIds = maybe [] (fmap (.groupId)) mCurrentUserGroups
 
 checkViewPermission myself =
-  if myself ^. entityPerm == EditorWebsocketPerm || myself ^. entityPerm == CommentatorWebsocketPerm || myself ^.
-     entityPerm ==
-     ViewerWebsocketPerm
+  if myself.entityPerm == EditorWebsocketPerm || myself.entityPerm == CommentatorWebsocketPerm || myself.entityPerm == ViewerWebsocketPerm
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "View Questionnaire"
 
 checkCommentPermission myself =
-  if myself ^. entityPerm == EditorWebsocketPerm || myself ^. entityPerm == CommentatorWebsocketPerm
+  if myself.entityPerm == EditorWebsocketPerm || myself.entityPerm == CommentatorWebsocketPerm
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Comment Questionnaire"
 
 checkEditPermission myself =
-  if myself ^. entityPerm == EditorWebsocketPerm
+  if myself.entityPerm == EditorWebsocketPerm
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire"

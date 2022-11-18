@@ -8,4 +8,4 @@ import Wizard.Api.Resource.User.UserSuggestionJM ()
 import Wizard.Database.Migration.Development.User.Data.Users
 
 instance ToSchema UserSuggestionDTO where
-  declareNamedSchema = simpleToSchema userAlbertSuggestion
+  declareNamedSchema = toSwagger userAlbertSuggestion

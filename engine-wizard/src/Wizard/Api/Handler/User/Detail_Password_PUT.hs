@@ -10,32 +10,32 @@ import Wizard.Api.Resource.User.UserPasswordJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.User.UserService
 
-type Detail_Password_PUT
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> ReqBody '[ SafeJSON] UserPasswordDTO
-     :> "users"
-     :> Capture "uUuid" String
-     :> "password"
-     :> QueryParam "hash" String
-     :> Verb PUT 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
+type Detail_Password_PUT =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> ReqBody '[SafeJSON] UserPasswordDTO
+    :> "users"
+    :> Capture "uUuid" String
+    :> "password"
+    :> QueryParam "hash" String
+    :> Verb PUT 204 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] NoContent)
 
-detail_password_PUT ::
-     Maybe String
+detail_password_PUT
+  :: Maybe String
   -> Maybe String
   -> UserPasswordDTO
   -> String
   -> Maybe String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
 detail_password_PUT mTokenHeader mServerUrl reqDto uUuid mHash =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
-    addTraceUuidHeader =<< do
-      ia <- isAdmin
-      if ia
-        then do
-          changeUserPasswordByAdmin uUuid reqDto
-          return NoContent
-        else do
-          changeUserPasswordByHash uUuid mHash reqDto
-          return NoContent
+      addTraceUuidHeader =<< do
+        ia <- isAdmin
+        if ia
+          then do
+            changeUserPasswordByAdmin uUuid reqDto
+            return NoContent
+          else do
+            changeUserPasswordByHash uUuid mHash reqDto
+            return NoContent

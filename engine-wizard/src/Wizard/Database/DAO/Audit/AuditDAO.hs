@@ -13,7 +13,7 @@ entityName = "audit"
 
 findAudits :: AppContextM [Audit]
 findAudits = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 insertAudit :: Audit -> AppContextM Int64

@@ -4,10 +4,10 @@ import Data.Aeson
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.List.NonEmpty as NE
-import Data.Swagger (NamedSchema(..), ToSchema(..), binarySchema)
+import Data.Swagger (NamedSchema (..), ToSchema (..), binarySchema)
 import Data.Typeable
 import GHC.Generics
-import Servant (Accept(..), MimeRender(..), MimeUnrender(..), OctetStream(..))
+import Servant (Accept (..), MimeRender (..), MimeUnrender (..), OctetStream (..))
 
 data ApplicationJavascript
   deriving (Typeable)
@@ -22,8 +22,8 @@ instance MimeRender ApplicationJavascript Javascript where
 instance MimeUnrender ApplicationJavascript Javascript where
   mimeUnrender _ = Right . Javascript
 
-newtype Javascript =
-  Javascript BSL.ByteString
+newtype Javascript
+  = Javascript BSL.ByteString
   deriving (Generic)
 
 instance ToSchema Javascript where
@@ -60,8 +60,8 @@ instance FromJSON a => MimeUnrender SafeJSON a where
       Left error -> Left "Problem in deserialization of JSON"
 
 -- ------------------------------------------------------------------------
-newtype FileStream =
-  FileStream BS.ByteString
+newtype FileStream
+  = FileStream BS.ByteString
   deriving (Generic)
 
 instance ToSchema FileStream where
@@ -71,8 +71,8 @@ instance MimeRender OctetStream FileStream where
   mimeRender _ (FileStream content) = BSL.fromStrict content
 
 -- ------------------------------------------------------------------------
-newtype FileStreamLazy =
-  FileStreamLazy BSL.ByteString
+newtype FileStreamLazy
+  = FileStreamLazy BSL.ByteString
   deriving (Generic)
 
 instance ToSchema FileStreamLazy where

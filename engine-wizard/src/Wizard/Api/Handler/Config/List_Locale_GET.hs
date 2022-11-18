@@ -11,19 +11,19 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Locale.LocaleService
 
-type List_Locale_GET
-   = Header "Host" String
-     :> "configs"
-     :> "locales"
-     :> Capture "localeId" String
-     :> Get '[ OctetStream] (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
+type List_Locale_GET =
+  Header "Host" String
+    :> "configs"
+    :> "locales"
+    :> Capture "localeId" String
+    :> Get '[OctetStream] (Headers '[Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
 
-list_locale_GET ::
-     Maybe String
+list_locale_GET
+  :: Maybe String
   -> String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
 list_locale_GET mServerUrl localeId =
   runInUnauthService mServerUrl NoTransaction $ do
     locale <- getLocaleForId localeId
-    traceUuid <- asks _appContextTraceUuid
+    traceUuid <- asks traceUuid
     return . addHeader (U.toString traceUuid) . addHeader "application/json" . FileStream $ locale

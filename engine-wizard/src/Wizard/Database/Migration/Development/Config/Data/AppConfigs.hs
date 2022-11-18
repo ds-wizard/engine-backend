@@ -1,14 +1,14 @@
 module Wizard.Database.Migration.Development.Config.Data.AppConfigs where
 
-import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import Data.Time
 
-import LensesConfig
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
+import Shared.Model.Template.Template
 import Wizard.Database.Migration.Development.App.Data.Apps
+import Wizard.Model.App.App
 import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
@@ -21,21 +21,21 @@ defaultSecret = "01234567890123456789012345678901"
 defaultAppConfig :: AppConfig
 defaultAppConfig =
   AppConfig
-    { _appConfigUuid = defaultApp ^. uuid
-    , _appConfigOrganization = defaultOrganization
-    , _appConfigFeature = defaultFeature
-    , _appConfigAuthentication = defaultAuth
-    , _appConfigPrivacyAndSupport = defaultPrivacyAndSupport
-    , _appConfigDashboard = defaultDashboard
-    , _appConfigLookAndFeel = defaultLookAndFeel
-    , _appConfigRegistry = defaultRegistry
-    , _appConfigKnowledgeModel = defaultKnowledgeModel
-    , _appConfigQuestionnaire = defaultQuestionnaire
-    , _appConfigTemplate = defaultTemplate
-    , _appConfigSubmission = defaultSubmission
-    , _appConfigOwl = defaultOwl
-    , _appConfigCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , _appConfigUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    { uuid = defaultApp.uuid
+    , organization = defaultOrganization
+    , feature = defaultFeature
+    , authentication = defaultAuth
+    , privacyAndSupport = defaultPrivacyAndSupport
+    , dashboard = defaultDashboard
+    , lookAndFeel = defaultLookAndFeel
+    , registry = defaultRegistry
+    , knowledgeModel = defaultKnowledgeModel
+    , questionnaire = defaultQuestionnaire
+    , template = defaultTemplate
+    , submission = defaultSubmission
+    , owl = defaultOwl
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
 defaultAppConfigEncrypted :: AppConfig
@@ -44,107 +44,109 @@ defaultAppConfigEncrypted = process defaultSecret defaultAppConfig
 defaultOrganization :: AppConfigOrganization
 defaultOrganization =
   AppConfigOrganization
-    { _appConfigOrganizationName = "Organization Amsterdam"
-    , _appConfigOrganizationDescription = "Some description of Organization Amsterdam"
-    , _appConfigOrganizationOrganizationId = "org.nl.amsterdam"
-    , _appConfigOrganizationAffiliations = []
+    { name = "Organization Amsterdam"
+    , description = "Some description of Organization Amsterdam"
+    , organizationId = "org.nl.amsterdam"
+    , affiliations = []
     }
 
 defaultFeature :: AppConfigFeature
 defaultFeature =
   AppConfigFeature
-    { _appConfigFeatureClientCustomizationEnabled = True
-    , _appConfigFeaturePdfOnlyEnabled = False
-    , _appConfigFeaturePdfWatermarkEnabled = False
+    { clientCustomizationEnabled = True
+    , pdfOnlyEnabled = False
+    , pdfWatermarkEnabled = False
     }
 
 defaultAuth :: AppConfigAuth
 defaultAuth =
   AppConfigAuth
-    { _appConfigAuthDefaultRole = _USER_ROLE_DATA_STEWARD
-    , _appConfigAuthInternal = defaultAuthInternal
-    , _appConfigAuthExternal = defaultAuthExternal
+    { defaultRole = _USER_ROLE_DATA_STEWARD
+    , internal = defaultAuthInternal
+    , external = defaultAuthExternal
     }
 
 defaultAuthInternal :: AppConfigAuthInternal
-defaultAuthInternal = AppConfigAuthInternal {_appConfigAuthInternalRegistration = SimpleFeature True}
+defaultAuthInternal = AppConfigAuthInternal {registration = SimpleFeature True}
 
 defaultAuthExternal :: AppConfigAuthExternal
-defaultAuthExternal = AppConfigAuthExternal {_appConfigAuthExternalServices = [defaultAuthExternalService]}
+defaultAuthExternal = AppConfigAuthExternal {services = [defaultAuthExternalService]}
 
 defaultAuthExternalService :: AppConfigAuthExternalService
 defaultAuthExternalService =
   AppConfigAuthExternalService
-    { _appConfigAuthExternalServiceAId = "google"
-    , _appConfigAuthExternalServiceName = "Google"
-    , _appConfigAuthExternalServiceUrl = "https://accounts.google.com"
-    , _appConfigAuthExternalServiceClientId = "32559869123-a98908094.apps.googleusercontent.com"
-    , _appConfigAuthExternalServiceClientSecret = "sad89089023"
-    , _appConfigAuthExternalServiceParameteres = [defaultAuthExternalServiceParameter]
-    , _appConfigAuthExternalServiceStyle = Just defaultAuthExternalServiceStyle
+    { aId = "google"
+    , name = "Google"
+    , url = "https://accounts.google.com"
+    , clientId = "32559869123-a98908094.apps.googleusercontent.com"
+    , clientSecret = "sad89089023"
+    , parameteres = [defaultAuthExternalServiceParameter]
+    , style = Just defaultAuthExternalServiceStyle
     }
 
 defaultAuthExternalServiceParameter :: AppConfigAuthExternalServiceParameter
 defaultAuthExternalServiceParameter =
   AppConfigAuthExternalServiceParameter
-    {_appConfigAuthExternalServiceParameterName = "hd2", _appConfigAuthExternalServiceParameterValue = "google.com"}
+    { name = "hd2"
+    , value = "google.com"
+    }
 
 defaultAuthExternalServiceStyle :: AppConfigAuthExternalServiceStyle
 defaultAuthExternalServiceStyle =
   AppConfigAuthExternalServiceStyle
-    { _appConfigAuthExternalServiceStyleIcon = Just "fa-google"
-    , _appConfigAuthExternalServiceStyleBackground = Just "#000"
-    , _appConfigAuthExternalServiceStyleColor = Just "#FFF"
+    { icon = Just "fa-google"
+    , background = Just "#000"
+    , color = Just "#FFF"
     }
 
 defaultPrivacyAndSupport :: AppConfigPrivacyAndSupport
 defaultPrivacyAndSupport =
   AppConfigPrivacyAndSupport
-    { _appConfigPrivacyAndSupportPrivacyUrl = Nothing
-    , _appConfigPrivacyAndSupportTermsOfServiceUrl = Nothing
-    , _appConfigPrivacyAndSupportSupportEmail = Nothing
-    , _appConfigPrivacyAndSupportSupportRepositoryName = Nothing
-    , _appConfigPrivacyAndSupportSupportRepositoryUrl = Nothing
+    { privacyUrl = Nothing
+    , termsOfServiceUrl = Nothing
+    , supportEmail = Nothing
+    , supportRepositoryName = Nothing
+    , supportRepositoryUrl = Nothing
     }
 
 defaultDashboard :: AppConfigDashboard
 defaultDashboard =
   AppConfigDashboard
-    { _appConfigDashboardDashboardType = WelcomeDashboardType
-    , _appConfigDashboardWelcomeWarning = Nothing
-    , _appConfigDashboardWelcomeInfo = Nothing
+    { dashboardType = WelcomeDashboardType
+    , welcomeWarning = Nothing
+    , welcomeInfo = Nothing
     }
 
 defaultLookAndFeel :: AppConfigLookAndFeel
 defaultLookAndFeel =
   AppConfigLookAndFeel
-    { _appConfigLookAndFeelAppTitle = Nothing
-    , _appConfigLookAndFeelAppTitleShort = Nothing
-    , _appConfigLookAndFeelCustomMenuLinks = [defaultLookAndFeelCustomLink]
-    , _appConfigLookAndFeelLoginInfo = Nothing
-    , _appConfigLookAndFeelLogoUrl = Nothing
-    , _appConfigLookAndFeelStyleUrl = Nothing
-    , _appConfigLookAndFeelPrimaryColor = Nothing
-    , _appConfigLookAndFeelIllustrationsColor = Nothing
+    { appTitle = Nothing
+    , appTitleShort = Nothing
+    , customMenuLinks = [defaultLookAndFeelCustomLink]
+    , loginInfo = Nothing
+    , logoUrl = Nothing
+    , styleUrl = Nothing
+    , primaryColor = Nothing
+    , illustrationsColor = Nothing
     }
 
 defaultLookAndFeelCustomLink :: AppConfigLookAndFeelCustomMenuLink
 defaultLookAndFeelCustomLink =
   AppConfigLookAndFeelCustomMenuLink
-    { _appConfigLookAndFeelCustomMenuLinkIcon = "faq"
-    , _appConfigLookAndFeelCustomMenuLinkTitle = "My Link"
-    , _appConfigLookAndFeelCustomMenuLinkUrl = "http://example.prg"
-    , _appConfigLookAndFeelCustomMenuLinkNewWindow = False
+    { icon = "faq"
+    , title = "My Link"
+    , url = "http://example.prg"
+    , newWindow = False
     }
 
 defaultRegistry :: AppConfigRegistry
-defaultRegistry = AppConfigRegistry {_appConfigRegistryEnabled = True, _appConfigRegistryToken = "GlobalToken"}
+defaultRegistry = AppConfigRegistry {enabled = True, token = "GlobalToken"}
 
 defaultKnowledgeModel :: AppConfigKnowledgeModel
 defaultKnowledgeModel =
   AppConfigKnowledgeModel
-    { _appConfigKnowledgeModelPublic = defaultKnowledgeModelPublic
-    , _appConfigKnowledgeModelIntegrationConfig =
+    { public = defaultKnowledgeModelPublic
+    , integrationConfig =
         "ontologyPortal: \n\
         \  path: ontology-portal.json \n\
         \bioPortal: \n\
@@ -154,32 +156,34 @@ defaultKnowledgeModel =
 defaultKnowledgeModelPublic :: AppConfigKnowledgeModelPublic
 defaultKnowledgeModelPublic =
   AppConfigKnowledgeModelPublic
-    {_appConfigKnowledgeModelPublicEnabled = True, _appConfigKnowledgeModelPublicPackages = [packagePatternGlobal]}
+    { enabled = True
+    , packages = [packagePatternGlobal]
+    }
 
 defaultQuestionnaire :: AppConfigQuestionnaire
 defaultQuestionnaire =
   AppConfigQuestionnaire
-    { _appConfigQuestionnaireQuestionnaireVisibility = defaultQuestionnaireVisibility
-    , _appConfigQuestionnaireQuestionnaireSharing = defaultQuestionnaireSharing
-    , _appConfigQuestionnaireQuestionnaireCreation = TemplateAndCustomQuestionnaireCreation
-    , _appConfigQuestionnaireProjectTagging = defaultQuestionnaireProjectTagging
-    , _appConfigQuestionnaireSummaryReport = SimpleFeature True
-    , _appConfigQuestionnaireFeedback = defaultFeedback
+    { questionnaireVisibility = defaultQuestionnaireVisibility
+    , questionnaireSharing = defaultQuestionnaireSharing
+    , questionnaireCreation = TemplateAndCustomQuestionnaireCreation
+    , projectTagging = defaultQuestionnaireProjectTagging
+    , summaryReport = SimpleFeature True
+    , feedback = defaultFeedback
     }
 
 defaultQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
 defaultQuestionnaireVisibility =
   AppConfigQuestionnaireVisibility
-    { _appConfigQuestionnaireVisibilityEnabled = True
-    , _appConfigQuestionnaireVisibilityDefaultValue = PrivateQuestionnaire
+    { enabled = True
+    , defaultValue = PrivateQuestionnaire
     }
 
 defaultQuestionnaireSharing :: AppConfigQuestionnaireSharing
 defaultQuestionnaireSharing =
   AppConfigQuestionnaireSharing
-    { _appConfigQuestionnaireSharingEnabled = True
-    , _appConfigQuestionnaireSharingDefaultValue = RestrictedQuestionnaire
-    , _appConfigQuestionnaireSharingAnonymousEnabled = False
+    { enabled = True
+    , defaultValue = RestrictedQuestionnaire
+    , anonymousEnabled = False
     }
 
 _SETTINGS_PROJECT_TAG_1 = "settingsProjectTag1"
@@ -189,35 +193,35 @@ _SETTINGS_PROJECT_TAG_2 = "settingsProjectTag2"
 defaultQuestionnaireProjectTagging :: AppConfigQuestionnaireProjectTagging
 defaultQuestionnaireProjectTagging =
   AppConfigQuestionnaireProjectTagging
-    { _appConfigQuestionnaireProjectTaggingEnabled = True
-    , _appConfigQuestionnaireProjectTaggingTags = [_SETTINGS_PROJECT_TAG_1, _SETTINGS_PROJECT_TAG_2]
+    { enabled = True
+    , tags = [_SETTINGS_PROJECT_TAG_1, _SETTINGS_PROJECT_TAG_2]
     }
 
 defaultFeedback :: AppConfigQuestionnaireFeedback
 defaultFeedback =
   AppConfigQuestionnaireFeedback
-    { _appConfigQuestionnaireFeedbackEnabled = True
-    , _appConfigQuestionnaireFeedbackToken = ""
-    , _appConfigQuestionnaireFeedbackOwner = "DSWGlobal"
-    , _appConfigQuestionnaireFeedbackRepo = "dsw-test"
+    { enabled = True
+    , token = ""
+    , owner = "DSWGlobal"
+    , repo = "dsw-test"
     }
 
 defaultTemplate :: AppConfigTemplate
-defaultTemplate = AppConfigTemplate {_appConfigTemplateRecommendedTemplateId = Just $ commonWizardTemplate ^. tId}
+defaultTemplate = AppConfigTemplate {recommendedTemplateId = Just $ commonWizardTemplate.tId}
 
 defaultSubmission :: AppConfigSubmission
 defaultSubmission =
-  AppConfigSubmission {_appConfigSubmissionEnabled = True, _appConfigSubmissionServices = [defaultSubmissionService]}
+  AppConfigSubmission {enabled = True, services = [defaultSubmissionService]}
 
 defaultSubmissionService :: AppConfigSubmissionService
 defaultSubmissionService =
   AppConfigSubmissionService
-    { _appConfigSubmissionServiceSId = "mySubmissionServer"
-    , _appConfigSubmissionServiceName = "My Submission Server"
-    , _appConfigSubmissionServiceDescription = "Some description"
-    , _appConfigSubmissionServiceProps = [defaultSubmissionServiceApiTokenProp, defaultSubmissionServiceSecretProp]
-    , _appConfigSubmissionServiceSupportedFormats = [defaultSubmissionServiceSupportedFormat]
-    , _appConfigSubmissionServiceRequest = defaultSubmissionServiceRequest
+    { sId = "mySubmissionServer"
+    , name = "My Submission Server"
+    , description = "Some description"
+    , props = [defaultSubmissionServiceApiTokenProp, defaultSubmissionServiceSecretProp]
+    , supportedFormats = [defaultSubmissionServiceSupportedFormat]
+    , request = defaultSubmissionServiceRequest
     }
 
 defaultSubmissionServiceApiTokenProp :: String
@@ -229,40 +233,40 @@ defaultSubmissionServiceSecretProp = "Secret"
 defaultSubmissionServiceSupportedFormat :: AppConfigSubmissionServiceSupportedFormat
 defaultSubmissionServiceSupportedFormat =
   AppConfigSubmissionServiceSupportedFormat
-    { _appConfigSubmissionServiceSupportedFormatTemplateId = commonWizardTemplate ^. tId
-    , _appConfigSubmissionServiceSupportedFormatFormatUuid = templateFormatJson ^. uuid
+    { templateId = commonWizardTemplate.tId
+    , formatUuid = templateFormatJson.uuid
     }
 
 defaultSubmissionServiceRequest :: AppConfigSubmissionServiceRequest
 defaultSubmissionServiceRequest =
   AppConfigSubmissionServiceRequest
-    { _appConfigSubmissionServiceRequestMethod = "GET"
-    , _appConfigSubmissionServiceRequestUrl = "https://mockserver.ds-wizard.org/submission.json"
-    , _appConfigSubmissionServiceRequestHeaders = M.fromList [("Api-Key", "${API Token}")]
-    , _appConfigSubmissionServiceRequestMultipart = defaultSubmissionServiceRequestMultipart
+    { method = "GET"
+    , url = "https://mockserver.ds-wizard.org/submission.json"
+    , headers = M.fromList [("Api-Key", "${API Token}")]
+    , multipart = defaultSubmissionServiceRequestMultipart
     }
 
 defaultSubmissionServiceRequestMultipart :: AppConfigSubmissionServiceRequestMultipart
 defaultSubmissionServiceRequestMultipart =
   AppConfigSubmissionServiceRequestMultipart
-    { _appConfigSubmissionServiceRequestMultipartEnabled = False
-    , _appConfigSubmissionServiceRequestMultipartFileName = "file"
+    { enabled = False
+    , fileName = "file"
     }
 
 defaultOwl :: AppConfigOwl
 defaultOwl =
   AppConfigOwl
-    { _appConfigOwlEnabled = False
-    , _appConfigOwlName = ""
-    , _appConfigOwlOrganizationId = ""
-    , _appConfigOwlKmId = ""
-    , _appConfigOwlVersion = ""
-    , _appConfigOwlPreviousPackageId = Nothing
-    , _appConfigOwlRootElement = ""
+    { enabled = False
+    , name = ""
+    , organizationId = ""
+    , kmId = ""
+    , version = ""
+    , previousPackageId = Nothing
+    , rootElement = ""
     }
 
 differentAppConfig :: AppConfig
-differentAppConfig = defaultAppConfig {_appConfigUuid = differentApp ^. uuid}
+differentAppConfig = defaultAppConfig {uuid = differentApp.uuid}
 
 differentAppConfigEncrypted :: AppConfig
 differentAppConfigEncrypted = process defaultSecret differentAppConfig
@@ -270,7 +274,7 @@ differentAppConfigEncrypted = process defaultSecret differentAppConfig
 -- ------------------------------------------------------------
 -- ------------------------------------------------------------
 editedAppConfig :: AppConfig
-editedAppConfig = defaultAppConfig {_appConfigQuestionnaire = editedQuestionnaire}
+editedAppConfig = defaultAppConfig {questionnaire = editedQuestionnaire}
 
 editedQuestionnaire :: AppConfigQuestionnaire
-editedQuestionnaire = defaultQuestionnaire {_appConfigQuestionnaireSummaryReport = SimpleFeature False}
+editedQuestionnaire = defaultQuestionnaire {summaryReport = SimpleFeature False}

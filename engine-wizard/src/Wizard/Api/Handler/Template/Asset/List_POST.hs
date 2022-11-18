@@ -16,28 +16,28 @@ import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Template.Asset.TemplateAssetService
 
-type List_POST
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> MultipartForm Mem (MultipartData Mem)
-     :> "templates"
-     :> Capture "templateId" String
-     :> "assets"
-     :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] TemplateAsset)
+type List_POST =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> MultipartForm Mem (MultipartData Mem)
+    :> "templates"
+    :> Capture "templateId" String
+    :> "assets"
+    :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] TemplateAsset)
 
-list_POST ::
-     Maybe String
+list_POST
+  :: Maybe String
   -> Maybe String
   -> MultipartData Mem
   -> String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateAsset)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] TemplateAsset)
 list_POST mTokenHeader mServerUrl multipartData tmlId =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
-    addTraceUuidHeader =<< do
-      let fs = files multipartData
-      case L.find (\file -> fdInputName file == "file") fs of
-        Just file -> do
-          let content = fdPayload file
-          createAsset tmlId (T.unpack . fdFileName $ file) (T.unpack . fdFileCType $ file) (BSL.toStrict content)
-        Nothing -> throwError $ UserError _ERROR_VALIDATION__FILE_ABSENCE
+      addTraceUuidHeader =<< do
+        let fs = files multipartData
+        case L.find (\file -> fdInputName file == "file") fs of
+          Just file -> do
+            let content = fdPayload file
+            createAsset tmlId (T.unpack . fdFileName $ file) (T.unpack . fdFileCType $ file) (BSL.toStrict content)
+          Nothing -> throwError $ UserError _ERROR_VALIDATION__FILE_ABSENCE

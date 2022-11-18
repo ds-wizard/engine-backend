@@ -9,7 +9,7 @@ import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.User.User
 
 instance ToSchema UserSubmissionProps where
-  declareNamedSchema = simpleToSchema' "_userSubmissionProps" userAlbertApiToken
+  declareNamedSchema = toSwagger userAlbertApiToken
 
 instance ToSchema UserSubmissionPropsDTO where
-  declareNamedSchema = simpleToSchema userAlbertApiTokenDto
+  declareNamedSchema = toSwagger userAlbertApiTokenDto

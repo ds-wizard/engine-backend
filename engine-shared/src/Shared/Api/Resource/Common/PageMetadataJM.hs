@@ -3,10 +3,10 @@ module Shared.Api.Resource.Common.PageMetadataJM where
 import Data.Aeson
 
 import Shared.Model.Common.PageMetadata
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance ToJSON PageMetadata where
-  toJSON = simpleToJSON "_pageMetadata"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON PageMetadata where
-  parseJSON = simpleParseJSON "_pageMetadata"
+  parseJSON = genericParseJSON jsonOptions

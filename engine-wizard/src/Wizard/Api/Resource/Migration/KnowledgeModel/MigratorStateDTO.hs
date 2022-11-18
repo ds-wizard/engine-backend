@@ -6,13 +6,12 @@ import GHC.Generics
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
-data MigratorStateDTO =
-  MigratorStateDTO
-    { _migratorStateDTOBranchUuid :: U.UUID
-    , _migratorStateDTOBranchName :: String
-    , _migratorStateDTOBranchPreviousPackageId :: String
-    , _migratorStateDTOMigrationState :: MigrationState
-    , _migratorStateDTOTargetPackageId :: String
-    , _migratorStateDTOCurrentKnowledgeModel :: Maybe KnowledgeModel
-    }
+data MigratorStateDTO = MigratorStateDTO
+  { branchUuid :: U.UUID
+  , branchName :: String
+  , branchPreviousPackageId :: String
+  , migrationState :: MigrationState
+  , targetPackageId :: String
+  , currentKnowledgeModel :: Maybe KnowledgeModel
+  }
   deriving (Show, Eq, Generic)

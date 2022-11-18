@@ -1,34 +1,32 @@
 module Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer where
 
-import Control.Lens ((&), (.~), (^.))
-
-import LensesConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Metric.MetricEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance CreateEntity AddAnswerEvent Answer where
-  createEntity e =
+  createEntity event =
     Answer
-      { _answerUuid = e ^. entityUuid
-      , _answerLabel = e ^. label
-      , _answerAdvice = e ^. advice
-      , _answerAnnotations = e ^. annotations
-      , _answerFollowUpUuids = []
-      , _answerMetricMeasures = e ^. metricMeasures
+      { uuid = event.entityUuid
+      , aLabel = event.aLabel
+      , advice = event.advice
+      , annotations = event.annotations
+      , followUpUuids = []
+      , metricMeasures = event.metricMeasures
       }
 
 instance EditEntity EditAnswerEvent Answer where
-  editEntity e = applyMetricMeasures . applyFollowUpUuids . applyAnnotations . applyAdvice . applyLabel
-    where
-      applyLabel ans = applyValue (e ^. label) ans label
-      applyAdvice ans = applyValue (e ^. advice) ans advice
-      applyAnnotations ans = applyValue (e ^. annotations) ans annotations
-      applyFollowUpUuids ans = applyValue (e ^. followUpUuids) ans followUpUuids
-      applyMetricMeasures ans = applyValue (e ^. metricMeasures) ans metricMeasures
+  editEntity event entity =
+    entity
+      { aLabel = applyValue entity.aLabel event.aLabel
+      , advice = applyValue entity.advice event.advice
+      , annotations = applyValue entity.annotations event.annotations
+      , followUpUuids = applyValue entity.followUpUuids event.followUpUuids
+      , metricMeasures = applyValue entity.metricMeasures event.metricMeasures
+      }
 
 deleteMetricReference :: DeleteMetricEvent -> Answer -> Answer
-deleteMetricReference e ans =
-  let updatedMetrics = filter (\mm -> mm ^. metricUuid /= e ^. entityUuid) (ans ^. metricMeasures)
-   in ans & metricMeasures .~ updatedMetrics
+deleteMetricReference event ans =
+  let updatedMetrics = filter (\mm -> mm.metricUuid /= event.entityUuid) ans.metricMeasures
+   in ans {metricMeasures = updatedMetrics}

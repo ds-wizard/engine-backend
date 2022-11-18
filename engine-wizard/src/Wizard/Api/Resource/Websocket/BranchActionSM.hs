@@ -10,7 +10,7 @@ import Wizard.Api.Resource.Websocket.BranchActionJM ()
 import Wizard.Database.Migration.Development.Branch.Data.BranchActions
 
 instance ToSchema ClientBranchActionDTO where
-  declareNamedSchema = simpleToSchema ensureOnlineUserAction
+  declareNamedSchema = toSwagger ensureOnlineUserAction
 
 instance ToSchema ServerBranchActionDTO where
-  declareNamedSchema = simpleToSchema setUserListAction
+  declareNamedSchema = toSwagger setUserListAction

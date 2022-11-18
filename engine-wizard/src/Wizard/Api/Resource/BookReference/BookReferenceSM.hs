@@ -8,4 +8,4 @@ import Wizard.Database.Migration.Development.BookReference.Data.BookReferences
 import Wizard.Model.BookReference.BookReference
 
 instance ToSchema BookReference where
-  declareNamedSchema = simpleToSchema' "_bookReference" bookReferenceBvq
+  declareNamedSchema = toSwagger bookReferenceBvq

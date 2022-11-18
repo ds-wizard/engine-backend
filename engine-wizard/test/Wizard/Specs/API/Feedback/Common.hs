@@ -1,12 +1,10 @@
 module Wizard.Specs.API.Feedback.Common where
 
-import Control.Lens (Lens', (&), (.~), (^.))
 import Control.Monad.Reader (liftIO)
 import Data.Maybe (fromMaybe)
 import System.Environment (lookupEnv)
 import Test.Hspec
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Model.Config.AppConfig
@@ -27,21 +25,21 @@ assertExistenceOfFeedbackInDB appContext feedback = do
 -- COMPARATORS
 -- --------------------------------
 compareFeedbackDtos resDto expDto = do
-  liftIO $ (resDto ^. questionUuid) `shouldBe` (expDto ^. questionUuid)
-  liftIO $ (resDto ^. packageId) `shouldBe` (expDto ^. packageId)
-  liftIO $ (resDto ^. title) `shouldBe` (expDto ^. title)
-  liftIO $ (resDto ^. content) `shouldBe` (expDto ^. content)
+  liftIO $ resDto.questionUuid `shouldBe` expDto.questionUuid
+  liftIO $ resDto.packageId `shouldBe` expDto.packageId
+  liftIO $ resDto.title `shouldBe` expDto.title
+  liftIO $ resDto.content `shouldBe` expDto.content
 
 -- --------------------------------
 -- HELPER
 -- --------------------------------
 loadFeedbackTokenFromEnv = do
   appConfig <- getAppConfig
-  updatedAppConfig <- applyEnvVariable "FEEDBACK_TOKEN" (questionnaire . feedback . token) appConfig
+  updatedAppConfig <- applyEnvVariable "FEEDBACK_TOKEN" appConfig.questionnaire.feedback.token (\t -> appConfig {questionnaire = appConfig.questionnaire {feedback = appConfig.questionnaire.feedback {token = t}}})
   modifyAppConfigDto (toChangeDTO updatedAppConfig)
 
-applyEnvVariable :: String -> Lens' AppConfig String -> AppConfig -> AppContextM AppConfig
-applyEnvVariable envVariableName accessor config = do
+applyEnvVariable :: String -> String -> (String -> AppConfig) -> AppContextM AppConfig
+applyEnvVariable envVariableName oldValue updateFn = do
   envVariable <- liftIO $ lookupEnv envVariableName
-  let newValue = fromMaybe (config ^. accessor) envVariable
-  return $ config & accessor .~ newValue
+  let newValue = fromMaybe oldValue envVariable
+  return $ updateFn newValue

@@ -1,6 +1,5 @@
 module Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO where
 
-import Control.Lens ((^.))
 import qualified Data.ByteString.Char8 as BS
 import Data.String
 import qualified Data.UUID as U
@@ -10,7 +9,6 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
-import LensesConfig
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
@@ -46,10 +44,10 @@ findPersistentCommandsByStates :: AppContextM [PersistentCommandSimple]
 findPersistentCommandsByStates = do
   let sql =
         "SELECT uuid, app_uuid, created_by \
-          \FROM persistent_command \
-          \WHERE (state = 'NewPersistentCommandState' \
-          \  OR (state = 'ErrorPersistentCommandState' AND attempts <= max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
-          \  AND internal = true"
+        \FROM persistent_command \
+        \WHERE (state = 'NewPersistentCommandState' \
+        \  OR (state = 'ErrorPersistentCommandState' AND attempts <= max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
+        \  AND internal = true"
   logInfoU _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   runDB action
@@ -64,7 +62,7 @@ findPersistentCommandSimpleByUuid uuid =
 insertPersistentCommand :: PersistentCommand -> AppContextM Int64
 insertPersistentCommand command = do
   createInsertFn entityName command
-  if command ^. internal
+  if command.internal
     then notifyPersistentCommandQueue
     else notifySpecificPersistentCommandQueue command
 
@@ -73,7 +71,7 @@ updatePersistentCommandById command = do
   let sql =
         fromString
           "UPDATE persistent_command SET uuid = ?, state = ?, component = ?, function = ?, body = ?, last_error_message = ?, attempts = ?, max_attempts = ?, app_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, internal = ? WHERE uuid = ?"
-  let params = toRow command ++ [toField . U.toText $ command ^. uuid]
+  let params = toRow command ++ [toField . U.toText $ command.uuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -114,7 +112,7 @@ notifyPersistentCommandQueue = do
 
 notifySpecificPersistentCommandQueue :: PersistentCommand -> AppContextM Int64
 notifySpecificPersistentCommandQueue command = do
-  let sql = f' "NOTIFY %s__%s, '%s'" [channelName, command ^. component, U.toString $ command ^. uuid]
+  let sql = f' "NOTIFY %s__%s, '%s'" [channelName, command.component, U.toString command.uuid]
   logInfoU _CMP_DATABASE (trim sql)
   let action conn = execute_ conn (fromString sql)
   runDB action

@@ -12,7 +12,7 @@ import Wizard.Api.Resource.Websocket.QuestionnaireActionJM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireActions
 
 instance ToSchema ClientQuestionnaireActionDTO where
-  declareNamedSchema = simpleToSchema ensureOnlineUserAction
+  declareNamedSchema = toSwagger ensureOnlineUserAction
 
 instance ToSchema ServerQuestionnaireActionDTO where
-  declareNamedSchema = simpleToSchema setUserListAction
+  declareNamedSchema = toSwagger setUserListAction

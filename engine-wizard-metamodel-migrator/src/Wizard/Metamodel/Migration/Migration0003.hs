@@ -1,6 +1,6 @@
-module Wizard.Metamodel.Migration.Migration0003
-  ( migrateEventValue
-  ) where
+module Wizard.Metamodel.Migration.Migration0003 (
+  migrateEventValue,
+) where
 
 import Data.Aeson
 import qualified Data.Aeson.KeyMap as KM
@@ -11,7 +11,9 @@ import Wizard.Metamodel.Migration.MigrationContext
 import Wizard.Metamodel.Migration.Utils
 
 -- Migration #0003 (KM v3 -> v4)
+
 -- * Change "path" to "parentUuid"
+
 -- * Change "<x>Uuid" to "entityUuid"
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ input = Right [migrate input]

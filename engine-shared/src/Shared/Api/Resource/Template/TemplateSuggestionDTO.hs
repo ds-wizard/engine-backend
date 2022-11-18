@@ -4,12 +4,11 @@ import GHC.Generics
 
 import Shared.Api.Resource.Template.TemplateFormatDTO
 
-data TemplateSuggestionDTO =
-  TemplateSuggestionDTO
-    { _templateSuggestionDTOTId :: String
-    , _templateSuggestionDTOName :: String
-    , _templateSuggestionDTOVersion :: String
-    , _templateSuggestionDTODescription :: String
-    , _templateSuggestionDTOFormats :: [TemplateFormatDTO]
-    }
+data TemplateSuggestionDTO = TemplateSuggestionDTO
+  { tId :: String
+  , name :: String
+  , version :: String
+  , description :: String
+  , formats :: [TemplateFormatDTO]
+  }
   deriving (Show, Eq, Generic)

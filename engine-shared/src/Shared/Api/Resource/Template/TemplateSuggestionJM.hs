@@ -4,10 +4,10 @@ import Data.Aeson
 
 import Shared.Api.Resource.Template.TemplateFormatJM ()
 import Shared.Api.Resource.Template.TemplateSuggestionDTO
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON TemplateSuggestionDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TemplateSuggestionDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

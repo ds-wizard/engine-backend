@@ -7,10 +7,10 @@ import Registry.Api.Handler.Package.Detail_GET
 import Registry.Api.Handler.Package.List_GET
 import Registry.Model.Context.BaseContext
 
-type PackageAPI
-   = List_GET
-     :<|> Detail_GET
-     :<|> Detail_Bundle_GET
+type PackageAPI =
+  List_GET
+    :<|> Detail_GET
+    :<|> Detail_Bundle_GET
 
 packageApi :: Proxy PackageAPI
 packageApi = Proxy

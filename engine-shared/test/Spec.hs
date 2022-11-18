@@ -12,12 +12,12 @@ import Shared.Specs.Util.TokenSpec
 main :: IO ()
 main =
   hspec $
-  describe "UNIT TESTING" $ do
-    describe "MODEL" $ do
-      knowledgeModelAccessorsSpec
-      pageSpec
-    describe "UTIL" $ do
-      mathSpec
-      listSpec
-      localeSpec
-      tokenSpec
+    describe "UNIT TESTING" $ do
+      describe "MODEL" $ do
+        knowledgeModelAccessorsSpec
+        pageSpec
+      describe "UTIL" $ do
+        mathSpec
+        listSpec
+        localeSpec
+        tokenSpec

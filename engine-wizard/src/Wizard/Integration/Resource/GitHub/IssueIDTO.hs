@@ -2,10 +2,9 @@ module Wizard.Integration.Resource.GitHub.IssueIDTO where
 
 import GHC.Generics
 
-data IssueIDTO =
-  IssueIDTO
-    { _issueIDTONumber :: Int
-    , _issueIDTOTitle :: String
-    , _issueIDTOBody :: String
-    }
+data IssueIDTO = IssueIDTO
+  { number :: Int
+  , title :: String
+  , body :: String
+  }
   deriving (Show, Eq, Generic)

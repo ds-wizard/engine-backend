@@ -1,6 +1,5 @@
 module Wizard.Service.Submission.SubmissionService where
 
-import Control.Lens ((.~), (?~), (^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.List as L
@@ -8,12 +7,14 @@ import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.Submission.SubmissionServiceSimpleDTO
+import Wizard.Api.Resource.User.UserDTO
+import Wizard.Api.Resource.User.UserProfileDTO
+import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
@@ -39,20 +40,20 @@ getAvailableServicesForSubmission docUuid = do
   checkPermissionToSubmission docUuid
   appConfig <- getAppConfig
   doc <- findDocumentById docUuid
-  checkEditPermissionToDoc (U.toString $ doc ^. questionnaireUuid)
-  return . fmap toSubmissionServiceSimpleDTO . filter (filterService doc) $ appConfig ^. submission . services
+  checkEditPermissionToDoc (U.toString doc.questionnaireUuid)
+  return . fmap toSubmissionServiceSimpleDTO . filter (filterService doc) $ appConfig.submission.services
   where
     filterService :: Document -> AppConfigSubmissionService -> Bool
-    filterService doc service = any (filterServiceFormat doc) $ service ^. supportedFormats
+    filterService doc service = any (filterServiceFormat doc) $ service.supportedFormats
     filterServiceFormat :: Document -> AppConfigSubmissionServiceSupportedFormat -> Bool
     filterServiceFormat doc supportedFormat =
-      (supportedFormat ^. templateId == doc ^. templateId) && (supportedFormat ^. formatUuid == doc ^. formatUuid)
+      (supportedFormat.templateId == doc.templateId) && (supportedFormat.formatUuid == doc.formatUuid)
 
 getSubmissionsForDocument :: String -> AppContextM [SubmissionDTO]
 getSubmissionsForDocument docUuid = do
   checkIfSubmissionIsEnabled
   doc <- findDocumentById docUuid
-  checkViewPermissionToDoc (U.toString $ doc ^. questionnaireUuid)
+  checkViewPermissionToDoc (U.toString doc.questionnaireUuid)
   submissions <- findSubmissionsByDocumentUuid docUuid
   traverse enhanceSubmission submissions
 
@@ -62,45 +63,55 @@ submitDocument docUuid reqDto =
     checkIfSubmissionIsEnabled
     checkPermissionToSubmission docUuid
     appConfig <- getAppConfig
-    case L.find (\s -> s ^. sId == (reqDto ^. serviceId)) (appConfig ^. submission . services) of
+    case L.find (\s -> s.sId == reqDto.serviceId) appConfig.submission.services of
       Just definition -> do
         doc <- findDocumentById docUuid
-        checkEditPermissionToDoc (U.toString $ doc ^. questionnaireUuid)
+        checkEditPermissionToDoc (U.toString doc.questionnaireUuid)
         docContent <- getDocumentContent docUuid
         userProps <- getUserProps definition
         sub <- createSubmission (u' docUuid) reqDto
-        response <- uploadDocument (definition ^. request) userProps docContent
+        response <- uploadDocument definition.request userProps docContent
         let updatedSub =
               case response of
-                Right mLocation -> (state .~ DoneSubmissionState) . (location .~ mLocation) $ sub
-                Left error -> (state .~ ErrorSubmissionState) . (returnedData ?~ error) $ sub
+                Right mLocation ->
+                  sub
+                    { state = DoneSubmissionState
+                    , location = mLocation
+                    }
+                  :: Submission
+                Left error ->
+                  sub
+                    { state = ErrorSubmissionState
+                    , returnedData = Just error
+                    }
+                  :: Submission
         savedSubmission <- updateSubmissionById updatedSub
         enhanceSubmission savedSubmission
-      Nothing -> throwError . UserError $ _ERROR_VALIDATION__SUBMISSION_DEFINITION_ABSENCE (reqDto ^. serviceId)
+      Nothing -> throwError . UserError $ _ERROR_VALIDATION__SUBMISSION_DEFINITION_ABSENCE reqDto.serviceId
   where
     getUserProps definition = do
-      mUser <- asks _appContextCurrentUser
+      mUser <- asks currentUser
       case mUser of
         Just user -> do
-          profile <- getUserProfile (U.toString $ user ^. uuid)
-          let mUserProps = L.find (\p -> (p ^. sId) == (definition ^. sId)) (profile ^. submissionProps)
+          profile <- getUserProfile (U.toString user.uuid)
+          let mUserProps = L.find (\p -> p.sId == definition.sId) profile.submissionProps
           return $
             case mUserProps of
-              Just p -> p ^. values
+              Just p -> p.values
               Nothing -> M.empty
         Nothing -> return M.empty
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-checkIfSubmissionIsEnabled = checkIfAppFeatureIsEnabled "Submission" (submission . enabled)
+checkIfSubmissionIsEnabled = checkIfAppFeatureIsEnabled "Submission" (\c -> c.submission.enabled)
 
 createSubmission :: U.UUID -> SubmissionCreateDTO -> AppContextM Submission
 createSubmission docUuid reqDto = do
   sUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   currentUser <- getCurrentUser
-  let sub = fromCreate sUuid (reqDto ^. serviceId) docUuid appUuid (currentUser ^. uuid) now
+  let sub = fromCreate sUuid reqDto.serviceId docUuid appUuid currentUser.uuid now
   insertSubmission sub
   return sub

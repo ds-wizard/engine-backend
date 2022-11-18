@@ -2,11 +2,11 @@ module Wizard.Api.Resource.Config.SimpleFeatureJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Model.Config.SimpleFeature
 
 instance FromJSON SimpleFeature where
-  parseJSON = simpleParseJSON "_simpleFeature"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SimpleFeature where
-  toJSON = simpleToJSON "_simpleFeature"
+  toJSON = genericToJSON jsonOptions

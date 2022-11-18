@@ -1,61 +1,60 @@
-module Shared.Util.Logger
-  ( logDebugI
-  , logInfoI
-  , logWarnI
-  , logErrorI
-  , logDebug
-  , logInfo
-  , logWarn
-  , logError
-  , createLogRecord
-  , showLogLevel
-  , runLogging
-  , f'
-  , LogLevel(..)
-  , module Shared.Constant.Component
-  ) where
+module Shared.Util.Logger (
+  logDebugI,
+  logInfoI,
+  logWarnI,
+  logErrorI,
+  logDebug,
+  logInfo,
+  logWarn,
+  logError,
+  createLogRecord,
+  showLogLevel,
+  runLogging,
+  f',
+  LogLevel (..),
+  module Shared.Constant.Component,
+) where
 
-import Control.Lens ((^.))
 import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger
-  ( LogLevel(..)
-  , LogSource(..)
-  , LoggingT(..)
-  , MonadLogger
-  , filterLogger
-  , logWithoutLoc
-  , runStdoutLoggingT
-  )
+import Control.Monad.Logger (
+  LogLevel (..),
+  LogSource (..),
+  LoggingT (..),
+  MonadLogger,
+  filterLogger,
+  logWithoutLoc,
+  runStdoutLoggingT,
+ )
 import Control.Monad.Reader (MonadReader, ask)
 import qualified Data.List as L
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Data.UUID as U
+import GHC.Records
+import System.Console.Pretty (Color (..), color)
 import Prelude hiding (log)
-import System.Console.Pretty (Color(..), color)
 
 import Shared.Constant.Component
-import Shared.Model.Context.ContextLenses
 import Shared.Util.String (f')
 
 -- ---------------------------------------------------------------------------
-logDebugI :: (MonadReader s m, HasIdentityUuid' s, HasTraceUuid' s, MonadLogger m) => String -> String -> m ()
+logDebugI :: (MonadReader s m, HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
 logDebugI = logI LevelDebug
 
-logInfoI :: (MonadReader s m, HasIdentityUuid' s, HasTraceUuid' s, MonadLogger m) => String -> String -> m ()
+logInfoI :: (MonadReader s m, HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
 logInfoI = logI LevelInfo
 
-logWarnI :: (MonadReader s m, HasIdentityUuid' s, HasTraceUuid' s, MonadLogger m) => String -> String -> m ()
+logWarnI :: (MonadReader s m, HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
 logWarnI = logI LevelWarn
 
-logErrorI :: (MonadReader s m, HasIdentityUuid' s, HasTraceUuid' s, MonadLogger m) => String -> String -> m ()
+logErrorI :: (MonadReader s m, HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
 logErrorI = logI LevelError
 
-logI :: (MonadReader s m, HasIdentityUuid' s, HasTraceUuid' s, MonadLogger m) => LogLevel -> String -> String -> m ()
+logI :: (MonadReader s m, HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => LogLevel -> String -> String -> m ()
 logI logLevel component message = do
   context <- ask
-  let mIdentityUuid = context ^. identityUuid'
-  let mTraceUuid = Just . U.toString $ context ^. traceUuid'
+  let mIdentityUuid = context.identityUuid'
+  let mTraceUuid = Just . U.toString $ context.traceUuid'
   let record = createLogRecord logLevel mIdentityUuid mTraceUuid component message
   logWithoutLoc "" (LevelOther . T.pack . showLogLevel $ logLevel) record
 

@@ -4,18 +4,17 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-data AppDTO =
-  AppDTO
-    { _appDTOUuid :: U.UUID
-    , _appDTOAppId :: String
-    , _appDTOName :: String
-    , _appDTOServerDomain :: String
-    , _appDTOServerUrl :: String
-    , _appDTOClientUrl :: String
-    , _appDTOEnabled :: Bool
-    , _appDTOLogoUrl :: Maybe String
-    , _appDTOPrimaryColor :: Maybe String
-    , _appDTOCreatedAt :: UTCTime
-    , _appDTOUpdatedAt :: UTCTime
-    }
+data AppDTO = AppDTO
+  { uuid :: U.UUID
+  , appId :: String
+  , name :: String
+  , serverDomain :: String
+  , serverUrl :: String
+  , clientUrl :: String
+  , enabled :: Bool
+  , logoUrl :: Maybe String
+  , primaryColor :: Maybe String
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

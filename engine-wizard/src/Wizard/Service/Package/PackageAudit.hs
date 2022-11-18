@@ -1,10 +1,8 @@
 module Wizard.Service.Package.PackageAudit where
 
-import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Model.Package.Package
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
@@ -17,16 +15,16 @@ auditPackageFailedToDelete entityId reasonType reasonId =
 
 auditPackageFailedToDeleteDuePreviousPackages :: String -> [Package] -> AppContextM ()
 auditPackageFailedToDeleteDuePreviousPackages entityId pkgs =
-  auditPackageFailedToDelete entityId "PreviousPackage" (show $ fmap (^. pId) pkgs)
+  auditPackageFailedToDelete entityId "PreviousPackage" (show $ fmap (.pId) pkgs)
 
 auditPackageFailedToDeleteDueParentPackages :: String -> [Package] -> AppContextM ()
 auditPackageFailedToDeleteDueParentPackages entityId pkgs =
-  auditPackageFailedToDelete entityId "ParentPackage" (show $ fmap (^. pId) pkgs)
+  auditPackageFailedToDelete entityId "ParentPackage" (show $ fmap (.pId) pkgs)
 
 auditPackageFailedToDeleteDueBranches :: String -> [Branch] -> AppContextM ()
 auditPackageFailedToDeleteDueBranches entityId branches =
-  auditPackageFailedToDelete entityId "Branch" (show $ fmap (\b -> U.toString $ b ^. uuid) branches)
+  auditPackageFailedToDelete entityId "Branch" (show $ fmap (\b -> U.toString $ b.uuid) branches)
 
 auditPackageFailedToDeleteDueQuestionnaires :: String -> [Questionnaire] -> AppContextM ()
 auditPackageFailedToDeleteDueQuestionnaires entityId questionnaires =
-  auditPackageFailedToDelete entityId "Branch" (show $ fmap (\qtn -> U.toString $ qtn ^. uuid) questionnaires)
+  auditPackageFailedToDelete entityId "Branch" (show $ fmap (\qtn -> U.toString $ qtn.uuid) questionnaires)

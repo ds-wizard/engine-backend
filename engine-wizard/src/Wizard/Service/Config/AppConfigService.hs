@@ -1,6 +1,5 @@
 module Wizard.Service.Config.AppConfigService where
 
-import Control.Lens ((&), (?~), (^.))
 import Control.Monad (when)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Lazy.Char8 as BSL
@@ -8,7 +7,6 @@ import qualified Data.Hashable as H
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Util.String (splitOn)
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Database.DAO.Common
@@ -17,6 +15,7 @@ import Wizard.Integration.Http.Config.Runner
 import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.S3.Public.PublicS3
 import Wizard.Service.Acl.AclService
@@ -28,15 +27,15 @@ import Wizard.Util.Logger
 
 getAppConfig :: AppContextM AppConfig
 getAppConfig = do
-  serverConfig <- asks _appContextServerConfig
+  serverConfig <- asks serverConfig
   encryptedAppConfig <- findAppConfig
-  return $ process (serverConfig ^. general . secret) encryptedAppConfig
+  return $ process serverConfig.general.secret encryptedAppConfig
 
 getAppConfigByUuid :: U.UUID -> AppContextM AppConfig
 getAppConfigByUuid appUuid = do
-  serverConfig <- asks _appContextServerConfig
+  serverConfig <- asks serverConfig
   encryptedAppConfig <- findAppConfigByUuid appUuid
-  return $ process (serverConfig ^. general . secret) encryptedAppConfig
+  return $ process serverConfig.general.secret encryptedAppConfig
 
 getAppConfigDto :: AppContextM AppConfig
 getAppConfigDto = do
@@ -46,19 +45,18 @@ getAppConfigDto = do
 modifyAppConfig :: AppConfig -> AppContextM AppConfig
 modifyAppConfig appConfig =
   runInTransaction $ do
-    serverConfig <- asks _appContextServerConfig
-    let encryptedUpdatedAppConfig = process (serverConfig ^. general . secret) appConfig
+    serverConfig <- asks serverConfig
+    let encryptedUpdatedAppConfig = process serverConfig.general.secret appConfig
     updateAppConfig encryptedUpdatedAppConfig
     return appConfig
 
 modifyAppConfigDto :: AppConfigChangeDTO -> AppContextM AppConfig
-modifyAppConfigDto reqDto
+modifyAppConfigDto reqDto =
   -- 1. Check permission
- =
   runInTransaction $ do
     checkPermission _CFG_PERM
     -- 2. Get current config
-    serverConfig <- asks _appContextServerConfig
+    serverConfig <- asks serverConfig
     appConfig <- getAppConfig
     -- 3. Validate
     validateAppConfig reqDto
@@ -67,9 +65,9 @@ modifyAppConfigDto reqDto
     let updatedAppConfig = fromChangeDTO reqDto appConfig now
     -- 5. Compile client CSS
     updatedAppConfigWithCss <-
-      if colorsChanged appConfig updatedAppConfig && appConfig ^. feature . clientCustomizationEnabled
+      if colorsChanged appConfig updatedAppConfig && appConfig.feature.clientCustomizationEnabled
         then do
-          auditAppConfigChangeColors $ appConfig ^. uuid
+          auditAppConfigChangeColors $ appConfig.uuid
           invokeClientCssCompilation appConfig updatedAppConfig
         else return updatedAppConfig
     -- 6. Update
@@ -81,52 +79,52 @@ modifyClientCustomization :: Bool -> AppContextM ()
 modifyClientCustomization newClientCustomizationEnabled = do
   runInTransaction $
     -- 1. Check permission
-   do
-    checkPermission _CFG_PERM
-    -- 2. Get current config
-    serverConfig <- asks _appContextServerConfig
-    appConfig <- getAppConfig
-    -- 3. Prepare to update & validate
-    now <- liftIO getCurrentTime
-    let updatedAppConfig = fromClientCustomizationDTO appConfig newClientCustomizationEnabled now
-    -- 5. Update
-    modifyAppConfig updatedAppConfig
-    -- 6. Create response
-    return ()
+    do
+      checkPermission _CFG_PERM
+      -- 2. Get current config
+      serverConfig <- asks serverConfig
+      appConfig <- getAppConfig
+      -- 3. Prepare to update & validate
+      now <- liftIO getCurrentTime
+      let updatedAppConfig = fromClientCustomizationDTO appConfig newClientCustomizationEnabled now
+      -- 5. Update
+      modifyAppConfig updatedAppConfig
+      -- 6. Create response
+      return ()
 
 invokeClientCssCompilation :: AppConfig -> AppConfig -> AppContextM AppConfig
-invokeClientCssCompilation oldAppConfig newAppConfig
+invokeClientCssCompilation oldAppConfig newAppConfig =
   -- 1. Recompile CSS
- = do
-  logInfoU _CMP_SERVICE "Invoking compile of clients' CSS files..."
-  app <- getCurrentApp
-  cssContent <- compileClientCss app (newAppConfig ^. lookAndFeel)
-  logInfoU _CMP_SERVICE "Compilation succeed"
-  let cssFileName = f' "customization.%s.css" [show . abs . H.hash $ cssContent]
-  logInfoU _CMP_SERVICE (f' "CSS filename: %s" [cssFileName])
-  -- 2. Upload new CSS file
-  logInfoU _CMP_SERVICE "Uploading new CSS file..."
-  putPublicContent cssFileName (Just "text/css") (BSL.toStrict cssContent)
-  logInfoU _CMP_SERVICE "CSS file uploaded. Creating the public link..."
-  newStyleUrl <- makePublicLink cssFileName
-  logInfoU _CMP_SERVICE (f' "Public link for CSS file created (%s)" [newStyleUrl])
-  -- 3. Remove old CSS files if exists
-  logInfoU _CMP_SERVICE "Compilation succeed"
-  when ((oldAppConfig ^. lookAndFeel . styleUrl) /= Just newStyleUrl) (removeOldConfig "CSS file" oldAppConfig styleUrl)
-  -- 4. Create response
-  return $ newAppConfig & (lookAndFeel . styleUrl) ?~ newStyleUrl
+  do
+    logInfoU _CMP_SERVICE "Invoking compile of clients' CSS files..."
+    app <- getCurrentApp
+    cssContent <- compileClientCss app newAppConfig.lookAndFeel
+    logInfoU _CMP_SERVICE "Compilation succeed"
+    let cssFileName = f' "customization.%s.css" [show . abs . H.hash $ cssContent]
+    logInfoU _CMP_SERVICE (f' "CSS filename: %s" [cssFileName])
+    -- 2. Upload new CSS file
+    logInfoU _CMP_SERVICE "Uploading new CSS file..."
+    putPublicContent cssFileName (Just "text/css") (BSL.toStrict cssContent)
+    logInfoU _CMP_SERVICE "CSS file uploaded. Creating the public link..."
+    newStyleUrl <- makePublicLink cssFileName
+    logInfoU _CMP_SERVICE (f' "Public link for CSS file created (%s)" [newStyleUrl])
+    -- 3. Remove old CSS files if exists
+    logInfoU _CMP_SERVICE "Compilation succeed"
+    when (oldAppConfig.lookAndFeel.styleUrl /= Just newStyleUrl) (removeOldConfig "CSS file" oldAppConfig oldAppConfig.lookAndFeel.styleUrl)
+    -- 4. Create response
+    return $ newAppConfig {lookAndFeel = newAppConfig.lookAndFeel {styleUrl = Just newStyleUrl}}
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
 colorsChanged :: AppConfig -> AppConfig -> Bool
 colorsChanged oldAppConfig newAppConfig =
-  (oldAppConfig ^. lookAndFeel . primaryColor) /= (newAppConfig ^. lookAndFeel . primaryColor) ||
-  (oldAppConfig ^. lookAndFeel . illustrationsColor) /=
-  (newAppConfig ^. lookAndFeel . illustrationsColor)
+  oldAppConfig.lookAndFeel.primaryColor /= newAppConfig.lookAndFeel.primaryColor
+    || oldAppConfig.lookAndFeel.illustrationsColor
+      /= newAppConfig.lookAndFeel.illustrationsColor
 
 removeOldConfig name appConfig urlPath =
-  case appConfig ^. lookAndFeel . urlPath of
+  case urlPath of
     Just url -> do
       logInfoU _CMP_SERVICE (f' "Deleting the old %s..." [name])
       let extractedFileName = extractFileName url

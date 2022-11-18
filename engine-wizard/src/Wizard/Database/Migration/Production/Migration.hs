@@ -1,12 +1,11 @@
-module Wizard.Database.Migration.Production.Migration
-  ( runMigration
-  ) where
+module Wizard.Database.Migration.Production.Migration (
+  runMigration,
+) where
 
-import Control.Lens ((^.))
 import Database.PostgreSQL.Migration.Entity
 import Database.PostgreSQL.Migration.Migration
 
-import LensesConfig
+import Shared.Model.Config.ServerConfig
 import qualified Wizard.Database.Migration.Production.Migration_0001_init.Migration as M_0001
 import qualified Wizard.Database.Migration.Production.Migration_0002_projectTemplate.Migration as M_0002
 import qualified Wizard.Database.Migration.Production.Migration_0003_metricsAndPhases.Migration as M_0003
@@ -32,13 +31,14 @@ import qualified Wizard.Database.Migration.Production.Migration_0022_optimizePro
 import qualified Wizard.Database.Migration.Production.Migration_0023_createdBy.Migration as M_0023
 import qualified Wizard.Database.Migration.Production.Migration_0024_commonFn_and_token_and_locale.Migration as M_0024
 import qualified Wizard.Database.Migration.Production.Migration_0025_locale_2.Migration as M_0025
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
 
 runMigration :: BaseContext -> IO (Maybe String)
 runMigration baseContext = do
-  let loggingLevel = baseContext ^. serverConfig . logging . level
-  runLogging loggingLevel $ migrateDatabase (baseContext ^. dbPool) migrationDefinitions (logInfo _CMP_MIGRATION)
+  let loggingLevel = baseContext.serverConfig.logging.level
+  runLogging loggingLevel $ migrateDatabase baseContext.dbPool migrationDefinitions (logInfo _CMP_MIGRATION)
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =

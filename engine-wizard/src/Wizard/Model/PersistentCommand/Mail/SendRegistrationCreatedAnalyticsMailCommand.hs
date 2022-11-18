@@ -4,21 +4,20 @@ import Data.Aeson
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
-data SendRegistrationCreatedAnalyticsMailCommand =
-  SendRegistrationCreatedAnalyticsMailCommand
-    { _sendRegistrationCreatedAnalyticsMailCommandEmail :: String
-    , _sendRegistrationCreatedAnalyticsMailCommandUserUuid :: U.UUID
-    , _sendRegistrationCreatedAnalyticsMailCommandUserFirstName :: String
-    , _sendRegistrationCreatedAnalyticsMailCommandUserLastName :: String
-    , _sendRegistrationCreatedAnalyticsMailCommandUserEmail :: String
-    , _sendRegistrationCreatedAnalyticsMailCommandClientUrl :: String
-    }
+data SendRegistrationCreatedAnalyticsMailCommand = SendRegistrationCreatedAnalyticsMailCommand
+  { email :: String
+  , userUuid :: U.UUID
+  , userFirstName :: String
+  , userLastName :: String
+  , userEmail :: String
+  , clientUrl :: String
+  }
   deriving (Show, Eq, Generic)
 
 instance FromJSON SendRegistrationCreatedAnalyticsMailCommand where
-  parseJSON = simpleParseJSON "_sendRegistrationCreatedAnalyticsMailCommand"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SendRegistrationCreatedAnalyticsMailCommand where
-  toJSON = simpleToJSON "_sendRegistrationCreatedAnalyticsMailCommand"
+  toJSON = genericToJSON jsonOptions

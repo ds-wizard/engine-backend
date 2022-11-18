@@ -1,10 +1,8 @@
 module Wizard.Service.Template.TemplateMapper where
 
-import Control.Lens ((^.), (^?), _Just)
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Template.TemplateSuggestionDTO
 import Shared.Model.Package.Package
@@ -24,27 +22,27 @@ import Wizard.Service.Template.TemplateUtil
 toTemplateList :: Template -> Maybe RegistryTemplate -> Maybe RegistryOrganization -> TemplateState -> TemplateList
 toTemplateList tml mTmlR mOrgR state =
   TemplateList
-    { _templateListTId = tml ^. tId
-    , _templateListName = tml ^. name
-    , _templateListOrganizationId = tml ^. organizationId
-    , _templateListTemplateId = tml ^. templateId
-    , _templateListVersion = tml ^. version
-    , _templateListMetamodelVersion = tml ^. metamodelVersion
-    , _templateListDescription = tml ^. description
-    , _templateListReadme = tml ^. readme
-    , _templateListLicense = tml ^. license
-    , _templateListAllowedPackages = tml ^. allowedPackages
-    , _templateListRecommendedPackageId = tml ^. recommendedPackageId
-    , _templateListFormats = tml ^. formats
-    , _templateListState = state
-    , _templateListRemoteVersion = mTmlR ^? _Just . remoteVersion
-    , _templateListRemoteOrganizationName = mOrgR ^? _Just . name
-    , _templateListRemoteOrganizationLogo =
+    { tId = tml.tId
+    , name = tml.name
+    , organizationId = tml.organizationId
+    , templateId = tml.templateId
+    , version = tml.version
+    , metamodelVersion = tml.metamodelVersion
+    , description = tml.description
+    , readme = tml.readme
+    , license = tml.license
+    , allowedPackages = tml.allowedPackages
+    , recommendedPackageId = tml.recommendedPackageId
+    , formats = tml.formats
+    , state = state
+    , remoteVersion = fmap (.remoteVersion) mTmlR
+    , remoteOrganizationName = fmap (.name) mOrgR
+    , remoteOrganizationLogo =
         case mOrgR of
-          Just orgR -> orgR ^. logo
+          Just orgR -> orgR.logo
           Nothing -> Nothing
-    , _templateListAppUuid = tml ^. appUuid
-    , _templateListCreatedAt = tml ^. createdAt
+    , appUuid = tml.appUuid
+    , createdAt = tml.createdAt
     }
 
 toSimpleDTO :: Template -> TemplateSimpleDTO
@@ -53,46 +51,46 @@ toSimpleDTO tml = toSimpleDTO' False [] $ toTemplateList tml Nothing Nothing Unk
 toSimpleDTO' :: Bool -> [Package] -> TemplateList -> TemplateSimpleDTO
 toSimpleDTO' registryEnabled pkgs tml =
   TemplateSimpleDTO
-    { _templateSimpleDTOTId = tml ^. tId
-    , _templateSimpleDTOName = tml ^. name
-    , _templateSimpleDTOOrganizationId = tml ^. organizationId
-    , _templateSimpleDTOTemplateId = tml ^. templateId
-    , _templateSimpleDTOVersion = tml ^. version
-    , _templateSimpleDTORemoteLatestVersion = tml ^. remoteVersion
-    , _templateSimpleDTOMetamodelVersion = tml ^. metamodelVersion
-    , _templateSimpleDTODescription = tml ^. description
-    , _templateSimpleDTOReadme = tml ^. readme
-    , _templateSimpleDTOLicense = tml ^. license
-    , _templateSimpleDTOAllowedPackages = tml ^. allowedPackages
-    , _templateSimpleDTORecommendedPackageId = tml ^. recommendedPackageId
-    , _templateSimpleDTOFormats = tml ^. formats
-    , _templateSimpleDTOUsablePackages = fmap PM_Mapper.toSimpleDTO . getUsablePackagesForTemplate tml $ pkgs
-    , _templateSimpleDTOState = computeTemplateState' registryEnabled tml
-    , _templateSimpleDTOOrganization =
-        case tml ^. remoteOrganizationName of
+    { tId = tml.tId
+    , name = tml.name
+    , organizationId = tml.organizationId
+    , templateId = tml.templateId
+    , version = tml.version
+    , remoteLatestVersion = tml.remoteVersion
+    , metamodelVersion = tml.metamodelVersion
+    , description = tml.description
+    , readme = tml.readme
+    , license = tml.license
+    , allowedPackages = tml.allowedPackages
+    , recommendedPackageId = tml.recommendedPackageId
+    , formats = tml.formats
+    , usablePackages = fmap PM_Mapper.toSimpleDTO . getUsablePackagesForTemplate tml $ pkgs
+    , state = computeTemplateState' registryEnabled tml
+    , organization =
+        case tml.remoteOrganizationName of
           Just orgName ->
             Just $
-            OrganizationSimpleDTO
-              { _organizationSimpleDTOOrganizationId = tml ^. organizationId
-              , _organizationSimpleDTOName = orgName
-              , _organizationSimpleDTOLogo = tml ^. remoteOrganizationLogo
-              }
+              OrganizationSimpleDTO
+                { organizationId = tml.organizationId
+                , name = orgName
+                , logo = tml.remoteOrganizationLogo
+                }
           Nothing -> Nothing
-    , _templateSimpleDTOCreatedAt = tml ^. createdAt
+    , createdAt = tml.createdAt
     }
 
 toSuggestionDTO :: TemplateList -> TemplateSuggestionDTO
 toSuggestionDTO tml =
   TemplateSuggestionDTO
-    { _templateSuggestionDTOTId = tml ^. tId
-    , _templateSuggestionDTOName = tml ^. name
-    , _templateSuggestionDTOVersion = tml ^. version
-    , _templateSuggestionDTODescription = tml ^. description
-    , _templateSuggestionDTOFormats = fmap toFormatDTO (tml ^. formats)
+    { tId = tml.tId
+    , name = tml.name
+    , version = tml.version
+    , description = tml.description
+    , formats = fmap toFormatDTO tml.formats
     }
 
-toDetailDTO ::
-     Template
+toDetailDTO
+  :: Template
   -> [RegistryTemplate]
   -> [RegistryOrganization]
   -> [String]
@@ -101,88 +99,90 @@ toDetailDTO ::
   -> TemplateDetailDTO
 toDetailDTO tml tmlRs orgRs versionLs registryLink pkgs =
   TemplateDetailDTO
-    { _templateDetailDTOTId = tml ^. tId
-    , _templateDetailDTOName = tml ^. name
-    , _templateDetailDTOOrganizationId = tml ^. organizationId
-    , _templateDetailDTOTemplateId = tml ^. templateId
-    , _templateDetailDTOVersion = tml ^. version
-    , _templateDetailDTOMetamodelVersion = tml ^. metamodelVersion
-    , _templateDetailDTODescription = tml ^. description
-    , _templateDetailDTOReadme = tml ^. readme
-    , _templateDetailDTOLicense = tml ^. license
-    , _templateDetailDTOAllowedPackages = tml ^. allowedPackages
-    , _templateDetailDTORecommendedPackageId = tml ^. recommendedPackageId
-    , _templateDetailDTOFormats = tml ^. formats
-    , _templateDetailDTOUsablePackages = fmap PM_Mapper.toSimpleDTO pkgs
-    , _templateDetailDTOVersions = versionLs
-    , _templateDetailDTORemoteLatestVersion =
+    { tId = tml.tId
+    , name = tml.name
+    , organizationId = tml.organizationId
+    , templateId = tml.templateId
+    , version = tml.version
+    , metamodelVersion = tml.metamodelVersion
+    , description = tml.description
+    , readme = tml.readme
+    , license = tml.license
+    , allowedPackages = tml.allowedPackages
+    , recommendedPackageId = tml.recommendedPackageId
+    , formats = tml.formats
+    , usablePackages = fmap PM_Mapper.toSimpleDTO pkgs
+    , versions = versionLs
+    , remoteLatestVersion =
         case selectTemplateByOrgIdAndTmlId tml tmlRs of
-          Just tmlR -> Just $ tmlR ^. remoteVersion
+          Just tmlR -> Just $ tmlR.remoteVersion
           Nothing -> Nothing
-    , _templateDetailDTOState = computeTemplateState tmlRs tml
-    , _templateDetailDTORegistryLink = registryLink
-    , _templateDetailDTOOrganization = selectOrganizationByOrgId tml orgRs
-    , _templateDetailDTOCreatedAt = tml ^. createdAt
+    , state = computeTemplateState tmlRs tml
+    , registryLink = registryLink
+    , organization = selectOrganizationByOrgId tml orgRs
+    , createdAt = tml.createdAt
     }
 
 toChangeDTO :: Template -> TemplateChangeDTO
 toChangeDTO template =
   TemplateChangeDTO
-    { _templateChangeDTOName = template ^. name
-    , _templateChangeDTOOrganizationId = template ^. organizationId
-    , _templateChangeDTOTemplateId = template ^. templateId
-    , _templateChangeDTOVersion = template ^. version
-    , _templateChangeDTOMetamodelVersion = template ^. metamodelVersion
-    , _templateChangeDTODescription = template ^. description
-    , _templateChangeDTOReadme = template ^. readme
-    , _templateChangeDTOLicense = template ^. license
-    , _templateChangeDTOAllowedPackages = template ^. allowedPackages
-    , _templateChangeDTORecommendedPackageId = template ^. recommendedPackageId
-    , _templateChangeDTOFormats = template ^. formats
+    { name = template.name
+    , organizationId = template.organizationId
+    , templateId = template.templateId
+    , version = template.version
+    , metamodelVersion = template.metamodelVersion
+    , description = template.description
+    , readme = template.readme
+    , license = template.license
+    , allowedPackages = template.allowedPackages
+    , recommendedPackageId = template.recommendedPackageId
+    , formats = template.formats
     }
 
 fromCreateDTO :: TemplateChangeDTO -> U.UUID -> UTCTime -> Template
 fromCreateDTO dto appUuid createdAt =
   Template
-    { _templateTId = buildCoordinate (dto ^. organizationId) (dto ^. templateId) (dto ^. version)
-    , _templateName = dto ^. name
-    , _templateOrganizationId = dto ^. organizationId
-    , _templateTemplateId = dto ^. templateId
-    , _templateVersion = dto ^. version
-    , _templateMetamodelVersion = dto ^. metamodelVersion
-    , _templateDescription = dto ^. description
-    , _templateReadme = dto ^. readme
-    , _templateLicense = dto ^. license
-    , _templateAllowedPackages = dto ^. allowedPackages
-    , _templateRecommendedPackageId = dto ^. recommendedPackageId
-    , _templateFormats = dto ^. formats
-    , _templateAppUuid = appUuid
-    , _templateCreatedAt = createdAt
+    { tId = buildCoordinate dto.organizationId dto.templateId dto.version
+    , name = dto.name
+    , organizationId = dto.organizationId
+    , templateId = dto.templateId
+    , version = dto.version
+    , metamodelVersion = dto.metamodelVersion
+    , description = dto.description
+    , readme = dto.readme
+    , license = dto.license
+    , allowedPackages = dto.allowedPackages
+    , recommendedPackageId = dto.recommendedPackageId
+    , formats = dto.formats
+    , appUuid = appUuid
+    , createdAt = createdAt
     }
 
 fromChangeDTO :: TemplateChangeDTO -> Template -> Template
 fromChangeDTO dto template =
   Template
-    { _templateTId = buildCoordinate (dto ^. organizationId) (dto ^. templateId) (dto ^. version)
-    , _templateName = dto ^. name
-    , _templateOrganizationId = dto ^. organizationId
-    , _templateTemplateId = dto ^. templateId
-    , _templateVersion = dto ^. version
-    , _templateMetamodelVersion = dto ^. metamodelVersion
-    , _templateDescription = dto ^. description
-    , _templateReadme = dto ^. readme
-    , _templateLicense = dto ^. license
-    , _templateAllowedPackages = dto ^. allowedPackages
-    , _templateRecommendedPackageId = dto ^. recommendedPackageId
-    , _templateFormats = dto ^. formats
-    , _templateAppUuid = template ^. appUuid
-    , _templateCreatedAt = template ^. createdAt
+    { tId = buildCoordinate dto.organizationId dto.templateId dto.version
+    , name = dto.name
+    , organizationId = dto.organizationId
+    , templateId = dto.templateId
+    , version = dto.version
+    , metamodelVersion = dto.metamodelVersion
+    , description = dto.description
+    , readme = dto.readme
+    , license = dto.license
+    , allowedPackages = dto.allowedPackages
+    , recommendedPackageId = dto.recommendedPackageId
+    , formats = dto.formats
+    , appUuid = template.appUuid
+    , createdAt = template.createdAt
     }
 
 buildTemplateUrl :: String -> Template -> [RegistryTemplate] -> Maybe String
 buildTemplateUrl clientRegistryUrl tml tmlRs =
   case selectTemplateByOrgIdAndTmlId tml tmlRs of
     Just tmlR ->
-      Just $ clientRegistryUrl ++ "/templates/" ++
-      buildCoordinate (tmlR ^. organizationId) (tmlR ^. templateId) (tmlR ^. remoteVersion)
+      Just $
+        clientRegistryUrl
+          ++ "/templates/"
+          ++ buildCoordinate tmlR.organizationId tmlR.templateId tmlR.remoteVersion
     Nothing -> Nothing

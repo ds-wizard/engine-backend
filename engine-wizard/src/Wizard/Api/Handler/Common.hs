@@ -1,16 +1,15 @@
 module Wizard.Api.Handler.Common where
 
-import Control.Lens ((^.))
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (ask, asks, liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Api.Handler.Common
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.App
 import Shared.Localization.Messages.Public
+import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.TransactionState
 import Shared.Model.Error.Error
 import Shared.Util.Token
@@ -21,6 +20,7 @@ import Wizard.Database.DAO.User.UserTokenDAO
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Localization.Messages.Public
 import Wizard.Model.App.App
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
@@ -43,12 +43,12 @@ runInAuthService mServerUrl user transactionState function = do
 
 runIn :: App -> Maybe UserDTO -> TransactionState -> AppContextM a -> BaseContextM a
 runIn app mUser transactionState function = do
-  if app ^. enabled
+  if app.enabled
     then do
       baseContext <- ask
-      let loggingLevel = baseContext ^. serverConfig . logging . level
+      let loggingLevel = baseContext.serverConfig.logging.level
       eResult <-
-        liftIO $ appContextFromBaseContext (app ^. uuid) mUser transactionState baseContext $ \appContext -> do
+        liftIO $ appContextFromBaseContext app.uuid mUser transactionState baseContext $ \appContext -> do
           liftIO $ runMonads (runAppContextM function) appContext
       case eResult of
         Right result -> return result
@@ -59,7 +59,7 @@ runIn app mUser transactionState function = do
 runWithSystemUser :: AppContextM a -> BaseContextM a
 runWithSystemUser function = do
   baseContext <- ask
-  let loggingLevel = baseContext ^. serverConfig . logging . level
+  let loggingLevel = baseContext.serverConfig.logging.level
   eResult <-
     liftIO $ appContextFromBaseContext defaultAppUuid (Just . toDTO $ userSystem) NoTransaction baseContext $ \appContext -> do
       liftIO $ runMonads (runAppContextM function) appContext
@@ -67,8 +67,8 @@ runWithSystemUser function = do
     Right result -> return result
     Left error -> throwError =<< sendError error
 
-getMaybeAuthServiceExecutor ::
-     Maybe String
+getMaybeAuthServiceExecutor
+  :: Maybe String
   -> Maybe String
   -> ((TransactionState -> AppContextM a -> BaseContextM a) -> BaseContextM b)
   -> BaseContextM b
@@ -76,8 +76,8 @@ getMaybeAuthServiceExecutor (Just tokenHeader) mServerUrl callback =
   getAuthServiceExecutor (Just tokenHeader) mServerUrl callback
 getMaybeAuthServiceExecutor Nothing mServerUrl callback = callback (runInUnauthService mServerUrl)
 
-getAuthServiceExecutor ::
-     Maybe String
+getAuthServiceExecutor
+  :: Maybe String
   -> Maybe String
   -> ((TransactionState -> AppContextM a -> BaseContextM a) -> BaseContextM b)
   -> BaseContextM b
@@ -85,7 +85,7 @@ getAuthServiceExecutor (Just token) mServerUrl callback = do
   isValidJwtToken token
   isTokenExistsInDb token mServerUrl
   user <- getCurrentUser token mServerUrl
-  if user ^. active
+  if user.active
     then callback (runInAuthService mServerUrl user)
     else throwError =<< (sendError . UnauthorizedError $ _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED)
 getAuthServiceExecutor Nothing _ _ =
@@ -101,11 +101,12 @@ getCurrentUser tokenHeader mServerUrl = do
 
 isValidJwtToken :: String -> BaseContextM ()
 isValidJwtToken tokenHeader = do
-  serverConfig <- asks _baseContextServerConfig
+  baseContext <- ask
+  let serverConfig = baseContext.serverConfig
   now <- liftIO getCurrentTime
   case separateToken tokenHeader of
     Just jwtToken ->
-      case validateJwtToken jwtToken (serverConfig ^. general . secret) (serverConfig ^. jwt . version) now of
+      case validateJwtToken jwtToken serverConfig.general.secret serverConfig.jwt.version now of
         Nothing -> return ()
         Just error -> throwError =<< sendError (UnauthorizedError error)
     Nothing -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
@@ -120,14 +121,16 @@ isTokenExistsInDb tokenHeader mServerUrl = do
 
 getCurrentApp :: Maybe String -> BaseContextM App
 getCurrentApp mServerUrl = do
-  serverConfig <- asks _baseContextServerConfig
-  if serverConfig ^. cloud . enabled
+  baseContext <- ask
+  let serverConfig = baseContext.serverConfig
+  if serverConfig.cloud.enabled
     then case mServerUrl of
-           Nothing -> runWithSystemUser . throwError $ UnauthorizedError (_ERROR_VALIDATION__APP_ABSENCE "not-provided")
-           Just serverUrl -> do
-             runWithSystemUser $ catchError (findAppByServerDomain serverUrl) (handleError serverUrl)
-    else runWithSystemUser $
-         catchError (findAppById . U.toString $ defaultAppUuid) (handleError (U.toString defaultAppUuid))
+      Nothing -> runWithSystemUser . throwError $ UnauthorizedError (_ERROR_VALIDATION__APP_ABSENCE "not-provided")
+      Just serverUrl -> do
+        runWithSystemUser $ catchError (findAppByServerDomain serverUrl) (handleError serverUrl)
+    else
+      runWithSystemUser $
+        catchError (findAppById . U.toString $ defaultAppUuid) (handleError (U.toString defaultAppUuid))
   where
     handleError host (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__APP_ABSENCE host)
     handleError host error = throwError error
@@ -148,7 +151,7 @@ getCurrentTokenUuid tokenHeader = do
 
 isAdmin :: AppContextM Bool
 isAdmin = do
-  mUser <- asks _appContextCurrentUser
+  mUser <- asks currentUser
   case mUser of
-    Just user -> return $ user ^. role == _USER_ROLE_ADMIN
+    Just user -> return $ user.uRole == _USER_ROLE_ADMIN
     Nothing -> return False

@@ -1,6 +1,6 @@
-module Registry.Specs.API.Organization.Detail_DELETE
-  ( detail_delete
-  ) where
+module Registry.Specs.API.Organization.Detail_DELETE (
+  detail_delete,
+) where
 
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -40,17 +40,17 @@ reqBody = ""
 -- ----------------------------------------------------
 test_204 appContext =
   it "HTTP 204 NO CONTENT" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 204
-    let expHeaders = resCorsHeaders
-    let expBody = ""
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 204
+      let expHeaders = resCorsHeaders
+      let expBody = ""
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

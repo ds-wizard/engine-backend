@@ -1,12 +1,10 @@
 module Registry.Service.Organization.OrganizationService where
 
-import Control.Lens ((&), (.~), (^.))
 import Control.Monad (when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 
-import LensesConfig
 import Registry.Api.Resource.ActionKey.ActionKeyDTO
 import Registry.Api.Resource.Organization.OrganizationChangeDTO
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
@@ -17,6 +15,7 @@ import Registry.Database.DAO.Common
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Internal
 import Registry.Model.ActionKey.ActionKey
+import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.AppContextHelpers
 import Registry.Model.Organization.Organization
@@ -26,6 +25,7 @@ import Registry.Service.Organization.OrganizationMapper
 import Registry.Service.Organization.OrganizationValidation
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Localization.Messages.Public
+import Shared.Model.Config.ServerConfig
 import Shared.Model.Error.Error
 import Shared.Util.Crypto (generateRandomString)
 
@@ -48,16 +48,16 @@ createOrganization reqDto mCallbackUrl =
     now <- liftIO getCurrentTime
     let org = fromCreateDTO reqDto UserRole token now now now
     insertOrganization org
-    actionKey <- createActionKey (org ^. organizationId) RegistrationActionKey
+    actionKey <- createActionKey org.organizationId RegistrationActionKey
     _ <-
-      sendRegistrationConfirmationMail (toDTO org) (actionKey ^. hash) mCallbackUrl `catchError`
-      (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_ORGANIZATION__ACTIVATION_EMAIL_NOT_SENT)
+      sendRegistrationConfirmationMail (toDTO org) actionKey.hash mCallbackUrl
+        `catchError` (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_ORGANIZATION__ACTIVATION_EMAIL_NOT_SENT)
     sendAnalyticsEmailIfEnabled org
     return . toDTO $ org
   where
     sendAnalyticsEmailIfEnabled org = do
-      serverConfig <- asks _appContextServerConfig
-      when (serverConfig ^. analytics . enabled) $ sendRegistrationCreatedAnalyticsMail (toDTO org)
+      serverConfig <- asks serverConfig
+      when serverConfig.analytics.enabled $ sendRegistrationCreatedAnalyticsMail (toDTO org)
 
 getOrganizationByOrgId :: String -> AppContextM OrganizationDTO
 getOrganizationByOrgId orgId = do
@@ -75,7 +75,7 @@ modifyOrganization :: String -> OrganizationChangeDTO -> AppContextM Organizatio
 modifyOrganization orgId reqDto =
   runInTransaction $ do
     org <- getOrganizationByOrgId orgId
-    _ <- validateOrganizationChangedEmailUniqueness (reqDto ^. email) (org ^. email)
+    _ <- validateOrganizationChangedEmailUniqueness reqDto.email org.email
     now <- liftIO getCurrentTime
     let organization = fromChangeDTO reqDto org now
     updateOrganization organization
@@ -92,33 +92,33 @@ changeOrganizationTokenByHash :: String -> Maybe String -> AppContextM Organizat
 changeOrganizationTokenByHash orgId maybeHash =
   runInTransaction $ do
     actionKey <- getActionKeyByHash maybeHash
-    org <- findOrganizationByOrgId (actionKey ^. organizationId)
+    org <- findOrganizationByOrgId actionKey.organizationId
     orgToken <- generateNewOrgToken
     now <- liftIO getCurrentTime
-    let updatedOrg = (org & token .~ orgToken) & updatedAt .~ now
+    let updatedOrg = org {token = orgToken, updatedAt = now} :: Organization
     updateOrganization updatedOrg
-    deleteActionKeyByHash (actionKey ^. hash)
+    deleteActionKeyByHash actionKey.hash
     return . toDTO $ updatedOrg
 
 resetOrganizationToken :: ActionKeyDTO -> AppContextM ()
 resetOrganizationToken reqDto =
   runInTransaction $ do
-    validateOrganizationEmailExistence (reqDto ^. email)
-    org <- findOrganizationByEmail (reqDto ^. email)
-    actionKey <- createActionKey (org ^. organizationId) ForgottenTokenActionKey
+    validateOrganizationEmailExistence reqDto.email
+    org <- findOrganizationByEmail reqDto.email
+    actionKey <- createActionKey org.organizationId ForgottenTokenActionKey
     _ <-
-      sendResetTokenMail (toDTO org) (actionKey ^. hash) `catchError`
-      (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_ORGANIZATION__RECOVERY_EMAIL_NOT_SENT)
+      sendResetTokenMail (toDTO org) actionKey.hash
+        `catchError` (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_ORGANIZATION__RECOVERY_EMAIL_NOT_SENT)
     return ()
 
 changeOrganizationState :: String -> Maybe String -> OrganizationStateDTO -> AppContextM OrganizationDTO
 changeOrganizationState orgId maybeHash reqDto =
   runInTransaction $ do
     actionKey <- getActionKeyByHash maybeHash
-    org <- findOrganizationByOrgId (actionKey ^. organizationId)
-    updatedOrg <- updateOrgTimestamp $ org & active .~ (reqDto ^. active)
+    org <- findOrganizationByOrgId actionKey.organizationId
+    updatedOrg <- updateOrgTimestamp $ org {active = reqDto.active}
     updateOrganization updatedOrg
-    deleteActionKeyByHash (actionKey ^. hash)
+    deleteActionKeyByHash actionKey.hash
     return . toDTO $ updatedOrg
 
 -- --------------------------------
@@ -126,13 +126,13 @@ changeOrganizationState orgId maybeHash reqDto =
 -- --------------------------------
 checkPermissionToListOrganizations = do
   currentOrg <- getCurrentOrganization
-  if currentOrg ^. role == AdminRole
+  if currentOrg.oRole == AdminRole
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "List Organizations"
 
 checkPermissionToOrganization org = do
   currentOrg <- getCurrentOrganization
-  if currentOrg ^. role == AdminRole || (org ^. organizationId) == (currentOrg ^. organizationId)
+  if currentOrg.oRole == AdminRole || org.organizationId == currentOrg.organizationId
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Detail Organization"
 
@@ -143,6 +143,6 @@ generateNewOrgToken :: AppContextM String
 generateNewOrgToken = liftIO $ generateRandomString 256
 
 updateOrgTimestamp :: Organization -> AppContextM Organization
-updateOrgTimestamp user = do
+updateOrgTimestamp org = do
   now <- liftIO getCurrentTime
-  return $ user & updatedAt .~ now
+  return $ org {updatedAt = now}

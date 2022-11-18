@@ -6,10 +6,9 @@ import GHC.Generics
 
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
-data QuestionnaireEventBundle =
-  QuestionnaireEventBundle
-    { _questionnaireEventBundleEvents :: [QuestionnaireEvent]
-    }
+data QuestionnaireEventBundle = QuestionnaireEventBundle
+  { events :: [QuestionnaireEvent]
+  }
   deriving (Show, Generic)
 
 data QuestionnaireEvent
@@ -19,62 +18,62 @@ data QuestionnaireEvent
   | SetLabelsEvent' SetLabelsEvent
   deriving (Show, Eq, Generic)
 
-data SetReplyEvent =
-  SetReplyEvent
-    { _setReplyEventUuid :: U.UUID
-    , _setReplyEventPath :: String
-    , _setReplyEventValue :: ReplyValue
-    , _setReplyEventCreatedBy :: Maybe U.UUID
-    , _setReplyEventCreatedAt :: UTCTime
-    }
+data SetReplyEvent = SetReplyEvent
+  { uuid :: U.UUID
+  , path :: String
+  , value :: ReplyValue
+  , createdBy :: Maybe U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq SetReplyEvent where
   a == b =
-    _setReplyEventUuid a == _setReplyEventUuid b &&
-    _setReplyEventPath a == _setReplyEventPath b &&
-    _setReplyEventValue a == _setReplyEventValue b && _setReplyEventCreatedBy a == _setReplyEventCreatedBy b
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.value == b.value
+      && a.createdBy == b.createdBy
 
-data ClearReplyEvent =
-  ClearReplyEvent
-    { _clearReplyEventUuid :: U.UUID
-    , _clearReplyEventPath :: String
-    , _clearReplyEventCreatedBy :: Maybe U.UUID
-    , _clearReplyEventCreatedAt :: UTCTime
-    }
+data ClearReplyEvent = ClearReplyEvent
+  { uuid :: U.UUID
+  , path :: String
+  , createdBy :: Maybe U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq ClearReplyEvent where
   a == b =
-    _clearReplyEventUuid a == _clearReplyEventUuid b &&
-    _clearReplyEventPath a == _clearReplyEventPath b && _clearReplyEventCreatedBy a == _clearReplyEventCreatedBy b
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.createdBy == b.createdBy
 
-data SetPhaseEvent =
-  SetPhaseEvent
-    { _setPhaseEventUuid :: U.UUID
-    , _setPhaseEventPhaseUuid :: Maybe U.UUID
-    , _setPhaseEventCreatedBy :: Maybe U.UUID
-    , _setPhaseEventCreatedAt :: UTCTime
-    }
+data SetPhaseEvent = SetPhaseEvent
+  { uuid :: U.UUID
+  , phaseUuid :: Maybe U.UUID
+  , createdBy :: Maybe U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq SetPhaseEvent where
   a == b =
-    _setPhaseEventUuid a == _setPhaseEventUuid b &&
-    _setPhaseEventPhaseUuid a == _setPhaseEventPhaseUuid b && _setPhaseEventCreatedBy a == _setPhaseEventCreatedBy b
+    a.uuid == b.uuid
+      && a.phaseUuid == b.phaseUuid
+      && a.createdBy == b.createdBy
 
-data SetLabelsEvent =
-  SetLabelsEvent
-    { _setLabelsEventUuid :: U.UUID
-    , _setLabelsEventPath :: String
-    , _setLabelsEventValue :: [U.UUID]
-    , _setLabelsEventCreatedBy :: Maybe U.UUID
-    , _setLabelsEventCreatedAt :: UTCTime
-    }
+data SetLabelsEvent = SetLabelsEvent
+  { uuid :: U.UUID
+  , path :: String
+  , value :: [U.UUID]
+  , createdBy :: Maybe U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq SetLabelsEvent where
   a == b =
-    _setLabelsEventUuid a == _setLabelsEventUuid b &&
-    _setLabelsEventPath a == _setLabelsEventPath b &&
-    _setLabelsEventValue a == _setLabelsEventValue b && _setLabelsEventCreatedBy a == _setLabelsEventCreatedBy b
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.value == b.value
+      && a.createdBy == b.createdBy

@@ -1,6 +1,5 @@
 module Wizard.Database.DAO.Branch.BranchDataDAO where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (asks)
 import Data.String
 import qualified Data.UUID as U
@@ -9,7 +8,6 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
-import LensesConfig
 import Shared.Model.Event.Event
 import Shared.Util.String (trim)
 import Wizard.Database.DAO.Common
@@ -33,7 +31,7 @@ findBranchesForSquashing = do
 
 findBranchDataById :: String -> AppContextM BranchData
 findBranchDataById branchUuid = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createFindEntityWithFieldsByFn "*" False entityName [appQueryUuid appUuid, ("branch_uuid", branchUuid)]
 
 findBranchDataByIdForSquashingLocked :: String -> AppContextM BranchData
@@ -49,7 +47,7 @@ insertBranchData = createInsertFn entityName
 
 updateBranchDataById :: BranchData -> AppContextM Int64
 updateBranchDataById branchData = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   let sql =
         fromString
           "BEGIN TRANSACTION; \
@@ -57,15 +55,15 @@ updateBranchDataById branchData = do
           \UPDATE branch SET updated_at = now() where uuid = ?; \
           \COMMIT;"
   let params =
-        toRow branchData ++
-        [toField appUuid, toField . U.toText $ branchData ^. branchUuid, toField . U.toText $ branchData ^. branchUuid]
+        toRow branchData
+          ++ [toField appUuid, toField . U.toText $ branchData.branchUuid, toField . U.toText $ branchData.branchUuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
 
 appendBranchEventByUuid :: String -> [Event] -> AppContextM ()
 appendBranchEventByUuid branchUuid events = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   let sql =
         fromString
           "BEGIN TRANSACTION; \

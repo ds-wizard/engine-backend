@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Config.List_Locale_GET
-  ( list_locale_GET
-  ) where
+module Wizard.Specs.API.Config.List_Locale_GET (
+  list_locale_GET,
+) where
 
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
@@ -44,18 +44,18 @@ test_200 appContext = do
 
 create_test_200 title appContext localeId = do
   it title $
-     -- GIVEN: Prepare expectation
-   do
-    let reqUrl = reqUrlT localeId
-    let expStatus = 200
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expBody = BSL.fromStrict localeCzContent
-     -- AND: Run migrations
-    runInContextIO LOC.runMigration appContext
-    runInContextIO LOC.runS3Migration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare expectation
+    do
+      let reqUrl = reqUrlT localeId
+      let expStatus = 200
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expBody = BSL.fromStrict localeCzContent
+      -- AND: Run migrations
+      runInContextIO LOC.runMigration appContext
+      runInContextIO LOC.runS3Migration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher

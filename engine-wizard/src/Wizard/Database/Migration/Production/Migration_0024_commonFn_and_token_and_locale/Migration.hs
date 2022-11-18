@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0024_commonFn_and_token_and_locale.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0024_commonFn_and_token_and_locale.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -194,23 +194,23 @@ createUserTokenTable dbPool = do
 createLocaleTable dbPool = do
   let sql =
         "create table locale \
-         \ ( \
-         \     uuid              uuid              not null \
-         \         constraint locale_pk \
-         \             primary key, \
-         \     name              varchar not null,\
-         \     shortcut          varchar not null,\
-         \     fallback          bool not null,\
-         \     enabled           bool not null,\
-         \     app_uuid          uuid not null \
-         \       constraint locale_app_uuid_fk \
-         \         references app, \
-         \     created_at timestamp with time zone not null,\
-         \     updated_at timestamp with time zone not null \
-         \ ); \
-         \  \
-         \ create unique index locale_uuid_uindex \
-         \     on locale (uuid);"
+        \ ( \
+        \     uuid              uuid              not null \
+        \         constraint locale_pk \
+        \             primary key, \
+        \     name              varchar not null,\
+        \     shortcut          varchar not null,\
+        \     fallback          bool not null,\
+        \     enabled           bool not null,\
+        \     app_uuid          uuid not null \
+        \       constraint locale_app_uuid_fk \
+        \         references app, \
+        \     created_at timestamp with time zone not null,\
+        \     updated_at timestamp with time zone not null \
+        \ ); \
+        \  \
+        \ create unique index locale_uuid_uindex \
+        \     on locale (uuid);"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

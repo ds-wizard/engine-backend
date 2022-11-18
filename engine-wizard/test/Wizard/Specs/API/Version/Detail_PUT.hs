@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Version.Detail_PUT
-  ( detail_put
-  ) where
+module Wizard.Specs.API.Version.Detail_PUT (
+  detail_put,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -59,24 +59,24 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 test_201 appContext =
   it "HTTP 201 CREATED" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 201
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = toSimpleDTO . toPackage $ amsterdamPackage
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO PKG.runMigration appContext
-    runInContextIO B.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, PackageSimpleDTO)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    comparePackageDtos resBody expDto
-     -- AND: Find result in DB and compare with expectation state
-    assertExistenceOfPackageInDB appContext expDto
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 201
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = toSimpleDTO . toPackage $ amsterdamPackage
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO PKG.runMigration appContext
+      runInContextIO B.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, PackageSimpleDTO)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      comparePackageDtos resBody expDto
+      -- AND: Find result in DB and compare with expectation state
+      assertExistenceOfPackageInDB appContext expDto
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -88,44 +88,44 @@ test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "descr
 -- ----------------------------------------------------
 test_400_invalid_version_format appContext =
   it "HTTP 400 BAD REQUEST when version is not in a valid format" $
-     -- GIVEN: Prepare request
-   do
-    let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/versions/.0.0"
-     -- AND: Prepare expectation
-    let expStatus = 400
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = UserError _ERROR_VALIDATION__INVALID_COORDINATE_VERSION_FORMAT
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO B.runMigration appContext
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare request
+    do
+      let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/versions/.0.0"
+      -- AND: Prepare expectation
+      let expStatus = 400
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = UserError _ERROR_VALIDATION__INVALID_COORDINATE_VERSION_FORMAT
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO B.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400_not_higher_pkg_version appContext =
   it "HTTP 400 BAD REQUEST when version is not higher than the previous one" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 400
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = UserError _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO PKG.runMigration appContext
-    runInContextIO B.runMigration appContext
-    runInContextIO (publishPackage "6474b24b-262b-42b1-9451-008e8363f2b6" "1.0.0" reqDto) appContext
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 400
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = UserError _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO PKG.runMigration appContext
+      runInContextIO B.runMigration appContext
+      runInContextIO (publishPackage "6474b24b-262b-42b1-9451-008e8363f2b6" "1.0.0" reqDto) appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

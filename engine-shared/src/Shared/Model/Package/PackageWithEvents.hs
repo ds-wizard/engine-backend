@@ -6,22 +6,21 @@ import GHC.Generics
 
 import Shared.Model.Event.Event
 
-data PackageWithEvents =
-  PackageWithEvents
-    { _packageWithEventsPId :: String
-    , _packageWithEventsName :: String
-    , _packageWithEventsOrganizationId :: String
-    , _packageWithEventsKmId :: String
-    , _packageWithEventsVersion :: String
-    , _packageWithEventsMetamodelVersion :: Int
-    , _packageWithEventsDescription :: String
-    , _packageWithEventsReadme :: String
-    , _packageWithEventsLicense :: String
-    , _packageWithEventsPreviousPackageId :: Maybe String
-    , _packageWithEventsForkOfPackageId :: Maybe String
-    , _packageWithEventsMergeCheckpointPackageId :: Maybe String
-    , _packageWithEventsEvents :: [Event]
-    , _packageWithEventsAppUuid :: U.UUID
-    , _packageWithEventsCreatedAt :: UTCTime
-    }
+data PackageWithEvents = PackageWithEvents
+  { pId :: String
+  , name :: String
+  , organizationId :: String
+  , kmId :: String
+  , version :: String
+  , metamodelVersion :: Int
+  , description :: String
+  , readme :: String
+  , license :: String
+  , previousPackageId :: Maybe String
+  , forkOfPackageId :: Maybe String
+  , mergeCheckpointPackageId :: Maybe String
+  , events :: [Event]
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

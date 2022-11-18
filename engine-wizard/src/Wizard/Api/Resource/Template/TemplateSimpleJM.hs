@@ -4,13 +4,13 @@ import Data.Aeson
 
 import Shared.Api.Resource.Organization.OrganizationSimpleJM ()
 import Shared.Model.Template.TemplateJM ()
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Api.Resource.Template.TemplateStateJM ()
 
 instance FromJSON TemplateSimpleDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TemplateSimpleDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

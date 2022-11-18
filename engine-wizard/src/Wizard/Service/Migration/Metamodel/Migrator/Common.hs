@@ -1,10 +1,10 @@
-module Wizard.Service.Migration.Metamodel.Migrator.Common
-  ( convertValueToOject
-  , getField
-  , getArrayField
-  , migrateMetamodelVersionField
-  , migrateEventsField
-  ) where
+module Wizard.Service.Migration.Metamodel.Migrator.Common (
+  convertValueToOject,
+  getField,
+  getArrayField,
+  migrateMetamodelVersionField,
+  migrateEventsField,
+) where
 
 import Data.Aeson
 import qualified Data.Aeson.KeyMap as KM
@@ -30,8 +30,8 @@ migrateEventsField eventsFieldName value =
       getField "createdAt" object $ \createdAt ->
         getArrayField eventsFieldName object $ \events ->
           case foldEither $
-               EventMigrator.migrate (EventMigrator.MigrationContext createdAt) oldMetamodelVersion kmMetamodelVersion <$>
-               Vector.toList events of
+            EventMigrator.migrate (EventMigrator.MigrationContext createdAt) oldMetamodelVersion kmMetamodelVersion
+              <$> Vector.toList events of
             Right updatedEvents ->
               Right . Object $ KM.insert (fromString eventsFieldName) (toJSON . concat $ updatedEvents) object
             Left error -> Left . GeneralServerError $ error

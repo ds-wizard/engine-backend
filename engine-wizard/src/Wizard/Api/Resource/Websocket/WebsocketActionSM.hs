@@ -9,4 +9,4 @@ import Wizard.Api.Resource.Websocket.WebsocketActionJM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireActions
 
 instance ToSchema resDto => ToSchema (Success_ServerActionDTO resDto) where
-  declareNamedSchema = simpleToSchema (Success_ServerActionDTO ensureOnlineUserAction)
+  declareNamedSchema = toSwagger (Success_ServerActionDTO ensureOnlineUserAction)

@@ -10,10 +10,10 @@ import Wizard.Model.Package.PackageSuggestion
 
 instance FromRow PackageSuggestion where
   fromRow = do
-    _packageSuggestionPId <- field
-    _packageSuggestionName <- field
-    _packageSuggestionVersion <- field
-    _packageSuggestionDescription <- field
-    versions <- fromPGArray <$> field
-    let _packageSuggestionVersions = L.sortBy compareVersion versions
+    pId <- field
+    name <- field
+    version <- field
+    description <- field
+    versionsL <- fromPGArray <$> field
+    let versions = L.sortBy compareVersion versionsL
     return $ PackageSuggestion {..}

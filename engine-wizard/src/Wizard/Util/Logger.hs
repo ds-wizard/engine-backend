@@ -1,30 +1,31 @@
-module Wizard.Util.Logger
-  ( logDebugU
-  , logInfoU
-  , logWarnU
-  , logErrorU
-  , LogLevel(..)
-  , module Shared.Constant.Component
-  , module Shared.Util.Logger
-  ) where
+module Wizard.Util.Logger (
+  logDebugU,
+  logInfoU,
+  logWarnU,
+  logErrorU,
+  LogLevel (..),
+  module Shared.Constant.Component,
+  module Shared.Util.Logger,
+) where
 
-import Control.Lens ((^.))
 import Control.Monad (when)
 import Control.Monad.Logger (logWithoutLoc)
 import Control.Monad.Reader (asks, liftIO)
-import Data.Aeson (Value(..), toJSON)
+import Data.Aeson (Value (..), toJSON)
 import qualified Data.HashMap.Strict as HashMap
 import qualified Data.Text as T
 import qualified Data.UUID as U
-import Prelude hiding (log)
 import System.Log.Raven (initRaven, register, stderrFallback)
 import System.Log.Raven.Transport.HttpConduit (sendRecord)
-import System.Log.Raven.Types (SentryLevel(Error), SentryRecord(..))
+import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..))
+import Prelude hiding (log)
 
-import LensesConfig
 import Shared.Constant.Component
+import Shared.Model.Config.BuildInfoConfig
+import Shared.Model.Config.ServerConfig
 import Shared.Util.Logger
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 
 logDebugU :: String -> String -> AppContextM ()
@@ -44,38 +45,42 @@ logErrorU component message = do
 -- ---------------------------------------------------------------------------
 logU :: LogLevel -> String -> String -> AppContextM ()
 logU logLevel component message = do
-  mUser <- asks _appContextCurrentUser
-  traceUuid <- asks _appContextTraceUuid
-  let mUserUuid = fmap (U.toString . _userDTOUuid) mUser
+  mUser <- asks currentUser
+  traceUuid <- asks traceUuid
+  let mUserUuid = fmap (U.toString . uuid) mUser
   let mTraceUuid = Just . U.toString $ traceUuid
   let record = createLogRecord logLevel mUserUuid mTraceUuid component message
   logWithoutLoc "" (LevelOther . T.pack . showLogLevel $ logLevel) record
 
 sendToSentry :: String -> String -> AppContextM ()
 sendToSentry component message = do
-  mUser <- asks _appContextCurrentUser
-  traceUuid <- asks _appContextTraceUuid
-  serverConfig <- asks _appContextServerConfig
+  mUser <- asks currentUser
+  traceUuid <- asks traceUuid
+  serverConfig <- asks serverConfig
   when
-    (serverConfig ^. sentry . enabled)
-    (do let sentryDsn = serverConfig ^. sentry . dsn
+    serverConfig.sentry.enabled
+    ( do
+        let sentryDsn = serverConfig.sentry.dsn
         sentryService <- liftIO $ initRaven sentryDsn id sendRecord stderrFallback
-        buildInfoConfig <- asks _appContextBuildInfoConfig
-        let buildVersion = buildInfoConfig ^. version
-        appUuid <- asks _appContextAppUuid
+        buildInfoConfig <- asks buildInfoConfig
+        let buildVersion = buildInfoConfig.version
+        appUuid <- asks currentAppUuid
         liftIO $
-          register sentryService "messageLogger" Error message (recordUpdate buildVersion mUser traceUuid appUuid))
+          register sentryService "messageLogger" Error message (recordUpdate buildVersion mUser traceUuid appUuid)
+    )
 
 recordUpdate :: String -> Maybe UserDTO -> U.UUID -> U.UUID -> SentryRecord -> SentryRecord
 recordUpdate buildVersion mUser traceUuid appUuid record =
-  let userUuid = T.pack . maybe "" (U.toString . _userDTOUuid) $ mUser
-      userEmail = T.pack . maybe "" _userDTOEmail $ mUser
+  let userUuid = T.pack . maybe "" (U.toString . uuid) $ mUser
+      userEmail = T.pack . maybe "" (.email) $ mUser
    in record
         { srRelease = Just buildVersion
         , srInterfaces =
             HashMap.fromList
-              [ ( "sentry.interfaces.User"
-                , toJSON $ HashMap.fromList [("id", String userUuid), ("email", String userEmail)])
+              [
+                ( "sentry.interfaces.User"
+                , toJSON $ HashMap.fromList [("id", String userUuid), ("email", String userEmail)]
+                )
               ]
         , srTags = HashMap.fromList [("traceUuid", U.toString traceUuid), ("appUuid", U.toString appUuid)]
         , srExtra =

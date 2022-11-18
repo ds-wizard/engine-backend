@@ -11,31 +11,30 @@ import Wizard.Util.Hashable ()
 
 type ReplyTuple = (String, Reply)
 
-data Reply =
-  Reply
-    { _replyValue :: ReplyValue
-    , _replyCreatedBy :: Maybe UserSuggestionDTO
-    , _replyCreatedAt :: UTCTime
-    }
+data Reply = Reply
+  { value :: ReplyValue
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
 instance Hashable Reply
 
 data ReplyValue
   = StringReply
-      { _stringReplyValue :: String
+      { sValue :: String
       }
   | AnswerReply
-      { _answerReplyValue :: U.UUID
+      { aValue :: U.UUID
       }
   | MultiChoiceReply
-      { _multiChoiceReplyValue :: [U.UUID]
+      { mcValue :: [U.UUID]
       }
   | ItemListReply
-      { _itemListReplyValue :: [U.UUID]
+      { ilValue :: [U.UUID]
       }
   | IntegrationReply
-      { _integrationReplyValue :: IntegrationReplyType
+      { iValue :: IntegrationReplyType
       }
   deriving (Show, Eq, Generic)
 
@@ -43,11 +42,11 @@ instance Hashable ReplyValue
 
 data IntegrationReplyType
   = PlainType
-      { _plainTypeValue :: String
+      { value :: String
       }
   | IntegrationType
-      { _integrationTypeIntId :: String
-      , _integrationTypeValue :: String
+      { intId :: String
+      , value :: String
       }
   deriving (Show, Eq, Generic)
 

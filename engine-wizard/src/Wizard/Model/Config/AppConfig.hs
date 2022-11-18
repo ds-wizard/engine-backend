@@ -8,115 +8,106 @@ import GHC.Generics
 
 import Shared.Model.Package.PackagePattern
 import Wizard.Model.Config.SimpleFeature
-import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.Questionnaire hiding (uuid)
 
-data AppConfig =
-  AppConfig
-    { _appConfigUuid :: U.UUID
-    , _appConfigOrganization :: AppConfigOrganization
-    , _appConfigAuthentication :: AppConfigAuth
-    , _appConfigPrivacyAndSupport :: AppConfigPrivacyAndSupport
-    , _appConfigDashboard :: AppConfigDashboard
-    , _appConfigLookAndFeel :: AppConfigLookAndFeel
-    , _appConfigRegistry :: AppConfigRegistry
-    , _appConfigKnowledgeModel :: AppConfigKnowledgeModel
-    , _appConfigQuestionnaire :: AppConfigQuestionnaire
-    , _appConfigTemplate :: AppConfigTemplate
-    , _appConfigSubmission :: AppConfigSubmission
-    , _appConfigFeature :: AppConfigFeature
-    , _appConfigOwl :: AppConfigOwl
-    , _appConfigCreatedAt :: UTCTime
-    , _appConfigUpdatedAt :: UTCTime
-    }
+data AppConfig = AppConfig
+  { uuid :: U.UUID
+  , organization :: AppConfigOrganization
+  , authentication :: AppConfigAuth
+  , privacyAndSupport :: AppConfigPrivacyAndSupport
+  , dashboard :: AppConfigDashboard
+  , lookAndFeel :: AppConfigLookAndFeel
+  , registry :: AppConfigRegistry
+  , knowledgeModel :: AppConfigKnowledgeModel
+  , questionnaire :: AppConfigQuestionnaire
+  , template :: AppConfigTemplate
+  , submission :: AppConfigSubmission
+  , feature :: AppConfigFeature
+  , owl :: AppConfigOwl
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Generic, Show)
 
 instance Eq AppConfig where
   a == b =
-    _appConfigUuid a == _appConfigUuid b &&
-    _appConfigOrganization a == _appConfigOrganization b &&
-    _appConfigAuthentication a == _appConfigAuthentication b &&
-    _appConfigPrivacyAndSupport a == _appConfigPrivacyAndSupport b &&
-    _appConfigDashboard a == _appConfigDashboard b &&
-    _appConfigLookAndFeel a == _appConfigLookAndFeel b &&
-    _appConfigRegistry a == _appConfigRegistry b &&
-    _appConfigQuestionnaire a == _appConfigQuestionnaire b &&
-    _appConfigSubmission a == _appConfigSubmission b &&
-    _appConfigFeature a == _appConfigFeature b && _appConfigOwl a == _appConfigOwl b
+    uuid a == uuid b
+      && organization a == organization b
+      && authentication a == authentication b
+      && privacyAndSupport a == privacyAndSupport b
+      && dashboard a == dashboard b
+      && lookAndFeel a == lookAndFeel b
+      && registry a == registry b
+      && questionnaire a == questionnaire b
+      && submission a == submission b
+      && feature a == feature b
+      && owl a == owl b
 
-data AppConfigOrganization =
-  AppConfigOrganization
-    { _appConfigOrganizationName :: String
-    , _appConfigOrganizationDescription :: String
-    , _appConfigOrganizationOrganizationId :: String
-    , _appConfigOrganizationAffiliations :: [String]
-    }
+data AppConfigOrganization = AppConfigOrganization
+  { name :: String
+  , description :: String
+  , organizationId :: String
+  , affiliations :: [String]
+  }
   deriving (Generic, Eq, Show)
 
 instance Hashable AppConfigOrganization
 
-data AppConfigAuth =
-  AppConfigAuth
-    { _appConfigAuthDefaultRole :: String
-    , _appConfigAuthInternal :: AppConfigAuthInternal
-    , _appConfigAuthExternal :: AppConfigAuthExternal
-    }
+data AppConfigAuth = AppConfigAuth
+  { defaultRole :: String
+  , internal :: AppConfigAuthInternal
+  , external :: AppConfigAuthExternal
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigAuthInternal =
-  AppConfigAuthInternal
-    { _appConfigAuthInternalRegistration :: SimpleFeature
-    }
+data AppConfigAuthInternal = AppConfigAuthInternal
+  { registration :: SimpleFeature
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigAuthExternal =
-  AppConfigAuthExternal
-    { _appConfigAuthExternalServices :: [AppConfigAuthExternalService]
-    }
+data AppConfigAuthExternal = AppConfigAuthExternal
+  { services :: [AppConfigAuthExternalService]
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigAuthExternalService =
-  AppConfigAuthExternalService
-    { _appConfigAuthExternalServiceAId :: String
-    , _appConfigAuthExternalServiceName :: String
-    , _appConfigAuthExternalServiceUrl :: String
-    , _appConfigAuthExternalServiceClientId :: String
-    , _appConfigAuthExternalServiceClientSecret :: String
-    , _appConfigAuthExternalServiceParameteres :: [AppConfigAuthExternalServiceParameter]
-    , _appConfigAuthExternalServiceStyle :: Maybe AppConfigAuthExternalServiceStyle
-    }
+data AppConfigAuthExternalService = AppConfigAuthExternalService
+  { aId :: String
+  , name :: String
+  , url :: String
+  , clientId :: String
+  , clientSecret :: String
+  , parameteres :: [AppConfigAuthExternalServiceParameter]
+  , style :: Maybe AppConfigAuthExternalServiceStyle
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigAuthExternalServiceParameter =
-  AppConfigAuthExternalServiceParameter
-    { _appConfigAuthExternalServiceParameterName :: String
-    , _appConfigAuthExternalServiceParameterValue :: String
-    }
+data AppConfigAuthExternalServiceParameter = AppConfigAuthExternalServiceParameter
+  { name :: String
+  , value :: String
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigAuthExternalServiceStyle =
-  AppConfigAuthExternalServiceStyle
-    { _appConfigAuthExternalServiceStyleIcon :: Maybe String
-    , _appConfigAuthExternalServiceStyleBackground :: Maybe String
-    , _appConfigAuthExternalServiceStyleColor :: Maybe String
-    }
+data AppConfigAuthExternalServiceStyle = AppConfigAuthExternalServiceStyle
+  { icon :: Maybe String
+  , background :: Maybe String
+  , color :: Maybe String
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigPrivacyAndSupport =
-  AppConfigPrivacyAndSupport
-    { _appConfigPrivacyAndSupportPrivacyUrl :: Maybe String
-    , _appConfigPrivacyAndSupportTermsOfServiceUrl :: Maybe String
-    , _appConfigPrivacyAndSupportSupportEmail :: Maybe String
-    , _appConfigPrivacyAndSupportSupportRepositoryName :: Maybe String
-    , _appConfigPrivacyAndSupportSupportRepositoryUrl :: Maybe String
-    }
+data AppConfigPrivacyAndSupport = AppConfigPrivacyAndSupport
+  { privacyUrl :: Maybe String
+  , termsOfServiceUrl :: Maybe String
+  , supportEmail :: Maybe String
+  , supportRepositoryName :: Maybe String
+  , supportRepositoryUrl :: Maybe String
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigDashboard =
-  AppConfigDashboard
-    { _appConfigDashboardDashboardType :: AppConfigDashboardDashboardType
-    , _appConfigDashboardWelcomeWarning :: Maybe String
-    , _appConfigDashboardWelcomeInfo :: Maybe String
-    }
+data AppConfigDashboard = AppConfigDashboard
+  { dashboardType :: AppConfigDashboardDashboardType
+  , welcomeWarning :: Maybe String
+  , welcomeInfo :: Maybe String
+  }
   deriving (Generic, Eq, Show)
 
 data AppConfigDashboardDashboardType
@@ -124,73 +115,65 @@ data AppConfigDashboardDashboardType
   | RoleBasedDashboardType
   deriving (Generic, Eq, Show)
 
-data AppConfigLookAndFeel =
-  AppConfigLookAndFeel
-    { _appConfigLookAndFeelAppTitle :: Maybe String
-    , _appConfigLookAndFeelAppTitleShort :: Maybe String
-    , _appConfigLookAndFeelCustomMenuLinks :: [AppConfigLookAndFeelCustomMenuLink]
-    , _appConfigLookAndFeelLoginInfo :: Maybe String
-    , _appConfigLookAndFeelLogoUrl :: Maybe String
-    , _appConfigLookAndFeelStyleUrl :: Maybe String
-    , _appConfigLookAndFeelPrimaryColor :: Maybe String
-    , _appConfigLookAndFeelIllustrationsColor :: Maybe String
-    }
+data AppConfigLookAndFeel = AppConfigLookAndFeel
+  { appTitle :: Maybe String
+  , appTitleShort :: Maybe String
+  , customMenuLinks :: [AppConfigLookAndFeelCustomMenuLink]
+  , loginInfo :: Maybe String
+  , logoUrl :: Maybe String
+  , styleUrl :: Maybe String
+  , primaryColor :: Maybe String
+  , illustrationsColor :: Maybe String
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigLookAndFeelCustomMenuLink =
-  AppConfigLookAndFeelCustomMenuLink
-    { _appConfigLookAndFeelCustomMenuLinkIcon :: String
-    , _appConfigLookAndFeelCustomMenuLinkTitle :: String
-    , _appConfigLookAndFeelCustomMenuLinkUrl :: String
-    , _appConfigLookAndFeelCustomMenuLinkNewWindow :: Bool
-    }
+data AppConfigLookAndFeelCustomMenuLink = AppConfigLookAndFeelCustomMenuLink
+  { icon :: String
+  , title :: String
+  , url :: String
+  , newWindow :: Bool
+  }
   deriving (Show, Eq, Generic)
 
-data AppConfigRegistry =
-  AppConfigRegistry
-    { _appConfigRegistryEnabled :: Bool
-    , _appConfigRegistryToken :: String
-    }
+data AppConfigRegistry = AppConfigRegistry
+  { enabled :: Bool
+  , token :: String
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigKnowledgeModel =
-  AppConfigKnowledgeModel
-    { _appConfigKnowledgeModelPublic :: AppConfigKnowledgeModelPublic
-    , _appConfigKnowledgeModelIntegrationConfig :: String
-    }
+data AppConfigKnowledgeModel = AppConfigKnowledgeModel
+  { public :: AppConfigKnowledgeModelPublic
+  , integrationConfig :: String
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigKnowledgeModelPublic =
-  AppConfigKnowledgeModelPublic
-    { _appConfigKnowledgeModelPublicEnabled :: Bool
-    , _appConfigKnowledgeModelPublicPackages :: [PackagePattern]
-    }
+data AppConfigKnowledgeModelPublic = AppConfigKnowledgeModelPublic
+  { enabled :: Bool
+  , packages :: [PackagePattern]
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigQuestionnaire =
-  AppConfigQuestionnaire
-    { _appConfigQuestionnaireQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
-    , _appConfigQuestionnaireQuestionnaireSharing :: AppConfigQuestionnaireSharing
-    , _appConfigQuestionnaireQuestionnaireCreation :: QuestionnaireCreation
-    , _appConfigQuestionnaireProjectTagging :: AppConfigQuestionnaireProjectTagging
-    , _appConfigQuestionnaireSummaryReport :: SimpleFeature
-    , _appConfigQuestionnaireFeedback :: AppConfigQuestionnaireFeedback
-    }
+data AppConfigQuestionnaire = AppConfigQuestionnaire
+  { questionnaireVisibility :: AppConfigQuestionnaireVisibility
+  , questionnaireSharing :: AppConfigQuestionnaireSharing
+  , questionnaireCreation :: QuestionnaireCreation
+  , projectTagging :: AppConfigQuestionnaireProjectTagging
+  , summaryReport :: SimpleFeature
+  , feedback :: AppConfigQuestionnaireFeedback
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigQuestionnaireVisibility =
-  AppConfigQuestionnaireVisibility
-    { _appConfigQuestionnaireVisibilityEnabled :: Bool
-    , _appConfigQuestionnaireVisibilityDefaultValue :: QuestionnaireVisibility
-    }
+data AppConfigQuestionnaireVisibility = AppConfigQuestionnaireVisibility
+  { enabled :: Bool
+  , defaultValue :: QuestionnaireVisibility
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigQuestionnaireSharing =
-  AppConfigQuestionnaireSharing
-    { _appConfigQuestionnaireSharingEnabled :: Bool
-    , _appConfigQuestionnaireSharingDefaultValue :: QuestionnaireSharing
-    , _appConfigQuestionnaireSharingAnonymousEnabled :: Bool
-    }
+data AppConfigQuestionnaireSharing = AppConfigQuestionnaireSharing
+  { enabled :: Bool
+  , defaultValue :: QuestionnaireSharing
+  , anonymousEnabled :: Bool
+  }
   deriving (Generic, Eq, Show)
 
 data QuestionnaireCreation
@@ -199,85 +182,75 @@ data QuestionnaireCreation
   | TemplateAndCustomQuestionnaireCreation
   deriving (Generic, Eq, Show)
 
-data AppConfigQuestionnaireProjectTagging =
-  AppConfigQuestionnaireProjectTagging
-    { _appConfigQuestionnaireProjectTaggingEnabled :: Bool
-    , _appConfigQuestionnaireProjectTaggingTags :: [String]
-    }
+data AppConfigQuestionnaireProjectTagging = AppConfigQuestionnaireProjectTagging
+  { enabled :: Bool
+  , tags :: [String]
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigQuestionnaireFeedback =
-  AppConfigQuestionnaireFeedback
-    { _appConfigQuestionnaireFeedbackEnabled :: Bool
-    , _appConfigQuestionnaireFeedbackToken :: String
-    , _appConfigQuestionnaireFeedbackOwner :: String
-    , _appConfigQuestionnaireFeedbackRepo :: String
-    }
+data AppConfigQuestionnaireFeedback = AppConfigQuestionnaireFeedback
+  { enabled :: Bool
+  , token :: String
+  , owner :: String
+  , repo :: String
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigTemplate =
-  AppConfigTemplate
-    { _appConfigTemplateRecommendedTemplateId :: Maybe String
-    }
+data AppConfigTemplate = AppConfigTemplate
+  { recommendedTemplateId :: Maybe String
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigSubmission =
-  AppConfigSubmission
-    { _appConfigSubmissionEnabled :: Bool
-    , _appConfigSubmissionServices :: [AppConfigSubmissionService]
-    }
+data AppConfigSubmission = AppConfigSubmission
+  { enabled :: Bool
+  , services :: [AppConfigSubmissionService]
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigSubmissionService =
-  AppConfigSubmissionService
-    { _appConfigSubmissionServiceSId :: String
-    , _appConfigSubmissionServiceName :: String
-    , _appConfigSubmissionServiceDescription :: String
-    , _appConfigSubmissionServiceProps :: [String]
-    , _appConfigSubmissionServiceSupportedFormats :: [AppConfigSubmissionServiceSupportedFormat]
-    , _appConfigSubmissionServiceRequest :: AppConfigSubmissionServiceRequest
-    }
+data AppConfigSubmissionService = AppConfigSubmissionService
+  { sId :: String
+  , name :: String
+  , description :: String
+  , props :: [String]
+  , supportedFormats :: [AppConfigSubmissionServiceSupportedFormat]
+  , request :: AppConfigSubmissionServiceRequest
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigSubmissionServiceSupportedFormat =
-  AppConfigSubmissionServiceSupportedFormat
-    { _appConfigSubmissionServiceSupportedFormatTemplateId :: String
-    , _appConfigSubmissionServiceSupportedFormatFormatUuid :: U.UUID
-    }
+data AppConfigSubmissionServiceSupportedFormat = AppConfigSubmissionServiceSupportedFormat
+  { templateId :: String
+  , formatUuid :: U.UUID
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigSubmissionServiceRequest =
-  AppConfigSubmissionServiceRequest
-    { _appConfigSubmissionServiceRequestMethod :: String
-    , _appConfigSubmissionServiceRequestUrl :: String
-    , _appConfigSubmissionServiceRequestHeaders :: M.Map String String
-    , _appConfigSubmissionServiceRequestMultipart :: AppConfigSubmissionServiceRequestMultipart
-    }
+data AppConfigSubmissionServiceRequest = AppConfigSubmissionServiceRequest
+  { method :: String
+  , url :: String
+  , headers :: M.Map String String
+  , multipart :: AppConfigSubmissionServiceRequestMultipart
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigSubmissionServiceRequestMultipart =
-  AppConfigSubmissionServiceRequestMultipart
-    { _appConfigSubmissionServiceRequestMultipartEnabled :: Bool
-    , _appConfigSubmissionServiceRequestMultipartFileName :: String
-    }
+data AppConfigSubmissionServiceRequestMultipart = AppConfigSubmissionServiceRequestMultipart
+  { enabled :: Bool
+  , fileName :: String
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigFeature =
-  AppConfigFeature
-    { _appConfigFeatureClientCustomizationEnabled :: Bool
-    , _appConfigFeaturePdfOnlyEnabled :: Bool
-    , _appConfigFeaturePdfWatermarkEnabled :: Bool
-    }
+data AppConfigFeature = AppConfigFeature
+  { clientCustomizationEnabled :: Bool
+  , pdfOnlyEnabled :: Bool
+  , pdfWatermarkEnabled :: Bool
+  }
   deriving (Generic, Eq, Show)
 
-data AppConfigOwl =
-  AppConfigOwl
-    { _appConfigOwlEnabled :: Bool
-    , _appConfigOwlName :: String
-    , _appConfigOwlOrganizationId :: String
-    , _appConfigOwlKmId :: String
-    , _appConfigOwlVersion :: String
-    , _appConfigOwlPreviousPackageId :: Maybe String
-    , _appConfigOwlRootElement :: String
-    }
+data AppConfigOwl = AppConfigOwl
+  { enabled :: Bool
+  , name :: String
+  , organizationId :: String
+  , kmId :: String
+  , version :: String
+  , previousPackageId :: Maybe String
+  , rootElement :: String
+  }
   deriving (Generic, Eq, Show)

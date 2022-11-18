@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0025_locale_2.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0025_locale_2.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -28,8 +28,8 @@ changeLocaleShortcutToCode dbPool = do
 insertDefaultLocale dbPool = do
   let sql =
         "INSERT INTO locale \
-         \VALUES ('b5f6ea5e-89c2-4419-930a-69980bbc36e8', 'English', 'en', true, true, '00000000-0000-0000-0000-000000000000', \
-         \        '2022-01-21 00:00:00.000000 +00:00', '2022-01-21 00:00:00.000000 +00:00');"
+        \VALUES ('b5f6ea5e-89c2-4419-930a-69980bbc36e8', 'English', 'en', true, true, '00000000-0000-0000-0000-000000000000', \
+        \        '2022-01-21 00:00:00.000000 +00:00', '2022-01-21 00:00:00.000000 +00:00');"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

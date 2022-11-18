@@ -1,6 +1,5 @@
 module Wizard.Specs.Websocket.Branch.Detail.Common where
 
-import Control.Lens
 import Data.Aeson
 import Data.Foldable (traverse_)
 import Data.Maybe (fromJust)
@@ -9,7 +8,6 @@ import Network.WebSockets
 import System.Timeout
 import Test.Hspec.Expectations.Pretty
 
-import LensesConfig hiding (request)
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Util.JSON
@@ -21,6 +19,8 @@ import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Wizard.Model.Branch.BranchList
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.Branch.BranchService
@@ -51,37 +51,38 @@ reqUrlT bUuid mUser =
 -- --------------------------------
 -- DATABASE
 -- --------------------------------
-insertBranchAndUsers appContext branch branchData
+insertBranchAndUsers appContext branch branchData =
   -- Prepare DB
- = do
-  runInContext U.runMigration appContext
-  runInContextIO TML_Migration.runMigration appContext
-  runInContextIO (insertPackage germanyPackage) appContext
-  runInContextIO (insertBranch branch) appContext
-  runInContextIO (insertBranchData branchData) appContext
-  runInContextIO
-    (createBranchWithParams
-       (leidenBranch ^. uuid)
-       (leidenBranch ^. createdAt)
-       (fromJust $ appContext ^. currentUser)
-       leidenBranchCreate)
-    appContext
+  do
+    runInContext U.runMigration appContext
+    runInContextIO TML_Migration.runMigration appContext
+    runInContextIO (insertPackage germanyPackage) appContext
+    runInContextIO (insertBranch branch) appContext
+    runInContextIO (insertBranchData branchData) appContext
+    runInContextIO
+      ( createBranchWithParams
+          leidenBranch.uuid
+          leidenBranch.createdAt
+          (fromJust appContext.currentUser)
+          leidenBranchCreate
+      )
+      appContext
 
 -- --------------------------------
 -- CONNECT
 -- --------------------------------
-connectTestWebsocketUsers appContext bUuid
+connectTestWebsocketUsers appContext bUuid =
   -- Clear websockets
- = do
-  clearConnections appContext bUuid
-  -- Connect 1. user
-  (c1, s1) <- createConnection appContext (reqUrlT bUuid (Just reqAuthToken))
-  read_SetUserList c1 0
-  -- Connect 2. user
-  (c2, s2) <- createConnection appContext (reqUrlT bUuid (Just reqNonAdminAuthToken))
-  read_SetUserList c1 1
-  read_SetUserList c2 1
-  return ((c1, s1), (c2, s2))
+  do
+    clearConnections appContext bUuid
+    -- Connect 1. user
+    (c1, s1) <- createConnection appContext (reqUrlT bUuid (Just reqAuthToken))
+    read_SetUserList c1 0
+    -- Connect 2. user
+    (c2, s2) <- createConnection appContext (reqUrlT bUuid (Just reqNonAdminAuthToken))
+    read_SetUserList c1 1
+    read_SetUserList c2 1
+    return ((c1, s1), (c2, s2))
 
 read_SetUserList connection expConnectionCount = do
   resDto <- receiveData connection
@@ -117,9 +118,9 @@ nothingWasReceived connection = do
 clearConnections :: AppContext -> U.UUID -> IO ()
 clearConnections appContext bUuid = do
   (Right records) <- runInContext getAllFromCache appContext
-  traverse_ (clearConnection appContext bUuid) . filter (\r -> r ^. entityId == U.toString bUuid) $ records
+  traverse_ (clearConnection appContext bUuid) . filter (\r -> r.entityId == U.toString bUuid) $ records
 
 clearConnection :: AppContext -> U.UUID -> WebsocketRecord -> IO ()
 clearConnection appContext bUuid record = do
-  runInContext (deleteUser (U.toString bUuid) (record ^. connectionUuid)) appContext
+  runInContext (deleteUser (U.toString bUuid) record.connectionUuid) appContext
   return ()

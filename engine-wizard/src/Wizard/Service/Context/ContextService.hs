@@ -1,10 +1,9 @@
 module Wizard.Service.Context.ContextService where
 
 import qualified Control.Exception.Base as E
-import Control.Lens ((.~), (^.), (^?), _Just)
 import Control.Monad (when)
 import Control.Monad.Reader (ask, asks, liftIO)
-import Data.Aeson (Value(..), toJSON)
+import Data.Aeson (Value (..), toJSON)
 import Data.Foldable (traverse_)
 import qualified Data.HashMap.Strict as HashMap
 import Data.Maybe (fromMaybe)
@@ -12,11 +11,14 @@ import qualified Data.Text as T
 import qualified Data.UUID as U
 import System.Log.Raven (initRaven, register, stderrFallback)
 import System.Log.Raven.Transport.HttpConduit (sendRecord)
-import System.Log.Raven.Types (SentryLevel(Error), SentryRecord(..))
+import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..))
 
-import LensesConfig
+import Shared.Model.Config.BuildInfoConfig
+import Shared.Model.Config.ServerConfig
 import Shared.Util.Uuid
 import Wizard.Database.DAO.App.AppDAO
+import Wizard.Model.App.App
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextResult
 import Wizard.Service.Acl.AclService
@@ -27,16 +29,17 @@ import Wizard.Util.Logger
 runFunctionForAllApps :: String -> AppContextM (ContextResult, Maybe String) -> AppContextM ()
 runFunctionForAllApps functionName function = do
   apps <- findApps
-  traverse_ (\app -> runFunctionUnderDifferentUserAndApp Nothing (app ^. uuid) functionName function) apps
+  traverse_ (\app -> runFunctionUnderDifferentUserAndApp Nothing app.uuid functionName function) apps
 
-runFunctionUnderDifferentUserAndApp ::
-     Maybe User -> U.UUID -> String -> AppContextM (ContextResult, Maybe String) -> AppContextM ()
+runFunctionUnderDifferentUserAndApp
+  :: Maybe User -> U.UUID -> String -> AppContextM (ContextResult, Maybe String) -> AppContextM ()
 runFunctionUnderDifferentUserAndApp mUser appUuid functionName function = do
   logInfoU
     _CMP_SERVICE
-    (f'
-       "Running '%s' with app ('%s') and user ('%s') started"
-       [functionName, U.toString appUuid, show . fmap (U.toString . _userUuid) $ mUser])
+    ( f'
+        "Running '%s' with app ('%s') and user ('%s') started"
+        [functionName, U.toString appUuid, show . fmap (U.toString . ((.uuid))) $ mUser]
+    )
   context <- ask
   newTraceUuid <- liftIO generateUuid
   eResult <- liftIO . E.try $ runAppContextWithAppContext function (updateContext mUser appUuid newTraceUuid context)
@@ -49,33 +52,40 @@ runFunctionUnderDifferentUserAndApp mUser appUuid functionName function = do
     SuccessContextResult ->
       logInfoU
         _CMP_SERVICE
-        (f'
-           "Running '%s' with app ('%s') and user ('%s') finished successfully. It returns: '%s''"
-           [functionName, U.toString appUuid, show . fmap (U.toString . _userUuid) $ mUser, show mReturnedMessage])
+        ( f'
+            "Running '%s' with app ('%s') and user ('%s') finished successfully. It returns: '%s''"
+            [functionName, U.toString appUuid, show . fmap (U.toString . ((.uuid))) $ mUser, show mReturnedMessage]
+        )
     ErrorContextResult -> do
       logInfoU
         _CMP_SERVICE
-        (f'
-           "Running '%s' with app ('%s') and user ('%s') failed. The reason is: '%s''"
-           [functionName, U.toString appUuid, show . fmap (U.toString . _userUuid) $ mUser, show mReturnedMessage])
+        ( f'
+            "Running '%s' with app ('%s') and user ('%s') failed. The reason is: '%s''"
+            [functionName, U.toString appUuid, show . fmap (U.toString . ((.uuid))) $ mUser, show mReturnedMessage]
+        )
       sendToSentry mUser appUuid functionName mReturnedMessage
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
 updateContext :: Maybe User -> U.UUID -> U.UUID -> AppContext -> AppContext
-updateContext mUser aUuid newTraceUuid =
-  (appUuid .~ aUuid) . (currentUser .~ fmap UM.toDTO mUser) . (traceUuid .~ newTraceUuid)
+updateContext mUser aUuid newTraceUuid context =
+  context
+    { currentAppUuid = aUuid
+    , currentUser = fmap UM.toDTO mUser
+    , traceUuid = newTraceUuid
+    }
 
 sendToSentry :: Maybe User -> U.UUID -> String -> Maybe String -> AppContextM ()
 sendToSentry mUser appUuid functionName mErrorMessage = do
-  serverConfig <- asks _appContextServerConfig
+  serverConfig <- asks serverConfig
   when
-    (serverConfig ^. sentry . enabled)
-    (do let sentryDsn = serverConfig ^. sentry . dsn
+    serverConfig.sentry.enabled
+    ( do
+        let sentryDsn = serverConfig.sentry.dsn
         sentryService <- liftIO $ initRaven sentryDsn id sendRecord stderrFallback
-        buildInfoConfig <- asks _appContextBuildInfoConfig
-        let buildVersion = buildInfoConfig ^. version
+        buildInfoConfig <- asks buildInfoConfig
+        let buildVersion = buildInfoConfig.version
         let message = fromMaybe "" mErrorMessage
         liftIO $
           register
@@ -83,11 +93,12 @@ sendToSentry mUser appUuid functionName mErrorMessage = do
             "persistentCommandLogger"
             Error
             message
-            (recordUpdate buildVersion mUser appUuid functionName mErrorMessage))
+            (recordUpdate buildVersion mUser appUuid functionName mErrorMessage)
+    )
 
 recordUpdate :: String -> Maybe User -> U.UUID -> String -> Maybe String -> SentryRecord -> SentryRecord
 recordUpdate buildVersion mUser appUuid functionName mErrorMessage record =
-  let userUuid = maybe "anonymous" U.toString (mUser ^? _Just . uuid)
+  let userUuid = maybe "anonymous" (U.toString . (.uuid)) mUser
    in record
         { srRelease = Just buildVersion
         , srInterfaces =

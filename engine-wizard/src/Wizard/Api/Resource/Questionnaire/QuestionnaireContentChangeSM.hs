@@ -9,4 +9,4 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeJM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 
 instance ToSchema QuestionnaireContentChangeDTO where
-  declareNamedSchema = simpleToSchema contentChangeDTO
+  declareNamedSchema = toSwagger contentChangeDTO

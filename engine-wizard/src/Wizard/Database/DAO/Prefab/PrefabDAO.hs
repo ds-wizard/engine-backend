@@ -13,12 +13,12 @@ entityName = "prefab"
 
 findPrefabs :: AppContextM [Prefab]
 findPrefabs = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findPrefabsFiltered :: [(String, String)] -> AppContextM [Prefab]
 findPrefabsFiltered queryParams = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
 
 insertPrefab :: Prefab -> AppContextM Int64

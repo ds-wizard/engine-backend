@@ -12,4 +12,4 @@ import Wizard.Model.Submission.Submission
 instance ToSchema SubmissionState
 
 instance ToSchema SubmissionDTO where
-  declareNamedSchema = simpleToSchema submission1Dto
+  declareNamedSchema = toSwagger submission1Dto

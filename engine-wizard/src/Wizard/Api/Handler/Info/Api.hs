@@ -6,9 +6,9 @@ import Servant.Swagger.Tags
 import Wizard.Api.Handler.Info.List_GET
 import Wizard.Model.Context.BaseContext
 
-type InfoAPI
-   = Tags "Info"
-     :> List_GET
+type InfoAPI =
+  Tags "Info"
+    :> List_GET
 
 infoApi :: Proxy InfoAPI
 infoApi = Proxy

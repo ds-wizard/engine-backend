@@ -1,16 +1,15 @@
 module Wizard.Service.Cache.QuestionnaireWebsocketCache where
 
-import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.Cache as C
 import qualified Data.Hashable as H
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.String
+import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.Cache.Common
@@ -21,7 +20,7 @@ cacheKey connectionUuid = f' "connection: '%s'" [U.toString connectionUuid]
 
 addToCache :: WebsocketRecord -> AppContextM ()
 addToCache record = do
-  let key = cacheKey (record ^. connectionUuid)
+  let key = cacheKey record.connectionUuid
   logCacheAddBefore cacheName key
   qwCache <- getCache
   liftIO $ C.insert qwCache (H.hash key) record
@@ -50,7 +49,7 @@ getFromCache connectionUuid = do
 
 updateCache :: WebsocketRecord -> AppContextM ()
 updateCache record = do
-  let key = cacheKey (record ^. connectionUuid)
+  let key = cacheKey record.connectionUuid
   logCacheModifyBefore cacheName key
   qwCache <- getCache
   liftIO $ C.insert qwCache (H.hash key) record
@@ -79,5 +78,5 @@ countCache = do
 
 getCache :: AppContextM (C.Cache Int WebsocketRecord)
 getCache = do
-  cache <- asks _appContextCache
-  return $ cache ^. questionnaireWebsocket
+  cache <- asks cache
+  return $ cache.questionnaireWebsocket

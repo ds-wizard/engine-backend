@@ -2,11 +2,11 @@ module Wizard.Api.Resource.UserToken.UserTokenJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.UserToken.UserTokenDTO
 
 instance FromJSON UserTokenDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON UserTokenDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

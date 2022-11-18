@@ -9,18 +9,18 @@ data ActionKeyType
   | ForgottenTokenActionKey
   deriving (Show, Eq, Generic, Read)
 
-data ActionKey =
-  ActionKey
-    { _actionKeyUuid :: U.UUID
-    , _actionKeyOrganizationId :: String
-    , _actionKeyAType :: ActionKeyType
-    , _actionKeyHash :: String
-    , _actionKeyCreatedAt :: UTCTime
-    }
+data ActionKey = ActionKey
+  { uuid :: U.UUID
+  , organizationId :: String
+  , aType :: ActionKeyType
+  , hash :: String
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq ActionKey where
   a == b =
-    _actionKeyUuid a == _actionKeyUuid b &&
-    _actionKeyOrganizationId a == _actionKeyOrganizationId b &&
-    _actionKeyAType a == _actionKeyAType b && _actionKeyHash a == _actionKeyHash b
+    a.uuid == b.uuid
+      && a.organizationId == b.organizationId
+      && a.aType == b.aType
+      && a.hash == b.hash

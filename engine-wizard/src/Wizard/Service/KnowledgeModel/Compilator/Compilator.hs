@@ -1,6 +1,6 @@
-module Wizard.Service.KnowledgeModel.Compilator.Compilator
-  ( compile
-  ) where
+module Wizard.Service.KnowledgeModel.Compilator.Compilator (
+  compile,
+) where
 
 import Shared.Model.Error.Error
 import Shared.Model.Event.Event

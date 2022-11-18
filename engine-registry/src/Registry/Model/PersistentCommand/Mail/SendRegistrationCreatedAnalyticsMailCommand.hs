@@ -3,20 +3,19 @@ module Registry.Model.PersistentCommand.Mail.SendRegistrationCreatedAnalyticsMai
 import Data.Aeson
 import GHC.Generics
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
-data SendRegistrationCreatedAnalyticsMailCommand =
-  SendRegistrationCreatedAnalyticsMailCommand
-    { _sendRegistrationCreatedAnalyticsMailCommandEmail :: String
-    , _sendRegistrationCreatedAnalyticsMailCommandOrganizationId :: String
-    , _sendRegistrationCreatedAnalyticsMailCommandOrganizationName :: String
-    , _sendRegistrationCreatedAnalyticsMailCommandOrganizationEmail :: String
-    , _sendRegistrationCreatedAnalyticsMailCommandClientUrl :: String
-    }
+data SendRegistrationCreatedAnalyticsMailCommand = SendRegistrationCreatedAnalyticsMailCommand
+  { email :: String
+  , organizationId :: String
+  , organizationName :: String
+  , organizationEmail :: String
+  , clientUrl :: String
+  }
   deriving (Show, Eq, Generic)
 
 instance FromJSON SendRegistrationCreatedAnalyticsMailCommand where
-  parseJSON = simpleParseJSON "_sendRegistrationCreatedAnalyticsMailCommand"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SendRegistrationCreatedAnalyticsMailCommand where
-  toJSON = simpleToJSON "_sendRegistrationCreatedAnalyticsMailCommand"
+  toJSON = genericToJSON jsonOptions

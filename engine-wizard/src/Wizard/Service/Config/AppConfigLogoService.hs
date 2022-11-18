@@ -1,14 +1,13 @@
 module Wizard.Service.Config.AppConfigLogoService where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.Hashable as H
 import Data.Time
 
-import LensesConfig
 import Shared.Util.String (splitOn)
 import Wizard.Database.DAO.Common
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.S3.Public.PublicS3
 import Wizard.Service.Acl.AclService
@@ -18,18 +17,17 @@ import Wizard.Service.Config.AppConfigService
 import Wizard.Util.Logger
 
 uploadLogo :: String -> String -> BSL.ByteString -> AppContextM ()
-uploadLogo plainFileName contentType content
+uploadLogo plainFileName contentType content =
   -- 1. Check permission
- =
   runInTransaction $ do
     checkPermission _CFG_PERM
     checkIfClientCustomizationIsEnabled
     -- 2. Get current config
-    serverConfig <- asks _appContextServerConfig
+    serverConfig <- asks serverConfig
     appConfig <- getAppConfig
     -- 3. Upload logo
     let logoFileName = getLogoFileName plainFileName content
-    if fmap extractFileName (appConfig ^. lookAndFeel . logoUrl) == Just logoFileName
+    if fmap extractFileName appConfig.lookAndFeel.logoUrl == Just logoFileName
       then logInfoU _CMP_SERVICE (f' "The logo is the same (%s). No action needed" [logoFileName])
       else do
         logInfoU _CMP_SERVICE (f' "Uploading logo with file ()..." [logoFileName])
@@ -43,20 +41,19 @@ uploadLogo plainFileName contentType content
         -- 5. Compile Client CSS
         updatedAppConfigWithCss <- invokeClientCssCompilation appConfig updatedAppConfig
         -- 6. Remove old logo if exists
-        removeOldConfig "logo" appConfig logoUrl
+        removeOldConfig "logo" appConfig appConfig.lookAndFeel.logoUrl
         -- 7. Update
         modifyAppConfig updatedAppConfigWithCss
         return ()
 
 deleteLogo :: AppContextM ()
-deleteLogo
+deleteLogo =
   -- 1. Check permission
- =
   runInTransaction $ do
     checkPermission _CFG_PERM
     checkIfClientCustomizationIsEnabled
     -- 2. Get current config
-    serverConfig <- asks _appContextServerConfig
+    serverConfig <- asks serverConfig
     appConfig <- getAppConfig
     -- 3. Update database
     now <- liftIO getCurrentTime
@@ -64,7 +61,7 @@ deleteLogo
     updatedAppConfigWithCss <- invokeClientCssCompilation appConfig updatedAppConfig
     modifyAppConfig updatedAppConfigWithCss
     -- 6. Remove logo
-    removeOldConfig "logo" appConfig logoUrl
+    removeOldConfig "logo" appConfig appConfig.lookAndFeel.logoUrl
 
 -- --------------------------------
 -- PRIVATE
@@ -80,4 +77,4 @@ getLogoFileName plainFileName content =
    in f' "logo.%s%s" [hash, suffix]
 
 checkIfClientCustomizationIsEnabled =
-  checkIfAppFeatureIsEnabled "Client Customization" (feature . clientCustomizationEnabled)
+  checkIfAppFeatureIsEnabled "Client Customization" (\c -> c.feature.clientCustomizationEnabled)

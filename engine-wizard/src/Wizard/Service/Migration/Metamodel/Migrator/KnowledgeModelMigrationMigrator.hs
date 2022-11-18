@@ -1,6 +1,6 @@
-module Wizard.Service.Migration.Metamodel.Migrator.KnowledgeModelMigrationMigrator
-  ( migrateAllInDB
-  ) where
+module Wizard.Service.Migration.Metamodel.Migrator.KnowledgeModelMigrationMigrator (
+  migrateAllInDB,
+) where
 
 import Data.Aeson
 import Data.Foldable (traverse_)
@@ -20,7 +20,8 @@ migrateAllInDB = do
         ( "knowledge_model_migration"
         , "branch_uuid"
         , "branch_events, target_package_events, result_events"
-        , "branch_events = ?, target_package_events = ?, result_events = ?")
+        , "branch_events = ?, target_package_events = ?, result_events = ?"
+        )
   logMigrationStarted entityName
   entities <- findOutdatedModels entityName eventsField idField
   traverse_ (migrateOneInDB entityName eventsFieldUpdate idField) entities
@@ -45,15 +46,14 @@ migrateOneInDB entityName eventsField idField MetamodelMigration {..} =
           , toField entityId
           ]
 
-data MetamodelMigration =
-  MetamodelMigration
-    { entityId :: U.UUID
-    , createdAt :: UTCTime
-    , oldMetamodelVersion :: Int
-    , branchEvents :: Value
-    , targetPackageEvents :: Value
-    , resultEvents :: Value
-    }
+data MetamodelMigration = MetamodelMigration
+  { entityId :: U.UUID
+  , createdAt :: UTCTime
+  , oldMetamodelVersion :: Int
+  , branchEvents :: Value
+  , targetPackageEvents :: Value
+  , resultEvents :: Value
+  }
 
 instance FromRow MetamodelMigration where
   fromRow = do

@@ -2,7 +2,7 @@ module Registry.Util.Template where
 
 import qualified Data.HashMap.Strict as HashMap
 import Data.Hashable
-import System.IO (IOMode(ReadMode), hGetContents, openFile)
+import System.IO (IOMode (ReadMode), hGetContents, openFile)
 import System.IO.Error (tryIOError)
 import Text.Ginger (formatParserError, makeContextHtml, parseGingerFile, runGinger, toGVal)
 import Text.Ginger.GVal (GVal, ToGVal)

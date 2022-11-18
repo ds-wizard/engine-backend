@@ -4,16 +4,15 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-data AppPlan =
-  AppPlan
-    { _appPlanUuid :: U.UUID
-    , _appPlanName :: String
-    , _appPlanUsers :: Maybe Int
-    , _appPlanSince :: Maybe UTCTime
-    , _appPlanUntil :: Maybe UTCTime
-    , _appPlanTest :: Bool
-    , _appPlanAppUuid :: U.UUID
-    , _appPlanCreatedAt :: UTCTime
-    , _appPlanUpdatedAt :: UTCTime
-    }
+data AppPlan = AppPlan
+  { uuid :: U.UUID
+  , name :: String
+  , users :: Maybe Int
+  , since :: Maybe UTCTime
+  , until :: Maybe UTCTime
+  , test :: Bool
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

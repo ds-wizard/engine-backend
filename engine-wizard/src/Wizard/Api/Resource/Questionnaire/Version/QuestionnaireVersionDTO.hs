@@ -6,22 +6,21 @@ import GHC.Generics
 
 import Wizard.Api.Resource.User.UserSuggestionDTO
 
-data QuestionnaireVersionDTO =
-  QuestionnaireVersionDTO
-    { _questionnaireVersionDTOUuid :: U.UUID
-    , _questionnaireVersionDTOName :: String
-    , _questionnaireVersionDTODescription :: Maybe String
-    , _questionnaireVersionDTOEventUuid :: U.UUID
-    , _questionnaireVersionDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _questionnaireVersionDTOCreatedAt :: UTCTime
-    , _questionnaireVersionDTOUpdatedAt :: UTCTime
-    }
+data QuestionnaireVersionDTO = QuestionnaireVersionDTO
+  { uuid :: U.UUID
+  , name :: String
+  , description :: Maybe String
+  , eventUuid :: U.UUID
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq QuestionnaireVersionDTO where
   a == b =
-    _questionnaireVersionDTOUuid a == _questionnaireVersionDTOUuid b &&
-    _questionnaireVersionDTOName a == _questionnaireVersionDTOName b &&
-    _questionnaireVersionDTODescription a == _questionnaireVersionDTODescription b &&
-    _questionnaireVersionDTOEventUuid a == _questionnaireVersionDTOEventUuid b &&
-    _questionnaireVersionDTOCreatedBy a == _questionnaireVersionDTOCreatedBy b
+    a.uuid == b.uuid
+      && a.name == b.name
+      && a.description == b.description
+      && a.eventUuid == b.eventUuid
+      && a.createdBy == b.createdBy

@@ -9,4 +9,4 @@ import Wizard.Api.Resource.Template.TemplateChangeJM ()
 import Wizard.Database.Migration.Development.Template.Data.Templates
 
 instance ToSchema TemplateChangeDTO where
-  declareNamedSchema = simpleToSchema commonWizardTemplateEditedChangeDto
+  declareNamedSchema = toSwagger commonWizardTemplateEditedChangeDto

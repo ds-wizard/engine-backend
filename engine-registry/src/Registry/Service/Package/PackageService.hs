@@ -1,13 +1,11 @@
-module Registry.Service.Package.PackageService
-  ( getSimplePackagesFiltered
-  , getPackageById
-  , getSeriesOfPackages
-  ) where
+module Registry.Service.Package.PackageService (
+  getSimplePackagesFiltered,
+  getPackageById,
+  getSeriesOfPackages,
+) where
 
-import Control.Lens ((^.))
 import qualified Data.List as L
 
-import LensesConfig
 import Registry.Api.Resource.Package.PackageDetailDTO
 import Registry.Api.Resource.Package.PackageSimpleDTO
 import Registry.Database.DAO.Common
@@ -33,22 +31,23 @@ getSimplePackagesFiltered queryParams mMetamodelVersion headers =
     mapToSimpleDTO :: [Package] -> [AppContextM PackageSimpleDTO]
     mapToSimpleDTO =
       fmap
-        (\pkg -> do
-           org <- findOrganizationByOrgId (pkg ^. organizationId)
-           return $ toSimpleDTO pkg org)
+        ( \pkg -> do
+            org <- findOrganizationByOrgId pkg.organizationId
+            return $ toSimpleDTO pkg org
+        )
 
 getPackageById :: String -> AppContextM PackageDetailDTO
 getPackageById pkgId = do
   resolvedPkgId <- resolvePackageId pkgId
   pkg <- findPackageById resolvedPkgId
   versions <- getPackageVersions pkg
-  org <- findOrganizationByOrgId (pkg ^. organizationId)
+  org <- findOrganizationByOrgId pkg.organizationId
   return $ toDetailDTO pkg versions org
 
 getSeriesOfPackages :: String -> AppContextM [PackageWithEventsRaw]
 getSeriesOfPackages pkgId = do
   package <- findPackageWithEventsRawById pkgId
-  case package ^. previousPackageId of
+  case package.previousPackageId of
     Just parentPkgId -> do
       parentPackages <- getSeriesOfPackages parentPkgId
       return $ parentPackages ++ [package]
@@ -59,5 +58,5 @@ getSeriesOfPackages pkgId = do
 -- --------------------------------
 getPackageVersions :: Package -> AppContextM [String]
 getPackageVersions pkg = do
-  allPkgs <- findPackagesByOrganizationIdAndKmId (pkg ^. organizationId) (pkg ^. kmId)
-  return . L.sort . fmap _packageVersion $ allPkgs
+  allPkgs <- findPackagesByOrganizationIdAndKmId pkg.organizationId pkg.kmId
+  return . L.sort . fmap (.version) $ allPkgs

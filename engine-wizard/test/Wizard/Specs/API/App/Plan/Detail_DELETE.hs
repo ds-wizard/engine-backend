@@ -1,6 +1,6 @@
-module Wizard.Specs.API.App.Plan.Detail_DELETE
-  ( detail_DELETE
-  ) where
+module Wizard.Specs.API.App.Plan.Detail_DELETE (
+  detail_DELETE,
+) where
 
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -44,21 +44,21 @@ reqBody = ""
 -- ----------------------------------------------------
 test_204 appContext =
   it "HTTP 204 NO CONTENT" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 204
-    let expHeaders = resCorsHeaders
-    let expBody = ""
-     -- AND: Run migrations
-    runInContextIO PLAN.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-     -- AND: Find result in DB and compare with expectation state
-    assertCountInDB findAppPlans appContext 1
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 204
+      let expHeaders = resCorsHeaders
+      let expBody = ""
+      -- AND: Run migrations
+      runInContextIO PLAN.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
+      -- AND: Find result in DB and compare with expectation state
+      assertCountInDB findAppPlans appContext 1
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -1,8 +1,5 @@
 module Wizard.Service.KnowledgeModel.Squash.Event.Common where
 
-import Control.Lens ((^.))
-
-import LensesConfig
 import Shared.Model.Event.Event
 import Shared.Model.Event.EventField
 import Shared.Model.Event.EventLenses
@@ -10,10 +7,10 @@ import Shared.Model.Event.EventLenses
 class EventSquash oldEvent newEvent where
   squashEvent :: oldEvent -> newEvent -> [Event]
 
-applyValue oldEvent newEvent accessor =
-  case newEvent ^. accessor of
+applyValue oldEvent newEvent getter =
+  case getter newEvent of
     (ChangedValue value) -> ChangedValue value
-    NothingChanged -> oldEvent ^. accessor
+    NothingChanged -> getter oldEvent
 
 class SimpleEventSquash event where
   isSimpleEventSquashApplicable :: event -> Bool
@@ -21,15 +18,15 @@ class SimpleEventSquash event where
   isTypeChanged :: event -> event -> Bool
   simpleSquashEvent :: Maybe Event -> event -> event -> event
 
-isChanged lens event =
-  case event ^. lens of
+isChanged getter event =
+  case getter event of
     (ChangedValue _) -> True
     NothingChanged -> False
 
 applyValueIfSameEntity mPreviousEvent oldEvent newEvent accessor =
   case mPreviousEvent of
     Just previousEvent ->
-      if previousEvent ^. entityUuid' == newEvent ^. entityUuid
+      if getEntityUuid previousEvent == newEvent.entityUuid
         then applyValue oldEvent newEvent accessor
         else NothingChanged
     _ -> NothingChanged

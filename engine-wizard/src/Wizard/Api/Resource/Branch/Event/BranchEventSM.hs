@@ -12,4 +12,4 @@ instance ToSchema BranchEventDTO where
   declareNamedSchema = genericDeclareNamedSchemaUnrestricted defaultSchemaOptions
 
 instance ToSchema AddBranchEventDTO where
-  declareNamedSchema = simpleToSchema' "_addBranchEventDTO" branchEvent1'
+  declareNamedSchema = toSwagger branchEvent1'

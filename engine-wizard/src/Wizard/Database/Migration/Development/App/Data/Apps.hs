@@ -11,48 +11,48 @@ import Wizard.Model.App.App
 defaultApp :: App
 defaultApp =
   App
-    { _appUuid = defaultAppUuid
-    , _appAppId = "default"
-    , _appName = "Default App"
-    , _appServerDomain = "localhost:3000"
-    , _appServerUrl = "http://localhost:3000"
-    , _appClientUrl = "http://localhost:8080"
-    , _appEnabled = True
-    , _appCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
-    , _appUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    { uuid = defaultAppUuid
+    , appId = "default"
+    , name = "Default App"
+    , serverDomain = "localhost:3000"
+    , serverUrl = "http://localhost:3000"
+    , clientUrl = "http://localhost:8080"
+    , enabled = True
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
 
 differentApp :: App
 differentApp =
   App
-    { _appUuid = u' "d9e73946-faa6-449d-83e4-2e38371b7bfa"
-    , _appAppId = "different"
-    , _appName = "Different App"
-    , _appServerDomain = "different-server.example.com"
-    , _appServerUrl = "https://different-server.example.com"
-    , _appClientUrl = "https://different-client.example.com"
-    , _appEnabled = True
-    , _appCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
-    , _appUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    { uuid = u' "d9e73946-faa6-449d-83e4-2e38371b7bfa"
+    , appId = "different"
+    , name = "Different App"
+    , serverDomain = "different-server.example.com"
+    , serverUrl = "https://different-server.example.com"
+    , clientUrl = "https://different-client.example.com"
+    , enabled = True
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
 
 differentAppEdited :: App
 differentAppEdited =
   differentApp
-    { _appAppId = "different-edited"
-    , _appName = "EDtIED:Different App"
-    , _appServerDomain = "api-different-edited."
-    , _appServerUrl = "https://api-different-edited."
-    , _appClientUrl = "https://different-edited."
+    { appId = "different-edited"
+    , name = "EDtIED:Different App"
+    , serverDomain = "api-different-edited."
+    , serverUrl = "https://api-different-edited."
+    , clientUrl = "https://different-edited."
     }
 
 appCreateDto :: AppCreateDTO
 appCreateDto =
   AppCreateDTO
-    { _appCreateDTOAppId = "new-app-id"
-    , _appCreateDTOAppName = "New App"
-    , _appCreateDTOFirstName = "Max"
-    , _appCreateDTOLastName = "Planck"
-    , _appCreateDTOEmail = "max.planck@example.com"
-    , _appCreateDTOPassword = "password"
+    { appId = "new-app-id"
+    , appName = "New App"
+    , firstName = "Max"
+    , lastName = "Planck"
+    , email = "max.planck@example.com"
+    , password = "password"
     }

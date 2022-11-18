@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Development.Migration
-  ( runMigration
-  ) where
+module Wizard.Database.Migration.Development.Migration (
+  runMigration,
+) where
 
 import Shared.Constant.Component
 import qualified Wizard.Database.Migration.Development.Acl.AclMigration as ACL

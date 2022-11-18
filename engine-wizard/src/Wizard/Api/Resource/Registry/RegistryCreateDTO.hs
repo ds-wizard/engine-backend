@@ -2,8 +2,7 @@ module Wizard.Api.Resource.Registry.RegistryCreateDTO where
 
 import GHC.Generics
 
-data RegistryCreateDTO =
-  RegistryCreateDTO
-    { _registryCreateDTOEmail :: String
-    }
+data RegistryCreateDTO = RegistryCreateDTO
+  { email :: String
+  }
   deriving (Show, Eq, Generic)

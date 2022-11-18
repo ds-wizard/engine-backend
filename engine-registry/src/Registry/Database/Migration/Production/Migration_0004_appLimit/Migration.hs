@@ -1,6 +1,6 @@
-module Registry.Database.Migration.Production.Migration_0004_appLimit.Migration
-  ( definition
-  ) where
+module Registry.Database.Migration.Production.Migration_0004_appLimit.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -13,7 +13,10 @@ definition = (meta, migrate)
 
 meta =
   MigrationMeta
-    {mmNumber = 4, mmName = "App Limit", mmDescription = "Add file size and internal flag for persistent Command"}
+    { mmNumber = 4
+    , mmName = "App Limit"
+    , mmDescription = "Add file size and internal flag for persistent Command"
+    }
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
@@ -31,7 +34,7 @@ addFileSizeToTemplateAsset dbPool = do
 addInternalFlagToPersistentCommand dbPool = do
   let sql =
         "ALTER TABLE persistent_command \
-          \ADD column internal bool not null default true"
+        \ADD column internal bool not null default true"
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing

@@ -3,12 +3,11 @@ module Wizard.Api.Resource.Plan.AppPlanChangeDTO where
 import Data.Time
 import GHC.Generics
 
-data AppPlanChangeDTO =
-  AppPlanChangeDTO
-    { _appPlanChangeDTOName :: String
-    , _appPlanChangeDTOUsers :: Maybe Int
-    , _appPlanChangeDTOSince :: Maybe UTCTime
-    , _appPlanChangeDTOUntil :: Maybe UTCTime
-    , _appPlanChangeDTOTest :: Bool
-    }
+data AppPlanChangeDTO = AppPlanChangeDTO
+  { name :: String
+  , users :: Maybe Int
+  , since :: Maybe UTCTime
+  , until :: Maybe UTCTime
+  , test :: Bool
+  }
   deriving (Generic)

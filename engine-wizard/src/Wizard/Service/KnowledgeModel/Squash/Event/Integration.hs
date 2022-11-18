@@ -1,53 +1,54 @@
 module Wizard.Service.KnowledgeModel.Squash.Event.Integration where
 
-import Control.Lens ((^.))
-
-import LensesConfig
+import Shared.Model.Common.MapEntry
+import Shared.Model.Event.EventField
 import Shared.Model.Event.Integration.IntegrationEvent
 import Wizard.Service.KnowledgeModel.Squash.Event.Common
 
 instance SimpleEventSquash EditIntegrationEvent where
   isSimpleEventSquashApplicable _ = True
   isReorderEventSquashApplicable _ _ = False
+
   --  --------------------------------------
   isTypeChanged (EditApiIntegrationEvent' oldEvent) (EditApiIntegrationEvent' newEvent) = False
   isTypeChanged (EditWidgetIntegrationEvent' oldEvent) (EditWidgetIntegrationEvent' newEvent) = False
   isTypeChanged _ _ = True
+
   --  --------------------------------------
   simpleSquashEvent previousEvent (EditApiIntegrationEvent' oldEvent) (EditApiIntegrationEvent' newEvent) =
     EditApiIntegrationEvent' $
-    EditApiIntegrationEvent
-      { _editApiIntegrationEventUuid = newEvent ^. uuid
-      , _editApiIntegrationEventParentUuid = newEvent ^. parentUuid
-      , _editApiIntegrationEventEntityUuid = newEvent ^. entityUuid
-      , _editApiIntegrationEventIId = applyValue oldEvent newEvent iId
-      , _editApiIntegrationEventName = applyValue oldEvent newEvent name
-      , _editApiIntegrationEventProps = applyValue oldEvent newEvent props
-      , _editApiIntegrationEventLogo = applyValue oldEvent newEvent logo
-      , _editApiIntegrationEventRequestMethod = applyValue oldEvent newEvent requestMethod
-      , _editApiIntegrationEventRequestUrl = applyValue oldEvent newEvent requestUrl
-      , _editApiIntegrationEventRequestHeaders = applyValue oldEvent newEvent requestHeaders
-      , _editApiIntegrationEventRequestBody = applyValue oldEvent newEvent requestBody
-      , _editApiIntegrationEventRequestEmptySearch = applyValue oldEvent newEvent requestEmptySearch
-      , _editApiIntegrationEventResponseListField = applyValue oldEvent newEvent responseListField
-      , _editApiIntegrationEventResponseItemId = applyValue oldEvent newEvent responseItemId
-      , _editApiIntegrationEventResponseItemTemplate = applyValue oldEvent newEvent responseItemTemplate
-      , _editApiIntegrationEventItemUrl = applyValue oldEvent newEvent itemUrl
-      , _editApiIntegrationEventAnnotations = applyValue oldEvent newEvent annotations
-      , _editApiIntegrationEventCreatedAt = newEvent ^. createdAt
-      }
+      EditApiIntegrationEvent
+        { uuid = newEvent.uuid
+        , parentUuid = newEvent.parentUuid
+        , entityUuid = newEvent.entityUuid
+        , iId = applyValue oldEvent newEvent (iId :: EditApiIntegrationEvent -> EventField String)
+        , name = applyValue oldEvent newEvent (name :: EditApiIntegrationEvent -> EventField String)
+        , props = applyValue oldEvent newEvent (props :: EditApiIntegrationEvent -> EventField [String])
+        , logo = applyValue oldEvent newEvent (logo :: EditApiIntegrationEvent -> EventField String)
+        , requestMethod = applyValue oldEvent newEvent (requestMethod :: EditApiIntegrationEvent -> EventField String)
+        , requestUrl = applyValue oldEvent newEvent (requestUrl :: EditApiIntegrationEvent -> EventField String)
+        , requestHeaders = applyValue oldEvent newEvent (requestHeaders :: EditApiIntegrationEvent -> EventField [MapEntry String String])
+        , requestBody = applyValue oldEvent newEvent (requestBody :: EditApiIntegrationEvent -> EventField String)
+        , requestEmptySearch = applyValue oldEvent newEvent (requestEmptySearch :: EditApiIntegrationEvent -> EventField Bool)
+        , responseListField = applyValue oldEvent newEvent (responseListField :: EditApiIntegrationEvent -> EventField String)
+        , responseItemId = applyValue oldEvent newEvent (responseItemId :: EditApiIntegrationEvent -> EventField String)
+        , responseItemTemplate = applyValue oldEvent newEvent (responseItemTemplate :: EditApiIntegrationEvent -> EventField String)
+        , itemUrl = applyValue oldEvent newEvent (itemUrl :: EditApiIntegrationEvent -> EventField String)
+        , annotations = applyValue oldEvent newEvent (annotations :: EditApiIntegrationEvent -> EventField [MapEntry String String])
+        , createdAt = newEvent.createdAt
+        }
   simpleSquashEvent previousEvent (EditWidgetIntegrationEvent' oldEvent) (EditWidgetIntegrationEvent' newEvent) =
     EditWidgetIntegrationEvent' $
-    EditWidgetIntegrationEvent
-      { _editWidgetIntegrationEventUuid = newEvent ^. uuid
-      , _editWidgetIntegrationEventParentUuid = newEvent ^. parentUuid
-      , _editWidgetIntegrationEventEntityUuid = newEvent ^. entityUuid
-      , _editWidgetIntegrationEventIId = applyValue oldEvent newEvent iId
-      , _editWidgetIntegrationEventName = applyValue oldEvent newEvent name
-      , _editWidgetIntegrationEventProps = applyValue oldEvent newEvent props
-      , _editWidgetIntegrationEventLogo = applyValue oldEvent newEvent logo
-      , _editWidgetIntegrationEventWidgetUrl = applyValue oldEvent newEvent widgetUrl
-      , _editWidgetIntegrationEventItemUrl = applyValue oldEvent newEvent itemUrl
-      , _editWidgetIntegrationEventAnnotations = applyValue oldEvent newEvent annotations
-      , _editWidgetIntegrationEventCreatedAt = newEvent ^. createdAt
-      }
+      EditWidgetIntegrationEvent
+        { uuid = newEvent.uuid
+        , parentUuid = newEvent.parentUuid
+        , entityUuid = newEvent.entityUuid
+        , iId = applyValue oldEvent newEvent (iId :: EditWidgetIntegrationEvent -> EventField String)
+        , name = applyValue oldEvent newEvent (name :: EditWidgetIntegrationEvent -> EventField String)
+        , props = applyValue oldEvent newEvent (props :: EditWidgetIntegrationEvent -> EventField [String])
+        , logo = applyValue oldEvent newEvent (logo :: EditWidgetIntegrationEvent -> EventField String)
+        , widgetUrl = applyValue oldEvent newEvent (widgetUrl :: EditWidgetIntegrationEvent -> EventField String)
+        , itemUrl = applyValue oldEvent newEvent (itemUrl :: EditWidgetIntegrationEvent -> EventField String)
+        , annotations = applyValue oldEvent newEvent (annotations :: EditWidgetIntegrationEvent -> EventField [MapEntry String String])
+        , createdAt = newEvent.createdAt
+        }

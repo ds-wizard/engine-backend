@@ -2,11 +2,11 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
 
 instance FromJSON QuestionnaireCreateFromTemplateDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON QuestionnaireCreateFromTemplateDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

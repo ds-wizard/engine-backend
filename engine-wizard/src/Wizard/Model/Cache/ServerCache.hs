@@ -6,10 +6,9 @@ import Wizard.Model.User.User
 import Wizard.Model.User.UserToken
 import Wizard.Model.Websocket.WebsocketRecord
 
-data ServerCache =
-  ServerCache
-    { _serverCacheBranchWebsocket :: C.Cache Int WebsocketRecord
-    , _serverCacheQuestionnaireWebsocket :: C.Cache Int WebsocketRecord
-    , _serverCacheUser :: C.Cache Int User
-    , _serverCacheUserToken :: C.Cache Int UserToken
-    }
+data ServerCache = ServerCache
+  { branchWebsocket :: C.Cache Int WebsocketRecord
+  , questionnaireWebsocket :: C.Cache Int WebsocketRecord
+  , user :: C.Cache Int User
+  , userToken :: C.Cache Int UserToken
+  }

@@ -9,12 +9,13 @@ import Wizard.Api.Handler.QuestionnaireImporter.List_GET
 import Wizard.Api.Handler.QuestionnaireImporter.List_Suggestions_GET
 import Wizard.Model.Context.BaseContext
 
-type QuestionnaireImporterAPI
-   = Tags "QuestionnaireImporter"
-     :> (List_GET
-         :<|> List_Suggestions_GET
-         :<|> Detail_GET
-         :<|> Detail_PUT)
+type QuestionnaireImporterAPI =
+  Tags "QuestionnaireImporter"
+    :> ( List_GET
+          :<|> List_Suggestions_GET
+          :<|> Detail_GET
+          :<|> Detail_PUT
+       )
 
 questionnaireImporterApi :: Proxy QuestionnaireImporterAPI
 questionnaireImporterApi = Proxy

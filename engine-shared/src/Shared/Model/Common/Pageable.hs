@@ -1,7 +1,6 @@
 module Shared.Model.Common.Pageable where
 
-data Pageable =
-  Pageable
-    { _pageablePage :: Maybe Int
-    , _pageableSize :: Maybe Int
-    }
+data Pageable = Pageable
+  { page :: Maybe Int
+  , size :: Maybe Int
+  }

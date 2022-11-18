@@ -1,12 +1,9 @@
 module Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Expert where
 
-import Control.Lens ((^.))
 import Prelude hiding (lookup)
 
-import LensesConfig
 import Shared.Model.Event.EventLenses
 import Shared.Model.Event.Expert.ExpertEvent
-import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()
@@ -20,11 +17,11 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Tag ()
 
 instance ApplyEvent AddExpertEvent where
-  apply = applyCreateEventWithParent (entities . experts) (entities . questions) expertUuids' "Expert" "Question"
+  apply = applyCreateEventWithParent getExpertsM setExpertsM getQuestionsM setQuestionsM getExpertUuids setExpertUuids
 
 instance ApplyEvent EditExpertEvent where
-  apply = applyEditEvent (entities . experts) "Expert"
+  apply = applyEditEvent getExpertsM setExpertsM
 
 instance ApplyEvent DeleteExpertEvent where
   apply event km =
-    deleteEntityReferenceFromParentNode event questionsM expertUuids' $ deleteExpert km (event ^. entityUuid')
+    deleteEntityReferenceFromParentNode event getQuestionsM setQuestionsM getExpertUuids setExpertUuids $ deleteExpert km (getEntityUuid event)

@@ -1,10 +1,8 @@
 module Wizard.Service.App.AppMapper where
 
-import Control.Lens ((^.))
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Util.String
 import Wizard.Api.Resource.App.AppChangeDTO
 import Wizard.Api.Resource.App.AppCreateDTO
@@ -19,79 +17,79 @@ import qualified Wizard.Service.User.UserMapper as U_Mapper
 toDTO :: App -> Maybe String -> Maybe String -> AppDTO
 toDTO app mLogoUrl mPrimaryColor =
   AppDTO
-    { _appDTOUuid = app ^. uuid
-    , _appDTOAppId = app ^. appId
-    , _appDTOName = app ^. name
-    , _appDTOServerDomain = app ^. serverDomain
-    , _appDTOServerUrl = app ^. serverUrl
-    , _appDTOClientUrl = app ^. clientUrl
-    , _appDTOEnabled = app ^. enabled
-    , _appDTOLogoUrl = mLogoUrl
-    , _appDTOPrimaryColor = mPrimaryColor
-    , _appDTOCreatedAt = app ^. createdAt
-    , _appDTOUpdatedAt = app ^. updatedAt
+    { uuid = app.uuid
+    , appId = app.appId
+    , name = app.name
+    , serverDomain = app.serverDomain
+    , serverUrl = app.serverUrl
+    , clientUrl = app.clientUrl
+    , enabled = app.enabled
+    , logoUrl = mLogoUrl
+    , primaryColor = mPrimaryColor
+    , createdAt = app.createdAt
+    , updatedAt = app.updatedAt
     }
 
 toDetailDTO :: App -> Maybe String -> Maybe String -> [AppPlan] -> UsageDTO -> [User] -> AppDetailDTO
 toDetailDTO app mLogoUrl mPrimaryColor plans usage users =
   AppDetailDTO
-    { _appDetailDTOUuid = app ^. uuid
-    , _appDetailDTOAppId = app ^. appId
-    , _appDetailDTOName = app ^. name
-    , _appDetailDTOServerDomain = app ^. serverDomain
-    , _appDetailDTOServerUrl = app ^. serverUrl
-    , _appDetailDTOClientUrl = app ^. clientUrl
-    , _appDetailDTOEnabled = app ^. enabled
-    , _appDetailDTOLogoUrl = mLogoUrl
-    , _appDetailDTOPrimaryColor = mPrimaryColor
-    , _appDetailDTOPlans = plans
-    , _appDetailDTOUsage = usage
-    , _appDetailDTOUsers = fmap U_Mapper.toDTO users
-    , _appDetailDTOCreatedAt = app ^. createdAt
-    , _appDetailDTOUpdatedAt = app ^. updatedAt
+    { uuid = app.uuid
+    , appId = app.appId
+    , name = app.name
+    , serverDomain = app.serverDomain
+    , serverUrl = app.serverUrl
+    , clientUrl = app.clientUrl
+    , enabled = app.enabled
+    , logoUrl = mLogoUrl
+    , primaryColor = mPrimaryColor
+    , plans = plans
+    , usage = usage
+    , users = fmap U_Mapper.toDTO users
+    , createdAt = app.createdAt
+    , updatedAt = app.updatedAt
     }
 
 toChangeDTO :: App -> AppChangeDTO
-toChangeDTO app = AppChangeDTO {_appChangeDTOAppId = app ^. appId, _appChangeDTOName = app ^. name}
+toChangeDTO app = AppChangeDTO {appId = app.appId, name = app.name}
 
 fromRegisterCreateDTO :: AppCreateDTO -> U.UUID -> String -> UTCTime -> App
 fromRegisterCreateDTO reqDto aUuid cloudDomain now =
   App
-    { _appUuid = aUuid
-    , _appAppId = reqDto ^. appId
-    , _appName = reqDto ^. appId
-    , _appServerDomain = f' "api-%s.%s" [reqDto ^. appId, cloudDomain]
-    , _appServerUrl = f' "https://api-%s.%s" [reqDto ^. appId, cloudDomain]
-    , _appClientUrl = f' "https://%s.%s" [reqDto ^. appId, cloudDomain]
-    , _appEnabled = True
-    , _appCreatedAt = now
-    , _appUpdatedAt = now
+    { uuid = aUuid
+    , appId = reqDto.appId
+    , name = reqDto.appId
+    , serverDomain = f' "api-%s.%s" [reqDto.appId, cloudDomain]
+    , serverUrl = f' "https://api-%s.%s" [reqDto.appId, cloudDomain]
+    , clientUrl = f' "https://%s.%s" [reqDto.appId, cloudDomain]
+    , enabled = True
+    , createdAt = now
+    , updatedAt = now
     }
 
 fromAdminCreateDTO :: AppCreateDTO -> U.UUID -> String -> UTCTime -> App
 fromAdminCreateDTO reqDto aUuid cloudDomain now =
   App
-    { _appUuid = aUuid
-    , _appAppId = reqDto ^. appId
-    , _appName = reqDto ^. appName
-    , _appServerDomain = f' "api-%s.%s" [reqDto ^. appId, cloudDomain]
-    , _appServerUrl = f' "https://api-%s.%s" [reqDto ^. appId, cloudDomain]
-    , _appClientUrl = f' "https://%s.%s" [reqDto ^. appId, cloudDomain]
-    , _appEnabled = True
-    , _appCreatedAt = now
-    , _appUpdatedAt = now
+    { uuid = aUuid
+    , appId = reqDto.appId
+    , name = reqDto.appName
+    , serverDomain = f' "api-%s.%s" [reqDto.appId, cloudDomain]
+    , serverUrl = f' "https://api-%s.%s" [reqDto.appId, cloudDomain]
+    , clientUrl = f' "https://%s.%s" [reqDto.appId, cloudDomain]
+    , enabled = True
+    , createdAt = now
+    , updatedAt = now
     }
 
 fromChangeDTO :: App -> AppChangeDTO -> String -> App
 fromChangeDTO app reqDto cloudDomain =
   App
-    { _appUuid = app ^. uuid
-    , _appAppId = reqDto ^. appId
-    , _appName = reqDto ^. name
-    , _appServerDomain = f' "api-%s.%s" [reqDto ^. appId, cloudDomain]
-    , _appServerUrl = f' "https://api-%s.%s" [reqDto ^. appId, cloudDomain]
-    , _appClientUrl = f' "https://%s.%s" [reqDto ^. appId, cloudDomain]
-    , _appEnabled = app ^. enabled
-    , _appCreatedAt = app ^. createdAt
-    , _appUpdatedAt = app ^. updatedAt
+    { uuid = app.uuid
+    , appId = reqDto.appId
+    , name = reqDto.name
+    , serverDomain = f' "api-%s.%s" [reqDto.appId, cloudDomain]
+    , serverUrl = f' "https://api-%s.%s" [reqDto.appId, cloudDomain]
+    , clientUrl = f' "https://%s.%s" [reqDto.appId, cloudDomain]
+    , enabled = app.enabled
+    , createdAt = app.createdAt
+    , updatedAt = app.updatedAt
     }

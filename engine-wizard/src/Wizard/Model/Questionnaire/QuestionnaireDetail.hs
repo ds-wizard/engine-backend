@@ -10,40 +10,39 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireState
 
-data QuestionnaireDetail =
-  QuestionnaireDetail
-    { _questionnaireDetailUuid :: U.UUID
-    , _questionnaireDetailName :: String
-    , _questionnaireDetailDescription :: Maybe String
-    , _questionnaireDetailVisibility :: QuestionnaireVisibility
-    , _questionnaireDetailSharing :: QuestionnaireSharing
-    , _questionnaireDetailSelectedQuestionTagUuids :: [U.UUID]
-    , _questionnaireDetailEvents :: [QuestionnaireEvent]
-    , _questionnaireDetailState :: QuestionnaireState
-    , _questionnaireDetailPackageId :: String
-    , _questionnaireDetailPackage :: PackageSimple
-    , _questionnaireDetailPermissions :: [QuestionnairePermRecordDTO]
-    , _questionnaireDetailIsTemplate :: Bool
-    , _questionnaireDetailAnsweredQuestions :: Int
-    , _questionnaireDetailUnansweredQuestions :: Int
-    , _questionnaireDetailCreatedAt :: UTCTime
-    , _questionnaireDetailUpdatedAt :: UTCTime
-    }
+data QuestionnaireDetail = QuestionnaireDetail
+  { uuid :: U.UUID
+  , name :: String
+  , description :: Maybe String
+  , visibility :: QuestionnaireVisibility
+  , sharing :: QuestionnaireSharing
+  , selectedQuestionTagUuids :: [U.UUID]
+  , events :: [QuestionnaireEvent]
+  , state :: QuestionnaireState
+  , packageId :: String
+  , package :: PackageSimple
+  , permissions :: [QuestionnairePermRecordDTO]
+  , isTemplate :: Bool
+  , answeredQuestions :: Int
+  , unansweredQuestions :: Int
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Generic, Show)
 
 instance Eq QuestionnaireDetail where
   a == b =
-    _questionnaireDetailUuid a == _questionnaireDetailUuid b &&
-    _questionnaireDetailName a == _questionnaireDetailName b &&
-    _questionnaireDetailDescription a == _questionnaireDetailDescription b &&
-    _questionnaireDetailVisibility a == _questionnaireDetailVisibility b &&
-    _questionnaireDetailSharing a == _questionnaireDetailSharing b &&
-    _questionnaireDetailSelectedQuestionTagUuids a == _questionnaireDetailSelectedQuestionTagUuids b &&
-    _questionnaireDetailEvents a == _questionnaireDetailEvents b &&
-    _questionnaireDetailState a == _questionnaireDetailState b &&
-    _questionnaireDetailPackageId a == _questionnaireDetailPackageId b &&
-    _questionnaireDetailPackage a == _questionnaireDetailPackage b &&
-    _questionnaireDetailPermissions a == _questionnaireDetailPermissions b &&
-    _questionnaireDetailIsTemplate a == _questionnaireDetailIsTemplate b &&
-    _questionnaireDetailAnsweredQuestions a == _questionnaireDetailAnsweredQuestions b &&
-    _questionnaireDetailUnansweredQuestions a == _questionnaireDetailUnansweredQuestions b
+    a.uuid == b.uuid
+      && a.name == b.name
+      && a.description == b.description
+      && a.visibility == b.visibility
+      && a.sharing == b.sharing
+      && a.selectedQuestionTagUuids == b.selectedQuestionTagUuids
+      && a.events == b.events
+      && a.state == b.state
+      && a.packageId == b.packageId
+      && a.package == b.package
+      && a.permissions == b.permissions
+      && a.isTemplate == b.isTemplate
+      && a.answeredQuestions == b.answeredQuestions
+      && a.unansweredQuestions == b.unansweredQuestions

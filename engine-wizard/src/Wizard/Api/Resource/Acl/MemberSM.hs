@@ -11,7 +11,7 @@ import Wizard.Model.Acl.Acl
 import Wizard.Service.Acl.AclMapper
 
 instance ToSchema Member where
-  declareNamedSchema = simpleToSchema' "_member" bioGroupMember
+  declareNamedSchema = toSwagger bioGroupMember
 
 instance ToSchema MemberDTO where
-  declareNamedSchema = simpleToSchema' "_memberDTO" (toUserMemberDTO userAlbert)
+  declareNamedSchema = toSwagger (toUserMemberDTO userAlbert)

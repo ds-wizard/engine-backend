@@ -5,11 +5,10 @@ import GHC.Generics
 
 import Shared.Model.Event.Event
 
-data TypehintRequestDTO =
-  TypehintRequestDTO
-    { _typehintRequestDTOPackageId :: Maybe String
-    , _typehintRequestDTOEvents :: [Event]
-    , _typehintRequestDTOQuestionUuid :: U.UUID
-    , _typehintRequestDTOQ :: String
-    }
+data TypehintRequestDTO = TypehintRequestDTO
+  { packageId :: Maybe String
+  , events :: [Event]
+  , questionUuid :: U.UUID
+  , q :: String
+  }
   deriving (Show, Eq, Generic)

@@ -12,14 +12,14 @@ import Wizard.Api.Resource.Registry.RegistryConfirmationJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Registry.RegistryService
 
-type List_Confirmation_POST
-   = Header "Host" String
-     :> ReqBody '[ SafeJSON] RegistryConfirmationDTO
-     :> "registry"
-     :> "confirmation"
-     :> PostCreated '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
+type List_Confirmation_POST =
+  Header "Host" String
+    :> ReqBody '[SafeJSON] RegistryConfirmationDTO
+    :> "registry"
+    :> "confirmation"
+    :> PostCreated '[SafeJSON] (Headers '[Header "x-trace-uuid" String] OrganizationDTO)
 
-list_confirmation_POST ::
-     Maybe String -> RegistryConfirmationDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
+list_confirmation_POST
+  :: Maybe String -> RegistryConfirmationDTO -> BaseContextM (Headers '[Header "x-trace-uuid" String] OrganizationDTO)
 list_confirmation_POST mServerUrl reqDto =
   runInUnauthService mServerUrl Transactional $ addTraceUuidHeader =<< confirmRegistration reqDto

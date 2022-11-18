@@ -8,4 +8,4 @@ import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Model.Registry.RegistryOrganization
 
 instance ToSchema RegistryOrganization where
-  declareNamedSchema = simpleToSchema' "_registryOrganization" globalRegistryOrganization
+  declareNamedSchema = toSwagger globalRegistryOrganization

@@ -9,4 +9,4 @@ import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.User.OnlineUserInfo
 
 instance ToSchema OnlineUserInfo where
-  declareNamedSchema = simpleToSchema'''' "OnlineUserInfo" userAlbertOnlineInfo
+  declareNamedSchema = toSwaggerWithType "type" userAlbertOnlineInfo

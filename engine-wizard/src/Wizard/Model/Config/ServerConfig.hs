@@ -4,140 +4,113 @@ import GHC.Generics
 import Shared.Model.Config.Environment
 import Shared.Model.Config.ServerConfig
 
-data ServerConfig =
-  ServerConfig
-    { _serverConfigGeneral :: ServerConfigGeneral
-    , _serverConfigDatabase :: ServerConfigDatabase
-    , _serverConfigS3 :: ServerConfigS3
-    , _serverConfigMessaging :: ServerConfigMessaging
-    , _serverConfigJwt :: ServerConfigJwt
-    , _serverConfigRoles :: ServerConfigRoles
-    , _serverConfigRegistry :: ServerConfigRegistry
-    , _serverConfigAnalytics :: ServerConfigAnalytics
-    , _serverConfigSentry :: ServerConfigSentry
-    , _serverConfigBranch :: ServerConfigBranch
-    , _serverConfigCache :: ServerConfigCache
-    , _serverConfigDocument :: ServerConfigDocument
-    , _serverConfigFeedback :: ServerConfigFeedback
-    , _serverConfigPersistentCommand :: ServerConfigPersistentCommand
-    , _serverConfigPlan :: ServerConfigPlan
-    , _serverConfigQuestionnaire :: ServerConfigQuestionnaire
-    , _serverConfigUserToken :: ServerConfigUserToken
-    , _serverConfigLogging :: ServerConfigLogging
-    , _serverConfigCloud :: ServerConfigCloud
-    }
+data ServerConfig = ServerConfig
+  { general :: ServerConfigGeneral
+  , database :: ServerConfigDatabase
+  , s3 :: ServerConfigS3
+  , jwt :: ServerConfigJwt
+  , roles :: ServerConfigRoles
+  , registry :: ServerConfigRegistry
+  , analytics :: ServerConfigAnalytics
+  , sentry :: ServerConfigSentry
+  , branch :: ServerConfigBranch
+  , cache :: ServerConfigCache
+  , document :: ServerConfigDocument
+  , feedback :: ServerConfigFeedback
+  , persistentCommand :: ServerConfigPersistentCommand
+  , plan :: ServerConfigPlan
+  , questionnaire :: ServerConfigQuestionnaire
+  , userToken :: ServerConfigUserToken
+  , logging :: ServerConfigLogging
+  , cloud :: ServerConfigCloud
+  }
   deriving (Generic, Show)
 
-data ServerConfigGeneral =
-  ServerConfigGeneral
-    { _serverConfigGeneralEnvironment :: Environment
-    , _serverConfigGeneralClientUrl :: String
-    , _serverConfigGeneralServerPort :: Int
-    , _serverConfigGeneralSecret :: String
-    , _serverConfigGeneralIntegrationConfig :: String
-    , _serverConfigGeneralRemoteLocalizationUrl :: Maybe String
-    , _serverConfigGeneralClientStyleBuilderUrl :: String
-    }
+data ServerConfigGeneral = ServerConfigGeneral
+  { environment :: Environment
+  , clientUrl :: String
+  , serverPort :: Int
+  , secret :: String
+  , integrationConfig :: String
+  , remoteLocalizationUrl :: Maybe String
+  , clientStyleBuilderUrl :: String
+  }
   deriving (Generic, Show)
 
-data ServerConfigMessaging =
-  ServerConfigMessaging
-    { _serverConfigMessagingEnabled :: Bool
-    , _serverConfigMessagingHost :: String
-    , _serverConfigMessagingPort :: Integer
-    , _serverConfigMessagingUsername :: String
-    , _serverConfigMessagingPassword :: String
-    , _serverConfigMessagingVhost :: String
-    }
+data ServerConfigJwt = ServerConfigJwt
+  { version :: Integer
+  , expiration :: Integer
+  }
   deriving (Generic, Show)
 
-data ServerConfigJwt =
-  ServerConfigJwt
-    { _serverConfigJwtVersion :: Integer
-    , _serverConfigJwtExpiration :: Integer
-    }
+data ServerConfigRoles = ServerConfigRoles
+  { admin :: [String]
+  , dataSteward :: [String]
+  , researcher :: [String]
+  }
   deriving (Generic, Show)
 
-data ServerConfigRoles =
-  ServerConfigRoles
-    { _serverConfigRolesAdmin :: [String]
-    , _serverConfigRolesDataSteward :: [String]
-    , _serverConfigRolesResearcher :: [String]
-    }
+data ServerConfigRegistry = ServerConfigRegistry
+  { url :: String
+  , clientUrl :: String
+  , sync :: ServerConfigCronWorker
+  }
   deriving (Generic, Show)
 
-data ServerConfigRegistry =
-  ServerConfigRegistry
-    { _serverConfigRegistryUrl :: String
-    , _serverConfigRegistryClientUrl :: String
-    , _serverConfigRegistrySync :: ServerConfigCronWorker
-    }
+data ServerConfigBranch = ServerConfigBranch
+  { squash :: ServerConfigCronWorker
+  }
   deriving (Generic, Show)
 
-data ServerConfigBranch =
-  ServerConfigBranch
-    { _serverConfigBranchSquash :: ServerConfigCronWorker
-    }
+data ServerConfigCache = ServerConfigCache
+  { dataExpiration :: Integer
+  , websocketExpiration :: Integer
+  , purgeExpired :: ServerConfigCronWorker
+  }
   deriving (Generic, Show)
 
-data ServerConfigCache =
-  ServerConfigCache
-    { _serverConfigCacheDataExpiration :: Integer
-    , _serverConfigCacheWebsocketExpiration :: Integer
-    , _serverConfigCachePurgeExpired :: ServerConfigCronWorker
-    }
+data ServerConfigDocument = ServerConfigDocument
+  { clean :: ServerConfigCronWorker
+  }
   deriving (Generic, Show)
 
-data ServerConfigDocument =
-  ServerConfigDocument
-    { _serverConfigDocumentClean :: ServerConfigCronWorker
-    }
+data ServerConfigFeedback = ServerConfigFeedback
+  { apiUrl :: String
+  , webUrl :: String
+  , sync :: ServerConfigCronWorker
+  }
   deriving (Generic, Show)
 
-data ServerConfigFeedback =
-  ServerConfigFeedback
-    { _serverConfigFeedbackApiUrl :: String
-    , _serverConfigFeedbackWebUrl :: String
-    , _serverConfigFeedbackSync :: ServerConfigCronWorker
-    }
+data ServerConfigPersistentCommand = ServerConfigPersistentCommand
+  { listenerJob :: ServerConfigPersistentCommandListenerJob
+  , retryJob :: ServerConfigCronWorker
+  }
   deriving (Generic, Show)
 
-data ServerConfigPersistentCommand =
-  ServerConfigPersistentCommand
-    { _serverConfigPersistentCommandListenerJob :: ServerConfigPersistentCommandListenerJob
-    , _serverConfigPersistentCommandRetryJob :: ServerConfigCronWorker
-    }
+data ServerConfigPersistentCommandListenerJob = ServerConfigPersistentCommandListenerJob
+  { enabled :: Bool
+  }
   deriving (Generic, Show)
 
-data ServerConfigPersistentCommandListenerJob =
-  ServerConfigPersistentCommandListenerJob
-    { _serverConfigPersistentCommandListenerJobEnabled :: Bool
-    }
+data ServerConfigPlan = ServerConfigPlan
+  { recomputeJob :: ServerConfigCronWorker
+  }
   deriving (Generic, Show)
 
-data ServerConfigPlan =
-  ServerConfigPlan
-    { _serverConfigPlanRecomputeJob :: ServerConfigCronWorker
-    }
+data ServerConfigQuestionnaire = ServerConfigQuestionnaire
+  { clean :: ServerConfigCronWorker
+  , recomputeIndication :: ServerConfigCronWorker
+  , squash :: ServerConfigCronWorker
+  }
   deriving (Generic, Show)
 
-data ServerConfigQuestionnaire =
-  ServerConfigQuestionnaire
-    { _serverConfigQuestionnaireClean :: ServerConfigCronWorker
-    , _serverConfigQuestionnaireRecomputeIndication :: ServerConfigCronWorker
-    , _serverConfigQuestionnaireSquash :: ServerConfigCronWorker
-    }
+data ServerConfigUserToken = ServerConfigUserToken
+  { clean :: ServerConfigCronWorker
+  }
   deriving (Generic, Show)
 
-data ServerConfigUserToken =
-  ServerConfigUserToken
-    { _serverConfigUserTokenClean :: ServerConfigCronWorker
-    }
-  deriving (Generic, Show)
-
-data ServerConfigCronWorker =
-  ServerConfigCronWorker
-    { _serverConfigCronWorkerEnabled :: Bool
-    , _serverConfigCronWorkerCron :: String
-    }
+data ServerConfigCronWorker = ServerConfigCronWorker
+  { enabled :: Bool
+  , cron :: String
+  }
   deriving (Generic, Show)

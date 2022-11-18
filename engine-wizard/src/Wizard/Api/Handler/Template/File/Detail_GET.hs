@@ -11,21 +11,21 @@ import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Template.File.TemplateFileService
 
-type Detail_GET
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> "templates"
-     :> Capture "templateId" String
-     :> "files"
-     :> Capture "fileUuid" U.UUID
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] TemplateFile)
+type Detail_GET =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> "templates"
+    :> Capture "templateId" String
+    :> "files"
+    :> Capture "fileUuid" U.UUID
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] TemplateFile)
 
-detail_GET ::
-     Maybe String
+detail_GET
+  :: Maybe String
   -> Maybe String
   -> String
   -> U.UUID
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateFile)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] TemplateFile)
 detail_GET mTokenHeader mServerUrl tmlId fileUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $ addTraceUuidHeader =<< getTemplateFile fileUuid

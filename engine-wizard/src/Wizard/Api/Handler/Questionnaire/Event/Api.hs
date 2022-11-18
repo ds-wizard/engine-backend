@@ -7,10 +7,11 @@ import Wizard.Api.Handler.Questionnaire.Event.Detail_GET
 import Wizard.Api.Handler.Questionnaire.Event.List_GET
 import Wizard.Model.Context.BaseContext
 
-type QuestionnaireEventAPI
-   = Tags "Questionnaire Event"
-     :> (List_GET
-         :<|> Detail_GET)
+type QuestionnaireEventAPI =
+  Tags "Questionnaire Event"
+    :> ( List_GET
+          :<|> Detail_GET
+       )
 
 questionnaireEventApi :: Proxy QuestionnaireEventAPI
 questionnaireEventApi = Proxy

@@ -11,4 +11,4 @@ import Wizard.Api.Resource.Package.PackageSimpleSM ()
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 
 instance ToSchema BranchDetailDTO where
-  declareNamedSchema = simpleToSchema amsterdamBranchDetail
+  declareNamedSchema = toSwagger amsterdamBranchDetail

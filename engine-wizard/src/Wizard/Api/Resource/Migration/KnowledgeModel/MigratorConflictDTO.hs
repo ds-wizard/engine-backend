@@ -6,10 +6,9 @@ import GHC.Generics
 import Shared.Model.Event.Event
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
-data MigratorConflictDTO =
-  MigratorConflictDTO
-    { _migratorConflictDTOOriginalEventUuid :: U.UUID
-    , _migratorConflictDTOAction :: MigrationConflictAction
-    , _migratorConflictDTOEvent :: Maybe Event
-    }
+data MigratorConflictDTO = MigratorConflictDTO
+  { originalEventUuid :: U.UUID
+  , action :: MigrationConflictAction
+  , event :: Maybe Event
+  }
   deriving (Show, Eq, Generic)

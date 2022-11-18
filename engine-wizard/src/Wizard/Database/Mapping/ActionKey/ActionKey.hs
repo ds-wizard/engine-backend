@@ -10,20 +10,20 @@ import Wizard.Model.ActionKey.ActionKey
 
 instance ToRow ActionKey where
   toRow ActionKey {..} =
-    [ toField _actionKeyUuid
-    , toField _actionKeyUserId
-    , toField _actionKeyAType
-    , toField _actionKeyHash
-    , toField _actionKeyCreatedAt
-    , toField _actionKeyAppUuid
+    [ toField uuid
+    , toField userId
+    , toField aType
+    , toField hash
+    , toField createdAt
+    , toField appUuid
     ]
 
 instance FromRow ActionKey where
   fromRow = do
-    _actionKeyUuid <- field
-    _actionKeyUserId <- field
-    _actionKeyAType <- field
-    _actionKeyHash <- field
-    _actionKeyCreatedAt <- field
-    _actionKeyAppUuid <- field
+    uuid <- field
+    userId <- field
+    aType <- field
+    hash <- field
+    createdAt <- field
+    appUuid <- field
     return $ ActionKey {..}

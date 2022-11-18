@@ -11,21 +11,21 @@ import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Template.TemplateService
 
-type List_GET
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> "templates"
-     :> QueryParam "organizationId" String
-     :> QueryParam "templateId" String
-     :> QueryParam "q" String
-     :> QueryParam "state" String
-     :> QueryParam "page" Int
-     :> QueryParam "size" Int
-     :> QueryParam "sort" String
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] (Page TemplateSimpleDTO))
+type List_GET =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> "templates"
+    :> QueryParam "organizationId" String
+    :> QueryParam "templateId" String
+    :> QueryParam "q" String
+    :> QueryParam "state" String
+    :> QueryParam "page" Int
+    :> QueryParam "size" Int
+    :> QueryParam "sort" String
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] (Page TemplateSimpleDTO))
 
-list_GET ::
-     Maybe String
+list_GET
+  :: Maybe String
   -> Maybe String
   -> Maybe String
   -> Maybe String
@@ -34,9 +34,9 @@ list_GET ::
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page TemplateSimpleDTO))
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page TemplateSimpleDTO))
 list_GET mTokenHeader mServerUrl mOrganizationId mTmlId mQuery mState mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
-    addTraceUuidHeader =<<
-    getTemplatesPage mOrganizationId mTmlId mQuery mState (Pageable mPage mSize) (parseSortQuery mSort)
+      addTraceUuidHeader
+        =<< getTemplatesPage mOrganizationId mTmlId mQuery mState (Pageable mPage mSize) (parseSortQuery mSort)

@@ -2,19 +2,19 @@ module Wizard.Api.Resource.Websocket.BranchActionJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Branch.Event.BranchEventJM ()
 import Wizard.Api.Resource.User.OnlineUserInfoJM ()
 import Wizard.Api.Resource.Websocket.BranchActionDTO
 
 instance FromJSON ClientBranchActionDTO where
-  parseJSON = genericParseJSON simpleOptions'''
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "type")
 
 instance ToJSON ClientBranchActionDTO where
-  toJSON = genericToJSON simpleOptions'''
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON ServerBranchActionDTO where
-  parseJSON = genericParseJSON simpleOptions'''
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "type")
 
 instance ToJSON ServerBranchActionDTO where
-  toJSON = genericToJSON simpleOptions'''
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")

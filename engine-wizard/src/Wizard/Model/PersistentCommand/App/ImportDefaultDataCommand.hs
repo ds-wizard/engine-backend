@@ -4,16 +4,15 @@ import Data.Aeson
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
-data ImportDefaultDataCommand =
-  ImportDefaultDataCommand
-    { _importDefaultDataCommandAppUuid :: U.UUID
-    }
+data ImportDefaultDataCommand = ImportDefaultDataCommand
+  { appUuid :: U.UUID
+  }
   deriving (Show, Eq, Generic)
 
 instance FromJSON ImportDefaultDataCommand where
-  parseJSON = simpleParseJSON "_importDefaultDataCommand"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON ImportDefaultDataCommand where
-  toJSON = simpleToJSON "_importDefaultDataCommand"
+  toJSON = genericToJSON jsonOptions

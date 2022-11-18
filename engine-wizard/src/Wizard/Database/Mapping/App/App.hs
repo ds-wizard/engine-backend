@@ -9,26 +9,26 @@ import Wizard.Model.App.App
 
 instance ToRow App where
   toRow App {..} =
-    [ toField _appUuid
-    , toField _appAppId
-    , toField _appName
-    , toField _appServerDomain
-    , toField _appClientUrl
-    , toField _appEnabled
-    , toField _appCreatedAt
-    , toField _appUpdatedAt
-    , toField _appServerUrl
+    [ toField uuid
+    , toField appId
+    , toField name
+    , toField serverDomain
+    , toField clientUrl
+    , toField enabled
+    , toField createdAt
+    , toField updatedAt
+    , toField serverUrl
     ]
 
 instance FromRow App where
   fromRow = do
-    _appUuid <- field
-    _appAppId <- field
-    _appName <- field
-    _appServerDomain <- field
-    _appClientUrl <- field
-    _appEnabled <- field
-    _appCreatedAt <- field
-    _appUpdatedAt <- field
-    _appServerUrl <- field
+    uuid <- field
+    appId <- field
+    name <- field
+    serverDomain <- field
+    clientUrl <- field
+    enabled <- field
+    createdAt <- field
+    updatedAt <- field
+    serverUrl <- field
     return $ App {..}

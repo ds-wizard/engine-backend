@@ -1,7 +1,7 @@
 module Wizard.Util.Sentry where
 
-import Control.Exception (SomeException(..), fromException)
-import Data.Aeson (Value(..), toJSON)
+import Control.Exception (SomeException (..), fromException)
+import Data.Aeson (Value (..), toJSON)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.CaseInsensitive as CI
 import qualified Data.HashMap.Strict as HashMap
@@ -13,8 +13,8 @@ import qualified Network.Wai as WAI
 import Network.Wai.Handler.Warp (defaultOnException)
 import System.Log.Raven (initRaven, register, stderrFallback)
 import System.Log.Raven.Transport.HttpConduit (sendRecord)
-import System.Log.Raven.Types (SentryLevel(Error), SentryRecord(..), SentryService)
-import System.TimeManager (TimeoutThread(..))
+import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..), SentryService)
+import System.TimeManager (TimeoutThread (..))
 
 import Shared.Util.Token
 import Wizard.Service.UserToken.UserTokenUtil
@@ -27,8 +27,8 @@ sentryOnException :: String -> SentryService -> Maybe WAI.Request -> SomeExcepti
 sentryOnException buildVersion sentryService mRequest exception
   | Just TimeoutThread <- fromException exception = return ()
   | otherwise = do
-    register sentryService "webServerLogger" Error (format exception) (recordUpdate buildVersion mRequest exception)
-    defaultOnException mRequest exception
+      register sentryService "webServerLogger" Error (format exception) (recordUpdate buildVersion mRequest exception)
+      defaultOnException mRequest exception
 
 format :: SomeException -> String
 format (SomeException exception) = show exception
@@ -63,19 +63,25 @@ recordUpdate buildVersion (Just request) exception record =
         , srInterfaces =
             HashMap.fromList
               [ ("sentry.interfaces.User", toJSON $ HashMap.fromList [("id", String . T.pack $ userUuid)])
-              , ( "sentry.interfaces.Http"
+              ,
+                ( "sentry.interfaces.Http"
                 , toJSON $
-                  HashMap.fromList
-                    [ ("url", String url)
-                    , ("method", String method)
-                    , ( "query_string"
-                      , if queryString == ""
-                          then Null
-                          else String queryString)
-                    , ("headers", toJSON [("Host", host)])
-                    ])
-              , ( "sentry.interfaces.Exception"
-                , toJSON $ HashMap.fromList [("type", String exceptionType), ("value", String exceptionValue)])
+                    HashMap.fromList
+                      [ ("url", String url)
+                      , ("method", String method)
+                      ,
+                        ( "query_string"
+                        , if queryString == ""
+                            then Null
+                            else String queryString
+                        )
+                      , ("headers", toJSON [("Host", host)])
+                      ]
+                )
+              ,
+                ( "sentry.interfaces.Exception"
+                , toJSON $ HashMap.fromList [("type", String exceptionType), ("value", String exceptionValue)]
+                )
               ]
         , srTags =
             if isNothing traceUuidHeader

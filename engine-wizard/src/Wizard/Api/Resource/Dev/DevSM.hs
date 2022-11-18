@@ -8,12 +8,12 @@ import Wizard.Database.Migration.Development.Dev.Data.Devs
 import Wizard.Model.Dev.Dev
 
 instance ToSchema DevSection where
-  declareNamedSchema = simpleToSchema' "_devSection" section
+  declareNamedSchema = toSwagger section
 
 instance ToSchema DevOperation where
-  declareNamedSchema = simpleToSchema' "_devOperation" operation
+  declareNamedSchema = toSwagger operation
 
 instance ToSchema DevOperationParameter where
-  declareNamedSchema = simpleToSchema' "_devOperationParameter" operationParam1
+  declareNamedSchema = toSwagger operationParam1
 
 instance ToSchema DevOperationParameterType

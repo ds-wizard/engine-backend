@@ -1,10 +1,8 @@
 module Wizard.Model.Questionnaire.QuestionnaireAclHelpers where
 
-import Control.Lens ((.~), (^.))
 import Control.Monad.Reader (liftIO)
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Util.Uuid
 import Wizard.Model.Acl.Acl
 import Wizard.Model.Context.AppContext
@@ -27,9 +25,9 @@ getUserUuidsForPerm desiredPerm = foldl go []
   where
     go :: [U.UUID] -> QuestionnairePermRecord -> [U.UUID]
     go acc record =
-      case record ^. member of
-        UserMember {_userMemberUuid = userUuid} ->
-          if desiredPerm `elem` (record ^. perms)
+      case record.member of
+        UserMember {uuid = userUuid} ->
+          if desiredPerm `elem` record.perms
             then acc ++ [userUuid]
             else acc
         _ -> acc
@@ -51,9 +49,9 @@ getGroupIdsForPerm desiredPerm = foldl go []
   where
     go :: [String] -> QuestionnairePermRecord -> [String]
     go acc record =
-      case record ^. member of
-        GroupMember {_groupMemberGId = groupId} ->
-          if desiredPerm `elem` (record ^. perms)
+      case record.member of
+        GroupMember {gId = groupId} ->
+          if desiredPerm `elem` record.perms
             then acc ++ [groupId]
             else acc
         _ -> acc
@@ -61,13 +59,13 @@ getGroupIdsForPerm desiredPerm = foldl go []
 duplicateUserPermission :: U.UUID -> QuestionnairePermRecord -> AppContextM QuestionnairePermRecord
 duplicateUserPermission newQtnUuid record = do
   newUuid <- liftIO generateUuid
-  return . (uuid .~ newUuid) . (questionnaireUuid .~ newQtnUuid) $ record
+  return record {uuid = newUuid, questionnaireUuid = newQtnUuid}
 
 removeUserPermission :: U.UUID -> [QuestionnairePermRecord] -> [QuestionnairePermRecord]
 removeUserPermission userUuidToDelete = filter go
   where
     go :: QuestionnairePermRecord -> Bool
     go record =
-      case record ^. member of
-        UserMember {_userMemberUuid = userUuid} -> userUuid /= userUuidToDelete
+      case record.member of
+        UserMember {uuid = userUuid} -> userUuid /= userUuidToDelete
         _ -> True

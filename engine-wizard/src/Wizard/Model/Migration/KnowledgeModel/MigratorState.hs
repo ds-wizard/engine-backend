@@ -14,8 +14,8 @@ data MigrationState
   | CompletedState
   deriving (Show, Eq, Generic)
 
-data Conflict =
-  CorrectorConflict (Maybe Event)
+data Conflict
+  = CorrectorConflict (Maybe Event)
   deriving (Show, Eq, Generic)
 
 data MigrationConflictAction
@@ -24,18 +24,17 @@ data MigrationConflictAction
   | MCAReject
   deriving (Show, Eq, Generic)
 
-data MigratorState =
-  MigratorState
-    { _migratorStateBranchUuid :: U.UUID
-    , _migratorStateMetamodelVersion :: Int
-    , _migratorStateMigrationState :: MigrationState
-    , _migratorStateBranchPreviousPackageId :: String
-    , _migratorStateTargetPackageId :: String
-    , _migratorStateBranchEvents :: [Event]
-    , _migratorStateTargetPackageEvents :: [Event]
-    , _migratorStateResultEvents :: [Event]
-    , _migratorStateCurrentKnowledgeModel :: Maybe KnowledgeModel
-    , _migratorStateAppUuid :: U.UUID
-    , _migratorStateCreatedAt :: UTCTime
-    }
+data MigratorState = MigratorState
+  { branchUuid :: U.UUID
+  , metamodelVersion :: Int
+  , migrationState :: MigrationState
+  , branchPreviousPackageId :: String
+  , targetPackageId :: String
+  , branchEvents :: [Event]
+  , targetPackageEvents :: [Event]
+  , resultEvents :: [Event]
+  , currentKnowledgeModel :: Maybe KnowledgeModel
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq)

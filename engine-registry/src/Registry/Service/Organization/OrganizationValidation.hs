@@ -1,6 +1,5 @@
 module Registry.Service.Organization.OrganizationValidation where
 
-import Control.Lens ((^.))
 import Control.Monad (when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (forM_)
@@ -8,7 +7,6 @@ import qualified Data.Map.Strict as M
 import Data.Maybe (isJust)
 import Text.Regex (matchRegex, mkRegex)
 
-import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Public
@@ -17,9 +15,9 @@ import Shared.Model.Error.Error
 
 validateOrganizationCreateDto :: OrganizationCreateDTO -> AppContextM ()
 validateOrganizationCreateDto reqDto = do
-  _ <- validateOrganizationIdUniqueness (reqDto ^. organizationId)
-  _ <- validateOrganizationEmailUniqueness (reqDto ^. email)
-  forM_ (validateOrganizationId (reqDto ^. organizationId)) throwError
+  _ <- validateOrganizationIdUniqueness reqDto.organizationId
+  _ <- validateOrganizationEmailUniqueness reqDto.email
+  forM_ (validateOrganizationId reqDto.organizationId) throwError
 
 validateOrganizationId :: String -> Maybe AppError
 validateOrganizationId orgId =
@@ -35,7 +33,7 @@ validateOrganizationIdUniqueness orgId = do
   case mOrg of
     Just _ ->
       throwError $
-      ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__ORGANIZATION_ID_UNIQUENESS orgId])
+        ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__ORGANIZATION_ID_UNIQUENESS orgId])
     Nothing -> return ()
 
 validateOrganizationEmailUniqueness :: String -> AppContextM ()

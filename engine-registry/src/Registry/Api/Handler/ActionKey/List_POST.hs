@@ -11,14 +11,14 @@ import Registry.Service.Organization.OrganizationService
 import Shared.Api.Handler.Common
 import Shared.Model.Context.TransactionState
 
-type List_POST
-   = ReqBody '[ SafeJSON] ActionKeyDTO
-     :> "action-keys"
-     :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
+type List_POST =
+  ReqBody '[SafeJSON] ActionKeyDTO
+    :> "action-keys"
+    :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] NoContent)
 
-list_POST :: ActionKeyDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+list_POST :: ActionKeyDTO -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
 list_POST reqDto =
   runInUnauthService Transactional $
-  addTraceUuidHeader =<< do
-    resetOrganizationToken reqDto
-    return NoContent
+    addTraceUuidHeader =<< do
+      resetOrganizationToken reqDto
+      return NoContent

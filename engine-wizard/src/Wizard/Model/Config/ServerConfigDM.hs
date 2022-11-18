@@ -7,57 +7,45 @@ import Wizard.Model.Config.ServerConfig
 defaultConfig :: ServerConfig
 defaultConfig =
   ServerConfig
-    { _serverConfigGeneral = defaultGeneral
-    , _serverConfigDatabase = defaultDatabase
-    , _serverConfigS3 = defaultS3
-    , _serverConfigMessaging = defaultMessaging
-    , _serverConfigJwt = defaultJwt
-    , _serverConfigRoles = defaultRoles
-    , _serverConfigRegistry = defaultRegistry
-    , _serverConfigAnalytics = defaultAnalytics
-    , _serverConfigSentry = defaultSentry
-    , _serverConfigBranch = defaultBranch
-    , _serverConfigCache = defaultCache
-    , _serverConfigDocument = defaultDocument
-    , _serverConfigFeedback = defaultFeedback
-    , _serverConfigPersistentCommand = defaultPersistentCommand
-    , _serverConfigPlan = defaultPlan
-    , _serverConfigQuestionnaire = defaultQuestionnaire
-    , _serverConfigUserToken = defaultUserToken
-    , _serverConfigLogging = defaultLogging
-    , _serverConfigCloud = defaultCloud
+    { general = defaultGeneral
+    , database = defaultDatabase
+    , s3 = defaultS3
+    , jwt = defaultJwt
+    , roles = defaultRoles
+    , registry = defaultRegistry
+    , analytics = defaultAnalytics
+    , sentry = defaultSentry
+    , branch = defaultBranch
+    , cache = defaultCache
+    , document = defaultDocument
+    , feedback = defaultFeedback
+    , persistentCommand = defaultPersistentCommand
+    , plan = defaultPlan
+    , questionnaire = defaultQuestionnaire
+    , userToken = defaultUserToken
+    , logging = defaultLogging
+    , cloud = defaultCloud
     }
 
 defaultGeneral :: ServerConfigGeneral
 defaultGeneral =
   ServerConfigGeneral
-    { _serverConfigGeneralEnvironment = Production
-    , _serverConfigGeneralClientUrl = ""
-    , _serverConfigGeneralServerPort = 3000
-    , _serverConfigGeneralSecret = ""
-    , _serverConfigGeneralIntegrationConfig = "engine-wizard/config/integration.yml"
-    , _serverConfigGeneralRemoteLocalizationUrl = Nothing
-    , _serverConfigGeneralClientStyleBuilderUrl = "http://wizard-style-builder:3002"
-    }
-
-defaultMessaging :: ServerConfigMessaging
-defaultMessaging =
-  ServerConfigMessaging
-    { _serverConfigMessagingEnabled = True
-    , _serverConfigMessagingHost = "rabbitmq"
-    , _serverConfigMessagingPort = 5672
-    , _serverConfigMessagingUsername = "guest"
-    , _serverConfigMessagingPassword = "guest"
-    , _serverConfigMessagingVhost = "/"
+    { environment = Production
+    , clientUrl = ""
+    , serverPort = 3000
+    , secret = ""
+    , integrationConfig = "engine-wizard/config/integration.yml"
+    , remoteLocalizationUrl = Nothing
+    , clientStyleBuilderUrl = "http://wizard-style-builder:3002"
     }
 
 defaultJwt :: ServerConfigJwt
-defaultJwt = ServerConfigJwt {_serverConfigJwtVersion = 3, _serverConfigJwtExpiration = 14}
+defaultJwt = ServerConfigJwt {version = 3, expiration = 14}
 
 defaultRoles :: ServerConfigRoles
 defaultRoles =
   ServerConfigRoles
-    { _serverConfigRolesAdmin =
+    { admin =
         [ "UM_PERM"
         , "KM_PERM"
         , "KM_UPGRADE_PERM"
@@ -73,7 +61,7 @@ defaultRoles =
         , "TML_PERM"
         , "DOC_PERM"
         ]
-    , _serverConfigRolesDataSteward =
+    , dataSteward =
         [ "KM_PERM"
         , "KM_UPGRADE_PERM"
         , "KM_PUBLISH_PERM"
@@ -86,104 +74,104 @@ defaultRoles =
         , "SUBM_PERM"
         , "TML_PERM"
         ]
-    , _serverConfigRolesResearcher = ["PM_READ_PERM", "QTN_PERM", "DMP_PERM", "SUBM_PERM"]
+    , researcher = ["PM_READ_PERM", "QTN_PERM", "DMP_PERM", "SUBM_PERM"]
     }
 
 defaultRegistry :: ServerConfigRegistry
 defaultRegistry =
   ServerConfigRegistry
-    { _serverConfigRegistryUrl = "https://api.registry.ds-wizard.org"
-    , _serverConfigRegistryClientUrl = "https://registry.ds-wizard.org"
-    , _serverConfigRegistrySync = defaultRegistrySyncJob
+    { url = "https://api.registry.ds-wizard.org"
+    , clientUrl = "https://registry.ds-wizard.org"
+    , sync = defaultRegistrySyncJob
     }
 
 defaultRegistrySyncJob :: ServerConfigCronWorker
 defaultRegistrySyncJob =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "*/15 * * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "*/15 * * * *"}
 
 defaultBranch :: ServerConfigBranch
-defaultBranch = ServerConfigBranch {_serverConfigBranchSquash = defaultBranchSquash}
+defaultBranch = ServerConfigBranch {squash = defaultBranchSquash}
 
 defaultBranchSquash :: ServerConfigCronWorker
 defaultBranchSquash =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "15 2 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "15 2 * * *"}
 
 defaultCache :: ServerConfigCache
 defaultCache =
   ServerConfigCache
-    { _serverConfigCacheDataExpiration = 14 * 24
-    , _serverConfigCacheWebsocketExpiration = 24
-    , _serverConfigCachePurgeExpired = defaultCachePurgeExpired
+    { dataExpiration = 14 * 24
+    , websocketExpiration = 24
+    , purgeExpired = defaultCachePurgeExpired
     }
 
 defaultCachePurgeExpired :: ServerConfigCronWorker
 defaultCachePurgeExpired =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "45 * * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "45 * * * *"}
 
 defaultDocument :: ServerConfigDocument
-defaultDocument = ServerConfigDocument {_serverConfigDocumentClean = defaultDocumentClean}
+defaultDocument = ServerConfigDocument {clean = defaultDocumentClean}
 
 defaultDocumentClean :: ServerConfigCronWorker
 defaultDocumentClean =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "0 */4 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "0 */4 * * *"}
 
 defaultFeedback :: ServerConfigFeedback
 defaultFeedback =
   ServerConfigFeedback
-    { _serverConfigFeedbackApiUrl = "https://api.github.com"
-    , _serverConfigFeedbackWebUrl = "https://github.com"
-    , _serverConfigFeedbackSync = defaultFeedbackSync
+    { apiUrl = "https://api.github.com"
+    , webUrl = "https://github.com"
+    , sync = defaultFeedbackSync
     }
 
 defaultFeedbackSync :: ServerConfigCronWorker
 defaultFeedbackSync =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "0 2 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "0 2 * * *"}
 
 defaultPersistentCommand :: ServerConfigPersistentCommand
 defaultPersistentCommand =
   ServerConfigPersistentCommand
-    { _serverConfigPersistentCommandListenerJob = defaultPersistentCommandListenerJob
-    , _serverConfigPersistentCommandRetryJob = defaultPersistentCommandRetryJob
+    { listenerJob = defaultPersistentCommandListenerJob
+    , retryJob = defaultPersistentCommandRetryJob
     }
 
 defaultPersistentCommandListenerJob :: ServerConfigPersistentCommandListenerJob
 defaultPersistentCommandListenerJob =
-  ServerConfigPersistentCommandListenerJob {_serverConfigPersistentCommandListenerJobEnabled = True}
+  ServerConfigPersistentCommandListenerJob {enabled = True}
 
 defaultPersistentCommandRetryJob :: ServerConfigCronWorker
 defaultPersistentCommandRetryJob =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "* * * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "* * * * *"}
 
 defaultPlan :: ServerConfigPlan
-defaultPlan = ServerConfigPlan {_serverConfigPlanRecomputeJob = defaultPlanRecomputeJob}
+defaultPlan = ServerConfigPlan {recomputeJob = defaultPlanRecomputeJob}
 
 defaultPlanRecomputeJob :: ServerConfigCronWorker
 defaultPlanRecomputeJob =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "0 * * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "0 * * * *"}
 
 defaultQuestionnaire :: ServerConfigQuestionnaire
 defaultQuestionnaire =
   ServerConfigQuestionnaire
-    { _serverConfigQuestionnaireClean = defaultQuestionnaireClean
-    , _serverConfigQuestionnaireRecomputeIndication = defaultQuestionnaireRecomputeIndication
-    , _serverConfigQuestionnaireSquash = defaultQuestionnaireSquash
+    { clean = defaultQuestionnaireClean
+    , recomputeIndication = defaultQuestionnaireRecomputeIndication
+    , squash = defaultQuestionnaireSquash
     }
 
 defaultQuestionnaireClean :: ServerConfigCronWorker
 defaultQuestionnaireClean =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "15 */4 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "15 */4 * * *"}
 
 defaultQuestionnaireRecomputeIndication :: ServerConfigCronWorker
 defaultQuestionnaireRecomputeIndication =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "20 1 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "20 1 * * *"}
 
 defaultQuestionnaireSquash :: ServerConfigCronWorker
 defaultQuestionnaireSquash =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "15 2 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "15 2 * * *"}
 
 defaultUserToken :: ServerConfigUserToken
-defaultUserToken = ServerConfigUserToken {_serverConfigUserTokenClean = defaultUserTokenClean}
+defaultUserToken = ServerConfigUserToken {clean = defaultUserTokenClean}
 
 defaultUserTokenClean :: ServerConfigCronWorker
 defaultUserTokenClean =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "0 3 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "0 3 * * *"}

@@ -1,6 +1,6 @@
-module Wizard.Service.Migration.Metamodel.Migrator.BranchMigrator
-  ( migrateAllInDB
-  ) where
+module Wizard.Service.Migration.Metamodel.Migrator.BranchMigrator (
+  migrateAllInDB,
+) where
 
 import Data.Aeson
 import Data.Foldable (traverse_)
@@ -34,13 +34,12 @@ migrateOneInDB entityName eventsField idField MetamodelMigration {..} =
       idField
       [toField kmMetamodelVersion, toJSONField . toJSON $ updatedEvents, toField entityId]
 
-data MetamodelMigration =
-  MetamodelMigration
-    { entityId :: U.UUID
-    , createdAt :: UTCTime
-    , oldMetamodelVersion :: Int
-    , events :: Value
-    }
+data MetamodelMigration = MetamodelMigration
+  { entityId :: U.UUID
+  , createdAt :: UTCTime
+  , oldMetamodelVersion :: Int
+  , events :: Value
+  }
 
 instance FromRow MetamodelMigration where
   fromRow = do

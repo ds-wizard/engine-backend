@@ -15,4 +15,4 @@ import Wizard.Service.App.AppMapper
 
 instance ToSchema AppDetailDTO where
   declareNamedSchema =
-    simpleToSchema (toDetailDTO defaultApp Nothing Nothing [standardPlan, standardPlanExpired] defaultUsage [])
+    toSwagger (toDetailDTO defaultApp Nothing Nothing [standardPlan, standardPlanExpired] defaultUsage [])

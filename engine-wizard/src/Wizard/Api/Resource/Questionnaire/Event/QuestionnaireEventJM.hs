@@ -3,14 +3,14 @@ module Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM where
 import Control.Monad
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
 import Wizard.Api.Resource.User.UserSuggestionJM ()
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 
 instance ToJSON QuestionnaireEventDTO where
-  toJSON = toSumJSON' "type"
+  toJSON = toSumJSON
 
 instance FromJSON QuestionnaireEventDTO where
   parseJSON (Object o) = do
@@ -30,69 +30,69 @@ instance FromJSON QuestionnaireEventDTO where
   parseJSON _ = mzero
 
 instance FromJSON SetReplyEventDTO where
-  parseJSON = simpleParseJSON "_setReplyEventDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SetReplyEventDTO where
-  toJSON = simpleToJSON' "_setReplyEventDTO" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON ClearReplyEventDTO where
-  parseJSON = simpleParseJSON "_clearReplyEventDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON ClearReplyEventDTO where
-  toJSON = simpleToJSON' "_clearReplyEventDTO" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON SetPhaseEventDTO where
-  parseJSON = simpleParseJSON "_setPhaseEventDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SetPhaseEventDTO where
-  toJSON = simpleToJSON' "_setPhaseEventDTO" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON SetLabelsEventDTO where
-  parseJSON = simpleParseJSON "_setLabelsEventDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SetLabelsEventDTO where
-  toJSON = simpleToJSON' "_setLabelsEventDTO" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON ResolveCommentThreadEventDTO where
-  parseJSON = simpleParseJSON "_resolveCommentThreadEventDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON ResolveCommentThreadEventDTO where
-  toJSON = simpleToJSON' "_resolveCommentThreadEventDTO" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON ReopenCommentThreadEventDTO where
-  parseJSON = simpleParseJSON "_reopenCommentThreadEventDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON ReopenCommentThreadEventDTO where
-  toJSON = simpleToJSON' "_reopenCommentThreadEventDTO" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON DeleteCommentThreadEventDTO where
-  parseJSON = simpleParseJSON "_deleteCommentThreadEventDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON DeleteCommentThreadEventDTO where
-  toJSON = simpleToJSON' "_deleteCommentThreadEventDTO" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON AddCommentEventDTO where
-  parseJSON = simpleParseJSON "_addCommentEventDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddCommentEventDTO where
-  toJSON = simpleToJSON' "_addCommentEventDTO" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON EditCommentEventDTO where
-  parseJSON = simpleParseJSON "_editCommentEventDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON EditCommentEventDTO where
-  toJSON = simpleToJSON' "_editCommentEventDTO" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON DeleteCommentEventDTO where
-  parseJSON = simpleParseJSON "_deleteCommentEventDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON DeleteCommentEventDTO where
-  toJSON = simpleToJSON' "_deleteCommentEventDTO" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 -- --------------------------------------------
 -- --------------------------------------------
 instance ToJSON QuestionnaireEvent where
-  toJSON = toSumJSON' "type"
+  toJSON = toSumJSONWithTypeField "type" ""
 
 instance FromJSON QuestionnaireEvent where
   parseJSON (Object o) = do
@@ -106,25 +106,25 @@ instance FromJSON QuestionnaireEvent where
   parseJSON _ = mzero
 
 instance FromJSON SetReplyEvent where
-  parseJSON = simpleParseJSON "_setReplyEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SetReplyEvent where
-  toJSON = simpleToJSON' "_setReplyEvent" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON ClearReplyEvent where
-  parseJSON = simpleParseJSON "_clearReplyEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON ClearReplyEvent where
-  toJSON = simpleToJSON' "_clearReplyEvent" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON SetPhaseEvent where
-  parseJSON = simpleParseJSON "_setPhaseEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SetPhaseEvent where
-  toJSON = simpleToJSON' "_setPhaseEvent" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON SetLabelsEvent where
-  parseJSON = simpleParseJSON "_setLabelsEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SetLabelsEvent where
-  toJSON = simpleToJSON' "_setLabelsEvent" "type"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")

@@ -1,8 +1,7 @@
-module Wizard.Specs.API.App.Detail_PUT
-  ( detail_PUT
-  ) where
+module Wizard.Specs.API.App.Detail_PUT (
+  detail_PUT,
+) where
 
-import Control.Lens ((&), (.~))
 import Data.Aeson (encode)
 import qualified Data.Map.Strict as M
 import Network.HTTP.Types
@@ -11,7 +10,6 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Model.Error.Error
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Localization.Messages.Public
@@ -53,17 +51,17 @@ reqBody = encode reqDto
 test_200 appContext =
   it "HTTP 200 OK" $
     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, App)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    compareAppDtos resDto differentAppEdited
-    assertExistenceOfAppInDB appContext differentAppEdited
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, App)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      compareAppDtos resDto differentAppEdited
+      assertExistenceOfAppInDB appContext differentAppEdited
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -72,20 +70,20 @@ test_400 appContext = do
   createInvalidJsonTest reqMethod reqUrl "lastName"
   it "HTTP 400 BAD REQUEST if appId is already used" $
     -- GIVEN: Prepare request
-   do
-    let reqDto = toChangeDTO (differentAppEdited & appId .~ "default")
-    let reqBody = encode reqDto
-    -- AND: Prepare expectation
-    let expStatus = 400
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = ValidationError [] (M.singleton "appId" [_ERROR_VALIDATION__APP_ID_UNIQUENESS])
-    let expBody = encode expDto
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- AND: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    do
+      let reqDto = toChangeDTO (differentAppEdited {appId = "default"})
+      let reqBody = encode reqDto
+      -- AND: Prepare expectation
+      let expStatus = 400
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = ValidationError [] (M.singleton "appId" [_ERROR_VALIDATION__APP_ID_UNIQUENESS])
+      let expBody = encode expDto
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- AND: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

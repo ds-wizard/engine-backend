@@ -1,8 +1,7 @@
 module Wizard.Integration.Resource.Typehint.TypehintIDTO where
 
-data TypehintIDTO =
-  TypehintIDTO
-    { _typehintIDTOIntId :: String
-    , _typehintIDTOName :: String
-    }
+data TypehintIDTO = TypehintIDTO
+  { intId :: String
+  , name :: String
+  }
   deriving (Show, Eq)

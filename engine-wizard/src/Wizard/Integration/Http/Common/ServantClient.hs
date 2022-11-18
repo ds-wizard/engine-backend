@@ -1,13 +1,11 @@
 module Wizard.Integration.Http.Common.ServantClient where
 
-import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Network.HTTP.Client (Manager)
 import Servant.Client
 
-import LensesConfig
 import Shared.Model.Error.Error
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Config.ServerConfig
@@ -16,12 +14,12 @@ import Wizard.Util.Logger
 
 createRegistryClient :: ServerConfig -> Manager -> IO ClientEnv
 createRegistryClient serverConfig httpClientManager = do
-  baseUrl <- parseBaseUrl (serverConfig ^. registry . url)
+  baseUrl <- parseBaseUrl serverConfig.registry.url
   return $ mkClientEnv httpClientManager baseUrl
 
 runRegistryClient :: ClientM response -> AppContextM response
 runRegistryClient request = do
-  registryClient <- asks _appContextRegistryClient
+  registryClient <- asks registryClient
   runClient request registryClient
 
 runClient :: ClientM response -> ClientEnv -> AppContextM response

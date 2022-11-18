@@ -22,28 +22,27 @@ import Wizard.Model.Questionnaire.QuestionnaireDetail
 
 instance FromRow QuestionnaireDetail where
   fromRow = do
-    _questionnaireDetailUuid <- field
-    _questionnaireDetailName <- field
-    _questionnaireDetailDescription <- field
-    _questionnaireDetailVisibility <- field
-    _questionnaireDetailSharing <- field
-    _questionnaireDetailSelectedQuestionTagUuids <- fieldWith fromJSONField
-    _questionnaireDetailEvents <- fieldWith fromJSONField
-    _questionnaireDetailIsTemplate <- field
-    _questionnaireDetailAnsweredQuestions <- field
-    _questionnaireDetailUnansweredQuestions <- field
-    _questionnaireDetailCreatedAt <- field
-    _questionnaireDetailUpdatedAt <- field
-    _questionnaireDetailState <- field
-    _questionnaireDetailPackageId <- field
-    let _packageSimplePId = _questionnaireDetailPackageId
-    _packageSimpleName <- field
-    _packageSimpleVersion <- field
-    let _questionnaireDetailPackage = PackageSimple {..}
+    uuid <- field
+    name <- field
+    description <- field
+    visibility <- field
+    sharing <- field
+    selectedQuestionTagUuids <- fieldWith fromJSONField
+    events <- fieldWith fromJSONField
+    isTemplate <- field
+    answeredQuestions <- field
+    unansweredQuestions <- field
+    createdAt <- field
+    updatedAt <- field
+    state <- field
+    packageId <- field
+    packageName <- field
+    packageVersion <- field
+    let package = PackageSimple {pId = packageId, name = packageName, version = packageVersion}
     mPermissions <- fieldWith (optionalField fromField)
-    let _questionnaireDetailPermissions =
+    let permissions =
           case mPermissions of
-            Just permissions -> L.sort . fmap (parsePermission _questionnaireDetailUuid) . fromPGArray $ permissions
+            Just permissions -> L.sort . fmap (parsePermission uuid) . fromPGArray $ permissions
             Nothing -> []
     return $ QuestionnaireDetail {..}
     where
@@ -51,16 +50,16 @@ instance FromRow QuestionnaireDetail where
       parsePermission qtnUuid permission =
         let parts = splitOn "::" permission
          in QuestionnairePermRecordDTO
-              { _questionnairePermRecordDTOUuid = u' (head parts)
-              , _questionnairePermRecordDTOQuestionnaireUuid = qtnUuid
-              , _questionnairePermRecordDTOPerms = splitOn "," . replace "}" "" . replace "{" "" $ parts !! 1
-              , _questionnairePermRecordDTOMember =
+              { uuid = u' (head parts)
+              , questionnaireUuid = qtnUuid
+              , perms = splitOn "," . replace "}" "" . replace "{" "" $ parts !! 1
+              , member =
                   UserMemberDTO
-                    { _userMemberDTOUuid = u' (parts !! 2)
-                    , _userMemberDTOFirstName = parts !! 3
-                    , _userMemberDTOLastName = parts !! 4
-                    , _userMemberDTOGravatarHash = createGravatarHash $ parts !! 5
-                    , _userMemberDTOImageUrl =
+                    { uuid = u' (parts !! 2)
+                    , firstName = parts !! 3
+                    , lastName = parts !! 4
+                    , gravatarHash = createGravatarHash $ parts !! 5
+                    , imageUrl =
                         case parts !! 6 of
                           "" -> Nothing
                           imageUrl -> Just imageUrl

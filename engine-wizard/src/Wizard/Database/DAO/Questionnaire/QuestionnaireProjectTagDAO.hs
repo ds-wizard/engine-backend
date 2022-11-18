@@ -17,35 +17,35 @@ entityName = "questionnaire"
 pageLabel = "projectTags"
 
 findQuestionnaireProjectTagsPage :: Maybe String -> [String] -> Pageable -> [Sort] -> AppContextM (Page String)
-findQuestionnaireProjectTagsPage mQuery excludeTags pageable sort
+findQuestionnaireProjectTagsPage mQuery excludeTags pageable sort =
   -- 1. Prepare variables
- = do
-  appUuid <- asks _appContextAppUuid
-  let params = [U.toString appUuid, regex mQuery] ++ excludeTags
-  let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
-  -- 2. Get total count
-  count <- findCount excludeTags params
-  -- 3. Prepare SQL
-  let sql =
-        fromString $
-        f'
-          "SELECT * \
-          \FROM (%s) merged \
-          \WHERE merged.project_tag ~* ? %s \
-          \%s \
-          \OFFSET %s LIMIT %s"
-          [sqlBase, excludeTagsCondition excludeTags, mapSort sort, show skip, show sizeI]
-  createFindColumnBySqlPageFn pageLabel pageable sql params count
+  do
+    appUuid <- asks currentAppUuid
+    let params = [U.toString appUuid, regex mQuery] ++ excludeTags
+    let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
+    -- 2. Get total count
+    count <- findCount excludeTags params
+    -- 3. Prepare SQL
+    let sql =
+          fromString $
+            f'
+              "SELECT * \
+              \FROM (%s) merged \
+              \WHERE merged.project_tag ~* ? %s \
+              \%s \
+              \OFFSET %s LIMIT %s"
+              [sqlBase, excludeTagsCondition excludeTags, mapSort sort, show skip, show sizeI]
+    createFindColumnBySqlPageFn pageLabel pageable sql params count
 
 findCount :: [String] -> [String] -> AppContextM Int
 findCount excludeTags params = do
   let sql =
         fromString $
-        f'
-          "SELECT COUNT(*) \
-          \FROM (%s) merged \
-          \WHERE merged.project_tag::text ~* ? %s"
-          [sqlBase, excludeTagsCondition excludeTags]
+          f'
+            "SELECT COUNT(*) \
+            \FROM (%s) merged \
+            \WHERE merged.project_tag::text ~* ? %s"
+            [sqlBase, excludeTagsCondition excludeTags]
   createCountWithSqlFn sql params
 
 sqlBase :: String

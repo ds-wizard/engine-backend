@@ -8,10 +8,10 @@ import Database.PostgreSQL.Simple.ToRow
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 
 instance ToRow QuestionnaireSimple where
-  toRow QuestionnaireSimple {..} = [toField _questionnaireSimpleUuid, toField _questionnaireSimpleName]
+  toRow QuestionnaireSimple {..} = [toField uuid, toField name]
 
 instance FromRow QuestionnaireSimple where
   fromRow = do
-    _questionnaireSimpleUuid <- field
-    _questionnaireSimpleName <- field
+    uuid <- field
+    name <- field
     return $ QuestionnaireSimple {..}

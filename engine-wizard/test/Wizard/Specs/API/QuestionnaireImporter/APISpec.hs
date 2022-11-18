@@ -11,8 +11,8 @@ import Wizard.Specs.API.QuestionnaireImporter.List_Suggestions_GET
 
 questionnaireImporterAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "QUESTIONNAIRE IMPORTER API Spec" $ do
-    list_GET appContext
-    list_suggestions_GET appContext
-    detail_GET appContext
-    detail_PUT appContext
+    describe "QUESTIONNAIRE IMPORTER API Spec" $ do
+      list_GET appContext
+      list_suggestions_GET appContext
+      detail_GET appContext
+      detail_PUT appContext

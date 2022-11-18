@@ -10,7 +10,7 @@ import Wizard.Model.Context.AppContext
 
 getCurrentUser :: AppContextM UserDTO
 getCurrentUser = do
-  mCurrentUser <- asks _appContextCurrentUser
+  mCurrentUser <- asks currentUser
   case mCurrentUser of
     Just user -> return user
     Nothing -> throwError $ ForbiddenError _ERROR_SERVICE_USER__MISSING_USER

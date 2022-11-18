@@ -5,13 +5,12 @@ import GHC.Generics
 
 import Shared.Model.Event.Event
 
-data BranchEventDTO =
-  AddBranchEventDTO' AddBranchEventDTO
+data BranchEventDTO
+  = AddBranchEventDTO' AddBranchEventDTO
   deriving (Show, Eq, Generic)
 
-data AddBranchEventDTO =
-  AddBranchEventDTO
-    { _addBranchEventDTOUuid :: U.UUID
-    , _addBranchEventDTOEvent :: Event
-    }
+data AddBranchEventDTO = AddBranchEventDTO
+  { uuid :: U.UUID
+  , event :: Event
+  }
   deriving (Show, Eq, Generic)

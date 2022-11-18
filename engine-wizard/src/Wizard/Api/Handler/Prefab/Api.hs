@@ -6,9 +6,9 @@ import Servant.Swagger.Tags
 import Wizard.Api.Handler.Prefab.List_GET
 import Wizard.Model.Context.BaseContext
 
-type PrefabAPI
-   = Tags "Prefab"
-     :> List_GET
+type PrefabAPI =
+  Tags "Prefab"
+    :> List_GET
 
 prefabApi :: Proxy PrefabAPI
 prefabApi = Proxy

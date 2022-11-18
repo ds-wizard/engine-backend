@@ -2,7 +2,7 @@ module Wizard.Api.Resource.Acl.AclJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Model.Acl.Acl
 
 instance FromJSON GroupMembershipType
@@ -10,7 +10,7 @@ instance FromJSON GroupMembershipType
 instance ToJSON GroupMembershipType
 
 instance FromJSON GroupMembership where
-  parseJSON = simpleParseJSON "_groupMembership"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON GroupMembership where
-  toJSON = simpleToJSON "_groupMembership"
+  toJSON = genericToJSON jsonOptions

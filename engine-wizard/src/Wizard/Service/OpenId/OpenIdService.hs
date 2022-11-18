@@ -1,10 +1,10 @@
 module Wizard.Service.OpenId.OpenIdService where
 
-import Control.Lens ((^.), (^?))
+import Control.Lens ((^?))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Aeson (FromJSON, Value, decode)
-import Data.Aeson.Lens (_String, key)
+import Data.Aeson.Lens (key, _String)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Char (toLower)
@@ -15,7 +15,6 @@ import qualified Web.OIDC.Client as O
 import qualified Web.OIDC.Client.IdTokenFlow as O_ID
 import qualified Web.OIDC.Client.Tokens as OT
 
-import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Crypto (generateRandomString)
 import Wizard.Api.Resource.UserToken.UserTokenDTO
@@ -35,18 +34,18 @@ createAuthenticationUrl authId mFlow mClientUrl = do
   let nonce = "FtEIbRdfFc7z2bNjCTaZKDcWNeUKUelvs13K21VL"
   (service, openIDClient) <- createOpenIDClient authId mClientUrl
   let params =
-        fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameteres) ++
-        [("nonce", Just . BS.pack $ nonce)]
+        fmap (\p -> (BS.pack p.name, Just . BS.pack $ p.value)) service.parameteres
+          ++ [("nonce", Just . BS.pack $ nonce)]
   loc <-
     liftIO $
-    case mFlow of
-      Just "id_token" ->
-        O_ID.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
-      _ -> O.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
+      case mFlow of
+        Just "id_token" ->
+          O_ID.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
+        _ -> O.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
   throwError $ FoundError (show loc)
 
-loginUser ::
-     String
+loginUser
+  :: String
   -> Maybe String
   -> Maybe String
   -> Maybe String
@@ -62,7 +61,7 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mSessionState =
         Nothing ->
           case mCode of
             Just code -> do
-              httpClientManager <- asks _appContextHttpClientManager
+              httpClientManager <- asks httpClientManager
               (_, openIDClient) <- createOpenIDClient authId mClientUrl
               tokens <-
                 liftIO $ O.requestTokens openIDClient (fmap BS.pack mNonce) (BS.pack code) httpClientManager :: AppContextM (OT.Tokens Value)
@@ -88,15 +87,15 @@ parseToken = fromJust . decode . BSL.pack
 -- --------------------------------
 createOpenIDClient :: String -> Maybe String -> AppContextM (AppConfigAuthExternalService, O.OIDC)
 createOpenIDClient authId mClientUrl = do
-  httpClientManager <- asks _appContextHttpClientManager
-  serverConfig <- asks _appContextServerConfig
+  httpClientManager <- asks httpClientManager
+  serverConfig <- asks serverConfig
   appConfig <- getAppConfig
   clientUrl <- getAppClientUrl
-  case L.find (\s -> s ^. aId == authId) (appConfig ^. authentication . external . services) of
+  case L.find (\s -> s.aId == authId) appConfig.authentication.external.services of
     Just service -> do
-      prov <- liftIO $ O.discover (T.pack $ service ^. url) httpClientManager
-      let cId = BS.pack $ service ^. clientId
-      let cSecret = BS.pack $ service ^. clientSecret
+      prov <- liftIO $ O.discover (T.pack service.url) httpClientManager
+      let cId = BS.pack service.clientId
+      let cSecret = BS.pack service.clientSecret
       let clientCallbackUrl = fromMaybe clientUrl mClientUrl
       let redirectUrl = BS.pack $ clientCallbackUrl ++ "/auth/" ++ authId ++ "/callback"
       let openIDClient = O.setCredentials cId cSecret redirectUrl (O.newOIDC prov)

@@ -14,22 +14,22 @@ import qualified Wizard.Model.Config.ServerConfigDM as S
 import Wizard.Service.Config.ClientConfigMapper
 
 instance ToSchema ClientConfigDTO where
-  declareNamedSchema = simpleToSchema (toClientConfigDTO S.defaultConfig A.defaultAppConfig defaultApp [])
+  declareNamedSchema = toSwagger (toClientConfigDTO S.defaultConfig A.defaultAppConfig defaultApp [])
 
 instance ToSchema ClientConfigAuthDTO where
-  declareNamedSchema = simpleToSchema (toClientAuthDTO A.defaultAuth)
+  declareNamedSchema = toSwagger (toClientAuthDTO A.defaultAuth)
 
 instance ToSchema ClientConfigAuthExternalDTO where
-  declareNamedSchema = simpleToSchema (toClientAuthExternalDTO A.defaultAuthExternal)
+  declareNamedSchema = toSwagger (toClientAuthExternalDTO A.defaultAuthExternal)
 
 instance ToSchema ClientConfigAuthExternalServiceDTO where
-  declareNamedSchema = simpleToSchema (toClientAuthExternalServiceDTO A.defaultAuthExternalService)
+  declareNamedSchema = toSwagger (toClientAuthExternalServiceDTO A.defaultAuthExternalService)
 
 instance ToSchema ClientConfigRegistryDTO where
-  declareNamedSchema = simpleToSchema (toClientConfigRegistryDTO S.defaultRegistry A.defaultRegistry)
+  declareNamedSchema = toSwagger (toClientConfigRegistryDTO S.defaultRegistry A.defaultRegistry)
 
 instance ToSchema ClientConfigQuestionnaireDTO where
-  declareNamedSchema = simpleToSchema (toClientConfigQuestionnaireDTO A.defaultQuestionnaire)
+  declareNamedSchema = toSwagger (toClientConfigQuestionnaireDTO A.defaultQuestionnaire)
 
 instance ToSchema ClientConfigCloudDTO where
-  declareNamedSchema = simpleToSchema (toClientConfigCloudDTO S_S.defaultCloud defaultApp)
+  declareNamedSchema = toSwagger (toClientConfigCloudDTO S_S.defaultCloud defaultApp)

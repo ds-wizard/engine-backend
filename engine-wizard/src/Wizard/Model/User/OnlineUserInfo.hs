@@ -7,17 +7,17 @@ import Wizard.Model.Acl.Acl
 
 data OnlineUserInfo
   = LoggedOnlineUserInfo
-      { _loggedOnlineUserInfoUuid :: U.UUID
-      , _loggedOnlineUserInfoFirstName :: String
-      , _loggedOnlineUserInfoLastName :: String
-      , _loggedOnlineUserInfoGravatarHash :: String
-      , _loggedOnlineUserInfoImageUrl :: Maybe String
-      , _loggedOnlineUserInfoColorNumber :: Int
-      , _loggedOnlineUserInfoRole :: String
-      , _loggedOnlineUserInfoGroups :: [GroupMembership]
+      { uuid :: U.UUID
+      , firstName :: String
+      , lastName :: String
+      , gravatarHash :: String
+      , imageUrl :: Maybe String
+      , colorNumber :: Int
+      , role :: String
+      , groups :: [GroupMembership]
       }
   | AnonymousOnlineUserInfo
-      { _anonymousOnlineUserInfoAvatarNumber :: Int
-      , _anonymousOnlineUserInfoColorNumber :: Int
+      { avatarNumber :: Int
+      , colorNumber :: Int
       }
   deriving (Show, Eq, Generic)

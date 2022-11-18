@@ -9,6 +9,6 @@ import Wizard.Specs.API.Submission.List_POST
 
 submissionAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "SUBMISSION API Spec" $ do
-    list_GET appContext
-    list_POST appContext
+    describe "SUBMISSION API Spec" $ do
+      list_GET appContext
+      list_POST appContext

@@ -5,4 +5,8 @@ import Shared.Model.Common.PageMetadata
 pageMetadata :: PageMetadata
 pageMetadata =
   PageMetadata
-    {_pageMetadataSize = 1, _pageMetadataTotalElements = 3, _pageMetadataTotalPages = 3, _pageMetadataNumber = 0}
+    { size = 1
+    , totalElements = 3
+    , totalPages = 3
+    , number = 0
+    }

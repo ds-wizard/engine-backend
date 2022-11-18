@@ -3,10 +3,10 @@ module Registry.Api.Resource.Statistics.InstanceStatisticsJM where
 import Data.Aeson
 
 import Registry.Model.Statistics.InstanceStatistics
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON InstanceStatistics where
-  parseJSON = simpleParseJSON "_instanceStatistics"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON InstanceStatistics where
-  toJSON = simpleToJSON "_instanceStatistics"
+  toJSON = genericToJSON jsonOptions

@@ -12,21 +12,20 @@ import Wizard.Api.Resource.Template.TemplateSimpleJM ()
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 
-data DocumentDTO =
-  DocumentDTO
-    { _documentDTOUuid :: U.UUID
-    , _documentDTOName :: String
-    , _documentDTOState :: DocumentState
-    , _documentDTOQuestionnaire :: Maybe QuestionnaireSimple
-    , _documentDTOQuestionnaireEventUuid :: Maybe U.UUID
-    , _documentDTOTemplate :: TemplateSimpleDTO
-    , _documentDTOFormatUuid :: U.UUID
-    , _documentDTOFileName :: Maybe String
-    , _documentDTOContentType :: Maybe String
-    , _documentDTOFileSize :: Maybe Int64
-    , _documentDTOWorkerLog :: Maybe String
-    , _documentDTOSubmissions :: [SubmissionDTO]
-    , _documentDTOCreatorUuid :: Maybe U.UUID
-    , _documentDTOCreatedAt :: UTCTime
-    }
+data DocumentDTO = DocumentDTO
+  { uuid :: U.UUID
+  , name :: String
+  , state :: DocumentState
+  , questionnaire :: Maybe QuestionnaireSimple
+  , questionnaireEventUuid :: Maybe U.UUID
+  , template :: TemplateSimpleDTO
+  , formatUuid :: U.UUID
+  , fileName :: Maybe String
+  , contentType :: Maybe String
+  , fileSize :: Maybe Int64
+  , workerLog :: Maybe String
+  , submissions :: [SubmissionDTO]
+  , creatorUuid :: Maybe U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

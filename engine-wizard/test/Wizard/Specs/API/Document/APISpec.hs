@@ -11,8 +11,8 @@ import Wizard.Specs.API.Document.List_POST
 
 documentAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "DOCUMENT API Spec" $ do
-    list_GET appContext
-    list_POST appContext
-    detail_DELETE appContext
-    detail_available_submission_Services_GET appContext
+    describe "DOCUMENT API Spec" $ do
+      list_GET appContext
+      list_POST appContext
+      detail_DELETE appContext
+      detail_available_submission_Services_GET appContext

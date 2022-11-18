@@ -84,6 +84,11 @@ jobs:
         run: |
           cp -R /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/servant-errors/.stack-work vendor/servant-errors/.stack-work
 
+      - name: Move vendor/servant-mock/.stack-work
+        continue-on-error: true
+        run: |
+          cp -R /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/servant-mock/.stack-work vendor/servant-mock/.stack-work
+
       - name: Update config and build info
         run: |
           ./scripts/update-file-timestamps.sh
@@ -138,6 +143,11 @@ jobs:
         run: |
           mkdir -p /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/servant-errors
           mv vendor/servant-errors/.stack-work /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/servant-errors/.stack-work
+      - name: Cache vendor/servant-mock/.stack-work
+        continue-on-error: true
+        run: |
+          mkdir -p /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/servant-mock
+          mv vendor/servant-mock/.stack-work /home/ubuntu/caches/engine-backend-private/$COMPONENT/vendor/servant-mock/.stack-work
 
       # (5) -> Docker login
       - name: Docker login

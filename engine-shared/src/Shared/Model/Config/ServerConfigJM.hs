@@ -1,53 +1,51 @@
 module Shared.Model.Config.ServerConfigJM where
 
-import Control.Lens ((^.))
 import Control.Monad
-import Control.Monad.Logger (LogLevel(..))
+import Control.Monad.Logger (LogLevel (..))
 import Data.Aeson
 
-import LensesConfig
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Config.ServerConfigDM
 
 instance FromJSON ServerConfigDatabase where
   parseJSON (Object o) = do
-    _serverConfigDatabaseConnectionString <- o .:? "connectionString" .!= (defaultDatabase ^. connectionString)
-    _serverConfigDatabaseStripeSize <- o .:? "stripeSize" .!= (defaultDatabase ^. stripeSize)
-    _serverConfigDatabaseConnectionTimeout <- o .:? "connectionTimeout" .!= (defaultDatabase ^. connectionTimeout)
-    _serverConfigDatabaseMaxConnections <- o .:? "maxConnections" .!= (defaultDatabase ^. maxConnections)
+    connectionString <- o .:? "connectionString" .!= defaultDatabase.connectionString
+    stripeSize <- o .:? "stripeSize" .!= defaultDatabase.stripeSize
+    connectionTimeout <- o .:? "connectionTimeout" .!= defaultDatabase.connectionTimeout
+    maxConnections <- o .:? "maxConnections" .!= defaultDatabase.maxConnections
     return ServerConfigDatabase {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigS3 where
   parseJSON (Object o) = do
-    _serverConfigS3Url <- o .:? "url" .!= (defaultS3 ^. url)
-    _serverConfigS3PublicUrl <- o .:? "publicUrl" .!= (defaultS3 ^. publicUrl)
-    _serverConfigS3Username <- o .:? "username" .!= (defaultS3 ^. username)
-    _serverConfigS3Password <- o .:? "password" .!= (defaultS3 ^. password)
-    _serverConfigS3Bucket <- o .:? "bucket" .!= (defaultS3 ^. bucket)
-    _serverConfigS3Region <- o .:? "region" .!= (defaultS3 ^. region)
+    url <- o .:? "url" .!= defaultS3.url
+    publicUrl <- o .:? "publicUrl" .!= defaultS3.publicUrl
+    username <- o .:? "username" .!= defaultS3.username
+    password <- o .:? "password" .!= defaultS3.password
+    bucket <- o .:? "bucket" .!= defaultS3.bucket
+    region <- o .:? "region" .!= defaultS3.region
     return ServerConfigS3 {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigAnalytics where
   parseJSON (Object o) = do
-    _serverConfigAnalyticsEnabled <- o .:? "enabled" .!= (defaultAnalytics ^. enabled)
-    _serverConfigAnalyticsEmail <- o .:? "email" .!= (defaultAnalytics ^. email)
+    enabled <- o .:? "enabled" .!= defaultAnalytics.enabled
+    email <- o .:? "email" .!= defaultAnalytics.email
     return ServerConfigAnalytics {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigSentry where
   parseJSON (Object o) = do
-    _serverConfigSentryEnabled <- o .:? "enabled" .!= (defaultSentry ^. enabled)
-    _serverConfigSentryDsn <- o .:? "dsn" .!= (defaultSentry ^. dsn)
+    enabled <- o .:? "enabled" .!= defaultSentry.enabled
+    dsn <- o .:? "dsn" .!= defaultSentry.dsn
     return ServerConfigSentry {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigLogging where
   parseJSON (Object o) = do
-    _serverConfigLoggingLevel <- o .:? "level" .!= (defaultLogging ^. level)
-    _serverConfigLoggingHttpClientDebug <- o .:? "httpClientDebug" .!= (defaultLogging ^. httpClientDebug)
-    _serverConfigLoggingWebsocketDebug <- o .:? "websocketDebug" .!= (defaultLogging ^. websocketDebug)
+    level <- o .:? "level" .!= defaultLogging.level
+    httpClientDebug <- o .:? "httpClientDebug" .!= defaultLogging.httpClientDebug
+    websocketDebug <- o .:? "websocketDebug" .!= defaultLogging.websocketDebug
     return ServerConfigLogging {..}
   parseJSON _ = mzero
 
@@ -62,9 +60,9 @@ instance FromJSON LogLevel where
 
 instance FromJSON ServerConfigCloud where
   parseJSON (Object o) = do
-    _serverConfigCloudEnabled <- o .:? "enabled" .!= (defaultCloud ^. enabled)
-    _serverConfigCloudDomain <- o .:? "domain" .!= (defaultCloud ^. domain)
-    _serverConfigCloudPublicRegistrationEnabled <-
-      o .:? "publicRegistrationEnabled" .!= (defaultCloud ^. publicRegistrationEnabled)
+    enabled <- o .:? "enabled" .!= defaultCloud.enabled
+    domain <- o .:? "domain" .!= defaultCloud.domain
+    publicRegistrationEnabled <-
+      o .:? "publicRegistrationEnabled" .!= defaultCloud.publicRegistrationEnabled
     return ServerConfigCloud {..}
   parseJSON _ = mzero

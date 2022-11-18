@@ -13,12 +13,12 @@ entityName = "locale"
 
 findLocales :: AppContextM [Locale]
 findLocales = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findLocaleById :: String -> AppContextM Locale
 findLocaleById uuid = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 insertLocale :: Locale -> AppContextM Int64

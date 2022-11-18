@@ -5,19 +5,18 @@ import GHC.Generics
 
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 
-data TemplateDetailDTO =
-  TemplateDetailDTO
-    { _templateDetailDTOTId :: String
-    , _templateDetailDTOName :: String
-    , _templateDetailDTOOrganizationId :: String
-    , _templateDetailDTOTemplateId :: String
-    , _templateDetailDTOVersion :: String
-    , _templateDetailDTOMetamodelVersion :: Int
-    , _templateDetailDTODescription :: String
-    , _templateDetailDTOReadme :: String
-    , _templateDetailDTOLicense :: String
-    , _templateDetailDTOVersions :: [String]
-    , _templateDetailDTOOrganization :: OrganizationSimpleDTO
-    , _templateDetailDTOCreatedAt :: UTCTime
-    }
+data TemplateDetailDTO = TemplateDetailDTO
+  { tId :: String
+  , name :: String
+  , organizationId :: String
+  , templateId :: String
+  , version :: String
+  , metamodelVersion :: Int
+  , description :: String
+  , readme :: String
+  , license :: String
+  , versions :: [String]
+  , organization :: OrganizationSimpleDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

@@ -1,6 +1,6 @@
-module Wizard.Metamodel.Migration.Migration0008
-  ( migrateEventValue
-  ) where
+module Wizard.Metamodel.Migration.Migration0008 (
+  migrateEventValue,
+) where
 
 import Data.Aeson
 import qualified Data.Aeson.KeyMap as KM
@@ -10,7 +10,9 @@ import Wizard.Metamodel.Migration.MigrationContext
 import Wizard.Metamodel.Migration.Utils
 
 -- Migration #0008 (KM v8 -> v9)
+
 -- * Add "annotations" to all add events (empty object)
+
 -- * Add "annotations" to all edit events (no change)
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ input = Right [migrate input]

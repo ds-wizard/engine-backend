@@ -9,4 +9,4 @@ import Wizard.Database.Migration.Development.Locale.Data.Locales
 import Wizard.Service.Locale.LocaleMapper
 
 instance ToSchema LocaleDTO where
-  declareNamedSchema = simpleToSchema (toDTO localeCz)
+  declareNamedSchema = toSwagger (toDTO localeCz)

@@ -49,72 +49,67 @@ import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PC_
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 
 instance ToSchema (Page String) where
-  declareNamedSchema = simpleToSchema''''' "_page" "Page String" (Page "projectTags" pageMetadata ["value1"])
+  declareNamedSchema = toSwaggerWithDtoName "Page String" (Page "projectTags" pageMetadata ["value1"])
 
 instance ToSchema (Page UserDTO) where
   declareNamedSchema =
-    simpleToSchema''''' "_page" "Page UserDTO" (Page "users" pageMetadata [U_Mapper.toDTO userAlbert])
+    toSwaggerWithDtoName "Page UserDTO" (Page "users" pageMetadata [U_Mapper.toDTO userAlbert])
 
 instance ToSchema (Page UserSuggestionDTO) where
   declareNamedSchema =
-    simpleToSchema'''''
-      "_page"
+    toSwaggerWithDtoName
       "Page UserSuggestionDTO"
       (Page "users" pageMetadata [U_Mapper.toSuggestionDTO . U_Mapper.toSuggestion $ userAlbert])
 
 instance ToSchema (Page PackageSimpleDTO) where
   declareNamedSchema =
-    simpleToSchema'''''
-      "_page"
+    toSwaggerWithDtoName
       "Page PackageSimpleDTO"
       (Page "packages" pageMetadata [P_Mapper.toSimpleDTO (SP_Mapper.toPackage globalPackage)])
 
 instance ToSchema (Page PackageSuggestion) where
   declareNamedSchema =
-    simpleToSchema'''''
-      "_page"
+    toSwaggerWithDtoName
       "Page PackageSuggestion"
       (Page "packages" pageMetadata [P_Mapper.toSuggestion (SP_Mapper.toPackage globalPackage, [])])
 
 instance ToSchema (Page BranchList) where
   declareNamedSchema =
-    simpleToSchema''''' "_page" "Page BranchList" (Page "branches" pageMetadata [amsterdamBranchList])
+    toSwaggerWithDtoName "Page BranchList" (Page "branches" pageMetadata [amsterdamBranchList])
 
 instance ToSchema (Page QuestionnaireDTO) where
   declareNamedSchema =
-    simpleToSchema''''' "_page" "Page QuestionnaireDTO" (Page "questionnaires" pageMetadata [questionnaire1Dto])
+    toSwaggerWithDtoName "Page QuestionnaireDTO" (Page "questionnaires" pageMetadata [questionnaire1Dto])
 
 instance ToSchema (Page QuestionnaireImporterDTO) where
   declareNamedSchema =
-    simpleToSchema'''''
-      "_page"
+    toSwaggerWithDtoName
       "Page QuestionnaireImporterDTO"
       (Page "questionnaireImporters" pageMetadata [questionnaireImporterBio3Dto])
 
 instance ToSchema (Page TemplateSimpleDTO) where
   declareNamedSchema =
-    simpleToSchema''''' "_page" "Page TemplateSimpleDTO" (Page "templates" pageMetadata [commonWizardTemplateSimpleDTO])
+    toSwaggerWithDtoName "Page TemplateSimpleDTO" (Page "templates" pageMetadata [commonWizardTemplateSimpleDTO])
 
 instance ToSchema (Page TemplateSuggestionDTO) where
   declareNamedSchema =
-    simpleToSchema'''''
-      "_page"
+    toSwaggerWithDtoName
       "Page TemplateSuggestionDTO"
       (Page "templates" pageMetadata [toSuggestionDTO commonWizardTemplate])
 
 instance ToSchema (Page DocumentDTO) where
-  declareNamedSchema = simpleToSchema''''' "_page" "Page DocumentDTO" (Page "documents" pageMetadata [doc1Dto])
+  declareNamedSchema = toSwaggerWithDtoName "Page DocumentDTO" (Page "documents" pageMetadata [doc1Dto])
 
 instance ToSchema (Page PersistentCommandDTO) where
   declareNamedSchema =
-    simpleToSchema'''''
-      "_page"
+    toSwaggerWithDtoName
       "Page PersistentCommandDTO"
-      (Page
-         "persistentCommands"
-         pageMetadata
-         [PC_Mapper.toDTO command1 (Just userAlbert) (A_Mapper.toDTO defaultApp Nothing Nothing)])
+      ( Page
+          "persistentCommands"
+          pageMetadata
+          [PC_Mapper.toDTO command1 (Just userAlbert) (A_Mapper.toDTO defaultApp Nothing Nothing)]
+      )
 
 instance ToSchema (Page AppDTO) where
   declareNamedSchema =
-    simpleToSchema''''' "_page" "Page AppDTO" (Page "apps" pageMetadata [A_Mapper.toDTO defaultApp Nothing Nothing])
+    toSwaggerWithDtoName "Page AppDTO" (Page "apps" pageMetadata [A_Mapper.toDTO defaultApp Nothing Nothing])

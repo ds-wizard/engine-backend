@@ -14,10 +14,10 @@ import qualified Wizard.Service.Migration.Metamodel.Migrator.PackageMigrator as 
 migratePackageBundle :: Value -> AppContextM Value
 migratePackageBundle value =
   runInTransaction $
-  let eResult = PBMigrator.migrate value
-   in case eResult of
-        Right result -> return result
-        Left error -> throwError error
+    let eResult = PBMigrator.migrate value
+     in case eResult of
+          Right result -> return result
+          Left error -> throwError error
 
 migrateCompleteDatabase :: AppContextM ()
 migrateCompleteDatabase =

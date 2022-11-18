@@ -27,6 +27,7 @@ instance SimpleEventSquash Event where
   isSimpleEventSquashApplicable (EditReferenceEvent' event) = isSimpleEventSquashApplicable event
   isSimpleEventSquashApplicable (EditTagEvent' event) = isSimpleEventSquashApplicable event
   isSimpleEventSquashApplicable _ = False
+
   --  --------------------------------------
   isReorderEventSquashApplicable (EditAnswerEvent' previousEvent) (EditAnswerEvent' event) =
     isReorderEventSquashApplicable previousEvent event
@@ -51,10 +52,12 @@ instance SimpleEventSquash Event where
   isReorderEventSquashApplicable (EditTagEvent' previousEvent) (EditTagEvent' event) =
     isReorderEventSquashApplicable previousEvent event
   isReorderEventSquashApplicable _ _ = False
+
   --  --------------------------------------
   isTypeChanged (EditQuestionEvent' oldEvent) (EditQuestionEvent' newEvent) = isTypeChanged oldEvent newEvent
   isTypeChanged (EditReferenceEvent' oldEvent) (EditReferenceEvent' newEvent) = isTypeChanged oldEvent newEvent
   isTypeChanged _ _ = False
+
   --  --------------------------------------
   simpleSquashEvent mPreviousEvent (EditAnswerEvent' oldEvent) (EditAnswerEvent' newEvent) =
     EditAnswerEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent

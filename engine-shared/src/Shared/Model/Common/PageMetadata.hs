@@ -2,11 +2,10 @@ module Shared.Model.Common.PageMetadata where
 
 import GHC.Generics
 
-data PageMetadata =
-  PageMetadata
-    { _pageMetadataSize :: Int
-    , _pageMetadataTotalElements :: Int
-    , _pageMetadataTotalPages :: Int
-    , _pageMetadataNumber :: Int
-    }
+data PageMetadata = PageMetadata
+  { size :: Int
+  , totalElements :: Int
+  , totalPages :: Int
+  , number :: Int
+  }
   deriving (Show, Eq, Generic)

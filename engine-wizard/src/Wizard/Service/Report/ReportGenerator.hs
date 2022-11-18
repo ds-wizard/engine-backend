@@ -1,11 +1,9 @@
 module Wizard.Service.Report.ReportGenerator where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
 import Shared.Util.Uuid
@@ -18,16 +16,16 @@ import Wizard.Service.Report.Evaluator.Metric
 computeChapterReport :: Maybe U.UUID -> KnowledgeModel -> [ReplyTuple] -> Chapter -> ChapterReport
 computeChapterReport requiredPhaseUuid km replies ch =
   ChapterReport
-    { _chapterReportChapterUuid = ch ^. uuid
-    , _chapterReportIndications = computeIndications requiredPhaseUuid km replies ch
-    , _chapterReportMetrics = computeMetrics km replies (Just ch)
+    { chapterUuid = ch.uuid
+    , indications = computeIndications requiredPhaseUuid km replies ch
+    , metrics = computeMetrics km replies (Just ch)
     }
 
 computeTotalReport :: Maybe U.UUID -> KnowledgeModel -> [ReplyTuple] -> TotalReport
 computeTotalReport requiredPhaseUuid km replies =
   TotalReport
-    { _totalReportIndications = computeTotalReportIndications requiredPhaseUuid km replies
-    , _totalReportMetrics = computeMetrics km replies Nothing
+    { indications = computeTotalReportIndications requiredPhaseUuid km replies
+    , metrics = computeMetrics km replies Nothing
     }
 
 computeTotalReportIndications :: Maybe U.UUID -> KnowledgeModel -> [ReplyTuple] -> [Indication]
@@ -50,9 +48,9 @@ generateReport requiredPhaseUuid km replies = do
   now <- liftIO getCurrentTime
   return
     Report
-      { _reportUuid = rUuid
-      , _reportTotalReport = computeTotalReport requiredPhaseUuid km replies
-      , _reportChapterReports = computeChapterReport requiredPhaseUuid km replies <$> getChaptersForKmUuid km
-      , _reportCreatedAt = now
-      , _reportUpdatedAt = now
+      { uuid = rUuid
+      , totalReport = computeTotalReport requiredPhaseUuid km replies
+      , chapterReports = computeChapterReport requiredPhaseUuid km replies <$> getChaptersForKmUuid km
+      , createdAt = now
+      , updatedAt = now
       }

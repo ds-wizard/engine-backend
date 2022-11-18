@@ -1,6 +1,5 @@
 module Wizard.Service.Config.AppConfigCommandExecutor where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 import Data.Aeson (eitherDecode, encode)
 import qualified Data.ByteString.Lazy.Char8 as BSL
@@ -8,11 +7,12 @@ import Data.Foldable (traverse_)
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Util.Uuid
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Wizard.Model.App.App
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.PersistentCommand.Config.InvokeClientCssCompilationCommand
@@ -25,13 +25,13 @@ cComponent = "AppConfig"
 
 execute :: PersistentCommand -> AppContextM (PersistentCommandState, Maybe String)
 execute command
-  | command ^. function == cInvokeClientCssCompilationName = cInvokeClientCssCompilation command
+  | command.function == cInvokeClientCssCompilationName = cInvokeClientCssCompilation command
 
 recompileCssInAllApplications :: AppContextM ()
 recompileCssInAllApplications =
   runInTransaction $ do
     apps <- findApps
-    traverse_ (\a -> recompileCssInApplication (a ^. uuid)) apps
+    traverse_ (\a -> recompileCssInApplication a.uuid) apps
 
 recompileCssInApplication :: U.UUID -> AppContextM ()
 recompileCssInApplication appUuid = do
@@ -47,7 +47,7 @@ recompileCssInApplication appUuid = do
           1
           True
           appUuid
-          (Just $ user ^. uuid)
+          (Just user.uuid)
           now
   insertPersistentCommand command
   return ()
@@ -56,10 +56,10 @@ cInvokeClientCssCompilationName = "invokeClientCssCompilation"
 
 cInvokeClientCssCompilation :: PersistentCommand -> AppContextM (PersistentCommandState, Maybe String)
 cInvokeClientCssCompilation persistentCommand = do
-  let eCommand = eitherDecode (BSL.pack $ persistentCommand ^. body) :: Either String InvokeClientCssCompilationCommand
+  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String InvokeClientCssCompilationCommand
   case eCommand of
     Right command -> do
-      appConfig <- getAppConfigByUuid (command ^. appUuid)
+      appConfig <- getAppConfigByUuid command.appUuid
       updatedAppConfig <- invokeClientCssCompilation appConfig appConfig
       modifyAppConfig updatedAppConfig
       return (DonePersistentCommandState, Nothing)

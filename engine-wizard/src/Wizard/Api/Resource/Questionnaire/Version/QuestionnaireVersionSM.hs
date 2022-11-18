@@ -9,4 +9,4 @@ import Wizard.Api.Resource.User.UserSuggestionSM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 
 instance ToSchema QuestionnaireVersionDTO where
-  declareNamedSchema = simpleToSchema questionnaireVersion1Dto
+  declareNamedSchema = toSwagger questionnaireVersion1Dto

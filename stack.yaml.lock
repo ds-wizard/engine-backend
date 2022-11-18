@@ -19,13 +19,6 @@ packages:
   original:
     hackage: text-replace-0.0.0.4
 - completed:
-    hackage: servant-mock-0.8.7@sha256:64cb3e52bbd51ab6cb25e3f412a99ea712c6c26f1efd117f01a8d1664df49c67,2306
-    pantry-tree:
-      sha256: b263e932ec6b151e52987054ec0a4cd692fa787f856c79e51498302eb0d6c388
-      size: 555
-  original:
-    hackage: servant-mock-0.8.7
-- completed:
     hackage: servant-swagger-tags-0.1.0.1@sha256:2d743e9ad1cfcca537acc99e0b97e0e4feda3b5c842937dbf5895261e3105bf1,1094
     pantry-tree:
       sha256: 4329b4e1c1d70304cd19841aa6a56b2b7c7151a2cb9d193ffbfcf800d1f1966e
@@ -67,9 +60,23 @@ packages:
       size: 1231
   original:
     hackage: jose-jwt-0.9.4
+- completed:
+    hackage: ginger-0.10.4.0@sha256:7ca26896395fda951443ed3bba5f24fd6036c44167d424e744d1e0c8c6b138fd,3855
+    pantry-tree:
+      sha256: c3d93b51ba0e76853b217debb662cdcf5eca78288d49c809f823be27a072bfbf
+      size: 1430
+  original:
+    hackage: ginger-0.10.4.0
+- completed:
+    hackage: lens-aeson-1.1.3@sha256:52c8eaecd2d1c2a969c0762277c4a8ee72c339a686727d5785932e72ef9c3050,1764
+    pantry-tree:
+      sha256: b31392b78f2a03111c805f4400007778eb93b49f998ab41dfbebaaf9b5526bad
+      size: 541
+  original:
+    hackage: lens-aeson-1.1.3
 snapshots:
 - completed:
-    sha256: 9a74d76d250a455d9cd11e74f157e087787fa9aa3c4264e69c94703d1e71aede
-    size: 619200
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/30.yaml
-  original: lts-19.30
+    sha256: fafa9d441155a77e7c0413cecdaaca2969b12b86c76d47c8d9c0f447c5ca1503
+    size: 648420
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2022/11/16.yaml
+  original: nightly-2022-11-16

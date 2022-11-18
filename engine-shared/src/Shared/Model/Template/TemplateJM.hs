@@ -4,34 +4,34 @@ import Data.Aeson
 
 import Shared.Api.Resource.Package.PackagePatternJM ()
 import Shared.Model.Template.Template
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON Template where
-  parseJSON = simpleParseJSON "_template"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON Template where
-  toJSON = simpleToJSON "_template"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON TemplateFormat where
-  parseJSON = simpleParseJSON "_templateFormat"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TemplateFormat where
-  toJSON = simpleToJSON "_templateFormat"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON TemplateFormatStep where
-  parseJSON = simpleParseJSON "_templateFormatStep"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TemplateFormatStep where
-  toJSON = simpleToJSON "_templateFormatStep"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON TemplateFile where
-  parseJSON = simpleParseJSON "_templateFile"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TemplateFile where
-  toJSON = simpleToJSON "_templateFile"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON TemplateAsset where
-  parseJSON = simpleParseJSON "_templateAsset"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TemplateAsset where
-  toJSON = simpleToJSON "_templateAsset"
+  toJSON = genericToJSON jsonOptions

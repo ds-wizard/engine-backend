@@ -9,24 +9,23 @@ import Shared.Model.Template.Template
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Model.Template.TemplateState
 
-data TemplateSimpleDTO =
-  TemplateSimpleDTO
-    { _templateSimpleDTOTId :: String
-    , _templateSimpleDTOName :: String
-    , _templateSimpleDTOOrganizationId :: String
-    , _templateSimpleDTOTemplateId :: String
-    , _templateSimpleDTOVersion :: String
-    , _templateSimpleDTORemoteLatestVersion :: Maybe String
-    , _templateSimpleDTOMetamodelVersion :: Int
-    , _templateSimpleDTODescription :: String
-    , _templateSimpleDTOReadme :: String
-    , _templateSimpleDTOLicense :: String
-    , _templateSimpleDTOAllowedPackages :: [PackagePattern]
-    , _templateSimpleDTORecommendedPackageId :: Maybe String
-    , _templateSimpleDTOFormats :: [TemplateFormat]
-    , _templateSimpleDTOUsablePackages :: [PackageSimpleDTO]
-    , _templateSimpleDTOState :: TemplateState
-    , _templateSimpleDTOOrganization :: Maybe OrganizationSimpleDTO
-    , _templateSimpleDTOCreatedAt :: UTCTime
-    }
+data TemplateSimpleDTO = TemplateSimpleDTO
+  { tId :: String
+  , name :: String
+  , organizationId :: String
+  , templateId :: String
+  , version :: String
+  , remoteLatestVersion :: Maybe String
+  , metamodelVersion :: Int
+  , description :: String
+  , readme :: String
+  , license :: String
+  , allowedPackages :: [PackagePattern]
+  , recommendedPackageId :: Maybe String
+  , formats :: [TemplateFormat]
+  , usablePackages :: [PackageSimpleDTO]
+  , state :: TemplateState
+  , organization :: Maybe OrganizationSimpleDTO
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

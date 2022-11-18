@@ -2,11 +2,11 @@ module Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionRevertJM wh
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionRevertDTO
 
 instance FromJSON QuestionnaireVersionRevertDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON QuestionnaireVersionRevertDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

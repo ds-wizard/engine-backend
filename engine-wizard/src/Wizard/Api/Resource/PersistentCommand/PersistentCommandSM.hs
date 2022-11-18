@@ -17,4 +17,4 @@ import Wizard.Service.PersistentCommand.PersistentCommandMapper
 instance ToSchema PersistentCommandState
 
 instance ToSchema PersistentCommandDTO where
-  declareNamedSchema = simpleToSchema (toDTO command1 (Just userAlbert) (AM.toDTO defaultApp Nothing Nothing))
+  declareNamedSchema = toSwagger (toDTO command1 (Just userAlbert) (AM.toDTO defaultApp Nothing Nothing))

@@ -11,7 +11,7 @@ import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Shared.Util.Swagger
 
 instance ToSchema AddKnowledgeModelEvent where
-  declareNamedSchema = simpleToSchema'' "_addKnowledgeModelEvent" "eventType" a_km1
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1
 
 instance ToSchema EditKnowledgeModelEvent where
-  declareNamedSchema = simpleToSchema'' "_editKnowledgeModelEvent" "eventType" e_km1
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1

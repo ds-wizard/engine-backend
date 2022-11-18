@@ -8,17 +8,16 @@ import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Model.PersistentCommand.PersistentCommand
 
-data PersistentCommandDTO =
-  PersistentCommandDTO
-    { _persistentCommandDTOUuid :: U.UUID
-    , _persistentCommandDTOState :: PersistentCommandState
-    , _persistentCommandDTOComponent :: String
-    , _persistentCommandDTOFunction :: String
-    , _persistentCommandDTOAttempts :: Int
-    , _persistentCommandDTOMaxAttempts :: Int
-    , _persistentCommandDTOApp :: AppDTO
-    , _persistentCommandDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _persistentCommandDTOCreatedAt :: UTCTime
-    , _persistentCommandDTOUpdatedAt :: UTCTime
-    }
+data PersistentCommandDTO = PersistentCommandDTO
+  { uuid :: U.UUID
+  , state :: PersistentCommandState
+  , component :: String
+  , function :: String
+  , attempts :: Int
+  , maxAttempts :: Int
+  , app :: AppDTO
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

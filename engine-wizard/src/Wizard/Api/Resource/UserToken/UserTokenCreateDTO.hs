@@ -2,9 +2,8 @@ module Wizard.Api.Resource.UserToken.UserTokenCreateDTO where
 
 import GHC.Generics
 
-data UserTokenCreateDTO =
-  UserTokenCreateDTO
-    { _userTokenCreateDTOEmail :: String
-    , _userTokenCreateDTOPassword :: String
-    }
+data UserTokenCreateDTO = UserTokenCreateDTO
+  { email :: String
+  , password :: String
+  }
   deriving (Generic)

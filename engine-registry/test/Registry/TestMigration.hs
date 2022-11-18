@@ -17,24 +17,24 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 
 import Registry.Specs.Common
 
-buildSchema appContext
+buildSchema appContext =
   -- 1. Drop
- = do
-  putStrLn "DB: dropping schema"
-  runInContext PC_Schema.dropTables appContext
-  runInContext ACK_Schema.dropTables appContext
-  runInContext ADT_Schema.dropTables appContext
-  runInContext ORG_Schema.dropTables appContext
-  runInContext PKG_Schema.dropTables appContext
-  runInContext TML_Schema.dropTables appContext
-  -- 2. Create
-  putStrLn "DB: Creating schema"
-  runInContext ACK_Schema.createTables appContext
-  runInContext ADT_Schema.createTables appContext
-  runInContext ORG_Schema.createTables appContext
-  runInContext PKG_Schema.createTables appContext
-  runInContext TML_Schema.createTables appContext
-  runInContext PC_Schema.createTables appContext
+  do
+    putStrLn "DB: dropping schema"
+    runInContext PC_Schema.dropTables appContext
+    runInContext ACK_Schema.dropTables appContext
+    runInContext ADT_Schema.dropTables appContext
+    runInContext ORG_Schema.dropTables appContext
+    runInContext PKG_Schema.dropTables appContext
+    runInContext TML_Schema.dropTables appContext
+    -- 2. Create
+    putStrLn "DB: Creating schema"
+    runInContext ACK_Schema.createTables appContext
+    runInContext ADT_Schema.createTables appContext
+    runInContext ORG_Schema.createTables appContext
+    runInContext PKG_Schema.createTables appContext
+    runInContext TML_Schema.createTables appContext
+    runInContext PC_Schema.createTables appContext
 
 resetDB appContext = do
   runInContext deletePersistentCommands appContext

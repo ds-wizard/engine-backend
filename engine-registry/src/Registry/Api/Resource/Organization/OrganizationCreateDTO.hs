@@ -2,11 +2,10 @@ module Registry.Api.Resource.Organization.OrganizationCreateDTO where
 
 import GHC.Generics
 
-data OrganizationCreateDTO =
-  OrganizationCreateDTO
-    { _organizationCreateDTOOrganizationId :: String
-    , _organizationCreateDTOName :: String
-    , _organizationCreateDTODescription :: String
-    , _organizationCreateDTOEmail :: String
-    }
+data OrganizationCreateDTO = OrganizationCreateDTO
+  { organizationId :: String
+  , name :: String
+  , description :: String
+  , email :: String
+  }
   deriving (Show, Eq, Generic)

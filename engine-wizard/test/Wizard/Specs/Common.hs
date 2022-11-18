@@ -1,6 +1,5 @@
 module Wizard.Specs.Common where
 
-import Control.Lens ((&), (.~))
 import Control.Monad.Except (runExceptT)
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO, runReaderT)
@@ -26,7 +25,7 @@ shouldFailed appContext fn = do
   result <- runInContext fn appContext
   isRight result `shouldBe` False
 
-modifyAppConfig key value = do
+modifyAppConfig updateFn = do
   appConfig <- findAppConfig
-  let updatedAppConfig = appConfig & key .~ value
+  let updatedAppConfig = updateFn appConfig
   updateAppConfig updatedAppConfig

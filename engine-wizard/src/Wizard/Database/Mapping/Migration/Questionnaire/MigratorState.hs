@@ -10,16 +10,16 @@ import Wizard.Model.Migration.Questionnaire.MigratorState
 
 instance ToRow MigratorState where
   toRow MigratorState {..} =
-    [ toField _migratorStateOldQuestionnaireUuid
-    , toField _migratorStateNewQuestionnaireUuid
-    , toJSONField _migratorStateResolvedQuestionUuids
-    , toField _migratorStateAppUuid
+    [ toField oldQuestionnaireUuid
+    , toField newQuestionnaireUuid
+    , toJSONField resolvedQuestionUuids
+    , toField appUuid
     ]
 
 instance FromRow MigratorState where
   fromRow = do
-    _migratorStateOldQuestionnaireUuid <- field
-    _migratorStateNewQuestionnaireUuid <- field
-    _migratorStateResolvedQuestionUuids <- fieldWith fromJSONField
-    _migratorStateAppUuid <- field
+    oldQuestionnaireUuid <- field
+    newQuestionnaireUuid <- field
+    resolvedQuestionUuids <- fieldWith fromJSONField
+    appUuid <- field
     return $ MigratorState {..}

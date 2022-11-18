@@ -61,32 +61,32 @@ createTemplateTable = do
   logInfo _CMP_MIGRATION "(Table/Template) create table"
   let sql =
         "create table template \
-          \ ( \
-          \     id                     varchar                  not null, \
-          \     name                   varchar                  not null, \
-          \     organization_id        varchar                  not null, \
-          \     template_id            varchar                  not null, \
-          \     version                varchar                  not null, \
-          \     metamodel_version      integer                  not null, \
-          \     description            varchar                  not null, \
-          \     readme                 varchar                  not null, \
-          \     license                varchar                  not null, \
-          \     allowed_packages       json                     not null, \
-          \     recommended_package_id varchar, \
-          \     formats                json                     not null, \
-          \     created_at             timestamp with time zone not null, \
-          \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-          \       constraint template_app_uuid_fk \
-          \         references app \
-          \ ); \
-          \ \
-          \alter table template \
-          \    add constraint template_pk primary key (id, app_uuid); \
-          \create unique index template_id_uindex \
-          \     on template (id, app_uuid); \
-          \ \
-          \create index template_organization_id_template_id_index \
-          \     on template (organization_id, template_id, app_uuid); "
+        \ ( \
+        \     id                     varchar                  not null, \
+        \     name                   varchar                  not null, \
+        \     organization_id        varchar                  not null, \
+        \     template_id            varchar                  not null, \
+        \     version                varchar                  not null, \
+        \     metamodel_version      integer                  not null, \
+        \     description            varchar                  not null, \
+        \     readme                 varchar                  not null, \
+        \     license                varchar                  not null, \
+        \     allowed_packages       json                     not null, \
+        \     recommended_package_id varchar, \
+        \     formats                json                     not null, \
+        \     created_at             timestamp with time zone not null, \
+        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \       constraint template_app_uuid_fk \
+        \         references app \
+        \ ); \
+        \ \
+        \alter table template \
+        \    add constraint template_pk primary key (id, app_uuid); \
+        \create unique index template_id_uindex \
+        \     on template (id, app_uuid); \
+        \ \
+        \create index template_organization_id_template_id_index \
+        \     on template (organization_id, template_id, app_uuid); "
   let action conn = execute_ conn sql
   runDB action
 

@@ -1,6 +1,6 @@
-module Shared.Model.Event.EventUtil
-  ( module Shared.Model.Event.Common.CommonUtil
-  ) where
+module Shared.Model.Event.EventUtil (
+  module Shared.Model.Event.Common.CommonUtil,
+) where
 
 import Shared.Model.Event.Answer.AnswerEventUtil ()
 import Shared.Model.Event.Chapter.ChapterEventUtil ()

@@ -10,4 +10,4 @@ import Wizard.Model.Acl.Acl
 instance ToSchema GroupMembershipType
 
 instance ToSchema GroupMembership where
-  declareNamedSchema = simpleToSchema' "_groupMembership" memberBioGroup
+  declareNamedSchema = toSwagger memberBioGroup

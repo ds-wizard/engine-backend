@@ -6,9 +6,9 @@ import Servant.Swagger.Tags
 import Wizard.Api.Handler.ActionKey.List_POST
 import Wizard.Model.Context.BaseContext
 
-type ActionKeyAPI
-   = Tags "Action"
-     :> List_POST
+type ActionKeyAPI =
+  Tags "Action"
+    :> List_POST
 
 actionKeyApi :: Proxy ActionKeyAPI
 actionKeyApi = Proxy

@@ -8,65 +8,61 @@ import GHC.Int
 
 import Shared.Model.Package.PackagePattern
 
-data Template =
-  Template
-    { _templateTId :: String
-    , _templateName :: String
-    , _templateOrganizationId :: String
-    , _templateTemplateId :: String
-    , _templateVersion :: String
-    , _templateMetamodelVersion :: Int
-    , _templateDescription :: String
-    , _templateReadme :: String
-    , _templateLicense :: String
-    , _templateAllowedPackages :: [PackagePattern]
-    , _templateRecommendedPackageId :: Maybe String
-    , _templateFormats :: [TemplateFormat]
-    , _templateAppUuid :: U.UUID
-    , _templateCreatedAt :: UTCTime
-    }
+data Template = Template
+  { tId :: String
+  , name :: String
+  , organizationId :: String
+  , templateId :: String
+  , version :: String
+  , metamodelVersion :: Int
+  , description :: String
+  , readme :: String
+  , license :: String
+  , allowedPackages :: [PackagePattern]
+  , recommendedPackageId :: Maybe String
+  , formats :: [TemplateFormat]
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data TemplateFormat =
-  TemplateFormat
-    { _templateFormatUuid :: U.UUID
-    , _templateFormatName :: String
-    , _templateFormatShortName :: String
-    , _templateFormatIcon :: String
-    , _templateFormatColor :: String
-    , _templateFormatSteps :: [TemplateFormatStep]
-    }
+data TemplateFormat = TemplateFormat
+  { uuid :: U.UUID
+  , name :: String
+  , shortName :: String
+  , icon :: String
+  , color :: String
+  , steps :: [TemplateFormatStep]
+  }
   deriving (Show, Eq, Generic)
 
-data TemplateFormatStep =
-  TemplateFormatStep
-    { _templateFormatStepName :: String
-    , _templateFormatStepOptions :: M.Map String String
-    }
+data TemplateFormatStep = TemplateFormatStep
+  { name :: String
+  , options :: M.Map String String
+  }
   deriving (Show, Eq, Generic)
 
-data TemplateFile =
-  TemplateFile
-    { _templateFileTemplateId :: String
-    , _templateFileUuid :: U.UUID
-    , _templateFileFileName :: String
-    , _templateFileContent :: String
-    , _templateFileAppUuid :: U.UUID
-    }
+data TemplateFile = TemplateFile
+  { templateId :: String
+  , uuid :: U.UUID
+  , fileName :: String
+  , content :: String
+  , appUuid :: U.UUID
+  }
   deriving (Show, Eq, Generic)
 
-data TemplateAsset =
-  TemplateAsset
-    { _templateAssetTemplateId :: String
-    , _templateAssetUuid :: U.UUID
-    , _templateAssetFileName :: String
-    , _templateAssetContentType :: String
-    , _templateAssetFileSize :: Int64
-    , _templateAssetAppUuid :: U.UUID
-    }
+data TemplateAsset = TemplateAsset
+  { templateId :: String
+  , uuid :: U.UUID
+  , fileName :: String
+  , contentType :: String
+  , fileSize :: Int64
+  , appUuid :: U.UUID
+  }
   deriving (Show, Eq, Generic)
 
 instance Ord Template where
   compare a b =
-    compare (_templateOrganizationId a) (_templateOrganizationId b) <>
-    compare (_templateTemplateId a) (_templateTemplateId b) <> compare (_templateVersion a) (_templateVersion b)
+    compare a.organizationId b.organizationId
+      <> compare a.templateId b.templateId
+      <> compare a.version b.version

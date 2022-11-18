@@ -1,19 +1,18 @@
-module Wizard.Specs.API.Branch.List_GET
-  ( list_GET
-  ) where
+module Wizard.Specs.API.Branch.List_GET (
+  list_GET,
+) where
 
-import Control.Lens ((^.))
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
+import Shared.Model.Package.PackageWithEvents
 import Wizard.Api.Resource.Common.PageJM ()
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import Wizard.Database.Migration.Development.Branch.Data.Branches
@@ -63,20 +62,20 @@ test_200 appContext = do
 
 create_test_200 title appContext reqUrl expDto =
   it title $
-       -- GIVEN: Prepare request
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    -- AND: Run migrations
-    runInContextIO (deletePackageById (netherlandsPackageV2 ^. pId)) appContext
-    runInContextIO B.runMigration appContext
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, Page BranchList)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    liftIO $ resDto `shouldBe` expDto
+    -- GIVEN: Prepare request
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      -- AND: Run migrations
+      runInContextIO (deletePackageById netherlandsPackageV2.pId) appContext
+      runInContextIO B.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, Page BranchList)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      liftIO $ resDto `shouldBe` expDto
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

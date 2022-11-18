@@ -17,28 +17,28 @@ instance FromField SubmissionState where
 
 instance ToRow Submission where
   toRow Submission {..} =
-    [ toField _submissionUuid
-    , toField _submissionState
-    , toField _submissionLocation
-    , toField _submissionReturnedData
-    , toField _submissionServiceId
-    , toField _submissionDocumentUuid
-    , toField _submissionCreatedBy
-    , toField _submissionCreatedAt
-    , toField _submissionUpdatedAt
-    , toField _submissionAppUuid
+    [ toField uuid
+    , toField state
+    , toField location
+    , toField returnedData
+    , toField serviceId
+    , toField documentUuid
+    , toField createdBy
+    , toField createdAt
+    , toField updatedAt
+    , toField appUuid
     ]
 
 instance FromRow Submission where
   fromRow = do
-    _submissionUuid <- field
-    _submissionState <- field
-    _submissionLocation <- field
-    _submissionReturnedData <- field
-    _submissionServiceId <- field
-    _submissionDocumentUuid <- field
-    _submissionCreatedBy <- field
-    _submissionCreatedAt <- field
-    _submissionUpdatedAt <- field
-    _submissionAppUuid <- field
+    uuid <- field
+    state <- field
+    location <- field
+    returnedData <- field
+    serviceId <- field
+    documentUuid <- field
+    createdBy <- field
+    createdAt <- field
+    updatedAt <- field
+    appUuid <- field
     return $ Submission {..}

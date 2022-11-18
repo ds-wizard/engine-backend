@@ -15,10 +15,11 @@ import Wizard.Service.Package.PackageMapper
 
 instance ToSchema PackageDetailDTO where
   declareNamedSchema =
-    simpleToSchema
-      (toDetailDTO
-         (toPackage globalPackage)
-         [globalRegistryPackage]
-         [globalRegistryOrganization]
-         ["1.0.0"]
-         (Just "https://registry.example.org"))
+    toSwagger
+      ( toDetailDTO
+          (toPackage globalPackage)
+          [globalRegistryPackage]
+          [globalRegistryOrganization]
+          ["1.0.0"]
+          (Just "https://registry.example.org")
+      )

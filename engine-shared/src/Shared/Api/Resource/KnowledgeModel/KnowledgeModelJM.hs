@@ -5,29 +5,29 @@ import Data.Aeson
 
 import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON KnowledgeModel where
-  toJSON = simpleToJSON "_knowledgeModel"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON KnowledgeModel where
-  parseJSON = simpleParseJSON "_knowledgeModel"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON KnowledgeModelEntities where
-  toJSON = simpleToJSON "_knowledgeModelEntities"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON KnowledgeModelEntities where
-  parseJSON = simpleParseJSON "_knowledgeModelEntities"
+  parseJSON = genericParseJSON jsonOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON Chapter where
-  toJSON = simpleToJSON "_chapter"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON Chapter where
-  parseJSON = simpleParseJSON "_chapter"
+  parseJSON = genericParseJSON jsonOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
@@ -52,62 +52,62 @@ instance FromJSON Question where
 
 -- --------------------------------------------------------------------
 instance ToJSON OptionsQuestion where
-  toJSON = simpleToJSON' "_optionsQuestion" "questionType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "questionType")
 
 instance FromJSON OptionsQuestion where
-  parseJSON = simpleParseJSON "_optionsQuestion"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "questionType")
 
 -- --------------------------------------------------------------------
 instance ToJSON MultiChoiceQuestion where
-  toJSON = simpleToJSON' "_multiChoiceQuestion" "questionType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "questionType")
 
 instance FromJSON MultiChoiceQuestion where
-  parseJSON = simpleParseJSON "_multiChoiceQuestion"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "questionType")
 
 -- --------------------------------------------------------------------
 instance ToJSON ListQuestion where
-  toJSON = simpleToJSON' "_listQuestion" "questionType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "questionType")
 
 instance FromJSON ListQuestion where
-  parseJSON = simpleParseJSON "_listQuestion"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "questionType")
 
 -- --------------------------------------------------------------------
 instance ToJSON ValueQuestion where
-  toJSON = simpleToJSON' "_valueQuestion" "questionType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "questionType")
 
 instance FromJSON ValueQuestion where
-  parseJSON = simpleParseJSON "_valueQuestion"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "questionType")
 
 -- --------------------------------------------------------------------
 instance ToJSON IntegrationQuestion where
-  toJSON = simpleToJSON' "_integrationQuestion" "questionType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "questionType")
 
 instance FromJSON IntegrationQuestion where
-  parseJSON = simpleParseJSON "_integrationQuestion"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "questionType")
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON Answer where
-  toJSON = simpleToJSON "_answer"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON Answer where
-  parseJSON = simpleParseJSON "_answer"
+  parseJSON = genericParseJSON jsonOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON Choice where
-  toJSON = simpleToJSON "_choice"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON Choice where
-  parseJSON = simpleParseJSON "_choice"
+  parseJSON = genericParseJSON jsonOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON Expert where
-  toJSON = simpleToJSON "_expert"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON Expert where
-  parseJSON = simpleParseJSON "_expert"
+  parseJSON = genericParseJSON jsonOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
@@ -126,55 +126,55 @@ instance FromJSON Reference where
 
 -- --------------------------------------------------------------------
 instance ToJSON ResourcePageReference where
-  toJSON = simpleToJSON' "_resourcePageReference" "referenceType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "referenceType")
 
 instance FromJSON ResourcePageReference where
-  parseJSON = simpleParseJSON "_resourcePageReference"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "referenceType")
 
 -- --------------------------------------------------------------------
 instance ToJSON URLReference where
-  toJSON = simpleToJSON' "_uRLReference" "referenceType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "referenceType")
 
 instance FromJSON URLReference where
-  parseJSON = simpleParseJSON "_uRLReference"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "referenceType")
 
 -- --------------------------------------------------------------------
 instance ToJSON CrossReference where
-  toJSON = simpleToJSON' "_crossReference" "referenceType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "referenceType")
 
 instance FromJSON CrossReference where
-  parseJSON = simpleParseJSON "_crossReference"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "referenceType")
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON Metric where
-  toJSON = simpleToJSON "_metric"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON Metric where
-  parseJSON = simpleParseJSON "_metric"
+  parseJSON = genericParseJSON jsonOptions
 
 -- --------------------------------------------------------------------
 instance ToJSON MetricMeasure where
-  toJSON = simpleToJSON "_metricMeasure"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON MetricMeasure where
-  parseJSON = simpleParseJSON "_metricMeasure"
+  parseJSON = genericParseJSON jsonOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON Phase where
-  toJSON = simpleToJSON "_phase"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON Phase where
-  parseJSON = simpleParseJSON "_phase"
+  parseJSON = genericParseJSON jsonOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON Tag where
-  toJSON = simpleToJSON "_tag"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON Tag where
-  parseJSON = simpleParseJSON "_tag"
+  parseJSON = genericParseJSON jsonOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
@@ -192,14 +192,14 @@ instance FromJSON Integration where
 
 -- --------------------------------------------------------------------
 instance ToJSON ApiIntegration where
-  toJSON = simpleToJSON' "_apiIntegration" "integrationType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "integrationType")
 
 instance FromJSON ApiIntegration where
-  parseJSON = simpleParseJSON "_apiIntegration"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "integrationType")
 
 -- --------------------------------------------------------------------
 instance ToJSON WidgetIntegration where
-  toJSON = simpleToJSON' "_widgetIntegration" "integrationType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "integrationType")
 
 instance FromJSON WidgetIntegration where
-  parseJSON = simpleParseJSON "_widgetIntegration"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "integrationType")

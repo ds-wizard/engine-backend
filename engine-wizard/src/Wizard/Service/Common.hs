@@ -1,6 +1,5 @@
 module Wizard.Service.Common where
 
-import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks)
 
@@ -11,12 +10,12 @@ import Wizard.Service.Config.AppConfigService
 
 checkIfAppFeatureIsEnabled featureName accessor = do
   appConfig <- getAppConfig
-  if appConfig ^. accessor
+  if accessor appConfig
     then return ()
     else throwError $ UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ featureName
 
 checkIfServerFeatureIsEnabled featureName accessor = do
-  serverConfig <- asks _appContextServerConfig
-  if serverConfig ^. accessor
+  serverConfig <- asks serverConfig
+  if accessor serverConfig
     then return ()
     else throwError $ UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ featureName

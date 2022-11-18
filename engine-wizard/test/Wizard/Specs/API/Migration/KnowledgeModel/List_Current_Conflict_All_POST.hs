@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Migration.KnowledgeModel.List_Current_Conflict_All_POST
-  ( list_Current_Conflict_All_POST
-  ) where
+module Wizard.Specs.API.Migration.KnowledgeModel.List_Current_Conflict_All_POST (
+  list_Current_Conflict_All_POST,
+) where
 
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -8,6 +8,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
 import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
@@ -44,20 +45,20 @@ reqBody = ""
 test_204 appContext =
   it "HTTP 204 NO CONTENT" $
     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 204
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expBody = ""
-    -- AND: Prepare database
-    runMigrationWithFullDB appContext
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-    -- AND: Find result in DB and compare with expectation state
-    assertStateOfMigrationInDB appContext migratorState CompletedState
+    do
+      let expStatus = 204
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expBody = ""
+      -- AND: Prepare database
+      runMigrationWithFullDB appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
+      -- AND: Find result in DB and compare with expectation state
+      assertStateOfMigrationInDB appContext migratorState CompletedState
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

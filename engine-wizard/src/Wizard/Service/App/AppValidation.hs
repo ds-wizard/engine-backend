@@ -1,6 +1,5 @@
 module Wizard.Service.App.AppValidation where
 
-import Control.Lens ((^.))
 import Control.Monad (unless, when)
 import Control.Monad.Except (throwError)
 import Data.Foldable (forM_)
@@ -9,24 +8,25 @@ import Data.Maybe (isJust)
 import GHC.Unicode (isAlphaNum)
 import Text.Regex (matchRegex, mkRegex)
 
-import LensesConfig
 import Shared.Localization.Messages.Public
+import Shared.Model.Config.ServerConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.App.AppChangeDTO
 import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.App.App
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Common
 
 validateAppCreateDTO :: AppCreateDTO -> Bool -> AppContextM ()
 validateAppCreateDTO reqDto isAdmin = do
   unless isAdmin validatePublicRegistrationEnabled
-  validateAppId (reqDto ^. appId)
+  validateAppId reqDto.appId
 
 validatePublicRegistrationEnabled :: AppContextM ()
-validatePublicRegistrationEnabled = checkIfServerFeatureIsEnabled "App Registration" (cloud . publicRegistrationEnabled)
+validatePublicRegistrationEnabled = checkIfServerFeatureIsEnabled "App Registration" (\s -> s.cloud.publicRegistrationEnabled)
 
 validateAppId :: String -> AppContextM ()
 validateAppId appId = do
@@ -35,8 +35,8 @@ validateAppId appId = do
 
 validateAppChangeDTO :: App -> AppChangeDTO -> AppContextM ()
 validateAppChangeDTO app reqDto = do
-  validateAppIdFormat (reqDto ^. appId)
-  when (app ^. appId /= reqDto ^. appId) (validateAppIdUniqueness (reqDto ^. appId))
+  validateAppIdFormat reqDto.appId
+  when (app.appId /= reqDto.appId) (validateAppIdUniqueness reqDto.appId)
 
 validateAppIdFormat :: String -> AppContextM ()
 validateAppIdFormat appId = forM_ (isValidAppIdFormat appId) throwError
@@ -52,7 +52,7 @@ isValidAppIdFormat appId =
 validateAppIdUniqueness :: String -> AppContextM ()
 validateAppIdUniqueness aId = do
   apps <- findApps
-  let usedAppIds = fmap (^. appId) apps ++ forbiddenAppIds
+  let usedAppIds = fmap (.appId) apps ++ forbiddenAppIds
   when
     (aId `elem` usedAppIds)
     (throwError . ValidationError [] $ M.singleton "appId" [_ERROR_VALIDATION__APP_ID_UNIQUENESS])

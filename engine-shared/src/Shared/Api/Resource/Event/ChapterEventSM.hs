@@ -11,10 +11,10 @@ import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Util.Swagger
 
 instance ToSchema AddChapterEvent where
-  declareNamedSchema = simpleToSchema'' "_addChapterEvent" "eventType" a_km1_ch1
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_ch1
 
 instance ToSchema EditChapterEvent where
-  declareNamedSchema = simpleToSchema'' "_editChapterEvent" "eventType" e_km1_ch1
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_ch1
 
 instance ToSchema DeleteChapterEvent where
-  declareNamedSchema = simpleToSchema'' "_deleteChapterEvent" "eventType" d_km1_ch1
+  declareNamedSchema = toSwaggerWithType "eventType" d_km1_ch1

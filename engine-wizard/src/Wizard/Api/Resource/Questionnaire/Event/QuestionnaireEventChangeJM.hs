@@ -3,14 +3,14 @@ module Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeJM where
 import Control.Monad
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
 import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Api.Resource.User.UserSuggestionJM ()
 
 instance ToJSON QuestionnaireEventChangeDTO where
-  toJSON = toSumJSON'' "type" "ChangeDTO"
+  toJSON = toSumJSONWithTypeField "type" "ChangeDTO"
 
 instance FromJSON QuestionnaireEventChangeDTO where
   parseJSON (Object o) = do
@@ -31,61 +31,61 @@ instance FromJSON QuestionnaireEventChangeDTO where
   parseJSON _ = mzero
 
 instance FromJSON SetReplyEventChangeDTO where
-  parseJSON = simpleParseJSON "_setReplyEventChangeDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SetReplyEventChangeDTO where
-  toJSON = simpleToJSON''' "_setReplyEventChangeDTO" "type" "ChangeDTO"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON ClearReplyEventChangeDTO where
-  parseJSON = simpleParseJSON "_clearReplyEventChangeDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON ClearReplyEventChangeDTO where
-  toJSON = simpleToJSON''' "_clearReplyEventChangeDTO" "type" "ChangeDTO"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON SetPhaseEventChangeDTO where
-  parseJSON = simpleParseJSON "_setPhaseEventChangeDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SetPhaseEventChangeDTO where
-  toJSON = simpleToJSON''' "_setPhaseEventChangeDTO" "type" "ChangeDTO"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON SetLabelsEventChangeDTO where
-  parseJSON = simpleParseJSON "_setLabelsEventChangeDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SetLabelsEventChangeDTO where
-  toJSON = simpleToJSON''' "_setLabelsEventChangeDTO" "type" "ChangeDTO"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON ResolveCommentThreadEventChangeDTO where
-  parseJSON = simpleParseJSON "_resolveCommentThreadEventChangeDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON ResolveCommentThreadEventChangeDTO where
-  toJSON = simpleToJSON''' "_resolveCommentThreadEventChangeDTO" "type" "ChangeDTO"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON ReopenCommentThreadEventChangeDTO where
-  parseJSON = simpleParseJSON "_reopenCommentThreadEventChangeDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON ReopenCommentThreadEventChangeDTO where
-  toJSON = simpleToJSON''' "_reopenCommentThreadEventChangeDTO" "type" "ChangeDTO"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON DeleteCommentThreadEventChangeDTO where
-  parseJSON = simpleParseJSON "_deleteCommentThreadEventChangeDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON DeleteCommentThreadEventChangeDTO where
-  toJSON = simpleToJSON''' "_deleteCommentThreadEventChangeDTO" "type" "ChangeDTO"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AddCommentEventChangeDTO where
-  parseJSON = simpleParseJSON "_addCommentEventChangeDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddCommentEventChangeDTO where
-  toJSON = simpleToJSON''' "_addCommentEventChangeDTO" "type" "ChangeDTO"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON EditCommentEventChangeDTO where
-  parseJSON = simpleParseJSON "_editCommentEventChangeDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON EditCommentEventChangeDTO where
-  toJSON = simpleToJSON''' "_editCommentEventChangeDTO" "type" "ChangeDTO"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON DeleteCommentEventChangeDTO where
-  parseJSON = simpleParseJSON "_deleteCommentEventChangeDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON DeleteCommentEventChangeDTO where
-  toJSON = simpleToJSON''' "_deleteCommentEventChangeDTO" "type" "ChangeDTO"
+  toJSON = genericToJSON jsonOptions

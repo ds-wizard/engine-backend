@@ -7,43 +7,43 @@ import Shared.Util.Uuid
 phase1 :: Phase
 phase1 =
   Phase
-    { _phaseUuid = u' "b101f2d0-2476-452d-aa8d-95a41a02b52c"
-    , _phaseTitle = "Before Submitting the Proposal"
-    , _phaseDescription = Nothing
-    , _phaseAnnotations = []
+    { uuid = u' "b101f2d0-2476-452d-aa8d-95a41a02b52c"
+    , title = "Before Submitting the Proposal"
+    , description = Nothing
+    , annotations = []
     }
 
 phase1Edited :: Phase
 phase1Edited =
   phase1
-    { _phaseTitle = "EDITED: Before Submitting the Proposal"
-    , _phaseDescription = Just "EDITED: some description"
-    , _phaseAnnotations = [MapEntry "newAnnotation" "someValue"]
+    { title = "EDITED: Before Submitting the Proposal"
+    , description = Just "EDITED: some description"
+    , annotations = [MapEntry "newAnnotation" "someValue"]
     }
 
 phase2 :: Phase
 phase2 =
   Phase
-    { _phaseUuid = u' "1796fa3c-9f53-475f-89ff-c66a0453c42e"
-    , _phaseTitle = "Before Submitting the DMP"
-    , _phaseDescription = Nothing
-    , _phaseAnnotations = []
+    { uuid = u' "1796fa3c-9f53-475f-89ff-c66a0453c42e"
+    , title = "Before Submitting the DMP"
+    , description = Nothing
+    , annotations = []
     }
 
 phase3 :: Phase
 phase3 =
   Phase
-    { _phaseUuid = u' "adc9133d-afcd-4616-9aea-db5f475898a2"
-    , _phaseTitle = "Before Finishing the Project"
-    , _phaseDescription = Nothing
-    , _phaseAnnotations = []
+    { uuid = u' "adc9133d-afcd-4616-9aea-db5f475898a2"
+    , title = "Before Finishing the Project"
+    , description = Nothing
+    , annotations = []
     }
 
 phase4 :: Phase
 phase4 =
   Phase
-    { _phaseUuid = u' "1ace0fc6-a949-495f-a32e-e948f3f6bed1"
-    , _phaseTitle = "After Finishing the Project"
-    , _phaseDescription = Nothing
-    , _phaseAnnotations = []
+    { uuid = u' "1ace0fc6-a949-495f-a32e-e948f3f6bed1"
+    , title = "After Finishing the Project"
+    , description = Nothing
+    , annotations = []
     }

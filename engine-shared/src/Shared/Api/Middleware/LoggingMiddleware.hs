@@ -2,21 +2,21 @@ module Shared.Api.Middleware.LoggingMiddleware where
 
 import qualified Data.List as L
 import qualified Data.Text as T
-import Network.HTTP.Types
-  ( Header
-  , Status
-  , status200
-  , status201
-  , status202
-  , status204
-  , status302
-  , status400
-  , status401
-  , status403
-  , status404
-  , status500
-  )
-import Network.Wai (Middleware, Request(..))
+import Network.HTTP.Types (
+  Header,
+  Status,
+  status200,
+  status201,
+  status202,
+  status204,
+  status302,
+  status400,
+  status401,
+  status403,
+  status404,
+  status500,
+ )
+import Network.Wai (Middleware, Request (..))
 import System.IO.Unsafe
 
 import Shared.Constant.Api (authorizationHeaderName, xTraceUuidHeaderName)
@@ -32,9 +32,9 @@ createLoggingMiddleware extractIdentity _ application request sendResponse =
 logRequest :: (T.Text -> Maybe String) -> Request -> Status -> [Header] -> [Header]
 logRequest extractIdentity request resStatus resHeaders =
   filterOptionsRequests request resHeaders $
-  unsafePerformIO $ do
-    putStrLn $ createHttpLogRecord extractIdentity request resStatus resHeaders
-    return resHeaders
+    unsafePerformIO $ do
+      putStrLn $ createHttpLogRecord extractIdentity request resStatus resHeaders
+      return resHeaders
 
 createHttpLogRecord extractIdentity request resStatus resHeaders =
   L.intercalate "" ["[", showLogLevel logLevel, "] ", record]

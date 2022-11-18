@@ -12,18 +12,18 @@ import Wizard.Api.Resource.Typehint.TypehintRequestJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Typehint.TypehintService
 
-type List_POST
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> ReqBody '[ SafeJSON] TypehintRequestDTO
-     :> "typehints"
-     :> Post '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [TypehintDTO])
+type List_POST =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> ReqBody '[SafeJSON] TypehintRequestDTO
+    :> "typehints"
+    :> Post '[SafeJSON] (Headers '[Header "x-trace-uuid" String] [TypehintDTO])
 
-list_POST ::
-     Maybe String
+list_POST
+  :: Maybe String
   -> Maybe String
   -> TypehintRequestDTO
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TypehintDTO])
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] [TypehintDTO])
 list_POST mTokenHeader mServerUrl reqDto =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
     runInMaybeAuthService Transactional $ addTraceUuidHeader =<< getTypehints reqDto

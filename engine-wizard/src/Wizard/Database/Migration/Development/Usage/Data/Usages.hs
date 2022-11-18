@@ -5,36 +5,36 @@ import Wizard.Api.Resource.Usage.UsageDTO
 defaultUsage :: UsageDTO
 defaultUsage =
   UsageDTO
-    { _usageDTOUsers = defaultUsageUsers
-    , _usageDTOActiveUsers = defaultUsageActiveUsers
-    , _usageDTOKnowledgeModels = defaultUsageKnowledgeModels
-    , _usageDTOBranches = defaultUsageBranches
-    , _usageDTOTemplates = defaultUsageTemplates
-    , _usageDTOQuestionnaires = defaultUsageQuestionnaires
-    , _usageDTODocuments = defaultUsageDocuments
-    , _usageDTOStorage = defaultUsageStorage
+    { users = defaultUsageUsers
+    , activeUsers = defaultUsageActiveUsers
+    , knowledgeModels = defaultUsageKnowledgeModels
+    , branches = defaultUsageBranches
+    , templates = defaultUsageTemplates
+    , questionnaires = defaultUsageQuestionnaires
+    , documents = defaultUsageDocuments
+    , storage = defaultUsageStorage
     }
 
 defaultUsageUsers :: UsageEntryDTO
-defaultUsageUsers = UsageEntryDTO {_usageEntryDTOCurrent = 2, _usageEntryDTOMax = Nothing}
+defaultUsageUsers = UsageEntryDTO {current = 2, max = Nothing}
 
 defaultUsageActiveUsers :: UsageEntryDTO
-defaultUsageActiveUsers = UsageEntryDTO {_usageEntryDTOCurrent = 2, _usageEntryDTOMax = Nothing}
+defaultUsageActiveUsers = UsageEntryDTO {current = 2, max = Nothing}
 
 defaultUsageKnowledgeModels :: UsageEntryDTO
-defaultUsageKnowledgeModels = UsageEntryDTO {_usageEntryDTOCurrent = 2, _usageEntryDTOMax = Nothing}
+defaultUsageKnowledgeModels = UsageEntryDTO {current = 2, max = Nothing}
 
 defaultUsageBranches :: UsageEntryDTO
-defaultUsageBranches = UsageEntryDTO {_usageEntryDTOCurrent = 0, _usageEntryDTOMax = Nothing}
+defaultUsageBranches = UsageEntryDTO {current = 0, max = Nothing}
 
 defaultUsageTemplates :: UsageEntryDTO
-defaultUsageTemplates = UsageEntryDTO {_usageEntryDTOCurrent = 0, _usageEntryDTOMax = Nothing}
+defaultUsageTemplates = UsageEntryDTO {current = 0, max = Nothing}
 
 defaultUsageQuestionnaires :: UsageEntryDTO
-defaultUsageQuestionnaires = UsageEntryDTO {_usageEntryDTOCurrent = 0, _usageEntryDTOMax = Nothing}
+defaultUsageQuestionnaires = UsageEntryDTO {current = 0, max = Nothing}
 
 defaultUsageDocuments :: UsageEntryDTO
-defaultUsageDocuments = UsageEntryDTO {_usageEntryDTOCurrent = 0, _usageEntryDTOMax = Nothing}
+defaultUsageDocuments = UsageEntryDTO {current = 0, max = Nothing}
 
 defaultUsageStorage :: UsageEntryDTO
-defaultUsageStorage = UsageEntryDTO {_usageEntryDTOCurrent = 0, _usageEntryDTOMax = Nothing}
+defaultUsageStorage = UsageEntryDTO {current = 0, max = Nothing}

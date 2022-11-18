@@ -22,40 +22,46 @@ import Wizard.Api.Handler.Questionnaire.ProjectTag.List_Suggestions_GET
 import Wizard.Api.Handler.Questionnaire.Version.Api
 import Wizard.Model.Context.BaseContext
 
-type QuestionnaireAPI
-   = Tags "Questionnaire"
-     :> (List_GET
-         :<|> List_POST
-         :<|> List_POST_FromTemplate
-         :<|> List_POST_CloneUuid
-         :<|> Detail_GET
-         :<|> Detail_PUT
-         :<|> Detail_DELETE
-         :<|> Detail_Content_PUT
-         :<|> Detail_Report_GET
-         :<|> Detail_Documents_GET
-         :<|> Detail_Documents_Preview_GET
-         :<|> Detail_WS
-         :<|> QuestionnaireEventAPI
-         :<|> QuestionnaireVersionAPI
-         :<|> Detail_Revert_POST
-         :<|> Detail_Revert_Preview_POST
-         :<|> List_Suggestions_GET)
+type QuestionnaireAPI =
+  Tags "Questionnaire"
+    :> ( List_GET
+          :<|> List_POST
+          :<|> List_POST_FromTemplate
+          :<|> List_POST_CloneUuid
+          :<|> Detail_GET
+          :<|> Detail_PUT
+          :<|> Detail_DELETE
+          :<|> Detail_Content_PUT
+          :<|> Detail_Report_GET
+          :<|> Detail_Documents_GET
+          :<|> Detail_Documents_Preview_GET
+          :<|> Detail_WS
+          :<|> QuestionnaireEventAPI
+          :<|> QuestionnaireVersionAPI
+          :<|> Detail_Revert_POST
+          :<|> Detail_Revert_Preview_POST
+          :<|> List_Suggestions_GET
+       )
 
 questionnaireApi :: Proxy QuestionnaireAPI
 questionnaireApi = Proxy
 
 questionnaireServer :: ServerT QuestionnaireAPI BaseContextM
 questionnaireServer =
-  list_GET :<|> list_POST :<|> list_POST_FromTemplate :<|> list_POST_CloneUuid :<|> detail_GET :<|> detail_PUT :<|>
-  detail_DELETE :<|>
-  detail_content_PUT :<|>
-  detail_report_GET :<|>
-  detail_documents_GET :<|>
-  detail_documents_preview_GET :<|>
-  detail_WS :<|>
-  questionnaireEventServer :<|>
-  questionnaireVersionServer :<|>
-  detail_revert_POST :<|>
-  detail_revert_preview_POST :<|>
-  list_suggestions_GET
+  list_GET
+    :<|> list_POST
+    :<|> list_POST_FromTemplate
+    :<|> list_POST_CloneUuid
+    :<|> detail_GET
+    :<|> detail_PUT
+    :<|> detail_DELETE
+    :<|> detail_content_PUT
+    :<|> detail_report_GET
+    :<|> detail_documents_GET
+    :<|> detail_documents_preview_GET
+    :<|> detail_WS
+    :<|> questionnaireEventServer
+    :<|> questionnaireVersionServer
+    :<|> detail_revert_POST
+    :<|> detail_revert_preview_POST
+    :<|> list_suggestions_GET

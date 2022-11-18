@@ -13,14 +13,14 @@ import Wizard.Model.Locale.Locale
 localeCz :: Locale
 localeCz =
   Locale
-    { _localeUuid = u' "b5f6ea5e-89c2-4419-930a-69980bbc36e8"
-    , _localeName = "Čeština"
-    , _localeCode = "cs"
-    , _localeFallback = True
-    , _localeEnabled = True
-    , _localeAppUuid = defaultAppUuid
-    , _localeCreatedAt = dt' 2022 1 21
-    , _localeUpdatedAt = dt' 2022 1 21
+    { uuid = u' "b5f6ea5e-89c2-4419-930a-69980bbc36e8"
+    , name = "Čeština"
+    , code = "cs"
+    , fallback = True
+    , enabled = True
+    , appUuid = defaultAppUuid
+    , createdAt = dt' 2022 1 21
+    , updatedAt = dt' 2022 1 21
     }
 
 localeCzContent :: BS.ByteString

@@ -41,13 +41,13 @@ convertToKnowledgeModel rdfClass = do
   events <- convertToChapter entityUuid rdfClass
   let entityEvent =
         AddKnowledgeModelEvent' $
-        AddKnowledgeModelEvent
-          { _addKnowledgeModelEventUuid = uuid
-          , _addKnowledgeModelEventParentUuid = U.nil
-          , _addKnowledgeModelEventEntityUuid = entityUuid
-          , _addKnowledgeModelEventAnnotations = []
-          , _addKnowledgeModelEventCreatedAt = now
-          }
+          AddKnowledgeModelEvent
+            { uuid = uuid
+            , parentUuid = U.nil
+            , entityUuid = entityUuid
+            , annotations = []
+            , createdAt = now
+            }
   return $ entityEvent : events
 
 convertToChapter :: MonadIO m => U.UUID -> RdfClass -> m [Event]
@@ -58,15 +58,15 @@ convertToChapter parentUuid rdfClass = do
   events <- convertToQuestion entityUuid rdfClass
   let entityEvent =
         AddChapterEvent' $
-        AddChapterEvent
-          { _addChapterEventUuid = uuid
-          , _addChapterEventParentUuid = parentUuid
-          , _addChapterEventEntityUuid = entityUuid
-          , _addChapterEventTitle = "Chapter"
-          , _addChapterEventText = Nothing
-          , _addChapterEventAnnotations = []
-          , _addChapterEventCreatedAt = now
-          }
+          AddChapterEvent
+            { uuid = uuid
+            , parentUuid = parentUuid
+            , entityUuid = entityUuid
+            , title = "Chapter"
+            , text = Nothing
+            , annotations = []
+            , createdAt = now
+            }
   return $ entityEvent : events
 
 convertToQuestion :: MonadIO m => U.UUID -> RdfClass -> m [Event]
@@ -77,18 +77,18 @@ convertToQuestion parentUuid (RdfClass nameT dataTypes objects) = do
   let name = T.unpack nameT
   let entityEvent =
         AddQuestionEvent' $
-        AddListQuestionEvent' $
-        AddListQuestionEvent
-          { _addListQuestionEventUuid = uuid
-          , _addListQuestionEventParentUuid = parentUuid
-          , _addListQuestionEventEntityUuid = entityUuid
-          , _addListQuestionEventTitle = getTitle nameT
-          , _addListQuestionEventText = Just $ f' "%s: %s" [_MAP_ENTRY_RDF_TYPE, name]
-          , _addListQuestionEventRequiredPhaseUuid = Nothing
-          , _addListQuestionEventAnnotations = [MapEntry _MAP_ENTRY_RDF_TYPE name]
-          , _addListQuestionEventTagUuids = []
-          , _addListQuestionEventCreatedAt = now
-          }
+          AddListQuestionEvent' $
+            AddListQuestionEvent
+              { uuid = uuid
+              , parentUuid = parentUuid
+              , entityUuid = entityUuid
+              , title = getTitle nameT
+              , text = Just $ f' "%s: %s" [_MAP_ENTRY_RDF_TYPE, name]
+              , requiredPhaseUuid = Nothing
+              , annotations = [MapEntry _MAP_ENTRY_RDF_TYPE name]
+              , tagUuids = []
+              , createdAt = now
+              }
   dataTypeEvents <- traverse (convertDataTypeToEvent entityUuid) dataTypes
   objectEvents <- traverse (convertObjectToEvent entityUuid) objects
   return $ [entityEvent] ++ dataTypeEvents ++ concat objectEvents
@@ -113,19 +113,19 @@ convertDataTypeToEvent parentUuid (RdfDataType nameT rdfType) = do
           _ -> StringQuestionValueType
   return $
     AddQuestionEvent' $
-    AddValueQuestionEvent' $
-    AddValueQuestionEvent
-      { _addValueQuestionEventUuid = uuid
-      , _addValueQuestionEventParentUuid = parentUuid
-      , _addValueQuestionEventEntityUuid = entityUuid
-      , _addValueQuestionEventTitle = getTitle nameT
-      , _addValueQuestionEventText = Just $ f' "%s: %s" [_MAP_ENTRY_RDF_TYPE, name]
-      , _addValueQuestionEventRequiredPhaseUuid = Nothing
-      , _addValueQuestionEventTagUuids = []
-      , _addValueQuestionEventAnnotations = [MapEntry _MAP_ENTRY_RDF_TYPE name]
-      , _addValueQuestionEventValueType = valueType
-      , _addValueQuestionEventCreatedAt = now
-      }
+      AddValueQuestionEvent' $
+        AddValueQuestionEvent
+          { uuid = uuid
+          , parentUuid = parentUuid
+          , entityUuid = entityUuid
+          , title = getTitle nameT
+          , text = Just $ f' "%s: %s" [_MAP_ENTRY_RDF_TYPE, name]
+          , requiredPhaseUuid = Nothing
+          , tagUuids = []
+          , annotations = [MapEntry _MAP_ENTRY_RDF_TYPE name]
+          , valueType = valueType
+          , createdAt = now
+          }
 
 convertObjectToEvent :: MonadIO m => U.UUID -> RdfObject -> m [Event]
 convertObjectToEvent parentUuid (RdfObject objName rdfType (RdfClass nameT dataTypes objects)) = do
@@ -135,20 +135,20 @@ convertObjectToEvent parentUuid (RdfObject objName rdfType (RdfClass nameT dataT
   let name = T.unpack nameT
   let entityEvent =
         AddQuestionEvent' $
-        AddListQuestionEvent' $
-        AddListQuestionEvent
-          { _addListQuestionEventUuid = uuid
-          , _addListQuestionEventParentUuid = parentUuid
-          , _addListQuestionEventEntityUuid = entityUuid
-          , _addListQuestionEventTitle = getTitle nameT
-          , _addListQuestionEventText =
-              Just $ f' "%s: %s, %s: %s" [_MAP_ENTRY_RDF_TYPE, name, _MAP_ENTRY_RDF_RELATION, T.unpack objName]
-          , _addListQuestionEventRequiredPhaseUuid = Nothing
-          , _addListQuestionEventAnnotations =
-              [MapEntry _MAP_ENTRY_RDF_TYPE name, MapEntry "rdfRelation" (T.unpack objName)]
-          , _addListQuestionEventTagUuids = []
-          , _addListQuestionEventCreatedAt = now
-          }
+          AddListQuestionEvent' $
+            AddListQuestionEvent
+              { uuid = uuid
+              , parentUuid = parentUuid
+              , entityUuid = entityUuid
+              , title = getTitle nameT
+              , text =
+                  Just $ f' "%s: %s, %s: %s" [_MAP_ENTRY_RDF_TYPE, name, _MAP_ENTRY_RDF_RELATION, T.unpack objName]
+              , requiredPhaseUuid = Nothing
+              , annotations =
+                  [MapEntry _MAP_ENTRY_RDF_TYPE name, MapEntry "rdfRelation" (T.unpack objName)]
+              , tagUuids = []
+              , createdAt = now
+              }
   dataTypeEvents <- traverse (convertDataTypeToEvent entityUuid) dataTypes
   objectEvents <- traverse (convertObjectToEvent entityUuid) objects
   return $ [entityEvent] ++ dataTypeEvents ++ concat objectEvents

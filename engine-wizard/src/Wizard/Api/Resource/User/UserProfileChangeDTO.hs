@@ -4,12 +4,11 @@ import GHC.Generics
 
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 
-data UserProfileChangeDTO =
-  UserProfileChangeDTO
-    { _userProfileChangeDTOFirstName :: String
-    , _userProfileChangeDTOLastName :: String
-    , _userProfileChangeDTOEmail :: String
-    , _userProfileChangeDTOAffiliation :: Maybe String
-    , _userProfileChangeDTOSubmissionProps :: [UserSubmissionPropsDTO]
-    }
+data UserProfileChangeDTO = UserProfileChangeDTO
+  { firstName :: String
+  , lastName :: String
+  , email :: String
+  , affiliation :: Maybe String
+  , submissionProps :: [UserSubmissionPropsDTO]
+  }
   deriving (Generic)

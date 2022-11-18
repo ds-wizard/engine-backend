@@ -19,25 +19,23 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 
-data AppContext =
-  AppContext
-    { _appContextServerConfig :: ServerConfig
-    , _appContextLocalization :: M.Map String String
-    , _appContextBuildInfoConfig :: BuildInfoConfig
-    , _appContextDbPool :: Pool Connection
-    , _appContextDbConnection :: Maybe Connection
-    , _appContextS3Client :: MinioConn
-    , _appContextHttpClientManager :: Manager
-    , _appContextRegistryClient :: ClientEnv
-    , _appContextTraceUuid :: U.UUID
-    , _appContextAppUuid :: U.UUID
-    , _appContextCurrentUser :: Maybe UserDTO
-    , _appContextShutdownFlag :: MVar ()
-    , _appContextCache :: ServerCache
-    }
+data AppContext = AppContext
+  { serverConfig :: ServerConfig
+  , localization :: M.Map String String
+  , buildInfoConfig :: BuildInfoConfig
+  , dbPool :: Pool Connection
+  , dbConnection :: Maybe Connection
+  , s3Client :: MinioConn
+  , httpClientManager :: Manager
+  , registryClient :: ClientEnv
+  , traceUuid :: U.UUID
+  , currentAppUuid :: U.UUID
+  , currentUser :: Maybe UserDTO
+  , shutdownFlag :: MVar ()
+  , cache :: ServerCache
+  }
 
-newtype AppContextM a =
-  AppContextM
-    { runAppContextM :: ReaderT AppContext (LoggingT (ExceptT AppError IO)) a
-    }
+newtype AppContextM a = AppContextM
+  { runAppContextM :: ReaderT AppContext (LoggingT (ExceptT AppError IO)) a
+  }
   deriving (Applicative, Functor, Monad, MonadIO, MonadReader AppContext, MonadError AppError, MonadLogger)

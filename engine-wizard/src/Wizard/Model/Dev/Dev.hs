@@ -2,27 +2,24 @@ module Wizard.Model.Dev.Dev where
 
 import GHC.Generics
 
-data DevSection =
-  DevSection
-    { _devSectionName :: String
-    , _devSectionDescription :: Maybe String
-    , _devSectionOperations :: [DevOperation]
-    }
+data DevSection = DevSection
+  { name :: String
+  , description :: Maybe String
+  , operations :: [DevOperation]
+  }
   deriving (Show, Eq, Generic)
 
-data DevOperation =
-  DevOperation
-    { _devOperationName :: String
-    , _devOperationDescription :: Maybe String
-    , _devOperationParameters :: [DevOperationParameter]
-    }
+data DevOperation = DevOperation
+  { name :: String
+  , description :: Maybe String
+  , parameters :: [DevOperationParameter]
+  }
   deriving (Show, Eq, Generic)
 
-data DevOperationParameter =
-  DevOperationParameter
-    { _devOperationParameterName :: String
-    , _devOperationParameterAType :: DevOperationParameterType
-    }
+data DevOperationParameter = DevOperationParameter
+  { name :: String
+  , aType :: DevOperationParameterType
+  }
   deriving (Show, Eq, Generic)
 
 data DevOperationParameterType

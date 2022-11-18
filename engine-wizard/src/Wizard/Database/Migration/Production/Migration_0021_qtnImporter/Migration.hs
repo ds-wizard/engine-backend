@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0021_qtnImporter.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0021_qtnImporter.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -36,30 +36,30 @@ migrate dbPool = do
 createQtnImporterTable dbPool = do
   let sql =
         "CREATE TABLE questionnaire_importer \
-          \ ( \
-          \     id                     varchar                  not null, \
-          \     name                   varchar                  not null, \
-          \     organization_id        varchar                  not null, \
-          \     importer_id            varchar                  not null, \
-          \     version                varchar                  not null, \
-          \     metamodel_version      integer                  not null, \
-          \     description            varchar                  not null, \
-          \     readme                 varchar                  not null, \
-          \     license                varchar                  not null, \
-          \     allowed_packages       json                     not null, \
-          \     url                    varchar, \
-          \     enabled                bool                     not null, \
-          \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-          \       constraint questionnaire_importer_app_uuid_fk \
-          \         references app, \
-          \     created_at             timestamp with time zone not null, \
-          \     updated_at             timestamp with time zone not null \
-          \ ); \
-          \ \
-          \ALTER TABLE questionnaire_importer \
-          \    ADD CONSTRAINT questionnaire_importer_pk PRIMARY KEY (id, app_uuid); \
-          \create unique index questionnaire_importer_id_uindex \
-          \     on questionnaire_importer (id, app_uuid); "
+        \ ( \
+        \     id                     varchar                  not null, \
+        \     name                   varchar                  not null, \
+        \     organization_id        varchar                  not null, \
+        \     importer_id            varchar                  not null, \
+        \     version                varchar                  not null, \
+        \     metamodel_version      integer                  not null, \
+        \     description            varchar                  not null, \
+        \     readme                 varchar                  not null, \
+        \     license                varchar                  not null, \
+        \     allowed_packages       json                     not null, \
+        \     url                    varchar, \
+        \     enabled                bool                     not null, \
+        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \       constraint questionnaire_importer_app_uuid_fk \
+        \         references app, \
+        \     created_at             timestamp with time zone not null, \
+        \     updated_at             timestamp with time zone not null \
+        \ ); \
+        \ \
+        \ALTER TABLE questionnaire_importer \
+        \    ADD CONSTRAINT questionnaire_importer_pk PRIMARY KEY (id, app_uuid); \
+        \create unique index questionnaire_importer_id_uindex \
+        \     on questionnaire_importer (id, app_uuid); "
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

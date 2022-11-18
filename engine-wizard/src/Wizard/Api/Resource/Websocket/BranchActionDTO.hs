@@ -5,17 +5,16 @@ import GHC.Generics
 import Wizard.Api.Resource.Branch.Event.BranchEventDTO
 import Wizard.Model.User.OnlineUserInfo
 
-data ClientBranchActionDTO =
-  SetContent_ClientBranchActionDTO
-    { _setContent_ClientBranchActionDTOData :: BranchEventDTO
-    }
+data ClientBranchActionDTO = SetContent_ClientBranchActionDTO
+  { aData :: BranchEventDTO
+  }
   deriving (Show, Generic)
 
 data ServerBranchActionDTO
   = SetUserList_ServerBranchActionDTO
-      { _setUserList_ServerBranchActionDTOData :: [OnlineUserInfo]
+      { seData :: [OnlineUserInfo]
       }
   | SetContent_ServerBranchActionDTO
-      { _setContent_ServerBranchActionDTOData :: BranchEventDTO
+      { scData :: BranchEventDTO
       }
   deriving (Show, Eq, Generic)

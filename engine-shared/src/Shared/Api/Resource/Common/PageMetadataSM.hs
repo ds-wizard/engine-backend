@@ -7,4 +7,4 @@ import Shared.Model.Common.PageMetadata
 import Shared.Util.Swagger
 
 instance ToSchema PageMetadata where
-  declareNamedSchema = simpleToSchema' "_pageMetadata" pageMetadata
+  declareNamedSchema = toSwagger pageMetadata

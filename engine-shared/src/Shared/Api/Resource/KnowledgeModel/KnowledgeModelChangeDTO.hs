@@ -5,10 +5,9 @@ import GHC.Generics
 
 import Shared.Model.Event.Event
 
-data KnowledgeModelChangeDTO =
-  KnowledgeModelChangeDTO
-    { _knowledgeModelChangeDTOPackageId :: Maybe String
-    , _knowledgeModelChangeDTOEvents :: [Event]
-    , _knowledgeModelChangeDTOTagUuids :: [U.UUID]
-    }
+data KnowledgeModelChangeDTO = KnowledgeModelChangeDTO
+  { packageId :: Maybe String
+  , events :: [Event]
+  , tagUuids :: [U.UUID]
+  }
   deriving (Show, Eq, Generic)

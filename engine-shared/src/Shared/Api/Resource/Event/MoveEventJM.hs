@@ -3,34 +3,34 @@ module Shared.Api.Resource.Event.MoveEventJM where
 import Data.Aeson
 
 import Shared.Model.Event.Move.MoveEvent
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON MoveQuestionEvent where
-  parseJSON = simpleParseJSON "_moveQuestionEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON MoveQuestionEvent where
-  toJSON = simpleToJSON' "_moveQuestionEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 instance FromJSON MoveAnswerEvent where
-  parseJSON = simpleParseJSON "_moveAnswerEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON MoveAnswerEvent where
-  toJSON = simpleToJSON' "_moveAnswerEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 instance FromJSON MoveChoiceEvent where
-  parseJSON = simpleParseJSON "_moveChoiceEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON MoveChoiceEvent where
-  toJSON = simpleToJSON' "_moveChoiceEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 instance FromJSON MoveExpertEvent where
-  parseJSON = simpleParseJSON "_moveExpertEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON MoveExpertEvent where
-  toJSON = simpleToJSON' "_moveExpertEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 instance FromJSON MoveReferenceEvent where
-  parseJSON = simpleParseJSON "_moveReferenceEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON MoveReferenceEvent where
-  toJSON = simpleToJSON' "_moveReferenceEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")

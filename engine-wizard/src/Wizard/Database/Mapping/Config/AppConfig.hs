@@ -11,38 +11,38 @@ import Wizard.Model.Config.AppConfig
 
 instance ToRow AppConfig where
   toRow AppConfig {..} =
-    [ toField _appConfigUuid
-    , toJSONField _appConfigOrganization
-    , toJSONField _appConfigAuthentication
-    , toJSONField _appConfigPrivacyAndSupport
-    , toJSONField _appConfigDashboard
-    , toJSONField _appConfigLookAndFeel
-    , toJSONField _appConfigRegistry
-    , toJSONField _appConfigKnowledgeModel
-    , toJSONField _appConfigQuestionnaire
-    , toJSONField _appConfigTemplate
-    , toJSONField _appConfigSubmission
-    , toField _appConfigCreatedAt
-    , toField _appConfigUpdatedAt
-    , toJSONField _appConfigFeature
-    , toJSONField _appConfigOwl
+    [ toField uuid
+    , toJSONField organization
+    , toJSONField authentication
+    , toJSONField privacyAndSupport
+    , toJSONField dashboard
+    , toJSONField lookAndFeel
+    , toJSONField registry
+    , toJSONField knowledgeModel
+    , toJSONField questionnaire
+    , toJSONField template
+    , toJSONField submission
+    , toField createdAt
+    , toField updatedAt
+    , toJSONField feature
+    , toJSONField owl
     ]
 
 instance FromRow AppConfig where
   fromRow = do
-    _appConfigUuid <- field
-    _appConfigOrganization <- fieldWith fromJSONField
-    _appConfigAuthentication <- fieldWith fromJSONField
-    _appConfigPrivacyAndSupport <- fieldWith fromJSONField
-    _appConfigDashboard <- fieldWith fromJSONField
-    _appConfigLookAndFeel <- fieldWith fromJSONField
-    _appConfigRegistry <- fieldWith fromJSONField
-    _appConfigKnowledgeModel <- fieldWith fromJSONField
-    _appConfigQuestionnaire <- fieldWith fromJSONField
-    _appConfigTemplate <- fieldWith fromJSONField
-    _appConfigSubmission <- fieldWith fromJSONField
-    _appConfigCreatedAt <- field
-    _appConfigUpdatedAt <- field
-    _appConfigFeature <- fieldWith fromJSONField
-    _appConfigOwl <- fieldWith fromJSONField
+    uuid <- field
+    organization <- fieldWith fromJSONField
+    authentication <- fieldWith fromJSONField
+    privacyAndSupport <- fieldWith fromJSONField
+    dashboard <- fieldWith fromJSONField
+    lookAndFeel <- fieldWith fromJSONField
+    registry <- fieldWith fromJSONField
+    knowledgeModel <- fieldWith fromJSONField
+    questionnaire <- fieldWith fromJSONField
+    template <- fieldWith fromJSONField
+    submission <- fieldWith fromJSONField
+    createdAt <- field
+    updatedAt <- field
+    feature <- fieldWith fromJSONField
+    owl <- fieldWith fromJSONField
     return $ AppConfig {..}

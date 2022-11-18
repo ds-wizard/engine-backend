@@ -1,12 +1,11 @@
 module Wizard.Service.Branch.Event.BranchEventService where
 
-import Control.Lens ((^.))
 import Data.Foldable (traverse_)
 import qualified Data.UUID as U
 
-import LensesConfig hiding (squash)
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Common
+import Wizard.Model.Branch.BranchData
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Branch.Collaboration.CollaborationService
 import Wizard.Service.KnowledgeModel.Squash.Squasher
@@ -23,10 +22,11 @@ squashEventsForBranch branchUuid =
     logInfoU _CMP_SERVICE (f' "Squashing events for branch (branchUuid: '%s')" [branchUuid])
     logOutOnlineUsersWhenBranchDramaticallyChanged branchUuid
     branchData <- findBranchDataByIdForSquashingLocked branchUuid
-    let squashedEvents = squash (branchData ^. events)
+    let squashedEvents = squash branchData.events
     updateBranchEventsByUuid branchUuid squashedEvents
     logInfoU
       _CMP_SERVICE
-      (f'
-         "Squashing for branch '%s' finished successfully (before: %s, after %s)"
-         [branchUuid, show . length $ branchData ^. events, show . length $ squashedEvents])
+      ( f'
+          "Squashing for branch '%s' finished successfully (before: %s, after %s)"
+          [branchUuid, show . length $ branchData.events, show . length $ squashedEvents]
+      )

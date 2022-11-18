@@ -7,28 +7,28 @@ import Data.Time
 
 import Shared.Api.Resource.Event.EventJM ()
 import Shared.Api.Resource.Package.PackageDTO
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance ToJSON PackageDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON PackageDTO where
   parseJSON (Object o) = do
-    _packageDTOPId <- o .: "id"
-    _packageDTOName <- o .: "name"
-    _packageDTOOrganizationId <- o .: "organizationId"
-    _packageDTOKmId <- o .: "kmId"
-    _packageDTOVersion <- o .: "version"
-    _packageDTOMetamodelVersion <- o .: "metamodelVersion"
-    _packageDTODescription <- o .: "description"
-    _packageDTOReadme <- o .:? "readme" .!= ""
-    _packageDTOLicense <- o .:? "license" .!= ""
-    _packageDTOParentPackageId <- o .:? "parentPackageId"
-    _packageDTOPreviousPackageId <- o .:? "previousPackageId" .!= _packageDTOParentPackageId
-    _packageDTOForkOfPackageId <- o .:? "forkOfPackageId" .!= _packageDTOParentPackageId
-    _packageDTOMergeCheckpointPackageId <- o .:? "mergeCheckpointPackageId" .!= _packageDTOParentPackageId
+    pId <- o .: "id"
+    name <- o .: "name"
+    organizationId <- o .: "organizationId"
+    kmId <- o .: "kmId"
+    version <- o .: "version"
+    metamodelVersion <- o .: "metamodelVersion"
+    description <- o .: "description"
+    readme <- o .:? "readme" .!= ""
+    license <- o .:? "license" .!= ""
+    parentPackageId <- o .:? "parentPackageId"
+    previousPackageId <- o .:? "previousPackageId" .!= parentPackageId
+    forkOfPackageId <- o .:? "forkOfPackageId" .!= parentPackageId
+    mergeCheckpointPackageId <- o .:? "mergeCheckpointPackageId" .!= parentPackageId
     eventSerialized <- o .: "events"
-    _packageDTOEvents <- parseJSON eventSerialized
-    _packageDTOCreatedAt <- o .:? "createdAt" .!= UTCTime (fromJust $ fromGregorianValid 1970 1 1) 0
+    events <- parseJSON eventSerialized
+    createdAt <- o .:? "createdAt" .!= UTCTime (fromJust $ fromGregorianValid 1970 1 1) 0
     return PackageDTO {..}
   parseJSON _ = mzero

@@ -1,6 +1,6 @@
-module Wizard.Metamodel.Migration.Migration0009
-  ( migrateEventValue
-  ) where
+module Wizard.Metamodel.Migration.Migration0009 (
+  migrateEventValue,
+) where
 
 import Data.Aeson
 import qualified Data.Text as T
@@ -9,9 +9,13 @@ import Wizard.Metamodel.Migration.MigrationContext
 import Wizard.Metamodel.Migration.Utils
 
 -- Migration #0009 (KM v9 -> v10)
+
 -- * Rename "responseIdField" to "responseItemId" in integration events
+
 -- * Rename "responseNameField" to "responseItemTemplate" in integration events
+
 -- * Change "responseItemId" in integration events (from path to Jinja)
+
 -- * Change "responseItemTemplate" in integration events (from path to Jinja)
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ input = Right [migrate input]

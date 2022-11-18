@@ -9,4 +9,4 @@ import Shared.Service.Template.TemplateMapper
 import Shared.Util.Swagger
 
 instance ToSchema TemplateFormatDTO where
-  declareNamedSchema = simpleToSchema (toFormatDTO templateFormatJson)
+  declareNamedSchema = toSwagger (toFormatDTO templateFormatJson)

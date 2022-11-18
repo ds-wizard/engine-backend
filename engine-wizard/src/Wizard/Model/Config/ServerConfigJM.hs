@@ -1,11 +1,9 @@
 module Wizard.Model.Config.ServerConfigJM where
 
-import Control.Lens ((^.))
 import Control.Monad
 import Data.Aeson
 import Data.String (fromString)
 
-import LensesConfig
 import Shared.Model.Config.EnvironmentJM ()
 import Shared.Model.Config.ServerConfigDM
 import Shared.Model.Config.ServerConfigJM ()
@@ -15,142 +13,126 @@ import Wizard.Model.User.User
 
 instance FromJSON ServerConfig where
   parseJSON (Object o) = do
-    _serverConfigGeneral <- o .: "general"
-    _serverConfigDatabase <- o .:? "database" .!= defaultDatabase
-    _serverConfigS3 <- o .:? "s3" .!= defaultS3
-    _serverConfigMessaging <- o .:? "messaging" .!= defaultMessaging
-    _serverConfigJwt <- o .:? "jwt" .!= defaultJwt
-    _serverConfigRoles <- o .:? "roles" .!= defaultRoles
-    _serverConfigRegistry <- o .:? "registry" .!= defaultRegistry
-    _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
-    _serverConfigSentry <- o .:? "sentry" .!= defaultSentry
-    _serverConfigBranch <- o .:? "branch" .!= defaultBranch
-    _serverConfigCache <- o .:? "cache" .!= defaultCache
-    _serverConfigDocument <- o .:? "document" .!= defaultDocument
-    _serverConfigFeedback <- o .:? "feedback" .!= defaultFeedback
-    _serverConfigPersistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
-    _serverConfigPlan <- o .:? "plan" .!= defaultPlan
-    _serverConfigQuestionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
-    _serverConfigUserToken <- o .:? "userToken" .!= defaultUserToken
-    _serverConfigLogging <- o .:? "logging" .!= defaultLogging
-    _serverConfigCloud <- o .:? "cloud" .!= defaultCloud
+    general <- o .: "general"
+    database <- o .:? "database" .!= defaultDatabase
+    s3 <- o .:? "s3" .!= defaultS3
+    jwt <- o .:? "jwt" .!= defaultJwt
+    roles <- o .:? "roles" .!= defaultRoles
+    registry <- o .:? "registry" .!= defaultRegistry
+    analytics <- o .:? "analytics" .!= defaultAnalytics
+    sentry <- o .:? "sentry" .!= defaultSentry
+    branch <- o .:? "branch" .!= defaultBranch
+    cache <- o .:? "cache" .!= defaultCache
+    document <- o .:? "document" .!= defaultDocument
+    feedback <- o .:? "feedback" .!= defaultFeedback
+    persistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
+    plan <- o .:? "plan" .!= defaultPlan
+    questionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
+    userToken <- o .:? "userToken" .!= defaultUserToken
+    logging <- o .:? "logging" .!= defaultLogging
+    cloud <- o .:? "cloud" .!= defaultCloud
     return ServerConfig {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigGeneral where
   parseJSON (Object o) = do
-    _serverConfigGeneralEnvironment <- o .:? "environment" .!= (defaultGeneral ^. environment)
-    _serverConfigGeneralClientUrl <- o .: "clientUrl"
-    _serverConfigGeneralServerPort <- o .:? "serverPort" .!= (defaultGeneral ^. serverPort)
-    _serverConfigGeneralSecret <- o .: "secret"
-    _serverConfigGeneralIntegrationConfig <- o .:? "integrationConfig" .!= (defaultGeneral ^. integrationConfig)
-    _serverConfigGeneralRemoteLocalizationUrl <-
-      o .:? "remoteLocalizationUrl" .!= (defaultGeneral ^. remoteLocalizationUrl)
-    _serverConfigGeneralClientStyleBuilderUrl <-
-      o .:? "clientStyleBuilderUrl" .!= (defaultGeneral ^. clientStyleBuilderUrl)
+    environment <- o .:? "environment" .!= defaultGeneral.environment
+    clientUrl <- o .: "clientUrl"
+    serverPort <- o .:? "serverPort" .!= defaultGeneral.serverPort
+    secret <- o .: "secret"
+    integrationConfig <- o .:? "integrationConfig" .!= defaultGeneral.integrationConfig
+    remoteLocalizationUrl <- o .:? "remoteLocalizationUrl" .!= defaultGeneral.remoteLocalizationUrl
+    clientStyleBuilderUrl <- o .:? "clientStyleBuilderUrl" .!= defaultGeneral.clientStyleBuilderUrl
     return ServerConfigGeneral {..}
-  parseJSON _ = mzero
-
-instance FromJSON ServerConfigMessaging where
-  parseJSON (Object o) = do
-    _serverConfigMessagingEnabled <- o .:? "enabled" .!= (defaultMessaging ^. enabled)
-    _serverConfigMessagingHost <- o .:? "host" .!= (defaultMessaging ^. host)
-    _serverConfigMessagingPort <- o .:? "port" .!= (defaultMessaging ^. port)
-    _serverConfigMessagingUsername <- o .:? "username" .!= (defaultMessaging ^. username)
-    _serverConfigMessagingPassword <- o .:? "password" .!= (defaultMessaging ^. password)
-    _serverConfigMessagingVhost <- o .:? "vhost" .!= (defaultMessaging ^. vhost)
-    return ServerConfigMessaging {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigJwt where
   parseJSON (Object o) = do
-    _serverConfigJwtVersion <- o .:? "version" .!= (defaultJwt ^. version)
-    _serverConfigJwtExpiration <- o .:? "expiration" .!= (defaultJwt ^. expiration)
+    version <- o .:? "version" .!= defaultJwt.version
+    expiration <- o .:? "expiration" .!= defaultJwt.expiration
     return ServerConfigJwt {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigRoles where
   parseJSON (Object o) = do
-    _serverConfigRolesAdmin <- o .:? fromString _USER_ROLE_ADMIN .!= (defaultRoles ^. admin)
-    _serverConfigRolesDataSteward <- o .:? fromString _USER_ROLE_DATA_STEWARD .!= (defaultRoles ^. dataSteward)
-    _serverConfigRolesResearcher <- o .:? fromString _USER_ROLE_RESEARCHER .!= (defaultRoles ^. researcher)
+    admin <- o .:? fromString _USER_ROLE_ADMIN .!= defaultRoles.admin
+    dataSteward <- o .:? fromString _USER_ROLE_DATA_STEWARD .!= defaultRoles.dataSteward
+    researcher <- o .:? fromString _USER_ROLE_RESEARCHER .!= defaultRoles.researcher
     return ServerConfigRoles {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigRegistry where
   parseJSON (Object o) = do
-    _serverConfigRegistryUrl <- o .:? "url" .!= (defaultRegistry ^. url)
-    _serverConfigRegistryClientUrl <- o .:? "clientUrl" .!= (defaultRegistry ^. clientUrl)
-    _serverConfigRegistrySync <- o .:? "sync" .!= (defaultRegistry ^. sync)
+    url <- o .:? "url" .!= defaultRegistry.url
+    clientUrl <- o .:? "clientUrl" .!= defaultRegistry.clientUrl
+    sync <- o .:? "sync" .!= defaultRegistry.sync
     return ServerConfigRegistry {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigBranch where
   parseJSON (Object o) = do
-    _serverConfigBranchSquash <- o .:? "squash" .!= (defaultBranch ^. squash)
+    squash <- o .:? "squash" .!= defaultBranch.squash
     return ServerConfigBranch {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigCache where
   parseJSON (Object o) = do
-    _serverConfigCacheDataExpiration <- o .:? "dataExpiration" .!= (defaultCache ^. dataExpiration)
-    _serverConfigCacheWebsocketExpiration <- o .:? "websocketExpiration" .!= (defaultCache ^. websocketExpiration)
-    _serverConfigCachePurgeExpired <- o .:? "purgeExpired" .!= (defaultCache ^. purgeExpired)
+    dataExpiration <- o .:? "dataExpiration" .!= defaultCache.dataExpiration
+    websocketExpiration <- o .:? "websocketExpiration" .!= defaultCache.websocketExpiration
+    purgeExpired <- o .:? "purgeExpired" .!= defaultCache.purgeExpired
     return ServerConfigCache {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigDocument where
   parseJSON (Object o) = do
-    _serverConfigDocumentClean <- o .:? "clean" .!= (defaultDocument ^. clean)
+    clean <- o .:? "clean" .!= defaultDocument.clean
     return ServerConfigDocument {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigFeedback where
   parseJSON (Object o) = do
-    _serverConfigFeedbackApiUrl <- o .:? "apiUrl" .!= (defaultFeedback ^. apiUrl)
-    _serverConfigFeedbackWebUrl <- o .:? "webUrl" .!= (defaultFeedback ^. webUrl)
-    _serverConfigFeedbackSync <- o .:? "sync" .!= (defaultFeedback ^. sync)
+    apiUrl <- o .:? "apiUrl" .!= defaultFeedback.apiUrl
+    webUrl <- o .:? "webUrl" .!= defaultFeedback.webUrl
+    sync <- o .:? "sync" .!= defaultFeedback.sync
     return ServerConfigFeedback {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigPersistentCommand where
   parseJSON (Object o) = do
-    _serverConfigPersistentCommandListenerJob <- o .:? "listenerJob" .!= (defaultPersistentCommand ^. listenerJob)
-    _serverConfigPersistentCommandRetryJob <- o .:? "retryJob" .!= (defaultPersistentCommand ^. retryJob)
+    listenerJob <- o .:? "listenerJob" .!= defaultPersistentCommand.listenerJob
+    retryJob <- o .:? "retryJob" .!= defaultPersistentCommand.retryJob
     return ServerConfigPersistentCommand {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigPersistentCommandListenerJob where
   parseJSON (Object o) = do
-    _serverConfigPersistentCommandListenerJobEnabled <-
-      o .:? "enabled" .!= (defaultPersistentCommandListenerJob ^. enabled)
+    enabled <- o .:? "enabled" .!= defaultPersistentCommandListenerJob.enabled
     return ServerConfigPersistentCommandListenerJob {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigPlan where
   parseJSON (Object o) = do
-    _serverConfigPlanRecomputeJob <- o .:? "recomputeJob" .!= (defaultPlan ^. recomputeJob)
+    recomputeJob <- o .:? "recomputeJob" .!= defaultPlan.recomputeJob
     return ServerConfigPlan {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigQuestionnaire where
   parseJSON (Object o) = do
-    _serverConfigQuestionnaireClean <- o .:? "clean" .!= (defaultQuestionnaire ^. clean)
-    _serverConfigQuestionnaireRecomputeIndication <-
-      o .:? "recomputeIndication" .!= (defaultQuestionnaire ^. recomputeIndication)
-    _serverConfigQuestionnaireSquash <- o .:? "squash" .!= (defaultQuestionnaire ^. squash)
+    clean <- o .:? "clean" .!= defaultQuestionnaire.clean
+    recomputeIndication <- o .:? "recomputeIndication" .!= defaultQuestionnaire.recomputeIndication
+    squash <- o .:? "squash" .!= defaultQuestionnaire.squash
     return ServerConfigQuestionnaire {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigUserToken where
   parseJSON (Object o) = do
-    _serverConfigUserTokenClean <- o .:? "clean" .!= (defaultUserToken ^. clean)
+    clean <- o .:? "clean" .!= defaultUserToken.clean
     return ServerConfigUserToken {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigCronWorker where
   parseJSON (Object o) = do
-    _serverConfigCronWorkerEnabled <- o .: "enabled"
-    _serverConfigCronWorkerCron <- o .: "cron"
+    enabled <- o .: "enabled"
+    cron <- o .: "cron"
     return ServerConfigCronWorker {..}
   parseJSON _ = mzero

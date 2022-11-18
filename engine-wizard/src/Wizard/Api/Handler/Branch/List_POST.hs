@@ -12,18 +12,18 @@ import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Branch.BranchService
 
-type List_POST
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> ReqBody '[ SafeJSON] BranchCreateDTO
-     :> "branches"
-     :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] BranchList)
+type List_POST =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> ReqBody '[SafeJSON] BranchCreateDTO
+    :> "branches"
+    :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] BranchList)
 
-list_POST ::
-     Maybe String
+list_POST
+  :: Maybe String
   -> Maybe String
   -> BranchCreateDTO
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] BranchList)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] BranchList)
 list_POST mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< createBranch reqDto

@@ -8,13 +8,13 @@ import Wizard.Model.Branch.BranchList
 
 instance FromRow BranchList where
   fromRow = do
-    _branchListUuid <- field
-    _branchListName <- field
-    _branchListKmId <- field
-    _branchListState <- field
-    _branchListPreviousPackageId <- field
-    _branchListForkOfPackageId <- field
-    _branchListCreatedBy <- field
-    _branchListCreatedAt <- field
-    _branchListUpdatedAt <- field
+    uuid <- field
+    name <- field
+    kmId <- field
+    state <- field
+    previousPackageId <- field
+    forkOfPackageId <- field
+    createdBy <- field
+    createdAt <- field
+    updatedAt <- field
     return $ BranchList {..}

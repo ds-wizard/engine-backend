@@ -1,6 +1,6 @@
-module Shared.Util.Gravatar
-  ( createGravatarHash
-  ) where
+module Shared.Util.Gravatar (
+  createGravatarHash,
+) where
 
 import Shared.Util.Crypto (hashMD5)
 import Shared.Util.String (toLower, trim)
