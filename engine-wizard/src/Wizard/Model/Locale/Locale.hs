@@ -8,7 +8,7 @@ data Locale =
   Locale
     { _localeUuid :: U.UUID
     , _localeName :: String
-    , _localeShortcut :: String
+    , _localeCode :: String
     , _localeFallback :: Bool
     , _localeEnabled :: Bool
     , _localeAppUuid :: U.UUID

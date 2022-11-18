@@ -6,6 +6,7 @@ import Shared.Util.JSON
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Config.SimpleFeatureJM ()
+import Wizard.Api.Resource.Locale.LocaleJM ()
 
 instance FromJSON ClientConfigDTO where
   parseJSON = genericParseJSON simpleOptions

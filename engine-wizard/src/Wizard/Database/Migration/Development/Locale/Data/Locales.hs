@@ -15,7 +15,7 @@ localeCz =
   Locale
     { _localeUuid = u' "b5f6ea5e-89c2-4419-930a-69980bbc36e8"
     , _localeName = "Čeština"
-    , _localeShortcut = "cs"
+    , _localeCode = "cs"
     , _localeFallback = True
     , _localeEnabled = True
     , _localeAppUuid = defaultAppUuid

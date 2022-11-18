@@ -2,6 +2,7 @@ module Wizard.Api.Resource.Config.ClientConfigDTO where
 
 import GHC.Generics
 
+import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.SimpleFeature
 
@@ -18,7 +19,7 @@ data ClientConfigDTO =
     , _clientConfigDTOTemplate :: AppConfigTemplate
     , _clientConfigDTOSubmission :: SimpleFeature
     , _clientConfigDTOCloud :: ClientConfigCloudDTO
-    , _clientConfigDTOLocales :: [String]
+    , _clientConfigDTOLocales :: [LocaleDTO]
     , _clientConfigDTOOwl :: AppConfigOwl
     }
   deriving (Show, Eq, Generic)

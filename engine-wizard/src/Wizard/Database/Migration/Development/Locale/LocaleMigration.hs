@@ -18,5 +18,5 @@ runMigration = do
 
 runS3Migration :: AppContextM ()
 runS3Migration = do
-  _ <- putLocale (f' "%s.json" [localeCz ^. shortcut]) localeCzContent
+  _ <- putLocale (f' "%s.json" [localeCz ^. code]) localeCzContent
   return ()

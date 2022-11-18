@@ -29,7 +29,7 @@ createTables = do
          \         constraint locale_pk \
          \             primary key, \
          \     name              varchar not null,\
-         \     shortcut          varchar not null,\
+         \     code          varchar not null,\
          \     fallback          bool not null,\
          \     enabled           bool not null,\
          \     app_uuid          uuid not null \

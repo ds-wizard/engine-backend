@@ -7,6 +7,7 @@ import Shared.Util.Swagger
 import Wizard.Api.Resource.Config.AppConfigSM ()
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Config.ClientConfigJM ()
+import Wizard.Api.Resource.Locale.LocaleSM ()
 import Wizard.Database.Migration.Development.App.Data.Apps
 import qualified Wizard.Database.Migration.Development.Config.Data.AppConfigs as A
 import qualified Wizard.Model.Config.ServerConfigDM as S

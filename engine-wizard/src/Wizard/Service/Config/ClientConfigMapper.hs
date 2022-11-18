@@ -10,6 +10,7 @@ import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Locale.Locale
+import Wizard.Service.Locale.LocaleMapper
 
 toClientConfigDTO :: ServerConfig -> AppConfig -> App -> [Locale] -> ClientConfigDTO
 toClientConfigDTO serverConfig appConfig app locales =
@@ -25,7 +26,7 @@ toClientConfigDTO serverConfig appConfig app locales =
     , _clientConfigDTOTemplate = appConfig ^. template
     , _clientConfigDTOSubmission = SimpleFeature $ appConfig ^. submission . enabled
     , _clientConfigDTOCloud = toClientConfigCloudDTO (serverConfig ^. cloud) app
-    , _clientConfigDTOLocales = fmap (^. shortcut) locales
+    , _clientConfigDTOLocales = fmap toDTO locales
     , _clientConfigDTOOwl = appConfig ^. owl
     }
 
