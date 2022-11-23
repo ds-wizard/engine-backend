@@ -1,13 +1,12 @@
 module Wizard.Service.Config.ClientConfigMapper where
 
 import Shared.Model.Config.ServerConfig
+import Shared.Model.Locale.Locale
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.SimpleFeature
-import Wizard.Model.Locale.Locale
-import Wizard.Service.Locale.LocaleMapper
 
 toClientConfigDTO :: ServerConfig -> AppConfig -> App -> [Locale] -> ClientConfigDTO
 toClientConfigDTO serverConfig appConfig app locales =
@@ -23,7 +22,7 @@ toClientConfigDTO serverConfig appConfig app locales =
     , template = appConfig.template
     , submission = SimpleFeature $ appConfig.submission.enabled
     , cloud = toClientConfigCloudDTO serverConfig.cloud app
-    , locales = fmap toDTO locales
+    , locales = fmap toClientConfigLocaleDTO locales
     , owl = appConfig.owl
     }
 
@@ -74,3 +73,7 @@ toClientConfigCloudDTO serverConfig app =
     { enabled = serverConfig.enabled
     , serverUrl = app.serverUrl
     }
+
+toClientConfigLocaleDTO :: Locale -> ClientConfigLocaleDTO
+toClientConfigLocaleDTO locale =
+  ClientConfigLocaleDTO {name = locale.name, code = locale.code, defaultLocale = locale.defaultLocale}

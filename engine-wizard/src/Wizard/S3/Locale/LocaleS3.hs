@@ -10,6 +10,9 @@ import Wizard.Model.Context.ContextLenses ()
 
 folderName = "locales"
 
+getLocale :: String -> AppContextM BS.ByteString
+getLocale localeId = createGetObjectFn (f' "%s/%s" [folderName, localeId])
+
 getLocale' :: String -> AppContextM (Either MinioErr BS.ByteString)
 getLocale' localeId = createGetObjectFn' (f' "%s/%s" [folderName, localeId])
 

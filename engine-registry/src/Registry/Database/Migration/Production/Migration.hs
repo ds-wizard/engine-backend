@@ -9,6 +9,7 @@ import qualified Registry.Database.Migration.Production.Migration_0001_init.Migr
 import qualified Registry.Database.Migration.Production.Migration_0002_app.Migration as M_0002
 import qualified Registry.Database.Migration.Production.Migration_0003_persistentCommand.Migration as M_0003
 import qualified Registry.Database.Migration.Production.Migration_0004_appLimit.Migration as M_0004
+import qualified Registry.Database.Migration.Production.Migration_0005_locale.Migration as M_0005
 import Registry.Util.Logger
 
 runMigration baseContext = do
@@ -16,4 +17,4 @@ runMigration baseContext = do
   runLogging loggingLevel $ migrateDatabase baseContext.dbPool migrationDefinitions (logInfo _CMP_MIGRATION)
 
 migrationDefinitions :: [MigrationDefinition]
-migrationDefinitions = [M_0001.definition, M_0002.definition, M_0003.definition, M_0004.definition]
+migrationDefinitions = [M_0001.definition, M_0002.definition, M_0003.definition, M_0004.definition, M_0005.definition]

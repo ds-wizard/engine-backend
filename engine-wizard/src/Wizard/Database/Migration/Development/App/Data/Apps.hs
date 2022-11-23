@@ -4,7 +4,6 @@ import Data.Maybe (fromJust)
 import Data.Time
 
 import Shared.Constant.App
-import Shared.Util.Uuid
 import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Model.App.App
 
@@ -25,7 +24,7 @@ defaultApp =
 differentApp :: App
 differentApp =
   App
-    { uuid = u' "d9e73946-faa6-449d-83e4-2e38371b7bfa"
+    { uuid = differentAppUuid
     , appId = "different"
     , name = "Different App"
     , serverDomain = "different-server.example.com"

@@ -10,8 +10,8 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.Database.Migration.Development.Locale.Data.Locales
 import Shared.Util.String (f')
-import Wizard.Database.Migration.Development.Locale.Data.Locales
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC
 import Wizard.Model.Context.AppContext
 
@@ -39,8 +39,8 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (cs-CZ)" appContext "cs-CZ"
-  create_test_200 "HTTP 200 OK (cs)" appContext "cs"
+  create_test_200 "HTTP 200 OK (nl-NL)" appContext "nl-NL"
+  create_test_200 "HTTP 200 OK (nl)" appContext "nl"
 
 create_test_200 title appContext localeId = do
   it title $
@@ -49,7 +49,7 @@ create_test_200 title appContext localeId = do
       let reqUrl = reqUrlT localeId
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expBody = BSL.fromStrict localeCzContent
+      let expBody = BSL.fromStrict localeNlContent
       -- AND: Run migrations
       runInContextIO LOC.runMigration appContext
       runInContextIO LOC.runS3Migration appContext

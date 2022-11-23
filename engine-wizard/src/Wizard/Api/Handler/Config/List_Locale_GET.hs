@@ -24,6 +24,6 @@ list_locale_GET
   -> BaseContextM (Headers '[Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
 list_locale_GET mServerUrl localeId =
   runInUnauthService mServerUrl NoTransaction $ do
-    locale <- getLocaleForId localeId
+    locale <- getLocaleContentForId localeId
     traceUuid <- asks traceUuid
     return . addHeader (U.toString traceUuid) . addHeader "application/json" . FileStream $ locale

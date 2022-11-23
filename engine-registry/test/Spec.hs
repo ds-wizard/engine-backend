@@ -20,6 +20,7 @@ import Shared.Service.Config.BuildInfoConfigService
 
 import Registry.Specs.API.ActionKey.APISpec
 import Registry.Specs.API.Info.APISpec
+import Registry.Specs.API.Locale.APISpec
 import Registry.Specs.API.Organization.APISpec
 import Registry.Specs.API.Package.APISpec
 import Registry.Specs.API.Template.APISpec
@@ -82,6 +83,7 @@ main =
           before (resetDB appContext) $ describe "INTEGRATION TESTING" $ describe "API" $ do
             actionKeyAPI baseContext appContext
             infoAPI baseContext appContext
+            localeAPI baseContext appContext
             organizationAPI baseContext appContext
             packageAPI baseContext appContext
             templateAPI baseContext appContext

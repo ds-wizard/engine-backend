@@ -49,6 +49,7 @@ userAlbert =
         , "SUBM_PERM"
         , "TML_PERM"
         , "DOC_PERM"
+        , "LOC_PERM"
         ]
     , active = True
     , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="

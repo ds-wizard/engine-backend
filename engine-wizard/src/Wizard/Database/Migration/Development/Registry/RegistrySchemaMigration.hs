@@ -19,7 +19,8 @@ dropTables = do
   let sql =
         "drop table if exists registry_organization cascade; \
         \drop table if exists registry_package cascade; \
-        \drop table if exists registry_template cascade;"
+        \drop table if exists registry_template cascade; \
+        \drop table if exists registry_locale cascade;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -27,6 +28,7 @@ createTables = do
   createOrganizationTable
   createPackageTable
   createTemplateTable
+  createLocaleTable
 
 createOrganizationTable = do
   logInfo _CMP_MIGRATION "(Table/RegistryOrganization) create table"
@@ -76,5 +78,22 @@ createTemplateTable = do
         \     add constraint registry_template_pk primary key (organization_id, template_id);\
         \create unique index registry_template_id_uindex \
         \     on registry_template (organization_id, template_id); "
+  let action conn = execute_ conn sql
+  runDB action
+
+createLocaleTable = do
+  logInfo _CMP_MIGRATION "(Table/RegistryLocale) create table"
+  let sql =
+        "create table registry_locale \
+        \ ( \
+        \     organization_id varchar                  not null, \
+        \     locale_id     varchar                  not null, \
+        \     remote_version  varchar                  not null, \
+        \     created_at      timestamp with time zone not null \
+        \ ); \
+        \alter table registry_locale\
+        \     add constraint registry_locale_pk primary key (organization_id, locale_id);\
+        \create unique index registry_locale_id_uindex \
+        \     on registry_locale (organization_id, locale_id); "
   let action conn = execute_ conn sql
   runDB action

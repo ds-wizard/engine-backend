@@ -14,6 +14,7 @@ import Wizard.Api.Handler.Domain.Api
 import Wizard.Api.Handler.Feedback.Api
 import Wizard.Api.Handler.Info.Api
 import Wizard.Api.Handler.KnowledgeModel.Api
+import Wizard.Api.Handler.Locale.Api
 import Wizard.Api.Handler.Migration.Api
 import Wizard.Api.Handler.Package.Api
 import Wizard.Api.Handler.PersistentCommand.Api
@@ -43,6 +44,7 @@ type ApplicationAPI =
     :<|> FeedbackAPI
     :<|> InfoAPI
     :<|> KnowledgeModelAPI
+    :<|> LocaleAPI
     :<|> MigrationAPI
     :<|> PackageAPI
     :<|> PersistentCommandAPI
@@ -75,6 +77,7 @@ applicationServer =
     :<|> feedbackServer
     :<|> infoServer
     :<|> knowledgeModelServer
+    :<|> localeServer
     :<|> migrationServer
     :<|> packageServer
     :<|> persistentCommandServer

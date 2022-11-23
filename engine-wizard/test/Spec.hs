@@ -33,6 +33,7 @@ import Wizard.Specs.API.Domain.APISpec
 import Wizard.Specs.API.Feedback.APISpec
 import Wizard.Specs.API.Info.APISpec
 import Wizard.Specs.API.KnowledgeModel.APISpec
+import Wizard.Specs.API.Locale.APISpec
 import qualified Wizard.Specs.API.Migration.KnowledgeModel.APISpec as KM_MigrationAPI
 import qualified Wizard.Specs.API.Migration.Questionnaire.APISpec as QTN_MigrationAPI
 import Wizard.Specs.API.Package.APISpec
@@ -190,6 +191,7 @@ main =
               feedbackAPI baseContext appContext
               infoAPI baseContext appContext
               knowledgeModelAPI baseContext appContext
+              localeAPI baseContext appContext
               KM_MigrationAPI.migrationAPI baseContext appContext
               QTN_MigrationAPI.migrationAPI baseContext appContext
               packageAPI baseContext appContext

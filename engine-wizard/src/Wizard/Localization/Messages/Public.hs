@@ -20,6 +20,9 @@ _ERROR_SERVICE_TML__TML_FILE_OR_ASSET_UNIQUENESS =
     "Template file or asset must have unique filename across the template"
     []
 
+_ERROR_VALIDATION__LCL_ID_UNIQUENESS lclId =
+  LocaleRecord "error.validation.lcl_id_uniqueness" "Locale '%s' already exists" [lclId]
+
 -- Absence
 _ERROR_VALIDATION__APP_ABSENCE host = LocaleRecord "error.validation.app_absence" "App ('%s') doesn't exist" [host]
 
@@ -59,12 +62,25 @@ _ERROR_VALIDATION__SUBMISSION_DEFINITION_ABSENCE subId =
 _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId target =
   LocaleRecord "error.validation.tml_deletation" "Template '%s' can't be deleted. It's used by some %s" [tmlId, target]
 
+_ERROR_VALIDATION__DEFAULT_LOCALE_DELETATION =
+  LocaleRecord "error.validation.default_locale_deletation" "You can't delete default locale" []
+
+_ERROR_VALIDATION__DEFAULT_WIZARD_LOCALE_DELETATION =
+  LocaleRecord "error.validation.default_locale_deletation" "You can't delete default wizard locale" []
+
 -- Unsupported version
 _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_VERSION tmlId tmlMetamodelVersion appTmlMetamodelVersion =
   LocaleRecord
     "error.validation.tml_unsupported_version"
     "Template '%s' contains unsupported version of metamodel (template metamodel version: '%s', application metamodel version: '%s')"
     [tmlId, show tmlMetamodelVersion, show appTmlMetamodelVersion]
+
+-- Locale
+_ERROR_VALIDATION__DEACTIVATE_DEFAULT_LOCALE =
+  LocaleRecord "error.validation.deactivate_default_locale" "You can't deactivate default locale" []
+
+_ERROR_VALIDATION__LOCALE_DISABLED_DEFAULT =
+  LocaleRecord "error.validation.locale_disabled_default" "You can't set disabled locale as default" []
 
 -- --------------------------------------
 -- SERVICE
@@ -79,6 +95,10 @@ _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP =
 -- Auth
 _ERROR_SERVICE_AUTH__SERVICE_NOT_DEFINED authId =
   LocaleRecord "error.service.auth.service_not_defined" "Service '%s' is not defined" [authId]
+
+-- Locale Bundle
+_ERROR_SERVICE_LB__PULL_NON_EXISTING_LOCALE lclId =
+  LocaleRecord "error.service.lb.pull_non_existing_locale" "Desired locale ('%s') wasn't found in Registry" [lclId]
 
 -- Migration / KnowledgeModel
 _ERROR_SERVICE_MIGRATION_KM__TARGET_PKG_IS_NOT_HIGHER =

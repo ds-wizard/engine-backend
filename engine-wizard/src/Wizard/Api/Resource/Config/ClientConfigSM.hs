@@ -2,6 +2,7 @@ module Wizard.Api.Resource.Config.ClientConfigSM where
 
 import Data.Swagger
 
+import Shared.Database.Migration.Development.Locale.Data.Locales
 import qualified Shared.Model.Config.ServerConfigDM as S_S
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Config.AppConfigSM ()
@@ -33,3 +34,6 @@ instance ToSchema ClientConfigQuestionnaireDTO where
 
 instance ToSchema ClientConfigCloudDTO where
   declareNamedSchema = toSwagger (toClientConfigCloudDTO S_S.defaultCloud defaultApp)
+
+instance ToSchema ClientConfigLocaleDTO where
+  declareNamedSchema = toSwagger (toClientConfigLocaleDTO localeNl)

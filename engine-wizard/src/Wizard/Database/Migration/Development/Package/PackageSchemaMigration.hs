@@ -23,7 +23,7 @@ dropTables = do
   runDB action
 
 dropFunctions = do
-  logInfo _CMP_MIGRATION "(Function/Branch) drop functions"
+  logInfo _CMP_MIGRATION "(Function/Package) drop functions"
   let sql =
         "DROP FUNCTION IF EXISTS get_newest_package; \
         \DROP FUNCTION IF EXISTS get_newest_package_2;\

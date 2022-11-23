@@ -9,10 +9,10 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.Database.Migration.Development.Locale.Data.Locales
 import Wizard.Api.Resource.Config.ClientConfigJM ()
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
-import Wizard.Database.Migration.Development.Locale.Data.Locales
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.ClientConfigMapper
@@ -46,7 +46,7 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = toClientConfigDTO appContext.serverConfig defaultAppConfig defaultApp [localeCz]
+      let expDto = toClientConfigDTO appContext.serverConfig defaultAppConfig defaultApp [localeDefaultEn, localeNl]
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO LOC.runMigration appContext

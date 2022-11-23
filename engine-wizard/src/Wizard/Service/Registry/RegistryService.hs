@@ -8,6 +8,7 @@ import Registry.Api.Resource.Organization.OrganizationDTO
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.Registry.RegistryLocaleDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Database.DAO.Registry.RegistryTemplateDAO
@@ -45,6 +46,7 @@ synchronizeData = do
     synchronizeOrganizations now
     synchronizePackages now
     synchronizeTemplates now
+    synchronizeLocales now
 
 synchronizeOrganizations :: UTCTime -> AppContextM ()
 synchronizeOrganizations now = do
@@ -72,6 +74,15 @@ synchronizeTemplates now = do
   let registryTemplates = fmap (`toRegistryTemplate` now) templates
   deleteRegistryTemplates
   traverse_ insertRegistryTemplate registryTemplates
+  logInfoU _CMP_SERVICE "Organization Synchronization successfully finished"
+
+synchronizeLocales :: UTCTime -> AppContextM ()
+synchronizeLocales now = do
+  logInfoU _CMP_SERVICE "Locale Synchronization started"
+  templates <- retrieveLocales
+  let registryLocales = fmap (`toRegistryLocale` now) templates
+  deleteRegistryLocales
+  traverse_ insertRegistryLocale registryLocales
   logInfoU _CMP_SERVICE "Organization Synchronization successfully finished"
 
 -- --------------------------------

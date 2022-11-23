@@ -18,6 +18,8 @@ import Wizard.Api.Resource.App.AppSM ()
 import Wizard.Api.Resource.Branch.BranchListSM ()
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentSM ()
+import Wizard.Api.Resource.Locale.LocaleDTO
+import Wizard.Api.Resource.Locale.LocaleSM ()
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
 import Wizard.Api.Resource.Package.PackageSuggestionSM ()
@@ -36,6 +38,7 @@ import Wizard.Api.Resource.User.UserSuggestionSM ()
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Document.Data.Documents
+import Wizard.Database.Migration.Development.Locale.Data.Locales
 import Wizard.Database.Migration.Development.PersistentCommand.Data.PersistentCommands
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
@@ -60,6 +63,10 @@ instance ToSchema (Page UserSuggestionDTO) where
     toSwaggerWithDtoName
       "Page UserSuggestionDTO"
       (Page "users" pageMetadata [U_Mapper.toSuggestionDTO . U_Mapper.toSuggestion $ userAlbert])
+
+instance ToSchema (Page LocaleDTO) where
+  declareNamedSchema =
+    toSwaggerWithDtoName "Page Locale" (Page "locales" pageMetadata [localeNlDto])
 
 instance ToSchema (Page PackageSimpleDTO) where
   declareNamedSchema =

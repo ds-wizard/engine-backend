@@ -5,12 +5,14 @@ import Control.Monad.Reader (asks)
 import qualified Data.ByteString.Lazy as BSL
 import Servant
 
+import Registry.Api.Resource.Locale.LocaleDTO
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Registry.Api.Resource.Package.PackageSimpleDTO
 import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Integration.Http.Common.HttpClient
@@ -97,4 +99,30 @@ retrieveTemplateBundleById tmlId = do
       runRequest
         (toRetrieveTemplateBundleByIdRequest serverConfig.registry appConfig.registry tmlId)
         toRetrieveTemplateBundleByIdResponse
+    else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
+
+retrieveLocales :: AppContextM [LocaleDTO]
+retrieveLocales = do
+  buildInfoConfig <- asks buildInfoConfig
+  appConfig <- getAppConfig
+  if appConfig.registry.enabled
+    then
+      catchError
+        ( do
+            let request = toRetrieveLocaleRequest buildInfoConfig.releaseVersion appConfig.registry
+            res <- runRegistryClient request
+            return . getResponse $ res
+        )
+        (\_ -> return [])
+    else return []
+
+retrieveLocaleBundleById :: String -> AppContextM BSL.ByteString
+retrieveLocaleBundleById lclId = do
+  serverConfig <- asks serverConfig
+  appConfig <- getAppConfig
+  if appConfig.registry.enabled
+    then
+      runRequest
+        (toRetrieveLocaleBundleByIdRequest serverConfig.registry appConfig.registry lclId)
+        toRetrieveLocaleBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"

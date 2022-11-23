@@ -12,3 +12,6 @@ toRetrievePackageBundleByIdResponse = Right . getResponseBody
 
 toRetrieveTemplateBundleByIdResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
 toRetrieveTemplateBundleByIdResponse = Right . getResponseBody
+
+toRetrieveLocaleBundleByIdResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
+toRetrieveLocaleBundleByIdResponse = Right . getResponseBody
