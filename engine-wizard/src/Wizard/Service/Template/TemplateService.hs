@@ -20,6 +20,7 @@ import Shared.Model.Error.Error
 import Shared.Model.Template.Template
 import Shared.Service.Coordinate.CoordinateValidation
 import qualified Shared.Service.Template.TemplateMapper as STM
+import Shared.Service.Template.TemplateUtil
 import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
@@ -99,7 +100,8 @@ getTemplateByUuidAndPackageId templateId mPkgId = do
 
 getTemplateByUuidDto :: String -> AppContextM TemplateDetailDTO
 getTemplateByUuidDto templateId = do
-  tml <- findTemplateById templateId
+  resolvedTmlId <- resolveTemplateId templateId
+  tml <- findTemplateById resolvedTmlId
   pkgs <- findPackages
   versions <- getTemplateVersions tml
   tmlRs <- findRegistryTemplates

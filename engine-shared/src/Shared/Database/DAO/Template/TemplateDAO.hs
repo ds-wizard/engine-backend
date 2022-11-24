@@ -110,6 +110,29 @@ findTemplateById' id = do
   appUuid <- asks (.appUuid')
   createFindEntityByFn' entityName [appQueryUuid appUuid, ("id", id)]
 
+findVersionsForTemplate
+  :: ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "appUuid'" s U.UUID
+     , MonadIO m
+     )
+  => String
+  -> String
+  -> m [String]
+findVersionsForTemplate orgId templateId = do
+  appUuid <- asks (.appUuid')
+  let sql = fromString "SELECT version FROM template WHERE app_uuid = ? and organization_id = ? and template_id = ?"
+  let params = [U.toString appUuid, orgId, templateId]
+  logQuery sql params
+  let action conn = query conn sql params
+  versions <- runDB action
+  return . fmap fromOnly $ versions
+
 countTemplatesGroupedByOrganizationIdAndKmId
   :: ( MonadLogger m
      , MonadError AppError m

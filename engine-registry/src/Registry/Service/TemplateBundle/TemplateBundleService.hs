@@ -11,13 +11,15 @@ import Shared.Database.DAO.Template.TemplateAssetDAO
 import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.DAO.Template.TemplateFileDAO
 import Shared.Model.Template.Template
+import Shared.Service.Template.TemplateUtil
 import Shared.Service.TemplateBundle.TemplateBundleMapper
 
 exportTemplateBundle :: String -> AppContextM BSL.ByteString
 exportTemplateBundle tmlId = do
-  template <- findTemplateById tmlId
-  files <- findTemplateFilesByTemplateId tmlId
-  assets <- findTemplateAssetsByTemplateId tmlId
+  resolvedId <- resolveTemplateId tmlId
+  template <- findTemplateById resolvedId
+  files <- findTemplateFilesByTemplateId resolvedId
+  assets <- findTemplateAssetsByTemplateId resolvedId
   assetContents <- traverse (findAsset template.tId) assets
   return $ toTemplateArchive (toTemplateBundle template files assets) assetContents
 
