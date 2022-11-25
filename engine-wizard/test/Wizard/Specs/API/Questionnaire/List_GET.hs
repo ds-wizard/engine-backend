@@ -211,13 +211,13 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Non-Admin - isTemplate - true)"
     appContext
-    "/questionnaires?isTemplate=true"
+    "/questionnaires?sort=uuid,asc&isTemplate=true"
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire14Dto, questionnaire12Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin - isTemplate - false)"
     appContext
-    "/questionnaires?isTemplate=false&sort=uuid,asc"
+    "/questionnaires?sort=uuid,asc&isTemplate=false"
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
   create_test_200
