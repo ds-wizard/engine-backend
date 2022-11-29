@@ -21,10 +21,10 @@ toCompileClientCssRequest reqUrl clientUrl lookAndFeel =
     , requestBody =
         BSL.toStrict . encode $
           CompileClientCssIDTO
-            { _compileClientCssIDTOClientUrl = clientUrl
-            , _compileClientCssIDTOLogoUrl = lookAndFeel.logoUrl
-            , _compileClientCssIDTOPrimaryColor = lookAndFeel.primaryColor
-            , _compileClientCssIDTOIllustrationsColor = lookAndFeel.illustrationsColor
+            { clientUrl = clientUrl
+            , logoUrl = lookAndFeel.logoUrl
+            , primaryColor = lookAndFeel.primaryColor
+            , illustrationsColor = lookAndFeel.illustrationsColor
             }
     , multipartFileName = Nothing
     }
