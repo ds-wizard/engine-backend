@@ -4,25 +4,25 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-data FeedbackDTO =
-  FeedbackDTO
-    { _feedbackDTOUuid :: U.UUID
-    , _feedbackDTOIssueId :: Int
-    , _feedbackDTOIssueUrl :: String
-    , _feedbackDTOQuestionUuid :: U.UUID
-    , _feedbackDTOPackageId :: String
-    , _feedbackDTOTitle :: String
-    , _feedbackDTOContent :: String
-    , _feedbackDTOCreatedAt :: UTCTime
-    , _feedbackDTOUpdatedAt :: UTCTime
-    }
+data FeedbackDTO = FeedbackDTO
+  { uuid :: U.UUID
+  , issueId :: Int
+  , issueUrl :: String
+  , questionUuid :: U.UUID
+  , packageId :: String
+  , title :: String
+  , content :: String
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq FeedbackDTO where
   a == b =
-    _feedbackDTOUuid a == _feedbackDTOUuid b &&
-    _feedbackDTOIssueId a == _feedbackDTOIssueId b &&
-    _feedbackDTOIssueUrl a == _feedbackDTOIssueUrl b &&
-    _feedbackDTOQuestionUuid a == _feedbackDTOQuestionUuid b &&
-    _feedbackDTOPackageId a == _feedbackDTOPackageId b &&
-    _feedbackDTOTitle a == _feedbackDTOTitle b && _feedbackDTOContent a == _feedbackDTOContent b
+    uuid a == uuid b
+      && issueId a == issueId b
+      && issueUrl a == issueUrl b
+      && questionUuid a == questionUuid b
+      && packageId a == packageId b
+      && title a == title b
+      && content a == content b

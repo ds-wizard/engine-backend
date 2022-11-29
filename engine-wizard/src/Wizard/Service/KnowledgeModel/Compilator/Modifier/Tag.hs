@@ -1,26 +1,24 @@
 module Wizard.Service.KnowledgeModel.Compilator.Modifier.Tag where
 
-import Control.Lens ((^.))
-
-import LensesConfig
 import Shared.Model.Event.Tag.TagEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance CreateEntity AddTagEvent Tag where
-  createEntity e =
+  createEntity event =
     Tag
-      { _tagUuid = e ^. entityUuid
-      , _tagName = e ^. name
-      , _tagDescription = e ^. description
-      , _tagColor = e ^. color
-      , _tagAnnotations = e ^. annotations
+      { uuid = event.entityUuid
+      , name = event.name
+      , description = event.description
+      , color = event.color
+      , annotations = event.annotations
       }
 
 instance EditEntity EditTagEvent Tag where
-  editEntity e = applyAnnotations . applyColor . applyDescription . applyName
-    where
-      applyName tag = applyValue (e ^. name) tag name
-      applyDescription tag = applyValue (e ^. description) tag description
-      applyColor tag = applyValue (e ^. color) tag color
-      applyAnnotations tag = applyValue (e ^. annotations) tag annotations
+  editEntity event entity =
+    entity
+      { name = applyValue entity.name event.name
+      , description = applyValue entity.description event.description
+      , color = applyValue entity.color event.color
+      , annotations = applyValue entity.annotations event.annotations
+      }

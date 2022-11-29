@@ -7,6 +7,6 @@ import Wizard.Model.Branch.BranchDataLength
 
 instance FromRow BranchDataLength where
   fromRow = do
-    _branchDataLengthBranchUuid <- field
-    _branchDataLengthEventSize <- field
+    branchUuid <- field
+    eventSize <- field
     return $ BranchDataLength {..}

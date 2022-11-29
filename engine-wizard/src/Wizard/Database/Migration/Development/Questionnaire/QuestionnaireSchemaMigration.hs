@@ -82,38 +82,38 @@ createQtnPermTable = do
   logInfo _CMP_MIGRATION "(Table/QuestionnaireAcl) create table"
   let sql =
         "create table questionnaire_acl_user \
-         \ ( \
-         \     uuid               uuid   not null \
-         \         constraint questionnaire_user_acl_pk \
-         \             primary key, \
-         \     user_uuid          uuid   not null \
-         \         constraint questionnaire_acl_user_user_uuid_fk \
-         \             references user_entity on delete cascade, \
-         \     perms              text[] not null, \
-         \     questionnaire_uuid uuid   not null \
-         \         constraint questionnaire_acl_user_questionnaire_uuid_fk \
-         \             references questionnaire on delete cascade on update cascade \
-         \ ); \
-         \  \
-         \ create unique index questionnaire_acl_user_uuid_uindex \
-         \     on questionnaire_acl_user (uuid); \
-         \  \
-         \ create table questionnaire_acl_group \
-         \ ( \
-         \     uuid               uuid    not null \
-         \         constraint questionnaire_acl_group_pk \
-         \             primary key, \
-         \     group_id           varchar not null \
-         \         constraint questionnaire_acl_group_group_id_fk \
-         \             references acl_group on delete cascade, \
-         \     perms              text[]  not null, \
-         \     questionnaire_uuid uuid    not null \
-         \         constraint questionnaire_acl_group_questionnaire_uuid_fk \
-         \             references questionnaire on delete cascade \
-         \ ); \
-         \  \
-         \ create unique index questionnaire_acl_group_uuid_uindex \
-         \     on questionnaire_acl_group (uuid); "
+        \ ( \
+        \     uuid               uuid   not null \
+        \         constraint questionnaire_user_acl_pk \
+        \             primary key, \
+        \     user_uuid          uuid   not null \
+        \         constraint questionnaire_acl_user_user_uuid_fk \
+        \             references user_entity on delete cascade, \
+        \     perms              text[] not null, \
+        \     questionnaire_uuid uuid   not null \
+        \         constraint questionnaire_acl_user_questionnaire_uuid_fk \
+        \             references questionnaire on delete cascade on update cascade \
+        \ ); \
+        \  \
+        \ create unique index questionnaire_acl_user_uuid_uindex \
+        \     on questionnaire_acl_user (uuid); \
+        \  \
+        \ create table questionnaire_acl_group \
+        \ ( \
+        \     uuid               uuid    not null \
+        \         constraint questionnaire_acl_group_pk \
+        \             primary key, \
+        \     group_id           varchar not null \
+        \         constraint questionnaire_acl_group_group_id_fk \
+        \             references acl_group on delete cascade, \
+        \     perms              text[]  not null, \
+        \     questionnaire_uuid uuid    not null \
+        \         constraint questionnaire_acl_group_questionnaire_uuid_fk \
+        \             references questionnaire on delete cascade \
+        \ ); \
+        \  \
+        \ create unique index questionnaire_acl_group_uuid_uindex \
+        \     on questionnaire_acl_group (uuid); "
   let action conn = execute_ conn sql
   runDB action
 

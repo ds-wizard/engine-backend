@@ -1,13 +1,11 @@
 module Wizard.Service.Questionnaire.QuestionnaireValidation where
 
-import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
 import Data.Foldable (forM_, traverse_)
 import qualified Data.Map.Strict as M
 import Data.Maybe (isJust)
 import Text.Regex (matchRegex, mkRegex)
 
-import LensesConfig
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
@@ -16,7 +14,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 validateQuestionnaireChangeDTO :: QuestionnaireChangeDTO -> AppContextM ()
-validateQuestionnaireChangeDTO reqDto = validateQuestionnaireTags (reqDto ^. projectTags)
+validateQuestionnaireChangeDTO reqDto = validateQuestionnaireTags reqDto.projectTags
 
 validateQuestionnaireDeletation :: String -> AppContextM ()
 validateQuestionnaireDeletation = validateUsageByQtnMigration

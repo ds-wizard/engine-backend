@@ -7,33 +7,30 @@ import GHC.Generics
 import Shared.Model.Common.MapEntry
 import Shared.Model.Event.EventField
 
-data AddChoiceEvent =
-  AddChoiceEvent
-    { _addChoiceEventUuid :: U.UUID
-    , _addChoiceEventParentUuid :: U.UUID
-    , _addChoiceEventEntityUuid :: U.UUID
-    , _addChoiceEventLabel :: String
-    , _addChoiceEventAnnotations :: [MapEntry String String]
-    , _addChoiceEventCreatedAt :: UTCTime
-    }
+data AddChoiceEvent = AddChoiceEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , aLabel :: String
+  , annotations :: [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditChoiceEvent =
-  EditChoiceEvent
-    { _editChoiceEventUuid :: U.UUID
-    , _editChoiceEventParentUuid :: U.UUID
-    , _editChoiceEventEntityUuid :: U.UUID
-    , _editChoiceEventLabel :: EventField String
-    , _editChoiceEventAnnotations :: EventField [MapEntry String String]
-    , _editChoiceEventCreatedAt :: UTCTime
-    }
+data EditChoiceEvent = EditChoiceEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , aLabel :: EventField String
+  , annotations :: EventField [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data DeleteChoiceEvent =
-  DeleteChoiceEvent
-    { _deleteChoiceEventUuid :: U.UUID
-    , _deleteChoiceEventParentUuid :: U.UUID
-    , _deleteChoiceEventEntityUuid :: U.UUID
-    , _deleteChoiceEventCreatedAt :: UTCTime
-    }
+data DeleteChoiceEvent = DeleteChoiceEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

@@ -10,4 +10,4 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 
 instance ToSchema QuestionnaireCreateDTO where
-  declareNamedSchema = simpleToSchema questionnaire1Create
+  declareNamedSchema = toSwagger questionnaire1Create

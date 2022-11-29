@@ -4,22 +4,21 @@ import Data.Aeson
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
-data SendRegistrationConfirmationMailCommand =
-  SendRegistrationConfirmationMailCommand
-    { _sendRegistrationConfirmationMailCommandEmail :: String
-    , _sendRegistrationConfirmationMailCommandUserUuid :: U.UUID
-    , _sendRegistrationConfirmationMailCommandUserFirstName :: String
-    , _sendRegistrationConfirmationMailCommandUserLastName :: String
-    , _sendRegistrationConfirmationMailCommandUserEmail :: String
-    , _sendRegistrationConfirmationMailCommandHash :: String
-    , _sendRegistrationConfirmationMailCommandClientUrl :: String
-    }
+data SendRegistrationConfirmationMailCommand = SendRegistrationConfirmationMailCommand
+  { email :: String
+  , userUuid :: U.UUID
+  , userFirstName :: String
+  , userLastName :: String
+  , userEmail :: String
+  , hash :: String
+  , clientUrl :: String
+  }
   deriving (Show, Eq, Generic)
 
 instance FromJSON SendRegistrationConfirmationMailCommand where
-  parseJSON = simpleParseJSON "_sendRegistrationConfirmationMailCommand"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SendRegistrationConfirmationMailCommand where
-  toJSON = simpleToJSON "_sendRegistrationConfirmationMailCommand"
+  toJSON = genericToJSON jsonOptions

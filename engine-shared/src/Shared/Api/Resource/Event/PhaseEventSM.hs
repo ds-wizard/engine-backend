@@ -11,10 +11,10 @@ import Shared.Model.Event.Phase.PhaseEvent
 import Shared.Util.Swagger
 
 instance ToSchema AddPhaseEvent where
-  declareNamedSchema = simpleToSchema'' "_addPhaseEvent" "eventType" a_km1_mtrF
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_mtrF
 
 instance ToSchema EditPhaseEvent where
-  declareNamedSchema = simpleToSchema'' "_editPhaseEvent" "eventType" e_km1_mtrF
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_mtrF
 
 instance ToSchema DeletePhaseEvent where
-  declareNamedSchema = simpleToSchema'' "_deletePhaseEvent" "eventType" d_km1_mtrF
+  declareNamedSchema = toSwaggerWithType "eventType" d_km1_mtrF

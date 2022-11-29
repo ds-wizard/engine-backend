@@ -1,6 +1,6 @@
-module Registry.Database.Migration.Production.Migration_0002_app.Migration
-  ( definition
-  ) where
+module Registry.Database.Migration.Production.Migration_0002_app.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -25,7 +25,7 @@ addForeignKey dbPool table = do
   let sql =
         f'
           "alter table %s \
-           \  add app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null;"
+          \  add app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null;"
           [table]
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
@@ -36,7 +36,7 @@ addForeignKey dbPool table = do
 f' :: String -> [String] -> String
 f' str terms =
   case str of
-    '%':'s':rest -> (fromMaybe "%s" . listToMaybe $ terms) ++ f' rest (drop 1 terms)
-    '%':'%':'s':rest -> '%' : 's' : f' rest terms
-    a:rest -> a : f' rest terms
+    '%' : 's' : rest -> (fromMaybe "%s" . listToMaybe $ terms) ++ f' rest (drop 1 terms)
+    '%' : '%' : 's' : rest -> '%' : 's' : f' rest terms
+    a : rest -> a : f' rest terms
     [] -> []

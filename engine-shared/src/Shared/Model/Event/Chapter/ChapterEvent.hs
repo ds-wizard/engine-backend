@@ -7,36 +7,33 @@ import GHC.Generics
 import Shared.Model.Common.MapEntry
 import Shared.Model.Event.EventField
 
-data AddChapterEvent =
-  AddChapterEvent
-    { _addChapterEventUuid :: U.UUID
-    , _addChapterEventParentUuid :: U.UUID
-    , _addChapterEventEntityUuid :: U.UUID
-    , _addChapterEventTitle :: String
-    , _addChapterEventText :: Maybe String
-    , _addChapterEventAnnotations :: [MapEntry String String]
-    , _addChapterEventCreatedAt :: UTCTime
-    }
+data AddChapterEvent = AddChapterEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: String
+  , text :: Maybe String
+  , annotations :: [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditChapterEvent =
-  EditChapterEvent
-    { _editChapterEventUuid :: U.UUID
-    , _editChapterEventParentUuid :: U.UUID
-    , _editChapterEventEntityUuid :: U.UUID
-    , _editChapterEventTitle :: EventField String
-    , _editChapterEventText :: EventField (Maybe String)
-    , _editChapterEventAnnotations :: EventField [MapEntry String String]
-    , _editChapterEventQuestionUuids :: EventField [U.UUID]
-    , _editChapterEventCreatedAt :: UTCTime
-    }
+data EditChapterEvent = EditChapterEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: EventField String
+  , text :: EventField (Maybe String)
+  , annotations :: EventField [MapEntry String String]
+  , questionUuids :: EventField [U.UUID]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data DeleteChapterEvent =
-  DeleteChapterEvent
-    { _deleteChapterEventUuid :: U.UUID
-    , _deleteChapterEventParentUuid :: U.UUID
-    , _deleteChapterEventEntityUuid :: U.UUID
-    , _deleteChapterEventCreatedAt :: UTCTime
-    }
+data DeleteChapterEvent = DeleteChapterEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

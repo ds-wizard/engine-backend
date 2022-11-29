@@ -16,49 +16,49 @@ import Wizard.Model.Questionnaire.Questionnaire
 
 instance ToRow Questionnaire where
   toRow Questionnaire {..} =
-    [ toField _questionnaireUuid
-    , toField _questionnaireName
-    , toField _questionnaireVisibility
-    , toField _questionnaireSharing
-    , toField _questionnairePackageId
-    , toJSONField _questionnaireSelectedQuestionTagUuids
-    , toField _questionnaireTemplateId
-    , toField _questionnaireFormatUuid
-    , toField _questionnaireCreatorUuid
-    , toJSONField _questionnaireEvents
-    , toJSONField _questionnaireVersions
-    , toField _questionnaireCreatedAt
-    , toField _questionnaireUpdatedAt
-    , toField _questionnaireDescription
-    , toField _questionnaireIsTemplate
-    , toField _questionnaireSquashed
-    , toField _questionnaireAppUuid
-    , toField . PGArray $ _questionnaireProjectTags
-    , toField _questionnaireAnsweredQuestions
-    , toField _questionnaireUnansweredQuestions
+    [ toField uuid
+    , toField name
+    , toField visibility
+    , toField sharing
+    , toField packageId
+    , toJSONField selectedQuestionTagUuids
+    , toField templateId
+    , toField formatUuid
+    , toField creatorUuid
+    , toJSONField events
+    , toJSONField versions
+    , toField createdAt
+    , toField updatedAt
+    , toField description
+    , toField isTemplate
+    , toField squashed
+    , toField appUuid
+    , toField . PGArray $ projectTags
+    , toField answeredQuestions
+    , toField unansweredQuestions
     ]
 
 instance FromRow Questionnaire where
   fromRow = do
-    _questionnaireUuid <- field
-    _questionnaireName <- field
-    _questionnaireVisibility <- field
-    _questionnaireSharing <- field
-    _questionnairePackageId <- field
-    _questionnaireSelectedQuestionTagUuids <- fieldWith fromJSONField
-    _questionnaireTemplateId <- field
-    _questionnaireFormatUuid <- field
-    _questionnaireCreatorUuid <- field
-    let _questionnairePermissions = []
-    _questionnaireEvents <- fieldWith fromJSONField
-    _questionnaireVersions <- fieldWith fromJSONField
-    _questionnaireCreatedAt <- field
-    _questionnaireUpdatedAt <- field
-    _questionnaireDescription <- field
-    _questionnaireIsTemplate <- field
-    _questionnaireSquashed <- field
-    _questionnaireAppUuid <- field
-    _questionnaireProjectTags <- fromPGArray <$> field
-    _questionnaireAnsweredQuestions <- field
-    _questionnaireUnansweredQuestions <- field
+    uuid <- field
+    name <- field
+    visibility <- field
+    sharing <- field
+    packageId <- field
+    selectedQuestionTagUuids <- fieldWith fromJSONField
+    templateId <- field
+    formatUuid <- field
+    creatorUuid <- field
+    let permissions = []
+    events <- fieldWith fromJSONField
+    versions <- fieldWith fromJSONField
+    createdAt <- field
+    updatedAt <- field
+    description <- field
+    isTemplate <- field
+    squashed <- field
+    appUuid <- field
+    projectTags <- fromPGArray <$> field
+    answeredQuestions <- field
+    unansweredQuestions <- field
     return $ Questionnaire {..}

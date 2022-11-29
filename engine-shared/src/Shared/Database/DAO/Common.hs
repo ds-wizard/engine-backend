@@ -1,6 +1,5 @@
 module Shared.Database.DAO.Common where
 
-import Control.Lens ((^.))
 import Control.Monad (when)
 import Control.Monad.Except (MonadError, catchError, throwError)
 import Control.Monad.IO.Class (MonadIO)
@@ -12,61 +11,60 @@ import Data.Pool
 import Data.String
 import qualified Data.UUID as U
 import qualified Database.PostgreSQL.LibPQ as LibPQ
-import qualified Database.PostgreSQL.Simple as PostgresTransaction
 import Database.PostgreSQL.Simple
+import qualified Database.PostgreSQL.Simple as PostgresTransaction
 import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.Internal
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
+import GHC.Records
 
-import LensesConfig
 import Shared.Localization.Messages.Internal
 import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
-import Shared.Model.Context.ContextLenses
 import Shared.Model.Error.Error
 import Shared.Util.ByteString (toByteString)
 import Shared.Util.Logger
 import Shared.Util.String (toSnake, trim)
 
-runDB ::
-     (MonadReader s m, HasDbPool' s, HasDbConnection' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m)
+runDB
+  :: (MonadReader s m, HasField "dbPool'" s (Pool Connection), HasField "dbConnection'" s (Maybe Connection), HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadIO m)
   => (Connection -> IO b)
   -> m b
 runDB action = do
   context <- ask
-  case context ^. dbConnection' of
+  case context.dbConnection' of
     Just dbConnection -> liftIO $ action dbConnection
-    Nothing -> liftIO $ withResource (context ^. dbPool') action
+    Nothing -> liftIO $ withResource context.dbPool' action
 
-runDBImmediately ::
-     (MonadReader s m, HasDbPool' s, HasDbConnection' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m)
+runDBImmediately
+  :: (MonadReader s m, HasField "dbPool'" s (Pool Connection), HasField "dbConnection'" s (Maybe Connection), HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadIO m)
   => (Connection -> IO b)
   -> m b
 runDBImmediately action = do
   context <- ask
-  liftIO $ withResource (context ^. dbPool') action
+  liftIO $ withResource context.dbPool' action
 
-runRawDB ::
-     (MonadReader s m, HasDbPool' s, HasDbConnection' s, HasIdentityUuid' s, HasTraceUuid' s, MonadIO m)
+runRawDB
+  :: (MonadReader s m, HasField "dbPool'" s (Pool Connection), HasField "dbConnection'" s (Maybe Connection), HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadIO m)
   => (LibPQ.Connection -> IO b)
   -> m b
 runRawDB action = do
   context <- ask
-  case context ^. dbConnection' of
+  case context.dbConnection' of
     Just dbConnection -> liftIO $ dbConnection `withConnection` action
-    Nothing -> liftIO $ withResource (context ^. dbPool') (`withConnection` action)
+    Nothing -> liftIO $ withResource context.dbPool' (`withConnection` action)
 
-logQuery ::
-     ( MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+logQuery
+  :: ( MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , ToRow q
      , MonadLogger m
@@ -77,18 +75,18 @@ logQuery ::
 logQuery sql params = do
   context <- ask
   exploded <-
-    case context ^. dbConnection' of
+    case context.dbConnection' of
       Just dbConnection -> liftIO $ formatQuery dbConnection sql params
-      Nothing -> liftIO $ withResource (context ^. dbPool') (\c -> formatQuery c sql params)
+      Nothing -> liftIO $ withResource context.dbPool' (\c -> formatQuery c sql params)
   let formatted = trim . BS.unpack $ exploded
   logInfoI _CMP_DATABASE formatted
 
-logInsertAndUpdate ::
-     ( MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+logInsertAndUpdate
+  :: ( MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , ToRow q
      , MonadLogger m
@@ -104,17 +102,17 @@ logInsertAndUpdate sql params = do
   let paramsS = show . fmap (cut . showAction) . toRow $ params
   logInfoI _CMP_DATABASE $ f' "%s  with params %s" [trim . show $ sql, paramsS]
 
-runInTransaction ::
-     ( Show e
+runInTransaction
+  :: ( Show e
      , MonadIO m
      , MonadReader s m
      , MonadIO m
      , MonadError e m
-     , HasDbPool' s
+     , HasField "dbPool'" s (Pool Connection)
      , MonadError AppError m
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      )
   => (String -> String -> m ())
   -> (String -> String -> m ())
@@ -123,7 +121,7 @@ runInTransaction ::
 runInTransaction logInfoFn logWarnFn action = do
   context <- ask
   when
-    (isNothing $ context ^. dbConnection')
+    (isNothing context.dbConnection')
     (throwError $ GeneralServerError _ERROR_DATABASE__TRANSACTION_REQUIRED_DB_CONN)
   status <- runRawDB LibPQ.transactionStatus
   case status of
@@ -144,14 +142,14 @@ runInTransaction logInfoFn logWarnFn action = do
       logWarnFn _CMP_DATABASE (show error)
       throwError error
 
-createFindEntitiesFn ::
-     ( MonadLogger m
+createFindEntitiesFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
      , FromRow entity
@@ -164,14 +162,14 @@ createFindEntitiesFn entityName = do
   let action conn = query_ conn (fromString sql)
   runDB action
 
-createFindEntitiesSortedFn ::
-     ( MonadLogger m
+createFindEntitiesSortedFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
      , FromRow entity
@@ -185,14 +183,14 @@ createFindEntitiesSortedFn entityName sort = do
   let action conn = query_ conn (fromString sql)
   runDB action
 
-createFindEntitiesByFn ::
-     ( MonadLogger m
+createFindEntitiesByFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
      , FromRow entity
@@ -208,14 +206,14 @@ createFindEntitiesByFn entityName queryParams = do
   let action conn = query conn sql params
   runDB action
 
-createFindEntitiesBySortedFn ::
-     ( MonadLogger m
+createFindEntitiesBySortedFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
      , FromRow entity
@@ -232,14 +230,14 @@ createFindEntitiesBySortedFn entityName queryParams sort = do
   let action conn = query conn sql params
   runDB action
 
-createFindEntityByFn ::
-     ( MonadLogger m
+createFindEntityByFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
      )
@@ -248,14 +246,14 @@ createFindEntityByFn ::
   -> m entity
 createFindEntityByFn = createFindEntityWithFieldsByFn "*" False
 
-createFindEntityWithFieldsByFn ::
-     ( MonadLogger m
+createFindEntityWithFieldsByFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
      )
@@ -279,19 +277,20 @@ createFindEntityWithFieldsByFn fields isForUpdate entityName queryParams = do
     [entity] -> return entity
     _ ->
       throwError $
-      GeneralServerError
-        (f'
-           "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)"
-           [entityName, show (fmap snd queryParams)])
+        GeneralServerError
+          ( f'
+              "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)"
+              [entityName, show (fmap snd queryParams)]
+          )
 
-createFindEntityByFn' ::
-     ( MonadLogger m
+createFindEntityByFn'
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
      )
@@ -300,14 +299,14 @@ createFindEntityByFn' ::
   -> m (Maybe entity)
 createFindEntityByFn' = createFindEntityWithFieldsByFn' "*"
 
-createFindEntityWithFieldsByFn' ::
-     ( MonadLogger m
+createFindEntityWithFieldsByFn'
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
      )
@@ -326,22 +325,23 @@ createFindEntityWithFieldsByFn' fields entityName queryParams = do
     [entity] -> return . Just $ entity
     _ ->
       throwError $
-      GeneralServerError
-        (f'
-           "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)"
-           [entityName, show (fmap snd queryParams)])
+        GeneralServerError
+          ( f'
+              "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)"
+              [entityName, show (fmap snd queryParams)]
+          )
 
-createFindEntitiesPageableQuerySortFn ::
-     ( MonadReader s m
+createFindEntitiesPageableQuerySortFn
+  :: ( MonadReader s m
      , FromRow entity
      , ToRow q
      , MonadIO m
      , MonadError AppError m
      , MonadLogger m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      )
   => String
   -> String
@@ -351,39 +351,39 @@ createFindEntitiesPageableQuerySortFn ::
   -> String
   -> q
   -> m (Page entity)
-createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort fields condition conditionParams
+createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort fields condition conditionParams =
   -- 1. Prepare variables
- = do
-  let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
-  -- 2. Get total count
-  count <- createCountByFn entityName condition conditionParams
-  -- 3. Get entities
-  let sql =
-        fromString $
-        f'
-          "SELECT %s FROM %s %s %s OFFSET %s LIMIT %s"
-          [fields, entityName, condition, mapSort sort, show skip, show sizeI]
-  logQuery sql conditionParams
-  let action conn = query conn sql conditionParams
-  entities <- runDB action
-  -- 4. Constructor response
-  let metadata =
-        PageMetadata
-          { _pageMetadataSize = sizeI
-          , _pageMetadataTotalElements = count
-          , _pageMetadataTotalPages = computeTotalPage count sizeI
-          , _pageMetadataNumber = pageI
-          }
-  return $ Page pageLabel metadata entities
+  do
+    let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
+    -- 2. Get total count
+    count <- createCountByFn entityName condition conditionParams
+    -- 3. Get entities
+    let sql =
+          fromString $
+            f'
+              "SELECT %s FROM %s %s %s OFFSET %s LIMIT %s"
+              [fields, entityName, condition, mapSort sort, show skip, show sizeI]
+    logQuery sql conditionParams
+    let action conn = query conn sql conditionParams
+    entities <- runDB action
+    -- 4. Constructor response
+    let metadata =
+          PageMetadata
+            { size = sizeI
+            , totalElements = count
+            , totalPages = computeTotalPage count sizeI
+            , number = pageI
+            }
+    return $ Page pageLabel metadata entities
 
-createFindColumnBySqlPageFn ::
-     ( MonadLogger m
+createFindColumnBySqlPageFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromField entity
      )
@@ -393,32 +393,32 @@ createFindColumnBySqlPageFn ::
   -> [String]
   -> Int
   -> m (Page entity)
-createFindColumnBySqlPageFn pageLabel pageable sql params count
-    -- 1. Prepare variables
- = do
-  let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
+createFindColumnBySqlPageFn pageLabel pageable sql params count =
+  -- 1. Prepare variables
+  do
+    let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
     -- 2. Perform query
-  logQuery sql params
-  let action conn = query conn sql params
-  entities <- runDB action
+    logQuery sql params
+    let action conn = query conn sql params
+    entities <- runDB action
     -- 3. Constructor response
-  let metadata =
-        PageMetadata
-          { _pageMetadataSize = sizeI
-          , _pageMetadataTotalElements = count
-          , _pageMetadataTotalPages = computeTotalPage count sizeI
-          , _pageMetadataNumber = pageI
-          }
-  return $ Page pageLabel metadata (concat entities)
+    let metadata =
+          PageMetadata
+            { size = sizeI
+            , totalElements = count
+            , totalPages = computeTotalPage count sizeI
+            , number = pageI
+            }
+    return $ Page pageLabel metadata (concat entities)
 
-createInsertFn ::
-     ( ToRow q
+createInsertFn
+  :: ( ToRow q
      , MonadLogger m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
   => String
@@ -431,14 +431,14 @@ createInsertFn entityName entity = do
   let action conn = execute conn sql params
   runDB action
 
-createInsertWithoutTransactionFn ::
-     ( ToRow q
+createInsertWithoutTransactionFn
+  :: ( ToRow q
      , MonadLogger m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
   => String
@@ -451,14 +451,14 @@ createInsertWithoutTransactionFn entityName entity = do
   let action conn = execute conn sql params
   runDBImmediately action
 
-createDeleteEntitiesFn ::
-     ( MonadLogger m
+createDeleteEntitiesFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
   => String
@@ -469,14 +469,14 @@ createDeleteEntitiesFn entityName = do
   let action conn = execute_ conn (fromString sql)
   runDB action
 
-createDeleteEntitiesByFn ::
-     ( MonadLogger m
+createDeleteEntitiesByFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
   => String
@@ -490,14 +490,14 @@ createDeleteEntitiesByFn entityName queryParams = do
   let action conn = execute conn sql params
   runDB action
 
-createDeleteEntityByFn ::
-     ( MonadLogger m
+createDeleteEntityByFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
   => String
@@ -510,14 +510,14 @@ createDeleteEntityByFn entityName queryParams = do
   let action conn = execute conn sql params
   runDB action
 
-createCountFn ::
-     ( MonadLogger m
+createCountFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
   => String
@@ -531,14 +531,14 @@ createCountFn entityName = do
     [count] -> return . fromOnly $ count
     _ -> throwError $ GeneralServerError (f' "createCountFn: there are no selected rows or more than one" [])
 
-createCountByFn ::
-     ( MonadLogger m
+createCountByFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , ToRow q
      )
@@ -556,14 +556,14 @@ createCountByFn entityName condition queryParams = do
     [count] -> return . fromOnly $ count
     _ -> return 0
 
-createCountWithSqlFn ::
-     ( MonadLogger m
+createCountWithSqlFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
   => Query
@@ -577,14 +577,14 @@ createCountWithSqlFn sql params = do
     [count] -> return . fromOnly $ count
     _ -> return 0
 
-createSumByFn ::
-     ( MonadLogger m
+createSumByFn
+  :: ( MonadLogger m
      , MonadError AppError m
      , MonadReader s m
-     , HasDbPool' s
-     , HasDbConnection' s
-     , HasIdentityUuid' s
-     , HasTraceUuid' s
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , ToRow q
      )
@@ -622,7 +622,7 @@ regex mQuery = ".*" ++ fromMaybe "" mQuery ++ ".*"
 mapToDBQuerySql :: [(String, String)] -> String
 mapToDBQuerySql [] = ""
 mapToDBQuerySql [(queryParamKey, queryParamValue)] = queryParamKey ++ " = ? "
-mapToDBQuerySql ((queryParamKey, queryParamValue):xs) = queryParamKey ++ " = ? AND " ++ mapToDBQuerySql xs
+mapToDBQuerySql ((queryParamKey, queryParamValue) : xs) = queryParamKey ++ " = ? AND " ++ mapToDBQuerySql xs
 
 mapToDBCoordinatesSql :: String -> String -> Maybe String -> Maybe String -> String
 mapToDBCoordinatesSql entityName entityId (Just orgId) (Just eId) =
@@ -642,7 +642,7 @@ mapSort [] = ""
 mapSort xs = "ORDER BY " ++ createRecord xs
   where
     createRecord [sort] = create sort
-    createRecord (sort:xs) = create sort ++ ", " ++ mapSort xs
+    createRecord (sort : xs) = create sort ++ ", " ++ mapSort xs
     create (Sort name order) =
       case order of
         Ascending -> f' "%s asc " [toSnake name]
@@ -653,7 +653,7 @@ mapSortWithPrefix _ [] = ""
 mapSortWithPrefix prefix xs = "ORDER BY " ++ createRecord xs
   where
     createRecord [sort] = create sort
-    createRecord (sort:xs) = create sort ++ ", " ++ mapSort xs
+    createRecord (sort : xs) = create sort ++ ", " ++ mapSort xs
     create (Sort name order) =
       case order of
         Ascending -> f' "%s.%s asc " [prefix, toSnake name]
@@ -661,8 +661,8 @@ mapSortWithPrefix prefix xs = "ORDER BY " ++ createRecord xs
 
 preparePaginationVariables :: Pageable -> (Int, Int, Int, Int)
 preparePaginationVariables pageable =
-  let sizeI = abs . fromMaybe 20 $ pageable ^. size
-      pageI = abs . fromMaybe 0 $ pageable ^. page
+  let sizeI = abs . fromMaybe 20 $ pageable.size
+      pageI = abs . fromMaybe 0 $ pageable.page
       skip = fromIntegral $ pageI * sizeI
       limit = fromIntegral sizeI
    in (sizeI, pageI, skip, limit)

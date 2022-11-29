@@ -12,18 +12,18 @@ import Wizard.Api.Resource.Template.TemplateChangeJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Template.TemplateService
 
-type List_POST
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> ReqBody '[ SafeJSON] TemplateChangeDTO
-     :> "templates"
-     :> PostCreated '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] Template)
+type List_POST =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> ReqBody '[SafeJSON] TemplateChangeDTO
+    :> "templates"
+    :> PostCreated '[SafeJSON] (Headers '[Header "x-trace-uuid" String] Template)
 
-list_POST ::
-     Maybe String
+list_POST
+  :: Maybe String
   -> Maybe String
   -> TemplateChangeDTO
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] Template)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] Template)
 list_POST mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< createTemplate reqDto

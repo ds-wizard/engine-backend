@@ -13,25 +13,25 @@ import Shared.Service.Template.TemplateMapper
 import Shared.Util.Swagger
 
 instance ToSchema Template where
-  declareNamedSchema = simpleToSchema' "_template" commonWizardTemplate
+  declareNamedSchema = toSwagger commonWizardTemplate
 
 instance ToSchema TemplateFormat where
-  declareNamedSchema = simpleToSchema' "_templateFormat" templateFormatJson
+  declareNamedSchema = toSwagger templateFormatJson
 
 instance ToSchema TemplateFormatStep where
-  declareNamedSchema = simpleToSchema' "_templateFormatStep" templateFormatJsonStep
+  declareNamedSchema = toSwagger templateFormatJsonStep
 
 instance ToSchema TemplateFile where
-  declareNamedSchema = simpleToSchema' "_templateFile" templateFileDefaultHtml
+  declareNamedSchema = toSwagger templateFileDefaultHtml
 
 instance ToSchema TemplateAsset where
-  declareNamedSchema = simpleToSchema' "_templateAsset" templateAssetLogo
+  declareNamedSchema = toSwagger templateAssetLogo
 
 instance ToSchema TemplateDTO where
-  declareNamedSchema = simpleToSchema (toDTO commonWizardTemplate)
+  declareNamedSchema = toSwagger (toDTO commonWizardTemplate)
 
 instance ToSchema TemplateFileDTO where
-  declareNamedSchema = simpleToSchema (toFileDTO templateFileDefaultHtml)
+  declareNamedSchema = toSwagger (toFileDTO templateFileDefaultHtml)
 
 instance ToSchema TemplateAssetDTO where
-  declareNamedSchema = simpleToSchema (toAssetDTO templateAssetLogo)
+  declareNamedSchema = toSwagger (toAssetDTO templateAssetLogo)

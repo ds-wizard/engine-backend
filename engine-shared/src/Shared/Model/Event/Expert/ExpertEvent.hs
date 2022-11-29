@@ -7,35 +7,32 @@ import GHC.Generics
 import Shared.Model.Common.MapEntry
 import Shared.Model.Event.EventField
 
-data AddExpertEvent =
-  AddExpertEvent
-    { _addExpertEventUuid :: U.UUID
-    , _addExpertEventParentUuid :: U.UUID
-    , _addExpertEventEntityUuid :: U.UUID
-    , _addExpertEventName :: String
-    , _addExpertEventEmail :: String
-    , _addExpertEventAnnotations :: [MapEntry String String]
-    , _addExpertEventCreatedAt :: UTCTime
-    }
+data AddExpertEvent = AddExpertEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , name :: String
+  , email :: String
+  , annotations :: [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditExpertEvent =
-  EditExpertEvent
-    { _editExpertEventUuid :: U.UUID
-    , _editExpertEventParentUuid :: U.UUID
-    , _editExpertEventEntityUuid :: U.UUID
-    , _editExpertEventName :: EventField String
-    , _editExpertEventEmail :: EventField String
-    , _editExpertEventAnnotations :: EventField [MapEntry String String]
-    , _editExpertEventCreatedAt :: UTCTime
-    }
+data EditExpertEvent = EditExpertEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , name :: EventField String
+  , email :: EventField String
+  , annotations :: EventField [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data DeleteExpertEvent =
-  DeleteExpertEvent
-    { _deleteExpertEventUuid :: U.UUID
-    , _deleteExpertEventParentUuid :: U.UUID
-    , _deleteExpertEventEntityUuid :: U.UUID
-    , _deleteExpertEventCreatedAt :: UTCTime
-    }
+data DeleteExpertEvent = DeleteExpertEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

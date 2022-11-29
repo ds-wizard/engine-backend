@@ -2,12 +2,12 @@ module Wizard.Api.Resource.User.UserProfileJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.User.UserProfileDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsJM ()
 
 instance FromJSON UserProfileDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON UserProfileDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

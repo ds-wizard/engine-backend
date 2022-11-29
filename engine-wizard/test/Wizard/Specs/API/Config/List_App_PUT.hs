@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Config.List_App_PUT
-  ( list_app_PUT
-  ) where
+module Wizard.Specs.API.Config.List_App_PUT (
+  list_app_PUT,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -10,7 +10,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.AppConfig hiding (request)
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.AppConfigMapper
 
@@ -47,20 +47,20 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 test_200 appContext =
   it "HTTP 200 OK" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = editedAppConfig
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, AppConfig)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    compareDtos resBody expDto
-     -- AND: Find result in DB and compare with expectation state
-    assertExistenceOfAppConfigInDB appContext editedAppConfig
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = editedAppConfig
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, AppConfig)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      compareDtos resBody expDto
+      -- AND: Find result in DB and compare with expectation state
+      assertExistenceOfAppConfigInDB appContext editedAppConfig
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

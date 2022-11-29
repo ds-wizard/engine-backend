@@ -1,8 +1,7 @@
-module Wizard.Specs.API.Submission.List_POST
-  ( list_POST
-  ) where
+module Wizard.Specs.API.Submission.List_POST (
+  list_POST,
+) where
 
-import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
 import qualified Data.UUID as U
 import Network.HTTP.Types
@@ -11,7 +10,6 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
@@ -30,7 +28,10 @@ import Wizard.Database.Migration.Development.Submission.Data.Submissions
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
+import Wizard.Model.Config.AppConfig hiding (request)
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Document.Document
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.Submission.SubmissionMapper
 
 import SharedTest.Specs.API.Common
@@ -74,29 +75,29 @@ test_201 appContext = do
 
 create_test_201 title appContext qtn authHeader user =
   it title $
-     -- GIVEN: Prepare request
-   do
-    let reqHeaders = reqHeadersT authHeader
-     -- AND: Prepare expectation
-    let expStatus = 201
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = toDTO submission2 (Just $ defaultSubmissionService ^. name) user
-    let expBody = encode expDto
-    let expType (a :: SubmissionDTO) = a
-     -- AND: Run migrations
-    runInContextIO U_Migration.runMigration appContext
-    runInContextIO TML_Migration.runMigration appContext
-    runInContextIO QTN_Migration.runMigration appContext
-    runInContextIO (insertQuestionnaire questionnaire10) appContext
-    runInContextIO DOC_Migration.runMigration appContext
-    runInContextIO (deleteDocumentById (U.toString $ doc1 ^. uuid)) appContext
-    runInContextIO (insertDocument (doc1 & questionnaireUuid .~ (qtn ^. uuid))) appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    assertResponse expStatus expHeaders expDto expType response ["uuid", "createdAt", "updatedAt"]
-     -- AND: Find result in DB and compare with expectation state
-    assertCountInDB findSubmissions appContext 1
+    -- GIVEN: Prepare request
+    do
+      let reqHeaders = reqHeadersT authHeader
+      -- AND: Prepare expectation
+      let expStatus = 201
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = toDTO submission2 (Just defaultSubmissionService.name) user
+      let expBody = encode expDto
+      let expType (a :: SubmissionDTO) = a
+      -- AND: Run migrations
+      runInContextIO U_Migration.runMigration appContext
+      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO QTN_Migration.runMigration appContext
+      runInContextIO (insertQuestionnaire questionnaire10) appContext
+      runInContextIO DOC_Migration.runMigration appContext
+      runInContextIO (deleteDocumentById (U.toString $ doc1.uuid)) appContext
+      runInContextIO (insertDocument (doc1 {questionnaireUuid = qtn.uuid})) appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      assertResponse expStatus expHeaders expDto expType response ["uuid", "createdAt", "updatedAt"]
+      -- AND: Find result in DB and compare with expectation state
+      assertCountInDB findSubmissions appContext 1
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -122,25 +123,25 @@ test_403 appContext = do
 
 create_test_403 title appContext qtn authHeader errorMessage =
   it title $
-     -- GIVEN: Prepare request
-   do
-    let reqHeaders = reqHeadersT authHeader
-     -- AND: Prepare expectation
-    let expStatus = 403
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = ForbiddenError errorMessage
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO U_Migration.runMigration appContext
-    runInContextIO TML_Migration.runMigration appContext
-    runInContextIO QTN_Migration.runMigration appContext
-    runInContextIO (insertQuestionnaire questionnaire7) appContext
-    runInContextIO DOC_Migration.runMigration appContext
-    runInContextIO (deleteDocumentById (U.toString $ doc1 ^. uuid)) appContext
-    runInContextIO (insertDocument (doc1 & questionnaireUuid .~ (qtn ^. uuid))) appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare request
+    do
+      let reqHeaders = reqHeadersT authHeader
+      -- AND: Prepare expectation
+      let expStatus = 403
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = ForbiddenError errorMessage
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO U_Migration.runMigration appContext
+      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO QTN_Migration.runMigration appContext
+      runInContextIO (insertQuestionnaire questionnaire7) appContext
+      runInContextIO DOC_Migration.runMigration appContext
+      runInContextIO (deleteDocumentById (U.toString $ doc1.uuid)) appContext
+      runInContextIO (insertDocument (doc1 {questionnaireUuid = qtn.uuid})) appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher

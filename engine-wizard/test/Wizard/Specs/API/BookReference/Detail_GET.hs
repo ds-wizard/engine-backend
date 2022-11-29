@@ -1,6 +1,6 @@
-module Wizard.Specs.API.BookReference.Detail_GET
-  ( detail_get
-  ) where
+module Wizard.Specs.API.BookReference.Detail_GET (
+  detail_get,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -42,20 +42,20 @@ reqBody = ""
 -- ----------------------------------------------------
 test_200 appContext =
   it "HTTP 200 OK" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = bookReferenceBvq
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO BR.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = bookReferenceBvq
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO BR.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

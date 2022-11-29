@@ -9,13 +9,12 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
-data QuestionnaireContentDTO =
-  QuestionnaireContentDTO
-    { _questionnaireContentDTOPhaseUuid :: Maybe U.UUID
-    , _questionnaireContentDTOReplies :: M.Map String Reply
-    , _questionnaireContentDTOCommentThreadsMap :: M.Map String [QuestionnaireCommentThreadDTO]
-    , _questionnaireContentDTOLabels :: M.Map String [U.UUID]
-    , _questionnaireContentDTOEvents :: [QuestionnaireEventDTO]
-    , _questionnaireContentDTOVersions :: [QuestionnaireVersionDTO]
-    }
+data QuestionnaireContentDTO = QuestionnaireContentDTO
+  { phaseUuid :: Maybe U.UUID
+  , replies :: M.Map String Reply
+  , commentThreadsMap :: M.Map String [QuestionnaireCommentThreadDTO]
+  , labels :: M.Map String [U.UUID]
+  , events :: [QuestionnaireEventDTO]
+  , versions :: [QuestionnaireVersionDTO]
+  }
   deriving (Show, Eq, Generic)

@@ -6,13 +6,13 @@ import Wizard.Model.User.User
 userJohnCreate :: UserCreateDTO
 userJohnCreate =
   UserCreateDTO
-    { _userCreateDTOFirstName = "John"
-    , _userCreateDTOLastName = "Doe"
-    , _userCreateDTOEmail = "john.doe@example.com"
-    , _userCreateDTOAffiliation = Just "My University"
-    , _userCreateDTORole = Just _USER_ROLE_ADMIN
-    , _userCreateDTOPassword = "password"
+    { firstName = "John"
+    , lastName = "Doe"
+    , email = "john.doe@example.com"
+    , affiliation = Just "My University"
+    , uRole = Just _USER_ROLE_ADMIN
+    , password = "password"
     }
 
 userJohnCreateDS :: UserCreateDTO
-userJohnCreateDS = userJohnCreate {_userCreateDTORole = Just _USER_ROLE_DATA_STEWARD}
+userJohnCreateDS = userJohnCreate {uRole = Just _USER_ROLE_DATA_STEWARD}

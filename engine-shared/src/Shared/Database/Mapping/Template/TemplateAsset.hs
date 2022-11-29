@@ -9,20 +9,20 @@ import Shared.Model.Template.Template
 
 instance ToRow TemplateAsset where
   toRow TemplateAsset {..} =
-    [ toField _templateAssetTemplateId
-    , toField _templateAssetUuid
-    , toField _templateAssetFileName
-    , toField _templateAssetContentType
-    , toField _templateAssetAppUuid
-    , toField _templateAssetFileSize
+    [ toField templateId
+    , toField uuid
+    , toField fileName
+    , toField contentType
+    , toField appUuid
+    , toField fileSize
     ]
 
 instance FromRow TemplateAsset where
   fromRow = do
-    _templateAssetTemplateId <- field
-    _templateAssetUuid <- field
-    _templateAssetFileName <- field
-    _templateAssetContentType <- field
-    _templateAssetAppUuid <- field
-    _templateAssetFileSize <- field
+    templateId <- field
+    uuid <- field
+    fileName <- field
+    contentType <- field
+    appUuid <- field
+    fileSize <- field
     return $ TemplateAsset {..}

@@ -9,16 +9,16 @@ import Registry.Service.Organization.OrganizationService
 import Shared.Api.Handler.Common
 import Shared.Model.Context.TransactionState
 
-type Detail_DELETE
-   = Header "Authorization" String
-     :> "organizations"
-     :> Capture "orgId" String
-     :> Verb DELETE 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
+type Detail_DELETE =
+  Header "Authorization" String
+    :> "organizations"
+    :> Capture "orgId" String
+    :> Verb DELETE 204 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] NoContent)
 
-detail_DELETE :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+detail_DELETE :: Maybe String -> String -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
 detail_DELETE mTokenHeader orgId =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService Transactional $
-    addTraceUuidHeader =<< do
-      deleteOrganization orgId
-      return NoContent
+      addTraceUuidHeader =<< do
+        deleteOrganization orgId
+        return NoContent

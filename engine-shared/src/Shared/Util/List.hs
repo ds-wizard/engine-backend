@@ -13,17 +13,17 @@ removeDuplicates :: Eq a => [a] -> [a]
 removeDuplicates = rdHelper []
   where
     rdHelper seen [] = seen
-    rdHelper seen (x:xs)
+    rdHelper seen (x : xs)
       | x `elem` seen = rdHelper seen xs
       | otherwise = rdHelper (seen ++ [x]) xs
 
 elems :: Eq a => [a] -> [a] -> Bool
-elems (x:xs) list = x `elem` list && xs `elems` list
+elems (x : xs) list = x `elem` list && xs `elems` list
 elems [] list = True
 
 headSafe :: [a] -> Maybe a
 headSafe [] = Nothing
-headSafe (x:_) = Just x
+headSafe (x : _) = Just x
 
 lastSafe :: [a] -> Maybe a
 lastSafe [] = Nothing
@@ -31,15 +31,15 @@ lastSafe xs = Just . last $ xs
 
 tailSafe :: [a] -> [a]
 tailSafe [] = []
-tailSafe (x:xs) = xs
+tailSafe (x : xs) = xs
 
 takeWhileInclusive :: (a -> Bool) -> [a] -> [a]
 takeWhileInclusive _ [] = []
-takeWhileInclusive p (x:xs) =
-  x :
-  if p x
-    then takeWhileInclusive p xs
-    else []
+takeWhileInclusive p (x : xs) =
+  x
+    : if p x
+      then takeWhileInclusive p xs
+      else []
 
 generateList :: Int -> [Int]
 generateList size = [0 .. (size - 1)]
@@ -47,7 +47,7 @@ generateList size = [0 .. (size - 1)]
 foldEither :: [Either l r] -> Either l [r]
 foldEither eitherList =
   case partitionEithers eitherList of
-    (l:_, rs) -> Left l
+    (l : _, rs) -> Left l
     (_, rs) -> Right rs
 
 foldMaybe :: [Maybe a] -> Maybe [a]

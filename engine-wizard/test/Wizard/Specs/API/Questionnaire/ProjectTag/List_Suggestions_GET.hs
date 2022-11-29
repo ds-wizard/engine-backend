@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Questionnaire.ProjectTag.List_Suggestions_GET
-  ( list_suggestions_GET
-  ) where
+module Wizard.Specs.API.Questionnaire.ProjectTag.List_Suggestions_GET (
+  list_suggestions_GET,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -49,10 +49,11 @@ test_200 appContext = do
     "HTTP 200 OK (All)"
     appContext
     "/questionnaires/project-tags/suggestions?sort=projectTag,asc"
-    (Page
-       "projectTags"
-       (PageMetadata 20 4 1 0)
-       [_QUESTIONNAIRE_PROJECT_TAG_1, _QUESTIONNAIRE_PROJECT_TAG_2, _SETTINGS_PROJECT_TAG_1, _SETTINGS_PROJECT_TAG_2])
+    ( Page
+        "projectTags"
+        (PageMetadata 20 4 1 0)
+        [_QUESTIONNAIRE_PROJECT_TAG_1, _QUESTIONNAIRE_PROJECT_TAG_2, _SETTINGS_PROJECT_TAG_1, _SETTINGS_PROJECT_TAG_2]
+    )
   create_test_200
     "HTTP 200 OK (pagination)"
     appContext
@@ -67,10 +68,11 @@ test_200 appContext = do
     "HTTP 200 OK (exclude)"
     appContext
     "/questionnaires/project-tags/suggestions?sort=projectTag,asc&exclude=settingsProjectTag2"
-    (Page
-       "projectTags"
-       (PageMetadata 20 3 1 0)
-       [_QUESTIONNAIRE_PROJECT_TAG_1, _QUESTIONNAIRE_PROJECT_TAG_2, _SETTINGS_PROJECT_TAG_1])
+    ( Page
+        "projectTags"
+        (PageMetadata 20 3 1 0)
+        [_QUESTIONNAIRE_PROJECT_TAG_1, _QUESTIONNAIRE_PROJECT_TAG_2, _SETTINGS_PROJECT_TAG_1]
+    )
   create_test_200
     "HTTP 200 OK (query, exclude)"
     appContext
@@ -79,20 +81,20 @@ test_200 appContext = do
 
 create_test_200 title appContext reqUrl expDto =
   it title $
-     -- GIVEN: Prepare request
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO TML_Migration.runMigration appContext
-    runInContextIO QTN_Migration.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- AND: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare request
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO QTN_Migration.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- AND: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

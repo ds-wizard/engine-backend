@@ -1,7 +1,7 @@
 module Wizard.Service.UserToken.UserTokenUtil where
 
 import Data.Aeson
-import qualified Data.Map as M
+import qualified Data.Map.Strict as M
 import qualified Data.Text as T
 import Data.Text.Read
 import qualified Web.JWT as JWT

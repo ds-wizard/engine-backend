@@ -12,9 +12,9 @@ import Wizard.Specs.API.Common
 
 branchAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "BRANCH API Spec" $ do
-    list_GET appContext
-    list_post appContext
-    detail_get appContext
-    detail_put appContext
-    detail_delete appContext
+    describe "BRANCH API Spec" $ do
+      list_GET appContext
+      list_post appContext
+      detail_get appContext
+      detail_put appContext
+      detail_delete appContext

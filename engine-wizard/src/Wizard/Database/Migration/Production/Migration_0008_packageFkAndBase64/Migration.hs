@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0008_packageFkAndBase64.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0008_packageFkAndBase64.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -82,11 +82,10 @@ updateSubmissionProp prop =
     Just (Object values) -> M.insert "values" (Object . KM.map (\(String a) -> convertToBase64 a) $ values) prop
     _ -> prop
 
-data User =
-  User
-    { uuid :: U.UUID
-    , submissionsProps :: [M.Map String Value]
-    }
+data User = User
+  { uuid :: U.UUID
+  , submissionsProps :: [M.Map String Value]
+  }
 
 instance ToRow User where
   toRow User {..} = [toJSONField submissionsProps, toField uuid]
@@ -156,13 +155,12 @@ updateQuestionnaire = updateEntity
         Just (String token) -> KM.insert "token" (convertToBase64 token) feedback
         _ -> feedback
 
-data AppConfig =
-  AppConfig
-    { id :: Int
-    , authentication :: M.Map String Value
-    , registry :: M.Map String Value
-    , questionnaire :: M.Map String Value
-    }
+data AppConfig = AppConfig
+  { id :: Int
+  , authentication :: M.Map String Value
+  , registry :: M.Map String Value
+  , questionnaire :: M.Map String Value
+  }
 
 instance ToRow AppConfig where
   toRow AppConfig {..} = [toJSONField authentication, toJSONField registry, toJSONField questionnaire, toField id]

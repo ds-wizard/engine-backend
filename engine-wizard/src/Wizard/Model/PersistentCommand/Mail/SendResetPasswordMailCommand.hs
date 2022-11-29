@@ -4,22 +4,21 @@ import Data.Aeson
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
-data SendResetPasswordMailCommand =
-  SendResetPasswordMailCommand
-    { _sendResetPasswordMailCommandEmail :: String
-    , _sendResetPasswordMailCommandUserUuid :: U.UUID
-    , _sendResetPasswordMailCommandUserFirstName :: String
-    , _sendResetPasswordMailCommandUserLastName :: String
-    , _sendResetPasswordMailCommandUserEmail :: String
-    , _sendResetPasswordMailCommandHash :: String
-    , _sendResetPasswordMailCommandClientUrl :: String
-    }
+data SendResetPasswordMailCommand = SendResetPasswordMailCommand
+  { email :: String
+  , userUuid :: U.UUID
+  , userFirstName :: String
+  , userLastName :: String
+  , userEmail :: String
+  , hash :: String
+  , clientUrl :: String
+  }
   deriving (Show, Eq, Generic)
 
 instance FromJSON SendResetPasswordMailCommand where
-  parseJSON = simpleParseJSON "_sendResetPasswordMailCommand"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SendResetPasswordMailCommand where
-  toJSON = simpleToJSON "_sendResetPasswordMailCommand"
+  toJSON = genericToJSON jsonOptions

@@ -7,17 +7,16 @@ import GHC.Generics
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Model.Submission.Submission
 
-data SubmissionDTO =
-  SubmissionDTO
-    { _submissionDTOUuid :: U.UUID
-    , _submissionDTOState :: SubmissionState
-    , _submissionDTOLocation :: Maybe String
-    , _submissionDTOReturnedData :: Maybe String
-    , _submissionDTOServiceId :: String
-    , _submissionDTOServiceName :: Maybe String
-    , _submissionDTODocumentUuid :: U.UUID
-    , _submissionDTOCreatedBy :: UserSuggestionDTO
-    , _submissionDTOCreatedAt :: UTCTime
-    , _submissionDTOUpdatedAt :: UTCTime
-    }
+data SubmissionDTO = SubmissionDTO
+  { uuid :: U.UUID
+  , state :: SubmissionState
+  , location :: Maybe String
+  , returnedData :: Maybe String
+  , serviceId :: String
+  , serviceName :: Maybe String
+  , documentUuid :: U.UUID
+  , createdBy :: UserSuggestionDTO
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

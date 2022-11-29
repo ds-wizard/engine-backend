@@ -1,10 +1,8 @@
 module Wizard.Service.Document.DocumentMapper where
 
-import Control.Lens ((^.), (^?), _Just)
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Model.Template.Template
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
@@ -17,45 +15,45 @@ import Wizard.Service.Template.TemplateMapper as Template
 toDTO :: Document -> Maybe QuestionnaireSimple -> [SubmissionDTO] -> Template -> DocumentDTO
 toDTO doc mQtn submissions tml =
   DocumentDTO
-    { _documentDTOUuid = doc ^. uuid
-    , _documentDTOName = doc ^. name
-    , _documentDTOState = doc ^. state
-    , _documentDTOQuestionnaire = mQtn
-    , _documentDTOQuestionnaireEventUuid = doc ^. questionnaireEventUuid
-    , _documentDTOTemplate = Template.toSimpleDTO tml
-    , _documentDTOFormatUuid = doc ^. formatUuid
-    , _documentDTOFileName = doc ^. fileName
-    , _documentDTOContentType = doc ^. contentType
-    , _documentDTOFileSize = doc ^. fileSize
-    , _documentDTOWorkerLog =
-        case doc ^. state of
-          ErrorDocumentState -> doc ^. workerLog
+    { uuid = doc.uuid
+    , name = doc.name
+    , state = doc.state
+    , questionnaire = mQtn
+    , questionnaireEventUuid = doc.questionnaireEventUuid
+    , template = Template.toSimpleDTO tml
+    , formatUuid = doc.formatUuid
+    , fileName = doc.fileName
+    , contentType = doc.contentType
+    , fileSize = doc.fileSize
+    , workerLog =
+        case doc.state of
+          ErrorDocumentState -> doc.workerLog
           _ -> Nothing
-    , _documentDTOSubmissions = submissions
-    , _documentDTOCreatorUuid = doc ^. creatorUuid
-    , _documentDTOCreatedAt = doc ^. createdAt
+    , submissions = submissions
+    , creatorUuid = doc.creatorUuid
+    , createdAt = doc.createdAt
     }
 
-fromCreateDTO ::
-     DocumentCreateDTO -> U.UUID -> DocumentDurability -> Int -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
+fromCreateDTO
+  :: DocumentCreateDTO -> U.UUID -> DocumentDurability -> Int -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
 fromCreateDTO dto docUuid durability repliesHash mCurrentUser appUuid now =
   Document
-    { _documentUuid = docUuid
-    , _documentName = dto ^. name
-    , _documentState = QueuedDocumentState
-    , _documentDurability = durability
-    , _documentQuestionnaireUuid = dto ^. questionnaireUuid
-    , _documentQuestionnaireEventUuid = dto ^. questionnaireEventUuid
-    , _documentQuestionnaireRepliesHash = repliesHash
-    , _documentTemplateId = dto ^. templateId
-    , _documentFormatUuid = dto ^. formatUuid
-    , _documentCreatorUuid = mCurrentUser ^? _Just . uuid
-    , _documentFileName = Nothing
-    , _documentContentType = Nothing
-    , _documentFileSize = Nothing
-    , _documentWorkerLog = Nothing
-    , _documentAppUuid = appUuid
-    , _documentRetrievedAt = Nothing
-    , _documentFinishedAt = Nothing
-    , _documentCreatedAt = now
+    { uuid = docUuid
+    , name = dto.name
+    , state = QueuedDocumentState
+    , durability = durability
+    , questionnaireUuid = dto.questionnaireUuid
+    , questionnaireEventUuid = dto.questionnaireEventUuid
+    , questionnaireRepliesHash = repliesHash
+    , templateId = dto.templateId
+    , formatUuid = dto.formatUuid
+    , creatorUuid = fmap (.uuid) mCurrentUser
+    , fileName = Nothing
+    , contentType = Nothing
+    , fileSize = Nothing
+    , workerLog = Nothing
+    , appUuid = appUuid
+    , retrievedAt = Nothing
+    , finishedAt = Nothing
+    , createdAt = now
     }

@@ -1,10 +1,7 @@
-module Wizard.Service.Migration.KnowledgeModel.Migrator.CorrectorMethod
-  ( runCorrectorMethod
-  ) where
+module Wizard.Service.Migration.KnowledgeModel.Migrator.CorrectorMethod (
+  runCorrectorMethod,
+) where
 
-import Control.Lens
-
-import LensesConfig
 import Shared.Model.Event.Event
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Migration.KnowledgeModel.Migrator.Sanitizator
@@ -12,11 +9,12 @@ import Wizard.Service.Migration.KnowledgeModel.Migrator.Sanitizator
 runCorrectorMethod :: MigratorState -> Event -> IO MigratorState
 runCorrectorMethod state event = do
   sanitizedEvent <- sanitizeEvent state event
-  let sanitizedTargetPackageEvents = sanitizeTargetPackageEvents (state ^. targetPackageEvents) sanitizedEvent
-  return .
-    (migrationState .~ (ConflictState . CorrectorConflict . Just $ sanitizedEvent)) .
-    (targetPackageEvents .~ sanitizedTargetPackageEvents) $
+  let sanitizedTargetPackageEvents = sanitizeTargetPackageEvents state.targetPackageEvents sanitizedEvent
+  return
     state
+      { migrationState = ConflictState . CorrectorConflict . Just $ sanitizedEvent
+      , targetPackageEvents = sanitizedTargetPackageEvents
+      }
 
 sanitizeEvent :: MigratorState -> Event -> IO Event
 sanitizeEvent state (EditKnowledgeModelEvent' e) = sanitize state e >>= \e2 -> return . EditKnowledgeModelEvent' $ e2
@@ -27,4 +25,4 @@ sanitizeEvent state event = return event
 
 sanitizeTargetPackageEvents :: [Event] -> Event -> [Event]
 sanitizeTargetPackageEvents [] _ = []
-sanitizeTargetPackageEvents (firstEvent:restEvent) sanitizedFirstEvent = sanitizedFirstEvent : restEvent
+sanitizeTargetPackageEvents (firstEvent : restEvent) sanitizedFirstEvent = sanitizedFirstEvent : restEvent

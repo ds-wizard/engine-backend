@@ -8,4 +8,4 @@ import Wizard.Api.Resource.Feedback.FeedbackCreateJM ()
 import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
 
 instance ToSchema FeedbackCreateDTO where
-  declareNamedSchema = simpleToSchema feedback1Create
+  declareNamedSchema = toSwagger feedback1Create

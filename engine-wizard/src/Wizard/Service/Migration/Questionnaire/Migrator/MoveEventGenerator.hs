@@ -1,6 +1,5 @@
 module Wizard.Service.Migration.Questionnaire.Migrator.MoveEventGenerator where
 
-import Control.Lens ((^.))
 import Control.Monad (guard)
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe)
@@ -17,41 +16,41 @@ import Shared.Model.KnowledgeModel.KnowledgeModelUtil
 generateEvents :: UTCTime -> KnowledgeModel -> KnowledgeModel -> [Event]
 generateEvents now oldKm newKm = moveQuestionEvents ++ moveAnswerEvents
   where
-    moveQuestionEvents = foldl (generateQuestionMoveEvent now oldParentMap newParentMap) [] (newKm ^. questionsL)
-    moveAnswerEvents = foldl (generateAnswerMoveEvents now oldParentMap newParentMap) [] (newKm ^. answersL)
+    moveQuestionEvents = foldl (generateQuestionMoveEvent now oldParentMap newParentMap) [] (getQuestionsL newKm)
+    moveAnswerEvents = foldl (generateAnswerMoveEvents now oldParentMap newParentMap) [] (getAnswersL newKm)
     oldParentMap = makeParentMap oldKm
     newParentMap = makeParentMap newKm
 
 generateQuestionMoveEvent :: UTCTime -> KMParentMap -> KMParentMap -> [Event] -> Question -> [Event]
 generateQuestionMoveEvent now oldParentMap newParentMap events entity =
   fromMaybe events $ do
-    oldParentUuid <- M.lookup (entity ^. uuid') oldParentMap
-    newParentUuid <- M.lookup (entity ^. uuid') newParentMap
+    oldParentUuid <- M.lookup (getUuid entity) oldParentMap
+    newParentUuid <- M.lookup (getUuid entity) newParentMap
     _ <- guard $ newParentUuid /= oldParentUuid
     let event =
           MoveQuestionEvent'
             MoveQuestionEvent
-              { _moveQuestionEventUuid = U.nil
-              , _moveQuestionEventParentUuid = oldParentUuid
-              , _moveQuestionEventEntityUuid = entity ^. uuid'
-              , _moveQuestionEventTargetUuid = newParentUuid
-              , _moveQuestionEventCreatedAt = now
+              { uuid = U.nil
+              , parentUuid = oldParentUuid
+              , entityUuid = getUuid entity
+              , targetUuid = newParentUuid
+              , createdAt = now
               }
     return $ events ++ [event]
 
 generateAnswerMoveEvents :: UTCTime -> KMParentMap -> KMParentMap -> [Event] -> Answer -> [Event]
 generateAnswerMoveEvents now oldParentMap newParentMap events entity =
   fromMaybe events $ do
-    oldParentUuid <- M.lookup (entity ^. uuid') oldParentMap
-    newParentUuid <- M.lookup (entity ^. uuid') newParentMap
+    oldParentUuid <- M.lookup (getUuid entity) oldParentMap
+    newParentUuid <- M.lookup (getUuid entity) newParentMap
     _ <- guard $ newParentUuid /= oldParentUuid
     let event =
           MoveAnswerEvent'
             MoveAnswerEvent
-              { _moveAnswerEventUuid = U.nil
-              , _moveAnswerEventParentUuid = oldParentUuid
-              , _moveAnswerEventEntityUuid = entity ^. uuid'
-              , _moveAnswerEventTargetUuid = newParentUuid
-              , _moveAnswerEventCreatedAt = now
+              { uuid = U.nil
+              , parentUuid = oldParentUuid
+              , entityUuid = getUuid entity
+              , targetUuid = newParentUuid
+              , createdAt = now
               }
     return $ events ++ [event]

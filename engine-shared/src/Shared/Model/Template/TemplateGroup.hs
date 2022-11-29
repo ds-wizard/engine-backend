@@ -4,10 +4,9 @@ import GHC.Generics
 
 import Shared.Model.Template.Template
 
-data TemplateGroup =
-  TemplateGroup
-    { _templateGroupOrganizationId :: String
-    , _templateGroupTemplateId :: String
-    , _templateGroupVersions :: [Template]
-    }
+data TemplateGroup = TemplateGroup
+  { organizationId :: String
+  , templateId :: String
+  , versions :: [Template]
+  }
   deriving (Show, Eq, Generic)

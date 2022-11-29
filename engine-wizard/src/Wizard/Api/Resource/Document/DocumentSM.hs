@@ -14,4 +14,4 @@ import Wizard.Model.Document.Document
 instance ToSchema DocumentState
 
 instance ToSchema DocumentDTO where
-  declareNamedSchema = simpleToSchema doc1Dto
+  declareNamedSchema = toSwagger doc1Dto

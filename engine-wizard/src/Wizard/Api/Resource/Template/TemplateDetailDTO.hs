@@ -9,26 +9,25 @@ import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Template.TemplateState
 
-data TemplateDetailDTO =
-  TemplateDetailDTO
-    { _templateDetailDTOTId :: String
-    , _templateDetailDTOName :: String
-    , _templateDetailDTOOrganizationId :: String
-    , _templateDetailDTOTemplateId :: String
-    , _templateDetailDTOVersion :: String
-    , _templateDetailDTOMetamodelVersion :: Int
-    , _templateDetailDTODescription :: String
-    , _templateDetailDTOReadme :: String
-    , _templateDetailDTOLicense :: String
-    , _templateDetailDTOAllowedPackages :: [PackagePattern]
-    , _templateDetailDTORecommendedPackageId :: Maybe String
-    , _templateDetailDTOFormats :: [TemplateFormat]
-    , _templateDetailDTOUsablePackages :: [PackageSimpleDTO]
-    , _templateDetailDTOVersions :: [String]
-    , _templateDetailDTORemoteLatestVersion :: Maybe String
-    , _templateDetailDTOOrganization :: Maybe RegistryOrganization
-    , _templateDetailDTORegistryLink :: Maybe String
-    , _templateDetailDTOState :: TemplateState
-    , _templateDetailDTOCreatedAt :: UTCTime
-    }
+data TemplateDetailDTO = TemplateDetailDTO
+  { tId :: String
+  , name :: String
+  , organizationId :: String
+  , templateId :: String
+  , version :: String
+  , metamodelVersion :: Int
+  , description :: String
+  , readme :: String
+  , license :: String
+  , allowedPackages :: [PackagePattern]
+  , recommendedPackageId :: Maybe String
+  , formats :: [TemplateFormat]
+  , usablePackages :: [PackageSimpleDTO]
+  , versions :: [String]
+  , remoteLatestVersion :: Maybe String
+  , organization :: Maybe RegistryOrganization
+  , registryLink :: Maybe String
+  , state :: TemplateState
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

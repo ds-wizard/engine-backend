@@ -2,10 +2,9 @@ module Shared.Model.Localization.LocaleRecord where
 
 import GHC.Generics
 
-data LocaleRecord =
-  LocaleRecord
-    { _localeRecordCode :: String
-    , _localeRecordDefaultMessage :: String
-    , _localeRecordParams :: [String]
-    }
+data LocaleRecord = LocaleRecord
+  { code :: String
+  , defaultMessage :: String
+  , params :: [String]
+  }
   deriving (Show, Eq, Generic)

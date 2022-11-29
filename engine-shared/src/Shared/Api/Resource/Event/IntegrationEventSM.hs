@@ -13,22 +13,22 @@ import Shared.Util.Swagger
 instance ToSchema AddIntegrationEvent
 
 instance ToSchema AddApiIntegrationEvent where
-  declareNamedSchema = simpleToSchema'' "_addApiIntegrationEvent" "eventType" a_km1_iop'
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_iop'
 
 instance ToSchema AddWidgetIntegrationEvent where
-  declareNamedSchema = simpleToSchema'' "_addWidgetIntegrationEvent" "eventType" a_km1_iwp'
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_iwp'
 
 -- --------------------------------------------
 -- --------------------------------------------
 instance ToSchema EditIntegrationEvent
 
 instance ToSchema EditApiIntegrationEvent where
-  declareNamedSchema = simpleToSchema'' "_editApiIntegrationEvent" "eventType" e_km1_iop'
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_iop'
 
 instance ToSchema EditWidgetIntegrationEvent where
-  declareNamedSchema = simpleToSchema'' "_editWidgetIntegrationEvent" "eventType" e_km1_iwp'
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_iwp'
 
 -- --------------------------------------------
 -- --------------------------------------------
 instance ToSchema DeleteIntegrationEvent where
-  declareNamedSchema = simpleToSchema'' "_deleteIntegrationEvent" "eventType" d_km1_iop
+  declareNamedSchema = toSwaggerWithType "eventType" d_km1_iop

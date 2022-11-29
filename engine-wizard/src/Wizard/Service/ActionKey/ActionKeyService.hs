@@ -16,13 +16,13 @@ import Wizard.Model.Context.AppContext
 getActionKeyByHash :: Maybe String -> AppContextM ActionKey
 getActionKeyByHash mHash =
   runInTransaction $
-  case mHash of
-    Just hash -> do
-      mActionKey <- findActionKeyByHash' hash
-      case mActionKey of
-        Just actionKey -> return actionKey
-        Nothing -> throwError $ UserError _ERROR_VALIDATION__HASH_ABSENCE
-    Nothing -> throwError $ UserError _ERROR_VALIDATION__HASH_ABSENCE
+    case mHash of
+      Just hash -> do
+        mActionKey <- findActionKeyByHash' hash
+        case mActionKey of
+          Just actionKey -> return actionKey
+          Nothing -> throwError $ UserError _ERROR_VALIDATION__HASH_ABSENCE
+      Nothing -> throwError $ UserError _ERROR_VALIDATION__HASH_ABSENCE
 
 createActionKey :: U.UUID -> ActionKeyType -> U.UUID -> AppContextM ActionKey
 createActionKey userId actionType appUuid =
@@ -32,12 +32,12 @@ createActionKey userId actionType appUuid =
     now <- liftIO getCurrentTime
     let actionKey =
           ActionKey
-            { _actionKeyUuid = uuid
-            , _actionKeyUserId = userId
-            , _actionKeyAType = actionType
-            , _actionKeyHash = U.toString hash
-            , _actionKeyAppUuid = appUuid
-            , _actionKeyCreatedAt = now
+            { uuid = uuid
+            , userId = userId
+            , aType = actionType
+            , hash = U.toString hash
+            , appUuid = appUuid
+            , createdAt = now
             }
     insertActionKey actionKey
     return actionKey

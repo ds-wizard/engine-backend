@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0001_init.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0001_init.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -81,20 +81,20 @@ createBookReferenceTable dbPool =
   createTable
     dbPool
     " create table book_reference \
-     \ ( \
-     \   short_uuid varchar not null, \
-     \   book_chapter varchar not null, \
-     \   content varchar not null, \
-     \   created_at timestamptz not null, \
-     \   updated_at timestamptz not null \
-     \ ); \
-     \  \
-     \ create unique index book_reference_short_uuid_uindex \
-     \    on book_reference (short_uuid); \
-     \  \
-     \ alter table book_reference \
-     \   add constraint book_reference_pk \
-     \      primary key (short_uuid); "
+    \ ( \
+    \   short_uuid varchar not null, \
+    \   book_chapter varchar not null, \
+    \   content varchar not null, \
+    \   created_at timestamptz not null, \
+    \   updated_at timestamptz not null \
+    \ ); \
+    \  \
+    \ create unique index book_reference_short_uuid_uindex \
+    \    on book_reference (short_uuid); \
+    \  \
+    \ alter table book_reference \
+    \   add constraint book_reference_pk \
+    \      primary key (short_uuid); "
 
 createBranchTable dbPool =
   createTable
@@ -213,31 +213,31 @@ createFeedbackTable dbPool =
   createTable
     dbPool
     " create table feedback \
-     \ ( \
-     \     uuid uuid not null, \
-     \     issue_id int not null, \
-     \     question_uuid uuid not null, \
-     \     package_id varchar not null, \
-     \     title varchar not null, \
-     \     content varchar not null, \
-     \     created_at timestamptz not null, \
-     \     updated_at timestamptz not null \
-     \ ); \
-     \  \
-     \ create unique index feedback_uuid_uindex \
-     \     on feedback (uuid); \
-     \  \
-     \ alter table feedback \
-     \     add constraint feedback_pk \
-     \         primary key (uuid); \
-     \ alter table feedback \
-     \    add constraint feedback_package_id_fk \
-     \       foreign key (package_id) references package (id); \
-     \ create index feedback_package_id_index \
-     \    on feedback (package_id); \
-     \  \
-     \ create index feedback_question_uuid_index \
-     \   on feedback (question_uuid); "
+    \ ( \
+    \     uuid uuid not null, \
+    \     issue_id int not null, \
+    \     question_uuid uuid not null, \
+    \     package_id varchar not null, \
+    \     title varchar not null, \
+    \     content varchar not null, \
+    \     created_at timestamptz not null, \
+    \     updated_at timestamptz not null \
+    \ ); \
+    \  \
+    \ create unique index feedback_uuid_uindex \
+    \     on feedback (uuid); \
+    \  \
+    \ alter table feedback \
+    \     add constraint feedback_pk \
+    \         primary key (uuid); \
+    \ alter table feedback \
+    \    add constraint feedback_package_id_fk \
+    \       foreign key (package_id) references package (id); \
+    \ create index feedback_package_id_index \
+    \    on feedback (package_id); \
+    \  \
+    \ create index feedback_question_uuid_index \
+    \   on feedback (question_uuid); "
 
 createLevelTable dbPool =
   createTable
@@ -278,36 +278,36 @@ createKmMigrationTable dbPool =
   createTable
     dbPool
     " create table knowledge_model_migration \
-     \ ( \
-     \     branch_uuid uuid not null, \
-     \     metamodel_version int not null, \
-     \     migration_state json not null, \
-     \     branch_previous_package_id varchar not null, \
-     \     target_package_id varchar not null, \
-     \     branch_events json not null, \
-     \     target_package_events json not null, \
-     \     result_events json not null, \
-     \     current_knowledge_model json \
-     \ ); \
-     \  \
-     \ create unique index knowledge_model_migration_branch_uuid_uindex \
-     \     on knowledge_model_migration (branch_uuid); \
-     \  \
-     \ alter table knowledge_model_migration \
-     \     add constraint knowledge_model_migration_pk \
-     \         primary key (branch_uuid); \
-     \  \
-     \ alter table knowledge_model_migration \
-     \   add constraint knowledge_model_migration_branch_uuid_fk \
-     \      foreign key (branch_uuid) references branch; \
-     \  \
-     \ alter table knowledge_model_migration \
-     \   add constraint knowledge_model_migration_branch_previous_package_id_fk \
-     \      foreign key (branch_previous_package_id) references package (id); \
-     \  \
-     \ alter table knowledge_model_migration \
-     \   add constraint knowledge_model_migration_target_package_id_fk \
-     \      foreign key (target_package_id) references package (id); "
+    \ ( \
+    \     branch_uuid uuid not null, \
+    \     metamodel_version int not null, \
+    \     migration_state json not null, \
+    \     branch_previous_package_id varchar not null, \
+    \     target_package_id varchar not null, \
+    \     branch_events json not null, \
+    \     target_package_events json not null, \
+    \     result_events json not null, \
+    \     current_knowledge_model json \
+    \ ); \
+    \  \
+    \ create unique index knowledge_model_migration_branch_uuid_uindex \
+    \     on knowledge_model_migration (branch_uuid); \
+    \  \
+    \ alter table knowledge_model_migration \
+    \     add constraint knowledge_model_migration_pk \
+    \         primary key (branch_uuid); \
+    \  \
+    \ alter table knowledge_model_migration \
+    \   add constraint knowledge_model_migration_branch_uuid_fk \
+    \      foreign key (branch_uuid) references branch; \
+    \  \
+    \ alter table knowledge_model_migration \
+    \   add constraint knowledge_model_migration_branch_previous_package_id_fk \
+    \      foreign key (branch_previous_package_id) references package (id); \
+    \  \
+    \ alter table knowledge_model_migration \
+    \   add constraint knowledge_model_migration_target_package_id_fk \
+    \      foreign key (target_package_id) references package (id); "
 
 createQtnMigrationTable dbPool =
   createTable
@@ -449,71 +449,71 @@ createTemplateTable dbPool =
   createTable
     dbPool
     "create table template \
-          \ ( \
-          \     id                     varchar                  not null \
-          \         constraint template_pk \
-          \             primary key, \
-          \     name                   varchar                  not null, \
-          \     organization_id        varchar                  not null, \
-          \     template_id            varchar                  not null, \
-          \     version                varchar                  not null, \
-          \     metamodel_version      integer                  not null, \
-          \     description            varchar                  not null, \
-          \     readme                 varchar                  not null, \
-          \     license                varchar                  not null, \
-          \     allowed_packages       json                     not null, \
-          \     recommended_package_id varchar, \
-          \     formats                json                     not null, \
-          \     created_at             timestamp with time zone not null \
-          \ ); \
-          \create unique index template_id_uindex \
-          \     on template (id); \
-          \create index template_organization_id_template_id_index \
-          \     on template (organization_id, template_id); "
+    \ ( \
+    \     id                     varchar                  not null \
+    \         constraint template_pk \
+    \             primary key, \
+    \     name                   varchar                  not null, \
+    \     organization_id        varchar                  not null, \
+    \     template_id            varchar                  not null, \
+    \     version                varchar                  not null, \
+    \     metamodel_version      integer                  not null, \
+    \     description            varchar                  not null, \
+    \     readme                 varchar                  not null, \
+    \     license                varchar                  not null, \
+    \     allowed_packages       json                     not null, \
+    \     recommended_package_id varchar, \
+    \     formats                json                     not null, \
+    \     created_at             timestamp with time zone not null \
+    \ ); \
+    \create unique index template_id_uindex \
+    \     on template (id); \
+    \create index template_organization_id_template_id_index \
+    \     on template (organization_id, template_id); "
 
 createTemplateFileTable dbPool =
   createTable
     dbPool
     " create table template_file \
-        \ ( \
-        \   template_id varchar not null, \
-        \   uuid uuid not null, \
-        \   file_name varchar not null, \
-        \   content varchar not null \
-        \ ); \
-        \  \
-        \ alter table template_file \
-        \   add constraint template_file_template_id_fk \
-        \      foreign key (template_id) references template (id); \
-        \  \
-        \ create unique index template_file_uuid_uindex \
-        \   on template_file (uuid); \
-        \  \
-        \ alter table template_file \
-        \   add constraint template_file_pk \
-        \      primary key (uuid); "
+    \ ( \
+    \   template_id varchar not null, \
+    \   uuid uuid not null, \
+    \   file_name varchar not null, \
+    \   content varchar not null \
+    \ ); \
+    \  \
+    \ alter table template_file \
+    \   add constraint template_file_template_id_fk \
+    \      foreign key (template_id) references template (id); \
+    \  \
+    \ create unique index template_file_uuid_uindex \
+    \   on template_file (uuid); \
+    \  \
+    \ alter table template_file \
+    \   add constraint template_file_pk \
+    \      primary key (uuid); "
 
 createTemplateAssetTable dbPool =
   createTable
     dbPool
     " create table template_asset \
-        \ ( \
-        \   template_id varchar not null, \
-        \   uuid uuid not null, \
-        \   file_name varchar not null, \
-        \   content_type varchar not null \
-        \ ); \
-        \  \
-        \ alter table template_asset \
-        \   add constraint template_asset_template_id_fk \
-        \      foreign key (template_id) references template (id); \
-        \  \
-        \ create unique index template_asset_uuid_uindex \
-        \   on template_asset (uuid); \
-        \  \
-        \ alter table template_asset \
-        \   add constraint template_asset_pk \
-        \      primary key (uuid); "
+    \ ( \
+    \   template_id varchar not null, \
+    \   uuid uuid not null, \
+    \   file_name varchar not null, \
+    \   content_type varchar not null \
+    \ ); \
+    \  \
+    \ alter table template_asset \
+    \   add constraint template_asset_template_id_fk \
+    \      foreign key (template_id) references template (id); \
+    \  \
+    \ create unique index template_asset_uuid_uindex \
+    \   on template_asset (uuid); \
+    \  \
+    \ alter table template_asset \
+    \   add constraint template_asset_pk \
+    \      primary key (uuid); "
 
 createUserTable dbPool =
   createTable

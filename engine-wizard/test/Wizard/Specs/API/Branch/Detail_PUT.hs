@@ -1,8 +1,7 @@
-module Wizard.Specs.API.Branch.Detail_PUT
-  ( detail_put
-  ) where
+module Wizard.Specs.API.Branch.Detail_PUT (
+  detail_put,
+) where
 
-import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
@@ -12,14 +11,16 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
+import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.User.Data.Users
+import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.AppContext
+import Wizard.Model.User.User
 import Wizard.Service.Branch.BranchService
 
 import SharedTest.Specs.API.Common
@@ -59,38 +60,39 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 test_200 appContext =
   it "HTTP 200 OK" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = amsterdamBranchDetail
-     -- AND: Run migrations
-    runInContextIO
-      (createBranchWithParams
-         (amsterdamBranchList ^. uuid)
-         (amsterdamBranchList ^. createdAt)
-         (fromJust $ appContext ^. currentUser)
-         amsterdamBranchCreate)
-      appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, BranchList)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    compareBranchDtos
-      resBody
-      reqDto
-      (resBody ^. previousPackageId)
-      (resBody ^. previousPackageId)
-      (Just $ userAlbert ^. uuid)
-     -- AND: Find result in DB and compare with expectation state
-    assertExistenceOfBranchInDB
-      appContext
-      reqDto
-      (resBody ^. previousPackageId)
-      (resBody ^. previousPackageId)
-      (Just $ userAlbert ^. uuid)
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = amsterdamBranchDetail
+      -- AND: Run migrations
+      runInContextIO
+        ( createBranchWithParams
+            amsterdamBranchList.uuid
+            amsterdamBranchList.createdAt
+            (fromJust appContext.currentUser)
+            amsterdamBranchCreate
+        )
+        appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, BranchList)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      compareBranchDtos
+        resBody
+        reqDto
+        resBody.previousPackageId
+        resBody.previousPackageId
+        (Just userAlbert.uuid)
+      -- AND: Find result in DB and compare with expectation state
+      assertExistenceOfBranchInDB
+        appContext
+        reqDto
+        resBody.previousPackageId
+        resBody.previousPackageId
+        (Just userAlbert.uuid)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -102,79 +104,82 @@ test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "kmId"
 -- ----------------------------------------------------
 test_400_not_valid_kmId appContext =
   it "HTTP 400 BAD REQUEST when kmId is not in valid format" $
-     -- GIVEN: Prepare request
-   do
-    let reqDto = amsterdamBranchChange & kmId .~ "amsterdam.km-"
-    let reqBody = encode reqDto
-     -- AND: Prepare expectation
-    let expStatus = 400
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__INVALID_KM_ID_FORMAT])
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO
-      (createBranchWithParams
-         (amsterdamBranchList ^. uuid)
-         (amsterdamBranchList ^. createdAt)
-         (fromJust $ appContext ^. currentUser)
-         amsterdamBranchCreate)
-      appContext
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-     -- AND: Find result in DB and compare with expectation state
-    assertExistenceOfBranchInDB
-      appContext
-      amsterdamBranchList
-      (amsterdamBranchList ^. previousPackageId)
-      (amsterdamBranchList ^. previousPackageId)
-      (Just $ userAlbert ^. uuid)
+    -- GIVEN: Prepare request
+    do
+      let reqDto = amsterdamBranchChange {kmId = "amsterdam.km-"} :: BranchChangeDTO
+      let reqBody = encode reqDto
+      -- AND: Prepare expectation
+      let expStatus = 400
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__INVALID_KM_ID_FORMAT])
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO
+        ( createBranchWithParams
+            amsterdamBranchList.uuid
+            amsterdamBranchList.createdAt
+            (fromJust appContext.currentUser)
+            amsterdamBranchCreate
+        )
+        appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
+      -- AND: Find result in DB and compare with expectation state
+      assertExistenceOfBranchInDB
+        appContext
+        amsterdamBranchList
+        amsterdamBranchList.previousPackageId
+        amsterdamBranchList.previousPackageId
+        (Just userAlbert.uuid)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400_already_taken_kmId appContext =
   it "HTTP 400 BAD REQUEST when kmId is already taken" $
-     -- GIVEN: Prepare request
-   do
-    let reqDto = amsterdamBranchChange & kmId .~ (leidenBranch ^. kmId)
-    let reqBody = encode reqDto
-     -- AND: Prepare expectation
-    let expStatus = 400
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__KM_ID_UNIQUENESS $ reqDto ^. kmId])
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO
-      (createBranchWithParams
-         (amsterdamBranchList ^. uuid)
-         (amsterdamBranchList ^. createdAt)
-         (fromJust $ appContext ^. currentUser)
-         amsterdamBranchCreate)
-      appContext
-    runInContextIO
-      (createBranchWithParams
-         (leidenBranch ^. uuid)
-         (leidenBranch ^. createdAt)
-         (fromJust $ appContext ^. currentUser)
-         leidenBranchCreate)
-      appContext
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-     -- AND: Find result in DB and compare with expectation state
-    assertExistenceOfBranchInDB
-      appContext
-      amsterdamBranchList
-      (amsterdamBranchList ^. previousPackageId)
-      (amsterdamBranchList ^. previousPackageId)
-      (Just $ userAlbert ^. uuid)
+    -- GIVEN: Prepare request
+    do
+      let reqDto = amsterdamBranchChange {kmId = leidenBranch.kmId} :: BranchChangeDTO
+      let reqBody = encode reqDto
+      -- AND: Prepare expectation
+      let expStatus = 400
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__KM_ID_UNIQUENESS $ reqDto.kmId])
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO
+        ( createBranchWithParams
+            amsterdamBranchList.uuid
+            amsterdamBranchList.createdAt
+            (fromJust appContext.currentUser)
+            amsterdamBranchCreate
+        )
+        appContext
+      runInContextIO
+        ( createBranchWithParams
+            leidenBranch.uuid
+            leidenBranch.createdAt
+            (fromJust appContext.currentUser)
+            leidenBranchCreate
+        )
+        appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
+      -- AND: Find result in DB and compare with expectation state
+      assertExistenceOfBranchInDB
+        appContext
+        amsterdamBranchList
+        amsterdamBranchList.previousPackageId
+        amsterdamBranchList.previousPackageId
+        (Just userAlbert.uuid)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -9,18 +9,18 @@ import Shared.Model.Template.Template
 
 instance ToRow TemplateFile where
   toRow TemplateFile {..} =
-    [ toField _templateFileTemplateId
-    , toField _templateFileUuid
-    , toField _templateFileFileName
-    , toField _templateFileContent
-    , toField _templateFileAppUuid
+    [ toField templateId
+    , toField uuid
+    , toField fileName
+    , toField content
+    , toField appUuid
     ]
 
 instance FromRow TemplateFile where
   fromRow = do
-    _templateFileTemplateId <- field
-    _templateFileUuid <- field
-    _templateFileFileName <- field
-    _templateFileContent <- field
-    _templateFileAppUuid <- field
+    templateId <- field
+    uuid <- field
+    fileName <- field
+    content <- field
+    appUuid <- field
     return $ TemplateFile {..}

@@ -1,11 +1,9 @@
 module Wizard.Service.Template.Asset.TemplateAssetService where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Database.DAO.Template.TemplateAssetDAO
 import Shared.Model.Template.Template
 import Shared.Util.Uuid
@@ -32,7 +30,7 @@ getTemplateAsset assetUuid = do
 getTemplateAssetContent :: String -> String -> AppContextM (TemplateAsset, BS.ByteString)
 getTemplateAssetContent tmlId assetUuid = do
   asset <- findTemplateAssetById assetUuid
-  content <- getAsset tmlId (U.toString $ asset ^. uuid)
+  content <- getAsset tmlId (U.toString $ asset.uuid)
   return (asset, content)
 
 createAsset :: String -> String -> String -> BS.ByteString -> AppContextM TemplateAsset
@@ -42,7 +40,7 @@ createAsset tmlId fileName contentType content =
     checkStorageSize (fromIntegral . BS.length $ content)
     validateTemplateFileAndAssetUniqueness Nothing tmlId fileName
     aUuid <- liftIO generateUuid
-    appUuid <- asks _appContextAppUuid
+    appUuid <- asks currentAppUuid
     let fileSize = fromIntegral . BS.length $ content
     let newAsset = fromChangeDTO tmlId aUuid fileName contentType fileSize appUuid
     insertTemplateAsset newAsset
@@ -55,7 +53,7 @@ deleteTemplateAsset tmlId assetUuid =
   runInTransaction $ do
     checkPermission _TML_PERM
     asset <- findTemplateAssetById assetUuid
-    deleteTemplateAssetById (U.toString $ asset ^. uuid)
+    deleteTemplateAssetById (U.toString $ asset.uuid)
     removeAsset tmlId assetUuid
     deleteTemporalDocumentsByTemplateAssetId assetUuid
     return ()

@@ -9,4 +9,4 @@ import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Service.App.AppMapper
 
 instance ToSchema AppChangeDTO where
-  declareNamedSchema = simpleToSchema (toChangeDTO defaultApp)
+  declareNamedSchema = toSwagger (toChangeDTO defaultApp)

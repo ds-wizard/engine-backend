@@ -20,15 +20,15 @@ findQuestionnairePermRecordsFiltered :: [(String, String)] -> AppContextM [Quest
 findQuestionnairePermRecordsFiltered queryParams = do
   let sql =
         fromString $
-        f'
-          "SELECT uuid, 'UserMember' AS member_type, text(user_uuid) AS member_id, perms, questionnaire_uuid \
-          \ FROM %s \
-          \ WHERE %s \
-          \ UNION \
-          \ SELECT uuid, 'GroupMember' AS member_type, group_id AS member_id, perms, questionnaire_uuid \
-          \ FROM %s \
-          \ WHERE %s"
-          [entityName_user, mapToDBQuerySql queryParams, entityName_group, mapToDBQuerySql queryParams]
+          f'
+            "SELECT uuid, 'UserMember' AS member_type, text(user_uuid) AS member_id, perms, questionnaire_uuid \
+            \ FROM %s \
+            \ WHERE %s \
+            \ UNION \
+            \ SELECT uuid, 'GroupMember' AS member_type, group_id AS member_id, perms, questionnaire_uuid \
+            \ FROM %s \
+            \ WHERE %s"
+            [entityName_user, mapToDBQuerySql queryParams, entityName_group, mapToDBQuerySql queryParams]
   let params = fmap snd queryParams ++ fmap snd queryParams
   logQuery sql params
   let action conn = query conn sql params
@@ -36,7 +36,7 @@ findQuestionnairePermRecordsFiltered queryParams = do
 
 insertQuestionnairePermRecord :: QuestionnairePermRecord -> AppContextM Int64
 insertQuestionnairePermRecord perm@QuestionnairePermRecord {..} =
-  case _questionnairePermRecordMember of
+  case member of
     m@GroupMember {..} -> createInsertFn entityName_group perm
     m@UserMember {..} -> createInsertFn entityName_user perm
 

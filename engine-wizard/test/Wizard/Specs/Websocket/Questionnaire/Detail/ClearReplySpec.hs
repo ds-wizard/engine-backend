@@ -1,12 +1,10 @@
 module Wizard.Specs.Websocket.Questionnaire.Detail.ClearReplySpec where
 
-import Control.Lens ((^.))
 import Data.Aeson
 import Network.WebSockets
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
-import LensesConfig
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
@@ -18,6 +16,7 @@ import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 
 import Wizard.Specs.Common
@@ -32,27 +31,27 @@ clearReplySpec appContext = describe "clearReply" $ test200 appContext
 test200 appContext =
   it "WS 200 OK" $
     -- GIVEN: Prepare database
-   do
-    let qtn = questionnaire10
-    runInContext U.runMigration appContext
-    runInContextIO TML_Migration.runMigration appContext
-    runInContextIO (insertPackage germanyPackage) appContext
-    runInContextIO (insertQuestionnaire questionnaire10) appContext
-    runInContextIO (insertQuestionnaire questionnaire7) appContext
-    -- AND: Connect to websocket
-    ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext (questionnaire10 ^. uuid)
-    ((c4, s4), (c5, s5), (c6, s6)) <- connectTestWebsocketUsers appContext (questionnaire7 ^. uuid)
-    -- WHEN:
-    write_ClearReply c1 (toEventChangeDTO cre_rQ1' samplePhasesAnsweredIndication)
-    -- THEN:
-    read_ClearReply c1 (toEventDTO cre_rQ1' (Just userAlbert))
-    read_ClearReply c2 (toEventDTO cre_rQ1' (Just userAlbert))
-    read_ClearReply c3 (toEventDTO cre_rQ1' (Just userAlbert))
-    nothingWasReceived c4
-    nothingWasReceived c5
-    nothingWasReceived c6
-    -- AND: Close sockets
-    closeSockets [s1, s2, s3, s4, s5, s6]
+    do
+      let qtn = questionnaire10
+      runInContext U.runMigration appContext
+      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertQuestionnaire questionnaire10) appContext
+      runInContextIO (insertQuestionnaire questionnaire7) appContext
+      -- AND: Connect to websocket
+      ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext questionnaire10.uuid
+      ((c4, s4), (c5, s5), (c6, s6)) <- connectTestWebsocketUsers appContext questionnaire7.uuid
+      -- WHEN:
+      write_ClearReply c1 (toEventChangeDTO cre_rQ1' samplePhasesAnsweredIndication)
+      -- THEN:
+      read_ClearReply c1 (toEventDTO cre_rQ1' (Just userAlbert))
+      read_ClearReply c2 (toEventDTO cre_rQ1' (Just userAlbert))
+      read_ClearReply c3 (toEventDTO cre_rQ1' (Just userAlbert))
+      nothingWasReceived c4
+      nothingWasReceived c5
+      nothingWasReceived c6
+      -- AND: Close sockets
+      closeSockets [s1, s2, s3, s4, s5, s6]
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

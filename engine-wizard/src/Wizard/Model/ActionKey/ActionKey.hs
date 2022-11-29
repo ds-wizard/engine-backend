@@ -9,20 +9,20 @@ data ActionKeyType
   | ForgottenPasswordActionKey
   deriving (Show, Eq, Generic, Read)
 
-data ActionKey =
-  ActionKey
-    { _actionKeyUuid :: U.UUID
-    , _actionKeyUserId :: U.UUID
-    , _actionKeyAType :: ActionKeyType
-    , _actionKeyHash :: String
-    , _actionKeyAppUuid :: U.UUID
-    , _actionKeyCreatedAt :: UTCTime
-    }
+data ActionKey = ActionKey
+  { uuid :: U.UUID
+  , userId :: U.UUID
+  , aType :: ActionKeyType
+  , hash :: String
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq ActionKey where
   a == b =
-    _actionKeyUuid a == _actionKeyUuid b &&
-    _actionKeyUserId a == _actionKeyUserId b &&
-    _actionKeyAType a == _actionKeyAType b &&
-    _actionKeyHash a == _actionKeyHash b && _actionKeyAppUuid a == _actionKeyAppUuid b
+    uuid a == uuid b
+      && userId a == userId b
+      && aType a == aType b
+      && hash a == hash b
+      && appUuid a == appUuid b

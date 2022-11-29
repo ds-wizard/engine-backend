@@ -11,35 +11,47 @@ import Wizard.Model.Acl.Acl
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 
 instance ToRow QuestionnairePermRecord where
-  toRow QuestionnairePermRecord {..} =
-    case _questionnairePermRecordMember of
+  toRow r@QuestionnairePermRecord {..} =
+    case member of
       m@GroupMember {..} ->
-        [ toField _questionnairePermRecordUuid
-        , toField _groupMemberGId
-        , toField . PGArray $ _questionnairePermRecordPerms
-        , toField _questionnairePermRecordQuestionnaireUuid
+        [ toField r.uuid
+        , toField m.gId
+        , toField . PGArray $ r.perms
+        , toField r.questionnaireUuid
         ]
       m@UserMember {..} ->
-        [ toField _questionnairePermRecordUuid
-        , toField _userMemberUuid
-        , toField . PGArray $ _questionnairePermRecordPerms
-        , toField _questionnairePermRecordQuestionnaireUuid
+        [ toField r.uuid
+        , toField m.uuid
+        , toField . PGArray $ r.perms
+        , toField r.questionnaireUuid
         ]
 
 instance FromRow QuestionnairePermRecord where
   fromRow = do
-    _questionnairePermRecordUuid <- field
+    rUuid <- field
     aType <- field
     case aType of
       "GroupMember" -> do
-        _groupMemberGId <- field
-        let _questionnairePermRecordMember = GroupMember _groupMemberGId
-        _questionnairePermRecordPerms <- fromPGArray <$> field
-        _questionnairePermRecordQuestionnaireUuid <- field
-        return $ QuestionnairePermRecord {..}
+        gId <- field
+        let member = GroupMember gId
+        perms <- fromPGArray <$> field
+        questionnaireUuid <- field
+        return
+          QuestionnairePermRecord
+            { uuid = rUuid
+            , questionnaireUuid = questionnaireUuid
+            , perms = perms
+            , member = member
+            }
       "UserMember" -> do
-        _userMemberUuid <- fmap u' field
-        let _questionnairePermRecordMember = UserMember _userMemberUuid
-        _questionnairePermRecordPerms <- fromPGArray <$> field
-        _questionnairePermRecordQuestionnaireUuid <- field
-        return $ QuestionnairePermRecord {..}
+        uuid <- fmap u' field
+        let member = UserMember uuid
+        perms <- fromPGArray <$> field
+        questionnaireUuid <- field
+        return
+          QuestionnairePermRecord
+            { uuid = rUuid
+            , questionnaireUuid = questionnaireUuid
+            , perms = perms
+            , member = member
+            }

@@ -14,66 +14,63 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Report.Report
 
-data DocumentContext =
-  DocumentContext
-    { _documentContextUuid :: U.UUID
-    , _documentContextConfig :: DocumentContextConfig
-    , _documentContextQuestionnaireUuid :: String
-    , _documentContextQuestionnaireName :: String
-    , _documentContextQuestionnaireDescription :: Maybe String
-    , _documentContextQuestionnaireReplies :: M.Map String Reply
-    , _documentContextQuestionnaireVersion :: Maybe U.UUID
-    , _documentContextQuestionnaireVersions :: [QuestionnaireVersionDTO]
-    , _documentContextQuestionnaireProjectTags :: [String]
-    , _documentContextPhaseUuid :: Maybe U.UUID
-    , _documentContextKnowledgeModel :: KnowledgeModel
-    , _documentContextReport :: Report
-    , _documentContextPackage :: DocumentContextPackage
-    , _documentContextOrganization :: AppConfigOrganization
-    , _documentContextTemplateMetamodelVersion :: Int
-    , _documentContextCreatedBy :: Maybe UserDTO
-    , _documentContextCreatedAt :: UTCTime
-    , _documentContextUpdatedAt :: UTCTime
-    }
+data DocumentContext = DocumentContext
+  { uuid :: U.UUID
+  , config :: DocumentContextConfig
+  , questionnaireUuid :: String
+  , questionnaireName :: String
+  , questionnaireDescription :: Maybe String
+  , questionnaireReplies :: M.Map String Reply
+  , questionnaireVersion :: Maybe U.UUID
+  , questionnaireVersions :: [QuestionnaireVersionDTO]
+  , questionnaireProjectTags :: [String]
+  , phaseUuid :: Maybe U.UUID
+  , knowledgeModel :: KnowledgeModel
+  , report :: Report
+  , package :: DocumentContextPackage
+  , organization :: AppConfigOrganization
+  , templateMetamodelVersion :: Int
+  , createdBy :: Maybe UserDTO
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq DocumentContext where
   a == b =
-    _documentContextUuid a == _documentContextUuid b &&
-    _documentContextConfig a == _documentContextConfig b &&
-    _documentContextQuestionnaireUuid a == _documentContextQuestionnaireUuid b &&
-    _documentContextQuestionnaireName a == _documentContextQuestionnaireName b &&
-    _documentContextQuestionnaireDescription a == _documentContextQuestionnaireDescription b &&
-    _documentContextQuestionnaireReplies a == _documentContextQuestionnaireReplies b &&
-    _documentContextQuestionnaireVersion a == _documentContextQuestionnaireVersion b &&
-    _documentContextQuestionnaireVersions a == _documentContextQuestionnaireVersions b &&
-    _documentContextQuestionnaireProjectTags a == _documentContextQuestionnaireProjectTags b &&
-    _documentContextPhaseUuid a == _documentContextPhaseUuid b &&
-    _documentContextKnowledgeModel a == _documentContextKnowledgeModel b &&
-    _documentContextReport a == _documentContextReport b &&
-    _documentContextPackage a == _documentContextPackage b &&
-    _documentContextOrganization a == _documentContextOrganization b &&
-    _documentContextTemplateMetamodelVersion a == _documentContextTemplateMetamodelVersion b &&
-    _documentContextCreatedBy a == _documentContextCreatedBy b
+    a.uuid == b.uuid
+      && a.config == b.config
+      && a.questionnaireUuid == b.questionnaireUuid
+      && a.questionnaireName == b.questionnaireName
+      && a.questionnaireDescription == b.questionnaireDescription
+      && a.questionnaireReplies == b.questionnaireReplies
+      && a.questionnaireVersion == b.questionnaireVersion
+      && a.questionnaireVersions == b.questionnaireVersions
+      && a.questionnaireProjectTags == b.questionnaireProjectTags
+      && a.phaseUuid == b.phaseUuid
+      && a.knowledgeModel == b.knowledgeModel
+      && a.report == b.report
+      && a.package == b.package
+      && a.organization == b.organization
+      && a.templateMetamodelVersion == b.templateMetamodelVersion
+      && a.createdBy == b.createdBy
 
-data DocumentContextConfig =
-  DocumentContextConfig
-    { _documentContextConfigClientUrl :: String
-    }
+data DocumentContextConfig = DocumentContextConfig
+  { clientUrl :: String
+  }
   deriving (Show, Eq, Generic)
 
-data DocumentContextPackage =
-  DocumentContextPackage
-    { _documentContextPackagePId :: String
-    , _documentContextPackageName :: String
-    , _documentContextPackageOrganizationId :: String
-    , _documentContextPackageKmId :: String
-    , _documentContextPackageVersion :: String
-    , _documentContextPackageVersions :: [String]
-    , _documentContextPackageRemoteLatestVersion :: Maybe String
-    , _documentContextPackageDescription :: String
-    , _documentContextPackageState :: PackageState
-    , _documentContextPackageOrganization :: Maybe RegistryOrganization
-    , _documentContextPackageCreatedAt :: UTCTime
-    }
+data DocumentContextPackage = DocumentContextPackage
+  { pId :: String
+  , name :: String
+  , organizationId :: String
+  , kmId :: String
+  , version :: String
+  , versions :: [String]
+  , remoteLatestVersion :: Maybe String
+  , description :: String
+  , state :: PackageState
+  , organization :: Maybe RegistryOrganization
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

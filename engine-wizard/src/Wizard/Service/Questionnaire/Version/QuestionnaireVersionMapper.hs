@@ -1,10 +1,8 @@
 module Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper where
 
-import Control.Lens ((^.))
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionRevertDTO
@@ -15,13 +13,13 @@ import qualified Wizard.Service.User.UserMapper as UM
 toVersionDTO :: QuestionnaireVersion -> Maybe User -> QuestionnaireVersionDTO
 toVersionDTO version mCreatedBy =
   QuestionnaireVersionDTO
-    { _questionnaireVersionDTOUuid = version ^. uuid
-    , _questionnaireVersionDTOName = version ^. name
-    , _questionnaireVersionDTODescription = version ^. description
-    , _questionnaireVersionDTOEventUuid = version ^. eventUuid
-    , _questionnaireVersionDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mCreatedBy
-    , _questionnaireVersionDTOCreatedAt = version ^. createdAt
-    , _questionnaireVersionDTOUpdatedAt = version ^. updatedAt
+    { uuid = version.uuid
+    , name = version.name
+    , description = version.description
+    , eventUuid = version.eventUuid
+    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mCreatedBy
+    , createdAt = version.createdAt
+    , updatedAt = version.updatedAt
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -29,26 +27,26 @@ toVersionDTO version mCreatedBy =
 toVersionChangeDTO :: QuestionnaireVersion -> QuestionnaireVersionChangeDTO
 toVersionChangeDTO version =
   QuestionnaireVersionChangeDTO
-    { _questionnaireVersionChangeDTOName = version ^. name
-    , _questionnaireVersionChangeDTODescription = version ^. description
-    , _questionnaireVersionChangeDTOEventUuid = version ^. eventUuid
+    { name = version.name
+    , description = version.description
+    , eventUuid = version.eventUuid
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------------------------
 toVersionRevertDTO :: U.UUID -> QuestionnaireVersionRevertDTO
-toVersionRevertDTO eventUuid = QuestionnaireVersionRevertDTO {_questionnaireVersionRevertDTOEventUuid = eventUuid}
+toVersionRevertDTO eventUuid = QuestionnaireVersionRevertDTO {eventUuid = eventUuid}
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------------------------
 fromVersionChangeDTO :: QuestionnaireVersionChangeDTO -> U.UUID -> U.UUID -> UTCTime -> UTCTime -> QuestionnaireVersion
 fromVersionChangeDTO version uuid createdBy createdAt updatedAt =
   QuestionnaireVersion
-    { _questionnaireVersionUuid = uuid
-    , _questionnaireVersionName = version ^. name
-    , _questionnaireVersionDescription = version ^. description
-    , _questionnaireVersionEventUuid = version ^. eventUuid
-    , _questionnaireVersionCreatedBy = createdBy
-    , _questionnaireVersionCreatedAt = createdAt
-    , _questionnaireVersionUpdatedAt = updatedAt
+    { uuid = uuid
+    , name = version.name
+    , description = version.description
+    , eventUuid = version.eventUuid
+    , createdBy = createdBy
+    , createdAt = createdAt
+    , updatedAt = updatedAt
     }

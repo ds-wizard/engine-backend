@@ -5,17 +5,17 @@ import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 orgGlobalSimple :: OrganizationSimpleDTO
 orgGlobalSimple =
   OrganizationSimpleDTO
-    { _organizationSimpleDTOName = "Organization"
-    , _organizationSimpleDTOOrganizationId = "global"
-    , _organizationSimpleDTOLogo = Just orgLogo
+    { name = "Organization"
+    , organizationId = "global"
+    , logo = Just orgLogo
     }
 
 orgNetherlandsSimple :: OrganizationSimpleDTO
 orgNetherlandsSimple =
   OrganizationSimpleDTO
-    { _organizationSimpleDTOName = "Organization Netherlands"
-    , _organizationSimpleDTOOrganizationId = "org.nl"
-    , _organizationSimpleDTOLogo = Just orgLogo
+    { name = "Organization Netherlands"
+    , organizationId = "org.nl"
+    , logo = Just orgLogo
     }
 
 orgLogo :: String

@@ -12,20 +12,20 @@ import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.QuestionnaireImporter.QuestionnaireImporterService
 
-type Detail_PUT
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> ReqBody '[ SafeJSON] QuestionnaireImporterChangeDTO
-     :> "questionnaire-importers"
-     :> Capture "qiId" String
-     :> Put '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] QuestionnaireImporterDTO)
+type Detail_PUT =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> ReqBody '[SafeJSON] QuestionnaireImporterChangeDTO
+    :> "questionnaire-importers"
+    :> Capture "qiId" String
+    :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] QuestionnaireImporterDTO)
 
-detail_PUT ::
-     Maybe String
+detail_PUT
+  :: Maybe String
   -> Maybe String
   -> QuestionnaireImporterChangeDTO
   -> String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireImporterDTO)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] QuestionnaireImporterDTO)
 detail_PUT mTokenHeader mServerUrl reqDto qiId =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< modifyQuestionnaireImporter qiId reqDto

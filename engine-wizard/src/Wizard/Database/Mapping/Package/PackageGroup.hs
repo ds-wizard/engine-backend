@@ -7,7 +7,7 @@ import Shared.Model.Package.PackageGroup
 
 instance FromRow PackageGroup where
   fromRow = do
-    _packageGroupOrganizationId <- field
-    _packageGroupKmId <- field
-    _packageGroupVersions <- field
+    organizationId <- field
+    kmId <- field
+    versions <- field
     return $ PackageGroup {..}

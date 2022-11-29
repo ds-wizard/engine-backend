@@ -21,5 +21,5 @@ validateUserEmailUniqueness email appUuid = do
 
 validateUserChangedEmailUniqueness :: String -> String -> AppContextM ()
 validateUserChangedEmailUniqueness newEmail oldEmail = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   when (newEmail /= oldEmail) (validateUserEmailUniqueness newEmail appUuid)

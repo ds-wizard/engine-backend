@@ -1,6 +1,5 @@
 module Wizard.Database.DAO.App.AppDAO where
 
-import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (liftIO)
 import Data.String
 import Data.Time
@@ -9,7 +8,6 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
-import LensesConfig
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
@@ -55,11 +53,11 @@ insertApp = createInsertFn entityName
 updateAppById :: App -> AppContextM App
 updateAppById app = do
   now <- liftIO getCurrentTime
-  let updatedApp = app & updatedAt .~ now
+  let updatedApp = app {updatedAt = now}
   let sql =
         fromString
           "UPDATE app SET uuid = ?, app_id = ?, name = ?, server_domain = ?, client_url = ?, enabled = ?, created_at = ?, updated_at = ?, server_url = ? WHERE uuid = ?"
-  let params = toRow app ++ [toField $ updatedApp ^. uuid]
+  let params = toRow app ++ [toField updatedApp.uuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action

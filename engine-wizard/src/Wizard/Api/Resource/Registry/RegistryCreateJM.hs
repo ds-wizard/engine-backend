@@ -2,11 +2,11 @@ module Wizard.Api.Resource.Registry.RegistryCreateJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 
 instance FromJSON RegistryCreateDTO where
-  parseJSON = simpleParseJSON "_registryCreateDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON RegistryCreateDTO where
-  toJSON = simpleToJSON "_registryCreateDTO"
+  toJSON = genericToJSON jsonOptions

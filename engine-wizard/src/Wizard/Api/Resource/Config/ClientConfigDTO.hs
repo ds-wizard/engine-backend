@@ -5,68 +5,68 @@ import GHC.Generics
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.SimpleFeature
 
-data ClientConfigDTO =
-  ClientConfigDTO
-    { _clientConfigDTOOrganization :: AppConfigOrganization
-    , _clientConfigDTOFeature :: AppConfigFeature
-    , _clientConfigDTOAuthentication :: ClientConfigAuthDTO
-    , _clientConfigDTOPrivacyAndSupport :: AppConfigPrivacyAndSupport
-    , _clientConfigDTODashboard :: AppConfigDashboard
-    , _clientConfigDTOLookAndFeel :: AppConfigLookAndFeel
-    , _clientConfigDTORegistry :: ClientConfigRegistryDTO
-    , _clientConfigDTOQuestionnaire :: ClientConfigQuestionnaireDTO
-    , _clientConfigDTOTemplate :: AppConfigTemplate
-    , _clientConfigDTOSubmission :: SimpleFeature
-    , _clientConfigDTOCloud :: ClientConfigCloudDTO
-    , _clientConfigDTOLocales :: [String]
-    , _clientConfigDTOOwl :: AppConfigOwl
-    }
+data ClientConfigDTO = ClientConfigDTO
+  { organization :: AppConfigOrganization
+  , feature :: AppConfigFeature
+  , authentication :: ClientConfigAuthDTO
+  , privacyAndSupport :: AppConfigPrivacyAndSupport
+  , dashboard :: AppConfigDashboard
+  , lookAndFeel :: AppConfigLookAndFeel
+  , registry :: ClientConfigRegistryDTO
+  , questionnaire :: ClientConfigQuestionnaireDTO
+  , template :: AppConfigTemplate
+  , submission :: SimpleFeature
+  , cloud :: ClientConfigCloudDTO
+  , locales :: [ClientConfigLocaleDTO]
+  , owl :: AppConfigOwl
+  }
   deriving (Show, Eq, Generic)
 
-data ClientConfigAuthDTO =
-  ClientConfigAuthDTO
-    { _clientConfigAuthDTODefaultRole :: String
-    , _clientConfigAuthDTOInternal :: AppConfigAuthInternal
-    , _clientConfigAuthDTOExternal :: ClientConfigAuthExternalDTO
-    }
+data ClientConfigAuthDTO = ClientConfigAuthDTO
+  { defaultRole :: String
+  , internal :: AppConfigAuthInternal
+  , external :: ClientConfigAuthExternalDTO
+  }
   deriving (Generic, Eq, Show)
 
-data ClientConfigAuthExternalDTO =
-  ClientConfigAuthExternalDTO
-    { _clientConfigAuthExternalDTOServices :: [ClientConfigAuthExternalServiceDTO]
-    }
+data ClientConfigAuthExternalDTO = ClientConfigAuthExternalDTO
+  { services :: [ClientConfigAuthExternalServiceDTO]
+  }
   deriving (Generic, Eq, Show)
 
-data ClientConfigAuthExternalServiceDTO =
-  ClientConfigAuthExternalServiceDTO
-    { _clientConfigAuthExternalServiceDTOAId :: String
-    , _clientConfigAuthExternalServiceDTOName :: String
-    , _clientConfigAuthExternalServiceDTOUrl :: String
-    , _clientConfigAuthExternalServiceDTOStyle :: Maybe AppConfigAuthExternalServiceStyle
-    }
+data ClientConfigAuthExternalServiceDTO = ClientConfigAuthExternalServiceDTO
+  { aId :: String
+  , name :: String
+  , url :: String
+  , style :: Maybe AppConfigAuthExternalServiceStyle
+  }
   deriving (Generic, Eq, Show)
 
-data ClientConfigRegistryDTO =
-  ClientConfigRegistryDTO
-    { _clientConfigRegistryDTOEnabled :: Bool
-    , _clientConfigRegistryDTOUrl :: String
-    }
+data ClientConfigRegistryDTO = ClientConfigRegistryDTO
+  { enabled :: Bool
+  , url :: String
+  }
   deriving (Show, Eq, Generic)
 
-data ClientConfigQuestionnaireDTO =
-  ClientConfigQuestionnaireDTO
-    { _clientConfigQuestionnaireDTOQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
-    , _clientConfigQuestionnaireDTOQuestionnaireSharing :: AppConfigQuestionnaireSharing
-    , _clientConfigQuestionnaireDTOQuestionnaireCreation :: QuestionnaireCreation
-    , _clientConfigQuestionnaireDTOProjectTagging :: SimpleFeature
-    , _clientConfigQuestionnaireDTOSummaryReport :: SimpleFeature
-    , _clientConfigQuestionnaireDTOFeedback :: SimpleFeature
-    }
+data ClientConfigQuestionnaireDTO = ClientConfigQuestionnaireDTO
+  { questionnaireVisibility :: AppConfigQuestionnaireVisibility
+  , questionnaireSharing :: AppConfigQuestionnaireSharing
+  , questionnaireCreation :: QuestionnaireCreation
+  , projectTagging :: SimpleFeature
+  , summaryReport :: SimpleFeature
+  , feedback :: SimpleFeature
+  }
   deriving (Generic, Eq, Show)
 
-data ClientConfigCloudDTO =
-  ClientConfigCloudDTO
-    { _clientConfigCloudDTOEnabled :: Bool
-    , _clientConfigCloudDTOServerUrl :: String
-    }
+data ClientConfigCloudDTO = ClientConfigCloudDTO
+  { enabled :: Bool
+  , serverUrl :: String
+  }
   deriving (Generic, Eq, Show)
+
+data ClientConfigLocaleDTO = ClientConfigLocaleDTO
+  { name :: String
+  , code :: String
+  , defaultLocale :: Bool
+  }
+  deriving (Show, Eq, Generic)

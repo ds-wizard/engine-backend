@@ -1,15 +1,15 @@
-module Wizard.Worker.Cron.Branch.SquashBranchEventsWorker
-  ( squashBranchEventsWorker
-  ) where
+module Wizard.Worker.Cron.Branch.SquashBranchEventsWorker (
+  squashBranchEventsWorker,
+) where
 
-import Control.Lens ((^.))
 import Control.Monad (when)
 import Control.Monad.Reader (liftIO)
 import qualified Data.Text as T
-import Prelude hiding (log)
 import System.Cron hiding (cron)
+import Prelude hiding (log)
 
-import LensesConfig
+import Shared.Model.Config.ServerConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Branch.Event.BranchEventService hiding (squash)
 import Wizard.Util.Context
@@ -18,14 +18,14 @@ import Wizard.Util.Logger
 squashBranchEventsWorker :: (MonadSchedule m, Applicative m) => BaseContext -> m ()
 squashBranchEventsWorker context =
   when
-    (context ^. serverConfig . branch . squash . enabled)
-    (addJob (job context) (T.pack $ context ^. serverConfig . branch . squash . cron))
+    (context.serverConfig.branch.squash.enabled)
+    (addJob (job context) (T.pack context.serverConfig.branch.squash.cron))
 
 -- -----------------------------------------------------------------------------
 -- -----------------------------------------------------------------------------
 job :: BaseContext -> IO ()
 job context =
-  let loggingLevel = context ^. serverConfig . logging . level
+  let loggingLevel = context.serverConfig.logging.level
    in runLogging loggingLevel $ do
         log "starting"
         liftIO $ runAppContextWithBaseContext squashEvents context

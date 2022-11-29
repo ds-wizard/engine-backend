@@ -1,11 +1,9 @@
 module Wizard.Service.Report.Evaluator.Metric where
 
-import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe (mapMaybe)
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
@@ -21,15 +19,17 @@ computeMetrics km replies mCh =
 computeMetric :: KnowledgeModel -> [ReplyTuple] -> Maybe Chapter -> Metric -> MetricSummary
 computeMetric km replies mCh m =
   MetricSummary
-    {_metricSummaryMetricUuid = m ^. uuid, _metricSummaryMeasure = weightAverage' . mapMetric . filterMetric $ measures}
+    { metricUuid = m.uuid
+    , measure = weightAverage' . mapMetric . filterMetric $ measures
+    }
   where
     weightAverage' :: [(Double, Double)] -> Maybe Double
     weightAverage' [] = Nothing
     weightAverage' xs = Just . weightAverage $ xs
     mapMetric :: [MetricMeasure] -> [(Double, Double)]
-    mapMetric = fmap (\mm -> (mm ^. measure, mm ^. weight))
+    mapMetric = fmap (\mm -> (mm.measure, mm.weight))
     filterMetric :: [MetricMeasure] -> [MetricMeasure]
-    filterMetric = filter (\mm -> mm ^. metricUuid == m ^. uuid)
+    filterMetric = filter (\mm -> mm.metricUuid == m.uuid)
     measures :: [MetricMeasure]
     measures =
       case mCh of
@@ -41,19 +41,19 @@ computeMetric km replies mCh m =
 -- --------------------------------
 filterEmptyMetricSummary :: MetricSummary -> Maybe MetricSummary
 filterEmptyMetricSummary ms =
-  case ms ^. measure of
+  case ms.measure of
     Just msMeasure -> Just ms
     Nothing -> Nothing
 
 evaluateChapter :: KnowledgeModel -> [ReplyTuple] -> Chapter -> [MetricMeasure]
 evaluateChapter km replies ch =
-  let currentPath = U.toString $ ch ^. uuid
-      qs = getQuestionsForChapterUuid km (ch ^. uuid)
+  let currentPath = U.toString $ ch.uuid
+      qs = getQuestionsForChapterUuid km ch.uuid
    in concatMap (evaluateQuestion km replies currentPath) qs
 
 evaluateQuestion :: KnowledgeModel -> [ReplyTuple] -> String -> Question -> [MetricMeasure]
 evaluateQuestion km replies path q' =
-  let currentPath = composePathUuid path $ q' ^. uuid'
+  let currentPath = composePathUuid path $ getUuid q'
    in case getReply replies currentPath of
         Just reply -> children currentPath
         Nothing -> []
@@ -69,22 +69,22 @@ evaluateQuestion km replies path q' =
 evaluateOptionsQuestion :: OptionsQuestion -> KnowledgeModel -> [ReplyTuple] -> String -> [MetricMeasure]
 evaluateOptionsQuestion q km replies path =
   case getReply replies path of
-    Just (_, Reply {_replyValue = AnswerReply {..}}) ->
-      case M.lookup _answerReplyValue (km ^. answersM) of
+    Just (_, Reply {value = AnswerReply {..}}) ->
+      case M.lookup aValue (getAnswersM km) of
         Just answer ->
-          let currentMeasures = answer ^. metricMeasures
-              currentPath = composePathUuid path _answerReplyValue
-              qs = getQuestionsForAnswerUuid km _answerReplyValue
+          let currentMeasures = answer.metricMeasures
+              currentPath = composePathUuid path aValue
+              qs = getQuestionsForAnswerUuid km aValue
            in currentMeasures ++ concatMap (evaluateQuestion km replies currentPath) qs
         Nothing -> []
     _ -> []
 
 evaluateListQuestion :: KnowledgeModel -> [ReplyTuple] -> String -> ListQuestion -> [MetricMeasure]
 evaluateListQuestion km replies currentPath q =
-  let itemQs = getItemTemplateQuestionsForQuestionUuid km $ q ^. uuid
+  let itemQs = getItemTemplateQuestionsForQuestionUuid km $ q.uuid
       items =
         case getReply replies currentPath of
-          Just (_, Reply {_replyValue = ItemListReply {..}}) -> _itemListReplyValue
+          Just (_, Reply {value = ItemListReply {..}}) -> ilValue
           _ -> []
       evaluateQuestion' item =
         concatMap (evaluateQuestion km replies (composePath currentPath $ U.toString item)) itemQs

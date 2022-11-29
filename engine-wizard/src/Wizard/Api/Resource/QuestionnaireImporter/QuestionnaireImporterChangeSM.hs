@@ -9,4 +9,4 @@ import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.Question
 import Wizard.Service.QuestionnaireImporter.QuestionnaireImporterMapper
 
 instance ToSchema QuestionnaireImporterChangeDTO where
-  declareNamedSchema = simpleToSchema (toChangeDTO questionnaireImporterBio1)
+  declareNamedSchema = toSwagger (toChangeDTO questionnaireImporterBio1)

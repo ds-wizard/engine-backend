@@ -1,7 +1,7 @@
-module Shared.Util.Reflection
-  ( constructorName
-  , HasConstructor
-  ) where
+module Shared.Util.Reflection (
+  constructorName,
+  HasConstructor,
+) where
 
 import GHC.Generics
 

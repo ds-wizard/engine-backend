@@ -8,4 +8,5 @@ import Wizard.Specs.API.Questionnaire.ProjectTag.List_Suggestions_GET
 
 questionnaireProjectTagAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "QUESTIONNAIRE PROJECT TAG API Spec" $ do list_suggestions_GET appContext
+    describe "QUESTIONNAIRE PROJECT TAG API Spec" $
+      do list_suggestions_GET appContext

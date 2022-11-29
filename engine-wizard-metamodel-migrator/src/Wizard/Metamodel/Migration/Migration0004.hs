@@ -1,6 +1,6 @@
-module Wizard.Metamodel.Migration.Migration0004
-  ( migrateEventValue
-  ) where
+module Wizard.Metamodel.Migration.Migration0004 (
+  migrateEventValue,
+) where
 
 import Data.Aeson
 

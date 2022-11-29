@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-20.04
     
     env:
-      HLINT_VERSION: '3.3.4'
+      HLINT_VERSION: '3.5'
 
     steps:
 # (1) -> Init
@@ -39,19 +39,23 @@ jobs:
 # (4) -> Run hlint
     - name: Run hlint
       run: |
-        hlint --git
+        hlint engine-shared
+        hlint engine-registry
+        hlint engine-wizard
+        hlint engine-wizard-metamodel-migrator
 
-  hindent:
+  fourmolu:
     runs-on: ubuntu-20.04
-    
+
     env:
-      HINDENT_VERSION: '5.3.2'
+      FOURMOLU_VERSION: '0.8.2.0'
+      HPACK_VERSION: '0.34.2'
 
     steps:
 # (1) -> Init
     - name: Checkout git repository
       uses: actions/checkout@v3
-    
+
     - name: Prepare ~/.local/bin
       run: |
         mkdir -p ~/.local/bin
@@ -63,18 +67,45 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.local/bin
-        key: local-bin-${{ env.HINDENT_VERSION }}
+        key: local-bin-${{ env.FOURMOLU_VERSION }}-${{ env.HPACK_VERSION }}
 
-# (3) -> Prepare and install hindent (via stack)   
-    - name: Setup hindent
+# (3) -> Prepare and install dependencies
+    - name: Setup hpack && fourmolu
       if: steps.cache-local-bin.outputs.cache-hit != 'true'
       run: |
-        curl -o ~/.local/bin/hindent -L https://github.com/MarekSuchanek/hindent-ga-dist/releases/download/v$HINDENT_VERSION-ga-ubuntu20/hindent
-        chmod +x ~/.local/bin/hindent
-        hindent --version
+        curl -L $HPACK_URL --output hpack.gz 
+        gzip -d hpack.gz
+        chmod +x hpack
+        cp ./hpack ~/.local/bin/hpack
         
-# (4) -> Run hindent
-    - name: Run hindent (engine-shared)
+        curl -L $FOURMOLU_URL --output fourmolu
+        chmod +x fourmolu
+        cp ./fourmolu ~/.local/bin/fourmolu
+      env:
+        HPACK_URL: https://github.com/sol/hpack/releases/download/${{ env.HPACK_VERSION}}/hpack_linux.gz
+        FOURMOLU_URL: https://github.com/fourmolu/fourmolu/releases/download/v${{ env.FOURMOLU_VERSION }}/fourmolu-${{ env.FOURMOLU_VERSION }}-linux-x86_64
+
+# (4) -> Generate cabal files
+    - name: Generate cabal files
+      run: |
+        cd engine-shared
+        hpack --force
+        cd ..
+
+        cd engine-registry
+        hpack --force
+        cd ..
+
+        cd engine-wizard
+        hpack --force
+        cd ..
+
+        cd engine-wizard-metamodel-migrator
+        hpack --force
+        cd ..
+
+# (5) -> Run fourmolu
+    - name: Run fourmolu
       run: |
         FILES=$(find \
           engine-shared/src engine-shared/test \
@@ -85,7 +116,8 @@ jobs:
         )
         RET=0
         for FILE in $FILES; do
-          if ! hindent --validate $FILE; then
+          if ! fourmolu --mode check $FILE; then
+            echo "Unformatted file: " . $FILE
             RET=1
           fi
         done

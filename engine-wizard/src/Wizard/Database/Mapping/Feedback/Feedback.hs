@@ -9,26 +9,26 @@ import Wizard.Model.Feedback.Feedback
 
 instance ToRow Feedback where
   toRow Feedback {..} =
-    [ toField _feedbackUuid
-    , toField _feedbackIssueId
-    , toField _feedbackQuestionUuid
-    , toField _feedbackPackageId
-    , toField _feedbackTitle
-    , toField _feedbackContent
-    , toField _feedbackCreatedAt
-    , toField _feedbackUpdatedAt
-    , toField _feedbackAppUuid
+    [ toField uuid
+    , toField issueId
+    , toField questionUuid
+    , toField packageId
+    , toField title
+    , toField content
+    , toField createdAt
+    , toField updatedAt
+    , toField appUuid
     ]
 
 instance FromRow Feedback where
   fromRow = do
-    _feedbackUuid <- field
-    _feedbackIssueId <- field
-    _feedbackQuestionUuid <- field
-    _feedbackPackageId <- field
-    _feedbackTitle <- field
-    _feedbackContent <- field
-    _feedbackCreatedAt <- field
-    _feedbackUpdatedAt <- field
-    _feedbackAppUuid <- field
+    uuid <- field
+    issueId <- field
+    questionUuid <- field
+    packageId <- field
+    title <- field
+    content <- field
+    createdAt <- field
+    updatedAt <- field
+    appUuid <- field
     return $ Feedback {..}

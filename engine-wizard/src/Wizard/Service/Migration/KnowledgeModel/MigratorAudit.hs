@@ -1,11 +1,9 @@
 module Wizard.Service.Migration.KnowledgeModel.MigratorAudit where
 
-import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe
 import qualified Data.UUID as U
 
-import LensesConfig
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Model.Branch.Branch
@@ -17,9 +15,10 @@ auditKmMigrationCreate reqDto branch =
   logAuditWithBody
     "knowledge_model.migration"
     "create"
-    (U.toString $ branch ^. uuid)
-    (M.fromList
-       [("sourcePackageId", fromMaybe "" $ branch ^. previousPackageId), ("targetPackageId", reqDto ^. targetPackageId)])
+    (U.toString $ branch.uuid)
+    ( M.fromList
+        [("sourcePackageId", fromMaybe "" $ branch.previousPackageId), ("targetPackageId", reqDto.targetPackageId)]
+    )
 
 auditKmMigrationSolve :: String -> MigratorConflictDTO -> AppContextM ()
 auditKmMigrationSolve branchUuid reqDto =
@@ -27,7 +26,7 @@ auditKmMigrationSolve branchUuid reqDto =
     "knowledge_model.migration"
     "solve"
     branchUuid
-    (M.fromList [("originalEventUuid", U.toString $ reqDto ^. originalEventUuid), ("action", show $ reqDto ^. action)])
+    (M.fromList [("originalEventUuid", U.toString $ reqDto.originalEventUuid), ("action", show reqDto.action)])
 
 auditKmMigrationApplyAll :: String -> AppContextM ()
 auditKmMigrationApplyAll = logAudit "knowledge_model.migration" "applyAll"

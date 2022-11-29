@@ -5,28 +5,25 @@ import GHC.Generics
 
 import Shared.Api.Resource.Template.TemplateFormatDTO
 
-data TemplateDTO =
-  TemplateDTO
-    { _templateDTOTId :: String
-    , _templateDTOName :: String
-    , _templateDTOVersion :: String
-    , _templateDTODescription :: String
-    , _templateDTOFormats :: [TemplateFormatDTO]
-    }
+data TemplateDTO = TemplateDTO
+  { tId :: String
+  , name :: String
+  , version :: String
+  , description :: String
+  , formats :: [TemplateFormatDTO]
+  }
   deriving (Show, Eq, Generic)
 
-data TemplateFileDTO =
-  TemplateFileDTO
-    { _templateFileDTOUuid :: U.UUID
-    , _templateFileDTOFileName :: String
-    , _templateFileDTOContent :: String
-    }
+data TemplateFileDTO = TemplateFileDTO
+  { uuid :: U.UUID
+  , fileName :: String
+  , content :: String
+  }
   deriving (Show, Eq, Generic)
 
-data TemplateAssetDTO =
-  TemplateAssetDTO
-    { _templateAssetDTOUuid :: U.UUID
-    , _templateAssetDTOFileName :: String
-    , _templateAssetDTOContentType :: String
-    }
+data TemplateAssetDTO = TemplateAssetDTO
+  { uuid :: U.UUID
+  , fileName :: String
+  , contentType :: String
+  }
   deriving (Show, Eq, Generic)

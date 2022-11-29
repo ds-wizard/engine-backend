@@ -2,26 +2,26 @@ module Wizard.Api.Resource.Dev.DevJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Model.Dev.Dev
 
 instance FromJSON DevSection where
-  parseJSON = simpleParseJSON "_devSection"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON DevSection where
-  toJSON = simpleToJSON "_devSection"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON DevOperation where
-  parseJSON = simpleParseJSON "_devOperation"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON DevOperation where
-  toJSON = simpleToJSON "_devOperation"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON DevOperationParameter where
-  parseJSON = simpleParseJSON "_devOperationParameter"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON DevOperationParameter where
-  toJSON = simpleToJSON "_devOperationParameter"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON DevOperationParameterType
 

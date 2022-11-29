@@ -1,56 +1,101 @@
 module Wizard.Service.KnowledgeModel.Compilator.Modifier.Move where
 
-import Control.Lens (Lens', (&), (.~), (^.))
-import qualified Data.UUID as U
-
-import LensesConfig
 import Shared.Model.Event.EventLenses
 import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Shared.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance EditEntity MoveQuestionEvent Chapter where
-  editEntity = moveEntity uuid questionUuids
+  editEntity event = addReferenceToNewParent . deleteReferenceFromOldParent
+    where
+      deleteReferenceFromOldParent entity =
+        if event.parentUuid == entity.uuid
+          then entity {questionUuids = filter (event.entityUuid /=) entity.questionUuids}
+          else entity
+      addReferenceToNewParent entity =
+        if event.targetUuid == entity.uuid
+          then entity {questionUuids = entity.questionUuids ++ [event.entityUuid]}
+          else entity
 
+-- -------------------------------------------------------------------------------------------------------------
 instance EditEntity MoveQuestionEvent Question where
-  editEntity = moveEntity uuid' itemTemplateQuestionUuids'
+  editEntity event = addReferenceToNewParent . deleteReferenceFromOldParent
+    where
+      deleteReferenceFromOldParent entity =
+        if event.parentUuid == getUuid entity
+          then setItemTemplateQuestionUuids entity (filter (event.entityUuid /=) $ getItemTemplateQuestionUuids entity)
+          else entity
+      addReferenceToNewParent entity =
+        if event.targetUuid == getUuid entity
+          then setItemTemplateQuestionUuids entity (getItemTemplateQuestionUuids entity ++ [event.entityUuid])
+          else entity
 
+-- -------------------------------------------------------------------------------------------------------------
 instance EditEntity MoveQuestionEvent Answer where
-  editEntity = moveEntity uuid' followUpUuids
+  editEntity event = addReferenceToNewParent . deleteReferenceFromOldParent
+    where
+      deleteReferenceFromOldParent entity =
+        if event.parentUuid == entity.uuid
+          then entity {followUpUuids = filter (event.entityUuid /=) entity.followUpUuids}
+          else entity
+      addReferenceToNewParent entity =
+        if event.targetUuid == entity.uuid
+          then entity {followUpUuids = entity.followUpUuids ++ [event.entityUuid]}
+          else entity
 
+-- -------------------------------------------------------------------------------------------------------------
 -- -------------------------------------------------------------------------------------------------------------
 instance EditEntity MoveAnswerEvent Question where
-  editEntity = moveEntity uuid' answerUuids'
+  editEntity event = addReferenceToNewParent . deleteReferenceFromOldParent
+    where
+      deleteReferenceFromOldParent entity =
+        if event.parentUuid == getUuid entity
+          then setAnswerUuids entity (filter (event.entityUuid /=) $ getAnswerUuids entity)
+          else entity
+      addReferenceToNewParent entity =
+        if event.targetUuid == getUuid entity
+          then setAnswerUuids entity (getAnswerUuids entity ++ [event.entityUuid])
+          else entity
 
+-- -------------------------------------------------------------------------------------------------------------
 -- -------------------------------------------------------------------------------------------------------------
 instance EditEntity MoveChoiceEvent Question where
-  editEntity = moveEntity uuid' choiceUuids'
+  editEntity event = addReferenceToNewParent . deleteReferenceFromOldParent
+    where
+      deleteReferenceFromOldParent entity =
+        if event.parentUuid == getUuid entity
+          then setChoiceUuids entity (filter (event.entityUuid /=) $ getChoiceUuids entity)
+          else entity
+      addReferenceToNewParent entity =
+        if event.targetUuid == getUuid entity
+          then setChoiceUuids entity (getChoiceUuids entity ++ [event.entityUuid])
+          else entity
 
+-- -------------------------------------------------------------------------------------------------------------
 -- -------------------------------------------------------------------------------------------------------------
 instance EditEntity MoveExpertEvent Question where
-  editEntity = moveEntity uuid' expertUuids'
+  editEntity event = addReferenceToNewParent . deleteReferenceFromOldParent
+    where
+      deleteReferenceFromOldParent entity =
+        if event.parentUuid == getUuid entity
+          then setExpertUuids entity (filter (event.entityUuid /=) $ getExpertUuids entity)
+          else entity
+      addReferenceToNewParent entity =
+        if event.targetUuid == getUuid entity
+          then setExpertUuids entity (getExpertUuids entity ++ [event.entityUuid])
+          else entity
 
+-- -------------------------------------------------------------------------------------------------------------
 -- -------------------------------------------------------------------------------------------------------------
 instance EditEntity MoveReferenceEvent Question where
-  editEntity = moveEntity uuid' referenceUuids'
-
--- -------------------------------------------------------------------------------------------------------------
--- -------------------------------------------------------------------------------------------------------------
-moveEntity ::
-     (HasParentUuid' event, HasEntityUuid' event, HasTargetUuid event U.UUID)
-  => Lens' entity U.UUID
-  -> Lens' entity [U.UUID]
-  -> event
-  -> entity
-  -> entity
-moveEntity entityUuid parentUuidList event = addReferenceToNewParent . deleteReferenceFromOldParent
-  where
-    deleteReferenceFromOldParent entity =
-      if event ^. parentUuid' == entity ^. entityUuid
-        then entity & parentUuidList .~ filter (event ^. entityUuid' /=) (entity ^. parentUuidList)
-        else entity
-    addReferenceToNewParent entity =
-      if event ^. targetUuid == entity ^. entityUuid
-        then entity & parentUuidList .~ ((entity ^. parentUuidList) ++ [event ^. entityUuid'])
-        else entity
+  editEntity event = addReferenceToNewParent . deleteReferenceFromOldParent
+    where
+      deleteReferenceFromOldParent entity =
+        if event.parentUuid == getUuid entity
+          then setReferenceUuids entity (filter (event.entityUuid /=) $ getReferenceUuids entity)
+          else entity
+      addReferenceToNewParent entity =
+        if event.targetUuid == getUuid entity
+          then setReferenceUuids entity (getReferenceUuids entity ++ [event.entityUuid])
+          else entity

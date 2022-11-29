@@ -8,24 +8,23 @@ import GHC.Generics
 
 import Wizard.Util.Hashable ()
 
-data QuestionnaireVersion =
-  QuestionnaireVersion
-    { _questionnaireVersionUuid :: U.UUID
-    , _questionnaireVersionName :: String
-    , _questionnaireVersionDescription :: Maybe String
-    , _questionnaireVersionEventUuid :: U.UUID
-    , _questionnaireVersionCreatedBy :: U.UUID
-    , _questionnaireVersionCreatedAt :: UTCTime
-    , _questionnaireVersionUpdatedAt :: UTCTime
-    }
+data QuestionnaireVersion = QuestionnaireVersion
+  { uuid :: U.UUID
+  , name :: String
+  , description :: Maybe String
+  , eventUuid :: U.UUID
+  , createdBy :: U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq QuestionnaireVersion where
   a == b =
-    _questionnaireVersionUuid a == _questionnaireVersionUuid b &&
-    _questionnaireVersionName a == _questionnaireVersionName b &&
-    _questionnaireVersionDescription a == _questionnaireVersionDescription b &&
-    _questionnaireVersionEventUuid a == _questionnaireVersionEventUuid b &&
-    _questionnaireVersionCreatedBy a == _questionnaireVersionCreatedBy b
+    a.uuid == b.uuid
+      && a.name == b.name
+      && a.description == b.description
+      && a.eventUuid == b.eventUuid
+      && a.createdBy == b.createdBy
 
 instance Hashable QuestionnaireVersion

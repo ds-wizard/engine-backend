@@ -10,22 +10,22 @@ import Wizard.Model.Prefab.Prefab
 
 instance ToRow Prefab where
   toRow Prefab {..} =
-    [ toField _prefabUuid
-    , toField _prefabPType
-    , toField _prefabName
-    , toJSONField _prefabContent
-    , toField _prefabAppUuid
-    , toField _prefabCreatedAt
-    , toField _prefabUpdatedAt
+    [ toField uuid
+    , toField pType
+    , toField name
+    , toJSONField content
+    , toField appUuid
+    , toField createdAt
+    , toField updatedAt
     ]
 
 instance FromRow Prefab where
   fromRow = do
-    _prefabUuid <- field
-    _prefabPType <- field
-    _prefabName <- field
-    _prefabContent <- fieldWith fromJSONField
-    _prefabAppUuid <- field
-    _prefabCreatedAt <- field
-    _prefabUpdatedAt <- field
+    uuid <- field
+    pType <- field
+    name <- field
+    content <- fieldWith fromJSONField
+    appUuid <- field
+    createdAt <- field
+    updatedAt <- field
     return $ Prefab {..}

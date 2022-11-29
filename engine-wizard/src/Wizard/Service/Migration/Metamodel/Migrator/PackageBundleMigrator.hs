@@ -1,6 +1,6 @@
-module Wizard.Service.Migration.Metamodel.Migrator.PackageBundleMigrator
-  ( migrate
-  ) where
+module Wizard.Service.Migration.Metamodel.Migrator.PackageBundleMigrator (
+  migrate,
+) where
 
 import Data.Aeson
 import qualified Data.Aeson.KeyMap as KM

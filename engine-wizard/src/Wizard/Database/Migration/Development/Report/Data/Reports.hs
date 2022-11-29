@@ -1,132 +1,141 @@
 module Wizard.Database.Migration.Development.Report.Data.Reports where
 
-import Control.Lens ((^.))
 import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics
+import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Model.Report.Report
 
 report1 :: Report
 report1 =
   Report
-    { _reportUuid = fromJust (U.fromString "921bcb7e-e15f-49e4-b176-dbbe2f573af0")
-    , _reportTotalReport = report1_total
-    , _reportChapterReports = [report1_ch1, report1_ch2, report1_ch3]
-    , _reportCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , _reportUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    { uuid = fromJust (U.fromString "921bcb7e-e15f-49e4-b176-dbbe2f573af0")
+    , totalReport = report1_total
+    , chapterReports = [report1_ch1, report1_ch2, report1_ch3]
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
 
 report1_total :: TotalReport
 report1_total =
   TotalReport
-    { _totalReportIndications =
+    { indications =
         [ PhasesAnsweredIndication' $
-          PhasesAnsweredIndication
-            {_phasesAnsweredIndicationAnsweredQuestions = 3, _phasesAnsweredIndicationUnansweredQuestions = 1}
+            PhasesAnsweredIndication
+              { answeredQuestions = 3
+              , unansweredQuestions = 1
+              }
         , AnsweredIndication' $
-          AnsweredIndication {_answeredIndicationAnsweredQuestions = 13, _answeredIndicationUnansweredQuestions = 2}
+            AnsweredIndication {answeredQuestions = 13, unansweredQuestions = 2}
         ]
-    , _totalReportMetrics =
-        [ MetricSummary {_metricSummaryMetricUuid = metricF ^. uuid, _metricSummaryMeasure = Just 1.0}
-        , MetricSummary {_metricSummaryMetricUuid = metricA ^. uuid, _metricSummaryMeasure = Just 1.0}
-        , MetricSummary {_metricSummaryMetricUuid = metricI ^. uuid, _metricSummaryMeasure = Just 1.0}
-        , MetricSummary {_metricSummaryMetricUuid = metricR ^. uuid, _metricSummaryMeasure = Just 1.0}
+    , metrics =
+        [ MetricSummary {metricUuid = metricF.uuid, measure = Just 1.0}
+        , MetricSummary {metricUuid = metricA.uuid, measure = Just 1.0}
+        , MetricSummary {metricUuid = metricI.uuid, measure = Just 1.0}
+        , MetricSummary {metricUuid = metricR.uuid, measure = Just 1.0}
         ]
     }
 
 report1_total_full :: TotalReport
 report1_total_full =
   TotalReport
-    { _totalReportIndications =
+    { indications =
         [ PhasesAnsweredIndication' $
-          PhasesAnsweredIndication
-            {_phasesAnsweredIndicationAnsweredQuestions = 3, _phasesAnsweredIndicationUnansweredQuestions = 1}
+            PhasesAnsweredIndication
+              { answeredQuestions = 3
+              , unansweredQuestions = 1
+              }
         , AnsweredIndication' $
-          AnsweredIndication {_answeredIndicationAnsweredQuestions = 13, _answeredIndicationUnansweredQuestions = 2}
+            AnsweredIndication {answeredQuestions = 13, unansweredQuestions = 2}
         ]
-    , _totalReportMetrics =
-        [ MetricSummary {_metricSummaryMetricUuid = metricF ^. uuid, _metricSummaryMeasure = Just 1.0}
-        , MetricSummary {_metricSummaryMetricUuid = metricA ^. uuid, _metricSummaryMeasure = Just 1.0}
-        , MetricSummary {_metricSummaryMetricUuid = metricI ^. uuid, _metricSummaryMeasure = Just 1.0}
-        , MetricSummary {_metricSummaryMetricUuid = metricR ^. uuid, _metricSummaryMeasure = Just 1.0}
+    , metrics =
+        [ MetricSummary {metricUuid = metricF.uuid, measure = Just 1.0}
+        , MetricSummary {metricUuid = metricA.uuid, measure = Just 1.0}
+        , MetricSummary {metricUuid = metricI.uuid, measure = Just 1.0}
+        , MetricSummary {metricUuid = metricR.uuid, measure = Just 1.0}
         ]
     }
 
 report1_ch1 :: ChapterReport
 report1_ch1 =
   ChapterReport
-    { _chapterReportChapterUuid = chapter1 ^. uuid
-    , _chapterReportIndications =
+    { chapterUuid = chapter1.uuid
+    , indications =
         [ PhasesAnsweredIndication' $
-          PhasesAnsweredIndication
-            {_phasesAnsweredIndicationAnsweredQuestions = 1, _phasesAnsweredIndicationUnansweredQuestions = 0}
+            PhasesAnsweredIndication
+              { answeredQuestions = 1
+              , unansweredQuestions = 0
+              }
         , AnsweredIndication' $
-          AnsweredIndication {_answeredIndicationAnsweredQuestions = 3, _answeredIndicationUnansweredQuestions = 0}
+            AnsweredIndication {answeredQuestions = 3, unansweredQuestions = 0}
         ]
-    , _chapterReportMetrics =
-        [ MetricSummary {_metricSummaryMetricUuid = metricI ^. uuid, _metricSummaryMeasure = Just 1.0}
-        , MetricSummary {_metricSummaryMetricUuid = metricR ^. uuid, _metricSummaryMeasure = Just 1.0}
+    , metrics =
+        [ MetricSummary {metricUuid = metricI.uuid, measure = Just 1.0}
+        , MetricSummary {metricUuid = metricR.uuid, measure = Just 1.0}
         ]
     }
 
 report1_ch1_full :: ChapterReport
 report1_ch1_full =
   ChapterReport
-    { _chapterReportChapterUuid = report1_ch1 ^. chapterUuid
-    , _chapterReportIndications = report1_ch1 ^. indications
-    , _chapterReportMetrics = report1_ch1 ^. metrics
+    { chapterUuid = report1_ch1.chapterUuid
+    , indications = report1_ch1.indications
+    , metrics = report1_ch1.metrics
     }
 
 report1_ch2 :: ChapterReport
 report1_ch2 =
   ChapterReport
-    { _chapterReportChapterUuid = chapter2 ^. uuid
-    , _chapterReportIndications =
+    { chapterUuid = chapter2.uuid
+    , indications =
         [ PhasesAnsweredIndication' $
-          PhasesAnsweredIndication
-            {_phasesAnsweredIndicationAnsweredQuestions = 1, _phasesAnsweredIndicationUnansweredQuestions = 1}
+            PhasesAnsweredIndication
+              { answeredQuestions = 1
+              , unansweredQuestions = 1
+              }
         , AnsweredIndication' $
-          AnsweredIndication {_answeredIndicationAnsweredQuestions = 7, _answeredIndicationUnansweredQuestions = 1}
+            AnsweredIndication {answeredQuestions = 7, unansweredQuestions = 1}
         ]
-    , _chapterReportMetrics =
-        [ MetricSummary {_metricSummaryMetricUuid = metricF ^. uuid, _metricSummaryMeasure = Just 1.0}
-        , MetricSummary {_metricSummaryMetricUuid = metricA ^. uuid, _metricSummaryMeasure = Just 1.0}
+    , metrics =
+        [ MetricSummary {metricUuid = metricF.uuid, measure = Just 1.0}
+        , MetricSummary {metricUuid = metricA.uuid, measure = Just 1.0}
         ]
     }
 
 report1_ch2_full :: ChapterReport
 report1_ch2_full =
   ChapterReport
-    { _chapterReportChapterUuid = report1_ch2 ^. chapterUuid
-    , _chapterReportIndications = report1_ch2 ^. indications
-    , _chapterReportMetrics = report1_ch2 ^. metrics
+    { chapterUuid = report1_ch2.chapterUuid
+    , indications = report1_ch2.indications
+    , metrics = report1_ch2.metrics
     }
 
 report1_ch3 :: ChapterReport
 report1_ch3 =
   ChapterReport
-    { _chapterReportChapterUuid = chapter3 ^. uuid
-    , _chapterReportIndications =
+    { chapterUuid = chapter3.uuid
+    , indications =
         [ PhasesAnsweredIndication' $
-          PhasesAnsweredIndication
-            {_phasesAnsweredIndicationAnsweredQuestions = 1, _phasesAnsweredIndicationUnansweredQuestions = 0}
+            PhasesAnsweredIndication
+              { answeredQuestions = 1
+              , unansweredQuestions = 0
+              }
         , AnsweredIndication' $
-          AnsweredIndication {_answeredIndicationAnsweredQuestions = 3, _answeredIndicationUnansweredQuestions = 1}
+            AnsweredIndication {answeredQuestions = 3, unansweredQuestions = 1}
         ]
-    , _chapterReportMetrics = []
+    , metrics = []
     }
 
 report1_ch3_full :: ChapterReport
 report1_ch3_full =
   ChapterReport
-    { _chapterReportChapterUuid = report1_ch3 ^. chapterUuid
-    , _chapterReportIndications = report1_ch3 ^. indications
-    , _chapterReportMetrics = []
+    { chapterUuid = report1_ch3.chapterUuid
+    , indications = report1_ch3.indications
+    , metrics = []
     }
 
 -- ------------------------------------------------------------------------
@@ -134,12 +143,14 @@ report1_ch3_full =
 questionnaireReport :: QuestionnaireReportDTO
 questionnaireReport =
   QuestionnaireReportDTO
-    { _questionnaireReportDTOIndications =
+    { indications =
         [ PhasesAnsweredIndication' $
-          PhasesAnsweredIndication
-            {_phasesAnsweredIndicationAnsweredQuestions = 3, _phasesAnsweredIndicationUnansweredQuestions = 1}
+            PhasesAnsweredIndication
+              { answeredQuestions = 3
+              , unansweredQuestions = 1
+              }
         , AnsweredIndication' $
-          AnsweredIndication {_answeredIndicationAnsweredQuestions = 13, _answeredIndicationUnansweredQuestions = 2}
+            AnsweredIndication {answeredQuestions = 13, unansweredQuestions = 2}
         ]
     }
 
@@ -148,4 +159,6 @@ questionnaireReport =
 samplePhasesAnsweredIndication :: PhasesAnsweredIndication
 samplePhasesAnsweredIndication =
   PhasesAnsweredIndication
-    {_phasesAnsweredIndicationAnsweredQuestions = 3, _phasesAnsweredIndicationUnansweredQuestions = 1}
+    { answeredQuestions = 3
+    , unansweredQuestions = 1
+    }

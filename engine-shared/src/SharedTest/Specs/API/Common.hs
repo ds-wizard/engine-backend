@@ -1,5 +1,6 @@
 module SharedTest.Specs.API.Common where
 
+import Control.Exception (AssertionFailed (..), throw)
 import Control.Monad.IO.Class
 import Data.Aeson (FromJSON, Object, ToJSON, Value, eitherDecode, encode)
 import qualified Data.Aeson.KeyMap as KM
@@ -20,6 +21,7 @@ import Shared.Constant.App
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.List (elems)
+import Shared.Util.String (f')
 
 reqCtHeader :: Header
 reqCtHeader = contentTypeHeaderJSON
@@ -56,32 +58,32 @@ shouldRespondWith r matcher = forM_ (match r matcher) (liftIO . expectationFailu
 createAuthTest reqMethod reqUrl reqHeaders reqBody =
   it "HTTP 401 UNAUTHORIZED" $
     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 401
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = UnauthorizedError _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN
-    let expBody = encode expDto
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    do
+      let expStatus = 401
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = UnauthorizedError _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN
+      let expBody = encode expDto
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 createNotFoundTest reqMethod reqUrl reqHeaders reqBody entityName parameters =
   it "HTTP 404 NOT FOUND - entity doesn't exist" $
-      -- GIVEN: Prepare expectation
-   do
-    let expStatus = 404
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName parameters)
-    let expBody = encode expDto
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 404
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName parameters)
+      let expBody = encode expDto
       -- WHEN: Call APIA
-    response <- request reqMethod reqUrl reqHeaders reqBody
+      response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 createNotFoundTest' reqMethod reqUrl reqHeaders reqBody entityName parameters =
   createNotFoundTest
@@ -99,13 +101,23 @@ assertResStatus resStatus expStatus = liftIO $ resStatus `shouldBe` expStatus
 
 assertResHeaders resHeaders expHeaders = liftIO $ (expHeaders `elems` resHeaders) `shouldBe` True
 
+destructResponse :: FromJSON resDto => SResponse -> (Int, ResponseHeaders, resDto)
 destructResponse response =
   let (SResponse (Status status _) headers body) = response
       (Right resBody) = eitherDecode body
    in (status, headers, resBody)
 
-assertResponse ::
-     (ToJSON expDto, FromJSON expType)
+destructResponse' :: (FromJSON resDto, MonadIO m) => SResponse -> m (Int, ResponseHeaders, resDto)
+destructResponse' response = do
+  let (SResponse (Status status _) headers body) = response
+  case eitherDecode body of
+    Right resBody -> return (status, headers, resBody)
+    Left error -> do
+      liftIO . print $ error
+      throw . AssertionFailed $ f' "Failed to deserialize the response. Error: %s" [error]
+
+assertResponse
+  :: (ToJSON expDto, FromJSON expType)
   => Int
   -> ResponseHeaders
   -> expDto
@@ -117,8 +129,8 @@ assertResponse = createAssertResponse fieldModifier fieldModifier
   where
     fieldModifier body = fmap (\(k, v) -> (show k, v)) . KM.toList . foldl (\acc f -> KM.delete (fromString f) acc) body
 
-assertResponse' ::
-     (ToJSON expDto, FromJSON expType)
+assertResponse'
+  :: (ToJSON expDto, FromJSON expType)
   => Int
   -> ResponseHeaders
   -> expDto
@@ -131,8 +143,8 @@ assertResponse' = createAssertResponse expFieldModifier resFieldModifier
     expFieldModifier expBody = fmap (\f -> (f, fromMaybe "EXPECTED_FIELD_MISSING" $ KM.lookup (fromString f) expBody))
     resFieldModifier resBody = fmap (\f -> (f, fromMaybe "RESULT_FIELD_MISSING" $ KM.lookup (fromString f) resBody))
 
-createAssertResponse ::
-     (ToJSON expDto, FromJSON expType)
+createAssertResponse
+  :: (ToJSON expDto, FromJSON expType)
   => (Object -> [String] -> [(String, Value)])
   -> (Object -> [String] -> [(String, Value)])
   -> Int
@@ -142,32 +154,31 @@ createAssertResponse ::
   -> SResponse
   -> [String]
   -> WaiSession () ()
-createAssertResponse expFieldModifier resFiledModifier expStatus expHeaders expDto expType response fields
+createAssertResponse expFieldModifier resFiledModifier expStatus expHeaders expDto expType response fields =
   -- Prepare expectation
- = do
-  let (Right expBody) = eitherDecode . encode $ expDto :: Either String Object
-  let expEntity = expFieldModifier expBody fields
-  let expResponse = MatchResponse expStatus expHeaders expEntity
-  -- Prepare response
-  let (SResponse (Status status _) headers bodyS) = response
-  let (Right resBody) = eitherDecode bodyS :: Either String Object
-  let resHeaders = filter (`elem` expHeaders) headers
-  let resEntity = resFiledModifier resBody fields
-  let resResponse = MatchResponse status resHeaders resEntity
-  -- Compare response with expectation
-  liftIO $ expResponse `HP.shouldBe` resResponse
-  -- Check if response can be decoded to desired DTO
-  let eDecodedDto = eitherDecode bodyS
-  case eDecodedDto of
-    Right decodedDto -> do
-      let _ = expType decodedDto
-      return ()
-    Left _ -> liftIO $ expectationFailure "Response matched successfully. However, the result DTO couldn't be decoded."
+  do
+    let (Right expBody) = eitherDecode . encode $ expDto :: Either String Object
+    let expEntity = expFieldModifier expBody fields
+    let expResponse = MatchResponse expStatus expHeaders expEntity
+    -- Prepare response
+    let (SResponse (Status status _) headers bodyS) = response
+    let (Right resBody) = eitherDecode bodyS :: Either String Object
+    let resHeaders = filter (`elem` expHeaders) headers
+    let resEntity = resFiledModifier resBody fields
+    let resResponse = MatchResponse status resHeaders resEntity
+    -- Compare response with expectation
+    liftIO $ expResponse `HP.shouldBe` resResponse
+    -- Check if response can be decoded to desired DTO
+    let eDecodedDto = eitherDecode bodyS
+    case eDecodedDto of
+      Right decodedDto -> do
+        let _ = expType decodedDto
+        return ()
+      Left _ -> liftIO $ expectationFailure "Response matched successfully. However, the result DTO couldn't be decoded."
 
-data MatchResponse body =
-  MatchResponse
-    { status :: Int
-    , headers :: ResponseHeaders
-    , body :: body
-    }
+data MatchResponse body = MatchResponse
+  { status :: Int
+  , headers :: ResponseHeaders
+  , body :: body
+  }
   deriving (Show, Eq)

@@ -5,11 +5,10 @@ import GHC.Generics
 
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 
-data MigratorStateDTO =
-  MigratorStateDTO
-    { _migratorStateDTOOldQuestionnaire :: QuestionnaireDetailDTO
-    , _migratorStateDTONewQuestionnaire :: QuestionnaireDetailDTO
-    , _migratorStateDTOResolvedQuestionUuids :: [U.UUID]
-    , _migratorStateDTOAppUuid :: U.UUID
-    }
+data MigratorStateDTO = MigratorStateDTO
+  { oldQuestionnaire :: QuestionnaireDetailDTO
+  , newQuestionnaire :: QuestionnaireDetailDTO
+  , resolvedQuestionUuids :: [U.UUID]
+  , appUuid :: U.UUID
+  }
   deriving (Show, Eq, Generic)

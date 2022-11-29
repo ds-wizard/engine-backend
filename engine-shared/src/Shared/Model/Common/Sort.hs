@@ -4,8 +4,7 @@ data SortDirection
   = Ascending
   | Descending
 
-data Sort =
-  Sort
-    { _sortBy :: String
-    , _sortDirection :: SortDirection
-    }
+data Sort = Sort
+  { by :: String
+  , direction :: SortDirection
+  }

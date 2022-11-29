@@ -19,16 +19,16 @@ import Wizard.Specs.API.Questionnaire.List_POST_FromTemplate
 
 questionnaireAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "QUESTIONNAIRE API Spec" $ do
-    list_get appContext
-    list_post appContext
-    list_post_fromTemplate appContext
-    list_post_cloneUuid appContext
-    detail_get appContext
-    detail_put appContext
-    detail_delete appContext
-    detail_content_put appContext
-    detail_report_get appContext
-    detail_documents_get appContext
-    detail_revert_POST appContext
-    detail_revert_preview_POST appContext
+    describe "QUESTIONNAIRE API Spec" $ do
+      list_get appContext
+      list_post appContext
+      list_post_fromTemplate appContext
+      list_post_cloneUuid appContext
+      detail_get appContext
+      detail_put appContext
+      detail_delete appContext
+      detail_content_put appContext
+      detail_report_get appContext
+      detail_documents_get appContext
+      detail_revert_POST appContext
+      detail_revert_preview_POST appContext

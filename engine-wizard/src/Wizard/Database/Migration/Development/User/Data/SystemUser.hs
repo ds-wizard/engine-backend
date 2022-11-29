@@ -1,25 +1,24 @@
 module Wizard.Database.Migration.Development.User.Data.SystemUser where
 
-import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 
-import LensesConfig
 import Wizard.Constant.User
 import Wizard.Database.Migration.Development.App.Data.Apps
+import Wizard.Model.App.App
 import Wizard.Model.User.User
 
 userSystem :: User
 userSystem =
   User
-    { _userUuid = systemUserUuid
-    , _userFirstName = "System"
-    , _userLastName = "User"
-    , _userEmail = "system@example.com"
-    , _userAffiliation = Nothing
-    , _userSources = [_USER_SOURCE_INTERNAL]
-    , _userRole = _USER_ROLE_ADMIN
-    , _userPermissions =
+    { uuid = systemUserUuid
+    , firstName = "System"
+    , lastName = "User"
+    , email = "system@example.com"
+    , affiliation = Nothing
+    , sources = [_USER_SOURCE_INTERNAL]
+    , uRole = _USER_ROLE_ADMIN
+    , permissions =
         [ "APP_PERM"
         , "DEV_PERM"
         , "UM_PERM"
@@ -36,15 +35,16 @@ userSystem =
         , "SUBM_PERM"
         , "TML_PERM"
         , "DOC_PERM"
+        , "LOC_PERM"
         ]
-    , _userActive = True
-    , _userPasswordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
-    , _userSubmissionProps = []
-    , _userImageUrl = Nothing
-    , _userGroups = []
-    , _userMachine = True
-    , _userAppUuid = defaultApp ^. uuid
-    , _userLastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , _userCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , _userUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    , active = True
+    , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
+    , submissionProps = []
+    , imageUrl = Nothing
+    , groups = []
+    , machine = True
+    , appUuid = defaultApp.uuid
+    , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }

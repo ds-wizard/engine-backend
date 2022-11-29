@@ -7,21 +7,21 @@ import Registry.Model.Statistics.InstanceStatistics
 
 data AuditEntry
   = ListPackagesAuditEntry
-      { _listPackagesAuditEntryOrganizationId :: String
-      , _listPackagesAuditEntryInstanceStatistics :: InstanceStatistics
-      , _listPackagesAuditEntryCreatedAt :: UTCTime
+      { organizationId :: String
+      , instanceStatistics :: InstanceStatistics
+      , createdAt :: UTCTime
       }
   | GetPackageBundleAuditEntry
-      { _getPackageBundleAuditEntryOrganizationId :: String
-      , _getPackageBundleAuditEntryPackageId :: String
-      , _getPackageBundleAuditEntryCreatedAt :: UTCTime
+      { organizationId :: String
+      , packageId :: String
+      , createdAt :: UTCTime
       }
   deriving (Show, Generic)
 
 instance Eq AuditEntry where
   ae1@ListPackagesAuditEntry {} == ae2@ListPackagesAuditEntry {} =
-    _listPackagesAuditEntryOrganizationId ae1 == _listPackagesAuditEntryOrganizationId ae2 &&
-    _listPackagesAuditEntryInstanceStatistics ae1 == _listPackagesAuditEntryInstanceStatistics ae2
+    ae1.organizationId == ae2.organizationId
+      && ae1.instanceStatistics == ae2.instanceStatistics
   ae1@GetPackageBundleAuditEntry {} == ae2@GetPackageBundleAuditEntry {} =
-    _getPackageBundleAuditEntryOrganizationId ae1 == _getPackageBundleAuditEntryOrganizationId ae2 &&
-    _getPackageBundleAuditEntryPackageId ae1 == _getPackageBundleAuditEntryPackageId ae2
+    organizationId ae1 == organizationId ae2
+      && packageId ae1 == packageId ae2

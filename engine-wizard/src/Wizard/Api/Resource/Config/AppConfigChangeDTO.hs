@@ -4,17 +4,16 @@ import GHC.Generics
 
 import Wizard.Model.Config.AppConfig
 
-data AppConfigChangeDTO =
-  AppConfigChangeDTO
-    { _appConfigChangeDTOOrganization :: AppConfigOrganization
-    , _appConfigChangeDTOAuthentication :: AppConfigAuth
-    , _appConfigChangeDTOPrivacyAndSupport :: AppConfigPrivacyAndSupport
-    , _appConfigChangeDTODashboard :: AppConfigDashboard
-    , _appConfigChangeDTOLookAndFeel :: AppConfigLookAndFeel
-    , _appConfigChangeDTORegistry :: AppConfigRegistry
-    , _appConfigChangeDTOKnowledgeModel :: AppConfigKnowledgeModel
-    , _appConfigChangeDTOQuestionnaire :: AppConfigQuestionnaire
-    , _appConfigChangeDTOTemplate :: AppConfigTemplate
-    , _appConfigChangeDTOSubmission :: AppConfigSubmission
-    }
+data AppConfigChangeDTO = AppConfigChangeDTO
+  { organization :: AppConfigOrganization
+  , authentication :: AppConfigAuth
+  , privacyAndSupport :: AppConfigPrivacyAndSupport
+  , dashboard :: AppConfigDashboard
+  , lookAndFeel :: AppConfigLookAndFeel
+  , registry :: AppConfigRegistry
+  , knowledgeModel :: AppConfigKnowledgeModel
+  , questionnaire :: AppConfigQuestionnaire
+  , template :: AppConfigTemplate
+  , submission :: AppConfigSubmission
+  }
   deriving (Generic, Show)

@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0022_optimizeProjectList.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0022_optimizeProjectList.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)

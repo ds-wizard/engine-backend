@@ -2,11 +2,11 @@ module Wizard.Integration.Resource.GitHub.IssueIJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 
 instance FromJSON IssueIDTO where
-  parseJSON = simpleParseJSON "_issueIDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON IssueIDTO where
-  toJSON = simpleToJSON "_issueIDTO"
+  toJSON = genericToJSON jsonOptions

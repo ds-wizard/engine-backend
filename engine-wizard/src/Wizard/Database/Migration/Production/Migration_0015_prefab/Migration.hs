@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0015_prefab.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0015_prefab.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -53,22 +53,22 @@ addOwlToAppConfig dbPool = do
 createAppPlanTable dbPool = do
   let sql =
         "CREATE TABLE app_plan \
-         \ ( \
-         \     uuid              uuid              not null \
-         \         constraint app_plan_pk \
-         \             primary key, \
-         \     name              varchar not null, \
-         \     users             integer, \
-         \     since             timestamp with time zone not null, \
-         \     until             timestamp with time zone not null, \
-         \     test              bool not null, \
-         \     app_uuid          uuid not null, \
-         \     created_at        timestamp with time zone not null, \
-         \     updated_at        timestamp with time zone not null \
-         \ ); \
-         \  \
-         \ create unique index app_plan_uuid_uindex \
-         \     on app_plan (uuid);"
+        \ ( \
+        \     uuid              uuid              not null \
+        \         constraint app_plan_pk \
+        \             primary key, \
+        \     name              varchar not null, \
+        \     users             integer, \
+        \     since             timestamp with time zone not null, \
+        \     until             timestamp with time zone not null, \
+        \     test              bool not null, \
+        \     app_uuid          uuid not null, \
+        \     created_at        timestamp with time zone not null, \
+        \     updated_at        timestamp with time zone not null \
+        \ ); \
+        \  \
+        \ create unique index app_plan_uuid_uindex \
+        \     on app_plan (uuid);"
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing

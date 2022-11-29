@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Package.List_Suggestions_GET
-  ( list_suggestions_GET
-  ) where
+module Wizard.Specs.API.Package.List_Suggestions_GET (
+  list_suggestions_GET,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -55,23 +55,25 @@ test_200 appContext = do
     "HTTP 200 OK"
     appContext
     "/packages/suggestions?sort=organizationId,asc"
-    (Page
-       "packages"
-       (PageMetadata 20 3 1 0)
-       [ toSuggestion (toPackage globalPackage, ["0.0.1", "1.0.0"])
-       , toSuggestion (toPackage germanyPackage, ["1.0.0"])
-       , toSuggestion (toPackage netherlandsPackageV2, ["1.0.0", "2.0.0"])
-       ])
+    ( Page
+        "packages"
+        (PageMetadata 20 3 1 0)
+        [ toSuggestion (toPackage globalPackage, ["0.0.1", "1.0.0"])
+        , toSuggestion (toPackage germanyPackage, ["1.0.0"])
+        , toSuggestion (toPackage netherlandsPackageV2, ["1.0.0", "2.0.0"])
+        ]
+    )
   create_test_200
     "HTTP 200 OK (select)"
     appContext
     "/packages/suggestions?sort=organizationId,asc&select=org.de:core-de:all,org.nl:core-nl:all"
-    (Page
-       "packages"
-       (PageMetadata 20 2 1 0)
-       [ toSuggestion (toPackage germanyPackage, ["1.0.0"])
-       , toSuggestion (toPackage netherlandsPackageV2, ["1.0.0", "2.0.0"])
-       ])
+    ( Page
+        "packages"
+        (PageMetadata 20 2 1 0)
+        [ toSuggestion (toPackage germanyPackage, ["1.0.0"])
+        , toSuggestion (toPackage netherlandsPackageV2, ["1.0.0", "2.0.0"])
+        ]
+    )
   create_test_200
     "HTTP 200 OK (exclude)"
     appContext
@@ -90,22 +92,22 @@ test_200 appContext = do
 
 create_test_200 title appContext reqUrl expDto =
   it title $
-       -- GIVEN: Prepare request
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO U.runMigration appContext
-    runInContextIO PKG.runMigration appContext
-    runInContextIO TML.runMigration appContext
-    runInContextIO QTN.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare request
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO U.runMigration appContext
+      runInContextIO PKG.runMigration appContext
+      runInContextIO TML.runMigration appContext
+      runInContextIO QTN.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

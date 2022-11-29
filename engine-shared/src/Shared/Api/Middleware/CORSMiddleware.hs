@@ -1,10 +1,10 @@
-module Shared.Api.Middleware.CORSMiddleware
-  ( corsMiddleware
-  ) where
+module Shared.Api.Middleware.CORSMiddleware (
+  corsMiddleware,
+) where
 
 import Network.HTTP.Types (Header)
 import Network.Wai (Middleware)
-import Network.Wai.Internal (Response(..))
+import Network.Wai.Internal (Response (..))
 
 corsMiddleware :: Middleware
 corsMiddleware application request sendResponse = application request $ sendResponse . modifyResponse

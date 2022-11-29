@@ -4,20 +4,20 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-data UserToken =
-  UserToken
-    { _userTokenUuid :: U.UUID
-    , _userTokenUserUuid :: U.UUID
-    , _userTokenValue :: String
-    , _userTokenSessionState :: Maybe String
-    , _userTokenAppUuid :: U.UUID
-    , _userTokenCreatedAt :: UTCTime
-    }
+data UserToken = UserToken
+  { uuid :: U.UUID
+  , userUuid :: U.UUID
+  , value :: String
+  , sessionState :: Maybe String
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq UserToken where
   a == b =
-    _userTokenUuid a == _userTokenUuid b &&
-    _userTokenUserUuid a == _userTokenUserUuid b &&
-    _userTokenValue a == _userTokenValue b &&
-    _userTokenSessionState a == _userTokenSessionState b && _userTokenAppUuid a == _userTokenAppUuid b
+    uuid a == uuid b
+      && userUuid a == userUuid b
+      && value a == value b
+      && sessionState a == sessionState b
+      && appUuid a == appUuid b

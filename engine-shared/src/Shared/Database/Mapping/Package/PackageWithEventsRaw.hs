@@ -10,38 +10,38 @@ import Shared.Model.Package.PackageWithEventsRaw
 
 instance ToRow PackageWithEventsRaw where
   toRow PackageWithEventsRaw {..} =
-    [ toField _packageWithEventsRawPId
-    , toField _packageWithEventsRawName
-    , toField _packageWithEventsRawOrganizationId
-    , toField _packageWithEventsRawKmId
-    , toField _packageWithEventsRawVersion
-    , toField _packageWithEventsRawMetamodelVersion
-    , toField _packageWithEventsRawDescription
-    , toField _packageWithEventsRawReadme
-    , toField _packageWithEventsRawLicense
-    , toField _packageWithEventsRawPreviousPackageId
-    , toField _packageWithEventsRawForkOfPackageId
-    , toField _packageWithEventsRawMergeCheckpointPackageId
-    , toJSONField _packageWithEventsRawEvents
-    , toField _packageWithEventsRawCreatedAt
-    , toField _packageWithEventsRawAppUuid
+    [ toField pId
+    , toField name
+    , toField organizationId
+    , toField kmId
+    , toField version
+    , toField metamodelVersion
+    , toField description
+    , toField readme
+    , toField license
+    , toField previousPackageId
+    , toField forkOfPackageId
+    , toField mergeCheckpointPackageId
+    , toJSONField events
+    , toField createdAt
+    , toField appUuid
     ]
 
 instance FromRow PackageWithEventsRaw where
   fromRow = do
-    _packageWithEventsRawPId <- field
-    _packageWithEventsRawName <- field
-    _packageWithEventsRawOrganizationId <- field
-    _packageWithEventsRawKmId <- field
-    _packageWithEventsRawVersion <- field
-    _packageWithEventsRawMetamodelVersion <- field
-    _packageWithEventsRawDescription <- field
-    _packageWithEventsRawReadme <- field
-    _packageWithEventsRawLicense <- field
-    _packageWithEventsRawPreviousPackageId <- field
-    _packageWithEventsRawForkOfPackageId <- field
-    _packageWithEventsRawMergeCheckpointPackageId <- field
-    _packageWithEventsRawEvents <- fieldWith fromJSONField
-    _packageWithEventsRawCreatedAt <- field
-    _packageWithEventsRawAppUuid <- field
+    pId <- field
+    name <- field
+    organizationId <- field
+    kmId <- field
+    version <- field
+    metamodelVersion <- field
+    description <- field
+    readme <- field
+    license <- field
+    previousPackageId <- field
+    forkOfPackageId <- field
+    mergeCheckpointPackageId <- field
+    events <- fieldWith fromJSONField
+    createdAt <- field
+    appUuid <- field
     return $ PackageWithEventsRaw {..}

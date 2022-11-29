@@ -10,7 +10,7 @@ import Wizard.Specs.API.Template.Asset.List_GET
 
 templateAssetAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "TEMPLATE ASSET API Spec" $ do
-    list_get appContext
-    detail_get appContext
-    detail_delete appContext
+    describe "TEMPLATE ASSET API Spec" $ do
+      list_get appContext
+      detail_get appContext
+      detail_delete appContext

@@ -7,35 +7,32 @@ import GHC.Generics
 import Shared.Model.Common.MapEntry
 import Shared.Model.Event.EventField
 
-data AddPhaseEvent =
-  AddPhaseEvent
-    { _addPhaseEventUuid :: U.UUID
-    , _addPhaseEventParentUuid :: U.UUID
-    , _addPhaseEventEntityUuid :: U.UUID
-    , _addPhaseEventTitle :: String
-    , _addPhaseEventDescription :: Maybe String
-    , _addPhaseEventAnnotations :: [MapEntry String String]
-    , _addPhaseEventCreatedAt :: UTCTime
-    }
+data AddPhaseEvent = AddPhaseEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: String
+  , description :: Maybe String
+  , annotations :: [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditPhaseEvent =
-  EditPhaseEvent
-    { _editPhaseEventUuid :: U.UUID
-    , _editPhaseEventParentUuid :: U.UUID
-    , _editPhaseEventEntityUuid :: U.UUID
-    , _editPhaseEventTitle :: EventField String
-    , _editPhaseEventDescription :: EventField (Maybe String)
-    , _editPhaseEventAnnotations :: EventField [MapEntry String String]
-    , _editPhaseEventCreatedAt :: UTCTime
-    }
+data EditPhaseEvent = EditPhaseEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: EventField String
+  , description :: EventField (Maybe String)
+  , annotations :: EventField [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data DeletePhaseEvent =
-  DeletePhaseEvent
-    { _deletePhaseEventUuid :: U.UUID
-    , _deletePhaseEventParentUuid :: U.UUID
-    , _deletePhaseEventEntityUuid :: U.UUID
-    , _deletePhaseEventCreatedAt :: UTCTime
-    }
+data DeletePhaseEvent = DeletePhaseEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

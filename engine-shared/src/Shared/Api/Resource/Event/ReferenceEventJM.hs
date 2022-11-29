@@ -6,7 +6,7 @@ import Data.Aeson
 import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Model.Event.Reference.ReferenceEvent
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance ToJSON AddReferenceEvent where
   toJSON = toSumJSON
@@ -23,24 +23,24 @@ instance FromJSON AddReferenceEvent where
 
 -- --------------------------------------------
 instance FromJSON AddResourcePageReferenceEvent where
-  parseJSON = simpleParseJSON "_addResourcePageReferenceEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddResourcePageReferenceEvent where
-  toJSON = simpleToJSON'' "_addResourcePageReferenceEvent" [("referenceType", "ResourcePageReference")]
+  toJSON = toJSONWithAdditionalData [("referenceType", "ResourcePageReference")]
 
 -- --------------------------------------------
 instance FromJSON AddURLReferenceEvent where
-  parseJSON = simpleParseJSON "_addURLReferenceEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddURLReferenceEvent where
-  toJSON = simpleToJSON'' "_addURLReferenceEvent" [("referenceType", "URLReference")]
+  toJSON = toJSONWithAdditionalData [("referenceType", "URLReference")]
 
 -- --------------------------------------------
 instance FromJSON AddCrossReferenceEvent where
-  parseJSON = simpleParseJSON "_addCrossReferenceEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddCrossReferenceEvent where
-  toJSON = simpleToJSON'' "_addCrossReferenceEvent" [("referenceType", "CrossReference")]
+  toJSON = toJSONWithAdditionalData [("referenceType", "CrossReference")]
 
 -- --------------------------------------------
 -- --------------------------------------------
@@ -59,29 +59,29 @@ instance FromJSON EditReferenceEvent where
 
 -- --------------------------------------------
 instance FromJSON EditResourcePageReferenceEvent where
-  parseJSON = simpleParseJSON "_editResourcePageReferenceEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON EditResourcePageReferenceEvent where
-  toJSON = simpleToJSON'' "_editResourcePageReferenceEvent" [("referenceType", "ResourcePageReference")]
+  toJSON = toJSONWithAdditionalData [("referenceType", "ResourcePageReference")]
 
 -- --------------------------------------------
 instance FromJSON EditURLReferenceEvent where
-  parseJSON = simpleParseJSON "_editURLReferenceEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON EditURLReferenceEvent where
-  toJSON = simpleToJSON'' "_editURLReferenceEvent" [("referenceType", "URLReference")]
+  toJSON = toJSONWithAdditionalData [("referenceType", "URLReference")]
 
 -- --------------------------------------------
 instance FromJSON EditCrossReferenceEvent where
-  parseJSON = simpleParseJSON "_editCrossReferenceEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON EditCrossReferenceEvent where
-  toJSON = simpleToJSON'' "_editCrossReferenceEvent" [("referenceType", "CrossReference")]
+  toJSON = toJSONWithAdditionalData [("referenceType", "CrossReference")]
 
 -- --------------------------------------------
 -- --------------------------------------------
 instance FromJSON DeleteReferenceEvent where
-  parseJSON = simpleParseJSON "_deleteReferenceEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON DeleteReferenceEvent where
-  toJSON = simpleToJSON' "_deleteReferenceEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")

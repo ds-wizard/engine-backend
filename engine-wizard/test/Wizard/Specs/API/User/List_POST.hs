@@ -1,8 +1,7 @@
-module Wizard.Specs.API.User.List_POST
-  ( list_POST
-  ) where
+module Wizard.Specs.API.User.List_POST (
+  list_POST,
+) where
 
-import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
 import qualified Data.Map.Strict as M
 import Network.HTTP.Types
@@ -11,9 +10,9 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
+import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
@@ -22,6 +21,7 @@ import Wizard.Database.DAO.User.UserDAO
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ACK
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
+import Wizard.Model.User.User
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -59,27 +59,27 @@ test_201 appContext = do
 
 create_test_201 title appContext reqDto expDto authHeaders persistentCommandCount userActive =
   it title $
-     -- GIVEN: Prepare request
-   do
-    let reqHeaders = reqHeadersT authHeaders
-    let reqBody = reqBodyT reqDto
-     -- GIVEN: Prepare expectation
-    let expStatus = 201
-    let expHeaders = resCorsHeadersPlain
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO ACK.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, UserDTO)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    compareUserCreateDtos resDto expDto userActive
-    -- AND: Find result in DB and compare with expectation state
-    assertCountInDB findActionKeys appContext 1
-    assertCountInDB findUsers appContext 2
-    assertCountInDB findPersistentCommands appContext persistentCommandCount
+    -- GIVEN: Prepare request
+    do
+      let reqHeaders = reqHeadersT authHeaders
+      let reqBody = reqBodyT reqDto
+      -- GIVEN: Prepare expectation
+      let expStatus = 201
+      let expHeaders = resCorsHeadersPlain
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO ACK.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, UserDTO)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      compareUserCreateDtos resDto expDto userActive
+      -- AND: Find result in DB and compare with expectation state
+      assertCountInDB findActionKeys appContext 1
+      assertCountInDB findUsers appContext 2
+      assertCountInDB findPersistentCommands appContext persistentCommandCount
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -95,18 +95,18 @@ test_400 appContext = do
 create_test_400_email_uniqueness title appContext authHeaders =
   it title $
     -- GIVEN: Prepare request
-   do
-    let reqHeaders = reqHeadersT authHeaders
-    let reqDto = userJohnCreate & email .~ (userAlbert ^. email)
-    let reqBody = encode reqDto
-    -- AND: Prepare expectation
-    let expStatus = 400
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = ValidationError [] (M.singleton "email" [_ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. email])
-    let expBody = encode expDto
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- AND: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    do
+      let reqHeaders = reqHeadersT authHeaders
+      let reqDto = userJohnCreate {email = userAlbert.email} :: UserCreateDTO
+      let reqBody = encode reqDto
+      -- AND: Prepare expectation
+      let expStatus = 400
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = ValidationError [] (M.singleton "email" [_ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto.email])
+      let expBody = encode expDto
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- AND: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher

@@ -1,6 +1,6 @@
-module Wizard.Metamodel.Migration.Migration0010
-  ( migrateEventValue
-  ) where
+module Wizard.Metamodel.Migration.Migration0010 (
+  migrateEventValue,
+) where
 
 import Data.Aeson
 import Data.Aeson.Key (toText)
@@ -12,8 +12,11 @@ import Wizard.Metamodel.Migration.MigrationContext
 import Wizard.Metamodel.Migration.Utils
 
 -- Migration #0010 (KM v10 -> v11)
+
 -- * Add "createdAt" to all events (value provided in MigrationContext)
+
 -- * Change "annotations" in all events (from map to list)
+
 -- * Change "requestHeaders" in integration events (from map to list)
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue ctx input = Right [migrate ctx input]

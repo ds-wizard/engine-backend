@@ -7,37 +7,34 @@ import GHC.Generics
 import Shared.Model.Common.MapEntry
 import Shared.Model.Event.EventField
 
-data AddTagEvent =
-  AddTagEvent
-    { _addTagEventUuid :: U.UUID
-    , _addTagEventParentUuid :: U.UUID
-    , _addTagEventEntityUuid :: U.UUID
-    , _addTagEventName :: String
-    , _addTagEventDescription :: Maybe String
-    , _addTagEventColor :: String
-    , _addTagEventAnnotations :: [MapEntry String String]
-    , _addTagEventCreatedAt :: UTCTime
-    }
+data AddTagEvent = AddTagEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , name :: String
+  , description :: Maybe String
+  , color :: String
+  , annotations :: [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditTagEvent =
-  EditTagEvent
-    { _editTagEventUuid :: U.UUID
-    , _editTagEventParentUuid :: U.UUID
-    , _editTagEventEntityUuid :: U.UUID
-    , _editTagEventName :: EventField String
-    , _editTagEventDescription :: EventField (Maybe String)
-    , _editTagEventColor :: EventField String
-    , _editTagEventAnnotations :: EventField [MapEntry String String]
-    , _editTagEventCreatedAt :: UTCTime
-    }
+data EditTagEvent = EditTagEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , name :: EventField String
+  , description :: EventField (Maybe String)
+  , color :: EventField String
+  , annotations :: EventField [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data DeleteTagEvent =
-  DeleteTagEvent
-    { _deleteTagEventUuid :: U.UUID
-    , _deleteTagEventParentUuid :: U.UUID
-    , _deleteTagEventEntityUuid :: U.UUID
-    , _deleteTagEventCreatedAt :: UTCTime
-    }
+data DeleteTagEvent = DeleteTagEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

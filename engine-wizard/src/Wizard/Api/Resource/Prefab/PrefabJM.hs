@@ -2,11 +2,11 @@ module Wizard.Api.Resource.Prefab.PrefabJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Model.Prefab.Prefab
 
 instance FromJSON Prefab where
-  parseJSON = simpleParseJSON "_prefab"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON Prefab where
-  toJSON = simpleToJSON "_prefab"
+  toJSON = genericToJSON jsonOptions

@@ -1,8 +1,7 @@
-module Registry.Specs.API.Package.Detail_Bundle_GET
-  ( detail_bundle_get
-  ) where
+module Registry.Specs.API.Package.Detail_Bundle_GET (
+  detail_bundle_get,
+) where
 
-import Control.Lens ((^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
 import Network.HTTP.Types
@@ -11,13 +10,13 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig
 import Registry.Api.Resource.Package.PackageDetailJM ()
 import Registry.Database.Migration.Development.Audit.Data.AuditEntries
 import Registry.Model.Context.AppContext
 import Shared.Api.Resource.PackageBundle.PackageBundleJM ()
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.PackageBundle.Data.PackageBundles
+import Shared.Model.Package.PackageWithEvents
 import Shared.Service.PackageBundle.PackageBundleMapper
 
 import Registry.Specs.API.Audit.Common
@@ -39,7 +38,7 @@ detail_bundle_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = BS.pack $ "/packages/" ++ (netherlandsPackageV2 ^. pId) ++ "/bundle"
+reqUrl = BS.pack $ "/packages/" ++ netherlandsPackageV2.pId ++ "/bundle"
 
 reqHeaders = [reqAdminAuthHeader, reqCtHeader]
 
@@ -50,20 +49,20 @@ reqBody = ""
 -- ----------------------------------------------------
 test_200 appContext =
   it "HTTP 200 OK" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = toDTO netherlandsPackageV2Budle
-    let expBody = encode expDto
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-     -- AND: Find result in DB and compare with expectation state
-    assertExistenceOfAuditEntryInDB appContext getPackageBundleAuditEntry
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = toDTO netherlandsPackageV2Budle
+      let expBody = encode expDto
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
+      -- AND: Find result in DB and compare with expectation state
+      assertExistenceOfAuditEntryInDB appContext getPackageBundleAuditEntry
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -1,18 +1,18 @@
-module Shared.Util.Crypto
-  ( generateRandomString
-  , encryptAES256
-  , encryptAES256WithB64
-  , decryptAES256
-  , decryptAES256WithB64
-  , hashMD5
-  ) where
+module Shared.Util.Crypto (
+  generateRandomString,
+  encryptAES256,
+  encryptAES256WithB64,
+  decryptAES256,
+  decryptAES256WithB64,
+  hashMD5,
+) where
 
 import Crypto.Cipher.AES (AES256)
-import Crypto.Cipher.Types (BlockCipher(..), Cipher(..), nullIV)
+import Crypto.Cipher.Types (BlockCipher (..), Cipher (..), nullIV)
 import Crypto.Error (throwCryptoError)
-import Crypto.Hash (Digest, MD5(..), hash)
+import Crypto.Hash (Digest, MD5 (..), hash)
 import Crypto.Random (getRandomBytes)
-import Data.ByteArray.Encoding (Base(..), convertToBase)
+import Data.ByteArray.Encoding (Base (..), convertToBase)
 import qualified Data.ByteString.Base64 as B64
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.Text as T

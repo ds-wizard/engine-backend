@@ -4,14 +4,12 @@ import GHC.Generics
 
 import Shared.Model.Error.Error
 
-data Success_ServerActionDTO a =
-  Success_ServerActionDTO
-    { _success_ServerActionDTOData :: a
-    }
+data Success_ServerActionDTO a = Success_ServerActionDTO
+  { aData :: a
+  }
   deriving (Show, Eq, Generic)
 
-data Error_ServerActionDTO =
-  Error_ServerActionDTO
-    { _error_ServerActionDTOData :: AppError
-    }
+data Error_ServerActionDTO = Error_ServerActionDTO
+  { aData :: AppError
+  }
   deriving (Show, Eq, Generic)

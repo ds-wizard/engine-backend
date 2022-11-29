@@ -1,12 +1,9 @@
 module Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Choice where
 
-import Control.Lens ((^.))
 import Prelude hiding (lookup)
 
-import LensesConfig
 import Shared.Model.Event.Choice.ChoiceEvent
 import Shared.Model.Event.EventLenses
-import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Choice ()
@@ -21,11 +18,11 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Tag ()
 
 instance ApplyEvent AddChoiceEvent where
-  apply = applyCreateEventWithParent (entities . choices) (entities . questions) choiceUuids' "Choice" "Question"
+  apply = applyCreateEventWithParent getChoicesM setChoicesM getQuestionsM setQuestionsM getChoiceUuids setChoiceUuids
 
 instance ApplyEvent EditChoiceEvent where
-  apply = applyEditEvent (entities . choices) "Choice"
+  apply = applyEditEvent getChoicesM setChoicesM
 
 instance ApplyEvent DeleteChoiceEvent where
   apply event km =
-    deleteEntityReferenceFromParentNode event questionsM choiceUuids' $ deleteChoice km (event ^. entityUuid')
+    deleteEntityReferenceFromParentNode event getQuestionsM setQuestionsM getChoiceUuids setChoiceUuids $ deleteChoice km (getEntityUuid event)

@@ -2,8 +2,7 @@ module Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterChangeDTO 
 
 import GHC.Generics
 
-data QuestionnaireImporterChangeDTO =
-  QuestionnaireImporterChangeDTO
-    { _questionnaireImporterChangeDTOEnabled :: Bool
-    }
+data QuestionnaireImporterChangeDTO = QuestionnaireImporterChangeDTO
+  { enabled :: Bool
+  }
   deriving (Show, Eq, Generic)

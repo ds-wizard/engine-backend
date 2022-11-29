@@ -14,6 +14,7 @@ import Wizard.Api.Handler.Domain.Api
 import Wizard.Api.Handler.Feedback.Api
 import Wizard.Api.Handler.Info.Api
 import Wizard.Api.Handler.KnowledgeModel.Api
+import Wizard.Api.Handler.Locale.Api
 import Wizard.Api.Handler.Migration.Api
 import Wizard.Api.Handler.Package.Api
 import Wizard.Api.Handler.PersistentCommand.Api
@@ -30,57 +31,64 @@ import Wizard.Api.Handler.User.Api
 import Wizard.Api.Handler.Version.Api
 import Wizard.Model.Context.BaseContext
 
-type ApplicationAPI
-   = ActionKeyAPI
-     :<|> AppAPI
-     :<|> AuthAPI
-     :<|> BookReferenceAPI
-     :<|> BranchAPI
-     :<|> ConfigAPI
-     :<|> DevAPI
-     :<|> DocumentAPI
-     :<|> DomainAPI
-     :<|> FeedbackAPI
-     :<|> InfoAPI
-     :<|> KnowledgeModelAPI
-     :<|> MigrationAPI
-     :<|> PackageAPI
-     :<|> PersistentCommandAPI
-     :<|> PrefabAPI
-     :<|> QuestionnaireAPI
-     :<|> QuestionnaireImporterAPI
-     :<|> RegistryAPI
-     :<|> SubmissionAPI
-     :<|> TemplateAPI
-     :<|> TokenAPI
-     :<|> TypehintAPI
-     :<|> UsageAPI
-     :<|> UserAPI
-     :<|> VersionAPI
+type ApplicationAPI =
+  ActionKeyAPI
+    :<|> AppAPI
+    :<|> AuthAPI
+    :<|> BookReferenceAPI
+    :<|> BranchAPI
+    :<|> ConfigAPI
+    :<|> DevAPI
+    :<|> DocumentAPI
+    :<|> DomainAPI
+    :<|> FeedbackAPI
+    :<|> InfoAPI
+    :<|> KnowledgeModelAPI
+    :<|> LocaleAPI
+    :<|> MigrationAPI
+    :<|> PackageAPI
+    :<|> PersistentCommandAPI
+    :<|> PrefabAPI
+    :<|> QuestionnaireAPI
+    :<|> QuestionnaireImporterAPI
+    :<|> RegistryAPI
+    :<|> SubmissionAPI
+    :<|> TemplateAPI
+    :<|> TokenAPI
+    :<|> TypehintAPI
+    :<|> UsageAPI
+    :<|> UserAPI
+    :<|> VersionAPI
 
 applicationApi :: Proxy ApplicationAPI
 applicationApi = Proxy
 
 applicationServer :: ServerT ApplicationAPI BaseContextM
 applicationServer =
-  actionKeyServer :<|> appServer :<|> authServer :<|> bookReferenceServer :<|> branchServer :<|> configServer :<|>
-  devServer :<|>
-  documentServer :<|>
-  domainServer :<|>
-  feedbackServer :<|>
-  infoServer :<|>
-  knowledgeModelServer :<|>
-  migrationServer :<|>
-  packageServer :<|>
-  persistentCommandServer :<|>
-  prefabServer :<|>
-  questionnaireServer :<|>
-  questionnaireImporterServer :<|>
-  registryServer :<|>
-  submissionServer :<|>
-  templateServer :<|>
-  tokenServer :<|>
-  typehintServer :<|>
-  usageServer :<|>
-  userServer :<|>
-  versionServer
+  actionKeyServer
+    :<|> appServer
+    :<|> authServer
+    :<|> bookReferenceServer
+    :<|> branchServer
+    :<|> configServer
+    :<|> devServer
+    :<|> documentServer
+    :<|> domainServer
+    :<|> feedbackServer
+    :<|> infoServer
+    :<|> knowledgeModelServer
+    :<|> localeServer
+    :<|> migrationServer
+    :<|> packageServer
+    :<|> persistentCommandServer
+    :<|> prefabServer
+    :<|> questionnaireServer
+    :<|> questionnaireImporterServer
+    :<|> registryServer
+    :<|> submissionServer
+    :<|> templateServer
+    :<|> tokenServer
+    :<|> typehintServer
+    :<|> usageServer
+    :<|> userServer
+    :<|> versionServer

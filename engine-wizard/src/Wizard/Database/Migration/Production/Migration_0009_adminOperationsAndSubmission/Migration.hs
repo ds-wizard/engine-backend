@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0009_adminOperationsAndSubmission.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0009_adminOperationsAndSubmission.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)

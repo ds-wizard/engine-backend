@@ -5,13 +5,12 @@ import GHC.Generics
 
 import Wizard.Model.Acl.Acl
 
-data QuestionnairePermRecord =
-  QuestionnairePermRecord
-    { _questionnairePermRecordUuid :: U.UUID
-    , _questionnairePermRecordQuestionnaireUuid :: U.UUID
-    , _questionnairePermRecordPerms :: [String]
-    , _questionnairePermRecordMember :: Member
-    }
+data QuestionnairePermRecord = QuestionnairePermRecord
+  { uuid :: U.UUID
+  , questionnaireUuid :: U.UUID
+  , perms :: [String]
+  , member :: Member
+  }
   deriving (Generic, Eq, Show)
 
 ownerPermissions = [_VIEW_PERM, _COMMENT_PERM, _EDIT_PERM, _ADMIN_PERM]

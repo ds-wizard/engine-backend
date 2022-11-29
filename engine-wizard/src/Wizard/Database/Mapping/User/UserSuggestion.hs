@@ -7,9 +7,9 @@ import Wizard.Model.User.UserSuggestion
 
 instance FromRow UserSuggestion where
   fromRow = do
-    _userSuggestionUuid <- field
-    _userSuggestionFirstName <- field
-    _userSuggestionLastName <- field
-    _userSuggestionEmail <- field
-    _userSuggestionImageUrl <- field
+    uuid <- field
+    firstName <- field
+    lastName <- field
+    email <- field
+    imageUrl <- field
     return $ UserSuggestion {..}

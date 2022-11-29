@@ -8,6 +8,8 @@ import Servant.Swagger.UI
 
 import Registry.Api.Api
 import Registry.Api.Resource.ActionKey.ActionKeySM ()
+import Registry.Api.Resource.Locale.LocaleDetailSM ()
+import Registry.Api.Resource.Locale.LocaleSM ()
 import Registry.Api.Resource.Organization.OrganizationChangeSM ()
 import Registry.Api.Resource.Organization.OrganizationCreateSM ()
 import Registry.Api.Resource.Organization.OrganizationSM ()

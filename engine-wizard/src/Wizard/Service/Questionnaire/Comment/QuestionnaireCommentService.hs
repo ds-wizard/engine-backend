@@ -1,12 +1,10 @@
 module Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService where
 
-import Control.Lens ((.~), (^.))
 import Control.Monad.Reader (liftIO)
 import Data.Foldable (traverse_)
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
@@ -19,7 +17,7 @@ import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentUtil
 
 getQuestionnaireComments :: Questionnaire -> AppContextM (M.Map String [QuestionnaireCommentThreadDTO])
 getQuestionnaireComments qtn = do
-  threads <- findQuestionnaireCommentThreads (U.toString $ qtn ^. uuid)
+  threads <- findQuestionnaireCommentThreads (U.toString $ qtn.uuid)
   filteredThreads <- filterComments qtn threads
   threadsDto <- traverse enhanceQuestionnaireCommentThread filteredThreads
   let commentThreadsMap = toCommentThreadsMap threadsDto
@@ -33,13 +31,21 @@ duplicateCommentThreads oldQtnUuid newQtnUuid = do
 duplicateCommentThread :: U.UUID -> QuestionnaireCommentThread -> AppContextM ()
 duplicateCommentThread newQtnUuid thread = do
   newUuid <- liftIO generateUuid
-  let updatedCommentThread = (uuid .~ newUuid) . (questionnaireUuid .~ newQtnUuid) $ thread
+  let updatedCommentThread =
+        thread
+          { uuid = newUuid
+          , questionnaireUuid = newQtnUuid
+          }
   insertQuestionnaireCommentThread updatedCommentThread
-  traverse_ (duplicateComment newUuid) (thread ^. comments)
+  traverse_ (duplicateComment newUuid) thread.comments
 
 duplicateComment :: U.UUID -> QuestionnaireComment -> AppContextM ()
 duplicateComment newThreadUuid comment = do
   newUuid <- liftIO generateUuid
-  let updatedComment = (uuid .~ newUuid) . (threadUuid .~ newThreadUuid) $ comment
+  let updatedComment =
+        comment
+          { uuid = newUuid
+          , threadUuid = newThreadUuid
+          }
   insertQuestionnaireComment updatedComment
   return ()

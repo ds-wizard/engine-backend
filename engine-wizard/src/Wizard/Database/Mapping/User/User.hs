@@ -13,44 +13,44 @@ import Wizard.Model.User.User
 
 instance ToRow User where
   toRow User {..} =
-    [ toField _userUuid
-    , toField _userFirstName
-    , toField _userLastName
-    , toField _userEmail
-    , toField _userPasswordHash
-    , toField _userAffiliation
-    , toJSONField _userSources
-    , toField _userRole
-    , toField . PGArray $ _userPermissions
-    , toField _userActive
-    , toJSONField _userSubmissionProps
-    , toField _userImageUrl
-    , toJSONField _userGroups
-    , toField _userLastVisitedAt
-    , toField _userCreatedAt
-    , toField _userUpdatedAt
-    , toField _userAppUuid
-    , toField _userMachine
+    [ toField uuid
+    , toField firstName
+    , toField lastName
+    , toField email
+    , toField passwordHash
+    , toField affiliation
+    , toJSONField sources
+    , toField uRole
+    , toField . PGArray $ permissions
+    , toField active
+    , toJSONField submissionProps
+    , toField imageUrl
+    , toJSONField groups
+    , toField lastVisitedAt
+    , toField createdAt
+    , toField updatedAt
+    , toField appUuid
+    , toField machine
     ]
 
 instance FromRow User where
   fromRow = do
-    _userUuid <- field
-    _userFirstName <- field
-    _userLastName <- field
-    _userEmail <- field
-    _userPasswordHash <- field
-    _userAffiliation <- field
-    _userSources <- fieldWith fromJSONField
-    _userRole <- field
-    _userPermissions <- fromPGArray <$> field
-    _userActive <- field
-    _userSubmissionProps <- fieldWith fromJSONField
-    _userImageUrl <- field
-    _userGroups <- fieldWith fromJSONField
-    _userLastVisitedAt <- field
-    _userCreatedAt <- field
-    _userUpdatedAt <- field
-    _userAppUuid <- field
-    _userMachine <- field
+    uuid <- field
+    firstName <- field
+    lastName <- field
+    email <- field
+    passwordHash <- field
+    affiliation <- field
+    sources <- fieldWith fromJSONField
+    uRole <- field
+    permissions <- fromPGArray <$> field
+    active <- field
+    submissionProps <- fieldWith fromJSONField
+    imageUrl <- field
+    groups <- fieldWith fromJSONField
+    lastVisitedAt <- field
+    createdAt <- field
+    updatedAt <- field
+    appUuid <- field
+    machine <- field
     return $ User {..}

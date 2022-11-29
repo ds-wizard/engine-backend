@@ -4,34 +4,32 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-data Report =
-  Report
-    { _reportUuid :: U.UUID
-    , _reportTotalReport :: TotalReport
-    , _reportChapterReports :: [ChapterReport]
-    , _reportCreatedAt :: UTCTime
-    , _reportUpdatedAt :: UTCTime
-    }
+data Report = Report
+  { uuid :: U.UUID
+  , totalReport :: TotalReport
+  , chapterReports :: [ChapterReport]
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq Report where
   a == b =
-    _reportUuid a == _reportUuid b &&
-    _reportTotalReport a == _reportTotalReport b && _reportChapterReports a == _reportChapterReports b
+    a.uuid == b.uuid
+      && a.totalReport == b.totalReport
+      && a.chapterReports == b.chapterReports
 
-data TotalReport =
-  TotalReport
-    { _totalReportIndications :: [Indication]
-    , _totalReportMetrics :: [MetricSummary]
-    }
+data TotalReport = TotalReport
+  { indications :: [Indication]
+  , metrics :: [MetricSummary]
+  }
   deriving (Show, Eq, Generic)
 
-data ChapterReport =
-  ChapterReport
-    { _chapterReportChapterUuid :: U.UUID
-    , _chapterReportIndications :: [Indication]
-    , _chapterReportMetrics :: [MetricSummary]
-    }
+data ChapterReport = ChapterReport
+  { chapterUuid :: U.UUID
+  , indications :: [Indication]
+  , metrics :: [MetricSummary]
+  }
   deriving (Show, Eq, Generic)
 
 data Indication
@@ -39,23 +37,20 @@ data Indication
   | PhasesAnsweredIndication' PhasesAnsweredIndication
   deriving (Show, Eq, Generic)
 
-data AnsweredIndication =
-  AnsweredIndication
-    { _answeredIndicationAnsweredQuestions :: Int
-    , _answeredIndicationUnansweredQuestions :: Int
-    }
+data AnsweredIndication = AnsweredIndication
+  { answeredQuestions :: Int
+  , unansweredQuestions :: Int
+  }
   deriving (Show, Eq, Generic)
 
-data PhasesAnsweredIndication =
-  PhasesAnsweredIndication
-    { _phasesAnsweredIndicationAnsweredQuestions :: Int
-    , _phasesAnsweredIndicationUnansweredQuestions :: Int
-    }
+data PhasesAnsweredIndication = PhasesAnsweredIndication
+  { answeredQuestions :: Int
+  , unansweredQuestions :: Int
+  }
   deriving (Show, Eq, Generic)
 
-data MetricSummary =
-  MetricSummary
-    { _metricSummaryMetricUuid :: U.UUID
-    , _metricSummaryMeasure :: Maybe Double
-    }
+data MetricSummary = MetricSummary
+  { metricUuid :: U.UUID
+  , measure :: Maybe Double
+  }
   deriving (Show, Eq, Generic)

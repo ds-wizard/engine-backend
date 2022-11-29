@@ -5,22 +5,21 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-data PackageWithEventsRaw =
-  PackageWithEventsRaw
-    { _packageWithEventsRawPId :: String
-    , _packageWithEventsRawName :: String
-    , _packageWithEventsRawOrganizationId :: String
-    , _packageWithEventsRawKmId :: String
-    , _packageWithEventsRawVersion :: String
-    , _packageWithEventsRawMetamodelVersion :: Int
-    , _packageWithEventsRawDescription :: String
-    , _packageWithEventsRawReadme :: String
-    , _packageWithEventsRawLicense :: String
-    , _packageWithEventsRawPreviousPackageId :: Maybe String
-    , _packageWithEventsRawForkOfPackageId :: Maybe String
-    , _packageWithEventsRawMergeCheckpointPackageId :: Maybe String
-    , _packageWithEventsRawEvents :: Value
-    , _packageWithEventsRawAppUuid :: U.UUID
-    , _packageWithEventsRawCreatedAt :: UTCTime
-    }
+data PackageWithEventsRaw = PackageWithEventsRaw
+  { pId :: String
+  , name :: String
+  , organizationId :: String
+  , kmId :: String
+  , version :: String
+  , metamodelVersion :: Int
+  , description :: String
+  , readme :: String
+  , license :: String
+  , previousPackageId :: Maybe String
+  , forkOfPackageId :: Maybe String
+  , mergeCheckpointPackageId :: Maybe String
+  , events :: Value
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

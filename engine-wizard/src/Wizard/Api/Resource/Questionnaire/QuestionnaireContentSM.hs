@@ -14,4 +14,4 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 instance ToSchema QuestionnaireContentDTO where
-  declareNamedSchema = simpleToSchema (toContentDTO questionnaire1Ctn M.empty [] [])
+  declareNamedSchema = toSwagger (toContentDTO questionnaire1Ctn M.empty [] [])

@@ -4,10 +4,10 @@ import Data.Aeson
 
 import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleJM ()
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON TemplateSimpleDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TemplateSimpleDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

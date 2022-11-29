@@ -3,10 +3,10 @@ module Shared.Api.Resource.Template.TemplateFormatJM where
 import Data.Aeson
 
 import Shared.Api.Resource.Template.TemplateFormatDTO
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON TemplateFormatDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TemplateFormatDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

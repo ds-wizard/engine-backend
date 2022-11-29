@@ -1,8 +1,5 @@
 module Wizard.Service.Branch.Collaboration.CollaborationMapper where
 
-import Control.Lens ((^.))
-
-import LensesConfig
 import Wizard.Api.Resource.Branch.Event.BranchEventDTO
 import Wizard.Api.Resource.Websocket.BranchActionDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
@@ -13,20 +10,20 @@ import Wizard.Util.Websocket
 toWebsocketMessage :: WebsocketRecord -> content -> WebsocketMessage content
 toWebsocketMessage record content =
   WebsocketMessage
-    { _websocketMessageConnectionUuid = record ^. connectionUuid
-    , _websocketMessageConnection = record ^. connection
-    , _websocketMessageEntityId = record ^. entityId
-    , _websocketMessageContent = content
+    { connectionUuid = record.connectionUuid
+    , connection = record.connection
+    , entityId = record.entityId
+    , content = content
     }
 
-toSetUserListMessage ::
-     [WebsocketRecord] -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerBranchActionDTO)
+toSetUserListMessage
+  :: [WebsocketRecord] -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerBranchActionDTO)
 toSetUserListMessage records record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetUserList_ServerBranchActionDTO $
-  getCollaborators (record ^. connectionUuid) (record ^. entityId) records
+    Success_ServerActionDTO . SetUserList_ServerBranchActionDTO $
+      getCollaborators record.connectionUuid record.entityId records
 
-toAddBranchMessage ::
-     AddBranchEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerBranchActionDTO)
+toAddBranchMessage
+  :: AddBranchEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerBranchActionDTO)
 toAddBranchMessage reqDto record =
   toWebsocketMessage record $ Success_ServerActionDTO . SetContent_ServerBranchActionDTO . AddBranchEventDTO' $ reqDto

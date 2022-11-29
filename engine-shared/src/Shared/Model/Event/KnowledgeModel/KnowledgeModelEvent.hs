@@ -7,27 +7,25 @@ import GHC.Generics
 import Shared.Model.Common.MapEntry
 import Shared.Model.Event.EventField
 
-data AddKnowledgeModelEvent =
-  AddKnowledgeModelEvent
-    { _addKnowledgeModelEventUuid :: U.UUID
-    , _addKnowledgeModelEventParentUuid :: U.UUID
-    , _addKnowledgeModelEventEntityUuid :: U.UUID
-    , _addKnowledgeModelEventAnnotations :: [MapEntry String String]
-    , _addKnowledgeModelEventCreatedAt :: UTCTime
-    }
+data AddKnowledgeModelEvent = AddKnowledgeModelEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , annotations :: [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditKnowledgeModelEvent =
-  EditKnowledgeModelEvent
-    { _editKnowledgeModelEventUuid :: U.UUID
-    , _editKnowledgeModelEventParentUuid :: U.UUID
-    , _editKnowledgeModelEventEntityUuid :: U.UUID
-    , _editKnowledgeModelEventAnnotations :: EventField [MapEntry String String]
-    , _editKnowledgeModelEventChapterUuids :: EventField [U.UUID]
-    , _editKnowledgeModelEventTagUuids :: EventField [U.UUID]
-    , _editKnowledgeModelEventIntegrationUuids :: EventField [U.UUID]
-    , _editKnowledgeModelEventMetricUuids :: EventField [U.UUID]
-    , _editKnowledgeModelEventPhaseUuids :: EventField [U.UUID]
-    , _editKnowledgeModelEventCreatedAt :: UTCTime
-    }
+data EditKnowledgeModelEvent = EditKnowledgeModelEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , annotations :: EventField [MapEntry String String]
+  , chapterUuids :: EventField [U.UUID]
+  , tagUuids :: EventField [U.UUID]
+  , integrationUuids :: EventField [U.UUID]
+  , metricUuids :: EventField [U.UUID]
+  , phaseUuids :: EventField [U.UUID]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

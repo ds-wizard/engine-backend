@@ -11,23 +11,23 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Model.Plan.AppPlan
 import Wizard.Service.Plan.AppPlanService
 
-type Detail_PUT
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> ReqBody '[ SafeJSON] AppPlanChangeDTO
-     :> "apps"
-     :> Capture "aUuid" String
-     :> "plans"
-     :> Capture "pUuid" String
-     :> Put '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] AppPlan)
+type Detail_PUT =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> ReqBody '[SafeJSON] AppPlanChangeDTO
+    :> "apps"
+    :> Capture "aUuid" String
+    :> "plans"
+    :> Capture "pUuid" String
+    :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] AppPlan)
 
-detail_PUT ::
-     Maybe String
+detail_PUT
+  :: Maybe String
   -> Maybe String
   -> AppPlanChangeDTO
   -> String
   -> String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppPlan)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] AppPlan)
 detail_PUT mTokenHeader mServerUrl reqDto aUuid pUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< modifyPlan aUuid pUuid reqDto

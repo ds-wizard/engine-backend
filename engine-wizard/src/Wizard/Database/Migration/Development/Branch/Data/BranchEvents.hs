@@ -11,6 +11,6 @@ branchEvent1' = AddBranchEventDTO' branchEvent1
 branchEvent1 :: AddBranchEventDTO
 branchEvent1 =
   AddBranchEventDTO
-    { _addBranchEventDTOUuid = u' "6858b0b6-bb6f-4e21-a0c2-6afc84950f7a"
-    , _addBranchEventDTOEvent = AddKnowledgeModelEvent' a_km1
+    { uuid = u' "6858b0b6-bb6f-4e21-a0c2-6afc84950f7a"
+    , event = AddKnowledgeModelEvent' a_km1
     }

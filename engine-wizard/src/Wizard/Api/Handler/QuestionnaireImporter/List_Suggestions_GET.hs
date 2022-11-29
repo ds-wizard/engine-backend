@@ -12,21 +12,21 @@ import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.QuestionnaireImporter.QuestionnaireImporterService
 
-type List_Suggestions_GET
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> "questionnaire-importers"
-     :> "suggestions"
-     :> QueryParam "questionnaireUuid" String
-     :> QueryParam "q" String
-     :> QueryParam "enabled" Bool
-     :> QueryParam "page" Int
-     :> QueryParam "size" Int
-     :> QueryParam "sort" String
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] (Page QuestionnaireImporterDTO))
+type List_Suggestions_GET =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> "questionnaire-importers"
+    :> "suggestions"
+    :> QueryParam "questionnaireUuid" String
+    :> QueryParam "q" String
+    :> QueryParam "enabled" Bool
+    :> QueryParam "page" Int
+    :> QueryParam "size" Int
+    :> QueryParam "sort" String
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] (Page QuestionnaireImporterDTO))
 
-list_suggestions_GET ::
-     Maybe String
+list_suggestions_GET
+  :: Maybe String
   -> Maybe String
   -> Maybe String
   -> Maybe String
@@ -34,9 +34,9 @@ list_suggestions_GET ::
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page QuestionnaireImporterDTO))
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page QuestionnaireImporterDTO))
 list_suggestions_GET mTokenHeader mServerUrl mQuestionnaireUuid mQuery mEnabled mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
-    addTraceUuidHeader =<<
-    getQuestionnaireImporterSuggestions mQuestionnaireUuid mQuery mEnabled (Pageable mPage mSize) (parseSortQuery mSort)
+      addTraceUuidHeader
+        =<< getQuestionnaireImporterSuggestions mQuestionnaireUuid mQuery mEnabled (Pageable mPage mSize) (parseSortQuery mSort)

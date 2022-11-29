@@ -19,12 +19,13 @@ and [relevant section in our guide](https://img.shields.io/github/license/ds-wiz
 
 ### Requirements
 
- - **Stack** (recommended 2.3.1 or higher)
+ - **Stack** (recommended 2.9.1 or higher)
  - **Postgres & libpq** (recommended 11)
- - **Hindent** (recommended 5.3.2, optional)
- - **HLint** (recommended 3.3.4, optional)
+ - **Fourmolu** (recommended 0.8.2.0, optional)
+ - **HLint** (recommended 3.4.1, optional)
  - **Docker** (recommended 19.03.0-ce) - *for build of production image*
- - [**document-worker**](https://github.com/ds-wizard/document-worker) (corresponding version) - *for document generation, RabbitMQ required*
+ - [**document-worker**](https://github.com/ds-wizard/engine-tools) (corresponding version)
+ - [**mailer**](https://github.com/ds-wizard/engine-tools) (corresponding version)
 
 ### Build & Run
 
@@ -50,8 +51,8 @@ $ stack test <application>
 Create a bash script which will do the work for you. Run the script from the root of the project
 
 ```bash
-$ find <application>/src -name '*.hs' | while read line ; do hindent $line ; done
-$ find <application>/test -name '*.hs' | while read line ; do hindent $line ; done
+$ fourmolu -i (find <application>/src -name '*.hs')
+$ fourmolu -i (find <application>/test -name '*.hs')
 ```
 
 ### Code coverage

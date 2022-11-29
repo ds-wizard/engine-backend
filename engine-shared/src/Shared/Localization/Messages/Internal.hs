@@ -10,7 +10,7 @@ _ERROR_DATABASE__DESERIALIZATION_FAILED = "Problem with deserialization of entit
 _ERROR_DATABASE__TRANSACTION_REQUIRED_DB_CONN = "Transaction requires reserved DB connection"
 
 -- --------------------------------------
--- DATABASE
+-- S3
 -- --------------------------------------
 _ERROR_S3__GENERIC_ERROR error = f' "Error in S3: %s" [error]
 

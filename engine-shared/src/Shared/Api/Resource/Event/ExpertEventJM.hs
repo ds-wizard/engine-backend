@@ -5,22 +5,22 @@ import Data.Aeson
 import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Model.Event.Expert.ExpertEvent
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON AddExpertEvent where
-  parseJSON = simpleParseJSON "_addExpertEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON AddExpertEvent where
-  toJSON = simpleToJSON' "_addExpertEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 instance FromJSON EditExpertEvent where
-  parseJSON = simpleParseJSON "_editExpertEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON EditExpertEvent where
-  toJSON = simpleToJSON' "_editExpertEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")
 
 instance FromJSON DeleteExpertEvent where
-  parseJSON = simpleParseJSON "_deleteExpertEvent"
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "eventType")
 
 instance ToJSON DeleteExpertEvent where
-  toJSON = simpleToJSON' "_deleteExpertEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")

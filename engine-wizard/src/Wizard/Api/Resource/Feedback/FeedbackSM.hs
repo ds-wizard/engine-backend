@@ -11,4 +11,4 @@ import Wizard.Model.Config.ServerConfigDM
 import Wizard.Service.Feedback.FeedbackMapper
 
 instance ToSchema FeedbackDTO where
-  declareNamedSchema = simpleToSchema (toDTO defaultConfig defaultAppConfig feedback1)
+  declareNamedSchema = toSwagger (toDTO defaultConfig defaultAppConfig feedback1)

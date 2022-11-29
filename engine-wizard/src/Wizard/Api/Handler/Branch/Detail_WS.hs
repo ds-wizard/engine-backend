@@ -3,9 +3,9 @@ module Wizard.Api.Handler.Branch.Detail_WS where
 import Control.Monad.Except (catchError)
 import qualified Data.UUID as U
 import Network.WebSockets
-import Prelude hiding (log)
 import Servant
 import Servant.API.WebSocket
+import Prelude hiding (log)
 
 import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
@@ -17,13 +17,13 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.Branch.Collaboration.CollaborationService
 import Wizard.Util.Websocket
 
-type Detail_WS
-   = Header "Host" String
-     :> "branches"
-     :> Capture "branchUuid" String
-     :> "websocket"
-     :> QueryParam "Authorization" String
-     :> WebSocket
+type Detail_WS =
+  Header "Host" String
+    :> "branches"
+    :> Capture "branchUuid" String
+    :> "websocket"
+    :> QueryParam "Authorization" String
+    :> WebSocket
 
 detail_WS :: Maybe String -> String -> Maybe String -> Connection -> BaseContextM ()
 detail_WS mServerUrl branchUuid mTokenHeader connection =

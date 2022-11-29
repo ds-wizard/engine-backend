@@ -11,38 +11,38 @@ import Wizard.Model.QuestionnaireImporter.QuestionnaireImporter
 
 instance ToRow QuestionnaireImporter where
   toRow QuestionnaireImporter {..} =
-    [ toField _questionnaireImporterQiId
-    , toField _questionnaireImporterName
-    , toField _questionnaireImporterOrganizationId
-    , toField _questionnaireImporterImporterId
-    , toField _questionnaireImporterVersion
-    , toField _questionnaireImporterMetamodelVersion
-    , toField _questionnaireImporterDescription
-    , toField _questionnaireImporterReadme
-    , toField _questionnaireImporterLicense
-    , toJSONField _questionnaireImporterAllowedPackages
-    , toField _questionnaireImporterUrl
-    , toField _questionnaireImporterEnabled
-    , toField _questionnaireImporterAppUuid
-    , toField _questionnaireImporterCreatedAt
-    , toField _questionnaireImporterUpdatedAt
+    [ toField qiId
+    , toField name
+    , toField organizationId
+    , toField importerId
+    , toField version
+    , toField metamodelVersion
+    , toField description
+    , toField readme
+    , toField license
+    , toJSONField allowedPackages
+    , toField url
+    , toField enabled
+    , toField appUuid
+    , toField createdAt
+    , toField updatedAt
     ]
 
 instance FromRow QuestionnaireImporter where
   fromRow = do
-    _questionnaireImporterQiId <- field
-    _questionnaireImporterName <- field
-    _questionnaireImporterOrganizationId <- field
-    _questionnaireImporterImporterId <- field
-    _questionnaireImporterVersion <- field
-    _questionnaireImporterMetamodelVersion <- field
-    _questionnaireImporterDescription <- field
-    _questionnaireImporterReadme <- field
-    _questionnaireImporterLicense <- field
-    _questionnaireImporterAllowedPackages <- fieldWith fromJSONField
-    _questionnaireImporterUrl <- field
-    _questionnaireImporterEnabled <- field
-    _questionnaireImporterAppUuid <- field
-    _questionnaireImporterCreatedAt <- field
-    _questionnaireImporterUpdatedAt <- field
+    qiId <- field
+    name <- field
+    organizationId <- field
+    importerId <- field
+    version <- field
+    metamodelVersion <- field
+    description <- field
+    readme <- field
+    license <- field
+    allowedPackages <- fieldWith fromJSONField
+    url <- field
+    enabled <- field
+    appUuid <- field
+    createdAt <- field
+    updatedAt <- field
     return $ QuestionnaireImporter {..}

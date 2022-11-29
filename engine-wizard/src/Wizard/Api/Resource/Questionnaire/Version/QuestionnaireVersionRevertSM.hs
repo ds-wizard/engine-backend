@@ -8,4 +8,4 @@ import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionRevertJM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 
 instance ToSchema QuestionnaireVersionRevertDTO where
-  declareNamedSchema = simpleToSchema questionnaireVersion1RevertDto
+  declareNamedSchema = toSwagger questionnaireVersion1RevertDto

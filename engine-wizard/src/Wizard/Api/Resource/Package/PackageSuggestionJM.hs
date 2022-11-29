@@ -2,11 +2,11 @@ module Wizard.Api.Resource.Package.PackageSuggestionJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Model.Package.PackageSuggestion
 
 instance FromJSON PackageSuggestion where
-  parseJSON = simpleParseJSON "_packageSuggestion"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON PackageSuggestion where
-  toJSON = simpleToJSON "_packageSuggestion"
+  toJSON = genericToJSON jsonOptions

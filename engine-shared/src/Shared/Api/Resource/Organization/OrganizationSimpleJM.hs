@@ -3,10 +3,10 @@ module Shared.Api.Resource.Organization.OrganizationSimpleJM where
 import Data.Aeson
 
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON OrganizationSimpleDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON OrganizationSimpleDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

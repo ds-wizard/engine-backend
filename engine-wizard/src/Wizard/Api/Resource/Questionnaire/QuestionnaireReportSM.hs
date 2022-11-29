@@ -9,4 +9,4 @@ import Wizard.Api.Resource.Report.ReportSM ()
 import Wizard.Database.Migration.Development.Report.Data.Reports
 
 instance ToSchema QuestionnaireReportDTO where
-  declareNamedSchema = simpleToSchema questionnaireReport
+  declareNamedSchema = toSwagger questionnaireReport

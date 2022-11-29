@@ -2,11 +2,11 @@ module Wizard.Integration.Resource.Config.CompileClientCssIJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Integration.Resource.Config.CompileClientCssIDTO
 
 instance FromJSON CompileClientCssIDTO where
-  parseJSON = simpleParseJSON "_compileClientCssIDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON CompileClientCssIDTO where
-  toJSON = simpleToJSON "_compileClientCssIDTO"
+  toJSON = genericToJSON jsonOptions

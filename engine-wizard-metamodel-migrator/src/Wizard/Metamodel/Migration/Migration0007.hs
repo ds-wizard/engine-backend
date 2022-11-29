@@ -1,6 +1,6 @@
-module Wizard.Metamodel.Migration.Migration0007
-  ( migrateEventValue
-  ) where
+module Wizard.Metamodel.Migration.Migration0007 (
+  migrateEventValue,
+) where
 
 import Data.Aeson
 import qualified Data.Aeson.KeyMap as KM
@@ -11,7 +11,9 @@ import Wizard.Metamodel.Migration.MigrationContext
 import Wizard.Metamodel.Migration.Utils
 
 -- Migration #0007 (KM v7 -> v8)
+
 -- * Extend with default phases and metrics
+
 -- * Change levels to phases in question events
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ = Right . migrate
@@ -19,29 +21,29 @@ migrateEventValue _ = Right . migrate
 mkPhaseEvent :: T.Text -> T.Text -> T.Text -> T.Text -> Value
 mkPhaseEvent title eventUuid entityUuid parentUuid =
   Object $
-  KM.fromList
-    [ ("uuid", String eventUuid)
-    , ("entityUuid", String entityUuid)
-    , ("parentUuid", String parentUuid)
-    , ("entityUuid", String entityUuid)
-    , ("eventType", String "AddPhaseEvent")
-    , ("title", String title)
-    , ("description", Null)
-    ]
+    KM.fromList
+      [ ("uuid", String eventUuid)
+      , ("entityUuid", String entityUuid)
+      , ("parentUuid", String parentUuid)
+      , ("entityUuid", String entityUuid)
+      , ("eventType", String "AddPhaseEvent")
+      , ("title", String title)
+      , ("description", Null)
+      ]
 
 mkMetricEvent :: T.Text -> T.Text -> T.Text -> T.Text -> T.Text -> T.Text -> Value
 mkMetricEvent title abbr description eventUuid entityUuid parentUuid =
   Object $
-  KM.fromList
-    [ ("uuid", String eventUuid)
-    , ("entityUuid", String entityUuid)
-    , ("parentUuid", String parentUuid)
-    , ("entityUuid", String entityUuid)
-    , ("eventType", String "AddMetricEvent")
-    , ("title", String title)
-    , ("abbreviation", String abbr)
-    , ("description", String description)
-    ]
+    KM.fromList
+      [ ("uuid", String eventUuid)
+      , ("entityUuid", String entityUuid)
+      , ("parentUuid", String parentUuid)
+      , ("entityUuid", String entityUuid)
+      , ("eventType", String "AddMetricEvent")
+      , ("title", String title)
+      , ("abbreviation", String abbr)
+      , ("description", String description)
+      ]
 
 uuidPhase1 :: T.Text
 uuidPhase1 = "b101f2d0-2476-452d-aa8d-95a41a02b52c"

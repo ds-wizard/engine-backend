@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Template.List_POST
-  ( list_post
-  ) where
+module Wizard.Specs.API.Template.List_POST (
+  list_post,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -52,24 +52,24 @@ test_201 appContext = create_test_201 "HTTP 201 CREATED" appContext reqAuthHeade
 
 create_test_201 title appContext reqAuthHeader =
   it title $
-       -- GIVEN: Prepare request
-   do
-    let reqHeaders = reqHeadersT reqAuthHeader
+    -- GIVEN: Prepare request
+    do
+      let reqHeaders = reqHeadersT reqAuthHeader
       -- AND: Prepare expectation
-    let expStatus = 201
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = differentTemplate
-     -- AND: Run migrations
-    runInContextIO TML_Migration.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, Template)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    compareTemplateDtos resDto expDto
-    -- AND: Find result in DB and compare with expectation state
-    assertCountInDB findTemplates appContext 2
+      let expStatus = 201
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = differentTemplate
+      -- AND: Run migrations
+      runInContextIO TML_Migration.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, Template)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      compareTemplateDtos resDto expDto
+      -- AND: Find result in DB and compare with expectation state
+      assertCountInDB findTemplates appContext 2
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

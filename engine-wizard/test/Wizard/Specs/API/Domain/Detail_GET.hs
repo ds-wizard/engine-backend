@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Domain.Detail_GET
-  ( detail_GET
-  ) where
+module Wizard.Specs.API.Domain.Detail_GET (
+  detail_GET,
+) where
 
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
@@ -45,18 +45,18 @@ reqBody = ""
 test_204 appContext = do
   it "HTTP 204 NO CONTENT" $
     -- GIVEN: Prepare request
-   do
-    let reqUrl = reqUrlT "new-domain"
-    -- AND: Prepare expectation
-    let expStatus = 204
-    let expHeaders = resCorsHeaders
-    let expBody = ""
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- AND: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    do
+      let reqUrl = reqUrlT "new-domain"
+      -- AND: Prepare expectation
+      let expStatus = 204
+      let expHeaders = resCorsHeaders
+      let expBody = ""
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- AND: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -76,16 +76,16 @@ test_400 appContext = do
 create_test_400_app_id title appContext appId errorMessage =
   it title $
     -- GIVEN: Prepare request
-   do
-    let reqUrl = reqUrlT appId
-    -- AND: Prepare expectation
-    let expStatus = 400
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = ValidationError [] (M.singleton "appId" [errorMessage])
-    let expBody = encode expDto
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- AND: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    do
+      let reqUrl = reqUrlT appId
+      -- AND: Prepare expectation
+      let expStatus = 400
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = ValidationError [] (M.singleton "appId" [errorMessage])
+      let expBody = encode expDto
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- AND: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher

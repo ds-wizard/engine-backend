@@ -3,184 +3,184 @@ module Wizard.Api.Resource.Config.AppConfigJM where
 import Data.Aeson
 
 import Shared.Api.Resource.Package.PackagePatternJM ()
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Config.SimpleFeatureJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()
 import Wizard.Model.Config.AppConfig
 
 instance FromJSON AppConfig where
-  parseJSON = simpleParseJSON "_appConfig"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfig where
-  toJSON = simpleToJSON "_appConfig"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigOrganization where
-  parseJSON = simpleParseJSON "_appConfigOrganization"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigOrganization where
-  toJSON = simpleToJSON "_appConfigOrganization"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigFeature where
-  parseJSON = simpleParseJSON "_appConfigFeature"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigFeature where
-  toJSON = simpleToJSON "_appConfigFeature"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigAuth where
-  parseJSON = simpleParseJSON "_appConfigAuth"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigAuth where
-  toJSON = simpleToJSON "_appConfigAuth"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigAuthInternal where
-  parseJSON = simpleParseJSON "_appConfigAuthInternal"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigAuthInternal where
-  toJSON = simpleToJSON "_appConfigAuthInternal"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigAuthExternal where
-  parseJSON = simpleParseJSON "_appConfigAuthExternal"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigAuthExternal where
-  toJSON = simpleToJSON "_appConfigAuthExternal"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigAuthExternalService where
-  parseJSON = simpleParseJSON "_appConfigAuthExternalService"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigAuthExternalService where
-  toJSON = simpleToJSON "_appConfigAuthExternalService"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigAuthExternalServiceParameter where
-  parseJSON = simpleParseJSON "_appConfigAuthExternalServiceParameter"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigAuthExternalServiceParameter where
-  toJSON = simpleToJSON "_appConfigAuthExternalServiceParameter"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigAuthExternalServiceStyle where
-  parseJSON = simpleParseJSON "_appConfigAuthExternalServiceStyle"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigAuthExternalServiceStyle where
-  toJSON = simpleToJSON "_appConfigAuthExternalServiceStyle"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigPrivacyAndSupport where
-  parseJSON = simpleParseJSON "_appConfigPrivacyAndSupport"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigPrivacyAndSupport where
-  toJSON = simpleToJSON "_appConfigPrivacyAndSupport"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigDashboard where
-  parseJSON = simpleParseJSON "_appConfigDashboard"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigDashboard where
-  toJSON = simpleToJSON "_appConfigDashboard"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigDashboardDashboardType
 
 instance ToJSON AppConfigDashboardDashboardType
 
 instance FromJSON AppConfigLookAndFeel where
-  parseJSON = simpleParseJSON "_appConfigLookAndFeel"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigLookAndFeel where
-  toJSON = simpleToJSON "_appConfigLookAndFeel"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigLookAndFeelCustomMenuLink where
-  parseJSON = simpleParseJSON "_appConfigLookAndFeelCustomMenuLink"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigLookAndFeelCustomMenuLink where
-  toJSON = simpleToJSON "_appConfigLookAndFeelCustomMenuLink"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigRegistry where
-  parseJSON = simpleParseJSON "_appConfigRegistry"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigRegistry where
-  toJSON = simpleToJSON "_appConfigRegistry"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigKnowledgeModel where
-  parseJSON = simpleParseJSON "_appConfigKnowledgeModel"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigKnowledgeModel where
-  toJSON = simpleToJSON "_appConfigKnowledgeModel"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigKnowledgeModelPublic where
-  parseJSON = simpleParseJSON "_appConfigKnowledgeModelPublic"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigKnowledgeModelPublic where
-  toJSON = simpleToJSON "_appConfigKnowledgeModelPublic"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigQuestionnaire where
-  parseJSON = simpleParseJSON "_appConfigQuestionnaire"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigQuestionnaire where
-  toJSON = simpleToJSON "_appConfigQuestionnaire"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigQuestionnaireVisibility where
-  parseJSON = simpleParseJSON "_appConfigQuestionnaireVisibility"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigQuestionnaireVisibility where
-  toJSON = simpleToJSON "_appConfigQuestionnaireVisibility"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigQuestionnaireSharing where
-  parseJSON = simpleParseJSON "_appConfigQuestionnaireSharing"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigQuestionnaireSharing where
-  toJSON = simpleToJSON "_appConfigQuestionnaireSharing"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON QuestionnaireCreation
 
 instance ToJSON QuestionnaireCreation
 
 instance FromJSON AppConfigQuestionnaireProjectTagging where
-  parseJSON = simpleParseJSON "_appConfigQuestionnaireProjectTagging"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigQuestionnaireProjectTagging where
-  toJSON = simpleToJSON "_appConfigQuestionnaireProjectTagging"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigQuestionnaireFeedback where
-  parseJSON = simpleParseJSON "_appConfigQuestionnaireFeedback"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigQuestionnaireFeedback where
-  toJSON = simpleToJSON "_appConfigQuestionnaireFeedback"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigTemplate where
-  parseJSON = simpleParseJSON "_appConfigTemplate"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigTemplate where
-  toJSON = simpleToJSON "_appConfigTemplate"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigSubmission where
-  parseJSON = simpleParseJSON "_appConfigSubmission"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigSubmission where
-  toJSON = simpleToJSON "_appConfigSubmission"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigSubmissionService where
-  parseJSON = simpleParseJSON "_appConfigSubmissionService"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigSubmissionService where
-  toJSON = simpleToJSON "_appConfigSubmissionService"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigSubmissionServiceSupportedFormat where
-  parseJSON = simpleParseJSON "_appConfigSubmissionServiceSupportedFormat"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigSubmissionServiceSupportedFormat where
-  toJSON = simpleToJSON "_appConfigSubmissionServiceSupportedFormat"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigSubmissionServiceRequest where
-  parseJSON = simpleParseJSON "_appConfigSubmissionServiceRequest"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigSubmissionServiceRequest where
-  toJSON = simpleToJSON "_appConfigSubmissionServiceRequest"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigSubmissionServiceRequestMultipart where
-  parseJSON = simpleParseJSON "_appConfigSubmissionServiceRequestMultipart"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigSubmissionServiceRequestMultipart where
-  toJSON = simpleToJSON "_appConfigSubmissionServiceRequestMultipart"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppConfigOwl where
-  parseJSON = simpleParseJSON "_appConfigOwl"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppConfigOwl where
-  toJSON = simpleToJSON "_appConfigOwl"
+  toJSON = genericToJSON jsonOptions

@@ -1,27 +1,40 @@
 module Wizard.Database.Migration.Development.Locale.Data.Locales where
 
-import Data.Aeson (encode)
-import qualified Data.ByteString.Char8 as BS
-import qualified Data.ByteString.Lazy.Char8 as BSL
-import qualified Data.Map.Strict as M
+import Shared.Database.Migration.Development.Locale.Data.Locales
+import Shared.Database.Migration.Development.Organization.Data.Organizations
+import Shared.Model.Locale.Locale
+import Wizard.Api.Resource.Locale.LocaleChangeDTO
+import Wizard.Api.Resource.Locale.LocaleDTO
+import Wizard.Api.Resource.Locale.LocaleDetailDTO
+import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
+import Wizard.Model.Locale.LocaleList
+import Wizard.Model.Locale.LocaleState
+import Wizard.Service.Locale.LocaleMapper
 
-import Shared.Constant.App
-import Shared.Util.Date
-import Shared.Util.Uuid
-import Wizard.Model.Locale.Locale
+localeListDefaultEn :: LocaleList
+localeListDefaultEn = toLocaleList localeDefaultEn UnknownLocaleState
 
-localeCz :: Locale
-localeCz =
-  Locale
-    { _localeUuid = u' "b5f6ea5e-89c2-4419-930a-69980bbc36e8"
-    , _localeName = "Čeština"
-    , _localeShortcut = "cs"
-    , _localeFallback = True
-    , _localeEnabled = True
-    , _localeAppUuid = defaultAppUuid
-    , _localeCreatedAt = dt' 2022 1 21
-    , _localeUpdatedAt = dt' 2022 1 21
+localeDefaultEnDto :: LocaleDTO
+localeDefaultEnDto = toDTO False localeListDefaultEn
+
+localeListNl :: LocaleList
+localeListNl = toLocaleList localeNl UnknownLocaleState
+
+localeNlDto :: LocaleDTO
+localeNlDto = (toDTO False localeListNl) {organization = Just orgGlobalSimple}
+
+localeNlDetailDto :: LocaleDetailDTO
+localeNlDetailDto = toDetailDTO localeNl [] [globalRegistryOrganization] [localeNl.version] Nothing
+
+localeNlChangeDto :: LocaleChangeDTO
+localeNlChangeDto =
+  LocaleChangeDTO
+    { enabled = False
+    , defaultLocale = False
     }
 
-localeCzContent :: BS.ByteString
-localeCzContent = BSL.toStrict . encode . M.insert "someKey" "someValue" $ M.empty
+localeListDe :: LocaleList
+localeListDe = toLocaleList localeDe UnknownLocaleState
+
+localeDeDto :: LocaleDTO
+localeDeDto = (toDTO False localeListDe) {organization = Just orgGlobalSimple}

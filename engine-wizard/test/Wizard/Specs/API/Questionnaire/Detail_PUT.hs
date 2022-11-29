@@ -1,8 +1,7 @@
-module Wizard.Specs.API.Questionnaire.Detail_PUT
-  ( detail_put
-  ) where
+module Wizard.Specs.API.Questionnaire.Detail_PUT (
+  detail_put,
+) where
 
-import Control.Lens ((^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.Map.Strict as M
@@ -13,7 +12,6 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
@@ -31,6 +29,7 @@ import qualified Wizard.Database.Migration.Development.Questionnaire.Questionnai
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
@@ -62,15 +61,15 @@ reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
 reqDtoT qtn =
   QuestionnaireChangeDTO
-    { _questionnaireChangeDTOName = qtn ^. name
-    , _questionnaireChangeDTODescription = qtn ^. description
-    , _questionnaireChangeDTOVisibility = qtn ^. visibility
-    , _questionnaireChangeDTOSharing = qtn ^. sharing
-    , _questionnaireChangeDTOProjectTags = qtn ^. projectTags
-    , _questionnaireChangeDTOPermissions = qtn ^. permissions
-    , _questionnaireChangeDTOTemplateId = qtn ^. templateId
-    , _questionnaireChangeDTOFormatUuid = qtn ^. formatUuid
-    , _questionnaireChangeDTOIsTemplate = qtn ^. isTemplate
+    { name = qtn.name
+    , description = qtn.description
+    , visibility = qtn.visibility
+    , sharing = qtn.sharing
+    , projectTags = qtn.projectTags
+    , permissions = qtn.permissions
+    , templateId = qtn.templateId
+    , formatUuid = qtn.formatUuid
+    , isTemplate = qtn.isTemplate
     }
 
 reqBodyT qtn = encode $ reqDtoT qtn
@@ -112,56 +111,57 @@ test_200 appContext = do
 
 create_test_200 title appContext qtn qtnEdited qtnCtn permissions showComments authHeader anonymousEnabled =
   it title $
-     -- GIVEN: Prepare request
-   do
-    let reqUrl = reqUrlT $ qtn ^. uuid
-    let reqHeaders = reqHeadersT authHeader
-    let reqBody = reqBodyT qtnEdited
-     -- AND: Prepare expectation
-    let expStatus = 200
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto =
-          toDetailWithPackageWithEventsDTO
-            qtnEdited
-            qtnCtn
-            (SPM.toPackage germanyPackage)
-            ["1.0.0"]
-            km1WithQ4
-            QSDefault
-            Nothing
-            Nothing
-            fReplies
-            (if showComments
-               then qtnThreadsDto
-               else M.empty)
-            permissions
-            qVersionsDto
-            Nothing
-    let expType (a :: QuestionnaireDetailDTO) = a
-     -- AND: Run migrations
-    runInContextIO U.runMigration appContext
-    runInContextIO TML.runMigration appContext
-    runInContextIO QTN.runMigration appContext
-    runInContextIO (insertQuestionnaire questionnaire10) appContext
-    -- AND: Enabled anonymous sharing
-    updateAnonymousQuestionnaireSharing appContext anonymousEnabled
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    assertResponse expStatus expHeaders expDto expType response ["updatedAt"]
-    -- AND: Find a result in DB
-    assertExistenceOfQuestionnaireInDB appContext qtnEdited
+    -- GIVEN: Prepare request
+    do
+      let reqUrl = reqUrlT $ qtn.uuid
+      let reqHeaders = reqHeadersT authHeader
+      let reqBody = reqBodyT qtnEdited
+      -- AND: Prepare expectation
+      let expStatus = 200
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto =
+            toDetailWithPackageWithEventsDTO
+              qtnEdited
+              qtnCtn
+              (SPM.toPackage germanyPackage)
+              ["1.0.0"]
+              km1WithQ4
+              QSDefault
+              Nothing
+              Nothing
+              fReplies
+              ( if showComments
+                  then qtnThreadsDto
+                  else M.empty
+              )
+              permissions
+              qVersionsDto
+              Nothing
+      let expType (a :: QuestionnaireDetailDTO) = a
+      -- AND: Run migrations
+      runInContextIO U.runMigration appContext
+      runInContextIO TML.runMigration appContext
+      runInContextIO QTN.runMigration appContext
+      runInContextIO (insertQuestionnaire questionnaire10) appContext
+      -- AND: Enabled anonymous sharing
+      updateAnonymousQuestionnaireSharing appContext anonymousEnabled
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      assertResponse expStatus expHeaders expDto expType response ["updatedAt"]
+      -- AND: Find a result in DB
+      assertExistenceOfQuestionnaireInDB appContext qtnEdited
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = createInvalidJsonTest reqMethod (reqUrlT $ questionnaire3 ^. uuid) "visibility"
+test_400 appContext = createInvalidJsonTest reqMethod (reqUrlT questionnaire3.uuid) "visibility"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_401 appContext =
-  createAuthTest reqMethod (reqUrlT $ questionnaire3 ^. uuid) [reqCtHeader] (reqBodyT questionnaire1)
+  createAuthTest reqMethod (reqUrlT questionnaire3.uuid) [reqCtHeader] (reqBodyT questionnaire1)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -170,7 +170,7 @@ test_403 appContext = do
   createNoPermissionTest
     appContext
     reqMethod
-    (reqUrlT $ questionnaire3 ^. uuid)
+    (reqUrlT questionnaire3.uuid)
     [reqCtHeader]
     (reqBodyT questionnaire1)
     "QTN_PERM"
@@ -195,27 +195,27 @@ test_403 appContext = do
 
 create_test_403 title appContext qtn qtnEdited reason =
   it title $
-     -- GIVEN: Prepare request
-   do
-    let reqUrl = reqUrlT $ qtn ^. uuid
-    let reqHeaders = reqHeadersT [reqNonAdminAuthHeader]
-    let reqBody = reqBodyT qtnEdited
-     -- AND: Prepare expectation
-    let expStatus = 403
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO U.runMigration appContext
-    runInContextIO TML.runMigration appContext
-    runInContextIO QTN.runMigration appContext
-    runInContextIO (insertQuestionnaire questionnaire10) appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare request
+    do
+      let reqUrl = reqUrlT $ qtn.uuid
+      let reqHeaders = reqHeadersT [reqNonAdminAuthHeader]
+      let reqBody = reqBodyT qtnEdited
+      -- AND: Prepare expectation
+      let expStatus = 403
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO U.runMigration appContext
+      runInContextIO TML.runMigration appContext
+      runInContextIO QTN.runMigration appContext
+      runInContextIO (insertQuestionnaire questionnaire10) appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

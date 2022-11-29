@@ -1,111 +1,58 @@
 module Shared.Model.Event.Answer.AnswerEventLenses where
 
-import Control.Lens ((&), (.~), (^.))
-import Data.Time
-import qualified Data.UUID as U
-
-import LensesConfig
 import Shared.Model.Common.Lens
 import Shared.Model.Event.Answer.AnswerEvent
 
 instance HasUuid' AddAnswerEvent where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AddAnswerEvent -> U.UUID
-      get entity = entity ^. uuid
-      set :: AddAnswerEvent -> U.UUID -> AddAnswerEvent
-      set entity newValue = entity & uuid .~ newValue
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
 
 instance HasUuid' EditAnswerEvent where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: EditAnswerEvent -> U.UUID
-      get entity = entity ^. uuid
-      set :: EditAnswerEvent -> U.UUID -> EditAnswerEvent
-      set entity newValue = entity & uuid .~ newValue
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
 
 instance HasUuid' DeleteAnswerEvent where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: DeleteAnswerEvent -> U.UUID
-      get entity = entity ^. uuid
-      set :: DeleteAnswerEvent -> U.UUID -> DeleteAnswerEvent
-      set entity newValue = entity & uuid .~ newValue
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
 instance HasParentUuid' AddAnswerEvent where
-  parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AddAnswerEvent -> U.UUID
-      get entity = entity ^. parentUuid
-      set :: AddAnswerEvent -> U.UUID -> AddAnswerEvent
-      set entity newValue = entity & parentUuid .~ newValue
+  getParentUuid entity = entity.parentUuid
+  setParentUuid entity newValue = entity {parentUuid = newValue}
 
 instance HasParentUuid' EditAnswerEvent where
-  parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: EditAnswerEvent -> U.UUID
-      get entity = entity ^. parentUuid
-      set :: EditAnswerEvent -> U.UUID -> EditAnswerEvent
-      set entity newValue = entity & parentUuid .~ newValue
+  getParentUuid entity = entity.parentUuid
+  setParentUuid entity newValue = entity {parentUuid = newValue}
 
 instance HasParentUuid' DeleteAnswerEvent where
-  parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: DeleteAnswerEvent -> U.UUID
-      get entity = entity ^. parentUuid
-      set :: DeleteAnswerEvent -> U.UUID -> DeleteAnswerEvent
-      set entity newValue = entity & parentUuid .~ newValue
+  getParentUuid entity = entity.parentUuid
+  setParentUuid entity newValue = entity {parentUuid = newValue}
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
 instance HasEntityUuid' AddAnswerEvent where
-  entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AddAnswerEvent -> U.UUID
-      get entity = entity ^. entityUuid
-      set :: AddAnswerEvent -> U.UUID -> AddAnswerEvent
-      set entity newValue = entity & entityUuid .~ newValue
+  getEntityUuid entity = entity.entityUuid
+  setEntityUuid entity newValue = entity {entityUuid = newValue}
 
 instance HasEntityUuid' EditAnswerEvent where
-  entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: EditAnswerEvent -> U.UUID
-      get entity = entity ^. entityUuid
-      set :: EditAnswerEvent -> U.UUID -> EditAnswerEvent
-      set entity newValue = entity & entityUuid .~ newValue
+  getEntityUuid entity = entity.entityUuid
+  setEntityUuid entity newValue = entity {entityUuid = newValue}
 
 instance HasEntityUuid' DeleteAnswerEvent where
-  entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: DeleteAnswerEvent -> U.UUID
-      get entity = entity ^. entityUuid
-      set :: DeleteAnswerEvent -> U.UUID -> DeleteAnswerEvent
-      set entity newValue = entity & entityUuid .~ newValue
+  getEntityUuid entity = entity.entityUuid
+  setEntityUuid entity newValue = entity {entityUuid = newValue}
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
 instance HasCreatedAt' AddAnswerEvent where
-  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AddAnswerEvent -> UTCTime
-      get entity = entity ^. createdAt
-      set :: AddAnswerEvent -> UTCTime -> AddAnswerEvent
-      set entity newValue = entity & createdAt .~ newValue
+  getCreatedAt entity = entity.createdAt
+  setCreatedAt entity newValue = entity {createdAt = newValue}
 
 instance HasCreatedAt' EditAnswerEvent where
-  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: EditAnswerEvent -> UTCTime
-      get entity = entity ^. createdAt
-      set :: EditAnswerEvent -> UTCTime -> EditAnswerEvent
-      set entity newValue = entity & createdAt .~ newValue
+  getCreatedAt entity = entity.createdAt
+  setCreatedAt entity newValue = entity {createdAt = newValue}
 
 instance HasCreatedAt' DeleteAnswerEvent where
-  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: DeleteAnswerEvent -> UTCTime
-      get entity = entity ^. createdAt
-      set :: DeleteAnswerEvent -> UTCTime -> DeleteAnswerEvent
-      set entity newValue = entity & createdAt .~ newValue
+  getCreatedAt entity = entity.createdAt
+  setCreatedAt entity newValue = entity {createdAt = newValue}

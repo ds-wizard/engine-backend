@@ -1,10 +1,8 @@
 module Shared.Bootstrap.Retry where
 
-import Control.Lens ((^.))
 import Control.Monad.Catch
 import Control.Retry
 
-import LensesConfig
 import Shared.Model.Config.ServerConfig
 import Shared.Util.Logger
 
@@ -21,7 +19,7 @@ withRetry serverConfigLogging backoff _CMP description action = recovering backo
     wrappedAction _ = action
     handlers = skipAsyncExceptions ++ [handler]
     handler retryStatus = Handler $ \(_ :: SomeException) -> loggingHandler retryStatus
-    loggingLevel = serverConfigLogging ^. level
+    loggingLevel = serverConfigLogging.level
     loggingHandler retryStatus = do
       let nextWait =
             case rsPreviousDelay retryStatus of

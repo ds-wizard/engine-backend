@@ -15,48 +15,48 @@ _USER_ROLE_DATA_STEWARD = "dataSteward"
 
 _USER_ROLE_RESEARCHER = "researcher"
 
-data User =
-  User
-    { _userUuid :: U.UUID
-    , _userFirstName :: String
-    , _userLastName :: String
-    , _userEmail :: String
-    , _userPasswordHash :: String
-    , _userAffiliation :: Maybe String
-    , _userSources :: [String]
-    , _userRole :: String
-    , _userPermissions :: [String]
-    , _userActive :: Bool
-    , _userSubmissionProps :: [UserSubmissionProps]
-    , _userImageUrl :: Maybe String
-    , _userGroups :: [GroupMembership]
-    , _userMachine :: Bool
-    , _userAppUuid :: U.UUID
-    , _userLastVisitedAt :: UTCTime
-    , _userCreatedAt :: UTCTime
-    , _userUpdatedAt :: UTCTime
-    }
+data User = User
+  { uuid :: U.UUID
+  , firstName :: String
+  , lastName :: String
+  , email :: String
+  , passwordHash :: String
+  , affiliation :: Maybe String
+  , sources :: [String]
+  , uRole :: String
+  , permissions :: [String]
+  , active :: Bool
+  , submissionProps :: [UserSubmissionProps]
+  , imageUrl :: Maybe String
+  , groups :: [GroupMembership]
+  , machine :: Bool
+  , appUuid :: U.UUID
+  , lastVisitedAt :: UTCTime
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Generic, Show)
 
-data UserSubmissionProps =
-  UserSubmissionProps
-    { _userSubmissionPropsSId :: String
-    , _userSubmissionPropsValues :: M.Map String String
-    }
+data UserSubmissionProps = UserSubmissionProps
+  { sId :: String
+  , values :: M.Map String String
+  }
   deriving (Generic, Eq, Show)
 
 instance Eq User where
   a == b =
-    _userUuid a == _userUuid b &&
-    _userFirstName a == _userFirstName b &&
-    _userLastName a == _userLastName b &&
-    _userEmail a == _userEmail b &&
-    _userPasswordHash a == _userPasswordHash b &&
-    _userAffiliation a == _userAffiliation b &&
-    _userSources a == _userSources b &&
-    _userRole a == _userRole b &&
-    _userPermissions a == _userPermissions b &&
-    _userActive a == _userActive b &&
-    _userSubmissionProps a == _userSubmissionProps b &&
-    _userImageUrl a == _userImageUrl b &&
-    _userGroups a == _userGroups b && _userMachine a == _userMachine b && _userAppUuid a == _userAppUuid b
+    a.uuid == b.uuid
+      && a.firstName == b.firstName
+      && a.lastName == b.lastName
+      && a.email == b.email
+      && a.passwordHash == b.passwordHash
+      && a.affiliation == b.affiliation
+      && a.sources == b.sources
+      && a.uRole == b.uRole
+      && a.permissions == b.permissions
+      && a.active == b.active
+      && a.submissionProps == b.submissionProps
+      && a.imageUrl == b.imageUrl
+      && a.groups == b.groups
+      && a.machine == b.machine
+      && a.appUuid == b.appUuid

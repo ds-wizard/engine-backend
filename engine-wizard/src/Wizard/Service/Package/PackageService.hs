@@ -1,9 +1,7 @@
 module Wizard.Service.Package.PackageService where
 
-import Control.Lens ((^.), (^..))
 import Control.Monad.Reader (asks)
 
-import LensesConfig
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
@@ -21,6 +19,8 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
+import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Package.PackageState
 import Wizard.Model.Package.PackageSuggestion
@@ -31,8 +31,8 @@ import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageUtil
 import Wizard.Service.Package.PackageValidation
 
-getPackagesPage ::
-     Maybe String
+getPackagesPage
+  :: Maybe String
   -> Maybe String
   -> Maybe String
   -> Maybe String
@@ -42,14 +42,14 @@ getPackagesPage ::
 getPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort = do
   checkPermission _PM_READ_PERM
   appConfig <- getAppConfig
-  if mPackageState == (Just . show $ OutdatedPackageState) && not (appConfig ^. registry . enabled)
+  if mPackageState == (Just . show $ OutdatedPackageState) && not (appConfig.registry.enabled)
     then return $ Page "packages" (PageMetadata 0 0 0 0) []
     else do
       packages <- findPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort
-      return . fmap (toSimpleDTO'' (appConfig ^. registry . enabled)) $ packages
+      return . fmap (toSimpleDTO'' (appConfig.registry.enabled)) $ packages
 
-getPackageSuggestions ::
-     Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)
+getPackageSuggestions
+  :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)
 getPackageSuggestions mQuery mSelectIds mExcludeIds pageable sort = do
   checkPermission _PM_READ_PERM
   findPackageSuggestionsPage mQuery mSelectIds mExcludeIds pageable sort
@@ -61,17 +61,17 @@ getPackageDetailById :: String -> AppContextM PackageDetailDTO
 getPackageDetailById pkgId = do
   resolvedPkgId <- resolvePackageId pkgId
   checkIfPackageIsPublic (Just resolvedPkgId) _PM_READ_PERM
-  serverConfig <- asks _appContextServerConfig
+  serverConfig <- asks serverConfig
   pkg <- getPackageById resolvedPkgId
   versions <- getPackageVersions pkg
   pkgRs <- findRegistryPackages
   orgRs <- findRegistryOrganizations
-  return $ toDetailDTO pkg pkgRs orgRs versions (buildPackageUrl (serverConfig ^. registry . clientUrl) pkg pkgRs)
+  return $ toDetailDTO pkg pkgRs orgRs versions (buildPackageUrl serverConfig.registry.clientUrl pkg pkgRs)
 
 getSeriesOfPackages :: String -> AppContextM [PackageWithEvents]
 getSeriesOfPackages pkgId = do
   pkg <- findPackageWithEventsById pkgId
-  case pkg ^. previousPackageId of
+  case pkg.previousPackageId of
     Just previousPkgId -> do
       previousPkgs <- getSeriesOfPackages previousPkgId
       return $ previousPkgs ++ [pkg]
@@ -80,11 +80,11 @@ getSeriesOfPackages pkgId = do
 getAllPreviousEventsSincePackageId :: String -> AppContextM [Event]
 getAllPreviousEventsSincePackageId pkgId = do
   package <- findPackageWithEventsById pkgId
-  case package ^. previousPackageId of
+  case package.previousPackageId of
     Just previousPackageId -> do
       pkgEvents <- getAllPreviousEventsSincePackageId previousPackageId
-      return $ pkgEvents ++ (package ^. events)
-    Nothing -> return $ package ^. events
+      return $ pkgEvents ++ package.events
+    Nothing -> return package.events
 
 getAllPreviousEventsSincePackageIdAndUntilPackageId :: String -> String -> AppContextM [Event]
 getAllPreviousEventsSincePackageIdAndUntilPackageId sincePkgId untilPkgId = go sincePkgId
@@ -94,11 +94,11 @@ getAllPreviousEventsSincePackageIdAndUntilPackageId sincePkgId untilPkgId = go s
         then return []
         else do
           package <- findPackageWithEventsById pkgId
-          case package ^. previousPackageId of
+          case package.previousPackageId of
             Just previousPackageId -> do
               pkgEvents <- go previousPackageId
-              return $ pkgEvents ++ (package ^. events)
-            Nothing -> return $ package ^. events
+              return $ pkgEvents ++ package.events
+            Nothing -> return package.events
 
 getTheNewestPackageByOrganizationIdAndKmId :: String -> String -> AppContextM (Maybe Package)
 getTheNewestPackageByOrganizationIdAndKmId organizationId kmId = do
@@ -112,7 +112,7 @@ getTheNewestPackageByOrganizationIdAndKmId organizationId kmId = do
 getNewerPackages :: String -> AppContextM [Package]
 getNewerPackages currentPkgId = do
   pkgs <- findPackagesByOrganizationIdAndKmId (getOrgIdFromCoordinate currentPkgId) (getKmIdFromCoordinate currentPkgId)
-  let newerPkgs = filter (\pkg -> compareVersion (pkg ^. version) (getVersionFromCoordinate currentPkgId) == GT) pkgs
+  let newerPkgs = filter (\pkg -> compareVersion pkg.version (getVersionFromCoordinate currentPkgId) == GT) pkgs
   return . sortPackagesByVersion $ newerPkgs
 
 createPackage :: PackageWithEvents -> AppContextM PackageSimpleDTO
@@ -127,7 +127,7 @@ deletePackagesByQueryParams queryParams =
   runInTransaction $ do
     checkPermission _PM_WRITE_PERM
     packages <- findPackagesFiltered queryParams
-    let pIds = packages ^.. traverse . pId
+    let pIds = fmap (.pId) packages
     validatePackagesDeletation pIds
     deletePackagesFiltered queryParams
     return ()
@@ -146,5 +146,5 @@ deletePackage pkgId =
 -- --------------------------------
 getPackageVersions :: Package -> AppContextM [String]
 getPackageVersions pkg = do
-  allPkgs <- findPackagesByOrganizationIdAndKmId (pkg ^. organizationId) (pkg ^. kmId)
-  return . fmap _packageVersion $ allPkgs
+  allPkgs <- findPackagesByOrganizationIdAndKmId pkg.organizationId pkg.kmId
+  return . fmap (.version) $ allPkgs

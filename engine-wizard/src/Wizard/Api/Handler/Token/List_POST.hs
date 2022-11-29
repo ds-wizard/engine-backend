@@ -12,12 +12,12 @@ import Wizard.Api.Resource.UserToken.UserTokenJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.UserToken.UserTokenService
 
-type List_POST
-   = Header "Host" String
-     :> ReqBody '[ SafeJSON] UserTokenCreateDTO
-     :> "tokens"
-     :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] UserTokenDTO)
+type List_POST =
+  Header "Host" String
+    :> ReqBody '[SafeJSON] UserTokenCreateDTO
+    :> "tokens"
+    :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] UserTokenDTO)
 
-list_POST :: Maybe String -> UserTokenCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UserTokenDTO)
+list_POST :: Maybe String -> UserTokenCreateDTO -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserTokenDTO)
 list_POST mServerUrl reqDto =
   runInUnauthService mServerUrl Transactional $ addTraceUuidHeader =<< createTokenFromCredentials reqDto

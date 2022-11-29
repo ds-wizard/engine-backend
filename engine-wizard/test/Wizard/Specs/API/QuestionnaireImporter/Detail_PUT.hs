@@ -1,6 +1,6 @@
-module Wizard.Specs.API.QuestionnaireImporter.Detail_PUT
-  ( detail_PUT
-  ) where
+module Wizard.Specs.API.QuestionnaireImporter.Detail_PUT (
+  detail_PUT,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -13,6 +13,7 @@ import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterJM ()
 import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterMigration as QI_Migration
 import Wizard.Model.Context.AppContext
+import Wizard.Model.QuestionnaireImporter.QuestionnaireImporter
 import Wizard.Service.QuestionnaireImporter.QuestionnaireImporterMapper
 
 import SharedTest.Specs.API.Common
@@ -51,24 +52,24 @@ test_200 appContext = create_test_200 "HTTP 200 OK" appContext reqAuthHeader
 
 create_test_200 title appContext reqAuthHeader =
   it title $
-       -- GIVEN: Prepare request
-   do
-    let reqHeaders = reqHeadersT reqAuthHeader
+    -- GIVEN: Prepare request
+    do
+      let reqHeaders = reqHeadersT reqAuthHeader
       -- AND: Prepare expectation
-    let expStatus = 200
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = toDTO questionnaireImporterBio3Edited
-     -- AND: Run migrations
-    runInContextIO QI_Migration.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, QuestionnaireImporterDTO)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    compareQuestionnaireImporterDtos resDto expDto
-    -- AND: Find result in DB and compare with expectation state
-    assertExistenceOfQuestionnaireImporterInDB appContext questionnaireImporterBio3Edited
+      let expStatus = 200
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = toDTO questionnaireImporterBio3Edited
+      -- AND: Run migrations
+      runInContextIO QI_Migration.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, QuestionnaireImporterDTO)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      compareQuestionnaireImporterDtos resDto expDto
+      -- AND: Find result in DB and compare with expectation state
+      assertExistenceOfQuestionnaireImporterInDB appContext questionnaireImporterBio3Edited
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

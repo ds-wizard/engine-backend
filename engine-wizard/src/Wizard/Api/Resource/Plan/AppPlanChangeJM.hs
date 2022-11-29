@@ -2,11 +2,11 @@ module Wizard.Api.Resource.Plan.AppPlanChangeJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Plan.AppPlanChangeDTO
 
 instance FromJSON AppPlanChangeDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppPlanChangeDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

@@ -1,8 +1,8 @@
-module Wizard.Integration.Http.Common.HttpClient
-  ( runRequest
-  , runRequest'
-  , runSimpleRequest
-  ) where
+module Wizard.Integration.Http.Common.HttpClient (
+  runRequest,
+  runRequest',
+  runSimpleRequest,
+) where
 
 import qualified Control.Exception.Base as E
 import Control.Lens ((&), (.~), (?~), (^.))
@@ -13,22 +13,21 @@ import qualified Data.ByteString.Lazy as BSL
 import qualified Data.CaseInsensitive as CI
 import Data.Map (toList)
 import qualified Data.Text as T
-import Network.Wreq
-  ( Part
-  , Response
-  , checkResponse
-  , customPayloadMethodWith
-  , defaults
-  , getWith
-  , headers
-  , manager
-  , partBS
-  , responseBody
-  , responseStatus
-  , statusCode
-  )
+import Network.Wreq (
+  Part,
+  Response,
+  checkResponse,
+  customPayloadMethodWith,
+  defaults,
+  getWith,
+  headers,
+  manager,
+  partBS,
+  responseBody,
+  responseStatus,
+  statusCode,
+ )
 
-import LensesConfig hiding (headers)
 import Shared.Constant.Component
 import Shared.Model.Error.Error
 import Wizard.Localization.Messages.Internal
@@ -78,21 +77,21 @@ runRequest' req responseMapper = do
 
 runSimpleRequest :: HttpRequest -> AppContextM (Either E.SomeException (Response BSL.ByteString))
 runSimpleRequest req = do
-  httpClientManager <- asks _appContextHttpClientManager
+  httpClientManager <- asks httpClientManager
   let opts =
         defaults & manager .~ Right httpClientManager & headers .~ reqHeaders & (checkResponse ?~ (\_ _ -> return ()))
-  case req ^. multipartFileName of
+  case req.multipartFileName of
     Just fileName -> liftIO . E.try . actionMultipart opts $ fileName
     Nothing -> liftIO . E.try . action $ opts
   where
-    reqMethod = req ^. requestMethod
-    reqUrl = req ^. requestUrl
-    reqHeaders = mapHeader <$> toList (req ^. requestHeaders)
+    reqMethod = req.requestMethod
+    reqUrl = req.requestUrl
+    reqHeaders = mapHeader <$> toList req.requestHeaders
     action opts
       | reqMethod == "GET" = getWith opts reqUrl
-      | otherwise = customPayloadMethodWith reqMethod opts reqUrl (req ^. requestBody)
+      | otherwise = customPayloadMethodWith reqMethod opts reqUrl req.requestBody
     actionMultipart opts fileName =
-      customPayloadMethodWith reqMethod opts reqUrl ([partBS (T.pack fileName) (req ^. requestBody)] :: [Part])
+      customPayloadMethodWith reqMethod opts reqUrl ([partBS (T.pack fileName) req.requestBody] :: [Part])
 
 -- --------------------------------
 -- PRIVATE
@@ -104,7 +103,7 @@ mapHeader (k, v) = (CI.mk . BS.pack $ k, BS.pack v)
 -- LOGGER
 -- --------------------------------
 logRequestMultipart request =
-  case request ^. multipartFileName of
+  case request.multipartFileName of
     Just fileName -> logInfoU _CMP_INTEGRATION ("Request Multipart FileName: '" ++ fileName ++ "'")
     Nothing -> logInfoU _CMP_INTEGRATION "Request Multipart: Not used"
 

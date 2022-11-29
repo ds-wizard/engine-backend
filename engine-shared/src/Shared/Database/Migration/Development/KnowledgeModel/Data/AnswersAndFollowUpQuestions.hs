@@ -1,9 +1,7 @@
 module Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions where
 
-import Control.Lens
-import qualified Data.Map as Map
+import qualified Data.Map.Strict as Map
 
-import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations as FI
 import Shared.Database.Migration.Development.KnowledgeModel.Data.MetricMeasures
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases as PHS
@@ -17,148 +15,148 @@ import Shared.Util.Uuid
 q2_answerNo :: Answer
 q2_answerNo =
   Answer
-    { _answerUuid = u' "00000000-0000-0000-0000-00000000f2a1"
-    , _answerLabel = "No"
-    , _answerAdvice = Just "Super long advice"
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = []
-    , _answerMetricMeasures = [metricMeasureF1, metricMeasureA1]
+    { uuid = u' "00000000-0000-0000-0000-00000000f2a1"
+    , aLabel = "No"
+    , advice = Just "Super long advice"
+    , annotations = []
+    , followUpUuids = []
+    , metricMeasures = [metricMeasureF1, metricMeasureA1]
     }
 
 q3_answerNo :: Answer
 q3_answerNo =
   Answer
-    { _answerUuid = u' "00000000-0000-0000-0000-00000000f3a1"
-    , _answerLabel = "No"
-    , _answerAdvice = Just "Super long advice"
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = []
-    , _answerMetricMeasures = [metricMeasureF1, metricMeasureA1]
+    { uuid = u' "00000000-0000-0000-0000-00000000f3a1"
+    , aLabel = "No"
+    , advice = Just "Super long advice"
+    , annotations = []
+    , followUpUuids = []
+    , metricMeasures = [metricMeasureF1, metricMeasureA1]
     }
 
 q4_it1_q6_answerNo :: Answer
 q4_it1_q6_answerNo =
   Answer
-    { _answerUuid = u' "00000000-0000-0000-0000-00000000f6a1"
-    , _answerLabel = "No"
-    , _answerAdvice = Just "Great advice"
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = []
-    , _answerMetricMeasures = []
+    { uuid = u' "00000000-0000-0000-0000-00000000f6a1"
+    , aLabel = "No"
+    , advice = Just "Great advice"
+    , annotations = []
+    , followUpUuids = []
+    , metricMeasures = []
     }
 
 q2_aYes_fuq1_answerNo :: Answer
 q2_aYes_fuq1_answerNo =
   Answer
-    { _answerUuid = u' "00000000-0000-0000-0000-a14d3387abc0"
-    , _answerLabel = "No"
-    , _answerAdvice = Just "Super long advice"
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = []
-    , _answerMetricMeasures = []
+    { uuid = u' "00000000-0000-0000-0000-a14d3387abc0"
+    , aLabel = "No"
+    , advice = Just "Super long advice"
+    , annotations = []
+    , followUpUuids = []
+    , metricMeasures = []
     }
 
 q2_aYes_fuq1_aYes_fuq2_answerNo :: Answer
 q2_aYes_fuq1_aYes_fuq2_answerNo =
   Answer
-    { _answerUuid = u' "00000000-0000-0000-0000-03bb26fa2764"
-    , _answerLabel = "No"
-    , _answerAdvice = Just "Super long advice"
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = []
-    , _answerMetricMeasures = [metricMeasureI0_5]
+    { uuid = u' "00000000-0000-0000-0000-03bb26fa2764"
+    , aLabel = "No"
+    , advice = Just "Super long advice"
+    , annotations = []
+    , followUpUuids = []
+    , metricMeasures = [metricMeasureI0_5]
     }
 
 q2_answerYes :: Answer
 q2_answerYes =
   Answer
-    { _answerUuid = u' "00000000-0000-0000-0000-00000000f2a2"
-    , _answerLabel = "Yes"
-    , _answerAdvice =
+    { uuid = u' "00000000-0000-0000-0000-00000000f2a2"
+    , aLabel = "Yes"
+    , advice =
         Just
           "You know that this is very unlikely? This question is not only about data sets that are similar to what you want to determine yourself, but also reference data or data that should be mined from the existing literature. Further, it is very likely that you will refer to related data, e.g. other databases where you usually \"quickly look something up\", but that could maybe be properly integrated, especially if you need to do such lookups multiple times."
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = [q2_aYes_fuQuestion1 ^. uuid]
-    , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1]
+    , annotations = []
+    , followUpUuids = [q2_aYes_fuQuestion1.uuid]
+    , metricMeasures = [metricMeasureI1, metricMeasureR1]
     }
 
 q2_answerYesEdited :: Answer
 q2_answerYesEdited =
   Answer
-    { _answerUuid = q2_answerYes ^. uuid
-    , _answerLabel = "EDITED: Yes"
-    , _answerAdvice = Just "EDITED: Short advice"
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = []
-    , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1, metricMeasureG1]
+    { uuid = q2_answerYes.uuid
+    , aLabel = "EDITED: Yes"
+    , advice = Just "EDITED: Short advice"
+    , annotations = []
+    , followUpUuids = []
+    , metricMeasures = [metricMeasureI1, metricMeasureR1, metricMeasureG1]
     }
 
 q2_answerYesPlain :: Answer
 q2_answerYesPlain =
   Answer
-    { _answerUuid = u' "00000000-0000-0000-0000-00000000f2a2"
-    , _answerLabel = "Yes"
-    , _answerAdvice =
+    { uuid = u' "00000000-0000-0000-0000-00000000f2a2"
+    , aLabel = "Yes"
+    , advice =
         Just
           "You know that this is very unlikely? This question is not only about data sets that are similar to what you want to determine yourself, but also reference data or data that should be mined from the existing literature. Further, it is very likely that you will refer to related data, e.g. other databases where you usually \"quickly look something up\", but that could maybe be properly integrated, especially if you need to do such lookups multiple times."
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = []
-    , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1]
+    , annotations = []
+    , followUpUuids = []
+    , metricMeasures = [metricMeasureI1, metricMeasureR1]
     }
 
 q3_answerYes :: Answer
 q3_answerYes =
   Answer
-    { _answerUuid = u' "00000000-0000-0000-0000-00000000f3a2"
-    , _answerLabel = "Yes"
-    , _answerAdvice = Just "Short advice"
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = []
-    , _answerMetricMeasures = []
+    { uuid = u' "00000000-0000-0000-0000-00000000f3a2"
+    , aLabel = "Yes"
+    , advice = Just "Short advice"
+    , annotations = []
+    , followUpUuids = []
+    , metricMeasures = []
     }
 
 q2_aYes_fuq1_answerYes :: Answer
 q2_aYes_fuq1_answerYes =
   Answer
-    { _answerUuid = u' "00000000-0000-0000-0000-8c80e6d66dcd"
-    , _answerLabel = "Yes"
-    , _answerAdvice = Just "Short advice"
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = [q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid]
-    , _answerMetricMeasures = []
+    { uuid = u' "00000000-0000-0000-0000-8c80e6d66dcd"
+    , aLabel = "Yes"
+    , advice = Just "Short advice"
+    , annotations = []
+    , followUpUuids = [q2_aYes_fuq1_aYes_fuQuestion2.uuid]
+    , metricMeasures = []
     }
 
 q2_aYes_fuq1_aYes_fuq2_answerYes :: Answer
 q2_aYes_fuq1_aYes_fuq2_answerYes =
   Answer
-    { _answerUuid = u' "00000000-0000-0000-0000-9f9aa5683efe"
-    , _answerLabel = "Yes"
-    , _answerAdvice = Just "Short advice"
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = []
-    , _answerMetricMeasures = []
+    { uuid = u' "00000000-0000-0000-0000-9f9aa5683efe"
+    , aLabel = "Yes"
+    , advice = Just "Short advice"
+    , annotations = []
+    , followUpUuids = []
+    , metricMeasures = []
     }
 
 q4_it1_q6_answerYes :: Answer
 q4_it1_q6_answerYes =
   Answer
-    { _answerUuid = u' "00000000-0000-0000-0000-157e8c3cd009"
-    , _answerLabel = "Yes"
-    , _answerAdvice = Just "Short advice"
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = [q4_it1_q6_aYes_followUpQuestion4 ^. uuid, q4_it1_q6_aYes_followUpQuestion5 ^. uuid]
-    , _answerMetricMeasures = []
+    { uuid = u' "00000000-0000-0000-0000-157e8c3cd009"
+    , aLabel = "Yes"
+    , advice = Just "Short advice"
+    , annotations = []
+    , followUpUuids = [q4_it1_q6_aYes_followUpQuestion4.uuid, q4_it1_q6_aYes_followUpQuestion5.uuid]
+    , metricMeasures = []
     }
 
 q2_answerMaybe :: Answer
 q2_answerMaybe =
   Answer
-    { _answerUuid = u' "00000000-0000-0000-0000-00000000f2a3"
-    , _answerLabel = "Maybe"
-    , _answerAdvice = Just "Great advice"
-    , _answerAnnotations = []
-    , _answerFollowUpUuids = []
-    , _answerMetricMeasures = []
+    { uuid = u' "00000000-0000-0000-0000-00000000f2a3"
+    , aLabel = "Maybe"
+    , advice = Just "Great advice"
+    , annotations = []
+    , followUpUuids = []
+    , metricMeasures = []
     }
 
 -- -----------------------------------------------------------------
@@ -170,15 +168,15 @@ q2_aYes_fuQuestion1' = OptionsQuestion' q2_aYes_fuQuestion1
 q2_aYes_fuQuestion1 :: OptionsQuestion
 q2_aYes_fuQuestion1 =
   OptionsQuestion
-    { _optionsQuestionUuid = u' "f9b380eb-bc18-4445-a9bf-14d9a1512d3f"
-    , _optionsQuestionTitle = "First Follow-Up Question"
-    , _optionsQuestionText = Just "Maybe there will be some description"
-    , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _optionsQuestionAnnotations = []
-    , _optionsQuestionTagUuids = [FT.tagDataScience ^. uuid]
-    , _optionsQuestionReferenceUuids = []
-    , _optionsQuestionExpertUuids = []
-    , _optionsQuestionAnswerUuids = [q2_aYes_fuq1_answerNo ^. uuid, q2_aYes_fuq1_answerYes ^. uuid]
+    { uuid = u' "f9b380eb-bc18-4445-a9bf-14d9a1512d3f"
+    , title = "First Follow-Up Question"
+    , text = Just "Maybe there will be some description"
+    , requiredPhaseUuid = Just $ PHS.phase2.uuid
+    , annotations = []
+    , tagUuids = [FT.tagDataScience.uuid]
+    , referenceUuids = []
+    , expertUuids = []
+    , answerUuids = [q2_aYes_fuq1_answerNo.uuid, q2_aYes_fuq1_answerYes.uuid]
     }
 
 q2_aYes_fuQuestion1Plain' :: Question
@@ -187,15 +185,15 @@ q2_aYes_fuQuestion1Plain' = OptionsQuestion' q2_aYes_fuQuestion1Plain
 q2_aYes_fuQuestion1Plain :: OptionsQuestion
 q2_aYes_fuQuestion1Plain =
   OptionsQuestion
-    { _optionsQuestionUuid = q2_aYes_fuQuestion1 ^. uuid
-    , _optionsQuestionTitle = "Fourth Question"
-    , _optionsQuestionText = Just "Just follow"
-    , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _optionsQuestionAnnotations = []
-    , _optionsQuestionTagUuids = []
-    , _optionsQuestionReferenceUuids = []
-    , _optionsQuestionExpertUuids = []
-    , _optionsQuestionAnswerUuids = []
+    { uuid = q2_aYes_fuQuestion1.uuid
+    , title = "Fourth Question"
+    , text = Just "Just follow"
+    , requiredPhaseUuid = Just $ PHS.phase2.uuid
+    , annotations = []
+    , tagUuids = []
+    , referenceUuids = []
+    , expertUuids = []
+    , answerUuids = []
     }
 
 -- -----------------------------------------------------------------------------
@@ -205,15 +203,15 @@ q2_aYes_fuq1_aYes_fuQuestion2' = OptionsQuestion' q2_aYes_fuq1_aYes_fuQuestion2
 q2_aYes_fuq1_aYes_fuQuestion2 :: OptionsQuestion
 q2_aYes_fuq1_aYes_fuQuestion2 =
   OptionsQuestion
-    { _optionsQuestionUuid = u' "00000000-27bd-4156-9b2d-c4e8c582cca8"
-    , _optionsQuestionTitle = "Second Follow-Up Question"
-    , _optionsQuestionText = Just "Again just follow"
-    , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _optionsQuestionAnnotations = []
-    , _optionsQuestionTagUuids = []
-    , _optionsQuestionReferenceUuids = []
-    , _optionsQuestionExpertUuids = []
-    , _optionsQuestionAnswerUuids = [q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid]
+    { uuid = u' "00000000-27bd-4156-9b2d-c4e8c582cca8"
+    , title = "Second Follow-Up Question"
+    , text = Just "Again just follow"
+    , requiredPhaseUuid = Just $ PHS.phase2.uuid
+    , annotations = []
+    , tagUuids = []
+    , referenceUuids = []
+    , expertUuids = []
+    , answerUuids = [q2_aYes_fuq1_aYes_fuq2_answerNo.uuid, q2_aYes_fuq1_aYes_fuq2_answerYes.uuid]
     }
 
 q2_aYes_fuq1_aYes_fuQuestion2Edited' :: Question
@@ -222,15 +220,15 @@ q2_aYes_fuq1_aYes_fuQuestion2Edited' = OptionsQuestion' q2_aYes_fuq1_aYes_fuQues
 q2_aYes_fuq1_aYes_fuQuestion2Edited :: OptionsQuestion
 q2_aYes_fuq1_aYes_fuQuestion2Edited =
   OptionsQuestion
-    { _optionsQuestionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
-    , _optionsQuestionTitle = "EDITED: Second Follow-Up Question"
-    , _optionsQuestionText = Just "EDITED: Again just follow"
-    , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase1 ^. uuid
-    , _optionsQuestionAnnotations = []
-    , _optionsQuestionTagUuids = []
-    , _optionsQuestionReferenceUuids = []
-    , _optionsQuestionExpertUuids = []
-    , _optionsQuestionAnswerUuids = [q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid]
+    { uuid = q2_aYes_fuq1_aYes_fuQuestion2.uuid
+    , title = "EDITED: Second Follow-Up Question"
+    , text = Just "EDITED: Again just follow"
+    , requiredPhaseUuid = Just $ PHS.phase1.uuid
+    , annotations = []
+    , tagUuids = []
+    , referenceUuids = []
+    , expertUuids = []
+    , answerUuids = [q2_aYes_fuq1_aYes_fuq2_answerYes.uuid, q2_aYes_fuq1_aYes_fuq2_answerNo.uuid]
     }
 
 -- -----------------------------------------------------------------------------
@@ -240,15 +238,15 @@ q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3' = OptionsQuestion' q2_aYes1_fuq1_aYe
 q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 :: OptionsQuestion
 q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 =
   OptionsQuestion
-    { _optionsQuestionUuid = u' "00000000-bd35-4d5e-8995-78a94a69da83"
-    , _optionsQuestionTitle = "Third Follow-Up Question"
-    , _optionsQuestionText = Just "Again and again just follow"
-    , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _optionsQuestionAnnotations = []
-    , _optionsQuestionTagUuids = []
-    , _optionsQuestionReferenceUuids = []
-    , _optionsQuestionExpertUuids = []
-    , _optionsQuestionAnswerUuids = []
+    { uuid = u' "00000000-bd35-4d5e-8995-78a94a69da83"
+    , title = "Third Follow-Up Question"
+    , text = Just "Again and again just follow"
+    , requiredPhaseUuid = Just $ PHS.phase2.uuid
+    , annotations = []
+    , tagUuids = []
+    , referenceUuids = []
+    , expertUuids = []
+    , answerUuids = []
     }
 
 -- -----------------------------------------------------------------------------
@@ -258,16 +256,16 @@ q4_it1_q6_aYes_followUpQuestion4' = ListQuestion' q4_it1_q6_aYes_followUpQuestio
 q4_it1_q6_aYes_followUpQuestion4 :: ListQuestion
 q4_it1_q6_aYes_followUpQuestion4 =
   ListQuestion
-    { _listQuestionUuid = u' "cd98f76a-a430-4bd6-ba63-eb4c3c5c8c7e"
-    , _listQuestionTitle = "Fourth Follow-Up Question"
-    , _listQuestionText = Just "Again and again just follow"
-    , _listQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _listQuestionAnnotations = []
-    , _listQuestionTagUuids = []
-    , _listQuestionReferenceUuids = []
-    , _listQuestionExpertUuids = []
-    , _listQuestionItemTemplateQuestionUuids =
-        [q4_it1_q6_aYes_fuq4_it_question1 ^. uuid, q4_it1_q6_aYes_fuq4_it_question2 ^. uuid]
+    { uuid = u' "cd98f76a-a430-4bd6-ba63-eb4c3c5c8c7e"
+    , title = "Fourth Follow-Up Question"
+    , text = Just "Again and again just follow"
+    , requiredPhaseUuid = Just $ PHS.phase2.uuid
+    , annotations = []
+    , tagUuids = []
+    , referenceUuids = []
+    , expertUuids = []
+    , itemTemplateQuestionUuids =
+        [q4_it1_q6_aYes_fuq4_it_question1.uuid, q4_it1_q6_aYes_fuq4_it_question2.uuid]
     }
 
 q4_it1_q6_aYes_followUpQuestion4Edited' :: Question
@@ -276,16 +274,16 @@ q4_it1_q6_aYes_followUpQuestion4Edited' = ListQuestion' q4_it1_q6_aYes_followUpQ
 q4_it1_q6_aYes_followUpQuestion4Edited :: ListQuestion
 q4_it1_q6_aYes_followUpQuestion4Edited =
   ListQuestion
-    { _listQuestionUuid = q4_it1_q6_aYes_followUpQuestion4 ^. uuid
-    , _listQuestionTitle = "EDITED: Third Follow-Up Question"
-    , _listQuestionText = Just "EDITED: Again and again just follow"
-    , _listQuestionRequiredPhaseUuid = Just $ PHS.phase1 ^. uuid
-    , _listQuestionAnnotations = []
-    , _listQuestionTagUuids = []
-    , _listQuestionReferenceUuids = []
-    , _listQuestionExpertUuids = []
-    , _listQuestionItemTemplateQuestionUuids =
-        [q4_it1_q6_aYes_fuq4_it_question2 ^. uuid, q4_it1_q6_aYes_fuq4_it_question1 ^. uuid]
+    { uuid = q4_it1_q6_aYes_followUpQuestion4.uuid
+    , title = "EDITED: Third Follow-Up Question"
+    , text = Just "EDITED: Again and again just follow"
+    , requiredPhaseUuid = Just $ PHS.phase1.uuid
+    , annotations = []
+    , tagUuids = []
+    , referenceUuids = []
+    , expertUuids = []
+    , itemTemplateQuestionUuids =
+        [q4_it1_q6_aYes_fuq4_it_question2.uuid, q4_it1_q6_aYes_fuq4_it_question1.uuid]
     }
 
 q4_it1_q6_aYes_fuq4_it_question1' :: Question
@@ -294,15 +292,15 @@ q4_it1_q6_aYes_fuq4_it_question1' = OptionsQuestion' q4_it1_q6_aYes_fuq4_it_ques
 q4_it1_q6_aYes_fuq4_it_question1 :: OptionsQuestion
 q4_it1_q6_aYes_fuq4_it_question1 =
   OptionsQuestion
-    { _optionsQuestionUuid = u' "e5a3e1b2-077a-405f-b35c-3bffded63140"
-    , _optionsQuestionTitle = "Sub question 1 of Follow-Up Question 4"
-    , _optionsQuestionText = Just "Again and again just follow"
-    , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _optionsQuestionAnnotations = []
-    , _optionsQuestionTagUuids = []
-    , _optionsQuestionReferenceUuids = []
-    , _optionsQuestionExpertUuids = []
-    , _optionsQuestionAnswerUuids = []
+    { uuid = u' "e5a3e1b2-077a-405f-b35c-3bffded63140"
+    , title = "Sub question 1 of Follow-Up Question 4"
+    , text = Just "Again and again just follow"
+    , requiredPhaseUuid = Just $ PHS.phase2.uuid
+    , annotations = []
+    , tagUuids = []
+    , referenceUuids = []
+    , expertUuids = []
+    , answerUuids = []
     }
 
 q4_it1_q6_aYes_fuq4_it_question2' :: Question
@@ -311,15 +309,15 @@ q4_it1_q6_aYes_fuq4_it_question2' = OptionsQuestion' q4_it1_q6_aYes_fuq4_it_ques
 q4_it1_q6_aYes_fuq4_it_question2 :: OptionsQuestion
 q4_it1_q6_aYes_fuq4_it_question2 =
   OptionsQuestion
-    { _optionsQuestionUuid = u' "7f2e3fe5-b8b6-4b5a-812d-c5c1c704b3d9"
-    , _optionsQuestionTitle = "Sub question 2 of Follow-Up Question 4"
-    , _optionsQuestionText = Just "Again and again just follow"
-    , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _optionsQuestionAnnotations = []
-    , _optionsQuestionTagUuids = []
-    , _optionsQuestionReferenceUuids = []
-    , _optionsQuestionExpertUuids = []
-    , _optionsQuestionAnswerUuids = []
+    { uuid = u' "7f2e3fe5-b8b6-4b5a-812d-c5c1c704b3d9"
+    , title = "Sub question 2 of Follow-Up Question 4"
+    , text = Just "Again and again just follow"
+    , requiredPhaseUuid = Just $ PHS.phase2.uuid
+    , annotations = []
+    , tagUuids = []
+    , referenceUuids = []
+    , expertUuids = []
+    , answerUuids = []
     }
 
 q4_it1_q6_aYes_followUpQuestion5' :: Question
@@ -328,16 +326,16 @@ q4_it1_q6_aYes_followUpQuestion5' = IntegrationQuestion' q4_it1_q6_aYes_followUp
 q4_it1_q6_aYes_followUpQuestion5 :: IntegrationQuestion
 q4_it1_q6_aYes_followUpQuestion5 =
   IntegrationQuestion
-    { _integrationQuestionUuid = u' "82f9a83a-88c8-439b-8cf8-8a028d5cce7d"
-    , _integrationQuestionTitle = "Fifth Follow-Up Question"
-    , _integrationQuestionText = Just "Some non-funny description"
-    , _integrationQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _integrationQuestionAnnotations = []
-    , _integrationQuestionTagUuids = []
-    , _integrationQuestionReferenceUuids = []
-    , _integrationQuestionExpertUuids = []
-    , _integrationQuestionIntegrationUuid = FI.ontologyPortal ^. uuid
-    , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("country", "be")]
+    { uuid = u' "82f9a83a-88c8-439b-8cf8-8a028d5cce7d"
+    , title = "Fifth Follow-Up Question"
+    , text = Just "Some non-funny description"
+    , requiredPhaseUuid = Just $ PHS.phase2.uuid
+    , annotations = []
+    , tagUuids = []
+    , referenceUuids = []
+    , expertUuids = []
+    , integrationUuid = FI.ontologyPortal.uuid
+    , props = Map.fromList [("domain", "biology"), ("country", "be")]
     }
 
 q4_it1_q6_aYes_fuq5PropsEdited' :: Question
@@ -346,16 +344,16 @@ q4_it1_q6_aYes_fuq5PropsEdited' = IntegrationQuestion' q4_it1_q6_aYes_fuq5PropsE
 q4_it1_q6_aYes_fuq5PropsEdited :: IntegrationQuestion
 q4_it1_q6_aYes_fuq5PropsEdited =
   IntegrationQuestion
-    { _integrationQuestionUuid = q4_it1_q6_aYes_followUpQuestion5 ^. uuid
-    , _integrationQuestionTitle = q4_it1_q6_aYes_followUpQuestion5 ^. title
-    , _integrationQuestionText = q4_it1_q6_aYes_followUpQuestion5 ^. text
-    , _integrationQuestionRequiredPhaseUuid = q4_it1_q6_aYes_followUpQuestion5 ^. requiredPhaseUuid
-    , _integrationQuestionAnnotations = []
-    , _integrationQuestionTagUuids = q4_it1_q6_aYes_followUpQuestion5 ^. tagUuids
-    , _integrationQuestionReferenceUuids = q4_it1_q6_aYes_followUpQuestion5 ^. referenceUuids
-    , _integrationQuestionExpertUuids = q4_it1_q6_aYes_followUpQuestion5 ^. expertUuids
-    , _integrationQuestionIntegrationUuid = q4_it1_q6_aYes_followUpQuestion5 ^. integrationUuid
-    , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("language", "")]
+    { uuid = q4_it1_q6_aYes_followUpQuestion5.uuid
+    , title = q4_it1_q6_aYes_followUpQuestion5.title
+    , text = q4_it1_q6_aYes_followUpQuestion5.text
+    , requiredPhaseUuid = q4_it1_q6_aYes_followUpQuestion5.requiredPhaseUuid
+    , annotations = []
+    , tagUuids = q4_it1_q6_aYes_followUpQuestion5.tagUuids
+    , referenceUuids = q4_it1_q6_aYes_followUpQuestion5.referenceUuids
+    , expertUuids = q4_it1_q6_aYes_followUpQuestion5.expertUuids
+    , integrationUuid = q4_it1_q6_aYes_followUpQuestion5.integrationUuid
+    , props = Map.fromList [("domain", "biology"), ("language", "")]
     }
 
 q4_it1_q6_aYes_fuq5ConvertedToValue' :: Question
@@ -364,13 +362,13 @@ q4_it1_q6_aYes_fuq5ConvertedToValue' = ValueQuestion' q4_it1_q6_aYes_fuq5Convert
 q4_it1_q6_aYes_fuq5ConvertedToValue :: ValueQuestion
 q4_it1_q6_aYes_fuq5ConvertedToValue =
   ValueQuestion
-    { _valueQuestionUuid = q4_it1_q6_aYes_followUpQuestion5 ^. uuid
-    , _valueQuestionTitle = q4_it1_q6_aYes_followUpQuestion5 ^. title
-    , _valueQuestionText = q4_it1_q6_aYes_followUpQuestion5 ^. text
-    , _valueQuestionRequiredPhaseUuid = q4_it1_q6_aYes_followUpQuestion5 ^. requiredPhaseUuid
-    , _valueQuestionAnnotations = []
-    , _valueQuestionTagUuids = q4_it1_q6_aYes_followUpQuestion5 ^. tagUuids
-    , _valueQuestionReferenceUuids = q4_it1_q6_aYes_followUpQuestion5 ^. referenceUuids
-    , _valueQuestionExpertUuids = q4_it1_q6_aYes_followUpQuestion5 ^. expertUuids
-    , _valueQuestionValueType = StringQuestionValueType
+    { uuid = q4_it1_q6_aYes_followUpQuestion5.uuid
+    , title = q4_it1_q6_aYes_followUpQuestion5.title
+    , text = q4_it1_q6_aYes_followUpQuestion5.text
+    , requiredPhaseUuid = q4_it1_q6_aYes_followUpQuestion5.requiredPhaseUuid
+    , annotations = []
+    , tagUuids = q4_it1_q6_aYes_followUpQuestion5.tagUuids
+    , referenceUuids = q4_it1_q6_aYes_followUpQuestion5.referenceUuids
+    , expertUuids = q4_it1_q6_aYes_followUpQuestion5.expertUuids
+    , valueType = StringQuestionValueType
     }

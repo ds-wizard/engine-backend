@@ -11,10 +11,10 @@ import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Util.Swagger
 
 instance ToSchema AddAnswerEvent where
-  declareNamedSchema = simpleToSchema'' "_addAnswerEvent" "eventType" a_km1_ch1_q2_aNo1
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_ch1_q2_aNo1
 
 instance ToSchema EditAnswerEvent where
-  declareNamedSchema = simpleToSchema'' "_editAnswerEvent" "eventType" e_km1_ch1_q2_aYes1
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_ch1_q2_aYes1
 
 instance ToSchema DeleteAnswerEvent where
-  declareNamedSchema = simpleToSchema'' "_deleteAnswerEvent" "eventType" d_km1_ch1_q2_aYes1
+  declareNamedSchema = toSwaggerWithType "eventType" d_km1_ch1_q2_aYes1

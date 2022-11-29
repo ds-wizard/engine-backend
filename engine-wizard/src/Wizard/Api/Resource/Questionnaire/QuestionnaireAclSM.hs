@@ -13,8 +13,8 @@ import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 instance ToSchema QuestionnairePermRecord where
-  declareNamedSchema = simpleToSchema' "_questionnairePermRecord" bioGroupEditPermRecord
+  declareNamedSchema = toSwagger bioGroupEditPermRecord
 
 instance ToSchema QuestionnairePermRecordDTO where
   declareNamedSchema =
-    simpleToSchema' "_questionnairePermRecordDTO" (toUserPermRecordDTO bioGroupEditPermRecord userAlbert)
+    toSwagger (toUserPermRecordDTO bioGroupEditPermRecord userAlbert)

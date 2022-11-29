@@ -6,16 +6,15 @@ import GHC.Generics
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 
-data QuestionnaireChangeDTO =
-  QuestionnaireChangeDTO
-    { _questionnaireChangeDTOName :: String
-    , _questionnaireChangeDTODescription :: Maybe String
-    , _questionnaireChangeDTOVisibility :: QuestionnaireVisibility
-    , _questionnaireChangeDTOSharing :: QuestionnaireSharing
-    , _questionnaireChangeDTOProjectTags :: [String]
-    , _questionnaireChangeDTOPermissions :: [QuestionnairePermRecord]
-    , _questionnaireChangeDTOTemplateId :: Maybe String
-    , _questionnaireChangeDTOFormatUuid :: Maybe U.UUID
-    , _questionnaireChangeDTOIsTemplate :: Bool
-    }
+data QuestionnaireChangeDTO = QuestionnaireChangeDTO
+  { name :: String
+  , description :: Maybe String
+  , visibility :: QuestionnaireVisibility
+  , sharing :: QuestionnaireSharing
+  , projectTags :: [String]
+  , permissions :: [QuestionnairePermRecord]
+  , templateId :: Maybe String
+  , formatUuid :: Maybe U.UUID
+  , isTemplate :: Bool
+  }
   deriving (Show, Eq, Generic)

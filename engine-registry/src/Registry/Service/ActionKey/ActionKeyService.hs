@@ -29,11 +29,11 @@ createActionKey orgId actionType = do
   now <- liftIO getCurrentTime
   let actionKey =
         ActionKey
-          { _actionKeyUuid = uuid
-          , _actionKeyOrganizationId = orgId
-          , _actionKeyAType = actionType
-          , _actionKeyHash = U.toString hash
-          , _actionKeyCreatedAt = now
+          { uuid = uuid
+          , organizationId = orgId
+          , aType = actionType
+          , hash = U.toString hash
+          , createdAt = now
           }
   insertActionKey actionKey
   return actionKey

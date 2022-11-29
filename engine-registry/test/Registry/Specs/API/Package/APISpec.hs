@@ -10,7 +10,7 @@ import Registry.Specs.API.Package.List_GET
 
 packageAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "PACKAGE API Spec" $ do
-    list_get appContext
-    detail_get appContext
-    detail_bundle_get appContext
+    describe "PACKAGE API Spec" $ do
+      list_get appContext
+      detail_get appContext
+      detail_bundle_get appContext

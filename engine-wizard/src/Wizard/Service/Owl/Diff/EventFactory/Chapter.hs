@@ -1,10 +1,8 @@
 module Wizard.Service.Owl.Diff.EventFactory.Chapter where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 import Data.Time
 
-import LensesConfig
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.Event
 import Shared.Model.Event.EventField
@@ -21,29 +19,29 @@ instance EventFactory Chapter where
     now <- liftIO getCurrentTime
     return $
       AddChapterEvent' $
-      AddChapterEvent
-        { _addChapterEventUuid = eventUuid
-        , _addChapterEventParentUuid = parentUuid
-        , _addChapterEventEntityUuid = entity ^. uuid
-        , _addChapterEventTitle = entity ^. title
-        , _addChapterEventText = entity ^. text
-        , _addChapterEventAnnotations = entity ^. annotations
-        , _addChapterEventCreatedAt = now
-        }
+        AddChapterEvent
+          { uuid = eventUuid
+          , parentUuid = parentUuid
+          , entityUuid = entity.uuid
+          , title = entity.title
+          , text = entity.text
+          , annotations = entity.annotations
+          , createdAt = now
+          }
   createEditEvent (oldKm, newKm) parentUuid oldEntity newEntity = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let event =
           EditChapterEvent
-            { _editChapterEventUuid = eventUuid
-            , _editChapterEventParentUuid = parentUuid
-            , _editChapterEventEntityUuid = newEntity ^. uuid
-            , _editChapterEventTitle = diffField (oldEntity ^. title) (newEntity ^. title)
-            , _editChapterEventText = diffField (oldEntity ^. text) (newEntity ^. text)
-            , _editChapterEventAnnotations = diffField (oldEntity ^. annotations) (newEntity ^. annotations)
-            , _editChapterEventQuestionUuids =
-                diffListField (oldKm, newKm) (oldEntity ^. questionUuids) (newEntity ^. questionUuids) questionsM
-            , _editChapterEventCreatedAt = now
+            { uuid = eventUuid
+            , parentUuid = parentUuid
+            , entityUuid = newEntity.uuid
+            , title = diffField oldEntity.title newEntity.title
+            , text = diffField oldEntity.text newEntity.text
+            , annotations = diffField oldEntity.annotations newEntity.annotations
+            , questionUuids =
+                diffListField (oldKm, newKm) oldEntity.questionUuids newEntity.questionUuids getQuestionsM
+            , createdAt = now
             }
     if isEmptyEvent event
       then return . Just . EditChapterEvent' $ event
@@ -53,9 +51,9 @@ instance EventFactory Chapter where
     now <- liftIO getCurrentTime
     return $
       DeleteChapterEvent' $
-      DeleteChapterEvent
-        { _deleteChapterEventUuid = eventUuid
-        , _deleteChapterEventParentUuid = parentUuid
-        , _deleteChapterEventEntityUuid = entity ^. uuid
-        , _deleteChapterEventCreatedAt = now
-        }
+        DeleteChapterEvent
+          { uuid = eventUuid
+          , parentUuid = parentUuid
+          , entityUuid = entity.uuid
+          , createdAt = now
+          }

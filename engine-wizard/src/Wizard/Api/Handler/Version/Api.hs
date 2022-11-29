@@ -6,9 +6,9 @@ import Servant.Swagger.Tags
 import Wizard.Api.Handler.Version.Detail_Version_Detail_PUT
 import Wizard.Model.Context.BaseContext
 
-type VersionAPI
-   = Tags "Version"
-     :> Detail_Version_Detail_PUT
+type VersionAPI =
+  Tags "Version"
+    :> Detail_Version_Detail_PUT
 
 versionApi :: Proxy VersionAPI
 versionApi = Proxy

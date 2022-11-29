@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Package.List_GET
-  ( list_get
-  ) where
+module Wizard.Specs.API.Package.List_GET (
+  list_get,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -57,13 +57,14 @@ test_200 appContext = do
     "HTTP 200 OK"
     appContext
     "/packages?sort=name,asc"
-    (Page
-       "packages"
-       (PageMetadata 20 3 1 0)
-       [ toSimpleDTO' [] expOrgRs (toPackage germanyPackage)
-       , toSimpleDTO' [globalRegistryPackage] expOrgRs (toPackage globalPackage)
-       , toSimpleDTO' [nlRegistryPackage] expOrgRs (toPackage netherlandsPackageV2)
-       ])
+    ( Page
+        "packages"
+        (PageMetadata 20 3 1 0)
+        [ toSimpleDTO' [] expOrgRs (toPackage germanyPackage)
+        , toSimpleDTO' [globalRegistryPackage] expOrgRs (toPackage globalPackage)
+        , toSimpleDTO' [nlRegistryPackage] expOrgRs (toPackage netherlandsPackageV2)
+        ]
+    )
   create_test_200
     "HTTP 200 OK (query - q)"
     appContext
@@ -73,10 +74,11 @@ test_200 appContext = do
     "HTTP 200 OK (query - kmId)"
     appContext
     "/packages?kmId=core-nl"
-    (Page
-       "packages"
-       (PageMetadata 20 1 1 0)
-       [toSimpleDTO' [nlRegistryPackage] expOrgRs (toPackage netherlandsPackageV2)])
+    ( Page
+        "packages"
+        (PageMetadata 20 1 1 0)
+        [toSimpleDTO' [nlRegistryPackage] expOrgRs (toPackage netherlandsPackageV2)]
+    )
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext
@@ -86,12 +88,13 @@ test_200 appContext = do
     "HTTP 200 OK (state - UpToDatePackageState)"
     appContext
     "/packages?state=UpToDatePackageState"
-    (Page
-       "packages"
-       (PageMetadata 20 2 1 0)
-       [ toSimpleDTO' [globalRegistryPackage] expOrgRs (toPackage globalPackage)
-       , toSimpleDTO' [nlRegistryPackage] expOrgRs (toPackage netherlandsPackageV2)
-       ])
+    ( Page
+        "packages"
+        (PageMetadata 20 2 1 0)
+        [ toSimpleDTO' [globalRegistryPackage] expOrgRs (toPackage globalPackage)
+        , toSimpleDTO' [nlRegistryPackage] expOrgRs (toPackage netherlandsPackageV2)
+        ]
+    )
   create_test_200
     "HTTP 200 OK (state - OutdatedPackageState)"
     appContext
@@ -100,22 +103,22 @@ test_200 appContext = do
 
 create_test_200 title appContext reqUrl expDto =
   it title $
-       -- GIVEN: Prepare request
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO R_Migration.runMigration appContext
-    runInContextIO PKG.runMigration appContext
-    runInContextIO TML.runMigration appContext
-    runInContextIO QTN.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare request
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO R_Migration.runMigration appContext
+      runInContextIO PKG.runMigration appContext
+      runInContextIO TML.runMigration appContext
+      runInContextIO QTN.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -2,25 +2,25 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.User.UserSuggestionJM ()
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
 instance ToJSON Reply where
-  toJSON = simpleToJSON "_reply"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON Reply where
-  parseJSON = simpleParseJSON "_reply"
+  parseJSON = genericParseJSON jsonOptions
 
 instance FromJSON ReplyValue where
-  parseJSON = genericParseJSON (createSimpleOptions'''' "Reply")
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "type")
 
 instance ToJSON ReplyValue where
-  toJSON = genericToJSON (createSimpleOptions'''' "Reply")
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 -- --------------------------------------------------------------------
 instance FromJSON IntegrationReplyType where
-  parseJSON = genericParseJSON (createSimpleOptions'''' "Type")
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "type")
 
 instance ToJSON IntegrationReplyType where
-  toJSON = genericToJSON (createSimpleOptions'''' "Type")
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")

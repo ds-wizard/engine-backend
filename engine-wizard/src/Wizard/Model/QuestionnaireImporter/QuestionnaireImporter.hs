@@ -6,22 +6,21 @@ import GHC.Generics
 
 import Shared.Model.Package.PackagePattern
 
-data QuestionnaireImporter =
-  QuestionnaireImporter
-    { _questionnaireImporterQiId :: String
-    , _questionnaireImporterName :: String
-    , _questionnaireImporterOrganizationId :: String
-    , _questionnaireImporterImporterId :: String
-    , _questionnaireImporterVersion :: String
-    , _questionnaireImporterMetamodelVersion :: Int
-    , _questionnaireImporterDescription :: String
-    , _questionnaireImporterReadme :: String
-    , _questionnaireImporterLicense :: String
-    , _questionnaireImporterAllowedPackages :: [PackagePattern]
-    , _questionnaireImporterUrl :: String
-    , _questionnaireImporterEnabled :: Bool
-    , _questionnaireImporterAppUuid :: U.UUID
-    , _questionnaireImporterCreatedAt :: UTCTime
-    , _questionnaireImporterUpdatedAt :: UTCTime
-    }
+data QuestionnaireImporter = QuestionnaireImporter
+  { qiId :: String
+  , name :: String
+  , organizationId :: String
+  , importerId :: String
+  , version :: String
+  , metamodelVersion :: Int
+  , description :: String
+  , readme :: String
+  , license :: String
+  , allowedPackages :: [PackagePattern]
+  , url :: String
+  , enabled :: Bool
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

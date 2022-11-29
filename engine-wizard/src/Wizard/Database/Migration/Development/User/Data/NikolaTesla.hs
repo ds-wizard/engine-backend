@@ -1,26 +1,25 @@
 module Wizard.Database.Migration.Development.User.Data.NikolaTesla where
 
-import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 
-import LensesConfig
 import Shared.Util.Uuid
 import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.App.Data.Apps
+import Wizard.Model.App.App
 import Wizard.Model.User.User
 
 userNikola :: User
 userNikola =
   User
-    { _userUuid = u' "30d48cf4-8c8a-496f-bafe-585bd238f798"
-    , _userFirstName = "Nikola"
-    , _userLastName = "Tesla"
-    , _userEmail = "nikola.tesla@example.com"
-    , _userAffiliation = Nothing
-    , _userSources = [_USER_SOURCE_INTERNAL]
-    , _userRole = _USER_ROLE_DATA_STEWARD
-    , _userPermissions =
+    { uuid = u' "30d48cf4-8c8a-496f-bafe-585bd238f798"
+    , firstName = "Nikola"
+    , lastName = "Tesla"
+    , email = "nikola.tesla@example.com"
+    , affiliation = Nothing
+    , sources = [_USER_SOURCE_INTERNAL]
+    , uRole = _USER_ROLE_DATA_STEWARD
+    , permissions =
         [ "KM_PERM"
         , "KM_UPGRADE_PERM"
         , "KM_PUBLISH_PERM"
@@ -33,14 +32,14 @@ userNikola =
         , "SUBM_PERM"
         , "TML_PERM"
         ]
-    , _userActive = True
-    , _userPasswordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
-    , _userSubmissionProps = []
-    , _userImageUrl = Nothing
-    , _userGroups = [memberBioGroup, memberPlantGroup]
-    , _userMachine = False
-    , _userAppUuid = defaultApp ^. uuid
-    , _userLastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
-    , _userCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
-    , _userUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
+    , active = True
+    , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
+    , submissionProps = []
+    , imageUrl = Nothing
+    , groups = [memberBioGroup, memberPlantGroup]
+    , machine = False
+    , appUuid = defaultApp.uuid
+    , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
+    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
     }

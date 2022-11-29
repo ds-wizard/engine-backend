@@ -9,5 +9,5 @@ import Wizard.Model.Questionnaire.QuestionnaireEvent
 
 instance FromRow QuestionnaireEventBundle where
   fromRow = do
-    _questionnaireEventBundleEvents <- fieldWith fromJSONField
+    events <- fieldWith fromJSONField
     return $ QuestionnaireEventBundle {..}

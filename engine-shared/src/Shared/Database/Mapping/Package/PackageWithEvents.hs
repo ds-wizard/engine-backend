@@ -11,38 +11,38 @@ import Shared.Model.Package.PackageWithEvents
 
 instance ToRow PackageWithEvents where
   toRow PackageWithEvents {..} =
-    [ toField _packageWithEventsPId
-    , toField _packageWithEventsName
-    , toField _packageWithEventsOrganizationId
-    , toField _packageWithEventsKmId
-    , toField _packageWithEventsVersion
-    , toField _packageWithEventsMetamodelVersion
-    , toField _packageWithEventsDescription
-    , toField _packageWithEventsReadme
-    , toField _packageWithEventsLicense
-    , toField _packageWithEventsPreviousPackageId
-    , toField _packageWithEventsForkOfPackageId
-    , toField _packageWithEventsMergeCheckpointPackageId
-    , toJSONField _packageWithEventsEvents
-    , toField _packageWithEventsCreatedAt
-    , toField _packageWithEventsAppUuid
+    [ toField pId
+    , toField name
+    , toField organizationId
+    , toField kmId
+    , toField version
+    , toField metamodelVersion
+    , toField description
+    , toField readme
+    , toField license
+    , toField previousPackageId
+    , toField forkOfPackageId
+    , toField mergeCheckpointPackageId
+    , toJSONField events
+    , toField createdAt
+    , toField appUuid
     ]
 
 instance FromRow PackageWithEvents where
   fromRow = do
-    _packageWithEventsPId <- field
-    _packageWithEventsName <- field
-    _packageWithEventsOrganizationId <- field
-    _packageWithEventsKmId <- field
-    _packageWithEventsVersion <- field
-    _packageWithEventsMetamodelVersion <- field
-    _packageWithEventsDescription <- field
-    _packageWithEventsReadme <- field
-    _packageWithEventsLicense <- field
-    _packageWithEventsPreviousPackageId <- field
-    _packageWithEventsForkOfPackageId <- field
-    _packageWithEventsMergeCheckpointPackageId <- field
-    _packageWithEventsEvents <- fieldWith fromJSONField
-    _packageWithEventsCreatedAt <- field
-    _packageWithEventsAppUuid <- field
+    pId <- field
+    name <- field
+    organizationId <- field
+    kmId <- field
+    version <- field
+    metamodelVersion <- field
+    description <- field
+    readme <- field
+    license <- field
+    previousPackageId <- field
+    forkOfPackageId <- field
+    mergeCheckpointPackageId <- field
+    events <- fieldWith fromJSONField
+    createdAt <- field
+    appUuid <- field
     return $ PackageWithEvents {..}

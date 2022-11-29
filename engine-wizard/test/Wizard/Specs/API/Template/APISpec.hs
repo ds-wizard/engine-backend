@@ -16,13 +16,13 @@ import Wizard.Specs.API.Template.List_Suggestions_GET
 
 templateAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "TEMPLATE API Spec" $ do
-    list_GET appContext
-    list_all_get appContext
-    list_suggestions_GET appContext
-    list_post appContext
-    list_delete appContext
-    detail_get appContext
-    detail_put appContext
-    detail_delete appContext
-    detail_pull_post appContext
+    describe "TEMPLATE API Spec" $ do
+      list_GET appContext
+      list_all_get appContext
+      list_suggestions_GET appContext
+      list_post appContext
+      list_delete appContext
+      detail_get appContext
+      detail_put appContext
+      detail_delete appContext
+      detail_pull_post appContext

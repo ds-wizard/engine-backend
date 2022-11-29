@@ -2,19 +2,19 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireAclJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Acl.MemberJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 
 instance FromJSON QuestionnairePermRecord where
-  parseJSON = simpleParseJSON "_questionnairePermRecord"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON QuestionnairePermRecord where
-  toJSON = simpleToJSON "_questionnairePermRecord"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON QuestionnairePermRecordDTO where
-  parseJSON = simpleParseJSON "_questionnairePermRecordDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON QuestionnairePermRecordDTO where
-  toJSON = simpleToJSON "_questionnairePermRecordDTO"
+  toJSON = genericToJSON jsonOptions

@@ -1,13 +1,11 @@
 module Wizard.Service.Limit.AppLimitService where
 
-import Control.Lens ((^.))
 import Control.Monad (when)
 import Control.Monad.Except (throwError)
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Int
 
-import LensesConfig
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.DAO.Template.TemplateAssetDAO
 import Shared.Database.DAO.Template.TemplateDAO
@@ -41,43 +39,43 @@ checkUserLimit :: AppContextM ()
 checkUserLimit = do
   limit <- findCurrentAppLimit
   count <- countUsers
-  checkLimit "users" count (limit ^. users)
+  checkLimit "users" count limit.users
 
 checkActiveUserLimit :: AppContextM ()
 checkActiveUserLimit = do
   limit <- findCurrentAppLimit
   count <- countActiveUsers
-  checkLimit "active users" count (limit ^. activeUsers)
+  checkLimit "active users" count limit.activeUsers
 
 checkBranchLimit :: AppContextM ()
 checkBranchLimit = do
   limit <- findCurrentAppLimit
   count <- countBranches
-  checkLimit "branches" count (limit ^. branches)
+  checkLimit "branches" count limit.branches
 
 checkPackageLimit :: AppContextM ()
 checkPackageLimit = do
   limit <- findCurrentAppLimit
   count <- countPackagesGroupedByOrganizationIdAndKmId
-  checkLimit "knowledge models" count (limit ^. knowledgeModels)
+  checkLimit "knowledge models" count limit.knowledgeModels
 
 checkQuestionnaireLimit :: AppContextM ()
 checkQuestionnaireLimit = do
   limit <- findCurrentAppLimit
   count <- countQuestionnaires
-  checkLimit "questionnaires" count (limit ^. questionnaires)
+  checkLimit "questionnaires" count limit.questionnaires
 
 checkTemplateLimit :: AppContextM ()
 checkTemplateLimit = do
   limit <- findCurrentAppLimit
   count <- countTemplatesGroupedByOrganizationIdAndKmId
-  checkLimit "knowledge models" count (limit ^. templates)
+  checkLimit "knowledge models" count limit.templates
 
 checkDocumentLimit :: AppContextM ()
 checkDocumentLimit = do
   limit <- findCurrentAppLimit
   count <- countDocuments
-  checkLimit "documents" count (limit ^. documents)
+  checkLimit "documents" count limit.documents
 
 checkStorageSize :: Int64 -> AppContextM ()
 checkStorageSize newFileSize = do
@@ -85,7 +83,7 @@ checkStorageSize newFileSize = do
   docSize <- sumDocumentFileSize
   templateAssetSize <- sumTemplateAssetFileSize
   let storageCount = docSize + templateAssetSize
-  checkLimit "storage" (storageCount + newFileSize) (limit ^. storage)
+  checkLimit "storage" (storageCount + newFileSize) limit.storage
 
 checkLimit :: (Show number, Ord number) => String -> number -> Maybe number -> AppContextM ()
 checkLimit name count mMaxCount =

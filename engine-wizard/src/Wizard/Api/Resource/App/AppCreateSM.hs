@@ -8,4 +8,4 @@ import Wizard.Api.Resource.App.AppCreateJM ()
 import Wizard.Database.Migration.Development.App.Data.Apps
 
 instance ToSchema AppCreateDTO where
-  declareNamedSchema = simpleToSchema appCreateDto
+  declareNamedSchema = toSwagger appCreateDto

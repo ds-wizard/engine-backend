@@ -2,33 +2,38 @@ module Wizard.Api.Resource.Config.ClientConfigSM where
 
 import Data.Swagger
 
+import Shared.Database.Migration.Development.Locale.Data.Locales
 import qualified Shared.Model.Config.ServerConfigDM as S_S
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Config.AppConfigSM ()
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Config.ClientConfigJM ()
+import Wizard.Api.Resource.Locale.LocaleSM ()
 import Wizard.Database.Migration.Development.App.Data.Apps
 import qualified Wizard.Database.Migration.Development.Config.Data.AppConfigs as A
 import qualified Wizard.Model.Config.ServerConfigDM as S
 import Wizard.Service.Config.ClientConfigMapper
 
 instance ToSchema ClientConfigDTO where
-  declareNamedSchema = simpleToSchema (toClientConfigDTO S.defaultConfig A.defaultAppConfig defaultApp [])
+  declareNamedSchema = toSwagger (toClientConfigDTO S.defaultConfig A.defaultAppConfig defaultApp [])
 
 instance ToSchema ClientConfigAuthDTO where
-  declareNamedSchema = simpleToSchema (toClientAuthDTO A.defaultAuth)
+  declareNamedSchema = toSwagger (toClientAuthDTO A.defaultAuth)
 
 instance ToSchema ClientConfigAuthExternalDTO where
-  declareNamedSchema = simpleToSchema (toClientAuthExternalDTO A.defaultAuthExternal)
+  declareNamedSchema = toSwagger (toClientAuthExternalDTO A.defaultAuthExternal)
 
 instance ToSchema ClientConfigAuthExternalServiceDTO where
-  declareNamedSchema = simpleToSchema (toClientAuthExternalServiceDTO A.defaultAuthExternalService)
+  declareNamedSchema = toSwagger (toClientAuthExternalServiceDTO A.defaultAuthExternalService)
 
 instance ToSchema ClientConfigRegistryDTO where
-  declareNamedSchema = simpleToSchema (toClientConfigRegistryDTO S.defaultRegistry A.defaultRegistry)
+  declareNamedSchema = toSwagger (toClientConfigRegistryDTO S.defaultRegistry A.defaultRegistry)
 
 instance ToSchema ClientConfigQuestionnaireDTO where
-  declareNamedSchema = simpleToSchema (toClientConfigQuestionnaireDTO A.defaultQuestionnaire)
+  declareNamedSchema = toSwagger (toClientConfigQuestionnaireDTO A.defaultQuestionnaire)
 
 instance ToSchema ClientConfigCloudDTO where
-  declareNamedSchema = simpleToSchema (toClientConfigCloudDTO S_S.defaultCloud defaultApp)
+  declareNamedSchema = toSwagger (toClientConfigCloudDTO S_S.defaultCloud defaultApp)
+
+instance ToSchema ClientConfigLocaleDTO where
+  declareNamedSchema = toSwagger (toClientConfigLocaleDTO localeNl)

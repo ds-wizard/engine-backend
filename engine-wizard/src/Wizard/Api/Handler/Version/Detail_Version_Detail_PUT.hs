@@ -12,23 +12,23 @@ import Wizard.Api.Resource.Version.VersionJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Version.VersionService
 
-type Detail_Version_Detail_PUT
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> ReqBody '[ SafeJSON] VersionDTO
-     :> "branches"
-     :> Capture "bUuid" String
-     :> "versions"
-     :> Capture "version" String
-     :> Verb 'PUT 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] PackageSimpleDTO)
+type Detail_Version_Detail_PUT =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> ReqBody '[SafeJSON] VersionDTO
+    :> "branches"
+    :> Capture "bUuid" String
+    :> "versions"
+    :> Capture "version" String
+    :> Verb 'PUT 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] PackageSimpleDTO)
 
-detail_version_detail_PUT ::
-     Maybe String
+detail_version_detail_PUT
+  :: Maybe String
   -> Maybe String
   -> VersionDTO
   -> String
   -> String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] PackageSimpleDTO)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] PackageSimpleDTO)
 detail_version_detail_PUT mTokenHeader mServerUrl reqDto bUuid version =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< publishPackage bUuid version reqDto

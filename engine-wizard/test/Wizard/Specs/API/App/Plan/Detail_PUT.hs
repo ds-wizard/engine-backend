@@ -1,6 +1,6 @@
-module Wizard.Specs.API.App.Plan.Detail_PUT
-  ( detail_PUT
-  ) where
+module Wizard.Specs.API.App.Plan.Detail_PUT (
+  detail_PUT,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -49,19 +49,19 @@ reqBody = encode reqDto
 test_200 appContext =
   it "HTTP 200 OK" $
     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-     -- AND: Run migrations
-    runInContextIO PLAN.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, AppPlan)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    comparePlanDtos resDto standardPlanEdited
-    assertExistenceOfPlanInDB appContext standardPlanEdited
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      -- AND: Run migrations
+      runInContextIO PLAN.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, AppPlan)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      comparePlanDtos resDto standardPlanEdited
+      assertExistenceOfPlanInDB appContext standardPlanEdited
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

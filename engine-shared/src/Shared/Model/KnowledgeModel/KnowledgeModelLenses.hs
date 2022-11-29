@@ -1,526 +1,351 @@
-module Shared.Model.KnowledgeModel.KnowledgeModelLenses
-  ( module Shared.Model.Common.Lens
-  , chaptersL
-  , chaptersM
-  , questionsL
-  , questionsM
-  , answersL
-  , answersM
-  , choicesL
-  , choicesM
-  , expertsL
-  , expertsM
-  , referencesL
-  , referencesM
-  , integrationsL
-  , integrationsM
-  , tagsL
-  , tagsM
-  , metricsL
-  , metricsM
-  , phasesL
-  , phasesM
-  , createEntityLFn
-  , createEntityMFn
-  , toMap
-  , title'
-  , text'
-  , requiredPhaseUuid'
-  , tagUuids'
-  , answerUuids'
-  , choiceUuids'
-  , itemTemplateQuestionUuids'
-  , valueType'
-  , integrationUuid'
-  ) where
+module Shared.Model.KnowledgeModel.KnowledgeModelLenses (
+  module Shared.Model.Common.Lens,
+  toMap,
+) where
 
-import Control.Lens hiding (Choice)
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Model.Common.Lens
-import Shared.Model.Common.MapEntry
 import Shared.Model.KnowledgeModel.KnowledgeModel
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
-chaptersL :: Functor f => ([Chapter] -> f [Chapter]) -> KnowledgeModel -> f KnowledgeModel
-chaptersL = createEntityLFn (entities . chapters)
-
-chaptersM :: Functor f => (M.Map U.UUID Chapter -> f (M.Map U.UUID Chapter)) -> KnowledgeModel -> f KnowledgeModel
-chaptersM = createEntityMFn (entities . chapters)
-
-------------------------------------------------------------------------------------------
-questionsL :: Functor f => ([Question] -> f [Question]) -> KnowledgeModel -> f KnowledgeModel
-questionsL = createEntityLFn (entities . questions)
-
-questionsM :: Functor f => (M.Map U.UUID Question -> f (M.Map U.UUID Question)) -> KnowledgeModel -> f KnowledgeModel
-questionsM = createEntityMFn (entities . questions)
+instance HasKnowledgeModelChapters KnowledgeModel where
+  getChaptersL km = M.elems km.entities.chapters
+  setChaptersL km newChapters = km {entities = km.entities {chapters = toMap newChapters}}
+  getChaptersM km = km.entities.chapters
+  setChaptersM km newChapters = km {entities = km.entities {chapters = newChapters}}
+  putInChaptersM chapterUuid chapter km = setChaptersM km $ M.insert chapterUuid chapter km.entities.chapters
+  deleteFromChaptersM chapterUuid km = setChaptersM km $ M.delete chapterUuid km.entities.chapters
 
 ------------------------------------------------------------------------------------------
-answersL :: Functor f => ([Answer] -> f [Answer]) -> KnowledgeModel -> f KnowledgeModel
-answersL = createEntityLFn (entities . answers)
-
-answersM :: Functor f => (M.Map U.UUID Answer -> f (M.Map U.UUID Answer)) -> KnowledgeModel -> f KnowledgeModel
-answersM = createEntityMFn (entities . answers)
-
-------------------------------------------------------------------------------------------
-choicesL :: Functor f => ([Choice] -> f [Choice]) -> KnowledgeModel -> f KnowledgeModel
-choicesL = createEntityLFn (entities . choices)
-
-choicesM :: Functor f => (M.Map U.UUID Choice -> f (M.Map U.UUID Choice)) -> KnowledgeModel -> f KnowledgeModel
-choicesM = createEntityMFn (entities . choices)
+instance HasKnowledgeModelQuestions KnowledgeModel where
+  getQuestionsL km = M.elems km.entities.questions
+  setQuestionsL km newQuestions = km {entities = km.entities {questions = toMap newQuestions}}
+  getQuestionsM km = km.entities.questions
+  setQuestionsM km newQuestions = km {entities = km.entities {questions = newQuestions}}
+  putInQuestionsM questionUuid question km = setQuestionsM km $ M.insert questionUuid question km.entities.questions
+  deleteFromQuestionsM questionUuid km = setQuestionsM km $ M.delete questionUuid km.entities.questions
 
 ------------------------------------------------------------------------------------------
-expertsL :: Functor f => ([Expert] -> f [Expert]) -> KnowledgeModel -> f KnowledgeModel
-expertsL = createEntityLFn (entities . experts)
-
-expertsM :: Functor f => (M.Map U.UUID Expert -> f (M.Map U.UUID Expert)) -> KnowledgeModel -> f KnowledgeModel
-expertsM = createEntityMFn (entities . experts)
-
-------------------------------------------------------------------------------------------
-referencesL :: Functor f => ([Reference] -> f [Reference]) -> KnowledgeModel -> f KnowledgeModel
-referencesL = createEntityLFn (entities . references)
-
-referencesM :: Functor f => (M.Map U.UUID Reference -> f (M.Map U.UUID Reference)) -> KnowledgeModel -> f KnowledgeModel
-referencesM = createEntityMFn (entities . references)
+instance HasKnowledgeModelAnswers KnowledgeModel where
+  getAnswersL km = M.elems km.entities.answers
+  setAnswersL km newAnswers = km {entities = km.entities {answers = toMap newAnswers}}
+  getAnswersM km = km.entities.answers
+  setAnswersM km newAnswers = km {entities = km.entities {answers = newAnswers}}
+  putInAnswersM answerUuid answer km = setAnswersM km $ M.insert answerUuid answer km.entities.answers
+  deleteFromAnswersM answerUuid km = setAnswersM km $ M.delete answerUuid km.entities.answers
 
 ------------------------------------------------------------------------------------------
-integrationsL :: Functor f => ([Integration] -> f [Integration]) -> KnowledgeModel -> f KnowledgeModel
-integrationsL = createEntityLFn (entities . integrations)
-
-integrationsM ::
-     Functor f => (M.Map U.UUID Integration -> f (M.Map U.UUID Integration)) -> KnowledgeModel -> f KnowledgeModel
-integrationsM = createEntityMFn (entities . integrations)
-
-------------------------------------------------------------------------------------------
-tagsL :: Functor f => ([Tag] -> f [Tag]) -> KnowledgeModel -> f KnowledgeModel
-tagsL = createEntityLFn (entities . tags)
-
-tagsM :: Functor f => (M.Map U.UUID Tag -> f (M.Map U.UUID Tag)) -> KnowledgeModel -> f KnowledgeModel
-tagsM = createEntityMFn (entities . tags)
+instance HasKnowledgeModelChoices KnowledgeModel where
+  getChoicesL km = M.elems km.entities.choices
+  setChoicesL km newChoices = km {entities = km.entities {choices = toMap newChoices}}
+  getChoicesM km = km.entities.choices
+  setChoicesM km newChoices = km {entities = km.entities {choices = newChoices}}
+  putInChoicesM choiceUuid choice km = setChoicesM km $ M.insert choiceUuid choice km.entities.choices
+  deleteFromChoicesM choiceUuid km = setChoicesM km $ M.delete choiceUuid km.entities.choices
 
 ------------------------------------------------------------------------------------------
-metricsL :: Functor f => ([Metric] -> f [Metric]) -> KnowledgeModel -> f KnowledgeModel
-metricsL = createEntityLFn (entities . metrics)
-
-metricsM :: Functor f => (M.Map U.UUID Metric -> f (M.Map U.UUID Metric)) -> KnowledgeModel -> f KnowledgeModel
-metricsM = createEntityMFn (entities . metrics)
-
-------------------------------------------------------------------------------------------
-phasesL :: Functor f => ([Phase] -> f [Phase]) -> KnowledgeModel -> f KnowledgeModel
-phasesL = createEntityLFn (entities . phases)
-
-phasesM :: Functor f => (M.Map U.UUID Phase -> f (M.Map U.UUID Phase)) -> KnowledgeModel -> f KnowledgeModel
-phasesM = createEntityMFn (entities . phases)
+instance HasKnowledgeModelExperts KnowledgeModel where
+  getExpertsL km = M.elems km.entities.experts
+  setExpertsL km newExperts = km {entities = km.entities {experts = toMap newExperts}}
+  getExpertsM km = km.entities.experts
+  setExpertsM km newExperts = km {entities = km.entities {experts = newExperts}}
+  putInExpertsM expertUuid expert km = setExpertsM km $ M.insert expertUuid expert km.entities.experts
+  deleteFromExpertsM expertUuid km = setExpertsM km $ M.delete expertUuid km.entities.experts
 
 ------------------------------------------------------------------------------------------
-createEntityLFn ::
-     (HasUuid' a, Functor f)
-  => Lens' KnowledgeModel (M.Map U.UUID a)
-  -> ([a] -> f [a])
-  -> KnowledgeModel
-  -> f KnowledgeModel
-createEntityLFn accessor convert km = fmap (update km) (convert . M.elems $ km ^. accessor)
-  where
-    update km newValue = km & accessor .~ toMap newValue
+instance HasKnowledgeModelReferences KnowledgeModel where
+  getReferencesL km = M.elems km.entities.references
+  setReferencesL km newReferences = km {entities = km.entities {references = toMap newReferences}}
+  getReferencesM km = km.entities.references
+  setReferencesM km newReferences = km {entities = km.entities {references = newReferences}}
+  putInReferencesM referenceUuid refenrece km = setReferencesM km $ M.insert referenceUuid refenrece km.entities.references
+  deleteFromReferencesM referenceUuid km = setReferencesM km $ M.delete referenceUuid km.entities.references
 
-createEntityMFn ::
-     Functor f
-  => Lens' KnowledgeModel (M.Map U.UUID a)
-  -> (M.Map U.UUID a -> f (M.Map U.UUID a))
-  -> KnowledgeModel
-  -> f KnowledgeModel
-createEntityMFn accessor convert km = fmap (update km) (convert $ km ^. accessor)
-  where
-    update km newValue = km & accessor .~ newValue
+------------------------------------------------------------------------------------------
+instance HasKnowledgeModelIntegrations KnowledgeModel where
+  getIntegrationsL km = M.elems km.entities.integrations
+  setIntegrationsL km newIntegrations = km {entities = km.entities {integrations = toMap newIntegrations}}
+  getIntegrationsM km = km.entities.integrations
+  setIntegrationsM km newIntegrations = km {entities = km.entities {integrations = newIntegrations}}
+  putInIntegrationsM integrationUuid integration km = setIntegrationsM km $ M.insert integrationUuid integration km.entities.integrations
+  deleteFromIntegrationsM integrationUuid km = setIntegrationsM km $ M.delete integrationUuid km.entities.integrations
 
+------------------------------------------------------------------------------------------
+instance HasKnowledgeModelTags KnowledgeModel where
+  getTagsL km = M.elems km.entities.tags
+  setTagsL km newTags = km {entities = km.entities {tags = toMap newTags}}
+  getTagsM km = km.entities.tags
+  setTagsM km newTags = km {entities = km.entities {tags = newTags}}
+  putInTagsM tagUuid tag km = setTagsM km $ M.insert tagUuid tag km.entities.tags
+  deleteFromTagsM tagUuid km = setTagsM km $ M.delete tagUuid km.entities.tags
+
+------------------------------------------------------------------------------------------
+instance HasKnowledgeModelMetrics KnowledgeModel where
+  getMetricsL km = M.elems km.entities.metrics
+  setMetricsL km newMetrics = km {entities = km.entities {metrics = toMap newMetrics}}
+  getMetricsM km = km.entities.metrics
+  setMetricsM km newMetrics = km {entities = km.entities {metrics = newMetrics}}
+  putInMetricsM metricUuid metric km = setMetricsM km $ M.insert metricUuid metric km.entities.metrics
+  deleteFromMetricsM metricUuid km = setMetricsM km $ M.delete metricUuid km.entities.metrics
+
+------------------------------------------------------------------------------------------
+instance HasKnowledgeModelPhases KnowledgeModel where
+  getPhasesL km = M.elems km.entities.phases
+  setPhasesL km newPhases = km {entities = km.entities {phases = toMap newPhases}}
+  getPhasesM km = km.entities.phases
+  setPhasesM km newPhases = km {entities = km.entities {phases = newPhases}}
+  putInPhasesM phaseUuid phase km = setPhasesM km $ M.insert phaseUuid phase km.entities.phases
+  deleteFromPhasesM phaseUuid km = setPhasesM km $ M.delete phaseUuid km.entities.phases
+
+------------------------------------------------------------------------------------------
 toMap :: HasUuid' a => [a] -> M.Map U.UUID a
-toMap = M.fromList . fmap (\entity -> (entity ^. uuid', entity))
+toMap = M.fromList . fmap (\entity -> (getUuid entity, entity))
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
 instance HasUuid' KnowledgeModel where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: KnowledgeModel -> U.UUID
-      get entity = entity ^. uuid
-      set :: KnowledgeModel -> U.UUID -> KnowledgeModel
-      set entity newValue = entity & uuid .~ newValue
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
 
 instance HasUuid' Chapter where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Chapter -> U.UUID
-      get entity = entity ^. uuid
-      set :: Chapter -> U.UUID -> Chapter
-      set entity newValue = entity & uuid .~ newValue
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
 
 instance HasUuid' Question where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Question -> U.UUID
-      get (OptionsQuestion' entity) = entity ^. uuid
-      get (MultiChoiceQuestion' entity) = entity ^. uuid
-      get (ListQuestion' entity) = entity ^. uuid
-      get (ValueQuestion' entity) = entity ^. uuid
-      get (IntegrationQuestion' entity) = entity ^. uuid
-      set :: Question -> U.UUID -> Question
-      set (OptionsQuestion' entity) newValue = OptionsQuestion' $ entity & uuid .~ newValue
-      set (MultiChoiceQuestion' entity) newValue = MultiChoiceQuestion' $ entity & uuid .~ newValue
-      set (ListQuestion' entity) newValue = ListQuestion' $ entity & uuid .~ newValue
-      set (ValueQuestion' entity) newValue = ValueQuestion' $ entity & uuid .~ newValue
-      set (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity & uuid .~ newValue
+  getUuid (OptionsQuestion' entity) = entity.uuid
+  getUuid (MultiChoiceQuestion' entity) = entity.uuid
+  getUuid (ListQuestion' entity) = entity.uuid
+  getUuid (ValueQuestion' entity) = entity.uuid
+  getUuid (IntegrationQuestion' entity) = entity.uuid
+  setUuid (OptionsQuestion' entity) newValue = OptionsQuestion' $ entity {uuid = newValue}
+  setUuid (MultiChoiceQuestion' entity) newValue = MultiChoiceQuestion' $ entity {uuid = newValue}
+  setUuid (ListQuestion' entity) newValue = ListQuestion' $ entity {uuid = newValue}
+  setUuid (ValueQuestion' entity) newValue = ValueQuestion' $ entity {uuid = newValue}
+  setUuid (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity {uuid = newValue}
 
 instance HasUuid' Expert where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Expert -> U.UUID
-      get entity = entity ^. uuid
-      set :: Expert -> U.UUID -> Expert
-      set entity newValue = entity & uuid .~ newValue
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
 
 instance HasUuid' Reference where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Reference -> U.UUID
-      get (ResourcePageReference' entity) = entity ^. uuid
-      get (URLReference' entity) = entity ^. uuid
-      get (CrossReference' entity) = entity ^. uuid
-      set :: Reference -> U.UUID -> Reference
-      set (ResourcePageReference' entity) newValue = ResourcePageReference' $ entity & uuid .~ newValue
-      set (URLReference' entity) newValue = URLReference' $ entity & uuid .~ newValue
-      set (CrossReference' entity) newValue = CrossReference' $ entity & uuid .~ newValue
+  getUuid (ResourcePageReference' entity) = entity.uuid
+  getUuid (URLReference' entity) = entity.uuid
+  getUuid (CrossReference' entity) = entity.uuid
+  setUuid (ResourcePageReference' entity) newValue = ResourcePageReference' $ entity {uuid = newValue}
+  setUuid (URLReference' entity) newValue = URLReference' $ entity {uuid = newValue}
+  setUuid (CrossReference' entity) newValue = CrossReference' $ entity {uuid = newValue}
 
 instance HasUuid' Answer where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Answer -> U.UUID
-      get entity = entity ^. uuid
-      set :: Answer -> U.UUID -> Answer
-      set entity newValue = entity & uuid .~ newValue
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
 
 instance HasUuid' Choice where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Choice -> U.UUID
-      get entity = entity ^. uuid
-      set :: Choice -> U.UUID -> Choice
-      set entity newValue = entity & uuid .~ newValue
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
 
 instance HasUuid' Tag where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Tag -> U.UUID
-      get entity = entity ^. uuid
-      set :: Tag -> U.UUID -> Tag
-      set entity newValue = entity & uuid .~ newValue
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
 
 instance HasUuid' Integration where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Integration -> U.UUID
-      get (ApiIntegration' entity) = entity ^. uuid
-      get (WidgetIntegration' entity) = entity ^. uuid
-      set :: Integration -> U.UUID -> Integration
-      set (ApiIntegration' entity) newValue = ApiIntegration' $ entity & uuid .~ newValue
-      set (WidgetIntegration' entity) newValue = WidgetIntegration' $ entity & uuid .~ newValue
+  getUuid (ApiIntegration' entity) = entity.uuid
+  getUuid (WidgetIntegration' entity) = entity.uuid
+  setUuid (ApiIntegration' entity) newValue = ApiIntegration' $ entity {uuid = newValue}
+  setUuid (WidgetIntegration' entity) newValue = WidgetIntegration' $ entity {uuid = newValue}
 
 instance HasUuid' Metric where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Metric -> U.UUID
-      get entity = entity ^. uuid
-      set :: Metric -> U.UUID -> Metric
-      set entity newValue = entity & uuid .~ newValue
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
 
 instance HasUuid' Phase where
-  uuid' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Phase -> U.UUID
-      get entity = entity ^. uuid
-      set :: Phase -> U.UUID -> Phase
-      set entity newValue = entity & uuid .~ newValue
-
-------------------------------------------------------------------------------------------
-title' :: Functor f => (String -> f String) -> Question -> f Question
-title' convert entity = fmap (set entity) (convert . get $ entity)
-  where
-    get :: Question -> String
-    get (OptionsQuestion' q) = q ^. title
-    get (MultiChoiceQuestion' q) = q ^. title
-    get (ListQuestion' q) = q ^. title
-    get (ValueQuestion' q) = q ^. title
-    get (IntegrationQuestion' q) = q ^. title
-    set :: Question -> String -> Question
-    set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & title .~ newValue
-    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & title .~ newValue
-    set (ListQuestion' q) newValue = ListQuestion' $ q & title .~ newValue
-    set (ValueQuestion' q) newValue = ValueQuestion' $ q & title .~ newValue
-    set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & title .~ newValue
-
-------------------------------------------------------------------------------------------
-text' :: Functor f => (Maybe String -> f (Maybe String)) -> Question -> f Question
-text' convert entity = fmap (set entity) (convert . get $ entity)
-  where
-    get :: Question -> Maybe String
-    get (OptionsQuestion' q) = q ^. text
-    get (MultiChoiceQuestion' q) = q ^. text
-    get (ListQuestion' q) = q ^. text
-    get (ValueQuestion' q) = q ^. text
-    get (IntegrationQuestion' q) = q ^. text
-    set :: Question -> Maybe String -> Question
-    set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & text .~ newValue
-    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & text .~ newValue
-    set (ListQuestion' q) newValue = ListQuestion' $ q & text .~ newValue
-    set (ValueQuestion' q) newValue = ValueQuestion' $ q & text .~ newValue
-    set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & text .~ newValue
-
-------------------------------------------------------------------------------------------
-requiredPhaseUuid' :: Functor f => (Maybe U.UUID -> f (Maybe U.UUID)) -> Question -> f Question
-requiredPhaseUuid' convert entity = fmap (set entity) (convert . get $ entity)
-  where
-    get :: Question -> Maybe U.UUID
-    get (OptionsQuestion' q) = q ^. requiredPhaseUuid
-    get (MultiChoiceQuestion' q) = q ^. requiredPhaseUuid
-    get (ListQuestion' q) = q ^. requiredPhaseUuid
-    get (ValueQuestion' q) = q ^. requiredPhaseUuid
-    get (IntegrationQuestion' q) = q ^. requiredPhaseUuid
-    set :: Question -> Maybe U.UUID -> Question
-    set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & requiredPhaseUuid .~ newValue
-    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & requiredPhaseUuid .~ newValue
-    set (ListQuestion' q) newValue = ListQuestion' $ q & requiredPhaseUuid .~ newValue
-    set (ValueQuestion' q) newValue = ValueQuestion' $ q & requiredPhaseUuid .~ newValue
-    set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & requiredPhaseUuid .~ newValue
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
 
 ------------------------------------------------------------------------------------------
 instance HasAnnotations' KnowledgeModel where
-  annotations' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: KnowledgeModel -> [MapEntry String String]
-      get entity = entity ^. annotations
-      set :: KnowledgeModel -> [MapEntry String String] -> KnowledgeModel
-      set entity newValue = entity & annotations .~ newValue
+  getAnnotations entity = entity.annotations
+  setAnnotations entity newValue = entity {annotations = newValue}
 
 instance HasAnnotations' Chapter where
-  annotations' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Chapter -> [MapEntry String String]
-      get entity = entity ^. annotations
-      set :: Chapter -> [MapEntry String String] -> Chapter
-      set entity newValue = entity & annotations .~ newValue
+  getAnnotations entity = entity.annotations
+  setAnnotations entity newValue = entity {annotations = newValue}
 
 instance HasAnnotations' Question where
-  annotations' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Question -> [MapEntry String String]
-      get (OptionsQuestion' entity) = entity ^. annotations
-      get (MultiChoiceQuestion' entity) = entity ^. annotations
-      get (ListQuestion' entity) = entity ^. annotations
-      get (ValueQuestion' entity) = entity ^. annotations
-      get (IntegrationQuestion' entity) = entity ^. annotations
-      set :: Question -> [MapEntry String String] -> Question
-      set (OptionsQuestion' entity) newValue = OptionsQuestion' $ entity & annotations .~ newValue
-      set (MultiChoiceQuestion' entity) newValue = MultiChoiceQuestion' $ entity & annotations .~ newValue
-      set (ListQuestion' entity) newValue = ListQuestion' $ entity & annotations .~ newValue
-      set (ValueQuestion' entity) newValue = ValueQuestion' $ entity & annotations .~ newValue
-      set (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity & annotations .~ newValue
+  getAnnotations (OptionsQuestion' entity) = entity.annotations
+  getAnnotations (MultiChoiceQuestion' entity) = entity.annotations
+  getAnnotations (ListQuestion' entity) = entity.annotations
+  getAnnotations (ValueQuestion' entity) = entity.annotations
+  getAnnotations (IntegrationQuestion' entity) = entity.annotations
+  setAnnotations (OptionsQuestion' entity) newValue = OptionsQuestion' $ entity {annotations = newValue}
+  setAnnotations (MultiChoiceQuestion' entity) newValue = MultiChoiceQuestion' $ entity {annotations = newValue}
+  setAnnotations (ListQuestion' entity) newValue = ListQuestion' $ entity {annotations = newValue}
+  setAnnotations (ValueQuestion' entity) newValue = ValueQuestion' $ entity {annotations = newValue}
+  setAnnotations (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity {annotations = newValue}
 
 instance HasAnnotations' Expert where
-  annotations' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Expert -> [MapEntry String String]
-      get entity = entity ^. annotations
-      set :: Expert -> [MapEntry String String] -> Expert
-      set entity newValue = entity & annotations .~ newValue
+  getAnnotations entity = entity.annotations
+  setAnnotations entity newValue = entity {annotations = newValue}
 
 instance HasAnnotations' Reference where
-  annotations' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Reference -> [MapEntry String String]
-      get (ResourcePageReference' entity) = entity ^. annotations
-      get (URLReference' entity) = entity ^. annotations
-      get (CrossReference' entity) = entity ^. annotations
-      set :: Reference -> [MapEntry String String] -> Reference
-      set (ResourcePageReference' entity) newValue = ResourcePageReference' $ entity & annotations .~ newValue
-      set (URLReference' entity) newValue = URLReference' $ entity & annotations .~ newValue
-      set (CrossReference' entity) newValue = CrossReference' $ entity & annotations .~ newValue
+  getAnnotations (ResourcePageReference' entity) = entity.annotations
+  getAnnotations (URLReference' entity) = entity.annotations
+  getAnnotations (CrossReference' entity) = entity.annotations
+  setAnnotations (ResourcePageReference' entity) newValue = ResourcePageReference' $ entity {annotations = newValue}
+  setAnnotations (URLReference' entity) newValue = URLReference' $ entity {annotations = newValue}
+  setAnnotations (CrossReference' entity) newValue = CrossReference' $ entity {annotations = newValue}
 
 instance HasAnnotations' Answer where
-  annotations' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Answer -> [MapEntry String String]
-      get entity = entity ^. annotations
-      set :: Answer -> [MapEntry String String] -> Answer
-      set entity newValue = entity & annotations .~ newValue
+  getAnnotations entity = entity.annotations
+  setAnnotations entity newValue = entity {annotations = newValue}
 
 instance HasAnnotations' Choice where
-  annotations' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Choice -> [MapEntry String String]
-      get entity = entity ^. annotations
-      set :: Choice -> [MapEntry String String] -> Choice
-      set entity newValue = entity & annotations .~ newValue
+  getAnnotations entity = entity.annotations
+  setAnnotations entity newValue = entity {annotations = newValue}
 
 instance HasAnnotations' Tag where
-  annotations' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Tag -> [MapEntry String String]
-      get entity = entity ^. annotations
-      set :: Tag -> [MapEntry String String] -> Tag
-      set entity newValue = entity & annotations .~ newValue
+  getAnnotations entity = entity.annotations
+  setAnnotations entity newValue = entity {annotations = newValue}
 
 instance HasAnnotations' Integration where
-  annotations' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Integration -> [MapEntry String String]
-      get (ApiIntegration' entity) = entity ^. annotations
-      get (WidgetIntegration' entity) = entity ^. annotations
-      set :: Integration -> [MapEntry String String] -> Integration
-      set (ApiIntegration' entity) newValue = ApiIntegration' $ entity & annotations .~ newValue
-      set (WidgetIntegration' entity) newValue = WidgetIntegration' $ entity & annotations .~ newValue
+  getAnnotations (ApiIntegration' entity) = entity.annotations
+  getAnnotations (WidgetIntegration' entity) = entity.annotations
+  setAnnotations (ApiIntegration' entity) newValue = ApiIntegration' $ entity {annotations = newValue}
+  setAnnotations (WidgetIntegration' entity) newValue = WidgetIntegration' $ entity {annotations = newValue}
 
 instance HasAnnotations' Metric where
-  annotations' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Metric -> [MapEntry String String]
-      get entity = entity ^. annotations
-      set :: Metric -> [MapEntry String String] -> Metric
-      set entity newValue = entity & annotations .~ newValue
+  getAnnotations entity = entity.annotations
+  setAnnotations entity newValue = entity {annotations = newValue}
 
 instance HasAnnotations' Phase where
-  annotations' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Phase -> [MapEntry String String]
-      get entity = entity ^. annotations
-      set :: Phase -> [MapEntry String String] -> Phase
-      set entity newValue = entity & annotations .~ newValue
+  getAnnotations entity = entity.annotations
+  setAnnotations entity newValue = entity {annotations = newValue}
 
 ------------------------------------------------------------------------------------------
-tagUuids' :: Functor f => ([U.UUID] -> f [U.UUID]) -> Question -> f Question
-tagUuids' convert entity = fmap (set entity) (convert . get $ entity)
-  where
-    get :: Question -> [U.UUID]
-    get (OptionsQuestion' q) = q ^. tagUuids
-    get (MultiChoiceQuestion' q) = q ^. tagUuids
-    get (ListQuestion' q) = q ^. tagUuids
-    get (ValueQuestion' q) = q ^. tagUuids
-    get (IntegrationQuestion' q) = q ^. tagUuids
-    set :: Question -> [U.UUID] -> Question
-    set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & tagUuids .~ newValue
-    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & tagUuids .~ newValue
-    set (ListQuestion' q) newValue = ListQuestion' $ q & tagUuids .~ newValue
-    set (ValueQuestion' q) newValue = ValueQuestion' $ q & tagUuids .~ newValue
-    set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & tagUuids .~ newValue
+instance HasTitle' Question where
+  getTitle (OptionsQuestion' q) = q.title
+  getTitle (MultiChoiceQuestion' q) = q.title
+  getTitle (ListQuestion' q) = q.title
+  getTitle (ValueQuestion' q) = q.title
+  getTitle (IntegrationQuestion' q) = q.title
+  setTitle (OptionsQuestion' q) newValue = OptionsQuestion' $ q {title = newValue}
+  setTitle (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q {title = newValue}
+  setTitle (ListQuestion' q) newValue = ListQuestion' $ q {title = newValue}
+  setTitle (ValueQuestion' q) newValue = ValueQuestion' $ q {title = newValue}
+  setTitle (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {title = newValue}
+
+------------------------------------------------------------------------------------------
+instance HasText' Question where
+  getText (OptionsQuestion' q) = q.text
+  getText (MultiChoiceQuestion' q) = q.text
+  getText (ListQuestion' q) = q.text
+  getText (ValueQuestion' q) = q.text
+  getText (IntegrationQuestion' q) = q.text
+  setText (OptionsQuestion' q) newValue = OptionsQuestion' $ q {text = newValue}
+  setText (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q {text = newValue}
+  setText (ListQuestion' q) newValue = ListQuestion' $ q {text = newValue}
+  setText (ValueQuestion' q) newValue = ValueQuestion' $ q {text = newValue}
+  setText (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {text = newValue}
+
+------------------------------------------------------------------------------------------
+instance HasRequiredPhaseUuid' Question where
+  getRequiredPhaseUuid (OptionsQuestion' q) = q.requiredPhaseUuid
+  getRequiredPhaseUuid (MultiChoiceQuestion' q) = q.requiredPhaseUuid
+  getRequiredPhaseUuid (ListQuestion' q) = q.requiredPhaseUuid
+  getRequiredPhaseUuid (ValueQuestion' q) = q.requiredPhaseUuid
+  getRequiredPhaseUuid (IntegrationQuestion' q) = q.requiredPhaseUuid
+  setRequiredPhaseUuid (OptionsQuestion' q) newValue = OptionsQuestion' $ q {requiredPhaseUuid = newValue}
+  setRequiredPhaseUuid (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q {requiredPhaseUuid = newValue}
+  setRequiredPhaseUuid (ListQuestion' q) newValue = ListQuestion' $ q {requiredPhaseUuid = newValue}
+  setRequiredPhaseUuid (ValueQuestion' q) newValue = ValueQuestion' $ q {requiredPhaseUuid = newValue}
+  setRequiredPhaseUuid (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {requiredPhaseUuid = newValue}
+
+------------------------------------------------------------------------------------------
+instance HasTagUuids' Question where
+  getTagUuids (OptionsQuestion' q) = q.tagUuids
+  getTagUuids (MultiChoiceQuestion' q) = q.tagUuids
+  getTagUuids (ListQuestion' q) = q.tagUuids
+  getTagUuids (ValueQuestion' q) = q.tagUuids
+  getTagUuids (IntegrationQuestion' q) = q.tagUuids
+  setTagUuids (OptionsQuestion' q) newValue = OptionsQuestion' $ q {tagUuids = newValue}
+  setTagUuids (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q {tagUuids = newValue}
+  setTagUuids (ListQuestion' q) newValue = ListQuestion' $ q {tagUuids = newValue}
+  setTagUuids (ValueQuestion' q) newValue = ValueQuestion' $ q {tagUuids = newValue}
+  setTagUuids (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {tagUuids = newValue}
 
 -- ------------------------------------------------------------------------------------------
 instance HasExpertUuids' Question [U.UUID] where
-  expertUuids' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Question -> [U.UUID]
-      get (OptionsQuestion' entity) = entity ^. expertUuids
-      get (MultiChoiceQuestion' entity) = entity ^. expertUuids
-      get (ListQuestion' entity) = entity ^. expertUuids
-      get (ValueQuestion' entity) = entity ^. expertUuids
-      get (IntegrationQuestion' entity) = entity ^. expertUuids
-      set :: Question -> [U.UUID] -> Question
-      set (OptionsQuestion' entity) newValue = OptionsQuestion' $ entity & expertUuids .~ newValue
-      set (MultiChoiceQuestion' entity) newValue = MultiChoiceQuestion' $ entity & expertUuids .~ newValue
-      set (ListQuestion' entity) newValue = ListQuestion' $ entity & expertUuids .~ newValue
-      set (ValueQuestion' entity) newValue = ValueQuestion' $ entity & expertUuids .~ newValue
-      set (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity & expertUuids .~ newValue
+  getExpertUuids (OptionsQuestion' entity) = entity.expertUuids
+  getExpertUuids (MultiChoiceQuestion' entity) = entity.expertUuids
+  getExpertUuids (ListQuestion' entity) = entity.expertUuids
+  getExpertUuids (ValueQuestion' entity) = entity.expertUuids
+  getExpertUuids (IntegrationQuestion' entity) = entity.expertUuids
+  setExpertUuids (OptionsQuestion' entity) newValue = OptionsQuestion' $ entity {expertUuids = newValue}
+  setExpertUuids (MultiChoiceQuestion' entity) newValue = MultiChoiceQuestion' $ entity {expertUuids = newValue}
+  setExpertUuids (ListQuestion' entity) newValue = ListQuestion' $ entity {expertUuids = newValue}
+  setExpertUuids (ValueQuestion' entity) newValue = ValueQuestion' $ entity {expertUuids = newValue}
+  setExpertUuids (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity {expertUuids = newValue}
 
 -- ------------------------------------------------------------------------------------------
 instance HasReferenceUuids' Question [U.UUID] where
-  referenceUuids' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Question -> [U.UUID]
-      get (OptionsQuestion' q) = q ^. referenceUuids
-      get (MultiChoiceQuestion' q) = q ^. referenceUuids
-      get (ListQuestion' q) = q ^. referenceUuids
-      get (ValueQuestion' q) = q ^. referenceUuids
-      get (IntegrationQuestion' q) = q ^. referenceUuids
-      set :: Question -> [U.UUID] -> Question
-      set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & referenceUuids .~ newValue
-      set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & referenceUuids .~ newValue
-      set (ListQuestion' q) newValue = ListQuestion' $ q & referenceUuids .~ newValue
-      set (ValueQuestion' q) newValue = ValueQuestion' $ q & referenceUuids .~ newValue
-      set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & referenceUuids .~ newValue
+  getReferenceUuids (OptionsQuestion' q) = q.referenceUuids
+  getReferenceUuids (MultiChoiceQuestion' q) = q.referenceUuids
+  getReferenceUuids (ListQuestion' q) = q.referenceUuids
+  getReferenceUuids (ValueQuestion' q) = q.referenceUuids
+  getReferenceUuids (IntegrationQuestion' q) = q.referenceUuids
+  setReferenceUuids (OptionsQuestion' q) newValue = OptionsQuestion' $ q {referenceUuids = newValue}
+  setReferenceUuids (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q {referenceUuids = newValue}
+  setReferenceUuids (ListQuestion' q) newValue = ListQuestion' $ q {referenceUuids = newValue}
+  setReferenceUuids (ValueQuestion' q) newValue = ValueQuestion' $ q {referenceUuids = newValue}
+  setReferenceUuids (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {referenceUuids = newValue}
 
 -- ------------------------------------------------------------------------------------------
-answerUuids' :: Functor f => ([U.UUID] -> f [U.UUID]) -> Question -> f Question
-answerUuids' convert entity = fmap (set entity) (convert . get $ entity)
-  where
-    get :: Question -> [U.UUID]
-    get (OptionsQuestion' q) = q ^. answerUuids
-    get q = []
-    set :: Question -> [U.UUID] -> Question
-    set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & answerUuids .~ newValue
-    set q newValue = q
+instance HasAnswerUuids' Question where
+  getAnswerUuids (OptionsQuestion' q) = q.answerUuids
+  getAnswerUuids q = []
+  setAnswerUuids (OptionsQuestion' q) newValue = OptionsQuestion' $ q {answerUuids = newValue}
+  setAnswerUuids q newValue = q
 
 -- ------------------------------------------------------------------------------------------
-choiceUuids' :: Functor f => ([U.UUID] -> f [U.UUID]) -> Question -> f Question
-choiceUuids' convert entity = fmap (set entity) (convert . get $ entity)
-  where
-    get :: Question -> [U.UUID]
-    get (MultiChoiceQuestion' q) = q ^. choiceUuids
-    get q = []
-    set :: Question -> [U.UUID] -> Question
-    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & choiceUuids .~ newValue
-    set q newValue = q
+instance HasChoiceUuids' Question where
+  getChoiceUuids (MultiChoiceQuestion' q) = q.choiceUuids
+  getChoiceUuids q = []
+  setChoiceUuids (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q {choiceUuids = newValue}
+  setChoiceUuids q newValue = q
 
 -- ------------------------------------------------------------------------------------------
-itemTemplateQuestionUuids' :: Functor f => ([U.UUID] -> f [U.UUID]) -> Question -> f Question
-itemTemplateQuestionUuids' convert entity = fmap (set entity) (convert . get $ entity)
-  where
-    get :: Question -> [U.UUID]
-    get (ListQuestion' q) = q ^. itemTemplateQuestionUuids
-    get q = []
-    set :: Question -> [U.UUID] -> Question
-    set (ListQuestion' q) newValue = ListQuestion' $ q & itemTemplateQuestionUuids .~ newValue
-    set q newValue = q
+instance HasItemTemplateQuestionUuids' Question where
+  getItemTemplateQuestionUuids (ListQuestion' q) = q.itemTemplateQuestionUuids
+  getItemTemplateQuestionUuids q = []
+  setItemTemplateQuestionUuids (ListQuestion' q) newValue = ListQuestion' $ q {itemTemplateQuestionUuids = newValue}
+  setItemTemplateQuestionUuids q newValue = q
 
 -- ------------------------------------------------------------------------------------------
-valueType' :: Functor f => (QuestionValueType -> f QuestionValueType) -> Question -> f Question
-valueType' convert entity = fmap (set entity) (convert . get $ entity)
-  where
-    get :: Question -> QuestionValueType
-    get (ValueQuestion' q) = q ^. valueType
-    get q = StringQuestionValueType
-    set :: Question -> QuestionValueType -> Question
-    set (ValueQuestion' q) newValue = ValueQuestion' $ q & valueType .~ newValue
-    set q newValue = q
+instance HasValueType' Question where
+  getValueType (ValueQuestion' q) = q.valueType
+  getValueType q = StringQuestionValueType
+  setValueType (ValueQuestion' q) newValue = ValueQuestion' $ q {valueType = newValue}
+  setValueType q newValue = q
 
 -- ------------------------------------------------------------------------------------------
-integrationUuid' :: Functor f => (U.UUID -> f U.UUID) -> Question -> f Question
-integrationUuid' convert entity = fmap (set entity) (convert . get $ entity)
-  where
-    get :: Question -> U.UUID
-    get (IntegrationQuestion' q) = q ^. integrationUuid
-    get q = U.nil
-    set :: Question -> U.UUID -> Question
-    set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & integrationUuid .~ newValue
-    set q newValue = q
+instance HasIntegrationUuid' Question where
+  getIntegrationUuid (IntegrationQuestion' q) = q.integrationUuid
+  getIntegrationUuid q = U.nil
+  setIntegrationUuid (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {integrationUuid = newValue}
+  setIntegrationUuid q newValue = q
 
 -- ------------------------------------------------------------------------------------------
 instance HasProps' Question (M.Map String String) where
-  props' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Question -> M.Map String String
-      get (IntegrationQuestion' q) = q ^. props
-      get q = M.empty
-      set :: Question -> M.Map String String -> Question
-      set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & props .~ newValue
-      set q newValue = q
+  getProps (IntegrationQuestion' q) = q.props
+  getProps q = M.empty
+  setProps (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {props = newValue}
+  setProps q newValue = q
 
 instance HasProps' Integration [String] where
-  props' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: Integration -> [String]
-      get (ApiIntegration' integration) = integration ^. props
-      get (WidgetIntegration' integration) = integration ^. props
-      set :: Integration -> [String] -> Integration
-      set (ApiIntegration' integration) newValue = ApiIntegration' $ integration & props .~ newValue
-      set (WidgetIntegration' integration) newValue = WidgetIntegration' $ integration & props .~ newValue
+  getProps (ApiIntegration' integration) = integration.props
+  getProps (WidgetIntegration' integration) = integration.props
+  setProps (ApiIntegration' integration) newValue = ApiIntegration' $ integration {props = newValue}
+  setProps (WidgetIntegration' integration) newValue = WidgetIntegration' $ integration {props = newValue}

@@ -8,4 +8,4 @@ import Shared.Model.Package.PackagePattern
 import Shared.Util.Swagger
 
 instance ToSchema PackagePattern where
-  declareNamedSchema = simpleToSchema' "_packagePattern" packagePatternAll
+  declareNamedSchema = toSwagger packagePatternAll

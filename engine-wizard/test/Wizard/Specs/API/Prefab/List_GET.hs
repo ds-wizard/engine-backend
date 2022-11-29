@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Prefab.List_GET
-  ( list_GET
-  ) where
+module Wizard.Specs.API.Prefab.List_GET (
+  list_GET,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -52,18 +52,18 @@ test_200 appContext = do
 create_test_200 title appContext reqUrl expDto =
   it title $
     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expBody = encode expDto
-    -- AND: Run migrations
-    runInContextIO PF.runMigration appContext
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO PF.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

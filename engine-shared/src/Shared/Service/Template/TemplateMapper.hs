@@ -1,10 +1,8 @@
 module Shared.Service.Template.TemplateMapper where
 
-import Control.Lens ((^.))
 import qualified Data.UUID as U
 import GHC.Int
 
-import LensesConfig
 import Shared.Api.Resource.Template.TemplateDTO
 import Shared.Api.Resource.Template.TemplateFormatDTO
 import Shared.Api.Resource.Template.TemplateSuggestionDTO
@@ -14,70 +12,70 @@ import Shared.Util.List
 toDTO :: Template -> TemplateDTO
 toDTO tml =
   TemplateDTO
-    { _templateDTOTId = tml ^. tId
-    , _templateDTOName = tml ^. name
-    , _templateDTOVersion = tml ^. version
-    , _templateDTODescription = tml ^. description
-    , _templateDTOFormats = fmap toFormatDTO (tml ^. formats)
+    { tId = tml.tId
+    , name = tml.name
+    , version = tml.version
+    , description = tml.description
+    , formats = fmap toFormatDTO tml.formats
     }
 
 toSuggestionDTO :: Template -> TemplateSuggestionDTO
 toSuggestionDTO tml =
   TemplateSuggestionDTO
-    { _templateSuggestionDTOTId = tml ^. tId
-    , _templateSuggestionDTOName = tml ^. name
-    , _templateSuggestionDTOVersion = tml ^. version
-    , _templateSuggestionDTODescription = tml ^. description
-    , _templateSuggestionDTOFormats = fmap toFormatDTO (tml ^. formats)
+    { tId = tml.tId
+    , name = tml.name
+    , version = tml.version
+    , description = tml.description
+    , formats = fmap toFormatDTO tml.formats
     }
 
 toFormatDTO :: TemplateFormat -> TemplateFormatDTO
 toFormatDTO format =
   TemplateFormatDTO
-    { _templateFormatDTOUuid = format ^. uuid
-    , _templateFormatDTOName = format ^. name
-    , _templateFormatDTOShortName = format ^. shortName
-    , _templateFormatDTOIcon = format ^. icon
-    , _templateFormatDTOColor = format ^. color
-    , _templateFormatDTOIsPdf =
-        case lastSafe $ format ^. steps of
+    { uuid = format.uuid
+    , name = format.name
+    , shortName = format.shortName
+    , icon = format.icon
+    , color = format.color
+    , isPdf =
+        case lastSafe $ format.steps of
           Nothing -> False
-          Just step -> step ^. name == "wkhtmltopdf"
+          Just step -> step.name == "wkhtmltopdf"
     }
 
 toFileDTO :: TemplateFile -> TemplateFileDTO
 toFileDTO file =
   TemplateFileDTO
-    { _templateFileDTOUuid = file ^. uuid
-    , _templateFileDTOFileName = file ^. fileName
-    , _templateFileDTOContent = file ^. content
+    { uuid = file.uuid
+    , fileName = file.fileName
+    , content = file.content
     }
 
 toAssetDTO :: TemplateAsset -> TemplateAssetDTO
 toAssetDTO asset =
   TemplateAssetDTO
-    { _templateAssetDTOUuid = asset ^. uuid
-    , _templateAssetDTOFileName = asset ^. fileName
-    , _templateAssetDTOContentType = asset ^. contentType
+    { uuid = asset.uuid
+    , fileName = asset.fileName
+    , contentType = asset.contentType
     }
 
 fromFileDTO :: String -> U.UUID -> TemplateFileDTO -> TemplateFile
 fromFileDTO templateId appUuid file =
   TemplateFile
-    { _templateFileTemplateId = templateId
-    , _templateFileUuid = file ^. uuid
-    , _templateFileFileName = file ^. fileName
-    , _templateFileContent = file ^. content
-    , _templateFileAppUuid = appUuid
+    { templateId = templateId
+    , uuid = file.uuid
+    , fileName = file.fileName
+    , content = file.content
+    , appUuid = appUuid
     }
 
 fromAssetDTO :: String -> Int64 -> U.UUID -> TemplateAssetDTO -> TemplateAsset
 fromAssetDTO templateId fileSize appUuid asset =
   TemplateAsset
-    { _templateAssetTemplateId = templateId
-    , _templateAssetUuid = asset ^. uuid
-    , _templateAssetFileName = asset ^. fileName
-    , _templateAssetContentType = asset ^. contentType
-    , _templateAssetFileSize = fileSize
-    , _templateAssetAppUuid = appUuid
+    { templateId = templateId
+    , uuid = asset.uuid
+    , fileName = asset.fileName
+    , contentType = asset.contentType
+    , fileSize = fileSize
+    , appUuid = appUuid
     }

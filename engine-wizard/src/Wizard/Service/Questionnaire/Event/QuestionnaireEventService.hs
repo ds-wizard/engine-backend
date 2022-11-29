@@ -1,13 +1,11 @@
 module Wizard.Service.Questionnaire.Event.QuestionnaireEventService where
 
-import Control.Lens ((^.))
 import Data.Foldable (traverse_)
 import qualified Data.List as L
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig hiding (squash)
 import Shared.Model.Common.Lens
 import Shared.Util.List (groupBy)
 import Wizard.Database.DAO.Common
@@ -33,31 +31,32 @@ squashQuestionnaireEventsForQuestionnaire qtnUuid =
     updateQuestionnaireEventsByUuid' qtnUuid True squashedEvents
     logInfoU
       _CMP_SERVICE
-      (f'
-         "Squashing for questionnaire '%s' finished successfully (before: %s, after %s)"
-         [qtnUuid, show . length $ events, show . length $ squashedEvents])
+      ( f'
+          "Squashing for questionnaire '%s' finished successfully (before: %s, after %s)"
+          [qtnUuid, show . length $ events, show . length $ squashedEvents]
+      )
 
 instance Ord QuestionnaireEvent where
-  compare a b = compare (a ^. createdAt') (b ^. createdAt')
+  compare a b = compare (getCreatedAt a) (getCreatedAt b)
 
 squash :: [QuestionnaireVersion] -> [QuestionnaireEvent] -> [QuestionnaireEvent]
 squash versions events =
-  let groupedEvents = groupBy (\e1 e2 -> utctDay (e1 ^. createdAt') == utctDay (e2 ^. createdAt')) events
+  let groupedEvents = groupBy (\e1 e2 -> utctDay (getCreatedAt e1) == utctDay (getCreatedAt e2)) events
       squashedEvents = fmap (squashOnePeriod versions) groupedEvents
    in concat squashedEvents
 
 squashOnePeriod :: [QuestionnaireVersion] -> [QuestionnaireEvent] -> [QuestionnaireEvent]
 squashOnePeriod versions = snd . foldr go (M.empty, [])
   where
-    go ::
-         QuestionnaireEvent
+    go
+      :: QuestionnaireEvent
       -> (M.Map String (Maybe U.UUID), [QuestionnaireEvent])
       -> (M.Map String (Maybe U.UUID), [QuestionnaireEvent])
     go event' (questions, events) =
       case event' of
         SetReplyEvent' event ->
-          if not (L.any (\v -> v ^. eventUuid == event ^. uuid) versions) &&
-             Just (event ^. createdBy) == M.lookup (event ^. path) questions
+          if not (L.any (\v -> v.eventUuid == event.uuid) versions)
+            && Just event.createdBy == M.lookup event.path questions
             then (questions, events)
-            else (M.insert (event ^. path) (event ^. createdBy) questions, event' : events)
+            else (M.insert event.path event.createdBy questions, event' : events)
         _ -> (questions, event' : events)

@@ -8,4 +8,4 @@ import Wizard.Api.Resource.Dev.DevExecutionResultJM ()
 import Wizard.Database.Migration.Development.Dev.Data.Devs
 
 instance ToSchema AdminExecutionResultDTO where
-  declareNamedSchema = simpleToSchema execution1Result
+  declareNamedSchema = toSwagger execution1Result

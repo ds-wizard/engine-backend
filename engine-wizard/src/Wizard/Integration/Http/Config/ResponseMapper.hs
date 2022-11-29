@@ -1,6 +1,6 @@
-module Wizard.Integration.Http.Config.ResponseMapper
-  ( toCompileClientCssResponse
-  ) where
+module Wizard.Integration.Http.Config.ResponseMapper (
+  toCompileClientCssResponse,
+) where
 
 import qualified Data.ByteString.Lazy as BSL
 import Network.Wreq (Response)

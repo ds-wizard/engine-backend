@@ -22,29 +22,29 @@ pageLabel = "tokens"
 
 findUserTokens :: AppContextM [UserToken]
 findUserTokens = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findUserTokensByUserUuid :: U.UUID -> AppContextM [UserToken]
 findUserTokensByUserUuid userUuid = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("user_uuid", U.toString userUuid)]
 
 findUserTokensBySessionState :: String -> AppContextM [UserToken]
 findUserTokensBySessionState sessionState = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("session_state", sessionState)]
 
 findUserTokensByValue :: String -> AppContextM [UserToken]
 findUserTokensByValue value = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("value", value)]
 
 findUserTokenById :: String -> AppContextM UserToken
 findUserTokenById = getFromCacheOrDb getFromCache addToCache go
   where
     go uuid = do
-      appUuid <- asks _appContextAppUuid
+      appUuid <- asks currentAppUuid
       createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 insertUserToken :: UserToken -> AppContextM Int64
@@ -66,7 +66,7 @@ deleteUserTokensWithExpiration expirationInDays = do
 
 deleteUserTokenById :: U.UUID -> AppContextM Int64
 deleteUserTokenById uuid = do
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   result <- createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
   deleteFromCache (U.toString uuid)
   return result

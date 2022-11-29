@@ -11,20 +11,20 @@ import Wizard.Model.Branch.BranchData
 
 instance ToRow BranchData where
   toRow BranchData {..} =
-    [ toField _branchDataBranchUuid
-    , toField _branchDataMetamodelVersion
-    , toJSONField _branchDataEvents
-    , toField _branchDataAppUuid
-    , toField _branchDataCreatedAt
-    , toField _branchDataUpdatedAt
+    [ toField branchUuid
+    , toField metamodelVersion
+    , toJSONField events
+    , toField appUuid
+    , toField createdAt
+    , toField updatedAt
     ]
 
 instance FromRow BranchData where
   fromRow = do
-    _branchDataBranchUuid <- field
-    _branchDataMetamodelVersion <- field
-    _branchDataEvents <- fieldWith fromJSONField
-    _branchDataAppUuid <- field
-    _branchDataCreatedAt <- field
-    _branchDataUpdatedAt <- field
+    branchUuid <- field
+    metamodelVersion <- field
+    events <- fieldWith fromJSONField
+    appUuid <- field
+    createdAt <- field
+    updatedAt <- field
     return $ BranchData {..}

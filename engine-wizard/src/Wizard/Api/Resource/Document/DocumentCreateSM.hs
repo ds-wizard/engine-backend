@@ -8,4 +8,4 @@ import Wizard.Api.Resource.Document.DocumentCreateJM ()
 import Wizard.Database.Migration.Development.Document.Data.Documents
 
 instance ToSchema DocumentCreateDTO where
-  declareNamedSchema = simpleToSchema doc1Create
+  declareNamedSchema = toSwagger doc1Create

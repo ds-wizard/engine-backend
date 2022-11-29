@@ -1,10 +1,8 @@
 module Wizard.Database.Migration.Development.Package.Data.Packages where
 
-import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 
-import LensesConfig
 import Registry.Api.Resource.Package.PackageSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Constant.KnowledgeModel
@@ -14,59 +12,60 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Event.Event
 import Shared.Model.Package.PackageWithEvents
 import Wizard.Database.Migration.Development.App.Data.Apps
+import Wizard.Model.App.App
 
 globalRemotePackage :: PackageSimpleDTO
 globalRemotePackage =
   PackageSimpleDTO
-    { _packageSimpleDTOPId = globalPackage ^. pId
-    , _packageSimpleDTOName = globalPackage ^. name
-    , _packageSimpleDTOOrganizationId = globalPackage ^. organizationId
-    , _packageSimpleDTOKmId = globalPackage ^. kmId
-    , _packageSimpleDTOVersion = globalPackage ^. version
-    , _packageSimpleDTODescription = globalPackage ^. description
-    , _packageSimpleDTOOrganization =
+    { pId = globalPackage.pId
+    , name = globalPackage.name
+    , organizationId = globalPackage.organizationId
+    , kmId = globalPackage.kmId
+    , version = globalPackage.version
+    , description = globalPackage.description
+    , organization =
         OrganizationSimpleDTO
-          { _organizationSimpleDTOOrganizationId = orgGlobalSimple ^. organizationId
-          , _organizationSimpleDTOName = orgGlobalSimple ^. name
-          , _organizationSimpleDTOLogo = Just orgLogo
+          { organizationId = orgGlobalSimple.organizationId
+          , name = orgGlobalSimple.name
+          , logo = Just orgLogo
           }
-    , _packageSimpleDTOCreatedAt = globalPackage ^. createdAt
+    , createdAt = globalPackage.createdAt
     }
 
 globalNetherlandsPackage :: PackageSimpleDTO
 globalNetherlandsPackage =
   PackageSimpleDTO
-    { _packageSimpleDTOPId = netherlandsPackageV2 ^. pId
-    , _packageSimpleDTOName = netherlandsPackageV2 ^. name
-    , _packageSimpleDTOOrganizationId = netherlandsPackageV2 ^. organizationId
-    , _packageSimpleDTOKmId = netherlandsPackageV2 ^. kmId
-    , _packageSimpleDTOVersion = netherlandsPackageV2 ^. version
-    , _packageSimpleDTODescription = netherlandsPackageV2 ^. description
-    , _packageSimpleDTOOrganization =
+    { pId = netherlandsPackageV2.pId
+    , name = netherlandsPackageV2.name
+    , organizationId = netherlandsPackageV2.organizationId
+    , kmId = netherlandsPackageV2.kmId
+    , version = netherlandsPackageV2.version
+    , description = netherlandsPackageV2.description
+    , organization =
         OrganizationSimpleDTO
-          { _organizationSimpleDTOOrganizationId = orgNetherlandsSimple ^. organizationId
-          , _organizationSimpleDTOName = orgNetherlandsSimple ^. name
-          , _organizationSimpleDTOLogo = Just orgLogo
+          { organizationId = orgNetherlandsSimple.organizationId
+          , name = orgNetherlandsSimple.name
+          , logo = Just orgLogo
           }
-    , _packageSimpleDTOCreatedAt = globalPackage ^. createdAt
+    , createdAt = globalPackage.createdAt
     }
 
 differentPackage :: PackageWithEvents
 differentPackage =
   PackageWithEvents
-    { _packageWithEventsPId = "global:different:1.0.0"
-    , _packageWithEventsName = "Different Knowledge Model"
-    , _packageWithEventsOrganizationId = "global"
-    , _packageWithEventsKmId = "different"
-    , _packageWithEventsVersion = "1.0.0"
-    , _packageWithEventsMetamodelVersion = kmMetamodelVersion
-    , _packageWithEventsDescription = "Empty package"
-    , _packageWithEventsReadme = "# Different Knowledge Model"
-    , _packageWithEventsLicense = "Apache-2.0"
-    , _packageWithEventsPreviousPackageId = Nothing
-    , _packageWithEventsForkOfPackageId = Nothing
-    , _packageWithEventsMergeCheckpointPackageId = Nothing
-    , _packageWithEventsEvents = [AddKnowledgeModelEvent' a_km1]
-    , _packageWithEventsAppUuid = differentApp ^. uuid
-    , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    { pId = "global:different:1.0.0"
+    , name = "Different Knowledge Model"
+    , organizationId = "global"
+    , kmId = "different"
+    , version = "1.0.0"
+    , metamodelVersion = kmMetamodelVersion
+    , description = "Empty package"
+    , readme = "# Different Knowledge Model"
+    , license = "Apache-2.0"
+    , previousPackageId = Nothing
+    , forkOfPackageId = Nothing
+    , mergeCheckpointPackageId = Nothing
+    , events = [AddKnowledgeModelEvent' a_km1]
+    , appUuid = differentApp.uuid
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }

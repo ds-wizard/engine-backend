@@ -27,6 +27,8 @@ instance Hashable DiffTime where
 
 deriving instance Generic UTCTime
 
+deriving instance Eq ZonedTime
+
 deriving instance Generic ZonedTime
 
 instance Hashable ZonedTime

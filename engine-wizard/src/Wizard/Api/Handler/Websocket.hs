@@ -26,8 +26,8 @@ initConnection = do
   log connectionUuid "New websocket client"
   return connectionUuid
 
-handleWebsocketMessage ::
-     FromJSON reqDto
+handleWebsocketMessage
+  :: FromJSON reqDto
   => String
   -> U.UUID
   -> Connection
@@ -69,8 +69,8 @@ handleWebsocketMessage entityId connectionUuid connection handleClose disconnect
       log connectionUuid "Unicode Exception"
       return ()
 
-handleError ::
-     AppContextM ()
+handleError
+  :: AppContextM ()
   -> U.UUID
   -> Connection
   -> String

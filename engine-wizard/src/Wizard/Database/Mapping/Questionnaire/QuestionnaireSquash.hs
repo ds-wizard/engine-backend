@@ -12,11 +12,11 @@ import Wizard.Model.Questionnaire.QuestionnaireSquash
 
 instance ToRow QuestionnaireSquash where
   toRow QuestionnaireSquash {..} =
-    [toField _questionnaireSquashUuid, toJSONField _questionnaireSquashEvents, toJSONField _questionnaireSquashVersions]
+    [toField uuid, toJSONField events, toJSONField versions]
 
 instance FromRow QuestionnaireSquash where
   fromRow = do
-    _questionnaireSquashUuid <- field
-    _questionnaireSquashEvents <- fieldWith fromJSONField
-    _questionnaireSquashVersions <- fieldWith fromJSONField
+    uuid <- field
+    events <- fieldWith fromJSONField
+    versions <- fieldWith fromJSONField
     return $ QuestionnaireSquash {..}

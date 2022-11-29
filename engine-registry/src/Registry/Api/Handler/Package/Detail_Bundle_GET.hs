@@ -11,14 +11,14 @@ import Registry.Service.PackageBundle.PackageBundleService
 import Shared.Api.Handler.Common
 import Shared.Model.Context.TransactionState
 
-type Detail_Bundle_GET
-   = Header "Authorization" String
-     :> "packages"
-     :> Capture "pkgId" String
-     :> "bundle"
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] PackageBundleDTO)
+type Detail_Bundle_GET =
+  Header "Authorization" String
+    :> "packages"
+    :> Capture "pkgId" String
+    :> "bundle"
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] PackageBundleDTO)
 
-detail_bundle_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] PackageBundleDTO)
+detail_bundle_GET :: Maybe String -> String -> BaseContextM (Headers '[Header "x-trace-uuid" String] PackageBundleDTO)
 detail_bundle_GET mTokenHeader pkgId =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService NoTransaction $ addTraceUuidHeader =<< getPackageBundle pkgId

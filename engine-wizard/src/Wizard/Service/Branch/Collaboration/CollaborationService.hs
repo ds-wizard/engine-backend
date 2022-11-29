@@ -1,13 +1,11 @@
 module Wizard.Service.Branch.Collaboration.CollaborationService where
 
-import Control.Lens ((^.))
 import Control.Monad (when)
 import Data.Aeson (ToJSON)
 import Data.Foldable (traverse_)
 import qualified Data.UUID as U
 import Network.WebSockets (Connection)
 
-import LensesConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Branch.Event.BranchEventDTO
 import Wizard.Api.Resource.Websocket.BranchActionJM ()
@@ -54,8 +52,8 @@ logOutOnlineUsersWhenBranchDramaticallyChanged branchUuid = do
     logOut :: AppError -> WebsocketRecord -> AppContextM ()
     logOut error record =
       when
-        (record ^. entityId == branchUuid)
-        (sendError (record ^. connectionUuid) (record ^. connection) (record ^. entityId) disconnectUser error)
+        (record.entityId == branchUuid)
+        (sendError record.connectionUuid record.connection record.entityId disconnectUser error)
 
 -- --------------------------------
 setContent :: String -> U.UUID -> BranchEventDTO -> AppContextM ()
@@ -67,10 +65,10 @@ addBranchEvent :: String -> U.UUID -> AddBranchEventDTO -> AppContextM ()
 addBranchEvent branchUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
-  appendBranchEventByUuid branchUuid [reqDto ^. event]
+  appendBranchEventByUuid branchUuid [reqDto.event]
   records <- getAllFromCache
   broadcast branchUuid records (toAddBranchMessage reqDto) disconnectUser
 
 -- --------------------------------
 disconnectUser :: ToJSON resDto => WebsocketMessage resDto -> AppContextM ()
-disconnectUser msg = deleteUser (msg ^. entityId) (msg ^. connectionUuid)
+disconnectUser msg = deleteUser msg.entityId msg.connectionUuid

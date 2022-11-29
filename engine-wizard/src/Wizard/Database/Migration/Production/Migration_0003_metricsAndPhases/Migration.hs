@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0003_metricsAndPhases.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0003_metricsAndPhases.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -22,7 +22,10 @@ definition = (meta, migrate)
 
 meta =
   MigrationMeta
-    {mmNumber = 3, mmName = "Metrics and Phases", mmDescription = "Move metrics and phases into Knowledge Model"}
+    { mmNumber = 3
+    , mmName = "Metrics and Phases"
+    , mmDescription = "Move metrics and phases into Knowledge Model"
+    }
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
@@ -76,11 +79,10 @@ updateEvent = updatePhase . updateType
         Just (Number 3) -> M.insert "phase" "adc9133d-afcd-4616-9aea-db5f475898a2" . M.delete "level" $ event
         _ -> event
 
-data Questionnaire =
-  Questionnaire
-    { uuid :: U.UUID
-    , events :: [M.Map String Value]
-    }
+data Questionnaire = Questionnaire
+  { uuid :: U.UUID
+  , events :: [M.Map String Value]
+  }
 
 instance ToRow Questionnaire where
   toRow Questionnaire {..} = [toJSONField events, toField uuid]

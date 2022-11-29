@@ -22,50 +22,49 @@ data QuestionnaireSharing
   | AnyoneWithLinkEditQuestionnaire
   deriving (Show, Eq, Generic, Read)
 
-data Questionnaire =
-  Questionnaire
-    { _questionnaireUuid :: U.UUID
-    , _questionnaireName :: String
-    , _questionnaireDescription :: Maybe String
-    , _questionnaireVisibility :: QuestionnaireVisibility
-    , _questionnaireSharing :: QuestionnaireSharing
-    , _questionnairePackageId :: String
-    , _questionnaireSelectedQuestionTagUuids :: [U.UUID]
-    , _questionnaireProjectTags :: [String]
-    , _questionnaireTemplateId :: Maybe String
-    , _questionnaireFormatUuid :: Maybe U.UUID
-    , _questionnaireCreatorUuid :: Maybe U.UUID
-    , _questionnairePermissions :: [QuestionnairePermRecord]
-    , _questionnaireEvents :: [QuestionnaireEvent]
-    , _questionnaireVersions :: [QuestionnaireVersion]
-    , _questionnaireIsTemplate :: Bool
-    , _questionnaireSquashed :: Bool
-    , _questionnaireAnsweredQuestions :: Int
-    , _questionnaireUnansweredQuestions :: Int
-    , _questionnaireAppUuid :: U.UUID
-    , _questionnaireCreatedAt :: UTCTime
-    , _questionnaireUpdatedAt :: UTCTime
-    }
+data Questionnaire = Questionnaire
+  { uuid :: U.UUID
+  , name :: String
+  , description :: Maybe String
+  , visibility :: QuestionnaireVisibility
+  , sharing :: QuestionnaireSharing
+  , packageId :: String
+  , selectedQuestionTagUuids :: [U.UUID]
+  , projectTags :: [String]
+  , templateId :: Maybe String
+  , formatUuid :: Maybe U.UUID
+  , creatorUuid :: Maybe U.UUID
+  , permissions :: [QuestionnairePermRecord]
+  , events :: [QuestionnaireEvent]
+  , versions :: [QuestionnaireVersion]
+  , isTemplate :: Bool
+  , squashed :: Bool
+  , answeredQuestions :: Int
+  , unansweredQuestions :: Int
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Generic, Show)
 
 instance Eq Questionnaire where
   a == b =
-    _questionnaireUuid a == _questionnaireUuid b &&
-    _questionnaireName a == _questionnaireName b &&
-    _questionnaireDescription a == _questionnaireDescription b &&
-    _questionnaireVisibility a == _questionnaireVisibility b &&
-    _questionnaireSharing a == _questionnaireSharing b &&
-    _questionnairePackageId a == _questionnairePackageId b &&
-    _questionnaireSelectedQuestionTagUuids a == _questionnaireSelectedQuestionTagUuids b &&
-    _questionnaireProjectTags a == _questionnaireProjectTags b &&
-    _questionnaireTemplateId a == _questionnaireTemplateId b &&
-    _questionnaireFormatUuid a == _questionnaireFormatUuid b &&
-    _questionnaireCreatorUuid a == _questionnaireCreatorUuid b &&
-    _questionnairePermissions a == _questionnairePermissions b &&
-    _questionnaireEvents a == _questionnaireEvents b &&
-    _questionnaireVersions a == _questionnaireVersions b &&
-    _questionnaireIsTemplate a == _questionnaireIsTemplate b &&
-    _questionnaireSquashed a == _questionnaireSquashed b &&
-    _questionnaireAnsweredQuestions a == _questionnaireAnsweredQuestions b &&
-    _questionnaireUnansweredQuestions a == _questionnaireUnansweredQuestions b &&
-    _questionnaireAppUuid a == _questionnaireAppUuid b
+    a.uuid == b.uuid
+      && a.name == b.name
+      && a.description == b.description
+      && a.visibility == b.visibility
+      && a.sharing == b.sharing
+      && a.packageId == b.packageId
+      && a.selectedQuestionTagUuids == b.selectedQuestionTagUuids
+      && a.projectTags == b.projectTags
+      && a.templateId == b.templateId
+      && a.formatUuid == b.formatUuid
+      && a.creatorUuid == b.creatorUuid
+      && a.permissions == b.permissions
+      && a.events == b.events
+      && a.versions == b.versions
+      && a.isTemplate == b.isTemplate
+      && a.squashed == b.squashed
+      && a.answeredQuestions == b.answeredQuestions
+      && a.unansweredQuestions == b.unansweredQuestions
+      && a.appUuid == b.appUuid

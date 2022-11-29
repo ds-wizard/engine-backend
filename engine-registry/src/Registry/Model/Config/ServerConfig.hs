@@ -5,23 +5,21 @@ import GHC.Generics
 import Shared.Model.Config.Environment
 import Shared.Model.Config.ServerConfig
 
-data ServerConfig =
-  ServerConfig
-    { _serverConfigGeneral :: ServerConfigGeneral
-    , _serverConfigDatabase :: ServerConfigDatabase
-    , _serverConfigS3 :: ServerConfigS3
-    , _serverConfigAnalytics :: ServerConfigAnalytics
-    , _serverConfigSentry :: ServerConfigSentry
-    , _serverConfigLogging :: ServerConfigLogging
-    , _serverConfigCloud :: ServerConfigCloud
-    }
+data ServerConfig = ServerConfig
+  { general :: ServerConfigGeneral
+  , database :: ServerConfigDatabase
+  , s3 :: ServerConfigS3
+  , analytics :: ServerConfigAnalytics
+  , sentry :: ServerConfigSentry
+  , logging :: ServerConfigLogging
+  , cloud :: ServerConfigCloud
+  }
   deriving (Generic, Show)
 
-data ServerConfigGeneral =
-  ServerConfigGeneral
-    { _serverConfigGeneralEnvironment :: Environment
-    , _serverConfigGeneralClientUrl :: String
-    , _serverConfigGeneralServerPort :: Int
-    , _serverConfigGeneralRemoteLocalizationUrl :: Maybe String
-    }
+data ServerConfigGeneral = ServerConfigGeneral
+  { environment :: Environment
+  , clientUrl :: String
+  , serverPort :: Int
+  , remoteLocalizationUrl :: Maybe String
+  }
   deriving (Generic, Show)

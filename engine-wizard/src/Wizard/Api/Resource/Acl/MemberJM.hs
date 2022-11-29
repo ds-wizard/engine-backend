@@ -2,18 +2,18 @@ module Wizard.Api.Resource.Acl.MemberJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Acl.MemberDTO
 import Wizard.Model.Acl.Acl
 
 instance FromJSON Member where
-  parseJSON = genericParseJSON (createSimpleOptions'''' "Member")
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "type")
 
 instance ToJSON Member where
-  toJSON = genericToJSON (createSimpleOptions'''' "Member")
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON MemberDTO where
-  parseJSON = genericParseJSON (createSimpleOptions'''' "MemberDTO")
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "type")
 
 instance ToJSON MemberDTO where
-  toJSON = genericToJSON (createSimpleOptions'''' "MemberDTO")
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")

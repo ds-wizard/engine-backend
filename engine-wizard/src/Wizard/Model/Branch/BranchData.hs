@@ -6,13 +6,12 @@ import GHC.Generics
 
 import Shared.Model.Event.Event
 
-data BranchData =
-  BranchData
-    { _branchDataBranchUuid :: U.UUID
-    , _branchDataMetamodelVersion :: Int
-    , _branchDataEvents :: [Event]
-    , _branchDataAppUuid :: U.UUID
-    , _branchDataCreatedAt :: UTCTime
-    , _branchDataUpdatedAt :: UTCTime
-    }
+data BranchData = BranchData
+  { branchUuid :: U.UUID
+  , metamodelVersion :: Int
+  , events :: [Event]
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

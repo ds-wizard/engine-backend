@@ -6,9 +6,9 @@ import qualified Wizard.Api.Handler.Migration.KnowledgeModel.Api as KM
 import qualified Wizard.Api.Handler.Migration.Questionnaire.Api as QTN
 import Wizard.Model.Context.BaseContext
 
-type MigrationAPI
-   = KM.MigrationAPI
-     :<|> QTN.MigrationAPI
+type MigrationAPI =
+  KM.MigrationAPI
+    :<|> QTN.MigrationAPI
 
 migrationApi :: Proxy MigrationAPI
 migrationApi = Proxy

@@ -4,14 +4,13 @@ import GHC.Generics
 
 import Shared.Model.Package.PackageWithEventsRaw
 
-data PackageBundle =
-  PackageBundle
-    { _packageBundleBundleId :: String
-    , _packageBundleName :: String
-    , _packageBundleOrganizationId :: String
-    , _packageBundleKmId :: String
-    , _packageBundleVersion :: String
-    , _packageBundleMetamodelVersion :: Int
-    , _packageBundlePackages :: [PackageWithEventsRaw]
-    }
+data PackageBundle = PackageBundle
+  { bundleId :: String
+  , name :: String
+  , organizationId :: String
+  , kmId :: String
+  , version :: String
+  , metamodelVersion :: Int
+  , packages :: [PackageWithEventsRaw]
+  }
   deriving (Show, Eq, Generic)

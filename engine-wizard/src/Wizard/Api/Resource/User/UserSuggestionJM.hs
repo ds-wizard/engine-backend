@@ -2,11 +2,11 @@ module Wizard.Api.Resource.User.UserSuggestionJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.User.UserSuggestionDTO
 
 instance FromJSON UserSuggestionDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON UserSuggestionDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Typehint.List_POST
-  ( list_post
-  ) where
+module Wizard.Specs.API.Typehint.List_POST (
+  list_post,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -43,18 +43,18 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 test_200 appContext =
   it "HTTP 200 OK" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = [lifeScienceTypehint, mathematicalTypehint, legalTypehint]
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO PKG.runMigration appContext
-    runInContextIO (insertPackage germanyPackage) appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = [lifeScienceTypehint, mathematicalTypehint, legalTypehint]
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO PKG.runMigration appContext
+      runInContextIO (insertPackage germanyPackage) appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher

@@ -2,11 +2,11 @@ module Wizard.Api.Resource.Registry.RegistryConfirmationJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 
 instance FromJSON RegistryConfirmationDTO where
-  parseJSON = simpleParseJSON "_registryConfirmationDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON RegistryConfirmationDTO where
-  toJSON = simpleToJSON "_registryConfirmationDTO"
+  toJSON = genericToJSON jsonOptions

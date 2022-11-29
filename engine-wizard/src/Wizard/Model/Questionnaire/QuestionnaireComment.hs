@@ -4,27 +4,25 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-data QuestionnaireCommentThread =
-  QuestionnaireCommentThread
-    { _questionnaireCommentThreadUuid :: U.UUID
-    , _questionnaireCommentThreadPath :: String
-    , _questionnaireCommentThreadResolved :: Bool
-    , _questionnaireCommentThreadComments :: [QuestionnaireComment]
-    , _questionnaireCommentThreadPrivate :: Bool
-    , _questionnaireCommentThreadQuestionnaireUuid :: U.UUID
-    , _questionnaireCommentThreadCreatedBy :: Maybe U.UUID
-    , _questionnaireCommentThreadCreatedAt :: UTCTime
-    , _questionnaireCommentThreadUpdatedAt :: UTCTime
-    }
+data QuestionnaireCommentThread = QuestionnaireCommentThread
+  { uuid :: U.UUID
+  , path :: String
+  , resolved :: Bool
+  , comments :: [QuestionnaireComment]
+  , private :: Bool
+  , questionnaireUuid :: U.UUID
+  , createdBy :: Maybe U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data QuestionnaireComment =
-  QuestionnaireComment
-    { _questionnaireCommentUuid :: U.UUID
-    , _questionnaireCommentText :: String
-    , _questionnaireCommentThreadUuid :: U.UUID
-    , _questionnaireCommentCreatedBy :: Maybe U.UUID
-    , _questionnaireCommentCreatedAt :: UTCTime
-    , _questionnaireCommentUpdatedAt :: UTCTime
-    }
+data QuestionnaireComment = QuestionnaireComment
+  { uuid :: U.UUID
+  , text :: String
+  , threadUuid :: U.UUID
+  , createdBy :: Maybe U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

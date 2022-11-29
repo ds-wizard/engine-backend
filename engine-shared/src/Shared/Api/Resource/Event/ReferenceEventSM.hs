@@ -13,28 +13,28 @@ import Shared.Util.Swagger
 instance ToSchema AddReferenceEvent
 
 instance ToSchema AddResourcePageReferenceEvent where
-  declareNamedSchema = simpleToSchema'' "_addResourcePageReferenceEvent" "eventType" a_km1_ch1_q2_rCh1'
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_ch1_q2_rCh1'
 
 instance ToSchema AddURLReferenceEvent where
-  declareNamedSchema = simpleToSchema'' "_addURLReferenceEvent" "eventType" a_km1_ch1_q2_rCh2'
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_ch1_q2_rCh2'
 
 instance ToSchema AddCrossReferenceEvent where
-  declareNamedSchema = simpleToSchema'' "_addCrossReferenceEvent" "eventType" a_km1_ch1_q2_rCh3'
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_ch1_q2_rCh3'
 
 -- --------------------------------------------
 -- --------------------------------------------
 instance ToSchema EditReferenceEvent
 
 instance ToSchema EditResourcePageReferenceEvent where
-  declareNamedSchema = simpleToSchema'' "_editResourcePageReferenceEvent" "eventType" e_km1_ch1_q2_rCh1'
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_ch1_q2_rCh1'
 
 instance ToSchema EditURLReferenceEvent where
-  declareNamedSchema = simpleToSchema'' "_editURLReferenceEvent" "eventType" e_km1_ch1_q2_rCh2'
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_ch1_q2_rCh2'
 
 instance ToSchema EditCrossReferenceEvent where
-  declareNamedSchema = simpleToSchema'' "_editCrossReferenceEvent" "eventType" e_km1_ch1_q2_rCh3'
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_ch1_q2_rCh3'
 
 -- --------------------------------------------
 -- --------------------------------------------
 instance ToSchema DeleteReferenceEvent where
-  declareNamedSchema = simpleToSchema'' "_deleteReferenceEvent" "eventType" d_km1_ch1_q2_rCh2
+  declareNamedSchema = toSwaggerWithType "eventType" d_km1_ch1_q2_rCh2

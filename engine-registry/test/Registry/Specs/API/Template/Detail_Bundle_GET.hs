@@ -1,18 +1,17 @@
-module Registry.Specs.API.Template.Detail_Bundle_GET
-  ( detail_bundle_get
-  ) where
+module Registry.Specs.API.Template.Detail_Bundle_GET (
+  detail_bundle_get,
+) where
 
-import Control.Lens ((^.))
 import qualified Data.ByteString.Char8 as BS
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import LensesConfig hiding (request)
 import qualified Registry.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Registry.Model.Context.AppContext
 import Shared.Database.Migration.Development.Template.Data.Templates
+import Shared.Model.Template.Template
 
 import Registry.Specs.API.Common
 import Registry.Specs.Common
@@ -33,7 +32,7 @@ detail_bundle_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = BS.pack $ "/templates/" ++ (commonWizardTemplate ^. tId) ++ "/bundle"
+reqUrl = BS.pack $ "/templates/" ++ commonWizardTemplate.tId ++ "/bundle"
 
 reqHeaders = [reqAdminAuthHeader, reqCtHeader]
 
@@ -44,18 +43,18 @@ reqBody = ""
 -- ----------------------------------------------------
 test_200 appContext =
   it "HTTP 200 OK" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = resCorsHeadersPlain
-     -- AND: Run migrations
-    runInContextIO TML_Migration.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, String)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 200
+      let expHeaders = resCorsHeadersPlain
+      -- AND: Run migrations
+      runInContextIO TML_Migration.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, String)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

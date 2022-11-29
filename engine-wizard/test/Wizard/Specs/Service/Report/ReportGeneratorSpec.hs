@@ -1,16 +1,16 @@
 module Wizard.Specs.Service.Report.ReportGeneratorSpec where
 
-import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Test.Hspec
 
-import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
+import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
+import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Service.Report.ReportGenerator
 
 reportGeneratorSpec =
@@ -24,23 +24,23 @@ reportGeneratorSpec =
 createComputeChapterReportTest number chapter expectation =
   it ("computeChapterReport for chapter" ++ show number ++ " should work") $
     -- GIVEN: Prepare
-   do
-    let requiredPhaseUuidUuid = Just $ phase1 ^. uuid
-    let km = km1WithQ4
-    let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList (questionnaire1Ctn ^. replies)
-    -- WHEN:
-    let result = computeChapterReport requiredPhaseUuidUuid km rs chapter
-    -- THEN
-    result `shouldBe` expectation
+    do
+      let requiredPhaseUuidUuid = Just $ phase1.uuid
+      let km = km1WithQ4
+      let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList questionnaire1Ctn.replies
+      -- WHEN:
+      let result = computeChapterReport requiredPhaseUuidUuid km rs chapter
+      -- THEN
+      result `shouldBe` expectation
 
 createComputeTotalReportTest number expectation =
   it "computeTotalReport should work" $
     -- GIVEN: Prepare
-   do
-    let requiredPhaseUuidUuid = Just $ phase1 ^. uuid
-    let km = km1WithQ4
-    let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList (questionnaire1Ctn ^. replies)
-    -- WHEN:
-    let result = computeTotalReport requiredPhaseUuidUuid km rs
-    -- THEN
-    result `shouldBe` expectation
+    do
+      let requiredPhaseUuidUuid = Just $ phase1.uuid
+      let km = km1WithQ4
+      let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList questionnaire1Ctn.replies
+      -- WHEN:
+      let result = computeTotalReport requiredPhaseUuidUuid km rs
+      -- THEN
+      result `shouldBe` expectation

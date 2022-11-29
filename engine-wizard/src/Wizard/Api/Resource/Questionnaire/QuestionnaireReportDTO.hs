@@ -4,8 +4,7 @@ import GHC.Generics
 
 import Wizard.Model.Report.Report
 
-data QuestionnaireReportDTO =
-  QuestionnaireReportDTO
-    { _questionnaireReportDTOIndications :: [Indication]
-    }
+data QuestionnaireReportDTO = QuestionnaireReportDTO
+  { indications :: [Indication]
+  }
   deriving (Show, Eq, Generic)

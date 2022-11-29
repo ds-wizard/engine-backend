@@ -1,18 +1,17 @@
-module Wizard.Specs.API.Branch.Detail_GET
-  ( detail_get
-  ) where
+module Wizard.Specs.API.Branch.Detail_GET (
+  detail_get,
+) where
 
-import Control.Lens ((^.))
 import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Model.Package.PackageWithEvents
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import Wizard.Database.Migration.Development.Branch.Data.Branches
@@ -50,21 +49,21 @@ reqBody = ""
 test_200 appContext =
   it "HTTP 200 OK" $
     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = amsterdamBranchDetail
-    let expBody = encode expDto
-    -- AND: Run migrations
-    runInContextIO (deletePackageById (netherlandsPackageV2 ^. pId)) appContext
-    runInContextIO B.runMigration appContext
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, BranchDetailDTO)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    liftIO $ resDto `shouldBe` expDto
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = amsterdamBranchDetail
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO (deletePackageById netherlandsPackageV2.pId) appContext
+      runInContextIO B.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, BranchDetailDTO)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      liftIO $ resDto `shouldBe` expDto
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

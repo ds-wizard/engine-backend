@@ -10,7 +10,7 @@ import Wizard.Model.App.App
 import Wizard.Service.App.AppMapper
 
 instance ToSchema App where
-  declareNamedSchema = simpleToSchema' "_app" defaultApp
+  declareNamedSchema = toSwagger defaultApp
 
 instance ToSchema AppDTO where
-  declareNamedSchema = simpleToSchema (toDTO defaultApp Nothing Nothing)
+  declareNamedSchema = toSwagger (toDTO defaultApp Nothing Nothing)

@@ -1,8 +1,7 @@
-module Wizard.Specs.API.Questionnaire.Detail_GET
-  ( detail_get
-  ) where
+module Wizard.Specs.API.Questionnaire.Detail_GET (
+  detail_get,
+) where
 
-import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.Map.Strict as M
@@ -13,7 +12,6 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
@@ -36,6 +34,7 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -88,7 +87,7 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Commentator)"
     appContext
-    (questionnaire13 & visibility .~ PrivateQuestionnaire)
+    (questionnaire13 {visibility = PrivateQuestionnaire})
     questionnaire13Ctn
     True
     [reqNonAdminAuthHeader]
@@ -104,7 +103,7 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleComment, AnyoneWithLinkComment)"
     appContext
-    (questionnaire13 & sharing .~ AnyoneWithLinkCommentQuestionnaire)
+    (questionnaire13 {sharing = AnyoneWithLinkCommentQuestionnaire})
     questionnaire13Ctn
     True
     []
@@ -129,57 +128,61 @@ test_200 appContext = do
 
 create_test_200 title appContext qtn qtnCtn showComments authHeader permissions =
   it title $
-     -- GIVEN: Prepare request
-   do
-    let reqUrl = reqUrlT (qtn ^. uuid)
-    let reqHeaders = reqHeadersT authHeader
-     -- AND: Run migrations
-    runInContextIO U.runMigration appContext
-    runInContextIO TML.runMigration appContext
-    runInContextIO (insertPackage germanyPackage) appContext
-    thread1 <- liftIO . create_cmtQ1_t1 $ qtn ^. uuid
-    comment1 <- liftIO . create_cmtQ1_t1_1 $ thread1 ^. uuid
-    comment2 <- liftIO . create_cmtQ1_t1_2 $ thread1 ^. uuid
-    runInContextIO (insertQuestionnaire qtn) appContext
-    runInContextIO (insertQuestionnaireCommentThread thread1) appContext
-    runInContextIO (insertQuestionnaireComment comment1) appContext
-    runInContextIO (insertQuestionnaireComment comment2) appContext
-    let commentThreadsMap =
-          if showComments
-            then M.fromList
-                   [ ( cmtQ1_path
-                     , [ toCommentThreadDTO
-                           thread1
-                           (Just userAlbert)
-                           [toCommentDTO comment1 (Just userAlbert), toCommentDTO comment2 (Just userAlbert)]
-                       ])
-                   ]
-            else M.empty
-     -- AND: Prepare expectation
-    let expStatus = 200
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto =
-          toDetailWithPackageWithEventsDTO
-            qtn
-            qtnCtn
-            (SPM.toPackage germanyPackage)
-            ["1.0.0"]
-            km1WithQ4
-            QSDefault
-            (Just commonWizardTemplate)
-            (Just templateFormatJson)
-            fReplies
-            commentThreadsMap
-            permissions
-            qVersionsDto
-            Nothing
-    let expBody = encode expDto
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare request
+    do
+      let reqUrl = reqUrlT qtn.uuid
+      let reqHeaders = reqHeadersT authHeader
+      -- AND: Run migrations
+      runInContextIO U.runMigration appContext
+      runInContextIO TML.runMigration appContext
+      runInContextIO (insertPackage germanyPackage) appContext
+      thread1 <- liftIO . create_cmtQ1_t1 $ qtn.uuid
+      comment1 <- liftIO . create_cmtQ1_t1_1 $ thread1.uuid
+      comment2 <- liftIO . create_cmtQ1_t1_2 $ thread1.uuid
+      runInContextIO (insertQuestionnaire qtn) appContext
+      runInContextIO (insertQuestionnaireCommentThread thread1) appContext
+      runInContextIO (insertQuestionnaireComment comment1) appContext
+      runInContextIO (insertQuestionnaireComment comment2) appContext
+      let commentThreadsMap =
+            if showComments
+              then
+                M.fromList
+                  [
+                    ( cmtQ1_path
+                    ,
+                      [ toCommentThreadDTO
+                          thread1
+                          (Just userAlbert)
+                          [toCommentDTO comment1 (Just userAlbert), toCommentDTO comment2 (Just userAlbert)]
+                      ]
+                    )
+                  ]
+              else M.empty
+      -- AND: Prepare expectation
+      let expStatus = 200
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto =
+            toDetailWithPackageWithEventsDTO
+              qtn
+              qtnCtn
+              (SPM.toPackage germanyPackage)
+              ["1.0.0"]
+              km1WithQ4
+              QSDefault
+              (Just commonWizardTemplate)
+              (Just templateFormatJson)
+              fReplies
+              commentThreadsMap
+              permissions
+              qVersionsDto
+              Nothing
+      let expBody = encode expDto
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -206,25 +209,25 @@ test_403 appContext = do
 
 create_test_403 title appContext qtn authHeader errorMessage =
   it title $
-     -- GIVEN: Prepare request
-   do
-    let reqUrl = reqUrlT (qtn ^. uuid)
-    let reqHeaders = reqHeadersT authHeader
-     -- AND: Prepare expectation
-    let expStatus = 403
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = ForbiddenError errorMessage
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO U.runMigration appContext
-    runInContextIO TML.runMigration appContext
-    runInContextIO QTN.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    -- GIVEN: Prepare request
+    do
+      let reqUrl = reqUrlT qtn.uuid
+      let reqHeaders = reqHeadersT authHeader
+      -- AND: Prepare expectation
+      let expStatus = 403
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = ForbiddenError errorMessage
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO U.runMigration appContext
+      runInContextIO TML.runMigration appContext
+      runInContextIO QTN.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

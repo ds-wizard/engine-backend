@@ -4,45 +4,28 @@ import Control.Lens
 import Data.Aeson
 import Data.Swagger
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
-simpleToSchema exampleDTO proxy =
-  genericDeclareNamedSchema createSchemaOptions proxy & mapped . schema . example ?~ toJSON exampleDTO
+toSwagger exampleDTO proxy =
+  genericDeclareNamedSchema (fromAesonOptions jsonOptions) proxy & mapped . schema . example ?~ toJSON exampleDTO
 
-createSchemaOptions :: SchemaOptions
-createSchemaOptions = fromAesonOptions simpleOptions
+toSwaggerWithType typeFieldName exampleDTO proxy =
+  genericDeclareNamedSchema (fromAesonOptions (jsonOptionsWithTypeField typeFieldName)) proxy
+    & mapped . schema . example
+      ?~ toJSON exampleDTO
 
-simpleToSchema' fieldPrefix exampleDTO proxy =
-  genericDeclareNamedSchema (createSchemaOptions' fieldPrefix) proxy & mapped . schema . example ?~ toJSON exampleDTO
-
-createSchemaOptions' :: String -> SchemaOptions
-createSchemaOptions' fieldPrefix = fromAesonOptions (createOptions fieldPrefix)
-
-simpleToSchema'' fieldPrefix typeFieldName exampleDTO proxy =
-  genericDeclareNamedSchema (createSchemaOptions'' fieldPrefix typeFieldName) proxy & mapped . schema . example ?~
-  toJSON exampleDTO
-
-createSchemaOptions'' :: String -> String -> SchemaOptions
-createSchemaOptions'' fieldPrefix typeFieldName = fromAesonOptions (createOptions' fieldPrefix typeFieldName)
-
-simpleToSchema'''' parentEntityName exampleDTO proxy =
-  genericDeclareNamedSchema (createSchemaOptions'''' parentEntityName) proxy & mapped . schema . example ?~
-  toJSON exampleDTO
-
-createSchemaOptions'''' :: String -> SchemaOptions
-createSchemaOptions'''' parentEntityName = fromAesonOptions (createSimpleOptions'''' parentEntityName)
-
-simpleToSchema''''' fieldPrefix dtoName exampleDTO proxy =
-  genericDeclareNamedSchema ((createSchemaOptions' fieldPrefix) {fieldLabelModifier = changePageFields}) proxy & mapped .
-  schema .
-  example ?~
-  toJSON exampleDTO &
-  mapped .
-  name ?~
-  dtoName
+toSwaggerWithDtoName dtoName exampleDTO proxy =
+  genericDeclareNamedSchema ((fromAesonOptions jsonOptions) {fieldLabelModifier = changePageFields}) proxy
+    & mapped
+      . schema
+      . example
+      ?~ toJSON exampleDTO
+    & mapped
+      . name
+      ?~ dtoName
 
 changePageFields :: String -> String
-changePageFields "_pageName" = "name"
-changePageFields "_pageMetadata" = "page"
-changePageFields "_pageEntities" = "_embedded"
+changePageFields "name" = "name"
+changePageFields "metadata" = "page"
+changePageFields "entities" = "_embedded"
 changePageFields field = field

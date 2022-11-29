@@ -1,8 +1,7 @@
-module Wizard.Specs.API.Template.Detail_Pull_POST
-  ( detail_pull_post
-  ) where
+module Wizard.Specs.API.Template.Detail_Pull_POST (
+  detail_pull_post,
+) where
 
-import Control.Lens ((^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
 import Network.HTTP.Types
@@ -11,11 +10,11 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Error.Error
+import Shared.Model.Template.Template
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
@@ -40,7 +39,7 @@ detail_pull_post appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = BS.pack $ "/templates/" ++ (commonWizardTemplate ^. tId) ++ "/pull"
+reqUrl = BS.pack $ "/templates/" ++ commonWizardTemplate.tId ++ "/pull"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -53,45 +52,45 @@ test_204 appContext = create_test_204 "HTTP 204 NO CONTENT" appContext reqAuthHe
 
 create_test_204 title appContext reqAuthHeader =
   it title $
-       -- GIVEN: Prepare request
-   do
-    let reqHeaders = reqHeadersT reqAuthHeader
+    -- GIVEN: Prepare request
+    do
+      let reqHeaders = reqHeadersT reqAuthHeader
       -- AND: Prepare expectation
-    let expStatus = 204
-    let expHeaders = resCorsHeaders
-    let expBody = ""
-     -- AND: Run migrations
-    runInContextIO deleteTemplates appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-     -- AND: Find result in DB and compare with expectation state
-    assertCountInDB findTemplates appContext 1
-    assertExistenceOfTemplateInDB appContext commonWizardTemplate
+      let expStatus = 204
+      let expHeaders = resCorsHeaders
+      let expBody = ""
+      -- AND: Run migrations
+      runInContextIO deleteTemplates appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
+      -- AND: Find result in DB and compare with expectation state
+      assertCountInDB findTemplates appContext 1
+      assertExistenceOfTemplateInDB appContext commonWizardTemplate
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext =
   it "HTTP 400 BAD REQUEST - Template was not found in Registry" $
-      -- GIVEN: Prepare request
-   do
-    let reqUrl = "/templates/global:non-existing-template:1.0.0/pull"
-    let reqHeaders = reqHeadersT reqAuthHeader
-     -- AND: Prepare expectation
-    let expStatus = 400
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = UserError (_ERROR_SERVICE_TB__PULL_NON_EXISTING_TML "global:non-existing-template:1.0.0")
-    let expBody = encode expDto
+    -- GIVEN: Prepare request
+    do
+      let reqUrl = "/templates/global:non-existing-template:1.0.0/pull"
+      let reqHeaders = reqHeadersT reqAuthHeader
+      -- AND: Prepare expectation
+      let expStatus = 400
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = UserError (_ERROR_SERVICE_TB__PULL_NON_EXISTING_TML "global:non-existing-template:1.0.0")
+      let expBody = encode expDto
       -- WHEN: Call APIA
-    response <- request reqMethod reqUrl reqHeaders reqBody
+      response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -1,6 +1,5 @@
 module Wizard.Service.Questionnaire.Collaboration.CollaborationService where
 
-import Control.Lens ((&), (.~), (^.), (^?), _Just)
 import Control.Monad (when)
 import Control.Monad.Except (catchError)
 import Control.Monad.Reader (asks, liftIO)
@@ -10,10 +9,10 @@ import Data.Time
 import qualified Data.UUID as U
 import Network.WebSockets (Connection)
 
-import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Api.Resource.Websocket.QuestionnaireActionJM ()
 import Wizard.Api.Resource.Websocket.WebsocketActionJM ()
@@ -55,8 +54,8 @@ setUserList qtnUuid connectionUuid = do
   broadcast qtnUuid records (toSetUserListMessage records) disconnectUser
   logWS connectionUuid "Informed completed"
 
-updatePermsForOnlineUsers ::
-     String -> QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM ()
+updatePermsForOnlineUsers
+  :: String -> QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM ()
 updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
   records <- getAllFromCache
   traverse_ updatePerm records
@@ -64,19 +63,22 @@ updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
     updatePerm :: WebsocketRecord -> AppContextM ()
     updatePerm record =
       when
-        (record ^. entityId == qtnUuid)
-        (do let permission =
-                  case record ^. user of
-                    user@LoggedOnlineUserInfo { _loggedOnlineUserInfoUuid = uuid
-                                              , _loggedOnlineUserInfoRole = role
-                                              , _loggedOnlineUserInfoGroups = groups
-                                              } ->
-                      getPermission visibility sharing permissions (Just uuid) (Just role) (Just groups)
+        (record.entityId == qtnUuid)
+        ( do
+            let permission =
+                  case record.user of
+                    user@LoggedOnlineUserInfo
+                      { uuid = uuid
+                      , role = role
+                      , groups = groups
+                      } ->
+                        getPermission visibility sharing permissions (Just uuid) (Just role) (Just groups)
                     user@AnonymousOnlineUserInfo {..} ->
                       getPermission visibility sharing permissions Nothing Nothing Nothing
-            let updatedRecord = record & entityPerm .~ permission
+            let updatedRecord = record {entityPerm = permission}
             updateCache updatedRecord
-            disconnectUserIfLostPermission updatedRecord)
+            disconnectUserIfLostPermission updatedRecord
+        )
 
 logOutOnlineUsersWhenQtnDramaticallyChanged :: String -> AppContextM ()
 logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid = do
@@ -87,8 +89,8 @@ logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid = do
     logOut :: AppError -> WebsocketRecord -> AppContextM ()
     logOut error record =
       when
-        (record ^. entityId == qtnUuid)
-        (sendError (record ^. connectionUuid) (record ^. connection) (record ^. entityId) disconnectUser error)
+        (record.entityId == qtnUuid)
+        (sendError record.connectionUuid record.connection record.entityId disconnectUser error)
 
 -- --------------------------------
 setContent :: String -> U.UUID -> QuestionnaireEventChangeDTO -> AppContextM ()
@@ -115,7 +117,7 @@ setReply qtnUuid connectionUuid reqDto = do
   appendQuestionnaireEventByUuid
     qtnUuid
     [fromEventChangeDTO (SetReplyEventChangeDTO' reqDto) mCreatedByUuid now]
-    (reqDto ^. phasesAnsweredIndication)
+    reqDto.phasesAnsweredIndication
   let resDto = toSetReplyEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   broadcast qtnUuid records (toSetReplyMessage resDto) disconnectUser
@@ -130,7 +132,7 @@ clearReply qtnUuid connectionUuid reqDto = do
   appendQuestionnaireEventByUuid
     qtnUuid
     [fromEventChangeDTO (ClearReplyEventChangeDTO' reqDto) mCreatedByUuid now]
-    (reqDto ^. phasesAnsweredIndication)
+    reqDto.phasesAnsweredIndication
   let resDto = toClearReplyEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   broadcast qtnUuid records (toClearReplyMessage resDto) disconnectUser
@@ -166,11 +168,11 @@ resolveCommentThread qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
-  updateQuestionnaireCommentThreadResolvedById (reqDto ^. threadUuid) True
+  updateQuestionnaireCommentThreadResolvedById reqDto.threadUuid True
   let resDto = toResolveCommentThreadEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   let filteredRecords =
-        if reqDto ^. private
+        if reqDto.private
           then filterEditors records
           else records
   broadcast qtnUuid filteredRecords (toResolveCommentThreadMessage resDto) disconnectUser
@@ -182,11 +184,11 @@ reopenCommentThread qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
-  updateQuestionnaireCommentThreadResolvedById (reqDto ^. threadUuid) False
+  updateQuestionnaireCommentThreadResolvedById reqDto.threadUuid False
   let resDto = toReopenCommentThreadEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   let filteredRecords =
-        if reqDto ^. private
+        if reqDto.private
           then filterEditors records
           else records
   broadcast qtnUuid filteredRecords (toReopenCommentThreadMessage resDto) disconnectUser
@@ -198,11 +200,11 @@ deleteCommentThread qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
-  deleteQuestionnaireCommentThreadById (reqDto ^. threadUuid)
+  deleteQuestionnaireCommentThreadById reqDto.threadUuid
   let resDto = toDeleteCommentThreadEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   let filteredRecords =
-        if reqDto ^. private
+        if reqDto.private
           then filterEditors records
           else records
   broadcast qtnUuid filteredRecords (toDeleteCommentThreadMessage resDto) disconnectUser
@@ -215,7 +217,7 @@ addComment qtnUuid connectionUuid reqDto = do
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
   let comment = toComment reqDto mCreatedByUuid now
-  if reqDto ^. newThread
+  if reqDto.newThread
     then do
       let thread = toCommentThread reqDto (u' qtnUuid) mCreatedByUuid now
       insertQuestionnaireThreadAndComment thread comment
@@ -223,7 +225,7 @@ addComment qtnUuid connectionUuid reqDto = do
   let resDto = toAddCommentEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   let filteredRecords =
-        if reqDto ^. private
+        if reqDto.private
           then filterEditors records
           else records
   broadcast qtnUuid filteredRecords (toAddCommentMessage resDto) disconnectUser
@@ -235,11 +237,11 @@ editComment qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
-  updateQuestionnaireCommentTextById (reqDto ^. commentUuid) (reqDto ^. text)
+  updateQuestionnaireCommentTextById reqDto.commentUuid reqDto.text
   let resDto = toEditCommentEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   let filteredRecords =
-        if reqDto ^. private
+        if reqDto.private
           then filterEditors records
           else records
   broadcast qtnUuid filteredRecords (toEditCommentMessage resDto) disconnectUser
@@ -251,11 +253,11 @@ deleteComment qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
-  deleteQuestionnaireCommentById (reqDto ^. commentUuid)
+  deleteQuestionnaireCommentById reqDto.commentUuid
   let resDto = toDeleteCommentEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   let filteredRecords =
-        if reqDto ^. private
+        if reqDto.private
           then filterEditors records
           else records
   broadcast qtnUuid filteredRecords (toDeleteCommentMessage resDto) disconnectUser
@@ -264,48 +266,49 @@ deleteComment qtnUuid connectionUuid reqDto = do
 -- PRIVATE
 -- --------------------------------
 disconnectUser :: ToJSON resDto => WebsocketMessage resDto -> AppContextM ()
-disconnectUser msg = deleteUser (msg ^. entityId) (msg ^. connectionUuid)
+disconnectUser msg = deleteUser msg.entityId msg.connectionUuid
 
 disconnectUserIfLostPermission :: WebsocketRecord -> AppContextM ()
 disconnectUserIfLostPermission record = catchError (checkViewPermission record) handleError
   where
-    handleError = sendError (record ^. connectionUuid) (record ^. connection) (record ^. entityId) disconnectUser
+    handleError = sendError record.connectionUuid record.connection record.entityId disconnectUser
 
 createQuestionnaireRecord :: U.UUID -> Connection -> String -> AppContextM WebsocketRecord
 createQuestionnaireRecord connectionUuid connection qtnUuid = do
-  mCurrentUser <- asks _appContextCurrentUser
+  mCurrentUser <- asks currentUser
   qtn <- findQuestionnaireById qtnUuid
   let permission =
         getPermission
-          (qtn ^. visibility)
-          (qtn ^. sharing)
-          (qtn ^. permissions)
-          (mCurrentUser ^? _Just . uuid)
-          (mCurrentUser ^? _Just . role)
-          (mCurrentUser ^? _Just . groups)
+          qtn.visibility
+          qtn.sharing
+          qtn.permissions
+          (fmap (.uuid) mCurrentUser)
+          (fmap (.uRole) mCurrentUser)
+          (fmap (.groups) mCurrentUser)
   createRecord connectionUuid connection qtnUuid permission
 
 getMaybeCreatedBy :: WebsocketRecord -> Maybe UserSuggestionDTO
 getMaybeCreatedBy myself =
-  case myself ^. user of
-    u@LoggedOnlineUserInfo { _loggedOnlineUserInfoUuid = uuid
-                           , _loggedOnlineUserInfoFirstName = firstName
-                           , _loggedOnlineUserInfoLastName = lastName
-                           , _loggedOnlineUserInfoGravatarHash = gravatarHash
-                           , _loggedOnlineUserInfoImageUrl = imageUrl
-                           } ->
-      Just $
-      UserSuggestionDTO
-        { _userSuggestionDTOUuid = uuid
-        , _userSuggestionDTOFirstName = firstName
-        , _userSuggestionDTOLastName = lastName
-        , _userSuggestionDTOGravatarHash = gravatarHash
-        , _userSuggestionDTOImageUrl = imageUrl
-        }
+  case myself.user of
+    u@LoggedOnlineUserInfo
+      { uuid = uuid
+      , firstName = firstName
+      , lastName = lastName
+      , gravatarHash = gravatarHash
+      , imageUrl = imageUrl
+      } ->
+        Just $
+          UserSuggestionDTO
+            { uuid = uuid
+            , firstName = firstName
+            , lastName = lastName
+            , gravatarHash = gravatarHash
+            , imageUrl = imageUrl
+            }
     u@AnonymousOnlineUserInfo {..} -> Nothing
 
 getMaybeCreatedByUuid :: WebsocketRecord -> Maybe U.UUID
 getMaybeCreatedByUuid myself =
-  case myself ^. user of
-    u@LoggedOnlineUserInfo {_loggedOnlineUserInfoUuid = uuid} -> Just uuid
+  case myself.user of
+    u@LoggedOnlineUserInfo {uuid = uuid} -> Just uuid
     u@AnonymousOnlineUserInfo {..} -> Nothing

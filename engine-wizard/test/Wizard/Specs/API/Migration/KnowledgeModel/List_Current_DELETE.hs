@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Migration.KnowledgeModel.List_Current_DELETE
-  ( list_current_DELETE
-  ) where
+module Wizard.Specs.API.Migration.KnowledgeModel.List_Current_DELETE (
+  list_current_DELETE,
+) where
 
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -43,21 +43,21 @@ reqBody = ""
 -- ----------------------------------------------------
 test_204 appContext =
   it "HTTP 204 NO CONTENT" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 204
-    let expBody = ""
-    let expHeaders = resCorsHeaders
-    -- AND: Prepare database
-    runMigrationWithFullDB appContext
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-     -- AND: Find result in DB and compare with expectation state
-    assertCountInDB findMigratorStates appContext 0
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 204
+      let expBody = ""
+      let expHeaders = resCorsHeaders
+      -- AND: Prepare database
+      runMigrationWithFullDB appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
+      -- AND: Find result in DB and compare with expectation state
+      assertCountInDB findMigratorStates appContext 0
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

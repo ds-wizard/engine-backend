@@ -15,20 +15,16 @@ import Registry.Model.Organization.Organization
 import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Error.Error
 
-data AppContext =
-  AppContext
-    { _appContextServerConfig :: ServerConfig
-    , _appContextLocalization :: M.Map String String
-    , _appContextBuildInfoConfig :: BuildInfoConfig
-    , _appContextDbPool :: Pool Connection
-    , _appContextDbConnection :: Maybe Connection
-    , _appContextTraceUuid :: U.UUID
-    , _appContextCurrentOrganization :: Maybe Organization
-    , _appContextS3Client :: MinioConn
-    }
+data AppContext = AppContext
+  { serverConfig :: ServerConfig
+  , localization :: M.Map String String
+  , buildInfoConfig :: BuildInfoConfig
+  , dbPool :: Pool Connection
+  , dbConnection :: Maybe Connection
+  , traceUuid :: U.UUID
+  , currentOrganization :: Maybe Organization
+  , s3Client :: MinioConn
+  }
 
-newtype AppContextM a =
-  AppContextM
-    { runAppContextM :: ReaderT AppContext (LoggingT (ExceptT AppError IO)) a
-    }
+newtype AppContextM a = AppContextM {runAppContextM :: ReaderT AppContext (LoggingT (ExceptT AppError IO)) a}
   deriving (Applicative, Functor, Monad, MonadIO, MonadReader AppContext, MonadError AppError, MonadLogger)

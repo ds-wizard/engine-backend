@@ -2,19 +2,19 @@ module Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserSuggestionJM ()
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 
 instance FromJSON QuestionnaireVersion where
-  parseJSON = simpleParseJSON "_questionnaireVersion"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON QuestionnaireVersion where
-  toJSON = simpleToJSON "_questionnaireVersion"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON QuestionnaireVersionDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON QuestionnaireVersionDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0014_appLimit.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0014_appLimit.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -92,7 +92,7 @@ addFlagsForDocWorkerToAppConfig dbPool = do
 addInternalFlagToPersistentCommand dbPool = do
   let sql =
         "ALTER TABLE persistent_command \
-          \ADD column internal bool not null default true"
+        \ADD column internal bool not null default true"
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing
@@ -100,7 +100,7 @@ addInternalFlagToPersistentCommand dbPool = do
 addMachineFlagToUser dbPool = do
   let sql =
         "ALTER TABLE user_entity \
-          \ADD column machine bool not null default false"
+        \ADD column machine bool not null default false"
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing

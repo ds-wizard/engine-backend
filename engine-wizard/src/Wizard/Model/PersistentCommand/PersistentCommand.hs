@@ -11,20 +11,19 @@ data PersistentCommandState
   | IgnorePersistentCommandState
   deriving (Show, Eq, Generic, Read)
 
-data PersistentCommand =
-  PersistentCommand
-    { _persistentCommandUuid :: U.UUID
-    , _persistentCommandState :: PersistentCommandState
-    , _persistentCommandComponent :: String
-    , _persistentCommandFunction :: String
-    , _persistentCommandBody :: String
-    , _persistentCommandLastErrorMessage :: Maybe String
-    , _persistentCommandAttempts :: Int
-    , _persistentCommandMaxAttempts :: Int
-    , _persistentCommandInternal :: Bool
-    , _persistentCommandAppUuid :: U.UUID
-    , _persistentCommandCreatedBy :: Maybe U.UUID
-    , _persistentCommandCreatedAt :: UTCTime
-    , _persistentCommandUpdatedAt :: UTCTime
-    }
+data PersistentCommand = PersistentCommand
+  { uuid :: U.UUID
+  , state :: PersistentCommandState
+  , component :: String
+  , function :: String
+  , body :: String
+  , lastErrorMessage :: Maybe String
+  , attempts :: Int
+  , maxAttempts :: Int
+  , internal :: Bool
+  , appUuid :: U.UUID
+  , createdBy :: Maybe U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

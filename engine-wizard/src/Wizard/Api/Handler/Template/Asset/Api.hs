@@ -10,13 +10,14 @@ import Wizard.Api.Handler.Template.Asset.List_GET
 import Wizard.Api.Handler.Template.Asset.List_POST
 import Wizard.Model.Context.BaseContext
 
-type TemplateAssetAPI
-   = Tags "Template Asset"
-     :> (List_GET
-         :<|> List_POST
-         :<|> Detail_GET
-         :<|> Detail_DELETE
-         :<|> Detail_Content_GET)
+type TemplateAssetAPI =
+  Tags "Template Asset"
+    :> ( List_GET
+          :<|> List_POST
+          :<|> Detail_GET
+          :<|> Detail_DELETE
+          :<|> Detail_Content_GET
+       )
 
 templateAssetApi :: Proxy TemplateAssetAPI
 templateAssetApi = Proxy

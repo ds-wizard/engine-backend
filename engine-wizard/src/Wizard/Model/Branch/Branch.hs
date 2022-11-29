@@ -4,15 +4,14 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-data Branch =
-  Branch
-    { _branchUuid :: U.UUID
-    , _branchName :: String
-    , _branchKmId :: String
-    , _branchPreviousPackageId :: Maybe String
-    , _branchCreatedBy :: Maybe U.UUID
-    , _branchAppUuid :: U.UUID
-    , _branchCreatedAt :: UTCTime
-    , _branchUpdatedAt :: UTCTime
-    }
+data Branch = Branch
+  { uuid :: U.UUID
+  , name :: String
+  , kmId :: String
+  , previousPackageId :: Maybe String
+  , createdBy :: Maybe U.UUID
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

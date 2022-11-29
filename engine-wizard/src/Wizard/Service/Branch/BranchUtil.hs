@@ -1,13 +1,12 @@
 module Wizard.Service.Branch.BranchUtil where
 
-import Control.Lens ((^.))
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Model.Package.Package
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchState
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Config.AppConfigService
@@ -15,7 +14,7 @@ import Wizard.Service.Package.PackageService
 
 getBranchPreviousPackage :: Branch -> AppContextM (Maybe Package)
 getBranchPreviousPackage branch =
-  case branch ^. previousPackageId of
+  case branch.previousPackageId of
     Just pkgId -> do
       pkg <- getPackageById pkgId
       return . Just $ pkg
@@ -27,10 +26,10 @@ getBranchForkOfPackageId branch = do
   case mPreviousPkg of
     Just previousPkg -> do
       appConfig <- getAppConfig
-      let org = appConfig ^. organization
-      if (previousPkg ^. organizationId == org ^. organizationId) && (previousPkg ^. kmId == branch ^. kmId)
-        then return $ previousPkg ^. forkOfPackageId
-        else return . Just $ previousPkg ^. pId
+      let org = appConfig.organization
+      if (previousPkg.organizationId == org.organizationId) && (previousPkg.kmId == branch.kmId)
+        then return $ previousPkg.forkOfPackageId
+        else return . Just $ previousPkg.pId
     Nothing -> return Nothing
 
 getBranchMergeCheckpointPackageId :: Branch -> AppContextM (Maybe String)
@@ -39,21 +38,21 @@ getBranchMergeCheckpointPackageId branch = do
   case mPreviousPkg of
     Just previousPkg -> do
       appConfig <- getAppConfig
-      let org = appConfig ^. organization
-      if (previousPkg ^. organizationId == org ^. organizationId) && (previousPkg ^. kmId == branch ^. kmId)
-        then return $ previousPkg ^. mergeCheckpointPackageId
-        else return . Just $ previousPkg ^. pId
+      let org = appConfig.organization
+      if (previousPkg.organizationId == org.organizationId) && (previousPkg.kmId == branch.kmId)
+        then return $ previousPkg.mergeCheckpointPackageId
+        else return . Just $ previousPkg.pId
     Nothing -> return Nothing
 
 getBranchState :: Branch -> Int -> Maybe String -> AppContextM BranchState
 getBranchState branch eventSize mForkOfPackageId = do
-  mMs <- findMigratorStateByBranchUuid' (U.toString $ branch ^. uuid)
+  mMs <- findMigratorStateByBranchUuid' (U.toString $ branch.uuid)
   isMigrating mMs $ isEditing $ isMigrated mMs $ isOutdated isDefault
   where
     isMigrating mMs continue =
       case mMs of
         Just ms ->
-          if ms ^. migrationState == CompletedState
+          if ms.migrationState == CompletedState
             then continue
             else return BSMigrating
         Nothing -> continue
@@ -64,7 +63,7 @@ getBranchState branch eventSize mForkOfPackageId = do
     isMigrated mMs continue =
       case mMs of
         Just ms ->
-          if ms ^. migrationState == CompletedState
+          if ms.migrationState == CompletedState
             then return BSMigrated
             else continue
         Nothing -> continue

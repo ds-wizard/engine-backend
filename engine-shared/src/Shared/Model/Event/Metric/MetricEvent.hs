@@ -7,37 +7,34 @@ import GHC.Generics
 import Shared.Model.Common.MapEntry
 import Shared.Model.Event.EventField
 
-data AddMetricEvent =
-  AddMetricEvent
-    { _addMetricEventUuid :: U.UUID
-    , _addMetricEventParentUuid :: U.UUID
-    , _addMetricEventEntityUuid :: U.UUID
-    , _addMetricEventTitle :: String
-    , _addMetricEventAbbreviation :: Maybe String
-    , _addMetricEventDescription :: Maybe String
-    , _addMetricEventAnnotations :: [MapEntry String String]
-    , _addMetricEventCreatedAt :: UTCTime
-    }
+data AddMetricEvent = AddMetricEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: String
+  , abbreviation :: Maybe String
+  , description :: Maybe String
+  , annotations :: [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditMetricEvent =
-  EditMetricEvent
-    { _editMetricEventUuid :: U.UUID
-    , _editMetricEventParentUuid :: U.UUID
-    , _editMetricEventEntityUuid :: U.UUID
-    , _editMetricEventTitle :: EventField String
-    , _editMetricEventAbbreviation :: EventField (Maybe String)
-    , _editMetricEventDescription :: EventField (Maybe String)
-    , _editMetricEventAnnotations :: EventField [MapEntry String String]
-    , _editMetricEventCreatedAt :: UTCTime
-    }
+data EditMetricEvent = EditMetricEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: EventField String
+  , abbreviation :: EventField (Maybe String)
+  , description :: EventField (Maybe String)
+  , annotations :: EventField [MapEntry String String]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data DeleteMetricEvent =
-  DeleteMetricEvent
-    { _deleteMetricEventUuid :: U.UUID
-    , _deleteMetricEventParentUuid :: U.UUID
-    , _deleteMetricEventEntityUuid :: U.UUID
-    , _deleteMetricEventCreatedAt :: UTCTime
-    }
+data DeleteMetricEvent = DeleteMetricEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

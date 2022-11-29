@@ -1,6 +1,6 @@
-module Registry.Database.Migration.Development.Migration
-  ( runMigration
-  ) where
+module Registry.Database.Migration.Development.Migration (
+  runMigration,
+) where
 
 import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema

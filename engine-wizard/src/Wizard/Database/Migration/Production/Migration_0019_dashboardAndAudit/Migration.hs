@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0019_dashboardAndAudit.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0019_dashboardAndAudit.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -13,7 +13,10 @@ definition = (meta, migrate)
 
 meta =
   MigrationMeta
-    {mmNumber = 19, mmName = "Dashboard and Audit", mmDescription = "Rename app config dashboard and add audit"}
+    { mmNumber = 19
+    , mmName = "Dashboard and Audit"
+    , mmDescription = "Rename app config dashboard and add audit"
+    }
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do

@@ -10,7 +10,7 @@ import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 ensureOnlineUserAction :: ClientQuestionnaireActionDTO
 ensureOnlineUserAction =
   SetContent_ClientQuestionnaireActionDTO . SetReplyEventChangeDTO' $
-  toSetReplyEventChangeDTO sre_rQ1 samplePhasesAnsweredIndication
+    toSetReplyEventChangeDTO sre_rQ1 samplePhasesAnsweredIndication
 
 setUserListAction :: ServerQuestionnaireActionDTO
 setUserListAction = SetUserList_ServerQuestionnaireActionDTO [userAlbertOnlineInfo]

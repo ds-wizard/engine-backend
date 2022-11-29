@@ -1,13 +1,12 @@
 module Wizard.Service.Dev.DevOperationDefinitions where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (ask, liftIO)
 import Data.Foldable (traverse_)
 
-import LensesConfig hiding (action, cache, feedback)
 import Wizard.Api.Resource.Dev.DevExecutionDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Wizard.Model.App.App
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Dev.Dev
 import Wizard.Service.Branch.Event.BranchEventService
@@ -27,16 +26,19 @@ import Wizard.Util.Context
 branch :: DevSection
 branch =
   DevSection
-    { _devSectionName = "Branch"
-    , _devSectionDescription = Nothing
-    , _devSectionOperations = [branch_squashAllEvents, branch_squashEventsForBranch]
+    { name = "Branch"
+    , description = Nothing
+    , operations = [branch_squashAllEvents, branch_squashEventsForBranch]
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
 branch_squashAllEvents :: DevOperation
 branch_squashAllEvents =
   DevOperation
-    {_devOperationName = "Squash All Events", _devOperationDescription = Nothing, _devOperationParameters = []}
+    { name = "Squash All Events"
+    , description = Nothing
+    , parameters = []
+    }
 
 branch_squashAllEventsFn :: DevExecutionDTO -> AppContextM String
 branch_squashAllEventsFn reqDto = do
@@ -47,17 +49,19 @@ branch_squashAllEventsFn reqDto = do
 branch_squashEventsForBranch :: DevOperation
 branch_squashEventsForBranch =
   DevOperation
-    { _devOperationName = "Squash Events for Branch"
-    , _devOperationDescription = Nothing
-    , _devOperationParameters =
+    { name = "Squash Events for Branch"
+    , description = Nothing
+    , parameters =
         [ DevOperationParameter
-            {_devOperationParameterName = "branchUuid", _devOperationParameterAType = StringDevOperationParameterType}
+            { name = "branchUuid"
+            , aType = StringDevOperationParameterType
+            }
         ]
     }
 
 branch_squashEventsForBranchFn :: DevExecutionDTO -> AppContextM String
 branch_squashEventsForBranchFn reqDto = do
-  squashEventsForBranch (head (reqDto ^. parameters))
+  squashEventsForBranch (head reqDto.parameters)
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -65,13 +69,16 @@ branch_squashEventsForBranchFn reqDto = do
 -- ---------------------------------------------------------------------------------------------------------------------
 cache :: DevSection
 cache =
-  DevSection {_devSectionName = "Cache", _devSectionDescription = Nothing, _devSectionOperations = [cache_purgeCache]}
+  DevSection {name = "Cache", description = Nothing, operations = [cache_purgeCache]}
 
 -- ---------------------------------------------------------------------------------------------------------------------
 cache_purgeCache :: DevOperation
 cache_purgeCache =
   DevOperation
-    {_devOperationName = "Purge All Caches", _devOperationDescription = Nothing, _devOperationParameters = []}
+    { name = "Purge All Caches"
+    , description = Nothing
+    , parameters = []
+    }
 
 cache_purgeCacheFn :: DevExecutionDTO -> AppContextM String
 cache_purgeCacheFn reqDto = do
@@ -84,9 +91,9 @@ cache_purgeCacheFn reqDto = do
 config :: DevSection
 config =
   DevSection
-    { _devSectionName = "Config"
-    , _devSectionDescription = Nothing
-    , _devSectionOperations =
+    { name = "Config"
+    , description = Nothing
+    , operations =
         [config_recompileCssInAllApplications, config_switchClientCustomizationOn, config_switchClientCustomizationOff]
     }
 
@@ -94,9 +101,9 @@ config =
 config_recompileCssInAllApplications :: DevOperation
 config_recompileCssInAllApplications =
   DevOperation
-    { _devOperationName = "Recompile CSS in All Applications"
-    , _devOperationDescription = Nothing
-    , _devOperationParameters = []
+    { name = "Recompile CSS in All Applications"
+    , description = Nothing
+    , parameters = []
     }
 
 config_recompileCssInAllApplicationsFn :: DevExecutionDTO -> AppContextM String
@@ -108,9 +115,9 @@ config_recompileCssInAllApplicationsFn reqDto = do
 config_switchClientCustomizationOn :: DevOperation
 config_switchClientCustomizationOn =
   DevOperation
-    { _devOperationName = "Enable Client Customization in Settings"
-    , _devOperationDescription = Nothing
-    , _devOperationParameters = []
+    { name = "Enable Client Customization in Settings"
+    , description = Nothing
+    , parameters = []
     }
 
 config_switchClientCustomizationOnFn :: DevExecutionDTO -> AppContextM String
@@ -122,9 +129,9 @@ config_switchClientCustomizationOnFn reqDto = do
 config_switchClientCustomizationOff :: DevOperation
 config_switchClientCustomizationOff =
   DevOperation
-    { _devOperationName = "Disable Client Customization in Settings"
-    , _devOperationDescription = Nothing
-    , _devOperationParameters = []
+    { name = "Disable Client Customization in Settings"
+    , description = Nothing
+    , parameters = []
     }
 
 config_switchClientCustomizationOffFn :: DevExecutionDTO -> AppContextM String
@@ -138,16 +145,19 @@ config_switchClientCustomizationOffFn reqDto = do
 feedback :: DevSection
 feedback =
   DevSection
-    { _devSectionName = "Feedback"
-    , _devSectionDescription = Nothing
-    , _devSectionOperations = [feedback_synchronizeFeedbacks]
+    { name = "Feedback"
+    , description = Nothing
+    , operations = [feedback_synchronizeFeedbacks]
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
 feedback_synchronizeFeedbacks :: DevOperation
 feedback_synchronizeFeedbacks =
   DevOperation
-    {_devOperationName = "Synchronize Feedbacks", _devOperationDescription = Nothing, _devOperationParameters = []}
+    { name = "Synchronize Feedbacks"
+    , description = Nothing
+    , parameters = []
+    }
 
 feedback_synchronizeFeedbacksFn :: DevExecutionDTO -> AppContextM String
 feedback_synchronizeFeedbacksFn reqDto = do
@@ -160,25 +170,25 @@ feedback_synchronizeFeedbacksFn reqDto = do
 persistentCommand :: DevSection
 persistentCommand =
   DevSection
-    { _devSectionName = "Persistent Command"
-    , _devSectionDescription = Nothing
-    , _devSectionOperations = [persistentCommand_runAll, persistentCommand_run]
+    { name = "Persistent Command"
+    , description = Nothing
+    , operations = [persistentCommand_runAll, persistentCommand_run]
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
 persistentCommand_runAll :: DevOperation
 persistentCommand_runAll =
   DevOperation
-    { _devOperationName = "Run All Persistent Commands"
-    , _devOperationDescription = Nothing
-    , _devOperationParameters = []
+    { name = "Run All Persistent Commands"
+    , description = Nothing
+    , parameters = []
     }
 
 persistentCommand_runAllFn :: DevExecutionDTO -> AppContextM String
 persistentCommand_runAllFn reqDto = do
   context <- ask
   apps <- findApps
-  let appUuids = fmap (^. uuid) apps
+  let appUuids = fmap (.uuid) apps
   liftIO $ traverse_ (runAppContextWithBaseContext' runPersistentCommands (baseContextFromAppContext context)) appUuids
   return "Done"
 
@@ -186,17 +196,19 @@ persistentCommand_runAllFn reqDto = do
 persistentCommand_run :: DevOperation
 persistentCommand_run =
   DevOperation
-    { _devOperationName = "Run Persistent Command"
-    , _devOperationDescription = Nothing
-    , _devOperationParameters =
+    { name = "Run Persistent Command"
+    , description = Nothing
+    , parameters =
         [ DevOperationParameter
-            {_devOperationParameterName = "uuid", _devOperationParameterAType = StringDevOperationParameterType}
+            { name = "uuid"
+            , aType = StringDevOperationParameterType
+            }
         ]
     }
 
 persistentCommand_runFn :: DevExecutionDTO -> AppContextM String
 persistentCommand_runFn reqDto = do
-  command <- findPersistentCommandSimpleByUuid (head (reqDto ^. parameters))
+  command <- findPersistentCommandSimpleByUuid (head reqDto.parameters)
   runPersistentCommand command
   return "Done"
 
@@ -206,16 +218,19 @@ persistentCommand_runFn reqDto = do
 registry :: DevSection
 registry =
   DevSection
-    { _devSectionName = "Registry"
-    , _devSectionDescription = Nothing
-    , _devSectionOperations = [registry_syncWithRegistry]
+    { name = "Registry"
+    , description = Nothing
+    , operations = [registry_syncWithRegistry]
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
 registry_syncWithRegistry :: DevOperation
 registry_syncWithRegistry =
   DevOperation
-    {_devOperationName = "Sync with registry", _devOperationDescription = Nothing, _devOperationParameters = []}
+    { name = "Sync with registry"
+    , description = Nothing
+    , parameters = []
+    }
 
 registry_syncWithRegistryFn :: DevExecutionDTO -> AppContextM String
 registry_syncWithRegistryFn reqDto = do
@@ -228,9 +243,9 @@ registry_syncWithRegistryFn reqDto = do
 questionnaire :: DevSection
 questionnaire =
   DevSection
-    { _devSectionName = "Questionnaire"
-    , _devSectionDescription = Nothing
-    , _devSectionOperations =
+    { name = "Questionnaire"
+    , description = Nothing
+    , operations =
         [ questionnaire_recomputeQuestionnaireIndications
         , questionnaire_squashAllEvents
         , questionnaire_squashEventsForQuestionnaire
@@ -241,9 +256,9 @@ questionnaire =
 questionnaire_recomputeQuestionnaireIndications :: DevOperation
 questionnaire_recomputeQuestionnaireIndications =
   DevOperation
-    { _devOperationName = "Recompute Questionnaire Indications"
-    , _devOperationDescription = Nothing
-    , _devOperationParameters = []
+    { name = "Recompute Questionnaire Indications"
+    , description = Nothing
+    , parameters = []
     }
 
 questionnaire_recomputeQuestionnaireIndicationsFn :: DevExecutionDTO -> AppContextM String
@@ -255,7 +270,10 @@ questionnaire_recomputeQuestionnaireIndicationsFn reqDto = do
 questionnaire_squashAllEvents :: DevOperation
 questionnaire_squashAllEvents =
   DevOperation
-    {_devOperationName = "Squash All Events", _devOperationDescription = Nothing, _devOperationParameters = []}
+    { name = "Squash All Events"
+    , description = Nothing
+    , parameters = []
+    }
 
 questionnaire_squashAllEventsFn :: DevExecutionDTO -> AppContextM String
 questionnaire_squashAllEventsFn reqDto = do
@@ -266,17 +284,17 @@ questionnaire_squashAllEventsFn reqDto = do
 questionnaire_squashEventsForQuestionnaire :: DevOperation
 questionnaire_squashEventsForQuestionnaire =
   DevOperation
-    { _devOperationName = "Squash Events for Questionnaire"
-    , _devOperationDescription = Nothing
-    , _devOperationParameters =
+    { name = "Squash Events for Questionnaire"
+    , description = Nothing
+    , parameters =
         [ DevOperationParameter
-            { _devOperationParameterName = "questionnaireUuid"
-            , _devOperationParameterAType = StringDevOperationParameterType
+            { name = "questionnaireUuid"
+            , aType = StringDevOperationParameterType
             }
         ]
     }
 
 questionnaire_squashEventsForQuestionnaireFn :: DevExecutionDTO -> AppContextM String
 questionnaire_squashEventsForQuestionnaireFn reqDto = do
-  squashQuestionnaireEventsForQuestionnaire (head (reqDto ^. parameters))
+  squashQuestionnaireEventsForQuestionnaire (head reqDto.parameters)
   return "Done"

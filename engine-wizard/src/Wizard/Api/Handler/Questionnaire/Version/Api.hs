@@ -9,12 +9,13 @@ import Wizard.Api.Handler.Questionnaire.Version.List_GET
 import Wizard.Api.Handler.Questionnaire.Version.List_POST
 import Wizard.Model.Context.BaseContext
 
-type QuestionnaireVersionAPI
-   = Tags "Questionnaire Version"
-     :> (List_GET
-         :<|> List_POST
-         :<|> Detail_PUT
-         :<|> Detail_DELETE)
+type QuestionnaireVersionAPI =
+  Tags "Questionnaire Version"
+    :> ( List_GET
+          :<|> List_POST
+          :<|> Detail_PUT
+          :<|> Detail_DELETE
+       )
 
 questionnaireVersionApi :: Proxy QuestionnaireVersionAPI
 questionnaireVersionApi = Proxy

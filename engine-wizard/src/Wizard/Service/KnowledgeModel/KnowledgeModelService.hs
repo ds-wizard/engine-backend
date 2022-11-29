@@ -1,10 +1,8 @@
 module Wizard.Service.KnowledgeModel.KnowledgeModelService where
 
-import Control.Lens ((^.))
 import Control.Monad.Except (liftEither)
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModel
@@ -18,9 +16,9 @@ import Wizard.Service.Package.PackageUtil
 
 createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM KnowledgeModel
 createKnowledgeModelPreview reqDto = do
-  mResolvedPackageId <- traverse resolvePackageId (reqDto ^. packageId)
+  mResolvedPackageId <- traverse resolvePackageId reqDto.packageId
   checkIfPackageIsPublic mResolvedPackageId _QTN_PERM
-  compileKnowledgeModel (reqDto ^. events) mResolvedPackageId (reqDto ^. tagUuids)
+  compileKnowledgeModel reqDto.events mResolvedPackageId reqDto.tagUuids
 
 compileKnowledgeModel :: [Event] -> Maybe String -> [U.UUID] -> AppContextM KnowledgeModel
 compileKnowledgeModel events mPackageId tagUuids = do

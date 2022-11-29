@@ -11,14 +11,15 @@ import Wizard.Api.Handler.Branch.List_GET
 import Wizard.Api.Handler.Branch.List_POST
 import Wizard.Model.Context.BaseContext
 
-type BranchAPI
-   = Tags "Branch"
-     :> (List_GET
-         :<|> List_POST
-         :<|> Detail_GET
-         :<|> Detail_PUT
-         :<|> Detail_DELETE
-         :<|> Detail_WS)
+type BranchAPI =
+  Tags "Branch"
+    :> ( List_GET
+          :<|> List_POST
+          :<|> Detail_GET
+          :<|> Detail_PUT
+          :<|> Detail_DELETE
+          :<|> Detail_WS
+       )
 
 branchApi :: Proxy BranchAPI
 branchApi = Proxy

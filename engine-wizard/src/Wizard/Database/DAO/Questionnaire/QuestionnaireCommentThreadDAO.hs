@@ -1,6 +1,5 @@
 module Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO where
 
-import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
 import Data.String
@@ -11,7 +10,6 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
-import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.String
 import Wizard.Database.DAO.Common
@@ -60,26 +58,27 @@ findQuestionnaireCommentThreadById uuid = do
     [entity] -> return . Just $ entity
     _ ->
       throwError $
-      GeneralServerError
-        (f'
-           "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)"
-           [entityName, show [("uuid", uuid)]])
+        GeneralServerError
+          ( f'
+              "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)"
+              [entityName, show [("uuid", uuid)]]
+          )
 
 insertQuestionnaireCommentThread :: QuestionnaireCommentThread -> AppContextM Int64
 insertQuestionnaireCommentThread = createInsertFn entityName
 
 updateQuestionnaireCommentThreadById :: QuestionnaireCommentThread -> AppContextM QuestionnaireCommentThread
-updateQuestionnaireCommentThreadById app = do
+updateQuestionnaireCommentThreadById entity = do
   now <- liftIO getCurrentTime
-  let updatedApp = app & updatedAt .~ now
+  let updatedEntity = entity {updatedAt = now} :: QuestionnaireCommentThread
   let sql =
         fromString
           "UPDATE questionnaire_comment_thread SET uuid = ?, text = ?, questionnaire_uuid = ?, created_by = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
-  let params = toRow updatedApp ++ [toField $ updatedApp ^. uuid]
+  let params = toRow updatedEntity ++ [toField updatedEntity.uuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
-  return updatedApp
+  return updatedEntity
 
 updateQuestionnaireCommentThreadResolvedById :: U.UUID -> Bool -> AppContextM Int64
 updateQuestionnaireCommentThreadResolvedById uuid resolved = do

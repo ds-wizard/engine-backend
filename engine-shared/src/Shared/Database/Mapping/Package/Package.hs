@@ -8,19 +8,19 @@ import Shared.Model.Package.Package
 
 instance FromRow Package where
   fromRow = do
-    _packagePId <- field
-    _packageName <- field
-    _packageOrganizationId <- field
-    _packageKmId <- field
-    _packageVersion <- field
-    _packageMetamodelVersion <- field
-    _packageDescription <- field
-    _packageReadme <- field
-    _packageLicense <- field
-    _packagePreviousPackageId <- field
-    _packageForkOfPackageId <- field
-    _packageMergeCheckpointPackageId <- field
+    pId <- field
+    name <- field
+    organizationId <- field
+    kmId <- field
+    version <- field
+    metamodelVersion <- field
+    description <- field
+    readme <- field
+    license <- field
+    previousPackageId <- field
+    forkOfPackageId <- field
+    mergeCheckpointPackageId <- field
     _ <- field :: RowParser Value
-    _packageCreatedAt <- field
-    _packageAppUuid <- field
+    createdAt <- field
+    appUuid <- field
     return $ Package {..}

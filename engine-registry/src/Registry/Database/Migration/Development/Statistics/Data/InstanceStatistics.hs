@@ -5,10 +5,10 @@ import Registry.Model.Statistics.InstanceStatistics
 iStat :: InstanceStatistics
 iStat =
   InstanceStatistics
-    { _instanceStatisticsUserCount = 10
-    , _instanceStatisticsPkgCount = 20
-    , _instanceStatisticsQtnCount = 30
-    , _instanceStatisticsBranchCount = 40
-    , _instanceStatisticsDocCount = 50
-    , _instanceStatisticsTmlCount = 60
+    { userCount = 10
+    , pkgCount = 20
+    , qtnCount = 30
+    , branchCount = 40
+    , docCount = 50
+    , tmlCount = 60
     }

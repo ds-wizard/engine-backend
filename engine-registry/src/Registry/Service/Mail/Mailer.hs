@@ -1,74 +1,74 @@
-module Registry.Service.Mail.Mailer
-  ( sendRegistrationConfirmationMail
-  , sendRegistrationCreatedAnalyticsMail
-  , sendResetTokenMail
-  ) where
+module Registry.Service.Mail.Mailer (
+  sendRegistrationConfirmationMail,
+  sendRegistrationCreatedAnalyticsMail,
+  sendResetTokenMail,
+) where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import Data.Aeson (ToJSON)
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Database.DAO.Common
 import Registry.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.PersistentCommand.Mail.SendRegistrationConfirmationMailCommand
 import Registry.Model.PersistentCommand.Mail.SendRegistrationCreatedAnalyticsMailCommand
 import Registry.Model.PersistentCommand.Mail.SendResetTokenMailCommand
 import Registry.Service.PersistentCommand.PersistentCommandMapper
+import Shared.Model.Config.ServerConfig
 import Shared.Util.JSON
 import Shared.Util.Uuid
 
 sendRegistrationConfirmationMail :: OrganizationDTO -> String -> Maybe String -> AppContextM ()
 sendRegistrationConfirmationMail org hash mCallbackUrl = do
-  serverConfig <- asks _appContextServerConfig
-  let clientAddress = serverConfig ^. general . clientUrl
+  serverConfig <- asks serverConfig
+  let clientAddress = serverConfig.general.clientUrl
   runInTransaction $ do
     let body =
           SendRegistrationConfirmationMailCommand
-            { _sendRegistrationConfirmationMailCommandEmail = org ^. email
-            , _sendRegistrationConfirmationMailCommandOrganizationId = org ^. organizationId
-            , _sendRegistrationConfirmationMailCommandOrganizationName = org ^. name
-            , _sendRegistrationConfirmationMailCommandOrganizationEmail = org ^. email
-            , _sendRegistrationConfirmationMailCommandHash = hash
-            , _sendRegistrationConfirmationMailCommandClientUrl = clientAddress
-            , _sendRegistrationConfirmationMailCommandCallbackUrl = mCallbackUrl
+            { email = org.email
+            , organizationId = org.organizationId
+            , organizationName = org.name
+            , organizationEmail = org.email
+            , hash = hash
+            , clientUrl = clientAddress
+            , callbackUrl = mCallbackUrl
             }
-    sendEmail "sendRegistrationConfirmationMail" body (org ^. organizationId)
+    sendEmail "sendRegistrationConfirmationMail" body org.organizationId
 
 sendRegistrationCreatedAnalyticsMail :: OrganizationDTO -> AppContextM ()
 sendRegistrationCreatedAnalyticsMail org =
   runInTransaction $ do
-    serverConfig <- asks _appContextServerConfig
-    let clientAddress = serverConfig ^. general . clientUrl
+    serverConfig <- asks serverConfig
+    let clientAddress = serverConfig.general.clientUrl
     let body =
           SendRegistrationCreatedAnalyticsMailCommand
-            { _sendRegistrationCreatedAnalyticsMailCommandEmail = serverConfig ^. analytics . email
-            , _sendRegistrationCreatedAnalyticsMailCommandOrganizationId = org ^. organizationId
-            , _sendRegistrationCreatedAnalyticsMailCommandOrganizationName = org ^. name
-            , _sendRegistrationCreatedAnalyticsMailCommandOrganizationEmail = org ^. email
-            , _sendRegistrationCreatedAnalyticsMailCommandClientUrl = clientAddress
+            { email = serverConfig.analytics.email
+            , organizationId = org.organizationId
+            , organizationName = org.name
+            , organizationEmail = org.email
+            , clientUrl = clientAddress
             }
-    sendEmail "sendRegistrationCreatedAnalyticsMail" body (org ^. organizationId)
+    sendEmail "sendRegistrationCreatedAnalyticsMail" body org.organizationId
 
 sendResetTokenMail :: OrganizationDTO -> String -> AppContextM ()
 sendResetTokenMail org hash =
   runInTransaction $ do
-    serverConfig <- asks _appContextServerConfig
-    let clientAddress = serverConfig ^. general . clientUrl
+    serverConfig <- asks serverConfig
+    let clientAddress = serverConfig.general.clientUrl
     let body =
           SendResetTokenMailCommand
-            { _sendResetTokenMailCommandEmail = org ^. email
-            , _sendResetTokenMailCommandOrganizationId = org ^. organizationId
-            , _sendResetTokenMailCommandOrganizationName = org ^. name
-            , _sendResetTokenMailCommandOrganizationEmail = org ^. email
-            , _sendResetTokenMailCommandHash = hash
-            , _sendResetTokenMailCommandClientUrl = clientAddress
+            { email = org.email
+            , organizationId = org.organizationId
+            , organizationName = org.name
+            , organizationEmail = org.email
+            , hash = hash
+            , clientUrl = clientAddress
             }
-    sendEmail "sendResetTokenMail" body (org ^. organizationId)
+    sendEmail "sendResetTokenMail" body org.organizationId
 
 -- --------------------------------
 -- PRIVATE

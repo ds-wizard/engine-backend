@@ -1,6 +1,5 @@
 module Wizard.Specs.Websocket.Questionnaire.Detail.Common where
 
-import Control.Lens
 import Data.Aeson
 import Data.Foldable (traverse_)
 import qualified Data.UUID as U
@@ -8,7 +7,6 @@ import Network.WebSockets
 import System.Timeout
 import Test.Hspec.Expectations.Pretty
 
-import LensesConfig hiding (request)
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Util.JSON
@@ -18,6 +16,7 @@ import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.Cache.QuestionnaireWebsocketCache
@@ -47,34 +46,34 @@ reqUrlT qtnUuid mUser =
 -- --------------------------------
 -- DATABASE
 -- --------------------------------
-insertQuestionnaireAndUsers appContext qtn
+insertQuestionnaireAndUsers appContext qtn =
   -- Prepare DB
- = do
-  runInContext U.runMigration appContext
-  runInContextIO TML_Migration.runMigration appContext
-  runInContextIO (insertPackage germanyPackage) appContext
-  runInContextIO (insertQuestionnaire qtn) appContext
+  do
+    runInContext U.runMigration appContext
+    runInContextIO TML_Migration.runMigration appContext
+    runInContextIO (insertPackage germanyPackage) appContext
+    runInContextIO (insertQuestionnaire qtn) appContext
 
 -- --------------------------------
 -- CONNECT
 -- --------------------------------
-connectTestWebsocketUsers appContext qtnUuid
+connectTestWebsocketUsers appContext qtnUuid =
   -- Clear websockets
- = do
-  clearConnections appContext qtnUuid
-  -- Connect 1. user
-  (c1, s1) <- createConnection appContext (reqUrlT qtnUuid (Just reqAuthToken))
-  read_SetUserList c1 0
-  -- Connect 2. user
-  (c2, s2) <- createConnection appContext (reqUrlT qtnUuid (Just reqNonAdminAuthToken))
-  read_SetUserList c1 1
-  read_SetUserList c2 1
-  -- Connect 3. user
-  (c3, s3) <- createConnection appContext (reqUrlT qtnUuid Nothing)
-  read_SetUserList c1 2
-  read_SetUserList c2 2
-  read_SetUserList c3 2
-  return ((c1, s1), (c2, s2), (c3, s3))
+  do
+    clearConnections appContext qtnUuid
+    -- Connect 1. user
+    (c1, s1) <- createConnection appContext (reqUrlT qtnUuid (Just reqAuthToken))
+    read_SetUserList c1 0
+    -- Connect 2. user
+    (c2, s2) <- createConnection appContext (reqUrlT qtnUuid (Just reqNonAdminAuthToken))
+    read_SetUserList c1 1
+    read_SetUserList c2 1
+    -- Connect 3. user
+    (c3, s3) <- createConnection appContext (reqUrlT qtnUuid Nothing)
+    read_SetUserList c1 2
+    read_SetUserList c2 2
+    read_SetUserList c3 2
+    return ((c1, s1), (c2, s2), (c3, s3))
 
 read_SetUserList connection expConnectionCount = do
   resDto <- receiveData connection
@@ -110,9 +109,9 @@ nothingWasReceived connection = do
 clearConnections :: AppContext -> U.UUID -> IO ()
 clearConnections appContext qtnUuid = do
   (Right records) <- runInContext getAllFromCache appContext
-  traverse_ (clearConnection appContext qtnUuid) . filter (\r -> r ^. entityId == U.toString qtnUuid) $ records
+  traverse_ (clearConnection appContext qtnUuid) . filter (\r -> r.entityId == U.toString qtnUuid) $ records
 
 clearConnection :: AppContext -> U.UUID -> WebsocketRecord -> IO ()
 clearConnection appContext qtnUuid record = do
-  runInContext (deleteUser (U.toString qtnUuid) (record ^. connectionUuid)) appContext
+  runInContext (deleteUser (U.toString qtnUuid) record.connectionUuid) appContext
   return ()

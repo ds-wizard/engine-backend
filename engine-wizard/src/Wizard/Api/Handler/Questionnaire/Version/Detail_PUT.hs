@@ -12,23 +12,23 @@ import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionService
 
-type Detail_PUT
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> ReqBody '[ SafeJSON] QuestionnaireVersionChangeDTO
-     :> "questionnaires"
-     :> Capture "qtnUuid" String
-     :> "versions"
-     :> Capture "vUuid" String
-     :> Put '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] QuestionnaireVersionDTO)
+type Detail_PUT =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> ReqBody '[SafeJSON] QuestionnaireVersionChangeDTO
+    :> "questionnaires"
+    :> Capture "qtnUuid" String
+    :> "versions"
+    :> Capture "vUuid" String
+    :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] QuestionnaireVersionDTO)
 
-detail_PUT ::
-     Maybe String
+detail_PUT
+  :: Maybe String
   -> Maybe String
   -> QuestionnaireVersionChangeDTO
   -> String
   -> String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireVersionDTO)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] QuestionnaireVersionDTO)
 detail_PUT mTokenHeader mServerUrl reqDto qtnUuid vUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< modifyVersion qtnUuid vUuid reqDto

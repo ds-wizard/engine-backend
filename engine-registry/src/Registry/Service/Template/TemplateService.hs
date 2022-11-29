@@ -1,8 +1,5 @@
 module Registry.Service.Template.TemplateService where
 
-import Control.Lens ((^.))
-
-import LensesConfig
 import Registry.Api.Resource.Template.TemplateDetailDTO
 import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Registry.Database.DAO.Organization.OrganizationDAO
@@ -24,7 +21,7 @@ getTemplateById :: String -> AppContextM TemplateDetailDTO
 getTemplateById tId = do
   tml <- findTemplateById tId
   versions <- getTemplateVersions tml
-  org <- findOrganizationByOrgId (tml ^. organizationId)
+  org <- findOrganizationByOrgId tml.organizationId
   return $ toDetailDTO tml versions org
 
 -- --------------------------------
@@ -32,5 +29,5 @@ getTemplateById tId = do
 -- --------------------------------
 getTemplateVersions :: Template -> AppContextM [String]
 getTemplateVersions tml = do
-  allTmls <- findTemplatesByOrganizationIdAndKmId (tml ^. organizationId) (tml ^. templateId)
-  return . fmap _templateVersion $ allTmls
+  allTmls <- findTemplatesByOrganizationIdAndKmId tml.organizationId tml.templateId
+  return . fmap (.version) $ allTmls

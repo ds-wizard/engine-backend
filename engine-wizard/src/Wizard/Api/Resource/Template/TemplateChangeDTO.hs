@@ -5,18 +5,17 @@ import GHC.Generics
 import Shared.Model.Package.PackagePattern
 import Shared.Model.Template.Template
 
-data TemplateChangeDTO =
-  TemplateChangeDTO
-    { _templateChangeDTOName :: String
-    , _templateChangeDTOOrganizationId :: String
-    , _templateChangeDTOTemplateId :: String
-    , _templateChangeDTOVersion :: String
-    , _templateChangeDTOMetamodelVersion :: Int
-    , _templateChangeDTODescription :: String
-    , _templateChangeDTOReadme :: String
-    , _templateChangeDTOLicense :: String
-    , _templateChangeDTOAllowedPackages :: [PackagePattern]
-    , _templateChangeDTORecommendedPackageId :: Maybe String
-    , _templateChangeDTOFormats :: [TemplateFormat]
-    }
+data TemplateChangeDTO = TemplateChangeDTO
+  { name :: String
+  , organizationId :: String
+  , templateId :: String
+  , version :: String
+  , metamodelVersion :: Int
+  , description :: String
+  , readme :: String
+  , license :: String
+  , allowedPackages :: [PackagePattern]
+  , recommendedPackageId :: Maybe String
+  , formats :: [TemplateFormat]
+  }
   deriving (Show, Eq, Generic)

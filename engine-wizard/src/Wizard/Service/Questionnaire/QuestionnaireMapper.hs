@@ -1,20 +1,18 @@
 module Wizard.Service.Questionnaire.QuestionnaireMapper where
 
-import Control.Lens ((&), (.~), (^.), (^?), _Just)
 import qualified Data.List as L
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig hiding (templateMetamodelVersion)
 import Shared.Constant.Template
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.Template.Template
 import qualified Shared.Service.Package.PackageMapper as SPM
-import qualified Shared.Service.Template.TemplateMapper as STM
 import Shared.Service.Template.TemplateMapper
+import qualified Shared.Service.Template.TemplateMapper as STM
 import Shared.Util.Coordinate
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
@@ -49,60 +47,60 @@ import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 toDTO :: Questionnaire -> Package -> QuestionnaireState -> [QuestionnairePermRecordDTO] -> QuestionnaireDTO
 toDTO qtn package state permissions =
   QuestionnaireDTO
-    { _questionnaireDTOUuid = qtn ^. uuid
-    , _questionnaireDTOName = qtn ^. name
-    , _questionnaireDTODescription = qtn ^. description
-    , _questionnaireDTOVisibility = qtn ^. visibility
-    , _questionnaireDTOSharing = qtn ^. sharing
-    , _questionnaireDTOState = state
-    , _questionnaireDTOPackage = SPM.toSimple package
-    , _questionnaireDTOAnsweredQuestions = qtn ^. answeredQuestions
-    , _questionnaireDTOUnansweredQuestions = qtn ^. unansweredQuestions
-    , _questionnaireDTOPermissions = permissions
-    , _questionnaireDTOIsTemplate = qtn ^. isTemplate
-    , _questionnaireDTOCreatedAt = qtn ^. createdAt
-    , _questionnaireDTOUpdatedAt = qtn ^. updatedAt
+    { uuid = qtn.uuid
+    , name = qtn.name
+    , description = qtn.description
+    , visibility = qtn.visibility
+    , sharing = qtn.sharing
+    , state = state
+    , package = SPM.toSimple package
+    , answeredQuestions = qtn.answeredQuestions
+    , unansweredQuestions = qtn.unansweredQuestions
+    , permissions = permissions
+    , isTemplate = qtn.isTemplate
+    , createdAt = qtn.createdAt
+    , updatedAt = qtn.updatedAt
     }
 
 toDTO' :: QuestionnaireDetail -> QuestionnaireDTO
 toDTO' qtn =
   QuestionnaireDTO
-    { _questionnaireDTOUuid = qtn ^. uuid
-    , _questionnaireDTOName = qtn ^. name
-    , _questionnaireDTODescription = qtn ^. description
-    , _questionnaireDTOVisibility = qtn ^. visibility
-    , _questionnaireDTOSharing = qtn ^. sharing
-    , _questionnaireDTOState = qtn ^. state
-    , _questionnaireDTOPackage = qtn ^. package
-    , _questionnaireDTOAnsweredQuestions = qtn ^. answeredQuestions
-    , _questionnaireDTOUnansweredQuestions = qtn ^. unansweredQuestions
-    , _questionnaireDTOPermissions = qtn ^. permissions
-    , _questionnaireDTOIsTemplate = qtn ^. isTemplate
-    , _questionnaireDTOCreatedAt = qtn ^. createdAt
-    , _questionnaireDTOUpdatedAt = qtn ^. updatedAt
+    { uuid = qtn.uuid
+    , name = qtn.name
+    , description = qtn.description
+    , visibility = qtn.visibility
+    , sharing = qtn.sharing
+    , state = qtn.state
+    , package = qtn.package
+    , answeredQuestions = qtn.answeredQuestions
+    , unansweredQuestions = qtn.unansweredQuestions
+    , permissions = qtn.permissions
+    , isTemplate = qtn.isTemplate
+    , createdAt = qtn.createdAt
+    , updatedAt = qtn.updatedAt
     }
 
-toSimpleDTO ::
-     Questionnaire -> PackageWithEvents -> QuestionnaireState -> [QuestionnairePermRecordDTO] -> QuestionnaireDTO
+toSimpleDTO
+  :: Questionnaire -> PackageWithEvents -> QuestionnaireState -> [QuestionnairePermRecordDTO] -> QuestionnaireDTO
 toSimpleDTO qtn package state permissions =
   QuestionnaireDTO
-    { _questionnaireDTOUuid = qtn ^. uuid
-    , _questionnaireDTOName = qtn ^. name
-    , _questionnaireDTODescription = qtn ^. description
-    , _questionnaireDTOVisibility = qtn ^. visibility
-    , _questionnaireDTOSharing = qtn ^. sharing
-    , _questionnaireDTOState = state
-    , _questionnaireDTOPackage = SPM.toSimple . SPM.toPackage $ package
-    , _questionnaireDTOAnsweredQuestions = qtn ^. answeredQuestions
-    , _questionnaireDTOUnansweredQuestions = qtn ^. unansweredQuestions
-    , _questionnaireDTOPermissions = permissions
-    , _questionnaireDTOIsTemplate = qtn ^. isTemplate
-    , _questionnaireDTOCreatedAt = qtn ^. createdAt
-    , _questionnaireDTOUpdatedAt = qtn ^. updatedAt
+    { uuid = qtn.uuid
+    , name = qtn.name
+    , description = qtn.description
+    , visibility = qtn.visibility
+    , sharing = qtn.sharing
+    , state = state
+    , package = SPM.toSimple . SPM.toPackage $ package
+    , answeredQuestions = qtn.answeredQuestions
+    , unansweredQuestions = qtn.unansweredQuestions
+    , permissions = permissions
+    , isTemplate = qtn.isTemplate
+    , createdAt = qtn.createdAt
+    , updatedAt = qtn.updatedAt
     }
 
-toDetailWithPackageWithEventsDTO ::
-     Questionnaire
+toDetailWithPackageWithEventsDTO
+  :: Questionnaire
   -> QuestionnaireContent
   -> Package
   -> [String]
@@ -118,124 +116,125 @@ toDetailWithPackageWithEventsDTO ::
   -> QuestionnaireDetailDTO
 toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state mTemplate mFormat replies threads records versions mMigrationUuid =
   QuestionnaireDetailDTO
-    { _questionnaireDetailDTOUuid = qtn ^. uuid
-    , _questionnaireDetailDTOName = qtn ^. name
-    , _questionnaireDetailDTODescription = qtn ^. description
-    , _questionnaireDetailDTOPhaseUuid = qtnCtn ^. phaseUuid
-    , _questionnaireDetailDTOVisibility = qtn ^. visibility
-    , _questionnaireDetailDTOSharing = qtn ^. sharing
-    , _questionnaireDetailDTOState = state
-    , _questionnaireDetailDTOPackage = PM.toSimpleDTO' [] [] pkg
-    , _questionnaireDetailDTOPackageVersions = L.sortBy compareVersion pkgVersions
-    , _questionnaireDetailDTOSelectedQuestionTagUuids = qtn ^. selectedQuestionTagUuids
-    , _questionnaireDetailDTOProjectTags = qtn ^. projectTags
-    , _questionnaireDetailDTOTemplateId = qtn ^. templateId
-    , _questionnaireDetailDTOTemplate = fmap STM.toDTO mTemplate
-    , _questionnaireDetailDTOFormatUuid = qtn ^. formatUuid
-    , _questionnaireDetailDTOFormat = fmap toFormatDTO mFormat
-    , _questionnaireDetailDTOTemplateState = toQuestionnaireDetailTemplateState mTemplate
-    , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
-    , _questionnaireDetailDTOReplies = replies
-    , _questionnaireDetailDTOCommentThreadsMap = threads
-    , _questionnaireDetailDTOLabels = qtnCtn ^. labels
-    , _questionnaireDetailDTOPermissions = records
-    , _questionnaireDetailDTOVersions = versions
-    , _questionnaireDetailDTOCreatorUuid = qtn ^. creatorUuid
-    , _questionnaireDetailDTOIsTemplate = qtn ^. isTemplate
-    , _questionnaireDetailDTOMigrationUuid = mMigrationUuid
-    , _questionnaireDetailDTOCreatedAt = qtn ^. createdAt
-    , _questionnaireDetailDTOUpdatedAt = qtn ^. updatedAt
+    { uuid = qtn.uuid
+    , name = qtn.name
+    , description = qtn.description
+    , phaseUuid = qtnCtn.phaseUuid
+    , visibility = qtn.visibility
+    , sharing = qtn.sharing
+    , state = state
+    , package = PM.toSimpleDTO' [] [] pkg
+    , packageVersions = L.sortBy compareVersion pkgVersions
+    , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
+    , projectTags = qtn.projectTags
+    , templateId = qtn.templateId
+    , template = fmap STM.toDTO mTemplate
+    , formatUuid = qtn.formatUuid
+    , format = fmap toFormatDTO mFormat
+    , templateState = toQuestionnaireDetailTemplateState mTemplate
+    , knowledgeModel = knowledgeModel
+    , replies = replies
+    , commentThreadsMap = threads
+    , labels = qtnCtn.labels
+    , permissions = records
+    , versions = versions
+    , creatorUuid = qtn.creatorUuid
+    , isTemplate = qtn.isTemplate
+    , migrationUuid = mMigrationUuid
+    , createdAt = qtn.createdAt
+    , updatedAt = qtn.updatedAt
     }
 
-toContentDTO ::
-     QuestionnaireContent
+toContentDTO
+  :: QuestionnaireContent
   -> M.Map String [QuestionnaireCommentThreadDTO]
   -> [QuestionnaireEventDTO]
   -> [QuestionnaireVersionDTO]
   -> QuestionnaireContentDTO
 toContentDTO qtnCtn threads events versions =
   QuestionnaireContentDTO
-    { _questionnaireContentDTOPhaseUuid = qtnCtn ^. phaseUuid
-    , _questionnaireContentDTOReplies = qtnCtn ^. replies
-    , _questionnaireContentDTOCommentThreadsMap = threads
-    , _questionnaireContentDTOLabels = qtnCtn ^. labels
-    , _questionnaireContentDTOEvents = events
-    , _questionnaireContentDTOVersions = versions
+    { phaseUuid = qtnCtn.phaseUuid
+    , replies = qtnCtn.replies
+    , commentThreadsMap = threads
+    , labels = qtnCtn.labels
+    , events = events
+    , versions = versions
     }
 
 toQuestionnaireReportDTO :: [Indication] -> QuestionnaireReportDTO
-toQuestionnaireReportDTO indications = QuestionnaireReportDTO {_questionnaireReportDTOIndications = indications}
+toQuestionnaireReportDTO indications = QuestionnaireReportDTO {indications = indications}
 
 toChangeDTO :: Questionnaire -> QuestionnaireChangeDTO
 toChangeDTO qtn =
   QuestionnaireChangeDTO
-    { _questionnaireChangeDTOName = qtn ^. name
-    , _questionnaireChangeDTODescription = qtn ^. description
-    , _questionnaireChangeDTOVisibility = qtn ^. visibility
-    , _questionnaireChangeDTOSharing = qtn ^. sharing
-    , _questionnaireChangeDTOProjectTags = qtn ^. projectTags
-    , _questionnaireChangeDTOPermissions = qtn ^. permissions
-    , _questionnaireChangeDTOTemplateId = qtn ^. templateId
-    , _questionnaireChangeDTOFormatUuid = qtn ^. formatUuid
-    , _questionnaireChangeDTOIsTemplate = qtn ^. isTemplate
+    { name = qtn.name
+    , description = qtn.description
+    , visibility = qtn.visibility
+    , sharing = qtn.sharing
+    , projectTags = qtn.projectTags
+    , permissions = qtn.permissions
+    , templateId = qtn.templateId
+    , formatUuid = qtn.formatUuid
+    , isTemplate = qtn.isTemplate
     }
 
 toUserPermRecord :: U.UUID -> U.UUID -> U.UUID -> [String] -> QuestionnairePermRecord
 toUserPermRecord permUuid questionnaireUuid userUuid perms =
   QuestionnairePermRecord
-    { _questionnairePermRecordUuid = permUuid
-    , _questionnairePermRecordQuestionnaireUuid = questionnaireUuid
-    , _questionnairePermRecordMember = UserMember {_userMemberUuid = userUuid}
-    , _questionnairePermRecordPerms = perms
+    { uuid = permUuid
+    , questionnaireUuid = questionnaireUuid
+    , member = UserMember {uuid = userUuid}
+    , perms = perms
     }
 
 toGroupPermRecord :: U.UUID -> U.UUID -> String -> [String] -> QuestionnairePermRecord
 toGroupPermRecord permUuid questionnaireUuid groupId perms =
   QuestionnairePermRecord
-    { _questionnairePermRecordUuid = permUuid
-    , _questionnairePermRecordQuestionnaireUuid = questionnaireUuid
-    , _questionnairePermRecordMember = GroupMember {_groupMemberGId = groupId}
-    , _questionnairePermRecordPerms = perms
+    { uuid = permUuid
+    , questionnaireUuid = questionnaireUuid
+    , member = GroupMember {gId = groupId}
+    , perms = perms
     }
 
 toUserPermRecordDTO :: QuestionnairePermRecord -> User -> QuestionnairePermRecordDTO
 toUserPermRecordDTO record user =
   QuestionnairePermRecordDTO
-    { _questionnairePermRecordDTOUuid = record ^. uuid
-    , _questionnairePermRecordDTOQuestionnaireUuid = record ^. questionnaireUuid
-    , _questionnairePermRecordDTOMember = toUserMemberDTO user
-    , _questionnairePermRecordDTOPerms = record ^. perms
+    { uuid = record.uuid
+    , questionnaireUuid = record.questionnaireUuid
+    , member = toUserMemberDTO user
+    , perms = record.perms
     }
 
 toGroupPermRecordDTO :: QuestionnairePermRecord -> Group -> QuestionnairePermRecordDTO
 toGroupPermRecordDTO record group =
   QuestionnairePermRecordDTO
-    { _questionnairePermRecordDTOUuid = record ^. uuid
-    , _questionnairePermRecordDTOQuestionnaireUuid = record ^. questionnaireUuid
-    , _questionnairePermRecordDTOMember = toGroupMemberDTO group
-    , _questionnairePermRecordDTOPerms = record ^. perms
+    { uuid = record.uuid
+    , questionnaireUuid = record.questionnaireUuid
+    , member = toGroupMemberDTO group
+    , perms = record.perms
     }
 
 toSimple :: Questionnaire -> QuestionnaireSimple
-toSimple qtn = QuestionnaireSimple {_questionnaireSimpleUuid = qtn ^. uuid, _questionnaireSimpleName = qtn ^. name}
+toSimple qtn = QuestionnaireSimple {uuid = qtn.uuid, name = qtn.name}
 
 toCreateFromTemplateDTO :: Questionnaire -> QuestionnaireCreateFromTemplateDTO
 toCreateFromTemplateDTO qtn =
   QuestionnaireCreateFromTemplateDTO
-    { _questionnaireCreateFromTemplateDTOName = qtn ^. name
-    , _questionnaireCreateFromTemplateDTOQuestionnaireUuid = qtn ^. uuid
+    { name = qtn.name
+    , questionnaireUuid = qtn.uuid
     }
 
 toQuestionnaireDetailTemplateState :: Maybe Template -> Maybe TemplateState
 toQuestionnaireDetailTemplateState =
   fmap
-    (\template ->
-       if template ^. metamodelVersion /= templateMetamodelVersion
-         then UnsupportedMetamodelVersionTemplateState
-         else UnknownTemplateState)
+    ( \template ->
+        if template.metamodelVersion /= templateMetamodelVersion
+          then UnsupportedMetamodelVersionTemplateState
+          else UnknownTemplateState
+    )
 
-fromChangeDTO ::
-     Questionnaire
+fromChangeDTO
+  :: Questionnaire
   -> QuestionnaireChangeDTO
   -> QuestionnaireVisibility
   -> QuestionnaireSharing
@@ -244,36 +243,36 @@ fromChangeDTO ::
   -> Questionnaire
 fromChangeDTO qtn dto visibility sharing currentUser now =
   Questionnaire
-    { _questionnaireUuid = qtn ^. uuid
-    , _questionnaireName = dto ^. name
-    , _questionnaireDescription = dto ^. description
-    , _questionnaireVisibility = visibility
-    , _questionnaireSharing = sharing
-    , _questionnairePackageId = qtn ^. packageId
-    , _questionnaireSelectedQuestionTagUuids = qtn ^. selectedQuestionTagUuids
-    , _questionnaireProjectTags = dto ^. projectTags
-    , _questionnaireTemplateId = dto ^. templateId
-    , _questionnaireFormatUuid = dto ^. formatUuid
-    , _questionnaireCreatorUuid = qtn ^. creatorUuid
-    , _questionnairePermissions = fmap sanitizePerms (dto ^. permissions)
-    , _questionnaireEvents = qtn ^. events
-    , _questionnaireVersions = qtn ^. versions
-    , _questionnaireIsTemplate =
-        if _QTN_TML_PERM `elem` (currentUser ^. permissions)
-          then dto ^. isTemplate
-          else qtn ^. isTemplate
-    , _questionnaireSquashed = qtn ^. squashed
-    , _questionnaireAnsweredQuestions = qtn ^. answeredQuestions
-    , _questionnaireUnansweredQuestions = qtn ^. unansweredQuestions
-    , _questionnaireAppUuid = qtn ^. appUuid
-    , _questionnaireCreatedAt = qtn ^. createdAt
-    , _questionnaireUpdatedAt = now
+    { uuid = qtn.uuid
+    , name = dto.name
+    , description = dto.description
+    , visibility = visibility
+    , sharing = sharing
+    , packageId = qtn.packageId
+    , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
+    , projectTags = dto.projectTags
+    , templateId = dto.templateId
+    , formatUuid = dto.formatUuid
+    , creatorUuid = qtn.creatorUuid
+    , permissions = fmap sanitizePerms dto.permissions
+    , events = qtn.events
+    , versions = qtn.versions
+    , isTemplate =
+        if _QTN_TML_PERM `elem` currentUser.permissions
+          then dto.isTemplate
+          else qtn.isTemplate
+    , squashed = qtn.squashed
+    , answeredQuestions = qtn.answeredQuestions
+    , unansweredQuestions = qtn.unansweredQuestions
+    , appUuid = qtn.appUuid
+    , createdAt = qtn.createdAt
+    , updatedAt = now
     }
   where
-    sanitizePerms perm = perm & questionnaireUuid .~ (qtn ^. uuid)
+    sanitizePerms perm = perm {questionnaireUuid = qtn.uuid} :: QuestionnairePermRecord
 
-fromQuestionnaireCreateDTO ::
-     QuestionnaireCreateDTO
+fromQuestionnaireCreateDTO
+  :: QuestionnaireCreateDTO
   -> U.UUID
   -> QuestionnaireVisibility
   -> QuestionnaireSharing
@@ -287,45 +286,45 @@ fromQuestionnaireCreateDTO ::
   -> Questionnaire
 fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId phaseEventUuid mPhase appUuid now permUuid =
   Questionnaire
-    { _questionnaireUuid = qtnUuid
-    , _questionnaireName = dto ^. name
-    , _questionnaireDescription = Nothing
-    , _questionnaireVisibility = visibility
-    , _questionnaireSharing = sharing
-    , _questionnairePackageId = pkgId
-    , _questionnaireSelectedQuestionTagUuids = dto ^. questionTagUuids
-    , _questionnaireProjectTags = []
-    , _questionnaireTemplateId = dto ^. templateId
-    , _questionnaireFormatUuid = dto ^. formatUuid
-    , _questionnaireCreatorUuid = mCurrentUserUuid
-    , _questionnairePermissions =
+    { uuid = qtnUuid
+    , name = dto.name
+    , description = Nothing
+    , visibility = visibility
+    , sharing = sharing
+    , packageId = pkgId
+    , selectedQuestionTagUuids = dto.questionTagUuids
+    , projectTags = []
+    , templateId = dto.templateId
+    , formatUuid = dto.formatUuid
+    , creatorUuid = mCurrentUserUuid
+    , permissions =
         case mCurrentUserUuid of
           Just currentUserUuid -> [toUserPermRecord permUuid qtnUuid currentUserUuid ownerPermissions]
           Nothing -> []
-    , _questionnaireEvents =
+    , events =
         case mPhase of
           Just phase ->
             [ SetPhaseEvent' $
-              SetPhaseEvent
-                { _setPhaseEventUuid = phaseEventUuid
-                , _setPhaseEventPhaseUuid = Just phase
-                , _setPhaseEventCreatedBy = mCurrentUserUuid
-                , _setPhaseEventCreatedAt = now
-                }
+                SetPhaseEvent
+                  { uuid = phaseEventUuid
+                  , phaseUuid = Just phase
+                  , createdBy = mCurrentUserUuid
+                  , createdAt = now
+                  }
             ]
           Nothing -> []
-    , _questionnaireVersions = []
-    , _questionnaireIsTemplate = False
-    , _questionnaireSquashed = True
-    , _questionnaireAnsweredQuestions = 0
-    , _questionnaireUnansweredQuestions = 0
-    , _questionnaireAppUuid = appUuid
-    , _questionnaireCreatedAt = now
-    , _questionnaireUpdatedAt = now
+    , versions = []
+    , isTemplate = False
+    , squashed = True
+    , answeredQuestions = 0
+    , unansweredQuestions = 0
+    , appUuid = appUuid
+    , createdAt = now
+    , updatedAt = now
     }
 
 fromContentChangeDTO :: Questionnaire -> QuestionnaireContentChangeDTO -> Maybe UserDTO -> UTCTime -> Questionnaire
 fromContentChangeDTO qtn dto mCurrentUser now =
-  let newTodoEvents = fmap (\e -> fromEventChangeDTO e (mCurrentUser ^? _Just . uuid) now) (dto ^. events)
-      updatedEvents = qtn ^. events ++ newTodoEvents
-   in qtn {_questionnaireEvents = updatedEvents, _questionnaireUpdatedAt = now}
+  let newTodoEvents = fmap (\e -> fromEventChangeDTO e (fmap (.uuid) mCurrentUser) now) dto.events
+      updatedEvents = qtn.events ++ newTodoEvents
+   in qtn {events = updatedEvents, updatedAt = now}

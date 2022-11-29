@@ -1,6 +1,6 @@
-module Registry.Service.Package.PackageValidation
-  ( validateIsVersionHigher
-  ) where
+module Registry.Service.Package.PackageValidation (
+  validateIsVersionHigher,
+) where
 
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error

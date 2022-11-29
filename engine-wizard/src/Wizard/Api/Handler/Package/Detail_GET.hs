@@ -10,15 +10,15 @@ import Wizard.Api.Resource.Package.PackageDetailJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Package.PackageService
 
-type Detail_GET
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> "packages"
-     :> Capture "pkgId" String
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] PackageDetailDTO)
+type Detail_GET =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> "packages"
+    :> Capture "pkgId" String
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] PackageDetailDTO)
 
-detail_GET ::
-     Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] PackageDetailDTO)
+detail_GET
+  :: Maybe String -> Maybe String -> String -> BaseContextM (Headers '[Header "x-trace-uuid" String] PackageDetailDTO)
 detail_GET mTokenHeader mServerUrl pkgId =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
     runInMaybeAuthService NoTransaction $ addTraceUuidHeader =<< getPackageDetailById pkgId

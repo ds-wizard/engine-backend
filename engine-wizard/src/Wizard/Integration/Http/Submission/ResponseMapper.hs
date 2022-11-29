@@ -1,6 +1,6 @@
-module Wizard.Integration.Http.Submission.ResponseMapper
-  ( toUploadDocumentResponse
-  ) where
+module Wizard.Integration.Http.Submission.ResponseMapper (
+  toUploadDocumentResponse,
+) where
 
 import qualified Data.ByteString.Lazy as BSL
 import Network.Wreq (Response)

@@ -8,27 +8,27 @@ data OrganizationRole
   | UserRole
   deriving (Show, Eq, Generic, Read)
 
-data Organization =
-  Organization
-    { _organizationOrganizationId :: String
-    , _organizationName :: String
-    , _organizationDescription :: String
-    , _organizationEmail :: String
-    , _organizationRole :: OrganizationRole
-    , _organizationToken :: String
-    , _organizationActive :: Bool
-    , _organizationLogo :: Maybe String
-    , _organizationCreatedAt :: UTCTime
-    , _organizationUpdatedAt :: UTCTime
-    }
+data Organization = Organization
+  { organizationId :: String
+  , name :: String
+  , description :: String
+  , email :: String
+  , oRole :: OrganizationRole
+  , token :: String
+  , active :: Bool
+  , logo :: Maybe String
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq Organization where
   a == b =
-    _organizationOrganizationId a == _organizationOrganizationId b &&
-    _organizationName a == _organizationName b &&
-    _organizationDescription a == _organizationDescription b &&
-    _organizationEmail a == _organizationEmail b &&
-    _organizationRole a == _organizationRole b &&
-    _organizationToken a == _organizationToken b &&
-    _organizationActive a == _organizationActive b && _organizationLogo a == _organizationLogo b
+    organizationId a == organizationId b
+      && name a == name b
+      && description a == description b
+      && email a == email b
+      && oRole a == oRole b
+      && token a == token b
+      && active a == active b
+      && logo a == logo b

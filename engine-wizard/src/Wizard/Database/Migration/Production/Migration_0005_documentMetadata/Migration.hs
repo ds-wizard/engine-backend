@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0005_documentMetadata.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0005_documentMetadata.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -13,7 +13,10 @@ definition = (meta, migrate)
 
 meta =
   MigrationMeta
-    {mmNumber = 5, mmName = "Document metadata", mmDescription = "Add workerLog and embed metadata into document table"}
+    { mmNumber = 5
+    , mmName = "Document metadata"
+    , mmDescription = "Add workerLog and embed metadata into document table"
+    }
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do

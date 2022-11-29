@@ -1,8 +1,7 @@
-module Wizard.Specs.API.Questionnaire.List_POST
-  ( list_post
-  ) where
+module Wizard.Specs.API.Questionnaire.List_POST (
+  list_post,
+) where
 
-import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
 import qualified Data.UUID as U
 import Network.HTTP.Types
@@ -10,10 +9,11 @@ import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
+import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -21,6 +21,7 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireAcl
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -59,64 +60,80 @@ test_201 appContext = do
     appContext
     "HTTP 201 CREATED (without token)"
     True
-    (questionnaire1Create & sharing .~ AnyoneWithLinkEditQuestionnaire)
+    (questionnaire1Create {sharing = AnyoneWithLinkEditQuestionnaire} :: QuestionnaireCreateDTO)
     []
 
 create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
   it title $
-     -- GIVEN: Prepare request
-   do
-    let reqHeaders = reqHeadersT authHeader
-    let reqBody = reqBodyT qtn
-    -- AND: Prepare expectation
-    let expStatus = 201
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto =
-          if anonymousSharingEnabled
-            then questionnaire1Dto & sharing .~ AnyoneWithLinkEditQuestionnaire
-            else questionnaire1Dto
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO TML.runMigration appContext
-    runInContextIO (insertPackage germanyPackage) appContext
-    runInContextIO deleteQuestionnaires appContext
-    -- AND: Enabled anonymous sharing
-    updateAnonymousQuestionnaireSharing appContext anonymousSharingEnabled
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, QuestionnaireDTO)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    compareQuestionnaireCreateDtos resBody expDto
-    -- AND: Find a result in DB
-    (Right eventsInDB) <- runInContextIO (findQuestionnaireEventsById (U.toString $ resBody ^. uuid)) appContext
-    if anonymousSharingEnabled
-      then assertExistenceOfQuestionnaireInDB
-             appContext
-             ((uuid .~ (resBody ^. uuid)) .
-              (description .~ Nothing) .
-              (isTemplate .~ False) .
-              (sharing .~ AnyoneWithLinkEditQuestionnaire) .
-              (events .~ eventsInDB) .
-              (versions .~ []) .
-              (projectTags .~ []) .
-              (permissions .~ []) . (creatorUuid .~ Nothing) . (answeredQuestions .~ 0) . (unansweredQuestions .~ 0) $
-              questionnaire1)
-      else do
-        let aPermissions =
-              [ (uuid .~ head (resBody ^. permissions) ^. uuid) . (questionnaireUuid .~ resBody ^. uuid) $
-                head (questionnaire1 ^. permissions)
-              ]
-        assertExistenceOfQuestionnaireInDB
-          appContext
-          ((uuid .~ (resBody ^. uuid)) .
-           (description .~ Nothing) .
-           (isTemplate .~ False) .
-           (events .~ eventsInDB) .
-           (versions .~ []) .
-           (projectTags .~ []) . (permissions .~ aPermissions) . (answeredQuestions .~ 0) . (unansweredQuestions .~ 0) $
-           questionnaire1)
+    -- GIVEN: Prepare request
+    do
+      let reqHeaders = reqHeadersT authHeader
+      let reqBody = reqBodyT qtn
+      -- AND: Prepare expectation
+      let expStatus = 201
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto =
+            if anonymousSharingEnabled
+              then questionnaire1Dto {sharing = AnyoneWithLinkEditQuestionnaire} :: QuestionnaireDTO
+              else questionnaire1Dto
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO TML.runMigration appContext
+      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO deleteQuestionnaires appContext
+      -- AND: Enabled anonymous sharing
+      updateAnonymousQuestionnaireSharing appContext anonymousSharingEnabled
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, QuestionnaireDTO)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      compareQuestionnaireCreateDtos resBody expDto
+      -- AND: Find a result in DB
+      (Right eventsInDB) <- runInContextIO (findQuestionnaireEventsById (U.toString $ resBody.uuid)) appContext
+      if anonymousSharingEnabled
+        then
+          assertExistenceOfQuestionnaireInDB
+            appContext
+            ( questionnaire1
+                { uuid = resBody.uuid
+                , description = Nothing
+                , isTemplate = False
+                , sharing = AnyoneWithLinkEditQuestionnaire
+                , events = eventsInDB
+                , versions = []
+                , projectTags = []
+                , permissions = []
+                , creatorUuid = Nothing
+                , answeredQuestions = 0
+                , unansweredQuestions = 0
+                }
+              :: Questionnaire
+            )
+        else do
+          let aPermissions =
+                [ (head questionnaire1.permissions)
+                    { uuid = (head resBody.permissions).uuid
+                    , questionnaireUuid = resBody.uuid
+                    }
+                  :: QuestionnairePermRecord
+                ]
+          assertExistenceOfQuestionnaireInDB
+            appContext
+            ( questionnaire1
+                { uuid = resBody.uuid
+                , description = Nothing
+                , isTemplate = False
+                , events = eventsInDB
+                , versions = []
+                , projectTags = []
+                , permissions = aPermissions
+                , answeredQuestions = 0
+                , unansweredQuestions = 0
+                }
+              :: Questionnaire
+            )
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

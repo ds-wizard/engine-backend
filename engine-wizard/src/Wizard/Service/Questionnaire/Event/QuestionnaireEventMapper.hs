@@ -1,10 +1,8 @@
 module Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper where
 
-import Control.Lens ((^.))
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
@@ -25,39 +23,39 @@ toEventDTO event' mCreatedBy =
 toSetReplyEventDTO :: SetReplyEvent -> Maybe User -> SetReplyEventDTO
 toSetReplyEventDTO event user =
   SetReplyEventDTO
-    { _setReplyEventDTOUuid = event ^. uuid
-    , _setReplyEventDTOPath = event ^. path
-    , _setReplyEventDTOValue = event ^. value
-    , _setReplyEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
-    , _setReplyEventDTOCreatedAt = event ^. createdAt
+    { uuid = event.uuid
+    , path = event.path
+    , value = event.value
+    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
+    , createdAt = event.createdAt
     }
 
 toClearReplyEventDTO :: ClearReplyEvent -> Maybe User -> ClearReplyEventDTO
 toClearReplyEventDTO event user =
   ClearReplyEventDTO
-    { _clearReplyEventDTOUuid = event ^. uuid
-    , _clearReplyEventDTOPath = event ^. path
-    , _clearReplyEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
-    , _clearReplyEventDTOCreatedAt = event ^. createdAt
+    { uuid = event.uuid
+    , path = event.path
+    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
+    , createdAt = event.createdAt
     }
 
 toSetPhaseEventDTO :: SetPhaseEvent -> Maybe User -> SetPhaseEventDTO
 toSetPhaseEventDTO event user =
   SetPhaseEventDTO
-    { _setPhaseEventDTOUuid = event ^. uuid
-    , _setPhaseEventDTOPhaseUuid = event ^. phaseUuid
-    , _setPhaseEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
-    , _setPhaseEventDTOCreatedAt = event ^. createdAt
+    { uuid = event.uuid
+    , phaseUuid = event.phaseUuid
+    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
+    , createdAt = event.createdAt
     }
 
 toSetLabelsEventDTO :: SetLabelsEvent -> Maybe User -> SetLabelsEventDTO
 toSetLabelsEventDTO event user =
   SetLabelsEventDTO
-    { _setLabelsEventDTOUuid = event ^. uuid
-    , _setLabelsEventDTOPath = event ^. path
-    , _setLabelsEventDTOValue = event ^. value
-    , _setLabelsEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
-    , _setLabelsEventDTOCreatedAt = event ^. createdAt
+    { uuid = event.uuid
+    , path = event.path
+    , value = event.value
+    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
+    , createdAt = event.createdAt
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -89,108 +87,108 @@ toEventDTO' event' mCreatedBy now =
 toSetReplyEventDTO' :: SetReplyEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> SetReplyEventDTO
 toSetReplyEventDTO' event mCreatedBy now =
   SetReplyEventDTO
-    { _setReplyEventDTOUuid = event ^. uuid
-    , _setReplyEventDTOPath = event ^. path
-    , _setReplyEventDTOValue = event ^. value
-    , _setReplyEventDTOCreatedBy = mCreatedBy
-    , _setReplyEventDTOCreatedAt = now
+    { uuid = event.uuid
+    , path = event.path
+    , value = event.value
+    , createdBy = mCreatedBy
+    , createdAt = now
     }
 
 toClearReplyEventDTO' :: ClearReplyEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> ClearReplyEventDTO
 toClearReplyEventDTO' event mCreatedBy now =
   ClearReplyEventDTO
-    { _clearReplyEventDTOUuid = event ^. uuid
-    , _clearReplyEventDTOPath = event ^. path
-    , _clearReplyEventDTOCreatedBy = mCreatedBy
-    , _clearReplyEventDTOCreatedAt = now
+    { uuid = event.uuid
+    , path = event.path
+    , createdBy = mCreatedBy
+    , createdAt = now
     }
 
 toSetPhaseEventDTO' :: SetPhaseEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> SetPhaseEventDTO
 toSetPhaseEventDTO' event mCreatedBy now =
   SetPhaseEventDTO
-    { _setPhaseEventDTOUuid = event ^. uuid
-    , _setPhaseEventDTOPhaseUuid = event ^. phaseUuid
-    , _setPhaseEventDTOCreatedBy = mCreatedBy
-    , _setPhaseEventDTOCreatedAt = now
+    { uuid = event.uuid
+    , phaseUuid = event.phaseUuid
+    , createdBy = mCreatedBy
+    , createdAt = now
     }
 
 toSetLabelsEventDTO' :: SetLabelsEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> SetLabelsEventDTO
 toSetLabelsEventDTO' event mCreatedBy now =
   SetLabelsEventDTO
-    { _setLabelsEventDTOUuid = event ^. uuid
-    , _setLabelsEventDTOPath = event ^. path
-    , _setLabelsEventDTOValue = event ^. value
-    , _setLabelsEventDTOCreatedBy = mCreatedBy
-    , _setLabelsEventDTOCreatedAt = now
+    { uuid = event.uuid
+    , path = event.path
+    , value = event.value
+    , createdBy = mCreatedBy
+    , createdAt = now
     }
 
-toResolveCommentThreadEventDTO' ::
-     ResolveCommentThreadEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> ResolveCommentThreadEventDTO
+toResolveCommentThreadEventDTO'
+  :: ResolveCommentThreadEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> ResolveCommentThreadEventDTO
 toResolveCommentThreadEventDTO' event mCreatedBy now =
   ResolveCommentThreadEventDTO
-    { _resolveCommentThreadEventDTOUuid = event ^. uuid
-    , _resolveCommentThreadEventDTOPath = event ^. path
-    , _resolveCommentThreadEventDTOThreadUuid = event ^. threadUuid
-    , _resolveCommentThreadEventDTOCreatedBy = mCreatedBy
-    , _resolveCommentThreadEventDTOCreatedAt = now
+    { uuid = event.uuid
+    , path = event.path
+    , threadUuid = event.threadUuid
+    , createdBy = mCreatedBy
+    , createdAt = now
     }
 
-toReopenCommentThreadEventDTO' ::
-     ReopenCommentThreadEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> ReopenCommentThreadEventDTO
+toReopenCommentThreadEventDTO'
+  :: ReopenCommentThreadEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> ReopenCommentThreadEventDTO
 toReopenCommentThreadEventDTO' event mCreatedBy now =
   ReopenCommentThreadEventDTO
-    { _reopenCommentThreadEventDTOUuid = event ^. uuid
-    , _reopenCommentThreadEventDTOPath = event ^. path
-    , _reopenCommentThreadEventDTOThreadUuid = event ^. threadUuid
-    , _reopenCommentThreadEventDTOCreatedBy = mCreatedBy
-    , _reopenCommentThreadEventDTOCreatedAt = now
+    { uuid = event.uuid
+    , path = event.path
+    , threadUuid = event.threadUuid
+    , createdBy = mCreatedBy
+    , createdAt = now
     }
 
-toDeleteCommentThreadEventDTO' ::
-     DeleteCommentThreadEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> DeleteCommentThreadEventDTO
+toDeleteCommentThreadEventDTO'
+  :: DeleteCommentThreadEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> DeleteCommentThreadEventDTO
 toDeleteCommentThreadEventDTO' event mCreatedBy now =
   DeleteCommentThreadEventDTO
-    { _deleteCommentThreadEventDTOUuid = event ^. uuid
-    , _deleteCommentThreadEventDTOPath = event ^. path
-    , _deleteCommentThreadEventDTOThreadUuid = event ^. threadUuid
-    , _deleteCommentThreadEventDTOCreatedBy = mCreatedBy
-    , _deleteCommentThreadEventDTOCreatedAt = now
+    { uuid = event.uuid
+    , path = event.path
+    , threadUuid = event.threadUuid
+    , createdBy = mCreatedBy
+    , createdAt = now
     }
 
 toAddCommentEventDTO' :: AddCommentEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> AddCommentEventDTO
 toAddCommentEventDTO' event mCreatedBy now =
   AddCommentEventDTO
-    { _addCommentEventDTOUuid = event ^. uuid
-    , _addCommentEventDTOPath = event ^. path
-    , _addCommentEventDTOThreadUuid = event ^. threadUuid
-    , _addCommentEventDTOCommentUuid = event ^. commentUuid
-    , _addCommentEventDTOText = event ^. text
-    , _addCommentEventDTOPrivate = event ^. private
-    , _addCommentEventDTOCreatedBy = mCreatedBy
-    , _addCommentEventDTOCreatedAt = now
+    { uuid = event.uuid
+    , path = event.path
+    , threadUuid = event.threadUuid
+    , commentUuid = event.commentUuid
+    , text = event.text
+    , private = event.private
+    , createdBy = mCreatedBy
+    , createdAt = now
     }
 
 toEditCommentEventDTO' :: EditCommentEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> EditCommentEventDTO
 toEditCommentEventDTO' event mCreatedBy now =
   EditCommentEventDTO
-    { _editCommentEventDTOUuid = event ^. uuid
-    , _editCommentEventDTOPath = event ^. path
-    , _editCommentEventDTOThreadUuid = event ^. threadUuid
-    , _editCommentEventDTOCommentUuid = event ^. commentUuid
-    , _editCommentEventDTOText = event ^. text
-    , _editCommentEventDTOCreatedBy = mCreatedBy
-    , _editCommentEventDTOCreatedAt = now
+    { uuid = event.uuid
+    , path = event.path
+    , threadUuid = event.threadUuid
+    , commentUuid = event.commentUuid
+    , text = event.text
+    , createdBy = mCreatedBy
+    , createdAt = now
     }
 
 toDeleteCommentEventDTO' :: DeleteCommentEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> DeleteCommentEventDTO
 toDeleteCommentEventDTO' event mCreatedBy now =
   DeleteCommentEventDTO
-    { _deleteCommentEventDTOUuid = event ^. uuid
-    , _deleteCommentEventDTOPath = event ^. path
-    , _deleteCommentEventDTOThreadUuid = event ^. threadUuid
-    , _deleteCommentEventDTOCommentUuid = event ^. commentUuid
-    , _deleteCommentEventDTOCreatedBy = mCreatedBy
-    , _deleteCommentEventDTOCreatedAt = now
+    { uuid = event.uuid
+    , path = event.path
+    , threadUuid = event.threadUuid
+    , commentUuid = event.commentUuid
+    , createdBy = mCreatedBy
+    , createdAt = now
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -210,31 +208,33 @@ toEventChangeDTO event phasesAnsweredIndication =
 toSetReplyEventChangeDTO :: SetReplyEvent -> PhasesAnsweredIndication -> SetReplyEventChangeDTO
 toSetReplyEventChangeDTO event phasesAnsweredIndication =
   SetReplyEventChangeDTO
-    { _setReplyEventChangeDTOUuid = event ^. uuid
-    , _setReplyEventChangeDTOPath = event ^. path
-    , _setReplyEventChangeDTOValue = event ^. value
-    , _setReplyEventChangeDTOPhasesAnsweredIndication = phasesAnsweredIndication
+    { uuid = event.uuid
+    , path = event.path
+    , value = event.value
+    , phasesAnsweredIndication = phasesAnsweredIndication
     }
 
 toClearReplyEventChangeDTO :: ClearReplyEvent -> PhasesAnsweredIndication -> ClearReplyEventChangeDTO
 toClearReplyEventChangeDTO event phasesAnsweredIndication =
   ClearReplyEventChangeDTO
-    { _clearReplyEventChangeDTOUuid = event ^. uuid
-    , _clearReplyEventChangeDTOPath = event ^. path
-    , _clearReplyEventChangeDTOPhasesAnsweredIndication = phasesAnsweredIndication
+    { uuid = event.uuid
+    , path = event.path
+    , phasesAnsweredIndication = phasesAnsweredIndication
     }
 
 toSetPhaseEventChangeDTO :: SetPhaseEvent -> PhasesAnsweredIndication -> SetPhaseEventChangeDTO
 toSetPhaseEventChangeDTO event phasesAnsweredIndication =
   SetPhaseEventChangeDTO
-    {_setPhaseEventChangeDTOUuid = event ^. uuid, _setPhaseEventChangeDTOPhaseUuid = event ^. phaseUuid}
+    { uuid = event.uuid
+    , phaseUuid = event.phaseUuid
+    }
 
 toSetLabelsEventChangeDTO :: SetLabelsEvent -> PhasesAnsweredIndication -> SetLabelsEventChangeDTO
 toSetLabelsEventChangeDTO event phasesAnsweredIndication =
   SetLabelsEventChangeDTO
-    { _setLabelsEventChangeDTOUuid = event ^. uuid
-    , _setLabelsEventChangeDTOPath = event ^. path
-    , _setLabelsEventChangeDTOValue = event ^. value
+    { uuid = event.uuid
+    , path = event.path
+    , value = event.value
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -254,39 +254,39 @@ fromEventChangeDTO event createdBy now =
 fromSetReplyEventChangeDTO :: SetReplyEventChangeDTO -> Maybe U.UUID -> UTCTime -> SetReplyEvent
 fromSetReplyEventChangeDTO event createdBy now =
   SetReplyEvent
-    { _setReplyEventUuid = event ^. uuid
-    , _setReplyEventPath = event ^. path
-    , _setReplyEventValue = event ^. value
-    , _setReplyEventCreatedBy = createdBy
-    , _setReplyEventCreatedAt = now
+    { uuid = event.uuid
+    , path = event.path
+    , value = event.value
+    , createdBy = createdBy
+    , createdAt = now
     }
 
 fromClearReplyEventChangeDTO :: ClearReplyEventChangeDTO -> Maybe U.UUID -> UTCTime -> ClearReplyEvent
 fromClearReplyEventChangeDTO event createdBy now =
   ClearReplyEvent
-    { _clearReplyEventUuid = event ^. uuid
-    , _clearReplyEventPath = event ^. path
-    , _clearReplyEventCreatedBy = createdBy
-    , _clearReplyEventCreatedAt = now
+    { uuid = event.uuid
+    , path = event.path
+    , createdBy = createdBy
+    , createdAt = now
     }
 
 fromSetPhaseEventChangeDTO :: SetPhaseEventChangeDTO -> Maybe U.UUID -> UTCTime -> SetPhaseEvent
 fromSetPhaseEventChangeDTO event createdBy now =
   SetPhaseEvent
-    { _setPhaseEventUuid = event ^. uuid
-    , _setPhaseEventPhaseUuid = event ^. phaseUuid
-    , _setPhaseEventCreatedBy = createdBy
-    , _setPhaseEventCreatedAt = now
+    { uuid = event.uuid
+    , phaseUuid = event.phaseUuid
+    , createdBy = createdBy
+    , createdAt = now
     }
 
 fromSetLabelsEventChangeDTO :: SetLabelsEventChangeDTO -> Maybe U.UUID -> UTCTime -> SetLabelsEvent
 fromSetLabelsEventChangeDTO event createdBy now =
   SetLabelsEvent
-    { _setLabelsEventUuid = event ^. uuid
-    , _setLabelsEventPath = event ^. path
-    , _setLabelsEventValue = event ^. value
-    , _setLabelsEventCreatedBy = createdBy
-    , _setLabelsEventCreatedAt = now
+    { uuid = event.uuid
+    , path = event.path
+    , value = event.value
+    , createdBy = createdBy
+    , createdAt = now
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -294,7 +294,7 @@ fromSetLabelsEventChangeDTO event createdBy now =
 toReply :: SetReplyEvent -> Maybe User -> Reply
 toReply event mUser =
   Reply
-    { _replyValue = event ^. value
-    , _replyCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mUser
-    , _replyCreatedAt = event ^. createdAt
+    { value = event.value
+    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mUser
+    , createdAt = event.createdAt
     }

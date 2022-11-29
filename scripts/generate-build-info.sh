@@ -32,6 +32,9 @@ fi
 
 echo "version: $appVersion" >> $BUILD_INFO_FILE
 
+release=$(cat package.yaml | grep "version: " | cut -c 11- | rev | cut -c 2- | rev)
+echo "releaseVersion: $release" >> $BUILD_INFO_FILE
+
 # ---------------------------------------------------------------
 # 3. Create build timestamp
 # ---------------------------------------------------------------

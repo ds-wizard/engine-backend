@@ -24,12 +24,12 @@ createTables = do
   logInfo _CMP_MIGRATION "(Table/Audit) create table"
   let sql =
         "create table audit \
-                \ ( \
-                \     type                varchar                  not null, \
-                \     organization_id     varchar                  not null, \
-                \     instance_statistics json                     not null, \
-                \     package_id          varchar                  not null, \
-                \     created_at          timestamp with time zone not null \
-                \ );"
+        \ ( \
+        \     type                varchar                  not null, \
+        \     organization_id     varchar                  not null, \
+        \     instance_statistics json                     not null, \
+        \     package_id          varchar                  not null, \
+        \     created_at          timestamp with time zone not null \
+        \ );"
   let action conn = execute_ conn sql
   runDB action

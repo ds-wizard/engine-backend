@@ -1,55 +1,63 @@
 module Wizard.Service.KnowledgeModel.Compilator.Modifier.Reference where
 
-import Control.Lens ((^.))
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance CreateEntity AddReferenceEvent Reference where
-  createEntity (AddResourcePageReferenceEvent' e) =
+  createEntity (AddResourcePageReferenceEvent' event) =
     ResourcePageReference' $
-    ResourcePageReference
-      { _resourcePageReferenceUuid = e ^. entityUuid
-      , _resourcePageReferenceShortUuid = e ^. shortUuid
-      , _resourcePageReferenceAnnotations = e ^. annotations
-      }
-  createEntity (AddURLReferenceEvent' e) =
+      ResourcePageReference
+        { uuid = event.entityUuid
+        , shortUuid = event.shortUuid
+        , annotations = event.annotations
+        }
+  createEntity (AddURLReferenceEvent' event) =
     URLReference' $
-    URLReference
-      { _uRLReferenceUuid = e ^. entityUuid
-      , _uRLReferenceUrl = e ^. url
-      , _uRLReferenceLabel = e ^. label
-      , _uRLReferenceAnnotations = e ^. annotations
-      }
-  createEntity (AddCrossReferenceEvent' e) =
+      URLReference
+        { uuid = event.entityUuid
+        , url = event.url
+        , aLabel = event.aLabel
+        , annotations = event.annotations
+        }
+  createEntity (AddCrossReferenceEvent' event) =
     CrossReference' $
-    CrossReference
-      { _crossReferenceUuid = e ^. entityUuid
-      , _crossReferenceTargetUuid = e ^. targetUuid
-      , _crossReferenceDescription = e ^. description
-      , _crossReferenceAnnotations = e ^. annotations
-      }
+      CrossReference
+        { uuid = event.entityUuid
+        , targetUuid = event.targetUuid
+        , description = event.description
+        , annotations = event.annotations
+        }
 
 instance EditEntity EditReferenceEvent Reference where
-  editEntity e' ref =
-    case e' of
-      (EditResourcePageReferenceEvent' e) ->
-        ResourcePageReference' . applyToResourcePageReference e . convertToResourcePageReference $ ref
-      (EditURLReferenceEvent' e) -> URLReference' . applyToURLReference e . convertToURLReference $ ref
-      (EditCrossReferenceEvent' e) -> CrossReference' . applyToCrossReference e . convertToCrossReference $ ref
+  editEntity event' ref =
+    case event' of
+      (EditResourcePageReferenceEvent' event) -> applyToResourcePageReference event . convertToResourcePageReference $ ref
+      (EditURLReferenceEvent' event) -> applyToURLReference event . convertToURLReference $ ref
+      (EditCrossReferenceEvent' event) -> applyToCrossReference event . convertToCrossReference $ ref
     where
-      applyToResourcePageReference e = applyAnnotations e . applyShortUuid e
-      applyToURLReference e = applyAnnotations e . applyAnchor e . applyUrl e
-      applyToCrossReference e = applyAnnotations e . applyDescription e . applyTarget e
-      applyShortUuid e ref = applyValue (e ^. shortUuid) ref shortUuid
-      applyUrl e ref = applyValue (e ^. url) ref url
-      applyAnchor e ref = applyValue (e ^. label) ref label
-      applyTarget e ref = applyValue (e ^. targetUuid) ref targetUuid
-      applyDescription e ref = applyValue (e ^. description) ref description
-      applyAnnotations e ref = applyValue (e ^. annotations) ref annotations
+      applyToResourcePageReference event resourcePageReference =
+        ResourcePageReference' $
+          resourcePageReference
+            { shortUuid = applyValue resourcePageReference.shortUuid event.shortUuid
+            , annotations = applyValue resourcePageReference.annotations event.annotations
+            }
+      applyToURLReference event urlReference =
+        URLReference' $
+          urlReference
+            { url = applyValue urlReference.url event.url
+            , aLabel = applyValue urlReference.aLabel event.aLabel
+            , annotations = applyValue urlReference.annotations event.annotations
+            }
+      applyToCrossReference event crossReference =
+        CrossReference' $
+          crossReference
+            { targetUuid = applyValue crossReference.targetUuid event.targetUuid
+            , description = applyValue crossReference.description event.description
+            , annotations = applyValue crossReference.annotations event.annotations
+            }
 
 convertToResourcePageReference :: Reference -> ResourcePageReference
 convertToResourcePageReference (ResourcePageReference' ref) = ref
@@ -60,9 +68,9 @@ convertToResourcePageReference ref' =
   where
     createQuestion ref =
       ResourcePageReference
-        { _resourcePageReferenceUuid = ref ^. uuid
-        , _resourcePageReferenceShortUuid = ""
-        , _resourcePageReferenceAnnotations = ref ^. annotations
+        { uuid = ref.uuid
+        , shortUuid = ""
+        , annotations = ref.annotations
         }
 
 convertToURLReference :: Reference -> URLReference
@@ -74,10 +82,10 @@ convertToURLReference ref' =
   where
     createQuestion ref =
       URLReference
-        { _uRLReferenceUuid = ref ^. uuid
-        , _uRLReferenceUrl = ""
-        , _uRLReferenceLabel = ""
-        , _uRLReferenceAnnotations = ref ^. annotations
+        { uuid = ref.uuid
+        , url = ""
+        , aLabel = ""
+        , annotations = ref.annotations
         }
 
 convertToCrossReference :: Reference -> CrossReference
@@ -89,8 +97,8 @@ convertToCrossReference ref' =
   where
     createQuestion ref =
       CrossReference
-        { _crossReferenceUuid = ref ^. uuid
-        , _crossReferenceTargetUuid = U.nil
-        , _crossReferenceDescription = ""
-        , _crossReferenceAnnotations = ref ^. annotations
+        { uuid = ref.uuid
+        , targetUuid = U.nil
+        , description = ""
+        , annotations = ref.annotations
         }

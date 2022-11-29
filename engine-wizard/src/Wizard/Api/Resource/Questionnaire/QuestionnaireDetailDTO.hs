@@ -17,61 +17,60 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Template.TemplateState
 
-data QuestionnaireDetailDTO =
-  QuestionnaireDetailDTO
-    { _questionnaireDetailDTOUuid :: U.UUID
-    , _questionnaireDetailDTOName :: String
-    , _questionnaireDetailDTODescription :: Maybe String
-    , _questionnaireDetailDTOPhaseUuid :: Maybe U.UUID
-    , _questionnaireDetailDTOVisibility :: QuestionnaireVisibility
-    , _questionnaireDetailDTOSharing :: QuestionnaireSharing
-    , _questionnaireDetailDTOState :: QuestionnaireState
-    , _questionnaireDetailDTOPackage :: PackageSimpleDTO
-    , _questionnaireDetailDTOPackageVersions :: [String]
-    , _questionnaireDetailDTOSelectedQuestionTagUuids :: [U.UUID]
-    , _questionnaireDetailDTOProjectTags :: [String]
-    , _questionnaireDetailDTOTemplateId :: Maybe String
-    , _questionnaireDetailDTOTemplate :: Maybe TemplateDTO
-    , _questionnaireDetailDTOFormatUuid :: Maybe U.UUID
-    , _questionnaireDetailDTOFormat :: Maybe TemplateFormatDTO
-    , _questionnaireDetailDTOTemplateState :: Maybe TemplateState
-    , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModel
-    , _questionnaireDetailDTOReplies :: M.Map String Reply
-    , _questionnaireDetailDTOCommentThreadsMap :: M.Map String [QuestionnaireCommentThreadDTO]
-    , _questionnaireDetailDTOLabels :: M.Map String [U.UUID]
-    , _questionnaireDetailDTOCreatorUuid :: Maybe U.UUID
-    , _questionnaireDetailDTOPermissions :: [QuestionnairePermRecordDTO]
-    , _questionnaireDetailDTOVersions :: [QuestionnaireVersionDTO]
-    , _questionnaireDetailDTOIsTemplate :: Bool
-    , _questionnaireDetailDTOMigrationUuid :: Maybe U.UUID
-    , _questionnaireDetailDTOCreatedAt :: UTCTime
-    , _questionnaireDetailDTOUpdatedAt :: UTCTime
-    }
+data QuestionnaireDetailDTO = QuestionnaireDetailDTO
+  { uuid :: U.UUID
+  , name :: String
+  , description :: Maybe String
+  , phaseUuid :: Maybe U.UUID
+  , visibility :: QuestionnaireVisibility
+  , sharing :: QuestionnaireSharing
+  , state :: QuestionnaireState
+  , package :: PackageSimpleDTO
+  , packageVersions :: [String]
+  , selectedQuestionTagUuids :: [U.UUID]
+  , projectTags :: [String]
+  , templateId :: Maybe String
+  , template :: Maybe TemplateDTO
+  , formatUuid :: Maybe U.UUID
+  , format :: Maybe TemplateFormatDTO
+  , templateState :: Maybe TemplateState
+  , knowledgeModel :: KnowledgeModel
+  , replies :: M.Map String Reply
+  , commentThreadsMap :: M.Map String [QuestionnaireCommentThreadDTO]
+  , labels :: M.Map String [U.UUID]
+  , creatorUuid :: Maybe U.UUID
+  , permissions :: [QuestionnairePermRecordDTO]
+  , versions :: [QuestionnaireVersionDTO]
+  , isTemplate :: Bool
+  , migrationUuid :: Maybe U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq QuestionnaireDetailDTO where
   a == b =
-    _questionnaireDetailDTOUuid a == _questionnaireDetailDTOUuid b &&
-    _questionnaireDetailDTOName a == _questionnaireDetailDTOName b &&
-    _questionnaireDetailDTODescription a == _questionnaireDetailDTODescription b &&
-    _questionnaireDetailDTOPhaseUuid a == _questionnaireDetailDTOPhaseUuid b &&
-    _questionnaireDetailDTOVisibility a == _questionnaireDetailDTOVisibility b &&
-    _questionnaireDetailDTOSharing a == _questionnaireDetailDTOSharing b &&
-    _questionnaireDetailDTOState a == _questionnaireDetailDTOState b &&
-    _questionnaireDetailDTOPackage a == _questionnaireDetailDTOPackage b &&
-    _questionnaireDetailDTOPackageVersions a == _questionnaireDetailDTOPackageVersions b &&
-    _questionnaireDetailDTOSelectedQuestionTagUuids a == _questionnaireDetailDTOSelectedQuestionTagUuids b &&
-    _questionnaireDetailDTOProjectTags a == _questionnaireDetailDTOProjectTags b &&
-    _questionnaireDetailDTOTemplateId a == _questionnaireDetailDTOTemplateId b &&
-    _questionnaireDetailDTOTemplate a == _questionnaireDetailDTOTemplate b &&
-    _questionnaireDetailDTOFormatUuid a == _questionnaireDetailDTOFormatUuid b &&
-    _questionnaireDetailDTOFormat a == _questionnaireDetailDTOFormat b &&
-    _questionnaireDetailDTOTemplateState a == _questionnaireDetailDTOTemplateState b &&
-    _questionnaireDetailDTOKnowledgeModel a == _questionnaireDetailDTOKnowledgeModel b &&
-    _questionnaireDetailDTOReplies a == _questionnaireDetailDTOReplies b &&
-    _questionnaireDetailDTOCommentThreadsMap a == _questionnaireDetailDTOCommentThreadsMap b &&
-    _questionnaireDetailDTOPermissions a == _questionnaireDetailDTOPermissions b &&
-    _questionnaireDetailDTOVersions a == _questionnaireDetailDTOVersions b &&
-    _questionnaireDetailDTOCreatorUuid a == _questionnaireDetailDTOCreatorUuid b &&
-    _questionnaireDetailDTOIsTemplate a == _questionnaireDetailDTOIsTemplate b &&
-    _questionnaireDetailDTOMigrationUuid a == _questionnaireDetailDTOMigrationUuid b
+    a.uuid == b.uuid
+      && a.name == b.name
+      && a.description == b.description
+      && a.phaseUuid == b.phaseUuid
+      && a.visibility == b.visibility
+      && a.sharing == b.sharing
+      && a.state == b.state
+      && a.package == b.package
+      && a.packageVersions == b.packageVersions
+      && a.selectedQuestionTagUuids == b.selectedQuestionTagUuids
+      && a.projectTags == b.projectTags
+      && a.templateId == b.templateId
+      && a.template == b.template
+      && a.formatUuid == b.formatUuid
+      && a.format == b.format
+      && a.templateState == b.templateState
+      && a.knowledgeModel == b.knowledgeModel
+      && a.replies == b.replies
+      && a.commentThreadsMap == b.commentThreadsMap
+      && a.permissions == b.permissions
+      && a.versions == b.versions
+      && a.creatorUuid == b.creatorUuid
+      && a.isTemplate == b.isTemplate
+      && a.migrationUuid == b.migrationUuid

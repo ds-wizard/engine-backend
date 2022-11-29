@@ -4,9 +4,8 @@ import GHC.Generics
 
 import Wizard.Model.ActionKey.ActionKey
 
-data ActionKeyDTO =
-  ActionKeyDTO
-    { _actionKeyDTOAType :: ActionKeyType
-    , _actionKeyDTOEmail :: String
-    }
+data ActionKeyDTO = ActionKeyDTO
+  { aType :: ActionKeyType
+  , email :: String
+  }
   deriving (Show, Eq, Generic)

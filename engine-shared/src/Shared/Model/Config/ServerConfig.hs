@@ -1,54 +1,48 @@
 module Shared.Model.Config.ServerConfig where
 
-import Control.Monad.Logger (LogLevel(..))
+import Control.Monad.Logger (LogLevel (..))
 import GHC.Generics
 
-data ServerConfigDatabase =
-  ServerConfigDatabase
-    { _serverConfigDatabaseConnectionString :: String
-    , _serverConfigDatabaseStripeSize :: Int
-    , _serverConfigDatabaseConnectionTimeout :: Int
-    , _serverConfigDatabaseMaxConnections :: Int
-    }
+data ServerConfigDatabase = ServerConfigDatabase
+  { connectionString :: String
+  , stripeSize :: Int
+  , connectionTimeout :: Int
+  , maxConnections :: Int
+  }
   deriving (Generic, Show)
 
-data ServerConfigS3 =
-  ServerConfigS3
-    { _serverConfigS3Url :: String
-    , _serverConfigS3PublicUrl :: String
-    , _serverConfigS3Username :: String
-    , _serverConfigS3Password :: String
-    , _serverConfigS3Bucket :: String
-    , _serverConfigS3Region :: Maybe String
-    }
+data ServerConfigS3 = ServerConfigS3
+  { url :: String
+  , publicUrl :: String
+  , username :: String
+  , password :: String
+  , bucket :: String
+  , region :: Maybe String
+  }
   deriving (Generic, Show)
 
-data ServerConfigAnalytics =
-  ServerConfigAnalytics
-    { _serverConfigAnalyticsEnabled :: Bool
-    , _serverConfigAnalyticsEmail :: String
-    }
+data ServerConfigAnalytics = ServerConfigAnalytics
+  { enabled :: Bool
+  , email :: String
+  }
   deriving (Generic, Show)
 
-data ServerConfigSentry =
-  ServerConfigSentry
-    { _serverConfigSentryEnabled :: Bool
-    , _serverConfigSentryDsn :: String
-    }
+data ServerConfigSentry = ServerConfigSentry
+  { enabled :: Bool
+  , dsn :: String
+  }
   deriving (Generic, Show)
 
-data ServerConfigLogging =
-  ServerConfigLogging
-    { _serverConfigLoggingLevel :: LogLevel
-    , _serverConfigLoggingHttpClientDebug :: Bool
-    , _serverConfigLoggingWebsocketDebug :: Bool
-    }
+data ServerConfigLogging = ServerConfigLogging
+  { level :: LogLevel
+  , httpClientDebug :: Bool
+  , websocketDebug :: Bool
+  }
   deriving (Generic, Show)
 
-data ServerConfigCloud =
-  ServerConfigCloud
-    { _serverConfigCloudEnabled :: Bool
-    , _serverConfigCloudDomain :: Maybe String
-    , _serverConfigCloudPublicRegistrationEnabled :: Bool
-    }
+data ServerConfigCloud = ServerConfigCloud
+  { enabled :: Bool
+  , domain :: Maybe String
+  , publicRegistrationEnabled :: Bool
+  }
   deriving (Generic, Show)

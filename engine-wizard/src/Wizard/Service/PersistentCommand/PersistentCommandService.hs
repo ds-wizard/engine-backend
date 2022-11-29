@@ -1,10 +1,9 @@
 module Wizard.Service.PersistentCommand.PersistentCommandService where
 
 import qualified Control.Exception.Base as E
-import Control.Lens ((.~), (^.))
 import Control.Monad (forever, when)
 import Control.Monad.Reader (ask, asks, liftIO)
-import Data.Aeson (Value(..), toJSON)
+import Data.Aeson (Value (..), toJSON)
 import Data.Foldable (traverse_)
 import qualified Data.HashMap.Strict as HashMap
 import Data.Maybe (fromMaybe)
@@ -13,18 +12,20 @@ import Data.Time
 import qualified Data.UUID as U
 import System.Log.Raven (initRaven, register, stderrFallback)
 import System.Log.Raven.Transport.HttpConduit (sendRecord)
-import System.Log.Raven.Types (SentryLevel(Error), SentryRecord(..))
+import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..))
 
-import LensesConfig
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
+import Shared.Model.Config.BuildInfoConfig
+import Shared.Model.Config.ServerConfig
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.PersistentCommand.PersistentCommandSimple
@@ -48,10 +49,10 @@ getPersistentCommandById uuid = do
   checkPermission _DEV_PERM
   command <- findPersistentCommandByUuid uuid
   mUser <-
-    case command ^. createdBy of
+    case command.createdBy of
       Just userUuid -> findUserByIdSystem' (U.toString userUuid)
       Nothing -> return Nothing
-  app <- findAppById (U.toString $ command ^. appUuid)
+  app <- findAppById (U.toString $ command.appUuid)
   appDto <- enhanceApp app
   return $ toDetailDTO command mUser appDto
 
@@ -64,7 +65,7 @@ runPersistentCommands = do
 runPersistentCommandById :: String -> AppContextM PersistentCommandDetailDTO
 runPersistentCommandById uuid = do
   command <- findPersistentCommandByUuid uuid
-  if command ^. internal
+  if command.internal
     then runPersistentCommand (toSimple command)
     else do
       notifySpecificPersistentCommandQueue command
@@ -74,12 +75,16 @@ runPersistentCommandById uuid = do
 runPersistentCommand :: PersistentCommandSimple -> AppContextM ()
 runPersistentCommand command = do
   user <-
-    case command ^. createdBy of
+    case command.createdBy of
       Just userUuid -> findUserByIdSystem' . U.toString $ userUuid
       Nothing -> return Nothing
   context <- ask
-  let updatedContext = (appUuid .~ (command ^. appUuid)) . (currentUser .~ fmap UM.toDTO user) $ context
-  executePersistentCommandByUuid (U.toString $ command ^. uuid) updatedContext
+  let updatedContext =
+        context
+          { currentAppUuid = command.appUuid
+          , currentUser = fmap UM.toDTO user
+          }
+  executePersistentCommandByUuid (U.toString $ command.uuid) updatedContext
 
 executePersistentCommandByUuid :: String -> AppContext -> AppContextM ()
 executePersistentCommandByUuid uuid context =
@@ -94,16 +99,20 @@ executePersistentCommandByUuid uuid context =
             Left exception -> (ErrorPersistentCommandState, Just . show $ exception)
     now <- liftIO getCurrentTime
     let updatedCommand =
-          (updatedAt .~ now) . (attempts .~ ((command ^. attempts) + 1)) . (state .~ resultState) .
-          (lastErrorMessage .~ mErrorMessage) $
           command
+            { state = resultState
+            , lastErrorMessage = mErrorMessage
+            , attempts = command.attempts + 1
+            , updatedAt = now
+            }
+          :: PersistentCommand
     when (resultState == ErrorPersistentCommandState) (sendToSentry updatedCommand)
     updatePersistentCommandById updatedCommand
     logInfoU _CMP_SERVICE (f' "Command finished with following state: '%s'" [show resultState])
 
 execute :: PersistentCommand -> AppContextM (PersistentCommandState, Maybe String)
 execute command
-  | command ^. component == AppConfigCommandExecutor.cComponent = AppConfigCommandExecutor.execute command
+  | command.component == AppConfigCommandExecutor.cComponent = AppConfigCommandExecutor.execute command
 
 runPersistentCommandChannelListener :: AppContextM ()
 runPersistentCommandChannelListener = do
@@ -117,21 +126,23 @@ runPersistentCommandChannelListener = do
 -- --------------------------------
 sendToSentry :: PersistentCommand -> AppContextM ()
 sendToSentry command = do
-  serverConfig <- asks _appContextServerConfig
+  serverConfig <- asks serverConfig
   when
-    (serverConfig ^. sentry . enabled)
-    (do let sentryDsn = serverConfig ^. sentry . dsn
+    (serverConfig.sentry.enabled)
+    ( do
+        let sentryDsn = serverConfig.sentry.dsn
         sentryService <- liftIO $ initRaven sentryDsn id sendRecord stderrFallback
-        buildInfoConfig <- asks _appContextBuildInfoConfig
-        let buildVersion = buildInfoConfig ^. version
-        let message = fromMaybe "" (command ^. lastErrorMessage)
-        liftIO $ register sentryService "persistentCommandLogger" Error message (recordUpdate buildVersion command))
+        buildInfoConfig <- asks buildInfoConfig
+        let buildVersion = buildInfoConfig.version
+        let message = fromMaybe "" command.lastErrorMessage
+        liftIO $ register sentryService "persistentCommandLogger" Error message (recordUpdate buildVersion command)
+    )
 
 recordUpdate :: String -> PersistentCommand -> SentryRecord -> SentryRecord
 recordUpdate buildVersion command record =
-  let commandUserUuid = maybe "anonymous" U.toString (command ^. createdBy)
-      commandUuid = U.toString $ command ^. uuid
-      commandAppUuid = U.toString $ command ^. appUuid
+  let commandUserUuid = maybe "anonymous" U.toString command.createdBy
+      commandUuid = U.toString $ command.uuid
+      commandAppUuid = U.toString $ command.appUuid
    in record
         { srRelease = Just buildVersion
         , srInterfaces =
@@ -140,19 +151,19 @@ recordUpdate buildVersion command record =
         , srTags =
             HashMap.fromList
               [ ("uuid", commandUuid)
-              , ("component", command ^. component)
-              , ("function", command ^. function)
+              , ("component", command.component)
+              , ("function", command.function)
               , ("appUuid", commandAppUuid)
               ]
         , srExtra =
             HashMap.fromList
               [ ("uuid", String . T.pack $ commandUuid)
-              , ("component", String . T.pack $ command ^. component)
-              , ("function", String . T.pack $ command ^. function)
+              , ("component", String . T.pack $ command.component)
+              , ("function", String . T.pack $ command.function)
               , ("appUuid", String . T.pack $ commandAppUuid)
-              , ("attempts", String . T.pack . show $ command ^. attempts)
-              , ("maxAttempts", String . T.pack . show $ command ^. maxAttempts)
-              , ("body", String . T.pack $ command ^. body)
-              , ("lastErrorMessage", String . T.pack . fromMaybe "" $ command ^. lastErrorMessage)
+              , ("attempts", String . T.pack . show $ command.attempts)
+              , ("maxAttempts", String . T.pack . show $ command.maxAttempts)
+              , ("body", String . T.pack $ command.body)
+              , ("lastErrorMessage", String . T.pack . fromMaybe "" $ command.lastErrorMessage)
               ]
         }

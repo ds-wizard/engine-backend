@@ -4,10 +4,10 @@ import Data.Aeson
 
 import Shared.Api.Resource.Event.EventJM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON KnowledgeModelChangeDTO where
-  parseJSON = simpleParseJSON "_knowledgeModelChangeDTO"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON KnowledgeModelChangeDTO where
-  toJSON = simpleToJSON "_knowledgeModelChangeDTO"
+  toJSON = genericToJSON jsonOptions

@@ -6,7 +6,7 @@ import Data.Aeson
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Shared.Model.Event.Question.QuestionEvent
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance ToJSON AddQuestionEvent where
   toJSON = toSumJSON
@@ -25,38 +25,38 @@ instance FromJSON AddQuestionEvent where
 
 -- --------------------------------------------
 instance FromJSON AddOptionsQuestionEvent where
-  parseJSON = simpleParseJSON "_addOptionsQuestionEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddOptionsQuestionEvent where
-  toJSON = simpleToJSON'' "_addOptionsQuestionEvent" [("questionType", "OptionsQuestion")]
+  toJSON = toJSONWithAdditionalData [("questionType", "OptionsQuestion")]
 
 -- --------------------------------------------
 instance FromJSON AddMultiChoiceQuestionEvent where
-  parseJSON = simpleParseJSON "_addMultiChoiceQuestionEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddMultiChoiceQuestionEvent where
-  toJSON = simpleToJSON'' "_addMultiChoiceQuestionEvent" [("questionType", "MultiChoiceQuestion")]
+  toJSON = toJSONWithAdditionalData [("questionType", "MultiChoiceQuestion")]
 
 -- --------------------------------------------
 instance FromJSON AddListQuestionEvent where
-  parseJSON = simpleParseJSON "_addListQuestionEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddListQuestionEvent where
-  toJSON = simpleToJSON'' "_addListQuestionEvent" [("questionType", "ListQuestion")]
+  toJSON = toJSONWithAdditionalData [("questionType", "ListQuestion")]
 
 -- --------------------------------------------
 instance FromJSON AddValueQuestionEvent where
-  parseJSON = simpleParseJSON "_addValueQuestionEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddValueQuestionEvent where
-  toJSON = simpleToJSON'' "_addValueQuestionEvent" [("questionType", "ValueQuestion")]
+  toJSON = toJSONWithAdditionalData [("questionType", "ValueQuestion")]
 
 -- --------------------------------------------
 instance FromJSON AddIntegrationQuestionEvent where
-  parseJSON = simpleParseJSON "_addIntegrationQuestionEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AddIntegrationQuestionEvent where
-  toJSON = simpleToJSON'' "_addIntegrationQuestionEvent" [("questionType", "IntegrationQuestion")]
+  toJSON = toJSONWithAdditionalData [("questionType", "IntegrationQuestion")]
 
 -- --------------------------------------------
 -- --------------------------------------------
@@ -77,43 +77,43 @@ instance FromJSON EditQuestionEvent where
 
 -- --------------------------------------------
 instance FromJSON EditOptionsQuestionEvent where
-  parseJSON = simpleParseJSON "_editOptionsQuestionEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON EditOptionsQuestionEvent where
-  toJSON = simpleToJSON'' "_editOptionsQuestionEvent" [("questionType", "OptionsQuestion")]
+  toJSON = toJSONWithAdditionalData [("questionType", "OptionsQuestion")]
 
 -- --------------------------------------------
 instance FromJSON EditMultiChoiceQuestionEvent where
-  parseJSON = simpleParseJSON "_editMultiChoiceQuestionEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON EditMultiChoiceQuestionEvent where
-  toJSON = simpleToJSON'' "_editMultiChoiceQuestionEvent" [("questionType", "MultiChoiceQuestion")]
+  toJSON = toJSONWithAdditionalData [("questionType", "MultiChoiceQuestion")]
 
 -- --------------------------------------------
 instance FromJSON EditListQuestionEvent where
-  parseJSON = simpleParseJSON "_editListQuestionEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON EditListQuestionEvent where
-  toJSON = simpleToJSON'' "_editListQuestionEvent" [("questionType", "ListQuestion")]
+  toJSON = toJSONWithAdditionalData [("questionType", "ListQuestion")]
 
 -- --------------------------------------------
 instance FromJSON EditValueQuestionEvent where
-  parseJSON = simpleParseJSON "_editValueQuestionEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON EditValueQuestionEvent where
-  toJSON = simpleToJSON'' "_editValueQuestionEvent" [("questionType", "ValueQuestion")]
+  toJSON = toJSONWithAdditionalData [("questionType", "ValueQuestion")]
 
 -- --------------------------------------------
 instance FromJSON EditIntegrationQuestionEvent where
-  parseJSON = simpleParseJSON "_editIntegrationQuestionEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON EditIntegrationQuestionEvent where
-  toJSON = simpleToJSON'' "_editIntegrationQuestionEvent" [("questionType", "IntegrationQuestion")]
+  toJSON = toJSONWithAdditionalData [("questionType", "IntegrationQuestion")]
 
 -- --------------------------------------------
 -- --------------------------------------------
 instance FromJSON DeleteQuestionEvent where
-  parseJSON = simpleParseJSON "_deleteQuestionEvent"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON DeleteQuestionEvent where
-  toJSON = simpleToJSON' "_deleteQuestionEvent" "eventType"
+  toJSON = genericToJSON (jsonOptionsWithTypeField "eventType")

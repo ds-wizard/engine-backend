@@ -3,21 +3,20 @@ module Registry.Model.PersistentCommand.Mail.SendResetTokenMailCommand where
 import Data.Aeson
 import GHC.Generics
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
-data SendResetTokenMailCommand =
-  SendResetTokenMailCommand
-    { _sendResetTokenMailCommandEmail :: String
-    , _sendResetTokenMailCommandOrganizationId :: String
-    , _sendResetTokenMailCommandOrganizationName :: String
-    , _sendResetTokenMailCommandOrganizationEmail :: String
-    , _sendResetTokenMailCommandHash :: String
-    , _sendResetTokenMailCommandClientUrl :: String
-    }
+data SendResetTokenMailCommand = SendResetTokenMailCommand
+  { email :: String
+  , organizationId :: String
+  , organizationName :: String
+  , organizationEmail :: String
+  , hash :: String
+  , clientUrl :: String
+  }
   deriving (Show, Eq, Generic)
 
 instance FromJSON SendResetTokenMailCommand where
-  parseJSON = simpleParseJSON "_sendResetTokenMailCommand"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SendResetTokenMailCommand where
-  toJSON = simpleToJSON "_sendResetTokenMailCommand"
+  toJSON = genericToJSON jsonOptions

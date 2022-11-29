@@ -11,10 +11,10 @@ import Shared.Model.Event.Metric.MetricEvent
 import Shared.Util.Swagger
 
 instance ToSchema AddMetricEvent where
-  declareNamedSchema = simpleToSchema'' "_addMetricEvent" "eventType" a_km1_mtrF
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_mtrF
 
 instance ToSchema EditMetricEvent where
-  declareNamedSchema = simpleToSchema'' "_editMetricEvent" "eventType" e_km1_mtrF
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_mtrF
 
 instance ToSchema DeleteMetricEvent where
-  declareNamedSchema = simpleToSchema'' "_deleteMetricEvent" "eventType" d_km1_mtrF
+  declareNamedSchema = toSwaggerWithType "eventType" d_km1_mtrF

@@ -1,6 +1,6 @@
-module Wizard.Specs.API.Template.List_Suggestions_GET
-  ( list_suggestions_GET
-  ) where
+module Wizard.Specs.API.Template.List_Suggestions_GET (
+  list_suggestions_GET,
+) where
 
 import Data.Aeson (encode)
 import Network.HTTP.Types
@@ -82,24 +82,24 @@ test_200 appContext = do
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
   it title $
-       -- GIVEN: Prepare request
-   do
-    let reqHeaders = reqHeadersT reqAuthHeader
+    -- GIVEN: Prepare request
+    do
+      let reqHeaders = reqHeadersT reqAuthHeader
       -- AND: Prepare expectation
-    let expStatus = 200
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO U_Migration.runMigration appContext
-    runInContextIO TML_Migration.runMigration appContext
-    runInContextIO R_Migration.runMigration appContext
-    runInContextIO (updateTemplateById commonWizardTemplateEdited) appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+      let expStatus = 200
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO U_Migration.runMigration appContext
+      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO R_Migration.runMigration appContext
+      runInContextIO (updateTemplateById commonWizardTemplateEdited) appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

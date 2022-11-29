@@ -6,25 +6,25 @@ import GHC.Generics
 
 import Wizard.Model.Branch.BranchState
 
-data BranchList =
-  BranchList
-    { _branchListUuid :: U.UUID
-    , _branchListName :: String
-    , _branchListKmId :: String
-    , _branchListState :: BranchState
-    , _branchListPreviousPackageId :: Maybe String
-    , _branchListForkOfPackageId :: Maybe String
-    , _branchListCreatedBy :: Maybe U.UUID
-    , _branchListCreatedAt :: UTCTime
-    , _branchListUpdatedAt :: UTCTime
-    }
+data BranchList = BranchList
+  { uuid :: U.UUID
+  , name :: String
+  , kmId :: String
+  , state :: BranchState
+  , previousPackageId :: Maybe String
+  , forkOfPackageId :: Maybe String
+  , createdBy :: Maybe U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq BranchList where
   a == b =
-    _branchListUuid a == _branchListUuid b &&
-    _branchListName a == _branchListName b &&
-    _branchListKmId a == _branchListKmId b &&
-    _branchListState a == _branchListState b &&
-    _branchListPreviousPackageId a == _branchListPreviousPackageId b &&
-    _branchListForkOfPackageId a == _branchListForkOfPackageId b && _branchListCreatedBy a == _branchListCreatedBy b
+    uuid a == uuid b
+      && name a == name b
+      && kmId a == kmId b
+      && state a == state b
+      && previousPackageId a == previousPackageId b
+      && forkOfPackageId a == forkOfPackageId b
+      && createdBy a == createdBy b

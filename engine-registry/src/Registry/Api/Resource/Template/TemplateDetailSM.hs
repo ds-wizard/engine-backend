@@ -10,4 +10,4 @@ import Shared.Api.Resource.Template.TemplateSM ()
 import Shared.Util.Swagger
 
 instance ToSchema TemplateDetailDTO where
-  declareNamedSchema = simpleToSchema commonWizardTemplateDetailDTO
+  declareNamedSchema = toSwagger commonWizardTemplateDetailDTO

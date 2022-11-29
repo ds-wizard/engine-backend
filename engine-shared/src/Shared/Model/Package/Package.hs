@@ -4,26 +4,26 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-data Package =
-  Package
-    { _packagePId :: String
-    , _packageName :: String
-    , _packageOrganizationId :: String
-    , _packageKmId :: String
-    , _packageVersion :: String
-    , _packageMetamodelVersion :: Int
-    , _packageDescription :: String
-    , _packageReadme :: String
-    , _packageLicense :: String
-    , _packagePreviousPackageId :: Maybe String
-    , _packageForkOfPackageId :: Maybe String
-    , _packageMergeCheckpointPackageId :: Maybe String
-    , _packageAppUuid :: U.UUID
-    , _packageCreatedAt :: UTCTime
-    }
+data Package = Package
+  { pId :: String
+  , name :: String
+  , organizationId :: String
+  , kmId :: String
+  , version :: String
+  , metamodelVersion :: Int
+  , description :: String
+  , readme :: String
+  , license :: String
+  , previousPackageId :: Maybe String
+  , forkOfPackageId :: Maybe String
+  , mergeCheckpointPackageId :: Maybe String
+  , appUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
 instance Ord Package where
   compare a b =
-    compare (_packageOrganizationId a) (_packageOrganizationId b) <>
-    compare (_packageKmId a) (_packageKmId b) <> compare (_packageVersion a) (_packageVersion b)
+    compare a.organizationId b.organizationId
+      <> compare a.kmId b.kmId
+      <> compare a.version b.version

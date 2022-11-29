@@ -8,4 +8,4 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 
 instance ToSchema QuestionnaireSimple where
-  declareNamedSchema = simpleToSchema' "_questionnaireSimple" questionnaire1Simple
+  declareNamedSchema = toSwagger questionnaire1Simple

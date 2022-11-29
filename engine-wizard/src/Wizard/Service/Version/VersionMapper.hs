@@ -1,9 +1,7 @@
 module Wizard.Service.Version.VersionMapper where
 
-import Control.Lens ((^.))
 import Data.Time
 
-import LensesConfig
 import Shared.Constant.KnowledgeModel
 import Shared.Model.Event.Event
 import Shared.Model.Package.PackageWithEvents
@@ -12,8 +10,8 @@ import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Config.AppConfig
 
-fromPackage ::
-     Branch
+fromPackage
+  :: Branch
   -> VersionDTO
   -> Maybe String
   -> Maybe String
@@ -24,19 +22,19 @@ fromPackage ::
   -> PackageWithEvents
 fromPackage branch versionDto forkOfPkgId mergeCheckpointPkgId org version events now =
   PackageWithEvents
-    { _packageWithEventsPId = buildCoordinate (org ^. organizationId) (branch ^. kmId) version
-    , _packageWithEventsName = branch ^. name
-    , _packageWithEventsOrganizationId = org ^. organizationId
-    , _packageWithEventsKmId = branch ^. kmId
-    , _packageWithEventsVersion = version
-    , _packageWithEventsMetamodelVersion = kmMetamodelVersion
-    , _packageWithEventsDescription = versionDto ^. description
-    , _packageWithEventsReadme = versionDto ^. readme
-    , _packageWithEventsLicense = versionDto ^. license
-    , _packageWithEventsPreviousPackageId = branch ^. previousPackageId
-    , _packageWithEventsForkOfPackageId = forkOfPkgId
-    , _packageWithEventsMergeCheckpointPackageId = mergeCheckpointPkgId
-    , _packageWithEventsEvents = events
-    , _packageWithEventsAppUuid = branch ^. appUuid
-    , _packageWithEventsCreatedAt = now
+    { pId = buildCoordinate org.organizationId branch.kmId version
+    , name = branch.name
+    , organizationId = org.organizationId
+    , kmId = branch.kmId
+    , version = version
+    , metamodelVersion = kmMetamodelVersion
+    , description = versionDto.description
+    , readme = versionDto.readme
+    , license = versionDto.license
+    , previousPackageId = branch.previousPackageId
+    , forkOfPackageId = forkOfPkgId
+    , mergeCheckpointPackageId = mergeCheckpointPkgId
+    , events = events
+    , appUuid = branch.appUuid
+    , createdAt = now
     }

@@ -1,6 +1,5 @@
 module Wizard.Service.App.AppService where
 
-import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (asks, liftIO)
 import Data.Aeson (encode)
 import qualified Data.ByteString.Lazy.Char8 as BSL
@@ -8,16 +7,17 @@ import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
+import Shared.Model.Config.ServerConfig
 import Shared.Util.Crypto
 import Shared.Util.Uuid
 import Wizard.Api.Resource.App.AppChangeDTO
 import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.App.AppDetailDTO
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Config.AppConfigDAO
@@ -27,6 +27,7 @@ import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigDM
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.PersistentCommand.App.ImportDefaultDataCommand
 import Wizard.Model.PersistentCommand.PersistentCommand
@@ -59,10 +60,10 @@ registerApp reqDto = do
     insertApp app
     userUuid <- liftIO generateUuid
     let userCreate = U_Mapper.fromAppCreateToUserCreateDTO reqDto
-    user <- createUserByAdminWithUuid userCreate userUuid (app ^. uuid) (app ^. clientUrl) True
+    user <- createUserByAdminWithUuid userCreate userUuid app.uuid app.clientUrl True
     createAppConfig aUuid now
     createAppLimit aUuid now
-    createSeederPersistentCommand aUuid (user ^. uuid) now
+    createSeederPersistentCommand aUuid user.uuid now
     return $ toDTO app Nothing Nothing
 
 createAppByAdmin :: AppCreateDTO -> AppContextM AppDTO
@@ -77,11 +78,11 @@ createAppByAdmin reqDto = do
     insertApp app
     userUuid <- liftIO generateUuid
     userPassword <- liftIO $ generateRandomString 25
-    let userCreate = U_Mapper.fromAppCreateToUserCreateDTO reqDto & password .~ userPassword
-    user <- createUserByAdminWithUuid userCreate userUuid (app ^. uuid) (app ^. clientUrl) False
+    let userCreate = U_Mapper.fromAppCreateToUserCreateDTO (reqDto {password = userPassword})
+    user <- createUserByAdminWithUuid userCreate userUuid app.uuid app.clientUrl False
     createAppConfig aUuid now
     createAppLimit aUuid now
-    createSeederPersistentCommand aUuid (user ^. uuid) now
+    createSeederPersistentCommand aUuid user.uuid now
     return $ toDTO app Nothing Nothing
 
 getAppById :: String -> AppContextM AppDetailDTO
@@ -91,9 +92,9 @@ getAppById aUuid = do
   plans <- findAppPlansForAppUuid aUuid
   usage <- getUsage aUuid
   users <- findUsersWithAppFiltered aUuid [("role", _USER_ROLE_ADMIN)]
-  appConfig <- getAppConfigByUuid (app ^. uuid)
-  let mLogoUrl = appConfig ^. lookAndFeel . logoUrl
-  let mPrimaryColor = appConfig ^. lookAndFeel . primaryColor
+  appConfig <- getAppConfigByUuid app.uuid
+  let mLogoUrl = appConfig.lookAndFeel.logoUrl
+  let mPrimaryColor = appConfig.lookAndFeel.primaryColor
   return $ toDetailDTO app mLogoUrl mPrimaryColor plans usage users
 
 modifyApp :: String -> AppChangeDTO -> AppContextM App
@@ -118,7 +119,13 @@ deleteApp aUuid = do
 createAppConfig :: U.UUID -> UTCTime -> AppContextM AppConfig
 createAppConfig aUuid now = do
   runInTransaction $ do
-    let appConfig = (uuid .~ aUuid) . (createdAt .~ now) . (updatedAt .~ now) $ defaultAppConfig
+    let appConfig =
+          defaultAppConfig
+            { uuid = aUuid
+            , createdAt = now
+            , updatedAt = now
+            }
+          :: AppConfig
     insertAppConfig appConfig
     return appConfig
 
@@ -142,5 +149,5 @@ createSeederPersistentCommand aUuid createdBy now =
 
 getCloudDomain :: AppContextM String
 getCloudDomain = do
-  serverConfig <- asks _appContextServerConfig
-  return $ fromMaybe "" (serverConfig ^. cloud . domain)
+  serverConfig <- asks serverConfig
+  return $ fromMaybe "" serverConfig.cloud.domain

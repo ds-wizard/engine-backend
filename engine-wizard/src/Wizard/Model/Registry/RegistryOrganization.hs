@@ -3,11 +3,10 @@ module Wizard.Model.Registry.RegistryOrganization where
 import Data.Time
 import GHC.Generics
 
-data RegistryOrganization =
-  RegistryOrganization
-    { _registryOrganizationOrganizationId :: String
-    , _registryOrganizationName :: String
-    , _registryOrganizationLogo :: Maybe String
-    , _registryOrganizationCreatedAt :: UTCTime
-    }
+data RegistryOrganization = RegistryOrganization
+  { organizationId :: String
+  , name :: String
+  , logo :: Maybe String
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

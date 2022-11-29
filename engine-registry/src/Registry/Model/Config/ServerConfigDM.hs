@@ -7,20 +7,20 @@ import Shared.Model.Config.ServerConfigDM
 defaultConfig :: ServerConfig
 defaultConfig =
   ServerConfig
-    { _serverConfigGeneral = defaultGeneral
-    , _serverConfigDatabase = defaultDatabase
-    , _serverConfigS3 = defaultS3
-    , _serverConfigAnalytics = defaultAnalytics
-    , _serverConfigSentry = defaultSentry
-    , _serverConfigLogging = defaultLogging
-    , _serverConfigCloud = defaultCloud
+    { general = defaultGeneral
+    , database = defaultDatabase
+    , s3 = defaultS3
+    , analytics = defaultAnalytics
+    , sentry = defaultSentry
+    , logging = defaultLogging
+    , cloud = defaultCloud
     }
 
 defaultGeneral :: ServerConfigGeneral
 defaultGeneral =
   ServerConfigGeneral
-    { _serverConfigGeneralEnvironment = Production
-    , _serverConfigGeneralClientUrl = ""
-    , _serverConfigGeneralServerPort = 3000
-    , _serverConfigGeneralRemoteLocalizationUrl = Nothing
+    { environment = Production
+    , clientUrl = ""
+    , serverPort = 3000
+    , remoteLocalizationUrl = Nothing
     }

@@ -4,10 +4,10 @@ import Data.Aeson
 
 import Registry.Api.Resource.Package.PackageRawJM ()
 import Registry.Api.Resource.PackageBundle.PackageBundleDTO
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
 instance FromJSON PackageBundleDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON PackageBundleDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

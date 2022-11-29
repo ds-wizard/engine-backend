@@ -10,15 +10,15 @@ import Wizard.Api.Resource.App.AppDetailJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.App.AppService
 
-type Detail_GET
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> "apps"
-     :> Capture "aUuid" String
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] AppDetailDTO)
+type Detail_GET =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> "apps"
+    :> Capture "aUuid" String
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] AppDetailDTO)
 
-detail_GET ::
-     Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppDetailDTO)
+detail_GET
+  :: Maybe String -> Maybe String -> String -> BaseContextM (Headers '[Header "x-trace-uuid" String] AppDetailDTO)
 detail_GET mTokenHeader mServerUrl aUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $ addTraceUuidHeader =<< getAppById aUuid

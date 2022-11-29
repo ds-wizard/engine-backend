@@ -14,17 +14,17 @@ import Shared.Database.Mapping.Common
 instance ToRow AuditEntry where
   toRow ListPackagesAuditEntry {..} =
     [ toStringField "ListPackagesAuditEntry"
-    , toField _listPackagesAuditEntryOrganizationId
-    , toJSONField _listPackagesAuditEntryInstanceStatistics
+    , toField organizationId
+    , toJSONField instanceStatistics
     , toStringField ""
-    , toField _listPackagesAuditEntryCreatedAt
+    , toField createdAt
     ]
   toRow GetPackageBundleAuditEntry {..} =
     [ toStringField "GetPackageBundleAuditEntry"
-    , toField _getPackageBundleAuditEntryOrganizationId
+    , toField organizationId
     , toStringField "{}"
-    , toField _getPackageBundleAuditEntryPackageId
-    , toField _getPackageBundleAuditEntryCreatedAt
+    , toField packageId
+    , toField createdAt
     ]
 
 instance FromRow AuditEntry where
@@ -32,14 +32,14 @@ instance FromRow AuditEntry where
     aType <- field
     case aType of
       "ListPackagesAuditEntry" -> do
-        _listPackagesAuditEntryOrganizationId <- field
-        _listPackagesAuditEntryInstanceStatistics <- fieldWith fromJSONField
+        organizationId <- field
+        instanceStatistics <- fieldWith fromJSONField
         _ <- field :: RowParser String
-        _listPackagesAuditEntryCreatedAt <- field
+        createdAt <- field
         return $ ListPackagesAuditEntry {..}
       "GetPackageBundleAuditEntry" -> do
-        _getPackageBundleAuditEntryOrganizationId <- field
+        organizationId <- field
         _ <- fieldWith fromJSONField :: RowParser Object
-        _getPackageBundleAuditEntryPackageId <- field
-        _getPackageBundleAuditEntryCreatedAt <- field
+        packageId <- field
+        createdAt <- field
         return $ GetPackageBundleAuditEntry {..}

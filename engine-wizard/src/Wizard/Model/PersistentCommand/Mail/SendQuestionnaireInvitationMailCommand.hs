@@ -4,27 +4,26 @@ import Data.Aeson
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 
-data SendQuestionnaireInvitationMailCommand =
-  SendQuestionnaireInvitationMailCommand
-    { _sendQuestionnaireInvitationMailCommandEmail :: String
-    , _sendQuestionnaireInvitationMailCommandClientUrl :: String
-    , _sendQuestionnaireInvitationMailCommandInviteeUuid :: U.UUID
-    , _sendQuestionnaireInvitationMailCommandInviteeFirstName :: String
-    , _sendQuestionnaireInvitationMailCommandInviteeLastName :: String
-    , _sendQuestionnaireInvitationMailCommandInviteeEmail :: String
-    , _sendQuestionnaireInvitationMailCommandQuestionnaireUuid :: U.UUID
-    , _sendQuestionnaireInvitationMailCommandQuestionnaireName :: String
-    , _sendQuestionnaireInvitationMailCommandOwnerUuid :: U.UUID
-    , _sendQuestionnaireInvitationMailCommandOwnerFirstName :: String
-    , _sendQuestionnaireInvitationMailCommandOwnerLastName :: String
-    , _sendQuestionnaireInvitationMailCommandOwnerEmail :: String
-    }
+data SendQuestionnaireInvitationMailCommand = SendQuestionnaireInvitationMailCommand
+  { email :: String
+  , clientUrl :: String
+  , inviteeUuid :: U.UUID
+  , inviteeFirstName :: String
+  , inviteeLastName :: String
+  , inviteeEmail :: String
+  , questionnaireUuid :: U.UUID
+  , questionnaireName :: String
+  , ownerUuid :: U.UUID
+  , ownerFirstName :: String
+  , ownerLastName :: String
+  , ownerEmail :: String
+  }
   deriving (Show, Eq, Generic)
 
 instance FromJSON SendQuestionnaireInvitationMailCommand where
-  parseJSON = simpleParseJSON "_sendQuestionnaireInvitationMailCommand"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON SendQuestionnaireInvitationMailCommand where
-  toJSON = simpleToJSON "_sendQuestionnaireInvitationMailCommand"
+  toJSON = genericToJSON jsonOptions

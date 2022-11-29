@@ -13,41 +13,41 @@ import Wizard.Model.Questionnaire.QuestionnaireComment
 
 instance ToRow QuestionnaireCommentThread where
   toRow QuestionnaireCommentThread {..} =
-    [ toField _questionnaireCommentThreadUuid
-    , toField _questionnaireCommentThreadPath
-    , toField _questionnaireCommentThreadResolved
-    , toField _questionnaireCommentThreadPrivate
-    , toField _questionnaireCommentThreadQuestionnaireUuid
-    , toField _questionnaireCommentThreadCreatedBy
-    , toField _questionnaireCommentThreadCreatedAt
-    , toField _questionnaireCommentThreadUpdatedAt
+    [ toField uuid
+    , toField path
+    , toField resolved
+    , toField private
+    , toField questionnaireUuid
+    , toField createdBy
+    , toField createdAt
+    , toField updatedAt
     ]
 
 instance FromRow QuestionnaireCommentThread where
   fromRow = do
-    _questionnaireCommentThreadUuid <- field
-    _questionnaireCommentThreadPath <- field
-    _questionnaireCommentThreadResolved <- field
-    _questionnaireCommentThreadPrivate <- field
-    _questionnaireCommentThreadQuestionnaireUuid <- field
-    _questionnaireCommentThreadCreatedBy <- field
-    _questionnaireCommentThreadCreatedAt <- field
-    _questionnaireCommentThreadUpdatedAt <- field
-    comments <- fromPGArray <$> field
-    let _questionnaireCommentThreadComments = fmap parseComment comments
+    uuid <- field
+    path <- field
+    resolved <- field
+    private <- field
+    questionnaireUuid <- field
+    createdBy <- field
+    createdAt <- field
+    updatedAt <- field
+    commentsArray <- fromPGArray <$> field
+    let comments = fmap parseComment commentsArray
     return $ QuestionnaireCommentThread {..}
-    where
-      parseComment :: String -> QuestionnaireComment
-      parseComment parseComment =
-        let parts = splitOn ":::::" parseComment
-         in QuestionnaireComment
-              { _questionnaireCommentUuid = u' (head parts)
-              , _questionnaireCommentText = parts !! 1
-              , _questionnaireCommentThreadUuid = u' (parts !! 2)
-              , _questionnaireCommentCreatedBy =
-                  case parts !! 3 of
-                    "" -> Nothing
-                    uuid -> Just . u' $ uuid
-              , _questionnaireCommentCreatedAt = parsePostgresDateTime' $ parts !! 4
-              , _questionnaireCommentUpdatedAt = parsePostgresDateTime' $ parts !! 5
-              }
+
+parseComment :: String -> QuestionnaireComment
+parseComment commentS =
+  let parts = splitOn ":::::" commentS
+   in QuestionnaireComment
+        { uuid = u' (head parts)
+        , text = parts !! 1
+        , threadUuid = u' (parts !! 2)
+        , createdBy =
+            case parts !! 3 of
+              "" -> Nothing
+              u -> Just . u' $ u
+        , createdAt = parsePostgresDateTime' $ parts !! 4
+        , updatedAt = parsePostgresDateTime' $ parts !! 5
+        }

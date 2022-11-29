@@ -12,152 +12,158 @@ import Wizard.Model.User.User
 defaultAppConfig :: AppConfig
 defaultAppConfig =
   AppConfig
-    { _appConfigUuid = U.nil
-    , _appConfigOrganization = defaultOrganization
-    , _appConfigFeature = defaultFeature
-    , _appConfigAuthentication = defaultAuth
-    , _appConfigPrivacyAndSupport = defaultPrivacyAndSupport
-    , _appConfigDashboard = defaultDashboard
-    , _appConfigLookAndFeel = defaultLookAndFeel
-    , _appConfigRegistry = defaultRegistry
-    , _appConfigKnowledgeModel = defaultKnowledgeModel
-    , _appConfigQuestionnaire = defaultQuestionnaire
-    , _appConfigTemplate = defaultTemplate
-    , _appConfigSubmission = defaultSubmission
-    , _appConfigOwl = defaultOwl
-    , _appConfigCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , _appConfigUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    { uuid = U.nil
+    , organization = defaultOrganization
+    , feature = defaultFeature
+    , authentication = defaultAuth
+    , privacyAndSupport = defaultPrivacyAndSupport
+    , dashboard = defaultDashboard
+    , lookAndFeel = defaultLookAndFeel
+    , registry = defaultRegistry
+    , knowledgeModel = defaultKnowledgeModel
+    , questionnaire = defaultQuestionnaire
+    , template = defaultTemplate
+    , submission = defaultSubmission
+    , owl = defaultOwl
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
 defaultOrganization :: AppConfigOrganization
 defaultOrganization =
   AppConfigOrganization
-    { _appConfigOrganizationName = "My Organization"
-    , _appConfigOrganizationDescription = "My description"
-    , _appConfigOrganizationOrganizationId = "organization"
-    , _appConfigOrganizationAffiliations = []
+    { name = "My Organization"
+    , description = "My description"
+    , organizationId = "organization"
+    , affiliations = []
     }
 
 defaultFeature :: AppConfigFeature
 defaultFeature =
   AppConfigFeature
-    { _appConfigFeatureClientCustomizationEnabled = True
-    , _appConfigFeaturePdfOnlyEnabled = False
-    , _appConfigFeaturePdfWatermarkEnabled = False
+    { clientCustomizationEnabled = True
+    , pdfOnlyEnabled = False
+    , pdfWatermarkEnabled = False
     }
 
 defaultAuth :: AppConfigAuth
 defaultAuth =
   AppConfigAuth
-    { _appConfigAuthDefaultRole = _USER_ROLE_DATA_STEWARD
-    , _appConfigAuthInternal = defaultAuthInternal
-    , _appConfigAuthExternal = defaultAuthExternal
+    { defaultRole = _USER_ROLE_DATA_STEWARD
+    , internal = defaultAuthInternal
+    , external = defaultAuthExternal
     }
 
 defaultAuthInternal :: AppConfigAuthInternal
-defaultAuthInternal = AppConfigAuthInternal {_appConfigAuthInternalRegistration = SimpleFeature True}
+defaultAuthInternal = AppConfigAuthInternal {registration = SimpleFeature True}
 
 defaultAuthExternal :: AppConfigAuthExternal
-defaultAuthExternal = AppConfigAuthExternal {_appConfigAuthExternalServices = []}
+defaultAuthExternal = AppConfigAuthExternal {services = []}
 
 defaultPrivacyAndSupport :: AppConfigPrivacyAndSupport
 defaultPrivacyAndSupport =
   AppConfigPrivacyAndSupport
-    { _appConfigPrivacyAndSupportPrivacyUrl = Nothing
-    , _appConfigPrivacyAndSupportTermsOfServiceUrl = Nothing
-    , _appConfigPrivacyAndSupportSupportEmail = Nothing
-    , _appConfigPrivacyAndSupportSupportRepositoryName = Nothing
-    , _appConfigPrivacyAndSupportSupportRepositoryUrl = Nothing
+    { privacyUrl = Nothing
+    , termsOfServiceUrl = Nothing
+    , supportEmail = Nothing
+    , supportRepositoryName = Nothing
+    , supportRepositoryUrl = Nothing
     }
 
 defaultDashboard :: AppConfigDashboard
 defaultDashboard =
   AppConfigDashboard
-    { _appConfigDashboardDashboardType = RoleBasedDashboardType
-    , _appConfigDashboardWelcomeWarning = Nothing
-    , _appConfigDashboardWelcomeInfo = Nothing
+    { dashboardType = RoleBasedDashboardType
+    , welcomeWarning = Nothing
+    , welcomeInfo = Nothing
     }
 
 defaultLookAndFeel :: AppConfigLookAndFeel
 defaultLookAndFeel =
   AppConfigLookAndFeel
-    { _appConfigLookAndFeelAppTitle = Nothing
-    , _appConfigLookAndFeelAppTitleShort = Nothing
-    , _appConfigLookAndFeelCustomMenuLinks = []
-    , _appConfigLookAndFeelLoginInfo = Nothing
-    , _appConfigLookAndFeelLogoUrl = Nothing
-    , _appConfigLookAndFeelStyleUrl = Nothing
-    , _appConfigLookAndFeelPrimaryColor = Nothing
-    , _appConfigLookAndFeelIllustrationsColor = Nothing
+    { appTitle = Nothing
+    , appTitleShort = Nothing
+    , customMenuLinks = []
+    , loginInfo = Nothing
+    , logoUrl = Nothing
+    , styleUrl = Nothing
+    , primaryColor = Nothing
+    , illustrationsColor = Nothing
     }
 
 defaultRegistry :: AppConfigRegistry
-defaultRegistry = AppConfigRegistry {_appConfigRegistryEnabled = False, _appConfigRegistryToken = ""}
+defaultRegistry = AppConfigRegistry {enabled = False, token = ""}
 
 defaultKnowledgeModel :: AppConfigKnowledgeModel
 defaultKnowledgeModel =
   AppConfigKnowledgeModel
-    {_appConfigKnowledgeModelPublic = defaultKnowledgeModelPublic, _appConfigKnowledgeModelIntegrationConfig = ""}
+    { public = defaultKnowledgeModelPublic
+    , integrationConfig = ""
+    }
 
 defaultKnowledgeModelPublic :: AppConfigKnowledgeModelPublic
 defaultKnowledgeModelPublic =
   AppConfigKnowledgeModelPublic
-    {_appConfigKnowledgeModelPublicEnabled = False, _appConfigKnowledgeModelPublicPackages = []}
+    { enabled = False
+    , packages = []
+    }
 
 defaultQuestionnaire :: AppConfigQuestionnaire
 defaultQuestionnaire =
   AppConfigQuestionnaire
-    { _appConfigQuestionnaireQuestionnaireVisibility = defaultQuestionnaireVisibility
-    , _appConfigQuestionnaireQuestionnaireSharing = defaultQuestionnaireSharing
-    , _appConfigQuestionnaireQuestionnaireCreation = TemplateAndCustomQuestionnaireCreation
-    , _appConfigQuestionnaireProjectTagging = defaultQuestionnaireProjectTagging
-    , _appConfigQuestionnaireSummaryReport = SimpleFeature True
-    , _appConfigQuestionnaireFeedback = defaultFeedback
+    { questionnaireVisibility = defaultQuestionnaireVisibility
+    , questionnaireSharing = defaultQuestionnaireSharing
+    , questionnaireCreation = TemplateAndCustomQuestionnaireCreation
+    , projectTagging = defaultQuestionnaireProjectTagging
+    , summaryReport = SimpleFeature True
+    , feedback = defaultFeedback
     }
 
 defaultQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
 defaultQuestionnaireVisibility =
   AppConfigQuestionnaireVisibility
-    { _appConfigQuestionnaireVisibilityEnabled = True
-    , _appConfigQuestionnaireVisibilityDefaultValue = PrivateQuestionnaire
+    { enabled = True
+    , defaultValue = PrivateQuestionnaire
     }
 
 defaultQuestionnaireSharing :: AppConfigQuestionnaireSharing
 defaultQuestionnaireSharing =
   AppConfigQuestionnaireSharing
-    { _appConfigQuestionnaireSharingEnabled = True
-    , _appConfigQuestionnaireSharingDefaultValue = RestrictedQuestionnaire
-    , _appConfigQuestionnaireSharingAnonymousEnabled = True
+    { enabled = True
+    , defaultValue = RestrictedQuestionnaire
+    , anonymousEnabled = True
     }
 
 defaultQuestionnaireProjectTagging :: AppConfigQuestionnaireProjectTagging
 defaultQuestionnaireProjectTagging =
   AppConfigQuestionnaireProjectTagging
-    {_appConfigQuestionnaireProjectTaggingEnabled = True, _appConfigQuestionnaireProjectTaggingTags = []}
+    { enabled = True
+    , tags = []
+    }
 
 defaultFeedback :: AppConfigQuestionnaireFeedback
 defaultFeedback =
   AppConfigQuestionnaireFeedback
-    { _appConfigQuestionnaireFeedbackEnabled = False
-    , _appConfigQuestionnaireFeedbackToken = ""
-    , _appConfigQuestionnaireFeedbackOwner = ""
-    , _appConfigQuestionnaireFeedbackRepo = ""
+    { enabled = False
+    , token = ""
+    , owner = ""
+    , repo = ""
     }
 
 defaultTemplate :: AppConfigTemplate
-defaultTemplate = AppConfigTemplate {_appConfigTemplateRecommendedTemplateId = Nothing}
+defaultTemplate = AppConfigTemplate {recommendedTemplateId = Nothing}
 
 defaultSubmission :: AppConfigSubmission
-defaultSubmission = AppConfigSubmission {_appConfigSubmissionEnabled = False, _appConfigSubmissionServices = []}
+defaultSubmission = AppConfigSubmission {enabled = False, services = []}
 
 defaultOwl :: AppConfigOwl
 defaultOwl =
   AppConfigOwl
-    { _appConfigOwlEnabled = False
-    , _appConfigOwlName = ""
-    , _appConfigOwlOrganizationId = ""
-    , _appConfigOwlKmId = ""
-    , _appConfigOwlVersion = ""
-    , _appConfigOwlPreviousPackageId = Nothing
-    , _appConfigOwlRootElement = ""
+    { enabled = False
+    , name = ""
+    , organizationId = ""
+    , kmId = ""
+    , version = ""
+    , previousPackageId = Nothing
+    , rootElement = ""
     }

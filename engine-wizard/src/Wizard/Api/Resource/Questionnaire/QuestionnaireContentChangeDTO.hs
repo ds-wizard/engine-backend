@@ -4,8 +4,7 @@ import GHC.Generics
 
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 
-data QuestionnaireContentChangeDTO =
-  QuestionnaireContentChangeDTO
-    { _questionnaireContentChangeDTOEvents :: [QuestionnaireEventChangeDTO]
-    }
+data QuestionnaireContentChangeDTO = QuestionnaireContentChangeDTO
+  { events :: [QuestionnaireEventChangeDTO]
+  }
   deriving (Show, Eq, Generic)

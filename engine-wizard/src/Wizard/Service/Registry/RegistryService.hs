@@ -1,15 +1,14 @@
 module Wizard.Service.Registry.RegistryService where
 
-import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (liftIO)
 import Data.Foldable (traverse_)
 import Data.Time
 
-import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.Registry.RegistryLocaleDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Database.DAO.Registry.RegistryTemplateDAO
@@ -34,8 +33,8 @@ confirmRegistration reqDto =
   runInTransaction $ do
     org <- confirmOrganizationRegistration reqDto
     appConfig <- getAppConfig
-    let updatedRegistry = AppConfigRegistry {_appConfigRegistryEnabled = True, _appConfigRegistryToken = org ^. token}
-    let updatedAppConfig = appConfig & registry .~ updatedRegistry
+    let updatedRegistry = AppConfigRegistry {enabled = True, token = org.token}
+    let updatedAppConfig = appConfig {registry = updatedRegistry}
     modifyAppConfig updatedAppConfig
     return org
 
@@ -47,6 +46,7 @@ synchronizeData = do
     synchronizeOrganizations now
     synchronizePackages now
     synchronizeTemplates now
+    synchronizeLocales now
 
 synchronizeOrganizations :: UTCTime -> AppContextM ()
 synchronizeOrganizations now = do
@@ -76,7 +76,16 @@ synchronizeTemplates now = do
   traverse_ insertRegistryTemplate registryTemplates
   logInfoU _CMP_SERVICE "Organization Synchronization successfully finished"
 
+synchronizeLocales :: UTCTime -> AppContextM ()
+synchronizeLocales now = do
+  logInfoU _CMP_SERVICE "Locale Synchronization started"
+  templates <- retrieveLocales
+  let registryLocales = fmap (`toRegistryLocale` now) templates
+  deleteRegistryLocales
+  traverse_ insertRegistryLocale registryLocales
+  logInfoU _CMP_SERVICE "Organization Synchronization successfully finished"
+
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-checkIfRegistryIsEnabled = checkIfAppFeatureIsEnabled "Registry" (registry . enabled)
+checkIfRegistryIsEnabled = checkIfAppFeatureIsEnabled "Registry" (\c -> c.registry.enabled)

@@ -17,77 +17,72 @@ data AddQuestionEvent
   | AddIntegrationQuestionEvent' AddIntegrationQuestionEvent
   deriving (Show, Eq, Generic)
 
-data AddOptionsQuestionEvent =
-  AddOptionsQuestionEvent
-    { _addOptionsQuestionEventUuid :: U.UUID
-    , _addOptionsQuestionEventParentUuid :: U.UUID
-    , _addOptionsQuestionEventEntityUuid :: U.UUID
-    , _addOptionsQuestionEventTitle :: String
-    , _addOptionsQuestionEventText :: Maybe String
-    , _addOptionsQuestionEventRequiredPhaseUuid :: Maybe U.UUID
-    , _addOptionsQuestionEventAnnotations :: [MapEntry String String]
-    , _addOptionsQuestionEventTagUuids :: [U.UUID]
-    , _addOptionsQuestionEventCreatedAt :: UTCTime
-    }
+data AddOptionsQuestionEvent = AddOptionsQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: String
+  , text :: Maybe String
+  , requiredPhaseUuid :: Maybe U.UUID
+  , annotations :: [MapEntry String String]
+  , tagUuids :: [U.UUID]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data AddMultiChoiceQuestionEvent =
-  AddMultiChoiceQuestionEvent
-    { _addMultiChoiceQuestionEventUuid :: U.UUID
-    , _addMultiChoiceQuestionEventParentUuid :: U.UUID
-    , _addMultiChoiceQuestionEventEntityUuid :: U.UUID
-    , _addMultiChoiceQuestionEventTitle :: String
-    , _addMultiChoiceQuestionEventText :: Maybe String
-    , _addMultiChoiceQuestionEventRequiredPhaseUuid :: Maybe U.UUID
-    , _addMultiChoiceQuestionEventAnnotations :: [MapEntry String String]
-    , _addMultiChoiceQuestionEventTagUuids :: [U.UUID]
-    , _addMultiChoiceQuestionEventCreatedAt :: UTCTime
-    }
+data AddMultiChoiceQuestionEvent = AddMultiChoiceQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: String
+  , text :: Maybe String
+  , requiredPhaseUuid :: Maybe U.UUID
+  , annotations :: [MapEntry String String]
+  , tagUuids :: [U.UUID]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data AddListQuestionEvent =
-  AddListQuestionEvent
-    { _addListQuestionEventUuid :: U.UUID
-    , _addListQuestionEventParentUuid :: U.UUID
-    , _addListQuestionEventEntityUuid :: U.UUID
-    , _addListQuestionEventTitle :: String
-    , _addListQuestionEventText :: Maybe String
-    , _addListQuestionEventRequiredPhaseUuid :: Maybe U.UUID
-    , _addListQuestionEventAnnotations :: [MapEntry String String]
-    , _addListQuestionEventTagUuids :: [U.UUID]
-    , _addListQuestionEventCreatedAt :: UTCTime
-    }
+data AddListQuestionEvent = AddListQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: String
+  , text :: Maybe String
+  , requiredPhaseUuid :: Maybe U.UUID
+  , annotations :: [MapEntry String String]
+  , tagUuids :: [U.UUID]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data AddValueQuestionEvent =
-  AddValueQuestionEvent
-    { _addValueQuestionEventUuid :: U.UUID
-    , _addValueQuestionEventParentUuid :: U.UUID
-    , _addValueQuestionEventEntityUuid :: U.UUID
-    , _addValueQuestionEventTitle :: String
-    , _addValueQuestionEventText :: Maybe String
-    , _addValueQuestionEventRequiredPhaseUuid :: Maybe U.UUID
-    , _addValueQuestionEventAnnotations :: [MapEntry String String]
-    , _addValueQuestionEventTagUuids :: [U.UUID]
-    , _addValueQuestionEventValueType :: QuestionValueType
-    , _addValueQuestionEventCreatedAt :: UTCTime
-    }
+data AddValueQuestionEvent = AddValueQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: String
+  , text :: Maybe String
+  , requiredPhaseUuid :: Maybe U.UUID
+  , annotations :: [MapEntry String String]
+  , tagUuids :: [U.UUID]
+  , valueType :: QuestionValueType
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data AddIntegrationQuestionEvent =
-  AddIntegrationQuestionEvent
-    { _addIntegrationQuestionEventUuid :: U.UUID
-    , _addIntegrationQuestionEventParentUuid :: U.UUID
-    , _addIntegrationQuestionEventEntityUuid :: U.UUID
-    , _addIntegrationQuestionEventTitle :: String
-    , _addIntegrationQuestionEventText :: Maybe String
-    , _addIntegrationQuestionEventRequiredPhaseUuid :: Maybe U.UUID
-    , _addIntegrationQuestionEventAnnotations :: [MapEntry String String]
-    , _addIntegrationQuestionEventTagUuids :: [U.UUID]
-    , _addIntegrationQuestionEventIntegrationUuid :: U.UUID
-    , _addIntegrationQuestionEventProps :: M.Map String String
-    , _addIntegrationQuestionEventCreatedAt :: UTCTime
-    }
+data AddIntegrationQuestionEvent = AddIntegrationQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: String
+  , text :: Maybe String
+  , requiredPhaseUuid :: Maybe U.UUID
+  , annotations :: [MapEntry String String]
+  , tagUuids :: [U.UUID]
+  , integrationUuid :: U.UUID
+  , props :: M.Map String String
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
 -- --------------------------------------------
@@ -99,98 +94,92 @@ data EditQuestionEvent
   | EditIntegrationQuestionEvent' EditIntegrationQuestionEvent
   deriving (Show, Eq, Generic)
 
-data EditOptionsQuestionEvent =
-  EditOptionsQuestionEvent
-    { _editOptionsQuestionEventUuid :: U.UUID
-    , _editOptionsQuestionEventParentUuid :: U.UUID
-    , _editOptionsQuestionEventEntityUuid :: U.UUID
-    , _editOptionsQuestionEventTitle :: EventField String
-    , _editOptionsQuestionEventText :: EventField (Maybe String)
-    , _editOptionsQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
-    , _editOptionsQuestionEventAnnotations :: EventField [MapEntry String String]
-    , _editOptionsQuestionEventTagUuids :: EventField [U.UUID]
-    , _editOptionsQuestionEventExpertUuids :: EventField [U.UUID]
-    , _editOptionsQuestionEventReferenceUuids :: EventField [U.UUID]
-    , _editOptionsQuestionEventAnswerUuids :: EventField [U.UUID]
-    , _editOptionsQuestionEventCreatedAt :: UTCTime
-    }
+data EditOptionsQuestionEvent = EditOptionsQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: EventField String
+  , text :: EventField (Maybe String)
+  , requiredPhaseUuid :: EventField (Maybe U.UUID)
+  , annotations :: EventField [MapEntry String String]
+  , tagUuids :: EventField [U.UUID]
+  , expertUuids :: EventField [U.UUID]
+  , referenceUuids :: EventField [U.UUID]
+  , answerUuids :: EventField [U.UUID]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditMultiChoiceQuestionEvent =
-  EditMultiChoiceQuestionEvent
-    { _editMultiChoiceQuestionEventUuid :: U.UUID
-    , _editMultiChoiceQuestionEventParentUuid :: U.UUID
-    , _editMultiChoiceQuestionEventEntityUuid :: U.UUID
-    , _editMultiChoiceQuestionEventTitle :: EventField String
-    , _editMultiChoiceQuestionEventText :: EventField (Maybe String)
-    , _editMultiChoiceQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
-    , _editMultiChoiceQuestionEventAnnotations :: EventField [MapEntry String String]
-    , _editMultiChoiceQuestionEventTagUuids :: EventField [U.UUID]
-    , _editMultiChoiceQuestionEventExpertUuids :: EventField [U.UUID]
-    , _editMultiChoiceQuestionEventReferenceUuids :: EventField [U.UUID]
-    , _editMultiChoiceQuestionEventChoiceUuids :: EventField [U.UUID]
-    , _editMultiChoiceQuestionEventCreatedAt :: UTCTime
-    }
+data EditMultiChoiceQuestionEvent = EditMultiChoiceQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: EventField String
+  , text :: EventField (Maybe String)
+  , requiredPhaseUuid :: EventField (Maybe U.UUID)
+  , annotations :: EventField [MapEntry String String]
+  , tagUuids :: EventField [U.UUID]
+  , expertUuids :: EventField [U.UUID]
+  , referenceUuids :: EventField [U.UUID]
+  , choiceUuids :: EventField [U.UUID]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditListQuestionEvent =
-  EditListQuestionEvent
-    { _editListQuestionEventUuid :: U.UUID
-    , _editListQuestionEventParentUuid :: U.UUID
-    , _editListQuestionEventEntityUuid :: U.UUID
-    , _editListQuestionEventTitle :: EventField String
-    , _editListQuestionEventText :: EventField (Maybe String)
-    , _editListQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
-    , _editListQuestionEventAnnotations :: EventField [MapEntry String String]
-    , _editListQuestionEventTagUuids :: EventField [U.UUID]
-    , _editListQuestionEventExpertUuids :: EventField [U.UUID]
-    , _editListQuestionEventReferenceUuids :: EventField [U.UUID]
-    , _editListQuestionEventItemTemplateQuestionUuids :: EventField [U.UUID]
-    , _editListQuestionEventCreatedAt :: UTCTime
-    }
+data EditListQuestionEvent = EditListQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: EventField String
+  , text :: EventField (Maybe String)
+  , requiredPhaseUuid :: EventField (Maybe U.UUID)
+  , annotations :: EventField [MapEntry String String]
+  , tagUuids :: EventField [U.UUID]
+  , expertUuids :: EventField [U.UUID]
+  , referenceUuids :: EventField [U.UUID]
+  , itemTemplateQuestionUuids :: EventField [U.UUID]
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditValueQuestionEvent =
-  EditValueQuestionEvent
-    { _editValueQuestionEventUuid :: U.UUID
-    , _editValueQuestionEventParentUuid :: U.UUID
-    , _editValueQuestionEventEntityUuid :: U.UUID
-    , _editValueQuestionEventTitle :: EventField String
-    , _editValueQuestionEventText :: EventField (Maybe String)
-    , _editValueQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
-    , _editValueQuestionEventAnnotations :: EventField [MapEntry String String]
-    , _editValueQuestionEventTagUuids :: EventField [U.UUID]
-    , _editValueQuestionEventExpertUuids :: EventField [U.UUID]
-    , _editValueQuestionEventReferenceUuids :: EventField [U.UUID]
-    , _editValueQuestionEventValueType :: EventField QuestionValueType
-    , _editValueQuestionEventCreatedAt :: UTCTime
-    }
+data EditValueQuestionEvent = EditValueQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: EventField String
+  , text :: EventField (Maybe String)
+  , requiredPhaseUuid :: EventField (Maybe U.UUID)
+  , annotations :: EventField [MapEntry String String]
+  , tagUuids :: EventField [U.UUID]
+  , expertUuids :: EventField [U.UUID]
+  , referenceUuids :: EventField [U.UUID]
+  , valueType :: EventField QuestionValueType
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
-data EditIntegrationQuestionEvent =
-  EditIntegrationQuestionEvent
-    { _editIntegrationQuestionEventUuid :: U.UUID
-    , _editIntegrationQuestionEventParentUuid :: U.UUID
-    , _editIntegrationQuestionEventEntityUuid :: U.UUID
-    , _editIntegrationQuestionEventTitle :: EventField String
-    , _editIntegrationQuestionEventText :: EventField (Maybe String)
-    , _editIntegrationQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
-    , _editIntegrationQuestionEventAnnotations :: EventField [MapEntry String String]
-    , _editIntegrationQuestionEventTagUuids :: EventField [U.UUID]
-    , _editIntegrationQuestionEventExpertUuids :: EventField [U.UUID]
-    , _editIntegrationQuestionEventReferenceUuids :: EventField [U.UUID]
-    , _editIntegrationQuestionEventIntegrationUuid :: EventField U.UUID
-    , _editIntegrationQuestionEventProps :: EventField (M.Map String String)
-    , _editIntegrationQuestionEventCreatedAt :: UTCTime
-    }
+data EditIntegrationQuestionEvent = EditIntegrationQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: EventField String
+  , text :: EventField (Maybe String)
+  , requiredPhaseUuid :: EventField (Maybe U.UUID)
+  , annotations :: EventField [MapEntry String String]
+  , tagUuids :: EventField [U.UUID]
+  , expertUuids :: EventField [U.UUID]
+  , referenceUuids :: EventField [U.UUID]
+  , integrationUuid :: EventField U.UUID
+  , props :: EventField (M.Map String String)
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)
 
 -- --------------------------------------------
-data DeleteQuestionEvent =
-  DeleteQuestionEvent
-    { _deleteQuestionEventUuid :: U.UUID
-    , _deleteQuestionEventParentUuid :: U.UUID
-    , _deleteQuestionEventEntityUuid :: U.UUID
-    , _deleteQuestionEventCreatedAt :: UTCTime
-    }
+data DeleteQuestionEvent = DeleteQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , createdAt :: UTCTime
+  }
   deriving (Show, Eq, Generic)

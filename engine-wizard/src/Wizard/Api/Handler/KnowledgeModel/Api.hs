@@ -6,9 +6,9 @@ import Servant.Swagger.Tags
 import Wizard.Api.Handler.KnowledgeModel.List_POST
 import Wizard.Model.Context.BaseContext
 
-type KnowledgeModelAPI
-   = Tags "Knowledge Model"
-     :> List_POST
+type KnowledgeModelAPI =
+  Tags "Knowledge Model"
+    :> List_POST
 
 knowledgeModelApi :: Proxy KnowledgeModelAPI
 knowledgeModelApi = Proxy

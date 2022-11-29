@@ -5,27 +5,27 @@ import GHC.Generics
 
 import Registry.Model.Organization.Organization
 
-data OrganizationDTO =
-  OrganizationDTO
-    { _organizationDTOOrganizationId :: String
-    , _organizationDTOName :: String
-    , _organizationDTODescription :: String
-    , _organizationDTOEmail :: String
-    , _organizationDTORole :: OrganizationRole
-    , _organizationDTOToken :: String
-    , _organizationDTOActive :: Bool
-    , _organizationDTOLogo :: Maybe String
-    , _organizationDTOCreatedAt :: UTCTime
-    , _organizationDTOUpdatedAt :: UTCTime
-    }
+data OrganizationDTO = OrganizationDTO
+  { organizationId :: String
+  , name :: String
+  , description :: String
+  , email :: String
+  , oRole :: OrganizationRole
+  , token :: String
+  , active :: Bool
+  , logo :: Maybe String
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
   deriving (Show, Generic)
 
 instance Eq OrganizationDTO where
   a == b =
-    _organizationDTOOrganizationId a == _organizationDTOOrganizationId b &&
-    _organizationDTOName a == _organizationDTOName b &&
-    _organizationDTODescription a == _organizationDTODescription b &&
-    _organizationDTOEmail a == _organizationDTOEmail b &&
-    _organizationDTORole a == _organizationDTORole b &&
-    _organizationDTOToken a == _organizationDTOToken b &&
-    _organizationDTOActive a == _organizationDTOActive b && _organizationDTOLogo a == _organizationDTOLogo b
+    a.organizationId == b.organizationId
+      && a.name == b.name
+      && a.description == b.description
+      && a.email == b.email
+      && a.oRole == b.oRole
+      && a.token == b.token
+      && a.active == b.active
+      && a.logo == b.logo

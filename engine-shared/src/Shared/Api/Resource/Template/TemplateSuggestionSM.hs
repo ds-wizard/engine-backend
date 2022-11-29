@@ -10,4 +10,4 @@ import Shared.Service.Template.TemplateMapper
 import Shared.Util.Swagger
 
 instance ToSchema TemplateSuggestionDTO where
-  declareNamedSchema = simpleToSchema (toSuggestionDTO commonWizardTemplate)
+  declareNamedSchema = toSwagger (toSuggestionDTO commonWizardTemplate)

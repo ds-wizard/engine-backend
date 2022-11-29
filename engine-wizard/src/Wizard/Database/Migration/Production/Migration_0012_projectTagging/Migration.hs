@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Production.Migration_0012_projectTagging.Migration
-  ( definition
-  ) where
+module Wizard.Database.Migration.Production.Migration_0012_projectTagging.Migration (
+  definition,
+) where
 
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
@@ -32,7 +32,7 @@ updateAppConfig dbPool = do
 addProjectTagsToQuestionnaire dbPool = do
   let sql =
         "ALTER TABLE questionnaire ADD project_tags TEXT[] NOT NULL DEFAULT '{}'; \
-            \ALTER TABLE questionnaire RENAME COLUMN selected_tag_uuids TO selected_question_tag_uuids;"
+        \ALTER TABLE questionnaire RENAME COLUMN selected_tag_uuids TO selected_question_tag_uuids;"
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing

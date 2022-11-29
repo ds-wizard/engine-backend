@@ -6,11 +6,11 @@ import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 
 registryCreate :: RegistryCreateDTO
-registryCreate = RegistryCreateDTO {_registryCreateDTOEmail = "albert.einstein@example.com"}
+registryCreate = RegistryCreateDTO {email = "albert.einstein@example.com"}
 
 registryConfirmation :: RegistryConfirmationDTO
 registryConfirmation =
   RegistryConfirmationDTO
-    { _registryConfirmationDTOOrganizationId = _actionKeyOrganizationId regActionKey
-    , _registryConfirmationDTOHash = _actionKeyHash regActionKey
+    { organizationId = regActionKey.organizationId
+    , hash = regActionKey.hash
     }

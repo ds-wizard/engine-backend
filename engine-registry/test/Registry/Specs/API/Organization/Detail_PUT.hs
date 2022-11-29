@@ -1,8 +1,7 @@
-module Registry.Specs.API.Organization.Detail_PUT
-  ( detail_put
-  ) where
+module Registry.Specs.API.Organization.Detail_PUT (
+  detail_put,
+) where
 
-import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
 import qualified Data.Map.Strict as M
 import Network.HTTP.Types
@@ -11,8 +10,8 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationChangeJM ()
+import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationCreateJM ()
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
@@ -20,6 +19,7 @@ import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext
+import Registry.Model.Organization.Organization
 import Registry.Service.Organization.OrganizationMapper
 import Shared.Model.Error.Error
 
@@ -57,18 +57,18 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 test_200 appContext =
   it "HTTP 200 OK" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = toDTO orgGlobalEdited
-    let expType (a :: OrganizationDTO) = a
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    assertResponse expStatus expHeaders expDto expType response ["updatedAt"]
-     -- AND: Find result in DB and compare with expectation state
-    assertExistenceOfOrganizationInDB appContext orgGlobalEdited
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = toDTO orgGlobalEdited
+      let expType (a :: OrganizationDTO) = a
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      assertResponse expStatus expHeaders expDto expType response ["updatedAt"]
+      -- AND: Find result in DB and compare with expectation state
+      assertExistenceOfOrganizationInDB appContext orgGlobalEdited
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -76,24 +76,24 @@ test_200 appContext =
 test_400 appContext = do
   createInvalidJsonTest reqMethod reqUrl "description"
   it "HTTP 400 BAD REQUEST when email is already used" $
-     -- GIVEN: Prepare request
-   do
-    let orgEmail = orgNetherlands ^. email
-    let reqDto = orgGlobalCreate & email .~ orgEmail
-    let reqBody = encode reqDto
-     -- AND: Prepare expectation
-    let expStatus = 400
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = ValidationError [] (M.singleton "email" [_ERROR_VALIDATION__ORGANIZATION_EMAIL_UNIQUENESS orgEmail])
-    let expBody = encode expDto
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-     -- AND: Find result in DB and compare with expectation state
-    assertCountInDB findOrganizations appContext 2
+    -- GIVEN: Prepare request
+    do
+      let orgEmail = orgNetherlands.email
+      let reqDto = orgGlobalCreate {email = orgEmail} :: OrganizationCreateDTO
+      let reqBody = encode reqDto
+      -- AND: Prepare expectation
+      let expStatus = 400
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = ValidationError [] (M.singleton "email" [_ERROR_VALIDATION__ORGANIZATION_EMAIL_UNIQUENESS orgEmail])
+      let expBody = encode expDto
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
+      -- AND: Find result in DB and compare with expectation state
+      assertCountInDB findOrganizations appContext 2
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

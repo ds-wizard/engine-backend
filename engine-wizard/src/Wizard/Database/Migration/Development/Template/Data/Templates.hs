@@ -1,10 +1,8 @@
 module Wizard.Database.Migration.Development.Template.Data.Templates where
 
-import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 
-import LensesConfig hiding (templateMetamodelVersion)
 import Shared.Constant.Template
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.DefaultTemplate (html)
@@ -19,21 +17,22 @@ import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Database.Migration.Development.Registry.Data.RegistryTemplates
+import Wizard.Model.App.App
 import Wizard.Model.Template.TemplateState
 import Wizard.Service.Template.TemplateMapper
 
 templateFileDefaultHtmlEditedChangeDto :: TemplateFileChangeDTO
 templateFileDefaultHtmlEditedChangeDto =
   TemplateFileChangeDTO
-    { _templateFileChangeDTOFileName = templateFileDefaultHtmlEdited ^. fileName
-    , _templateFileChangeDTOContent = templateFileDefaultHtmlEdited ^. content
+    { fileName = templateFileDefaultHtmlEdited.fileName
+    , content = templateFileDefaultHtmlEdited.content
     }
 
 templateFileNewFileChangeDto :: TemplateFileChangeDTO
 templateFileNewFileChangeDto =
   TemplateFileChangeDTO
-    { _templateFileChangeDTOFileName = templateFileNewFile ^. fileName
-    , _templateFileChangeDTOContent = templateFileNewFile ^. content
+    { fileName = templateFileNewFile.fileName
+    , content = templateFileNewFile.content
     }
 
 commonWizardTemplateSimpleDTO :: TemplateSimpleDTO
@@ -41,11 +40,12 @@ commonWizardTemplateSimpleDTO =
   toSimpleDTO'
     True
     [SPM.toPackage globalPackage, SPM.toPackage netherlandsPackageV2]
-    (toTemplateList
-       commonWizardTemplate
-       (Just commonWizardRegistryTemplate)
-       (Just globalRegistryOrganization)
-       UpToDateTemplateState)
+    ( toTemplateList
+        commonWizardTemplate
+        (Just commonWizardRegistryTemplate)
+        (Just globalRegistryOrganization)
+        UpToDateTemplateState
+    )
 
 commonWizardTemplateDetailDTO :: TemplateDetailDTO
 commonWizardTemplateDetailDTO =
@@ -64,28 +64,28 @@ commonWizardTemplateEditedChangeDto = toChangeDTO commonWizardTemplateEdited
 differentTemplate :: Template
 differentTemplate =
   Template
-    { _templateTId = "dsw:another-temlate:1.0.0"
-    , _templateName = "Another Template"
-    , _templateOrganizationId = "dsw"
-    , _templateTemplateId = "another-template"
-    , _templateVersion = "1.0.0"
-    , _templateMetamodelVersion = templateMetamodelVersion
-    , _templateDescription = "This is a another template"
-    , _templateReadme = "# Another Template"
-    , _templateLicense = "Apache-2.0"
-    , _templateAllowedPackages = [packagePatternAll]
-    , _templateRecommendedPackageId = Nothing
-    , _templateFormats = []
-    , _templateAppUuid = differentApp ^. uuid
-    , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    { tId = "dsw:another-temlate:1.0.0"
+    , name = "Another Template"
+    , organizationId = "dsw"
+    , templateId = "another-template"
+    , version = "1.0.0"
+    , metamodelVersion = templateMetamodelVersion
+    , description = "This is a another template"
+    , readme = "# Another Template"
+    , license = "Apache-2.0"
+    , allowedPackages = [packagePatternAll]
+    , recommendedPackageId = Nothing
+    , formats = []
+    , appUuid = differentApp.uuid
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
 differentFileHtml :: TemplateFile
 differentFileHtml =
   TemplateFile
-    { _templateFileTemplateId = differentTemplate ^. tId
-    , _templateFileUuid = u' "2d9eb63d-05fb-4eb7-9dc3-378b55d062ce"
-    , _templateFileFileName = "default.html.j2"
-    , _templateFileContent = html
-    , _templateFileAppUuid = differentApp ^. uuid
+    { templateId = differentTemplate.tId
+    , uuid = u' "2d9eb63d-05fb-4eb7-9dc3-378b55d062ce"
+    , fileName = "default.html.j2"
+    , content = html
+    , appUuid = differentApp.uuid
     }

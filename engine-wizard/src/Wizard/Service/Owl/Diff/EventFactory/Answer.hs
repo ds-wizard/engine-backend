@@ -1,10 +1,8 @@
 module Wizard.Service.Owl.Diff.EventFactory.Answer where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 import Data.Time
 
-import LensesConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Event
 import Shared.Model.Event.EventField
@@ -21,31 +19,31 @@ instance EventFactory Answer where
     now <- liftIO getCurrentTime
     return $
       AddAnswerEvent' $
-      AddAnswerEvent
-        { _addAnswerEventUuid = eventUuid
-        , _addAnswerEventParentUuid = parentUuid
-        , _addAnswerEventEntityUuid = entity ^. uuid
-        , _addAnswerEventLabel = entity ^. label
-        , _addAnswerEventAdvice = entity ^. advice
-        , _addAnswerEventAnnotations = entity ^. annotations
-        , _addAnswerEventMetricMeasures = entity ^. metricMeasures
-        , _addAnswerEventCreatedAt = now
-        }
+        AddAnswerEvent
+          { uuid = eventUuid
+          , parentUuid = parentUuid
+          , entityUuid = entity.uuid
+          , aLabel = entity.aLabel
+          , advice = entity.advice
+          , annotations = entity.annotations
+          , metricMeasures = entity.metricMeasures
+          , createdAt = now
+          }
   createEditEvent (oldKm, newKm) parentUuid oldEntity newEntity = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let event =
           EditAnswerEvent
-            { _editAnswerEventUuid = eventUuid
-            , _editAnswerEventParentUuid = parentUuid
-            , _editAnswerEventEntityUuid = newEntity ^. uuid
-            , _editAnswerEventLabel = diffField (oldEntity ^. label) (newEntity ^. label)
-            , _editAnswerEventAdvice = diffField (oldEntity ^. advice) (newEntity ^. advice)
-            , _editAnswerEventAnnotations = diffField (oldEntity ^. annotations) (newEntity ^. annotations)
-            , _editAnswerEventFollowUpUuids =
-                diffListField (oldKm, newKm) (oldEntity ^. followUpUuids) (newEntity ^. followUpUuids) questionsM
-            , _editAnswerEventMetricMeasures = diffField (oldEntity ^. metricMeasures) (newEntity ^. metricMeasures)
-            , _editAnswerEventCreatedAt = now
+            { uuid = eventUuid
+            , parentUuid = parentUuid
+            , entityUuid = newEntity.uuid
+            , aLabel = diffField oldEntity.aLabel newEntity.aLabel
+            , advice = diffField oldEntity.advice newEntity.advice
+            , annotations = diffField oldEntity.annotations newEntity.annotations
+            , followUpUuids =
+                diffListField (oldKm, newKm) oldEntity.followUpUuids newEntity.followUpUuids getQuestionsM
+            , metricMeasures = diffField oldEntity.metricMeasures newEntity.metricMeasures
+            , createdAt = now
             }
     if isEmptyEvent event
       then return . Just . EditAnswerEvent' $ event
@@ -55,9 +53,9 @@ instance EventFactory Answer where
     now <- liftIO getCurrentTime
     return $
       DeleteAnswerEvent' $
-      DeleteAnswerEvent
-        { _deleteAnswerEventUuid = eventUuid
-        , _deleteAnswerEventParentUuid = parentUuid
-        , _deleteAnswerEventEntityUuid = entity ^. uuid
-        , _deleteAnswerEventCreatedAt = now
-        }
+        DeleteAnswerEvent
+          { uuid = eventUuid
+          , parentUuid = parentUuid
+          , entityUuid = entity.uuid
+          , createdAt = now
+          }

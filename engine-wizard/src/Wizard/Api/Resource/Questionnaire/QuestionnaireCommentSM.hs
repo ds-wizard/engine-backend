@@ -9,7 +9,7 @@ import Wizard.Api.Resource.User.UserSuggestionSM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 
 instance ToSchema QuestionnaireCommentThreadDTO where
-  declareNamedSchema = simpleToSchema cmtQ1_t1Dto
+  declareNamedSchema = toSwagger cmtQ1_t1Dto
 
 instance ToSchema QuestionnaireCommentDTO where
-  declareNamedSchema = simpleToSchema cmtQ1_t1_1Dto
+  declareNamedSchema = toSwagger cmtQ1_t1_1Dto

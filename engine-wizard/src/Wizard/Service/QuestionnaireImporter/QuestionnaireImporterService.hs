@@ -1,11 +1,9 @@
 module Wizard.Service.QuestionnaireImporter.QuestionnaireImporterService where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 import Data.Maybe (fromMaybe)
 import Data.Time
 
-import LensesConfig
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Model.Common.Pageable
@@ -17,6 +15,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.QuestionnaireImporter.QuestionnaireImporterDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.QuestionnaireImporter.QuestionnaireImporter
 import Wizard.Service.Acl.AclService
 import Wizard.Service.QuestionnaireImporter.QuestionnaireImporterAudit
@@ -30,15 +29,15 @@ getQuestionnaireImportersPageDto mQuery pageable sort = do
   importersPage <- findQuestionnaireImportersPage Nothing Nothing mQuery Nothing pageable sort
   return $ fmap toDTO importersPage
 
-getQuestionnaireImporterSuggestions ::
-     Maybe String -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireImporterDTO)
+getQuestionnaireImporterSuggestions
+  :: Maybe String -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireImporterDTO)
 getQuestionnaireImporterSuggestions mQuestionnaireUuid mQuery mEnabled pageable sort = do
   checkPermission _QTN_PERM
   mPkgId <-
     case mQuestionnaireUuid of
       Just qtnUuid -> do
         qtn <- findQuestionnaireById qtnUuid
-        return . Just $ qtn ^. packageId
+        return . Just $ qtn.packageId
       Nothing -> return Nothing
   page <- findQuestionnaireImportersPage Nothing Nothing mQuery mEnabled (Pageable (Just 0) (Just 999999999)) sort
   return . fmap toDTO . updatePage page . filterImportersInGroup mPkgId $ page
@@ -46,14 +45,14 @@ getQuestionnaireImporterSuggestions mQuestionnaireUuid mQuery mEnabled pageable 
     updatePage :: Page QuestionnaireImporter -> [QuestionnaireImporter] -> Page QuestionnaireImporter
     updatePage (Page name _ _) array =
       let updatedArray = take updatedSize array
-          updatedSize = fromMaybe 20 $ pageable ^. size
+          updatedSize = fromMaybe 20 pageable.size
           updatedTotalElements = length updatedArray
           updatedTotalPages = computeTotalPage updatedTotalElements updatedSize
-          updatedNumber = fromMaybe 0 $ pageable ^. page
+          updatedNumber = fromMaybe 0 pageable.page
        in Page name (PageMetadata updatedSize updatedTotalElements updatedTotalPages updatedNumber) updatedArray
     filterImportersInGroup :: Maybe String -> Page QuestionnaireImporter -> [QuestionnaireImporter]
     filterImportersInGroup mPkgId page =
-      filter isQuestionnaireImporterSupported . filterQuestionnaireImporters mPkgId $ (page ^. entities)
+      filter isQuestionnaireImporterSupported . filterQuestionnaireImporters mPkgId $ page.entities
 
 getQuestionnaireImporter :: String -> AppContextM QuestionnaireImporterDTO
 getQuestionnaireImporter qiId =

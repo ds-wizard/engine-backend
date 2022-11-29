@@ -1,6 +1,5 @@
 module Wizard.Service.Template.TemplateService where
 
-import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Foldable (traverse_)
@@ -9,7 +8,6 @@ import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
 import Shared.Api.Resource.Template.TemplateSuggestionDTO
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.DAO.Template.TemplateAssetDAO
@@ -31,6 +29,8 @@ import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryTemplateDAO
 import Wizard.Database.DAO.Template.TemplateDAO (findTemplatesPage)
 import Wizard.Localization.Messages.Public
+import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Template.TemplateList
 import Wizard.Model.Template.TemplateState
@@ -48,8 +48,8 @@ getTemplates queryParams mPkgId = do
   templates <- findTemplatesFiltered queryParams
   return $ filterTemplates mPkgId templates
 
-getTemplatesPage ::
-     Maybe String
+getTemplatesPage
+  :: Maybe String
   -> Maybe String
   -> Maybe String
   -> Maybe String
@@ -59,12 +59,12 @@ getTemplatesPage ::
 getTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState pageable sort = do
   checkPermission _DMP_PERM
   appConfig <- getAppConfig
-  if mTemplateState == (Just . show $ OutdatedTemplateState) && not (appConfig ^. registry . enabled)
+  if mTemplateState == (Just . show $ OutdatedTemplateState) && not appConfig.registry.enabled
     then return $ Page "templates" (PageMetadata 0 0 0 0) []
     else do
       templates <- findTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState pageable sort
       packages <- findPackages
-      return . fmap (toSimpleDTO' (appConfig ^. registry . enabled) packages) $ templates
+      return . fmap (toSimpleDTO' appConfig.registry.enabled packages) $ templates
 
 getTemplateSuggestions :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page TemplateSuggestionDTO)
 getTemplateSuggestions mPkgId mQuery pageable sort = do
@@ -76,13 +76,13 @@ getTemplateSuggestions mPkgId mQuery pageable sort = do
     updatePage :: Page TemplateList -> [TemplateList] -> Page TemplateList
     updatePage (Page name _ _) array =
       let updatedArray = take updatedSize array
-          updatedSize = fromMaybe 20 $ pageable ^. size
+          updatedSize = fromMaybe 20 pageable.size
           updatedTotalElements = length updatedArray
           updatedTotalPages = computeTotalPage updatedTotalElements updatedSize
-          updatedNumber = fromMaybe 0 $ pageable ^. page
+          updatedNumber = fromMaybe 0 pageable.page
        in Page name (PageMetadata updatedSize updatedTotalElements updatedTotalPages updatedNumber) updatedArray
     filterTemplatesInGroup :: Page TemplateList -> [TemplateList]
-    filterTemplatesInGroup page = filter isTemplateSupported . filterTemplates mPkgId $ (page ^. entities)
+    filterTemplatesInGroup page = filter isTemplateSupported . filterTemplates mPkgId $ page.entities
 
 getTemplatesDto :: [(String, String)] -> AppContextM [TemplateSuggestionDTO]
 getTemplatesDto queryParams = do
@@ -93,7 +93,7 @@ getTemplatesDto queryParams = do
 getTemplateByUuidAndPackageId :: String -> Maybe String -> AppContextM Template
 getTemplateByUuidAndPackageId templateId mPkgId = do
   templates <- getTemplates [] mPkgId
-  case L.find (\t -> (t ^. tId) == templateId) templates of
+  case L.find (\t -> t.tId == templateId) templates of
     Just template -> return template
     Nothing -> throwError . NotExistsError $ _ERROR_VALIDATION__TEMPLATE_ABSENCE
 
@@ -104,8 +104,8 @@ getTemplateByUuidDto templateId = do
   versions <- getTemplateVersions tml
   tmlRs <- findRegistryTemplates
   orgRs <- findRegistryOrganizations
-  serverConfig <- asks _appContextServerConfig
-  let registryLink = buildTemplateUrl (serverConfig ^. registry . clientUrl) tml tmlRs
+  serverConfig <- asks serverConfig
+  let registryLink = buildTemplateUrl serverConfig.registry.clientUrl tml tmlRs
   let usablePackages = getUsablePackagesForTemplate tml pkgs
   return $ toDetailDTO tml tmlRs orgRs versions registryLink usablePackages
 
@@ -115,7 +115,7 @@ createTemplate reqDto =
     checkPermission _TML_PERM
     checkTemplateLimit
     now <- liftIO getCurrentTime
-    appUuid <- asks _appContextAppUuid
+    appUuid <- asks currentAppUuid
     let template = fromCreateDTO reqDto appUuid now
     validateNewTemplate template
     insertTemplate template
@@ -137,7 +137,7 @@ deleteTemplatesByQueryParams queryParams =
   runInTransaction $ do
     checkPermission _TML_PERM
     tmls <- findTemplatesFiltered queryParams
-    traverse_ validateTemplateDeletation (_templateTId <$> tmls)
+    traverse_ validateTemplateDeletation ((.tId) <$> tmls)
     deleteTemplatesFiltered queryParams
     return ()
 
@@ -149,7 +149,7 @@ deleteTemplate tmlId =
     assets <- findTemplateAssetsByTemplateId tmlId
     validateTemplateDeletation tmlId
     deleteTemplateById tmlId
-    let assetUuids = fmap (\a -> U.toString $ a ^. uuid) assets
+    let assetUuids = fmap (\a -> U.toString $ a.uuid) assets
     traverse_ (removeAsset tmlId) assetUuids
 
 -- --------------------------------
@@ -157,5 +157,5 @@ deleteTemplate tmlId =
 -- --------------------------------
 getTemplateVersions :: Template -> AppContextM [String]
 getTemplateVersions tml = do
-  allTmls <- findTemplatesByOrganizationIdAndKmId (tml ^. organizationId) (tml ^. templateId)
-  return . fmap _templateVersion $ allTmls
+  allTmls <- findTemplatesByOrganizationIdAndKmId tml.organizationId tml.templateId
+  return . fmap (.version) $ allTmls

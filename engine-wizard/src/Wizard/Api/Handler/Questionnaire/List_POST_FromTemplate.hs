@@ -12,19 +12,19 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Questionnaire.QuestionnaireService
 
-type List_POST_FromTemplate
-   = Header "Authorization" String
-     :> Header "Host" String
-     :> ReqBody '[ SafeJSON] QuestionnaireCreateFromTemplateDTO
-     :> "questionnaires"
-     :> "from-template"
-     :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
+type List_POST_FromTemplate =
+  Header "Authorization" String
+    :> Header "Host" String
+    :> ReqBody '[SafeJSON] QuestionnaireCreateFromTemplateDTO
+    :> "questionnaires"
+    :> "from-template"
+    :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] QuestionnaireDTO)
 
-list_POST_FromTemplate ::
-     Maybe String
+list_POST_FromTemplate
+  :: Maybe String
   -> Maybe String
   -> QuestionnaireCreateFromTemplateDTO
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] QuestionnaireDTO)
 list_POST_FromTemplate mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< createQuestionnaireFromTemplate reqDto

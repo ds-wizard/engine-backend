@@ -12,9 +12,9 @@ import Wizard.Specs.API.Migration.KnowledgeModel.List_Current_POST
 
 migrationAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "MIGRATION KNOWLEDGE MODEL API Spec" $ do
-    list_current_GET appContext
-    list_current_POST appContext
-    list_current_DELETE appContext
-    list_current_conflict_POST appContext
-    list_Current_Conflict_All_POST appContext
+    describe "MIGRATION KNOWLEDGE MODEL API Spec" $ do
+      list_current_GET appContext
+      list_current_POST appContext
+      list_current_DELETE appContext
+      list_current_conflict_POST appContext
+      list_Current_Conflict_All_POST appContext

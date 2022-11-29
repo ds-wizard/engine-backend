@@ -1,6 +1,5 @@
 module Wizard.Service.Owl.OwlService where
 
-import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Lazy.Char8 as BSL
@@ -8,13 +7,13 @@ import qualified Data.List as L
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
 import Data.Time
-import Servant.Multipart (Input(..))
+import Servant.Multipart (Input (..))
 
-import LensesConfig
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Model.Event.Event
+import Shared.Model.Package.PackageWithEvents
 import Shared.Service.Package.PackageMapper
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Model.Context.AppContext
@@ -34,7 +33,7 @@ importOwl inputs content = do
   kmId <- getStringFromInput "kmId" inputs
   version <- getStringFromInput "version" inputs
   let mPreviousPackageId = getMaybeStringFromInput "previousPackageId" inputs
-  appUuid <- asks _appContextAppUuid
+  appUuid <- asks currentAppUuid
   now <- liftIO getCurrentTime
   events <- importEvents mPreviousPackageId rootElement (TE.decodeUtf8 . BSL.toStrict $ content)
   let pkg = fromOwl name organizationId kmId version mPreviousPackageId events appUuid now
@@ -48,7 +47,7 @@ importEvents mPreviousPackageId rootElement content = do
     Just previousPackageId -> do
       previousPackage <- findPackageWithEventsById previousPackageId
       let (Right km1) = compile Nothing pkgEvents
-      let (Right km2) = compile Nothing (previousPackage ^. events)
+      let (Right km2) = compile Nothing previousPackage.events
       diffKnowledgeModel (km1, km2)
     Nothing -> return pkgEvents
 

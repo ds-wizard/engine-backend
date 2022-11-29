@@ -2,18 +2,18 @@ module Wizard.Api.Resource.App.AppJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON
+import Shared.Util.Aeson
 import Wizard.Api.Resource.App.AppDTO
 import Wizard.Model.App.App
 
 instance FromJSON App where
-  parseJSON = simpleParseJSON "_app"
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON App where
-  toJSON = simpleToJSON "_app"
+  toJSON = genericToJSON jsonOptions
 
 instance FromJSON AppDTO where
-  parseJSON = genericParseJSON simpleOptions
+  parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON AppDTO where
-  toJSON = genericToJSON simpleOptions
+  toJSON = genericToJSON jsonOptions

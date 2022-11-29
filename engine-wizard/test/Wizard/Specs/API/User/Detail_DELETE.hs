@@ -1,6 +1,6 @@
-module Wizard.Specs.API.User.Detail_DELETE
-  ( detail_DELETE
-  ) where
+module Wizard.Specs.API.User.Detail_DELETE (
+  detail_DELETE,
+) where
 
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -17,6 +17,9 @@ import qualified Wizard.Database.Migration.Development.Template.TemplateMigratio
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Document.Document
+import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.User.User
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -53,25 +56,25 @@ reqBody = ""
 test_204 appContext =
   it "HTTP 204 NO CONTENT" $
     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 204
-    let expHeaders = resCorsHeaders
-     -- AND: Run migrations
-    runInContextIO U.runMigration appContext
-    runInContextIO TML.runMigration appContext
-    runInContextIO QTN.runMigration appContext
-    runInContextIO DOC.runMigration appContext
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- AND: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
-    response `shouldRespondWith` responseMatcher
-    -- AND: Compare state in DB with expectation
-    assertAbsenceOfUserInDB appContext userAlbert
-    assertAbsenceOfQuestionnaireInDB appContext questionnaire1
-    assertAbsenceOfQuestionnaireInDB appContext questionnaire2
-    assertAbsenceOfDocumentInDB appContext doc3
+    do
+      let expStatus = 204
+      let expHeaders = resCorsHeaders
+      -- AND: Run migrations
+      runInContextIO U.runMigration appContext
+      runInContextIO TML.runMigration appContext
+      runInContextIO QTN.runMigration appContext
+      runInContextIO DOC.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- AND: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
+      response `shouldRespondWith` responseMatcher
+      -- AND: Compare state in DB with expectation
+      assertAbsenceOfUserInDB appContext userAlbert
+      assertAbsenceOfQuestionnaireInDB appContext questionnaire1
+      assertAbsenceOfQuestionnaireInDB appContext questionnaire2
+      assertAbsenceOfDocumentInDB appContext doc3
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

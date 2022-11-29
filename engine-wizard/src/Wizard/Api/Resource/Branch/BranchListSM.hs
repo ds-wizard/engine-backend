@@ -9,4 +9,4 @@ import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Model.Branch.BranchList
 
 instance ToSchema BranchList where
-  declareNamedSchema = simpleToSchema' "_branchList" amsterdamBranchList
+  declareNamedSchema = toSwagger amsterdamBranchList

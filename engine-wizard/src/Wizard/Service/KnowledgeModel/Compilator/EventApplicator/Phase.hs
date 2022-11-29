@@ -1,13 +1,12 @@
 module Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Phase where
 
-import Control.Lens
-import qualified Data.Map as M
+import qualified Data.List as L
+import qualified Data.Map.Strict as M
 import Prelude hiding (lookup)
 
-import LensesConfig
 import Shared.Model.Event.EventLenses
 import Shared.Model.Event.Phase.PhaseEvent
-import Shared.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()
@@ -21,21 +20,20 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Phase ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Question
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Tag ()
-import Wizard.Util.Lens
 
 instance ApplyEvent AddPhaseEvent where
   apply event = Right . addEntity . addEntityReference
     where
-      addEntityReference km = km & ap phaseUuids .~ (event ^. entityUuid')
-      addEntity km = km & phasesM . at (event ^. entityUuid') ?~ createEntity event
+      addEntityReference km = km {phaseUuids = km.phaseUuids ++ [getEntityUuid event]}
+      addEntity = putInPhasesM (getEntityUuid event) (createEntity event)
 
 instance ApplyEvent EditPhaseEvent where
-  apply = applyEditEvent (entities . phases) "Phase"
+  apply = applyEditEvent getPhasesM setPhasesM
 
 instance ApplyEvent DeletePhaseEvent where
   apply event = Right . deleteEntity . deleteEntityReference . deleteEntityChildrenReference
     where
-      deleteEntityReference km = km & del phaseUuids .~ (event ^. entityUuid')
-      deleteEntity km = deletePhase km (event ^. entityUuid')
+      deleteEntityReference km = km {phaseUuids = L.delete (getEntityUuid event) km.phaseUuids}
+      deleteEntity km = deletePhase km (getEntityUuid event)
       deleteEntityChildrenReference km =
-        km & entities . questions .~ M.map (deletePhaseReference event) (km ^. entities . questions)
+        setQuestionsM km $ M.map (deletePhaseReference event) km.entities.questions

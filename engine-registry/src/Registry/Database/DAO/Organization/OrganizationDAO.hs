@@ -1,6 +1,5 @@
 module Registry.Database.DAO.Organization.OrganizationDAO where
 
-import Control.Lens ((^.))
 import Data.String
 import qualified Data.Text as T
 import Database.PostgreSQL.Simple
@@ -8,7 +7,6 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
-import LensesConfig
 import Registry.Database.DAO.Common
 import Registry.Database.Mapping.Organization.Organization ()
 import Registry.Model.Context.AppContext
@@ -46,7 +44,7 @@ updateOrganization org = do
   let sql =
         fromString
           "UPDATE organization SET organization_id = ?, name = ?, description = ?, email = ?, role = ?, token = ?, active = ?, logo = ?, created_at = ?, updated_at = ? WHERE organization_id = ?"
-  let params = toRow org ++ [toField . T.pack $ org ^. organizationId]
+  let params = toRow org ++ [toField . T.pack $ org.organizationId]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action

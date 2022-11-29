@@ -12,9 +12,9 @@ import Wizard.Specs.API.Migration.Questionnaire.List_POST
 
 migrationAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
-  describe "MIGRATION QUESTIONNAIRE API Spec" $ do
-    list_POST appContext
-    list_current_GET appContext
-    list_current_PUT appContext
-    list_current_DELETE appContext
-    list_current_completion_POST appContext
+    describe "MIGRATION QUESTIONNAIRE API Spec" $ do
+      list_POST appContext
+      list_current_GET appContext
+      list_current_PUT appContext
+      list_current_DELETE appContext
+      list_current_completion_POST appContext

@@ -1,14 +1,11 @@
-module Wizard.Service.Dev.DevOperationService
-  ( getDevOperations
-  , executeOperation
-  ) where
+module Wizard.Service.Dev.DevOperationService (
+  getDevOperations,
+  executeOperation,
+) where
 
-import Control.Lens ((^.))
-
-import LensesConfig hiding (action, branch, cache, config, feedback, persistentCommand, questionnaire, registry)
 import Wizard.Api.Resource.Dev.DevExecutionDTO
 import Wizard.Api.Resource.Dev.DevExecutionResultDTO
-import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContext hiding (cache)
 import Wizard.Model.Dev.Dev
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Dev.DevOperationDefinitions
@@ -37,11 +34,10 @@ execute reqDto
   | action reqDto persistentCommand persistentCommand_run = persistentCommand_runFn reqDto
   | action reqDto registry registry_syncWithRegistry = registry_syncWithRegistryFn reqDto
   | action reqDto questionnaire questionnaire_recomputeQuestionnaireIndications =
-    questionnaire_recomputeQuestionnaireIndicationsFn reqDto
+      questionnaire_recomputeQuestionnaireIndicationsFn reqDto
   | action reqDto questionnaire questionnaire_squashAllEvents = questionnaire_squashAllEventsFn reqDto
   | action reqDto questionnaire questionnaire_squashEventsForQuestionnaire =
-    questionnaire_squashEventsForQuestionnaireFn reqDto
+      questionnaire_squashEventsForQuestionnaireFn reqDto
 
 action :: DevExecutionDTO -> DevSection -> DevOperation -> Bool
-action reqDto section operation =
-  (reqDto ^. sectionName) == (section ^. name) && (reqDto ^. operationName) == (operation ^. name)
+action reqDto section operation = reqDto.sectionName == section.name && reqDto.operationName == operation.name

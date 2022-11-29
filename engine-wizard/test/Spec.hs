@@ -1,23 +1,23 @@
 module Main where
 
 import Control.Concurrent.MVar
-import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import Data.Pool
 import qualified Data.UUID as U
 import Test.Hspec
 
-import LensesConfig
 import Shared.Constant.App
 import Shared.Database.Connection
 import Shared.Integration.Http.Common.HttpClientFactory
+import Shared.Model.Config.ServerConfig
 import Shared.S3.Common
 import Shared.Service.Config.BuildInfoConfigService
 import Wizard.Bootstrap.ServerCache
 import Wizard.Constant.Resource
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.ServantClient
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Config.ServerConfigService
@@ -33,6 +33,7 @@ import Wizard.Specs.API.Domain.APISpec
 import Wizard.Specs.API.Feedback.APISpec
 import Wizard.Specs.API.Info.APISpec
 import Wizard.Specs.API.KnowledgeModel.APISpec
+import Wizard.Specs.API.Locale.APISpec
 import qualified Wizard.Specs.API.Migration.KnowledgeModel.APISpec as KM_MigrationAPI
 import qualified Wizard.Specs.API.Migration.Questionnaire.APISpec as QTN_MigrationAPI
 import Wizard.Specs.API.Package.APISpec
@@ -101,12 +102,12 @@ prepareWebApp runCallback =
   hLoadConfig serverConfigFileTest getServerConfig $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
       shutdownFlag <- newEmptyMVar
-      putStrLn $ "ENVIRONMENT: set to " `mappend` show (serverConfig ^. general . environment)
-      dbPool <- createDatabaseConnectionPool (serverConfig ^. database)
+      putStrLn $ "ENVIRONMENT: set to " `mappend` show serverConfig.general.environment
+      dbPool <- createDatabaseConnectionPool serverConfig.database
       putStrLn "DATABASE: connected"
-      httpClientManager <- createHttpClientManager (serverConfig ^. logging)
+      httpClientManager <- createHttpClientManager serverConfig.logging
       putStrLn "HTTP_CLIENT: created"
-      s3Client <- createS3Client (serverConfig ^. s3) httpClientManager
+      s3Client <- createS3Client serverConfig.s3 httpClientManager
       putStrLn "S3_CLIENT: created"
       registryClient <- createRegistryClient serverConfig httpClientManager
       putStrLn "REGISTRY_CLIENT: created"
@@ -114,32 +115,32 @@ prepareWebApp runCallback =
       putStrLn "CACHE: created"
       let baseContext =
             BaseContext
-              { _baseContextServerConfig = serverConfig
-              , _baseContextLocalization = M.empty
-              , _baseContextBuildInfoConfig = buildInfoConfig
-              , _baseContextDbPool = dbPool
-              , _baseContextS3Client = s3Client
-              , _baseContextHttpClientManager = httpClientManager
-              , _baseContextRegistryClient = registryClient
-              , _baseContextShutdownFlag = shutdownFlag
-              , _baseContextCache = cache
+              { serverConfig = serverConfig
+              , localization = M.empty
+              , buildInfoConfig = buildInfoConfig
+              , dbPool = dbPool
+              , s3Client = s3Client
+              , httpClientManager = httpClientManager
+              , registryClient = registryClient
+              , shutdownFlag = shutdownFlag
+              , cache = cache
               }
       withResource dbPool $ \dbConnection -> do
         let appContext =
               AppContext
-                { _appContextServerConfig = serverConfig
-                , _appContextLocalization = M.empty
-                , _appContextBuildInfoConfig = buildInfoConfig
-                , _appContextDbPool = dbPool
-                , _appContextDbConnection = Just dbConnection
-                , _appContextS3Client = s3Client
-                , _appContextHttpClientManager = httpClientManager
-                , _appContextRegistryClient = registryClient
-                , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
-                , _appContextAppUuid = defaultAppUuid
-                , _appContextCurrentUser = Just . toDTO $ userAlbert
-                , _appContextShutdownFlag = shutdownFlag
-                , _appContextCache = cache
+                { serverConfig = serverConfig
+                , localization = M.empty
+                , buildInfoConfig = buildInfoConfig
+                , dbPool = dbPool
+                , dbConnection = Just dbConnection
+                , s3Client = s3Client
+                , httpClientManager = httpClientManager
+                , registryClient = registryClient
+                , traceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
+                , currentAppUuid = defaultAppUuid
+                , currentUser = Just . toDTO $ userAlbert
+                , shutdownFlag = shutdownFlag
+                , cache = cache
                 }
         putStrLn "DB: start creating schema"
         buildSchema appContext
@@ -149,80 +150,84 @@ prepareWebApp runCallback =
 main :: IO ()
 main =
   prepareWebApp
-    (\baseContext appContext ->
-       hspec $ do
-         describe "UNIT TESTING" $ do
-           describe "INTEGRATION" $ describe "Http" $ do
-             describe "Common" commonResponseMapperSpec
-             describe "Typehint" typehintResponseMapperSpec
-           describe "SERVICE" $ do
-             describe "App" appValidationSpec
-             describe "Branch" branchValidationSpec
-             describe "Config" appConfigValidationSpec
-             describe "KnowledgeModel" $ do
-               describe "Compilator" $ do
-                 describe "Modifier" modifierSpec
-                 compilatorSpec
-               describe "Squash" $ do squasherSpec
-               knowledgeModelFilterSpec
-             describe "Migration" $ do
-               describe "KnowledgeModel" $ describe "Migrator" $ do
-                 migratorSpec
-                 KM_SanitizatorSpec.sanitizatorSpec
-               describe "Questionnaire" $ describe "Migrator" $ do
-                 QTN_ChangeQTypeSanitizator.sanitizatorSpec
-                 QTN_MoveSanitizatorSpec.sanitizatorSpec
-             describe "Package" packageUtilSpec
-             describe "Questionnaire" $ do
-               describe "Event" questionnaireEventServiceSpec
-               questionnaireValidationSpec
-             describe "Report" reportGeneratorSpec
-             describe "Template" templateUtilSpec
-         before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
-           describe "API" $ do
-             appAPI baseContext appContext
-             appPlanAPI baseContext appContext
-             bookReferenceAPI baseContext appContext
-             branchAPI baseContext appContext
-             configAPI baseContext appContext
-             documentAPI baseContext appContext
-             domainAPI baseContext appContext
-             feedbackAPI baseContext appContext
-             infoAPI baseContext appContext
-             knowledgeModelAPI baseContext appContext
-             KM_MigrationAPI.migrationAPI baseContext appContext
-             QTN_MigrationAPI.migrationAPI baseContext appContext
-             packageAPI baseContext appContext
-             prefabAPI baseContext appContext
-             questionnaireAPI baseContext appContext
-             questionnaireEventAPI baseContext appContext
-             questionnaireProjectTagAPI baseContext appContext
-             questionnaireVersionAPI baseContext appContext
-             questionnaireImporterAPI baseContext appContext
-             submissionAPI baseContext appContext
-             swaggerAPI baseContext appContext
-             templateAPI baseContext appContext
-             templateAssetAPI baseContext appContext
-             templateFileAPI baseContext appContext
-             typehintAPI baseContext appContext
-             tokenAPI baseContext appContext
-             usageAPI baseContext appContext
-             userAPI baseContext appContext
-             versionAPI baseContext appContext
-           describe "SERVICE" $ do
-             branchServiceIntegrationSpec appContext
-             coordinateValidationSpec appContext
-             feedbackServiceIntegrationSpec appContext
-             documentIntegrationSpec appContext
-             describe "Migration" $ describe "Questionnaire" $ describe "Migrator" $
-               QTN_SanitizatorSpec.sanitizatorIntegrationSpec appContext
-             packageValidationSpec appContext
-             describe "Questionnaire" $ do
-               questionnaireCollaborationAclSpec appContext
-               questionnaireCompilerServiceSpec appContext
-               questionnaireAclSpec appContext
-               questionnaireServiceSpec appContext
-             userServiceIntegrationSpec appContext
-           describe "WEBSOCKET" $ do
-             branchesWebsocketAPI appContext
-             questionnaireWebsocketAPI appContext)
+    ( \baseContext appContext ->
+        hspec $ do
+          describe "UNIT TESTING" $ do
+            describe "INTEGRATION" $ describe "Http" $ do
+              describe "Common" commonResponseMapperSpec
+              describe "Typehint" typehintResponseMapperSpec
+            describe "SERVICE" $ do
+              describe "App" appValidationSpec
+              describe "Branch" branchValidationSpec
+              describe "Config" appConfigValidationSpec
+              describe "KnowledgeModel" $ do
+                describe "Compilator" $ do
+                  describe "Modifier" modifierSpec
+                  compilatorSpec
+                describe "Squash" $ do squasherSpec
+                knowledgeModelFilterSpec
+              describe "Migration" $ do
+                describe "KnowledgeModel" $ describe "Migrator" $ do
+                  migratorSpec
+                  KM_SanitizatorSpec.sanitizatorSpec
+                describe "Questionnaire" $ describe "Migrator" $ do
+                  QTN_ChangeQTypeSanitizator.sanitizatorSpec
+                  QTN_MoveSanitizatorSpec.sanitizatorSpec
+              describe "Package" packageUtilSpec
+              describe "Questionnaire" $ do
+                describe "Event" questionnaireEventServiceSpec
+                questionnaireValidationSpec
+              describe "Report" reportGeneratorSpec
+              describe "Template" templateUtilSpec
+          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
+            describe "API" $ do
+              appAPI baseContext appContext
+              appPlanAPI baseContext appContext
+              bookReferenceAPI baseContext appContext
+              branchAPI baseContext appContext
+              configAPI baseContext appContext
+              documentAPI baseContext appContext
+              domainAPI baseContext appContext
+              feedbackAPI baseContext appContext
+              infoAPI baseContext appContext
+              knowledgeModelAPI baseContext appContext
+              localeAPI baseContext appContext
+              KM_MigrationAPI.migrationAPI baseContext appContext
+              QTN_MigrationAPI.migrationAPI baseContext appContext
+              packageAPI baseContext appContext
+              prefabAPI baseContext appContext
+              questionnaireAPI baseContext appContext
+              questionnaireEventAPI baseContext appContext
+              questionnaireProjectTagAPI baseContext appContext
+              questionnaireVersionAPI baseContext appContext
+              questionnaireImporterAPI baseContext appContext
+              submissionAPI baseContext appContext
+              swaggerAPI baseContext appContext
+              templateAPI baseContext appContext
+              templateAssetAPI baseContext appContext
+              templateFileAPI baseContext appContext
+              typehintAPI baseContext appContext
+              tokenAPI baseContext appContext
+              usageAPI baseContext appContext
+              userAPI baseContext appContext
+              versionAPI baseContext appContext
+            describe "SERVICE" $ do
+              branchServiceIntegrationSpec appContext
+              coordinateValidationSpec appContext
+              feedbackServiceIntegrationSpec appContext
+              documentIntegrationSpec appContext
+              describe "Migration" $
+                describe "Questionnaire" $
+                  describe "Migrator" $
+                    QTN_SanitizatorSpec.sanitizatorIntegrationSpec appContext
+              packageValidationSpec appContext
+              describe "Questionnaire" $ do
+                questionnaireCollaborationAclSpec appContext
+                questionnaireCompilerServiceSpec appContext
+                questionnaireAclSpec appContext
+                questionnaireServiceSpec appContext
+              userServiceIntegrationSpec appContext
+            describe "WEBSOCKET" $ do
+              branchesWebsocketAPI appContext
+              questionnaireWebsocketAPI appContext
+    )
