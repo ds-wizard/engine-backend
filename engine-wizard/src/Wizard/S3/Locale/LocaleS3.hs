@@ -1,6 +1,7 @@
 module Wizard.S3.Locale.LocaleS3 where
 
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.Minio
 
 import Shared.S3.Common
@@ -12,6 +13,9 @@ folderName = "locales"
 
 getLocale :: String -> AppContextM BS.ByteString
 getLocale localeId = createGetObjectFn (f' "%s/%s" [folderName, localeId])
+
+getLocaleWithApp :: U.UUID -> String -> AppContextM BS.ByteString
+getLocaleWithApp appUuid localeId = createGetObjectWithAppFn appUuid (f' "%s/%s" [folderName, localeId])
 
 getLocale' :: String -> AppContextM (Either MinioErr BS.ByteString)
 getLocale' localeId = createGetObjectFn' (f' "%s/%s" [folderName, localeId])

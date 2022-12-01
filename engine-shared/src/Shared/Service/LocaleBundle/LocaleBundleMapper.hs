@@ -58,14 +58,14 @@ fromLocaleEntry archive =
     Just localeEntry ->
       case eitherDecode . fromEntry $ localeEntry of
         Right lb -> Right lb
-        Left error -> Left $ UserError (_ERROR_SERVICE_TB__UNABLE_TO_DECODE_TEMPLATE_JSON error)
-    Nothing -> Left $ UserError _ERROR_SERVICE_TB__MISSING_TEMPLATE_JSON
+        Left error -> Left $ UserError (_ERROR_SERVICE_LB__UNABLE_TO_DECODE_LOCALE_JSON error)
+    Nothing -> Left $ UserError _ERROR_SERVICE_LB__MISSING_LOCALE_JSON
 
 fromTranslationEntry :: LocaleBundleDTO -> Archive -> Either AppError BS.ByteString
 fromTranslationEntry lb archive =
   case findEntryByPath "locale/translation.json" archive of
     Just translationEntry -> Right . BSL.toStrict . fromEntry $ translationEntry
-    Nothing -> Left $ UserError (_ERROR_SERVICE_TB__MISSING_ASSET "translation.json")
+    Nothing -> Left $ UserError (_ERROR_SERVICE_LB__MISSING_FILE "translation.json")
 
 fromLocaleBundle :: LocaleBundleDTO -> U.UUID -> Locale
 fromLocaleBundle lb appUuid =
