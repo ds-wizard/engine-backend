@@ -7,10 +7,13 @@ import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Database.DAO.Locale.LocaleDAO
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Shared.Model.Config.ServerConfig
+import Shared.Model.Locale.Locale
+import Shared.Model.Locale.LocaleDM
 import Shared.Util.Crypto
 import Shared.Util.Uuid
 import Wizard.Api.Resource.App.AppChangeDTO
@@ -63,6 +66,7 @@ registerApp reqDto = do
     user <- createUserByAdminWithUuid userCreate userUuid app.uuid app.clientUrl True
     createAppConfig aUuid now
     createAppLimit aUuid now
+    createLocale aUuid now
     createSeederPersistentCommand aUuid user.uuid now
     return $ toDTO app Nothing Nothing
 
@@ -82,6 +86,7 @@ createAppByAdmin reqDto = do
     user <- createUserByAdminWithUuid userCreate userUuid app.uuid app.clientUrl False
     createAppConfig aUuid now
     createAppLimit aUuid now
+    createLocale aUuid now
     createSeederPersistentCommand aUuid user.uuid now
     return $ toDTO app Nothing Nothing
 
@@ -128,6 +133,19 @@ createAppConfig aUuid now = do
           :: AppConfig
     insertAppConfig appConfig
     return appConfig
+
+createLocale :: U.UUID -> UTCTime -> AppContextM Locale
+createLocale aUuid now = do
+  runInTransaction $ do
+    let locale =
+          localeDefault
+            { appUuid = aUuid
+            , createdAt = now
+            , updatedAt = now
+            }
+          :: Locale
+    insertLocale locale
+    return locale
 
 createSeederPersistentCommand :: U.UUID -> U.UUID -> UTCTime -> AppContextM PersistentCommand
 createSeederPersistentCommand aUuid createdBy now =
