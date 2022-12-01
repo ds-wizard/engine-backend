@@ -30,5 +30,5 @@ getClientConfig mClientUrl = do
         Just clientUrl -> getAppConfigByUuid app.uuid
         Nothing -> getAppConfig
       else getAppConfig
-  locales <- findLocalesFiltered [("enabled", show True)]
+  locales <- findLocalesFilteredWithApp app.uuid [("enabled", show True)]
   return $ toClientConfigDTO serverConfig appConfig app locales

@@ -11,16 +11,19 @@ import Shared.Constant.Locale
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
+import Shared.Model.Config.ServerConfig
 import Shared.Model.Locale.Locale
 import Shared.Util.String
 import Wizard.Api.Resource.Locale.LocaleChangeDTO
 import Wizard.Api.Resource.Locale.LocaleCreateDTO
 import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Api.Resource.Locale.LocaleDetailDTO
+import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Locale.LocaleDAO
 import Wizard.Database.DAO.Registry.RegistryLocaleDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
+import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
@@ -28,6 +31,7 @@ import Wizard.Model.Locale.LocaleSimple
 import Wizard.Model.Locale.LocaleState
 import Wizard.S3.Locale.LocaleS3
 import Wizard.Service.Acl.AclService
+import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Locale.LocaleMapper
 import Wizard.Service.Locale.LocaleValidation
@@ -64,14 +68,19 @@ getLocaleForId lclId = do
   orgRs <- findRegistryOrganizations
   return $ toDetailDTO locale localeRs orgRs versions (buildLocaleUrl serverConfig.registry.clientUrl locale localeRs)
 
-getLocaleContentForId :: String -> AppContextM BS.ByteString
-getLocaleContentForId code = do
+getLocaleContentForId :: String -> Maybe String -> AppContextM BS.ByteString
+getLocaleContentForId code mClientUrl = do
+  serverConfig <- asks serverConfig
+  app <-
+    if serverConfig.cloud.enabled
+      then maybe getCurrentApp findAppByClientUrl mClientUrl
+      else getCurrentApp
   let shortCode =
         case splitOn "-" code of
           [] -> code
           [x] -> code
           (language : _) -> language
-  locales <- findLocalesByCode code shortCode
+  locales <- findLocalesByCodeWithApp app.uuid code shortCode
   locale <-
     case L.find (\l -> l.code == code) locales of
       Just locale -> return locale
@@ -79,9 +88,9 @@ getLocaleContentForId code = do
         Just locale -> return locale
         Nothing -> case L.find (\l -> l.defaultLocale) locales of
           Just locale -> return locale
-          Nothing -> findSimpleLocaleById defaultLocaleId
+          Nothing -> findSimpleLocaleByIdWithApp app.uuid defaultLocaleId
   if locale.lId /= defaultLocaleId
-    then getLocale locale.lId
+    then getLocaleWithApp app.uuid locale.lId
     else return "{}"
 
 modifyLocale :: String -> LocaleChangeDTO -> AppContextM LocaleDTO

@@ -51,9 +51,11 @@ findLocalesFiltered queryParams = do
   appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
 
-findLocalesByCode :: String -> String -> AppContextM [LocaleSimple]
-findLocalesByCode code shortCode = do
-  appUuid <- asks currentAppUuid
+findLocalesFilteredWithApp :: U.UUID -> [(String, String)] -> AppContextM [Locale]
+findLocalesFilteredWithApp appUuid queryParams = createFindEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
+
+findLocalesByCodeWithApp :: U.UUID -> String -> String -> AppContextM [LocaleSimple]
+findLocalesByCodeWithApp appUuid code shortCode = do
   let sql =
         fromString
           "SELECT id, \
@@ -86,9 +88,8 @@ findLocaleById' lclId = do
   appUuid <- asks currentAppUuid
   createFindEntityByFn' entityName [appQueryUuid appUuid, ("id", lclId)]
 
-findSimpleLocaleById :: String -> AppContextM LocaleSimple
-findSimpleLocaleById lclId = do
-  appUuid <- asks currentAppUuid
+findSimpleLocaleByIdWithApp :: U.UUID -> String -> AppContextM LocaleSimple
+findSimpleLocaleByIdWithApp appUuid lclId =
   createFindEntityWithFieldsByFn "id, name, code, default_locale" False entityName [appQueryUuid appUuid, ("id", lclId)]
 
 updateLocaleById :: Locale -> AppContextM Int64

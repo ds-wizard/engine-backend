@@ -63,6 +63,32 @@ createGetObjectFn object = do
         C.connect (gorObjectStream src) foldFn
   runMinioClient action
 
+createGetObjectWithAppFn
+  :: ( MonadReader s m
+     , HasField "s3Client'" s MinioConn
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "serverConfig'" s sc
+     , HasField "cloud'" sc ServerConfigCloud
+     , HasField "s3'" sc ServerConfigS3
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => U.UUID
+  -> String
+  -> m BS.ByteString
+createGetObjectWithAppFn appUuid object = do
+  bucketName <- getBucketName
+  sanitizedObject <- sanitizeObjectWithApp appUuid object
+  logInfoI _CMP_S3 (f' "Get object: '%s'" [sanitizedObject])
+  let action = do
+        src <- getObject (T.pack bucketName) (T.pack sanitizedObject) defaultGetObjectOptions
+        let srcStream = gorObjectStream src :: C.ConduitM () BS.ByteString Minio ()
+        let foldFn = CL.fold BS.append "" :: C.ConduitT BS.ByteString C.Void Minio BS.ByteString
+        C.connect (gorObjectStream src) foldFn
+  runMinioClient action
+
 createGetObjectFn'
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
@@ -346,7 +372,6 @@ runMinioClient
      , HasField "s3Client'" s MinioConn
      , HasField "identityUuid'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
      , HasField "cloud'" sc ServerConfigCloud
      , HasField "s3'" sc ServerConfigS3
@@ -371,7 +396,6 @@ runMinioClient'
      , HasField "s3Client'" s MinioConn
      , HasField "identityUuid'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
      , HasField "cloud'" sc ServerConfigCloud
      , HasField "s3'" sc ServerConfigS3
@@ -399,7 +423,7 @@ getS3PublicUrl = do
       Just _ -> context.serverConfig'.s3'.publicUrl
       Nothing -> f' "%s/%s" [context.serverConfig'.s3'.publicUrl, context.serverConfig'.s3'.bucket]
 
-getBucketName :: (MonadReader s m, HasField "appUuid'" s U.UUID, HasField "serverConfig'" s sc, HasField "s3'" sc ServerConfigS3, MonadIO m, MonadError AppError m) => m String
+getBucketName :: (MonadReader s m, HasField "serverConfig'" s sc, HasField "s3'" sc ServerConfigS3, MonadIO m, MonadError AppError m) => m String
 getBucketName = do
   context <- ask
   return context.serverConfig'.s3'.bucket
@@ -410,6 +434,14 @@ sanitizeObject object = do
   context <- ask
   if context.serverConfig'.cloud'.enabled && not (U.toString context.appUuid' `L.isPrefixOf` object)
     then return $ U.toString context.appUuid' ++ "/" ++ object
+    else return object
+
+sanitizeObjectWithApp
+  :: (MonadReader s m, HasField "serverConfig'" s sc, HasField "cloud'" sc ServerConfigCloud, MonadIO m, MonadError AppError m) => U.UUID -> String -> m String
+sanitizeObjectWithApp appUuid object = do
+  context <- ask
+  if context.serverConfig'.cloud'.enabled && not (U.toString appUuid `L.isPrefixOf` object)
+    then return $ U.toString appUuid ++ "/" ++ object
     else return object
 
 buildObjectUrl

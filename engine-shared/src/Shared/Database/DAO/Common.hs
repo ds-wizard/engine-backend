@@ -156,8 +156,25 @@ createFindEntitiesFn
      )
   => String
   -> m [entity]
-createFindEntitiesFn entityName = do
-  let sql = f' "SELECT * FROM %s" [entityName]
+createFindEntitiesFn = createFindEntitiesWithFieldsFn "*"
+
+createFindEntitiesWithFieldsFn
+  :: ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , MonadIO m
+     , FromRow entity
+     , FromRow entity
+     )
+  => String
+  -> String
+  -> m [entity]
+createFindEntitiesWithFieldsFn fields entityName = do
+  let sql = f' "SELECT %s FROM %s" [fields, entityName]
   logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   runDB action
@@ -201,6 +218,30 @@ createFindEntitiesByFn
 createFindEntitiesByFn entityName [] = createFindEntitiesFn entityName
 createFindEntitiesByFn entityName queryParams = do
   let sql = fromString $ f' "SELECT * FROM %s WHERE %s" [entityName, mapToDBQuerySql queryParams]
+  let params = fmap snd queryParams
+  logQuery sql params
+  let action conn = query conn sql params
+  runDB action
+
+createFindEntitiesWithFieldsByFn
+  :: ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , MonadIO m
+     , FromRow entity
+     , FromRow entity
+     )
+  => String
+  -> String
+  -> [(String, String)]
+  -> m [entity]
+createFindEntitiesWithFieldsByFn fields entityName [] = createFindEntitiesWithFieldsFn fields entityName
+createFindEntitiesWithFieldsByFn fields entityName queryParams = do
+  let sql = fromString $ f' "SELECT %s FROM %s WHERE %s" [fields, entityName, mapToDBQuerySql queryParams]
   let params = fmap snd queryParams
   logQuery sql params
   let action conn = query conn sql params
