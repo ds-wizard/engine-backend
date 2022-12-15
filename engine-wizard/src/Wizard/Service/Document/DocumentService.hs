@@ -84,7 +84,7 @@ createDocumentWithDurability dto durability =
     qtnCtn <- compileQuestionnairePreview qtnEvents
     appConfig <- getAppConfig
     let repliesHash = computeHash qtn qtnCtn appConfig mCurrentUser
-    let doc = fromCreateDTO dto dUuid durability repliesHash mCurrentUser appUuid now
+    let doc = fromCreateDTO dto dUuid durability repliesHash qtn.events mCurrentUser appUuid now
     insertDocument doc
     publishToPersistentCommandQueue doc
     return $ toDTO doc (Just qtnSimple) [] tml
