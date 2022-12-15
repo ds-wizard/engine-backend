@@ -32,6 +32,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0023_createdBy.M
 import qualified Wizard.Database.Migration.Production.Migration_0024_commonFn_and_token_and_locale.Migration as M_0024
 import qualified Wizard.Database.Migration.Production.Migration_0025_locale_2.Migration as M_0025
 import qualified Wizard.Database.Migration.Production.Migration_0026_locale_3.Migration as M_0026
+import qualified Wizard.Database.Migration.Production.Migration_0027_localePerm.Migration as M_0027
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
@@ -69,4 +70,5 @@ migrationDefinitions =
   , M_0024.definition
   , M_0025.definition
   , M_0026.definition
+  , M_0027.definition
   ]

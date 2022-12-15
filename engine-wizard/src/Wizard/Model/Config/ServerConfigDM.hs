@@ -60,6 +60,7 @@ defaultRoles =
         , "SUBM_PERM"
         , "TML_PERM"
         , "DOC_PERM"
+        , "LOC_PERM"
         ]
     , dataSteward =
         [ "KM_PERM"

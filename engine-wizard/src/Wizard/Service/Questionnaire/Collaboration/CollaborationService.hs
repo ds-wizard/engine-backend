@@ -200,6 +200,7 @@ deleteCommentThread qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
+  deleteQuestionnaireCommentsByThreadUuid reqDto.threadUuid
   deleteQuestionnaireCommentThreadById reqDto.threadUuid
   let resDto = toDeleteCommentThreadEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
