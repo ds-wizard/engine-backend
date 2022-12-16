@@ -29,9 +29,9 @@ createAppLimit aUuid now = do
   insertAppLimit appLimit
   return appLimit
 
-recomputeAppLimit :: Maybe Int -> AppContextM AppLimit
-recomputeAppLimit mUsers = do
-  appLimit <- getCurrentAppLimits
+recomputeAppLimit :: U.UUID -> Maybe Int -> AppContextM AppLimit
+recomputeAppLimit appUuid mUsers = do
+  appLimit <- findAppLimitById (U.toString appUuid)
   let updatedAppLimit = fromChange appLimit mUsers
   updateAppLimitById updatedAppLimit
 
