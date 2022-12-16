@@ -76,7 +76,7 @@ recomputePlansForApp app = do
       appConfig <- getAppConfigByUuid app.uuid
       let updatedAppConfig = turnTestPlanFeature activePlan.test appConfig
       when (appConfig.feature /= updatedAppConfig.feature) (void $ modifyAppConfig updatedAppConfig)
-      recomputeAppLimit activePlan.users
+      recomputeAppLimit app.uuid activePlan.users
       return ()
     Nothing -> return ()
 
