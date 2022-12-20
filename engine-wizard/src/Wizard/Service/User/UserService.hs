@@ -45,7 +45,7 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.App.AppHelper
 import Wizard.Service.Common
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Questionnaire.QuestionnaireService

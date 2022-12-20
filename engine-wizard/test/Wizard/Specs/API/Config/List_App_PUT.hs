@@ -12,7 +12,7 @@ import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Model.Config.AppConfig hiding (request)
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.AppConfigMapper
+import Wizard.Service.Config.App.AppConfigMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

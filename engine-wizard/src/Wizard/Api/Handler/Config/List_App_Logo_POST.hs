@@ -11,7 +11,7 @@ import Shared.Model.Context.TransactionState
 import Shared.Model.Error.Error
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Config.AppConfigLogoService
+import Wizard.Service.Config.App.AppConfigLogoService
 
 type List_App_Logo_POST =
   Header "Authorization" String

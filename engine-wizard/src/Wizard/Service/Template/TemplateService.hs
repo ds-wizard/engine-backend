@@ -36,7 +36,7 @@ import Wizard.Model.Template.TemplateList
 import Wizard.Model.Template.TemplateState
 import Wizard.S3.Template.TemplateS3
 import Wizard.Service.Acl.AclService
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Template.TemplateMapper
 import Wizard.Service.Template.TemplateUtil

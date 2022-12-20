@@ -9,8 +9,8 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.AppConfigMapper
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigMapper
+import Wizard.Service.Config.App.AppConfigService
 
 import Wizard.Specs.API.Common
 

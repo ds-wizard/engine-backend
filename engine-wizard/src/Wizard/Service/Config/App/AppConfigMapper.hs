@@ -1,4 +1,4 @@
-module Wizard.Service.Config.AppConfigMapper where
+module Wizard.Service.Config.App.AppConfigMapper where
 
 import Data.Time
 
@@ -36,6 +36,7 @@ fromChangeDTO dto oldConfig now =
     , template = dto.template
     , submission = dto.submission
     , owl = oldConfig.owl
+    , mailConfigUuid = oldConfig.mailConfigUuid
     , createdAt = oldConfig.createdAt
     , updatedAt = now
     }

@@ -5,7 +5,7 @@ import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.App.AppMapper
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 
 enhanceApp :: App -> AppContextM AppDTO
 enhanceApp app = do

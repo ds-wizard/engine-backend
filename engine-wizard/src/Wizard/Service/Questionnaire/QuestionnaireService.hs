@@ -54,7 +54,7 @@ import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Acl.AclService
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Context.ContextService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Limit.AppLimitService

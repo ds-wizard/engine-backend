@@ -12,7 +12,7 @@ import Wizard.Api.Resource.Locale.LocaleSM ()
 import Wizard.Database.Migration.Development.App.Data.Apps
 import qualified Wizard.Database.Migration.Development.Config.Data.AppConfigs as A
 import qualified Wizard.Model.Config.ServerConfigDM as S
-import Wizard.Service.Config.ClientConfigMapper
+import Wizard.Service.Config.Client.ClientConfigMapper
 
 instance ToSchema ClientConfigDTO where
   declareNamedSchema = toSwagger (toClientConfigDTO S.defaultConfig A.defaultAppConfig defaultApp [])

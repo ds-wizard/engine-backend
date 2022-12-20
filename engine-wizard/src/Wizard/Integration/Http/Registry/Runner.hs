@@ -25,7 +25,7 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Statistics.InstanceStatistics
 import Wizard.Service.App.AppHelper
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 
 retrieveOrganizations :: AppContextM [OrganizationSimpleDTO]
 retrieveOrganizations = do

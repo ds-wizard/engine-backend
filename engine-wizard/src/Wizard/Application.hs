@@ -27,7 +27,7 @@ import Wizard.Constant.ASCIIArt
 import Wizard.Constant.Resource
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Config.ServerConfigService
+import Wizard.Service.Config.Server.ServerConfigService
 import Wizard.Util.Logger
 
 runApplication :: IO ()

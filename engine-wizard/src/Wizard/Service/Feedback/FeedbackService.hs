@@ -28,7 +28,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextResult
 import Wizard.Model.Feedback.Feedback
 import Wizard.Service.Common
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Context.ContextService
 import Wizard.Service.Feedback.FeedbackMapper
 import Wizard.Util.Logger

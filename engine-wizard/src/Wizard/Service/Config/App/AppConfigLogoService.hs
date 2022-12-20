@@ -1,4 +1,4 @@
-module Wizard.Service.Config.AppConfigLogoService where
+module Wizard.Service.Config.App.AppConfigLogoService where
 
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Lazy.Char8 as BSL
@@ -12,8 +12,8 @@ import Wizard.Model.Context.AppContext
 import Wizard.S3.Public.PublicS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Common
-import Wizard.Service.Config.AppConfigMapper
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigMapper
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Util.Logger
 
 uploadLogo :: String -> String -> BSL.ByteString -> AppContextM ()

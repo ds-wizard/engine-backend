@@ -31,7 +31,7 @@ import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.PersistentCommand.PersistentCommandSimple
 import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppUtil
-import qualified Wizard.Service.Config.AppConfigCommandExecutor as AppConfigCommandExecutor
+import qualified Wizard.Service.Config.App.AppConfigCommandExecutor as AppConfigCommandExecutor
 import Wizard.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Service.PersistentCommand.PersistentCommandUtil
 import qualified Wizard.Service.User.UserMapper as UM

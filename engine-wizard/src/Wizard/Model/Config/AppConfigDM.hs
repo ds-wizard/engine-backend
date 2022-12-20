@@ -25,6 +25,7 @@ defaultAppConfig =
     , template = defaultTemplate
     , submission = defaultSubmission
     , owl = defaultOwl
+    , mailConfigUuid = Nothing
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }

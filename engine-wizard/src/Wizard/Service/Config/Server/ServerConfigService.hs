@@ -1,4 +1,4 @@
-module Wizard.Service.Config.ServerConfigService where
+module Wizard.Service.Config.Server.ServerConfigService where
 
 import Data.Yaml (decodeFileEither)
 

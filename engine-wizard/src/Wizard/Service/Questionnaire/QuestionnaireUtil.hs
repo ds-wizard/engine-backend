@@ -26,7 +26,7 @@ import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Report.Report
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Compiler.CompilerService

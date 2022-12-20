@@ -1,4 +1,4 @@
-module Wizard.Service.Config.AppConfigCommandExecutor where
+module Wizard.Service.Config.App.AppConfigCommandExecutor where
 
 import Control.Monad.Reader (liftIO)
 import Data.Aeson (eitherDecode, encode)
@@ -17,7 +17,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.PersistentCommand.Config.InvokeClientCssCompilationCommand
 import Wizard.Model.PersistentCommand.PersistentCommand
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Util.Logger
 

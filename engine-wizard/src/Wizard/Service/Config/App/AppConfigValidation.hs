@@ -1,4 +1,4 @@
-module Wizard.Service.Config.AppConfigValidation where
+module Wizard.Service.Config.App.AppConfigValidation where
 
 import Control.Monad.Except (throwError)
 import Data.Foldable (forM_)

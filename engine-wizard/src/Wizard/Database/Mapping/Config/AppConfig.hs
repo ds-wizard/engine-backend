@@ -26,6 +26,7 @@ instance ToRow AppConfig where
     , toField updatedAt
     , toJSONField feature
     , toJSONField owl
+    , toField mailConfigUuid
     ]
 
 instance FromRow AppConfig where
@@ -45,4 +46,5 @@ instance FromRow AppConfig where
     updatedAt <- field
     feature <- fieldWith fromJSONField
     owl <- fieldWith fromJSONField
+    mailConfigUuid <- field
     return $ AppConfig {..}

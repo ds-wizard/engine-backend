@@ -1,4 +1,4 @@
-module Wizard.Service.Config.ClientConfigMapper where
+module Wizard.Service.Config.Client.ClientConfigMapper where
 
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Locale.Locale

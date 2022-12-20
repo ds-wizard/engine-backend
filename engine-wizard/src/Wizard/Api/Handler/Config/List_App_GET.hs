@@ -8,7 +8,7 @@ import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 
 type List_App_GET =
   Header "Authorization" String

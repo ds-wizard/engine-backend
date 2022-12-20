@@ -8,7 +8,7 @@ import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Submission.Submission
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Submission.SubmissionMapper
 
 enhanceSubmission :: Submission -> AppContextM SubmissionDTO

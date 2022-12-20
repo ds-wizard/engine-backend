@@ -39,7 +39,7 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppMapper
 import Wizard.Service.App.AppUtil
 import Wizard.Service.App.AppValidation
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Limit.AppLimitService
 import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PCM
 import Wizard.Service.Usage.UsageService

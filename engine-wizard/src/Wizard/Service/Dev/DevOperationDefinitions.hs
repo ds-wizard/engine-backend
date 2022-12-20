@@ -11,8 +11,8 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Dev.Dev
 import Wizard.Service.Branch.Event.BranchEventService
 import Wizard.Service.Cache.CacheService
-import Wizard.Service.Config.AppConfigCommandExecutor
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigCommandExecutor
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService

@@ -13,8 +13,8 @@ import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Service.Config.AppConfigMapper
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigMapper
+import Wizard.Service.Config.App.AppConfigService
 
 import Wizard.Specs.Common
 

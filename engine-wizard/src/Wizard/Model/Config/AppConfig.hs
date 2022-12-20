@@ -24,6 +24,7 @@ data AppConfig = AppConfig
   , submission :: AppConfigSubmission
   , feature :: AppConfigFeature
   , owl :: AppConfigOwl
+  , mailConfigUuid :: Maybe U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -42,6 +43,7 @@ instance Eq AppConfig where
       && submission a == submission b
       && feature a == feature b
       && owl a == owl b
+      && mailConfigUuid a == mailConfigUuid b
 
 data AppConfigOrganization = AppConfigOrganization
   { name :: String

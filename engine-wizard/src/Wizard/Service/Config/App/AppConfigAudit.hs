@@ -1,4 +1,4 @@
-module Wizard.Service.Config.AppConfigAudit where
+module Wizard.Service.Config.App.AppConfigAudit where
 
 import Data.UUID as U
 
