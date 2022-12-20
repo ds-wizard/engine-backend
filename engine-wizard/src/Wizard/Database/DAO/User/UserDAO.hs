@@ -115,7 +115,7 @@ countUsers = do
   countUsersWithApp (U.toString appUuid)
 
 countUsersWithApp :: String -> AppContextM Int
-countUsersWithApp appUuid = createCountByFn entityName appCondition [appUuid]
+countUsersWithApp appUuid = createCountByFn entityName (f' "%s AND machine = false" [appCondition]) [appUuid]
 
 countActiveUsers :: AppContextM Int
 countActiveUsers = do
@@ -123,7 +123,7 @@ countActiveUsers = do
   countActiveUsersWithApp (U.toString appUuid)
 
 countActiveUsersWithApp :: String -> AppContextM Int
-countActiveUsersWithApp appUuid = createCountByFn entityName (f' "%s AND active = true" [appCondition]) [appUuid]
+countActiveUsersWithApp appUuid = createCountByFn entityName (f' "%s AND machine = false AND active = true" [appCondition]) [appUuid]
 
 insertUser :: User -> AppContextM Int64
 insertUser user = do
