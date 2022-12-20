@@ -135,7 +135,7 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
             now
             qtnPermUuid
     insertQuestionnaire qtn
-    report <- getQuestionnaireReport qtn
+    recomputeQuestionnaireIndication qtn.uuid
     permissionDtos <- traverse enhanceQuestionnairePermRecord qtn.permissions
     qtnCtn <- compileQuestionnaire qtn
     return $ toSimpleDTO qtn package qtnState permissionDtos
@@ -170,9 +170,9 @@ createQuestionnaireFromTemplate reqDto =
             }
           :: Questionnaire
     insertQuestionnaire newQtn
+    recomputeQuestionnaireIndication newQtn.uuid
     duplicateCommentThreads (U.toString reqDto.questionnaireUuid) newUuid
     state <- getQuestionnaireState (U.toString newUuid) pkg.pId
-    report <- getQuestionnaireReport newQtn
     permissionDtos <- traverse enhanceQuestionnairePermRecord newQtn.permissions
     qtnCtn <- compileQuestionnaire newQtn
     return $ toSimpleDTO newQtn pkg state permissionDtos
@@ -201,6 +201,7 @@ cloneQuestionnaire cloneUuid =
           :: Questionnaire
     insertQuestionnaire newQtn
     duplicateCommentThreads cloneUuid newUuid
+    recomputeQuestionnaireIndication newQtn.uuid
     state <- getQuestionnaireState (U.toString newUuid) pkg.pId
     permissionDtos <- traverse enhanceQuestionnairePermRecord newQtn.permissions
     return $ toSimpleDTO newQtn pkg state permissionDtos
@@ -220,7 +221,6 @@ getQuestionnaireById' qtnUuid = do
       checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
       package <- getPackageById qtn.packageId
       state <- getQuestionnaireState qtnUuid package.pId
-      report <- getQuestionnaireReport qtn
       permissionDtos <- traverse enhanceQuestionnairePermRecord qtn.permissions
       return . Just $ toDTO qtn package state permissionDtos
     Nothing -> return Nothing

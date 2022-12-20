@@ -107,7 +107,7 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
                 , permissions = []
                 , creatorUuid = Nothing
                 , answeredQuestions = 0
-                , unansweredQuestions = 0
+                , unansweredQuestions = 2
                 }
               :: Questionnaire
             )
@@ -130,7 +130,7 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
                 , projectTags = []
                 , permissions = aPermissions
                 , answeredQuestions = 0
-                , unansweredQuestions = 0
+                , unansweredQuestions = 2
                 }
               :: Questionnaire
             )
