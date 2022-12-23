@@ -209,7 +209,7 @@ persistentCommand_run =
 persistentCommand_runFn :: DevExecutionDTO -> AppContextM String
 persistentCommand_runFn reqDto = do
   command <- findPersistentCommandSimpleByUuid (head reqDto.parameters)
-  runPersistentCommand command
+  runPersistentCommand True command
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
