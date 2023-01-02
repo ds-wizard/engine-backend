@@ -37,6 +37,7 @@ data ClearReplyEventChangeDTO = ClearReplyEventChangeDTO
 data SetPhaseEventChangeDTO = SetPhaseEventChangeDTO
   { uuid :: U.UUID
   , phaseUuid :: Maybe U.UUID
+  , phasesAnsweredIndication :: PhasesAnsweredIndication
   }
   deriving (Show, Eq, Generic)
 

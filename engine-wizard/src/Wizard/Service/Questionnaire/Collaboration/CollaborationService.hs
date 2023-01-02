@@ -144,7 +144,10 @@ setPhase qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
-  appendQuestionnaireEventByUuid' qtnUuid [fromEventChangeDTO (SetPhaseEventChangeDTO' reqDto) mCreatedByUuid now]
+  appendQuestionnaireEventByUuid
+    qtnUuid
+    [fromEventChangeDTO (SetPhaseEventChangeDTO' reqDto) mCreatedByUuid now]
+    reqDto.phasesAnsweredIndication
   let resDto = toSetPhaseEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   broadcast qtnUuid records (toSetPhaseMessage resDto) disconnectUser
