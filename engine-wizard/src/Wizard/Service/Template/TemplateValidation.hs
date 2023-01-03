@@ -19,7 +19,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 
 validateNewTemplate :: Template -> AppContextM ()
 validateNewTemplate tml = do

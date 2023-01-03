@@ -6,7 +6,7 @@ import Control.Monad.Reader (asks)
 import Shared.Model.Error.Error
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 
 checkIfAppFeatureIsEnabled featureName accessor = do
   appConfig <- getAppConfig

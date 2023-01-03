@@ -227,6 +227,7 @@ toSetPhaseEventChangeDTO event phasesAnsweredIndication =
   SetPhaseEventChangeDTO
     { uuid = event.uuid
     , phaseUuid = event.phaseUuid
+    , phasesAnsweredIndication = phasesAnsweredIndication
     }
 
 toSetLabelsEventChangeDTO :: SetLabelsEvent -> PhasesAnsweredIndication -> SetLabelsEventChangeDTO

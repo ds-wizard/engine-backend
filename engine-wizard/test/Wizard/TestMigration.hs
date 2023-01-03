@@ -36,7 +36,7 @@ import qualified Wizard.Database.Migration.Development.Audit.AuditSchemaMigratio
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
 import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
-import qualified Wizard.Database.Migration.Development.Config.AppConfigSchemaMigration as CFG_Schema
+import qualified Wizard.Database.Migration.Development.Config.ConfigSchemaMigration as CFG_Schema
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema

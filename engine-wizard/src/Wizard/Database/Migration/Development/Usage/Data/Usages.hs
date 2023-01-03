@@ -16,10 +16,10 @@ defaultUsage =
     }
 
 defaultUsageUsers :: UsageEntryDTO
-defaultUsageUsers = UsageEntryDTO {current = 2, max = Nothing}
+defaultUsageUsers = UsageEntryDTO {current = 1, max = Nothing}
 
 defaultUsageActiveUsers :: UsageEntryDTO
-defaultUsageActiveUsers = UsageEntryDTO {current = 2, max = Nothing}
+defaultUsageActiveUsers = UsageEntryDTO {current = 1, max = Nothing}
 
 defaultUsageKnowledgeModels :: UsageEntryDTO
 defaultUsageKnowledgeModels = UsageEntryDTO {current = 2, max = Nothing}

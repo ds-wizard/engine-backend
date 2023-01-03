@@ -34,7 +34,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Acl.AclService
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Document.DocumentAcl
 import Wizard.Service.Document.DocumentContextService
 import Wizard.Service.Document.DocumentMapper

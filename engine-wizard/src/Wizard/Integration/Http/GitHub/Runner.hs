@@ -10,7 +10,7 @@ import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 
 getIssues :: AppContextM [IssueIDTO]
 getIssues = do

@@ -27,7 +27,7 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Submission.Submission
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Common
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Document.DocumentAcl
 import Wizard.Service.Submission.SubmissionAcl
 import Wizard.Service.Submission.SubmissionMapper

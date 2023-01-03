@@ -5,7 +5,7 @@ import Test.Hspec
 
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
-import Wizard.Service.Config.AppConfigValidation
+import Wizard.Service.Config.App.AppConfigValidation
 
 appConfigValidationSpec =
   describe "AppConfigValidation" $

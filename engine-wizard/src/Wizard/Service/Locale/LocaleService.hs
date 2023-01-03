@@ -32,7 +32,7 @@ import Wizard.Model.Locale.LocaleState
 import Wizard.S3.Locale.LocaleS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppHelper
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Locale.LocaleMapper
 import Wizard.Service.Locale.LocaleValidation
 

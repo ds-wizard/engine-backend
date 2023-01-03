@@ -34,7 +34,7 @@ updateAppConfig :: AppConfig -> AppContextM Int64
 updateAppConfig config = do
   let sql =
         fromString
-          "UPDATE app_config SET uuid = ?, organization = ?, authentication = ?, privacy_and_support = ?, dashboard = ?, look_and_feel = ?, registry = ?, knowledge_model = ?, questionnaire = ?, template = ?, submission = ?, created_at = ?, updated_at = ?, feature = ?, owl = ? WHERE uuid = ?"
+          "UPDATE app_config SET uuid = ?, organization = ?, authentication = ?, privacy_and_support = ?, dashboard = ?, look_and_feel = ?, registry = ?, knowledge_model = ?, questionnaire = ?, template = ?, submission = ?, created_at = ?, updated_at = ?, feature = ?, owl = ?, mail_config_uuid = ? WHERE uuid = ?"
   let params = toRow config ++ [toField config.uuid]
   logQuery sql params
   let action conn = execute conn sql params

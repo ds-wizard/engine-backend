@@ -1,4 +1,4 @@
-module Wizard.Service.Config.ClientConfigService where
+module Wizard.Service.Config.Client.ClientConfigService where
 
 import Control.Monad (unless)
 import Control.Monad.Except (throwError)
@@ -13,8 +13,8 @@ import Wizard.Model.App.App
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.App.AppHelper
-import Wizard.Service.Config.AppConfigService
-import Wizard.Service.Config.ClientConfigMapper
+import Wizard.Service.Config.App.AppConfigService
+import Wizard.Service.Config.Client.ClientConfigMapper
 
 getClientConfig :: Maybe String -> AppContextM ClientConfigDTO
 getClientConfig mClientUrl = do

@@ -24,7 +24,7 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.Branch.BranchAudit
 import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Branch.Collaboration.CollaborationService
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.KnowledgeModel.Squash.Squasher
 import Wizard.Service.Migration.KnowledgeModel.MigratorAudit
 import Wizard.Service.Package.PackageService

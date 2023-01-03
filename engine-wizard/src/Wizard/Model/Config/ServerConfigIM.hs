@@ -1,0 +1,158 @@
+module Wizard.Model.Config.ServerConfigIM where
+
+import Shared.Model.Config.ServerConfig
+import Shared.Model.Config.ServerConfigIM
+import Wizard.Model.Config.ServerConfig
+
+instance FromEnv ServerConfig where
+  applyEnv serverConfig = do
+    general <- applyEnv serverConfig.general
+    database <- applyEnv serverConfig.database
+    s3 <- applyEnv serverConfig.s3
+    jwt <- applyEnv serverConfig.jwt
+    roles <- applyEnv serverConfig.roles
+    registry <- applyEnv serverConfig.registry
+    analytics <- applyEnv serverConfig.analytics
+    sentry <- applyEnv serverConfig.sentry
+    branch <- applyEnv serverConfig.branch
+    cache <- applyEnv serverConfig.cache
+    document <- applyEnv serverConfig.document
+    feedback <- applyEnv serverConfig.feedback
+    persistentCommand <- applyEnv serverConfig.persistentCommand
+    plan <- applyEnv serverConfig.plan
+    questionnaire <- applyEnv serverConfig.questionnaire
+    userToken <- applyEnv serverConfig.userToken
+    logging <- applyEnv serverConfig.logging
+    cloud <- applyEnv serverConfig.cloud
+    return ServerConfig {..}
+
+instance FromEnv ServerConfigGeneral where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "GENERAL_ENVIRONMENT" c.environment (\x -> c {environment = x})
+      , \c -> applyEnvVariable "GENERAL_CLIENT_URL" c.clientUrl (\x -> c {clientUrl = x} :: ServerConfigGeneral)
+      , \c -> applyEnvVariable "GENERAL_SERVER_PORT" c.serverPort (\x -> c {serverPort = x})
+      , \c -> applyEnvVariable "GENERAL_SECRET" c.secret (\x -> c {secret = x})
+      , \c -> applyEnvVariable "GENERAL_INTEGRATION_CONFIG" c.integrationConfig (\x -> c {integrationConfig = x})
+      , \c -> applyEnvVariable "GENERAL_REMOTE_LOCALIZATION_URL" c.remoteLocalizationUrl (\x -> c {remoteLocalizationUrl = x})
+      , \c -> applyEnvVariable "GENERAL_CLIENT_STYLE_BUILDER_URL" c.clientStyleBuilderUrl (\x -> c {clientStyleBuilderUrl = x})
+      ]
+
+instance FromEnv ServerConfigJwt where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "JWT_VERSION" c.version (\x -> c {version = x})
+      , \c -> applyEnvVariable "JWT_EXPIRATION" c.expiration (\x -> c {expiration = x})
+      ]
+
+instance FromEnv ServerConfigRoles where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "ROLES_ADMIN" c.admin (\x -> c {admin = x})
+      , \c -> applyEnvVariable "ROLES_DATA_STEWARD" c.dataSteward (\x -> c {dataSteward = x})
+      , \c -> applyEnvVariable "ROLES_RESEARCHER" c.researcher (\x -> c {researcher = x})
+      ]
+
+instance FromEnv ServerConfigRegistry where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "REGISTRY_URL" c.url (\x -> c {url = x} :: ServerConfigRegistry)
+      , \c -> applyEnvVariable "REGISTRY_CLIENT_URL" c.clientUrl (\x -> c {clientUrl = x} :: ServerConfigRegistry)
+      , \c -> applyEnvVariable "REGISTRY_SYNC_ENABLED" c.sync.enabled (\x -> c {sync = c.sync {enabled = x}} :: ServerConfigRegistry)
+      , \c -> applyEnvVariable "REGISTRY_SYNC_CRON" c.sync.cron (\x -> c {sync = c.sync {cron = x}} :: ServerConfigRegistry)
+      ]
+
+instance FromEnv ServerConfigBranch where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "BRANCH_SQUASH_ENABLED" c.squash.enabled (\x -> c {squash = c.squash {enabled = x}} :: ServerConfigBranch)
+      , \c -> applyEnvVariable "BRANCH_SQUASH_CRON" c.squash.cron (\x -> c {squash = c.squash {cron = x}} :: ServerConfigBranch)
+      ]
+
+instance FromEnv ServerConfigCache where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "CACHE_DATA_EXPIRATION" c.dataExpiration (\x -> c {dataExpiration = x})
+      , \c -> applyEnvVariable "CACHE_WEBSOCKET_EXPIRATION" c.websocketExpiration (\x -> c {websocketExpiration = x})
+      , \c -> applyEnvVariable "CACHE_PURGE_EXPIRED_ENABLED" c.purgeExpired.enabled (\x -> c {purgeExpired = c.purgeExpired {enabled = x}} :: ServerConfigCache)
+      , \c -> applyEnvVariable "CACHE_PURGE_EXPIRED_CRON" c.purgeExpired.cron (\x -> c {purgeExpired = c.purgeExpired {cron = x}} :: ServerConfigCache)
+      ]
+
+instance FromEnv ServerConfigDocument where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "DOCUMENT_CLEAN_ENABLED" c.clean.enabled (\x -> c {clean = c.clean {enabled = x}} :: ServerConfigDocument)
+      , \c -> applyEnvVariable "DOCUMENT_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigDocument)
+      ]
+
+instance FromEnv ServerConfigFeedback where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "FEEDBACK_API_URL" c.apiUrl (\x -> c {apiUrl = x} :: ServerConfigFeedback)
+      , \c -> applyEnvVariable "FEEDBACK_WEB_URL" c.webUrl (\x -> c {webUrl = x} :: ServerConfigFeedback)
+      , \c -> applyEnvVariable "FEEDBACK_SYNC_ENABLED" c.sync.enabled (\x -> c {sync = c.sync {enabled = x}} :: ServerConfigFeedback)
+      , \c -> applyEnvVariable "FEEDBACK_SYNC_CRON" c.sync.cron (\x -> c {sync = c.sync {cron = x}} :: ServerConfigFeedback)
+      ]
+
+instance FromEnv ServerConfigPersistentCommand where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "PERSISTENT_COMMAND_LISTENER_JOB_ENABLED" c.listenerJob.enabled (\x -> c {listenerJob = c.listenerJob {enabled = x}} :: ServerConfigPersistentCommand)
+      , \c -> applyEnvVariable "PERSISTENT_COMMAND_RETRY_JOB_ENABLED" c.retryJob.enabled (\x -> c {retryJob = c.retryJob {enabled = x}} :: ServerConfigPersistentCommand)
+      , \c -> applyEnvVariable "PERSISTENT_COMMAND_RETRY_JOB_CRON" c.retryJob.cron (\x -> c {retryJob = c.retryJob {cron = x}} :: ServerConfigPersistentCommand)
+      ]
+
+instance FromEnv ServerConfigPlan where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "PLAN_RECOMPUTE_JOB_ENABLED" c.recomputeJob.enabled (\x -> c {recomputeJob = c.recomputeJob {enabled = x}} :: ServerConfigPlan)
+      , \c -> applyEnvVariable "PLAN_RECOMPUTE_JOB_CRON" c.recomputeJob.cron (\x -> c {recomputeJob = c.recomputeJob {cron = x}} :: ServerConfigPlan)
+      ]
+
+instance FromEnv ServerConfigQuestionnaire where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "QUESTIONNAIRE_CLEAN_ENABLED" c.clean.enabled (\x -> c {clean = c.clean {enabled = x}} :: ServerConfigQuestionnaire)
+      , \c -> applyEnvVariable "QUESTIONNAIRE_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigQuestionnaire)
+      , \c -> applyEnvVariable "QUESTIONNAIRE_RECOMPUTE_INDICATION_ENABLED" c.recomputeIndication.enabled (\x -> c {recomputeIndication = c.recomputeIndication {enabled = x}} :: ServerConfigQuestionnaire)
+      , \c -> applyEnvVariable "QUESTIONNAIRE_RECOMPUTE_INDICATION_CRON" c.recomputeIndication.cron (\x -> c {recomputeIndication = c.recomputeIndication {cron = x}} :: ServerConfigQuestionnaire)
+      , \c -> applyEnvVariable "QUESTIONNAIRE_SQUASH_ENABLED" c.squash.enabled (\x -> c {squash = c.squash {enabled = x}} :: ServerConfigQuestionnaire)
+      , \c -> applyEnvVariable "QUESTIONNAIRE_SQUASH_CRON" c.squash.cron (\x -> c {squash = c.squash {cron = x}} :: ServerConfigQuestionnaire)
+      ]
+
+instance FromEnv ServerConfigUserToken where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "USER_TOKEN_CLEAN_ENABLED" c.clean.enabled (\x -> c {clean = c.clean {enabled = x}} :: ServerConfigUserToken)
+      , \c -> applyEnvVariable "USER_TOKEN_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigUserToken)
+      ]
+
+instance FromEnv ServerConfigLogging where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "LOGGING_LEVEL" c.level (\x -> c {level = x})
+      , \c -> applyEnvVariable "LOGGING_HTTP_CLIENT_DEBUG" c.httpClientDebug (\x -> c {httpClientDebug = x})
+      , \c -> applyEnvVariable "LOGGING_WEBSOCKET_DEBUG" c.websocketDebug (\x -> c {websocketDebug = x})
+      ]
+
+instance FromEnv ServerConfigCloud where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "CLOUD_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigCloud)
+      , \c -> applyMaybeEnvVariable "CLOUD_DOMAIN" c.domain (\x -> c {domain = x})
+      , \c -> applyEnvVariable "CLOUD_PUBLIC_REGISTRATION_ENABLED" c.publicRegistrationEnabled (\x -> c {publicRegistrationEnabled = x})
+      ]

@@ -1,7 +1,7 @@
 module Wizard.Service.PersistentCommand.PersistentCommandService where
 
 import qualified Control.Exception.Base as E
-import Control.Monad (forever, when)
+import Control.Monad (forever, unless, when)
 import Control.Monad.Reader (ask, asks, liftIO)
 import Data.Aeson (Value (..), toJSON)
 import Data.Foldable (traverse_)
@@ -31,7 +31,7 @@ import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.PersistentCommand.PersistentCommandSimple
 import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppUtil
-import qualified Wizard.Service.Config.AppConfigCommandExecutor as AppConfigCommandExecutor
+import qualified Wizard.Service.Config.App.AppConfigCommandExecutor as AppConfigCommandExecutor
 import Wizard.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Service.PersistentCommand.PersistentCommandUtil
 import qualified Wizard.Service.User.UserMapper as UM
@@ -60,20 +60,25 @@ runPersistentCommands :: AppContextM ()
 runPersistentCommands = do
   checkPermission _DEV_PERM
   commands <- findPersistentCommandsByStates
-  traverse_ runPersistentCommand commands
+  unless
+    (null commands)
+    ( do
+        traverse_ (runPersistentCommand False) commands
+        runPersistentCommands
+    )
 
 runPersistentCommandById :: String -> AppContextM PersistentCommandDetailDTO
 runPersistentCommandById uuid = do
   command <- findPersistentCommandByUuid uuid
   if command.internal
-    then runPersistentCommand (toSimple command)
+    then runPersistentCommand True (toSimple command)
     else do
       notifySpecificPersistentCommandQueue command
       return ()
   getPersistentCommandById uuid
 
-runPersistentCommand :: PersistentCommandSimple -> AppContextM ()
-runPersistentCommand command = do
+runPersistentCommand :: Bool -> PersistentCommandSimple -> AppContextM ()
+runPersistentCommand force command = do
   user <-
     case command.createdBy of
       Just userUuid -> findUserByIdSystem' . U.toString $ userUuid
@@ -84,31 +89,35 @@ runPersistentCommand command = do
           { currentAppUuid = command.appUuid
           , currentUser = fmap UM.toDTO user
           }
-  executePersistentCommandByUuid (U.toString $ command.uuid) updatedContext
+  executePersistentCommandByUuid force (U.toString $ command.uuid) updatedContext
 
-executePersistentCommandByUuid :: String -> AppContext -> AppContextM ()
-executePersistentCommandByUuid uuid context =
+executePersistentCommandByUuid :: Bool -> String -> AppContext -> AppContextM ()
+executePersistentCommandByUuid force uuid context =
   runInTransaction $ do
     logInfoU _CMP_SERVICE (f' "Running command '%s'" [uuid])
     command <- findPersistentCommandByUuid uuid
-    eResult <- liftIO . E.try $ runAppContextWithAppContext (execute command) context
-    let (resultState, mErrorMessage) =
-          case eResult :: Either E.SomeException (Either String (PersistentCommandState, Maybe String)) of
-            Right (Right (resultState, mErrorMessage)) -> (resultState, mErrorMessage)
-            Right (Left error) -> (ErrorPersistentCommandState, Just error)
-            Left exception -> (ErrorPersistentCommandState, Just . show $ exception)
-    now <- liftIO getCurrentTime
-    let updatedCommand =
-          command
-            { state = resultState
-            , lastErrorMessage = mErrorMessage
-            , attempts = command.attempts + 1
-            , updatedAt = now
-            }
-          :: PersistentCommand
-    when (resultState == ErrorPersistentCommandState) (sendToSentry updatedCommand)
-    updatePersistentCommandById updatedCommand
-    logInfoU _CMP_SERVICE (f' "Command finished with following state: '%s'" [show resultState])
+    when
+      (command.attempts < command.maxAttempts || force)
+      ( do
+          eResult <- liftIO . E.try $ runAppContextWithAppContext (execute command) context
+          let (resultState, mErrorMessage) =
+                case eResult :: Either E.SomeException (Either String (PersistentCommandState, Maybe String)) of
+                  Right (Right (resultState, mErrorMessage)) -> (resultState, mErrorMessage)
+                  Right (Left error) -> (ErrorPersistentCommandState, Just error)
+                  Left exception -> (ErrorPersistentCommandState, Just . show $ exception)
+          now <- liftIO getCurrentTime
+          let updatedCommand =
+                command
+                  { state = resultState
+                  , lastErrorMessage = mErrorMessage
+                  , attempts = command.attempts + 1
+                  , updatedAt = now
+                  }
+                :: PersistentCommand
+          when (resultState == ErrorPersistentCommandState) (sendToSentry updatedCommand)
+          updatePersistentCommandById updatedCommand
+          logInfoU _CMP_SERVICE (f' "Command finished with following state: '%s'" [show resultState])
+      )
 
 execute :: PersistentCommand -> AppContextM (PersistentCommandState, Maybe String)
 execute command

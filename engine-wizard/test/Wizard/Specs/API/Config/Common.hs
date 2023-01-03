@@ -5,7 +5,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Api.Resource.Error.ErrorJM ()
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 
 import Wizard.Specs.Common
 

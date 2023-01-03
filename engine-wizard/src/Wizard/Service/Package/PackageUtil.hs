@@ -12,7 +12,7 @@ import Wizard.Model.Package.PackageList
 import Wizard.Model.Package.PackageState
 import Wizard.Model.Registry.RegistryPackage
 import Wizard.Service.Acl.AclService
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 
 selectPackageByOrgIdAndKmId pkg =
   L.find (\p -> p.organizationId == pkg.organizationId && p.kmId == pkg.kmId)

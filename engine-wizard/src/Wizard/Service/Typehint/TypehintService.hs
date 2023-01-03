@@ -13,7 +13,7 @@ import Wizard.Database.DAO.Common
 import Wizard.Integration.Http.Typehint.Runner
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.IntegrationConfigService
+import Wizard.Service.Config.Integration.IntegrationConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Typehint.TypehintMapper
 import Wizard.Util.Logger

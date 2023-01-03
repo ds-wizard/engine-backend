@@ -1,17 +1,21 @@
-module Wizard.Service.Config.ServerConfigService where
+module Wizard.Service.Config.Server.ServerConfigService where
 
 import Data.Yaml (decodeFileEither)
 
 import Shared.Localization.Messages.Internal
+import Shared.Model.Config.ServerConfigIM
 import Shared.Model.Error.Error
 import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Config.ServerConfigIM ()
 import Wizard.Model.Config.ServerConfigJM ()
 
 getServerConfig :: String -> IO (Either AppError ServerConfig)
 getServerConfig fileName = do
   eConfig <- decodeFileEither fileName
   case eConfig of
-    Right config -> return . validateServerConfig $ config
+    Right config -> do
+      updatedConfig <- applyEnv config
+      return . validateServerConfig $ updatedConfig
     Left error -> return . Left . GeneralServerError . show $ error
 
 validateServerConfig :: ServerConfig -> Either AppError ServerConfig

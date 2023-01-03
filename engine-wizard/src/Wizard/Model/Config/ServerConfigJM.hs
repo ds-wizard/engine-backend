@@ -13,7 +13,7 @@ import Wizard.Model.User.User
 
 instance FromJSON ServerConfig where
   parseJSON (Object o) = do
-    general <- o .: "general"
+    general <- o .:? "general" .!= defaultGeneral
     database <- o .:? "database" .!= defaultDatabase
     s3 <- o .:? "s3" .!= defaultS3
     jwt <- o .:? "jwt" .!= defaultJwt
@@ -37,9 +37,9 @@ instance FromJSON ServerConfig where
 instance FromJSON ServerConfigGeneral where
   parseJSON (Object o) = do
     environment <- o .:? "environment" .!= defaultGeneral.environment
-    clientUrl <- o .: "clientUrl"
+    clientUrl <- o .:? "clientUrl" .!= defaultGeneral.clientUrl
     serverPort <- o .:? "serverPort" .!= defaultGeneral.serverPort
-    secret <- o .: "secret"
+    secret <- o .:? "secret" .!= defaultGeneral.secret
     integrationConfig <- o .:? "integrationConfig" .!= defaultGeneral.integrationConfig
     remoteLocalizationUrl <- o .:? "remoteLocalizationUrl" .!= defaultGeneral.remoteLocalizationUrl
     clientStyleBuilderUrl <- o .:? "clientStyleBuilderUrl" .!= defaultGeneral.clientStyleBuilderUrl
@@ -132,7 +132,7 @@ instance FromJSON ServerConfigUserToken where
 
 instance FromJSON ServerConfigCronWorker where
   parseJSON (Object o) = do
-    enabled <- o .: "enabled"
+    enabled <- o .:? "enabled" .!= True
     cron <- o .: "cron"
     return ServerConfigCronWorker {..}
   parseJSON _ = mzero

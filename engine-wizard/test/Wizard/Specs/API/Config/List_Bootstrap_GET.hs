@@ -15,7 +15,7 @@ import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.ClientConfigMapper
+import Wizard.Service.Config.Client.ClientConfigMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.Common

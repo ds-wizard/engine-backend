@@ -21,7 +21,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Service.App.AppHelper
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Document.DocumentContextMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService

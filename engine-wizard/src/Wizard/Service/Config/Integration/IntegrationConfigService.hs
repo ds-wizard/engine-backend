@@ -1,4 +1,4 @@
-module Wizard.Service.Config.IntegrationConfigService where
+module Wizard.Service.Config.Integration.IntegrationConfigService where
 
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
@@ -10,7 +10,7 @@ import Shared.Constant.Component
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Util.Logger
 
 getFileIntegrationConfig :: String -> AppContextM (M.Map String String)

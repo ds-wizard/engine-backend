@@ -19,7 +19,8 @@ getTemplates queryParams mMetamodelVersion = do
 
 getTemplateById :: String -> AppContextM TemplateDetailDTO
 getTemplateById tId = do
-  tml <- findTemplateById tId
+  resolvedId <- resolveTemplateId tId
+  tml <- findTemplateById resolvedId
   versions <- getTemplateVersions tml
   org <- findOrganizationByOrgId tml.organizationId
   return $ toDetailDTO tml versions org

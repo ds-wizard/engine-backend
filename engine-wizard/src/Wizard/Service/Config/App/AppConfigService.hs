@@ -1,4 +1,4 @@
-module Wizard.Service.Config.AppConfigService where
+module Wizard.Service.Config.App.AppConfigService where
 
 import Control.Monad (when)
 import Control.Monad.Reader (asks, liftIO)
@@ -20,9 +20,9 @@ import Wizard.Model.Context.AppContext
 import Wizard.S3.Public.PublicS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppHelper
-import Wizard.Service.Config.AppConfigAudit
-import Wizard.Service.Config.AppConfigMapper
-import Wizard.Service.Config.AppConfigValidation
+import Wizard.Service.Config.App.AppConfigAudit
+import Wizard.Service.Config.App.AppConfigMapper
+import Wizard.Service.Config.App.AppConfigValidation
 import Wizard.Util.Logger
 
 getAppConfig :: AppContextM AppConfig

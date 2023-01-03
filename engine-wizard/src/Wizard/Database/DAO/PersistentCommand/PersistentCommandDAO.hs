@@ -46,8 +46,10 @@ findPersistentCommandsByStates = do
         "SELECT uuid, app_uuid, created_by \
         \FROM persistent_command \
         \WHERE (state = 'NewPersistentCommandState' \
-        \  OR (state = 'ErrorPersistentCommandState' AND attempts <= max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
-        \  AND internal = true"
+        \  OR (state = 'ErrorPersistentCommandState' AND attempts < max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
+        \  AND internal = true \
+        \LIMIT 5 \
+        \FOR UPDATE"
   logInfoU _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   runDB action

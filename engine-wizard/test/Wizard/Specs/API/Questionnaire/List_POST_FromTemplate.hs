@@ -24,8 +24,8 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig hiding (request)
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Service.Config.AppConfigMapper
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigMapper
+import Wizard.Service.Config.App.AppConfigService
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

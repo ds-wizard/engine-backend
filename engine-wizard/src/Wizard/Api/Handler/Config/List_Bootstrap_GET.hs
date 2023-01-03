@@ -8,7 +8,7 @@ import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Config.ClientConfigJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Config.ClientConfigService
+import Wizard.Service.Config.Client.ClientConfigService
 
 type List_Bootstrap_GET =
   Header "Host" String

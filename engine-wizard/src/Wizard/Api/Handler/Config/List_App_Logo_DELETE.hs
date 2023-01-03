@@ -6,7 +6,7 @@ import Shared.Api.Handler.Common
 import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Config.AppConfigLogoService
+import Wizard.Service.Config.App.AppConfigLogoService
 
 type List_App_Logo_DELETE =
   Header "Authorization" String

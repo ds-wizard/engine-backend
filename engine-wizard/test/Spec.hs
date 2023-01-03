@@ -20,7 +20,7 @@ import Wizard.Integration.Http.Common.ServantClient
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Config.ServerConfigService
+import Wizard.Service.Config.Server.ServerConfigService
 import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.App.APISpec

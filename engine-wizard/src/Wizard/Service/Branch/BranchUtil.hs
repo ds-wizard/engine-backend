@@ -9,7 +9,7 @@ import Wizard.Model.Branch.BranchState
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Package.PackageService
 
 getBranchPreviousPackage :: Branch -> AppContextM (Maybe Package)

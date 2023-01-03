@@ -33,6 +33,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0024_commonFn_an
 import qualified Wizard.Database.Migration.Production.Migration_0025_locale_2.Migration as M_0025
 import qualified Wizard.Database.Migration.Production.Migration_0026_locale_3.Migration as M_0026
 import qualified Wizard.Database.Migration.Production.Migration_0027_localePerm.Migration as M_0027
+import qualified Wizard.Database.Migration.Production.Migration_0028_instanceConfigMail.Migration as M_0028
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
@@ -71,4 +72,5 @@ migrationDefinitions =
   , M_0025.definition
   , M_0026.definition
   , M_0027.definition
+  , M_0028.definition
   ]

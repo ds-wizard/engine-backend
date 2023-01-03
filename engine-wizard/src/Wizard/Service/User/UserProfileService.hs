@@ -17,7 +17,7 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.User.UserProfileMapper
 import Wizard.Service.User.UserService
 import Wizard.Service.User.UserValidation

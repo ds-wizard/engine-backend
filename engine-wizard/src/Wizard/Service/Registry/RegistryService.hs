@@ -16,7 +16,7 @@ import Wizard.Integration.Http.Registry.Runner
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Common
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Registry.RegistryMapper
 import Wizard.Service.Statistics.StatisticsService
 import Wizard.Util.Logger

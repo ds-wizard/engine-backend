@@ -72,8 +72,8 @@ create_test_200 title appContext reqAuthHeader =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/templates/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/templates/global:questionnaire-report:9.9.9"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "template"
-    [("id", "deab6c38-aeac-4b17-a501-4365a0a70176")]
+    [("id", "global:questionnaire-report:9.9.9")]

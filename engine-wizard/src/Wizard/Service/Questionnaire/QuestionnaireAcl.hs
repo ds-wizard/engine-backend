@@ -16,7 +16,7 @@ import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
 import Wizard.Model.User.User
 import Wizard.Service.Acl.AclService
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Config.App.AppConfigService
 
 checkCreatePermissionToQtn :: AppContextM ()
 checkCreatePermissionToQtn = do
