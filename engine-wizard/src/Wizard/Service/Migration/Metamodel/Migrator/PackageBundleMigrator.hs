@@ -26,4 +26,4 @@ migratePackagesField value =
         Left error -> Left error
 
 migratePackage :: Value -> Either AppError Value
-migratePackage value = migrateEventsField "events" value >>= migrateMetamodelVersionField
+migratePackage value = validateMetamodelVersionField value >>= migrateEventsField "events" >>= migrateMetamodelVersionField

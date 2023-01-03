@@ -69,6 +69,12 @@ _ERROR_VALIDATION__DEFAULT_WIZARD_LOCALE_DELETATION =
   LocaleRecord "error.validation.default_locale_deletation" "You can't delete default wizard locale" []
 
 -- Unsupported version
+_ERROR_VALIDATION__PKG_UNSUPPORTED_VERSION pkgMetamodelVersion appPkgMetamodelVersion =
+  LocaleRecord
+    "error.validation.pkg_unsupported_version"
+    "Package contains unsupported version of metamodel (pkg metamodel version: '%s', application metamodel version: '%s')"
+    [show pkgMetamodelVersion, show appPkgMetamodelVersion]
+
 _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_VERSION tmlId tmlMetamodelVersion appTmlMetamodelVersion =
   LocaleRecord
     "error.validation.tml_unsupported_version"
