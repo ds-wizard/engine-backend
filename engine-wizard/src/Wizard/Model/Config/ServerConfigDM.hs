@@ -35,7 +35,6 @@ defaultGeneral =
     , serverPort = 3000
     , secret = ""
     , integrationConfig = "engine-wizard/config/integration.yml"
-    , remoteLocalizationUrl = Nothing
     , clientStyleBuilderUrl = "http://wizard-style-builder:3002"
     }
 

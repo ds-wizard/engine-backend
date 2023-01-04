@@ -5,7 +5,6 @@ import Control.Monad.Except (ExceptT, MonadError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (LoggingT, MonadLogger)
 import Control.Monad.Reader (MonadReader, ReaderT)
-import qualified Data.Map.Strict as M
 import Data.Pool (Pool)
 import Database.PostgreSQL.Simple (Connection)
 import Network.HTTP.Client (Manager)
@@ -19,7 +18,6 @@ import Wizard.Model.Config.ServerConfig
 
 data BaseContext = BaseContext
   { serverConfig :: ServerConfig
-  , localization :: M.Map String String
   , buildInfoConfig :: BuildInfoConfig
   , dbPool :: Pool Connection
   , s3Client :: MinioConn

@@ -49,7 +49,6 @@ appContextFromBaseContext appUuid mUser transactionState baseContext callback = 
   let appContext =
         AppContext
           { serverConfig = baseContext.serverConfig
-          , localization = baseContext.localization
           , buildInfoConfig = baseContext.buildInfoConfig
           , dbPool = baseContext.dbPool
           , dbConnection = Nothing
@@ -74,7 +73,6 @@ baseContextFromAppContext :: AppContext -> BaseContext
 baseContextFromAppContext appContext =
   BaseContext
     { serverConfig = appContext.serverConfig
-    , localization = appContext.localization
     , buildInfoConfig = appContext.buildInfoConfig
     , dbPool = appContext.dbPool
     , s3Client = appContext.s3Client

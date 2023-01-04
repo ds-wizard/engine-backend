@@ -32,7 +32,6 @@ data ServerConfigGeneral = ServerConfigGeneral
   , serverPort :: Int
   , secret :: String
   , integrationConfig :: String
-  , remoteLocalizationUrl :: Maybe String
   , clientStyleBuilderUrl :: String
   }
   deriving (Generic, Show)
