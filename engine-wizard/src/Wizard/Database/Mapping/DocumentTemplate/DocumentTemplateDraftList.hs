@@ -1,0 +1,7 @@
+module Wizard.Database.Mapping.DocumentTemplate.DocumentTemplateDraftList where
+
+import Database.PostgreSQL.Simple
+
+import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
+
+instance FromRow DocumentTemplateDraftList

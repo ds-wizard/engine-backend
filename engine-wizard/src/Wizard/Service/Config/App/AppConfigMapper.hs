@@ -16,7 +16,6 @@ toChangeDTO config =
     , registry = config.registry
     , knowledgeModel = config.knowledgeModel
     , questionnaire = config.questionnaire
-    , template = config.template
     , submission = config.submission
     }
 
@@ -33,7 +32,6 @@ fromChangeDTO dto oldConfig now =
     , registry = dto.registry
     , knowledgeModel = dto.knowledgeModel
     , questionnaire = dto.questionnaire
-    , template = dto.template
     , submission = dto.submission
     , owl = oldConfig.owl
     , mailConfigUuid = oldConfig.mailConfigUuid

@@ -11,7 +11,7 @@ import Prelude hiding (log)
 import Shared.Model.Config.ServerConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Document.DocumentService
+import Wizard.Service.Document.DocumentCleanService
 import Wizard.Util.Context
 import Wizard.Util.Logger
 

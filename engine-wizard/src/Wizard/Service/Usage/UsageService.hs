@@ -1,11 +1,14 @@
 module Wizard.Service.Usage.UsageService where
 
+import Shared.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
+import Shared.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.Database.DAO.Locale.LocaleDAO
 import Shared.Database.DAO.Package.PackageDAO
-import Shared.Database.DAO.Template.TemplateAssetDAO
-import Shared.Database.DAO.Template.TemplateDAO
+import Shared.Util.Uuid
 import Wizard.Api.Resource.Usage.UsageDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Limit.AppLimitDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
@@ -20,12 +23,14 @@ getUsage appUuid = do
   branchCount <- countBranchesWithApp appUuid
   kmCount <- countPackagesGroupedByOrganizationIdAndKmIdWithApp appUuid
   qtnCount <- countQuestionnairesWithApp appUuid
-  tmlCount <- countTemplatesGroupedByOrganizationIdAndKmIdWithApp appUuid
-  docCount <- countDocumentsWithApp appUuid
-  docSize <- sumDocumentFileSizeWithApp appUuid
-  templateAssetSize <- sumTemplateAssetFileSizeWithApp appUuid
+  documentTemplateCount <- countDocumentTemplatesGroupedByOrganizationIdAndKmIdWithApp (u' appUuid)
+  documentTemplateDraftCount <- countDraftsGroupedByOrganizationIdAndKmIdWithApp (u' appUuid)
+  docCount <- countDocumentsWithApp (u' appUuid)
+  localeCount <- countLocalesGroupedByOrganizationIdAndLocaleIdWithApp (u' appUuid)
+  docSize <- sumDocumentFileSizeWithApp (u' appUuid)
+  templateAssetSize <- sumAssetFileSizeWithApp appUuid
   let storageCount = docSize + templateAssetSize
-  return $ toDTO appLimit userCount activeUserCount branchCount kmCount qtnCount tmlCount docCount storageCount
+  return $ toDTO appLimit userCount activeUserCount branchCount kmCount qtnCount documentTemplateCount documentTemplateDraftCount docCount localeCount storageCount
 
 getUsageForCurrentApp :: AppContextM UsageDTO
 getUsageForCurrentApp = do
@@ -35,9 +40,11 @@ getUsageForCurrentApp = do
   branchCount <- countBranches
   kmCount <- countPackagesGroupedByOrganizationIdAndKmId
   qtnCount <- countQuestionnaires
-  tmlCount <- countTemplatesGroupedByOrganizationIdAndKmId
+  documentTemplateCount <- countDocumentTemplatesGroupedByOrganizationIdAndKmId
+  documentTemplateDraftCount <- countDraftsGroupedByOrganizationIdAndKmId
   docCount <- countDocuments
+  localeCount <- countLocalesGroupedByOrganizationIdAndLocaleId
   docSize <- sumDocumentFileSize
-  templateAssetSize <- sumTemplateAssetFileSize
+  templateAssetSize <- sumAssetFileSize
   let storageCount = docSize + templateAssetSize
-  return $ toDTO appLimit userCount activeUserCount branchCount kmCount qtnCount tmlCount docCount storageCount
+  return $ toDTO appLimit userCount activeUserCount branchCount kmCount qtnCount documentTemplateCount documentTemplateDraftCount docCount localeCount storageCount

@@ -5,9 +5,9 @@ import Data.Swagger
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentJM ()
+import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSimpleSM ()
 import Wizard.Api.Resource.Submission.SubmissionSM ()
-import Wizard.Api.Resource.Template.TemplateSimpleSM ()
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Model.Document.Document
 

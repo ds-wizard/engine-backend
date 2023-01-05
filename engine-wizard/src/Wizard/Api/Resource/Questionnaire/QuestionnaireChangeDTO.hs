@@ -13,7 +13,7 @@ data QuestionnaireChangeDTO = QuestionnaireChangeDTO
   , sharing :: QuestionnaireSharing
   , projectTags :: [String]
   , permissions :: [QuestionnairePermRecord]
-  , templateId :: Maybe String
+  , documentTemplateId :: Maybe String
   , formatUuid :: Maybe U.UUID
   , isTemplate :: Bool
   }

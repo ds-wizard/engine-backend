@@ -8,18 +8,18 @@ import qualified Data.List as L
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.Database.DAO.Package.PackageDAO
-import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Common.Lens
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
+import Shared.Model.DocumentTemplate.DocumentTemplate
 import Shared.Model.Error.Error
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
-import Shared.Model.Template.Template
 import Shared.Service.Package.PackageUtil
 import Shared.Util.List
 import Shared.Util.Uuid
@@ -234,14 +234,14 @@ getQuestionnaireDetailById qtnUuid = do
   knowledgeModel <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
   state <- getQuestionnaireState qtnUuid qtn.packageId
   mTemplate <-
-    case qtn.templateId of
+    case qtn.documentTemplateId of
       Just tId -> do
-        template <- findTemplateById tId
-        return $ Just template
+        tml <- findDocumentTemplateById tId
+        return $ Just tml
       _ -> return Nothing
   mFormat <-
     case (mTemplate, qtn.formatUuid) of
-      (Just template, Just fUuid) -> return $ L.find (\f -> f.uuid == fUuid) template.formats
+      (Just tml, Just fUuid) -> return $ L.find (\f -> f.uuid == fUuid) tml.formats
       _ -> return Nothing
   permissionDtos <- traverse enhanceQuestionnairePermRecord qtn.permissions
   qtnCtn <- compileQuestionnaire qtn
@@ -312,7 +312,7 @@ modifyQuestionnaire qtnUuid reqDto =
     qtnCtn <- compileQuestionnaire updatedQtn
     versionDto <- traverse enhanceQuestionnaireVersion qtn.versions
     commentThreadsMap <- getQuestionnaireComments qtn
-    deleteTemporalDocumentsByQuestionnaireUuid qtnUuid
+    deleteTemporalDocumentsByQuestionnaireUuid qtn.uuid
     migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
     return $
       toDetailWithPackageWithEventsDTO
@@ -349,7 +349,7 @@ deleteQuestionnaire qtnUuid shouldValidatePermission =
       ( \d -> do
           deleteSubmissionsFiltered [("document_uuid", U.toString d.uuid)]
           deleteDocumentsFiltered [("uuid", U.toString d.uuid)]
-          removeDocumentContent (U.toString d.uuid)
+          removeDocumentContent d.uuid
       )
       documents
     deleteQuestionnaireById qtnUuid

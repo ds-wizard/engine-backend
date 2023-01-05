@@ -5,10 +5,10 @@ import qualified Data.UUID as U
 import GHC.Generics
 import GHC.Int
 
+import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
+import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleJM ()
 import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.Submission.SubmissionJM ()
-import Wizard.Api.Resource.Template.TemplateSimpleDTO
-import Wizard.Api.Resource.Template.TemplateSimpleJM ()
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 
@@ -18,7 +18,7 @@ data DocumentDTO = DocumentDTO
   , state :: DocumentState
   , questionnaire :: Maybe QuestionnaireSimple
   , questionnaireEventUuid :: Maybe U.UUID
-  , template :: TemplateSimpleDTO
+  , documentTemplate :: DocumentTemplateSimpleDTO
   , formatUuid :: U.UUID
   , fileName :: Maybe String
   , contentType :: Maybe String

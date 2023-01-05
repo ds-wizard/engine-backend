@@ -1,7 +1,5 @@
 module Wizard.Database.Migration.Development.Document.DocumentMigration where
 
-import qualified Data.UUID as U
-
 import Shared.Constant.Component
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
@@ -17,5 +15,5 @@ runMigration = do
   insertDocument doc2
   insertDocument doc3
   insertDocument differentDoc
-  putDocumentContent (U.toString doc1.uuid) doc1Content
+  putDocumentContent doc1.uuid doc1Content
   logInfo _CMP_MIGRATION "(Document/Document) ended"

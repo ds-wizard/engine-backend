@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Document.Detail_Available_Submission_Services_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -14,14 +15,14 @@ type Detail_Available_Submission_Services_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "documents"
-    :> Capture "docUuid" String
+    :> Capture "docUuid" U.UUID
     :> "available-submission-services"
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] [SubmissionServiceSimpleDTO])
 
 detail_available_submission_Services_GET
   :: Maybe String
   -> Maybe String
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] [SubmissionServiceSimpleDTO])
 detail_available_submission_Services_GET mTokenHeader mServerUrl docUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->

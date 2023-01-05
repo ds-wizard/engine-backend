@@ -16,14 +16,14 @@ import Wizard.Service.Document.DocumentService
 type Detail_Download_GET =
   Header "Host" String
     :> "documents"
-    :> Capture "docUuid" String
+    :> Capture "docUuid" U.UUID
     :> "download"
     :> QueryParam "Authorization" String
     :> Get '[OctetStream] (Headers '[Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
 
 detail_download_GET
   :: Maybe String
-  -> String
+  -> U.UUID
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
 detail_download_GET mServerUrl docUuid mTokenHeader =

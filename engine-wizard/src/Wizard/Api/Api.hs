@@ -10,6 +10,8 @@ import Wizard.Api.Handler.Branch.Api
 import Wizard.Api.Handler.Config.Api
 import Wizard.Api.Handler.Dev.Api
 import Wizard.Api.Handler.Document.Api
+import Wizard.Api.Handler.DocumentTemplate.Api
+import Wizard.Api.Handler.DocumentTemplateDraft.Api
 import Wizard.Api.Handler.Domain.Api
 import Wizard.Api.Handler.Feedback.Api
 import Wizard.Api.Handler.Info.Api
@@ -23,7 +25,6 @@ import Wizard.Api.Handler.Questionnaire.Api
 import Wizard.Api.Handler.QuestionnaireImporter.Api
 import Wizard.Api.Handler.Registry.Api
 import Wizard.Api.Handler.Submission.Api
-import Wizard.Api.Handler.Template.Api
 import Wizard.Api.Handler.Token.Api
 import Wizard.Api.Handler.Typehint.Api
 import Wizard.Api.Handler.Usage.Api
@@ -54,6 +55,7 @@ type ApplicationAPI =
     :<|> RegistryAPI
     :<|> SubmissionAPI
     :<|> TemplateAPI
+    :<|> TemplateDraftAPI
     :<|> TokenAPI
     :<|> TypehintAPI
     :<|> UsageAPI
@@ -87,6 +89,7 @@ applicationServer =
     :<|> registryServer
     :<|> submissionServer
     :<|> templateServer
+    :<|> templateDraftServer
     :<|> tokenServer
     :<|> typehintServer
     :<|> usageServer

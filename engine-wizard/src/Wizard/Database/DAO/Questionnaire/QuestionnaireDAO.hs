@@ -28,6 +28,7 @@ import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetail ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireEvent ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSimple ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSquash ()
+import Wizard.Database.Mapping.Questionnaire.QuestionnaireSuggestion ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.ContextLenses ()
@@ -36,6 +37,7 @@ import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireSquash
+import Wizard.Model.Questionnaire.QuestionnaireSuggestion
 import Wizard.Model.Report.Report
 import Wizard.Model.User.User
 import Wizard.Util.Logger
@@ -276,17 +278,17 @@ findQuestionnairesByPackageId packageId = do
       entities <- runDB action
       traverse enhance entities
 
-findQuestionnairesByTemplateId :: String -> AppContextM [Questionnaire]
-findQuestionnairesByTemplateId templateId = do
+findQuestionnairesByDocumentTemplateId :: String -> AppContextM [Questionnaire]
+findQuestionnairesByDocumentTemplateId documentTemplateId = do
   appUuid <- asks currentAppUuid
   currentUser <- getCurrentUser
   if currentUser.uRole == _USER_ROLE_ADMIN
-    then createFindEntitiesByFn entityName [appQueryUuid appUuid, ("template_id", templateId)] >>= traverse enhance
+    then createFindEntitiesByFn entityName [appQueryUuid appUuid, ("document_template_id", documentTemplateId)] >>= traverse enhance
     else do
       let sql =
             fromString $
-              f' (qtnSelectSql (U.toString appUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["and template_id = ?"]
-      let params = [templateId]
+              f' (qtnSelectSql (U.toString appUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["and document_template_id = ?"]
+      let params = [documentTemplateId]
       logQuery sql params
       let action conn = query conn sql params
       entities <- runDB action
@@ -360,6 +362,11 @@ findQuestionnaireSimpleById' uuid = do
   appUuid <- asks currentAppUuid
   createFindEntityWithFieldsByFn' "uuid, name" entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
+findQuestionnaireSuggestionByUuid' :: U.UUID -> AppContextM (Maybe QuestionnaireSuggestion)
+findQuestionnaireSuggestionByUuid' uuid = do
+  appUuid <- asks currentAppUuid
+  createFindEntityWithFieldsByFn' "uuid, name, description" entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+
 findQuestionnaireEventsById :: String -> AppContextM [QuestionnaireEvent]
 findQuestionnaireEventsById uuid = do
   appUuid <- asks currentAppUuid
@@ -403,7 +410,7 @@ updateQuestionnaireById qtn = do
   appUuid <- asks currentAppUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, template_id = ?, format_uuid = ?, created_by = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, app_uuid = ?, project_tags = ?, answered_questions = ?, unanswered_questions = ? WHERE  app_uuid = ? AND uuid = ?"
+          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, document_template_id = ?, format_uuid = ?, created_by = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, app_uuid = ?, project_tags = ?, answered_questions = ?, unanswered_questions = ? WHERE  app_uuid = ? AND uuid = ?"
   let params = toRow qtn ++ [toField appUuid, toField . U.toText $ qtn.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params

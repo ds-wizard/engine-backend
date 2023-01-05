@@ -22,7 +22,7 @@ instance ToRow Questionnaire where
     , toField sharing
     , toField packageId
     , toJSONField selectedQuestionTagUuids
-    , toField templateId
+    , toField documentTemplateId
     , toField formatUuid
     , toField creatorUuid
     , toJSONField events
@@ -46,7 +46,7 @@ instance FromRow Questionnaire where
     sharing <- field
     packageId <- field
     selectedQuestionTagUuids <- fieldWith fromJSONField
-    templateId <- field
+    documentTemplateId <- field
     formatUuid <- field
     creatorUuid <- field
     let permissions = []

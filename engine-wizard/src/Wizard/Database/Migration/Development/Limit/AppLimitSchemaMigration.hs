@@ -25,19 +25,21 @@ createTables = do
   let sql =
         "create table app_limit \
         \ ( \
-        \     uuid              uuid              not null \
+        \     uuid                            uuid not null \
         \         constraint app_limit_pk \
         \             primary key, \
-        \     users             integer,\
-        \     active_users      integer,\
-        \     knowledge_models  integer,\
-        \     branches          integer,\
-        \     templates         integer,\
-        \     questionnaires    integer,\
-        \     documents         integer,\
-        \     storage           bigint,\
-        \     created_at timestamp with time zone not null,\
-        \     updated_at timestamp with time zone not null \
+        \     users                           integer,\
+        \     active_users                    integer,\
+        \     knowledge_models                integer,\
+        \     branches                        integer,\
+        \     document_templates              integer,\
+        \     questionnaires                  integer,\
+        \     documents                       integer,\
+        \     storage                         bigint,\
+        \     created_at                      timestamp with time zone not null,\
+        \     updated_at                      timestamp with time zone not null, \
+        \     document_template_drafts        integer,\
+        \     locales                         integer\
         \ ); \
         \  \
         \ create unique index app_limit_uuid_uindex \

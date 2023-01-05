@@ -143,6 +143,35 @@ createPutObjectFn object mContentType content = do
   runMinioClient action
   buildObjectUrl sanitizedObject
 
+createPutObjectWithAppFn
+  :: ( MonadReader s m
+     , HasField "s3Client'" s MinioConn
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "appUuid'" s U.UUID
+     , HasField "serverConfig'" s sc
+     , HasField "cloud'" sc ServerConfigCloud
+     , HasField "s3'" sc ServerConfigS3
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => U.UUID
+  -> String
+  -> Maybe String
+  -> BS.ByteString
+  -> m String
+createPutObjectWithAppFn appUuid object mContentType content = do
+  bucketName <- getBucketName
+  sanitizedObject <- sanitizeObjectWithApp appUuid object
+  logInfoI _CMP_S3 (f' "Put object: '%s'" [sanitizedObject])
+  let req = C.yield content
+  let kb15 = 15 * 1024
+  let objectOptions = defaultPutObjectOptions {pooContentType = fmap T.pack mContentType}
+  let action = putObject (T.pack bucketName) (T.pack sanitizedObject) req (Just kb15) objectOptions
+  runMinioClient action
+  buildObjectUrl sanitizedObject
+
 createRemoveObjectFn
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn

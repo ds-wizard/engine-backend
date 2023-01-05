@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Document.List_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -16,7 +17,7 @@ type List_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "documents"
-    :> QueryParam "questionnaireUuid" String
+    :> QueryParam "questionnaireUuid" U.UUID
     :> QueryParam "q" String
     :> QueryParam "page" Int
     :> QueryParam "size" Int
@@ -26,7 +27,7 @@ type List_GET =
 list_GET
   :: Maybe String
   -> Maybe String
-  -> Maybe String
+  -> Maybe U.UUID
   -> Maybe String
   -> Maybe Int
   -> Maybe Int

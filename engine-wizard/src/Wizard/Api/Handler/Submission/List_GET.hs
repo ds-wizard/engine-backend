@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Submission.List_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -14,12 +15,12 @@ type List_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "documents"
-    :> Capture "docUuid" String
+    :> Capture "docUuid" U.UUID
     :> "submissions"
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] [SubmissionDTO])
 
 list_GET
-  :: Maybe String -> Maybe String -> String -> BaseContextM (Headers '[Header "x-trace-uuid" String] [SubmissionDTO])
+  :: Maybe String -> Maybe String -> U.UUID -> BaseContextM (Headers '[Header "x-trace-uuid" String] [SubmissionDTO])
 list_GET mTokenHeader mServerUrl docUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $ addTraceUuidHeader =<< getSubmissionsForDocument docUuid

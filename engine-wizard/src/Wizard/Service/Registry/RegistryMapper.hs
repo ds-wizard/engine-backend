@@ -2,10 +2,10 @@ module Wizard.Service.Registry.RegistryMapper where
 
 import Data.Time
 
+import Registry.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Registry.Api.Resource.Locale.LocaleDTO
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Package.PackageSimpleDTO
-import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Model.Config.AppConfig
@@ -41,7 +41,7 @@ toRegistryPackage dto now =
     , createdAt = now
     }
 
-toRegistryTemplate :: TemplateSimpleDTO -> UTCTime -> RegistryTemplate
+toRegistryTemplate :: DocumentTemplateSimpleDTO -> UTCTime -> RegistryTemplate
 toRegistryTemplate dto now =
   RegistryTemplate
     { organizationId = dto.organizationId

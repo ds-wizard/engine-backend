@@ -28,9 +28,9 @@ userNikola =
         , "QTN_PERM"
         , "QTN_IMPORTER_PERM"
         , "QTN_TML_PERM"
-        , "DMP_PERM"
+        , "DOC_TML_READ_PERM"
         , "SUBM_PERM"
-        , "TML_PERM"
+        , "DOC_TML_WRITE_PERM"
         ]
     , active = True
     , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="

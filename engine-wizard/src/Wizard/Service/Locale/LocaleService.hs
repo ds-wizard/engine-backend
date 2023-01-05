@@ -33,6 +33,7 @@ import Wizard.S3.Locale.LocaleS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.App.AppConfigService
+import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Locale.LocaleMapper
 import Wizard.Service.Locale.LocaleValidation
 
@@ -43,10 +44,11 @@ getLocalesPage mOrganizationId mLocaleId mQuery pageable sort = do
   appConfig <- getAppConfig
   return . fmap (toDTO appConfig.registry.enabled) $ locales
 
-createLocale :: LocaleCreateDTO -> BS.ByteString -> AppContextM LocaleDTO
-createLocale reqDto content =
+createLocale :: LocaleCreateDTO -> AppContextM LocaleDTO
+createLocale reqDto =
   runInTransaction $ do
     checkPermission _LOC_PERM
+    checkLocaleLimit
     now <- liftIO getCurrentTime
     appConfig <- getAppConfig
     let organizationId = appConfig.organization.organizationId
@@ -54,7 +56,7 @@ createLocale reqDto content =
     let defaultLocale = False
     let locale = fromCreateDTO reqDto organizationId defaultLocale appConfig.uuid now
     insertLocale locale
-    putLocale locale.lId content
+    putLocale locale.lId reqDto.content
     appConfig <- getAppConfig
     return . toDTO appConfig.registry.enabled $ toLocaleList locale UnknownLocaleState
 
@@ -90,7 +92,7 @@ getLocaleContentForId code mClientUrl = do
           Just locale -> return locale
           Nothing -> findSimpleLocaleByIdWithApp app.uuid defaultLocaleId
   if locale.lId /= defaultLocaleId
-    then getLocaleWithApp app.uuid locale.lId
+    then retrieveLocaleWithApp app.uuid locale.lId
     else return "{}"
 
 modifyLocale :: String -> LocaleChangeDTO -> AppContextM LocaleDTO

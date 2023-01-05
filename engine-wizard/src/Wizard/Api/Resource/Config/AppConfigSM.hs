@@ -78,9 +78,6 @@ instance ToSchema AppConfigQuestionnaireProjectTagging where
 instance ToSchema AppConfigQuestionnaireFeedback where
   declareNamedSchema = toSwagger defaultFeedback
 
-instance ToSchema AppConfigTemplate where
-  declareNamedSchema = toSwagger defaultTemplate
-
 instance ToSchema AppConfigSubmission where
   declareNamedSchema = toSwagger defaultSubmission
 

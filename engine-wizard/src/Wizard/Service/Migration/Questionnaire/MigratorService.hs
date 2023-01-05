@@ -71,7 +71,7 @@ finishQuestionnaireMigration qtnUuid =
     let updatedQtn =
           oldQtn
             { formatUuid = newQtn.formatUuid
-            , templateId = newQtn.templateId
+            , documentTemplateId = newQtn.documentTemplateId
             , selectedQuestionTagUuids = newQtn.selectedQuestionTagUuids
             , packageId = newQtn.packageId
             , events = newQtn.events
@@ -110,7 +110,7 @@ upgradeQuestionnaire reqDto oldQtn = do
           , packageId = newPkgId
           , events = newEvents
           , selectedQuestionTagUuids = newTagUuids
-          , templateId = Nothing
+          , documentTemplateId = Nothing
           , formatUuid = Nothing
           , permissions = newPermissions
           }

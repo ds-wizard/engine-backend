@@ -28,6 +28,10 @@ import Wizard.Specs.API.BookReference.APISpec
 import Wizard.Specs.API.Branch.APISpec
 import Wizard.Specs.API.Config.APISpec
 import Wizard.Specs.API.Document.APISpec
+import Wizard.Specs.API.DocumentTemplate.APISpec
+import Wizard.Specs.API.DocumentTemplateDraft.APISpec
+import Wizard.Specs.API.DocumentTemplateDraft.Asset.APISpec
+import Wizard.Specs.API.DocumentTemplateDraft.File.APISpec
 import Wizard.Specs.API.Domain.APISpec
 import Wizard.Specs.API.Feedback.APISpec
 import Wizard.Specs.API.Info.APISpec
@@ -44,9 +48,6 @@ import Wizard.Specs.API.Questionnaire.Version.APISpec
 import Wizard.Specs.API.QuestionnaireImporter.APISpec
 import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Swagger.APISpec
-import Wizard.Specs.API.Template.APISpec
-import Wizard.Specs.API.Template.Asset.APISpec
-import Wizard.Specs.API.Template.File.APISpec
 import Wizard.Specs.API.Token.APISpec
 import Wizard.Specs.API.Typehint.APISpec
 import Wizard.Specs.API.Usage.APISpec
@@ -60,6 +61,7 @@ import Wizard.Specs.Service.Branch.BranchValidationSpec
 import Wizard.Specs.Service.Config.AppConfigValidationSpec
 import Wizard.Specs.Service.Coordinate.CoordinateValidationSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
+import Wizard.Specs.Service.DocumentTemplate.DocumentTemplateUtilSpec
 import Wizard.Specs.Service.Feedback.FeedbackServiceSpec
 import Wizard.Specs.Service.KnowledgeModel.Compilator.CompilatorSpec
 import Wizard.Specs.Service.KnowledgeModel.Compilator.Modifier.ModifierSpec
@@ -79,7 +81,6 @@ import Wizard.Specs.Service.Questionnaire.QuestionnaireAclSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireServiceSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireValidationSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
-import Wizard.Specs.Service.Template.TemplateUtilSpec
 import Wizard.Specs.Service.User.UserServiceSpec
 import Wizard.Specs.Websocket.Branch.Detail.WebsocketSpec
 import Wizard.Specs.Websocket.Common
@@ -157,6 +158,7 @@ main =
               describe "App" appValidationSpec
               describe "Branch" branchValidationSpec
               describe "Config" appConfigValidationSpec
+              describe "Document Template" documentTemplateUtilSpec
               describe "KnowledgeModel" $ do
                 describe "Compilator" $ do
                   describe "Modifier" modifierSpec
@@ -175,7 +177,6 @@ main =
                 describe "Event" questionnaireEventServiceSpec
                 questionnaireValidationSpec
               describe "Report" reportGeneratorSpec
-              describe "Template" templateUtilSpec
           before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
             describe "API" $ do
               appAPI baseContext appContext
@@ -184,6 +185,10 @@ main =
               branchAPI baseContext appContext
               configAPI baseContext appContext
               documentAPI baseContext appContext
+              documentTemplateAPI baseContext appContext
+              documentTemplateDraftAPI baseContext appContext
+              documentTemplateDraftAssetAPI baseContext appContext
+              documentTemplateDraftFileAPI baseContext appContext
               domainAPI baseContext appContext
               feedbackAPI baseContext appContext
               infoAPI baseContext appContext
@@ -200,9 +205,6 @@ main =
               questionnaireImporterAPI baseContext appContext
               submissionAPI baseContext appContext
               swaggerAPI baseContext appContext
-              templateAPI baseContext appContext
-              templateAssetAPI baseContext appContext
-              templateFileAPI baseContext appContext
               typehintAPI baseContext appContext
               tokenAPI baseContext appContext
               usageAPI baseContext appContext

@@ -11,7 +11,7 @@ data QuestionnaireCreateDTO = QuestionnaireCreateDTO
   , visibility :: QuestionnaireVisibility
   , sharing :: QuestionnaireSharing
   , questionTagUuids :: [U.UUID]
-  , templateId :: Maybe String
+  , documentTemplateId :: Maybe String
   , formatUuid :: Maybe U.UUID
   }
   deriving (Show, Eq, Generic)

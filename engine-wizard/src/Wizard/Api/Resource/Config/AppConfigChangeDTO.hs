@@ -13,7 +13,6 @@ data AppConfigChangeDTO = AppConfigChangeDTO
   , registry :: AppConfigRegistry
   , knowledgeModel :: AppConfigKnowledgeModel
   , questionnaire :: AppConfigQuestionnaire
-  , template :: AppConfigTemplate
   , submission :: AppConfigSubmission
   }
   deriving (Generic, Show)

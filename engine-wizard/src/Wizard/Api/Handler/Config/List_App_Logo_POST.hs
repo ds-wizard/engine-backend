@@ -1,14 +1,12 @@
 module Wizard.Api.Handler.Config.List_App_Logo_POST where
 
-import qualified Data.List as L
-import qualified Data.Text as T
 import Servant
 import Servant.Multipart
 
 import Shared.Api.Handler.Common
-import Shared.Localization.Messages.Public
+import Shared.Api.Resource.Common.FileDTO
+import Shared.Api.Resource.Common.FileJM ()
 import Shared.Model.Context.TransactionState
-import Shared.Model.Error.Error
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Config.App.AppConfigLogoService
@@ -16,7 +14,7 @@ import Wizard.Service.Config.App.AppConfigLogoService
 type List_App_Logo_POST =
   Header "Authorization" String
     :> Header "Host" String
-    :> MultipartForm Mem (MultipartData Mem)
+    :> MultipartForm Mem FileDTO
     :> "configs"
     :> "app"
     :> "logo"
@@ -25,17 +23,11 @@ type List_App_Logo_POST =
 list_app_logo_POST
   :: Maybe String
   -> Maybe String
-  -> MultipartData Mem
+  -> FileDTO
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
-list_app_logo_POST mTokenHeader mServerUrl multipartData =
+list_app_logo_POST mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        let fs = files multipartData
-        case L.find (\file -> fdInputName file == "file") fs of
-          Just file -> do
-            let content = fdPayload file
-            let contentType = fdFileCType file
-            uploadLogo (T.unpack . fdFileName $ file) (T.unpack contentType) content
-            return NoContent
-          Nothing -> throwError $ UserError _ERROR_VALIDATION__FILE_ABSENCE
+        uploadLogo reqDto.fileName reqDto.contentType reqDto.content
+        return NoContent

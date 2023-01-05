@@ -3,12 +3,13 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireDetailSM where
 import qualified Data.Map.Strict as M
 import Data.Swagger
 
+import Shared.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
-import Shared.Api.Resource.Template.TemplateSM ()
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
 import qualified Shared.Service.Package.PackageMapper as PM
 import Shared.Util.Swagger
+import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateStateSM ()
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentSM ()
@@ -19,7 +20,6 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireStateSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionSM ()
-import Wizard.Api.Resource.Template.TemplateStateSM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Questionnaire.QuestionnaireState

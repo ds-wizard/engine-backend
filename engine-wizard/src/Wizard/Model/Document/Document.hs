@@ -25,7 +25,7 @@ data Document = Document
   , questionnaireUuid :: U.UUID
   , questionnaireEventUuid :: Maybe U.UUID
   , questionnaireRepliesHash :: Int
-  , templateId :: String
+  , documentTemplateId :: String
   , formatUuid :: U.UUID
   , creatorUuid :: Maybe U.UUID
   , fileName :: Maybe String

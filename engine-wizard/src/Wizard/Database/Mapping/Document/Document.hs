@@ -30,7 +30,7 @@ instance ToRow Document where
     , toField questionnaireUuid
     , toField questionnaireEventUuid
     , toField questionnaireRepliesHash
-    , toField templateId
+    , toField documentTemplateId
     , toField formatUuid
     , toField creatorUuid
     , toField retrievedAt
@@ -52,7 +52,7 @@ instance FromRow Document where
     questionnaireUuid <- field
     questionnaireEventUuid <- field
     questionnaireRepliesHash <- field
-    templateId <- field
+    documentTemplateId <- field
     formatUuid <- field
     creatorUuid <- field
     retrievedAt <- field

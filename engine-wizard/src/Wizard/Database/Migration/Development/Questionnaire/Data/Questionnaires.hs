@@ -5,13 +5,14 @@ import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Common.Lens
+import Shared.Model.DocumentTemplate.DocumentTemplate
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.PackageWithEvents
-import Shared.Model.Template.Template
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
@@ -56,8 +57,8 @@ questionnaire1 =
     , packageId = germanyPackage.pId
     , selectedQuestionTagUuids = []
     , projectTags = [_QUESTIONNAIRE_PROJECT_TAG_1]
-    , templateId = Just $ commonWizardTemplate.tId
-    , formatUuid = Just $ templateFormatJson.uuid
+    , documentTemplateId = Just $ wizardDocumentTemplate.tId
+    , formatUuid = Just $ formatJson.uuid
     , creatorUuid = Just $ userAlbert.uuid
     , permissions = [qtn1AlbertEditPermRecord]
     , events = fEvents
@@ -114,7 +115,7 @@ questionnaire1Create =
     , visibility = questionnaire1.visibility
     , sharing = questionnaire1.sharing
     , questionTagUuids = []
-    , templateId = questionnaire1.templateId
+    , documentTemplateId = questionnaire1.documentTemplateId
     , formatUuid = questionnaire1.formatUuid
     }
 
@@ -127,7 +128,7 @@ questionnaire1EditedChange =
     , sharing = questionnaire1Edited.sharing
     , projectTags = questionnaire1Edited.projectTags
     , permissions = questionnaire1Edited.permissions
-    , templateId = Nothing
+    , documentTemplateId = Nothing
     , formatUuid = Nothing
     , isTemplate = questionnaire1Edited.isTemplate
     }
@@ -160,8 +161,8 @@ questionnaire2 =
     , packageId = germanyPackage.pId
     , selectedQuestionTagUuids = []
     , projectTags = [_QUESTIONNAIRE_PROJECT_TAG_1, _QUESTIONNAIRE_PROJECT_TAG_2]
-    , templateId = Just $ commonWizardTemplate.tId
-    , formatUuid = Just $ templateFormatJson.uuid
+    , documentTemplateId = Just $ wizardDocumentTemplate.tId
+    , formatUuid = Just $ formatJson.uuid
     , creatorUuid = Just $ userAlbert.uuid
     , permissions = [qtn2AlbertEditPermRecord]
     , events = fEvents
@@ -186,8 +187,8 @@ questionnaire2Edited =
     , packageId = questionnaire2.packageId
     , selectedQuestionTagUuids = questionnaire2.selectedQuestionTagUuids
     , projectTags = questionnaire2.projectTags
-    , templateId = Just $ commonWizardTemplate.tId
-    , formatUuid = Just $ templateFormatJson.uuid
+    , documentTemplateId = Just $ wizardDocumentTemplate.tId
+    , formatUuid = Just $ formatJson.uuid
     , creatorUuid = Just $ userAlbert.uuid
     , permissions = []
     , events = questionnaire2.events
@@ -243,8 +244,8 @@ questionnaire3 =
     , packageId = germanyPackage.pId
     , selectedQuestionTagUuids = []
     , projectTags = []
-    , templateId = Just $ commonWizardTemplate.tId
-    , formatUuid = Just $ templateFormatJson.uuid
+    , documentTemplateId = Just $ wizardDocumentTemplate.tId
+    , formatUuid = Just $ formatJson.uuid
     , creatorUuid = Nothing
     , permissions = []
     , events = fEvents
@@ -285,8 +286,8 @@ questionnaire4 =
     , packageId = netherlandsPackage.pId
     , selectedQuestionTagUuids = []
     , projectTags = []
-    , templateId = Just $ commonWizardTemplate.tId
-    , formatUuid = Just $ templateFormatJson.uuid
+    , documentTemplateId = Just $ wizardDocumentTemplate.tId
+    , formatUuid = Just $ formatJson.uuid
     , creatorUuid = Nothing
     , permissions = []
     , events = [sphse_2']
@@ -658,8 +659,8 @@ differentQuestionnaire =
     , packageId = differentPackage.pId
     , selectedQuestionTagUuids = []
     , projectTags = []
-    , templateId = Just $ anotherWizardTemplate.tId
-    , formatUuid = Just $ templateFormatJson.uuid
+    , documentTemplateId = Just $ anotherWizardDocumentTemplate.tId
+    , formatUuid = Just $ formatJson.uuid
     , creatorUuid = Just $ userCharles.uuid
     , permissions = [differentQtnCharlesOwnerPermRecord]
     , events = []

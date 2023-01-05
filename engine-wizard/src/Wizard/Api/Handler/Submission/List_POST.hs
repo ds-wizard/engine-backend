@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Submission.List_POST where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -17,7 +18,7 @@ type List_POST =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] SubmissionCreateDTO
     :> "documents"
-    :> Capture "docUuid" String
+    :> Capture "docUuid" U.UUID
     :> "submissions"
     :> PostCreated '[SafeJSON] (Headers '[Header "x-trace-uuid" String] SubmissionDTO)
 
@@ -25,7 +26,7 @@ list_POST
   :: Maybe String
   -> Maybe String
   -> SubmissionCreateDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] SubmissionDTO)
 list_POST mTokenHeader mServerUrl reqDto docUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->

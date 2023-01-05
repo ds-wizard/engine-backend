@@ -9,7 +9,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Shared.Model.Template.TemplateJM ()
+import Shared.Model.DocumentTemplate.DocumentTemplateJM ()
 import Wizard.Database.Migration.Development.Locale.Data.Locales
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC_Migration
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration

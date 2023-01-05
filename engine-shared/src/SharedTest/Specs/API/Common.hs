@@ -4,6 +4,7 @@ import Control.Exception (AssertionFailed (..), throw)
 import Control.Monad.IO.Class
 import Data.Aeson (Array, FromJSON, Object, ToJSON, Value (..), eitherDecode, encode)
 import qualified Data.Aeson.KeyMap as KM
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Foldable
 import Data.String (fromString)
 import qualified Data.UUID as U
@@ -111,7 +112,13 @@ destructResponse' response = do
   case eitherDecode body of
     Right resBody -> return (status, headers, resBody)
     Left error -> do
-      liftIO . print $ error
+      liftIO . putStrLn $ "------------------------------------------------------"
+      liftIO . putStrLn $ "- Response Error                                     -"
+      liftIO . putStrLn $ "------------------------------------------------------"
+      liftIO . putStrLn . BSL.unpack $ body
+      liftIO . putStrLn $ "------------------------------------------------------"
+      liftIO . putStrLn $ f' "Error in deserialization: '%s'" [error]
+      liftIO . putStrLn $ "------------------------------------------------------"
       throw . AssertionFailed $ f' "Failed to deserialize the response. Error: %s" [error]
 
 assertResponse

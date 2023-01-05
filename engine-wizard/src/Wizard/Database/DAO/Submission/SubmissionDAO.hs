@@ -3,6 +3,7 @@ module Wizard.Database.DAO.Submission.SubmissionDAO where
 import Control.Monad.Reader (asks, liftIO)
 import Data.String
 import Data.Time
+import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -28,10 +29,10 @@ findSubmissionsFiltered params = do
   appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName (appQueryUuid appUuid : params)
 
-findSubmissionsByDocumentUuid :: String -> AppContextM [Submission]
-findSubmissionsByDocumentUuid templateId = do
+findSubmissionsByDocumentUuid :: U.UUID -> AppContextM [Submission]
+findSubmissionsByDocumentUuid documentUuid = do
   appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("document_uuid", templateId)]
+  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("document_uuid", U.toString documentUuid)]
 
 findSubmissionById :: String -> AppContextM Submission
 findSubmissionById uuid = do

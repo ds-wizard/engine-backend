@@ -90,6 +90,50 @@ findLocaleById' lclId = do
   appUuid <- asks (.appUuid')
   createFindEntityByFn' entityName [appQueryUuid appUuid, ("id", lclId)]
 
+countLocalesGroupedByOrganizationIdAndLocaleId
+  :: ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "appUuid'" s U.UUID
+     , MonadIO m
+     )
+  => m Int
+countLocalesGroupedByOrganizationIdAndLocaleId = do
+  appUuid <- asks (.appUuid')
+  countLocalesGroupedByOrganizationIdAndLocaleIdWithApp appUuid
+
+countLocalesGroupedByOrganizationIdAndLocaleIdWithApp
+  :: ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "appUuid'" s U.UUID
+     , MonadIO m
+     )
+  => U.UUID
+  -> m Int
+countLocalesGroupedByOrganizationIdAndLocaleIdWithApp appUuid = do
+  let sql =
+        "SELECT COUNT(*) \
+        \FROM (SELECT 1 \
+        \      FROM locale \
+        \      WHERE app_uuid = ? \
+        \      GROUP BY organization_id, locale_id) nested;"
+  let params = [U.toString appUuid]
+  logQuery sql params
+  let action conn = query conn sql params
+  result <- runDB action
+  case result of
+    [count] -> return . fromOnly $ count
+    _ -> return 0
+
 updateLocaleById
   :: ( MonadLogger m
      , MonadError AppError m

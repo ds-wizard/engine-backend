@@ -41,17 +41,14 @@ _ERROR_DATABASE__ENTITY_NOT_FOUND entityName params =
 _ERROR_VALIDATION__COORDINATE_MISMATCH coordinate =
   LocaleRecord
     "error.validation.coordinate_mismatch"
-    "Coordinate '%s' doesn't correspond with 'orgId', 'kmId/templateId' or 'version'"
+    "Coordinate '%s' doesn't correspond with 'orgId', 'kmId/documentTemplateId' or 'version'"
     [coordinate]
 
 _ERROR_VALIDATION__FORBIDDEN_CHARACTERS word =
   LocaleRecord "error.validation.forbidden_characters" "There were forbidden characters in the '%s'" [word]
 
--- Absence
-_ERROR_VALIDATION__FILE_ABSENCE = LocaleRecord "error.validation.file_absence" "Missing file" []
-
-_ERROR_VALIDATION__FIELD_ABSENCE fieldName =
-  LocaleRecord "error.validation.field_absence" "Missing field: '%s'" [fieldName]
+_ERROR_VALIDATION__FIELDS_ABSENCE =
+  LocaleRecord "error.validation.fields_absence" "Missing fields" []
 
 _ERROR_VALIDATION__HASH_ABSENCE =
   LocaleRecord "error.validation.hash_absence" "A hash query param is absent or doesn't exist in database" []
@@ -70,14 +67,14 @@ _ERROR_VALIDATION__INVALID_ORG_ID_FORMAT =
   LocaleRecord "error.validation.invalid_org_id_format" "OrganizationId is not in the valid format" []
 
 -- Uniqueness
+_ERROR_VALIDATION__DOC_TML_ID_UNIQUENESS tmlId =
+  LocaleRecord "error.validation.tml_id_uniqueness" "DocumentTemplate '%s' already exists" [tmlId]
+
 _ERROR_VALIDATION__KM_ID_UNIQUENESS kmId =
   LocaleRecord "error.validation.km_id_uniqueness" "KmId '%s' already exists" [kmId]
 
 _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId =
   LocaleRecord "error.validation.pkg_id_uniqueness" "Package '%s' already exists" [pkgId]
-
-_ERROR_VALIDATION__TML_ID_UNIQUENESS tmlId =
-  LocaleRecord "error.validation.tml_id_uniqueness" "Template '%s' already exists" [tmlId]
 
 _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email =
   LocaleRecord "error.validation.user_email_uniqueness" "User (email: '%s') already exists" [email]
@@ -94,6 +91,13 @@ _ERROR_SERVICE_APP__LIMIT_EXCEEDED name maxLimit actualLimit =
     "error.service.app.limit_exceeded"
     "Limit of %s exceeded (actual: %s, max: %s)"
     [name, show maxLimit, show actualLimit]
+
+-- DocumentTemplate
+_ERROR_SERVICE_TB__MISSING_TEMPLATE_JSON =
+  LocaleRecord
+    "error.service.tb.missing_template_json"
+    "Desired definition ('template.json') wasn't found in archive"
+    []
 
 -- Locale
 _ERROR_SERVICE_LB__MISSING_LOCALE_JSON =
@@ -116,13 +120,6 @@ _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION =
   LocaleRecord
     "error.service.pkg.highest_number_in_new_version"
     "Your new version has to be higher than the previous version"
-    []
-
--- Template
-_ERROR_SERVICE_TB__MISSING_TEMPLATE_JSON =
-  LocaleRecord
-    "error.service.tb.missing_template_json"
-    "Desired definition ('template.json') wasn't found in archive"
     []
 
 _ERROR_SERVICE_TB__UNABLE_TO_DECODE_TEMPLATE_JSON errorMessage =

@@ -20,7 +20,6 @@ data AppConfig = AppConfig
   , registry :: AppConfigRegistry
   , knowledgeModel :: AppConfigKnowledgeModel
   , questionnaire :: AppConfigQuestionnaire
-  , template :: AppConfigTemplate
   , submission :: AppConfigSubmission
   , feature :: AppConfigFeature
   , owl :: AppConfigOwl
@@ -195,11 +194,6 @@ data AppConfigQuestionnaireFeedback = AppConfigQuestionnaireFeedback
   , token :: String
   , owner :: String
   , repo :: String
-  }
-  deriving (Generic, Eq, Show)
-
-data AppConfigTemplate = AppConfigTemplate
-  { recommendedTemplateId :: Maybe String
   }
   deriving (Generic, Eq, Show)
 

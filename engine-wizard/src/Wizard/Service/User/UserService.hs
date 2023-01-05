@@ -243,7 +243,7 @@ deleteUser userUuid =
       documents
       ( \d -> do
           deleteDocumentsFiltered [("uuid", U.toString d.uuid)]
-          removeDocumentContent (U.toString d.uuid)
+          removeDocumentContent d.uuid
       )
     deleteTokenByUserUuid user.uuid
     deleteUserById userUuid

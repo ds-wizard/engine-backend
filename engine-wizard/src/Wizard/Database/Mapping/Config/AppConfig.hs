@@ -20,7 +20,6 @@ instance ToRow AppConfig where
     , toJSONField registry
     , toJSONField knowledgeModel
     , toJSONField questionnaire
-    , toJSONField template
     , toJSONField submission
     , toField createdAt
     , toField updatedAt
@@ -40,7 +39,6 @@ instance FromRow AppConfig where
     registry <- fieldWith fromJSONField
     knowledgeModel <- fieldWith fromJSONField
     questionnaire <- fieldWith fromJSONField
-    template <- fieldWith fromJSONField
     submission <- fieldWith fromJSONField
     createdAt <- field
     updatedAt <- field

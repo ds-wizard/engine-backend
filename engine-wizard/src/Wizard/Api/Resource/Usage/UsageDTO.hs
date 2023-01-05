@@ -8,9 +8,11 @@ data UsageDTO = UsageDTO
   , activeUsers :: UsageEntryDTO
   , knowledgeModels :: UsageEntryDTO
   , branches :: UsageEntryDTO
-  , templates :: UsageEntryDTO
+  , documentTemplates :: UsageEntryDTO
+  , documentTemplateDrafts :: UsageEntryDTO
   , questionnaires :: UsageEntryDTO
   , documents :: UsageEntryDTO
+  , locales :: UsageEntryDTO
   , storage :: UsageEntryDTO
   }
   deriving (Show, Eq, Generic)

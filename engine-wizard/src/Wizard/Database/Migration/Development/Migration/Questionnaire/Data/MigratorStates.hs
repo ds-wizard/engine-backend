@@ -2,10 +2,11 @@ module Wizard.Database.Migration.Development.Migration.Questionnaire.Data.Migrat
 
 import qualified Data.Map.Strict as M
 
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.PackageWithEvents
 import qualified Shared.Service.Package.PackageMapper as PM
@@ -44,8 +45,8 @@ nlQtnMigrationStateDto =
           ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
-          (Just commonWizardTemplate)
-          (Just templateFormatJson)
+          (Just wizardDocumentTemplate)
+          (Just formatJson)
           questionnaire4Ctn.replies
           M.empty
           []
@@ -59,8 +60,8 @@ nlQtnMigrationStateDto =
           ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
-          (Just commonWizardTemplate)
-          (Just templateFormatJson)
+          (Just wizardDocumentTemplate)
+          (Just formatJson)
           questionnaire4Ctn.replies
           M.empty
           []
@@ -81,8 +82,8 @@ nlQtnMigrationStateVisibleViewDto =
           ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
-          (Just commonWizardTemplate)
-          (Just templateFormatJson)
+          (Just wizardDocumentTemplate)
+          (Just formatJson)
           questionnaire4Ctn.replies
           M.empty
           []
@@ -96,8 +97,8 @@ nlQtnMigrationStateVisibleViewDto =
           ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
-          (Just commonWizardTemplate)
-          (Just templateFormatJson)
+          (Just wizardDocumentTemplate)
+          (Just formatJson)
           questionnaire4Ctn.replies
           M.empty
           []
@@ -118,8 +119,8 @@ nlQtnMigrationStateVisibleEditDto =
           ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
-          (Just commonWizardTemplate)
-          (Just templateFormatJson)
+          (Just wizardDocumentTemplate)
+          (Just formatJson)
           questionnaire4Ctn.replies
           M.empty
           []
@@ -133,8 +134,8 @@ nlQtnMigrationStateVisibleEditDto =
           ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
-          (Just commonWizardTemplate)
-          (Just templateFormatJson)
+          (Just wizardDocumentTemplate)
+          (Just formatJson)
           questionnaire4Ctn.replies
           M.empty
           []

@@ -22,7 +22,6 @@ defaultAppConfig =
     , registry = defaultRegistry
     , knowledgeModel = defaultKnowledgeModel
     , questionnaire = defaultQuestionnaire
-    , template = defaultTemplate
     , submission = defaultSubmission
     , owl = defaultOwl
     , mailConfigUuid = Nothing
@@ -150,9 +149,6 @@ defaultFeedback =
     , owner = ""
     , repo = ""
     }
-
-defaultTemplate :: AppConfigTemplate
-defaultTemplate = AppConfigTemplate {recommendedTemplateId = Nothing}
 
 defaultSubmission :: AppConfigSubmission
 defaultSubmission = AppConfigSubmission {enabled = False, services = []}

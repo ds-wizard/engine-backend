@@ -2,7 +2,7 @@ module Wizard.Api.Resource.Document.DocumentJM where
 
 import Data.Aeson
 
-import Shared.Model.Template.TemplateJM ()
+import Shared.Model.DocumentTemplate.DocumentTemplateJM ()
 import Shared.Util.Aeson
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSimpleJM ()

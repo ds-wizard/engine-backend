@@ -15,7 +15,7 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Util.String (splitOn)
 import Wizard.Integration.Http.Common.ResponseMapper
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
-import Wizard.Util.Template
+import Wizard.Util.DocumentTemplate
 
 toRetrieveTypehintsResponse :: ApiIntegration -> Response BSL.ByteString -> Either String [TypehintIDTO]
 toRetrieveTypehintsResponse intConfig response =

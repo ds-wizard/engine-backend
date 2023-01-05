@@ -2,11 +2,8 @@ module Wizard.Api.Handler.Common where
 
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (ask, asks, liftIO)
-import qualified Data.List as L
-import qualified Data.Text as T
 import Data.Time
 import qualified Data.UUID as U
-import Servant.Multipart (Input (..))
 
 import Shared.Api.Handler.Common
 import Shared.Api.Resource.Error.ErrorJM ()
@@ -158,21 +155,3 @@ isAdmin = do
   case mUser of
     Just user -> return $ user.uRole == _USER_ROLE_ADMIN
     Nothing -> return False
-
--- --------------------------------
--- MULTIPART
--- --------------------------------
-getTextFromInput :: T.Text -> [Input] -> AppContextM T.Text
-getTextFromInput name inputs = do
-  case getMaybeTextFromInput name inputs of
-    Just text -> return text
-    Nothing -> throwError . UserError $ _ERROR_VALIDATION__FIELD_ABSENCE (T.unpack name)
-
-getMaybeTextFromInput :: T.Text -> [Input] -> Maybe T.Text
-getMaybeTextFromInput name = fmap iValue . L.find (\i -> iName i == name)
-
-getStringFromInput :: T.Text -> [Input] -> AppContextM String
-getStringFromInput name inputs = fmap T.unpack $ getTextFromInput name inputs
-
-getMaybeStringFromInput :: T.Text -> [Input] -> Maybe String
-getMaybeStringFromInput name inputs = fmap T.unpack $ getMaybeTextFromInput name inputs

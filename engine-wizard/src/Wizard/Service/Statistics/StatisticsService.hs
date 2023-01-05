@@ -1,7 +1,7 @@
 module Wizard.Service.Statistics.StatisticsService where
 
+import Shared.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.Database.DAO.Package.PackageDAO
-import Shared.Database.DAO.Template.TemplateDAO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -16,7 +16,7 @@ getInstanceStatistics = do
   qCount <- countQuestionnaires
   bCount <- countBranches
   docCount <- countDocuments
-  tmlCount <- countTemplatesGroupedByOrganizationIdAndKmId
+  tmlCount <- countDocumentTemplatesGroupedByOrganizationIdAndKmId
   return
     InstanceStatistics
       { userCount = uCount

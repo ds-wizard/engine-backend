@@ -35,7 +35,7 @@ detail_documents_preview_GET
 detail_documents_preview_GET mTokenHeader mServerUrl qtnUuid mTokenQueryHeader =
   getMaybeAuthServiceExecutor (msum [mTokenHeader, mTokenQueryHeader]) mServerUrl $ \runInMaybeAuthService ->
     runInMaybeAuthService Transactional $ do
-      (doc, result) <- createDocumentPreview qtnUuid
+      (doc, result) <- createDocumentPreviewForQtn qtnUuid
       case doc.state of
         DoneDocumentState -> do
           let cdHeader = fromMaybe "text/plain" doc.contentType

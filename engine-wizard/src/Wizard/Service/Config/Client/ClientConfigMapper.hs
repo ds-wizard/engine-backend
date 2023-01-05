@@ -19,7 +19,6 @@ toClientConfigDTO serverConfig appConfig app locales =
     , lookAndFeel = appConfig.lookAndFeel
     , registry = toClientConfigRegistryDTO serverConfig.registry appConfig.registry
     , questionnaire = toClientConfigQuestionnaireDTO $ appConfig.questionnaire
-    , template = appConfig.template
     , submission = SimpleFeature $ appConfig.submission.enabled
     , cloud = toClientConfigCloudDTO serverConfig.cloud app
     , locales = fmap toClientConfigLocaleDTO locales

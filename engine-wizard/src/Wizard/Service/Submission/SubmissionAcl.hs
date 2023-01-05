@@ -8,8 +8,8 @@ import Wizard.Model.Document.Document
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Document.DocumentAcl
 
-checkPermissionToSubmission :: String -> AppContextM ()
+checkPermissionToSubmission :: U.UUID -> AppContextM ()
 checkPermissionToSubmission docUuid = do
   checkPermission _SUBM_PERM
-  doc <- findDocumentById docUuid
+  doc <- findDocumentByUuid docUuid
   checkEditPermissionToDoc (U.toString doc.questionnaireUuid)

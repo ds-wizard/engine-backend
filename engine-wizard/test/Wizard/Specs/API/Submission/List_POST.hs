@@ -3,7 +3,6 @@ module Wizard.Specs.API.Submission.List_POST (
 ) where
 
 import Data.Aeson (encode)
-import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -22,10 +21,10 @@ import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import Wizard.Database.Migration.Development.Submission.Data.Submissions
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Config.AppConfig hiding (request)
@@ -90,7 +89,7 @@ create_test_201 title appContext qtn authHeader user =
       runInContextIO QTN_Migration.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire10) appContext
       runInContextIO DOC_Migration.runMigration appContext
-      runInContextIO (deleteDocumentById (U.toString $ doc1.uuid)) appContext
+      runInContextIO (deleteDocumentByUuid doc1.uuid) appContext
       runInContextIO (insertDocument (doc1 {questionnaireUuid = qtn.uuid})) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
@@ -137,7 +136,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
       runInContextIO QTN_Migration.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire7) appContext
       runInContextIO DOC_Migration.runMigration appContext
-      runInContextIO (deleteDocumentById (U.toString $ doc1.uuid)) appContext
+      runInContextIO (deleteDocumentByUuid doc1.uuid) appContext
       runInContextIO (insertDocument (doc1 {questionnaireUuid = qtn.uuid})) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

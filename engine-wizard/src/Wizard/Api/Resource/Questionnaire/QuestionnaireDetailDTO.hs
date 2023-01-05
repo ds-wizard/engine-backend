@@ -5,17 +5,17 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.Api.Resource.Template.TemplateDTO
-import Shared.Api.Resource.Template.TemplateFormatDTO
+import Shared.Api.Resource.DocumentTemplate.DocumentTemplateDTO
+import Shared.Api.Resource.DocumentTemplate.DocumentTemplateFormatDTO
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
+import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireState
-import Wizard.Model.Template.TemplateState
 
 data QuestionnaireDetailDTO = QuestionnaireDetailDTO
   { uuid :: U.UUID
@@ -29,11 +29,11 @@ data QuestionnaireDetailDTO = QuestionnaireDetailDTO
   , packageVersions :: [String]
   , selectedQuestionTagUuids :: [U.UUID]
   , projectTags :: [String]
-  , templateId :: Maybe String
-  , template :: Maybe TemplateDTO
+  , documentTemplateId :: Maybe String
+  , documentTemplate :: Maybe DocumentTemplateDTO
   , formatUuid :: Maybe U.UUID
-  , format :: Maybe TemplateFormatDTO
-  , templateState :: Maybe TemplateState
+  , format :: Maybe DocumentTemplateFormatDTO
+  , documentTemplateState :: Maybe DocumentTemplateState
   , knowledgeModel :: KnowledgeModel
   , replies :: M.Map String Reply
   , commentThreadsMap :: M.Map String [QuestionnaireCommentThreadDTO]
@@ -61,11 +61,11 @@ instance Eq QuestionnaireDetailDTO where
       && a.packageVersions == b.packageVersions
       && a.selectedQuestionTagUuids == b.selectedQuestionTagUuids
       && a.projectTags == b.projectTags
-      && a.templateId == b.templateId
-      && a.template == b.template
+      && a.documentTemplateId == b.documentTemplateId
+      && a.documentTemplate == b.documentTemplate
       && a.formatUuid == b.formatUuid
       && a.format == b.format
-      && a.templateState == b.templateState
+      && a.documentTemplateState == b.documentTemplateState
       && a.knowledgeModel == b.knowledgeModel
       && a.replies == b.replies
       && a.commentThreadsMap == b.commentThreadsMap

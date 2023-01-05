@@ -5,6 +5,8 @@ module Registry.Database.Migration.Development.Migration (
 import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import qualified Registry.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
+import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
+import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as TML_Schema
 import qualified Registry.Database.Migration.Development.Locale.LocaleMigration as LOC
 import qualified Registry.Database.Migration.Development.Locale.LocaleSchemaMigration as LOC_Schema
 import qualified Registry.Database.Migration.Development.Organization.OrganizationMigration as ORG
@@ -13,8 +15,6 @@ import qualified Registry.Database.Migration.Development.Package.PackageMigratio
 import qualified Registry.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
-import qualified Registry.Database.Migration.Development.Template.TemplateMigration as TML
-import qualified Registry.Database.Migration.Development.Template.TemplateSchemaMigration as TML_Schema
 import Registry.Util.Logger
 
 runMigration = do

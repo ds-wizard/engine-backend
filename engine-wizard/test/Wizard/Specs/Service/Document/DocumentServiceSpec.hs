@@ -3,11 +3,11 @@ module Wizard.Specs.Service.Document.DocumentServiceSpec where
 import Test.Hspec hiding (shouldBe)
 
 import Wizard.Database.Migration.Development.Document.Data.Documents
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Report.Report
-import Wizard.Service.Document.DocumentContextService
+import Wizard.Service.Document.Context.DocumentContextService
 
 import Wizard.Specs.Common
 import Wizard.Specs.Service.Document.Common

@@ -29,7 +29,7 @@ data DocumentContext = DocumentContext
   , report :: Report
   , package :: DocumentContextPackage
   , organization :: AppConfigOrganization
-  , templateMetamodelVersion :: Int
+  , documentTemplateMetamodelVersion :: Int
   , createdBy :: Maybe UserDTO
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
@@ -52,7 +52,7 @@ instance Eq DocumentContext where
       && a.report == b.report
       && a.package == b.package
       && a.organization == b.organization
-      && a.templateMetamodelVersion == b.templateMetamodelVersion
+      && a.documentTemplateMetamodelVersion == b.documentTemplateMetamodelVersion
       && a.createdBy == b.createdBy
 
 data DocumentContextConfig = DocumentContextConfig
