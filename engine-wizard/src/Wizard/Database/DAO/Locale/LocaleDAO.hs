@@ -58,10 +58,7 @@ findLocalesByCodeWithApp :: U.UUID -> String -> String -> AppContextM [LocaleSim
 findLocalesByCodeWithApp appUuid code shortCode = do
   let sql =
         fromString
-          "SELECT id, \
-          \       name, \
-          \       code, \
-          \       default_locale \
+          "SELECT id, name, code, default_locale \
           \FROM locale \
           \WHERE app_uuid = ? \
           \  AND enabled = true \
