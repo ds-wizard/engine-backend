@@ -39,7 +39,7 @@ defaultGeneral =
     }
 
 defaultJwt :: ServerConfigJwt
-defaultJwt = ServerConfigJwt {version = 3, expiration = 14}
+defaultJwt = ServerConfigJwt {version = 3, expiration = 14 * 24}
 
 defaultRoles :: ServerConfigRoles
 defaultRoles =

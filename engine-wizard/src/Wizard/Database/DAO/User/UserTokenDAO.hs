@@ -57,9 +57,9 @@ deleteUserTokens :: AppContextM Int64
 deleteUserTokens = createDeleteEntitiesFn entityName
 
 deleteUserTokensWithExpiration :: Integer -> AppContextM Int64
-deleteUserTokensWithExpiration expirationInDays = do
-  let sql = fromString $ f' "DELETE FROM %s WHERE created_at <= now() - interval '? day'" [entityName]
-  let params = [toField expirationInDays]
+deleteUserTokensWithExpiration expirationInHours = do
+  let sql = fromString $ f' "DELETE FROM %s WHERE created_at <= now() - interval '? hour'" [entityName]
+  let params = [toField expirationInHours]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action

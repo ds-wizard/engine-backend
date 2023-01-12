@@ -19,7 +19,7 @@ toDTO token = UserTokenDTO {token = token.value}
 
 toUserToken :: User -> U.UUID -> Maybe String -> UTCTime -> ServerConfigJwt -> String -> UserToken
 toUserToken user tokenUuid mSessionState now config secret =
-  let timeDelta = realToFrac $ config.expiration * nominalDayInSeconds
+  let timeDelta = realToFrac $ config.expiration * nominalHourInSeconds
       cs =
         JWT.JWTClaimsSet
           { iss = Nothing
@@ -45,5 +45,5 @@ toUserToken user tokenUuid mSessionState now config secret =
         , value = tokenValue
         , sessionState = mSessionState
         , appUuid = user.appUuid
-        , createdAt = user.lastVisitedAt
+        , createdAt = now
         }
