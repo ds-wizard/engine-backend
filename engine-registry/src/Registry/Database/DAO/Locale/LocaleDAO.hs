@@ -21,10 +21,10 @@ findLocalesFiltered queryParams mRecommendedAppVersion = do
   let queryParamCondition = mapToDBQuerySql (appQueryUuid appUuid : queryParams)
   let recommendedAppVersionCondition =
         case mRecommendedAppVersion of
-          Just _ -> "AND compare_version(recommended_app_version, ?) = 'LT'"
+          Just _ -> "AND (compare_version(recommended_app_version, ?) = 'LT' OR compare_version(recommended_app_version, ?) = 'EQ')"
           Nothing -> ""
   let sql = fromString $ f' "SELECT * FROM locale WHERE %s %s" [queryParamCondition, recommendedAppVersionCondition]
-  let params = [U.toString appUuid] ++ fmap snd queryParams ++ maybeToList mRecommendedAppVersion
+  let params = [U.toString appUuid] ++ fmap snd queryParams ++ maybeToList mRecommendedAppVersion ++ maybeToList mRecommendedAppVersion
   logQuery sql params
   let action conn = query conn sql params
   runDB action
