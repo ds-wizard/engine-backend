@@ -12,7 +12,7 @@ import Wizard.Api.Handler.DocumentTemplateDraft.Asset.List_GET
 import Wizard.Api.Handler.DocumentTemplateDraft.Asset.List_POST
 import Wizard.Model.Context.BaseContext
 
-type TemplateAssetAPI =
+type DocumentTemplateAssetAPI =
   Tags "Document Template Draft Asset"
     :> ( List_GET
           :<|> List_POST
@@ -23,8 +23,8 @@ type TemplateAssetAPI =
           :<|> Detail_Content_PUT
        )
 
-templateAssetApi :: Proxy TemplateAssetAPI
-templateAssetApi = Proxy
+documentTemplateAssetApi :: Proxy DocumentTemplateAssetAPI
+documentTemplateAssetApi = Proxy
 
-templateAssetServer :: ServerT TemplateAssetAPI BaseContextM
-templateAssetServer = list_GET :<|> list_POST :<|> detail_GET :<|> detail_PUT :<|> detail_DELETE :<|> detail_content_GET :<|> detail_content_PUT
+documentTemplateAssetServer :: ServerT DocumentTemplateAssetAPI BaseContextM
+documentTemplateAssetServer = list_GET :<|> list_POST :<|> detail_GET :<|> detail_PUT :<|> detail_DELETE :<|> detail_content_GET :<|> detail_content_PUT

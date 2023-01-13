@@ -13,13 +13,11 @@ import Wizard.Api.Handler.Questionnaire.Detail_Report_GET
 import Wizard.Api.Handler.Questionnaire.Detail_Revert_POST
 import Wizard.Api.Handler.Questionnaire.Detail_Revert_Preview_POST
 import Wizard.Api.Handler.Questionnaire.Detail_WS
-import Wizard.Api.Handler.Questionnaire.Event.Api
 import Wizard.Api.Handler.Questionnaire.List_GET
 import Wizard.Api.Handler.Questionnaire.List_POST
 import Wizard.Api.Handler.Questionnaire.List_POST_CloneUuid
 import Wizard.Api.Handler.Questionnaire.List_POST_FromTemplate
 import Wizard.Api.Handler.Questionnaire.ProjectTag.List_Suggestions_GET
-import Wizard.Api.Handler.Questionnaire.Version.Api
 import Wizard.Model.Context.BaseContext
 
 type QuestionnaireAPI =
@@ -36,8 +34,6 @@ type QuestionnaireAPI =
           :<|> Detail_Documents_GET
           :<|> Detail_Documents_Preview_GET
           :<|> Detail_WS
-          :<|> QuestionnaireEventAPI
-          :<|> QuestionnaireVersionAPI
           :<|> Detail_Revert_POST
           :<|> Detail_Revert_Preview_POST
           :<|> List_Suggestions_GET
@@ -60,8 +56,6 @@ questionnaireServer =
     :<|> detail_documents_GET
     :<|> detail_documents_preview_GET
     :<|> detail_WS
-    :<|> questionnaireEventServer
-    :<|> questionnaireVersionServer
     :<|> detail_revert_POST
     :<|> detail_revert_preview_POST
     :<|> list_suggestions_GET

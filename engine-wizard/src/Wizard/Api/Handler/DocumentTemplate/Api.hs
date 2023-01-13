@@ -15,7 +15,7 @@ import Wizard.Api.Handler.DocumentTemplate.List_GET
 import Wizard.Api.Handler.DocumentTemplate.List_Suggestions_GET
 import Wizard.Model.Context.BaseContext
 
-type TemplateAPI =
+type DocumentTemplateAPI =
   Tags "Document Template"
     :> ( List_GET
           :<|> List_All_GET
@@ -29,11 +29,11 @@ type TemplateAPI =
           :<|> Detail_Pull_POST
        )
 
-templateApi :: Proxy TemplateAPI
-templateApi = Proxy
+documentTemplateApi :: Proxy DocumentTemplateAPI
+documentTemplateApi = Proxy
 
-templateServer :: ServerT TemplateAPI BaseContextM
-templateServer =
+documentTemplateServer :: ServerT DocumentTemplateAPI BaseContextM
+documentTemplateServer =
   list_GET
     :<|> list_all_GET
     :<|> list_suggestions_GET

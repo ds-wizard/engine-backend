@@ -13,13 +13,13 @@ import Registry.Model.Context.BaseContext
 type ApplicationAPI =
   InfoAPI
     :<|> ActionKeyAPI
+    :<|> DocumentTemplateAPI
     :<|> LocaleAPI
     :<|> OrganizationAPI
     :<|> PackageAPI
-    :<|> TemplateAPI
 
 applicationApi :: Proxy ApplicationAPI
 applicationApi = Proxy
 
 applicationServer :: ServerT ApplicationAPI BaseContextM
-applicationServer = infoServer :<|> actionKeyServer :<|> localeServer :<|> organizationServer :<|> packageServer :<|> templateServer
+applicationServer = infoServer :<|> actionKeyServer :<|> documentTemplateServer :<|> localeServer :<|> organizationServer :<|> packageServer

@@ -3,7 +3,6 @@ module Wizard.Api.Handler.DocumentTemplateDraft.Api where
 import Servant
 import Servant.Swagger.Tags
 
-import Wizard.Api.Handler.DocumentTemplateDraft.Asset.Api
 import Wizard.Api.Handler.DocumentTemplateDraft.Detail_DELETE
 import Wizard.Api.Handler.DocumentTemplateDraft.Detail_Documents_Preview_GET
 import Wizard.Api.Handler.DocumentTemplateDraft.Detail_Documents_Preview_Settings_PUT
@@ -13,10 +12,9 @@ import Wizard.Api.Handler.DocumentTemplateDraft.List_GET
 import Wizard.Api.Handler.DocumentTemplateDraft.List_POST
 import Wizard.Model.Context.BaseContext
 
-type TemplateDraftAPI =
+type DocumentTemplateDraftAPI =
   Tags "Document Template Draft"
-    :> ( TemplateAssetAPI
-          :<|> List_GET
+    :> ( List_GET
           :<|> List_POST
           :<|> Detail_GET
           :<|> Detail_PUT
@@ -25,13 +23,12 @@ type TemplateDraftAPI =
           :<|> Detail_Documents_Preview_Settings_PUT
        )
 
-templateDraftApi :: Proxy TemplateDraftAPI
-templateDraftApi = Proxy
+documentTemplateDraftApi :: Proxy DocumentTemplateDraftAPI
+documentTemplateDraftApi = Proxy
 
-templateDraftServer :: ServerT TemplateDraftAPI BaseContextM
-templateDraftServer =
-  templateAssetServer
-    :<|> list_GET
+documentTemplateDraftServer :: ServerT DocumentTemplateDraftAPI BaseContextM
+documentTemplateDraftServer =
+  list_GET
     :<|> list_POST
     :<|> detail_GET
     :<|> detail_PUT
