@@ -29,7 +29,7 @@ runClient request client = do
     Right res -> return res
     Left (FailureResponse req res) -> do
       let body = responseBody res
-      logErrorU _CMP_INTEGRATION . show $ body
+      logWarnU _CMP_INTEGRATION . show $ body
       throwError $ HttpClientError (responseStatusCode res) (BSL.unpack body)
     Left err -> do
       logErrorU _CMP_INTEGRATION . show $ err
