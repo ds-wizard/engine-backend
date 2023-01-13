@@ -49,6 +49,9 @@ _ERROR_VALIDATION__USER_ABSENCE userUuid =
 _ERROR_VALIDATION__TOKEN_ABSENCE tokenUuid =
   LocaleRecord "error.validation.token_absence" "Token ('%s') doesn't exist" [tokenUuid]
 
+_ERROR_VALIDATION__OPENID_WRONG_RESPONSE error =
+  LocaleRecord "error.validation.openid_wrong_response" "There was a wrong response from OpenID (error: '%s')" [error]
+
 _ERROR_VALIDATION__OPENID_CODE_ABSENCE =
   LocaleRecord "error.validation.openid_code_absence" "Auth Code is not provided" []
 
