@@ -8,7 +8,7 @@ import Wizard.Api.Handler.Dev.Operation.List_GET
 import Wizard.Model.Context.BaseContext
 
 type DevOperationAPI =
-  Tags "DevOperations"
+  Tags "Dev Operation"
     :> ( List_GET
           :<|> List_Executions_POST
        )

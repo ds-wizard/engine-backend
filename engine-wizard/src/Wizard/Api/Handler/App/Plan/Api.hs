@@ -10,7 +10,7 @@ import Wizard.Api.Handler.App.Plan.List_POST
 import Wizard.Model.Context.BaseContext
 
 type PlanAPI =
-  Tags "Plan"
+  Tags "App Plan"
     :> ( List_Current_GET
           :<|> List_POST
           :<|> Detail_PUT

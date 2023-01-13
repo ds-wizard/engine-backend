@@ -10,7 +10,7 @@ import Wizard.Api.Handler.PersistentCommand.List_GET
 import Wizard.Model.Context.BaseContext
 
 type PersistentCommandAPI =
-  Tags "PersistentCommand"
+  Tags "Persistent Command"
     :> ( List_GET
           :<|> List_Attempts_POST
           :<|> Detail_GET
