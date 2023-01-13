@@ -15,9 +15,9 @@ type Detail_Token_PUT =
   "organizations"
     :> Capture "orgId" String
     :> "token"
-    :> QueryParam "hash" String
+    :> QueryParam' '[Required] "hash" String
     :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] OrganizationDTO)
 
-detail_token_PUT :: String -> Maybe String -> BaseContextM (Headers '[Header "x-trace-uuid" String] OrganizationDTO)
-detail_token_PUT orgId mHash =
-  runInUnauthService Transactional $ addTraceUuidHeader =<< changeOrganizationTokenByHash orgId mHash
+detail_token_PUT :: String -> String -> BaseContextM (Headers '[Header "x-trace-uuid" String] OrganizationDTO)
+detail_token_PUT orgId hash =
+  runInUnauthService Transactional $ addTraceUuidHeader =<< changeOrganizationTokenByHash orgId hash

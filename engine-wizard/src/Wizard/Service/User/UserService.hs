@@ -197,10 +197,10 @@ changeUserPasswordByAdmin userUuid reqDto =
     updateUserPasswordById userUuid passwordHash now
     return ()
 
-changeUserPasswordByHash :: String -> Maybe String -> UserPasswordDTO -> AppContextM ()
-changeUserPasswordByHash userUuid maybeHash userPasswordDto =
+changeUserPasswordByHash :: String -> String -> UserPasswordDTO -> AppContextM ()
+changeUserPasswordByHash userUuid hash userPasswordDto =
   runInTransaction $ do
-    actionKey <- getActionKeyByHash maybeHash
+    actionKey <- findActionKeyByHash hash
     user <- findUserById (U.toString actionKey.userId)
     passwordHash <- generatePasswordHash userPasswordDto.password
     now <- liftIO getCurrentTime
@@ -218,11 +218,11 @@ resetUserPassword reqDto =
       (sendResetPasswordMail (toDTO user) actionKey.hash)
       (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT)
 
-changeUserState :: String -> Maybe String -> UserStateDTO -> AppContextM UserStateDTO
-changeUserState userUuid maybeHash reqDto =
+changeUserState :: String -> String -> UserStateDTO -> AppContextM UserStateDTO
+changeUserState userUuid hash reqDto =
   runInTransaction $ do
     checkActiveUserLimit
-    actionKey <- getActionKeyByHash maybeHash
+    actionKey <- findActionKeyByHash hash
     user <- findUserById (U.toString actionKey.userId)
     updatedUser <- updateUserTimestamp $ user {active = reqDto.active}
     updateUserById updatedUser

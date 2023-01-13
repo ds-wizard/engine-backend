@@ -6,7 +6,7 @@ import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
-import Test.Hspec.Wai hiding (shouldRespondWith)
+import Test.Hspec.Wai
 
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
@@ -19,10 +19,7 @@ import Registry.Model.Context.AppContext
 import Registry.Model.Organization.Organization
 import Registry.Service.Organization.OrganizationMapper
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Localization.Messages.Public
-import Shared.Model.Error.Error
 
-import Registry.Specs.API.ActionKey.Common
 import Registry.Specs.API.Common
 import Registry.Specs.API.Organization.Common
 import Registry.Specs.Common
@@ -36,6 +33,7 @@ detail_state_put appContext =
   describe "PUT /organizations/{orgId}/state" $ do
     test_200 appContext
     test_400 appContext
+    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -74,45 +72,16 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = do
-  createInvalidJsonTest reqMethod reqUrl "active"
-  it "HTTP 400 BAD REQUEST when hash is absent" $
-    -- GIVEN: Prepare request
-    do
-      let reqUrl = "/organizations/global/state"
-      -- AND: Prepare expectation
-      let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = UserError _ERROR_VALIDATION__HASH_ABSENCE
-      let expBody = encode expDto
-      -- AND: Prepare DB
-      runInContextIO (insertActionKey regActionKey) appContext
-      runInContextIO (updateOrganization (orgGlobal {active = False})) appContext
-      -- WHEN: Call API
-      response <- request reqMethod reqUrl reqHeaders reqBody
-      -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
-      -- AND: Find result in DB and compare with expectation state
-      assertExistenceOfActionKeyInDB appContext regActionKey
-      assertExistenceOfOrganizationInDB appContext (orgGlobal {active = False})
-  it "HTTP 400 BAD REQUEST when hash is not in DB" $
-    -- GIVEN: Prepare request
-    do
-      let reqUrl = "/organizations/global/state?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
-      -- AND: Prepare expectation
-      let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = UserError _ERROR_VALIDATION__HASH_ABSENCE
-      let expBody = encode expDto
-      -- AND: Prepare DB
-      runInContextIO (updateOrganization (orgGlobal {active = False})) appContext
-      -- WHEN: Call API
-      response <- request reqMethod reqUrl reqHeaders reqBody
-      -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
-      -- AND: Find result in DB and compare with expectation state
-      assertExistenceOfOrganizationInDB appContext (orgGlobal {active = False})
+test_400 appContext = createInvalidJsonTest reqMethod reqUrl "active"
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_404 appContext =
+  createNotFoundTest
+    reqMethod
+    "/organizations/global/state?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
+    reqHeaders
+    reqBody
+    "action_key"
+    [("hash", "c996414a-b51d-4c8c-bc10-5ee3dab85fa8")]

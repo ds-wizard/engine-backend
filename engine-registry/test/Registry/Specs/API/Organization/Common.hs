@@ -25,5 +25,3 @@ compareOrganizationDtosWhenCreate resDto expDto = do
   liftIO $ resDto.email `shouldBe` expDto.email
 
 compareOrganizationDtos resDto expDto = liftIO $ resDto `shouldBe` expDto
-
-compareActionKeyDtos resDto expDto = liftIO $ resDto `shouldBe` expDto

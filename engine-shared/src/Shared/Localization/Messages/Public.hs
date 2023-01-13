@@ -50,9 +50,6 @@ _ERROR_VALIDATION__FORBIDDEN_CHARACTERS word =
 _ERROR_VALIDATION__FIELDS_ABSENCE =
   LocaleRecord "error.validation.fields_absence" "Missing fields" []
 
-_ERROR_VALIDATION__HASH_ABSENCE =
-  LocaleRecord "error.validation.hash_absence" "A hash query param is absent or doesn't exist in database" []
-
 -- Format
 _ERROR_VALIDATION__INVALID_COORDINATE_FORMAT =
   LocaleRecord "error.validation.invalid_coordinate_format" "Coordinate is not in the valid format" []

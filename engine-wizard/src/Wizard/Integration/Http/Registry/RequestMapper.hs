@@ -48,7 +48,7 @@ toConfirmOrganizationRegistrationRequest reqDto =
     detail_state_PUT_Api
     (OrganizationStateDTO {active = True})
     reqDto.organizationId
-    (Just reqDto.hash)
+    reqDto.hash
 
 toRetrievePackagesRequest
   :: AppConfigRegistry -> InstanceStatistics -> ClientM (Headers '[Header "x-trace-uuid" String] [PackageSimpleDTO])

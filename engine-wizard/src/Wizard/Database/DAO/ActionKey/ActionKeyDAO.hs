@@ -16,10 +16,10 @@ findActionKeys = do
   appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
-findActionKeyByHash' :: String -> AppContextM (Maybe ActionKey)
-findActionKeyByHash' hash = do
+findActionKeyByHash :: String -> AppContextM ActionKey
+findActionKeyByHash hash = do
   appUuid <- asks currentAppUuid
-  createFindEntityByFn' entityName [appQueryUuid appUuid, ("hash", hash)]
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("hash", hash)]
 
 insertActionKey :: ActionKey -> AppContextM Int64
 insertActionKey = createInsertFn entityName

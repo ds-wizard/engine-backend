@@ -18,7 +18,7 @@ type Detail_State_PUT =
     :> "organizations"
     :> Capture "orgId" String
     :> "state"
-    :> QueryParam "hash" String
+    :> QueryParam' '[Required] "hash" String
     :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] OrganizationDTO)
 
 detail_state_PUT_Api :: Proxy Detail_State_PUT
@@ -27,7 +27,7 @@ detail_state_PUT_Api = Proxy
 detail_state_PUT
   :: OrganizationStateDTO
   -> String
-  -> Maybe String
+  -> String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] OrganizationDTO)
-detail_state_PUT reqDto orgId mHash =
-  runInUnauthService Transactional $ addTraceUuidHeader =<< changeOrganizationState orgId mHash reqDto
+detail_state_PUT reqDto orgId hash =
+  runInUnauthService Transactional $ addTraceUuidHeader =<< changeOrganizationState orgId hash reqDto
