@@ -2,16 +2,15 @@ module Registry.Specs.API.Organization.List_Simple_GET (
   list_simple_get,
 ) where
 
-import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
-import Test.Hspec.Wai hiding (shouldRespondWith)
-import Test.Hspec.Wai.Matcher
+import Test.Hspec.Wai
 
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Service.Organization.OrganizationMapper
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleJM ()
 
 import SharedTest.Specs.API.Common
@@ -41,12 +40,10 @@ test_200 appContext =
     -- GIVEN: Prepare expectation
     do
       let expStatus = 200
-      let expHeaders = resCtHeader : resCorsHeaders
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       let expDto = toSimpleDTO <$> [orgGlobal, orgNetherlands]
-      let expBody = encode expDto
+      let expType (a :: [OrganizationSimpleDTO]) = a
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      assertListResponse expStatus expHeaders expDto expType response

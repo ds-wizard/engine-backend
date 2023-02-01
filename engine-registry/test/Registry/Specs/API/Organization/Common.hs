@@ -1,7 +1,7 @@
 module Registry.Specs.API.Organization.Common where
 
 import Test.Hspec
-import Test.Hspec.Wai hiding (shouldRespondWith)
+import Test.Hspec.Wai
 
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Model.Organization.Organization

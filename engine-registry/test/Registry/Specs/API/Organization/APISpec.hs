@@ -1,7 +1,7 @@
 module Registry.Specs.API.Organization.APISpec where
 
 import Test.Hspec
-import Test.Hspec.Wai hiding (shouldRespondWith)
+import Test.Hspec.Wai
 
 import Registry.Specs.API.Common
 import Registry.Specs.API.Organization.Detail_DELETE

@@ -7,7 +7,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import Test.Hspec.Wai.Matcher
 
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
@@ -68,7 +67,7 @@ test_200 appContext =
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      assertResponse expStatus expHeaders expDto expType response ["updatedAt"]
+      assertResponseWithoutFields expStatus expHeaders expDto expType response ["updatedAt"]
       -- AND: Find result in DB and compare with expectation state
       assertExistenceOfOrganizationInDB appContext orgGlobal
 

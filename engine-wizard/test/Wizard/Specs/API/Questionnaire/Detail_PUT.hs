@@ -148,7 +148,7 @@ create_test_200 title appContext qtn qtnEdited qtnCtn permissions showComments a
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      assertResponse expStatus expHeaders expDto expType response ["updatedAt"]
+      assertResponseWithoutFields expStatus expHeaders expDto expType response ["updatedAt"]
       -- AND: Find a result in DB
       assertExistenceOfQuestionnaireInDB appContext qtnEdited
 

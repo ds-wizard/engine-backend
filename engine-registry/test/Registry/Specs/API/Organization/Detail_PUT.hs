@@ -7,8 +7,7 @@ import qualified Data.Map.Strict as M
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
-import Test.Hspec.Wai hiding (shouldRespondWith)
-import Test.Hspec.Wai.Matcher
+import Test.Hspec.Wai
 
 import Registry.Api.Resource.Organization.OrganizationChangeJM ()
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
@@ -66,7 +65,7 @@ test_200 appContext =
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      assertResponse expStatus expHeaders expDto expType response ["updatedAt"]
+      assertResponseWithoutFields expStatus expHeaders expDto expType response ["updatedAt"]
       -- AND: Find result in DB and compare with expectation state
       assertExistenceOfOrganizationInDB appContext orgGlobalEdited
 
@@ -83,15 +82,13 @@ test_400 appContext = do
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       let expDto = ValidationError [] (M.singleton "email" [_ERROR_VALIDATION__ORGANIZATION_EMAIL_UNIQUENESS orgEmail])
-      let expBody = encode expDto
+      let expType (a :: AppError) = a
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      assertResponse expStatus expHeaders expDto expType response
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findOrganizations appContext 2
 

@@ -95,7 +95,7 @@ create_test_201 title appContext qtn authHeader user =
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      assertResponse expStatus expHeaders expDto expType response ["uuid", "createdAt", "updatedAt"]
+      assertResponseWithoutFields expStatus expHeaders expDto expType response ["uuid", "createdAt", "updatedAt"]
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findSubmissions appContext 1
 
