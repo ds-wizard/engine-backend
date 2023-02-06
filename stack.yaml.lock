@@ -76,7 +76,7 @@ packages:
     hackage: lens-aeson-1.1.3
 snapshots:
 - completed:
-    sha256: fafa9d441155a77e7c0413cecdaaca2969b12b86c76d47c8d9c0f447c5ca1503
-    size: 648420
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2022/11/16.yaml
-  original: nightly-2022-11-16
+    sha256: 17870c63f8041ac17a38096124abeb953cb14d84bfc96deb88f9b24daa97b347
+    size: 649332
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/20/10.yaml
+  original: lts-20.10
