@@ -120,7 +120,7 @@ test_400 appContext = do
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto =
             UserError $
-              _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_VERSION wizardDocumentTemplate.tId 1 documentTemplateMetamodelVersion
+              _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION wizardDocumentTemplate.tId 1 documentTemplateMetamodelVersion
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext

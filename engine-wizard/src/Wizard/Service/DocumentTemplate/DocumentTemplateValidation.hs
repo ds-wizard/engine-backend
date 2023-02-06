@@ -76,7 +76,7 @@ validateMetamodelVersion tml =
   when
     (tml.metamodelVersion /= documentTemplateMetamodelVersion)
     ( throwError . UserError $
-        _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_VERSION tml.tId tml.metamodelVersion documentTemplateMetamodelVersion
+        _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION tml.tId tml.metamodelVersion documentTemplateMetamodelVersion
     )
 
 validateFileAndAssetUniqueness :: Maybe U.UUID -> String -> String -> AppContextM ()

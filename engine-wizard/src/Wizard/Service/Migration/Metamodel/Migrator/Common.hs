@@ -26,7 +26,7 @@ validateMetamodelVersionField value =
     getField "metamodelVersion" object $ \metamodelVersion ->
       if metamodelVersion <= kmMetamodelVersion
         then Right value
-        else Left . UserError $ _ERROR_VALIDATION__PKG_UNSUPPORTED_VERSION metamodelVersion kmMetamodelVersion
+        else Left . UserError $ _ERROR_VALIDATION__PKG_UNSUPPORTED_METAMODEL_VERSION metamodelVersion kmMetamodelVersion
 
 migrateMetamodelVersionField :: Value -> Either AppError Value
 migrateMetamodelVersionField value =
