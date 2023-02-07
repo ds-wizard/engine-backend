@@ -9,9 +9,9 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Api.Resource.Error.ErrorJM ()
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 

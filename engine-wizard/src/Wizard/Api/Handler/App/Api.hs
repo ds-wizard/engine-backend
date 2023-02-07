@@ -8,7 +8,6 @@ import Wizard.Api.Handler.App.Detail_GET
 import Wizard.Api.Handler.App.Detail_PUT
 import Wizard.Api.Handler.App.List_GET
 import Wizard.Api.Handler.App.List_POST
-import Wizard.Api.Handler.App.Plan.Api
 import Wizard.Model.Context.BaseContext
 
 type AppAPI =
@@ -18,11 +17,10 @@ type AppAPI =
           :<|> Detail_GET
           :<|> Detail_PUT
           :<|> Detail_DELETE
-          :<|> PlanAPI
        )
 
 appApi :: Proxy AppAPI
 appApi = Proxy
 
 appServer :: ServerT AppAPI BaseContextM
-appServer = list_GET :<|> list_POST :<|> detail_GET :<|> detail_PUT :<|> detail_DELETE :<|> planServer
+appServer = list_GET :<|> list_POST :<|> detail_GET :<|> detail_PUT :<|> detail_DELETE

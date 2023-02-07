@@ -16,9 +16,9 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig hiding (request)

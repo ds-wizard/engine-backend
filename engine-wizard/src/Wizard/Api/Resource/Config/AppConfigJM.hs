@@ -143,12 +143,6 @@ instance FromJSON AppConfigQuestionnaireFeedback where
 instance ToJSON AppConfigQuestionnaireFeedback where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON AppConfigTemplate where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON AppConfigTemplate where
-  toJSON = genericToJSON jsonOptions
-
 instance FromJSON AppConfigSubmission where
   parseJSON = genericParseJSON jsonOptions
 

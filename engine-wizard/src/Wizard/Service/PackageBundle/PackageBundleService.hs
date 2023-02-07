@@ -9,7 +9,7 @@ import Control.Monad (forM)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks)
 import Data.Aeson
-import qualified Data.ByteString.Lazy.Char8 as BS
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.List (find)
 import Data.Maybe (catMaybes)
 
@@ -73,7 +73,7 @@ pullPackageBundleFromRegistry pkgId =
         then throwError . UserError $ _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId
         else throwError error
 
-importAndConvertPackageBundle :: BS.ByteString -> Bool -> AppContextM [PackageSimpleDTO]
+importAndConvertPackageBundle :: BSL.ByteString -> Bool -> AppContextM [PackageSimpleDTO]
 importAndConvertPackageBundle contentS fromRegistry =
   runInTransaction $ do
     checkPermission _PM_WRITE_PERM

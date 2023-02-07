@@ -2,12 +2,10 @@ module Registry.Specs.API.Organization.Detail_Token_PUT (
   detail_token_put,
 ) where
 
-import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
-import Test.Hspec.Wai hiding (shouldRespondWith)
-import Test.Hspec.Wai.Matcher
+import Test.Hspec.Wai
 
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
@@ -18,12 +16,8 @@ import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Model.Organization.Organization
 import Registry.Service.Organization.OrganizationMapper
-import Shared.Localization.Messages.Public
-import Shared.Model.Error.Error
 
-import Registry.Specs.API.ActionKey.Common
 import Registry.Specs.API.Common
-import Registry.Specs.API.Organization.Common
 import Registry.Specs.Common
 import SharedTest.Specs.API.Common
 
@@ -34,7 +28,7 @@ detail_token_put :: AppContext -> SpecWith ((), Application)
 detail_token_put appContext =
   describe "PUT /organizations/{orgId}/token" $ do
     test_200 appContext
-    test_400 appContext
+    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -63,7 +57,7 @@ test_200 appContext =
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      assertResponse' expStatus expHeaders expDto expType response []
+      assertResponseWithoutFields expStatus expHeaders expDto expType response ["token", "updatedAt"]
       -- AND: Find result in DB and compare with expectation state
       orgFromDb <- getFirstFromDB findOrganizations appContext
       liftIO $ (orgFromDb.token /= orgGlobal.token) `shouldBe` True
@@ -71,40 +65,11 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = do
-  it "HTTP 400 BAD REQUEST when hash is absent" $
-    -- GIVEN: Prepare request
-    do
-      let reqUrl = "/organizations/global/token"
-      -- AND: Prepare expectation
-      let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = UserError _ERROR_VALIDATION__HASH_ABSENCE
-      let expBody = encode expDto
-      -- AND: Prepare DB
-      runInContextIO (insertActionKey forgTokActionKey) appContext
-      -- WHEN: Call API
-      response <- request reqMethod reqUrl reqHeaders reqBody
-      -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
-      -- AND: Find result in DB and compare with expectation state
-      assertExistenceOfActionKeyInDB appContext forgTokActionKey
-  it "HTTP 400 BAD REQUEST when hash is not in DB" $
-    -- GIVEN: Prepare request
-    do
-      let reqUrl = "/organizations/global/token?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
-      -- AND: Prepare expectation
-      let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = UserError _ERROR_VALIDATION__HASH_ABSENCE
-      let expBody = encode expDto
-      -- WHEN: Call API
-      response <- request reqMethod reqUrl reqHeaders reqBody
-      -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
-      -- AND: Find result in DB and compare with expectation state
-      assertExistenceOfOrganizationInDB appContext orgGlobal
+test_404 appContext =
+  createNotFoundTest
+    reqMethod
+    "/organizations/global/token?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
+    reqHeaders
+    reqBody
+    "action_key"
+    [("hash", "c996414a-b51d-4c8c-bc10-5ee3dab85fa8")]

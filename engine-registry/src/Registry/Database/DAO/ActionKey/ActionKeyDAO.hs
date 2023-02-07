@@ -13,8 +13,8 @@ entityName = "action_key"
 findActionKeys :: AppContextM [ActionKey]
 findActionKeys = createFindEntitiesFn entityName
 
-findActionKeyByHash' :: String -> AppContextM (Maybe ActionKey)
-findActionKeyByHash' hash = createFindEntityByFn' entityName [("hash", hash)]
+findActionKeyByHash :: String -> AppContextM ActionKey
+findActionKeyByHash hash = createFindEntityByFn entityName [("hash", hash)]
 
 insertActionKey :: ActionKey -> AppContextM Int64
 insertActionKey = createInsertFn entityName

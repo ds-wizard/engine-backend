@@ -35,7 +35,6 @@ instance FromEnv ServerConfigGeneral where
       , \c -> applyEnvVariable "GENERAL_SERVER_PORT" c.serverPort (\x -> c {serverPort = x})
       , \c -> applyStringEnvVariable "GENERAL_SECRET" c.secret (\x -> c {secret = x})
       , \c -> applyStringEnvVariable "GENERAL_INTEGRATION_CONFIG" c.integrationConfig (\x -> c {integrationConfig = x})
-      , \c -> applyMaybeStringEnvVariable "GENERAL_REMOTE_LOCALIZATION_URL" c.remoteLocalizationUrl (\x -> c {remoteLocalizationUrl = x})
       , \c -> applyStringEnvVariable "GENERAL_CLIENT_STYLE_BUILDER_URL" c.clientStyleBuilderUrl (\x -> c {clientStyleBuilderUrl = x})
       ]
 

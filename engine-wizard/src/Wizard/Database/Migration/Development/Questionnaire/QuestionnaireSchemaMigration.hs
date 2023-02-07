@@ -41,7 +41,7 @@ createQtnTable = do
         \     sharing varchar not null, \
         \     package_id varchar not null, \
         \     selected_question_tag_uuids json not null, \
-        \     template_id varchar, \
+        \     document_template_id varchar, \
         \     format_uuid uuid, \
         \     created_by uuid, \
         \     events json not null, \
@@ -70,8 +70,8 @@ createQtnTable = do
         \   add constraint questionnaire_package_id_fk \
         \      foreign key (package_id, app_uuid) references package (id, app_uuid); \
         \ alter table questionnaire \
-        \   add constraint questionnaire_template_id_fk \
-        \      foreign key (template_id, app_uuid) references template (id, app_uuid); \
+        \   add constraint questionnaire_document_template_id_fk \
+        \      foreign key (document_template_id, app_uuid) references document_template (id, app_uuid); \
         \ alter table questionnaire \
         \   add constraint questionnaire_user_entity_uuid_fk \
         \      foreign key (created_by) references user_entity;"

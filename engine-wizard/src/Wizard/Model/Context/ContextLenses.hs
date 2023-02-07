@@ -1,6 +1,5 @@
 module Wizard.Model.Context.ContextLenses where
 
-import qualified Data.Map.Strict as M
 import Data.Pool (Pool)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple (Connection)
@@ -43,12 +42,6 @@ instance HasField "s3Client'" AppContext MinioConn where
 
 instance HasField "s3Client'" BaseContext MinioConn where
   getField = (.s3Client)
-
-instance HasField "localization'" AppContext (M.Map String String) where
-  getField = (.localization)
-
-instance HasField "localization'" BaseContext (M.Map String String) where
-  getField = (.localization)
 
 instance HasField "buildInfoConfig'" AppContext BuildInfoConfig where
   getField = (.buildInfoConfig)

@@ -10,7 +10,7 @@ import Wizard.Api.Handler.QuestionnaireImporter.List_Suggestions_GET
 import Wizard.Model.Context.BaseContext
 
 type QuestionnaireImporterAPI =
-  Tags "QuestionnaireImporter"
+  Tags "Questionnaire Importer"
     :> ( List_GET
           :<|> List_Suggestions_GET
           :<|> Detail_GET

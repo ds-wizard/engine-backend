@@ -18,7 +18,7 @@ owlObjectProperty = Just (unode "http://www.w3.org/2002/07/owl#ObjectProperty")
 owlDataTypeProperty = Just (unode "http://www.w3.org/2002/07/owl#DatatypeProperty")
 
 data RdfClass
-  = RdfClass T.Text [RdfDataType] [RdfObject]
+  = RdfClass T.Text (Maybe T.Text) [RdfDataType] [RdfObject]
   deriving (Show)
 
 data RdfObject
@@ -26,7 +26,7 @@ data RdfObject
   deriving (Show)
 
 data RdfDataType
-  = RdfDataType T.Text T.Text
+  = RdfDataType T.Text (Maybe T.Text) T.Text
   deriving (Show)
 
 subUriOf t =
@@ -46,7 +46,7 @@ obValjOf t =
 resolveClass :: RDF TList -> T.Text -> RdfClass
 resolveClass graph rootElement =
   let relationships = fmap subUriOf $ query graph Nothing rdfsDomain (Just (unode rootElement))
-   in RdfClass rootElement (resolveDataTypes graph relationships) (resolveObjects graph relationships)
+   in RdfClass rootElement (resolveComment graph rootElement) (resolveDataTypes graph relationships) (resolveObjects graph relationships)
 
 resolveObjects :: RDF TList -> [T.Text] -> [RdfObject]
 resolveObjects graph relationships =
@@ -57,7 +57,7 @@ resolveObjects graph relationships =
 resolveDataTypes :: RDF TList -> [T.Text] -> [RdfDataType]
 resolveDataTypes graph relationships =
   let isDataType r = not . null $ query graph (Just (unode r)) rdfType owlDataTypeProperty
-      createDataType d = RdfDataType d (resolveRange graph d)
+      createDataType d = RdfDataType d (resolveComment graph d) (resolveRange graph d)
    in fmap createDataType . filter isDataType $ relationships
 
 resolveRange :: RDF TList -> T.Text -> T.Text

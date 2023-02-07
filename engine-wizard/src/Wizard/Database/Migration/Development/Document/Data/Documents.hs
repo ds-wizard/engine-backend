@@ -7,12 +7,12 @@ import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
 
-import qualified Shared.Constant.Template as TemplateConstant
+import qualified Shared.Constant.DocumentTemplate as TemplateConstant
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Shared.Database.Migration.Development.Template.Data.Templates
+import Shared.Model.DocumentTemplate.DocumentTemplate
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
-import Shared.Model.Template.Template
 import qualified Shared.Service.Package.PackageMapper as SPM
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentCreateDTO
@@ -29,7 +29,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.User.User
-import Wizard.Service.Document.DocumentContextMapper
+import Wizard.Service.Document.Context.DocumentContextMapper
 import Wizard.Service.Document.DocumentMapper
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
@@ -45,8 +45,8 @@ doc1 =
     , questionnaireUuid = questionnaire1.uuid
     , questionnaireEventUuid = Just . getUuid . last $ questionnaire1.events
     , questionnaireRepliesHash = hash . M.toList $ questionnaire1Ctn.replies
-    , templateId = commonWizardTemplate.tId
-    , formatUuid = (head commonWizardTemplate.formats).uuid
+    , documentTemplateId = wizardDocumentTemplate.tId
+    , formatUuid = (head wizardDocumentTemplate.formats).uuid
     , creatorUuid = Just $ userNikola.uuid
     , fileName = Just "export.txt"
     , contentType = Just "text/plain"
@@ -85,7 +85,7 @@ dmp1 =
     , report = report1
     , package = toDocumentContextPackage . SPM.toPackage $ germanyPackage
     , organization = defaultOrganization
-    , templateMetamodelVersion = TemplateConstant.templateMetamodelVersion
+    , documentTemplateMetamodelVersion = TemplateConstant.documentTemplateMetamodelVersion
     , createdBy = Just . USR_Mapper.toDTO $ userAlbert
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -97,12 +97,12 @@ doc1Create =
     { name = doc1.name
     , questionnaireUuid = doc1.questionnaireUuid
     , questionnaireEventUuid = Just . getUuid . last $ questionnaire1.events
-    , templateId = doc1.templateId
+    , documentTemplateId = doc1.documentTemplateId
     , formatUuid = doc1.formatUuid
     }
 
 doc1Dto :: DocumentDTO
-doc1Dto = toDTO doc1 (Just . QTN_Mapper.toSimple $ questionnaire1) [] commonWizardTemplate
+doc1Dto = toDTO doc1 (Just . QTN_Mapper.toSimple $ questionnaire1) [] wizardDocumentTemplate
 
 doc2 :: Document
 doc2 =
@@ -114,8 +114,8 @@ doc2 =
     , questionnaireUuid = questionnaire2.uuid
     , questionnaireEventUuid = Just . getUuid . last $ questionnaire2.events
     , questionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn.replies
-    , templateId = commonWizardTemplate.tId
-    , formatUuid = (head commonWizardTemplate.formats).uuid
+    , documentTemplateId = wizardDocumentTemplate.tId
+    , formatUuid = (head wizardDocumentTemplate.formats).uuid
     , creatorUuid = Just $ userNikola.uuid
     , fileName = Just "export.txt"
     , contentType = Just "text/plain"
@@ -137,8 +137,8 @@ doc3 =
     , questionnaireUuid = questionnaire2.uuid
     , questionnaireEventUuid = Just . getUuid . last $ questionnaire2.events
     , questionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn.replies
-    , templateId = commonWizardTemplate.tId
-    , formatUuid = (head commonWizardTemplate.formats).uuid
+    , documentTemplateId = wizardDocumentTemplate.tId
+    , formatUuid = (head wizardDocumentTemplate.formats).uuid
     , creatorUuid = Just $ userAlbert.uuid
     , fileName = Just "export.txt"
     , contentType = Just "text/plain"
@@ -220,8 +220,8 @@ differentDoc =
     , questionnaireUuid = differentQuestionnaire.uuid
     , questionnaireEventUuid = Just . getUuid . last $ questionnaire1.events
     , questionnaireRepliesHash = hash . M.toList $ questionnaire1Ctn.replies
-    , templateId = anotherWizardTemplate.tId
-    , formatUuid = (head anotherWizardTemplate.formats).uuid
+    , documentTemplateId = anotherWizardDocumentTemplate.tId
+    , formatUuid = (head anotherWizardDocumentTemplate.formats).uuid
     , creatorUuid = Just $ userCharles.uuid
     , fileName = Just "export.txt"
     , contentType = Just "text/plain"

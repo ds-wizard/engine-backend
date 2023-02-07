@@ -1,5 +1,6 @@
 module Wizard.Service.OpenId.OpenIdService where
 
+import qualified Control.Exception.Base as E
 import Control.Lens ((^?))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
@@ -27,6 +28,7 @@ import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.User.UserService
 import Wizard.Service.UserToken.UserTokenMapper
 import Wizard.Service.UserToken.UserTokenService
+import Wizard.Util.Logger
 
 createAuthenticationUrl :: String -> Maybe String -> Maybe String -> AppContextM ()
 createAuthenticationUrl authId mFlow mClientUrl = do
@@ -63,9 +65,13 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mSessionState =
             Just code -> do
               httpClientManager <- asks httpClientManager
               (_, openIDClient) <- createOpenIDClient authId mClientUrl
-              tokens <-
-                liftIO $ O.requestTokens openIDClient (fmap BS.pack mNonce) (BS.pack code) httpClientManager :: AppContextM (OT.Tokens Value)
-              return . O.idToken $ tokens
+              eTokens <-
+                liftIO . E.try $ O.requestTokens openIDClient (fmap BS.pack mNonce) (BS.pack code) httpClientManager :: AppContextM (Either IOError (OT.Tokens Value))
+              case eTokens of
+                Right tokens -> return . O.idToken $ tokens
+                Left error -> do
+                  logWarnU _CMP_SERVICE . f' "Error in retrieving token from OpenID (error: '%s')" $ [show error]
+                  throwError . UserError . _ERROR_VALIDATION__OPENID_WRONG_RESPONSE . show $ error
             Nothing -> throwError . UserError $ _ERROR_VALIDATION__OPENID_CODE_ABSENCE
     let claims = O.otherClaims token
     let mEmail = fmap toLower . T.unpack <$> (claims ^? key "email" . _String)

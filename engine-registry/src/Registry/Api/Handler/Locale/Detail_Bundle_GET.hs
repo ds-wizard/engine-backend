@@ -14,7 +14,7 @@ import Shared.Model.Context.TransactionState
 type Detail_Bundle_GET =
   Header "Authorization" String
     :> "locales"
-    :> Capture "tmlId" String
+    :> Capture "documentTemplateId" String
     :> "bundle"
     :> Get '[OctetStream] (Headers '[Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStreamLazy)
 

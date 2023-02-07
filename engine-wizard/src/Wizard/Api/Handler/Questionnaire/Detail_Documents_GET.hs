@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Questionnaire.Detail_Documents_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -16,7 +17,7 @@ type Detail_Documents_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "questionnaires"
-    :> Capture "qtnUuid" String
+    :> Capture "qtnUuid" U.UUID
     :> "documents"
     :> QueryParam "q" String
     :> QueryParam "page" Int
@@ -27,7 +28,7 @@ type Detail_Documents_GET =
 detail_documents_GET
   :: Maybe String
   -> Maybe String
-  -> String
+  -> U.UUID
   -> Maybe String
   -> Maybe Int
   -> Maybe Int
@@ -36,4 +37,4 @@ detail_documents_GET
 detail_documents_GET mTokenHeader mServerUrl qtnUuid mQuery mPage mSize mSort =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
-      addTraceUuidHeader =<< getDocumentsForQuestionnaire qtnUuid mQuery (Pageable mPage mSize) (parseSortQuery mSort)
+      addTraceUuidHeader =<< getDocumentsForQtn qtnUuid mQuery (Pageable mPage mSize) (parseSortQuery mSort)

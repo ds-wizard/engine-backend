@@ -11,9 +11,11 @@ data AppLimit = AppLimit
   , activeUsers :: Maybe Int
   , knowledgeModels :: Maybe Int
   , branches :: Maybe Int
-  , templates :: Maybe Int
+  , documentTemplates :: Maybe Int
+  , documentTemplateDrafts :: Maybe Int
   , questionnaires :: Maybe Int
   , documents :: Maybe Int
+  , locales :: Maybe Int
   , storage :: Maybe Int64
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

@@ -12,10 +12,10 @@ import Test.Hspec.Wai.Matcher
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterJM ()
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterMigration as QI_Migration
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Service.QuestionnaireImporter.QuestionnaireImporterMapper
 

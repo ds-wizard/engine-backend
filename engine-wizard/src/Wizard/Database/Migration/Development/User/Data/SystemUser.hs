@@ -30,10 +30,10 @@ userSystem =
         , "QTN_PERM"
         , "QTN_IMPORTER_PERM"
         , "QTN_TML_PERM"
-        , "DMP_PERM"
+        , "DOC_TML_READ_PERM"
         , "CFG_PERM"
         , "SUBM_PERM"
-        , "TML_PERM"
+        , "DOC_TML_WRITE_PERM"
         , "DOC_PERM"
         , "LOC_PERM"
         ]

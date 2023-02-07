@@ -11,14 +11,14 @@ import Shared.Model.Localization.LocaleRecord
 _ERROR_VALIDATION__APP_ID_UNIQUENESS =
   LocaleRecord "error.validation.app_id_uniqueness" "Provided appId is already used" []
 
+_ERROR_VALIDATION__DOC_TML_FILE_OR_ASSET_UNIQUENESS =
+  LocaleRecord
+    "error.validation.doc_tml_file_or_asset_uniqueness"
+    "DocumentTemplate file or asset must have unique filename across the template"
+    []
+
 _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS =
   LocaleRecord "error.validation.km_migration_uniqueness" "Migration of Knowledge Model already exists" []
-
-_ERROR_SERVICE_TML__TML_FILE_OR_ASSET_UNIQUENESS =
-  LocaleRecord
-    "error.service.tml.tml_file_or_asset_uniqueness"
-    "Template file or asset must have unique filename across the template"
-    []
 
 _ERROR_VALIDATION__LCL_ID_UNIQUENESS lclId =
   LocaleRecord "error.validation.lcl_id_uniqueness" "Locale '%s' already exists" [lclId]
@@ -41,13 +41,16 @@ _ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE =
 _ERROR_VALIDATION__QUESTION_ABSENCE =
   LocaleRecord "error.validation.question_absence" "Desired question doesn't exist" []
 
-_ERROR_VALIDATION__TEMPLATE_ABSENCE = LocaleRecord "error.validation.template_absence" "Template doesn't exist" []
+_ERROR_VALIDATION__TEMPLATE_ABSENCE = LocaleRecord "error.validation.template_absence" "DocumentTemplate doesn't exist" []
 
 _ERROR_VALIDATION__USER_ABSENCE userUuid =
   LocaleRecord "error.validation.user_absence" "User ('%s') doesn't exist" [userUuid]
 
 _ERROR_VALIDATION__TOKEN_ABSENCE tokenUuid =
   LocaleRecord "error.validation.token_absence" "Token ('%s') doesn't exist" [tokenUuid]
+
+_ERROR_VALIDATION__OPENID_WRONG_RESPONSE error =
+  LocaleRecord "error.validation.openid_wrong_response" "There was a wrong response from OpenID (error: '%s')" [error]
 
 _ERROR_VALIDATION__OPENID_CODE_ABSENCE =
   LocaleRecord "error.validation.openid_code_absence" "Auth Code is not provided" []
@@ -60,7 +63,7 @@ _ERROR_VALIDATION__SUBMISSION_DEFINITION_ABSENCE subId =
 
 -- Delete
 _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId target =
-  LocaleRecord "error.validation.tml_deletation" "Template '%s' can't be deleted. It's used by some %s" [tmlId, target]
+  LocaleRecord "error.validation.tml_deletation" "DocumentTemplate '%s' can't be deleted. It's used by some %s" [tmlId, target]
 
 _ERROR_VALIDATION__DEFAULT_LOCALE_DELETATION =
   LocaleRecord "error.validation.default_locale_deletation" "You can't delete default locale" []
@@ -69,11 +72,21 @@ _ERROR_VALIDATION__DEFAULT_WIZARD_LOCALE_DELETATION =
   LocaleRecord "error.validation.default_locale_deletation" "You can't delete default wizard locale" []
 
 -- Unsupported version
-_ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_VERSION tmlId tmlMetamodelVersion appTmlMetamodelVersion =
+_ERROR_VALIDATION__PKG_UNSUPPORTED_METAMODEL_VERSION pkgMetamodelVersion appPkgMetamodelVersion =
   LocaleRecord
-    "error.validation.tml_unsupported_version"
-    "Template '%s' contains unsupported version of metamodel (template metamodel version: '%s', application metamodel version: '%s')"
+    "error.validation.pkg_unsupported_metamodel_version"
+    "Package contains unsupported version of metamodel (pkg metamodel version: '%s', application metamodel version: '%s')"
+    [show pkgMetamodelVersion, show appPkgMetamodelVersion]
+
+_ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION tmlId tmlMetamodelVersion appTmlMetamodelVersion =
+  LocaleRecord
+    "error.validation.tml_unsupported_metamodel_version"
+    "DocumentTemplate '%s' contains unsupported version of metamodel (template metamodel version: '%s', application metamodel version: '%s')"
     [tmlId, show tmlMetamodelVersion, show appTmlMetamodelVersion]
+
+-- Unsupported State
+_ERROR_VALIDATION__DOC_TML_UNSUPPORTED_STATE tmlId phase =
+  LocaleRecord "error.validation.doc_tml_unsupported_state" "You can not move '%s' into the following phase: %s" [tmlId, phase]
 
 -- Locale
 _ERROR_VALIDATION__DEACTIVATE_DEFAULT_LOCALE =
@@ -90,7 +103,10 @@ _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED featureName =
   LocaleRecord "error.service.common.feature_is_disabled" "Feature '%s' is disabled" [featureName]
 
 _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP =
-  LocaleRecord "error.service.template.template_or_format_not_set_up" "Template or format is not set up" []
+  LocaleRecord "error.service.template.template_or_format_not_set_up" "DocumentTemplate or format is not set up" []
+
+_ERROR_SERVICE_DOCUMENT__QUESTIONNAIRE_OR_FORMAT_NOT_SET_UP =
+  LocaleRecord "error.service.template.questionnaire_or_format_not_set_up" "Questionnaire or format is not set up" []
 
 -- Auth
 _ERROR_SERVICE_AUTH__SERVICE_NOT_DEFINED authId =
@@ -182,7 +198,7 @@ _ERROR_SERVICE_QTN_VERSION__NON_EXISTENT_EVENT_UUID eventUuid =
 _ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW workerLog =
   LocaleRecord "error.service.qtn.unable_to_generate_document_preview" "%s" [fromMaybe "no log provided" workerLog]
 
--- Template Bundle
+-- DocumentTemplate Bundle
 _ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =
   LocaleRecord "error.service.tb.pull_non_existing_tml" "Desired template ('%s') wasn't found in Registry" [tmlId]
 

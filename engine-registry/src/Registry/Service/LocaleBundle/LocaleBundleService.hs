@@ -11,5 +11,5 @@ import Shared.Service.LocaleBundle.LocaleBundleMapper
 exportLocaleBundle :: String -> AppContextM BSL.ByteString
 exportLocaleBundle lclId = do
   locale <- findLocaleById lclId
-  content <- getLocale locale.lId
+  content <- retrieveLocale locale.lId
   return $ toLocaleArchive locale content

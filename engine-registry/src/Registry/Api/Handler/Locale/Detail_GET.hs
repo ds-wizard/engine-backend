@@ -13,7 +13,7 @@ import Shared.Model.Context.TransactionState
 
 type Detail_GET =
   "locales"
-    :> Capture "tmlId" String
+    :> Capture "documentTemplateId" String
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] LocaleDetailDTO)
 
 detail_GET :: String -> BaseContextM (Headers '[Header "x-trace-uuid" String] LocaleDetailDTO)

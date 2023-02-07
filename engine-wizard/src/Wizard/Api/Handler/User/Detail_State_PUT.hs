@@ -17,7 +17,7 @@ type Detail_State_PUT =
     :> "users"
     :> Capture "uUuid" String
     :> "state"
-    :> QueryParam "hash" String
+    :> QueryParam' '[Required] "hash" String
     :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] UserStateDTO)
 
 detail_state_PUT
@@ -25,8 +25,8 @@ detail_state_PUT
   -> Maybe String
   -> UserStateDTO
   -> String
-  -> Maybe String
+  -> String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserStateDTO)
-detail_state_PUT mTokenHeader mServerUrl reqDto uUuid mHash =
+detail_state_PUT mTokenHeader mServerUrl reqDto uUuid hash =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< changeUserState uUuid mHash reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< changeUserState uUuid hash reqDto

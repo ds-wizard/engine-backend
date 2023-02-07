@@ -3,7 +3,6 @@ module Wizard.Specs.API.Document.Detail_DELETE (
 ) where
 
 import Data.Aeson (encode)
-import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -17,9 +16,9 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
@@ -73,7 +72,7 @@ create_test_204 title appContext qtn authHeader =
       runInContextIO QTN_Migration.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire10) appContext
       runInContextIO DOC_Migration.runMigration appContext
-      runInContextIO (deleteDocumentById (U.toString $ doc1.uuid)) appContext
+      runInContextIO (deleteDocumentByUuid doc1.uuid) appContext
       runInContextIO (insertDocument (doc1 {questionnaireUuid = qtn.uuid})) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
@@ -122,7 +121,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
       runInContextIO QTN_Migration.runMigration appContext
       runInContextIO DOC_Migration.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire7) appContext
-      runInContextIO (deleteDocumentById (U.toString $ doc1.uuid)) appContext
+      runInContextIO (deleteDocumentByUuid doc1.uuid) appContext
       runInContextIO (insertDocument (doc1 {questionnaireUuid = qtn.uuid})) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

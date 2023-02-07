@@ -68,7 +68,6 @@ createAppConfigTable = do
         \     registry            json                     not null, \
         \     knowledge_model     json                     not null, \
         \     questionnaire       json                     not null, \
-        \     template            json                     not null, \
         \     submission          json                     not null, \
         \     created_at          timestamp with time zone not null, \
         \     updated_at          timestamp with time zone not null, \

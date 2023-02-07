@@ -5,8 +5,7 @@ module Registry.Specs.API.Organization.Detail_DELETE (
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
-import Test.Hspec.Wai hiding (shouldRespondWith)
-import Test.Hspec.Wai.Matcher
+import Test.Hspec.Wai
 
 import Registry.Model.Context.AppContext
 
@@ -43,14 +42,11 @@ test_204 appContext =
     -- GIVEN: Prepare expectation
     do
       let expStatus = 204
-      let expHeaders = resCorsHeaders
-      let expBody = ""
+      let expHeaders = resCorsHeadersPlain
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      assertEmptyResponse expStatus expHeaders response
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

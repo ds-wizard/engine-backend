@@ -10,23 +10,23 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Constant.Template
-import Shared.Database.DAO.Template.TemplateDAO
-import Shared.Database.Migration.Development.Template.Data.Templates
+import Shared.Constant.DocumentTemplate
+import Shared.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.Localization.Messages.Public
 import Shared.Model.Common.Lens
+import Shared.Model.DocumentTemplate.DocumentTemplate
 import Shared.Model.Error.Error
-import Shared.Model.Template.Template
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentCreateJM ()
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentJM ()
-import Wizard.Api.Resource.Template.TemplateSimpleDTO
+import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -65,7 +65,7 @@ reqDtoT qtn =
     { name = "Document"
     , questionnaireUuid = qtn.uuid
     , questionnaireEventUuid = Just . getUuid . last $ qtn.events
-    , templateId = doc1.templateId
+    , documentTemplateId = doc1.documentTemplateId
     , formatUuid = doc1.formatUuid
     }
 
@@ -120,13 +120,13 @@ test_400 appContext = do
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto =
             UserError $
-              _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_VERSION commonWizardTemplate.tId 1 templateMetamodelVersion
+              _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION wizardDocumentTemplate.tId 1 documentTemplateMetamodelVersion
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO QTN_Migration.runMigration appContext
-      runInContextIO (updateTemplateById (commonWizardTemplate {metamodelVersion = 1})) appContext
+      runInContextIO (updateDocumentTemplateById (wizardDocumentTemplate {metamodelVersion = 1})) appContext
       runInContextIO deleteDocuments appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

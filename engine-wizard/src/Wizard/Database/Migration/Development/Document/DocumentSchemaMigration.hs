@@ -32,7 +32,7 @@ createTables = do
         \     questionnaire_uuid uuid not null, \
         \     questionnaire_event_uuid uuid, \
         \     questionnaire_replies_hash bigint not null, \
-        \     template_id varchar not null, \
+        \     document_template_id varchar not null, \
         \     format_uuid uuid not null, \
         \     creator_uuid uuid, \
         \     retrieved_at timestamptz, \
@@ -58,8 +58,8 @@ createTables = do
         \      foreign key (questionnaire_uuid) references questionnaire; \
         \  \
         \ alter table document \
-        \   add constraint document_template_id_fk \
-        \      foreign key (template_id, app_uuid) references template (id, app_uuid); \
+        \   add constraint document_document_template_id_fk \
+        \      foreign key (document_template_id, app_uuid) references document_template (id, app_uuid); \
         \ alter table document \
         \   add constraint document_user_entity_uuid_fk \
         \      foreign key (creator_uuid) references user_entity; \

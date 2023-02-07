@@ -1,5 +1,5 @@
 name: engine-shared
-version: '3.19.3'
+version: '3.20.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -68,6 +68,7 @@ library:
   - zip-archive
   - hspec
   - hspec-wai
+  - hspec-expectations-json
   - hspec-expectations-pretty-diff
 
 tests:

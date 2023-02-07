@@ -70,11 +70,20 @@ convertToChapter parentUuid rdfClass = do
   return $ entityEvent : events
 
 convertToQuestion :: MonadIO m => U.UUID -> RdfClass -> m [Event]
-convertToQuestion parentUuid (RdfClass nameT dataTypes objects) = do
+convertToQuestion parentUuid (RdfClass nameT mCommentT dataTypes objects) = do
   uuid <- liftIO generateUuid
   entityUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
   let name = T.unpack nameT
+  let comment =
+        case mCommentT of
+          Just commentT ->
+            f'
+              "\n\
+              \##### Description:\n\
+              \%s"
+              [T.unpack commentT]
+          Nothing -> ""
   let entityEvent =
         AddQuestionEvent' $
           AddListQuestionEvent' $
@@ -83,7 +92,12 @@ convertToQuestion parentUuid (RdfClass nameT dataTypes objects) = do
               , parentUuid = parentUuid
               , entityUuid = entityUuid
               , title = getTitle nameT
-              , text = Just $ f' "%s: %s" [_MAP_ENTRY_RDF_TYPE, name]
+              , text =
+                  Just $
+                    f'
+                      "##### RDF:\n\
+                      \- **Type:** `%s`%s"
+                      [name, comment]
               , requiredPhaseUuid = Nothing
               , annotations = [MapEntry _MAP_ENTRY_RDF_TYPE name]
               , tagUuids = []
@@ -94,11 +108,20 @@ convertToQuestion parentUuid (RdfClass nameT dataTypes objects) = do
   return $ [entityEvent] ++ dataTypeEvents ++ concat objectEvents
 
 convertDataTypeToEvent :: MonadIO m => U.UUID -> RdfDataType -> m Event
-convertDataTypeToEvent parentUuid (RdfDataType nameT rdfType) = do
+convertDataTypeToEvent parentUuid (RdfDataType nameT mCommentT rdfType) = do
   uuid <- liftIO generateUuid
   entityUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
   let name = T.unpack nameT
+  let comment =
+        case mCommentT of
+          Just commentT ->
+            f'
+              "\n\
+              \##### Description:\n\
+              \%s"
+              [T.unpack commentT]
+          Nothing -> ""
   let valueType =
         case rdfType of
           "http://www.w3.org/2001/XMLSchema#anyURI" -> UrlQuestionValueType
@@ -119,7 +142,12 @@ convertDataTypeToEvent parentUuid (RdfDataType nameT rdfType) = do
           , parentUuid = parentUuid
           , entityUuid = entityUuid
           , title = getTitle nameT
-          , text = Just $ f' "%s: %s" [_MAP_ENTRY_RDF_TYPE, name]
+          , text =
+              Just $
+                f'
+                  "##### RDF:\n\
+                  \- **Type:** `%s`%s"
+                  [name, comment]
           , requiredPhaseUuid = Nothing
           , tagUuids = []
           , annotations = [MapEntry _MAP_ENTRY_RDF_TYPE name]
@@ -128,11 +156,29 @@ convertDataTypeToEvent parentUuid (RdfDataType nameT rdfType) = do
           }
 
 convertObjectToEvent :: MonadIO m => U.UUID -> RdfObject -> m [Event]
-convertObjectToEvent parentUuid (RdfObject objName rdfType (RdfClass nameT dataTypes objects)) = do
+convertObjectToEvent parentUuid (RdfObject objName mCommentT (RdfClass nameT mClassCommentT dataTypes objects)) = do
   uuid <- liftIO generateUuid
   entityUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
   let name = T.unpack nameT
+  let comment =
+        case mCommentT of
+          Just commentT ->
+            f'
+              "\n\
+              \##### Description:\n\
+              \%s"
+              [T.unpack commentT]
+          Nothing -> ""
+  let classComment =
+        case mClassCommentT of
+          Just classCommentT ->
+            f'
+              "\n\
+              \##### Relation Description:\n\
+              \%s"
+              [T.unpack classCommentT]
+          Nothing -> ""
   let entityEvent =
         AddQuestionEvent' $
           AddListQuestionEvent' $
@@ -142,10 +188,17 @@ convertObjectToEvent parentUuid (RdfObject objName rdfType (RdfClass nameT dataT
               , entityUuid = entityUuid
               , title = getTitle nameT
               , text =
-                  Just $ f' "%s: %s, %s: %s" [_MAP_ENTRY_RDF_TYPE, name, _MAP_ENTRY_RDF_RELATION, T.unpack objName]
+                  Just $
+                    f'
+                      "##### RDF:\n\
+                      \- **Type:** `%s`\n\
+                      \- **Relation:** `%s`%s%s"
+                      [name, T.unpack objName, comment, classComment]
               , requiredPhaseUuid = Nothing
               , annotations =
-                  [MapEntry _MAP_ENTRY_RDF_TYPE name, MapEntry "rdfRelation" (T.unpack objName)]
+                  [ MapEntry _MAP_ENTRY_RDF_TYPE name
+                  , MapEntry "rdfRelation" (T.unpack objName)
+                  ]
               , tagUuids = []
               , createdAt = now
               }

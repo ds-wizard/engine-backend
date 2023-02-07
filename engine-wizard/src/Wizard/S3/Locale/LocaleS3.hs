@@ -11,14 +11,14 @@ import Wizard.Model.Context.ContextLenses ()
 
 folderName = "locales"
 
-getLocale :: String -> AppContextM BS.ByteString
-getLocale localeId = createGetObjectFn (f' "%s/%s" [folderName, localeId])
+retrieveLocale :: String -> AppContextM BS.ByteString
+retrieveLocale localeId = createGetObjectFn (f' "%s/%s" [folderName, localeId])
 
-getLocaleWithApp :: U.UUID -> String -> AppContextM BS.ByteString
-getLocaleWithApp appUuid localeId = createGetObjectWithAppFn appUuid (f' "%s/%s" [folderName, localeId])
+retrieveLocaleWithApp :: U.UUID -> String -> AppContextM BS.ByteString
+retrieveLocaleWithApp appUuid localeId = createGetObjectWithAppFn appUuid (f' "%s/%s" [folderName, localeId])
 
-getLocale' :: String -> AppContextM (Either MinioErr BS.ByteString)
-getLocale' localeId = createGetObjectFn' (f' "%s/%s" [folderName, localeId])
+retrieveLocale' :: String -> AppContextM (Either MinioErr BS.ByteString)
+retrieveLocale' localeId = createGetObjectFn' (f' "%s/%s" [folderName, localeId])
 
 putLocale :: String -> BS.ByteString -> AppContextM String
 putLocale localeId = createPutObjectFn (f' "%s/%s" [folderName, localeId]) Nothing

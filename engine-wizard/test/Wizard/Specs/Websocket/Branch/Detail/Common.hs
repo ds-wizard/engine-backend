@@ -17,7 +17,7 @@ import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.Migration.Development.Branch.Data.Branches
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.Config.ServerConfig

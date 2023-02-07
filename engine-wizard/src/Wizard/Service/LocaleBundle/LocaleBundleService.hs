@@ -27,13 +27,13 @@ import Wizard.Service.LocaleBundle.LocaleBundleAudit
 exportLocaleBundle :: String -> AppContextM BSL.ByteString
 exportLocaleBundle lclId = do
   locale <- findLocaleById lclId
-  content <- getLocale locale.lId
+  content <- retrieveLocale locale.lId
   return $ toLocaleArchive locale content
 
 pullLocaleBundleFromRegistry :: String -> AppContextM ()
 pullLocaleBundleFromRegistry lclId =
   runInTransaction $ do
-    checkPermission _TML_PERM
+    checkPermission _DOC_TML_WRITE_PERM
     lb <- catchError (retrieveLocaleBundleById lclId) handleError
     _ <- importAndConvertLocaleBundle lb True
     return ()

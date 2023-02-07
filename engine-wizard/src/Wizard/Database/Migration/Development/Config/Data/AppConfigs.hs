@@ -4,9 +4,10 @@ import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import Data.Time
 
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Shared.Database.Migration.Development.Template.Data.Templates
-import Shared.Model.Template.Template
+import Shared.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.App.App
 import Wizard.Model.Common.SensitiveData
@@ -31,7 +32,6 @@ defaultAppConfig =
     , registry = defaultRegistry
     , knowledgeModel = defaultKnowledgeModel
     , questionnaire = defaultQuestionnaire
-    , template = defaultTemplate
     , submission = defaultSubmission
     , owl = defaultOwl
     , mailConfigUuid = Nothing
@@ -207,9 +207,6 @@ defaultFeedback =
     , repo = "dsw-test"
     }
 
-defaultTemplate :: AppConfigTemplate
-defaultTemplate = AppConfigTemplate {recommendedTemplateId = Just $ commonWizardTemplate.tId}
-
 defaultSubmission :: AppConfigSubmission
 defaultSubmission =
   AppConfigSubmission {enabled = True, services = [defaultSubmissionService]}
@@ -234,8 +231,8 @@ defaultSubmissionServiceSecretProp = "Secret"
 defaultSubmissionServiceSupportedFormat :: AppConfigSubmissionServiceSupportedFormat
 defaultSubmissionServiceSupportedFormat =
   AppConfigSubmissionServiceSupportedFormat
-    { templateId = commonWizardTemplate.tId
-    , formatUuid = templateFormatJson.uuid
+    { templateId = wizardDocumentTemplate.tId
+    , formatUuid = formatJson.uuid
     }
 
 defaultSubmissionServiceRequest :: AppConfigSubmissionServiceRequest

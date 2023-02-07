@@ -14,7 +14,6 @@ data ClientConfigDTO = ClientConfigDTO
   , lookAndFeel :: AppConfigLookAndFeel
   , registry :: ClientConfigRegistryDTO
   , questionnaire :: ClientConfigQuestionnaireDTO
-  , template :: AppConfigTemplate
   , submission :: SimpleFeature
   , cloud :: ClientConfigCloudDTO
   , locales :: [ClientConfigLocaleDTO]

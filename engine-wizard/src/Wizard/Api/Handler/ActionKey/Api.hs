@@ -7,7 +7,7 @@ import Wizard.Api.Handler.ActionKey.List_POST
 import Wizard.Model.Context.BaseContext
 
 type ActionKeyAPI =
-  Tags "Action"
+  Tags "Action Key"
     :> List_POST
 
 actionKeyApi :: Proxy ActionKeyAPI

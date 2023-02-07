@@ -7,8 +7,7 @@ import qualified Data.Map.Strict as M
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
-import Test.Hspec.Wai hiding (shouldRespondWith)
-import Test.Hspec.Wai.Matcher
+import Test.Hspec.Wai
 
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationCreateJM ()
@@ -61,14 +60,14 @@ test_201 appContext =
     do
       let expStatus = 201
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-      let expDto = toDTO (orgGlobal {active = False})
+      let expDto = toDTO (orgGlobal {active = False, logo = Nothing, oRole = UserRole})
       let expType (a :: OrganizationDTO) = a
       -- AND: Prepare DB
       runInContextIO deleteOrganizations appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      assertResponse' expStatus expHeaders expDto expType response ["organizationId", "name", "description", "email"]
+      assertResponseWithoutFields expStatus expHeaders expDto expType response ["token", "createdAt", "updatedAt"]
       -- AND: Find result in DB and compare with expectation state
       organizationFromDb <- getFirstFromDB findOrganizations appContext
       compareOrganizationDtosWhenCreate organizationFromDb reqDto
@@ -89,17 +88,15 @@ test_400_invalid_organizationId appContext =
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       let expDto = ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT])
-      let expBody = encode expDto
+      let expType (a :: AppError) = a
       -- AND: Prepare DB
       runInContextIO deleteOrganizations appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      assertResponse expStatus expHeaders expDto expType response
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findOrganizations appContext 0
 
@@ -113,15 +110,13 @@ test_400_organizationId_duplication appContext =
       let orgId = orgGlobalCreate.organizationId
       -- AND: Prepare expectation
       let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       let expDto = ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__ORGANIZATION_ID_UNIQUENESS orgId])
-      let expBody = encode expDto
+      let expType (a :: AppError) = a
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      assertResponse expStatus expHeaders expDto expType response
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findOrganizations appContext 2
 
@@ -137,14 +132,12 @@ test_400_email_duplication appContext =
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       let expDto = ValidationError [] (M.singleton "email" [_ERROR_VALIDATION__ORGANIZATION_EMAIL_UNIQUENESS orgEmail])
-      let expBody = encode expDto
+      let expType (a :: AppError) = a
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      assertResponse expStatus expHeaders expDto expType response
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findOrganizations appContext 2

@@ -6,15 +6,15 @@ import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.DAO.PersistentCommand.PersistentCommandDAO
 import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
+import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as TML_Schema
 import qualified Registry.Database.Migration.Development.Locale.LocaleSchemaMigration as LOC_Schema
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import qualified Registry.Database.Migration.Development.Organization.OrganizationSchemaMigration as ORG_Schema
 import qualified Registry.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
-import qualified Registry.Database.Migration.Development.Template.TemplateSchemaMigration as TML_Schema
+import Shared.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.Database.DAO.Locale.LocaleDAO
 import Shared.Database.DAO.Package.PackageDAO
-import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 
 import Registry.Specs.Common
@@ -52,6 +52,6 @@ resetDB appContext = do
   runInContext (insertPackage globalPackage) appContext
   runInContext (insertPackage netherlandsPackage) appContext
   runInContext (insertPackage netherlandsPackageV2) appContext
-  runInContext deleteTemplates appContext
+  runInContext deleteDocumentTemplates appContext
   runInContext deleteLocales appContext
   return ()

@@ -34,12 +34,12 @@ import Wizard.Service.Submission.SubmissionMapper
 import Wizard.Service.Submission.SubmissionUtil
 import Wizard.Service.User.UserProfileService
 
-getAvailableServicesForSubmission :: String -> AppContextM [SubmissionServiceSimpleDTO]
+getAvailableServicesForSubmission :: U.UUID -> AppContextM [SubmissionServiceSimpleDTO]
 getAvailableServicesForSubmission docUuid = do
   checkIfSubmissionIsEnabled
   checkPermissionToSubmission docUuid
   appConfig <- getAppConfig
-  doc <- findDocumentById docUuid
+  doc <- findDocumentByUuid docUuid
   checkEditPermissionToDoc (U.toString doc.questionnaireUuid)
   return . fmap toSubmissionServiceSimpleDTO . filter (filterService doc) $ appConfig.submission.services
   where
@@ -47,17 +47,17 @@ getAvailableServicesForSubmission docUuid = do
     filterService doc service = any (filterServiceFormat doc) $ service.supportedFormats
     filterServiceFormat :: Document -> AppConfigSubmissionServiceSupportedFormat -> Bool
     filterServiceFormat doc supportedFormat =
-      (supportedFormat.templateId == doc.templateId) && (supportedFormat.formatUuid == doc.formatUuid)
+      (supportedFormat.templateId == doc.documentTemplateId) && (supportedFormat.formatUuid == doc.formatUuid)
 
-getSubmissionsForDocument :: String -> AppContextM [SubmissionDTO]
+getSubmissionsForDocument :: U.UUID -> AppContextM [SubmissionDTO]
 getSubmissionsForDocument docUuid = do
   checkIfSubmissionIsEnabled
-  doc <- findDocumentById docUuid
+  doc <- findDocumentByUuid docUuid
   checkViewPermissionToDoc (U.toString doc.questionnaireUuid)
   submissions <- findSubmissionsByDocumentUuid docUuid
   traverse enhanceSubmission submissions
 
-submitDocument :: String -> SubmissionCreateDTO -> AppContextM SubmissionDTO
+submitDocument :: U.UUID -> SubmissionCreateDTO -> AppContextM SubmissionDTO
 submitDocument docUuid reqDto =
   runInTransaction $ do
     checkIfSubmissionIsEnabled
@@ -65,11 +65,11 @@ submitDocument docUuid reqDto =
     appConfig <- getAppConfig
     case L.find (\s -> s.sId == reqDto.serviceId) appConfig.submission.services of
       Just definition -> do
-        doc <- findDocumentById docUuid
+        doc <- findDocumentByUuid docUuid
         checkEditPermissionToDoc (U.toString doc.questionnaireUuid)
-        docContent <- getDocumentContent docUuid
+        docContent <- retrieveDocumentContent docUuid
         userProps <- getUserProps definition
-        sub <- createSubmission (u' docUuid) reqDto
+        sub <- createSubmission docUuid reqDto
         response <- uploadDocument definition.request userProps docContent
         let updatedSub =
               case response of

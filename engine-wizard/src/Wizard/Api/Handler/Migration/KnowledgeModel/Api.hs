@@ -11,7 +11,7 @@ import Wizard.Api.Handler.Migration.KnowledgeModel.List_Current_POST
 import Wizard.Model.Context.BaseContext
 
 type MigrationAPI =
-  Tags "Knowledge Model Migration"
+  Tags "Branch Migration"
     :> ( List_Current_GET
           :<|> List_Current_POST
           :<|> List_Current_DELETE

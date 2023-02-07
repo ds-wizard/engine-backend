@@ -5,14 +5,14 @@ import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
-import Shared.Constant.Template
+import Shared.Constant.DocumentTemplate
+import Shared.Model.DocumentTemplate.DocumentTemplate
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
-import Shared.Model.Template.Template
+import Shared.Service.DocumentTemplate.DocumentTemplateMapper
+import qualified Shared.Service.DocumentTemplate.DocumentTemplateMapper as STM
 import qualified Shared.Service.Package.PackageMapper as SPM
-import Shared.Service.Template.TemplateMapper
-import qualified Shared.Service.Template.TemplateMapper as STM
 import Shared.Util.Coordinate
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
@@ -29,6 +29,7 @@ import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Constant.Acl
 import Wizard.Model.Acl.Acl
+import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireContent
@@ -37,8 +38,8 @@ import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
+import Wizard.Model.Questionnaire.QuestionnaireSuggestion
 import Wizard.Model.Report.Report
-import Wizard.Model.Template.TemplateState
 import Wizard.Model.User.User
 import Wizard.Service.Acl.AclMapper
 import qualified Wizard.Service.Package.PackageMapper as PM
@@ -106,8 +107,8 @@ toDetailWithPackageWithEventsDTO
   -> [String]
   -> KnowledgeModel
   -> QuestionnaireState
-  -> Maybe Template
-  -> Maybe TemplateFormat
+  -> Maybe DocumentTemplate
+  -> Maybe DocumentTemplateFormat
   -> M.Map String Reply
   -> M.Map String [QuestionnaireCommentThreadDTO]
   -> [QuestionnairePermRecordDTO]
@@ -127,11 +128,11 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , packageVersions = L.sortBy compareVersion pkgVersions
     , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
     , projectTags = qtn.projectTags
-    , templateId = qtn.templateId
-    , template = fmap STM.toDTO mTemplate
+    , documentTemplateId = qtn.documentTemplateId
+    , documentTemplate = fmap STM.toDTO mTemplate
     , formatUuid = qtn.formatUuid
     , format = fmap toFormatDTO mFormat
-    , templateState = toQuestionnaireDetailTemplateState mTemplate
+    , documentTemplateState = toQuestionnaireDetailTemplateState mTemplate
     , knowledgeModel = knowledgeModel
     , replies = replies
     , commentThreadsMap = threads
@@ -173,7 +174,7 @@ toChangeDTO qtn =
     , sharing = qtn.sharing
     , projectTags = qtn.projectTags
     , permissions = qtn.permissions
-    , templateId = qtn.templateId
+    , documentTemplateId = qtn.documentTemplateId
     , formatUuid = qtn.formatUuid
     , isTemplate = qtn.isTemplate
     }
@@ -217,6 +218,9 @@ toGroupPermRecordDTO record group =
 toSimple :: Questionnaire -> QuestionnaireSimple
 toSimple qtn = QuestionnaireSimple {uuid = qtn.uuid, name = qtn.name}
 
+toSuggestion :: Questionnaire -> QuestionnaireSuggestion
+toSuggestion qtn = QuestionnaireSuggestion {uuid = qtn.uuid, name = qtn.name, description = qtn.description}
+
 toCreateFromTemplateDTO :: Questionnaire -> QuestionnaireCreateFromTemplateDTO
 toCreateFromTemplateDTO qtn =
   QuestionnaireCreateFromTemplateDTO
@@ -224,13 +228,13 @@ toCreateFromTemplateDTO qtn =
     , questionnaireUuid = qtn.uuid
     }
 
-toQuestionnaireDetailTemplateState :: Maybe Template -> Maybe TemplateState
+toQuestionnaireDetailTemplateState :: Maybe DocumentTemplate -> Maybe DocumentTemplateState
 toQuestionnaireDetailTemplateState =
   fmap
-    ( \template ->
-        if template.metamodelVersion /= templateMetamodelVersion
-          then UnsupportedMetamodelVersionTemplateState
-          else UnknownTemplateState
+    ( \tml ->
+        if tml.metamodelVersion /= documentTemplateMetamodelVersion
+          then UnsupportedMetamodelVersionDocumentTemplateState
+          else UnknownDocumentTemplateState
     )
 
 fromChangeDTO
@@ -251,7 +255,7 @@ fromChangeDTO qtn dto visibility sharing currentUser now =
     , packageId = qtn.packageId
     , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
     , projectTags = dto.projectTags
-    , templateId = dto.templateId
+    , documentTemplateId = dto.documentTemplateId
     , formatUuid = dto.formatUuid
     , creatorUuid = qtn.creatorUuid
     , permissions = fmap sanitizePerms dto.permissions
@@ -294,7 +298,7 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId
     , packageId = pkgId
     , selectedQuestionTagUuids = dto.questionTagUuids
     , projectTags = []
-    , templateId = dto.templateId
+    , documentTemplateId = dto.documentTemplateId
     , formatUuid = dto.formatUuid
     , creatorUuid = mCurrentUserUuid
     , permissions =

@@ -15,9 +15,9 @@ import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Service.Package.PackageMapper
 import Wizard.Api.Resource.Package.PackageSuggestionJM ()
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper

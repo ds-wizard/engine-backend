@@ -88,10 +88,10 @@ deleteOrganization orgId =
     deleteOrganizationByOrgId orgId
     return Nothing
 
-changeOrganizationTokenByHash :: String -> Maybe String -> AppContextM OrganizationDTO
-changeOrganizationTokenByHash orgId maybeHash =
+changeOrganizationTokenByHash :: String -> String -> AppContextM OrganizationDTO
+changeOrganizationTokenByHash orgId hash =
   runInTransaction $ do
-    actionKey <- getActionKeyByHash maybeHash
+    actionKey <- findActionKeyByHash hash
     org <- findOrganizationByOrgId actionKey.organizationId
     orgToken <- generateNewOrgToken
     now <- liftIO getCurrentTime
@@ -111,10 +111,10 @@ resetOrganizationToken reqDto =
         `catchError` (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_ORGANIZATION__RECOVERY_EMAIL_NOT_SENT)
     return ()
 
-changeOrganizationState :: String -> Maybe String -> OrganizationStateDTO -> AppContextM OrganizationDTO
-changeOrganizationState orgId maybeHash reqDto =
+changeOrganizationState :: String -> String -> OrganizationStateDTO -> AppContextM OrganizationDTO
+changeOrganizationState orgId hash reqDto =
   runInTransaction $ do
-    actionKey <- getActionKeyByHash maybeHash
+    actionKey <- findActionKeyByHash hash
     org <- findOrganizationByOrgId actionKey.organizationId
     updatedOrg <- updateOrgTimestamp $ org {active = reqDto.active}
     updateOrganization updatedOrg

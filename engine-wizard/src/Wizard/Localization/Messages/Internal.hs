@@ -45,11 +45,6 @@ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_NEW_METAMODEL entityName =
 _ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT =
   "The questionnaire invitation email could not be sent. Please contact administrator."
 
--- Template
-_ERROR_SERVICE_TEMPLATE__LOADING_TEMPLATE_FAILED reason = "Couldn't load a template from file (" ++ reason ++ ")"
-
-_ERROR_SERVICE_TEMPLATE__NO_TEMPLATES_IN_SYSTEM = "There are no specified templates in the system."
-
 -- Token
 _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN = "Unable to get token"
 

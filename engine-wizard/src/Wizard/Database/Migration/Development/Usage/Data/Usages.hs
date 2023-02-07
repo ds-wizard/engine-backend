@@ -9,9 +9,11 @@ defaultUsage =
     , activeUsers = defaultUsageActiveUsers
     , knowledgeModels = defaultUsageKnowledgeModels
     , branches = defaultUsageBranches
-    , templates = defaultUsageTemplates
+    , documentTemplates = defaultUsageDocumentTemplates
+    , documentTemplateDrafts = defaultUsageDocumentTemplateDrafts
     , questionnaires = defaultUsageQuestionnaires
     , documents = defaultUsageDocuments
+    , locales = defaultUsageLocales
     , storage = defaultUsageStorage
     }
 
@@ -27,14 +29,20 @@ defaultUsageKnowledgeModels = UsageEntryDTO {current = 2, max = Nothing}
 defaultUsageBranches :: UsageEntryDTO
 defaultUsageBranches = UsageEntryDTO {current = 0, max = Nothing}
 
-defaultUsageTemplates :: UsageEntryDTO
-defaultUsageTemplates = UsageEntryDTO {current = 0, max = Nothing}
+defaultUsageDocumentTemplates :: UsageEntryDTO
+defaultUsageDocumentTemplates = UsageEntryDTO {current = 0, max = Nothing}
+
+defaultUsageDocumentTemplateDrafts :: UsageEntryDTO
+defaultUsageDocumentTemplateDrafts = UsageEntryDTO {current = 0, max = Nothing}
 
 defaultUsageQuestionnaires :: UsageEntryDTO
 defaultUsageQuestionnaires = UsageEntryDTO {current = 0, max = Nothing}
 
 defaultUsageDocuments :: UsageEntryDTO
 defaultUsageDocuments = UsageEntryDTO {current = 0, max = Nothing}
+
+defaultUsageLocales :: UsageEntryDTO
+defaultUsageLocales = UsageEntryDTO {current = 0, max = Nothing}
 
 defaultUsageStorage :: UsageEntryDTO
 defaultUsageStorage = UsageEntryDTO {current = 0, max = Nothing}

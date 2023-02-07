@@ -1,5 +1,7 @@
 module Wizard.Api.Handler.User.Detail_Password_PUT where
 
+import Data.Maybe (fromMaybe)
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -37,5 +39,6 @@ detail_password_PUT mTokenHeader mServerUrl reqDto uUuid mHash =
             changeUserPasswordByAdmin uUuid reqDto
             return NoContent
           else do
-            changeUserPasswordByHash uUuid mHash reqDto
+            let hash = fromMaybe (U.toString U.nil) mHash
+            changeUserPasswordByHash uUuid hash reqDto
             return NoContent

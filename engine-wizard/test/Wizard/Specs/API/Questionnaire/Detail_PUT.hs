@@ -21,12 +21,12 @@ import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
@@ -67,7 +67,7 @@ reqDtoT qtn =
     , sharing = qtn.sharing
     , projectTags = qtn.projectTags
     , permissions = qtn.permissions
-    , templateId = qtn.templateId
+    , documentTemplateId = qtn.documentTemplateId
     , formatUuid = qtn.formatUuid
     , isTemplate = qtn.isTemplate
     }
@@ -148,7 +148,7 @@ create_test_200 title appContext qtn qtnEdited qtnCtn permissions showComments a
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      assertResponse expStatus expHeaders expDto expType response ["updatedAt"]
+      assertResponseWithoutFields expStatus expHeaders expDto expType response ["updatedAt"]
       -- AND: Find a result in DB
       assertExistenceOfQuestionnaireInDB appContext qtnEdited
 

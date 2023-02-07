@@ -18,6 +18,7 @@ import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
+import Wizard.Service.UserToken.UserTokenService
 import Wizard.Util.Context
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -297,4 +298,29 @@ questionnaire_squashEventsForQuestionnaire =
 questionnaire_squashEventsForQuestionnaireFn :: DevExecutionDTO -> AppContextM String
 questionnaire_squashEventsForQuestionnaireFn reqDto = do
   squashQuestionnaireEventsForQuestionnaire (head reqDto.parameters)
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- USER
+-- ---------------------------------------------------------------------------------------------------------------------
+user :: DevSection
+user =
+  DevSection
+    { name = "User"
+    , description = Nothing
+    , operations = [user_cleanTokens]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+user_cleanTokens :: DevOperation
+user_cleanTokens =
+  DevOperation
+    { name = "Delete expired token"
+    , description = Nothing
+    , parameters = []
+    }
+
+user_cleanTokensFn :: DevExecutionDTO -> AppContextM String
+user_cleanTokensFn reqDto = do
+  cleanTokens
   return "Done"

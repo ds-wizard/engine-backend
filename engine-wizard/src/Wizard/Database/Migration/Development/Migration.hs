@@ -20,6 +20,8 @@ import qualified Wizard.Database.Migration.Development.Config.ConfigMigration as
 import qualified Wizard.Database.Migration.Development.Config.ConfigSchemaMigration as CFG_Schema
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as TML_Schema
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as F
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
 import qualified Wizard.Database.Migration.Development.Limit.AppLimitMigration as AL
@@ -45,8 +47,6 @@ import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.Que
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as R_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
-import qualified Wizard.Database.Migration.Development.Template.TemplateSchemaMigration as TML_Schema
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as U_Schema
 import Wizard.Util.Logger

@@ -14,21 +14,22 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.Package.PackageDAO
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
@@ -169,8 +170,8 @@ create_test_200 title appContext qtn qtnCtn showComments authHeader permissions 
               ["1.0.0"]
               km1WithQ4
               QSDefault
-              (Just commonWizardTemplate)
-              (Just templateFormatJson)
+              (Just wizardDocumentTemplate)
+              (Just formatJson)
               fReplies
               commentThreadsMap
               permissions

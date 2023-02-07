@@ -19,11 +19,11 @@ import Shared.S3.Common
 import Shared.Service.Config.BuildInfoConfigService
 
 import Registry.Specs.API.ActionKey.APISpec
+import Registry.Specs.API.DocumentTemplate.APISpec
 import Registry.Specs.API.Info.APISpec
 import Registry.Specs.API.Locale.APISpec
 import Registry.Specs.API.Organization.APISpec
 import Registry.Specs.API.Package.APISpec
-import Registry.Specs.API.Template.APISpec
 import Registry.Specs.Service.Organization.OrganizationValidationSpec
 import Registry.Specs.Service.Package.PackageValidationSpec
 import Registry.TestMigration

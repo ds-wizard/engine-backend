@@ -2,15 +2,16 @@ module SharedTest.Specs.API.Common where
 
 import Control.Exception (AssertionFailed (..), throw)
 import Control.Monad.IO.Class
-import Data.Aeson (FromJSON, Object, ToJSON, Value, eitherDecode, encode)
+import Data.Aeson (Array, FromJSON, Object, ToJSON, Value (..), eitherDecode, encode)
 import qualified Data.Aeson.KeyMap as KM
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Foldable
-import Data.Maybe (fromMaybe)
 import Data.String (fromString)
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai.Test hiding (request)
 import Test.Hspec
+import qualified Test.Hspec.Expectations.Json as HJSON
 import qualified Test.Hspec.Expectations.Pretty as HP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
@@ -27,13 +28,11 @@ reqCtHeader :: Header
 reqCtHeader = contentTypeHeaderJSON
 
 resCtHeaderPlain :: Header
-resCtHeaderPlain = contentTypeHeaderJSON
+resCtHeaderPlain = reqCtHeader
 
 resCtHeader = "Content-Type" <:> "application/json"
 
 resCtHeaderUtf8 = "Content-Type" <:> "application/json;charset=utf-8"
-
-resCtHeaderJavascript = "Content-Type" <:> "application/javascript"
 
 resCorsHeadersPlain :: [Header]
 resCorsHeadersPlain =
@@ -113,7 +112,13 @@ destructResponse' response = do
   case eitherDecode body of
     Right resBody -> return (status, headers, resBody)
     Left error -> do
-      liftIO . print $ error
+      liftIO . putStrLn $ "------------------------------------------------------"
+      liftIO . putStrLn $ "- Response Error                                     -"
+      liftIO . putStrLn $ "------------------------------------------------------"
+      liftIO . putStrLn . BSL.unpack $ body
+      liftIO . putStrLn $ "------------------------------------------------------"
+      liftIO . putStrLn $ f' "Error in deserialization: '%s'" [error]
+      liftIO . putStrLn $ "------------------------------------------------------"
       throw . AssertionFailed $ f' "Failed to deserialize the response. Error: %s" [error]
 
 assertResponse
@@ -123,13 +128,11 @@ assertResponse
   -> expDto
   -> (expType -> expType)
   -> SResponse
-  -> [String]
   -> WaiSession () ()
-assertResponse = createAssertResponse fieldModifier fieldModifier
-  where
-    fieldModifier body = fmap (\(k, v) -> (show k, v)) . KM.toList . foldl (\acc f -> KM.delete (fromString f) acc) body
+assertResponse expStatus expHeaders expDto expType response =
+  assertResponseWithoutFields expStatus expHeaders expDto expType response []
 
-assertResponse'
+assertResponseWithoutFields
   :: (ToJSON expDto, FromJSON expType)
   => Int
   -> ResponseHeaders
@@ -138,43 +141,75 @@ assertResponse'
   -> SResponse
   -> [String]
   -> WaiSession () ()
-assertResponse' = createAssertResponse expFieldModifier resFieldModifier
-  where
-    expFieldModifier expBody = fmap (\f -> (f, fromMaybe "EXPECTED_FIELD_MISSING" $ KM.lookup (fromString f) expBody))
-    resFieldModifier resBody = fmap (\f -> (f, fromMaybe "RESULT_FIELD_MISSING" $ KM.lookup (fromString f) resBody))
-
-createAssertResponse
-  :: (ToJSON expDto, FromJSON expType)
-  => (Object -> [String] -> [(String, Value)])
-  -> (Object -> [String] -> [(String, Value)])
-  -> Int
-  -> ResponseHeaders
-  -> expDto
-  -> (expType -> expType)
-  -> SResponse
-  -> [String]
-  -> WaiSession () ()
-createAssertResponse expFieldModifier resFiledModifier expStatus expHeaders expDto expType response fields =
-  -- Prepare expectation
+assertResponseWithoutFields expStatus expHeaders expDto expType response fields =
+  -- Prepare functions
   do
+    let fieldModifier = foldl (\acc f -> KM.delete (fromString f) acc)
+    -- Prepare expectation
     let (Right expBody) = eitherDecode . encode $ expDto :: Either String Object
-    let expEntity = expFieldModifier expBody fields
-    let expResponse = MatchResponse expStatus expHeaders expEntity
+    let expEntity = fieldModifier expBody fields
+    let expResponse = MatchResponse expStatus expHeaders (encode expEntity)
     -- Prepare response
     let (SResponse (Status status _) headers bodyS) = response
     let (Right resBody) = eitherDecode bodyS :: Either String Object
     let resHeaders = filter (`elem` expHeaders) headers
-    let resEntity = resFiledModifier resBody fields
-    let resResponse = MatchResponse status resHeaders resEntity
+    let resEntity = fieldModifier resBody fields
+    let resResponse = MatchResponse status resHeaders (encode resEntity)
     -- Compare response with expectation
-    liftIO $ expResponse `HP.shouldBe` resResponse
+    case (status == expStatus, resHeaders == expHeaders) of
+      (True, True) -> liftIO $ Object resEntity `HJSON.shouldBeJson` Object expEntity
+      _ -> liftIO $ resResponse `HP.shouldBe` expResponse
     -- Check if response can be decoded to desired DTO
     let eDecodedDto = eitherDecode bodyS
     case eDecodedDto of
       Right decodedDto -> do
         let _ = expType decodedDto
         return ()
-      Left _ -> liftIO $ expectationFailure "Response matched successfully. However, the result DTO couldn't be decoded."
+      Left error ->
+        liftIO . expectationFailure $ f' "Response matched successfully. However, the result DTO couldn't be decoded. Error: %s" [error]
+
+assertListResponse
+  :: (ToJSON expDto, FromJSON expType)
+  => Int
+  -> ResponseHeaders
+  -> expDto
+  -> (expType -> expType)
+  -> SResponse
+  -> WaiSession () ()
+assertListResponse expStatus expHeaders expDto expType response =
+  -- Prepare expectation
+  do
+    let (Right expBody) = eitherDecode . encode $ expDto :: Either String Array
+    let expResponse = MatchResponse expStatus expHeaders (encode expBody)
+    -- Prepare response
+    let (SResponse (Status status _) headers bodyS) = response
+    let (Right resBody) = eitherDecode bodyS :: Either String Array
+    let resHeaders = filter (`elem` expHeaders) headers
+    let resResponse = MatchResponse status resHeaders (encode resBody)
+    -- Compare response with expectation
+    case (status == expStatus, resHeaders == expHeaders) of
+      (True, True) -> liftIO $ Array resBody `HJSON.shouldBeJson` Array expBody
+      _ -> liftIO $ resResponse `HP.shouldBe` expResponse
+    -- Check if response can be decoded to desired DTO
+    let eDecodedDto = eitherDecode bodyS
+    case eDecodedDto of
+      Right decodedDto -> do
+        let _ = expType decodedDto
+        return ()
+      Left error ->
+        liftIO . expectationFailure $ f' "Response matched successfully. However, the result DTO couldn't be decoded. Error: %s" [error]
+
+assertEmptyResponse :: Int -> ResponseHeaders -> SResponse -> WaiSession () ()
+assertEmptyResponse expStatus expHeaders response =
+  -- Prepare expectation
+  do
+    let expResponse = MatchResponse expStatus expHeaders ""
+    -- Prepare response
+    let (SResponse (Status status _) headers bodyS) = response
+    let resHeaders = filter (`elem` expHeaders) headers
+    let resResponse = MatchResponse status resHeaders ""
+    -- Compare response with expectation
+    liftIO $ resResponse `HP.shouldBe` expResponse
 
 data MatchResponse body = MatchResponse
   { status :: Int

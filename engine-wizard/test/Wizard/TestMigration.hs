@@ -1,7 +1,7 @@
 module Wizard.TestMigration where
 
+import Shared.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.Database.DAO.Package.PackageDAO
-import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.App.AppDAO
@@ -10,6 +10,7 @@ import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Database.DAO.Limit.AppLimitDAO
 import Wizard.Database.DAO.Locale.LocaleDAO
@@ -39,6 +40,8 @@ import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigrat
 import qualified Wizard.Database.Migration.Development.Config.ConfigSchemaMigration as CFG_Schema
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as TML_Schema
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
 import qualified Wizard.Database.Migration.Development.Limit.AppLimitSchemaMigration as AL_Schema
 import Wizard.Database.Migration.Development.Limit.Data.AppLimits
@@ -55,8 +58,6 @@ import qualified Wizard.Database.Migration.Development.Questionnaire.Questionnai
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QI_Schema
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as R_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
-import qualified Wizard.Database.Migration.Development.Template.TemplateSchemaMigration as TML_Schema
 import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as U_Schema
@@ -151,7 +152,8 @@ resetDB appContext = do
   runInContext deleteQuestionnaireCommentThreads appContext
   runInContext deleteQuestionnaires appContext
   runInContext deleteQuestionnaireImporters appContext
-  runInContext deleteTemplates appContext
+  runInContext deleteDrafts appContext
+  runInContext deleteDocumentTemplates appContext
   runInContext deletePackages appContext
   runInContext deleteUserTokens appContext
   runInContext deleteUsers appContext

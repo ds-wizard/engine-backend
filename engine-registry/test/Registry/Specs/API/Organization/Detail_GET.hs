@@ -2,14 +2,12 @@ module Registry.Specs.API.Organization.Detail_GET (
   detail_get,
 ) where
 
-import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
-import Test.Hspec.Wai hiding (shouldRespondWith)
-import Test.Hspec.Wai.Matcher
+import Test.Hspec.Wai
 
-import Registry.Api.Resource.Organization.OrganizationJM ()
+import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Service.Organization.OrganizationMapper
@@ -47,15 +45,13 @@ test_200 appContext =
     -- GIVEN: Prepare expectation
     do
       let expStatus = 200
-      let expHeaders = resCtHeader : resCorsHeaders
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       let expDto = toDTO orgGlobal
-      let expBody = encode expDto
+      let expType (a :: OrganizationDTO) = a
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      assertResponse expStatus expHeaders expDto expType response
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -14,12 +14,12 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Service.Package.PackageMapper
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Database.Migration.Development.Registry.Data.RegistryPackages
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper
 

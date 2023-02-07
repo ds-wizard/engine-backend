@@ -41,7 +41,6 @@ instance FromJSON ServerConfigGeneral where
     serverPort <- o .:? "serverPort" .!= defaultGeneral.serverPort
     secret <- o .:? "secret" .!= defaultGeneral.secret
     integrationConfig <- o .:? "integrationConfig" .!= defaultGeneral.integrationConfig
-    remoteLocalizationUrl <- o .:? "remoteLocalizationUrl" .!= defaultGeneral.remoteLocalizationUrl
     clientStyleBuilderUrl <- o .:? "clientStyleBuilderUrl" .!= defaultGeneral.clientStyleBuilderUrl
     return ServerConfigGeneral {..}
   parseJSON _ = mzero

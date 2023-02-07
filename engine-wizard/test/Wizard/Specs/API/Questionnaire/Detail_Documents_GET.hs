@@ -12,7 +12,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Database.Migration.Development.Template.Data.Templates
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
@@ -21,10 +21,10 @@ import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
@@ -92,7 +92,7 @@ create_test_200 title appContext authHeader =
               "documents"
               (PageMetadata 20 2 1 0)
               [toDTO doc1 (Just questionnaire6Simple) [], toDTO (doc2 {creatorUuid = Just userIsaac.uuid}) (Just questionnaire6Simple) []]
-      let expBody = encode (fmap (\x -> x commonWizardTemplate) expDto)
+      let expBody = encode (fmap (\x -> x wizardDocumentTemplate) expDto)
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

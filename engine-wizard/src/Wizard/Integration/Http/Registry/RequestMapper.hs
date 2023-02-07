@@ -6,12 +6,13 @@ import Servant
 import Servant.Client
 import Prelude hiding (lookup)
 
+import qualified Registry.Api.Handler.DocumentTemplate.List_GET as TML_List_GET
 import qualified Registry.Api.Handler.Locale.List_GET as LOC_List_GET
 import Registry.Api.Handler.Organization.Detail_State_PUT
 import Registry.Api.Handler.Organization.List_POST
 import Registry.Api.Handler.Organization.List_Simple_GET
 import qualified Registry.Api.Handler.Package.List_GET as PKG_List_GET
-import qualified Registry.Api.Handler.Template.List_GET as TML_List_GET
+import Registry.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Registry.Api.Resource.Locale.LocaleDTO
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationCreateJM ()
@@ -19,11 +20,10 @@ import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateDTO
 import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Registry.Api.Resource.Package.PackageSimpleDTO
-import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Constant.Api
+import Shared.Constant.DocumentTemplate
 import Shared.Constant.KnowledgeModel
-import Shared.Constant.Template
 import Shared.Util.String (f', splitOn)
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Model.Config.AppConfig
@@ -48,7 +48,7 @@ toConfirmOrganizationRegistrationRequest reqDto =
     detail_state_PUT_Api
     (OrganizationStateDTO {active = True})
     reqDto.organizationId
-    (Just reqDto.hash)
+    reqDto.hash
 
 toRetrievePackagesRequest
   :: AppConfigRegistry -> InstanceStatistics -> ClientM (Headers '[Header "x-trace-uuid" String] [PackageSimpleDTO])
@@ -78,14 +78,14 @@ toRetrievePackagesRequest appConfig iStat =
     metamodelVersion = Just kmMetamodelVersion
 
 toRetrieveTemplatesRequest
-  :: AppConfigRegistry -> ClientM (Headers '[Header "x-trace-uuid" String] [TemplateSimpleDTO])
+  :: AppConfigRegistry -> ClientM (Headers '[Header "x-trace-uuid" String] [DocumentTemplateSimpleDTO])
 toRetrieveTemplatesRequest appConfig =
   client TML_List_GET.list_GET_Api mTokenHeader organizationId tmlId metamodelVersion
   where
     mTokenHeader = Just $ "Bearer " ++ appConfig.token
     organizationId = Nothing
     tmlId = Nothing
-    metamodelVersion = Just templateMetamodelVersion
+    metamodelVersion = Just documentTemplateMetamodelVersion
 
 toRetrieveLocaleRequest :: String -> AppConfigRegistry -> ClientM (Headers '[Header "x-trace-uuid" String] [LocaleDTO])
 toRetrieveLocaleRequest version appConfig =
@@ -113,7 +113,7 @@ toRetrieveTemplateBundleByIdRequest :: ServerConfigRegistry -> AppConfigRegistry
 toRetrieveTemplateBundleByIdRequest serverConfig appConfig tmlId =
   HttpRequest
     { requestMethod = "GET"
-    , requestUrl = serverConfig.url ++ "/templates/" ++ tmlId ++ "/bundle"
+    , requestUrl = serverConfig.url ++ "/document-templates/" ++ tmlId ++ "/bundle"
     , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig.token)]
     , requestBody = BS.empty
     , multipartFileName = Nothing

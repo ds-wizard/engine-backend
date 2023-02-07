@@ -6,13 +6,15 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Int
 
+import Shared.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
+import Shared.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.Database.DAO.Locale.LocaleDAO
 import Shared.Database.DAO.Package.PackageDAO
-import Shared.Database.DAO.Template.TemplateAssetDAO
-import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Limit.AppLimitDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
@@ -65,11 +67,17 @@ checkQuestionnaireLimit = do
   count <- countQuestionnaires
   checkLimit "questionnaires" count limit.questionnaires
 
-checkTemplateLimit :: AppContextM ()
-checkTemplateLimit = do
+checkDocumentTemplateLimit :: AppContextM ()
+checkDocumentTemplateLimit = do
   limit <- findCurrentAppLimit
-  count <- countTemplatesGroupedByOrganizationIdAndKmId
-  checkLimit "knowledge models" count limit.templates
+  count <- countDocumentTemplatesGroupedByOrganizationIdAndKmId
+  checkLimit "document template" count limit.documentTemplates
+
+checkDocumentTemplateDraftLimit :: AppContextM ()
+checkDocumentTemplateDraftLimit = do
+  limit <- findCurrentAppLimit
+  count <- countDraftsGroupedByOrganizationIdAndKmId
+  checkLimit "document template draft" count limit.documentTemplateDrafts
 
 checkDocumentLimit :: AppContextM ()
 checkDocumentLimit = do
@@ -77,11 +85,17 @@ checkDocumentLimit = do
   count <- countDocuments
   checkLimit "documents" count limit.documents
 
+checkLocaleLimit :: AppContextM ()
+checkLocaleLimit = do
+  limit <- findCurrentAppLimit
+  count <- countLocalesGroupedByOrganizationIdAndLocaleId
+  checkLimit "locales" count limit.locales
+
 checkStorageSize :: Int64 -> AppContextM ()
 checkStorageSize newFileSize = do
   limit <- findCurrentAppLimit
   docSize <- sumDocumentFileSize
-  templateAssetSize <- sumTemplateAssetFileSize
+  templateAssetSize <- sumAssetFileSize
   let storageCount = docSize + templateAssetSize
   checkLimit "storage" (storageCount + newFileSize) limit.storage
 

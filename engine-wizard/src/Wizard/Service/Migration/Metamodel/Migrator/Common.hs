@@ -4,6 +4,7 @@ module Wizard.Service.Migration.Metamodel.Migrator.Common (
   getArrayField,
   migrateMetamodelVersionField,
   migrateEventsField,
+  validateMetamodelVersionField,
 ) where
 
 import Data.Aeson
@@ -15,8 +16,17 @@ import Shared.Constant.KnowledgeModel
 import Shared.Model.Error.Error
 import Shared.Util.JSON (convertValueToOject, getArrayField, getField)
 import Shared.Util.List (foldEither)
+import Wizard.Localization.Messages.Public
 import qualified Wizard.Metamodel.Migration.MigrationContext as EventMigrator
 import qualified Wizard.Metamodel.Migrator.EventMigrator as EventMigrator
+
+validateMetamodelVersionField :: Value -> Either AppError Value
+validateMetamodelVersionField value =
+  convertValueToOject value $ \object ->
+    getField "metamodelVersion" object $ \metamodelVersion ->
+      if metamodelVersion <= kmMetamodelVersion
+        then Right value
+        else Left . UserError $ _ERROR_VALIDATION__PKG_UNSUPPORTED_METAMODEL_VERSION metamodelVersion kmMetamodelVersion
 
 migrateMetamodelVersionField :: Value -> Either AppError Value
 migrateMetamodelVersionField value =

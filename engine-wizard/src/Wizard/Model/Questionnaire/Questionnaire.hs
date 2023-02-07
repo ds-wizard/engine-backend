@@ -31,7 +31,7 @@ data Questionnaire = Questionnaire
   , packageId :: String
   , selectedQuestionTagUuids :: [U.UUID]
   , projectTags :: [String]
-  , templateId :: Maybe String
+  , documentTemplateId :: Maybe String
   , formatUuid :: Maybe U.UUID
   , creatorUuid :: Maybe U.UUID
   , permissions :: [QuestionnairePermRecord]
@@ -57,7 +57,7 @@ instance Eq Questionnaire where
       && a.packageId == b.packageId
       && a.selectedQuestionTagUuids == b.selectedQuestionTagUuids
       && a.projectTags == b.projectTags
-      && a.templateId == b.templateId
+      && a.documentTemplateId == b.documentTemplateId
       && a.formatUuid == b.formatUuid
       && a.creatorUuid == b.creatorUuid
       && a.permissions == b.permissions

@@ -8,7 +8,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Registry.RegistryTemplate
 
-entityName = "registry_template"
+entityName = "registry_document_template"
 
 findRegistryTemplates :: AppContextM [RegistryTemplate]
 findRegistryTemplates = createFindEntitiesFn entityName

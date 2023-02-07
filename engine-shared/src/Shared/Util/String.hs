@@ -21,7 +21,7 @@ import qualified Data.Text as T
 import Text.Regex (mkRegex, subRegex)
 
 trim :: String -> String
-trim = T.unpack . T.strip . T.pack
+trim = unwords . words
 
 lowerFirst :: String -> String
 lowerFirst [] = []

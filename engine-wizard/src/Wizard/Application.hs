@@ -17,7 +17,6 @@ import Shared.Constant.Component
 import Shared.Model.Config.ServerConfig
 import Shared.Service.Config.BuildInfoConfigService
 import Wizard.Bootstrap.DatabaseMigration
-import Wizard.Bootstrap.Localization
 import Wizard.Bootstrap.MetamodelMigration
 import Wizard.Bootstrap.RegistryClient
 import Wizard.Bootstrap.ServerCache
@@ -45,12 +44,10 @@ runApplication = do
       s3Client <- setupS3Client serverConfig.s3 httpClientManager
       httpClientManager <- setupHttpClientManager serverConfig.logging
       registryClient <- setupRegistryClient serverConfig httpClientManager
-      localization <- loadLocalization serverConfig
       cache <- setupServerCache serverConfig
       let baseContext =
             BaseContext
               { serverConfig = serverConfig
-              , localization = localization
               , buildInfoConfig = buildInfoConfig
               , dbPool = dbPool
               , s3Client = s3Client

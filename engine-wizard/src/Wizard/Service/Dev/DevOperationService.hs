@@ -13,7 +13,7 @@ import Wizard.Service.Dev.DevOperationDefinitions
 getDevOperations :: AppContextM [DevSection]
 getDevOperations = do
   checkPermission _DEV_PERM
-  return [branch, cache, config, feedback, persistentCommand, registry, questionnaire]
+  return [branch, cache, config, feedback, persistentCommand, registry, questionnaire, user]
 
 executeOperation :: DevExecutionDTO -> AppContextM AdminExecutionResultDTO
 executeOperation reqDto = do
@@ -38,6 +38,8 @@ execute reqDto
   | action reqDto questionnaire questionnaire_squashAllEvents = questionnaire_squashAllEventsFn reqDto
   | action reqDto questionnaire questionnaire_squashEventsForQuestionnaire =
       questionnaire_squashEventsForQuestionnaireFn reqDto
+  | action reqDto user user_cleanTokens =
+      user_cleanTokensFn reqDto
 
 action :: DevExecutionDTO -> DevSection -> DevOperation -> Bool
 action reqDto section operation = reqDto.sectionName == section.name && reqDto.operationName == operation.name

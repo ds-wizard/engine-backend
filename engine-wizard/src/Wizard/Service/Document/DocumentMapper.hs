@@ -4,19 +4,25 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Model.Common.Lens
-import Shared.Model.Template.Template
+import Shared.Model.DocumentTemplate.DocumentTemplate
+import Shared.Util.JSON
 import Shared.Util.List
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Document.Document
+import Wizard.Model.Document.DocumentContext (DocumentContext)
+import Wizard.Model.Document.DocumentContextJM ()
+import Wizard.Model.PersistentCommand.PersistentCommand
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireSimple
-import Wizard.Service.Template.TemplateMapper as Template
+import Wizard.Service.DocumentTemplate.DocumentTemplateMapper as DocumentTemplate
+import Wizard.Service.PersistentCommand.PersistentCommandMapper
 
-toDTO :: Document -> Maybe QuestionnaireSimple -> [SubmissionDTO] -> Template -> DocumentDTO
+toDTO :: Document -> Maybe QuestionnaireSimple -> [SubmissionDTO] -> DocumentTemplate -> DocumentDTO
 toDTO doc mQtn submissions tml =
   DocumentDTO
     { uuid = doc.uuid
@@ -24,7 +30,7 @@ toDTO doc mQtn submissions tml =
     , state = doc.state
     , questionnaire = mQtn
     , questionnaireEventUuid = doc.questionnaireEventUuid
-    , template = Template.toSimpleDTO tml
+    , documentTemplate = DocumentTemplate.toSimpleDTO tml
     , formatUuid = doc.formatUuid
     , fileName = doc.fileName
     , contentType = doc.contentType
@@ -38,21 +44,20 @@ toDTO doc mQtn submissions tml =
     , createdAt = doc.createdAt
     }
 
-fromCreateDTO
-  :: DocumentCreateDTO -> U.UUID -> DocumentDurability -> Int -> [QuestionnaireEvent] -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
-fromCreateDTO dto docUuid durability repliesHash qtnEvents mCurrentUser appUuid now =
+fromCreateDTO :: DocumentCreateDTO -> U.UUID -> Int -> [QuestionnaireEvent] -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
+fromCreateDTO dto docUuid repliesHash qtnEvents mCurrentUser appUuid now =
   Document
     { uuid = docUuid
     , name = dto.name
     , state = QueuedDocumentState
-    , durability = durability
+    , durability = PersistentDocumentDurability
     , questionnaireUuid = dto.questionnaireUuid
     , questionnaireEventUuid =
         case dto.questionnaireEventUuid of
           Just questionnaireEventUuid -> Just questionnaireEventUuid
           Nothing -> fmap getUuid (lastSafe qtnEvents)
     , questionnaireRepliesHash = repliesHash
-    , templateId = dto.templateId
+    , documentTemplateId = dto.documentTemplateId
     , formatUuid = dto.formatUuid
     , creatorUuid = fmap (.uuid) mCurrentUser
     , fileName = Nothing
@@ -64,3 +69,40 @@ fromCreateDTO dto docUuid durability repliesHash qtnEvents mCurrentUser appUuid 
     , finishedAt = Nothing
     , createdAt = now
     }
+
+fromTemporallyCreateDTO
+  :: U.UUID -> Questionnaire -> String -> U.UUID -> Int -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
+fromTemporallyCreateDTO docUuid qtn documentTemplateId formatUuid repliesHash mCurrentUser appUuid now =
+  Document
+    { uuid = docUuid
+    , name = qtn.name
+    , state = QueuedDocumentState
+    , durability = TemporallyDocumentDurability
+    , questionnaireUuid = qtn.uuid
+    , questionnaireEventUuid = fmap getUuid (lastSafe qtn.events)
+    , questionnaireRepliesHash = repliesHash
+    , documentTemplateId = documentTemplateId
+    , formatUuid = formatUuid
+    , creatorUuid = fmap (.uuid) mCurrentUser
+    , fileName = Nothing
+    , contentType = Nothing
+    , fileSize = Nothing
+    , workerLog = Nothing
+    , appUuid = appUuid
+    , retrievedAt = Nothing
+    , finishedAt = Nothing
+    , createdAt = now
+    }
+
+toDocPersistentCommand :: U.UUID -> DocumentContext -> Document -> PersistentCommand
+toDocPersistentCommand pUuid docContext doc =
+  toPersistentCommand
+    pUuid
+    "doc_worker"
+    "generateDocument"
+    (encodeJsonToString docContext)
+    10
+    False
+    doc.appUuid
+    doc.creatorUuid
+    doc.createdAt

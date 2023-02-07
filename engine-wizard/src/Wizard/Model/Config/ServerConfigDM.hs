@@ -35,12 +35,11 @@ defaultGeneral =
     , serverPort = 3000
     , secret = ""
     , integrationConfig = "engine-wizard/config/integration.yml"
-    , remoteLocalizationUrl = Nothing
     , clientStyleBuilderUrl = "http://wizard-style-builder:3002"
     }
 
 defaultJwt :: ServerConfigJwt
-defaultJwt = ServerConfigJwt {version = 3, expiration = 14}
+defaultJwt = ServerConfigJwt {version = 3, expiration = 14 * 24}
 
 defaultRoles :: ServerConfigRoles
 defaultRoles =
@@ -55,10 +54,10 @@ defaultRoles =
         , "QTN_PERM"
         , "QTN_IMPORTER_PERM"
         , "QTN_TML_PERM"
-        , "DMP_PERM"
+        , "DOC_TML_READ_PERM"
         , "CFG_PERM"
         , "SUBM_PERM"
-        , "TML_PERM"
+        , "DOC_TML_WRITE_PERM"
         , "DOC_PERM"
         , "LOC_PERM"
         ]
@@ -71,11 +70,11 @@ defaultRoles =
         , "QTN_PERM"
         , "QTN_IMPORTER_PERM"
         , "QTN_TML_PERM"
-        , "DMP_PERM"
+        , "DOC_TML_READ_PERM"
         , "SUBM_PERM"
-        , "TML_PERM"
+        , "DOC_TML_WRITE_PERM"
         ]
-    , researcher = ["PM_READ_PERM", "QTN_PERM", "DMP_PERM", "SUBM_PERM"]
+    , researcher = ["PM_READ_PERM", "QTN_PERM", "DOC_TML_READ_PERM", "SUBM_PERM"]
     }
 
 defaultRegistry :: ServerConfigRegistry

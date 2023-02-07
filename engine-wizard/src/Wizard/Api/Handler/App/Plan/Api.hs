@@ -9,16 +9,16 @@ import Wizard.Api.Handler.App.Plan.List_Current_GET
 import Wizard.Api.Handler.App.Plan.List_POST
 import Wizard.Model.Context.BaseContext
 
-type PlanAPI =
-  Tags "Plan"
+type AppPlanAPI =
+  Tags "App Plan"
     :> ( List_Current_GET
           :<|> List_POST
           :<|> Detail_PUT
           :<|> Detail_DELETE
        )
 
-planApi :: Proxy PlanAPI
-planApi = Proxy
+appPlanApi :: Proxy AppPlanAPI
+appPlanApi = Proxy
 
-planServer :: ServerT PlanAPI BaseContextM
-planServer = list_current_GET :<|> list_POST :<|> detail_PUT :<|> detail_DELETE
+appPlanServer :: ServerT AppPlanAPI BaseContextM
+appPlanServer = list_current_GET :<|> list_POST :<|> detail_PUT :<|> detail_DELETE

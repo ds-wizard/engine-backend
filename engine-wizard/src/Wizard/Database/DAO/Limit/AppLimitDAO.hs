@@ -37,7 +37,7 @@ updateAppLimitById appLimit = do
   let updatedAppLimit = appLimit {updatedAt = now}
   let sql =
         fromString
-          "UPDATE app_limit SET uuid = ?, users = ?, active_users = ?, knowledge_models = ?, branches = ?, templates = ?, questionnaires = ?, documents =?, storage = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
+          "UPDATE app_limit SET uuid = ?, users = ?, active_users = ?, knowledge_models = ?, branches = ?, document_templates = ?, questionnaires = ?, documents =?, storage = ?, created_at = ?, updated_at = ?, document_template_drafts = ?, locales = ? WHERE uuid = ?"
   let params = toRow updatedAppLimit ++ [toField updatedAppLimit.uuid]
   logQuery sql params
   let action conn = execute conn sql params
