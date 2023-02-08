@@ -14,6 +14,7 @@ import Wizard.Specs.Websocket.Questionnaire.Detail.ReopenCommentThreadSpec
 import Wizard.Specs.Websocket.Questionnaire.Detail.ResolveCommentThreadSpec
 import Wizard.Specs.Websocket.Questionnaire.Detail.SetLabelsSpec
 import Wizard.Specs.Websocket.Questionnaire.Detail.SetPhaseSpec
+import Wizard.Specs.Websocket.Questionnaire.Detail.SetQuestionnaireSpec
 import Wizard.Specs.Websocket.Questionnaire.Detail.SetReplySpec
 
 questionnaireWebsocketAPI :: AppContext -> SpecWith ()
@@ -30,3 +31,4 @@ questionnaireWebsocketAPI appContext =
     addCommentSpec appContext
     editCommentSpec appContext
     deleteCommentSpec appContext
+    setQuestionnaireSpec appContext

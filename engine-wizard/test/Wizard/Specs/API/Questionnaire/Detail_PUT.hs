@@ -13,6 +13,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
@@ -127,8 +129,8 @@ create_test_200 title appContext qtn qtnEdited qtnCtn permissions showComments a
               ["1.0.0"]
               km1WithQ4
               QSDefault
-              Nothing
-              Nothing
+              (Just wizardDocumentTemplate)
+              (Just formatJson)
               fReplies
               ( if showComments
                   then qtnThreadsDto

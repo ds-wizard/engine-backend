@@ -157,6 +157,7 @@ tests:
     - wai-extra
     - warp
     - websockets
+    - wreq
     - yaml
     - engine-wizard
     - hspec
