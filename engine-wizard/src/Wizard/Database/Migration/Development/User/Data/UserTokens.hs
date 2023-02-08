@@ -27,7 +27,7 @@ albertTokenDto = toDTO albertToken
 
 albertCreateToken :: UserTokenCreateDTO
 albertCreateToken =
-  UserTokenCreateDTO {email = userAlbert.email, password = "password"}
+  UserTokenCreateDTO {email = userAlbert.email, password = "password", code = Nothing}
 
 alternativeAlbertToken :: UserToken
 alternativeAlbertToken =
@@ -54,7 +54,7 @@ nikolaToken =
 
 nikolaCreateToken :: UserTokenCreateDTO
 nikolaCreateToken =
-  UserTokenCreateDTO {email = userNikola.email, password = "password"}
+  UserTokenCreateDTO {email = userNikola.email, password = "password", code = Nothing}
 
 isaacToken :: UserToken
 isaacToken =
@@ -70,4 +70,4 @@ isaacToken =
 
 isaacCreateToken :: UserTokenCreateDTO
 isaacCreateToken =
-  UserTokenCreateDTO {email = userIsaac.email, password = "password"}
+  UserTokenCreateDTO {email = userIsaac.email, password = "password", code = Nothing}

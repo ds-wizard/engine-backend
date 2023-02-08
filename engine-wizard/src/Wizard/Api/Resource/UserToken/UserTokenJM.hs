@@ -6,7 +6,7 @@ import Shared.Util.Aeson
 import Wizard.Api.Resource.UserToken.UserTokenDTO
 
 instance FromJSON UserTokenDTO where
-  parseJSON = genericParseJSON jsonOptions
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "type")
 
 instance ToJSON UserTokenDTO where
-  toJSON = genericToJSON jsonOptions
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")

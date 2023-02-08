@@ -15,6 +15,7 @@ defaultConfig =
     , registry = defaultRegistry
     , analytics = defaultAnalytics
     , sentry = defaultSentry
+    , actionKey = defaultActionKey
     , branch = defaultBranch
     , cache = defaultCache
     , document = defaultDocument
@@ -88,6 +89,13 @@ defaultRegistry =
 defaultRegistrySyncJob :: ServerConfigCronWorker
 defaultRegistrySyncJob =
   ServerConfigCronWorker {enabled = True, cron = "*/15 * * * *"}
+
+defaultActionKey :: ServerConfigActionKey
+defaultActionKey = ServerConfigActionKey {clean = defaultActionKeyClean}
+
+defaultActionKeyClean :: ServerConfigCronWorker
+defaultActionKeyClean =
+  ServerConfigCronWorker {enabled = True, cron = "20 0 * * *"}
 
 defaultBranch :: ServerConfigBranch
 defaultBranch = ServerConfigBranch {squash = defaultBranchSquash}

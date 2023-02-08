@@ -13,6 +13,7 @@ data ServerConfig = ServerConfig
   , registry :: ServerConfigRegistry
   , analytics :: ServerConfigAnalytics
   , sentry :: ServerConfigSentry
+  , actionKey :: ServerConfigActionKey
   , branch :: ServerConfigBranch
   , cache :: ServerConfigCache
   , document :: ServerConfigDocument
@@ -53,6 +54,11 @@ data ServerConfigRegistry = ServerConfigRegistry
   { url :: String
   , clientUrl :: String
   , sync :: ServerConfigCronWorker
+  }
+  deriving (Generic, Show)
+
+data ServerConfigActionKey = ServerConfigActionKey
+  { clean :: ServerConfigCronWorker
   }
   deriving (Generic, Show)
 

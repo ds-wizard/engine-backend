@@ -9,21 +9,34 @@ import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.Common
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.Context.AppContext (AppContextM)
+import Wizard.Util.Date
 
 createActionKey :: U.UUID -> ActionKeyType -> U.UUID -> AppContextM ActionKey
-createActionKey userId actionType appUuid =
+createActionKey userId actionType appUuid = do
+  hash <- liftIO generateUuid
+  createActionKeyWithHash userId actionType appUuid (U.toString hash)
+
+createActionKeyWithHash :: U.UUID -> ActionKeyType -> U.UUID -> String -> AppContextM ActionKey
+createActionKeyWithHash userId actionType appUuid hash =
   runInTransaction $ do
     uuid <- liftIO generateUuid
-    hash <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let actionKey =
           ActionKey
             { uuid = uuid
             , userId = userId
             , aType = actionType
-            , hash = U.toString hash
+            , hash = hash
             , appUuid = appUuid
             , createdAt = now
             }
     insertActionKey actionKey
     return actionKey
+
+cleanActionKeys :: AppContextM ()
+cleanActionKeys = do
+  now <- liftIO getCurrentTime
+  let timeDelta = realToFrac . toInteger $ nominalDayInSeconds * (-1)
+  let dayBefore = addUTCTime timeDelta now
+  deleteActionKeyOlderThen dayBefore
+  return ()

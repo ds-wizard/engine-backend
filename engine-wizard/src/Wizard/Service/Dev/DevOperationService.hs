@@ -13,7 +13,7 @@ import Wizard.Service.Dev.DevOperationDefinitions
 getDevOperations :: AppContextM [DevSection]
 getDevOperations = do
   checkPermission _DEV_PERM
-  return [branch, cache, config, feedback, persistentCommand, registry, questionnaire, user]
+  return [actionKey, branch, cache, config, feedback, persistentCommand, registry, questionnaire, user]
 
 executeOperation :: DevExecutionDTO -> AppContextM AdminExecutionResultDTO
 executeOperation reqDto = do
@@ -23,6 +23,7 @@ executeOperation reqDto = do
 
 execute :: DevExecutionDTO -> AppContextM String
 execute reqDto
+  | action reqDto actionKey actionKey_cleanActionKeys = actionKey_cleanActionKeysFn reqDto
   | action reqDto branch branch_squashAllEvents = branch_squashAllEventsFn reqDto
   | action reqDto branch branch_squashEventsForBranch = branch_squashEventsForBranchFn reqDto
   | action reqDto cache cache_purgeCache = cache_purgeCacheFn reqDto

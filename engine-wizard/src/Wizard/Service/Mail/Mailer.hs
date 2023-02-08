@@ -3,6 +3,7 @@ module Wizard.Service.Mail.Mailer (
   sendRegistrationCreatedAnalyticsMail,
   sendResetPasswordMail,
   sendQuestionnaireInvitationMail,
+  sendTwoFactorAuthMail,
 ) where
 
 import Control.Monad.Reader (asks, liftIO)
@@ -26,6 +27,7 @@ import Wizard.Model.PersistentCommand.Mail.SendQuestionnaireInvitationMailComman
 import Wizard.Model.PersistentCommand.Mail.SendRegistrationConfirmationMailCommand
 import Wizard.Model.PersistentCommand.Mail.SendRegistrationCreatedAnalyticsMailCommand
 import Wizard.Model.PersistentCommand.Mail.SendResetPasswordMailCommand
+import Wizard.Model.PersistentCommand.Mail.SendTwoFactorAuthMailCommand
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.User.User
@@ -78,6 +80,22 @@ sendResetPasswordMail user hash =
             , clientUrl = clientUrl
             }
     sendEmail "sendResetPasswordMail" body user.uuid
+
+sendTwoFactorAuthMail :: UserDTO -> String -> AppContextM ()
+sendTwoFactorAuthMail user code =
+  runInTransaction $ do
+    clientUrl <- getAppClientUrl
+    let body =
+          SendTwoFactorAuthMailCommand
+            { email = user.email
+            , userUuid = user.uuid
+            , userFirstName = user.firstName
+            , userLastName = user.lastName
+            , userEmail = user.email
+            , code = code
+            , clientUrl = clientUrl
+            }
+    sendEmail "sendTwoFactorAuthMail" body user.uuid
 
 sendQuestionnaireInvitationMail :: Questionnaire -> Questionnaire -> AppContextM ()
 sendQuestionnaireInvitationMail oldQtn newQtn =

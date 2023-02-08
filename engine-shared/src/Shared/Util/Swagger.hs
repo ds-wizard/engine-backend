@@ -14,6 +14,11 @@ toSwaggerWithType typeFieldName exampleDTO proxy =
     & mapped . schema . example
       ?~ toJSON exampleDTO
 
+toSwaggerWithFlatType typeFieldName exampleDTO proxy =
+  genericDeclareNamedSchemaUnrestricted (fromAesonOptions (jsonOptionsWithTypeField typeFieldName)) proxy
+    & mapped . schema . example
+      ?~ toJSON exampleDTO
+
 toSwaggerWithDtoName dtoName exampleDTO proxy =
   genericDeclareNamedSchema ((fromAesonOptions jsonOptions) {fieldLabelModifier = changePageFields}) proxy
     & mapped

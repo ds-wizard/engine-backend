@@ -39,6 +39,12 @@ instance FromJSON AppConfigAuthInternal where
 instance ToJSON AppConfigAuthInternal where
   toJSON = genericToJSON jsonOptions
 
+instance FromJSON AppConfigAuthInternalTwoFactorAuth where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON AppConfigAuthInternalTwoFactorAuth where
+  toJSON = genericToJSON jsonOptions
+
 instance FromJSON AppConfigAuthExternal where
   parseJSON = genericParseJSON jsonOptions
 
