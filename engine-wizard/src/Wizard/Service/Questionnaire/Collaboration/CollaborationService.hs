@@ -12,6 +12,7 @@ import Network.WebSockets (Connection)
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Api.Resource.Websocket.QuestionnaireActionJM ()
@@ -79,6 +80,13 @@ updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
             updateCache updatedRecord
             disconnectUserIfLostPermission updatedRecord
         )
+
+setQuestionnaire :: String -> QuestionnaireDetailWsDTO -> AppContextM ()
+setQuestionnaire qtnUuid reqDto = do
+  logWS U.nil "Informing other users about changed questionnaire"
+  records <- getAllFromCache
+  broadcast qtnUuid records (toSetQuestionnaireMessage reqDto) disconnectUser
+  logWS U.nil "Informed completed"
 
 logOutOnlineUsersWhenQtnDramaticallyChanged :: String -> AppContextM ()
 logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid = do

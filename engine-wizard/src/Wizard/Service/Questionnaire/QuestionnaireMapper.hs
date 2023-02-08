@@ -24,6 +24,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
@@ -144,6 +145,22 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , migrationUuid = mMigrationUuid
     , createdAt = qtn.createdAt
     , updatedAt = qtn.updatedAt
+    }
+
+toDetailWsDTO :: Questionnaire -> Maybe DocumentTemplate -> Maybe DocumentTemplateFormat -> [QuestionnairePermRecordDTO] -> QuestionnaireDetailWsDTO
+toDetailWsDTO qtn mTemplate mFormat records =
+  QuestionnaireDetailWsDTO
+    { name = qtn.name
+    , description = qtn.description
+    , visibility = qtn.visibility
+    , sharing = qtn.sharing
+    , projectTags = qtn.projectTags
+    , documentTemplateId = qtn.documentTemplateId
+    , documentTemplate = fmap STM.toDTO mTemplate
+    , formatUuid = qtn.formatUuid
+    , format = fmap toFormatDTO mFormat
+    , permissions = records
+    , isTemplate = qtn.isTemplate
     }
 
 toContentDTO

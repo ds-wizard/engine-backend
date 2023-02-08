@@ -20,6 +20,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
 import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.Acl.Data.Members
 import Wizard.Database.Migration.Development.App.Data.Apps
@@ -512,6 +513,36 @@ qtn10NikolaEditPermRecord =
 
 qtn10NikolaEditPermRecordDto :: QuestionnairePermRecordDTO
 qtn10NikolaEditPermRecordDto = toUserPermRecordDTO qtn10NikolaEditPermRecord userNikola
+
+questionnaire10EditedChange :: QuestionnaireChangeDTO
+questionnaire10EditedChange =
+  QuestionnaireChangeDTO
+    { name = "EDITED: " ++ questionnaire10.name
+    , description = questionnaire10.description
+    , visibility = questionnaire10.visibility
+    , sharing = questionnaire10.sharing
+    , projectTags = questionnaire10.projectTags
+    , permissions = questionnaire10.permissions
+    , documentTemplateId = Nothing
+    , formatUuid = Nothing
+    , isTemplate = questionnaire10.isTemplate
+    }
+
+questionnaire10EditedWs :: QuestionnaireDetailWsDTO
+questionnaire10EditedWs =
+  QuestionnaireDetailWsDTO
+    { name = questionnaire10EditedChange.name
+    , description = questionnaire10EditedChange.description
+    , visibility = questionnaire10EditedChange.visibility
+    , sharing = questionnaire10EditedChange.sharing
+    , projectTags = questionnaire10EditedChange.projectTags
+    , permissions = []
+    , documentTemplateId = Nothing
+    , documentTemplate = Nothing
+    , formatUuid = Nothing
+    , format = Nothing
+    , isTemplate = questionnaire10EditedChange.isTemplate
+    }
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

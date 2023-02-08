@@ -1,6 +1,7 @@
 module Wizard.Service.Questionnaire.Collaboration.CollaborationMapper where
 
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
 import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Model.Websocket.WebsocketMessage
@@ -98,3 +99,10 @@ toDeleteCommentMessage reqDto record =
   toWebsocketMessage record $
     Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . DeleteCommentEventDTO' $
       reqDto
+
+toSetQuestionnaireMessage
+  :: QuestionnaireDetailWsDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
+toSetQuestionnaireMessage resWsDto record =
+  toWebsocketMessage record $
+    Success_ServerActionDTO . SetQuestionnaire_ServerQuestionnaireActionDTO $
+      resWsDto

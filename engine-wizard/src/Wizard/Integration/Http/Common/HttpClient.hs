@@ -2,6 +2,7 @@ module Wizard.Integration.Http.Common.HttpClient (
   runRequest,
   runRequest',
   runSimpleRequest,
+  mapHeader,
 ) where
 
 import qualified Control.Exception.Base as E

@@ -4,6 +4,7 @@ import GHC.Generics
 
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
 import Wizard.Model.User.OnlineUserInfo
 
 data ClientQuestionnaireActionDTO = SetContent_ClientQuestionnaireActionDTO
@@ -17,5 +18,8 @@ data ServerQuestionnaireActionDTO
       }
   | SetContent_ServerQuestionnaireActionDTO
       { qeData :: QuestionnaireEventDTO
+      }
+  | SetQuestionnaire_ServerQuestionnaireActionDTO
+      { sqData :: QuestionnaireDetailWsDTO
       }
   deriving (Show, Eq, Generic)
