@@ -9,6 +9,7 @@ import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Model.App.App
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Dev.Dev
+import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Branch.Event.BranchEventService
 import Wizard.Service.Cache.CacheService
 import Wizard.Service.Config.App.AppConfigCommandExecutor
@@ -20,6 +21,31 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
 import Wizard.Service.UserToken.UserTokenService
 import Wizard.Util.Context
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- ACTION KEY
+-- ---------------------------------------------------------------------------------------------------------------------
+actionKey :: DevSection
+actionKey =
+  DevSection
+    { name = "Action Key"
+    , description = Nothing
+    , operations = [actionKey_cleanActionKeys]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+actionKey_cleanActionKeys :: DevOperation
+actionKey_cleanActionKeys =
+  DevOperation
+    { name = "Clean Expired Action Keys"
+    , description = Nothing
+    , parameters = []
+    }
+
+actionKey_cleanActionKeysFn :: DevExecutionDTO -> AppContextM String
+actionKey_cleanActionKeysFn reqDto = do
+  cleanActionKeys
+  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- BRANCH

@@ -218,6 +218,8 @@ _ERROR_SERVICE_TOKEN__OBSOLETE_TOKEN_VERSION =
 _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_VERSION =
   LocaleRecord "error.service.token.unable_to_get_token_version" "Unable to get token version from token" []
 
+_ERROR_SERVICE_TOKEN__CODE_IS_EXPIRED = LocaleRecord "error.service.token.code_expired" "Code is expired" []
+
 _ERROR_SERVICE_TOKEN__TOKEN_IS_EXPIRED = LocaleRecord "error.service.token.token_expired" "Token is expired" []
 
 _ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES =

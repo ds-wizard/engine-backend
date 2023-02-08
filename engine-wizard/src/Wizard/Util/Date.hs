@@ -7,6 +7,9 @@ import qualified Web.JWT as JWT
 -- First day in computer calendar
 day0 = UTCTime (fromJust $ fromGregorianValid 1970 1 1) 0
 
+-- One Day represented in seconds
+nominalDayInSeconds = 24 * 60 * 60
+
 -- One Hour represented in seconds
 nominalHourInSeconds = 60 * 60
 

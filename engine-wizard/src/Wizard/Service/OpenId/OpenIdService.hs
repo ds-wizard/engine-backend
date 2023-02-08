@@ -26,7 +26,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.User.UserService
-import Wizard.Service.UserToken.UserTokenMapper
 import Wizard.Service.UserToken.UserTokenService
 import Wizard.Util.Logger
 
@@ -81,8 +80,7 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mSessionState =
     case (mEmail, mFirstName, mLastName) of
       (Just email, Just firstName, Just lastName) -> do
         user <- createUserFromExternalService authId firstName lastName email mPicture
-        userToken <- createToken user mSessionState
-        return . toDTO $ userToken
+        createToken user mSessionState
       _ -> throwError . UserError $ _ERROR_VALIDATION__OPENID_PROFILE_INFO_ABSENCE
 
 parseToken :: FromJSON a => String -> O.IdTokenClaims a

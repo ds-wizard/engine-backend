@@ -63,6 +63,14 @@ data AppConfigAuth = AppConfigAuth
 
 data AppConfigAuthInternal = AppConfigAuthInternal
   { registration :: SimpleFeature
+  , twoFactorAuth :: AppConfigAuthInternalTwoFactorAuth
+  }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthInternalTwoFactorAuth = AppConfigAuthInternalTwoFactorAuth
+  { enabled :: Bool
+  , codeLength :: Int
+  , expiration :: Int
   }
   deriving (Generic, Eq, Show)
 

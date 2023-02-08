@@ -21,6 +21,7 @@ instance FromJSON ServerConfig where
     registry <- o .:? "registry" .!= defaultRegistry
     analytics <- o .:? "analytics" .!= defaultAnalytics
     sentry <- o .:? "sentry" .!= defaultSentry
+    actionKey <- o .:? "actionKey" .!= defaultActionKey
     branch <- o .:? "branch" .!= defaultBranch
     cache <- o .:? "cache" .!= defaultCache
     document <- o .:? "document" .!= defaultDocument
@@ -66,6 +67,12 @@ instance FromJSON ServerConfigRegistry where
     clientUrl <- o .:? "clientUrl" .!= defaultRegistry.clientUrl
     sync <- o .:? "sync" .!= defaultRegistry.sync
     return ServerConfigRegistry {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigActionKey where
+  parseJSON (Object o) = do
+    clean <- o .:? "clean" .!= defaultActionKey.clean
+    return ServerConfigActionKey {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigBranch where

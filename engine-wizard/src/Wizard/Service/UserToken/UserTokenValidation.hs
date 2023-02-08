@@ -1,6 +1,8 @@
 module Wizard.Service.UserToken.UserTokenValidation where
 
+import Control.Monad (when)
 import Control.Monad.Except (throwError)
+import Control.Monad.Reader (liftIO)
 import qualified Data.Text as T
 import Data.Time
 import qualified Web.JWT as JWT
@@ -8,7 +10,10 @@ import qualified Web.JWT as JWT
 import Shared.Model.Error.Error
 import Shared.Model.Localization.LocaleRecord
 import Wizard.Api.Resource.UserToken.UserTokenCreateDTO
+import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Localization.Messages.Public
+import Wizard.Model.ActionKey.ActionKey
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
 import Wizard.Service.User.UserUtil
@@ -31,6 +36,13 @@ validateUserPassword reqDto user =
   if verifyPassword reqDto.password user.passwordHash
     then return ()
     else throwError $ UserError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+
+validateCode :: User -> Int -> AppConfig -> AppContextM ()
+validateCode user code appConfig = do
+  actionKey <- findActionKeyByUserIdAndHash user.uuid (show code)
+  let timeDelta = realToFrac . toInteger $ appConfig.authentication.internal.twoFactorAuth.expiration
+  now <- liftIO getCurrentTime
+  when (addUTCTime timeDelta actionKey.createdAt < now) (throwError $ UserError _ERROR_SERVICE_TOKEN__CODE_IS_EXPIRED)
 
 validateJwtToken :: String -> String -> Integer -> UTCTime -> Maybe LocaleRecord
 validateJwtToken jwtToken secret currentJwtVersion now =
