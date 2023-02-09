@@ -14,8 +14,11 @@ import Wizard.Service.Branch.Event.BranchEventService
 import Wizard.Service.Cache.CacheService
 import Wizard.Service.Config.App.AppConfigCommandExecutor
 import Wizard.Service.Config.App.AppConfigService
+import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.Feedback.FeedbackService
+import Wizard.Service.Owl.OwlService
 import Wizard.Service.PersistentCommand.PersistentCommandService
+import Wizard.Service.Plan.AppPlanService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
@@ -45,6 +48,31 @@ actionKey_cleanActionKeys =
 actionKey_cleanActionKeysFn :: DevExecutionDTO -> AppContextM String
 actionKey_cleanActionKeysFn reqDto = do
   cleanActionKeys
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- APP PLAN
+-- ---------------------------------------------------------------------------------------------------------------------
+appPlan :: DevSection
+appPlan =
+  DevSection
+    { name = "App Plan"
+    , description = Nothing
+    , operations = [appPlan_recomputePlansForApps]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+appPlan_recomputePlansForApps :: DevOperation
+appPlan_recomputePlansForApps =
+  DevOperation
+    { name = "Recompute Plans for Apps"
+    , description = Nothing
+    , parameters = []
+    }
+
+appPlan_recomputePlansForAppsFn :: DevExecutionDTO -> AppContextM String
+appPlan_recomputePlansForAppsFn reqDto = do
+  recomputePlansForApps
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -167,6 +195,31 @@ config_switchClientCustomizationOffFn reqDto = do
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
+-- DOCUMENT
+-- ---------------------------------------------------------------------------------------------------------------------
+document :: DevSection
+document =
+  DevSection
+    { name = "Document"
+    , description = Nothing
+    , operations = [document_cleanDocuments]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+document_cleanDocuments :: DevOperation
+document_cleanDocuments =
+  DevOperation
+    { name = "Clean Expired Documents"
+    , description = Nothing
+    , parameters = []
+    }
+
+document_cleanDocumentsFn :: DevExecutionDTO -> AppContextM String
+document_cleanDocumentsFn reqDto = do
+  cleanDocuments
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
 -- FEEDBACK
 -- ---------------------------------------------------------------------------------------------------------------------
 feedback :: DevSection
@@ -189,6 +242,97 @@ feedback_synchronizeFeedbacks =
 feedback_synchronizeFeedbacksFn :: DevExecutionDTO -> AppContextM String
 feedback_synchronizeFeedbacksFn reqDto = do
   synchronizeFeedbacksInAllApplications
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- OWL
+-- ---------------------------------------------------------------------------------------------------------------------
+owl :: DevSection
+owl =
+  DevSection
+    { name = "Owl"
+    , description = Nothing
+    , operations =
+        [ owl_switchOwlOn
+        , owl_switchOwlOff
+        , owl_setOwlProperties
+        ]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+owl_switchOwlOn :: DevOperation
+owl_switchOwlOn =
+  DevOperation
+    { name = "Enable OWL feature"
+    , description = Nothing
+    , parameters = []
+    }
+
+owl_switchOwlOnFn :: DevExecutionDTO -> AppContextM String
+owl_switchOwlOnFn reqDto = do
+  modifyOwlFeature True
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+owl_switchOwlOff :: DevOperation
+owl_switchOwlOff =
+  DevOperation
+    { name = "Disable OWL feature"
+    , description = Nothing
+    , parameters = []
+    }
+
+owl_switchOwlOffFn :: DevExecutionDTO -> AppContextM String
+owl_switchOwlOffFn reqDto = do
+  modifyOwlFeature False
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+owl_setOwlProperties :: DevOperation
+owl_setOwlProperties =
+  DevOperation
+    { name = "Set OWL properties"
+    , description = Just "If you do not want to fill `previousPackageId`, please fill empty space (`' '`)"
+    , parameters =
+        [ DevOperationParameter
+            { name = "name"
+            , aType = StringDevOperationParameterType
+            }
+        , DevOperationParameter
+            { name = "organizationId"
+            , aType = StringDevOperationParameterType
+            }
+        , DevOperationParameter
+            { name = "kmId"
+            , aType = StringDevOperationParameterType
+            }
+        , DevOperationParameter
+            { name = "version"
+            , aType = StringDevOperationParameterType
+            }
+        , DevOperationParameter
+            { name = "previousPackageId"
+            , aType = StringDevOperationParameterType
+            }
+        , DevOperationParameter
+            { name = "rootElement"
+            , aType = StringDevOperationParameterType
+            }
+        ]
+    }
+
+owl_setOwlPropertiesFn :: DevExecutionDTO -> AppContextM String
+owl_setOwlPropertiesFn reqDto = do
+  let name = head reqDto.parameters
+  let organizationId = reqDto.parameters !! 1
+  let kmId = reqDto.parameters !! 2
+  let version = reqDto.parameters !! 3
+  let previousPackageId =
+        case reqDto.parameters !! 4 of
+          " " -> Nothing
+          p -> Just p
+  let rootElement = reqDto.parameters !! 5
+  setOwlProperties name organizationId kmId version previousPackageId rootElement
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -273,11 +417,26 @@ questionnaire =
     { name = "Questionnaire"
     , description = Nothing
     , operations =
-        [ questionnaire_recomputeQuestionnaireIndications
+        [ questionnaire_cleanQuestionnaires
+        , questionnaire_recomputeQuestionnaireIndications
         , questionnaire_squashAllEvents
         , questionnaire_squashEventsForQuestionnaire
         ]
     }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+questionnaire_cleanQuestionnaires :: DevOperation
+questionnaire_cleanQuestionnaires =
+  DevOperation
+    { name = "Clean Questionnaires"
+    , description = Nothing
+    , parameters = []
+    }
+
+questionnaire_cleanQuestionnairesFn :: DevExecutionDTO -> AppContextM String
+questionnaire_cleanQuestionnairesFn reqDto = do
+  cleanQuestionnaires
+  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 questionnaire_recomputeQuestionnaireIndications :: DevOperation
@@ -341,7 +500,7 @@ user =
 user_cleanTokens :: DevOperation
 user_cleanTokens =
   DevOperation
-    { name = "Delete expired token"
+    { name = "Clean Expired Tokens"
     , description = Nothing
     , parameters = []
     }

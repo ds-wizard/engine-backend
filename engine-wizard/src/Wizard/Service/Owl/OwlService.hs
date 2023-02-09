@@ -15,7 +15,10 @@ import Shared.Model.Package.PackageWithEvents
 import Shared.Service.Package.PackageMapper
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.PackageBundle.PackageBundleFileDTO
+import Wizard.Database.DAO.Common
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.Owl.Convertor.OwlConvertor
 import Wizard.Service.Owl.Diff.Differ
@@ -46,3 +49,30 @@ importEvents mPreviousPackageId rootElement content = do
       let (Right km2) = compile Nothing previousPackage.events
       diffKnowledgeModel (km1, km2)
     Nothing -> return pkgEvents
+
+modifyOwlFeature :: Bool -> AppContextM ()
+modifyOwlFeature owlEnabled =
+  runInTransaction $ do
+    appConfig <- getAppConfig
+    let updatedAppConfig = appConfig {owl = appConfig.owl {enabled = owlEnabled}}
+    modifyAppConfig updatedAppConfig
+    return ()
+
+setOwlProperties :: String -> String -> String -> String -> Maybe String -> String -> AppContextM ()
+setOwlProperties name organizationId kmId version previousPackageId rootElement =
+  runInTransaction $ do
+    appConfig <- getAppConfig
+    let updatedAppConfig =
+          appConfig
+            { owl =
+                appConfig.owl
+                  { name = name
+                  , organizationId = organizationId
+                  , kmId = kmId
+                  , version = version
+                  , previousPackageId = previousPackageId
+                  , rootElement = rootElement
+                  }
+            }
+    modifyAppConfig updatedAppConfig
+    return ()
