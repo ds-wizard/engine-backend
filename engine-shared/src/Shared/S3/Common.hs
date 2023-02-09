@@ -369,6 +369,30 @@ makeBucketPublicReadOnly = do
   runMinioClient action
   logInfoI _CMP_S3 (f' "Bucket was exposed as public: '%s'" [resource])
 
+createPresignedGetObjectUrl
+  :: ( MonadReader s m
+     , HasField "s3Client'" s MinioConn
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "appUuid'" s U.UUID
+     , HasField "serverConfig'" s sc
+     , HasField "cloud'" sc ServerConfigCloud
+     , HasField "s3'" sc ServerConfigS3
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => String
+  -> Int
+  -> m String
+createPresignedGetObjectUrl object expirationInSeconds = do
+  bucketName <- getBucketName
+  sanitizedObject <- sanitizeObject object
+  logInfoI _CMP_S3 (f' "Presign get object url: '%s'" [sanitizedObject])
+  let action = presignedGetObjectUrl (T.pack bucketName) (T.pack sanitizedObject) expirationInSeconds [] []
+  result <- runMinioClient action
+  return . BS.unpack $ result
+
 createMakePublicLink
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn

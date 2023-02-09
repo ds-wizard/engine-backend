@@ -38,11 +38,15 @@ import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Migration.Metamodel.MigratorService
 import qualified Wizard.Service.Package.PackageMapper as PM
 import Wizard.Service.Package.PackageService
-import Wizard.Service.Package.PackageValidation
+import Wizard.Service.Package.PackageValidation (
+  validateMaybePreviousPackageIdExistence,
+  validatePackageIdUniqueness,
+ )
 import Wizard.Service.PackageBundle.PackageBundleAudit
+import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Util.Logger
 
-exportPackageBundle :: String -> AppContextM PackageBundleDTO
+exportPackageBundle :: String -> AppContextM String
 exportPackageBundle pbId = do
   packages <- getSeriesOfPackages pbId
   let newestPackage = last packages
@@ -57,7 +61,7 @@ exportPackageBundle pbId = do
           , packages = packages
           }
   auditPackageBundleExport pbId
-  return . toDTO $ pb
+  createTemporaryFile (f' "%s.km" [pb.bundleId]) "text/plain" (encode . toDTO $ pb)
 
 pullPackageBundleFromRegistry :: String -> AppContextM ()
 pullPackageBundleFromRegistry pkgId =

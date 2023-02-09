@@ -13,7 +13,7 @@ import Wizard.Service.Dev.DevOperationDefinitions
 getDevOperations :: AppContextM [DevSection]
 getDevOperations = do
   checkPermission _DEV_PERM
-  return [actionKey, appPlan, branch, cache, config, document, feedback, owl, persistentCommand, registry, questionnaire, user]
+  return [actionKey, appPlan, branch, cache, config, document, feedback, owl, persistentCommand, registry, questionnaire, temporaryFile, user]
 
 executeOperation :: DevExecutionDTO -> AppContextM AdminExecutionResultDTO
 executeOperation reqDto = do
@@ -40,13 +40,11 @@ execute reqDto
   | action reqDto persistentCommand persistentCommand_run = persistentCommand_runFn reqDto
   | action reqDto registry registry_syncWithRegistry = registry_syncWithRegistryFn reqDto
   | action reqDto questionnaire questionnaire_cleanQuestionnaires = questionnaire_cleanQuestionnairesFn reqDto
-  | action reqDto questionnaire questionnaire_recomputeQuestionnaireIndications =
-      questionnaire_recomputeQuestionnaireIndicationsFn reqDto
+  | action reqDto questionnaire questionnaire_recomputeQuestionnaireIndications = questionnaire_recomputeQuestionnaireIndicationsFn reqDto
   | action reqDto questionnaire questionnaire_squashAllEvents = questionnaire_squashAllEventsFn reqDto
-  | action reqDto questionnaire questionnaire_squashEventsForQuestionnaire =
-      questionnaire_squashEventsForQuestionnaireFn reqDto
-  | action reqDto user user_cleanTokens =
-      user_cleanTokensFn reqDto
+  | action reqDto questionnaire questionnaire_squashEventsForQuestionnaire = questionnaire_squashEventsForQuestionnaireFn reqDto
+  | action reqDto temporaryFile temporaryFile_cleanTemporaryFiles = temporaryFile_cleanTemporaryFilesFn reqDto
+  | action reqDto user user_cleanTokens = user_cleanTokensFn reqDto
 
 action :: DevExecutionDTO -> DevSection -> DevOperation -> Bool
 action reqDto section operation = reqDto.sectionName == section.name && reqDto.operationName == operation.name

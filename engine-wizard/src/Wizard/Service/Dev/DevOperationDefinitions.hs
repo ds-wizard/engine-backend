@@ -22,6 +22,7 @@ import Wizard.Service.Plan.AppPlanService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
+import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Service.UserToken.UserTokenService
 import Wizard.Util.Context
 
@@ -483,6 +484,31 @@ questionnaire_squashEventsForQuestionnaire =
 questionnaire_squashEventsForQuestionnaireFn :: DevExecutionDTO -> AppContextM String
 questionnaire_squashEventsForQuestionnaireFn reqDto = do
   squashQuestionnaireEventsForQuestionnaire (head reqDto.parameters)
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- TEMPORARY FILE
+-- ---------------------------------------------------------------------------------------------------------------------
+temporaryFile :: DevSection
+temporaryFile =
+  DevSection
+    { name = "Temporary File"
+    , description = Nothing
+    , operations = [temporaryFile_cleanTemporaryFiles]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+temporaryFile_cleanTemporaryFiles :: DevOperation
+temporaryFile_cleanTemporaryFiles =
+  DevOperation
+    { name = "Clean Expired Temporary Files"
+    , description = Nothing
+    , parameters = []
+    }
+
+temporaryFile_cleanTemporaryFilesFn :: DevExecutionDTO -> AppContextM String
+temporaryFile_cleanTemporaryFilesFn reqDto = do
+  cleanTemporaryFiles
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------

@@ -2,7 +2,8 @@ module Wizard.Service.Document.DocumentService where
 
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
-import qualified Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Lazy.Char8 as BSL
+import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -42,6 +43,7 @@ import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
+import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Util.Logger
 
 getDocumentsPageDto :: Maybe U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
@@ -90,14 +92,15 @@ deleteDocument docUuid =
     deleteDocumentByUuid docUuid
     removeDocumentContent docUuid
 
-downloadDocument :: U.UUID -> AppContextM (Document, BS.ByteString)
+downloadDocument :: U.UUID -> AppContextM String
 downloadDocument docUuid = do
   doc <- findDocumentByUuid docUuid
   checkViewPermissionToDoc (U.toString doc.questionnaireUuid)
   content <- retrieveDocumentContent docUuid
-  return (doc, content)
+  let fileName = fromMaybe "export" doc.fileName
+  createTemporaryFile fileName "text/plain" (BSL.fromStrict content)
 
-createDocumentPreviewForQtn :: String -> AppContextM (Document, BS.ByteString)
+createDocumentPreviewForQtn :: String -> AppContextM (Document, String)
 createDocumentPreviewForQtn qtnUuid =
   runInTransaction $ do
     qtn <- findQuestionnaireById qtnUuid
@@ -108,7 +111,7 @@ createDocumentPreviewForQtn qtnUuid =
         createDocumentPreview tml qtn formatUuid
       _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP
 
-createDocumentPreviewForDocTmlDraft :: String -> AppContextM (Document, BS.ByteString)
+createDocumentPreviewForDocTmlDraft :: String -> AppContextM (Document, String)
 createDocumentPreviewForDocTmlDraft tmlId =
   runInTransaction $ do
     draftData <- findDraftDataById tmlId
@@ -120,7 +123,7 @@ createDocumentPreviewForDocTmlDraft tmlId =
         createDocumentPreview draft qtn formatUuid
       _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__QUESTIONNAIRE_OR_FORMAT_NOT_SET_UP
 
-createDocumentPreview :: DocumentTemplate -> Questionnaire -> U.UUID -> AppContextM (Document, BS.ByteString)
+createDocumentPreview :: DocumentTemplate -> Questionnaire -> U.UUID -> AppContextM (Document, String)
 createDocumentPreview tml qtn formatUuid = do
   docs <- findDocumentsFiltered [("questionnaire_uuid", U.toString qtn.uuid), ("durability", "TemporallyDocumentDurability")]
   qtnCtn <- compileQuestionnaire qtn
@@ -134,14 +137,14 @@ createDocumentPreview tml qtn formatUuid = do
       logInfoU _CMP_SERVICE "Retrieving from cache"
       if doc.state == DoneDocumentState
         then do
-          content <- retrieveDocumentContent doc.uuid
-          return (doc, content)
-        else return (doc, BS.empty)
+          link <- makeDocumentLink doc.uuid
+          return (doc, link)
+        else return (doc, "")
     [] ->
       case filter (\d -> d.state == QueuedDocumentState || d.state == InProgressDocumentState) matchingDocs of
         (doc : _) -> do
           logInfoU _CMP_SERVICE "Waiting to generation"
-          return (doc, BS.empty)
+          return (doc, "")
         _ -> do
           logInfoU _CMP_SERVICE "Generating new preview"
           validateMetamodelVersion tml
@@ -150,7 +153,7 @@ createDocumentPreview tml qtn formatUuid = do
           let doc = fromTemporallyCreateDTO dUuid qtn tml.tId formatUuid repliesHash mCurrentUser appConfig.uuid now
           insertDocument doc
           publishToPersistentCommandQueue doc
-          return (doc, BS.empty)
+          return (doc, "")
 
 publishToPersistentCommandQueue :: Document -> AppContextM ()
 publishToPersistentCommandQueue doc = do

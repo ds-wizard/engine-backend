@@ -16,6 +16,9 @@ retrieveDocumentContent documentUuid = createGetObjectFn (f' "%s/%s" [folderName
 putDocumentContent :: U.UUID -> BS.ByteString -> AppContextM String
 putDocumentContent documentUuid = createPutObjectFn (f' "%s/%s" [folderName, U.toString documentUuid]) Nothing
 
+makeDocumentLink :: U.UUID -> AppContextM String
+makeDocumentLink documentUuid = createMakePublicLink folderName (U.toString documentUuid)
+
 removeDocumentContents :: AppContextM ()
 removeDocumentContents = createRemoveObjectFn (f' "%s" [folderName])
 

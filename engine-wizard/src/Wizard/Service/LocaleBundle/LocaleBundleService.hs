@@ -8,6 +8,7 @@ import Shared.Api.Resource.LocaleBundle.LocaleBundleDTO
 import Shared.Model.Error.Error
 import Shared.Model.Locale.Locale
 import Shared.Service.LocaleBundle.LocaleBundleMapper
+import Shared.Util.String
 import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Locale.LocaleDAO
@@ -23,12 +24,13 @@ import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Locale.LocaleMapper
 import Wizard.Service.Locale.LocaleValidation
 import Wizard.Service.LocaleBundle.LocaleBundleAudit
+import Wizard.Service.TemporaryFile.TemporaryFileService
 
-exportLocaleBundle :: String -> AppContextM BSL.ByteString
+exportLocaleBundle :: String -> AppContextM String
 exportLocaleBundle lclId = do
   locale <- findLocaleById lclId
   content <- retrieveLocale locale.lId
-  return $ toLocaleArchive locale content
+  createTemporaryFile (f' "%s.zip" [locale.lId]) "application/zip" (toLocaleArchive locale content)
 
 pullLocaleBundleFromRegistry :: String -> AppContextM ()
 pullLocaleBundleFromRegistry lclId =

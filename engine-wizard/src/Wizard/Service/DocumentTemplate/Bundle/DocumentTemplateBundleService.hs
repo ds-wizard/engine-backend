@@ -15,6 +15,7 @@ import Shared.Model.DocumentTemplate.DocumentTemplate
 import Shared.Model.Error.Error
 import Shared.Service.DocumentTemplate.Bundle.DocumentTemplateBundleMapper
 import Shared.Service.DocumentTemplate.DocumentTemplateMapper
+import Shared.Util.String
 import Wizard.Database.DAO.Common
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Internal
@@ -25,15 +26,17 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleAudit
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Limit.AppLimitService
+import Wizard.Service.TemporaryFile.TemporaryFileService
 
-exportBundle :: String -> AppContextM BSL.ByteString
+exportBundle :: String -> AppContextM String
 exportBundle tmlId = do
   tml <- findDocumentTemplateById tmlId
   files <- findFilesByDocumentTemplateId tmlId
   assets <- findAssetsByDocumentTemplateId tmlId
   assetContents <- traverse (findAsset tml.tId) assets
   auditBundleExport tmlId
-  return $ toDocumentTemplateArchive (toBundle tml files assets) assetContents
+  let resDto = toDocumentTemplateArchive (toBundle tml files assets) assetContents
+  createTemporaryFile (f' "%s.zip" [tml.tId]) "application/zip" resDto
 
 pullBundleFromRegistry :: String -> AppContextM ()
 pullBundleFromRegistry tmlId =

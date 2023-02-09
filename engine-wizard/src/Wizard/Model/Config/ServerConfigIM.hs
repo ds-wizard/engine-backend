@@ -22,6 +22,7 @@ instance FromEnv ServerConfig where
     persistentCommand <- applyEnv serverConfig.persistentCommand
     plan <- applyEnv serverConfig.plan
     questionnaire <- applyEnv serverConfig.questionnaire
+    temporaryFile <- applyEnv serverConfig.temporaryFile
     userToken <- applyEnv serverConfig.userToken
     logging <- applyEnv serverConfig.logging
     cloud <- applyEnv serverConfig.cloud
@@ -137,6 +138,14 @@ instance FromEnv ServerConfigQuestionnaire where
       , \c -> applyStringEnvVariable "QUESTIONNAIRE_RECOMPUTE_INDICATION_CRON" c.recomputeIndication.cron (\x -> c {recomputeIndication = c.recomputeIndication {cron = x}} :: ServerConfigQuestionnaire)
       , \c -> applyEnvVariable "QUESTIONNAIRE_SQUASH_ENABLED" c.squash.enabled (\x -> c {squash = c.squash {enabled = x}} :: ServerConfigQuestionnaire)
       , \c -> applyStringEnvVariable "QUESTIONNAIRE_SQUASH_CRON" c.squash.cron (\x -> c {squash = c.squash {cron = x}} :: ServerConfigQuestionnaire)
+      ]
+
+instance FromEnv ServerConfigTemporaryFile where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "TEMPORARY_FILE_CLEAN_ENABLED" c.clean.enabled (\x -> c {clean = c.clean {enabled = x}} :: ServerConfigTemporaryFile)
+      , \c -> applyStringEnvVariable "TEMPORARY_FILE_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigTemporaryFile)
       ]
 
 instance FromEnv ServerConfigUserToken where
