@@ -27,6 +27,7 @@ import Shared.Model.PackageBundle.PackageBundle
 import Shared.Service.Coordinate.CoordinateValidation
 import Shared.Service.PackageBundle.PackageBundleMapper
 import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Internal
@@ -38,26 +39,33 @@ import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Migration.Metamodel.MigratorService
 import qualified Wizard.Service.Package.PackageMapper as PM
 import Wizard.Service.Package.PackageService
-import Wizard.Service.Package.PackageValidation
+import Wizard.Service.Package.PackageValidation (
+  validateMaybePreviousPackageIdExistence,
+  validatePackageIdUniqueness,
+ )
 import Wizard.Service.PackageBundle.PackageBundleAudit
+import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
+import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Util.Logger
 
-exportPackageBundle :: String -> AppContextM PackageBundleDTO
-exportPackageBundle pbId = do
-  packages <- getSeriesOfPackages pbId
-  let newestPackage = last packages
-  let pb =
-        PackageBundle
-          { bundleId = newestPackage.pId
-          , name = newestPackage.name
-          , organizationId = newestPackage.organizationId
-          , kmId = newestPackage.kmId
-          , version = newestPackage.version
-          , metamodelVersion = kmMetamodelVersion
-          , packages = packages
-          }
-  auditPackageBundleExport pbId
-  return . toDTO $ pb
+exportPackageBundle :: String -> AppContextM TemporaryFileDTO
+exportPackageBundle pbId =
+  runInTransaction $ do
+    packages <- getSeriesOfPackages pbId
+    let newestPackage = last packages
+    let pb =
+          PackageBundle
+            { bundleId = newestPackage.pId
+            , name = newestPackage.name
+            , organizationId = newestPackage.organizationId
+            , kmId = newestPackage.kmId
+            , version = newestPackage.version
+            , metamodelVersion = kmMetamodelVersion
+            , packages = packages
+            }
+    auditPackageBundleExport pbId
+    url <- createTemporaryFile (f' "%s.km" [pb.bundleId]) "application/octet-stream" (encode . toDTO $ pb)
+    return $ TemporaryFileMapper.toDTO url "application/octet-stream"
 
 pullPackageBundleFromRegistry :: String -> AppContextM ()
 pullPackageBundleFromRegistry pkgId =

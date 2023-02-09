@@ -10,10 +10,10 @@ import Wizard.Util.Logger
 folderName = "public"
 
 putPublicContent :: String -> Maybe String -> BS.ByteString -> AppContextM String
-putPublicContent configName = createPutObjectFn (f' "%s/%s" [folderName, configName])
+putPublicContent configName mContentType = createPutObjectFn (f' "%s/%s" [folderName, configName]) mContentType Nothing
 
 makePublicLink :: String -> AppContextM String
-makePublicLink = createMakePublicLink folderName
+makePublicLink configName = createMakePublicLink (f' "%s/%s" [folderName, configName])
 
 removePublic :: String -> AppContextM ()
 removePublic configName = createRemoveObjectFn (f' "%s/%s" [folderName, configName])

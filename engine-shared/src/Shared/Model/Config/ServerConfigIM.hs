@@ -22,7 +22,6 @@ instance FromEnv ServerConfigS3 where
     applyEnvVariables
       serverConfig
       [ \c -> applyStringEnvVariable "S3_URL" c.url (\x -> c {url = x} :: ServerConfigS3)
-      , \c -> applyStringEnvVariable "S3_PUBLIC_URL" c.publicUrl (\x -> c {publicUrl = x})
       , \c -> applyStringEnvVariable "S3_USERNAME" c.username (\x -> c {username = x})
       , \c -> applyStringEnvVariable "S3_PASSWORD" c.password (\x -> c {password = x})
       , \c -> applyStringEnvVariable "S3_BUCKET" c.bucket (\x -> c {bucket = x})

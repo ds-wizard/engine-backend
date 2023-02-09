@@ -10,8 +10,11 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateAssets
+import Shared.Model.Config.ServerConfig
 import Shared.Model.DocumentTemplate.DocumentTemplateJM ()
+import Shared.Util.String
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetMapper
 
@@ -51,9 +54,10 @@ create_test_200 title appContext reqAuthHeader =
     do
       let reqHeaders = reqHeadersT reqAuthHeader
       -- AND: Prepare expectation
+      let minioUrl = appContext.serverConfig.s3.url
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = [toDTO assetLogo "https://s3.ds-wizard.org/engine-wizard/templates/global:questionnaire-report:1.0.0/6c367648-9b60-4307-93b2-0851938adee0"]
+      let expDto = [toDTO assetLogo (f' "%s/engine-wizard/templates/global:questionnaire-report:1.0.0/6c367648-9b60-4307-93b2-0851938adee0" [minioUrl])]
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext

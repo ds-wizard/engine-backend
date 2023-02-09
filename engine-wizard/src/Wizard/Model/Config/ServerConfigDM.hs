@@ -23,6 +23,7 @@ defaultConfig =
     , persistentCommand = defaultPersistentCommand
     , plan = defaultPlan
     , questionnaire = defaultQuestionnaire
+    , temporaryFile = defaultTemporaryFile
     , userToken = defaultUserToken
     , logging = defaultLogging
     , cloud = defaultCloud
@@ -176,6 +177,13 @@ defaultQuestionnaireRecomputeIndication =
 defaultQuestionnaireSquash :: ServerConfigCronWorker
 defaultQuestionnaireSquash =
   ServerConfigCronWorker {enabled = True, cron = "15 2 * * *"}
+
+defaultTemporaryFile :: ServerConfigTemporaryFile
+defaultTemporaryFile = ServerConfigTemporaryFile {clean = defaultTemporaryFileClean}
+
+defaultTemporaryFileClean :: ServerConfigCronWorker
+defaultTemporaryFileClean =
+  ServerConfigCronWorker {enabled = True, cron = "25 0 * * *"}
 
 defaultUserToken :: ServerConfigUserToken
 defaultUserToken = ServerConfigUserToken {clean = defaultUserTokenClean}

@@ -21,6 +21,7 @@ data ServerConfig = ServerConfig
   , persistentCommand :: ServerConfigPersistentCommand
   , plan :: ServerConfigPlan
   , questionnaire :: ServerConfigQuestionnaire
+  , temporaryFile :: ServerConfigTemporaryFile
   , userToken :: ServerConfigUserToken
   , logging :: ServerConfigLogging
   , cloud :: ServerConfigCloud
@@ -106,6 +107,11 @@ data ServerConfigQuestionnaire = ServerConfigQuestionnaire
   { clean :: ServerConfigCronWorker
   , recomputeIndication :: ServerConfigCronWorker
   , squash :: ServerConfigCronWorker
+  }
+  deriving (Generic, Show)
+
+data ServerConfigTemporaryFile = ServerConfigTemporaryFile
+  { clean :: ServerConfigCronWorker
   }
   deriving (Generic, Show)
 

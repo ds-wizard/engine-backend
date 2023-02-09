@@ -5,6 +5,7 @@ module Shared.Util.String (
   stripSuffix,
   stripSuffixIfExists,
   isSuffixOf,
+  isLetterOrDotOrDashOrUnderscore,
   trim,
   f',
   toLower,
@@ -63,6 +64,9 @@ stripSuffixIfExists suffix string = fromMaybe string (stripSuffix suffix string)
 
 isSuffixOf :: String -> String -> Bool
 isSuffixOf suffix name = T.isSuffixOf (T.pack suffix) (T.pack name)
+
+isLetterOrDotOrDashOrUnderscore :: Char -> Bool
+isLetterOrDotOrDashOrUnderscore c = CH.isAsciiLower c || CH.isAsciiUpper c || c == '.' || c == '-' || c == '_'
 
 f' :: String -> [String] -> String
 f' str terms =

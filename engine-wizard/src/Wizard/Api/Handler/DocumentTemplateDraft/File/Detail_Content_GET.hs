@@ -4,7 +4,7 @@ import Control.Monad.Reader (asks)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
 import qualified Data.UUID as U
-import Servant hiding (contentType)
+import Servant
 
 import Shared.Api.Handler.Common
 import Shared.Model.Context.TransactionState

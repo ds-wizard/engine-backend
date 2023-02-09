@@ -8,7 +8,9 @@ import Shared.Api.Resource.LocaleBundle.LocaleBundleDTO
 import Shared.Model.Error.Error
 import Shared.Model.Locale.Locale
 import Shared.Service.LocaleBundle.LocaleBundleMapper
+import Shared.Util.String
 import Wizard.Api.Resource.Locale.LocaleDTO
+import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Locale.LocaleDAO
 import Wizard.Integration.Http.Registry.Runner
@@ -23,12 +25,16 @@ import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Locale.LocaleMapper
 import Wizard.Service.Locale.LocaleValidation
 import Wizard.Service.LocaleBundle.LocaleBundleAudit
+import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
+import Wizard.Service.TemporaryFile.TemporaryFileService
 
-exportLocaleBundle :: String -> AppContextM BSL.ByteString
-exportLocaleBundle lclId = do
-  locale <- findLocaleById lclId
-  content <- retrieveLocale locale.lId
-  return $ toLocaleArchive locale content
+exportLocaleBundle :: String -> AppContextM TemporaryFileDTO
+exportLocaleBundle lclId =
+  runInTransaction $ do
+    locale <- findLocaleById lclId
+    content <- retrieveLocale locale.lId
+    url <- createTemporaryFile (f' "%s.zip" [locale.lId]) "application/octet-stream" (toLocaleArchive locale content)
+    return $ TemporaryFileMapper.toDTO url "application/octet-stream"
 
 pullLocaleBundleFromRegistry :: String -> AppContextM ()
 pullLocaleBundleFromRegistry lclId =

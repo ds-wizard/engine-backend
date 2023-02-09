@@ -13,7 +13,7 @@ retrieveAsset :: String -> String -> AppContextM BS.ByteString
 retrieveAsset templateId assetId = createGetObjectFn (f' "%s/%s/%s" [folderName, templateId, assetId])
 
 putAsset :: String -> String -> String -> BS.ByteString -> AppContextM String
-putAsset templateId assetId contentType = createPutObjectFn (f' "%s/%s/%s" [folderName, templateId, assetId]) (Just contentType)
+putAsset templateId assetId contentType = createPutObjectFn (f' "%s/%s/%s" [folderName, templateId, assetId]) (Just contentType) Nothing
 
 removeAssets :: String -> AppContextM ()
 removeAssets templateId = createRemoveObjectFn (f' "%s/%s" [folderName, templateId])
