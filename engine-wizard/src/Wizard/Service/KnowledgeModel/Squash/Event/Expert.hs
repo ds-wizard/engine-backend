@@ -14,8 +14,8 @@ instance SimpleEventSquash EditExpertEvent where
       { uuid = newEvent.uuid
       , parentUuid = newEvent.parentUuid
       , entityUuid = newEvent.entityUuid
-      , name = applyValue oldEvent newEvent (name :: EditExpertEvent -> EventField String)
-      , email = applyValue oldEvent newEvent (email :: EditExpertEvent -> EventField String)
-      , annotations = applyValue oldEvent newEvent (annotations :: EditExpertEvent -> EventField [MapEntry String String])
+      , name = applyValue oldEvent newEvent ((.name) :: EditExpertEvent -> EventField String)
+      , email = applyValue oldEvent newEvent ((.email) :: EditExpertEvent -> EventField String)
+      , annotations = applyValue oldEvent newEvent ((.annotations) :: EditExpertEvent -> EventField [MapEntry String String])
       , createdAt = newEvent.createdAt
       }

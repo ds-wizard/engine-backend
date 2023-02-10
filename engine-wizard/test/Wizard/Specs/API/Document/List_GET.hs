@@ -15,6 +15,7 @@ import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Model.Error.Error
+import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
@@ -60,21 +61,21 @@ test_200 appContext = do
     ( Page
         "documents"
         (PageMetadata 20 3 1 0)
-        [ toDTO doc1 (Just questionnaire1Simple) []
-        , toDTO doc2 (Just questionnaire2Simple) []
-        , toDTO doc3 (Just questionnaire2Simple) []
+        [ toDTO doc1 (Just questionnaire1Simple) [] wizardDocumentTemplate
+        , toDTO doc2 (Just questionnaire2Simple) [] wizardDocumentTemplate
+        , toDTO doc3 (Just questionnaire2Simple) [] wizardDocumentTemplate
         ]
     )
   create_test_200
     "HTTP 200 OK (query)"
     appContext
     "/documents?q=My exported document 2"
-    (Page "documents" (PageMetadata 20 1 1 0) [toDTO doc2 (Just questionnaire2Simple) []])
+    (Page "documents" (PageMetadata 20 1 1 0) [toDTO doc2 (Just questionnaire2Simple) [] wizardDocumentTemplate])
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext
     "/documents?q=Non-existing document"
-    (Page "documents" (PageMetadata 20 0 0 0) [])
+    (Page "documents" (PageMetadata 20 0 0 0) ([] :: [DocumentDTO]))
 
 create_test_200 title appContext reqUrl expDto =
   it title $
@@ -84,7 +85,7 @@ create_test_200 title appContext reqUrl expDto =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expBody = encode (fmap (\x -> x wizardDocumentTemplate) expDto)
+      let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext

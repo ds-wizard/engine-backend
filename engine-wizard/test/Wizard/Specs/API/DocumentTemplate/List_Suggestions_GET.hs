@@ -9,6 +9,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import Shared.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.Database.Migration.Development.Package.Data.Packages
@@ -74,13 +75,13 @@ test_200 appContext = do
     appContext
     "/document-templates/suggestions?pkgId=org.nl:core-nl:1.0.0"
     reqAuthHeader
-    (Page "documentTemplates" (PageMetadata 20 0 0 0) [])
+    (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSuggestionDTO]))
   create_test_200
     "HTTP 200 OK (query 'q' for non-existing)"
     appContext
     "/document-templates/suggestions?q=Non-existing Questionnaire Report"
     reqAuthHeader
-    (Page "documentTemplates" (PageMetadata 20 0 0 0) [])
+    (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSuggestionDTO]))
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
   it title $

@@ -22,9 +22,9 @@ instance SimpleEventSquash EditKnowledgeModelEvent where
       { uuid = newEvent.uuid
       , parentUuid = newEvent.parentUuid
       , entityUuid = newEvent.entityUuid
-      , annotations = applyValue oldEvent newEvent (annotations :: EditKnowledgeModelEvent -> EventField [MapEntry String String])
+      , annotations = applyValue oldEvent newEvent ((.annotations) :: EditKnowledgeModelEvent -> EventField [MapEntry String String])
       , chapterUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (chapterUuids :: EditKnowledgeModelEvent -> EventField [U.UUID])
-      , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (tagUuids :: EditKnowledgeModelEvent -> EventField [U.UUID])
+      , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent ((.tagUuids) :: EditKnowledgeModelEvent -> EventField [U.UUID])
       , integrationUuids =
           applyValueIfSameEntity mPreviousEvent oldEvent newEvent (integrationUuids :: EditKnowledgeModelEvent -> EventField [U.UUID])
       , metricUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (metricUuids :: EditKnowledgeModelEvent -> EventField [U.UUID])

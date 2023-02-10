@@ -12,6 +12,7 @@ import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorMigration as KM_MIG
 import Wizard.Model.Branch.BranchList
+import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Migration.KnowledgeModel.MigratorService
 
 import Wizard.Specs.Common

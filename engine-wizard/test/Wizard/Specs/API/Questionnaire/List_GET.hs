@@ -16,6 +16,7 @@ import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -93,7 +94,7 @@ test_200 appContext = do
           ++ U.toString userIsaac.uuid
     )
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 0 0 0) [])
+    (Page "questionnaires" (PageMetadata 20 0 0 0) ([] :: [QuestionnaireDTO]))
   create_test_200
     "HTTP 200 OK (Admin - isTemplate - true)"
     appContext
@@ -111,7 +112,7 @@ test_200 appContext = do
     appContext
     "/questionnaires?sort=uuid,asc&isMigrating=true"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 0 0 0) [])
+    (Page "questionnaires" (PageMetadata 20 0 0 0) ([] :: [QuestionnaireDTO]))
   create_test_200
     "HTTP 200 OK (Admin - isMigrating - false)"
     appContext
@@ -225,7 +226,7 @@ test_200 appContext = do
     appContext
     "/questionnaires?sort=uuid,asc&isMigrating=true"
     reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 20 0 0 0) [])
+    (Page "questionnaires" (PageMetadata 20 0 0 0) ([] :: [QuestionnaireDTO]))
   create_test_200
     "HTTP 200 OK (Non-Admin - isMigrating - false)"
     appContext

@@ -14,7 +14,7 @@ instance SimpleEventSquash EditChoiceEvent where
       { uuid = newEvent.uuid
       , parentUuid = newEvent.parentUuid
       , entityUuid = newEvent.entityUuid
-      , aLabel = applyValue oldEvent newEvent (aLabel :: EditChoiceEvent -> EventField String)
-      , annotations = applyValue oldEvent newEvent (annotations :: EditChoiceEvent -> EventField [MapEntry String String])
+      , aLabel = applyValue oldEvent newEvent ((.aLabel) :: EditChoiceEvent -> EventField String)
+      , annotations = applyValue oldEvent newEvent ((.annotations) :: EditChoiceEvent -> EventField [MapEntry String String])
       , createdAt = newEvent.createdAt
       }

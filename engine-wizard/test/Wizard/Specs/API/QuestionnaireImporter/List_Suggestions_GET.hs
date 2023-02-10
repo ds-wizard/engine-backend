@@ -11,6 +11,7 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
+import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterJM ()
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
@@ -69,7 +70,7 @@ test_200 appContext = do
     appContext
     "/questionnaire-importers/suggestions?enabled=true&q=Non-existing Questionnaire Report"
     reqAuthHeader
-    (Page "questionnaireImporters" (PageMetadata 20 0 0 0) [])
+    (Page "questionnaireImporters" (PageMetadata 20 0 0 0) ([] :: [QuestionnaireImporterDTO]))
   create_test_200
     "HTTP 200 OK (query 'questionnaireUuid')"
     appContext

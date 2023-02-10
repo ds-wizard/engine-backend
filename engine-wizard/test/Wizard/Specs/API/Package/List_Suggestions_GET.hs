@@ -20,6 +20,7 @@ import qualified Wizard.Database.Migration.Development.Package.PackageMigration 
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Package.PackageSuggestion
 import Wizard.Service.Package.PackageMapper
 
 import SharedTest.Specs.API.Common
@@ -88,7 +89,7 @@ test_200 appContext = do
     "HTTP 200 OK (query for non-existing)"
     appContext
     "/packages/suggestions?q=Non-existing Knowledge Model"
-    (Page "packages" (PageMetadata 20 0 0 0) [])
+    (Page "packages" (PageMetadata 20 0 0 0) ([] :: [PackageSuggestion]))
 
 create_test_200 title appContext reqUrl expDto =
   it title $

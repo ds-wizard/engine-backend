@@ -17,9 +17,9 @@ instance SimpleEventSquash EditChapterEvent where
       { uuid = newEvent.uuid
       , parentUuid = newEvent.parentUuid
       , entityUuid = newEvent.entityUuid
-      , title = applyValue oldEvent newEvent (title :: EditChapterEvent -> EventField String)
-      , text = applyValue oldEvent newEvent (text :: EditChapterEvent -> EventField (Maybe String))
-      , annotations = applyValue oldEvent newEvent (annotations :: EditChapterEvent -> EventField [MapEntry String String])
+      , title = applyValue oldEvent newEvent ((.title) :: EditChapterEvent -> EventField String)
+      , text = applyValue oldEvent newEvent ((.text) :: EditChapterEvent -> EventField (Maybe String))
+      , annotations = applyValue oldEvent newEvent ((.annotations) :: EditChapterEvent -> EventField [MapEntry String String])
       , questionUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (questionUuids :: EditChapterEvent -> EventField [U.UUID])
       , createdAt = newEvent.createdAt
       }
