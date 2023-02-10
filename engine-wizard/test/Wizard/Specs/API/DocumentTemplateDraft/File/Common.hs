@@ -8,6 +8,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
 import Shared.Localization.Messages.Public
+import Shared.Model.DocumentTemplate.DocumentTemplate
 import Shared.Model.Error.Error
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.App.App

@@ -17,7 +17,6 @@ import Shared.Model.Error.Error
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User

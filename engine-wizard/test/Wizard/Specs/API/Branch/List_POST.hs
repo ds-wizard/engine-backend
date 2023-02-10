@@ -19,7 +19,6 @@ import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Localization.Messages.Public
-import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User

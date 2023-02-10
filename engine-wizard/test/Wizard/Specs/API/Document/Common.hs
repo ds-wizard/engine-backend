@@ -12,6 +12,7 @@ import Shared.Model.Error.Error
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.App.App
+import Wizard.Model.Document.Document
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
