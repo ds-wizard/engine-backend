@@ -6,6 +6,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.Model.DocumentTemplate.DocumentTemplate
 
 import Wizard.Specs.Common
 

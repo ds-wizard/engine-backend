@@ -47,13 +47,6 @@ packages:
   original:
     hackage: raven-haskell-0.1.4.1
 - completed:
-    hackage: rdf4h-5.0.1@sha256:76ecd4aa6b536add8d7c6c13aedd3e028d492d0044f28dba9eb130cfed063fdc,6470
-    pantry-tree:
-      sha256: 4c81222dbdb1a97adfb7f47421c404e6144c704e6806501d8e7d259f106b0fdd
-      size: 4230
-  original:
-    hackage: rdf4h-5.0.1
-- completed:
     hackage: jose-jwt-0.9.4@sha256:6db77f81cfcf81cf7faf8a4dc4b2110c1603dbb94249d49d069a17b4897e9d69,3560
     pantry-tree:
       sha256: fd3145cd8ab15be77d49522c454e86f17cf0f233ada7a623457926dbf6ea47e4
@@ -74,9 +67,44 @@ packages:
       size: 541
   original:
     hackage: lens-aeson-1.1.3
+- completed:
+    hackage: minio-hs-1.6.0@sha256:f1e2c9b9a0586d8ccf993642692dbb4a1fb907181e1fedb5d3e58d0394ac9a47,10866
+    pantry-tree:
+      sha256: 054ae4a413bda9b40015797ebdd2ea159ca63f005d71a10e067309709a39bf47
+      size: 4028
+  original:
+    hackage: minio-hs-1.6.0
+- completed:
+    hackage: servant-multipart-0.12.1@sha256:b482509b17371e56ef16179388f8221deffdf87fe32915bf3abb5eff4ce36bf2,2028
+    pantry-tree:
+      sha256: bb9f0808f90cf98cc23b169b3a99ea95548f958d2e773987351c4c9974323028
+      size: 332
+  original:
+    hackage: servant-multipart-0.12.1
+- completed:
+    hackage: relude-1.1.0.0@sha256:fe82b67d4560b9eff8d7dd12c5e1f786b25d52d64f7302ad82a3bbec9a0bd55e,11747
+    pantry-tree:
+      sha256: 1482f23099d4b66e2db69e90403456c51cd2573bb0f3e51b86d449c3cf47ebc8
+      size: 4286
+  original:
+    hackage: relude-1.1.0.0
+- completed:
+    hackage: servant-docs-0.12@sha256:73fd8901a9dbe4d2c563b7da0b94c75f7755ee9059eec80ff621f415a8d3ef6a,3383
+    pantry-tree:
+      sha256: 9b5c1fbbecfc901c58f46cbb944f40324e8ebeec82b7024c09fc89ab55e4ac83
+      size: 702
+  original:
+    hackage: servant-docs-0.12
+- completed:
+    hackage: servant-foreign-0.15.4@sha256:ba0b1bca0d9fa4b09b59f6b4fcaccdfac38bd3da6dad80f23242ad6e869e67b0,2873
+    pantry-tree:
+      sha256: 0e0552f97d1ccf6b79776dde4b5d9bc7d474233612312eb0888112d0f66d7e57
+      size: 590
+  original:
+    hackage: servant-foreign-0.15.4
 snapshots:
 - completed:
-    sha256: 17870c63f8041ac17a38096124abeb953cb14d84bfc96deb88f9b24daa97b347
-    size: 649332
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/20/10.yaml
-  original: lts-20.10
+    sha256: 71c6dbed787818f0c56e9edaaa98bb17e413d172f7952682da7fd99da0f0d6f1
+    size: 598121
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2023/2/12.yaml
+  original: nightly-2023-02-12

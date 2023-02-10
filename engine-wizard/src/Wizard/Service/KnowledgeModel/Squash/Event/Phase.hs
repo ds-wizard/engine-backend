@@ -1,7 +1,5 @@
 module Wizard.Service.KnowledgeModel.Squash.Event.Phase where
 
-import Shared.Model.Common.MapEntry
-import Shared.Model.Event.EventField
 import Shared.Model.Event.Phase.PhaseEvent
 import Wizard.Service.KnowledgeModel.Squash.Event.Common
 
@@ -14,8 +12,8 @@ instance SimpleEventSquash EditPhaseEvent where
       { uuid = newEvent.uuid
       , parentUuid = newEvent.parentUuid
       , entityUuid = newEvent.entityUuid
-      , title = applyValue oldEvent newEvent (title :: EditPhaseEvent -> EventField String)
-      , description = applyValue oldEvent newEvent (description :: EditPhaseEvent -> EventField (Maybe String))
-      , annotations = applyValue oldEvent newEvent (annotations :: EditPhaseEvent -> EventField [MapEntry String String])
+      , title = applyValue oldEvent newEvent (.title)
+      , description = applyValue oldEvent newEvent (.description)
+      , annotations = applyValue oldEvent newEvent (.annotations)
       , createdAt = newEvent.createdAt
       }

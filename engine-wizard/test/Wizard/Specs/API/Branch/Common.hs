@@ -5,6 +5,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.DAO.Branch.BranchDAO
+import Wizard.Model.Branch.Branch
 
 import Wizard.Specs.API.Common
 

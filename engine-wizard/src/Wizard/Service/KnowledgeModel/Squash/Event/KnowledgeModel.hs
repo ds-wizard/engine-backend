@@ -1,9 +1,5 @@
 module Wizard.Service.KnowledgeModel.Squash.Event.KnowledgeModel where
 
-import qualified Data.UUID as U
-
-import Shared.Model.Common.MapEntry
-import Shared.Model.Event.EventField
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Wizard.Service.KnowledgeModel.Squash.Event.Common
 
@@ -22,12 +18,11 @@ instance SimpleEventSquash EditKnowledgeModelEvent where
       { uuid = newEvent.uuid
       , parentUuid = newEvent.parentUuid
       , entityUuid = newEvent.entityUuid
-      , annotations = applyValue oldEvent newEvent (annotations :: EditKnowledgeModelEvent -> EventField [MapEntry String String])
-      , chapterUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (chapterUuids :: EditKnowledgeModelEvent -> EventField [U.UUID])
-      , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (tagUuids :: EditKnowledgeModelEvent -> EventField [U.UUID])
-      , integrationUuids =
-          applyValueIfSameEntity mPreviousEvent oldEvent newEvent (integrationUuids :: EditKnowledgeModelEvent -> EventField [U.UUID])
-      , metricUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (metricUuids :: EditKnowledgeModelEvent -> EventField [U.UUID])
-      , phaseUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (phaseUuids :: EditKnowledgeModelEvent -> EventField [U.UUID])
+      , annotations = applyValue oldEvent newEvent (.annotations)
+      , chapterUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.chapterUuids)
+      , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.tagUuids)
+      , integrationUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.integrationUuids)
+      , metricUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.metricUuids)
+      , phaseUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.phaseUuids)
       , createdAt = newEvent.createdAt
       }

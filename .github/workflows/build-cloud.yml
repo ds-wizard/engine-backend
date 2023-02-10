@@ -64,19 +64,19 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.stack
-        key: stack-home-ubuntu18-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
+        key: stack-home-ubuntu22-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
         restore-keys: |
-          stack-home-ubuntu18-
+          stack-home-ubuntu22-
     
     - name: Cache postgresql-migration
       id: cache-postgresql-migration
       uses: actions/cache@v3
       with:
         path: vendor/postgresql-migration/.stack-work
-        key: postgresql-migration-ubuntu18-${{ hashFiles('vendor/postgresql-migration/package.yaml')}}-${{ hashFiles('vendor/postgresql-migration/**/*.hs') }}
+        key: postgresql-migration-ubuntu22-${{ hashFiles('vendor/postgresql-migration/package.yaml')}}-${{ hashFiles('vendor/postgresql-migration/**/*.hs') }}
         restore-keys: |
-          postgresql-migration-ubuntu18-${{ hashFiles('vendor/postgresql-migration/package.yaml')}}-
-          postgresql-migration-ubuntu18-
+          postgresql-migration-ubuntu22-${{ hashFiles('vendor/postgresql-migration/package.yaml')}}-
+          postgresql-migration-ubuntu22-
 
     - name: Invalidate postgresql-migration cache (force push)
       id: invalidate-cache-postgresql-migration
@@ -89,10 +89,10 @@ jobs:
       uses: actions/cache@v3
       with:
         path: vendor/servant-errors/.stack-work
-        key: servant-errors-ubuntu18-${{ hashFiles('vendor/servant-errors/package.yaml')}}-${{ hashFiles('vendor/servant-errors/**/*.hs') }}
+        key: servant-errors-ubuntu22-${{ hashFiles('vendor/servant-errors/package.yaml')}}-${{ hashFiles('vendor/servant-errors/**/*.hs') }}
         restore-keys: |
-          servant-errors-ubuntu18-${{ hashFiles('vendor/servant-errors/package.yaml')}}-
-          servant-errors-ubuntu18-
+          servant-errors-ubuntu22-${{ hashFiles('vendor/servant-errors/package.yaml')}}-
+          servant-errors-ubuntu22-
 
     - name: Invalidate servant-errors cache (force push)
       id: invalidate-cache-servant-errors
@@ -105,10 +105,10 @@ jobs:
       uses: actions/cache@v3
       with:
         path: vendor/servant-mock/.stack-work
-        key: servant-mock-ubuntu18-${{ hashFiles('vendor/servant-mock/package.yaml')}}-${{ hashFiles('vendor/servant-mock/**/*.hs') }}
+        key: servant-mock-ubuntu22-${{ hashFiles('vendor/servant-mock/package.yaml')}}-${{ hashFiles('vendor/servant-mock/**/*.hs') }}
         restore-keys: |
-          servant-mock-ubuntu18-${{ hashFiles('vendor/servant-mock/package.yaml')}}-
-          servant-mock-ubuntu18-
+          servant-mock-ubuntu22-${{ hashFiles('vendor/servant-mock/package.yaml')}}-
+          servant-mock-ubuntu22-
 
     - name: Invalidate servant-mock cache (force push)
       id: invalidate-cache-servant-mock
@@ -121,10 +121,10 @@ jobs:
       uses: actions/cache@v3
       with:
         path: engine-shared/.stack-work
-        key: engine-shared-ubuntu18-${{ hashFiles('engine-shared/package.yaml')}}-${{ hashFiles('engine-shared/**/*.hs') }}
+        key: engine-shared-ubuntu22-${{ hashFiles('engine-shared/package.yaml')}}-${{ hashFiles('engine-shared/**/*.hs') }}
         restore-keys: |
-          engine-shared-ubuntu18-${{ hashFiles('engine-shared/package.yaml')}}-
-          engine-shared-ubuntu18-
+          engine-shared-ubuntu22-${{ hashFiles('engine-shared/package.yaml')}}-
+          engine-shared-ubuntu22-
     
     - name: Invalidate engine-shared cache (force push)
       id: invalidate-cache-engine-shared
@@ -137,10 +137,10 @@ jobs:
       uses: actions/cache@v3
       with:
         path: engine-registry/.stack-work
-        key: engine-registry-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-registry/package.yaml')}}-${{ hashFiles('engine-registry/**/*.hs') }}
+        key: engine-registry-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-registry/package.yaml')}}-${{ hashFiles('engine-registry/**/*.hs') }}
         restore-keys: |
-          engine-registry-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-registry/package.yaml')}}-
-          engine-registry-${{ matrix.component }}-ubuntu18-
+          engine-registry-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-registry/package.yaml')}}-
+          engine-registry-${{ matrix.component }}-ubuntu22-
     
     - name: Invalidate engine-registry cache (force push)
       id: invalidate-cache-engine-registry
@@ -154,10 +154,10 @@ jobs:
       if: matrix.component == 'wizard'
       with:
         path: engine-wizard/.stack-work
-        key: engine-wizard-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-wizard/package.yaml')}}-${{ hashFiles('engine-wizard/**/*.hs') }}
+        key: engine-wizard-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard/package.yaml')}}-${{ hashFiles('engine-wizard/**/*.hs') }}
         restore-keys: |
-          engine-wizard-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-wizard/package.yaml')}}-
-          engine-wizard-${{ matrix.component }}-ubuntu18-
+          engine-wizard-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard/package.yaml')}}-
+          engine-wizard-${{ matrix.component }}-ubuntu22-
     
     - name: Invalidate engine-wizard cache (force push)
       id: invalidate-cache-engine-wizard
@@ -171,10 +171,10 @@ jobs:
       if: matrix.component == 'wizard'
       with:
         path: engine-wizard-metamodel-migrator/.stack-work
-        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-${{ hashFiles('engine-wizard-metamodel-migrator/**/*.hs') }}
+        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-${{ hashFiles('engine-wizard-metamodel-migrator/**/*.hs') }}
         restore-keys: |
-          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-
-          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18-
+          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-
+          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-
     
     - name: Invalidate engine-wizard-metamodel-migrator cache (force push)
       id: invalidate-cache-engine-wizard-metamodel-migrator
@@ -187,7 +187,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.local/bin
-        key: stack-local-bin-ubuntu18-${{ matrix.stack }}
+        key: stack-local-bin-ubuntu22-${{ matrix.stack }}
 
 # (2) -> Prepare and install dependencies     
     - name: Setup stack

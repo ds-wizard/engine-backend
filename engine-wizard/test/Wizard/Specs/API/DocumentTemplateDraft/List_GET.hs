@@ -16,6 +16,7 @@ import Shared.Model.DocumentTemplate.DocumentTemplateJM ()
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
 import Wizard.Model.Context.AppContext
+import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 
 import SharedTest.Specs.API.Common
@@ -64,7 +65,7 @@ test_200 appContext = do
     appContext
     "/document-template-drafts?q=Non-existing Questionnaire Report"
     reqAuthHeader
-    (Page "documentTemplateDrafts" (PageMetadata 20 0 0 0) [])
+    (Page "documentTemplateDrafts" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateDraftList]))
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
   it title $

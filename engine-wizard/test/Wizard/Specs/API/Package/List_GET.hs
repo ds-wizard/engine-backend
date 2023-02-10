@@ -14,6 +14,7 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Service.Package.PackageMapper
+import Wizard.Api.Resource.Package.PackageSimpleDTO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
@@ -83,7 +84,7 @@ test_200 appContext = do
     "HTTP 200 OK (query for non-existing)"
     appContext
     "/packages?q=Non-existing Knowledge Model"
-    (Page "packages" (PageMetadata 20 0 0 0) [])
+    (Page "packages" (PageMetadata 20 0 0 0) ([] :: [PackageSimpleDTO]))
   create_test_200
     "HTTP 200 OK (state - UpToDatePackageState)"
     appContext
@@ -99,7 +100,7 @@ test_200 appContext = do
     "HTTP 200 OK (state - OutdatedPackageState)"
     appContext
     "/packages?state=OutdatedPackageState"
-    (Page "packages" (PageMetadata 20 0 0 0) [])
+    (Page "packages" (PageMetadata 20 0 0 0) ([] :: [PackageSimpleDTO]))
 
 create_test_200 title appContext reqUrl expDto =
   it title $
