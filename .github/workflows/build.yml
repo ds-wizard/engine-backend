@@ -1,4 +1,4 @@
-name: Build (cloud)
+name: Build
 
 on:
   push:
@@ -19,10 +19,11 @@ jobs:
     
     env:
       COMPONENT: ${{ matrix.component }}
-      PUBLIC_IMAGE: datastewardshipwizard/${{ matrix.component }}-server
-      PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/${{ matrix.component }}-server
-      TAG_DEVELOP: develop
-      TAG_LATEST: latest
+      IMAGE_NAME: ${{ matrix.component }}-server
+      PUBLIC_IMAGE_PREFIX: datastewardshipwizard
+      DOCKER_META_CONTEXT: './engine-${{ matrix.component }}'
+      DOCKER_META_FILE: './engine-${{ matrix.component }}/Dockerfile'
+      DOCKER_META_PLATFORMS: 'linux/amd64'
       STACK_VERSION: ${{ matrix.stack }}
 
     services:
@@ -236,54 +237,77 @@ jobs:
       env:
         FEEDBACK_TOKEN: ${{ secrets.FEEDBACK_TOKEN }}
 
-# (4) -> Docker login
-    - name: Docker login
-      run: |
-        docker login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_PASSWORD"
-        docker login -u "$PRIVATE_REGISTRY_USERNAME" -p "$PRIVATE_REGISTRY_PASSWORD" "$PRIVATE_REGISTRY_URL"
-      env:
-        DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-        DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
-        PRIVATE_REGISTRY_URL: ${{ secrets.PRIVATE_REGISTRY_URL }}
-        PRIVATE_REGISTRY_USERNAME: ${{ secrets.PRIVATE_REGISTRY_USERNAME }}
-        PRIVATE_REGISTRY_PASSWORD: ${{ secrets.PRIVATE_REGISTRY_PASSWORD }}
+# (4.1) -> Docker build (test)
+    - name: Docker meta [test]
+      id: meta-test
+      uses: docker/metadata-action@v4
+      with:
+        images: |
+          ${{ env.PUBLIC_IMAGE_PREFIX }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=sha
 
-# (5) -> Build Docker image
-    - name: Docker build
-      run: |
-        cd engine-$COMPONENT
-        docker build -t $PRIVATE_IMAGE:$GITHUB_SHA .
+    - name: Docker build [test]
+      uses: docker/build-push-action@v3
+      with:
+        context: ${{ env.DOCKER_META_CONTEXT }}
+        file: ${{ env.DOCKER_META_FILE }}
+        platforms: ${{ env.DOCKER_META_PLATFORMS }}
+        push: false
+        tags: ${{ steps.meta-test.outputs.tags }}
+        labels: ${{ steps.meta-test.outputs.labels }}
 
-    - name: Docker tag and push - branch (private)
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && !contains(github.ref, 'release')
-      run: |
-        GITHUB_BRANCH=`echo $GITHUB_REF | cut -d/ -f3- | sed 's#/#-#g'`
-        docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $PRIVATE_IMAGE:$GITHUB_BRANCH
-        docker push $PRIVATE_IMAGE:$GITHUB_BRANCH
+# (4.2) -> Docker login
+    - name: Docker login [docker.io]
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-    - name: Docker tag and push - latest (public)
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      run: |
-        docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $PUBLIC_IMAGE:$TAG_LATEST
-        docker push $PUBLIC_IMAGE:$TAG_LATEST
+# (4.3) -> Docker build+push (dev)
+    - name: Docker meta [dev]
+      id: meta-dev
+      if: github.event_name != 'pull_request'
+      uses: docker/metadata-action@v4
+      with:
+        images: |
+          ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
 
-    - name: Docker tag and push - version tag (public)
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-      run: |
-        GITHUB_TAG=`echo $GITHUB_REF | cut -d/ -f3` 
-        # Release vX.Y.Z
-        if [[ $GITHUB_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          IMAGE_TAG_MAJOR="$PUBLIC_IMAGE:"`echo $GITHUB_TAG | sed -E "s/v(.*)\..*\..*/\1/g"`
-          IMAGE_TAG_MINOR="$PUBLIC_IMAGE:"`echo $GITHUB_TAG | sed -E "s/v(.*)\..*/\1/g"`
-          IMAGE_TAG_PATCH="$PUBLIC_IMAGE:"`echo $GITHUB_TAG | sed -E "s/v//g"`
-          echo "Publishing release: $IMAGE_TAG_PATCH";
-          docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $IMAGE_TAG_MAJOR && docker push $IMAGE_TAG_MAJOR;
-          docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $IMAGE_TAG_MINOR && docker push $IMAGE_TAG_MINOR;
-          docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $IMAGE_TAG_PATCH && docker push $IMAGE_TAG_PATCH;
-        fi
-        # Release candidate vX.Y.Z-rc.R
-        if [[ $GITHUB_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+$ ]]; then
-          IMAGE_TAG_RC="$PUBLIC_IMAGE:"`echo $GITHUB_TAG | sed -E "s/v//g"`
-          echo "Publishing release candidate: $IMAGE_TAG_RC";
-          docker image tag $PRIVATE_IMAGE:$GITHUB_SHA $IMAGE_TAG_RC && docker push $IMAGE_TAG_RC;
-        fi
+    - name: Docker build+push [dev]
+      uses: docker/build-push-action@v3
+      if: github.event_name != 'pull_request' && steps.meta-dev.outputs.tags != ''
+      with:
+        context: ${{ env.DOCKER_META_CONTEXT }}
+        file: ${{ env.DOCKER_META_FILE }}
+        platforms: ${{ env.DOCKER_META_PLATFORMS }}
+        push: true
+        tags: ${{ steps.meta-dev.outputs.tags }}
+        labels: ${{ steps.meta-dev.outputs.labels }}
+
+# (4.4) -> Docker build+push (public)
+    - name: Docker meta [public]
+      id: meta-public
+      if: github.event_name != 'pull_request'
+      uses: docker/metadata-action@v4
+      with:
+        images: |
+          ${{ env.PUBLIC_IMAGE_PREFIX }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
+
+    - name: Docker build+push [public]
+      uses: docker/build-push-action@v3
+      if: github.event_name != 'pull_request' && steps.meta-public.outputs.tags != ''
+      with:
+        context: ${{ env.DOCKER_META_CONTEXT }}
+        file: ${{ env.DOCKER_META_FILE }}
+        platforms: ${{ env.DOCKER_META_PLATFORMS }}
+        push: true
+        tags: ${{ steps.meta-public.outputs.tags }}
+        labels: ${{ steps.meta-public.outputs.labels }}
