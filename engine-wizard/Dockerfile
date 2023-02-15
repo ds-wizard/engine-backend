@@ -9,7 +9,7 @@ HEALTHCHECK --interval=5m --timeout=10s \
 RUN apt-get update && apt-get -qq -y install libmemcached-dev ca-certificates netbase wget curl libpq5 libpq-dev
 
 # Add built exectutable binary and run script
-ADD engine-wizard-bin ./scripts/docker-run.sh /application/
+ADD engine-wizard-bin /application/
 
 # Add configs
 ADD config/application.yml config/integration.yml config/build-info.yml /application/engine-wizard/config/
@@ -18,5 +18,9 @@ ADD config/application.yml config/integration.yml config/build-info.yml /applica
 RUN groupadd -r user && useradd -r -g user user
 USER user
 
+# Set up env
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
 # Run the run script (preparations and engine-wizard-bin)
-CMD ["bash", "./docker-run.sh"]
+CMD ["/application/engine-wizard-bin"]
