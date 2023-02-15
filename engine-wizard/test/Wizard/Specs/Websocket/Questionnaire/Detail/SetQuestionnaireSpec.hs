@@ -54,7 +54,7 @@ test200 appContext =
               , requestUrl = "/questionnaires/" ++ U.toString questionnaire10.uuid
               , requestHeaders = M.fromList [("Authorization", "Bearer " ++ reqAuthToken), ("Content-Type", "application/json")]
               , requestBody = BSL.toStrict . encode $ questionnaire10EditedChange
-              , multipartFileName = Nothing
+              , multipart = Nothing
               }
       -- AND: Prepare expectation
       let expStatus = 200

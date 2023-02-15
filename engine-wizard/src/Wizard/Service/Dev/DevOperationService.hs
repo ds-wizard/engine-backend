@@ -39,6 +39,9 @@ execute reqDto
   | action reqDto persistentCommand persistentCommand_runAll = persistentCommand_runAllFn reqDto
   | action reqDto persistentCommand persistentCommand_run = persistentCommand_runFn reqDto
   | action reqDto registry registry_syncWithRegistry = registry_syncWithRegistryFn reqDto
+  | action reqDto registry registry_pushPackageBundle = registry_pushPackageBundleFn reqDto
+  | action reqDto registry registry_pushDocumentTemplateBundle = registry_pushDocumentTemplateBundleFn reqDto
+  | action reqDto registry registry_pushLocaleBundle = registry_pushLocaleBundleFn reqDto
   | action reqDto questionnaire questionnaire_cleanQuestionnaires = questionnaire_cleanQuestionnairesFn reqDto
   | action reqDto questionnaire questionnaire_recomputeQuestionnaireIndications = questionnaire_recomputeQuestionnaireIndicationsFn reqDto
   | action reqDto questionnaire questionnaire_squashAllEvents = questionnaire_squashAllEventsFn reqDto

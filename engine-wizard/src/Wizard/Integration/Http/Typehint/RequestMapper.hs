@@ -18,5 +18,5 @@ toRetrieveTypehintsRequest intConfig variables =
     , requestUrl = interpolateString variables intConfig.requestUrl
     , requestHeaders = interpolateMapValues variables (mapEntryToMap intConfig.requestHeaders)
     , requestBody = BS.pack $ interpolateString variables intConfig.requestBody
-    , multipartFileName = Nothing
+    , multipart = Nothing
     }

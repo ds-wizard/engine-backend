@@ -19,10 +19,12 @@ import Registry.Api.Resource.Organization.OrganizationStateSM ()
 import Registry.Api.Resource.Package.PackageDetailSM ()
 import Registry.Api.Resource.Package.PackageSimpleSM ()
 import Registry.Api.Resource.PackageBundle.PackageBundleSM ()
+import Shared.Api.Resource.Common.FileSM ()
 import Shared.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 import Shared.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import Shared.Api.Resource.Info.InfoSM ()
 import Shared.Api.Resource.Package.PackageSM ()
+import Shared.Api.Resource.PackageBundle.PackageBundleSM ()
 
 type SwaggerAPI = SwaggerSchemaUI "swagger-ui" "swagger.json"
 

@@ -25,4 +25,4 @@ detail_bundle_GET
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] TemporaryFileDTO)
 detail_bundle_GET mTokenHeader mServerUrl pkgId =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< exportPackageBundle pkgId
+    runInAuthService Transactional $ addTraceUuidHeader =<< getTemporaryFileWithPackageBundle pkgId

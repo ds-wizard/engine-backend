@@ -1,4 +1,5 @@
 module Wizard.Service.PackageBundle.PackageBundleService (
+  getTemporaryFileWithPackageBundle,
   exportPackageBundle,
   pullPackageBundleFromRegistry,
   importAndConvertPackageBundle,
@@ -25,6 +26,7 @@ import Shared.Model.Error.Error
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.PackageBundle.PackageBundle
 import Shared.Service.Coordinate.CoordinateValidation
+import qualified Shared.Service.Package.PackageMapper as PM
 import Shared.Service.PackageBundle.PackageBundleMapper
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
@@ -37,7 +39,6 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.KnowledgeModel.KnowledgeModelValidation
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Migration.Metamodel.MigratorService
-import qualified Wizard.Service.Package.PackageMapper as PM
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Package.PackageValidation (
   validateMaybePreviousPackageIdExistence,
@@ -48,12 +49,19 @@ import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFi
 import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Util.Logger
 
-exportPackageBundle :: String -> AppContextM TemporaryFileDTO
+getTemporaryFileWithPackageBundle :: String -> AppContextM TemporaryFileDTO
+getTemporaryFileWithPackageBundle pbId =
+  runInTransaction $ do
+    bundle <- exportPackageBundle pbId
+    url <- createTemporaryFile (f' "%s.km" [pbId]) "application/octet-stream" (encode bundle)
+    return $ TemporaryFileMapper.toDTO url "application/octet-stream"
+
+exportPackageBundle :: String -> AppContextM PackageBundleDTO
 exportPackageBundle pbId =
   runInTransaction $ do
     packages <- getSeriesOfPackages pbId
     let newestPackage = last packages
-    let pb =
+    let bundle =
           PackageBundle
             { bundleId = newestPackage.pId
             , name = newestPackage.name
@@ -64,8 +72,7 @@ exportPackageBundle pbId =
             , packages = packages
             }
     auditPackageBundleExport pbId
-    url <- createTemporaryFile (f' "%s.km" [pb.bundleId]) "application/octet-stream" (encode . toDTO $ pb)
-    return $ TemporaryFileMapper.toDTO url "application/octet-stream"
+    return . toDTO $ bundle
 
 pullPackageBundleFromRegistry :: String -> AppContextM ()
 pullPackageBundleFromRegistry pkgId =

@@ -30,7 +30,14 @@ import Wizard.Service.Limit.AppLimitService
 import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import Wizard.Service.TemporaryFile.TemporaryFileService
 
-exportBundle :: String -> AppContextM TemporaryFileDTO
+getTemporaryFileWithBundle :: String -> AppContextM TemporaryFileDTO
+getTemporaryFileWithBundle tmlId =
+  runInTransaction $ do
+    bundle <- exportBundle tmlId
+    url <- createTemporaryFile (f' "%s.zip" [tmlId]) "application/octet-stream" bundle
+    return $ TemporaryFileMapper.toDTO url "application/zip"
+
+exportBundle :: String -> AppContextM BSL.ByteString
 exportBundle tmlId =
   runInTransaction $ do
     tml <- findDocumentTemplateById tmlId
@@ -38,9 +45,7 @@ exportBundle tmlId =
     assets <- findAssetsByDocumentTemplateId tmlId
     assetContents <- traverse (findAsset tml.tId) assets
     auditBundleExport tmlId
-    let resDto = toDocumentTemplateArchive (toBundle tml files assets) assetContents
-    url <- createTemporaryFile (f' "%s.zip" [tml.tId]) "application/octet-stream" resDto
-    return $ TemporaryFileMapper.toDTO url "application/zip"
+    return $ toDocumentTemplateArchive (toBundle tml files assets) assetContents
 
 pullBundleFromRegistry :: String -> AppContextM ()
 pullBundleFromRegistry tmlId =

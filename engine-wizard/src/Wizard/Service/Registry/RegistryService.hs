@@ -17,6 +17,9 @@ import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Common
 import Wizard.Service.Config.App.AppConfigService
+import Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleService
+import Wizard.Service.LocaleBundle.LocaleBundleService
+import Wizard.Service.PackageBundle.PackageBundleService
 import Wizard.Service.Registry.RegistryMapper
 import Wizard.Service.Statistics.StatisticsService
 import Wizard.Util.Logger
@@ -84,6 +87,27 @@ synchronizeLocales now = do
   deleteRegistryLocales
   traverse_ insertRegistryLocale registryLocales
   logInfoU _CMP_SERVICE "Organization Synchronization successfully finished"
+
+pushPackageBundle :: String -> AppContextM ()
+pushPackageBundle pkgId = do
+  logInfoU _CMP_SERVICE (f' "Pushing package bundle with the id ('%s') to registry" [pkgId])
+  bundle <- exportPackageBundle pkgId
+  uploadPackageBundle bundle
+  logInfoU _CMP_SERVICE (f' "Pushing package bundle with the id ('%s') successfully completed" [pkgId])
+
+pushDocumentTemplateBundle :: String -> AppContextM ()
+pushDocumentTemplateBundle tmlId = do
+  logInfoU _CMP_SERVICE (f' "Pushing document template bundle with the id ('%s') to registry" [tmlId])
+  bundle <- exportBundle tmlId
+  uploadDocumentTemplateBundle bundle
+  logInfoU _CMP_SERVICE (f' "Pushing document template bundle with the id ('%s') successfully completed" [tmlId])
+
+pushLocaleBundle :: String -> AppContextM ()
+pushLocaleBundle lclId = do
+  logInfoU _CMP_SERVICE (f' "Pushing locale bundle with the id ('%s') to registry" [lclId])
+  bundle <- exportLocaleBundle lclId
+  uploadLocaleBundle bundle
+  logInfoU _CMP_SERVICE (f' "Pushing locale bundle with the id ('%s') successfully completed" [lclId])
 
 -- --------------------------------
 -- PRIVATE

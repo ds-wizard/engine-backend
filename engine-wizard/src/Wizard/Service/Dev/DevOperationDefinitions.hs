@@ -392,7 +392,7 @@ registry =
   DevSection
     { name = "Registry"
     , description = Nothing
-    , operations = [registry_syncWithRegistry]
+    , operations = [registry_syncWithRegistry, registry_pushPackageBundle, registry_pushDocumentTemplateBundle, registry_pushLocaleBundle]
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -407,6 +407,63 @@ registry_syncWithRegistry =
 registry_syncWithRegistryFn :: DevExecutionDTO -> AppContextM String
 registry_syncWithRegistryFn reqDto = do
   synchronizeData
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+registry_pushPackageBundle :: DevOperation
+registry_pushPackageBundle =
+  DevOperation
+    { name = "Push Package Bundle"
+    , description = Nothing
+    , parameters =
+        [ DevOperationParameter
+            { name = "id"
+            , aType = StringDevOperationParameterType
+            }
+        ]
+    }
+
+registry_pushPackageBundleFn :: DevExecutionDTO -> AppContextM String
+registry_pushPackageBundleFn reqDto = do
+  pushPackageBundle (head reqDto.parameters)
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+registry_pushDocumentTemplateBundle :: DevOperation
+registry_pushDocumentTemplateBundle =
+  DevOperation
+    { name = "Push Document Template Bundle"
+    , description = Nothing
+    , parameters =
+        [ DevOperationParameter
+            { name = "id"
+            , aType = StringDevOperationParameterType
+            }
+        ]
+    }
+
+registry_pushDocumentTemplateBundleFn :: DevExecutionDTO -> AppContextM String
+registry_pushDocumentTemplateBundleFn reqDto = do
+  pushDocumentTemplateBundle (head reqDto.parameters)
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+registry_pushLocaleBundle :: DevOperation
+registry_pushLocaleBundle =
+  DevOperation
+    { name = "Push Locale Bundle"
+    , description = Nothing
+    , parameters =
+        [ DevOperationParameter
+            { name = "id"
+            , aType = StringDevOperationParameterType
+            }
+        ]
+    }
+
+registry_pushLocaleBundleFn :: DevExecutionDTO -> AppContextM String
+registry_pushLocaleBundleFn reqDto = do
+  pushLocaleBundle (head reqDto.parameters)
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------

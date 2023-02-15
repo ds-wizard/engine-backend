@@ -50,6 +50,10 @@ _ERROR_VALIDATION__FORBIDDEN_CHARACTERS word =
 _ERROR_VALIDATION__FIELDS_ABSENCE =
   LocaleRecord "error.validation.fields_absence" "Missing fields" []
 
+-- Absence
+_ERROR_VALIDATION__MAIN_PKG_OF_PB_ABSENCE =
+  LocaleRecord "error.validation.main_pkg_of_pb_absence" "Package Bundle doesn't contain main package" []
+
 -- Format
 _ERROR_VALIDATION__INVALID_COORDINATE_FORMAT =
   LocaleRecord "error.validation.invalid_coordinate_format" "Coordinate is not in the valid format" []

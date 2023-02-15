@@ -1,6 +1,7 @@
 module Wizard.Integration.Http.Registry.RequestMapper where
 
 import Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Map.Strict as M
 import Servant
 import Servant.Client
@@ -11,6 +12,7 @@ import qualified Registry.Api.Handler.Locale.List_GET as LOC_List_GET
 import Registry.Api.Handler.Organization.Detail_State_PUT
 import Registry.Api.Handler.Organization.List_POST
 import Registry.Api.Handler.Organization.List_Simple_GET
+import qualified Registry.Api.Handler.Package.List_Bundle_POST as PKG_List_Bundle_POST
 import qualified Registry.Api.Handler.Package.List_GET as PKG_List_GET
 import Registry.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Registry.Api.Resource.Locale.LocaleDTO
@@ -21,6 +23,8 @@ import Registry.Api.Resource.Organization.OrganizationStateDTO
 import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Registry.Api.Resource.Package.PackageSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Api.Resource.PackageBundle.PackageBundleJM ()
 import Shared.Constant.Api
 import Shared.Constant.DocumentTemplate
 import Shared.Constant.KnowledgeModel
@@ -106,7 +110,7 @@ toRetrievePackageBundleByIdRequest serverConfig appConfig pkgId =
     , requestUrl = serverConfig.url ++ "/packages/" ++ pkgId ++ "/bundle"
     , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig.token)]
     , requestBody = BS.empty
-    , multipartFileName = Nothing
+    , multipart = Nothing
     }
 
 toRetrieveTemplateBundleByIdRequest :: ServerConfigRegistry -> AppConfigRegistry -> String -> HttpRequest
@@ -116,7 +120,7 @@ toRetrieveTemplateBundleByIdRequest serverConfig appConfig tmlId =
     , requestUrl = serverConfig.url ++ "/document-templates/" ++ tmlId ++ "/bundle"
     , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig.token)]
     , requestBody = BS.empty
-    , multipartFileName = Nothing
+    , multipart = Nothing
     }
 
 toRetrieveLocaleBundleByIdRequest :: ServerConfigRegistry -> AppConfigRegistry -> String -> HttpRequest
@@ -126,5 +130,31 @@ toRetrieveLocaleBundleByIdRequest serverConfig appConfig lclId =
     , requestUrl = serverConfig.url ++ "/locales/" ++ lclId ++ "/bundle"
     , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig.token)]
     , requestBody = BS.empty
-    , multipartFileName = Nothing
+    , multipart = Nothing
+    }
+
+toUploadPackageBundleRequest :: AppConfigRegistry -> PackageBundleDTO -> ClientM (Headers '[Header "x-trace-uuid" String] PackageBundleDTO)
+toUploadPackageBundleRequest appConfig =
+  client PKG_List_Bundle_POST.list_bundle_POST_Api mTokenHeader
+  where
+    mTokenHeader = Just $ "Bearer " ++ appConfig.token
+
+toUploadDocumentTemplateBundleRequest :: ServerConfigRegistry -> AppConfigRegistry -> BSL.ByteString -> HttpRequest
+toUploadDocumentTemplateBundleRequest serverConfig appConfig bundle =
+  HttpRequest
+    { requestMethod = "POST"
+    , requestUrl = serverConfig.url ++ "/document-templates/bundle"
+    , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig.token)]
+    , requestBody = BSL.toStrict bundle
+    , multipart = Just $ HttpRequestMultipart {key = "file", fileName = Just "file.zip", contentType = Just "application/zip"}
+    }
+
+toUploadLocaleBundleRequest :: ServerConfigRegistry -> AppConfigRegistry -> BSL.ByteString -> HttpRequest
+toUploadLocaleBundleRequest serverConfig appConfig bundle =
+  HttpRequest
+    { requestMethod = "POST"
+    , requestUrl = serverConfig.url ++ "/locales/bundle"
+    , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig.token)]
+    , requestBody = BSL.toStrict bundle
+    , multipart = Just $ HttpRequestMultipart {key = "file", fileName = Just "file.zip", contentType = Just "application/zip"}
     }

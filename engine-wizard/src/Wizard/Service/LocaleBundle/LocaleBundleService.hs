@@ -28,13 +28,19 @@ import Wizard.Service.LocaleBundle.LocaleBundleAudit
 import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import Wizard.Service.TemporaryFile.TemporaryFileService
 
-exportLocaleBundle :: String -> AppContextM TemporaryFileDTO
+getTemporaryFileWithLocaleBundle :: String -> AppContextM TemporaryFileDTO
+getTemporaryFileWithLocaleBundle lclId =
+  runInTransaction $ do
+    bundle <- exportLocaleBundle lclId
+    url <- createTemporaryFile (f' "%s.zip" [lclId]) "application/octet-stream" bundle
+    return $ TemporaryFileMapper.toDTO url "application/octet-stream"
+
+exportLocaleBundle :: String -> AppContextM BSL.ByteString
 exportLocaleBundle lclId =
   runInTransaction $ do
     locale <- findLocaleById lclId
     content <- retrieveLocale locale.lId
-    url <- createTemporaryFile (f' "%s.zip" [locale.lId]) "application/octet-stream" (toLocaleArchive locale content)
-    return $ TemporaryFileMapper.toDTO url "application/octet-stream"
+    return $ toLocaleArchive locale content
 
 pullLocaleBundleFromRegistry :: String -> AppContextM ()
 pullLocaleBundleFromRegistry lclId =

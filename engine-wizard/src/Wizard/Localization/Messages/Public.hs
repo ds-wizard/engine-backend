@@ -32,9 +32,6 @@ _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE =
 _ERROR_VALIDATION__INTEGRATION_ABSENCE =
   LocaleRecord "error.validation.integration_absence" "Desired integrations doesn't exist" []
 
-_ERROR_VALIDATION__MAIN_PKG_OF_PB_ABSENCE =
-  LocaleRecord "error.validation.main_pkg_of_pb_absence" "Package Bundle doesn't contain main package" []
-
 _ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE =
   LocaleRecord "error.validation.previous_pkg_absence" "Previous package doesn't exist" []
 

@@ -12,6 +12,7 @@ import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Registry.Api.Resource.Package.PackageSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Api.Resource.PackageBundle.PackageBundleDTO
 import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
@@ -126,3 +127,26 @@ retrieveLocaleBundleById lclId = do
         (toRetrieveLocaleBundleByIdRequest serverConfig.registry appConfig.registry lclId)
         toRetrieveLocaleBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
+
+uploadPackageBundle :: PackageBundleDTO -> AppContextM PackageBundleDTO
+uploadPackageBundle reqDto = do
+  appConfig <- getAppConfig
+  let request = toUploadPackageBundleRequest appConfig.registry reqDto
+  res <- runRegistryClient request
+  return . getResponse $ res
+
+uploadDocumentTemplateBundle :: BSL.ByteString -> AppContextM BSL.ByteString
+uploadDocumentTemplateBundle bundle = do
+  serverConfig <- asks serverConfig
+  appConfig <- getAppConfig
+  runRequest
+    (toUploadDocumentTemplateBundleRequest serverConfig.registry appConfig.registry bundle)
+    toUploadDocumentTemplateBundleResponse
+
+uploadLocaleBundle :: BSL.ByteString -> AppContextM BSL.ByteString
+uploadLocaleBundle bundle = do
+  serverConfig <- asks serverConfig
+  appConfig <- getAppConfig
+  runRequest
+    (toUploadLocaleBundleRequest serverConfig.registry appConfig.registry bundle)
+    toUploadLocaleBundleResponse
