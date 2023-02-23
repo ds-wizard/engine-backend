@@ -16,6 +16,9 @@ migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   add2fa dbPool
   createTemporaryFileTable dbPool
+  renameSupportRepositoryName dbPool
+  renameSupportRepositoryUrl dbPool
+  addSupportSiteIcon dbPool
 
 add2fa dbPool = do
   let sql =
@@ -51,6 +54,30 @@ createTemporaryFileTable dbPool = do
         \     ); \
         \ CREATE UNIQUE INDEX temporary_file_uuid_uindex \
         \     ON temporary_file (uuid);"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+renameSupportRepositoryName dbPool = do
+  let sql =
+        "UPDATE app_config \
+        \SET privacy_and_support = privacy_and_support::jsonb - 'supportRepositoryName' || jsonb_build_object('supportSiteName', privacy_and_support -> 'supportRepositoryName');"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+renameSupportRepositoryUrl dbPool = do
+  let sql =
+        "UPDATE app_config \
+        \SET privacy_and_support = privacy_and_support::jsonb - 'supportRepositoryUrl' || jsonb_build_object('supportSiteUrl', privacy_and_support -> 'supportRepositoryUrl');"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addSupportSiteIcon dbPool = do
+  let sql =
+        "UPDATE app_config \
+        \SET privacy_and_support = privacy_and_support::jsonb || jsonb_build_object('supportSiteIcon', null);"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

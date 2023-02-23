@@ -107,8 +107,9 @@ data AppConfigPrivacyAndSupport = AppConfigPrivacyAndSupport
   { privacyUrl :: Maybe String
   , termsOfServiceUrl :: Maybe String
   , supportEmail :: Maybe String
-  , supportRepositoryName :: Maybe String
-  , supportRepositoryUrl :: Maybe String
+  , supportSiteName :: Maybe String
+  , supportSiteUrl :: Maybe String
+  , supportSiteIcon :: Maybe String
   }
   deriving (Generic, Eq, Show)
 

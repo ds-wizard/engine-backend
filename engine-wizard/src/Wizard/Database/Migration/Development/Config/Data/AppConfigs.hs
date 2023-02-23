@@ -114,8 +114,9 @@ defaultPrivacyAndSupport =
     { privacyUrl = Nothing
     , termsOfServiceUrl = Nothing
     , supportEmail = Nothing
-    , supportRepositoryName = Nothing
-    , supportRepositoryUrl = Nothing
+    , supportSiteName = Nothing
+    , supportSiteUrl = Nothing
+    , supportSiteIcon = Nothing
     }
 
 defaultDashboard :: AppConfigDashboard
