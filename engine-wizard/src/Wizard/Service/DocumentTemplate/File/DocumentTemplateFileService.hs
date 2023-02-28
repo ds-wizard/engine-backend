@@ -11,6 +11,7 @@ import Shared.Util.Uuid
 import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileChangeDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Service.Acl.AclService
@@ -37,6 +38,7 @@ createFile tmlId reqDto =
     now <- liftIO getCurrentTime
     let newFile = fromChangeDTO reqDto tmlId fUuid appUuid now now
     insertFile newFile
+    touchDocumentTemplateById newFile.documentTemplateId
     deleteTemporalDocumentsByFileUuid fUuid
     return newFile
 
@@ -49,6 +51,7 @@ modifyFile fileUuid reqDto =
     now <- liftIO getCurrentTime
     let updatedFile = fromChangeDTO reqDto file.documentTemplateId file.uuid file.appUuid file.createdAt now
     updateFileById updatedFile
+    touchDocumentTemplateById updatedFile.documentTemplateId
     deleteTemporalDocumentsByFileUuid fileUuid
     return updatedFile
 
@@ -60,6 +63,7 @@ modifyFileContent fileUuid content =
     now <- liftIO getCurrentTime
     let updatedFile = fromContentChangeDTO file content now
     updateFileById updatedFile
+    touchDocumentTemplateById updatedFile.documentTemplateId
     deleteTemporalDocumentsByFileUuid fileUuid
     return updatedFile
 
@@ -69,6 +73,7 @@ duplicateFile newTemplateId file = do
   now <- liftIO getCurrentTime
   let updatedFile = fromDuplicateDTO file newTemplateId aUuid now
   insertFile updatedFile
+  touchDocumentTemplateById updatedFile.documentTemplateId
   return updatedFile
 
 deleteFile :: U.UUID -> AppContextM ()
@@ -77,5 +82,6 @@ deleteFile fileUuid =
     checkPermission _DOC_TML_WRITE_PERM
     file <- findFileById fileUuid
     deleteFileById file.uuid
+    touchDocumentTemplateById file.documentTemplateId
     deleteTemporalDocumentsByFileUuid fileUuid
     return ()
