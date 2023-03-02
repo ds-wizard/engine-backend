@@ -1,5 +1,6 @@
 module Wizard.TestMigration where
 
+import Shared.Database.DAO.Component.ComponentDAO
 import Shared.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
@@ -37,6 +38,7 @@ import qualified Wizard.Database.Migration.Development.Audit.AuditSchemaMigratio
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
 import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
+import qualified Wizard.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import qualified Wizard.Database.Migration.Development.Config.ConfigSchemaMigration as CFG_Schema
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
@@ -72,6 +74,7 @@ buildSchema appContext = do
   runInContext PKG_Schema.dropFunctions appContext
   runInContext CMN_Schema.dropFunctions appContext
   putStrLn "DB: dropping schema"
+  runInContext CMP_Schema.dropTables appContext
   runInContext LOC_Schema.dropTables appContext
   runInContext R_Schema.dropTables appContext
   runInContext QI_Schema.dropTables appContext
@@ -119,6 +122,7 @@ buildSchema appContext = do
   runInContext QI_Schema.createTables appContext
   runInContext R_Schema.createTables appContext
   runInContext LOC_Schema.createTables appContext
+  runInContext CMP_Schema.createTables appContext
   putStrLn "DB: Creating DB functions"
   runInContext CMN_Schema.createFunctions appContext
   runInContext PKG_Schema.createFunctions appContext
@@ -173,4 +177,5 @@ resetDB appContext = do
   runInContext (insertPackage netherlandsPackage) appContext
   runInContext (insertPackage netherlandsPackageV2) appContext
   runInContext (insertPackage differentPackage) appContext
+  runInContext deleteComponents appContext
   return ()

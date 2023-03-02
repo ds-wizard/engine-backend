@@ -38,5 +38,5 @@ echo "releaseVersion: $release" >> $BUILD_INFO_FILE
 # ---------------------------------------------------------------
 # 3. Create build timestamp
 # ---------------------------------------------------------------
-builtAtTimestamp=`date +"%Y/%m/%d %TZ"`
+builtAtTimestamp=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
 echo "builtAt: $builtAtTimestamp" >> $BUILD_INFO_FILE

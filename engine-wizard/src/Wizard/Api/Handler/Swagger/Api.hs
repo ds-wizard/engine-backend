@@ -9,6 +9,7 @@ import Servant.Swagger.UI
 import Registry.Api.Resource.Organization.OrganizationSM ()
 import Shared.Api.Resource.Common.FileSM ()
 import Shared.Api.Resource.Common.PageMetadataSM ()
+import Shared.Api.Resource.Component.ComponentSM ()
 import Shared.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 import Shared.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import Shared.Api.Resource.Info.InfoSM ()
