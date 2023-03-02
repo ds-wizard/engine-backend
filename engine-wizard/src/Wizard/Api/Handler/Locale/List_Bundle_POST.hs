@@ -11,7 +11,7 @@ import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Api.Resource.Locale.LocaleJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.LocaleBundle.LocaleBundleService
+import Wizard.Service.Locale.Bundle.LocaleBundleService
 
 type List_Bundle_POST =
   Header "Authorization" String
@@ -30,4 +30,4 @@ list_bundle_POST mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        importAndConvertLocaleBundle reqDto.content False
+        importBundle reqDto.content False

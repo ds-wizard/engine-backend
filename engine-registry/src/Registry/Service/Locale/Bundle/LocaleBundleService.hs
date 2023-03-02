@@ -1,4 +1,4 @@
-module Registry.Service.LocaleBundle.LocaleBundleService where
+module Registry.Service.Locale.Bundle.LocaleBundleService where
 
 import Control.Monad.Except (throwError)
 import qualified Data.ByteString.Lazy.Char8 as BSL
@@ -7,20 +7,22 @@ import qualified Data.UUID as U
 import Registry.Api.Resource.Locale.LocaleDTO
 import Registry.Model.Context.AppContext
 import Registry.S3.Locale.LocaleS3
+import Registry.Service.Audit.AuditService
+import Registry.Service.Locale.Bundle.LocaleBundleAcl
 import Registry.Service.Locale.LocaleMapper
-import Registry.Service.LocaleBundle.LocaleBundleAcl
 import Shared.Database.DAO.Locale.LocaleDAO
 import Shared.Model.Locale.Locale
-import Shared.Service.LocaleBundle.LocaleBundleMapper
+import Shared.Service.Locale.Bundle.LocaleBundleMapper
 
-exportLocaleBundle :: String -> AppContextM BSL.ByteString
-exportLocaleBundle lclId = do
+exportBundle :: String -> AppContextM BSL.ByteString
+exportBundle lclId = do
+  _ <- auditGetLocaleBundle lclId
   locale <- findLocaleById lclId
   content <- retrieveLocale locale.lId
   return $ toLocaleArchive locale content
 
-importLocaleBundle :: BSL.ByteString -> AppContextM LocaleDTO
-importLocaleBundle contentS = do
+importBundle :: BSL.ByteString -> AppContextM LocaleDTO
+importBundle contentS = do
   checkWritePermission
   case fromLocaleArchive contentS of
     Right (bundle, content) -> do

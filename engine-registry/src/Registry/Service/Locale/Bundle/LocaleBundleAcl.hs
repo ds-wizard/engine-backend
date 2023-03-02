@@ -1,4 +1,4 @@
-module Registry.Service.LocaleBundle.LocaleBundleAcl where
+module Registry.Service.Locale.Bundle.LocaleBundleAcl where
 
 import Control.Monad.Except (throwError)
 

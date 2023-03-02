@@ -13,7 +13,7 @@ import Wizard.Api.Resource.PackageBundle.PackageBundleFileDTO
 import Wizard.Api.Resource.PackageBundle.PackageBundleFileJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Owl.OwlService
-import Wizard.Service.PackageBundle.PackageBundleService
+import Wizard.Service.Package.Bundle.PackageBundleService
 
 type List_Bundle_POST =
   Header "Authorization" String
@@ -34,4 +34,4 @@ list_bundle_POST mTokenHeader mServerUrl reqDto =
       addTraceUuidHeader
         =<< if L.isSuffixOf ".ttl" reqDto.fileName || L.isSuffixOf ".owl" reqDto.fileName
           then importOwl reqDto
-          else importAndConvertPackageBundle reqDto.content False
+          else importAndConvertBundle reqDto.content False

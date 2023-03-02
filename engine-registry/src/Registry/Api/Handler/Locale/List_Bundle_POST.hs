@@ -7,7 +7,7 @@ import Registry.Api.Handler.Common
 import Registry.Api.Resource.Locale.LocaleDTO
 import Registry.Api.Resource.Locale.LocaleJM ()
 import Registry.Model.Context.BaseContext
-import Registry.Service.LocaleBundle.LocaleBundleService
+import Registry.Service.Locale.Bundle.LocaleBundleService
 import Shared.Api.Handler.Common
 import Shared.Api.Resource.Common.FileDTO
 import Shared.Api.Resource.Common.FileJM ()
@@ -28,4 +28,4 @@ list_bundle_POST mTokenHeader reqDto =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        importLocaleBundle reqDto.content
+        importBundle reqDto.content

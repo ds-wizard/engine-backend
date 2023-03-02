@@ -8,7 +8,7 @@ import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Api.Resource.TemporaryFile.TemporaryFileJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.LocaleBundle.LocaleBundleService
+import Wizard.Service.Locale.Bundle.LocaleBundleService
 
 type Detail_Bundle_GET =
   Header "Authorization" String
@@ -25,4 +25,4 @@ detail_bundle_GET
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] TemporaryFileDTO)
 detail_bundle_GET mTokenHeader mServerUrl lclId =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< getTemporaryFileWithLocaleBundle lclId
+    runInAuthService Transactional $ addTraceUuidHeader =<< getTemporaryFileWithBundle lclId

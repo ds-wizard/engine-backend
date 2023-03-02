@@ -1,6 +1,6 @@
-module Registry.Service.PackageBundle.PackageBundleService (
-  getPackageBundle,
-  importPackageBundle,
+module Registry.Service.Package.Bundle.PackageBundleService (
+  exportBundle,
+  importBundle,
 ) where
 
 import Control.Monad.Except (throwError)
@@ -14,9 +14,9 @@ import Registry.Database.DAO.Common
 import Registry.Model.Context.AppContext
 import Registry.Model.PackageBundle.PackageBundle
 import Registry.Service.Audit.AuditService
+import Registry.Service.Package.Bundle.PackageBundleAcl
+import Registry.Service.Package.Bundle.PackageBundleMapper
 import Registry.Service.Package.PackageService
-import Registry.Service.PackageBundle.PackageBundleAcl
-import Registry.Service.PackageBundle.PackageBundleMapper
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.Package.PackageJM ()
 import qualified Shared.Api.Resource.PackageBundle.PackageBundleDTO as S_PackageBundleDTO
@@ -29,8 +29,8 @@ import Shared.Model.Package.PackageWithEventsRaw
 import qualified Shared.Service.Package.PackageMapper as PM
 import Shared.Service.Package.PackageUtil
 
-getPackageBundle :: String -> AppContextM R_PackageBundleDTO.PackageBundleDTO
-getPackageBundle pbId = do
+exportBundle :: String -> AppContextM R_PackageBundleDTO.PackageBundleDTO
+exportBundle pbId = do
   _ <- auditGetPackageBundle pbId
   resolvedPbId <- resolvePackageId pbId
   packages <- getSeriesOfPackages resolvedPbId
@@ -47,8 +47,8 @@ getPackageBundle pbId = do
           }
   return . toDTO $ pb
 
-importPackageBundle :: S_PackageBundleDTO.PackageBundleDTO -> AppContextM S_PackageBundleDTO.PackageBundleDTO
-importPackageBundle pb =
+importBundle :: S_PackageBundleDTO.PackageBundleDTO -> AppContextM S_PackageBundleDTO.PackageBundleDTO
+importBundle pb =
   runInTransaction $ do
     checkWritePermission
     pkg <- extractMainPackage pb

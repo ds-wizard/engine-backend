@@ -1,4 +1,4 @@
-module Wizard.Service.LocaleBundle.LocaleBundleAudit where
+module Wizard.Service.Locale.Bundle.LocaleBundleAudit where
 
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Audit.AuditService

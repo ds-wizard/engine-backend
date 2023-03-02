@@ -1,4 +1,4 @@
-module Shared.Service.PackageBundle.PackageBundleMapper where
+module Shared.Service.Package.Bundle.PackageBundleMapper where
 
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
 import Shared.Model.PackageBundle.PackageBundle

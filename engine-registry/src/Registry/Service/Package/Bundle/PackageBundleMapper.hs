@@ -1,4 +1,4 @@
-module Registry.Service.PackageBundle.PackageBundleMapper where
+module Registry.Service.Package.Bundle.PackageBundleMapper where
 
 import Registry.Api.Resource.PackageBundle.PackageBundleDTO
 import Registry.Model.PackageBundle.PackageBundle

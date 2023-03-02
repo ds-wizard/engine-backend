@@ -10,6 +10,7 @@ import Registry.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.S3.DocumentTemplate.DocumentTemplateS3
+import Registry.Service.Audit.AuditService
 import Registry.Service.DocumentTemplate.Bundle.DocumentTemplateBundleAcl
 import Registry.Service.DocumentTemplate.Bundle.DocumentTemplateBundleMapper (toDocumentTemplateArchive)
 import Registry.Service.DocumentTemplate.DocumentTemplateService
@@ -25,6 +26,7 @@ import Shared.Service.DocumentTemplate.DocumentTemplateUtil
 
 exportBundle :: String -> AppContextM BSL.ByteString
 exportBundle tmlId = do
+  _ <- auditGetDocumentTemplateBundle tmlId
   resolvedId <- resolveDocumentTemplateId tmlId
   tml <- findDocumentTemplateById resolvedId
   files <- findFilesByDocumentTemplateId resolvedId

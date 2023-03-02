@@ -1,4 +1,4 @@
-module Wizard.Service.LocaleBundle.LocaleBundleService where
+module Wizard.Service.Locale.Bundle.LocaleBundleService where
 
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks)
@@ -7,7 +7,7 @@ import qualified Data.ByteString.Lazy.Char8 as BSL
 import Shared.Api.Resource.LocaleBundle.LocaleBundleDTO
 import Shared.Model.Error.Error
 import Shared.Model.Locale.Locale
-import Shared.Service.LocaleBundle.LocaleBundleMapper
+import Shared.Service.Locale.Bundle.LocaleBundleMapper
 import Shared.Util.String
 import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
@@ -22,32 +22,32 @@ import Wizard.Model.Locale.LocaleState
 import Wizard.S3.Locale.LocaleS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Config.App.AppConfigService
+import Wizard.Service.Locale.Bundle.LocaleBundleAudit
 import Wizard.Service.Locale.LocaleMapper
 import Wizard.Service.Locale.LocaleValidation
-import Wizard.Service.LocaleBundle.LocaleBundleAudit
 import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import Wizard.Service.TemporaryFile.TemporaryFileService
 
-getTemporaryFileWithLocaleBundle :: String -> AppContextM TemporaryFileDTO
-getTemporaryFileWithLocaleBundle lclId =
+getTemporaryFileWithBundle :: String -> AppContextM TemporaryFileDTO
+getTemporaryFileWithBundle lclId =
   runInTransaction $ do
-    bundle <- exportLocaleBundle lclId
+    bundle <- exportBundle lclId
     url <- createTemporaryFile (f' "%s.zip" [lclId]) "application/octet-stream" bundle
     return $ TemporaryFileMapper.toDTO url "application/octet-stream"
 
-exportLocaleBundle :: String -> AppContextM BSL.ByteString
-exportLocaleBundle lclId =
+exportBundle :: String -> AppContextM BSL.ByteString
+exportBundle lclId =
   runInTransaction $ do
     locale <- findLocaleById lclId
     content <- retrieveLocale locale.lId
     return $ toLocaleArchive locale content
 
-pullLocaleBundleFromRegistry :: String -> AppContextM ()
-pullLocaleBundleFromRegistry lclId =
+pullBundleFromRegistry :: String -> AppContextM ()
+pullBundleFromRegistry lclId =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
     lb <- catchError (retrieveLocaleBundleById lclId) handleError
-    _ <- importAndConvertLocaleBundle lb True
+    _ <- importBundle lb True
     return ()
   where
     handleError error =
@@ -55,8 +55,8 @@ pullLocaleBundleFromRegistry lclId =
         then throwError . UserError $ _ERROR_SERVICE_LB__PULL_NON_EXISTING_LOCALE lclId
         else throwError error
 
-importAndConvertLocaleBundle :: BSL.ByteString -> Bool -> AppContextM LocaleDTO
-importAndConvertLocaleBundle contentS fromRegistry =
+importBundle :: BSL.ByteString -> Bool -> AppContextM LocaleDTO
+importBundle contentS fromRegistry =
   case fromLocaleArchive contentS of
     Right (bundle, content) -> do
       validateLocaleIdUniqueness bundle.lId

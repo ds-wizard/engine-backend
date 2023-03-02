@@ -21,8 +21,8 @@ import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.PackageBundle.PackageBundle
+import qualified Shared.Service.Package.Bundle.PackageBundleMapper as PBM
 import Shared.Service.Package.PackageMapper
-import qualified Shared.Service.PackageBundle.PackageBundleMapper as PBM
 import Shared.Util.String (replace)
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Localization.Messages.Public

@@ -1,4 +1,4 @@
-module Registry.Service.PackageBundle.PackageBundleAcl where
+module Registry.Service.Package.Bundle.PackageBundleAcl where
 
 import Control.Monad.Except (throwError)
 

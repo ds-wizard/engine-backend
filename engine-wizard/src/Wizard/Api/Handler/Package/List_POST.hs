@@ -9,7 +9,7 @@ import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.PackageBundle.PackageBundleService
+import Wizard.Service.Package.Bundle.PackageBundleService
 
 type List_POST =
   Header "Authorization" String
@@ -25,4 +25,4 @@ list_POST
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] [PackageSimpleDTO])
 list_POST mTokenHeader mServerUrl reqBody =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< importAndConvertPackageBundle (BSL.pack reqBody) False
+    runInAuthService Transactional $ addTraceUuidHeader =<< importAndConvertBundle (BSL.pack reqBody) False

@@ -1,9 +1,9 @@
-module Wizard.Service.PackageBundle.PackageBundleService (
-  getTemporaryFileWithPackageBundle,
-  exportPackageBundle,
-  pullPackageBundleFromRegistry,
-  importAndConvertPackageBundle,
-  importPackageBundle,
+module Wizard.Service.Package.Bundle.PackageBundleService (
+  getTemporaryFileWithBundle,
+  exportBundle,
+  pullBundleFromRegistry,
+  importAndConvertBundle,
+  importBundle,
 ) where
 
 import Control.Monad (forM)
@@ -26,8 +26,8 @@ import Shared.Model.Error.Error
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.PackageBundle.PackageBundle
 import Shared.Service.Coordinate.CoordinateValidation
+import Shared.Service.Package.Bundle.PackageBundleMapper
 import qualified Shared.Service.Package.PackageMapper as PM
-import Shared.Service.PackageBundle.PackageBundleMapper
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
@@ -39,25 +39,25 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.KnowledgeModel.KnowledgeModelValidation
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Migration.Metamodel.MigratorService
+import Wizard.Service.Package.Bundle.PackageBundleAudit
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Package.PackageValidation (
   validateMaybePreviousPackageIdExistence,
   validatePackageIdUniqueness,
  )
-import Wizard.Service.PackageBundle.PackageBundleAudit
 import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Util.Logger
 
-getTemporaryFileWithPackageBundle :: String -> AppContextM TemporaryFileDTO
-getTemporaryFileWithPackageBundle pbId =
+getTemporaryFileWithBundle :: String -> AppContextM TemporaryFileDTO
+getTemporaryFileWithBundle pbId =
   runInTransaction $ do
-    bundle <- exportPackageBundle pbId
+    bundle <- exportBundle pbId
     url <- createTemporaryFile (f' "%s.km" [pbId]) "application/octet-stream" (encode bundle)
     return $ TemporaryFileMapper.toDTO url "application/octet-stream"
 
-exportPackageBundle :: String -> AppContextM PackageBundleDTO
-exportPackageBundle pbId =
+exportBundle :: String -> AppContextM PackageBundleDTO
+exportBundle pbId =
   runInTransaction $ do
     packages <- getSeriesOfPackages pbId
     let newestPackage = last packages
@@ -74,13 +74,13 @@ exportPackageBundle pbId =
     auditPackageBundleExport pbId
     return . toDTO $ bundle
 
-pullPackageBundleFromRegistry :: String -> AppContextM ()
-pullPackageBundleFromRegistry pkgId =
+pullBundleFromRegistry :: String -> AppContextM ()
+pullBundleFromRegistry pkgId =
   runInTransaction $ do
     checkPermission _PM_WRITE_PERM
     checkPackageLimit
     pb <- catchError (retrievePackageBundleById pkgId) handleError
-    _ <- importAndConvertPackageBundle pb True
+    _ <- importAndConvertBundle pb True
     return ()
   where
     handleError error =
@@ -88,8 +88,8 @@ pullPackageBundleFromRegistry pkgId =
         then throwError . UserError $ _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId
         else throwError error
 
-importAndConvertPackageBundle :: BSL.ByteString -> Bool -> AppContextM [PackageSimpleDTO]
-importAndConvertPackageBundle contentS fromRegistry =
+importAndConvertBundle :: BSL.ByteString -> Bool -> AppContextM [PackageSimpleDTO]
+importAndConvertBundle contentS fromRegistry =
   runInTransaction $ do
     checkPermission _PM_WRITE_PERM
     checkPackageLimit
@@ -101,7 +101,7 @@ importAndConvertPackageBundle contentS fromRegistry =
             if fromRegistry
               then auditPackageBundlePullFromRegistry pb.bundleId
               else auditPackageBundleImportFromFile pb.bundleId
-            importPackageBundle pb
+            importBundle pb
           Left error -> do
             logWarnU _CMP_SERVICE ("Couln't deserialize migrated PackageBundle content (" ++ show error ++ ")")
             throwError . UserError $ _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
@@ -109,8 +109,8 @@ importAndConvertPackageBundle contentS fromRegistry =
         logWarnU _CMP_SERVICE ("Couln't deserialize PackageBundle content (" ++ show error ++ ")")
         throwError . UserError $ _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
 
-importPackageBundle :: PackageBundleDTO -> AppContextM [PackageSimpleDTO]
-importPackageBundle pb =
+importBundle :: PackageBundleDTO -> AppContextM [PackageSimpleDTO]
+importBundle pb =
   runInTransaction $ do
     pkg <- extractMainPackage pb
     validatePackageIdUniqueness pkg.pId

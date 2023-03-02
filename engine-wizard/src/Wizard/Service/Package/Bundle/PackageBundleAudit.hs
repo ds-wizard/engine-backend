@@ -1,4 +1,4 @@
-module Wizard.Service.PackageBundle.PackageBundleAudit where
+module Wizard.Service.Package.Bundle.PackageBundleAudit where
 
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Audit.AuditService

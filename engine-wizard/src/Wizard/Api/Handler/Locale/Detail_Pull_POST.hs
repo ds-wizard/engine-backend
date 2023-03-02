@@ -6,7 +6,7 @@ import Shared.Api.Handler.Common
 import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.LocaleBundle.LocaleBundleService
+import Wizard.Service.Locale.Bundle.LocaleBundleService
 
 type Detail_Pull_POST =
   Header "Authorization" String
@@ -22,5 +22,5 @@ detail_pull_POST mTokenHeader mServerUrl lclId =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        pullLocaleBundleFromRegistry lclId
+        pullBundleFromRegistry lclId
         return NoContent
