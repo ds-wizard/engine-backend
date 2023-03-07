@@ -16,7 +16,6 @@ import Shared.Model.Package.PackageWithEvents
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Feedback.Feedback
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

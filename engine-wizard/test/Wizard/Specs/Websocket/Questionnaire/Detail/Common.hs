@@ -1,14 +1,21 @@
 module Wizard.Specs.Websocket.Questionnaire.Detail.Common where
 
+import qualified Control.Exception.Base as E
+import Control.Lens ((&), (.~), (?~))
 import Data.Aeson
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Foldable (traverse_)
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
+import qualified Network.HTTP.Client as HC
 import Network.WebSockets
+import qualified Network.Wreq as W
 import System.Timeout
 import Test.Hspec.Expectations.Pretty
 
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Integration.Http.Common.HttpClientFactory
 import Shared.Util.JSON
 import Shared.Util.String
 import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
@@ -16,8 +23,10 @@ import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Wizard.Integration.Http.Common.HttpClient (mapHeader)
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.Cache.QuestionnaireWebsocketCache
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
@@ -115,3 +124,23 @@ clearConnection :: AppContext -> U.UUID -> WebsocketRecord -> IO ()
 clearConnection appContext qtnUuid record = do
   runInContext (deleteUser (U.toString qtnUuid) record.connectionUuid) appContext
   return ()
+
+-- --------------------------------
+-- HTTP Client
+-- --------------------------------
+runSimpleRequest :: AppContext -> HttpRequest -> IO (Either E.SomeException (HC.Response BSL.ByteString))
+runSimpleRequest appContext req = do
+  httpClientManager <- createHttpClientManager appContext.serverConfig.logging
+  let opts = W.defaults & W.manager .~ Right httpClientManager & W.headers .~ reqHeaders & (W.checkResponse ?~ (\_ _ -> return ()))
+  E.try . action $ opts
+  where
+    reqMethod = req.requestMethod
+    host =
+      if appContext.serverConfig.general.serverPort == 80
+        then "localhost"
+        else "localhost:" ++ show appContext.serverConfig.general.serverPort
+    reqUrl = f' "http://%s/%s" [host, req.requestUrl]
+    reqHeaders = mapHeader <$> M.toList req.requestHeaders
+    action opts
+      | reqMethod == "GET" = W.getWith opts reqUrl
+      | otherwise = W.customPayloadMethodWith reqMethod opts reqUrl req.requestBody

@@ -88,6 +88,7 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds pageable sort =
               \         FROM package inner_package \
               \         WHERE outer_package.organization_id = inner_package.organization_id \
               \           AND outer_package.km_id = inner_package.km_id \
+              \           AND inner_package.app_uuid = ? \
               \         GROUP BY organization_id, km_id) AS versions \
               \FROM package outer_package \
               \WHERE app_uuid = ? %s %s \
@@ -105,7 +106,7 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds pageable sort =
               \LIMIT %s"
               [selectCondition, excludeCondition, mapSort sort, show skip, show sizeI]
     let params =
-          [U.toString appUuid]
+          [U.toString appUuid, U.toString appUuid]
             ++ fromMaybe [] mSelectIdsLike
             ++ fromMaybe [] mExcludeIdsLike
             ++ [U.toString appUuid, regex mQuery]

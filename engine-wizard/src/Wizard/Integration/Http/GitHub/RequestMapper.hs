@@ -25,7 +25,7 @@ toGetIssuesRequest serverConfig appConfig =
         , requestHeaders =
             M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig.token), ("User-Agent", "Wizard Server")]
         , requestBody = BS.empty
-        , multipartFileName = Nothing
+        , multipart = Nothing
         }
 
 toCreateIssueRequest
@@ -47,5 +47,5 @@ toCreateIssueRequest serverConfig appConfig pkgId questionUuid title content =
                 , milestone = Nothing
                 , labels = [pkgId, U.toString questionUuid]
                 }
-        , multipartFileName = Nothing
+        , multipart = Nothing
         }

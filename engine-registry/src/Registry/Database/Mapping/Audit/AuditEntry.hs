@@ -26,6 +26,20 @@ instance ToRow AuditEntry where
     , toField packageId
     , toField createdAt
     ]
+  toRow GetDocumentTemplateBundleAuditEntry {..} =
+    [ toStringField "GetDocumentTemplateBundleAuditEntry"
+    , toField organizationId
+    , toStringField "{}"
+    , toField documentTemplateId
+    , toField createdAt
+    ]
+  toRow GetLocaleBundleAuditEntry {..} =
+    [ toStringField "GetLocaleBundleAuditEntry"
+    , toField organizationId
+    , toStringField "{}"
+    , toField localeId
+    , toField createdAt
+    ]
 
 instance FromRow AuditEntry where
   fromRow = do
@@ -43,3 +57,15 @@ instance FromRow AuditEntry where
         packageId <- field
         createdAt <- field
         return $ GetPackageBundleAuditEntry {..}
+      "GetDocumentTemplateBundleAuditEntry" -> do
+        organizationId <- field
+        _ <- fieldWith fromJSONField :: RowParser Object
+        documentTemplateId <- field
+        createdAt <- field
+        return $ GetDocumentTemplateBundleAuditEntry {..}
+      "GetLocaleBundleAuditEntry" -> do
+        organizationId <- field
+        _ <- fieldWith fromJSONField :: RowParser Object
+        localeId <- field
+        createdAt <- field
+        return $ GetLocaleBundleAuditEntry {..}

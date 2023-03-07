@@ -12,6 +12,7 @@ import Test.Hspec.Wai.Matcher
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Model.DocumentTemplate.DocumentTemplateJM ()
+import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
@@ -63,7 +64,7 @@ test_200 appContext = do
     appContext
     "/document-templates?q=Non-existing Questionnaire Report"
     reqAuthHeader
-    (Page "documentTemplates" (PageMetadata 20 0 0 0) [])
+    (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSimpleDTO]))
   create_test_200
     "HTTP 200 OK (query 'templateId')"
     appContext
@@ -75,7 +76,7 @@ test_200 appContext = do
     appContext
     "/document-templates?templateId=non-existing-template"
     reqAuthHeader
-    (Page "documentTemplates" (PageMetadata 20 0 0 0) [])
+    (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSimpleDTO]))
   create_test_200
     "HTTP 200 OK (state - UpToDateDocumentTemplateState)"
     appContext
@@ -87,7 +88,7 @@ test_200 appContext = do
     appContext
     "/document-templates?state=OutdatedDocumentTemplateState"
     reqAuthHeader
-    (Page "documentTemplates" (PageMetadata 20 0 0 0) [])
+    (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSimpleDTO]))
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
   it title $

@@ -2,7 +2,8 @@ module Wizard.Service.Document.DocumentService where
 
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
-import qualified Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Lazy.Char8 as BSL
+import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -17,6 +18,7 @@ import Shared.Util.List
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
+import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
@@ -42,6 +44,8 @@ import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
+import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
+import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Util.Logger
 
 getDocumentsPageDto :: Maybe U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
@@ -90,14 +94,18 @@ deleteDocument docUuid =
     deleteDocumentByUuid docUuid
     removeDocumentContent docUuid
 
-downloadDocument :: U.UUID -> AppContextM (Document, BS.ByteString)
+downloadDocument :: U.UUID -> AppContextM TemporaryFileDTO
 downloadDocument docUuid = do
-  doc <- findDocumentByUuid docUuid
-  checkViewPermissionToDoc (U.toString doc.questionnaireUuid)
-  content <- retrieveDocumentContent docUuid
-  return (doc, content)
+  runInTransaction $ do
+    doc <- findDocumentByUuid docUuid
+    checkViewPermissionToDoc (U.toString doc.questionnaireUuid)
+    content <- retrieveDocumentContent docUuid
+    let fileName = fromMaybe "export" doc.fileName
+    let contentType = fromMaybe "text/plain" doc.contentType
+    url <- createTemporaryFile fileName "application/octet-stream" (BSL.fromStrict content)
+    return $ TemporaryFileMapper.toDTO url contentType
 
-createDocumentPreviewForQtn :: String -> AppContextM (Document, BS.ByteString)
+createDocumentPreviewForQtn :: String -> AppContextM (Document, TemporaryFileDTO)
 createDocumentPreviewForQtn qtnUuid =
   runInTransaction $ do
     qtn <- findQuestionnaireById qtnUuid
@@ -108,7 +116,7 @@ createDocumentPreviewForQtn qtnUuid =
         createDocumentPreview tml qtn formatUuid
       _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP
 
-createDocumentPreviewForDocTmlDraft :: String -> AppContextM (Document, BS.ByteString)
+createDocumentPreviewForDocTmlDraft :: String -> AppContextM (Document, TemporaryFileDTO)
 createDocumentPreviewForDocTmlDraft tmlId =
   runInTransaction $ do
     draftData <- findDraftDataById tmlId
@@ -120,7 +128,7 @@ createDocumentPreviewForDocTmlDraft tmlId =
         createDocumentPreview draft qtn formatUuid
       _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__QUESTIONNAIRE_OR_FORMAT_NOT_SET_UP
 
-createDocumentPreview :: DocumentTemplate -> Questionnaire -> U.UUID -> AppContextM (Document, BS.ByteString)
+createDocumentPreview :: DocumentTemplate -> Questionnaire -> U.UUID -> AppContextM (Document, TemporaryFileDTO)
 createDocumentPreview tml qtn formatUuid = do
   docs <- findDocumentsFiltered [("questionnaire_uuid", U.toString qtn.uuid), ("durability", "TemporallyDocumentDurability")]
   qtnCtn <- compileQuestionnaire qtn
@@ -134,14 +142,15 @@ createDocumentPreview tml qtn formatUuid = do
       logInfoU _CMP_SERVICE "Retrieving from cache"
       if doc.state == DoneDocumentState
         then do
-          content <- retrieveDocumentContent doc.uuid
-          return (doc, content)
-        else return (doc, BS.empty)
+          let expirationInSeconds = 60
+          link <- presigneGetDocumentUrl doc.uuid expirationInSeconds
+          return (doc, TemporaryFileDTO link (fromMaybe "text/plain" doc.contentType))
+        else return (doc, TemporaryFileMapper.emptyFileDTO)
     [] ->
       case filter (\d -> d.state == QueuedDocumentState || d.state == InProgressDocumentState) matchingDocs of
         (doc : _) -> do
           logInfoU _CMP_SERVICE "Waiting to generation"
-          return (doc, BS.empty)
+          return (doc, TemporaryFileMapper.emptyFileDTO)
         _ -> do
           logInfoU _CMP_SERVICE "Generating new preview"
           validateMetamodelVersion tml
@@ -150,7 +159,7 @@ createDocumentPreview tml qtn formatUuid = do
           let doc = fromTemporallyCreateDTO dUuid qtn tml.tId formatUuid repliesHash mCurrentUser appConfig.uuid now
           insertDocument doc
           publishToPersistentCommandQueue doc
-          return (doc, BS.empty)
+          return (doc, TemporaryFileMapper.emptyFileDTO)
 
 publishToPersistentCommandQueue :: Document -> AppContextM ()
 publishToPersistentCommandQueue doc = do

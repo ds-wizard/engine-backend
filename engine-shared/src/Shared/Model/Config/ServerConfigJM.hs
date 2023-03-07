@@ -19,7 +19,6 @@ instance FromJSON ServerConfigDatabase where
 instance FromJSON ServerConfigS3 where
   parseJSON (Object o) = do
     url <- o .:? "url" .!= defaultS3.url
-    publicUrl <- o .:? "publicUrl" .!= defaultS3.publicUrl
     username <- o .:? "username" .!= defaultS3.username
     password <- o .:? "password" .!= defaultS3.password
     bucket <- o .:? "bucket" .!= defaultS3.bucket

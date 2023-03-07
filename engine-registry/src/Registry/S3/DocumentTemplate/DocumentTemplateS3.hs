@@ -1,6 +1,7 @@
 module Registry.S3.DocumentTemplate.DocumentTemplateS3 where
 
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
@@ -9,17 +10,20 @@ import Shared.Util.String (f')
 
 folderName = "templates"
 
-retrieveAsset :: String -> String -> AppContextM BS.ByteString
-retrieveAsset templateId assetId = createGetObjectFn (f' "%s/%s/%s" [folderName, templateId, assetId])
+retrieveAsset :: String -> U.UUID -> AppContextM BS.ByteString
+retrieveAsset documentTemplateId assetUuid = createGetObjectFn (f' "%s/%s/%s" [folderName, documentTemplateId, U.toString assetUuid])
 
-putAsset :: String -> String -> String -> BS.ByteString -> AppContextM String
-putAsset templateId assetId contentType = createPutObjectFn (f' "%s/%s/%s" [folderName, templateId, assetId]) (Just contentType)
+putAsset :: String -> U.UUID -> String -> BS.ByteString -> AppContextM String
+putAsset documentTemplateId assetUuid contentType = createPutObjectFn (f' "%s/%s/%s" [folderName, documentTemplateId, U.toString assetUuid]) (Just contentType) Nothing
+
+makePublicLink :: String -> U.UUID -> AppContextM String
+makePublicLink documentTemplateId assetUuid = createMakePublicLink (f' "%s/%s/%s" [folderName, documentTemplateId, U.toString assetUuid])
 
 removeAssets :: String -> AppContextM ()
-removeAssets templateId = createRemoveObjectFn (f' "%s/%s" [folderName, templateId])
+removeAssets documentTemplateId = createRemoveObjectFn (f' "%s/%s" [folderName, documentTemplateId])
 
-removeAsset :: String -> String -> AppContextM ()
-removeAsset templateId assetId = createRemoveObjectFn (f' "%s/%s/%s" [folderName, templateId, assetId])
+removeAsset :: String -> U.UUID -> AppContextM ()
+removeAsset documentTemplateId assetUuid = createRemoveObjectFn (f' "%s/%s/%s" [folderName, documentTemplateId, U.toString assetUuid])
 
 makeBucket :: AppContextM ()
 makeBucket = createMakeBucketFn

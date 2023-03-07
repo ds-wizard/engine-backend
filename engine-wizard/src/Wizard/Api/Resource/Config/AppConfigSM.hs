@@ -26,6 +26,9 @@ instance ToSchema AppConfigAuth where
 instance ToSchema AppConfigAuthInternal where
   declareNamedSchema = toSwagger defaultAuthInternal
 
+instance ToSchema AppConfigAuthInternalTwoFactorAuth where
+  declareNamedSchema = toSwagger defaultAuthInternalTwoFactorAuth
+
 instance ToSchema AppConfigAuthExternal where
   declareNamedSchema = toSwagger defaultAuthExternal
 

@@ -14,6 +14,7 @@ instance FromEnv ServerConfig where
     registry <- applyEnv serverConfig.registry
     analytics <- applyEnv serverConfig.analytics
     sentry <- applyEnv serverConfig.sentry
+    actionKey <- applyEnv serverConfig.actionKey
     branch <- applyEnv serverConfig.branch
     cache <- applyEnv serverConfig.cache
     document <- applyEnv serverConfig.document
@@ -21,6 +22,7 @@ instance FromEnv ServerConfig where
     persistentCommand <- applyEnv serverConfig.persistentCommand
     plan <- applyEnv serverConfig.plan
     questionnaire <- applyEnv serverConfig.questionnaire
+    temporaryFile <- applyEnv serverConfig.temporaryFile
     userToken <- applyEnv serverConfig.userToken
     logging <- applyEnv serverConfig.logging
     cloud <- applyEnv serverConfig.cloud
@@ -63,6 +65,14 @@ instance FromEnv ServerConfigRegistry where
       , \c -> applyStringEnvVariable "REGISTRY_CLIENT_URL" c.clientUrl (\x -> c {clientUrl = x} :: ServerConfigRegistry)
       , \c -> applyEnvVariable "REGISTRY_SYNC_ENABLED" c.sync.enabled (\x -> c {sync = c.sync {enabled = x}} :: ServerConfigRegistry)
       , \c -> applyStringEnvVariable "REGISTRY_SYNC_CRON" c.sync.cron (\x -> c {sync = c.sync {cron = x}} :: ServerConfigRegistry)
+      ]
+
+instance FromEnv ServerConfigActionKey where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "ACTION_KEY_CLEAN_ENABLED" c.clean.enabled (\x -> c {clean = c.clean {enabled = x}} :: ServerConfigActionKey)
+      , \c -> applyStringEnvVariable "ACTION_KEY_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigActionKey)
       ]
 
 instance FromEnv ServerConfigBranch where
@@ -128,6 +138,14 @@ instance FromEnv ServerConfigQuestionnaire where
       , \c -> applyStringEnvVariable "QUESTIONNAIRE_RECOMPUTE_INDICATION_CRON" c.recomputeIndication.cron (\x -> c {recomputeIndication = c.recomputeIndication {cron = x}} :: ServerConfigQuestionnaire)
       , \c -> applyEnvVariable "QUESTIONNAIRE_SQUASH_ENABLED" c.squash.enabled (\x -> c {squash = c.squash {enabled = x}} :: ServerConfigQuestionnaire)
       , \c -> applyStringEnvVariable "QUESTIONNAIRE_SQUASH_CRON" c.squash.cron (\x -> c {squash = c.squash {cron = x}} :: ServerConfigQuestionnaire)
+      ]
+
+instance FromEnv ServerConfigTemporaryFile where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "TEMPORARY_FILE_CLEAN_ENABLED" c.clean.enabled (\x -> c {clean = c.clean {enabled = x}} :: ServerConfigTemporaryFile)
+      , \c -> applyStringEnvVariable "TEMPORARY_FILE_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigTemporaryFile)
       ]
 
 instance FromEnv ServerConfigUserToken where

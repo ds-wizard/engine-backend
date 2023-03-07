@@ -130,15 +130,20 @@ createPutObjectFn
      )
   => String
   -> Maybe String
+  -> Maybe String
   -> BS.ByteString
   -> m String
-createPutObjectFn object mContentType content = do
+createPutObjectFn object mContentType mContentDisposition content = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObject object
   logInfoI _CMP_S3 (f' "Put object: '%s'" [sanitizedObject])
   let req = C.yield content
   let kb15 = 15 * 1024
-  let objectOptions = defaultPutObjectOptions {pooContentType = fmap T.pack mContentType}
+  let objectOptions =
+        defaultPutObjectOptions
+          { pooContentType = fmap T.pack mContentType
+          , pooContentDisposition = fmap T.pack mContentDisposition
+          }
   let action = putObject (T.pack bucketName) (T.pack sanitizedObject) req (Just kb15) objectOptions
   runMinioClient action
   buildObjectUrl sanitizedObject
@@ -369,6 +374,30 @@ makeBucketPublicReadOnly = do
   runMinioClient action
   logInfoI _CMP_S3 (f' "Bucket was exposed as public: '%s'" [resource])
 
+createPresignedGetObjectUrl
+  :: ( MonadReader s m
+     , HasField "s3Client'" s MinioConn
+     , HasField "identityUuid'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "appUuid'" s U.UUID
+     , HasField "serverConfig'" s sc
+     , HasField "cloud'" sc ServerConfigCloud
+     , HasField "s3'" sc ServerConfigS3
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => String
+  -> Int
+  -> m String
+createPresignedGetObjectUrl object expirationInSeconds = do
+  bucketName <- getBucketName
+  sanitizedObject <- sanitizeObject object
+  logInfoI _CMP_S3 (f' "Presign get object url: '%s'" [sanitizedObject])
+  let action = presignedGetObjectUrl (T.pack bucketName) (T.pack sanitizedObject) expirationInSeconds [] []
+  result <- runMinioClient action
+  return $ BS.unpack result
+
 createMakePublicLink
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
@@ -383,18 +412,14 @@ createMakePublicLink
      , MonadLogger m
      )
   => String
-  -> String
   -> m String
-createMakePublicLink folderName object = do
+createMakePublicLink object = do
   bucketName <- getBucketName
-  context <- ask
-  publicUrl <- getS3PublicUrl
-  let url =
-        if context.serverConfig'.cloud'.enabled
-          then f' "%s/%s/%s/%s" [publicUrl, U.toString context.appUuid', folderName, object]
-          else f' "%s/%s/%s" [publicUrl, folderName, object]
-  logInfoI _CMP_S3 (f' "Public URL to share: '%s'" [url])
-  return url
+  sanitizedObject <- sanitizeObject object
+  url <- getS3Url
+  let publicLink = f' "%s/%s/%s" [url, bucketName, sanitizedObject]
+  logInfoI _CMP_S3 (f' "Public URL to share: '%s'" [publicLink])
+  return publicLink
 
 runMinioClient
   :: ( MonadReader s m
@@ -443,14 +468,6 @@ getS3Url :: (MonadReader s m, HasField "appUuid'" s U.UUID, HasField "serverConf
 getS3Url = do
   context <- ask
   return context.serverConfig'.s3'.url
-
-getS3PublicUrl :: (MonadReader s m, HasField "appUuid'" s U.UUID, HasField "serverConfig'" s sc, HasField "cloud'" sc ServerConfigCloud, HasField "s3'" sc ServerConfigS3, MonadIO m, MonadError AppError m) => m String
-getS3PublicUrl = do
-  context <- ask
-  return $
-    case context.serverConfig'.s3'.region of
-      Just _ -> context.serverConfig'.s3'.publicUrl
-      Nothing -> f' "%s/%s" [context.serverConfig'.s3'.publicUrl, context.serverConfig'.s3'.bucket]
 
 getBucketName :: (MonadReader s m, HasField "serverConfig'" s sc, HasField "s3'" sc ServerConfigS3, MonadIO m, MonadError AppError m) => m String
 getBucketName = do

@@ -21,7 +21,7 @@ retrieveLocale' :: String -> AppContextM (Either MinioErr BS.ByteString)
 retrieveLocale' localeId = createGetObjectFn' (f' "%s/%s" [folderName, localeId])
 
 putLocale :: String -> BS.ByteString -> AppContextM String
-putLocale localeId = createPutObjectFn (f' "%s/%s" [folderName, localeId]) Nothing
+putLocale localeId = createPutObjectFn (f' "%s/%s" [folderName, localeId]) Nothing Nothing
 
 removeLocales :: AppContextM ()
 removeLocales = createRemoveObjectFn folderName

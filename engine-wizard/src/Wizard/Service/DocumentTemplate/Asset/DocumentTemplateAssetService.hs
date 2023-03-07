@@ -13,6 +13,7 @@ import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
@@ -57,6 +58,7 @@ createAsset tmlId reqDto =
     let fileSize = fromIntegral . BS.length $ reqDto.content
     let newAsset = fromCreateDTO tmlId aUuid reqDto.fileName reqDto.contentType fileSize appUuid now now
     insertAsset newAsset
+    touchDocumentTemplateById newAsset.documentTemplateId
     putAsset tmlId aUuid reqDto.contentType reqDto.content
     deleteTemporalDocumentsByAssetUuid aUuid
     url <- makePublicLink newAsset.documentTemplateId aUuid
@@ -71,6 +73,7 @@ modifyAsset assetUuid reqDto =
     now <- liftIO getCurrentTime
     let updatedAsset = fromChangeDTO asset reqDto now
     updateAssetById updatedAsset
+    touchDocumentTemplateById asset.documentTemplateId
     deleteTemporalDocumentsByFileUuid assetUuid
     return updatedAsset
 
@@ -82,9 +85,9 @@ modifyAssetContent assetUuid reqDto =
     now <- liftIO getCurrentTime
     asset <- findAssetById assetUuid
     let fileSize = fromIntegral . BS.length $ reqDto.content
-    now <- liftIO getCurrentTime
     let updatedAsset = fromChangeContentDTO asset reqDto.fileName reqDto.contentType fileSize now
     updateAssetById updatedAsset
+    touchDocumentTemplateById updatedAsset.documentTemplateId
     deleteTemporalDocumentsByFileUuid assetUuid
     putAsset asset.documentTemplateId assetUuid reqDto.contentType reqDto.content
     return updatedAsset
@@ -96,6 +99,7 @@ duplicateAsset newTemplateId asset = do
   now <- liftIO getCurrentTime
   let updatedAsset = fromDuplicateDTO asset newTemplateId aUuid now
   insertAsset updatedAsset
+  touchDocumentTemplateById asset.documentTemplateId
   putAsset newTemplateId aUuid updatedAsset.contentType content
   return updatedAsset
 
@@ -106,5 +110,6 @@ deleteAsset tmlId assetUuid =
     asset <- findAssetById assetUuid
     deleteAssetById asset.uuid
     removeAsset tmlId assetUuid
+    touchDocumentTemplateById tmlId
     deleteTemporalDocumentsByAssetUuid assetUuid
     return ()

@@ -8,6 +8,13 @@ data HttpRequest = HttpRequest
   , requestUrl :: String
   , requestHeaders :: M.Map String String
   , requestBody :: BS.ByteString
-  , multipartFileName :: Maybe String
+  , multipart :: Maybe HttpRequestMultipart
+  }
+  deriving (Show, Eq)
+
+data HttpRequestMultipart = HttpRequestMultipart
+  { key :: String
+  , fileName :: Maybe String
+  , contentType :: Maybe String
   }
   deriving (Show, Eq)

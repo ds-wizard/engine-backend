@@ -7,6 +7,7 @@ import Prelude hiding (until)
 
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.DAO.Plan.AppPlanDAO
+import Wizard.Model.Plan.AppPlan
 
 import Wizard.Specs.API.Common
 

@@ -32,9 +32,6 @@ _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE =
 _ERROR_VALIDATION__INTEGRATION_ABSENCE =
   LocaleRecord "error.validation.integration_absence" "Desired integrations doesn't exist" []
 
-_ERROR_VALIDATION__MAIN_PKG_OF_PB_ABSENCE =
-  LocaleRecord "error.validation.main_pkg_of_pb_absence" "Package Bundle doesn't contain main package" []
-
 _ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE =
   LocaleRecord "error.validation.previous_pkg_absence" "Previous package doesn't exist" []
 
@@ -204,7 +201,10 @@ _ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =
 
 -- Token
 _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD =
-  LocaleRecord "error.service.token.Incorrect_email_or_password" "Incorrect email or password" []
+  LocaleRecord "error.service.token.incorrect_email_or_password" "Incorrect email or password" []
+
+_ERROR_SERVICE_TOKEN__INCORRECT_CODE =
+  LocaleRecord "error.service.token.incorrect_code" "Incorrect code" []
 
 _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED =
   LocaleRecord "error.service.token.account_is_not_activated" "The account is not activated" []
@@ -217,6 +217,8 @@ _ERROR_SERVICE_TOKEN__OBSOLETE_TOKEN_VERSION =
 
 _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_VERSION =
   LocaleRecord "error.service.token.unable_to_get_token_version" "Unable to get token version from token" []
+
+_ERROR_SERVICE_TOKEN__CODE_IS_EXPIRED = LocaleRecord "error.service.token.code_expired" "Code is expired" []
 
 _ERROR_SERVICE_TOKEN__TOKEN_IS_EXPIRED = LocaleRecord "error.service.token.token_expired" "Token is expired" []
 

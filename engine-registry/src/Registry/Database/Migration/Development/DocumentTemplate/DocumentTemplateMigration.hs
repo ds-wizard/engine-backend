@@ -1,7 +1,5 @@
 module Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration where
 
-import qualified Data.UUID as U
-
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.S3.DocumentTemplate.DocumentTemplateS3
@@ -23,5 +21,5 @@ runMigration = do
   insertFile fileDefaultHtml
   insertFile fileDefaultCss
   insertAsset assetLogo
-  putAsset wizardDocumentTemplate.tId (U.toString assetLogo.uuid) assetLogo.contentType assetLogoContent
+  putAsset wizardDocumentTemplate.tId assetLogo.uuid assetLogo.contentType assetLogoContent
   logInfo _CMP_MIGRATION "(Fixtures/DocumentTemplate) ended"

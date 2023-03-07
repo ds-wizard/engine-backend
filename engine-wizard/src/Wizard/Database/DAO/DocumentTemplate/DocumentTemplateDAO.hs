@@ -1,10 +1,13 @@
 module Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDAO where
 
-import Control.Monad.Reader (asks)
+import Control.Monad.Reader (asks, liftIO)
 import Data.Maybe (maybeToList)
 import Data.String (fromString)
+import Data.Time
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
+import Database.PostgreSQL.Simple.ToField
+import GHC.Int
 
 import Shared.Constant.DocumentTemplate
 import Shared.Database.Mapping.DocumentTemplate.DocumentTemplate ()
@@ -137,4 +140,14 @@ findDocumentTemplatesFiltered queryParams = do
   let params = U.toString appUuid : fmap snd queryParams
   logQuery sql params
   let action conn = query conn sql params
+  runDB action
+
+touchDocumentTemplateById :: String -> AppContextM Int64
+touchDocumentTemplateById tmlId = do
+  appUuid <- asks currentAppUuid
+  now <- liftIO getCurrentTime
+  let sql = fromString "UPDATE document_template SET updated_at = ? WHERE app_uuid = ? AND id = ?"
+  let params = [toField now, toField appUuid, toField tmlId]
+  logQuery sql params
+  let action conn = execute conn sql params
   runDB action

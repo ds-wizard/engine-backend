@@ -13,7 +13,6 @@ data ServerConfigDatabase = ServerConfigDatabase
 
 data ServerConfigS3 = ServerConfigS3
   { url :: String
-  , publicUrl :: String
   , username :: String
   , password :: String
   , bucket :: String

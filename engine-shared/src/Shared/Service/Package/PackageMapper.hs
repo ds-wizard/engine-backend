@@ -1,5 +1,7 @@
 module Shared.Service.Package.PackageMapper where
 
+import qualified Data.UUID as U
+
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageSimple
@@ -49,4 +51,24 @@ toDTO pkg =
     , mergeCheckpointPackageId = pkg.mergeCheckpointPackageId
     , events = pkg.events
     , createdAt = pkg.createdAt
+    }
+
+fromDTO :: PackageDTO -> U.UUID -> PackageWithEvents
+fromDTO dto appUuid =
+  PackageWithEvents
+    { pId = dto.pId
+    , name = dto.name
+    , organizationId = dto.organizationId
+    , kmId = dto.kmId
+    , version = dto.version
+    , metamodelVersion = dto.metamodelVersion
+    , description = dto.description
+    , readme = dto.readme
+    , license = dto.license
+    , previousPackageId = dto.previousPackageId
+    , forkOfPackageId = dto.forkOfPackageId
+    , mergeCheckpointPackageId = dto.mergeCheckpointPackageId
+    , events = dto.events
+    , appUuid = appUuid
+    , createdAt = dto.createdAt
     }

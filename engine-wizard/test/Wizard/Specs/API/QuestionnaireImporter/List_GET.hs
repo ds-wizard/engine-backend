@@ -11,6 +11,7 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
+import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterJM ()
 import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterMigration as QI_Migration
@@ -67,7 +68,7 @@ test_200 appContext = do
     appContext
     "/questionnaire-importers?q=Non-existing Questionnaire Report"
     reqAuthHeader
-    (Page "questionnaireImporters" (PageMetadata 20 0 0 0) [])
+    (Page "questionnaireImporters" (PageMetadata 20 0 0 0) ([] :: [QuestionnaireImporterDTO]))
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
   it title $

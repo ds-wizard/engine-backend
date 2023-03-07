@@ -63,6 +63,14 @@ data AppConfigAuth = AppConfigAuth
 
 data AppConfigAuthInternal = AppConfigAuthInternal
   { registration :: SimpleFeature
+  , twoFactorAuth :: AppConfigAuthInternalTwoFactorAuth
+  }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthInternalTwoFactorAuth = AppConfigAuthInternalTwoFactorAuth
+  { enabled :: Bool
+  , codeLength :: Int
+  , expiration :: Int
   }
   deriving (Generic, Eq, Show)
 
@@ -99,8 +107,9 @@ data AppConfigPrivacyAndSupport = AppConfigPrivacyAndSupport
   { privacyUrl :: Maybe String
   , termsOfServiceUrl :: Maybe String
   , supportEmail :: Maybe String
-  , supportRepositoryName :: Maybe String
-  , supportRepositoryUrl :: Maybe String
+  , supportSiteName :: Maybe String
+  , supportSiteUrl :: Maybe String
+  , supportSiteIcon :: Maybe String
   }
   deriving (Generic, Eq, Show)
 

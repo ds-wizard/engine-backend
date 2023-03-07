@@ -21,6 +21,7 @@ instance FromJSON ServerConfig where
     registry <- o .:? "registry" .!= defaultRegistry
     analytics <- o .:? "analytics" .!= defaultAnalytics
     sentry <- o .:? "sentry" .!= defaultSentry
+    actionKey <- o .:? "actionKey" .!= defaultActionKey
     branch <- o .:? "branch" .!= defaultBranch
     cache <- o .:? "cache" .!= defaultCache
     document <- o .:? "document" .!= defaultDocument
@@ -28,6 +29,7 @@ instance FromJSON ServerConfig where
     persistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
     plan <- o .:? "plan" .!= defaultPlan
     questionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
+    temporaryFile <- o .:? "temporaryFile" .!= defaultTemporaryFile
     userToken <- o .:? "userToken" .!= defaultUserToken
     logging <- o .:? "logging" .!= defaultLogging
     cloud <- o .:? "cloud" .!= defaultCloud
@@ -66,6 +68,12 @@ instance FromJSON ServerConfigRegistry where
     clientUrl <- o .:? "clientUrl" .!= defaultRegistry.clientUrl
     sync <- o .:? "sync" .!= defaultRegistry.sync
     return ServerConfigRegistry {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigActionKey where
+  parseJSON (Object o) = do
+    clean <- o .:? "clean" .!= defaultActionKey.clean
+    return ServerConfigActionKey {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigBranch where
@@ -121,6 +129,12 @@ instance FromJSON ServerConfigQuestionnaire where
     recomputeIndication <- o .:? "recomputeIndication" .!= defaultQuestionnaire.recomputeIndication
     squash <- o .:? "squash" .!= defaultQuestionnaire.squash
     return ServerConfigQuestionnaire {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigTemporaryFile where
+  parseJSON (Object o) = do
+    clean <- o .:? "clean" .!= defaultTemporaryFile.clean
+    return ServerConfigTemporaryFile {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigUserToken where

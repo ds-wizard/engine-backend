@@ -7,6 +7,7 @@ import Shared.Model.Event.EventLenses
 class EventSquash oldEvent newEvent where
   squashEvent :: oldEvent -> newEvent -> [Event]
 
+applyValue :: event -> event -> (event -> EventField value) -> EventField value
 applyValue oldEvent newEvent getter =
   case getter newEvent of
     (ChangedValue value) -> ChangedValue value

@@ -103,11 +103,9 @@ logInsertAndUpdate sql params = do
   logInfoI _CMP_DATABASE $ f' "%s  with params %s" [trim . show $ sql, paramsS]
 
 runInTransaction
-  :: ( Show e
-     , MonadIO m
+  :: ( MonadIO m
      , MonadReader s m
      , MonadIO m
-     , MonadError e m
      , HasField "dbPool'" s (Pool Connection)
      , MonadError AppError m
      , HasField "dbConnection'" s (Maybe Connection)

@@ -2,7 +2,7 @@ module Wizard.Api.Handler.DocumentTemplateDraft.Asset.Detail_Content_GET where
 
 import Control.Monad.Reader (asks)
 import qualified Data.UUID as U
-import Servant hiding (contentType)
+import Servant
 
 import Shared.Api.Handler.Common
 import Shared.Model.Context.TransactionState

@@ -13,6 +13,7 @@ data ServerConfig = ServerConfig
   , registry :: ServerConfigRegistry
   , analytics :: ServerConfigAnalytics
   , sentry :: ServerConfigSentry
+  , actionKey :: ServerConfigActionKey
   , branch :: ServerConfigBranch
   , cache :: ServerConfigCache
   , document :: ServerConfigDocument
@@ -20,6 +21,7 @@ data ServerConfig = ServerConfig
   , persistentCommand :: ServerConfigPersistentCommand
   , plan :: ServerConfigPlan
   , questionnaire :: ServerConfigQuestionnaire
+  , temporaryFile :: ServerConfigTemporaryFile
   , userToken :: ServerConfigUserToken
   , logging :: ServerConfigLogging
   , cloud :: ServerConfigCloud
@@ -53,6 +55,11 @@ data ServerConfigRegistry = ServerConfigRegistry
   { url :: String
   , clientUrl :: String
   , sync :: ServerConfigCronWorker
+  }
+  deriving (Generic, Show)
+
+data ServerConfigActionKey = ServerConfigActionKey
+  { clean :: ServerConfigCronWorker
   }
   deriving (Generic, Show)
 
@@ -100,6 +107,11 @@ data ServerConfigQuestionnaire = ServerConfigQuestionnaire
   { clean :: ServerConfigCronWorker
   , recomputeIndication :: ServerConfigCronWorker
   , squash :: ServerConfigCronWorker
+  }
+  deriving (Generic, Show)
+
+data ServerConfigTemporaryFile = ServerConfigTemporaryFile
+  { clean :: ServerConfigCronWorker
   }
   deriving (Generic, Show)
 

@@ -7,7 +7,7 @@ import Servant
 import Registry.Api.Handler.Common
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
-import Registry.Service.LocaleBundle.LocaleBundleService
+import Registry.Service.Locale.Bundle.LocaleBundleService
 import Shared.Api.Handler.Common
 import Shared.Model.Context.TransactionState
 
@@ -25,7 +25,7 @@ detail_bundle_GET
 detail_bundle_GET mTokenHeader tmlId =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService NoTransaction $ do
-      zipFile <- exportLocaleBundle tmlId
+      zipFile <- exportBundle tmlId
       let cdHeader = "attachment;filename=\"locale.zip\""
       traceUuid <- asks traceUuid
       return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStreamLazy $ zipFile

@@ -1,0 +1,313 @@
+name: Build
+
+on:
+  push:
+  schedule:
+  - cron: '0 2 * * *'
+
+jobs:
+  btp:
+    name: Build-Tag-Push
+    runs-on: ubuntu-22.04
+
+    if: github.repository == 'ds-wizard/engine-backend'
+
+    strategy:
+      matrix:
+        component: [registry, wizard]
+        stack: [2.9.3]
+    
+    env:
+      COMPONENT: ${{ matrix.component }}
+      IMAGE_NAME: ${{ matrix.component }}-server
+      PUBLIC_IMAGE_PREFIX: datastewardshipwizard
+      DOCKER_META_CONTEXT: './engine-${{ matrix.component }}'
+      DOCKER_META_FILE: './engine-${{ matrix.component }}/Dockerfile'
+      DOCKER_META_PLATFORMS: 'linux/amd64'
+      STACK_VERSION: ${{ matrix.stack }}
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+        - 5432:5432
+        options: --name postgres
+      minio:
+        image: fclairamb/minio-github-actions
+        ports:
+          - 9000:9000
+        options: --name minio
+
+    steps:
+    - name: Detect force push
+      if: github.event_name == 'push' && github.event.forced
+      run: echo "Force push detected. Cache may be invalidated..."
+
+    - name: Checkout git repository
+      uses: actions/checkout@v3
+
+    - name: Fetch all git history
+      run: |
+        git fetch --prune --unshallow
+    
+    - name: Prepare ~/.local/bin
+      run: |
+        mkdir -p ~/.local/bin
+        export PATH=~/.local/bin:$PATH
+
+# (1) -> Setup cache
+    - name: Cache ~/.stack
+      id: cache-stack
+      uses: actions/cache@v3
+      with:
+        path: ~/.stack
+        key: stack-home-ubuntu22-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
+        restore-keys: |
+          stack-home-ubuntu22-
+    
+    - name: Cache postgresql-migration
+      id: cache-postgresql-migration
+      uses: actions/cache@v3
+      with:
+        path: vendor/postgresql-migration/.stack-work
+        key: postgresql-migration-ubuntu22-${{ hashFiles('vendor/postgresql-migration/package.yaml')}}-${{ hashFiles('vendor/postgresql-migration/**/*.hs') }}
+        restore-keys: |
+          postgresql-migration-ubuntu22-${{ hashFiles('vendor/postgresql-migration/package.yaml')}}-
+          postgresql-migration-ubuntu22-
+
+    - name: Invalidate postgresql-migration cache (force push)
+      id: invalidate-cache-postgresql-migration
+      if: github.event_name == 'push' && github.event.forced && steps.cache-postgresql-migration.outputs.cache-hit != 'true'
+      run: |
+        rm -rf vendor/postgresql-migration/.stack-work
+
+    - name: Cache servant-errors
+      id: cache-servant-errors
+      uses: actions/cache@v3
+      with:
+        path: vendor/servant-errors/.stack-work
+        key: servant-errors-ubuntu22-${{ hashFiles('vendor/servant-errors/package.yaml')}}-${{ hashFiles('vendor/servant-errors/**/*.hs') }}
+        restore-keys: |
+          servant-errors-ubuntu22-${{ hashFiles('vendor/servant-errors/package.yaml')}}-
+          servant-errors-ubuntu22-
+
+    - name: Invalidate servant-errors cache (force push)
+      id: invalidate-cache-servant-errors
+      if: github.event_name == 'push' && github.event.forced && steps.cache-servant-errors.outputs.cache-hit != 'true'
+      run: |
+        rm -rf vendor/servant-errors/.stack-work
+
+    - name: Cache servant-mock
+      id: cache-servant-mock
+      uses: actions/cache@v3
+      with:
+        path: vendor/servant-mock/.stack-work
+        key: servant-mock-ubuntu22-${{ hashFiles('vendor/servant-mock/package.yaml')}}-${{ hashFiles('vendor/servant-mock/**/*.hs') }}
+        restore-keys: |
+          servant-mock-ubuntu22-${{ hashFiles('vendor/servant-mock/package.yaml')}}-
+          servant-mock-ubuntu22-
+
+    - name: Invalidate servant-mock cache (force push)
+      id: invalidate-cache-servant-mock
+      if: github.event_name == 'push' && github.event.forced && steps.cache-servant-mock.outputs.cache-hit != 'true'
+      run: |
+        rm -rf vendor/servant-mock/.stack-work
+    
+    - name: Cache rdf4h
+      id: cache-rdf4h
+      uses: actions/cache@v3
+      with:
+        path: vendor/rdf4h/.stack-work
+        key: rdf4h-ubuntu22-${{ hashFiles('vendor/rdf4h/package.yaml')}}-${{ hashFiles('vendor/rdf4h/**/*.hs') }}
+        restore-keys: |
+          rdf4h-ubuntu22-${{ hashFiles('vendor/rdf4h/package.yaml')}}-
+          rdf4h-ubuntu22-
+
+    - name: Invalidate rdf4h cache (force push)
+      id: invalidate-cache-rdf4h
+      if: github.event_name == 'push' && github.event.forced && steps.cache-rdf4h.outputs.cache-hit != 'true'
+      run: |
+        rm -rf vendor/rdf4h/.stack-work
+
+    - name: Cache engine-shared
+      id: cache-engine-shared
+      uses: actions/cache@v3
+      with:
+        path: engine-shared/.stack-work
+        key: engine-shared-ubuntu22-${{ hashFiles('engine-shared/package.yaml')}}-${{ hashFiles('engine-shared/**/*.hs') }}
+        restore-keys: |
+          engine-shared-ubuntu22-${{ hashFiles('engine-shared/package.yaml')}}-
+          engine-shared-ubuntu22-
+    
+    - name: Invalidate engine-shared cache (force push)
+      id: invalidate-cache-engine-shared
+      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-shared.outputs.cache-hit != 'true'
+      run: |
+        rm -rf engine-shared/.stack-work
+
+    - name: Cache engine-registry
+      id: cache-engine-registry
+      uses: actions/cache@v3
+      with:
+        path: engine-registry/.stack-work
+        key: engine-registry-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-registry/package.yaml')}}-${{ hashFiles('engine-registry/**/*.hs') }}
+        restore-keys: |
+          engine-registry-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-registry/package.yaml')}}-
+          engine-registry-${{ matrix.component }}-ubuntu22-
+    
+    - name: Invalidate engine-registry cache (force push)
+      id: invalidate-cache-engine-registry
+      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-registry.outputs.cache-hit != 'true'
+      run: |
+        rm -rf engine-registry/.stack-work
+    
+    - name: Cache engine-wizard
+      id: cache-engine-wizard
+      uses: actions/cache@v3
+      if: matrix.component == 'wizard'
+      with:
+        path: engine-wizard/.stack-work
+        key: engine-wizard-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard/package.yaml')}}-${{ hashFiles('engine-wizard/**/*.hs') }}
+        restore-keys: |
+          engine-wizard-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard/package.yaml')}}-
+          engine-wizard-${{ matrix.component }}-ubuntu22-
+    
+    - name: Invalidate engine-wizard cache (force push)
+      id: invalidate-cache-engine-wizard
+      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-wizard.outputs.cache-hit != 'true'
+      run: |
+        rm -rf engine-wizard/.stack-work
+    
+    - name: Cache engine-wizard-metamodel-migrator
+      id: cache-engine-wizard-metamodel-migrator
+      uses: actions/cache@v3
+      if: matrix.component == 'wizard'
+      with:
+        path: engine-wizard-metamodel-migrator/.stack-work
+        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-${{ hashFiles('engine-wizard-metamodel-migrator/**/*.hs') }}
+        restore-keys: |
+          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-
+          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-
+    
+    - name: Invalidate engine-wizard-metamodel-migrator cache (force push)
+      id: invalidate-cache-engine-wizard-metamodel-migrator
+      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-wizard-metamodel-migrator.outputs.cache-hit != 'true'
+      run: |
+        rm -rf engine-wizard-metamodel-migrator/.stack-work
+    
+    - name: Cache Stack in ~/.local/bin
+      id: cache-stack-local-bin
+      uses: actions/cache@v3
+      with:
+        path: ~/.local/bin
+        key: stack-local-bin-ubuntu22-${{ matrix.stack }}
+
+# (2) -> Prepare and install dependencies     
+    - name: Setup stack
+      if: steps.cache-stack-local-bin.outputs.cache-hit != 'true'
+      run: |
+        curl -L https://github.com/commercialhaskell/stack/releases/download/v$STACK_VERSION/stack-$STACK_VERSION-linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack';
+        
+    - name: Update config and build info
+      run: |
+        ./scripts/update-file-timestamps.sh
+        ./scripts/expand-example-files.sh
+        ./scripts/generate-build-info.sh engine-$COMPONENT
+
+    - name: Install GHC and dependencies
+      run: |
+        stack test --no-terminal --install-ghc --only-dependencies
+        
+# (3) -> Build binary
+    - name: Build and test application 
+      run: |
+        stack test engine-$COMPONENT --no-terminal --skip-ghc-check 2>&1 | tee log.txt
+        WARNINGS=$(grep -o ': warning: ' log.txt | wc -l)
+        if [ $WARNINGS -gt "0" ]; then
+          echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+          echo "!! GHC WARNINGS DETECTED ($WARNINGS):"
+          grep ': warning: ' -A 3 log.txt
+          echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+          exit 1
+        fi
+        cp $(stack path --local-install-root)/bin/engine-$COMPONENT engine-$COMPONENT/engine-$COMPONENT-bin
+      env:
+        FEEDBACK_TOKEN: ${{ secrets.FEEDBACK_TOKEN }}
+
+# (4.1) -> Docker build (test)
+    - name: Docker meta [test]
+      id: meta-test
+      uses: docker/metadata-action@v4
+      with:
+        images: |
+          ${{ env.PUBLIC_IMAGE_PREFIX }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=sha
+
+    - name: Docker build [test]
+      uses: docker/build-push-action@v4
+      with:
+        context: ${{ env.DOCKER_META_CONTEXT }}
+        file: ${{ env.DOCKER_META_FILE }}
+        platforms: ${{ env.DOCKER_META_PLATFORMS }}
+        push: false
+        tags: ${{ steps.meta-test.outputs.tags }}
+        labels: ${{ steps.meta-test.outputs.labels }}
+
+# (4.2) -> Docker login
+    - name: Docker login [docker.io]
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+# (4.3) -> Docker build+push (dev)
+    - name: Docker meta [dev]
+      id: meta-dev
+      if: github.event_name != 'pull_request'
+      uses: docker/metadata-action@v4
+      with:
+        images: |
+          ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+
+    - name: Docker build+push [dev]
+      uses: docker/build-push-action@v4
+      if: github.event_name != 'pull_request' && steps.meta-dev.outputs.tags != ''
+      with:
+        context: ${{ env.DOCKER_META_CONTEXT }}
+        file: ${{ env.DOCKER_META_FILE }}
+        platforms: ${{ env.DOCKER_META_PLATFORMS }}
+        push: true
+        tags: ${{ steps.meta-dev.outputs.tags }}
+        labels: ${{ steps.meta-dev.outputs.labels }}
+
+# (4.4) -> Docker build+push (public)
+    - name: Docker meta [public]
+      id: meta-public
+      if: github.event_name != 'pull_request'
+      uses: docker/metadata-action@v4
+      with:
+        images: |
+          ${{ env.PUBLIC_IMAGE_PREFIX }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
+
+    - name: Docker build+push [public]
+      uses: docker/build-push-action@v4
+      if: github.event_name != 'pull_request' && steps.meta-public.outputs.tags != ''
+      with:
+        context: ${{ env.DOCKER_META_CONTEXT }}
+        file: ${{ env.DOCKER_META_FILE }}
+        platforms: ${{ env.DOCKER_META_PLATFORMS }}
+        push: true
+        tags: ${{ steps.meta-public.outputs.tags }}
+        labels: ${{ steps.meta-public.outputs.labels }}

@@ -3,16 +3,20 @@ name: Metamodel Migrator CI
 on:
   push:
     paths:
+      - '.github/workflows/test-migrator.yml'
       - 'engine-wizard-metamodel-migrator/**/*.hs'
       - 'engine-wizard-metamodel-migrator/package.yaml'
 
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     
+    strategy:
+      matrix:
+        stack: [2.9.1]
     env:
-      STACK_VERSION: '2.5.1'
+      STACK_VERSION: ${{ matrix.stack }}
 
     steps:
     - name: Detect force push
@@ -37,19 +41,19 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.stack
-        key: stack-home-ubuntu20-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
+        key: stack-home-ubuntu22-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
         restore-keys: |
-          stack-home-ubuntu20-
+          stack-home-ubuntu22-
   
     - name: Cache engine-wizard-metamodel-migrator
       id: cache-engine-wizard-metamodel-migrator
       uses: actions/cache@v3
       with:
         path: engine-wizard-metamodel-migrator/.stack-work
-        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu20-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-${{ hashFiles('engine-wizard-metamodel-migrator/**/*.hs') }}
+        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-${{ hashFiles('engine-wizard-metamodel-migrator/**/*.hs') }}
         restore-keys: |
-          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu20-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-
-          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu20-
+          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-
+          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-
     
     - name: Invalidate engine-wizard-metamodel-migrator cache (force push)
       id: invalidate-cache-engine-wizard-metamodel-migrator
@@ -62,7 +66,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.local/bin
-        key: stack-local-bin-ubuntu20-${{ matrix.stack }}
+        key: stack-local-bin-ubuntu22-${{ matrix.stack }}
 
 # (2) -> Prepare and install dependencies     
     - name: Setup stack

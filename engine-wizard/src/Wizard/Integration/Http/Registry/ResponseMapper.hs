@@ -15,3 +15,9 @@ toRetrieveTemplateBundleByIdResponse = Right . getResponseBody
 
 toRetrieveLocaleBundleByIdResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
 toRetrieveLocaleBundleByIdResponse = Right . getResponseBody
+
+toUploadDocumentTemplateBundleResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
+toUploadDocumentTemplateBundleResponse = Right . getResponseBody
+
+toUploadLocaleBundleResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
+toUploadLocaleBundleResponse = Right . getResponseBody

@@ -15,6 +15,8 @@ import Shared.Model.DocumentTemplate.DocumentTemplate
 import Shared.Model.Error.Error
 import Shared.Service.DocumentTemplate.Bundle.DocumentTemplateBundleMapper
 import Shared.Service.DocumentTemplate.DocumentTemplateMapper
+import Shared.Util.String
+import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Internal
@@ -25,15 +27,25 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleAudit
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Limit.AppLimitService
+import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
+import Wizard.Service.TemporaryFile.TemporaryFileService
+
+getTemporaryFileWithBundle :: String -> AppContextM TemporaryFileDTO
+getTemporaryFileWithBundle tmlId =
+  runInTransaction $ do
+    bundle <- exportBundle tmlId
+    url <- createTemporaryFile (f' "%s.zip" [tmlId]) "application/octet-stream" bundle
+    return $ TemporaryFileMapper.toDTO url "application/zip"
 
 exportBundle :: String -> AppContextM BSL.ByteString
-exportBundle tmlId = do
-  tml <- findDocumentTemplateById tmlId
-  files <- findFilesByDocumentTemplateId tmlId
-  assets <- findAssetsByDocumentTemplateId tmlId
-  assetContents <- traverse (findAsset tml.tId) assets
-  auditBundleExport tmlId
-  return $ toDocumentTemplateArchive (toBundle tml files assets) assetContents
+exportBundle tmlId =
+  runInTransaction $ do
+    tml <- findDocumentTemplateById tmlId
+    files <- findFilesByDocumentTemplateId tmlId
+    assets <- findAssetsByDocumentTemplateId tmlId
+    assetContents <- traverse (findAsset tml.tId) assets
+    auditBundleExport tmlId
+    return $ toDocumentTemplateArchive (toBundle tml files assets) assetContents
 
 pullBundleFromRegistry :: String -> AppContextM ()
 pullBundleFromRegistry tmlId =

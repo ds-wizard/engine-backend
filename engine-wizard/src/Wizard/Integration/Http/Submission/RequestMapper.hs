@@ -17,8 +17,8 @@ toUploadDocumentRequest req variables reqBody =
     , requestUrl = interpolateString variables req.url
     , requestHeaders = interpolateMapValues variables req.headers
     , requestBody = reqBody
-    , multipartFileName =
+    , multipart =
         if req.multipart.enabled
-          then Just req.multipart.fileName
+          then Just HttpRequestMultipart {key = req.multipart.fileName, fileName = Nothing, contentType = Nothing}
           else Nothing
     }

@@ -47,6 +47,7 @@ import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.Que
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as R_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
+import qualified Wizard.Database.Migration.Development.TemporaryFile.TemporaryFileSchemaMigration as TF_Schema
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as U_Schema
 import Wizard.Util.Logger
@@ -59,6 +60,7 @@ runMigration = do
   TML_Schema.dropFunctions
   CMN_Schema.dropFunctions
   -- 2. Drop schema
+  TF_Schema.dropTables
   LOC_Schema.dropTables
   R_Schema.dropTables
   QI_Schema.dropTables
@@ -107,6 +109,7 @@ runMigration = do
   QI_Schema.createTables
   R_Schema.createTables
   LOC_Schema.createTables
+  TF_Schema.createTables
   -- 4. Create DB functions
   CMN_Schema.createFunctions
   PKG_Schema.createFunctions

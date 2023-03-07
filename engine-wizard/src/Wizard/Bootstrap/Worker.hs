@@ -12,6 +12,7 @@ import Shared.Model.Config.ServerConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
+import Wizard.Worker.Cron.ActionKey.ActionKeyWorker
 import Wizard.Worker.Cron.Branch.SquashBranchEventsWorker
 import Wizard.Worker.Cron.Cache.CacheWorker
 import Wizard.Worker.Cron.Document.DocumentWorker
@@ -22,6 +23,7 @@ import Wizard.Worker.Cron.Questionnaire.CleanQuestionnaireWorker
 import Wizard.Worker.Cron.Questionnaire.RecomputeQuestionnaireIndicationWorker
 import Wizard.Worker.Cron.Questionnaire.SquashQuestionnaireEventsWorker
 import Wizard.Worker.Cron.Registry.RegistrySyncWorker
+import Wizard.Worker.Cron.TemporaryFile.TemporaryFileWorker
 import Wizard.Worker.Cron.UserToken.CleanUserTokenWorker
 import Wizard.Worker.Permanent.PersistentCommand.PersistentCommandListenerWorker
 
@@ -45,6 +47,7 @@ cronJob context = do
   logInfo _CMP_WORKER "scheduling workers started"
   threadIds <-
     liftIO . execSchedule $ do
+      actionKeyWorker context
       squashBranchEventsWorker context
       cacheWorker context
       feedbackWorker context
@@ -55,6 +58,7 @@ cronJob context = do
       recomputeQuestionnaireIndicationWorker context
       squashQuestionnaireEventsWorker context
       registrySyncWorker context
+      temporaryFileWorker context
       cleanUserTokenWorker context
   logInfo _CMP_WORKER "scheduling workers completed"
   return threadIds

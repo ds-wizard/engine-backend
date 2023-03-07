@@ -26,5 +26,5 @@ toCompileClientCssRequest reqUrl clientUrl lookAndFeel =
             , primaryColor = lookAndFeel.primaryColor
             , illustrationsColor = lookAndFeel.illustrationsColor
             }
-    , multipartFileName = Nothing
+    , multipart = Nothing
     }

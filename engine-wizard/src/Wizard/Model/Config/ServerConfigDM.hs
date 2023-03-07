@@ -15,6 +15,7 @@ defaultConfig =
     , registry = defaultRegistry
     , analytics = defaultAnalytics
     , sentry = defaultSentry
+    , actionKey = defaultActionKey
     , branch = defaultBranch
     , cache = defaultCache
     , document = defaultDocument
@@ -22,6 +23,7 @@ defaultConfig =
     , persistentCommand = defaultPersistentCommand
     , plan = defaultPlan
     , questionnaire = defaultQuestionnaire
+    , temporaryFile = defaultTemporaryFile
     , userToken = defaultUserToken
     , logging = defaultLogging
     , cloud = defaultCloud
@@ -88,6 +90,13 @@ defaultRegistry =
 defaultRegistrySyncJob :: ServerConfigCronWorker
 defaultRegistrySyncJob =
   ServerConfigCronWorker {enabled = True, cron = "*/15 * * * *"}
+
+defaultActionKey :: ServerConfigActionKey
+defaultActionKey = ServerConfigActionKey {clean = defaultActionKeyClean}
+
+defaultActionKeyClean :: ServerConfigCronWorker
+defaultActionKeyClean =
+  ServerConfigCronWorker {enabled = True, cron = "20 0 * * *"}
 
 defaultBranch :: ServerConfigBranch
 defaultBranch = ServerConfigBranch {squash = defaultBranchSquash}
@@ -168,6 +177,13 @@ defaultQuestionnaireRecomputeIndication =
 defaultQuestionnaireSquash :: ServerConfigCronWorker
 defaultQuestionnaireSquash =
   ServerConfigCronWorker {enabled = True, cron = "15 2 * * *"}
+
+defaultTemporaryFile :: ServerConfigTemporaryFile
+defaultTemporaryFile = ServerConfigTemporaryFile {clean = defaultTemporaryFileClean}
+
+defaultTemporaryFileClean :: ServerConfigCronWorker
+defaultTemporaryFileClean =
+  ServerConfigCronWorker {enabled = True, cron = "25 0 * * *"}
 
 defaultUserToken :: ServerConfigUserToken
 defaultUserToken = ServerConfigUserToken {clean = defaultUserTokenClean}

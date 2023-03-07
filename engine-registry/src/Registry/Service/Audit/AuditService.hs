@@ -1,6 +1,8 @@
 module Registry.Service.Audit.AuditService (
   auditListPackages,
   auditGetPackageBundle,
+  auditGetDocumentTemplateBundle,
+  auditGetLocaleBundle,
 ) where
 
 import Control.Monad.Reader (asks, liftIO)
@@ -32,6 +34,22 @@ auditGetPackageBundle pkgId =
   heGetOrganizationFromContext $ \org -> do
     now <- liftIO getCurrentTime
     let entry = GetPackageBundleAuditEntry {organizationId = org.organizationId, packageId = pkgId, createdAt = now}
+    insertAuditEntry entry
+    return . Right . Just $ entry
+
+auditGetDocumentTemplateBundle :: String -> AppContextM (Either AppError (Maybe AuditEntry))
+auditGetDocumentTemplateBundle documentTemplateId =
+  heGetOrganizationFromContext $ \org -> do
+    now <- liftIO getCurrentTime
+    let entry = GetDocumentTemplateBundleAuditEntry {organizationId = org.organizationId, documentTemplateId = documentTemplateId, createdAt = now}
+    insertAuditEntry entry
+    return . Right . Just $ entry
+
+auditGetLocaleBundle :: String -> AppContextM (Either AppError (Maybe AuditEntry))
+auditGetLocaleBundle localeId =
+  heGetOrganizationFromContext $ \org -> do
+    now <- liftIO getCurrentTime
+    let entry = GetLocaleBundleAuditEntry {organizationId = org.organizationId, localeId = localeId, createdAt = now}
     insertAuditEntry entry
     return . Right . Just $ entry
 

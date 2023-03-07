@@ -17,7 +17,7 @@ import Shared.Api.Resource.PackageBundle.PackageBundleJM ()
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.PackageBundle.Data.PackageBundles
 import Shared.Model.Package.PackageWithEvents
-import Shared.Service.PackageBundle.PackageBundleMapper
+import Shared.Service.Package.Bundle.PackageBundleMapper
 
 import Registry.Specs.API.Audit.Common
 import Registry.Specs.API.Common

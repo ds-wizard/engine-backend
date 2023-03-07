@@ -68,7 +68,15 @@ defaultAuth =
     }
 
 defaultAuthInternal :: AppConfigAuthInternal
-defaultAuthInternal = AppConfigAuthInternal {registration = SimpleFeature True}
+defaultAuthInternal = AppConfigAuthInternal {registration = SimpleFeature True, twoFactorAuth = defaultAuthInternalTwoFactorAuth}
+
+defaultAuthInternalTwoFactorAuth :: AppConfigAuthInternalTwoFactorAuth
+defaultAuthInternalTwoFactorAuth =
+  AppConfigAuthInternalTwoFactorAuth
+    { enabled = False
+    , codeLength = 6
+    , expiration = 600
+    }
 
 defaultAuthExternal :: AppConfigAuthExternal
 defaultAuthExternal = AppConfigAuthExternal {services = [defaultAuthExternalService]}
@@ -106,8 +114,9 @@ defaultPrivacyAndSupport =
     { privacyUrl = Nothing
     , termsOfServiceUrl = Nothing
     , supportEmail = Nothing
-    , supportRepositoryName = Nothing
-    , supportRepositoryUrl = Nothing
+    , supportSiteName = Nothing
+    , supportSiteUrl = Nothing
+    , supportSiteIcon = Nothing
     }
 
 defaultDashboard :: AppConfigDashboard

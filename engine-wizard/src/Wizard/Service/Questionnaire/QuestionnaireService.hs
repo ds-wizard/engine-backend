@@ -314,6 +314,18 @@ modifyQuestionnaire qtnUuid reqDto =
     commentThreadsMap <- getQuestionnaireComments qtn
     deleteTemporalDocumentsByQuestionnaireUuid qtn.uuid
     migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
+    mTemplate <-
+      case updatedQtn.documentTemplateId of
+        Just tId -> do
+          tml <- findDocumentTemplateById tId
+          return $ Just tml
+        _ -> return Nothing
+    mFormat <-
+      case (mTemplate, updatedQtn.formatUuid) of
+        (Just tml, Just fUuid) -> return $ L.find (\f -> f.uuid == fUuid) tml.formats
+        _ -> return Nothing
+    let restWsDto = toDetailWsDTO updatedQtn mTemplate mFormat permissionDtos
+    setQuestionnaire qtnUuid restWsDto
     return $
       toDetailWithPackageWithEventsDTO
         updatedQtn
@@ -322,8 +334,8 @@ modifyQuestionnaire qtnUuid reqDto =
         pkgVersions
         knowledgeModel
         state
-        Nothing
-        Nothing
+        mTemplate
+        mFormat
         qtnCtn.replies
         commentThreadsMap
         permissionDtos

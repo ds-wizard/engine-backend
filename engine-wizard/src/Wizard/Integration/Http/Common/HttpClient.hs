@@ -2,6 +2,7 @@ module Wizard.Integration.Http.Common.HttpClient (
   runRequest,
   runRequest',
   runSimpleRequest,
+  mapHeader,
 ) where
 
 import qualified Control.Exception.Base as E
@@ -13,6 +14,7 @@ import qualified Data.ByteString.Lazy as BSL
 import qualified Data.CaseInsensitive as CI
 import Data.Map (toList)
 import qualified Data.Text as T
+import Network.HTTP.Client.MultipartFormData (partContentType, partFilename)
 import Network.Wreq (
   Part,
   Response,
@@ -80,8 +82,8 @@ runSimpleRequest req = do
   httpClientManager <- asks httpClientManager
   let opts =
         defaults & manager .~ Right httpClientManager & headers .~ reqHeaders & (checkResponse ?~ (\_ _ -> return ()))
-  case req.multipartFileName of
-    Just fileName -> liftIO . E.try . actionMultipart opts $ fileName
+  case req.multipart of
+    Just multipart -> liftIO . E.try . actionMultipart opts $ multipart
     Nothing -> liftIO . E.try . action $ opts
   where
     reqMethod = req.requestMethod
@@ -90,8 +92,8 @@ runSimpleRequest req = do
     action opts
       | reqMethod == "GET" = getWith opts reqUrl
       | otherwise = customPayloadMethodWith reqMethod opts reqUrl req.requestBody
-    actionMultipart opts fileName =
-      customPayloadMethodWith reqMethod opts reqUrl ([partBS (T.pack fileName) req.requestBody] :: [Part])
+    actionMultipart opts fileConfig =
+      customPayloadMethodWith reqMethod opts reqUrl ([(partBS (T.pack fileConfig.key) req.requestBody) {partFilename = fileConfig.fileName, partContentType = fmap BS.pack fileConfig.contentType}] :: [Part])
 
 -- --------------------------------
 -- PRIVATE
@@ -103,8 +105,8 @@ mapHeader (k, v) = (CI.mk . BS.pack $ k, BS.pack v)
 -- LOGGER
 -- --------------------------------
 logRequestMultipart request =
-  case request.multipartFileName of
-    Just fileName -> logInfoU _CMP_INTEGRATION ("Request Multipart FileName: '" ++ fileName ++ "'")
+  case request.multipart of
+    Just multipart -> logInfoU _CMP_INTEGRATION (f' "Request Multipart (key: '%s', fileName: '%s', contentType: '%s')" [multipart.key, show multipart.fileName, show multipart.contentType])
     Nothing -> logInfoU _CMP_INTEGRATION "Request Multipart: Not used"
 
 logResponseErrorGeneral error = logInfoU _CMP_INTEGRATION (f' "Request failed: '%s'" [show error])
