@@ -1,6 +1,5 @@
 module Wizard.Api.Resource.PackageBundle.PackageBundleFileSM where
 
-import Control.Lens
 import Data.Swagger
 import Servant
 import Servant.Multipart
@@ -10,11 +9,18 @@ import Servant.Swagger.Internal
 import Wizard.Api.Resource.PackageBundle.PackageBundleFileDTO hiding (name)
 
 instance HasSwagger api => HasSwagger (MultipartForm Mem PackageBundleFileDTO :> api) where
-  toSwagger _ = toSwagger (Proxy :: Proxy api) & addParam param
+  toSwagger _ = addParam param (toSwagger (Proxy :: Proxy api))
     where
       param =
-        mempty
-          & name .~ "file"
-          & required ?~ True
-          & description ?~ "File to upload"
-          & schema .~ ParamOther (mempty & in_ .~ ParamFormData & paramSchema .~ (mempty & type_ ?~ SwaggerFile))
+        Param
+          { _paramName = "file"
+          , _paramDescription = Just "File to upload"
+          , _paramRequired = Just True
+          , _paramSchema =
+              ParamOther
+                ( mempty
+                    { _paramOtherSchemaIn = ParamFormData
+                    , _paramOtherSchemaParamSchema = mempty {_paramSchemaType = Just SwaggerFile}
+                    }
+                )
+          }

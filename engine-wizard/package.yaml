@@ -44,8 +44,6 @@ library:
   - http-client-tls
   - http-types
   - jwt
-  - lens
-  - lens-aeson
   - markdown
   - minio-hs
   - mtl
@@ -133,7 +131,6 @@ tests:
     - ginger
     - http-client
     - http-types
-    - lens
     - jwt
     - mtl
     - monad-control

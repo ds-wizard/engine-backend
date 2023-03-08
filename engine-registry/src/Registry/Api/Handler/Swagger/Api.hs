@@ -1,6 +1,5 @@
 module Registry.Api.Handler.Swagger.Api where
 
-import Control.Lens
 import Data.Swagger
 import Servant
 import Servant.Swagger
@@ -31,7 +30,14 @@ type SwaggerAPI = SwaggerSchemaUI "swagger-ui" "swagger.json"
 
 swagger :: Swagger
 swagger =
-  toSwagger applicationApi & info . title .~ "Registry API" & info . description ?~ "API specification for Registry"
+  let s = toSwagger applicationApi
+   in s
+        { _swaggerInfo =
+            s._swaggerInfo
+              { _infoTitle = "Registry API"
+              , _infoDescription = Just "API specification for Registry"
+              }
+        }
 
 swaggerServer :: Server SwaggerAPI
 swaggerServer = swaggerSchemaUIServer swagger

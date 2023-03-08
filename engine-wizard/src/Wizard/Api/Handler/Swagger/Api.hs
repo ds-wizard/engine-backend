@@ -1,6 +1,5 @@
 module Wizard.Api.Handler.Swagger.Api where
 
-import Control.Lens
 import Data.Swagger
 import Servant
 import Servant.Swagger
@@ -114,7 +113,15 @@ import Wizard.Api.Resource.Websocket.WebsocketSM ()
 type SwaggerAPI = SwaggerSchemaUI "swagger-ui" "swagger.json"
 
 swagger :: Swagger
-swagger = toSwagger applicationApi & info . title .~ "Wizard API" & info . description ?~ "API specification for Wizard"
+swagger =
+  let s = toSwagger applicationApi
+   in s
+        { _swaggerInfo =
+            s._swaggerInfo
+              { _infoTitle = "Wizard API"
+              , _infoDescription = Just "API specification for Wizard"
+              }
+        }
 
 swaggerServer :: Server SwaggerAPI
 swaggerServer = swaggerSchemaUIServer swagger

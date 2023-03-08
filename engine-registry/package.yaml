@@ -32,9 +32,8 @@ library:
   - engine-shared
   - ginger
   - hashable
+  - http-client
   - http-types
-  - lens
-  - lens-aeson
   - memory
   - minio-hs
   - mtl
@@ -107,7 +106,6 @@ tests:
     - engine-shared
     - ginger
     - http-types
-    - lens
     - mtl
     - monad-control
     - monad-logger

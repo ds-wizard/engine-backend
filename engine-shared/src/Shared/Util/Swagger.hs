@@ -1,33 +1,25 @@
 module Shared.Util.Swagger where
 
-import Control.Lens
 import Data.Aeson
 import Data.Swagger
 
 import Shared.Util.Aeson
 
 toSwagger exampleDTO proxy =
-  genericDeclareNamedSchema (fromAesonOptions jsonOptions) proxy & mapped . schema . example ?~ toJSON exampleDTO
+  let schema = genericDeclareNamedSchema (fromAesonOptions jsonOptions) proxy
+   in fmap (\s -> s {_namedSchemaSchema = s._namedSchemaSchema {_schemaExample = Just . toJSON $ exampleDTO}}) schema
 
 toSwaggerWithType typeFieldName exampleDTO proxy =
-  genericDeclareNamedSchema (fromAesonOptions (jsonOptionsWithTypeField typeFieldName)) proxy
-    & mapped . schema . example
-      ?~ toJSON exampleDTO
+  let schema = genericDeclareNamedSchema (fromAesonOptions (jsonOptionsWithTypeField typeFieldName)) proxy
+   in fmap (\s -> s {_namedSchemaSchema = s._namedSchemaSchema {_schemaExample = Just . toJSON $ exampleDTO}}) schema
 
 toSwaggerWithFlatType typeFieldName exampleDTO proxy =
-  genericDeclareNamedSchemaUnrestricted (fromAesonOptions (jsonOptionsWithTypeField typeFieldName)) proxy
-    & mapped . schema . example
-      ?~ toJSON exampleDTO
+  let schema = genericDeclareNamedSchemaUnrestricted (fromAesonOptions (jsonOptionsWithTypeField typeFieldName)) proxy
+   in fmap (\s -> s {_namedSchemaSchema = s._namedSchemaSchema {_schemaExample = Just . toJSON $ exampleDTO}}) schema
 
 toSwaggerWithDtoName dtoName exampleDTO proxy =
-  genericDeclareNamedSchema ((fromAesonOptions jsonOptions) {fieldLabelModifier = changePageFields}) proxy
-    & mapped
-      . schema
-      . example
-      ?~ toJSON exampleDTO
-    & mapped
-      . name
-      ?~ dtoName
+  let schema = genericDeclareNamedSchema ((fromAesonOptions jsonOptions) {fieldLabelModifier = changePageFields}) proxy
+   in fmap (\s -> s {_namedSchemaName = Just dtoName, _namedSchemaSchema = s._namedSchemaSchema {_schemaExample = Just . toJSON $ exampleDTO}}) schema
 
 changePageFields :: String -> String
 changePageFields "name" = "name"

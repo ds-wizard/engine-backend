@@ -17,7 +17,6 @@ extra-deps:
   - oidc-client-0.6.1.0
   - raven-haskell-0.1.4.1
   - ginger-0.10.4.0
-  - lens-aeson-1.1.3
   - minio-hs-1.6.0
   - servant-multipart-0.12.1
   - relude-1.1.0.0

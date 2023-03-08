@@ -47,13 +47,6 @@ packages:
   original:
     hackage: ginger-0.10.4.0
 - completed:
-    hackage: lens-aeson-1.1.3@sha256:52c8eaecd2d1c2a969c0762277c4a8ee72c339a686727d5785932e72ef9c3050,1764
-    pantry-tree:
-      sha256: b31392b78f2a03111c805f4400007778eb93b49f998ab41dfbebaaf9b5526bad
-      size: 541
-  original:
-    hackage: lens-aeson-1.1.3
-- completed:
     hackage: minio-hs-1.6.0@sha256:f1e2c9b9a0586d8ccf993642692dbb4a1fb907181e1fedb5d3e58d0394ac9a47,10866
     pantry-tree:
       sha256: 054ae4a413bda9b40015797ebdd2ea159ca63f005d71a10e067309709a39bf47

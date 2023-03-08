@@ -36,7 +36,6 @@ library:
   - http-client
   - http-client-tls
   - http-types
-  - lens
   - memory
   - minio-hs
   - mtl
@@ -85,7 +84,6 @@ tests:
     - base
     - aeson
     - containers
-    - lens
     - random
     - text
     - text-replace

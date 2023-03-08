@@ -1,7 +1,6 @@
 module Wizard.Specs.Websocket.Questionnaire.Detail.Common where
 
 import qualified Control.Exception.Base as E
-import Control.Lens ((&), (.~), (?~))
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Foldable (traverse_)
@@ -10,6 +9,7 @@ import qualified Data.UUID as U
 import qualified Network.HTTP.Client as HC
 import Network.WebSockets
 import qualified Network.Wreq as W
+import qualified Network.Wreq.Types as WT
 import System.Timeout
 import Test.Hspec.Expectations.Pretty
 
@@ -131,7 +131,12 @@ clearConnection appContext qtnUuid record = do
 runSimpleRequest :: AppContext -> HttpRequest -> IO (Either E.SomeException (HC.Response BSL.ByteString))
 runSimpleRequest appContext req = do
   httpClientManager <- createHttpClientManager appContext.serverConfig.logging
-  let opts = W.defaults & W.manager .~ Right httpClientManager & W.headers .~ reqHeaders & (W.checkResponse ?~ (\_ _ -> return ()))
+  let opts =
+        W.defaults
+          { WT.manager = Right httpClientManager
+          , WT.headers = reqHeaders
+          , WT.checkResponse = Just (\_ _ -> return ())
+          }
   E.try . action $ opts
   where
     reqMethod = req.requestMethod
