@@ -14,8 +14,6 @@ _CMP_HTTP_CLIENT = "HTTP Client "
 
 _CMP_INTEGRATION = "Integration "
 
-_CMP_LOCALIZATION = "Localization"
-
 _CMP_MAILER = "Mailer      "
 
 _CMP_MESSAGING = "Messaging   "

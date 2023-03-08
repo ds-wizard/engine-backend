@@ -1,6 +1,5 @@
 module Main where
 
-import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import Data.Pool
 import qualified Data.UUID as U
@@ -52,7 +51,6 @@ prepareWebApp runCallback =
       let baseContext =
             BaseContext
               { serverConfig = serverConfig
-              , localization = M.empty
               , buildInfoConfig = buildInfoConfig
               , dbPool = dbPool
               , s3Client = s3Client
@@ -61,7 +59,6 @@ prepareWebApp runCallback =
         let appContext =
               AppContext
                 { serverConfig = serverConfig
-                , localization = M.empty
                 , buildInfoConfig = buildInfoConfig
                 , dbPool = dbPool
                 , dbConnection = Just dbConnection

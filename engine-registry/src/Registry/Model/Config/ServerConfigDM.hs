@@ -22,5 +22,4 @@ defaultGeneral =
     { environment = Production
     , clientUrl = ""
     , serverPort = 3000
-    , remoteLocalizationUrl = Nothing
     }

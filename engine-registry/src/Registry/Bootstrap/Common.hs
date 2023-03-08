@@ -18,7 +18,6 @@ runAppContextWithBaseContext function baseContext = do
     let appContext =
           AppContext
             { serverConfig = baseContext.serverConfig
-            , localization = baseContext.localization
             , buildInfoConfig = baseContext.buildInfoConfig
             , dbPool = baseContext.dbPool
             , dbConnection = Just dbConnection

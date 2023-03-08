@@ -26,6 +26,5 @@ instance FromJSON ServerConfigGeneral where
     environment <- o .:? "environment" .!= defaultGeneral.environment
     clientUrl <- o .: "clientUrl"
     serverPort <- o .:? "serverPort" .!= defaultGeneral.serverPort
-    remoteLocalizationUrl <- o .:? "remoteLocalizationUrl" .!= defaultGeneral.remoteLocalizationUrl
     return ServerConfigGeneral {..}
   parseJSON _ = mzero

@@ -4,7 +4,6 @@ import Control.Monad.Except (ExceptT, MonadError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (LoggingT, MonadLogger)
 import Control.Monad.Reader (MonadReader, ReaderT)
-import qualified Data.Map.Strict as M
 import Data.Pool (Pool)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple (Connection)
@@ -17,7 +16,6 @@ import Shared.Model.Error.Error
 
 data AppContext = AppContext
   { serverConfig :: ServerConfig
-  , localization :: M.Map String String
   , buildInfoConfig :: BuildInfoConfig
   , dbPool :: Pool Connection
   , dbConnection :: Maybe Connection
