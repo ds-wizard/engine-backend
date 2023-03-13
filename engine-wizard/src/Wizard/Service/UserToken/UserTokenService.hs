@@ -43,7 +43,7 @@ createTokenFromCredentials reqDto =
         now <- liftIO getCurrentTime
         case (appConfig.authentication.internal.twoFactorAuth.enabled, reqDto.code) of
           (False, _) -> do
-            updateUserById user {lastVisitedAt = now}
+            updateUserLastVisitedAtByUuid user.uuid now
             createToken user Nothing
           (True, Nothing) -> do
             deleteActionKeyByUserId user.uuid
@@ -57,7 +57,7 @@ createTokenFromCredentials reqDto =
           (True, Just code) -> do
             validateCode user code appConfig
             deleteActionKeyByUserIdAndHash user.uuid (show code)
-            updateUserById user {lastVisitedAt = now}
+            updateUserLastVisitedAtByUuid user.uuid now
             createToken user Nothing
       Nothing -> throwError $ UserError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
 

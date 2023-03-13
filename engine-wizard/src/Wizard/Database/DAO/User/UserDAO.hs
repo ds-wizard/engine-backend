@@ -155,6 +155,17 @@ updateUserPasswordById uUuid uPassword uUpdatedAt = do
   deleteFromCache uUuid
   return result
 
+updateUserLastVisitedAtByUuid :: U.UUID -> UTCTime -> AppContextM Int64
+updateUserLastVisitedAtByUuid userUuid lastVisitedAt = do
+  appUuid <- asks currentAppUuid
+  let sql = fromString "UPDATE user_entity SET last_visited_at = ? WHERE app_uuid = ? AND uuid = ?"
+  let params = [toField lastVisitedAt, toField appUuid, toField userUuid]
+  logQuery sql params
+  let action conn = execute conn sql params
+  result <- runDB action
+  deleteFromCache (U.toString userUuid)
+  return result
+
 deleteUsers :: AppContextM Int64
 deleteUsers = do
   result <- createDeleteEntitiesFn entityName
