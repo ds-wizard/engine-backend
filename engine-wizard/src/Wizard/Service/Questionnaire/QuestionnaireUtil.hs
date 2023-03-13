@@ -50,7 +50,7 @@ extractSharing dto = do
 enhanceQuestionnaire :: Questionnaire -> AppContextM QuestionnaireDTO
 enhanceQuestionnaire qtn = do
   pkg <- getPackageById qtn.packageId
-  state <- getQuestionnaireState (U.toString qtn.uuid) pkg.pId
+  state <- getQuestionnaireState qtn.uuid pkg.pId
   permissionDtos <- traverse enhanceQuestionnairePermRecord qtn.permissions
   return $ toDTO qtn pkg state permissionDtos
 
@@ -58,7 +58,7 @@ enhanceQuestionnairePermRecord :: QuestionnairePermRecord -> AppContextM Questio
 enhanceQuestionnairePermRecord record =
   case record.member of
     UserMember {uuid = userUuid} -> do
-      user <- findUserById (U.toString userUuid)
+      user <- findUserByUuid userUuid
       return $ toUserPermRecordDTO record user
     GroupMember {gId = groupId} -> do
       group <- findGroupById groupId
@@ -68,18 +68,18 @@ enhanceQuestionnaireEvent :: QuestionnaireEvent -> AppContextM QuestionnaireEven
 enhanceQuestionnaireEvent event = do
   mUser <-
     case getCreatedBy event of
-      Just userUuid -> findUserById' (U.toString userUuid)
+      Just userUuid -> findUserByUuid' userUuid
       Nothing -> return Nothing
   return $ toEventDTO event mUser
 
 enhanceQuestionnaireVersion :: QuestionnaireVersion -> AppContextM QuestionnaireVersionDTO
 enhanceQuestionnaireVersion version = do
-  mUser <- findUserById' (U.toString $ version.createdBy)
+  mUser <- findUserByUuid' version.createdBy
   return $ toVersionDTO version mUser
 
-getQuestionnaireState :: String -> String -> AppContextM QuestionnaireState
+getQuestionnaireState :: U.UUID -> String -> AppContextM QuestionnaireState
 getQuestionnaireState qtnUuid pkgId = do
-  mMs <- findMigratorStateByNewQuestionnaireId' qtnUuid
+  mMs <- findMigratorStateByNewQuestionnaireUuid' qtnUuid
   case mMs of
     Just _ -> return QSMigrating
     Nothing -> do

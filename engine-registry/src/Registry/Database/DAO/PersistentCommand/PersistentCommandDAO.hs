@@ -20,8 +20,8 @@ channelName = "persistent_command_channel"
 findPersistentCommands :: AppContextM [PersistentCommand]
 findPersistentCommands = createFindEntitiesFn entityName
 
-findPersistentCommandByUuid :: String -> AppContextM PersistentCommand
-findPersistentCommandByUuid uuid = createFindEntityWithFieldsByFn "*" True entityName [("uuid", uuid)]
+findPersistentCommandByUuid :: U.UUID -> AppContextM PersistentCommand
+findPersistentCommandByUuid uuid = createFindEntityWithFieldsByFn "*" True entityName [("uuid", U.toString uuid)]
 
 insertPersistentCommand :: PersistentCommand -> AppContextM Int64
 insertPersistentCommand command = do
@@ -31,8 +31,8 @@ insertPersistentCommand command = do
 deletePersistentCommands :: AppContextM Int64
 deletePersistentCommands = createDeleteEntitiesFn entityName
 
-deletePersistentCommandByUuid :: String -> AppContextM Int64
-deletePersistentCommandByUuid uuid = createDeleteEntityByFn entityName [("uuid", uuid)]
+deletePersistentCommandByUuid :: U.UUID -> AppContextM Int64
+deletePersistentCommandByUuid uuid = createDeleteEntityByFn entityName [("uuid", U.toString uuid)]
 
 notifySpecificPersistentCommandQueue :: PersistentCommand -> AppContextM Int64
 notifySpecificPersistentCommandQueue command = do

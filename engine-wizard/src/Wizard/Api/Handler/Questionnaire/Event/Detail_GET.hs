@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Questionnaire.Event.Detail_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -14,16 +15,16 @@ type Detail_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "questionnaires"
-    :> Capture "qtnUuid" String
+    :> Capture "qtnUuid" U.UUID
     :> "events"
-    :> Capture "eventUuid" String
+    :> Capture "eventUuid" U.UUID
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] QuestionnaireEventDTO)
 
 detail_GET
   :: Maybe String
   -> Maybe String
-  -> String
-  -> String
+  -> U.UUID
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] QuestionnaireEventDTO)
 detail_GET mTokenHeader mServerUrl qtnUuid eventUuid =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->

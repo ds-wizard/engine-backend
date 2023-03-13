@@ -1,7 +1,6 @@
 module Wizard.Service.Questionnaire.Compiler.CompilerService where
 
 import qualified Data.Map.Strict as M
-import qualified Data.UUID as U
 import GHC.Records
 
 import Wizard.Database.DAO.User.UserDAO
@@ -41,5 +40,5 @@ applyEvent qtnCtn' (SetLabelsEvent' event) = do
 
 getUser mUserUuid =
   case mUserUuid of
-    Just userUuid -> findUserById' (U.toString userUuid)
+    Just userUuid -> findUserByUuid' userUuid
     Nothing -> return Nothing

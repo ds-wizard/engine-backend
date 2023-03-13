@@ -70,7 +70,7 @@ test403 appContext = do
       -- AND: Prepare expectation
       let expError = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "View Questionnaire"
       -- WHEN: Update permission
-      runInContext (modifyQuestionnaire (U.toString $ updatedQtn.uuid) (toChangeDTO updatedQtn)) appContext
+      runInContext (modifyQuestionnaire updatedQtn.uuid (toChangeDTO updatedQtn)) appContext
       -- THEN: Read response
       read_SetUserList c1 1
       read_SetUserList c1 0
@@ -124,7 +124,7 @@ test404 appContext = do
       -- AND: Prepare expectation
       let expError = NotExistsError (_ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT (U.toString $ qtn.uuid))
       -- WHEN: Update permission
-      runInContext (deleteQuestionnaire (U.toString $ qtn.uuid) True) appContext
+      runInContext (deleteQuestionnaire qtn.uuid True) appContext
       -- THEN: Read response
       read_Error c1 expError
       read_Error c2 expError

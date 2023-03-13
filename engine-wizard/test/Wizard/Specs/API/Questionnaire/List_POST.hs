@@ -3,7 +3,6 @@ module Wizard.Specs.API.Questionnaire.List_POST (
 ) where
 
 import Data.Aeson (encode)
-import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -91,7 +90,7 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
       assertResHeaders headers expHeaders
       compareQuestionnaireCreateDtos resBody expDto
       -- AND: Find a result in DB
-      (Right eventsInDB) <- runInContextIO (findQuestionnaireEventsById (U.toString $ resBody.uuid)) appContext
+      (Right eventsInDB) <- runInContextIO (findQuestionnaireEventsByUuid resBody.uuid) appContext
       if anonymousSharingEnabled
         then
           assertExistenceOfQuestionnaireInDB

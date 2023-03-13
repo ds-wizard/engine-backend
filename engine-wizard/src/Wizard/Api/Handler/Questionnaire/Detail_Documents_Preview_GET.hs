@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Questionnaire.Detail_Documents_Preview_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -17,7 +18,7 @@ type Detail_Documents_Preview_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "questionnaires"
-    :> Capture "qtnUuid" String
+    :> Capture "qtnUuid" U.UUID
     :> "documents"
     :> "preview"
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] TemporaryFileDTO)
@@ -25,7 +26,7 @@ type Detail_Documents_Preview_GET =
 detail_documents_preview_GET
   :: Maybe String
   -> Maybe String
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] TemporaryFileDTO)
 detail_documents_preview_GET mTokenHeader mServerUrl qtnUuid =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->

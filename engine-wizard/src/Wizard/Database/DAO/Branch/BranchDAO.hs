@@ -98,10 +98,10 @@ findBranchByKmId' kmId = do
 countBranches :: AppContextM Int
 countBranches = do
   appUuid <- asks currentAppUuid
-  countBranchesWithApp (U.toString appUuid)
+  countBranchesWithApp appUuid
 
-countBranchesWithApp :: String -> AppContextM Int
-countBranchesWithApp appUuid = createCountByFn entityName appCondition [appUuid]
+countBranchesWithApp :: U.UUID -> AppContextM Int
+countBranchesWithApp appUuid = createCountByFn entityName appCondition [U.toString appUuid]
 
 insertBranch :: Branch -> AppContextM Int64
 insertBranch = createInsertFn entityName

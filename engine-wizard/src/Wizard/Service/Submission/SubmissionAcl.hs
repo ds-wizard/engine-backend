@@ -12,4 +12,4 @@ checkPermissionToSubmission :: U.UUID -> AppContextM ()
 checkPermissionToSubmission docUuid = do
   checkPermission _SUBM_PERM
   doc <- findDocumentByUuid docUuid
-  checkEditPermissionToDoc (U.toString doc.questionnaireUuid)
+  checkEditPermissionToDoc doc.questionnaireUuid

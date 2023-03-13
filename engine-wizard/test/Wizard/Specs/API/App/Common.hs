@@ -1,6 +1,5 @@
 module Wizard.Specs.API.App.Common where
 
-import qualified Data.UUID as U
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
@@ -14,7 +13,7 @@ import Wizard.Specs.API.Common
 -- ASSERTS
 -- --------------------------------
 assertExistenceOfAppInDB appContext app = do
-  appFromDb <- getOneFromDB (findAppById . U.toString $ app.uuid) appContext
+  appFromDb <- getOneFromDB (findAppByUuid app.uuid) appContext
   compareAppDtos appFromDb app
 
 -- --------------------------------

@@ -3,6 +3,7 @@ module Wizard.Service.Dev.DevOperationDefinitions where
 import Control.Monad.Reader (ask, liftIO)
 import Data.Foldable (traverse_)
 
+import Shared.Util.Uuid
 import Wizard.Api.Resource.Dev.DevExecutionDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
@@ -380,7 +381,7 @@ persistentCommand_run =
 
 persistentCommand_runFn :: DevExecutionDTO -> AppContextM String
 persistentCommand_runFn reqDto = do
-  command <- findPersistentCommandSimpleByUuid (head reqDto.parameters)
+  command <- findPersistentCommandSimpleByUuid (u' . head $ reqDto.parameters)
   runPersistentCommand True command
   return "Done"
 
@@ -540,7 +541,7 @@ questionnaire_squashEventsForQuestionnaire =
 
 questionnaire_squashEventsForQuestionnaireFn :: DevExecutionDTO -> AppContextM String
 questionnaire_squashEventsForQuestionnaireFn reqDto = do
-  squashQuestionnaireEventsForQuestionnaire (head reqDto.parameters)
+  squashQuestionnaireEventsForQuestionnaire (u' . head $ reqDto.parameters)
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------

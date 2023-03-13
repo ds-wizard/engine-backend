@@ -20,19 +20,19 @@ entityName = "app_limit"
 findAppLimits :: AppContextM [AppLimit]
 findAppLimits = createFindEntitiesFn entityName
 
-findAppLimitById :: String -> AppContextM AppLimit
-findAppLimitById uuid = createFindEntityByFn entityName [("uuid", uuid)]
+findAppLimitByUuid :: U.UUID -> AppContextM AppLimit
+findAppLimitByUuid uuid = createFindEntityByFn entityName [("uuid", U.toString uuid)]
 
 findCurrentAppLimit :: AppContextM AppLimit
 findCurrentAppLimit = do
   appUuid <- asks currentAppUuid
-  findAppLimitById (U.toString appUuid)
+  findAppLimitByUuid appUuid
 
 insertAppLimit :: AppLimit -> AppContextM Int64
 insertAppLimit = createInsertFn entityName
 
-updateAppLimitById :: AppLimit -> AppContextM AppLimit
-updateAppLimitById appLimit = do
+updateAppLimitByUuid :: AppLimit -> AppContextM AppLimit
+updateAppLimitByUuid appLimit = do
   now <- liftIO getCurrentTime
   let updatedAppLimit = appLimit {updatedAt = now}
   let sql =

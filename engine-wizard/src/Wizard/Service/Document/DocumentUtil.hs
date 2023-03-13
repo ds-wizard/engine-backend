@@ -26,7 +26,7 @@ enhanceDocument doc = do
       then getSubmissionsForDocument doc.uuid
       else return []
   tml <- getDocumentTemplateByUuidAndPackageId doc.documentTemplateId Nothing
-  mQtn <- catchError (findQuestionnaireSimpleById' (U.toString doc.questionnaireUuid)) (\_ -> return Nothing)
+  mQtn <- catchError (findQuestionnaireSimpleByUuid' doc.questionnaireUuid) (\_ -> return Nothing)
   return $ toDTO doc mQtn submissions tml
 
 filterAlreadyDoneDocument :: String -> U.UUID -> Document -> Bool

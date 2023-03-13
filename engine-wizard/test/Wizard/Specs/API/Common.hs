@@ -79,7 +79,7 @@ createNoPermissionTest appContext reqMethod reqUrl otherHeaders reqBody missingP
     -- GIVEN: Prepare request
     do
       let user = userWithoutPerm appContext.serverConfig missingPerm
-      runInContextIO (updateUserById user) appContext
+      runInContextIO (updateUserByUuid user) appContext
       let reqHeaders = reqAuthHeader : otherHeaders
       -- GIVEN: Prepare expectation
       let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ missingPerm)

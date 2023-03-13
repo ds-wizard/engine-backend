@@ -111,7 +111,7 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
       case permission.member of
         GroupMember {..} -> return ()
         UserMember {uuid = userUuid} -> do
-          user <- findUserById (U.toString userUuid)
+          user <- findUserByUuid userUuid
           let body =
                 SendQuestionnaireInvitationMailCommand
                   { email = user.email

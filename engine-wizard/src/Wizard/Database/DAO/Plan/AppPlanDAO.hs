@@ -3,6 +3,7 @@ module Wizard.Database.DAO.Plan.AppPlanDAO where
 import Control.Monad.Reader (liftIO)
 import Data.String
 import Data.Time
+import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -20,18 +21,18 @@ entityName = "app_plan"
 findAppPlans :: AppContextM [AppPlan]
 findAppPlans = createFindEntitiesFn entityName
 
-findAppPlansForAppUuid :: String -> AppContextM [AppPlan]
+findAppPlansForAppUuid :: U.UUID -> AppContextM [AppPlan]
 findAppPlansForAppUuid appUuid =
-  createFindEntitiesBySortedFn entityName [appQueryString appUuid] [Sort "since" Descending]
+  createFindEntitiesBySortedFn entityName [appQueryUuid appUuid] [Sort "since" Descending]
 
-findAppPlanById :: String -> AppContextM AppPlan
-findAppPlanById uuid = createFindEntityByFn entityName [("uuid", uuid)]
+findAppPlanByUuid :: U.UUID -> AppContextM AppPlan
+findAppPlanByUuid uuid = createFindEntityByFn entityName [("uuid", U.toString uuid)]
 
 insertAppPlan :: AppPlan -> AppContextM Int64
 insertAppPlan = createInsertFn entityName
 
-updateAppPlanById :: AppPlan -> AppContextM AppPlan
-updateAppPlanById app = do
+updateAppPlanByUuid :: AppPlan -> AppContextM AppPlan
+updateAppPlanByUuid app = do
   now <- liftIO getCurrentTime
   let updatedApp = app {updatedAt = now}
   let sql =
@@ -46,5 +47,5 @@ updateAppPlanById app = do
 deleteAppPlans :: AppContextM Int64
 deleteAppPlans = createDeleteEntitiesFn entityName
 
-deleteAppPlanById :: String -> AppContextM Int64
-deleteAppPlanById uuid = createDeleteEntityByFn entityName [("uuid", uuid)]
+deleteAppPlanByUuid :: U.UUID -> AppContextM Int64
+deleteAppPlanByUuid uuid = createDeleteEntityByFn entityName [("uuid", U.toString uuid)]

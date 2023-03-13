@@ -131,7 +131,7 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl =
         if user.active
           then do
             let updatedUser = fromUpdateUserExternalDTO user firstName lastName mImageUrl serviceId now
-            updateUserById updatedUser
+            updateUserByUuid updatedUser
             return updatedUser
           else throwError $ UserError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
       Nothing -> do
@@ -161,26 +161,26 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl =
         sendAnalyticsEmailIfEnabled user
         return user
 
-getUserById :: String -> AppContextM UserDTO
+getUserById :: U.UUID -> AppContextM UserDTO
 getUserById userUuid = do
-  user <- findUserById userUuid
+  user <- findUserByUuid userUuid
   return $ toDTO user
 
-getUserDetailById :: String -> AppContextM UserDTO
+getUserDetailById :: U.UUID -> AppContextM UserDTO
 getUserDetailById userUuid = do
   checkPermission _UM_PERM
   getUserById userUuid
 
-modifyUser :: String -> UserChangeDTO -> AppContextM UserDTO
+modifyUser :: U.UUID -> UserChangeDTO -> AppContextM UserDTO
 modifyUser userUuid reqDto =
   runInTransaction $ do
     checkPermission _UM_PERM
-    user <- findUserById userUuid
+    user <- findUserByUuid userUuid
     when (reqDto.active && not user.active) checkActiveUserLimit
     validateUserChangedEmailUniqueness reqDto.email user.email
     serverConfig <- asks serverConfig
     updatedUser <- updateUserTimestamp $ fromUserChangeDTO reqDto user (getPermissions serverConfig reqDto user)
-    updateUserById updatedUser
+    updateUserByUuid updatedUser
     return . toDTO $ updatedUser
   where
     getPermissions serverConfig reqDto oldUser =
@@ -188,23 +188,23 @@ modifyUser userUuid reqDto =
         then getPermissionForRole serverConfig reqDto.uRole
         else oldUser.permissions
 
-changeUserPasswordByAdmin :: String -> UserPasswordDTO -> AppContextM ()
+changeUserPasswordByAdmin :: U.UUID -> UserPasswordDTO -> AppContextM ()
 changeUserPasswordByAdmin userUuid reqDto =
   runInTransaction $ do
-    user <- findUserById userUuid
+    user <- findUserByUuid userUuid
     passwordHash <- generatePasswordHash reqDto.password
     now <- liftIO getCurrentTime
-    updateUserPasswordById userUuid passwordHash now
+    updateUserPasswordByUuid userUuid passwordHash now
     return ()
 
-changeUserPasswordByHash :: String -> String -> UserPasswordDTO -> AppContextM ()
+changeUserPasswordByHash :: U.UUID -> String -> UserPasswordDTO -> AppContextM ()
 changeUserPasswordByHash userUuid hash userPasswordDto =
   runInTransaction $ do
     actionKey <- findActionKeyByHash hash
-    user <- findUserById (U.toString actionKey.userId)
+    user <- findUserByUuid actionKey.userId
     passwordHash <- generatePasswordHash userPasswordDto.password
     now <- liftIO getCurrentTime
-    updateUserPasswordById userUuid passwordHash now
+    updateUserPasswordByUuid userUuid passwordHash now
     deleteActionKeyByHash actionKey.hash
     return ()
 
@@ -223,22 +223,22 @@ changeUserState userUuid hash reqDto =
   runInTransaction $ do
     checkActiveUserLimit
     actionKey <- findActionKeyByHash hash
-    user <- findUserById (U.toString actionKey.userId)
+    user <- findUserByUuid actionKey.userId
     updatedUser <- updateUserTimestamp $ user {active = reqDto.active}
-    updateUserById updatedUser
+    updateUserByUuid updatedUser
     deleteActionKeyByHash actionKey.hash
     return reqDto
 
-deleteUser :: String -> AppContextM ()
+deleteUser :: U.UUID -> AppContextM ()
 deleteUser userUuid =
   runInTransaction $ do
     checkPermission _UM_PERM
-    user <- findUserById userUuid
+    user <- findUserByUuid userUuid
     clearBranchCreatedBy user.uuid
     removeOwnerFromQuestionnaire user.uuid
     clearQuestionnaireCreatedBy user.uuid
     deletePersistentCommandByCreatedBy userUuid
-    documents <- findDocumentsFiltered [("creator_uuid", userUuid)]
+    documents <- findDocumentsFiltered [("creator_uuid", U.toString userUuid)]
     forM_
       documents
       ( \d -> do
@@ -246,7 +246,7 @@ deleteUser userUuid =
           removeDocumentContent d.uuid
       )
     deleteTokenByUserUuid user.uuid
-    deleteUserById userUuid
+    deleteUserByUuid userUuid
     return ()
 
 -- --------------------------------

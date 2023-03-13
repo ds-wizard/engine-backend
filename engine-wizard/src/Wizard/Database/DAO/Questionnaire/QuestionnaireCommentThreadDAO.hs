@@ -20,7 +20,7 @@ import Wizard.Model.Questionnaire.QuestionnaireComment
 
 entityName = "questionnaire_comment_thread"
 
-findQuestionnaireCommentThreads :: String -> AppContextM [QuestionnaireCommentThread]
+findQuestionnaireCommentThreads :: U.UUID -> AppContextM [QuestionnaireCommentThread]
 findQuestionnaireCommentThreads qtnUuid = do
   let sql =
         fromString
@@ -37,7 +37,7 @@ findQuestionnaireCommentThreads qtnUuid = do
   let action conn = query conn sql params
   runDB action
 
-findQuestionnaireCommentThreadById :: String -> AppContextM (Maybe QuestionnaireCommentThread)
+findQuestionnaireCommentThreadById :: U.UUID -> AppContextM (Maybe QuestionnaireCommentThread)
 findQuestionnaireCommentThreadById uuid = do
   let sql =
         fromString

@@ -90,10 +90,10 @@ createAppByAdmin reqDto = do
     createSeederPersistentCommand aUuid user.uuid now
     return $ toDTO app Nothing Nothing
 
-getAppById :: String -> AppContextM AppDetailDTO
+getAppById :: U.UUID -> AppContextM AppDetailDTO
 getAppById aUuid = do
   checkPermission _APP_PERM
-  app <- findAppById aUuid
+  app <- findAppByUuid aUuid
   plans <- findAppPlansForAppUuid aUuid
   usage <- getUsage aUuid
   users <- findUsersWithAppFiltered aUuid [("role", _USER_ROLE_ADMIN)]
@@ -102,20 +102,20 @@ getAppById aUuid = do
   let mPrimaryColor = appConfig.lookAndFeel.primaryColor
   return $ toDetailDTO app mLogoUrl mPrimaryColor plans usage users
 
-modifyApp :: String -> AppChangeDTO -> AppContextM App
+modifyApp :: U.UUID -> AppChangeDTO -> AppContextM App
 modifyApp aUuid reqDto = do
   checkPermission _APP_PERM
-  app <- findAppById aUuid
+  app <- findAppByUuid aUuid
   validateAppChangeDTO app reqDto
   cloudDomain <- getCloudDomain
   let updatedApp = fromChangeDTO app reqDto cloudDomain
-  updateAppById updatedApp
+  updateAppByUuid updatedApp
 
-deleteApp :: String -> AppContextM ()
+deleteApp :: U.UUID -> AppContextM ()
 deleteApp aUuid = do
   checkPermission _APP_PERM
-  _ <- findAppById aUuid
-  deleteAppById aUuid
+  _ <- findAppByUuid aUuid
+  deleteAppByUuid aUuid
   return ()
 
 -- --------------------------------

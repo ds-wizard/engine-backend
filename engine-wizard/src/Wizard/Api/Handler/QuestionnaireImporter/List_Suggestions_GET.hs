@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.QuestionnaireImporter.List_Suggestions_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -17,7 +18,7 @@ type List_Suggestions_GET =
     :> Header "Host" String
     :> "questionnaire-importers"
     :> "suggestions"
-    :> QueryParam "questionnaireUuid" String
+    :> QueryParam "questionnaireUuid" U.UUID
     :> QueryParam "q" String
     :> QueryParam "enabled" Bool
     :> QueryParam "page" Int
@@ -28,7 +29,7 @@ type List_Suggestions_GET =
 list_suggestions_GET
   :: Maybe String
   -> Maybe String
-  -> Maybe String
+  -> Maybe U.UUID
   -> Maybe String
   -> Maybe Bool
   -> Maybe Int

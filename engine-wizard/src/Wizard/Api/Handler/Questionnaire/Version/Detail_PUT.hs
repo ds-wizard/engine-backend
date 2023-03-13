@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Questionnaire.Version.Detail_PUT where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -17,17 +18,17 @@ type Detail_PUT =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] QuestionnaireVersionChangeDTO
     :> "questionnaires"
-    :> Capture "qtnUuid" String
+    :> Capture "qtnUuid" U.UUID
     :> "versions"
-    :> Capture "vUuid" String
+    :> Capture "vUuid" U.UUID
     :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] QuestionnaireVersionDTO)
 
 detail_PUT
   :: Maybe String
   -> Maybe String
   -> QuestionnaireVersionChangeDTO
-  -> String
-  -> String
+  -> U.UUID
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] QuestionnaireVersionDTO)
 detail_PUT mTokenHeader mServerUrl reqDto qtnUuid vUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->

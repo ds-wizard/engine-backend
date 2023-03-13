@@ -17,7 +17,7 @@ type Detail_Password_PUT =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] UserPasswordDTO
     :> "users"
-    :> Capture "uUuid" String
+    :> Capture "uUuid" U.UUID
     :> "password"
     :> QueryParam "hash" String
     :> Verb PUT 204 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] NoContent)
@@ -26,7 +26,7 @@ detail_password_PUT
   :: Maybe String
   -> Maybe String
   -> UserPasswordDTO
-  -> String
+  -> U.UUID
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
 detail_password_PUT mTokenHeader mServerUrl reqDto uUuid mHash =

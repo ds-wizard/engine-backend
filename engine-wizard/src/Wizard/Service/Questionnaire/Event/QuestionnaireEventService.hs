@@ -20,20 +20,20 @@ import Wizard.Util.Logger
 squashQuestionnaireEvents :: AppContextM ()
 squashQuestionnaireEvents = do
   qtnUuids <- findQuestionnaireForSquashing
-  traverse_ (squashQuestionnaireEventsForQuestionnaire . U.toString) qtnUuids
+  traverse_ squashQuestionnaireEventsForQuestionnaire qtnUuids
 
-squashQuestionnaireEventsForQuestionnaire :: String -> AppContextM ()
+squashQuestionnaireEventsForQuestionnaire :: U.UUID -> AppContextM ()
 squashQuestionnaireEventsForQuestionnaire qtnUuid =
   runInTransaction $ do
-    logInfoU _CMP_SERVICE (f' "Squashing events for questionnaire (qtnUuid: '%s')" [qtnUuid])
-    (QuestionnaireSquash _ events versions) <- findQuestionnaireSquashById qtnUuid
+    logInfoU _CMP_SERVICE (f' "Squashing events for questionnaire (qtnUuid: '%s')" [U.toString qtnUuid])
+    (QuestionnaireSquash _ events versions) <- findQuestionnaireSquashByUuid qtnUuid
     let squashedEvents = squash versions events
     updateQuestionnaireEventsByUuid' qtnUuid True squashedEvents
     logInfoU
       _CMP_SERVICE
       ( f'
           "Squashing for questionnaire '%s' finished successfully (before: %s, after %s)"
-          [qtnUuid, show . length $ events, show . length $ squashedEvents]
+          [U.toString qtnUuid, show . length $ events, show . length $ squashedEvents]
       )
 
 instance Ord QuestionnaireEvent where

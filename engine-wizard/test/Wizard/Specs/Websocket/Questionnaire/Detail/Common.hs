@@ -122,7 +122,7 @@ clearConnections appContext qtnUuid = do
 
 clearConnection :: AppContext -> U.UUID -> WebsocketRecord -> IO ()
 clearConnection appContext qtnUuid record = do
-  runInContext (deleteUser (U.toString qtnUuid) record.connectionUuid) appContext
+  runInContext (deleteUser qtnUuid record.connectionUuid) appContext
   return ()
 
 -- --------------------------------

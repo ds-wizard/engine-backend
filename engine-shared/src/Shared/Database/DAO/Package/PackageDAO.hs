@@ -244,7 +244,7 @@ countPackagesGroupedByOrganizationIdAndKmId
   => m Int
 countPackagesGroupedByOrganizationIdAndKmId = do
   appUuid <- asks (.appUuid')
-  countPackagesGroupedByOrganizationIdAndKmIdWithApp (U.toString appUuid)
+  countPackagesGroupedByOrganizationIdAndKmIdWithApp appUuid
 
 countPackagesGroupedByOrganizationIdAndKmIdWithApp
   :: ( MonadLogger m
@@ -257,7 +257,7 @@ countPackagesGroupedByOrganizationIdAndKmIdWithApp
      , HasField "appUuid'" s U.UUID
      , MonadIO m
      )
-  => String
+  => U.UUID
   -> m Int
 countPackagesGroupedByOrganizationIdAndKmIdWithApp appUuid = do
   let sql =
@@ -266,7 +266,7 @@ countPackagesGroupedByOrganizationIdAndKmIdWithApp appUuid = do
         \      FROM package \
         \      WHERE app_uuid = ? \
         \      GROUP BY organization_id, km_id) nested;"
-  let params = [appUuid]
+  let params = [U.toString appUuid]
   logQuery sql params
   let action conn = query conn sql params
   result <- runDB action

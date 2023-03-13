@@ -2,6 +2,7 @@ module Wizard.Database.DAO.Feedback.FeedbackDAO where
 
 import Control.Monad.Reader (asks)
 import Data.String
+import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -23,16 +24,16 @@ findFeedbacksFiltered params = do
   appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName (appQueryUuid appUuid : params)
 
-findFeedbackById :: String -> AppContextM Feedback
-findFeedbackById uuid = do
+findFeedbackByUuid :: U.UUID -> AppContextM Feedback
+findFeedbackByUuid uuid = do
   appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
 
 insertFeedback :: Feedback -> AppContextM Int64
 insertFeedback = createInsertFn entityName
 
-updateFeedbackById :: Feedback -> AppContextM Int64
-updateFeedbackById feedback = do
+updateFeedbackByUuid :: Feedback -> AppContextM Int64
+updateFeedbackByUuid feedback = do
   appUuid <- asks currentAppUuid
   let sql =
         fromString
@@ -45,7 +46,7 @@ updateFeedbackById feedback = do
 deleteFeedbacks :: AppContextM Int64
 deleteFeedbacks = createDeleteEntitiesFn entityName
 
-deleteFeedbackById :: String -> AppContextM Int64
-deleteFeedbackById uuid = do
+deleteFeedbackByUuid :: U.UUID -> AppContextM Int64
+deleteFeedbackByUuid uuid = do
   appUuid <- asks currentAppUuid
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
+  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]

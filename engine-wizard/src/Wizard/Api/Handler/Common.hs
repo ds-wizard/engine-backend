@@ -96,7 +96,7 @@ getCurrentUser tokenHeader mServerUrl = do
   userUuid <- getCurrentUserUuid tokenHeader
   runInUnauthService mServerUrl NoTransaction $ catchError (getUserById userUuid) (handleError userUuid)
   where
-    handleError userUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__USER_ABSENCE userUuid)
+    handleError userUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__USER_ABSENCE . U.toString $ userUuid)
     handleError userUuid error = throwError error
 
 isValidJwtToken :: String -> BaseContextM ()
@@ -130,17 +130,17 @@ getCurrentApp mServerUrl = do
         runWithSystemUser $ catchError (findAppByServerDomain serverUrl) (handleError serverUrl)
     else
       runWithSystemUser $
-        catchError (findAppById . U.toString $ defaultAppUuid) (handleError (U.toString defaultAppUuid))
+        catchError (findAppByUuid defaultAppUuid) (handleError (U.toString defaultAppUuid))
   where
     handleError host (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__APP_ABSENCE host)
     handleError host error = throwError error
 
-getCurrentUserUuid :: String -> BaseContextM String
+getCurrentUserUuid :: String -> BaseContextM U.UUID
 getCurrentUserUuid tokenHeader = do
   let userUuidMaybe = separateToken tokenHeader >>= getUserUuidFromToken
-  case userUuidMaybe of
-    Just userUuid -> return userUuid
-    Nothing -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
+  case fmap U.fromString userUuidMaybe of
+    Just (Just userUuid) -> return userUuid
+    _ -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
 
 getCurrentTokenUuid :: String -> BaseContextM String
 getCurrentTokenUuid tokenHeader = do

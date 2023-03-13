@@ -22,9 +22,6 @@ entityName = "questionnaire_comment"
 findQuestionnaireComments :: AppContextM [QuestionnaireComment]
 findQuestionnaireComments = createFindEntitiesFn entityName
 
-findQuestionnaireCommentById :: String -> AppContextM QuestionnaireComment
-findQuestionnaireCommentById uuid = createFindEntityByFn entityName [("uuid", uuid)]
-
 insertQuestionnaireComment :: QuestionnaireComment -> AppContextM Int64
 insertQuestionnaireComment = createInsertFn entityName
 

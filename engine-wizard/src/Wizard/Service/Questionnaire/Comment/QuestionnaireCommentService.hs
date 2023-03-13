@@ -17,13 +17,13 @@ import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentUtil
 
 getQuestionnaireComments :: Questionnaire -> AppContextM (M.Map String [QuestionnaireCommentThreadDTO])
 getQuestionnaireComments qtn = do
-  threads <- findQuestionnaireCommentThreads (U.toString $ qtn.uuid)
+  threads <- findQuestionnaireCommentThreads qtn.uuid
   filteredThreads <- filterComments qtn threads
   threadsDto <- traverse enhanceQuestionnaireCommentThread filteredThreads
   let commentThreadsMap = toCommentThreadsMap threadsDto
   return commentThreadsMap
 
-duplicateCommentThreads :: String -> U.UUID -> AppContextM ()
+duplicateCommentThreads :: U.UUID -> U.UUID -> AppContextM ()
 duplicateCommentThreads oldQtnUuid newQtnUuid = do
   threads <- findQuestionnaireCommentThreads oldQtnUuid
   traverse_ (duplicateCommentThread newQtnUuid) threads

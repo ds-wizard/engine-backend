@@ -33,9 +33,9 @@ createAppLimit aUuid now = do
 
 recomputeAppLimit :: U.UUID -> Maybe Int -> AppContextM AppLimit
 recomputeAppLimit appUuid mUsers = do
-  appLimit <- findAppLimitById (U.toString appUuid)
+  appLimit <- findAppLimitByUuid appUuid
   let updatedAppLimit = fromChange appLimit mUsers
-  updateAppLimitById updatedAppLimit
+  updateAppLimitByUuid updatedAppLimit
 
 checkUserLimit :: AppContextM ()
 checkUserLimit = do

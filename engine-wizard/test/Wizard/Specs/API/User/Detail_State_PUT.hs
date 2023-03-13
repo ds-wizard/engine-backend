@@ -57,7 +57,7 @@ test_200 appContext =
       let expBody = encode expDto
       -- AND: Prepare DB
       runInContextIO (insertActionKey regActionKey) appContext
-      runInContextIO (updateUserById (userAlbert {active = False})) appContext
+      runInContextIO (updateUserByUuid (userAlbert {active = False})) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
