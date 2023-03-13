@@ -122,5 +122,5 @@ clearConnections appContext bUuid = do
 
 clearConnection :: AppContext -> U.UUID -> WebsocketRecord -> IO ()
 clearConnection appContext bUuid record = do
-  runInContext (deleteUser (U.toString bUuid) record.connectionUuid) appContext
+  runInContext (deleteUser bUuid record.connectionUuid) appContext
   return ()

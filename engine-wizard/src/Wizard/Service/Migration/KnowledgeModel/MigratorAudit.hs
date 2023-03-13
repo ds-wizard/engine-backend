@@ -15,24 +15,24 @@ auditKmMigrationCreate reqDto branch =
   logAuditWithBody
     "knowledge_model.migration"
     "create"
-    (U.toString $ branch.uuid)
+    (U.toString branch.uuid)
     ( M.fromList
         [("sourcePackageId", fromMaybe "" $ branch.previousPackageId), ("targetPackageId", reqDto.targetPackageId)]
     )
 
-auditKmMigrationSolve :: String -> MigratorConflictDTO -> AppContextM ()
+auditKmMigrationSolve :: U.UUID -> MigratorConflictDTO -> AppContextM ()
 auditKmMigrationSolve branchUuid reqDto =
   logAuditWithBody
     "knowledge_model.migration"
     "solve"
-    branchUuid
+    (U.toString branchUuid)
     (M.fromList [("originalEventUuid", U.toString $ reqDto.originalEventUuid), ("action", show reqDto.action)])
 
-auditKmMigrationApplyAll :: String -> AppContextM ()
-auditKmMigrationApplyAll = logAudit "knowledge_model.migration" "applyAll"
+auditKmMigrationApplyAll :: U.UUID -> AppContextM ()
+auditKmMigrationApplyAll branchUuid = logAudit "knowledge_model.migration" "applyAll" (U.toString branchUuid)
 
-auditKmMigrationCancel :: String -> AppContextM ()
-auditKmMigrationCancel = logAudit "knowledge_model.migration" "cancel"
+auditKmMigrationCancel :: U.UUID -> AppContextM ()
+auditKmMigrationCancel branchUuid = logAudit "knowledge_model.migration" "cancel" (U.toString branchUuid)
 
-auditKmMigrationFinish :: String -> AppContextM ()
-auditKmMigrationFinish = logAudit "knowledge_model.migration" "finish"
+auditKmMigrationFinish :: U.UUID -> AppContextM ()
+auditKmMigrationFinish branchUuid = logAudit "knowledge_model.migration" "finish" (U.toString branchUuid)

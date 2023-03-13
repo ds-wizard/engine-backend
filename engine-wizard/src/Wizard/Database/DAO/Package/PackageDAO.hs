@@ -6,11 +6,14 @@ import Data.Maybe (fromMaybe)
 import Data.String (fromString)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
+import Database.PostgreSQL.Simple.ToField
+import GHC.Int
 
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
+import Shared.Model.Package.Package
 import Shared.Util.String (replace)
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Package.PackageList ()
@@ -39,7 +42,7 @@ findPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort =
     pageLabel
     pageable
     sort
-    "id, package.name, package.organization_id, package.km_id, version, description, get_package_state(registry_package.remote_version, version), registry_package.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, package.created_at"
+    "id, package.name, package.organization_id, package.km_id, version, phase, description, get_package_state(registry_package.remote_version, version), registry_package.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, package.created_at"
     "km_id"
     mQuery
     Nothing
@@ -52,8 +55,8 @@ findPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort =
     )
 
 findPackageSuggestionsPage
-  :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)
-findPackageSuggestionsPage mQuery mSelectIds mExcludeIds pageable sort =
+  :: Maybe String -> Maybe [String] -> Maybe [String] -> Maybe PackagePhase -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)
+findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase pageable sort =
   -- 1. Prepare variables
   do
     appUuid <- asks currentAppUuid
@@ -74,8 +77,12 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds pageable sort =
             Just excludeIds ->
               let mapFn _ = " id NOT LIKE ?"
                in " AND (" ++ L.intercalate " AND " (fmap mapFn excludeIds) ++ ")"
+    let phaseCondition =
+          case mPhase of
+            Just phase -> f' "AND phase = '%s'" [show phase]
+            Nothing -> ""
     -- 2. Get total count
-    count <- countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike mExcludeIdsLike
+    count <- countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike mExcludeIdsLike phaseCondition
     -- 3. Get entities
     let sql =
           fromString $
@@ -91,7 +98,7 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds pageable sort =
               \           AND inner_package.app_uuid = ? \
               \         GROUP BY organization_id, km_id) AS versions \
               \FROM package outer_package \
-              \WHERE app_uuid = ? %s %s \
+              \WHERE app_uuid = ? %s %s %s \
               \  AND id IN ( \
               \    SELECT CONCAT(organization_id, ':', km_id, ':', \
               \                  (max(string_to_array(version, '.')::int[]))[1] || '.' || \
@@ -104,7 +111,7 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds pageable sort =
               \%s \
               \OFFSET %s \
               \LIMIT %s"
-              [selectCondition, excludeCondition, mapSort sort, show skip, show sizeI]
+              [selectCondition, excludeCondition, phaseCondition, mapSort sort, show skip, show sizeI]
     let params =
           [U.toString appUuid, U.toString appUuid]
             ++ fromMaybe [] mSelectIdsLike
@@ -124,8 +131,8 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds pageable sort =
             }
     return $ Page pageLabel metadata entities
 
-countPackageSuggestions :: Maybe String -> String -> String -> Maybe [String] -> Maybe [String] -> AppContextM Int
-countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike mExcludeIdsLike = do
+countPackageSuggestions :: Maybe String -> String -> String -> Maybe [String] -> Maybe [String] -> String -> AppContextM Int
+countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike mExcludeIdsLike phaseCondition = do
   appUuid <- asks currentAppUuid
   let sql =
         fromString $
@@ -133,14 +140,25 @@ countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike m
             "SELECT COUNT(*) \
             \FROM (SELECT COUNT(*) \
             \   FROM package \
-            \   WHERE app_uuid = ? AND (name ~* ? OR id ~* ?) %s %s \
+            \   WHERE app_uuid = ? AND (name ~* ? OR id ~* ?) %s %s %s \
             \   GROUP BY organization_id, km_id) nested"
-            [selectCondition, excludeCondition]
+            [selectCondition, excludeCondition, phaseCondition]
   let params =
-        [U.toString appUuid, regex mQuery, regex mQuery] ++ fromMaybe [] mSelectIdsLike ++ fromMaybe [] mExcludeIdsLike
+        [U.toString appUuid, regex mQuery, regex mQuery]
+          ++ fromMaybe [] mSelectIdsLike
+          ++ fromMaybe [] mExcludeIdsLike
   logQuery sql params
   let action conn = query conn sql params
   result <- runDB action
   case result of
     [count] -> return . fromOnly $ count
     _ -> return 0
+
+updatePackagePhaseById :: String -> PackagePhase -> AppContextM Int64
+updatePackagePhaseById pkgId phase = do
+  appUuid <- asks currentAppUuid
+  let sql = fromString "UPDATE package SET phase = ? WHERE app_uuid = ? AND id = ?"
+  let params = [toField phase, toField appUuid, toField pkgId]
+  logQuery sql params
+  let action conn = execute conn sql params
+  runDB action

@@ -9,6 +9,7 @@ import Shared.Api.Resource.Package.PackageDTO
 import Shared.Constant.KnowledgeModel
 import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Model.Event.Event
+import Shared.Model.Package.Package
 import Shared.Model.Package.PackageGroup
 import Shared.Model.Package.PackagePattern
 import Shared.Model.Package.PackageWithEvents
@@ -22,6 +23,7 @@ globalPackageEmpty =
     , organizationId = "global"
     , kmId = "core"
     , version = "0.0.1"
+    , phase = ReleasedPackagePhase
     , metamodelVersion = kmMetamodelVersion
     , description = "Empty package"
     , readme = "# Global Knowledge Model"
@@ -42,6 +44,7 @@ globalPackage =
     , organizationId = "global"
     , kmId = "core"
     , version = "1.0.0"
+    , phase = ReleasedPackagePhase
     , metamodelVersion = kmMetamodelVersion
     , description = "First Release"
     , readme = "# Global Knowledge Model"
@@ -70,6 +73,12 @@ globalPackage =
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
+globalPackageDeprecated :: PackageWithEvents
+globalPackageDeprecated =
+  globalPackage
+    { phase = DeprecatedPackagePhase
+    }
+
 globalPackageDto :: PackageDTO
 globalPackageDto = toDTO globalPackage
 
@@ -89,6 +98,7 @@ netherlandsPackage =
     , organizationId = "org.nl"
     , kmId = "core-nl"
     , version = "1.0.0"
+    , phase = ReleasedPackagePhase
     , metamodelVersion = kmMetamodelVersion
     , description = "First Release"
     , readme = "# Netherlands Knowledge Model"
@@ -109,6 +119,7 @@ netherlandsPackageV2 =
     , organizationId = "org.nl"
     , kmId = "core-nl"
     , version = "2.0.0"
+    , phase = ReleasedPackagePhase
     , metamodelVersion = kmMetamodelVersion
     , description = "Second Release"
     , readme = "# Netherlands Knowledge Model"
@@ -137,6 +148,7 @@ amsterdamPackage =
     , organizationId = "org.nl.amsterdam"
     , kmId = "core-amsterdam"
     , version = "1.0.0"
+    , phase = ReleasedPackagePhase
     , metamodelVersion = kmMetamodelVersion
     , description = "First Release"
     , readme = "# Amsterdam Knowledge Model"
@@ -157,6 +169,7 @@ germanyPackage =
     , organizationId = "org.de"
     , kmId = "core-de"
     , version = "1.0.0"
+    , phase = ReleasedPackagePhase
     , metamodelVersion = kmMetamodelVersion
     , description = "First Release"
     , readme = "# Germany Knowledge Model"

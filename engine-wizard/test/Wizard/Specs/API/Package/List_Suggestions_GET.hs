@@ -86,6 +86,18 @@ test_200 appContext = do
     "/packages/suggestions?q=Germany Knowledge Model"
     (Page "packages" (PageMetadata 20 1 1 0) [toSuggestion (toPackage germanyPackage, ["1.0.0"])])
   create_test_200
+    "HTTP 200 OK (phase)"
+    appContext
+    "/packages/suggestions?sort=organizationId,asc&phase=ReleasedPackagePhase"
+    ( Page
+        "packages"
+        (PageMetadata 20 3 1 0)
+        [ toSuggestion (toPackage globalPackage, ["0.0.1", "1.0.0"])
+        , toSuggestion (toPackage germanyPackage, ["1.0.0"])
+        , toSuggestion (toPackage netherlandsPackageV2, ["1.0.0", "2.0.0"])
+        ]
+    )
+  create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext
     "/packages/suggestions?q=Non-existing Knowledge Model"

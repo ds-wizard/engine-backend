@@ -15,6 +15,8 @@ import Shared.Util.Uuid
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
+import Wizard.Api.Resource.Package.Publish.PackagePublishBranchDTO
+import Wizard.Api.Resource.Package.Publish.PackagePublishMigrationDTO
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -33,6 +35,7 @@ amsterdamBranchList =
     { uuid = u' "6474b24b-262b-42b1-9451-008e8363f2b6"
     , name = amsterdamPackage.name
     , kmId = amsterdamPackage.kmId
+    , version = amsterdamPackage.version
     , previousPackageId = Just netherlandsPackage.pId
     , forkOfPackageId = Just netherlandsPackage.pId
     , state = BSEdited
@@ -47,6 +50,10 @@ amsterdamBranch =
     { uuid = amsterdamBranchList.uuid
     , name = amsterdamBranchList.name
     , kmId = amsterdamBranchList.kmId
+    , version = "1.0.0"
+    , description = "First Release"
+    , readme = "# Netherlands Knowledge Model"
+    , license = "Apache-2.0"
     , previousPackageId = amsterdamBranchList.previousPackageId
     , createdBy = amsterdamBranchList.createdBy
     , appUuid = defaultApp.uuid
@@ -89,6 +96,7 @@ amsterdamBranchCreate =
   BranchCreateDTO
     { name = amsterdamBranchList.name
     , kmId = amsterdamBranchList.kmId
+    , version = "1.0.0"
     , previousPackageId = amsterdamBranchList.previousPackageId
     }
 
@@ -97,6 +105,10 @@ amsterdamBranchChange =
   BranchChangeDTO
     { name = "EDITED: " ++ amsterdamBranchList.name
     , kmId = amsterdamBranchList.kmId
+    , version = "2.0.0"
+    , description = "EDITED: description"
+    , readme = "EDITED: Readme"
+    , license = "Apacha-3.0"
     }
 
 amsterdamBranchKnowledgeModel :: KnowledgeModel
@@ -109,6 +121,10 @@ amsterdamBranchDetail =
     { uuid = amsterdamBranchList.uuid
     , name = amsterdamBranchList.name
     , kmId = amsterdamBranchList.kmId
+    , version = amsterdamBranch.version
+    , description = amsterdamBranch.description
+    , readme = amsterdamBranch.readme
+    , license = amsterdamBranch.license
     , state = BSEdited
     , previousPackageId = amsterdamBranchList.previousPackageId
     , forkOfPackageId = amsterdamBranchList.forkOfPackageId
@@ -126,6 +142,7 @@ leidenBranch =
     { uuid = u' "47421955-ba30-48d4-8c49-9ec47eda2cad"
     , name = "Leiden KM"
     , kmId = "leiden-km"
+    , version = "1.0.0"
     , state = BSDefault
     , previousPackageId = Just netherlandsPackage.pId
     , forkOfPackageId = Just netherlandsPackage.pId
@@ -139,6 +156,7 @@ leidenBranchCreate =
   BranchCreateDTO
     { name = leidenBranch.name
     , kmId = leidenBranch.kmId
+    , version = "1.0.0"
     , previousPackageId = leidenBranch.previousPackageId
     }
 
@@ -148,6 +166,10 @@ differentBranch =
     { uuid = u' "fc49b6a5-51ae-4442-82e8-c3bf216545ec"
     , name = "Branch Events"
     , kmId = "my-km"
+    , version = "1.0.0"
+    , description = "Some desc"
+    , readme = "Some readme"
+    , license = "Apache-2.0"
     , previousPackageId = Just $ differentPackage.pId
     , createdBy = Just $ userCharles.uuid
     , appUuid = differentApp.uuid
@@ -164,4 +186,19 @@ differentBranchData =
     , appUuid = differentApp.uuid
     , createdAt = differentBranch.createdAt
     , updatedAt = differentBranch.updatedAt
+    }
+
+packagePublishBranchDTO :: PackagePublishBranchDTO
+packagePublishBranchDTO =
+  PackagePublishBranchDTO
+    { branchUuid = amsterdamBranch.uuid
+    }
+
+packagePublishMigrationDTO :: PackagePublishMigrationDTO
+packagePublishMigrationDTO =
+  PackagePublishMigrationDTO
+    { branchUuid = amsterdamBranch.uuid
+    , version = amsterdamPackage.version
+    , description = amsterdamPackage.description
+    , readme = amsterdamPackage.readme
     }

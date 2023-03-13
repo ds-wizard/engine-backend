@@ -2,6 +2,7 @@ module Wizard.Api.Resource.Package.PackageDetailJM where
 
 import Data.Aeson
 
+import Shared.Api.Resource.Package.PackagePhaseJM ()
 import Shared.Util.Aeson
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageStateJM ()

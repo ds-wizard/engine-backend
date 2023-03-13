@@ -52,6 +52,7 @@ findBranchesPage mQuery pageable sort =
               "SELECT branch.uuid, \
               \       branch.name, \
               \       branch.km_id, \
+              \       branch.version, \
               \       get_branch_state(knowledge_model_migration, branch_data, get_branch_fork_of_package_id(app_config, previous_pkg, branch), '%s') as state, \
               \       branch.previous_package_id, \
               \       get_branch_fork_of_package_id(app_config, previous_pkg, branch) as fork_of_package_id, \
@@ -80,10 +81,10 @@ findBranchesPage mQuery pageable sort =
             }
     return $ Page pageLabel metadata entities
 
-findBranchById :: String -> AppContextM Branch
-findBranchById uuid = do
+findBranchByUuid :: U.UUID -> AppContextM Branch
+findBranchByUuid uuid = do
   appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
 
 findBranchByKmId :: String -> AppContextM Branch
 findBranchByKmId kmId = do
@@ -111,7 +112,7 @@ updateBranchById branch = do
   appUuid <- asks currentAppUuid
   let sql =
         fromString
-          "UPDATE branch SET uuid = ?, name = ?, km_id = ?, previous_package_id = ?, created_by = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
+          "UPDATE branch SET uuid = ?, name = ?, km_id = ?, previous_package_id = ?, created_by = ?, created_at = ?, updated_at = ?, app_uuid = ?, version = ?, description = ?, readme = ?, license = ? WHERE app_uuid = ? AND uuid = ?"
   let params = toRow branch ++ [toField appUuid, toField . U.toText $ branch.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
@@ -129,5 +130,5 @@ clearBranchCreatedBy userUuid = do
 deleteBranches :: AppContextM Int64
 deleteBranches = createDeleteEntitiesFn entityName
 
-deleteBranchById :: String -> AppContextM Int64
-deleteBranchById uuid = createDeleteEntityByFn entityName [("uuid", uuid)]
+deleteBranchByUuid :: U.UUID -> AppContextM Int64
+deleteBranchByUuid uuid = createDeleteEntityByFn entityName [("uuid", U.toString uuid)]

@@ -10,6 +10,7 @@ import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Event.Event
+import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.App.App
@@ -58,6 +59,7 @@ differentPackage =
     , organizationId = "global"
     , kmId = "different"
     , version = "1.0.0"
+    , phase = ReleasedPackagePhase
     , metamodelVersion = kmMetamodelVersion
     , description = "Empty package"
     , readme = "# Different Knowledge Model"

@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Migration.KnowledgeModel.List_Current_Conflict_POST where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -15,7 +16,7 @@ type List_Current_Conflict_POST =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] MigratorConflictDTO
     :> "branches"
-    :> Capture "bUuid" String
+    :> Capture "bUuid" U.UUID
     :> "migrations"
     :> "current"
     :> "conflict"
@@ -25,7 +26,7 @@ list_current_conflict_POST
   :: Maybe String
   -> Maybe String
   -> MigratorConflictDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
 list_current_conflict_POST mTokenHeader mServerUrl reqDto bUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->

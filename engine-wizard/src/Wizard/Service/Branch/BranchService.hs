@@ -1,18 +1,13 @@
 module Wizard.Service.Branch.BranchService where
 
-import Control.Monad (when)
-import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
-import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Database.DAO.Package.PackageDAO
-import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
-import Shared.Model.Error.Error
 import Shared.Model.Event.Event
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Shared.Util.Uuid
@@ -52,21 +47,23 @@ createBranch reqDto =
     createBranchWithParams bUuid now currentUser reqDto
 
 createBranchWithParams :: U.UUID -> UTCTime -> UserDTO -> BranchCreateDTO -> AppContextM BranchList
-createBranchWithParams bUuid now currentUser reqDto =
+createBranchWithParams uuid now currentUser reqDto =
   runInTransaction $ do
     checkBranchLimit
     checkPermission _KM_PERM
-    validateNewKmId reqDto.kmId
-    validatePackageExistence reqDto.previousPackageId
+    validateCreateDto reqDto
     appUuid <- asks currentAppUuid
-    let branch = fromCreateDTO reqDto bUuid (Just currentUser.uuid) appUuid now now
+    mPreviousPkg <-
+      case reqDto.previousPackageId of
+        Just previousPackageId -> fmap Just $ findPackageById previousPackageId
+        Nothing -> return Nothing
+    let branch = fromCreateDTO reqDto uuid mPreviousPkg currentUser.uuid appUuid now
     insertBranch branch
     insertBranchData (toBranchData branch)
     createDefaultEventIfPreviousPackageIsNotPresent branch
     return $ toList branch Nothing BSDefault
   where
     createDefaultEventIfPreviousPackageIsNotPresent branch = do
-      let branchUuid = U.toString $ branch.uuid
       let mPreviousPackageId = branch.previousPackageId
       case mPreviousPackageId of
         Just _ -> return ()
@@ -81,13 +78,13 @@ createBranchWithParams bUuid now currentUser reqDto =
                   , annotations = []
                   , createdAt = now
                   }
-          appendBranchEventByUuid branchUuid [AddKnowledgeModelEvent' addKMEvent]
+          appendBranchEventByUuid branch.uuid [AddKnowledgeModelEvent' addKMEvent]
           return ()
 
-getBranchById :: String -> AppContextM BranchDetailDTO
+getBranchById :: U.UUID -> AppContextM BranchDetailDTO
 getBranchById branchUuid = do
   checkPermission _KM_PERM
-  branch <- findBranchById branchUuid
+  branch <- findBranchByUuid branchUuid
   branchData <- findBranchDataById branchUuid
   mForkOfPackageId <- getBranchForkOfPackageId branch
   branchState <- getBranchState branch (length branchData.events) mForkOfPackageId
@@ -100,25 +97,21 @@ getBranchById branchUuid = do
       Nothing -> return Nothing
   return $ toDetailDTO branch branchData knowledgeModel mForkOfPackageId mForkOfPackage branchState
 
-modifyBranch :: String -> BranchChangeDTO -> AppContextM BranchDetailDTO
+modifyBranch :: U.UUID -> BranchChangeDTO -> AppContextM BranchDetailDTO
 modifyBranch branchUuid reqDto =
   runInTransaction $ do
     checkPermission _KM_PERM
-    branchFromDB <- findBranchById branchUuid
-    validateKmId
+    branchFromDB <- findBranchByUuid branchUuid
+    validateChangeDto reqDto
     now <- liftIO getCurrentTime
     let branch =
           fromChangeDTO
             reqDto
-            branchFromDB.uuid
-            branchFromDB.previousPackageId
-            branchFromDB.createdBy
-            branchFromDB.appUuid
-            branchFromDB.createdAt
+            branchFromDB
             now
     updateBranchById branch
     mForkOfPackageId <- getBranchForkOfPackageId branch
-    branchData <- findBranchDataById (U.toString branch.uuid)
+    branchData <- findBranchDataById branch.uuid
     branchState <- getBranchState branch (length branchData.events) mForkOfPackageId
     knowledgeModel <- compileKnowledgeModel branchData.events branch.previousPackageId []
     mForkOfPackage <-
@@ -128,27 +121,14 @@ modifyBranch branchUuid reqDto =
           return . Just $ pkg
         Nothing -> return Nothing
     return $ toDetailDTO branch branchData knowledgeModel mForkOfPackageId mForkOfPackage branchState
-  where
-    validateKmId = do
-      let bKmId = reqDto.kmId
-      case isValidKmId bKmId of
-        Nothing -> do
-          branch <- findBranchById branchUuid
-          mBranchFromDb <- findBranchByKmId' bKmId
-          when
-            (isAlreadyUsedAndIsNotMine mBranchFromDb)
-            (throwError $ ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__KM_ID_UNIQUENESS bKmId]))
-        Just error -> throwError error
-    isAlreadyUsedAndIsNotMine (Just branch) = U.toString branch.uuid /= branchUuid
-    isAlreadyUsedAndIsNotMine Nothing = False
 
-deleteBranch :: String -> AppContextM ()
+deleteBranch :: U.UUID -> AppContextM ()
 deleteBranch branchUuid =
   runInTransaction $ do
     checkPermission _KM_PERM
-    branch <- findBranchById branchUuid
+    branch <- findBranchByUuid branchUuid
     deleteBranchDataById branchUuid
-    deleteBranchById branchUuid
+    deleteBranchByUuid branchUuid
     deleteMigratorStateByBranchUuid branchUuid
     logOutOnlineUsersWhenBranchDramaticallyChanged branchUuid
     return ()

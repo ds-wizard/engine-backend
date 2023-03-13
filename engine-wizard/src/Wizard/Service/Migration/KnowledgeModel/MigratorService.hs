@@ -5,6 +5,7 @@ import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Maybe
 import Data.Time
+import qualified Data.UUID as U
 
 import Shared.Model.Error.Error
 import Shared.Model.Event.EventLenses
@@ -31,14 +32,14 @@ import Wizard.Service.Migration.KnowledgeModel.MigratorMapper
 import Wizard.Service.Migration.KnowledgeModel.MigratorValidation
 import Wizard.Service.Package.PackageService
 
-getCurrentMigrationDto :: String -> AppContextM MigratorStateDTO
+getCurrentMigrationDto :: U.UUID -> AppContextM MigratorStateDTO
 getCurrentMigrationDto branchUuid = do
   checkPermission _KM_UPGRADE_PERM
   ms <- getCurrentMigration branchUuid
-  branch <- findBranchById branchUuid
+  branch <- findBranchByUuid branchUuid
   return $ toDTO ms branch
 
-getCurrentMigration :: String -> AppContextM MigratorState
+getCurrentMigration :: U.UUID -> AppContextM MigratorState
 getCurrentMigration branchUuid = do
   ms <- findMigratorStateByBranchUuid branchUuid
   knowledgeModel <- compileKnowledgeModel ms.resultEvents (Just ms.branchPreviousPackageId) []
@@ -48,13 +49,13 @@ getCurrentMigration branchUuid = do
           state -> state
   return $ ms {currentKnowledgeModel = Just knowledgeModel, migrationState = stateWithEvent} :: AppContextM MigratorState
 
-createMigration :: String -> MigratorStateCreateDTO -> AppContextM MigratorStateDTO
+createMigration :: U.UUID -> MigratorStateCreateDTO -> AppContextM MigratorStateDTO
 createMigration bUuid reqDto =
   runInTransaction $ do
     checkPermission _KM_UPGRADE_PERM
     logOutOnlineUsersWhenBranchDramaticallyChanged bUuid
     let targetPkgId = reqDto.targetPackageId
-    branch <- findBranchById bUuid
+    branch <- findBranchByUuid bUuid
     branchData <- findBranchDataById bUuid
     previousPkg <- getPreviousPkg branch
     mergeCheckpointPkgId <- getMergeCheckpointPackageId branch
@@ -89,7 +90,7 @@ createMigration bUuid reqDto =
         Just forkOfPackageId -> return forkOfPackageId
         Nothing -> throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__BRANCH_MISSING_FORK_OF_PACKAGE_ID
 
-deleteCurrentMigration :: String -> AppContextM ()
+deleteCurrentMigration :: U.UUID -> AppContextM ()
 deleteCurrentMigration branchUuid =
   runInTransaction $ do
     checkPermission _KM_UPGRADE_PERM
@@ -98,7 +99,7 @@ deleteCurrentMigration branchUuid =
     auditKmMigrationCancel branchUuid
     return ()
 
-solveConflictAndMigrate :: String -> MigratorConflictDTO -> AppContextM ()
+solveConflictAndMigrate :: U.UUID -> MigratorConflictDTO -> AppContextM ()
 solveConflictAndMigrate branchUuid reqDto =
   runInTransaction $ do
     checkPermission _KM_UPGRADE_PERM
@@ -127,7 +128,7 @@ solveConflictAndMigrate branchUuid reqDto =
             (throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT)
         else throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__EVENT_UUIDS_MISMATCH
 
-solveAllConflicts :: String -> AppContextM ()
+solveAllConflicts :: U.UUID -> AppContextM ()
 solveAllConflicts branchUuid =
   runInTransaction $ do
     checkPermission _KM_UPGRADE_PERM

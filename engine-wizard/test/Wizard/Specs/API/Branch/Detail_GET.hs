@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Branch.Detail_GET (
-  detail_get,
+  detail_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -24,8 +24,8 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /branches/{branchId}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith ((), Application)
-detail_get appContext =
+detail_GET :: AppContext -> SpecWith ((), Application)
+detail_GET appContext =
   describe "GET /branches/{branchId}" $ do
     test_200 appContext
     test_401 appContext

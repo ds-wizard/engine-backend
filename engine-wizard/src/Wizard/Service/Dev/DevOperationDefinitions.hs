@@ -118,7 +118,7 @@ branch_squashEventsForBranch =
 
 branch_squashEventsForBranchFn :: DevExecutionDTO -> AppContextM String
 branch_squashEventsForBranchFn reqDto = do
-  squashEventsForBranch (head reqDto.parameters)
+  squashEventsForBranch (u' . head $ reqDto.parameters)
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------

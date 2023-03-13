@@ -1,7 +1,5 @@
 module Wizard.Service.Branch.BranchUtil where
 
-import qualified Data.UUID as U
-
 import Shared.Model.Package.Package
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Model.Branch.Branch
@@ -46,7 +44,7 @@ getBranchMergeCheckpointPackageId branch = do
 
 getBranchState :: Branch -> Int -> Maybe String -> AppContextM BranchState
 getBranchState branch eventSize mForkOfPackageId = do
-  mMs <- findMigratorStateByBranchUuid' (U.toString $ branch.uuid)
+  mMs <- findMigratorStateByBranchUuid' branch.uuid
   isMigrating mMs $ isEditing $ isMigrated mMs $ isOutdated isDefault
   where
     isMigrating mMs continue =

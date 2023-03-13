@@ -4,6 +4,7 @@ import qualified Data.List as L
 
 import Shared.Model.Package.Package
 import Shared.Util.Coordinate
+import Wizard.Api.Resource.Package.PackageChangeDTO
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Model.Package.PackageList
@@ -23,6 +24,7 @@ toSimpleDTO' pkgRs orgRs pkg =
     , organizationId = pkg.organizationId
     , kmId = pkg.kmId
     , version = pkg.version
+    , phase = pkg.phase
     , remoteLatestVersion =
         case selectPackageByOrgIdAndKmId pkg pkgRs of
           Just pkgR -> Just $ pkgR.remoteVersion
@@ -41,6 +43,7 @@ toSimpleDTO'' registryEnabled pkg =
     , organizationId = pkg.organizationId
     , kmId = pkg.kmId
     , version = pkg.version
+    , phase = pkg.phase
     , remoteLatestVersion = pkg.remoteVersion
     , description = pkg.description
     , state = computePackageState' registryEnabled pkg
@@ -66,6 +69,7 @@ toDetailDTO pkg pkgRs orgRs versionLs registryLink =
     , organizationId = pkg.organizationId
     , kmId = pkg.kmId
     , version = pkg.version
+    , phase = pkg.phase
     , description = pkg.description
     , readme = pkg.readme
     , license = pkg.license
@@ -92,6 +96,12 @@ toSuggestion (pkg, localVersions) =
     , version = pkg.version
     , description = pkg.description
     , versions = L.sortBy compareVersion localVersions
+    }
+
+toChangeDTO :: Package -> PackageChangeDTO
+toChangeDTO pkg =
+  PackageChangeDTO
+    { phase = pkg.phase
     }
 
 buildPackageUrl :: String -> Package -> [RegistryPackage] -> Maybe String

@@ -50,6 +50,7 @@ library:
   - regex-compat
   - resource-pool
   - retry
+  - servant
   - servant-server
   - servant-multipart
   - servant-swagger

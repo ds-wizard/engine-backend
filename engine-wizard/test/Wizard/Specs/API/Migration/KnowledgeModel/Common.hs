@@ -1,7 +1,6 @@
 module Wizard.Specs.API.Migration.KnowledgeModel.Common where
 
 import Data.Either (isRight)
-import qualified Data.UUID as U
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
@@ -21,22 +20,19 @@ import Wizard.Specs.Common
 -- MIGRATION
 -- --------------------------------
 runMigrationWithEmptyDB appContext = do
-  let branchUuid = U.toString $ amsterdamBranchList.uuid
   runInContextIO B.runMigration appContext
-  runInContextIO (updateBranchEventsByUuid branchUuid []) appContext
+  runInContextIO (updateBranchEventsByUuid amsterdamBranchList.uuid []) appContext
   runInContextIO KM_MIG.runMigration appContext
 
 runMigrationWithFullDB appContext = do
   runMigrationWithEmptyDB appContext
-  let branchUuid = U.toString $ amsterdamBranchList.uuid
-  runInContextIO (createMigration branchUuid migratorStateCreate) appContext
+  runInContextIO (createMigration amsterdamBranchList.uuid migratorStateCreate) appContext
 
 -- --------------------------------
 -- ASSERTS
 -- --------------------------------
 assertStateOfMigrationInDB appContext ms expState = do
-  let bUuid = U.toString ms.branchUuid
-  eMs <- runInContextIO (findMigratorStateByBranchUuid bUuid) appContext
+  eMs <- runInContextIO (findMigratorStateByBranchUuid ms.branchUuid) appContext
   liftIO $ isRight eMs `shouldBe` True
   let (Right msFromDB) = eMs
   liftIO $ msFromDB.migrationState `shouldBe` expState

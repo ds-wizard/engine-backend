@@ -13,6 +13,7 @@ import Shared.Model.Package.PackageWithEvents
 import Shared.Service.Package.PackageMapper hiding (toSuggestionDTO)
 import Shared.Service.Package.PackageUtil
 import Shared.Util.Coordinate
+import Wizard.Api.Resource.Package.PackageChangeDTO
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Database.DAO.Common
@@ -49,10 +50,16 @@ getPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort = do
       return . fmap (toSimpleDTO'' (appConfig.registry.enabled)) $ packages
 
 getPackageSuggestions
-  :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)
-getPackageSuggestions mQuery mSelectIds mExcludeIds pageable sort = do
+  :: Maybe String
+  -> Maybe [String]
+  -> Maybe [String]
+  -> Maybe PackagePhase
+  -> Pageable
+  -> [Sort]
+  -> AppContextM (Page PackageSuggestion)
+getPackageSuggestions mQuery mSelectIds mExcludeIds mPhase pageable sort = do
   checkPermission _PM_READ_PERM
-  findPackageSuggestionsPage mQuery mSelectIds mExcludeIds pageable sort
+  findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase pageable sort
 
 getPackageById :: String -> AppContextM Package
 getPackageById pkgId = resolvePackageId pkgId >>= findPackageById
@@ -121,6 +128,14 @@ createPackage pkg =
     checkPackageLimit
     insertPackage pkg
     return . toSimpleDTO . toPackage $ pkg
+
+modifyPackage :: String -> PackageChangeDTO -> AppContextM PackageChangeDTO
+modifyPackage pkgId reqDto =
+  runInTransaction $ do
+    checkPermission _PM_WRITE_PERM
+    _ <- findPackageById pkgId
+    updatePackagePhaseById pkgId reqDto.phase
+    return reqDto
 
 deletePackagesByQueryParams :: [(String, String)] -> AppContextM ()
 deletePackagesByQueryParams queryParams =

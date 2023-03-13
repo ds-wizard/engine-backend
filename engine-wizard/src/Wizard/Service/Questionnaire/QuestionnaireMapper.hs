@@ -134,6 +134,7 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , formatUuid = qtn.formatUuid
     , format = fmap toFormatDTO mFormat
     , documentTemplateState = toQuestionnaireDetailTemplateState mTemplate
+    , documentTemplatePhase = fmap (.phase) mTemplate
     , knowledgeModel = knowledgeModel
     , replies = replies
     , commentThreadsMap = threads

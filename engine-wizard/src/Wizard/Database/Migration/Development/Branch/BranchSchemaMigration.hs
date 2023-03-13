@@ -50,7 +50,11 @@ createTables = do
         \     updated_at timestamptz not null, \
         \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
         \       constraint branch_app_uuid_fk \
-        \         references app \
+        \         references app, \
+        \     version varchar not null, \
+        \     description varchar not null, \
+        \     readme varchar not null, \
+        \     license varchar not null \
         \); \
         \  \
         \ create unique index branch_uuid_uindex \

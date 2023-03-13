@@ -3,6 +3,7 @@ module Wizard.Model.Package.PackageList where
 import Data.Time
 import GHC.Generics
 
+import Shared.Model.Package.Package (PackagePhase)
 import Wizard.Model.Package.PackageState
 
 data PackageList = PackageList
@@ -11,6 +12,7 @@ data PackageList = PackageList
   , organizationId :: String
   , kmId :: String
   , version :: String
+  , phase :: PackagePhase
   , description :: String
   , state :: PackageState
   , remoteVersion :: Maybe String

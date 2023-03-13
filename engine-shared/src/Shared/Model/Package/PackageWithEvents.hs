@@ -5,6 +5,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Model.Event.Event
+import Shared.Model.Package.Package
 
 data PackageWithEvents = PackageWithEvents
   { pId :: String
@@ -12,6 +13,7 @@ data PackageWithEvents = PackageWithEvents
   , organizationId :: String
   , kmId :: String
   , version :: String
+  , phase :: PackagePhase
   , metamodelVersion :: Int
   , description :: String
   , readme :: String

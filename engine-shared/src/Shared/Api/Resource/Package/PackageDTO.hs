@@ -4,6 +4,7 @@ import Data.Time
 import GHC.Generics
 
 import Shared.Model.Event.Event
+import Shared.Model.Package.Package
 
 data PackageDTO = PackageDTO
   { pId :: String
@@ -11,6 +12,7 @@ data PackageDTO = PackageDTO
   , organizationId :: String
   , kmId :: String
   , version :: String
+  , phase :: PackagePhase
   , metamodelVersion :: Int
   , description :: String
   , readme :: String

@@ -13,6 +13,10 @@ data BranchDetailDTO = BranchDetailDTO
   { uuid :: U.UUID
   , name :: String
   , kmId :: String
+  , version :: String
+  , description :: String
+  , readme :: String
+  , license :: String
   , state :: BranchState
   , previousPackageId :: Maybe String
   , forkOfPackageId :: Maybe String
@@ -30,6 +34,10 @@ instance Eq BranchDetailDTO where
     a.uuid == b.uuid
       && a.name == b.name
       && a.kmId == b.kmId
+      && a.version == b.version
+      && a.description == b.description
+      && a.readme == b.readme
+      && a.license == b.license
       && a.state == b.state
       && a.previousPackageId == b.previousPackageId
       && a.forkOfPackageId == b.forkOfPackageId

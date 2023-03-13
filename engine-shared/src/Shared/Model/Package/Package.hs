@@ -4,12 +4,18 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+data PackagePhase
+  = ReleasedPackagePhase
+  | DeprecatedPackagePhase
+  deriving (Show, Eq, Generic, Read)
+
 data Package = Package
   { pId :: String
   , name :: String
   , organizationId :: String
   , kmId :: String
   , version :: String
+  , phase :: PackagePhase
   , metamodelVersion :: Int
   , description :: String
   , readme :: String
