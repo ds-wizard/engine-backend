@@ -19,6 +19,7 @@ import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Config.ServerConfig
+import Wizard.Api.Resource.PersistentCommand.PersistentCommandChangeDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
 import Wizard.Database.DAO.App.AppDAO
@@ -55,6 +56,15 @@ getPersistentCommandById uuid = do
   app <- findAppByUuid command.appUuid
   appDto <- enhanceApp app
   return $ toDetailDTO command mUser appDto
+
+modifyPersistentCommand :: U.UUID -> PersistentCommandChangeDTO -> AppContextM PersistentCommandDetailDTO
+modifyPersistentCommand uuid reqDto = do
+  checkPermission _DEV_PERM
+  command <- findPersistentCommandByUuid uuid
+  now <- liftIO getCurrentTime
+  let updatedCommand = fromChangeDTO command reqDto now
+  updatePersistentCommandByUuid updatedCommand
+  getPersistentCommandById uuid
 
 runPersistentCommands :: AppContextM ()
 runPersistentCommands = do

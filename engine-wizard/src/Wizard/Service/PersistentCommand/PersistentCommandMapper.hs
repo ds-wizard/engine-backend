@@ -4,6 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Wizard.Api.Resource.App.AppDTO
+import Wizard.Api.Resource.PersistentCommand.PersistentCommandChangeDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
 import Wizard.Model.PersistentCommand.PersistentCommand
@@ -68,4 +69,22 @@ toSimple command =
     { uuid = command.uuid
     , appUuid = command.appUuid
     , createdBy = command.createdBy
+    }
+
+fromChangeDTO :: PersistentCommand -> PersistentCommandChangeDTO -> UTCTime -> PersistentCommand
+fromChangeDTO command reqDto now =
+  PersistentCommand
+    { uuid = command.uuid
+    , state = reqDto.state
+    , component = command.component
+    , function = command.function
+    , body = command.body
+    , lastErrorMessage = command.lastErrorMessage
+    , attempts = command.attempts
+    , maxAttempts = command.maxAttempts
+    , internal = command.internal
+    , appUuid = command.appUuid
+    , createdBy = command.createdBy
+    , createdAt = command.createdAt
+    , updatedAt = now
     }
