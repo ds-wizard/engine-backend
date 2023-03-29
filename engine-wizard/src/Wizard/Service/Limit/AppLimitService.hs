@@ -71,13 +71,13 @@ checkDocumentTemplateLimit :: AppContextM ()
 checkDocumentTemplateLimit = do
   limit <- findCurrentAppLimit
   count <- countDocumentTemplatesGroupedByOrganizationIdAndKmId
-  checkLimit "document template" count limit.documentTemplates
+  checkLimit "document templates" count limit.documentTemplates
 
 checkDocumentTemplateDraftLimit :: AppContextM ()
 checkDocumentTemplateDraftLimit = do
   limit <- findCurrentAppLimit
   count <- countDraftsGroupedByOrganizationIdAndKmId
-  checkLimit "document template draft" count limit.documentTemplateDrafts
+  checkLimit "document template drafts" count limit.documentTemplateDrafts
 
 checkDocumentLimit :: AppContextM ()
 checkDocumentLimit = do
