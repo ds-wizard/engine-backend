@@ -36,6 +36,13 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Registry API"
               , _infoDescription = Just "API specification for Registry"
+              , _infoVersion = "3.21.0"
+              , _infoLicense =
+                  Just $
+                    License
+                      { _licenseName = "Apache-2.0"
+                      , _licenseUrl = Just . URL $ "https://raw.githubusercontent.com/ds-wizard/engine-backend/main/LICENSE.md"
+                      }
               }
         }
 
