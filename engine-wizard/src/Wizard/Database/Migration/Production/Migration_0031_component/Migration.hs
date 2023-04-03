@@ -17,6 +17,7 @@ migrate dbPool = do
   createComponentTable dbPool
   addPhaseToPackage dbPool
   extendBranch dbPool
+  changeReadmeInDefaultLocale dbPool
 
 createComponentTable dbPool = do
   let sql =
@@ -52,6 +53,39 @@ extendBranch dbPool = do
         \   ADD description varchar NOT NULL DEFAULT 'Fill description here',\
         \   ADD readme varchar NOT NULL DEFAULT 'Fill readme here',\
         \   ADD license varchar NOT NULL DEFAULT 'Fill license here';"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+changeReadmeInDefaultLocale dbPool = do
+  let sql =
+        "UPDATE locale \
+        \SET description = 'Default English locale for Wizard UI', \
+        \    readme      = concat('# Default English Locale for Wizard Client', \
+        \              CHR(13), \
+        \              CHR(10), \
+        \              CHR(13), \
+        \              CHR(10), \
+        \              '[![Language](https://img.shields.io/badge/ISO%20639--1-en-blue)](https://en.wikipedia.org/wiki/English_language)', \
+        \              CHR(13), \
+        \              CHR(10), \
+        \              CHR(13), \
+        \              CHR(10), \
+        \              'This is the default English locale embedded in the Wizard Client. Therefore, it is always complete and compatible with the version that it is shipped with.', \
+        \              CHR(13), \
+        \              CHR(10), \
+        \              CHR(13), \
+        \              CHR(10), \
+        \              'The locale also cannot be exported or deleted. However, you can *Disable* it anytime as well as mark other locale to be used as *Default* if necessary.', \
+        \              CHR(13), \
+        \              CHR(10), \
+        \              CHR(13), \
+        \              CHR(10), \
+        \              'In case you encounter any issues with this issue, please contact your service provider.', \
+        \              CHR(13), \
+        \              CHR(10) \
+        \           ) \
+        \WHERE id = 'wizard:default:1.0.0';"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
