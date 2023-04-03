@@ -26,10 +26,13 @@ getAssets :: String -> AppContextM [DocumentTemplateAssetDTO]
 getAssets tmlId = do
   checkPermission _DOC_TML_WRITE_PERM
   assets <- findAssetsByDocumentTemplateId tmlId
+  now <- liftIO getCurrentTime
   traverse
     ( \asset -> do
-        url <- makePublicLink asset.documentTemplateId asset.uuid
-        return $ toDTO asset url
+        let expirationInSeconds = 60
+        let urlExpiration = addUTCTime (realToFrac expirationInSeconds) now
+        url <- presigneGetAssetUrl asset.documentTemplateId asset.uuid expirationInSeconds
+        return $ toDTO asset url urlExpiration
     )
     assets
 
@@ -37,8 +40,11 @@ getAsset :: U.UUID -> AppContextM DocumentTemplateAssetDTO
 getAsset assetUuid = do
   checkPermission _DOC_TML_WRITE_PERM
   asset <- findAssetById assetUuid
-  url <- makePublicLink asset.documentTemplateId assetUuid
-  return $ toDTO asset url
+  let expirationInSeconds = 60
+  now <- liftIO getCurrentTime
+  let urlExpiration = addUTCTime (realToFrac expirationInSeconds) now
+  url <- presigneGetAssetUrl asset.documentTemplateId asset.uuid expirationInSeconds
+  return $ toDTO asset url urlExpiration
 
 getAssetContent :: String -> U.UUID -> AppContextM (DocumentTemplateAsset, BS.ByteString)
 getAssetContent tmlId assetUuid = do
@@ -61,8 +67,11 @@ createAsset tmlId reqDto =
     touchDocumentTemplateById newAsset.documentTemplateId
     putAsset tmlId aUuid reqDto.contentType reqDto.content
     deleteTemporalDocumentsByAssetUuid aUuid
-    url <- makePublicLink newAsset.documentTemplateId aUuid
-    return $ toDTO newAsset url
+    let expirationInSeconds = 60
+    now <- liftIO getCurrentTime
+    let urlExpiration = addUTCTime (realToFrac expirationInSeconds) now
+    url <- presigneGetAssetUrl newAsset.documentTemplateId aUuid expirationInSeconds
+    return $ toDTO newAsset url urlExpiration
 
 modifyAsset :: U.UUID -> DocumentTemplateAssetChangeDTO -> AppContextM DocumentTemplateAsset
 modifyAsset assetUuid reqDto =

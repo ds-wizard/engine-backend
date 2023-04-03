@@ -8,14 +8,15 @@ import Shared.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetDTO
 
-toDTO :: DocumentTemplateAsset -> String -> DocumentTemplateAssetDTO
-toDTO asset url =
+toDTO :: DocumentTemplateAsset -> String -> UTCTime -> DocumentTemplateAssetDTO
+toDTO asset url urlExpiration =
   DocumentTemplateAssetDTO
     { uuid = asset.uuid
     , fileName = asset.fileName
     , contentType = asset.contentType
     , fileSize = asset.fileSize
     , url = url
+    , urlExpiration = urlExpiration
     , createdAt = asset.createdAt
     , updatedAt = asset.updatedAt
     }

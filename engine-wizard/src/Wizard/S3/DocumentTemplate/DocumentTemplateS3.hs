@@ -16,8 +16,8 @@ retrieveAsset documentTemplateId assetUuid = createGetObjectFn (f' "%s/%s/%s" [f
 putAsset :: String -> U.UUID -> String -> BS.ByteString -> AppContextM String
 putAsset documentTemplateId assetUuid contentType = createPutObjectFn (f' "%s/%s/%s" [folderName, documentTemplateId, U.toString assetUuid]) (Just contentType) Nothing
 
-makePublicLink :: String -> U.UUID -> AppContextM String
-makePublicLink documentTemplateId assetUuid = createMakePublicLink (f' "%s/%s/%s" [folderName, documentTemplateId, U.toString assetUuid])
+presigneGetAssetUrl :: String -> U.UUID -> Int -> AppContextM String
+presigneGetAssetUrl documentTemplateId assetUuid = createPresignedGetObjectUrl (f' "%s/%s/%s" [folderName, documentTemplateId, U.toString assetUuid])
 
 removeAssets :: String -> AppContextM ()
 removeAssets documentTemplateId = createRemoveObjectFn (f' "%s/%s" [folderName, documentTemplateId])

@@ -11,6 +11,7 @@ data DocumentTemplateAssetDTO = DocumentTemplateAssetDTO
   , contentType :: String
   , fileSize :: Int64
   , url :: String
+  , urlExpiration :: UTCTime
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
