@@ -64,13 +64,13 @@ getPackageSuggestions mQuery mSelectIds mExcludeIds mPhase pageable sort = do
 getPackageById :: String -> AppContextM Package
 getPackageById pkgId = resolvePackageId pkgId >>= findPackageById
 
-getPackageDetailById :: String -> AppContextM PackageDetailDTO
-getPackageDetailById pkgId = do
+getPackageDetailById :: String -> Bool -> AppContextM PackageDetailDTO
+getPackageDetailById pkgId excludeDeprecatedVersions = do
   resolvedPkgId <- resolvePackageId pkgId
   checkIfPackageIsPublic (Just resolvedPkgId) _PM_READ_PERM
   serverConfig <- asks serverConfig
   pkg <- getPackageById resolvedPkgId
-  versions <- getPackageVersions pkg
+  versions <- getPackageVersions pkg excludeDeprecatedVersions
   pkgRs <- findRegistryPackages
   orgRs <- findRegistryOrganizations
   return $ toDetailDTO pkg pkgRs orgRs versions (buildPackageUrl serverConfig.registry.clientUrl pkg pkgRs)
@@ -116,11 +116,14 @@ getTheNewestPackageByOrganizationIdAndKmId organizationId kmId = do
       let sorted = sortPackagesByVersion packages
       return . Just . head $ sorted
 
-getNewerPackages :: String -> AppContextM [Package]
-getNewerPackages currentPkgId = do
+getNewerPackages :: String -> Bool -> AppContextM [Package]
+getNewerPackages currentPkgId excludeDeprecatedVersions = do
   pkgs <- findPackagesByOrganizationIdAndKmId (getOrgIdFromCoordinate currentPkgId) (getKmIdFromCoordinate currentPkgId)
-  let newerPkgs = filter (\pkg -> compareVersion pkg.version (getVersionFromCoordinate currentPkgId) == GT) pkgs
-  return . sortPackagesByVersion $ newerPkgs
+  return . sortPackagesByVersion . filter (filterPkg excludeDeprecatedVersions) $ pkgs
+  where
+    filterPkg :: Bool -> Package -> Bool
+    filterPkg True pkg = compareVersion pkg.version (getVersionFromCoordinate currentPkgId) == GT && pkg.phase == ReleasedPackagePhase
+    filterPkg False pkg = compareVersion pkg.version (getVersionFromCoordinate currentPkgId) == GT
 
 createPackage :: PackageWithEvents -> AppContextM PackageSimpleDTO
 createPackage pkg =
@@ -159,7 +162,11 @@ deletePackage pkgId =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getPackageVersions :: Package -> AppContextM [String]
-getPackageVersions pkg = do
+getPackageVersions :: Package -> Bool -> AppContextM [String]
+getPackageVersions pkg excludeDeprecatedVersions = do
   allPkgs <- findPackagesByOrganizationIdAndKmId pkg.organizationId pkg.kmId
-  return . fmap (.version) $ allPkgs
+  return . fmap (.version) . filter (filterPkg excludeDeprecatedVersions) $ allPkgs
+  where
+    filterPkg :: Bool -> Package -> Bool
+    filterPkg True pkg = pkg.phase == ReleasedPackagePhase
+    filterPkg False _ = True

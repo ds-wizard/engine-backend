@@ -68,7 +68,7 @@ getBranchState branch eventSize mForkOfPackageId = do
     isOutdated continue =
       case mForkOfPackageId of
         Just forkOfPackageId -> do
-          newerPackages <- getNewerPackages forkOfPackageId
+          newerPackages <- getNewerPackages forkOfPackageId False
           if not . null $ newerPackages
             then return BSOutdated
             else continue

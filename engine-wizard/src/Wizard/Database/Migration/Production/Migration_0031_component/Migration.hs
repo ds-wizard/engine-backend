@@ -5,6 +5,7 @@ module Wizard.Database.Migration.Production.Migration_0031_component.Migration (
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
 import Data.Pool (Pool, withResource)
+import Data.String (fromString)
 import Database.PostgreSQL.Migration.Entity
 import Database.PostgreSQL.Simple
 
@@ -18,6 +19,8 @@ migrate dbPool = do
   addPhaseToPackage dbPool
   extendBranch dbPool
   changeReadmeInDefaultLocale dbPool
+  createGetNewestPackageFn dbPool
+  createGetNewestPackage2Fn dbPool
 
 createComponentTable dbPool = do
   let sql =
@@ -87,5 +90,57 @@ changeReadmeInDefaultLocale dbPool = do
         \           ) \
         \WHERE id = 'wizard:default:1.0.0';"
   let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createGetNewestPackageFn dbPool = do
+  let sql =
+        "CREATE or REPLACE FUNCTION get_newest_package(req_organization_id varchar, req_km_id varchar, req_app_uuid uuid, req_phase varchar[]) \
+        \    RETURNS varchar \
+        \    LANGUAGE plpgsql \
+        \AS \
+        \$$ \
+        \DECLARE \
+        \    p_id varchar; \
+        \BEGIN \
+        \    SELECT CONCAT(organization_id, ':', km_id, ':', \
+        \                  (max(string_to_array(version, '.')::int[]))[1] || \
+        \                  '.' || \
+        \                  (max(string_to_array(version, '.')::int[]))[2] || \
+        \                  '.' || \
+        \                  (max(string_to_array(version, '.')::int[]))[3]) \
+        \    INTO p_id \
+        \    FROM package \
+        \    WHERE organization_id = req_organization_id \
+        \      AND km_id = req_km_id \
+        \      AND app_uuid = req_app_uuid \
+        \      AND phase = any(req_phase) \
+        \    GROUP BY organization_id, km_id; \
+        \    RETURN p_id; \
+        \END; \
+        \$$;"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createGetNewestPackage2Fn dbPool = do
+  let sql =
+        "CREATE or REPLACE FUNCTION get_newest_package_2(req_p_id varchar, req_app_uuid uuid, req_phase varchar[]) \
+        \    RETURNS varchar \
+        \    LANGUAGE plpgsql \
+        \AS \
+        \$$ \
+        \DECLARE \
+        \    p_id varchar; \
+        \BEGIN \
+        \    SELECT CASE \
+        \        WHEN req_p_id IS NULL THEN NULL \
+        \        ELSE get_newest_package(get_organization_id(req_p_id), get_km_id(req_p_id), req_app_uuid, req_phase) \
+        \        END as newest_package_id \
+        \    INTO p_id; \
+        \    RETURN p_id; \
+        \END; \
+        \$$;"
+  let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing

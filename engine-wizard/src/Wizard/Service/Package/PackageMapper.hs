@@ -88,14 +88,13 @@ toDetailDTO pkg pkgRs orgRs versionLs registryLink =
     , createdAt = pkg.createdAt
     }
 
-toSuggestion :: (Package, [String]) -> PackageSuggestion
-toSuggestion (pkg, localVersions) =
+toSuggestion :: Package -> PackageSuggestion
+toSuggestion pkg =
   PackageSuggestion
     { pId = pkg.pId
     , name = pkg.name
     , version = pkg.version
     , description = pkg.description
-    , versions = L.sortBy compareVersion localVersions
     }
 
 toChangeDTO :: Package -> PackageChangeDTO

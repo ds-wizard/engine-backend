@@ -192,7 +192,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
             \qtn.updated_at, \
             \CASE \
             \  WHEN qtn_mig.new_questionnaire_uuid IS NOT NULL THEN 'Migrating' \
-            \  WHEN qtn.package_id != get_newest_package(pkg.organization_id, pkg.km_id, '%s') THEN 'Outdated' \
+            \  WHEN qtn.package_id != get_newest_package(pkg.organization_id, pkg.km_id, '%s', ARRAY['ReleasedPackagePhase']) THEN 'Outdated' \
             \  WHEN qtn_mig.new_questionnaire_uuid IS NULL THEN 'Default' \
             \  END, \
             \pkg.id, \

@@ -132,7 +132,7 @@ createGetBranchStateFn = do
         \               WHEN json_array_length(branch_data.events) > 0 THEN 'BSEdited' \
         \               WHEN knowledge_model_migration.migration_state ->> 'stateType' IS NOT NULL AND \
         \                    knowledge_model_migration.migration_state ->> 'stateType' = 'CompletedState' THEN 'BSMigrated' \
-        \               WHEN fork_of_package_id != get_newest_package_2(fork_of_package_id, app_uuid) THEN 'BSOutdated' \
+        \               WHEN fork_of_package_id != get_newest_package_2(fork_of_package_id, app_uuid, ARRAY['ReleasedPackagePhase', 'DeprecatedPackagePhase']) THEN 'BSOutdated' \
         \               WHEN True THEN 'BSDefault' END \
         \    INTO state; \
         \    RETURN state; \

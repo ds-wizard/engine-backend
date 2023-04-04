@@ -1,6 +1,5 @@
 module Wizard.Service.Questionnaire.QuestionnaireMapper where
 
-import qualified Data.List as L
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
@@ -13,7 +12,6 @@ import Shared.Model.Package.PackageWithEvents
 import Shared.Service.DocumentTemplate.DocumentTemplateMapper
 import qualified Shared.Service.DocumentTemplate.DocumentTemplateMapper as STM
 import qualified Shared.Service.Package.PackageMapper as SPM
-import Shared.Util.Coordinate
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
@@ -105,7 +103,6 @@ toDetailWithPackageWithEventsDTO
   :: Questionnaire
   -> QuestionnaireContent
   -> Package
-  -> [String]
   -> KnowledgeModel
   -> QuestionnaireState
   -> Maybe DocumentTemplate
@@ -116,7 +113,7 @@ toDetailWithPackageWithEventsDTO
   -> [QuestionnaireVersionDTO]
   -> Maybe U.UUID
   -> QuestionnaireDetailDTO
-toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state mTemplate mFormat replies threads records versions mMigrationUuid =
+toDetailWithPackageWithEventsDTO qtn qtnCtn pkg knowledgeModel state mTemplate mFormat replies threads records versions mMigrationUuid =
   QuestionnaireDetailDTO
     { uuid = qtn.uuid
     , name = qtn.name
@@ -126,7 +123,6 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , sharing = qtn.sharing
     , state = state
     , package = PM.toSimpleDTO' [] [] pkg
-    , packageVersions = L.sortBy compareVersion pkgVersions
     , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
     , projectTags = qtn.projectTags
     , documentTemplateId = qtn.documentTemplateId

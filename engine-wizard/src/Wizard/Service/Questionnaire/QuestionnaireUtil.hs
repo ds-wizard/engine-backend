@@ -83,7 +83,7 @@ getQuestionnaireState qtnUuid pkgId = do
   case mMs of
     Just _ -> return QSMigrating
     Nothing -> do
-      pkgs <- getNewerPackages pkgId
+      pkgs <- getNewerPackages pkgId True
       if null pkgs
         then return QSDefault
         else return QSOutdated

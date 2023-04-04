@@ -84,7 +84,7 @@ instance ToSchema (Page PackageSuggestion) where
   declareNamedSchema =
     toSwaggerWithDtoName
       "Page PackageSuggestion"
-      (Page "packages" pageMetadata [P_Mapper.toSuggestion (SP_Mapper.toPackage globalPackage, [])])
+      (Page "packages" pageMetadata [P_Mapper.toSuggestion (SP_Mapper.toPackage globalPackage)])
 
 instance ToSchema (Page BranchList) where
   declareNamedSchema =

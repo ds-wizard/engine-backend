@@ -32,7 +32,6 @@ instance ToSchema QuestionnaireDetailDTO where
           questionnaire1
           questionnaire1Ctn
           (PM.toPackage germanyPackage)
-          ["1.0.0"]
           km1WithQ4
           QSDefault
           Nothing

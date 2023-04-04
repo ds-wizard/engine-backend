@@ -27,7 +27,6 @@ data QuestionnaireDetailDTO = QuestionnaireDetailDTO
   , sharing :: QuestionnaireSharing
   , state :: QuestionnaireState
   , package :: PackageSimpleDTO
-  , packageVersions :: [String]
   , selectedQuestionTagUuids :: [U.UUID]
   , projectTags :: [String]
   , documentTemplateId :: Maybe String
@@ -60,7 +59,6 @@ instance Eq QuestionnaireDetailDTO where
       && a.sharing == b.sharing
       && a.state == b.state
       && a.package == b.package
-      && a.packageVersions == b.packageVersions
       && a.selectedQuestionTagUuids == b.selectedQuestionTagUuids
       && a.projectTags == b.projectTags
       && a.documentTemplateId == b.documentTemplateId

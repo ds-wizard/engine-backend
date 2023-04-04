@@ -230,7 +230,6 @@ getQuestionnaireDetailById qtnUuid = do
   qtn <- findQuestionnaireByUuid qtnUuid
   checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
   pkg <- getPackageById qtn.packageId
-  pkgVersions <- getPackageVersions pkg
   knowledgeModel <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
   state <- getQuestionnaireState qtnUuid qtn.packageId
   mTemplate <-
@@ -253,7 +252,6 @@ getQuestionnaireDetailById qtnUuid = do
       qtn
       qtnCtn
       pkg
-      pkgVersions
       knowledgeModel
       state
       mTemplate
@@ -297,7 +295,6 @@ modifyQuestionnaire qtnUuid reqDto =
     let updatedQtn = fromChangeDTO qtn reqDto qVisibility qSharing currentUser now
     let pkgId = qtnDto.package.pId
     pkg <- getPackageById qtn.packageId
-    pkgVersions <- getPackageVersions pkg
     updateQuestionnaireByUuid updatedQtn
     knowledgeModel <- compileKnowledgeModel [] (Just pkgId) updatedQtn.selectedQuestionTagUuids
     state <- getQuestionnaireState qtnUuid pkgId
@@ -331,7 +328,6 @@ modifyQuestionnaire qtnUuid reqDto =
         updatedQtn
         qtnCtn
         pkg
-        pkgVersions
         knowledgeModel
         state
         mTemplate

@@ -90,34 +90,27 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase pageable sort =
               "SELECT id, \
               \        name, \
               \        version, \
-              \        description, \
-              \        (SELECT array_agg(version) AS versions \
-              \         FROM package inner_package \
-              \         WHERE outer_package.organization_id = inner_package.organization_id \
-              \           AND outer_package.km_id = inner_package.km_id \
-              \           AND inner_package.app_uuid = ? \
-              \         GROUP BY organization_id, km_id) AS versions \
+              \        description \
               \FROM package outer_package \
-              \WHERE app_uuid = ? %s %s %s \
-              \  AND id IN ( \
+              \WHERE id IN ( \
               \    SELECT CONCAT(organization_id, ':', km_id, ':', \
               \                  (max(string_to_array(version, '.')::int[]))[1] || '.' || \
               \                  (max(string_to_array(version, '.')::int[]))[2] || '.' || \
               \                  (max(string_to_array(version, '.')::int[]))[3]) \
               \    FROM package \
               \    WHERE app_uuid = ? \
-              \      AND (name ~* ? OR id ~* ?) \
+              \      AND (name ~* ? OR id ~* ?) %s %s %s \
               \    GROUP BY organization_id, km_id) \
               \%s \
               \OFFSET %s \
               \LIMIT %s"
               [selectCondition, excludeCondition, phaseCondition, mapSort sort, show skip, show sizeI]
     let params =
-          [U.toString appUuid, U.toString appUuid]
+          [U.toString appUuid]
+            ++ [regex mQuery]
+            ++ [regex mQuery]
             ++ fromMaybe [] mSelectIdsLike
             ++ fromMaybe [] mExcludeIdsLike
-            ++ [U.toString appUuid, regex mQuery]
-            ++ [regex mQuery]
     logQuery sql params
     let action conn = query conn sql params
     entities <- runDB action
