@@ -5,6 +5,7 @@ import qualified Data.UUID as U
 
 import Shared.Constant.KnowledgeModel
 import Shared.Model.Event.Event
+import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Util.Coordinate
 
@@ -16,6 +17,7 @@ fromOwl name organizationId kmId version mPreviousPackageId events appUuid now =
     , organizationId = organizationId
     , kmId = kmId
     , version = version
+    , phase = ReleasedPackagePhase
     , metamodelVersion = kmMetamodelVersion
     , description = ""
     , readme = ""

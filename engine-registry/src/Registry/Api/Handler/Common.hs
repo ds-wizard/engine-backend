@@ -31,14 +31,12 @@ runIn :: Maybe Organization -> TransactionState -> AppContext.AppContextM a -> B
 runIn mOrganization transactionState function = do
   traceUuid <- liftIO generateUuid
   serverConf <- asks serverConfig
-  localization <- asks localization
   buildInfoConfig <- asks buildInfoConfig
   dbPool <- asks dbPool
   s3Client <- asks s3Client
   let appContext =
         AppContext.AppContext
           { serverConfig = serverConf
-          , localization = localization
           , buildInfoConfig = buildInfoConfig
           , dbPool = dbPool
           , dbConnection = Nothing

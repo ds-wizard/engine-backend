@@ -4,6 +4,7 @@ import Data.Aeson
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromRow
 
+import Shared.Database.Mapping.Package.PackagePhase ()
 import Shared.Model.Package.Package
 
 instance FromRow Package where
@@ -23,4 +24,5 @@ instance FromRow Package where
     _ <- field :: RowParser Value
     createdAt <- field
     appUuid <- field
+    phase <- field
     return $ Package {..}

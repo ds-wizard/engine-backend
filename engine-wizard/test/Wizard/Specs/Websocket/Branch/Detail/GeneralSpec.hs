@@ -94,7 +94,7 @@ test404 appContext = do
       -- AND: Prepare expectation
       let expError = NotExistsError (_ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT (U.toString $ branch.uuid))
       -- WHEN: Update permission
-      runInContext (deleteBranch (U.toString $ branch.uuid)) appContext
+      runInContext (deleteBranch branch.uuid) appContext
       -- THEN: Read response
       read_Error c1 expError
       read_Error c2 expError

@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Migration.Questionnaire.List_POST where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -17,7 +18,7 @@ type List_POST =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] MigratorStateCreateDTO
     :> "questionnaires"
-    :> Capture "qtnUuid" String
+    :> Capture "qtnUuid" U.UUID
     :> "migrations"
     :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] MigratorStateDTO)
 
@@ -25,7 +26,7 @@ list_POST
   :: Maybe String
   -> Maybe String
   -> MigratorStateCreateDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] MigratorStateDTO)
 list_POST mTokenHeader mServerUrl reqDto qtnUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->

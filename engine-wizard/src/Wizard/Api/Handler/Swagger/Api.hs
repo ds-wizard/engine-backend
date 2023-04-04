@@ -1,6 +1,5 @@
 module Wizard.Api.Handler.Swagger.Api where
 
-import Control.Lens
 import Data.Swagger
 import Servant
 import Servant.Swagger
@@ -9,11 +8,13 @@ import Servant.Swagger.UI
 import Registry.Api.Resource.Organization.OrganizationSM ()
 import Shared.Api.Resource.Common.FileSM ()
 import Shared.Api.Resource.Common.PageMetadataSM ()
+import Shared.Api.Resource.Component.ComponentSM ()
 import Shared.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 import Shared.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import Shared.Api.Resource.Info.InfoSM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM ()
 import Shared.Api.Resource.Organization.OrganizationSimpleSM ()
+import Shared.Api.Resource.Package.PackagePhaseSM ()
 import Wizard.Api.Api
 import Wizard.Api.Resource.ActionKey.ActionKeySM ()
 import Wizard.Api.Resource.App.AppChangeSM ()
@@ -63,9 +64,13 @@ import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateSM ()
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeSM ()
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateSM ()
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateSM ()
+import Wizard.Api.Resource.Package.PackageChangeSM ()
 import Wizard.Api.Resource.Package.PackageDetailSM ()
 import Wizard.Api.Resource.Package.PackageSuggestionSM ()
+import Wizard.Api.Resource.Package.Publish.PackagePublishBranchSM ()
+import Wizard.Api.Resource.Package.Publish.PackagePublishMigrationSM ()
 import Wizard.Api.Resource.PackageBundle.PackageBundleFileSM ()
+import Wizard.Api.Resource.PersistentCommand.PersistentCommandChangeSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Wizard.Api.Resource.Plan.AppPlanChangeSM ()
@@ -106,14 +111,28 @@ import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Api.Resource.User.UserStateSM ()
 import Wizard.Api.Resource.UserToken.UserTokenCreateSM ()
 import Wizard.Api.Resource.UserToken.UserTokenSM ()
-import Wizard.Api.Resource.Version.VersionSM ()
 import Wizard.Api.Resource.Websocket.QuestionnaireActionSM ()
 import Wizard.Api.Resource.Websocket.WebsocketSM ()
 
 type SwaggerAPI = SwaggerSchemaUI "swagger-ui" "swagger.json"
 
 swagger :: Swagger
-swagger = toSwagger applicationApi & info . title .~ "Wizard API" & info . description ?~ "API specification for Wizard"
+swagger =
+  let s = toSwagger applicationApi
+   in s
+        { _swaggerInfo =
+            s._swaggerInfo
+              { _infoTitle = "Wizard API"
+              , _infoDescription = Just "API specification for Wizard"
+              , _infoVersion = "3.22.0"
+              , _infoLicense =
+                  Just $
+                    License
+                      { _licenseName = "Apache-2.0"
+                      , _licenseUrl = Just . URL $ "https://raw.githubusercontent.com/ds-wizard/engine-backend/main/LICENSE.md"
+                      }
+              }
+        }
 
 swaggerServer :: Server SwaggerAPI
 swaggerServer = swaggerSchemaUIServer swagger

@@ -4,6 +4,7 @@ import Control.Monad.Reader (asks, liftIO)
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe)
 import Data.Time
+import qualified Data.UUID as U
 
 import Shared.Util.List (groupBy)
 import Wizard.Api.Resource.User.UserPasswordDTO
@@ -22,7 +23,7 @@ import Wizard.Service.User.UserProfileMapper
 import Wizard.Service.User.UserService
 import Wizard.Service.User.UserValidation
 
-getUserProfile :: String -> AppContextM UserProfileDTO
+getUserProfile :: U.UUID -> AppContextM UserProfileDTO
 getUserProfile userUuid = do
   appConfig <- getAppConfig
   userDecrypted <- getDecryptedUser
@@ -32,7 +33,7 @@ getUserProfile userUuid = do
     getDecryptedUser :: AppContextM User
     getDecryptedUser = do
       serverConfig <- asks serverConfig
-      user <- findUserById userUuid
+      user <- findUserByUuid userUuid
       return $ process serverConfig.general.secret user
     computeUserPropsForProfile :: AppConfig -> User -> [UserSubmissionPropsDTO]
     computeUserPropsForProfile appConfig user =
@@ -50,20 +51,20 @@ getUserProfile userUuid = do
           mergeFn pFromUser k v = fromMaybe "" (M.lookup k pFromUser.values)
        in fmap merge groupedProps
 
-modifyUserProfile :: String -> UserProfileChangeDTO -> AppContextM UserProfileDTO
+modifyUserProfile :: U.UUID -> UserProfileChangeDTO -> AppContextM UserProfileDTO
 modifyUserProfile userUuid reqDto = do
   serverConfig <- asks serverConfig
-  user <- findUserById userUuid
+  user <- findUserByUuid userUuid
   validateUserChangedEmailUniqueness reqDto.email user.email
   updatedUser <- updateUserTimestamp $ fromUserProfileChangeDTO reqDto user
   let encryptedUpdatedUser = process serverConfig.general.secret updatedUser
-  updateUserById encryptedUpdatedUser
+  updateUserByUuid encryptedUpdatedUser
   getUserProfile userUuid
 
-changeUserProfilePassword :: String -> UserPasswordDTO -> AppContextM ()
+changeUserProfilePassword :: U.UUID -> UserPasswordDTO -> AppContextM ()
 changeUserProfilePassword userUuid reqDto = do
-  user <- findUserById userUuid
+  user <- findUserByUuid userUuid
   passwordHash <- generatePasswordHash reqDto.password
   now <- liftIO getCurrentTime
-  updateUserPasswordById userUuid passwordHash now
+  updateUserPasswordByUuid userUuid passwordHash now
   return ()

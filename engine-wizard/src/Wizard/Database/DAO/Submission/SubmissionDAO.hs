@@ -34,16 +34,11 @@ findSubmissionsByDocumentUuid documentUuid = do
   appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("document_uuid", U.toString documentUuid)]
 
-findSubmissionById :: String -> AppContextM Submission
-findSubmissionById uuid = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
-
 insertSubmission :: Submission -> AppContextM Int64
 insertSubmission = createInsertFn entityName
 
-updateSubmissionById :: Submission -> AppContextM Submission
-updateSubmissionById sub = do
+updateSubmissionByUuid :: Submission -> AppContextM Submission
+updateSubmissionByUuid sub = do
   now <- liftIO getCurrentTime
   appUuid <- asks currentAppUuid
   let updatedSub = sub {updatedAt = now}
@@ -63,8 +58,3 @@ deleteSubmissionsFiltered :: [(String, String)] -> AppContextM Int64
 deleteSubmissionsFiltered params = do
   appUuid <- asks currentAppUuid
   createDeleteEntitiesByFn entityName (appQueryUuid appUuid : params)
-
-deleteSubmissionById :: String -> AppContextM Int64
-deleteSubmissionById uuid = do
-  appUuid <- asks currentAppUuid
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]

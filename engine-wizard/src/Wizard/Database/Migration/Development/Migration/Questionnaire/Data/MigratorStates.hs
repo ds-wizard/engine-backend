@@ -42,7 +42,6 @@ nlQtnMigrationStateDto =
           questionnaire4
           questionnaire4Ctn
           (PM.toPackage netherlandsPackage)
-          ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
           (Just wizardDocumentTemplate)
@@ -57,7 +56,6 @@ nlQtnMigrationStateDto =
           questionnaire4Upgraded
           questionnaire4Ctn
           (PM.toPackage netherlandsPackageV2)
-          ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
           (Just wizardDocumentTemplate)
@@ -79,7 +77,6 @@ nlQtnMigrationStateVisibleViewDto =
           questionnaire4VisibleView
           questionnaire4Ctn
           (PM.toPackage netherlandsPackage)
-          ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
           (Just wizardDocumentTemplate)
@@ -94,7 +91,6 @@ nlQtnMigrationStateVisibleViewDto =
           questionnaire4VisibleViewUpgraded
           questionnaire4Ctn
           (PM.toPackage netherlandsPackageV2)
-          ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
           (Just wizardDocumentTemplate)
@@ -116,7 +112,6 @@ nlQtnMigrationStateVisibleEditDto =
           questionnaire4VisibleEdit
           questionnaire4Ctn
           (PM.toPackage netherlandsPackage)
-          ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
           (Just wizardDocumentTemplate)
@@ -131,7 +126,6 @@ nlQtnMigrationStateVisibleEditDto =
           questionnaire4VisibleEditUpgraded
           questionnaire4Ctn
           (PM.toPackage netherlandsPackageV2)
-          ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
           (Just wizardDocumentTemplate)

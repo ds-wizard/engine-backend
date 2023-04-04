@@ -1,16 +1,16 @@
 module Wizard.Service.OpenId.OpenIdService where
 
 import qualified Control.Exception.Base as E
-import Control.Lens ((^?))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
-import Data.Aeson (FromJSON, Value, decode)
-import Data.Aeson.Lens (key, _String)
+import Data.Aeson (FromJSON, Value (..), decode)
+import qualified Data.Aeson.KeyMap as KM
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Char (toLower)
 import qualified Data.List as L
 import Data.Maybe (fromJust, fromMaybe)
+import Data.String (fromString)
 import qualified Data.Text as T
 import qualified Web.OIDC.Client as O
 import qualified Web.OIDC.Client.IdTokenFlow as O_ID
@@ -73,10 +73,10 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mSessionState =
                   throwError . UserError . _ERROR_VALIDATION__OPENID_WRONG_RESPONSE . show $ error
             Nothing -> throwError . UserError $ _ERROR_VALIDATION__OPENID_CODE_ABSENCE
     let claims = O.otherClaims token
-    let mEmail = fmap toLower . T.unpack <$> (claims ^? key "email" . _String)
-    let mFirstName = T.unpack <$> claims ^? key "given_name" . _String
-    let mLastName = T.unpack <$> claims ^? key "family_name" . _String
-    let mPicture = T.unpack <$> claims ^? key "picture" . _String
+    let mEmail = fmap (fmap toLower) . getClaim "email" $ claims
+    let mFirstName = getClaim "given_name" claims
+    let mLastName = getClaim "family_name" claims
+    let mPicture = getClaim "picture" claims
     case (mEmail, mFirstName, mLastName) of
       (Just email, Just firstName, Just lastName) -> do
         user <- createUserFromExternalService authId firstName lastName email mPicture
@@ -105,3 +105,10 @@ createOpenIDClient authId mClientUrl = do
       let openIDClient = O.setCredentials cId cSecret redirectUrl (O.newOIDC prov)
       return (service, openIDClient)
     Nothing -> throwError . UserError $ _ERROR_SERVICE_AUTH__SERVICE_NOT_DEFINED authId
+
+getClaim :: String -> Value -> Maybe String
+getClaim key (Object obj) =
+  case KM.lookup (fromString key) obj of
+    Just (String string) -> Just . T.unpack $ string
+    _ -> Nothing
+getClaim _ _ = Nothing

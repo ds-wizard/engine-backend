@@ -31,10 +31,10 @@ import Wizard.Service.Report.ReportGenerator
 
 createDocumentContext :: Document -> AppContextM DocumentContext
 createDocumentContext doc = do
-  qtn <- findQuestionnaireById . U.toString $ doc.questionnaireUuid
+  qtn <- findQuestionnaireByUuid doc.questionnaireUuid
   pkg <- getPackageById qtn.packageId
   km <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
-  mCreatedBy <- forM (fmap U.toString qtn.creatorUuid) findUserById
+  mCreatedBy <- forM qtn.creatorUuid findUserByUuid
   appConfig <- getAppConfig
   serverConfig <- asks serverConfig
   clientUrl <- getAppClientUrl

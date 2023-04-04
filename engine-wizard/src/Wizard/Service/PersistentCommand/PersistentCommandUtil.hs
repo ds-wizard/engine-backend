@@ -1,7 +1,5 @@
 module Wizard.Service.PersistentCommand.PersistentCommandUtil where
 
-import qualified Data.UUID as U
-
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.User.UserDAO
@@ -14,8 +12,8 @@ enhancePersistentCommand :: PersistentCommand -> AppContextM PersistentCommandDT
 enhancePersistentCommand command = do
   mUser <-
     case command.createdBy of
-      Just userUuid -> findUserByIdSystem' (U.toString userUuid)
+      Just userUuid -> findUserByUuidSystem' userUuid
       Nothing -> return Nothing
-  app <- findAppById (U.toString command.appUuid)
+  app <- findAppByUuid command.appUuid
   appDto <- enhanceApp app
   return $ toDTO command mUser appDto

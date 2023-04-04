@@ -126,7 +126,6 @@ create_test_200 title appContext qtn qtnEdited qtnCtn permissions showComments a
               qtnEdited
               qtnCtn
               (SPM.toPackage germanyPackage)
-              ["1.0.0"]
               km1WithQ4
               QSDefault
               (Just wizardDocumentTemplate)

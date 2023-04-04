@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Migration.Questionnaire.List_Current_PUT where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -17,7 +18,7 @@ type List_Current_PUT =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] MigratorStateChangeDTO
     :> "questionnaires"
-    :> Capture "qtnUuid" String
+    :> Capture "qtnUuid" U.UUID
     :> "migrations"
     :> "current"
     :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] MigratorStateDTO)
@@ -26,7 +27,7 @@ list_current_PUT
   :: Maybe String
   -> Maybe String
   -> MigratorStateChangeDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] MigratorStateDTO)
 list_current_PUT mTokenHeader mServerUrl reqDto qtnUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->

@@ -7,6 +7,8 @@ import Data.Time
 
 import Shared.Api.Resource.Event.EventJM ()
 import Shared.Api.Resource.Package.PackageDTO
+import Shared.Api.Resource.Package.PackagePhaseJM ()
+import Shared.Model.Package.Package
 import Shared.Util.Aeson
 
 instance ToJSON PackageDTO where
@@ -19,6 +21,7 @@ instance FromJSON PackageDTO where
     organizationId <- o .: "organizationId"
     kmId <- o .: "kmId"
     version <- o .: "version"
+    phase <- o .:? "phase" .!= ReleasedPackagePhase
     metamodelVersion <- o .: "metamodelVersion"
     description <- o .: "description"
     readme <- o .:? "readme" .!= ""

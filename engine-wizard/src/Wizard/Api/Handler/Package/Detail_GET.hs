@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Package.Detail_GET where
 
+import Data.Maybe (fromMaybe)
 import Servant
 
 import Shared.Api.Handler.Common
@@ -15,10 +16,11 @@ type Detail_GET =
     :> Header "Host" String
     :> "packages"
     :> Capture "pkgId" String
+    :> QueryParam "excludeDeprecatedVersions" Bool
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] PackageDetailDTO)
 
 detail_GET
-  :: Maybe String -> Maybe String -> String -> BaseContextM (Headers '[Header "x-trace-uuid" String] PackageDetailDTO)
-detail_GET mTokenHeader mServerUrl pkgId =
+  :: Maybe String -> Maybe String -> String -> Maybe Bool -> BaseContextM (Headers '[Header "x-trace-uuid" String] PackageDetailDTO)
+detail_GET mTokenHeader mServerUrl pkgId mExcludeDeprecatedVersions =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
-    runInMaybeAuthService NoTransaction $ addTraceUuidHeader =<< getPackageDetailById pkgId
+    runInMaybeAuthService NoTransaction $ addTraceUuidHeader =<< getPackageDetailById pkgId (fromMaybe False mExcludeDeprecatedVersions)

@@ -11,6 +11,7 @@ instance FromRow BranchList where
     uuid <- field
     name <- field
     kmId <- field
+    version <- field
     state <- field
     previousPackageId <- field
     forkOfPackageId <- field

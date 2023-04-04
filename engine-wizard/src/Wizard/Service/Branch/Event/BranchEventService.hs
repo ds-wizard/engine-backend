@@ -14,12 +14,12 @@ import Wizard.Util.Logger
 squashEvents :: AppContextM ()
 squashEvents = do
   branchUuids <- findBranchesForSquashing
-  traverse_ (squashEventsForBranch . U.toString) branchUuids
+  traverse_ squashEventsForBranch branchUuids
 
-squashEventsForBranch :: String -> AppContextM ()
+squashEventsForBranch :: U.UUID -> AppContextM ()
 squashEventsForBranch branchUuid =
   runInTransaction $ do
-    logInfoU _CMP_SERVICE (f' "Squashing events for branch (branchUuid: '%s')" [branchUuid])
+    logInfoU _CMP_SERVICE (f' "Squashing events for branch (branchUuid: '%s')" [U.toString branchUuid])
     logOutOnlineUsersWhenBranchDramaticallyChanged branchUuid
     branchData <- findBranchDataByIdForSquashingLocked branchUuid
     let squashedEvents = squash branchData.events
@@ -28,5 +28,5 @@ squashEventsForBranch branchUuid =
       _CMP_SERVICE
       ( f'
           "Squashing for branch '%s' finished successfully (before: %s, after %s)"
-          [branchUuid, show . length $ branchData.events, show . length $ squashedEvents]
+          [U.toString branchUuid, show . length $ branchData.events, show . length $ squashedEvents]
       )

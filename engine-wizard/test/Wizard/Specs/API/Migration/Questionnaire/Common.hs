@@ -1,7 +1,6 @@
 module Wizard.Specs.API.Migration.Questionnaire.Common where
 
 import Data.Either (isRight)
-import qualified Data.UUID as U
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
@@ -17,7 +16,7 @@ import Wizard.Specs.Common
 -- --------------------------------
 assertExistenceOfMigrationStateInDB appContext entity = do
   eEntitiesFromDb <-
-    runInContextIO (findMigratorStatesByOldQuestionnaireId (U.toString $ entity.oldQuestionnaireUuid)) appContext
+    runInContextIO (findMigratorStatesByOldQuestionnaireUuid entity.oldQuestionnaireUuid) appContext
   liftIO $ isRight eEntitiesFromDb `shouldBe` True
   let (Right entitiesFromDb) = eEntitiesFromDb
   liftIO $ length entitiesFromDb `shouldBe` 1

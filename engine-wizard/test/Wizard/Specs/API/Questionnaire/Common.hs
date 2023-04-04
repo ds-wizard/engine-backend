@@ -22,20 +22,19 @@ import Wizard.Specs.Common
 -- ASSERTS
 -- --------------------------------
 assertExistenceOfQuestionnaireInDB appContext qtn = do
-  eQtn <- runInContextIO (findQuestionnaireById (U.toString qtn.uuid)) appContext
+  eQtn <- runInContextIO (findQuestionnaireByUuid qtn.uuid) appContext
   liftIO $ isRight eQtn `shouldBe` True
   let (Right qtnFromDb) = eQtn
   compareQuestionnaireDtos qtnFromDb qtn
 
 assertExistenceOfQuestionnaireContentInDB appContext qtnUuid content = do
-  eQtn <- runInContextIO (findQuestionnaireById (U.toString qtnUuid)) appContext
+  eQtn <- runInContextIO (findQuestionnaireByUuid qtnUuid) appContext
   liftIO $ isRight eQtn `shouldBe` True
   let (Right qtnFromDb) = eQtn
   compareQuestionnaireContentDtos qtnFromDb content
 
 assertAbsenceOfQuestionnaireInDB appContext qtn = do
-  let qtnUuid = U.toString $ qtn.uuid
-  eQtn <- runInContextIO (findQuestionnaireById qtnUuid) appContext
+  eQtn <- runInContextIO (findQuestionnaireByUuid qtn.uuid) appContext
   liftIO $ isLeft eQtn `shouldBe` True
   let (Left error) = eQtn
   liftIO $
@@ -43,7 +42,7 @@ assertAbsenceOfQuestionnaireInDB appContext qtn = do
       `shouldBe` NotExistsError
         ( _ERROR_DATABASE__ENTITY_NOT_FOUND
             "questionnaire"
-            [("app_uuid", U.toString defaultApp.uuid), ("uuid", qtnUuid)]
+            [("app_uuid", U.toString defaultApp.uuid), ("uuid", U.toString qtn.uuid)]
         )
 
 -- --------------------------------

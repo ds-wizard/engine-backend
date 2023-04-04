@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.User.Detail_PUT where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -17,14 +18,14 @@ type Detail_PUT =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] UserChangeDTO
     :> "users"
-    :> Capture "uUuid" String
+    :> Capture "uUuid" U.UUID
     :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] UserDTO)
 
 detail_PUT
   :: Maybe String
   -> Maybe String
   -> UserChangeDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserDTO)
 detail_PUT mTokenHeader mServerUrl reqDto uUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->

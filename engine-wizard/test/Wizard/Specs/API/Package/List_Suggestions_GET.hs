@@ -59,9 +59,9 @@ test_200 appContext = do
     ( Page
         "packages"
         (PageMetadata 20 3 1 0)
-        [ toSuggestion (toPackage globalPackage, ["0.0.1", "1.0.0"])
-        , toSuggestion (toPackage germanyPackage, ["1.0.0"])
-        , toSuggestion (toPackage netherlandsPackageV2, ["1.0.0", "2.0.0"])
+        [ toSuggestion (toPackage globalPackage)
+        , toSuggestion (toPackage germanyPackage)
+        , toSuggestion (toPackage netherlandsPackageV2)
         ]
     )
   create_test_200
@@ -71,20 +71,32 @@ test_200 appContext = do
     ( Page
         "packages"
         (PageMetadata 20 2 1 0)
-        [ toSuggestion (toPackage germanyPackage, ["1.0.0"])
-        , toSuggestion (toPackage netherlandsPackageV2, ["1.0.0", "2.0.0"])
+        [ toSuggestion (toPackage germanyPackage)
+        , toSuggestion (toPackage netherlandsPackageV2)
         ]
     )
   create_test_200
     "HTTP 200 OK (exclude)"
     appContext
     "/packages/suggestions?sort=organizationId,asc&exclude=org.de:core-de:all,org.nl:core-nl:all"
-    (Page "packages" (PageMetadata 20 1 1 0) [toSuggestion (toPackage globalPackage, ["0.0.1", "1.0.0"])])
+    (Page "packages" (PageMetadata 20 1 1 0) [toSuggestion (toPackage globalPackage)])
   create_test_200
     "HTTP 200 OK (query - q)"
     appContext
     "/packages/suggestions?q=Germany Knowledge Model"
-    (Page "packages" (PageMetadata 20 1 1 0) [toSuggestion (toPackage germanyPackage, ["1.0.0"])])
+    (Page "packages" (PageMetadata 20 1 1 0) [toSuggestion (toPackage germanyPackage)])
+  create_test_200
+    "HTTP 200 OK (phase)"
+    appContext
+    "/packages/suggestions?sort=organizationId,asc&phase=ReleasedPackagePhase"
+    ( Page
+        "packages"
+        (PageMetadata 20 3 1 0)
+        [ toSuggestion (toPackage globalPackage)
+        , toSuggestion (toPackage germanyPackage)
+        , toSuggestion (toPackage netherlandsPackageV2)
+        ]
+    )
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext

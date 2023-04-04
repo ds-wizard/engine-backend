@@ -54,12 +54,12 @@ findPersistentCommandsByStates = do
   let action conn = query_ conn (fromString sql)
   runDB action
 
-findPersistentCommandByUuid :: String -> AppContextM PersistentCommand
-findPersistentCommandByUuid uuid = createFindEntityWithFieldsByFn "*" True entityName [("uuid", uuid)]
+findPersistentCommandByUuid :: U.UUID -> AppContextM PersistentCommand
+findPersistentCommandByUuid uuid = createFindEntityWithFieldsByFn "*" True entityName [("uuid", U.toString uuid)]
 
-findPersistentCommandSimpleByUuid :: String -> AppContextM PersistentCommandSimple
+findPersistentCommandSimpleByUuid :: U.UUID -> AppContextM PersistentCommandSimple
 findPersistentCommandSimpleByUuid uuid =
-  createFindEntityWithFieldsByFn "uuid, app_uuid, created_by" False entityName [("uuid", uuid)]
+  createFindEntityWithFieldsByFn "uuid, app_uuid, created_by" False entityName [("uuid", U.toString uuid)]
 
 insertPersistentCommand :: PersistentCommand -> AppContextM Int64
 insertPersistentCommand command = do
@@ -68,8 +68,8 @@ insertPersistentCommand command = do
     then notifyPersistentCommandQueue
     else notifySpecificPersistentCommandQueue command
 
-updatePersistentCommandById :: PersistentCommand -> AppContextM Int64
-updatePersistentCommandById command = do
+updatePersistentCommandByUuid :: PersistentCommand -> AppContextM Int64
+updatePersistentCommandByUuid command = do
   let sql =
         fromString
           "UPDATE persistent_command SET uuid = ?, state = ?, component = ?, function = ?, body = ?, last_error_message = ?, attempts = ?, max_attempts = ?, app_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, internal = ? WHERE uuid = ?"
@@ -81,11 +81,11 @@ updatePersistentCommandById command = do
 deletePersistentCommands :: AppContextM Int64
 deletePersistentCommands = createDeleteEntitiesFn entityName
 
-deletePersistentCommandByUuid :: String -> AppContextM Int64
-deletePersistentCommandByUuid uuid = createDeleteEntityByFn entityName [("uuid", uuid)]
+deletePersistentCommandByUuid :: U.UUID -> AppContextM Int64
+deletePersistentCommandByUuid uuid = createDeleteEntityByFn entityName [("uuid", U.toString uuid)]
 
-deletePersistentCommandByCreatedBy :: String -> AppContextM Int64
-deletePersistentCommandByCreatedBy createdBy = createDeleteEntityByFn entityName [("created_by", createdBy)]
+deletePersistentCommandByCreatedBy :: U.UUID -> AppContextM Int64
+deletePersistentCommandByCreatedBy createdBy = createDeleteEntityByFn entityName [("created_by", U.toString createdBy)]
 
 listenPersistentCommandChannel :: AppContextM ()
 listenPersistentCommandChannel = createChannelListener channelName

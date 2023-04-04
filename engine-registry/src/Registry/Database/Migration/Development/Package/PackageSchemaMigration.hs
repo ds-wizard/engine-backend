@@ -41,7 +41,8 @@ createTables = do
         \     merge_checkpoint_package_id varchar, \
         \     events                      json                     not null, \
         \     created_at                  timestamp with time zone not null, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
+        \     phase                       varchar                  not null default 'ReleasedPackagePhase' \
         \ ); \
         \create unique index package_id_uindex \
         \     on package (id); \

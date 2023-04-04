@@ -8,6 +8,7 @@ import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Foldable
 import Data.String (fromString)
 import qualified Data.UUID as U
+import qualified Data.Vector as Vector
 import Network.HTTP.Types
 import Network.Wai.Test hiding (request)
 import Test.Hspec
@@ -142,18 +143,16 @@ assertResponseWithoutFields
   -> [String]
   -> WaiSession () ()
 assertResponseWithoutFields expStatus expHeaders expDto expType response fields =
-  -- Prepare functions
   do
-    let fieldModifier = foldl (\acc f -> KM.delete (fromString f) acc)
     -- Prepare expectation
     let (Right expBody) = eitherDecode . encode $ expDto :: Either String Object
-    let expEntity = fieldModifier expBody fields
+    let expEntity = fieldObjectModifier expBody fields
     let expResponse = MatchResponse expStatus expHeaders (encode expEntity)
     -- Prepare response
     let (SResponse (Status status _) headers bodyS) = response
     let (Right resBody) = eitherDecode bodyS :: Either String Object
     let resHeaders = filter (`elem` expHeaders) headers
-    let resEntity = fieldModifier resBody fields
+    let resEntity = fieldObjectModifier resBody fields
     let resResponse = MatchResponse status resHeaders (encode resEntity)
     -- Compare response with expectation
     case (status == expStatus, resHeaders == expHeaders) of
@@ -199,6 +198,42 @@ assertListResponse expStatus expHeaders expDto expType response =
       Left error ->
         liftIO . expectationFailure $ f' "Response matched successfully. However, the result DTO couldn't be decoded. Error: %s" [error]
 
+assertListResponseWithoutFields
+  :: (ToJSON expDto, FromJSON expType)
+  => Int
+  -> ResponseHeaders
+  -> expDto
+  -> (expType -> expType)
+  -> SResponse
+  -> [String]
+  -> WaiSession () ()
+assertListResponseWithoutFields expStatus expHeaders expDto expType response fields =
+  do
+    -- Prepare expectation
+    let (Right expBody) = eitherDecode . encode $ expDto :: Either String Array
+    let expEntity = fieldArrayModifier expBody fields
+    -- let expEntity = expBody
+    let expResponse = MatchResponse expStatus expHeaders (encode expEntity)
+    -- Prepare response
+    let (SResponse (Status status _) headers bodyS) = response
+    let (Right resBody) = eitherDecode bodyS :: Either String Array
+    let resHeaders = filter (`elem` expHeaders) headers
+    let resEntity = fieldArrayModifier resBody fields
+    -- let resEntity = resBody
+    let resResponse = MatchResponse status resHeaders (encode resEntity)
+    -- Compare response with expectation
+    case (status == expStatus, resHeaders == expHeaders) of
+      (True, True) -> liftIO $ Array resEntity `HJSON.shouldBeJson` Array expEntity
+      _ -> liftIO $ resResponse `HP.shouldBe` expResponse
+    -- Check if response can be decoded to desired DTO
+    let eDecodedDto = eitherDecode bodyS
+    case eDecodedDto of
+      Right decodedDto -> do
+        let _ = expType decodedDto
+        return ()
+      Left error ->
+        liftIO . expectationFailure $ f' "Response matched successfully. However, the result DTO couldn't be decoded. Error: %s" [error]
+
 assertEmptyResponse :: Int -> ResponseHeaders -> SResponse -> WaiSession () ()
 assertEmptyResponse expStatus expHeaders response =
   -- Prepare expectation
@@ -210,6 +245,16 @@ assertEmptyResponse expStatus expHeaders response =
     let resResponse = MatchResponse status resHeaders ""
     -- Compare response with expectation
     liftIO $ resResponse `HP.shouldBe` expResponse
+
+fieldObjectModifier :: Object -> [String] -> Object
+fieldObjectModifier = foldl (\acc f -> KM.delete (fromString f) acc)
+
+fieldArrayModifier :: Array -> [String] -> Array
+fieldArrayModifier body keys = Vector.fromList . fmap modify . Vector.toList $ body
+  where
+    modify :: Value -> Value
+    modify (Object obj) = Object $ foldl (\acc f -> KM.delete (fromString f) acc) obj keys
+    modify rest = rest
 
 data MatchResponse body = MatchResponse
   { status :: Int

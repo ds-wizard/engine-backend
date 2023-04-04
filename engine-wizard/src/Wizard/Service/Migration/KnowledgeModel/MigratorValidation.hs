@@ -1,6 +1,7 @@
 module Wizard.Service.Migration.KnowledgeModel.MigratorValidation where
 
 import Control.Monad.Except (catchError, throwError)
+import qualified Data.UUID as U
 
 import Shared.Model.Error.Error
 import Shared.Util.Coordinate
@@ -9,7 +10,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageValidation
 
-validateMigrationUniqueness :: String -> AppContextM ()
+validateMigrationUniqueness :: U.UUID -> AppContextM ()
 validateMigrationUniqueness bUuid = do
   mMs <- findMigratorStateByBranchUuid' bUuid
   case mMs of

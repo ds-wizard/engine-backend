@@ -34,7 +34,6 @@ import Wizard.Api.Handler.Token.Api
 import Wizard.Api.Handler.Typehint.Api
 import Wizard.Api.Handler.Usage.Api
 import Wizard.Api.Handler.User.Api
-import Wizard.Api.Handler.Version.Api
 import Wizard.Model.Context.BaseContext
 
 type ApplicationAPI =
@@ -70,7 +69,6 @@ type ApplicationAPI =
     :<|> TypehintAPI
     :<|> UsageAPI
     :<|> UserAPI
-    :<|> VersionAPI
 
 applicationApi :: Proxy ApplicationAPI
 applicationApi = Proxy
@@ -109,4 +107,3 @@ applicationServer =
     :<|> typehintServer
     :<|> usageServer
     :<|> userServer
-    :<|> versionServer

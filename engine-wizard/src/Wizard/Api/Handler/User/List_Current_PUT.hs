@@ -1,6 +1,5 @@
 module Wizard.Api.Handler.User.List_Current_PUT where
 
-import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -33,4 +32,4 @@ list_current_PUT mTokenHeader mServerUrl reqDto =
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
         user <- getCurrentUser
-        modifyUserProfile (U.toString user.uuid) reqDto
+        modifyUserProfile user.uuid reqDto

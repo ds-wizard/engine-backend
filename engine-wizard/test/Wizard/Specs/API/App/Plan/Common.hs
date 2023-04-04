@@ -1,6 +1,5 @@
 module Wizard.Specs.API.App.Plan.Common where
 
-import qualified Data.UUID as U
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Prelude hiding (until)
@@ -15,7 +14,7 @@ import Wizard.Specs.API.Common
 -- ASSERTS
 -- --------------------------------
 assertExistenceOfPlanInDB appContext plan = do
-  planFromDb <- getFirstFromDB (findAppPlansForAppUuid (U.toString plan.appUuid)) appContext
+  planFromDb <- getFirstFromDB (findAppPlansForAppUuid plan.appUuid) appContext
   comparePlanDtos planFromDb plan
 
 -- --------------------------------

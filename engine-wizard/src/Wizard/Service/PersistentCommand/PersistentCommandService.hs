@@ -19,6 +19,7 @@ import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Config.ServerConfig
+import Wizard.Api.Resource.PersistentCommand.PersistentCommandChangeDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
 import Wizard.Database.DAO.App.AppDAO
@@ -44,17 +45,26 @@ getPersistentCommandsPage states pageable sort = do
   commands <- findPersistentCommandsPage states pageable sort
   traverse enhancePersistentCommand commands
 
-getPersistentCommandById :: String -> AppContextM PersistentCommandDetailDTO
+getPersistentCommandById :: U.UUID -> AppContextM PersistentCommandDetailDTO
 getPersistentCommandById uuid = do
   checkPermission _DEV_PERM
   command <- findPersistentCommandByUuid uuid
   mUser <-
     case command.createdBy of
-      Just userUuid -> findUserByIdSystem' (U.toString userUuid)
+      Just userUuid -> findUserByUuidSystem' userUuid
       Nothing -> return Nothing
-  app <- findAppById (U.toString $ command.appUuid)
+  app <- findAppByUuid command.appUuid
   appDto <- enhanceApp app
   return $ toDetailDTO command mUser appDto
+
+modifyPersistentCommand :: U.UUID -> PersistentCommandChangeDTO -> AppContextM PersistentCommandDetailDTO
+modifyPersistentCommand uuid reqDto = do
+  checkPermission _DEV_PERM
+  command <- findPersistentCommandByUuid uuid
+  now <- liftIO getCurrentTime
+  let updatedCommand = fromChangeDTO command reqDto now
+  updatePersistentCommandByUuid updatedCommand
+  getPersistentCommandById uuid
 
 runPersistentCommands :: AppContextM ()
 runPersistentCommands = do
@@ -67,7 +77,7 @@ runPersistentCommands = do
         runPersistentCommands
     )
 
-runPersistentCommandById :: String -> AppContextM PersistentCommandDetailDTO
+runPersistentCommandById :: U.UUID -> AppContextM PersistentCommandDetailDTO
 runPersistentCommandById uuid = do
   command <- findPersistentCommandByUuid uuid
   if command.internal
@@ -81,7 +91,7 @@ runPersistentCommand :: Bool -> PersistentCommandSimple -> AppContextM ()
 runPersistentCommand force command = do
   user <-
     case command.createdBy of
-      Just userUuid -> findUserByIdSystem' . U.toString $ userUuid
+      Just userUuid -> findUserByUuidSystem' userUuid
       Nothing -> return Nothing
   context <- ask
   let updatedContext =
@@ -89,12 +99,12 @@ runPersistentCommand force command = do
           { currentAppUuid = command.appUuid
           , currentUser = fmap UM.toDTO user
           }
-  executePersistentCommandByUuid force (U.toString $ command.uuid) updatedContext
+  executePersistentCommandByUuid force command.uuid updatedContext
 
-executePersistentCommandByUuid :: Bool -> String -> AppContext -> AppContextM ()
+executePersistentCommandByUuid :: Bool -> U.UUID -> AppContext -> AppContextM ()
 executePersistentCommandByUuid force uuid context =
   runInTransaction $ do
-    logInfoU _CMP_SERVICE (f' "Running command '%s'" [uuid])
+    logInfoU _CMP_SERVICE (f' "Running command '%s'" [U.toString uuid])
     command <- findPersistentCommandByUuid uuid
     when
       (command.attempts < command.maxAttempts || force)
@@ -115,7 +125,7 @@ executePersistentCommandByUuid force uuid context =
                   }
                 :: PersistentCommand
           when (resultState == ErrorPersistentCommandState) (sendToSentry updatedCommand)
-          updatePersistentCommandById updatedCommand
+          updatePersistentCommandByUuid updatedCommand
           logInfoU _CMP_SERVICE (f' "Command finished with following state: '%s'" [show resultState])
       )
 

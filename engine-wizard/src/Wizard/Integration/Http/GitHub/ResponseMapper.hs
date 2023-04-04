@@ -10,7 +10,7 @@ import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.GitHub.IssueIJM ()
 
 toGetIssuesResponse :: Response BSL.ByteString -> Either AppError [IssueIDTO]
-toGetIssuesResponse = deserializeResponseBody
+toGetIssuesResponse = extractResponseBody
 
 toCreateIssueResponse :: Response BSL.ByteString -> Either AppError IssueIDTO
-toCreateIssueResponse = deserializeResponseBody
+toCreateIssueResponse = extractResponseBody

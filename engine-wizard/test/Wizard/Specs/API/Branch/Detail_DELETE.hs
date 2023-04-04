@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Branch.Detail_DELETE (
-  detail_delete,
+  detail_DELETE,
 ) where
 
 import Data.Maybe (fromJust)
@@ -23,8 +23,8 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- DELETE /branches/{branchId}
 -- ------------------------------------------------------------------------
-detail_delete :: AppContext -> SpecWith ((), Application)
-detail_delete appContext =
+detail_DELETE :: AppContext -> SpecWith ((), Application)
+detail_DELETE appContext =
   describe "DELETE /branches/{branchId}" $ do
     test_204 appContext
     test_401 appContext

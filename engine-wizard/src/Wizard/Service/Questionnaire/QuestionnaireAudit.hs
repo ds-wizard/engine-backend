@@ -1,10 +1,12 @@
 module Wizard.Service.Questionnaire.QuestionnaireAudit where
 
+import qualified Data.UUID as U
+
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Audit.AuditService
 
-auditQuestionnaireListEvents :: String -> AppContextM ()
-auditQuestionnaireListEvents = logAudit "questionnaire" "listEvents"
+auditQuestionnaireListEvents :: U.UUID -> AppContextM ()
+auditQuestionnaireListEvents qtnUuid = logAudit "questionnaire" "listEvents" (U.toString qtnUuid)
 
-auditQuestionnaireDetailEvent :: String -> AppContextM ()
-auditQuestionnaireDetailEvent = logAudit "questionnaire" "detailEvent"
+auditQuestionnaireDetailEvent :: U.UUID -> AppContextM ()
+auditQuestionnaireDetailEvent qtnUuid = logAudit "questionnaire" "detailEvent" (U.toString qtnUuid)

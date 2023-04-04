@@ -7,6 +7,7 @@ import qualified Data.UUID as U
 import Network.WebSockets (Connection)
 
 import Shared.Model.Error.Error
+import Shared.Util.Uuid
 import Wizard.Api.Resource.Branch.Event.BranchEventDTO
 import Wizard.Api.Resource.Websocket.BranchActionJM ()
 import Wizard.Api.Resource.Websocket.WebsocketActionJM ()
@@ -22,53 +23,53 @@ import Wizard.Service.Cache.BranchWebsocketCache
 import Wizard.Service.Websocket.WebsocketService
 import Wizard.Util.Websocket
 
-putUserOnline :: String -> U.UUID -> Connection -> AppContextM ()
+putUserOnline :: U.UUID -> U.UUID -> Connection -> AppContextM ()
 putUserOnline branchUuid connectionUuid connection = do
-  myself <- createRecord connectionUuid connection branchUuid EditorWebsocketPerm
+  myself <- createRecord connectionUuid connection (U.toString branchUuid) EditorWebsocketPerm
   checkViewPermission myself
-  _ <- findBranchById branchUuid
+  _ <- findBranchByUuid branchUuid
   addToCache myself
   logWS connectionUuid "New user added to the list"
   setUserList branchUuid connectionUuid
 
-deleteUser :: String -> U.UUID -> AppContextM ()
+deleteUser :: U.UUID -> U.UUID -> AppContextM ()
 deleteUser branchUuid connectionUuid = do
   deleteFromCache connectionUuid
   setUserList branchUuid connectionUuid
 
-setUserList :: String -> U.UUID -> AppContextM ()
+setUserList :: U.UUID -> U.UUID -> AppContextM ()
 setUserList branchUuid connectionUuid = do
   logWS connectionUuid "Informing other users about user list changes"
   records <- getAllFromCache
-  broadcast branchUuid records (toSetUserListMessage records) disconnectUser
+  broadcast (U.toString branchUuid) records (toSetUserListMessage records) disconnectUser
   logWS connectionUuid "Informed completed"
 
-logOutOnlineUsersWhenBranchDramaticallyChanged :: String -> AppContextM ()
+logOutOnlineUsersWhenBranchDramaticallyChanged :: U.UUID -> AppContextM ()
 logOutOnlineUsersWhenBranchDramaticallyChanged branchUuid = do
   records <- getAllFromCache
-  let error = NotExistsError $ _ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT branchUuid
+  let error = NotExistsError $ _ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT (U.toString branchUuid)
   traverse_ (logOut error) records
   where
     logOut :: AppError -> WebsocketRecord -> AppContextM ()
     logOut error record =
       when
-        (record.entityId == branchUuid)
+        (record.entityId == U.toString branchUuid)
         (sendError record.connectionUuid record.connection record.entityId disconnectUser error)
 
 -- --------------------------------
-setContent :: String -> U.UUID -> BranchEventDTO -> AppContextM ()
+setContent :: U.UUID -> U.UUID -> BranchEventDTO -> AppContextM ()
 setContent branchUuid connectionUuid reqDto =
   case reqDto of
     AddBranchEventDTO' event -> addBranchEvent branchUuid connectionUuid event
 
-addBranchEvent :: String -> U.UUID -> AddBranchEventDTO -> AppContextM ()
+addBranchEvent :: U.UUID -> U.UUID -> AddBranchEventDTO -> AppContextM ()
 addBranchEvent branchUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
   appendBranchEventByUuid branchUuid [reqDto.event]
   records <- getAllFromCache
-  broadcast branchUuid records (toAddBranchMessage reqDto) disconnectUser
+  broadcast (U.toString branchUuid) records (toAddBranchMessage reqDto) disconnectUser
 
 -- --------------------------------
 disconnectUser :: ToJSON resDto => WebsocketMessage resDto -> AppContextM ()
-disconnectUser msg = deleteUser msg.entityId msg.connectionUuid
+disconnectUser msg = deleteUser (u' msg.entityId) msg.connectionUuid

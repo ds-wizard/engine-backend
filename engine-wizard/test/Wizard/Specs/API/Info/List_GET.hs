@@ -11,9 +11,11 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Api.Resource.Info.InfoJM ()
 import Shared.Database.Migration.Development.Info.Data.Infos
+import qualified Wizard.Database.Migration.Development.Component.ComponentMigration as CMP_Migration
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
+import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- GET /
@@ -43,6 +45,8 @@ test_200 appContext =
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto = appInfo
       let expBody = encode expDto
+      -- AND: Prepare DB
+      runInContextIO CMP_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

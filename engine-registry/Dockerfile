@@ -17,7 +17,6 @@ RUN mkdir /application/engine-registry
 # Add configs
 ADD config/application.yml /application/engine-registry/config/application.yml
 ADD config/build-info.yml /application/engine-registry/config/build-info.yml
-ADD config/localization.json /application/engine-registry/config/localization.json
 
 # Setup non-root user
 RUN groupadd -r user && useradd -r -g user user

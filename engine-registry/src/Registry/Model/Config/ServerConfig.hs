@@ -20,6 +20,5 @@ data ServerConfigGeneral = ServerConfigGeneral
   { environment :: Environment
   , clientUrl :: String
   , serverPort :: Int
-  , remoteLocalizationUrl :: Maybe String
   }
   deriving (Generic, Show)

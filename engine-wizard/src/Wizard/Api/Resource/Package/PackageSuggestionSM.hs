@@ -10,4 +10,4 @@ import Wizard.Model.Package.PackageSuggestion
 import Wizard.Service.Package.PackageMapper
 
 instance ToSchema PackageSuggestion where
-  declareNamedSchema = toSwagger [toSuggestion (toPackage globalPackage, [])]
+  declareNamedSchema = toSwagger [toSuggestion (toPackage globalPackage)]

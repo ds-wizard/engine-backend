@@ -14,7 +14,7 @@ branchAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
     describe "BRANCH API Spec" $ do
       list_GET appContext
-      list_post appContext
-      detail_get appContext
-      detail_put appContext
-      detail_delete appContext
+      list_POST appContext
+      detail_GET appContext
+      detail_PUT appContext
+      detail_DELETE appContext

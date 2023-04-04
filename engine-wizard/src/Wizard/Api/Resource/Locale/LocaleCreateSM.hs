@@ -1,6 +1,5 @@
 module Wizard.Api.Resource.Locale.LocaleCreateSM where
 
-import Control.Lens
 import Data.Swagger
 import Servant
 import Servant.Multipart
@@ -11,68 +10,123 @@ import Wizard.Api.Resource.Locale.LocaleCreateDTO (LocaleCreateDTO)
 
 instance HasSwagger api => HasSwagger (MultipartForm Mem LocaleCreateDTO :> api) where
   toSwagger _ =
-    toSwagger (Proxy :: Proxy api)
-      & addParam fileField
-      & addParam recommendedAppVersionField
-      & addParam readmeField
-      & addParam licenseField
-      & addParam versionField
-      & addParam localeIdField
-      & addParam codeField
-      & addParam descriptionField
-      & addParam nameField
+    addParam nameField
+      . addParam descriptionField
+      . addParam codeField
+      . addParam localeIdField
+      . addParam versionField
+      . addParam licenseField
+      . addParam readmeField
+      . addParam recommendedAppVersionField
+      . addParam fileField
+      $ toSwagger (Proxy :: Proxy api)
     where
       nameField =
-        mempty
-          & name .~ "name"
-          & required ?~ True
-          & description ?~ "Name"
-          & schema .~ ParamOther (mempty & in_ .~ ParamFormData & paramSchema .~ mempty)
+        Param
+          { _paramName = "name"
+          , _paramDescription = Just "Name"
+          , _paramRequired = Just True
+          , _paramSchema =
+              ParamOther
+                ( mempty
+                    { _paramOtherSchemaIn = ParamFormData
+                    }
+                )
+          }
       descriptionField =
-        mempty
-          & name .~ "description"
-          & required ?~ True
-          & description ?~ "Description"
-          & schema .~ ParamOther (mempty & in_ .~ ParamFormData & paramSchema .~ mempty)
+        Param
+          { _paramName = "description"
+          , _paramDescription = Just "Description"
+          , _paramRequired = Just True
+          , _paramSchema =
+              ParamOther
+                ( mempty
+                    { _paramOtherSchemaIn = ParamFormData
+                    }
+                )
+          }
       codeField =
-        mempty
-          & name .~ "code"
-          & required ?~ True
-          & description ?~ "Code"
-          & schema .~ ParamOther (mempty & in_ .~ ParamFormData & paramSchema .~ mempty)
+        Param
+          { _paramName = "code"
+          , _paramDescription = Just "Code"
+          , _paramRequired = Just True
+          , _paramSchema =
+              ParamOther
+                ( mempty
+                    { _paramOtherSchemaIn = ParamFormData
+                    }
+                )
+          }
       localeIdField =
-        mempty
-          & name .~ "localeId"
-          & required ?~ True
-          & description ?~ "Locale ID"
-          & schema .~ ParamOther (mempty & in_ .~ ParamFormData & paramSchema .~ mempty)
+        Param
+          { _paramName = "localeId"
+          , _paramDescription = Just "Locale ID"
+          , _paramRequired = Just True
+          , _paramSchema =
+              ParamOther
+                ( mempty
+                    { _paramOtherSchemaIn = ParamFormData
+                    }
+                )
+          }
       versionField =
-        mempty
-          & name .~ "version"
-          & required ?~ True
-          & description ?~ "Version"
-          & schema .~ ParamOther (mempty & in_ .~ ParamFormData & paramSchema .~ mempty)
+        Param
+          { _paramName = "version"
+          , _paramDescription = Just "Version"
+          , _paramRequired = Just True
+          , _paramSchema =
+              ParamOther
+                ( mempty
+                    { _paramOtherSchemaIn = ParamFormData
+                    }
+                )
+          }
       licenseField =
-        mempty
-          & name .~ "license"
-          & required ?~ True
-          & description ?~ "License"
-          & schema .~ ParamOther (mempty & in_ .~ ParamFormData & paramSchema .~ mempty)
+        Param
+          { _paramName = "license"
+          , _paramDescription = Just "License"
+          , _paramRequired = Just True
+          , _paramSchema =
+              ParamOther
+                ( mempty
+                    { _paramOtherSchemaIn = ParamFormData
+                    }
+                )
+          }
       readmeField =
-        mempty
-          & name .~ "readme"
-          & required ?~ True
-          & description ?~ "Readme"
-          & schema .~ ParamOther (mempty & in_ .~ ParamFormData & paramSchema .~ mempty)
+        Param
+          { _paramName = "readme"
+          , _paramDescription = Just "Readme"
+          , _paramRequired = Just True
+          , _paramSchema =
+              ParamOther
+                ( mempty
+                    { _paramOtherSchemaIn = ParamFormData
+                    }
+                )
+          }
       recommendedAppVersionField =
-        mempty
-          & name .~ "recommendedAppVersion"
-          & required ?~ True
-          & description ?~ "Recommended App Version"
-          & schema .~ ParamOther (mempty & in_ .~ ParamFormData & paramSchema .~ mempty)
+        Param
+          { _paramName = "recommendedAppVersion"
+          , _paramDescription = Just "Recommended App Version"
+          , _paramRequired = Just True
+          , _paramSchema =
+              ParamOther
+                ( mempty
+                    { _paramOtherSchemaIn = ParamFormData
+                    }
+                )
+          }
       fileField =
-        mempty
-          & name .~ "file"
-          & required ?~ True
-          & description ?~ "File to upload"
-          & schema .~ ParamOther (mempty & in_ .~ ParamFormData & paramSchema .~ (mempty & type_ ?~ SwaggerFile))
+        Param
+          { _paramName = "file"
+          , _paramDescription = Just "File to upload"
+          , _paramRequired = Just True
+          , _paramSchema =
+              ParamOther
+                ( mempty
+                    { _paramOtherSchemaIn = ParamFormData
+                    , _paramOtherSchemaParamSchema = mempty {_paramSchemaType = Just SwaggerFile}
+                    }
+                )
+          }

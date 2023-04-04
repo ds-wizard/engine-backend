@@ -2,7 +2,6 @@ module Wizard.Specs.Service.Branch.BranchServiceSpec where
 
 import Control.Monad.Reader
 import Data.Either
-import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
@@ -28,7 +27,6 @@ import Wizard.Specs.Common
 
 branchServiceIntegrationSpec appContext =
   describe "Branch Service Integration" $ do
-    let branchUuid = U.toString $ amsterdamBranch.uuid
     describe "getBranchState" $ do
       it "BSDefault - no edit events, no new parent package version" $
         -- GIVEN: Prepare database
@@ -108,10 +106,10 @@ branchServiceIntegrationSpec appContext =
         do
           runInContext PKG.runMigration appContext
           runInContext B.runMigration appContext
-          runInContext (updateBranchEventsByUuid branchUuid []) appContext
+          runInContext (updateBranchEventsByUuid amsterdamBranch.uuid []) appContext
           let migratorCreateDto =
                 MigratorStateCreateDTO {targetPackageId = netherlandsPackageV2.pId}
-          runInContext (createMigration branchUuid migratorCreateDto) appContext
+          runInContext (createMigration amsterdamBranch.uuid migratorCreateDto) appContext
           -- AND: Prepare branch
           let branch = amsterdamBranch
           let branchData = amsterdamBranchData
@@ -132,14 +130,14 @@ branchServiceIntegrationSpec appContext =
           runInContext B.runMigration appContext
           let migratorCreateDto =
                 MigratorStateCreateDTO {targetPackageId = netherlandsPackageV2.pId}
-          runInContext (createMigration branchUuid migratorCreateDto) appContext
+          runInContext (createMigration amsterdamBranch.uuid migratorCreateDto) appContext
           let reqDto =
                 MigratorConflictDTO
                   { originalEventUuid = a_km1_ch4.uuid
                   , action = MCAReject
                   , event = Nothing
                   }
-          runInContext (solveConflictAndMigrate branchUuid reqDto) appContext
+          runInContext (solveConflictAndMigrate amsterdamBranch.uuid reqDto) appContext
           -- AND: Prepare branch
           let branch = amsterdamBranch
           let branchData = amsterdamBranchData {events = []} :: BranchData

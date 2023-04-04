@@ -5,6 +5,8 @@ module Registry.Database.Migration.Development.Migration (
 import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import qualified Registry.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
+import qualified Registry.Database.Migration.Development.Component.ComponentMigration as CMP
+import qualified Registry.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as TML_Schema
 import qualified Registry.Database.Migration.Development.Locale.LocaleMigration as LOC
@@ -22,6 +24,7 @@ runMigration = do
   -- 1. Drop DB functions
   CMN_Schema.dropFunctions
   -- 2. Drop schema
+  CMP_Schema.dropTables
   LOC_Schema.dropTables
   PC_Schema.dropTables
   ORG_Schema.dropTables
@@ -37,6 +40,7 @@ runMigration = do
   TML_Schema.createTables
   PC_Schema.createTables
   LOC_Schema.createTables
+  CMP_Schema.createTables
   -- 4. Create DB functions
   CMN_Schema.createFunctions
   -- 5. Load fixtures
@@ -45,5 +49,6 @@ runMigration = do
   TML.runMigration
   PC.runMigration
   LOC.runMigration
+  CMP.runMigration
   logInfo _CMP_MIGRATION "ended"
   return Nothing

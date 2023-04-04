@@ -71,9 +71,6 @@ _ERROR_VALIDATION__INVALID_ORG_ID_FORMAT =
 _ERROR_VALIDATION__DOC_TML_ID_UNIQUENESS tmlId =
   LocaleRecord "error.validation.tml_id_uniqueness" "DocumentTemplate '%s' already exists" [tmlId]
 
-_ERROR_VALIDATION__KM_ID_UNIQUENESS kmId =
-  LocaleRecord "error.validation.km_id_uniqueness" "KmId '%s' already exists" [kmId]
-
 _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId =
   LocaleRecord "error.validation.pkg_id_uniqueness" "Package '%s' already exists" [pkgId]
 

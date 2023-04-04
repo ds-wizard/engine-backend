@@ -33,9 +33,9 @@ findUsers = do
   appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("machine", "false")]
 
-findUsersWithAppFiltered :: String -> [(String, String)] -> AppContextM [User]
+findUsersWithAppFiltered :: U.UUID -> [(String, String)] -> AppContextM [User]
 findUsersWithAppFiltered appUuid queryParams =
-  createFindEntitiesByFn entityName ([appQueryString appUuid, ("machine", "false")] ++ queryParams)
+  createFindEntitiesByFn entityName ([appQueryUuid appUuid, ("machine", "false")] ++ queryParams)
 
 findUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page User)
 findUsersPage mQuery mRole pageable sort = do
@@ -76,25 +76,22 @@ findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
     condition
     ([regex mQuery, regex mQuery, U.toString appUuid] ++ fromMaybe [] mSelectUuids ++ fromMaybe [] mExcludeUuids)
 
-findUserById :: String -> AppContextM User
-findUserById = getFromCacheOrDb getFromCache addToCache go
+findUserByUuid :: U.UUID -> AppContextM User
+findUserByUuid uuid = getFromCacheOrDb getFromCache addToCache go (U.toString uuid)
   where
     go uuid = do
       appUuid <- asks currentAppUuid
       createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
-findUserById' :: String -> AppContextM (Maybe User)
-findUserById' = getFromCacheOrDb' getFromCache addToCache go
+findUserByUuid' :: U.UUID -> AppContextM (Maybe User)
+findUserByUuid' uuid = getFromCacheOrDb' getFromCache addToCache go (U.toString uuid)
   where
     go uuid = do
       appUuid <- asks currentAppUuid
       createFindEntityByFn' entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
-findUserByIdSystem :: String -> AppContextM User
-findUserByIdSystem uuid = createFindEntityByFn entityName [("uuid", uuid)]
-
-findUserByIdSystem' :: String -> AppContextM (Maybe User)
-findUserByIdSystem' uuid = createFindEntityByFn' entityName [("uuid", uuid)]
+findUserByUuidSystem' :: U.UUID -> AppContextM (Maybe User)
+findUserByUuidSystem' uuid = createFindEntityByFn' entityName [("uuid", U.toString uuid)]
 
 findUserByEmail :: String -> AppContextM User
 findUserByEmail email = do
@@ -112,18 +109,18 @@ findUserByEmailAndAppUuid' email appUuid = createFindEntityByFn' entityName [app
 countUsers :: AppContextM Int
 countUsers = do
   appUuid <- asks currentAppUuid
-  countUsersWithApp (U.toString appUuid)
+  countUsersWithApp appUuid
 
-countUsersWithApp :: String -> AppContextM Int
+countUsersWithApp :: U.UUID -> AppContextM Int
 countUsersWithApp appUuid = createCountByFn entityName (f' "%s AND machine = false" [appCondition]) [appUuid]
 
 countActiveUsers :: AppContextM Int
 countActiveUsers = do
   appUuid <- asks currentAppUuid
-  countActiveUsersWithApp (U.toString appUuid)
+  countActiveUsersWithApp appUuid
 
-countActiveUsersWithApp :: String -> AppContextM Int
-countActiveUsersWithApp appUuid = createCountByFn entityName (f' "%s AND machine = false AND active = true" [appCondition]) [appUuid]
+countActiveUsersWithApp :: U.UUID -> AppContextM Int
+countActiveUsersWithApp appUuid = createCountByFn entityName (f' "%s AND machine = false AND active = true" [appCondition]) [U.toString appUuid]
 
 insertUser :: User -> AppContextM Int64
 insertUser user = do
@@ -131,8 +128,8 @@ insertUser user = do
   addToCache user
   return result
 
-updateUserById :: User -> AppContextM Int64
-updateUserById user = do
+updateUserByUuid :: User -> AppContextM Int64
+updateUserByUuid user = do
   appUuid <- asks currentAppUuid
   let sql =
         fromString
@@ -144,15 +141,26 @@ updateUserById user = do
   updateCache user
   return result
 
-updateUserPasswordById :: String -> String -> UTCTime -> AppContextM Int64
-updateUserPasswordById uUuid uPassword uUpdatedAt = do
+updateUserPasswordByUuid :: U.UUID -> String -> UTCTime -> AppContextM Int64
+updateUserPasswordByUuid userUuid uPassword uUpdatedAt = do
   appUuid <- asks currentAppUuid
   let sql = fromString "UPDATE user_entity SET password_hash = ?, updated_at = ? WHERE app_uuid = ? AND uuid = ?"
-  let params = [toField uPassword, toField uUpdatedAt, toField appUuid, toField uUuid]
+  let params = [toField uPassword, toField uUpdatedAt, toField appUuid, toField userUuid]
   logQuery sql params
   let action conn = execute conn sql params
   result <- runDB action
-  deleteFromCache uUuid
+  deleteFromCache (U.toString userUuid)
+  return result
+
+updateUserLastVisitedAtByUuid :: U.UUID -> UTCTime -> AppContextM Int64
+updateUserLastVisitedAtByUuid userUuid lastVisitedAt = do
+  appUuid <- asks currentAppUuid
+  let sql = fromString "UPDATE user_entity SET last_visited_at = ? WHERE app_uuid = ? AND uuid = ?"
+  let params = [toField lastVisitedAt, toField appUuid, toField userUuid]
+  logQuery sql params
+  let action conn = execute conn sql params
+  result <- runDB action
+  deleteFromCache (U.toString userUuid)
   return result
 
 deleteUsers :: AppContextM Int64
@@ -161,9 +169,9 @@ deleteUsers = do
   deleteAllFromCache
   return result
 
-deleteUserById :: String -> AppContextM Int64
-deleteUserById uuid = do
+deleteUserByUuid :: U.UUID -> AppContextM Int64
+deleteUserByUuid uuid = do
   appUuid <- asks currentAppUuid
-  result <- createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
-  deleteFromCache uuid
+  result <- createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  deleteFromCache (U.toString uuid)
   return result

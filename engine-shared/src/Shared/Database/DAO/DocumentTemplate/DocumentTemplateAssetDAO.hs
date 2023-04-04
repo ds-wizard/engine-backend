@@ -86,7 +86,7 @@ sumAssetFileSize
   => m Int64
 sumAssetFileSize = do
   appUuid <- asks (.appUuid')
-  sumAssetFileSizeWithApp (U.toString appUuid)
+  sumAssetFileSizeWithApp appUuid
 
 sumAssetFileSizeWithApp
   :: ( MonadLogger m
@@ -99,9 +99,9 @@ sumAssetFileSizeWithApp
      , HasField "appUuid'" s U.UUID
      , MonadIO m
      )
-  => String
+  => U.UUID
   -> m Int64
-sumAssetFileSizeWithApp appUuid = createSumByFn entityName "file_size" appCondition [appUuid]
+sumAssetFileSizeWithApp appUuid = createSumByFn entityName "file_size" appCondition [U.toString appUuid]
 
 insertAsset
   :: ( MonadLogger m

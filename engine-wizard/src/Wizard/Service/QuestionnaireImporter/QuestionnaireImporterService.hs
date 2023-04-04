@@ -3,6 +3,7 @@ module Wizard.Service.QuestionnaireImporter.QuestionnaireImporterService where
 import Control.Monad.Reader (liftIO)
 import Data.Maybe (fromMaybe)
 import Data.Time
+import qualified Data.UUID as U
 
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
@@ -30,13 +31,13 @@ getQuestionnaireImportersPageDto mQuery pageable sort = do
   return $ fmap toDTO importersPage
 
 getQuestionnaireImporterSuggestions
-  :: Maybe String -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireImporterDTO)
+  :: Maybe U.UUID -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireImporterDTO)
 getQuestionnaireImporterSuggestions mQuestionnaireUuid mQuery mEnabled pageable sort = do
   checkPermission _QTN_PERM
   mPkgId <-
     case mQuestionnaireUuid of
       Just qtnUuid -> do
-        qtn <- findQuestionnaireById qtnUuid
+        qtn <- findQuestionnaireByUuid qtnUuid
         return . Just $ qtn.packageId
       Nothing -> return Nothing
   page <- findQuestionnaireImportersPage Nothing Nothing mQuery mEnabled (Pageable (Just 0) (Just 999999999)) sort

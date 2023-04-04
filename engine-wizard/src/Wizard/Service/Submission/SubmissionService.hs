@@ -40,7 +40,7 @@ getAvailableServicesForSubmission docUuid = do
   checkPermissionToSubmission docUuid
   appConfig <- getAppConfig
   doc <- findDocumentByUuid docUuid
-  checkEditPermissionToDoc (U.toString doc.questionnaireUuid)
+  checkEditPermissionToDoc doc.questionnaireUuid
   return . fmap toSubmissionServiceSimpleDTO . filter (filterService doc) $ appConfig.submission.services
   where
     filterService :: Document -> AppConfigSubmissionService -> Bool
@@ -53,7 +53,7 @@ getSubmissionsForDocument :: U.UUID -> AppContextM [SubmissionDTO]
 getSubmissionsForDocument docUuid = do
   checkIfSubmissionIsEnabled
   doc <- findDocumentByUuid docUuid
-  checkViewPermissionToDoc (U.toString doc.questionnaireUuid)
+  checkViewPermissionToDoc doc.questionnaireUuid
   submissions <- findSubmissionsByDocumentUuid docUuid
   traverse enhanceSubmission submissions
 
@@ -66,7 +66,7 @@ submitDocument docUuid reqDto =
     case L.find (\s -> s.sId == reqDto.serviceId) appConfig.submission.services of
       Just definition -> do
         doc <- findDocumentByUuid docUuid
-        checkEditPermissionToDoc (U.toString doc.questionnaireUuid)
+        checkEditPermissionToDoc doc.questionnaireUuid
         docContent <- retrieveDocumentContent docUuid
         userProps <- getUserProps definition
         sub <- createSubmission docUuid reqDto
@@ -85,7 +85,7 @@ submitDocument docUuid reqDto =
                     , returnedData = Just error
                     }
                   :: Submission
-        savedSubmission <- updateSubmissionById updatedSub
+        savedSubmission <- updateSubmissionByUuid updatedSub
         enhanceSubmission savedSubmission
       Nothing -> throwError . UserError $ _ERROR_VALIDATION__SUBMISSION_DEFINITION_ABSENCE reqDto.serviceId
   where
@@ -93,7 +93,7 @@ submitDocument docUuid reqDto =
       mUser <- asks currentUser
       case mUser of
         Just user -> do
-          profile <- getUserProfile (U.toString user.uuid)
+          profile <- getUserProfile user.uuid
           let mUserProps = L.find (\p -> p.sId == definition.sId) profile.submissionProps
           return $
             case mUserProps of

@@ -1,6 +1,5 @@
 module Registry.Api.Handler.Swagger.Api where
 
-import Control.Lens
 import Data.Swagger
 import Servant
 import Servant.Swagger
@@ -20,6 +19,7 @@ import Registry.Api.Resource.Package.PackageDetailSM ()
 import Registry.Api.Resource.Package.PackageSimpleSM ()
 import Registry.Api.Resource.PackageBundle.PackageBundleSM ()
 import Shared.Api.Resource.Common.FileSM ()
+import Shared.Api.Resource.Component.ComponentSM ()
 import Shared.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 import Shared.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import Shared.Api.Resource.Info.InfoSM ()
@@ -30,7 +30,21 @@ type SwaggerAPI = SwaggerSchemaUI "swagger-ui" "swagger.json"
 
 swagger :: Swagger
 swagger =
-  toSwagger applicationApi & info . title .~ "Registry API" & info . description ?~ "API specification for Registry"
+  let s = toSwagger applicationApi
+   in s
+        { _swaggerInfo =
+            s._swaggerInfo
+              { _infoTitle = "Registry API"
+              , _infoDescription = Just "API specification for Registry"
+              , _infoVersion = "3.22.0"
+              , _infoLicense =
+                  Just $
+                    License
+                      { _licenseName = "Apache-2.0"
+                      , _licenseUrl = Just . URL $ "https://raw.githubusercontent.com/ds-wizard/engine-backend/main/LICENSE.md"
+                      }
+              }
+        }
 
 swaggerServer :: Server SwaggerAPI
 swaggerServer = swaggerSchemaUIServer swagger

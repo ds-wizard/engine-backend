@@ -1,6 +1,5 @@
 module Wizard.Specs.Service.Feedback.FeedbackServiceSpec where
 
-import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
@@ -56,6 +55,6 @@ feedbackServiceIntegrationSpec appContext =
           -- AND: Update config in DB
           runInContext (modifyAppConfig (\c -> c {questionnaire = c.questionnaire {feedback = c.questionnaire.feedback {enabled = False}}})) appContext
           -- WHEN:
-          result <- runInContext (getFeedbackByUuid (U.toString $ feedback1.uuid)) appContext
+          result <- runInContext (getFeedbackByUuid feedback1.uuid) appContext
           -- THEN:
           result `shouldBe` expectation

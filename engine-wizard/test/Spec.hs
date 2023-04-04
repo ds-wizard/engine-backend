@@ -52,7 +52,6 @@ import Wizard.Specs.API.Token.APISpec
 import Wizard.Specs.API.Typehint.APISpec
 import Wizard.Specs.API.Usage.APISpec
 import Wizard.Specs.API.User.APISpec
-import Wizard.Specs.API.Version.APISpec
 import Wizard.Specs.Integration.Http.Common.ResponseMapperSpec
 import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
 import Wizard.Specs.Service.App.AppValidationSpec
@@ -209,7 +208,6 @@ main =
               tokenAPI baseContext appContext
               usageAPI baseContext appContext
               userAPI baseContext appContext
-              versionAPI baseContext appContext
             describe "SERVICE" $ do
               branchServiceIntegrationSpec appContext
               coordinateValidationSpec appContext

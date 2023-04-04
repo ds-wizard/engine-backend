@@ -25,12 +25,12 @@ import Wizard.Service.Plan.AppPlanMapper
 getPlansForCurrentApp :: AppContextM [AppPlan]
 getPlansForCurrentApp = do
   appUUid <- asks currentAppUuid
-  findAppPlansForAppUuid (U.toString appUUid)
+  findAppPlansForAppUuid appUUid
 
 createPlan :: U.UUID -> AppPlanChangeDTO -> AppContextM AppPlan
 createPlan aUuid reqDto = do
   checkPermission _APP_PERM
-  app <- findAppById (U.toString aUuid)
+  app <- findAppByUuid aUuid
   uuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
   let plan = fromChangeDTO reqDto uuid aUuid now now
@@ -38,22 +38,22 @@ createPlan aUuid reqDto = do
   recomputePlansForApp app
   return plan
 
-modifyPlan :: String -> String -> AppPlanChangeDTO -> AppContextM AppPlan
+modifyPlan :: U.UUID -> U.UUID -> AppPlanChangeDTO -> AppContextM AppPlan
 modifyPlan aUuid pUuid reqDto = do
   checkPermission _APP_PERM
-  app <- findAppById aUuid
-  plan <- findAppPlanById pUuid
+  app <- findAppByUuid aUuid
+  plan <- findAppPlanByUuid pUuid
   let updatedPlan = fromChangeDTO reqDto plan.uuid plan.appUuid plan.createdAt plan.updatedAt
-  updateAppPlanById updatedPlan
+  updateAppPlanByUuid updatedPlan
   recomputePlansForApp app
   return updatedPlan
 
-deletePlan :: String -> String -> AppContextM ()
+deletePlan :: U.UUID -> U.UUID -> AppContextM ()
 deletePlan aUuid pUuid = do
   checkPermission _APP_PERM
-  app <- findAppById aUuid
-  plan <- findAppPlanById pUuid
-  deleteAppPlanById pUuid
+  app <- findAppByUuid aUuid
+  plan <- findAppPlanByUuid pUuid
+  deleteAppPlanByUuid pUuid
   recomputePlansForApp app
   return ()
 
@@ -65,11 +65,11 @@ recomputePlansForApps = do
 recomputePlansForApp :: App -> AppContextM ()
 recomputePlansForApp app = do
   now <- liftIO getCurrentTime
-  plans <- findAppPlansForAppUuid (U.toString app.uuid)
+  plans <- findAppPlansForAppUuid app.uuid
   let mActivePlan = headSafe . filter (isPlanActive now) $ plans
   -- Recompute active flag
   let active = isJust mActivePlan
-  when (app.enabled /= active) (void $ updateAppById (app {enabled = active}))
+  when (app.enabled /= active) (void $ updateAppByUuid (app {enabled = active}))
   -- Recompute features & limits
   case mActivePlan of
     Just activePlan -> do

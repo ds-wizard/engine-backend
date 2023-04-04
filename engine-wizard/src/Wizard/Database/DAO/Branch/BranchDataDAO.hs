@@ -29,18 +29,18 @@ findBranchesForSquashing = do
   entities <- runDB action
   return . concat $ entities
 
-findBranchDataById :: String -> AppContextM BranchData
+findBranchDataById :: U.UUID -> AppContextM BranchData
 findBranchDataById branchUuid = do
   appUuid <- asks currentAppUuid
-  createFindEntityWithFieldsByFn "*" False entityName [appQueryUuid appUuid, ("branch_uuid", branchUuid)]
+  createFindEntityWithFieldsByFn "*" False entityName [appQueryUuid appUuid, ("branch_uuid", U.toString branchUuid)]
 
-findBranchDataByIdForSquashingLocked :: String -> AppContextM BranchData
+findBranchDataByIdForSquashingLocked :: U.UUID -> AppContextM BranchData
 findBranchDataByIdForSquashingLocked branchUuid =
-  createFindEntityWithFieldsByFn "*" True entityName [("branch_uuid", branchUuid)]
+  createFindEntityWithFieldsByFn "*" True entityName [("branch_uuid", U.toString branchUuid)]
 
-findBranchDataLengthById :: String -> AppContextM BranchDataLength
+findBranchDataLengthById :: U.UUID -> AppContextM BranchDataLength
 findBranchDataLengthById branchUuid =
-  createFindEntityWithFieldsByFn "branch_uuid, json_array_length(events)" True entityName [("branch_uuid", branchUuid)]
+  createFindEntityWithFieldsByFn "branch_uuid, json_array_length(events)" True entityName [("branch_uuid", U.toString branchUuid)]
 
 insertBranchData :: BranchData -> AppContextM Int64
 insertBranchData = createInsertFn entityName
@@ -61,7 +61,7 @@ updateBranchDataById branchData = do
   let action conn = execute conn sql params
   runDB action
 
-appendBranchEventByUuid :: String -> [Event] -> AppContextM ()
+appendBranchEventByUuid :: U.UUID -> [Event] -> AppContextM ()
 appendBranchEventByUuid branchUuid events = do
   appUuid <- asks currentAppUuid
   let sql =
@@ -76,7 +76,7 @@ appendBranchEventByUuid branchUuid events = do
   runDB action
   return ()
 
-updateBranchEventsByUuid :: String -> [Event] -> AppContextM ()
+updateBranchEventsByUuid :: U.UUID -> [Event] -> AppContextM ()
 updateBranchEventsByUuid branchUuid events = do
   let sql = fromString "UPDATE branch_data SET events = ? WHERE branch_uuid = ?"
   let params = [toJSONField events, toField branchUuid]
@@ -88,5 +88,5 @@ updateBranchEventsByUuid branchUuid events = do
 deleteBranchDatas :: AppContextM Int64
 deleteBranchDatas = createDeleteEntitiesFn entityName
 
-deleteBranchDataById :: String -> AppContextM Int64
-deleteBranchDataById branchUuid = createDeleteEntityByFn entityName [("branch_uuid", branchUuid)]
+deleteBranchDataById :: U.UUID -> AppContextM Int64
+deleteBranchDataById branchUuid = createDeleteEntityByFn entityName [("branch_uuid", U.toString branchUuid)]

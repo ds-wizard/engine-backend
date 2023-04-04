@@ -1,6 +1,5 @@
 module Wizard.Api.Handler.User.List_Current_GET where
 
-import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -27,4 +26,4 @@ list_current_GET mTokenHeader mServerUrl =
     runInAuthService NoTransaction $
       addTraceUuidHeader =<< do
         user <- getCurrentUser
-        getUserProfile (U.toString user.uuid)
+        getUserProfile user.uuid

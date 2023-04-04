@@ -192,7 +192,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
             \qtn.updated_at, \
             \CASE \
             \  WHEN qtn_mig.new_questionnaire_uuid IS NOT NULL THEN 'Migrating' \
-            \  WHEN qtn.package_id != get_newest_package(pkg.organization_id, pkg.km_id, '%s') THEN 'Outdated' \
+            \  WHEN qtn.package_id != get_newest_package(pkg.organization_id, pkg.km_id, '%s', ARRAY['ReleasedPackagePhase']) THEN 'Outdated' \
             \  WHEN qtn_mig.new_questionnaire_uuid IS NULL THEN 'Default' \
             \  END, \
             \pkg.id, \
@@ -338,37 +338,37 @@ findQuestionnaireUuids' = do
   entities <- runDB action
   return . concat $ entities
 
-findQuestionnaireById :: String -> AppContextM Questionnaire
-findQuestionnaireById qtnUuid = do
+findQuestionnaireByUuid :: U.UUID -> AppContextM Questionnaire
+findQuestionnaireByUuid qtnUuid = do
   appUuid <- asks currentAppUuid
-  entity <- createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", qtnUuid)]
+  entity <- createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString qtnUuid)]
   enhance entity
 
-findQuestionnaireById' :: String -> AppContextM (Maybe Questionnaire)
-findQuestionnaireById' qtnUuid = do
+findQuestionnaireByUuid' :: U.UUID -> AppContextM (Maybe Questionnaire)
+findQuestionnaireByUuid' qtnUuid = do
   appUuid <- asks currentAppUuid
-  mEntity <- createFindEntityByFn' entityName [appQueryUuid appUuid, ("uuid", qtnUuid)]
+  mEntity <- createFindEntityByFn' entityName [appQueryUuid appUuid, ("uuid", U.toString qtnUuid)]
   case mEntity of
     Just entity -> enhance entity >>= return . Just
     Nothing -> return Nothing
 
-findQuestionnaireSimpleById :: String -> AppContextM QuestionnaireSimple
-findQuestionnaireSimpleById uuid = do
+findQuestionnaireSimpleByUuid :: U.UUID -> AppContextM QuestionnaireSimple
+findQuestionnaireSimpleByUuid uuid = do
   appUuid <- asks currentAppUuid
-  createFindEntityWithFieldsByFn "uuid, name" False entityName [appQueryUuid appUuid, ("uuid", uuid)]
+  createFindEntityWithFieldsByFn "uuid, name" False entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
 
-findQuestionnaireSimpleById' :: String -> AppContextM (Maybe QuestionnaireSimple)
-findQuestionnaireSimpleById' uuid = do
+findQuestionnaireSimpleByUuid' :: U.UUID -> AppContextM (Maybe QuestionnaireSimple)
+findQuestionnaireSimpleByUuid' uuid = do
   appUuid <- asks currentAppUuid
-  createFindEntityWithFieldsByFn' "uuid, name" entityName [appQueryUuid appUuid, ("uuid", uuid)]
+  createFindEntityWithFieldsByFn' "uuid, name" entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
 
 findQuestionnaireSuggestionByUuid' :: U.UUID -> AppContextM (Maybe QuestionnaireSuggestion)
 findQuestionnaireSuggestionByUuid' uuid = do
   appUuid <- asks currentAppUuid
   createFindEntityWithFieldsByFn' "uuid, name, description" entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
 
-findQuestionnaireEventsById :: String -> AppContextM [QuestionnaireEvent]
-findQuestionnaireEventsById uuid = do
+findQuestionnaireEventsByUuid :: U.UUID -> AppContextM [QuestionnaireEvent]
+findQuestionnaireEventsByUuid uuid = do
   appUuid <- asks currentAppUuid
   let sql = fromString "SELECT events FROM questionnaire qtn WHERE app_uuid = ? AND uuid = ?"
   let params = [toField appUuid, toField uuid]
@@ -387,17 +387,17 @@ findQuestionnaireForSquashing = do
   entities <- runDB action
   return . concat $ entities
 
-findQuestionnaireSquashById :: String -> AppContextM QuestionnaireSquash
-findQuestionnaireSquashById uuid =
-  createFindEntityWithFieldsByFn "uuid, events, versions" False entityName [("uuid", uuid)]
+findQuestionnaireSquashByUuid :: U.UUID -> AppContextM QuestionnaireSquash
+findQuestionnaireSquashByUuid uuid =
+  createFindEntityWithFieldsByFn "uuid, events, versions" False entityName [("uuid", U.toString uuid)]
 
 countQuestionnaires :: AppContextM Int
 countQuestionnaires = do
   appUuid <- asks currentAppUuid
-  countQuestionnairesWithApp (U.toString appUuid)
+  countQuestionnairesWithApp appUuid
 
-countQuestionnairesWithApp :: String -> AppContextM Int
-countQuestionnairesWithApp appUuid = createCountByFn entityName appCondition [appUuid]
+countQuestionnairesWithApp :: U.UUID -> AppContextM Int
+countQuestionnairesWithApp appUuid = createCountByFn entityName appCondition [U.toString appUuid]
 
 insertQuestionnaire :: Questionnaire -> AppContextM Int64
 insertQuestionnaire qtn = do
@@ -405,8 +405,8 @@ insertQuestionnaire qtn = do
   traverse_ insertQuestionnairePermRecord qtn.permissions
   return 1
 
-updateQuestionnaireById :: Questionnaire -> AppContextM ()
-updateQuestionnaireById qtn = do
+updateQuestionnaireByUuid :: Questionnaire -> AppContextM ()
+updateQuestionnaireByUuid qtn = do
   appUuid <- asks currentAppUuid
   let sql =
         fromString
@@ -418,7 +418,7 @@ updateQuestionnaireById qtn = do
   deleteQuestionnairePermRecordsFiltered [("questionnaire_uuid", U.toString qtn.uuid)]
   traverse_ insertQuestionnairePermRecord qtn.permissions
 
-updateQuestionnaireEventsByUuid :: String -> Bool -> [QuestionnaireEvent] -> AppContextM ()
+updateQuestionnaireEventsByUuid :: U.UUID -> Bool -> [QuestionnaireEvent] -> AppContextM ()
 updateQuestionnaireEventsByUuid qtnUuid squashed events = do
   let sql = fromString "UPDATE questionnaire SET squashed = ?, events = ?, updated_at = now() WHERE uuid = ?"
   let params = [toField squashed, toJSONField events, toField qtnUuid]
@@ -427,7 +427,7 @@ updateQuestionnaireEventsByUuid qtnUuid squashed events = do
   runDB action
   return ()
 
-updateQuestionnaireEventsByUuid' :: String -> Bool -> [QuestionnaireEvent] -> AppContextM ()
+updateQuestionnaireEventsByUuid' :: U.UUID -> Bool -> [QuestionnaireEvent] -> AppContextM ()
 updateQuestionnaireEventsByUuid' qtnUuid squashed events = do
   let sql = fromString "UPDATE questionnaire SET squashed = ?, events = ? WHERE uuid = ?"
   let params = [toField squashed, toJSONField events, toField qtnUuid]
@@ -436,7 +436,7 @@ updateQuestionnaireEventsByUuid' qtnUuid squashed events = do
   runDB action
   return ()
 
-updateQuestionnaireEventsByUuid'' :: String -> [QuestionnaireEvent] -> AppContextM ()
+updateQuestionnaireEventsByUuid'' :: U.UUID -> [QuestionnaireEvent] -> AppContextM ()
 updateQuestionnaireEventsByUuid'' qtnUuid events = do
   let sql = fromString "UPDATE questionnaire SET events = ? WHERE uuid = ?"
   let params = [toJSONField events, toField qtnUuid]
@@ -445,7 +445,7 @@ updateQuestionnaireEventsByUuid'' qtnUuid events = do
   runDB action
   return ()
 
-updateQuestionnaireIndicationByUuid :: String -> PhasesAnsweredIndication -> AppContextM ()
+updateQuestionnaireIndicationByUuid :: U.UUID -> PhasesAnsweredIndication -> AppContextM ()
 updateQuestionnaireIndicationByUuid qtnUuid phasesAnsweredIndication = do
   let sql = fromString "UPDATE questionnaire SET answered_questions = ?, unanswered_questions = ? WHERE uuid = ?"
   let params =
@@ -458,8 +458,7 @@ updateQuestionnaireIndicationByUuid qtnUuid phasesAnsweredIndication = do
   runDB action
   return ()
 
-updateQuestionnaireEventsWithIndicationByUuid
-  :: String -> Bool -> [QuestionnaireEvent] -> PhasesAnsweredIndication -> AppContextM ()
+updateQuestionnaireEventsWithIndicationByUuid :: U.UUID -> Bool -> [QuestionnaireEvent] -> PhasesAnsweredIndication -> AppContextM ()
 updateQuestionnaireEventsWithIndicationByUuid qtnUuid squashed events phasesAnsweredIndication = do
   let sql =
         fromString
@@ -476,7 +475,7 @@ updateQuestionnaireEventsWithIndicationByUuid qtnUuid squashed events phasesAnsw
   runDB action
   return ()
 
-appendQuestionnaireEventByUuid :: String -> [QuestionnaireEvent] -> PhasesAnsweredIndication -> AppContextM ()
+appendQuestionnaireEventByUuid :: U.UUID -> [QuestionnaireEvent] -> PhasesAnsweredIndication -> AppContextM ()
 appendQuestionnaireEventByUuid qtnUuid events phasesAnsweredIndication = do
   appUuid <- asks currentAppUuid
   let sql =
@@ -494,7 +493,7 @@ appendQuestionnaireEventByUuid qtnUuid events phasesAnsweredIndication = do
   runDB action
   return ()
 
-appendQuestionnaireEventByUuid' :: String -> [QuestionnaireEvent] -> AppContextM ()
+appendQuestionnaireEventByUuid' :: U.UUID -> [QuestionnaireEvent] -> AppContextM ()
 appendQuestionnaireEventByUuid' qtnUuid events = do
   appUuid <- asks currentAppUuid
   let sql =
@@ -523,10 +522,10 @@ deleteQuestionnairesFiltered params = do
   appUuid <- asks currentAppUuid
   createDeleteEntitiesByFn entityName (appQueryUuid appUuid : params)
 
-deleteQuestionnaireById :: String -> AppContextM Int64
-deleteQuestionnaireById uuid = do
+deleteQuestionnaireByUuid :: U.UUID -> AppContextM Int64
+deleteQuestionnaireByUuid uuid = do
   appUuid <- asks currentAppUuid
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
+  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
 
 -- ------------------------------------------------------------------------------------------------------------------------------
 -- PRIVATE

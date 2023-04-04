@@ -1,10 +1,9 @@
 module Wizard.Specs.API.Branch.List_POST (
-  list_post,
+  list_POST,
 ) where
 
 import Data.Aeson (encode)
 import qualified Data.Map.Strict as M
-import Data.Maybe (fromJust)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -22,23 +21,20 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
-import Wizard.Service.Branch.BranchService
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Branch.Common
 import Wizard.Specs.API.Common
-import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- POST /branches
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith ((), Application)
-list_post appContext =
+list_POST :: AppContext -> SpecWith ((), Application)
+list_POST appContext =
   describe "POST /branches" $ do
     test_201 appContext
     test_400_invalid_json appContext
     test_400_not_valid_kmId appContext
-    test_400_already_taken_kmId appContext
     test_400_not_existing_previousPackageId appContext
     test_401 appContext
     test_403 appContext
@@ -72,7 +68,7 @@ test_201 appContext =
       let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, BranchList)
       assertResStatus status expStatus
       assertResHeaders headers expHeaders
-      compareBranchDtos
+      compareBranch
         resBody
         reqDto
         reqDto.previousPackageId
@@ -114,35 +110,6 @@ test_400_not_valid_kmId appContext =
       response `shouldRespondWith` responseMatcher
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findBranches appContext 0
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_400_already_taken_kmId appContext =
-  it "HTTP 400 BAD REQUEST when kmId is already taken" $
-    -- GIVEN: Prepare expectation
-    do
-      let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__KM_ID_UNIQUENESS $ reqDto.kmId])
-      let expBody = encode expDto
-      -- AND: Run migrations
-      runInContextIO
-        ( createBranchWithParams
-            amsterdamBranchList.uuid
-            amsterdamBranchList.createdAt
-            (fromJust appContext.currentUser)
-            amsterdamBranchCreate
-        )
-        appContext
-      -- WHEN: Call API
-      response <- request reqMethod reqUrl reqHeaders reqBody
-      -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
-      -- AND: Find result in DB and compare with expectation state
-      assertCountInDB findBranches appContext 1
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

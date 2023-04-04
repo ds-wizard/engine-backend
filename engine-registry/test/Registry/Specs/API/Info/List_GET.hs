@@ -9,10 +9,12 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import qualified Registry.Database.Migration.Development.Component.ComponentMigration as CMP_Migration
 import Registry.Model.Context.AppContext
 import Shared.Api.Resource.Info.InfoJM ()
 import Shared.Database.Migration.Development.Info.Data.Infos
 
+import Registry.Specs.Common
 import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
@@ -43,6 +45,8 @@ test_200 appContext =
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto = appInfo
       let expBody = encode expDto
+      -- AND: Prepare DB
+      runInContextIO CMP_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

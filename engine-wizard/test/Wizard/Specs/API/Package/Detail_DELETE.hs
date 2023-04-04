@@ -64,7 +64,7 @@ test_204 appContext =
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Find a result
-      eitherPackage <- runInContextIO (getPackageDetailById netherlandsPackageV2.pId) appContext
+      eitherPackage <- runInContextIO (getPackageDetailById netherlandsPackageV2.pId True) appContext
       -- AND: Compare response with expectation
       let responseMatcher =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}

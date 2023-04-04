@@ -6,7 +6,6 @@ module Wizard.Integration.Http.Common.HttpClient (
 ) where
 
 import qualified Control.Exception.Base as E
-import Control.Lens ((&), (.~), (?~), (^.))
 import Control.Monad.Except (liftEither, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
@@ -14,21 +13,18 @@ import qualified Data.ByteString.Lazy as BSL
 import qualified Data.CaseInsensitive as CI
 import Data.Map (toList)
 import qualified Data.Text as T
+import Network.HTTP.Client (responseBody, responseStatus)
 import Network.HTTP.Client.MultipartFormData (partContentType, partFilename)
+import Network.HTTP.Types.Status (statusCode)
 import Network.Wreq (
   Part,
   Response,
-  checkResponse,
   customPayloadMethodWith,
   defaults,
   getWith,
-  headers,
-  manager,
   partBS,
-  responseBody,
-  responseStatus,
-  statusCode,
  )
+import Network.Wreq.Types (Options (..))
 
 import Shared.Constant.Component
 import Shared.Model.Error.Error
@@ -43,7 +39,7 @@ runRequest req responseMapper = do
   eResponse <- runSimpleRequest req
   case eResponse of
     Right response -> do
-      let sc = response ^. responseStatus . statusCode
+      let sc = statusCode . responseStatus $ response
       if sc <= 399
         then do
           let eResDto = responseMapper response
@@ -63,7 +59,7 @@ runRequest' req responseMapper = do
   eResponse <- runSimpleRequest req
   case eResponse of
     Right response -> do
-      let sc = response ^. responseStatus . statusCode
+      let sc = statusCode . responseStatus $ response
       if sc <= 399
         then do
           let eResDto = responseMapper response
@@ -72,7 +68,7 @@ runRequest' req responseMapper = do
         else do
           logResponseErrorBody response
           return . Left $
-            f' "Request Failed\nStatus Code: %s\nResponse Body: %s" [show sc, show (response ^. responseBody)]
+            f' "Request Failed\nStatus Code: %s\nResponse Body: %s" [show sc, show . responseBody $ response]
     Left error -> do
       logResponseErrorGeneral error
       return . Left $ f' "Request failed\nError: %s" [show error]
@@ -81,7 +77,11 @@ runSimpleRequest :: HttpRequest -> AppContextM (Either E.SomeException (Response
 runSimpleRequest req = do
   httpClientManager <- asks httpClientManager
   let opts =
-        defaults & manager .~ Right httpClientManager & headers .~ reqHeaders & (checkResponse ?~ (\_ _ -> return ()))
+        defaults
+          { manager = Right httpClientManager
+          , headers = reqHeaders
+          , checkResponse = Just (\_ _ -> return ())
+          }
   case req.multipart of
     Just multipart -> liftIO . E.try . actionMultipart opts $ multipart
     Nothing -> liftIO . E.try . action $ opts
@@ -112,7 +112,7 @@ logRequestMultipart request =
 logResponseErrorGeneral error = logInfoU _CMP_INTEGRATION (f' "Request failed: '%s'" [show error])
 
 logResponseErrorBody response =
-  logInfoU _CMP_INTEGRATION ("Response Message: '" ++ show (response ^. responseBody) ++ "'")
+  logInfoU _CMP_INTEGRATION ("Response Message: '" ++ show (responseBody response) ++ "'")
 
 logResponseBody eResDto =
   case eResDto of

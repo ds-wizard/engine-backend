@@ -1,7 +1,6 @@
 module Wizard.Service.Questionnaire.Comment.QuestionnaireCommentUtil where
 
 import Control.Monad.Except (catchError)
-import qualified Data.UUID as U
 
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Database.DAO.User.UserDAO
@@ -15,7 +14,7 @@ enhanceQuestionnaireCommentThread :: QuestionnaireCommentThread -> AppContextM Q
 enhanceQuestionnaireCommentThread thread = do
   mUser <-
     case thread.createdBy of
-      Just userUuid -> findUserById' (U.toString userUuid)
+      Just userUuid -> findUserByUuid' userUuid
       Nothing -> return Nothing
   commentsDto <- traverse enhanceQuestionnaireComment thread.comments
   return $ toCommentThreadDTO thread mUser commentsDto
@@ -24,7 +23,7 @@ enhanceQuestionnaireComment :: QuestionnaireComment -> AppContextM Questionnaire
 enhanceQuestionnaireComment comment = do
   mUser <-
     case comment.createdBy of
-      Just userUuid -> findUserById' (U.toString userUuid)
+      Just userUuid -> findUserByUuid' userUuid
       Nothing -> return Nothing
   return $ toCommentDTO comment mUser
 

@@ -61,10 +61,10 @@ createFeedbackWithGivenUuid fUuid reqDto =
     appConfig <- getAppConfig
     return $ toDTO serverConfig appConfig feedback
 
-getFeedbackByUuid :: String -> AppContextM FeedbackDTO
+getFeedbackByUuid :: U.UUID -> AppContextM FeedbackDTO
 getFeedbackByUuid fUuid = do
   checkIfFeedbackIsEnabled
-  feedback <- findFeedbackById fUuid
+  feedback <- findFeedbackByUuid fUuid
   serverConfig <- asks serverConfig
   appConfig <- getAppConfig
   return $ toDTO serverConfig appConfig feedback
@@ -99,7 +99,7 @@ synchronizeFeedbacks =
   where
     updateOrDeleteFeedback issues now feedback =
       case L.find (\issue -> feedback.issueId == issue.number) issues of
-        Just issue -> updateFeedbackById $ fromSimpleIssue feedback issue now
-        Nothing -> deleteFeedbackById (U.toString feedback.uuid)
+        Just issue -> updateFeedbackByUuid $ fromSimpleIssue feedback issue now
+        Nothing -> deleteFeedbackByUuid feedback.uuid
 
 checkIfFeedbackIsEnabled = checkIfAppFeatureIsEnabled "Feedback" (\c -> c.questionnaire.feedback.enabled)

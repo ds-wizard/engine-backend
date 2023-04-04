@@ -13,6 +13,7 @@ import Shared.Model.Package.PackageWithEvents
 import Shared.Service.Package.PackageMapper hiding (toSuggestionDTO)
 import Shared.Service.Package.PackageUtil
 import Shared.Util.Coordinate
+import Wizard.Api.Resource.Package.PackageChangeDTO
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Database.DAO.Common
@@ -49,21 +50,27 @@ getPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort = do
       return . fmap (toSimpleDTO'' (appConfig.registry.enabled)) $ packages
 
 getPackageSuggestions
-  :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)
-getPackageSuggestions mQuery mSelectIds mExcludeIds pageable sort = do
+  :: Maybe String
+  -> Maybe [String]
+  -> Maybe [String]
+  -> Maybe PackagePhase
+  -> Pageable
+  -> [Sort]
+  -> AppContextM (Page PackageSuggestion)
+getPackageSuggestions mQuery mSelectIds mExcludeIds mPhase pageable sort = do
   checkPermission _PM_READ_PERM
-  findPackageSuggestionsPage mQuery mSelectIds mExcludeIds pageable sort
+  findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase pageable sort
 
 getPackageById :: String -> AppContextM Package
 getPackageById pkgId = resolvePackageId pkgId >>= findPackageById
 
-getPackageDetailById :: String -> AppContextM PackageDetailDTO
-getPackageDetailById pkgId = do
+getPackageDetailById :: String -> Bool -> AppContextM PackageDetailDTO
+getPackageDetailById pkgId excludeDeprecatedVersions = do
   resolvedPkgId <- resolvePackageId pkgId
   checkIfPackageIsPublic (Just resolvedPkgId) _PM_READ_PERM
   serverConfig <- asks serverConfig
   pkg <- getPackageById resolvedPkgId
-  versions <- getPackageVersions pkg
+  versions <- getPackageVersions pkg excludeDeprecatedVersions
   pkgRs <- findRegistryPackages
   orgRs <- findRegistryOrganizations
   return $ toDetailDTO pkg pkgRs orgRs versions (buildPackageUrl serverConfig.registry.clientUrl pkg pkgRs)
@@ -109,11 +116,14 @@ getTheNewestPackageByOrganizationIdAndKmId organizationId kmId = do
       let sorted = sortPackagesByVersion packages
       return . Just . head $ sorted
 
-getNewerPackages :: String -> AppContextM [Package]
-getNewerPackages currentPkgId = do
+getNewerPackages :: String -> Bool -> AppContextM [Package]
+getNewerPackages currentPkgId excludeDeprecatedVersions = do
   pkgs <- findPackagesByOrganizationIdAndKmId (getOrgIdFromCoordinate currentPkgId) (getKmIdFromCoordinate currentPkgId)
-  let newerPkgs = filter (\pkg -> compareVersion pkg.version (getVersionFromCoordinate currentPkgId) == GT) pkgs
-  return . sortPackagesByVersion $ newerPkgs
+  return . sortPackagesByVersion . filter (filterPkg excludeDeprecatedVersions) $ pkgs
+  where
+    filterPkg :: Bool -> Package -> Bool
+    filterPkg True pkg = compareVersion pkg.version (getVersionFromCoordinate currentPkgId) == GT && pkg.phase == ReleasedPackagePhase
+    filterPkg False pkg = compareVersion pkg.version (getVersionFromCoordinate currentPkgId) == GT
 
 createPackage :: PackageWithEvents -> AppContextM PackageSimpleDTO
 createPackage pkg =
@@ -121,6 +131,14 @@ createPackage pkg =
     checkPackageLimit
     insertPackage pkg
     return . toSimpleDTO . toPackage $ pkg
+
+modifyPackage :: String -> PackageChangeDTO -> AppContextM PackageChangeDTO
+modifyPackage pkgId reqDto =
+  runInTransaction $ do
+    checkPermission _PM_WRITE_PERM
+    _ <- findPackageById pkgId
+    updatePackagePhaseById pkgId reqDto.phase
+    return reqDto
 
 deletePackagesByQueryParams :: [(String, String)] -> AppContextM ()
 deletePackagesByQueryParams queryParams =
@@ -144,7 +162,11 @@ deletePackage pkgId =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getPackageVersions :: Package -> AppContextM [String]
-getPackageVersions pkg = do
+getPackageVersions :: Package -> Bool -> AppContextM [String]
+getPackageVersions pkg excludeDeprecatedVersions = do
   allPkgs <- findPackagesByOrganizationIdAndKmId pkg.organizationId pkg.kmId
-  return . fmap (.version) $ allPkgs
+  return . fmap (.version) . filter (filterPkg excludeDeprecatedVersions) $ allPkgs
+  where
+    filterPkg :: Bool -> Package -> Bool
+    filterPkg True pkg = pkg.phase == ReleasedPackagePhase
+    filterPkg False _ = True

@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Migration.KnowledgeModel.List_Current_POST where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -17,7 +18,7 @@ type List_Current_POST =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] MigratorStateCreateDTO
     :> "branches"
-    :> Capture "bUuid" String
+    :> Capture "bUuid" U.UUID
     :> "migrations"
     :> "current"
     :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] MigratorStateDTO)
@@ -26,7 +27,7 @@ list_current_POST
   :: Maybe String
   -> Maybe String
   -> MigratorStateCreateDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] MigratorStateDTO)
 list_current_POST mTokenHeader mServerUrl reqDto bUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->

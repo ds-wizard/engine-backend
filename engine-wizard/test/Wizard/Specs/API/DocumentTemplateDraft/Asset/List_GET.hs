@@ -7,12 +7,12 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import Test.Hspec.Wai.Matcher
 
 import Shared.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateAssets
 import Shared.Model.Config.ServerConfig
+import Shared.Model.DocumentTemplate.DocumentTemplate
 import Shared.Model.DocumentTemplate.DocumentTemplateJM ()
-import Shared.Util.String
+import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetDTO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
@@ -56,17 +56,16 @@ create_test_200 title appContext reqAuthHeader =
       -- AND: Prepare expectation
       let minioUrl = appContext.serverConfig.s3.url
       let expStatus = 200
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = [toDTO assetLogo (f' "%s/engine-wizard/templates/global:questionnaire-report:1.0.0/6c367648-9b60-4307-93b2-0851938adee0" [minioUrl])]
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = [toDTO assetLogo "" assetLogo.createdAt]
       let expBody = encode expDto
+      let expType (a :: [DocumentTemplateAssetDTO]) = a
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      assertListResponseWithoutFields expStatus expHeaders expDto expType response ["url", "urlExpiration"]
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

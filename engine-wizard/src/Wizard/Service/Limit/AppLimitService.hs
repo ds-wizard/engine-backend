@@ -33,9 +33,9 @@ createAppLimit aUuid now = do
 
 recomputeAppLimit :: U.UUID -> Maybe Int -> AppContextM AppLimit
 recomputeAppLimit appUuid mUsers = do
-  appLimit <- findAppLimitById (U.toString appUuid)
+  appLimit <- findAppLimitByUuid appUuid
   let updatedAppLimit = fromChange appLimit mUsers
-  updateAppLimitById updatedAppLimit
+  updateAppLimitByUuid updatedAppLimit
 
 checkUserLimit :: AppContextM ()
 checkUserLimit = do
@@ -71,13 +71,13 @@ checkDocumentTemplateLimit :: AppContextM ()
 checkDocumentTemplateLimit = do
   limit <- findCurrentAppLimit
   count <- countDocumentTemplatesGroupedByOrganizationIdAndKmId
-  checkLimit "document template" count limit.documentTemplates
+  checkLimit "document templates" count limit.documentTemplates
 
 checkDocumentTemplateDraftLimit :: AppContextM ()
 checkDocumentTemplateDraftLimit = do
   limit <- findCurrentAppLimit
   count <- countDraftsGroupedByOrganizationIdAndKmId
-  checkLimit "document template draft" count limit.documentTemplateDrafts
+  checkLimit "document template drafts" count limit.documentTemplateDrafts
 
 checkDocumentLimit :: AppContextM ()
 checkDocumentLimit = do

@@ -2,6 +2,7 @@ module Wizard.Api.Resource.Package.PackageDetailSM where
 
 import Data.Swagger
 
+import Shared.Api.Resource.Package.PackagePhaseSM ()
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Service.Package.PackageMapper
 import Shared.Util.Swagger

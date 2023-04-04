@@ -20,24 +20,24 @@ import Wizard.Util.Websocket
 type Detail_WS =
   Header "Host" String
     :> "branches"
-    :> Capture "branchUuid" String
+    :> Capture "branchUuid" U.UUID
     :> "websocket"
     :> QueryParam "Authorization" String
     :> WebSocket
 
-detail_WS :: Maybe String -> String -> Maybe String -> Connection -> BaseContextM ()
+detail_WS :: Maybe String -> U.UUID -> Maybe String -> Connection -> BaseContextM ()
 detail_WS mServerUrl branchUuid mTokenHeader connection =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
     runInMaybeAuthService NoTransaction $ do
       connectionUuid <- initConnection
       catchError
         (putUserOnline branchUuid connectionUuid connection)
-        (sendError connectionUuid connection branchUuid disconnectUser)
+        (sendError connectionUuid connection (U.toString branchUuid) disconnectUser)
       handleMessage branchUuid connectionUuid connection
 
-handleMessage :: String -> U.UUID -> Connection -> AppContextM ()
+handleMessage :: U.UUID -> U.UUID -> Connection -> AppContextM ()
 handleMessage branchUuid connectionUuid connection =
-  handleWebsocketMessage branchUuid connectionUuid connection handleClose disconnectUser handleAction continue
+  handleWebsocketMessage (U.toString branchUuid) connectionUuid connection handleClose disconnectUser handleAction continue
   where
     continue :: AppContextM ()
     continue = handleMessage branchUuid connectionUuid connection

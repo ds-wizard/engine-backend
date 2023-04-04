@@ -8,7 +8,6 @@ import System.Exit
 import System.IO
 
 import Registry.Bootstrap.DatabaseMigration
-import Registry.Bootstrap.Localization
 import Registry.Bootstrap.Web
 import Registry.Constant.ASCIIArt
 import Registry.Constant.Resource
@@ -35,11 +34,9 @@ runApplication = do
       dbPool <- connectPostgresDB serverConfig.logging serverConfig.database
       httpClientManager <- setupHttpClientManager serverConfig.logging
       s3Client <- setupS3Client serverConfig.s3 httpClientManager
-      localization <- loadLocalization serverConfig
       let baseContext =
             BaseContext
               { serverConfig = serverConfig
-              , localization = localization
               , buildInfoConfig = buildInfoConfig
               , dbPool = dbPool
               , s3Client = s3Client

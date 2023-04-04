@@ -7,6 +7,5 @@ data PackageSuggestion = PackageSuggestion
   , name :: String
   , version :: String
   , description :: String
-  , versions :: [String]
   }
   deriving (Show, Eq, Ord, Generic)

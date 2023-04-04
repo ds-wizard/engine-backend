@@ -35,7 +35,7 @@ import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Websocket.WebsocketService
 import Wizard.Util.Websocket
 
-putUserOnline :: String -> U.UUID -> Connection -> AppContextM ()
+putUserOnline :: U.UUID -> U.UUID -> Connection -> AppContextM ()
 putUserOnline qtnUuid connectionUuid connection = do
   myself <- createQuestionnaireRecord connectionUuid connection qtnUuid
   checkViewPermission myself
@@ -43,20 +43,20 @@ putUserOnline qtnUuid connectionUuid connection = do
   logWS connectionUuid "New user added to the list"
   setUserList qtnUuid connectionUuid
 
-deleteUser :: String -> U.UUID -> AppContextM ()
+deleteUser :: U.UUID -> U.UUID -> AppContextM ()
 deleteUser qtnUuid connectionUuid = do
   deleteFromCache connectionUuid
   setUserList qtnUuid connectionUuid
 
-setUserList :: String -> U.UUID -> AppContextM ()
+setUserList :: U.UUID -> U.UUID -> AppContextM ()
 setUserList qtnUuid connectionUuid = do
   logWS connectionUuid "Informing other users about user list changes"
   records <- getAllFromCache
-  broadcast qtnUuid records (toSetUserListMessage records) disconnectUser
+  broadcast (U.toString qtnUuid) records (toSetUserListMessage records) disconnectUser
   logWS connectionUuid "Informed completed"
 
 updatePermsForOnlineUsers
-  :: String -> QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM ()
+  :: U.UUID -> QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM ()
 updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
   records <- getAllFromCache
   traverse_ updatePerm records
@@ -64,7 +64,7 @@ updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
     updatePerm :: WebsocketRecord -> AppContextM ()
     updatePerm record =
       when
-        (record.entityId == qtnUuid)
+        (record.entityId == U.toString qtnUuid)
         ( do
             let permission =
                   case record.user of
@@ -81,27 +81,27 @@ updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
             disconnectUserIfLostPermission updatedRecord
         )
 
-setQuestionnaire :: String -> QuestionnaireDetailWsDTO -> AppContextM ()
+setQuestionnaire :: U.UUID -> QuestionnaireDetailWsDTO -> AppContextM ()
 setQuestionnaire qtnUuid reqDto = do
   logWS U.nil "Informing other users about changed questionnaire"
   records <- getAllFromCache
-  broadcast qtnUuid records (toSetQuestionnaireMessage reqDto) disconnectUser
+  broadcast (U.toString qtnUuid) records (toSetQuestionnaireMessage reqDto) disconnectUser
   logWS U.nil "Informed completed"
 
-logOutOnlineUsersWhenQtnDramaticallyChanged :: String -> AppContextM ()
+logOutOnlineUsersWhenQtnDramaticallyChanged :: U.UUID -> AppContextM ()
 logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid = do
   records <- getAllFromCache
-  let error = NotExistsError $ _ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT qtnUuid
+  let error = NotExistsError $ _ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT (U.toString qtnUuid)
   traverse_ (logOut error) records
   where
     logOut :: AppError -> WebsocketRecord -> AppContextM ()
     logOut error record =
       when
-        (record.entityId == qtnUuid)
+        (record.entityId == U.toString qtnUuid)
         (sendError record.connectionUuid record.connection record.entityId disconnectUser error)
 
 -- --------------------------------
-setContent :: String -> U.UUID -> QuestionnaireEventChangeDTO -> AppContextM ()
+setContent :: U.UUID -> U.UUID -> QuestionnaireEventChangeDTO -> AppContextM ()
 setContent qtnUuid connectionUuid reqDto =
   case reqDto of
     SetReplyEventChangeDTO' event -> setReply qtnUuid connectionUuid event
@@ -115,7 +115,7 @@ setContent qtnUuid connectionUuid reqDto =
     EditCommentEventChangeDTO' event -> editComment qtnUuid connectionUuid event
     DeleteCommentEventChangeDTO' event -> deleteComment qtnUuid connectionUuid event
 
-setReply :: String -> U.UUID -> SetReplyEventChangeDTO -> AppContextM ()
+setReply :: U.UUID -> U.UUID -> SetReplyEventChangeDTO -> AppContextM ()
 setReply qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
@@ -128,9 +128,9 @@ setReply qtnUuid connectionUuid reqDto = do
     reqDto.phasesAnsweredIndication
   let resDto = toSetReplyEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
-  broadcast qtnUuid records (toSetReplyMessage resDto) disconnectUser
+  broadcast (U.toString qtnUuid) records (toSetReplyMessage resDto) disconnectUser
 
-clearReply :: String -> U.UUID -> ClearReplyEventChangeDTO -> AppContextM ()
+clearReply :: U.UUID -> U.UUID -> ClearReplyEventChangeDTO -> AppContextM ()
 clearReply qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
@@ -143,9 +143,9 @@ clearReply qtnUuid connectionUuid reqDto = do
     reqDto.phasesAnsweredIndication
   let resDto = toClearReplyEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
-  broadcast qtnUuid records (toClearReplyMessage resDto) disconnectUser
+  broadcast (U.toString qtnUuid) records (toClearReplyMessage resDto) disconnectUser
 
-setPhase :: String -> U.UUID -> SetPhaseEventChangeDTO -> AppContextM ()
+setPhase :: U.UUID -> U.UUID -> SetPhaseEventChangeDTO -> AppContextM ()
 setPhase qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
@@ -158,9 +158,9 @@ setPhase qtnUuid connectionUuid reqDto = do
     reqDto.phasesAnsweredIndication
   let resDto = toSetPhaseEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
-  broadcast qtnUuid records (toSetPhaseMessage resDto) disconnectUser
+  broadcast (U.toString qtnUuid) records (toSetPhaseMessage resDto) disconnectUser
 
-setLabel :: String -> U.UUID -> SetLabelsEventChangeDTO -> AppContextM ()
+setLabel :: U.UUID -> U.UUID -> SetLabelsEventChangeDTO -> AppContextM ()
 setLabel qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
@@ -170,9 +170,9 @@ setLabel qtnUuid connectionUuid reqDto = do
   appendQuestionnaireEventByUuid' qtnUuid [fromEventChangeDTO (SetLabelsEventChangeDTO' reqDto) mCreatedByUuid now]
   let resDto = toSetLabelsEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
-  broadcast qtnUuid records (toSetLabelMessage resDto) disconnectUser
+  broadcast (U.toString qtnUuid) records (toSetLabelMessage resDto) disconnectUser
 
-resolveCommentThread :: String -> U.UUID -> ResolveCommentThreadEventChangeDTO -> AppContextM ()
+resolveCommentThread :: U.UUID -> U.UUID -> ResolveCommentThreadEventChangeDTO -> AppContextM ()
 resolveCommentThread qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkCommentPermission myself
@@ -186,9 +186,9 @@ resolveCommentThread qtnUuid connectionUuid reqDto = do
         if reqDto.private
           then filterEditors records
           else records
-  broadcast qtnUuid filteredRecords (toResolveCommentThreadMessage resDto) disconnectUser
+  broadcast (U.toString qtnUuid) filteredRecords (toResolveCommentThreadMessage resDto) disconnectUser
 
-reopenCommentThread :: String -> U.UUID -> ReopenCommentThreadEventChangeDTO -> AppContextM ()
+reopenCommentThread :: U.UUID -> U.UUID -> ReopenCommentThreadEventChangeDTO -> AppContextM ()
 reopenCommentThread qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkCommentPermission myself
@@ -202,9 +202,9 @@ reopenCommentThread qtnUuid connectionUuid reqDto = do
         if reqDto.private
           then filterEditors records
           else records
-  broadcast qtnUuid filteredRecords (toReopenCommentThreadMessage resDto) disconnectUser
+  broadcast (U.toString qtnUuid) filteredRecords (toReopenCommentThreadMessage resDto) disconnectUser
 
-deleteCommentThread :: String -> U.UUID -> DeleteCommentThreadEventChangeDTO -> AppContextM ()
+deleteCommentThread :: U.UUID -> U.UUID -> DeleteCommentThreadEventChangeDTO -> AppContextM ()
 deleteCommentThread qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkCommentPermission myself
@@ -219,9 +219,9 @@ deleteCommentThread qtnUuid connectionUuid reqDto = do
         if reqDto.private
           then filterEditors records
           else records
-  broadcast qtnUuid filteredRecords (toDeleteCommentThreadMessage resDto) disconnectUser
+  broadcast (U.toString qtnUuid) filteredRecords (toDeleteCommentThreadMessage resDto) disconnectUser
 
-addComment :: String -> U.UUID -> AddCommentEventChangeDTO -> AppContextM ()
+addComment :: U.UUID -> U.UUID -> AddCommentEventChangeDTO -> AppContextM ()
 addComment qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkCommentPermission myself
@@ -231,7 +231,7 @@ addComment qtnUuid connectionUuid reqDto = do
   let comment = toComment reqDto mCreatedByUuid now
   if reqDto.newThread
     then do
-      let thread = toCommentThread reqDto (u' qtnUuid) mCreatedByUuid now
+      let thread = toCommentThread reqDto qtnUuid mCreatedByUuid now
       insertQuestionnaireThreadAndComment thread comment
     else insertQuestionnaireComment comment
   let resDto = toAddCommentEventDTO' reqDto mCreatedBy now
@@ -240,9 +240,9 @@ addComment qtnUuid connectionUuid reqDto = do
         if reqDto.private
           then filterEditors records
           else records
-  broadcast qtnUuid filteredRecords (toAddCommentMessage resDto) disconnectUser
+  broadcast (U.toString qtnUuid) filteredRecords (toAddCommentMessage resDto) disconnectUser
 
-editComment :: String -> U.UUID -> EditCommentEventChangeDTO -> AppContextM ()
+editComment :: U.UUID -> U.UUID -> EditCommentEventChangeDTO -> AppContextM ()
 editComment qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkCommentPermission myself
@@ -256,9 +256,9 @@ editComment qtnUuid connectionUuid reqDto = do
         if reqDto.private
           then filterEditors records
           else records
-  broadcast qtnUuid filteredRecords (toEditCommentMessage resDto) disconnectUser
+  broadcast (U.toString qtnUuid) filteredRecords (toEditCommentMessage resDto) disconnectUser
 
-deleteComment :: String -> U.UUID -> DeleteCommentEventChangeDTO -> AppContextM ()
+deleteComment :: U.UUID -> U.UUID -> DeleteCommentEventChangeDTO -> AppContextM ()
 deleteComment qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkCommentPermission myself
@@ -272,23 +272,23 @@ deleteComment qtnUuid connectionUuid reqDto = do
         if reqDto.private
           then filterEditors records
           else records
-  broadcast qtnUuid filteredRecords (toDeleteCommentMessage resDto) disconnectUser
+  broadcast (U.toString qtnUuid) filteredRecords (toDeleteCommentMessage resDto) disconnectUser
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
 disconnectUser :: ToJSON resDto => WebsocketMessage resDto -> AppContextM ()
-disconnectUser msg = deleteUser msg.entityId msg.connectionUuid
+disconnectUser msg = deleteUser (u' msg.entityId) msg.connectionUuid
 
 disconnectUserIfLostPermission :: WebsocketRecord -> AppContextM ()
 disconnectUserIfLostPermission record = catchError (checkViewPermission record) handleError
   where
     handleError = sendError record.connectionUuid record.connection record.entityId disconnectUser
 
-createQuestionnaireRecord :: U.UUID -> Connection -> String -> AppContextM WebsocketRecord
+createQuestionnaireRecord :: U.UUID -> Connection -> U.UUID -> AppContextM WebsocketRecord
 createQuestionnaireRecord connectionUuid connection qtnUuid = do
   mCurrentUser <- asks currentUser
-  qtn <- findQuestionnaireById qtnUuid
+  qtn <- findQuestionnaireByUuid qtnUuid
   let permission =
         getPermission
           qtn.visibility
@@ -297,7 +297,7 @@ createQuestionnaireRecord connectionUuid connection qtnUuid = do
           (fmap (.uuid) mCurrentUser)
           (fmap (.uRole) mCurrentUser)
           (fmap (.groups) mCurrentUser)
-  createRecord connectionUuid connection qtnUuid permission
+  createRecord connectionUuid connection (U.toString qtnUuid) permission
 
 getMaybeCreatedBy :: WebsocketRecord -> Maybe UserSuggestionDTO
 getMaybeCreatedBy myself =

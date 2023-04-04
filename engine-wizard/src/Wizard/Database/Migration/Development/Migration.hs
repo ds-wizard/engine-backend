@@ -16,6 +16,8 @@ import qualified Wizard.Database.Migration.Development.BookReference.BookReferen
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
 import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
+import qualified Wizard.Database.Migration.Development.Component.ComponentMigration as CMP
+import qualified Wizard.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import qualified Wizard.Database.Migration.Development.Config.ConfigMigration as CFG
 import qualified Wizard.Database.Migration.Development.Config.ConfigSchemaMigration as CFG_Schema
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
@@ -60,6 +62,7 @@ runMigration = do
   TML_Schema.dropFunctions
   CMN_Schema.dropFunctions
   -- 2. Drop schema
+  CMP_Schema.dropTables
   TF_Schema.dropTables
   LOC_Schema.dropTables
   R_Schema.dropTables
@@ -110,6 +113,7 @@ runMigration = do
   R_Schema.createTables
   LOC_Schema.createTables
   TF_Schema.createTables
+  CMP_Schema.createTables
   -- 4. Create DB functions
   CMN_Schema.createFunctions
   PKG_Schema.createFunctions
@@ -141,5 +145,6 @@ runMigration = do
   QI.runMigration
   R.runMigration
   LOC.runMigration
+  CMP.runMigration
   logInfo _CMP_MIGRATION "ended"
   return Nothing

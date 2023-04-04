@@ -20,24 +20,24 @@ import Wizard.Util.Websocket
 type Detail_WS =
   Header "Host" String
     :> "questionnaires"
-    :> Capture "qtnUuid" String
+    :> Capture "qtnUuid" U.UUID
     :> "websocket"
     :> QueryParam "Authorization" String
     :> WebSocket
 
-detail_WS :: Maybe String -> String -> Maybe String -> Connection -> BaseContextM ()
+detail_WS :: Maybe String -> U.UUID -> Maybe String -> Connection -> BaseContextM ()
 detail_WS mServerUrl qtnUuid mTokenHeader connection =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
     runInMaybeAuthService NoTransaction $ do
       connectionUuid <- initConnection
       catchError
         (putUserOnline qtnUuid connectionUuid connection)
-        (sendError connectionUuid connection qtnUuid disconnectUser)
+        (sendError connectionUuid connection (U.toString qtnUuid) disconnectUser)
       handleMessage qtnUuid connectionUuid connection
 
-handleMessage :: String -> U.UUID -> Connection -> AppContextM ()
+handleMessage :: U.UUID -> U.UUID -> Connection -> AppContextM ()
 handleMessage qtnUuid connectionUuid connection =
-  handleWebsocketMessage qtnUuid connectionUuid connection handleClose disconnectUser handleAction continue
+  handleWebsocketMessage (U.toString qtnUuid) connectionUuid connection handleClose disconnectUser handleAction continue
   where
     continue :: AppContextM ()
     continue = handleMessage qtnUuid connectionUuid connection

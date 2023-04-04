@@ -21,6 +21,7 @@ toList branch mForkOfPackageId state =
     { uuid = branch.uuid
     , name = branch.name
     , kmId = branch.kmId
+    , version = branch.version
     , state = state
     , previousPackageId = branch.previousPackageId
     , forkOfPackageId = mForkOfPackageId
@@ -35,6 +36,10 @@ toDetailDTO branch branchData knowledgeModel mForkOfPackageId mForkOfPackage sta
     { uuid = branch.uuid
     , name = branch.name
     , kmId = branch.kmId
+    , version = branch.version
+    , description = branch.description
+    , readme = branch.readme
+    , license = branch.license
     , state = state
     , previousPackageId = branch.previousPackageId
     , forkOfPackageId = mForkOfPackageId
@@ -46,32 +51,6 @@ toDetailDTO branch branchData knowledgeModel mForkOfPackageId mForkOfPackage sta
     , updatedAt = branch.updatedAt
     }
 
-fromChangeDTO :: BranchChangeDTO -> U.UUID -> Maybe String -> Maybe U.UUID -> U.UUID -> UTCTime -> UTCTime -> Branch
-fromChangeDTO dto bUuid bPackageId mCreatedBy appUuid bCreatedAt bUpdatedAt =
-  Branch
-    { uuid = bUuid
-    , name = dto.name
-    , kmId = dto.kmId
-    , previousPackageId = bPackageId
-    , createdBy = mCreatedBy
-    , appUuid = appUuid
-    , createdAt = bCreatedAt
-    , updatedAt = bUpdatedAt
-    }
-
-fromCreateDTO :: BranchCreateDTO -> U.UUID -> Maybe U.UUID -> U.UUID -> UTCTime -> UTCTime -> Branch
-fromCreateDTO dto bUuid mCreatedBy appUuid bCreatedAt bUpdatedAt =
-  Branch
-    { uuid = bUuid
-    , name = dto.name
-    , kmId = dto.kmId
-    , previousPackageId = dto.previousPackageId
-    , createdBy = mCreatedBy
-    , appUuid = appUuid
-    , createdAt = bCreatedAt
-    , updatedAt = bUpdatedAt
-    }
-
 toBranchData :: Branch -> BranchData
 toBranchData branch =
   BranchData
@@ -81,4 +60,38 @@ toBranchData branch =
     , appUuid = branch.appUuid
     , createdAt = branch.createdAt
     , updatedAt = branch.updatedAt
+    }
+
+fromCreateDTO :: BranchCreateDTO -> U.UUID -> Maybe Package -> U.UUID -> U.UUID -> UTCTime -> Branch
+fromCreateDTO dto uuid mPreviousPkg createdBy appUuid now =
+  Branch
+    { uuid = uuid
+    , name = dto.name
+    , kmId = dto.kmId
+    , version = dto.version
+    , description = maybe "" (.description) mPreviousPkg
+    , readme = maybe "" (.readme) mPreviousPkg
+    , license = maybe "" (.license) mPreviousPkg
+    , previousPackageId = dto.previousPackageId
+    , createdBy = Just createdBy
+    , appUuid = appUuid
+    , createdAt = now
+    , updatedAt = now
+    }
+
+fromChangeDTO :: BranchChangeDTO -> Branch -> UTCTime -> Branch
+fromChangeDTO dto branch bUpdatedAt =
+  Branch
+    { uuid = branch.uuid
+    , name = dto.name
+    , kmId = dto.kmId
+    , version = dto.version
+    , description = dto.description
+    , readme = dto.readme
+    , license = dto.license
+    , previousPackageId = branch.previousPackageId
+    , createdBy = branch.createdBy
+    , appUuid = branch.appUuid
+    , createdAt = branch.createdAt
+    , updatedAt = bUpdatedAt
     }

@@ -34,16 +34,16 @@ import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionValidation
 
-getVersions :: String -> AppContextM [QuestionnaireVersionDTO]
+getVersions :: U.UUID -> AppContextM [QuestionnaireVersionDTO]
 getVersions qtnUuid = do
-  qtn <- findQuestionnaireById qtnUuid
+  qtn <- findQuestionnaireByUuid qtnUuid
   checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
   traverse enhanceQuestionnaireVersion qtn.versions
 
-createVersion :: String -> QuestionnaireVersionChangeDTO -> AppContextM QuestionnaireVersionDTO
+createVersion :: U.UUID -> QuestionnaireVersionChangeDTO -> AppContextM QuestionnaireVersionDTO
 createVersion qtnUuid reqDto =
   runInTransaction $ do
-    qtn <- findQuestionnaireById qtnUuid
+    qtn <- findQuestionnaireByUuid qtnUuid
     checkOwnerPermissionToQtn qtn.visibility qtn.permissions
     validateQuestionnaireVersion reqDto qtn
     vUuid <- liftIO generateUuid
@@ -51,20 +51,20 @@ createVersion qtnUuid reqDto =
     now <- liftIO getCurrentTime
     let version = fromVersionChangeDTO reqDto vUuid currentUser.uuid now now
     let updatedQtn = qtn {versions = qtn.versions ++ [version]} :: Questionnaire
-    updateQuestionnaireById updatedQtn
+    updateQuestionnaireByUuid updatedQtn
     enhanceQuestionnaireVersion version
 
-modifyVersion :: String -> String -> QuestionnaireVersionChangeDTO -> AppContextM QuestionnaireVersionDTO
+modifyVersion :: U.UUID -> U.UUID -> QuestionnaireVersionChangeDTO -> AppContextM QuestionnaireVersionDTO
 modifyVersion qtnUuid vUuid reqDto =
   runInTransaction $ do
-    qtn <- findQuestionnaireById qtnUuid
+    qtn <- findQuestionnaireByUuid qtnUuid
     checkOwnerPermissionToQtn qtn.visibility qtn.permissions
     validateQuestionnaireVersion reqDto qtn
     now <- liftIO getCurrentTime
     version <-
-      case L.find (\v -> U.toString v.uuid == vUuid) qtn.versions of
+      case L.find (\v -> v.uuid == vUuid) qtn.versions of
         Just version -> return version
-        Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "version" [("uuid", vUuid)]
+        Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "version" [("uuid", U.toString vUuid)]
     let updatedVersion = fromVersionChangeDTO reqDto version.uuid version.createdBy version.createdAt now
     let updatedVersions =
           foldl
@@ -76,31 +76,31 @@ modifyVersion qtnUuid vUuid reqDto =
             []
             qtn.versions
     let updatedQtn = qtn {versions = updatedVersions} :: Questionnaire
-    updateQuestionnaireById updatedQtn
+    updateQuestionnaireByUuid updatedQtn
     enhanceQuestionnaireVersion updatedVersion
 
-deleteVersion :: String -> String -> AppContextM ()
+deleteVersion :: U.UUID -> U.UUID -> AppContextM ()
 deleteVersion qtnUuid vUuid =
   runInTransaction $ do
-    qtn <- findQuestionnaireById qtnUuid
+    qtn <- findQuestionnaireByUuid qtnUuid
     checkOwnerPermissionToQtn qtn.visibility qtn.permissions
     updatedVersions <-
-      case L.find (\v -> U.toString v.uuid == vUuid) qtn.versions of
+      case L.find (\v -> v.uuid == vUuid) qtn.versions of
         Just version -> return $ L.delete version qtn.versions
-        Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "version" [("uuid", vUuid)]
+        Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "version" [("uuid", U.toString vUuid)]
     let updatedQtn = qtn {versions = updatedVersions} :: Questionnaire
-    updateQuestionnaireById updatedQtn
+    updateQuestionnaireByUuid updatedQtn
 
-revertToEvent :: String -> QuestionnaireVersionRevertDTO -> Bool -> AppContextM QuestionnaireContentDTO
+revertToEvent :: U.UUID -> QuestionnaireVersionRevertDTO -> Bool -> AppContextM QuestionnaireContentDTO
 revertToEvent qtnUuid reqDto shouldSave =
   runInTransaction $ do
-    qtn <- findQuestionnaireById qtnUuid
+    qtn <- findQuestionnaireByUuid qtnUuid
     when shouldSave (checkOwnerPermissionToQtn qtn.visibility qtn.permissions)
     let updatedEvents = takeWhileInclusive (\e -> getUuid e /= reqDto.eventUuid) qtn.events
     let updatedEventUuids = S.fromList . fmap getUuid $ updatedEvents
     let updatedVersions = filter (\v -> S.member v.eventUuid updatedEventUuids) qtn.versions
     let updatedQtn = qtn {events = updatedEvents, versions = updatedVersions} :: Questionnaire
-    when shouldSave (updateQuestionnaireById updatedQtn)
+    when shouldSave (updateQuestionnaireByUuid updatedQtn)
     qtnCtn <- compileQuestionnaire updatedQtn
     eventsDto <- traverse enhanceQuestionnaireEvent updatedQtn.events
     versionDto <- traverse enhanceQuestionnaireVersion updatedQtn.versions

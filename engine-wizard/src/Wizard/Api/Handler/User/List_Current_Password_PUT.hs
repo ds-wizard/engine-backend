@@ -1,6 +1,5 @@
 module Wizard.Api.Handler.User.List_Current_Password_PUT where
 
-import qualified Data.UUID as U
 import Servant
 
 import Shared.Api.Handler.Common
@@ -32,5 +31,5 @@ list_current_password_PUT mTokenHeader mServerUrl reqDto =
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
         user <- getCurrentUser
-        changeUserProfilePassword (U.toString user.uuid) reqDto
+        changeUserProfilePassword user.uuid reqDto
         return NoContent

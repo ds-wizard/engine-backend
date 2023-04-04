@@ -4,6 +4,7 @@ import Data.Time
 import GHC.Generics
 
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Model.Package.Package
 
 data PackageDetailDTO = PackageDetailDTO
   { pId :: String
@@ -11,6 +12,7 @@ data PackageDetailDTO = PackageDetailDTO
   , organizationId :: String
   , kmId :: String
   , version :: String
+  , phase :: PackagePhase
   , description :: String
   , readme :: String
   , license :: String

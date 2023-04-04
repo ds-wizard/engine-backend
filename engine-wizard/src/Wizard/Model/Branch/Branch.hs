@@ -8,6 +8,10 @@ data Branch = Branch
   { uuid :: U.UUID
   , name :: String
   , kmId :: String
+  , version :: String
+  , description :: String
+  , readme :: String
+  , license :: String
   , previousPackageId :: Maybe String
   , createdBy :: Maybe U.UUID
   , appUuid :: U.UUID

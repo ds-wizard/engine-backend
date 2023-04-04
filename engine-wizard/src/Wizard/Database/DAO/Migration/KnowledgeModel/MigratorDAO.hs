@@ -2,6 +2,7 @@ module Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO where
 
 import Control.Monad.Reader (asks)
 import Data.String
+import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -22,15 +23,15 @@ findMigratorStates = do
   appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
-findMigratorStateByBranchUuid :: String -> AppContextM MigratorState
+findMigratorStateByBranchUuid :: U.UUID -> AppContextM MigratorState
 findMigratorStateByBranchUuid branchUuid = do
   appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("branch_uuid", branchUuid)]
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("branch_uuid", U.toString branchUuid)]
 
-findMigratorStateByBranchUuid' :: String -> AppContextM (Maybe MigratorState)
+findMigratorStateByBranchUuid' :: U.UUID -> AppContextM (Maybe MigratorState)
 findMigratorStateByBranchUuid' branchUuid = do
   appUuid <- asks currentAppUuid
-  createFindEntityByFn' entityName [appQueryUuid appUuid, ("branch_uuid", branchUuid)]
+  createFindEntityByFn' entityName [appQueryUuid appUuid, ("branch_uuid", U.toString branchUuid)]
 
 insertMigratorState :: MigratorState -> AppContextM Int64
 insertMigratorState = createInsertFn entityName
@@ -49,7 +50,7 @@ updateMigratorState ms = do
 deleteMigratorStates :: AppContextM Int64
 deleteMigratorStates = createDeleteEntitiesFn entityName
 
-deleteMigratorStateByBranchUuid :: String -> AppContextM Int64
+deleteMigratorStateByBranchUuid :: U.UUID -> AppContextM Int64
 deleteMigratorStateByBranchUuid branchUuid = do
   appUuid <- asks currentAppUuid
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("branch_uuid", branchUuid)]
+  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("branch_uuid", U.toString branchUuid)]

@@ -56,17 +56,17 @@ getDocumentsPageDto mQuestionnaireUuid mQuery pageable sort = do
 
 getDocumentsForQtn :: U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
 getDocumentsForQtn qtnUuid mQuery pageable sort = do
-  checkViewPermissionToDoc (U.toString qtnUuid)
+  checkViewPermissionToDoc qtnUuid
   docPage <- findDocumentsByQuestionnaireUuidPage qtnUuid mQuery pageable sort
   traverse enhanceDocument docPage
 
 createDocument :: DocumentCreateDTO -> AppContextM DocumentDTO
 createDocument reqDto =
   runInTransaction $ do
-    checkEditPermissionToDoc (U.toString reqDto.questionnaireUuid)
+    checkEditPermissionToDoc reqDto.questionnaireUuid
     checkDocumentLimit
-    qtnSimple <- findQuestionnaireSimpleById (U.toString reqDto.questionnaireUuid)
-    qtn <- findQuestionnaireById (U.toString $ reqDto.questionnaireUuid)
+    qtnSimple <- findQuestionnaireSimpleByUuid reqDto.questionnaireUuid
+    qtn <- findQuestionnaireByUuid reqDto.questionnaireUuid
     tml <- getDocumentTemplateByUuidAndPackageId reqDto.documentTemplateId (Just qtn.packageId)
     validateMetamodelVersion tml
     mCurrentUser <- asks currentUser
@@ -89,7 +89,7 @@ deleteDocument :: U.UUID -> AppContextM ()
 deleteDocument docUuid =
   runInTransaction $ do
     doc <- findDocumentByUuid docUuid
-    checkEditPermissionToDoc (U.toString doc.questionnaireUuid)
+    checkEditPermissionToDoc doc.questionnaireUuid
     deleteSubmissionsFiltered [("document_uuid", U.toString docUuid)]
     deleteDocumentByUuid docUuid
     removeDocumentContent docUuid
@@ -98,17 +98,17 @@ downloadDocument :: U.UUID -> AppContextM TemporaryFileDTO
 downloadDocument docUuid = do
   runInTransaction $ do
     doc <- findDocumentByUuid docUuid
-    checkViewPermissionToDoc (U.toString doc.questionnaireUuid)
+    checkViewPermissionToDoc doc.questionnaireUuid
     content <- retrieveDocumentContent docUuid
     let fileName = fromMaybe "export" doc.fileName
     let contentType = fromMaybe "text/plain" doc.contentType
     url <- createTemporaryFile fileName "application/octet-stream" (BSL.fromStrict content)
     return $ TemporaryFileMapper.toDTO url contentType
 
-createDocumentPreviewForQtn :: String -> AppContextM (Document, TemporaryFileDTO)
+createDocumentPreviewForQtn :: U.UUID -> AppContextM (Document, TemporaryFileDTO)
 createDocumentPreviewForQtn qtnUuid =
   runInTransaction $ do
-    qtn <- findQuestionnaireById qtnUuid
+    qtn <- findQuestionnaireByUuid qtnUuid
     checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
     case (qtn.documentTemplateId, qtn.formatUuid) of
       (Just tmlId, Just formatUuid) -> do
@@ -123,7 +123,7 @@ createDocumentPreviewForDocTmlDraft tmlId =
     case (draftData.questionnaireUuid, draftData.formatUuid) of
       (Just qtnUuid, Just formatUuid) -> do
         draft <- findDraftById tmlId
-        qtn <- findQuestionnaireById (U.toString qtnUuid)
+        qtn <- findQuestionnaireByUuid qtnUuid
         checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
         createDocumentPreview draft qtn formatUuid
       _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__QUESTIONNAIRE_OR_FORMAT_NOT_SET_UP

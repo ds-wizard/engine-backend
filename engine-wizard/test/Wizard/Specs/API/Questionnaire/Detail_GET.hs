@@ -167,7 +167,6 @@ create_test_200 title appContext qtn qtnCtn showComments authHeader permissions 
               qtn
               qtnCtn
               (SPM.toPackage germanyPackage)
-              ["1.0.0"]
               km1WithQ4
               QSDefault
               (Just wizardDocumentTemplate)

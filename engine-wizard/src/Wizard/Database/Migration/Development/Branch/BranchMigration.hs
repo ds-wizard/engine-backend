@@ -1,7 +1,5 @@
 module Wizard.Database.Migration.Development.Branch.BranchMigration where
 
-import qualified Data.UUID as U
-
 import Shared.Constant.Component
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
@@ -21,6 +19,6 @@ runMigration = do
     amsterdamBranchList.createdAt
     (toDTO userAlbert)
     amsterdamBranchCreate
-  appendBranchEventByUuid (U.toString $ amsterdamBranchList.uuid) amsterdamBranchData.events
+  appendBranchEventByUuid amsterdamBranchList.uuid amsterdamBranchData.events
   insertBranch differentBranch
   logInfo _CMP_MIGRATION "(KnowledgeModel/Branch) ended"

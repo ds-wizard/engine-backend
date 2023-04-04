@@ -17,6 +17,10 @@ instance FromRow Branch where
     createdAt <- field
     updatedAt <- field
     appUuid <- field
+    version <- field
+    description <- field
+    readme <- field
+    license <- field
     return $ Branch {..}
 
 instance ToRow Branch where
@@ -29,4 +33,8 @@ instance ToRow Branch where
     , toField createdAt
     , toField updatedAt
     , toField appUuid
+    , toField version
+    , toField description
+    , toField readme
+    , toField license
     ]

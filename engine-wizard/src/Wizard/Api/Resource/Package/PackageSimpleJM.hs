@@ -2,6 +2,7 @@ module Wizard.Api.Resource.Package.PackageSimpleJM where
 
 import Data.Aeson
 
+import Shared.Api.Resource.Package.PackagePhaseJM ()
 import Shared.Model.Package.PackageSimple
 import Shared.Util.Aeson
 import Wizard.Api.Resource.Package.PackageSimpleDTO

@@ -3,6 +3,7 @@ module Wizard.Database.DAO.App.AppDAO where
 import Control.Monad.Reader (liftIO)
 import Data.String
 import Data.Time
+import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -35,8 +36,8 @@ findAppsPage mQuery mEnabled pageable sort = do
   let condition = f' "WHERE (name ~* ? OR app_id ~* ?) %s" [enabledCondition]
   createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort "*" condition [regex mQuery, regex mQuery]
 
-findAppById :: String -> AppContextM App
-findAppById uuid = createFindEntityByFn entityName [("uuid", uuid)]
+findAppByUuid :: U.UUID -> AppContextM App
+findAppByUuid uuid = createFindEntityByFn entityName [("uuid", U.toString uuid)]
 
 findAppByServerDomain :: String -> AppContextM App
 findAppByServerDomain serverDomain = createFindEntityByFn entityName [("server_domain", serverDomain)]
@@ -50,8 +51,8 @@ findAppByAppId appId = createFindEntityByFn entityName [("app_id", appId)]
 insertApp :: App -> AppContextM Int64
 insertApp = createInsertFn entityName
 
-updateAppById :: App -> AppContextM App
-updateAppById app = do
+updateAppByUuid :: App -> AppContextM App
+updateAppByUuid app = do
   now <- liftIO getCurrentTime
   let updatedApp = app {updatedAt = now}
   let sql =
@@ -66,5 +67,5 @@ updateAppById app = do
 deleteApps :: AppContextM Int64
 deleteApps = createDeleteEntitiesFn entityName
 
-deleteAppById :: String -> AppContextM Int64
-deleteAppById uuid = createDeleteEntityByFn entityName [("uuid", uuid)]
+deleteAppByUuid :: U.UUID -> AppContextM Int64
+deleteAppByUuid uuid = createDeleteEntityByFn entityName [("uuid", U.toString uuid)]

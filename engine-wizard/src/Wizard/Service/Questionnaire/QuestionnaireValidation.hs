@@ -4,6 +4,7 @@ import Control.Monad.Except (throwError)
 import Data.Foldable (forM_, traverse_)
 import qualified Data.Map.Strict as M
 import Data.Maybe (isJust)
+import qualified Data.UUID as U
 import Text.Regex (matchRegex, mkRegex)
 
 import Shared.Localization.Messages.Public
@@ -16,12 +17,12 @@ import Wizard.Model.Context.AppContext
 validateQuestionnaireChangeDTO :: QuestionnaireChangeDTO -> AppContextM ()
 validateQuestionnaireChangeDTO reqDto = validateQuestionnaireTags reqDto.projectTags
 
-validateQuestionnaireDeletation :: String -> AppContextM ()
+validateQuestionnaireDeletation :: U.UUID -> AppContextM ()
 validateQuestionnaireDeletation = validateUsageByQtnMigration
 
-validateUsageByQtnMigration :: String -> AppContextM ()
+validateUsageByQtnMigration :: U.UUID -> AppContextM ()
 validateUsageByQtnMigration qtnUuid = do
-  result <- findMigratorStatesByOldQuestionnaireId qtnUuid
+  result <- findMigratorStatesByOldQuestionnaireUuid qtnUuid
   case result of
     [] -> return ()
     _ -> throwError . UserError $ _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION

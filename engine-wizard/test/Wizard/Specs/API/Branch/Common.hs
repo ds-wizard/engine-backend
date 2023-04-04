@@ -14,13 +14,23 @@ import Wizard.Specs.API.Common
 -- --------------------------------
 assertExistenceOfBranchInDB appContext branch bPreviousPackageId bForkOfPackageId bCreatedBy = do
   branchFromDb <- getFirstFromDB findBranches appContext
-  compareBranchDtos branchFromDb branch bPreviousPackageId bForkOfPackageId bCreatedBy
+  compareBranch branchFromDb branch bPreviousPackageId bForkOfPackageId bCreatedBy
 
 -- --------------------------------
 -- COMPARATORS
 -- --------------------------------
+compareBranch resDto expDto bPreviousPackageId bForkOfPackageId bCreatedBy = do
+  liftIO $ resDto.name `shouldBe` expDto.name
+  liftIO $ resDto.kmId `shouldBe` expDto.kmId
+  liftIO $ resDto.previousPackageId `shouldBe` bPreviousPackageId
+  liftIO $ resDto.createdBy `shouldBe` bCreatedBy
+
 compareBranchDtos resDto expDto bPreviousPackageId bForkOfPackageId bCreatedBy = do
   liftIO $ resDto.name `shouldBe` expDto.name
   liftIO $ resDto.kmId `shouldBe` expDto.kmId
+  liftIO $ resDto.version `shouldBe` expDto.version
+  liftIO $ resDto.description `shouldBe` expDto.description
+  liftIO $ resDto.readme `shouldBe` expDto.readme
+  liftIO $ resDto.license `shouldBe` expDto.license
   liftIO $ resDto.previousPackageId `shouldBe` bPreviousPackageId
   liftIO $ resDto.createdBy `shouldBe` bCreatedBy

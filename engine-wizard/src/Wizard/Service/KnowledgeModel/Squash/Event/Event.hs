@@ -54,6 +54,7 @@ instance SimpleEventSquash Event where
   isReorderEventSquashApplicable _ _ = False
 
   --  --------------------------------------
+  isTypeChanged (EditIntegrationEvent' oldEvent) (EditIntegrationEvent' newEvent) = isTypeChanged oldEvent newEvent
   isTypeChanged (EditQuestionEvent' oldEvent) (EditQuestionEvent' newEvent) = isTypeChanged oldEvent newEvent
   isTypeChanged (EditReferenceEvent' oldEvent) (EditReferenceEvent' newEvent) = isTypeChanged oldEvent newEvent
   isTypeChanged _ _ = False

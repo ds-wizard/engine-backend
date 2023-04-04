@@ -7,6 +7,7 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 
 import Shared.Api.Resource.Event.EventJM ()
+import Shared.Database.Mapping.Package.PackagePhase ()
 import Shared.Model.Package.PackageWithEvents
 
 instance ToRow PackageWithEvents where
@@ -26,6 +27,7 @@ instance ToRow PackageWithEvents where
     , toJSONField events
     , toField createdAt
     , toField appUuid
+    , toField phase
     ]
 
 instance FromRow PackageWithEvents where
@@ -45,4 +47,5 @@ instance FromRow PackageWithEvents where
     events <- fieldWith fromJSONField
     createdAt <- field
     appUuid <- field
+    phase <- field
     return $ PackageWithEvents {..}

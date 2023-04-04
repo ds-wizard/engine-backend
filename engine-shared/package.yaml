@@ -1,5 +1,5 @@
 name: engine-shared
-version: '3.21.0'
+version: '3.22.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -36,7 +36,6 @@ library:
   - http-client
   - http-client-tls
   - http-types
-  - lens
   - memory
   - minio-hs
   - mtl
@@ -51,6 +50,7 @@ library:
   - regex-compat
   - resource-pool
   - retry
+  - servant
   - servant-server
   - servant-multipart
   - servant-swagger
@@ -85,7 +85,6 @@ tests:
     - base
     - aeson
     - containers
-    - lens
     - random
     - text
     - text-replace
