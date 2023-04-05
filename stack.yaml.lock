@@ -83,7 +83,7 @@ packages:
     hackage: servant-foreign-0.15.4
 snapshots:
 - completed:
-    sha256: d08cba48a93881905b529a6896763b90086596889c6c4643816d639260fc12f4
-    size: 598785
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2023/3/5.yaml
-  original: nightly-2023-03-05
+    sha256: 91195434dbc6e4d745301c865e94b798e771db5539625571a19adf6ed4c5e39e
+    size: 600986
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2023/4/5.yaml
+  original: nightly-2023-04-05
