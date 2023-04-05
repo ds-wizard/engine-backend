@@ -127,8 +127,8 @@ deleteBranch branchUuid =
   runInTransaction $ do
     checkPermission _KM_PERM
     branch <- findBranchByUuid branchUuid
+    deleteMigratorStateByBranchUuid branchUuid
     deleteBranchDataById branchUuid
     deleteBranchByUuid branchUuid
-    deleteMigratorStateByBranchUuid branchUuid
     logOutOnlineUsersWhenBranchDramaticallyChanged branchUuid
     return ()
