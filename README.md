@@ -1,7 +1,7 @@
 # Data Stewardship Wizard Engine Backend
 
 [![User Guide](https://img.shields.io/badge/docs-User%20Guide-informational)](https://guide.ds-wizard.org)
-[![Engine Backend CI](https://github.com/ds-wizard/engine-backend/actions/workflows/build-cloud.yml/badge.svg?branch=main)](https://github.com/ds-wizard/engine-backend/actions/workflows/build-cloud.yml)
+[![Engine Backend CI](https://github.com/ds-wizard/engine-backend/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/ds-wizard/engine-backend/actions/workflows/build.yml)
 [![License](https://img.shields.io/github/license/ds-wizard/engine-backend)](LICENSE)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4975/badge)](https://bestpractices.coreinfrastructure.org/projects/4975)
 
