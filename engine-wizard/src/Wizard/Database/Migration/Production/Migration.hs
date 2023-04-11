@@ -37,6 +37,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0028_instanceCon
 import qualified Wizard.Database.Migration.Production.Migration_0029_documentTemplateEditor.Migration as M_0029
 import qualified Wizard.Database.Migration.Production.Migration_0030_twoFactorAuth.Migration as M_0030
 import qualified Wizard.Database.Migration.Production.Migration_0031_component.Migration as M_0031
+import qualified Wizard.Database.Migration.Production.Migration_0032_branchFix.Migration as M_0032
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
@@ -79,4 +80,5 @@ migrationDefinitions =
   , M_0029.definition
   , M_0030.definition
   , M_0031.definition
+  , M_0032.definition
   ]
