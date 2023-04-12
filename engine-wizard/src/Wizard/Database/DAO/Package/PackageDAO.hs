@@ -92,7 +92,7 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase pageable sort =
               \        version, \
               \        description \
               \FROM package outer_package \
-              \WHERE id IN ( \
+              \WHERE app_uuid = ? AND id IN ( \
               \    SELECT CONCAT(organization_id, ':', km_id, ':', \
               \                  (max(string_to_array(version, '.')::int[]))[1] || '.' || \
               \                  (max(string_to_array(version, '.')::int[]))[2] || '.' || \
@@ -106,7 +106,7 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase pageable sort =
               \LIMIT %s"
               [selectCondition, excludeCondition, phaseCondition, mapSort sort, show skip, show sizeI]
     let params =
-          [U.toString appUuid]
+          [U.toString appUuid, U.toString appUuid]
             ++ [regex mQuery]
             ++ [regex mQuery]
             ++ fromMaybe [] mSelectIdsLike
