@@ -20,6 +20,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEvent
+import Wizard.Model.Report.Report
 import Wizard.Service.Acl.AclService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
@@ -28,6 +29,7 @@ import Wizard.Service.Migration.Questionnaire.MigratorMapper
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireService
+import Wizard.Service.Questionnaire.QuestionnaireUtil
 
 createQuestionnaireMigration :: U.UUID -> MigratorStateCreateDTO -> AppContextM MigratorStateDTO
 createQuestionnaireMigration oldQtnUuid reqDto =
@@ -84,7 +86,17 @@ finishQuestionnaireMigration qtnUuid =
             , events = events
             }
           :: Questionnaire
-    updateQuestionnaireByUuid updatedQtn
+    mPhasesAnsweredIndication <- getPhasesAnsweredIndication updatedQtn
+    let updatedQtnWithIndication =
+          case mPhasesAnsweredIndication of
+            Just phasesAnsweredIndication ->
+              updatedQtn
+                { answeredQuestions = phasesAnsweredIndication.answeredQuestions
+                , unansweredQuestions = phasesAnsweredIndication.unansweredQuestions
+                }
+              :: Questionnaire
+            Nothing -> updatedQtn
+    updateQuestionnaireByUuid updatedQtnWithIndication
     deleteQuestionnaire newQtn.uuid False
     auditQuestionnaireMigrationFinish oldQtn newQtn
     return ()

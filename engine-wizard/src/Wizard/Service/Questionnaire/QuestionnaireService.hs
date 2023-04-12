@@ -388,7 +388,7 @@ modifyContent qtnUuid reqDto =
     mCurrentUser <- asks currentUser
     now <- liftIO getCurrentTime
     let updatedQtn = fromContentChangeDTO qtn reqDto mCurrentUser now
-    mPhasesAnsweredIndication <- getPhasesAnsweredIndication qtn
+    mPhasesAnsweredIndication <- getPhasesAnsweredIndication updatedQtn
     case mPhasesAnsweredIndication of
       Just phasesAnsweredIndication ->
         updateQuestionnaireEventsWithIndicationByUuid qtnUuid False updatedQtn.events phasesAnsweredIndication
