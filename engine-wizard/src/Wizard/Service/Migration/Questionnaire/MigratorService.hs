@@ -1,8 +1,11 @@
 module Wizard.Service.Migration.Questionnaire.MigratorService where
 
 import Control.Monad.Reader (asks, liftIO)
+import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Util.List
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
@@ -15,11 +18,14 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Service.Acl.AclService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
 import Wizard.Service.Migration.Questionnaire.MigratorAudit
 import Wizard.Service.Migration.Questionnaire.MigratorMapper
+import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireService
 
@@ -68,13 +74,14 @@ finishQuestionnaireMigration qtnUuid =
     deleteMigratorStateByNewQuestionnaireUuid qtnUuid
     oldQtn <- findQuestionnaireByUuid state.oldQuestionnaireUuid
     newQtn <- findQuestionnaireByUuid state.newQuestionnaireUuid
+    events <- ensurePhaseIsSetIfNecessary newQtn
     let updatedQtn =
           oldQtn
             { formatUuid = newQtn.formatUuid
             , documentTemplateId = newQtn.documentTemplateId
             , selectedQuestionTagUuids = newQtn.selectedQuestionTagUuids
             , packageId = newQtn.packageId
-            , events = newQtn.events
+            , events = events
             }
           :: Questionnaire
     updateQuestionnaireByUuid updatedQtn
@@ -126,3 +133,16 @@ upgradeQuestionnairePerm newQtnUuid perm = do
           , questionnaireUuid = newQtnUuid
           }
   return upgradedPerm
+
+ensurePhaseIsSetIfNecessary :: Questionnaire -> AppContextM [QuestionnaireEvent]
+ensurePhaseIsSetIfNecessary newQtn = do
+  uuid <- liftIO generateUuid
+  mCurrentUser <- asks currentUser
+  now <- liftIO getCurrentTime
+  qtnCtn <- compileQuestionnaire newQtn
+  knowledgeModel <- compileKnowledgeModel [] (Just newQtn.packageId) newQtn.selectedQuestionTagUuids
+  let events =
+        case (qtnCtn.phaseUuid, headSafe knowledgeModel.phaseUuids) of
+          (Nothing, Just kmPhaseUuid) -> newQtn.events ++ [toPhaseEvent uuid kmPhaseUuid mCurrentUser now]
+          _ -> newQtn.events
+  return events
