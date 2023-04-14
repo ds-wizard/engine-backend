@@ -49,7 +49,6 @@ instance FromJSON ServerConfigGeneral where
 
 instance FromJSON ServerConfigJwt where
   parseJSON (Object o) = do
-    version <- o .:? "version" .!= defaultJwt.version
     expiration <- o .:? "expiration" .!= defaultJwt.expiration
     return ServerConfigJwt {..}
   parseJSON _ = mzero

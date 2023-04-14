@@ -1,4 +1,4 @@
-module Wizard.Specs.API.Token.List_POST (
+module Wizard.Specs.API.ApiKey.List_POST (
   list_POST,
 ) where
 
@@ -7,38 +7,34 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import Test.Hspec.Wai.Matcher
 
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Model.Error.Error
-import Wizard.Api.Resource.UserToken.LoginDTO
 import Wizard.Api.Resource.UserToken.UserTokenDTO
 import Wizard.Database.Migration.Development.User.Data.UserTokens
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- POST /tokens
+-- POST /api-keys
 -- ------------------------------------------------------------------------
 list_POST :: AppContext -> SpecWith ((), Application)
 list_POST appContext =
-  describe "POST /tokens" $ do
+  describe "POST /api-keys" $ do
     test_201 appContext
-    test_400 appContext
+    test_401 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/tokens"
+reqUrl = "/api-keys"
 
-reqHeaders = [reqCtHeader]
+reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = albertCreateToken
+reqDto = albertCreateApiKey
 
 reqBody = encode reqDto
 
@@ -62,21 +58,4 @@ test_201 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = do
-  createInvalidJsonTest reqMethod reqUrl "password"
-  it "HTTP 400 BAD REQUEST when invalid creadentials are provided" $
-    -- GIVEN: Prepare request
-    do
-      let reqDto = albertCreateToken {email = "albert.einstein@example.com2"}
-      let reqBody = encode reqDto
-      -- AND: Prepare expectation
-      let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = UserError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
-      let expBody = encode expDto
-      -- WHEN: Call API
-      response <- request reqMethod reqUrl reqHeaders reqBody
-      -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody

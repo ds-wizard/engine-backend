@@ -1,5 +1,5 @@
-module Wizard.Specs.API.User.List_Current_Token_DELETE (
-  list_current_token_DELETE,
+module Wizard.Specs.API.Token.List_Current_DELETE (
+  list_current_DELETE,
 ) where
 
 import Network.HTTP.Types
@@ -23,9 +23,9 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- DELETE /users/current/token
 -- ------------------------------------------------------------------------
-list_current_token_DELETE :: AppContext -> SpecWith ((), Application)
-list_current_token_DELETE appContext =
-  describe "DELETE /users/current/token" $ do
+list_current_DELETE :: AppContext -> SpecWith ((), Application)
+list_current_DELETE appContext =
+  describe "DELETE /tokens/current" $ do
     test_204 appContext
     test_401 appContext
 
@@ -34,13 +34,13 @@ list_current_token_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/users/current/token"
+reqUrl = "/tokens/current"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
 reqBody = ""
 
--- ----------------------------------------------------
+-- ----------------------------------------------------:r
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_204 appContext =

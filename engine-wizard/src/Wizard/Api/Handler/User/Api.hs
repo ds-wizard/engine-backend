@@ -11,7 +11,6 @@ import Wizard.Api.Handler.User.Detail_State_PUT
 import Wizard.Api.Handler.User.List_Current_GET
 import Wizard.Api.Handler.User.List_Current_PUT
 import Wizard.Api.Handler.User.List_Current_Password_PUT
-import Wizard.Api.Handler.User.List_Current_Token_DELETE
 import Wizard.Api.Handler.User.List_GET
 import Wizard.Api.Handler.User.List_POST
 import Wizard.Api.Handler.User.List_Suggestions_GET
@@ -25,7 +24,6 @@ type UserAPI =
           :<|> List_Current_GET
           :<|> List_Current_PUT
           :<|> List_Current_Password_PUT
-          :<|> List_Current_Token_DELETE
           :<|> Detail_GET
           :<|> Detail_PUT
           :<|> Detail_Password_PUT
@@ -44,7 +42,6 @@ userServer =
     :<|> list_current_GET
     :<|> list_current_PUT
     :<|> list_current_password_PUT
-    :<|> list_current_token_PUT
     :<|> detail_GET
     :<|> detail_PUT
     :<|> detail_password_PUT

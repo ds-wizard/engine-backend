@@ -44,8 +44,7 @@ instance FromEnv ServerConfigJwt where
   applyEnv serverConfig =
     applyEnvVariables
       serverConfig
-      [ \c -> applyEnvVariable "JWT_VERSION" c.version (\x -> c {version = x})
-      , \c -> applyEnvVariable "JWT_EXPIRATION" c.expiration (\x -> c {expiration = x})
+      [ \c -> applyEnvVariable "JWT_EXPIRATION" c.expiration (\x -> c {expiration = x})
       ]
 
 instance FromEnv ServerConfigRoles where

@@ -79,7 +79,11 @@ createUserTokenTable = do
         \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
         \         constraint user_entity_app_uuid_fk \
         \             references app, \
-        \     created_at        timestamp with time zone not null \
+        \     created_at        timestamp with time zone not null, \
+        \     name              varchar not null, \
+        \     type              varchar not null, \
+        \     user_agent        varchar not null, \
+        \     expires_at        timestamp with time zone not null \
         \ ); \
         \  \
         \ create unique index user_token_uuid_uindex \

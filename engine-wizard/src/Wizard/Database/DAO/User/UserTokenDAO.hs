@@ -1,20 +1,23 @@
 module Wizard.Database.DAO.User.UserTokenDAO where
 
 import Control.Monad.Reader (asks)
+import Data.Maybe (maybeToList)
 import Data.String (fromString)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
-import Database.PostgreSQL.Simple.ToField
 import GHC.Int
 
-import Shared.Util.String (f')
+import Shared.Util.String
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.User.UserToken ()
+import Wizard.Database.Mapping.User.UserTokenList ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.UserToken
+import Wizard.Model.User.UserTokenList
 import Wizard.Service.Cache.UserTokenCache
 import Wizard.Util.Cache
+import Wizard.Util.Logger
 
 entityName = "user_token"
 
@@ -24,6 +27,25 @@ findUserTokens :: AppContextM [UserToken]
 findUserTokens = do
   appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
+
+findUserTokensByUserUuidAndType :: U.UUID -> UserTokenType -> Maybe U.UUID -> AppContextM [UserTokenList]
+findUserTokensByUserUuidAndType userUuid tokenType mCurrentTokenUuid = do
+  appUuid <- asks currentAppUuid
+  let currentSessionCondition =
+        case mCurrentTokenUuid of
+          Just _ -> "uuid = ?"
+          Nothing -> "false"
+  let sql =
+        fromString $
+          f'
+            "SELECT uuid, name, user_agent, %s as current_session, expires_at, created_at \
+            \FROM user_token \
+            \WHERE app_uuid = ? AND user_uuid = ? AND type = ?"
+            [currentSessionCondition, entityName]
+  let params = (fmap U.toString . maybeToList $ mCurrentTokenUuid) ++ [U.toString appUuid, U.toString userUuid, show tokenType]
+  logQuery sql params
+  let action conn = query conn sql params
+  runDB action
 
 findUserTokensByUserUuid :: U.UUID -> AppContextM [UserToken]
 findUserTokensByUserUuid userUuid = do
@@ -40,8 +62,8 @@ findUserTokensByValue value = do
   appUuid <- asks currentAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("value", value)]
 
-findUserTokenById :: String -> AppContextM UserToken
-findUserTokenById = getFromCacheOrDb getFromCache addToCache go
+findUserTokenByUuid :: U.UUID -> AppContextM UserToken
+findUserTokenByUuid uuid = getFromCacheOrDb getFromCache addToCache go (U.toString uuid)
   where
     go uuid = do
       appUuid <- asks currentAppUuid
@@ -56,16 +78,15 @@ insertUserToken userToken = do
 deleteUserTokens :: AppContextM Int64
 deleteUserTokens = createDeleteEntitiesFn entityName
 
-deleteUserTokensWithExpiration :: Integer -> AppContextM Int64
-deleteUserTokensWithExpiration expirationInHours = do
-  let sql = fromString $ f' "DELETE FROM %s WHERE created_at <= now() - interval '? hour'" [entityName]
-  let params = [toField expirationInHours]
-  logQuery sql params
-  let action conn = execute conn sql params
+deleteUserTokensWithExpiration :: AppContextM Int64
+deleteUserTokensWithExpiration = do
+  let sql = f' "DELETE FROM %s WHERE expires_at <= now()" [entityName]
+  logInfoU _CMP_DATABASE (trim sql)
+  let action conn = execute_ conn (fromString sql)
   runDB action
 
-deleteUserTokenById :: U.UUID -> AppContextM Int64
-deleteUserTokenById uuid = do
+deleteUserTokenByUuid :: U.UUID -> AppContextM Int64
+deleteUserTokenByUuid uuid = do
   appUuid <- asks currentAppUuid
   result <- createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
   deleteFromCache (U.toString uuid)

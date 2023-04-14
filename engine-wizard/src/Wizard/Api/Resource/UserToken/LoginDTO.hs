@@ -1,8 +1,8 @@
-module Wizard.Api.Resource.UserToken.UserTokenCreateDTO where
+module Wizard.Api.Resource.UserToken.LoginDTO where
 
 import GHC.Generics
 
-data UserTokenCreateDTO = UserTokenCreateDTO
+data LoginDTO = LoginDTO
   { email :: String
   , password :: String
   , code :: Maybe Int

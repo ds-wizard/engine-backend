@@ -39,8 +39,7 @@ data ServerConfigGeneral = ServerConfigGeneral
   deriving (Generic, Show)
 
 data ServerConfigJwt = ServerConfigJwt
-  { version :: Integer
-  , expiration :: Integer
+  { expiration :: Integer
   }
   deriving (Generic, Show)
 

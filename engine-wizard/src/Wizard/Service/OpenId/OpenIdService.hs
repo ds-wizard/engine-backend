@@ -26,7 +26,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.User.UserService
-import Wizard.Service.UserToken.UserTokenService
+import Wizard.Service.UserToken.Login.LoginService
 import Wizard.Util.Logger
 
 createAuthenticationUrl :: String -> Maybe String -> Maybe String -> AppContextM ()
@@ -53,8 +53,9 @@ loginUser
   -> Maybe String
   -> Maybe String
   -> Maybe String
+  -> Maybe String
   -> AppContextM UserTokenDTO
-loginUser authId mClientUrl mError mCode mNonce mIdToken mSessionState =
+loginUser authId mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionState =
   runInTransaction $ do
     token <-
       case mIdToken of
@@ -80,7 +81,7 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mSessionState =
     case (mEmail, mFirstName, mLastName) of
       (Just email, Just firstName, Just lastName) -> do
         user <- createUserFromExternalService authId firstName lastName email mPicture
-        createToken user mSessionState
+        createLoginToken user mUserAgent mSessionState
       _ -> throwError . UserError $ _ERROR_VALIDATION__OPENID_PROFILE_INFO_ABSENCE
 
 parseToken :: FromJSON a => String -> O.IdTokenClaims a

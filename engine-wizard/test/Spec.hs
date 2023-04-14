@@ -22,6 +22,7 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.Config.Server.ServerConfigService
 import Wizard.Service.User.UserMapper
 
+import Wizard.Specs.API.ApiKey.APISpec
 import Wizard.Specs.API.App.APISpec
 import Wizard.Specs.API.App.Plan.APISpec
 import Wizard.Specs.API.BookReference.APISpec
@@ -178,6 +179,7 @@ main =
               describe "Report" reportGeneratorSpec
           before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
             describe "API" $ do
+              apiKeyAPI baseContext appContext
               appAPI baseContext appContext
               appPlanAPI baseContext appContext
               bookReferenceAPI baseContext appContext

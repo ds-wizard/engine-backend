@@ -11,6 +11,7 @@ import Wizard.Service.OpenId.OpenIdService
 
 type Detail_Callback_GET =
   Header "Host" String
+    :> Header "User-Agent" String
     :> "auth"
     :> Capture "id" String
     :> "callback"
@@ -24,6 +25,7 @@ type Detail_Callback_GET =
 
 detail_callback_GET
   :: Maybe String
+  -> Maybe String
   -> String
   -> Maybe String
   -> Maybe String
@@ -32,6 +34,6 @@ detail_callback_GET
   -> Maybe String
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserTokenDTO)
-detail_callback_GET mServerUrl authId mClientUrl mError mCode mNonce mIdToken mSessionState =
+detail_callback_GET mServerUrl mUserAgent authId mClientUrl mError mCode mNonce mIdToken mSessionState =
   runInUnauthService mServerUrl Transactional $
-    addTraceUuidHeader =<< loginUser authId mClientUrl mError mCode mNonce mIdToken mSessionState
+    addTraceUuidHeader =<< loginUser authId mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionState

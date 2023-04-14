@@ -6,7 +6,7 @@ import Shared.Api.Handler.Common
 import Shared.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.UserToken.UserTokenService
+import Wizard.Service.UserToken.Login.LoginService
 
 type Detail_Logout_GET =
   Header "Host" String
@@ -21,5 +21,5 @@ detail_logout_GET
 detail_logout_GET mServerUrl authId mSid =
   runInUnauthService mServerUrl Transactional $
     addTraceUuidHeader =<< do
-      deleteTokenBySessionState mSid
+      deleteLoginTokenBySessionState mSid
       return NoContent

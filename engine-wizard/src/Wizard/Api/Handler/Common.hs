@@ -15,6 +15,7 @@ import Shared.Model.Error.Error
 import Shared.Util.Token
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Constant.UserToken
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.User.UserTokenDAO
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -106,7 +107,7 @@ isValidJwtToken tokenHeader = do
   now <- liftIO getCurrentTime
   case separateToken tokenHeader of
     Just jwtToken ->
-      case validateJwtToken jwtToken serverConfig.general.secret serverConfig.jwt.version now of
+      case validateJwtToken jwtToken serverConfig.general.secret userTokenVersion now of
         Nothing -> return ()
         Just error -> throwError =<< sendError (UnauthorizedError error)
     Nothing -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
@@ -114,10 +115,10 @@ isValidJwtToken tokenHeader = do
 isTokenExistsInDb :: String -> Maybe String -> BaseContextM UserToken
 isTokenExistsInDb tokenHeader mServerUrl = do
   tokenUuid <- getCurrentTokenUuid tokenHeader
-  runInUnauthService mServerUrl NoTransaction $ catchError (findUserTokenById tokenUuid) (handleError tokenUuid)
+  runInUnauthService mServerUrl NoTransaction $ catchError (findUserTokenByUuid tokenUuid) (handleError tokenUuid)
   where
-    handleError userUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__TOKEN_ABSENCE userUuid)
-    handleError userUuid error = throwError error
+    handleError tokenUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__TOKEN_ABSENCE . U.toString $ tokenUuid)
+    handleError tokenUuid error = throwError error
 
 getCurrentApp :: Maybe String -> BaseContextM App
 getCurrentApp mServerUrl = do
@@ -142,9 +143,9 @@ getCurrentUserUuid tokenHeader = do
     Just (Just userUuid) -> return userUuid
     _ -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
 
-getCurrentTokenUuid :: String -> BaseContextM String
+getCurrentTokenUuid :: String -> BaseContextM U.UUID
 getCurrentTokenUuid tokenHeader = do
-  let tokenUuidMaybe = separateToken tokenHeader >>= getTokenUuidFromToken
+  let tokenUuidMaybe = separateToken tokenHeader >>= getTokenUuidFromToken >>= U.fromString
   case tokenUuidMaybe of
     Just tokenUuid -> return tokenUuid
     Nothing -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)

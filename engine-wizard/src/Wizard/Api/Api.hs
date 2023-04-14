@@ -3,6 +3,7 @@ module Wizard.Api.Api where
 import Servant
 
 import Wizard.Api.Handler.ActionKey.Api
+import Wizard.Api.Handler.ApiKey.Api
 import Wizard.Api.Handler.App.Api
 import Wizard.Api.Handler.App.Plan.Api
 import Wizard.Api.Handler.Auth.Api
@@ -38,6 +39,7 @@ import Wizard.Model.Context.BaseContext
 
 type ApplicationAPI =
   ActionKeyAPI
+    :<|> ApiKeyAPI
     :<|> AppAPI
     :<|> AppPlanAPI
     :<|> AuthAPI
@@ -76,6 +78,7 @@ applicationApi = Proxy
 applicationServer :: ServerT ApplicationAPI BaseContextM
 applicationServer =
   actionKeyServer
+    :<|> apiKeyServer
     :<|> appServer
     :<|> appPlanServer
     :<|> authServer

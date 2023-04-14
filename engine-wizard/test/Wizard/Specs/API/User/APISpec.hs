@@ -13,7 +13,6 @@ import Wizard.Specs.API.User.Detail_State_PUT
 import Wizard.Specs.API.User.List_Current_GET
 import Wizard.Specs.API.User.List_Current_PUT
 import Wizard.Specs.API.User.List_Current_Password_PUT
-import Wizard.Specs.API.User.List_Current_Token_DELETE
 import Wizard.Specs.API.User.List_GET
 import Wizard.Specs.API.User.List_POST
 import Wizard.Specs.API.User.List_Suggestions_GET
@@ -27,7 +26,6 @@ userAPI baseContext appContext =
       list_current_GET appContext
       list_current_PUT appContext
       list_current_password_PUT appContext
-      list_current_token_DELETE appContext
       detail_GET appContext
       detail_PUT appContext
       detail_DELETE appContext
