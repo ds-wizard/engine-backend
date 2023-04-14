@@ -125,6 +125,7 @@ defaultDashboardAndLoginScreen =
     { dashboardType = WelcomeDashboardType
     , announcements = [defaultDashboardAndLoginScreenAnnouncement]
     , loginInfo = Nothing
+    , loginInfoSidebar = Nothing
     }
 
 defaultDashboardAndLoginScreenAnnouncement :: AppConfigDashboardAndLoginScreenAnnouncement

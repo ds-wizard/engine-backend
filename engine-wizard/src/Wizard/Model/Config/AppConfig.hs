@@ -117,6 +117,7 @@ data AppConfigDashboardAndLoginScreen = AppConfigDashboardAndLoginScreen
   { dashboardType :: AppConfigDashboardAndLoginScreenDashboardType
   , announcements :: [AppConfigDashboardAndLoginScreenAnnouncement]
   , loginInfo :: Maybe String
+  , loginInfoSidebar :: Maybe String
   }
   deriving (Generic, Eq, Show)
 

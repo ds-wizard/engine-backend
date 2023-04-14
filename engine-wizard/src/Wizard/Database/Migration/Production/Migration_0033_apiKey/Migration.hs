@@ -18,6 +18,7 @@ migrate dbPool = do
   extendUserTokenTable dbPool
   changeDashboardContent dbPool
   renameDashboardColumn dbPool
+  addLoginInfoSidebar dbPool
 
 clearUserTokenTable dbPool = do
   let sql = "DELETE FROM user_token WHERE uuid is not null;"
@@ -74,6 +75,18 @@ renameDashboardColumn dbPool = do
   let sql =
         "ALTER TABLE app_config \
         \RENAME COLUMN dashboard TO dashboard_and_login_screen;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addLoginInfoSidebar dbPool = do
+  let sql =
+        "UPDATE app_config \
+        \SET dashboard_and_login_screen = (jsonb_set( \
+        \        to_jsonb(dashboard_and_login_screen), \
+        \        '{loginInfoSidebar}', \
+        \        'null' \
+        \    ))::jsonb"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

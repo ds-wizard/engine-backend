@@ -85,6 +85,7 @@ defaultDashboardAndLoginScreen =
     { dashboardType = RoleBasedDashboardType
     , announcements = []
     , loginInfo = Nothing
+    , loginInfoSidebar = Nothing
     }
 
 defaultLookAndFeel :: AppConfigLookAndFeel
