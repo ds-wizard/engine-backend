@@ -16,6 +16,8 @@ migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   clearUserTokenTable dbPool
   extendUserTokenTable dbPool
+  changeDashboardContent dbPool
+  renameDashboardColumn dbPool
 
 clearUserTokenTable dbPool = do
   let sql = "DELETE FROM user_token WHERE uuid is not null;"
@@ -30,6 +32,48 @@ extendUserTokenTable dbPool = do
         \   ADD type varchar NOT NULL,\
         \   ADD user_agent varchar NOT NULL,\
         \   ADD expires_at timestamp with time zone NOT NULL;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+changeDashboardContent dbPool = do
+  let sql =
+        "UPDATE app_config \
+        \SET dashboard = (jsonb_set( \
+        \                        to_jsonb(dashboard), \
+        \                        '{announcements}', \
+        \                        concat( \
+        \                           '[ ', \
+        \                           CASE \
+        \                               WHEN dashboard ->> 'welcomeInfo' IS NOT NULL THEN concat( \
+        \                                       '{ \"content\": ', dashboard -> 'welcomeInfo', \
+        \                                       ', \"level\": \"InfoAnnouncementLevelType\", \"dashboard\": true, \"loginScreen\": false } ') \
+        \                               ELSE '' \
+        \                               END, \
+        \                           CASE \
+        \                               WHEN dashboard ->> 'welcomeInfo' IS NOT NULL AND dashboard ->> 'welcomeWarning' IS NOT NULL THEN ',' \
+        \                               ELSE '' \
+        \                               END, \
+        \                           CASE \
+        \                               WHEN dashboard ->> 'welcomeWarning' IS NOT NULL THEN concat( \
+        \                                       '{ \"content\": ', dashboard -> 'welcomeWarning', \
+        \                                       ', \"level\": \"WarningAnnouncementLevelType\", \"dashboard\": true, \"loginScreen\": false } ') \
+        \                               ELSE '' \
+        \                               END, \
+        \                           ' ]' \
+        \                        )::jsonb \
+        \                    )::jsonb \
+        \    || jsonb_build_object('loginInfo', look_and_feel -> 'loginInfo')) \
+        \    - 'welcomeInfo' \
+        \    - 'welcomeWarning'"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+renameDashboardColumn dbPool = do
+  let sql =
+        "ALTER TABLE app_config \
+        \RENAME COLUMN dashboard TO dashboard_and_login_screen;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

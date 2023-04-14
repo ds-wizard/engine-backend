@@ -59,21 +59,21 @@ createAppConfigTable = do
   let sql =
         "CREATE TABLE app_config \
         \ ( \
-        \     uuid                uuid                     not null, \
-        \     organization        json                     not null, \
-        \     authentication      json                     not null, \
-        \     privacy_and_support json                     not null, \
-        \     dashboard           json                     not null, \
-        \     look_and_feel       json                     not null, \
-        \     registry            json                     not null, \
-        \     knowledge_model     json                     not null, \
-        \     questionnaire       json                     not null, \
-        \     submission          json                     not null, \
-        \     created_at          timestamp with time zone not null, \
-        \     updated_at          timestamp with time zone not null, \
-        \     feature             json                     not null, \
-        \     owl                 json                     not null, \
-        \     mail_config_uuid    uuid \
+        \     uuid                        uuid                     not null, \
+        \     organization                json                     not null, \
+        \     authentication              json                     not null, \
+        \     privacy_and_support         json                     not null, \
+        \     dashboard_and_login_screen  json                     not null, \
+        \     look_and_feel               json                     not null, \
+        \     registry                    json                     not null, \
+        \     knowledge_model             json                     not null, \
+        \     questionnaire               json                     not null, \
+        \     submission                  json                     not null, \
+        \     created_at                  timestamp with time zone not null, \
+        \     updated_at                  timestamp with time zone not null, \
+        \     feature                     json                     not null, \
+        \     owl                         json                     not null, \
+        \     mail_config_uuid            uuid \
         \ ); \
         \ \
         \CREATE UNIQUE INDEX app_config_uuid_uindex \

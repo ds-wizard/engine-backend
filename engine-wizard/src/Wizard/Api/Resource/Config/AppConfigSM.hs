@@ -44,10 +44,15 @@ instance ToSchema AppConfigAuthExternalServiceStyle where
 instance ToSchema AppConfigPrivacyAndSupport where
   declareNamedSchema = toSwagger defaultPrivacyAndSupport
 
-instance ToSchema AppConfigDashboard where
-  declareNamedSchema = toSwagger defaultDashboard
+instance ToSchema AppConfigDashboardAndLoginScreen where
+  declareNamedSchema = toSwagger defaultDashboardAndLoginScreen
 
-instance ToSchema AppConfigDashboardDashboardType
+instance ToSchema AppConfigDashboardAndLoginScreenDashboardType
+
+instance ToSchema AppConfigDashboardAndLoginScreenAnnouncement where
+  declareNamedSchema = toSwagger defaultDashboardAndLoginScreenAnnouncement
+
+instance ToSchema AppConfigDashboardAndLoginScreenAnnouncementLevelType
 
 instance ToSchema AppConfigLookAndFeel where
   declareNamedSchema = toSwagger defaultLookAndFeel

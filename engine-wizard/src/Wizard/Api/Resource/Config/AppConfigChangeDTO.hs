@@ -8,7 +8,7 @@ data AppConfigChangeDTO = AppConfigChangeDTO
   { organization :: AppConfigOrganization
   , authentication :: AppConfigAuth
   , privacyAndSupport :: AppConfigPrivacyAndSupport
-  , dashboard :: AppConfigDashboard
+  , dashboardAndLoginScreen :: AppConfigDashboardAndLoginScreen
   , lookAndFeel :: AppConfigLookAndFeel
   , registry :: AppConfigRegistry
   , knowledgeModel :: AppConfigKnowledgeModel

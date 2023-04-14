@@ -15,7 +15,7 @@ data AppConfig = AppConfig
   , organization :: AppConfigOrganization
   , authentication :: AppConfigAuth
   , privacyAndSupport :: AppConfigPrivacyAndSupport
-  , dashboard :: AppConfigDashboard
+  , dashboardAndLoginScreen :: AppConfigDashboardAndLoginScreen
   , lookAndFeel :: AppConfigLookAndFeel
   , registry :: AppConfigRegistry
   , knowledgeModel :: AppConfigKnowledgeModel
@@ -35,7 +35,7 @@ instance Eq AppConfig where
       && organization a == organization b
       && authentication a == authentication b
       && privacyAndSupport a == privacyAndSupport b
-      && dashboard a == dashboard b
+      && dashboardAndLoginScreen a == dashboardAndLoginScreen b
       && lookAndFeel a == lookAndFeel b
       && registry a == registry b
       && questionnaire a == questionnaire b
@@ -113,23 +113,36 @@ data AppConfigPrivacyAndSupport = AppConfigPrivacyAndSupport
   }
   deriving (Generic, Eq, Show)
 
-data AppConfigDashboard = AppConfigDashboard
-  { dashboardType :: AppConfigDashboardDashboardType
-  , welcomeWarning :: Maybe String
-  , welcomeInfo :: Maybe String
+data AppConfigDashboardAndLoginScreen = AppConfigDashboardAndLoginScreen
+  { dashboardType :: AppConfigDashboardAndLoginScreenDashboardType
+  , announcements :: [AppConfigDashboardAndLoginScreenAnnouncement]
+  , loginInfo :: Maybe String
   }
   deriving (Generic, Eq, Show)
 
-data AppConfigDashboardDashboardType
+data AppConfigDashboardAndLoginScreenDashboardType
   = WelcomeDashboardType
   | RoleBasedDashboardType
+  deriving (Generic, Eq, Show)
+
+data AppConfigDashboardAndLoginScreenAnnouncement = AppConfigDashboardAndLoginScreenAnnouncement
+  { content :: String
+  , level :: AppConfigDashboardAndLoginScreenAnnouncementLevelType
+  , loginScreen :: Bool
+  , dashboard :: Bool
+  }
+  deriving (Generic, Eq, Show)
+
+data AppConfigDashboardAndLoginScreenAnnouncementLevelType
+  = InfoAnnouncementLevelType
+  | WarningAnnouncementLevelType
+  | CriticalAnnouncementLevelType
   deriving (Generic, Eq, Show)
 
 data AppConfigLookAndFeel = AppConfigLookAndFeel
   { appTitle :: Maybe String
   , appTitleShort :: Maybe String
   , customMenuLinks :: [AppConfigLookAndFeelCustomMenuLink]
-  , loginInfo :: Maybe String
   , logoUrl :: Maybe String
   , styleUrl :: Maybe String
   , primaryColor :: Maybe String

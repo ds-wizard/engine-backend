@@ -17,7 +17,7 @@ defaultAppConfig =
     , feature = defaultFeature
     , authentication = defaultAuth
     , privacyAndSupport = defaultPrivacyAndSupport
-    , dashboard = defaultDashboard
+    , dashboardAndLoginScreen = defaultDashboardAndLoginScreen
     , lookAndFeel = defaultLookAndFeel
     , registry = defaultRegistry
     , knowledgeModel = defaultKnowledgeModel
@@ -79,12 +79,12 @@ defaultPrivacyAndSupport =
     , supportSiteIcon = Nothing
     }
 
-defaultDashboard :: AppConfigDashboard
-defaultDashboard =
-  AppConfigDashboard
+defaultDashboardAndLoginScreen :: AppConfigDashboardAndLoginScreen
+defaultDashboardAndLoginScreen =
+  AppConfigDashboardAndLoginScreen
     { dashboardType = RoleBasedDashboardType
-    , welcomeWarning = Nothing
-    , welcomeInfo = Nothing
+    , announcements = []
+    , loginInfo = Nothing
     }
 
 defaultLookAndFeel :: AppConfigLookAndFeel
@@ -93,7 +93,6 @@ defaultLookAndFeel =
     { appTitle = Nothing
     , appTitleShort = Nothing
     , customMenuLinks = []
-    , loginInfo = Nothing
     , logoUrl = Nothing
     , styleUrl = Nothing
     , primaryColor = Nothing

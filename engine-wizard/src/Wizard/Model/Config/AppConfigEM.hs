@@ -37,9 +37,11 @@ instance SensitiveData AppConfigAuthExternalServiceStyle
 
 instance SensitiveData AppConfigPrivacyAndSupport
 
-instance SensitiveData AppConfigDashboard
+instance SensitiveData AppConfigDashboardAndLoginScreen
 
-instance SensitiveData AppConfigDashboardDashboardType
+instance SensitiveData AppConfigDashboardAndLoginScreenDashboardType
+
+instance SensitiveData AppConfigDashboardAndLoginScreenAnnouncement
 
 instance SensitiveData AppConfigLookAndFeel
 

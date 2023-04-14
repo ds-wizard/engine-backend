@@ -75,15 +75,25 @@ instance FromJSON AppConfigPrivacyAndSupport where
 instance ToJSON AppConfigPrivacyAndSupport where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON AppConfigDashboard where
+instance FromJSON AppConfigDashboardAndLoginScreen where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON AppConfigDashboard where
+instance ToJSON AppConfigDashboardAndLoginScreen where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON AppConfigDashboardDashboardType
+instance FromJSON AppConfigDashboardAndLoginScreenDashboardType
 
-instance ToJSON AppConfigDashboardDashboardType
+instance ToJSON AppConfigDashboardAndLoginScreenDashboardType
+
+instance FromJSON AppConfigDashboardAndLoginScreenAnnouncement where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON AppConfigDashboardAndLoginScreenAnnouncement where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON AppConfigDashboardAndLoginScreenAnnouncementLevelType
+
+instance ToJSON AppConfigDashboardAndLoginScreenAnnouncementLevelType
 
 instance FromJSON AppConfigLookAndFeel where
   parseJSON = genericParseJSON jsonOptions

@@ -15,7 +15,7 @@ instance ToRow AppConfig where
     , toJSONField organization
     , toJSONField authentication
     , toJSONField privacyAndSupport
-    , toJSONField dashboard
+    , toJSONField dashboardAndLoginScreen
     , toJSONField lookAndFeel
     , toJSONField registry
     , toJSONField knowledgeModel
@@ -34,7 +34,7 @@ instance FromRow AppConfig where
     organization <- fieldWith fromJSONField
     authentication <- fieldWith fromJSONField
     privacyAndSupport <- fieldWith fromJSONField
-    dashboard <- fieldWith fromJSONField
+    dashboardAndLoginScreen <- fieldWith fromJSONField
     lookAndFeel <- fieldWith fromJSONField
     registry <- fieldWith fromJSONField
     knowledgeModel <- fieldWith fromJSONField

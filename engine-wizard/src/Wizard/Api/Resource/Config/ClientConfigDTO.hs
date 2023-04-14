@@ -10,7 +10,7 @@ data ClientConfigDTO = ClientConfigDTO
   , feature :: AppConfigFeature
   , authentication :: ClientConfigAuthDTO
   , privacyAndSupport :: AppConfigPrivacyAndSupport
-  , dashboard :: AppConfigDashboard
+  , dashboardAndLoginScreen :: AppConfigDashboardAndLoginScreen
   , lookAndFeel :: AppConfigLookAndFeel
   , registry :: ClientConfigRegistryDTO
   , questionnaire :: ClientConfigQuestionnaireDTO
