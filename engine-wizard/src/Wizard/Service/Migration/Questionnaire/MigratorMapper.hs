@@ -37,12 +37,12 @@ fromChangeDTO changeDto ms =
     , appUuid = ms.appUuid
     }
 
-toPhaseEvent :: U.UUID -> U.UUID -> Maybe UserDTO -> UTCTime -> QuestionnaireEvent
+toPhaseEvent :: U.UUID -> Maybe U.UUID -> Maybe UserDTO -> UTCTime -> QuestionnaireEvent
 toPhaseEvent phaseEventUuid kmPhaseUuid mCurrentUserUuid now =
   SetPhaseEvent' $
     SetPhaseEvent
       { uuid = phaseEventUuid
-      , phaseUuid = Just kmPhaseUuid
+      , phaseUuid = kmPhaseUuid
       , createdBy = fmap (.uuid) mCurrentUserUuid
       , createdAt = now
       }

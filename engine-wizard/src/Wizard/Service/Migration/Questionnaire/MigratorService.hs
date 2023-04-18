@@ -154,7 +154,12 @@ ensurePhaseIsSetIfNecessary newQtn = do
   qtnCtn <- compileQuestionnaire newQtn
   knowledgeModel <- compileKnowledgeModel [] (Just newQtn.packageId) newQtn.selectedQuestionTagUuids
   let events =
-        case (qtnCtn.phaseUuid, headSafe knowledgeModel.phaseUuids) of
-          (Nothing, Just kmPhaseUuid) -> newQtn.events ++ [toPhaseEvent uuid kmPhaseUuid mCurrentUser now]
-          _ -> newQtn.events
+        case (headSafe knowledgeModel.phaseUuids, qtnCtn.phaseUuid) of
+          (Nothing, Nothing) -> newQtn.events
+          (Nothing, Just qtnPhaseUuid) -> newQtn.events ++ [toPhaseEvent uuid Nothing mCurrentUser now]
+          (Just kmPhaseUuid, Nothing) -> newQtn.events ++ [toPhaseEvent uuid (Just kmPhaseUuid) mCurrentUser now]
+          (Just kmPhaseUuid, Just qtnPhaseUuid) ->
+            if qtnPhaseUuid `notElem` knowledgeModel.phaseUuids
+              then newQtn.events ++ [toPhaseEvent uuid (Just kmPhaseUuid) mCurrentUser now]
+              else newQtn.events
   return events
