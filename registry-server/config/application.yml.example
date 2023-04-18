@@ -1,0 +1,14 @@
+general:
+  environment: Production
+  serverPort: 3000
+  clientUrl: http://localhost:3001
+
+database:
+  connectionString: postgresql://postgres:postgres@postgres:5432/registry-server
+
+s3:
+  bucket: registry-server
+
+analytics:
+  enabled: false
+  email:

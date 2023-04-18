@@ -21,8 +21,8 @@ jobs:
       COMPONENT: ${{ matrix.component }}
       IMAGE_NAME: ${{ matrix.component }}-server
       PUBLIC_IMAGE_PREFIX: datastewardshipwizard
-      DOCKER_META_CONTEXT: './engine-${{ matrix.component }}'
-      DOCKER_META_FILE: './engine-${{ matrix.component }}/Dockerfile'
+      DOCKER_META_CONTEXT: './${{ matrix.component }}-server'
+      DOCKER_META_FILE: './${{ matrix.component }}-server/Dockerfile'
       DOCKER_META_PLATFORMS: 'linux/amd64'
       STACK_VERSION: ${{ matrix.stack }}
 
@@ -68,135 +68,87 @@ jobs:
         restore-keys: |
           stack-home-ubuntu22-
     
-    - name: Cache postgresql-migration
-      id: cache-postgresql-migration
+    - name: Cache shared-common
+      id: cache-shared-common
       uses: actions/cache@v3
       with:
-        path: vendor/postgresql-migration/.stack-work
-        key: postgresql-migration-ubuntu22-${{ hashFiles('vendor/postgresql-migration/package.yaml')}}-${{ hashFiles('vendor/postgresql-migration/**/*.hs') }}
+        path: shared-common/.stack-work
+        key: shared-common-ubuntu22-${{ hashFiles('shared-common/package.yaml')}}-${{ hashFiles('shared-common/**/*.hs') }}
         restore-keys: |
-          postgresql-migration-ubuntu22-${{ hashFiles('vendor/postgresql-migration/package.yaml')}}-
-          postgresql-migration-ubuntu22-
-
-    - name: Invalidate postgresql-migration cache (force push)
-      id: invalidate-cache-postgresql-migration
-      if: github.event_name == 'push' && github.event.forced && steps.cache-postgresql-migration.outputs.cache-hit != 'true'
-      run: |
-        rm -rf vendor/postgresql-migration/.stack-work
-
-    - name: Cache servant-errors
-      id: cache-servant-errors
-      uses: actions/cache@v3
-      with:
-        path: vendor/servant-errors/.stack-work
-        key: servant-errors-ubuntu22-${{ hashFiles('vendor/servant-errors/package.yaml')}}-${{ hashFiles('vendor/servant-errors/**/*.hs') }}
-        restore-keys: |
-          servant-errors-ubuntu22-${{ hashFiles('vendor/servant-errors/package.yaml')}}-
-          servant-errors-ubuntu22-
-
-    - name: Invalidate servant-errors cache (force push)
-      id: invalidate-cache-servant-errors
-      if: github.event_name == 'push' && github.event.forced && steps.cache-servant-errors.outputs.cache-hit != 'true'
-      run: |
-        rm -rf vendor/servant-errors/.stack-work
-
-    - name: Cache servant-mock
-      id: cache-servant-mock
-      uses: actions/cache@v3
-      with:
-        path: vendor/servant-mock/.stack-work
-        key: servant-mock-ubuntu22-${{ hashFiles('vendor/servant-mock/package.yaml')}}-${{ hashFiles('vendor/servant-mock/**/*.hs') }}
-        restore-keys: |
-          servant-mock-ubuntu22-${{ hashFiles('vendor/servant-mock/package.yaml')}}-
-          servant-mock-ubuntu22-
-
-    - name: Invalidate servant-mock cache (force push)
-      id: invalidate-cache-servant-mock
-      if: github.event_name == 'push' && github.event.forced && steps.cache-servant-mock.outputs.cache-hit != 'true'
-      run: |
-        rm -rf vendor/servant-mock/.stack-work
+          shared-common-ubuntu22-${{ hashFiles('shared-common/package.yaml')}}-
+          shared-common-ubuntu22-
     
-    - name: Cache rdf4h
-      id: cache-rdf4h
+    - name: Invalidate shared-common cache (force push)
+      id: invalidate-cache-shared-common
+      if: github.event_name == 'push' && github.event.forced && steps.cache-shared-common.outputs.cache-hit != 'true'
+      run: |
+        rm -rf shared-common/.stack-work
+    
+    - name: Cache wizard-common
+      id: cache-wizard-common
       uses: actions/cache@v3
       with:
-        path: vendor/rdf4h/.stack-work
-        key: rdf4h-ubuntu22-${{ hashFiles('vendor/rdf4h/package.yaml')}}-${{ hashFiles('vendor/rdf4h/**/*.hs') }}
+        path: wizard-common/.stack-work
+        key: wizard-common-ubuntu22-${{ hashFiles('wizard-common/package.yaml')}}-${{ hashFiles('wizard-common/**/*.hs') }}
         restore-keys: |
-          rdf4h-ubuntu22-${{ hashFiles('vendor/rdf4h/package.yaml')}}-
-          rdf4h-ubuntu22-
-
-    - name: Invalidate rdf4h cache (force push)
-      id: invalidate-cache-rdf4h
-      if: github.event_name == 'push' && github.event.forced && steps.cache-rdf4h.outputs.cache-hit != 'true'
+          wizard-common-ubuntu22-${{ hashFiles('wizard-common/package.yaml')}}-
+          wizard-common-ubuntu22-
+    
+    - name: Invalidate wizard-common cache (force push)
+      id: invalidate-cache-wizard-common
+      if: github.event_name == 'push' && github.event.forced && steps.cache-wizard-common.outputs.cache-hit != 'true'
       run: |
-        rm -rf vendor/rdf4h/.stack-work
+        rm -rf wizard-common/.stack-work
 
-    - name: Cache engine-shared
-      id: cache-engine-shared
+    - name: Cache registry-server
+      id: cache-registry-server
       uses: actions/cache@v3
       with:
-        path: engine-shared/.stack-work
-        key: engine-shared-ubuntu22-${{ hashFiles('engine-shared/package.yaml')}}-${{ hashFiles('engine-shared/**/*.hs') }}
+        path: registry-server/.stack-work
+        key: registry-server-${{ matrix.component }}-ubuntu22-${{ hashFiles('registry-server/package.yaml')}}-${{ hashFiles('registry-server/**/*.hs') }}
         restore-keys: |
-          engine-shared-ubuntu22-${{ hashFiles('engine-shared/package.yaml')}}-
-          engine-shared-ubuntu22-
+          registry-server-${{ matrix.component }}-ubuntu22-${{ hashFiles('registry-server/package.yaml')}}-
+          registry-server-${{ matrix.component }}-ubuntu22-
     
-    - name: Invalidate engine-shared cache (force push)
-      id: invalidate-cache-engine-shared
-      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-shared.outputs.cache-hit != 'true'
+    - name: Invalidate registry-server cache (force push)
+      id: invalidate-cache-registry-server
+      if: github.event_name == 'push' && github.event.forced && steps.cache-registry-server.outputs.cache-hit != 'true'
       run: |
-        rm -rf engine-shared/.stack-work
-
-    - name: Cache engine-registry
-      id: cache-engine-registry
-      uses: actions/cache@v3
-      with:
-        path: engine-registry/.stack-work
-        key: engine-registry-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-registry/package.yaml')}}-${{ hashFiles('engine-registry/**/*.hs') }}
-        restore-keys: |
-          engine-registry-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-registry/package.yaml')}}-
-          engine-registry-${{ matrix.component }}-ubuntu22-
+        rm -rf registry-server/.stack-work
     
-    - name: Invalidate engine-registry cache (force push)
-      id: invalidate-cache-engine-registry
-      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-registry.outputs.cache-hit != 'true'
-      run: |
-        rm -rf engine-registry/.stack-work
-    
-    - name: Cache engine-wizard
-      id: cache-engine-wizard
+    - name: Cache wizard-server
+      id: cache-wizard-server
       uses: actions/cache@v3
       if: matrix.component == 'wizard'
       with:
-        path: engine-wizard/.stack-work
-        key: engine-wizard-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard/package.yaml')}}-${{ hashFiles('engine-wizard/**/*.hs') }}
+        path: wizard-server/.stack-work
+        key: wizard-server-${{ matrix.component }}-ubuntu22-${{ hashFiles('wizard-server/package.yaml')}}-${{ hashFiles('wizard-server/**/*.hs') }}
         restore-keys: |
-          engine-wizard-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard/package.yaml')}}-
-          engine-wizard-${{ matrix.component }}-ubuntu22-
+          wizard-server-${{ matrix.component }}-ubuntu22-${{ hashFiles('wizard-server/package.yaml')}}-
+          wizard-server-${{ matrix.component }}-ubuntu22-
     
-    - name: Invalidate engine-wizard cache (force push)
-      id: invalidate-cache-engine-wizard
-      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-wizard.outputs.cache-hit != 'true'
+    - name: Invalidate wizard-server cache (force push)
+      id: invalidate-cache-wizard-server
+      if: github.event_name == 'push' && github.event.forced && steps.cache-wizard-server.outputs.cache-hit != 'true'
       run: |
-        rm -rf engine-wizard/.stack-work
+        rm -rf wizard-server/.stack-work
     
-    - name: Cache engine-wizard-metamodel-migrator
-      id: cache-engine-wizard-metamodel-migrator
+    - name: Cache wizard-metamodel-migrator
+      id: cache-wizard-metamodel-migrator
       uses: actions/cache@v3
       if: matrix.component == 'wizard'
       with:
-        path: engine-wizard-metamodel-migrator/.stack-work
-        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-${{ hashFiles('engine-wizard-metamodel-migrator/**/*.hs') }}
+        path: wizard-metamodel-migrator/.stack-work
+        key: wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-${{ hashFiles('wizard-metamodel-migrator/package.yaml')}}-${{ hashFiles('wizard-metamodel-migrator/**/*.hs') }}
         restore-keys: |
-          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-
-          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-
+          wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-${{ hashFiles('wizard-metamodel-migrator/package.yaml')}}-
+          wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-
     
-    - name: Invalidate engine-wizard-metamodel-migrator cache (force push)
-      id: invalidate-cache-engine-wizard-metamodel-migrator
-      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-wizard-metamodel-migrator.outputs.cache-hit != 'true'
+    - name: Invalidate wizard-metamodel-migrator cache (force push)
+      id: invalidate-cache-wizard-metamodel-migrator
+      if: github.event_name == 'push' && github.event.forced && steps.cache-wizard-metamodel-migrator.outputs.cache-hit != 'true'
       run: |
-        rm -rf engine-wizard-metamodel-migrator/.stack-work
+        rm -rf wizard-metamodel-migrator/.stack-work
     
     - name: Cache Stack in ~/.local/bin
       id: cache-stack-local-bin
@@ -215,7 +167,7 @@ jobs:
       run: |
         ./scripts/update-file-timestamps.sh
         ./scripts/expand-example-files.sh
-        ./scripts/generate-build-info.sh engine-$COMPONENT
+        ./scripts/generate-build-info.sh $COMPONENT-server
 
     - name: Install GHC and dependencies
       run: |
@@ -224,7 +176,7 @@ jobs:
 # (3) -> Build binary
     - name: Build and test application 
       run: |
-        stack test engine-$COMPONENT --no-terminal --skip-ghc-check 2>&1 | tee log.txt
+        stack test $COMPONENT-server --no-terminal --skip-ghc-check 2>&1 | tee log.txt
         WARNINGS=$(grep -o ': warning: ' log.txt | wc -l)
         if [ $WARNINGS -gt "0" ]; then
           echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
@@ -233,7 +185,7 @@ jobs:
           echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
           exit 1
         fi
-        cp $(stack path --local-install-root)/bin/engine-$COMPONENT engine-$COMPONENT/engine-$COMPONENT-bin
+        cp $(stack path --local-install-root)/bin/$COMPONENT-server $COMPONENT-server/$COMPONENT-server-bin
       env:
         FEEDBACK_TOKEN: ${{ secrets.FEEDBACK_TOKEN }}
 

@@ -1,0 +1,118 @@
+name: shared-common
+version: '3.22.3'
+synopsis: Engine Shared
+description: Engine Shared
+category: Web
+author: Vojtech Knaisl <vknaisl@gmail.com>
+maintainer: Vojtech Knaisl <vknaisl@gmail.com>
+copyright: 2023 Vojtech Knaisl <vknaisl@gmail.com>
+license: Apache
+license-file: LICENSE.md
+homepage: https://github.com/ds-wizard/engine-backend
+git: git@github.com:engine/ds-wizard/engine-backend.git
+bug-reports: https://github.com/ds-wizard/ds-wizard/iisues
+tested-with: GHC==9.4.4
+library:
+  source-dirs: src
+  when:
+  - condition: os(darwin)
+    then:
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+    else:
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+  dependencies:
+  - base
+  - aeson
+  - attoparsec
+  - base64
+  - bytestring
+  - case-insensitive
+  - conduit
+  - containers
+  - cryptonite
+  - directory
+  - exceptions
+  - fsutils
+  - http-client
+  - http-client-tls
+  - http-types
+  - memory
+  - minio-hs
+  - mtl
+  - monad-logger
+  - network
+  - postgresql-simple
+  - postgresql-libpq
+  - pretty-terminal
+  - random
+  - raven-haskell
+  - raw-strings-qq
+  - regex-compat
+  - resource-pool
+  - retry
+  - servant
+  - servant-server
+  - servant-multipart
+  - servant-swagger
+  - swagger2
+  - time
+  - time-parsers
+  - text
+  - text-replace
+  - unordered-containers
+  - uuid
+  - vector
+  - wai
+  - wai-extra
+  - yaml
+  - zip-archive
+  - hspec
+  - hspec-wai
+  - hspec-expectations-json
+  - hspec-expectations-pretty-diff
+
+tests:
+  hspec:
+    main: Spec.hs
+    source-dirs: test
+    when:
+    - condition: os(darwin)
+      then:
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+      else:
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+    dependencies:
+    - base
+    - aeson
+    - containers
+    - random
+    - text
+    - text-replace
+    - uuid
+    - hspec
+    - hspec-expectations-pretty-diff
+    - hspec-wai
+
+default-extensions:
+  - DataKinds
+  - DeriveGeneric
+  - DuplicateRecordFields
+  - ExistentialQuantification
+  - ExtendedDefaultRules
+  - FlexibleContexts
+  - FunctionalDependencies
+  - GeneralizedNewtypeDeriving
+  - FlexibleInstances
+  - MultiParamTypeClasses
+  - OverloadedStrings
+  - QuasiQuotes
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - TemplateHaskell
+  - TypeFamilies
+  - TypeOperators
+  - TypeSynonymInstances
+  - UnicodeSyntax
+  - OverloadedRecordDot
+  - DisambiguateRecordFields

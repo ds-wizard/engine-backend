@@ -1,16 +1,21 @@
 resolver: nightly-2023-04-05
 
 packages:
-- engine-registry
-- engine-shared
-- engine-wizard
-- engine-wizard-metamodel-migrator
+- shared-common
+- registry-server
+- wizard-common
+- wizard-server
+- wizard-metamodel-migrator
 
 extra-deps:
-  - vendor/postgresql-migration
-  - vendor/servant-errors
-  - vendor/servant-mock
-  - vendor/rdf4h
+  - github: haskellify/postgresql-migration
+    commit: v1.0.0
+  - github: haskellify/rdf4h
+    commit: v5.0.1
+  - github: haskellify/servant-errors
+    commit: v0.1.7.0
+  - github: haskellify/servant-mock
+    commit: v0.8.7
   - text-replace-0.0.0.4
   - servant-swagger-tags-0.1.0.1
   - fsutils-0.1.2
