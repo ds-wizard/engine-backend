@@ -1,10 +1,14 @@
 module Shared.Common.Model.Config.ServerConfigIM where
 
 import Control.Monad.Reader (liftIO)
+import qualified Crypto.PubKey.RSA as RSA
+import qualified Data.ByteString.Char8 as BS
 import System.Environment (lookupEnv)
 import Text.Read (readEither)
 
+import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Util.Crypto
 import Shared.Common.Util.String
 
 instance FromEnv ServerConfigDatabase where
@@ -88,4 +92,19 @@ applyMaybeStringEnvVariable envVariableName oldValue updateFn = do
     Just envVariable -> do
       print $ f' "Config: Applying env variable %s" [envVariableName]
       return . updateFn . Just $ envVariable
+    Nothing -> return $ updateFn oldValue
+
+applyRSAPrivateKeyEnvVariable :: String -> RSA.PrivateKey -> (RSA.PrivateKey -> serverConfig) -> IO serverConfig
+applyRSAPrivateKeyEnvVariable envVariableName oldValue updateFn = do
+  envVariable <- liftIO $ lookupEnv envVariableName
+  case envVariable of
+    Just envVariable -> do
+      case readRSAPrivateKey . BS.pack $ envVariable of
+        Just privateKey -> do
+          print $ f' "Config: Applying env variable %s" [envVariableName]
+          return . updateFn $ privateKey
+        Nothing -> do
+          print $ f' "Config: Failed to decode env variable '%s' with the value '%s'" [envVariableName, envVariable]
+          print _ERROR_SERVICE_CONFIG__VALIDATION_RSA_PRIVATE_KEY_FORMAT
+          return $ updateFn oldValue
     Nothing -> return $ updateFn oldValue

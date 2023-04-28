@@ -22,9 +22,10 @@ library:
       ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
   dependencies:
   - shared-common
+  - registry-server
   - wizard-common
   - wizard-metamodel-migrator
-  - registry-server
+  - wizard-public
   - base
   - aeson
   - async
@@ -37,6 +38,7 @@ library:
   - conduit
   - containers
   - cron
+  - cryptonite
   - data-default
   - exceptions
   - ginger
@@ -44,6 +46,7 @@ library:
   - http-client
   - http-client-tls
   - http-types
+  - jose-jwt
   - jwt
   - markdown
   - minio-hs
@@ -122,6 +125,7 @@ tests:
     dependencies:
     - shared-common
     - wizard-common
+    - wizard-public
     - wizard-server
     - base
     - aeson

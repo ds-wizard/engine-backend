@@ -13,8 +13,8 @@ import Wizard.Database.DAO.User.UserTokenDAO
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.App.App
 import Wizard.Model.User.User
-import Wizard.Model.User.UserToken
 import Wizard.Service.User.UserUtil
+import WizardLib.Public.Model.User.UserToken
 
 import Wizard.Specs.Common
 

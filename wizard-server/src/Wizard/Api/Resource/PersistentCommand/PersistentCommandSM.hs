@@ -18,3 +18,6 @@ instance ToSchema PersistentCommandState
 
 instance ToSchema PersistentCommandDTO where
   declareNamedSchema = toSwagger (toDTO command1 (Just userAlbert) (AM.toDTO defaultApp Nothing Nothing))
+
+instance ToSchema PersistentCommand where
+  declareNamedSchema = toSwagger command1

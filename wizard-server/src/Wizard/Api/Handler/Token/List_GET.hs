@@ -1,6 +1,5 @@
 module Wizard.Api.Handler.Token.List_GET where
 
-import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -9,10 +8,10 @@ import Shared.Common.Util.Token
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.UserToken.UserTokenListJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Model.User.UserToken
-import Wizard.Model.User.UserTokenList
 import Wizard.Service.UserToken.UserTokenService
 import Wizard.Service.UserToken.UserTokenUtil
+import WizardLib.Public.Model.User.UserToken
+import WizardLib.Public.Model.User.UserTokenList
 
 type List_GET =
   Header "Authorization" String
@@ -28,5 +27,5 @@ list_GET mTokenHeader mServerUrl =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
       addTraceUuidHeader =<< do
-        let mCurrentTokenUuid = mTokenHeader >>= separateToken >>= getTokenUuidFromToken >>= U.fromString
+        let mCurrentTokenUuid = mTokenHeader >>= separateToken >>= getTokenUuidFromToken
         getTokens LoginUserTokenType mCurrentTokenUuid

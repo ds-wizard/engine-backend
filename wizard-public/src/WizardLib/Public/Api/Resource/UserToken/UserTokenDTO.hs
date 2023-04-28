@@ -1,4 +1,4 @@
-module Wizard.Api.Resource.UserToken.UserTokenDTO where
+module WizardLib.Public.Api.Resource.UserToken.UserTokenDTO where
 
 import GHC.Generics
 

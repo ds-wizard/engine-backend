@@ -22,8 +22,8 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
-import Wizard.Model.User.UserToken
 import Wizard.Service.User.UserService
+import WizardLib.Public.Model.User.UserToken
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.Common

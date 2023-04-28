@@ -13,6 +13,7 @@ import Wizard.Model.App.App
 import Wizard.Model.Plan.AppPlan
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as U_Mapper
+import WizardLib.Public.Model.PersistentCommand.App.CreateOrUpdateAppCommand
 
 toDTO :: App -> Maybe String -> Maybe String -> AppDTO
 toDTO app mLogoUrl mPrimaryColor =
@@ -75,6 +76,20 @@ fromAdminCreateDTO reqDto aUuid cloudDomain now =
     , serverDomain = f' "api-%s.%s" [reqDto.appId, cloudDomain]
     , serverUrl = f' "https://api-%s.%s" [reqDto.appId, cloudDomain]
     , clientUrl = f' "https://%s.%s" [reqDto.appId, cloudDomain]
+    , enabled = True
+    , createdAt = now
+    , updatedAt = now
+    }
+
+fromCommand :: CreateOrUpdateAppCommand -> String -> UTCTime -> App
+fromCommand command cloudDomain now =
+  App
+    { uuid = command.uuid
+    , appId = command.appId
+    , name = command.name
+    , serverDomain = f' "api-%s.%s" [command.appId, cloudDomain]
+    , serverUrl = f' "https://api-%s.%s" [command.appId, cloudDomain]
+    , clientUrl = f' "https://%s.%s" [command.appId, cloudDomain]
     , enabled = True
     , createdAt = now
     , updatedAt = now

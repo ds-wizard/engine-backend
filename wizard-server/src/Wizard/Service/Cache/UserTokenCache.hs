@@ -8,8 +8,8 @@ import qualified Data.UUID as U
 import Shared.Common.Util.String
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Context.AppContext
-import Wizard.Model.User.UserToken
 import Wizard.Service.Cache.Common
+import WizardLib.Public.Model.User.UserToken
 
 cacheName = "UserToken"
 

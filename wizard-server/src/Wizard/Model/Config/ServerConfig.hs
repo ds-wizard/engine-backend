@@ -1,6 +1,8 @@
 module Wizard.Model.Config.ServerConfig where
 
+import qualified Crypto.PubKey.RSA as RSA
 import GHC.Generics
+
 import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfig
 
@@ -25,6 +27,7 @@ data ServerConfig = ServerConfig
   , userToken :: ServerConfigUserToken
   , logging :: ServerConfigLogging
   , cloud :: ServerConfigCloud
+  , admin :: ServerConfigAdmin
   }
   deriving (Generic, Show)
 
@@ -33,6 +36,7 @@ data ServerConfigGeneral = ServerConfigGeneral
   , clientUrl :: String
   , serverPort :: Int
   , secret :: String
+  , rsaPrivateKey :: RSA.PrivateKey
   , integrationConfig :: String
   , clientStyleBuilderUrl :: String
   }
@@ -122,5 +126,12 @@ data ServerConfigUserToken = ServerConfigUserToken
 data ServerConfigCronWorker = ServerConfigCronWorker
   { enabled :: Bool
   , cron :: String
+  }
+  deriving (Generic, Show)
+
+data ServerConfigAdmin = ServerConfigAdmin
+  { enabled :: Bool
+  , url :: String
+  , token :: String
   }
   deriving (Generic, Show)

@@ -18,7 +18,6 @@ import qualified Web.OIDC.Client.Tokens as OT
 
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
-import Wizard.Api.Resource.UserToken.UserTokenDTO
 import Wizard.Database.DAO.Common
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig
@@ -28,6 +27,7 @@ import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.User.UserService
 import Wizard.Service.UserToken.Login.LoginService
 import Wizard.Util.Logger
+import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 
 createAuthenticationUrl :: String -> Maybe String -> Maybe String -> AppContextM ()
 createAuthenticationUrl authId mFlow mClientUrl = do

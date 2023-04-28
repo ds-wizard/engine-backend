@@ -1,9 +1,9 @@
-module Wizard.Database.Mapping.User.UserTokenList where
+module WizardLib.Public.Database.Mapping.User.UserTokenList where
 
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromRow
 
-import Wizard.Model.User.UserTokenList
+import WizardLib.Public.Model.User.UserTokenList
 
 instance FromRow UserTokenList where
   fromRow = do

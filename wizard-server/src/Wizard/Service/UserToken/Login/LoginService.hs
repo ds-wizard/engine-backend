@@ -2,16 +2,16 @@ module Wizard.Service.UserToken.Login.LoginService where
 
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
+import qualified Data.ByteString.Char8 as BS
 import Data.Char (toLower)
 import Data.Foldable (traverse_)
 import Data.Time
+import qualified Jose.Jwt as JWT
 
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Number
 import Shared.Common.Util.Token
 import Shared.Common.Util.Uuid
-import Wizard.Api.Resource.UserToken.LoginDTO
-import Wizard.Api.Resource.UserToken.UserTokenDTO
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
@@ -22,7 +22,6 @@ import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
-import Wizard.Model.User.UserToken
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Mail.Mailer
@@ -30,6 +29,10 @@ import qualified Wizard.Service.User.UserMapper as UserMapper
 import Wizard.Service.UserToken.Login.LoginMapper
 import Wizard.Service.UserToken.Login.LoginValidation
 import Wizard.Service.UserToken.UserTokenMapper
+import Wizard.Service.UserToken.UserTokenUtil
+import WizardLib.Public.Api.Resource.UserToken.LoginDTO
+import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
+import WizardLib.Public.Model.User.UserToken
 
 createLoginTokenFromCredentials :: LoginDTO -> Maybe String -> AppContextM UserTokenDTO
 createLoginTokenFromCredentials reqDto mUserAgent =
@@ -66,7 +69,9 @@ createLoginToken user mUserAgent mSessionState =
     serverConfig <- asks serverConfig
     uuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
-    let userToken = fromLoginDTO uuid user serverConfig.jwt.expiration serverConfig.general.secret mUserAgent mSessionState now
+    let claims = toUserTokenClaims user uuid now serverConfig.jwt
+    (JWT.Jwt jwtToken) <- createSignedJwtToken claims
+    let userToken = fromLoginDTO uuid user serverConfig.jwt.expiration serverConfig.general.secret mUserAgent mSessionState now (BS.unpack jwtToken)
     insertUserToken userToken
     return . toDTO $ userToken
 

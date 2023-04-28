@@ -1,4 +1,4 @@
-module Wizard.Model.User.UserTokenList where
+module WizardLib.Public.Model.User.UserTokenList where
 
 import Data.Time
 import qualified Data.UUID as U

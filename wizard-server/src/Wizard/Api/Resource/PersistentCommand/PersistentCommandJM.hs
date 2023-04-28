@@ -17,3 +17,9 @@ instance FromJSON PersistentCommandDTO where
 
 instance ToJSON PersistentCommandDTO where
   toJSON = genericToJSON jsonOptions
+
+instance FromJSON PersistentCommand where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON PersistentCommand where
+  toJSON = genericToJSON jsonOptions

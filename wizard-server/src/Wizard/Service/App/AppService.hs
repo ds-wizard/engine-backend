@@ -21,6 +21,7 @@ import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.App.AppDetailDTO
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Constant.User
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Config.AppConfigDAO
@@ -45,6 +46,7 @@ import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PCM
 import Wizard.Service.Usage.UsageService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import Wizard.Service.User.UserService
+import WizardLib.Public.Model.PersistentCommand.App.CreateOrUpdateAppCommand
 
 getAppsPage :: Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page AppDTO)
 getAppsPage mQuery mEnabled pageable sort = do
@@ -89,6 +91,18 @@ createAppByAdmin reqDto = do
     createLocale aUuid now
     createSeederPersistentCommand aUuid user.uuid now
     return $ toDTO app Nothing Nothing
+
+createAppByCommand :: CreateOrUpdateAppCommand -> AppContextM ()
+createAppByCommand command = do
+  now <- liftIO getCurrentTime
+  cloudDomain <- getCloudDomain
+  let app = fromCommand command cloudDomain now
+  insertApp app
+  createAppConfig app.uuid now
+  createAppLimit app.uuid now
+  createLocale app.uuid now
+  createSeederPersistentCommand app.uuid systemUserUuid now
+  return ()
 
 getAppById :: U.UUID -> AppContextM AppDetailDTO
 getAppById aUuid = do

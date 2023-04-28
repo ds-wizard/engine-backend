@@ -3,8 +3,8 @@ module Wizard.Model.Cache.ServerCache where
 import qualified Data.Cache as C
 
 import Wizard.Model.User.User
-import Wizard.Model.User.UserToken
 import Wizard.Model.Websocket.WebsocketRecord
+import WizardLib.Public.Model.User.UserToken
 
 data ServerCache = ServerCache
   { branchWebsocket :: C.Cache Int WebsocketRecord

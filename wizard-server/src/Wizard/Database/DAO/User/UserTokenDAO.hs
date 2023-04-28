@@ -9,15 +9,15 @@ import GHC.Int
 
 import Shared.Common.Util.String
 import Wizard.Database.DAO.Common
-import Wizard.Database.Mapping.User.UserToken ()
-import Wizard.Database.Mapping.User.UserTokenList ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Model.User.UserToken
-import Wizard.Model.User.UserTokenList
 import Wizard.Service.Cache.UserTokenCache
 import Wizard.Util.Cache
 import Wizard.Util.Logger
+import WizardLib.Public.Database.Mapping.User.UserToken ()
+import WizardLib.Public.Database.Mapping.User.UserTokenList ()
+import WizardLib.Public.Model.User.UserToken
+import WizardLib.Public.Model.User.UserTokenList
 
 entityName = "user_token"
 

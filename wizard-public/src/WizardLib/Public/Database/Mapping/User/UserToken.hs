@@ -1,4 +1,4 @@
-module Wizard.Database.Mapping.User.UserToken where
+module WizardLib.Public.Database.Mapping.User.UserToken where
 
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromField
@@ -7,7 +7,7 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 
 import Shared.Common.Database.Mapping.Common
-import Wizard.Model.User.UserToken
+import WizardLib.Public.Model.User.UserToken
 
 instance ToField UserTokenType where
   toField = toFieldGenericEnum

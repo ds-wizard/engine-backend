@@ -1,9 +1,9 @@
-module Wizard.Api.Resource.UserToken.UserTokenJM where
+module WizardLib.Public.Api.Resource.UserToken.UserTokenJM where
 
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.UserToken.UserTokenDTO
+import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 
 instance FromJSON UserTokenDTO where
   parseJSON = genericParseJSON (jsonOptionsWithTypeField "type")

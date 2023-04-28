@@ -9,9 +9,9 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
-import Wizard.Api.Resource.UserToken.UserTokenDTO
 import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Model.Context.AppContext
+import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -53,7 +53,7 @@ test_201 appContext =
       let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, UserTokenDTO)
       assertResStatus status expStatus
       assertResHeaders headers expHeaders
-      liftIO $ resBody.token `shouldStartWith` "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+      liftIO $ resBody.token `shouldStartWith` "eyJhbGciOiJSUzI1NiJ9"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

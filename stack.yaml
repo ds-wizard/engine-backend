@@ -4,6 +4,7 @@ packages:
 - shared-common
 - registry-server
 - wizard-common
+- wizard-public
 - wizard-server
 - wizard-metamodel-migrator
 

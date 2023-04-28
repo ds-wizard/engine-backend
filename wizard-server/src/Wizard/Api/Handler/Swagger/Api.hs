@@ -105,9 +105,7 @@ import Wizard.Api.Resource.User.UserProfileSM ()
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Api.Resource.User.UserStateSM ()
 import Wizard.Api.Resource.UserToken.ApiKeyCreateSM ()
-import Wizard.Api.Resource.UserToken.LoginSM ()
 import Wizard.Api.Resource.UserToken.UserTokenListSM ()
-import Wizard.Api.Resource.UserToken.UserTokenSM ()
 import Wizard.Api.Resource.Websocket.QuestionnaireActionSM ()
 import Wizard.Api.Resource.Websocket.WebsocketSM ()
 import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleSM ()
@@ -115,6 +113,8 @@ import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM ()
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePhaseSM ()
+import WizardLib.Public.Api.Resource.UserToken.LoginSM ()
+import WizardLib.Public.Api.Resource.UserToken.UserTokenSM ()
 
 type SwaggerAPI = SwaggerSchemaUI "swagger-ui" "swagger.json"
 

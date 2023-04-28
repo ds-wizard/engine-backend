@@ -5,9 +5,9 @@ import Servant
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.UserToken.UserTokenDTO
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.OpenId.OpenIdService
+import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 
 type Detail_Callback_GET =
   Header "Host" String

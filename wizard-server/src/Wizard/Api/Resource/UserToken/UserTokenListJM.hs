@@ -3,7 +3,7 @@ module Wizard.Api.Resource.UserToken.UserTokenListJM where
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Model.User.UserTokenList
+import WizardLib.Public.Model.User.UserTokenList
 
 instance FromJSON UserTokenList where
   parseJSON = genericParseJSON jsonOptions

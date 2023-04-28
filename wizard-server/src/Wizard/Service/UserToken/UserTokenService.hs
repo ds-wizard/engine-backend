@@ -7,9 +7,9 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.User.UserTokenDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
-import Wizard.Model.User.UserToken
-import Wizard.Model.User.UserTokenList
 import Wizard.Util.Logger
+import WizardLib.Public.Model.User.UserToken
+import WizardLib.Public.Model.User.UserTokenList
 
 getTokens :: UserTokenType -> Maybe U.UUID -> AppContextM [UserTokenList]
 getTokens tokenType mCurrentTokenUuid = do

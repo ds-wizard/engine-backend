@@ -27,6 +27,7 @@ defaultConfig =
     , userToken = defaultUserToken
     , logging = defaultLogging
     , cloud = defaultCloud
+    , admin = defaultAdmin
     }
 
 defaultGeneral :: ServerConfigGeneral
@@ -36,6 +37,7 @@ defaultGeneral =
     , clientUrl = ""
     , serverPort = 3000
     , secret = ""
+    , rsaPrivateKey = undefined
     , integrationConfig = "wizard-server/config/integration.yml"
     , clientStyleBuilderUrl = "http://wizard-style-builder:3002"
     }
@@ -191,3 +193,7 @@ defaultUserToken = ServerConfigUserToken {clean = defaultUserTokenClean}
 defaultUserTokenClean :: ServerConfigCronWorker
 defaultUserTokenClean =
   ServerConfigCronWorker {enabled = True, cron = "0 3 * * *"}
+
+defaultAdmin :: ServerConfigAdmin
+defaultAdmin =
+  ServerConfigAdmin {enabled = False, url = "", token = ""}

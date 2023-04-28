@@ -30,6 +30,7 @@ library:
   - conduit
   - containers
   - cryptonite
+  - cryptostore
   - directory
   - exceptions
   - fsutils
@@ -64,6 +65,8 @@ library:
   - vector
   - wai
   - wai-extra
+  - x509
+  - x509-store
   - yaml
   - zip-archive
   - hspec

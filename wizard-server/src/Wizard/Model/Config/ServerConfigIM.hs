@@ -26,6 +26,7 @@ instance FromEnv ServerConfig where
     userToken <- applyEnv serverConfig.userToken
     logging <- applyEnv serverConfig.logging
     cloud <- applyEnv serverConfig.cloud
+    admin <- applyEnv serverConfig.admin
     return ServerConfig {..}
 
 instance FromEnv ServerConfigGeneral where
@@ -36,6 +37,7 @@ instance FromEnv ServerConfigGeneral where
       , \c -> applyStringEnvVariable "GENERAL_CLIENT_URL" c.clientUrl (\x -> c {clientUrl = x} :: ServerConfigGeneral)
       , \c -> applyEnvVariable "GENERAL_SERVER_PORT" c.serverPort (\x -> c {serverPort = x})
       , \c -> applyStringEnvVariable "GENERAL_SECRET" c.secret (\x -> c {secret = x})
+      , \c -> applyRSAPrivateKeyEnvVariable "GENERAL_RSA_PRIVATE_KEY" c.rsaPrivateKey (\x -> c {rsaPrivateKey = x} :: ServerConfigGeneral)
       , \c -> applyStringEnvVariable "GENERAL_INTEGRATION_CONFIG" c.integrationConfig (\x -> c {integrationConfig = x})
       , \c -> applyStringEnvVariable "GENERAL_CLIENT_STYLE_BUILDER_URL" c.clientStyleBuilderUrl (\x -> c {clientStyleBuilderUrl = x})
       ]
@@ -51,9 +53,9 @@ instance FromEnv ServerConfigRoles where
   applyEnv serverConfig =
     applyEnvVariables
       serverConfig
-      [ \c -> applyEnvVariable "ROLES_ADMIN" c.admin (\x -> c {admin = x})
-      , \c -> applyEnvVariable "ROLES_DATA_STEWARD" c.dataSteward (\x -> c {dataSteward = x})
-      , \c -> applyEnvVariable "ROLES_RESEARCHER" c.researcher (\x -> c {researcher = x})
+      [ \c -> applyEnvVariable "ROLES_ADMIN" c.admin (\x -> c {admin = x} :: ServerConfigRoles)
+      , \c -> applyEnvVariable "ROLES_DATA_STEWARD" c.dataSteward (\x -> c {dataSteward = x} :: ServerConfigRoles)
+      , \c -> applyEnvVariable "ROLES_RESEARCHER" c.researcher (\x -> c {researcher = x} :: ServerConfigRoles)
       ]
 
 instance FromEnv ServerConfigRegistry where
@@ -171,4 +173,13 @@ instance FromEnv ServerConfigCloud where
       [ \c -> applyEnvVariable "CLOUD_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigCloud)
       , \c -> applyMaybeStringEnvVariable "CLOUD_DOMAIN" c.domain (\x -> c {domain = x})
       , \c -> applyEnvVariable "CLOUD_PUBLIC_REGISTRATION_ENABLED" c.publicRegistrationEnabled (\x -> c {publicRegistrationEnabled = x})
+      ]
+
+instance FromEnv ServerConfigAdmin where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "ADMIN_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigAdmin)
+      , \c -> applyStringEnvVariable "ADMIN_URL" c.url (\x -> c {url = x} :: ServerConfigAdmin)
+      , \c -> applyStringEnvVariable "ADMIN_TOKEN" c.token (\x -> c {token = x} :: ServerConfigAdmin)
       ]

@@ -32,7 +32,7 @@ import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.PersistentCommand.PersistentCommandSimple
 import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppUtil
-import qualified Wizard.Service.Config.App.AppConfigCommandExecutor as AppConfigCommandExecutor
+import Wizard.Service.PersistentCommand.PersistentCommandExecutor
 import Wizard.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Service.PersistentCommand.PersistentCommandUtil
 import qualified Wizard.Service.User.UserMapper as UM
@@ -56,6 +56,12 @@ getPersistentCommandById uuid = do
   app <- findAppByUuid command.appUuid
   appDto <- enhanceApp app
   return $ toDetailDTO command mUser appDto
+
+createPersistentCommand :: PersistentCommand -> AppContextM PersistentCommand
+createPersistentCommand persistentCommand = do
+  checkPermission _DEV_PERM
+  insertPersistentCommand persistentCommand
+  return persistentCommand
 
 modifyPersistentCommand :: U.UUID -> PersistentCommandChangeDTO -> AppContextM PersistentCommandDetailDTO
 modifyPersistentCommand uuid reqDto = do
@@ -128,10 +134,6 @@ executePersistentCommandByUuid force uuid context =
           updatePersistentCommandByUuid updatedCommand
           logInfoU _CMP_SERVICE (f' "Command finished with following state: '%s'" [show resultState])
       )
-
-execute :: PersistentCommand -> AppContextM (PersistentCommandState, Maybe String)
-execute command
-  | command.component == AppConfigCommandExecutor.cComponent = AppConfigCommandExecutor.execute command
 
 runPersistentCommandChannelListener :: AppContextM ()
 runPersistentCommandChannelListener = do

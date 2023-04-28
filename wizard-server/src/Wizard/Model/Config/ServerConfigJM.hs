@@ -2,11 +2,14 @@ module Wizard.Model.Config.ServerConfigJM where
 
 import Control.Monad
 import Data.Aeson
+import qualified Data.ByteString.Char8 as BS
 import Data.String (fromString)
 
+import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Config.EnvironmentJM ()
 import Shared.Common.Model.Config.ServerConfigDM
 import Shared.Common.Model.Config.ServerConfigJM ()
+import Shared.Common.Util.Crypto
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.ServerConfigDM
 import Wizard.Model.User.User
@@ -33,6 +36,7 @@ instance FromJSON ServerConfig where
     userToken <- o .:? "userToken" .!= defaultUserToken
     logging <- o .:? "logging" .!= defaultLogging
     cloud <- o .:? "cloud" .!= defaultCloud
+    admin <- o .:? "admin" .!= defaultAdmin
     return ServerConfig {..}
   parseJSON _ = mzero
 
@@ -42,6 +46,11 @@ instance FromJSON ServerConfigGeneral where
     clientUrl <- o .:? "clientUrl" .!= defaultGeneral.clientUrl
     serverPort <- o .:? "serverPort" .!= defaultGeneral.serverPort
     secret <- o .:? "secret" .!= defaultGeneral.secret
+    rsaPrivateKeyString <- o .: "rsaPrivateKey"
+    rsaPrivateKey <-
+      case readRSAPrivateKey . BS.pack $ rsaPrivateKeyString of
+        Just privateKey -> return privateKey
+        Nothing -> fail _ERROR_SERVICE_CONFIG__VALIDATION_RSA_PRIVATE_KEY_FORMAT
     integrationConfig <- o .:? "integrationConfig" .!= defaultGeneral.integrationConfig
     clientStyleBuilderUrl <- o .:? "clientStyleBuilderUrl" .!= defaultGeneral.clientStyleBuilderUrl
     return ServerConfigGeneral {..}
@@ -147,4 +156,12 @@ instance FromJSON ServerConfigCronWorker where
     enabled <- o .:? "enabled" .!= True
     cron <- o .: "cron"
     return ServerConfigCronWorker {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigAdmin where
+  parseJSON (Object o) = do
+    enabled <- o .:? "enabled" .!= defaultAdmin.enabled
+    url <- o .:? "url" .!= defaultAdmin.url
+    token <- o .:? "token" .!= defaultAdmin.token
+    return ServerConfigAdmin {..}
   parseJSON _ = mzero

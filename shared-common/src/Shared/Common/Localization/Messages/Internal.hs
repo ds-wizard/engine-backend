@@ -24,6 +24,8 @@ _ERROR_SERVICE_CONFIG__VALIDATION_SECRET =
 _ERROR_SERVICE_CONFIG__VALIDATION_SERVER_PORT =
   "Invalid configuration supplied: general.serverPort must be between 1 and 65535"
 
+_ERROR_SERVICE_CONFIG__VALIDATION_RSA_PRIVATE_KEY_FORMAT = "Unable to load RSA private key from the following property 'general.rsaPrivateKey'"
+
 -- File
 _ERROR_SERVICE_FILE__CANT_READ_JSON filename =
   f' "Server was unable to decode a file ('%s') to a JSON object" [filename]

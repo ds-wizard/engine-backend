@@ -7,10 +7,10 @@ import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.UserToken.ApiKeyCreateDTO
 import Wizard.Api.Resource.UserToken.ApiKeyCreateJM ()
-import Wizard.Api.Resource.UserToken.UserTokenDTO
-import Wizard.Api.Resource.UserToken.UserTokenJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
+import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
+import WizardLib.Public.Api.Resource.UserToken.UserTokenJM ()
 
 type List_POST =
   Header "Authorization" String

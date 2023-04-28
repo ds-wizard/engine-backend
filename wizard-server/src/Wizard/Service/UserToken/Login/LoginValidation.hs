@@ -6,7 +6,6 @@ import Control.Monad.Reader (liftIO)
 import Data.Time
 
 import Shared.Common.Model.Error.Error
-import Wizard.Api.Resource.UserToken.LoginDTO
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.ActionKey.ActionKey
@@ -14,6 +13,7 @@ import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
 import Wizard.Service.User.UserUtil
+import WizardLib.Public.Api.Resource.UserToken.LoginDTO
 
 validate :: LoginDTO -> User -> AppContextM ()
 validate reqDto user = do

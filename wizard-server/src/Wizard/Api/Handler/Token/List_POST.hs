@@ -5,12 +5,12 @@ import Servant
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.UserToken.LoginDTO
-import Wizard.Api.Resource.UserToken.LoginJM ()
-import Wizard.Api.Resource.UserToken.UserTokenDTO
-import Wizard.Api.Resource.UserToken.UserTokenJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.UserToken.Login.LoginService
+import WizardLib.Public.Api.Resource.UserToken.LoginDTO
+import WizardLib.Public.Api.Resource.UserToken.LoginJM ()
+import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
+import WizardLib.Public.Api.Resource.UserToken.UserTokenJM ()
 
 type List_POST =
   Header "Host" String

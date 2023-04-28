@@ -1,19 +1,19 @@
 module Wizard.Service.UserToken.UserTokenMapper where
 
-import Data.Aeson
-import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe)
-import qualified Data.Text as T
 import Data.Time
+import Data.Time.Clock.POSIX
 import qualified Data.UUID as U
-import qualified Web.JWT as JWT
+import qualified Jose.Jwt as JWT
 
-import Wizard.Api.Resource.UserToken.UserTokenDTO
 import Wizard.Constant.UserToken
-import Wizard.Model.User.UserToken
-import Wizard.Model.User.UserTokenList
-import Wizard.Service.UserToken.UserTokenUtil
+import Wizard.Model.Config.ServerConfig
+import Wizard.Model.User.User
 import Wizard.Util.Date
+import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsDTO
+import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
+import WizardLib.Public.Model.User.UserToken
+import WizardLib.Public.Model.User.UserTokenList
 
 toDTO :: UserToken -> UserTokenDTO
 toDTO token = UserTokenDTO {token = token.value}
@@ -29,36 +29,27 @@ toList token currentSession =
     , createdAt = token.createdAt
     }
 
-toUserToken :: U.UUID -> String -> UserTokenType -> U.UUID -> UTCTime -> String -> Maybe String -> Maybe String -> U.UUID -> UTCTime -> UserToken
-toUserToken uuid name tokenType userUuid expiresAt secret mUserAgent mSessionState appUuid now =
-  let cs =
-        JWT.JWTClaimsSet
-          { iss = Nothing
-          , sub = Nothing
-          , aud = Nothing
-          , exp = toNumericDate expiresAt
-          , nbf = Nothing
-          , iat = Nothing
-          , jti = Nothing
-          , unregisteredClaims =
-              JWT.ClaimsMap
-                { unClaimsMap =
-                    M.insert "version" (String . T.pack . show $ userTokenVersion)
-                      . M.insert "tokenUuid" (toJSON uuid)
-                      . M.insert "userUuid" (toJSON userUuid)
-                      $ M.empty
-                }
-          }
-      tokenValue = signToken secret cs
-   in UserToken
-        { uuid = uuid
-        , name = name
-        , tType = tokenType
-        , userUuid = userUuid
-        , value = tokenValue
-        , userAgent = fromMaybe "Uknown User Agent" mUserAgent
-        , sessionState = mSessionState
-        , expiresAt = expiresAt
-        , appUuid = appUuid
-        , createdAt = now
+toUserToken :: U.UUID -> String -> UserTokenType -> U.UUID -> UTCTime -> String -> Maybe String -> Maybe String -> U.UUID -> UTCTime -> String -> UserToken
+toUserToken uuid name tokenType userUuid expiresAt secret mUserAgent mSessionState appUuid now tokenValue =
+  UserToken
+    { uuid = uuid
+    , name = name
+    , tType = tokenType
+    , userUuid = userUuid
+    , value = tokenValue
+    , userAgent = fromMaybe "Uknown User Agent" mUserAgent
+    , sessionState = mSessionState
+    , expiresAt = expiresAt
+    , appUuid = appUuid
+    , createdAt = now
+    }
+
+toUserTokenClaims :: User -> U.UUID -> UTCTime -> ServerConfigJwt -> UserTokenClaimsDTO
+toUserTokenClaims user tokenUuid now config =
+  let timeDelta = realToFrac $ config.expiration * nominalHourInSeconds
+   in UserTokenClaimsDTO
+        { exp = JWT.IntDate $ utcTimeToPOSIXSeconds (addUTCTime timeDelta now)
+        , version = userTokenVersion
+        , tokenUuid = tokenUuid
+        , userUuid = user.uuid
         }

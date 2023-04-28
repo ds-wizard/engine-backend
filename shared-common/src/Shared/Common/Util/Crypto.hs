@@ -1,22 +1,19 @@
-module Shared.Common.Util.Crypto (
-  generateRandomString,
-  encryptAES256,
-  encryptAES256WithB64,
-  decryptAES256,
-  decryptAES256WithB64,
-  hashMD5,
-) where
+module Shared.Common.Util.Crypto where
 
 import Crypto.Cipher.AES (AES256)
 import Crypto.Cipher.Types (BlockCipher (..), Cipher (..), nullIV)
 import Crypto.Error (throwCryptoError)
 import Crypto.Hash (Digest, MD5 (..), hash)
+import qualified Crypto.PubKey.RSA as RSA
 import Crypto.Random (getRandomBytes)
+import Crypto.Store.X509 (readPubKeyFileFromMemory)
 import Data.ByteArray.Encoding (Base (..), convertToBase)
 import qualified Data.ByteString.Base64 as B64
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
+import qualified Data.X509 as X509
+import Data.X509.Memory (readKeyFileFromMemory)
 
 generateRandomString :: Int -> IO String
 generateRandomString lengthOfString =
@@ -49,3 +46,15 @@ hashMD5 text =
   let digest :: Digest MD5
       digest = hash . TE.encodeUtf8 . T.pack $ text
    in show digest
+
+readRSAPrivateKey :: BS.ByteString -> Maybe RSA.PrivateKey
+readRSAPrivateKey bs =
+  case readKeyFileFromMemory bs of
+    [X509.PrivKeyRSA k] -> Just k
+    _ -> Nothing
+
+readRSAPublicKey :: BS.ByteString -> Maybe RSA.PublicKey
+readRSAPublicKey bs =
+  case readPubKeyFileFromMemory bs of
+    [X509.PubKeyRSA k] -> Just k
+    _ -> Nothing
