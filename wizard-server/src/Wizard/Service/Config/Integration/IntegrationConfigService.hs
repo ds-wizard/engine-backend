@@ -5,6 +5,7 @@ import qualified Data.ByteString.Char8 as BS
 import Data.Map.Strict as M
 import Data.Maybe (fromMaybe)
 import Data.Yaml (decodeEither', decodeFileEither)
+import System.Environment (lookupEnv)
 
 import Shared.Common.Constant.Component
 import Wizard.Model.Config.AppConfig
@@ -16,7 +17,11 @@ import Wizard.Util.Logger
 getFileIntegrationConfig :: String -> AppContextM (M.Map String String)
 getFileIntegrationConfig sectionName = do
   serverConfig <- asks serverConfig
-  let integrationConfigPath = serverConfig.general.integrationConfig
+  mFileNameEnv <- liftIO $ lookupEnv "INTEGRATION_CONFIG_PATH"
+  let integrationConfigPath =
+        case mFileNameEnv of
+          Just fileNameEnv -> fileNameEnv
+          Nothing -> serverConfig.general.integrationConfig
   eIntConfig <- liftIO $ decodeFileEither integrationConfigPath
   case eIntConfig of
     Right intConfig -> return . fromMaybe M.empty . M.lookup sectionName $ intConfig
