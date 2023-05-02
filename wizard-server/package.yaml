@@ -1,0 +1,193 @@
+name: wizard-server
+version: '3.23.0'
+synopsis: Engine Wizard
+description: Engine Wizard
+category: Web
+author: Vojtech Knaisl <vknaisl@gmail.com>
+maintainer: Vojtech Knaisl <vknaisl@gmail.com>
+copyright: 2023 Vojtech Knaisl <vknaisl@gmail.com>
+license: Apache
+license-file: LICENSE.md
+homepage: https://github.com/ds-wizard/engine-backend
+git: git@github.com:ds-wizard/engine-backend.git
+bug-reports: https://github.com/ds-wizard/ds-wizard
+tested-with: GHC==9.4.4
+library:
+  source-dirs: src
+  when:
+  - condition: os(darwin)
+    then:
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+    else:
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+  dependencies:
+  - shared-common
+  - registry-server
+  - wizard-common
+  - wizard-metamodel-migrator
+  - wizard-public
+  - base
+  - aeson
+  - async
+  - base64
+  - blaze-html
+  - bytestring
+  - cache
+  - case-insensitive
+  - clock
+  - conduit
+  - containers
+  - cron
+  - cryptonite
+  - data-default
+  - exceptions
+  - ginger
+  - hashable
+  - http-client
+  - http-client-tls
+  - http-types
+  - jose-jwt
+  - jwt
+  - markdown
+  - minio-hs
+  - mtl
+  - monad-control
+  - monad-logger
+  - network
+  - oidc-client
+  - postgresql-simple
+  - postgresql-libpq
+  - postgresql-migration
+  - pretty-simple
+  - pretty-terminal
+  - pwstore-fast
+  - random # OK
+  - raven-haskell
+  - raw-strings-qq
+  - rdf4h
+  - regex-compat
+  - resource-pool
+  - scientific
+  - servant
+  - servant-client
+  - servant-client-core
+  - servant-errors
+  - servant-multipart
+  - servant-server
+  - servant-swagger
+  - servant-swagger-tags
+  - servant-swagger-ui
+  - servant-websockets
+  - swagger2
+  - text
+  - text-replace
+  - time
+  - time-manager
+  - transformers
+  - unix
+  - unordered-containers
+  - uri-encode
+  - uuid
+  - vector
+  - wai
+  - wai-extra
+  - warp # OK
+  - websockets
+  - wreq # OK
+  - yaml # OK
+  - zip-archive
+  - resourcet
+  - wai-websockets
+
+executables:
+  wizard-server:
+    main: Main.hs
+    source-dirs: app
+    when:
+    - condition: os(darwin)
+      then:
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+      else:
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+    dependencies:
+    - base
+    - wizard-server
+tests:
+  hspec:
+    main: Spec.hs
+    source-dirs: test
+    when:
+    - condition: os(darwin)
+      then:
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+      else:
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+    dependencies:
+    - shared-common
+    - wizard-common
+    - wizard-public
+    - wizard-server
+    - base
+    - aeson
+    - async
+    - bytestring
+    - cache
+    - case-insensitive
+    - containers
+    - data-default
+    - ginger
+    - http-client
+    - http-types
+    - jwt
+    - mtl
+    - monad-control
+    - monad-logger
+    - network
+    - pretty-simple
+    - pwstore-fast
+    - random
+    - regex-compat
+    - resource-pool
+    - servant
+    - servant-server
+    - servant-errors
+    - text
+    - time
+    - transformers
+    - unordered-containers
+    - uuid
+    - vector
+    - wai
+    - wai-extra
+    - warp
+    - websockets
+    - wreq
+    - yaml
+    - hspec
+    - hspec-expectations-pretty-diff
+    - hspec-wai
+
+default-extensions:
+  - DataKinds
+  - DeriveGeneric
+  - DuplicateRecordFields
+  - ExistentialQuantification
+  - ExtendedDefaultRules
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GeneralizedNewtypeDeriving
+  - MultiParamTypeClasses
+  - OverloadedStrings
+  - QuasiQuotes
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - TemplateHaskell
+  - TypeApplications
+  - TypeFamilies
+  - TypeOperators
+  - TypeSynonymInstances
+  - UnicodeSyntax
+  - OverloadedRecordDot
+  - DisambiguateRecordFields

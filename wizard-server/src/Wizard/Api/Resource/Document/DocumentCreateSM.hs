@@ -1,0 +1,11 @@
+module Wizard.Api.Resource.Document.DocumentCreateSM where
+
+import Data.Swagger
+
+import Shared.Common.Util.Swagger
+import Wizard.Api.Resource.Document.DocumentCreateDTO
+import Wizard.Api.Resource.Document.DocumentCreateJM ()
+import Wizard.Database.Migration.Development.Document.Data.Documents
+
+instance ToSchema DocumentCreateDTO where
+  declareNamedSchema = toSwagger doc1Create

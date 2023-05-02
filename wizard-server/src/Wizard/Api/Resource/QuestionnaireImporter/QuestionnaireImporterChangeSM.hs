@@ -1,0 +1,12 @@
+module Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterChangeSM where
+
+import Data.Swagger
+
+import Shared.Common.Util.Swagger
+import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterChangeDTO
+import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterChangeJM ()
+import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
+import Wizard.Service.QuestionnaireImporter.QuestionnaireImporterMapper
+
+instance ToSchema QuestionnaireImporterChangeDTO where
+  declareNamedSchema = toSwagger (toChangeDTO questionnaireImporterBio1)

@@ -9,8 +9,8 @@
 
 ## Applications
 
-- Wizard (`<application>` = engine-wizard)
-- Registry (`<application>` = engine-registry)
+- Wizard (`<application>` = wizard-server)
+- Registry (`<application>` = registry-server)
 
 ## Contribute
 

@@ -1,0 +1,161 @@
+name: registry-server
+version: '3.23.0'
+synopsis: Engine Registry
+description: Engine Registry
+category: Web
+author: Vojtech Knaisl <vknaisl@gmail.com>
+maintainer: Vojtech Knaisl <vknaisl@gmail.com>
+copyright: 2023 Vojtech Knaisl <vknaisl@gmail.com>
+license: Apache
+license-file: LICENSE.md
+homepage: https://github.com/ds-wizard/engine-backend
+git: git@github.com:engine/ds-wizard/engine-backend.git
+bug-reports: https://github.com/ds-wizard/ds-wizard/iisues
+tested-with: GHC==9.4.4
+library:
+  source-dirs: src
+  when:
+  - condition: os(darwin)
+    then:
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+    else:
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+  dependencies:
+  - shared-common
+  - wizard-common
+  - base
+  - aeson
+  - bytestring
+  - case-insensitive
+  - conduit
+  - containers
+  - data-default
+  - exceptions
+  - ginger
+  - hashable
+  - http-client
+  - http-types
+  - memory
+  - minio-hs
+  - mtl
+  - monad-control
+  - monad-logger
+  - network
+  - postgresql-simple
+  - postgresql-libpq
+  - postgresql-migration
+  - pretty-simple
+  - pretty-terminal
+  - pwstore-fast
+  - random
+  - raven-haskell
+  - regex-compat
+  - resource-pool
+  - servant
+  - servant-errors
+  - servant-multipart
+  - servant-server
+  - servant-swagger
+  - servant-swagger-ui
+  - swagger2
+  - text
+  - text-replace
+  - time
+  - time-manager
+  - transformers
+  - unordered-containers
+  - uri-encode
+  - uuid
+  - vector
+  - wai
+  - wai-extra
+  - warp
+  - wreq
+  - yaml
+  - zip-archive
+
+executables:
+  registry-server:
+    main: Main.hs
+    source-dirs: app
+    when:
+    - condition: os(darwin)
+      then:
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+      else:
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+    dependencies:
+    - base
+    - registry-server
+tests:
+  hspec:
+    main: Spec.hs
+    source-dirs: test
+    when:
+    - condition: os(darwin)
+      then:
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+      else:
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+    dependencies:
+    - shared-common
+    - wizard-common
+    - base
+    - aeson
+    - bytestring
+    - case-insensitive
+    - containers
+    - data-default
+    - ginger
+    - http-types
+    - mtl
+    - monad-control
+    - monad-logger
+    - network
+    - pretty-simple
+    - pwstore-fast
+    - random
+    - regex-compat
+    - resource-pool
+    - servant
+    - servant-server
+    - servant-errors
+    - text
+    - time
+    - transformers
+    - unordered-containers
+    - uuid
+    - vector
+    - wai
+    - wai-extra
+    - warp
+    - yaml
+    - registry-server
+    - hspec
+    - hspec-expectations-pretty-diff
+    - hspec-wai
+
+default-extensions:
+  - DataKinds
+  - DeriveGeneric
+  - DuplicateRecordFields
+  - ExistentialQuantification
+  - ExtendedDefaultRules
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GeneralizedNewtypeDeriving
+  - MultiParamTypeClasses
+  - OverloadedStrings
+  - QuasiQuotes
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - TemplateHaskell
+  - TypeApplications
+  - TypeFamilies
+  - TypeOperators
+  - TypeSynonymInstances
+  - UnicodeSyntax
+  - OverloadedRecordDot
+  - DisambiguateRecordFields

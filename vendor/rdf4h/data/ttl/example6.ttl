@@ -1,2 +1,0 @@
-# Test that bnode identifiers are preserved
-_:asdf <http://example.com/pred> <http://example.com/obj> .

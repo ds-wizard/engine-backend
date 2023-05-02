@@ -1,0 +1,277 @@
+module Wizard.Service.User.UserService where
+
+import Control.Monad (forM_, when)
+import Control.Monad.Except (catchError, throwError)
+import Control.Monad.Reader (asks, liftIO)
+import qualified Crypto.PasswordStore as PasswordStore
+import Data.ByteString.Char8 as BS
+import Data.Maybe (fromMaybe)
+import Data.Time
+import qualified Data.UUID as U
+
+import Shared.Common.Model.Common.Page
+import Shared.Common.Model.Common.Pageable
+import Shared.Common.Model.Common.Sort
+import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Model.Error.Error
+import Shared.Common.Util.Crypto (generateRandomString)
+import Shared.Common.Util.Uuid
+import Wizard.Api.Resource.ActionKey.ActionKeyDTO
+import Wizard.Api.Resource.User.UserChangeDTO
+import Wizard.Api.Resource.User.UserCreateDTO
+import Wizard.Api.Resource.User.UserDTO
+import Wizard.Api.Resource.User.UserPasswordDTO
+import Wizard.Api.Resource.User.UserStateDTO
+import Wizard.Api.Resource.User.UserSuggestionDTO
+import Wizard.Database.DAO.ActionKey.ActionKeyDAO
+import Wizard.Database.DAO.Branch.BranchDAO
+import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.User.UserDAO
+import Wizard.Localization.Messages.Internal
+import Wizard.Localization.Messages.Public
+import Wizard.Model.ActionKey.ActionKey
+import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Config.SimpleFeature
+import Wizard.Model.Context.AppContext
+import Wizard.Model.Document.Document
+import Wizard.Model.User.User
+import Wizard.Model.User.UserEM ()
+import Wizard.S3.Document.DocumentS3
+import Wizard.Service.Acl.AclService
+import Wizard.Service.ActionKey.ActionKeyService
+import Wizard.Service.App.AppHelper
+import Wizard.Service.Common
+import Wizard.Service.Config.App.AppConfigService
+import Wizard.Service.Limit.AppLimitService
+import Wizard.Service.Mail.Mailer
+import Wizard.Service.Questionnaire.QuestionnaireService
+import Wizard.Service.User.UserAudit
+import Wizard.Service.User.UserMapper
+import Wizard.Service.User.UserValidation
+import Wizard.Service.UserToken.UserTokenService
+
+getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
+getUsersPage mQuery mRole pageable sort = do
+  checkPermission _UM_PERM
+  userPage <- findUsersPage mQuery mRole pageable sort
+  return . fmap toDTO $ userPage
+
+getUserSuggestionsPage
+  :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)
+getUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
+  suggestionPage <- findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort
+  return . fmap toSuggestionDTO $ suggestionPage
+
+createUserByAdmin :: UserCreateDTO -> AppContextM UserDTO
+createUserByAdmin reqDto =
+  runInTransaction $ do
+    checkPermission _UM_PERM
+    uUuid <- liftIO generateUuid
+    appUuid <- asks currentAppUuid
+    clientUrl <- getAppClientUrl
+    createUserByAdminWithUuid reqDto uUuid appUuid clientUrl False
+
+createUserByAdminWithUuid :: UserCreateDTO -> U.UUID -> U.UUID -> String -> Bool -> AppContextM UserDTO
+createUserByAdminWithUuid reqDto uUuid appUuid clientUrl shouldSendRegistrationEmail =
+  runInTransaction $ do
+    uPasswordHash <- generatePasswordHash reqDto.password
+    serverConfig <- asks serverConfig
+    appConfig <- getAppConfig
+    let uRole = fromMaybe appConfig.authentication.defaultRole reqDto.uRole
+    let uPermissions = getPermissionForRole serverConfig uRole
+    userDto <- createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl shouldSendRegistrationEmail
+    auditUserCreateByAdmin userDto
+    return userDto
+
+registerUser :: UserCreateDTO -> AppContextM UserDTO
+registerUser reqDto =
+  runInTransaction $ do
+    checkIfRegistrationIsEnabled
+    uUuid <- liftIO generateUuid
+    uPasswordHash <- generatePasswordHash reqDto.password
+    serverConfig <- asks serverConfig
+    appConfig <- getAppConfig
+    let uRole = appConfig.authentication.defaultRole
+    let uPermissions = getPermissionForRole serverConfig uRole
+    clientUrl <- getAppClientUrl
+    appUuid <- asks currentAppUuid
+    createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl True
+
+createUser :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> U.UUID -> String -> Bool -> AppContextM UserDTO
+createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl shouldSendRegistrationEmail =
+  runInTransaction $ do
+    checkUserLimit
+    checkActiveUserLimit
+    validateUserEmailUniqueness reqDto.email appUuid
+    now <- liftIO getCurrentTime
+    let user = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions appUuid now shouldSendRegistrationEmail
+    insertUser user
+    actionKey <- createActionKey uUuid RegistrationActionKey appUuid
+    when
+      shouldSendRegistrationEmail
+      ( catchError
+          (sendRegistrationConfirmationMail (toDTO user) actionKey.hash clientUrl)
+          (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT)
+      )
+    sendAnalyticsEmailIfEnabled user
+    return $ toDTO user
+
+createUserFromExternalService :: String -> String -> String -> String -> Maybe String -> AppContextM User
+createUserFromExternalService serviceId firstName lastName email mImageUrl =
+  runInTransaction $ do
+    mUserFromDb <- findUserByEmail' email
+    now <- liftIO getCurrentTime
+    appUuid <- asks currentAppUuid
+    case mUserFromDb of
+      Just user ->
+        if user.active
+          then do
+            let updatedUser = fromUpdateUserExternalDTO user firstName lastName mImageUrl serviceId now
+            updateUserByUuid updatedUser
+            return updatedUser
+          else throwError $ UserError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
+      Nothing -> do
+        checkUserLimit
+        checkActiveUserLimit
+        serverConfig <- asks serverConfig
+        uUuid <- liftIO generateUuid
+        password <- liftIO $ generateRandomString 40
+        uPasswordHash <- generatePasswordHash password
+        appConfig <- getAppConfig
+        let uRole = appConfig.authentication.defaultRole
+        let uPerms = getPermissionForRole serverConfig uRole
+        let user =
+              fromUserExternalDTO
+                uUuid
+                firstName
+                lastName
+                email
+                uPasswordHash
+                [serviceId]
+                uRole
+                uPerms
+                mImageUrl
+                appUuid
+                now
+        insertUser user
+        sendAnalyticsEmailIfEnabled user
+        return user
+
+getUserById :: U.UUID -> AppContextM UserDTO
+getUserById userUuid = do
+  user <- findUserByUuid userUuid
+  return $ toDTO user
+
+getUserDetailById :: U.UUID -> AppContextM UserDTO
+getUserDetailById userUuid = do
+  checkPermission _UM_PERM
+  getUserById userUuid
+
+modifyUser :: U.UUID -> UserChangeDTO -> AppContextM UserDTO
+modifyUser userUuid reqDto =
+  runInTransaction $ do
+    checkPermission _UM_PERM
+    user <- findUserByUuid userUuid
+    when (reqDto.active && not user.active) checkActiveUserLimit
+    validateUserChangedEmailUniqueness reqDto.email user.email
+    serverConfig <- asks serverConfig
+    updatedUser <- updateUserTimestamp $ fromUserChangeDTO reqDto user (getPermissions serverConfig reqDto user)
+    updateUserByUuid updatedUser
+    return . toDTO $ updatedUser
+  where
+    getPermissions serverConfig reqDto oldUser =
+      if reqDto.uRole /= oldUser.uRole
+        then getPermissionForRole serverConfig reqDto.uRole
+        else oldUser.permissions
+
+changeUserPasswordByAdmin :: U.UUID -> UserPasswordDTO -> AppContextM ()
+changeUserPasswordByAdmin userUuid reqDto =
+  runInTransaction $ do
+    user <- findUserByUuid userUuid
+    passwordHash <- generatePasswordHash reqDto.password
+    now <- liftIO getCurrentTime
+    updateUserPasswordByUuid userUuid passwordHash now
+    return ()
+
+changeUserPasswordByHash :: U.UUID -> String -> UserPasswordDTO -> AppContextM ()
+changeUserPasswordByHash userUuid hash userPasswordDto =
+  runInTransaction $ do
+    actionKey <- findActionKeyByHash hash
+    user <- findUserByUuid actionKey.userId
+    passwordHash <- generatePasswordHash userPasswordDto.password
+    now <- liftIO getCurrentTime
+    updateUserPasswordByUuid userUuid passwordHash now
+    deleteActionKeyByHash actionKey.hash
+    return ()
+
+resetUserPassword :: ActionKeyDTO -> AppContextM ()
+resetUserPassword reqDto =
+  runInTransaction $ do
+    user <- findUserByEmail reqDto.email
+    appUuid <- asks currentAppUuid
+    actionKey <- createActionKey user.uuid ForgottenPasswordActionKey appUuid
+    catchError
+      (sendResetPasswordMail (toDTO user) actionKey.hash)
+      (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT)
+
+changeUserState :: String -> String -> UserStateDTO -> AppContextM UserStateDTO
+changeUserState userUuid hash reqDto =
+  runInTransaction $ do
+    checkActiveUserLimit
+    actionKey <- findActionKeyByHash hash
+    user <- findUserByUuid actionKey.userId
+    updatedUser <- updateUserTimestamp $ user {active = reqDto.active}
+    updateUserByUuid updatedUser
+    deleteActionKeyByHash actionKey.hash
+    return reqDto
+
+deleteUser :: U.UUID -> AppContextM ()
+deleteUser userUuid =
+  runInTransaction $ do
+    checkPermission _UM_PERM
+    user <- findUserByUuid userUuid
+    clearBranchCreatedBy user.uuid
+    removeOwnerFromQuestionnaire user.uuid
+    clearQuestionnaireCreatedBy user.uuid
+    deletePersistentCommandByCreatedBy userUuid
+    documents <- findDocumentsFiltered [("creator_uuid", U.toString userUuid)]
+    forM_
+      documents
+      ( \d -> do
+          deleteDocumentsFiltered [("uuid", U.toString d.uuid)]
+          removeDocumentContent d.uuid
+      )
+    deleteTokenByUserUuid user.uuid
+    deleteUserByUuid userUuid
+    return ()
+
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
+getPermissionForRole :: ServerConfig -> String -> [String]
+getPermissionForRole config role
+  | role == _USER_ROLE_ADMIN = config.roles.admin
+  | role == _USER_ROLE_DATA_STEWARD = config.roles.dataSteward
+  | role == _USER_ROLE_RESEARCHER = config.roles.researcher
+  | otherwise = []
+
+generatePasswordHash :: String -> AppContextM String
+generatePasswordHash password = do
+  hash <- liftIO $ BS.unpack <$> PasswordStore.makePasswordWith PasswordStore.pbkdf2 (BS.pack password) 17
+  return $ "pbkdf2:" ++ hash
+
+updateUserTimestamp :: User -> AppContextM User
+updateUserTimestamp user = do
+  now <- liftIO getCurrentTime
+  return $ user {updatedAt = now}
+
+sendAnalyticsEmailIfEnabled user = do
+  serverConfig <- asks serverConfig
+  when serverConfig.analytics.enabled (sendRegistrationCreatedAnalyticsMail (toDTO user))
+
+checkIfRegistrationIsEnabled =
+  checkIfAppFeatureIsEnabled "Registration" (\c -> c.authentication.internal.registration.enabled)

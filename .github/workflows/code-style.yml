@@ -39,10 +39,10 @@ jobs:
 # (4) -> Run hlint
     - name: Run hlint
       run: |
-        hlint engine-shared
-        hlint engine-registry
-        hlint engine-wizard
-        hlint engine-wizard-metamodel-migrator
+        hlint wizard-common
+        hlint registry-server
+        hlint wizard-server
+        hlint wizard-metamodel-migrator
 
   fourmolu:
     runs-on: ubuntu-20.04
@@ -88,19 +88,19 @@ jobs:
 # (4) -> Generate cabal files
     - name: Generate cabal files
       run: |
-        cd engine-shared
+        cd wizard-common
         hpack --force
         cd ..
 
-        cd engine-registry
+        cd registry-server
         hpack --force
         cd ..
 
-        cd engine-wizard
+        cd wizard-server
         hpack --force
         cd ..
 
-        cd engine-wizard-metamodel-migrator
+        cd wizard-metamodel-migrator
         hpack --force
         cd ..
 
@@ -108,10 +108,10 @@ jobs:
     - name: Run fourmolu
       run: |
         FILES=$(find \
-          engine-shared/src engine-shared/test \
-          engine-registry/src engine-registry/test \
-          engine-wizard/src engine-wizard/test \
-          engine-wizard-metamodel-migrator/app engine-wizard-metamodel-migrator/src \
+          wizard-common/src wizard-common/test \
+          registry-server/src registry-server/test \
+          wizard-server/src wizard-server/test \
+          wizard-metamodel-migrator/app wizard-metamodel-migrator/src \
           -name '*.hs'
         )
         RET=0

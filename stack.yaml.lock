@@ -5,6 +5,50 @@
 
 packages:
 - completed:
+    name: postgresql-migration
+    pantry-tree:
+      sha256: d85a152a91a3b2b9b04addf00ce43bbc93746a60d891178149be548d87b4dbbe
+      size: 986
+    sha256: 02106a3bd1434a6786535e3b057c981606756b8849cb3c3c9fa53dbc778b1b29
+    size: 9987
+    url: https://github.com/haskellify/postgresql-migration/archive/v1.0.0.tar.gz
+    version: 1.0.0
+  original:
+    url: https://github.com/haskellify/postgresql-migration/archive/v1.0.0.tar.gz
+- completed:
+    name: rdf4h
+    pantry-tree:
+      sha256: 00267d706bce329123798a5367710d2469e670a369606af7292c1f6518bfe1c9
+      size: 11234
+    sha256: b053c7462b8d050be5f6dc6c42d17d1974137dee58c8036279c86d4d9a65d16d
+    size: 1048078
+    url: https://github.com/haskellify/rdf4h/archive/v5.0.1.tar.gz
+    version: 5.0.1
+  original:
+    url: https://github.com/haskellify/rdf4h/archive/v5.0.1.tar.gz
+- completed:
+    name: servant-errors
+    pantry-tree:
+      sha256: fe090925accee04e661e6389d665b096b794f846f1a280eacfe2b97aaa7d6869
+      size: 616
+    sha256: 1d30939e26b21e824fac31f35b0c6b903a45e7092e6b26c0ab875dca07b44129
+    size: 8210
+    url: https://github.com/haskellify/servant-errors/archive/v0.1.7.0.tar.gz
+    version: 0.1.7.0
+  original:
+    url: https://github.com/haskellify/servant-errors/archive/v0.1.7.0.tar.gz
+- completed:
+    name: servant-mock
+    pantry-tree:
+      sha256: 229f8882c5724dd6ef7ab6bff426083837b43293ef6274b7a69c70e8cdfe9dd9
+      size: 803
+    sha256: dc0710f5dc2a2b6a5620aabab595adc10c0889a50f94ffe7ea95b0d96b4f858d
+    size: 8610
+    url: https://github.com/haskellify/servant-mock/archive/v0.8.7.tar.gz
+    version: 0.8.7
+  original:
+    url: https://github.com/haskellify/servant-mock/archive/v0.8.7.tar.gz
+- completed:
     hackage: text-replace-0.0.0.4@sha256:88800aba160dfb512cf43b24063170d34900e1646ad21f28715a22679f42ae15,1738
     pantry-tree:
       sha256: a7d17c85a9637ef9cc6762ea4e9b932191ede485655b5d18d41292cc9475b105
@@ -83,7 +127,7 @@ packages:
     hackage: servant-foreign-0.15.4
 snapshots:
 - completed:
-    sha256: d08cba48a93881905b529a6896763b90086596889c6c4643816d639260fc12f4
-    size: 598785
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2023/3/5.yaml
-  original: nightly-2023-03-05
+    sha256: 91195434dbc6e4d745301c865e94b798e771db5539625571a19adf6ed4c5e39e
+    size: 600986
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2023/4/5.yaml
+  original: nightly-2023-04-05
