@@ -25,6 +25,8 @@ USER user
 # Set up env
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
+ENV APPLICATION_CONFIG_PATH=/app/config/application.yml
+ENV BUILD_INFO_PATH=/app/config/build-info.yml
 
 # Run the run script (preparations and wizard-server-bin)
 CMD ["/application/registry-server-bin"]

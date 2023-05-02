@@ -1,6 +1,9 @@
 module Registry.Service.Config.ServerConfigService where
 
+import Control.Monad.Reader (liftIO)
+import Data.Maybe (fromMaybe)
 import Data.Yaml (decodeFileEither)
+import System.Environment (lookupEnv)
 
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Config.ServerConfigJM ()
@@ -8,7 +11,9 @@ import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Error.Error
 
 getServerConfig :: String -> IO (Either AppError ServerConfig)
-getServerConfig fileName = do
+getServerConfig fileNameBase = do
+  mFileNameEnv <- liftIO $ lookupEnv "APPLICATION_CONFIG_PATH"
+  let fileName = fromMaybe fileNameBase mFileNameEnv
   eConfig <- decodeFileEither fileName
   case eConfig of
     Right config -> return . validateServerConfig $ config
