@@ -4,6 +4,7 @@ import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks)
 import qualified Data.ByteString.Lazy.Char8 as BSL
 
+import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.String
 import Shared.Locale.Api.Resource.LocaleBundle.LocaleBundleDTO
@@ -14,7 +15,6 @@ import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Locale.LocaleDAO
 import Wizard.Integration.Http.Registry.Runner
-import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext

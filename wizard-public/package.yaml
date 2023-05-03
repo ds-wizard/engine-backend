@@ -23,9 +23,16 @@ library:
   dependencies:
   - shared-common
   - base
+  - bytestring
   - aeson
+  - cache
+  - cryptonite
+  - hashable
   - jose-jwt
+  - monad-logger
+  - mtl
   - postgresql-simple
+  - resource-pool
   - swagger2
   - time
   - uuid

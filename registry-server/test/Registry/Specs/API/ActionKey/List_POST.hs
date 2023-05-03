@@ -9,15 +9,17 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Registry.Api.Resource.ActionKey.ActionKeyDTO
 import Registry.Api.Resource.ActionKey.ActionKeyJM ()
-import Registry.Database.DAO.ActionKey.ActionKeyDAO
 import Registry.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Localization.Messages.Public
-import Registry.Model.ActionKey.ActionKey
+import Registry.Model.ActionKey.ActionKeyType
 import Registry.Model.Context.AppContext
 import Registry.Model.Organization.Organization
+import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
+import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyJM ()
+import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Model.Error.Error
 
 import Registry.Specs.API.Common
@@ -64,7 +66,7 @@ test_201 appContext =
       -- AND: Find result in DB and compare with expectation state
       actionKeyFromDb <- getFirstFromDB findActionKeys appContext
       liftIO $ actionKeyFromDb.aType `shouldBe` reqDto.aType
-      liftIO $ actionKeyFromDb.organizationId `shouldBe` orgGlobal.organizationId
+      liftIO $ actionKeyFromDb.identity `shouldBe` orgGlobal.organizationId
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -74,7 +76,7 @@ test_400 appContext = do
   it "HTTP 400 BAD REQUEST when email doesn't exist" $
     -- GIVEN: Prepare request
     do
-      let reqDto = forgTokActionKeyDto {email = "non-existing@example.com"} :: ActionKeyDTO
+      let reqDto = forgTokActionKeyDto {email = "non-existing@example.com"} :: ActionKeyDTO ActionKeyType
       let reqBody = encode reqDto
       -- Prepare expectation
       let expStatus = 400

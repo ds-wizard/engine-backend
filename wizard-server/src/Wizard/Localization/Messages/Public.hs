@@ -206,35 +206,6 @@ _ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW workerLog =
 _ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =
   LocaleRecord "error.service.tb.pull_non_existing_tml" "Desired template ('%s') wasn't found in Registry" [tmlId]
 
--- Token
-_ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD =
-  LocaleRecord "error.service.token.incorrect_email_or_password" "Incorrect email or password" []
-
-_ERROR_SERVICE_TOKEN__INCORRECT_CODE =
-  LocaleRecord "error.service.token.incorrect_code" "Incorrect code" []
-
-_ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED =
-  LocaleRecord "error.service.token.account_is_not_activated" "The account is not activated" []
-
-_ERROR_SERVICE_TOKEN__UNABLE_TO_DECODE_AND_VERIFY_TOKEN =
-  LocaleRecord "error.service.token.unable_to_decode_token" "Unable to decode and verify token" []
-
-_ERROR_SERVICE_TOKEN__OBSOLETE_TOKEN_VERSION =
-  LocaleRecord "error.service.token.obsolete_token_version" "Obsolete token version" []
-
-_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_VERSION =
-  LocaleRecord "error.service.token.unable_to_get_token_version" "Unable to get token version from token" []
-
-_ERROR_SERVICE_TOKEN__CODE_IS_EXPIRED = LocaleRecord "error.service.token.code_expired" "Code is expired" []
-
-_ERROR_SERVICE_TOKEN__TOKEN_IS_EXPIRED = LocaleRecord "error.service.token.token_expired" "Token is expired" []
-
-_ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES =
-  LocaleRecord "error.service.token.unknown_technical_difficulties" "Unknown technical difficulties" []
-
-_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_EXPIRATION =
-  LocaleRecord "error.service.token.unable_to_get_token_expiration" "Unable to get token expiration from token" []
-
 -- Typehint
 _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION =
   LocaleRecord "error.service.typehint.bad_type_of_question" "Desired question has to be integration question" []
@@ -244,7 +215,3 @@ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION =
 
 _ERROR_SERVICE_TYPEHINT__INTEGRATION_RETURNS_ERROR =
   LocaleRecord "error.service.typehint.integration_request_failed" "Integration request failed" []
-
--- User
-_ERROR_SERVICE_USER__MISSING_USER =
-  LocaleRecord "error.service.user.missing_user" "You have to be log in to perform this request." []

@@ -40,7 +40,7 @@ createS3Client serverConfig manager = do
 createGetObjectFn
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -66,7 +66,7 @@ createGetObjectFn object = do
 createGetObjectWithAppFn
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "serverConfig'" s sc
      , HasField "cloud'" sc ServerConfigCloud
@@ -92,7 +92,7 @@ createGetObjectWithAppFn appUuid object = do
 createGetObjectFn'
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -118,7 +118,7 @@ createGetObjectFn' object = do
 createPutObjectFn
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -151,7 +151,7 @@ createPutObjectFn object mContentType mContentDisposition content = do
 createPutObjectWithAppFn
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -180,7 +180,7 @@ createPutObjectWithAppFn appUuid object mContentType content = do
 createRemoveObjectFn
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -202,7 +202,7 @@ createRemoveObjectFn object = do
 createListObjectsFn
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -229,7 +229,7 @@ createListObjectsFn = do
 createBucketExistsFn
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -249,7 +249,7 @@ createBucketExistsFn = do
 createMakeBucketFn
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -269,7 +269,7 @@ createMakeBucketFn = do
 createPurgeBucketFn
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -289,7 +289,7 @@ createPurgeBucketFn = do
 createRemoveBucketFn
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -309,7 +309,7 @@ createRemoveBucketFn = do
 createSetBucketPolicyFn
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -334,7 +334,7 @@ createSetBucketPolicyFn prefix policy = do
 makeBucketPublicReadOnly
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -377,7 +377,7 @@ makeBucketPublicReadOnly = do
 createPresignedGetObjectUrl
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -401,7 +401,7 @@ createPresignedGetObjectUrl object expirationInSeconds = do
 createMakePublicLink
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , HasField "serverConfig'" s sc
@@ -424,7 +424,7 @@ createMakePublicLink object = do
 runMinioClient
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "serverConfig'" s sc
      , HasField "cloud'" sc ServerConfigCloud
@@ -448,7 +448,7 @@ runMinioClient action = do
 runMinioClient'
   :: ( MonadReader s m
      , HasField "s3Client'" s MinioConn
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "serverConfig'" s sc
      , HasField "cloud'" sc ServerConfigCloud

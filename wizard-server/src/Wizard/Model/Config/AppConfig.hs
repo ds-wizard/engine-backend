@@ -6,7 +6,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Model.Config.SimpleFeature
+import Shared.Common.Model.Config.SimpleFeature
 import Wizard.Model.Questionnaire.Questionnaire hiding (uuid)
 import WizardLib.KnowledgeModel.Model.Package.PackagePattern
 

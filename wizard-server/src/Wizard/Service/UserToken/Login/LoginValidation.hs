@@ -4,16 +4,20 @@ import Control.Monad (when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
 import Data.Time
+import qualified Data.UUID as U
 
+import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Model.Error.Error
-import Wizard.Database.DAO.ActionKey.ActionKeyDAO
-import Wizard.Localization.Messages.Public
-import Wizard.Model.ActionKey.ActionKey
+import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
+import Wizard.Model.ActionKey.ActionKeyType
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
 import Wizard.Service.User.UserUtil
 import WizardLib.Public.Api.Resource.UserToken.LoginDTO
+import WizardLib.Public.Localization.Messages.Public
 
 validate :: LoginDTO -> User -> AppContextM ()
 validate reqDto user = do
@@ -34,7 +38,7 @@ validateUserPassword reqDto user =
 
 validateCode :: User -> Int -> AppConfig -> AppContextM ()
 validateCode user code appConfig = do
-  mActionKey <- findActionKeyByUserIdAndHash' user.uuid (show code)
+  mActionKey <- findActionKeyByIdentityAndHash' (U.toString user.uuid) (show code) :: AppContextM (Maybe (ActionKey U.UUID ActionKeyType))
   case mActionKey of
     Just actionKey -> do
       let timeDelta = realToFrac . toInteger $ appConfig.authentication.internal.twoFactorAuth.expiration

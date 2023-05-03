@@ -5,8 +5,8 @@ import Control.Monad.Reader (asks)
 
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import WizardLib.Public.Localization.Messages.Public
 
 getCurrentUser :: AppContextM UserDTO
 getCurrentUser = do

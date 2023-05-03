@@ -45,3 +45,20 @@ data ServerConfigCloud = ServerConfigCloud
   , publicRegistrationEnabled :: Bool
   }
   deriving (Generic, Show)
+
+data ServerConfigCronWorker = ServerConfigCronWorker
+  { enabled :: Bool
+  , cron :: String
+  }
+  deriving (Generic, Show)
+
+data ServerConfigPersistentCommand = ServerConfigPersistentCommand
+  { listenerJob :: ServerConfigPersistentCommandListenerJob
+  , retryJob :: ServerConfigCronWorker
+  }
+  deriving (Generic, Show)
+
+data ServerConfigPersistentCommandListenerJob = ServerConfigPersistentCommandListenerJob
+  { enabled :: Bool
+  }
+  deriving (Generic, Show)

@@ -12,9 +12,9 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Constant.Acl
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
+import WizardLib.Public.Localization.Messages.Public
 
 checkPermission :: String -> AppContextM ()
 checkPermission perm = do

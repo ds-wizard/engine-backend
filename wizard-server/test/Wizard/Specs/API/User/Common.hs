@@ -9,11 +9,11 @@ import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Database.DAO.User.UserTokenDAO
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.App.App
 import Wizard.Model.User.User
 import Wizard.Service.User.UserUtil
+import WizardLib.Public.Database.DAO.User.UserTokenDAO
 import WizardLib.Public.Model.User.UserToken
 
 import Wizard.Specs.Common

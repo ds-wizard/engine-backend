@@ -3,10 +3,11 @@ module Wizard.Service.Package.PackageAudit where
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
+import Shared.Audit.Service.Audit.AuditService
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Service.Audit.AuditService
 import WizardLib.KnowledgeModel.Model.Package.Package
 
 auditPackageFailedToDelete :: String -> String -> String -> AppContextM ()

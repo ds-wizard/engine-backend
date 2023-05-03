@@ -65,3 +65,23 @@ instance FromJSON ServerConfigCloud where
       o .:? "publicRegistrationEnabled" .!= defaultCloud.publicRegistrationEnabled
     return ServerConfigCloud {..}
   parseJSON _ = mzero
+
+instance FromJSON ServerConfigCronWorker where
+  parseJSON (Object o) = do
+    enabled <- o .:? "enabled" .!= True
+    cron <- o .: "cron"
+    return ServerConfigCronWorker {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigPersistentCommand where
+  parseJSON (Object o) = do
+    listenerJob <- o .:? "listenerJob" .!= defaultPersistentCommand.listenerJob
+    retryJob <- o .:? "retryJob" .!= defaultPersistentCommand.retryJob
+    return ServerConfigPersistentCommand {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigPersistentCommandListenerJob where
+  parseJSON (Object o) = do
+    enabled <- o .:? "enabled" .!= defaultPersistentCommandListenerJob.enabled
+    return ServerConfigPersistentCommandListenerJob {..}
+  parseJSON _ = mzero

@@ -4,8 +4,8 @@ import qualified Data.ByteString.Lazy as BSL
 import Network.Wreq (Response)
 import Prelude hiding (lookup)
 
+import Shared.Common.Integration.Http.Common.ResponseMapper
 import Shared.Common.Model.Error.Error
-import Wizard.Integration.Http.Common.ResponseMapper
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.GitHub.IssueIJM ()
 

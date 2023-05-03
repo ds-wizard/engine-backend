@@ -9,9 +9,10 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import qualified Registry.Database.Migration.Development.Component.ComponentMigration as CMP_Migration
 import Registry.Model.Context.AppContext
+import Registry.Model.Context.ContextLenses ()
 import Shared.Common.Api.Resource.Info.InfoJM ()
+import qualified Shared.Common.Database.Migration.Development.Component.ComponentMigration as CMP_Migration
 import Shared.Common.Database.Migration.Development.Info.Data.Infos
 
 import Registry.Specs.Common

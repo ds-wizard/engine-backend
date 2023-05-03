@@ -87,6 +87,6 @@ createUserTokenTable = do
         \ ); \
         \  \
         \ create unique index user_token_uuid_uindex \
-        \     on user_entity (uuid, app_uuid);"
+        \     on user_token (uuid, app_uuid);"
   let action conn = execute_ conn sql
   runDB action

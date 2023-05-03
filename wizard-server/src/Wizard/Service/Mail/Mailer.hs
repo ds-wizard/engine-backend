@@ -15,9 +15,10 @@ import qualified Data.UUID as U
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Util.JSON
 import Shared.Common.Util.Uuid
+import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Acl.Acl
 import Wizard.Model.Config.ServerConfig
@@ -32,7 +33,6 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.User.User
 import Wizard.Service.App.AppHelper
-import Wizard.Service.PersistentCommand.PersistentCommandMapper
 
 sendRegistrationConfirmationMail :: UserDTO -> String -> String -> AppContextM ()
 sendRegistrationConfirmationMail user hash clientUrl =
@@ -139,6 +139,6 @@ sendEmail function dto createdBy = do
     pUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let body = encodeJsonToString dto
-    let command = toPersistentCommand pUuid "mailer" function body 10 False appUuid (Just createdBy) now
+    let command = toPersistentCommand pUuid "mailer" function body 10 False appUuid (Just . U.toString $ createdBy) now
     insertPersistentCommand command
     return ()

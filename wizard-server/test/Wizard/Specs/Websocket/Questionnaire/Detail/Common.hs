@@ -13,7 +13,9 @@ import qualified Network.Wreq.Types as WT
 import System.Timeout
 import Test.Hspec.Expectations.Pretty
 
+import Shared.Common.Integration.Http.Common.HttpClient (mapHeader)
 import Shared.Common.Integration.Http.Common.HttpClientFactory
+import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.JSON
 import Shared.Common.Util.String
 import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
@@ -21,10 +23,8 @@ import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
-import Wizard.Integration.Http.Common.HttpClient (mapHeader)
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.Cache.QuestionnaireWebsocketCache
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService

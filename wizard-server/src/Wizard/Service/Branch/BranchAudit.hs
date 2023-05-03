@@ -4,10 +4,11 @@ import qualified Data.Map.Strict as M
 import Data.Maybe (isJust)
 import Data.UUID as U
 
+import Shared.Audit.Service.Audit.AuditService
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchData
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Audit.AuditService
+import Wizard.Model.Context.ContextLenses ()
 
 auditBranchPublish :: Branch -> BranchData -> Maybe String -> AppContextM ()
 auditBranchPublish branch branchData mForkOfPkgId =

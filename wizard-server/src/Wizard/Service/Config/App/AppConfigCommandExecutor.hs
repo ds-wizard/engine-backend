@@ -8,22 +8,22 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Util.Uuid
+import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
+import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Model.App.App
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.PersistentCommand.Config.InvokeClientCssCompilationCommand
-import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Service.Config.App.AppConfigService
-import Wizard.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Util.Logger
 
 cComponent = "AppConfig"
 
-execute :: PersistentCommand -> AppContextM (PersistentCommandState, Maybe String)
+execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command
   | command.function == cInvokeClientCssCompilationName = cInvokeClientCssCompilation command
 
@@ -47,14 +47,14 @@ recompileCssInApplication appUuid = do
           1
           True
           appUuid
-          (Just user.uuid)
+          (Just . U.toString $ user.uuid)
           now
   insertPersistentCommand command
   return ()
 
 cInvokeClientCssCompilationName = "invokeClientCssCompilation"
 
-cInvokeClientCssCompilation :: PersistentCommand -> AppContextM (PersistentCommandState, Maybe String)
+cInvokeClientCssCompilation :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 cInvokeClientCssCompilation persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String InvokeClientCssCompilationCommand
   case eCommand of

@@ -27,11 +27,11 @@ import Wizard.Specs.API.User.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /users/{userId}
+-- PUT /users/{uuid}
 -- ------------------------------------------------------------------------
 detail_PUT :: AppContext -> SpecWith ((), Application)
 detail_PUT appContext =
-  describe "PUT /users/{userId}" $ do
+  describe "PUT /users/{uuid}" $ do
     test_200 appContext
     test_400 appContext
     test_401 appContext

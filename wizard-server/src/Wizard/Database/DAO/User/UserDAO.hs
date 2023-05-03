@@ -13,6 +13,7 @@ import GHC.Int
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
+import Shared.Common.Util.Cache
 import Shared.Common.Util.String
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.User.User ()
@@ -22,7 +23,6 @@ import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
 import Wizard.Service.Cache.UserCache
-import Wizard.Util.Cache
 
 entityName = "user_entity"
 

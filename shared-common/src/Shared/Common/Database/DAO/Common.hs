@@ -32,7 +32,7 @@ import Shared.Common.Util.Logger
 import Shared.Common.Util.String (toSnake, trim)
 
 runDB
-  :: (MonadReader s m, HasField "dbPool'" s (Pool Connection), HasField "dbConnection'" s (Maybe Connection), HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadIO m)
+  :: (MonadReader s m, HasField "dbPool'" s (Pool Connection), HasField "dbConnection'" s (Maybe Connection), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadIO m)
   => (Connection -> IO b)
   -> m b
 runDB action = do
@@ -42,7 +42,7 @@ runDB action = do
     Nothing -> liftIO $ withResource context.dbPool' action
 
 runDBImmediately
-  :: (MonadReader s m, HasField "dbPool'" s (Pool Connection), HasField "dbConnection'" s (Maybe Connection), HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadIO m)
+  :: (MonadReader s m, HasField "dbPool'" s (Pool Connection), HasField "dbConnection'" s (Maybe Connection), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadIO m)
   => (Connection -> IO b)
   -> m b
 runDBImmediately action = do
@@ -50,7 +50,7 @@ runDBImmediately action = do
   liftIO $ withResource context.dbPool' action
 
 runRawDB
-  :: (MonadReader s m, HasField "dbPool'" s (Pool Connection), HasField "dbConnection'" s (Maybe Connection), HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadIO m)
+  :: (MonadReader s m, HasField "dbPool'" s (Pool Connection), HasField "dbConnection'" s (Maybe Connection), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadIO m)
   => (LibPQ.Connection -> IO b)
   -> m b
 runRawDB action = do
@@ -63,7 +63,7 @@ logQuery
   :: ( MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , ToRow q
@@ -85,7 +85,7 @@ logInsertAndUpdate
   :: ( MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , ToRow q
@@ -109,7 +109,7 @@ runInTransaction
      , HasField "dbPool'" s (Pool Connection)
      , MonadError AppError m
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      )
   => (String -> String -> m ())
@@ -146,7 +146,7 @@ createFindEntitiesFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
@@ -162,7 +162,7 @@ createFindEntitiesWithFieldsFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
@@ -183,7 +183,7 @@ createFindEntitiesSortedFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
@@ -204,7 +204,7 @@ createFindEntitiesByFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
@@ -227,7 +227,7 @@ createFindEntitiesWithFieldsByFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
@@ -251,7 +251,7 @@ createFindEntitiesBySortedFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
@@ -275,7 +275,7 @@ createFindEntityByFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
@@ -291,7 +291,7 @@ createFindEntityWithFieldsByFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
@@ -328,7 +328,7 @@ createFindEntityByFn'
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
@@ -344,7 +344,7 @@ createFindEntityWithFieldsByFn'
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromRow entity
@@ -379,7 +379,7 @@ createFindEntitiesPageableQuerySortFn
      , MonadLogger m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      )
   => String
@@ -421,7 +421,7 @@ createFindColumnBySqlPageFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , FromField entity
@@ -456,7 +456,7 @@ createInsertFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
@@ -476,7 +476,7 @@ createInsertWithoutTransactionFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
@@ -496,7 +496,7 @@ createDeleteEntitiesFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
@@ -514,7 +514,7 @@ createDeleteEntitiesByFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
@@ -535,7 +535,7 @@ createDeleteEntityByFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
@@ -555,7 +555,7 @@ createCountFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
@@ -576,7 +576,7 @@ createCountByFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , ToRow q
@@ -601,7 +601,7 @@ createCountWithSqlFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      )
@@ -622,7 +622,7 @@ createSumByFn
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , MonadIO m
      , ToRow q

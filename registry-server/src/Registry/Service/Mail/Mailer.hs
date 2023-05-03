@@ -11,16 +11,16 @@ import qualified Data.UUID as U
 
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Database.DAO.Common
-import Registry.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.PersistentCommand.Mail.SendRegistrationConfirmationMailCommand
 import Registry.Model.PersistentCommand.Mail.SendRegistrationCreatedAnalyticsMailCommand
 import Registry.Model.PersistentCommand.Mail.SendResetTokenMailCommand
-import Registry.Service.PersistentCommand.PersistentCommandMapper
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Util.JSON
 import Shared.Common.Util.Uuid
+import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
 
 sendRegistrationConfirmationMail :: OrganizationDTO -> String -> Maybe String -> AppContextM ()
 sendRegistrationConfirmationMail org hash mCallbackUrl = do
@@ -79,6 +79,6 @@ sendEmail function dto createdBy = do
     pUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let body = encodeJsonToString dto
-    let command = toPersistentCommand pUuid "mailer" function body 10 False U.nil createdBy now
+    let command = toPersistentCommand pUuid "mailer" function body 10 False U.nil (Just createdBy) now
     insertPersistentCommand command
     return ()

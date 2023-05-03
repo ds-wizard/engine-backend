@@ -10,15 +10,17 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.UserToken.ApiKeyCreateDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Database.DAO.User.UserTokenDAO
+import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
 import Wizard.Service.UserToken.ApiKey.ApiKeyMapper
 import Wizard.Service.UserToken.UserTokenMapper
-import Wizard.Service.UserToken.UserTokenUtil
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
+import WizardLib.Public.Database.DAO.User.UserTokenDAO
+import WizardLib.Public.Service.UserToken.UserTokenUtil
 
 createApiKey :: ApiKeyCreateDTO -> Maybe String -> AppContextM UserTokenDTO
 createApiKey reqDto mUserAgent =

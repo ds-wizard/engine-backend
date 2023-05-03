@@ -7,6 +7,7 @@ import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Common.Constant.User
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
@@ -16,16 +17,17 @@ import Shared.Common.Util.Uuid
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
 import Shared.Locale.Model.Locale.LocaleDM
+import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
+import qualified Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper as PCM
 import Wizard.Api.Resource.App.AppChangeDTO
 import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.App.AppDetailDTO
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Constant.User
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Config.AppConfigDAO
-import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.Plan.AppPlanDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.App.App
@@ -34,7 +36,6 @@ import Wizard.Model.Config.AppConfigDM
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.PersistentCommand.App.ImportDefaultDataCommand
-import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.User.User
 import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppMapper
@@ -42,7 +43,6 @@ import Wizard.Service.App.AppUtil
 import Wizard.Service.App.AppValidation
 import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Limit.AppLimitService
-import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PCM
 import Wizard.Service.Usage.UsageService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import Wizard.Service.User.UserService
@@ -161,7 +161,7 @@ createLocale aUuid now = do
     insertLocale locale
     return locale
 
-createSeederPersistentCommand :: U.UUID -> U.UUID -> UTCTime -> AppContextM PersistentCommand
+createSeederPersistentCommand :: U.UUID -> U.UUID -> UTCTime -> AppContextM (PersistentCommand U.UUID)
 createSeederPersistentCommand aUuid createdBy now =
   runInTransaction $ do
     pUuid <- liftIO generateUuid

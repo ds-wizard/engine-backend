@@ -2,22 +2,23 @@ module Wizard.Database.Migration.Development.Migration (
   runMigration,
 ) where
 
+import qualified Shared.Audit.Database.Migration.Development.Audit.AuditMigration as ADT
+import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import Shared.Common.Constant.Component
+import qualified Shared.Common.Database.Migration.Development.Component.ComponentMigration as CMP
+import qualified Shared.Common.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
+import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 import qualified Wizard.Database.Migration.Development.Acl.AclMigration as ACL
 import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ACK
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Wizard.Database.Migration.Development.App.AppMigration as A
 import qualified Wizard.Database.Migration.Development.App.AppSchemaMigration as A_Schema
-import qualified Wizard.Database.Migration.Development.Audit.AuditMigration as ADT
-import qualified Wizard.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
 import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
-import qualified Wizard.Database.Migration.Development.Component.ComponentMigration as CMP
-import qualified Wizard.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import qualified Wizard.Database.Migration.Development.Config.ConfigMigration as CFG
 import qualified Wizard.Database.Migration.Development.Config.ConfigSchemaMigration as CFG_Schema
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
@@ -36,7 +37,6 @@ import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.M
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorSchemaMigration as QTN_MIG_Schema
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
-import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
 import qualified Wizard.Database.Migration.Development.Plan.AppPlanMigration as AP
 import qualified Wizard.Database.Migration.Development.Plan.AppPlanSchemaMigration as AP_Schema

@@ -5,13 +5,14 @@ module Wizard.Integration.Http.Config.Runner (
 import Control.Monad.Reader (asks)
 import qualified Data.ByteString.Lazy as BSL
 
-import Wizard.Integration.Http.Common.HttpClient
+import Shared.Common.Integration.Http.Common.HttpClient
 import Wizard.Integration.Http.Config.RequestMapper
 import Wizard.Integration.Http.Config.ResponseMapper
 import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Service.App.AppHelper
 
 compileClientCss :: App -> AppConfigLookAndFeel -> AppContextM BSL.ByteString

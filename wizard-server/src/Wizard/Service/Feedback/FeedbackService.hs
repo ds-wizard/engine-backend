@@ -14,6 +14,8 @@ import Data.Time
 import qualified Data.UUID as U
 import Prelude hiding (id)
 
+import Shared.Common.Localization.Messages.Internal
+import Shared.Common.Model.Context.ContextResult
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
@@ -22,10 +24,8 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Integration.Http.GitHub.Runner
 import Wizard.Integration.Resource.GitHub.IssueIDTO
-import Wizard.Localization.Messages.Internal
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.ContextResult
 import Wizard.Model.Feedback.Feedback
 import Wizard.Service.Common
 import Wizard.Service.Config.App.AppConfigService

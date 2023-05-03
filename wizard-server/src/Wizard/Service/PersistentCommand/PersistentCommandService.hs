@@ -19,17 +19,19 @@ import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
-import Wizard.Api.Resource.PersistentCommand.PersistentCommandChangeDTO
+import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandChangeDTO
+import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
+import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommandSimple
+import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Model.PersistentCommand.PersistentCommand
-import Wizard.Model.PersistentCommand.PersistentCommandSimple
 import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppUtil
 import Wizard.Service.PersistentCommand.PersistentCommandExecutor
@@ -57,7 +59,7 @@ getPersistentCommandById uuid = do
   appDto <- enhanceApp app
   return $ toDetailDTO command mUser appDto
 
-createPersistentCommand :: PersistentCommand -> AppContextM PersistentCommand
+createPersistentCommand :: PersistentCommand U.UUID -> AppContextM (PersistentCommand U.UUID)
 createPersistentCommand persistentCommand = do
   checkPermission _DEV_PERM
   insertPersistentCommand persistentCommand
@@ -68,7 +70,7 @@ modifyPersistentCommand uuid reqDto = do
   checkPermission _DEV_PERM
   command <- findPersistentCommandByUuid uuid
   now <- liftIO getCurrentTime
-  let updatedCommand = fromChangeDTO command reqDto now
+  let updatedCommand = fromChangeDTO command reqDto now :: PersistentCommand U.UUID
   updatePersistentCommandByUuid updatedCommand
   getPersistentCommandById uuid
 
@@ -93,7 +95,7 @@ runPersistentCommandById uuid = do
       return ()
   getPersistentCommandById uuid
 
-runPersistentCommand :: Bool -> PersistentCommandSimple -> AppContextM ()
+runPersistentCommand :: Bool -> PersistentCommandSimple U.UUID -> AppContextM ()
 runPersistentCommand force command = do
   user <-
     case command.createdBy of
@@ -129,7 +131,7 @@ executePersistentCommandByUuid force uuid context =
                   , attempts = command.attempts + 1
                   , updatedAt = now
                   }
-                :: PersistentCommand
+                :: PersistentCommand U.UUID
           when (resultState == ErrorPersistentCommandState) (sendToSentry updatedCommand)
           updatePersistentCommandByUuid updatedCommand
           logInfoU _CMP_SERVICE (f' "Command finished with following state: '%s'" [show resultState])
@@ -145,7 +147,7 @@ runPersistentCommandChannelListener = do
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-sendToSentry :: PersistentCommand -> AppContextM ()
+sendToSentry :: PersistentCommand U.UUID -> AppContextM ()
 sendToSentry command = do
   serverConfig <- asks serverConfig
   when
@@ -159,7 +161,7 @@ sendToSentry command = do
         liftIO $ register sentryService "persistentCommandLogger" Error message (recordUpdate buildVersion command)
     )
 
-recordUpdate :: String -> PersistentCommand -> SentryRecord -> SentryRecord
+recordUpdate :: String -> PersistentCommand U.UUID -> SentryRecord -> SentryRecord
 recordUpdate buildVersion command record =
   let commandUserUuid = maybe "anonymous" U.toString command.createdBy
       commandUuid = U.toString $ command.uuid

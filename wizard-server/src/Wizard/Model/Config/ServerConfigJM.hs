@@ -5,12 +5,12 @@ import Data.Aeson
 import qualified Data.ByteString.Char8 as BS
 import Data.String (fromString)
 
+import Shared.Common.Constant.DummyRsaPrivateKey
 import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Config.EnvironmentJM ()
 import Shared.Common.Model.Config.ServerConfigDM
 import Shared.Common.Model.Config.ServerConfigJM ()
 import Shared.Common.Util.Crypto
-import Wizard.Constant.DummyRsaPrivateKey
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.ServerConfigDM
 import Wizard.Model.User.User
@@ -116,19 +116,6 @@ instance FromJSON ServerConfigFeedback where
     return ServerConfigFeedback {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigPersistentCommand where
-  parseJSON (Object o) = do
-    listenerJob <- o .:? "listenerJob" .!= defaultPersistentCommand.listenerJob
-    retryJob <- o .:? "retryJob" .!= defaultPersistentCommand.retryJob
-    return ServerConfigPersistentCommand {..}
-  parseJSON _ = mzero
-
-instance FromJSON ServerConfigPersistentCommandListenerJob where
-  parseJSON (Object o) = do
-    enabled <- o .:? "enabled" .!= defaultPersistentCommandListenerJob.enabled
-    return ServerConfigPersistentCommandListenerJob {..}
-  parseJSON _ = mzero
-
 instance FromJSON ServerConfigPlan where
   parseJSON (Object o) = do
     recomputeJob <- o .:? "recomputeJob" .!= defaultPlan.recomputeJob
@@ -153,13 +140,6 @@ instance FromJSON ServerConfigUserToken where
   parseJSON (Object o) = do
     clean <- o .:? "clean" .!= defaultUserToken.clean
     return ServerConfigUserToken {..}
-  parseJSON _ = mzero
-
-instance FromJSON ServerConfigCronWorker where
-  parseJSON (Object o) = do
-    enabled <- o .:? "enabled" .!= True
-    cron <- o .: "cron"
-    return ServerConfigCronWorker {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigAdmin where

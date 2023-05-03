@@ -4,11 +4,13 @@ import Data.Pool (Pool)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple (Connection)
 import GHC.Records
+import Network.HTTP.Client (Manager)
 import Network.Minio (MinioConn)
 
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
@@ -43,13 +45,19 @@ instance HasField "s3Client'" AppContext MinioConn where
 instance HasField "s3Client'" BaseContext MinioConn where
   getField = (.s3Client)
 
+instance HasField "httpClientManager'" AppContext Manager where
+  getField = (.httpClientManager)
+
+instance HasField "httpClientManager'" BaseContext Manager where
+  getField = (.httpClientManager)
+
 instance HasField "buildInfoConfig'" AppContext BuildInfoConfig where
   getField = (.buildInfoConfig)
 
 instance HasField "buildInfoConfig'" BaseContext BuildInfoConfig where
   getField = (.buildInfoConfig)
 
-instance HasField "identityUuid'" AppContext (Maybe String) where
+instance HasField "identity'" AppContext (Maybe String) where
   getField entity = fmap (U.toString . (.uuid)) $ entity.currentUser
 
 instance HasField "traceUuid'" AppContext U.UUID where
@@ -57,3 +65,6 @@ instance HasField "traceUuid'" AppContext U.UUID where
 
 instance HasField "appUuid'" AppContext U.UUID where
   getField = (.currentAppUuid)
+
+instance HasField "cache'" AppContext ServerCache where
+  getField = (.cache)

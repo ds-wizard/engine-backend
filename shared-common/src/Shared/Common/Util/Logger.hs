@@ -38,22 +38,22 @@ import Shared.Common.Constant.Component
 import Shared.Common.Util.String (f')
 
 -- ---------------------------------------------------------------------------
-logDebugI :: (MonadReader s m, HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
+logDebugI :: (MonadReader s m, HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
 logDebugI = logI LevelDebug
 
-logInfoI :: (MonadReader s m, HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
+logInfoI :: (MonadReader s m, HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
 logInfoI = logI LevelInfo
 
-logWarnI :: (MonadReader s m, HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
+logWarnI :: (MonadReader s m, HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
 logWarnI = logI LevelWarn
 
-logErrorI :: (MonadReader s m, HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
+logErrorI :: (MonadReader s m, HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
 logErrorI = logI LevelError
 
-logI :: (MonadReader s m, HasField "identityUuid'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => LogLevel -> String -> String -> m ()
+logI :: (MonadReader s m, HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => LogLevel -> String -> String -> m ()
 logI logLevel component message = do
   context <- ask
-  let mIdentityUuid = context.identityUuid'
+  let mIdentityUuid = context.identity'
   let mTraceUuid = Just . U.toString $ context.traceUuid'
   let record = createLogRecord logLevel mIdentityUuid mTraceUuid component message
   logWithoutLoc "" (LevelOther . T.pack . showLogLevel $ logLevel) record

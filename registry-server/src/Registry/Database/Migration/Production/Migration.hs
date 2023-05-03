@@ -12,6 +12,7 @@ import qualified Registry.Database.Migration.Production.Migration_0004_appLimit.
 import qualified Registry.Database.Migration.Production.Migration_0005_locale.Migration as M_0005
 import qualified Registry.Database.Migration.Production.Migration_0006_templateTimestamps.Migration as M_0006
 import qualified Registry.Database.Migration.Production.Migration_0007_component.Migration as M_0007
+import qualified Registry.Database.Migration.Production.Migration_0008_unification.Migration as M_0008
 import Registry.Util.Logger
 
 runMigration baseContext = do
@@ -27,4 +28,5 @@ migrationDefinitions =
   , M_0005.definition
   , M_0006.definition
   , M_0007.definition
+  , M_0008.definition
   ]

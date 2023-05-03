@@ -28,7 +28,7 @@ findFilesByDocumentTemplateId
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -45,7 +45,7 @@ findFileListsByDocumentTemplateId
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -62,7 +62,7 @@ findFilesByDocumentTemplateIdAndFileName
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -80,7 +80,7 @@ findFileById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -97,7 +97,7 @@ insertFile
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -112,7 +112,7 @@ updateFileById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -135,7 +135,7 @@ deleteFiles
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -149,7 +149,7 @@ deleteFilesByDocumentTemplateId
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -166,7 +166,7 @@ deleteFileById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m

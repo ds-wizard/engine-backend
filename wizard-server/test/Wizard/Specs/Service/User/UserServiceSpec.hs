@@ -3,11 +3,11 @@ module Wizard.Specs.Service.User.UserServiceSpec where
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
+import Shared.Common.Model.Config.SimpleFeature
 import Shared.Common.Model.Error.Error
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig
-import Wizard.Model.Config.SimpleFeature
 import Wizard.Service.User.UserService
 
 import Wizard.Specs.Common

@@ -1,12 +1,12 @@
 module Wizard.Service.Config.Client.ClientConfigMapper where
 
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Model.Config.SimpleFeature
 import Shared.Locale.Model.Locale.Locale
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
-import Wizard.Model.Config.SimpleFeature
 
 toClientConfigDTO :: ServerConfig -> AppConfig -> App -> [Locale] -> ClientConfigDTO
 toClientConfigDTO serverConfig appConfig app locales =

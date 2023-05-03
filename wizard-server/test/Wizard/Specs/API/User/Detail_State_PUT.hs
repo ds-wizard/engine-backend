@@ -3,16 +3,19 @@ module Wizard.Specs.API.User.Detail_State_PUT (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.ActionKey.Model.ActionKey.ActionKey
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Wizard.Database.Migration.Development.User.Data.Users
+import Wizard.Model.ActionKey.ActionKeyType
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
 
@@ -22,11 +25,11 @@ import Wizard.Specs.API.User.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /users/{userId}/state?hash={hash}
+-- PUT /users/{uuid}/state?hash={hash}
 -- ------------------------------------------------------------------------
 detail_state_PUT :: AppContext -> SpecWith ((), Application)
 detail_state_PUT appContext =
-  describe "PUT /users/{userId}/state?hash={hash}" $ do
+  describe "PUT /users/{uuid}/state?hash={hash}" $ do
     test_200 appContext
     test_400 appContext
     test_404 appContext
@@ -65,7 +68,7 @@ test_200 appContext =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find result in DB and compare with expectation state
-      assertCountInDB findActionKeys appContext 0
+      assertCountInDB (findActionKeys :: AppContextM [ActionKey U.UUID ActionKeyType]) appContext 0
       assertExistenceOfUserInDB appContext userAlbert
 
 -- ----------------------------------------------------

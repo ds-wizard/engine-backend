@@ -6,6 +6,8 @@ import qualified Data.UUID as U
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.JSON
 import Shared.Common.Util.List
+import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
+import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Submission.SubmissionDTO
@@ -13,13 +15,11 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext (DocumentContext)
 import Wizard.Model.Document.DocumentContextJM ()
-import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Service.DocumentTemplate.DocumentTemplateMapper as DocumentTemplate
-import Wizard.Service.PersistentCommand.PersistentCommandMapper
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 toDTO :: Document -> Maybe QuestionnaireSimple -> [SubmissionDTO] -> DocumentTemplate -> DocumentDTO
@@ -94,7 +94,7 @@ fromTemporallyCreateDTO docUuid qtn documentTemplateId formatUuid repliesHash mC
     , createdAt = now
     }
 
-toDocPersistentCommand :: U.UUID -> DocumentContext -> Document -> PersistentCommand
+toDocPersistentCommand :: U.UUID -> DocumentContext -> Document -> PersistentCommand U.UUID
 toDocPersistentCommand pUuid docContext doc =
   toPersistentCommand
     pUuid

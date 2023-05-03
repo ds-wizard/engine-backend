@@ -6,7 +6,7 @@ import Network.Wai (Middleware)
 import Shared.Common.Api.Middleware.LoggingMiddleware
 import Shared.Common.Model.Config.Environment
 import Shared.Common.Util.Token
-import Wizard.Service.UserToken.UserTokenUtil
+import WizardLib.Public.Service.UserToken.UserTokenUtil
 
 loggingMiddleware :: Environment -> Middleware
 loggingMiddleware = createLoggingMiddleware extractIdentity

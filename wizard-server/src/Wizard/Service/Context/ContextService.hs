@@ -15,12 +15,12 @@ import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..))
 
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Model.Context.ContextResult
 import Shared.Common.Util.Uuid
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Model.App.App
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.ContextResult
 import Wizard.Service.Acl.AclService
 import qualified Wizard.Service.User.UserMapper as UM
 import Wizard.Util.Context

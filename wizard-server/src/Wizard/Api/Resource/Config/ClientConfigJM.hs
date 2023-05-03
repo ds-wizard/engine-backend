@@ -2,10 +2,10 @@ module Wizard.Api.Resource.Config.ClientConfigJM where
 
 import Data.Aeson
 
+import Shared.Common.Api.Resource.Config.SimpleFeatureJM ()
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Api.Resource.Config.ClientConfigDTO
-import Wizard.Api.Resource.Config.SimpleFeatureJM ()
 import Wizard.Api.Resource.Locale.LocaleJM ()
 
 instance FromJSON ClientConfigDTO where

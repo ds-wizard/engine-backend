@@ -3,7 +3,7 @@ module Wizard.Database.Migration.Development.User.Data.SystemUser where
 import Data.Maybe (fromJust)
 import Data.Time
 
-import Wizard.Constant.User
+import Shared.Common.Constant.User
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.App.App
 import Wizard.Model.User.User

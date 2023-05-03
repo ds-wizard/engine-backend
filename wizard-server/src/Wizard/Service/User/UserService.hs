@@ -9,33 +9,35 @@ import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
+import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Model.Config.SimpleFeature
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
 import Shared.Common.Util.Uuid
-import Wizard.Api.Resource.ActionKey.ActionKeyDTO
+import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
-import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
-import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
 import Wizard.Localization.Messages.Internal
-import Wizard.Localization.Messages.Public
-import Wizard.Model.ActionKey.ActionKey
+import Wizard.Model.ActionKey.ActionKeyType
+import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
-import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.User.User
@@ -52,7 +54,8 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.User.UserAudit
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
-import Wizard.Service.UserToken.UserTokenService
+import WizardLib.Public.Localization.Messages.Public
+import WizardLib.Public.Service.UserToken.UserTokenService
 
 getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
 getUsersPage mQuery mRole pageable sort = do
@@ -200,15 +203,15 @@ changeUserPasswordByAdmin userUuid reqDto =
 changeUserPasswordByHash :: U.UUID -> String -> UserPasswordDTO -> AppContextM ()
 changeUserPasswordByHash userUuid hash userPasswordDto =
   runInTransaction $ do
-    actionKey <- findActionKeyByHash hash
-    user <- findUserByUuid actionKey.userId
+    actionKey <- findActionKeyByHash hash :: AppContextM (ActionKey U.UUID ActionKeyType)
+    user <- findUserByUuid actionKey.identity
     passwordHash <- generatePasswordHash userPasswordDto.password
     now <- liftIO getCurrentTime
     updateUserPasswordByUuid userUuid passwordHash now
     deleteActionKeyByHash actionKey.hash
     return ()
 
-resetUserPassword :: ActionKeyDTO -> AppContextM ()
+resetUserPassword :: ActionKeyDTO ActionKeyType -> AppContextM ()
 resetUserPassword reqDto =
   runInTransaction $ do
     user <- findUserByEmail reqDto.email
@@ -222,8 +225,8 @@ changeUserState :: String -> String -> UserStateDTO -> AppContextM UserStateDTO
 changeUserState userUuid hash reqDto =
   runInTransaction $ do
     checkActiveUserLimit
-    actionKey <- findActionKeyByHash hash
-    user <- findUserByUuid actionKey.userId
+    actionKey <- findActionKeyByHash hash :: AppContextM (ActionKey U.UUID ActionKeyType)
+    user <- findUserByUuid actionKey.identity
     updatedUser <- updateUserTimestamp $ user {active = reqDto.active}
     updateUserByUuid updatedUser
     deleteActionKeyByHash actionKey.hash

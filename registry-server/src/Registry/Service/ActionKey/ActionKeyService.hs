@@ -4,12 +4,15 @@ import Control.Monad.Reader (liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
-import Registry.Database.DAO.ActionKey.ActionKeyDAO
-import Registry.Model.ActionKey.ActionKey
+import Registry.Database.Mapping.ActionKey.ActionKeyType ()
+import Registry.Model.ActionKey.ActionKeyType
 import Registry.Model.Context.AppContext
+import Registry.Model.Context.ContextLenses ()
+import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Util.Uuid
 
-createActionKey :: String -> ActionKeyType -> AppContextM ActionKey
+createActionKey :: String -> ActionKeyType -> AppContextM (ActionKey String ActionKeyType)
 createActionKey orgId actionType = do
   uuid <- liftIO generateUuid
   hash <- liftIO generateUuid
@@ -17,9 +20,10 @@ createActionKey orgId actionType = do
   let actionKey =
         ActionKey
           { uuid = uuid
-          , organizationId = orgId
+          , identity = orgId
           , aType = actionType
           , hash = U.toString hash
+          , appUuid = U.nil
           , createdAt = now
           }
   insertActionKey actionKey

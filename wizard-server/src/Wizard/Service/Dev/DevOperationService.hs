@@ -3,10 +3,10 @@ module Wizard.Service.Dev.DevOperationService (
   executeOperation,
 ) where
 
-import Wizard.Api.Resource.Dev.DevExecutionDTO
-import Wizard.Api.Resource.Dev.DevExecutionResultDTO
+import Shared.Common.Api.Resource.Dev.DevExecutionDTO
+import Shared.Common.Api.Resource.Dev.DevExecutionResultDTO
+import Shared.Common.Model.Dev.Dev
 import Wizard.Model.Context.AppContext hiding (cache)
-import Wizard.Model.Dev.Dev
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Dev.DevOperationDefinitions
 

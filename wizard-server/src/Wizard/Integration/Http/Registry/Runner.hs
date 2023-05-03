@@ -11,10 +11,10 @@ import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Registry.Api.Resource.Package.PackageSimpleDTO
+import Shared.Common.Integration.Http.Common.HttpClient
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
-import Wizard.Integration.Http.Common.HttpClient
 import Wizard.Integration.Http.Common.ServantClient
 import Wizard.Integration.Http.Registry.RequestMapper
 import Wizard.Integration.Http.Registry.ResponseMapper

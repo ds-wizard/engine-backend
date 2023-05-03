@@ -30,7 +30,7 @@ findDocumentTemplates
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -54,7 +54,7 @@ findDocumentTemplatesFiltered
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -71,7 +71,7 @@ findDocumentTemplatesByOrganizationIdAndKmId
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -91,7 +91,7 @@ findDocumentTemplateById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -108,7 +108,7 @@ findDocumentTemplateById'
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -125,7 +125,7 @@ findVersionsForDocumentTemplate
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -148,7 +148,7 @@ countDocumentTemplatesGroupedByOrganizationIdAndKmId
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -164,7 +164,7 @@ countDocumentTemplatesGroupedByOrganizationIdAndKmIdWithApp
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -192,7 +192,7 @@ insertDocumentTemplate
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -207,7 +207,7 @@ updateDocumentTemplateById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -230,7 +230,7 @@ deleteDocumentTemplates
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -247,7 +247,7 @@ deleteDocumentTemplatesFiltered
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -280,7 +280,7 @@ deleteDocumentTemplateById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m

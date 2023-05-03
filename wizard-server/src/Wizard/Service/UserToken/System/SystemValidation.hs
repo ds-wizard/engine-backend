@@ -11,10 +11,10 @@ import qualified Jose.Jwk as JWK
 import qualified Jose.Jwt as JWT
 
 import Shared.Common.Model.Localization.LocaleRecord
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsJM ()
+import WizardLib.Public.Localization.Messages.Public
 
 decodeAndValidateJwtToken :: String -> [JWK.Jwk] -> Integer -> UTCTime -> AppContextM (Either LocaleRecord UserTokenClaimsDTO)
 decodeAndValidateJwtToken token privateKeys currentJwtVersion now = do

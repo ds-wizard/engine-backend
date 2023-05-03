@@ -4,11 +4,12 @@ import qualified Data.Map.Strict as M
 import Data.Maybe
 import qualified Data.UUID as U
 
+import Shared.Audit.Service.Audit.AuditService
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Audit.AuditService
+import Wizard.Model.Context.ContextLenses ()
 
 auditKmMigrationCreate :: MigratorStateCreateDTO -> Branch -> AppContextM ()
 auditKmMigrationCreate reqDto branch =

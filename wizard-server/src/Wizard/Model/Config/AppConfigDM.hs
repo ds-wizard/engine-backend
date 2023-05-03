@@ -4,8 +4,8 @@ import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Common.Model.Config.SimpleFeature
 import Wizard.Model.Config.AppConfig
-import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.User.User
 

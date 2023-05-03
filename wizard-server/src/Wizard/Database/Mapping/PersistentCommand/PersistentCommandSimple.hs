@@ -1,9 +1,0 @@
-module Wizard.Database.Mapping.PersistentCommand.PersistentCommandSimple where
-
-import Database.PostgreSQL.Simple
-
-import Wizard.Model.PersistentCommand.PersistentCommandSimple
-
-instance FromRow PersistentCommandSimple
-
-instance ToRow PersistentCommandSimple

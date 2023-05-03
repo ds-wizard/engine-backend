@@ -28,7 +28,7 @@ findLocales
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -44,7 +44,7 @@ findLocalesByOrganizationIdAndLocaleId
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -62,7 +62,7 @@ findLocaleById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -79,7 +79,7 @@ findLocaleById'
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -96,7 +96,7 @@ countLocalesGroupedByOrganizationIdAndLocaleId
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -112,7 +112,7 @@ countLocalesGroupedByOrganizationIdAndLocaleIdWithApp
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -140,7 +140,7 @@ updateLocaleById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -163,7 +163,7 @@ insertLocale
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -178,7 +178,7 @@ deleteLocales
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -192,7 +192,7 @@ deleteLocaleById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m

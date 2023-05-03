@@ -9,13 +9,13 @@ import Test.Hspec.Wai
 
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
-import Registry.Database.DAO.ActionKey.ActionKeyDAO
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Model.Organization.Organization
 import Registry.Service.Organization.OrganizationMapper
+import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 
 import Registry.Specs.API.Common
 import Registry.Specs.Common
@@ -66,7 +66,7 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/organizations/global/token?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
     reqHeaders

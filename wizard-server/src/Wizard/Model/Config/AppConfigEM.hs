@@ -1,7 +1,7 @@
 module Wizard.Model.Config.AppConfigEM where
 
+import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Util.Crypto (encryptAES256WithB64)
-import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 
 instance SensitiveData AppConfig where

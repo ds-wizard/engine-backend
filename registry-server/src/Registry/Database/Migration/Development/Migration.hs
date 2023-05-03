@@ -5,8 +5,6 @@ module Registry.Database.Migration.Development.Migration (
 import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import qualified Registry.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
-import qualified Registry.Database.Migration.Development.Component.ComponentMigration as CMP
-import qualified Registry.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as TML_Schema
 import qualified Registry.Database.Migration.Development.Locale.LocaleMigration as LOC
@@ -15,9 +13,11 @@ import qualified Registry.Database.Migration.Development.Organization.Organizati
 import qualified Registry.Database.Migration.Development.Organization.OrganizationSchemaMigration as ORG_Schema
 import qualified Registry.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Registry.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
-import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
 import Registry.Util.Logger
+import qualified Shared.Common.Database.Migration.Development.Component.ComponentMigration as CMP
+import qualified Shared.Common.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
+import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 
 runMigration = do
   logInfo _CMP_MIGRATION "started"
@@ -27,11 +27,11 @@ runMigration = do
   CMP_Schema.dropTables
   LOC_Schema.dropTables
   PC_Schema.dropTables
-  ORG_Schema.dropTables
-  PKG_Schema.dropTables
-  ACK_Schema.dropTables
-  ADT_Schema.dropTables
   TML_Schema.dropTables
+  ADT_Schema.dropTables
+  ACK_Schema.dropTables
+  PKG_Schema.dropTables
+  ORG_Schema.dropTables
   -- 3. Create schema
   ORG_Schema.createTables
   PKG_Schema.createTables

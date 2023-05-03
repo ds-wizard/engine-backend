@@ -23,11 +23,11 @@ import Registry.Api.Resource.Organization.OrganizationStateDTO
 import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Registry.Api.Resource.Package.PackageSimpleDTO
 import Shared.Common.Constant.Api
+import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.String (f', splitOn)
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
-import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Statistics.InstanceStatistics
 import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
 import WizardLib.DocumentTemplate.Constant.DocumentTemplate

@@ -6,13 +6,13 @@ import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Util.List (groupBy)
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserProfileDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext

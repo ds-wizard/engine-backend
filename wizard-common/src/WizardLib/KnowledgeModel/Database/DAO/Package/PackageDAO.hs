@@ -28,7 +28,7 @@ findPackages
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -44,7 +44,7 @@ findPackageWithEvents
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -60,7 +60,7 @@ findPackageWithEventsRawById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -77,7 +77,7 @@ findPackagesFiltered
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -94,7 +94,7 @@ findPackagesByOrganizationIdAndKmId
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -112,7 +112,7 @@ findPackagesByPreviousPackageId
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -129,7 +129,7 @@ findPackagesByForkOfPackageId
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -146,7 +146,7 @@ findVersionsForPackage
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -169,7 +169,7 @@ findPackageById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -186,7 +186,7 @@ findPackageById'
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -203,7 +203,7 @@ findPackageWithEventsById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -220,7 +220,7 @@ countPackages
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -236,7 +236,7 @@ countPackagesGroupedByOrganizationIdAndKmId
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -252,7 +252,7 @@ countPackagesGroupedByOrganizationIdAndKmIdWithApp
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -280,7 +280,7 @@ insertPackage
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -295,7 +295,7 @@ deletePackages
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -309,7 +309,7 @@ deletePackagesFiltered
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m
@@ -326,7 +326,7 @@ deletePackageById
      , MonadReader s m
      , HasField "dbPool'" s (Pool Connection)
      , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identityUuid'" s (Maybe String)
+     , HasField "identity'" s (Maybe String)
      , HasField "traceUuid'" s U.UUID
      , HasField "appUuid'" s U.UUID
      , MonadIO m

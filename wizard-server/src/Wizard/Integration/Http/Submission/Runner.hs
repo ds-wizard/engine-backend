@@ -5,11 +5,12 @@ module Wizard.Integration.Http.Submission.Runner (
 import qualified Data.ByteString.Char8 as BS
 import Data.Map.Strict as M
 
-import Wizard.Integration.Http.Common.HttpClient
+import Shared.Common.Integration.Http.Common.HttpClient
 import Wizard.Integration.Http.Submission.RequestMapper
 import Wizard.Integration.Http.Submission.ResponseMapper
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 
 uploadDocument
   :: AppConfigSubmissionServiceRequest

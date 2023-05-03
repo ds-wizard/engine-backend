@@ -3,7 +3,7 @@ module Wizard.Integration.Http.GitHub.Runner where
 import Control.Monad.Reader (asks)
 import qualified Data.UUID as U
 
-import Wizard.Integration.Http.Common.HttpClient
+import Shared.Common.Integration.Http.Common.HttpClient
 import Wizard.Integration.Http.GitHub.RequestMapper
 import Wizard.Integration.Http.GitHub.ResponseMapper
 import Wizard.Integration.Resource.GitHub.IssueIDTO
