@@ -8,6 +8,7 @@ import System.Environment (lookupEnv)
 import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Config.ServerConfigIM
 import Shared.Common.Model.Error.Error
+import Wizard.Constant.DummyRsaPrivateKey
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.ServerConfigIM ()
 import Wizard.Model.Config.ServerConfigJM ()
@@ -25,8 +26,16 @@ getServerConfig fileNameBase = do
 
 validateServerConfig :: ServerConfig -> Either AppError ServerConfig
 validateServerConfig config = do
-  validateGeneralSecret config
   validateGeneralServerPort config
+  validateGeneralSecret config
+  validateGeneralRsaPrivateKey config
+
+validateGeneralServerPort :: ServerConfig -> Either AppError ServerConfig
+validateGeneralServerPort config
+  | port < 1 || port > 65535 = Left . GeneralServerError $ _ERROR_SERVICE_CONFIG__VALIDATION_SERVER_PORT
+  | otherwise = Right config
+  where
+    port = config.general.serverPort
 
 validateGeneralSecret :: ServerConfig -> Either AppError ServerConfig
 validateGeneralSecret config
@@ -35,9 +44,8 @@ validateGeneralSecret config
   where
     secretLen = length $ config.general.secret
 
-validateGeneralServerPort :: ServerConfig -> Either AppError ServerConfig
-validateGeneralServerPort config
-  | port < 1 || port > 65535 = Left . GeneralServerError $ _ERROR_SERVICE_CONFIG__VALIDATION_SERVER_PORT
-  | otherwise = Right config
-  where
-    port = config.general.serverPort
+validateGeneralRsaPrivateKey :: ServerConfig -> Either AppError ServerConfig
+validateGeneralRsaPrivateKey config =
+  if config.general.rsaPrivateKey == dummyRsaPrivateKey
+    then Left . GeneralServerError $ _ERROR_SERVICE_CONFIG__VALIDATION_RSA_PRIVATE_KEY_FORMAT
+    else Right config
