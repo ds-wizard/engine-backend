@@ -105,6 +105,6 @@ applyRSAPrivateKeyEnvVariable envVariableName oldValue updateFn = do
           return . updateFn $ privateKey
         Nothing -> do
           print $ f' "Config: Failed to decode env variable '%s' with the value '%s'" [envVariableName, envVariable]
-          print _ERROR_SERVICE_CONFIG__VALIDATION_RSA_PRIVATE_KEY_FORMAT
+          print _ERROR_SERVICE_CONFIG__VALIDATION_ENV_RSA_PRIVATE_KEY_FORMAT
           return $ updateFn oldValue
     Nothing -> return $ updateFn oldValue

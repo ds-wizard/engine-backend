@@ -10,6 +10,7 @@ import Shared.Common.Model.Config.EnvironmentJM ()
 import Shared.Common.Model.Config.ServerConfigDM
 import Shared.Common.Model.Config.ServerConfigJM ()
 import Shared.Common.Util.Crypto
+import Wizard.Constant.DummyRsaPrivateKey
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.ServerConfigDM
 import Wizard.Model.User.User
@@ -46,11 +47,14 @@ instance FromJSON ServerConfigGeneral where
     clientUrl <- o .:? "clientUrl" .!= defaultGeneral.clientUrl
     serverPort <- o .:? "serverPort" .!= defaultGeneral.serverPort
     secret <- o .:? "secret" .!= defaultGeneral.secret
-    rsaPrivateKeyString <- o .: "rsaPrivateKey"
+    mRsaPrivateKeyString <- o .:? "rsaPrivateKey"
     rsaPrivateKey <-
-      case readRSAPrivateKey . BS.pack $ rsaPrivateKeyString of
-        Just privateKey -> return privateKey
-        Nothing -> fail _ERROR_SERVICE_CONFIG__VALIDATION_RSA_PRIVATE_KEY_FORMAT
+      case mRsaPrivateKeyString of
+        Just rsaPrivateKeyString ->
+          case readRSAPrivateKey . BS.pack $ rsaPrivateKeyString of
+            Just privateKey -> return privateKey
+            Nothing -> fail _ERROR_SERVICE_CONFIG__VALIDATION_CFG_RSA_PRIVATE_KEY_FORMAT
+        Nothing -> return dummyRsaPrivateKey
     integrationConfig <- o .:? "integrationConfig" .!= defaultGeneral.integrationConfig
     clientStyleBuilderUrl <- o .:? "clientStyleBuilderUrl" .!= defaultGeneral.clientStyleBuilderUrl
     return ServerConfigGeneral {..}

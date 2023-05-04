@@ -24,7 +24,11 @@ _ERROR_SERVICE_CONFIG__VALIDATION_SECRET =
 _ERROR_SERVICE_CONFIG__VALIDATION_SERVER_PORT =
   "Invalid configuration supplied: general.serverPort must be between 1 and 65535"
 
-_ERROR_SERVICE_CONFIG__VALIDATION_RSA_PRIVATE_KEY_FORMAT = "Unable to load RSA private key from the following property 'general.rsaPrivateKey'"
+_ERROR_SERVICE_CONFIG__VALIDATION_RSA_PRIVATE_KEY_FORMAT = "There is no RSA private key configured"
+
+_ERROR_SERVICE_CONFIG__VALIDATION_CFG_RSA_PRIVATE_KEY_FORMAT = "Unable to load RSA private key from the following property 'general.rsaPrivateKey'"
+
+_ERROR_SERVICE_CONFIG__VALIDATION_ENV_RSA_PRIVATE_KEY_FORMAT = "Unable to load RSA private key from the env 'GENERAL_RSA_PRIVATE_KEY' variable"
 
 -- File
 _ERROR_SERVICE_FILE__CANT_READ_JSON filename =
