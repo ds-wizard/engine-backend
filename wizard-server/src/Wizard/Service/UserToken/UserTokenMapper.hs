@@ -16,7 +16,7 @@ import WizardLib.Public.Model.User.UserToken
 import WizardLib.Public.Model.User.UserTokenList
 
 toDTO :: UserToken -> UserTokenDTO
-toDTO token = UserTokenDTO {token = token.value}
+toDTO token = UserTokenDTO {token = token.value, expiresAt = token.expiresAt}
 
 toList :: UserToken -> Bool -> UserTokenList
 toList token currentSession =
