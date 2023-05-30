@@ -50,7 +50,7 @@ instance HasField "buildInfoConfig'" AppContext BuildInfoConfig where
 instance HasField "buildInfoConfig'" BaseContext BuildInfoConfig where
   getField = (.buildInfoConfig)
 
-instance HasField "identityUuid'" AppContext (Maybe String) where
+instance HasField "identity'" AppContext (Maybe String) where
   getField entity = fmap (.token) entity.currentOrganization
 
 instance HasField "traceUuid'" AppContext U.UUID where

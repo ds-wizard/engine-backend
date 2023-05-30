@@ -1,13 +1,13 @@
 module Wizard.Database.Migration.Development.PersistentCommand.Data.PersistentCommands where
 
+import qualified Data.UUID as U
+
 import Shared.Common.Constant.App
 import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
-import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.PersistentCommand.PersistentCommand
-import Wizard.Model.User.User
+import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 
-command1 :: PersistentCommand
+command1 :: PersistentCommand U.UUID
 command1 =
   PersistentCommand
     { uuid = u' "34493424-ad08-4752-acf4-ac92223dc2f6"
@@ -20,7 +20,7 @@ command1 =
     , maxAttempts = 10
     , internal = True
     , appUuid = defaultAppUuid
-    , createdBy = Just $ userAlbert.uuid
+    , createdBy = Nothing
     , createdAt = dt' 2018 1 25
     , updatedAt = dt' 2018 1 25
     }

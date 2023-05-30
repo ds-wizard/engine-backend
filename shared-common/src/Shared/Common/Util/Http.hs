@@ -3,9 +3,12 @@ module Shared.Common.Util.Http where
 import qualified Data.ByteString.Char8 as BS
 import Data.CaseInsensitive (mk)
 import Data.List (find)
-import Network.HTTP.Types (Header, Status)
+import Network.HTTP.Types (Header, Status, urlEncode)
 import Network.Wai (Request (..), Response)
 import Network.Wai.Internal (Response (..))
+
+encodeUrl :: String -> String
+encodeUrl url = BS.unpack $ urlEncode True (BS.pack url)
 
 findHeader :: String -> [Header] -> Maybe String
 findHeader headerNameToFind headers =

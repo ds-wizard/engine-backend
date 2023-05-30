@@ -10,9 +10,9 @@ import qualified Data.Text as T
 import Network.Wreq (Response)
 import Prelude hiding (lookup)
 
+import Shared.Common.Integration.Http.Common.ResponseMapper
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.String (splitOn)
-import Wizard.Integration.Http.Common.ResponseMapper
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Util.DocumentTemplate
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel

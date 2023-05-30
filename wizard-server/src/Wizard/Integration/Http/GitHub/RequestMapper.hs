@@ -8,11 +8,11 @@ import qualified Data.UUID as U
 import Prelude hiding (lookup)
 
 import Shared.Common.Constant.Api
+import Shared.Common.Model.Http.HttpRequest
 import Wizard.Integration.Resource.GitHub.IssueCreateIDTO
 import Wizard.Integration.Resource.GitHub.IssueCreateIJM ()
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
-import Wizard.Model.Http.HttpRequest
 import Wizard.Util.Interpolation (interpolateString)
 
 toGetIssuesRequest :: ServerConfigFeedback -> AppConfigQuestionnaireFeedback -> HttpRequest

@@ -44,3 +44,18 @@ defaultCloud =
     , domain = Nothing
     , publicRegistrationEnabled = False
     }
+
+defaultPersistentCommand :: ServerConfigPersistentCommand
+defaultPersistentCommand =
+  ServerConfigPersistentCommand
+    { listenerJob = defaultPersistentCommandListenerJob
+    , retryJob = defaultPersistentCommandRetryJob
+    }
+
+defaultPersistentCommandListenerJob :: ServerConfigPersistentCommandListenerJob
+defaultPersistentCommandListenerJob =
+  ServerConfigPersistentCommandListenerJob {enabled = True}
+
+defaultPersistentCommandRetryJob :: ServerConfigCronWorker
+defaultPersistentCommandRetryJob =
+  ServerConfigCronWorker {enabled = True, cron = "* * * * *"}

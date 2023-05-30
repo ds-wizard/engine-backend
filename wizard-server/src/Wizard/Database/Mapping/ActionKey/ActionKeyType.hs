@@ -4,7 +4,7 @@ import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.ToField
 
 import Shared.Common.Database.Mapping.Common
-import Wizard.Model.ActionKey.ActionKey
+import Wizard.Model.ActionKey.ActionKeyType
 
 instance ToField ActionKeyType where
   toField = toFieldGenericEnum

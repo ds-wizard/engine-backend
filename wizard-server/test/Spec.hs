@@ -11,7 +11,8 @@ import Shared.Common.Database.Connection
 import Shared.Common.Integration.Http.Common.HttpClientFactory
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.S3.Common
-import Shared.Common.Service.Config.BuildInfoConfigService
+import Shared.Common.Service.Config.BuildInfo.BuildInfoConfigService
+import Shared.Common.Service.Config.Server.ServerConfigService
 import Wizard.Bootstrap.ServerCache
 import Wizard.Constant.Resource
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -19,7 +20,7 @@ import Wizard.Integration.Http.Common.ServantClient
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Config.Server.ServerConfigService
+import Wizard.Service.Config.Server.ServerConfigValidation
 import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.ApiKey.APISpec
@@ -53,7 +54,6 @@ import Wizard.Specs.API.Token.APISpec
 import Wizard.Specs.API.Typehint.APISpec
 import Wizard.Specs.API.Usage.APISpec
 import Wizard.Specs.API.User.APISpec
-import Wizard.Specs.Integration.Http.Common.ResponseMapperSpec
 import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
 import Wizard.Specs.Service.App.AppValidationSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
@@ -99,7 +99,7 @@ hLoadConfig fileName loadFn callback = do
       callback config
 
 prepareWebApp runCallback =
-  hLoadConfig serverConfigFileTest getServerConfig $ \serverConfig ->
+  hLoadConfig serverConfigFileTest (getServerConfig validateServerConfig) $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
       shutdownFlag <- newEmptyMVar
       putStrLn $ "ENVIRONMENT: set to " `mappend` show serverConfig.general.environment
@@ -151,9 +151,9 @@ main =
     ( \baseContext appContext ->
         hspec $ do
           describe "UNIT TESTING" $ do
-            describe "INTEGRATION" $ describe "Http" $ do
-              describe "Common" commonResponseMapperSpec
-              describe "Typehint" typehintResponseMapperSpec
+            describe "INTEGRATION" $
+              describe "Http" $
+                describe "Typehint" typehintResponseMapperSpec
             describe "SERVICE" $ do
               describe "App" appValidationSpec
               describe "Branch" branchValidationSpec

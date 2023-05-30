@@ -9,8 +9,8 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Api.Resource.User.UserPasswordDTO
-import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
@@ -22,11 +22,11 @@ import Wizard.Specs.API.User.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /users/{userId}/password?hash={hash}
+-- PUT /users/{uuid}/password?hash={hash}
 -- ------------------------------------------------------------------------
 detail_password_hash_PUT :: AppContext -> SpecWith ((), Application)
 detail_password_hash_PUT appContext =
-  describe "PUT /users/{userId}/password?hash={hash}" $ do
+  describe "PUT /users/{uuid}/password?hash={hash}" $ do
     test_204 appContext
     test_400 appContext
     test_404 appContext

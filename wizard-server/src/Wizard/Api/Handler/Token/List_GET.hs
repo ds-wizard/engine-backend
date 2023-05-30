@@ -8,10 +8,10 @@ import Shared.Common.Util.Token
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.UserToken.UserTokenListJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.UserToken.UserTokenService
-import Wizard.Service.UserToken.UserTokenUtil
 import WizardLib.Public.Model.User.UserToken
 import WizardLib.Public.Model.User.UserTokenList
+import WizardLib.Public.Service.UserToken.UserTokenService
+import WizardLib.Public.Service.UserToken.UserTokenUtil
 
 type List_GET =
   Header "Authorization" String

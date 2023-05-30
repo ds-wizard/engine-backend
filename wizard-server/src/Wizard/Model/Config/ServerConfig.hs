@@ -90,17 +90,6 @@ data ServerConfigFeedback = ServerConfigFeedback
   }
   deriving (Generic, Show)
 
-data ServerConfigPersistentCommand = ServerConfigPersistentCommand
-  { listenerJob :: ServerConfigPersistentCommandListenerJob
-  , retryJob :: ServerConfigCronWorker
-  }
-  deriving (Generic, Show)
-
-data ServerConfigPersistentCommandListenerJob = ServerConfigPersistentCommandListenerJob
-  { enabled :: Bool
-  }
-  deriving (Generic, Show)
-
 data ServerConfigPlan = ServerConfigPlan
   { recomputeJob :: ServerConfigCronWorker
   }
@@ -120,12 +109,6 @@ data ServerConfigTemporaryFile = ServerConfigTemporaryFile
 
 data ServerConfigUserToken = ServerConfigUserToken
   { clean :: ServerConfigCronWorker
-  }
-  deriving (Generic, Show)
-
-data ServerConfigCronWorker = ServerConfigCronWorker
-  { enabled :: Bool
-  , cron :: String
   }
   deriving (Generic, Show)
 

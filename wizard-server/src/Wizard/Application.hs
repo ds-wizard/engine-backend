@@ -15,7 +15,8 @@ import Shared.Common.Bootstrap.Postgres
 import Shared.Common.Bootstrap.S3
 import Shared.Common.Constant.Component
 import Shared.Common.Model.Config.ServerConfig
-import Shared.Common.Service.Config.BuildInfoConfigService
+import Shared.Common.Service.Config.BuildInfo.BuildInfoConfigService
+import Shared.Common.Service.Config.Server.ServerConfigService
 import Wizard.Bootstrap.DatabaseMigration
 import Wizard.Bootstrap.MetamodelMigration
 import Wizard.Bootstrap.RegistryClient
@@ -26,14 +27,14 @@ import Wizard.Constant.ASCIIArt
 import Wizard.Constant.Resource
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Config.Server.ServerConfigService
+import Wizard.Service.Config.Server.ServerConfigValidation
 import Wizard.Util.Logger
 
 runApplication :: IO ()
 runApplication = do
   hSetBuffering stdout LineBuffering
   putStrLn asciiLogo
-  serverConfig <- loadConfig serverConfigFile getServerConfig
+  serverConfig <- loadConfig serverConfigFile (getServerConfig validateServerConfig)
   buildInfoConfig <- loadConfig buildInfoFile getBuildInfoConfig
   result <-
     runLogging serverConfig.logging.level $ do

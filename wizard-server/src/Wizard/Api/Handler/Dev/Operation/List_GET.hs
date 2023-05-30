@@ -3,11 +3,11 @@ module Wizard.Api.Handler.Dev.Operation.List_GET where
 import Servant
 
 import Shared.Common.Api.Handler.Common
+import Shared.Common.Api.Resource.Dev.DevJM ()
 import Shared.Common.Model.Context.TransactionState
+import Shared.Common.Model.Dev.Dev
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.Dev.DevJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Model.Dev.Dev
 import Wizard.Service.Dev.DevOperationService
 
 type List_GET =

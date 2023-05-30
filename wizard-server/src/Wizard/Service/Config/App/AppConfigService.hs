@@ -7,12 +7,12 @@ import qualified Data.Hashable as H
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Util.String (splitOn)
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Integration.Http.Config.Runner
-import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
 import Wizard.Model.Config.ServerConfig

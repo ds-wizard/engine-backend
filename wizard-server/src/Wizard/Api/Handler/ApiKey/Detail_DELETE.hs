@@ -6,8 +6,9 @@ import Servant
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
+import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.UserToken.UserTokenService
+import WizardLib.Public.Service.UserToken.UserTokenService
 
 type Detail_DELETE =
   Header "Authorization" String

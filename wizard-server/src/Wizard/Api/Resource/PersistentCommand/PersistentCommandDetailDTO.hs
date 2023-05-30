@@ -4,9 +4,9 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
-import Wizard.Model.PersistentCommand.PersistentCommand
 
 data PersistentCommandDetailDTO = PersistentCommandDetailDTO
   { uuid :: U.UUID

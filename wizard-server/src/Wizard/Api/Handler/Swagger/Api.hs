@@ -6,12 +6,18 @@ import Servant.Swagger
 import Servant.Swagger.UI
 
 import Registry.Api.Resource.Organization.OrganizationSM ()
+import Shared.Common.Api.Resource.Common.AesonSM ()
 import Shared.Common.Api.Resource.Common.FileSM ()
 import Shared.Common.Api.Resource.Common.PageMetadataSM ()
 import Shared.Common.Api.Resource.Component.ComponentSM ()
+import Shared.Common.Api.Resource.Dev.DevExecutionResultSM ()
+import Shared.Common.Api.Resource.Dev.DevExecutionSM ()
+import Shared.Common.Api.Resource.Dev.DevSM ()
 import Shared.Common.Api.Resource.Info.InfoSM ()
+import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandChangeSM ()
+import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Wizard.Api.Api
-import Wizard.Api.Resource.ActionKey.ActionKeySM ()
+import Wizard.Api.Resource.ActionKey.ActionKeyTypeSM ()
 import Wizard.Api.Resource.App.AppChangeSM ()
 import Wizard.Api.Resource.App.AppCreateSM ()
 import Wizard.Api.Resource.App.AppDetailSM ()
@@ -21,14 +27,10 @@ import Wizard.Api.Resource.Branch.BranchChangeSM ()
 import Wizard.Api.Resource.Branch.BranchCreateSM ()
 import Wizard.Api.Resource.Branch.BranchDetailSM ()
 import Wizard.Api.Resource.Branch.BranchStateSM ()
-import Wizard.Api.Resource.Common.AesonSM ()
 import Wizard.Api.Resource.Common.PageSM ()
 import Wizard.Api.Resource.Config.AppConfigChangeSM ()
 import Wizard.Api.Resource.Config.AppConfigSM ()
 import Wizard.Api.Resource.Config.ClientConfigSM ()
-import Wizard.Api.Resource.Dev.DevExecutionResultSM ()
-import Wizard.Api.Resource.Dev.DevExecutionSM ()
-import Wizard.Api.Resource.Dev.DevSM ()
 import Wizard.Api.Resource.Document.DocumentCreateSM ()
 import Wizard.Api.Resource.Document.DocumentSM ()
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetChangeSM ()
@@ -65,7 +67,6 @@ import Wizard.Api.Resource.Package.PackageSuggestionSM ()
 import Wizard.Api.Resource.Package.Publish.PackagePublishBranchSM ()
 import Wizard.Api.Resource.Package.Publish.PackagePublishMigrationSM ()
 import Wizard.Api.Resource.PackageBundle.PackageBundleFileSM ()
-import Wizard.Api.Resource.PersistentCommand.PersistentCommandChangeSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Wizard.Api.Resource.Plan.AppPlanChangeSM ()
@@ -126,7 +127,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "3.23.2"
+              , _infoVersion = "3.24.0"
               , _infoLicense =
                   Just $
                     License

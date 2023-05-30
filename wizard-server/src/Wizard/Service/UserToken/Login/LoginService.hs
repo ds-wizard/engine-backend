@@ -6,21 +6,22 @@ import qualified Data.ByteString.Char8 as BS
 import Data.Char (toLower)
 import Data.Foldable (traverse_)
 import Data.Time
+import qualified Data.UUID as U
 import qualified Jose.Jwt as JWT
 
+import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Number
 import Shared.Common.Util.Token
 import Shared.Common.Util.Uuid
-import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Database.DAO.User.UserTokenDAO
-import Wizard.Localization.Messages.Public
-import Wizard.Model.ActionKey.ActionKey
+import Wizard.Model.ActionKey.ActionKeyType
+import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Config.App.AppConfigService
@@ -29,10 +30,12 @@ import qualified Wizard.Service.User.UserMapper as UserMapper
 import Wizard.Service.UserToken.Login.LoginMapper
 import Wizard.Service.UserToken.Login.LoginValidation
 import Wizard.Service.UserToken.UserTokenMapper
-import Wizard.Service.UserToken.UserTokenUtil
 import WizardLib.Public.Api.Resource.UserToken.LoginDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
+import WizardLib.Public.Database.DAO.User.UserTokenDAO
+import WizardLib.Public.Localization.Messages.Public
 import WizardLib.Public.Model.User.UserToken
+import WizardLib.Public.Service.UserToken.UserTokenUtil
 
 createLoginTokenFromCredentials :: LoginDTO -> Maybe String -> AppContextM UserTokenDTO
 createLoginTokenFromCredentials reqDto mUserAgent =
@@ -48,7 +51,7 @@ createLoginTokenFromCredentials reqDto mUserAgent =
             updateUserLastVisitedAtByUuid user.uuid now
             createLoginToken user mUserAgent Nothing
           (True, Nothing) -> do
-            deleteActionKeyByUserId user.uuid
+            deleteActionKeyByIdentity (U.toString user.uuid)
             let length = appConfig.authentication.internal.twoFactorAuth.codeLength
             let min = 10 ^ (length - 1)
             let max = (10 ^ length) - 1
@@ -58,7 +61,7 @@ createLoginTokenFromCredentials reqDto mUserAgent =
             return CodeRequiredDTO
           (True, Just code) -> do
             validateCode user code appConfig
-            deleteActionKeyByUserIdAndHash user.uuid (show code)
+            deleteActionKeyByIdentityAndHash (U.toString user.uuid) (show code)
             updateUserLastVisitedAtByUuid user.uuid now
             createLoginToken user mUserAgent Nothing
       Nothing -> throwError $ UserError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD

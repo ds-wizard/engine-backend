@@ -16,7 +16,7 @@ runMigration = do
 
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/ActionKey) drop tables"
-  let sql = "drop table if exists action_key;"
+  let sql = "drop table if exists action_key cascade;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -28,14 +28,19 @@ createTables = do
         \         uuid            uuid not null \
         \             constraint action_key_pk \
         \                 primary key, \
-        \         organization_id varchar, \
-        \         type            varchar, \
-        \         hash            varchar, \
-        \         created_at      timestamp with time zone \
+        \         identity        varchar not null, \
+        \         type            varchar not null, \
+        \         hash            varchar not null, \
+        \         created_at      timestamp with time zone not null, \
+        \         app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
         \     ); \
-        \     create unique index action_key_uuid_uindex \
-        \         on action_key (uuid); \
-        \     create unique index action_key_hash_uindex \
-        \         on action_key (hash); "
+        \create unique index action_key_uuid_uindex \
+        \     on action_key (uuid); \
+        \create unique index action_key_hash_uindex \
+        \     on action_key (hash); \
+        \  \
+        \alter table action_key \
+        \    add constraint action_key_organization_id_fk \
+        \       foreign key (identity) references organization (organization_id) on delete cascade;"
   let action conn = execute_ conn sql
   runDB action

@@ -4,22 +4,26 @@ module Wizard.Specs.API.App.List_POST (
 
 import Data.Aeson (encode)
 import qualified Data.Map.Strict as M
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Model.Error.Error
+import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.App.AppJM ()
-import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.App.AppDAO
-import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Localization.Messages.Public
+import Wizard.Model.ActionKey.ActionKeyType
 import Wizard.Model.App.App
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
@@ -77,8 +81,8 @@ create_test_201 title appContext reqDto authHeaders persistentCommandCount userA
       let updatedAppContext = appContext {currentAppUuid = app.uuid}
       (Right [user]) <- runInContextIO findUsers updatedAppContext
       liftIO $ user.active `shouldBe` userActive
-      assertCountInDB findActionKeys updatedAppContext 1
-      assertCountInDB findPersistentCommands updatedAppContext persistentCommandCount
+      assertCountInDB (findActionKeys :: AppContextM [ActionKey U.UUID ActionKeyType]) updatedAppContext 1
+      assertCountInDB (findPersistentCommands :: AppContextM [PersistentCommand U.UUID]) updatedAppContext persistentCommandCount
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

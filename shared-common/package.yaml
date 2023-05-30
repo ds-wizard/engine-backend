@@ -1,5 +1,5 @@
 name: shared-common
-version: '3.23.2'
+version: '3.24.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -51,6 +51,7 @@ library:
   - regex-compat
   - resource-pool
   - retry
+  - scientific
   - servant
   - servant-server
   - servant-multipart
@@ -65,6 +66,7 @@ library:
   - vector
   - wai
   - wai-extra
+  - wreq
   - x509
   - x509-store
   - yaml

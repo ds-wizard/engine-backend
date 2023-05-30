@@ -4,6 +4,7 @@ import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import Data.Time
 
+import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileDTO
@@ -14,7 +15,6 @@ import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Model.App.App
-import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User

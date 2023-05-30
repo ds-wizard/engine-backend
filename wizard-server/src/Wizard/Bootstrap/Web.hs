@@ -12,13 +12,13 @@ import Network.Wai.Middleware.Servant.Errors (errorMw)
 import Servant
 
 import Shared.Common.Api.Middleware.CORSMiddleware
+import Shared.Common.Api.Middleware.ContentTypeMiddleware
 import Shared.Common.Api.Middleware.OptionsMiddleware
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfig
 import Wizard.Api.Api
 import Wizard.Api.Handler.Swagger.Api
-import Wizard.Api.Middleware.ContentTypeMiddleware
 import Wizard.Api.Middleware.LoggingMiddleware
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext

@@ -8,14 +8,17 @@ import Test.Hspec
 import Registry.Constant.Resource
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Config.ServerConfig
+import Registry.Model.Config.ServerConfigIM ()
+import Registry.Model.Config.ServerConfigJM ()
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
-import Registry.Service.Config.ServerConfigService
+import Registry.Service.Config.Server.ServerConfigValidation
 import Shared.Common.Database.Connection
 import Shared.Common.Integration.Http.Common.HttpClientFactory
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.S3.Common
-import Shared.Common.Service.Config.BuildInfoConfigService
+import Shared.Common.Service.Config.BuildInfo.BuildInfoConfigService
+import Shared.Common.Service.Config.Server.ServerConfigService
 
 import Registry.Specs.API.ActionKey.APISpec
 import Registry.Specs.API.DocumentTemplate.APISpec
@@ -39,7 +42,7 @@ hLoadConfig fileName loadFn callback = do
       callback config
 
 prepareWebApp runCallback =
-  hLoadConfig serverConfigFileTest getServerConfig $ \serverConfig ->
+  hLoadConfig serverConfigFileTest (getServerConfig validateServerConfig) $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
       putStrLn $ "ENVIRONMENT: set to " `mappend` show serverConfig.general.environment
       dbPool <- createDatabaseConnectionPool serverConfig.database

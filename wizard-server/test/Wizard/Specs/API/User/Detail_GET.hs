@@ -17,11 +17,11 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- GET /users/{userId}
+-- GET /users/{uuid}
 -- ------------------------------------------------------------------------
 detail_GET :: AppContext -> SpecWith ((), Application)
 detail_GET appContext =
-  describe "GET /users/{userId}" $ do
+  describe "GET /users/{uuid}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext

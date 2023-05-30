@@ -27,7 +27,6 @@ import qualified Wizard.Database.Migration.Development.Questionnaire.Questionnai
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
@@ -35,6 +34,7 @@ import Wizard.Model.User.User
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Document.DocumentMapper
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import WizardLib.Public.Localization.Messages.Public
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

@@ -6,12 +6,12 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Foldable (traverse_)
 
+import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.String
 import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
 import Wizard.Integration.Http.Registry.Runner
-import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3

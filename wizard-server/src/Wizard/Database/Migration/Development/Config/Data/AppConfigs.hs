@@ -4,12 +4,12 @@ import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import Data.Time
 
+import Shared.Common.Model.Common.SensitiveData
+import Shared.Common.Model.Config.SimpleFeature
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.App.App
-import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
-import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.User.User
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats

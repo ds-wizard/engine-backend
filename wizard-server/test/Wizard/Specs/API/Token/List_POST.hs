@@ -12,10 +12,10 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Model.Error.Error
 import Wizard.Database.Migration.Development.User.Data.UserTokens
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import WizardLib.Public.Api.Resource.UserToken.LoginDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
+import WizardLib.Public.Localization.Messages.Public
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

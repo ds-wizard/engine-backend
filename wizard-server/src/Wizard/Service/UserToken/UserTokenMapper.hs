@@ -6,17 +6,17 @@ import Data.Time.Clock.POSIX
 import qualified Data.UUID as U
 import qualified Jose.Jwt as JWT
 
+import Shared.Common.Util.Date
 import Wizard.Constant.UserToken
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.User.User
-import Wizard.Util.Date
 import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Model.User.UserToken
 import WizardLib.Public.Model.User.UserTokenList
 
 toDTO :: UserToken -> UserTokenDTO
-toDTO token = UserTokenDTO {token = token.value}
+toDTO token = UserTokenDTO {token = token.value, expiresAt = token.expiresAt}
 
 toList :: UserToken -> Bool -> UserTokenList
 toList token currentSession =
@@ -37,7 +37,7 @@ toUserToken uuid name tokenType userUuid expiresAt secret mUserAgent mSessionSta
     , tType = tokenType
     , userUuid = userUuid
     , value = tokenValue
-    , userAgent = fromMaybe "Uknown User Agent" mUserAgent
+    , userAgent = fromMaybe "Unknown User Agent" mUserAgent
     , sessionState = mSessionState
     , expiresAt = expiresAt
     , appUuid = appUuid

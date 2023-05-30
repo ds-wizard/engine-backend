@@ -1,6 +1,7 @@
 module Wizard.Model.Config.ServerConfigDM where
 
 import Shared.Common.Model.Config.Environment
+import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Config.ServerConfigDM
 import Wizard.Model.Config.ServerConfig
 
@@ -137,21 +138,6 @@ defaultFeedback =
 defaultFeedbackSync :: ServerConfigCronWorker
 defaultFeedbackSync =
   ServerConfigCronWorker {enabled = True, cron = "0 2 * * *"}
-
-defaultPersistentCommand :: ServerConfigPersistentCommand
-defaultPersistentCommand =
-  ServerConfigPersistentCommand
-    { listenerJob = defaultPersistentCommandListenerJob
-    , retryJob = defaultPersistentCommandRetryJob
-    }
-
-defaultPersistentCommandListenerJob :: ServerConfigPersistentCommandListenerJob
-defaultPersistentCommandListenerJob =
-  ServerConfigPersistentCommandListenerJob {enabled = True}
-
-defaultPersistentCommandRetryJob :: ServerConfigCronWorker
-defaultPersistentCommandRetryJob =
-  ServerConfigCronWorker {enabled = True, cron = "* * * * *"}
 
 defaultPlan :: ServerConfigPlan
 defaultPlan = ServerConfigPlan {recomputeJob = defaultPlanRecomputeJob}

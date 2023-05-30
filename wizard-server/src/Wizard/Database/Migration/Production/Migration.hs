@@ -39,6 +39,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0030_twoFactorAu
 import qualified Wizard.Database.Migration.Production.Migration_0031_component.Migration as M_0031
 import qualified Wizard.Database.Migration.Production.Migration_0032_branchFix.Migration as M_0032
 import qualified Wizard.Database.Migration.Production.Migration_0033_apiKey.Migration as M_0033
+import qualified Wizard.Database.Migration.Production.Migration_0034_unification.Migration as M_0034
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
@@ -83,4 +84,5 @@ migrationDefinitions =
   , M_0031.definition
   , M_0032.definition
   , M_0033.definition
+  , M_0034.definition
   ]

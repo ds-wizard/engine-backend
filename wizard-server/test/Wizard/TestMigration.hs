@@ -1,9 +1,12 @@
 module Wizard.TestMigration where
 
+import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.Audit.Database.DAO.Audit.AuditDAO
+import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import Shared.Common.Database.DAO.Component.ComponentDAO
-import Wizard.Database.DAO.ActionKey.ActionKeyDAO
+import qualified Shared.Common.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
+import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.App.AppDAO
-import Wizard.Database.DAO.Audit.AuditDAO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Config.AppConfigDAO
@@ -14,7 +17,6 @@ import Wizard.Database.DAO.Limit.AppLimitDAO
 import Wizard.Database.DAO.Locale.LocaleDAO
 import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_MigratorDAO
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
-import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.Plan.AppPlanDAO
 import Wizard.Database.DAO.Prefab.PrefabDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
@@ -26,16 +28,13 @@ import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Database.DAO.Registry.RegistryTemplateDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Database.DAO.User.UserTokenDAO
 import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Wizard.Database.Migration.Development.App.AppSchemaMigration as A_Schema
 import Wizard.Database.Migration.Development.App.Data.Apps
-import qualified Wizard.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
 import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
-import qualified Wizard.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import qualified Wizard.Database.Migration.Development.Config.ConfigSchemaMigration as CFG_Schema
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
@@ -60,9 +59,11 @@ import qualified Wizard.Database.Migration.Development.Submission.SubmissionSche
 import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as U_Schema
+import Wizard.Model.Cache.ServerCache
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
+import WizardLib.Public.Database.DAO.User.UserTokenDAO
 
 import Wizard.Specs.Common
 

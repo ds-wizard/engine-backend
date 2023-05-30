@@ -8,11 +8,13 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Database.DAO.User.UserTokenDAO
 import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
+import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
+import WizardLib.Public.Database.DAO.User.UserTokenDAO
 import WizardLib.Public.Model.User.UserToken
 
 import SharedTest.Specs.API.Common

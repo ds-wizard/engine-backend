@@ -3,9 +3,9 @@ module Wizard.Service.UserToken.System.SystemMapper where
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Common.Util.Date
 import Wizard.Model.User.User
 import Wizard.Service.UserToken.UserTokenMapper
-import Wizard.Util.Date
 import WizardLib.Public.Model.User.UserToken
 
 fromSystemDTO :: U.UUID -> User -> Integer -> String -> Maybe String -> Maybe String -> UTCTime -> String -> UserToken

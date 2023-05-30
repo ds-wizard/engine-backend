@@ -1,5 +1,5 @@
 name: wizard-public
-version: '3.23.2'
+version: '3.24.0'
 synopsis: Wizard Public
 description: Wizard Public
 category: Web
@@ -23,9 +23,16 @@ library:
   dependencies:
   - shared-common
   - base
+  - bytestring
   - aeson
+  - cache
+  - cryptonite
+  - hashable
   - jose-jwt
+  - monad-logger
+  - mtl
   - postgresql-simple
+  - resource-pool
   - swagger2
   - time
   - uuid

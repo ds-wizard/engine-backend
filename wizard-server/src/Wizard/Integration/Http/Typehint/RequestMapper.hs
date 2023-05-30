@@ -7,7 +7,7 @@ import qualified Data.Map.Strict as M
 import Prelude hiding (lookup)
 
 import Shared.Common.Model.Common.MapEntry
-import Wizard.Model.Http.HttpRequest
+import Shared.Common.Model.Http.HttpRequest
 import Wizard.Util.Interpolation (interpolateMapValues, interpolateString)
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 

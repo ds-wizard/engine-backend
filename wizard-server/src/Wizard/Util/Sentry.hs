@@ -17,7 +17,7 @@ import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..), SentrySer
 import System.TimeManager (TimeoutThread (..))
 
 import Shared.Common.Util.Token
-import Wizard.Service.UserToken.UserTokenUtil
+import WizardLib.Public.Service.UserToken.UserTokenUtil
 
 createSentryService :: String -> IO SentryService
 createSentryService sentryUrl = initRaven sentryUrl id sendRecord stderrFallback

@@ -1,8 +1,8 @@
 module Wizard.Model.User.UserEM where
 
 import qualified Data.Map.Strict as M
+import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Util.Crypto (encryptAES256WithB64)
-import Wizard.Model.Common.SensitiveData
 import Wizard.Model.User.User
 
 instance SensitiveData User where

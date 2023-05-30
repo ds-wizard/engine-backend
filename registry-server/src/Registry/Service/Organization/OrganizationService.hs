@@ -5,16 +5,14 @@ import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 
-import Registry.Api.Resource.ActionKey.ActionKeyDTO
 import Registry.Api.Resource.Organization.OrganizationChangeDTO
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateDTO
-import Registry.Database.DAO.ActionKey.ActionKeyDAO
 import Registry.Database.DAO.Common
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Internal
-import Registry.Model.ActionKey.ActionKey
+import Registry.Model.ActionKey.ActionKeyType
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.AppContextHelpers
@@ -23,6 +21,9 @@ import Registry.Service.ActionKey.ActionKeyService
 import Registry.Service.Mail.Mailer
 import Registry.Service.Organization.OrganizationMapper
 import Registry.Service.Organization.OrganizationValidation
+import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
+import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Error.Error
@@ -91,8 +92,8 @@ deleteOrganization orgId =
 changeOrganizationTokenByHash :: String -> String -> AppContextM OrganizationDTO
 changeOrganizationTokenByHash orgId hash =
   runInTransaction $ do
-    actionKey <- findActionKeyByHash hash
-    org <- findOrganizationByOrgId actionKey.organizationId
+    actionKey <- findActionKeyByHash hash :: AppContextM (ActionKey String ActionKeyType)
+    org <- findOrganizationByOrgId actionKey.identity
     orgToken <- generateNewOrgToken
     now <- liftIO getCurrentTime
     let updatedOrg = org {token = orgToken, updatedAt = now} :: Organization
@@ -100,7 +101,7 @@ changeOrganizationTokenByHash orgId hash =
     deleteActionKeyByHash actionKey.hash
     return . toDTO $ updatedOrg
 
-resetOrganizationToken :: ActionKeyDTO -> AppContextM ()
+resetOrganizationToken :: ActionKeyDTO ActionKeyType -> AppContextM ()
 resetOrganizationToken reqDto =
   runInTransaction $ do
     validateOrganizationEmailExistence reqDto.email
@@ -114,8 +115,8 @@ resetOrganizationToken reqDto =
 changeOrganizationState :: String -> String -> OrganizationStateDTO -> AppContextM OrganizationDTO
 changeOrganizationState orgId hash reqDto =
   runInTransaction $ do
-    actionKey <- findActionKeyByHash hash
-    org <- findOrganizationByOrgId actionKey.organizationId
+    actionKey <- findActionKeyByHash hash :: AppContextM (ActionKey String ActionKeyType)
+    org <- findOrganizationByOrgId actionKey.identity
     updatedOrg <- updateOrgTimestamp $ org {active = reqDto.active}
     updateOrganization updatedOrg
     deleteActionKeyByHash actionKey.hash

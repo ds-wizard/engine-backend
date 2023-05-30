@@ -9,8 +9,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
-import Wizard.Database.DAO.User.UserTokenDAO
 import Wizard.Model.Context.AppContext
+import WizardLib.Public.Database.DAO.User.UserTokenDAO
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

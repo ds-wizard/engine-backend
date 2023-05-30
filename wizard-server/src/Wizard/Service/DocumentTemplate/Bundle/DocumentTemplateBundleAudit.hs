@@ -1,7 +1,8 @@
 module Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleAudit where
 
+import Shared.Audit.Service.Audit.AuditService
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Audit.AuditService
+import Wizard.Model.Context.ContextLenses ()
 
 auditBundleExport :: String -> AppContextM ()
 auditBundleExport = logAudit "template_bundle" "export"

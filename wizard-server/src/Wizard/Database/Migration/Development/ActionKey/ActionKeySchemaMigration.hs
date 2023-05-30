@@ -28,7 +28,7 @@ createTables = do
         \         uuid            uuid not null \
         \             constraint action_key_pk \
         \                 primary key, \
-        \         user_id         uuid not null, \
+        \         identity        uuid not null, \
         \         type            varchar not null, \
         \         hash            varchar not null, \
         \         created_at      timestamp with time zone not null, \
@@ -36,13 +36,13 @@ createTables = do
         \           constraint action_key_app_uuid_fk \
         \             references app \
         \     ); \
-        \ create unique index action_key_uuid_uindex \
+        \create unique index action_key_uuid_uindex \
         \     on action_key (uuid); \
-        \ create unique index action_key_hash_uindex \
-        \     on action_key (hash);  \
+        \create unique index action_key_hash_uindex \
+        \     on action_key (hash); \
         \  \
-        \ alter table action_key \
+        \alter table action_key \
         \    add constraint action_key_user_entity_uuid_fk \
-        \       foreign key (user_id) references user_entity (uuid) on delete cascade;"
+        \       foreign key (identity) references user_entity (uuid) on delete cascade;"
   let action conn = execute_ conn sql
   runDB action

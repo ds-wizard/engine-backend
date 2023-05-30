@@ -1,7 +1,8 @@
 module Wizard.Service.Locale.Bundle.LocaleBundleAudit where
 
+import Shared.Audit.Service.Audit.AuditService
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Audit.AuditService
+import Wizard.Model.Context.ContextLenses ()
 
 auditLocaleBundleExport :: String -> AppContextM ()
 auditLocaleBundleExport = logAudit "locale_bundle" "export"

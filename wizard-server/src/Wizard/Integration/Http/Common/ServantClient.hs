@@ -6,8 +6,8 @@ import qualified Data.ByteString.Lazy.Char8 as BSL
 import Network.HTTP.Client (Manager)
 import Servant.Client
 
+import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Error.Error
-import Wizard.Localization.Messages.Internal
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Util.Logger

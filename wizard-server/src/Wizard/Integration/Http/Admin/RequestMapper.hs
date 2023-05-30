@@ -2,9 +2,9 @@ module Wizard.Integration.Http.Admin.RequestMapper where
 
 import qualified Data.Map.Strict as M
 
+import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.String
 import Wizard.Model.Config.ServerConfig
-import Wizard.Model.Http.HttpRequest
 
 toRetrieveJwtPublicKeysRequest :: ServerConfigAdmin -> HttpRequest
 toRetrieveJwtPublicKeysRequest serverConfig =

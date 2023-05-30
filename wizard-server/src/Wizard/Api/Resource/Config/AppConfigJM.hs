@@ -2,8 +2,8 @@ module Wizard.Api.Resource.Config.AppConfigJM where
 
 import Data.Aeson
 
+import Shared.Common.Api.Resource.Config.SimpleFeatureJM ()
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.Config.SimpleFeatureJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()
 import Wizard.Model.Config.AppConfig

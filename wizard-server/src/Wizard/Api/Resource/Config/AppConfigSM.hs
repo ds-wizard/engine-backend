@@ -2,9 +2,9 @@ module Wizard.Api.Resource.Config.AppConfigSM where
 
 import Data.Swagger
 
+import Shared.Common.Api.Resource.Config.SimpleFeatureSM ()
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Config.AppConfigJM ()
-import Wizard.Api.Resource.Config.SimpleFeatureSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs

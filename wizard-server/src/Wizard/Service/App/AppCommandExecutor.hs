@@ -2,24 +2,25 @@ module Wizard.Service.App.AppCommandExecutor where
 
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy.Char8 as BSL
+import qualified Data.UUID as U
 
+import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Api.Resource.App.AppChangeDTO
 import Wizard.Model.Context.AppContext
-import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Service.App.AppService
 import Wizard.Util.Logger
 import WizardLib.Public.Model.PersistentCommand.App.CreateOrUpdateAppCommand
 
 cComponent = "app"
 
-execute :: PersistentCommand -> AppContextM (PersistentCommandState, Maybe String)
+execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command
   | command.function == cCreateAppName = cCreateApp command
   | command.function == cUpdateAppName = cUpdateApp command
 
 cCreateAppName = "createApp"
 
-cCreateApp :: PersistentCommand -> AppContextM (PersistentCommandState, Maybe String)
+cCreateApp :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 cCreateApp persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String CreateOrUpdateAppCommand
   case eCommand of
@@ -30,7 +31,7 @@ cCreateApp persistentCommand = do
 
 cUpdateAppName = "updateApp"
 
-cUpdateApp :: PersistentCommand -> AppContextM (PersistentCommandState, Maybe String)
+cUpdateApp :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 cUpdateApp persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String CreateOrUpdateAppCommand
   case eCommand of

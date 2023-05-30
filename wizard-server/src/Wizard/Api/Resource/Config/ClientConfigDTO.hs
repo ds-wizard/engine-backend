@@ -2,8 +2,8 @@ module Wizard.Api.Resource.Config.ClientConfigDTO where
 
 import GHC.Generics
 
+import Shared.Common.Model.Config.SimpleFeature
 import Wizard.Model.Config.AppConfig
-import Wizard.Model.Config.SimpleFeature
 
 data ClientConfigDTO = ClientConfigDTO
   { organization :: AppConfigOrganization

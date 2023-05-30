@@ -3,7 +3,7 @@ module Registry.Database.Mapping.ActionKey.ActionKeyType where
 import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.ToField
 
-import Registry.Model.ActionKey.ActionKey
+import Registry.Model.ActionKey.ActionKeyType
 import Shared.Common.Database.Mapping.Common
 
 instance ToField ActionKeyType where

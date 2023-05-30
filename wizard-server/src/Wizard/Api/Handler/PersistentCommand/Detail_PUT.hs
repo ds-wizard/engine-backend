@@ -5,9 +5,9 @@ import Servant
 
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
+import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandChangeDTO
+import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandChangeJM ()
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.PersistentCommand.PersistentCommandChangeDTO
-import Wizard.Api.Resource.PersistentCommand.PersistentCommandChangeJM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailJM ()
 import Wizard.Model.Context.BaseContext
