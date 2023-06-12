@@ -6,7 +6,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Model.Common.Lens
-import Shared.Common.Util.List (groupBy)
+import Shared.Common.Util.List (groupBy, replace)
 import Wizard.Service.KnowledgeModel.Squash.Event.Common
 import Wizard.Service.KnowledgeModel.Squash.Event.Event ()
 import WizardLib.KnowledgeModel.Model.Event.Event
@@ -41,8 +41,8 @@ squashSimple events =
             else
               let squashedEvent = simpleSquashEvent Nothing oldEvent newEvent
                   entities' = M.insert (getEntityUuid newEvent) squashedEvent entities
-                  eventsToDeleted' = oldEvent : eventsToDeleted
-                  events' = squashedEvent : events
+                  eventsToDeleted' = eventsToDeleted
+                  events' = replace squashedEvent oldEvent events
                in (entities', eventsToDeleted', events')
         Nothing ->
           if isSimpleEventSquashApplicable newEvent
