@@ -176,7 +176,9 @@ jobs:
 # (3) -> Build binary
     - name: Build and test application 
       run: |
+        set -o pipefail
         stack test $COMPONENT-server --no-terminal --skip-ghc-check 2>&1 | tee log.txt
+        set +o pipefail
         WARNINGS=$(grep -o ': warning: ' log.txt | wc -l)
         if [ $WARNINGS -gt "0" ]; then
           echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
