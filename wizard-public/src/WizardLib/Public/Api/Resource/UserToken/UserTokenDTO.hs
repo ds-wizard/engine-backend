@@ -5,6 +5,9 @@ import GHC.Generics
 
 data UserTokenDTO
   = CodeRequiredDTO
+  | ConsentsRequiredDTO
+      { hash :: String
+      }
   | UserTokenDTO
       { token :: String
       , expiresAt :: UTCTime

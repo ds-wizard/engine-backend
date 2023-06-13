@@ -111,11 +111,12 @@ fromUserExternalDTO
   -> [String]
   -> String
   -> [String]
+  -> Bool
   -> Maybe String
   -> U.UUID
   -> UTCTime
   -> User
-fromUserExternalDTO userUuid firstName lastName email passwordHash sources uRole permissions mImageUrl appUuid now =
+fromUserExternalDTO userUuid firstName lastName email passwordHash sources uRole permissions active mImageUrl appUuid now =
   User
     { uuid = userUuid
     , firstName = firstName
@@ -126,7 +127,7 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash sources uRole
     , sources = sources
     , uRole = uRole
     , permissions = permissions
-    , active = True
+    , active = active
     , submissionProps = []
     , imageUrl = mImageUrl
     , groups = []
