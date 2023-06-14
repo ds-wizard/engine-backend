@@ -6,6 +6,7 @@ import qualified Data.UUID as U
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.JSON
 import Shared.Common.Util.List
+import Shared.Common.Util.String (trim)
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Api.Resource.Document.DocumentCreateDTO
@@ -48,7 +49,7 @@ fromCreateDTO :: DocumentCreateDTO -> U.UUID -> Int -> [QuestionnaireEvent] -> M
 fromCreateDTO dto docUuid repliesHash qtnEvents mCurrentUser appUuid now =
   Document
     { uuid = docUuid
-    , name = dto.name
+    , name = trim dto.name
     , state = QueuedDocumentState
     , durability = PersistentDocumentDurability
     , questionnaireUuid = dto.questionnaireUuid
@@ -75,7 +76,7 @@ fromTemporallyCreateDTO
 fromTemporallyCreateDTO docUuid qtn documentTemplateId formatUuid repliesHash mCurrentUser appUuid now =
   Document
     { uuid = docUuid
-    , name = qtn.name
+    , name = trim qtn.name
     , state = QueuedDocumentState
     , durability = TemporallyDocumentDurability
     , questionnaireUuid = qtn.uuid
