@@ -21,8 +21,8 @@ type List_System_POST =
     :> "system"
     :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] UserTokenDTO)
 
-list_systemp_POST :: Maybe String -> Maybe String -> Maybe String -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserTokenDTO)
-list_systemp_POST mTokenHeader mServerUrl mUserAgent =
+list_system_POST :: Maybe String -> Maybe String -> Maybe String -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserTokenDTO)
+list_system_POST mTokenHeader mServerUrl mUserAgent =
   runInUnauthService mServerUrl Transactional $
     addTraceUuidHeader =<< do
       let forbid = throwError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN

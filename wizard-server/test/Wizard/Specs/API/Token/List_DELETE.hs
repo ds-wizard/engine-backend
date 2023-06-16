@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Token.List_Current_DELETE (
-  list_current_DELETE,
+module Wizard.Specs.API.Token.List_DELETE (
+  list_DELETE,
 ) where
 
 import Network.HTTP.Types
@@ -8,6 +8,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Cache.ServerCache
@@ -22,11 +23,11 @@ import Wizard.Specs.API.User.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /users/current/token
+-- DELETE /tokens
 -- ------------------------------------------------------------------------
-list_current_DELETE :: AppContext -> SpecWith ((), Application)
-list_current_DELETE appContext =
-  describe "DELETE /tokens/current" $ do
+list_DELETE :: AppContext -> SpecWith ((), Application)
+list_DELETE appContext =
+  describe "DELETE /tokens" $ do
     test_204 appContext
     test_401 appContext
 
@@ -35,13 +36,13 @@ list_current_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/tokens/current"
+reqUrl = "/tokens"
 
-reqHeaders = [reqAuthHeader, reqCtHeader]
+reqHeaders = [reqAuthHeader]
 
 reqBody = ""
 
--- ----------------------------------------------------:r
+-- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_204 appContext =
@@ -50,18 +51,19 @@ test_204 appContext =
     do
       let expStatus = 204
       let expHeaders = resCorsHeaders
+      let expBody = ""
       -- AND: Run migration
       eUser <- runInContextIO (insertUserToken alternativeAlbertToken) appContext
       assertUserTokenInDB appContext userAlbert 2
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
-      -- AND: Compare response with expectation
+      -- THEN: Compare response with expectation
       let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find result in DB and compare with expectation state
       assertUserTokenInDB appContext userAlbert 1
-      assertExistenceOfUserTokenInDB appContext userAlbert alternativeAlbertToken.value
+      assertExistenceOfUserTokenInDB appContext userAlbert albertToken.value
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
