@@ -5,10 +5,10 @@ import Servant
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.UserToken.ApiKeyCreateDTO
-import Wizard.Api.Resource.UserToken.ApiKeyCreateJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
+import WizardLib.Public.Api.Resource.UserToken.ApiKeyCreateDTO
+import WizardLib.Public.Api.Resource.UserToken.ApiKeyCreateJM ()
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenJM ()
 

@@ -1,4 +1,4 @@
-module Wizard.Api.Resource.UserToken.UserTokenListJM where
+module WizardLib.Public.Api.Resource.UserToken.UserTokenListJM where
 
 import Data.Aeson
 

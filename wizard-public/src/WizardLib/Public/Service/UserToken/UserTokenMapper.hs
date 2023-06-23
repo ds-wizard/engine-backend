@@ -1,4 +1,4 @@
-module Wizard.Service.UserToken.UserTokenMapper where
+module WizardLib.Public.Service.UserToken.UserTokenMapper where
 
 import Data.Maybe (fromMaybe)
 import Data.Time
@@ -7,9 +7,7 @@ import qualified Data.UUID as U
 import qualified Jose.Jwt as JWT
 
 import Shared.Common.Util.Date
-import Wizard.Constant.UserToken
-import Wizard.Model.Config.ServerConfig
-import Wizard.Model.User.User
+import WizardLib.Public.Constant.UserToken
 import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Model.User.UserToken
@@ -44,16 +42,16 @@ toUserToken uuid name tokenType userUuid expiresAt secret mUserAgent mSessionSta
     , createdAt = now
     }
 
-toUserTokenClaims :: User -> U.UUID -> UTCTime -> ServerConfigJwt -> UserTokenClaimsDTO
-toUserTokenClaims user tokenUuid now config =
-  let timeDelta = realToFrac $ config.expiration * nominalHourInSeconds
-   in toUserTokenClaimsWithExpiration user tokenUuid now (addUTCTime timeDelta now)
+toUserTokenClaims :: U.UUID -> U.UUID -> UTCTime -> Integer -> UserTokenClaimsDTO
+toUserTokenClaims userUuid tokenUuid now expiration =
+  let timeDelta = realToFrac $ expiration * nominalHourInSeconds
+   in toUserTokenClaimsWithExpiration userUuid tokenUuid now (addUTCTime timeDelta now)
 
-toUserTokenClaimsWithExpiration :: User -> U.UUID -> UTCTime -> UTCTime -> UserTokenClaimsDTO
-toUserTokenClaimsWithExpiration user tokenUuid now expiresAt =
+toUserTokenClaimsWithExpiration :: U.UUID -> U.UUID -> UTCTime -> UTCTime -> UserTokenClaimsDTO
+toUserTokenClaimsWithExpiration userUuid tokenUuid now expiresAt =
   UserTokenClaimsDTO
     { exp = JWT.IntDate $ utcTimeToPOSIXSeconds expiresAt
     , version = userTokenVersion
     , tokenUuid = tokenUuid
-    , userUuid = user.uuid
+    , userUuid = userUuid
     }

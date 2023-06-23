@@ -1,9 +1,9 @@
-module Wizard.Api.Resource.UserToken.ApiKeyCreateJM where
+module WizardLib.Public.Api.Resource.UserToken.ApiKeyCreateJM where
 
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.UserToken.ApiKeyCreateDTO
+import WizardLib.Public.Api.Resource.UserToken.ApiKeyCreateDTO
 
 instance FromJSON ApiKeyCreateDTO where
   parseJSON = genericParseJSON jsonOptions
