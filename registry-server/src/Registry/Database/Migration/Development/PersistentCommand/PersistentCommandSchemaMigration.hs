@@ -39,7 +39,8 @@ createTables = do
         \         references organization, \
         \     created_at timestamptz not null, \
         \     updated_at timestamptz not null, \
-        \     internal bool not null default true \
+        \     internal bool not null default true, \
+        \     destination varchar \
         \ ); \
         \  \
         \ create unique index persistent_command_uuid_uindex \

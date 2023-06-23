@@ -17,6 +17,7 @@ command1 =
     , attempts = 1
     , maxAttempts = 10
     , internal = True
+    , destination = Nothing
     , appUuid = defaultAppUuid
     , createdBy = Nothing
     , createdAt = dt' 2018 1 25

@@ -104,6 +104,7 @@ toDocPersistentCommand pUuid docContext doc =
     (encodeJsonToString docContext)
     10
     False
+    Nothing
     doc.appUuid
     doc.creatorUuid
     doc.createdAt

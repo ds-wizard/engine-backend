@@ -46,6 +46,7 @@ recompileCssInApplication appUuid = do
           (BSL.unpack . encode $ InvokeClientCssCompilationCommand appUuid)
           1
           True
+          Nothing
           appUuid
           (Just . U.toString $ user.uuid)
           now
