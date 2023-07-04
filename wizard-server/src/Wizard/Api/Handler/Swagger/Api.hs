@@ -22,6 +22,7 @@ import Wizard.Api.Resource.App.AppChangeSM ()
 import Wizard.Api.Resource.App.AppCreateSM ()
 import Wizard.Api.Resource.App.AppDetailSM ()
 import Wizard.Api.Resource.App.AppSM ()
+import Wizard.Api.Resource.Auth.AuthConsentSM ()
 import Wizard.Api.Resource.BookReference.BookReferenceSM ()
 import Wizard.Api.Resource.Branch.BranchChangeSM ()
 import Wizard.Api.Resource.Branch.BranchCreateSM ()
@@ -127,7 +128,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "3.24.1"
+              , _infoVersion = "3.25.0"
               , _infoLicense =
                   Just $
                     License

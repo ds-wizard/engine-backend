@@ -21,6 +21,7 @@ data PersistentCommand identity = PersistentCommand
   , attempts :: Int
   , maxAttempts :: Int
   , internal :: Bool
+  , destination :: Maybe String
   , appUuid :: U.UUID
   , createdBy :: Maybe identity
   , createdAt :: UTCTime

@@ -12,6 +12,7 @@ import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import GHC.Records
 
+import Shared.Common.Database.DAO.Common
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
@@ -39,6 +40,31 @@ getTokens tokenType mCurrentTokenUuid = do
   case mIdentityUuid of
     Just identityUuid -> findUserTokensByUserUuidAndType identityUuid tokenType mCurrentTokenUuid
     Nothing -> throwError $ ForbiddenError _ERROR_SERVICE_USER__MISSING_USER
+
+deleteTokensExceptCurrentSession
+  :: ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identity'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "appUuid'" s U.UUID
+     , HasField "cache'" s serverCache
+     , HasField "userToken" serverCache (C.Cache Int UserToken)
+     , MonadIO m
+     )
+  => String
+  -> m ()
+deleteTokensExceptCurrentSession tokenValue =
+  runInTransaction logInfoI logWarnI $ do
+    context <- ask
+    let mIdentityUuid = fmap (fromJust . U.fromString) context.identity'
+    case mIdentityUuid of
+      Just identityUuid -> do
+        userTokens <- findUserTokensByUserUuid identityUuid
+        traverse_ deleteUserTokenByUuid . fmap (.uuid) . filter (\ut -> ut.value /= tokenValue) $ userTokens
+      Nothing -> throwError $ ForbiddenError _ERROR_SERVICE_USER__MISSING_USER
 
 deleteTokenByUuid
   :: ( MonadLogger m

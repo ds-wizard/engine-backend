@@ -25,7 +25,6 @@ import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
-import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Common
@@ -123,10 +122,9 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl shoul
     sendAnalyticsEmailIfEnabled user
     return $ toDTO user
 
-createUserFromExternalService :: String -> String -> String -> String -> Maybe String -> AppContextM User
-createUserFromExternalService serviceId firstName lastName email mImageUrl =
+createUserFromExternalService :: Maybe User -> String -> String -> String -> String -> Maybe String -> Bool -> AppContextM User
+createUserFromExternalService mUserFromDb serviceId firstName lastName email mImageUrl active =
   runInTransaction $ do
-    mUserFromDb <- findUserByEmail' email
     now <- liftIO getCurrentTime
     appUuid <- asks currentAppUuid
     case mUserFromDb of
@@ -157,6 +155,7 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl =
                 [serviceId]
                 uRole
                 uPerms
+                active
                 mImageUrl
                 appUuid
                 now
@@ -221,16 +220,16 @@ resetUserPassword reqDto =
       (sendResetPasswordMail (toDTO user) actionKey.hash)
       (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT)
 
-changeUserState :: String -> String -> UserStateDTO -> AppContextM UserStateDTO
-changeUserState userUuid hash reqDto =
+changeUserState :: String -> Bool -> AppContextM ()
+changeUserState hash active =
   runInTransaction $ do
     checkActiveUserLimit
     actionKey <- findActionKeyByHash hash :: AppContextM (ActionKey U.UUID ActionKeyType)
     user <- findUserByUuid actionKey.identity
-    updatedUser <- updateUserTimestamp $ user {active = reqDto.active}
+    updatedUser <- updateUserTimestamp $ user {active = active}
     updateUserByUuid updatedUser
     deleteActionKeyByHash actionKey.hash
-    return reqDto
+    return ()
 
 deleteUser :: U.UUID -> AppContextM ()
 deleteUser userUuid =

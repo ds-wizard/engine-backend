@@ -5,6 +5,7 @@ import GHC.Generics
 
 data PersistentCommandSimple identity = PersistentCommandSimple
   { uuid :: U.UUID
+  , destination :: Maybe String
   , appUuid :: U.UUID
   , createdBy :: Maybe identity
   }

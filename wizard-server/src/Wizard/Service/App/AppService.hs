@@ -173,6 +173,7 @@ createSeederPersistentCommand aUuid createdBy now =
             (BSL.unpack . encode $ ImportDefaultDataCommand aUuid)
             1
             False
+            Nothing
             aUuid
             (Just createdBy)
             now

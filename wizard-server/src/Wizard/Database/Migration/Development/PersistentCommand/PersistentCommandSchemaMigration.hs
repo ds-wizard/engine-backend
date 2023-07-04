@@ -41,7 +41,8 @@ createTables = do
         \         references user_entity, \
         \     created_at timestamptz not null, \
         \     updated_at timestamptz not null, \
-        \     internal bool not null default true \
+        \     internal bool not null default true, \
+        \     destination varchar \
         \ ); \
         \  \
         \ create unique index persistent_command_uuid_uindex \

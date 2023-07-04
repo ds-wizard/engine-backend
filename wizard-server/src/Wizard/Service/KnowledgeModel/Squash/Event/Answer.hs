@@ -5,7 +5,7 @@ import WizardLib.KnowledgeModel.Model.Event.Answer.AnswerEvent
 import WizardLib.KnowledgeModel.Model.Event.EventLenses
 
 instance SimpleEventSquash EditAnswerEvent where
-  isSimpleEventSquashApplicable = not . isChanged (.followUpUuids)
+  isSimpleEventSquashApplicable e = not (isChanged (.followUpUuids) e || isChanged (.metricMeasures) e)
   isReorderEventSquashApplicable previousEvent newEvent = getEntityUuid previousEvent == getEntityUuid newEvent
   isTypeChanged _ _ = False
   simpleSquashEvent mPreviousEvent oldEvent newEvent =

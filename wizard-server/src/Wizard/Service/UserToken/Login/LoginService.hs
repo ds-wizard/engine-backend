@@ -29,12 +29,12 @@ import Wizard.Service.Mail.Mailer
 import qualified Wizard.Service.User.UserMapper as UserMapper
 import Wizard.Service.UserToken.Login.LoginMapper
 import Wizard.Service.UserToken.Login.LoginValidation
-import Wizard.Service.UserToken.UserTokenMapper
 import WizardLib.Public.Api.Resource.UserToken.LoginDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
 import WizardLib.Public.Localization.Messages.Public
 import WizardLib.Public.Model.User.UserToken
+import WizardLib.Public.Service.UserToken.UserTokenMapper
 import WizardLib.Public.Service.UserToken.UserTokenUtil
 
 createLoginTokenFromCredentials :: LoginDTO -> Maybe String -> AppContextM UserTokenDTO
@@ -72,7 +72,7 @@ createLoginToken user mUserAgent mSessionState =
     serverConfig <- asks serverConfig
     uuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
-    let claims = toUserTokenClaims user uuid now serverConfig.jwt
+    let claims = toUserTokenClaims user.uuid uuid now serverConfig.jwt.expiration
     (JWT.Jwt jwtToken) <- createSignedJwtToken claims
     let userToken = fromLoginDTO uuid user serverConfig.jwt.expiration serverConfig.general.secret mUserAgent mSessionState now (BS.unpack jwtToken)
     insertUserToken userToken

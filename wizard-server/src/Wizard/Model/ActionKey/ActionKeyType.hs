@@ -6,4 +6,5 @@ data ActionKeyType
   = RegistrationActionKey
   | ForgottenPasswordActionKey
   | TwoFactorAuthActionKey
+  | ConsentsRequiredActionKey
   deriving (Show, Eq, Generic, Read)

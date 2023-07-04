@@ -8,8 +8,18 @@ import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommandSimple
 
 toPersistentCommand
-  :: U.UUID -> String -> String -> String -> Int -> Bool -> U.UUID -> Maybe identity -> UTCTime -> PersistentCommand identity
-toPersistentCommand uuid component function body maxAttempts internal appUuid mCreatedBy now =
+  :: U.UUID
+  -> String
+  -> String
+  -> String
+  -> Int
+  -> Bool
+  -> Maybe String
+  -> U.UUID
+  -> Maybe identity
+  -> UTCTime
+  -> PersistentCommand identity
+toPersistentCommand uuid component function body maxAttempts internal destination appUuid mCreatedBy now =
   PersistentCommand
     { uuid = uuid
     , state = NewPersistentCommandState
@@ -20,6 +30,7 @@ toPersistentCommand uuid component function body maxAttempts internal appUuid mC
     , attempts = 0
     , maxAttempts = maxAttempts
     , internal = internal
+    , destination = destination
     , appUuid = appUuid
     , createdBy = mCreatedBy
     , createdAt = now
@@ -30,6 +41,7 @@ toSimple :: PersistentCommand identity -> PersistentCommandSimple identity
 toSimple command =
   PersistentCommandSimple
     { uuid = command.uuid
+    , destination = command.destination
     , appUuid = command.appUuid
     , createdBy = command.createdBy
     }
@@ -46,6 +58,7 @@ fromChangeDTO command reqDto now =
     , attempts = command.attempts
     , maxAttempts = command.maxAttempts
     , internal = command.internal
+    , destination = command.destination
     , appUuid = command.appUuid
     , createdBy = command.createdBy
     , createdAt = command.createdAt

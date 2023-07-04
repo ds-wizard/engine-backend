@@ -1,4 +1,4 @@
-module Wizard.Api.Resource.UserToken.ApiKeyCreateDTO where
+module WizardLib.Public.Api.Resource.UserToken.ApiKeyCreateDTO where
 
 import Data.Time
 import GHC.Generics

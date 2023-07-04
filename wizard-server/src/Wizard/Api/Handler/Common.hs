@@ -15,7 +15,6 @@ import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Token
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Constant.UserToken
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Localization.Messages.Public
@@ -30,6 +29,7 @@ import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
 import Wizard.Util.Context
 import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsDTO
+import WizardLib.Public.Constant.UserToken
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
 import WizardLib.Public.Localization.Messages.Public
 import WizardLib.Public.Model.User.UserToken

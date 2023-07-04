@@ -9,19 +9,27 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Char (toLower)
 import qualified Data.List as L
-import Data.Maybe (fromJust, fromMaybe)
+import Data.Maybe (fromJust, fromMaybe, isJust)
 import Data.String (fromString)
 import qualified Data.Text as T
+import qualified Data.UUID as U
 import qualified Web.OIDC.Client as O
 import qualified Web.OIDC.Client.IdTokenFlow as O_ID
 import qualified Web.OIDC.Client.Tokens as OT
 
+import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
+import Wizard.Api.Resource.Auth.AuthConsentDTO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Public
+import Wizard.Model.ActionKey.ActionKeyType
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.User.User
+import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.User.UserService
@@ -80,9 +88,23 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionStat
     let mPicture = getClaim "picture" claims
     case (mEmail, mFirstName, mLastName) of
       (Just email, Just firstName, Just lastName) -> do
-        user <- createUserFromExternalService authId firstName lastName email mPicture
-        createLoginToken user mUserAgent mSessionState
+        mUserFromDb <- findUserByEmail' email
+        appConfig <- getAppConfig
+        let consentRequired = isJust appConfig.privacyAndSupport.privacyUrl || isJust appConfig.privacyAndSupport.termsOfServiceUrl
+        user <- createUserFromExternalService mUserFromDb authId firstName lastName email mPicture consentRequired
+        case (mUserFromDb, consentRequired) of
+          (Nothing, True) -> do
+            actionKey <- createActionKey user.uuid ConsentsRequiredActionKey appConfig.uuid
+            return $ ConsentsRequiredDTO {hash = actionKey.hash}
+          _ -> createLoginToken user mUserAgent mSessionState
       _ -> throwError . UserError $ _ERROR_VALIDATION__OPENID_PROFILE_INFO_ABSENCE
+
+confirmConsents :: AuthConsentDTO -> Maybe String -> AppContextM UserTokenDTO
+confirmConsents reqDto mUserAgent = do
+  actionKey <- findActionKeyByHash reqDto.hash :: AppContextM (ActionKey U.UUID ActionKeyType)
+  user <- findUserByUuid actionKey.identity
+  changeUserState reqDto.hash True
+  createLoginToken user mUserAgent reqDto.sessionState
 
 parseToken :: FromJSON a => String -> O.IdTokenClaims a
 parseToken = fromJust . decode . BSL.pack

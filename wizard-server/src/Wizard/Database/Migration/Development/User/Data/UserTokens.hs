@@ -3,13 +3,13 @@ module Wizard.Database.Migration.Development.User.Data.UserTokens where
 import Shared.Common.Constant.App
 import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
-import Wizard.Api.Resource.UserToken.ApiKeyCreateDTO
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.User.User
-import Wizard.Service.UserToken.UserTokenMapper
+import WizardLib.Public.Api.Resource.UserToken.ApiKeyCreateDTO
 import WizardLib.Public.Api.Resource.UserToken.LoginDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Model.User.UserToken
+import WizardLib.Public.Service.UserToken.UserTokenMapper
 
 albertToken :: UserToken
 albertToken =

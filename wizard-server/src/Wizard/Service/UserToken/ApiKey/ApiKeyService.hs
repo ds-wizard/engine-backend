@@ -7,7 +7,6 @@ import qualified Jose.Jwt as JWT
 
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Api.Resource.UserToken.ApiKeyCreateDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Cache.ServerCache
@@ -17,9 +16,10 @@ import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
 import Wizard.Service.UserToken.ApiKey.ApiKeyMapper
-import Wizard.Service.UserToken.UserTokenMapper
+import WizardLib.Public.Api.Resource.UserToken.ApiKeyCreateDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
+import WizardLib.Public.Service.UserToken.UserTokenMapper
 import WizardLib.Public.Service.UserToken.UserTokenUtil
 
 createApiKey :: ApiKeyCreateDTO -> Maybe String -> AppContextM UserTokenDTO
@@ -31,7 +31,7 @@ createApiKey reqDto mUserAgent =
     user <- findUserByUuid userDto.uuid
     appUuid <- asks currentAppUuid
     now <- liftIO getCurrentTime
-    let claims = toUserTokenClaimsWithExpiration user uuid now reqDto.expiresAt
+    let claims = toUserTokenClaimsWithExpiration user.uuid uuid now reqDto.expiresAt
     (JWT.Jwt jwtToken) <- createSignedJwtToken claims
     let userToken = fromApiKeyDTO reqDto uuid user.uuid serverConfig.general.secret mUserAgent appUuid now (BS.unpack jwtToken)
     insertUserToken userToken

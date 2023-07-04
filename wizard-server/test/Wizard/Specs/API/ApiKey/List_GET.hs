@@ -9,13 +9,13 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Api.Resource.UserToken.UserTokenListJM ()
 import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Service.UserToken.UserTokenMapper
+import WizardLib.Public.Api.Resource.UserToken.UserTokenListJM ()
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
+import WizardLib.Public.Service.UserToken.UserTokenMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

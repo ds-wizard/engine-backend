@@ -30,6 +30,7 @@ instance FromField identity => FromRow (PersistentCommand identity) where
     createdAt <- field
     updatedAt <- field
     internal <- field
+    destination <- field
     return $ PersistentCommand {..}
 
 instance ToField identity => ToRow (PersistentCommand identity) where
@@ -47,4 +48,5 @@ instance ToField identity => ToRow (PersistentCommand identity) where
     , toField createdAt
     , toField updatedAt
     , toField internal
+    , toField destination
     ]

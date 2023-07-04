@@ -12,7 +12,6 @@ import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
 import WizardLib.Public.Model.User.UserToken
@@ -51,6 +50,7 @@ test_204 appContext =
     do
       let expStatus = 204
       let expHeaders = resCorsHeaders
+      -- AND: Run migration
       eUser <- runInContextIO (insertUserToken alternativeAlbertToken) appContext
       assertUserTokenInDB appContext userAlbert 2
       -- WHEN: Call API

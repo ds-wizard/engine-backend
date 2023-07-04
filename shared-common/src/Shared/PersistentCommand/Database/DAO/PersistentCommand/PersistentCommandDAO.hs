@@ -85,7 +85,7 @@ findPersistentCommandsByStates
   => m [PersistentCommandSimple identity]
 findPersistentCommandsByStates = do
   let sql =
-        "SELECT uuid, app_uuid, created_by \
+        "SELECT uuid, destination, app_uuid, created_by \
         \FROM persistent_command \
         \WHERE (state = 'NewPersistentCommandState' \
         \  OR (state = 'ErrorPersistentCommandState' AND attempts < max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
@@ -125,7 +125,7 @@ findPersistentCommandSimpleByUuid
   => U.UUID
   -> m (PersistentCommandSimple identity)
 findPersistentCommandSimpleByUuid uuid =
-  createFindEntityWithFieldsByFn "uuid, app_uuid, created_by" False entityName [("uuid", U.toString uuid)]
+  createFindEntityWithFieldsByFn "uuid, destination, app_uuid, created_by" False entityName [("uuid", U.toString uuid)]
 
 insertPersistentCommand
   :: ( MonadLogger m
@@ -162,7 +162,7 @@ updatePersistentCommandByUuid
 updatePersistentCommandByUuid command = do
   let sql =
         fromString
-          "UPDATE persistent_command SET uuid = ?, state = ?, component = ?, function = ?, body = ?, last_error_message = ?, attempts = ?, max_attempts = ?, app_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, internal = ? WHERE uuid = ?"
+          "UPDATE persistent_command SET uuid = ?, state = ?, component = ?, function = ?, body = ?, last_error_message = ?, attempts = ?, max_attempts = ?, app_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, internal = ?, destination = ? WHERE uuid = ?"
   let params = toRow command ++ [toField . U.toText $ command.uuid]
   logQuery sql params
   let action conn = execute conn sql params

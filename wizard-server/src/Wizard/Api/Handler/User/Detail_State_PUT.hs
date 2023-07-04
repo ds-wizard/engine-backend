@@ -29,4 +29,7 @@ detail_state_PUT
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserStateDTO)
 detail_state_PUT mTokenHeader mServerUrl reqDto uUuid hash =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< changeUserState uUuid hash reqDto
+    runInAuthService Transactional $
+      addTraceUuidHeader =<< do
+        changeUserState hash reqDto.active
+        return reqDto

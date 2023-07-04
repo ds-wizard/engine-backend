@@ -5,8 +5,8 @@ import qualified Data.UUID as U
 
 import Shared.Common.Util.Date
 import Wizard.Model.User.User
-import Wizard.Service.UserToken.UserTokenMapper
 import WizardLib.Public.Model.User.UserToken
+import WizardLib.Public.Service.UserToken.UserTokenMapper
 
 fromSystemDTO :: U.UUID -> User -> Integer -> String -> Maybe String -> Maybe String -> UTCTime -> String -> UserToken
 fromSystemDTO uuid user expiration secret mUserAgent mSessionState now tokenValue =

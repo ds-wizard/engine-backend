@@ -9,7 +9,6 @@ import qualified Jose.Jwt as JWT
 
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Uuid
-import Wizard.Constant.UserToken
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Integration.Http.Admin.Runner
@@ -20,11 +19,12 @@ import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
 import Wizard.Service.UserToken.System.SystemMapper
 import Wizard.Service.UserToken.System.SystemValidation
-import Wizard.Service.UserToken.UserTokenMapper
 import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsJM ()
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
+import WizardLib.Public.Constant.UserToken
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
+import WizardLib.Public.Service.UserToken.UserTokenMapper
 import WizardLib.Public.Service.UserToken.UserTokenUtil
 
 createSystemToken :: String -> Maybe String -> AppContextM UserTokenDTO
@@ -39,7 +39,7 @@ createSystemToken token mUserAgent =
         user <- findUserByUuid userTokenClaims.userUuid
         uuid <- liftIO generateUuid
         updateUserLastVisitedAtByUuid user.uuid now
-        let claims = toUserTokenClaims user uuid now serverConfig.jwt
+        let claims = toUserTokenClaims user.uuid uuid now serverConfig.jwt.expiration
         (JWT.Jwt jwtToken) <- createSignedJwtToken claims
         let userToken = fromSystemDTO uuid user serverConfig.jwt.expiration serverConfig.general.secret mUserAgent Nothing now (BS.unpack jwtToken)
         insertUserToken userToken
