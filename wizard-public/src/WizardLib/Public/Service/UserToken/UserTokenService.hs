@@ -86,6 +86,25 @@ deleteTokenByUuid uuid = do
   deleteUserTokenByUuid uuid
   return ()
 
+deleteTokensByAppUuid
+  :: ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identity'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "appUuid'" s U.UUID
+     , HasField "cache'" s serverCache
+     , HasField "userToken" serverCache (C.Cache Int UserToken)
+     , MonadIO m
+     )
+  => U.UUID
+  -> m ()
+deleteTokensByAppUuid appUuid = do
+  userTokens <- findUserTokensByAppUuid appUuid
+  traverse_ (\t -> deleteUserTokenByUuidAndAppUuid t.uuid appUuid) userTokens
+
 deleteTokenByUserUuid
   :: ( MonadLogger m
      , MonadError AppError m

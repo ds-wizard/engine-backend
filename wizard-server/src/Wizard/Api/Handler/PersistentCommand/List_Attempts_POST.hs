@@ -20,5 +20,5 @@ list_attempts_POST mTokenHeader mServerUrl =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        runPersistentCommands
+        runPersistentCommands'
         return NoContent

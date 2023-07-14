@@ -18,6 +18,7 @@ data ClientConfigDTO = ClientConfigDTO
   , cloud :: ClientConfigCloudDTO
   , locales :: [ClientConfigLocaleDTO]
   , owl :: AppConfigOwl
+  , admin :: ClientConfigAdminDTO
   }
   deriving (Show, Eq, Generic)
 
@@ -69,3 +70,8 @@ data ClientConfigLocaleDTO = ClientConfigLocaleDTO
   , defaultLocale :: Bool
   }
   deriving (Show, Eq, Generic)
+
+data ClientConfigAdminDTO = ClientConfigAdminDTO
+  { enabled :: Bool
+  }
+  deriving (Generic, Eq, Show)

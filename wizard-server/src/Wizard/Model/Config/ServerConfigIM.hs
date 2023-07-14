@@ -154,5 +154,4 @@ instance FromEnv ServerConfigAdmin where
       serverConfig
       [ \c -> applyEnvVariable "ADMIN_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigAdmin)
       , \c -> applyStringEnvVariable "ADMIN_URL" c.url (\x -> c {url = x} :: ServerConfigAdmin)
-      , \c -> applyStringEnvVariable "ADMIN_TOKEN" c.token (\x -> c {token = x} :: ServerConfigAdmin)
       ]

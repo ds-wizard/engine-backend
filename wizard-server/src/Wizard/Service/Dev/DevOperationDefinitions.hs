@@ -363,7 +363,7 @@ persistentCommand_runAllFn reqDto = do
   context <- ask
   apps <- findApps
   let appUuids = fmap (.uuid) apps
-  liftIO $ traverse_ (runAppContextWithBaseContext' runPersistentCommands (baseContextFromAppContext context)) appUuids
+  liftIO $ traverse_ (runAppContextWithBaseContext' runPersistentCommands' (baseContextFromAppContext context)) appUuids
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -383,7 +383,7 @@ persistentCommand_run =
 persistentCommand_runFn :: DevExecutionDTO -> AppContextM String
 persistentCommand_runFn reqDto = do
   command <- findPersistentCommandSimpleByUuid (u' . head $ reqDto.parameters)
-  runPersistentCommand True command
+  runPersistentCommand' True command
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------

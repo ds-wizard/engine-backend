@@ -28,7 +28,7 @@ job context =
   let loggingLevel = context.serverConfig.logging.level
    in runLogging loggingLevel $ do
         log "starting"
-        liftIO $ runAppContextWithBaseContext runPersistentCommands context
+        liftIO $ runAppContextWithBaseContext runPersistentCommands' context
         log "ended"
 
 log msg = logInfo _CMP_WORKER ("PersistentCommandRetryWorker: " ++ msg)

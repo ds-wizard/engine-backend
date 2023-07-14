@@ -529,6 +529,26 @@ createDeleteEntitiesByFn entityName queryParams = do
   let action conn = execute conn sql params
   runDB action
 
+createDeleteEntityLikeFn
+  :: ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identity'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , MonadIO m
+     )
+  => String
+  -> String
+  -> [String]
+  -> m Int64
+createDeleteEntityLikeFn entityName key params = do
+  let sql = fromString $ f' "DELETE FROM %s WHERE %s IN (%s)" [entityName, key, generateQuestionMarks params]
+  logQuery sql params
+  let action conn = execute conn sql params
+  runDB action
+
 createDeleteEntityByFn
   :: ( MonadLogger m
      , MonadError AppError m

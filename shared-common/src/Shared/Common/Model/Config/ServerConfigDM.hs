@@ -43,6 +43,7 @@ defaultCloud =
     { enabled = False
     , domain = Nothing
     , publicRegistrationEnabled = False
+    , prefix = ""
     }
 
 defaultPersistentCommand :: ServerConfigPersistentCommand

@@ -6,6 +6,7 @@ import Prelude hiding (until)
 
 import Wizard.Api.Resource.Plan.AppPlanChangeDTO
 import Wizard.Model.Plan.AppPlan
+import WizardLib.Public.Model.PersistentCommand.Plan.CreateOrUpdatePlanCommand
 
 toChangeDTO :: AppPlan -> AppPlanChangeDTO
 toChangeDTO plan =
@@ -29,4 +30,14 @@ fromChangeDTO reqDto uuid appUuid createdAt updatedAt =
     , appUuid = appUuid
     , createdAt = createdAt
     , updatedAt = updatedAt
+    }
+
+fromCommandToChangeDTO :: CreateOrUpdatePlanCommand -> AppPlanChangeDTO
+fromCommandToChangeDTO command =
+  AppPlanChangeDTO
+    { name = command.name
+    , users = command.users
+    , since = command.since
+    , until = command.until
+    , test = command.test
     }

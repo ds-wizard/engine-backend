@@ -29,11 +29,15 @@ getPlansForCurrentApp = do
 
 createPlan :: U.UUID -> AppPlanChangeDTO -> AppContextM AppPlan
 createPlan aUuid reqDto = do
+  uuid <- liftIO generateUuid
+  createPlanWithUuid aUuid uuid reqDto
+
+createPlanWithUuid :: U.UUID -> U.UUID -> AppPlanChangeDTO -> AppContextM AppPlan
+createPlanWithUuid aUuid pUuid reqDto = do
   checkPermission _APP_PERM
   app <- findAppByUuid aUuid
-  uuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
-  let plan = fromChangeDTO reqDto uuid aUuid now now
+  let plan = fromChangeDTO reqDto pUuid aUuid now now
   insertAppPlan plan
   recomputePlansForApp app
   return plan

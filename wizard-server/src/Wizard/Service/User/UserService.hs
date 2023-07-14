@@ -54,6 +54,7 @@ import Wizard.Service.User.UserAudit
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
 import WizardLib.Public.Localization.Messages.Public
+import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
 import WizardLib.Public.Service.UserToken.UserTokenService
 
 getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
@@ -161,6 +162,25 @@ createUserFromExternalService mUserFromDb serviceId firstName lastName email mIm
                 now
         insertUser user
         sendAnalyticsEmailIfEnabled user
+        return user
+
+createOrUpdateUserFromCommand :: CreateOrUpdateUserCommand -> AppContextM User
+createOrUpdateUserFromCommand command =
+  runInTransaction $ do
+    mUserFromDb <- findUserByUuidSystem' command.uuid
+    now <- liftIO getCurrentTime
+    case mUserFromDb of
+      Just userFromDb -> do
+        let updatedUser = fromCommandChangeDTO userFromDb command now
+        updateUserByUuid updatedUser
+        return updatedUser
+      Nothing -> do
+        checkUserLimit
+        checkActiveUserLimit
+        serverConfig <- asks serverConfig
+        let uPerms = getPermissionForRole serverConfig command.uRole
+        let user = fromCommandCreateDTO command uPerms now
+        insertUser user
         return user
 
 getUserById :: U.UUID -> AppContextM UserDTO

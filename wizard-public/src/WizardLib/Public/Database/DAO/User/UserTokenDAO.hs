@@ -128,6 +128,22 @@ findUserTokensByValue value = do
   appUuid <- asks (.appUuid')
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("value", value)]
 
+findUserTokensByAppUuid
+  :: ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identity'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "appUuid'" s U.UUID
+     , MonadIO m
+     )
+  => U.UUID
+  -> m [UserToken]
+findUserTokensByAppUuid appUuid = do
+  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+
 findUserTokenByUuid
   :: ( MonadLogger m
      , MonadError AppError m
@@ -218,6 +234,27 @@ deleteUserTokenByUuid
   -> m Int64
 deleteUserTokenByUuid uuid = do
   appUuid <- asks (.appUuid')
+  result <- createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  deleteFromCache (U.toString uuid)
+  return result
+
+deleteUserTokenByUuidAndAppUuid
+  :: ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identity'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "appUuid'" s U.UUID
+     , HasField "cache'" s serverCache
+     , HasField "userToken" serverCache (C.Cache Int UserToken)
+     , MonadIO m
+     )
+  => U.UUID
+  -> U.UUID
+  -> m Int64
+deleteUserTokenByUuidAndAppUuid uuid appUuid = do
   result <- createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
   deleteFromCache (U.toString uuid)
   return result

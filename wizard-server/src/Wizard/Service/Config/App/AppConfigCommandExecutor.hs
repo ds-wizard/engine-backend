@@ -18,14 +18,17 @@ import Wizard.Model.App.App
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.PersistentCommand.Config.InvokeClientCssCompilationCommand
+import Wizard.Service.Config.App.AppConfigMapper
 import Wizard.Service.Config.App.AppConfigService
 import Wizard.Util.Logger
+import WizardLib.Public.Model.PersistentCommand.Config.CreateAppConfigAuthenticationCommand
 
 cComponent = "AppConfig"
 
 execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command
   | command.function == cInvokeClientCssCompilationName = cInvokeClientCssCompilation command
+  | command.function == cCreateAuthenticationName = cCreateAuthentication command
 
 recompileCssInAllApplications :: AppContextM ()
 recompileCssInAllApplications =
@@ -62,6 +65,20 @@ cInvokeClientCssCompilation persistentCommand = do
     Right command -> do
       appConfig <- getAppConfigByUuid command.appUuid
       updatedAppConfig <- invokeClientCssCompilation appConfig appConfig
+      modifyAppConfig updatedAppConfig
+      return (DonePersistentCommandState, Nothing)
+    Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
+
+cCreateAuthenticationName = "createAuthentication"
+
+cCreateAuthentication :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
+cCreateAuthentication persistentCommand = do
+  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String CreateAppConfigAuthenticationCommand
+  case eCommand of
+    Right command -> do
+      appConfig <- getAppConfigByUuid command.appUuid
+      now <- liftIO getCurrentTime
+      let updatedAppConfig = fromAuthenticationCommand appConfig command now
       modifyAppConfig updatedAppConfig
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])

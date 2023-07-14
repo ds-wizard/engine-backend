@@ -15,3 +15,11 @@ auditUserCreateByAdmin userDto =
     "createByAdmin"
     (U.toString $ userDto.uuid)
     (M.fromList [("firstName", userDto.firstName), ("lastName", userDto.lastName), ("email", userDto.email)])
+
+auditUserCreateByCommand :: UserDTO -> AppContextM ()
+auditUserCreateByCommand userDto =
+  logAuditWithBody
+    "user"
+    "createByCommand"
+    (U.toString $ userDto.uuid)
+    (M.fromList [("firstName", userDto.firstName), ("lastName", userDto.lastName), ("email", userDto.email)])

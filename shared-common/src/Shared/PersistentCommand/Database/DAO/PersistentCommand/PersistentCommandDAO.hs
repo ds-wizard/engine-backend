@@ -90,6 +90,7 @@ findPersistentCommandsByStates = do
         \WHERE (state = 'NewPersistentCommandState' \
         \  OR (state = 'ErrorPersistentCommandState' AND attempts < max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
         \  AND internal = true \
+        \ORDER BY created_at \
         \LIMIT 5 \
         \FOR UPDATE"
   logInfoI _CMP_DATABASE (trim sql)
@@ -110,6 +111,21 @@ findPersistentCommandByUuid
   => U.UUID
   -> m (PersistentCommand identity)
 findPersistentCommandByUuid uuid = createFindEntityWithFieldsByFn "*" True entityName [("uuid", U.toString uuid)]
+
+findPersistentCommandByUuid'
+  :: ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identity'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , MonadIO m
+     , FromField identity
+     )
+  => U.UUID
+  -> m (Maybe (PersistentCommand identity))
+findPersistentCommandByUuid' uuid = createFindEntityWithFieldsByFn' "*" entityName [("uuid", U.toString uuid)]
 
 findPersistentCommandSimpleByUuid
   :: ( MonadLogger m
@@ -180,6 +196,20 @@ deletePersistentCommands
      )
   => m Int64
 deletePersistentCommands = createDeleteEntitiesFn entityName
+
+deletePersistentCommandsByCreatedBy
+  :: ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasField "dbPool'" s (Pool Connection)
+     , HasField "dbConnection'" s (Maybe Connection)
+     , HasField "identity'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , MonadIO m
+     )
+  => [U.UUID]
+  -> m Int64
+deletePersistentCommandsByCreatedBy createdBys = createDeleteEntityLikeFn entityName "created_by" (fmap U.toString createdBys)
 
 deletePersistentCommandByUuid
   :: ( MonadLogger m
