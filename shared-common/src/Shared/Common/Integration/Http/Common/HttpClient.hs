@@ -14,10 +14,11 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.CaseInsensitive as CI
 import Data.Map (toList)
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Data.UUID as U
 import GHC.Records
-import Network.HTTP.Client (Manager, responseBody, responseStatus)
+import Network.HTTP.Client (Manager (..), responseBody, responseStatus)
 import Network.HTTP.Client.MultipartFormData (partContentType, partFilename)
 import Network.HTTP.Types.Status (statusCode)
 import Network.Wreq (
@@ -115,7 +116,7 @@ runSimpleRequest req = do
   let opts =
         defaults
           { manager = Right httpClientManager
-          , headers = reqHeaders
+          , headers = reqHeaders context
           , checkResponse = Just (\_ _ -> return ())
           }
   case req.multipart of
@@ -124,7 +125,7 @@ runSimpleRequest req = do
   where
     reqMethod = req.requestMethod
     reqUrl = req.requestUrl
-    reqHeaders = mapHeader <$> toList req.requestHeaders
+    reqHeaders context = mapHeader <$> (toList req.requestHeaders ++ [("x-identity", fromMaybe "------------------------------------" context.identity'), ("x-trace-uuid", U.toString context.traceUuid')])
     action opts
       | reqMethod == "GET" = getWith opts reqUrl
       | otherwise = customPayloadMethodWith reqMethod opts reqUrl req.requestBody
