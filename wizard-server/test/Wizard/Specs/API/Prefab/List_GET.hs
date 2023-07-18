@@ -9,9 +9,9 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Api.Resource.Prefab.PrefabJM ()
-import Wizard.Database.Migration.Development.Prefab.Data.Prefabs
-import qualified Wizard.Database.Migration.Development.Prefab.PrefabMigration as PF
+import Shared.Prefab.Api.Resource.Prefab.PrefabJM ()
+import Shared.Prefab.Database.Migration.Development.Prefab.Data.Prefabs
+import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabMigration as PF
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common

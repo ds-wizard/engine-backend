@@ -1,9 +1,9 @@
-module Wizard.Api.Resource.Prefab.PrefabJM where
+module Shared.Prefab.Api.Resource.Prefab.PrefabJM where
 
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Model.Prefab.Prefab
+import Shared.Prefab.Model.Prefab.Prefab
 
 instance FromJSON Prefab where
   parseJSON = genericParseJSON jsonOptions

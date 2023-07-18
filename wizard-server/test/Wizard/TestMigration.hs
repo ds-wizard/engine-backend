@@ -6,6 +6,8 @@ import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMi
 import Shared.Common.Database.DAO.Component.ComponentDAO
 import qualified Shared.Common.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Shared.Prefab.Database.DAO.Prefab.PrefabDAO
+import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
@@ -18,7 +20,6 @@ import Wizard.Database.DAO.Locale.LocaleDAO
 import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_MigratorDAO
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
 import Wizard.Database.DAO.Plan.AppPlanDAO
-import Wizard.Database.DAO.Prefab.PrefabDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -51,7 +52,6 @@ import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
 import qualified Wizard.Database.Migration.Development.Plan.AppPlanSchemaMigration as AP_Schema
-import qualified Wizard.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QI_Schema
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as R_Schema

@@ -1,4 +1,4 @@
-module Wizard.Database.Mapping.Prefab.Prefab where
+module Shared.Prefab.Database.Mapping.Prefab.Prefab where
 
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromField
@@ -6,7 +6,7 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 
-import Wizard.Model.Prefab.Prefab
+import Shared.Prefab.Model.Prefab.Prefab
 
 instance ToRow Prefab where
   toRow Prefab {..} =

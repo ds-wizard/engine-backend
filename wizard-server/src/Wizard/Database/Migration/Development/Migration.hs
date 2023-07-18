@@ -8,6 +8,8 @@ import Shared.Common.Constant.Component
 import qualified Shared.Common.Database.Migration.Development.Component.ComponentMigration as CMP
 import qualified Shared.Common.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
+import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabMigration as PF
+import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
 import qualified Wizard.Database.Migration.Development.Acl.AclMigration as ACL
 import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ACK
@@ -40,8 +42,6 @@ import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigr
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
 import qualified Wizard.Database.Migration.Development.Plan.AppPlanMigration as AP
 import qualified Wizard.Database.Migration.Development.Plan.AppPlanSchemaMigration as AP_Schema
-import qualified Wizard.Database.Migration.Development.Prefab.PrefabMigration as PF
-import qualified Wizard.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterMigration as QI

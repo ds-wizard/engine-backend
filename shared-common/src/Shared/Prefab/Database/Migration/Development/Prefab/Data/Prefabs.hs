@@ -1,14 +1,13 @@
-module Wizard.Database.Migration.Development.Prefab.Data.Prefabs where
+module Shared.Prefab.Database.Migration.Development.Prefab.Data.Prefabs where
 
 import Data.Aeson
 import qualified Data.HashMap.Strict as HM
 import Data.Maybe (fromJust)
 import Data.Time
 
+import Shared.Common.Constant.App
 import Shared.Common.Util.Uuid
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Model.App.App
-import Wizard.Model.Prefab.Prefab
+import Shared.Prefab.Model.Prefab.Prefab
 
 kmIntegrationBioPortalPrefab :: Prefab
 kmIntegrationBioPortalPrefab =
@@ -17,7 +16,7 @@ kmIntegrationBioPortalPrefab =
     , pType = "knowledge-model-integration"
     , name = "Bio Portal"
     , content = toJSON $ HM.fromList [("key1", "value1"), ("key2", "value2")]
-    , appUuid = defaultApp.uuid
+    , appUuid = defaultAppUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -29,7 +28,7 @@ authServicePrefab =
     , pType = "authentication-service"
     , name = "Authentication Service"
     , content = toJSON $ HM.fromList [("key1", 2), ("key2", 3)]
-    , appUuid = defaultApp.uuid
+    , appUuid = defaultAppUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -41,7 +40,7 @@ differentPrefab =
     , pType = "knowledge-model-integration"
     , name = "Different Bio Portal"
     , content = toJSON $ HM.fromList [("differentKey1", True), ("differentKey2", False)]
-    , appUuid = differentApp.uuid
+    , appUuid = differentAppUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }

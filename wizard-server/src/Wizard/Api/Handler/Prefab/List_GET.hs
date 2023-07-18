@@ -5,11 +5,11 @@ import Servant
 
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
+import Shared.Prefab.Api.Resource.Prefab.PrefabJM ()
+import Shared.Prefab.Model.Prefab.Prefab
+import Shared.Prefab.Service.Prefab.PrefabService
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.Prefab.PrefabJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Model.Prefab.Prefab
-import Wizard.Service.Prefab.PrefabService
 
 type List_GET =
   Header "Authorization" String

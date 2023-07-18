@@ -1,4 +1,4 @@
-module Wizard.Model.Prefab.Prefab where
+module Shared.Prefab.Model.Prefab.Prefab where
 
 import Data.Aeson
 import Data.Time
