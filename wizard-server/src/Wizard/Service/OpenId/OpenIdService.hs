@@ -91,7 +91,7 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionStat
         mUserFromDb <- findUserByEmail' email
         appConfig <- getAppConfig
         let consentRequired = isJust appConfig.privacyAndSupport.privacyUrl || isJust appConfig.privacyAndSupport.termsOfServiceUrl
-        user <- createUserFromExternalService mUserFromDb authId firstName lastName email mPicture consentRequired
+        user <- createUserFromExternalService mUserFromDb authId firstName lastName email mPicture (not consentRequired)
         case (mUserFromDb, consentRequired) of
           (Nothing, True) -> do
             actionKey <- createActionKey user.uuid ConsentsRequiredActionKey appConfig.uuid
