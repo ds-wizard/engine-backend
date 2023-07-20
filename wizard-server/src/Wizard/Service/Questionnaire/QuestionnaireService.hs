@@ -373,12 +373,15 @@ removeOwnerFromQuestionnaire userUuid =
     processQtn :: Questionnaire -> AppContextM ()
     processQtn qtn = do
       let newPermissions = removeUserPermission userUuid qtn.permissions
-      if null newPermissions
-        then deleteQuestionnaire qtn.uuid True
-        else do
-          let reqDto = toChangeDTO $ qtn {permissions = newPermissions}
-          modifyQuestionnaire qtn.uuid reqDto
-          return ()
+      if newPermissions == qtn.permissions
+        then return ()
+        else
+          if null newPermissions
+            then deleteQuestionnaire qtn.uuid True
+            else do
+              let reqDto = toChangeDTO $ qtn {permissions = newPermissions}
+              modifyQuestionnaire qtn.uuid reqDto
+              return ()
 
 modifyContent :: U.UUID -> QuestionnaireContentChangeDTO -> AppContextM QuestionnaireContentChangeDTO
 modifyContent qtnUuid reqDto =

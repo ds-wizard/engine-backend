@@ -62,8 +62,7 @@ getUsersPage mQuery mRole pageable sort = do
   userPage <- findUsersPage mQuery mRole pageable sort
   return . fmap toDTO $ userPage
 
-getUserSuggestionsPage
-  :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)
+getUserSuggestionsPage :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)
 getUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
   suggestionPage <- findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort
   return . fmap toSuggestionDTO $ suggestionPage
@@ -254,10 +253,10 @@ deleteUser :: U.UUID -> AppContextM ()
 deleteUser userUuid =
   runInTransaction $ do
     checkPermission _UM_PERM
-    user <- findUserByUuid userUuid
-    clearBranchCreatedBy user.uuid
-    removeOwnerFromQuestionnaire user.uuid
-    clearQuestionnaireCreatedBy user.uuid
+    _ <- findUserByUuid userUuid
+    clearBranchCreatedBy userUuid
+    removeOwnerFromQuestionnaire userUuid
+    clearQuestionnaireCreatedBy userUuid
     deletePersistentCommandByCreatedBy userUuid
     documents <- findDocumentsFiltered [("creator_uuid", U.toString userUuid)]
     forM_
@@ -266,7 +265,7 @@ deleteUser userUuid =
           deleteDocumentsFiltered [("uuid", U.toString d.uuid)]
           removeDocumentContent d.uuid
       )
-    deleteTokenByUserUuid user.uuid
+    deleteTokenByUserUuid userUuid
     deleteUserByUuid userUuid
     return ()
 
