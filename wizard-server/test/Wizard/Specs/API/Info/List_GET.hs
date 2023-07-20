@@ -10,8 +10,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Info.InfoJM ()
-import qualified Shared.Common.Database.Migration.Development.Component.ComponentMigration as CMP_Migration
 import Shared.Common.Database.Migration.Development.Info.Data.Infos
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentMigration as CMP_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 

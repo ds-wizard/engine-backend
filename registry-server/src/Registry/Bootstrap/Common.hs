@@ -22,6 +22,7 @@ runAppContextWithBaseContext function baseContext = do
             , dbPool = baseContext.dbPool
             , dbConnection = Just dbConnection
             , s3Client = baseContext.s3Client
+            , httpClientManager = baseContext.httpClientManager
             , traceUuid = traceUuid
             , currentOrganization = Nothing
             }

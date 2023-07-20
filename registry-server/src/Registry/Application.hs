@@ -43,6 +43,7 @@ runApplication = do
               , buildInfoConfig = buildInfoConfig
               , dbPool = dbPool
               , s3Client = s3Client
+              , httpClientManager = httpClientManager
               }
       result <- liftIO $ runDBMigrations baseContext
       case result of

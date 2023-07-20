@@ -6,10 +6,8 @@ module Shared.Common.Integration.Http.Common.HttpClient (
 ) where
 
 import qualified Control.Exception.Base as E
-import Control.Monad.Except (MonadError, liftEither, throwError)
-import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadReader, ask, liftIO)
+import Control.Monad.Except (liftEither, throwError)
+import Control.Monad.Reader (ask, liftIO)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.CaseInsensitive as CI
@@ -17,8 +15,7 @@ import Data.Map (toList)
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Data.UUID as U
-import GHC.Records
-import Network.HTTP.Client (Manager (..), responseBody, responseStatus)
+import Network.HTTP.Client (responseBody, responseStatus)
 import Network.HTTP.Client.MultipartFormData (partContentType, partFilename)
 import Network.HTTP.Types.Status (statusCode)
 import Network.Wreq (
@@ -33,22 +30,12 @@ import Network.Wreq.Types (Options (..))
 
 import Shared.Common.Constant.Component
 import Shared.Common.Localization.Messages.Internal
+import Shared.Common.Model.Context.AppContext
 import Shared.Common.Model.Error.Error
 import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.Logger
 
-runRequest
-  :: ( MonadReader s m
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "httpClientManager'" s Manager
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => HttpRequest
-  -> (Response BSL.ByteString -> Either AppError a)
-  -> m a
+runRequest :: AppContextC s sc m => HttpRequest -> (Response BSL.ByteString -> Either AppError a) -> m a
 runRequest req responseMapper = do
   logRequestMultipart req
   eResponse <- runSimpleRequest req
@@ -68,18 +55,7 @@ runRequest req responseMapper = do
       logResponseErrorGeneral error
       throwError . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR "Request failed, see logs"
 
-runRequest'
-  :: ( MonadReader s m
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "httpClientManager'" s Manager
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => HttpRequest
-  -> (Response BSL.ByteString -> Either String a)
-  -> m (Either String a)
+runRequest' :: AppContextC s sc m => HttpRequest -> (Response BSL.ByteString -> Either String a) -> m (Either String a)
 runRequest' req responseMapper = do
   logRequestMultipart req
   eResponse <- runSimpleRequest req
@@ -99,17 +75,7 @@ runRequest' req responseMapper = do
       logResponseErrorGeneral error
       return . Left $ f' "Request failed\nError: %s" [show error]
 
-runSimpleRequest
-  :: ( MonadReader s m
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "httpClientManager'" s Manager
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => HttpRequest
-  -> m (Either E.SomeException (Response BSL.ByteString))
+runSimpleRequest :: AppContextC s sc m => HttpRequest -> m (Either E.SomeException (Response BSL.ByteString))
 runSimpleRequest req = do
   context <- ask
   let httpClientManager = context.httpClientManager'

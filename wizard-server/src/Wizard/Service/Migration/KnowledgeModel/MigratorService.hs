@@ -18,9 +18,9 @@ import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchData
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Service.Acl.AclService
 import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Branch.Collaboration.CollaborationService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService

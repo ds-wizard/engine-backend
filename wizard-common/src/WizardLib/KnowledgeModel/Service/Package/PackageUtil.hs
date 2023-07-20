@@ -1,16 +1,8 @@
 module WizardLib.KnowledgeModel.Service.Package.PackageUtil where
 
-import Control.Monad.Except (MonadError)
-import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadReader)
 import qualified Data.List as L
-import Data.Pool
-import qualified Data.UUID as U
-import Database.PostgreSQL.Simple
-import GHC.Records
 
-import Shared.Common.Model.Error.Error
+import Shared.Common.Model.Context.AppContext
 import Shared.Common.Util.List (groupBy)
 import WizardLib.Common.Service.Coordinate.CoordinateValidation
 import WizardLib.Common.Util.Coordinate
@@ -59,19 +51,7 @@ fitsIntoKMSpec pkgIdSplit kmSpec = heCompareOrgId $ heCompareKmId $ heCompareVer
             _ -> callback
         Nothing -> callback
 
-resolvePackageId
-  :: ( MonadError AppError m
-     , MonadLogger m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> m String
+resolvePackageId :: AppContextC s sc m => String -> m String
 resolvePackageId pId = do
   validateCoordinateFormat True pId
   let version = getVersionFromCoordinate pId

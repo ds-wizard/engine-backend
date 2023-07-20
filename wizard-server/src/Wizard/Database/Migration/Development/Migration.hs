@@ -5,9 +5,9 @@ module Wizard.Database.Migration.Development.Migration (
 import qualified Shared.Audit.Database.Migration.Development.Audit.AuditMigration as ADT
 import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import Shared.Common.Constant.Component
-import qualified Shared.Common.Database.Migration.Development.Component.ComponentMigration as CMP
-import qualified Shared.Common.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import Shared.Common.Util.Logger
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentMigration as CMP
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabMigration as PF
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema

@@ -3,7 +3,7 @@ module Shared.Common.Api.Resource.Info.InfoDTO where
 import Data.Time
 import GHC.Generics
 
-import Shared.Common.Model.Component.Component
+import Shared.Component.Model.Component.Component
 
 data InfoDTO = InfoDTO
   { name :: String

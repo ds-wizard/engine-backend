@@ -1,37 +1,20 @@
 module Shared.ActionKey.Service.ActionKey.ActionKeyService where
 
-import Control.Monad.Except (MonadError)
-import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadReader, liftIO)
-import Data.Pool
+import Control.Monad.Reader (liftIO)
 import Data.Time
 import qualified Data.UUID as U
-import Database.PostgreSQL.Simple (Connection)
-import GHC.Records
 
 import Database.PostgreSQL.Simple.ToField
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Database.DAO.Common
-import Shared.Common.Model.Error.Error
+import Shared.Common.Model.Context.AppContext
 import Shared.Common.Util.Date
 import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 
 createActionKey
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     , ToField aType
-     , ToField identity
-     )
+  :: (AppContextC s sc m, ToField aType, ToField identity)
   => identity
   -> aType
   -> U.UUID
@@ -41,18 +24,7 @@ createActionKey identity actionType appUuid = do
   createActionKeyWithHash identity actionType appUuid (U.toString hash)
 
 createActionKeyWithHash
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     , ToField aType
-     , ToField identity
-     )
+  :: (AppContextC s sc m, ToField aType, ToField identity)
   => identity
   -> aType
   -> U.UUID
@@ -74,18 +46,7 @@ createActionKeyWithHash identity actionType appUuid hash =
     insertActionKey actionKey
     return actionKey
 
-cleanActionKeys
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => m ()
+cleanActionKeys :: AppContextC s sc m => m ()
 cleanActionKeys = do
   now <- liftIO getCurrentTime
   let timeDelta = realToFrac . toInteger $ nominalDayInSeconds * (-1)

@@ -24,8 +24,8 @@ import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Public
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Acl.AclService
 import Wizard.Service.KnowledgeModel.KnowledgeModelValidation
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Migration.Metamodel.MigratorService

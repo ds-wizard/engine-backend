@@ -1,4 +1,4 @@
-module Wizard.Service.Acl.AclService (
+module Wizard.Model.Context.AclContext (
   AclContext (..),
   module Wizard.Constant.Acl,
   module Wizard.Model.User.User,

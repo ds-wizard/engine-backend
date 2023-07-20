@@ -1,12 +1,12 @@
 module WizardLib.Public.Service.Cache.UserTokenCache where
 
-import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadIO, MonadReader, ask, liftIO)
+import Control.Monad.Reader (ask, liftIO)
 import qualified Data.Cache as C
 import qualified Data.Hashable as H
 import qualified Data.UUID as U
 import GHC.Records
 
+import Shared.Common.Model.Context.AppContext
 import Shared.Common.Util.String
 import WizardLib.Public.Model.User.UserToken
 import WizardLib.Public.Service.Cache.Common
@@ -15,7 +15,7 @@ cacheName = "UserToken"
 
 cacheKey uuid = f' "uuid: '%s'" [uuid]
 
-addToCache :: (MonadIO m, MonadReader s m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => UserToken -> m ()
+addToCache :: (AppContextC s sc m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken)) => UserToken -> m ()
 addToCache record = do
   let key = cacheKey (U.toString record.uuid)
   logCacheAddBefore cacheName key
@@ -24,13 +24,13 @@ addToCache record = do
   logCacheAddAfter cacheName key
   return ()
 
-getAllFromCache :: (MonadIO m, MonadReader s m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => m [UserToken]
+getAllFromCache :: (AppContextC s sc m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken)) => m [UserToken]
 getAllFromCache = do
   cache <- getCache
   records <- liftIO $ C.toList cache
   return . fmap (\(_, v, _) -> v) $ records
 
-getFromCache :: (MonadIO m, MonadReader s m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> m (Maybe UserToken)
+getFromCache :: (AppContextC s sc m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken)) => String -> m (Maybe UserToken)
 getFromCache uuid = do
   let key = cacheKey uuid
   logCacheGetBefore cacheName key
@@ -44,7 +44,7 @@ getFromCache uuid = do
       logCacheGetMissed cacheName key
       return Nothing
 
-updateCache :: (MonadIO m, MonadReader s m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => UserToken -> m ()
+updateCache :: (AppContextC s sc m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken)) => UserToken -> m ()
 updateCache record = do
   let key = cacheKey (U.toString record.uuid)
   logCacheModifyBefore cacheName key
@@ -53,14 +53,14 @@ updateCache record = do
   logCacheModifyAfter cacheName key
   return ()
 
-deleteAllFromCache :: (MonadIO m, MonadReader s m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => m ()
+deleteAllFromCache :: (AppContextC s sc m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken)) => m ()
 deleteAllFromCache = do
   logCacheDeleteAllBefore cacheName
   cache <- getCache
   liftIO $ C.purge cache
   logCacheDeleteAllFinished cacheName
 
-deleteFromCache :: (MonadIO m, MonadReader s m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> m ()
+deleteFromCache :: (AppContextC s sc m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken)) => String -> m ()
 deleteFromCache uuid = do
   let key = cacheKey uuid
   logCacheDeleteBefore cacheName key
@@ -68,12 +68,12 @@ deleteFromCache uuid = do
   liftIO $ C.delete cache (H.hash key)
   logCacheDeleteFinished cacheName key
 
-countCache :: (MonadIO m, MonadReader s m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => m Int
+countCache :: (AppContextC s sc m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken)) => m Int
 countCache = do
   iCache <- getCache
   liftIO $ C.size iCache
 
-getCache :: (MonadIO m, MonadReader s m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => m (C.Cache Int UserToken)
+getCache :: (AppContextC s sc m, HasField "cache'" s serverCache, HasField "userToken" serverCache (C.Cache Int UserToken)) => m (C.Cache Int UserToken)
 getCache = do
   context <- ask
   let cache = context.cache'

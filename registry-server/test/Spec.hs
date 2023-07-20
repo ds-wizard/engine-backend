@@ -57,6 +57,7 @@ prepareWebApp runCallback =
               , buildInfoConfig = buildInfoConfig
               , dbPool = dbPool
               , s3Client = s3Client
+              , httpClientManager = httpClientManager
               }
       withResource dbPool $ \dbConnection -> do
         let appContext =
@@ -66,6 +67,7 @@ prepareWebApp runCallback =
                 , dbPool = dbPool
                 , dbConnection = Just dbConnection
                 , s3Client = s3Client
+                , httpClientManager = httpClientManager
                 , traceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
                 , currentOrganization = Just orgGlobal
                 }

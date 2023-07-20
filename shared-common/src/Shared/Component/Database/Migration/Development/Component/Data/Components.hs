@@ -1,6 +1,6 @@
-module Shared.Common.Database.Migration.Development.Component.Data.Components where
+module Shared.Component.Database.Migration.Development.Component.Data.Components where
 
-import Shared.Common.Model.Component.Component
+import Shared.Component.Model.Component.Component
 import Shared.Common.Util.Date
 
 mailComponent :: Component

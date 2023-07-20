@@ -21,8 +21,8 @@ import Shared.Common.Util.Uuid
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Model.App.App
 import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Acl.AclService
 import qualified Wizard.Service.User.UserMapper as UM
 import Wizard.Util.Context
 

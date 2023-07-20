@@ -1,4 +1,4 @@
-module Shared.Common.Model.Component.Component where
+module Shared.Component.Model.Component.Component where
 
 import Data.Time
 import GHC.Generics

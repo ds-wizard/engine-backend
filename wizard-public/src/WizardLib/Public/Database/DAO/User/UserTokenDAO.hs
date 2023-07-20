@@ -1,12 +1,8 @@
 module WizardLib.Public.Database.DAO.User.UserTokenDAO where
 
-import Control.Monad.Except (MonadError)
-import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadReader, asks)
+import Control.Monad.Reader (asks)
 import qualified Data.Cache as C
 import Data.Maybe (maybeToList)
-import Data.Pool
 import Data.String (fromString)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
@@ -14,7 +10,7 @@ import GHC.Int
 import GHC.Records
 
 import Shared.Common.Database.DAO.Common
-import Shared.Common.Model.Error.Error
+import Shared.Common.Model.Context.AppContext
 import Shared.Common.Util.Cache
 import Shared.Common.Util.Logger
 import Shared.Common.Util.String
@@ -28,33 +24,13 @@ entityName = "user_token"
 
 pageLabel = "tokens"
 
-findUserTokens
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => m [UserToken]
+findUserTokens :: AppContextC s sc m => m [UserToken]
 findUserTokens = do
   appUuid <- asks (.appUuid')
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findUserTokensByUserUuidAndType
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
+  :: AppContextC s sc m
   => U.UUID
   -> UserTokenType
   -> Maybe U.UUID
@@ -77,85 +53,29 @@ findUserTokensByUserUuidAndType userUuid tokenType mCurrentTokenUuid = do
   let action conn = query conn sql params
   runDB action
 
-findUserTokensByUserUuid
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => U.UUID
-  -> m [UserToken]
+findUserTokensByUserUuid :: AppContextC s sc m => U.UUID -> m [UserToken]
 findUserTokensByUserUuid userUuid = do
   appUuid <- asks (.appUuid')
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("user_uuid", U.toString userUuid)]
 
-findUserTokensBySessionState
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> m [UserToken]
+findUserTokensBySessionState :: AppContextC s sc m => String -> m [UserToken]
 findUserTokensBySessionState sessionState = do
   appUuid <- asks (.appUuid')
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("session_state", sessionState)]
 
-findUserTokensByValue
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> m [UserToken]
+findUserTokensByValue :: AppContextC s sc m => String -> m [UserToken]
 findUserTokensByValue value = do
   appUuid <- asks (.appUuid')
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("value", value)]
 
-findUserTokensByAppUuid
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => U.UUID
-  -> m [UserToken]
+findUserTokensByAppUuid :: AppContextC s sc m => U.UUID -> m [UserToken]
 findUserTokensByAppUuid appUuid = do
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findUserTokenByUuid
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
+  :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
-     , MonadIO m
      )
   => U.UUID
   -> m UserToken
@@ -166,17 +86,9 @@ findUserTokenByUuid uuid = getFromCacheOrDb getFromCache addToCache go (U.toStri
       createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 insertUserToken
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
+  :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
-     , MonadIO m
      )
   => UserToken
   -> m Int64
@@ -185,32 +97,10 @@ insertUserToken userToken = do
   addToCache userToken
   return result
 
-deleteUserTokens
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => m Int64
+deleteUserTokens :: AppContextC s sc m => m Int64
 deleteUserTokens = createDeleteEntitiesFn entityName
 
-deleteUserTokensWithExpiration
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => m Int64
+deleteUserTokensWithExpiration :: AppContextC s sc m => m Int64
 deleteUserTokensWithExpiration = do
   let sql = f' "DELETE FROM %s WHERE expires_at <= now()" [entityName]
   logInfoI _CMP_DATABASE (trim sql)
@@ -218,17 +108,9 @@ deleteUserTokensWithExpiration = do
   runDB action
 
 deleteUserTokenByUuid
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
+  :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
-     , MonadIO m
      )
   => U.UUID
   -> m Int64
@@ -239,17 +121,9 @@ deleteUserTokenByUuid uuid = do
   return result
 
 deleteUserTokenByUuidAndAppUuid
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
+  :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
-     , MonadIO m
      )
   => U.UUID
   -> U.UUID

@@ -1,10 +1,8 @@
 module Shared.Common.Database.DAO.Common where
 
 import Control.Monad (when)
-import Control.Monad.Except (MonadError, catchError, throwError)
-import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadReader, ask, liftIO)
+import Control.Monad.Except (catchError, throwError)
+import Control.Monad.Reader (ask, liftIO)
 import qualified Data.ByteString.Char8 as BS
 import Data.Maybe
 import Data.Pool
@@ -18,7 +16,6 @@ import Database.PostgreSQL.Simple.Internal
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
-import GHC.Records
 
 import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Localization.Messages.Public
@@ -26,52 +23,32 @@ import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
+import Shared.Common.Model.Context.AppContext
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.ByteString (toByteString)
 import Shared.Common.Util.Logger
 import Shared.Common.Util.String (toSnake, trim)
 
-runDB
-  :: (MonadReader s m, HasField "dbPool'" s (Pool Connection), HasField "dbConnection'" s (Maybe Connection), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadIO m)
-  => (Connection -> IO b)
-  -> m b
+runDB :: AppContextC s sc m => (Connection -> IO b) -> m b
 runDB action = do
   context <- ask
   case context.dbConnection' of
     Just dbConnection -> liftIO $ action dbConnection
     Nothing -> liftIO $ withResource context.dbPool' action
 
-runDBImmediately
-  :: (MonadReader s m, HasField "dbPool'" s (Pool Connection), HasField "dbConnection'" s (Maybe Connection), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadIO m)
-  => (Connection -> IO b)
-  -> m b
+runDBImmediately :: AppContextC s sc m => (Connection -> IO b) -> m b
 runDBImmediately action = do
   context <- ask
   liftIO $ withResource context.dbPool' action
 
-runRawDB
-  :: (MonadReader s m, HasField "dbPool'" s (Pool Connection), HasField "dbConnection'" s (Maybe Connection), HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadIO m)
-  => (LibPQ.Connection -> IO b)
-  -> m b
+runRawDB :: AppContextC s sc m => (LibPQ.Connection -> IO b) -> m b
 runRawDB action = do
   context <- ask
   case context.dbConnection' of
     Just dbConnection -> liftIO $ dbConnection `withConnection` action
     Nothing -> liftIO $ withResource context.dbPool' (`withConnection` action)
 
-logQuery
-  :: ( MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , ToRow q
-     , MonadLogger m
-     )
-  => Query
-  -> q
-  -> m ()
+logQuery :: (AppContextC s sc m, ToRow q) => Query -> q -> m ()
 logQuery sql params = do
   context <- ask
   exploded <-
@@ -81,19 +58,7 @@ logQuery sql params = do
   let formatted = trim . BS.unpack $ exploded
   logInfoI _CMP_DATABASE formatted
 
-logInsertAndUpdate
-  :: ( MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , ToRow q
-     , MonadLogger m
-     )
-  => Query
-  -> q
-  -> m ()
+logInsertAndUpdate :: (AppContextC s sc m, ToRow q) => Query -> q -> m ()
 logInsertAndUpdate sql params = do
   let cut p =
         if length p > 50
@@ -102,20 +67,7 @@ logInsertAndUpdate sql params = do
   let paramsS = show . fmap (cut . showAction) . toRow $ params
   logInfoI _CMP_DATABASE $ f' "%s  with params %s" [trim . show $ sql, paramsS]
 
-runInTransaction
-  :: ( MonadIO m
-     , MonadReader s m
-     , MonadIO m
-     , HasField "dbPool'" s (Pool Connection)
-     , MonadError AppError m
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     )
-  => (String -> String -> m ())
-  -> (String -> String -> m ())
-  -> m a
-  -> m a
+runInTransaction :: AppContextC s sc m => (String -> String -> m ()) -> (String -> String -> m ()) -> m a -> m a
 runInTransaction logInfoFn logWarnFn action = do
   context <- ask
   when
@@ -140,79 +92,24 @@ runInTransaction logInfoFn logWarnFn action = do
       logWarnFn _CMP_DATABASE (show error)
       throwError error
 
-createFindEntitiesFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , FromRow entity
-     , FromRow entity
-     )
-  => String
-  -> m [entity]
+createFindEntitiesFn :: (AppContextC s sc m, FromRow entity) => String -> m [entity]
 createFindEntitiesFn = createFindEntitiesWithFieldsFn "*"
 
-createFindEntitiesWithFieldsFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , FromRow entity
-     , FromRow entity
-     )
-  => String
-  -> String
-  -> m [entity]
+createFindEntitiesWithFieldsFn :: (AppContextC s sc m, FromRow entity) => String -> String -> m [entity]
 createFindEntitiesWithFieldsFn fields entityName = do
   let sql = f' "SELECT %s FROM %s" [fields, entityName]
   logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   runDB action
 
-createFindEntitiesSortedFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , FromRow entity
-     , FromRow entity
-     )
-  => String
-  -> [Sort]
-  -> m [entity]
+createFindEntitiesSortedFn :: (AppContextC s sc m, FromRow entity) => String -> [Sort] -> m [entity]
 createFindEntitiesSortedFn entityName sort = do
   let sql = f' "SELECT * FROM %s %s" [entityName, mapSort sort]
   logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   runDB action
 
-createFindEntitiesByFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , FromRow entity
-     , FromRow entity
-     )
-  => String
-  -> [(String, String)]
-  -> m [entity]
+createFindEntitiesByFn :: (AppContextC s sc m, FromRow entity) => String -> [(String, String)] -> m [entity]
 createFindEntitiesByFn entityName [] = createFindEntitiesFn entityName
 createFindEntitiesByFn entityName queryParams = do
   let sql = fromString $ f' "SELECT * FROM %s WHERE %s" [entityName, mapToDBQuerySql queryParams]
@@ -221,22 +118,7 @@ createFindEntitiesByFn entityName queryParams = do
   let action conn = query conn sql params
   runDB action
 
-createFindEntitiesWithFieldsByFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , FromRow entity
-     , FromRow entity
-     )
-  => String
-  -> String
-  -> [(String, String)]
-  -> m [entity]
+createFindEntitiesWithFieldsByFn :: (AppContextC s sc m, FromRow entity) => String -> String -> [(String, String)] -> m [entity]
 createFindEntitiesWithFieldsByFn fields entityName [] = createFindEntitiesWithFieldsFn fields entityName
 createFindEntitiesWithFieldsByFn fields entityName queryParams = do
   let sql = fromString $ f' "SELECT %s FROM %s WHERE %s" [fields, entityName, mapToDBQuerySql queryParams]
@@ -245,22 +127,7 @@ createFindEntitiesWithFieldsByFn fields entityName queryParams = do
   let action conn = query conn sql params
   runDB action
 
-createFindEntitiesBySortedFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , FromRow entity
-     , FromRow entity
-     )
-  => String
-  -> [(String, String)]
-  -> [Sort]
-  -> m [entity]
+createFindEntitiesBySortedFn :: (AppContextC s sc m, FromRow entity) => String -> [(String, String)] -> [Sort] -> m [entity]
 createFindEntitiesBySortedFn entityName [] sort = createFindEntitiesSortedFn entityName sort
 createFindEntitiesBySortedFn entityName queryParams sort = do
   let sql = fromString $ f' "SELECT * FROM %s WHERE %s %s" [entityName, mapToDBQuerySql queryParams, mapSort sort]
@@ -269,38 +136,10 @@ createFindEntitiesBySortedFn entityName queryParams sort = do
   let action conn = query conn sql params
   runDB action
 
-createFindEntityByFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , FromRow entity
-     )
-  => String
-  -> [(String, String)]
-  -> m entity
+createFindEntityByFn :: (AppContextC s sc m, FromRow entity) => String -> [(String, String)] -> m entity
 createFindEntityByFn = createFindEntityWithFieldsByFn "*" False
 
-createFindEntityWithFieldsByFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , FromRow entity
-     )
-  => String
-  -> Bool
-  -> String
-  -> [(String, String)]
-  -> m entity
+createFindEntityWithFieldsByFn :: (AppContextC s sc m, FromRow entity) => String -> Bool -> String -> [(String, String)] -> m entity
 createFindEntityWithFieldsByFn fields isForUpdate entityName queryParams = do
   let forUpdate =
         if isForUpdate
@@ -322,37 +161,10 @@ createFindEntityWithFieldsByFn fields isForUpdate entityName queryParams = do
               [entityName, show (fmap snd queryParams)]
           )
 
-createFindEntityByFn'
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , FromRow entity
-     )
-  => String
-  -> [(String, String)]
-  -> m (Maybe entity)
+createFindEntityByFn' :: (AppContextC s sc m, FromRow entity) => String -> [(String, String)] -> m (Maybe entity)
 createFindEntityByFn' = createFindEntityWithFieldsByFn' "*"
 
-createFindEntityWithFieldsByFn'
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , FromRow entity
-     )
-  => String
-  -> String
-  -> [(String, String)]
-  -> m (Maybe entity)
+createFindEntityWithFieldsByFn' :: (AppContextC s sc m, FromRow entity) => String -> String -> [(String, String)] -> m (Maybe entity)
 createFindEntityWithFieldsByFn' fields entityName queryParams = do
   let sql = fromString $ f' "SELECT %s FROM %s WHERE %s" [fields, entityName, mapToDBQuerySql queryParams]
   let params = fmap snd queryParams
@@ -371,17 +183,7 @@ createFindEntityWithFieldsByFn' fields entityName queryParams = do
           )
 
 createFindEntitiesPageableQuerySortFn
-  :: ( MonadReader s m
-     , FromRow entity
-     , ToRow q
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     )
+  :: (AppContextC s sc m, ToRow q, FromRow entity)
   => String
   -> String
   -> Pageable
@@ -416,16 +218,7 @@ createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort fields 
     return $ Page pageLabel metadata entities
 
 createFindColumnBySqlPageFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , FromField entity
-     )
+  :: (AppContextC s sc m, FromField entity)
   => String
   -> Pageable
   -> Query
@@ -450,19 +243,7 @@ createFindColumnBySqlPageFn pageLabel pageable sql params count =
             }
     return $ Page pageLabel metadata (concat entities)
 
-createInsertFn
-  :: ( ToRow q
-     , MonadLogger m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> q
-  -> m Int64
+createInsertFn :: (AppContextC s sc m, ToRow entity) => String -> entity -> m Int64
 createInsertFn entityName entity = do
   let sql = fromString $ f' "INSERT INTO %s VALUES (%s)" [entityName, generateQuestionMarks' entity]
   let params = entity
@@ -470,19 +251,7 @@ createInsertFn entityName entity = do
   let action conn = execute conn sql params
   runDB action
 
-createInsertWithoutTransactionFn
-  :: ( ToRow q
-     , MonadLogger m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> q
-  -> m Int64
+createInsertWithoutTransactionFn :: (AppContextC s sc m, ToRow entity) => String -> entity -> m Int64
 createInsertWithoutTransactionFn entityName entity = do
   let sql = fromString $ f' "INSERT INTO %s VALUES (%s)" [entityName, generateQuestionMarks' entity]
   let params = entity
@@ -490,37 +259,14 @@ createInsertWithoutTransactionFn entityName entity = do
   let action conn = execute conn sql params
   runDBImmediately action
 
-createDeleteEntitiesFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> m Int64
+createDeleteEntitiesFn :: AppContextC s sc m => String -> m Int64
 createDeleteEntitiesFn entityName = do
   let sql = f' "DELETE FROM %s" [entityName]
   logInfoI _CMP_DATABASE (trim sql)
   let action conn = execute_ conn (fromString sql)
   runDB action
 
-createDeleteEntitiesByFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> [(String, String)]
-  -> m Int64
+createDeleteEntitiesByFn :: AppContextC s sc m => String -> [(String, String)] -> m Int64
 createDeleteEntitiesByFn entityName [] = createDeleteEntitiesFn entityName
 createDeleteEntitiesByFn entityName queryParams = do
   let sql = fromString $ f' "DELETE FROM %s WHERE %s" [entityName, mapToDBQuerySql queryParams]
@@ -529,39 +275,14 @@ createDeleteEntitiesByFn entityName queryParams = do
   let action conn = execute conn sql params
   runDB action
 
-createDeleteEntityLikeFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> String
-  -> [String]
-  -> m Int64
+createDeleteEntityLikeFn :: AppContextC s sc m => String -> String -> [String] -> m Int64
 createDeleteEntityLikeFn entityName key params = do
   let sql = fromString $ f' "DELETE FROM %s WHERE %s IN (%s)" [entityName, key, generateQuestionMarks params]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
 
-createDeleteEntityByFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> [(String, String)]
-  -> m Int64
+createDeleteEntityByFn :: AppContextC s sc m => String -> [(String, String)] -> m Int64
 createDeleteEntityByFn entityName queryParams = do
   let sql = fromString $ f' "DELETE FROM %s WHERE %s" [entityName, mapToDBQuerySql queryParams]
   let params = fmap snd queryParams
@@ -569,18 +290,7 @@ createDeleteEntityByFn entityName queryParams = do
   let action conn = execute conn sql params
   runDB action
 
-createCountFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> m Int
+createCountFn :: AppContextC s sc m => String -> m Int64
 createCountFn entityName = do
   let sql = f' "SELECT COUNT(*) FROM %s" [entityName]
   logInfoI _CMP_DATABASE (trim sql)
@@ -590,21 +300,7 @@ createCountFn entityName = do
     [count] -> return . fromOnly $ count
     _ -> throwError $ GeneralServerError (f' "createCountFn: there are no selected rows or more than one" [])
 
-createCountByFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , ToRow q
-     )
-  => String
-  -> String
-  -> q
-  -> m Int
+createCountByFn :: (AppContextC s sc m, ToRow q) => String -> String -> q -> m Int
 createCountByFn entityName condition queryParams = do
   let sql = fromString $ f' "SELECT COUNT(*) FROM %s %s" [entityName, condition]
   let params = queryParams
@@ -615,19 +311,7 @@ createCountByFn entityName condition queryParams = do
     [count] -> return . fromOnly $ count
     _ -> return 0
 
-createCountWithSqlFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     )
-  => Query
-  -> [String]
-  -> m Int
+createCountWithSqlFn :: AppContextC s sc m => Query -> [String] -> m Int
 createCountWithSqlFn sql params = do
   logQuery sql params
   let action conn = query conn sql params
@@ -636,22 +320,7 @@ createCountWithSqlFn sql params = do
     [count] -> return . fromOnly $ count
     _ -> return 0
 
-createSumByFn
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , MonadIO m
-     , ToRow q
-     )
-  => String
-  -> String
-  -> String
-  -> q
-  -> m Int64
+createSumByFn :: (AppContextC s sc m, ToRow q) => String -> String -> String -> q -> m Int64
 createSumByFn entityName field condition queryParams = do
   let sql = fromString $ f' "SELECT COALESCE(SUM(%s)::bigint, 0) FROM %s %s" [field, entityName, condition]
   let params = queryParams

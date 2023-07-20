@@ -9,9 +9,9 @@ import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileChangeDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Service.Acl.AclService
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.DocumentTemplate.File.DocumentTemplateFileMapper
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO

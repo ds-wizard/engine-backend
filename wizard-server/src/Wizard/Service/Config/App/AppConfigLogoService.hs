@@ -9,9 +9,9 @@ import Shared.Common.Util.Logger
 import Shared.Common.Util.String (splitOn)
 import Wizard.Database.DAO.Common
 import Wizard.Model.Config.AppConfig
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.S3.Public.PublicS3
-import Wizard.Service.Acl.AclService
 import Wizard.Service.Common
 import Wizard.Service.Config.App.AppConfigMapper
 import Wizard.Service.Config.App.AppConfigService

@@ -7,6 +7,7 @@ import Control.Monad.Reader (MonadReader, ReaderT)
 import Data.Pool (Pool)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple (Connection)
+import Network.HTTP.Client (Manager)
 import Network.Minio (MinioConn)
 
 import Registry.Model.Config.ServerConfig
@@ -19,9 +20,10 @@ data AppContext = AppContext
   , buildInfoConfig :: BuildInfoConfig
   , dbPool :: Pool Connection
   , dbConnection :: Maybe Connection
+  , s3Client :: MinioConn
+  , httpClientManager :: Manager
   , traceUuid :: U.UUID
   , currentOrganization :: Maybe Organization
-  , s3Client :: MinioConn
   }
 
 newtype AppContextM a = AppContextM {runAppContextM :: ReaderT AppContext (LoggingT (ExceptT AppError IO)) a}

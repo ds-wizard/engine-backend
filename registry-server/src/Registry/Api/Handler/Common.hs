@@ -34,6 +34,7 @@ runIn mOrganization transactionState function = do
   buildInfoConfig <- asks buildInfoConfig
   dbPool <- asks dbPool
   s3Client <- asks s3Client
+  httpClientManager <- asks httpClientManager
   let appContext =
         AppContext.AppContext
           { serverConfig = serverConf
@@ -41,6 +42,7 @@ runIn mOrganization transactionState function = do
           , dbPool = dbPool
           , dbConnection = Nothing
           , s3Client = s3Client
+          , httpClientManager = httpClientManager
           , traceUuid = traceUuid
           , currentOrganization = mOrganization
           }

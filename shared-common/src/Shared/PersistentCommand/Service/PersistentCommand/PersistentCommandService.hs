@@ -2,20 +2,14 @@ module Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandServi
 
 import qualified Control.Exception.Base as E
 import Control.Monad (forever, unless, when)
-import Control.Monad.Except (MonadError)
-import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadReader, ask, liftIO)
+import Control.Monad.Reader (ask, liftIO)
 import Data.Aeson (Value (..), toJSON)
 import Data.Foldable (traverse_)
 import qualified Data.HashMap.Strict as HashMap
 import Data.Maybe (fromMaybe)
-import Data.Pool
 import qualified Data.Text as T
 import Data.Time
 import qualified Data.UUID as U
-import Database.PostgreSQL.Simple
-import GHC.Records
 import System.Log.Raven (initRaven, register, stderrFallback)
 import System.Log.Raven.Transport.HttpConduit (sendRecord)
 import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..))
@@ -23,7 +17,7 @@ import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..))
 import Shared.Common.Database.DAO.Common
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
-import Shared.Common.Model.Error.Error
+import Shared.Common.Model.Context.AppContext
 import Shared.Common.Service.Acl.AclService
 import Shared.Common.Util.Error (tryError)
 import Shared.Common.Util.Logger
@@ -32,19 +26,7 @@ import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommandSimple
 
 runPersistentCommands
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , MonadIO m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "sentry" sc ServerConfigSentry
-     , HasField "buildInfoConfig'" s BuildInfoConfig
-     , AclContext m
-     )
+  :: AppContextC s sc m
   => (function -> appContext -> IO (Either String (PersistentCommandState, Maybe String)))
   -> (PersistentCommandSimple U.UUID -> s -> m appContext)
   -> (PersistentCommand U.UUID -> m a2)
@@ -61,18 +43,7 @@ runPersistentCommands runAppContextWithAppContext updateContext createPersistent
     )
 
 runPersistentCommand
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , MonadIO m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "sentry" sc ServerConfigSentry
-     , HasField "buildInfoConfig'" s BuildInfoConfig
-     )
+  :: AppContextC s sc m
   => (function -> appContext -> IO (Either String (PersistentCommandState, Maybe String)))
   -> (PersistentCommandSimple U.UUID -> s -> m appContext)
   -> (PersistentCommand U.UUID -> m a2)
@@ -89,18 +60,7 @@ runPersistentCommand runAppContextWithAppContext updateContext createPersistentC
       executePersistentCommandByUuid runAppContextWithAppContext execute force commandSimple.uuid updatedContext
 
 executePersistentCommandByUuid
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , MonadIO m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "sentry" sc ServerConfigSentry
-     , HasField "buildInfoConfig'" s BuildInfoConfig
-     )
+  :: AppContextC s sc m
   => (function -> appContext -> IO (Either String (PersistentCommandState, Maybe String)))
   -> (PersistentCommand U.UUID -> function)
   -> Bool
@@ -135,18 +95,7 @@ executePersistentCommandByUuid runAppContextWithAppContext execute force uuid co
       )
 
 tranferPersistentCommandByUuid
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , MonadIO m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "sentry" sc ServerConfigSentry
-     , HasField "buildInfoConfig'" s BuildInfoConfig
-     )
+  :: AppContextC s sc m
   => (PersistentCommand U.UUID -> m a)
   -> U.UUID
   -> m ()
@@ -177,19 +126,7 @@ tranferPersistentCommandByUuid createPersistentCommand uuid =
       )
 
 runPersistentCommandChannelListener
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , MonadIO m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "sentry" sc ServerConfigSentry
-     , HasField "buildInfoConfig'" s BuildInfoConfig
-     , AclContext m
-     )
+  :: AppContextC s sc m
   => (function -> appContext -> IO (Either String (PersistentCommandState, Maybe String)))
   -> (PersistentCommandSimple U.UUID -> s -> m appContext)
   -> (PersistentCommand U.UUID -> m a2)
@@ -205,21 +142,15 @@ runPersistentCommandChannelListener runAppContextWithAppContext updateContext cr
 -- PRIVATE
 -- --------------------------------
 sendToSentry
-  :: ( MonadReader context m
-     , HasField "serverConfig'" context sc
-     , HasField "sentry" sc ServerConfigSentry
-     , HasField "buildInfoConfig'" context BuildInfoConfig
-     , MonadLogger m
-     , MonadIO m
-     )
+  :: AppContextC s sc m
   => PersistentCommand U.UUID
   -> m ()
 sendToSentry command = do
   context <- ask
   when
-    (context.serverConfig'.sentry.enabled)
+    (context.serverConfig'.sentry'.enabled)
     ( do
-        let sentryDsn = context.serverConfig'.sentry.dsn
+        let sentryDsn = context.serverConfig'.sentry'.dsn
         sentryService <- liftIO $ initRaven sentryDsn id sendRecord stderrFallback
         let buildVersion = context.buildInfoConfig'.version
         let message = fromMaybe "" command.lastErrorMessage

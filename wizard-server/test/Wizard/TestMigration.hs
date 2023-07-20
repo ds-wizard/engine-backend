@@ -3,8 +3,8 @@ module Wizard.TestMigration where
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.Audit.Database.DAO.Audit.AuditDAO
 import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
-import Shared.Common.Database.DAO.Component.ComponentDAO
-import qualified Shared.Common.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
+import Shared.Component.Database.DAO.Component.ComponentDAO
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Shared.Prefab.Database.DAO.Prefab.PrefabDAO
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
