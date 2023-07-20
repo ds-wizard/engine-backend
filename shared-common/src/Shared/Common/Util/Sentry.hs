@@ -1,4 +1,4 @@
-module Registry.Util.Sentry where
+module Shared.Common.Util.Sentry where
 
 import Control.Exception (SomeException (..), fromException)
 import Data.Aeson (Value (..), toJSON)
@@ -20,11 +20,11 @@ createSentryService :: String -> IO SentryService
 createSentryService sentryUrl = initRaven sentryUrl id sendRecord stderrFallback
 
 -- Ignore timeout exception (https://magnus.therning.org/2021-07-03-the-timeout-manager-exception.html)
-sentryOnException :: String -> SentryService -> Maybe WAI.Request -> SomeException -> IO ()
-sentryOnException buildVersion sentryService mRequest exception
+sentryOnException :: String -> (Maybe String -> [(String, Value)]) -> SentryService -> Maybe WAI.Request -> SomeException -> IO ()
+sentryOnException buildVersion getSentryIdentity sentryService mRequest exception
   | Just TimeoutThread <- fromException exception = return ()
   | otherwise = do
-      register sentryService "webServerLogger" Error (format exception) (recordUpdate buildVersion mRequest exception)
+      register sentryService "webServerLogger" Error (format exception) (recordUpdate buildVersion mRequest exception getSentryIdentity)
       defaultOnException mRequest exception
 
 format :: SomeException -> String
@@ -33,19 +33,22 @@ format (SomeException exception) = show exception
 getExceptionType :: SomeException -> String
 getExceptionType (SomeException exception) = show . typeOf $ exception
 
-recordUpdate :: String -> Maybe WAI.Request -> SomeException -> SentryRecord -> SentryRecord
-recordUpdate buildVersion Nothing exception record = record
-recordUpdate buildVersion (Just request) exception record =
+recordUpdate :: String -> Maybe WAI.Request -> SomeException -> (Maybe String -> [(String, Value)]) -> SentryRecord -> SentryRecord
+recordUpdate buildVersion Nothing exception getSentryIdentity record = record
+recordUpdate buildVersion (Just request) exception getSentryIdentity record =
   let headersWithoutAuthorization = filter (not . isAuthorizationHeader) . WAI.requestHeaders $ request
       isAuthorizationHeader (headerName, value) = CI.mk "Authorization" == headerName
       isTraceUuidHeader (headerName, value) = CI.mk "x-trace-uuid" == headerName
+      isHostHeader (headerName, value) = CI.mk "Host" == headerName
       authorizationHeader =
         fmap (\(_, value) -> BS.unpack value) . L.find isAuthorizationHeader . WAI.requestHeaders $ request
       traceUuidHeader = fmap (\(_, value) -> BS.unpack value) . L.find isTraceUuidHeader . WAI.requestHeaders $ request
+      hostHeader = fmap (\(_, value) -> BS.unpack value) . L.find isHostHeader . WAI.requestHeaders $ request
       sanitizedRequest = request {WAI.requestHeaders = headersWithoutAuthorization}
       url = T.pack . BS.unpack . WAI.rawPathInfo $ request
       method = T.pack . BS.unpack . WAI.requestMethod $ request
       queryString = T.pack . BS.unpack . WAI.rawQueryString $ request
+      host = T.pack . fromMaybe "" $ hostHeader
       exceptionType = T.pack . getExceptionType $ exception
       exceptionValue = T.pack . format $ exception
    in record
@@ -55,7 +58,7 @@ recordUpdate buildVersion (Just request) exception record =
         , srRelease = Just buildVersion
         , srInterfaces =
             HashMap.fromList
-              [
+              ([
                 ( "sentry.interfaces.Http"
                 , toJSON $
                     HashMap.fromList
@@ -67,6 +70,7 @@ recordUpdate buildVersion (Just request) exception record =
                             then Null
                             else String queryString
                         )
+                      , ("headers", toJSON [("Host", host)])
                       ]
                 )
               ,
@@ -74,6 +78,8 @@ recordUpdate buildVersion (Just request) exception record =
                 , toJSON $ HashMap.fromList [("type", String exceptionType), ("value", String exceptionValue)]
                 )
               ]
+              ++ getSentryIdentity authorizationHeader
+              )
         , srTags =
             if isNothing traceUuidHeader
               then HashMap.empty

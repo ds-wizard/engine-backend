@@ -18,6 +18,7 @@ import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Util.Logger
+import Shared.Common.Util.Sentry
 import Wizard.Api.Api
 import Wizard.Api.Handler.Swagger.Api
 import Wizard.Api.Middleware.LoggingMiddleware
@@ -70,7 +71,7 @@ createSentryHandler context = do
       let sentryUrl = context.serverConfig.sentry.dsn
       sentryService <- createSentryService sentryUrl
       let buildVersion = context.buildInfoConfig.version
-      return $ sentryOnException buildVersion sentryService
+      return $ sentryOnException buildVersion getSentryIdentity sentryService
     else do
       return
         ( \_ error -> do

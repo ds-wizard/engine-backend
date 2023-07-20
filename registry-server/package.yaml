@@ -61,7 +61,6 @@ library:
   - text
   - text-replace
   - time
-  - time-manager
   - transformers
   - unordered-containers
   - uri-encode
