@@ -15,14 +15,14 @@ import Shared.Common.Database.DAO.Common hiding (runInTransaction)
 import qualified Shared.Common.Database.DAO.Common as S
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
+import Shared.Common.Util.Logger
 import Shared.Common.Util.String
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Util.Logger
 import WizardLib.KnowledgeModel.Database.Mapping.Package.Package ()
 
 runInTransaction :: AppContextM a -> AppContextM a
-runInTransaction = S.runInTransaction logInfoU logWarnU
+runInTransaction = S.runInTransaction logInfoI logWarnI
 
 createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel pageable sort fields entityId mQuery mEnabled mOrganizationId mEntityId mState stateCondition =
   -- 1. Prepare variables
@@ -84,7 +84,7 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
             , show skip
             , show sizeI
             ]
-    logInfoU _CMP_DATABASE (trim sql)
+    logInfoI _CMP_DATABASE (trim sql)
     let action conn =
           query
             conn

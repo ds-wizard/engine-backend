@@ -11,12 +11,12 @@ import GHC.Int
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Document.Document ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Document.Document
-import Wizard.Util.Logger
 
 entityName = "document"
 

@@ -16,6 +16,7 @@ import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..))
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.ContextResult
+import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Model.App.App
@@ -24,7 +25,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Acl.AclService
 import qualified Wizard.Service.User.UserMapper as UM
 import Wizard.Util.Context
-import Wizard.Util.Logger
 
 runFunctionForAllApps :: String -> AppContextM (ContextResult, Maybe String) -> AppContextM ()
 runFunctionForAllApps functionName function = do
@@ -34,7 +34,7 @@ runFunctionForAllApps functionName function = do
 runFunctionUnderDifferentUserAndApp
   :: Maybe User -> U.UUID -> String -> AppContextM (ContextResult, Maybe String) -> AppContextM ()
 runFunctionUnderDifferentUserAndApp mUser appUuid functionName function = do
-  logInfoU
+  logInfoI
     _CMP_SERVICE
     ( f'
         "Running '%s' with app ('%s') and user ('%s') started"
@@ -50,14 +50,14 @@ runFunctionUnderDifferentUserAndApp mUser appUuid functionName function = do
           Left exception -> (ErrorContextResult, Just . show $ exception)
   case resultState of
     SuccessContextResult ->
-      logInfoU
+      logInfoI
         _CMP_SERVICE
         ( f'
             "Running '%s' with app ('%s') and user ('%s') finished successfully. It returns: '%s''"
             [functionName, U.toString appUuid, show . fmap (U.toString . ((.uuid))) $ mUser, show mReturnedMessage]
         )
     ErrorContextResult -> do
-      logInfoU
+      logInfoI
         _CMP_SERVICE
         ( f'
             "Running '%s' with app ('%s') and user ('%s') failed. The reason is: '%s''"

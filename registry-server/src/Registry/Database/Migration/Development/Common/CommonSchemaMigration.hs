@@ -5,7 +5,7 @@ import Database.PostgreSQL.Simple
 import Registry.Database.DAO.Common
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
-import Registry.Util.Logger
+import Shared.Common.Util.Logger
 
 runMigration :: AppContextM ()
 runMigration = do

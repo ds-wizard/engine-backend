@@ -1,6 +1,7 @@
 module Wizard.Database.Migration.Development.Branch.BranchMigration where
 
 import Shared.Common.Constant.Component
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.Migration.Development.Branch.Data.Branches
@@ -9,7 +10,6 @@ import Wizard.Model.Branch.BranchData
 import Wizard.Model.Branch.BranchList
 import Wizard.Service.Branch.BranchService
 import Wizard.Service.User.UserMapper
-import Wizard.Util.Logger
 
 runMigration = do
   logInfo _CMP_MIGRATION "(KnowledgeModel/Branch) started"

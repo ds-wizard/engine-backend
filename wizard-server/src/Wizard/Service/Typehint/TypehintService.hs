@@ -5,6 +5,7 @@ import Data.Map.Strict as M
 import Network.URI.Encode (encode)
 
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.Logger
 import Wizard.Api.Resource.Typehint.TypehintDTO
 import Wizard.Api.Resource.Typehint.TypehintRequestDTO
 import Wizard.Database.DAO.Common
@@ -14,7 +15,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.Integration.IntegrationConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Typehint.TypehintMapper
-import Wizard.Util.Logger
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 
@@ -35,7 +35,7 @@ getTypehints reqDto =
         case eiDtos of
           Right iDtos -> return . fmap (toDTO integration.itemUrl) $ iDtos
           Left error -> do
-            logWarnU _CMP_SERVICE error
+            logWarnI _CMP_SERVICE error
             throwError . UserError $ _ERROR_SERVICE_TYPEHINT__INTEGRATION_RETURNS_ERROR
       WidgetIntegration' _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION
   where

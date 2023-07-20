@@ -9,11 +9,11 @@ import System.Cron
 import Prelude hiding (log)
 
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Util.Logger
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Cache.CacheService
 import Wizard.Util.Context
-import Wizard.Util.Logger
 
 cacheWorker :: (MonadSchedule m, Applicative m) => BaseContext -> m ()
 cacheWorker context =

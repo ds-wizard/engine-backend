@@ -14,12 +14,11 @@ import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
-import Shared.Common.Util.String
+import Shared.Common.Util.Logger
 import Wizard.Database.Mapping.QuestionnaireImporter.QuestionnaireImporter ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.QuestionnaireImporter.QuestionnaireImporter
-import Wizard.Util.Logger
 
 entityName = "questionnaire_importer"
 

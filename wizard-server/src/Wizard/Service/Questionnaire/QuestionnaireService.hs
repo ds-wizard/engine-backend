@@ -16,6 +16,7 @@ import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Context.ContextResult
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.List
+import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
@@ -61,7 +62,6 @@ import Wizard.Service.Questionnaire.QuestionnaireAudit
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Questionnaire.QuestionnaireValidation
-import Wizard.Util.Logger
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
@@ -401,7 +401,7 @@ cleanQuestionnaires =
     qtns <- findQuestionnaireWithZeroAcl
     traverse_
       ( \qtn -> do
-          logInfoU _CMP_SERVICE (f' "Clean questionnaire with empty ACL (qtnUuid: '%s')" [U.toString qtn.uuid])
+          logInfoI _CMP_SERVICE (f' "Clean questionnaire with empty ACL (qtnUuid: '%s')" [U.toString qtn.uuid])
           deleteQuestionnaire qtn.uuid False
       )
       qtns
@@ -423,4 +423,4 @@ recomputeQuestionnaireIndication qtnUuid = do
   case mPhasesAnsweredIndication of
     Just phasesAnsweredIndication -> updateQuestionnaireIndicationByUuid qtnUuid phasesAnsweredIndication
     Nothing ->
-      logErrorU _CMP_SERVICE (f' "Can not get phasesAnsweredIndication for the qtn uuid: %s" [U.toString qtnUuid])
+      logErrorI _CMP_SERVICE (f' "Can not get phasesAnsweredIndication for the qtn uuid: %s" [U.toString qtnUuid])

@@ -9,6 +9,7 @@ import Data.Time
 
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.Logger
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.PackageBundle.PackageBundleFileDTO
 import Wizard.Database.DAO.Common
@@ -20,7 +21,6 @@ import Wizard.Service.Owl.Convertor.OwlConvertor
 import Wizard.Service.Owl.Diff.Differ
 import Wizard.Service.Owl.OwlMapper
 import Wizard.Service.Package.PackageMapper
-import Wizard.Util.Logger
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
@@ -28,7 +28,7 @@ import WizardLib.KnowledgeModel.Service.Package.PackageMapper
 
 importOwl :: PackageBundleFileDTO -> AppContextM [PackageSimpleDTO]
 importOwl reqDto = do
-  logInfoU _CMP_SERVICE "Importing OWL..."
+  logInfoI _CMP_SERVICE "Importing OWL..."
   case (reqDto.rootElement, reqDto.name, reqDto.organizationId, reqDto.kmId, reqDto.version) of
     (Just rootElement, Just name, Just organizationId, Just kmId, Just version) -> do
       appUuid <- asks currentAppUuid

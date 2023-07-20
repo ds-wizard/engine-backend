@@ -1,9 +1,9 @@
 module Wizard.Database.Migration.Development.Submission.SubmissionMigration where
 
 import Shared.Common.Constant.Component
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.Migration.Development.Submission.Data.Submissions
-import Wizard.Util.Logger
 
 runMigration = do
   logInfo _CMP_MIGRATION "(Submission/Submission) started"

@@ -17,6 +17,7 @@ import Prelude hiding (id)
 import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Context.ContextResult
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
@@ -31,7 +32,6 @@ import Wizard.Service.Common
 import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Context.ContextService
 import Wizard.Service.Feedback.FeedbackMapper
-import Wizard.Util.Logger
 
 getFeedbacksFiltered :: [(String, String)] -> AppContextM [FeedbackDTO]
 getFeedbacksFiltered queryParams = do
@@ -83,12 +83,12 @@ synchronizeFeedbacks =
           appConfig <- getAppConfig
           if appConfig.questionnaire.feedback.enabled
             then do
-              logInfoU _CMP_WORKER "synchronizing feedback"
+              logInfoI _CMP_WORKER "synchronizing feedback"
               issues <- getIssues
               feedbacks <- findFeedbacks
               now <- liftIO getCurrentTime
               traverse_ (updateOrDeleteFeedback issues now) feedbacks
-            else logInfoU _CMP_WORKER "synchronization is disabled"
+            else logInfoI _CMP_WORKER "synchronization is disabled"
           return (SuccessContextResult, Nothing)
     )
     ( \error -> do

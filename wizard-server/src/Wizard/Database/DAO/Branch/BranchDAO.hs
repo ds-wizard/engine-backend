@@ -12,6 +12,7 @@ import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Branch.Branch ()
 import Wizard.Database.Mapping.Branch.BranchList ()
@@ -19,7 +20,6 @@ import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Util.Logger
 
 entityName = "branch"
 

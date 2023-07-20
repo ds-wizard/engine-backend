@@ -16,7 +16,6 @@ import Registry.Model.Config.ServerConfigIM ()
 import Registry.Model.Config.ServerConfigJM ()
 import Registry.Model.Context.BaseContext
 import Registry.Service.Config.Server.ServerConfigValidation
-import Registry.Util.Logger
 import Shared.Common.Bootstrap.Config
 import Shared.Common.Bootstrap.HttpClient
 import Shared.Common.Bootstrap.Postgres
@@ -24,6 +23,7 @@ import Shared.Common.Bootstrap.S3
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Service.Config.BuildInfo.BuildInfoConfigService
 import Shared.Common.Service.Config.Server.ServerConfigService
+import Shared.Common.Util.Logger
 
 runApplication :: IO ()
 runApplication = do

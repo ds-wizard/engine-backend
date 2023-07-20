@@ -9,12 +9,12 @@ import System.Cron
 import Prelude hiding (log)
 
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Util.Logger
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Util.Context
-import Wizard.Util.Logger
 import WizardLib.Public.Service.UserToken.UserTokenService
 
 cleanUserTokenWorker :: (MonadSchedule m, Applicative m) => BaseContext -> m ()

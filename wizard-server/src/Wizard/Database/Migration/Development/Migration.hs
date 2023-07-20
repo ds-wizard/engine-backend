@@ -7,6 +7,7 @@ import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMi
 import Shared.Common.Constant.Component
 import qualified Shared.Common.Database.Migration.Development.Component.ComponentMigration as CMP
 import qualified Shared.Common.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
+import Shared.Common.Util.Logger
 import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabMigration as PF
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
@@ -52,7 +53,6 @@ import qualified Wizard.Database.Migration.Development.Submission.SubmissionSche
 import qualified Wizard.Database.Migration.Development.TemporaryFile.TemporaryFileSchemaMigration as TF_Schema
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as U_Schema
-import Wizard.Util.Logger
 
 runMigration = do
   logInfo _CMP_MIGRATION "started"

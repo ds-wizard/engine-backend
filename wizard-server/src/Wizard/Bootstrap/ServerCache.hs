@@ -4,8 +4,8 @@ import Control.Monad.Reader (liftIO)
 import qualified Data.Cache as C
 import System.Clock
 
+import Shared.Common.Util.Logger
 import Wizard.Model.Cache.ServerCache
-import Wizard.Util.Logger
 
 setupServerCache serverConfig = do
   logInfo _CMP_CACHE "creating server cache"

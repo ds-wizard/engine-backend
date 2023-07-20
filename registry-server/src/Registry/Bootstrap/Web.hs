@@ -16,13 +16,13 @@ import Registry.Api.Handler.Swagger.Api
 import Registry.Api.Middleware.LoggingMiddleware
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.BaseContext
-import Registry.Util.Logger
 import Registry.Util.Sentry
 import Shared.Common.Api.Middleware.CORSMiddleware
 import Shared.Common.Api.Middleware.OptionsMiddleware
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Util.Logger
 
 runWebServer :: BaseContext -> IO ()
 runWebServer context = do

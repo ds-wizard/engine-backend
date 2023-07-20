@@ -53,6 +53,9 @@ instance HasField "buildInfoConfig'" BaseContext BuildInfoConfig where
 instance HasField "identity'" AppContext (Maybe String) where
   getField entity = fmap (.token) entity.currentOrganization
 
+instance HasField "identityEmail'" AppContext (Maybe String) where
+  getField entity = fmap (.email) entity.currentOrganization
+
 instance HasField "traceUuid'" AppContext U.UUID where
   getField = (.traceUuid)
 

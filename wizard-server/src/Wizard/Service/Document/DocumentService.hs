@@ -14,6 +14,7 @@ import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.List
+import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Api.Resource.Document.DocumentCreateDTO
@@ -45,7 +46,6 @@ import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import Wizard.Service.TemporaryFile.TemporaryFileService
-import Wizard.Util.Logger
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 getDocumentsPageDto :: Maybe U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
@@ -135,11 +135,11 @@ createDocumentPreview tml qtn formatUuid = do
   appConfig <- getAppConfig
   mCurrentUser <- asks currentUser
   let repliesHash = computeHash qtn qtnCtn appConfig mCurrentUser
-  logDebugU _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
+  logDebugI _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
   let matchingDocs = filter (\d -> d.questionnaireRepliesHash == repliesHash) docs
   case filter (filterAlreadyDoneDocument tml.tId formatUuid) matchingDocs of
     (doc : _) -> do
-      logInfoU _CMP_SERVICE "Retrieving from cache"
+      logInfoI _CMP_SERVICE "Retrieving from cache"
       if doc.state == DoneDocumentState
         then do
           let expirationInSeconds = 60
@@ -149,10 +149,10 @@ createDocumentPreview tml qtn formatUuid = do
     [] ->
       case filter (\d -> d.state == QueuedDocumentState || d.state == InProgressDocumentState) matchingDocs of
         (doc : _) -> do
-          logInfoU _CMP_SERVICE "Waiting to generation"
+          logInfoI _CMP_SERVICE "Waiting to generation"
           return (doc, TemporaryFileMapper.emptyFileDTO)
         _ -> do
-          logInfoU _CMP_SERVICE "Generating new preview"
+          logInfoI _CMP_SERVICE "Generating new preview"
           validateMetamodelVersion tml
           dUuid <- liftIO generateUuid
           now <- liftIO getCurrentTime

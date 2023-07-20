@@ -4,10 +4,10 @@ import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.UUID as U
 
+import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.Context.AppContext
 import Wizard.Service.User.UserService
-import Wizard.Util.Logger
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
 import WizardLib.Public.Model.PersistentCommand.User.DeleteUserCommand
 

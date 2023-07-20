@@ -4,11 +4,11 @@ import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.UUID as U
 
+import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Api.Resource.App.AppChangeDTO
 import Wizard.Model.Context.AppContext
 import Wizard.Service.App.AppService
-import Wizard.Util.Logger
 import WizardLib.Public.Model.PersistentCommand.App.CreateOrUpdateAppCommand
 
 cComponent = "app"

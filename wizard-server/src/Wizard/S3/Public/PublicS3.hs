@@ -3,9 +3,9 @@ module Wizard.S3.Public.PublicS3 where
 import qualified Data.ByteString.Char8 as BS
 
 import Shared.Common.S3.Common
+import Shared.Common.Util.Logger
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Util.Logger
 
 folderName = "public"
 

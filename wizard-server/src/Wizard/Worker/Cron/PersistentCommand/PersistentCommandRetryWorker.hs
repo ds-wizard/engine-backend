@@ -9,11 +9,11 @@ import System.Cron hiding (cron)
 import Prelude hiding (log)
 
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Util.Logger
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Util.Context
-import Wizard.Util.Logger
 
 persistentCommandRetryWorker :: (MonadSchedule m, Applicative m) => BaseContext -> m ()
 persistentCommandRetryWorker context =

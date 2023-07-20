@@ -1,8 +1,8 @@
 module Wizard.Database.Migration.Development.TemporaryFile.TemporaryFileMigration where
 
 import Shared.Common.Constant.Component
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.TemporaryFile.TemporaryFileDAO
-import Wizard.Util.Logger
 
 runMigration = do
   logInfo _CMP_MIGRATION "(TemporaryFile/TemporaryFile) started"

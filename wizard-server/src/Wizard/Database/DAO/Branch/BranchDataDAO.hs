@@ -8,6 +8,7 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
+import Shared.Common.Util.Logger
 import Shared.Common.Util.String (trim)
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Branch.BranchData ()
@@ -16,7 +17,6 @@ import Wizard.Model.Branch.BranchData
 import Wizard.Model.Branch.BranchDataLength
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Util.Logger
 import WizardLib.KnowledgeModel.Model.Event.Event
 
 entityName = "branch_data"
@@ -24,7 +24,7 @@ entityName = "branch_data"
 findBranchesForSquashing :: AppContextM [U.UUID]
 findBranchesForSquashing = do
   let sql = "SELECT branch_uuid FROM branch_data"
-  logInfoU _CMP_DATABASE (trim sql)
+  logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   entities <- runDB action
   return . concat $ entities

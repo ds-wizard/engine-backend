@@ -6,13 +6,13 @@ import Data.Pool
 
 import Shared.Common.Constant.App
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.User.UserMapper
-import Wizard.Util.Logger
 
 runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO a
 runAppContextWithBaseContext function baseContext = do

@@ -13,6 +13,7 @@ import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
+import Shared.Common.Util.Logger
 import Shared.Common.Util.String (replace)
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Package.PackageList ()
@@ -21,7 +22,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Package.PackageList
 import Wizard.Model.Package.PackageSuggestion
-import Wizard.Util.Logger
 import WizardLib.KnowledgeModel.Model.Package.Package
 
 entityName = "package"

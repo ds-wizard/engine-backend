@@ -7,6 +7,7 @@ import Data.Foldable (traverse_)
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
@@ -20,7 +21,6 @@ import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.PersistentCommand.Config.InvokeClientCssCompilationCommand
 import Wizard.Service.Config.App.AppConfigMapper
 import Wizard.Service.Config.App.AppConfigService
-import Wizard.Util.Logger
 import WizardLib.Public.Model.PersistentCommand.Config.CreateAppConfigAuthenticationCommand
 
 cComponent = "AppConfig"

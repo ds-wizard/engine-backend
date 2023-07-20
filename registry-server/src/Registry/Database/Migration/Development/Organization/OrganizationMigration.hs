@@ -4,7 +4,7 @@ import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
-import Registry.Util.Logger
+import Shared.Common.Util.Logger
 
 runMigration :: AppContextM ()
 runMigration = do

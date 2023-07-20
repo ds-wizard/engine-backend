@@ -15,6 +15,7 @@ import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
+import Shared.Common.Util.Logger
 import Shared.Common.Util.String (replace, trim)
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
@@ -40,7 +41,6 @@ import Wizard.Model.Questionnaire.QuestionnaireSquash
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
 import Wizard.Model.Report.Report
 import Wizard.Model.User.User
-import Wizard.Util.Logger
 
 entityName = "questionnaire"
 
@@ -54,7 +54,7 @@ findQuestionnaires = do
     then createFindEntitiesByFn entityName [appQueryUuid appUuid] >>= traverse enhance
     else do
       let sql = f' (qtnSelectSql (U.toString appUuid) (U.toString $ currentUser.uuid) "['VIEW']") [""]
-      logInfoU _CMP_DATABASE sql
+      logInfoI _CMP_DATABASE sql
       let action conn = query_ conn (fromString sql)
       entities <- runDB action
       traverse enhance entities
@@ -299,7 +299,7 @@ findQuestionnairesOwnedByUser userUuid = do
   appUuid <- asks currentAppUuid
   currentUser <- getCurrentUser
   let sql = f' (qtnSelectSql (U.toString appUuid) (U.toString $ currentUser.uuid) "[]::text[]") [""]
-  logInfoU _CMP_DATABASE (trim sql)
+  logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   entities <- runDB action
   traverse enhance entities
@@ -316,7 +316,7 @@ findQuestionnaireWithZeroAcl = do
           \AND qtn_acl_group.uuid IS NULL \
           \AND qtn.updated_at < now() - INTERVAL '30 days'"
           [entityName]
-  logInfoU _CMP_DATABASE (trim sql)
+  logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   runDB action
 
@@ -333,7 +333,7 @@ findQuestionnaireUuids = do
 findQuestionnaireUuids' :: AppContextM [U.UUID]
 findQuestionnaireUuids' = do
   let sql = f' "SELECT %s FROM %s" ["uuid", entityName]
-  logInfoU _CMP_DATABASE (trim sql)
+  logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   entities <- runDB action
   return . concat $ entities
@@ -382,7 +382,7 @@ findQuestionnaireEventsByUuid uuid = do
 findQuestionnaireForSquashing :: AppContextM [U.UUID]
 findQuestionnaireForSquashing = do
   let sql = "SELECT uuid FROM questionnaire qtn WHERE squashed = false"
-  logInfoU _CMP_DATABASE (trim sql)
+  logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   entities <- runDB action
   return . concat $ entities

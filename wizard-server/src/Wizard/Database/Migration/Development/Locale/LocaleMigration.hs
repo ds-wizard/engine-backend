@@ -1,12 +1,12 @@
 module Wizard.Database.Migration.Development.Locale.LocaleMigration where
 
 import Shared.Common.Constant.Component
+import Shared.Common.Util.Logger
 import Shared.Locale.Database.Migration.Development.Locale.Data.Locales
 import Shared.Locale.Model.Locale.Locale
 import Wizard.Database.DAO.Locale.LocaleDAO
 import Wizard.Model.Context.AppContext
 import Wizard.S3.Locale.LocaleS3
-import Wizard.Util.Logger
 
 runMigration = do
   logInfo _CMP_MIGRATION "(App/Locale) started"

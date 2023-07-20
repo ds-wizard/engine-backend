@@ -21,6 +21,7 @@ import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
+import Shared.Common.Util.Logger
 import Wizard.Api.Resource.Auth.AuthConsentDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
@@ -34,7 +35,6 @@ import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.User.UserService
 import Wizard.Service.UserToken.Login.LoginService
-import Wizard.Util.Logger
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 
 createAuthenticationUrl :: String -> Maybe String -> Maybe String -> AppContextM ()
@@ -78,7 +78,7 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionStat
               case eTokens of
                 Right tokens -> return . O.idToken $ tokens
                 Left error -> do
-                  logWarnU _CMP_SERVICE . f' "Error in retrieving token from OpenID (error: '%s')" $ [show error]
+                  logWarnI _CMP_SERVICE . f' "Error in retrieving token from OpenID (error: '%s')" $ [show error]
                   throwError . UserError . _ERROR_VALIDATION__OPENID_WRONG_RESPONSE . show $ error
             Nothing -> throwError . UserError $ _ERROR_VALIDATION__OPENID_CODE_ABSENCE
     let claims = O.otherClaims token

@@ -17,12 +17,12 @@ import Shared.Common.Api.Middleware.OptionsMiddleware
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Util.Logger
 import Wizard.Api.Api
 import Wizard.Api.Handler.Swagger.Api
 import Wizard.Api.Middleware.LoggingMiddleware
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
-import Wizard.Util.Logger
 import Wizard.Util.Sentry
 
 runWebServer :: BaseContext -> IO ()

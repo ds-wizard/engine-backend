@@ -2,7 +2,7 @@ module Registry.Database.Migration.Development.Package.PackageMigration where
 
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
-import Registry.Util.Logger
+import Shared.Common.Util.Logger
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 

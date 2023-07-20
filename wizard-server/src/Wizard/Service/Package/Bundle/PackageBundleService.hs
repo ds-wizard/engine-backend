@@ -18,6 +18,7 @@ import Shared.Common.Constant.Component
 import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.Logger
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
@@ -36,7 +37,6 @@ import Wizard.Service.Package.PackageValidation (
  )
 import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import Wizard.Service.TemporaryFile.TemporaryFileService
-import Wizard.Util.Logger
 import WizardLib.Common.Service.Coordinate.CoordinateValidation
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackageDTO
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackageJM ()
@@ -104,10 +104,10 @@ importAndConvertBundle contentS fromRegistry =
               else auditPackageBundleImportFromFile pb.bundleId
             importBundle pb
           Left error -> do
-            logWarnU _CMP_SERVICE ("Couln't deserialize migrated PackageBundle content (" ++ show error ++ ")")
+            logWarnI _CMP_SERVICE ("Couln't deserialize migrated PackageBundle content (" ++ show error ++ ")")
             throwError . UserError $ _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
       Left error -> do
-        logWarnU _CMP_SERVICE ("Couln't deserialize PackageBundle content (" ++ show error ++ ")")
+        logWarnI _CMP_SERVICE ("Couln't deserialize PackageBundle content (" ++ show error ++ ")")
         throwError . UserError $ _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
 
 importBundle :: PackageBundleDTO -> AppContextM [PackageSimpleDTO]
