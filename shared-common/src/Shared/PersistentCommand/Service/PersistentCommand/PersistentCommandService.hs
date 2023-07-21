@@ -24,12 +24,13 @@ import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommandSimple
+import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
 
 runPersistentCommands
   :: AppContextC s sc m
   => (function -> appContext -> IO (Either String (PersistentCommandState, Maybe String)))
   -> (PersistentCommandSimple U.UUID -> s -> m appContext)
-  -> (PersistentCommand U.UUID -> m a2)
+  -> (String -> PersistentCommand U.UUID -> m a)
   -> (PersistentCommand U.UUID -> function)
   -> m ()
 runPersistentCommands runAppContextWithAppContext updateContext createPersistentCommand execute = do
@@ -46,14 +47,14 @@ runPersistentCommand
   :: AppContextC s sc m
   => (function -> appContext -> IO (Either String (PersistentCommandState, Maybe String)))
   -> (PersistentCommandSimple U.UUID -> s -> m appContext)
-  -> (PersistentCommand U.UUID -> m a2)
+  -> (String -> PersistentCommand U.UUID -> m a)
   -> (PersistentCommand U.UUID -> function)
   -> Bool
   -> PersistentCommandSimple U.UUID
   -> m ()
 runPersistentCommand runAppContextWithAppContext updateContext createPersistentCommand execute force commandSimple = do
   case commandSimple.destination of
-    Just destination -> tranferPersistentCommandByUuid createPersistentCommand commandSimple.uuid
+    Just destination -> tranferPersistentCommandByUuid destination createPersistentCommand commandSimple.uuid
     Nothing -> do
       context <- ask
       updatedContext <- updateContext commandSimple context
@@ -96,17 +97,19 @@ executePersistentCommandByUuid runAppContextWithAppContext execute force uuid co
 
 tranferPersistentCommandByUuid
   :: AppContextC s sc m
-  => (PersistentCommand U.UUID -> m a)
+  => String
+  -> (String -> PersistentCommand U.UUID -> m a)
   -> U.UUID
   -> m ()
-tranferPersistentCommandByUuid createPersistentCommand uuid =
+tranferPersistentCommandByUuid destination createPersistentCommand uuid =
   runInTransaction logInfoI logWarnI $ do
     logInfoI _CMP_SERVICE (f' "Transfering command '%s'" [U.toString uuid])
     command <- findPersistentCommandByUuid uuid
     when
       (command.attempts < command.maxAttempts)
       ( do
-          eResult <- tryError (createPersistentCommand command)
+          let sanitizedCommand = sanitizePersistentCommand command
+          eResult <- tryError (createPersistentCommand destination sanitizedCommand)
           let (resultState, mErrorMessage) =
                 case eResult of
                   Right _ -> (DonePersistentCommandState, Nothing)
@@ -129,7 +132,7 @@ runPersistentCommandChannelListener
   :: AppContextC s sc m
   => (function -> appContext -> IO (Either String (PersistentCommandState, Maybe String)))
   -> (PersistentCommandSimple U.UUID -> s -> m appContext)
-  -> (PersistentCommand U.UUID -> m a2)
+  -> (String -> PersistentCommand U.UUID -> m a)
   -> (PersistentCommand U.UUID -> function)
   -> m ()
 runPersistentCommandChannelListener runAppContextWithAppContext updateContext createPersistentCommand execute = do
