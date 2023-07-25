@@ -42,6 +42,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0032_branchFix.M
 import qualified Wizard.Database.Migration.Production.Migration_0033_apiKey.Migration as M_0033
 import qualified Wizard.Database.Migration.Production.Migration_0034_unification.Migration as M_0034
 import qualified Wizard.Database.Migration.Production.Migration_0035_persistentCommandDestination.Migration as M_0035
+import qualified Wizard.Database.Migration.Production.Migration_0036_branchCreatedBy.Migration as M_0036
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 
@@ -87,4 +88,5 @@ migrationDefinitions =
   , M_0033.definition
   , M_0034.definition
   , M_0035.definition
+  , M_0036.definition
   ]
