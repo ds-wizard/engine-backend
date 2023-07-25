@@ -3,7 +3,6 @@ module Wizard.Service.App.AppService where
 import Control.Monad.Reader (asks, liftIO)
 import Data.Aeson (encode)
 import qualified Data.ByteString.Lazy.Char8 as BSL
-import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -11,7 +10,6 @@ import Shared.Common.Constant.User
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
-import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Util.Crypto
 import Shared.Common.Util.Uuid
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
@@ -33,7 +31,6 @@ import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigDM
-import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.PersistentCommand.App.ImportDefaultDataCommand
@@ -59,8 +56,8 @@ registerApp reqDto = do
     validateAppCreateDTO reqDto False
     aUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
-    cloudDomain <- getCloudDomain
-    let app = fromRegisterCreateDTO reqDto aUuid cloudDomain now
+    serverConfig <- asks serverConfig
+    let app = fromRegisterCreateDTO reqDto aUuid serverConfig now
     insertApp app
     userUuid <- liftIO generateUuid
     let userCreate = U_Mapper.fromAppCreateToUserCreateDTO reqDto
@@ -78,8 +75,8 @@ createAppByAdmin reqDto = do
     validateAppCreateDTO reqDto True
     aUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
-    cloudDomain <- getCloudDomain
-    let app = fromAdminCreateDTO reqDto aUuid cloudDomain now
+    serverConfig <- asks serverConfig
+    let app = fromAdminCreateDTO reqDto aUuid serverConfig now
     insertApp app
     userUuid <- liftIO generateUuid
     userPassword <- liftIO $ generateRandomString 25
@@ -94,8 +91,8 @@ createAppByAdmin reqDto = do
 createAppByCommand :: CreateOrUpdateAppCommand -> AppContextM ()
 createAppByCommand command = do
   now <- liftIO getCurrentTime
-  cloudDomain <- getCloudDomain
-  let app = fromCommand command cloudDomain now
+  serverConfig <- asks serverConfig
+  let app = fromCommand command serverConfig now
   insertApp app
   createAppConfig app.uuid now
   createAppLimit app.uuid now
@@ -120,8 +117,8 @@ modifyApp aUuid reqDto = do
   checkPermission _APP_PERM
   app <- findAppByUuid aUuid
   validateAppChangeDTO app reqDto
-  cloudDomain <- getCloudDomain
-  let updatedApp = fromChangeDTO app reqDto cloudDomain
+  serverConfig <- asks serverConfig
+  let updatedApp = fromChangeDTO app reqDto serverConfig
   updateAppByUuid updatedApp
 
 deleteApp :: U.UUID -> AppContextM ()
@@ -178,8 +175,3 @@ createSeederPersistentCommand aUuid createdBy now =
             now
     insertPersistentCommand command
     return command
-
-getCloudDomain :: AppContextM String
-getCloudDomain = do
-  serverConfig <- asks serverConfig
-  return $ fromMaybe "" serverConfig.cloud.domain
