@@ -8,9 +8,10 @@ import Shared.Common.Api.Resource.Dev.DevExecutionJM ()
 import Shared.Common.Api.Resource.Dev.DevExecutionResultDTO
 import Shared.Common.Api.Resource.Dev.DevExecutionResultJM ()
 import Shared.Common.Model.Context.TransactionState
+import Shared.Common.Service.Dev.DevOperationService
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Dev.DevOperationService
+import Wizard.Service.Dev.DevOperationDefinitions
 
 type List_Executions_POST =
   Header "Authorization" String
@@ -27,4 +28,4 @@ list_executions_POST
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] AdminExecutionResultDTO)
 list_executions_POST mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< executeOperation reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< executeOperation sections reqDto

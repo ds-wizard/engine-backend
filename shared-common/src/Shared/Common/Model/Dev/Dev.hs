@@ -2,19 +2,22 @@ module Shared.Common.Model.Dev.Dev where
 
 import GHC.Generics
 
-data DevSection = DevSection
+import Shared.Common.Api.Resource.Dev.DevExecutionDTO
+
+data DevSection m = DevSection
   { name :: String
   , description :: Maybe String
-  , operations :: [DevOperation]
+  , operations :: [DevOperation m]
   }
-  deriving (Show, Eq, Generic)
+  deriving (Generic)
 
-data DevOperation = DevOperation
+data DevOperation m = DevOperation
   { name :: String
   , description :: Maybe String
   , parameters :: [DevOperationParameter]
+  , function :: DevExecutionDTO -> m String
   }
-  deriving (Show, Eq, Generic)
+  deriving (Generic)
 
 data DevOperationParameter = DevOperationParameter
   { name :: String
