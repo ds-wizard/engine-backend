@@ -29,12 +29,7 @@ findUserTokens = do
   appUuid <- asks (.appUuid')
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
-findUserTokensByUserUuidAndType
-  :: AppContextC s sc m
-  => U.UUID
-  -> UserTokenType
-  -> Maybe U.UUID
-  -> m [UserTokenList]
+findUserTokensByUserUuidAndType :: AppContextC s sc m => U.UUID -> UserTokenType -> Maybe U.UUID -> m [UserTokenList]
 findUserTokensByUserUuidAndType userUuid tokenType mCurrentTokenUuid = do
   appUuid <- asks (.appUuid')
   let currentSessionCondition =
@@ -45,12 +40,24 @@ findUserTokensByUserUuidAndType userUuid tokenType mCurrentTokenUuid = do
         fromString $
           f'
             "SELECT uuid, name, user_agent, %s as current_session, expires_at, created_at \
-            \FROM user_token \
+            \FROM %s \
             \WHERE app_uuid = ? AND user_uuid = ? AND type = ?"
             [currentSessionCondition, entityName]
   let params = (fmap U.toString . maybeToList $ mCurrentTokenUuid) ++ [U.toString appUuid, U.toString userUuid, show tokenType]
   logQuery sql params
   let action conn = query conn sql params
+  runDB action
+
+findApiUserTokensWithCloseExpiration :: AppContextC s sc m => m [UserToken]
+findApiUserTokensWithCloseExpiration = do
+  let sql =
+        f'
+          "SELECT * \
+          \FROM %s \
+          \WHERE type = '%s' AND ((now() + interval '1 day' < expires_at AND expires_at < now() + interval '2 day') OR (now() + interval '6 day' < expires_at AND expires_at < now() + interval '7 day'))"
+          [entityName, show ApiKeyUserTokenType]
+  logInfoI _CMP_DATABASE (trim sql)
+  let action conn = query_ conn (fromString sql)
   runDB action
 
 findUserTokensByUserUuid :: AppContextC s sc m => U.UUID -> m [UserToken]

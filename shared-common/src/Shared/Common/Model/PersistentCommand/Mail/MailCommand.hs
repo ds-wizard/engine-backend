@@ -3,6 +3,7 @@ module Shared.Common.Model.PersistentCommand.Mail.MailCommand where
 import Data.Aeson
 import qualified Data.Map.Strict as M
 import qualified Data.Text as T
+import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -30,3 +31,6 @@ string = String . T.pack
 
 maybeString :: Maybe String -> Value
 maybeString = maybe Null (String . T.pack)
+
+datetime :: UTCTime -> Value
+datetime = toJSON
