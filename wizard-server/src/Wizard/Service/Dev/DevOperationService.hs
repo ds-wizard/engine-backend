@@ -6,8 +6,8 @@ module Wizard.Service.Dev.DevOperationService (
 import Shared.Common.Api.Resource.Dev.DevExecutionDTO
 import Shared.Common.Api.Resource.Dev.DevExecutionResultDTO
 import Shared.Common.Model.Dev.Dev
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext hiding (cache)
-import Wizard.Service.Acl.AclService
 import Wizard.Service.Dev.DevOperationDefinitions
 
 getDevOperations :: AppContextM [DevSection]

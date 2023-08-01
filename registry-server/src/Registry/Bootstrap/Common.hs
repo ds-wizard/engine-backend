@@ -7,8 +7,8 @@ import Data.Pool
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
-import Registry.Util.Logger
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 
 runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO a
@@ -22,6 +22,7 @@ runAppContextWithBaseContext function baseContext = do
             , dbPool = baseContext.dbPool
             , dbConnection = Just dbConnection
             , s3Client = baseContext.s3Client
+            , httpClientManager = baseContext.httpClientManager
             , traceUuid = traceUuid
             , currentOrganization = Nothing
             }

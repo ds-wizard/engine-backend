@@ -14,6 +14,7 @@ data CreateOrUpdatePlanCommand = CreateOrUpdatePlanCommand
   , since :: Maybe UTCTime
   , until :: Maybe UTCTime
   , test :: Bool
+  , appUuid :: U.UUID
   }
   deriving (Show, Eq, Generic)
 

@@ -4,11 +4,11 @@ import Control.Monad.Except (catchError)
 import Database.PostgreSQL.Simple
 
 import Shared.Common.S3.Common
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
-import Wizard.Util.Logger
 
 runMigration :: AppContextM ()
 runMigration = do

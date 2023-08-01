@@ -1,9 +1,7 @@
 module Shared.Common.S3.Common where
 
-import Control.Monad.Except (MonadError, throwError)
-import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadReader, ask, liftIO)
+import Control.Monad.Except (throwError)
+import Control.Monad.Reader (ask, liftIO)
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
@@ -16,12 +14,12 @@ import qualified Data.String as S
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
 import qualified Data.UUID as U
-import GHC.Records
 import Network.Minio
 import Network.Minio.S3API
 
 import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Model.Context.AppContext
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.JSON
 import Shared.Common.Util.Logger
@@ -37,21 +35,7 @@ createS3Client serverConfig manager = do
           Nothing -> connectionInfo
   liftIO $ mkMinioConn connectionInfoWithRegion manager
 
-createGetObjectFn
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => String
-  -> m BS.ByteString
+createGetObjectFn :: AppContextC s sc m => String -> m BS.ByteString
 createGetObjectFn object = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObject object
@@ -63,21 +47,7 @@ createGetObjectFn object = do
         C.connect (gorObjectStream src) foldFn
   runMinioClient action
 
-createGetObjectWithAppFn
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => U.UUID
-  -> String
-  -> m BS.ByteString
+createGetObjectWithAppFn :: AppContextC s sc m => U.UUID -> String -> m BS.ByteString
 createGetObjectWithAppFn appUuid object = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObjectWithApp appUuid object
@@ -89,21 +59,7 @@ createGetObjectWithAppFn appUuid object = do
         C.connect (gorObjectStream src) foldFn
   runMinioClient action
 
-createGetObjectFn'
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => String
-  -> m (Either MinioErr BS.ByteString)
+createGetObjectFn' :: AppContextC s sc m => String -> m (Either MinioErr BS.ByteString)
 createGetObjectFn' object = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObject object
@@ -115,24 +71,7 @@ createGetObjectFn' object = do
         C.connect (gorObjectStream src) foldFn
   runMinioClient' action
 
-createPutObjectFn
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => String
-  -> Maybe String
-  -> Maybe String
-  -> BS.ByteString
-  -> m String
+createPutObjectFn :: AppContextC s sc m => String -> Maybe String -> Maybe String -> BS.ByteString -> m String
 createPutObjectFn object mContentType mContentDisposition content = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObject object
@@ -148,24 +87,7 @@ createPutObjectFn object mContentType mContentDisposition content = do
   runMinioClient action
   buildObjectUrl sanitizedObject
 
-createPutObjectWithAppFn
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => U.UUID
-  -> String
-  -> Maybe String
-  -> BS.ByteString
-  -> m String
+createPutObjectWithAppFn :: AppContextC s sc m => U.UUID -> String -> Maybe String -> BS.ByteString -> m String
 createPutObjectWithAppFn appUuid object mContentType content = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObjectWithApp appUuid object
@@ -177,21 +99,7 @@ createPutObjectWithAppFn appUuid object mContentType content = do
   runMinioClient action
   buildObjectUrl sanitizedObject
 
-createRemoveObjectFn
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => String
-  -> m ()
+createRemoveObjectFn :: AppContextC s sc m => String -> m ()
 createRemoveObjectFn object = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObject object
@@ -199,20 +107,7 @@ createRemoveObjectFn object = do
   let action = removeObject (T.pack bucketName) (T.pack sanitizedObject)
   runMinioClient action
 
-createListObjectsFn
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => m [String]
+createListObjectsFn :: AppContextC s sc m => m [String]
 createListObjectsFn = do
   bucketName <- getBucketName
   logInfoI _CMP_S3 "List objects"
@@ -226,102 +121,35 @@ createListObjectsFn = do
     getName (ListItemObject objectInfo) = Just . T.unpack . oiObject $ objectInfo
     getName _ = Nothing
 
-createBucketExistsFn
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => m Bool
+createBucketExistsFn :: AppContextC s sc m => m Bool
 createBucketExistsFn = do
   bucketName <- getBucketName
   logInfoI _CMP_S3 (f' "Check existence of bucket: '%s'" [bucketName])
   let action = bucketExists (T.pack bucketName)
   runMinioClient action
 
-createMakeBucketFn
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => m ()
+createMakeBucketFn :: AppContextC s sc m => m ()
 createMakeBucketFn = do
   bucketName <- getBucketName
   logInfoI _CMP_S3 (f' "Make bucket: '%s'" [bucketName])
   let action = makeBucket (T.pack bucketName) Nothing
   runMinioClient action
 
-createPurgeBucketFn
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => m ()
+createPurgeBucketFn :: AppContextC s sc m => m ()
 createPurgeBucketFn = do
   bucketName <- getBucketName
   logInfoI _CMP_S3 (f' "Purge bucket: '%s'" [bucketName])
   objects <- createListObjectsFn
   traverse_ createRemoveObjectFn objects
 
-createRemoveBucketFn
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => m ()
+createRemoveBucketFn :: AppContextC s sc m => m ()
 createRemoveBucketFn = do
   bucketName <- getBucketName
   logInfoI _CMP_S3 (f' "Remove bucket: '%s'" [bucketName])
   let action = removeBucket (T.pack bucketName)
   runMinioClient action
 
-createSetBucketPolicyFn
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => String
-  -> String
-  -> m ()
+createSetBucketPolicyFn :: AppContextC s sc m => String -> String -> m ()
 createSetBucketPolicyFn prefix policy = do
   bucketName <- getBucketName
   logInfoI _CMP_S3 (f' "Set policy: '%s' with '%s'" [prefix, policy])
@@ -331,20 +159,7 @@ createSetBucketPolicyFn prefix policy = do
           "{\"bucketName\": \"wizard-server\", \"prefix\": \"configs/logo.png\", \"policy\": \"readonly\"}"
   runMinioClient action
 
-makeBucketPublicReadOnly
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => m ()
+makeBucketPublicReadOnly :: AppContextC s sc m => m ()
 makeBucketPublicReadOnly = do
   bucketName <- getBucketName
   context <- ask
@@ -374,22 +189,7 @@ makeBucketPublicReadOnly = do
   runMinioClient action
   logInfoI _CMP_S3 (f' "Bucket was exposed as public: '%s'" [resource])
 
-createPresignedGetObjectUrl
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => String
-  -> Int
-  -> m String
+createPresignedGetObjectUrl :: AppContextC s sc m => String -> Int -> m String
 createPresignedGetObjectUrl object expirationInSeconds = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObject object
@@ -398,21 +198,7 @@ createPresignedGetObjectUrl object expirationInSeconds = do
   result <- runMinioClient action
   return $ BS.unpack result
 
-createMakePublicLink
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => String
-  -> m String
+createMakePublicLink :: AppContextC s sc m => String -> m String
 createMakePublicLink object = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObject object
@@ -421,20 +207,7 @@ createMakePublicLink object = do
   logInfoI _CMP_S3 (f' "Public URL to share: '%s'" [publicLink])
   return publicLink
 
-runMinioClient
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => Minio a
-  -> m a
+runMinioClient :: AppContextC s sc m => Minio a -> m a
 runMinioClient action = do
   context <- ask
   let s3Client = context.s3Client'
@@ -445,63 +218,37 @@ runMinioClient action = do
       throwError . GeneralServerError $ _ERROR_S3__GENERIC_ERROR (show e)
     Right e -> return e
 
-runMinioClient'
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "cloud'" sc ServerConfigCloud
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => Minio a
-  -> m (Either MinioErr a)
+runMinioClient' :: AppContextC s sc m => Minio a -> m (Either MinioErr a)
 runMinioClient' action = do
   context <- ask
   let s3Client = context.s3Client'
   liftIO $ runMinioWith s3Client action
 
-getS3Url :: (MonadReader s m, HasField "appUuid'" s U.UUID, HasField "serverConfig'" s sc, HasField "s3'" sc ServerConfigS3, MonadIO m, MonadError AppError m) => m String
+getS3Url :: AppContextC s sc m => m String
 getS3Url = do
   context <- ask
   return context.serverConfig'.s3'.url
 
-getBucketName :: (MonadReader s m, HasField "serverConfig'" s sc, HasField "s3'" sc ServerConfigS3, MonadIO m, MonadError AppError m) => m String
+getBucketName :: AppContextC s sc m => m String
 getBucketName = do
   context <- ask
   return context.serverConfig'.s3'.bucket
 
-sanitizeObject
-  :: (MonadReader s m, HasField "appUuid'" s U.UUID, HasField "serverConfig'" s sc, HasField "cloud'" sc ServerConfigCloud, MonadIO m, MonadError AppError m) => String -> m String
+sanitizeObject :: AppContextC s sc m => String -> m String
 sanitizeObject object = do
   context <- ask
   if context.serverConfig'.cloud'.enabled && not (U.toString context.appUuid' `L.isPrefixOf` object)
     then return $ U.toString context.appUuid' ++ "/" ++ object
     else return object
 
-sanitizeObjectWithApp
-  :: (MonadReader s m, HasField "serverConfig'" s sc, HasField "cloud'" sc ServerConfigCloud, MonadIO m, MonadError AppError m) => U.UUID -> String -> m String
+sanitizeObjectWithApp :: AppContextC s sc m => U.UUID -> String -> m String
 sanitizeObjectWithApp appUuid object = do
   context <- ask
   if context.serverConfig'.cloud'.enabled && not (U.toString appUuid `L.isPrefixOf` object)
     then return $ U.toString appUuid ++ "/" ++ object
     else return object
 
-buildObjectUrl
-  :: ( MonadReader s m
-     , HasField "s3Client'" s MinioConn
-     , HasField "appUuid'" s U.UUID
-     , HasField "serverConfig'" s sc
-     , HasField "s3'" sc ServerConfigS3
-     , MonadIO m
-     , MonadError AppError m
-     , MonadLogger m
-     )
-  => String
-  -> m String
+buildObjectUrl :: AppContextC s sc m => String -> m String
 buildObjectUrl object = do
   s3Url <- getS3Url
   bucketName <- getBucketName

@@ -11,13 +11,13 @@ import Registry.Model.Config.ServerConfig
 import qualified Registry.Model.Context.AppContext as AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Organization.Organization
-import Registry.Util.Logger
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.TransactionState
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.Logger
 import Shared.Common.Util.Token
 import Shared.Common.Util.Uuid
 
@@ -34,6 +34,7 @@ runIn mOrganization transactionState function = do
   buildInfoConfig <- asks buildInfoConfig
   dbPool <- asks dbPool
   s3Client <- asks s3Client
+  httpClientManager <- asks httpClientManager
   let appContext =
         AppContext.AppContext
           { serverConfig = serverConf
@@ -41,6 +42,7 @@ runIn mOrganization transactionState function = do
           , dbPool = dbPool
           , dbConnection = Nothing
           , s3Client = s3Client
+          , httpClientManager = httpClientManager
           , traceUuid = traceUuid
           , currentOrganization = mOrganization
           }

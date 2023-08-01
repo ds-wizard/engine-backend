@@ -1,9 +1,9 @@
 module Wizard.Database.Migration.Development.Feedback.FeedbackMigration where
 
 import Shared.Common.Constant.Component
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
-import Wizard.Util.Logger
 
 runMigration = do
   logInfo _CMP_MIGRATION "(Feedback/Feedback) started"

@@ -9,13 +9,14 @@ import Registry.Api.Resource.Organization.OrganizationSM ()
 import Shared.Common.Api.Resource.Common.AesonSM ()
 import Shared.Common.Api.Resource.Common.FileSM ()
 import Shared.Common.Api.Resource.Common.PageMetadataSM ()
-import Shared.Common.Api.Resource.Component.ComponentSM ()
 import Shared.Common.Api.Resource.Dev.DevExecutionResultSM ()
 import Shared.Common.Api.Resource.Dev.DevExecutionSM ()
 import Shared.Common.Api.Resource.Dev.DevSM ()
 import Shared.Common.Api.Resource.Info.InfoSM ()
+import Shared.Component.Api.Resource.Component.ComponentSM ()
 import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandChangeSM ()
 import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandSM ()
+import Shared.Prefab.Api.Resource.Prefab.PrefabSM ()
 import Wizard.Api.Api
 import Wizard.Api.Resource.ActionKey.ActionKeyTypeSM ()
 import Wizard.Api.Resource.App.AppChangeSM ()
@@ -72,7 +73,6 @@ import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Wizard.Api.Resource.Plan.AppPlanChangeSM ()
 import Wizard.Api.Resource.Plan.AppPlanSM ()
-import Wizard.Api.Resource.Prefab.PrefabSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentSM ()
@@ -128,7 +128,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "3.25.1"
+              , _infoVersion = "3.26.0"
               , _infoLicense =
                   Just $
                     License

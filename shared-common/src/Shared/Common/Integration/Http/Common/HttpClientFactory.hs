@@ -3,12 +3,15 @@ module Shared.Common.Integration.Http.Common.HttpClientFactory where
 import Control.Monad (when)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as LBS
+import qualified Data.CaseInsensitive as CI
+import qualified Data.List as L
 import Network.HTTP.Client (
   BodyReader,
   Manager,
   Request,
   RequestBody (..),
   Response,
+  getOriginalRequest,
   host,
   managerModifyRequest,
   managerModifyResponse,
@@ -68,26 +71,34 @@ logRequest logHttpClient request = do
           RequestBodyBS bytestring -> BS.unpack bytestring
           _ -> "can't be shown"
   let headers = show $ requestHeaders request
+  let mIdentity = getHeader "x-identity" request
+  let mTraceUuid = getHeader "x-trace-uuid" request
   when
     logHttpClient
     ( do
-        logMessage $ f' "Retrieving '%s://%s%s%s'" [protocol, h, p, q]
-        logMessage $ f' "Request Method '%s'" [m]
-        logMessage $ f' "Request Headers: '%s'" [headers]
-        logMessage $ f' "Request Body '%s'" [b]
+        logMessage mIdentity mTraceUuid $ f' "Retrieving '%s://%s%s%s'" [protocol, h, p, q]
+        logMessage mIdentity mTraceUuid $ f' "Request Method '%s'" [m]
+        logMessage mIdentity mTraceUuid $ f' "Request Headers: '%s'" [headers]
+        logMessage mIdentity mTraceUuid $ f' "Request Body '%s'" [b]
     )
 
 logResponse :: Bool -> Response BodyReader -> IO ()
 logResponse logHttpClient response = do
   let status = responseStatus response
   let headers = responseHeaders response
+  let mIdentity = getHeader "x-identity" $ getOriginalRequest response
+  let mTraceUuid = getHeader "x-trace-uuid" $ getOriginalRequest response
   when
     logHttpClient
     ( do
-        logMessage "Retrieved Response"
-        logMessage $ f' "Response StatusCode: '%s'" [show status]
-        logMessage $ f' "Response Headers: '%s'" [show headers]
+        logMessage mIdentity mTraceUuid "Retrieved Response"
+        logMessage mIdentity mTraceUuid $ f' "Response StatusCode: '%s'" [show status]
+        logMessage mIdentity mTraceUuid $ f' "Response Headers: '%s'" [show headers]
     )
 
-logMessage :: String -> IO ()
-logMessage msg = putStrLn (f' "[Debug] %s" [createLogRecord LevelDebug Nothing Nothing _CMP_HTTP_CLIENT msg])
+logMessage :: Maybe String -> Maybe String -> String -> IO ()
+logMessage mIdentity mTraceUuid msg = putStrLn (f' "[Debug] %s" [createLogRecord LevelDebug mIdentity mTraceUuid _CMP_HTTP_CLIENT msg])
+
+getHeader :: String -> Request -> Maybe String
+getHeader headerName request =
+  fmap (\(_, value) -> BS.unpack value) . L.find (\(name, _) -> name == (CI.mk . BS.pack $ headerName)) $ request.requestHeaders

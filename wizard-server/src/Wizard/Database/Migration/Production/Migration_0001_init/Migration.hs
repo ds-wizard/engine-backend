@@ -668,7 +668,7 @@ insertAppConfig dbPool = do
         \          \"external\": { \
         \            \"services\": [] \
         \          }, \
-        \          \"defaultRole\": \"dataSteward\" \
+        \          \"defaultRole\": \"researcher\" \
         \        }', \
         \        '{ \
         \          \"supportRepositoryUrl\": null, \

@@ -1,136 +1,47 @@
 module WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO where
 
-import Control.Monad.Except (MonadError)
-import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadReader, asks)
-import Data.Pool
+import Control.Monad.Reader (asks)
 import Data.String
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
-import GHC.Records
 
 import Shared.Common.Database.DAO.Common
-import Shared.Common.Model.Error.Error
+import Shared.Common.Model.Context.AppContext
 import WizardLib.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplateAsset ()
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 entityName = "document_template_asset"
 
-findAssetsByDocumentTemplateId
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> m [DocumentTemplateAsset]
+findAssetsByDocumentTemplateId :: AppContextC s sc m => String -> m [DocumentTemplateAsset]
 findAssetsByDocumentTemplateId documentTemplateId = do
   appUuid <- asks (.appUuid')
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("document_template_id", documentTemplateId)]
 
-findAssetsByDocumentTemplateIdAndFileName
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> String
-  -> m [DocumentTemplateAsset]
+findAssetsByDocumentTemplateIdAndFileName :: AppContextC s sc m => String -> String -> m [DocumentTemplateAsset]
 findAssetsByDocumentTemplateIdAndFileName documentTemplateId fileName = do
   appUuid <- asks (.appUuid')
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("document_template_id", documentTemplateId), ("file_name", fileName)]
 
-findAssetById
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => U.UUID
-  -> m DocumentTemplateAsset
+findAssetById :: AppContextC s sc m => U.UUID -> m DocumentTemplateAsset
 findAssetById uuid = do
   appUuid <- asks (.appUuid')
   createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
 
-sumAssetFileSize
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => m Int64
+sumAssetFileSize :: AppContextC s sc m => m Int64
 sumAssetFileSize = do
   appUuid <- asks (.appUuid')
   sumAssetFileSizeWithApp appUuid
 
-sumAssetFileSizeWithApp
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => U.UUID
-  -> m Int64
+sumAssetFileSizeWithApp :: AppContextC s sc m => U.UUID -> m Int64
 sumAssetFileSizeWithApp appUuid = createSumByFn entityName "file_size" appCondition [U.toString appUuid]
 
-insertAsset
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => DocumentTemplateAsset
-  -> m Int64
+insertAsset :: AppContextC s sc m => DocumentTemplateAsset -> m Int64
 insertAsset = createInsertFn entityName
 
-updateAssetById
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => DocumentTemplateAsset
-  -> m Int64
+updateAssetById :: AppContextC s sc m => DocumentTemplateAsset -> m Int64
 updateAssetById asset = do
   appUuid <- asks (.appUuid')
   let sql =
@@ -141,50 +52,15 @@ updateAssetById asset = do
   let action conn = execute conn sql params
   runDB action
 
-deleteAssets
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => m Int64
+deleteAssets :: AppContextC s sc m => m Int64
 deleteAssets = createDeleteEntitiesFn entityName
 
-deleteAssetsByDocumentTemplateId
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> m Int64
+deleteAssetsByDocumentTemplateId :: AppContextC s sc m => String -> m Int64
 deleteAssetsByDocumentTemplateId tmlId = do
   appUuid <- asks (.appUuid')
   createDeleteEntitiesByFn entityName [appQueryUuid appUuid, ("document_template_id", tmlId)]
 
-deleteAssetById
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => U.UUID
-  -> m Int64
+deleteAssetById :: AppContextC s sc m => U.UUID -> m Int64
 deleteAssetById uuid = do
   appUuid <- asks (.appUuid')
   createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]

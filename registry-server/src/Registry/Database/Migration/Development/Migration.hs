@@ -14,9 +14,9 @@ import qualified Registry.Database.Migration.Development.Organization.Organizati
 import qualified Registry.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Registry.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
-import Registry.Util.Logger
-import qualified Shared.Common.Database.Migration.Development.Component.ComponentMigration as CMP
-import qualified Shared.Common.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
+import Shared.Common.Util.Logger
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentMigration as CMP
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 
 runMigration = do

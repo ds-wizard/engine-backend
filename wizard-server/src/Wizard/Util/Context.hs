@@ -9,13 +9,13 @@ import qualified Data.UUID as U
 import Shared.Common.Constant.App
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.TransactionState
+import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.User.UserMapper
-import Wizard.Util.Logger
 
 runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO (Either String a)
 runAppContextWithBaseContext function baseContext =

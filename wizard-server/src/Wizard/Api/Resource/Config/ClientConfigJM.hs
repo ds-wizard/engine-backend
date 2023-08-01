@@ -55,3 +55,9 @@ instance FromJSON ClientConfigLocaleDTO where
 
 instance ToJSON ClientConfigLocaleDTO where
   toJSON = genericToJSON jsonOptions
+
+instance FromJSON ClientConfigAdminDTO where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON ClientConfigAdminDTO where
+  toJSON = genericToJSON jsonOptions

@@ -1,5 +1,5 @@
 name: shared-common
-version: '3.25.1'
+version: '3.26.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -58,6 +58,7 @@ library:
   - servant-swagger
   - swagger2
   - time
+  - time-manager
   - time-parsers
   - text
   - text-replace
@@ -66,6 +67,7 @@ library:
   - vector
   - wai
   - wai-extra
+  - warp
   - wreq
   - x509
   - x509-store

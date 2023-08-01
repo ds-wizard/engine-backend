@@ -17,8 +17,7 @@ parseSortQuery (Just query) =
     [by, "desc"] -> [Sort {by = by, direction = Descending}]
     _ -> []
 
-addTraceUuidHeader
-  :: (MonadReader s m, HasField "traceUuid'" s U.UUID, MonadIO m) => a -> m (Headers '[Header "x-trace-uuid" String] a)
+addTraceUuidHeader :: (MonadReader s m, HasField "traceUuid'" s U.UUID, MonadIO m) => a -> m (Headers '[Header "x-trace-uuid" String] a)
 addTraceUuidHeader result = do
   context <- ask
   let traceUuid = context.traceUuid'

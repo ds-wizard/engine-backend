@@ -37,3 +37,6 @@ instance ToSchema ClientConfigCloudDTO where
 
 instance ToSchema ClientConfigLocaleDTO where
   declareNamedSchema = toSwagger (toClientConfigLocaleDTO localeNl)
+
+instance ToSchema ClientConfigAdminDTO where
+  declareNamedSchema = toSwagger (toClientConfigAdminDTO S.defaultAdmin)

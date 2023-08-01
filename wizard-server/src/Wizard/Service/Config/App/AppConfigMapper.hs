@@ -1,9 +1,11 @@
 module Wizard.Service.Config.App.AppConfigMapper where
 
 import Data.Time
+import qualified Data.UUID as U
 
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Model.Config.AppConfig
+import WizardLib.Public.Model.PersistentCommand.Config.CreateAppConfigAuthenticationCommand
 
 toChangeDTO :: AppConfig -> AppConfigChangeDTO
 toChangeDTO config =
@@ -53,3 +55,56 @@ fromClientCustomizationDTO oldConfig newClientCustomizationEnabled now =
     { feature = oldConfig.feature {clientCustomizationEnabled = newClientCustomizationEnabled}
     , updatedAt = now
     }
+
+fromAuthenticationCommand :: AppConfig -> CreateAppConfigAuthenticationCommand -> UTCTime -> AppConfig
+fromAuthenticationCommand oldConfig command now =
+  oldConfig
+    { authentication =
+        oldConfig.authentication
+          { external =
+              oldConfig.authentication.external
+                { services =
+                    [ AppConfigAuthExternalService
+                        { aId = command.aId
+                        , name = command.name
+                        , url = command.url
+                        , clientId = U.toString command.clientId
+                        , clientSecret = command.clientSecret
+                        , parameteres = []
+                        , style =
+                            Just
+                              AppConfigAuthExternalServiceStyle
+                                { icon = Nothing
+                                , background = Nothing
+                                , color = Nothing
+                                }
+                        }
+                    ]
+                }
+          }
+    , updatedAt = now
+    }
+
+-- data AppConfigAuthExternalService = AppConfigAuthExternalService
+--   { aId :: String
+--   , name :: String
+--   , url :: String
+--   , clientId :: String
+--   , clientSecret :: String
+--   , parameteres :: [AppConfigAuthExternalServiceParameter]
+--   , style :: Maybe AppConfigAuthExternalServiceStyle
+--   }
+--   deriving (Generic, Eq, Show)
+
+-- data AppConfigAuthExternalServiceParameter = AppConfigAuthExternalServiceParameter
+--   { name :: String
+--   , value :: String
+--   }
+--   deriving (Generic, Eq, Show)
+
+-- data AppConfigAuthExternalServiceStyle = AppConfigAuthExternalServiceStyle
+--   { icon :: Maybe String
+--   , background :: Maybe String
+--   , color :: Maybe String
+--   }
+--   deriving (Generic, Eq, Show)

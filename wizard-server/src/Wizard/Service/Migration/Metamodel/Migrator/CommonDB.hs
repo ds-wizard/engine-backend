@@ -8,10 +8,10 @@ import Database.PostgreSQL.Simple
 import Shared.Common.Constant.Component
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Util.List (foldEither)
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Util.Logger
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 import qualified WizardLib.Metamodel.Migration.MigrationContext as EventMigrator
 import qualified WizardLib.Metamodel.Migrator.EventMigrator as EventMigrator

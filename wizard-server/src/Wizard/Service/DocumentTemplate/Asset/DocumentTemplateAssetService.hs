@@ -12,10 +12,10 @@ import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
-import Wizard.Service.Acl.AclService
 import Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetMapper
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Limit.AppLimitService

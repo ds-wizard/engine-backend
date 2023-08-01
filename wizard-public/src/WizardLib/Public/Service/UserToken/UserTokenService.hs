@@ -1,18 +1,15 @@
 module WizardLib.Public.Service.UserToken.UserTokenService where
 
-import Control.Monad.Except (MonadError, throwError)
-import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadReader, ask)
+import Control.Monad.Except (throwError)
+import Control.Monad.Reader (ask)
 import qualified Data.Cache as C
 import Data.Foldable (traverse_)
 import Data.Maybe (fromJust)
-import Data.Pool
 import qualified Data.UUID as U
-import Database.PostgreSQL.Simple
 import GHC.Records
 
 import Shared.Common.Database.DAO.Common
+import Shared.Common.Model.Context.AppContext
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
@@ -20,20 +17,7 @@ import WizardLib.Public.Localization.Messages.Public
 import WizardLib.Public.Model.User.UserToken
 import WizardLib.Public.Model.User.UserTokenList
 
-getTokens
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => UserTokenType
-  -> Maybe U.UUID
-  -> m [UserTokenList]
+getTokens :: AppContextC s sc m => UserTokenType -> Maybe U.UUID -> m [UserTokenList]
 getTokens tokenType mCurrentTokenUuid = do
   context <- ask
   let mIdentityUuid = fmap (fromJust . U.fromString) context.identity'
@@ -42,17 +26,9 @@ getTokens tokenType mCurrentTokenUuid = do
     Nothing -> throwError $ ForbiddenError _ERROR_SERVICE_USER__MISSING_USER
 
 deleteTokensExceptCurrentSession
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
+  :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
-     , MonadIO m
      )
   => String
   -> m ()
@@ -67,17 +43,9 @@ deleteTokensExceptCurrentSession tokenValue =
       Nothing -> throwError $ ForbiddenError _ERROR_SERVICE_USER__MISSING_USER
 
 deleteTokenByUuid
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
+  :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
-     , MonadIO m
      )
   => U.UUID
   -> m ()
@@ -86,18 +54,21 @@ deleteTokenByUuid uuid = do
   deleteUserTokenByUuid uuid
   return ()
 
-deleteTokenByUserUuid
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
+deleteTokensByAppUuid
+  :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
-     , MonadIO m
+     )
+  => U.UUID
+  -> m ()
+deleteTokensByAppUuid appUuid = do
+  userTokens <- findUserTokensByAppUuid appUuid
+  traverse_ (\t -> deleteUserTokenByUuidAndAppUuid t.uuid appUuid) userTokens
+
+deleteTokenByUserUuid
+  :: ( AppContextC s sc m
+     , HasField "cache'" s serverCache
+     , HasField "userToken" serverCache (C.Cache Int UserToken)
      )
   => U.UUID
   -> m ()
@@ -106,17 +77,9 @@ deleteTokenByUserUuid userUuid = do
   traverse_ (\t -> deleteUserTokenByUuid t.uuid) userTokens
 
 cleanTokens
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
+  :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
-     , MonadIO m
      )
   => m ()
 cleanTokens = do

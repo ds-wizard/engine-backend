@@ -11,8 +11,8 @@ import qualified Registry.Database.Migration.Development.Organization.Organizati
 import qualified Registry.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
-import Shared.Common.Database.DAO.Component.ComponentDAO
-import qualified Shared.Common.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
+import Shared.Component.Database.DAO.Component.ComponentDAO
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO

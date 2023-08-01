@@ -146,6 +146,5 @@ instance FromJSON ServerConfigAdmin where
   parseJSON (Object o) = do
     enabled <- o .:? "enabled" .!= defaultAdmin.enabled
     url <- o .:? "url" .!= defaultAdmin.url
-    token <- o .:? "token" .!= defaultAdmin.token
     return ServerConfigAdmin {..}
   parseJSON _ = mzero

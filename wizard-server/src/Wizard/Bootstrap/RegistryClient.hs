@@ -3,8 +3,8 @@ module Wizard.Bootstrap.RegistryClient where
 import Control.Monad.Reader (liftIO)
 
 import Shared.Common.Constant.Component
+import Shared.Common.Util.Logger
 import Wizard.Integration.Http.Common.ServantClient
-import Wizard.Util.Logger
 
 setupRegistryClient serverConfig httpClientManager = do
   logInfo _CMP_INTEGRATION "creating registry client"

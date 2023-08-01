@@ -6,6 +6,7 @@ module Registry.Service.Mail.Mailer (
 
 import Control.Monad.Reader (asks, liftIO)
 import Data.Aeson (ToJSON)
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
@@ -13,10 +14,8 @@ import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Database.DAO.Common
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
-import Registry.Model.PersistentCommand.Mail.SendRegistrationConfirmationMailCommand
-import Registry.Model.PersistentCommand.Mail.SendRegistrationCreatedAnalyticsMailCommand
-import Registry.Model.PersistentCommand.Mail.SendResetTokenMailCommand
 import Shared.Common.Model.Config.ServerConfig
+import qualified Shared.Common.Model.PersistentCommand.Mail.MailCommand as MC
 import Shared.Common.Util.JSON
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
@@ -28,16 +27,21 @@ sendRegistrationConfirmationMail org hash mCallbackUrl = do
   let clientAddress = serverConfig.general.clientUrl
   runInTransaction $ do
     let body =
-          SendRegistrationConfirmationMailCommand
-            { email = org.email
-            , organizationId = org.organizationId
-            , organizationName = org.name
-            , organizationEmail = org.email
-            , hash = hash
-            , clientUrl = clientAddress
-            , callbackUrl = mCallbackUrl
+          MC.MailCommand
+            { mode = "registry"
+            , template = "registrationConfirmation"
+            , recipients = [org.email]
+            , parameters =
+                M.fromList
+                  [ ("organizationId", MC.string org.organizationId)
+                  , ("organizationName", MC.string org.name)
+                  , ("organizationEmail", MC.string org.email)
+                  , ("hash", MC.string hash)
+                  , ("clientUrl", MC.string clientAddress)
+                  , ("callbackUrl", MC.maybeString mCallbackUrl)
+                  ]
             }
-    sendEmail "sendRegistrationConfirmationMail" body org.organizationId
+    sendEmail body org.organizationId
 
 sendRegistrationCreatedAnalyticsMail :: OrganizationDTO -> AppContextM ()
 sendRegistrationCreatedAnalyticsMail org =
@@ -45,14 +49,19 @@ sendRegistrationCreatedAnalyticsMail org =
     serverConfig <- asks serverConfig
     let clientAddress = serverConfig.general.clientUrl
     let body =
-          SendRegistrationCreatedAnalyticsMailCommand
-            { email = serverConfig.analytics.email
-            , organizationId = org.organizationId
-            , organizationName = org.name
-            , organizationEmail = org.email
-            , clientUrl = clientAddress
+          MC.MailCommand
+            { mode = "registry"
+            , template = "registrationCreatedAnalytics"
+            , recipients = [serverConfig.analytics.email]
+            , parameters =
+                M.fromList
+                  [ ("organizationId", MC.string org.organizationId)
+                  , ("organizationName", MC.string org.name)
+                  , ("organizationEmail", MC.string org.email)
+                  , ("clientUrl", MC.string clientAddress)
+                  ]
             }
-    sendEmail "sendRegistrationCreatedAnalyticsMail" body org.organizationId
+    sendEmail body org.organizationId
 
 sendResetTokenMail :: OrganizationDTO -> String -> AppContextM ()
 sendResetTokenMail org hash =
@@ -60,25 +69,30 @@ sendResetTokenMail org hash =
     serverConfig <- asks serverConfig
     let clientAddress = serverConfig.general.clientUrl
     let body =
-          SendResetTokenMailCommand
-            { email = org.email
-            , organizationId = org.organizationId
-            , organizationName = org.name
-            , organizationEmail = org.email
-            , hash = hash
-            , clientUrl = clientAddress
+          MC.MailCommand
+            { mode = "registry"
+            , template = "resetToken"
+            , recipients = [org.email]
+            , parameters =
+                M.fromList
+                  [ ("organizationId", MC.string org.organizationId)
+                  , ("organizationName", MC.string org.name)
+                  , ("organizationEmail", MC.string org.email)
+                  , ("hash", MC.string hash)
+                  , ("clientUrl", MC.string clientAddress)
+                  ]
             }
-    sendEmail "sendResetTokenMail" body org.organizationId
+    sendEmail body org.organizationId
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-sendEmail :: ToJSON dto => String -> dto -> String -> AppContextM ()
-sendEmail function dto createdBy = do
+sendEmail :: ToJSON dto => dto -> String -> AppContextM ()
+sendEmail dto createdBy = do
   runInTransaction $ do
     pUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let body = encodeJsonToString dto
-    let command = toPersistentCommand pUuid "mailer" function body 10 False Nothing U.nil (Just createdBy) now
+    let command = toPersistentCommand pUuid "mailer" "sendMail" body 10 False Nothing U.nil (Just createdBy) now
     insertPersistentCommand command
     return ()

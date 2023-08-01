@@ -1,8 +1,7 @@
 module WizardLib.Public.Service.UserToken.UserTokenUtil where
 
-import Control.Monad.Except (MonadError, throwError)
-import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Reader (MonadReader, ask, liftIO)
+import Control.Monad.Except (throwError)
+import Control.Monad.Reader (ask, liftIO)
 import qualified Crypto.PubKey.RSA as RSA
 import Data.Aeson
 import qualified Data.ByteString.Char8 as BS
@@ -13,18 +12,16 @@ import qualified Jose.Jwa as JWA
 import qualified Jose.Jwk as JWK
 import qualified Jose.Jwt as JWT
 
+import Shared.Common.Model.Context.AppContext
 import Shared.Common.Model.Error.Error
 import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsJM ()
 import WizardLib.Public.Localization.Messages.Public
 
 createSignedJwtToken
-  :: ( MonadReader s m
-     , HasField "serverConfig'" s sc
+  :: ( AppContextC s sc m
      , HasField "general" sc scGeneral
      , HasField "rsaPrivateKey" scGeneral RSA.PrivateKey
-     , MonadIO m
-     , MonadError AppError m
      , ToJSON content
      )
   => content

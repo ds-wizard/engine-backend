@@ -15,9 +15,9 @@ import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Plan.AppPlanDAO
 import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Plan.AppPlan
-import Wizard.Service.Acl.AclService
 import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Plan.AppPlanMapper
@@ -29,11 +29,15 @@ getPlansForCurrentApp = do
 
 createPlan :: U.UUID -> AppPlanChangeDTO -> AppContextM AppPlan
 createPlan aUuid reqDto = do
+  uuid <- liftIO generateUuid
+  createPlanWithUuid aUuid uuid reqDto
+
+createPlanWithUuid :: U.UUID -> U.UUID -> AppPlanChangeDTO -> AppContextM AppPlan
+createPlanWithUuid aUuid pUuid reqDto = do
   checkPermission _APP_PERM
   app <- findAppByUuid aUuid
-  uuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
-  let plan = fromChangeDTO reqDto uuid aUuid now now
+  let plan = fromChangeDTO reqDto pUuid aUuid now now
   insertAppPlan plan
   recomputePlansForApp app
   return plan

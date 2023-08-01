@@ -8,12 +8,12 @@ import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import GHC.Int
 
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.TemporaryFile.TemporaryFile ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.TemporaryFile.TemporaryFile
-import Wizard.Util.Logger
 
 entityName = "temporary_file"
 

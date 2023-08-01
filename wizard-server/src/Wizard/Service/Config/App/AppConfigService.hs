@@ -8,6 +8,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Model.Common.SensitiveData
+import Shared.Common.Util.Logger
 import Shared.Common.Util.String (splitOn)
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Database.DAO.Common
@@ -16,14 +17,13 @@ import Wizard.Integration.Http.Config.Runner
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
 import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.S3.Public.PublicS3
-import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.App.AppConfigAudit
 import Wizard.Service.Config.App.AppConfigMapper
 import Wizard.Service.Config.App.AppConfigValidation
-import Wizard.Util.Logger
 
 getAppConfig :: AppContextM AppConfig
 getAppConfig = do
@@ -96,20 +96,20 @@ invokeClientCssCompilation :: AppConfig -> AppConfig -> AppContextM AppConfig
 invokeClientCssCompilation oldAppConfig newAppConfig =
   -- 1. Recompile CSS
   do
-    logInfoU _CMP_SERVICE "Invoking compile of clients' CSS files..."
+    logInfoI _CMP_SERVICE "Invoking compile of clients' CSS files..."
     app <- getCurrentApp
     cssContent <- compileClientCss app newAppConfig.lookAndFeel
-    logInfoU _CMP_SERVICE "Compilation succeed"
+    logInfoI _CMP_SERVICE "Compilation succeed"
     let cssFileName = f' "customization.%s.css" [show . abs . H.hash $ cssContent]
-    logInfoU _CMP_SERVICE (f' "CSS filename: %s" [cssFileName])
+    logInfoI _CMP_SERVICE (f' "CSS filename: %s" [cssFileName])
     -- 2. Upload new CSS file
-    logInfoU _CMP_SERVICE "Uploading new CSS file..."
+    logInfoI _CMP_SERVICE "Uploading new CSS file..."
     putPublicContent cssFileName (Just "text/css") (BSL.toStrict cssContent)
-    logInfoU _CMP_SERVICE "CSS file uploaded. Creating the public link..."
+    logInfoI _CMP_SERVICE "CSS file uploaded. Creating the public link..."
     newStyleUrl <- makePublicLink cssFileName
-    logInfoU _CMP_SERVICE (f' "Public link for CSS file created (%s)" [newStyleUrl])
+    logInfoI _CMP_SERVICE (f' "Public link for CSS file created (%s)" [newStyleUrl])
     -- 3. Remove old CSS files if exists
-    logInfoU _CMP_SERVICE "Compilation succeed"
+    logInfoI _CMP_SERVICE "Compilation succeed"
     when (oldAppConfig.lookAndFeel.styleUrl /= Just newStyleUrl) (removeOldConfig "CSS file" oldAppConfig oldAppConfig.lookAndFeel.styleUrl)
     -- 4. Create response
     return $ newAppConfig {lookAndFeel = newAppConfig.lookAndFeel {styleUrl = Just newStyleUrl}}
@@ -126,12 +126,12 @@ colorsChanged oldAppConfig newAppConfig =
 removeOldConfig name appConfig urlPath =
   case urlPath of
     Just url -> do
-      logInfoU _CMP_SERVICE (f' "Deleting the old %s..." [name])
+      logInfoI _CMP_SERVICE (f' "Deleting the old %s..." [name])
       let extractedFileName = extractFileName url
-      logInfoU _CMP_SERVICE (f' "Extracted filename: %s" [extractedFileName])
+      logInfoI _CMP_SERVICE (f' "Extracted filename: %s" [extractedFileName])
       removePublic extractedFileName
-      logInfoU _CMP_SERVICE (f' "The old %s deleted" [name])
-    Nothing -> logInfoU _CMP_SERVICE (f' "There is no old %s" [name])
+      logInfoI _CMP_SERVICE (f' "The old %s deleted" [name])
+    Nothing -> logInfoI _CMP_SERVICE (f' "There is no old %s" [name])
 
 extractFileName :: String -> String
 extractFileName url =

@@ -1,5 +1,5 @@
 name: registry-server
-version: '3.25.1'
+version: '3.26.0'
 synopsis: Engine Registry
 description: Engine Registry
 category: Web
@@ -61,7 +61,6 @@ library:
   - text
   - text-replace
   - time
-  - time-manager
   - transformers
   - unordered-containers
   - uri-encode

@@ -13,11 +13,11 @@ import Prelude hiding (log)
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Websocket.WebsocketMessage
-import Wizard.Util.Logger
 import Wizard.Util.Websocket
 
 initConnection :: AppContextM U.UUID
@@ -82,4 +82,4 @@ handleError continue connectionUuid connection entityId disconnectUser error = d
   continue
 
 log :: U.UUID -> String -> AppContextM ()
-log connectionUuid message = logInfoU _CMP_API (f' "[C:%s] %s" [U.toString connectionUuid, message])
+log connectionUuid message = logInfoI _CMP_API (f' "[C:%s] %s" [U.toString connectionUuid, message])

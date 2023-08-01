@@ -10,6 +10,7 @@ import Network.WebSockets (Connection, sendTextData)
 
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.Logger
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionJM ()
 import Wizard.Model.Config.ServerConfig
@@ -18,7 +19,6 @@ import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.Websocket.WebsocketMessage
 import Wizard.Model.Websocket.WebsocketRecord
-import Wizard.Util.Logger
 
 -- --------------------------------
 -- PRIVATE
@@ -89,4 +89,4 @@ logWS connectionUuid message = do
   serverConfig <- asks serverConfig
   when
     serverConfig.logging.websocketDebug
-    (logInfoU _CMP_SERVICE (f' "[C:%s] %s" [U.toString connectionUuid, message]))
+    (logInfoI _CMP_SERVICE (f' "[C:%s] %s" [U.toString connectionUuid, message]))

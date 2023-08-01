@@ -115,6 +115,5 @@ data ServerConfigUserToken = ServerConfigUserToken
 data ServerConfigAdmin = ServerConfigAdmin
   { enabled :: Bool
   , url :: String
-  , token :: String
   }
   deriving (Generic, Show)

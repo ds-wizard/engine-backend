@@ -4,10 +4,10 @@ import Control.Monad (unless)
 import qualified Data.List as L
 
 import Wizard.Model.Config.AppConfig
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Package.PackageList
 import Wizard.Model.Package.PackageState
 import Wizard.Model.Registry.RegistryPackage
-import Wizard.Service.Acl.AclService
 import Wizard.Service.Config.App.AppConfigService
 import WizardLib.Common.Service.Coordinate.CoordinateValidation
 import WizardLib.Common.Util.Coordinate

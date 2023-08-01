@@ -9,9 +9,9 @@ import System.Cron
 import System.Posix.Signals (Handler (CatchOnce), installHandler, sigINT, sigTERM)
 
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Util.Logger
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
-import Wizard.Util.Logger
 import Wizard.Worker.Cron.ActionKey.ActionKeyWorker
 import Wizard.Worker.Cron.Branch.SquashBranchEventsWorker
 import Wizard.Worker.Cron.Cache.CacheWorker

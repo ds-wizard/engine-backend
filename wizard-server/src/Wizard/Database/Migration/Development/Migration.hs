@@ -5,9 +5,12 @@ module Wizard.Database.Migration.Development.Migration (
 import qualified Shared.Audit.Database.Migration.Development.Audit.AuditMigration as ADT
 import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import Shared.Common.Constant.Component
-import qualified Shared.Common.Database.Migration.Development.Component.ComponentMigration as CMP
-import qualified Shared.Common.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
+import Shared.Common.Util.Logger
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentMigration as CMP
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
+import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabMigration as PF
+import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
 import qualified Wizard.Database.Migration.Development.Acl.AclMigration as ACL
 import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ACK
@@ -40,8 +43,6 @@ import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigr
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
 import qualified Wizard.Database.Migration.Development.Plan.AppPlanMigration as AP
 import qualified Wizard.Database.Migration.Development.Plan.AppPlanSchemaMigration as AP_Schema
-import qualified Wizard.Database.Migration.Development.Prefab.PrefabMigration as PF
-import qualified Wizard.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterMigration as QI
@@ -52,7 +53,6 @@ import qualified Wizard.Database.Migration.Development.Submission.SubmissionSche
 import qualified Wizard.Database.Migration.Development.TemporaryFile.TemporaryFileSchemaMigration as TF_Schema
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as U_Schema
-import Wizard.Util.Logger
 
 runMigration = do
   logInfo _CMP_MIGRATION "started"

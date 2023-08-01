@@ -2,10 +2,10 @@ module Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration 
 
 import Database.PostgreSQL.Simple
 
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Util.Logger
 
 runMigration :: AppContextM ()
 runMigration = do

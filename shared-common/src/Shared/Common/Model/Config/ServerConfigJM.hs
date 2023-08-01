@@ -63,6 +63,7 @@ instance FromJSON ServerConfigCloud where
     domain <- o .:? "domain" .!= defaultCloud.domain
     publicRegistrationEnabled <-
       o .:? "publicRegistrationEnabled" .!= defaultCloud.publicRegistrationEnabled
+    prefix <- o .:? "prefix" .!= defaultCloud.prefix
     return ServerConfigCloud {..}
   parseJSON _ = mzero
 

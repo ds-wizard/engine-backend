@@ -5,16 +5,16 @@ import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.Hashable as H
 import Data.Time
 
+import Shared.Common.Util.Logger
 import Shared.Common.Util.String (splitOn)
 import Wizard.Database.DAO.Common
 import Wizard.Model.Config.AppConfig
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.S3.Public.PublicS3
-import Wizard.Service.Acl.AclService
 import Wizard.Service.Common
 import Wizard.Service.Config.App.AppConfigMapper
 import Wizard.Service.Config.App.AppConfigService
-import Wizard.Util.Logger
 
 uploadLogo :: String -> String -> BSL.ByteString -> AppContextM ()
 uploadLogo plainFileName contentType content =
@@ -28,13 +28,13 @@ uploadLogo plainFileName contentType content =
     -- 3. Upload logo
     let logoFileName = getLogoFileName plainFileName content
     if fmap extractFileName appConfig.lookAndFeel.logoUrl == Just logoFileName
-      then logInfoU _CMP_SERVICE (f' "The logo is the same (%s). No action needed" [logoFileName])
+      then logInfoI _CMP_SERVICE (f' "The logo is the same (%s). No action needed" [logoFileName])
       else do
-        logInfoU _CMP_SERVICE (f' "Uploading logo with file ()..." [logoFileName])
+        logInfoI _CMP_SERVICE (f' "Uploading logo with file ()..." [logoFileName])
         putPublicContent logoFileName (Just contentType) (BSL.toStrict content)
-        logInfoU _CMP_SERVICE "Logo uploaded. Creating the public link..."
+        logInfoI _CMP_SERVICE "Logo uploaded. Creating the public link..."
         newLogoUrl <- makePublicLink logoFileName
-        logInfoU _CMP_SERVICE (f' "Public link for logo created (%s)" [newLogoUrl])
+        logInfoI _CMP_SERVICE (f' "Public link for logo created (%s)" [newLogoUrl])
         -- 4. Prepare to update & validate
         now <- liftIO getCurrentTime
         let updatedAppConfig = fromLogoDTO appConfig newLogoUrl now

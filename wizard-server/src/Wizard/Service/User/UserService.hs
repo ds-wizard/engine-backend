@@ -37,12 +37,11 @@ import Wizard.Model.ActionKey.ActionKeyType
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
-import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
 import Wizard.S3.Document.DocumentS3
-import Wizard.Service.Acl.AclService
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.App.AppHelper
 import Wizard.Service.Common
@@ -54,6 +53,7 @@ import Wizard.Service.User.UserAudit
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
 import WizardLib.Public.Localization.Messages.Public
+import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
 import WizardLib.Public.Service.UserToken.UserTokenService
 
 getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
@@ -62,8 +62,7 @@ getUsersPage mQuery mRole pageable sort = do
   userPage <- findUsersPage mQuery mRole pageable sort
   return . fmap toDTO $ userPage
 
-getUserSuggestionsPage
-  :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)
+getUserSuggestionsPage :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)
 getUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
   suggestionPage <- findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort
   return . fmap toSuggestionDTO $ suggestionPage
@@ -163,6 +162,25 @@ createUserFromExternalService mUserFromDb serviceId firstName lastName email mIm
         sendAnalyticsEmailIfEnabled user
         return user
 
+createOrUpdateUserFromCommand :: CreateOrUpdateUserCommand -> AppContextM User
+createOrUpdateUserFromCommand command =
+  runInTransaction $ do
+    mUserFromDb <- findUserByUuidSystem' command.uuid
+    now <- liftIO getCurrentTime
+    case mUserFromDb of
+      Just userFromDb -> do
+        let updatedUser = fromCommandChangeDTO userFromDb command now
+        updateUserByUuid updatedUser
+        return updatedUser
+      Nothing -> do
+        checkUserLimit
+        checkActiveUserLimit
+        serverConfig <- asks serverConfig
+        let uPerms = getPermissionForRole serverConfig command.uRole
+        let user = fromCommandCreateDTO command uPerms now
+        insertUser user
+        return user
+
 getUserById :: U.UUID -> AppContextM UserDTO
 getUserById userUuid = do
   user <- findUserByUuid userUuid
@@ -235,10 +253,10 @@ deleteUser :: U.UUID -> AppContextM ()
 deleteUser userUuid =
   runInTransaction $ do
     checkPermission _UM_PERM
-    user <- findUserByUuid userUuid
-    clearBranchCreatedBy user.uuid
-    removeOwnerFromQuestionnaire user.uuid
-    clearQuestionnaireCreatedBy user.uuid
+    _ <- findUserByUuid userUuid
+    clearBranchCreatedBy userUuid
+    removeOwnerFromQuestionnaire userUuid
+    clearQuestionnaireCreatedBy userUuid
     deletePersistentCommandByCreatedBy userUuid
     documents <- findDocumentsFiltered [("creator_uuid", U.toString userUuid)]
     forM_
@@ -247,7 +265,7 @@ deleteUser userUuid =
           deleteDocumentsFiltered [("uuid", U.toString d.uuid)]
           removeDocumentContent d.uuid
       )
-    deleteTokenByUserUuid user.uuid
+    deleteTokenByUserUuid userUuid
     deleteUserByUuid userUuid
     return ()
 

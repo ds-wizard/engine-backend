@@ -1,21 +1,16 @@
 module WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO where
 
-import Control.Monad.Except (MonadError)
-import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadReader, asks)
+import Control.Monad.Reader (asks)
 import Data.Foldable (traverse_)
-import Data.Pool
 import Data.String
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
-import GHC.Records
 
 import Shared.Common.Database.DAO.Common
-import Shared.Common.Model.Error.Error
+import Shared.Common.Model.Context.AppContext
 import Shared.Common.Util.String
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO (deleteAssets, deleteAssetsByDocumentTemplateId)
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO (deleteFiles, deleteFilesByDocumentTemplateId)
@@ -24,18 +19,7 @@ import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 entityName = "document_template"
 
-findDocumentTemplates
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => m [DocumentTemplate]
+findDocumentTemplates :: AppContextC s sc m => m [DocumentTemplate]
 findDocumentTemplates = do
   appUuid <- asks (.appUuid')
   let sql =
@@ -48,91 +32,29 @@ findDocumentTemplates = do
   let action conn = query conn sql params
   runDB action
 
-findDocumentTemplatesFiltered
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => [(String, String)]
-  -> m [DocumentTemplate]
+findDocumentTemplatesFiltered :: AppContextC s sc m => [(String, String)] -> m [DocumentTemplate]
 findDocumentTemplatesFiltered queryParams = do
   appUuid <- asks (.appUuid')
   createFindEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
 
-findDocumentTemplatesByOrganizationIdAndKmId
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> String
-  -> m [DocumentTemplate]
+findDocumentTemplatesByOrganizationIdAndKmId :: AppContextC s sc m => String -> String -> m [DocumentTemplate]
 findDocumentTemplatesByOrganizationIdAndKmId organizationId templateId = do
   appUuid <- asks (.appUuid')
   createFindEntitiesByFn
     entityName
     [appQueryUuid appUuid, ("organization_id", organizationId), ("template_id", templateId)]
 
-findDocumentTemplateById
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> m DocumentTemplate
+findDocumentTemplateById :: AppContextC s sc m => String -> m DocumentTemplate
 findDocumentTemplateById id = do
   appUuid <- asks (.appUuid')
   createFindEntityByFn entityName [appQueryUuid appUuid, ("id", id)]
 
-findDocumentTemplateById'
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> m (Maybe DocumentTemplate)
+findDocumentTemplateById' :: AppContextC s sc m => String -> m (Maybe DocumentTemplate)
 findDocumentTemplateById' id = do
   appUuid <- asks (.appUuid')
   createFindEntityByFn' entityName [appQueryUuid appUuid, ("id", id)]
 
-findVersionsForDocumentTemplate
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> String
-  -> m [String]
+findVersionsForDocumentTemplate :: AppContextC s sc m => String -> String -> m [String]
 findVersionsForDocumentTemplate orgId templateId = do
   appUuid <- asks (.appUuid')
   let sql = fromString "SELECT version FROM document_template WHERE app_uuid = ? and organization_id = ? and template_id = ?"
@@ -142,35 +64,12 @@ findVersionsForDocumentTemplate orgId templateId = do
   versions <- runDB action
   return . fmap fromOnly $ versions
 
-countDocumentTemplatesGroupedByOrganizationIdAndKmId
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => m Int
+countDocumentTemplatesGroupedByOrganizationIdAndKmId :: AppContextC s sc m => m Int
 countDocumentTemplatesGroupedByOrganizationIdAndKmId = do
   appUuid <- asks (.appUuid')
   countDocumentTemplatesGroupedByOrganizationIdAndKmIdWithApp appUuid
 
-countDocumentTemplatesGroupedByOrganizationIdAndKmIdWithApp
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => U.UUID
-  -> m Int
+countDocumentTemplatesGroupedByOrganizationIdAndKmIdWithApp :: AppContextC s sc m => U.UUID -> m Int
 countDocumentTemplatesGroupedByOrganizationIdAndKmIdWithApp appUuid = do
   let sql =
         "SELECT COUNT(*) \
@@ -186,34 +85,10 @@ countDocumentTemplatesGroupedByOrganizationIdAndKmIdWithApp appUuid = do
     [count] -> return . fromOnly $ count
     _ -> return 0
 
-insertDocumentTemplate
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => DocumentTemplate
-  -> m Int64
+insertDocumentTemplate :: AppContextC s sc m => DocumentTemplate -> m Int64
 insertDocumentTemplate = createInsertFn entityName
 
-updateDocumentTemplateById
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => DocumentTemplate
-  -> m Int64
+updateDocumentTemplateById :: AppContextC s sc m => DocumentTemplate -> m Int64
 updateDocumentTemplateById tml = do
   appUuid <- asks (.appUuid')
   let sql =
@@ -224,36 +99,13 @@ updateDocumentTemplateById tml = do
   let action conn = execute conn sql params
   runDB action
 
-deleteDocumentTemplates
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => m Int64
+deleteDocumentTemplates :: AppContextC s sc m => m Int64
 deleteDocumentTemplates = do
   deleteFiles
   deleteAssets
   createDeleteEntitiesFn entityName
 
-deleteDocumentTemplatesFiltered
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => [(String, String)]
-  -> m Int64
+deleteDocumentTemplatesFiltered :: AppContextC s sc m => [(String, String)] -> m Int64
 deleteDocumentTemplatesFiltered queryParams = do
   appUuid <- asks (.appUuid')
   templates <- findDocumentTemplatesFiltered queryParams
@@ -274,19 +126,7 @@ deleteDocumentTemplatesFiltered queryParams = do
   let action conn = execute conn sql params
   runDB action
 
-deleteDocumentTemplateById
-  :: ( MonadLogger m
-     , MonadError AppError m
-     , MonadReader s m
-     , HasField "dbPool'" s (Pool Connection)
-     , HasField "dbConnection'" s (Maybe Connection)
-     , HasField "identity'" s (Maybe String)
-     , HasField "traceUuid'" s U.UUID
-     , HasField "appUuid'" s U.UUID
-     , MonadIO m
-     )
-  => String
-  -> m Int64
+deleteDocumentTemplateById :: AppContextC s sc m => String -> m Int64
 deleteDocumentTemplateById documentTemplateId = do
   appUuid <- asks (.appUuid')
   deleteFilesByDocumentTemplateId documentTemplateId

@@ -4,13 +4,13 @@ import Data.String
 import Database.PostgreSQL.Simple
 import GHC.Int
 
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireAcl ()
 import Wizard.Model.Acl.Acl
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireAcl
-import Wizard.Util.Logger
 
 entityName_user = "questionnaire_acl_user"
 

@@ -13,9 +13,9 @@ import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Public
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
-import Wizard.Service.Acl.AclService
 import Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleAudit
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Limit.AppLimitService

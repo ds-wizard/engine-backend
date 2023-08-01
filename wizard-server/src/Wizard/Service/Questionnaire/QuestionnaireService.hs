@@ -16,6 +16,7 @@ import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Context.ContextResult
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.List
+import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
@@ -35,6 +36,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Config.AppConfig
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Document.Document
@@ -46,7 +48,6 @@ import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.S3.Document.DocumentS3
-import Wizard.Service.Acl.AclService
 import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Context.ContextService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
@@ -61,7 +62,6 @@ import Wizard.Service.Questionnaire.QuestionnaireAudit
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Questionnaire.QuestionnaireValidation
-import Wizard.Util.Logger
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
@@ -373,12 +373,15 @@ removeOwnerFromQuestionnaire userUuid =
     processQtn :: Questionnaire -> AppContextM ()
     processQtn qtn = do
       let newPermissions = removeUserPermission userUuid qtn.permissions
-      if null newPermissions
-        then deleteQuestionnaire qtn.uuid True
-        else do
-          let reqDto = toChangeDTO $ qtn {permissions = newPermissions}
-          modifyQuestionnaire qtn.uuid reqDto
-          return ()
+      if newPermissions == qtn.permissions
+        then return ()
+        else
+          if null newPermissions
+            then deleteQuestionnaire qtn.uuid True
+            else do
+              let reqDto = toChangeDTO $ qtn {permissions = newPermissions}
+              modifyQuestionnaire qtn.uuid reqDto
+              return ()
 
 modifyContent :: U.UUID -> QuestionnaireContentChangeDTO -> AppContextM QuestionnaireContentChangeDTO
 modifyContent qtnUuid reqDto =
@@ -401,7 +404,7 @@ cleanQuestionnaires =
     qtns <- findQuestionnaireWithZeroAcl
     traverse_
       ( \qtn -> do
-          logInfoU _CMP_SERVICE (f' "Clean questionnaire with empty ACL (qtnUuid: '%s')" [U.toString qtn.uuid])
+          logInfoI _CMP_SERVICE (f' "Clean questionnaire with empty ACL (qtnUuid: '%s')" [U.toString qtn.uuid])
           deleteQuestionnaire qtn.uuid False
       )
       qtns
@@ -423,4 +426,4 @@ recomputeQuestionnaireIndication qtnUuid = do
   case mPhasesAnsweredIndication of
     Just phasesAnsweredIndication -> updateQuestionnaireIndicationByUuid qtnUuid phasesAnsweredIndication
     Nothing ->
-      logErrorU _CMP_SERVICE (f' "Can not get phasesAnsweredIndication for the qtn uuid: %s" [U.toString qtnUuid])
+      logErrorI _CMP_SERVICE (f' "Can not get phasesAnsweredIndication for the qtn uuid: %s" [U.toString qtnUuid])

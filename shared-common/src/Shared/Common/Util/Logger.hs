@@ -15,26 +15,26 @@ module Shared.Common.Util.Logger (
   module Shared.Common.Constant.Component,
 ) where
 
+import Control.Monad (when)
 import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger (
-  LogLevel (..),
-  LogSource (..),
-  LoggingT (..),
-  MonadLogger,
-  filterLogger,
-  logWithoutLoc,
-  runStdoutLoggingT,
- )
-import Control.Monad.Reader (MonadReader, ask)
+import Control.Monad.Logger (LogLevel (..), LogSource (..), LoggingT (..), MonadLogger, filterLogger, logWithoutLoc, runStdoutLoggingT)
+import Control.Monad.Reader (MonadReader, ask, liftIO)
+import Data.Aeson (Value (..), toJSON)
+import qualified Data.HashMap.Strict as HashMap
 import qualified Data.List as L
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Data.UUID as U
 import GHC.Records
 import System.Console.Pretty (Color (..), color)
+import System.Log.Raven (initRaven, register, stderrFallback)
+import System.Log.Raven.Transport.HttpConduit (sendRecord)
+import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..))
 import Prelude hiding (log)
 
 import Shared.Common.Constant.Component
+import Shared.Common.Model.Config.BuildInfoConfig
+import Shared.Common.Model.Config.ServerConfig hiding (email)
 import Shared.Common.Util.String (f')
 
 -- ---------------------------------------------------------------------------
@@ -47,15 +47,29 @@ logInfoI = logI LevelInfo
 logWarnI :: (MonadReader s m, HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
 logWarnI = logI LevelWarn
 
-logErrorI :: (MonadReader s m, HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => String -> String -> m ()
-logErrorI = logI LevelError
+logErrorI
+  :: ( MonadReader s m
+     , MonadLogger m
+     , MonadIO m
+     , HasField "identity'" s (Maybe String)
+     , HasField "identityEmail'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "serverConfig'" s sc
+     , HasField "sentry'" sc ServerConfigSentry
+     , HasField "buildInfoConfig'" s BuildInfoConfig
+     )
+  => String
+  -> String
+  -> m ()
+logErrorI component message = do
+  logI LevelError component message
+  sendToSentry component message
 
 logI :: (MonadReader s m, HasField "identity'" s (Maybe String), HasField "traceUuid'" s U.UUID, MonadLogger m) => LogLevel -> String -> String -> m ()
 logI logLevel component message = do
   context <- ask
-  let mIdentityUuid = context.identity'
   let mTraceUuid = Just . U.toString $ context.traceUuid'
-  let record = createLogRecord logLevel mIdentityUuid mTraceUuid component message
+  let record = createLogRecord logLevel context.identity' mTraceUuid component message
   logWithoutLoc "" (LevelOther . T.pack . showLogLevel $ logLevel) record
 
 -- ---------------------------------------------------------------------------
@@ -125,3 +139,44 @@ showLogLevel LevelDebug = "Debug"
 showLogLevel LevelInfo = "Info "
 showLogLevel LevelWarn = "Warn "
 showLogLevel LevelError = "Error"
+
+-- ---------------------------------------------------------------------------
+sendToSentry
+  :: ( MonadReader s m
+     , MonadLogger m
+     , MonadIO m
+     , HasField "identity'" s (Maybe String)
+     , HasField "identityEmail'" s (Maybe String)
+     , HasField "traceUuid'" s U.UUID
+     , HasField "serverConfig'" s sc
+     , HasField "sentry'" sc ServerConfigSentry
+     , HasField "buildInfoConfig'" s BuildInfoConfig
+     )
+  => String
+  -> String
+  -> m ()
+sendToSentry component message = do
+  context <- ask
+  when
+    (context.serverConfig'.sentry'.enabled)
+    ( do
+        let sentryDsn = context.serverConfig'.sentry'.dsn
+        sentryService <- liftIO $ initRaven sentryDsn id sendRecord stderrFallback
+        let buildVersion = context.buildInfoConfig'.version
+        liftIO $ register sentryService "messageLogger" Error message (recordUpdate buildVersion context.identity' context.identityEmail' context.traceUuid')
+    )
+
+recordUpdate :: String -> Maybe String -> Maybe String -> U.UUID -> SentryRecord -> SentryRecord
+recordUpdate buildVersion mIdentity mEmail traceUuid record =
+  record
+    { srRelease = Just buildVersion
+    , srInterfaces =
+        HashMap.fromList
+          [
+            ( "sentry.interfaces.User"
+            , toJSON $ HashMap.fromList [("id", String . T.pack . fromMaybe "" $ mIdentity), ("email", String . T.pack . fromMaybe "" $ mEmail)]
+            )
+          ]
+    , srTags = HashMap.fromList [("traceUuid", U.toString traceUuid)]
+    , srExtra = HashMap.fromList [("traceUuid", String . T.pack . U.toString $ traceUuid)]
+    }

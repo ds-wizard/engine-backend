@@ -1,11 +1,11 @@
 module Wizard.Database.Migration.Development.Document.DocumentMigration where
 
 import Shared.Common.Constant.Component
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Model.Document.Document
 import Wizard.S3.Document.DocumentS3
-import Wizard.Util.Logger
 
 runMigration = do
   logInfo _CMP_MIGRATION "(Document/Document) started"

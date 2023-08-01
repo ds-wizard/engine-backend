@@ -7,7 +7,7 @@ import Registry.Database.DAO.Common
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.S3.DocumentTemplate.DocumentTemplateS3
-import Registry.Util.Logger
+import Shared.Common.Util.Logger
 
 runMigration :: AppContextM ()
 runMigration = do

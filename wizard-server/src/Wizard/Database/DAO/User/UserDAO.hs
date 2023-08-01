@@ -130,11 +130,10 @@ insertUser user = do
 
 updateUserByUuid :: User -> AppContextM Int64
 updateUserByUuid user = do
-  appUuid <- asks currentAppUuid
   let sql =
         fromString
           "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, groups = ?, last_visited_at = ?, created_at = ?, updated_at = ?, app_uuid = ?, machine = ? WHERE app_uuid = ? AND uuid = ?"
-  let params = toRow user ++ [toField appUuid, toField user.uuid]
+  let params = toRow user ++ [toField user.appUuid, toField user.uuid]
   logQuery sql params
   let action conn = execute conn sql params
   result <- runDB action

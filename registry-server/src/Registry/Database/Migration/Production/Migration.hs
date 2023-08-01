@@ -14,7 +14,7 @@ import qualified Registry.Database.Migration.Production.Migration_0006_templateT
 import qualified Registry.Database.Migration.Production.Migration_0007_component.Migration as M_0007
 import qualified Registry.Database.Migration.Production.Migration_0008_unification.Migration as M_0008
 import qualified Registry.Database.Migration.Production.Migration_0009_persistentCommandDestination.Migration as M_0009
-import Registry.Util.Logger
+import Shared.Common.Util.Logger
 
 runMigration baseContext = do
   let loggingLevel = baseContext.serverConfig.logging.level

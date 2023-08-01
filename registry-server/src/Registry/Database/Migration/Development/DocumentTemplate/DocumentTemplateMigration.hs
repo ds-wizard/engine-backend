@@ -3,7 +3,7 @@ module Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplate
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.S3.DocumentTemplate.DocumentTemplateS3
-import Registry.Util.Logger
+import Shared.Common.Util.Logger
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO

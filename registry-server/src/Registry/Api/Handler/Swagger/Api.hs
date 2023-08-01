@@ -19,8 +19,8 @@ import Registry.Api.Resource.Package.PackageDetailSM ()
 import Registry.Api.Resource.Package.PackageSimpleSM ()
 import Registry.Api.Resource.PackageBundle.PackageBundleSM ()
 import Shared.Common.Api.Resource.Common.FileSM ()
-import Shared.Common.Api.Resource.Component.ComponentSM ()
 import Shared.Common.Api.Resource.Info.InfoSM ()
+import Shared.Component.Api.Resource.Component.ComponentSM ()
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackageSM ()
@@ -36,7 +36,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Registry API"
               , _infoDescription = Just "API specification for Registry"
-              , _infoVersion = "3.25.1"
+              , _infoVersion = "3.26.0"
               , _infoLicense =
                   Just $
                     License

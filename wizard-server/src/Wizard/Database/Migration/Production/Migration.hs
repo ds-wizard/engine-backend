@@ -6,6 +6,7 @@ import Database.PostgreSQL.Migration.Entity
 import Database.PostgreSQL.Migration.Migration
 
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Util.Logger
 import qualified Wizard.Database.Migration.Production.Migration_0001_init.Migration as M_0001
 import qualified Wizard.Database.Migration.Production.Migration_0002_projectTemplate.Migration as M_0002
 import qualified Wizard.Database.Migration.Production.Migration_0003_metricsAndPhases.Migration as M_0003
@@ -41,9 +42,9 @@ import qualified Wizard.Database.Migration.Production.Migration_0032_branchFix.M
 import qualified Wizard.Database.Migration.Production.Migration_0033_apiKey.Migration as M_0033
 import qualified Wizard.Database.Migration.Production.Migration_0034_unification.Migration as M_0034
 import qualified Wizard.Database.Migration.Production.Migration_0035_persistentCommandDestination.Migration as M_0035
+import qualified Wizard.Database.Migration.Production.Migration_0036_branchCreatedBy.Migration as M_0036
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
-import Wizard.Util.Logger
 
 runMigration :: BaseContext -> IO (Maybe String)
 runMigration baseContext = do
@@ -87,4 +88,5 @@ migrationDefinitions =
   , M_0033.definition
   , M_0034.definition
   , M_0035.definition
+  , M_0036.definition
   ]

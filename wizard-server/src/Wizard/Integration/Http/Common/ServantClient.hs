@@ -8,9 +8,10 @@ import Servant.Client
 
 import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.Logger
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Util.Logger
+import Wizard.Model.Context.ContextLenses ()
 
 createRegistryClient :: ServerConfig -> Manager -> IO ClientEnv
 createRegistryClient serverConfig httpClientManager = do
@@ -29,8 +30,8 @@ runClient request client = do
     Right res -> return res
     Left (FailureResponse req res) -> do
       let body = responseBody res
-      logWarnU _CMP_INTEGRATION . show $ body
+      logWarnI _CMP_INTEGRATION . show $ body
       throwError $ HttpClientError (responseStatusCode res) (BSL.unpack body)
     Left err -> do
-      logErrorU _CMP_INTEGRATION . show $ err
+      logErrorI _CMP_INTEGRATION . show $ err
       throwError . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR "statusCode: 502"

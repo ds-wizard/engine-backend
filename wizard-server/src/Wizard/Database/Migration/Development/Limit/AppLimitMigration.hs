@@ -1,9 +1,9 @@
 module Wizard.Database.Migration.Development.Limit.AppLimitMigration where
 
 import Shared.Common.Constant.Component
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Limit.AppLimitDAO
 import Wizard.Database.Migration.Development.Limit.Data.AppLimits
-import Wizard.Util.Logger
 
 runMigration = do
   logInfo _CMP_MIGRATION "(App/Limit) started"

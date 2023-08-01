@@ -1,6 +1,6 @@
 module Wizard.Service.Branch.Collaboration.CollaborationAcl where
 
-import Wizard.Service.Acl.AclService
+import Wizard.Model.Context.AclContext
 
 checkViewPermission _ = checkPermission _KM_PERM
 

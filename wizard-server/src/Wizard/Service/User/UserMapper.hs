@@ -14,6 +14,7 @@ import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
+import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
 
 toDTO :: User -> UserDTO
 toDTO user =
@@ -196,4 +197,50 @@ fromAppCreateToUserCreateDTO dto =
     , affiliation = Nothing
     , uRole = Just _USER_ROLE_ADMIN
     , password = dto.password
+    }
+
+fromCommandCreateDTO :: CreateOrUpdateUserCommand -> [String] -> UTCTime -> User
+fromCommandCreateDTO command permissions now =
+  User
+    { uuid = command.uuid
+    , firstName = command.firstName
+    , lastName = command.lastName
+    , email = command.email
+    , passwordHash = "no-hash"
+    , affiliation = command.affiliation
+    , sources = command.sources
+    , uRole = command.uRole
+    , permissions = permissions
+    , active = command.active
+    , submissionProps = []
+    , imageUrl = command.imageUrl
+    , groups = []
+    , machine = False
+    , appUuid = command.appUuid
+    , lastVisitedAt = now
+    , createdAt = now
+    , updatedAt = now
+    }
+
+fromCommandChangeDTO :: User -> CreateOrUpdateUserCommand -> UTCTime -> User
+fromCommandChangeDTO oldUser command now =
+  User
+    { uuid = command.uuid
+    , firstName = command.firstName
+    , lastName = command.lastName
+    , email = command.email
+    , passwordHash = oldUser.passwordHash
+    , affiliation = command.affiliation
+    , sources = command.sources
+    , uRole = command.uRole
+    , permissions = oldUser.permissions
+    , active = command.active
+    , submissionProps = oldUser.submissionProps
+    , imageUrl = command.imageUrl
+    , groups = oldUser.groups
+    , machine = oldUser.machine
+    , appUuid = oldUser.appUuid
+    , lastVisitedAt = oldUser.lastVisitedAt
+    , createdAt = oldUser.createdAt
+    , updatedAt = now
     }

@@ -2,10 +2,10 @@ module Wizard.Database.Migration.Development.Branch.BranchSchemaMigration where
 
 import Database.PostgreSQL.Simple
 
+import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Util.Logger
 
 runMigration :: AppContextM ()
 runMigration = do
@@ -43,7 +43,7 @@ createTables = do
         \     name varchar not null, \
         \     km_id varchar not null, \
         \     previous_package_id varchar, \
-        \     created_by uuid not null \
+        \     created_by uuid \
         \         constraint branch_user_entity_uuid_fk \
         \             references user_entity, \
         \     created_at timestamptz not null, \

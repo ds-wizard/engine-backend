@@ -3,8 +3,8 @@ module Wizard.Service.KnowledgeModel.KnowledgeModelService where
 import Control.Monad.Except (liftEither)
 import qualified Data.UUID as U
 
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Acl.AclService
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.KnowledgeModel.KnowledgeModelFilter
 import Wizard.Service.Package.PackageService

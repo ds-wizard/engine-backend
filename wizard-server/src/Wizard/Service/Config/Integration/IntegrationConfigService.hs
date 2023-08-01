@@ -8,11 +8,11 @@ import Data.Yaml (decodeEither', decodeFileEither)
 import System.Environment (lookupEnv)
 
 import Shared.Common.Constant.Component
+import Shared.Common.Util.Logger
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.App.AppConfigService
-import Wizard.Util.Logger
 
 getFileIntegrationConfig :: String -> AppContextM (M.Map String String)
 getFileIntegrationConfig sectionName = do
@@ -26,7 +26,7 @@ getFileIntegrationConfig sectionName = do
   case eIntConfig of
     Right intConfig -> return . fromMaybe M.empty . M.lookup sectionName $ intConfig
     Left error -> do
-      logWarnU _CMP_SERVICE ("Failed to load file integration configuration (error: " ++ show error ++ ")")
+      logWarnI _CMP_SERVICE ("Failed to load file integration configuration (error: " ++ show error ++ ")")
       return M.empty
 
 getAppIntegrationConfig :: String -> AppContextM (M.Map String String)
@@ -37,5 +37,5 @@ getAppIntegrationConfig sectionName = do
   case eIntConfig of
     Right intConfig -> return . fromMaybe M.empty . M.lookup sectionName $ intConfig
     Left error -> do
-      logWarnU _CMP_SERVICE ("Failed to load app integration configuration (error: " ++ show error ++ ")")
+      logWarnI _CMP_SERVICE ("Failed to load app integration configuration (error: " ++ show error ++ ")")
       return M.empty

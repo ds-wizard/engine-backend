@@ -6,6 +6,7 @@ import Control.Monad.Logger (LoggingT, MonadLogger)
 import Control.Monad.Reader (MonadReader, ReaderT)
 import Data.Pool (Pool)
 import Database.PostgreSQL.Simple (Connection)
+import Network.HTTP.Client (Manager)
 import Network.Minio (MinioConn)
 import Servant (ServerError)
 
@@ -17,6 +18,7 @@ data BaseContext = BaseContext
   , buildInfoConfig :: BuildInfoConfig
   , dbPool :: Pool Connection
   , s3Client :: MinioConn
+  , httpClientManager :: Manager
   }
 
 newtype BaseContextM a = BaseContextM {runBaseContextM :: ReaderT BaseContext (LoggingT (ExceptT ServerError IO)) a}

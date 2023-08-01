@@ -182,4 +182,4 @@ defaultUserTokenClean =
 
 defaultAdmin :: ServerConfigAdmin
 defaultAdmin =
-  ServerConfigAdmin {enabled = False, url = "", token = ""}
+  ServerConfigAdmin {enabled = False, url = ""}
