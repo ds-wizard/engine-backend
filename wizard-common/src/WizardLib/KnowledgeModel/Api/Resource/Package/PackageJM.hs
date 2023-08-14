@@ -32,6 +32,7 @@ instance FromJSON PackageDTO where
     mergeCheckpointPackageId <- o .:? "mergeCheckpointPackageId" .!= parentPackageId
     eventSerialized <- o .: "events"
     events <- parseJSON eventSerialized
+    let nonEditable = False
     createdAt <- o .:? "createdAt" .!= UTCTime (fromJust $ fromGregorianValid 1970 1 1) 0
     return PackageDTO {..}
   parseJSON _ = mzero

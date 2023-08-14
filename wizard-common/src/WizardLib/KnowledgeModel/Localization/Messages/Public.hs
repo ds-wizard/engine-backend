@@ -20,9 +20,22 @@ _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId =
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
+-- Document Template
+_ERROR_SERVICE_DOC_TML__NON_EDITABLE_DOC_TML =
+  LocaleRecord
+    "error.service.doc_tml.non_editable_doc_tml"
+    "Unable to export / edit non editable document template"
+    []
+
 -- Package
 _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION =
   LocaleRecord
     "error.service.pkg.highest_number_in_new_version"
     "Your new version has to be higher than the previous version"
+    []
+
+_ERROR_SERVICE_PKG__NON_EDITABLE_PKG =
+  LocaleRecord
+    "error.service.pkg.non_editable_pkg"
+    "Unable to export / edit non editable package"
     []

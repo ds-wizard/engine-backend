@@ -67,6 +67,7 @@ differentPackage =
     , previousPackageId = Nothing
     , forkOfPackageId = Nothing
     , mergeCheckpointPackageId = Nothing
+    , nonEditable = False
     , events = [AddKnowledgeModelEvent' a_km1]
     , appUuid = differentApp.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0

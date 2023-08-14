@@ -68,7 +68,8 @@ createTemplateTable = do
         \     created_at             timestamp with time zone not null, \
         \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
         \     updated_at             timestamp with time zone not null, \
-        \     phase                  varchar                  not null default 'ReleasedDocumentTemplatePhase' \
+        \     phase                  varchar                  not null default 'ReleasedDocumentTemplatePhase', \
+        \     non_editable           boolean                  not null default false \
         \ ); \
         \create unique index document_template_id_uindex \
         \     on document_template (id); \

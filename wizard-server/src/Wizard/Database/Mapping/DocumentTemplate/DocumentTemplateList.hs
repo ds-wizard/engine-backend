@@ -27,6 +27,7 @@ instance FromRow DocumentTemplateList where
     appUuid <- field
     updatedAt <- field
     phase <- field
+    nonEditable <- field
     state <- field
     remoteVersion <- field
     remoteOrganizationName <- field

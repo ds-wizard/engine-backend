@@ -25,4 +25,5 @@ instance FromRow Package where
     createdAt <- field
     appUuid <- field
     phase <- field
+    nonEditable <- field
     return $ Package {..}

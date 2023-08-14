@@ -22,6 +22,7 @@ data PackageWithEventsRaw = PackageWithEventsRaw
   , forkOfPackageId :: Maybe String
   , mergeCheckpointPackageId :: Maybe String
   , events :: Value
+  , nonEditable :: Bool
   , appUuid :: U.UUID
   , createdAt :: UTCTime
   }

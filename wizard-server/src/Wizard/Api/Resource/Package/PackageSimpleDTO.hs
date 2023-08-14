@@ -18,6 +18,7 @@ data PackageSimpleDTO = PackageSimpleDTO
   , description :: String
   , state :: PackageState
   , organization :: Maybe RegistryOrganization
+  , nonEditable :: Bool
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

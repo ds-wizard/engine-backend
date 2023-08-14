@@ -1,5 +1,7 @@
 module Wizard.Service.Branch.BranchService where
 
+import Control.Monad (when)
+import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 import qualified Data.UUID as U
@@ -7,6 +9,7 @@ import qualified Data.UUID as U
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
+import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
@@ -30,8 +33,10 @@ import Wizard.Service.Branch.Collaboration.CollaborationService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Limit.AppLimitService
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
+import WizardLib.KnowledgeModel.Localization.Messages.Public
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import WizardLib.KnowledgeModel.Model.Package.Package
 
 getBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchList)
 getBranchesPage mQuery pageable sort = do
@@ -55,7 +60,12 @@ createBranchWithParams uuid now currentUser reqDto =
     appUuid <- asks currentAppUuid
     mPreviousPkg <-
       case reqDto.previousPackageId of
-        Just previousPackageId -> fmap Just $ findPackageById previousPackageId
+        Just previousPackageId -> do
+          previousPkg <- findPackageById previousPackageId
+          when
+            previousPkg.nonEditable
+            (throwError . UserError $ _ERROR_SERVICE_PKG__NON_EDITABLE_PKG)
+          return . Just $ previousPkg
         Nothing -> return Nothing
     let branch = fromCreateDTO reqDto uuid mPreviousPkg currentUser.uuid appUuid now
     insertBranch branch

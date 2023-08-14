@@ -21,6 +21,7 @@ data PackageDetailDTO = PackageDetailDTO
   , previousPackageId :: Maybe String
   , forkOfPackageId :: Maybe String
   , mergeCheckpointPackageId :: Maybe String
+  , nonEditable :: Bool
   , versions :: [String]
   , remoteLatestVersion :: Maybe String
   , organization :: Maybe RegistryOrganization

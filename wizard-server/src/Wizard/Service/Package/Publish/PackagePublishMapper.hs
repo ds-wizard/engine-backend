@@ -37,6 +37,7 @@ fromPackage branch forkOfPkgId mergeCheckpointPkgId org version description read
     , forkOfPackageId = forkOfPkgId
     , mergeCheckpointPackageId = mergeCheckpointPkgId
     , events = events
+    , nonEditable = False
     , appUuid = branch.appUuid
     , createdAt = now
     }

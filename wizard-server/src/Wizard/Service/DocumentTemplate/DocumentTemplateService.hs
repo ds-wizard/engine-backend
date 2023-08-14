@@ -61,15 +61,15 @@ getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState pagea
   if mTemplateState == (Just . show $ OutdatedDocumentTemplateState) && not appConfig.registry.enabled
     then return $ Page "documentTemplates" (PageMetadata 0 0 0 0) []
     else do
-      templates <- findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState pageable sort
+      templates <- findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState Nothing pageable sort
       packages <- findPackages
       return . fmap (toSimpleDTO' appConfig.registry.enabled packages) $ templates
 
-getDocumentTemplateSuggestions :: Maybe String -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
-getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery pageable sort = do
+getDocumentTemplateSuggestions :: Maybe String -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
+getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable pageable sort = do
   checkPermission _DOC_TML_READ_PERM
   validateCoordinateFormat' False mPkgId
-  page <- findDocumentTemplatesPage Nothing Nothing mQuery Nothing (Pageable (Just 0) (Just 999999999)) sort
+  page <- findDocumentTemplatesPage Nothing Nothing mQuery Nothing mNonEditable (Pageable (Just 0) (Just 999999999)) sort
   return . fmap toSuggestionDTO . updatePage page . filterDocumentTemplatesInGroup $ page
   where
     updatePage :: Page DocumentTemplateList -> [DocumentTemplateList] -> Page DocumentTemplateList

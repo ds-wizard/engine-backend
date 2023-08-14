@@ -21,6 +21,7 @@ data PackageRawDTO = PackageRawDTO
   , forkOfPackageId :: Maybe String
   , mergeCheckpointPackageId :: Maybe String
   , events :: Value
+  , nonEditable :: Bool
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

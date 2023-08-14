@@ -23,6 +23,7 @@ type List_Suggestions_GET =
     :> QueryParam "includeUnsupportedMetamodelVersion" Bool
     :> QueryParam "phase" DocumentTemplatePhase
     :> QueryParam "q" String
+    :> QueryParam "nonEditable" Bool
     :> QueryParam "page" Int
     :> QueryParam "size" Int
     :> QueryParam "sort" String
@@ -35,13 +36,14 @@ list_suggestions_GET
   -> Maybe Bool
   -> Maybe DocumentTemplatePhase
   -> Maybe String
+  -> Maybe Bool
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page DocumentTemplateSuggestionDTO))
-list_suggestions_GET mTokenHeader mServerUrl mPkgId mIncludeUnsupportedMetamodelVersion mPhase mQuery mPage mSize mSort =
+list_suggestions_GET mTokenHeader mServerUrl mPkgId mIncludeUnsupportedMetamodelVersion mPhase mQuery mNonEditable mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
       addTraceUuidHeader =<< do
         let includeUnsupportedMetamodelVersion = fromMaybe False mIncludeUnsupportedMetamodelVersion
-        getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery (Pageable mPage mSize) (parseSortQuery mSort)
+        getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable (Pageable mPage mSize) (parseSortQuery mSort)

@@ -55,7 +55,8 @@ createTables = do
         \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
         \       constraint branch_app_uuid_fk \
         \         references app, \
-        \     phase                       varchar                  not null default 'ReleasedPackagePhase' \
+        \     phase                       varchar                  not null default 'ReleasedPackagePhase', \
+        \     non_editable                bool                     not null default false \
         \ ); \
         \alter table package\
         \     add constraint package_pk primary key (id, app_uuid);\

@@ -23,6 +23,7 @@ type List_Suggestions_GET =
     :> QueryParam "select" String
     :> QueryParam "exclude" String
     :> QueryParam "phase" PackagePhase
+    :> QueryParam "nonEditable" Bool
     :> QueryParam "page" Int
     :> QueryParam "size" Int
     :> QueryParam "sort" String
@@ -35,14 +36,15 @@ list_suggestions_GET
   -> Maybe String
   -> Maybe String
   -> Maybe PackagePhase
+  -> Maybe Bool
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page PackageSuggestion))
-list_suggestions_GET mTokenHeader mServerUrl mQuery mSelect mExclude mPhase mPage mSize mSort =
+list_suggestions_GET mTokenHeader mServerUrl mQuery mSelect mExclude mPhase mNonEditable mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
       addTraceUuidHeader =<< do
         let mSelectIds = fmap (splitOn ",") mSelect
         let mExcludeIds = fmap (splitOn ",") mExclude
-        getPackageSuggestions mQuery mSelectIds mExcludeIds mPhase (Pageable mPage mSize) (parseSortQuery mSort)
+        getPackageSuggestions mQuery mSelectIds mExcludeIds mPhase mNonEditable (Pageable mPage mSize) (parseSortQuery mSort)

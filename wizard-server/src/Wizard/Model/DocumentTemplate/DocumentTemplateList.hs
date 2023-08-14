@@ -22,6 +22,7 @@ data DocumentTemplateList = DocumentTemplateList
   , allowedPackages :: [PackagePattern]
   , formats :: [DocumentTemplateFormat]
   , state :: DocumentTemplateState
+  , nonEditable :: Bool
   , remoteVersion :: Maybe String
   , remoteOrganizationName :: Maybe String
   , remoteOrganizationLogo :: Maybe String

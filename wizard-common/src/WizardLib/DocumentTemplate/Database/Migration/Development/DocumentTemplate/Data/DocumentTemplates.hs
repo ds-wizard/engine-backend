@@ -32,6 +32,7 @@ wizardDocumentTemplate =
         , formatOdt
         , formatMarkdown
         ]
+    , nonEditable = False
     , appUuid = defaultAppUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -86,6 +87,7 @@ anotherWizardDocumentTemplate =
         , formatOdt
         , formatMarkdown
         ]
+    , nonEditable = False
     , appUuid = defaultAppUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -107,6 +109,7 @@ differentDocumentTemplate =
     , license = "Apache-2.0"
     , allowedPackages = [packagePatternAll]
     , formats = []
+    , nonEditable = False
     , appUuid = differentAppUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0

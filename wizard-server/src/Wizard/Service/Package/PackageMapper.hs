@@ -30,6 +30,7 @@ toSimpleDTO' pkgRs orgRs pkg =
           Just pkgR -> Just $ pkgR.remoteVersion
           Nothing -> Nothing
     , description = pkg.description
+    , nonEditable = pkg.nonEditable
     , state = computePackageState pkgRs pkg
     , organization = selectOrganizationByOrgId pkg orgRs
     , createdAt = pkg.createdAt
@@ -47,6 +48,7 @@ toSimpleDTO'' registryEnabled pkg =
     , remoteLatestVersion = pkg.remoteVersion
     , description = pkg.description
     , state = computePackageState' registryEnabled pkg
+    , nonEditable = pkg.nonEditable
     , organization =
         case pkg.remoteOrganizationName of
           Just orgName ->
@@ -77,6 +79,7 @@ toDetailDTO pkg pkgRs orgRs versionLs registryLink =
     , previousPackageId = pkg.previousPackageId
     , forkOfPackageId = pkg.forkOfPackageId
     , mergeCheckpointPackageId = pkg.mergeCheckpointPackageId
+    , nonEditable = pkg.nonEditable
     , versions = L.sort versionLs
     , remoteLatestVersion =
         case selectPackageByOrgIdAndKmId pkg pkgRs of

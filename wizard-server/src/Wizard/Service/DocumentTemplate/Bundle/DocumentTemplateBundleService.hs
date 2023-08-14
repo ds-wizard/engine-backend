@@ -1,5 +1,6 @@
 module Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleService where
 
+import Control.Monad (when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks)
 import qualified Data.ByteString.Char8 as BS
@@ -29,6 +30,7 @@ import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.Bundle.DocumentTemplateBundleMapper
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
+import WizardLib.KnowledgeModel.Localization.Messages.Public
 
 getTemporaryFileWithBundle :: String -> AppContextM TemporaryFileDTO
 getTemporaryFileWithBundle tmlId =
@@ -41,6 +43,9 @@ exportBundle :: String -> AppContextM BSL.ByteString
 exportBundle tmlId =
   runInTransaction $ do
     tml <- findDocumentTemplateById tmlId
+    when
+      tml.nonEditable
+      (throwError . UserError $ _ERROR_SERVICE_DOC_TML__NON_EDITABLE_DOC_TML)
     files <- findFilesByDocumentTemplateId tmlId
     assets <- findAssetsByDocumentTemplateId tmlId
     assetContents <- traverse (findAsset tml.tId) assets

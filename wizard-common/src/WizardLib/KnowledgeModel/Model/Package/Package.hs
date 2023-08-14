@@ -23,6 +23,7 @@ data Package = Package
   , previousPackageId :: Maybe String
   , forkOfPackageId :: Maybe String
   , mergeCheckpointPackageId :: Maybe String
+  , nonEditable :: Bool
   , appUuid :: U.UUID
   , createdAt :: UTCTime
   }

@@ -28,6 +28,7 @@ instance ToRow DocumentTemplate where
     , toField appUuid
     , toField updatedAt
     , toField phase
+    , toField nonEditable
     ]
 
 instance FromRow DocumentTemplate where
@@ -47,4 +48,5 @@ instance FromRow DocumentTemplate where
     appUuid <- field
     updatedAt <- field
     phase <- field
+    nonEditable <- field
     return $ DocumentTemplate {..}

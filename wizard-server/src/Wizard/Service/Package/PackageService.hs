@@ -54,12 +54,13 @@ getPackageSuggestions
   -> Maybe [String]
   -> Maybe [String]
   -> Maybe PackagePhase
+  -> Maybe Bool
   -> Pageable
   -> [Sort]
   -> AppContextM (Page PackageSuggestion)
-getPackageSuggestions mQuery mSelectIds mExcludeIds mPhase pageable sort = do
+getPackageSuggestions mQuery mSelectIds mExcludeIds mPhase mNonEditable pageable sort = do
   checkPermission _PM_READ_PERM
-  findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase pageable sort
+  findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pageable sort
 
 getPackageById :: String -> AppContextM Package
 getPackageById pkgId = resolvePackageId pkgId >>= findPackageById

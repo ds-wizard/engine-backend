@@ -29,6 +29,7 @@ toRaw pkg =
     , forkOfPackageId = pkg.forkOfPackageId
     , mergeCheckpointPackageId = pkg.mergeCheckpointPackageId
     , events = toJSON $ pkg.events
+    , nonEditable = pkg.nonEditable
     , appUuid = pkg.appUuid
     , createdAt = pkg.createdAt
     }
@@ -50,6 +51,7 @@ toRawDTO pkg =
     , forkOfPackageId = pkg.forkOfPackageId
     , mergeCheckpointPackageId = pkg.mergeCheckpointPackageId
     , events = pkg.events
+    , nonEditable = pkg.nonEditable
     , createdAt = pkg.createdAt
     }
 

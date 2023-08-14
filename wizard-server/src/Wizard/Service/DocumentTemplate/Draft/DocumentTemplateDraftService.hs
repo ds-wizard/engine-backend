@@ -1,5 +1,7 @@
 module Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftService where
 
+import Control.Monad (when)
+import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
 import Data.Foldable (traverse_)
 import Data.Time
@@ -7,6 +9,7 @@ import Data.Time
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
+import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataChangeDTO
@@ -35,6 +38,7 @@ import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import WizardLib.KnowledgeModel.Localization.Messages.Public
 
 getDraftsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateDraftList)
 getDraftsPage mQuery pageable sort = do
@@ -51,6 +55,9 @@ createDraft reqDto =
     case reqDto.basedOn of
       Just tmlId -> do
         tml <- findDocumentTemplateById tmlId
+        when
+          tml.nonEditable
+          (throwError . UserError $ _ERROR_SERVICE_DOC_TML__NON_EDITABLE_DOC_TML)
         let draft = fromCreateDTO reqDto tml appConfig.organization.organizationId now
         validateNewDocumentTemplate draft False
         insertDocumentTemplate draft

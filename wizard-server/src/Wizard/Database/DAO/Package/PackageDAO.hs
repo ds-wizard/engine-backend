@@ -42,7 +42,7 @@ findPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort =
     pageLabel
     pageable
     sort
-    "id, package.name, package.organization_id, package.km_id, version, phase, description, get_package_state(registry_package.remote_version, version), registry_package.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, package.created_at"
+    "id, package.name, package.organization_id, package.km_id, version, phase, description, non_editable, get_package_state(registry_package.remote_version, version), registry_package.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, package.created_at"
     "km_id"
     mQuery
     Nothing
@@ -55,8 +55,8 @@ findPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort =
     )
 
 findPackageSuggestionsPage
-  :: Maybe String -> Maybe [String] -> Maybe [String] -> Maybe PackagePhase -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)
-findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase pageable sort =
+  :: Maybe String -> Maybe [String] -> Maybe [String] -> Maybe PackagePhase -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)
+findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pageable sort =
   -- 1. Prepare variables
   do
     appUuid <- asks currentAppUuid
@@ -81,8 +81,12 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase pageable sort =
           case mPhase of
             Just phase -> f' "AND phase = '%s'" [show phase]
             Nothing -> ""
+    let nonEditableCondition =
+          case mNonEditable of
+            Just nonEditable -> f' "AND non_editable = '%s'" [show nonEditable]
+            Nothing -> ""
     -- 2. Get total count
-    count <- countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike mExcludeIdsLike phaseCondition
+    count <- countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike mExcludeIdsLike phaseCondition nonEditableCondition
     -- 3. Get entities
     let sql =
           fromString $
@@ -99,12 +103,12 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase pageable sort =
               \                  (max(string_to_array(version, '.')::int[]))[3]) \
               \    FROM package \
               \    WHERE app_uuid = ? \
-              \      AND (name ~* ? OR id ~* ?) %s %s %s \
+              \      AND (name ~* ? OR id ~* ?) %s %s %s %s \
               \    GROUP BY organization_id, km_id) \
               \%s \
               \OFFSET %s \
               \LIMIT %s"
-              [selectCondition, excludeCondition, phaseCondition, mapSort sort, show skip, show sizeI]
+              [selectCondition, excludeCondition, phaseCondition, nonEditableCondition, mapSort sort, show skip, show sizeI]
     let params =
           [U.toString appUuid, U.toString appUuid]
             ++ [regex mQuery]
@@ -124,8 +128,8 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase pageable sort =
             }
     return $ Page pageLabel metadata entities
 
-countPackageSuggestions :: Maybe String -> String -> String -> Maybe [String] -> Maybe [String] -> String -> AppContextM Int
-countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike mExcludeIdsLike phaseCondition = do
+countPackageSuggestions :: Maybe String -> String -> String -> Maybe [String] -> Maybe [String] -> String -> String -> AppContextM Int
+countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike mExcludeIdsLike phaseCondition nonEditableCondition = do
   appUuid <- asks currentAppUuid
   let sql =
         fromString $
@@ -133,9 +137,9 @@ countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike m
             "SELECT COUNT(*) \
             \FROM (SELECT COUNT(*) \
             \   FROM package \
-            \   WHERE app_uuid = ? AND (name ~* ? OR id ~* ?) %s %s %s \
+            \   WHERE app_uuid = ? AND (name ~* ? OR id ~* ?) %s %s %s %s \
             \   GROUP BY organization_id, km_id) nested"
-            [selectCondition, excludeCondition, phaseCondition]
+            [selectCondition, excludeCondition, phaseCondition, nonEditableCondition]
   let params =
         [U.toString appUuid, regex mQuery, regex mQuery]
           ++ fromMaybe [] mSelectIdsLike
