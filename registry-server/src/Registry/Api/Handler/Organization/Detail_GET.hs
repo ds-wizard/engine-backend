@@ -3,11 +3,11 @@ module Registry.Api.Handler.Organization.Detail_GET where
 import Servant
 
 import Registry.Api.Handler.Common
-import Registry.Api.Resource.Organization.OrganizationDTO
-import Registry.Api.Resource.Organization.OrganizationJM ()
 import Registry.Model.Context.BaseContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.Service.Organization.OrganizationService
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Api.Resource.Organization.OrganizationJM ()
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 

@@ -4,9 +4,9 @@ import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
 
-import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.ActionKey.ActionKeyType
-import Registry.Model.Organization.Organization
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
+import RegistryLib.Model.Organization.Organization
 import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
 import Shared.ActionKey.Model.ActionKey.ActionKey
 

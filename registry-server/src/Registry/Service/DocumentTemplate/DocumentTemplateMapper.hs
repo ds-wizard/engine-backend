@@ -1,10 +1,10 @@
 module Registry.Service.DocumentTemplate.DocumentTemplateMapper where
 
 import Registry.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
-import Registry.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
-import Registry.Model.Organization.Organization
 import Registry.Service.DocumentTemplate.DocumentTemplateUtil
 import qualified Registry.Service.Organization.OrganizationMapper as OM_Mapper
+import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
+import RegistryLib.Model.Organization.Organization
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 toSimpleDTO :: [Organization] -> DocumentTemplate -> DocumentTemplateSimpleDTO

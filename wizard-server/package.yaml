@@ -22,7 +22,7 @@ library:
       ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
   dependencies:
   - shared-common
-  - registry-server
+  - registry-public
   - wizard-common
   - wizard-metamodel-migrator
   - wizard-public

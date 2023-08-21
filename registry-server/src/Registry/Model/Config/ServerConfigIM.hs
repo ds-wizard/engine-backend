@@ -11,6 +11,7 @@ instance FromEnv ServerConfig where
     analytics <- applyEnv serverConfig.analytics
     sentry <- applyEnv serverConfig.sentry
     logging <- applyEnv serverConfig.logging
+    persistentCommand <- applyEnv serverConfig.persistentCommand
     cloud <- applyEnv serverConfig.cloud
     return ServerConfig {..}
 
@@ -21,4 +22,5 @@ instance FromEnv ServerConfigGeneral where
       [ \c -> applyEnvVariable "GENERAL_ENVIRONMENT" c.environment (\x -> c {environment = x})
       , \c -> applyStringEnvVariable "GENERAL_CLIENT_URL" c.clientUrl (\x -> c {clientUrl = x} :: ServerConfigGeneral)
       , \c -> applyEnvVariable "GENERAL_SERVER_PORT" c.serverPort (\x -> c {serverPort = x})
+      , \c -> applyEnvVariable "GENERAL_PUBLIC_REGISTRATION_ENABLED" c.publicRegistrationEnabled (\x -> c {publicRegistrationEnabled = x})
       ]

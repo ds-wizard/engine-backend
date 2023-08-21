@@ -5,7 +5,7 @@ import Servant
 import Servant.Swagger
 import Servant.Swagger.UI
 
-import Registry.Api.Resource.Organization.OrganizationSM ()
+import RegistryLib.Api.Resource.Organization.OrganizationSM ()
 import Shared.Common.Api.Resource.Common.AesonSM ()
 import Shared.Common.Api.Resource.Common.FileSM ()
 import Shared.Common.Api.Resource.Common.PageMetadataSM ()

@@ -11,6 +11,9 @@ import Registry.Api.Handler.Organization.List_GET
 import Registry.Api.Handler.Organization.List_POST
 import Registry.Api.Handler.Organization.List_Simple_GET
 import Registry.Model.Context.BaseContext
+import RegistryLib.Api.Handler.Organization.Detail_State_PUT
+import RegistryLib.Api.Handler.Organization.List_POST
+import RegistryLib.Api.Handler.Organization.List_Simple_GET
 
 type OrganizationAPI =
   List_GET

@@ -1,14 +1,8 @@
 module Registry.Localization.Messages.Internal where
 
 -- --------------------------------------
--- API
--- --------------------------------------
--- --------------------------------------
 -- SERVICE
 -- --------------------------------------
--- Common
-_ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED featureName = "'" ++ featureName ++ "' feature is disabled"
-
 -- Knowledge Model Bundle
 _ERROR_SERVICE_KMB__MAIN_PKG_ABSENCE = "Knowledge Model Bundle doesn't contain main package"
 

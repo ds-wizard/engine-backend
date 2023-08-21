@@ -4,9 +4,9 @@ import Data.Aeson
 
 import Registry.Api.Resource.Package.PackageDetailDTO
 import Registry.Api.Resource.Package.PackageRawDTO
-import Registry.Api.Resource.Package.PackageSimpleDTO
-import qualified Registry.Model.Organization.Organization as Organization
 import qualified Registry.Service.Organization.OrganizationMapper as OM
+import RegistryLib.Api.Resource.Package.PackageSimpleDTO
+import qualified RegistryLib.Model.Organization.Organization as Organization
 import WizardLib.KnowledgeModel.Api.Resource.Event.EventJM ()
 import WizardLib.KnowledgeModel.Model.Package.Package
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents

@@ -8,15 +8,15 @@ import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai
 
-import Registry.Api.Resource.Organization.OrganizationDTO
-import Registry.Api.Resource.Organization.OrganizationJM ()
-import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.Migration.Development.ActionKey.Data.ActionKeys
-import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
-import Registry.Model.Organization.Organization
 import Registry.Service.Organization.OrganizationMapper
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Api.Resource.Organization.OrganizationJM ()
+import RegistryLib.Api.Resource.Organization.OrganizationStateJM ()
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
+import RegistryLib.Model.Organization.Organization
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 

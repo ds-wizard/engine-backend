@@ -3,7 +3,7 @@ module Wizard.Database.Migration.Development.Package.Data.Packages where
 import Data.Maybe (fromJust)
 import Data.Time
 
-import Registry.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.App.App
 import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO

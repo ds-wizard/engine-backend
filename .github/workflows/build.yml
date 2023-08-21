@@ -99,6 +99,38 @@ jobs:
       if: github.event_name == 'push' && github.event.forced && steps.cache-wizard-common.outputs.cache-hit != 'true'
       run: |
         rm -rf wizard-common/.stack-work
+    
+    - name: Cache wizard-public
+      id: cache-wizard-public
+      uses: actions/cache@v3
+      with:
+        path: wizard-public/.stack-work
+        key: wizard-public-ubuntu22-${{ hashFiles('wizard-public/package.yaml')}}-${{ hashFiles('wizard-public/**/*.hs') }}
+        restore-keys: |
+          wizard-public-ubuntu22-${{ hashFiles('wizard-public/package.yaml')}}-
+          wizard-public-ubuntu22-
+    
+    - name: Invalidate wizard-public cache (force push)
+      id: invalidate-cache-wizard-public
+      if: github.event_name == 'push' && github.event.forced && steps.cache-wizard-public.outputs.cache-hit != 'true'
+      run: |
+        rm -rf wizard-public/.stack-work
+    
+    - name: Cache registry-public
+      id: cache-registry-public
+      uses: actions/cache@v3
+      with:
+        path: registry-public/.stack-work
+        key: registry-public-ubuntu22-${{ hashFiles('registry-public/package.yaml')}}-${{ hashFiles('registry-public/**/*.hs') }}
+        restore-keys: |
+          registry-public-ubuntu22-${{ hashFiles('registry-public/package.yaml')}}-
+          registry-public-ubuntu22-
+    
+    - name: Invalidate registry-public cache (force push)
+      id: invalidate-cache-registry-public
+      if: github.event_name == 'push' && github.event.forced && steps.cache-registry-public.outputs.cache-hit != 'true'
+      run: |
+        rm -rf registry-public/.stack-work
 
     - name: Cache registry-server
       id: cache-registry-server

@@ -10,7 +10,7 @@ import Network.Minio (MinioConn)
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
-import Registry.Model.Organization.Organization
+import RegistryLib.Model.Organization.Organization
 import Shared.Common.Constant.App
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig

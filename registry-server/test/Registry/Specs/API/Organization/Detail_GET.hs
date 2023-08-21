@@ -7,10 +7,10 @@ import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai
 
-import Registry.Api.Resource.Organization.OrganizationDTO
-import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Service.Organization.OrganizationMapper
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 
 import Registry.Specs.API.Common
 import SharedTest.Specs.API.Common

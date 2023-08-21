@@ -7,6 +7,7 @@ import Registry.Api.Handler.DocumentTemplate.Detail_GET
 import Registry.Api.Handler.DocumentTemplate.List_Bundle_POST
 import Registry.Api.Handler.DocumentTemplate.List_GET
 import Registry.Model.Context.BaseContext
+import RegistryLib.Api.Handler.DocumentTemplate.List_GET
 
 type DocumentTemplateAPI =
   List_GET

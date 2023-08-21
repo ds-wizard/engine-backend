@@ -4,12 +4,12 @@ import Control.Monad.Except (throwError)
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.UUID as U
 
-import Registry.Api.Resource.Locale.LocaleDTO
 import Registry.Model.Context.AppContext
 import Registry.S3.Locale.LocaleS3
 import Registry.Service.Audit.AuditService
 import Registry.Service.Locale.Bundle.LocaleBundleAcl
 import Registry.Service.Locale.LocaleMapper
+import RegistryLib.Api.Resource.Locale.LocaleDTO
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
 import Shared.Locale.Service.Locale.Bundle.LocaleBundleMapper

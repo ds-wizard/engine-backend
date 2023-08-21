@@ -6,10 +6,10 @@ import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySche
 import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as TML_Schema
 import qualified Registry.Database.Migration.Development.Locale.LocaleSchemaMigration as LOC_Schema
-import Registry.Database.Migration.Development.Organization.Data.Organizations
 import qualified Registry.Database.Migration.Development.Organization.OrganizationSchemaMigration as ORG_Schema
 import qualified Registry.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.Component.Database.DAO.Component.ComponentDAO
 import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema

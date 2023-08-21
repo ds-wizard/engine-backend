@@ -7,6 +7,7 @@ import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Model.Config.AppConfig
 import WizardLib.Public.Model.PersistentCommand.Config.CreateAppConfigAuthenticationCommand
+import WizardLib.Public.Model.PersistentCommand.Config.UpdateAppConfigRegistryCommand
 
 toChangeDTO :: AppConfig -> AppConfigChangeDTO
 toChangeDTO config =
@@ -82,6 +83,17 @@ fromAuthenticationCommand oldConfig command now =
                         }
                     ]
                 }
+          }
+    , updatedAt = now
+    }
+
+fromRegistry :: AppConfig -> UpdateAppConfigRegistryCommand -> UTCTime -> AppConfig
+fromRegistry oldConfig command now =
+  oldConfig
+    { registry =
+        AppConfigRegistry
+          { enabled = command.enabled
+          , token = command.token
           }
     , updatedAt = now
     }

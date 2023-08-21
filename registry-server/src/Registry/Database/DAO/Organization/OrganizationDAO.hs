@@ -11,7 +11,7 @@ import Registry.Database.DAO.Common
 import Registry.Database.Mapping.Organization.Organization ()
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
-import Registry.Model.Organization.Organization
+import RegistryLib.Model.Organization.Organization
 
 entityName = "organization"
 

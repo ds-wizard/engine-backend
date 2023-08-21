@@ -7,9 +7,9 @@ import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai
 
-import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Service.Organization.OrganizationMapper
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
 import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleJM ()
 

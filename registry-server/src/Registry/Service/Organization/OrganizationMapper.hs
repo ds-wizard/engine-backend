@@ -3,9 +3,10 @@ module Registry.Service.Organization.OrganizationMapper where
 import Data.Time
 
 import Registry.Api.Resource.Organization.OrganizationChangeDTO
-import Registry.Api.Resource.Organization.OrganizationCreateDTO
-import Registry.Api.Resource.Organization.OrganizationDTO
-import Registry.Model.Organization.Organization
+import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Model.Organization.Organization
+import RegistryLib.Model.Organization.OrganizationRole
 import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
 
 toDTO :: Organization -> OrganizationDTO

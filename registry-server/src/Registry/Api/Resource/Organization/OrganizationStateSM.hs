@@ -2,9 +2,9 @@ module Registry.Api.Resource.Organization.OrganizationStateSM where
 
 import Data.Swagger
 
-import Registry.Api.Resource.Organization.OrganizationStateDTO
-import Registry.Api.Resource.Organization.OrganizationStateJM ()
-import Registry.Database.Migration.Development.Organization.Data.Organizations
+import RegistryLib.Api.Resource.Organization.OrganizationStateDTO
+import RegistryLib.Api.Resource.Organization.OrganizationStateJM ()
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Common.Util.Swagger
 
 instance ToSchema OrganizationStateDTO where

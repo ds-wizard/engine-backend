@@ -20,7 +20,6 @@ import qualified Wizard.Database.Migration.Development.DocumentTemplate.Document
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig hiding (request)
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire

@@ -57,6 +57,10 @@ _ERROR_SERVICE_APP__LIMIT_EXCEEDED name maxLimit actualLimit =
     "Limit of %s exceeded (actual: %s, max: %s)"
     [name, show maxLimit, show actualLimit]
 
+-- Common
+_ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED featureName =
+  LocaleRecord "error.service.common.feature_is_disabled" "Feature '%s' is disabled" [featureName]
+
 -- --------------------------------------
 -- UTIL
 -- --------------------------------------

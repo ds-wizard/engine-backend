@@ -62,7 +62,6 @@ runApplication = do
         Just error -> return . Just $ error
         Nothing -> do
           liftIO $ runMetamodelMigrations baseContext
-          liftIO $
-            race_ (takeMVar shutdownFlag) (concurrently (runWebServer baseContext) (worker shutdownFlag baseContext))
+          liftIO $ race_ (takeMVar shutdownFlag) (concurrently (runWebServer baseContext) (worker shutdownFlag baseContext))
           return Nothing
   forM_ result die

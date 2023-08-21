@@ -6,13 +6,13 @@ import qualified Data.UUID as U
 import Test.Hspec
 
 import Registry.Constant.Resource
-import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Config.ServerConfigIM ()
 import Registry.Model.Config.ServerConfigJM ()
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Service.Config.Server.ServerConfigValidation
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Common.Database.Connection
 import Shared.Common.Integration.Http.Common.HttpClientFactory
 import Shared.Common.Model.Config.ServerConfig
@@ -21,6 +21,7 @@ import Shared.Common.Service.Config.BuildInfo.BuildInfoConfigService
 import Shared.Common.Service.Config.Server.ServerConfigService
 
 import Registry.Specs.API.ActionKey.APISpec
+import Registry.Specs.API.Config.APISpec
 import Registry.Specs.API.DocumentTemplate.APISpec
 import Registry.Specs.API.Info.APISpec
 import Registry.Specs.API.Locale.APISpec
@@ -84,6 +85,7 @@ main =
             describe "Package" packageValidationSpec
           before (resetDB appContext) $ describe "INTEGRATION TESTING" $ describe "API" $ do
             actionKeyAPI baseContext appContext
+            configAPI baseContext appContext
             infoAPI baseContext appContext
             localeAPI baseContext appContext
             organizationAPI baseContext appContext

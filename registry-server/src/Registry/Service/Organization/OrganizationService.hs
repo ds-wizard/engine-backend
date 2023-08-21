@@ -6,9 +6,6 @@ import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 
 import Registry.Api.Resource.Organization.OrganizationChangeDTO
-import Registry.Api.Resource.Organization.OrganizationCreateDTO
-import Registry.Api.Resource.Organization.OrganizationDTO
-import Registry.Api.Resource.Organization.OrganizationStateDTO
 import Registry.Database.DAO.Common
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Internal
@@ -16,11 +13,15 @@ import Registry.Model.ActionKey.ActionKeyType
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.AppContextHelpers
-import Registry.Model.Organization.Organization
 import Registry.Service.ActionKey.ActionKeyService
 import Registry.Service.Mail.Mailer
 import Registry.Service.Organization.OrganizationMapper
 import Registry.Service.Organization.OrganizationValidation
+import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Api.Resource.Organization.OrganizationStateDTO
+import RegistryLib.Model.Organization.Organization
+import RegistryLib.Model.Organization.OrganizationRole
 import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.ActionKey.Model.ActionKey.ActionKey

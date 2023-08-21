@@ -1,12 +1,12 @@
 module Registry.Service.Locale.LocaleService where
 
-import Registry.Api.Resource.Locale.LocaleDTO
 import Registry.Api.Resource.Locale.LocaleDetailDTO
 import Registry.Database.DAO.Locale.LocaleDAO
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Model.Context.AppContext
 import Registry.Service.Locale.LocaleMapper
 import Registry.Service.Locale.LocaleUtil
+import RegistryLib.Api.Resource.Locale.LocaleDTO
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
 import WizardLib.Common.Util.Coordinate

@@ -7,6 +7,8 @@ import Registry.Api.Handler.Package.Detail_GET
 import Registry.Api.Handler.Package.List_Bundle_POST
 import Registry.Api.Handler.Package.List_GET
 import Registry.Model.Context.BaseContext
+import RegistryLib.Api.Handler.Package.List_Bundle_POST
+import RegistryLib.Api.Handler.Package.List_GET
 
 type PackageAPI =
   List_GET

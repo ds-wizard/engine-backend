@@ -7,13 +7,13 @@ module Registry.Service.Package.PackageService (
 import qualified Data.List as L
 
 import Registry.Api.Resource.Package.PackageDetailDTO
-import Registry.Api.Resource.Package.PackageSimpleDTO
 import Registry.Database.DAO.Common
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.DAO.Package.PackageDAO
 import Registry.Model.Context.AppContext
 import Registry.Service.Audit.AuditService
 import Registry.Service.Package.PackageMapper
+import RegistryLib.Api.Resource.Package.PackageSimpleDTO
 import Shared.Common.Util.List (foldInContext)
 import WizardLib.Common.Util.Coordinate
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO hiding (findPackagesFiltered)

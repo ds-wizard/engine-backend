@@ -2,10 +2,10 @@ module Wizard.Service.Registry.RegistryMapper where
 
 import Data.Time
 
-import Registry.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
-import Registry.Api.Resource.Locale.LocaleDTO
-import Registry.Api.Resource.Organization.OrganizationCreateDTO
-import Registry.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
+import RegistryLib.Api.Resource.Locale.LocaleDTO
+import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
+import RegistryLib.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Registry.RegistryLocale

@@ -1,23 +1,34 @@
 module Registry.Service.Organization.OrganizationValidation where
 
-import Control.Monad (when)
+import Control.Monad (unless, when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (forM_)
 import qualified Data.Map.Strict as M
 import Data.Maybe (isJust)
 import Text.Regex (matchRegex, mkRegex)
 
-import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Public
+import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
+import Registry.Model.Context.AppContextHelpers
+import Registry.Service.Common
+import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
 import Shared.Common.Model.Error.Error
 
 validateOrganizationCreateDto :: OrganizationCreateDTO -> AppContextM ()
 validateOrganizationCreateDto reqDto = do
+  validatePublicRegistrationEnabled
   _ <- validateOrganizationIdUniqueness reqDto.organizationId
   _ <- validateOrganizationEmailUniqueness reqDto.email
   forM_ (validateOrganizationId reqDto.organizationId) throwError
+
+validatePublicRegistrationEnabled :: AppContextM ()
+validatePublicRegistrationEnabled = do
+  isAdmin <- isOrganizationAdmin
+  unless
+    isAdmin
+    (checkIfServerFeatureIsEnabled "App Registration" (\s -> s.general.publicRegistrationEnabled))
 
 validateOrganizationId :: String -> Maybe AppError
 validateOrganizationId orgId =

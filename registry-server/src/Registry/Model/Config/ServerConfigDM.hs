@@ -13,6 +13,7 @@ defaultConfig =
     , analytics = defaultAnalytics
     , sentry = defaultSentry
     , logging = defaultLogging
+    , persistentCommand = defaultPersistentCommand
     , cloud = defaultCloud
     }
 
@@ -22,4 +23,5 @@ defaultGeneral =
     { environment = Production
     , clientUrl = ""
     , serverPort = 3000
+    , publicRegistrationEnabled = True
     }

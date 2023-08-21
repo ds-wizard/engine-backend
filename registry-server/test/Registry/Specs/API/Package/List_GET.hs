@@ -11,9 +11,9 @@ import Test.Hspec.Wai.Matcher
 
 import Registry.Database.DAO.Audit.AuditEntryDAO
 import Registry.Database.Migration.Development.Audit.Data.AuditEntries
-import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Service.Package.PackageMapper
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.KnowledgeModel.Service.Package.PackageMapper
 

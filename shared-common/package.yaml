@@ -10,7 +10,7 @@ license: Apache
 license-file: LICENSE.md
 homepage: https://github.com/ds-wizard/engine-backend
 git: git@github.com:engine/ds-wizard/engine-backend.git
-bug-reports: https://github.com/ds-wizard/ds-wizard/iisues
+bug-reports: https://github.com/ds-wizard/ds-wizard/issues
 tested-with: GHC==9.4.4
 library:
   source-dirs: src

@@ -4,7 +4,7 @@ import Control.Monad.Reader (liftIO)
 import Data.Foldable (traverse_)
 import Data.Time
 
-import Registry.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
 import Shared.Common.Util.Logger
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO

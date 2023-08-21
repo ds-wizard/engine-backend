@@ -12,6 +12,7 @@ data ServerConfig = ServerConfig
   , analytics :: ServerConfigAnalytics
   , sentry :: ServerConfigSentry
   , logging :: ServerConfigLogging
+  , persistentCommand :: ServerConfigPersistentCommand
   , cloud :: ServerConfigCloud
   }
   deriving (Generic, Show)
@@ -20,5 +21,6 @@ data ServerConfigGeneral = ServerConfigGeneral
   { environment :: Environment
   , clientUrl :: String
   , serverPort :: Int
+  , publicRegistrationEnabled :: Bool
   }
   deriving (Generic, Show)
