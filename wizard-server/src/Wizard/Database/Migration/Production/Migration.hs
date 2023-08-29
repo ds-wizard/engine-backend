@@ -44,6 +44,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0034_unification
 import qualified Wizard.Database.Migration.Production.Migration_0035_persistentCommandDestination.Migration as M_0035
 import qualified Wizard.Database.Migration.Production.Migration_0036_branchCreatedBy.Migration as M_0036
 import qualified Wizard.Database.Migration.Production.Migration_0037_pkgAndDocReadOnly.Migration as M_0037
+import qualified Wizard.Database.Migration.Production.Migration_0038_admin.Migration as M_0038
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 
@@ -91,4 +92,5 @@ migrationDefinitions =
   , M_0035.definition
   , M_0036.definition
   , M_0037.definition
+  , M_0038.definition
   ]

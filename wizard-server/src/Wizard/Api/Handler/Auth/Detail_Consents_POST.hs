@@ -7,7 +7,7 @@ import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Auth.AuthConsentDTO
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.OpenId.OpenIdService
+import Wizard.Service.User.UserService
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 
 type Detail_Consents_POST =

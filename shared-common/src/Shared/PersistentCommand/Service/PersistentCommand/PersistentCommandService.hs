@@ -81,10 +81,12 @@ executePersistentCommandByUuid runAppContextWithAppContext execute force uuid co
                   Right (Right (resultState, mErrorMessage)) -> (resultState, mErrorMessage)
                   Right (Left error) -> (ErrorPersistentCommandState, Just error)
                   Left exception -> (ErrorPersistentCommandState, Just . show $ exception)
+          context <- ask
           now <- liftIO getCurrentTime
           let updatedCommand =
                 command
                   { state = resultState
+                  , lastTraceUuid = Just context.traceUuid'
                   , lastErrorMessage = mErrorMessage
                   , attempts = command.attempts + 1
                   , updatedAt = now
@@ -114,10 +116,12 @@ tranferPersistentCommandByUuid destination createPersistentCommand uuid =
                 case eResult of
                   Right _ -> (DonePersistentCommandState, Nothing)
                   Left exception -> (ErrorPersistentCommandState, Just . show $ exception)
+          context <- ask
           now <- liftIO getCurrentTime
           let updatedCommand =
                 command
                   { state = resultState
+                  , lastTraceUuid = Just context.traceUuid'
                   , lastErrorMessage = mErrorMessage
                   , attempts = command.attempts + 1
                   , updatedAt = now

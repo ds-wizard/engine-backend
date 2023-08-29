@@ -6,6 +6,7 @@ import Data.Time
 
 import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Model.Config.SimpleFeature
+import Shared.OpenId.Database.Migration.Development.OpenId.Data.OpenIds
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
@@ -89,23 +90,8 @@ defaultAuthExternalService =
     , url = "https://accounts.google.com"
     , clientId = "32559869123-a98908094.apps.googleusercontent.com"
     , clientSecret = "sad89089023"
-    , parameteres = [defaultAuthExternalServiceParameter]
-    , style = Just defaultAuthExternalServiceStyle
-    }
-
-defaultAuthExternalServiceParameter :: AppConfigAuthExternalServiceParameter
-defaultAuthExternalServiceParameter =
-  AppConfigAuthExternalServiceParameter
-    { name = "hd2"
-    , value = "google.com"
-    }
-
-defaultAuthExternalServiceStyle :: AppConfigAuthExternalServiceStyle
-defaultAuthExternalServiceStyle =
-  AppConfigAuthExternalServiceStyle
-    { icon = Just "fa-google"
-    , background = Just "#000"
-    , color = Just "#FFF"
+    , parameteres = [openIdClientDefinitionParameter]
+    , style = Just openIdClientDefinitionStyle
     }
 
 defaultPrivacyAndSupport :: AppConfigPrivacyAndSupport

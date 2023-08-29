@@ -7,7 +7,7 @@ import Data.Time
 import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.User.UserPasswordDTO
-import Wizard.Api.Resource.User.UserProfileDTO
+import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
@@ -20,7 +20,6 @@ import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
 import Wizard.Service.User.UserMapper
-import Wizard.Service.User.UserProfileMapper
 
 userAlbert :: User
 userAlbert =
@@ -53,7 +52,7 @@ userAlbert =
         ]
     , active = True
     , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
-    , submissionProps = [userAlbertApiTokenEncrypted]
+    , submissionProps = [process defaultSecret userAlbertApiToken]
     , imageUrl = Nothing
     , groups = [ownerBioGroup, ownerPlantGroup]
     , machine = False
@@ -70,24 +69,19 @@ userAlbertEdited =
     , lastName = "EDITED: Einstein"
     , email = "albert.einstein@example-edited.com"
     , affiliation = Just "EDITED: My University"
-    , submissionProps = [userAlbertApiTokenEditedEncrypted]
     }
 
-userAlbertDecrypted :: User
-userAlbertDecrypted = process defaultSecret userAlbert
-
-userAlbertProfile :: UserProfileDTO
-userAlbertProfile = toUserProfileDTO userAlbert [userAlbertApiTokenDto]
-
-userAlbertProfileEdited :: UserProfileDTO
-userAlbertProfileEdited =
-  userAlbertProfile
+userAlbertEditedChange :: UserProfileChangeDTO
+userAlbertEditedChange =
+  UserProfileChangeDTO
     { firstName = userAlbertEdited.firstName
     , lastName = userAlbertEdited.lastName
     , email = userAlbertEdited.email
     , affiliation = userAlbertEdited.affiliation
-    , submissionProps = [userAlbertApiTokenEditedDto]
     }
+
+userAlbertDecrypted :: User
+userAlbertDecrypted = process defaultSecret userAlbert
 
 userPassword :: UserPasswordDTO
 userPassword = UserPasswordDTO {password = "newPassword"}
@@ -95,46 +89,46 @@ userPassword = UserPasswordDTO {password = "newPassword"}
 userState :: UserStateDTO
 userState = UserStateDTO {active = True}
 
+userAlbertOnlineInfo :: OnlineUserInfo
+userAlbertOnlineInfo = toLoggedOnlineUserInfo (toDTO userAlbert) 10
+
+userAlbertSuggestion :: UserSuggestionDTO
+userAlbertSuggestion = toSuggestionDTO . toSuggestion $ userAlbert
+
+-- --------------------------------------
+-- SUBMISSION
+-- --------------------------------------
+userAlbertEditedSubmission :: User
+userAlbertEditedSubmission =
+  userAlbert
+    { submissionProps = [process defaultSecret userAlbertApiTokenEdited]
+    }
+
 userAlbertApiToken :: UserSubmissionProps
 userAlbertApiToken =
   UserSubmissionProps
     { sId = defaultSubmissionService.sId
-    , values = M.fromList [(defaultSubmissionServiceApiTokenProp, "Some Token")]
+    , values = M.fromList [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "Some Token")]
     }
-
-userAlbertApiTokenEncrypted :: UserSubmissionProps
-userAlbertApiTokenEncrypted = process defaultSecret userAlbertApiToken
 
 userAlbertApiTokenDto :: UserSubmissionPropsDTO
 userAlbertApiTokenDto =
   UserSubmissionPropsDTO
     { sId = defaultSubmissionService.sId
     , name = defaultSubmissionService.name
-    , values =
-        M.fromList [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "Some Token")]
+    , values = M.fromList [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "Some Token")]
     }
 
 userAlbertApiTokenEdited :: UserSubmissionProps
 userAlbertApiTokenEdited =
   userAlbertApiToken
-    { values = M.fromList [(defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]
+    { values = M.fromList [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]
     }
-
-userAlbertApiTokenEditedEncrypted :: UserSubmissionProps
-userAlbertApiTokenEditedEncrypted = process defaultSecret userAlbertApiTokenEdited
 
 userAlbertApiTokenEditedDto :: UserSubmissionPropsDTO
 userAlbertApiTokenEditedDto =
   UserSubmissionPropsDTO
     { sId = defaultSubmissionService.sId
     , name = defaultSubmissionService.name
-    , values =
-        M.fromList
-          [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]
+    , values = M.fromList [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]
     }
-
-userAlbertOnlineInfo :: OnlineUserInfo
-userAlbertOnlineInfo = toLoggedOnlineUserInfo (toDTO userAlbert) 10
-
-userAlbertSuggestion :: UserSuggestionDTO
-userAlbertSuggestion = toSuggestionDTO . toSuggestion $ userAlbert

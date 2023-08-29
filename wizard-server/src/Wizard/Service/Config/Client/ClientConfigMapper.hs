@@ -23,7 +23,7 @@ toClientConfigDTO serverConfig appConfig app locales =
     , cloud = toClientConfigCloudDTO serverConfig.cloud app
     , locales = fmap toClientConfigLocaleDTO locales
     , owl = appConfig.owl
-    , admin = toClientConfigAdminDTO serverConfig.admin
+    , admin = toClientConfigAdminDTO serverConfig.admin app
     }
 
 toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO
@@ -78,6 +78,6 @@ toClientConfigLocaleDTO :: Locale -> ClientConfigLocaleDTO
 toClientConfigLocaleDTO locale =
   ClientConfigLocaleDTO {name = locale.name, code = locale.code, defaultLocale = locale.defaultLocale}
 
-toClientConfigAdminDTO :: ServerConfigAdmin -> ClientConfigAdminDTO
-toClientConfigAdminDTO serverConfig =
-  ClientConfigAdminDTO {enabled = serverConfig.enabled}
+toClientConfigAdminDTO :: ServerConfigAdmin -> App -> ClientConfigAdminDTO
+toClientConfigAdminDTO serverConfig app =
+  ClientConfigAdminDTO {enabled = serverConfig.enabled, clientUrl = app.adminClientUrl}

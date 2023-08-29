@@ -11,6 +11,8 @@ data App = App
   , serverDomain :: String
   , serverUrl :: String
   , clientUrl :: String
+  , adminServerUrl :: Maybe String
+  , adminClientUrl :: Maybe String
   , enabled :: Bool
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

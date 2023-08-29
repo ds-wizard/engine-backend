@@ -18,6 +18,8 @@ instance ToRow App where
     , toField createdAt
     , toField updatedAt
     , toField serverUrl
+    , toField adminServerUrl
+    , toField adminClientUrl
     ]
 
 instance FromRow App where
@@ -31,4 +33,6 @@ instance FromRow App where
     createdAt <- field
     updatedAt <- field
     serverUrl <- field
+    adminServerUrl <- field
+    adminClientUrl <- field
     return $ App {..}

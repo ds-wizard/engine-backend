@@ -7,12 +7,9 @@ import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.User.Data.AlbertEinstein
 import Wizard.Model.App.App
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.User.User
-import Wizard.Service.User.UserProfileMapper
 
 userIsaac :: User
 userIsaac =
@@ -66,6 +63,4 @@ userIsaacProfileChange =
     , lastName = userAlbertEdited.lastName
     , email = userAlbertEdited.email
     , affiliation = userAlbertEdited.affiliation
-    , submissionProps =
-        [toUserSubmissionPropsDTO userAlbertApiTokenEdited defaultSubmissionService.name]
     }

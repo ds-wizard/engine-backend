@@ -21,6 +21,7 @@ import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Wizard.Api.Resource.Auth.AuthConsentDTO
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
@@ -52,6 +53,8 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.User.UserAudit
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
+import Wizard.Service.UserToken.Login.LoginService
+import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Localization.Messages.Public
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
 import WizardLib.Public.Service.UserToken.UserTokenService
@@ -248,6 +251,13 @@ changeUserState hash active =
     updateUserByUuid updatedUser
     deleteActionKeyByHash actionKey.hash
     return ()
+
+confirmConsents :: AuthConsentDTO -> Maybe String -> AppContextM UserTokenDTO
+confirmConsents reqDto mUserAgent = do
+  actionKey <- findActionKeyByHash reqDto.hash :: AppContextM (ActionKey U.UUID ActionKeyType)
+  user <- findUserByUuid actionKey.identity
+  changeUserState reqDto.hash True
+  createLoginToken user mUserAgent reqDto.sessionState
 
 deleteUser :: U.UUID -> AppContextM ()
 deleteUser userUuid =

@@ -6,7 +6,7 @@ import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.OpenId.OpenIdService
+import Wizard.Service.OpenId.Client.Flow.OpenIdClientFlowService
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 
 type Detail_Callback_GET =

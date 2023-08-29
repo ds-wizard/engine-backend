@@ -7,6 +7,8 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Config.SimpleFeature
+import Shared.OpenId.Model.OpenId.OpenIdClientParameter
+import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Questionnaire.Questionnaire hiding (uuid)
 import WizardLib.KnowledgeModel.Model.Package.PackagePattern
 
@@ -85,21 +87,8 @@ data AppConfigAuthExternalService = AppConfigAuthExternalService
   , url :: String
   , clientId :: String
   , clientSecret :: String
-  , parameteres :: [AppConfigAuthExternalServiceParameter]
-  , style :: Maybe AppConfigAuthExternalServiceStyle
-  }
-  deriving (Generic, Eq, Show)
-
-data AppConfigAuthExternalServiceParameter = AppConfigAuthExternalServiceParameter
-  { name :: String
-  , value :: String
-  }
-  deriving (Generic, Eq, Show)
-
-data AppConfigAuthExternalServiceStyle = AppConfigAuthExternalServiceStyle
-  { icon :: Maybe String
-  , background :: Maybe String
-  , color :: Maybe String
+  , parameteres :: [OpenIdClientParameter]
+  , style :: Maybe OpenIdClientStyle
   }
   deriving (Generic, Eq, Show)
 

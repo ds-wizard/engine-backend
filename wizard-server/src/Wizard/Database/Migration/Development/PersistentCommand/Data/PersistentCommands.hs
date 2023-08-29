@@ -15,6 +15,7 @@ command1 =
     , component = "component1"
     , function = "function1"
     , body = "{}"
+    , lastTraceUuid = Nothing
     , lastErrorMessage = Nothing
     , attempts = 1
     , maxAttempts = 10

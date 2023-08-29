@@ -31,6 +31,7 @@ instance FromField identity => FromRow (PersistentCommand identity) where
     updatedAt <- field
     internal <- field
     destination <- field
+    lastTraceUuid <- field
     return $ PersistentCommand {..}
 
 instance ToField identity => ToRow (PersistentCommand identity) where
@@ -49,4 +50,5 @@ instance ToField identity => ToRow (PersistentCommand identity) where
     , toField updatedAt
     , toField internal
     , toField destination
+    , toField lastTraceUuid
     ]

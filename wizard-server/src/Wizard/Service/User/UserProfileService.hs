@@ -8,58 +8,35 @@ import qualified Data.UUID as U
 
 import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Util.List (groupBy)
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
-import Wizard.Api.Resource.User.UserProfileDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.User.User
-import Wizard.Model.User.UserEM ()
 import Wizard.Service.Config.App.AppConfigService
+import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserProfileMapper
 import Wizard.Service.User.UserService
+import Wizard.Service.User.UserUtil
 import Wizard.Service.User.UserValidation
 
-getUserProfile :: U.UUID -> AppContextM UserProfileDTO
-getUserProfile userUuid = do
-  appConfig <- getAppConfig
-  userDecrypted <- getDecryptedUser
-  let userProps = computeUserPropsForProfile appConfig userDecrypted
-  return $ toUserProfileDTO userDecrypted userProps
-  where
-    getDecryptedUser :: AppContextM User
-    getDecryptedUser = do
-      serverConfig <- asks serverConfig
-      user <- findUserByUuid userUuid
-      return $ process serverConfig.general.secret user
-    computeUserPropsForProfile :: AppConfig -> User -> [UserSubmissionPropsDTO]
-    computeUserPropsForProfile appConfig user =
-      let userPropsFromService = fmap fromService appConfig.submission.services
-          userPropsFromUser = fmap fromUserSubmissionProps user.submissionProps
-          groupedProps :: [[UserSubmissionPropsDTO]]
-          groupedProps = groupBy groupFn (userPropsFromService ++ userPropsFromUser)
-          groupFn :: UserSubmissionPropsDTO -> UserSubmissionPropsDTO -> Bool
-          groupFn p1 p2 = p1.sId == p2.sId
-          merge :: [UserSubmissionPropsDTO] -> UserSubmissionPropsDTO
-          merge [p] = p
-          merge [pFromService, pFromUser] =
-            pFromService {values = M.mapWithKey (mergeFn pFromUser) pFromService.values}
-          mergeFn :: UserSubmissionPropsDTO -> String -> String -> String
-          mergeFn pFromUser k v = fromMaybe "" (M.lookup k pFromUser.values)
-       in fmap merge groupedProps
+getUserProfile :: AppContextM UserDTO
+getUserProfile = getCurrentUser
 
-modifyUserProfile :: U.UUID -> UserProfileChangeDTO -> AppContextM UserProfileDTO
-modifyUserProfile userUuid reqDto = do
-  serverConfig <- asks serverConfig
-  user <- findUserByUuid userUuid
+modifyUserProfile :: UserProfileChangeDTO -> AppContextM UserDTO
+modifyUserProfile reqDto = do
+  currentUser <- getCurrentUser
+  user <- findUserByUuid currentUser.uuid
   validateUserChangedEmailUniqueness reqDto.email user.email
-  updatedUser <- updateUserTimestamp $ fromUserProfileChangeDTO reqDto user
-  let encryptedUpdatedUser = process serverConfig.general.secret updatedUser
-  updateUserByUuid encryptedUpdatedUser
-  getUserProfile userUuid
+  now <- liftIO getCurrentTime
+  let updatedUser = fromUserProfileChangeDTO user reqDto now
+  updateUserByUuid updatedUser
+  return . toDTO $ updatedUser
 
 changeUserProfilePassword :: U.UUID -> UserPasswordDTO -> AppContextM ()
 changeUserProfilePassword userUuid reqDto = do
@@ -68,3 +45,29 @@ changeUserProfilePassword userUuid reqDto = do
   now <- liftIO getCurrentTime
   updateUserPasswordByUuid userUuid passwordHash now
   return ()
+
+getUserProfileSubmissionProps :: U.UUID -> AppContextM [UserSubmissionPropsDTO]
+getUserProfileSubmissionProps userUuid = do
+  userDecrypted <- getDecryptedUser userUuid
+  appConfig <- getAppConfig
+  let userPropsFromService = fmap fromService appConfig.submission.services
+  let userPropsFromUser = fmap fromUserSubmissionProps userDecrypted.submissionProps
+  let groupedProps = groupBy (\p1 p2 -> p1.sId == p2.sId) (userPropsFromService ++ userPropsFromUser)
+  return $ fmap merge groupedProps
+  where
+    merge :: [UserSubmissionPropsDTO] -> UserSubmissionPropsDTO
+    merge [p] = p
+    merge [pFromService, pFromUser] = pFromService {values = M.mapWithKey (mergeFn pFromUser) pFromService.values}
+    mergeFn :: UserSubmissionPropsDTO -> String -> String -> String
+    mergeFn pFromUser k v = fromMaybe "" (M.lookup k pFromUser.values)
+
+modifyUserProfileSubmissionProps :: [UserSubmissionPropsDTO] -> AppContextM [UserSubmissionPropsDTO]
+modifyUserProfileSubmissionProps reqDto = do
+  currentUser <- getCurrentUser
+  serverConfig <- asks serverConfig
+  user <- findUserByUuid currentUser.uuid
+  now <- liftIO getCurrentTime
+  let updatedUser = fromUserSubmissionPropsDTO user reqDto now
+  let encryptedUpdatedUser = process serverConfig.general.secret updatedUser
+  updateUserByUuid encryptedUpdatedUser
+  return reqDto

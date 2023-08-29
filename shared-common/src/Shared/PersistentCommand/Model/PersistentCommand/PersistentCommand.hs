@@ -17,6 +17,7 @@ data PersistentCommand identity = PersistentCommand
   , component :: String
   , function :: String
   , body :: String
+  , lastTraceUuid :: Maybe U.UUID
   , lastErrorMessage :: Maybe String
   , attempts :: Int
   , maxAttempts :: Int
