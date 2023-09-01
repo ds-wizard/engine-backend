@@ -16,9 +16,9 @@ import Shared.Common.Model.Error.Error
 import Shared.Common.Util.JSON (convertValueToOject, getArrayField, getField)
 import Shared.Common.Util.List (foldEither)
 import Wizard.Localization.Messages.Public
+import qualified Wizard.Service.Migration.Metamodel.Migrator.EventMigrator as EventMigrator
+import qualified Wizard.Service.Migration.Metamodel.Migrator.Migrations.MigrationContext as EventMigrator
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
-import qualified WizardLib.Metamodel.Migration.MigrationContext as EventMigrator
-import qualified WizardLib.Metamodel.Migrator.EventMigrator as EventMigrator
 
 validateMetamodelVersionField :: Value -> Either AppError Value
 validateMetamodelVersionField value =

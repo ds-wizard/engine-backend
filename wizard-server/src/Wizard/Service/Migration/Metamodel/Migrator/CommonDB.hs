@@ -12,9 +12,9 @@ import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.ContextLenses ()
+import qualified Wizard.Service.Migration.Metamodel.Migrator.EventMigrator as EventMigrator
+import qualified Wizard.Service.Migration.Metamodel.Migrator.Migrations.MigrationContext as EventMigrator
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
-import qualified WizardLib.Metamodel.Migration.MigrationContext as EventMigrator
-import qualified WizardLib.Metamodel.Migrator.EventMigrator as EventMigrator
 
 -- --------------------------------
 -- COMMON

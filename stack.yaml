@@ -7,7 +7,6 @@ packages:
 - wizard-common
 - wizard-public
 - wizard-server
-- wizard-metamodel-migrator
 
 extra-deps:
   - github: haskellify/postgresql-migration

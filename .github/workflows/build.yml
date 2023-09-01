@@ -165,23 +165,6 @@ jobs:
       run: |
         rm -rf wizard-server/.stack-work
     
-    - name: Cache wizard-metamodel-migrator
-      id: cache-wizard-metamodel-migrator
-      uses: actions/cache@v3
-      if: matrix.component == 'wizard'
-      with:
-        path: wizard-metamodel-migrator/.stack-work
-        key: wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-${{ hashFiles('wizard-metamodel-migrator/package.yaml')}}-${{ hashFiles('wizard-metamodel-migrator/**/*.hs') }}
-        restore-keys: |
-          wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-${{ hashFiles('wizard-metamodel-migrator/package.yaml')}}-
-          wizard-metamodel-migrator-${{ matrix.component }}-ubuntu22-
-    
-    - name: Invalidate wizard-metamodel-migrator cache (force push)
-      id: invalidate-cache-wizard-metamodel-migrator
-      if: github.event_name == 'push' && github.event.forced && steps.cache-wizard-metamodel-migrator.outputs.cache-hit != 'true'
-      run: |
-        rm -rf wizard-metamodel-migrator/.stack-work
-    
     - name: Cache Stack in ~/.local/bin
       id: cache-stack-local-bin
       uses: actions/cache@v3

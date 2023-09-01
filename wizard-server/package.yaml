@@ -24,7 +24,6 @@ library:
   - shared-common
   - registry-public
   - wizard-common
-  - wizard-metamodel-migrator
   - wizard-public
   - base
   - aeson
@@ -128,6 +127,7 @@ tests:
     - wizard-server
     - base
     - aeson
+    - aeson-qq
     - async
     - bytestring
     - cache
@@ -163,6 +163,7 @@ tests:
     - wreq
     - yaml
     - hspec
+    - hspec-expectations-json
     - hspec-expectations-pretty-diff
     - hspec-wai
 

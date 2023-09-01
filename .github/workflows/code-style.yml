@@ -39,10 +39,12 @@ jobs:
 # (4) -> Run hlint
     - name: Run hlint
       run: |
-        hlint wizard-common
+        hlint shared-common
+        hlint registry-public
         hlint registry-server
+        hlint wizard-common
+        hlint wizard-public
         hlint wizard-server
-        hlint wizard-metamodel-migrator
 
   fourmolu:
     runs-on: ubuntu-20.04
@@ -88,7 +90,11 @@ jobs:
 # (4) -> Generate cabal files
     - name: Generate cabal files
       run: |
-        cd wizard-common
+        cd shared-common
+        hpack --force
+        cd ..
+
+        cd registry-public
         hpack --force
         cd ..
 
@@ -96,11 +102,15 @@ jobs:
         hpack --force
         cd ..
 
-        cd wizard-server
+        cd wizard-common
         hpack --force
         cd ..
 
-        cd wizard-metamodel-migrator
+        cd wizard-public
+        hpack --force
+        cd ..
+
+        cd wizard-server
         hpack --force
         cd ..
 
@@ -108,10 +118,12 @@ jobs:
     - name: Run fourmolu
       run: |
         FILES=$(find \
-          wizard-common/src wizard-common/test \
+          shared-common/src \
+          registry-public/src \
           registry-server/src registry-server/test \
+          wizard-common/src wizard-common/test \
+          wizard-public/src \
           wizard-server/src wizard-server/test \
-          wizard-metamodel-migrator/app wizard-metamodel-migrator/src \
           -name '*.hs'
         )
         RET=0
