@@ -2,7 +2,6 @@ module Wizard.Specs.Service.Migration.Metamodel.Migrator.Migration0001.Migration
 
 import Data.Aeson.QQ
 
-
 editKmEventIn1 =
   [aesonQQ|
     {

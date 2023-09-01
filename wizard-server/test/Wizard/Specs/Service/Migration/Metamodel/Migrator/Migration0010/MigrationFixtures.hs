@@ -29,7 +29,7 @@ addPhaseEventOut1 =
     }
   |]
 
-deleteQuestionEventIn1 = 
+deleteQuestionEventIn1 =
   [aesonQQ|
     {
       "uuid": "0fcdd1bb-010f-4b15-9d57-54d8343ac020",
@@ -39,7 +39,7 @@ deleteQuestionEventIn1 =
     }
   |]
 
-deleteQuestionEventOut1 = 
+deleteQuestionEventOut1 =
   [aesonQQ|
     {
       "createdAt": "2022-01-01T12:00:00Z",
@@ -50,7 +50,7 @@ deleteQuestionEventOut1 =
     }
   |]
 
-editKmEventIn1 = 
+editKmEventIn1 =
   [aesonQQ|
     {
       "annotations": {
@@ -85,7 +85,7 @@ editKmEventIn1 =
     }
   |]
 
-editKmEventOut1 = 
+editKmEventOut1 =
   [aesonQQ|
     {
       "annotations": {

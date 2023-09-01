@@ -2,7 +2,6 @@ module Wizard.Specs.Service.Migration.Metamodel.Migrator.Migration0002.Migration
 
 import Data.Aeson.QQ
 
-
 addQuestionEventIn1 =
   [aesonQQ|
     {
@@ -66,7 +65,6 @@ addQuestionEventOut2 =
       "requiredLevel": null
     }
   |]
-
 
 editQuestionEventIn1 =
   [aesonQQ|
