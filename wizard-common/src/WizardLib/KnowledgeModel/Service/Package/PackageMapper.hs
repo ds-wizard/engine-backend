@@ -23,6 +23,7 @@ toPackage pkg =
     , previousPackageId = pkg.previousPackageId
     , forkOfPackageId = pkg.forkOfPackageId
     , mergeCheckpointPackageId = pkg.mergeCheckpointPackageId
+    , nonEditable = pkg.nonEditable
     , appUuid = pkg.appUuid
     , createdAt = pkg.createdAt
     }
@@ -51,6 +52,7 @@ toDTO pkg =
     , previousPackageId = pkg.previousPackageId
     , forkOfPackageId = pkg.forkOfPackageId
     , mergeCheckpointPackageId = pkg.mergeCheckpointPackageId
+    , nonEditable = pkg.nonEditable
     , events = pkg.events
     , createdAt = pkg.createdAt
     }
@@ -71,6 +73,7 @@ fromDTO dto appUuid =
     , previousPackageId = dto.previousPackageId
     , forkOfPackageId = dto.forkOfPackageId
     , mergeCheckpointPackageId = dto.mergeCheckpointPackageId
+    , nonEditable = dto.nonEditable
     , events = dto.events
     , appUuid = appUuid
     , createdAt = dto.createdAt

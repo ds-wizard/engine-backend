@@ -11,7 +11,7 @@ import Shared.Common.Api.Resource.Common.FileSM ()
 import Shared.Common.Api.Resource.Common.PageMetadataSM ()
 import Shared.Common.Api.Resource.Dev.DevExecutionResultSM ()
 import Shared.Common.Api.Resource.Dev.DevExecutionSM ()
-import Shared.Common.Api.Resource.Dev.DevSM ()
+import Shared.Common.Api.Resource.Dev.DevSectionSM ()
 import Shared.Common.Api.Resource.Info.InfoSM ()
 import Shared.Component.Api.Resource.Component.ComponentSM ()
 import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandChangeSM ()
@@ -128,7 +128,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "3.26.0"
+              , _infoVersion = "3.27.0"
               , _infoLicense =
                   Just $
                     License

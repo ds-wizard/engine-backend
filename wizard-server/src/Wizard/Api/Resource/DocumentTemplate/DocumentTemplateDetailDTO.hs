@@ -22,6 +22,7 @@ data DocumentTemplateDetailDTO = DocumentTemplateDetailDTO
   , license :: String
   , allowedPackages :: [PackagePattern]
   , formats :: [DocumentTemplateFormat]
+  , nonEditable :: Bool
   , usablePackages :: [PackageSimpleDTO]
   , versions :: [String]
   , remoteLatestVersion :: Maybe String

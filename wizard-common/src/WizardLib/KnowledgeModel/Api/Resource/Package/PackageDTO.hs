@@ -20,6 +20,7 @@ data PackageDTO = PackageDTO
   , previousPackageId :: Maybe String
   , forkOfPackageId :: Maybe String
   , mergeCheckpointPackageId :: Maybe String
+  , nonEditable :: Bool
   , events :: [Event]
   , createdAt :: UTCTime
   }

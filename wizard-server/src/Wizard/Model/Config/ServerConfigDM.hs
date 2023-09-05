@@ -174,11 +174,15 @@ defaultTemporaryFileClean =
   ServerConfigCronWorker {enabled = True, cron = "25 0 * * *"}
 
 defaultUserToken :: ServerConfigUserToken
-defaultUserToken = ServerConfigUserToken {clean = defaultUserTokenClean}
+defaultUserToken = ServerConfigUserToken {clean = defaultUserTokenClean, expire = defaultUserTokenExpire}
 
 defaultUserTokenClean :: ServerConfigCronWorker
 defaultUserTokenClean =
   ServerConfigCronWorker {enabled = True, cron = "0 3 * * *"}
+
+defaultUserTokenExpire :: ServerConfigCronWorker
+defaultUserTokenExpire =
+  ServerConfigCronWorker {enabled = True, cron = "0 4 * * *"}
 
 defaultAdmin :: ServerConfigAdmin
 defaultAdmin =

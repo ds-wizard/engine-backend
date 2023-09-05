@@ -6,7 +6,7 @@ module Wizard.Service.Package.Bundle.PackageBundleService (
   importBundle,
 ) where
 
-import Control.Monad (forM)
+import Control.Monad (forM, when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks)
 import Data.Aeson
@@ -62,6 +62,9 @@ exportBundle pbId =
   runInTransaction $ do
     packages <- getSeriesOfPackages pbId
     let newestPackage = last packages
+    when
+      newestPackage.nonEditable
+      (throwError . UserError $ _ERROR_SERVICE_PKG__NON_EDITABLE_PKG)
     let bundle =
           PackageBundle
             { bundleId = newestPackage.pId

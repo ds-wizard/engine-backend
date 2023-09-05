@@ -27,6 +27,7 @@ data DocumentTemplate = DocumentTemplate
   , license :: String
   , allowedPackages :: [PackagePattern]
   , formats :: [DocumentTemplateFormat]
+  , nonEditable :: Bool
   , appUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

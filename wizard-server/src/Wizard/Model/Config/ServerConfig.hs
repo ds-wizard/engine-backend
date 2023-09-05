@@ -109,6 +109,7 @@ data ServerConfigTemporaryFile = ServerConfigTemporaryFile
 
 data ServerConfigUserToken = ServerConfigUserToken
   { clean :: ServerConfigCronWorker
+  , expire :: ServerConfigCronWorker
   }
   deriving (Generic, Show)
 

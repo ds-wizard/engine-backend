@@ -55,6 +55,10 @@ _ERROR_SERVICE_CONFIG__VALIDATION_CFG_RSA_PRIVATE_KEY_FORMAT = "Unable to load R
 
 _ERROR_SERVICE_CONFIG__VALIDATION_ENV_RSA_PRIVATE_KEY_FORMAT = "Unable to load RSA private key from the env 'GENERAL_RSA_PRIVATE_KEY' variable"
 
+-- Dev
+_ERROR_SERVICE_DEV__INVALID_DEV_OPERATION_DEFINITIONS_OR_REQUEST =
+  "There were either wrong request or wrong dev operation definitions"
+
 -- File
 _ERROR_SERVICE_FILE__CANT_READ_JSON filename =
   f' "Server was unable to decode a file ('%s') to a JSON object" [filename]

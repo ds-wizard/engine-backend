@@ -2,14 +2,21 @@ module Shared.Common.Database.Migration.Development.Dev.Data.Devs where
 
 import Shared.Common.Api.Resource.Dev.DevExecutionDTO
 import Shared.Common.Api.Resource.Dev.DevExecutionResultDTO
+import Shared.Common.Api.Resource.Dev.DevOperationDTO
+import Shared.Common.Api.Resource.Dev.DevSectionDTO
 import Shared.Common.Model.Dev.Dev
 
-section :: DevSection
-section = DevSection {name = "Cache", description = Nothing, operations = [operation]}
+sectionDto :: DevSectionDTO
+sectionDto =
+  DevSectionDTO
+    { name = "Cache"
+    , description = Nothing
+    , operations = [operationDto]
+    }
 
-operation :: DevOperation
-operation =
-  DevOperation
+operationDto :: DevOperationDTO
+operationDto =
+  DevOperationDTO
     { name = "purgeCache"
     , description = Nothing
     , parameters = [operationParam1]
@@ -25,8 +32,8 @@ operationParam1 =
 execution1 :: DevExecutionDTO
 execution1 =
   DevExecutionDTO
-    { sectionName = section.name
-    , operationName = operation.name
+    { sectionName = sectionDto.name
+    , operationName = operationDto.name
     , parameters = []
     }
 

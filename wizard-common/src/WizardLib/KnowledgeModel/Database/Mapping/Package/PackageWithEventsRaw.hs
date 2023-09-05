@@ -27,6 +27,7 @@ instance ToRow PackageWithEventsRaw where
     , toField createdAt
     , toField appUuid
     , toField phase
+    , toField nonEditable
     ]
 
 instance FromRow PackageWithEventsRaw where
@@ -47,4 +48,5 @@ instance FromRow PackageWithEventsRaw where
     createdAt <- field
     appUuid <- field
     phase <- field
+    nonEditable <- field
     return $ PackageWithEventsRaw {..}

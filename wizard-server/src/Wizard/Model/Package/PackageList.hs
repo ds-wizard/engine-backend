@@ -14,6 +14,7 @@ data PackageList = PackageList
   , version :: String
   , phase :: PackagePhase
   , description :: String
+  , nonEditable :: Bool
   , state :: PackageState
   , remoteVersion :: Maybe String
   , remoteOrganizationName :: Maybe String

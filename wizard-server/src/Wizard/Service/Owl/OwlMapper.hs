@@ -26,6 +26,7 @@ fromOwl name organizationId kmId version mPreviousPackageId events appUuid now =
     , forkOfPackageId = Nothing
     , mergeCheckpointPackageId = Nothing
     , events = events
+    , nonEditable = False
     , appUuid = appUuid
     , createdAt = now
     }

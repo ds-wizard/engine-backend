@@ -27,8 +27,8 @@ entityName = "document_template"
 
 pageLabel = "documentTemplates"
 
-findDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateList)
-findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState pageable sort =
+findDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateList)
+findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState mNonEditable pageable sort =
   -- 1. Prepare variables
   do
     appUuid <- asks currentAppUuid
@@ -40,8 +40,12 @@ findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState page
                 "AND get_template_state(registry_document_template.remote_version, document_template.version, %s, document_template.metamodel_version) = ?"
                 [show documentTemplateMetamodelVersion]
             Nothing -> ""
+    let nonEditableCondition =
+          case mNonEditable of
+            Just nonEditable -> f' "AND non_editable = '%s'" [show nonEditable]
+            Nothing -> ""
     -- 2. Get total count
-    count <- countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mTemplateState stateCondition
+    count <- countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mTemplateState stateCondition nonEditableCondition
     -- 3. Get entities
     let sql =
           fromString $
@@ -60,11 +64,13 @@ findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState page
               \) \
               \%s \
               \%s \
+              \%s \
               \offset %s \
               \limit %s"
               [ show documentTemplateMetamodelVersion
               , mapToDBCoordinatesSql entityName "template_id" mOrganizationId mTemplateId
               , stateCondition
+              , nonEditableCondition
               , mapSort sort
               , show skip
               , show sizeI
@@ -89,8 +95,8 @@ findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState page
             }
     return $ Page pageLabel metadata entities
 
-countDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe String -> String -> AppContextM Int
-countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mState stateCondition = do
+countDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe String -> String -> String -> AppContextM Int
+countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mState stateCondition nonEditableCondition = do
   appUuid <- asks currentAppUuid
   let sql =
         fromString $
@@ -98,7 +104,7 @@ countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mState stateCondit
             "SELECT count(*) \
             \FROM document_template \
             \LEFT JOIN registry_document_template ON document_template.organization_id = registry_document_template.organization_id AND document_template.template_id = registry_document_template.template_id \
-            \WHERE app_uuid = ? AND (name ~* ? OR id ~* ?) %s %s \
+            \WHERE app_uuid = ? AND (name ~* ? OR id ~* ?) %s %s %s \
             \  AND id IN (SELECT CONCAT(organization_id, ':', template_id, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
             \                                                                   (max(string_to_array(version, '.')::int[]))[2] || '.' || \
             \                                                                   (max(string_to_array(version, '.')::int[]))[3]) \
@@ -107,6 +113,7 @@ countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mState stateCondit
             \             GROUP BY organization_id, template_id)"
             [ mapToDBCoordinatesSql entityName "template_id" mOrganizationId mTemplateId
             , stateCondition
+            , nonEditableCondition
             ]
   let params =
         U.toString appUuid

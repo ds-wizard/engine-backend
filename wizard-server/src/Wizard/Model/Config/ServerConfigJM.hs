@@ -139,6 +139,7 @@ instance FromJSON ServerConfigTemporaryFile where
 instance FromJSON ServerConfigUserToken where
   parseJSON (Object o) = do
     clean <- o .:? "clean" .!= defaultUserToken.clean
+    expire <- o .:? "expire" .!= defaultUserToken.expire
     return ServerConfigUserToken {..}
   parseJSON _ = mzero
 

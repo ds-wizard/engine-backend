@@ -14,6 +14,7 @@ import qualified Registry.Database.Migration.Production.Migration_0006_templateT
 import qualified Registry.Database.Migration.Production.Migration_0007_component.Migration as M_0007
 import qualified Registry.Database.Migration.Production.Migration_0008_unification.Migration as M_0008
 import qualified Registry.Database.Migration.Production.Migration_0009_persistentCommandDestination.Migration as M_0009
+import qualified Registry.Database.Migration.Production.Migration_0010_pkgAndDocReadOnly.Migration as M_0010
 import Shared.Common.Util.Logger
 
 runMigration baseContext = do
@@ -31,4 +32,5 @@ migrationDefinitions =
   , M_0007.definition
   , M_0008.definition
   , M_0009.definition
+  , M_0010.definition
   ]

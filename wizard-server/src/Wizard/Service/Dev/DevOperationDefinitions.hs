@@ -9,8 +9,8 @@ import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Model.App.App
-import Wizard.Model.Cache.ServerCache
-import Wizard.Model.Context.AppContext
+import Wizard.Model.Cache.ServerCache hiding (user)
+import Wizard.Model.Context.AppContext hiding (cache)
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Branch.Event.BranchEventService
 import Wizard.Service.Cache.CacheService
@@ -25,13 +25,32 @@ import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
 import Wizard.Service.TemporaryFile.TemporaryFileService
+import Wizard.Service.UserToken.ApiKey.ApiKeyService
 import Wizard.Util.Context
 import WizardLib.Public.Service.UserToken.UserTokenService
+
+sections :: [DevSection AppContextM]
+sections =
+  [ actionKey
+  , apiKey
+  , appPlan
+  , branch
+  , cache
+  , config
+  , document
+  , feedback
+  , owl
+  , persistentCommand
+  , registry
+  , questionnaire
+  , temporaryFile
+  , user
+  ]
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- ACTION KEY
 -- ---------------------------------------------------------------------------------------------------------------------
-actionKey :: DevSection
+actionKey :: DevSection AppContextM
 actionKey =
   DevSection
     { name = "Action Key"
@@ -40,23 +59,44 @@ actionKey =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-actionKey_cleanActionKeys :: DevOperation
+actionKey_cleanActionKeys :: DevOperation AppContextM
 actionKey_cleanActionKeys =
   DevOperation
     { name = "Clean Expired Action Keys"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        cleanActionKeys
+        return "Done"
     }
 
-actionKey_cleanActionKeysFn :: DevExecutionDTO -> AppContextM String
-actionKey_cleanActionKeysFn reqDto = do
-  cleanActionKeys
-  return "Done"
+-- ---------------------------------------------------------------------------------------------------------------------
+-- API KEY
+-- ---------------------------------------------------------------------------------------------------------------------
+apiKey :: DevSection AppContextM
+apiKey =
+  DevSection
+    { name = "API Key"
+    , description = Nothing
+    , operations = [apiKey_expireApiKeys]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+apiKey_expireApiKeys :: DevOperation AppContextM
+apiKey_expireApiKeys =
+  DevOperation
+    { name = "Send Api Key Expiration Mails"
+    , description = Nothing
+    , parameters = []
+    , function = \reqDto -> do
+        expireApiKeys
+        return "Done"
+    }
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- APP PLAN
 -- ---------------------------------------------------------------------------------------------------------------------
-appPlan :: DevSection
+appPlan :: DevSection AppContextM
 appPlan =
   DevSection
     { name = "App Plan"
@@ -65,46 +105,45 @@ appPlan =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-appPlan_recomputePlansForApps :: DevOperation
+appPlan_recomputePlansForApps :: DevOperation AppContextM
 appPlan_recomputePlansForApps =
   DevOperation
     { name = "Recompute Plans for Apps"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        recomputePlansForApps
+        return "Done"
     }
-
-appPlan_recomputePlansForAppsFn :: DevExecutionDTO -> AppContextM String
-appPlan_recomputePlansForAppsFn reqDto = do
-  recomputePlansForApps
-  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- BRANCH
 -- ---------------------------------------------------------------------------------------------------------------------
-branch :: DevSection
+branch :: DevSection AppContextM
 branch =
   DevSection
     { name = "Branch"
     , description = Nothing
-    , operations = [branch_squashAllEvents, branch_squashEventsForBranch]
+    , operations =
+        [ branch_squashAllEvents
+        , branch_squashEventsForBranch
+        ]
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-branch_squashAllEvents :: DevOperation
+branch_squashAllEvents :: DevOperation AppContextM
 branch_squashAllEvents =
   DevOperation
     { name = "Squash All Events"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        squashEvents
+        return "Done"
     }
 
-branch_squashAllEventsFn :: DevExecutionDTO -> AppContextM String
-branch_squashAllEventsFn reqDto = do
-  squashEvents
-  return "Done"
-
 -- ---------------------------------------------------------------------------------------------------------------------
-branch_squashEventsForBranch :: DevOperation
+branch_squashEventsForBranch :: DevOperation AppContextM
 branch_squashEventsForBranch =
   DevOperation
     { name = "Squash Events for Branch"
@@ -115,92 +154,85 @@ branch_squashEventsForBranch =
             , aType = StringDevOperationParameterType
             }
         ]
+    , function = \reqDto -> do
+        squashEventsForBranch (u' . head $ reqDto.parameters)
+        return "Done"
     }
-
-branch_squashEventsForBranchFn :: DevExecutionDTO -> AppContextM String
-branch_squashEventsForBranchFn reqDto = do
-  squashEventsForBranch (u' . head $ reqDto.parameters)
-  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- CACHE
 -- ---------------------------------------------------------------------------------------------------------------------
-cache :: DevSection
+cache :: DevSection AppContextM
 cache =
   DevSection {name = "Cache", description = Nothing, operations = [cache_purgeCache]}
 
 -- ---------------------------------------------------------------------------------------------------------------------
-cache_purgeCache :: DevOperation
+cache_purgeCache :: DevOperation AppContextM
 cache_purgeCache =
   DevOperation
     { name = "Purge All Caches"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        purgeCache
+        return "Done"
     }
-
-cache_purgeCacheFn :: DevExecutionDTO -> AppContextM String
-cache_purgeCacheFn reqDto = do
-  purgeCache
-  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- CONFIG
 -- ---------------------------------------------------------------------------------------------------------------------
-config :: DevSection
+config :: DevSection AppContextM
 config =
   DevSection
     { name = "Config"
     , description = Nothing
     , operations =
-        [config_recompileCssInAllApplications, config_switchClientCustomizationOn, config_switchClientCustomizationOff]
+        [ config_recompileCssInAllApplications
+        , config_switchClientCustomizationOn
+        , config_switchClientCustomizationOff
+        ]
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-config_recompileCssInAllApplications :: DevOperation
+config_recompileCssInAllApplications :: DevOperation AppContextM
 config_recompileCssInAllApplications =
   DevOperation
     { name = "Recompile CSS in All Applications"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        recompileCssInAllApplications
+        return "Done"
     }
 
-config_recompileCssInAllApplicationsFn :: DevExecutionDTO -> AppContextM String
-config_recompileCssInAllApplicationsFn reqDto = do
-  recompileCssInAllApplications
-  return "Done"
-
 -- ---------------------------------------------------------------------------------------------------------------------
-config_switchClientCustomizationOn :: DevOperation
+config_switchClientCustomizationOn :: DevOperation AppContextM
 config_switchClientCustomizationOn =
   DevOperation
     { name = "Enable Client Customization in Settings"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        modifyClientCustomization True
+        return "Done"
     }
 
-config_switchClientCustomizationOnFn :: DevExecutionDTO -> AppContextM String
-config_switchClientCustomizationOnFn reqDto = do
-  modifyClientCustomization True
-  return "Done"
-
 -- ---------------------------------------------------------------------------------------------------------------------
-config_switchClientCustomizationOff :: DevOperation
+config_switchClientCustomizationOff :: DevOperation AppContextM
 config_switchClientCustomizationOff =
   DevOperation
     { name = "Disable Client Customization in Settings"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        modifyClientCustomization False
+        return "Done"
     }
-
-config_switchClientCustomizationOffFn :: DevExecutionDTO -> AppContextM String
-config_switchClientCustomizationOffFn reqDto = do
-  modifyClientCustomization False
-  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- DOCUMENT
 -- ---------------------------------------------------------------------------------------------------------------------
-document :: DevSection
+document :: DevSection AppContextM
 document =
   DevSection
     { name = "Document"
@@ -209,23 +241,21 @@ document =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-document_cleanDocuments :: DevOperation
+document_cleanDocuments :: DevOperation AppContextM
 document_cleanDocuments =
   DevOperation
     { name = "Clean Expired Documents"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        cleanDocuments
+        return "Done"
     }
-
-document_cleanDocumentsFn :: DevExecutionDTO -> AppContextM String
-document_cleanDocumentsFn reqDto = do
-  cleanDocuments
-  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- FEEDBACK
 -- ---------------------------------------------------------------------------------------------------------------------
-feedback :: DevSection
+feedback :: DevSection AppContextM
 feedback =
   DevSection
     { name = "Feedback"
@@ -234,23 +264,21 @@ feedback =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-feedback_synchronizeFeedbacks :: DevOperation
+feedback_synchronizeFeedbacks :: DevOperation AppContextM
 feedback_synchronizeFeedbacks =
   DevOperation
     { name = "Synchronize Feedbacks"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        synchronizeFeedbacksInAllApplications
+        return "Done"
     }
-
-feedback_synchronizeFeedbacksFn :: DevExecutionDTO -> AppContextM String
-feedback_synchronizeFeedbacksFn reqDto = do
-  synchronizeFeedbacksInAllApplications
-  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- OWL
 -- ---------------------------------------------------------------------------------------------------------------------
-owl :: DevSection
+owl :: DevSection AppContextM
 owl =
   DevSection
     { name = "Owl"
@@ -263,35 +291,31 @@ owl =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-owl_switchOwlOn :: DevOperation
+owl_switchOwlOn :: DevOperation AppContextM
 owl_switchOwlOn =
   DevOperation
     { name = "Enable OWL feature"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        modifyOwlFeature True
+        return "Done"
     }
 
-owl_switchOwlOnFn :: DevExecutionDTO -> AppContextM String
-owl_switchOwlOnFn reqDto = do
-  modifyOwlFeature True
-  return "Done"
-
 -- ---------------------------------------------------------------------------------------------------------------------
-owl_switchOwlOff :: DevOperation
+owl_switchOwlOff :: DevOperation AppContextM
 owl_switchOwlOff =
   DevOperation
     { name = "Disable OWL feature"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        modifyOwlFeature False
+        return "Done"
     }
 
-owl_switchOwlOffFn :: DevExecutionDTO -> AppContextM String
-owl_switchOwlOffFn reqDto = do
-  modifyOwlFeature False
-  return "Done"
-
 -- ---------------------------------------------------------------------------------------------------------------------
-owl_setOwlProperties :: DevOperation
+owl_setOwlProperties :: DevOperation AppContextM
 owl_setOwlProperties =
   DevOperation
     { name = "Set OWL properties"
@@ -322,26 +346,24 @@ owl_setOwlProperties =
             , aType = StringDevOperationParameterType
             }
         ]
+    , function = \reqDto -> do
+        let name = head reqDto.parameters
+        let organizationId = reqDto.parameters !! 1
+        let kmId = reqDto.parameters !! 2
+        let version = reqDto.parameters !! 3
+        let previousPackageId =
+              case reqDto.parameters !! 4 of
+                " " -> Nothing
+                p -> Just p
+        let rootElement = reqDto.parameters !! 5
+        setOwlProperties name organizationId kmId version previousPackageId rootElement
+        return "Done"
     }
-
-owl_setOwlPropertiesFn :: DevExecutionDTO -> AppContextM String
-owl_setOwlPropertiesFn reqDto = do
-  let name = head reqDto.parameters
-  let organizationId = reqDto.parameters !! 1
-  let kmId = reqDto.parameters !! 2
-  let version = reqDto.parameters !! 3
-  let previousPackageId =
-        case reqDto.parameters !! 4 of
-          " " -> Nothing
-          p -> Just p
-  let rootElement = reqDto.parameters !! 5
-  setOwlProperties name organizationId kmId version previousPackageId rootElement
-  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- PERSISTENT COMMAND
 -- ---------------------------------------------------------------------------------------------------------------------
-persistentCommand :: DevSection
+persistentCommand :: DevSection AppContextM
 persistentCommand =
   DevSection
     { name = "Persistent Command"
@@ -350,24 +372,22 @@ persistentCommand =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-persistentCommand_runAll :: DevOperation
+persistentCommand_runAll :: DevOperation AppContextM
 persistentCommand_runAll =
   DevOperation
     { name = "Run All Persistent Commands"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        context <- ask
+        apps <- findApps
+        let appUuids = fmap (.uuid) apps
+        liftIO $ traverse_ (runAppContextWithBaseContext' runPersistentCommands' (baseContextFromAppContext context)) appUuids
+        return "Done"
     }
 
-persistentCommand_runAllFn :: DevExecutionDTO -> AppContextM String
-persistentCommand_runAllFn reqDto = do
-  context <- ask
-  apps <- findApps
-  let appUuids = fmap (.uuid) apps
-  liftIO $ traverse_ (runAppContextWithBaseContext' runPersistentCommands' (baseContextFromAppContext context)) appUuids
-  return "Done"
-
 -- ---------------------------------------------------------------------------------------------------------------------
-persistentCommand_run :: DevOperation
+persistentCommand_run :: DevOperation AppContextM
 persistentCommand_run =
   DevOperation
     { name = "Run Persistent Command"
@@ -378,18 +398,16 @@ persistentCommand_run =
             , aType = StringDevOperationParameterType
             }
         ]
+    , function = \reqDto -> do
+        command <- findPersistentCommandSimpleByUuid (u' . head $ reqDto.parameters)
+        runPersistentCommand' True command
+        return "Done"
     }
-
-persistentCommand_runFn :: DevExecutionDTO -> AppContextM String
-persistentCommand_runFn reqDto = do
-  command <- findPersistentCommandSimpleByUuid (u' . head $ reqDto.parameters)
-  runPersistentCommand' True command
-  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- REGISTRY
 -- ---------------------------------------------------------------------------------------------------------------------
-registry :: DevSection
+registry :: DevSection AppContextM
 registry =
   DevSection
     { name = "Registry"
@@ -398,21 +416,19 @@ registry =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-registry_syncWithRegistry :: DevOperation
+registry_syncWithRegistry :: DevOperation AppContextM
 registry_syncWithRegistry =
   DevOperation
     { name = "Sync with registry"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        synchronizeData
+        return "Done"
     }
 
-registry_syncWithRegistryFn :: DevExecutionDTO -> AppContextM String
-registry_syncWithRegistryFn reqDto = do
-  synchronizeData
-  return "Done"
-
 -- ---------------------------------------------------------------------------------------------------------------------
-registry_pushPackageBundle :: DevOperation
+registry_pushPackageBundle :: DevOperation AppContextM
 registry_pushPackageBundle =
   DevOperation
     { name = "Push Package Bundle"
@@ -423,15 +439,13 @@ registry_pushPackageBundle =
             , aType = StringDevOperationParameterType
             }
         ]
+    , function = \reqDto -> do
+        pushPackageBundle (head reqDto.parameters)
+        return "Done"
     }
 
-registry_pushPackageBundleFn :: DevExecutionDTO -> AppContextM String
-registry_pushPackageBundleFn reqDto = do
-  pushPackageBundle (head reqDto.parameters)
-  return "Done"
-
 -- ---------------------------------------------------------------------------------------------------------------------
-registry_pushDocumentTemplateBundle :: DevOperation
+registry_pushDocumentTemplateBundle :: DevOperation AppContextM
 registry_pushDocumentTemplateBundle =
   DevOperation
     { name = "Push Document Template Bundle"
@@ -442,15 +456,13 @@ registry_pushDocumentTemplateBundle =
             , aType = StringDevOperationParameterType
             }
         ]
+    , function = \reqDto -> do
+        pushDocumentTemplateBundle (head reqDto.parameters)
+        return "Done"
     }
 
-registry_pushDocumentTemplateBundleFn :: DevExecutionDTO -> AppContextM String
-registry_pushDocumentTemplateBundleFn reqDto = do
-  pushDocumentTemplateBundle (head reqDto.parameters)
-  return "Done"
-
 -- ---------------------------------------------------------------------------------------------------------------------
-registry_pushLocaleBundle :: DevOperation
+registry_pushLocaleBundle :: DevOperation AppContextM
 registry_pushLocaleBundle =
   DevOperation
     { name = "Push Locale Bundle"
@@ -461,17 +473,15 @@ registry_pushLocaleBundle =
             , aType = StringDevOperationParameterType
             }
         ]
+    , function = \reqDto -> do
+        pushLocaleBundle (head reqDto.parameters)
+        return "Done"
     }
-
-registry_pushLocaleBundleFn :: DevExecutionDTO -> AppContextM String
-registry_pushLocaleBundleFn reqDto = do
-  pushLocaleBundle (head reqDto.parameters)
-  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- QUESTIONNAIRE
 -- ---------------------------------------------------------------------------------------------------------------------
-questionnaire :: DevSection
+questionnaire :: DevSection AppContextM
 questionnaire =
   DevSection
     { name = "Questionnaire"
@@ -485,49 +495,43 @@ questionnaire =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-questionnaire_cleanQuestionnaires :: DevOperation
+questionnaire_cleanQuestionnaires :: DevOperation AppContextM
 questionnaire_cleanQuestionnaires =
   DevOperation
     { name = "Clean Questionnaires"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        cleanQuestionnaires
+        return "Done"
     }
 
-questionnaire_cleanQuestionnairesFn :: DevExecutionDTO -> AppContextM String
-questionnaire_cleanQuestionnairesFn reqDto = do
-  cleanQuestionnaires
-  return "Done"
-
 -- ---------------------------------------------------------------------------------------------------------------------
-questionnaire_recomputeQuestionnaireIndications :: DevOperation
+questionnaire_recomputeQuestionnaireIndications :: DevOperation AppContextM
 questionnaire_recomputeQuestionnaireIndications =
   DevOperation
     { name = "Recompute Questionnaire Indications"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        recomputeQuestionnaireIndicationsInAllApplications
+        return "Done"
     }
 
-questionnaire_recomputeQuestionnaireIndicationsFn :: DevExecutionDTO -> AppContextM String
-questionnaire_recomputeQuestionnaireIndicationsFn reqDto = do
-  recomputeQuestionnaireIndicationsInAllApplications
-  return "Done"
-
 -- ---------------------------------------------------------------------------------------------------------------------
-questionnaire_squashAllEvents :: DevOperation
+questionnaire_squashAllEvents :: DevOperation AppContextM
 questionnaire_squashAllEvents =
   DevOperation
     { name = "Squash All Events"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        squashQuestionnaireEvents
+        return "Done"
     }
 
-questionnaire_squashAllEventsFn :: DevExecutionDTO -> AppContextM String
-questionnaire_squashAllEventsFn reqDto = do
-  squashQuestionnaireEvents
-  return "Done"
-
 -- ---------------------------------------------------------------------------------------------------------------------
-questionnaire_squashEventsForQuestionnaire :: DevOperation
+questionnaire_squashEventsForQuestionnaire :: DevOperation AppContextM
 questionnaire_squashEventsForQuestionnaire =
   DevOperation
     { name = "Squash Events for Questionnaire"
@@ -538,17 +542,15 @@ questionnaire_squashEventsForQuestionnaire =
             , aType = StringDevOperationParameterType
             }
         ]
+    , function = \reqDto -> do
+        squashQuestionnaireEventsForQuestionnaire (u' . head $ reqDto.parameters)
+        return "Done"
     }
-
-questionnaire_squashEventsForQuestionnaireFn :: DevExecutionDTO -> AppContextM String
-questionnaire_squashEventsForQuestionnaireFn reqDto = do
-  squashQuestionnaireEventsForQuestionnaire (u' . head $ reqDto.parameters)
-  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- TEMPORARY FILE
 -- ---------------------------------------------------------------------------------------------------------------------
-temporaryFile :: DevSection
+temporaryFile :: DevSection AppContextM
 temporaryFile =
   DevSection
     { name = "Temporary File"
@@ -557,23 +559,21 @@ temporaryFile =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-temporaryFile_cleanTemporaryFiles :: DevOperation
+temporaryFile_cleanTemporaryFiles :: DevOperation AppContextM
 temporaryFile_cleanTemporaryFiles =
   DevOperation
     { name = "Clean Expired Temporary Files"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        cleanTemporaryFiles
+        return "Done"
     }
-
-temporaryFile_cleanTemporaryFilesFn :: DevExecutionDTO -> AppContextM String
-temporaryFile_cleanTemporaryFilesFn reqDto = do
-  cleanTemporaryFiles
-  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- USER
 -- ---------------------------------------------------------------------------------------------------------------------
-user :: DevSection
+user :: DevSection AppContextM
 user =
   DevSection
     { name = "User"
@@ -582,15 +582,13 @@ user =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-user_cleanTokens :: DevOperation
+user_cleanTokens :: DevOperation AppContextM
 user_cleanTokens =
   DevOperation
     { name = "Clean Expired Tokens"
     , description = Nothing
     , parameters = []
+    , function = \reqDto -> do
+        cleanTokens
+        return "Done"
     }
-
-user_cleanTokensFn :: DevExecutionDTO -> AppContextM String
-user_cleanTokensFn reqDto = do
-  cleanTokens
-  return "Done"

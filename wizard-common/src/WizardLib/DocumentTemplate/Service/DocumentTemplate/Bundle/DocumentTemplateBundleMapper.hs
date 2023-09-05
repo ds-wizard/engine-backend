@@ -90,6 +90,7 @@ fromBundle tb appUuid =
     , license = tb.license
     , allowedPackages = tb.allowedPackages
     , formats = tb.formats
+    , nonEditable = False
     , appUuid = appUuid
     , createdAt = tb.createdAt
     , updatedAt = tb.createdAt

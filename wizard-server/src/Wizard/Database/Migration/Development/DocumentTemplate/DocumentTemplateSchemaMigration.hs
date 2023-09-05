@@ -86,7 +86,8 @@ createTemplateTable = do
         \       constraint document_template_app_uuid_fk \
         \         references app, \
         \     updated_at             timestamp with time zone not null, \
-        \     phase                  varchar                  not null default 'ReleasedDocumentTemplatePhase' \
+        \     phase                  varchar                  not null default 'ReleasedDocumentTemplatePhase', \
+        \     non_editable           boolean                  not null default false \
         \ ); \
         \ \
         \alter table document_template \

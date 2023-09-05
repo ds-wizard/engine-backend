@@ -32,6 +32,7 @@ documentTemplateUtilSpec =
                     , license = ""
                     , allowedPackages = []
                     , formats = []
+                    , nonEditable = False
                     , appUuid = defaultApp.uuid
                     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -67,6 +68,7 @@ documentTemplateUtilSpec =
                             }
                         ]
                     , formats = []
+                    , nonEditable = False
                     , appUuid = defaultApp.uuid
                     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -108,6 +110,7 @@ documentTemplateUtilSpec =
                             }
                         ]
                     , formats = []
+                    , nonEditable = False
                     , appUuid = defaultApp.uuid
                     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0

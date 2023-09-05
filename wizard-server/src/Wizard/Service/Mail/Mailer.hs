@@ -1,10 +1,4 @@
-module Wizard.Service.Mail.Mailer (
-  sendRegistrationConfirmationMail,
-  sendRegistrationCreatedAnalyticsMail,
-  sendResetPasswordMail,
-  sendQuestionnaireInvitationMail,
-  sendTwoFactorAuthMail,
-) where
+module Wizard.Service.Mail.Mailer where
 
 import Control.Monad.Reader (asks, liftIO)
 import Data.Aeson (ToJSON)
@@ -32,6 +26,7 @@ import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.User.User
 import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.App.AppConfigService
+import WizardLib.Public.Model.User.UserToken
 
 sendRegistrationConfirmationMail :: UserDTO -> String -> String -> AppContextM ()
 sendRegistrationConfirmationMail user hash clientUrl =
@@ -168,6 +163,56 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
                         ]
                   }
           sendEmail body currentUser.uuid
+
+sendApiKeyCreatedMail :: UserDTO -> UserToken -> AppContextM ()
+sendApiKeyCreatedMail user userToken =
+  runInTransaction $ do
+    appConfig <- getAppConfig
+    clientUrl <- getAppClientUrl
+    let body =
+          MC.MailCommand
+            { mode = "wizard"
+            , template = "apiKeyCreated"
+            , recipients = [user.email]
+            , parameters =
+                M.fromList
+                  [ ("userUuid", MC.uuid user.uuid)
+                  , ("userFirstName", MC.string user.firstName)
+                  , ("userLastName", MC.string user.lastName)
+                  , ("userEmail", MC.string user.email)
+                  , ("tokenName", MC.string userToken.name)
+                  , ("tokenExpiresAt", MC.datetime userToken.expiresAt)
+                  , ("clientUrl", MC.string clientUrl)
+                  , ("appTitle", MC.maybeString appConfig.lookAndFeel.appTitle)
+                  , ("supportEmail", MC.maybeString appConfig.privacyAndSupport.supportEmail)
+                  ]
+            }
+    sendEmail body user.uuid
+
+sendApiKeyExpirationMail :: UserDTO -> UserToken -> AppContextM ()
+sendApiKeyExpirationMail user userToken =
+  runInTransaction $ do
+    appConfig <- getAppConfig
+    clientUrl <- getAppClientUrl
+    let body =
+          MC.MailCommand
+            { mode = "wizard"
+            , template = "apiKeyExpiration"
+            , recipients = [user.email]
+            , parameters =
+                M.fromList
+                  [ ("userUuid", MC.uuid user.uuid)
+                  , ("userFirstName", MC.string user.firstName)
+                  , ("userLastName", MC.string user.lastName)
+                  , ("userEmail", MC.string user.email)
+                  , ("tokenName", MC.string userToken.name)
+                  , ("tokenExpiresAt", MC.datetime userToken.expiresAt)
+                  , ("clientUrl", MC.string clientUrl)
+                  , ("appTitle", MC.maybeString appConfig.lookAndFeel.appTitle)
+                  , ("supportEmail", MC.maybeString appConfig.privacyAndSupport.supportEmail)
+                  ]
+            }
+    sendEmail body user.uuid
 
 -- --------------------------------
 -- PRIVATE

@@ -23,6 +23,7 @@ data DocumentTemplateSimpleDTO = DocumentTemplateSimpleDTO
   , license :: String
   , allowedPackages :: [PackagePattern]
   , formats :: [DocumentTemplateFormat]
+  , nonEditable :: Bool
   , usablePackages :: [PackageSimpleDTO]
   , state :: DocumentTemplateState
   , organization :: Maybe OrganizationSimpleDTO
