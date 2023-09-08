@@ -20,6 +20,7 @@ data ClientConfigDTO = ClientConfigDTO
   , locales :: [ClientConfigLocaleDTO]
   , owl :: AppConfigOwl
   , admin :: ClientConfigAdminDTO
+  , modules :: [ClientConfigModuleDTO]
   }
   deriving (Show, Eq, Generic)
 
@@ -75,5 +76,14 @@ data ClientConfigLocaleDTO = ClientConfigLocaleDTO
 data ClientConfigAdminDTO = ClientConfigAdminDTO
   { enabled :: Bool
   , clientUrl :: Maybe String
+  }
+  deriving (Generic, Eq, Show)
+
+data ClientConfigModuleDTO = ClientConfigModuleDTO
+  { title :: String
+  , description :: String
+  , icon :: String
+  , url :: String
+  , external :: Bool
   }
   deriving (Generic, Eq, Show)

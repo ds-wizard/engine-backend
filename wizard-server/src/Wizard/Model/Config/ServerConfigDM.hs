@@ -29,6 +29,7 @@ defaultConfig =
     , logging = defaultLogging
     , cloud = defaultCloud
     , admin = defaultAdmin
+    , modules = defaultModules
     }
 
 defaultGeneral :: ServerConfigGeneral
@@ -186,4 +187,12 @@ defaultUserTokenExpire =
 
 defaultAdmin :: ServerConfigAdmin
 defaultAdmin =
-  ServerConfigAdmin {enabled = False, url = ""}
+  ServerConfigAdmin {enabled = False}
+
+defaultModules :: ServerConfigModules
+defaultModules =
+  ServerConfigModules {wizard = defaultModule, admin = defaultModule, guide = defaultModule}
+
+defaultModule :: ServerConfigModule
+defaultModule =
+  ServerConfigModule {title = "", description = "", icon = "", url = Nothing}

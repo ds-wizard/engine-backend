@@ -38,6 +38,7 @@ instance FromJSON ServerConfig where
     logging <- o .:? "logging" .!= defaultLogging
     cloud <- o .:? "cloud" .!= defaultCloud
     admin <- o .:? "admin" .!= defaultAdmin
+    modules <- o .:? "modules" .!= defaultModules
     return ServerConfig {..}
   parseJSON _ = mzero
 
@@ -146,6 +147,22 @@ instance FromJSON ServerConfigUserToken where
 instance FromJSON ServerConfigAdmin where
   parseJSON (Object o) = do
     enabled <- o .:? "enabled" .!= defaultAdmin.enabled
-    url <- o .:? "url" .!= defaultAdmin.url
     return ServerConfigAdmin {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigModules where
+  parseJSON (Object o) = do
+    wizard <- o .:? "wizard" .!= defaultModules.wizard
+    admin <- o .:? "admin" .!= defaultModules.admin
+    guide <- o .:? "guide" .!= defaultModules.guide
+    return ServerConfigModules {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigModule where
+  parseJSON (Object o) = do
+    title <- o .:? "title" .!= defaultModule.title
+    description <- o .:? "description" .!= defaultModule.description
+    icon <- o .:? "icon" .!= defaultModule.icon
+    url <- o .:? "url" .!= defaultModule.url
+    return ServerConfigModule {..}
   parseJSON _ = mzero
