@@ -63,7 +63,7 @@ defaultFeature =
 defaultAuth :: AppConfigAuth
 defaultAuth =
   AppConfigAuth
-    { defaultRole = _USER_ROLE_DATA_STEWARD
+    { defaultRole = _USER_ROLE_RESEARCHER
     , internal = defaultAuthInternal
     , external = defaultAuthExternal
     }
