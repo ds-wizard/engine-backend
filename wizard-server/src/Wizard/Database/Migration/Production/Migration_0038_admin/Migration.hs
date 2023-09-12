@@ -17,6 +17,7 @@ migrate dbPool = do
   addAdminUrls dbPool
   addTraceUuidToPersistentCommand dbPool
   addSquashedToBranchData dbPool
+  deleteMoveQuestionnaireCommentsToSeparateTableCommand dbPool
 
 addAdminUrls dbPool = do
   let sql =
@@ -39,6 +40,16 @@ addSquashedToBranchData dbPool = do
   let sql =
         "ALTER TABLE branch_data \
         \    ADD squashed bool not null default false;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+deleteMoveQuestionnaireCommentsToSeparateTableCommand dbPool = do
+  let sql =
+        "DELETE \
+        \FROM persistent_command \
+        \WHERE component = 'Questionnaire' \
+        \  AND function = 'moveQuestionnaireCommentsToSeparateTable';"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
