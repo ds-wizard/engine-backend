@@ -86,6 +86,7 @@ amsterdamBranchData =
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
+    , squashed = True
     , appUuid = defaultApp.uuid
     , createdAt = amsterdamBranchList.createdAt
     , updatedAt = amsterdamBranchList.updatedAt
@@ -183,6 +184,7 @@ differentBranchData =
     { branchUuid = differentBranch.uuid
     , metamodelVersion = kmMetamodelVersion
     , events = []
+    , squashed = True
     , appUuid = differentApp.uuid
     , createdAt = differentBranch.createdAt
     , updatedAt = differentBranch.updatedAt

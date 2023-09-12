@@ -107,7 +107,7 @@ defaultBranch = ServerConfigBranch {squash = defaultBranchSquash}
 
 defaultBranchSquash :: ServerConfigCronWorker
 defaultBranchSquash =
-  ServerConfigCronWorker {enabled = True, cron = "15 2 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "*/5 * * * *"}
 
 defaultCache :: ServerConfigCache
 defaultCache =

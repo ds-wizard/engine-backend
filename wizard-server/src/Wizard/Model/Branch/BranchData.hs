@@ -10,6 +10,7 @@ data BranchData = BranchData
   { branchUuid :: U.UUID
   , metamodelVersion :: Int
   , events :: [Event]
+  , squashed :: Bool
   , appUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

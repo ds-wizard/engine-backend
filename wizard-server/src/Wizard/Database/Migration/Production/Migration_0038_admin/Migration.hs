@@ -16,6 +16,7 @@ migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   addAdminUrls dbPool
   addTraceUuidToPersistentCommand dbPool
+  addSquashedToBranchData dbPool
 
 addAdminUrls dbPool = do
   let sql =
@@ -30,6 +31,14 @@ addTraceUuidToPersistentCommand dbPool = do
   let sql =
         "ALTER TABLE persistent_command \
         \    ADD trace_uuid uuid;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addSquashedToBranchData dbPool = do
+  let sql =
+        "ALTER TABLE branch_data \
+        \    ADD squashed bool not null default false;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

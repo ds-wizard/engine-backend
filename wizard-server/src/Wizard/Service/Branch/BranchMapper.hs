@@ -57,6 +57,7 @@ toBranchData branch =
     { branchUuid = branch.uuid
     , metamodelVersion = kmMetamodelVersion
     , events = []
+    , squashed = True
     , appUuid = branch.appUuid
     , createdAt = branch.createdAt
     , updatedAt = branch.updatedAt

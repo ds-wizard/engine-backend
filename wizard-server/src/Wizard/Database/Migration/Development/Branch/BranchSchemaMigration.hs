@@ -76,7 +76,8 @@ createTables = do
         \       constraint branch_app_uuid_fk \
         \         references app, \
         \     created_at timestamptz not null, \
-        \     updated_at timestamptz not null \
+        \     updated_at timestamptz not null, \
+        \     squashed bool not null default false \
         \); \
         \  \
         \create unique index branch_data_branch_uuid_uindex \

@@ -8,7 +8,6 @@ import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Common
 import Wizard.Model.Branch.BranchData
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Branch.Collaboration.CollaborationService
 import Wizard.Service.KnowledgeModel.Squash.Squasher
 
 squashEvents :: AppContextM ()
@@ -20,7 +19,6 @@ squashEventsForBranch :: U.UUID -> AppContextM ()
 squashEventsForBranch branchUuid =
   runInTransaction $ do
     logInfoI _CMP_SERVICE (f' "Squashing events for branch (branchUuid: '%s')" [U.toString branchUuid])
-    logOutOnlineUsersWhenBranchDramaticallyChanged branchUuid
     branchData <- findBranchDataByIdForSquashingLocked branchUuid
     let squashedEvents = squash branchData.events
     updateBranchEventsByUuid branchUuid squashedEvents
