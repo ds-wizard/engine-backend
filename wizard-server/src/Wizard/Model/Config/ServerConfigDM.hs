@@ -165,7 +165,7 @@ defaultQuestionnaireRecomputeIndication =
 
 defaultQuestionnaireSquash :: ServerConfigCronWorker
 defaultQuestionnaireSquash =
-  ServerConfigCronWorker {enabled = True, cron = "15 2 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "*/4 * * * *"}
 
 defaultTemporaryFile :: ServerConfigTemporaryFile
 defaultTemporaryFile = ServerConfigTemporaryFile {clean = defaultTemporaryFileClean}

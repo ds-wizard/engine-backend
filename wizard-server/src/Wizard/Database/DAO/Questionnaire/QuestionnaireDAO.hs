@@ -381,7 +381,7 @@ findQuestionnaireEventsByUuid uuid = do
 
 findQuestionnaireForSquashing :: AppContextM [U.UUID]
 findQuestionnaireForSquashing = do
-  let sql = "SELECT uuid FROM questionnaire qtn WHERE squashed = false"
+  let sql = "SELECT uuid FROM questionnaire WHERE squashed = false"
   logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   entities <- runDB action
@@ -389,7 +389,7 @@ findQuestionnaireForSquashing = do
 
 findQuestionnaireSquashByUuid :: U.UUID -> AppContextM QuestionnaireSquash
 findQuestionnaireSquashByUuid uuid =
-  createFindEntityWithFieldsByFn "uuid, events, versions" False entityName [("uuid", U.toString uuid)]
+  createFindEntityWithFieldsByFn "uuid, events, versions" True entityName [("uuid", U.toString uuid)]
 
 countQuestionnaires :: AppContextM Int
 countQuestionnaires = do
