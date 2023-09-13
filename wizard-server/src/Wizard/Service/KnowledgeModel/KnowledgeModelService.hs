@@ -3,15 +3,16 @@ module Wizard.Service.KnowledgeModel.KnowledgeModelService where
 import Control.Monad.Except (liftEither)
 import qualified Data.UUID as U
 
+import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.KnowledgeModel.KnowledgeModelFilter
-import Wizard.Service.Package.PackageService
 import Wizard.Service.Package.PackageUtil
 import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 import WizardLib.KnowledgeModel.Service.Package.PackageUtil
 
 createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM KnowledgeModel
@@ -30,5 +31,5 @@ compileKnowledgeModel events mPackageId tagUuids = do
     getEvents :: Maybe String -> AppContextM [Event]
     getEvents Nothing = return events
     getEvents (Just packageId) = do
-      eventsFromPackage <- getAllPreviousEventsSincePackageId packageId
-      return $ eventsFromPackage ++ events
+      pkgs <- findSeriesOfPackagesRecursiveById packageId
+      return . concatMap (.events) $ pkgs

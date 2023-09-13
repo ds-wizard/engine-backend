@@ -22,7 +22,9 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Package.PackageList
 import Wizard.Model.Package.PackageSuggestion
+import WizardLib.KnowledgeModel.Database.Mapping.Package.PackageWithEvents ()
 import WizardLib.KnowledgeModel.Model.Package.Package
+import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 
 entityName = "package"
 
@@ -127,6 +129,28 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pag
             , number = pageI
             }
     return $ Page pageLabel metadata entities
+
+findSeriesOfPackagesRecursiveById :: String -> AppContextM [PackageWithEvents]
+findSeriesOfPackagesRecursiveById pkgId = do
+  appUuid <- asks currentAppUuid
+  let sql =
+        fromString
+          "WITH RECURSIVE recursive AS ( \
+          \  SELECT *, 1 as level \
+          \  FROM package \
+          \  WHERE app_uuid = ? AND id = ? \
+          \  UNION ALL \
+          \  SELECT e.*, level + 1 as level \
+          \  FROM package e \
+          \  INNER JOIN recursive r ON e.id = r.previous_package_id AND e.app_uuid = ? \
+          \) \
+          \SELECT id, name, organization_id, km_id, version, metamodel_version, description, readme, license, previous_package_id, fork_of_package_id, merge_checkpoint_package_id, events, created_at, app_uuid, phase, non_editable \
+          \FROM recursive \
+          \ORDER BY level DESC;"
+  let params = [U.toString appUuid, pkgId, U.toString appUuid]
+  logQuery sql params
+  let action conn = query conn sql params
+  runDB action
 
 countPackageSuggestions :: Maybe String -> String -> String -> Maybe [String] -> Maybe [String] -> String -> String -> AppContextM Int
 countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike mExcludeIdsLike phaseCondition nonEditableCondition = do
