@@ -16,7 +16,7 @@ migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   let sql =
         "ALTER TABLE persistent_command \
-        \    ADD trace_uuid uuid;"
+        \    ADD last_trace_uuid uuid;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
