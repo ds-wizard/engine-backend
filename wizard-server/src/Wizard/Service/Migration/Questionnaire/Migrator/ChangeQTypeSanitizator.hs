@@ -4,9 +4,9 @@ import qualified Data.Map.Strict as M
 import Data.Maybe (mapMaybe)
 import qualified Data.UUID as U
 
+import Shared.Common.Util.Maybe (concatMaybe)
 import Shared.Common.Util.String (splitOn)
 import Wizard.Model.Questionnaire.QuestionnaireReply
-import Wizard.Util.Maybe (concatMaybe)
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 

@@ -222,8 +222,8 @@ fromCommandCreateDTO command permissions now =
     , updatedAt = now
     }
 
-fromCommandChangeDTO :: User -> CreateOrUpdateUserCommand -> UTCTime -> User
-fromCommandChangeDTO oldUser command now =
+fromCommandChangeDTO :: User -> CreateOrUpdateUserCommand -> [String] -> UTCTime -> User
+fromCommandChangeDTO oldUser command permissions now =
   User
     { uuid = command.uuid
     , firstName = command.firstName
@@ -233,7 +233,7 @@ fromCommandChangeDTO oldUser command now =
     , affiliation = command.affiliation
     , sources = command.sources
     , uRole = command.uRole
-    , permissions = oldUser.permissions
+    , permissions = permissions
     , active = command.active
     , submissionProps = oldUser.submissionProps
     , imageUrl = command.imageUrl

@@ -1,4 +1,4 @@
-module Wizard.Util.Maybe where
+module Shared.Common.Util.Maybe where
 
 concatMaybe :: Maybe (Maybe a) -> Maybe a
 concatMaybe (Just (Just a)) = Just a

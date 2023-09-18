@@ -36,10 +36,10 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionStat
   runInTransaction $ do
     httpClientManager <- asks httpClientManager
     (_, openIDClient) <- createOpenIDClient authId mClientUrl
-    (email, firstName, lastName, mPicture) <- getUserInfoFromOpenId openIDClient mCode mNonce mIdToken
+    (email, firstName, lastName, mPicture, mUserUuid) <- getUserInfoFromOpenId openIDClient mCode mNonce mIdToken
     mUserFromDb <- findUserByEmail' email
     consentRequired <- isConsentRequired mUserFromDb
-    user <- createUserFromExternalService mUserFromDb authId firstName lastName email mPicture (not consentRequired)
+    user <- createUserFromExternalService mUserFromDb authId firstName lastName email mPicture mUserUuid (not consentRequired)
     case (mUserFromDb, consentRequired) of
       (Nothing, True) -> do
         actionKey <- createActionKey user.uuid ConsentsRequiredActionKey user.appUuid

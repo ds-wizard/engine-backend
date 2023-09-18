@@ -124,8 +124,8 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl shoul
     sendAnalyticsEmailIfEnabled user
     return $ toDTO user
 
-createUserFromExternalService :: Maybe User -> String -> String -> String -> String -> Maybe String -> Bool -> AppContextM User
-createUserFromExternalService mUserFromDb serviceId firstName lastName email mImageUrl active =
+createUserFromExternalService :: Maybe User -> String -> String -> String -> String -> Maybe String -> Maybe U.UUID -> Bool -> AppContextM User
+createUserFromExternalService mUserFromDb serviceId firstName lastName email mImageUrl mUserUuid active =
   runInTransaction $ do
     now <- liftIO getCurrentTime
     appUuid <- asks currentAppUuid
@@ -141,7 +141,10 @@ createUserFromExternalService mUserFromDb serviceId firstName lastName email mIm
         checkUserLimit
         checkActiveUserLimit
         serverConfig <- asks serverConfig
-        uUuid <- liftIO generateUuid
+        uUuid <-
+          case mUserUuid of
+            Just userUuid -> return userUuid
+            Nothing -> liftIO generateUuid
         password <- liftIO $ generateRandomString 40
         uPasswordHash <- generatePasswordHash password
         appConfig <- getAppConfig
@@ -169,16 +172,20 @@ createOrUpdateUserFromCommand :: CreateOrUpdateUserCommand -> AppContextM User
 createOrUpdateUserFromCommand command =
   runInTransaction $ do
     mUserFromDb <- findUserByUuidSystem' command.uuid
+    serverConfig <- asks serverConfig
     now <- liftIO getCurrentTime
     case mUserFromDb of
       Just userFromDb -> do
-        let updatedUser = fromCommandChangeDTO userFromDb command now
+        let uPermissions =
+              if userFromDb.uRole == command.uRole
+                then userFromDb.permissions
+                else getPermissionForRole serverConfig command.uRole
+        let updatedUser = fromCommandChangeDTO userFromDb command uPermissions now
         updateUserByUuid updatedUser
         return updatedUser
       Nothing -> do
         checkUserLimit
         checkActiveUserLimit
-        serverConfig <- asks serverConfig
         let uPerms = getPermissionForRole serverConfig command.uRole
         let user = fromCommandCreateDTO command uPerms now
         insertUser user
