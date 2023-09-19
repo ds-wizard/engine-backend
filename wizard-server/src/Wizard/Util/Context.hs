@@ -27,6 +27,11 @@ runAppContextWithBaseContext' function baseContext appUuid =
   appContextFromBaseContext appUuid (Just . toDTO $ userSystem) Transactional baseContext $
     runAppContextWithAppContext function
 
+runAppContextWithBaseContext'' :: AppContextM a -> BaseContext -> IO (Either String a)
+runAppContextWithBaseContext'' function baseContext =
+  appContextFromBaseContext defaultAppUuid (Just . toDTO $ userSystem) NoTransaction baseContext $
+    runAppContextWithAppContext function
+
 runAppContextWithAppContext :: AppContextM a -> AppContext -> IO (Either String a)
 runAppContextWithAppContext function appContext = do
   eResult <- liftIO $ runMonads (runAppContextM function) appContext
@@ -36,6 +41,18 @@ runAppContextWithAppContext function appContext = do
       runLogging' appContext $ do
         logError _CMP_SERVER ("Catched error: " ++ show error)
         return . Left $ show error
+
+runAppContextWithAppContext' :: AppContextM a -> AppContext -> IO (Either String a)
+runAppContextWithAppContext' function appContext =
+  withResource appContext.dbPool $ \dbConn -> do
+    let updatedAppContext = appContext {dbConnection = Just dbConn}
+    eResult <- liftIO $ runMonads (runAppContextM function) updatedAppContext
+    case eResult of
+      Right result -> return . Right $ result
+      Left error ->
+        runLogging' updatedAppContext $ do
+          logError _CMP_SERVER ("Catched error: " ++ show error)
+          return . Left $ show error
 
 runMonads fn context = runExceptT $ runLogging' context $ runReaderT fn context
 

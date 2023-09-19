@@ -77,13 +77,13 @@ runPersistentCommandById uuid = do
   getPersistentCommandById uuid
 
 runPersistentCommands' :: AppContextM ()
-runPersistentCommands' = runPersistentCommands runAppContextWithAppContext updateContext emptyTransferFn execute
+runPersistentCommands' = runPersistentCommands runAppContextWithAppContext' updateContext emptyTransferFn execute
 
 runPersistentCommand' :: Bool -> PersistentCommandSimple U.UUID -> AppContextM ()
-runPersistentCommand' = runPersistentCommand runAppContextWithAppContext updateContext emptyTransferFn execute
+runPersistentCommand' = runPersistentCommand runAppContextWithAppContext' updateContext emptyTransferFn execute
 
 runPersistentCommandChannelListener' :: AppContextM ()
-runPersistentCommandChannelListener' = runPersistentCommandChannelListener runAppContextWithAppContext updateContext emptyTransferFn execute
+runPersistentCommandChannelListener' = runPersistentCommandChannelListener runAppContextWithAppContext' updateContext emptyTransferFn execute
 
 emptyTransferFn :: String -> PersistentCommand U.UUID -> AppContextM ()
 emptyTransferFn _ _ = return ()
