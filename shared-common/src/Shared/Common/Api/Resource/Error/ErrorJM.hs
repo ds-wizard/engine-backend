@@ -9,6 +9,7 @@ import Shared.Common.Model.Error.Error
 
 instance ToJSON AppError where
   toJSON AcceptedError = object ["status" .= 202]
+  toJSON (MovedPermanentlyError _) = object ["status" .= 301]
   toJSON (FoundError _) = object ["status" .= 302]
   toJSON (UserError error) = object ["status" .= 400, "type" .= "UserSimpleError", "error" .= error]
   toJSON (SystemLogError error) = object ["status" .= 400, "type" .= "SystemLogError", "error" .= error]
@@ -29,6 +30,7 @@ instance FromJSON AppError where
     case (status, userErrorType, external) of
       (_, _, "external") -> return $ HttpClientError (toEnum status) ""
       (202, _, _) -> return AcceptedError
+      (301, _, _) -> return $ MovedPermanentlyError ""
       (302, _, _) -> return $ FoundError ""
       (400, "UserSimpleError", _) -> do
         error <- o .: "error"

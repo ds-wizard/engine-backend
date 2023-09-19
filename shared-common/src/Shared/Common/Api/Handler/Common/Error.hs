@@ -35,6 +35,17 @@ sendError AcceptedError =
       , errBody = encode AcceptedError
       , errHeaders = [contentTypeHeaderJSON]
       }
+sendError (MovedPermanentlyError url) =
+  return $
+    ServerError
+      { errHTTPCode = 301
+      , errReasonPhrase = "Moved Permanently"
+      , errBody = encode $ MovedPermanentlyError url
+      , errHeaders =
+          [ contentTypeHeaderJSON
+          , ("Location", BS.pack url)
+          ]
+      }
 sendError (FoundError url) =
   return $ err302 {errBody = encode $ FoundError url, errHeaders = [contentTypeHeaderJSON, ("Location", BS.pack url)]}
 sendError (ValidationError formErrors fieldErrors) =

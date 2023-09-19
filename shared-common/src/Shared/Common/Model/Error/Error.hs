@@ -7,6 +7,7 @@ import Shared.Common.Model.Localization.LocaleRecord
 
 data AppError
   = AcceptedError
+  | MovedPermanentlyError String
   | FoundError String
   | ValidationError [LocaleRecord] (M.Map String [LocaleRecord])
   | UserError LocaleRecord
