@@ -40,7 +40,7 @@ toFormatDTO format =
     , isPdf =
         case lastSafe $ format.steps of
           Nothing -> False
-          Just step -> step.name == "wkhtmltopdf"
+          Just step -> step.name == "wkhtmltopdf" || step.name == "weasyprint"
     }
 
 toFileDTO :: DocumentTemplateFile -> DocumentTemplateFileDTO
