@@ -3,7 +3,9 @@ module Shared.Common.Database.DAO.Common where
 import Control.Monad (when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (ask, liftIO)
+import qualified Data.ByteString.Builder as BSB
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Maybe
 import Data.Pool
 import Data.String
@@ -15,6 +17,7 @@ import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.Internal
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
+import Database.PostgreSQL.Simple.Types
 import GHC.Int
 
 import Shared.Common.Localization.Messages.Internal
@@ -27,7 +30,7 @@ import Shared.Common.Model.Context.AppContext
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.ByteString (toByteString)
 import Shared.Common.Util.Logger
-import Shared.Common.Util.String (toSnake, trim)
+import Shared.Common.Util.String (replace, toSnake, trim)
 
 runDB :: AppContextC s sc m => (Connection -> IO b) -> m b
 runDB action = do
@@ -60,12 +63,22 @@ logQuery sql params = do
 
 logInsertAndUpdate :: (AppContextC s sc m, ToRow q) => Query -> q -> m ()
 logInsertAndUpdate sql params = do
-  let cut p =
-        if length p > 50
-          then take 50 p ++ "..."
-          else p
-  let paramsS = show . fmap (cut . showAction) . toRow $ params
-  logInfoI _CMP_DATABASE $ f' "%s  with params %s" [trim . show $ sql, paramsS]
+  context <- ask
+  let sqlTemplate = replace "?" "%s" . trim . BS.unpack . fromQuery $ sql
+  parameters <- liftIO $
+    case context.dbConnection' of
+      Just conn -> createParameters conn sql params
+      Nothing -> withResource context.dbPool' (\conn -> createParameters conn sql params)
+  logInfoI _CMP_DATABASE $ f' sqlTemplate (fmap showParameter parameters)
+  where
+    createParameters conn sql params =
+      let actions = toRow params
+       in traverse (buildAction conn sql actions) actions
+    cutParameter param =
+      if length param > 50
+        then take 50 param ++ "...'"
+        else param
+    showParameter = cutParameter . BSL.unpack . BSB.toLazyByteString
 
 runInTransaction :: AppContextC s sc m => (String -> String -> m ()) -> (String -> String -> m ()) -> m a -> m a
 runInTransaction logInfoFn logWarnFn action = do
