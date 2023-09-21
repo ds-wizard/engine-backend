@@ -3,7 +3,7 @@ module RegistryLib.Api.Resource.Package.PackageSimpleDTO where
 import Data.Time
 import GHC.Generics
 
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
+import RegistryLib.Model.Organization.OrganizationSimple
 
 data PackageSimpleDTO = PackageSimpleDTO
   { pId :: String
@@ -12,7 +12,7 @@ data PackageSimpleDTO = PackageSimpleDTO
   , kmId :: String
   , version :: String
   , description :: String
-  , organization :: OrganizationSimpleDTO
+  , organization :: OrganizationSimple
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

@@ -9,9 +9,9 @@ import Test.Hspec.Wai
 
 import Registry.Model.Context.AppContext
 import Registry.Service.Organization.OrganizationMapper
+import RegistryLib.Api.Resource.Organization.OrganizationSimpleJM ()
 import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleJM ()
+import RegistryLib.Model.Organization.OrganizationSimple
 
 import SharedTest.Specs.API.Common
 
@@ -42,7 +42,7 @@ test_200 appContext =
       let expStatus = 200
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       let expDto = toSimpleDTO <$> [orgGlobal, orgNetherlands]
-      let expType (a :: [OrganizationSimpleDTO]) = a
+      let expType (a :: [OrganizationSimple]) = a
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

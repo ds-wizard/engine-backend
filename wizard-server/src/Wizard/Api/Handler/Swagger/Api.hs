@@ -6,6 +6,7 @@ import Servant.Swagger
 import Servant.Swagger.UI
 
 import RegistryLib.Api.Resource.Organization.OrganizationSM ()
+import RegistryLib.Api.Resource.Organization.OrganizationSimpleSM ()
 import Shared.Common.Api.Resource.Common.AesonSM ()
 import Shared.Common.Api.Resource.Common.FileSM ()
 import Shared.Common.Api.Resource.Common.PageMetadataSM ()
@@ -109,7 +110,6 @@ import Wizard.Api.Resource.UserToken.ApiKeyCreateSM ()
 import Wizard.Api.Resource.UserToken.UserTokenListSM ()
 import Wizard.Api.Resource.Websocket.QuestionnaireActionSM ()
 import Wizard.Api.Resource.Websocket.WebsocketSM ()
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleSM ()
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM ()

@@ -8,8 +8,8 @@ import RegistryLib.Api.Resource.Organization.OrganizationDTO
 import RegistryLib.Api.Resource.Organization.OrganizationStateDTO
 import RegistryLib.Model.Organization.Organization
 import RegistryLib.Model.Organization.OrganizationRole
+import RegistryLib.Model.Organization.OrganizationSimple
 import RegistryLib.Service.Organization.OrganizationMapper
-import WizardLib.Common.Database.Migration.Development.Organization.Data.Organizations
 
 orgGlobal :: Organization
 orgGlobal =
@@ -24,6 +24,14 @@ orgGlobal =
     , logo = Just orgLogo
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    }
+
+orgGlobalSimple :: OrganizationSimple
+orgGlobalSimple =
+  OrganizationSimple
+    { name = "Organization"
+    , organizationId = "global"
+    , logo = Just orgLogo
     }
 
 orgGlobalDTO :: OrganizationDTO
@@ -68,5 +76,17 @@ orgNetherlands =
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
+orgNetherlandsSimple :: OrganizationSimple
+orgNetherlandsSimple =
+  OrganizationSimple
+    { name = "Organization Netherlands"
+    , organizationId = "org.nl"
+    , logo = Just orgLogo
+    }
+
 orgStateDto :: OrganizationStateDTO
 orgStateDto = OrganizationStateDTO {active = True}
+
+orgLogo :: String
+orgLogo =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg=="

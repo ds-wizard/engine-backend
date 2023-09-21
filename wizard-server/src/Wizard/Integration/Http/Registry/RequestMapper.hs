@@ -22,6 +22,7 @@ import RegistryLib.Api.Resource.Organization.OrganizationDTO
 import RegistryLib.Api.Resource.Organization.OrganizationStateDTO
 import RegistryLib.Api.Resource.Organization.OrganizationStateJM ()
 import RegistryLib.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Model.Organization.OrganizationSimple
 import Shared.Common.Constant.Api
 import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.String (f', splitOn)
@@ -29,13 +30,12 @@ import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Statistics.InstanceStatistics
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
 import WizardLib.DocumentTemplate.Constant.DocumentTemplate
 import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleDTO
 import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleJM ()
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 
-toRetrieveOrganizationsRequest :: ClientM (Headers '[Header "x-trace-uuid" String] [OrganizationSimpleDTO])
+toRetrieveOrganizationsRequest :: ClientM (Headers '[Header "x-trace-uuid" String] [OrganizationSimple])
 toRetrieveOrganizationsRequest = client list_simple_GET_Api
 
 toCreateOrganizationRequest

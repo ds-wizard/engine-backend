@@ -1,8 +1,8 @@
-module WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO where
+module RegistryLib.Model.Organization.OrganizationSimple where
 
 import GHC.Generics
 
-data OrganizationSimpleDTO = OrganizationSimpleDTO
+data OrganizationSimple = OrganizationSimple
   { organizationId :: String
   , name :: String
   , logo :: Maybe String

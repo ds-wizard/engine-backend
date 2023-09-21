@@ -3,7 +3,7 @@ module Registry.Api.Resource.Locale.LocaleDetailDTO where
 import Data.Time
 import GHC.Generics
 
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
+import RegistryLib.Model.Organization.OrganizationSimple
 
 data LocaleDetailDTO = LocaleDetailDTO
   { lId :: String
@@ -17,7 +17,7 @@ data LocaleDetailDTO = LocaleDetailDTO
   , readme :: String
   , recommendedAppVersion :: String
   , versions :: [String]
-  , organization :: OrganizationSimpleDTO
+  , organization :: OrganizationSimple
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
