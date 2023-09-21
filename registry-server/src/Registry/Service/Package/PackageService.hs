@@ -1,7 +1,6 @@
 module Registry.Service.Package.PackageService (
   getSimplePackagesFiltered,
   getPackageById,
-  getSeriesOfPackages,
 ) where
 
 import qualified Data.List as L
@@ -18,7 +17,6 @@ import Shared.Common.Util.List (foldInContext)
 import WizardLib.Common.Util.Coordinate
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO hiding (findPackagesFiltered)
 import WizardLib.KnowledgeModel.Model.Package.Package
-import WizardLib.KnowledgeModel.Model.Package.PackageWithEventsRaw
 import WizardLib.KnowledgeModel.Service.Package.PackageUtil
 
 getSimplePackagesFiltered :: [(String, String)] -> Maybe Int -> [(String, String)] -> AppContextM [PackageSimpleDTO]
@@ -43,15 +41,6 @@ getPackageById pkgId = do
   versions <- getPackageVersions pkg
   org <- findOrganizationByOrgId pkg.organizationId
   return $ toDetailDTO pkg versions org
-
-getSeriesOfPackages :: String -> AppContextM [PackageWithEventsRaw]
-getSeriesOfPackages pkgId = do
-  package <- findPackageWithEventsRawById pkgId
-  case package.previousPackageId of
-    Just parentPkgId -> do
-      parentPackages <- getSeriesOfPackages parentPkgId
-      return $ parentPackages ++ [package]
-    Nothing -> return [package]
 
 -- --------------------------------
 -- PRIVATE
