@@ -19,11 +19,11 @@ import Wizard.Specs.API.DocumentTemplateDraft.Asset.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /document-template-drafts/{documentTemplateId}/assets/{assetUuid}
+-- DELETE /wizard-api/document-template-drafts/{documentTemplateId}/assets/{assetUuid}
 -- ------------------------------------------------------------------------
 detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
-  describe "DELETE /document-template-drafts/{documentTemplateId}/assets/{assetUuid}" $ do
+  describe "DELETE /wizard-api/document-template-drafts/{documentTemplateId}/assets/{assetUuid}" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -34,7 +34,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/document-template-drafts/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -81,7 +81,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-template-drafts/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+    "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template_asset"

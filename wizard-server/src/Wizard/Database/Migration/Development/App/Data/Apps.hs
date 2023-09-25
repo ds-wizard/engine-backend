@@ -14,8 +14,8 @@ defaultApp =
     , appId = "default"
     , name = "Default App"
     , serverDomain = "localhost:3000"
-    , serverUrl = "http://localhost:3000"
-    , clientUrl = "http://localhost:8080"
+    , serverUrl = "http://localhost:3000/wizard-api"
+    , clientUrl = "http://localhost:8080/wizard"
     , adminServerUrl = Nothing
     , adminClientUrl = Nothing
     , enabled = True
@@ -30,8 +30,8 @@ differentApp =
     , appId = "different"
     , name = "Different App"
     , serverDomain = "different-server.example.com"
-    , serverUrl = "https://different-server.example.com"
-    , clientUrl = "https://different-client.example.com"
+    , serverUrl = "https://different-server.example.com/wizard-api"
+    , clientUrl = "https://different-client.example.com/wizard"
     , adminServerUrl = Nothing
     , adminClientUrl = Nothing
     , enabled = True
@@ -44,9 +44,9 @@ differentAppEdited =
   differentApp
     { appId = "different-edited"
     , name = "EDtIED:Different App"
-    , serverDomain = "api-different-edited."
-    , serverUrl = "https://api-different-edited."
-    , clientUrl = "https://different-edited."
+    , serverDomain = "different-edited."
+    , serverUrl = "https://different-edited./wizard-api"
+    , clientUrl = "https://different-edited./wizard"
     }
 
 appCreateDto :: AppCreateDTO

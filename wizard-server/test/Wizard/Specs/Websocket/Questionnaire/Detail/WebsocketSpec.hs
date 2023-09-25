@@ -19,7 +19,7 @@ import Wizard.Specs.Websocket.Questionnaire.Detail.SetReplySpec
 
 questionnaireWebsocketAPI :: AppContext -> SpecWith ()
 questionnaireWebsocketAPI appContext =
-  describe "WS /questionnaires/{qtnUuid}/websocket" $ do
+  describe "WS /wizard-api/questionnaires/{qtnUuid}/websocket" $ do
     generalSpec appContext
     setReplySpec appContext
     clearReplySpec appContext

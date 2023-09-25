@@ -22,11 +22,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-template-drafts/{documentTemplateId}
+-- GET /wizard-api/document-template-drafts/{documentTemplateId}
 -- ------------------------------------------------------------------------
 detail_GET :: AppContext -> SpecWith ((), Application)
 detail_GET appContext =
-  describe "GET /document-template-drafts/{documentTemplateId}" $ do
+  describe "GET /wizard-api/document-template-drafts/{documentTemplateId}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +37,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/document-template-drafts/global:questionnaire-report:2.0.0"
+reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:2.0.0"
 
 reqHeaders = [reqAuthHeader]
 
@@ -80,7 +80,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-template-drafts/global:questionnaire-report:9.9.9"
+    "/wizard-api/document-template-drafts/global:questionnaire-report:9.9.9"
     reqHeaders
     reqBody
     "document_template"

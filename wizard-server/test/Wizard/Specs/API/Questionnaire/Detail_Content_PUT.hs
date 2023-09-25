@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.Detail_Content_PUT (
-  detail_content_put,
+  detail_content_PUT,
 ) where
 
 import Data.Aeson (encode)
@@ -33,11 +33,11 @@ import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /questionnaires/{qtnUuid}/content
+-- PUT /wizard-api/questionnaires/{qtnUuid}/content
 -- ------------------------------------------------------------------------
-detail_content_put :: AppContext -> SpecWith ((), Application)
-detail_content_put appContext =
-  describe "PUT /questionnaires/{qtnUuid}/content" $ do
+detail_content_PUT :: AppContext -> SpecWith ((), Application)
+detail_content_PUT appContext =
+  describe "PUT /wizard-api/questionnaires/{qtnUuid}/content" $ do
     test_200 appContext
     test_400 appContext
     test_403 appContext
@@ -48,7 +48,7 @@ detail_content_put appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/content"
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid ++ "/content"
 
 reqHeadersT authHeader = reqCtHeader : authHeader
 
@@ -172,7 +172,7 @@ create_test_403 title appContext qtn qtnEdited authHeader reason =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/content"
+    "/wizard-api/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/content"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "questionnaire"

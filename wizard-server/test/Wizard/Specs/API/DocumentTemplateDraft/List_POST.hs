@@ -24,11 +24,11 @@ import Wizard.Specs.API.DocumentTemplateDraft.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /document-template-drafts
+-- POST /wizard-api/document-template-drafts
 -- ------------------------------------------------------------------------
 list_POST :: AppContext -> SpecWith ((), Application)
 list_POST appContext =
-  describe "POST /document-template-drafts" $ do
+  describe "POST /wizard-api/document-template-drafts" $ do
     test_201 appContext
     test_401 appContext
     test_403 appContext
@@ -38,7 +38,7 @@ list_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/document-template-drafts"
+reqUrl = "/wizard-api/document-template-drafts"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 

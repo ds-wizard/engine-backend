@@ -23,11 +23,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-template-drafts/{documentTemplateId}/assets/{assetUuid}
+-- GET /wizard-api/document-template-drafts/{documentTemplateId}/assets/{assetUuid}
 -- ------------------------------------------------------------------------
 detail_GET :: AppContext -> SpecWith ((), Application)
 detail_GET appContext =
-  describe "GET /document-template-drafts/{documentTemplateId}/assets/{assetUuid}" $ do
+  describe "GET /wizard-api/document-template-drafts/{documentTemplateId}/assets/{assetUuid}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -38,7 +38,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/document-template-drafts/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -84,7 +84,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-template-drafts/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+    "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template_asset"

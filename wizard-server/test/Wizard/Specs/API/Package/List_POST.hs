@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Package.List_POST (
-  list_post,
+  list_POST,
 ) where
 
 import Data.Aeson (encode)
@@ -37,11 +37,11 @@ import Wizard.Specs.API.Package.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /packages
+-- POST /wizard-api/packages
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith ((), Application)
-list_post appContext =
-  describe "POST /packages" $ do
+list_POST :: AppContext -> SpecWith ((), Application)
+list_POST appContext =
+  describe "POST /wizard-api/packages" $ do
     test_201_req_all_db_all appContext
     test_201_req_all_db_no appContext
     test_201_req_no_db_all appContext
@@ -59,7 +59,7 @@ list_post appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/packages"
+reqUrl = "/wizard-api/packages"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

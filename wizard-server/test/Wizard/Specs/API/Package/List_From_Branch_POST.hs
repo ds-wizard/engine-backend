@@ -28,11 +28,11 @@ import Wizard.Specs.API.Package.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /package/from-branch
+-- POST /wizard-api/package/from-branch
 -- ------------------------------------------------------------------------
 list_from_branch_POST :: AppContext -> SpecWith ((), Application)
 list_from_branch_POST appContext =
-  describe "POST /package/from-branch" $ do
+  describe "POST /wizard-api/package/from-branch" $ do
     test_201 appContext
     test_400_invalid_json appContext
     test_400_not_higher_pkg_version appContext
@@ -45,7 +45,7 @@ list_from_branch_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/packages/from-branch"
+reqUrl = "/wizard-api/packages/from-branch"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -120,7 +120,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/packages/from-branch"
+    "/wizard-api/packages/from-branch"
     reqHeaders
     reqBody
     "branch"

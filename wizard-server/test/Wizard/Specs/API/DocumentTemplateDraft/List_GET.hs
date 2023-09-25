@@ -24,11 +24,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-template-drafts
+-- GET /wizard-api/document-template-drafts
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /document-template-drafts" $ do
+  describe "GET /wizard-api/document-template-drafts" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -38,7 +38,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/document-template-drafts"
+reqUrl = "/wizard-api/document-template-drafts"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -51,19 +51,19 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK"
     appContext
-    "/document-template-drafts"
+    "/wizard-api/document-template-drafts"
     reqAuthHeader
     (Page "documentTemplateDrafts" (PageMetadata 20 1 1 0) [toDraftList wizardDocumentTemplateDraft])
   create_test_200
     "HTTP 200 OK (query 'q')"
     appContext
-    "/document-template-drafts?q=Questionnaire Report"
+    "/wizard-api/document-template-drafts?q=Questionnaire Report"
     reqAuthHeader
     (Page "documentTemplateDrafts" (PageMetadata 20 1 1 0) [toDraftList wizardDocumentTemplateDraft])
   create_test_200
     "HTTP 200 OK (query 'q' for non-existing)"
     appContext
-    "/document-template-drafts?q=Non-existing Questionnaire Report"
+    "/wizard-api/document-template-drafts?q=Non-existing Questionnaire Report"
     reqAuthHeader
     (Page "documentTemplateDrafts" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateDraftList]))
 

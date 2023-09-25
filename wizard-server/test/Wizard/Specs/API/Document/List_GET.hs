@@ -30,11 +30,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /documents
+-- GET /wizard-api/documents
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /documents" $ do
+  describe "GET /wizard-api/documents" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -44,7 +44,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/documents"
+reqUrl = "/wizard-api/documents"
 
 reqHeadersT authHeader = [authHeader]
 
@@ -57,7 +57,7 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK"
     appContext
-    "/documents"
+    "/wizard-api/documents"
     ( Page
         "documents"
         (PageMetadata 20 3 1 0)
@@ -69,12 +69,12 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (query)"
     appContext
-    "/documents?q=My exported document 2"
+    "/wizard-api/documents?q=My exported document 2"
     (Page "documents" (PageMetadata 20 1 1 0) [toDTO doc2 (Just questionnaire2Simple) [] wizardDocumentTemplate])
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext
-    "/documents?q=Non-existing document"
+    "/wizard-api/documents?q=Non-existing document"
     (Page "documents" (PageMetadata 20 0 0 0) ([] :: [DocumentDTO]))
 
 create_test_200 title appContext reqUrl expDto =

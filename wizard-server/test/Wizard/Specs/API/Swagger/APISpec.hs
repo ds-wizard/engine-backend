@@ -7,4 +7,4 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.API.Swagger.List_GET
 
 swaggerAPI baseContext appContext =
-  with (startWebApp baseContext appContext) $ describe "SWAGGER API Spec" $ list_get appContext
+  with (startWebApp baseContext appContext) $ describe "SWAGGER API Spec" $ list_GET appContext

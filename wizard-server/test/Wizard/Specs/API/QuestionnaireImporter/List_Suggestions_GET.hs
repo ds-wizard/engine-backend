@@ -25,11 +25,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaire-importers/suggestions
+-- GET /wizard-api/questionnaire-importers/suggestions
 -- ------------------------------------------------------------------------
 list_suggestions_GET :: AppContext -> SpecWith ((), Application)
 list_suggestions_GET appContext =
-  describe "GET /questionnaire-importers/suggestions" $ do
+  describe "GET /wizard-api/questionnaire-importers/suggestions" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -39,7 +39,7 @@ list_suggestions_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/questionnaire-importers/suggestions"
+reqUrl = "/wizard-api/questionnaire-importers/suggestions"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -52,7 +52,7 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK"
     appContext
-    "/questionnaire-importers/suggestions?enabled=true"
+    "/wizard-api/questionnaire-importers/suggestions?enabled=true"
     reqAuthHeader
     ( Page
         "questionnaireImporters"
@@ -62,19 +62,19 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (query 'q')"
     appContext
-    "/questionnaire-importers/suggestions?enabled=true&q=QuestionnaireImporterBio"
+    "/wizard-api/questionnaire-importers/suggestions?enabled=true&q=QuestionnaireImporterBio"
     reqAuthHeader
     (Page "questionnaireImporters" (PageMetadata 20 1 1 0) (fmap toDTO [questionnaireImporterBio2]))
   create_test_200
     "HTTP 200 OK (query 'q' for non-existing)"
     appContext
-    "/questionnaire-importers/suggestions?enabled=true&q=Non-existing Questionnaire Report"
+    "/wizard-api/questionnaire-importers/suggestions?enabled=true&q=Non-existing Questionnaire Report"
     reqAuthHeader
     (Page "questionnaireImporters" (PageMetadata 20 0 0 0) ([] :: [QuestionnaireImporterDTO]))
   create_test_200
     "HTTP 200 OK (query 'questionnaireUuid')"
     appContext
-    "/questionnaire-importers/suggestions?enabled=true&questionnaireUuid=af984a75-56e3-49f8-b16f-d6b99599910a"
+    "/wizard-api/questionnaire-importers/suggestions?enabled=true&questionnaireUuid=af984a75-56e3-49f8-b16f-d6b99599910a"
     reqAuthHeader
     (Page "questionnaireImporters" (PageMetadata 20 1 1 0) (fmap toDTO [questionnaireImporterBio2]))
 

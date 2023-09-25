@@ -19,11 +19,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /prefabs
+-- GET /wizard-api/prefabs
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /prefabs" $ do
+  describe "GET /wizard-api/prefabs" $ do
     test_200 appContext
     test_401 appContext
 
@@ -32,7 +32,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/prefabs"
+reqUrl = "/wizard-api/prefabs"
 
 reqHeaders = [reqAuthHeader]
 
@@ -42,11 +42,11 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK" appContext "/prefabs" [kmIntegrationBioPortalPrefab, authServicePrefab]
+  create_test_200 "HTTP 200 OK" appContext "/wizard-api/prefabs" [kmIntegrationBioPortalPrefab, authServicePrefab]
   create_test_200
     "HTTP 200 OK (Type)"
     appContext
-    "/prefabs?type=knowledge-model-integration"
+    "/wizard-api/prefabs?type=knowledge-model-integration"
     [kmIntegrationBioPortalPrefab]
 
 create_test_200 title appContext reqUrl expDto =

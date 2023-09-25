@@ -21,11 +21,11 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- POST /tokens
+-- POST /wizard-api/tokens
 -- ------------------------------------------------------------------------
 list_POST :: AppContext -> SpecWith ((), Application)
 list_POST appContext =
-  describe "POST /tokens" $ do
+  describe "POST /wizard-api/tokens" $ do
     test_201 appContext
     test_400 appContext
 
@@ -34,7 +34,7 @@ list_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/tokens"
+reqUrl = "/wizard-api/tokens"
 
 reqHeaders = [reqCtHeader]
 

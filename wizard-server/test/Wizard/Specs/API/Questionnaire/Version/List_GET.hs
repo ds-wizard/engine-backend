@@ -29,11 +29,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires/{qtnUuid}/versions
+-- GET /wizard-api/questionnaires/{qtnUuid}/versions
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /questionnaires/{qtnUuid}/versions" $ do
+  describe "GET /wizard-api/questionnaires/{qtnUuid}/versions" $ do
     test_200 appContext
     test_403 appContext
     test_404 appContext
@@ -43,7 +43,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/versions"
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid ++ "/versions"
 
 reqHeadersT authHeader = authHeader
 
@@ -158,7 +158,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/versions"
+    "/wizard-api/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/versions"
     [reqHeadersT reqAuthHeader]
     reqBody
     "questionnaire"

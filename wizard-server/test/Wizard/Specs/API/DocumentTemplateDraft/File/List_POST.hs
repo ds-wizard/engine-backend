@@ -1,5 +1,5 @@
 module Wizard.Specs.API.DocumentTemplateDraft.File.List_POST (
-  list_post,
+  list_POST,
 ) where
 
 import Data.Aeson (encode)
@@ -23,11 +23,11 @@ import Wizard.Specs.API.DocumentTemplateDraft.File.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /document-template-drafts
+-- POST /wizard-api/document-template-drafts
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith ((), Application)
-list_post appContext =
-  describe "POST /document-template-drafts/{documentTemplateId}/files" $ do
+list_POST :: AppContext -> SpecWith ((), Application)
+list_POST appContext =
+  describe "POST /wizard-api/document-template-drafts/{documentTemplateId}/files" $ do
     test_201 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +37,7 @@ list_post appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/document-template-drafts/global:questionnaire-report:1.0.0/files"
+reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/files"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 

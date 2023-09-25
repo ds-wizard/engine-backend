@@ -18,11 +18,11 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- GET /tokens
+-- GET /wizard-api/tokens
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /tokens" $ do
+  describe "GET /wizard-api/tokens" $ do
     test_200 appContext
     test_401 appContext
 
@@ -31,7 +31,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "tokens"
+reqUrl = "/wizard-api/tokens"
 
 reqHeaders = [reqAuthHeader]
 

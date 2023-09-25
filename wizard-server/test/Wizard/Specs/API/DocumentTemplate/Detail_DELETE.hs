@@ -1,5 +1,5 @@
 module Wizard.Specs.API.DocumentTemplate.Detail_DELETE (
-  detail_delete,
+  detail_DELETE,
 ) where
 
 import Data.Aeson (encode)
@@ -23,11 +23,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-templates/{documentTemplateId}
+-- GET /wizard-api/document-templates/{documentTemplateId}
 -- ------------------------------------------------------------------------
-detail_delete :: AppContext -> SpecWith ((), Application)
-detail_delete appContext =
-  describe "DELETE /document-templates/{documentTemplateId}" $ do
+detail_DELETE :: AppContext -> SpecWith ((), Application)
+detail_DELETE appContext =
+  describe "DELETE /wizard-api/document-templates/{documentTemplateId}" $ do
     test_204 appContext
     test_400 appContext
     test_401 appContext
@@ -39,7 +39,7 @@ detail_delete appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/document-templates/global:questionnaire-report:1.0.0"
+reqUrl = "/wizard-api/document-templates/global:questionnaire-report:1.0.0"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -118,7 +118,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-templates/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/document-templates/deab6c38-aeac-4b17-a501-4365a0a70176"
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template"

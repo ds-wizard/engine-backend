@@ -16,11 +16,11 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- GET /configs/app
+-- GET /wizard-api/configs/app
 -- ------------------------------------------------------------------------
 list_app_GET :: AppContext -> SpecWith ((), Application)
 list_app_GET appContext =
-  describe "GET /configs/app" $ do
+  describe "GET /wizard-api/configs/app" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -30,7 +30,7 @@ list_app_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/configs/app"
+reqUrl = "/wizard-api/configs/app"
 
 reqHeaders = [reqAuthHeader]
 

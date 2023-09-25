@@ -21,11 +21,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /branches/{branchId}
+-- DELETE /wizard-api/branches/{branchId}
 -- ------------------------------------------------------------------------
 detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
-  describe "DELETE /branches/{branchId}" $ do
+  describe "DELETE /wizard-api/branches/{branchId}" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -36,7 +36,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6"
+reqUrl = "/wizard-api/branches/6474b24b-262b-42b1-9451-008e8363f2b6"
 
 reqHeaders = [reqAuthHeader]
 
@@ -86,7 +86,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+    "/wizard-api/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
     reqHeaders
     reqBody
     "branch"

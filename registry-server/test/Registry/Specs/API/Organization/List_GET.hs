@@ -1,5 +1,5 @@
 module Registry.Specs.API.Organization.List_GET (
-  list_get,
+  list_GET,
 ) where
 
 import Network.HTTP.Types
@@ -18,8 +18,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /organizations
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext =
+list_GET :: AppContext -> SpecWith ((), Application)
+list_GET appContext =
   describe "GET /organizations" $ do
     test_200 appContext
     test_401 appContext

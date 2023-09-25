@@ -21,11 +21,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /users
+-- GET /wizard-api/users
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /users" $ do
+  describe "GET /wizard-api/users" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -35,7 +35,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/users"
+reqUrl = "/wizard-api/users"
 
 reqHeaders = [reqAuthHeader]
 
@@ -48,27 +48,27 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Admin)"
     appContext
-    "/users?sort=uuid,asc"
+    "/wizard-api/users?sort=uuid,asc"
     (Page "users" (PageMetadata 20 3 1 0) [toDTO userNikola, toDTO userIsaac, toDTO userAlbert])
   create_test_200
     "HTTP 200 OK (Admin - pagination)"
     appContext
-    "/users?sort=uuid,asc&page=1&size=1"
+    "/wizard-api/users?sort=uuid,asc&page=1&size=1"
     (Page "users" (PageMetadata 1 3 3 1) [toDTO userIsaac])
   create_test_200
     "HTTP 200 OK (Admin - query)"
     appContext
-    "/users?sort=uuid,asc&q=te"
+    "/wizard-api/users?sort=uuid,asc&q=te"
     (Page "users" (PageMetadata 20 2 1 0) [toDTO userNikola, toDTO userAlbert])
   create_test_200
     "HTTP 200 OK (Admin - sort asc)"
     appContext
-    "/users?sort=first_name,asc"
+    "/wizard-api/users?sort=first_name,asc"
     (Page "users" (PageMetadata 20 3 1 0) [toDTO userAlbert, toDTO userIsaac, toDTO userNikola])
   create_test_200
     "HTTP 200 OK (Admin - sort desc)"
     appContext
-    "/users?sort=first_name,desc"
+    "/wizard-api/users?sort=first_name,desc"
     (Page "users" (PageMetadata 20 3 1 0) [toDTO userNikola, toDTO userIsaac, toDTO userAlbert])
 
 create_test_200 title appContext reqUrl expDto =

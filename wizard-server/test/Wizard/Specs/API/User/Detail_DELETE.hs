@@ -29,11 +29,11 @@ import Wizard.Specs.API.User.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /users/{uUuid}
+-- DELETE /wizard-api/users/{uUuid}
 -- ------------------------------------------------------------------------
 detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
-  describe "DELETE /users/{uUuid}" $ do
+  describe "DELETE /wizard-api/users/{uUuid}" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -44,7 +44,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
+reqUrl = "/wizard-api/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -92,7 +92,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [] "" "
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+    "/wizard-api/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
     reqHeaders
     reqBody
     "user_entity"

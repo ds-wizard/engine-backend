@@ -22,11 +22,11 @@ import Wizard.Specs.API.User.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /users/{uuid}/password?hash={hash}
+-- PUT /wizard-api/users/{uuid}/password?hash={hash}
 -- ------------------------------------------------------------------------
 detail_password_hash_PUT :: AppContext -> SpecWith ((), Application)
 detail_password_hash_PUT appContext =
-  describe "PUT /users/{uuid}/password?hash={hash}" $ do
+  describe "PUT /wizard-api/users/{uuid}/password?hash={hash}" $ do
     test_204 appContext
     test_400 appContext
     test_404 appContext
@@ -36,7 +36,7 @@ detail_password_hash_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password?hash=1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
+reqUrl = "/wizard-api/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password?hash=1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
 
 reqHeaders = [reqCtHeader]
 
@@ -75,7 +75,7 @@ test_400 appContext = createInvalidJsonTest reqMethod reqUrl "password"
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
+    "/wizard-api/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
     reqHeaders
     reqBody
     "action_key"

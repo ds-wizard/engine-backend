@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.List_POST_FromTemplate (
-  list_post_fromTemplate,
+  list_POST_fromTemplate,
 ) where
 
 import Data.Aeson (encode)
@@ -32,11 +32,11 @@ import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /questionnaires?fromTemplate=true
+-- POST /wizard-api/questionnaires?fromTemplate=true
 -- ------------------------------------------------------------------------
-list_post_fromTemplate :: AppContext -> SpecWith ((), Application)
-list_post_fromTemplate appContext =
-  describe "POST /questionnaires/from-template" $ do
+list_POST_fromTemplate :: AppContext -> SpecWith ((), Application)
+list_POST_fromTemplate appContext =
+  describe "POST /wizard-api/questionnaires/from-template" $ do
     test_201 appContext
     test_400 appContext
     test_403 appContext
@@ -46,7 +46,7 @@ list_post_fromTemplate appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/questionnaires/from-template"
+reqUrl = "/wizard-api/questionnaires/from-template"
 
 reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 

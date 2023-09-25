@@ -72,7 +72,7 @@ dmp1 :: DocumentContext
 dmp1 =
   DocumentContext
     { uuid = u' "d87941ae-7725-4d22-b5c7-45dabc125199"
-    , config = DocumentContextConfig {clientUrl = "https://example.com"}
+    , config = DocumentContextConfig {clientUrl = "https://example.com/wizard"}
     , questionnaireUuid = U.toString $ questionnaire1.uuid
     , questionnaireName = questionnaire1.name
     , questionnaireDescription = questionnaire1.description

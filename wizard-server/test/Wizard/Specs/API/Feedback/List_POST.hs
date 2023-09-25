@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Feedback.List_POST (
-  list_post,
+  list_POST,
 ) where
 
 import Data.Aeson (encode)
@@ -23,11 +23,11 @@ import Wizard.Specs.API.Feedback.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /feedbacks
+-- POST /wizard-api/feedbacks
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith ((), Application)
-list_post appContext =
-  describe "POST /feedbacks" $ do
+list_POST :: AppContext -> SpecWith ((), Application)
+list_POST appContext =
+  describe "POST /wizard-api/feedbacks" $ do
     test_200 appContext
     test_400 appContext
 
@@ -36,7 +36,7 @@ list_post appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/feedbacks"
+reqUrl = "/wizard-api/feedbacks"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

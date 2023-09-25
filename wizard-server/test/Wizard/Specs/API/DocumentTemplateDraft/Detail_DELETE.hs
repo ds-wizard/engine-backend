@@ -17,11 +17,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-template-drafts/{documentTemplateId}
+-- GET /wizard-api/document-template-drafts/{documentTemplateId}
 -- ------------------------------------------------------------------------
 detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
-  describe "DELETE /document-template-drafts/{documentTemplateId}" $ do
+  describe "DELETE /wizard-api/document-template-drafts/{documentTemplateId}" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -32,7 +32,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/document-template-drafts/global:questionnaire-report:2.0.0"
+reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:2.0.0"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -79,7 +79,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-template-drafts/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/document-template-drafts/deab6c38-aeac-4b17-a501-4365a0a70176"
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template"

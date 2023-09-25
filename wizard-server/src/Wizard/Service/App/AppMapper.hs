@@ -62,11 +62,11 @@ fromRegisterCreateDTO reqDto aUuid serverConfig now =
     { uuid = aUuid
     , appId = reqDto.appId
     , name = reqDto.appId
-    , serverDomain = f' "api-%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
-    , serverUrl = f' "https://api-%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
-    , clientUrl = f' "https://%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
-    , adminServerUrl = Just $ f' "https://api-admin-%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
-    , adminClientUrl = Just $ f' "https://admin-%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
+    , serverDomain = createServerDomain serverConfig reqDto.appId
+    , serverUrl = createServerUrl serverConfig reqDto.appId
+    , clientUrl = createClientUrl serverConfig reqDto.appId
+    , adminServerUrl = Just $ createAdminServerUrl serverConfig reqDto.appId
+    , adminClientUrl = Just $ createAdminClientUrl serverConfig reqDto.appId
     , enabled = True
     , createdAt = now
     , updatedAt = now
@@ -78,11 +78,11 @@ fromAdminCreateDTO reqDto aUuid serverConfig now =
     { uuid = aUuid
     , appId = reqDto.appId
     , name = reqDto.appName
-    , serverDomain = f' "api-%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
-    , serverUrl = f' "https://api-%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
-    , clientUrl = f' "https://%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
-    , adminServerUrl = Just $ f' "https://api-admin-%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
-    , adminClientUrl = Just $ f' "https://admin-%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
+    , serverDomain = createServerDomain serverConfig reqDto.appId
+    , serverUrl = createServerUrl serverConfig reqDto.appId
+    , clientUrl = createClientUrl serverConfig reqDto.appId
+    , adminServerUrl = Just $ createAdminServerUrl serverConfig reqDto.appId
+    , adminClientUrl = Just $ createAdminClientUrl serverConfig reqDto.appId
     , enabled = True
     , createdAt = now
     , updatedAt = now
@@ -94,11 +94,11 @@ fromCommand command serverConfig now =
     { uuid = command.uuid
     , appId = command.appId
     , name = command.name
-    , serverDomain = f' "api-%s%s.%s" [serverConfig.cloud.prefix, command.appId, fromMaybe "" serverConfig.cloud.domain]
-    , serverUrl = f' "https://api-%s%s.%s" [serverConfig.cloud.prefix, command.appId, fromMaybe "" serverConfig.cloud.domain]
-    , clientUrl = f' "https://%s%s.%s" [serverConfig.cloud.prefix, command.appId, fromMaybe "" serverConfig.cloud.domain]
-    , adminServerUrl = Just $ f' "https://api-admin-%s%s.%s" [serverConfig.cloud.prefix, command.appId, fromMaybe "" serverConfig.cloud.domain]
-    , adminClientUrl = Just $ f' "https://admin-%s%s.%s" [serverConfig.cloud.prefix, command.appId, fromMaybe "" serverConfig.cloud.domain]
+    , serverDomain = createServerDomain serverConfig command.appId
+    , serverUrl = createServerUrl serverConfig command.appId
+    , clientUrl = createClientUrl serverConfig command.appId
+    , adminServerUrl = Just $ createAdminServerUrl serverConfig command.appId
+    , adminClientUrl = Just $ createAdminClientUrl serverConfig command.appId
     , enabled = True
     , createdAt = now
     , updatedAt = now
@@ -110,12 +110,30 @@ fromChangeDTO app reqDto serverConfig =
     { uuid = app.uuid
     , appId = reqDto.appId
     , name = reqDto.name
-    , serverDomain = f' "api-%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
-    , serverUrl = f' "https://api-%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
-    , clientUrl = f' "https://%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
-    , adminServerUrl = Just $ f' "https://api-admin-%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
-    , adminClientUrl = Just $ f' "https://admin-%s%s.%s" [serverConfig.cloud.prefix, reqDto.appId, fromMaybe "" serverConfig.cloud.domain]
+    , serverDomain = createServerDomain serverConfig reqDto.appId
+    , serverUrl = createServerUrl serverConfig reqDto.appId
+    , clientUrl = createClientUrl serverConfig reqDto.appId
+    , adminServerUrl = Just $ createAdminServerUrl serverConfig reqDto.appId
+    , adminClientUrl = Just $ createAdminClientUrl serverConfig reqDto.appId
     , enabled = app.enabled
     , createdAt = app.createdAt
     , updatedAt = app.updatedAt
     }
+
+createServerDomain :: ServerConfig -> String -> String
+createServerDomain serverConfig appId = f' "%s.%s" [appId, fromMaybe "" serverConfig.cloud.domain]
+
+createServerUrl :: ServerConfig -> String -> String
+createServerUrl serverConfig appId = f' "%s/wizard-api" [createUrl serverConfig appId]
+
+createClientUrl :: ServerConfig -> String -> String
+createClientUrl serverConfig appId = f' "%s/wizard" [createUrl serverConfig appId]
+
+createAdminServerUrl :: ServerConfig -> String -> String
+createAdminServerUrl serverConfig appId = f' "%s/admin-api" [createUrl serverConfig appId]
+
+createAdminClientUrl :: ServerConfig -> String -> String
+createAdminClientUrl serverConfig appId = f' "%s/admin" [createUrl serverConfig appId]
+
+createUrl :: ServerConfig -> String -> String
+createUrl serverConfig appId = f' "https://%s.%s" [appId, fromMaybe "" serverConfig.cloud.domain]

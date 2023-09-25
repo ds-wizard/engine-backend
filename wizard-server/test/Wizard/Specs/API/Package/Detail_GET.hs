@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Package.Detail_GET (
-  detail_get,
+  detail_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -27,11 +27,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /packages/{pkgId}
+-- GET /wizard-api/packages/{pkgId}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith ((), Application)
-detail_get appContext =
-  describe "GET /packages/{pkgId}" $ do
+detail_GET :: AppContext -> SpecWith ((), Application)
+detail_GET appContext =
+  describe "GET /wizard-api/packages/{pkgId}" $ do
     test_200 appContext
     test_403 appContext
     test_404 appContext
@@ -41,7 +41,7 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrlT pkgId = BS.pack $ "/packages/" ++ pkgId
+reqUrlT pkgId = BS.pack $ "/wizard-api/packages/" ++ pkgId
 
 reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
@@ -103,7 +103,7 @@ test_403 appContext =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/packages/global:non-existing-package:1.0.0"
+    "/wizard-api/packages/global:non-existing-package:1.0.0"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "package"

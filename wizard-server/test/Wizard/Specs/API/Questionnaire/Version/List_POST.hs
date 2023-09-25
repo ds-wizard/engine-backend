@@ -25,11 +25,11 @@ import Wizard.Specs.API.Questionnaire.Version.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /questionnaires/{qtnUuid}/versions
+-- POST /wizard-api/questionnaires/{qtnUuid}/versions
 -- ------------------------------------------------------------------------
 list_POST :: AppContext -> SpecWith ((), Application)
 list_POST appContext =
-  describe "POST /questionnaires/{qtnUuid}/versions" $ do
+  describe "POST /wizard-api/questionnaires/{qtnUuid}/versions" $ do
     test_201 appContext
     test_400 appContext
     test_401 appContext
@@ -39,7 +39,7 @@ list_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/versions"
+reqUrl = "/wizard-api/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/versions"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

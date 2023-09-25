@@ -1,5 +1,5 @@
 module Wizard.Specs.API.DocumentTemplate.Detail_GET (
-  detail_get,
+  detail_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -20,11 +20,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-templates/{documentTemplateId}
+-- GET /wizard-api/document-templates/{documentTemplateId}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith ((), Application)
-detail_get appContext =
-  describe "GET /document-templates/{documentTemplateId}" $ do
+detail_GET :: AppContext -> SpecWith ((), Application)
+detail_GET appContext =
+  describe "GET /wizard-api/document-templates/{documentTemplateId}" $ do
     test_200 appContext
     test_404 appContext
 
@@ -33,7 +33,7 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/document-templates/global:questionnaire-report:1.0.0"
+reqUrl = "/wizard-api/document-templates/global:questionnaire-report:1.0.0"
 
 reqHeadersT reqAuthHeader = reqAuthHeader
 
@@ -72,7 +72,7 @@ create_test_200 title appContext reqAuthHeader =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-templates/global:questionnaire-report:9.9.9"
+    "/wizard-api/document-templates/global:questionnaire-report:9.9.9"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "document_template"

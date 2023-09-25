@@ -24,11 +24,11 @@ import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /questionnaires/{qtnUuid}/revert
+-- POST /wizard-api/questionnaires/{qtnUuid}/revert
 -- ------------------------------------------------------------------------
 detail_revert_POST :: AppContext -> SpecWith ((), Application)
 detail_revert_POST appContext =
-  describe "POST /questionnaires/{qtnUuid}/revert" $ do
+  describe "POST /wizard-api/questionnaires/{qtnUuid}/revert" $ do
     test_200 appContext
     test_400 appContext
     test_401 appContext
@@ -38,7 +38,7 @@ detail_revert_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/revert"
+reqUrl = "/wizard-api/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/revert"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

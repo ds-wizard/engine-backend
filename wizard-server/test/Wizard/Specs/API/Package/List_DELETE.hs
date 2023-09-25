@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Package.List_DELETE (
-  list_delete,
+  list_DELETE,
 ) where
 
 import Data.Aeson (encode)
@@ -25,11 +25,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /packages
+-- GET /wizard-api/packages
 -- ------------------------------------------------------------------------
-list_delete :: AppContext -> SpecWith ((), Application)
-list_delete appContext =
-  describe "DELETE /packages" $ do
+list_DELETE :: AppContext -> SpecWith ((), Application)
+list_DELETE appContext =
+  describe "DELETE /wizard-api/packages" $ do
     test_204 appContext
     test_400 appContext
     test_401 appContext
@@ -40,7 +40,7 @@ list_delete appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/packages?organizationId=org.nl&kmId=core-nl"
+reqUrl = "/wizard-api/packages?organizationId=org.nl&kmId=core-nl"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

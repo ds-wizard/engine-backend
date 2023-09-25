@@ -18,11 +18,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /apps/{appUuid}/plans/{planUuid}
+-- DELETE /wizard-api/apps/{appUuid}/plans/{planUuid}
 -- ------------------------------------------------------------------------
 detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
-  describe "DELETE /apps/{appUuid}/plans/{planUuid}" $ do
+  describe "DELETE /wizard-api/apps/{appUuid}/plans/{planUuid}" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -33,7 +33,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/apps/00000000-0000-0000-0000-000000000000/plans/f54f7b16-804b-439f-b8db-abbae171f18b"
+reqUrl = "/wizard-api/apps/00000000-0000-0000-0000-000000000000/plans/f54f7b16-804b-439f-b8db-abbae171f18b"
 
 reqHeaders = [reqAuthHeader]
 
@@ -76,7 +76,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest
     reqMethod
-    "/apps/00000000-0000-0000-0000-000000000000/plans/fc38f7c5-1185-4470-b177-f06ecce1cd2f"
+    "/wizard-api/apps/00000000-0000-0000-0000-000000000000/plans/fc38f7c5-1185-4470-b177-f06ecce1cd2f"
     reqHeaders
     reqBody
     "app_plan"

@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Feedback.Detail_GET (
-  detail_get,
+  detail_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -22,11 +22,11 @@ import Wizard.Specs.API.Feedback.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /feedbacks/{feedbackUuid}
+-- GET /wizard-api/feedbacks/{feedbackUuid}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith ((), Application)
-detail_get appContext =
-  describe "GET /feedbacks/{feedbackUuid}" $ do
+detail_GET :: AppContext -> SpecWith ((), Application)
+detail_GET appContext =
+  describe "GET /wizard-api/feedbacks/{feedbackUuid}" $ do
     test_200 appContext
     test_404 appContext
 
@@ -35,7 +35,7 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/feedbacks/c44c06d1-ad9f-4f73-9c05-2aa9eddacae1"
+reqUrl = "/wizard-api/feedbacks/c44c06d1-ad9f-4f73-9c05-2aa9eddacae1"
 
 reqHeaders = []
 
@@ -69,7 +69,7 @@ test_200 appContext =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/feedbacks/f335e2b9-5e81-4412-8bf5-50753b2020fc"
+    "/wizard-api/feedbacks/f335e2b9-5e81-4412-8bf5-50753b2020fc"
     reqHeaders
     reqBody
     "feedback"

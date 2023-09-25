@@ -1,5 +1,5 @@
 module Registry.Specs.API.Organization.List_Simple_GET (
-  list_simple_get,
+  list_simple_GET,
 ) where
 
 import Network.HTTP.Types
@@ -18,8 +18,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /organizations/simple
 -- ------------------------------------------------------------------------
-list_simple_get :: AppContext -> SpecWith ((), Application)
-list_simple_get appContext = describe "GET /organizations/simple" $ test_200 appContext
+list_simple_GET :: AppContext -> SpecWith ((), Application)
+list_simple_GET appContext = describe "GET /organizations/simple" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

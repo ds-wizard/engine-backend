@@ -10,6 +10,7 @@ import Network.Minio (MinioConn)
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
 import qualified Shared.Common.Model.Context.AppContext as S_AppContext
+import qualified Shared.Common.Model.Context.BaseContext as S_BaseContext
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
@@ -18,6 +19,8 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 
 instance S_AppContext.AppContextC AppContext ServerConfig AppContextM
+
+instance S_BaseContext.BaseContextC BaseContext ServerConfig BaseContextM
 
 instance HasField "serverConfig'" AppContext ServerConfig where
   getField = (.serverConfig)

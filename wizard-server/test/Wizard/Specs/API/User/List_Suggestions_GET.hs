@@ -21,11 +21,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /users/suggestions
+-- GET /wizard-api/users/suggestions
 -- ------------------------------------------------------------------------
 list_suggestions_GET :: AppContext -> SpecWith ((), Application)
 list_suggestions_GET appContext =
-  describe "GET /users/suggestions" $ do
+  describe "GET /wizard-api/users/suggestions" $ do
     test_200 appContext
     test_401 appContext
 
@@ -34,7 +34,7 @@ list_suggestions_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/users/suggestions"
+reqUrl = "/wizard-api/users/suggestions"
 
 reqHeaders = [reqNonAdminAuthHeader]
 
@@ -47,37 +47,37 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Admin)"
     appContext
-    "/users/suggestions?sort=uuid,asc"
+    "/wizard-api/users/suggestions?sort=uuid,asc"
     (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
   create_test_200
     "HTTP 200 OK (Admin - pagination)"
     appContext
-    "/users/suggestions?sort=uuid,asc&page=1&size=1"
+    "/wizard-api/users/suggestions?sort=uuid,asc&page=1&size=1"
     (Page "users" (PageMetadata 1 3 3 1) [toSuggestionDTO . toSuggestion $ userIsaac])
   create_test_200
     "HTTP 200 OK (Admin - query)"
     appContext
-    "/users/suggestions?sort=uuid,asc&q=te"
+    "/wizard-api/users/suggestions?sort=uuid,asc&q=te"
     (Page "users" (PageMetadata 20 2 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userAlbert]))
   create_test_200
     "HTTP 200 OK (Admin - select)"
     appContext
-    "/users/suggestions?sort=uuid,asc&select=30d48cf4-8c8a-496f-bafe-585bd238f798,e1c58e52-0824-4526-8ebe-ec38eec67030"
+    "/wizard-api/users/suggestions?sort=uuid,asc&select=30d48cf4-8c8a-496f-bafe-585bd238f798,e1c58e52-0824-4526-8ebe-ec38eec67030"
     (Page "users" (PageMetadata 20 2 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac]))
   create_test_200
     "HTTP 200 OK (Admin - exclude)"
     appContext
-    "/users/suggestions?sort=uuid,asc&exclude=30d48cf4-8c8a-496f-bafe-585bd238f798,e1c58e52-0824-4526-8ebe-ec38eec67030"
+    "/wizard-api/users/suggestions?sort=uuid,asc&exclude=30d48cf4-8c8a-496f-bafe-585bd238f798,e1c58e52-0824-4526-8ebe-ec38eec67030"
     (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestionDTO . toSuggestion) [userAlbert]))
   create_test_200
     "HTTP 200 OK (Admin - sort asc)"
     appContext
-    "/users/suggestions?sort=first_name,asc"
+    "/wizard-api/users/suggestions?sort=first_name,asc"
     (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userAlbert, userIsaac, userNikola]))
   create_test_200
     "HTTP 200 OK (Admin - sort desc)"
     appContext
-    "/users/suggestions?sort=first_name,desc"
+    "/wizard-api/users/suggestions?sort=first_name,desc"
     (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
 
 create_test_200 title appContext reqUrl expDto =

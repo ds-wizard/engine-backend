@@ -135,6 +135,7 @@ swagger =
                       , _licenseUrl = Just . URL $ "https://raw.githubusercontent.com/ds-wizard/engine-backend/main/LICENSE.md"
                       }
               }
+        , _swaggerBasePath = Just "/wizard-api"
         }
 
 swaggerServer :: Server SwaggerAPI

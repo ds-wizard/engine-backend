@@ -17,11 +17,11 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- POST /api-keys
+-- POST /wizard-api/api-keys
 -- ------------------------------------------------------------------------
 list_POST :: AppContext -> SpecWith ((), Application)
 list_POST appContext =
-  describe "POST /api-keys" $ do
+  describe "POST /wizard-api/api-keys" $ do
     test_201 appContext
     test_401 appContext
 
@@ -30,7 +30,7 @@ list_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/api-keys"
+reqUrl = "/wizard-api/api-keys"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

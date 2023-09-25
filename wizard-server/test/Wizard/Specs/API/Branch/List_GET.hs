@@ -24,11 +24,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /branches
+-- GET /wizard-api/branches
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /branches" $ do
+  describe "GET /wizard-api/branches" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -38,7 +38,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/branches"
+reqUrl = "/wizard-api/branches"
 
 reqHeaders = [reqAuthHeader]
 
@@ -48,16 +48,16 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK" appContext "/branches" (Page "branches" (PageMetadata 20 1 1 0) [amsterdamBranchList])
+  create_test_200 "HTTP 200 OK" appContext "/wizard-api/branches" (Page "branches" (PageMetadata 20 1 1 0) [amsterdamBranchList])
   create_test_200
     "HTTP 200 OK (query)"
     appContext
-    "/branches?q=Amsterdam Knowledge Model"
+    "/wizard-api/branches?q=Amsterdam Knowledge Model"
     (Page "branches" (PageMetadata 20 1 1 0) [amsterdamBranchList])
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext
-    "/branches?q=Non-existing Branch"
+    "/wizard-api/branches?q=Non-existing Branch"
     (Page "branches" (PageMetadata 20 0 0 0) [])
 
 create_test_200 title appContext reqUrl expDto =

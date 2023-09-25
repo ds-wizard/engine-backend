@@ -1,5 +1,5 @@
 general:
-  clientUrl: http://localhost:3001
+  clientUrl: http://localhost:3001/wizard
   secret:
 
 database:

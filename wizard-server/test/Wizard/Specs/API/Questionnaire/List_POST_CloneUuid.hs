@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.List_POST_CloneUuid (
-  list_post_cloneUuid,
+  list_POST_cloneUuid,
 ) where
 
 import Data.Aeson (encode)
@@ -30,11 +30,11 @@ import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /questionnaires?cloneUuid={qtnUuid}
+-- POST /wizard-api/questionnaires?cloneUuid={qtnUuid}
 -- ------------------------------------------------------------------------
-list_post_cloneUuid :: AppContext -> SpecWith ((), Application)
-list_post_cloneUuid appContext =
-  describe "POST /questionnaires/{qtnUuid}/clone" $ do
+list_POST_cloneUuid :: AppContext -> SpecWith ((), Application)
+list_POST_cloneUuid appContext =
+  describe "POST /wizard-api/questionnaires/{qtnUuid}/clone" $ do
     test_201 appContext
     test_401 appContext
     test_403 appContext
@@ -45,7 +45,7 @@ list_post_cloneUuid appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/clone"
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid ++ "/clone"
 
 reqHeadersT authHeader = [authHeader]
 
@@ -127,7 +127,7 @@ create_test_403 title appContext qtn qtnEdited reason =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/clone"
+    "/wizard-api/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/clone"
     (reqHeadersT reqAuthHeader)
     reqBody
     "questionnaire"

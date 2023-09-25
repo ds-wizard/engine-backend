@@ -1,5 +1,5 @@
 module Registry.Specs.API.Locale.Detail_GET (
-  detail_get,
+  detail_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -23,8 +23,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /locales/{lclId}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith ((), Application)
-detail_get appContext =
+detail_GET :: AppContext -> SpecWith ((), Application)
+detail_GET appContext =
   describe "GET /locales/{lclId}" $ do
     test_200 appContext
     test_404 appContext

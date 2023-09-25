@@ -21,17 +21,17 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /configs/bootstrap
+-- GET /wizard-api/configs/bootstrap
 -- ------------------------------------------------------------------------
 list_bootstrap_GET :: AppContext -> SpecWith ((), Application)
-list_bootstrap_GET appContext = describe "GET /configs/bootstrap" $ test_200 appContext
+list_bootstrap_GET appContext = describe "GET /wizard-api/configs/bootstrap" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/configs/bootstrap"
+reqUrl = "/wizard-api/configs/bootstrap"
 
 reqHeaders = []
 

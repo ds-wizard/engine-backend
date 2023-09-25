@@ -1,5 +1,5 @@
 module Wizard.Specs.API.KnowledgeModel.Preview_POST (
-  preview_post,
+  preview_POST,
 ) where
 
 import Data.Aeson (encode)
@@ -24,11 +24,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /knowledge-models/preview
+-- POST /wizard-api/knowledge-models/preview
 -- ------------------------------------------------------------------------
-preview_post :: AppContext -> SpecWith ((), Application)
-preview_post appContext =
-  describe "POST /knowledge-models/preview" $ do
+preview_POST :: AppContext -> SpecWith ((), Application)
+preview_POST appContext =
+  describe "POST /wizard-api/knowledge-models/preview" $ do
     test_200 appContext
     test_403 appContext
 
@@ -37,7 +37,7 @@ preview_post appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/knowledge-models/preview"
+reqUrl = "/wizard-api/knowledge-models/preview"
 
 reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 

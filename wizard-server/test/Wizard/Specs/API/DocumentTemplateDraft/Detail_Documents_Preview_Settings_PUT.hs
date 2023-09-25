@@ -22,11 +22,11 @@ import Wizard.Specs.API.DocumentTemplateDraft.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /document-template-drafts/{documentTemplateId}/documents/preview/settings
+-- PUT /wizard-api/document-template-drafts/{documentTemplateId}/documents/preview/settings
 -- ------------------------------------------------------------------------
 detail_documents_preview_settings_PUT :: AppContext -> SpecWith ((), Application)
 detail_documents_preview_settings_PUT appContext =
-  describe "PUT /document-template-drafts/{documentTemplateId}/documents/preview/settings" $ do
+  describe "PUT /wizard-api/document-template-drafts/{documentTemplateId}/documents/preview/settings" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +37,7 @@ detail_documents_preview_settings_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/document-template-drafts/global:questionnaire-report:2.0.0/documents/preview/settings"
+reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:2.0.0/documents/preview/settings"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 
@@ -88,7 +88,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-template-drafts/deab6c38-aeac-4b17-a501-4365a0a70176/documents/preview/settings"
+    "/wizard-api/document-template-drafts/deab6c38-aeac-4b17-a501-4365a0a70176/documents/preview/settings"
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template_draft_data"

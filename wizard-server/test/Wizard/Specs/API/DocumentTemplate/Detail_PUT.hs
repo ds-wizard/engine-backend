@@ -1,5 +1,5 @@
 module Wizard.Specs.API.DocumentTemplate.Detail_PUT (
-  detail_put,
+  detail_PUT,
 ) where
 
 import Data.Aeson (encode)
@@ -23,11 +23,11 @@ import Wizard.Specs.API.DocumentTemplate.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /document-templates/{documentTemplateId}
+-- PUT /wizard-api/document-templates/{documentTemplateId}
 -- ------------------------------------------------------------------------
-detail_put :: AppContext -> SpecWith ((), Application)
-detail_put appContext =
-  describe "PUT /document-templates/{documentTemplateId}" $ do
+detail_PUT :: AppContext -> SpecWith ((), Application)
+detail_PUT appContext =
+  describe "PUT /wizard-api/document-templates/{documentTemplateId}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -38,7 +38,7 @@ detail_put appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/document-templates/global:questionnaire-report:1.0.0"
+reqUrl = "/wizard-api/document-templates/global:questionnaire-report:1.0.0"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 
@@ -88,7 +88,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-templates/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/document-templates/deab6c38-aeac-4b17-a501-4365a0a70176"
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template"

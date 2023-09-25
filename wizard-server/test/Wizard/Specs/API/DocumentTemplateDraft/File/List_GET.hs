@@ -1,5 +1,5 @@
 module Wizard.Specs.API.DocumentTemplateDraft.File.List_GET (
-  list_get,
+  list_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -20,11 +20,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-template-drafts/{documentTemplateId}/files
+-- GET /wizard-api/document-template-drafts/{documentTemplateId}/files
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext =
-  describe "GET /document-template-drafts/{documentTemplateId}/files" $ do
+list_GET :: AppContext -> SpecWith ((), Application)
+list_GET appContext =
+  describe "GET /wizard-api/document-template-drafts/{documentTemplateId}/files" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -34,7 +34,7 @@ list_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/document-template-drafts/global:questionnaire-report:1.0.0/files"
+reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/files"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 

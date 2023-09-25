@@ -7,4 +7,4 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.API.Info.List_GET
 
 infoAPI baseContext appContext =
-  with (startWebApp baseContext appContext) $ describe "INFO API Spec" $ list_get appContext
+  with (startWebApp baseContext appContext) $ describe "INFO API Spec" $ list_GET appContext

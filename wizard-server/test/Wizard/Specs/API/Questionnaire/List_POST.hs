@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.List_POST (
-  list_post,
+  list_POST,
 ) where
 
 import Data.Aeson (encode)
@@ -28,11 +28,11 @@ import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /questionnaires
+-- POST /wizard-api/questionnaires
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith ((), Application)
-list_post appContext =
-  describe "POST /questionnaires" $ do
+list_POST :: AppContext -> SpecWith ((), Application)
+list_POST appContext =
+  describe "POST /wizard-api/questionnaires" $ do
     test_201 appContext
     test_400 appContext
     test_403 appContext
@@ -42,7 +42,7 @@ list_post appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/questionnaires"
+reqUrl = "/wizard-api/questionnaires"
 
 reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 

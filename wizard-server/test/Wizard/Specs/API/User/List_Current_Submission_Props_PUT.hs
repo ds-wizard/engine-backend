@@ -17,11 +17,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.API.User.Common
 
 -- ------------------------------------------------------------------------
--- PUT /users/current/submission-props
+-- PUT /wizard-api/users/current/submission-props
 -- ------------------------------------------------------------------------
 list_current_submission_props_PUT :: AppContext -> SpecWith ((), Application)
 list_current_submission_props_PUT appContext =
-  describe "PUT /users/current/submission-props" $ do
+  describe "PUT /wizard-api/users/current/submission-props" $ do
     test_200 appContext
     test_400 appContext
     test_401 appContext
@@ -31,7 +31,7 @@ list_current_submission_props_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/users/current/submission-props"
+reqUrl = "/wizard-api/users/current/submission-props"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

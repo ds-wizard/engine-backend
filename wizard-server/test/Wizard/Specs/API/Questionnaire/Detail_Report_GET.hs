@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.Detail_Report_GET (
-  detail_report_get,
+  detail_report_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -32,11 +32,11 @@ import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires/{qtnUuid}/report
+-- GET /wizard-api/questionnaires/{qtnUuid}/report
 -- ------------------------------------------------------------------------
-detail_report_get :: AppContext -> SpecWith ((), Application)
-detail_report_get appContext =
-  describe "GET /questionnaires/{qtnUuid}/report" $ do
+detail_report_GET :: AppContext -> SpecWith ((), Application)
+detail_report_GET appContext =
+  describe "GET /wizard-api/questionnaires/{qtnUuid}/report" $ do
     test_200 appContext
     test_403 appContext
     test_404 appContext
@@ -46,7 +46,7 @@ detail_report_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/report"
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid ++ "/report"
 
 reqHeadersT authHeader = reqCtHeader : authHeader
 
@@ -139,7 +139,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/report"
+    "/wizard-api/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/report"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "questionnaire"

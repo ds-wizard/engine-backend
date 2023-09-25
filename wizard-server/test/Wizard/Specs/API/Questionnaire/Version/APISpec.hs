@@ -15,4 +15,4 @@ questionnaireVersionAPI baseContext appContext =
       list_GET appContext
       list_POST appContext
       detail_PUT appContext
-      detail_delete appContext
+      detail_DELETE appContext

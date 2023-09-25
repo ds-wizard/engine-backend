@@ -18,11 +18,11 @@ import Wizard.Specs.API.App.Plan.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- POST /apps/{appUuid}/plans
+-- POST /wizard-api/apps/{appUuid}/plans
 -- ------------------------------------------------------------------------
 list_POST :: AppContext -> SpecWith ((), Application)
 list_POST appContext =
-  describe "POST /apps/{appUuid}/plans" $ do
+  describe "POST /wizard-api/apps/{appUuid}/plans" $ do
     test_201 appContext
     test_400 appContext
     test_401 appContext
@@ -33,7 +33,7 @@ list_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/apps/00000000-0000-0000-0000-000000000000/plans"
+reqUrl = "/wizard-api/apps/00000000-0000-0000-0000-000000000000/plans"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

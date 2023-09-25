@@ -17,11 +17,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.API.Migration.KnowledgeModel.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /branches/{branchUuid}/migrations/current
+-- DELETE /wizard-api/branches/{branchUuid}/migrations/current
 -- ------------------------------------------------------------------------
 list_current_DELETE :: AppContext -> SpecWith ((), Application)
 list_current_DELETE appContext =
-  describe "DELETE /branches/{branchUuid}/migrations/current" $ do
+  describe "DELETE /wizard-api/branches/{branchUuid}/migrations/current" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -32,7 +32,7 @@ list_current_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current"
+reqUrl = "/wizard-api/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

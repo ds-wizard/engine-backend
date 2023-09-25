@@ -24,11 +24,11 @@ import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /questionnaires/{qtnUuid}/revert/preview
+-- POST /wizard-api/questionnaires/{qtnUuid}/revert/preview
 -- ------------------------------------------------------------------------
 detail_revert_preview_POST :: AppContext -> SpecWith ((), Application)
 detail_revert_preview_POST appContext =
-  describe "POST /questionnaires/{qtnUuid}/revert/preview" $ do
+  describe "POST /wizard-api/questionnaires/{qtnUuid}/revert/preview" $ do
     test_200 appContext
     test_400 appContext
 
@@ -37,7 +37,7 @@ detail_revert_preview_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/revert/preview"
+reqUrl = "/wizard-api/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/revert/preview"
 
 reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 

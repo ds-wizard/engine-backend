@@ -13,8 +13,8 @@ import Wizard.Specs.API.DocumentTemplateDraft.File.List_POST
 documentTemplateDraftFileAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
     describe "DOCUMENT TEMPLATE DRAFT FILE API Spec" $ do
-      list_get appContext
-      list_post appContext
-      detail_get appContext
-      detail_put appContext
-      detail_delete appContext
+      list_GET appContext
+      list_POST appContext
+      detail_GET appContext
+      detail_PUT appContext
+      detail_DELETE appContext

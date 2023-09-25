@@ -1,5 +1,5 @@
 module Registry.Specs.API.DocumentTemplate.Detail_Bundle_GET (
-  detail_bundle_get,
+  detail_bundle_GET,
 ) where
 
 import qualified Data.ByteString.Char8 as BS
@@ -20,8 +20,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /document-templates/{documentTemplateId}/bundle
 -- ------------------------------------------------------------------------
-detail_bundle_get :: AppContext -> SpecWith ((), Application)
-detail_bundle_get appContext =
+detail_bundle_GET :: AppContext -> SpecWith ((), Application)
+detail_bundle_GET appContext =
   describe "GET /document-templates/{documentTemplateId}/bundle" $ do
     test_200 appContext
     test_401 appContext

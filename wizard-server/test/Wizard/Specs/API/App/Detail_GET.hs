@@ -20,11 +20,11 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- GET /apps/{appId}
+-- GET /wizard-api/apps/{appId}
 -- ------------------------------------------------------------------------
 detail_GET :: AppContext -> SpecWith ((), Application)
 detail_GET appContext =
-  describe "GET /apps/{appId}" $ do
+  describe "GET /wizard-api/apps/{appId}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -35,7 +35,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/apps/00000000-0000-0000-0000-000000000000"
+reqUrl = "/wizard-api/apps/00000000-0000-0000-0000-000000000000"
 
 reqHeaders = [reqAuthHeader]
 
@@ -75,7 +75,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest
     reqMethod
-    "/apps/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+    "/wizard-api/apps/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
     reqHeaders
     reqBody
     "app"

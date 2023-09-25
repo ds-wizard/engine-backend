@@ -19,11 +19,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.API.Config.Common
 
 -- ------------------------------------------------------------------------
--- PUT /configs/app
+-- PUT /wizard-api/configs/app
 -- ------------------------------------------------------------------------
 list_app_PUT :: AppContext -> SpecWith ((), Application)
 list_app_PUT appContext =
-  describe "PUT /configs/app" $ do
+  describe "PUT /wizard-api/configs/app" $ do
     test_200 appContext
     test_400_invalid_json appContext
     test_401 appContext
@@ -34,7 +34,7 @@ list_app_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/configs/app"
+reqUrl = "/wizard-api/configs/app"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

@@ -24,11 +24,11 @@ import Wizard.Specs.API.DocumentTemplate.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /document-template-drafts/{documentTemplateId}
+-- PUT /wizard-api/document-template-drafts/{documentTemplateId}
 -- ------------------------------------------------------------------------
 detail_PUT :: AppContext -> SpecWith ((), Application)
 detail_PUT appContext =
-  describe "PUT /document-templates-drafts/{documentTemplateId}" $ do
+  describe "PUT /wizard-api/document-templates-drafts/{documentTemplateId}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -39,7 +39,7 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/document-template-drafts/global:questionnaire-report:2.0.0"
+reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:2.0.0"
 
 reqHeaders = [reqCtHeader, reqAuthHeader]
 
@@ -102,7 +102,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-template-drafts/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/document-template-drafts/deab6c38-aeac-4b17-a501-4365a0a70176"
     reqHeaders
     (reqBodyT reqDto)
     "document_template"

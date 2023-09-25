@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Feedback.List_GET (
-  list_get,
+  list_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -22,17 +22,17 @@ import Wizard.Specs.API.Feedback.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /feedbacks
+-- GET /wizard-api/feedbacks
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext = describe "GET /feedbacks" $ test_200 appContext
+list_GET :: AppContext -> SpecWith ((), Application)
+list_GET appContext = describe "GET /wizard-api/feedbacks" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/feedbacks"
+reqUrl = "/wizard-api/feedbacks"
 
 reqHeaders = []
 

@@ -1,5 +1,5 @@
 module Wizard.Specs.API.DocumentTemplateDraft.File.Detail_DELETE (
-  detail_delete,
+  detail_DELETE,
 ) where
 
 import Network.HTTP.Types
@@ -19,11 +19,11 @@ import Wizard.Specs.API.DocumentTemplateDraft.File.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /document-template-drafts/{documentTemplateId}/files/{fileUuid}
+-- DELETE /wizard-api/document-template-drafts/{documentTemplateId}/files/{fileUuid}
 -- ------------------------------------------------------------------------
-detail_delete :: AppContext -> SpecWith ((), Application)
-detail_delete appContext =
-  describe "DELETE /document-template-drafts/{documentTemplateId}/files/{fileUuid}" $ do
+detail_DELETE :: AppContext -> SpecWith ((), Application)
+detail_DELETE appContext =
+  describe "DELETE /wizard-api/document-template-drafts/{documentTemplateId}/files/{fileUuid}" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -34,7 +34,7 @@ detail_delete appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/document-template-drafts/global:questionnaire-report:1.0.0/files/7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
+reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/files/7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -81,7 +81,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-template-drafts/global:questionnaire-report:1.0.0/files/7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
+    "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/files/7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template_file"
