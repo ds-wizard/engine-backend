@@ -169,9 +169,6 @@ main =
               describe "Migration" $ do
                 describe "Metamodel" $ describe "Migrator" $ do
                   eventMigratorSpec
-                describe "KnowledgeModel" $ describe "Migrator" $ do
-                  migratorSpec
-                  KM_SanitizatorSpec.sanitizatorSpec
                 describe "Questionnaire" $ describe "Migrator" $ do
                   QTN_ChangeQTypeSanitizator.sanitizatorSpec
                   QTN_MoveSanitizatorSpec.sanitizatorSpec
@@ -218,7 +215,11 @@ main =
               coordinateValidationSpec appContext
               feedbackServiceIntegrationSpec appContext
               documentIntegrationSpec appContext
-              describe "Migration" $
+              describe "Migration" $ do
+                describe "KnowledgeModel" $
+                  describe "Migrator" $ do
+                    migratorSpec appContext
+                    KM_SanitizatorSpec.sanitizatorSpec appContext
                 describe "Questionnaire" $
                   describe "Migrator" $
                     QTN_SanitizatorSpec.sanitizatorIntegrationSpec appContext

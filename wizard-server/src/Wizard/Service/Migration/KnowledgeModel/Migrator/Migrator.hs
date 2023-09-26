@@ -4,13 +4,14 @@ import Data.Either
 import Data.Maybe
 
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
+import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.Migration.KnowledgeModel.Migrator.CleanerMethod
 import Wizard.Service.Migration.KnowledgeModel.Migrator.CorrectorMethod
 import WizardLib.KnowledgeModel.Model.Event.Event
 
-migrate :: MigratorState -> IO MigratorState
+migrate :: MigratorState -> AppContextM MigratorState
 migrate state =
   case state.migrationState of
     RunningState -> do
@@ -20,7 +21,7 @@ migrate state =
         else return newState
     _ -> return state
 
-doMigrate :: IO MigratorState -> Event -> IO MigratorState
+doMigrate :: AppContextM MigratorState -> Event -> AppContextM MigratorState
 doMigrate stateIO event = do
   state <- stateIO
   case state.migrationState of
