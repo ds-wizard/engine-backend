@@ -32,4 +32,4 @@ compileKnowledgeModel events mPackageId tagUuids = do
     getEvents Nothing = return events
     getEvents (Just packageId) = do
       pkgs <- findSeriesOfPackagesRecursiveById packageId :: AppContextM [PackageWithEvents]
-      return . concatMap (.events) $ pkgs
+      return $ concatMap (.events) pkgs ++ events
