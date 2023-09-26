@@ -27,10 +27,13 @@ toClientConfigDTO serverConfig appConfig app locales =
     , owl = appConfig.owl
     , admin = toClientConfigAdminDTO serverConfig.admin app
     , modules =
-        [ toClientConfigModuleDTO serverConfig.modules.wizard app.clientUrl False
-        , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" app.adminClientUrl) False
-        , toClientConfigModuleDTO serverConfig.modules.guide (fromMaybe "" serverConfig.modules.guide.url) True
-        ]
+        if serverConfig.admin.enabled
+          then
+            [ toClientConfigModuleDTO serverConfig.modules.wizard app.clientUrl False
+            , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" app.adminClientUrl) False
+            , toClientConfigModuleDTO serverConfig.modules.guide (fromMaybe "" serverConfig.modules.guide.url) True
+            ]
+          else []
     }
 
 toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO
