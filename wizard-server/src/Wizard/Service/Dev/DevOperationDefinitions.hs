@@ -7,24 +7,24 @@ import Shared.Common.Api.Resource.Dev.DevExecutionDTO
 import Shared.Common.Model.Dev.Dev
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
-import Wizard.Database.DAO.App.AppDAO
-import Wizard.Model.App.App
+import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Model.Cache.ServerCache hiding (user)
 import Wizard.Model.Context.AppContext hiding (cache)
+import Wizard.Model.Tenant.Tenant
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Branch.Event.BranchEventService
 import Wizard.Service.Cache.CacheService
-import Wizard.Service.Config.App.AppConfigCommandExecutor
-import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.Owl.OwlService
 import Wizard.Service.PersistentCommand.PersistentCommandService
-import Wizard.Service.Plan.AppPlanService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
 import Wizard.Service.TemporaryFile.TemporaryFileService
+import Wizard.Service.Tenant.Config.ConfigCommandExecutor
+import Wizard.Service.Tenant.Config.ConfigService
+import Wizard.Service.Tenant.Plan.PlanService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
 import Wizard.Util.Context
 import WizardLib.Public.Service.UserToken.UserTokenService
@@ -33,7 +33,6 @@ sections :: [DevSection AppContextM]
 sections =
   [ actionKey
   , apiKey
-  , appPlan
   , branch
   , cache
   , config
@@ -41,6 +40,7 @@ sections =
   , feedback
   , owl
   , persistentCommand
+  , plan
   , registry
   , questionnaire
   , temporaryFile
@@ -90,29 +90,6 @@ apiKey_expireApiKeys =
     , parameters = []
     , function = \reqDto -> do
         expireApiKeys
-        return "Done"
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
--- APP PLAN
--- ---------------------------------------------------------------------------------------------------------------------
-appPlan :: DevSection AppContextM
-appPlan =
-  DevSection
-    { name = "App Plan"
-    , description = Nothing
-    , operations = [appPlan_recomputePlansForApps]
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-appPlan_recomputePlansForApps :: DevOperation AppContextM
-appPlan_recomputePlansForApps =
-  DevOperation
-    { name = "Recompute Plans for Apps"
-    , description = Nothing
-    , parameters = []
-    , function = \reqDto -> do
-        recomputePlansForApps
         return "Done"
     }
 
@@ -187,21 +164,21 @@ config =
     { name = "Config"
     , description = Nothing
     , operations =
-        [ config_recompileCssInAllApplications
+        [ config_recompileCssInAllTenants
         , config_switchClientCustomizationOn
         , config_switchClientCustomizationOff
         ]
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-config_recompileCssInAllApplications :: DevOperation AppContextM
-config_recompileCssInAllApplications =
+config_recompileCssInAllTenants :: DevOperation AppContextM
+config_recompileCssInAllTenants =
   DevOperation
-    { name = "Recompile CSS in All Applications"
+    { name = "Recompile CSS in All Tenants"
     , description = Nothing
     , parameters = []
     , function = \reqDto -> do
-        recompileCssInAllApplications
+        recompileCssInAllTenants
         return "Done"
     }
 
@@ -380,9 +357,9 @@ persistentCommand_runAll =
     , parameters = []
     , function = \reqDto -> do
         context <- ask
-        apps <- findApps
-        let appUuids = fmap (.uuid) apps
-        liftIO $ traverse_ (runAppContextWithBaseContext' runPersistentCommands' (baseContextFromAppContext context)) appUuids
+        tenants <- findTenants
+        let tenantUuids = fmap (.uuid) tenants
+        liftIO $ traverse_ (runAppContextWithBaseContext' runPersistentCommands' (baseContextFromAppContext context)) tenantUuids
         return "Done"
     }
 
@@ -401,6 +378,29 @@ persistentCommand_run =
     , function = \reqDto -> do
         command <- findPersistentCommandSimpleByUuid (u' . head $ reqDto.parameters)
         runPersistentCommand' True command
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- PLAN
+-- ---------------------------------------------------------------------------------------------------------------------
+plan :: DevSection AppContextM
+plan =
+  DevSection
+    { name = "Plan"
+    , description = Nothing
+    , operations = [plan_recomputePlansForTenants]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+plan_recomputePlansForTenants :: DevOperation AppContextM
+plan_recomputePlansForTenants =
+  DevOperation
+    { name = "Recompute Plans for Tenants"
+    , description = Nothing
+    , parameters = []
+    , function = \reqDto -> do
+        recomputePlansForTenants
         return "Done"
     }
 

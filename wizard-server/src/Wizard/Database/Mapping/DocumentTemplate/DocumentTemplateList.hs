@@ -24,7 +24,7 @@ instance FromRow DocumentTemplateList where
     allowedPackages <- fieldWith fromJSONField
     formats <- fieldWith fromJSONField
     createdAt <- field
-    appUuid <- field
+    tenantUuid <- field
     updatedAt <- field
     phase <- field
     nonEditable <- field

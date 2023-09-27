@@ -32,7 +32,7 @@ data Document = Document
   , contentType :: Maybe String
   , fileSize :: Maybe Int64
   , workerLog :: Maybe String
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , retrievedAt :: Maybe UTCTime
   , finishedAt :: Maybe UTCTime
   , createdAt :: UTCTime

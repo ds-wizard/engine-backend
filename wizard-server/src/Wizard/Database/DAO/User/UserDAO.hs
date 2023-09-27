@@ -30,29 +30,29 @@ pageLabel = "users"
 
 findUsers :: AppContextM [User]
 findUsers = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("machine", "false")]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("machine", "false")]
 
-findUsersWithAppFiltered :: U.UUID -> [(String, String)] -> AppContextM [User]
-findUsersWithAppFiltered appUuid queryParams =
-  createFindEntitiesByFn entityName ([appQueryUuid appUuid, ("machine", "false")] ++ queryParams)
+findUsersWithTenantFiltered :: U.UUID -> [(String, String)] -> AppContextM [User]
+findUsersWithTenantFiltered tenantUuid queryParams =
+  createFindEntitiesByFn entityName ([tenantQueryUuid tenantUuid, ("machine", "false")] ++ queryParams)
 
 findUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page User)
 findUsersPage mQuery mRole pageable sort = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   createFindEntitiesPageableQuerySortFn
     entityName
     pageLabel
     pageable
     sort
     "*"
-    "WHERE (concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role ~* ? AND app_uuid = ? AND machine = false"
-    [regex mQuery, regex mQuery, regex mRole, U.toString appUuid]
+    "WHERE (concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role ~* ? AND tenant_uuid = ? AND machine = false"
+    [regex mQuery, regex mQuery, regex mRole, U.toString tenantUuid]
 
 findUserSuggestionsPage
   :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
 findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let selectCondition =
         case mSelectUuids of
           Nothing -> ""
@@ -65,7 +65,7 @@ findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
           Just excludeUuids -> f' "AND uuid NOT IN (%s)" [generateQuestionMarks excludeUuids]
   let condition =
         f'
-          "WHERE (concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND active = true AND app_uuid = ? AND machine = false %s %s"
+          "WHERE (concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND active = true AND tenant_uuid = ? AND machine = false %s %s"
           [selectCondition, excludeCondition]
   createFindEntitiesPageableQuerySortFn
     entityName
@@ -74,53 +74,53 @@ findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
     sort
     "uuid, first_name, last_name, email, image_url"
     condition
-    ([regex mQuery, regex mQuery, U.toString appUuid] ++ fromMaybe [] mSelectUuids ++ fromMaybe [] mExcludeUuids)
+    ([regex mQuery, regex mQuery, U.toString tenantUuid] ++ fromMaybe [] mSelectUuids ++ fromMaybe [] mExcludeUuids)
 
 findUserByUuid :: U.UUID -> AppContextM User
 findUserByUuid uuid = getFromCacheOrDb getFromCache addToCache go (U.toString uuid)
   where
     go uuid = do
-      appUuid <- asks currentAppUuid
-      createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
+      tenantUuid <- asks currentTenantUuid
+      createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", uuid)]
 
 findUserByUuid' :: U.UUID -> AppContextM (Maybe User)
 findUserByUuid' uuid = getFromCacheOrDb' getFromCache addToCache go (U.toString uuid)
   where
     go uuid = do
-      appUuid <- asks currentAppUuid
-      createFindEntityByFn' entityName [appQueryUuid appUuid, ("uuid", uuid)]
+      tenantUuid <- asks currentTenantUuid
+      createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("uuid", uuid)]
 
 findUserByUuidSystem' :: U.UUID -> AppContextM (Maybe User)
 findUserByUuidSystem' uuid = createFindEntityByFn' entityName [("uuid", U.toString uuid)]
 
 findUserByEmail :: String -> AppContextM User
 findUserByEmail email = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("email", email)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("email", email)]
 
 findUserByEmail' :: String -> AppContextM (Maybe User)
 findUserByEmail' email = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn' entityName [appQueryUuid appUuid, ("email", email)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("email", email)]
 
-findUserByEmailAndAppUuid' :: String -> U.UUID -> AppContextM (Maybe User)
-findUserByEmailAndAppUuid' email appUuid = createFindEntityByFn' entityName [appQueryUuid appUuid, ("email", email)]
+findUserByEmailAndTenantUuid' :: String -> U.UUID -> AppContextM (Maybe User)
+findUserByEmailAndTenantUuid' email tenantUuid = createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("email", email)]
 
 countUsers :: AppContextM Int
 countUsers = do
-  appUuid <- asks currentAppUuid
-  countUsersWithApp appUuid
+  tenantUuid <- asks currentTenantUuid
+  countUsersWithTenant tenantUuid
 
-countUsersWithApp :: U.UUID -> AppContextM Int
-countUsersWithApp appUuid = createCountByFn entityName (f' "%s AND machine = false" [appCondition]) [appUuid]
+countUsersWithTenant :: U.UUID -> AppContextM Int
+countUsersWithTenant tenantUuid = createCountByFn entityName (f' "%s AND machine = false" [tenantCondition]) [tenantUuid]
 
 countActiveUsers :: AppContextM Int
 countActiveUsers = do
-  appUuid <- asks currentAppUuid
-  countActiveUsersWithApp appUuid
+  tenantUuid <- asks currentTenantUuid
+  countActiveUsersWithTenant tenantUuid
 
-countActiveUsersWithApp :: U.UUID -> AppContextM Int
-countActiveUsersWithApp appUuid = createCountByFn entityName (f' "%s AND machine = false AND active = true" [appCondition]) [U.toString appUuid]
+countActiveUsersWithTenant :: U.UUID -> AppContextM Int
+countActiveUsersWithTenant tenantUuid = createCountByFn entityName (f' "%s AND machine = false AND active = true" [tenantCondition]) [U.toString tenantUuid]
 
 insertUser :: User -> AppContextM Int64
 insertUser user = do
@@ -132,8 +132,8 @@ updateUserByUuid :: User -> AppContextM Int64
 updateUserByUuid user = do
   let sql =
         fromString
-          "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, groups = ?, last_visited_at = ?, created_at = ?, updated_at = ?, app_uuid = ?, machine = ? WHERE app_uuid = ? AND uuid = ?"
-  let params = toRow user ++ [toField user.appUuid, toField user.uuid]
+          "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, groups = ?, last_visited_at = ?, created_at = ?, updated_at = ?, tenant_uuid = ?, machine = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = toRow user ++ [toField user.tenantUuid, toField user.uuid]
   logQuery sql params
   let action conn = execute conn sql params
   result <- runDB action
@@ -142,9 +142,9 @@ updateUserByUuid user = do
 
 updateUserPasswordByUuid :: U.UUID -> String -> UTCTime -> AppContextM Int64
 updateUserPasswordByUuid userUuid uPassword uUpdatedAt = do
-  appUuid <- asks currentAppUuid
-  let sql = fromString "UPDATE user_entity SET password_hash = ?, updated_at = ? WHERE app_uuid = ? AND uuid = ?"
-  let params = [toField uPassword, toField uUpdatedAt, toField appUuid, toField userUuid]
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE user_entity SET password_hash = ?, updated_at = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = [toField uPassword, toField uUpdatedAt, toField tenantUuid, toField userUuid]
   logQuery sql params
   let action conn = execute conn sql params
   result <- runDB action
@@ -153,9 +153,9 @@ updateUserPasswordByUuid userUuid uPassword uUpdatedAt = do
 
 updateUserLastVisitedAtByUuid :: U.UUID -> UTCTime -> AppContextM Int64
 updateUserLastVisitedAtByUuid userUuid lastVisitedAt = do
-  appUuid <- asks currentAppUuid
-  let sql = fromString "UPDATE user_entity SET last_visited_at = ? WHERE app_uuid = ? AND uuid = ?"
-  let params = [toField lastVisitedAt, toField appUuid, toField userUuid]
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE user_entity SET last_visited_at = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = [toField lastVisitedAt, toField tenantUuid, toField userUuid]
   logQuery sql params
   let action conn = execute conn sql params
   result <- runDB action
@@ -170,7 +170,7 @@ deleteUsers = do
 
 deleteUserByUuid :: U.UUID -> AppContextM Int64
 deleteUserByUuid uuid = do
-  appUuid <- asks currentAppUuid
-  result <- createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  tenantUuid <- asks currentTenantUuid
+  result <- createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
   deleteFromCache (U.toString uuid)
   return result

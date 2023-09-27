@@ -25,7 +25,7 @@ instance ToRow DocumentTemplate where
     , toJSONField allowedPackages
     , toJSONField formats
     , toField createdAt
-    , toField appUuid
+    , toField tenantUuid
     , toField updatedAt
     , toField phase
     , toField nonEditable
@@ -45,7 +45,7 @@ instance FromRow DocumentTemplate where
     allowedPackages <- fieldWith fromJSONField
     formats <- fieldWith fromJSONField
     createdAt <- field
-    appUuid <- field
+    tenantUuid <- field
     updatedAt <- field
     phase <- field
     nonEditable <- field

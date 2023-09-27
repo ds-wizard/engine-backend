@@ -30,7 +30,7 @@ data User = User
   , imageUrl :: Maybe String
   , groups :: [GroupMembership]
   , machine :: Bool
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , lastVisitedAt :: UTCTime
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
@@ -59,4 +59,4 @@ instance Eq User where
       && a.imageUrl == b.imageUrl
       && a.groups == b.groups
       && a.machine == b.machine
-      && a.appUuid == b.appUuid
+      && a.tenantUuid == b.tenantUuid

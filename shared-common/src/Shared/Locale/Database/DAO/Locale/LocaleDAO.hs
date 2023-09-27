@@ -19,38 +19,38 @@ pageLabel = "locales"
 
 findLocales :: AppContextC s sc m => m [Locale]
 findLocales = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findLocalesByOrganizationIdAndLocaleId :: AppContextC s sc m => String -> String -> m [Locale]
 findLocalesByOrganizationIdAndLocaleId organizationId localeId = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("organization_id", organizationId), ("locale_id", localeId)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("organization_id", organizationId), ("locale_id", localeId)]
 
 findLocaleById :: AppContextC s sc m => String -> m Locale
 findLocaleById lclId = do
-  appUuid <- asks (.appUuid')
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("id", lclId)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", lclId)]
 
 findLocaleById' :: AppContextC s sc m => String -> m (Maybe Locale)
 findLocaleById' lclId = do
-  appUuid <- asks (.appUuid')
-  createFindEntityByFn' entityName [appQueryUuid appUuid, ("id", lclId)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("id", lclId)]
 
 countLocalesGroupedByOrganizationIdAndLocaleId :: AppContextC s sc m => m Int
 countLocalesGroupedByOrganizationIdAndLocaleId = do
-  appUuid <- asks (.appUuid')
-  countLocalesGroupedByOrganizationIdAndLocaleIdWithApp appUuid
+  tenantUuid <- asks (.tenantUuid')
+  countLocalesGroupedByOrganizationIdAndLocaleIdWithTenant tenantUuid
 
-countLocalesGroupedByOrganizationIdAndLocaleIdWithApp :: AppContextC s sc m => U.UUID -> m Int
-countLocalesGroupedByOrganizationIdAndLocaleIdWithApp appUuid = do
+countLocalesGroupedByOrganizationIdAndLocaleIdWithTenant :: AppContextC s sc m => U.UUID -> m Int
+countLocalesGroupedByOrganizationIdAndLocaleIdWithTenant tenantUuid = do
   let sql =
         "SELECT COUNT(*) \
         \FROM (SELECT 1 \
         \      FROM locale \
-        \      WHERE app_uuid = ? \
+        \      WHERE tenant_uuid = ? \
         \      GROUP BY organization_id, locale_id) nested;"
-  let params = [U.toString appUuid]
+  let params = [U.toString tenantUuid]
   logQuery sql params
   let action conn = query conn sql params
   result <- runDB action
@@ -60,11 +60,11 @@ countLocalesGroupedByOrganizationIdAndLocaleIdWithApp appUuid = do
 
 updateLocaleById :: AppContextC s sc m => Locale -> m Int64
 updateLocaleById locale = do
-  appUuid <- asks (.appUuid')
+  tenantUuid <- asks (.tenantUuid')
   let sql =
         fromString
-          "UPDATE locale SET id = ?, name = ?, description = ?, code = ?, organization_id = ?, locale_id = ?, version = ?, default_locale = ?, license = ?, readme = ?, recommended_app_version = ?, enabled = ?, app_uuid = ?, created_at = ?, updated_at = ? WHERE app_uuid = ? AND id = ?"
-  let params = toRow locale ++ [toField appUuid, toField locale.lId]
+          "UPDATE locale SET id = ?, name = ?, description = ?, code = ?, organization_id = ?, locale_id = ?, version = ?, default_locale = ?, license = ?, readme = ?, recommended_app_version = ?, enabled = ?, tenant_uuid = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND id = ?"
+  let params = toRow locale ++ [toField tenantUuid, toField locale.lId]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -77,5 +77,5 @@ deleteLocales = createDeleteEntitiesFn entityName
 
 deleteLocaleById :: AppContextC s sc m => String -> m Int64
 deleteLocaleById lclId = do
-  appUuid <- asks (.appUuid')
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("id", lclId)]
+  tenantUuid <- asks (.tenantUuid')
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", lclId)]

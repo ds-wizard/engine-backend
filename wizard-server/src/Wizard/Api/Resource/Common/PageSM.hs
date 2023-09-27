@@ -7,8 +7,6 @@ import Shared.Common.Api.Resource.Common.PageMetadataSM ()
 import Shared.Common.Database.Migration.Development.Common.Data.Pages
 import Shared.Common.Model.Common.Page
 import Shared.Common.Util.Swagger
-import Wizard.Api.Resource.App.AppDTO
-import Wizard.Api.Resource.App.AppSM ()
 import Wizard.Api.Resource.Branch.BranchListSM ()
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentSM ()
@@ -27,11 +25,12 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSuggestionSM ()
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterSM ()
+import Wizard.Api.Resource.Tenant.TenantDTO
+import Wizard.Api.Resource.Tenant.TenantSM ()
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Api.Resource.User.UserSuggestionSM ()
-import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
@@ -39,16 +38,17 @@ import Wizard.Database.Migration.Development.Locale.Data.Locales
 import Wizard.Database.Migration.Development.PersistentCommand.Data.PersistentCommands
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Model.Package.PackageSuggestion
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
-import qualified Wizard.Service.App.AppMapper as A_Mapper
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 import qualified Wizard.Service.Package.PackageMapper as P_Mapper
 import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PC_Mapper
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
+import qualified Wizard.Service.Tenant.TenantMapper as TNT_Mapper
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionSM ()
@@ -124,12 +124,12 @@ instance ToSchema (Page PersistentCommandDTO) where
       ( Page
           "persistentCommands"
           pageMetadata
-          [PC_Mapper.toDTO command1 (Just userAlbert) (A_Mapper.toDTO defaultApp Nothing Nothing)]
+          [PC_Mapper.toDTO command1 (Just userAlbert) (TNT_Mapper.toDTO defaultTenant Nothing Nothing)]
       )
 
-instance ToSchema (Page AppDTO) where
+instance ToSchema (Page TenantDTO) where
   declareNamedSchema =
-    toSwaggerWithDtoName "Page AppDTO" (Page "apps" pageMetadata [A_Mapper.toDTO defaultApp Nothing Nothing])
+    toSwaggerWithDtoName "Page TenantDTO" (Page "tenants" pageMetadata [TNT_Mapper.toDTO defaultTenant Nothing Nothing])
 
 instance ToSchema (Page DocumentTemplateDraftList) where
   declareNamedSchema =

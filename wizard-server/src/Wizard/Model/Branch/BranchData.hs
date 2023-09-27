@@ -11,7 +11,7 @@ data BranchData = BranchData
   , metamodelVersion :: Int
   , events :: [Event]
   , squashed :: Bool
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

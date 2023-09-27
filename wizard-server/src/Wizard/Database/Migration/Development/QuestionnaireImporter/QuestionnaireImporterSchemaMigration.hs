@@ -37,16 +37,16 @@ createTables = do
         \     allowed_packages       json                     not null, \
         \     url                    varchar, \
         \     enabled                bool                     not null, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \       constraint questionnaire_importer_app_uuid_fk \
-        \         references app, \
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \       constraint questionnaire_importer_tenant_uuid_fk \
+        \         references tenant, \
         \     created_at             timestamp with time zone not null, \
         \     updated_at             timestamp with time zone not null \
         \ ); \
         \ \
         \alter table questionnaire_importer \
-        \    add constraint questionnaire_importer_pk primary key (id, app_uuid); \
+        \    add constraint questionnaire_importer_pk primary key (id, tenant_uuid); \
         \create unique index questionnaire_importer_id_uindex \
-        \     on questionnaire_importer (id, app_uuid); "
+        \     on questionnaire_importer (id, tenant_uuid); "
   let action conn = execute_ conn sql
   runDB action

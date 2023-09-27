@@ -49,17 +49,17 @@ createUserTable = do
         \     last_visited_at   timestamp with time zone not null, \
         \     created_at        timestamp with time zone not null, \
         \     updated_at        timestamp with time zone not null, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \         constraint user_entity_app_uuid_fk \
-        \             references app, \
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \         constraint user_entity_tenant_uuid_fk \
+        \             references tenant, \
         \     machine           boolean not null default false \
         \ ); \
         \  \
         \ create unique index user_uuid_uindex \
-        \     on user_entity (uuid, app_uuid); \
+        \     on user_entity (uuid, tenant_uuid); \
         \  \
         \ create unique index user_email_uindex \
-        \     on user_entity (email, app_uuid); "
+        \     on user_entity (email, tenant_uuid); "
   let action conn = execute_ conn sql
   runDB action
 
@@ -76,9 +76,9 @@ createUserTokenTable = do
         \             references user_entity, \
         \     value             varchar not null, \
         \     session_state     varchar, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \         constraint user_entity_app_uuid_fk \
-        \             references app, \
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \         constraint user_entity_tenant_uuid_fk \
+        \             references tenant, \
         \     created_at        timestamp with time zone not null, \
         \     name              varchar not null, \
         \     type              varchar not null, \
@@ -87,6 +87,6 @@ createUserTokenTable = do
         \ ); \
         \  \
         \ create unique index user_token_uuid_uindex \
-        \     on user_token (uuid, app_uuid);"
+        \     on user_token (uuid, tenant_uuid);"
   let action conn = execute_ conn sql
   runDB action

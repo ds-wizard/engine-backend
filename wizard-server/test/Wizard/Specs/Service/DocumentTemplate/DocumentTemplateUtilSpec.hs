@@ -4,8 +4,8 @@ import Data.Maybe (fromJust)
 import Data.Time
 import Test.Hspec
 
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Model.App.App
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Model.Tenant.Tenant
 import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
 import WizardLib.DocumentTemplate.Constant.DocumentTemplate
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -33,7 +33,7 @@ documentTemplateUtilSpec =
                     , allowedPackages = []
                     , formats = []
                     , nonEditable = False
-                    , appUuid = defaultApp.uuid
+                    , tenantUuid = defaultTenant.uuid
                     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                     }
@@ -69,7 +69,7 @@ documentTemplateUtilSpec =
                         ]
                     , formats = []
                     , nonEditable = False
-                    , appUuid = defaultApp.uuid
+                    , tenantUuid = defaultTenant.uuid
                     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                     }
@@ -111,7 +111,7 @@ documentTemplateUtilSpec =
                         ]
                     , formats = []
                     , nonEditable = False
-                    , appUuid = defaultApp.uuid
+                    , tenantUuid = defaultTenant.uuid
                     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                     }

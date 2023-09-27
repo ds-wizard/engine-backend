@@ -13,8 +13,8 @@ entityName = "acl_group"
 
 findGroupById :: String -> AppContextM Group
 findGroupById id = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("id", id)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", id)]
 
 insertGroup :: Group -> AppContextM Int64
 insertGroup = createInsertFn entityName

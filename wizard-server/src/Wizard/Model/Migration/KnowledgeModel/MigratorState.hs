@@ -34,7 +34,7 @@ data MigratorState = MigratorState
   , targetPackageEvents :: [Event]
   , resultEvents :: [Event]
   , currentKnowledgeModel :: Maybe KnowledgeModel
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   }
   deriving (Show, Eq)

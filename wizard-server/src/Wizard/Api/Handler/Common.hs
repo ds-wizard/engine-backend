@@ -7,7 +7,7 @@ import qualified Data.UUID as U
 
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Api.Resource.Error.ErrorJM ()
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.TransactionState
@@ -15,15 +15,15 @@ import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Token
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Database.DAO.App.AppDAO
+import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Localization.Messages.Public
-import Wizard.Model.App.App
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Context.ContextLenses ()
+import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
@@ -37,22 +37,22 @@ import WizardLib.Public.Service.UserToken.UserTokenValidation
 
 runInUnauthService :: Maybe String -> TransactionState -> AppContextM a -> BaseContextM a
 runInUnauthService mServerUrl transactionState function = do
-  app <- getCurrentApp mServerUrl
-  runIn app Nothing transactionState function
+  tenant <- getCurrentTenant mServerUrl
+  runIn tenant Nothing transactionState function
 
 runInAuthService :: Maybe String -> UserDTO -> TransactionState -> AppContextM a -> BaseContextM a
 runInAuthService mServerUrl user transactionState function = do
-  app <- getCurrentApp mServerUrl
-  runIn app (Just user) transactionState function
+  tenant <- getCurrentTenant mServerUrl
+  runIn tenant (Just user) transactionState function
 
-runIn :: App -> Maybe UserDTO -> TransactionState -> AppContextM a -> BaseContextM a
-runIn app mUser transactionState function = do
-  if app.enabled
+runIn :: Tenant -> Maybe UserDTO -> TransactionState -> AppContextM a -> BaseContextM a
+runIn tenant mUser transactionState function = do
+  if tenant.enabled
     then do
       baseContext <- ask
       let loggingLevel = baseContext.serverConfig.logging.level
       eResult <-
-        liftIO $ appContextFromBaseContext app.uuid mUser transactionState baseContext $ \appContext -> do
+        liftIO $ appContextFromBaseContext tenant.uuid mUser transactionState baseContext $ \appContext -> do
           liftIO $ runMonads (runAppContextM function) appContext
       case eResult of
         Right result -> return result
@@ -65,7 +65,7 @@ runWithSystemUser function = do
   baseContext <- ask
   let loggingLevel = baseContext.serverConfig.logging.level
   eResult <-
-    liftIO $ appContextFromBaseContext defaultAppUuid (Just . toDTO $ userSystem) NoTransaction baseContext $ \appContext -> do
+    liftIO $ appContextFromBaseContext defaultTenantUuid (Just . toDTO $ userSystem) NoTransaction baseContext $ \appContext -> do
       liftIO $ runMonads (runAppContextM function) appContext
   case eResult of
     Right result -> return result
@@ -124,20 +124,20 @@ isTokenExistsInDb userTokenClaims mServerUrl = do
     handleError tokenUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__TOKEN_ABSENCE . U.toString $ tokenUuid)
     handleError tokenUuid error = throwError error
 
-getCurrentApp :: Maybe String -> BaseContextM App
-getCurrentApp mServerUrl = do
+getCurrentTenant :: Maybe String -> BaseContextM Tenant
+getCurrentTenant mServerUrl = do
   baseContext <- ask
   let serverConfig = baseContext.serverConfig
   if serverConfig.cloud.enabled
     then case mServerUrl of
-      Nothing -> runWithSystemUser . throwError $ UnauthorizedError (_ERROR_VALIDATION__APP_ABSENCE "not-provided")
+      Nothing -> runWithSystemUser . throwError $ UnauthorizedError (_ERROR_VALIDATION__TENANT_ABSENCE "not-provided")
       Just serverUrl -> do
-        runWithSystemUser $ catchError (findAppByServerDomain serverUrl) (handleError serverUrl)
+        runWithSystemUser $ catchError (findTenantByServerDomain serverUrl) (handleError serverUrl)
     else
       runWithSystemUser $
-        catchError (findAppByUuid defaultAppUuid) (handleError (U.toString defaultAppUuid))
+        catchError (findTenantByUuid defaultTenantUuid) (handleError (U.toString defaultTenantUuid))
   where
-    handleError host (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__APP_ABSENCE host)
+    handleError host (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__TENANT_ABSENCE host)
     handleError host error = throwError error
 
 isAdmin :: AppContextM Bool

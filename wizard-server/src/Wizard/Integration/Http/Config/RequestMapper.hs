@@ -10,9 +10,9 @@ import Prelude hiding (lookup)
 import Shared.Common.Model.Http.HttpRequest
 import Wizard.Integration.Resource.Config.CompileClientCssIDTO
 import Wizard.Integration.Resource.Config.CompileClientCssIJM ()
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Tenant.Config.TenantConfig
 
-toCompileClientCssRequest :: String -> String -> AppConfigLookAndFeel -> HttpRequest
+toCompileClientCssRequest :: String -> String -> TenantConfigLookAndFeel -> HttpRequest
 toCompileClientCssRequest reqUrl clientUrl lookAndFeel =
   HttpRequest
     { requestMethod = "POST"

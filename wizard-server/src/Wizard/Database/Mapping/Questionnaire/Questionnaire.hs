@@ -32,7 +32,7 @@ instance ToRow Questionnaire where
     , toField description
     , toField isTemplate
     , toField squashed
-    , toField appUuid
+    , toField tenantUuid
     , toField . PGArray $ projectTags
     , toField answeredQuestions
     , toField unansweredQuestions
@@ -57,7 +57,7 @@ instance FromRow Questionnaire where
     description <- field
     isTemplate <- field
     squashed <- field
-    appUuid <- field
+    tenantUuid <- field
     projectTags <- fromPGArray <$> field
     answeredQuestions <- field
     unansweredQuestions <- field

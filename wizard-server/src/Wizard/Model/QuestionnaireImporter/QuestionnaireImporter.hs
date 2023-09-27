@@ -19,7 +19,7 @@ data QuestionnaireImporter = QuestionnaireImporter
   , allowedPackages :: [PackagePattern]
   , url :: String
   , enabled :: Bool
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

@@ -7,6 +7,6 @@ data MigratorState = MigratorState
   { oldQuestionnaireUuid :: U.UUID
   , newQuestionnaireUuid :: U.UUID
   , resolvedQuestionUuids :: [U.UUID]
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   }
   deriving (Show, Eq, Generic)

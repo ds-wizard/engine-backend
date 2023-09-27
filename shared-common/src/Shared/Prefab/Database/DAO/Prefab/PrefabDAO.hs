@@ -12,13 +12,13 @@ entityName = "prefab"
 
 findPrefabs :: AppContextC s sc m => m [Prefab]
 findPrefabs = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findPrefabsFiltered :: AppContextC s sc m => [(String, String)] -> m [Prefab]
 findPrefabsFiltered queryParams = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName (tenantQueryUuid tenantUuid : queryParams)
 
 insertPrefab :: AppContextC s sc m => Prefab -> m Int64
 insertPrefab = createInsertFn entityName

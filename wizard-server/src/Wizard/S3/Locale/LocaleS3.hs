@@ -14,8 +14,8 @@ folderName = "locales"
 retrieveLocale :: String -> AppContextM BS.ByteString
 retrieveLocale localeId = createGetObjectFn (f' "%s/%s" [folderName, localeId])
 
-retrieveLocaleWithApp :: U.UUID -> String -> AppContextM BS.ByteString
-retrieveLocaleWithApp appUuid localeId = createGetObjectWithAppFn appUuid (f' "%s/%s" [folderName, localeId])
+retrieveLocaleWithTenant :: U.UUID -> String -> AppContextM BS.ByteString
+retrieveLocaleWithTenant tenantUuid localeId = createGetObjectWithTenantFn tenantUuid (f' "%s/%s" [folderName, localeId])
 
 retrieveLocale' :: String -> AppContextM (Either MinioErr BS.ByteString)
 retrieveLocale' localeId = createGetObjectFn' (f' "%s/%s" [folderName, localeId])

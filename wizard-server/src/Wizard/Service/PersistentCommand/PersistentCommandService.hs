@@ -15,16 +15,16 @@ import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMappe
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandService
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
-import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Service.App.AppUtil
 import Wizard.Service.PersistentCommand.PersistentCommandExecutor
 import Wizard.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Service.PersistentCommand.PersistentCommandUtil
+import Wizard.Service.Tenant.TenantUtil
 import qualified Wizard.Service.User.UserMapper as UM
 import Wizard.Util.Context
 
@@ -42,9 +42,9 @@ getPersistentCommandById uuid = do
     case command.createdBy of
       Just userUuid -> findUserByUuidSystem' userUuid
       Nothing -> return Nothing
-  app <- findAppByUuid command.appUuid
-  appDto <- enhanceApp app
-  return $ toDetailDTO command mUser appDto
+  tenant <- findTenantByUuid command.tenantUuid
+  tenantDto <- enhanceTenant tenant
+  return $ toDetailDTO command mUser tenantDto
 
 createPersistentCommand :: PersistentCommand U.UUID -> AppContextM (PersistentCommand U.UUID)
 createPersistentCommand persistentCommand =
@@ -96,6 +96,6 @@ updateContext commandSimple context = do
       Nothing -> return Nothing
   return $
     context
-      { currentAppUuid = commandSimple.appUuid
+      { currentTenantUuid = commandSimple.tenantUuid
       , currentUser = fmap UM.toDTO user
       }

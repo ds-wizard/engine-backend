@@ -46,7 +46,7 @@ toDTO doc mQtn submissions tml =
     }
 
 fromCreateDTO :: DocumentCreateDTO -> U.UUID -> Int -> [QuestionnaireEvent] -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
-fromCreateDTO dto docUuid repliesHash qtnEvents mCurrentUser appUuid now =
+fromCreateDTO dto docUuid repliesHash qtnEvents mCurrentUser tenantUuid now =
   Document
     { uuid = docUuid
     , name = trim dto.name
@@ -65,7 +65,7 @@ fromCreateDTO dto docUuid repliesHash qtnEvents mCurrentUser appUuid now =
     , contentType = Nothing
     , fileSize = Nothing
     , workerLog = Nothing
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , retrievedAt = Nothing
     , finishedAt = Nothing
     , createdAt = now
@@ -73,7 +73,7 @@ fromCreateDTO dto docUuid repliesHash qtnEvents mCurrentUser appUuid now =
 
 fromTemporallyCreateDTO
   :: U.UUID -> Questionnaire -> String -> U.UUID -> Int -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
-fromTemporallyCreateDTO docUuid qtn documentTemplateId formatUuid repliesHash mCurrentUser appUuid now =
+fromTemporallyCreateDTO docUuid qtn documentTemplateId formatUuid repliesHash mCurrentUser tenantUuid now =
   Document
     { uuid = docUuid
     , name = trim qtn.name
@@ -89,7 +89,7 @@ fromTemporallyCreateDTO docUuid qtn documentTemplateId formatUuid repliesHash mC
     , contentType = Nothing
     , fileSize = Nothing
     , workerLog = Nothing
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , retrievedAt = Nothing
     , finishedAt = Nothing
     , createdAt = now
@@ -105,6 +105,6 @@ toDocPersistentCommand pUuid docContext doc =
     10
     False
     Nothing
-    doc.appUuid
+    doc.tenantUuid
     doc.creatorUuid
     doc.createdAt

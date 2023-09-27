@@ -27,7 +27,7 @@ getTypehints reqDto =
     case integration' of
       ApiIntegration' integration -> do
         fileIntConfig <- getFileIntegrationConfig integration.iId
-        appIntConfig <- getAppIntegrationConfig integration.iId
+        appIntConfig <- getTenantIntegrationConfig integration.iId
         let kmQuestionConfig = question.props
         let userRequest = M.singleton "q" (encode reqDto.q)
         let variables = M.union userRequest . M.union kmQuestionConfig . M.union appIntConfig $ fileIntConfig

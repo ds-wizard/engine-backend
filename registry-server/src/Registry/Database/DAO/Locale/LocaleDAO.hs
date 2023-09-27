@@ -17,14 +17,14 @@ entityName = "locale"
 
 findLocalesFiltered :: [(String, String)] -> Maybe String -> AppContextM [Locale]
 findLocalesFiltered queryParams mRecommendedAppVersion = do
-  appUuid <- asks (.appUuid')
-  let queryParamCondition = mapToDBQuerySql (appQueryUuid appUuid : queryParams)
+  tenantUuid <- asks (.tenantUuid')
+  let queryParamCondition = mapToDBQuerySql (tenantQueryUuid tenantUuid : queryParams)
   let recommendedAppVersionCondition =
         case mRecommendedAppVersion of
           Just _ -> "AND (compare_version(recommended_app_version, ?) = 'LT' OR compare_version(recommended_app_version, ?) = 'EQ')"
           Nothing -> ""
   let sql = fromString $ f' "SELECT * FROM locale WHERE %s %s" [queryParamCondition, recommendedAppVersionCondition]
-  let params = [U.toString appUuid] ++ fmap snd queryParams ++ maybeToList mRecommendedAppVersion ++ maybeToList mRecommendedAppVersion
+  let params = [U.toString tenantUuid] ++ fmap snd queryParams ++ maybeToList mRecommendedAppVersion ++ maybeToList mRecommendedAppVersion
   logQuery sql params
   let action conn = query conn sql params
   runDB action

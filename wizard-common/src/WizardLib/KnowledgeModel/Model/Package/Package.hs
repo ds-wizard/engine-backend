@@ -24,7 +24,7 @@ data Package = Package
   , forkOfPackageId :: Maybe String
   , mergeCheckpointPackageId :: Maybe String
   , nonEditable :: Bool
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

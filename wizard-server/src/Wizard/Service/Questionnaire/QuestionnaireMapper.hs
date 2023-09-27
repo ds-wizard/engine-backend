@@ -282,7 +282,7 @@ fromChangeDTO qtn dto visibility sharing currentUser now =
     , squashed = qtn.squashed
     , answeredQuestions = qtn.answeredQuestions
     , unansweredQuestions = qtn.unansweredQuestions
-    , appUuid = qtn.appUuid
+    , tenantUuid = qtn.tenantUuid
     , createdAt = qtn.createdAt
     , updatedAt = now
     }
@@ -302,7 +302,7 @@ fromQuestionnaireCreateDTO
   -> UTCTime
   -> U.UUID
   -> Questionnaire
-fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId phaseEventUuid mPhase appUuid now permUuid =
+fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId phaseEventUuid mPhase tenantUuid now permUuid =
   Questionnaire
     { uuid = qtnUuid
     , name = dto.name
@@ -336,7 +336,7 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId
     , squashed = True
     , answeredQuestions = 0
     , unansweredQuestions = 0
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = now
     , updatedAt = now
     }

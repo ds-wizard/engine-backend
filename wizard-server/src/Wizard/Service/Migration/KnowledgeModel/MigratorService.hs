@@ -65,9 +65,9 @@ createMigration bUuid reqDto =
     branchEvents <- getBranchEvents previousPkg.pId mergeCheckpointPkgId
     targetPkgEvents <- getTargetPackageEvents targetPkgId forkOfPkgId
     km <- compileKnowledgeModel branchData.events branch.previousPackageId []
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     now <- liftIO getCurrentTime
-    let ms = fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km appUuid now
+    let ms = fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km tenantUuid now
     insertMigratorState ms
     migratedMs <- migrateState ms
     auditKmMigrationCreate reqDto branch

@@ -20,18 +20,18 @@ import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryTemplateDAO
 import Wizard.Localization.Messages.Public
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.DocumentTemplate.DocumentTemplateList
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
-import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.DocumentTemplate.DocumentTemplateMapper
 import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
+import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.Common.Service.Coordinate.CoordinateValidation
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
@@ -57,13 +57,13 @@ getDocumentTemplatesPage
   -> AppContextM (Page DocumentTemplateSimpleDTO)
 getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState pageable sort = do
   checkPermission _DOC_TML_READ_PERM
-  appConfig <- getAppConfig
-  if mTemplateState == (Just . show $ OutdatedDocumentTemplateState) && not appConfig.registry.enabled
+  tenantConfig <- getCurrentTenantConfig
+  if mTemplateState == (Just . show $ OutdatedDocumentTemplateState) && not tenantConfig.registry.enabled
     then return $ Page "documentTemplates" (PageMetadata 0 0 0 0) []
     else do
       templates <- findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState Nothing pageable sort
       packages <- findPackages
-      return . fmap (toSimpleDTO' appConfig.registry.enabled packages) $ templates
+      return . fmap (toSimpleDTO' tenantConfig.registry.enabled packages) $ templates
 
 getDocumentTemplateSuggestions :: Maybe String -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
 getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable pageable sort = do

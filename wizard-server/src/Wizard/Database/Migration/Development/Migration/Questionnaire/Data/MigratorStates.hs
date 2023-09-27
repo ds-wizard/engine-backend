@@ -6,14 +6,14 @@ import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
-import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.App.App
 import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireState
+import Wizard.Model.Tenant.Tenant
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
@@ -31,7 +31,7 @@ nlQtnMigrationState =
     { oldQuestionnaireUuid = nlQtnMigrationStateDto.oldQuestionnaire.uuid
     , newQuestionnaireUuid = nlQtnMigrationStateDto.newQuestionnaire.uuid
     , resolvedQuestionUuids = [question2.uuid]
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     }
 
 nlQtnMigrationStateDto :: MigratorStateDTO
@@ -66,7 +66,7 @@ nlQtnMigrationStateDto =
           (fmap (`toVersionDTO` Just userAlbert) questionnaire4Upgraded.versions)
           Nothing
     , resolvedQuestionUuids = [question2.uuid]
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     }
 
 nlQtnMigrationStateVisibleViewDto :: MigratorStateDTO
@@ -101,7 +101,7 @@ nlQtnMigrationStateVisibleViewDto =
           (fmap (`toVersionDTO` Just userAlbert) questionnaire4VisibleViewUpgraded.versions)
           Nothing
     , resolvedQuestionUuids = nlQtnMigrationStateDto.resolvedQuestionUuids
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     }
 
 nlQtnMigrationStateVisibleEditDto :: MigratorStateDTO
@@ -136,7 +136,7 @@ nlQtnMigrationStateVisibleEditDto =
           (fmap (`toVersionDTO` Just userAlbert) questionnaire4VisibleEditUpgraded.versions)
           Nothing
     , resolvedQuestionUuids = nlQtnMigrationStateDto.resolvedQuestionUuids
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     }
 
 nlQtnMigrationStateDtoEdited :: MigratorStateDTO
@@ -145,7 +145,7 @@ nlQtnMigrationStateDtoEdited =
     { oldQuestionnaire = nlQtnMigrationStateDto.oldQuestionnaire
     , newQuestionnaire = nlQtnMigrationStateDto.newQuestionnaire
     , resolvedQuestionUuids = [question2.uuid, question3.uuid]
-    , appUuid = nlQtnMigrationStateDto.appUuid
+    , tenantUuid = nlQtnMigrationStateDto.tenantUuid
     }
 
 migratorStateCreate :: MigratorStateCreateDTO
@@ -167,5 +167,5 @@ differentQtnMigrationState =
     { oldQuestionnaireUuid = differentQuestionnaire.uuid
     , newQuestionnaireUuid = differentQuestionnaire.uuid
     , resolvedQuestionUuids = [question2.uuid]
-    , appUuid = differentApp.uuid
+    , tenantUuid = differentTenant.uuid
     }

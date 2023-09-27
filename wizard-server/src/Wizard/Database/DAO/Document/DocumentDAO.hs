@@ -24,17 +24,17 @@ pageLabel = "documents"
 
 findDocuments :: AppContextM [Document]
 findDocuments = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findDocumentsFiltered :: [(String, String)] -> AppContextM [Document]
 findDocumentsFiltered params = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName (appQueryUuid appUuid : params)
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName (tenantQueryUuid tenantUuid : params)
 
 findDocumentsPage :: Maybe U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page Document)
 findDocumentsPage mQtnUuid mQuery pageable sort = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   createFindEntitiesPageableQuerySortFn
     entityName
     pageLabel
@@ -42,48 +42,48 @@ findDocumentsPage mQtnUuid mQuery pageable sort = do
     sort
     "*"
     ( if isJust mQtnUuid
-        then "WHERE app_uuid = ? AND name ~* ? AND questionnaire_uuid = ? AND durability='PersistentDocumentDurability'"
-        else "WHERE app_uuid = ? AND name ~* ? AND durability='PersistentDocumentDurability'"
+        then "WHERE tenant_uuid = ? AND name ~* ? AND questionnaire_uuid = ? AND durability='PersistentDocumentDurability'"
+        else "WHERE tenant_uuid = ? AND name ~* ? AND durability='PersistentDocumentDurability'"
     )
-    (U.toString appUuid : regex mQuery : maybeToList (fmap U.toString mQtnUuid))
+    (U.toString tenantUuid : regex mQuery : maybeToList (fmap U.toString mQtnUuid))
 
 findDocumentsByQuestionnaireUuidPage :: U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page Document)
 findDocumentsByQuestionnaireUuidPage qtnUuid mQuery pageable sort = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   createFindEntitiesPageableQuerySortFn
     entityName
     pageLabel
     pageable
     sort
     "*"
-    "WHERE app_uuid = ? AND name ~* ? AND questionnaire_uuid = ? AND durability='PersistentDocumentDurability'"
-    (U.toString appUuid : regex mQuery : [U.toString qtnUuid])
+    "WHERE tenant_uuid = ? AND name ~* ? AND questionnaire_uuid = ? AND durability='PersistentDocumentDurability'"
+    (U.toString tenantUuid : regex mQuery : [U.toString qtnUuid])
 
 findDocumentsByDocumentTemplateId :: String -> AppContextM [Document]
 findDocumentsByDocumentTemplateId documentTemplateId = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("document_template_id", documentTemplateId)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId)]
 
 findDocumentByUuid :: U.UUID -> AppContextM Document
 findDocumentByUuid uuid = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 countDocuments :: AppContextM Int
 countDocuments = do
-  appUuid <- asks currentAppUuid
-  countDocumentsWithApp appUuid
+  tenantUuid <- asks currentTenantUuid
+  countDocumentsWithTenant tenantUuid
 
-countDocumentsWithApp :: U.UUID -> AppContextM Int
-countDocumentsWithApp appUuid = createCountByFn entityName appCondition [U.toString appUuid]
+countDocumentsWithTenant :: U.UUID -> AppContextM Int
+countDocumentsWithTenant tenantUuid = createCountByFn entityName tenantCondition [U.toString tenantUuid]
 
 sumDocumentFileSize :: AppContextM Int64
 sumDocumentFileSize = do
-  appUuid <- asks currentAppUuid
-  sumDocumentFileSizeWithApp appUuid
+  tenantUuid <- asks currentTenantUuid
+  sumDocumentFileSizeWithTenant tenantUuid
 
-sumDocumentFileSizeWithApp :: U.UUID -> AppContextM Int64
-sumDocumentFileSizeWithApp appUuid = createSumByFn entityName "file_size" appCondition [U.toString appUuid]
+sumDocumentFileSizeWithTenant :: U.UUID -> AppContextM Int64
+sumDocumentFileSizeWithTenant tenantUuid = createSumByFn entityName "file_size" tenantCondition [U.toString tenantUuid]
 
 insertDocument :: Document -> AppContextM Int64
 insertDocument = createInsertFn entityName
@@ -93,25 +93,25 @@ deleteDocuments = createDeleteEntitiesFn entityName
 
 deleteDocumentsFiltered :: [(String, String)] -> AppContextM Int64
 deleteDocumentsFiltered params = do
-  appUuid <- asks currentAppUuid
-  createDeleteEntitiesByFn entityName (appQueryUuid appUuid : params)
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntitiesByFn entityName (tenantQueryUuid tenantUuid : params)
 
 deleteDocumentByUuid :: U.UUID -> AppContextM Int64
 deleteDocumentByUuid uuid = do
-  appUuid <- asks currentAppUuid
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 deleteTemporalDocumentsByQuestionnaireUuid :: U.UUID -> AppContextM Int64
 deleteTemporalDocumentsByQuestionnaireUuid qtnUuid = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   deleteDocumentsFiltered
-    [appQueryUuid appUuid, ("questionnaire_uuid", U.toString qtnUuid), ("durability", "TemporallyDocumentDurability")]
+    [tenantQueryUuid tenantUuid, ("questionnaire_uuid", U.toString qtnUuid), ("durability", "TemporallyDocumentDurability")]
 
 deleteTemporalDocumentsByDocumentTemplateId :: String -> AppContextM Int64
 deleteTemporalDocumentsByDocumentTemplateId documentTemplateId = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   deleteDocumentsFiltered
-    [appQueryUuid appUuid, ("document_template_id", documentTemplateId), ("durability", "TemporallyDocumentDurability")]
+    [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId), ("durability", "TemporallyDocumentDurability")]
 
 deleteTemporalDocumentsByAssetUuid :: U.UUID -> AppContextM Int64
 deleteTemporalDocumentsByAssetUuid = deleteTemporalDocumentsByTableAndUuid "document_template_asset"
@@ -124,13 +124,13 @@ deleteTemporalDocumentsByFileUuid = deleteTemporalDocumentsByTableAndUuid "docum
 -- --------------------------------
 deleteTemporalDocumentsByTableAndUuid :: String -> U.UUID -> AppContextM Int64
 deleteTemporalDocumentsByTableAndUuid joinTableName entityUuid = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString $
           f'
             "DELETE \
             \FROM document \
-            \WHERE app_uuid = ? AND uuid IN ( \
+            \WHERE tenant_uuid = ? AND uuid IN ( \
             \    SELECT d.uuid \
             \    FROM %s join_table \
             \             JOIN document d ON join_table.document_template_id = d.document_template_id \
@@ -138,7 +138,7 @@ deleteTemporalDocumentsByTableAndUuid joinTableName entityUuid = do
             \      AND d.durability = 'TemporallyDocumentDurability' \
             \)"
             [joinTableName, U.toString entityUuid]
-  let params = [toField appUuid]
+  let params = [toField tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action

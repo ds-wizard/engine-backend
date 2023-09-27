@@ -33,9 +33,9 @@ createTables = do
         \     content varchar not null, \
         \     created_at timestamptz not null, \
         \     updated_at timestamptz not null, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \       constraint feedback_app_uuid_fk \
-        \         references app \
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \       constraint feedback_tenant_uuid_fk \
+        \         references tenant \
         \ ); \
         \  \
         \ create unique index feedback_uuid_uindex \
@@ -47,12 +47,12 @@ createTables = do
         \  \
         \ alter table feedback \
         \    add constraint feedback_package_id_fk \
-        \       foreign key (package_id, app_uuid) references package (id, app_uuid); \
+        \       foreign key (package_id, tenant_uuid) references package (id, tenant_uuid); \
         \  \
         \ create index feedback_package_id_index \
-        \    on feedback (package_id, app_uuid); \
+        \    on feedback (package_id, tenant_uuid); \
         \  \
         \ create index feedback_question_uuid_index \
-        \   on feedback (question_uuid, app_uuid); "
+        \   on feedback (question_uuid, tenant_uuid); "
   let action conn = execute_ conn sql
   runDB action

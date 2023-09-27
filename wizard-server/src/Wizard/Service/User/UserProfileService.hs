@@ -13,12 +13,12 @@ import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserProfileMapper
 import Wizard.Service.User.UserService
@@ -49,8 +49,8 @@ changeUserProfilePassword userUuid reqDto = do
 getUserProfileSubmissionProps :: U.UUID -> AppContextM [UserSubmissionPropsDTO]
 getUserProfileSubmissionProps userUuid = do
   userDecrypted <- getDecryptedUser userUuid
-  appConfig <- getAppConfig
-  let userPropsFromService = fmap fromService appConfig.submission.services
+  tenantConfig <- getCurrentTenantConfig
+  let userPropsFromService = fmap fromService tenantConfig.submission.services
   let userPropsFromUser = fmap fromUserSubmissionProps userDecrypted.submissionProps
   let groupedProps = groupBy (\p1 p2 -> p1.sId == p2.sId) (userPropsFromService ++ userPropsFromUser)
   return $ fmap merge groupedProps

@@ -39,7 +39,7 @@ instance ToRow Document where
     , toField fileName
     , toField contentType
     , toField workerLog
-    , toField appUuid
+    , toField tenantUuid
     , toField fileSize
     ]
 
@@ -61,6 +61,6 @@ instance FromRow Document where
     fileName <- field
     contentType <- field
     workerLog <- field
-    appUuid <- field
+    tenantUuid <- field
     fileSize <- field
     return $ Document {..}

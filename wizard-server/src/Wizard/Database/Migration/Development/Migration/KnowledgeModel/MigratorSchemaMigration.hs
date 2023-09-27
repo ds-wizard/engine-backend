@@ -34,7 +34,7 @@ createTables = do
         \     target_package_events json not null, \
         \     result_events json not null, \
         \     current_knowledge_model json, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
         \     created_at timestamptz not null \
         \ ); \
         \  \
@@ -51,10 +51,10 @@ createTables = do
         \  \
         \ alter table knowledge_model_migration \
         \   add constraint knowledge_model_migration_branch_previous_package_id_fk \
-        \      foreign key (branch_previous_package_id, app_uuid) references package (id, app_uuid); \
+        \      foreign key (branch_previous_package_id, tenant_uuid) references package (id, tenant_uuid); \
         \  \
         \ alter table knowledge_model_migration \
         \   add constraint knowledge_model_migration_target_package_id_fk \
-        \      foreign key (target_package_id, app_uuid) references package (id, app_uuid); "
+        \      foreign key (target_package_id, tenant_uuid) references package (id, tenant_uuid); "
   let action conn = execute_ conn sql
   runDB action

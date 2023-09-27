@@ -9,7 +9,7 @@ data ActionKey identity aType = ActionKey
   , identity :: identity
   , aType :: aType
   , hash :: String
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)
@@ -20,4 +20,4 @@ instance (Eq identity, Eq aType) => Eq (ActionKey identity aType) where
       && identity a == identity b
       && aType a == aType b
       && hash a == hash b
-      && appUuid a == appUuid b
+      && tenantUuid a == tenantUuid b

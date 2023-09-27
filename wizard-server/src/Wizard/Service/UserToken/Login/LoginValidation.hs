@@ -11,9 +11,9 @@ import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Model.Error.Error
 import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
 import Wizard.Model.ActionKey.ActionKeyType
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.User.UserUtil
 import WizardLib.Public.Api.Resource.UserToken.LoginDTO
@@ -36,12 +36,12 @@ validateUserPassword reqDto user =
     then return ()
     else throwError $ UserError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
 
-validateCode :: User -> Int -> AppConfig -> AppContextM ()
-validateCode user code appConfig = do
+validateCode :: User -> Int -> TenantConfig -> AppContextM ()
+validateCode user code tenantConfig = do
   mActionKey <- findActionKeyByIdentityAndHash' (U.toString user.uuid) (show code) :: AppContextM (Maybe (ActionKey U.UUID ActionKeyType))
   case mActionKey of
     Just actionKey -> do
-      let timeDelta = realToFrac . toInteger $ appConfig.authentication.internal.twoFactorAuth.expiration
+      let timeDelta = realToFrac . toInteger $ tenantConfig.authentication.internal.twoFactorAuth.expiration
       now <- liftIO getCurrentTime
       when (addUTCTime timeDelta actionKey.createdAt < now) (throwError $ UserError _ERROR_SERVICE_TOKEN__CODE_IS_EXPIRED)
     Nothing -> throwError $ UserError _ERROR_SERVICE_TOKEN__INCORRECT_CODE

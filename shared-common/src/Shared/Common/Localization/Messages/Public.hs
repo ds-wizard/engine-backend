@@ -50,16 +50,16 @@ _ERROR_VALIDATION__FORBIDDEN action = LocaleRecord "error.validation.forbidden" 
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
--- App
-_ERROR_SERVICE_APP__LIMIT_EXCEEDED name maxLimit actualLimit =
-  LocaleRecord
-    "error.service.app.limit_exceeded"
-    "Limit of %s exceeded (actual: %s, max: %s)"
-    [name, show maxLimit, show actualLimit]
-
 -- Common
 _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED featureName =
   LocaleRecord "error.service.common.feature_is_disabled" "Feature '%s' is disabled" [featureName]
+
+-- Tenant
+_ERROR_SERVICE_TENANT__LIMIT_EXCEEDED name maxLimit actualLimit =
+  LocaleRecord
+    "error.service.tenant.limit_exceeded"
+    "Limit of %s exceeded (actual: %s, max: %s)"
+    [name, show maxLimit, show actualLimit]
 
 -- --------------------------------------
 -- UTIL

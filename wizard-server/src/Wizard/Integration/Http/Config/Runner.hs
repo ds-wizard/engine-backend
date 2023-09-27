@@ -8,16 +8,15 @@ import qualified Data.ByteString.Lazy as BSL
 import Shared.Common.Integration.Http.Common.HttpClient
 import Wizard.Integration.Http.Config.RequestMapper
 import Wizard.Integration.Http.Config.ResponseMapper
-import Wizard.Model.App.App
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Service.App.AppHelper
+import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Service.Tenant.TenantHelper
 
-compileClientCss :: App -> AppConfigLookAndFeel -> AppContextM BSL.ByteString
-compileClientCss app lookAndFeel = do
+compileClientCss :: TenantConfigLookAndFeel -> AppContextM BSL.ByteString
+compileClientCss lookAndFeel = do
   serverConfig <- asks serverConfig
   let styleBuilderUrl = serverConfig.general.clientStyleBuilderUrl
-  clientUrl <- getAppClientUrl
+  clientUrl <- getClientUrl
   runRequest (toCompileClientCssRequest styleBuilderUrl clientUrl lookAndFeel) toCompileClientCssResponse

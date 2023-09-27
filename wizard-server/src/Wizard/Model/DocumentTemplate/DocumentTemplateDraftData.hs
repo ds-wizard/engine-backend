@@ -8,7 +8,7 @@ data DocumentTemplateDraftData = DocumentTemplateDraftData
   { documentTemplateId :: String
   , questionnaireUuid :: Maybe U.UUID
   , formatUuid :: Maybe U.UUID
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -19,4 +19,4 @@ instance Eq DocumentTemplateDraftData where
     a.documentTemplateId == b.documentTemplateId
       && a.questionnaireUuid == b.questionnaireUuid
       && a.formatUuid == b.formatUuid
-      && a.appUuid == b.appUuid
+      && a.tenantUuid == b.tenantUuid

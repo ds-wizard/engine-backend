@@ -60,26 +60,26 @@ toAssetDTO asset =
     }
 
 fromFileDTO :: String -> U.UUID -> UTCTime -> DocumentTemplateFileDTO -> DocumentTemplateFile
-fromFileDTO documentTemplateId appUuid now file =
+fromFileDTO documentTemplateId tenantUuid now file =
   DocumentTemplateFile
     { documentTemplateId = documentTemplateId
     , uuid = file.uuid
     , fileName = file.fileName
     , content = file.content
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = now
     , updatedAt = now
     }
 
 fromAssetDTO :: String -> Int64 -> U.UUID -> UTCTime -> DocumentTemplateAssetDTO -> DocumentTemplateAsset
-fromAssetDTO documentTemplateId fileSize appUuid now asset =
+fromAssetDTO documentTemplateId fileSize tenantUuid now asset =
   DocumentTemplateAsset
     { documentTemplateId = documentTemplateId
     , uuid = asset.uuid
     , fileName = asset.fileName
     , contentType = asset.contentType
     , fileSize = fileSize
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = now
     , updatedAt = now
     }

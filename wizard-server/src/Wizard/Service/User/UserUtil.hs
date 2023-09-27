@@ -9,12 +9,12 @@ import qualified Data.UUID as U
 import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Util.String (splitOn)
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Service.Tenant.Config.ConfigService
 
 getDecryptedUser :: U.UUID -> AppContextM User
 getDecryptedUser userUuid = do
@@ -32,5 +32,5 @@ verifyPassword incomingPassword passwordHashFromDB =
 
 isConsentRequired :: Maybe User -> AppContextM Bool
 isConsentRequired mUserFromDb = do
-  appConfig <- getAppConfig
-  return $ isNothing mUserFromDb && (isJust appConfig.privacyAndSupport.privacyUrl || isJust appConfig.privacyAndSupport.termsOfServiceUrl)
+  tenantConfig <- getCurrentTenantConfig
+  return $ isNothing mUserFromDb && (isJust tenantConfig.privacyAndSupport.privacyUrl || isJust tenantConfig.privacyAndSupport.termsOfServiceUrl)

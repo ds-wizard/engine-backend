@@ -165,7 +165,7 @@ recordUpdate :: String -> PersistentCommand U.UUID -> SentryRecord -> SentryReco
 recordUpdate buildVersion command record =
   let commandUserUuid = maybe "anonymous" U.toString command.createdBy
       commandUuid = U.toString $ command.uuid
-      commandAppUuid = U.toString $ command.appUuid
+      commandTenantUuid = U.toString $ command.tenantUuid
    in record
         { srRelease = Just buildVersion
         , srInterfaces =
@@ -176,14 +176,14 @@ recordUpdate buildVersion command record =
               [ ("uuid", commandUuid)
               , ("component", command.component)
               , ("function", command.function)
-              , ("appUuid", commandAppUuid)
+              , ("tenantUuid", commandTenantUuid)
               ]
         , srExtra =
             HashMap.fromList
               [ ("uuid", String . T.pack $ commandUuid)
               , ("component", String . T.pack $ command.component)
               , ("function", String . T.pack $ command.function)
-              , ("appUuid", String . T.pack $ commandAppUuid)
+              , ("tenantUuid", String . T.pack $ commandTenantUuid)
               , ("attempts", String . T.pack . show $ command.attempts)
               , ("maxAttempts", String . T.pack . show $ command.maxAttempts)
               , ("body", String . T.pack $ command.body)

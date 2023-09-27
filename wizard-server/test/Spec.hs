@@ -6,7 +6,7 @@ import Data.Pool
 import qualified Data.UUID as U
 import Test.Hspec
 
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Shared.Common.Database.Connection
 import Shared.Common.Integration.Http.Common.HttpClientFactory
 import Shared.Common.Model.Config.ServerConfig
@@ -24,8 +24,6 @@ import Wizard.Service.Config.Server.ServerConfigValidation
 import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.ApiKey.APISpec
-import Wizard.Specs.API.App.APISpec
-import Wizard.Specs.API.App.Plan.APISpec
 import Wizard.Specs.API.BookReference.APISpec
 import Wizard.Specs.API.Branch.APISpec
 import Wizard.Specs.API.Config.APISpec
@@ -50,15 +48,16 @@ import Wizard.Specs.API.Questionnaire.Version.APISpec
 import Wizard.Specs.API.QuestionnaireImporter.APISpec
 import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Swagger.APISpec
+import Wizard.Specs.API.Tenant.APISpec
+import Wizard.Specs.API.Tenant.Config.APISpec
+import Wizard.Specs.API.Tenant.Plan.APISpec
 import Wizard.Specs.API.Token.APISpec
 import Wizard.Specs.API.Typehint.APISpec
 import Wizard.Specs.API.Usage.APISpec
 import Wizard.Specs.API.User.APISpec
 import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
-import Wizard.Specs.Service.App.AppValidationSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
 import Wizard.Specs.Service.Branch.BranchValidationSpec
-import Wizard.Specs.Service.Config.AppConfigValidationSpec
 import Wizard.Specs.Service.Coordinate.CoordinateValidationSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
 import Wizard.Specs.Service.DocumentTemplate.DocumentTemplateUtilSpec
@@ -82,6 +81,8 @@ import Wizard.Specs.Service.Questionnaire.QuestionnaireAclSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireServiceSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireValidationSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
+import Wizard.Specs.Service.Tenant.Config.TenantConfigValidationSpec
+import Wizard.Specs.Service.Tenant.TenantValidationSpec
 import Wizard.Specs.Service.User.UserServiceSpec
 import Wizard.Specs.Websocket.Branch.Detail.WebsocketSpec
 import Wizard.Specs.Websocket.Common
@@ -136,7 +137,7 @@ prepareWebApp runCallback =
                 , httpClientManager = httpClientManager
                 , registryClient = registryClient
                 , traceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
-                , currentAppUuid = defaultAppUuid
+                , currentTenantUuid = defaultTenantUuid
                 , currentUser = Just . toDTO $ userAlbert
                 , shutdownFlag = shutdownFlag
                 , cache = cache
@@ -156,9 +157,7 @@ main =
               describe "Http" $
                 describe "Typehint" typehintResponseMapperSpec
             describe "SERVICE" $ do
-              describe "App" appValidationSpec
               describe "Branch" branchValidationSpec
-              describe "Config" appConfigValidationSpec
               describe "Document Template" documentTemplateUtilSpec
               describe "KnowledgeModel" $ do
                 describe "Compilator" $ do
@@ -177,11 +176,12 @@ main =
                 describe "Event" questionnaireEventServiceSpec
                 questionnaireValidationSpec
               describe "Report" reportGeneratorSpec
+              describe "Tenant" $ do
+                describe "Config" tenantConfigValidationSpec
+                tenantValidationSpec
           before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
             describe "API" $ do
               apiKeyAPI baseContext appContext
-              appAPI baseContext appContext
-              appPlanAPI baseContext appContext
               bookReferenceAPI baseContext appContext
               branchAPI baseContext appContext
               configAPI baseContext appContext
@@ -206,6 +206,9 @@ main =
               questionnaireImporterAPI baseContext appContext
               submissionAPI baseContext appContext
               swaggerAPI baseContext appContext
+              tenantAPI baseContext appContext
+              tenantConfigAPI baseContext appContext
+              tenantPlanAPI baseContext appContext
               typehintAPI baseContext appContext
               tokenAPI baseContext appContext
               usageAPI baseContext appContext

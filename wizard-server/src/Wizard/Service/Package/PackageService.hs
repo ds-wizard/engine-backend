@@ -13,17 +13,17 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Package.PackageState
 import Wizard.Model.Package.PackageSuggestion
-import Wizard.Service.Config.App.AppConfigService
-import Wizard.Service.Limit.AppLimitService
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageUtil
 import Wizard.Service.Package.PackageValidation
+import Wizard.Service.Tenant.Config.ConfigService
+import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.Common.Util.Coordinate
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Model.Event.Event
@@ -42,12 +42,12 @@ getPackagesPage
   -> AppContextM (Page PackageSimpleDTO)
 getPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort = do
   checkPermission _PM_READ_PERM
-  appConfig <- getAppConfig
-  if mPackageState == (Just . show $ OutdatedPackageState) && not (appConfig.registry.enabled)
+  tenantConfig <- getCurrentTenantConfig
+  if mPackageState == (Just . show $ OutdatedPackageState) && not (tenantConfig.registry.enabled)
     then return $ Page "packages" (PageMetadata 0 0 0 0) []
     else do
       packages <- findPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort
-      return . fmap (toSimpleDTO'' (appConfig.registry.enabled)) $ packages
+      return . fmap (toSimpleDTO'' (tenantConfig.registry.enabled)) $ packages
 
 getPackageSuggestions
   :: Maybe String

@@ -26,7 +26,7 @@ instance ToRow PackageWithEvents where
     , toField mergeCheckpointPackageId
     , toJSONField events
     , toField createdAt
-    , toField appUuid
+    , toField tenantUuid
     , toField phase
     , toField nonEditable
     ]
@@ -47,7 +47,7 @@ instance FromRow PackageWithEvents where
     mergeCheckpointPackageId <- field
     events <- fieldWith fromJSONField
     createdAt <- field
-    appUuid <- field
+    tenantUuid <- field
     phase <- field
     nonEditable <- field
     return $ PackageWithEvents {..}

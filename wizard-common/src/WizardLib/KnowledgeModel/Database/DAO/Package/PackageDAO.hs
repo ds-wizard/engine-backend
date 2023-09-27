@@ -19,66 +19,66 @@ entityName = "package"
 
 findPackages :: AppContextC s sc m => m [Package]
 findPackages = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findPackageWithEvents :: AppContextC s sc m => m [PackageWithEvents]
 findPackageWithEvents = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findPackageWithEventsRawById :: AppContextC s sc m => String -> m PackageWithEventsRaw
 findPackageWithEventsRawById id = do
-  appUuid <- asks (.appUuid')
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("id", id)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", id)]
 
 findPackagesFiltered :: AppContextC s sc m => [(String, String)] -> m [Package]
 findPackagesFiltered queryParams = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName (tenantQueryUuid tenantUuid : queryParams)
 
 findPackagesByOrganizationIdAndKmId :: AppContextC s sc m => String -> String -> m [Package]
 findPackagesByOrganizationIdAndKmId organizationId kmId = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("organization_id", organizationId), ("km_id", kmId)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("organization_id", organizationId), ("km_id", kmId)]
 
 findPackagesByPreviousPackageId :: AppContextC s sc m => String -> m [Package]
 findPackagesByPreviousPackageId previousPackageId = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("previous_package_id", previousPackageId)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("previous_package_id", previousPackageId)]
 
 findPackagesByForkOfPackageId :: AppContextC s sc m => String -> m [Package]
 findPackagesByForkOfPackageId forkOfPackageId = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("fork_of_package_id", forkOfPackageId)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("fork_of_package_id", forkOfPackageId)]
 
 findSeriesOfPackagesRecursiveById :: (AppContextC s sc m, FromRow packageWithEvents) => String -> m [packageWithEvents]
 findSeriesOfPackagesRecursiveById pkgId = do
-  appUuid <- asks (.appUuid')
+  tenantUuid <- asks (.tenantUuid')
   let sql =
         fromString
           "WITH RECURSIVE recursive AS ( \
           \  SELECT *, 1 as level \
           \  FROM package \
-          \  WHERE app_uuid = ? AND id = ? \
+          \  WHERE tenant_uuid = ? AND id = ? \
           \  UNION ALL \
           \  SELECT pkg.*, level + 1 as level \
           \  FROM package pkg \
-          \  INNER JOIN recursive r ON pkg.id = r.previous_package_id AND pkg.app_uuid = ? \
+          \  INNER JOIN recursive r ON pkg.id = r.previous_package_id AND pkg.tenant_uuid = ? \
           \) \
-          \SELECT id, name, organization_id, km_id, version, metamodel_version, description, readme, license, previous_package_id, fork_of_package_id, merge_checkpoint_package_id, events, created_at, app_uuid, phase, non_editable \
+          \SELECT id, name, organization_id, km_id, version, metamodel_version, description, readme, license, previous_package_id, fork_of_package_id, merge_checkpoint_package_id, events, created_at, tenant_uuid, phase, non_editable \
           \FROM recursive \
           \ORDER BY level DESC;"
-  let params = [U.toString appUuid, pkgId, U.toString appUuid]
+  let params = [U.toString tenantUuid, pkgId, U.toString tenantUuid]
   logQuery sql params
   let action conn = query conn sql params
   runDB action
 
 findVersionsForPackage :: AppContextC s sc m => String -> String -> m [String]
 findVersionsForPackage orgId kmId = do
-  appUuid <- asks (.appUuid')
-  let sql = fromString "SELECT version FROM package WHERE app_uuid = ? and organization_id = ? and km_id = ?"
-  let params = [U.toString appUuid, orgId, kmId]
+  tenantUuid <- asks (.tenantUuid')
+  let sql = fromString "SELECT version FROM package WHERE tenant_uuid = ? and organization_id = ? and km_id = ?"
+  let params = [U.toString tenantUuid, orgId, kmId]
   logQuery sql params
   let action conn = query conn sql params
   versions <- runDB action
@@ -86,38 +86,38 @@ findVersionsForPackage orgId kmId = do
 
 findPackageById :: AppContextC s sc m => String -> m Package
 findPackageById id = do
-  appUuid <- asks (.appUuid')
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("id", id)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", id)]
 
 findPackageById' :: AppContextC s sc m => String -> m (Maybe Package)
 findPackageById' id = do
-  appUuid <- asks (.appUuid')
-  createFindEntityByFn' entityName [appQueryUuid appUuid, ("id", id)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("id", id)]
 
 findPackageWithEventsById :: AppContextC s sc m => String -> m PackageWithEvents
 findPackageWithEventsById id = do
-  appUuid <- asks (.appUuid')
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("id", id)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", id)]
 
 countPackages :: AppContextC s sc m => m Int
 countPackages = do
-  appUuid <- asks (.appUuid')
-  createCountByFn entityName appCondition [appUuid]
+  tenantUuid <- asks (.tenantUuid')
+  createCountByFn entityName tenantCondition [tenantUuid]
 
 countPackagesGroupedByOrganizationIdAndKmId :: AppContextC s sc m => m Int
 countPackagesGroupedByOrganizationIdAndKmId = do
-  appUuid <- asks (.appUuid')
-  countPackagesGroupedByOrganizationIdAndKmIdWithApp appUuid
+  tenantUuid <- asks (.tenantUuid')
+  countPackagesGroupedByOrganizationIdAndKmIdWithTenant tenantUuid
 
-countPackagesGroupedByOrganizationIdAndKmIdWithApp :: AppContextC s sc m => U.UUID -> m Int
-countPackagesGroupedByOrganizationIdAndKmIdWithApp appUuid = do
+countPackagesGroupedByOrganizationIdAndKmIdWithTenant :: AppContextC s sc m => U.UUID -> m Int
+countPackagesGroupedByOrganizationIdAndKmIdWithTenant tenantUuid = do
   let sql =
         "SELECT COUNT(*) \
         \FROM (SELECT 1 \
         \      FROM package \
-        \      WHERE app_uuid = ? \
+        \      WHERE tenant_uuid = ? \
         \      GROUP BY organization_id, km_id) nested;"
-  let params = [U.toString appUuid]
+  let params = [U.toString tenantUuid]
   logQuery sql params
   let action conn = query conn sql params
   result <- runDB action
@@ -133,10 +133,10 @@ deletePackages = createDeleteEntitiesFn entityName
 
 deletePackagesFiltered :: AppContextC s sc m => [(String, String)] -> m Int64
 deletePackagesFiltered queryParams = do
-  appUuid <- asks (.appUuid')
-  createDeleteEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
+  tenantUuid <- asks (.tenantUuid')
+  createDeleteEntitiesByFn entityName (tenantQueryUuid tenantUuid : queryParams)
 
 deletePackageById :: AppContextC s sc m => String -> m Int64
 deletePackageById id = do
-  appUuid <- asks (.appUuid')
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("id", id)]
+  tenantUuid <- asks (.tenantUuid')
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", id)]

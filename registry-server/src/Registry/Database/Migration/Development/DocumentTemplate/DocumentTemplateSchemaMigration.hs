@@ -66,7 +66,7 @@ createTemplateTable = do
         \     allowed_packages       json                     not null, \
         \     formats                json                     not null, \
         \     created_at             timestamp with time zone not null, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
         \     updated_at             timestamp with time zone not null, \
         \     phase                  varchar                  not null default 'ReleasedDocumentTemplatePhase', \
         \     non_editable           boolean                  not null default false \
@@ -87,7 +87,7 @@ createTemplateFileTable = do
         \   uuid uuid not null, \
         \   file_name varchar not null, \
         \   content varchar not null, \
-        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
+        \   tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
         \   created_at             timestamp with time zone not null, \
         \   updated_at             timestamp with time zone not null \
         \ ); \
@@ -114,7 +114,7 @@ createTemplateAssetTable = do
         \   uuid uuid not null, \
         \   file_name varchar not null, \
         \   content_type varchar not null, \
-        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
+        \   tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
         \   file_size bigint not null default 0, \
         \   created_at             timestamp with time zone not null, \
         \   updated_at             timestamp with time zone not null \

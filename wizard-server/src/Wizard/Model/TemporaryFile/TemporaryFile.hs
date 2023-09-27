@@ -9,7 +9,7 @@ data TemporaryFile = TemporaryFile
   , fileName :: String
   , contentType :: String
   , expiresAt :: UTCTime
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdBy :: U.UUID
   , createdAt :: UTCTime
   }

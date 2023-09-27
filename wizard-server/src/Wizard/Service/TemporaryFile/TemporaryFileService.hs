@@ -21,12 +21,12 @@ createTemporaryFile :: String -> String -> BSL.ByteString -> AppContextM String
 createTemporaryFile fileName contentType content = do
   runInTransaction $ do
     uuid <- liftIO generateUuid
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
     let expirationInSeconds = 60
     let escapedFileName = filter isLetterOrDotOrDashOrUnderscore fileName
-    let tf = toTemporaryFile uuid escapedFileName contentType expirationInSeconds appUuid currentUser.uuid now
+    let tf = toTemporaryFile uuid escapedFileName contentType expirationInSeconds tenantUuid currentUser.uuid now
     insertTemporaryFile tf
     let contentDisposition = f' "attachment;filename=\"%s\"" [fileName]
     putTemporaryFile tf.uuid escapedFileName tf.contentType contentDisposition (BSL.toStrict content)

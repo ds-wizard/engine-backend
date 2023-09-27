@@ -4,8 +4,6 @@ import Servant
 
 import Wizard.Api.Handler.ActionKey.Api
 import Wizard.Api.Handler.ApiKey.Api
-import Wizard.Api.Handler.App.Api
-import Wizard.Api.Handler.App.Plan.Api
 import Wizard.Api.Handler.Auth.Api
 import Wizard.Api.Handler.BookReference.Api
 import Wizard.Api.Handler.Branch.Api
@@ -31,6 +29,7 @@ import Wizard.Api.Handler.Questionnaire.Version.Api
 import Wizard.Api.Handler.QuestionnaireImporter.Api
 import Wizard.Api.Handler.Registry.Api
 import Wizard.Api.Handler.Submission.Api
+import Wizard.Api.Handler.Tenant.Api
 import Wizard.Api.Handler.Token.Api
 import Wizard.Api.Handler.Typehint.Api
 import Wizard.Api.Handler.Usage.Api
@@ -40,8 +39,6 @@ import Wizard.Model.Context.BaseContext
 type ApplicationAPI =
   ActionKeyAPI
     :<|> ApiKeyAPI
-    :<|> AppAPI
-    :<|> AppPlanAPI
     :<|> AuthAPI
     :<|> BookReferenceAPI
     :<|> BranchAPI
@@ -67,6 +64,7 @@ type ApplicationAPI =
     :<|> QuestionnaireImporterAPI
     :<|> RegistryAPI
     :<|> SubmissionAPI
+    :<|> TenantAPI
     :<|> TokenAPI
     :<|> TypehintAPI
     :<|> UsageAPI
@@ -79,8 +77,6 @@ applicationServer :: ServerT ApplicationAPI BaseContextM
 applicationServer =
   actionKeyServer
     :<|> apiKeyServer
-    :<|> appServer
-    :<|> appPlanServer
     :<|> authServer
     :<|> bookReferenceServer
     :<|> branchServer
@@ -106,6 +102,7 @@ applicationServer =
     :<|> questionnaireImporterServer
     :<|> registryServer
     :<|> submissionServer
+    :<|> tenantServer
     :<|> tokenServer
     :<|> typehintServer
     :<|> usageServer

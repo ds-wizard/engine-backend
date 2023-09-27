@@ -31,7 +31,7 @@ findDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> May
 findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState mNonEditable pageable sort =
   -- 1. Prepare variables
   do
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
     let stateCondition =
           case mTemplateState of
@@ -54,12 +54,12 @@ findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState mNon
               \FROM document_template \
               \LEFT JOIN registry_document_template ON document_template.organization_id = registry_document_template.organization_id AND document_template.template_id = registry_document_template.template_id \
               \LEFT JOIN registry_organization ON document_template.organization_id = registry_organization.organization_id \
-              \WHERE app_uuid = ? AND id IN ( \
+              \WHERE tenant_uuid = ? AND id IN ( \
               \    SELECT CONCAT(organization_id, ':', template_id, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
               \                                                          (max(string_to_array(version, '.')::int[]))[2] || '.' || \
               \                                                          (max(string_to_array(version, '.')::int[]))[3]) \
               \    FROM document_template \
-              \    WHERE (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') AND app_uuid = ? AND (name ~* ? OR id ~* ?) %s \
+              \    WHERE (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') AND tenant_uuid = ? AND (name ~* ? OR id ~* ?) %s \
               \    GROUP BY organization_id, template_id \
               \) \
               \%s \
@@ -76,8 +76,8 @@ findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState mNon
               , show sizeI
               ]
     let params =
-          U.toString appUuid
-            : U.toString appUuid
+          U.toString tenantUuid
+            : U.toString tenantUuid
             : regex mQuery
             : regex mQuery
             : mapToDBCoordinatesParams mOrganizationId mTemplateId
@@ -97,31 +97,31 @@ findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState mNon
 
 countDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe String -> String -> String -> AppContextM Int
 countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mState stateCondition nonEditableCondition = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString $
           f'
             "SELECT count(*) \
             \FROM document_template \
             \LEFT JOIN registry_document_template ON document_template.organization_id = registry_document_template.organization_id AND document_template.template_id = registry_document_template.template_id \
-            \WHERE app_uuid = ? AND (name ~* ? OR id ~* ?) %s %s %s \
+            \WHERE tenant_uuid = ? AND (name ~* ? OR id ~* ?) %s %s %s \
             \  AND id IN (SELECT CONCAT(organization_id, ':', template_id, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
             \                                                                   (max(string_to_array(version, '.')::int[]))[2] || '.' || \
             \                                                                   (max(string_to_array(version, '.')::int[]))[3]) \
             \             FROM document_template \
-            \             WHERE (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') AND app_uuid = ? AND (name ~* ? OR id ~* ?) \
+            \             WHERE (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') AND tenant_uuid = ? AND (name ~* ? OR id ~* ?) \
             \             GROUP BY organization_id, template_id)"
             [ mapToDBCoordinatesSql entityName "template_id" mOrganizationId mTemplateId
             , stateCondition
             , nonEditableCondition
             ]
   let params =
-        U.toString appUuid
+        U.toString tenantUuid
           : regex mQuery
           : regex mQuery
           : mapToDBCoordinatesParams mOrganizationId mTemplateId
           ++ maybeToList mState
-          ++ [U.toString appUuid]
+          ++ [U.toString tenantUuid]
           ++ [regex mQuery, regex mQuery]
   logQuery sql params
   let action conn = query conn sql params
@@ -132,7 +132,7 @@ countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mState stateCondit
 
 findDocumentTemplatesFiltered :: [(String, String)] -> AppContextM [DocumentTemplate]
 findDocumentTemplatesFiltered queryParams = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let queryCondition =
         case queryParams of
           [] -> ""
@@ -142,19 +142,19 @@ findDocumentTemplatesFiltered queryParams = do
           f'
             "SELECT * \
             \FROM document_template \
-            \WHERE app_uuid = ? AND (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') %s"
+            \WHERE tenant_uuid = ? AND (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') %s"
             [queryCondition]
-  let params = U.toString appUuid : fmap snd queryParams
+  let params = U.toString tenantUuid : fmap snd queryParams
   logQuery sql params
   let action conn = query conn sql params
   runDB action
 
 touchDocumentTemplateById :: String -> AppContextM Int64
 touchDocumentTemplateById tmlId = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   now <- liftIO getCurrentTime
-  let sql = fromString "UPDATE document_template SET updated_at = ? WHERE app_uuid = ? AND id = ?"
-  let params = [toField now, toField appUuid, toField tmlId]
+  let sql = fromString "UPDATE document_template SET updated_at = ? WHERE tenant_uuid = ? AND id = ?"
+  let params = [toField now, toField tenantUuid, toField tmlId]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action

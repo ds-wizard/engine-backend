@@ -35,7 +35,6 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Internal
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
@@ -47,11 +46,10 @@ import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
 import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.Document.DocumentS3
-import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Context.ContextService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
-import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
@@ -62,6 +60,8 @@ import Wizard.Service.Questionnaire.QuestionnaireAudit
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Questionnaire.QuestionnaireValidation
+import Wizard.Service.Tenant.Config.ConfigService
+import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
@@ -114,7 +114,7 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
     package <- findPackageWithEventsById pkgId
     qtnState <- getQuestionnaireState qtnUuid pkgId
     now <- liftIO getCurrentTime
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     visibility <- extractVisibility reqDto
     sharing <- extractSharing reqDto
     qtnPermUuid <- liftIO generateUuid
@@ -131,7 +131,7 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
             pkgId
             phaseEventUuid
             (headSafe knowledgeModel.phaseUuids)
-            appUuid
+            tenantUuid
             now
             qtnPermUuid
     insertQuestionnaire qtn
@@ -151,9 +151,9 @@ createQuestionnaireFromTemplate reqDto =
     qtnPermUuid <- liftIO generateUuid
     currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
-    appConfig <- getAppConfig
-    let newVisibility = appConfig.questionnaire.questionnaireVisibility.defaultValue
-    let newSharing = appConfig.questionnaire.questionnaireSharing.defaultValue
+    tenantConfig <- getCurrentTenantConfig
+    let newVisibility = tenantConfig.questionnaire.questionnaireVisibility.defaultValue
+    let newSharing = tenantConfig.questionnaire.questionnaireSharing.defaultValue
     let newPermissions = [toUserPermRecord qtnPermUuid newUuid currentUser.uuid ownerPermissions]
     let newQtn =
           originQtn
@@ -411,7 +411,7 @@ cleanQuestionnaires =
 
 recomputeQuestionnaireIndicationsInAllApplications :: AppContextM ()
 recomputeQuestionnaireIndicationsInAllApplications =
-  runFunctionForAllApps "recomputeQuestionnaireIndications" recomputeQuestionnaireIndications
+  runFunctionForAllTenants "recomputeQuestionnaireIndications" recomputeQuestionnaireIndications
 
 recomputeQuestionnaireIndications :: AppContextM (ContextResult, Maybe String)
 recomputeQuestionnaireIndications = do

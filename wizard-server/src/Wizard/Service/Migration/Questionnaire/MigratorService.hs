@@ -39,8 +39,8 @@ createQuestionnaireMigration oldQtnUuid reqDto =
     checkMigrationPermissionToQtn oldQtn.visibility oldQtn.permissions
     newQtn <- upgradeQuestionnaire reqDto oldQtn
     insertQuestionnaire newQtn
-    appUuid <- asks currentAppUuid
-    let state = fromCreateDTO oldQtn.uuid newQtn.uuid appUuid
+    tenantUuid <- asks currentTenantUuid
+    let state = fromCreateDTO oldQtn.uuid newQtn.uuid tenantUuid
     insertMigratorState state
     auditQuestionnaireMigrationCreate reqDto oldQtn newQtn
     getQuestionnaireMigration newQtn.uuid
@@ -55,7 +55,7 @@ getQuestionnaireMigration qtnUuid = do
   newQtn <- findQuestionnaireByUuid state.newQuestionnaireUuid
   checkMigrationPermissionToQtn oldQtn.visibility oldQtn.permissions
   checkMigrationPermissionToQtn newQtn.visibility newQtn.permissions
-  return $ toDTO oldQtnDto newQtnDto state.resolvedQuestionUuids state.appUuid
+  return $ toDTO oldQtnDto newQtnDto state.resolvedQuestionUuids state.tenantUuid
 
 modifyQuestionnaireMigration :: U.UUID -> MigratorStateChangeDTO -> AppContextM MigratorStateDTO
 modifyQuestionnaireMigration qtnUuid reqDto =
@@ -65,7 +65,7 @@ modifyQuestionnaireMigration qtnUuid reqDto =
     let updatedState = fromChangeDTO reqDto state
     updateMigratorStateByNewQuestionnaireUuid updatedState
     auditQuestionnaireMigrationModify state reqDto
-    return $ toDTO state.oldQuestionnaire state.newQuestionnaire updatedState.resolvedQuestionUuids updatedState.appUuid
+    return $ toDTO state.oldQuestionnaire state.newQuestionnaire updatedState.resolvedQuestionUuids updatedState.tenantUuid
 
 finishQuestionnaireMigration :: U.UUID -> AppContextM ()
 finishQuestionnaireMigration qtnUuid =

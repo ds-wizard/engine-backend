@@ -9,12 +9,12 @@ import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Model.App.App
-import Wizard.Model.Config.AppConfig
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Service.Config.App.AppConfigMapper
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Tenant
+import Wizard.Service.Tenant.Config.ConfigMapper
+import Wizard.Service.Tenant.Config.ConfigService
 
 import Wizard.Specs.Common
 
@@ -42,7 +42,7 @@ assertAbsenceOfQuestionnaireInDB appContext qtn = do
       `shouldBe` NotExistsError
         ( _ERROR_DATABASE__ENTITY_NOT_FOUND
             "questionnaire"
-            [("app_uuid", U.toString defaultApp.uuid), ("uuid", U.toString qtn.uuid)]
+            [("tenant_uuid", U.toString defaultTenant.uuid), ("uuid", U.toString qtn.uuid)]
         )
 
 -- --------------------------------
@@ -93,6 +93,6 @@ compareReportDtos resDto expDto = do
 -- HELPERS
 -- --------------------------------
 updateAnonymousQuestionnaireSharing appContext value = do
-  (Right appConfig) <- runInContextIO getAppConfig appContext
-  let updatedAppConfig = appConfig {questionnaire = appConfig.questionnaire {questionnaireSharing = appConfig.questionnaire.questionnaireSharing {anonymousEnabled = value}}}
-  runInContextIO (modifyAppConfigDto (toChangeDTO updatedAppConfig)) appContext
+  (Right tenantConfig) <- runInContextIO getCurrentTenantConfig appContext
+  let updatedTenantConfig = tenantConfig {questionnaire = tenantConfig.questionnaire {questionnaireSharing = tenantConfig.questionnaire.questionnaireSharing {anonymousEnabled = value}}}
+  runInContextIO (modifyTenantConfigDto (toChangeDTO updatedTenantConfig)) appContext

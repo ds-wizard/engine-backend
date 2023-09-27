@@ -34,9 +34,9 @@ createFile tmlId reqDto =
     checkPermission _DOC_TML_WRITE_PERM
     validateFileAndAssetUniqueness Nothing tmlId reqDto.fileName
     fUuid <- liftIO generateUuid
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     now <- liftIO getCurrentTime
-    let newFile = fromChangeDTO reqDto tmlId fUuid appUuid now now
+    let newFile = fromChangeDTO reqDto tmlId fUuid tenantUuid now now
     insertFile newFile
     touchDocumentTemplateById newFile.documentTemplateId
     deleteTemporalDocumentsByFileUuid fUuid
@@ -49,7 +49,7 @@ modifyFile fileUuid reqDto =
     file <- findFileById fileUuid
     validateFileAndAssetUniqueness (Just file.uuid) file.documentTemplateId reqDto.fileName
     now <- liftIO getCurrentTime
-    let updatedFile = fromChangeDTO reqDto file.documentTemplateId file.uuid file.appUuid file.createdAt now
+    let updatedFile = fromChangeDTO reqDto file.documentTemplateId file.uuid file.tenantUuid file.createdAt now
     updateFileById updatedFile
     touchDocumentTemplateById updatedFile.documentTemplateId
     deleteTemporalDocumentsByFileUuid fileUuid

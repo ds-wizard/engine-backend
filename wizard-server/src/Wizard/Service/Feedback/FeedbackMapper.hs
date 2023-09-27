@@ -7,17 +7,17 @@ import Prelude hiding (id)
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
 import Wizard.Integration.Resource.GitHub.IssueIDTO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Feedback.Feedback
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Feedback.FeedbackUtil
 
-toDTO :: ServerConfig -> AppConfig -> Feedback -> FeedbackDTO
-toDTO serverConfig appConfig f =
+toDTO :: ServerConfig -> TenantConfig -> Feedback -> FeedbackDTO
+toDTO serverConfig tenantConfig f =
   FeedbackDTO
     { uuid = f.uuid
     , issueId = f.issueId
-    , issueUrl = createIssueUrl serverConfig.feedback appConfig.questionnaire.feedback f
+    , issueUrl = createIssueUrl serverConfig.feedback tenantConfig.questionnaire.feedback f
     , questionUuid = f.questionUuid
     , packageId = f.packageId
     , title = f.title
@@ -27,7 +27,7 @@ toDTO serverConfig appConfig f =
     }
 
 fromCreateDTO :: FeedbackCreateDTO -> U.UUID -> Int -> U.UUID -> UTCTime -> Feedback
-fromCreateDTO dto fUuid issueId appUuid now =
+fromCreateDTO dto fUuid issueId tenantUuid now =
   Feedback
     { uuid = fUuid
     , issueId = issueId
@@ -35,7 +35,7 @@ fromCreateDTO dto fUuid issueId appUuid now =
     , packageId = dto.packageId
     , title = dto.title
     , content = dto.content
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = now
     , updatedAt = now
     }
@@ -49,7 +49,7 @@ fromSimpleIssue feedback simpleIssue now =
     , packageId = feedback.packageId
     , title = simpleIssue.title
     , content = simpleIssue.body
-    , appUuid = feedback.appUuid
+    , tenantUuid = feedback.tenantUuid
     , createdAt = feedback.createdAt
     , updatedAt = now
     }

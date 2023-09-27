@@ -5,10 +5,10 @@ import Data.Time
 
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
-import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Package.Data.Packages
-import Wizard.Model.App.App
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Feedback.Feedback
+import Wizard.Model.Tenant.Tenant
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
@@ -23,7 +23,7 @@ feedback1 =
     , packageId = germanyPackage.pId
     , title = "Provide more descriptive content"
     , content = "I'm not very satisfied with a description of this question"
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
@@ -46,7 +46,7 @@ feedback2 =
     , packageId = germanyPackage.pId
     , title = "Non-existing issue"
     , content = "There is no issue like that"
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
@@ -60,7 +60,7 @@ differentFeedback =
     , packageId = differentPackage.pId
     , title = "Non-existing issue"
     , content = "There is no issue like that"
-    , appUuid = differentApp.uuid
+    , tenantUuid = differentTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }

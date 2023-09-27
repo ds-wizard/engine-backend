@@ -32,7 +32,7 @@ createTables = do
         \         type            varchar not null, \
         \         hash            varchar not null, \
         \         created_at      timestamp with time zone not null, \
-        \         app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \         tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
         \     ); \
         \create unique index action_key_uuid_uindex \
         \     on action_key (uuid); \

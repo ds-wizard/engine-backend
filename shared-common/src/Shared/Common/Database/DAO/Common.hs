@@ -413,17 +413,11 @@ computeTotalPage 0 0 = 0
 computeTotalPage _ 0 = 1
 computeTotalPage count size = ceiling $ fromIntegral count / fromIntegral size
 
-appQueryUuid :: U.UUID -> (String, String)
-appQueryUuid appUuid = ("app_uuid", U.toString appUuid)
+tenantQueryUuid :: U.UUID -> (String, String)
+tenantQueryUuid tenantUuid = ("tenant_uuid", U.toString tenantUuid)
 
-appQueryString :: String -> (String, String)
-appQueryString appUuid = ("app_uuid", appUuid)
-
-appCondition :: String
-appCondition = "WHERE app_uuid = ?"
-
-appSelector :: U.UUID -> String
-appSelector appUuid = "app_uuid = '" ++ U.toString appUuid ++ "'"
+tenantCondition :: String
+tenantCondition = "WHERE tenant_uuid = ?"
 
 showAction :: Action -> String
 showAction (Plain a) = BS.unpack . toByteString $ a

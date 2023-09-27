@@ -76,7 +76,7 @@ fromAssetEntry tb archive asset =
     Nothing -> Left $ UserError (_ERROR_SERVICE_TB__MISSING_ASSET asset.fileName)
 
 fromBundle :: DocumentTemplateBundleDTO -> U.UUID -> DocumentTemplate
-fromBundle tb appUuid =
+fromBundle tb tenantUuid =
   DocumentTemplate
     { tId = tb.tId
     , name = tb.name
@@ -91,7 +91,7 @@ fromBundle tb appUuid =
     , allowedPackages = tb.allowedPackages
     , formats = tb.formats
     , nonEditable = False
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = tb.createdAt
     , updatedAt = tb.createdAt
     }

@@ -39,14 +39,14 @@ importBundle contentS = do
   checkWritePermission
   case fromDocumentTemplateArchive contentS of
     Right (bundle, assetContents) -> do
-      let appUuid = U.nil
-      let tml = fromBundle bundle appUuid
+      let tenantUuid = U.nil
+      let tml = fromBundle bundle tenantUuid
       traverse_ (\(a, content) -> putAsset tml.tId a.uuid a.contentType content) assetContents
       insertDocumentTemplate tml
-      traverse_ (insertFile . fromFileDTO tml.tId appUuid tml.createdAt) bundle.files
+      traverse_ (insertFile . fromFileDTO tml.tId tenantUuid tml.createdAt) bundle.files
       traverse_
         ( \(assetDto, content) ->
-            insertAsset $ fromAssetDTO tml.tId (fromIntegral . BS.length $ content) appUuid tml.createdAt assetDto
+            insertAsset $ fromAssetDTO tml.tId (fromIntegral . BS.length $ content) tenantUuid tml.createdAt assetDto
         )
         assetContents
       getDocumentTemplateById tml.tId

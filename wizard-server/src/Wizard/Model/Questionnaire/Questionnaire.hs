@@ -41,7 +41,7 @@ data Questionnaire = Questionnaire
   , squashed :: Bool
   , answeredQuestions :: Int
   , unansweredQuestions :: Int
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -67,4 +67,4 @@ instance Eq Questionnaire where
       && a.squashed == b.squashed
       && a.answeredQuestions == b.answeredQuestions
       && a.unansweredQuestions == b.unansweredQuestions
-      && a.appUuid == b.appUuid
+      && a.tenantUuid == b.tenantUuid

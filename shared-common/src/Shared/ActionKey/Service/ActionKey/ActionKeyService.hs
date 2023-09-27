@@ -19,9 +19,9 @@ createActionKey
   -> aType
   -> U.UUID
   -> m (ActionKey identity aType)
-createActionKey identity actionType appUuid = do
+createActionKey identity actionType tenantUuid = do
   hash <- liftIO generateUuid
-  createActionKeyWithHash identity actionType appUuid (U.toString hash)
+  createActionKeyWithHash identity actionType tenantUuid (U.toString hash)
 
 createActionKeyWithHash
   :: (AppContextC s sc m, ToField aType, ToField identity)
@@ -30,7 +30,7 @@ createActionKeyWithHash
   -> U.UUID
   -> String
   -> m (ActionKey identity aType)
-createActionKeyWithHash identity actionType appUuid hash =
+createActionKeyWithHash identity actionType tenantUuid hash =
   runInTransaction logInfoI logWarnI $ do
     uuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
@@ -40,7 +40,7 @@ createActionKeyWithHash identity actionType appUuid hash =
             , identity = identity
             , aType = actionType
             , hash = hash
-            , appUuid = appUuid
+            , tenantUuid = tenantUuid
             , createdAt = now
             }
     insertActionKey actionKey

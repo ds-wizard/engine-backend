@@ -6,13 +6,13 @@ import Test.Hspec hiding (shouldBe)
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Uuid
-import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Localization.Messages.Public
-import Wizard.Model.App.App
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Tenant.Tenant
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireService
 
@@ -106,7 +106,7 @@ test404 appContext = do
             NotExistsError
               ( _ERROR_DATABASE__ENTITY_NOT_FOUND
                   "questionnaire"
-                  [("app_uuid", U.toString defaultApp.uuid), ("uuid", nonExistingQtnUuid)]
+                  [("tenant_uuid", U.toString defaultTenant.uuid), ("uuid", nonExistingQtnUuid)]
               )
       -- WHEN:
       (c1, s1) <- createConnection appContext (reqUrlT (u' nonExistingQtnUuid) (Just reqAuthToken))

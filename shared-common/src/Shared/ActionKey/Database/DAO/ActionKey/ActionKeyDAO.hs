@@ -18,13 +18,13 @@ entityName = "action_key"
 
 findActionKeys :: (AppContextC s sc m, FromField aType, FromField identity) => m [ActionKey identity aType]
 findActionKeys = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findActionKeyByHash :: (AppContextC s sc m, FromField aType, FromField identity) => String -> m (ActionKey identity aType)
 findActionKeyByHash hash = do
-  appUuid <- asks (.appUuid')
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("hash", hash)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("hash", hash)]
 
 findActionKeyByIdentityAndHash'
   :: ( AppContextC s sc m
@@ -36,8 +36,8 @@ findActionKeyByIdentityAndHash'
   -> String
   -> m (Maybe (ActionKey identity aType))
 findActionKeyByIdentityAndHash' identity hash = do
-  appUuid <- asks (.appUuid')
-  createFindEntityByFn' entityName [appQueryUuid appUuid, ("identity", identity), ("hash", hash)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("identity", identity), ("hash", hash)]
 
 insertActionKey :: (AppContextC s sc m, ToField aType, ToField identity) => ActionKey identity aType -> m Int64
 insertActionKey = createInsertFn entityName
@@ -47,18 +47,18 @@ deleteActionKeys = createDeleteEntitiesFn entityName
 
 deleteActionKeyByHash :: AppContextC s sc m => String -> m Int64
 deleteActionKeyByHash hash = do
-  appUuid <- asks (.appUuid')
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("hash", hash)]
+  tenantUuid <- asks (.tenantUuid')
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("hash", hash)]
 
 deleteActionKeyByIdentity :: AppContextC s sc m => String -> m Int64
 deleteActionKeyByIdentity identity = do
-  appUuid <- asks (.appUuid')
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("identity", identity)]
+  tenantUuid <- asks (.tenantUuid')
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("identity", identity)]
 
 deleteActionKeyByIdentityAndHash :: AppContextC s sc m => String -> String -> m Int64
 deleteActionKeyByIdentityAndHash identity hash = do
-  appUuid <- asks (.appUuid')
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("identity", identity), ("hash", hash)]
+  tenantUuid <- asks (.tenantUuid')
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("identity", identity), ("hash", hash)]
 
 deleteActionKeyOlderThen :: AppContextC s sc m => UTCTime -> m Int64
 deleteActionKeyOlderThen date = do

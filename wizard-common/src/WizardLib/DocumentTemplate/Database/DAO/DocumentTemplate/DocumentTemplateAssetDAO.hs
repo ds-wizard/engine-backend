@@ -17,37 +17,37 @@ entityName = "document_template_asset"
 
 findAssetsByDocumentTemplateId :: AppContextC s sc m => String -> m [DocumentTemplateAsset]
 findAssetsByDocumentTemplateId documentTemplateId = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("document_template_id", documentTemplateId)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId)]
 
 findAssetsByDocumentTemplateIdAndFileName :: AppContextC s sc m => String -> String -> m [DocumentTemplateAsset]
 findAssetsByDocumentTemplateIdAndFileName documentTemplateId fileName = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("document_template_id", documentTemplateId), ("file_name", fileName)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId), ("file_name", fileName)]
 
 findAssetById :: AppContextC s sc m => U.UUID -> m DocumentTemplateAsset
 findAssetById uuid = do
-  appUuid <- asks (.appUuid')
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 sumAssetFileSize :: AppContextC s sc m => m Int64
 sumAssetFileSize = do
-  appUuid <- asks (.appUuid')
-  sumAssetFileSizeWithApp appUuid
+  tenantUuid <- asks (.tenantUuid')
+  sumAssetFileSizeWithTenant tenantUuid
 
-sumAssetFileSizeWithApp :: AppContextC s sc m => U.UUID -> m Int64
-sumAssetFileSizeWithApp appUuid = createSumByFn entityName "file_size" appCondition [U.toString appUuid]
+sumAssetFileSizeWithTenant :: AppContextC s sc m => U.UUID -> m Int64
+sumAssetFileSizeWithTenant tenantUuid = createSumByFn entityName "file_size" tenantCondition [U.toString tenantUuid]
 
 insertAsset :: AppContextC s sc m => DocumentTemplateAsset -> m Int64
 insertAsset = createInsertFn entityName
 
 updateAssetById :: AppContextC s sc m => DocumentTemplateAsset -> m Int64
 updateAssetById asset = do
-  appUuid <- asks (.appUuid')
+  tenantUuid <- asks (.tenantUuid')
   let sql =
         fromString
-          "UPDATE document_template_asset SET document_template_id = ?, uuid = ?, file_name = ?, content_type = ?, app_uuid = ?, file_size = ?, created_at = ?, updated_at = ? WHERE app_uuid = ? AND uuid = ?"
-  let params = toRow asset ++ [toField appUuid, toField asset.uuid]
+          "UPDATE document_template_asset SET document_template_id = ?, uuid = ?, file_name = ?, content_type = ?, tenant_uuid = ?, file_size = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = toRow asset ++ [toField tenantUuid, toField asset.uuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -57,10 +57,10 @@ deleteAssets = createDeleteEntitiesFn entityName
 
 deleteAssetsByDocumentTemplateId :: AppContextC s sc m => String -> m Int64
 deleteAssetsByDocumentTemplateId tmlId = do
-  appUuid <- asks (.appUuid')
-  createDeleteEntitiesByFn entityName [appQueryUuid appUuid, ("document_template_id", tmlId)]
+  tenantUuid <- asks (.tenantUuid')
+  createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", tmlId)]
 
 deleteAssetById :: AppContextC s sc m => U.UUID -> m Int64
 deleteAssetById uuid = do
-  appUuid <- asks (.appUuid')
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  tenantUuid <- asks (.tenantUuid')
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]

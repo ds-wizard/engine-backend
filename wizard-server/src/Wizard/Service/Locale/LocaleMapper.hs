@@ -93,7 +93,7 @@ toLocaleList locale state =
     }
 
 fromCreateDTO :: LocaleCreateDTO -> String -> Bool -> U.UUID -> UTCTime -> Locale
-fromCreateDTO reqDto organizationId defaultLocale appUuid now =
+fromCreateDTO reqDto organizationId defaultLocale tenantUuid now =
   Locale
     { lId = buildCoordinate organizationId reqDto.localeId reqDto.version
     , name = reqDto.name
@@ -107,7 +107,7 @@ fromCreateDTO reqDto organizationId defaultLocale appUuid now =
     , readme = reqDto.readme
     , recommendedAppVersion = reqDto.recommendedAppVersion
     , enabled = False
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = now
     , updatedAt = now
     }
@@ -127,7 +127,7 @@ fromChangeDTO locale reqDto now =
     , readme = locale.readme
     , recommendedAppVersion = locale.recommendedAppVersion
     , enabled = reqDto.enabled
-    , appUuid = locale.appUuid
+    , tenantUuid = locale.tenantUuid
     , createdAt = locale.createdAt
     , updatedAt = now
     }

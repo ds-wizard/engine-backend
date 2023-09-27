@@ -27,7 +27,7 @@ data AppContext = AppContext
   , httpClientManager :: Manager
   , registryClient :: ClientEnv
   , traceUuid :: U.UUID
-  , currentAppUuid :: U.UUID
+  , currentTenantUuid :: U.UUID
   , currentUser :: Maybe UserDTO
   , shutdownFlag :: MVar ()
   , cache :: ServerCache

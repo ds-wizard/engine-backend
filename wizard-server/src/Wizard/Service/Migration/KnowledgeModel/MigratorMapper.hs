@@ -24,7 +24,7 @@ toDTO ms branch =
 
 fromCreateDTO
   :: Branch -> Package -> [Event] -> String -> [Event] -> KnowledgeModel -> U.UUID -> UTCTime -> MigratorState
-fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km appUuid now =
+fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km tenantUuid now =
   MigratorState
     { branchUuid = branch.uuid
     , metamodelVersion = kmMetamodelVersion
@@ -35,6 +35,6 @@ fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km app
     , targetPackageEvents = targetPkgEvents
     , resultEvents = []
     , currentKnowledgeModel = Just km
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = now
     }

@@ -58,13 +58,13 @@ toBranchData branch =
     , metamodelVersion = kmMetamodelVersion
     , events = []
     , squashed = True
-    , appUuid = branch.appUuid
+    , tenantUuid = branch.tenantUuid
     , createdAt = branch.createdAt
     , updatedAt = branch.updatedAt
     }
 
 fromCreateDTO :: BranchCreateDTO -> U.UUID -> Maybe Package -> U.UUID -> U.UUID -> UTCTime -> Branch
-fromCreateDTO dto uuid mPreviousPkg createdBy appUuid now =
+fromCreateDTO dto uuid mPreviousPkg createdBy tenantUuid now =
   Branch
     { uuid = uuid
     , name = dto.name
@@ -75,7 +75,7 @@ fromCreateDTO dto uuid mPreviousPkg createdBy appUuid now =
     , license = maybe "" (.license) mPreviousPkg
     , previousPackageId = dto.previousPackageId
     , createdBy = Just createdBy
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = now
     , updatedAt = now
     }
@@ -92,7 +92,7 @@ fromChangeDTO dto branch bUpdatedAt =
     , license = dto.license
     , previousPackageId = branch.previousPackageId
     , createdBy = branch.createdBy
-    , appUuid = branch.appUuid
+    , tenantUuid = branch.tenantUuid
     , createdAt = branch.createdAt
     , updatedAt = bUpdatedAt
     }

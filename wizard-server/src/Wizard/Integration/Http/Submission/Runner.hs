@@ -8,12 +8,12 @@ import Data.Map.Strict as M
 import Shared.Common.Integration.Http.Common.HttpClient
 import Wizard.Integration.Http.Submission.RequestMapper
 import Wizard.Integration.Http.Submission.ResponseMapper
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
+import Wizard.Model.Tenant.Config.TenantConfig
 
 uploadDocument
-  :: AppConfigSubmissionServiceRequest
+  :: TenantConfigSubmissionServiceRequest
   -> M.Map String String
   -> BS.ByteString
   -> AppContextM (Either String (Maybe String))

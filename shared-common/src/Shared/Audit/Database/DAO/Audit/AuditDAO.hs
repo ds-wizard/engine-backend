@@ -12,8 +12,8 @@ entityName = "audit"
 
 findAudits :: AppContextC s sc m => m [Audit]
 findAudits = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 insertAudit :: AppContextC s sc m => Audit -> m Int64
 insertAudit = createInsertWithoutTransactionFn entityName

@@ -18,14 +18,14 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.ActionKey.ActionKeyType
 import Wizard.Model.Cache.ServerCache
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.ActionKey.ActionKeyService
-import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Mail.Mailer
+import Wizard.Service.Tenant.Config.ConfigService
 import qualified Wizard.Service.User.UserMapper as UserMapper
 import Wizard.Service.UserToken.Login.LoginMapper
 import Wizard.Service.UserToken.Login.LoginValidation
@@ -44,23 +44,23 @@ createLoginTokenFromCredentials reqDto mUserAgent =
     case mUser of
       Just user -> do
         validate reqDto user
-        appConfig <- getAppConfig
+        tenantConfig <- getCurrentTenantConfig
         now <- liftIO getCurrentTime
-        case (appConfig.authentication.internal.twoFactorAuth.enabled, reqDto.code) of
+        case (tenantConfig.authentication.internal.twoFactorAuth.enabled, reqDto.code) of
           (False, _) -> do
             updateUserLastVisitedAtByUuid user.uuid now
             createLoginToken user mUserAgent Nothing
           (True, Nothing) -> do
             deleteActionKeyByIdentity (U.toString user.uuid)
-            let length = appConfig.authentication.internal.twoFactorAuth.codeLength
+            let length = tenantConfig.authentication.internal.twoFactorAuth.codeLength
             let min = 10 ^ (length - 1)
             let max = (10 ^ length) - 1
             code <- liftIO $ generateIntInRange min max
-            createActionKeyWithHash user.uuid TwoFactorAuthActionKey user.appUuid (show code)
+            createActionKeyWithHash user.uuid TwoFactorAuthActionKey user.tenantUuid (show code)
             sendTwoFactorAuthMail (UserMapper.toDTO user) (show code)
             return CodeRequiredDTO
           (True, Just code) -> do
-            validateCode user code appConfig
+            validateCode user code tenantConfig
             deleteActionKeyByIdentityAndHash (U.toString user.uuid) (show code)
             updateUserLastVisitedAtByUuid user.uuid now
             createLoginToken user mUserAgent Nothing

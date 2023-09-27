@@ -12,10 +12,10 @@ import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Database.Migration.Development.Acl.Data.Groups
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Database.Migration.Development.Config.Data.AppConfigs
-import Wizard.Model.App.App
-import Wizard.Model.Config.AppConfig
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
@@ -32,7 +32,7 @@ userAlbert =
     , sources = [_USER_SOURCE_INTERNAL]
     , uRole = _USER_ROLE_ADMIN
     , permissions =
-        [ "APP_PERM"
+        [ "TENANT_PERM"
         , "DEV_PERM"
         , "UM_PERM"
         , "KM_PERM"
@@ -56,7 +56,7 @@ userAlbert =
     , imageUrl = Nothing
     , groups = [ownerBioGroup, ownerPlantGroup]
     , machine = False
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0

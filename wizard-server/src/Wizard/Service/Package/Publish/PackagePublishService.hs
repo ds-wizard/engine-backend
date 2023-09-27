@@ -15,19 +15,19 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchData
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Branch.BranchAudit
 import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Branch.Collaboration.CollaborationService
-import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.KnowledgeModel.Squash.Squasher
 import Wizard.Service.Migration.KnowledgeModel.MigratorAudit
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Package.Publish.PackagePublishMapper
 import Wizard.Service.Package.Publish.PackagePublishValidation
+import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 import WizardLib.KnowledgeModel.Service.Package.PackageUtil
@@ -86,8 +86,8 @@ doPublishPackage
   -> AppContextM PackageSimpleDTO
 doPublishPackage version branch branchData branchEvents description readme mForkOfPkgId mMergeCheckpointPkgId = do
   let squashedBranchEvents = squash branchEvents
-  appConfig <- getAppConfig
-  let org = appConfig.organization
+  tenantConfig <- getCurrentTenantConfig
+  let org = tenantConfig.organization
   validateNewPackageVersion version branch org
   now <- liftIO getCurrentTime
   let pkg = fromPackage branch mForkOfPkgId mMergeCheckpointPkgId org version description readme squashedBranchEvents now

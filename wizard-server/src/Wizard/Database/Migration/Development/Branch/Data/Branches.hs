@@ -10,14 +10,14 @@ import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.Package.Publish.PackagePublishBranchDTO
 import Wizard.Api.Resource.Package.Publish.PackagePublishMigrationDTO
-import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Package.Data.Packages
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.App.App
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchData
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.Branch.BranchState
+import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import qualified Wizard.Service.Package.PackageMapper as PM
@@ -56,7 +56,7 @@ amsterdamBranch =
     , license = "Apache-2.0"
     , previousPackageId = amsterdamBranchList.previousPackageId
     , createdBy = amsterdamBranchList.createdBy
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdAt = amsterdamBranchList.createdAt
     , updatedAt = amsterdamBranchList.updatedAt
     }
@@ -87,7 +87,7 @@ amsterdamBranchData =
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
     , squashed = True
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdAt = amsterdamBranchList.createdAt
     , updatedAt = amsterdamBranchList.updatedAt
     }
@@ -173,7 +173,7 @@ differentBranch =
     , license = "Apache-2.0"
     , previousPackageId = Just $ differentPackage.pId
     , createdBy = Just $ userCharles.uuid
-    , appUuid = differentApp.uuid
+    , tenantUuid = differentTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -185,7 +185,7 @@ differentBranchData =
     , metamodelVersion = kmMetamodelVersion
     , events = []
     , squashed = True
-    , appUuid = differentApp.uuid
+    , tenantUuid = differentTenant.uuid
     , createdAt = differentBranch.createdAt
     , updatedAt = differentBranch.updatedAt
     }

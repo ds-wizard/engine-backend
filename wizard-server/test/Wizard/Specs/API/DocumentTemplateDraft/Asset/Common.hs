@@ -8,8 +8,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Model.App.App
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Model.Tenant.Tenant
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
@@ -33,7 +33,7 @@ assertAbsenceOfTemplateAssetInDB appContext asset = do
       `shouldBe` NotExistsError
         ( _ERROR_DATABASE__ENTITY_NOT_FOUND
             "document_template_asset"
-            [("app_uuid", U.toString defaultApp.uuid), ("uuid", U.toString asset.uuid)]
+            [("tenant_uuid", U.toString defaultTenant.uuid), ("uuid", U.toString asset.uuid)]
         )
 
 -- --------------------------------

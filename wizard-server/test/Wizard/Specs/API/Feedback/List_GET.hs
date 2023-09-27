@@ -9,9 +9,9 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as F
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Feedback.FeedbackMapper
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
@@ -48,8 +48,8 @@ test_200 appContext =
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto =
-            [ toDTO appContext.serverConfig defaultAppConfig feedback1
-            , toDTO appContext.serverConfig defaultAppConfig feedback2
+            [ toDTO appContext.serverConfig defaultTenantConfig feedback1
+            , toDTO appContext.serverConfig defaultTenantConfig feedback2
             ]
       let expBody = encode expDto
       -- AND: Run migrations

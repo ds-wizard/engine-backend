@@ -104,13 +104,13 @@ fromCreateDTO dto tml organizationId now =
     , allowedPackages = tml.allowedPackages
     , formats = tml.formats
     , nonEditable = False
-    , appUuid = tml.appUuid
+    , tenantUuid = tml.tenantUuid
     , createdAt = now
     , updatedAt = now
     }
 
 fromCreateDTO' :: DocumentTemplateDraftCreateDTO -> String -> U.UUID -> UTCTime -> DocumentTemplate
-fromCreateDTO' dto organizationId appUuid now =
+fromCreateDTO' dto organizationId tenantUuid now =
   DocumentTemplate
     { tId = buildCoordinate organizationId dto.templateId dto.version
     , name = dto.name
@@ -125,7 +125,7 @@ fromCreateDTO' dto organizationId appUuid now =
     , allowedPackages = []
     , formats = []
     , nonEditable = False
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = now
     , updatedAt = now
     }
@@ -146,7 +146,7 @@ fromChangeDTO dto tml =
     , allowedPackages = dto.allowedPackages
     , formats = dto.formats
     , nonEditable = tml.nonEditable
-    , appUuid = tml.appUuid
+    , tenantUuid = tml.tenantUuid
     , createdAt = tml.createdAt
     , updatedAt = tml.updatedAt
     }
@@ -157,7 +157,7 @@ fromCreateDraftData draft =
     { documentTemplateId = draft.tId
     , questionnaireUuid = Nothing
     , formatUuid = Nothing
-    , appUuid = draft.appUuid
+    , tenantUuid = draft.tenantUuid
     , createdAt = draft.createdAt
     , updatedAt = draft.updatedAt
     }
@@ -168,7 +168,7 @@ fromDraftDataChangeDTO draftData reqDto =
     { documentTemplateId = draftData.documentTemplateId
     , questionnaireUuid = reqDto.questionnaireUuid
     , formatUuid = reqDto.formatUuid
-    , appUuid = draftData.appUuid
+    , tenantUuid = draftData.tenantUuid
     , createdAt = draftData.createdAt
     , updatedAt = draftData.updatedAt
     }

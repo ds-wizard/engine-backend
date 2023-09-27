@@ -48,12 +48,12 @@ pageLabel = "questionnaires"
 
 findQuestionnaires :: AppContextM [Questionnaire]
 findQuestionnaires = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
   if currentUser.uRole == _USER_ROLE_ADMIN
-    then createFindEntitiesByFn entityName [appQueryUuid appUuid] >>= traverse enhance
+    then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid] >>= traverse enhance
     else do
-      let sql = f' (qtnSelectSql (U.toString appUuid) (U.toString $ currentUser.uuid) "['VIEW']") [""]
+      let sql = f' (qtnSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") [""]
       logInfoI _CMP_DATABASE sql
       let action conn = query_ conn (fromString sql)
       entities <- runDB action
@@ -75,7 +75,7 @@ findQuestionnairesForCurrentUserPage
 findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mPackageIds mPackageIdsOp pageable sort =
   -- 1. Prepare variables
   do
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     let nameCondition = "qtn.name ~* ?"
     let isTemplateCondition =
           case mIsTemplate of
@@ -142,7 +142,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
                   "SELECT COUNT(DISTINCT qtn.uuid) FROM questionnaire qtn %s %s WHERE %s %s %s %s %s %s %s"
                   [ userUuidsJoin
                   , qtnMigrationJoin
-                  , f' "qtn.app_uuid = '%s' AND" [U.toString appUuid]
+                  , f' "qtn.tenant_uuid = '%s' AND" [U.toString tenantUuid]
                   , nameCondition
                   , isTemplateCondition
                   , isMigratingCondition
@@ -159,7 +159,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
                   \%s \
                   \WHERE %s AND %s %s %s %s %s %s"
                   [ qtnMigrationJoin
-                  , qtnWhereSql (U.toString appUuid) (U.toString $ currentUser.uuid) "['VIEW']"
+                  , qtnWhereSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']"
                   , nameCondition
                   , isTemplateCondition
                   , isMigratingCondition
@@ -207,9 +207,9 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
             \    pkg.name, \
             \    pkg.version \
             \  FROM questionnaire qtn \
-            \  JOIN package pkg ON qtn.package_id = pkg.id AND qtn.app_uuid = pkg.app_uuid \
+            \  JOIN package pkg ON qtn.package_id = pkg.id AND qtn.tenant_uuid = pkg.tenant_uuid \
             \  LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.new_questionnaire_uuid "
-            [U.toString appUuid]
+            [U.toString tenantUuid]
     let sql =
           fromString $
             if currentUser.uRole == _USER_ROLE_ADMIN
@@ -220,7 +220,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
                   \OFFSET %s LIMIT %s) nested_qtn"
                   [ sqlBase
                   , userUuidsJoin
-                  , f' "qtn.app_uuid = '%s' AND" [U.toString appUuid]
+                  , f' "qtn.tenant_uuid = '%s' AND" [U.toString tenantUuid]
                   , nameCondition
                   , isTemplateCondition
                   , isMigratingCondition
@@ -238,7 +238,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
                   \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
                   \WHERE %s %s OFFSET %s LIMIT %s) nested_qtn"
                   [ sqlBase
-                  , qtnWhereSql (U.toString appUuid) (U.toString $ currentUser.uuid) "['VIEW']"
+                  , qtnWhereSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']"
                       ++ " AND "
                       ++ nameCondition
                       ++ isTemplateCondition
@@ -265,14 +265,14 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
 
 findQuestionnairesByPackageId :: String -> AppContextM [Questionnaire]
 findQuestionnairesByPackageId packageId = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
   if currentUser.uRole == _USER_ROLE_ADMIN
-    then createFindEntitiesByFn entityName [appQueryUuid appUuid, ("package_id", packageId)] >>= traverse enhance
+    then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("package_id", packageId)] >>= traverse enhance
     else do
       let sql =
             fromString $
-              f' (qtnSelectSql (U.toString appUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["and package_id = ?"]
+              f' (qtnSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["and package_id = ?"]
       let params = [packageId]
       logQuery sql params
       let action conn = query conn sql params
@@ -281,14 +281,14 @@ findQuestionnairesByPackageId packageId = do
 
 findQuestionnairesByDocumentTemplateId :: String -> AppContextM [Questionnaire]
 findQuestionnairesByDocumentTemplateId documentTemplateId = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
   if currentUser.uRole == _USER_ROLE_ADMIN
-    then createFindEntitiesByFn entityName [appQueryUuid appUuid, ("document_template_id", documentTemplateId)] >>= traverse enhance
+    then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId)] >>= traverse enhance
     else do
       let sql =
             fromString $
-              f' (qtnSelectSql (U.toString appUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["and document_template_id = ?"]
+              f' (qtnSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["and document_template_id = ?"]
       let params = [documentTemplateId]
       logQuery sql params
       let action conn = query conn sql params
@@ -297,9 +297,9 @@ findQuestionnairesByDocumentTemplateId documentTemplateId = do
 
 findQuestionnairesOwnedByUser :: String -> AppContextM [Questionnaire]
 findQuestionnairesOwnedByUser userUuid = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
-  let sql = f' (qtnSelectSql (U.toString appUuid) (U.toString $ currentUser.uuid) "[]::text[]") [""]
+  let sql = f' (qtnSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "[]::text[]") [""]
   logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   entities <- runDB action
@@ -323,9 +323,9 @@ findQuestionnaireWithZeroAcl = do
 
 findQuestionnaireUuids :: AppContextM [U.UUID]
 findQuestionnaireUuids = do
-  appUuid <- asks currentAppUuid
-  let sql = fromString $ f' "SELECT %s FROM %s WHERE app_uuid = ?" ["uuid", entityName]
-  let params = [toField appUuid]
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString $ f' "SELECT %s FROM %s WHERE tenant_uuid = ?" ["uuid", entityName]
+  let params = [toField tenantUuid]
   logQuery sql params
   let action conn = query conn sql params
   entities <- runDB action
@@ -341,38 +341,38 @@ findQuestionnaireUuids' = do
 
 findQuestionnaireByUuid :: U.UUID -> AppContextM Questionnaire
 findQuestionnaireByUuid qtnUuid = do
-  appUuid <- asks currentAppUuid
-  entity <- createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString qtnUuid)]
+  tenantUuid <- asks currentTenantUuid
+  entity <- createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString qtnUuid)]
   enhance entity
 
 findQuestionnaireByUuid' :: U.UUID -> AppContextM (Maybe Questionnaire)
 findQuestionnaireByUuid' qtnUuid = do
-  appUuid <- asks currentAppUuid
-  mEntity <- createFindEntityByFn' entityName [appQueryUuid appUuid, ("uuid", U.toString qtnUuid)]
+  tenantUuid <- asks currentTenantUuid
+  mEntity <- createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString qtnUuid)]
   case mEntity of
     Just entity -> enhance entity >>= return . Just
     Nothing -> return Nothing
 
 findQuestionnaireSimpleByUuid :: U.UUID -> AppContextM QuestionnaireSimple
 findQuestionnaireSimpleByUuid uuid = do
-  appUuid <- asks currentAppUuid
-  createFindEntityWithFieldsByFn "uuid, name" False entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityWithFieldsByFn "uuid, name" False entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 findQuestionnaireSimpleByUuid' :: U.UUID -> AppContextM (Maybe QuestionnaireSimple)
 findQuestionnaireSimpleByUuid' uuid = do
-  appUuid <- asks currentAppUuid
-  createFindEntityWithFieldsByFn' "uuid, name" entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityWithFieldsByFn' "uuid, name" entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 findQuestionnaireSuggestionByUuid' :: U.UUID -> AppContextM (Maybe QuestionnaireSuggestion)
 findQuestionnaireSuggestionByUuid' uuid = do
-  appUuid <- asks currentAppUuid
-  createFindEntityWithFieldsByFn' "uuid, name, description" entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityWithFieldsByFn' "uuid, name, description" entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 findQuestionnaireEventsByUuid :: U.UUID -> AppContextM [QuestionnaireEvent]
 findQuestionnaireEventsByUuid uuid = do
-  appUuid <- asks currentAppUuid
-  let sql = fromString "SELECT events FROM questionnaire qtn WHERE app_uuid = ? AND uuid = ?"
-  let params = [toField appUuid, toField uuid]
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "SELECT events FROM questionnaire qtn WHERE tenant_uuid = ? AND uuid = ?"
+  let params = [toField tenantUuid, toField uuid]
   logQuery sql params
   let action conn = query conn sql params
   entities <- runDB action :: AppContextM [QuestionnaireEventBundle]
@@ -394,11 +394,11 @@ findQuestionnaireSquashByUuid uuid =
 
 countQuestionnaires :: AppContextM Int
 countQuestionnaires = do
-  appUuid <- asks currentAppUuid
-  countQuestionnairesWithApp appUuid
+  tenantUuid <- asks currentTenantUuid
+  countQuestionnairesWithTenant tenantUuid
 
-countQuestionnairesWithApp :: U.UUID -> AppContextM Int
-countQuestionnairesWithApp appUuid = createCountByFn entityName appCondition [U.toString appUuid]
+countQuestionnairesWithTenant :: U.UUID -> AppContextM Int
+countQuestionnairesWithTenant tenantUuid = createCountByFn entityName tenantCondition [U.toString tenantUuid]
 
 insertQuestionnaire :: Questionnaire -> AppContextM Int64
 insertQuestionnaire qtn = do
@@ -408,11 +408,11 @@ insertQuestionnaire qtn = do
 
 updateQuestionnaireByUuid :: Questionnaire -> AppContextM ()
 updateQuestionnaireByUuid qtn = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, document_template_id = ?, format_uuid = ?, created_by = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, app_uuid = ?, project_tags = ?, answered_questions = ?, unanswered_questions = ? WHERE  app_uuid = ? AND uuid = ?"
-  let params = toRow qtn ++ [toField appUuid, toField . U.toText $ qtn.uuid]
+          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, document_template_id = ?, format_uuid = ?, created_by = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?, answered_questions = ?, unanswered_questions = ? WHERE  tenant_uuid = ? AND uuid = ?"
+  let params = toRow qtn ++ [toField tenantUuid, toField . U.toText $ qtn.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
@@ -478,15 +478,15 @@ updateQuestionnaireEventsWithIndicationByUuid qtnUuid squashed events phasesAnsw
 
 appendQuestionnaireEventByUuid :: U.UUID -> [QuestionnaireEvent] -> PhasesAnsweredIndication -> AppContextM ()
 appendQuestionnaireEventByUuid qtnUuid events phasesAnsweredIndication = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb, answered_questions = ?, unanswered_questions = ?, updated_at = now() WHERE app_uuid = ? AND uuid = ?"
+          "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb, answered_questions = ?, unanswered_questions = ?, updated_at = now() WHERE tenant_uuid = ? AND uuid = ?"
   let params =
         [ toJSONField events
         , toField $ phasesAnsweredIndication.answeredQuestions
         , toField $ phasesAnsweredIndication.unansweredQuestions
-        , toField appUuid
+        , toField tenantUuid
         , toField qtnUuid
         ]
   logInsertAndUpdate sql params
@@ -496,11 +496,11 @@ appendQuestionnaireEventByUuid qtnUuid events phasesAnsweredIndication = do
 
 appendQuestionnaireEventByUuid' :: U.UUID -> [QuestionnaireEvent] -> AppContextM ()
 appendQuestionnaireEventByUuid' qtnUuid events = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb, updated_at = now() WHERE app_uuid = ? AND uuid = ?"
-  let params = [toJSONField events, toField appUuid, toField qtnUuid]
+          "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb, updated_at = now() WHERE tenant_uuid = ? AND uuid = ?"
+  let params = [toJSONField events, toField tenantUuid, toField qtnUuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
@@ -520,34 +520,34 @@ deleteQuestionnaires = createDeleteEntitiesFn entityName
 
 deleteQuestionnairesFiltered :: [(String, String)] -> AppContextM Int64
 deleteQuestionnairesFiltered params = do
-  appUuid <- asks currentAppUuid
-  createDeleteEntitiesByFn entityName (appQueryUuid appUuid : params)
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntitiesByFn entityName (tenantQueryUuid tenantUuid : params)
 
 deleteQuestionnaireByUuid :: U.UUID -> AppContextM Int64
 deleteQuestionnaireByUuid uuid = do
-  appUuid <- asks currentAppUuid
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 -- ------------------------------------------------------------------------------------------------------------------------------
 -- PRIVATE
 -- ------------------------------------------------------------------------------------------------------------------------------
-qtnSelectSql appUuid userUuid perm =
+qtnSelectSql tenantUuid userUuid perm =
   f'
     "SELECT qtn.* \
     \FROM questionnaire qtn \
     \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
     \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
     \WHERE %s %s"
-    [qtnWhereSql appUuid userUuid perm]
+    [qtnWhereSql tenantUuid userUuid perm]
 
-qtnWhereSql appUuid userUuid perm =
+qtnWhereSql tenantUuid userUuid perm =
   f'
-    "qtn.app_uuid = '%s' \
+    "qtn.tenant_uuid = '%s' \
     \AND (visibility = 'VisibleEditQuestionnaire' \
     \OR visibility = 'VisibleCommentQuestionnaire' \
     \OR visibility = 'VisibleViewQuestionnaire' \
     \OR (visibility = 'PrivateQuestionnaire' and qtn_acl_user.user_uuid = '%s' AND qtn_acl_user.perms @> ARRAY %s))"
-    [appUuid, userUuid, perm]
+    [tenantUuid, userUuid, perm]
 
 enhance :: Questionnaire -> AppContextM Questionnaire
 enhance qtn = do

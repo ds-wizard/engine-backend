@@ -36,9 +36,9 @@ createTables = do
         \         entity          varchar not null, \
         \         body            json not null, \
         \         created_by      uuid, \
-        \         app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \           constraint audit_app_uuid_fk \
-        \             references app, \
+        \         tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \           constraint audit_tenant_uuid_fk \
+        \             references tenant, \
         \         created_at      timestamp with time zone not null \
         \     ); \
         \ create unique index audit_uuid_uindex \

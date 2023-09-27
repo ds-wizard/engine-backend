@@ -28,7 +28,7 @@ createTables = do
         \   old_questionnaire_uuid uuid not null, \
         \   new_questionnaire_uuid uuid not null, \
         \   resolved_question_uuids json not null, \
-        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
+        \   tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
         \   constraint questionnaire_migration_pk \
         \      primary key (old_questionnaire_uuid, new_questionnaire_uuid) \
         \ ); \

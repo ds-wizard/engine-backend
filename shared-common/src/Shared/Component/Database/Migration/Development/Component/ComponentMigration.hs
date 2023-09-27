@@ -8,7 +8,7 @@ import Shared.Component.Database.Migration.Development.Component.Data.Components
 
 runMigration :: AppContextC s sc m => m ()
 runMigration = do
-  logInfo _CMP_MIGRATION "(App/Component) started"
+  logInfo _CMP_MIGRATION "(Component/Component) started"
   deleteComponents
   insertComponent mailComponent
-  logInfo _CMP_MIGRATION "(App/Component) ended"
+  logInfo _CMP_MIGRATION "(Component/Component) ended"

@@ -13,7 +13,7 @@ instance ToRow DocumentTemplateAsset where
     , toField uuid
     , toField fileName
     , toField contentType
-    , toField appUuid
+    , toField tenantUuid
     , toField fileSize
     , toField createdAt
     , toField updatedAt
@@ -25,7 +25,7 @@ instance FromRow DocumentTemplateAsset where
     uuid <- field
     fileName <- field
     contentType <- field
-    appUuid <- field
+    tenantUuid <- field
     fileSize <- field
     createdAt <- field
     updatedAt <- field

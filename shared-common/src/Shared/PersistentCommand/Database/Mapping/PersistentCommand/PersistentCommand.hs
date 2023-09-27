@@ -25,7 +25,7 @@ instance FromField identity => FromRow (PersistentCommand identity) where
     lastErrorMessage <- field
     attempts <- field
     maxAttempts <- field
-    appUuid <- field
+    tenantUuid <- field
     createdBy <- field
     createdAt <- field
     updatedAt <- field
@@ -44,7 +44,7 @@ instance ToField identity => ToRow (PersistentCommand identity) where
     , toField lastErrorMessage
     , toField attempts
     , toField maxAttempts
-    , toField appUuid
+    , toField tenantUuid
     , toField createdBy
     , toField createdAt
     , toField updatedAt

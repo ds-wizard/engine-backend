@@ -14,7 +14,7 @@ data Branch = Branch
   , license :: String
   , previousPackageId :: Maybe String
   , createdBy :: Maybe U.UUID
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

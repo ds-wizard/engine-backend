@@ -7,7 +7,7 @@ import GHC.Generics
 import Shared.Common.Util.Aeson
 
 data InvokeClientCssCompilationCommand = InvokeClientCssCompilationCommand
-  { appUuid :: U.UUID
+  { tenantUuid :: U.UUID
   }
   deriving (Show, Eq, Generic)
 

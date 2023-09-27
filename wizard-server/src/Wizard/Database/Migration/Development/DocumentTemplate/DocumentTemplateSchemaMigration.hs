@@ -82,21 +82,21 @@ createTemplateTable = do
         \     allowed_packages       json                     not null, \
         \     formats                json                     not null, \
         \     created_at             timestamp with time zone not null, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \       constraint document_template_app_uuid_fk \
-        \         references app, \
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \       constraint document_template_tenant_uuid_fk \
+        \         references tenant, \
         \     updated_at             timestamp with time zone not null, \
         \     phase                  varchar                  not null default 'ReleasedDocumentTemplatePhase', \
         \     non_editable           boolean                  not null default false \
         \ ); \
         \ \
         \alter table document_template \
-        \    add constraint document_template_pk primary key (id, app_uuid); \
+        \    add constraint document_template_pk primary key (id, tenant_uuid); \
         \create unique index document_template_id_uindex \
-        \     on document_template (id, app_uuid); \
+        \     on document_template (id, tenant_uuid); \
         \ \
         \create index document_template_organization_id_template_id_index \
-        \     on document_template (organization_id, template_id, app_uuid); "
+        \     on document_template (organization_id, template_id, tenant_uuid); "
   let action conn = execute_ conn sql
   runDB action
 
@@ -109,23 +109,23 @@ createTemplateFileTable = do
         \   uuid uuid not null, \
         \   file_name varchar not null, \
         \   content varchar not null, \
-        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \     constraint document_template_file_app_uuid_fk \
-        \       references app, \
+        \   tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \     constraint document_template_file_tenant_uuid_fk \
+        \       references tenant, \
         \     created_at             timestamp with time zone not null, \
         \     updated_at             timestamp with time zone not null \
         \ ); \
         \  \
         \ alter table document_template_file \
         \   add constraint document_template_file_template_id_fk \
-        \      foreign key (document_template_id, app_uuid) references document_template (id, app_uuid); \
+        \      foreign key (document_template_id, tenant_uuid) references document_template (id, tenant_uuid); \
         \  \
         \ create unique index document_template_file_uuid_uindex \
-        \   on document_template_file (uuid, app_uuid); \
+        \   on document_template_file (uuid, tenant_uuid); \
         \  \
         \ alter table document_template_file \
         \   add constraint document_template_file_pk \
-        \      primary key (uuid, app_uuid); "
+        \      primary key (uuid, tenant_uuid); "
   let action conn = execute_ conn sql
   runDB action
 
@@ -138,9 +138,9 @@ createTemplateAssetTable = do
         \   uuid uuid not null, \
         \   file_name varchar not null, \
         \   content_type varchar not null, \
-        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \     constraint document_template_asset_app_uuid_fk \
-        \       references app, \
+        \   tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \     constraint document_template_asset_tenant_uuid_fk \
+        \       references tenant, \
         \   file_size bigint not null default 0, \
         \   created_at             timestamp with time zone not null, \
         \   updated_at             timestamp with time zone not null \
@@ -148,14 +148,14 @@ createTemplateAssetTable = do
         \  \
         \ alter table document_template_asset \
         \   add constraint document_template_asset_template_id_fk \
-        \      foreign key (document_template_id, app_uuid) references document_template (id, app_uuid); \
+        \      foreign key (document_template_id, tenant_uuid) references document_template (id, tenant_uuid); \
         \  \
         \ create unique index document_template_asset_uuid_uindex \
-        \   on document_template_asset (uuid, app_uuid); \
+        \   on document_template_asset (uuid, tenant_uuid); \
         \  \
         \ alter table document_template_asset \
         \   add constraint document_template_asset_pk \
-        \      primary key (uuid, app_uuid); "
+        \      primary key (uuid, tenant_uuid); "
   let action conn = execute_ conn sql
   runDB action
 
@@ -167,23 +167,23 @@ createDraftDataTable = do
         \   document_template_id varchar not null, \
         \   questionnaire_uuid uuid, \
         \   format_uuid uuid, \
-        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \     constraint document_template_draft_data_app_uuid_fk \
-        \       references app, \
+        \   tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \     constraint document_template_draft_data_tenant_uuid_fk \
+        \       references tenant, \
         \   created_at             timestamp with time zone not null, \
         \   updated_at             timestamp with time zone not null \
         \ ); \
         \  \
         \ alter table document_template_draft_data \
         \   add constraint document_template_draft_data_document_template_id_fk \
-        \      foreign key (document_template_id, app_uuid) references document_template (id, app_uuid); \
+        \      foreign key (document_template_id, tenant_uuid) references document_template (id, tenant_uuid); \
         \  \
         \ create unique index document_template_draft_data_document_template_id_uindex \
-        \   on document_template_draft_data (document_template_id, app_uuid); \
+        \   on document_template_draft_data (document_template_id, tenant_uuid); \
         \  \
         \ alter table document_template_draft_data \
         \   add constraint document_template_draft_data_pk \
-        \      primary key (document_template_id, app_uuid); "
+        \      primary key (document_template_id, tenant_uuid); "
   let action conn = execute_ conn sql
   runDB action
 

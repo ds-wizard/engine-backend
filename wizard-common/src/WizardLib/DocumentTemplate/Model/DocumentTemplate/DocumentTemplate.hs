@@ -28,7 +28,7 @@ data DocumentTemplate = DocumentTemplate
   , allowedPackages :: [PackagePattern]
   , formats :: [DocumentTemplateFormat]
   , nonEditable :: Bool
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -53,7 +53,7 @@ data DocumentTemplateFile = DocumentTemplateFile
   , uuid :: U.UUID
   , fileName :: String
   , content :: String
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -65,7 +65,7 @@ data DocumentTemplateAsset = DocumentTemplateAsset
   , fileName :: String
   , contentType :: String
   , fileSize :: Int64
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

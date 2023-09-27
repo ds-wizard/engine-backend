@@ -4,8 +4,8 @@ import Data.Maybe (fromJust)
 import Data.Time
 
 import Shared.Common.Util.Uuid
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Model.App.App
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 
 userGalileo :: User
@@ -25,7 +25,7 @@ userGalileo =
     , imageUrl = Nothing
     , groups = []
     , machine = False
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0

@@ -16,7 +16,7 @@ data CreateOrUpdateUserCommand = CreateOrUpdateUserCommand
   , uRole :: String
   , active :: Bool
   , imageUrl :: Maybe String
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   }
   deriving (Show, Eq, Generic)
 

@@ -9,8 +9,8 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Api.Resource.Usage.UsageJM ()
-import Wizard.Database.Migration.Development.Usage.Data.Usages
+import Wizard.Api.Resource.Tenant.Usage.TenantUsageJM ()
+import Wizard.Database.Migration.Development.Tenant.Data.TenantUsages
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
@@ -45,7 +45,7 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = defaultUsage
+      let expDto = defaultTenantUsage
       let expBody = encode expDto
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

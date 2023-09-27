@@ -4,7 +4,7 @@ import Data.Maybe (fromJust)
 import Data.Time
 import Text.RawString.QQ
 
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Uuid
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -16,7 +16,7 @@ fileDefaultHtml =
     , uuid = u' "7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
     , fileName = "default.html.j2"
     , content = html
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -32,7 +32,7 @@ fileDefaultCss =
     , uuid = u' "ae41aa74-9605-4dfb-b1f9-b6064adc1dbc"
     , fileName = "default.css"
     , content = css
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -44,7 +44,7 @@ fileNewFile =
     , uuid = u' "63279989-d9ac-49da-81d3-fc8a56a8aa62"
     , fileName = "new-file.txt"
     , content = "some content"
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -59,7 +59,7 @@ anotherFileHtml =
     , uuid = u' "7444f722-4972-4bf8-86d8-d4f01875572d"
     , fileName = "default.html.j2"
     , content = html
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -71,7 +71,7 @@ anotherFileCss =
     , uuid = u' "ac60ddb8-4561-4d4b-8d85-c8446bc96b56"
     , fileName = "default.css"
     , content = css
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -85,7 +85,7 @@ differentFileHtml =
     , uuid = u' "2d9eb63d-05fb-4eb7-9dc3-378b55d062ce"
     , fileName = "default.html.j2"
     , content = html
-    , appUuid = differentAppUuid
+    , tenantUuid = differentTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }

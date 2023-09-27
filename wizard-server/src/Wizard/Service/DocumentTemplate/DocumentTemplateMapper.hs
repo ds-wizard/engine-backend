@@ -39,7 +39,7 @@ toList tml mTmlR mOrgR state phase =
         case mOrgR of
           Just orgR -> orgR.logo
           Nothing -> Nothing
-    , appUuid = tml.appUuid
+    , tenantUuid = tml.tenantUuid
     , createdAt = tml.createdAt
     , updatedAt = tml.updatedAt
     }
@@ -146,7 +146,7 @@ fromChangeDTO dto tml =
     , allowedPackages = tml.allowedPackages
     , formats = tml.formats
     , nonEditable = tml.nonEditable
-    , appUuid = tml.appUuid
+    , tenantUuid = tml.tenantUuid
     , createdAt = tml.createdAt
     , updatedAt = tml.updatedAt
     }

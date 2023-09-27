@@ -15,12 +15,12 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.ActionKey.ActionKeyType
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.ActionKey.ActionKeyService
-import Wizard.Service.App.AppHelper
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Service.Tenant.Config.ConfigService
+import Wizard.Service.Tenant.TenantHelper
 import Wizard.Service.User.UserService
 import Wizard.Service.User.UserUtil
 import Wizard.Service.UserToken.Login.LoginService
@@ -42,20 +42,20 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionStat
     user <- createUserFromExternalService mUserFromDb authId firstName lastName email mPicture mUserUuid (not consentRequired)
     case (mUserFromDb, consentRequired) of
       (Nothing, True) -> do
-        actionKey <- createActionKey user.uuid ConsentsRequiredActionKey user.appUuid
+        actionKey <- createActionKey user.uuid ConsentsRequiredActionKey user.tenantUuid
         return $ ConsentsRequiredDTO {hash = actionKey.hash}
       _ -> createLoginToken user mUserAgent mSessionState
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-createOpenIDClient :: String -> Maybe String -> AppContextM (AppConfigAuthExternalService, O.OIDC)
+createOpenIDClient :: String -> Maybe String -> AppContextM (TenantConfigAuthExternalService, O.OIDC)
 createOpenIDClient authId mClientUrl = do
   httpClientManager <- asks httpClientManager
   serverConfig <- asks serverConfig
-  appConfig <- getAppConfig
-  clientUrl <- getAppClientUrl
-  case L.find (\s -> s.aId == authId) appConfig.authentication.external.services of
+  tenantConfig <- getCurrentTenantConfig
+  clientUrl <- getClientUrl
+  case L.find (\s -> s.aId == authId) tenantConfig.authentication.external.services of
     Just service -> do
       prov <- liftIO $ O.discover (T.pack service.url) httpClientManager
       let cId = BS.pack service.clientId

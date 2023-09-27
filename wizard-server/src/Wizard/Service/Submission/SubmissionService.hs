@@ -19,32 +19,32 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Integration.Http.Submission.Runner
 import Wizard.Localization.Messages.Public
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Document.Document
 import Wizard.Model.Submission.Submission
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Common
-import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Document.DocumentAcl
 import Wizard.Service.Submission.SubmissionAcl
 import Wizard.Service.Submission.SubmissionMapper
 import Wizard.Service.Submission.SubmissionUtil
+import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.User.UserProfileService
 
 getAvailableServicesForSubmission :: U.UUID -> AppContextM [SubmissionServiceSimpleDTO]
 getAvailableServicesForSubmission docUuid = do
   checkIfSubmissionIsEnabled
   checkPermissionToSubmission docUuid
-  appConfig <- getAppConfig
+  tenantConfig <- getCurrentTenantConfig
   doc <- findDocumentByUuid docUuid
   checkEditPermissionToDoc doc.questionnaireUuid
-  return . fmap toSubmissionServiceSimpleDTO . filter (filterService doc) $ appConfig.submission.services
+  return . fmap toSubmissionServiceSimpleDTO . filter (filterService doc) $ tenantConfig.submission.services
   where
-    filterService :: Document -> AppConfigSubmissionService -> Bool
+    filterService :: Document -> TenantConfigSubmissionService -> Bool
     filterService doc service = any (filterServiceFormat doc) $ service.supportedFormats
-    filterServiceFormat :: Document -> AppConfigSubmissionServiceSupportedFormat -> Bool
+    filterServiceFormat :: Document -> TenantConfigSubmissionServiceSupportedFormat -> Bool
     filterServiceFormat doc supportedFormat =
       (supportedFormat.templateId == doc.documentTemplateId) && (supportedFormat.formatUuid == doc.formatUuid)
 
@@ -61,8 +61,8 @@ submitDocument docUuid reqDto =
   runInTransaction $ do
     checkIfSubmissionIsEnabled
     checkPermissionToSubmission docUuid
-    appConfig <- getAppConfig
-    case L.find (\s -> s.sId == reqDto.serviceId) appConfig.submission.services of
+    tenantConfig <- getCurrentTenantConfig
+    case L.find (\s -> s.sId == reqDto.serviceId) tenantConfig.submission.services of
       Just definition -> do
         doc <- findDocumentByUuid docUuid
         checkEditPermissionToDoc doc.questionnaireUuid
@@ -103,14 +103,14 @@ submitDocument docUuid reqDto =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-checkIfSubmissionIsEnabled = checkIfAppFeatureIsEnabled "Submission" (\c -> c.submission.enabled)
+checkIfSubmissionIsEnabled = checkIfTenantFeatureIsEnabled "Submission" (\c -> c.submission.enabled)
 
 createSubmission :: U.UUID -> SubmissionCreateDTO -> AppContextM Submission
 createSubmission docUuid reqDto = do
   sUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
-  let sub = fromCreate sUuid reqDto.serviceId docUuid appUuid currentUser.uuid now
+  let sub = fromCreate sUuid reqDto.serviceId docUuid tenantUuid currentUser.uuid now
   insertSubmission sub
   return sub

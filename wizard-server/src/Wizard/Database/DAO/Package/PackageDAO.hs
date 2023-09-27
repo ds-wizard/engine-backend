@@ -58,7 +58,7 @@ findPackageSuggestionsPage :: Maybe String -> Maybe [String] -> Maybe [String] -
 findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pageable sort =
   -- 1. Prepare variables
   do
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
     let mSelectIdsLike = fmap (fmap (replace "all" "%")) mSelectIds
     let selectCondition =
@@ -95,13 +95,13 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pag
               \        version, \
               \        description \
               \FROM package outer_package \
-              \WHERE app_uuid = ? AND id IN ( \
+              \WHERE tenant_uuid = ? AND id IN ( \
               \    SELECT CONCAT(organization_id, ':', km_id, ':', \
               \                  (max(string_to_array(version, '.')::int[]))[1] || '.' || \
               \                  (max(string_to_array(version, '.')::int[]))[2] || '.' || \
               \                  (max(string_to_array(version, '.')::int[]))[3]) \
               \    FROM package \
-              \    WHERE app_uuid = ? \
+              \    WHERE tenant_uuid = ? \
               \      AND (name ~* ? OR id ~* ?) %s %s %s %s \
               \    GROUP BY organization_id, km_id) \
               \%s \
@@ -109,7 +109,7 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pag
               \LIMIT %s"
               [selectCondition, excludeCondition, phaseCondition, nonEditableCondition, mapSort sort, show skip, show sizeI]
     let params =
-          [U.toString appUuid, U.toString appUuid]
+          [U.toString tenantUuid, U.toString tenantUuid]
             ++ [regex mQuery]
             ++ [regex mQuery]
             ++ fromMaybe [] mSelectIdsLike
@@ -129,18 +129,18 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pag
 
 countPackageSuggestions :: Maybe String -> String -> String -> Maybe [String] -> Maybe [String] -> String -> String -> AppContextM Int
 countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike mExcludeIdsLike phaseCondition nonEditableCondition = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString $
           f'
             "SELECT COUNT(*) \
             \FROM (SELECT COUNT(*) \
             \   FROM package \
-            \   WHERE app_uuid = ? AND (name ~* ? OR id ~* ?) %s %s %s %s \
+            \   WHERE tenant_uuid = ? AND (name ~* ? OR id ~* ?) %s %s %s %s \
             \   GROUP BY organization_id, km_id) nested"
             [selectCondition, excludeCondition, phaseCondition, nonEditableCondition]
   let params =
-        [U.toString appUuid, regex mQuery, regex mQuery]
+        [U.toString tenantUuid, regex mQuery, regex mQuery]
           ++ fromMaybe [] mSelectIdsLike
           ++ fromMaybe [] mExcludeIdsLike
   logQuery sql params
@@ -152,9 +152,9 @@ countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike m
 
 updatePackagePhaseById :: String -> PackagePhase -> AppContextM Int64
 updatePackagePhaseById pkgId phase = do
-  appUuid <- asks currentAppUuid
-  let sql = fromString "UPDATE package SET phase = ? WHERE app_uuid = ? AND id = ?"
-  let params = [toField phase, toField appUuid, toField pkgId]
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE package SET phase = ? WHERE tenant_uuid = ? AND id = ?"
+  let params = [toField phase, toField tenantUuid, toField pkgId]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action

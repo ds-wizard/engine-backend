@@ -14,12 +14,12 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document

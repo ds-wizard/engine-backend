@@ -20,34 +20,34 @@ pageLabel = "migrations"
 
 findMigratorStates :: AppContextM [MigratorState]
 findMigratorStates = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findMigratorStatesByOldQuestionnaireUuid :: U.UUID -> AppContextM [MigratorState]
 findMigratorStatesByOldQuestionnaireUuid oldQtnUuid = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("old_questionnaire_uuid", U.toString oldQtnUuid)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("old_questionnaire_uuid", U.toString oldQtnUuid)]
 
 findMigratorStateByNewQuestionnaireUuid :: U.UUID -> AppContextM MigratorState
 findMigratorStateByNewQuestionnaireUuid newQuestionnaireUuid = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("new_questionnaire_uuid", U.toString newQuestionnaireUuid)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("new_questionnaire_uuid", U.toString newQuestionnaireUuid)]
 
 findMigratorStateByNewQuestionnaireUuid' :: U.UUID -> AppContextM (Maybe MigratorState)
 findMigratorStateByNewQuestionnaireUuid' newQuestionnaireUuid = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn' entityName [appQueryUuid appUuid, ("new_questionnaire_uuid", U.toString newQuestionnaireUuid)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("new_questionnaire_uuid", U.toString newQuestionnaireUuid)]
 
 insertMigratorState :: MigratorState -> AppContextM Int64
 insertMigratorState = createInsertFn entityName
 
 updateMigratorStateByNewQuestionnaireUuid :: MigratorState -> AppContextM Int64
 updateMigratorStateByNewQuestionnaireUuid ms = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE questionnaire_migration SET old_questionnaire_uuid = ?, new_questionnaire_uuid = ?, resolved_question_uuids = ?, app_uuid = ? WHERE app_uuid = ? AND new_questionnaire_uuid = ?"
-  let params = toRow ms ++ [toField appUuid, toField ms.newQuestionnaireUuid]
+          "UPDATE questionnaire_migration SET old_questionnaire_uuid = ?, new_questionnaire_uuid = ?, resolved_question_uuids = ?, tenant_uuid = ? WHERE tenant_uuid = ? AND new_questionnaire_uuid = ?"
+  let params = toRow ms ++ [toField tenantUuid, toField ms.newQuestionnaireUuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -57,5 +57,5 @@ deleteMigratorStates = createDeleteEntitiesFn entityName
 
 deleteMigratorStateByNewQuestionnaireUuid :: U.UUID -> AppContextM Int64
 deleteMigratorStateByNewQuestionnaireUuid newQuestionnaireUuid = do
-  appUuid <- asks currentAppUuid
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("new_questionnaire_uuid", U.toString newQuestionnaireUuid)]
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("new_questionnaire_uuid", U.toString newQuestionnaireUuid)]

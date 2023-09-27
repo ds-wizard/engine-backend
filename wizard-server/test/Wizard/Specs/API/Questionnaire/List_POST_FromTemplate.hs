@@ -20,11 +20,11 @@ import qualified Wizard.Database.Migration.Development.DocumentTemplate.Document
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
-import Wizard.Model.Config.AppConfig hiding (request)
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Service.Config.App.AppConfigMapper
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Model.Tenant.Config.TenantConfig hiding (request)
+import Wizard.Service.Tenant.Config.ConfigMapper
+import Wizard.Service.Tenant.Config.ConfigService
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -100,10 +100,10 @@ test_400 appContext =
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto = UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Questionnaire Template"
       let expBody = encode expDto
-      -- AND: Change appConfig
-      (Right appConfig) <- runInContextIO getAppConfig appContext
-      let updatedAppConfig = appConfig {questionnaire = appConfig.questionnaire {questionnaireCreation = CustomQuestionnaireCreation}}
-      runInContextIO (modifyAppConfigDto (toChangeDTO updatedAppConfig)) appContext
+      -- AND: Change tenantConfig
+      (Right tenantConfig) <- runInContextIO getCurrentTenantConfig appContext
+      let updatedTenantConfig = tenantConfig {questionnaire = tenantConfig.questionnaire {questionnaireCreation = CustomQuestionnaireCreation}}
+      runInContextIO (modifyTenantConfigDto (toChangeDTO updatedTenantConfig)) appContext
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext

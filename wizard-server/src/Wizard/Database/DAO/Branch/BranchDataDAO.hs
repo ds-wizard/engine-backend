@@ -31,8 +31,8 @@ findBranchesForSquashing = do
 
 findBranchDataById :: U.UUID -> AppContextM BranchData
 findBranchDataById branchUuid = do
-  appUuid <- asks currentAppUuid
-  createFindEntityWithFieldsByFn "*" False entityName [appQueryUuid appUuid, ("branch_uuid", U.toString branchUuid)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityWithFieldsByFn "*" False entityName [tenantQueryUuid tenantUuid, ("branch_uuid", U.toString branchUuid)]
 
 findBranchDataByIdForSquashingLocked :: U.UUID -> AppContextM BranchData
 findBranchDataByIdForSquashingLocked branchUuid =
@@ -47,24 +47,24 @@ insertBranchData = createInsertFn entityName
 
 updateBranchDataById :: BranchData -> AppContextM Int64
 updateBranchDataById branchData = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE branch_data SET branch_uuid = ?, metamodel_version = ?, events = ?, app_uuid = ?, created_at = ?, updated_at = ?, squashed = ? WHERE app_uuid = ? AND branch_uuid = ?;"
+          "UPDATE branch_data SET branch_uuid = ?, metamodel_version = ?, events = ?, tenant_uuid = ?, created_at = ?, updated_at = ?, squashed = ? WHERE tenant_uuid = ? AND branch_uuid = ?;"
   let params =
         toRow branchData
-          ++ [toField appUuid, toField . U.toText $ branchData.branchUuid]
+          ++ [toField tenantUuid, toField . U.toText $ branchData.branchUuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
 
 appendBranchEventByUuid :: U.UUID -> [Event] -> AppContextM ()
 appendBranchEventByUuid branchUuid events = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE branch_data SET events = events::jsonb || ?::jsonb, squashed = false, updated_at = now() WHERE app_uuid = ? AND branch_uuid = ?"
-  let params = [toJSONField events, toField appUuid, toField branchUuid]
+          "UPDATE branch_data SET events = events::jsonb || ?::jsonb, squashed = false, updated_at = now() WHERE tenant_uuid = ? AND branch_uuid = ?"
+  let params = [toJSONField events, toField tenantUuid, toField branchUuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action

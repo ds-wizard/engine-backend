@@ -26,7 +26,7 @@ data DocumentTemplateList = DocumentTemplateList
   , remoteVersion :: Maybe String
   , remoteOrganizationName :: Maybe String
   , remoteOrganizationLogo :: Maybe String
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

@@ -27,25 +27,25 @@ import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Public
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.Document.DocumentS3
-import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Document.Context.DocumentContextService
 import Wizard.Service.Document.DocumentAcl
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Document.DocumentUtil
 import Wizard.Service.DocumentTemplate.DocumentTemplateService
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
-import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import Wizard.Service.TemporaryFile.TemporaryFileService
+import Wizard.Service.Tenant.Config.ConfigService
+import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 getDocumentsPageDto :: Maybe U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
@@ -72,15 +72,15 @@ createDocument reqDto =
     mCurrentUser <- asks currentUser
     dUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     let qtnEvents =
           case reqDto.questionnaireEventUuid of
             Just eventUuid -> takeWhileInclusive (\e -> getUuid e /= eventUuid) qtn.events
             Nothing -> qtn.events
     qtnCtn <- compileQuestionnairePreview qtnEvents
-    appConfig <- getAppConfig
-    let repliesHash = computeHash qtn qtnCtn appConfig mCurrentUser
-    let doc = fromCreateDTO reqDto dUuid repliesHash qtn.events mCurrentUser appUuid now
+    tenantConfig <- getCurrentTenantConfig
+    let repliesHash = computeHash qtn qtnCtn tenantConfig mCurrentUser
+    let doc = fromCreateDTO reqDto dUuid repliesHash qtn.events mCurrentUser tenantUuid now
     insertDocument doc
     publishToPersistentCommandQueue doc
     return $ toDTO doc (Just qtnSimple) [] tml
@@ -132,9 +132,9 @@ createDocumentPreview :: DocumentTemplate -> Questionnaire -> U.UUID -> AppConte
 createDocumentPreview tml qtn formatUuid = do
   docs <- findDocumentsFiltered [("questionnaire_uuid", U.toString qtn.uuid), ("durability", "TemporallyDocumentDurability")]
   qtnCtn <- compileQuestionnaire qtn
-  appConfig <- getAppConfig
+  tenantConfig <- getCurrentTenantConfig
   mCurrentUser <- asks currentUser
-  let repliesHash = computeHash qtn qtnCtn appConfig mCurrentUser
+  let repliesHash = computeHash qtn qtnCtn tenantConfig mCurrentUser
   logDebugI _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
   let matchingDocs = filter (\d -> d.questionnaireRepliesHash == repliesHash) docs
   case filter (filterAlreadyDoneDocument tml.tId formatUuid) matchingDocs of
@@ -156,7 +156,7 @@ createDocumentPreview tml qtn formatUuid = do
           validateMetamodelVersion tml
           dUuid <- liftIO generateUuid
           now <- liftIO getCurrentTime
-          let doc = fromTemporallyCreateDTO dUuid qtn tml.tId formatUuid repliesHash mCurrentUser appConfig.uuid now
+          let doc = fromTemporallyCreateDTO dUuid qtn tml.tId formatUuid repliesHash mCurrentUser tenantConfig.uuid now
           insertDocument doc
           publishToPersistentCommandQueue doc
           return (doc, TemporaryFileMapper.emptyFileDTO)

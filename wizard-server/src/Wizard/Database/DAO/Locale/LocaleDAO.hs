@@ -27,8 +27,8 @@ pageLabel = "locales"
 
 findLocales :: AppContextM [Locale]
 findLocales = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findLocalesPage :: Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page LocaleList)
 findLocalesPage mOrganizationId mLocaleId mQuery pageable sort =
@@ -48,63 +48,63 @@ findLocalesPage mOrganizationId mLocaleId mQuery pageable sort =
 
 findLocalesFiltered :: [(String, String)] -> AppContextM [Locale]
 findLocalesFiltered queryParams = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName (tenantQueryUuid tenantUuid : queryParams)
 
-findLocalesFilteredWithApp :: U.UUID -> [(String, String)] -> AppContextM [Locale]
-findLocalesFilteredWithApp appUuid queryParams = createFindEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
+findLocalesFilteredWithTenant :: U.UUID -> [(String, String)] -> AppContextM [Locale]
+findLocalesFilteredWithTenant tenantUuid queryParams = createFindEntitiesByFn entityName (tenantQueryUuid tenantUuid : queryParams)
 
-findLocalesByCodeWithApp :: U.UUID -> String -> String -> AppContextM [LocaleSimple]
-findLocalesByCodeWithApp appUuid code shortCode = do
+findLocalesByCodeWithTenant :: U.UUID -> String -> String -> AppContextM [LocaleSimple]
+findLocalesByCodeWithTenant tenantUuid code shortCode = do
   let sql =
         fromString
           "SELECT id, name, code, default_locale \
           \FROM locale \
-          \WHERE app_uuid = ? \
+          \WHERE tenant_uuid = ? \
           \  AND enabled = true \
           \  AND (code = ? \
           \    OR code = ? \
           \    OR default_locale = true);"
-  let params = [toField . U.toString $ appUuid, toField code, toField shortCode]
+  let params = [toField . U.toString $ tenantUuid, toField code, toField shortCode]
   logQuery sql params
   let action conn = query conn sql params
   runDB action
 
 findLocalesByOrganizationIdAndLocaleId :: String -> String -> AppContextM [Locale]
 findLocalesByOrganizationIdAndLocaleId organizationId localeId = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("organization_id", organizationId), ("locale_id", localeId)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("organization_id", organizationId), ("locale_id", localeId)]
 
 findLocaleById :: String -> AppContextM Locale
 findLocaleById lclId = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("id", lclId)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", lclId)]
 
 findLocaleById' :: String -> AppContextM (Maybe Locale)
 findLocaleById' lclId = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn' entityName [appQueryUuid appUuid, ("id", lclId)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("id", lclId)]
 
-findSimpleLocaleByIdWithApp :: U.UUID -> String -> AppContextM LocaleSimple
-findSimpleLocaleByIdWithApp appUuid lclId =
-  createFindEntityWithFieldsByFn "id, name, code, default_locale" False entityName [appQueryUuid appUuid, ("id", lclId)]
+findSimpleLocaleByIdWithTenant :: U.UUID -> String -> AppContextM LocaleSimple
+findSimpleLocaleByIdWithTenant tenantUuid lclId =
+  createFindEntityWithFieldsByFn "id, name, code, default_locale" False entityName [tenantQueryUuid tenantUuid, ("id", lclId)]
 
 updateLocaleById :: Locale -> AppContextM Int64
 updateLocaleById locale = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE locale SET id = ?, name = ?, description = ?, code = ?, organization_id = ?, locale_id = ?, version = ?, default_locale = ?, license = ?, readme = ?, recommended_app_version = ?, enabled = ?, app_uuid = ?, created_at = ?, updated_at = ? WHERE app_uuid = ? AND id = ?"
-  let params = toRow locale ++ [toField appUuid, toField locale.lId]
+          "UPDATE locale SET id = ?, name = ?, description = ?, code = ?, organization_id = ?, locale_id = ?, version = ?, default_locale = ?, license = ?, readme = ?, recommended_app_version = ?, enabled = ?, tenant_uuid = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND id = ?"
+  let params = toRow locale ++ [toField tenantUuid, toField locale.lId]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
 
 unsetDefaultLocale :: AppContextM ()
 unsetDefaultLocale = do
-  appUuid <- asks currentAppUuid
-  let sql = fromString "UPDATE locale SET default_locale = false WHERE app_uuid = ?"
-  let params = [toField appUuid]
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE locale SET default_locale = false WHERE tenant_uuid = ?"
+  let params = [toField tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -112,9 +112,9 @@ unsetDefaultLocale = do
 
 unsetEnabledLocale :: String -> AppContextM ()
 unsetEnabledLocale code = do
-  appUuid <- asks currentAppUuid
-  let sql = fromString "UPDATE locale SET enabled = false WHERE app_uuid = ? AND code = ?"
-  let params = [toField appUuid, toField code]
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE locale SET enabled = false WHERE tenant_uuid = ? AND code = ?"
+  let params = [toField tenantUuid, toField code]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -128,5 +128,5 @@ deleteLocales = createDeleteEntitiesFn entityName
 
 deleteLocaleById :: String -> AppContextM Int64
 deleteLocaleById lclId = do
-  appUuid <- asks currentAppUuid
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("id", lclId)]
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", lclId)]

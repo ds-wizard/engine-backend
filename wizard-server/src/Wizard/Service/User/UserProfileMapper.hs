@@ -6,7 +6,7 @@ import qualified Data.Map.Strict as M
 import Data.Time (UTCTime)
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 
 toUserSubmissionPropsDTO :: UserSubmissionProps -> String -> UserSubmissionPropsDTO
@@ -34,7 +34,7 @@ fromUserProfileChangeDTO oldUser dto now =
     , imageUrl = oldUser.imageUrl
     , groups = oldUser.groups
     , machine = oldUser.machine
-    , appUuid = oldUser.appUuid
+    , tenantUuid = oldUser.tenantUuid
     , lastVisitedAt = oldUser.lastVisitedAt
     , createdAt = oldUser.createdAt
     , updatedAt = now
@@ -47,7 +47,7 @@ fromUserSubmissionPropsDTO user submissionProps now =
     , updatedAt = now
     }
 
-fromService :: AppConfigSubmissionService -> UserSubmissionPropsDTO
+fromService :: TenantConfigSubmissionService -> UserSubmissionPropsDTO
 fromService service =
   UserSubmissionPropsDTO
     { sId = service.sId

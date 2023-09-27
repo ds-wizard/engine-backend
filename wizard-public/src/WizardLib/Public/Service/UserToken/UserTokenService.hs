@@ -54,16 +54,16 @@ deleteTokenByUuid uuid = do
   deleteUserTokenByUuid uuid
   return ()
 
-deleteTokensByAppUuid
+deleteTokensByTenantUuid
   :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
      )
   => U.UUID
   -> m ()
-deleteTokensByAppUuid appUuid = do
-  userTokens <- findUserTokensByAppUuid appUuid
-  traverse_ (\t -> deleteUserTokenByUuidAndAppUuid t.uuid appUuid) userTokens
+deleteTokensByTenantUuid tenantUuid = do
+  userTokens <- findUserTokensByTenantUuid tenantUuid
+  traverse_ (\t -> deleteUserTokenByUuidAndTenantUuid t.uuid tenantUuid) userTokens
 
 deleteTokenByUserUuid
   :: ( AppContextC s sc m

@@ -33,9 +33,9 @@ createTables = do
         \     last_error_message varchar, \
         \     attempts int not null, \
         \     max_attempts int not null, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \       constraint persistent_command_app_uuid_fk \
-        \         references app, \
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \       constraint persistent_command_tenant_uuid_fk \
+        \         references tenant, \
         \     created_by uuid \
         \       constraint persistent_command_created_by_fk \
         \         references user_entity, \

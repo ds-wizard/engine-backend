@@ -39,7 +39,7 @@ createTables = do
         \     readme                    varchar not null,\
         \     recommended_app_version   varchar not null,\
         \     enabled                   bool not null,\
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null,\
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null,\
         \     created_at timestamp with time zone not null,\
         \     updated_at timestamp with time zone not null\
         \ ); \

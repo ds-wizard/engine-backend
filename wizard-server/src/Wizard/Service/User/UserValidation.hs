@@ -13,13 +13,13 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 validateUserEmailUniqueness :: String -> U.UUID -> AppContextM ()
-validateUserEmailUniqueness email appUuid = do
-  mUserFromDb <- findUserByEmailAndAppUuid' (toLower <$> email) appUuid
+validateUserEmailUniqueness email tenantUuid = do
+  mUserFromDb <- findUserByEmailAndTenantUuid' (toLower <$> email) tenantUuid
   case mUserFromDb of
     Just _ -> throwError $ ValidationError [] (M.singleton "email" [_ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email])
     Nothing -> return ()
 
 validateUserChangedEmailUniqueness :: String -> String -> AppContextM ()
 validateUserChangedEmailUniqueness newEmail oldEmail = do
-  appUuid <- asks currentAppUuid
-  when (newEmail /= oldEmail) (validateUserEmailUniqueness newEmail appUuid)
+  tenantUuid <- asks currentTenantUuid
+  when (newEmail /= oldEmail) (validateUserEmailUniqueness newEmail tenantUuid)

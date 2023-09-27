@@ -18,31 +18,31 @@ import Wizard.Api.Resource.Locale.LocaleChangeDTO
 import Wizard.Api.Resource.Locale.LocaleCreateDTO
 import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Api.Resource.Locale.LocaleDetailDTO
-import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Locale.LocaleDAO
 import Wizard.Database.DAO.Registry.RegistryLocaleDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
-import Wizard.Model.App.App
-import Wizard.Model.Config.AppConfig
+import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Locale.LocaleSimple
 import Wizard.Model.Locale.LocaleState
+import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Tenant
 import Wizard.S3.Locale.LocaleS3
-import Wizard.Service.App.AppHelper
-import Wizard.Service.Config.App.AppConfigService
-import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Locale.LocaleMapper
 import Wizard.Service.Locale.LocaleValidation
+import Wizard.Service.Tenant.Config.ConfigService
+import Wizard.Service.Tenant.Limit.LimitService
+import Wizard.Service.Tenant.TenantHelper
 
 getLocalesPage :: Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page LocaleDTO)
 getLocalesPage mOrganizationId mLocaleId mQuery pageable sort = do
   checkPermission _LOC_PERM
   locales <- findLocalesPage mOrganizationId mLocaleId mQuery pageable sort
-  appConfig <- getAppConfig
-  return . fmap (toDTO appConfig.registry.enabled) $ locales
+  tenantConfig <- getCurrentTenantConfig
+  return . fmap (toDTO tenantConfig.registry.enabled) $ locales
 
 createLocale :: LocaleCreateDTO -> AppContextM LocaleDTO
 createLocale reqDto =
@@ -50,15 +50,15 @@ createLocale reqDto =
     checkPermission _LOC_PERM
     checkLocaleLimit
     now <- liftIO getCurrentTime
-    appConfig <- getAppConfig
-    let organizationId = appConfig.organization.organizationId
+    tenantConfig <- getCurrentTenantConfig
+    let organizationId = tenantConfig.organization.organizationId
     validateLocaleCreate reqDto organizationId
     let defaultLocale = False
-    let locale = fromCreateDTO reqDto organizationId defaultLocale appConfig.uuid now
+    let locale = fromCreateDTO reqDto organizationId defaultLocale tenantConfig.uuid now
     insertLocale locale
     putLocale locale.lId reqDto.content
-    appConfig <- getAppConfig
-    return . toDTO appConfig.registry.enabled $ toLocaleList locale UnknownLocaleState
+    tenantConfig <- getCurrentTenantConfig
+    return . toDTO tenantConfig.registry.enabled $ toLocaleList locale UnknownLocaleState
 
 getLocaleForId :: String -> AppContextM LocaleDetailDTO
 getLocaleForId lclId = do
@@ -73,16 +73,16 @@ getLocaleForId lclId = do
 getLocaleContentForId :: String -> Maybe String -> AppContextM BS.ByteString
 getLocaleContentForId code mClientUrl = do
   serverConfig <- asks serverConfig
-  app <-
+  tenant <-
     if serverConfig.cloud.enabled
-      then maybe getCurrentApp findAppByClientUrl mClientUrl
-      else getCurrentApp
+      then maybe getCurrentTenant findTenantByClientUrl mClientUrl
+      else getCurrentTenant
   let shortCode =
         case splitOn "-" code of
           [] -> code
           [x] -> code
           (language : _) -> language
-  locales <- findLocalesByCodeWithApp app.uuid code shortCode
+  locales <- findLocalesByCodeWithTenant tenant.uuid code shortCode
   locale <-
     case L.find (\l -> l.code == code) locales of
       Just locale -> return locale
@@ -90,9 +90,9 @@ getLocaleContentForId code mClientUrl = do
         Just locale -> return locale
         Nothing -> case L.find (\l -> l.defaultLocale) locales of
           Just locale -> return locale
-          Nothing -> findSimpleLocaleByIdWithApp app.uuid defaultLocaleId
+          Nothing -> findSimpleLocaleByIdWithTenant tenant.uuid defaultLocaleId
   if locale.lId /= defaultLocaleId
-    then retrieveLocaleWithApp app.uuid locale.lId
+    then retrieveLocaleWithTenant tenant.uuid locale.lId
     else return "{}"
 
 modifyLocale :: String -> LocaleChangeDTO -> AppContextM LocaleDTO
@@ -106,8 +106,8 @@ modifyLocale lclId reqDto = do
     when (updatedLocale.defaultLocale && not locale.defaultLocale) unsetDefaultLocale
     when (updatedLocale.enabled && not locale.enabled) (unsetEnabledLocale updatedLocale.code)
     updateLocaleById updatedLocale
-    appConfig <- getAppConfig
-    return . toDTO appConfig.registry.enabled $ toLocaleList updatedLocale UnknownLocaleState
+    tenantConfig <- getCurrentTenantConfig
+    return . toDTO tenantConfig.registry.enabled $ toLocaleList updatedLocale UnknownLocaleState
 
 deleteLocalesByQueryParams :: [(String, String)] -> AppContextM ()
 deleteLocalesByQueryParams queryParams =

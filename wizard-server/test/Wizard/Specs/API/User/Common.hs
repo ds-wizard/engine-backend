@@ -9,8 +9,8 @@ import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Model.App.App
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.User.UserUtil
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
@@ -41,7 +41,7 @@ assertAbsenceOfUserInDB appContext user = do
   liftIO $
     error
       `shouldBe` NotExistsError
-        (_ERROR_DATABASE__ENTITY_NOT_FOUND "user_entity" [("app_uuid", U.toString defaultApp.uuid), ("uuid", U.toString user.uuid)])
+        (_ERROR_DATABASE__ENTITY_NOT_FOUND "user_entity" [("tenant_uuid", U.toString defaultTenant.uuid), ("uuid", U.toString user.uuid)])
 
 assertUserTokenInDB appContext user size = do
   eUserTokens <- runInContextIO (findUserTokensByUserUuid user.uuid) appContext

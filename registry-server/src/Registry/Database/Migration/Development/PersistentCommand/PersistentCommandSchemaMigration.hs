@@ -33,7 +33,7 @@ createTables = do
         \     last_error_message varchar, \
         \     attempts int not null, \
         \     max_attempts int not null, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
         \     created_by varchar not null \
         \       constraint persistent_command_created_by_fk \
         \         references organization, \

@@ -4,13 +4,13 @@ import Shared.Common.Util.Date
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
-import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Package.Data.Packages
-import Wizard.Model.App.App
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
+import Wizard.Model.Tenant.Tenant
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 import WizardLib.KnowledgeModel.Database.Migration.Development.Event.Data.Events
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
@@ -53,6 +53,6 @@ differentMigratorState =
     , targetPackageEvents = []
     , resultEvents = []
     , currentKnowledgeModel = Nothing
-    , appUuid = differentApp.uuid
+    , tenantUuid = differentTenant.uuid
     , createdAt = dt'' 2018 1 1 1
     }

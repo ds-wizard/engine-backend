@@ -10,7 +10,7 @@ import WizardLib.KnowledgeModel.Model.Package.Package
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 
 fromOwl :: String -> String -> String -> String -> Maybe String -> [Event] -> U.UUID -> UTCTime -> PackageWithEvents
-fromOwl name organizationId kmId version mPreviousPackageId events appUuid now =
+fromOwl name organizationId kmId version mPreviousPackageId events tenantUuid now =
   PackageWithEvents
     { pId = buildCoordinate organizationId kmId version
     , name = name
@@ -27,6 +27,6 @@ fromOwl name organizationId kmId version mPreviousPackageId events appUuid now =
     , mergeCheckpointPackageId = Nothing
     , events = events
     , nonEditable = False
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = now
     }

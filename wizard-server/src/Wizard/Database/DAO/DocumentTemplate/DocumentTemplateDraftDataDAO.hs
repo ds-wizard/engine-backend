@@ -17,19 +17,19 @@ entityName = "document_template_draft_data"
 
 findDraftDataById :: String -> AppContextM DocumentTemplateDraftData
 findDraftDataById id = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("document_template_id", id)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", id)]
 
 insertDraftData :: DocumentTemplateDraftData -> AppContextM Int64
 insertDraftData = createInsertFn entityName
 
 updateDraftDataById :: DocumentTemplateDraftData -> AppContextM Int64
 updateDraftDataById draftData = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE document_template_draft_data SET document_template_id = ?, questionnaire_uuid = ?, format_uuid = ?, app_uuid = ?, created_at = ?, updated_at = ? WHERE app_uuid = ? AND document_template_id = ?"
-  let params = toRow draftData ++ [toField draftData.appUuid, toField draftData.documentTemplateId]
+          "UPDATE document_template_draft_data SET document_template_id = ?, questionnaire_uuid = ?, format_uuid = ?, tenant_uuid = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND document_template_id = ?"
+  let params = toRow draftData ++ [toField draftData.tenantUuid, toField draftData.documentTemplateId]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -39,5 +39,5 @@ deleteDraftDatas = createDeleteEntitiesFn entityName
 
 deleteDraftDataByDocumentTemplateId :: String -> AppContextM Int64
 deleteDraftDataByDocumentTemplateId tmlId = do
-  appUuid <- asks currentAppUuid
-  createDeleteEntitiesByFn entityName [appQueryUuid appUuid, ("document_template_id", tmlId)]
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", tmlId)]

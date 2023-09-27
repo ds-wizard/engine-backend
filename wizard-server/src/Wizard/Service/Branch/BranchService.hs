@@ -31,7 +31,7 @@ import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Branch.BranchValidation
 import Wizard.Service.Branch.Collaboration.CollaborationService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
-import Wizard.Service.Limit.AppLimitService
+import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Localization.Messages.Public
 import WizardLib.KnowledgeModel.Model.Event.Event
@@ -57,7 +57,7 @@ createBranchWithParams uuid now currentUser reqDto =
     checkBranchLimit
     checkPermission _KM_PERM
     validateCreateDto reqDto
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     mPreviousPkg <-
       case reqDto.previousPackageId of
         Just previousPackageId -> do
@@ -67,7 +67,7 @@ createBranchWithParams uuid now currentUser reqDto =
             (throwError . UserError $ _ERROR_SERVICE_PKG__NON_EDITABLE_PKG)
           return . Just $ previousPkg
         Nothing -> return Nothing
-    let branch = fromCreateDTO reqDto uuid mPreviousPkg currentUser.uuid appUuid now
+    let branch = fromCreateDTO reqDto uuid mPreviousPkg currentUser.uuid tenantUuid now
     insertBranch branch
     insertBranchData (toBranchData branch)
     createDefaultEventIfPreviousPackageIsNotPresent branch

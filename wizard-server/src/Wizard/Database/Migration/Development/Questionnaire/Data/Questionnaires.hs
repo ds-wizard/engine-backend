@@ -16,7 +16,6 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
 import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.Acl.Data.Members
-import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
@@ -24,14 +23,15 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireLab
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Report.Data.Reports
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.App.App
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
+import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -68,7 +68,7 @@ questionnaire1 =
     , squashed = True
     , answeredQuestions = 3
     , unansweredQuestions = 1
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -172,7 +172,7 @@ questionnaire2 =
     , squashed = True
     , answeredQuestions = 3
     , unansweredQuestions = 1
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     }
@@ -198,7 +198,7 @@ questionnaire2Edited =
     , squashed = True
     , answeredQuestions = 3
     , unansweredQuestions = 1
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdAt = questionnaire2.createdAt
     , updatedAt = questionnaire2.updatedAt
     }
@@ -255,7 +255,7 @@ questionnaire3 =
     , squashed = True
     , answeredQuestions = 3
     , unansweredQuestions = 1
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 28) 0
     }
@@ -297,7 +297,7 @@ questionnaire4 =
     , squashed = True
     , answeredQuestions = 3
     , unansweredQuestions = 1
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -700,7 +700,7 @@ differentQuestionnaire =
     , squashed = True
     , answeredQuestions = 3
     , unansweredQuestions = 1
-    , appUuid = differentApp.uuid
+    , tenantUuid = differentTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }

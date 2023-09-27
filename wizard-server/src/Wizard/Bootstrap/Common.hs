@@ -4,7 +4,7 @@ import Control.Monad.Except (runExceptT)
 import Control.Monad.Reader (liftIO, runReaderT)
 import Data.Pool
 
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
@@ -28,7 +28,7 @@ runAppContextWithBaseContext function baseContext = do
             , httpClientManager = baseContext.httpClientManager
             , registryClient = baseContext.registryClient
             , traceUuid = traceUuid
-            , currentAppUuid = defaultAppUuid
+            , currentTenantUuid = defaultTenantUuid
             , currentUser = Just . toDTO $ userSystem
             , shutdownFlag = baseContext.shutdownFlag
             , cache = baseContext.cache

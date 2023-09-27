@@ -41,9 +41,9 @@ createTables = do
         \     file_name varchar, \
         \     content_type varchar, \
         \     worker_log varchar, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \         constraint document_app_uuid_fk \
-        \             references app, \
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \         constraint document_tenant_uuid_fk \
+        \             references tenant, \
         \     file_size bigint \
         \ ); \
         \  \
@@ -59,7 +59,7 @@ createTables = do
         \  \
         \ alter table document \
         \   add constraint document_document_template_id_fk \
-        \      foreign key (document_template_id, app_uuid) references document_template (id, app_uuid); \
+        \      foreign key (document_template_id, tenant_uuid) references document_template (id, tenant_uuid); \
         \ alter table document \
         \   add constraint document_user_entity_uuid_fk \
         \      foreign key (creator_uuid) references user_entity; \

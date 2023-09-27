@@ -29,7 +29,7 @@ instance ToRow User where
     , toField lastVisitedAt
     , toField createdAt
     , toField updatedAt
-    , toField appUuid
+    , toField tenantUuid
     , toField machine
     ]
 
@@ -51,6 +51,6 @@ instance FromRow User where
     lastVisitedAt <- field
     createdAt <- field
     updatedAt <- field
-    appUuid <- field
+    tenantUuid <- field
     machine <- field
     return $ User {..}

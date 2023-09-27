@@ -7,21 +7,21 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Acl.Acl
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Service.Tenant.Config.ConfigService
 
 checkCreatePermissionToQtn :: AppContextM ()
 checkCreatePermissionToQtn = do
-  appConfig <- getAppConfig
-  let qtnSharingEnabled = appConfig.questionnaire.questionnaireSharing.enabled
-  let qtnSharingAnonymousEnabled = appConfig.questionnaire.questionnaireSharing.anonymousEnabled
-  let qtnCreation = appConfig.questionnaire.questionnaireCreation
+  tenantConfig <- getCurrentTenantConfig
+  let qtnSharingEnabled = tenantConfig.questionnaire.questionnaireSharing.enabled
+  let qtnSharingAnonymousEnabled = tenantConfig.questionnaire.questionnaireSharing.anonymousEnabled
+  let qtnCreation = tenantConfig.questionnaire.questionnaireCreation
   case (qtnSharingEnabled, qtnSharingAnonymousEnabled, qtnCreation) of
     (True, True, CustomQuestionnaireCreation) -> return ()
     (True, True, TemplateAndCustomQuestionnaireCreation) -> return ()
@@ -33,8 +33,8 @@ checkCreatePermissionToQtn = do
 checkCreateFromTemplatePermissionToQtn :: Bool -> AppContextM ()
 checkCreateFromTemplatePermissionToQtn isTemplate = do
   checkPermission _QTN_PERM
-  appConfig <- getAppConfig
-  let qtnCreation = appConfig.questionnaire.questionnaireCreation
+  tenantConfig <- getCurrentTenantConfig
+  let qtnCreation = tenantConfig.questionnaire.questionnaireCreation
   case qtnCreation of
     CustomQuestionnaireCreation ->
       throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Questionnaire Template"

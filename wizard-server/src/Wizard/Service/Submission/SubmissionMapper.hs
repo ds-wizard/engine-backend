@@ -5,12 +5,12 @@ import qualified Data.UUID as U
 
 import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.Submission.SubmissionServiceSimpleDTO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Submission.Submission
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 
-toSubmissionServiceSimpleDTO :: AppConfigSubmissionService -> SubmissionServiceSimpleDTO
+toSubmissionServiceSimpleDTO :: TenantConfigSubmissionService -> SubmissionServiceSimpleDTO
 toSubmissionServiceSimpleDTO config =
   SubmissionServiceSimpleDTO
     { sId = config.sId
@@ -34,7 +34,7 @@ toDTO sub mServiceName user =
     }
 
 fromCreate :: U.UUID -> String -> U.UUID -> U.UUID -> U.UUID -> UTCTime -> Submission
-fromCreate uuid serviceId documentUuid appUuid createdBy now =
+fromCreate uuid serviceId documentUuid tenantUuid createdBy now =
   Submission
     { uuid = uuid
     , state = InProgressSubmissionState
@@ -42,7 +42,7 @@ fromCreate uuid serviceId documentUuid appUuid createdBy now =
     , returnedData = Nothing
     , serviceId = serviceId
     , documentUuid = documentUuid
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdBy = createdBy
     , createdAt = now
     , updatedAt = now

@@ -8,21 +8,21 @@ import qualified Data.UUID as U
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.DocumentTemplate.DocumentTemplateService
 import Wizard.Service.Submission.SubmissionService
+import Wizard.Service.Tenant.Config.ConfigService
 
 enhanceDocument :: Document -> AppContextM DocumentDTO
 enhanceDocument doc = do
-  appConfig <- getAppConfig
+  tenantConfig <- getCurrentTenantConfig
   submissions <-
-    if appConfig.submission.enabled
+    if tenantConfig.submission.enabled
       then getSubmissionsForDocument doc.uuid
       else return []
   tml <- getDocumentTemplateByUuidAndPackageId doc.documentTemplateId Nothing
@@ -33,14 +33,14 @@ filterAlreadyDoneDocument :: String -> U.UUID -> Document -> Bool
 filterAlreadyDoneDocument documentTemplateId formatUuid doc =
   (doc.state == DoneDocumentState || doc.state == ErrorDocumentState) && Just doc.documentTemplateId == Just documentTemplateId && Just doc.formatUuid == Just formatUuid
 
-computeHash :: Questionnaire -> QuestionnaireContent -> AppConfig -> Maybe UserDTO -> Int
-computeHash qtn qtnCtn appConfig mCurrentUser =
+computeHash :: Questionnaire -> QuestionnaireContent -> TenantConfig -> Maybe UserDTO -> Int
+computeHash qtn qtnCtn tenantConfig mCurrentUser =
   sum
     [ hash $ qtn.name
     , hash $ qtn.description
     , hash $ qtn.versions
     , hash $ qtn.projectTags
-    , hash $ appConfig.organization
+    , hash $ tenantConfig.organization
     , hash . M.toList $ qtnCtn.replies
     , maybe 0 hash qtnCtn.phaseUuid
     , maybe 0 hash mCurrentUser

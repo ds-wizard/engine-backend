@@ -12,7 +12,6 @@ import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.List
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
@@ -20,14 +19,15 @@ import Wizard.Model.Document.DocumentContextJM ()
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireVersion
-import Wizard.Service.App.AppHelper
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Document.Context.DocumentContextMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Report.ReportGenerator
+import Wizard.Service.Tenant.Config.ConfigService
+import Wizard.Service.Tenant.TenantHelper
 
 createDocumentContext :: Document -> AppContextM DocumentContext
 createDocumentContext doc = do
@@ -35,10 +35,10 @@ createDocumentContext doc = do
   pkg <- getPackageById qtn.packageId
   km <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
   mCreatedBy <- forM qtn.creatorUuid findUserByUuid
-  appConfig <- getAppConfig
+  tenantConfig <- getCurrentTenantConfig
   serverConfig <- asks serverConfig
-  clientUrl <- getAppClientUrl
-  let org = appConfig.organization
+  clientUrl <- getClientUrl
+  let org = tenantConfig.organization
   now <- liftIO getCurrentTime
   let qtnEvents =
         case doc.questionnaireEventUuid of

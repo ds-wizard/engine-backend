@@ -5,7 +5,7 @@ import Data.Swagger
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Submission.SubmissionServiceSimpleDTO
 import Wizard.Api.Resource.Submission.SubmissionServiceSimpleJM ()
-import Wizard.Database.Migration.Development.Config.Data.AppConfigs
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Service.Submission.SubmissionMapper
 
 instance ToSchema SubmissionServiceSimpleDTO where

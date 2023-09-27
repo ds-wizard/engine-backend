@@ -15,23 +15,18 @@ import qualified Wizard.Database.Migration.Development.Acl.AclMigration as ACL
 import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ACK
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
-import qualified Wizard.Database.Migration.Development.App.AppMigration as A
-import qualified Wizard.Database.Migration.Development.App.AppSchemaMigration as A_Schema
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
 import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
-import qualified Wizard.Database.Migration.Development.Config.ConfigMigration as CFG
-import qualified Wizard.Database.Migration.Development.Config.ConfigSchemaMigration as CFG_Schema
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as TML_Schema
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as F
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
-import qualified Wizard.Database.Migration.Development.Limit.AppLimitMigration as AL
-import qualified Wizard.Database.Migration.Development.Limit.AppLimitSchemaMigration as AL_Schema
+import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMigration as INS_Schema
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC
 import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as LOC_Schema
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorMigration as KM_MIG
@@ -41,8 +36,6 @@ import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.M
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
-import qualified Wizard.Database.Migration.Development.Plan.AppPlanMigration as AP
-import qualified Wizard.Database.Migration.Development.Plan.AppPlanSchemaMigration as AP_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterMigration as QI
@@ -51,6 +44,8 @@ import qualified Wizard.Database.Migration.Development.Registry.RegistryMigratio
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as R_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
 import qualified Wizard.Database.Migration.Development.TemporaryFile.TemporaryFileSchemaMigration as TF_Schema
+import qualified Wizard.Database.Migration.Development.Tenant.TenantMigration as TNT
+import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigration as TNT_Schema
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as U_Schema
 
@@ -84,19 +79,15 @@ runMigration = do
   PKG_Schema.dropFunctions
   ACL_Schema.dropTables
   U_Schema.dropTables
-  CFG_Schema.dropTables
-  AP_Schema.dropTables
-  AL_Schema.dropTables
-  A_Schema.dropTables
+  TNT_Schema.dropTables
+  INS_Schema.dropTables
   -- 3. Create schema
-  A_Schema.createTables
-  AL_Schema.createTables
-  AP_Schema.createTables
+  INS_Schema.createTables
+  TNT_Schema.createTables
   U_Schema.createTables
   ACL_Schema.createTables
   TML_Schema.createTables
   PKG_Schema.createTables
-  CFG_Schema.createTables
   ACK_Schema.createTables
   BR_Schema.createTables
   F_Schema.createTables
@@ -123,10 +114,7 @@ runMigration = do
   TML.runS3Migration
   LOC.runS3Migration
   -- 6. Load fixtures
-  A.runMigration
-  AL.runMigration
-  AP.runMigration
-  CFG.runMigration
+  TNT.runMigration
   U.runMigration
   TML.runMigration
   PKG.runMigration

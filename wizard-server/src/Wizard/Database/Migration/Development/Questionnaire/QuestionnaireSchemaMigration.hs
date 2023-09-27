@@ -51,9 +51,9 @@ createQtnTable = do
         \     description varchar, \
         \     is_template boolean not null, \
         \     squashed boolean not null, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \         constraint questionnaire_app_uuid_fk \
-        \             references app, \
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \         constraint questionnaire_tenant_uuid_fk \
+        \             references tenant, \
         \     project_tags text[] not null default '{}', \
         \     answered_questions int not null default 0, \
         \     unanswered_questions int not null default 0 \
@@ -68,10 +68,10 @@ createQtnTable = do
         \  \
         \ alter table questionnaire \
         \   add constraint questionnaire_package_id_fk \
-        \      foreign key (package_id, app_uuid) references package (id, app_uuid); \
+        \      foreign key (package_id, tenant_uuid) references package (id, tenant_uuid); \
         \ alter table questionnaire \
         \   add constraint questionnaire_document_template_id_fk \
-        \      foreign key (document_template_id, app_uuid) references document_template (id, app_uuid); \
+        \      foreign key (document_template_id, tenant_uuid) references document_template (id, tenant_uuid); \
         \ alter table questionnaire \
         \   add constraint questionnaire_user_entity_uuid_fk \
         \      foreign key (created_by) references user_entity;"

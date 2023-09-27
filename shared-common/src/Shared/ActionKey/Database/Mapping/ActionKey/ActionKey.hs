@@ -15,7 +15,7 @@ instance (ToField aType, ToField identity) => ToRow (ActionKey identity aType) w
     , toField aType
     , toField hash
     , toField createdAt
-    , toField appUuid
+    , toField tenantUuid
     ]
 
 instance (FromField aType, FromField identity) => FromRow (ActionKey identity aType) where
@@ -25,5 +25,5 @@ instance (FromField aType, FromField identity) => FromRow (ActionKey identity aT
     aType <- field
     hash <- field
     createdAt <- field
-    appUuid <- field
+    tenantUuid <- field
     return $ ActionKey {..}

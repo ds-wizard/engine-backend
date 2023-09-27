@@ -18,31 +18,31 @@ import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.ContextResult
 import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
-import Wizard.Database.DAO.App.AppDAO
-import Wizard.Model.App.App
+import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Tenant.Tenant
 import qualified Wizard.Service.User.UserMapper as UM
 import Wizard.Util.Context
 
-runFunctionForAllApps :: String -> AppContextM (ContextResult, Maybe String) -> AppContextM ()
-runFunctionForAllApps functionName function = do
-  apps <- findApps
-  traverse_ (\app -> runFunctionUnderDifferentUserAndApp Nothing app.uuid functionName function) apps
+runFunctionForAllTenants :: String -> AppContextM (ContextResult, Maybe String) -> AppContextM ()
+runFunctionForAllTenants functionName function = do
+  tenants <- findTenants
+  traverse_ (\tenant -> runFunctionUnderDifferentUserAndTenant Nothing tenant.uuid functionName function) tenants
 
-runFunctionUnderDifferentUserAndApp
+runFunctionUnderDifferentUserAndTenant
   :: Maybe User -> U.UUID -> String -> AppContextM (ContextResult, Maybe String) -> AppContextM ()
-runFunctionUnderDifferentUserAndApp mUser appUuid functionName function = do
+runFunctionUnderDifferentUserAndTenant mUser tenantUuid functionName function = do
   logInfoI
     _CMP_SERVICE
     ( f'
-        "Running '%s' with app ('%s') and user ('%s') started"
-        [functionName, U.toString appUuid, show . fmap (U.toString . ((.uuid))) $ mUser]
+        "Running '%s' with tenant ('%s') and user ('%s') started"
+        [functionName, U.toString tenantUuid, show . fmap (U.toString . ((.uuid))) $ mUser]
     )
   context <- ask
   newTraceUuid <- liftIO generateUuid
-  eResult <- liftIO . E.try $ runAppContextWithAppContext function (updateContext mUser appUuid newTraceUuid context)
+  eResult <- liftIO . E.try $ runAppContextWithAppContext function (updateContext mUser tenantUuid newTraceUuid context)
   let (resultState, mReturnedMessage) =
         case eResult :: Either E.SomeException (Either String (ContextResult, Maybe String)) of
           Right (Right (resultState, mErrorMessage)) -> (resultState, mErrorMessage)
@@ -53,17 +53,17 @@ runFunctionUnderDifferentUserAndApp mUser appUuid functionName function = do
       logInfoI
         _CMP_SERVICE
         ( f'
-            "Running '%s' with app ('%s') and user ('%s') finished successfully. It returns: '%s''"
-            [functionName, U.toString appUuid, show . fmap (U.toString . ((.uuid))) $ mUser, show mReturnedMessage]
+            "Running '%s' with tenant ('%s') and user ('%s') finished successfully. It returns: '%s''"
+            [functionName, U.toString tenantUuid, show . fmap (U.toString . ((.uuid))) $ mUser, show mReturnedMessage]
         )
     ErrorContextResult -> do
       logInfoI
         _CMP_SERVICE
         ( f'
-            "Running '%s' with app ('%s') and user ('%s') failed. The reason is: '%s''"
-            [functionName, U.toString appUuid, show . fmap (U.toString . ((.uuid))) $ mUser, show mReturnedMessage]
+            "Running '%s' with tenant ('%s') and user ('%s') failed. The reason is: '%s''"
+            [functionName, U.toString tenantUuid, show . fmap (U.toString . ((.uuid))) $ mUser, show mReturnedMessage]
         )
-      sendToSentry mUser appUuid functionName mReturnedMessage
+      sendToSentry mUser tenantUuid functionName mReturnedMessage
 
 -- --------------------------------
 -- PRIVATE
@@ -71,13 +71,13 @@ runFunctionUnderDifferentUserAndApp mUser appUuid functionName function = do
 updateContext :: Maybe User -> U.UUID -> U.UUID -> AppContext -> AppContext
 updateContext mUser aUuid newTraceUuid context =
   context
-    { currentAppUuid = aUuid
+    { currentTenantUuid = aUuid
     , currentUser = fmap UM.toDTO mUser
     , traceUuid = newTraceUuid
     }
 
 sendToSentry :: Maybe User -> U.UUID -> String -> Maybe String -> AppContextM ()
-sendToSentry mUser appUuid functionName mErrorMessage = do
+sendToSentry mUser tenantUuid functionName mErrorMessage = do
   serverConfig <- asks serverConfig
   when
     serverConfig.sentry.enabled
@@ -93,22 +93,22 @@ sendToSentry mUser appUuid functionName mErrorMessage = do
             "persistentCommandLogger"
             Error
             message
-            (recordUpdate buildVersion mUser appUuid functionName mErrorMessage)
+            (recordUpdate buildVersion mUser tenantUuid functionName mErrorMessage)
     )
 
 recordUpdate :: String -> Maybe User -> U.UUID -> String -> Maybe String -> SentryRecord -> SentryRecord
-recordUpdate buildVersion mUser appUuid functionName mErrorMessage record =
+recordUpdate buildVersion mUser tenantUuid functionName mErrorMessage record =
   let userUuid = maybe "anonymous" (U.toString . (.uuid)) mUser
    in record
         { srRelease = Just buildVersion
         , srInterfaces =
             HashMap.fromList
               [("sentry.interfaces.User", toJSON $ HashMap.fromList [("id", String . T.pack $ userUuid)])]
-        , srTags = HashMap.fromList [("function", functionName), ("appUuid", U.toString appUuid)]
+        , srTags = HashMap.fromList [("function", functionName), ("tenantUuid", U.toString tenantUuid)]
         , srExtra =
             HashMap.fromList
               [ ("function", String . T.pack $ functionName)
-              , ("appUuid", String . T.pack . U.toString $ appUuid)
+              , ("tenantUuid", String . T.pack . U.toString $ tenantUuid)
               , ("lastErrorMessage", String . T.pack . fromMaybe "" $ mErrorMessage)
               ]
         }

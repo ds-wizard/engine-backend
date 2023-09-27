@@ -1,6 +1,6 @@
 module Wizard.Database.Migration.Development.User.Data.UserTokens where
 
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -23,7 +23,7 @@ albertToken =
     , userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
     , sessionState = Nothing
     , expiresAt = dt' 2052 1 21
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = dt' 2022 1 21
     }
 
@@ -46,7 +46,7 @@ albertApiKey =
     , userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
     , sessionState = Nothing
     , expiresAt = dt' 2052 1 21
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = dt' 2022 1 21
     }
 
@@ -65,7 +65,7 @@ alternativeAlbertToken =
     , userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
     , sessionState = Nothing
     , expiresAt = dt' 2052 1 21
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = dt' 2022 1 21
     }
 
@@ -81,7 +81,7 @@ nikolaToken =
     , userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
     , sessionState = Nothing
     , expiresAt = dt' 2052 1 21
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = dt' 2022 1 21
     }
 
@@ -101,7 +101,7 @@ isaacToken =
     , userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
     , sessionState = Nothing
     , expiresAt = dt' 2052 1 21
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = dt' 2022 1 21
     }
 

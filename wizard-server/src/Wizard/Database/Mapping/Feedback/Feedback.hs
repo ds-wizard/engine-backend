@@ -17,7 +17,7 @@ instance ToRow Feedback where
     , toField content
     , toField createdAt
     , toField updatedAt
-    , toField appUuid
+    , toField tenantUuid
     ]
 
 instance FromRow Feedback where
@@ -30,5 +30,5 @@ instance FromRow Feedback where
     content <- field
     createdAt <- field
     updatedAt <- field
-    appUuid <- field
+    tenantUuid <- field
     return $ Feedback {..}

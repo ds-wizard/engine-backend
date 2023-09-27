@@ -16,7 +16,7 @@ import Registry.Model.PackageBundle.PackageBundle
 import Registry.Service.Audit.AuditService
 import Registry.Service.Package.Bundle.PackageBundleAcl
 import Registry.Service.Package.Bundle.PackageBundleMapper
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.List
@@ -49,7 +49,7 @@ exportBundle pbId = do
               , packages = packages
               }
       return . toDTO $ pb
-    Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "package" [("app_uuid", U.toString defaultAppUuid), ("id", resolvedPbId)]
+    Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "package" [("tenant_uuid", U.toString defaultTenantUuid), ("id", resolvedPbId)]
 
 importBundle :: S_PackageBundleDTO.PackageBundleDTO -> AppContextM S_PackageBundleDTO.PackageBundleDTO
 importBundle pb =

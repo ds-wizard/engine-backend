@@ -28,7 +28,7 @@ toList token currentSession =
     }
 
 toUserToken :: U.UUID -> String -> UserTokenType -> U.UUID -> UTCTime -> String -> Maybe String -> Maybe String -> U.UUID -> UTCTime -> String -> UserToken
-toUserToken uuid name tokenType userUuid expiresAt secret mUserAgent mSessionState appUuid now tokenValue =
+toUserToken uuid name tokenType userUuid expiresAt secret mUserAgent mSessionState tenantUuid now tokenValue =
   UserToken
     { uuid = uuid
     , name = name
@@ -38,7 +38,7 @@ toUserToken uuid name tokenType userUuid expiresAt secret mUserAgent mSessionSta
     , userAgent = fromMaybe "Unknown User Agent" mUserAgent
     , sessionState = mSessionState
     , expiresAt = expiresAt
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = now
     }
 

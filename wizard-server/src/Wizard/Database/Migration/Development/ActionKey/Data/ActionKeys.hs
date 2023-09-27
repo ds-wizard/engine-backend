@@ -6,10 +6,10 @@ import Data.Time
 import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
 import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Util.Uuid
-import Wizard.Database.Migration.Development.App.Data.Apps
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.ActionKey.ActionKeyType
-import Wizard.Model.App.App
+import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 
 regActionKey =
@@ -18,7 +18,7 @@ regActionKey =
     , identity = userAlbert.uuid
     , aType = RegistrationActionKey
     , hash = "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
@@ -28,7 +28,7 @@ forgPassActionKey =
     , identity = userAlbert.uuid
     , aType = ForgottenPasswordActionKey
     , hash = "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
@@ -41,6 +41,6 @@ differentActionKey =
     , identity = userCharles.uuid
     , aType = RegistrationActionKey
     , hash = "b2da34b1-35b2-408b-8127-b0ab3b8b04d9"
-    , appUuid = differentApp.uuid
+    , tenantUuid = differentTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }

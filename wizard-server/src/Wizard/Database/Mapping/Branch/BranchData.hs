@@ -14,7 +14,7 @@ instance ToRow BranchData where
     [ toField branchUuid
     , toField metamodelVersion
     , toJSONField events
-    , toField appUuid
+    , toField tenantUuid
     , toField createdAt
     , toField updatedAt
     , toField squashed
@@ -25,7 +25,7 @@ instance FromRow BranchData where
     branchUuid <- field
     metamodelVersion <- field
     events <- fieldWith fromJSONField
-    appUuid <- field
+    tenantUuid <- field
     createdAt <- field
     updatedAt <- field
     squashed <- field

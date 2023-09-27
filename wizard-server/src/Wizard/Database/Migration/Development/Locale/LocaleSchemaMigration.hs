@@ -47,9 +47,9 @@ createTables = do
         \     readme                    varchar not null,\
         \     recommended_app_version   varchar not null,\
         \     enabled                   bool not null,\
-        \     app_uuid                  uuid not null \
-        \       constraint locale_app_uuid_fk \
-        \         references app, \
+        \     tenant_uuid                  uuid not null \
+        \       constraint locale_tenant_uuid_fk \
+        \         references tenant, \
         \     created_at timestamp with time zone not null,\
         \     updated_at timestamp with time zone not null\
         \ ); \

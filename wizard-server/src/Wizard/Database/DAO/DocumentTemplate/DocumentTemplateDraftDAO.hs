@@ -28,16 +28,16 @@ pageLabel = "documentTemplateDrafts"
 
 findDrafts :: AppContextM [DocumentTemplate]
 findDrafts = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("phase", "DraftDocumentTemplatePhase")]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("phase", "DraftDocumentTemplatePhase")]
 
 findDraftsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateDraftList)
 findDraftsPage mQuery pageable sort =
   -- 1. Prepare variables
   do
-    appUuid <- asks currentAppUuid
-    let condition = "WHERE phase = 'DraftDocumentTemplatePhase' AND (name ~* ? OR template_id ~* ?) AND app_uuid = ?"
-    let conditionParams = [regex mQuery, regex mQuery, U.toString appUuid]
+    tenantUuid <- asks currentTenantUuid
+    let condition = "WHERE phase = 'DraftDocumentTemplatePhase' AND (name ~* ? OR template_id ~* ?) AND tenant_uuid = ?"
+    let conditionParams = [regex mQuery, regex mQuery, U.toString tenantUuid]
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
     -- 2. Get total count
     count <- createCountByFn entityName condition conditionParams
@@ -54,7 +54,7 @@ findDraftsPage mQuery pageable sort =
               \       created_at, \
               \       updated_at \
               \FROM document_template \
-              \WHERE phase = 'DraftDocumentTemplatePhase' AND (name ~* ? OR template_id ~* ?) AND app_uuid = ? \
+              \WHERE phase = 'DraftDocumentTemplatePhase' AND (name ~* ? OR template_id ~* ?) AND tenant_uuid = ? \
               \%s OFFSET %s LIMIT %s"
               [mapSort sort, show skip, show sizeI]
     logQuery sql conditionParams
@@ -72,23 +72,23 @@ findDraftsPage mQuery pageable sort =
 
 findDraftById :: String -> AppContextM DocumentTemplate
 findDraftById id = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("id", id), ("phase", "DraftDocumentTemplatePhase")]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", id), ("phase", "DraftDocumentTemplatePhase")]
 
 countDraftsGroupedByOrganizationIdAndKmId :: AppContextM Int
 countDraftsGroupedByOrganizationIdAndKmId = do
-  appUuid <- asks currentAppUuid
-  countDraftsGroupedByOrganizationIdAndKmIdWithApp appUuid
+  tenantUuid <- asks currentTenantUuid
+  countDraftsGroupedByOrganizationIdAndKmIdWithTenant tenantUuid
 
-countDraftsGroupedByOrganizationIdAndKmIdWithApp :: U.UUID -> AppContextM Int
-countDraftsGroupedByOrganizationIdAndKmIdWithApp appUuid = do
+countDraftsGroupedByOrganizationIdAndKmIdWithTenant :: U.UUID -> AppContextM Int
+countDraftsGroupedByOrganizationIdAndKmIdWithTenant tenantUuid = do
   let sql =
         "SELECT COUNT(*) \
         \FROM (SELECT 1 \
         \      FROM document_template \
-        \      WHERE app_uuid = ? AND phase = 'DraftDocumentTemplatePhase' \
+        \      WHERE tenant_uuid = ? AND phase = 'DraftDocumentTemplatePhase' \
         \      GROUP BY organization_id, template_id) nested;"
-  let params = [U.toString appUuid]
+  let params = [U.toString tenantUuid]
   logQuery sql params
   let action conn = query conn sql params
   result <- runDB action
@@ -98,14 +98,14 @@ countDraftsGroupedByOrganizationIdAndKmIdWithApp appUuid = do
 
 deleteDrafts :: AppContextM Int64
 deleteDrafts = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   deleteDraftDatas
-  createDeleteEntitiesByFn entityName [appQueryUuid appUuid, ("phase", "DraftDocumentTemplatePhase")]
+  createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("phase", "DraftDocumentTemplatePhase")]
 
 deleteDraftByDocumentTemplateId :: String -> AppContextM Int64
 deleteDraftByDocumentTemplateId documentTemplateId = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   deleteDraftDataByDocumentTemplateId documentTemplateId
   deleteFilesByDocumentTemplateId documentTemplateId
   deleteAssetsByDocumentTemplateId documentTemplateId
-  createDeleteEntitiesByFn entityName [appQueryUuid appUuid, ("id", documentTemplateId), ("phase", "DraftDocumentTemplatePhase")]
+  createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("id", documentTemplateId), ("phase", "DraftDocumentTemplatePhase")]

@@ -17,21 +17,21 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Acl.Acl
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
-import Wizard.Service.App.AppHelper
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Service.Tenant.Config.ConfigService
+import Wizard.Service.Tenant.TenantHelper
 import WizardLib.Public.Model.User.UserToken
 
 sendRegistrationConfirmationMail :: UserDTO -> String -> String -> AppContextM ()
 sendRegistrationConfirmationMail user hash clientUrl =
   runInTransaction $ do
-    appConfig <- getAppConfig
+    tenantConfig <- getCurrentTenantConfig
     let body =
           MC.MailCommand
             { mode = "wizard"
@@ -45,8 +45,8 @@ sendRegistrationConfirmationMail user hash clientUrl =
                   , ("userEmail", MC.string user.email)
                   , ("hash", MC.string hash)
                   , ("clientUrl", MC.string clientUrl)
-                  , ("appTitle", MC.maybeString appConfig.lookAndFeel.appTitle)
-                  , ("supportEmail", MC.maybeString appConfig.privacyAndSupport.supportEmail)
+                  , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
                   ]
             }
     sendEmail body user.uuid
@@ -55,8 +55,8 @@ sendRegistrationCreatedAnalyticsMail :: UserDTO -> AppContextM ()
 sendRegistrationCreatedAnalyticsMail user =
   runInTransaction $ do
     serverConfig <- asks serverConfig
-    appConfig <- getAppConfig
-    clientUrl <- getAppClientUrl
+    tenantConfig <- getCurrentTenantConfig
+    clientUrl <- getClientUrl
     let body =
           MC.MailCommand
             { mode = "wizard"
@@ -69,8 +69,8 @@ sendRegistrationCreatedAnalyticsMail user =
                   , ("userLastName", MC.string user.lastName)
                   , ("userEmail", MC.string user.email)
                   , ("clientUrl", MC.string clientUrl)
-                  , ("appTitle", MC.maybeString appConfig.lookAndFeel.appTitle)
-                  , ("supportEmail", MC.maybeString appConfig.privacyAndSupport.supportEmail)
+                  , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
                   ]
             }
     sendEmail body user.uuid
@@ -78,8 +78,8 @@ sendRegistrationCreatedAnalyticsMail user =
 sendResetPasswordMail :: UserDTO -> String -> AppContextM ()
 sendResetPasswordMail user hash =
   runInTransaction $ do
-    appConfig <- getAppConfig
-    clientUrl <- getAppClientUrl
+    tenantConfig <- getCurrentTenantConfig
+    clientUrl <- getClientUrl
     let body =
           MC.MailCommand
             { mode = "wizard"
@@ -93,8 +93,8 @@ sendResetPasswordMail user hash =
                   , ("userEmail", MC.string user.email)
                   , ("hash", MC.string hash)
                   , ("clientUrl", MC.string clientUrl)
-                  , ("appTitle", MC.maybeString appConfig.lookAndFeel.appTitle)
-                  , ("supportEmail", MC.maybeString appConfig.privacyAndSupport.supportEmail)
+                  , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
                   ]
             }
     sendEmail body user.uuid
@@ -102,8 +102,8 @@ sendResetPasswordMail user hash =
 sendTwoFactorAuthMail :: UserDTO -> String -> AppContextM ()
 sendTwoFactorAuthMail user code =
   runInTransaction $ do
-    appConfig <- getAppConfig
-    clientUrl <- getAppClientUrl
+    tenantConfig <- getCurrentTenantConfig
+    clientUrl <- getClientUrl
     let body =
           MC.MailCommand
             { mode = "wizard"
@@ -117,8 +117,8 @@ sendTwoFactorAuthMail user code =
                   , ("userEmail", MC.string user.email)
                   , ("code", MC.string code)
                   , ("clientUrl", MC.string clientUrl)
-                  , ("appTitle", MC.maybeString appConfig.lookAndFeel.appTitle)
-                  , ("supportEmail", MC.maybeString appConfig.privacyAndSupport.supportEmail)
+                  , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
                   ]
             }
     sendEmail body user.uuid
@@ -126,15 +126,15 @@ sendTwoFactorAuthMail user code =
 sendQuestionnaireInvitationMail :: Questionnaire -> Questionnaire -> AppContextM ()
 sendQuestionnaireInvitationMail oldQtn newQtn =
   runInTransaction $ do
-    appConfig <- getAppConfig
-    clientUrl <- getAppClientUrl
+    tenantConfig <- getCurrentTenantConfig
+    clientUrl <- getClientUrl
     currentUser <- getCurrentUser
-    traverse_ (sendOneEmail appConfig clientUrl currentUser) (filter filterPermissions newQtn.permissions)
+    traverse_ (sendOneEmail tenantConfig clientUrl currentUser) (filter filterPermissions newQtn.permissions)
   where
     filterPermissions :: QuestionnairePermRecord -> Bool
     filterPermissions perm = perm.member `notElem` fmap (.member) oldQtn.permissions
-    sendOneEmail :: AppConfig -> String -> UserDTO -> QuestionnairePermRecord -> AppContextM ()
-    sendOneEmail appConfig clientUrl currentUser permission =
+    sendOneEmail :: TenantConfig -> String -> UserDTO -> QuestionnairePermRecord -> AppContextM ()
+    sendOneEmail tenantConfig clientUrl currentUser permission =
       case permission.member of
         GroupMember {..} -> return ()
         UserMember {uuid = userUuid} -> do
@@ -148,8 +148,8 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
                       M.fromList
                         [ ("userUuid", MC.uuid user.uuid)
                         , ("clientUrl", MC.string clientUrl)
-                        , ("appTitle", MC.maybeString appConfig.lookAndFeel.appTitle)
-                        , ("supportEmail", MC.maybeString appConfig.privacyAndSupport.supportEmail)
+                        , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
+                        , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
                         , ("inviteeUuid", MC.uuid user.uuid)
                         , ("inviteeFirstName", MC.string user.firstName)
                         , ("inviteeLastName", MC.string user.lastName)
@@ -167,8 +167,8 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
 sendApiKeyCreatedMail :: UserDTO -> UserToken -> AppContextM ()
 sendApiKeyCreatedMail user userToken =
   runInTransaction $ do
-    appConfig <- getAppConfig
-    clientUrl <- getAppClientUrl
+    tenantConfig <- getCurrentTenantConfig
+    clientUrl <- getClientUrl
     let body =
           MC.MailCommand
             { mode = "wizard"
@@ -183,8 +183,8 @@ sendApiKeyCreatedMail user userToken =
                   , ("tokenName", MC.string userToken.name)
                   , ("tokenExpiresAt", MC.datetime userToken.expiresAt)
                   , ("clientUrl", MC.string clientUrl)
-                  , ("appTitle", MC.maybeString appConfig.lookAndFeel.appTitle)
-                  , ("supportEmail", MC.maybeString appConfig.privacyAndSupport.supportEmail)
+                  , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
                   ]
             }
     sendEmail body user.uuid
@@ -192,8 +192,8 @@ sendApiKeyCreatedMail user userToken =
 sendApiKeyExpirationMail :: UserDTO -> UserToken -> AppContextM ()
 sendApiKeyExpirationMail user userToken =
   runInTransaction $ do
-    appConfig <- getAppConfig
-    clientUrl <- getAppClientUrl
+    tenantConfig <- getCurrentTenantConfig
+    clientUrl <- getClientUrl
     let body =
           MC.MailCommand
             { mode = "wizard"
@@ -208,8 +208,8 @@ sendApiKeyExpirationMail user userToken =
                   , ("tokenName", MC.string userToken.name)
                   , ("tokenExpiresAt", MC.datetime userToken.expiresAt)
                   , ("clientUrl", MC.string clientUrl)
-                  , ("appTitle", MC.maybeString appConfig.lookAndFeel.appTitle)
-                  , ("supportEmail", MC.maybeString appConfig.privacyAndSupport.supportEmail)
+                  , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
                   ]
             }
     sendEmail body user.uuid
@@ -220,10 +220,10 @@ sendApiKeyExpirationMail user userToken =
 sendEmail :: ToJSON dto => dto -> U.UUID -> AppContextM ()
 sendEmail dto createdBy = do
   runInTransaction $ do
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     pUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let body = encodeJsonToString dto
-    let command = toPersistentCommand pUuid "mailer" "sendMail" body 10 False Nothing appUuid (Just . U.toString $ createdBy) now
+    let command = toPersistentCommand pUuid "mailer" "sendMail" body 10 False Nothing tenantUuid (Just . U.toString $ createdBy) now
     insertPersistentCommand command
     return ()

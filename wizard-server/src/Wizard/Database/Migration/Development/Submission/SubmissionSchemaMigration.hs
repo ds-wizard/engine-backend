@@ -34,9 +34,9 @@ createTables = do
         \     created_by uuid, \
         \     created_at timestamptz, \
         \     updated_at timestamptz not null, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \       constraint submission_app_uuid_fk \
-        \         references app \
+        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \       constraint submission_tenant_uuid_fk \
+        \         references tenant \
         \ ); \
         \  \
         \ create unique index submission_uuid_uindex \
@@ -53,6 +53,6 @@ createTables = do
         \      foreign key (created_by) references user_entity (uuid); \
         \  \
         \ create index submission_document_uuid_index \
-        \   on submission (document_uuid, app_uuid);"
+        \   on submission (document_uuid, tenant_uuid);"
   let action conn = execute_ conn sql
   runDB action

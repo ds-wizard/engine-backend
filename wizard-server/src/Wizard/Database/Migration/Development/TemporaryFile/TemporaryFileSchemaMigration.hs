@@ -31,9 +31,9 @@ createTables = do
         \         file_name        varchar not null, \
         \         content_type     varchar not null, \
         \         expires_at       timestamp with time zone not null, \
-        \         app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \           constraint temporary_file_app_uuid_fk \
-        \             references app, \
+        \         tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \           constraint temporary_file_tenant_uuid_fk \
+        \             references tenant, \
         \         created_by       uuid not null \
         \           constraint temporary_file_user_entity_uuid_fk \
         \             references user_entity on delete cascade, \

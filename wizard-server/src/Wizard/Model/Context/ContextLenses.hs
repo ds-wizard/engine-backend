@@ -73,8 +73,8 @@ instance HasField "identityEmail'" AppContext (Maybe String) where
 instance HasField "traceUuid'" AppContext U.UUID where
   getField = (.traceUuid)
 
-instance HasField "appUuid'" AppContext U.UUID where
-  getField = (.currentAppUuid)
+instance HasField "tenantUuid'" AppContext U.UUID where
+  getField = (.currentTenantUuid)
 
 instance HasField "cache'" AppContext ServerCache where
   getField = (.cache)

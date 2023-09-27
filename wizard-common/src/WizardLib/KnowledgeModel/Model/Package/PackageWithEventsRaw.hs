@@ -23,7 +23,7 @@ data PackageWithEventsRaw = PackageWithEventsRaw
   , mergeCheckpointPackageId :: Maybe String
   , events :: Value
   , nonEditable :: Bool
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

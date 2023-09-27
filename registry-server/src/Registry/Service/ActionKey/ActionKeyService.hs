@@ -23,7 +23,7 @@ createActionKey orgId actionType = do
           , identity = orgId
           , aType = actionType
           , hash = U.toString hash
-          , appUuid = U.nil
+          , tenantUuid = U.nil
           , createdAt = now
           }
   insertActionKey actionKey

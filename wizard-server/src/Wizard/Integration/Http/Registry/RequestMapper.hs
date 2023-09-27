@@ -27,9 +27,9 @@ import Shared.Common.Constant.Api
 import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.String (f', splitOn)
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Statistics.InstanceStatistics
+import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.DocumentTemplate.Constant.DocumentTemplate
 import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleDTO
 import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleJM ()
@@ -55,8 +55,8 @@ toConfirmOrganizationRegistrationRequest reqDto =
     reqDto.hash
 
 toRetrievePackagesRequest
-  :: AppConfigRegistry -> InstanceStatistics -> ClientM (Headers '[Header "x-trace-uuid" String] [PackageSimpleDTO])
-toRetrievePackagesRequest appConfig iStat =
+  :: TenantConfigRegistry -> InstanceStatistics -> ClientM (Headers '[Header "x-trace-uuid" String] [PackageSimpleDTO])
+toRetrievePackagesRequest tenantConfig iStat =
   client
     PKG_List_GET.list_GET_Api
     mTokenHeader
@@ -70,7 +70,7 @@ toRetrievePackagesRequest appConfig iStat =
     kmId
     metamodelVersion
   where
-    mTokenHeader = Just $ "Bearer " ++ appConfig.token
+    mTokenHeader = Just $ "Bearer " ++ tenantConfig.token
     xUserCountHeaderName = Just . show $ iStat.userCount
     xPkgCountHeaderName = Just . show $ iStat.pkgCount
     xQtnCountHeaderName = Just . show $ iStat.qtnCount
@@ -82,20 +82,20 @@ toRetrievePackagesRequest appConfig iStat =
     metamodelVersion = Just kmMetamodelVersion
 
 toRetrieveTemplatesRequest
-  :: AppConfigRegistry -> ClientM (Headers '[Header "x-trace-uuid" String] [DocumentTemplateSimpleDTO])
-toRetrieveTemplatesRequest appConfig =
+  :: TenantConfigRegistry -> ClientM (Headers '[Header "x-trace-uuid" String] [DocumentTemplateSimpleDTO])
+toRetrieveTemplatesRequest tenantConfig =
   client TML_List_GET.list_GET_Api mTokenHeader organizationId tmlId metamodelVersion
   where
-    mTokenHeader = Just $ "Bearer " ++ appConfig.token
+    mTokenHeader = Just $ "Bearer " ++ tenantConfig.token
     organizationId = Nothing
     tmlId = Nothing
     metamodelVersion = Just documentTemplateMetamodelVersion
 
-toRetrieveLocaleRequest :: String -> AppConfigRegistry -> ClientM (Headers '[Header "x-trace-uuid" String] [LocaleDTO])
-toRetrieveLocaleRequest version appConfig =
+toRetrieveLocaleRequest :: String -> TenantConfigRegistry -> ClientM (Headers '[Header "x-trace-uuid" String] [LocaleDTO])
+toRetrieveLocaleRequest version tenantConfig =
   client LOC_List_GET.list_GET_Api mTokenHeader organizationId lclId recommendedAppVersion
   where
-    mTokenHeader = Just $ "Bearer " ++ appConfig.token
+    mTokenHeader = Just $ "Bearer " ++ tenantConfig.token
     organizationId = Nothing
     lclId = Nothing
     recommendedAppVersion =
@@ -103,58 +103,58 @@ toRetrieveLocaleRequest version appConfig =
         [major, minor, _] -> Just . f' "%s.%s.%s" $ [major, minor, "0"]
         _ -> Just "1.0.0"
 
-toRetrievePackageBundleByIdRequest :: ServerConfigRegistry -> AppConfigRegistry -> String -> HttpRequest
-toRetrievePackageBundleByIdRequest serverConfig appConfig pkgId =
+toRetrievePackageBundleByIdRequest :: ServerConfigRegistry -> TenantConfigRegistry -> String -> HttpRequest
+toRetrievePackageBundleByIdRequest serverConfig tenantConfig pkgId =
   HttpRequest
     { requestMethod = "GET"
     , requestUrl = serverConfig.url ++ "/packages/" ++ pkgId ++ "/bundle"
-    , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig.token)]
+    , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ tenantConfig.token)]
     , requestBody = BS.empty
     , multipart = Nothing
     }
 
-toRetrieveTemplateBundleByIdRequest :: ServerConfigRegistry -> AppConfigRegistry -> String -> HttpRequest
-toRetrieveTemplateBundleByIdRequest serverConfig appConfig tmlId =
+toRetrieveTemplateBundleByIdRequest :: ServerConfigRegistry -> TenantConfigRegistry -> String -> HttpRequest
+toRetrieveTemplateBundleByIdRequest serverConfig tenantConfig tmlId =
   HttpRequest
     { requestMethod = "GET"
     , requestUrl = serverConfig.url ++ "/document-templates/" ++ tmlId ++ "/bundle"
-    , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig.token)]
+    , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ tenantConfig.token)]
     , requestBody = BS.empty
     , multipart = Nothing
     }
 
-toRetrieveLocaleBundleByIdRequest :: ServerConfigRegistry -> AppConfigRegistry -> String -> HttpRequest
-toRetrieveLocaleBundleByIdRequest serverConfig appConfig lclId =
+toRetrieveLocaleBundleByIdRequest :: ServerConfigRegistry -> TenantConfigRegistry -> String -> HttpRequest
+toRetrieveLocaleBundleByIdRequest serverConfig tenantConfig lclId =
   HttpRequest
     { requestMethod = "GET"
     , requestUrl = serverConfig.url ++ "/locales/" ++ lclId ++ "/bundle"
-    , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig.token)]
+    , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ tenantConfig.token)]
     , requestBody = BS.empty
     , multipart = Nothing
     }
 
-toUploadPackageBundleRequest :: AppConfigRegistry -> PackageBundleDTO -> ClientM (Headers '[Header "x-trace-uuid" String] PackageBundleDTO)
-toUploadPackageBundleRequest appConfig =
+toUploadPackageBundleRequest :: TenantConfigRegistry -> PackageBundleDTO -> ClientM (Headers '[Header "x-trace-uuid" String] PackageBundleDTO)
+toUploadPackageBundleRequest tenantConfig =
   client PKG_List_Bundle_POST.list_bundle_POST_Api mTokenHeader
   where
-    mTokenHeader = Just $ "Bearer " ++ appConfig.token
+    mTokenHeader = Just $ "Bearer " ++ tenantConfig.token
 
-toUploadDocumentTemplateBundleRequest :: ServerConfigRegistry -> AppConfigRegistry -> BSL.ByteString -> HttpRequest
-toUploadDocumentTemplateBundleRequest serverConfig appConfig bundle =
+toUploadDocumentTemplateBundleRequest :: ServerConfigRegistry -> TenantConfigRegistry -> BSL.ByteString -> HttpRequest
+toUploadDocumentTemplateBundleRequest serverConfig tenantConfig bundle =
   HttpRequest
     { requestMethod = "POST"
     , requestUrl = serverConfig.url ++ "/document-templates/bundle"
-    , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig.token)]
+    , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ tenantConfig.token)]
     , requestBody = BSL.toStrict bundle
     , multipart = Just $ HttpRequestMultipart {key = "file", fileName = Just "file.zip", contentType = Just "application/zip"}
     }
 
-toUploadLocaleBundleRequest :: ServerConfigRegistry -> AppConfigRegistry -> BSL.ByteString -> HttpRequest
-toUploadLocaleBundleRequest serverConfig appConfig bundle =
+toUploadLocaleBundleRequest :: ServerConfigRegistry -> TenantConfigRegistry -> BSL.ByteString -> HttpRequest
+toUploadLocaleBundleRequest serverConfig tenantConfig bundle =
   HttpRequest
     { requestMethod = "POST"
     , requestUrl = serverConfig.url ++ "/locales/bundle"
-    , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig.token)]
+    , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ tenantConfig.token)]
     , requestBody = BSL.toStrict bundle
     , multipart = Just $ HttpRequestMultipart {key = "file", fileName = Just "file.zip", contentType = Just "application/zip"}
     }

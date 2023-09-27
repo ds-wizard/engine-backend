@@ -10,17 +10,17 @@ import qualified Data.UUID as U
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.App.App
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.Document.Context.DocumentContextMapper
 import Wizard.Service.Document.DocumentMapper
@@ -52,7 +52,7 @@ doc1 =
     , contentType = Just "text/plain"
     , fileSize = Just $ 50 * 1024
     , workerLog = Just "Success"
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , retrievedAt = Nothing
     , finishedAt = Nothing
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -121,7 +121,7 @@ doc2 =
     , contentType = Just "text/plain"
     , fileSize = Just $ 50 * 1024
     , workerLog = Just "Success"
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , retrievedAt = Nothing
     , finishedAt = Nothing
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -144,7 +144,7 @@ doc3 =
     , contentType = Just "text/plain"
     , fileSize = Just $ 50 * 1024
     , workerLog = Just "Success"
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , retrievedAt = Nothing
     , finishedAt = Nothing
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -227,7 +227,7 @@ differentDoc =
     , contentType = Just "text/plain"
     , fileSize = Just $ 50 * 1024
     , workerLog = Just "Success"
-    , appUuid = differentApp.uuid
+    , tenantUuid = differentTenant.uuid
     , retrievedAt = Nothing
     , finishedAt = Nothing
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0

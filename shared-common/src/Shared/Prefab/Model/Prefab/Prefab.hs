@@ -10,7 +10,7 @@ data Prefab = Prefab
   , pType :: String
   , name :: String
   , content :: Value
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

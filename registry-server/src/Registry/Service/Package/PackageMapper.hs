@@ -30,7 +30,7 @@ toRaw pkg =
     , mergeCheckpointPackageId = pkg.mergeCheckpointPackageId
     , events = toJSON $ pkg.events
     , nonEditable = pkg.nonEditable
-    , appUuid = pkg.appUuid
+    , tenantUuid = pkg.tenantUuid
     , createdAt = pkg.createdAt
     }
 

@@ -28,7 +28,7 @@ validatePublicRegistrationEnabled = do
   isAdmin <- isOrganizationAdmin
   unless
     isAdmin
-    (checkIfServerFeatureIsEnabled "App Registration" (\s -> s.general.publicRegistrationEnabled))
+    (checkIfServerFeatureIsEnabled "Tenant Registration" (\s -> s.general.publicRegistrationEnabled))
 
 validateOrganizationId :: String -> Maybe AppError
 validateOrganizationId orgId =

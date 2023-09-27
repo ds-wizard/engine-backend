@@ -33,7 +33,7 @@ globalPackageEmpty =
     , mergeCheckpointPackageId = Nothing
     , events = [AddQuestionEvent' a_km1_ch1_q1']
     , nonEditable = False
-    , appUuid = U.nil
+    , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -71,7 +71,7 @@ globalPackage =
         , AddIntegrationEvent' a_km1_iwp'
         ]
     , nonEditable = False
-    , appUuid = U.nil
+    , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -110,7 +110,7 @@ netherlandsPackage =
     , mergeCheckpointPackageId = Just $ globalPackage.pId
     , events = [AddChapterEvent' a_km1_ch1]
     , nonEditable = False
-    , appUuid = U.nil
+    , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -132,7 +132,7 @@ netherlandsPackageV2 =
     , mergeCheckpointPackageId = Just $ globalPackage.pId
     , events = [AddChapterEvent' a_km1_ch4]
     , nonEditable = False
-    , appUuid = U.nil
+    , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -162,7 +162,7 @@ amsterdamPackage =
     , mergeCheckpointPackageId = Just netherlandsPackage.pId
     , events = []
     , nonEditable = False
-    , appUuid = U.nil
+    , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -241,7 +241,7 @@ germanyPackage =
         , AddQuestionEvent' a_km1_ch3_q12'
         ]
     , nonEditable = False
-    , appUuid = U.nil
+    , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 

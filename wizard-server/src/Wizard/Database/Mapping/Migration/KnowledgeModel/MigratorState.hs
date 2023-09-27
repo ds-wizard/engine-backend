@@ -21,7 +21,7 @@ instance ToRow MigratorState where
     , toJSONField targetPackageEvents
     , toJSONField resultEvents
     , toJSONField currentKnowledgeModel
-    , toField appUuid
+    , toField tenantUuid
     , toField createdAt
     ]
 
@@ -36,6 +36,6 @@ instance FromRow MigratorState where
     targetPackageEvents <- fieldWith fromJSONField
     resultEvents <- fieldWith fromJSONField
     currentKnowledgeModel <- fieldWith fromJSONField
-    appUuid <- field
+    tenantUuid <- field
     createdAt <- field
     return $ MigratorState {..}

@@ -27,7 +27,6 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Service.KnowledgeModel.KnowledgeModelValidation
-import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Migration.Metamodel.MigratorService
 import Wizard.Service.Package.Bundle.PackageBundleAudit
 import Wizard.Service.Package.PackageService
@@ -37,6 +36,7 @@ import Wizard.Service.Package.PackageValidation (
  )
 import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import Wizard.Service.TemporaryFile.TemporaryFileService
+import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.Common.Service.Coordinate.CoordinateValidation
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackageDTO
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackageJM ()
@@ -132,8 +132,8 @@ importBundle pb =
 importPackage :: PackageDTO -> AppContextM (Maybe PackageSimpleDTO)
 importPackage dto =
   runInTransaction $ do
-    appUuid <- asks currentAppUuid
-    let pkg = PM.fromDTO dto appUuid
+    tenantUuid <- asks currentTenantUuid
+    let pkg = PM.fromDTO dto tenantUuid
     skipIfPackageIsAlreadyImported pkg $ do
       validateCoordinateWithParams pkg.pId pkg.organizationId pkg.kmId pkg.version
       validateMaybePreviousPackageIdExistence pkg.pId pkg.previousPackageId
