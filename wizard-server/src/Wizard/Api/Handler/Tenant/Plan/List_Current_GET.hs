@@ -5,10 +5,10 @@ import Servant
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.Tenant.Plan.TenantPlanJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Model.Tenant.Plan.TenantPlan
 import Wizard.Service.Tenant.Plan.PlanService
+import WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanJM ()
+import WizardLib.Public.Model.Tenant.Plan.TenantPlan
 
 type List_Current_GET =
   Header "Authorization" String

@@ -1,12 +1,12 @@
-module Wizard.Service.Tenant.Plan.PlanMapper where
+module WizardLib.Public.Service.Tenant.Plan.PlanMapper where
 
 import Data.Time
 import qualified Data.UUID as U
 import Prelude hiding (until)
 
-import Wizard.Api.Resource.Tenant.Plan.TenantPlanChangeDTO
-import Wizard.Model.Tenant.Plan.TenantPlan
+import WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanChangeDTO
 import WizardLib.Public.Model.PersistentCommand.Tenant.Plan.CreateOrUpdatePlanCommand
+import WizardLib.Public.Model.Tenant.Plan.TenantPlan
 
 toChangeDTO :: TenantPlan -> TenantPlanChangeDTO
 toChangeDTO plan =

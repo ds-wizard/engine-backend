@@ -9,9 +9,9 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
-import Wizard.Database.DAO.Tenant.TenantPlanDAO
 import qualified Wizard.Database.Migration.Development.Tenant.TenantMigration as TNT_Migration
 import Wizard.Model.Context.AppContext
+import WizardLib.Public.Database.DAO.Tenant.TenantPlanDAO
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -58,7 +58,7 @@ test_204 appContext =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find result in DB and compare with expectation state
-      assertCountInDB findPlans appContext 1
+      assertCountInDB findTenantPlans appContext 1
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

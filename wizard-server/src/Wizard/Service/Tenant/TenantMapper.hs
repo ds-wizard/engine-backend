@@ -12,11 +12,11 @@ import Wizard.Api.Resource.Tenant.TenantDTO
 import Wizard.Api.Resource.Tenant.TenantDetailDTO
 import Wizard.Api.Resource.Tenant.Usage.TenantUsageDTO
 import Wizard.Model.Config.ServerConfig
-import Wizard.Model.Tenant.Plan.TenantPlan
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
+import WizardLib.Public.Model.Tenant.Plan.TenantPlan
 
 toDTO :: Tenant -> Maybe String -> Maybe String -> TenantDTO
 toDTO tenant mLogoUrl mPrimaryColor =

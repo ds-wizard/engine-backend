@@ -1,4 +1,4 @@
-module Wizard.Api.Resource.Tenant.Plan.TenantPlanChangeDTO where
+module WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanChangeDTO where
 
 import Data.Time
 import GHC.Generics

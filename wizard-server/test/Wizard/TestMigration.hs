@@ -27,7 +27,6 @@ import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.DAO.Tenant.TenantConfigDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
-import Wizard.Database.DAO.Tenant.TenantPlanDAO
 import Wizard.Database.DAO.User.UserDAO
 import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
@@ -61,6 +60,7 @@ import Wizard.Model.Cache.ServerCache
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
+import WizardLib.Public.Database.DAO.Tenant.TenantPlanDAO
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
 
 import Wizard.Specs.Common
@@ -157,7 +157,7 @@ resetDB appContext = do
   runInContext deleteUserTokens appContext
   runInContext deleteUsers appContext
   runInContext deleteLimitBundles appContext
-  runInContext deletePlans appContext
+  runInContext deleteTenantPlans appContext
   runInContext deleteTenants appContext
   runInContext (insertTenant defaultTenant) appContext
   runInContext (insertLimitBundle defaultTenantLimitBundle) appContext

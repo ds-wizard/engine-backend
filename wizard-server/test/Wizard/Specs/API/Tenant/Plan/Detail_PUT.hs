@@ -8,11 +8,11 @@ import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import Wizard.Database.Migration.Development.Tenant.Data.TenantPlans
 import qualified Wizard.Database.Migration.Development.Tenant.TenantMigration as TNT_Migration
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Tenant.Plan.TenantPlan
-import Wizard.Service.Tenant.Plan.PlanMapper
+import WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantPlans
+import WizardLib.Public.Model.Tenant.Plan.TenantPlan
+import WizardLib.Public.Service.Tenant.Plan.PlanMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

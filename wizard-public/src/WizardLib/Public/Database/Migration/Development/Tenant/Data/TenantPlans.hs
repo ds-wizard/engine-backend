@@ -1,9 +1,9 @@
-module Wizard.Database.Migration.Development.Tenant.Data.TenantPlans where
+module WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantPlans where
 
 import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
-import Wizard.Model.Tenant.Plan.TenantPlan
+import WizardLib.Public.Model.Tenant.Plan.TenantPlan
 
 standardPlan :: TenantPlan
 standardPlan =

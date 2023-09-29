@@ -26,7 +26,6 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Tenant.TenantConfigDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
-import Wizard.Database.DAO.Tenant.TenantPlanDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
@@ -42,6 +41,7 @@ import Wizard.Service.Tenant.TenantValidation
 import Wizard.Service.Tenant.Usage.UsageService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import Wizard.Service.User.UserService
+import WizardLib.Public.Database.DAO.Tenant.TenantPlanDAO
 import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
 
 getTenantsPage :: Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page TenantDTO)
@@ -104,7 +104,7 @@ getTenantByUuid :: U.UUID -> AppContextM TenantDetailDTO
 getTenantByUuid uuid = do
   checkPermission _TENANT_PERM
   tenant <- findTenantByUuid uuid
-  plans <- findPlansForTenantUuid uuid
+  plans <- findTenantPlansForTenantUuid uuid
   usage <- getUsage uuid
   users <- findUsersWithTenantFiltered uuid [("role", _USER_ROLE_ADMIN)]
   tenantConfig <- getTenantConfigByUuid tenant.uuid

@@ -5,8 +5,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Prelude hiding (until)
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
-import Wizard.Database.DAO.Tenant.TenantPlanDAO
-import Wizard.Model.Tenant.Plan.TenantPlan
+import WizardLib.Public.Database.DAO.Tenant.TenantPlanDAO
+import WizardLib.Public.Model.Tenant.Plan.TenantPlan
 
 import Wizard.Specs.API.Common
 
@@ -14,7 +14,7 @@ import Wizard.Specs.API.Common
 -- ASSERTS
 -- --------------------------------
 assertExistenceOfPlanInDB appContext plan = do
-  planFromDb <- getFirstFromDB (findPlansForTenantUuid plan.tenantUuid) appContext
+  planFromDb <- getFirstFromDB (findTenantPlansForTenantUuid plan.tenantUuid) appContext
   comparePlanDtos planFromDb plan
 
 -- --------------------------------

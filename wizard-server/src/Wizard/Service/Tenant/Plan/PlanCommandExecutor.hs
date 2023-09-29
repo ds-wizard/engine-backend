@@ -7,10 +7,10 @@ import qualified Data.UUID as U
 import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Tenant.Plan.PlanMapper
 import Wizard.Service.Tenant.Plan.PlanService
 import WizardLib.Public.Model.PersistentCommand.Tenant.Plan.CreateOrUpdatePlanCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Plan.DeletePlanCommand
+import WizardLib.Public.Service.Tenant.Plan.PlanMapper
 
 cComponent = "plan"
 

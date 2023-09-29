@@ -1,4 +1,4 @@
-module Wizard.Model.Tenant.Plan.TenantPlan where
+module WizardLib.Public.Model.Tenant.Plan.TenantPlan where
 
 import Data.Time
 import qualified Data.UUID as U

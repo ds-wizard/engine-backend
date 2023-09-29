@@ -1,9 +1,9 @@
-module Wizard.Api.Resource.Tenant.Plan.TenantPlanJM where
+module WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanJM where
 
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Model.Tenant.Plan.TenantPlan
+import WizardLib.Public.Model.Tenant.Plan.TenantPlan
 
 instance FromJSON TenantPlan where
   parseJSON = genericParseJSON jsonOptions
