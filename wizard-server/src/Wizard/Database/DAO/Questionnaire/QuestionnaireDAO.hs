@@ -193,8 +193,6 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
             \    qtn.description, \
             \    qtn.visibility, \
             \    qtn.sharing, \
-            \    qtn.selected_question_tag_uuids::jsonb, \
-            \    qtn.events::jsonb, \
             \    qtn.is_template, \
             \    qtn.answered_questions, \
             \    qtn.unanswered_questions, \
