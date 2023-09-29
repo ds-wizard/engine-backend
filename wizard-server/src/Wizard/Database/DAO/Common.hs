@@ -91,8 +91,8 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
             (fromString sql)
             ( U.toString tenantUuid
                 : U.toString tenantUuid
-                : regex mQuery
-                : regex mQuery
+                : regexM mQuery
+                : regexM mQuery
                 : mapToDBCoordinatesParams mOrganizationId mEntityId
                 ++ maybeToList mState
             )
@@ -152,11 +152,11 @@ createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrga
         query
           conn
           (fromString sql)
-          ( [U.toString tenantUuid, regex mQuery, regex mQuery]
+          ( [U.toString tenantUuid, regexM mQuery, regexM mQuery]
               ++ mapToDBCoordinatesParams mOrganizationId mEntityId
               ++ maybeToList mState
               ++ [U.toString tenantUuid]
-              ++ [regex mQuery, regex mQuery]
+              ++ [regexM mQuery, regexM mQuery]
           )
   result <- runDB action
   case result of

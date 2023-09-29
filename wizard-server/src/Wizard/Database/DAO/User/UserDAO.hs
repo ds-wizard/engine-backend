@@ -47,7 +47,7 @@ findUsersPage mQuery mRole pageable sort = do
     sort
     "*"
     "WHERE (concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role ~* ? AND tenant_uuid = ? AND machine = false"
-    [regex mQuery, regex mQuery, regex mRole, U.toString tenantUuid]
+    [regexM mQuery, regexM mQuery, regexM mRole, U.toString tenantUuid]
 
 findUserSuggestionsPage
   :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
@@ -74,7 +74,7 @@ findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
     sort
     "uuid, first_name, last_name, email, image_url"
     condition
-    ([regex mQuery, regex mQuery, U.toString tenantUuid] ++ fromMaybe [] mSelectUuids ++ fromMaybe [] mExcludeUuids)
+    ([regexM mQuery, regexM mQuery, U.toString tenantUuid] ++ fromMaybe [] mSelectUuids ++ fromMaybe [] mExcludeUuids)
 
 findUserByUuid :: U.UUID -> AppContextM User
 findUserByUuid uuid = getFromCacheOrDb getFromCache addToCache go (U.toString uuid)

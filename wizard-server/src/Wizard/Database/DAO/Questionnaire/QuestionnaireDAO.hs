@@ -76,7 +76,10 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
   -- 1. Prepare variables
   do
     tenantUuid <- asks currentTenantUuid
-    let nameCondition = "qtn.name ~* ?"
+    let (nameCondition, nameRegex) =
+          case mQuery of
+            Just query -> ("AND qtn.name ~* ?", [regex query])
+            Nothing -> ("", [])
     let isTemplateCondition =
           case mIsTemplate of
             Nothing -> ""
@@ -142,7 +145,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
                   "SELECT COUNT(DISTINCT qtn.uuid) FROM questionnaire qtn %s %s WHERE %s %s %s %s %s %s %s"
                   [ userUuidsJoin
                   , qtnMigrationJoin
-                  , f' "qtn.tenant_uuid = '%s' AND" [U.toString tenantUuid]
+                  , f' "qtn.tenant_uuid = '%s'" [U.toString tenantUuid]
                   , nameCondition
                   , isTemplateCondition
                   , isMigratingCondition
@@ -157,7 +160,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
                   \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
                   \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
                   \%s \
-                  \WHERE %s AND %s %s %s %s %s %s"
+                  \WHERE %s %s %s %s %s %s %s"
                   [ qtnMigrationJoin
                   , qtnWhereSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']"
                   , nameCondition
@@ -167,7 +170,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
                   , userUuidsCondition
                   , packageCondition
                   ]
-    let params = [regex mQuery] ++ fromMaybe [] mProjectTags ++ fromMaybe [] mUserUuids ++ fromMaybe [] mPackageIdsLike
+    let params = nameRegex ++ fromMaybe [] mProjectTags ++ fromMaybe [] mUserUuids ++ fromMaybe [] mPackageIdsLike
     logQuery sql params
     let action conn = query conn sql params
     result <- runDB action
@@ -220,7 +223,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
                   \OFFSET %s LIMIT %s) nested_qtn"
                   [ sqlBase
                   , userUuidsJoin
-                  , f' "qtn.tenant_uuid = '%s' AND" [U.toString tenantUuid]
+                  , f' "qtn.tenant_uuid = '%s'" [U.toString tenantUuid]
                   , nameCondition
                   , isTemplateCondition
                   , isMigratingCondition
@@ -239,7 +242,6 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
                   \WHERE %s %s OFFSET %s LIMIT %s) nested_qtn"
                   [ sqlBase
                   , qtnWhereSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']"
-                      ++ " AND "
                       ++ nameCondition
                       ++ isTemplateCondition
                       ++ isMigratingCondition

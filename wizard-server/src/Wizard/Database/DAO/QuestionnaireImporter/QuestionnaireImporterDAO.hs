@@ -130,8 +130,8 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
             (fromString sql)
             ( U.toString tenantUuid
                 : U.toString tenantUuid
-                : regex mQuery
-                : regex mQuery
+                : regexM mQuery
+                : regexM mQuery
                 : mapToDBCoordinatesParams mOrganizationId mEntityId
             )
     entities <- runDB action
@@ -162,7 +162,7 @@ createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrga
         query
           conn
           (fromString sql)
-          (U.toString tenantUuid : regex mQuery : regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
+          (U.toString tenantUuid : regexM mQuery : regexM mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
   result <- runDB action
   case result of
     [count] -> return . fromOnly $ count

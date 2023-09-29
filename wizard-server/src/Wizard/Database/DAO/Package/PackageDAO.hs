@@ -110,8 +110,8 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pag
               [selectCondition, excludeCondition, phaseCondition, nonEditableCondition, mapSort sort, show skip, show sizeI]
     let params =
           [U.toString tenantUuid, U.toString tenantUuid]
-            ++ [regex mQuery]
-            ++ [regex mQuery]
+            ++ [regexM mQuery]
+            ++ [regexM mQuery]
             ++ fromMaybe [] mSelectIdsLike
             ++ fromMaybe [] mExcludeIdsLike
     logQuery sql params
@@ -140,7 +140,7 @@ countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike m
             \   GROUP BY organization_id, km_id) nested"
             [selectCondition, excludeCondition, phaseCondition, nonEditableCondition]
   let params =
-        [U.toString tenantUuid, regex mQuery, regex mQuery]
+        [U.toString tenantUuid, regexM mQuery, regexM mQuery]
           ++ fromMaybe [] mSelectIdsLike
           ++ fromMaybe [] mExcludeIdsLike
   logQuery sql params

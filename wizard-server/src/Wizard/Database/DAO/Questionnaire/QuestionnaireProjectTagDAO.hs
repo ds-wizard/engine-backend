@@ -21,7 +21,7 @@ findQuestionnaireProjectTagsPage mQuery excludeTags pageable sort =
   -- 1. Prepare variables
   do
     tenantUuid <- asks currentTenantUuid
-    let params = [U.toString tenantUuid, regex mQuery] ++ excludeTags
+    let params = [U.toString tenantUuid, regexM mQuery] ++ excludeTags
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
     -- 2. Get total count
     count <- findCount excludeTags params

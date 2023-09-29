@@ -41,7 +41,7 @@ findBranchesPage mQuery pageable sort =
   do
     tenantUuid <- asks currentTenantUuid
     let condition = "WHERE (name ~* ? OR km_id ~* ?) AND tenant_uuid = ?"
-    let conditionParams = [regex mQuery, regex mQuery, U.toString tenantUuid]
+    let conditionParams = [regexM mQuery, regexM mQuery, U.toString tenantUuid]
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
     -- 2. Get total count
     count <- createCountByFn entityName condition conditionParams

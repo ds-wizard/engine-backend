@@ -357,8 +357,11 @@ generateQuestionMarks fields =
 generateQuestionMarks' :: ToRow entity => entity -> String
 generateQuestionMarks' = generateQuestionMarks . fmap show . toRow
 
-regex :: Maybe String -> String
-regex mQuery = ".*" ++ fromMaybe "" mQuery ++ ".*"
+regex :: String -> String
+regex query = ".*" ++ query ++ ".*"
+
+regexM :: Maybe String -> String
+regexM query = ".*" ++ fromMaybe "" query ++ ".*"
 
 mapToDBQuerySql :: [(String, String)] -> String
 mapToDBQuerySql [] = ""

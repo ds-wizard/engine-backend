@@ -34,7 +34,7 @@ findTenantsPage mQuery mEnabled pageable sort = do
           Just True -> " AND enabled = true"
           Just False -> " AND enabled = false"
   let condition = f' "WHERE (name ~* ? OR tenant_id ~* ?) %s" [enabledCondition]
-  createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort "*" condition [regex mQuery, regex mQuery]
+  createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort "*" condition [regexM mQuery, regexM mQuery]
 
 findTenantByUuid :: U.UUID -> AppContextM Tenant
 findTenantByUuid uuid = createFindEntityByFn entityName [("uuid", U.toString uuid)]

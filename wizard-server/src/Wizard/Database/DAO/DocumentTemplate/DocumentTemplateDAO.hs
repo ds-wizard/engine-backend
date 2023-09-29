@@ -78,8 +78,8 @@ findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState mNon
     let params =
           U.toString tenantUuid
             : U.toString tenantUuid
-            : regex mQuery
-            : regex mQuery
+            : regexM mQuery
+            : regexM mQuery
             : mapToDBCoordinatesParams mOrganizationId mTemplateId
             ++ maybeToList mTemplateState
     logQuery sql params
@@ -117,12 +117,12 @@ countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mState stateCondit
             ]
   let params =
         U.toString tenantUuid
-          : regex mQuery
-          : regex mQuery
+          : regexM mQuery
+          : regexM mQuery
           : mapToDBCoordinatesParams mOrganizationId mTemplateId
           ++ maybeToList mState
           ++ [U.toString tenantUuid]
-          ++ [regex mQuery, regex mQuery]
+          ++ [regexM mQuery, regexM mQuery]
   logQuery sql params
   let action conn = query conn sql params
   result <- runDB action
