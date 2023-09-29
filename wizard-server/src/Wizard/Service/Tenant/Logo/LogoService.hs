@@ -1,4 +1,4 @@
-module Wizard.Service.Tenant.Config.ConfigLogoService where
+module Wizard.Service.Tenant.Logo.LogoService where
 
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Lazy.Char8 as BSL
@@ -12,7 +12,6 @@ import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.Public.PublicS3
-import Wizard.Service.Common
 import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigService
 
@@ -21,7 +20,6 @@ uploadLogo plainFileName contentType content =
   -- 1. Check permission
   runInTransaction $ do
     checkPermission _CFG_PERM
-    checkIfClientCustomizationIsEnabled
     -- 2. Get current config
     serverConfig <- asks serverConfig
     tenantConfig <- getCurrentTenantConfig
@@ -38,12 +36,10 @@ uploadLogo plainFileName contentType content =
         -- 4. Prepare to update & validate
         now <- liftIO getCurrentTime
         let updatedTenantConfig = fromLogoDTO tenantConfig newLogoUrl now
-        -- 5. Compile Client CSS
-        updatedTenantConfigWithCss <- invokeClientCssCompilation tenantConfig updatedTenantConfig
-        -- 6. Remove old logo if exists
+        -- 5. Remove old logo if exists
         removeOldConfig "logo" tenantConfig tenantConfig.lookAndFeel.logoUrl
-        -- 7. Update
-        modifyTenantConfig updatedTenantConfigWithCss
+        -- 6. Update
+        modifyTenantConfig updatedTenantConfig
         return ()
 
 deleteLogo :: AppContextM ()
@@ -51,15 +47,13 @@ deleteLogo =
   -- 1. Check permission
   runInTransaction $ do
     checkPermission _CFG_PERM
-    checkIfClientCustomizationIsEnabled
     -- 2. Get current config
     serverConfig <- asks serverConfig
     tenantConfig <- getCurrentTenantConfig
     -- 3. Update database
     now <- liftIO getCurrentTime
     let updatedTenantConfig = fromLogoDeleteDTO tenantConfig now
-    updatedTenantConfigWithCss <- invokeClientCssCompilation tenantConfig updatedTenantConfig
-    modifyTenantConfig updatedTenantConfigWithCss
+    modifyTenantConfig updatedTenantConfig
     -- 6. Remove logo
     removeOldConfig "logo" tenantConfig tenantConfig.lookAndFeel.logoUrl
 
@@ -75,6 +69,3 @@ getLogoFileName plainFileName content =
           else ""
       hash = show . abs . H.hash $ content
    in f' "logo.%s%s" [hash, suffix]
-
-checkIfClientCustomizationIsEnabled =
-  checkIfTenantFeatureIsEnabled "Client Customization" (\c -> c.feature.clientCustomizationEnabled)

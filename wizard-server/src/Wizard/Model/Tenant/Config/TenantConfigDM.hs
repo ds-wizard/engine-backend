@@ -95,7 +95,6 @@ defaultLookAndFeel =
     , appTitleShort = Nothing
     , customMenuLinks = []
     , logoUrl = Nothing
-    , styleUrl = Nothing
     , primaryColor = Nothing
     , illustrationsColor = Nothing
     }

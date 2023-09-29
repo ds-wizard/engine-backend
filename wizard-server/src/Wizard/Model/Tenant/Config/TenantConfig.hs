@@ -134,7 +134,6 @@ data TenantConfigLookAndFeel = TenantConfigLookAndFeel
   , appTitleShort :: Maybe String
   , customMenuLinks :: [TenantConfigLookAndFeelCustomMenuLink]
   , logoUrl :: Maybe String
-  , styleUrl :: Maybe String
   , primaryColor :: Maybe String
   , illustrationsColor :: Maybe String
   }

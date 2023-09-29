@@ -130,7 +130,6 @@ defaultLookAndFeel =
     , appTitleShort = Nothing
     , customMenuLinks = [defaultLookAndFeelCustomLink]
     , logoUrl = Nothing
-    , styleUrl = Nothing
     , primaryColor = Nothing
     , illustrationsColor = Nothing
     }

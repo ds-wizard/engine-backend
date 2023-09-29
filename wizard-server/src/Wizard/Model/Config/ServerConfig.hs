@@ -39,7 +39,6 @@ data ServerConfigGeneral = ServerConfigGeneral
   , secret :: String
   , rsaPrivateKey :: RSA.PrivateKey
   , integrationConfig :: String
-  , clientStyleBuilderUrl :: String
   }
   deriving (Generic, Show)
 

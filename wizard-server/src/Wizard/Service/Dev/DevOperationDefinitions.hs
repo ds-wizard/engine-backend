@@ -22,7 +22,6 @@ import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
 import Wizard.Service.TemporaryFile.TemporaryFileService
-import Wizard.Service.Tenant.Config.ConfigCommandExecutor
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Plan.PlanService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
@@ -164,22 +163,9 @@ config =
     { name = "Config"
     , description = Nothing
     , operations =
-        [ config_recompileCssInAllTenants
-        , config_switchClientCustomizationOn
+        [ config_switchClientCustomizationOn
         , config_switchClientCustomizationOff
         ]
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-config_recompileCssInAllTenants :: DevOperation AppContextM
-config_recompileCssInAllTenants =
-  DevOperation
-    { name = "Recompile CSS in All Tenants"
-    , description = Nothing
-    , parameters = []
-    , function = \reqDto -> do
-        recompileCssInAllTenants
-        return "Done"
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
