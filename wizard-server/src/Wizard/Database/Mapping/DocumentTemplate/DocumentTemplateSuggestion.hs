@@ -1,16 +1,16 @@
-module Wizard.Database.Mapping.DocumentTemplate.DocumentTemplateList where
+module Wizard.Database.Mapping.DocumentTemplate.DocumentTemplateSuggestion where
 
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 
 import Wizard.Database.Mapping.DocumentTemplate.DocumentTemplateState ()
-import Wizard.Model.DocumentTemplate.DocumentTemplateList
+import Wizard.Model.DocumentTemplate.DocumentTemplateSuggestion
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
 import WizardLib.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplatePhase ()
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
-instance FromRow DocumentTemplateList where
+instance FromRow DocumentTemplateSuggestion where
   fromRow = do
     tId <- field
     name <- field
@@ -21,10 +21,5 @@ instance FromRow DocumentTemplateList where
     metamodelVersion <- field
     description <- field
     allowedPackages <- fieldWith fromJSONField
-    state <- field
-    nonEditable <- field
-    remoteVersion <- field
-    remoteOrganizationName <- field
-    remoteOrganizationLogo <- field
-    createdAt <- field
-    return $ DocumentTemplateList {..}
+    formats <- fieldWith fromJSONField
+    return $ DocumentTemplateSuggestion {..}

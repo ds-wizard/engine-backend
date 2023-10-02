@@ -1,11 +1,18 @@
 module Wizard.Service.DocumentTemplate.DocumentTemplateMapper where
 
+import Data.Maybe (fromMaybe)
+
 import RegistryLib.Model.Organization.OrganizationSimple
+import Shared.Common.Database.DAO.Common
+import Shared.Common.Model.Common.Page
+import Shared.Common.Model.Common.PageMetadata
+import Shared.Common.Model.Common.Pageable
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Wizard.Model.DocumentTemplate.DocumentTemplateList
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
+import Wizard.Model.DocumentTemplate.DocumentTemplateSuggestion
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Registry.RegistryTemplate
 import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
@@ -13,7 +20,7 @@ import qualified Wizard.Service.Package.PackageMapper as PM_Mapper
 import WizardLib.Common.Util.Coordinate
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
+import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper hiding (toSuggestionDTO)
 import WizardLib.KnowledgeModel.Model.Package.Package
 
 toList :: DocumentTemplate -> Maybe RegistryTemplate -> Maybe RegistryOrganization -> DocumentTemplateState -> DocumentTemplatePhase -> DocumentTemplateList
@@ -27,10 +34,7 @@ toList tml mTmlR mOrgR state phase =
     , phase = tml.phase
     , metamodelVersion = tml.metamodelVersion
     , description = tml.description
-    , readme = tml.readme
-    , license = tml.license
     , allowedPackages = tml.allowedPackages
-    , formats = tml.formats
     , nonEditable = tml.nonEditable
     , state = state
     , remoteVersion = fmap (.remoteVersion) mTmlR
@@ -39,16 +43,14 @@ toList tml mTmlR mOrgR state phase =
         case mOrgR of
           Just orgR -> orgR.logo
           Nothing -> Nothing
-    , tenantUuid = tml.tenantUuid
     , createdAt = tml.createdAt
-    , updatedAt = tml.updatedAt
     }
 
 toSimpleDTO :: DocumentTemplate -> DocumentTemplateSimpleDTO
-toSimpleDTO tml = toSimpleDTO' False [] $ toList tml Nothing Nothing UnknownDocumentTemplateState ReleasedDocumentTemplatePhase
+toSimpleDTO tml = toSimpleDTO' False $ toList tml Nothing Nothing UnknownDocumentTemplateState ReleasedDocumentTemplatePhase
 
-toSimpleDTO' :: Bool -> [Package] -> DocumentTemplateList -> DocumentTemplateSimpleDTO
-toSimpleDTO' registryEnabled pkgs tml =
+toSimpleDTO' :: Bool -> DocumentTemplateList -> DocumentTemplateSimpleDTO
+toSimpleDTO' registryEnabled tml =
   DocumentTemplateSimpleDTO
     { tId = tml.tId
     , name = tml.name
@@ -57,14 +59,8 @@ toSimpleDTO' registryEnabled pkgs tml =
     , version = tml.version
     , phase = tml.phase
     , remoteLatestVersion = tml.remoteVersion
-    , metamodelVersion = tml.metamodelVersion
     , description = tml.description
-    , readme = tml.readme
-    , license = tml.license
-    , allowedPackages = tml.allowedPackages
-    , formats = tml.formats
     , nonEditable = tml.nonEditable
-    , usablePackages = fmap PM_Mapper.toSimpleDTO . getUsablePackagesForDocumentTemplate tml $ pkgs
     , state = computeDocumentTemplateState' registryEnabled tml
     , organization =
         case tml.remoteOrganizationName of
@@ -79,7 +75,21 @@ toSimpleDTO' registryEnabled pkgs tml =
     , createdAt = tml.createdAt
     }
 
-toSuggestionDTO :: DocumentTemplateList -> DocumentTemplateSuggestionDTO
+toSuggestionDTOPage :: [DocumentTemplateSuggestion] -> Pageable -> Page DocumentTemplateSuggestionDTO
+toSuggestionDTOPage suggestions pageable =
+  let size = fromMaybe 20 pageable.size
+      totalElements = length suggestions
+      metadata =
+        PageMetadata
+          { size = size
+          , totalElements = totalElements
+          , totalPages = computeTotalPage totalElements size
+          , number = fromMaybe 0 pageable.page
+          }
+      entities = fmap toSuggestionDTO . take size $ suggestions
+   in Page "documentTemplates" metadata entities
+
+toSuggestionDTO :: DocumentTemplateSuggestion -> DocumentTemplateSuggestionDTO
 toSuggestionDTO tml =
   DocumentTemplateSuggestionDTO
     { tId = tml.tId

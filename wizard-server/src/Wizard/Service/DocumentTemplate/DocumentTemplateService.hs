@@ -4,7 +4,6 @@ import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
-import Data.Maybe (fromMaybe)
 
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
@@ -23,8 +22,8 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Model.DocumentTemplate.DocumentTemplateList
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
+import Wizard.Model.DocumentTemplate.DocumentTemplateSuggestion
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
 import Wizard.Service.Document.DocumentCleanService
@@ -47,14 +46,7 @@ getDocumentTemplates queryParams mPkgId = do
   templates <- findDocumentTemplatesFiltered queryParams
   return $ filterDocumentTemplates mPkgId templates
 
-getDocumentTemplatesPage
-  :: Maybe String
-  -> Maybe String
-  -> Maybe String
-  -> Maybe String
-  -> Pageable
-  -> [Sort]
-  -> AppContextM (Page DocumentTemplateSimpleDTO)
+getDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSimpleDTO)
 getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState pageable sort = do
   checkPermission _DOC_TML_READ_PERM
   tenantConfig <- getCurrentTenantConfig
@@ -62,30 +54,21 @@ getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState pagea
     then return $ Page "documentTemplates" (PageMetadata 0 0 0 0) []
     else do
       templates <- findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState Nothing pageable sort
-      packages <- findPackages
-      return . fmap (toSimpleDTO' tenantConfig.registry.enabled packages) $ templates
+      return . fmap (toSimpleDTO' tenantConfig.registry.enabled) $ templates
 
 getDocumentTemplateSuggestions :: Maybe String -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
 getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable pageable sort = do
   checkPermission _DOC_TML_READ_PERM
   validateCoordinateFormat' False mPkgId
-  page <- findDocumentTemplatesPage Nothing Nothing mQuery Nothing mNonEditable (Pageable (Just 0) (Just 999999999)) sort
-  return . fmap toSuggestionDTO . updatePage page . filterDocumentTemplatesInGroup $ page
+  tmls <- findDocumentTemplatesSuggestions mQuery mNonEditable
+  let entities = filterDocumentTemplatesInGroup tmls
+  return $ toSuggestionDTOPage entities pageable
   where
-    updatePage :: Page DocumentTemplateList -> [DocumentTemplateList] -> Page DocumentTemplateList
-    updatePage (Page name _ _) array =
-      let updatedArray = take updatedSize array
-          updatedSize = fromMaybe 20 pageable.size
-          updatedTotalElements = length updatedArray
-          updatedTotalPages = computeTotalPage updatedTotalElements updatedSize
-          updatedNumber = fromMaybe 0 pageable.page
-       in Page name (PageMetadata updatedSize updatedTotalElements updatedTotalPages updatedNumber) updatedArray
-    filterDocumentTemplatesInGroup :: Page DocumentTemplateList -> [DocumentTemplateList]
-    filterDocumentTemplatesInGroup page =
+    filterDocumentTemplatesInGroup :: [DocumentTemplateSuggestion] -> [DocumentTemplateSuggestion]
+    filterDocumentTemplatesInGroup =
       filter (isDocumentTemplateSupported includeUnsupportedMetamodelVersion)
         . filter (isDocumentTemplateInPhase mPhase)
         . filterDocumentTemplates mPkgId
-        $ page.entities
 
 getDocumentTemplatesDto :: [(String, String)] -> AppContextM [DocumentTemplateSuggestionDTO]
 getDocumentTemplatesDto queryParams = do
