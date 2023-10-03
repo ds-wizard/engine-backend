@@ -7,8 +7,6 @@ import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common hiding (getCurrentUser)
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
-import Wizard.Api.Resource.User.UserProfileDTO
-import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.User.UserProfileService
 
@@ -17,13 +15,11 @@ type List_Current_GET =
     :> Header "Host" String
     :> "users"
     :> "current"
-    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] UserProfileDTO)
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] UserDTO)
 
 list_current_GET
-  :: Maybe String -> Maybe String -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserProfileDTO)
+  :: Maybe String -> Maybe String -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserDTO)
 list_current_GET mTokenHeader mServerUrl =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
-      addTraceUuidHeader =<< do
-        user <- getCurrentUser
-        getUserProfile user.uuid
+      addTraceUuidHeader =<< getUserProfile

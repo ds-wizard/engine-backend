@@ -2,6 +2,8 @@ module Registry.Application (
   runApplication,
 ) where
 
+import Control.Concurrent
+import Control.Concurrent.Async
 import Control.Monad.Reader (liftIO)
 import Data.Foldable (forM_)
 import System.Exit
@@ -9,6 +11,7 @@ import System.IO
 
 import Registry.Bootstrap.DatabaseMigration
 import Registry.Bootstrap.Web
+import Registry.Bootstrap.Worker
 import Registry.Constant.ASCIIArt
 import Registry.Constant.Resource
 import Registry.Model.Config.ServerConfig
@@ -34,6 +37,7 @@ runApplication = do
   result <-
     runLogging serverConfig.logging.level $ do
       logInfo _CMP_ENVIRONMENT $ "set to " ++ show serverConfig.general.environment
+      shutdownFlag <- liftIO newEmptyMVar
       dbPool <- connectPostgresDB serverConfig.logging serverConfig.database
       httpClientManager <- setupHttpClientManager serverConfig.logging
       s3Client <- setupS3Client serverConfig.s3 httpClientManager
@@ -49,6 +53,6 @@ runApplication = do
       case result of
         Just error -> return . Just $ error
         Nothing -> do
-          liftIO $ runWebServer baseContext
+          liftIO $ race_ (takeMVar shutdownFlag) (concurrently (runWebServer baseContext) (worker shutdownFlag baseContext))
           return Nothing
   forM_ result die

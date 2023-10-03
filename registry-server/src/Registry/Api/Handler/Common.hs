@@ -5,12 +5,12 @@ import Control.Monad.Reader (asks, liftIO, runReaderT)
 import Data.Pool
 import Servant (throwError)
 
-import Registry.Api.Resource.Package.PackageSimpleJM ()
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Model.Config.ServerConfig
 import qualified Registry.Model.Context.AppContext as AppContext
 import Registry.Model.Context.BaseContext
-import Registry.Model.Organization.Organization
+import RegistryLib.Api.Resource.Package.PackageSimpleJM ()
+import RegistryLib.Model.Organization.Organization
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public

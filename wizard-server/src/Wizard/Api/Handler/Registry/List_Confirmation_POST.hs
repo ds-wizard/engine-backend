@@ -2,8 +2,8 @@ module Wizard.Api.Handler.Registry.List_Confirmation_POST where
 
 import Servant
 
-import Registry.Api.Resource.Organization.OrganizationDTO
-import Registry.Api.Resource.Organization.OrganizationJM ()
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Api.Resource.Organization.OrganizationJM ()
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common

@@ -3,8 +3,8 @@ module Wizard.Api.Resource.Locale.LocaleDTO where
 import Data.Time
 import GHC.Generics
 
+import RegistryLib.Model.Organization.OrganizationSimple
 import Wizard.Model.Locale.LocaleState
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
 
 data LocaleDTO = LocaleDTO
   { lId :: String
@@ -17,7 +17,7 @@ data LocaleDTO = LocaleDTO
   , defaultLocale :: Bool
   , enabled :: Bool
   , remoteLatestVersion :: Maybe String
-  , organization :: Maybe OrganizationSimpleDTO
+  , organization :: Maybe OrganizationSimple
   , state :: LocaleState
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

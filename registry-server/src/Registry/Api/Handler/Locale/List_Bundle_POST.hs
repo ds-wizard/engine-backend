@@ -4,10 +4,10 @@ import Servant
 import Servant.Multipart
 
 import Registry.Api.Handler.Common
-import Registry.Api.Resource.Locale.LocaleDTO
-import Registry.Api.Resource.Locale.LocaleJM ()
 import Registry.Model.Context.BaseContext
 import Registry.Service.Locale.Bundle.LocaleBundleService
+import RegistryLib.Api.Resource.Locale.LocaleDTO
+import RegistryLib.Api.Resource.Locale.LocaleJM ()
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Api.Resource.Common.FileDTO
 import Shared.Common.Api.Resource.Common.FileJM ()

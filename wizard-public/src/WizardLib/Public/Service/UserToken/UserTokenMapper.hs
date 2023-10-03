@@ -7,9 +7,9 @@ import qualified Data.UUID as U
 import qualified Jose.Jwt as JWT
 
 import Shared.Common.Util.Date
-import WizardLib.Public.Constant.UserToken
 import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
+import WizardLib.Public.Constant.UserToken
 import WizardLib.Public.Model.User.UserToken
 import WizardLib.Public.Model.User.UserTokenList
 

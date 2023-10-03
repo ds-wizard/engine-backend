@@ -3,7 +3,8 @@ module Registry.Service.DocumentTemplate.Bundle.DocumentTemplateBundleAcl where
 import Control.Monad.Except (throwError)
 
 import Registry.Model.Context.AppContextHelpers
-import Registry.Model.Organization.Organization
+import RegistryLib.Model.Organization.Organization
+import RegistryLib.Model.Organization.OrganizationRole
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 

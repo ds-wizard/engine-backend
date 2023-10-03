@@ -1,5 +1,6 @@
 module Wizard.Database.Migration.Development.Locale.Data.Locales where
 
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Locale.Database.Migration.Development.Locale.Data.Locales
 import Shared.Locale.Model.Locale.Locale
 import Wizard.Api.Resource.Locale.LocaleChangeDTO
@@ -9,7 +10,6 @@ import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Model.Locale.LocaleList
 import Wizard.Model.Locale.LocaleState
 import Wizard.Service.Locale.LocaleMapper
-import WizardLib.Common.Database.Migration.Development.Organization.Data.Organizations
 
 localeListDefaultEn :: LocaleList
 localeListDefaultEn = toLocaleList localeDefaultEn UnknownLocaleState

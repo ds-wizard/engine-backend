@@ -1,5 +1,6 @@
 module Wizard.Service.Migration.KnowledgeModel.Migrator.Sanitizator where
 
+import Control.Monad.Reader (liftIO)
 import Data.List
 import qualified Data.Map.Strict as M
 import Data.Maybe
@@ -7,6 +8,7 @@ import qualified Data.UUID as U
 
 import Shared.Common.Util.List
 import Shared.Common.Util.Uuid
+import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import WizardLib.KnowledgeModel.Model.Common.Lens
 import WizardLib.KnowledgeModel.Model.Event.Answer.AnswerEvent
@@ -20,7 +22,7 @@ import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
 
 -- ------------------------------------------------------------
 class Sanitizator a where
-  sanitize :: MigratorState -> a -> IO a
+  sanitize :: MigratorState -> a -> AppContextM a
 
 -- ------------------------------------------------------------
 instance Sanitizator EditKnowledgeModelEvent where
@@ -232,5 +234,5 @@ unwrapKM state event callback =
     Just km -> callback km
 
 changeEventUuid setter event = do
-  uuid <- generateUuid
+  uuid <- liftIO generateUuid
   return $ setter event uuid

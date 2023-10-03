@@ -16,8 +16,10 @@ import Registry.Model.PackageBundle.PackageBundle
 import Registry.Service.Audit.AuditService
 import Registry.Service.Package.Bundle.PackageBundleAcl
 import Registry.Service.Package.Bundle.PackageBundleMapper
-import Registry.Service.Package.PackageService
+import Shared.Common.Constant.App
+import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.List
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackageDTO
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackageJM ()
 import qualified WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleDTO as S_PackageBundleDTO
@@ -33,19 +35,21 @@ exportBundle :: String -> AppContextM R_PackageBundleDTO.PackageBundleDTO
 exportBundle pbId = do
   _ <- auditGetPackageBundle pbId
   resolvedPbId <- resolvePackageId pbId
-  packages <- getSeriesOfPackages resolvedPbId
-  let newestPackage = last packages
-  let pb =
-        PackageBundle
-          { bundleId = newestPackage.pId
-          , name = newestPackage.name
-          , organizationId = newestPackage.organizationId
-          , kmId = newestPackage.kmId
-          , version = newestPackage.version
-          , metamodelVersion = kmMetamodelVersion
-          , packages = packages
-          }
-  return . toDTO $ pb
+  packages <- findSeriesOfPackagesRecursiveById resolvedPbId
+  case lastSafe packages of
+    Just newestPackage -> do
+      let pb =
+            PackageBundle
+              { bundleId = newestPackage.pId
+              , name = newestPackage.name
+              , organizationId = newestPackage.organizationId
+              , kmId = newestPackage.kmId
+              , version = newestPackage.version
+              , metamodelVersion = kmMetamodelVersion
+              , packages = packages
+              }
+      return . toDTO $ pb
+    Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "package" [("app_uuid", U.toString defaultAppUuid), ("id", resolvedPbId)]
 
 importBundle :: S_PackageBundleDTO.PackageBundleDTO -> AppContextM S_PackageBundleDTO.PackageBundleDTO
 importBundle pb =

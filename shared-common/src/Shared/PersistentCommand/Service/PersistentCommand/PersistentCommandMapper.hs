@@ -26,6 +26,7 @@ toPersistentCommand uuid component function body maxAttempts internal destinatio
     , component = component
     , function = function
     , body = body
+    , lastTraceUuid = Nothing
     , lastErrorMessage = Nothing
     , attempts = 0
     , maxAttempts = maxAttempts
@@ -54,6 +55,7 @@ fromChangeDTO command reqDto now =
     , component = command.component
     , function = command.function
     , body = command.body
+    , lastTraceUuid = command.lastTraceUuid
     , lastErrorMessage = command.lastErrorMessage
     , attempts = command.attempts
     , maxAttempts = command.maxAttempts

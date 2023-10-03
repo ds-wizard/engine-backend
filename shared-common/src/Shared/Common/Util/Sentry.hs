@@ -58,27 +58,27 @@ recordUpdate buildVersion (Just request) exception getSentryIdentity record =
         , srRelease = Just buildVersion
         , srInterfaces =
             HashMap.fromList
-              ([
-                ( "sentry.interfaces.Http"
-                , toJSON $
-                    HashMap.fromList
-                      [ ("url", String url)
-                      , ("method", String method)
-                      ,
-                        ( "query_string"
-                        , if queryString == ""
-                            then Null
-                            else String queryString
-                        )
-                      , ("headers", toJSON [("Host", host)])
-                      ]
-                )
-              ,
-                ( "sentry.interfaces.Exception"
-                , toJSON $ HashMap.fromList [("type", String exceptionType), ("value", String exceptionValue)]
-                )
-              ]
-              ++ getSentryIdentity authorizationHeader
+              ( [
+                  ( "sentry.interfaces.Http"
+                  , toJSON $
+                      HashMap.fromList
+                        [ ("url", String url)
+                        , ("method", String method)
+                        ,
+                          ( "query_string"
+                          , if queryString == ""
+                              then Null
+                              else String queryString
+                          )
+                        , ("headers", toJSON [("Host", host)])
+                        ]
+                  )
+                ,
+                  ( "sentry.interfaces.Exception"
+                  , toJSON $ HashMap.fromList [("type", String exceptionType), ("value", String exceptionValue)]
+                  )
+                ]
+                  ++ getSentryIdentity authorizationHeader
               )
         , srTags =
             if isNothing traceUuidHeader

@@ -28,6 +28,7 @@ data ServerConfig = ServerConfig
   , logging :: ServerConfigLogging
   , cloud :: ServerConfigCloud
   , admin :: ServerConfigAdmin
+  , modules :: ServerConfigModules
   }
   deriving (Generic, Show)
 
@@ -115,6 +116,20 @@ data ServerConfigUserToken = ServerConfigUserToken
 
 data ServerConfigAdmin = ServerConfigAdmin
   { enabled :: Bool
-  , url :: String
+  }
+  deriving (Generic, Show)
+
+data ServerConfigModules = ServerConfigModules
+  { wizard :: ServerConfigModule
+  , admin :: ServerConfigModule
+  , guide :: ServerConfigModule
+  }
+  deriving (Generic, Show)
+
+data ServerConfigModule = ServerConfigModule
+  { title :: String
+  , description :: String
+  , icon :: String
+  , url :: Maybe String
   }
   deriving (Generic, Show)

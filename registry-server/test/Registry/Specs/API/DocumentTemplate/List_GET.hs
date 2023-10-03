@@ -9,10 +9,10 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Registry.Api.Resource.DocumentTemplate.DocumentTemplateSimpleJM ()
 import Registry.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Registry.Model.Context.AppContext
+import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleJM ()
 
 import Registry.Specs.Common
 import SharedTest.Specs.API.Common

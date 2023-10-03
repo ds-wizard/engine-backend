@@ -4,7 +4,7 @@ import Test.Hspec
 import Test.Hspec.Wai
 
 import Registry.Database.DAO.Organization.OrganizationDAO
-import Registry.Model.Organization.Organization
+import RegistryLib.Model.Organization.Organization
 
 import Registry.Specs.API.Common
 

@@ -178,36 +178,37 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
     -- 3. Get entities
     let sqlBase =
           f'
-            "SELECT DISTINCT qtn.uuid, \
-            \qtn.name, \
-            \qtn.description, \
-            \qtn.visibility, \
-            \qtn.sharing, \
-            \qtn.selected_question_tag_uuids::jsonb, \
-            \qtn.events::jsonb, \
-            \qtn.is_template, \
-            \qtn.answered_questions, \
-            \qtn.unanswered_questions, \
-            \qtn.created_at, \
-            \qtn.updated_at, \
-            \CASE \
-            \  WHEN qtn_mig.new_questionnaire_uuid IS NOT NULL THEN 'Migrating' \
-            \  WHEN qtn.package_id != get_newest_package(pkg.organization_id, pkg.km_id, '%s', ARRAY['ReleasedPackagePhase']) THEN 'Outdated' \
-            \  WHEN qtn_mig.new_questionnaire_uuid IS NULL THEN 'Default' \
-            \  END, \
-            \pkg.id, \
-            \pkg.name, \
-            \pkg.version, \
-            \( \
-            \  SELECT array_agg(CONCAT(qtn_acl_user.uuid, '::', qtn_acl_user.perms, '::', u.uuid, '::', u.first_name, '::', u.last_name, '::', u.email, '::', u.image_url)) \
-            \  FROM questionnaire_acl_user qtn_acl_user \
-            \           JOIN user_entity u on u.uuid = qtn_acl_user.user_uuid \
-            \  WHERE questionnaire_uuid = qtn.uuid \
-            \  GROUP BY questionnaire_uuid \
-            \) as user_permissions \
-            \FROM questionnaire qtn \
-            \JOIN package pkg ON qtn.package_id = pkg.id AND qtn.app_uuid = pkg.app_uuid \
-            \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.new_questionnaire_uuid "
+            "SELECT \
+            \  nested_qtn.*, \
+            \  ( \
+            \    SELECT array_agg(CONCAT(qtn_acl_user.uuid, '::', qtn_acl_user.perms, '::', u.uuid, '::', u.first_name, '::', u.last_name, '::', u.email, '::', u.image_url)) \
+            \    FROM questionnaire_acl_user qtn_acl_user \
+            \    JOIN user_entity u on u.uuid = qtn_acl_user.user_uuid \
+            \    WHERE questionnaire_uuid = nested_qtn.uuid \
+            \    GROUP BY questionnaire_uuid \
+            \  ) as user_permissions \
+            \FROM ( \
+            \  SELECT DISTINCT qtn.uuid, \
+            \    qtn.name, \
+            \    qtn.description, \
+            \    qtn.visibility, \
+            \    qtn.sharing, \
+            \    qtn.is_template, \
+            \    qtn.answered_questions, \
+            \    qtn.unanswered_questions, \
+            \    qtn.created_at, \
+            \    qtn.updated_at, \
+            \    CASE \
+            \      WHEN qtn_mig.new_questionnaire_uuid IS NOT NULL THEN 'Migrating' \
+            \      WHEN qtn.package_id != get_newest_package(pkg.organization_id, pkg.km_id, '%s', ARRAY['ReleasedPackagePhase']) THEN 'Outdated' \
+            \      WHEN qtn_mig.new_questionnaire_uuid IS NULL THEN 'Default' \
+            \    END, \
+            \    pkg.id, \
+            \    pkg.name, \
+            \    pkg.version \
+            \  FROM questionnaire qtn \
+            \  JOIN package pkg ON qtn.package_id = pkg.id AND qtn.app_uuid = pkg.app_uuid \
+            \  LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.new_questionnaire_uuid "
             [U.toString appUuid]
     let sql =
           fromString $
@@ -216,7 +217,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
                 f'
                   "%s %s \
                   \WHERE %s %s %s %s %s %s %s  %s \
-                  \OFFSET %s LIMIT %s"
+                  \OFFSET %s LIMIT %s) nested_qtn"
                   [ sqlBase
                   , userUuidsJoin
                   , f' "qtn.app_uuid = '%s' AND" [U.toString appUuid]
@@ -235,7 +236,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
                   "%s \
                   \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
                   \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
-                  \WHERE %s %s OFFSET %s LIMIT %s"
+                  \WHERE %s %s OFFSET %s LIMIT %s) nested_qtn"
                   [ sqlBase
                   , qtnWhereSql (U.toString appUuid) (U.toString $ currentUser.uuid) "['VIEW']"
                       ++ " AND "
@@ -381,7 +382,7 @@ findQuestionnaireEventsByUuid uuid = do
 
 findQuestionnaireForSquashing :: AppContextM [U.UUID]
 findQuestionnaireForSquashing = do
-  let sql = "SELECT uuid FROM questionnaire qtn WHERE squashed = false"
+  let sql = "SELECT uuid FROM questionnaire WHERE squashed = false"
   logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   entities <- runDB action
@@ -389,7 +390,7 @@ findQuestionnaireForSquashing = do
 
 findQuestionnaireSquashByUuid :: U.UUID -> AppContextM QuestionnaireSquash
 findQuestionnaireSquashByUuid uuid =
-  createFindEntityWithFieldsByFn "uuid, events, versions" False entityName [("uuid", U.toString uuid)]
+  createFindEntityWithFieldsByFn "uuid, events, versions" True entityName [("uuid", U.toString uuid)]
 
 countQuestionnaires :: AppContextM Int
 countQuestionnaires = do

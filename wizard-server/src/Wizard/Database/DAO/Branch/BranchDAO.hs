@@ -58,7 +58,7 @@ findBranchesPage mQuery pageable sort =
               \       get_branch_fork_of_package_id(app_config, previous_pkg, branch) as fork_of_package_id, \
               \       branch.created_by, \
               \       branch.created_at, \
-              \       branch.updated_at  \
+              \       branch_data.updated_at  \
               \FROM branch \
               \         JOIN branch_data ON branch.uuid = branch_data.branch_uuid \
               \         JOIN app_config ON branch.app_uuid = app_config.uuid \
@@ -112,8 +112,11 @@ updateBranchById branch = do
   appUuid <- asks currentAppUuid
   let sql =
         fromString
-          "UPDATE branch SET uuid = ?, name = ?, km_id = ?, previous_package_id = ?, created_by = ?, created_at = ?, updated_at = ?, app_uuid = ?, version = ?, description = ?, readme = ?, license = ? WHERE app_uuid = ? AND uuid = ?"
-  let params = toRow branch ++ [toField appUuid, toField . U.toText $ branch.uuid]
+          "BEGIN TRANSACTION; \
+          \UPDATE branch SET uuid = ?, name = ?, km_id = ?, previous_package_id = ?, created_by = ?, created_at = ?, updated_at = ?, app_uuid = ?, version = ?, description = ?, readme = ?, license = ? WHERE app_uuid = ? AND uuid = ?; \
+          \UPDATE branch_data SET updated_at = now() WHERE app_uuid = ? AND branch_uuid = ?; \
+          \COMMIT;"
+  let params = toRow branch ++ [toField appUuid, toField . U.toText $ branch.uuid, toField appUuid, toField . U.toText $ branch.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action

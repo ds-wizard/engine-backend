@@ -5,30 +5,30 @@ import Control.Monad.Reader (asks)
 import qualified Data.ByteString.Lazy as BSL
 import Servant
 
-import Registry.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
-import Registry.Api.Resource.Locale.LocaleDTO
-import Registry.Api.Resource.Organization.OrganizationCreateDTO
-import Registry.Api.Resource.Organization.OrganizationDTO
-import Registry.Api.Resource.Organization.OrganizationStateJM ()
-import Registry.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
+import RegistryLib.Api.Resource.Locale.LocaleDTO
+import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Api.Resource.Organization.OrganizationStateJM ()
+import RegistryLib.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Model.Organization.OrganizationSimple
 import Shared.Common.Integration.Http.Common.HttpClient
+import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Integration.Http.Common.ServantClient
 import Wizard.Integration.Http.Registry.RequestMapper
 import Wizard.Integration.Http.Registry.ResponseMapper
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Statistics.InstanceStatistics
 import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.App.AppConfigService
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
 import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleDTO
 
-retrieveOrganizations :: AppContextM [OrganizationSimpleDTO]
+retrieveOrganizations :: AppContextM [OrganizationSimple]
 retrieveOrganizations = do
   appConfig <- getAppConfig
   if appConfig.registry.enabled

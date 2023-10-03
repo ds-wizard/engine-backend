@@ -7,6 +7,7 @@ import Servant.Swagger.UI
 
 import Registry.Api.Api
 import Registry.Api.Resource.ActionKey.ActionKeySM ()
+import Registry.Api.Resource.Config.ClientConfigSM ()
 import Registry.Api.Resource.DocumentTemplate.DocumentTemplateDetailSM ()
 import Registry.Api.Resource.DocumentTemplate.DocumentTemplateSimpleSM ()
 import Registry.Api.Resource.Locale.LocaleDetailSM ()
@@ -18,6 +19,7 @@ import Registry.Api.Resource.Organization.OrganizationStateSM ()
 import Registry.Api.Resource.Package.PackageDetailSM ()
 import Registry.Api.Resource.Package.PackageSimpleSM ()
 import Registry.Api.Resource.PackageBundle.PackageBundleSM ()
+import Registry.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Shared.Common.Api.Resource.Common.FileSM ()
 import Shared.Common.Api.Resource.Info.InfoSM ()
 import Shared.Component.Api.Resource.Component.ComponentSM ()
@@ -36,7 +38,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Registry API"
               , _infoDescription = Just "API specification for Registry"
-              , _infoVersion = "3.27.1"
+              , _infoVersion = "3.28.0"
               , _infoLicense =
                   Just $
                     License

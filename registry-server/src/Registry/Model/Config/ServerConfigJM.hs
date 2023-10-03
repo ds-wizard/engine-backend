@@ -17,6 +17,7 @@ instance FromJSON ServerConfig where
     analytics <- o .:? "analytics" .!= defaultAnalytics
     sentry <- o .:? "sentry" .!= defaultSentry
     logging <- o .:? "logging" .!= defaultLogging
+    persistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
     cloud <- o .:? "cloud" .!= defaultCloud
     return ServerConfig {..}
   parseJSON _ = mzero
@@ -26,5 +27,6 @@ instance FromJSON ServerConfigGeneral where
     environment <- o .:? "environment" .!= defaultGeneral.environment
     clientUrl <- o .: "clientUrl"
     serverPort <- o .:? "serverPort" .!= defaultGeneral.serverPort
+    publicRegistrationEnabled <- o .:? "publicRegistrationEnabled" .!= defaultGeneral.publicRegistrationEnabled
     return ServerConfigGeneral {..}
   parseJSON _ = mzero

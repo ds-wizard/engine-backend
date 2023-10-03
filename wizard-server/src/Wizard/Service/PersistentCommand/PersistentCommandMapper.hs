@@ -32,6 +32,7 @@ toDetailDTO command user app =
     , component = command.component
     , function = command.function
     , body = command.body
+    , lastTraceUuid = command.lastTraceUuid
     , lastErrorMessage = command.lastErrorMessage
     , attempts = command.attempts
     , maxAttempts = command.maxAttempts

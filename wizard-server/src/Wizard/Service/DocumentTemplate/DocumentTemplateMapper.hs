@@ -1,5 +1,6 @@
 module Wizard.Service.DocumentTemplate.DocumentTemplateMapper where
 
+import RegistryLib.Model.Organization.OrganizationSimple
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
@@ -9,7 +10,6 @@ import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Registry.RegistryTemplate
 import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
 import qualified Wizard.Service.Package.PackageMapper as PM_Mapper
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
 import WizardLib.Common.Util.Coordinate
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -70,7 +70,7 @@ toSimpleDTO' registryEnabled pkgs tml =
         case tml.remoteOrganizationName of
           Just orgName ->
             Just $
-              OrganizationSimpleDTO
+              OrganizationSimple
                 { organizationId = tml.organizationId
                 , name = orgName
                 , logo = tml.remoteOrganizationLogo

@@ -11,7 +11,7 @@ import Network.HTTP.Client (Manager)
 import Network.Minio (MinioConn)
 
 import Registry.Model.Config.ServerConfig
-import Registry.Model.Organization.Organization
+import RegistryLib.Model.Organization.Organization
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Error.Error
 

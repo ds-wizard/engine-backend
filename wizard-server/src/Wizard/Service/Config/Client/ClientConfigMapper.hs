@@ -1,5 +1,7 @@
 module Wizard.Service.Config.Client.ClientConfigMapper where
 
+import Data.Maybe
+
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Config.SimpleFeature
 import Shared.Locale.Model.Locale.Locale
@@ -23,7 +25,15 @@ toClientConfigDTO serverConfig appConfig app locales =
     , cloud = toClientConfigCloudDTO serverConfig.cloud app
     , locales = fmap toClientConfigLocaleDTO locales
     , owl = appConfig.owl
-    , admin = toClientConfigAdminDTO serverConfig.admin
+    , admin = toClientConfigAdminDTO serverConfig.admin app
+    , modules =
+        if serverConfig.admin.enabled
+          then
+            [ toClientConfigModuleDTO serverConfig.modules.wizard app.clientUrl False
+            , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" app.adminClientUrl) False
+            , toClientConfigModuleDTO serverConfig.modules.guide (fromMaybe "" serverConfig.modules.guide.url) True
+            ]
+          else []
     }
 
 toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO
@@ -78,6 +88,16 @@ toClientConfigLocaleDTO :: Locale -> ClientConfigLocaleDTO
 toClientConfigLocaleDTO locale =
   ClientConfigLocaleDTO {name = locale.name, code = locale.code, defaultLocale = locale.defaultLocale}
 
-toClientConfigAdminDTO :: ServerConfigAdmin -> ClientConfigAdminDTO
-toClientConfigAdminDTO serverConfig =
-  ClientConfigAdminDTO {enabled = serverConfig.enabled}
+toClientConfigAdminDTO :: ServerConfigAdmin -> App -> ClientConfigAdminDTO
+toClientConfigAdminDTO serverConfig app =
+  ClientConfigAdminDTO {enabled = serverConfig.enabled, clientUrl = app.adminClientUrl}
+
+toClientConfigModuleDTO :: ServerConfigModule -> String -> Bool -> ClientConfigModuleDTO
+toClientConfigModuleDTO serverConfig url external =
+  ClientConfigModuleDTO
+    { title = serverConfig.title
+    , description = serverConfig.description
+    , icon = serverConfig.icon
+    , url = url
+    , external = external
+    }

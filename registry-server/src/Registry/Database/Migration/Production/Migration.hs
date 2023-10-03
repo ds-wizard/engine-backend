@@ -15,6 +15,7 @@ import qualified Registry.Database.Migration.Production.Migration_0007_component
 import qualified Registry.Database.Migration.Production.Migration_0008_unification.Migration as M_0008
 import qualified Registry.Database.Migration.Production.Migration_0009_persistentCommandDestination.Migration as M_0009
 import qualified Registry.Database.Migration.Production.Migration_0010_pkgAndDocReadOnly.Migration as M_0010
+import qualified Registry.Database.Migration.Production.Migration_0011_traceUuid.Migration as M_0011
 import Shared.Common.Util.Logger
 
 runMigration baseContext = do
@@ -33,4 +34,5 @@ migrationDefinitions =
   , M_0008.definition
   , M_0009.definition
   , M_0010.definition
+  , M_0011.definition
   ]

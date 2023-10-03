@@ -3,10 +3,10 @@ module Registry.Database.Migration.Development.Audit.Data.AuditEntries where
 import Data.Maybe (fromJust)
 import Data.Time
 
-import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Database.Migration.Development.Statistics.Data.InstanceStatistics
 import Registry.Model.Audit.AuditEntry
-import Registry.Model.Organization.Organization
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
+import RegistryLib.Model.Organization.Organization
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 

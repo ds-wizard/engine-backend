@@ -5,7 +5,8 @@ import Servant
 import Servant.Swagger
 import Servant.Swagger.UI
 
-import Registry.Api.Resource.Organization.OrganizationSM ()
+import RegistryLib.Api.Resource.Organization.OrganizationSM ()
+import RegistryLib.Api.Resource.Organization.OrganizationSimpleSM ()
 import Shared.Common.Api.Resource.Common.AesonSM ()
 import Shared.Common.Api.Resource.Common.FileSM ()
 import Shared.Common.Api.Resource.Common.PageMetadataSM ()
@@ -103,14 +104,12 @@ import Wizard.Api.Resource.User.UserChangeSM ()
 import Wizard.Api.Resource.User.UserCreateSM ()
 import Wizard.Api.Resource.User.UserPasswordSM ()
 import Wizard.Api.Resource.User.UserProfileChangeSM ()
-import Wizard.Api.Resource.User.UserProfileSM ()
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Api.Resource.User.UserStateSM ()
 import Wizard.Api.Resource.UserToken.ApiKeyCreateSM ()
 import Wizard.Api.Resource.UserToken.UserTokenListSM ()
 import Wizard.Api.Resource.Websocket.QuestionnaireActionSM ()
 import Wizard.Api.Resource.Websocket.WebsocketSM ()
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleSM ()
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM ()
@@ -128,7 +127,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "3.27.1"
+              , _infoVersion = "3.28.0"
               , _infoLicense =
                   Just $
                     License

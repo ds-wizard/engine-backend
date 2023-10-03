@@ -6,9 +6,6 @@ import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 
 import Registry.Api.Resource.Organization.OrganizationChangeDTO
-import Registry.Api.Resource.Organization.OrganizationCreateDTO
-import Registry.Api.Resource.Organization.OrganizationDTO
-import Registry.Api.Resource.Organization.OrganizationStateDTO
 import Registry.Database.DAO.Common
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Internal
@@ -16,11 +13,16 @@ import Registry.Model.ActionKey.ActionKeyType
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.AppContextHelpers
-import Registry.Model.Organization.Organization
 import Registry.Service.ActionKey.ActionKeyService
 import Registry.Service.Mail.Mailer
 import Registry.Service.Organization.OrganizationMapper
 import Registry.Service.Organization.OrganizationValidation
+import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Api.Resource.Organization.OrganizationStateDTO
+import RegistryLib.Model.Organization.Organization
+import RegistryLib.Model.Organization.OrganizationRole
+import RegistryLib.Model.Organization.OrganizationSimple
 import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.ActionKey.Model.ActionKey.ActionKey
@@ -28,7 +30,6 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
 
 getOrganizations :: AppContextM [OrganizationDTO]
 getOrganizations = do
@@ -36,10 +37,8 @@ getOrganizations = do
   organizations <- findOrganizations
   return . fmap toDTO $ organizations
 
-getSimpleOrganizations :: AppContextM [OrganizationSimpleDTO]
-getSimpleOrganizations = do
-  organizations <- findOrganizations
-  return . fmap toSimpleDTO $ organizations
+getSimpleOrganizations :: AppContextM [OrganizationSimple]
+getSimpleOrganizations = findUsedOrganizations
 
 createOrganization :: OrganizationCreateDTO -> Maybe String -> AppContextM OrganizationDTO
 createOrganization reqDto mCallbackUrl =

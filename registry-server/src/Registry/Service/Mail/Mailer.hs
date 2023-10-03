@@ -10,10 +10,10 @@ import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
-import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Database.DAO.Common
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
 import Shared.Common.Model.Config.ServerConfig
 import qualified Shared.Common.Model.PersistentCommand.Mail.MailCommand as MC
 import Shared.Common.Util.JSON

@@ -14,8 +14,8 @@ import Text.Read (readMaybe)
 import Registry.Database.DAO.Audit.AuditEntryDAO
 import Registry.Model.Audit.AuditEntry
 import Registry.Model.Context.AppContext
-import Registry.Model.Organization.Organization
 import Registry.Model.Statistics.InstanceStatistics
+import RegistryLib.Model.Organization.Organization
 import Shared.Common.Constant.Api
 import Shared.Common.Model.Error.Error
 

@@ -7,21 +7,22 @@ import Servant
 import Servant.Client
 import Prelude hiding (lookup)
 
-import qualified Registry.Api.Handler.DocumentTemplate.List_GET as TML_List_GET
-import qualified Registry.Api.Handler.Locale.List_GET as LOC_List_GET
-import Registry.Api.Handler.Organization.Detail_State_PUT
-import Registry.Api.Handler.Organization.List_POST
-import Registry.Api.Handler.Organization.List_Simple_GET
-import qualified Registry.Api.Handler.Package.List_Bundle_POST as PKG_List_Bundle_POST
-import qualified Registry.Api.Handler.Package.List_GET as PKG_List_GET
-import Registry.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
-import Registry.Api.Resource.Locale.LocaleDTO
-import Registry.Api.Resource.Organization.OrganizationCreateDTO
-import Registry.Api.Resource.Organization.OrganizationCreateJM ()
-import Registry.Api.Resource.Organization.OrganizationDTO
-import Registry.Api.Resource.Organization.OrganizationStateDTO
-import Registry.Api.Resource.Organization.OrganizationStateJM ()
-import Registry.Api.Resource.Package.PackageSimpleDTO
+import qualified RegistryLib.Api.Handler.DocumentTemplate.List_GET as TML_List_GET
+import qualified RegistryLib.Api.Handler.Locale.List_GET as LOC_List_GET
+import RegistryLib.Api.Handler.Organization.Detail_State_PUT
+import RegistryLib.Api.Handler.Organization.List_POST as ORG_List_POST
+import RegistryLib.Api.Handler.Organization.List_Simple_GET
+import qualified RegistryLib.Api.Handler.Package.List_Bundle_POST as PKG_List_Bundle_POST
+import qualified RegistryLib.Api.Handler.Package.List_GET as PKG_List_GET
+import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
+import RegistryLib.Api.Resource.Locale.LocaleDTO
+import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
+import RegistryLib.Api.Resource.Organization.OrganizationCreateJM ()
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Api.Resource.Organization.OrganizationStateDTO
+import RegistryLib.Api.Resource.Organization.OrganizationStateJM ()
+import RegistryLib.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Model.Organization.OrganizationSimple
 import Shared.Common.Constant.Api
 import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.String (f', splitOn)
@@ -29,13 +30,12 @@ import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Statistics.InstanceStatistics
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
 import WizardLib.DocumentTemplate.Constant.DocumentTemplate
 import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleDTO
 import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleJM ()
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 
-toRetrieveOrganizationsRequest :: ClientM (Headers '[Header "x-trace-uuid" String] [OrganizationSimpleDTO])
+toRetrieveOrganizationsRequest :: ClientM (Headers '[Header "x-trace-uuid" String] [OrganizationSimple])
 toRetrieveOrganizationsRequest = client list_simple_GET_Api
 
 toCreateOrganizationRequest
@@ -43,7 +43,7 @@ toCreateOrganizationRequest
   -> OrganizationCreateDTO
   -> String
   -> ClientM (Headers '[Header "x-trace-uuid" String] OrganizationDTO)
-toCreateOrganizationRequest serverConfig reqDto clientUrl = client list_POST_Api reqDto (Just clientUrl)
+toCreateOrganizationRequest serverConfig reqDto clientUrl = client list_POST_Api Nothing reqDto (Just clientUrl)
 
 toConfirmOrganizationRegistrationRequest
   :: RegistryConfirmationDTO -> ClientM (Headers '[Header "x-trace-uuid" String] OrganizationDTO)

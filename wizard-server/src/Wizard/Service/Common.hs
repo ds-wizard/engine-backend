@@ -3,8 +3,8 @@ module Wizard.Service.Common where
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks)
 
+import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.App.AppConfigService
 

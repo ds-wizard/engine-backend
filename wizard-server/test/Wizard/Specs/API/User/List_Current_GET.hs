@@ -11,6 +11,7 @@ import Test.Hspec.Wai.Matcher
 
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
+import Wizard.Service.User.UserMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -44,7 +45,7 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCorsHeaders
-      let expDto = userAlbertProfile
+      let expDto = toDTO userAlbert
       let expBody = encode expDto
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

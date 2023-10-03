@@ -76,15 +76,6 @@ getPackageDetailById pkgId excludeDeprecatedVersions = do
   orgRs <- findRegistryOrganizations
   return $ toDetailDTO pkg pkgRs orgRs versions (buildPackageUrl serverConfig.registry.clientUrl pkg pkgRs)
 
-getSeriesOfPackages :: String -> AppContextM [PackageWithEvents]
-getSeriesOfPackages pkgId = do
-  pkg <- findPackageWithEventsById pkgId
-  case pkg.previousPackageId of
-    Just previousPkgId -> do
-      previousPkgs <- getSeriesOfPackages previousPkgId
-      return $ previousPkgs ++ [pkg]
-    Nothing -> return [pkg]
-
 getAllPreviousEventsSincePackageId :: String -> AppContextM [Event]
 getAllPreviousEventsSincePackageId pkgId = do
   package <- findPackageWithEventsById pkgId

@@ -4,6 +4,7 @@ import qualified Data.List as L
 import Data.Time
 import qualified Data.UUID as U
 
+import RegistryLib.Model.Organization.OrganizationSimple
 import Shared.Locale.Model.Locale.Locale
 import Wizard.Api.Resource.Locale.LocaleChangeDTO
 import Wizard.Api.Resource.Locale.LocaleCreateDTO
@@ -14,7 +15,6 @@ import Wizard.Model.Locale.LocaleState
 import Wizard.Model.Registry.RegistryLocale
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Service.Locale.LocaleUtil
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
 import WizardLib.Common.Util.Coordinate
 
 toDTO :: Bool -> LocaleList -> LocaleDTO
@@ -34,7 +34,7 @@ toDTO registryEnabled locale =
         case locale.remoteOrganizationName of
           Just orgName ->
             Just $
-              OrganizationSimpleDTO
+              OrganizationSimple
                 { organizationId = locale.organizationId
                 , name = orgName
                 , logo = locale.remoteOrganizationLogo

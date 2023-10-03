@@ -52,6 +52,28 @@ findPackagesByForkOfPackageId forkOfPackageId = do
   appUuid <- asks (.appUuid')
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("fork_of_package_id", forkOfPackageId)]
 
+findSeriesOfPackagesRecursiveById :: (AppContextC s sc m, FromRow packageWithEvents) => String -> m [packageWithEvents]
+findSeriesOfPackagesRecursiveById pkgId = do
+  appUuid <- asks (.appUuid')
+  let sql =
+        fromString
+          "WITH RECURSIVE recursive AS ( \
+          \  SELECT *, 1 as level \
+          \  FROM package \
+          \  WHERE app_uuid = ? AND id = ? \
+          \  UNION ALL \
+          \  SELECT pkg.*, level + 1 as level \
+          \  FROM package pkg \
+          \  INNER JOIN recursive r ON pkg.id = r.previous_package_id AND pkg.app_uuid = ? \
+          \) \
+          \SELECT id, name, organization_id, km_id, version, metamodel_version, description, readme, license, previous_package_id, fork_of_package_id, merge_checkpoint_package_id, events, created_at, app_uuid, phase, non_editable \
+          \FROM recursive \
+          \ORDER BY level DESC;"
+  let params = [U.toString appUuid, pkgId, U.toString appUuid]
+  logQuery sql params
+  let action conn = query conn sql params
+  runDB action
+
 findVersionsForPackage :: AppContextC s sc m => String -> String -> m [String]
 findVersionsForPackage orgId kmId = do
   appUuid <- asks (.appUuid')

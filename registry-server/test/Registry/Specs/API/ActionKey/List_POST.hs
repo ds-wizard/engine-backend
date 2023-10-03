@@ -11,11 +11,11 @@ import Test.Hspec.Wai.Matcher
 
 import Registry.Api.Resource.ActionKey.ActionKeyJM ()
 import Registry.Database.Migration.Development.ActionKey.Data.ActionKeys
-import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Localization.Messages.Public
 import Registry.Model.ActionKey.ActionKeyType
 import Registry.Model.Context.AppContext
-import Registry.Model.Organization.Organization
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
+import RegistryLib.Model.Organization.Organization
 import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
 import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyJM ()
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO

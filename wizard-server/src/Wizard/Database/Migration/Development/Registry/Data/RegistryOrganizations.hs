@@ -1,9 +1,9 @@
 module Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations where
 
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
+import RegistryLib.Model.Organization.OrganizationSimple
 import Shared.Common.Util.Date
 import Wizard.Model.Registry.RegistryOrganization
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
-import WizardLib.Common.Database.Migration.Development.Organization.Data.Organizations
 
 globalRegistryOrganization :: RegistryOrganization
 globalRegistryOrganization =

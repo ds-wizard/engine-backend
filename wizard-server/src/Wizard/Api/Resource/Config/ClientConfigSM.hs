@@ -11,6 +11,7 @@ import Wizard.Api.Resource.Config.ClientConfigJM ()
 import Wizard.Api.Resource.Locale.LocaleSM ()
 import Wizard.Database.Migration.Development.App.Data.Apps
 import qualified Wizard.Database.Migration.Development.Config.Data.AppConfigs as A
+import Wizard.Model.Config.ServerConfig
 import qualified Wizard.Model.Config.ServerConfigDM as S
 import Wizard.Service.Config.Client.ClientConfigMapper
 
@@ -39,4 +40,7 @@ instance ToSchema ClientConfigLocaleDTO where
   declareNamedSchema = toSwagger (toClientConfigLocaleDTO localeNl)
 
 instance ToSchema ClientConfigAdminDTO where
-  declareNamedSchema = toSwagger (toClientConfigAdminDTO S.defaultAdmin)
+  declareNamedSchema = toSwagger (toClientConfigAdminDTO S.defaultAdmin defaultApp)
+
+instance ToSchema ClientConfigModuleDTO where
+  declareNamedSchema = toSwagger (toClientConfigModuleDTO S.defaultConfig.modules.wizard "https://wizard-client.com" False)

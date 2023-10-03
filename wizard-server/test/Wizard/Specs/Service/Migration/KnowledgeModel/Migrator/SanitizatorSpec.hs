@@ -24,9 +24,10 @@ import WizardLib.KnowledgeModel.Model.Event.KnowledgeModel.KnowledgeModelEvent
 import WizardLib.KnowledgeModel.Model.Event.Question.QuestionEvent
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
+import Wizard.Specs.Common
 import Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.Common
 
-sanitizatorSpec =
+sanitizatorSpec appContext =
   describe "Sanatizor" $
     -- -------------------------------------------------------------
     -- -------------------------------------------------------------
@@ -37,7 +38,7 @@ sanitizatorSpec =
           do
             let reqState = createTestMigratorStateWithEvents [] [EditKnowledgeModelEvent' e_km1] (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditKnowledgeModelEvent' resEvent)))) = resState.migrationState
             resEvent.uuid `shouldBe` e_km1.uuid
@@ -59,7 +60,7 @@ sanitizatorSpec =
                   :: EditKnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [EditKnowledgeModelEvent' edited_e_km1] (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditKnowledgeModelEvent' resEvent)))) = resState.migrationState
             resEvent.uuid `shouldNotBe` e_km1.uuid
@@ -92,7 +93,7 @@ sanitizatorSpec =
                   :: EditKnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [EditKnowledgeModelEvent' edited_e_km1] (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditKnowledgeModelEvent' resEvent)))) = resState.migrationState
             resEvent.uuid `shouldNotBe` e_km1.uuid
@@ -108,7 +109,7 @@ sanitizatorSpec =
           do
             let reqState = createTestMigratorStateWithEvents [] [EditChapterEvent' e_km1_ch1] (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState.migrationState
             resEvent.uuid `shouldBe` e_km1_ch1.uuid
@@ -120,7 +121,7 @@ sanitizatorSpec =
             let edited_e_km1_ch1 = e_km1_ch1 {questionUuids = ChangedValue chQuestionUuids} :: EditChapterEvent
             let reqState = createTestMigratorStateWithEvents [] [EditChapterEvent' edited_e_km1_ch1] (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState.migrationState
             resEvent.uuid `shouldNotBe` e_km1_ch1.uuid
@@ -135,7 +136,7 @@ sanitizatorSpec =
             let edited_e_km1_ch1 = e_km1_ch1 {questionUuids = ChangedValue chQuestionUuids} :: EditChapterEvent
             let reqState = createTestMigratorStateWithEvents [] [EditChapterEvent' edited_e_km1_ch1] (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState.migrationState
             resEvent.uuid `shouldNotBe` e_km1_ch1.uuid
@@ -152,7 +153,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditOptionsQuestionEvent' e_km1_ch1_q2)]
                     (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -175,7 +176,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditOptionsQuestionEvent' edited_3_e_km1_ch1_q2)]
                     (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -207,7 +208,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditOptionsQuestionEvent' edited_3_e_km1_ch1_q2)]
                     (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -225,7 +226,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditListQuestionEvent' e_km1_ch2_q4)]
                     (Just km1WithQ4)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -243,7 +244,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditListQuestionEvent' edited_1_e_km1_ch2_q4)]
                     (Just km1WithQ4)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -264,7 +265,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditListQuestionEvent' edited_1_e_km1_ch2_q4)]
                     (Just km1WithQ4)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -279,7 +280,7 @@ sanitizatorSpec =
           do
             let reqState = createTestMigratorStateWithEvents [] [EditAnswerEvent' e_km1_ch1_q2_aYes1_2] (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditAnswerEvent' resEvent)))) = resState.migrationState
             resEvent.uuid `shouldBe` e_km1_ch1_q2_aYes1_2.uuid
@@ -291,7 +292,7 @@ sanitizatorSpec =
             let edited_e_km1_ch1_q2_aYes1_2 = e_km1_ch1_q2_aYes1_2 {followUpUuids = ChangedValue ansFollowUpUuids} :: EditAnswerEvent
             let reqState = createTestMigratorStateWithEvents [] [EditAnswerEvent' edited_e_km1_ch1_q2_aYes1_2] (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditAnswerEvent' resEvent)))) = resState.migrationState
             resEvent.uuid `shouldNotBe` e_km1_ch1_q2_aYes1_2.uuid
@@ -306,7 +307,7 @@ sanitizatorSpec =
             let edited_e_km1_ch1_q2_aYes1_2 = e_km1_ch1_q2_aYes1_2 {followUpUuids = ChangedValue ansFollowUpUuids} :: EditAnswerEvent
             let reqState = createTestMigratorStateWithEvents [] [EditAnswerEvent' edited_e_km1_ch1_q2_aYes1_2] (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditAnswerEvent' resEvent)))) = resState.migrationState
             resEvent.uuid `shouldNotBe` e_km1_ch1_q2_aYes1_2.uuid
@@ -323,7 +324,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditOptionsQuestionEvent' e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2)]
                     (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -346,7 +347,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditOptionsQuestionEvent' edited_3_event)]
                     (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -379,7 +380,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditOptionsQuestionEvent' edited_3_event)]
                     (Just km1)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -398,7 +399,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditListQuestionEvent' e_km1_ch2_ansMaybe6_fuq4)]
                     (Just km1WithQ4)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -416,7 +417,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditListQuestionEvent' edited_e_km1_ch2_ansMaybe6_fuq4)]
                     (Just km1WithQ4)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -438,7 +439,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditListQuestionEvent' edited_e_km1_ch2_ansMaybe6_fuq4)]
                     (Just km1WithQ4)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -453,7 +454,7 @@ sanitizatorSpec =
           do
             let reqState = createTestMigratorStateWithEvents [] [EditQuestionEvent' e_km1_ch2_q4_it1_q6'] (Just km1WithQ4)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -476,7 +477,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditOptionsQuestionEvent' edited_3_event)]
                     (Just km1WithQ4)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -508,7 +509,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditOptionsQuestionEvent' edited_3_event)]
                     (Just km1WithQ4)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -522,7 +523,7 @@ sanitizatorSpec =
           do
             let reqState = createTestMigratorStateWithEvents [] [EditQuestionEvent' e_km1_ch2_q4_it1_q5'] (Just km1WithQ4)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -539,7 +540,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' (EditListQuestionEvent' edited_e_km1_ch2_q4_it1_q5)]
                     (Just km1WithQ4)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
                   resState.migrationState
@@ -560,7 +561,7 @@ sanitizatorSpec =
                     [EditQuestionEvent' . EditListQuestionEvent' $ edited_e_km1_ch2_q4_it1_q5]
                     (Just km1WithQ4)
             -- When:
-            resState <- migrate reqState
+            (Right resState) <- runInContext (migrate reqState) appContext
             -- Then:
             let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
                   resState.migrationState

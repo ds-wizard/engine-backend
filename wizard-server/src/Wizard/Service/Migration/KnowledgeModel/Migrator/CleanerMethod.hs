@@ -2,7 +2,11 @@ module Wizard.Service.Migration.KnowledgeModel.Migrator.CleanerMethod where
 
 import qualified Data.Map.Strict as M
 import Data.Maybe (isNothing)
+import qualified Data.UUID as U
 
+import Shared.Common.Util.Logger
+import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import WizardLib.KnowledgeModel.Model.Common.Lens
 import WizardLib.KnowledgeModel.Model.Event.Event
@@ -71,7 +75,8 @@ doIsCleanerMethod km (MoveReferenceEvent' event) =
   isNothing (M.lookup (getEntityUuid event) (getReferencesM km))
     || isNothing (M.lookup event.targetUuid (getQuestionsM km))
 
-runCleanerMethod :: MigratorState -> Event -> IO MigratorState
-runCleanerMethod state event =
+runCleanerMethod :: MigratorState -> Event -> AppContextM MigratorState
+runCleanerMethod state event = do
+  logInfoI _CMP_SERVICE . f' "Running cleaner method for event '%s'" $ [U.toString . getUuid $ event]
   let (_ : newTargetPackageEvents) = state.targetPackageEvents
-   in return $ state {targetPackageEvents = newTargetPackageEvents}
+  return $ state {targetPackageEvents = newTargetPackageEvents}

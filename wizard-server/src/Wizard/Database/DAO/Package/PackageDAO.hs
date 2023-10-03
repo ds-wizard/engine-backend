@@ -54,8 +54,7 @@ findPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort =
         Nothing -> ""
     )
 
-findPackageSuggestionsPage
-  :: Maybe String -> Maybe [String] -> Maybe [String] -> Maybe PackagePhase -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)
+findPackageSuggestionsPage :: Maybe String -> Maybe [String] -> Maybe [String] -> Maybe PackagePhase -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestion)
 findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pageable sort =
   -- 1. Prepare variables
   do

@@ -3,7 +3,7 @@ module Registry.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO where
 import Data.Time
 import GHC.Generics
 
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
+import RegistryLib.Model.Organization.OrganizationSimple
 
 data DocumentTemplateDetailDTO = DocumentTemplateDetailDTO
   { tId :: String
@@ -16,7 +16,7 @@ data DocumentTemplateDetailDTO = DocumentTemplateDetailDTO
   , readme :: String
   , license :: String
   , versions :: [String]
-  , organization :: OrganizationSimpleDTO
+  , organization :: OrganizationSimple
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

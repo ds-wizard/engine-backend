@@ -14,7 +14,6 @@ import System.Log.Raven (initRaven, register, stderrFallback)
 import System.Log.Raven.Transport.HttpConduit (sendRecord)
 import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..))
 
-import Shared.Common.Database.DAO.Common
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.AppContext
@@ -33,14 +32,14 @@ runPersistentCommands
   -> (String -> PersistentCommand U.UUID -> m a)
   -> (PersistentCommand U.UUID -> function)
   -> m ()
-runPersistentCommands runAppContextWithAppContext updateContext createPersistentCommand execute = do
+runPersistentCommands runAppContextWithAppContext' updateContext createPersistentCommand execute = do
   checkPermission _DEV_PERM
   commands <- findPersistentCommandsByStates
   unless
     (null commands)
     ( do
-        traverse_ (runPersistentCommand runAppContextWithAppContext updateContext createPersistentCommand execute False) commands
-        runPersistentCommands runAppContextWithAppContext updateContext createPersistentCommand execute
+        traverse_ (runPersistentCommand runAppContextWithAppContext' updateContext createPersistentCommand execute False) commands
+        runPersistentCommands runAppContextWithAppContext' updateContext createPersistentCommand execute
     )
 
 runPersistentCommand
@@ -52,13 +51,13 @@ runPersistentCommand
   -> Bool
   -> PersistentCommandSimple U.UUID
   -> m ()
-runPersistentCommand runAppContextWithAppContext updateContext createPersistentCommand execute force commandSimple = do
+runPersistentCommand runAppContextWithAppContext' updateContext createPersistentCommand execute force commandSimple = do
   case commandSimple.destination of
     Just destination -> tranferPersistentCommandByUuid destination createPersistentCommand commandSimple.uuid
     Nothing -> do
       context <- ask
       updatedContext <- updateContext commandSimple context
-      executePersistentCommandByUuid runAppContextWithAppContext execute force commandSimple.uuid updatedContext
+      executePersistentCommandByUuid runAppContextWithAppContext' execute force commandSimple.uuid updatedContext
 
 executePersistentCommandByUuid
   :: AppContextC s sc m
@@ -68,32 +67,33 @@ executePersistentCommandByUuid
   -> U.UUID
   -> appContext
   -> m ()
-executePersistentCommandByUuid runAppContextWithAppContext execute force uuid context =
-  runInTransaction logInfoI logWarnI $ do
-    logInfoI _CMP_SERVICE (f' "Running command '%s'" [U.toString uuid])
-    command <- findPersistentCommandByUuid uuid
-    when
-      (command.state == NewPersistentCommandState || (command.state == ErrorPersistentCommandState && command.attempts < command.maxAttempts) || force)
-      ( do
-          eResult <- liftIO . E.try $ runAppContextWithAppContext (execute command) context
-          let (resultState, mErrorMessage) =
-                case eResult :: Either E.SomeException (Either String (PersistentCommandState, Maybe String)) of
-                  Right (Right (resultState, mErrorMessage)) -> (resultState, mErrorMessage)
-                  Right (Left error) -> (ErrorPersistentCommandState, Just error)
-                  Left exception -> (ErrorPersistentCommandState, Just . show $ exception)
-          now <- liftIO getCurrentTime
-          let updatedCommand =
-                command
-                  { state = resultState
-                  , lastErrorMessage = mErrorMessage
-                  , attempts = command.attempts + 1
-                  , updatedAt = now
-                  }
-                :: PersistentCommand U.UUID
-          when (resultState == ErrorPersistentCommandState) (sendToSentry updatedCommand)
-          updatePersistentCommandByUuid updatedCommand
-          logInfoI _CMP_SERVICE (f' "Command finished with following state: '%s'" [show resultState])
-      )
+executePersistentCommandByUuid runAppContextWithAppContext' execute force uuid context = do
+  logInfoI _CMP_SERVICE (f' "Running command '%s'" [U.toString uuid])
+  command <- findPersistentCommandByUuid uuid
+  when
+    (command.state == NewPersistentCommandState || (command.state == ErrorPersistentCommandState && command.attempts < command.maxAttempts) || force)
+    ( do
+        eResult <- liftIO . E.try $ runAppContextWithAppContext' (execute command) context
+        let (resultState, mErrorMessage) =
+              case eResult :: Either E.SomeException (Either String (PersistentCommandState, Maybe String)) of
+                Right (Right (resultState, mErrorMessage)) -> (resultState, mErrorMessage)
+                Right (Left error) -> (ErrorPersistentCommandState, Just error)
+                Left exception -> (ErrorPersistentCommandState, Just . show $ exception)
+        context <- ask
+        now <- liftIO getCurrentTime
+        let updatedCommand =
+              command
+                { state = resultState
+                , lastTraceUuid = Just context.traceUuid'
+                , lastErrorMessage = mErrorMessage
+                , attempts = command.attempts + 1
+                , updatedAt = now
+                }
+              :: PersistentCommand U.UUID
+        when (resultState == ErrorPersistentCommandState) (sendToSentry updatedCommand)
+        updatePersistentCommandByUuid updatedCommand
+        logInfoI _CMP_SERVICE (f' "Command finished with following state: '%s'" [show resultState])
+    )
 
 tranferPersistentCommandByUuid
   :: AppContextC s sc m
@@ -101,32 +101,33 @@ tranferPersistentCommandByUuid
   -> (String -> PersistentCommand U.UUID -> m a)
   -> U.UUID
   -> m ()
-tranferPersistentCommandByUuid destination createPersistentCommand uuid =
-  runInTransaction logInfoI logWarnI $ do
-    logInfoI _CMP_SERVICE (f' "Transfering command '%s'" [U.toString uuid])
-    command <- findPersistentCommandByUuid uuid
-    when
-      (command.attempts < command.maxAttempts)
-      ( do
-          let sanitizedCommand = sanitizePersistentCommand command
-          eResult <- tryError (createPersistentCommand destination sanitizedCommand)
-          let (resultState, mErrorMessage) =
-                case eResult of
-                  Right _ -> (DonePersistentCommandState, Nothing)
-                  Left exception -> (ErrorPersistentCommandState, Just . show $ exception)
-          now <- liftIO getCurrentTime
-          let updatedCommand =
-                command
-                  { state = resultState
-                  , lastErrorMessage = mErrorMessage
-                  , attempts = command.attempts + 1
-                  , updatedAt = now
-                  }
-                :: PersistentCommand U.UUID
-          when (resultState == ErrorPersistentCommandState) (sendToSentry updatedCommand)
-          updatePersistentCommandByUuid updatedCommand
-          logInfoI _CMP_SERVICE (f' "Command transfered with following state: '%s'" [show resultState])
-      )
+tranferPersistentCommandByUuid destination createPersistentCommand uuid = do
+  logInfoI _CMP_SERVICE (f' "Transfering command '%s'" [U.toString uuid])
+  command <- findPersistentCommandByUuid uuid
+  when
+    (command.attempts < command.maxAttempts)
+    ( do
+        let sanitizedCommand = sanitizePersistentCommand command
+        eResult <- tryError (createPersistentCommand destination sanitizedCommand)
+        let (resultState, mErrorMessage) =
+              case eResult of
+                Right _ -> (DonePersistentCommandState, Nothing)
+                Left exception -> (ErrorPersistentCommandState, Just . show $ exception)
+        context <- ask
+        now <- liftIO getCurrentTime
+        let updatedCommand =
+              command
+                { state = resultState
+                , lastTraceUuid = Just context.traceUuid'
+                , lastErrorMessage = mErrorMessage
+                , attempts = command.attempts + 1
+                , updatedAt = now
+                }
+              :: PersistentCommand U.UUID
+        when (resultState == ErrorPersistentCommandState) (sendToSentry updatedCommand)
+        updatePersistentCommandByUuid updatedCommand
+        logInfoI _CMP_SERVICE (f' "Command transfered with following state: '%s'" [show resultState])
+    )
 
 runPersistentCommandChannelListener
   :: AppContextC s sc m

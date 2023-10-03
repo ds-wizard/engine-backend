@@ -28,14 +28,16 @@ createTables = do
         \     uuid              uuid              not null \
         \         constraint app_pk \
         \             primary key, \
-        \     app_id            varchar           not null,\
-        \     name              varchar           not null,\
-        \     server_domain     varchar           not null,\
-        \     client_url        varchar           not null,\
-        \     enabled           bool              not null,\
-        \     created_at timestamp with time zone not null,\
+        \     app_id            varchar           not null, \
+        \     name              varchar           not null, \
+        \     server_domain     varchar           not null, \
+        \     client_url        varchar           not null, \
+        \     enabled           bool              not null, \
+        \     created_at timestamp with time zone not null, \
         \     updated_at timestamp with time zone not null, \
-        \     server_url        varchar           not null\
+        \     server_url        varchar           not null, \
+        \     admin_server_url  varchar, \
+        \     admin_client_url  varchar \
         \ ); \
         \  \
         \ create unique index app_uuid_uindex \

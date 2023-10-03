@@ -29,6 +29,7 @@ defaultConfig =
     , logging = defaultLogging
     , cloud = defaultCloud
     , admin = defaultAdmin
+    , modules = defaultModules
     }
 
 defaultGeneral :: ServerConfigGeneral
@@ -106,7 +107,7 @@ defaultBranch = ServerConfigBranch {squash = defaultBranchSquash}
 
 defaultBranchSquash :: ServerConfigCronWorker
 defaultBranchSquash =
-  ServerConfigCronWorker {enabled = True, cron = "15 2 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "*/5 * * * *"}
 
 defaultCache :: ServerConfigCache
 defaultCache =
@@ -164,7 +165,7 @@ defaultQuestionnaireRecomputeIndication =
 
 defaultQuestionnaireSquash :: ServerConfigCronWorker
 defaultQuestionnaireSquash =
-  ServerConfigCronWorker {enabled = True, cron = "15 2 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = "*/4 * * * *"}
 
 defaultTemporaryFile :: ServerConfigTemporaryFile
 defaultTemporaryFile = ServerConfigTemporaryFile {clean = defaultTemporaryFileClean}
@@ -186,4 +187,12 @@ defaultUserTokenExpire =
 
 defaultAdmin :: ServerConfigAdmin
 defaultAdmin =
-  ServerConfigAdmin {enabled = False, url = ""}
+  ServerConfigAdmin {enabled = False}
+
+defaultModules :: ServerConfigModules
+defaultModules =
+  ServerConfigModules {wizard = defaultModule, admin = defaultModule, guide = defaultModule}
+
+defaultModule :: ServerConfigModule
+defaultModule =
+  ServerConfigModule {title = "", description = "", icon = "", url = Nothing}

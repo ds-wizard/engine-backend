@@ -9,14 +9,34 @@ import GHC.Int
 
 import Registry.Database.DAO.Common
 import Registry.Database.Mapping.Organization.Organization ()
+import Registry.Database.Mapping.Organization.OrganizationSimple ()
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
-import Registry.Model.Organization.Organization
+import RegistryLib.Model.Organization.Organization
+import RegistryLib.Model.Organization.OrganizationSimple
+import Shared.Common.Util.Logger
+import Shared.Common.Util.String
 
 entityName = "organization"
 
 findOrganizations :: AppContextM [Organization]
 findOrganizations = createFindEntitiesFn entityName
+
+findUsedOrganizations :: AppContextM [OrganizationSimple]
+findUsedOrganizations = do
+  let sql =
+        "SELECT organization_id, name, logo \
+        \FROM organization \
+        \WHERE organization_id IN (SELECT DISTINCT nested.organization_id \
+        \                          FROM (SELECT DISTINCT organization_id FROM package \
+        \                                UNION ALL \
+        \                                SELECT DISTINCT organization_id FROM document_template \
+        \                                UNION ALL \
+        \                                SELECT DISTINCT organization_id FROM locale \
+        \                         ) nested)"
+  logInfoI _CMP_DATABASE (trim sql)
+  let action conn = query_ conn (fromString sql)
+  runDB action
 
 findOrganizationByOrgId :: String -> AppContextM Organization
 findOrganizationByOrgId organizationId = createFindEntityByFn entityName [("organization_id", organizationId)]

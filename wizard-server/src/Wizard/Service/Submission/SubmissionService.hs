@@ -13,7 +13,6 @@ import Wizard.Api.Resource.Submission.SubmissionCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.Submission.SubmissionServiceSimpleDTO
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Api.Resource.User.UserProfileDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
@@ -93,8 +92,8 @@ submitDocument docUuid reqDto =
       mUser <- asks currentUser
       case mUser of
         Just user -> do
-          profile <- getUserProfile user.uuid
-          let mUserProps = L.find (\p -> p.sId == definition.sId) profile.submissionProps
+          submissionProps <- getUserProfileSubmissionProps user.uuid
+          let mUserProps = L.find (\p -> p.sId == definition.sId) submissionProps
           return $
             case mUserProps of
               Just p -> p.values

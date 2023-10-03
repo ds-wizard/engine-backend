@@ -13,9 +13,10 @@ import WizardLib.KnowledgeModel.Model.Event.EventField
 import WizardLib.KnowledgeModel.Model.Event.EventLenses
 import WizardLib.KnowledgeModel.Model.Event.Question.QuestionEvent
 
+import Wizard.Specs.Common
 import Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.Common
 
-migratorSpec =
+migratorSpec appContext =
   describe "Migrator" $
     describe "Situations (Core <?> Localization)" $ do
       it "Situation n.1: Add < Edit (Corrector)" $
@@ -33,7 +34,7 @@ migratorSpec =
           let expState =
                 reqState {migrationState = ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -53,7 +54,7 @@ migratorSpec =
           let expState =
                 reqState {migrationState = ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' resEvent)))) = resState.migrationState
           let expEvent = e_km1_ch1_q1 {uuid = getUuid resEvent} :: EditValueQuestionEvent
@@ -77,7 +78,7 @@ migratorSpec =
           let expState =
                 reqState {migrationState = ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -94,7 +95,7 @@ migratorSpec =
           -- And: Prepare current state
           let reqState = createTestMigratorStateWithEvents branchEvents msTargetPackageEvents (Just km)
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState.migrationState
           let expEvent = e_km1_ch1_2 {uuid = resEvent.uuid} :: EditChapterEvent
@@ -117,7 +118,7 @@ migratorSpec =
           let expState =
                 reqState {migrationState = ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -137,7 +138,7 @@ migratorSpec =
           let expState =
                 reqState {migrationState = ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -157,7 +158,7 @@ migratorSpec =
           let expState =
                 reqState {migrationState = ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState.migrationState
           let expEvent = e_km1_ch1 {uuid = resEvent.uuid} :: EditChapterEvent
@@ -185,7 +186,7 @@ migratorSpec =
           let expState =
                 reqState {migrationState = ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState.migrationState
           let expEvent = e_km1_ch1 {uuid = resEvent.uuid} :: EditChapterEvent
@@ -213,7 +214,7 @@ migratorSpec =
           let expState =
                 reqState {migrationState = ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState.migrationState
           let expEventEntityUuids = ChangedValue [a_km1_ch1_q2.entityUuid]
@@ -241,7 +242,7 @@ migratorSpec =
           let expState =
                 reqState {migrationState = ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -261,7 +262,7 @@ migratorSpec =
           let expState =
                 reqState {migrationState = ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -282,7 +283,7 @@ migratorSpec =
                 reqState {migrationState = ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents}
 
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -301,7 +302,7 @@ migratorSpec =
           -- And: Prepare expected state
           let expState = reqState {migrationState = CompletedState, targetPackageEvents = []}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -320,7 +321,7 @@ migratorSpec =
           -- And: Prepare expected state
           let expState = reqState {migrationState = CompletedState, targetPackageEvents = []}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -339,7 +340,7 @@ migratorSpec =
           -- And: Prepare expected state
           let expState = reqState {migrationState = CompletedState, targetPackageEvents = []}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -358,7 +359,7 @@ migratorSpec =
           -- And: Prepare expected state
           let expState = reqState {migrationState = CompletedState, targetPackageEvents = []}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -377,6 +378,6 @@ migratorSpec =
           -- And: Prepare expected state
           let expState = reqState {migrationState = CompletedState, targetPackageEvents = []}
           -- When:
-          resState <- migrate reqState
+          (Right resState) <- runInContext (migrate reqState) appContext
           -- Then:
           resState `shouldBe` expState

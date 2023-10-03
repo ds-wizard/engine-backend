@@ -2,17 +2,17 @@ module Wizard.Service.Registry.RegistryMapper where
 
 import Data.Time
 
-import Registry.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
-import Registry.Api.Resource.Locale.LocaleDTO
-import Registry.Api.Resource.Organization.OrganizationCreateDTO
-import Registry.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
+import RegistryLib.Api.Resource.Locale.LocaleDTO
+import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
+import RegistryLib.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Model.Organization.OrganizationSimple
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Registry.RegistryLocale
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Registry.RegistryPackage
 import Wizard.Model.Registry.RegistryTemplate
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
 
 toOrganizationCreate :: AppConfig -> RegistryCreateDTO -> OrganizationCreateDTO
 toOrganizationCreate appConfig reqDto =
@@ -23,7 +23,7 @@ toOrganizationCreate appConfig reqDto =
     , email = reqDto.email
     }
 
-toRegistryOrganization :: OrganizationSimpleDTO -> UTCTime -> RegistryOrganization
+toRegistryOrganization :: OrganizationSimple -> UTCTime -> RegistryOrganization
 toRegistryOrganization dto now =
   RegistryOrganization
     { organizationId = dto.organizationId

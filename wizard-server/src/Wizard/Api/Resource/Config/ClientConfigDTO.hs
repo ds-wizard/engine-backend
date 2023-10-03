@@ -3,6 +3,7 @@ module Wizard.Api.Resource.Config.ClientConfigDTO where
 import GHC.Generics
 
 import Shared.Common.Model.Config.SimpleFeature
+import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Config.AppConfig
 
 data ClientConfigDTO = ClientConfigDTO
@@ -19,6 +20,7 @@ data ClientConfigDTO = ClientConfigDTO
   , locales :: [ClientConfigLocaleDTO]
   , owl :: AppConfigOwl
   , admin :: ClientConfigAdminDTO
+  , modules :: [ClientConfigModuleDTO]
   }
   deriving (Show, Eq, Generic)
 
@@ -38,7 +40,7 @@ data ClientConfigAuthExternalServiceDTO = ClientConfigAuthExternalServiceDTO
   { aId :: String
   , name :: String
   , url :: String
-  , style :: Maybe AppConfigAuthExternalServiceStyle
+  , style :: Maybe OpenIdClientStyle
   }
   deriving (Generic, Eq, Show)
 
@@ -73,5 +75,15 @@ data ClientConfigLocaleDTO = ClientConfigLocaleDTO
 
 data ClientConfigAdminDTO = ClientConfigAdminDTO
   { enabled :: Bool
+  , clientUrl :: Maybe String
+  }
+  deriving (Generic, Eq, Show)
+
+data ClientConfigModuleDTO = ClientConfigModuleDTO
+  { title :: String
+  , description :: String
+  , icon :: String
+  , url :: String
+  , external :: Bool
   }
   deriving (Generic, Eq, Show)

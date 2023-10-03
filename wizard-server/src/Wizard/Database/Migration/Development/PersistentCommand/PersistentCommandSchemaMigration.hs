@@ -42,7 +42,8 @@ createTables = do
         \     created_at timestamptz not null, \
         \     updated_at timestamptz not null, \
         \     internal bool not null default true, \
-        \     destination varchar \
+        \     destination varchar, \
+        \     last_trace_uuid uuid \
         \ ); \
         \  \
         \ create unique index persistent_command_uuid_uindex \

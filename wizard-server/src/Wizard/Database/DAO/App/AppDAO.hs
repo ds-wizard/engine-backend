@@ -57,7 +57,7 @@ updateAppByUuid app = do
   let updatedApp = app {updatedAt = now}
   let sql =
         fromString
-          "UPDATE app SET uuid = ?, app_id = ?, name = ?, server_domain = ?, client_url = ?, enabled = ?, created_at = ?, updated_at = ?, server_url = ? WHERE uuid = ?"
+          "UPDATE app SET uuid = ?, app_id = ?, name = ?, server_domain = ?, client_url = ?, enabled = ?, created_at = ?, updated_at = ?, server_url = ?, admin_server_url = ?, admin_client_url = ? WHERE uuid = ?"
   let params = toRow app ++ [toField updatedApp.uuid]
   logQuery sql params
   let action conn = execute conn sql params

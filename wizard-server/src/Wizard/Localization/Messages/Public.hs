@@ -49,15 +49,6 @@ _ERROR_VALIDATION__USER_ABSENCE userUuid =
 _ERROR_VALIDATION__TOKEN_ABSENCE tokenUuid =
   LocaleRecord "error.validation.token_absence" "Token ('%s') doesn't exist" [tokenUuid]
 
-_ERROR_VALIDATION__OPENID_WRONG_RESPONSE error =
-  LocaleRecord "error.validation.openid_wrong_response" "There was a wrong response from OpenID (error: '%s')" [error]
-
-_ERROR_VALIDATION__OPENID_CODE_ABSENCE =
-  LocaleRecord "error.validation.openid_code_absence" "Auth Code is not provided" []
-
-_ERROR_VALIDATION__OPENID_PROFILE_INFO_ABSENCE =
-  LocaleRecord "error.validation.openid_profile_info_absence" "Profile Information from OpenID service is missing" []
-
 _ERROR_VALIDATION__SUBMISSION_DEFINITION_ABSENCE subId =
   LocaleRecord "error.validation.submission_definition_absence" "Definition of submission ('%s') is missing" [subId]
 
@@ -98,10 +89,6 @@ _ERROR_VALIDATION__LOCALE_DISABLED_DEFAULT =
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
--- Common
-_ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED featureName =
-  LocaleRecord "error.service.common.feature_is_disabled" "Feature '%s' is disabled" [featureName]
-
 _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP =
   LocaleRecord "error.service.template.template_or_format_not_set_up" "DocumentTemplate or format is not set up" []
 

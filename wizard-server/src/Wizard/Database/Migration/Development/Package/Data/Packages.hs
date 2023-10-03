@@ -3,11 +3,11 @@ module Wizard.Database.Migration.Development.Package.Data.Packages where
 import Data.Maybe (fromJust)
 import Data.Time
 
-import Registry.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
+import RegistryLib.Model.Organization.OrganizationSimple
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.App.App
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
-import WizardLib.Common.Database.Migration.Development.Organization.Data.Organizations
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 import WizardLib.KnowledgeModel.Database.Migration.Development.Event.Data.Events
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
@@ -25,7 +25,7 @@ globalRemotePackage =
     , version = globalPackage.version
     , description = globalPackage.description
     , organization =
-        OrganizationSimpleDTO
+        OrganizationSimple
           { organizationId = orgGlobalSimple.organizationId
           , name = orgGlobalSimple.name
           , logo = Just orgLogo
@@ -43,7 +43,7 @@ globalNetherlandsPackage =
     , version = netherlandsPackageV2.version
     , description = netherlandsPackageV2.description
     , organization =
-        OrganizationSimpleDTO
+        OrganizationSimple
           { organizationId = orgNetherlandsSimple.organizationId
           , name = orgNetherlandsSimple.name
           , logo = Just orgLogo

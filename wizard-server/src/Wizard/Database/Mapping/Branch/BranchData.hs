@@ -17,6 +17,7 @@ instance ToRow BranchData where
     , toField appUuid
     , toField createdAt
     , toField updatedAt
+    , toField squashed
     ]
 
 instance FromRow BranchData where
@@ -27,4 +28,5 @@ instance FromRow BranchData where
     appUuid <- field
     createdAt <- field
     updatedAt <- field
+    squashed <- field
     return $ BranchData {..}

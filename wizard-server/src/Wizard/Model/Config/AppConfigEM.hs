@@ -2,6 +2,8 @@ module Wizard.Model.Config.AppConfigEM where
 
 import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Util.Crypto (encryptAES256WithB64)
+import Shared.OpenId.Model.OpenId.OpenIdClientParameter
+import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Config.AppConfig
 
 instance SensitiveData AppConfig where
@@ -31,9 +33,9 @@ instance SensitiveData AppConfigAuthExternalService where
       , clientSecret = encryptAES256WithB64 key entity.clientSecret
       }
 
-instance SensitiveData AppConfigAuthExternalServiceParameter
+instance SensitiveData OpenIdClientParameter
 
-instance SensitiveData AppConfigAuthExternalServiceStyle
+instance SensitiveData OpenIdClientStyle
 
 instance SensitiveData AppConfigPrivacyAndSupport
 

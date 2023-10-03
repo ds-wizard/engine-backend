@@ -4,7 +4,7 @@ import Control.Monad.Reader (liftIO)
 import Data.Foldable (traverse_)
 import Data.Time
 
-import Registry.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
 import Shared.Common.Util.Logger
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
@@ -16,12 +16,14 @@ import Wizard.Database.DAO.Registry.RegistryTemplateDAO
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Service.Common
 import Wizard.Service.Config.App.AppConfigService
 import qualified Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleService as DocumentTemplateBundleService
 import qualified Wizard.Service.Locale.Bundle.LocaleBundleService as LocaleBundleService
 import qualified Wizard.Service.Package.Bundle.PackageBundleService as PackageBundleService
 import Wizard.Service.Registry.RegistryMapper
+import Wizard.Service.Registry.RegistryUtil
 import Wizard.Service.Statistics.StatisticsService
 
 signUpToRegistry :: RegistryCreateDTO -> AppContextM OrganizationDTO
@@ -43,22 +45,35 @@ confirmRegistration reqDto =
 
 synchronizeData :: AppContextM ()
 synchronizeData = do
-  runInTransaction $ do
-    checkIfRegistryIsEnabled
-    now <- liftIO getCurrentTime
-    synchronizeOrganizations now
-    synchronizePackages now
-    synchronizeTemplates now
-    synchronizeLocales now
+  checkIfRegistryIsEnabled
+  now <- liftIO getCurrentTime
+  synchronizeOrganizations now
+  synchronizePackages now
+  synchronizeTemplates now
+  synchronizeLocales now
 
 synchronizeOrganizations :: UTCTime -> AppContextM ()
 synchronizeOrganizations now = do
   logInfoI _CMP_SERVICE "Organization Synchronization started"
   organizations <- retrieveOrganizations
-  let registryOrganizations = fmap (`toRegistryOrganization` now) organizations
-  deleteRegistryOrganizations
-  traverse_ insertRegistryOrganization registryOrganizations
-  logInfoI _CMP_SERVICE "Organization Synchronization successfully finished"
+  let orgsRemote = fmap (`toRegistryOrganization` now) organizations
+  runInTransaction $ do
+    orgsLocal <- findRegistryOrganizations
+    -- 1. Delete the old one
+    let deletedOrganizations = getDiffOrganizations orgsLocal orgsRemote
+    if null deletedOrganizations
+      then logInfoI _CMP_SERVICE "No outdated organizations"
+      else do
+        let organizationIds = fmap (.organizationId) deletedOrganizations
+        deleteRegistryOrganizationsByOrganizationIds organizationIds
+    -- 2. Insert the new one
+    let newOrganizations = getDiffOrganizations orgsRemote orgsLocal
+    if null newOrganizations
+      then logInfoI _CMP_SERVICE "No new organizations"
+      else do
+        let organizationIds = fmap (.organizationId) newOrganizations
+        traverse_ insertRegistryOrganization newOrganizations
+    logInfoI _CMP_SERVICE "Organization Synchronization successfully finished"
 
 synchronizePackages :: UTCTime -> AppContextM ()
 synchronizePackages now = do

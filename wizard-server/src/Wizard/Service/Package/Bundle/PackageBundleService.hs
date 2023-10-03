@@ -60,7 +60,7 @@ getTemporaryFileWithBundle pbId =
 exportBundle :: String -> AppContextM PackageBundleDTO
 exportBundle pbId =
   runInTransaction $ do
-    packages <- getSeriesOfPackages pbId
+    packages <- findSeriesOfPackagesRecursiveById pbId
     let newestPackage = last packages
     when
       newestPackage.nonEditable

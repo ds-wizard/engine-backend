@@ -3,8 +3,8 @@ module Registry.Api.Resource.Locale.LocaleJM where
 import Data.Aeson
 
 import Registry.Api.Resource.Locale.LocaleDTO
+import RegistryLib.Api.Resource.Organization.OrganizationSimpleJM ()
 import Shared.Common.Util.Aeson
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleJM ()
 
 instance FromJSON LocaleDTO where
   parseJSON = genericParseJSON jsonOptions

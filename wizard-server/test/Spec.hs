@@ -69,6 +69,7 @@ import Wizard.Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
 import Wizard.Specs.Service.KnowledgeModel.Squash.SquasherSpec
 import Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.MigrationSpec
 import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.SanitizatorSpec as KM_SanitizatorSpec
+import Wizard.Specs.Service.Migration.Metamodel.Migrator.EventMigratorSpec
 import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec as QTN_ChangeQTypeSanitizator
 import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec as QTN_MoveSanitizatorSpec
 import qualified Wizard.Specs.Service.Migration.Questionnaire.SanitizatorSpec as QTN_SanitizatorSpec
@@ -166,9 +167,8 @@ main =
                 describe "Squash" $ do squasherSpec
                 knowledgeModelFilterSpec
               describe "Migration" $ do
-                describe "KnowledgeModel" $ describe "Migrator" $ do
-                  migratorSpec
-                  KM_SanitizatorSpec.sanitizatorSpec
+                describe "Metamodel" $ describe "Migrator" $ do
+                  eventMigratorSpec
                 describe "Questionnaire" $ describe "Migrator" $ do
                   QTN_ChangeQTypeSanitizator.sanitizatorSpec
                   QTN_MoveSanitizatorSpec.sanitizatorSpec
@@ -215,7 +215,11 @@ main =
               coordinateValidationSpec appContext
               feedbackServiceIntegrationSpec appContext
               documentIntegrationSpec appContext
-              describe "Migration" $
+              describe "Migration" $ do
+                describe "KnowledgeModel" $
+                  describe "Migrator" $ do
+                    migratorSpec appContext
+                    KM_SanitizatorSpec.sanitizatorSpec appContext
                 describe "Questionnaire" $
                   describe "Migrator" $
                     QTN_SanitizatorSpec.sanitizatorIntegrationSpec appContext

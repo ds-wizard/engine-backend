@@ -27,6 +27,7 @@ instance FromEnv ServerConfig where
     logging <- applyEnv serverConfig.logging
     cloud <- applyEnv serverConfig.cloud
     admin <- applyEnv serverConfig.admin
+    modules <- applyEnv serverConfig.modules
     return ServerConfig {..}
 
 instance FromEnv ServerConfigGeneral where
@@ -155,5 +156,22 @@ instance FromEnv ServerConfigAdmin where
     applyEnvVariables
       serverConfig
       [ \c -> applyEnvVariable "ADMIN_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigAdmin)
-      , \c -> applyStringEnvVariable "ADMIN_URL" c.url (\x -> c {url = x} :: ServerConfigAdmin)
+      ]
+
+instance FromEnv ServerConfigModules where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyStringEnvVariable "MODULES_WIZARD_TITLE" c.wizard.title (\x -> c {wizard = c.wizard {title = x}} :: ServerConfigModules)
+      , \c -> applyStringEnvVariable "MODULES_WIZARD_DESCRIPTION" c.wizard.description (\x -> c {wizard = c.wizard {description = x}} :: ServerConfigModules)
+      , \c -> applyStringEnvVariable "MODULES_WIZARD_ICON" c.wizard.icon (\x -> c {wizard = c.wizard {icon = x}} :: ServerConfigModules)
+      , \c -> applyMaybeStringEnvVariable "MODULES_WIZARD_URL" c.wizard.url (\x -> c {wizard = c.wizard {url = x}} :: ServerConfigModules)
+      , \c -> applyStringEnvVariable "MODULES_ADMIN_TITLE" c.admin.title (\x -> c {admin = c.admin {title = x}} :: ServerConfigModules)
+      , \c -> applyStringEnvVariable "MODULES_ADMIN_DESCRIPTION" c.admin.description (\x -> c {admin = c.admin {description = x}} :: ServerConfigModules)
+      , \c -> applyStringEnvVariable "MODULES_ADMIN_ICON" c.admin.icon (\x -> c {admin = c.admin {icon = x}} :: ServerConfigModules)
+      , \c -> applyMaybeStringEnvVariable "MODULES_ADMIN_URL" c.admin.url (\x -> c {admin = c.admin {url = x}} :: ServerConfigModules)
+      , \c -> applyStringEnvVariable "MODULES_GUIDE_TITLE" c.guide.title (\x -> c {guide = c.guide {title = x}} :: ServerConfigModules)
+      , \c -> applyStringEnvVariable "MODULES_GUIDE_DESCRIPTION" c.guide.description (\x -> c {guide = c.guide {description = x}} :: ServerConfigModules)
+      , \c -> applyStringEnvVariable "MODULES_GUIDE_ICON" c.guide.icon (\x -> c {guide = c.guide {icon = x}} :: ServerConfigModules)
+      , \c -> applyMaybeStringEnvVariable "MODULES_GUIDE_URL" c.guide.url (\x -> c {guide = c.guide {url = x}} :: ServerConfigModules)
       ]

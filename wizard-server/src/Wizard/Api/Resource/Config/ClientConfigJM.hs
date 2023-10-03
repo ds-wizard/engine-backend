@@ -61,3 +61,9 @@ instance FromJSON ClientConfigAdminDTO where
 
 instance ToJSON ClientConfigAdminDTO where
   toJSON = genericToJSON jsonOptions
+
+instance FromJSON ClientConfigModuleDTO where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON ClientConfigModuleDTO where
+  toJSON = genericToJSON jsonOptions

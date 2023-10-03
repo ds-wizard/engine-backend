@@ -3,8 +3,8 @@ module Registry.Api.Resource.Package.PackageDetailJM where
 import Data.Aeson
 
 import Registry.Api.Resource.Package.PackageDetailDTO
+import RegistryLib.Api.Resource.Organization.OrganizationSimpleJM ()
 import Shared.Common.Util.Aeson
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleJM ()
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePhaseJM ()
 
 instance FromJSON PackageDetailDTO where

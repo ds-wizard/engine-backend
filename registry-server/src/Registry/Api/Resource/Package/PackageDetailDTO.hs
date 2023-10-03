@@ -3,7 +3,7 @@ module Registry.Api.Resource.Package.PackageDetailDTO where
 import Data.Time
 import GHC.Generics
 
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
+import RegistryLib.Model.Organization.OrganizationSimple
 import WizardLib.KnowledgeModel.Model.Package.Package
 
 data PackageDetailDTO = PackageDetailDTO
@@ -21,7 +21,7 @@ data PackageDetailDTO = PackageDetailDTO
   , forkOfPackageId :: Maybe String
   , mergeCheckpointPackageId :: Maybe String
   , versions :: [String]
-  , organization :: OrganizationSimpleDTO
+  , organization :: OrganizationSimple
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

@@ -11,7 +11,6 @@ import Shared.Common.Util.Gravatar
 import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Acl.MemberDTO
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclJM ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSharing ()
@@ -27,8 +26,6 @@ instance FromRow QuestionnaireDetail where
     description <- field
     visibility <- field
     sharing <- field
-    selectedQuestionTagUuids <- fieldWith fromJSONField
-    events <- fieldWith fromJSONField
     isTemplate <- field
     answeredQuestions <- field
     unansweredQuestions <- field

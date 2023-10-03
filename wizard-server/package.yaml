@@ -1,5 +1,5 @@
 name: wizard-server
-version: '3.27.1'
+version: '3.28.0'
 synopsis: Engine Wizard
 description: Engine Wizard
 category: Web
@@ -22,9 +22,8 @@ library:
       ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
   dependencies:
   - shared-common
-  - registry-server
+  - registry-public
   - wizard-common
-  - wizard-metamodel-migrator
   - wizard-public
   - base
   - aeson
@@ -128,6 +127,7 @@ tests:
     - wizard-server
     - base
     - aeson
+    - aeson-qq
     - async
     - bytestring
     - cache
@@ -163,6 +163,7 @@ tests:
     - wreq
     - yaml
     - hspec
+    - hspec-expectations-json
     - hspec-expectations-pretty-diff
     - hspec-wai
 

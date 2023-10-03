@@ -6,7 +6,6 @@ import Control.Monad.Except (throwError)
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Acl.Acl
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AclContext

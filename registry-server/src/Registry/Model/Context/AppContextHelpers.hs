@@ -5,7 +5,8 @@ import Control.Monad.Reader (asks)
 
 import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext
-import Registry.Model.Organization.Organization
+import RegistryLib.Model.Organization.Organization
+import RegistryLib.Model.Organization.OrganizationRole
 import Shared.Common.Model.Error.Error
 
 getCurrentOrganization :: AppContextM Organization
@@ -14,3 +15,10 @@ getCurrentOrganization = do
   case mCurrentOrganization of
     Just org -> return org
     Nothing -> throwError $ ForbiddenError _ERROR_MODEL_APPCONTEXT__MISSING_ORGANIZATION
+
+isOrganizationAdmin :: AppContextM Bool
+isOrganizationAdmin = do
+  mOrg <- asks currentOrganization
+  case mOrg of
+    Just org -> return $ org.oRole == AdminRole
+    Nothing -> return False

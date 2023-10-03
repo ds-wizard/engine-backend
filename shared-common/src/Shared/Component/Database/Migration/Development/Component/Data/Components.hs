@@ -1,7 +1,7 @@
 module Shared.Component.Database.Migration.Development.Component.Data.Components where
 
-import Shared.Component.Model.Component.Component
 import Shared.Common.Util.Date
+import Shared.Component.Model.Component.Component
 
 mailComponent :: Component
 mailComponent =

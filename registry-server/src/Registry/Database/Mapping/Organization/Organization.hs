@@ -4,7 +4,8 @@ import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.ToField
 
-import Registry.Model.Organization.Organization
+import RegistryLib.Model.Organization.Organization
+import RegistryLib.Model.Organization.OrganizationRole
 import Shared.Common.Database.Mapping.Common
 
 instance ToField OrganizationRole where

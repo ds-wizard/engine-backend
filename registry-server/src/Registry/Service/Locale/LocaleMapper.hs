@@ -1,10 +1,10 @@
 module Registry.Service.Locale.LocaleMapper where
 
-import Registry.Api.Resource.Locale.LocaleDTO
 import Registry.Api.Resource.Locale.LocaleDetailDTO
-import Registry.Model.Organization.Organization
 import Registry.Service.Locale.LocaleUtil
 import qualified Registry.Service.Organization.OrganizationMapper as OM_Mapper
+import RegistryLib.Api.Resource.Locale.LocaleDTO
+import RegistryLib.Model.Organization.Organization
 import Shared.Locale.Model.Locale.Locale
 
 toDTO :: [Organization] -> Locale -> LocaleDTO

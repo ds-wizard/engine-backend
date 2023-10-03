@@ -15,4 +15,4 @@ userJohnCreate =
     }
 
 userJohnCreateDS :: UserCreateDTO
-userJohnCreateDS = userJohnCreate {uRole = Just _USER_ROLE_DATA_STEWARD}
+userJohnCreateDS = userJohnCreate {uRole = Just _USER_ROLE_RESEARCHER}

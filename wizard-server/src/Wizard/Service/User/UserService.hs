@@ -21,6 +21,7 @@ import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Wizard.Api.Resource.Auth.AuthConsentDTO
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
@@ -52,6 +53,8 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.User.UserAudit
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
+import Wizard.Service.UserToken.Login.LoginService
+import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Localization.Messages.Public
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
 import WizardLib.Public.Service.UserToken.UserTokenService
@@ -121,8 +124,8 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl shoul
     sendAnalyticsEmailIfEnabled user
     return $ toDTO user
 
-createUserFromExternalService :: Maybe User -> String -> String -> String -> String -> Maybe String -> Bool -> AppContextM User
-createUserFromExternalService mUserFromDb serviceId firstName lastName email mImageUrl active =
+createUserFromExternalService :: Maybe User -> String -> String -> String -> String -> Maybe String -> Maybe U.UUID -> Bool -> AppContextM User
+createUserFromExternalService mUserFromDb serviceId firstName lastName email mImageUrl mUserUuid active =
   runInTransaction $ do
     now <- liftIO getCurrentTime
     appUuid <- asks currentAppUuid
@@ -138,7 +141,10 @@ createUserFromExternalService mUserFromDb serviceId firstName lastName email mIm
         checkUserLimit
         checkActiveUserLimit
         serverConfig <- asks serverConfig
-        uUuid <- liftIO generateUuid
+        uUuid <-
+          case mUserUuid of
+            Just userUuid -> return userUuid
+            Nothing -> liftIO generateUuid
         password <- liftIO $ generateRandomString 40
         uPasswordHash <- generatePasswordHash password
         appConfig <- getAppConfig
@@ -166,16 +172,20 @@ createOrUpdateUserFromCommand :: CreateOrUpdateUserCommand -> AppContextM User
 createOrUpdateUserFromCommand command =
   runInTransaction $ do
     mUserFromDb <- findUserByUuidSystem' command.uuid
+    serverConfig <- asks serverConfig
     now <- liftIO getCurrentTime
     case mUserFromDb of
       Just userFromDb -> do
-        let updatedUser = fromCommandChangeDTO userFromDb command now
+        let uPermissions =
+              if userFromDb.uRole == command.uRole
+                then userFromDb.permissions
+                else getPermissionForRole serverConfig command.uRole
+        let updatedUser = fromCommandChangeDTO userFromDb command uPermissions now
         updateUserByUuid updatedUser
         return updatedUser
       Nothing -> do
         checkUserLimit
         checkActiveUserLimit
-        serverConfig <- asks serverConfig
         let uPerms = getPermissionForRole serverConfig command.uRole
         let user = fromCommandCreateDTO command uPerms now
         insertUser user
@@ -248,6 +258,13 @@ changeUserState hash active =
     updateUserByUuid updatedUser
     deleteActionKeyByHash actionKey.hash
     return ()
+
+confirmConsents :: AuthConsentDTO -> Maybe String -> AppContextM UserTokenDTO
+confirmConsents reqDto mUserAgent = do
+  actionKey <- findActionKeyByHash reqDto.hash :: AppContextM (ActionKey U.UUID ActionKeyType)
+  user <- findUserByUuid actionKey.identity
+  changeUserState reqDto.hash True
+  createLoginToken user mUserAgent reqDto.sessionState
 
 deleteUser :: U.UUID -> AppContextM ()
 deleteUser userUuid =

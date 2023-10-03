@@ -3,9 +3,11 @@ module Wizard.Service.Config.App.AppConfigMapper where
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Model.Config.AppConfig
 import WizardLib.Public.Model.PersistentCommand.Config.CreateAppConfigAuthenticationCommand
+import WizardLib.Public.Model.PersistentCommand.Config.UpdateAppConfigRegistryCommand
 
 toChangeDTO :: AppConfig -> AppConfigChangeDTO
 toChangeDTO config =
@@ -73,7 +75,7 @@ fromAuthenticationCommand oldConfig command now =
                         , parameteres = []
                         , style =
                             Just
-                              AppConfigAuthExternalServiceStyle
+                              OpenIdClientStyle
                                 { icon = Nothing
                                 , background = Nothing
                                 , color = Nothing
@@ -85,26 +87,13 @@ fromAuthenticationCommand oldConfig command now =
     , updatedAt = now
     }
 
--- data AppConfigAuthExternalService = AppConfigAuthExternalService
---   { aId :: String
---   , name :: String
---   , url :: String
---   , clientId :: String
---   , clientSecret :: String
---   , parameteres :: [AppConfigAuthExternalServiceParameter]
---   , style :: Maybe AppConfigAuthExternalServiceStyle
---   }
---   deriving (Generic, Eq, Show)
-
--- data AppConfigAuthExternalServiceParameter = AppConfigAuthExternalServiceParameter
---   { name :: String
---   , value :: String
---   }
---   deriving (Generic, Eq, Show)
-
--- data AppConfigAuthExternalServiceStyle = AppConfigAuthExternalServiceStyle
---   { icon :: Maybe String
---   , background :: Maybe String
---   , color :: Maybe String
---   }
---   deriving (Generic, Eq, Show)
+fromRegistry :: AppConfig -> UpdateAppConfigRegistryCommand -> UTCTime -> AppConfig
+fromRegistry oldConfig command now =
+  oldConfig
+    { registry =
+        AppConfigRegistry
+          { enabled = command.enabled
+          , token = command.token
+          }
+    , updatedAt = now
+    }

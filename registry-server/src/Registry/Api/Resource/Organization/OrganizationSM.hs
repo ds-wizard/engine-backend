@@ -2,10 +2,10 @@ module Registry.Api.Resource.Organization.OrganizationSM where
 
 import Data.Swagger
 
-import Registry.Api.Resource.Organization.OrganizationDTO
-import Registry.Api.Resource.Organization.OrganizationJM ()
-import Registry.Database.Migration.Development.Organization.Data.Organizations
-import Registry.Model.Organization.Organization
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Api.Resource.Organization.OrganizationJM ()
+import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
+import RegistryLib.Model.Organization.OrganizationRole
 import Shared.Common.Util.Swagger
 
 instance ToSchema OrganizationRole

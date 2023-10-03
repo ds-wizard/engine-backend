@@ -4,31 +4,14 @@ import Data.Maybe (catMaybes)
 import Servant
 
 import Registry.Api.Handler.Common
-import Registry.Api.Resource.Package.PackageSimpleDTO
-import Registry.Api.Resource.Package.PackageSimpleJM ()
 import Registry.Model.Context.BaseContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.Service.Package.PackageService
+import RegistryLib.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Api.Resource.Package.PackageSimpleJM ()
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Constant.Api
 import Shared.Common.Model.Context.TransactionState
-
-type List_GET =
-  Header "Authorization" String
-    :> Header "x-user-count" String
-    :> Header "x-pkg-count" String
-    :> Header "x-qtn-count" String
-    :> Header "x-branch-count" String
-    :> Header "x-doc-count" String
-    :> Header "x-tml-count" String
-    :> "packages"
-    :> QueryParam "organizationId" String
-    :> QueryParam "kmId" String
-    :> QueryParam "metamodelVersion" Int
-    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] [PackageSimpleDTO])
-
-list_GET_Api :: Proxy List_GET
-list_GET_Api = Proxy
 
 list_GET
   :: Maybe String

@@ -3,10 +3,11 @@ module Registry.Service.Organization.OrganizationMapper where
 import Data.Time
 
 import Registry.Api.Resource.Organization.OrganizationChangeDTO
-import Registry.Api.Resource.Organization.OrganizationCreateDTO
-import Registry.Api.Resource.Organization.OrganizationDTO
-import Registry.Model.Organization.Organization
-import WizardLib.Common.Api.Resource.Organization.OrganizationSimpleDTO
+import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
+import RegistryLib.Api.Resource.Organization.OrganizationDTO
+import RegistryLib.Model.Organization.Organization
+import RegistryLib.Model.Organization.OrganizationRole
+import RegistryLib.Model.Organization.OrganizationSimple
 
 toDTO :: Organization -> OrganizationDTO
 toDTO organization =
@@ -23,17 +24,9 @@ toDTO organization =
     , updatedAt = organization.updatedAt
     }
 
-toSimpleDTO :: Organization -> OrganizationSimpleDTO
+toSimpleDTO :: Organization -> OrganizationSimple
 toSimpleDTO organization =
-  OrganizationSimpleDTO
-    { organizationId = organization.organizationId
-    , name = organization.name
-    , logo = organization.logo
-    }
-
-organizationDTOtoSimpleDTO :: OrganizationDTO -> OrganizationSimpleDTO
-organizationDTOtoSimpleDTO organization =
-  OrganizationSimpleDTO
+  OrganizationSimple
     { organizationId = organization.organizationId
     , name = organization.name
     , logo = organization.logo

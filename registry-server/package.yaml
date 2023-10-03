@@ -1,5 +1,5 @@
 name: registry-server
-version: '3.27.1'
+version: '3.28.0'
 synopsis: Engine Registry
 description: Engine Registry
 category: Web
@@ -10,7 +10,7 @@ license: Apache
 license-file: LICENSE.md
 homepage: https://github.com/ds-wizard/engine-backend
 git: git@github.com:engine/ds-wizard/engine-backend.git
-bug-reports: https://github.com/ds-wizard/ds-wizard/iisues
+bug-reports: https://github.com/ds-wizard/ds-wizard/issues
 tested-with: GHC==9.4.4
 library:
   source-dirs: src
@@ -22,13 +22,16 @@ library:
       ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
   dependencies:
   - shared-common
+  - registry-public
   - wizard-common
   - base
   - aeson
+  - async
   - bytestring
   - case-insensitive
   - conduit
   - containers
+  - cron
   - data-default
   - exceptions
   - ginger
@@ -62,6 +65,7 @@ library:
   - text-replace
   - time
   - transformers
+  - unix
   - unordered-containers
   - uri-encode
   - uuid
@@ -98,6 +102,7 @@ tests:
         ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
     dependencies:
     - shared-common
+    - registry-public
     - wizard-common
     - base
     - aeson

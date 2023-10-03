@@ -150,7 +150,7 @@ solveAllConflicts branchUuid =
                       , action = MCAApply
                       , event = Just event
                       }
-              nextState <- liftIO $ migrate (solveConflict migratorState conflictDto)
+              nextState <- migrate (solveConflict migratorState conflictDto)
               go nextState
             Nothing -> do
               let updatedMigratorState = migratorState {migrationState = ErrorState} :: MigratorState
@@ -162,6 +162,6 @@ solveAllConflicts branchUuid =
 migrateState :: MigratorState -> AppContextM MigratorState
 migrateState ms =
   runInTransaction $ do
-    migratedMs <- liftIO $ migrate ms
+    migratedMs <- migrate ms
     updateMigratorState migratedMs
     return migratedMs

@@ -4,6 +4,8 @@ import Data.Swagger
 
 import Shared.Common.Api.Resource.Config.SimpleFeatureSM ()
 import Shared.Common.Util.Swagger
+import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientParameterSM ()
+import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientStyleSM ()
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
@@ -34,12 +36,6 @@ instance ToSchema AppConfigAuthExternal where
 
 instance ToSchema AppConfigAuthExternalService where
   declareNamedSchema = toSwagger defaultAuthExternalService
-
-instance ToSchema AppConfigAuthExternalServiceParameter where
-  declareNamedSchema = toSwagger defaultAuthExternalServiceParameter
-
-instance ToSchema AppConfigAuthExternalServiceStyle where
-  declareNamedSchema = toSwagger defaultAuthExternalServiceStyle
 
 instance ToSchema AppConfigPrivacyAndSupport where
   declareNamedSchema = toSwagger defaultPrivacyAndSupport

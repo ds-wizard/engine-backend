@@ -3,9 +3,9 @@ module Wizard.Specs.Service.Feedback.FeedbackServiceSpec where
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
+import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Feedback.Feedback
 import Wizard.Service.Feedback.FeedbackService
