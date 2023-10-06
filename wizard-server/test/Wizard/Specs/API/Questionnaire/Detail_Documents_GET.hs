@@ -83,7 +83,7 @@ create_test_200 title appContext authHeader =
       runInContextIO deleteDocuments appContext
       runInContextIO removeDocumentContents appContext
       runInContextIO (insertDocument (doc1 {questionnaireUuid = questionnaire6.uuid})) appContext
-      runInContextIO (insertDocument (doc2 {questionnaireUuid = questionnaire6.uuid, creatorUuid = Just userIsaac.uuid})) appContext
+      runInContextIO (insertDocument (doc2 {questionnaireUuid = questionnaire6.uuid, createdBy = Just userIsaac.uuid})) appContext
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
@@ -91,7 +91,7 @@ create_test_200 title appContext authHeader =
             Page
               "documents"
               (PageMetadata 20 2 1 0)
-              [toDTO doc1 (Just questionnaire6Simple) [], toDTO (doc2 {creatorUuid = Just userIsaac.uuid}) (Just questionnaire6Simple) []]
+              [toDTOWithDocTemplate doc1 (Just questionnaire6Simple) [], toDTOWithDocTemplate (doc2 {createdBy = Just userIsaac.uuid}) (Just questionnaire6Simple) []]
       let expBody = encode (fmap (\x -> x wizardDocumentTemplate) expDto)
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

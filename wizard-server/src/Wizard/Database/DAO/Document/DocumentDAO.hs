@@ -1,7 +1,6 @@
 module Wizard.Database.DAO.Document.DocumentDAO where
 
 import Control.Monad.Reader (asks)
-import Data.Maybe
 import Data.String
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
@@ -9,14 +8,17 @@ import Database.PostgreSQL.Simple.ToField
 import GHC.Int
 
 import Shared.Common.Model.Common.Page
+import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Document.Document ()
+import Wizard.Database.Mapping.Document.DocumentList ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Document.Document
+import Wizard.Model.Document.DocumentList
 
 entityName = "document"
 
@@ -32,32 +34,59 @@ findDocumentsFiltered params = do
   tenantUuid <- asks currentTenantUuid
   createFindEntitiesByFn entityName (tenantQueryUuid tenantUuid : params)
 
-findDocumentsPage :: Maybe U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page Document)
-findDocumentsPage mQtnUuid mQuery pageable sort = do
-  tenantUuid <- asks currentTenantUuid
-  createFindEntitiesPageableQuerySortFn
-    entityName
-    pageLabel
-    pageable
-    sort
-    "*"
-    ( if isJust mQtnUuid
-        then "WHERE tenant_uuid = ? AND name ~* ? AND questionnaire_uuid = ? AND durability='PersistentDocumentDurability'"
-        else "WHERE tenant_uuid = ? AND name ~* ? AND durability='PersistentDocumentDurability'"
-    )
-    (U.toString tenantUuid : regexM mQuery : maybeToList (fmap U.toString mQtnUuid))
-
-findDocumentsByQuestionnaireUuidPage :: U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page Document)
-findDocumentsByQuestionnaireUuidPage qtnUuid mQuery pageable sort = do
-  tenantUuid <- asks currentTenantUuid
-  createFindEntitiesPageableQuerySortFn
-    entityName
-    pageLabel
-    pageable
-    sort
-    "*"
-    "WHERE tenant_uuid = ? AND name ~* ? AND questionnaire_uuid = ? AND durability='PersistentDocumentDurability'"
-    (U.toString tenantUuid : regexM mQuery : [U.toString qtnUuid])
+findDocumentsPage :: Maybe U.UUID -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentList)
+findDocumentsPage mQtnUuid mQtnName mQuery pageable sort = do
+  -- 1. Prepare variables
+  do
+    tenantUuid <- asks currentTenantUuid
+    let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
+    let (questionnaireSelect, questionnaireSelectParams, questionnaireJoin, questionnaireCondition, questionnaireParam) =
+          case (mQtnUuid, mQtnName) of
+            (Just qtnUuid, Just qtnName) -> ("?, ", [qtnName], "", "AND doc.questionnaire_uuid = ?", [U.toString qtnUuid])
+            (Just qtnUuid, Nothing) -> ("qtn.name, ", [], "LEFT JOIN questionnaire qtn ON qtn.uuid = doc.questionnaire_uuid", "AND doc.questionnaire_uuid = ?", [U.toString qtnUuid])
+            _ -> ("qtn.name, ", [], "LEFT JOIN questionnaire qtn ON qtn.uuid = doc.questionnaire_uuid", "", [])
+    let condition = "WHERE doc.tenant_uuid = ? AND doc.name ~* ? AND doc.durability = 'PersistentDocumentDurability' " ++ questionnaireCondition
+    let baseParams = [U.toString tenantUuid, regexM mQuery] ++ questionnaireParam
+    let params = questionnaireSelectParams ++ baseParams
+    -- 2. Get total count
+    count <- createCountByFn "document doc" condition baseParams
+    -- 3. Get entities
+    let sql =
+          fromString $
+            f'
+              "SELECT doc.uuid, \
+              \       doc.name, \
+              \       doc.state, \
+              \       doc.questionnaire_uuid, \
+              \       %s \
+              \       doc.questionnaire_event_uuid, \
+              \       doc_tml.name, \
+              \       doc_tml.formats, \
+              \       doc.format_uuid, \
+              \       doc.file_size, \
+              \       doc.worker_log, \
+              \       doc.created_by, \
+              \       doc.created_at \
+              \FROM document doc \
+              \%s \
+              \LEFT JOIN document_template doc_tml ON doc_tml.id = doc.document_template_id \
+              \%s \
+              \%s \
+              \OFFSET %s \
+              \LIMIT %s"
+              [questionnaireSelect, questionnaireJoin, condition, mapSortWithPrefix "doc" sort, show skip, show sizeI]
+    logQuery sql params
+    let action conn = query conn sql params
+    entities <- runDB action
+    -- 4. Constructor response
+    let metadata =
+          PageMetadata
+            { size = sizeI
+            , totalElements = count
+            , totalPages = computeTotalPage count sizeI
+            , number = pageI
+            }
+    return $ Page pageLabel metadata entities
 
 findDocumentsByDocumentTemplateId :: String -> AppContextM [Document]
 findDocumentsByDocumentTemplateId documentTemplateId = do

@@ -42,5 +42,4 @@ assertAbsenceOfDocumentInDB appContext doc = do
 compareDocumentDtos resDto expDto = do
   liftIO $ resDto.name `shouldBe` expDto.name
   liftIO $ (fromJust resDto.questionnaire).uuid `shouldBe` expDto.questionnaireUuid
-  liftIO $ resDto.documentTemplate.tId `shouldBe` expDto.documentTemplateId
-  liftIO $ resDto.formatUuid `shouldBe` expDto.formatUuid
+  liftIO $ (fmap (.uuid) resDto.format) `shouldBe` Just expDto.formatUuid

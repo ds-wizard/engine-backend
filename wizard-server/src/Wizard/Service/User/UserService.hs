@@ -275,7 +275,7 @@ deleteUser userUuid =
     removeOwnerFromQuestionnaire userUuid
     clearQuestionnaireCreatedBy userUuid
     deletePersistentCommandByCreatedBy userUuid
-    documents <- findDocumentsFiltered [("creator_uuid", U.toString userUuid)]
+    documents <- findDocumentsFiltered [("created_by", U.toString userUuid)]
     forM_
       documents
       ( \d -> do

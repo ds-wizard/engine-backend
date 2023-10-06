@@ -27,7 +27,7 @@ data Document = Document
   , questionnaireRepliesHash :: Int
   , documentTemplateId :: String
   , formatUuid :: U.UUID
-  , creatorUuid :: Maybe U.UUID
+  , createdBy :: Maybe U.UUID
   , fileName :: Maybe String
   , contentType :: Maybe String
   , fileSize :: Maybe Int64

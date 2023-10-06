@@ -34,7 +34,7 @@ createTables = do
         \     questionnaire_replies_hash bigint not null, \
         \     document_template_id varchar not null, \
         \     format_uuid uuid not null, \
-        \     creator_uuid uuid, \
+        \     created_by uuid, \
         \     retrieved_at timestamptz, \
         \     finished_at timestamptz, \
         \     created_at timestamptz not null, \
@@ -62,7 +62,7 @@ createTables = do
         \      foreign key (document_template_id, tenant_uuid) references document_template (id, tenant_uuid); \
         \ alter table document \
         \   add constraint document_user_entity_uuid_fk \
-        \      foreign key (creator_uuid) references user_entity; \
+        \      foreign key (created_by) references user_entity; \
         \  \
         \ create index document_questionnaire_uuid_index \
         \   on document (questionnaire_uuid);"

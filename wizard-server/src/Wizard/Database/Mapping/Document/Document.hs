@@ -32,7 +32,7 @@ instance ToRow Document where
     , toField questionnaireRepliesHash
     , toField documentTemplateId
     , toField formatUuid
-    , toField creatorUuid
+    , toField createdBy
     , toField retrievedAt
     , toField finishedAt
     , toField createdAt
@@ -54,7 +54,7 @@ instance FromRow Document where
     questionnaireRepliesHash <- field
     documentTemplateId <- field
     formatUuid <- field
-    creatorUuid <- field
+    createdBy <- field
     retrievedAt <- field
     finishedAt <- field
     createdAt <- field

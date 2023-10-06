@@ -47,7 +47,7 @@ doc1 =
     , questionnaireRepliesHash = hash . M.toList $ questionnaire1Ctn.replies
     , documentTemplateId = wizardDocumentTemplate.tId
     , formatUuid = (head wizardDocumentTemplate.formats).uuid
-    , creatorUuid = Just $ userNikola.uuid
+    , createdBy = Just $ userNikola.uuid
     , fileName = Just "export.txt"
     , contentType = Just "text/plain"
     , fileSize = Just $ 50 * 1024
@@ -102,7 +102,7 @@ doc1Create =
     }
 
 doc1Dto :: DocumentDTO
-doc1Dto = toDTO doc1 (Just . QTN_Mapper.toSimple $ questionnaire1) [] wizardDocumentTemplate
+doc1Dto = toDTOWithDocTemplate doc1 (Just . QTN_Mapper.toSimple $ questionnaire1) [] wizardDocumentTemplate
 
 doc2 :: Document
 doc2 =
@@ -116,7 +116,7 @@ doc2 =
     , questionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn.replies
     , documentTemplateId = wizardDocumentTemplate.tId
     , formatUuid = (head wizardDocumentTemplate.formats).uuid
-    , creatorUuid = Just $ userNikola.uuid
+    , createdBy = Just $ userNikola.uuid
     , fileName = Just "export.txt"
     , contentType = Just "text/plain"
     , fileSize = Just $ 50 * 1024
@@ -139,7 +139,7 @@ doc3 =
     , questionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn.replies
     , documentTemplateId = wizardDocumentTemplate.tId
     , formatUuid = (head wizardDocumentTemplate.formats).uuid
-    , creatorUuid = Just $ userAlbert.uuid
+    , createdBy = Just $ userAlbert.uuid
     , fileName = Just "export.txt"
     , contentType = Just "text/plain"
     , fileSize = Just $ 50 * 1024
@@ -222,7 +222,7 @@ differentDoc =
     , questionnaireRepliesHash = hash . M.toList $ questionnaire1Ctn.replies
     , documentTemplateId = anotherWizardDocumentTemplate.tId
     , formatUuid = (head anotherWizardDocumentTemplate.formats).uuid
-    , creatorUuid = Just $ userCharles.uuid
+    , createdBy = Just $ userCharles.uuid
     , fileName = Just "export.txt"
     , contentType = Just "text/plain"
     , fileSize = Just $ 50 * 1024

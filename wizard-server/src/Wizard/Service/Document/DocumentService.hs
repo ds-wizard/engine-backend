@@ -51,14 +51,17 @@ import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 getDocumentsPageDto :: Maybe U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
 getDocumentsPageDto mQuestionnaireUuid mQuery pageable sort = do
   checkPermission _DOC_PERM
-  docPage <- findDocumentsPage mQuestionnaireUuid mQuery pageable sort
-  traverse enhanceDocument docPage
+  docPage <- findDocumentsPage mQuestionnaireUuid Nothing mQuery pageable sort
+  tenantConfig <- getCurrentTenantConfig
+  traverse (enhanceDocument tenantConfig) docPage
 
 getDocumentsForQtn :: U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
 getDocumentsForQtn qtnUuid mQuery pageable sort = do
-  checkViewPermissionToDoc qtnUuid
-  docPage <- findDocumentsByQuestionnaireUuidPage qtnUuid mQuery pageable sort
-  traverse enhanceDocument docPage
+  qtn <- findQuestionnaireByUuid qtnUuid
+  checkViewPermissionToDoc' qtn
+  docPage <- findDocumentsPage (Just qtnUuid) (Just qtn.name) mQuery pageable sort
+  tenantConfig <- getCurrentTenantConfig
+  traverse (enhanceDocument tenantConfig) docPage
 
 createDocument :: DocumentCreateDTO -> AppContextM DocumentDTO
 createDocument reqDto =
@@ -83,7 +86,7 @@ createDocument reqDto =
     let doc = fromCreateDTO reqDto dUuid repliesHash qtn.events mCurrentUser tenantUuid now
     insertDocument doc
     publishToPersistentCommandQueue doc
-    return $ toDTO doc (Just qtnSimple) [] tml
+    return $ toDTOWithDocTemplate doc (Just qtnSimple) [] tml
 
 deleteDocument :: U.UUID -> AppContextM ()
 deleteDocument docUuid =
