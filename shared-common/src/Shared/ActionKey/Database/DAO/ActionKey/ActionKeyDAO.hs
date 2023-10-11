@@ -16,15 +16,20 @@ import Shared.Common.Util.Logger
 
 entityName = "action_key"
 
-findActionKeys :: (AppContextC s sc m, FromField aType, FromField identity) => m [ActionKey identity aType]
+findActionKeys :: (AppContextC s sc m, FromField identity, FromField aType) => m [ActionKey identity aType]
 findActionKeys = do
   tenantUuid <- asks (.tenantUuid')
   createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
-findActionKeyByHash :: (AppContextC s sc m, FromField aType, FromField identity) => String -> m (ActionKey identity aType)
+findActionKeyByHash :: (AppContextC s sc m, FromField identity, FromField aType) => String -> m (ActionKey identity aType)
 findActionKeyByHash hash = do
   tenantUuid <- asks (.tenantUuid')
   createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("hash", hash)]
+
+findActionKeyByHashAndType :: (AppContextC s sc m, FromField identity, FromField aType, Show aType) => String -> aType -> m (ActionKey identity aType)
+findActionKeyByHashAndType hash aType = do
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("hash", hash), ("type", show aType)]
 
 findActionKeyByIdentityAndHash'
   :: ( AppContextC s sc m
