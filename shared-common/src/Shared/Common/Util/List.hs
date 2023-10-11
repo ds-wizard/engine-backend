@@ -3,6 +3,12 @@ module Shared.Common.Util.List where
 import Data.Either (partitionEithers)
 import qualified Data.List as L
 
+addIfNotExists :: Eq a => a -> [a] -> [a]
+addIfNotExists x list =
+  case L.find (== x) list of
+    Just _ -> list
+    Nothing -> list ++ [x]
+
 groupBy :: Ord a => (a -> a -> Bool) -> [a] -> [[a]]
 groupBy fn = L.groupBy fn . L.sort
 
