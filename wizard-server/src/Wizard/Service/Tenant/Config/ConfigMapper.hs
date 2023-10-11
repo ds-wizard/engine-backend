@@ -7,6 +7,7 @@ import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateAuthenticationConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConfigCommand
 
 toChangeDTO :: TenantConfig -> TenantConfigChangeDTO
@@ -40,21 +41,6 @@ fromChangeDTO dto oldConfig now =
     , owl = oldConfig.owl
     , mailConfigUuid = oldConfig.mailConfigUuid
     , createdAt = oldConfig.createdAt
-    , updatedAt = now
-    }
-
-fromLogoDTO :: TenantConfig -> String -> UTCTime -> TenantConfig
-fromLogoDTO oldConfig logo now =
-  oldConfig {lookAndFeel = oldConfig.lookAndFeel {logoUrl = Just logo}, updatedAt = now}
-
-fromLogoDeleteDTO :: TenantConfig -> UTCTime -> TenantConfig
-fromLogoDeleteDTO oldConfig now =
-  oldConfig {lookAndFeel = oldConfig.lookAndFeel {logoUrl = Nothing}, updatedAt = now}
-
-fromClientCustomizationDTO :: TenantConfig -> Bool -> UTCTime -> TenantConfig
-fromClientCustomizationDTO oldConfig newClientCustomizationEnabled now =
-  oldConfig
-    { feature = oldConfig.feature {clientCustomizationEnabled = newClientCustomizationEnabled}
     , updatedAt = now
     }
 
@@ -94,6 +80,18 @@ fromRegistry oldConfig command now =
         TenantConfigRegistry
           { enabled = command.enabled
           , token = command.token
+          }
+    , updatedAt = now
+    }
+
+fromLookAndFeel :: TenantConfig -> UpdateLookAndFeelConfigCommand -> UTCTime -> TenantConfig
+fromLookAndFeel oldConfig command now =
+  oldConfig
+    { lookAndFeel =
+        oldConfig.lookAndFeel
+          { logoUrl = command.logoUrl
+          , primaryColor = command.primaryColor
+          , illustrationsColor = command.illustrationsColor
           }
     , updatedAt = now
     }

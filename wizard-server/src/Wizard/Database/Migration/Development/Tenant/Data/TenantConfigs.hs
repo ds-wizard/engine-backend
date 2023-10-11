@@ -55,8 +55,7 @@ defaultOrganization =
 defaultFeature :: TenantConfigFeature
 defaultFeature =
   TenantConfigFeature
-    { clientCustomizationEnabled = True
-    , pdfOnlyEnabled = False
+    { pdfOnlyEnabled = False
     , pdfWatermarkEnabled = False
     }
 

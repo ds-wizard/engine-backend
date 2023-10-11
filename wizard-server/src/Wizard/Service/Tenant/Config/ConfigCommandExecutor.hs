@@ -12,6 +12,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateAuthenticationConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConfigCommand
 
 cComponent = "TenantConfig"
@@ -20,6 +21,7 @@ execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Mayb
 execute command
   | command.function == cCreateAuthenticationName = cCreateAuthentication command
   | command.function == cUpdateRegistryName = cUpdateRegistry command
+  | command.function == cUpdateLookAndFeelName = cUpdateLookAndFeel command
 
 cCreateAuthenticationName = "createAuthentication"
 
@@ -45,6 +47,20 @@ cUpdateRegistry persistentCommand = do
       tenantConfig <- getTenantConfigByUuid command.tenantUuid
       now <- liftIO getCurrentTime
       let updatedTenantConfig = fromRegistry tenantConfig command now
+      modifyTenantConfig updatedTenantConfig
+      return (DonePersistentCommandState, Nothing)
+    Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
+
+cUpdateLookAndFeelName = "updateLookAndFeel"
+
+cUpdateLookAndFeel :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
+cUpdateLookAndFeel persistentCommand = do
+  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateLookAndFeelConfigCommand
+  case eCommand of
+    Right command -> do
+      tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
+      now <- liftIO getCurrentTime
+      let updatedTenantConfig = fromLookAndFeel tenantConfig command now
       modifyTenantConfig updatedTenantConfig
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])

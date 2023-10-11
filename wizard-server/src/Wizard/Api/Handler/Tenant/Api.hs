@@ -9,7 +9,6 @@ import Wizard.Api.Handler.Tenant.Detail_GET
 import Wizard.Api.Handler.Tenant.Detail_PUT
 import Wizard.Api.Handler.Tenant.List_GET
 import Wizard.Api.Handler.Tenant.List_POST
-import Wizard.Api.Handler.Tenant.Logo.Api
 import Wizard.Api.Handler.Tenant.Plan.Api
 import Wizard.Model.Context.BaseContext
 
@@ -21,7 +20,6 @@ type TenantAPI =
           :<|> Detail_PUT
           :<|> Detail_DELETE
           :<|> TenantConfigAPI
-          :<|> TenantLogoAPI
           :<|> TenantPlanAPI
        )
 
@@ -36,5 +34,4 @@ tenantServer =
     :<|> detail_PUT
     :<|> detail_DELETE
     :<|> tenantConfigServer
-    :<|> tenantLogoServer
     :<|> tenantPlanServer

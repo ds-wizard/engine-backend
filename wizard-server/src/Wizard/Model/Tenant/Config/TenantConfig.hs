@@ -245,8 +245,7 @@ data TenantConfigSubmissionServiceRequestMultipart = TenantConfigSubmissionServi
   deriving (Generic, Eq, Show)
 
 data TenantConfigFeature = TenantConfigFeature
-  { clientCustomizationEnabled :: Bool
-  , pdfOnlyEnabled :: Bool
+  { pdfOnlyEnabled :: Bool
   , pdfWatermarkEnabled :: Bool
   }
   deriving (Generic, Eq, Show)

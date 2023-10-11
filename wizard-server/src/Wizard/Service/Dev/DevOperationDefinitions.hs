@@ -22,7 +22,6 @@ import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
 import Wizard.Service.TemporaryFile.TemporaryFileService
-import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Plan.PlanService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
 import Wizard.Util.Context
@@ -34,7 +33,6 @@ sections =
   , apiKey
   , branch
   , cache
-  , config
   , document
   , feedback
   , owl
@@ -151,44 +149,6 @@ cache_purgeCache =
     , parameters = []
     , function = \reqDto -> do
         purgeCache
-        return "Done"
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
--- CONFIG
--- ---------------------------------------------------------------------------------------------------------------------
-config :: DevSection AppContextM
-config =
-  DevSection
-    { name = "Config"
-    , description = Nothing
-    , operations =
-        [ config_switchClientCustomizationOn
-        , config_switchClientCustomizationOff
-        ]
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-config_switchClientCustomizationOn :: DevOperation AppContextM
-config_switchClientCustomizationOn =
-  DevOperation
-    { name = "Enable Client Customization in Settings"
-    , description = Nothing
-    , parameters = []
-    , function = \reqDto -> do
-        modifyClientCustomization True
-        return "Done"
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-config_switchClientCustomizationOff :: DevOperation AppContextM
-config_switchClientCustomizationOff =
-  DevOperation
-    { name = "Disable Client Customization in Settings"
-    , description = Nothing
-    , parameters = []
-    , function = \reqDto -> do
-        modifyClientCustomization False
         return "Done"
     }
 
