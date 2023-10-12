@@ -256,6 +256,13 @@ createFindColumnBySqlPageFn pageLabel pageable sql params count =
             }
     return $ Page pageLabel metadata (concat entities)
 
+createFindEntitiesInFn :: (AppContextC s sc m, FromRow entity) => String -> U.UUID -> String -> [String] -> m [entity]
+createFindEntitiesInFn entityName tenantUuid paramName params = do
+  let sql = fromString $ f' "SELECT * FROM %s WHERE tenant_uuid = '%s' AND %s IN (%s)" [entityName, U.toString tenantUuid, paramName, generateQuestionMarks params]
+  logQuery sql params
+  let action conn = query conn sql params
+  runDB action
+
 createInsertFn :: (AppContextC s sc m, ToRow entity) => String -> entity -> m Int64
 createInsertFn entityName entity = do
   let sql = fromString $ f' "INSERT INTO %s VALUES (%s)" [entityName, generateQuestionMarks' entity]

@@ -31,6 +31,7 @@ import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
 import Wizard.Model.Report.Report
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.Acl.AclMapper
 import qualified Wizard.Service.Package.PackageMapper as PM
@@ -43,6 +44,7 @@ import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Package.Package
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as SPM
+import WizardLib.Public.Model.PersistentCommand.Questionnaire.CreateQuestionnaireCommand
 
 toDTO :: Questionnaire -> Package -> QuestionnaireState -> [QuestionnairePermRecordDTO] -> QuestionnaireDTO
 toDTO qtn package state permissions =
@@ -346,3 +348,29 @@ fromContentChangeDTO qtn dto mCurrentUser now =
   let newTodoEvents = fmap (\e -> fromEventChangeDTO e (fmap (.uuid) mCurrentUser) now) dto.events
       updatedEvents = qtn.events ++ newTodoEvents
    in qtn {events = updatedEvents, updatedAt = now}
+
+fromCreateQuestionnaireCommand :: CreateQuestionnaireCommand -> U.UUID -> [QuestionnairePermRecord] -> TenantConfig -> UTCTime -> Questionnaire
+fromCreateQuestionnaireCommand command uuid permissions tenantConfig now = do
+  Questionnaire
+    { uuid = uuid
+    , name = command.name
+    , description = Nothing
+    , visibility = tenantConfig.questionnaire.questionnaireVisibility.defaultValue
+    , sharing = tenantConfig.questionnaire.questionnaireSharing.defaultValue
+    , packageId = command.packageId
+    , selectedQuestionTagUuids = []
+    , projectTags = []
+    , documentTemplateId = command.documentTemplateId
+    , formatUuid = Nothing
+    , creatorUuid = Nothing
+    , permissions = permissions
+    , events = []
+    , versions = []
+    , isTemplate = False
+    , squashed = True
+    , answeredQuestions = 0
+    , unansweredQuestions = 0
+    , tenantUuid = tenantConfig.uuid
+    , createdAt = now
+    , updatedAt = now
+    }

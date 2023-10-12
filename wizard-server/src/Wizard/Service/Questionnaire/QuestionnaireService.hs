@@ -34,6 +34,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
+import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
@@ -69,6 +70,7 @@ import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Package.Package
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 import WizardLib.KnowledgeModel.Service.Package.PackageUtil
+import WizardLib.Public.Model.PersistentCommand.Questionnaire.CreateQuestionnaireCommand
 
 getQuestionnairesForCurrentUserPageDto
   :: Maybe String
@@ -205,6 +207,24 @@ cloneQuestionnaire cloneUuid =
     state <- getQuestionnaireState newUuid pkg.pId
     permissionDtos <- traverse enhanceQuestionnairePermRecord newQtn.permissions
     return $ toSimpleDTO newQtn pkg state permissionDtos
+
+createQuestionnairesFromCommands :: [CreateQuestionnaireCommand] -> AppContextM ()
+createQuestionnairesFromCommands = runInTransaction . traverse_ create
+  where
+    create :: CreateQuestionnaireCommand -> AppContextM ()
+    create command = do
+      uuid <- liftIO generateUuid
+      now <- liftIO getCurrentTime
+      tenantConfig <- getCurrentTenantConfig
+      users <- findUsersByEmails command.emails
+      permissions <- traverse (createPermission uuid) users
+      let questionnaire = fromCreateQuestionnaireCommand command uuid permissions tenantConfig now
+      insertQuestionnaire questionnaire
+      return ()
+    createPermission :: U.UUID -> User -> AppContextM QuestionnairePermRecord
+    createPermission questionnaireUuid user = do
+      uuid <- liftIO generateUuid
+      return $ toUserPermRecord uuid questionnaireUuid user.uuid ownerPermissions
 
 getQuestionnaireById :: U.UUID -> AppContextM QuestionnaireDTO
 getQuestionnaireById qtnUuid = do
