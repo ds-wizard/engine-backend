@@ -90,6 +90,9 @@ findUserByUuid' uuid = getFromCacheOrDb' getFromCache addToCache go (U.toString 
       tenantUuid <- asks currentTenantUuid
       createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("uuid", uuid)]
 
+findUserByUuidAndTenantUuidSystem :: U.UUID -> U.UUID -> AppContextM User
+findUserByUuidAndTenantUuidSystem uuid tenantUuid = createFindEntityByFn entityName [("uuid", U.toString uuid), ("tenantUuid", U.toString tenantUuid)]
+
 findUserByUuidSystem' :: U.UUID -> AppContextM (Maybe User)
 findUserByUuidSystem' uuid = createFindEntityByFn' entityName [("uuid", U.toString uuid)]
 

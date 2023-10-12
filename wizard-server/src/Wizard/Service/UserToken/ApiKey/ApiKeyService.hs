@@ -35,7 +35,7 @@ createApiKey reqDto mUserAgent =
     user <- findUserByUuid userDto.uuid
     tenantUuid <- asks currentTenantUuid
     now <- liftIO getCurrentTime
-    let claims = toUserTokenClaimsWithExpiration user.uuid uuid now reqDto.expiresAt
+    let claims = toUserTokenClaimsWithExpiration user.uuid uuid user.tenantUuid now reqDto.expiresAt
     (JWT.Jwt jwtToken) <- createSignedJwtToken claims
     let userToken = fromApiKeyDTO reqDto uuid user.uuid serverConfig.general.secret mUserAgent tenantUuid now (BS.unpack jwtToken)
     insertUserToken userToken

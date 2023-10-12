@@ -42,16 +42,17 @@ toUserToken uuid name tokenType userUuid expiresAt secret mUserAgent mSessionSta
     , createdAt = now
     }
 
-toUserTokenClaims :: U.UUID -> U.UUID -> UTCTime -> Integer -> UserTokenClaimsDTO
-toUserTokenClaims userUuid tokenUuid now expiration =
+toUserTokenClaims :: U.UUID -> U.UUID -> U.UUID -> UTCTime -> Integer -> UserTokenClaimsDTO
+toUserTokenClaims userUuid tokenUuid tenantUuid now expiration =
   let timeDelta = realToFrac $ expiration * nominalHourInSeconds
-   in toUserTokenClaimsWithExpiration userUuid tokenUuid now (addUTCTime timeDelta now)
+   in toUserTokenClaimsWithExpiration userUuid tokenUuid tenantUuid now (addUTCTime timeDelta now)
 
-toUserTokenClaimsWithExpiration :: U.UUID -> U.UUID -> UTCTime -> UTCTime -> UserTokenClaimsDTO
-toUserTokenClaimsWithExpiration userUuid tokenUuid now expiresAt =
+toUserTokenClaimsWithExpiration :: U.UUID -> U.UUID -> U.UUID -> UTCTime -> UTCTime -> UserTokenClaimsDTO
+toUserTokenClaimsWithExpiration userUuid tokenUuid tenantUuid now expiresAt =
   UserTokenClaimsDTO
     { exp = JWT.IntDate $ utcTimeToPOSIXSeconds expiresAt
     , version = userTokenVersion
     , tokenUuid = tokenUuid
     , userUuid = userUuid
+    , tenantUuid = tenantUuid
     }

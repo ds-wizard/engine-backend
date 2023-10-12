@@ -72,7 +72,7 @@ createLoginToken user mUserAgent mSessionState =
     serverConfig <- asks serverConfig
     uuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
-    let claims = toUserTokenClaims user.uuid uuid now serverConfig.jwt.expiration
+    let claims = toUserTokenClaims user.uuid uuid user.tenantUuid now serverConfig.jwt.expiration
     (JWT.Jwt jwtToken) <- createSignedJwtToken claims
     let userToken = fromLoginDTO uuid user serverConfig.jwt.expiration serverConfig.general.secret mUserAgent mSessionState now (BS.unpack jwtToken)
     insertUserToken userToken

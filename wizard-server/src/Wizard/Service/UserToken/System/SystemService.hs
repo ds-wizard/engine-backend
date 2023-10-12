@@ -36,10 +36,10 @@ createSystemToken token mUserAgent =
     case eUserTokenClaims of
       Right userTokenClaims -> do
         serverConfig <- asks serverConfig
-        user <- findUserByUuid userTokenClaims.userUuid
+        user <- findUserByUuidAndTenantUuidSystem userTokenClaims.userUuid userTokenClaims.tenantUuid
         uuid <- liftIO generateUuid
         updateUserLastVisitedAtByUuid user.uuid now
-        let claims = toUserTokenClaims user.uuid uuid now serverConfig.jwt.expiration
+        let claims = toUserTokenClaims user.uuid uuid user.tenantUuid now serverConfig.jwt.expiration
         (JWT.Jwt jwtToken) <- createSignedJwtToken claims
         let userToken = fromSystemDTO uuid user serverConfig.jwt.expiration serverConfig.general.secret mUserAgent Nothing now (BS.unpack jwtToken)
         insertUserToken userToken

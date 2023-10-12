@@ -9,5 +9,6 @@ data UserTokenClaimsDTO = UserTokenClaimsDTO
   , version :: Integer
   , userUuid :: U.UUID
   , tokenUuid :: U.UUID
+  , tenantUuid :: U.UUID
   }
   deriving (Show, Eq, Generic)
