@@ -8,7 +8,7 @@ import Database.PostgreSQL.Simple.ToRow
 import Database.PostgreSQL.Simple.Types
 
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireAclJM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnairePermJM ()
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionJM ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSharing ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireVisibility ()

@@ -68,7 +68,7 @@ reqDtoT qtn =
     , visibility = qtn.visibility
     , sharing = qtn.sharing
     , projectTags = qtn.projectTags
-    , permissions = qtn.permissions
+    , permissions = fmap toQuestionnairePermChangeDTO qtn.permissions
     , documentTemplateId = qtn.documentTemplateId
     , formatUuid = qtn.formatUuid
     , isTemplate = qtn.isTemplate
@@ -106,7 +106,7 @@ test_200 appContext = do
     questionnaire10
     questionnaire10Edited
     questionnaire10Ctn
-    [qtn10NikolaEditPermRecordDto]
+    [qtn10NikolaEditQtnPermDto]
     False
     [reqNonAdminAuthHeader]
     True

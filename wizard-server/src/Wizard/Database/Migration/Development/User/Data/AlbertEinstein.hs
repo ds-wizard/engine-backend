@@ -5,13 +5,13 @@ import Data.Maybe (fromJust)
 import Data.Time
 
 import Shared.Common.Model.Common.SensitiveData
+import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
-import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Tenant.Config.TenantConfig
@@ -19,7 +19,11 @@ import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
+import Wizard.Model.User.UserProfile
 import Wizard.Service.User.UserMapper
+import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
+import WizardLib.Public.Model.User.UserGroup
+import WizardLib.Public.Model.User.UserGroupMembership
 
 userAlbert :: User
 userAlbert =
@@ -54,7 +58,6 @@ userAlbert =
     , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
     , submissionProps = [process defaultSecret userAlbertApiToken]
     , imageUrl = Nothing
-    , groups = [ownerBioGroup, ownerPlantGroup]
     , machine = False
     , tenantUuid = defaultTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -70,6 +73,9 @@ userAlbertEdited =
     , email = "albert.einstein@example-edited.com"
     , affiliation = Just "EDITED: My University"
     }
+
+userAlbertProfile :: UserProfile
+userAlbertProfile = toUserProfile (toDTO userAlbert) [bioGroup.uuid]
 
 userAlbertEditedChange :: UserProfileChangeDTO
 userAlbertEditedChange =
@@ -90,10 +96,21 @@ userState :: UserStateDTO
 userState = UserStateDTO {active = True}
 
 userAlbertOnlineInfo :: OnlineUserInfo
-userAlbertOnlineInfo = toLoggedOnlineUserInfo (toDTO userAlbert) 10
+userAlbertOnlineInfo = toLoggedOnlineUserInfo (toDTO userAlbert) 10 [bioGroup.uuid]
 
 userAlbertSuggestion :: UserSuggestionDTO
 userAlbertSuggestion = toSuggestionDTO . toSuggestion $ userAlbert
+
+userAlbertBioGroupMembership :: UserGroupMembership
+userAlbertBioGroupMembership =
+  UserGroupMembership
+    { userGroupUuid = bioGroup.uuid
+    , userUuid = userAlbert.uuid
+    , mType = OwnerUserGroupMembershipType
+    , tenantUuid = defaultTenant.uuid
+    , createdAt = dt' 2018 1 21
+    , updatedAt = dt' 2018 1 21
+    }
 
 -- --------------------------------------
 -- SUBMISSION

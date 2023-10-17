@@ -58,9 +58,9 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Admin - pagination)"
     appContext
-    "/wizard-api/questionnaires?page=1&size=1"
+    "/wizard-api/questionnaires?sort=uuid,asc&page=1&size=1"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 1 5 5 1) [questionnaire14Dto])
+    (Page "questionnaires" (PageMetadata 1 6 6 1) [questionnaire14Dto])
   create_test_200
     "HTTP 200 OK (Admin - query)"
     appContext
@@ -106,7 +106,7 @@ test_200 appContext = do
     appContext
     "/wizard-api/questionnaires?sort=uuid,asc&isTemplate=false"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
+    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire3Dto, questionnaire15Dto, questionnaire2Dto])
   create_test_200
     "HTTP 200 OK (Admin - isMigrating - true)"
     appContext
@@ -120,8 +120,8 @@ test_200 appContext = do
     reqAuthHeader
     ( Page
         "questionnaires"
-        (PageMetadata 20 5 1 0)
-        [questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire2Dto, questionnaire12Dto]
+        (PageMetadata 20 6 1 0)
+        [questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire15Dto, questionnaire2Dto, questionnaire12Dto]
     )
   create_test_200
     "HTTP 200 OK (Admin - projectTags)"
@@ -162,8 +162,8 @@ test_200 appContext = do
     reqAuthHeader
     ( Page
         "questionnaires"
-        (PageMetadata 20 5 1 0)
-        [questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire2Dto, questionnaire12Dto]
+        (PageMetadata 20 6 1 0)
+        [questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire15Dto, questionnaire2Dto, questionnaire12Dto]
     )
   create_test_200
     "HTTP 200 OK (Admin - sort desc)"
@@ -172,8 +172,8 @@ test_200 appContext = do
     reqAuthHeader
     ( Page
         "questionnaires"
-        (PageMetadata 20 5 1 0)
-        [questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire12Dto, questionnaire2Dto]
+        (PageMetadata 20 6 1 0)
+        [questionnaire15Dto, questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire12Dto, questionnaire2Dto]
     )
   create_test_200
     "HTTP 200 OK (Non-Admin)"
@@ -182,8 +182,8 @@ test_200 appContext = do
     reqNonAdminAuthHeader
     ( Page
         "questionnaires"
-        (PageMetadata 20 4 1 0)
-        [questionnaire3Dto, questionnaire14Dto, questionnaire2Dto, questionnaire12Dto]
+        (PageMetadata 20 5 1 0)
+        [questionnaire3Dto, questionnaire14Dto, questionnaire15Dto, questionnaire2Dto, questionnaire12Dto]
     )
   create_test_200
     "HTTP 200 OK (Non-Admin - query)"
@@ -220,7 +220,7 @@ test_200 appContext = do
     appContext
     "/wizard-api/questionnaires?sort=uuid,asc&isTemplate=false"
     reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
+    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire3Dto, questionnaire15Dto, questionnaire2Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin - isMigrating - true)"
     appContext
@@ -234,8 +234,8 @@ test_200 appContext = do
     reqNonAdminAuthHeader
     ( Page
         "questionnaires"
-        (PageMetadata 20 4 1 0)
-        [questionnaire3Dto, questionnaire14Dto, questionnaire2Dto, questionnaire12Dto]
+        (PageMetadata 20 5 1 0)
+        [questionnaire3Dto, questionnaire14Dto, questionnaire15Dto, questionnaire2Dto, questionnaire12Dto]
     )
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
@@ -254,6 +254,7 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
       runInContextIO (insertPackage amsterdamPackage) appContext
       runInContextIO (insertQuestionnaire questionnaire12) appContext
       runInContextIO (insertQuestionnaire questionnaire14) appContext
+      runInContextIO (insertQuestionnaire questionnaire15) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

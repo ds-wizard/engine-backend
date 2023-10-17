@@ -3,8 +3,8 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsJM where
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.Questionnaire.QuestionnaireAclJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnairePermJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()

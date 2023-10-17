@@ -27,6 +27,7 @@ import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterSM ()
 import Wizard.Api.Resource.Tenant.TenantDTO
 import Wizard.Api.Resource.Tenant.TenantSM ()
+import Wizard.Api.Resource.User.Group.UserGroupSuggestionSM ()
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Api.Resource.User.UserSuggestionDTO
@@ -44,11 +45,13 @@ import Wizard.Model.Branch.BranchList
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Model.Package.PackageSuggestion
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
+import Wizard.Model.User.UserGroupSuggestion
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 import qualified Wizard.Service.Package.PackageMapper as P_Mapper
 import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PC_Mapper
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
 import qualified Wizard.Service.Tenant.TenantMapper as TNT_Mapper
+import qualified Wizard.Service.User.Group.UserGroupMapper as UG_Mapper
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionSM ()
@@ -56,6 +59,7 @@ import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplat
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as SP_Mapper
+import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
 
 instance ToSchema (Page String) where
   declareNamedSchema = toSwaggerWithDtoName "Page String" (Page "projectTags" pageMetadata ["value1"])
@@ -69,6 +73,10 @@ instance ToSchema (Page UserSuggestionDTO) where
     toSwaggerWithDtoName
       "Page UserSuggestionDTO"
       (Page "users" pageMetadata [U_Mapper.toSuggestionDTO . U_Mapper.toSuggestion $ userAlbert])
+
+instance ToSchema (Page UserGroupSuggestion) where
+  declareNamedSchema =
+    toSwaggerWithDtoName "Page UserGroupSuggestion" (Page "userGroups" pageMetadata [UG_Mapper.toSuggestion bioGroup])
 
 instance ToSchema (Page LocaleDTO) where
   declareNamedSchema =

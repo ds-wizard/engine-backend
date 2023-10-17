@@ -11,7 +11,7 @@ import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsJM ()
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.User.UserProfileService
+import Wizard.Service.User.Profile.UserProfileService
 
 type List_Current_Submission_Props_GET =
   Header "Authorization" String

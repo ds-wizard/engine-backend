@@ -9,11 +9,13 @@ import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
+import Wizard.Model.User.UserProfile
 
-toClientConfigDTO :: ServerConfig -> TenantConfig -> Tenant -> [Locale] -> ClientConfigDTO
-toClientConfigDTO serverConfig tenantConfig tenant locales =
+toClientConfigDTO :: ServerConfig -> TenantConfig -> Maybe UserProfile -> Tenant -> [Locale] -> ClientConfigDTO
+toClientConfigDTO serverConfig tenantConfig mUserProfile tenant locales =
   ClientConfigDTO
-    { organization = tenantConfig.organization
+    { user = mUserProfile
+    , organization = tenantConfig.organization
     , feature = tenantConfig.feature
     , authentication = toClientAuthDTO $ tenantConfig.authentication
     , privacyAndSupport = tenantConfig.privacyAndSupport

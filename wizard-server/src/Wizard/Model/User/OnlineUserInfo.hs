@@ -3,8 +3,6 @@ module Wizard.Model.User.OnlineUserInfo where
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Model.Acl.Acl
-
 data OnlineUserInfo
   = LoggedOnlineUserInfo
       { uuid :: U.UUID
@@ -14,7 +12,7 @@ data OnlineUserInfo
       , imageUrl :: Maybe String
       , colorNumber :: Int
       , role :: String
-      , groups :: [GroupMembership]
+      , groupUuids :: [U.UUID]
       }
   | AnonymousOnlineUserInfo
       { avatarNumber :: Int

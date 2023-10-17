@@ -11,13 +11,15 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.Config.Client.ClientConfigService
 
 type List_Bootstrap_GET =
-  Header "Host" String
+  Header "Authorization" String
+    :> Header "Host" String
     :> "configs"
     :> "bootstrap"
     :> QueryParam "clientUrl" String
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] ClientConfigDTO)
 
-list_bootstrap_GET
-  :: Maybe String -> Maybe String -> BaseContextM (Headers '[Header "x-trace-uuid" String] ClientConfigDTO)
-list_bootstrap_GET mServerUrl mClientUrl =
-  runInUnauthService mServerUrl NoTransaction $ addTraceUuidHeader =<< getClientConfig mClientUrl
+list_bootstrap_GET :: Maybe String -> Maybe String -> Maybe String -> BaseContextM (Headers '[Header "x-trace-uuid" String] ClientConfigDTO)
+list_bootstrap_GET mTokenHeader mServerUrl mClientUrl =
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
+    runInAuthService Transactional $
+      addTraceUuidHeader =<< getClientConfig mClientUrl

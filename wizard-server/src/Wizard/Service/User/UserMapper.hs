@@ -13,6 +13,7 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
+import Wizard.Model.User.UserProfile
 import Wizard.Model.User.UserSuggestion
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
 
@@ -29,9 +30,21 @@ toDTO user =
     , permissions = user.permissions
     , active = user.active
     , imageUrl = user.imageUrl
-    , groups = user.groups
     , createdAt = user.createdAt
     , updatedAt = user.updatedAt
+    }
+
+toUserProfile :: UserDTO -> [U.UUID] -> UserProfile
+toUserProfile user userGroupUuids =
+  UserProfile
+    { uuid = user.uuid
+    , firstName = user.firstName
+    , lastName = user.lastName
+    , email = user.email
+    , imageUrl = user.imageUrl
+    , uRole = user.uRole
+    , permissions = user.permissions
+    , userGroupUuids = userGroupUuids
     }
 
 toSuggestion :: User -> UserSuggestion
@@ -54,14 +67,14 @@ toSuggestionDTO user =
     , imageUrl = user.imageUrl
     }
 
-toOnlineUserInfo :: Maybe UserDTO -> Int -> Int -> OnlineUserInfo
-toOnlineUserInfo mUser avatarNumber colorNumber =
+toOnlineUserInfo :: Maybe UserDTO -> Int -> Int -> [U.UUID] -> OnlineUserInfo
+toOnlineUserInfo mUser avatarNumber colorNumber userGroupUuids =
   case mUser of
-    Just user -> toLoggedOnlineUserInfo user colorNumber
+    Just user -> toLoggedOnlineUserInfo user colorNumber userGroupUuids
     Nothing -> toAnonymousOnlineUserInfo avatarNumber colorNumber
 
-toLoggedOnlineUserInfo :: UserDTO -> Int -> OnlineUserInfo
-toLoggedOnlineUserInfo user colorNumber =
+toLoggedOnlineUserInfo :: UserDTO -> Int -> [U.UUID] -> OnlineUserInfo
+toLoggedOnlineUserInfo user colorNumber groupUuids =
   LoggedOnlineUserInfo
     { uuid = user.uuid
     , firstName = user.firstName
@@ -70,7 +83,7 @@ toLoggedOnlineUserInfo user colorNumber =
     , imageUrl = user.imageUrl
     , colorNumber = colorNumber
     , role = user.uRole
-    , groups = user.groups
+    , groupUuids = groupUuids
     }
 
 toAnonymousOnlineUserInfo :: Int -> Int -> OnlineUserInfo
@@ -95,7 +108,6 @@ fromUserCreateDTO dto userUuid passwordHash role permissions tenantUuid now shou
     , active = not shouldSendRegistrationEmail
     , submissionProps = []
     , imageUrl = Nothing
-    , groups = []
     , machine = False
     , tenantUuid = tenantUuid
     , lastVisitedAt = now
@@ -131,7 +143,6 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash sources uRole
     , active = active
     , submissionProps = []
     , imageUrl = mImageUrl
-    , groups = []
     , machine = False
     , tenantUuid = tenantUuid
     , lastVisitedAt = now
@@ -157,7 +168,6 @@ fromUpdateUserExternalDTO oldUser firstName lastName mImageUrl serviceId now =
     , active = oldUser.active
     , submissionProps = oldUser.submissionProps
     , imageUrl = mImageUrl
-    , groups = oldUser.groups
     , machine = oldUser.machine
     , tenantUuid = oldUser.tenantUuid
     , lastVisitedAt = now
@@ -180,7 +190,6 @@ fromUserChangeDTO dto oldUser permission =
     , active = dto.active
     , submissionProps = oldUser.submissionProps
     , imageUrl = oldUser.imageUrl
-    , groups = oldUser.groups
     , machine = oldUser.machine
     , tenantUuid = oldUser.tenantUuid
     , lastVisitedAt = oldUser.lastVisitedAt
@@ -214,7 +223,6 @@ fromCommandCreateDTO command permissions now =
     , active = command.active
     , submissionProps = []
     , imageUrl = command.imageUrl
-    , groups = []
     , machine = False
     , tenantUuid = command.tenantUuid
     , lastVisitedAt = now
@@ -237,7 +245,6 @@ fromCommandChangeDTO oldUser command permissions now =
     , active = command.active
     , submissionProps = oldUser.submissionProps
     , imageUrl = command.imageUrl
-    , groups = oldUser.groups
     , machine = oldUser.machine
     , tenantUuid = oldUser.tenantUuid
     , lastVisitedAt = oldUser.lastVisitedAt

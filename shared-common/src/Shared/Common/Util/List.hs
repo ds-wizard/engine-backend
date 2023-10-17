@@ -12,6 +12,14 @@ addIfNotExists x list =
 groupBy :: Ord a => (a -> a -> Bool) -> [a] -> [[a]]
 groupBy fn = L.groupBy fn . L.sort
 
+groupBy' :: Eq field => (a -> field) -> (b -> field) -> [a] -> [b] -> [(a, b)]
+groupBy' xFn yFn xs ys =
+  let fn acc x =
+        case L.find (\y -> yFn y == xFn x) ys of
+          Just y -> (x, y) : acc
+          Nothing -> acc
+   in foldl fn [] xs
+
 tuplify2 :: [a] -> (a, a)
 tuplify2 [x, y] = (x, y)
 

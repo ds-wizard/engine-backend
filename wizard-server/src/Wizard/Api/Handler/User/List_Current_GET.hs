@@ -8,7 +8,7 @@ import Wizard.Api.Handler.Common hiding (getCurrentUser)
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.User.UserProfileService
+import Wizard.Service.User.Profile.UserProfileService
 
 type List_Current_GET =
   Header "Authorization" String

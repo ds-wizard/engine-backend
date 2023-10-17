@@ -5,9 +5,11 @@ import GHC.Generics
 import Shared.Common.Model.Config.SimpleFeature
 import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.User.UserProfile
 
 data ClientConfigDTO = ClientConfigDTO
-  { organization :: TenantConfigOrganization
+  { user :: Maybe UserProfile
+  , organization :: TenantConfigOrganization
   , feature :: TenantConfigFeature
   , authentication :: ClientConfigAuthDTO
   , privacyAndSupport :: TenantConfigPrivacyAndSupport

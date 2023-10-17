@@ -10,7 +10,7 @@ import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserProfileChangeJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.User.UserProfileService
+import Wizard.Service.User.Profile.UserProfileService
 
 type List_Current_PUT =
   Header "Authorization" String

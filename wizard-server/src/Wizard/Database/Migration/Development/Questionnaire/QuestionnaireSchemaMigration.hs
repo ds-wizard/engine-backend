@@ -19,15 +19,16 @@ dropTables = do
   let sql =
         "drop table if exists questionnaire_comment cascade; \
         \drop table if exists questionnaire_comment_thread cascade; \
-        \drop table if exists questionnaire_acl_user cascade; \
-        \drop table if exists questionnaire_acl_group cascade; \
+        \drop table if exists questionnaire_perm_group cascade; \
+        \drop table if exists questionnaire_perm_user cascade; \
         \drop table if exists questionnaire cascade; "
   let action conn = execute_ conn sql
   runDB action
 
 createTables = do
   createQtnTable
-  createQtnPermTable
+  createQtnAclUserTable
+  createQtnAclGroupTable
   createQtnCommentTable
 
 createQtnTable = do
@@ -78,42 +79,42 @@ createQtnTable = do
   let action conn = execute_ conn sql
   runDB action
 
-createQtnPermTable = do
-  logInfo _CMP_MIGRATION "(Table/QuestionnaireAcl) create table"
+createQtnAclUserTable = do
+  logInfo _CMP_MIGRATION "(Table/QuestionnaireAclUser) create table"
   let sql =
-        "create table questionnaire_acl_user \
+        "create table questionnaire_perm_user \
         \ ( \
-        \     uuid               uuid   not null \
-        \         constraint questionnaire_user_acl_pk \
-        \             primary key, \
-        \     user_uuid          uuid   not null \
-        \         constraint questionnaire_acl_user_user_uuid_fk \
-        \             references user_entity on delete cascade, \
-        \     perms              text[] not null, \
         \     questionnaire_uuid uuid   not null \
-        \         constraint questionnaire_acl_user_questionnaire_uuid_fk \
-        \             references questionnaire on delete cascade on update cascade \
-        \ ); \
-        \  \
-        \ create unique index questionnaire_acl_user_uuid_uindex \
-        \     on questionnaire_acl_user (uuid); \
-        \  \
-        \ create table questionnaire_acl_group \
+        \         constraint questionnaire_perm_user_questionnaire_uuid_fk \
+        \             references questionnaire on delete cascade, \
+        \     user_uuid          uuid   not null \
+        \         constraint questionnaire_perm_user_user_uuid_fk \
+        \             references user_entity, \
+        \     perms              text[] not null, \
+        \     tenant_uuid        uuid   not null \
+        \         constraint questionnaire_perm_user_tenant_uuid_fk \
+        \             references tenant, \
+        \     constraint questionnaire_perm_user_pk primary key (user_uuid, questionnaire_uuid, tenant_uuid) \
+        \ );"
+  let action conn = execute_ conn sql
+  runDB action
+
+createQtnAclGroupTable = do
+  logInfo _CMP_MIGRATION "(Table/QuestionnaireAclGroup) create table"
+  let sql =
+        "create table questionnaire_perm_group \
         \ ( \
-        \     uuid               uuid    not null \
-        \         constraint questionnaire_acl_group_pk \
-        \             primary key, \
-        \     group_id           varchar not null \
-        \         constraint questionnaire_acl_group_group_id_fk \
-        \             references acl_group on delete cascade, \
-        \     perms              text[]  not null, \
-        \     questionnaire_uuid uuid    not null \
-        \         constraint questionnaire_acl_group_questionnaire_uuid_fk \
-        \             references questionnaire on delete cascade \
-        \ ); \
-        \  \
-        \ create unique index questionnaire_acl_group_uuid_uindex \
-        \     on questionnaire_acl_group (uuid); "
+        \     questionnaire_uuid uuid   not null \
+        \         constraint questionnaire_perm_group_questionnaire_uuid_fk \
+        \             references questionnaire on delete cascade, \
+        \     user_group_uuid          uuid   not null, \
+        \     perms              text[] not null, \
+        \     tenant_uuid        uuid   not null \
+        \         constraint questionnaire_perm_group_tenant_uuid_fk \
+        \             references tenant, \
+        \     constraint questionnaire_perm_group_pk primary key (user_group_uuid, questionnaire_uuid, tenant_uuid), \
+        \     constraint questionnaire_perm_group_user_uuid_tenant_uuid_fk foreign key (user_group_uuid, tenant_uuid) references user_group \
+        \ );"
   let action conn = execute_ conn sql
   runDB action
 

@@ -59,21 +59,21 @@ test_200 appContext = do
     questionnaire1
     questionnaire1Ctn
     [reqAuthHeader]
-    [qtn1AlbertEditPermRecordDto]
+    [qtn1AlbertEditQtnPermDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleView)"
     appContext
     questionnaire2
     questionnaire2Ctn
     [reqNonAdminAuthHeader]
-    [qtn1AlbertEditPermRecordDto]
+    [qtn1AlbertEditQtnPermDto]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleView, Sharing)"
     appContext
     questionnaire7
     questionnaire7Ctn
     []
-    [qtn1AlbertEditPermRecordDto]
+    [qtn1AlbertEditQtnPermDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleEdit)"
     appContext

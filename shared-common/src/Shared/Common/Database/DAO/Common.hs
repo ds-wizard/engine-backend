@@ -351,7 +351,7 @@ createSumByFn entityName field condition queryParams = do
     [count] -> return . fromOnly $ count
     _ -> return 0
 
-generateQuestionMarks :: [String] -> String
+generateQuestionMarks :: [a] -> String
 generateQuestionMarks fields =
   let size = length fields
       generate :: Int -> String

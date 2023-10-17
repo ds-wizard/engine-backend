@@ -28,7 +28,6 @@ import Wizard.Database.DAO.Tenant.TenantConfigDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
 import Wizard.Database.DAO.User.UserDAO
-import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
@@ -61,6 +60,8 @@ import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.Public.Database.DAO.Tenant.TenantPlanDAO
+import WizardLib.Public.Database.DAO.User.UserGroupDAO
+import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
 
 import Wizard.Specs.Common
@@ -91,7 +92,6 @@ buildSchema appContext = do
   runInContext QTN_Schema.dropTables appContext
   runInContext TML_Schema.dropTables appContext
   runInContext PKG_Schema.dropTables appContext
-  runInContext ACL_Schema.dropTables appContext
   runInContext U_Schema.dropTables appContext
   runInContext TNT_Schema.dropTables appContext
   runInContext INS_Schema.dropTables appContext
@@ -99,7 +99,6 @@ buildSchema appContext = do
   runInContext INS_Schema.createTables appContext
   runInContext TNT_Schema.createTables appContext
   runInContext U_Schema.createTables appContext
-  runInContext ACL_Schema.createTables appContext
   runInContext TML_Schema.createTables appContext
   runInContext PKG_Schema.createTables appContext
   runInContext ACK_Schema.createTables appContext
@@ -155,7 +154,9 @@ resetDB appContext = do
   runInContext deleteDocumentTemplates appContext
   runInContext deletePackages appContext
   runInContext deleteUserTokens appContext
+  runInContext deleteUserGroupMemberships appContext
   runInContext deleteUsers appContext
+  runInContext deleteUserGroups appContext
   runInContext deleteLimitBundles appContext
   runInContext deleteTenantPlans appContext
   runInContext deleteTenants appContext

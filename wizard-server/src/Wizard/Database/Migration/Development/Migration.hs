@@ -11,8 +11,6 @@ import qualified Shared.Component.Database.Migration.Development.Component.Compo
 import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabMigration as PF
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
-import qualified Wizard.Database.Migration.Development.Acl.AclMigration as ACL
-import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ACK
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
@@ -77,7 +75,6 @@ runMigration = do
   TML_Schema.dropTables
   PKG_Schema.dropTables
   PKG_Schema.dropFunctions
-  ACL_Schema.dropTables
   U_Schema.dropTables
   TNT_Schema.dropTables
   INS_Schema.dropTables
@@ -85,7 +82,6 @@ runMigration = do
   INS_Schema.createTables
   TNT_Schema.createTables
   U_Schema.createTables
-  ACL_Schema.createTables
   TML_Schema.createTables
   PKG_Schema.createTables
   ACK_Schema.createTables
@@ -125,7 +121,6 @@ runMigration = do
   BR.runMigration
   F.runMigration
   DOC.runMigration
-  ACL.runMigration
   ACK.runMigration
   PC.runMigration
   PF.runMigration

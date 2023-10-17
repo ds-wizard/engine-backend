@@ -5,8 +5,6 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Model.Acl.Acl
-
 _USER_SOURCE_INTERNAL = "internal"
 
 _USER_ROLE_ADMIN = "admin"
@@ -28,7 +26,6 @@ data User = User
   , active :: Bool
   , submissionProps :: [UserSubmissionProps]
   , imageUrl :: Maybe String
-  , groups :: [GroupMembership]
   , machine :: Bool
   , tenantUuid :: U.UUID
   , lastVisitedAt :: UTCTime
@@ -57,6 +54,5 @@ instance Eq User where
       && a.active == b.active
       && a.submissionProps == b.submissionProps
       && a.imageUrl == b.imageUrl
-      && a.groups == b.groups
       && a.machine == b.machine
       && a.tenantUuid == b.tenantUuid

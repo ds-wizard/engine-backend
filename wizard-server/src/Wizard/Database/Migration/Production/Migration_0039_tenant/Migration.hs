@@ -5,6 +5,7 @@ module Wizard.Database.Migration.Production.Migration_0039_tenant.Migration (
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
 import Data.Pool (Pool, withResource)
+import Data.String (fromString)
 import Database.PostgreSQL.Migration.Entity
 import Database.PostgreSQL.Simple
 
@@ -14,6 +15,12 @@ meta = MigrationMeta {mmNumber = 39, mmName = "Tenant", mmDescription = "Rename 
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
+  renameToTenant dbPool
+  renameDocumentCreatorUuid dbPool
+  refactorQuestionnaireAcl dbPool
+
+renameToTenant :: Pool Connection -> LoggingT IO (Maybe Error)
+renameToTenant dbPool = do
   let sql =
         "ALTER TABLE app RENAME TO tenant; \
         \ALTER TABLE tenant RENAME app_id TO tenant_id; \
@@ -221,5 +228,87 @@ migrate dbPool = do
         \END; \
         \$$;"
   let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+renameDocumentCreatorUuid :: Pool Connection -> LoggingT IO (Maybe Error)
+renameDocumentCreatorUuid dbPool = do
+  let sql = "ALTER TABLE document rename column creator_uuid to created_by;"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+refactorQuestionnaireAcl :: Pool Connection -> LoggingT IO (Maybe Error)
+refactorQuestionnaireAcl dbPool = do
+  let sql =
+        "DROP TABLE questionnaire_acl_group; \
+        \DROP TABLE acl_group; \
+        \ \
+        \CREATE TABLE user_group \
+        \( \
+        \    uuid        uuid        not null, \
+        \    name        varchar     not null, \
+        \    description varchar, \
+        \    private     boolean     not null, \
+        \    tenant_uuid uuid        not null \
+        \        CONSTRAINT user_group_tenant_uuid_fk \
+        \            REFERENCES tenant, \
+        \    created_at  timestamptz not null, \
+        \    updated_at  timestamptz not null, \
+        \    CONSTRAINT user_group_pk PRIMARY KEY (uuid, tenant_uuid) \
+        \); \
+        \ \
+        \CREATE TABLE user_group_membership \
+        \( \
+        \    user_group_uuid uuid        not null, \
+        \    user_uuid       uuid        not null, \
+        \    type            varchar     not null, \
+        \    tenant_uuid     uuid        not null \
+        \        CONSTRAINT user_group_tenant_uuid_fk \
+        \            REFERENCES tenant, \
+        \    created_at      timestamptz not null, \
+        \    updated_at      timestamptz not null, \
+        \    CONSTRAINT user_group_membership_pk PRIMARY KEY (user_group_uuid, user_uuid, tenant_uuid) \
+        \); \
+        \ \
+        \CREATE TABLE questionnaire_perm_group \
+        \( \
+        \    questionnaire_uuid uuid   not null \
+        \        CONSTRAINT questionnaire_perm_group_questionnaire_uuid_fk \
+        \            REFERENCES questionnaire ON DELETE CASCADE, \
+        \    user_group_uuid    uuid   not null, \
+        \    perms              text[] not null, \
+        \    tenant_uuid        uuid   not null \
+        \        CONSTRAINT questionnaire_perm_group_tenant_uuid_fk \
+        \            REFERENCES tenant, \
+        \    CONSTRAINT questionnaire_perm_group_pk PRIMARY KEY (questionnaire_uuid, user_group_uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_perm_group_user_uuid_tenant_uuid_fk FOREIGN KEY (user_group_uuid, tenant_uuid) REFERENCES user_group \
+        \); \
+        \ \
+        \CREATE TABLE questionnaire_perm_user \
+        \( \
+        \    questionnaire_uuid uuid   not null \
+        \        CONSTRAINT questionnaire_perm_user_questionnaire_uuid_fk \
+        \            REFERENCES questionnaire ON DELETE CASCADE, \
+        \    user_uuid          uuid   not null \
+        \        CONSTRAINT questionnaire_perm_user_user_uuid_fk \
+        \            REFERENCES user_entity, \
+        \    perms              text[] not null, \
+        \    tenant_uuid        uuid   not null \
+        \        CONSTRAINT questionnaire_perm_user_tenant_uuid_fk \
+        \            REFERENCES tenant, \
+        \    CONSTRAINT questionnaire_perm_user_pk PRIMARY KEY (questionnaire_uuid, user_uuid, tenant_uuid) \
+        \); \
+        \ \
+        \INSERT INTO questionnaire_perm_user (questionnaire_uuid, user_uuid, perms, tenant_uuid) \
+        \SELECT qtn_acl_user.questionnaire_uuid, qtn_acl_user.user_uuid, qtn_acl_user.perms, qtn.tenant_uuid \
+        \FROM questionnaire_acl_user qtn_acl_user \
+        \JOIN questionnaire qtn on qtn.uuid = qtn_acl_user.questionnaire_uuid; \
+        \ \
+        \DROP TABLE questionnaire_acl_user; \
+        \ \
+        \ALTER TABLE user_entity \
+        \    DROP COLUMN groups;"
+  let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing

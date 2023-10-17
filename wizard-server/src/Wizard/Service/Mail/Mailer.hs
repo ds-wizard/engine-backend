@@ -16,12 +16,11 @@ import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMappe
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Model.Acl.Acl
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.Tenant.Config.ConfigService
@@ -131,14 +130,14 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
     currentUser <- getCurrentUser
     traverse_ (sendOneEmail tenantConfig clientUrl currentUser) (filter filterPermissions newQtn.permissions)
   where
-    filterPermissions :: QuestionnairePermRecord -> Bool
-    filterPermissions perm = perm.member `notElem` fmap (.member) oldQtn.permissions
-    sendOneEmail :: TenantConfig -> String -> UserDTO -> QuestionnairePermRecord -> AppContextM ()
+    filterPermissions :: QuestionnairePerm -> Bool
+    filterPermissions perm = perm.memberUuid `notElem` fmap (.memberUuid) oldQtn.permissions
+    sendOneEmail :: TenantConfig -> String -> UserDTO -> QuestionnairePerm -> AppContextM ()
     sendOneEmail tenantConfig clientUrl currentUser permission =
-      case permission.member of
-        GroupMember {..} -> return ()
-        UserMember {uuid = userUuid} -> do
-          user <- findUserByUuid userUuid
+      case permission.memberType of
+        UserGroupQuestionnairePermType -> return ()
+        UserQuestionnairePermType -> do
+          user <- findUserByUuid permission.memberUuid
           let body =
                 MC.MailCommand
                   { mode = "wizard"

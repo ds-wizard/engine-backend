@@ -17,7 +17,9 @@ runMigration = do
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/User) drop tables"
   let sql =
-        "drop table if exists user_token cascade;\
+        "drop table if exists user_group_membership cascade;\
+        \drop table if exists user_group cascade;\
+        \drop table if exists user_token cascade;\
         \drop table if exists user_entity cascade;"
   let action conn = execute_ conn sql
   runDB action
@@ -25,6 +27,8 @@ dropTables = do
 createTables = do
   createUserTable
   createUserTokenTable
+  createUserGroupTable
+  createUserGroupMembershipTable
 
 createUserTable = do
   logInfo _CMP_MIGRATION "(Table/User) create tables"
@@ -45,7 +49,6 @@ createUserTable = do
         \     active            boolean not null, \
         \     submissions_props json    not null, \
         \     image_url         varchar, \
-        \     groups            json    not null, \
         \     last_visited_at   timestamp with time zone not null, \
         \     created_at        timestamp with time zone not null, \
         \     updated_at        timestamp with time zone not null, \
@@ -88,5 +91,42 @@ createUserTokenTable = do
         \  \
         \ create unique index user_token_uuid_uindex \
         \     on user_token (uuid, tenant_uuid);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createUserGroupTable = do
+  logInfo _CMP_MIGRATION "(Table/UserGroup) create tables"
+  let sql =
+        "CREATE TABLE user_group \
+        \( \
+        \    uuid        uuid    NOT NULL, \
+        \    name        varchar NOT NULL, \
+        \    description varchar, \
+        \    private     boolean NOT NULL, \
+        \    tenant_uuid uuid    NOT NULL \
+        \        CONSTRAINT user_group_tenant_uuid_fk \
+        \            REFERENCES tenant, \
+        \    created_at      TIMESTAMPTZ NOT NULL, \
+        \    updated_at      TIMESTAMPTZ NOT NULL, \
+        \    CONSTRAINT user_group_pk PRIMARY KEY (uuid, tenant_uuid) \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createUserGroupMembershipTable = do
+  logInfo _CMP_MIGRATION "(Table/UserGroupMembership) create tables"
+  let sql =
+        "CREATE TABLE user_group_membership \
+        \( \
+        \    user_group_uuid uuid        NOT NULL, \
+        \    user_uuid       uuid        NOT NULL, \
+        \    type            varchar     NOT NULL, \
+        \    tenant_uuid     uuid        NOT NULL \
+        \        CONSTRAINT user_group_tenant_uuid_fk \
+        \            REFERENCES tenant, \
+        \    created_at      TIMESTAMPTZ NOT NULL, \
+        \    updated_at      TIMESTAMPTZ NOT NULL, \
+        \    CONSTRAINT user_group_membership_pk PRIMARY KEY (user_group_uuid, user_uuid, tenant_uuid) \
+        \);"
   let action conn = execute_ conn sql
   runDB action

@@ -3,8 +3,8 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO where
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Wizard.Api.Resource.Questionnaire.QuestionnairePermChangeDTO
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireAcl
 
 data QuestionnaireChangeDTO = QuestionnaireChangeDTO
   { name :: String
@@ -12,7 +12,7 @@ data QuestionnaireChangeDTO = QuestionnaireChangeDTO
   , visibility :: QuestionnaireVisibility
   , sharing :: QuestionnaireSharing
   , projectTags :: [String]
-  , permissions :: [QuestionnairePermRecord]
+  , permissions :: [QuestionnairePermChangeDTO]
   , documentTemplateId :: Maybe String
   , formatUuid :: Maybe U.UUID
   , isTemplate :: Bool

@@ -139,7 +139,7 @@ updateUserByUuid :: User -> AppContextM Int64
 updateUserByUuid user = do
   let sql =
         fromString
-          "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, groups = ?, last_visited_at = ?, created_at = ?, updated_at = ?, tenant_uuid = ?, machine = ? WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, last_visited_at = ?, created_at = ?, updated_at = ?, tenant_uuid = ?, machine = ? WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow user ++ [toField user.tenantUuid, toField user.uuid]
   logQuery sql params
   let action conn = execute conn sql params

@@ -23,7 +23,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.Websocket.WebsocketMessage
 import Wizard.Model.Websocket.WebsocketRecord
@@ -34,6 +34,8 @@ import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentMapper
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Websocket.WebsocketService
 import Wizard.Util.Websocket
+import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
+import WizardLib.Public.Model.User.UserGroupMembership
 
 putUserOnline :: U.UUID -> U.UUID -> Connection -> AppContextM ()
 putUserOnline qtnUuid connectionUuid connection = do
@@ -55,8 +57,7 @@ setUserList qtnUuid connectionUuid = do
   broadcast (U.toString qtnUuid) records (toSetUserListMessage records) disconnectUser
   logWS connectionUuid "Informed completed"
 
-updatePermsForOnlineUsers
-  :: U.UUID -> QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM ()
+updatePermsForOnlineUsers :: U.UUID -> QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePerm] -> AppContextM ()
 updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
   records <- getAllFromCache
   traverse_ updatePerm records
@@ -68,18 +69,31 @@ updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
         ( do
             let permission =
                   case record.user of
-                    user@LoggedOnlineUserInfo
-                      { uuid = uuid
-                      , role = role
-                      , groups = groups
-                      } ->
-                        getPermission visibility sharing permissions (Just uuid) (Just role) (Just groups)
+                    user@LoggedOnlineUserInfo {uuid = uuid, role = role, groupUuids = groupUuids} ->
+                      getPermission visibility sharing permissions (Just uuid) (Just role) groupUuids
                     user@AnonymousOnlineUserInfo {..} ->
-                      getPermission visibility sharing permissions Nothing Nothing Nothing
+                      getPermission visibility sharing permissions Nothing Nothing []
             let updatedRecord = record {entityPerm = permission}
             updateCache updatedRecord
             disconnectUserIfLostPermission updatedRecord
         )
+
+removeUserGroupFromUsers :: U.UUID -> [U.UUID] -> AppContextM ()
+removeUserGroupFromUsers userGroupUuid userUuids = do
+  records <- getAllFromCache
+  traverse_ updatePerm records
+  where
+    updatePerm :: WebsocketRecord -> AppContextM ()
+    updatePerm record =
+      case record.user of
+        user@LoggedOnlineUserInfo {uuid = uuid, role = role, groupUuids = groupUuids} -> do
+          when
+            (user.uuid `elem` userUuids)
+            ( do
+                let updatedRecord = record {user = user {groupUuids = filter (/= userGroupUuid) user.groupUuids}}
+                updateCache updatedRecord
+            )
+        user@AnonymousOnlineUserInfo {..} -> return ()
 
 setQuestionnaire :: U.UUID -> QuestionnaireDetailWsDTO -> AppContextM ()
 setQuestionnaire qtnUuid reqDto = do
@@ -289,6 +303,12 @@ createQuestionnaireRecord :: U.UUID -> Connection -> U.UUID -> AppContextM Webso
 createQuestionnaireRecord connectionUuid connection qtnUuid = do
   mCurrentUser <- asks currentUser
   qtn <- findQuestionnaireByUuid qtnUuid
+  userGroupUuids <-
+    case mCurrentUser of
+      Just currentUser -> do
+        userGroupMemberships <- findUserGroupMembershipsByUserUuid currentUser.uuid
+        return . fmap (.userGroupUuid) $ userGroupMemberships
+      Nothing -> return []
   let permission =
         getPermission
           qtn.visibility
@@ -296,8 +316,8 @@ createQuestionnaireRecord connectionUuid connection qtnUuid = do
           qtn.permissions
           (fmap (.uuid) mCurrentUser)
           (fmap (.uRole) mCurrentUser)
-          (fmap (.groups) mCurrentUser)
-  createRecord connectionUuid connection (U.toString qtnUuid) permission
+          userGroupUuids
+  createRecord connectionUuid connection (U.toString qtnUuid) permission userGroupUuids
 
 getMaybeCreatedBy :: WebsocketRecord -> Maybe UserSuggestionDTO
 getMaybeCreatedBy myself =

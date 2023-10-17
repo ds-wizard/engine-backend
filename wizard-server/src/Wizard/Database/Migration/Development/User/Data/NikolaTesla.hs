@@ -3,11 +3,14 @@ module Wizard.Database.Migration.Development.User.Data.NikolaTesla where
 import Data.Maybe (fromJust)
 import Data.Time
 
+import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
-import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
+import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
+import WizardLib.Public.Model.User.UserGroup
+import WizardLib.Public.Model.User.UserGroupMembership
 
 userNikola :: User
 userNikola =
@@ -36,10 +39,20 @@ userNikola =
     , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
     , submissionProps = []
     , imageUrl = Nothing
-    , groups = [memberBioGroup, memberPlantGroup]
     , machine = False
     , tenantUuid = defaultTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
+    }
+
+userNikolaBioGroupMembership :: UserGroupMembership
+userNikolaBioGroupMembership =
+  UserGroupMembership
+    { userGroupUuid = bioGroup.uuid
+    , userUuid = userNikola.uuid
+    , mType = OwnerUserGroupMembershipType
+    , tenantUuid = defaultTenant.uuid
+    , createdAt = dt' 2018 1 21
+    , updatedAt = dt' 2018 1 21
     }

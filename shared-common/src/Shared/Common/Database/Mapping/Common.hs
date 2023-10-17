@@ -5,8 +5,10 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.Map.Strict as M
 import Data.Typeable
+import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromField
+import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import GHC.Generics
 import Text.Read (readMaybe)
@@ -40,3 +42,9 @@ instance FromField (M.Map String String) where
 
 instance ToField (M.Map String String) where
   toField = Escape . BSL.toStrict . encode
+
+instance FromRow U.UUID where
+  fromRow = field
+
+instance FromRow Value where
+  fromRow = fieldWith fromJSONField

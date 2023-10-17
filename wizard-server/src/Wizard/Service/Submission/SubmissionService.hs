@@ -31,7 +31,7 @@ import Wizard.Service.Submission.SubmissionAcl
 import Wizard.Service.Submission.SubmissionMapper
 import Wizard.Service.Submission.SubmissionUtil
 import Wizard.Service.Tenant.Config.ConfigService
-import Wizard.Service.User.UserProfileService
+import Wizard.Service.User.Profile.UserProfileService
 
 getAvailableServicesForSubmission :: U.UUID -> AppContextM [SubmissionServiceSimpleDTO]
 getAvailableServicesForSubmission docUuid = do
