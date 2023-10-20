@@ -3,10 +3,10 @@ module Wizard.Database.DAO.User.UserGroupMembershipDAO where
 import qualified Data.UUID as U
 
 import Shared.Common.Database.DAO.Common
+import Shared.Common.Database.Mapping.Common ()
 import Wizard.Database.Mapping.User.UserGroupSuggestion ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Shared.Common.Database.Mapping.Common ()
 
 entityName = "user_group_membership"
 
