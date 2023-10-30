@@ -53,6 +53,12 @@ deleteUserGroupMembershipsByUserGroupUuid userGroupUuid = do
   createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("user_group_uuid", U.toString userGroupUuid)]
   return ()
 
+deleteUserGroupMembershipsByUserUuid :: AppContextC s sc m => U.UUID -> m ()
+deleteUserGroupMembershipsByUserUuid userUuid = do
+  tenantUuid <- asks (.tenantUuid')
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("user_uuid", U.toString userUuid)]
+  return ()
+
 deleteUserGroupMembershipsByUserGroupUuidAndUserUuids :: AppContextC s sc m => U.UUID -> [U.UUID] -> m ()
 deleteUserGroupMembershipsByUserGroupUuidAndUserUuids userGroupUuid userUuids = do
   tenantUuid <- asks (.tenantUuid')

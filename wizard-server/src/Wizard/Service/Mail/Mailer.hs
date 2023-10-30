@@ -27,7 +27,7 @@ import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.TenantHelper
 import WizardLib.Public.Model.User.UserToken
 
-sendRegistrationConfirmationMail :: UserDTO -> String -> String -> AppContextM ()
+sendRegistrationConfirmationMail :: User -> String -> String -> AppContextM ()
 sendRegistrationConfirmationMail user hash clientUrl =
   runInTransaction $ do
     tenantConfig <- getCurrentTenantConfig
@@ -48,9 +48,9 @@ sendRegistrationConfirmationMail user hash clientUrl =
                   , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
                   ]
             }
-    sendEmail body user.uuid
+    sendEmailWithTenant body user.uuid user.tenantUuid
 
-sendRegistrationCreatedAnalyticsMail :: UserDTO -> AppContextM ()
+sendRegistrationCreatedAnalyticsMail :: User -> AppContextM ()
 sendRegistrationCreatedAnalyticsMail user =
   runInTransaction $ do
     serverConfig <- asks serverConfig
@@ -72,7 +72,7 @@ sendRegistrationCreatedAnalyticsMail user =
                   , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
                   ]
             }
-    sendEmail body user.uuid
+    sendEmailWithTenant body user.uuid user.tenantUuid
 
 sendResetPasswordMail :: UserDTO -> String -> AppContextM ()
 sendResetPasswordMail user hash =
@@ -218,8 +218,12 @@ sendApiKeyExpirationMail user userToken =
 -- --------------------------------
 sendEmail :: ToJSON dto => dto -> U.UUID -> AppContextM ()
 sendEmail dto createdBy = do
+  tenantUuid <- asks currentTenantUuid
+  sendEmailWithTenant dto createdBy tenantUuid
+
+sendEmailWithTenant :: ToJSON dto => dto -> U.UUID -> U.UUID -> AppContextM ()
+sendEmailWithTenant dto createdBy tenantUuid = do
   runInTransaction $ do
-    tenantUuid <- asks currentTenantUuid
     pUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let body = encodeJsonToString dto

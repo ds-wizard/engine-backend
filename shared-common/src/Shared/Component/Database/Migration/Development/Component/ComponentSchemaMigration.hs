@@ -18,7 +18,7 @@ runMigration = do
 dropTables :: AppContextC s sc m => m Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Component) drop table"
-  let sql = "drop table if exists component cascade;"
+  let sql = "DROP TABLE IF EXISTS component CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -26,18 +26,14 @@ createTables :: AppContextC s sc m => m Int64
 createTables = do
   logInfo _CMP_MIGRATION "(Table/Component) create table"
   let sql =
-        "create table component \
-        \ ( \
-        \     name                      varchar not null \
-        \         constraint component_pk \
-        \             primary key, \
-        \     version                   varchar not null,\
-        \     built_at timestamp with time zone not null,\
-        \     created_at timestamp with time zone not null,\
-        \     updated_at timestamp with time zone not null\
-        \ ); \
-        \  \
-        \ create unique index component_name_uindex \
-        \     on component (name);"
+        "CREATE TABLE component \
+        \( \
+        \    name       varchar     NOT NULL, \
+        \    version    varchar     NOT NULL, \
+        \    built_at   timestamptz NOT NULL, \
+        \    created_at timestamptz NOT NULL, \
+        \    updated_at timestamptz NOT NULL, \
+        \    CONSTRAINT component_pk PRIMARY KEY (name) \
+        \);"
   let action conn = execute_ conn sql
   runDB action

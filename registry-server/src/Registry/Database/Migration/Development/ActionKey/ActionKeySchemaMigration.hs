@@ -16,31 +16,25 @@ runMigration = do
 
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/ActionKey) drop tables"
-  let sql = "drop table if exists action_key cascade;"
+  let sql = "DROP TABLE IF EXISTS action_key CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
 createTables = do
   logInfo _CMP_MIGRATION "(Table/ActionKey) create table"
   let sql =
-        "create table action_key \
-        \     ( \
-        \         uuid            uuid not null \
-        \             constraint action_key_pk \
-        \                 primary key, \
-        \         identity        varchar not null, \
-        \         type            varchar not null, \
-        \         hash            varchar not null, \
-        \         created_at      timestamp with time zone not null, \
-        \         tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \     ); \
-        \create unique index action_key_uuid_uindex \
-        \     on action_key (uuid); \
-        \create unique index action_key_hash_uindex \
-        \     on action_key (hash); \
-        \  \
-        \alter table action_key \
-        \    add constraint action_key_organization_id_fk \
-        \       foreign key (identity) references organization (organization_id) on delete cascade;"
+        "CREATE TABLE action_key \
+        \( \
+        \    uuid        uuid                     NOT NULL, \
+        \    identity    varchar                  NOT NULL, \
+        \    type        varchar                  NOT NULL, \
+        \    hash        varchar                  NOT NULL, \
+        \    created_at  timestamptz NOT NULL, \
+        \    tenant_uuid uuid                     NOT NULL, \
+        \    CONSTRAINT action_key_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT action_key_identity_fk FOREIGN KEY (identity) REFERENCES organization (organization_id) \
+        \); \
+        \ \
+        \CREATE UNIQUE INDEX action_key_hash_uindex ON action_key (hash);"
   let action conn = execute_ conn sql
   runDB action

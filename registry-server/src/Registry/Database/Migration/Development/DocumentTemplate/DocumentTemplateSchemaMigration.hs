@@ -25,19 +25,19 @@ dropTables = do
 
 dropTemplateTable = do
   logInfo _CMP_MIGRATION "(Table/DocumentTemplate) drop tables"
-  let sql = "drop table if exists document_template cascade;"
+  let sql = "DROP TABLE IF EXISTS document_template CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
 dropTemplateFileTable = do
   logInfo _CMP_MIGRATION "(Table/DocumentTemplateFile) drop tables"
-  let sql = "drop table if exists document_template_file cascade;"
+  let sql = "DROP TABLE IF EXISTS document_template_file CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
 dropTemplateAssetTable = do
   logInfo _CMP_MIGRATION "(Table/DocumentTemplateAsset) drop tables"
-  let sql = "drop table if exists document_template_asset cascade;"
+  let sql = "DROP TABLE IF EXISTS document_template_asset CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -50,85 +50,66 @@ createTables = do
 createTemplateTable = do
   logInfo _CMP_MIGRATION "(Table/DocumentTemplate) create table"
   let sql =
-        "create table document_template \
-        \ ( \
-        \     id                     varchar                  not null \
-        \         constraint document_template_pk \
-        \             primary key, \
-        \     name                   varchar                  not null, \
-        \     organization_id        varchar                  not null, \
-        \     template_id            varchar                  not null, \
-        \     version                varchar                  not null, \
-        \     metamodel_version      integer                  not null, \
-        \     description            varchar                  not null, \
-        \     readme                 varchar                  not null, \
-        \     license                varchar                  not null, \
-        \     allowed_packages       json                     not null, \
-        \     formats                json                     not null, \
-        \     created_at             timestamp with time zone not null, \
-        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
-        \     updated_at             timestamp with time zone not null, \
-        \     phase                  varchar                  not null default 'ReleasedDocumentTemplatePhase', \
-        \     non_editable           boolean                  not null default false \
-        \ ); \
-        \create unique index document_template_id_uindex \
-        \     on document_template (id); \
-        \create index document_template_organization_id_template_id_index \
-        \     on document_template (organization_id, template_id); "
+        "CREATE TABLE document_template \
+        \( \
+        \    id                varchar     NOT NULL, \
+        \    name              varchar     NOT NULL, \
+        \    organization_id   varchar     NOT NULL, \
+        \    template_id       varchar     NOT NULL, \
+        \    version           varchar     NOT NULL, \
+        \    metamodel_version integer     NOT NULL, \
+        \    description       varchar     NOT NULL, \
+        \    readme            varchar     NOT NULL, \
+        \    license           varchar     NOT NULL, \
+        \    allowed_packages  json        NOT NULL, \
+        \    formats           json        NOT NULL, \
+        \    created_at        timestamptz NOT NULL, \
+        \    tenant_uuid       uuid        NOT NULL, \
+        \    updated_at        timestamptz NOT NULL, \
+        \    phase             varchar     NOT NULL, \
+        \    non_editable      boolean     NOT NULL, \
+        \    CONSTRAINT document_template_pk PRIMARY KEY (id) \
+        \); \
+        \ \
+        \CREATE INDEX document_template_organization_id_template_id_index ON document_template (organization_id, template_id);"
   let action conn = execute_ conn sql
   runDB action
 
 createTemplateFileTable = do
   logInfo _CMP_MIGRATION "(Table/DocumentTemplateFile) create table"
   let sql =
-        " create table document_template_file \
-        \ ( \
-        \   document_template_id varchar not null, \
-        \   uuid uuid not null, \
-        \   file_name varchar not null, \
-        \   content varchar not null, \
-        \   tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
-        \   created_at             timestamp with time zone not null, \
-        \   updated_at             timestamp with time zone not null \
-        \ ); \
-        \  \
-        \ alter table document_template_file \
-        \   add constraint document_template_file_template_id_fk \
-        \      foreign key (document_template_id) references document_template (id); \
-        \  \
-        \ create unique index document_template_file_uuid_uindex \
-        \   on document_template_file (uuid); \
-        \  \
-        \ alter table document_template_file \
-        \   add constraint document_template_file_pk \
-        \      primary key (uuid); "
+        "CREATE TABLE document_template_file \
+        \( \
+        \    document_template_id varchar     NOT NULL, \
+        \    uuid                 uuid        NOT NULL, \
+        \    file_name            varchar     NOT NULL, \
+        \    content              varchar     NOT NULL, \
+        \    tenant_uuid          uuid        NOT NULL, \
+        \    created_at           timestamptz NOT NULL, \
+        \    updated_at           timestamptz NOT NULL, \
+        \    CONSTRAINT document_template_file_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT document_template_file_document_template_id_fk FOREIGN KEY (document_template_id) REFERENCES document_template (id) \
+        \);"
   let action conn = execute_ conn sql
   runDB action
 
 createTemplateAssetTable = do
   logInfo _CMP_MIGRATION "(Table/DocumentTemplateAsset) create table"
   let sql =
-        " create table document_template_asset \
-        \ ( \
-        \   document_template_id varchar not null, \
-        \   uuid uuid not null, \
-        \   file_name varchar not null, \
-        \   content_type varchar not null, \
-        \   tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
-        \   file_size bigint not null default 0, \
-        \   created_at             timestamp with time zone not null, \
-        \   updated_at             timestamp with time zone not null \
-        \ ); \
-        \  \
-        \ alter table document_template_asset \
-        \   add constraint document_template_asset_template_id_fk \
-        \      foreign key (document_template_id) references document_template (id); \
-        \  \
-        \ create unique index document_template_asset_uuid_uindex \
-        \   on document_template_asset (uuid); \
-        \  \
-        \ alter table document_template_asset \
-        \   add constraint document_template_asset_pk \
-        \      primary key (uuid); "
+        "CREATE TABLE document_template_asset \
+        \( \
+        \    document_template_id varchar     NOT NULL, \
+        \    uuid                 uuid        NOT NULL, \
+        \    file_name            varchar     NOT NULL, \
+        \    content_type         varchar     NOT NULL, \
+        \    tenant_uuid          uuid        NOT NULL, \
+        \    file_size            bigint      NOT NULL, \
+        \    created_at           timestamptz NOT NULL, \
+        \    updated_at           timestamptz NOT NULL, \
+        \    CONSTRAINT document_template_asset_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT document_template_asset_document_template_id_fk FOREIGN KEY (document_template_id) REFERENCES document_template (id) \
+        \); \
+        \ \
+        \CREATE UNIQUE INDEX document_template_asset_uuid_uindex ON document_template_asset (uuid);"
   let action conn = execute_ conn sql
   runDB action

@@ -40,7 +40,7 @@ getPersistentCommandById uuid = do
   command <- findPersistentCommandByUuid uuid
   mUser <-
     case command.createdBy of
-      Just userUuid -> findUserByUuidSystem' userUuid
+      Just userUuid -> findUserByUuidSystem' userUuid command.tenantUuid
       Nothing -> return Nothing
   tenant <- findTenantByUuid command.tenantUuid
   tenantDto <- enhanceTenant tenant
@@ -92,7 +92,7 @@ updateContext :: PersistentCommandSimple U.UUID -> AppContext -> AppContextM App
 updateContext commandSimple context = do
   user <-
     case commandSimple.createdBy of
-      Just userUuid -> findUserByUuidSystem' userUuid
+      Just userUuid -> findUserByUuidSystem' userUuid commandSimple.tenantUuid
       Nothing -> return Nothing
   return $
     context

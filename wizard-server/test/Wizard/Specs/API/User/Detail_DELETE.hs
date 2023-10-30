@@ -20,6 +20,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.User.User
+import Wizard.Service.Questionnaire.QuestionnaireService
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -71,6 +72,7 @@ test_204 appContext =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
       response `shouldRespondWith` responseMatcher
       -- AND: Compare state in DB with expectation
+      runInContextIO cleanQuestionnaires appContext
       assertAbsenceOfUserInDB appContext userAlbert
       assertAbsenceOfQuestionnaireInDB appContext questionnaire1
       assertAbsenceOfQuestionnaireInDB appContext questionnaire2

@@ -33,6 +33,7 @@ import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
@@ -374,28 +375,10 @@ deleteQuestionnaire qtnUuid shouldValidatePermission =
           removeDocumentContent d.uuid
       )
       documents
+    deleteQuestionnairePermsFiltered [("questionnaire_uuid", U.toString qtnUuid)]
     deleteQuestionnaireByUuid qtnUuid
     logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid
     return ()
-
-removeOwnerFromQuestionnaire :: U.UUID -> AppContextM ()
-removeOwnerFromQuestionnaire userUuid =
-  runInTransaction $ do
-    qtns <- findQuestionnairesOwnedByUser (U.toString userUuid)
-    traverse_ processQtn qtns
-  where
-    processQtn :: Questionnaire -> AppContextM ()
-    processQtn qtn = do
-      let newPermissions = removeUserPermission userUuid qtn.permissions
-      if newPermissions == qtn.permissions
-        then return ()
-        else
-          if null newPermissions
-            then deleteQuestionnaire qtn.uuid True
-            else do
-              let reqDto = toChangeDTO $ qtn {permissions = newPermissions}
-              modifyQuestionnaire qtn.uuid reqDto
-              return ()
 
 modifyContent :: U.UUID -> QuestionnaireContentChangeDTO -> AppContextM QuestionnaireContentChangeDTO
 modifyContent qtnUuid reqDto =

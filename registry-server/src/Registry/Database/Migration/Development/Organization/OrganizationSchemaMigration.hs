@@ -16,31 +16,28 @@ runMigration = do
 
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Organization) drop tables"
-  let sql = "drop table if exists organization;"
+  let sql = "DROP TABLE IF EXISTS organization;"
   let action conn = execute_ conn sql
   runDB action
 
 createTables = do
   logInfo _CMP_MIGRATION "(Table/Organization) create tables"
   let sql =
-        "create table organization \
-        \ ( \
-        \     organization_id varchar                  not null \
-        \         constraint organization_pk \
-        \             primary key, \
-        \     name            varchar                  not null, \
-        \     description     varchar                  not null, \
-        \     email           varchar                  not null, \
-        \     role            varchar                  not null, \
-        \     token           varchar                  not null, \
-        \     active          boolean                  not null, \
-        \     logo            varchar, \
-        \     created_at      timestamp with time zone not null, \
-        \     updated_at      timestamp with time zone not null \
-        \ ); \
-        \create unique index organization_organization_id_uindex \
-        \    on organization (organization_id); \
-        \create unique index organization_token_uindex \
-        \    on organization (token); "
+        "CREATE TABLE organization \
+        \( \
+        \    organization_id varchar     NOT NULL, \
+        \    name            varchar     NOT NULL, \
+        \    description     varchar     NOT NULL, \
+        \    email           varchar     NOT NULL, \
+        \    role            varchar     NOT NULL, \
+        \    token           varchar     NOT NULL, \
+        \    active          boolean     NOT NULL, \
+        \    logo            varchar, \
+        \    created_at      timestamptz NOT NULL, \
+        \    updated_at      timestamptz NOT NULL, \
+        \    CONSTRAINT organization_pk PRIMARY KEY (organization_id) \
+        \); \
+        \ \
+        \CREATE UNIQUE INDEX organization_token_uindex ON organization (token);"
   let action conn = execute_ conn sql
   runDB action

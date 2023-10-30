@@ -11,10 +11,14 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataChangeJM ()
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataJM ()
+import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateDrafts
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
+import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Context.AppContext
+import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
+import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -61,7 +65,10 @@ create_test_200 title appContext reqAuthHeader =
       let expDto = wizardDocumentTemplateDraftDataDTO
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext
-      runInContextIO QTN_Migration.runMigration appContext
+      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertQuestionnaire questionnaire1) appContext
+      runInContextIO (insertQuestionnaire questionnaire2) appContext
+      runInContextIO (insertDraftData wizardDocumentTemplateDraftData) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

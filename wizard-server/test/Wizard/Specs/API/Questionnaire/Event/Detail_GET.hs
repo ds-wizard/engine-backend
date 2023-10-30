@@ -18,6 +18,7 @@ import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -101,6 +102,7 @@ create_test_200 title appContext qtn qtnEvent authHeader =
       runInContextIO QTN.runMigration appContext
       runInContextIO deleteQuestionnaireComments appContext
       runInContextIO deleteQuestionnaireCommentThreads appContext
+      runInContextIO deleteQuestionnairePerms appContext
       runInContextIO deleteQuestionnaires appContext
       runInContextIO (insertQuestionnaire qtn) appContext
       -- WHEN: Call API

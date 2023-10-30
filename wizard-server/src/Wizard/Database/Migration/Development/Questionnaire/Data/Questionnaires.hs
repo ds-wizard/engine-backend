@@ -777,7 +777,7 @@ differentCharlesOwnerQtnPerm =
     , memberType = UserQuestionnairePermType
     , memberUuid = userCharles.uuid
     , perms = ownerPermissions
-    , tenantUuid = defaultTenant.uuid
+    , tenantUuid = differentTenant.uuid
     }
 
 -- ------------------------------------------------------------------------

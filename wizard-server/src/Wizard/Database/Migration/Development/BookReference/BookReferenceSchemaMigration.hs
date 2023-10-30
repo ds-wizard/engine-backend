@@ -16,27 +16,23 @@ runMigration = do
 
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/BookReference) drop tables"
-  let sql = "drop table if exists book_reference;"
+  let sql = "DROP TABLE IF EXISTS book_reference;"
   let action conn = execute_ conn sql
   runDB action
 
 createTables = do
   logInfo _CMP_MIGRATION "(Table/BookReference) create table"
   let sql =
-        " create table book_reference \
-        \ ( \
-        \   short_uuid varchar not null, \
-        \   book_chapter varchar not null, \
-        \   content varchar not null, \
-        \   created_at timestamptz not null, \
-        \   updated_at timestamptz not null \
-        \ ); \
-        \  \
-        \ create unique index book_reference_short_uuid_uindex \
-        \    on book_reference (short_uuid); \
-        \  \
-        \ alter table book_reference \
-        \   add constraint book_reference_pk \
-        \      primary key (short_uuid); "
+        "CREATE TABLE book_reference \
+        \( \
+        \    short_uuid   varchar     NOT NULL, \
+        \    book_chapter varchar     NOT NULL, \
+        \    content      varchar     NOT NULL, \
+        \    created_at   timestamptz NOT NULL, \
+        \    updated_at   timestamptz NOT NULL, \
+        \    CONSTRAINT book_reference_pk PRIMARY KEY (short_uuid) \
+        \); \
+        \ \
+        \CREATE UNIQUE INDEX book_reference_short_uuid_uindex ON book_reference (short_uuid);"
   let action conn = execute_ conn sql
   runDB action

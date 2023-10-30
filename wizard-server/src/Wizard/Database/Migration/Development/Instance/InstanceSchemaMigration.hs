@@ -25,25 +25,19 @@ createTables = do
   let sql =
         "CREATE TABLE instance_config_mail \
         \( \
-        \    uuid              uuid                 not null, \
-        \    enabled           boolean default true not null, \
+        \    uuid              uuid    NOT NULL, \
+        \    enabled           boolean NOT NULL, \
         \    sender_name       text, \
-        \    sender_email      text                 not null, \
-        \    host              text                 not null, \
+        \    sender_email      text    NOT NULL, \
+        \    host              text    NOT NULL, \
         \    port              integer, \
-        \    security          text                 not null, \
+        \    security          text    NOT NULL, \
         \    username          text, \
         \    password          text, \
         \    rate_limit_window integer, \
         \    rate_limit_count  integer, \
-        \    timeout           integer \
-        \); \
-        \ \
-        \CREATE UNIQUE INDEX instance_config_mail_uuid_uindex \
-        \   ON instance_config_mail (uuid); \
-        \ \
-        \ALTER TABLE instance_config_mail \
-        \   ADD CONSTRAINT instance_config_mail_pk \
-        \      PRIMARY KEY (uuid);"
+        \    timeout           integer, \
+        \    CONSTRAINT instance_config_mail_pk PRIMARY KEY (uuid) \
+        \);"
   let action conn = execute_ conn sql
   runDB action

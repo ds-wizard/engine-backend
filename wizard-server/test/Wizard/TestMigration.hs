@@ -19,6 +19,7 @@ import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
 import Wizard.Database.DAO.QuestionnaireImporter.QuestionnaireImporterDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
@@ -106,6 +107,7 @@ buildSchema appContext = do
   runInContext F_Schema.createTables appContext
   runInContext B_Schema.createTables appContext
   runInContext QTN_Schema.createTables appContext
+  runInContext TML_Schema.createDraftDataTable appContext
   runInContext DOC_Schema.createTables appContext
   runInContext QTN_MIG_Schema.createTables appContext
   runInContext KM_MIG_Schema.createTables appContext
@@ -146,11 +148,12 @@ resetDB appContext = do
   runInContext deleteBranchDatas appContext
   runInContext deleteBranches appContext
   runInContext deleteDocuments appContext
+  runInContext deleteDrafts appContext
   runInContext deleteQuestionnaireComments appContext
   runInContext deleteQuestionnaireCommentThreads appContext
+  runInContext deleteQuestionnairePerms appContext
   runInContext deleteQuestionnaires appContext
   runInContext deleteQuestionnaireImporters appContext
-  runInContext deleteDrafts appContext
   runInContext deleteDocumentTemplates appContext
   runInContext deletePackages appContext
   runInContext deleteUserTokens appContext

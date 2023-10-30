@@ -14,7 +14,7 @@ enhancePersistentCommand :: PersistentCommand U.UUID -> AppContextM PersistentCo
 enhancePersistentCommand command = do
   mUser <-
     case command.createdBy of
-      Just userUuid -> findUserByUuidSystem' userUuid
+      Just userUuid -> findUserByUuidSystem' userUuid command.tenantUuid
       Nothing -> return Nothing
   tenant <- findTenantByUuid command.tenantUuid
   tenantDto <- enhanceTenant tenant

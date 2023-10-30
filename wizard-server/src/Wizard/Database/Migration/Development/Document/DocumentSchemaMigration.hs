@@ -16,55 +16,38 @@ runMigration = do
 
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Document) drop tables"
-  let sql = "drop table if exists document cascade;"
+  let sql = "DROP TABLE IF EXISTS document CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
 createTables = do
   logInfo _CMP_MIGRATION "(Table/Document) create table"
   let sql =
-        " create table document \
-        \ ( \
-        \     uuid uuid not null, \
-        \     name varchar not null, \
-        \     state varchar not null, \
-        \     durability varchar not null, \
-        \     questionnaire_uuid uuid not null, \
-        \     questionnaire_event_uuid uuid, \
-        \     questionnaire_replies_hash bigint not null, \
-        \     document_template_id varchar not null, \
-        \     format_uuid uuid not null, \
-        \     created_by uuid, \
-        \     retrieved_at timestamptz, \
-        \     finished_at timestamptz, \
-        \     created_at timestamptz not null, \
-        \     file_name varchar, \
-        \     content_type varchar, \
-        \     worker_log varchar, \
-        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \         constraint document_tenant_uuid_fk \
-        \             references tenant, \
-        \     file_size bigint \
-        \ ); \
-        \  \
-        \ create unique index document_uuid_uindex \
-        \     on document (uuid); \
-        \  \
-        \ alter table document \
-        \     add constraint document_pk \
-        \         primary key (uuid); \
-        \ alter table document \
-        \   add constraint document_questionnaire_uuid_fk \
-        \      foreign key (questionnaire_uuid) references questionnaire; \
-        \  \
-        \ alter table document \
-        \   add constraint document_document_template_id_fk \
-        \      foreign key (document_template_id, tenant_uuid) references document_template (id, tenant_uuid); \
-        \ alter table document \
-        \   add constraint document_user_entity_uuid_fk \
-        \      foreign key (created_by) references user_entity; \
-        \  \
-        \ create index document_questionnaire_uuid_index \
-        \   on document (questionnaire_uuid);"
+        "CREATE TABLE document \
+        \( \
+        \    uuid                       uuid        NOT NULL, \
+        \    name                       varchar     NOT NULL, \
+        \    state                      varchar     NOT NULL, \
+        \    durability                 varchar     NOT NULL, \
+        \    questionnaire_uuid         uuid        NOT NULL, \
+        \    questionnaire_event_uuid   uuid, \
+        \    questionnaire_replies_hash bigint      NOT NULL, \
+        \    document_template_id       varchar     NOT NULL, \
+        \    format_uuid                uuid        NOT NULL, \
+        \    created_by                 uuid, \
+        \    retrieved_at               timestamptz, \
+        \    finished_at                timestamptz, \
+        \    created_at                 timestamptz NOT NULL, \
+        \    file_name                  varchar, \
+        \    content_type               varchar, \
+        \    worker_log                 varchar, \
+        \    tenant_uuid                uuid        NOT NULL, \
+        \    file_size                  bigint, \
+        \    CONSTRAINT document_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT document_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
+        \    CONSTRAINT document_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid), \
+        \    CONSTRAINT document_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
+        \    CONSTRAINT document_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
   let action conn = execute_ conn sql
   runDB action

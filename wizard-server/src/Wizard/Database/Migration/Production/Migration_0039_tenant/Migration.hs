@@ -17,7 +17,9 @@ migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   renameToTenant dbPool
   renameDocumentCreatorUuid dbPool
+  removeConstrains dbPool
   refactorQuestionnaireAcl dbPool
+  addConstrains dbPool
 
 renameToTenant :: Pool Connection -> LoggingT IO (Maybe Error)
 renameToTenant dbPool = do
@@ -238,6 +240,96 @@ renameDocumentCreatorUuid dbPool = do
   liftIO $ withResource dbPool action
   return Nothing
 
+removeConstrains :: Pool Connection -> LoggingT IO (Maybe Error)
+removeConstrains dbPool = do
+  let sql =
+        "ALTER TABLE action_key DROP CONSTRAINT action_key_pk; \
+        \ALTER TABLE action_key DROP CONSTRAINT action_key_user_entity_uuid_fk; \
+        \ALTER TABLE action_key DROP CONSTRAINT action_key_tenant_uuid_fk; \
+        \ALTER TABLE audit DROP CONSTRAINT audit_pk; \
+        \ALTER TABLE audit DROP CONSTRAINT audit_user_entity_uuid_fk; \
+        \ALTER TABLE audit DROP CONSTRAINT audit_tenant_uuid_fk; \
+        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT knowledge_model_migration_pk; \
+        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT knowledge_model_migration_branch_previous_package_id_fk; \
+        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT knowledge_model_migration_branch_uuid_fk; \
+        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT knowledge_model_migration_target_package_id_fk; \
+        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT knowledge_model_migration_tenant_uuid_fk; \
+        \ALTER TABLE branch_data DROP CONSTRAINT branch_data_pk; \
+        \ALTER TABLE branch_data DROP CONSTRAINT branch_data_branch_uuid_fk; \
+        \ALTER TABLE branch_data DROP CONSTRAINT branch_data_tenant_uuid_fk; \
+        \ALTER TABLE branch DROP CONSTRAINT branch_pk; \
+        \ALTER TABLE branch DROP CONSTRAINT branch_package_id_fk; \
+        \ALTER TABLE branch DROP CONSTRAINT branch_tenant_uuid_fk; \
+        \ALTER TABLE branch DROP CONSTRAINT branch_user_entity_uuid_fk; \
+        \ALTER TABLE submission DROP CONSTRAINT submission_pk; \
+        \ALTER TABLE submission DROP CONSTRAINT submission_created_by_fk; \
+        \ALTER TABLE submission DROP CONSTRAINT submission_document_uuid_fk; \
+        \ALTER TABLE submission DROP CONSTRAINT submission_tenant_uuid_fk; \
+        \ALTER TABLE document DROP CONSTRAINT document_pk; \
+        \ALTER TABLE document DROP CONSTRAINT document_questionnaire_uuid_fk; \
+        \ALTER TABLE document DROP CONSTRAINT document_user_entity_uuid_fk; \
+        \ALTER TABLE document DROP CONSTRAINT document_tenant_uuid_fk; \
+        \ALTER TABLE document DROP CONSTRAINT document_template_id_fk; \
+        \ALTER TABLE document_template_asset DROP CONSTRAINT document_template_asset_pk; \
+        \ALTER TABLE document_template_asset DROP CONSTRAINT document_template_asset_template_id_app_uuid_fk; \
+        \ALTER TABLE document_template_asset DROP CONSTRAINT document_template_asset_tenant_uuid_fk; \
+        \ALTER TABLE document_template_draft_data DROP CONSTRAINT document_template_draft_data_pk; \
+        \ALTER TABLE document_template_draft_data DROP CONSTRAINT document_template_draft_data_document_template_id_fk; \
+        \ALTER TABLE document_template_draft_data DROP CONSTRAINT document_template_draft_data_tenant_uuid_fk; \
+        \ALTER TABLE document_template_file DROP CONSTRAINT document_template_file_pk; \
+        \ALTER TABLE document_template_file DROP CONSTRAINT document_template_file_template_id_fk; \
+        \ALTER TABLE document_template_file DROP CONSTRAINT document_template_file_tenant_uuid_fk; \
+        \ALTER TABLE feedback DROP CONSTRAINT feedback_pk; \
+        \ALTER TABLE feedback DROP CONSTRAINT feedback_package_id_fk; \
+        \ALTER TABLE feedback DROP CONSTRAINT feedback_tenant_uuid_fk; \
+        \ALTER TABLE locale DROP CONSTRAINT locale_pk; \
+        \ALTER TABLE locale DROP CONSTRAINT locale_tenant_uuid_fk; \
+        \ALTER TABLE persistent_command DROP CONSTRAINT persistent_command_pk; \
+        \ALTER TABLE persistent_command DROP CONSTRAINT persistent_command_created_by_fk; \
+        \ALTER TABLE persistent_command DROP CONSTRAINT persistent_command_tenant_uuid_fk; \
+        \ALTER TABLE prefab DROP CONSTRAINT prefab_pk; \
+        \ALTER TABLE prefab DROP CONSTRAINT prefab_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire_acl_group DROP CONSTRAINT questionnaire_acl_group_pk; \
+        \ALTER TABLE questionnaire_acl_group DROP CONSTRAINT questionnaire_acl_group_group_id_fk; \
+        \ALTER TABLE questionnaire_acl_group DROP CONSTRAINT questionnaire_acl_group_questionnaire_uuid_fk; \
+        \ALTER TABLE questionnaire_acl_user DROP CONSTRAINT questionnaire_acl_user_user_uuid_fk; \
+        \ALTER TABLE questionnaire_acl_user DROP CONSTRAINT questionnaire_acl_user_questionnaire_uuid_fk; \
+        \ALTER TABLE questionnaire_migration DROP CONSTRAINT questionnaire_migration_pk; \
+        \ALTER TABLE questionnaire_migration DROP CONSTRAINT questionnaire_migration_new_questionnaire_uuid_fk; \
+        \ALTER TABLE questionnaire_migration DROP CONSTRAINT questionnaire_migration_old_questionnaire_uuid_fk; \
+        \ALTER TABLE questionnaire_migration DROP CONSTRAINT questionnaire_migration_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire_comment DROP CONSTRAINT questionnaire_comment_pk; \
+        \ALTER TABLE questionnaire_comment DROP CONSTRAINT questionnaire_comment_questionnaire_comment_thread_uuid_fk; \
+        \ALTER TABLE questionnaire_comment DROP CONSTRAINT questionnaire_comment_user_entity_uuid_fk; \
+        \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT questionnaire_comment_thread_pk; \
+        \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT questionnaire_comment_thread_questionnaire_uuid_fk; \
+        \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT questionnaire_comment_thread_user_entity_uuid_fk; \
+        \ALTER TABLE questionnaire_importer DROP CONSTRAINT questionnaire_importer_pk; \
+        \ALTER TABLE questionnaire_importer DROP CONSTRAINT questionnaire_importer_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire DROP CONSTRAINT questionnaire_pk; \
+        \ALTER TABLE questionnaire DROP CONSTRAINT questionnaire_package_id_fk; \
+        \ALTER TABLE questionnaire DROP CONSTRAINT questionnaire_template_id_fk; \
+        \ALTER TABLE questionnaire DROP CONSTRAINT questionnaire_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire DROP CONSTRAINT questionnaire_user_entity_uuid_fk; \
+        \ALTER TABLE document_template DROP CONSTRAINT document_template_pk; \
+        \ALTER TABLE document_template DROP CONSTRAINT document_template_tenant_uuid_fk; \
+        \ALTER TABLE temporary_file DROP CONSTRAINT temporary_file_pk; \
+        \ALTER TABLE temporary_file DROP CONSTRAINT temporary_file_tenant_uuid_fk; \
+        \ALTER TABLE temporary_file DROP CONSTRAINT temporary_file_user_entity_uuid_fk; \
+        \ALTER TABLE package DROP CONSTRAINT package_previous_package_id_fk; \
+        \ALTER TABLE package DROP CONSTRAINT package_pk; \
+        \ALTER TABLE package DROP CONSTRAINT package_tenant_uuid_fk; \
+        \ALTER TABLE tenant_plan DROP CONSTRAINT tenant_plan_pk; \
+        \ALTER TABLE tenant_plan DROP CONSTRAINT tenant_plan_tenant_uuid_fk; \
+        \ALTER TABLE user_token DROP CONSTRAINT user_token_pk; \
+        \ALTER TABLE user_token DROP CONSTRAINT user_token_tenant_uuid_fk; \
+        \ALTER TABLE user_token DROP CONSTRAINT user_token_user_uuid_fk; \
+        \ALTER TABLE user_entity DROP CONSTRAINT user_pk; \
+        \ALTER TABLE user_entity DROP CONSTRAINT user_entity_tenant_uuid_fk;"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
 refactorQuestionnaireAcl :: Pool Connection -> LoggingT IO (Maybe Error)
 refactorQuestionnaireAcl dbPool = do
   let sql =
@@ -246,69 +338,145 @@ refactorQuestionnaireAcl dbPool = do
         \ \
         \CREATE TABLE user_group \
         \( \
-        \    uuid        uuid        not null, \
-        \    name        varchar     not null, \
+        \    uuid        uuid        NOT NULL, \
+        \    name        varchar     NOT NULL, \
         \    description varchar, \
-        \    private     boolean     not null, \
-        \    tenant_uuid uuid        not null \
-        \        CONSTRAINT user_group_tenant_uuid_fk \
-        \            REFERENCES tenant, \
-        \    created_at  timestamptz not null, \
-        \    updated_at  timestamptz not null, \
-        \    CONSTRAINT user_group_pk PRIMARY KEY (uuid, tenant_uuid) \
+        \    private     boolean     NOT NULL, \
+        \    tenant_uuid uuid        NOT NULL, \
+        \    created_at  TIMESTAMPTZ NOT NULL, \
+        \    updated_at  TIMESTAMPTZ NOT NULL \
         \); \
         \ \
         \CREATE TABLE user_group_membership \
         \( \
-        \    user_group_uuid uuid        not null, \
-        \    user_uuid       uuid        not null, \
-        \    type            varchar     not null, \
-        \    tenant_uuid     uuid        not null \
-        \        CONSTRAINT user_group_tenant_uuid_fk \
-        \            REFERENCES tenant, \
-        \    created_at      timestamptz not null, \
-        \    updated_at      timestamptz not null, \
-        \    CONSTRAINT user_group_membership_pk PRIMARY KEY (user_group_uuid, user_uuid, tenant_uuid) \
+        \    user_group_uuid uuid        NOT NULL, \
+        \    user_uuid       uuid        NOT NULL, \
+        \    type            varchar     NOT NULL, \
+        \    tenant_uuid     uuid        NOT NULL, \
+        \    created_at      TIMESTAMPTZ NOT NULL, \
+        \    updated_at      TIMESTAMPTZ NOT NULL \
         \); \
         \ \
         \CREATE TABLE questionnaire_perm_group \
         \( \
-        \    questionnaire_uuid uuid   not null \
-        \        CONSTRAINT questionnaire_perm_group_questionnaire_uuid_fk \
-        \            REFERENCES questionnaire ON DELETE CASCADE, \
-        \    user_group_uuid    uuid   not null, \
-        \    perms              text[] not null, \
-        \    tenant_uuid        uuid   not null \
-        \        CONSTRAINT questionnaire_perm_group_tenant_uuid_fk \
-        \            REFERENCES tenant, \
-        \    CONSTRAINT questionnaire_perm_group_pk PRIMARY KEY (questionnaire_uuid, user_group_uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_perm_group_user_uuid_tenant_uuid_fk FOREIGN KEY (user_group_uuid, tenant_uuid) REFERENCES user_group \
+        \    questionnaire_uuid uuid   NOT NULL, \
+        \    user_group_uuid    uuid   NOT NULL, \
+        \    perms              text[] NOT NULL, \
+        \    tenant_uuid        uuid   NOT NULL \
         \); \
         \ \
         \CREATE TABLE questionnaire_perm_user \
         \( \
-        \    questionnaire_uuid uuid   not null \
-        \        CONSTRAINT questionnaire_perm_user_questionnaire_uuid_fk \
-        \            REFERENCES questionnaire ON DELETE CASCADE, \
-        \    user_uuid          uuid   not null \
-        \        CONSTRAINT questionnaire_perm_user_user_uuid_fk \
-        \            REFERENCES user_entity, \
-        \    perms              text[] not null, \
-        \    tenant_uuid        uuid   not null \
-        \        CONSTRAINT questionnaire_perm_user_tenant_uuid_fk \
-        \            REFERENCES tenant, \
-        \    CONSTRAINT questionnaire_perm_user_pk PRIMARY KEY (questionnaire_uuid, user_uuid, tenant_uuid) \
+        \    questionnaire_uuid uuid   NOT NULL, \
+        \    user_uuid          uuid   NOT NULL, \
+        \    perms              text[] NOT NULL, \
+        \    tenant_uuid        uuid   NOT NULL \
         \); \
         \ \
         \INSERT INTO questionnaire_perm_user (questionnaire_uuid, user_uuid, perms, tenant_uuid) \
         \SELECT qtn_acl_user.questionnaire_uuid, qtn_acl_user.user_uuid, qtn_acl_user.perms, qtn.tenant_uuid \
         \FROM questionnaire_acl_user qtn_acl_user \
-        \JOIN questionnaire qtn on qtn.uuid = qtn_acl_user.questionnaire_uuid; \
+        \JOIN questionnaire qtn ON qtn.uuid = qtn_acl_user.questionnaire_uuid; \
         \ \
         \DROP TABLE questionnaire_acl_user; \
         \ \
         \ALTER TABLE user_entity \
         \    DROP COLUMN groups;"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addConstrains :: Pool Connection -> LoggingT IO (Maybe Error)
+addConstrains dbPool = do
+  let sql =
+        "ALTER TABLE tenant_plan ADD CONSTRAINT tenant_plan_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE tenant_plan ADD CONSTRAINT tenant_plan_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE user_entity ADD CONSTRAINT user_entity_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE user_entity ADD CONSTRAINT user_entity_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE user_token ADD CONSTRAINT user_token_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE user_token ADD CONSTRAINT user_token_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid); \
+        \ALTER TABLE user_token ADD CONSTRAINT user_token_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE user_group ADD CONSTRAINT user_group_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE user_group ADD CONSTRAINT user_group_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE user_group_membership ADD CONSTRAINT user_group_membership_pk PRIMARY KEY (user_group_uuid, user_uuid, tenant_uuid); \
+        \ALTER TABLE user_group_membership ADD CONSTRAINT user_group_membership_user_group_uuid_fk FOREIGN KEY (user_group_uuid, tenant_uuid) REFERENCES user_group (uuid, tenant_uuid); \
+        \ALTER TABLE user_group_membership ADD CONSTRAINT user_group_membership_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid); \
+        \ALTER TABLE user_group_membership ADD CONSTRAINT user_group_membership_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE package ADD CONSTRAINT package_pk PRIMARY KEY (id, tenant_uuid); \
+        \ALTER TABLE package ADD CONSTRAINT package_previous_package_id_fk FOREIGN KEY (previous_package_id, tenant_uuid) REFERENCES package (id, tenant_uuid); \
+        \ALTER TABLE package ADD CONSTRAINT package_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE temporary_file ADD CONSTRAINT temporary_file_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE temporary_file ADD CONSTRAINT temporary_file_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid); \
+        \ALTER TABLE temporary_file ADD CONSTRAINT temporary_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE document_template ADD CONSTRAINT document_template_pk PRIMARY KEY (id, tenant_uuid); \
+        \ALTER TABLE document_template ADD CONSTRAINT document_template_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE questionnaire ADD CONSTRAINT questionnaire_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire ADD CONSTRAINT questionnaire_package_id_fk FOREIGN KEY (package_id, tenant_uuid) REFERENCES package (id, tenant_uuid); \
+        \ALTER TABLE questionnaire ADD CONSTRAINT questionnaire_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid); \
+        \ALTER TABLE questionnaire ADD CONSTRAINT questionnaire_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire ADD CONSTRAINT questionnaire_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE questionnaire_importer ADD CONSTRAINT questionnaire_importer_pk PRIMARY KEY (id, tenant_uuid); \
+        \ALTER TABLE questionnaire_importer ADD CONSTRAINT questionnaire_importer_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE questionnaire_comment ADD CONSTRAINT questionnaire_comment_pk PRIMARY KEY (uuid, comment_thread_uuid); \
+        \ALTER TABLE questionnaire_comment_thread ADD CONSTRAINT questionnaire_comment_thread_pk PRIMARY KEY (uuid, questionnaire_uuid); \
+        \ALTER TABLE questionnaire_perm_user ADD CONSTRAINT questionnaire_perm_user_pk PRIMARY KEY (user_uuid, questionnaire_uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire_perm_user ADD CONSTRAINT questionnaire_perm_user_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire_perm_user ADD CONSTRAINT questionnaire_perm_user_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire_perm_user ADD CONSTRAINT questionnaire_perm_user_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE questionnaire_perm_group ADD CONSTRAINT questionnaire_perm_group_pk PRIMARY KEY (user_group_uuid, questionnaire_uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire_perm_group ADD CONSTRAINT questionnaire_perm_group_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire_perm_group ADD CONSTRAINT questionnaire_perm_group_user_group_uuid_fk FOREIGN KEY (user_group_uuid, tenant_uuid) REFERENCES user_group (uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire_perm_group ADD CONSTRAINT questionnaire_perm_group_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE questionnaire_migration ADD CONSTRAINT questionnaire_migration_pk PRIMARY KEY (old_questionnaire_uuid, new_questionnaire_uuid); \
+        \ALTER TABLE questionnaire_migration ADD CONSTRAINT questionnaire_migration_old_questionnaire_uuid_fk FOREIGN KEY (old_questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire_migration ADD CONSTRAINT questionnaire_migration_new_questionnaire_uuid_fk FOREIGN KEY (new_questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire_migration ADD CONSTRAINT questionnaire_migration_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE prefab ADD CONSTRAINT prefab_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE prefab ADD CONSTRAINT prefab_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE persistent_command ADD CONSTRAINT persistent_command_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE persistent_command ADD CONSTRAINT persistent_command_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid); \
+        \ALTER TABLE persistent_command ADD CONSTRAINT persistent_command_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE locale ADD CONSTRAINT locale_pk PRIMARY KEY (id, tenant_uuid); \
+        \ALTER TABLE locale ADD CONSTRAINT locale_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE feedback ADD CONSTRAINT feedback_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE feedback ADD CONSTRAINT feedback_package_id_fk FOREIGN KEY (package_id, tenant_uuid) REFERENCES package (id, tenant_uuid); \
+        \ALTER TABLE feedback ADD CONSTRAINT feedback_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE document_template_file ADD CONSTRAINT document_template_file_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE document_template_file ADD CONSTRAINT document_template_file_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid); \
+        \ALTER TABLE document_template_file ADD CONSTRAINT document_template_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE document_template_asset ADD CONSTRAINT document_template_asset_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE document_template_asset ADD CONSTRAINT document_template_asset_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid); \
+        \ALTER TABLE document_template_asset ADD CONSTRAINT document_template_asset_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE document_template_draft_data ADD CONSTRAINT document_template_draft_data_pk PRIMARY KEY (document_template_id, tenant_uuid); \
+        \ALTER TABLE document_template_draft_data ADD CONSTRAINT document_template_draft_data_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid); \
+        \ALTER TABLE document_template_draft_data ADD CONSTRAINT document_template_draft_data_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE document ADD CONSTRAINT document_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE document ADD CONSTRAINT document_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid); \
+        \ALTER TABLE document ADD CONSTRAINT document_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid); \
+        \ALTER TABLE document ADD CONSTRAINT document_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid); \
+        \ALTER TABLE document ADD CONSTRAINT document_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE submission ADD CONSTRAINT submission_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE submission ADD CONSTRAINT submission_document_uuid_fk FOREIGN KEY (document_uuid, tenant_uuid) REFERENCES document (uuid, tenant_uuid); \
+        \ALTER TABLE submission ADD CONSTRAINT submission_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid); \
+        \ALTER TABLE submission ADD CONSTRAINT submission_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE branch ADD CONSTRAINT branch_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE branch ADD CONSTRAINT branch_previous_package_id_fk FOREIGN KEY (previous_package_id, tenant_uuid) REFERENCES package (id, tenant_uuid); \
+        \ALTER TABLE branch ADD CONSTRAINT branch_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid); \
+        \ALTER TABLE branch ADD CONSTRAINT branch_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE branch_data ADD CONSTRAINT branch_data_pk PRIMARY KEY (branch_uuid, tenant_uuid); \
+        \ALTER TABLE branch_data ADD CONSTRAINT branch_data_branch_uuid_fk FOREIGN KEY (branch_uuid, tenant_uuid) REFERENCES branch (uuid, tenant_uuid); \
+        \ALTER TABLE branch_data ADD CONSTRAINT branch_data_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE knowledge_model_migration ADD CONSTRAINT knowledge_model_migration_pk PRIMARY KEY (branch_uuid, tenant_uuid); \
+        \ALTER TABLE knowledge_model_migration ADD CONSTRAINT knowledge_model_migration_branch_uuid_fk FOREIGN KEY (branch_uuid, tenant_uuid) REFERENCES branch (uuid, tenant_uuid); \
+        \ALTER TABLE knowledge_model_migration ADD CONSTRAINT knowledge_model_migration_branch_previous_package_id_fk FOREIGN KEY (branch_previous_package_id, tenant_uuid) REFERENCES package (id, tenant_uuid); \
+        \ALTER TABLE knowledge_model_migration ADD CONSTRAINT knowledge_model_migration_target_package_id_fk FOREIGN KEY (target_package_id, tenant_uuid) REFERENCES package (id, tenant_uuid); \
+        \ALTER TABLE knowledge_model_migration ADD CONSTRAINT knowledge_model_migration_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE audit ADD CONSTRAINT audit_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE audit ADD CONSTRAINT audit_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid); \
+        \ALTER TABLE audit ADD CONSTRAINT audit_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ALTER TABLE action_key ADD CONSTRAINT action_key_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE action_key ADD CONSTRAINT action_key_identity_fk FOREIGN KEY (identity, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid) ON DELETE CASCADE; \
+        \ALTER TABLE action_key ADD CONSTRAINT action_key_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid);"
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing

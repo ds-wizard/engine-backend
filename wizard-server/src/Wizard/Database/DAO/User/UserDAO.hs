@@ -81,24 +81,24 @@ findUsersByEmails emails = do
   createFindEntitiesInFn entityName tenantUuid "email" emails
 
 findUserByUuid :: U.UUID -> AppContextM User
-findUserByUuid uuid = getFromCacheOrDb getFromCache addToCache go (U.toString uuid)
+findUserByUuid uuid = do
+  tenantUuid <- asks currentTenantUuid
+  getFromCacheOrDb getFromCache addToCache go (U.toString uuid, U.toString tenantUuid)
   where
-    go uuid = do
-      tenantUuid <- asks currentTenantUuid
-      createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", uuid)]
+    go (uuid, tenantUuid) = createFindEntityByFn entityName [("tenant_uuid", tenantUuid), ("uuid", uuid)]
 
 findUserByUuid' :: U.UUID -> AppContextM (Maybe User)
-findUserByUuid' uuid = getFromCacheOrDb' getFromCache addToCache go (U.toString uuid)
+findUserByUuid' uuid = do
+  tenantUuid <- asks currentTenantUuid
+  getFromCacheOrDb' getFromCache addToCache go (U.toString uuid, U.toString tenantUuid)
   where
-    go uuid = do
-      tenantUuid <- asks currentTenantUuid
-      createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("uuid", uuid)]
+    go (uuid, tenantUuid) = createFindEntityByFn' entityName [("tenant_uuid", tenantUuid), ("uuid", uuid)]
 
 findUserByUuidAndTenantUuidSystem :: U.UUID -> U.UUID -> AppContextM User
 findUserByUuidAndTenantUuidSystem uuid tenantUuid = createFindEntityByFn entityName [("uuid", U.toString uuid), ("tenant_uuid", U.toString tenantUuid)]
 
-findUserByUuidSystem' :: U.UUID -> AppContextM (Maybe User)
-findUserByUuidSystem' uuid = createFindEntityByFn' entityName [("uuid", U.toString uuid)]
+findUserByUuidSystem' :: U.UUID -> U.UUID -> AppContextM (Maybe User)
+findUserByUuidSystem' uuid tenantUuid = createFindEntityByFn' entityName [("uuid", U.toString uuid), ("tenant_uuid", U.toString tenantUuid)]
 
 findUserByEmail :: String -> AppContextM User
 findUserByEmail email = do
@@ -155,7 +155,7 @@ updateUserPasswordByUuid userUuid uPassword uUpdatedAt = do
   logQuery sql params
   let action conn = execute conn sql params
   result <- runDB action
-  deleteFromCache (U.toString userUuid)
+  deleteFromCache (U.toString userUuid, U.toString tenantUuid)
   return result
 
 updateUserLastVisitedAtByUuid :: U.UUID -> UTCTime -> AppContextM Int64
@@ -166,7 +166,7 @@ updateUserLastVisitedAtByUuid userUuid lastVisitedAt = do
   logQuery sql params
   let action conn = execute conn sql params
   result <- runDB action
-  deleteFromCache (U.toString userUuid)
+  deleteFromCache (U.toString userUuid, U.toString tenantUuid)
   return result
 
 deleteUsers :: AppContextM Int64
@@ -179,5 +179,5 @@ deleteUserByUuid :: U.UUID -> AppContextM Int64
 deleteUserByUuid uuid = do
   tenantUuid <- asks currentTenantUuid
   result <- createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
-  deleteFromCache (U.toString uuid)
+  deleteFromCache (U.toString uuid, U.toString tenantUuid)
   return result

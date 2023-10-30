@@ -16,43 +16,31 @@ runMigration = do
 
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Submission) drop tables"
-  let sql = "drop table if exists submission cascade;"
+  let sql = "DROP TABLE IF EXISTS submission CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
 createTables = do
   logInfo _CMP_MIGRATION "(Table/Submission) create table"
   let sql =
-        "create table submission \
-        \ ( \
-        \     uuid uuid not null, \
-        \     state varchar not null, \
-        \     location varchar, \
-        \     returned_data varchar, \
-        \     service_id varchar not null, \
-        \     document_uuid uuid, \
-        \     created_by uuid, \
-        \     created_at timestamptz, \
-        \     updated_at timestamptz not null, \
-        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \       constraint submission_tenant_uuid_fk \
-        \         references tenant \
-        \ ); \
-        \  \
-        \ create unique index submission_uuid_uindex \
-        \     on submission (uuid); \
-        \ alter table submission \
-        \     add constraint submission_pk \
-        \         primary key (uuid); \
+        "CREATE TABLE submission \
+        \( \
+        \    uuid          uuid        NOT NULL, \
+        \    state         varchar     NOT NULL, \
+        \    location      varchar, \
+        \    returned_data varchar, \
+        \    service_id    varchar     NOT NULL, \
+        \    document_uuid uuid, \
+        \    created_by    uuid, \
+        \    created_at    timestamptz, \
+        \    updated_at    timestamptz NOT NULL, \
+        \    tenant_uuid   uuid        NOT NULL, \
+        \    CONSTRAINT submission_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT submission_document_uuid_fk FOREIGN KEY (document_uuid, tenant_uuid) REFERENCES document (uuid, tenant_uuid), \
+        \    CONSTRAINT submission_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
+        \    CONSTRAINT submission_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \); \
         \ \
-        \ alter table submission \
-        \   add constraint submission_document_uuid_fk \
-        \      foreign key (document_uuid) references document (uuid); \
-        \ alter table submission \
-        \   add constraint submission_created_by_fk \
-        \      foreign key (created_by) references user_entity (uuid); \
-        \  \
-        \ create index submission_document_uuid_index \
-        \   on submission (document_uuid, tenant_uuid);"
+        \CREATE INDEX submission_document_uuid_index ON submission (document_uuid, tenant_uuid);"
   let action conn = execute_ conn sql
   runDB action

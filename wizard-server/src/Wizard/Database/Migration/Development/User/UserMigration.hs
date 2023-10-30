@@ -23,10 +23,10 @@ runMigration = do
   insertUser userSystem
   insertUser userAlbert
   insertUserGroupMembership userAlbertBioGroupMembership
-  insertUserGroupMembership userNikolaBioGroupMembership
   insertUserToken albertToken
   insertUser userNikola
   insertUserToken nikolaToken
+  insertUserGroupMembership userNikolaBioGroupMembership
   insertUser userIsaac
   insertUserToken isaacToken
   insertUser userCharles

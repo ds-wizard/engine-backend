@@ -4,6 +4,10 @@ import Data.Foldable (traverse_)
 import Test.Hspec
 
 import Shared.Common.Util.Uuid
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
+import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
@@ -12,10 +16,16 @@ import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import qualified Wizard.Service.User.UserMapper as U_Mapper
-import Wizard.Specs.Common
+import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
+import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
+import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
 import WizardLib.Public.Model.User.UserGroup
+
+import Wizard.Specs.Common
 
 questionnaireAclSpec appContext =
   describe "Questionnaire ACL" $ do
@@ -62,6 +72,7 @@ questionnaireAclSpec appContext =
     let userWithoutPermCtx = makeContext userIsaac
     let anonymousCtx = appContext {currentUser = Nothing}
     it "checkViewPermissionToQtn" $ do
+      runLocalTestMigration appContext
       let fn1 memberships = do
             deleteUserGroupMemberships
             traverse_ insertUserGroupMembership memberships
@@ -182,6 +193,7 @@ questionnaireAclSpec appContext =
       shouldSucceed userWithoutPermCtx (fn9 [])
       shouldSucceed anonymousCtx (fn9 [])
     it "checkOwnerPermissionToQtn" $ do
+      runLocalTestMigration appContext
       let fn1 memberships = do
             deleteUserGroupMemberships
             traverse_ insertUserGroupMembership memberships
@@ -222,6 +234,7 @@ questionnaireAclSpec appContext =
       shouldFailed userWithoutPermCtx (fn3 [])
       shouldFailed anonymousCtx (fn3 [])
     it "checkEditPermissionToQtn" $ do
+      runLocalTestMigration appContext
       let fn1 memberships = do
             deleteUserGroupMemberships
             traverse_ insertUserGroupMembership memberships
@@ -342,6 +355,7 @@ questionnaireAclSpec appContext =
       shouldSucceed userWithoutPermCtx (fn9 [])
       shouldSucceed anonymousCtx (fn9 [])
     it "checkMigrationPermissionToQtn" $ do
+      runLocalTestMigration appContext
       let fn1 memberships = do
             deleteUserGroupMemberships
             traverse_ insertUserGroupMembership memberships
@@ -381,3 +395,14 @@ questionnaireAclSpec appContext =
       shouldSucceed userInViewerGroupCtx (fn3 [userIsaacAnimalGroupMembership])
       shouldSucceed userWithoutPermCtx (fn3 [])
       shouldFailed anonymousCtx (fn3 [])
+
+runLocalTestMigration appContext = do
+  runInContext deleteQuestionnairePerms appContext
+  runInContext deleteQuestionnaires appContext
+  runInContext (insertPackage germanyPackage) appContext
+  runInContext (insertDocumentTemplate wizardDocumentTemplate) appContext
+  runInContext (insertQuestionnaire questionnaire1) appContext
+  runInContext (insertUser userIsaac) appContext
+  runInContext (insertUserGroup bioGroup) appContext
+  runInContext (insertUserGroup plantGroup) appContext
+  runInContext (insertUserGroup animalGroup) appContext

@@ -279,16 +279,6 @@ findQuestionnairesByDocumentTemplateId documentTemplateId = do
       entities <- runDB action
       traverse enhance entities
 
-findQuestionnairesOwnedByUser :: String -> AppContextM [Questionnaire]
-findQuestionnairesOwnedByUser userUuid = do
-  tenantUuid <- asks currentTenantUuid
-  currentUser <- getCurrentUser
-  let sql = f' (qtnSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "[]::text[]") [""]
-  logInfoI _CMP_DATABASE (trim sql)
-  let action conn = query_ conn (fromString sql)
-  entities <- runDB action
-  traverse enhance entities
-
 findQuestionnaireWithZeroAcl :: AppContextM [Questionnaire]
 findQuestionnaireWithZeroAcl = do
   let sql =

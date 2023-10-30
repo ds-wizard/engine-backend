@@ -89,6 +89,7 @@ runMigration = do
   F_Schema.createTables
   B_Schema.createTables
   QTN_Schema.createTables
+  TML_Schema.createDraftDataTable
   DOC_Schema.createTables
   QTN_MIG_Schema.createTables
   KM_MIG_Schema.createTables

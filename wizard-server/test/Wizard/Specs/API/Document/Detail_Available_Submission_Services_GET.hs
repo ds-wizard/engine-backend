@@ -74,6 +74,7 @@ create_test_200 title appContext qtn authHeader =
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO QTN_Migration.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire10) appContext
+      -- runInContextIO deleteDraftDatas appContext
       runInContextIO DOC_Migration.runMigration appContext
       runInContextIO (deleteDocumentByUuid doc1.uuid) appContext
       runInContextIO (insertDocument (doc1 {questionnaireUuid = qtn.uuid})) appContext

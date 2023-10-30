@@ -46,17 +46,17 @@ buildSchema appContext =
 
 resetDB appContext = do
   runInContext deletePersistentCommands appContext
-  runInContext deleteOrganizations appContext
-  runInContext (insertOrganization orgGlobal) appContext
-  runInContext (insertOrganization orgNetherlands) appContext
   runInContext deleteActionKeys appContext
   runInContext deleteAuditEntries appContext
   runInContext deletePackages appContext
+  runInContext deleteDocumentTemplates appContext
+  runInContext deleteLocales appContext
+  runInContext deleteOrganizations appContext
+  runInContext deleteComponents appContext
+  runInContext (insertOrganization orgGlobal) appContext
+  runInContext (insertOrganization orgNetherlands) appContext
   runInContext (insertPackage globalPackageEmpty) appContext
   runInContext (insertPackage globalPackage) appContext
   runInContext (insertPackage netherlandsPackage) appContext
   runInContext (insertPackage netherlandsPackageV2) appContext
-  runInContext deleteDocumentTemplates appContext
-  runInContext deleteLocales appContext
-  runInContext deleteComponents appContext
   return ()

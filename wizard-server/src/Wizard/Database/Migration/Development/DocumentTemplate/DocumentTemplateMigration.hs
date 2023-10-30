@@ -3,7 +3,6 @@ module Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMi
 import Shared.Common.Constant.Component
 import Shared.Common.Util.Logger
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
-import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateDrafts
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
@@ -18,7 +17,7 @@ import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 runMigration :: AppContextM ()
 runMigration = do
   logInfo _CMP_MIGRATION "(DocumentTemplate/DocumentTemplate) started"
-  -- deleteDraftDatas
+  deleteDraftDatas
   deleteDocumentTemplates
   insertDocumentTemplate wizardDocumentTemplate
   insertDocumentTemplate wizardDocumentTemplateDraft
@@ -27,7 +26,6 @@ runMigration = do
   _ <- insertAsset assetLogo
   insertDocumentTemplate differentDocumentTemplate
   _ <- insertFile differentFileHtml
-  insertDraftData wizardDocumentTemplateDraftData
   logInfo _CMP_MIGRATION "(DocumentTemplate/DocumentTemplate) ended"
 
 runS3Migration :: AppContextM ()

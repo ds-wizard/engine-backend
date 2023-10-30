@@ -14,11 +14,11 @@ import WizardLib.Public.Service.Cache.Common
 
 cacheName = "User"
 
-cacheKey uuid = f' "uuid: '%s'" [uuid]
+cacheKey uuid tenantUuid = f' "uuid: '%s', tenantUuid: '%s'" [uuid, tenantUuid]
 
 addToCache :: User -> AppContextM ()
 addToCache record = do
-  let key = cacheKey (U.toString record.uuid)
+  let key = cacheKey (U.toString record.uuid) (U.toString record.tenantUuid)
   logCacheAddBefore cacheName key
   cache <- getCache
   liftIO $ C.insert cache (H.hash key) record
@@ -31,9 +31,9 @@ getAllFromCache = do
   records <- liftIO $ C.toList cache
   return . fmap (\(_, v, _) -> v) $ records
 
-getFromCache :: String -> AppContextM (Maybe User)
-getFromCache uuid = do
-  let key = cacheKey uuid
+getFromCache :: (String, String) -> AppContextM (Maybe User)
+getFromCache (uuid, tenantUuid) = do
+  let key = cacheKey uuid tenantUuid
   logCacheGetBefore cacheName key
   cache <- getCache
   mValue <- liftIO $ C.lookup cache (H.hash key)
@@ -47,7 +47,7 @@ getFromCache uuid = do
 
 updateCache :: User -> AppContextM ()
 updateCache record = do
-  let key = cacheKey (U.toString record.uuid)
+  let key = cacheKey (U.toString record.uuid) (U.toString record.tenantUuid)
   logCacheModifyBefore cacheName key
   cache <- getCache
   liftIO $ C.insert cache (H.hash key) record
@@ -61,9 +61,9 @@ deleteAllFromCache = do
   liftIO $ C.purge cache
   logCacheDeleteAllFinished cacheName
 
-deleteFromCache :: String -> AppContextM ()
-deleteFromCache uuid = do
-  let key = cacheKey uuid
+deleteFromCache :: (String, String) -> AppContextM ()
+deleteFromCache (uuid, tenantUuid) = do
+  let key = cacheKey uuid tenantUuid
   logCacheDeleteBefore cacheName key
   cache <- getCache
   liftIO $ C.delete cache (H.hash key)

@@ -31,6 +31,7 @@ import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
 import Wizard.Localization.Messages.Internal
@@ -46,7 +47,6 @@ import Wizard.S3.Document.DocumentS3
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Common
 import Wizard.Service.Mail.Mailer
-import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
 import Wizard.Service.Tenant.TenantHelper
@@ -55,6 +55,7 @@ import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
 import Wizard.Service.UserToken.Login.LoginService
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
+import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Localization.Messages.Public
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
 import WizardLib.Public.Service.UserToken.UserTokenService
@@ -118,7 +119,7 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions tenantUuid clientUrl sh
     when
       shouldSendRegistrationEmail
       ( catchError
-          (sendRegistrationConfirmationMail (toDTO user) actionKey.hash clientUrl)
+          (sendRegistrationConfirmationMail user actionKey.hash clientUrl)
           (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT)
       )
     sendAnalyticsEmailIfEnabled user
@@ -171,7 +172,7 @@ createUserFromExternalService mUserFromDb serviceId firstName lastName email mIm
 createOrUpdateUserFromCommand :: CreateOrUpdateUserCommand -> AppContextM User
 createOrUpdateUserFromCommand command =
   runInTransaction $ do
-    mUserFromDb <- findUserByUuidSystem' command.uuid
+    mUserFromDb <- findUserByUuidSystem' command.uuid command.tenantUuid
     serverConfig <- asks serverConfig
     now <- liftIO getCurrentTime
     case mUserFromDb of
@@ -272,7 +273,7 @@ deleteUser userUuid =
     checkPermission _UM_PERM
     _ <- findUserByUuid userUuid
     clearBranchCreatedBy userUuid
-    removeOwnerFromQuestionnaire userUuid
+    deleteQuestionnairePermUserByUserUuid userUuid
     clearQuestionnaireCreatedBy userUuid
     deletePersistentCommandByCreatedBy userUuid
     documents <- findDocumentsFiltered [("created_by", U.toString userUuid)]
@@ -282,6 +283,7 @@ deleteUser userUuid =
           deleteDocumentsFiltered [("uuid", U.toString d.uuid)]
           removeDocumentContent d.uuid
       )
+    deleteUserGroupMembershipsByUserUuid userUuid
     deleteTokenByUserUuid userUuid
     deleteUserByUuid userUuid
     return ()
@@ -308,7 +310,7 @@ updateUserTimestamp user = do
 
 sendAnalyticsEmailIfEnabled user = do
   serverConfig <- asks serverConfig
-  when serverConfig.analytics.enabled (sendRegistrationCreatedAnalyticsMail (toDTO user))
+  when serverConfig.analytics.enabled (sendRegistrationCreatedAnalyticsMail user)
 
 checkIfRegistrationIsEnabled =
   checkIfTenantFeatureIsEnabled "Registration" (\c -> c.authentication.internal.registration.enabled)

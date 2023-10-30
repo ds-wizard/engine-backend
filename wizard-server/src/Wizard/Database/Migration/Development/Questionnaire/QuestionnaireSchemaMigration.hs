@@ -17,11 +17,11 @@ runMigration = do
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Questionnaire) drop tables"
   let sql =
-        "drop table if exists questionnaire_comment cascade; \
-        \drop table if exists questionnaire_comment_thread cascade; \
-        \drop table if exists questionnaire_perm_group cascade; \
-        \drop table if exists questionnaire_perm_user cascade; \
-        \drop table if exists questionnaire cascade; "
+        "DROP TABLE IF EXISTS questionnaire_comment CASCADE; \
+        \DROP TABLE IF EXISTS questionnaire_comment_thread CASCADE; \
+        \DROP TABLE IF EXISTS questionnaire_perm_group CASCADE; \
+        \DROP TABLE IF EXISTS questionnaire_perm_user CASCADE; \
+        \DROP TABLE IF EXISTS questionnaire CASCADE; "
   let action conn = execute_ conn sql
   runDB action
 
@@ -29,136 +29,107 @@ createTables = do
   createQtnTable
   createQtnAclUserTable
   createQtnAclGroupTable
+  createQtnCommentThreadTable
   createQtnCommentTable
 
 createQtnTable = do
   logInfo _CMP_MIGRATION "(Table/Questionnaire) create table"
   let sql =
-        " create table questionnaire \
-        \ ( \
-        \     uuid uuid not null, \
-        \     name varchar not null, \
-        \     visibility varchar not null, \
-        \     sharing varchar not null, \
-        \     package_id varchar not null, \
-        \     selected_question_tag_uuids json not null, \
-        \     document_template_id varchar, \
-        \     format_uuid uuid, \
-        \     created_by uuid, \
-        \     events json not null, \
-        \     versions json not null, \
-        \     created_at timestamptz not null, \
-        \     updated_at timestamptz not null, \
-        \     description varchar, \
-        \     is_template boolean not null, \
-        \     squashed boolean not null, \
-        \     tenant_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \         constraint questionnaire_tenant_uuid_fk \
-        \             references tenant, \
-        \     project_tags text[] not null default '{}', \
-        \     answered_questions int not null default 0, \
-        \     unanswered_questions int not null default 0 \
-        \ ); \
-        \  \
-        \ create unique index questionnaire_uuid_uindex \
-        \     on questionnaire (uuid); \
-        \  \
-        \ alter table questionnaire \
-        \     add constraint questionnaire_pk \
-        \         primary key (uuid); \
-        \  \
-        \ alter table questionnaire \
-        \   add constraint questionnaire_package_id_fk \
-        \      foreign key (package_id, tenant_uuid) references package (id, tenant_uuid); \
-        \ alter table questionnaire \
-        \   add constraint questionnaire_document_template_id_fk \
-        \      foreign key (document_template_id, tenant_uuid) references document_template (id, tenant_uuid); \
-        \ alter table questionnaire \
-        \   add constraint questionnaire_user_entity_uuid_fk \
-        \      foreign key (created_by) references user_entity;"
+        "CREATE TABLE questionnaire \
+        \( \
+        \    uuid                        uuid        NOT NULL, \
+        \    name                        varchar     NOT NULL, \
+        \    visibility                  varchar     NOT NULL, \
+        \    sharing                     varchar     NOT NULL, \
+        \    package_id                  varchar     NOT NULL, \
+        \    selected_question_tag_uuids json        NOT NULL, \
+        \    document_template_id        varchar, \
+        \    format_uuid                 uuid, \
+        \    created_by                  uuid, \
+        \    events                      json        NOT NULL, \
+        \    versions                    json        NOT NULL, \
+        \    created_at                  timestamptz NOT NULL, \
+        \    updated_at                  timestamptz NOT NULL, \
+        \    description                 varchar, \
+        \    is_template                 boolean     NOT NULL, \
+        \    squashed                    boolean     NOT NULL, \
+        \    tenant_uuid                 uuid        NOT NULL, \
+        \    project_tags                text[]      NOT NULL, \
+        \    answered_questions          int         NOT NULL, \
+        \    unanswered_questions        int         NOT NULL, \
+        \    CONSTRAINT questionnaire_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_package_id_fk FOREIGN KEY (package_id, tenant_uuid) REFERENCES package (id, tenant_uuid), \
+        \    CONSTRAINT questionnaire_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid), \
+        \    CONSTRAINT questionnaire_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
   let action conn = execute_ conn sql
   runDB action
 
 createQtnAclUserTable = do
   logInfo _CMP_MIGRATION "(Table/QuestionnaireAclUser) create table"
   let sql =
-        "create table questionnaire_perm_user \
-        \ ( \
-        \     questionnaire_uuid uuid   not null \
-        \         constraint questionnaire_perm_user_questionnaire_uuid_fk \
-        \             references questionnaire on delete cascade, \
-        \     user_uuid          uuid   not null \
-        \         constraint questionnaire_perm_user_user_uuid_fk \
-        \             references user_entity, \
-        \     perms              text[] not null, \
-        \     tenant_uuid        uuid   not null \
-        \         constraint questionnaire_perm_user_tenant_uuid_fk \
-        \             references tenant, \
-        \     constraint questionnaire_perm_user_pk primary key (user_uuid, questionnaire_uuid, tenant_uuid) \
-        \ );"
+        "CREATE TABLE questionnaire_perm_user \
+        \( \
+        \    questionnaire_uuid uuid   NOT NULL, \
+        \    user_uuid          uuid   NOT NULL, \
+        \    perms              text[] NOT NULL, \
+        \    tenant_uuid        uuid   NOT NULL, \
+        \    CONSTRAINT questionnaire_perm_user_pk PRIMARY KEY (user_uuid, questionnaire_uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_perm_user_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_perm_user_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_perm_user_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
   let action conn = execute_ conn sql
   runDB action
 
 createQtnAclGroupTable = do
   logInfo _CMP_MIGRATION "(Table/QuestionnaireAclGroup) create table"
   let sql =
-        "create table questionnaire_perm_group \
-        \ ( \
-        \     questionnaire_uuid uuid   not null \
-        \         constraint questionnaire_perm_group_questionnaire_uuid_fk \
-        \             references questionnaire on delete cascade, \
-        \     user_group_uuid          uuid   not null, \
-        \     perms              text[] not null, \
-        \     tenant_uuid        uuid   not null \
-        \         constraint questionnaire_perm_group_tenant_uuid_fk \
-        \             references tenant, \
-        \     constraint questionnaire_perm_group_pk primary key (user_group_uuid, questionnaire_uuid, tenant_uuid), \
-        \     constraint questionnaire_perm_group_user_uuid_tenant_uuid_fk foreign key (user_group_uuid, tenant_uuid) references user_group \
-        \ );"
+        "CREATE TABLE questionnaire_perm_group \
+        \( \
+        \    questionnaire_uuid uuid   NOT NULL, \
+        \    user_group_uuid    uuid   NOT NULL, \
+        \    perms              text[] NOT NULL, \
+        \    tenant_uuid        uuid   NOT NULL, \
+        \    CONSTRAINT questionnaire_perm_group_pk PRIMARY KEY (user_group_uuid, questionnaire_uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_perm_group_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_perm_group_user_group_uuid_fk FOREIGN KEY (user_group_uuid, tenant_uuid) REFERENCES user_group (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_perm_group_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createQtnCommentThreadTable = do
+  logInfo _CMP_MIGRATION "(Table/QuestionnaireCommentThread) create table"
+  let sql =
+        "CREATE TABLE questionnaire_comment_thread \
+        \( \
+        \    uuid               uuid        NOT NULL, \
+        \    path               text        NOT NULL, \
+        \    resolved           bool        NOT NULL, \
+        \    private            bool        NOT NULL, \
+        \    questionnaire_uuid uuid        NOT NULL, \
+        \    created_by         uuid, \
+        \    created_at         timestamptz NOT NULL, \
+        \    updated_at         timestamptz NOT NULL, \
+        \    CONSTRAINT questionnaire_comment_thread_pk PRIMARY KEY (uuid, questionnaire_uuid) \
+        \);"
   let action conn = execute_ conn sql
   runDB action
 
 createQtnCommentTable = do
   logInfo _CMP_MIGRATION "(Table/QuestionnaireComment) create table"
   let sql =
-        "create table questionnaire_comment_thread \
+        "CREATE TABLE questionnaire_comment \
         \( \
-        \    uuid       uuid        not null \
-        \        constraint questionnaire_comment_thread_pk \
-        \            primary key, \
-        \    path       text        not null, \
-        \    resolved   bool        not null, \
-        \    private    bool        not null, \
-        \    questionnaire_uuid uuid   not null \
-        \        constraint questionnaire_comment_thread_questionnaire_uuid_fk \
-        \            references questionnaire, \
-        \    created_by uuid \
-        \        constraint questionnaire_comment_thread_user_entity_uuid_fk \
-        \            references user_entity, \
-        \    created_at timestamptz not null, \
-        \    updated_at timestamptz not null \
-        \); \
-        \ \
-        \create unique index questionnaire_comment_thread_uuid_uindex \
-        \    on questionnaire_comment_thread (uuid); \
-        \ \
-        \create table questionnaire_comment \
-        \( \
-        \    uuid       uuid        not null \
-        \        constraint questionnaire_comment_pk \
-        \            primary key, \
-        \    text   text        not null, \
-        \    comment_thread_uuid uuid \
-        \        constraint questionnaire_comment_questionnaire_comment_thread_uuid_fk \
-        \            references questionnaire_comment_thread, \
-        \    created_by uuid \
-        \        constraint questionnaire_comment_user_entity_uuid_fk \
-        \            references user_entity, \
-        \    created_at timestamptz not null, \
-        \    updated_at timestamptz not null \
-        \); \
-        \ \
-        \create unique index questionnaire_comment_uuid_uindex \
-        \    on questionnaire_comment (uuid); "
+        \    uuid                uuid        NOT NULL, \
+        \    text                text        NOT NULL, \
+        \    comment_thread_uuid uuid, \
+        \    created_by          uuid, \
+        \    created_at          timestamptz NOT NULL, \
+        \    updated_at          timestamptz NOT NULL, \
+        \    CONSTRAINT questionnaire_comment_pk PRIMARY KEY (uuid, comment_thread_uuid) \
+        \);"
   let action conn = execute_ conn sql
   runDB action

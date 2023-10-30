@@ -16,20 +16,20 @@ runMigration = do
 
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Audit) drop table"
-  let sql = "drop table if exists audit;"
+  let sql = "DROP TABLE IF EXISTS audit;"
   let action conn = execute_ conn sql
   runDB action
 
 createTables = do
   logInfo _CMP_MIGRATION "(Table/Audit) create table"
   let sql =
-        "create table audit \
-        \ ( \
-        \     type                varchar                  not null, \
-        \     organization_id     varchar                  not null, \
-        \     instance_statistics json                     not null, \
-        \     package_id          varchar                  not null, \
-        \     created_at          timestamp with time zone not null \
-        \ );"
+        "CREATE TABLE audit \
+        \( \
+        \    type                varchar     NOT NULL, \
+        \    organization_id     varchar     NOT NULL, \
+        \    instance_statistics json        NOT NULL, \
+        \    package_id          varchar     NOT NULL, \
+        \    created_at          timestamptz NOT NULL \
+        \);"
   let action conn = execute_ conn sql
   runDB action
