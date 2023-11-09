@@ -239,13 +239,14 @@ addComment :: U.UUID -> U.UUID -> AddCommentEventChangeDTO -> AppContextM ()
 addComment qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkCommentPermission myself
+  tenantUuid <- asks currentTenantUuid
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
-  let comment = toComment reqDto mCreatedByUuid now
+  let comment = toComment reqDto tenantUuid mCreatedByUuid now
   if reqDto.newThread
     then do
-      let thread = toCommentThread reqDto qtnUuid mCreatedByUuid now
+      let thread = toCommentThread reqDto qtnUuid tenantUuid mCreatedByUuid now
       insertQuestionnaireThreadAndComment thread comment
     else insertQuestionnaireComment comment
   let resDto = toAddCommentEventDTO' reqDto mCreatedBy now

@@ -1,7 +1,7 @@
 module Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO where
 
 import Control.Monad.Except (throwError)
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import Data.String
 import Data.Time
 import qualified Data.UUID as U
@@ -22,34 +22,34 @@ entityName = "questionnaire_comment_thread"
 
 findQuestionnaireCommentThreads :: U.UUID -> AppContextM [QuestionnaireCommentThread]
 findQuestionnaireCommentThreads qtnUuid = do
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
           "SELECT questionnaire_comment_thread.*, \
-          \       (SELECT array_agg(concat(uuid, ':::::', text, ':::::', comment_thread_uuid, ':::::', created_by, ':::::', \
-          \                                created_at, ':::::', updated_at)) AS comments \
+          \       (SELECT array_agg(concat(uuid, ':::::', text, ':::::', comment_thread_uuid, ':::::', tenant_uuid, ':::::', created_by, ':::::', created_at, ':::::', updated_at)) AS comments \
           \        FROM questionnaire_comment \
           \        WHERE questionnaire_comment.comment_thread_uuid = questionnaire_comment_thread.uuid \
           \        GROUP BY comment_thread_uuid) AS comments \
           \FROM questionnaire_comment_thread \
-          \WHERE questionnaire_uuid = ?"
-  let params = [toField qtnUuid]
+          \WHERE questionnaire_uuid = ? AND tenant_uuid = ?"
+  let params = [toField qtnUuid, toField tenantUuid]
   logQuery sql params
   let action conn = query conn sql params
   runDB action
 
 findQuestionnaireCommentThreadById :: U.UUID -> AppContextM (Maybe QuestionnaireCommentThread)
 findQuestionnaireCommentThreadById uuid = do
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
           "SELECT questionnaire_comment_thread.*, \
-          \       (SELECT array_agg(concat(uuid, ':::::', text, ':::::', comment_thread_uuid, ':::::', created_by, ':::::', \
-          \                                created_at, ':::::', updated_at)) AS comments \
+          \       (SELECT array_agg(concat(uuid, ':::::', text, ':::::', comment_thread_uuid, ':::::', tenant_uuid, ':::::', created_by, ':::::', created_at, ':::::', updated_at)) AS comments \
           \        FROM questionnaire_comment \
           \        WHERE questionnaire_comment.comment_thread_uuid = questionnaire_comment_thread.uuid \
           \        GROUP BY comment_thread_uuid) AS comments \
           \FROM questionnaire_comment_thread \
-          \WHERE uuid = ?"
-  let params = [toField uuid]
+          \WHERE uuid = ? AND tenant_uuid = ?"
+  let params = [toField uuid, toField tenantUuid]
   logQuery sql params
   let action conn = query conn sql params
   entities <- runDB action
@@ -69,12 +69,13 @@ insertQuestionnaireCommentThread = createInsertFn entityName
 
 updateQuestionnaireCommentThreadById :: QuestionnaireCommentThread -> AppContextM QuestionnaireCommentThread
 updateQuestionnaireCommentThreadById entity = do
+  tenantUuid <- asks currentTenantUuid
   now <- liftIO getCurrentTime
   let updatedEntity = entity {updatedAt = now} :: QuestionnaireCommentThread
   let sql =
         fromString
-          "UPDATE questionnaire_comment_thread SET uuid = ?, text = ?, questionnaire_uuid = ?, created_by = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
-  let params = toRow updatedEntity ++ [toField updatedEntity.uuid]
+          "UPDATE questionnaire_comment_thread SET uuid = ?, text = ?, questionnaire_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, tenant_uuid = ? WHERE uuid = ? AND tenant_uuid = ?"
+  let params = toRow updatedEntity ++ [toField updatedEntity.uuid, toField tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -82,8 +83,9 @@ updateQuestionnaireCommentThreadById entity = do
 
 updateQuestionnaireCommentThreadResolvedById :: U.UUID -> Bool -> AppContextM Int64
 updateQuestionnaireCommentThreadResolvedById uuid resolved = do
-  let sql = fromString "UPDATE questionnaire_comment_thread SET resolved = ?, updated_at = now() WHERE uuid = ?"
-  let params = [toField resolved, toField uuid]
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE questionnaire_comment_thread SET resolved = ?, updated_at = now() WHERE uuid = ? AND tenant_uuid = ?"
+  let params = [toField resolved, toField uuid, toField tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -92,4 +94,6 @@ deleteQuestionnaireCommentThreads :: AppContextM Int64
 deleteQuestionnaireCommentThreads = createDeleteEntitiesFn entityName
 
 deleteQuestionnaireCommentThreadById :: U.UUID -> AppContextM Int64
-deleteQuestionnaireCommentThreadById uuid = createDeleteEntityByFn entityName [("uuid", U.toString uuid)]
+deleteQuestionnaireCommentThreadById uuid = do
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntityByFn entityName [("uuid", U.toString uuid), ("tenant_uuid", U.toString tenantUuid)]

@@ -39,8 +39,8 @@ toCommentThreadDTO thread mUser comments =
     , updatedAt = thread.updatedAt
     }
 
-toCommentThread :: AddCommentEventChangeDTO -> U.UUID -> Maybe U.UUID -> UTCTime -> QuestionnaireCommentThread
-toCommentThread event qtnUuid mCreatedByUuid now =
+toCommentThread :: AddCommentEventChangeDTO -> U.UUID -> U.UUID -> Maybe U.UUID -> UTCTime -> QuestionnaireCommentThread
+toCommentThread event qtnUuid tenantUuid mCreatedByUuid now =
   QuestionnaireCommentThread
     { uuid = event.threadUuid
     , path = event.path
@@ -48,6 +48,7 @@ toCommentThread event qtnUuid mCreatedByUuid now =
     , comments = []
     , private = event.private
     , questionnaireUuid = qtnUuid
+    , tenantUuid = tenantUuid
     , createdBy = mCreatedByUuid
     , createdAt = now
     , updatedAt = now
@@ -63,12 +64,13 @@ toCommentDTO comment mUser =
     , updatedAt = comment.updatedAt
     }
 
-toComment :: AddCommentEventChangeDTO -> Maybe U.UUID -> UTCTime -> QuestionnaireComment
-toComment event mCreatedByUuid now =
+toComment :: AddCommentEventChangeDTO -> U.UUID -> Maybe U.UUID -> UTCTime -> QuestionnaireComment
+toComment event tenantUuid mCreatedByUuid now =
   QuestionnaireComment
     { uuid = event.commentUuid
     , text = event.text
     , threadUuid = event.threadUuid
+    , tenantUuid = tenantUuid
     , createdBy = mCreatedByUuid
     , createdAt = now
     , updatedAt = now

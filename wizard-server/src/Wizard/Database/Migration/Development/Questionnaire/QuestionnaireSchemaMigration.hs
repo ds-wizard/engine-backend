@@ -113,7 +113,10 @@ createQtnCommentThreadTable = do
         \    created_by         uuid, \
         \    created_at         timestamptz NOT NULL, \
         \    updated_at         timestamptz NOT NULL, \
-        \    CONSTRAINT questionnaire_comment_thread_pk PRIMARY KEY (uuid, questionnaire_uuid) \
+        \    tenant_uuid        uuid        NOT NULL, \
+        \    CONSTRAINT questionnaire_comment_thread_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_comment_thread_questionnaire_uuid FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_comment_thread_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -129,7 +132,10 @@ createQtnCommentTable = do
         \    created_by          uuid, \
         \    created_at          timestamptz NOT NULL, \
         \    updated_at          timestamptz NOT NULL, \
-        \    CONSTRAINT questionnaire_comment_pk PRIMARY KEY (uuid, comment_thread_uuid) \
+        \    tenant_uuid         uuid        NOT NULL, \
+        \    CONSTRAINT questionnaire_comment_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_comment_comment_thread_uuid FOREIGN KEY (comment_thread_uuid, tenant_uuid) REFERENCES questionnaire_comment_thread (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_comment_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
         \);"
   let action conn = execute_ conn sql
   runDB action

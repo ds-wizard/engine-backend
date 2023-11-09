@@ -6,6 +6,7 @@ import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -32,6 +33,7 @@ cmtQ1_t1 =
     , comments = [cmtQ1_t1_1, cmtQ1_t1_2]
     , private = False
     , questionnaireUuid = u' "af984a75-56e3-49f8-b16f-d6b99599910a"
+    , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -48,6 +50,7 @@ create_cmtQ1_t1 qtnUuid = do
       , comments = []
       , private = False
       , questionnaireUuid = qtnUuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = Just userAlbert.uuid
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
       , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -71,6 +74,7 @@ cmtQ1_t1_1 =
     { uuid = u' "a2d4a1f6-6148-43a0-98d1-158176863a3c"
     , text = "1st comment to 1st question"
     , threadUuid = cmtQ1_t1.uuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -84,6 +88,7 @@ create_cmtQ1_t1_1 threadUuid = do
       { uuid = commentUuid
       , text = "1st comment to 1st question"
       , threadUuid = threadUuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = Just userAlbert.uuid
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
       , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -101,6 +106,7 @@ cmtQ1_t1_2 =
     { uuid = u' "09861528-7ca9-48d8-917c-3bf9f240bdf3"
     , text = "2nd comment to 1st question"
     , threadUuid = cmtQ1_t1.uuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -114,6 +120,7 @@ create_cmtQ1_t1_2 threadUuid = do
       { uuid = commentUuid
       , text = "2nd comment to 1st question"
       , threadUuid = threadUuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = Just userAlbert.uuid
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
       , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -134,6 +141,7 @@ cmtQ2_t1 =
     , comments = [cmtQ2_t1_1]
     , private = False
     , questionnaireUuid = u' "af984a75-56e3-49f8-b16f-d6b99599910a"
+    , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -148,6 +156,7 @@ cmtQ2_t1_1 =
     { uuid = u' "e9827a92-ecfd-4410-8809-ea761fe03bd3"
     , text = "1nd comment to 2st question"
     , threadUuid = cmtQ2_t1.uuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0

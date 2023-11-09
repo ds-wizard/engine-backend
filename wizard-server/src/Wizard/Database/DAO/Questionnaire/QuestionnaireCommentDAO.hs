@@ -1,6 +1,6 @@
 module Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO where
 
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import Data.String
 import Data.Time
 import qualified Data.UUID as U
@@ -18,9 +18,6 @@ import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireComment
 
 entityName = "questionnaire_comment"
-
-findQuestionnaireComments :: AppContextM [QuestionnaireComment]
-findQuestionnaireComments = createFindEntitiesFn entityName
 
 insertQuestionnaireComment :: QuestionnaireComment -> AppContextM Int64
 insertQuestionnaireComment = createInsertFn entityName
@@ -55,12 +52,13 @@ insertQuestionnaireThreadAndComment' thread comment = do
 
 updateQuestionnaireCommentById :: QuestionnaireComment -> AppContextM QuestionnaireComment
 updateQuestionnaireCommentById entity = do
+  tenantUuid <- asks currentTenantUuid
   now <- liftIO getCurrentTime
   let updatedEntity = entity {updatedAt = now} :: QuestionnaireComment
   let sql =
         fromString
-          "UPDATE questionnaire_comment SET uuid = ?, text = ?, created_by = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
-  let params = toRow updatedEntity ++ [toField updatedEntity.uuid]
+          "UPDATE questionnaire_comment SET uuid = ?, text = ?, created_by = ?, created_at = ?, updated_at = ?, tenant_uuid = ? WHERE uuid = ? AND tenant_uuid = ?"
+  let params = toRow updatedEntity ++ [toField updatedEntity.uuid, toField tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -68,8 +66,9 @@ updateQuestionnaireCommentById entity = do
 
 updateQuestionnaireCommentTextById :: U.UUID -> String -> AppContextM Int64
 updateQuestionnaireCommentTextById uuid text = do
-  let sql = fromString "UPDATE questionnaire_comment SET text = ?, updated_at = now() WHERE uuid = ?"
-  let params = [toField text, toField uuid]
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE questionnaire_comment SET text = ?, updated_at = now() WHERE uuid = ? AND tenant_uuid = ?"
+  let params = [toField text, toField uuid, toField tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -78,8 +77,11 @@ deleteQuestionnaireComments :: AppContextM Int64
 deleteQuestionnaireComments = createDeleteEntitiesFn entityName
 
 deleteQuestionnaireCommentsByThreadUuid :: U.UUID -> AppContextM Int64
-deleteQuestionnaireCommentsByThreadUuid threadUuid =
-  createDeleteEntityByFn entityName [("comment_thread_uuid", U.toString threadUuid)]
+deleteQuestionnaireCommentsByThreadUuid threadUuid = do
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntityByFn entityName [("comment_thread_uuid", U.toString threadUuid), ("tenant_uuid", U.toString tenantUuid)]
 
 deleteQuestionnaireCommentById :: U.UUID -> AppContextM Int64
-deleteQuestionnaireCommentById uuid = createDeleteEntityByFn entityName [("uuid", U.toString uuid)]
+deleteQuestionnaireCommentById uuid = do
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntityByFn entityName [("uuid", U.toString uuid), ("tenant_uuid", U.toString tenantUuid)]

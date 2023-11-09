@@ -20,6 +20,7 @@ migrate dbPool = do
   removeConstrains dbPool
   refactorQuestionnaireAcl dbPool
   addConstrains dbPool
+  adjustQuestionniareComment dbPool
 
 renameToTenant :: Pool Connection -> LoggingT IO (Maybe Error)
 renameToTenant dbPool = do
@@ -477,6 +478,26 @@ addConstrains dbPool = do
         \ALTER TABLE action_key ADD CONSTRAINT action_key_pk PRIMARY KEY (uuid, tenant_uuid); \
         \ALTER TABLE action_key ADD CONSTRAINT action_key_identity_fk FOREIGN KEY (identity, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid) ON DELETE CASCADE; \
         \ALTER TABLE action_key ADD CONSTRAINT action_key_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid);"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+adjustQuestionniareComment :: Pool Connection -> LoggingT IO (Maybe Error)
+adjustQuestionniareComment dbPool = do
+  let sql =
+        "ALTER TABLE questionnaire_comment DROP CONSTRAINT questionnaire_comment_pk; \
+        \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT questionnaire_comment_thread_pk; \
+        \ \
+        \ALTER TABLE questionnaire_comment_thread ADD tenant_uuid uuid NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'; \
+        \ALTER TABLE questionnaire_comment ADD tenant_uuid uuid NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'; \
+        \ \
+        \ALTER TABLE questionnaire_comment_thread ADD CONSTRAINT questionnaire_comment_thread_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire_comment_thread ADD CONSTRAINT questionnaire_comment_thread_questionnaire_uuid FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire_comment_thread ADD CONSTRAINT questionnaire_comment_thread_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
+        \ \
+        \ALTER TABLE questionnaire_comment ADD CONSTRAINT questionnaire_comment_pk PRIMARY KEY (uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire_comment ADD CONSTRAINT questionnaire_comment_comment_thread_uuid FOREIGN KEY (comment_thread_uuid, tenant_uuid) REFERENCES questionnaire_comment_thread (uuid, tenant_uuid); \
+        \ALTER TABLE questionnaire_comment ADD CONSTRAINT questionnaire_comment_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid);"
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing
