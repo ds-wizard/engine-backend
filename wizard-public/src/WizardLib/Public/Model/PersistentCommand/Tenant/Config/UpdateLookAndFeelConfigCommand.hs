@@ -6,7 +6,9 @@ import GHC.Generics
 import Shared.Common.Util.Aeson
 
 data UpdateLookAndFeelConfigCommand = UpdateLookAndFeelConfigCommand
-  { logoUrl :: Maybe String
+  { appTitle :: Maybe String
+  , appTitleShort :: Maybe String
+  , logoUrl :: Maybe String
   , primaryColor :: Maybe String
   , illustrationsColor :: Maybe String
   }

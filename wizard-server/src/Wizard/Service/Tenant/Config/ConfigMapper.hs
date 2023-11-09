@@ -89,7 +89,9 @@ fromLookAndFeel oldConfig command now =
   oldConfig
     { lookAndFeel =
         oldConfig.lookAndFeel
-          { logoUrl = command.logoUrl
+          { appTitle = command.appTitle
+          , appTitleShort = command.appTitleShort
+          , logoUrl = command.logoUrl
           , primaryColor = command.primaryColor
           , illustrationsColor = command.illustrationsColor
           }
