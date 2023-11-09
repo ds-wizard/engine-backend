@@ -115,9 +115,9 @@ fromTemporallyCreateDTO docUuid qtn documentTemplateId formatUuid repliesHash mC
     }
 
 toDocPersistentCommand :: U.UUID -> DocumentContext -> Document -> PersistentCommand U.UUID
-toDocPersistentCommand pUuid docContext doc =
+toDocPersistentCommand uuid docContext doc =
   toPersistentCommand
-    pUuid
+    uuid
     "doc_worker"
     "generateDocument"
     (encodeJsonToString docContext)

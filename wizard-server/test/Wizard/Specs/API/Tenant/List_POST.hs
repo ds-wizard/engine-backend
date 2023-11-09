@@ -58,8 +58,8 @@ reqBodyT dto = encode (reqDtoT dto)
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201 appContext = do
-  create_test_201 "HTTP 201 CREATED (anonymous)" appContext tenantCreateDto [] 2 False
-  create_test_201 "HTTP 201 CREATED (admin)" appContext tenantCreateDto [reqAuthHeader] 1 True
+  create_test_201 "HTTP 201 CREATED (anonymous)" appContext tenantCreateDto [] 1 False
+  create_test_201 "HTTP 201 CREATED (admin)" appContext tenantCreateDto [reqAuthHeader] 0 True
 
 create_test_201 title appContext reqDto authHeaders persistentCommandCount userActive =
   it title $

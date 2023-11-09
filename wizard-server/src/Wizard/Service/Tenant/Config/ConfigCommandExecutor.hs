@@ -15,7 +15,7 @@ import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateAuthenticati
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConfigCommand
 
-cComponent = "TenantConfig"
+cComponent = "tenant_config"
 
 execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command

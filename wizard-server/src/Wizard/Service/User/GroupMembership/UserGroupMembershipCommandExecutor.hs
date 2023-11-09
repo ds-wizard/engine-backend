@@ -10,7 +10,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.User.GroupMembership.UserGroupMembershipService
 import WizardLib.Public.Model.PersistentCommand.User.UpdateUserGroupMembershipCommand
 
-cComponent = "userGroupMembership"
+cComponent = "user_group_membership"
 
 execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command

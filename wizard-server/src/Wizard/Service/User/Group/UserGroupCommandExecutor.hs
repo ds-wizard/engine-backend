@@ -11,7 +11,7 @@ import Wizard.Service.User.Group.UserGroupService
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserGroupCommand
 import WizardLib.Public.Model.PersistentCommand.User.DeleteUserGroupCommand
 
-cComponent = "userGroup"
+cComponent = "user_group"
 
 execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command

@@ -3,6 +3,7 @@ module Wizard.Service.PersistentCommand.PersistentCommandExecutor where
 import qualified Data.UUID as U
 
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
+import qualified Shared.Prefab.Service.Prefab.PrefabCommandExecutor as PrefabCommandExecutor
 import Wizard.Model.Context.AppContext
 import qualified Wizard.Service.Questionnaire.QuestionnaireCommandExecutor as QuestionnaireCommandExecutor
 import qualified Wizard.Service.Tenant.Config.ConfigCommandExecutor as TenantConfigCommandExecutor
@@ -14,6 +15,7 @@ import qualified Wizard.Service.User.UserCommandExecutor as UserCommandExecutor
 
 execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command
+  | command.component == PrefabCommandExecutor.cComponent = PrefabCommandExecutor.execute command
   | command.component == QuestionnaireCommandExecutor.cComponent = QuestionnaireCommandExecutor.execute command
   | command.component == TenantCommandExecutor.cComponent = TenantCommandExecutor.execute command
   | command.component == TenantConfigCommandExecutor.cComponent = TenantConfigCommandExecutor.execute command

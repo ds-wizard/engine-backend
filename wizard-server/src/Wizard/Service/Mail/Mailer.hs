@@ -224,9 +224,9 @@ sendEmail dto createdBy = do
 sendEmailWithTenant :: ToJSON dto => dto -> U.UUID -> U.UUID -> AppContextM ()
 sendEmailWithTenant dto createdBy tenantUuid = do
   runInTransaction $ do
-    pUuid <- liftIO generateUuid
+    uuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let body = encodeJsonToString dto
-    let command = toPersistentCommand pUuid "mailer" "sendMail" body 10 False Nothing tenantUuid (Just . U.toString $ createdBy) now
+    let command = toPersistentCommand uuid "mailer" "sendMail" body 10 False Nothing tenantUuid (Just . U.toString $ createdBy) now
     insertPersistentCommand command
     return ()

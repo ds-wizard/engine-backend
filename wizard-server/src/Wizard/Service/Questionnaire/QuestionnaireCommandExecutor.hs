@@ -10,7 +10,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Questionnaire.QuestionnaireService
 import WizardLib.Public.Model.PersistentCommand.Questionnaire.CreateQuestionnaireCommand
 
-cComponent = "Questionnaire"
+cComponent = "questionnaire"
 
 execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command

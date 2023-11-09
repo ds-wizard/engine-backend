@@ -12,7 +12,7 @@ import WizardLib.Public.Model.PersistentCommand.Tenant.Plan.CreateOrUpdatePlanCo
 import WizardLib.Public.Model.PersistentCommand.Tenant.Plan.DeletePlanCommand
 import WizardLib.Public.Service.Tenant.Plan.PlanMapper
 
-cComponent = "plan"
+cComponent = "tenant_plan"
 
 execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command
