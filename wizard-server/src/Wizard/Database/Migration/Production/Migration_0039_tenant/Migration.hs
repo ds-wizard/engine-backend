@@ -491,6 +491,18 @@ adjustQuestionniareComment dbPool = do
         \ALTER TABLE questionnaire_comment_thread ADD tenant_uuid uuid NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'; \
         \ALTER TABLE questionnaire_comment ADD tenant_uuid uuid NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'; \
         \ \
+        \UPDATE questionnaire_comment_thread \
+        \SET tenant_uuid = nested.tenant_uuid \
+        \FROM (SELECT uuid, tenant_uuid \
+        \      FROM questionnaire) AS nested \
+        \WHERE nested.uuid = questionnaire_comment_thread.questionnaire_uuid; \
+        \ \
+        \UPDATE questionnaire_comment \
+        \SET tenant_uuid = nested.tenant_uuid \
+        \FROM (SELECT uuid, tenant_uuid \
+        \      FROM questionnaire_comment_thread) AS nested \
+        \WHERE nested.uuid = questionnaire_comment.comment_thread_uuid; \
+        \ \
         \ALTER TABLE questionnaire_comment_thread ADD CONSTRAINT questionnaire_comment_thread_pk PRIMARY KEY (uuid, tenant_uuid); \
         \ALTER TABLE questionnaire_comment_thread ADD CONSTRAINT questionnaire_comment_thread_questionnaire_uuid FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid); \
         \ALTER TABLE questionnaire_comment_thread ADD CONSTRAINT questionnaire_comment_thread_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid); \
