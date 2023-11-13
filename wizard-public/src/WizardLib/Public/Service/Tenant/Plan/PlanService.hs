@@ -19,36 +19,39 @@ getPlansForCurrentTenant = do
   context <- ask
   findTenantPlansForTenantUuid context.tenantUuid'
 
-createPlan' :: AppContextC s sc m => (U.UUID -> m tenant) -> (tenant -> m ()) -> U.UUID -> TenantPlanChangeDTO -> m TenantPlan
-createPlan' findTenantByUuid recomputePlansForTenant tenantUuid reqDto = do
+createPlan' :: AppContextC s sc m => (U.UUID -> m tenant) -> (tenant -> m ()) -> (U.UUID -> TenantPlan -> m ()) -> U.UUID -> TenantPlanChangeDTO -> m TenantPlan
+createPlan' findTenantByUuid recomputePlansForTenant runHook tenantUuid reqDto = do
   uuid <- liftIO generateUuid
-  createPlanWithUuid' findTenantByUuid recomputePlansForTenant uuid tenantUuid reqDto
+  createPlanWithUuid' findTenantByUuid recomputePlansForTenant runHook uuid tenantUuid reqDto
 
-createPlanWithUuid' :: AppContextC s sc m => (U.UUID -> m tenant) -> (tenant -> m ()) -> U.UUID -> U.UUID -> TenantPlanChangeDTO -> m TenantPlan
-createPlanWithUuid' findTenantByUuid recomputePlansForTenant uuid tenantUuid reqDto = do
+createPlanWithUuid' :: AppContextC s sc m => (U.UUID -> m tenant) -> (tenant -> m ()) -> (U.UUID -> TenantPlan -> m ()) -> U.UUID -> U.UUID -> TenantPlanChangeDTO -> m TenantPlan
+createPlanWithUuid' findTenantByUuid recomputePlansForTenant runHook uuid tenantUuid reqDto = do
   checkPermission _TENANT_PERM
   tenant <- findTenantByUuid tenantUuid
   now <- liftIO getCurrentTime
   let plan = fromChangeDTO reqDto uuid tenantUuid now now
   insertTenantPlan plan
   recomputePlansForTenant tenant
+  runHook plan.tenantUuid plan
   return plan
 
-modifyPlan' :: AppContextC s sc m => (U.UUID -> m tenant) -> (tenant -> m ()) -> U.UUID -> U.UUID -> TenantPlanChangeDTO -> m TenantPlan
-modifyPlan' findTenantByUuid recomputePlansForTenant aUuid pUuid reqDto = do
+modifyPlan' :: AppContextC s sc m => (U.UUID -> m tenant) -> (tenant -> m ()) -> (U.UUID -> TenantPlan -> m ()) -> U.UUID -> U.UUID -> TenantPlanChangeDTO -> m TenantPlan
+modifyPlan' findTenantByUuid recomputePlansForTenant runHook aUuid pUuid reqDto = do
   checkPermission _TENANT_PERM
   tenant <- findTenantByUuid aUuid
   plan <- findTenantPlanByUuid pUuid
   let updatedPlan = fromChangeDTO reqDto plan.uuid plan.tenantUuid plan.createdAt plan.updatedAt
   updateTenantPlanByUuid updatedPlan
   recomputePlansForTenant tenant
+  runHook plan.tenantUuid plan
   return updatedPlan
 
-deletePlan' :: AppContextC s sc m => (U.UUID -> m tenant) -> (tenant -> m ()) -> U.UUID -> U.UUID -> m ()
-deletePlan' findTenantByUuid recomputePlansForTenant aUuid pUuid = do
+deletePlan' :: AppContextC s sc m => (U.UUID -> m tenant) -> (tenant -> m ()) -> (U.UUID -> TenantPlan -> m ()) -> U.UUID -> U.UUID -> m ()
+deletePlan' findTenantByUuid recomputePlansForTenant runHook aUuid pUuid = do
   checkPermission _TENANT_PERM
   tenant <- findTenantByUuid aUuid
   plan <- findTenantPlanByUuid pUuid
   deleteTenantPlanByUuid pUuid
   recomputePlansForTenant tenant
+  runHook plan.tenantUuid plan
   return ()

@@ -28,16 +28,16 @@ import WizardLib.Public.Model.Tenant.Plan.TenantPlan
 import WizardLib.Public.Service.Tenant.Plan.PlanService
 
 createPlan :: U.UUID -> TenantPlanChangeDTO -> AppContextM TenantPlan
-createPlan = createPlan' findTenantByUuid recomputePlansForTenant
+createPlan = createPlan' findTenantByUuid recomputePlansForTenant (\_ _ -> return ())
 
 createPlanWithUuid :: U.UUID -> U.UUID -> TenantPlanChangeDTO -> AppContextM TenantPlan
-createPlanWithUuid = createPlanWithUuid' findTenantByUuid recomputePlansForTenant
+createPlanWithUuid = createPlanWithUuid' findTenantByUuid recomputePlansForTenant (\_ _ -> return ())
 
 modifyPlan :: U.UUID -> U.UUID -> TenantPlanChangeDTO -> AppContextM TenantPlan
-modifyPlan = modifyPlan' findTenantByUuid recomputePlansForTenant
+modifyPlan = modifyPlan' findTenantByUuid recomputePlansForTenant (\_ _ -> return ())
 
 deletePlan :: U.UUID -> U.UUID -> AppContextM ()
-deletePlan = deletePlan' findTenantByUuid recomputePlansForTenant
+deletePlan = deletePlan' findTenantByUuid recomputePlansForTenant (\_ _ -> return ())
 
 recomputePlansForTenants :: AppContextM ()
 recomputePlansForTenants = do
