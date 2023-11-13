@@ -8,6 +8,7 @@ import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateAuthenticationConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdatePrivacyAndSupportConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConfigCommand
 
 toChangeDTO :: TenantConfig -> TenantConfigChangeDTO
@@ -94,6 +95,21 @@ fromLookAndFeel oldConfig command now =
           , logoUrl = command.logoUrl
           , primaryColor = command.primaryColor
           , illustrationsColor = command.illustrationsColor
+          }
+    , updatedAt = now
+    }
+
+fromPrivacyAndSupport :: TenantConfig -> UpdatePrivacyAndSupportConfigCommand -> UTCTime -> TenantConfig
+fromPrivacyAndSupport oldConfig command now =
+  oldConfig
+    { privacyAndSupport =
+        oldConfig.privacyAndSupport
+          { privacyUrl = command.privacyUrl
+          , termsOfServiceUrl = command.termsOfServiceUrl
+          , supportEmail = command.supportEmail
+          , supportSiteName = command.supportSiteName
+          , supportSiteUrl = command.supportSiteUrl
+          , supportSiteIcon = command.supportSiteIcon
           }
     , updatedAt = now
     }

@@ -13,6 +13,7 @@ import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateAuthenticationConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdatePrivacyAndSupportConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConfigCommand
 
 cComponent = "tenant_config"
@@ -22,6 +23,7 @@ execute command
   | command.function == cCreateAuthenticationName = cCreateAuthentication command
   | command.function == cUpdateRegistryName = cUpdateRegistry command
   | command.function == cUpdateLookAndFeelName = cUpdateLookAndFeel command
+  | command.function == cUpdatePrivacyAndSupportName = cUpdatePrivacyAndSupport command
 
 cCreateAuthenticationName = "createAuthentication"
 
@@ -61,6 +63,20 @@ cUpdateLookAndFeel persistentCommand = do
       tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
       now <- liftIO getCurrentTime
       let updatedTenantConfig = fromLookAndFeel tenantConfig command now
+      modifyTenantConfig updatedTenantConfig
+      return (DonePersistentCommandState, Nothing)
+    Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
+
+cUpdatePrivacyAndSupportName = "updatePrivacyAndSupport"
+
+cUpdatePrivacyAndSupport :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
+cUpdatePrivacyAndSupport persistentCommand = do
+  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdatePrivacyAndSupportConfigCommand
+  case eCommand of
+    Right command -> do
+      tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
+      now <- liftIO getCurrentTime
+      let updatedTenantConfig = fromPrivacyAndSupport tenantConfig command now
       modifyTenantConfig updatedTenantConfig
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
