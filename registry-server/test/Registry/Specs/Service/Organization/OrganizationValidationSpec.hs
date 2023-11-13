@@ -12,7 +12,7 @@ organizationValidationSpec =
       isNothing (validateOrganizationId "base.organization") `shouldBe` True
       isNothing (validateOrganizationId "base.organization.e") `shouldBe` True
       isJust (validateOrganizationId "a") `shouldBe` True
-      isJust (validateOrganizationId "a-b") `shouldBe` True
+      isJust (validateOrganizationId "a_b") `shouldBe` True
       isJust (validateOrganizationId "a_bc") `shouldBe` True
       isJust (validateOrganizationId ".cz") `shouldBe` True
       isJust (validateOrganizationId "cz.") `shouldBe` True

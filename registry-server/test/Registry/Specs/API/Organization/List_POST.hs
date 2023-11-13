@@ -85,7 +85,7 @@ test_400_invalid_organizationId appContext =
   it "HTTP 400 BAD REQUEST when organizationId is not in valid format" $
     -- GIVEN: Prepare request
     do
-      let reqDto = orgGlobalCreate {organizationId = "organization-amsterdam"} :: OrganizationCreateDTO
+      let reqDto = orgGlobalCreate {organizationId = "organization_amsterdam"} :: OrganizationCreateDTO
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400

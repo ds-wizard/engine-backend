@@ -36,7 +36,7 @@ validateOrganizationId orgId =
     then Nothing
     else Just $ ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT])
   where
-    validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9.]*[a-zA-Z0-9]$"
+    validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9.-]*[a-zA-Z0-9]$"
 
 validateOrganizationIdUniqueness :: String -> AppContextM ()
 validateOrganizationIdUniqueness orgId = do
