@@ -76,8 +76,8 @@ updatePersistentCommandByUuid :: (AppContextC s sc m, ToField identity) => Persi
 updatePersistentCommandByUuid command = do
   let sql =
         fromString
-          "UPDATE persistent_command SET uuid = ?, state = ?, component = ?, function = ?, body = ?, last_error_message = ?, attempts = ?, max_attempts = ?, tenant_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, internal = ?, destination = ?, last_trace_uuid = ? WHERE uuid = ?"
-  let params = toRow command ++ [toField . U.toText $ command.uuid]
+          "UPDATE persistent_command SET uuid = ?, state = ?, component = ?, function = ?, body = ?, last_error_message = ?, attempts = ?, max_attempts = ?, tenant_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, internal = ?, destination = ?, last_trace_uuid = ? WHERE uuid = ? AND tenant_uuid = ? AND state != 'DonePersistentCommandState'"
+  let params = toRow command ++ [toField command.uuid, toField command.tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
