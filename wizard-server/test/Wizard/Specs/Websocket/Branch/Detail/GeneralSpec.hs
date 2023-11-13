@@ -6,15 +6,15 @@ import Test.Hspec hiding (shouldBe)
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Uuid
-import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Branch.Data.Branches
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Branch.Branch
 import Wizard.Service.Branch.BranchService
 
-import Wizard.Model.App.App
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Tenant.Tenant
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 import Wizard.Specs.Websocket.Branch.Detail.Common
@@ -75,7 +75,7 @@ test404 appContext = do
             NotExistsError
               ( _ERROR_DATABASE__ENTITY_NOT_FOUND
                   "branch"
-                  [("app_uuid", U.toString defaultApp.uuid), ("uuid", nonExistingBranchUuid)]
+                  [("tenant_uuid", U.toString defaultTenant.uuid), ("uuid", nonExistingBranchUuid)]
               )
       -- WHEN:
       (c1, s1) <- createConnection appContext (reqUrlT (u' nonExistingBranchUuid) (Just reqAuthToken))

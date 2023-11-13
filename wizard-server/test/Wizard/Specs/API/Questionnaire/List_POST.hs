@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.List_POST (
-  list_post,
+  list_POST,
 ) where
 
 import Data.Aeson (encode)
@@ -9,7 +9,6 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
@@ -18,7 +17,7 @@ import qualified Wizard.Database.Migration.Development.DocumentTemplate.Document
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Questionnaire.QuestionnairePerm
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
@@ -28,11 +27,11 @@ import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /questionnaires
+-- POST /wizard-api/questionnaires
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith ((), Application)
-list_post appContext =
-  describe "POST /questionnaires" $ do
+list_POST :: AppContext -> SpecWith ((), Application)
+list_POST appContext =
+  describe "POST /wizard-api/questionnaires" $ do
     test_201 appContext
     test_400 appContext
     test_403 appContext
@@ -42,7 +41,7 @@ list_post appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/questionnaires"
+reqUrl = "/wizard-api/questionnaires"
 
 reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
@@ -113,10 +112,9 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
         else do
           let aPermissions =
                 [ (head questionnaire1.permissions)
-                    { uuid = (head resBody.permissions).uuid
-                    , questionnaireUuid = resBody.uuid
+                    { questionnaireUuid = resBody.uuid
                     }
-                  :: QuestionnairePermRecord
+                  :: QuestionnairePerm
                 ]
           assertExistenceOfQuestionnaireInDB
             appContext

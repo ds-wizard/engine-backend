@@ -11,7 +11,7 @@ import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import RegistryLib.Model.Organization.Organization
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
 import qualified Shared.Common.Model.Context.AppContext as S_AppContext
@@ -70,8 +70,8 @@ instance HasField "identityEmail'" AppContext (Maybe String) where
 instance HasField "traceUuid'" AppContext U.UUID where
   getField = (.traceUuid)
 
-instance HasField "appUuid'" AppContext U.UUID where
-  getField entity = defaultAppUuid
+instance HasField "tenantUuid'" AppContext U.UUID where
+  getField entity = defaultTenantUuid
 
 instance AclContext AppContextM where
   checkPermission perm = return ()

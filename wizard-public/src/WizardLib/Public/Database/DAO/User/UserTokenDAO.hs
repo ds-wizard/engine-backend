@@ -26,12 +26,12 @@ pageLabel = "tokens"
 
 findUserTokens :: AppContextC s sc m => m [UserToken]
 findUserTokens = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findUserTokensByUserUuidAndType :: AppContextC s sc m => U.UUID -> UserTokenType -> Maybe U.UUID -> m [UserTokenList]
 findUserTokensByUserUuidAndType userUuid tokenType mCurrentTokenUuid = do
-  appUuid <- asks (.appUuid')
+  tenantUuid <- asks (.tenantUuid')
   let currentSessionCondition =
         case mCurrentTokenUuid of
           Just _ -> "uuid = ?"
@@ -41,9 +41,9 @@ findUserTokensByUserUuidAndType userUuid tokenType mCurrentTokenUuid = do
           f'
             "SELECT uuid, name, user_agent, %s as current_session, expires_at, created_at \
             \FROM %s \
-            \WHERE app_uuid = ? AND user_uuid = ? AND type = ?"
+            \WHERE tenant_uuid = ? AND user_uuid = ? AND type = ?"
             [currentSessionCondition, entityName]
-  let params = (fmap U.toString . maybeToList $ mCurrentTokenUuid) ++ [U.toString appUuid, U.toString userUuid, show tokenType]
+  let params = (fmap U.toString . maybeToList $ mCurrentTokenUuid) ++ [U.toString tenantUuid, U.toString userUuid, show tokenType]
   logQuery sql params
   let action conn = query conn sql params
   runDB action
@@ -62,22 +62,22 @@ findApiUserTokensWithCloseExpiration = do
 
 findUserTokensByUserUuid :: AppContextC s sc m => U.UUID -> m [UserToken]
 findUserTokensByUserUuid userUuid = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("user_uuid", U.toString userUuid)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("user_uuid", U.toString userUuid)]
 
 findUserTokensBySessionState :: AppContextC s sc m => String -> m [UserToken]
 findUserTokensBySessionState sessionState = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("session_state", sessionState)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("session_state", sessionState)]
 
 findUserTokensByValue :: AppContextC s sc m => String -> m [UserToken]
 findUserTokensByValue value = do
-  appUuid <- asks (.appUuid')
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("value", value)]
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("value", value)]
 
-findUserTokensByAppUuid :: AppContextC s sc m => U.UUID -> m [UserToken]
-findUserTokensByAppUuid appUuid = do
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+findUserTokensByTenantUuid :: AppContextC s sc m => U.UUID -> m [UserToken]
+findUserTokensByTenantUuid tenantUuid = do
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findUserTokenByUuid
   :: ( AppContextC s sc m
@@ -89,8 +89,8 @@ findUserTokenByUuid
 findUserTokenByUuid uuid = getFromCacheOrDb getFromCache addToCache go (U.toString uuid)
   where
     go uuid = do
-      appUuid <- asks (.appUuid')
-      createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
+      tenantUuid <- asks (.tenantUuid')
+      createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", uuid)]
 
 insertUserToken
   :: ( AppContextC s sc m
@@ -122,12 +122,12 @@ deleteUserTokenByUuid
   => U.UUID
   -> m Int64
 deleteUserTokenByUuid uuid = do
-  appUuid <- asks (.appUuid')
-  result <- createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  tenantUuid <- asks (.tenantUuid')
+  result <- createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
   deleteFromCache (U.toString uuid)
   return result
 
-deleteUserTokenByUuidAndAppUuid
+deleteUserTokenByUuidAndTenantUuid
   :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
@@ -135,7 +135,7 @@ deleteUserTokenByUuidAndAppUuid
   => U.UUID
   -> U.UUID
   -> m Int64
-deleteUserTokenByUuidAndAppUuid uuid appUuid = do
-  result <- createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+deleteUserTokenByUuidAndTenantUuid uuid tenantUuid = do
+  result <- createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
   deleteFromCache (U.toString uuid)
   return result

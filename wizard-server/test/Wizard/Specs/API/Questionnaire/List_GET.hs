@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.List_GET (
-  list_get,
+  list_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -31,11 +31,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires
+-- GET /wizard-api/questionnaires
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext =
-  describe "GET /questionnaires" $ do
+list_GET :: AppContext -> SpecWith ((), Application)
+list_GET appContext =
+  describe "GET /wizard-api/questionnaires" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -45,7 +45,7 @@ list_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/questionnaires"
+reqUrl = "/wizard-api/questionnaires"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -58,26 +58,26 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Admin - pagination)"
     appContext
-    "/questionnaires?page=1&size=1"
+    "/wizard-api/questionnaires?sort=uuid,asc&page=1&size=1"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 1 5 5 1) [questionnaire14Dto])
+    (Page "questionnaires" (PageMetadata 1 6 6 1) [questionnaire14Dto])
   create_test_200
     "HTTP 200 OK (Admin - query)"
     appContext
-    "/questionnaires?sort=uuid,asc&q=pr"
+    "/wizard-api/questionnaires?sort=uuid,asc&q=pr"
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire1Dto, questionnaire12Dto])
   create_test_200
     "HTTP 200 OK (Admin - userUuids)"
     appContext
-    (BS.pack $ "/questionnaires?sort=uuid,asc&userUuids=" ++ U.toString userAlbert.uuid)
+    (BS.pack $ "/wizard-api/questionnaires?sort=uuid,asc&userUuids=" ++ U.toString userAlbert.uuid)
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire2Dto, questionnaire12Dto])
   create_test_200
     "HTTP 200 OK (Admin - userUuids, or)"
     appContext
     ( BS.pack $
-        "/questionnaires?sort=uuid,asc&userUuidsOp=or&userUuids="
+        "/wizard-api/questionnaires?sort=uuid,asc&userUuidsOp=or&userUuids="
           ++ U.toString userAlbert.uuid
           ++ ","
           ++ U.toString userIsaac.uuid
@@ -88,7 +88,7 @@ test_200 appContext = do
     "HTTP 200 OK (Admin - userUuids, and)"
     appContext
     ( BS.pack $
-        "/questionnaires?sort=uuid,asc&userUuidsOp=and&userUuids="
+        "/wizard-api/questionnaires?sort=uuid,asc&userUuidsOp=and&userUuids="
           ++ U.toString userAlbert.uuid
           ++ ","
           ++ U.toString userIsaac.uuid
@@ -98,35 +98,35 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Admin - isTemplate - true)"
     appContext
-    "/questionnaires?sort=uuid,asc&isTemplate=true"
+    "/wizard-api/questionnaires?sort=uuid,asc&isTemplate=true"
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire14Dto, questionnaire1Dto, questionnaire12Dto])
   create_test_200
     "HTTP 200 OK (Admin - isTemplate - false)"
     appContext
-    "/questionnaires?sort=uuid,asc&isTemplate=false"
+    "/wizard-api/questionnaires?sort=uuid,asc&isTemplate=false"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
+    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire3Dto, questionnaire15Dto, questionnaire2Dto])
   create_test_200
     "HTTP 200 OK (Admin - isMigrating - true)"
     appContext
-    "/questionnaires?sort=uuid,asc&isMigrating=true"
+    "/wizard-api/questionnaires?sort=uuid,asc&isMigrating=true"
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 0 0 0) ([] :: [QuestionnaireDTO]))
   create_test_200
     "HTTP 200 OK (Admin - isMigrating - false)"
     appContext
-    "/questionnaires?sort=uuid,asc&isMigrating=false"
+    "/wizard-api/questionnaires?sort=uuid,asc&isMigrating=false"
     reqAuthHeader
     ( Page
         "questionnaires"
-        (PageMetadata 20 5 1 0)
-        [questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire2Dto, questionnaire12Dto]
+        (PageMetadata 20 6 1 0)
+        [questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire15Dto, questionnaire2Dto, questionnaire12Dto]
     )
   create_test_200
     "HTTP 200 OK (Admin - projectTags)"
     appContext
-    "/questionnaires?sort=uuid,asc&projectTags=projectTag1"
+    "/wizard-api/questionnaires?sort=uuid,asc&projectTags=projectTag1"
     reqAuthHeader
     ( Page
         "questionnaires"
@@ -136,7 +136,7 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Admin - projectTags, or)"
     appContext
-    "/questionnaires?sort=uuid,asc&projectTagsOp=or&projectTags=projectTag1,projectTag2"
+    "/wizard-api/questionnaires?sort=uuid,asc&projectTagsOp=or&projectTags=projectTag1,projectTag2"
     reqAuthHeader
     ( Page
         "questionnaires"
@@ -146,96 +146,96 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Admin - projectTags, and)"
     appContext
-    "/questionnaires?sort=uuid,asc&projectTagsOp=and&projectTags=projectTag1,projectTag2"
+    "/wizard-api/questionnaires?sort=uuid,asc&projectTagsOp=and&projectTags=projectTag1,projectTag2"
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire2Dto])
   create_test_200
     "HTTP 200 OK (Admin - package)"
     appContext
-    "/questionnaires?sort=uuid,asc&packageIds=org.nl.amsterdam:core-amsterdam:all"
+    "/wizard-api/questionnaires?sort=uuid,asc&packageIds=org.nl.amsterdam:core-amsterdam:all"
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire14Dto])
   create_test_200
     "HTTP 200 OK (Admin - sort asc)"
     appContext
-    "/questionnaires?sort=uuid,asc"
+    "/wizard-api/questionnaires?sort=uuid,asc"
     reqAuthHeader
     ( Page
         "questionnaires"
-        (PageMetadata 20 5 1 0)
-        [questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire2Dto, questionnaire12Dto]
+        (PageMetadata 20 6 1 0)
+        [questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire15Dto, questionnaire2Dto, questionnaire12Dto]
     )
   create_test_200
     "HTTP 200 OK (Admin - sort desc)"
     appContext
-    "/questionnaires?sort=updatedAt,desc"
+    "/wizard-api/questionnaires?sort=updatedAt,desc"
     reqAuthHeader
     ( Page
         "questionnaires"
-        (PageMetadata 20 5 1 0)
-        [questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire12Dto, questionnaire2Dto]
+        (PageMetadata 20 6 1 0)
+        [questionnaire15Dto, questionnaire3Dto, questionnaire14Dto, questionnaire1Dto, questionnaire12Dto, questionnaire2Dto]
     )
   create_test_200
     "HTTP 200 OK (Non-Admin)"
     appContext
-    "/questionnaires?sort=uuid,asc"
+    "/wizard-api/questionnaires?sort=uuid,asc"
     reqNonAdminAuthHeader
     ( Page
         "questionnaires"
-        (PageMetadata 20 4 1 0)
-        [questionnaire3Dto, questionnaire14Dto, questionnaire2Dto, questionnaire12Dto]
+        (PageMetadata 20 5 1 0)
+        [questionnaire3Dto, questionnaire14Dto, questionnaire15Dto, questionnaire2Dto, questionnaire12Dto]
     )
   create_test_200
     "HTTP 200 OK (Non-Admin - query)"
     appContext
-    "/questionnaires?q=pr"
+    "/wizard-api/questionnaires?q=pr"
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire12Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin - query users)"
     appContext
-    (BS.pack $ "/questionnaires?sort=uuid,asc&userUuids=" ++ U.toString userAlbert.uuid)
+    (BS.pack $ "/wizard-api/questionnaires?sort=uuid,asc&userUuids=" ++ U.toString userAlbert.uuid)
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire2Dto, questionnaire12Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin - projectTags)"
     appContext
-    "/questionnaires?sort=uuid,asc&projectTags=projectTag1"
+    "/wizard-api/questionnaires?sort=uuid,asc&projectTags=projectTag1"
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire14Dto, questionnaire2Dto, questionnaire12Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin - package)"
     appContext
-    "/questionnaires?sort=uuid,asc&packageIds=org.nl.amsterdam:core-amsterdam:all"
+    "/wizard-api/questionnaires?sort=uuid,asc&packageIds=org.nl.amsterdam:core-amsterdam:all"
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire14Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin - isTemplate - true)"
     appContext
-    "/questionnaires?sort=uuid,asc&isTemplate=true"
+    "/wizard-api/questionnaires?sort=uuid,asc&isTemplate=true"
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire14Dto, questionnaire12Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin - isTemplate - false)"
     appContext
-    "/questionnaires?sort=uuid,asc&isTemplate=false"
+    "/wizard-api/questionnaires?sort=uuid,asc&isTemplate=false"
     reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
+    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire3Dto, questionnaire15Dto, questionnaire2Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin - isMigrating - true)"
     appContext
-    "/questionnaires?sort=uuid,asc&isMigrating=true"
+    "/wizard-api/questionnaires?sort=uuid,asc&isMigrating=true"
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 0 0 0) ([] :: [QuestionnaireDTO]))
   create_test_200
     "HTTP 200 OK (Non-Admin - isMigrating - false)"
     appContext
-    "/questionnaires?sort=uuid,asc&isMigrating=false"
+    "/wizard-api/questionnaires?sort=uuid,asc&isMigrating=false"
     reqNonAdminAuthHeader
     ( Page
         "questionnaires"
-        (PageMetadata 20 4 1 0)
-        [questionnaire3Dto, questionnaire14Dto, questionnaire2Dto, questionnaire12Dto]
+        (PageMetadata 20 5 1 0)
+        [questionnaire3Dto, questionnaire14Dto, questionnaire15Dto, questionnaire2Dto, questionnaire12Dto]
     )
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
@@ -254,6 +254,7 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
       runInContextIO (insertPackage amsterdamPackage) appContext
       runInContextIO (insertQuestionnaire questionnaire12) appContext
       runInContextIO (insertQuestionnaire questionnaire14) appContext
+      runInContextIO (insertQuestionnaire questionnaire15) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

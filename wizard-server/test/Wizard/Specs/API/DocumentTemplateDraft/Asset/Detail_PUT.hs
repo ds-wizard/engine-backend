@@ -22,11 +22,11 @@ import Wizard.Specs.API.DocumentTemplateDraft.Asset.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /document-template-drafts/{documentTemplateId}/assets/{assetUuid}
+-- PUT /wizard-api/document-template-drafts/{documentTemplateId}/assets/{assetUuid}
 -- ------------------------------------------------------------------------
 detail_PUT :: AppContext -> SpecWith ((), Application)
 detail_PUT appContext =
-  describe "PUT /document-template-drafts/{documentTemplateId}/assets/{assetUuid}" $ do
+  describe "PUT /wizard-api/document-template-drafts/{documentTemplateId}/assets/{assetUuid}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +37,7 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/document-template-drafts/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
 
 reqHeaders = [reqCtHeader, reqAuthHeader]
 
@@ -82,7 +82,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-template-drafts/deab6c38-aeac-4b17-a501-4365a0a70176/assets/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/document-template-drafts/deab6c38-aeac-4b17-a501-4365a0a70176/assets/deab6c38-aeac-4b17-a501-4365a0a70176"
     reqHeaders
     reqBody
     "document_template_asset"

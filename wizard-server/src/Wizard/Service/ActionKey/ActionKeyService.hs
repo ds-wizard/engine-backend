@@ -14,12 +14,12 @@ import Wizard.Model.ActionKey.ActionKeyType
 import Wizard.Model.Context.AppContext (AppContextM)
 
 createActionKey :: U.UUID -> ActionKeyType -> U.UUID -> AppContextM (ActionKey U.UUID ActionKeyType)
-createActionKey userUuid actionType appUuid = do
+createActionKey userUuid actionType tenantUuid = do
   hash <- liftIO generateUuid
-  createActionKeyWithHash userUuid actionType appUuid (U.toString hash)
+  createActionKeyWithHash userUuid actionType tenantUuid (U.toString hash)
 
 createActionKeyWithHash :: U.UUID -> ActionKeyType -> U.UUID -> String -> AppContextM (ActionKey U.UUID ActionKeyType)
-createActionKeyWithHash userUuid actionType appUuid hash =
+createActionKeyWithHash userUuid actionType tenantUuid hash =
   runInTransaction $ do
     uuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
@@ -29,7 +29,7 @@ createActionKeyWithHash userUuid actionType appUuid hash =
             , identity = userUuid
             , aType = actionType
             , hash = hash
-            , appUuid = appUuid
+            , tenantUuid = tenantUuid
             , createdAt = now
             }
     insertActionKey actionKey

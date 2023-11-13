@@ -10,10 +10,10 @@ import Shared.Locale.Model.Locale.Locale
 
 runMigration :: AppContextM ()
 runMigration = do
-  logInfo _CMP_MIGRATION "(App/Locale) started"
+  logInfo _CMP_MIGRATION "(Locale/Locale) started"
   deleteLocales
   insertLocale localeNl
-  logInfo _CMP_MIGRATION "(App/Locale) ended"
+  logInfo _CMP_MIGRATION "(Locale/Locale) ended"
 
 runS3Migration :: AppContextM ()
 runS3Migration = do

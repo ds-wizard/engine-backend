@@ -6,7 +6,6 @@ import Data.UUID
 import GHC.Generics
 
 import Wizard.Api.Resource.User.UserSubmissionPropsJM ()
-import Wizard.Model.Acl.Acl
 import Wizard.Util.Hashable ()
 
 data UserDTO = UserDTO
@@ -20,7 +19,6 @@ data UserDTO = UserDTO
   , permissions :: [String]
   , active :: Bool
   , imageUrl :: Maybe String
-  , groups :: [GroupMembership]
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -38,6 +36,5 @@ instance Eq UserDTO where
       && a.permissions == b.permissions
       && a.active == b.active
       && a.imageUrl == b.imageUrl
-      && a.groups == b.groups
 
 instance Hashable UserDTO

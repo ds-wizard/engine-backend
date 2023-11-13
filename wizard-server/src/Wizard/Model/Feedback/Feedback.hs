@@ -11,7 +11,7 @@ data Feedback = Feedback
   , packageId :: String
   , title :: String
   , content :: String
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -25,4 +25,4 @@ instance Eq Feedback where
       && packageId a == packageId b
       && title a == title b
       && content a == content b
-      && appUuid a == appUuid b
+      && tenantUuid a == tenantUuid b

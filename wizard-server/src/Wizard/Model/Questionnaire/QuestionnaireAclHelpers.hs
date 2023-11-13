@@ -1,71 +1,63 @@
 module Wizard.Model.Questionnaire.QuestionnaireAclHelpers where
 
-import Control.Monad.Reader (liftIO)
 import qualified Data.UUID as U
 
-import Shared.Common.Util.Uuid
 import Wizard.Model.Acl.Acl
-import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Questionnaire.QuestionnairePerm
 
-getUserUuidsForViewerPerm :: [QuestionnairePermRecord] -> [U.UUID]
+getUserUuidsForViewerPerm :: [QuestionnairePerm] -> [U.UUID]
 getUserUuidsForViewerPerm = getUserUuidsForPerm _VIEW_PERM
 
-getUserUuidsForCommentatorPerm :: [QuestionnairePermRecord] -> [U.UUID]
+getUserUuidsForCommentatorPerm :: [QuestionnairePerm] -> [U.UUID]
 getUserUuidsForCommentatorPerm = getUserUuidsForPerm _COMMENT_PERM
 
-getUserUuidsForEditorPerm :: [QuestionnairePermRecord] -> [U.UUID]
+getUserUuidsForEditorPerm :: [QuestionnairePerm] -> [U.UUID]
 getUserUuidsForEditorPerm = getUserUuidsForPerm _EDIT_PERM
 
-getUserUuidsForOwnerPerm :: [QuestionnairePermRecord] -> [U.UUID]
+getUserUuidsForOwnerPerm :: [QuestionnairePerm] -> [U.UUID]
 getUserUuidsForOwnerPerm = getUserUuidsForPerm _ADMIN_PERM
 
-getUserUuidsForPerm :: String -> [QuestionnairePermRecord] -> [U.UUID]
+getUserUuidsForPerm :: String -> [QuestionnairePerm] -> [U.UUID]
 getUserUuidsForPerm desiredPerm = foldl go []
   where
-    go :: [U.UUID] -> QuestionnairePermRecord -> [U.UUID]
-    go acc record =
-      case record.member of
-        UserMember {uuid = userUuid} ->
-          if desiredPerm `elem` record.perms
-            then acc ++ [userUuid]
+    go :: [U.UUID] -> QuestionnairePerm -> [U.UUID]
+    go acc qtnPerm =
+      case qtnPerm.memberType of
+        UserQuestionnairePermType ->
+          if desiredPerm `elem` qtnPerm.perms
+            then acc ++ [qtnPerm.memberUuid]
             else acc
         _ -> acc
 
-getGroupIdsForViewerPerm :: [QuestionnairePermRecord] -> [String]
-getGroupIdsForViewerPerm = getGroupIdsForPerm _VIEW_PERM
+getUserGroupUuidsForViewerPerm :: [QuestionnairePerm] -> [U.UUID]
+getUserGroupUuidsForViewerPerm = getUserGroupUuidsForPerm _VIEW_PERM
 
-getGroupIdsForCommentatorPerm :: [QuestionnairePermRecord] -> [String]
-getGroupIdsForCommentatorPerm = getGroupIdsForPerm _COMMENT_PERM
+getUserGroupUuidsForCommentatorPerm :: [QuestionnairePerm] -> [U.UUID]
+getUserGroupUuidsForCommentatorPerm = getUserGroupUuidsForPerm _COMMENT_PERM
 
-getGroupIdsForEditorPerm :: [QuestionnairePermRecord] -> [String]
-getGroupIdsForEditorPerm = getGroupIdsForPerm _EDIT_PERM
+getUserGroupUuidsForEditorPerm :: [QuestionnairePerm] -> [U.UUID]
+getUserGroupUuidsForEditorPerm = getUserGroupUuidsForPerm _EDIT_PERM
 
-getGroupIdsForOwnerPerm :: [QuestionnairePermRecord] -> [String]
-getGroupIdsForOwnerPerm = getGroupIdsForPerm _ADMIN_PERM
+getUserGroupUuidsForOwnerPerm :: [QuestionnairePerm] -> [U.UUID]
+getUserGroupUuidsForOwnerPerm = getUserGroupUuidsForPerm _ADMIN_PERM
 
-getGroupIdsForPerm :: String -> [QuestionnairePermRecord] -> [String]
-getGroupIdsForPerm desiredPerm = foldl go []
+getUserGroupUuidsForPerm :: String -> [QuestionnairePerm] -> [U.UUID]
+getUserGroupUuidsForPerm desiredPerm = foldl go []
   where
-    go :: [String] -> QuestionnairePermRecord -> [String]
-    go acc record =
-      case record.member of
-        GroupMember {gId = groupId} ->
-          if desiredPerm `elem` record.perms
-            then acc ++ [groupId]
+    go :: [U.UUID] -> QuestionnairePerm -> [U.UUID]
+    go acc qtnPerm =
+      case qtnPerm.memberType of
+        UserGroupQuestionnairePermType ->
+          if desiredPerm `elem` qtnPerm.perms
+            then acc ++ [qtnPerm.memberUuid]
             else acc
         _ -> acc
 
-duplicateUserPermission :: U.UUID -> QuestionnairePermRecord -> AppContextM QuestionnairePermRecord
-duplicateUserPermission newQtnUuid record = do
-  newUuid <- liftIO generateUuid
-  return record {uuid = newUuid, questionnaireUuid = newQtnUuid}
-
-removeUserPermission :: U.UUID -> [QuestionnairePermRecord] -> [QuestionnairePermRecord]
+removeUserPermission :: U.UUID -> [QuestionnairePerm] -> [QuestionnairePerm]
 removeUserPermission userUuidToDelete = filter go
   where
-    go :: QuestionnairePermRecord -> Bool
-    go record =
-      case record.member of
-        UserMember {uuid = userUuid} -> userUuid /= userUuidToDelete
+    go :: QuestionnairePerm -> Bool
+    go qtnPerm =
+      case qtnPerm.memberType of
+        UserQuestionnairePermType -> qtnPerm.memberUuid /= userUuidToDelete
         _ -> True

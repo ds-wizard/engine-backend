@@ -12,6 +12,7 @@ data QuestionnaireCommentThread = QuestionnaireCommentThread
   , private :: Bool
   , questionnaireUuid :: U.UUID
   , createdBy :: Maybe U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -21,6 +22,7 @@ data QuestionnaireComment = QuestionnaireComment
   { uuid :: U.UUID
   , text :: String
   , threadUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdBy :: Maybe U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

@@ -14,12 +14,12 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
@@ -31,11 +31,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------------------
--- GET /documents/{docUuid}/available-submission-services
+-- GET /wizard-api/documents/{docUuid}/available-submission-services
 -- ------------------------------------------------------------------------------------
 detail_available_submission_Services_GET :: AppContext -> SpecWith ((), Application)
 detail_available_submission_Services_GET appContext =
-  describe "GET /documents/{docUuid}/available-submission-services" $ do
+  describe "GET /wizard-api/documents/{docUuid}/available-submission-services" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -46,7 +46,7 @@ detail_available_submission_Services_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/documents/264ca352-1a99-4ffd-860e-32aee9a98428/available-submission-services"
+reqUrl = "/wizard-api/documents/264ca352-1a99-4ffd-860e-32aee9a98428/available-submission-services"
 
 reqHeadersT authHeader = authHeader
 
@@ -74,6 +74,7 @@ create_test_200 title appContext qtn authHeader =
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO QTN_Migration.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire10) appContext
+      -- runInContextIO deleteDraftDatas appContext
       runInContextIO DOC_Migration.runMigration appContext
       runInContextIO (deleteDocumentByUuid doc1.uuid) appContext
       runInContextIO (insertDocument (doc1 {questionnaireUuid = qtn.uuid})) appContext
@@ -137,7 +138,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/documents/dc9fe65f-748b-47ec-b30c-d255bbac64a0/available-submission-services"
+    "/wizard-api/documents/dc9fe65f-748b-47ec-b30c-d255bbac64a0/available-submission-services"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "document"

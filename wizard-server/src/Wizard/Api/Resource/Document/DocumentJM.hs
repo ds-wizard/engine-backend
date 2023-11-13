@@ -6,7 +6,7 @@ import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSimpleJM ()
 import Wizard.Model.Document.Document
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
+import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatJM ()
 
 instance FromJSON DocumentState
 

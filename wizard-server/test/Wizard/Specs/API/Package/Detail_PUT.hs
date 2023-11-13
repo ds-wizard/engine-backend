@@ -22,11 +22,11 @@ import Wizard.Specs.API.Package.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /packages/{pkgId}
+-- PUT /wizard-api/packages/{pkgId}
 -- ------------------------------------------------------------------------
 detail_PUT :: AppContext -> SpecWith ((), Application)
 detail_PUT appContext =
-  describe "PUT /packages/{pkgId}" $ do
+  describe "PUT /wizard-api/packages/{pkgId}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +37,7 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/packages/global:core:1.0.0"
+reqUrl = "/wizard-api/packages/global:core:1.0.0"
 
 reqHeaders = [reqCtHeader, reqAuthHeader]
 
@@ -84,7 +84,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/packages/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/packages/deab6c38-aeac-4b17-a501-4365a0a70176"
     reqHeaders
     reqBody
     "package"

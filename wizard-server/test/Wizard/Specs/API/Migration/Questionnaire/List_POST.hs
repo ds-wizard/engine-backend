@@ -34,11 +34,11 @@ import Wizard.Specs.API.Migration.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /questionnaires/{qtnUuid}/migrations
+-- POST /wizard-api/questionnaires/{qtnUuid}/migrations
 -- ------------------------------------------------------------------------
 list_POST :: AppContext -> SpecWith ((), Application)
 list_POST appContext =
-  describe "POST /questionnaires/{qtnUuid}/migrations" $ do
+  describe "POST /wizard-api/questionnaires/{qtnUuid}/migrations" $ do
     test_201 appContext
     test_400 appContext
     test_401 appContext
@@ -50,7 +50,7 @@ list_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/migrations"
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid ++ "/migrations"
 
 reqHeadersT authHeader = [authHeader, reqCtHeader]
 

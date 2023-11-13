@@ -47,10 +47,10 @@ createGetObjectFn object = do
         C.connect (gorObjectStream src) foldFn
   runMinioClient action
 
-createGetObjectWithAppFn :: AppContextC s sc m => U.UUID -> String -> m BS.ByteString
-createGetObjectWithAppFn appUuid object = do
+createGetObjectWithTenantFn :: AppContextC s sc m => U.UUID -> String -> m BS.ByteString
+createGetObjectWithTenantFn tenantUuid object = do
   bucketName <- getBucketName
-  sanitizedObject <- sanitizeObjectWithApp appUuid object
+  sanitizedObject <- sanitizeObjectWithTenant tenantUuid object
   logInfoI _CMP_S3 (f' "Get object: '%s'" [sanitizedObject])
   let action = do
         src <- getObject (T.pack bucketName) (T.pack sanitizedObject) defaultGetObjectOptions
@@ -87,10 +87,10 @@ createPutObjectFn object mContentType mContentDisposition content = do
   runMinioClient action
   buildObjectUrl sanitizedObject
 
-createPutObjectWithAppFn :: AppContextC s sc m => U.UUID -> String -> Maybe String -> BS.ByteString -> m String
-createPutObjectWithAppFn appUuid object mContentType content = do
+createPutObjectWithTenantFn :: AppContextC s sc m => U.UUID -> String -> Maybe String -> BS.ByteString -> m String
+createPutObjectWithTenantFn tenantUuid object mContentType content = do
   bucketName <- getBucketName
-  sanitizedObject <- sanitizeObjectWithApp appUuid object
+  sanitizedObject <- sanitizeObjectWithTenant tenantUuid object
   logInfoI _CMP_S3 (f' "Put object: '%s'" [sanitizedObject])
   let req = C.yield content
   let kb15 = 15 * 1024
@@ -165,7 +165,7 @@ makeBucketPublicReadOnly = do
   context <- ask
   let resource =
         if context.serverConfig'.cloud'.enabled
-          then f' "arn:aws:s3:::%s/%s/public/*" [bucketName, U.toString context.appUuid']
+          then f' "arn:aws:s3:::%s/%s/public/*" [bucketName, U.toString context.tenantUuid']
           else f' "arn:aws:s3:::%s/public/*" [bucketName]
   logInfoI _CMP_S3 (f' "Make bucket public for read-only access: '%s'" [resource])
   let policy =
@@ -237,15 +237,15 @@ getBucketName = do
 sanitizeObject :: AppContextC s sc m => String -> m String
 sanitizeObject object = do
   context <- ask
-  if context.serverConfig'.cloud'.enabled && not (U.toString context.appUuid' `L.isPrefixOf` object)
-    then return $ U.toString context.appUuid' ++ "/" ++ object
+  if context.serverConfig'.cloud'.enabled && not (U.toString context.tenantUuid' `L.isPrefixOf` object)
+    then return $ U.toString context.tenantUuid' ++ "/" ++ object
     else return object
 
-sanitizeObjectWithApp :: AppContextC s sc m => U.UUID -> String -> m String
-sanitizeObjectWithApp appUuid object = do
+sanitizeObjectWithTenant :: AppContextC s sc m => U.UUID -> String -> m String
+sanitizeObjectWithTenant tenantUuid object = do
   context <- ask
-  if context.serverConfig'.cloud'.enabled && not (U.toString appUuid `L.isPrefixOf` object)
-    then return $ U.toString appUuid ++ "/" ++ object
+  if context.serverConfig'.cloud'.enabled && not (U.toString tenantUuid `L.isPrefixOf` object)
+    then return $ U.toString tenantUuid ++ "/" ++ object
     else return object
 
 buildObjectUrl :: AppContextC s sc m => String -> m String

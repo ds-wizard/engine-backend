@@ -21,13 +21,13 @@ toDTO url contentType =
     }
 
 toTemporaryFile :: U.UUID -> String -> String -> Int -> U.UUID -> U.UUID -> UTCTime -> TemporaryFile
-toTemporaryFile uuid fileName contentType expirationInSeconds appUuid createdBy now =
+toTemporaryFile uuid fileName contentType expirationInSeconds tenantUuid createdBy now =
   TemporaryFile
     { uuid = uuid
     , fileName = fileName
     , contentType = contentType
     , expiresAt = toExpiration expirationInSeconds now
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdBy = createdBy
     , createdAt = now
     }

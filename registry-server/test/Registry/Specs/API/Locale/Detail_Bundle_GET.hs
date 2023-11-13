@@ -1,5 +1,5 @@
 module Registry.Specs.API.Locale.Detail_Bundle_GET (
-  detail_bundle_get,
+  detail_bundle_GET,
 ) where
 
 import Network.HTTP.Types
@@ -17,8 +17,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /locales/{lclId}/bundle
 -- ------------------------------------------------------------------------
-detail_bundle_get :: AppContext -> SpecWith ((), Application)
-detail_bundle_get appContext =
+detail_bundle_GET :: AppContext -> SpecWith ((), Application)
+detail_bundle_GET appContext =
   describe "GET /locales/{lclId}/bundle" $ do
     test_200 appContext
     test_401 appContext

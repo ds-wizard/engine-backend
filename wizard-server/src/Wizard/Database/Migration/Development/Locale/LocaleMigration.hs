@@ -9,13 +9,13 @@ import Wizard.Model.Context.AppContext
 import Wizard.S3.Locale.LocaleS3
 
 runMigration = do
-  logInfo _CMP_MIGRATION "(App/Locale) started"
+  logInfo _CMP_MIGRATION "(Limit/Locale) started"
   deleteLocales
   insertLocale localeDefaultEn
   insertLocale localeNl
   insertLocale localeDe
   insertLocale differentLocale
-  logInfo _CMP_MIGRATION "(App/Locale) ended"
+  logInfo _CMP_MIGRATION "(Limit/Locale) ended"
 
 runS3Migration :: AppContextM ()
 runS3Migration = do

@@ -8,42 +8,36 @@ import qualified Shared.Component.Database.Migration.Development.Component.Compo
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Shared.Prefab.Database.DAO.Prefab.PrefabDAO
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
-import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
-import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
-import Wizard.Database.DAO.Limit.AppLimitDAO
 import Wizard.Database.DAO.Locale.LocaleDAO
 import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_MigratorDAO
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
-import Wizard.Database.DAO.Plan.AppPlanDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
 import Wizard.Database.DAO.QuestionnaireImporter.QuestionnaireImporterDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Database.DAO.Registry.RegistryTemplateDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
+import Wizard.Database.DAO.Tenant.TenantConfigDAO
+import Wizard.Database.DAO.Tenant.TenantDAO
+import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
 import Wizard.Database.DAO.User.UserDAO
-import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
-import qualified Wizard.Database.Migration.Development.App.AppSchemaMigration as A_Schema
-import Wizard.Database.Migration.Development.App.Data.Apps
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
 import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
-import qualified Wizard.Database.Migration.Development.Config.ConfigSchemaMigration as CFG_Schema
-import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as TML_Schema
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
-import qualified Wizard.Database.Migration.Development.Limit.AppLimitSchemaMigration as AL_Schema
-import Wizard.Database.Migration.Development.Limit.Data.AppLimits
+import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMigration as INS_Schema
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC
 import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as LOC_Schema
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KM_MIG_Schema
@@ -51,11 +45,14 @@ import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.M
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
-import qualified Wizard.Database.Migration.Development.Plan.AppPlanSchemaMigration as AP_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QI_Schema
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as R_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
+import Wizard.Database.Migration.Development.Tenant.Data.TenantLimitBundles
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigration as TNT_Schema
 import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as U_Schema
@@ -63,6 +60,9 @@ import Wizard.Model.Cache.ServerCache
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
+import WizardLib.Public.Database.DAO.Tenant.TenantPlanDAO
+import WizardLib.Public.Database.DAO.User.UserGroupDAO
+import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
 
 import Wizard.Specs.Common
@@ -93,26 +93,21 @@ buildSchema appContext = do
   runInContext QTN_Schema.dropTables appContext
   runInContext TML_Schema.dropTables appContext
   runInContext PKG_Schema.dropTables appContext
-  runInContext ACL_Schema.dropTables appContext
   runInContext U_Schema.dropTables appContext
-  runInContext CFG_Schema.dropTables appContext
-  runInContext AP_Schema.dropTables appContext
-  runInContext AL_Schema.dropTables appContext
-  runInContext A_Schema.dropTables appContext
+  runInContext TNT_Schema.dropTables appContext
+  runInContext INS_Schema.dropTables appContext
   putStrLn "DB: Creating schema"
-  runInContext A_Schema.createTables appContext
-  runInContext AL_Schema.createTables appContext
-  runInContext AP_Schema.createTables appContext
+  runInContext INS_Schema.createTables appContext
+  runInContext TNT_Schema.createTables appContext
   runInContext U_Schema.createTables appContext
-  runInContext ACL_Schema.createTables appContext
   runInContext TML_Schema.createTables appContext
   runInContext PKG_Schema.createTables appContext
-  runInContext CFG_Schema.createTables appContext
   runInContext ACK_Schema.createTables appContext
   runInContext BR_Schema.createTables appContext
   runInContext F_Schema.createTables appContext
   runInContext B_Schema.createTables appContext
   runInContext QTN_Schema.createTables appContext
+  runInContext TML_Schema.createDraftDataTable appContext
   runInContext DOC_Schema.createTables appContext
   runInContext QTN_MIG_Schema.createTables appContext
   runInContext KM_MIG_Schema.createTables appContext
@@ -143,9 +138,9 @@ resetDB appContext = do
   runInContext deletePrefabs appContext
   runInContext deletePersistentCommands appContext
   runInContext deleteSubmissions appContext
-  runInContext deleteAppConfigs appContext
-  runInContext (insertAppConfig defaultAppConfigEncrypted) appContext
-  runInContext (insertAppConfig differentAppConfigEncrypted) appContext
+  runInContext deleteTenantConfigs appContext
+  runInContext (insertTenantConfig defaultTenantConfigEncrypted) appContext
+  runInContext (insertTenantConfig differentTenantConfigEncrypted) appContext
   runInContext KM_MigratorDAO.deleteMigratorStates appContext
   runInContext QTN_MigratorDAO.deleteMigratorStates appContext
   runInContext deleteFeedbacks appContext
@@ -153,22 +148,25 @@ resetDB appContext = do
   runInContext deleteBranchDatas appContext
   runInContext deleteBranches appContext
   runInContext deleteDocuments appContext
+  runInContext deleteDrafts appContext
   runInContext deleteQuestionnaireComments appContext
   runInContext deleteQuestionnaireCommentThreads appContext
+  runInContext deleteQuestionnairePerms appContext
   runInContext deleteQuestionnaires appContext
   runInContext deleteQuestionnaireImporters appContext
-  runInContext deleteDrafts appContext
   runInContext deleteDocumentTemplates appContext
   runInContext deletePackages appContext
   runInContext deleteUserTokens appContext
+  runInContext deleteUserGroupMemberships appContext
   runInContext deleteUsers appContext
-  runInContext deleteAppLimits appContext
-  runInContext deleteAppPlans appContext
-  runInContext deleteApps appContext
-  runInContext (insertApp defaultApp) appContext
-  runInContext (insertAppLimit defaultAppLimit) appContext
-  runInContext (insertApp differentApp) appContext
-  runInContext (insertAppLimit differentAppLimit) appContext
+  runInContext deleteUserGroups appContext
+  runInContext deleteLimitBundles appContext
+  runInContext deleteTenantPlans appContext
+  runInContext deleteTenants appContext
+  runInContext (insertTenant defaultTenant) appContext
+  runInContext (insertLimitBundle defaultTenantLimitBundle) appContext
+  runInContext (insertTenant differentTenant) appContext
+  runInContext (insertLimitBundle differentTenantLimitBundle) appContext
   runInContext (insertUser userSystem) appContext
   runInContext (insertUser userAlbert) appContext
   runInContext (insertUserToken albertToken) appContext

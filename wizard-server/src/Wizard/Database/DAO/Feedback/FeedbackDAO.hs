@@ -21,24 +21,24 @@ findFeedbacks = createFindEntitiesFn entityName
 
 findFeedbacksFiltered :: [(String, String)] -> AppContextM [Feedback]
 findFeedbacksFiltered params = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName (appQueryUuid appUuid : params)
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName (tenantQueryUuid tenantUuid : params)
 
 findFeedbackByUuid :: U.UUID -> AppContextM Feedback
 findFeedbackByUuid uuid = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 insertFeedback :: Feedback -> AppContextM Int64
 insertFeedback = createInsertFn entityName
 
 updateFeedbackByUuid :: Feedback -> AppContextM Int64
 updateFeedbackByUuid feedback = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE feedback SET uuid = ?, issue_id = ?, question_uuid = ?, package_id = ?, title = ?, content = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
-  let params = toRow feedback ++ [toField appUuid, toField feedback.uuid]
+          "UPDATE feedback SET uuid = ?, issue_id = ?, question_uuid = ?, package_id = ?, title = ?, content = ?, created_at = ?, updated_at = ?, tenant_uuid = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = toRow feedback ++ [toField tenantUuid, toField feedback.uuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -48,5 +48,5 @@ deleteFeedbacks = createDeleteEntitiesFn entityName
 
 deleteFeedbackByUuid :: U.UUID -> AppContextM Int64
 deleteFeedbackByUuid uuid = do
-  appUuid <- asks currentAppUuid
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", U.toString uuid)]
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]

@@ -20,11 +20,11 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common ()
 
 -- ------------------------------------------------------------------------
--- GET /apps
+-- GET /wizard-api/domains
 -- ------------------------------------------------------------------------
 detail_GET :: AppContext -> SpecWith ((), Application)
 detail_GET appContext =
-  describe "GET /domains?check-domain={appId}" $ do
+  describe "GET /wizard-api/wizard-api/domains?check-domain={tenantId}" $ do
     test_204 appContext
     test_400 appContext
 
@@ -33,7 +33,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrlT appId = BS.pack $ "/domains?check-domain=" ++ appId
+reqUrlT tenantId = BS.pack $ "/wizard-api/domains?check-domain=" ++ tenantId
 
 reqHeaders = []
 
@@ -62,26 +62,26 @@ test_204 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext = do
-  create_test_400_app_id
-    "HTTP 400 BAD REQUEST if appId has forbidden characters"
+  create_test_400_tenant_id
+    "HTTP 400 BAD REQUEST if tenantId has forbidden characters"
     appContext
     "-forbidden-"
     (_ERROR_VALIDATION__FORBIDDEN_CHARACTERS "-forbidden-")
-  create_test_400_app_id
-    "HTTP 400 BAD REQUEST if appId is already used"
+  create_test_400_tenant_id
+    "HTTP 400 BAD REQUEST if tenantId is already used"
     appContext
     "default"
-    _ERROR_VALIDATION__APP_ID_UNIQUENESS
+    _ERROR_VALIDATION__TENANT_ID_UNIQUENESS
 
-create_test_400_app_id title appContext appId errorMessage =
+create_test_400_tenant_id title appContext tenantId errorMessage =
   it title $
     -- GIVEN: Prepare request
     do
-      let reqUrl = reqUrlT appId
+      let reqUrl = reqUrlT tenantId
       -- AND: Prepare expectation
       let expStatus = 400
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = ValidationError [] (M.singleton "appId" [errorMessage])
+      let expDto = ValidationError [] (M.singleton "tenantId" [errorMessage])
       let expBody = encode expDto
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

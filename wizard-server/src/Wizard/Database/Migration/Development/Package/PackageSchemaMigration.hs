@@ -18,7 +18,7 @@ runMigration = do
 
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Package) drop tables"
-  let sql = "drop table if exists package cascade;"
+  let sql = "DROP TABLE IF EXISTS package CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -36,47 +36,35 @@ dropFunctions = do
 createTables = do
   logInfo _CMP_MIGRATION "(Table/Package) create table"
   let sql =
-        "create table package \
-        \ ( \
-        \     id                          varchar                  not null, \
-        \     name                        varchar                  not null, \
-        \     organization_id             varchar                  not null, \
-        \     km_id                       varchar                  not null, \
-        \     version                     varchar                  not null, \
-        \     metamodel_version           integer                  not null, \
-        \     description                 varchar                  not null, \
-        \     readme                      varchar                  not null, \
-        \     license                     varchar                  not null, \
-        \     previous_package_id         varchar, \
-        \     fork_of_package_id          varchar, \
-        \     merge_checkpoint_package_id varchar, \
-        \     events                      json                     not null, \
-        \     created_at                  timestamp with time zone not null, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \       constraint branch_app_uuid_fk \
-        \         references app, \
-        \     phase                       varchar                  not null default 'ReleasedPackagePhase', \
-        \     non_editable                bool                     not null default false \
-        \ ); \
-        \alter table package\
-        \     add constraint package_pk primary key (id, app_uuid);\
-        \create unique index package_id_uindex \
-        \     on package (id, app_uuid); \
+        "CREATE TABLE package \
+        \( \
+        \    id                          varchar     NOT NULL, \
+        \    name                        varchar     NOT NULL, \
+        \    organization_id             varchar     NOT NULL, \
+        \    km_id                       varchar     NOT NULL, \
+        \    version                     varchar     NOT NULL, \
+        \    metamodel_version           integer     NOT NULL, \
+        \    description                 varchar     NOT NULL, \
+        \    readme                      varchar     NOT NULL, \
+        \    license                     varchar     NOT NULL, \
+        \    previous_package_id         varchar, \
+        \    fork_of_package_id          varchar, \
+        \    merge_checkpoint_package_id varchar, \
+        \    events                      json        NOT NULL, \
+        \    created_at                  timestamptz NOT NULL, \
+        \    tenant_uuid                 uuid        NOT NULL, \
+        \    phase                       varchar     NOT NULL, \
+        \    non_editable                bool        NOT NULL, \
+        \    CONSTRAINT package_pk PRIMARY KEY (id, tenant_uuid), \
+        \    CONSTRAINT package_previous_package_id_fk FOREIGN KEY (previous_package_id, tenant_uuid) REFERENCES package (id, tenant_uuid), \
+        \    CONSTRAINT package_fork_of_package_id_fk FOREIGN KEY (fork_of_package_id, tenant_uuid) REFERENCES package (id, tenant_uuid), \
+        \    CONSTRAINT package_merge_checkpoint_package_id_fk FOREIGN KEY (merge_checkpoint_package_id, tenant_uuid) REFERENCES package (id, tenant_uuid), \
+        \    CONSTRAINT package_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \); \
         \ \
-        \create index package_organization_id_km_id_index \
-        \     on package (organization_id, km_id, app_uuid); \
-        \create index package_previous_package_id_index \
-        \     on package (previous_package_id, app_uuid); \
+        \CREATE INDEX package_organization_id_km_id_index ON package (organization_id, km_id, tenant_uuid); \
         \ \
-        \alter table package \
-        \   add constraint package_previous_package_id_fk \
-        \      foreign key (previous_package_id, app_uuid) references package (id, app_uuid); \
-        \alter table package \
-        \   add constraint package_fork_of_package_id_fk \
-        \      foreign key (fork_of_package_id, app_uuid) references package (id, app_uuid); \
-        \alter table package \
-        \   add constraint package_merge_checkpoint_package_id_fk \
-        \      foreign key (merge_checkpoint_package_id, app_uuid) references package (id, app_uuid); "
+        \CREATE INDEX package_previous_package_id_index ON package (previous_package_id, tenant_uuid);"
   let action conn = execute_ conn sql
   runDB action
 
@@ -90,7 +78,7 @@ createFunctions = do
 
 createGetNewestPackageFn = do
   let sql =
-        "CREATE or REPLACE FUNCTION get_newest_package(req_organization_id varchar, req_km_id varchar, req_app_uuid uuid, req_phase varchar[]) \
+        "CREATE or REPLACE FUNCTION get_newest_package(req_organization_id varchar, req_km_id varchar, req_tenant_uuid uuid, req_phase varchar[]) \
         \    RETURNS varchar \
         \    LANGUAGE plpgsql \
         \AS \
@@ -108,7 +96,7 @@ createGetNewestPackageFn = do
         \    FROM package \
         \    WHERE organization_id = req_organization_id \
         \      AND km_id = req_km_id \
-        \      AND app_uuid = req_app_uuid \
+        \      AND tenant_uuid = req_tenant_uuid \
         \      AND phase = any(req_phase) \
         \    GROUP BY organization_id, km_id; \
         \    RETURN p_id; \
@@ -119,7 +107,7 @@ createGetNewestPackageFn = do
 
 createGetNewestPackage2Fn = do
   let sql =
-        "CREATE or REPLACE FUNCTION get_newest_package_2(req_p_id varchar, req_app_uuid uuid, req_phase varchar[]) \
+        "CREATE or REPLACE FUNCTION get_newest_package_2(req_p_id varchar, req_tenant_uuid uuid, req_phase varchar[]) \
         \    RETURNS varchar \
         \    LANGUAGE plpgsql \
         \AS \
@@ -129,7 +117,7 @@ createGetNewestPackage2Fn = do
         \BEGIN \
         \    SELECT CASE \
         \        WHEN req_p_id IS NULL THEN NULL \
-        \        ELSE get_newest_package(get_organization_id(req_p_id), get_km_id(req_p_id), req_app_uuid, req_phase) \
+        \        ELSE get_newest_package(get_organization_id(req_p_id), get_km_id(req_p_id), req_tenant_uuid, req_phase) \
         \        END as newest_package_id \
         \    INTO p_id; \
         \    RETURN p_id; \

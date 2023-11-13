@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Typehint.List_POST (
-  list_post,
+  list_POST,
 ) where
 
 import Data.Aeson (encode)
@@ -20,17 +20,17 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /typehints
+-- POST /wizard-api/typehints
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith ((), Application)
-list_post appContext = describe "POST /typehints" $ test_200 appContext
+list_POST :: AppContext -> SpecWith ((), Application)
+list_POST appContext = describe "POST /wizard-api/typehints" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/typehints"
+reqUrl = "/wizard-api/typehints"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

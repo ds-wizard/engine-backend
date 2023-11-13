@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Package.List_GET (
-  list_get,
+  list_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -29,11 +29,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /packages
+-- GET /wizard-api/packages
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext =
-  describe "GET /packages" $ do
+list_GET :: AppContext -> SpecWith ((), Application)
+list_GET appContext =
+  describe "GET /wizard-api/packages" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -43,7 +43,7 @@ list_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/packages"
+reqUrl = "/wizard-api/packages"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -57,7 +57,7 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK"
     appContext
-    "/packages?sort=name,asc"
+    "/wizard-api/packages?sort=name,asc"
     ( Page
         "packages"
         (PageMetadata 20 3 1 0)
@@ -69,12 +69,12 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (query - q)"
     appContext
-    "/packages?q=Germany Knowledge Model"
+    "/wizard-api/packages?q=Germany Knowledge Model"
     (Page "packages" (PageMetadata 20 1 1 0) [toSimpleDTO' [] expOrgRs (toPackage germanyPackage)])
   create_test_200
     "HTTP 200 OK (query - kmId)"
     appContext
-    "/packages?kmId=core-nl"
+    "/wizard-api/packages?kmId=core-nl"
     ( Page
         "packages"
         (PageMetadata 20 1 1 0)
@@ -83,12 +83,12 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext
-    "/packages?q=Non-existing Knowledge Model"
+    "/wizard-api/packages?q=Non-existing Knowledge Model"
     (Page "packages" (PageMetadata 20 0 0 0) ([] :: [PackageSimpleDTO]))
   create_test_200
     "HTTP 200 OK (state - UpToDatePackageState)"
     appContext
-    "/packages?state=UpToDatePackageState"
+    "/wizard-api/packages?state=UpToDatePackageState"
     ( Page
         "packages"
         (PageMetadata 20 2 1 0)
@@ -99,7 +99,7 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (state - OutdatedPackageState)"
     appContext
-    "/packages?state=OutdatedPackageState"
+    "/wizard-api/packages?state=OutdatedPackageState"
     (Page "packages" (PageMetadata 20 0 0 0) ([] :: [PackageSimpleDTO]))
 
 create_test_200 title appContext reqUrl expDto =

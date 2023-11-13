@@ -23,11 +23,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-templates
+-- GET /wizard-api/document-templates
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /document-templates" $ do
+  describe "GET /wizard-api/document-templates" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +37,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/document-templates"
+reqUrl = "/wizard-api/document-templates"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -50,43 +50,43 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK"
     appContext
-    "/document-templates"
+    "/wizard-api/document-templates"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 1 1 0) [wizardDocumentTemplateSimpleDTO])
   create_test_200
     "HTTP 200 OK (query 'q')"
     appContext
-    "/document-templates?q=Questionnaire Report"
+    "/wizard-api/document-templates?q=Questionnaire Report"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 1 1 0) [wizardDocumentTemplateSimpleDTO])
   create_test_200
     "HTTP 200 OK (query 'q' for non-existing)"
     appContext
-    "/document-templates?q=Non-existing Questionnaire Report"
+    "/wizard-api/document-templates?q=Non-existing Questionnaire Report"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSimpleDTO]))
   create_test_200
     "HTTP 200 OK (query 'templateId')"
     appContext
-    "/document-templates?templateId=questionnaire-report"
+    "/wizard-api/document-templates?templateId=questionnaire-report"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 1 1 0) [wizardDocumentTemplateSimpleDTO])
   create_test_200
     "HTTP 200 OK (query 'templateId' for non-existing)"
     appContext
-    "/document-templates?templateId=non-existing-template"
+    "/wizard-api/document-templates?templateId=non-existing-template"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSimpleDTO]))
   create_test_200
     "HTTP 200 OK (state - UpToDateDocumentTemplateState)"
     appContext
-    "/document-templates?state=UpToDateDocumentTemplateState"
+    "/wizard-api/document-templates?state=UpToDateDocumentTemplateState"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 1 1 0) [wizardDocumentTemplateSimpleDTO])
   create_test_200
     "HTTP 200 OK (state - OutdatedDocumentTemplateState)"
     appContext
-    "/document-templates?state=OutdatedDocumentTemplateState"
+    "/wizard-api/document-templates?state=OutdatedDocumentTemplateState"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSimpleDTO]))
 

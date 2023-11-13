@@ -16,7 +16,7 @@ regActionKey =
     , identity = orgGlobal.organizationId
     , aType = RegistrationActionKey
     , hash = "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
-    , appUuid = U.nil
+    , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
@@ -26,7 +26,7 @@ forgTokActionKey =
     , identity = orgGlobal.organizationId
     , aType = ForgottenTokenActionKey
     , hash = "5b1aff0d-b5e3-436d-b913-6b52d3cbad5f"
-    , appUuid = U.nil
+    , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 

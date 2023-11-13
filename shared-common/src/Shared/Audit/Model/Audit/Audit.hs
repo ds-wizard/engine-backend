@@ -12,7 +12,7 @@ data Audit = Audit
   , entity :: String
   , body :: M.Map String String
   , createdBy :: Maybe U.UUID
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

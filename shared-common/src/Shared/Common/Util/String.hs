@@ -1,5 +1,6 @@
 module Shared.Common.Util.String (
   lowerFirst,
+  upperFirst,
   replace,
   splitOn,
   stripSuffix,
@@ -8,6 +9,7 @@ module Shared.Common.Util.String (
   isLetterOrDotOrDashOrUnderscore,
   trim,
   f',
+  f'',
   toLower,
   toSnake,
   takeLastOf,
@@ -17,6 +19,7 @@ module Shared.Common.Util.String (
 
 import qualified Data.Char as CH
 import qualified Data.List as L
+import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe, listToMaybe)
 import qualified Data.Text as T
 import Text.Regex (mkRegex, subRegex)
@@ -28,6 +31,11 @@ lowerFirst :: String -> String
 lowerFirst [] = []
 lowerFirst [c] = [CH.toLower c]
 lowerFirst (s : str) = CH.toLower s : str
+
+upperFirst :: String -> String
+upperFirst [] = []
+upperFirst [c] = [CH.toUpper c]
+upperFirst (s : str) = CH.toUpper s : str
 
 toLower :: String -> String
 toLower = fmap CH.toLower
@@ -75,6 +83,12 @@ f' str terms =
     '%' : '%' : 's' : rest -> '%' : 's' : f' rest terms
     a : rest -> a : f' rest terms
     [] -> []
+
+f'' :: String -> [(String, String)] -> String
+f'' str terms = M.foldlWithKey replaceTerm str (M.fromList terms)
+  where
+    replaceTerm :: String -> String -> String -> String
+    replaceTerm strAcc key value = replace (f' "${%s}" [key]) value strAcc
 
 printTuples :: [(String, String)] -> String
 printTuples = L.intercalate ", " . fmap printTuple

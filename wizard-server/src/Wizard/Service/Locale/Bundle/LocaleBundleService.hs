@@ -16,17 +16,17 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Locale.LocaleDAO
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Public
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Locale.LocaleState
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.Locale.LocaleS3
-import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Locale.Bundle.LocaleBundleAudit
 import Wizard.Service.Locale.LocaleMapper
 import Wizard.Service.Locale.LocaleValidation
 import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import Wizard.Service.TemporaryFile.TemporaryFileService
+import Wizard.Service.Tenant.Config.ConfigService
 
 getTemporaryFileWithBundle :: String -> AppContextM TemporaryFileDTO
 getTemporaryFileWithBundle lclId =
@@ -60,13 +60,13 @@ importBundle contentS fromRegistry =
   case fromLocaleArchive contentS of
     Right (bundle, content) -> do
       validateLocaleIdUniqueness bundle.lId
-      appUuid <- asks currentAppUuid
-      let locale = fromLocaleBundle bundle appUuid
+      tenantUuid <- asks currentTenantUuid
+      let locale = fromLocaleBundle bundle tenantUuid
       putLocale locale.lId content
       insertLocale locale
       if fromRegistry
         then auditLocaleBundlePullFromRegistry locale.lId
         else auditLocaleBundleImportFromFile locale.lId
-      appConfig <- getAppConfig
-      return . toDTO appConfig.registry.enabled $ toLocaleList locale UnknownLocaleState
+      tenantConfig <- getCurrentTenantConfig
+      return . toDTO tenantConfig.registry.enabled $ toLocaleList locale UnknownLocaleState
     Left error -> throwError error

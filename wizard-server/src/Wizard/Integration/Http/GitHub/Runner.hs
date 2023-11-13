@@ -7,25 +7,25 @@ import Shared.Common.Integration.Http.Common.HttpClient
 import Wizard.Integration.Http.GitHub.RequestMapper
 import Wizard.Integration.Http.GitHub.ResponseMapper
 import Wizard.Integration.Resource.GitHub.IssueIDTO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Service.Tenant.Config.ConfigService
 
 getIssues :: AppContextM [IssueIDTO]
 getIssues = do
   serverConfig <- asks serverConfig
-  appConfig <- getAppConfig
-  runRequest (toGetIssuesRequest serverConfig.feedback appConfig.questionnaire.feedback) toGetIssuesResponse
+  tenantConfig <- getCurrentTenantConfig
+  runRequest (toGetIssuesRequest serverConfig.feedback tenantConfig.questionnaire.feedback) toGetIssuesResponse
 
 createIssue :: String -> U.UUID -> String -> String -> AppContextM IssueIDTO
 createIssue pkgId questionUuid title content = do
   serverConfig <- asks serverConfig
-  appConfig <- getAppConfig
+  tenantConfig <- getCurrentTenantConfig
   runRequest
     ( toCreateIssueRequest
         serverConfig.feedback
-        appConfig.questionnaire.feedback
+        tenantConfig.questionnaire.feedback
         pkgId
         questionUuid
         title

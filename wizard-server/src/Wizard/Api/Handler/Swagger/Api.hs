@@ -20,10 +20,6 @@ import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommand
 import Shared.Prefab.Api.Resource.Prefab.PrefabSM ()
 import Wizard.Api.Api
 import Wizard.Api.Resource.ActionKey.ActionKeyTypeSM ()
-import Wizard.Api.Resource.App.AppChangeSM ()
-import Wizard.Api.Resource.App.AppCreateSM ()
-import Wizard.Api.Resource.App.AppDetailSM ()
-import Wizard.Api.Resource.App.AppSM ()
 import Wizard.Api.Resource.Auth.AuthConsentSM ()
 import Wizard.Api.Resource.BookReference.BookReferenceSM ()
 import Wizard.Api.Resource.Branch.BranchChangeSM ()
@@ -31,8 +27,6 @@ import Wizard.Api.Resource.Branch.BranchCreateSM ()
 import Wizard.Api.Resource.Branch.BranchDetailSM ()
 import Wizard.Api.Resource.Branch.BranchStateSM ()
 import Wizard.Api.Resource.Common.PageSM ()
-import Wizard.Api.Resource.Config.AppConfigChangeSM ()
-import Wizard.Api.Resource.Config.AppConfigSM ()
 import Wizard.Api.Resource.Config.ClientConfigSM ()
 import Wizard.Api.Resource.Document.DocumentCreateSM ()
 import Wizard.Api.Resource.Document.DocumentSM ()
@@ -72,8 +66,6 @@ import Wizard.Api.Resource.Package.Publish.PackagePublishMigrationSM ()
 import Wizard.Api.Resource.PackageBundle.PackageBundleFileSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
-import Wizard.Api.Resource.Plan.AppPlanChangeSM ()
-import Wizard.Api.Resource.Plan.AppPlanSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentSM ()
@@ -97,13 +89,20 @@ import Wizard.Api.Resource.Submission.SubmissionCreateSM ()
 import Wizard.Api.Resource.Submission.SubmissionSM ()
 import Wizard.Api.Resource.Submission.SubmissionServiceSimpleSM ()
 import Wizard.Api.Resource.TemporaryFile.TemporaryFileSM ()
+import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeSM ()
+import Wizard.Api.Resource.Tenant.Config.TenantConfigSM ()
+import Wizard.Api.Resource.Tenant.TenantChangeSM ()
+import Wizard.Api.Resource.Tenant.TenantCreateSM ()
+import Wizard.Api.Resource.Tenant.TenantDetailSM ()
+import Wizard.Api.Resource.Tenant.TenantSM ()
+import Wizard.Api.Resource.Tenant.Usage.TenantUsageSM ()
 import Wizard.Api.Resource.Typehint.TypehintRequestSM ()
 import Wizard.Api.Resource.Typehint.TypehintSM ()
-import Wizard.Api.Resource.Usage.UsageSM ()
 import Wizard.Api.Resource.User.UserChangeSM ()
 import Wizard.Api.Resource.User.UserCreateSM ()
 import Wizard.Api.Resource.User.UserPasswordSM ()
 import Wizard.Api.Resource.User.UserProfileChangeSM ()
+import Wizard.Api.Resource.User.UserProfileSM ()
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Api.Resource.User.UserStateSM ()
 import Wizard.Api.Resource.UserToken.ApiKeyCreateSM ()
@@ -114,6 +113,9 @@ import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM ()
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePhaseSM ()
+import WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanChangeSM ()
+import WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanSM ()
+import WizardLib.Public.Api.Resource.User.Group.UserGroupDetailSM ()
 import WizardLib.Public.Api.Resource.UserToken.LoginSM ()
 import WizardLib.Public.Api.Resource.UserToken.UserTokenSM ()
 
@@ -127,7 +129,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "3.28.0"
+              , _infoVersion = "4.0.0"
               , _infoLicense =
                   Just $
                     License
@@ -135,6 +137,7 @@ swagger =
                       , _licenseUrl = Just . URL $ "https://raw.githubusercontent.com/ds-wizard/engine-backend/main/LICENSE.md"
                       }
               }
+        , _swaggerBasePath = Just "/wizard-api"
         }
 
 swaggerServer :: Server SwaggerAPI

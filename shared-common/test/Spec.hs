@@ -6,7 +6,7 @@ import Shared.Specs.Common.Integration.Http.Common.ResponseMapperSpec
 import Shared.Specs.Common.Model.Common.PageSpec
 import Shared.Specs.Common.Util.ListSpec
 import Shared.Specs.Common.Util.MathSpec
-import Shared.Specs.Common.Util.StringSpec (localeSpec)
+import Shared.Specs.Common.Util.StringSpec
 import Shared.Specs.Common.Util.TokenSpec
 
 main :: IO ()
@@ -22,5 +22,5 @@ main =
         describe "UTIL" $ do
           mathSpec
           listSpec
-          localeSpec
+          stringSpec
           tokenSpec

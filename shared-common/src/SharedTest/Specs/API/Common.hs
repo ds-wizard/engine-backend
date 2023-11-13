@@ -19,7 +19,7 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Constant.Api
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.List (elems)
@@ -92,7 +92,7 @@ createNotFoundTest' reqMethod reqUrl reqHeaders reqBody entityName parameters =
     reqHeaders
     reqBody
     entityName
-    (("app_uuid", U.toString defaultAppUuid) : parameters)
+    (("tenant_uuid", U.toString defaultTenantUuid) : parameters)
 
 -- ------------------------------------------------------------------------
 -- ASSERT

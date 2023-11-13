@@ -16,11 +16,11 @@ import Registry.Specs.API.Organization.List_Simple_GET
 organizationAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
     describe "ORGANIZATION API Spec" $ do
-      list_get appContext
-      list_simple_get appContext
-      list_post appContext
-      detail_get appContext
-      detail_put appContext
-      detail_delete appContext
-      detail_state_put appContext
-      detail_token_put appContext
+      list_GET appContext
+      list_simple_GET appContext
+      list_POST appContext
+      detail_GET appContext
+      detail_PUT appContext
+      detail_DELETE appContext
+      detail_state_PUT appContext
+      detail_token_PUT appContext

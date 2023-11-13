@@ -3,13 +3,17 @@ module Wizard.Database.Migration.Development.User.Data.IsaacNewton where
 import Data.Maybe (fromJust)
 import Data.Time
 
+import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
-import Wizard.Database.Migration.Development.App.Data.Apps
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.AlbertEinstein
-import Wizard.Model.App.App
+import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
+import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
+import WizardLib.Public.Model.User.UserGroup
+import WizardLib.Public.Model.User.UserGroupMembership
 
 userIsaac :: User
 userIsaac =
@@ -26,9 +30,8 @@ userIsaac =
     , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
     , submissionProps = []
     , imageUrl = Nothing
-    , groups = []
     , machine = False
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
@@ -63,4 +66,37 @@ userIsaacProfileChange =
     , lastName = userAlbertEdited.lastName
     , email = userAlbertEdited.email
     , affiliation = userAlbertEdited.affiliation
+    }
+
+userIsaacBioGroupMembership :: UserGroupMembership
+userIsaacBioGroupMembership =
+  UserGroupMembership
+    { userGroupUuid = bioGroup.uuid
+    , userUuid = userIsaac.uuid
+    , mType = MemberUserGroupMembershipType
+    , tenantUuid = defaultTenant.uuid
+    , createdAt = dt' 2018 1 21
+    , updatedAt = dt' 2018 1 21
+    }
+
+userIsaacPlantGroupMembership :: UserGroupMembership
+userIsaacPlantGroupMembership =
+  UserGroupMembership
+    { userGroupUuid = plantGroup.uuid
+    , userUuid = userIsaac.uuid
+    , mType = MemberUserGroupMembershipType
+    , tenantUuid = defaultTenant.uuid
+    , createdAt = dt' 2018 1 21
+    , updatedAt = dt' 2018 1 21
+    }
+
+userIsaacAnimalGroupMembership :: UserGroupMembership
+userIsaacAnimalGroupMembership =
+  UserGroupMembership
+    { userGroupUuid = animalGroup.uuid
+    , userUuid = userIsaac.uuid
+    , mType = MemberUserGroupMembershipType
+    , tenantUuid = defaultTenant.uuid
+    , createdAt = dt' 2018 1 21
+    , updatedAt = dt' 2018 1 21
     }

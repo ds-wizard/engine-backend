@@ -6,37 +6,39 @@ import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Config.SimpleFeature
 import Shared.Locale.Model.Locale.Locale
 import Wizard.Api.Resource.Config.ClientConfigDTO
-import Wizard.Model.App.App
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Tenant
+import Wizard.Model.User.UserProfile
 
-toClientConfigDTO :: ServerConfig -> AppConfig -> App -> [Locale] -> ClientConfigDTO
-toClientConfigDTO serverConfig appConfig app locales =
+toClientConfigDTO :: ServerConfig -> TenantConfig -> Maybe UserProfile -> Tenant -> [Locale] -> ClientConfigDTO
+toClientConfigDTO serverConfig tenantConfig mUserProfile tenant locales =
   ClientConfigDTO
-    { organization = appConfig.organization
-    , feature = appConfig.feature
-    , authentication = toClientAuthDTO $ appConfig.authentication
-    , privacyAndSupport = appConfig.privacyAndSupport
-    , dashboardAndLoginScreen = appConfig.dashboardAndLoginScreen
-    , lookAndFeel = appConfig.lookAndFeel
-    , registry = toClientConfigRegistryDTO serverConfig.registry appConfig.registry
-    , questionnaire = toClientConfigQuestionnaireDTO $ appConfig.questionnaire
-    , submission = SimpleFeature $ appConfig.submission.enabled
-    , cloud = toClientConfigCloudDTO serverConfig.cloud app
+    { user = mUserProfile
+    , organization = tenantConfig.organization
+    , feature = tenantConfig.feature
+    , authentication = toClientAuthDTO $ tenantConfig.authentication
+    , privacyAndSupport = tenantConfig.privacyAndSupport
+    , dashboardAndLoginScreen = tenantConfig.dashboardAndLoginScreen
+    , lookAndFeel = tenantConfig.lookAndFeel
+    , registry = toClientConfigRegistryDTO serverConfig.registry tenantConfig.registry
+    , questionnaire = toClientConfigQuestionnaireDTO $ tenantConfig.questionnaire
+    , submission = SimpleFeature $ tenantConfig.submission.enabled
+    , cloud = toClientConfigCloudDTO serverConfig.cloud tenant
     , locales = fmap toClientConfigLocaleDTO locales
-    , owl = appConfig.owl
-    , admin = toClientConfigAdminDTO serverConfig.admin app
+    , owl = tenantConfig.owl
+    , admin = toClientConfigAdminDTO serverConfig.admin tenant
     , modules =
         if serverConfig.admin.enabled
           then
-            [ toClientConfigModuleDTO serverConfig.modules.wizard app.clientUrl False
-            , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" app.adminClientUrl) False
+            [ toClientConfigModuleDTO serverConfig.modules.wizard tenant.clientUrl False
+            , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" tenant.adminClientUrl) False
             , toClientConfigModuleDTO serverConfig.modules.guide (fromMaybe "" serverConfig.modules.guide.url) True
             ]
           else []
     }
 
-toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO
+toClientAuthDTO :: TenantConfigAuth -> ClientConfigAuthDTO
 toClientAuthDTO config =
   ClientConfigAuthDTO
     { defaultRole = config.defaultRole
@@ -44,13 +46,13 @@ toClientAuthDTO config =
     , external = toClientAuthExternalDTO $ config.external
     }
 
-toClientAuthExternalDTO :: AppConfigAuthExternal -> ClientConfigAuthExternalDTO
+toClientAuthExternalDTO :: TenantConfigAuthExternal -> ClientConfigAuthExternalDTO
 toClientAuthExternalDTO config =
   ClientConfigAuthExternalDTO
     { services = toClientAuthExternalServiceDTO <$> config.services
     }
 
-toClientAuthExternalServiceDTO :: AppConfigAuthExternalService -> ClientConfigAuthExternalServiceDTO
+toClientAuthExternalServiceDTO :: TenantConfigAuthExternalService -> ClientConfigAuthExternalServiceDTO
 toClientAuthExternalServiceDTO config =
   ClientConfigAuthExternalServiceDTO
     { aId = config.aId
@@ -59,38 +61,38 @@ toClientAuthExternalServiceDTO config =
     , style = config.style
     }
 
-toClientConfigRegistryDTO :: ServerConfigRegistry -> AppConfigRegistry -> ClientConfigRegistryDTO
-toClientConfigRegistryDTO serverConfig appConfig =
+toClientConfigRegistryDTO :: ServerConfigRegistry -> TenantConfigRegistry -> ClientConfigRegistryDTO
+toClientConfigRegistryDTO serverConfig tenantConfig =
   ClientConfigRegistryDTO
-    { enabled = appConfig.enabled
+    { enabled = tenantConfig.enabled
     , url = serverConfig.clientUrl
     }
 
-toClientConfigQuestionnaireDTO :: AppConfigQuestionnaire -> ClientConfigQuestionnaireDTO
-toClientConfigQuestionnaireDTO appConfig =
+toClientConfigQuestionnaireDTO :: TenantConfigQuestionnaire -> ClientConfigQuestionnaireDTO
+toClientConfigQuestionnaireDTO tenantConfig =
   ClientConfigQuestionnaireDTO
-    { questionnaireVisibility = appConfig.questionnaireVisibility
-    , questionnaireSharing = appConfig.questionnaireSharing
-    , questionnaireCreation = appConfig.questionnaireCreation
-    , projectTagging = SimpleFeature $ appConfig.projectTagging.enabled
-    , summaryReport = appConfig.summaryReport
-    , feedback = SimpleFeature $ appConfig.feedback.enabled
+    { questionnaireVisibility = tenantConfig.questionnaireVisibility
+    , questionnaireSharing = tenantConfig.questionnaireSharing
+    , questionnaireCreation = tenantConfig.questionnaireCreation
+    , projectTagging = SimpleFeature $ tenantConfig.projectTagging.enabled
+    , summaryReport = tenantConfig.summaryReport
+    , feedback = SimpleFeature $ tenantConfig.feedback.enabled
     }
 
-toClientConfigCloudDTO :: ServerConfigCloud -> App -> ClientConfigCloudDTO
-toClientConfigCloudDTO serverConfig app =
+toClientConfigCloudDTO :: ServerConfigCloud -> Tenant -> ClientConfigCloudDTO
+toClientConfigCloudDTO serverConfig tenant =
   ClientConfigCloudDTO
     { enabled = serverConfig.enabled
-    , serverUrl = app.serverUrl
+    , serverUrl = tenant.serverUrl
     }
 
 toClientConfigLocaleDTO :: Locale -> ClientConfigLocaleDTO
 toClientConfigLocaleDTO locale =
   ClientConfigLocaleDTO {name = locale.name, code = locale.code, defaultLocale = locale.defaultLocale}
 
-toClientConfigAdminDTO :: ServerConfigAdmin -> App -> ClientConfigAdminDTO
-toClientConfigAdminDTO serverConfig app =
-  ClientConfigAdminDTO {enabled = serverConfig.enabled, clientUrl = app.adminClientUrl}
+toClientConfigAdminDTO :: ServerConfigAdmin -> Tenant -> ClientConfigAdminDTO
+toClientConfigAdminDTO serverConfig tenant =
+  ClientConfigAdminDTO {enabled = serverConfig.enabled, clientUrl = tenant.adminClientUrl}
 
 toClientConfigModuleDTO :: ServerConfigModule -> String -> Bool -> ClientConfigModuleDTO
 toClientConfigModuleDTO serverConfig url external =

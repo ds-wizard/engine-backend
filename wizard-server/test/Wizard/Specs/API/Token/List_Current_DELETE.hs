@@ -22,11 +22,11 @@ import Wizard.Specs.API.User.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /users/current/token
+-- DELETE /wizard-api/users/current/token
 -- ------------------------------------------------------------------------
 list_current_DELETE :: AppContext -> SpecWith ((), Application)
 list_current_DELETE appContext =
-  describe "DELETE /tokens/current" $ do
+  describe "DELETE /wizard-api/tokens/current" $ do
     test_204 appContext
     test_401 appContext
 
@@ -35,7 +35,7 @@ list_current_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/tokens/current"
+reqUrl = "/wizard-api/tokens/current"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

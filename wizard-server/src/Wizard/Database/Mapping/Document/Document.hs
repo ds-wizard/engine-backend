@@ -32,14 +32,14 @@ instance ToRow Document where
     , toField questionnaireRepliesHash
     , toField documentTemplateId
     , toField formatUuid
-    , toField creatorUuid
+    , toField createdBy
     , toField retrievedAt
     , toField finishedAt
     , toField createdAt
     , toField fileName
     , toField contentType
     , toField workerLog
-    , toField appUuid
+    , toField tenantUuid
     , toField fileSize
     ]
 
@@ -54,13 +54,13 @@ instance FromRow Document where
     questionnaireRepliesHash <- field
     documentTemplateId <- field
     formatUuid <- field
-    creatorUuid <- field
+    createdBy <- field
     retrievedAt <- field
     finishedAt <- field
     createdAt <- field
     fileName <- field
     contentType <- field
     workerLog <- field
-    appUuid <- field
+    tenantUuid <- field
     fileSize <- field
     return $ Document {..}

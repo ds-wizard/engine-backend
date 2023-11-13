@@ -18,7 +18,7 @@ import Wizard.Model.Context.ContextLenses ()
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
 import Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetMapper
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
-import Wizard.Service.Limit.AppLimitService
+import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
@@ -59,10 +59,10 @@ createAsset tmlId reqDto =
     checkStorageSize (fromIntegral . BS.length $ reqDto.content)
     validateFileAndAssetUniqueness Nothing tmlId reqDto.fileName
     aUuid <- liftIO generateUuid
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     now <- liftIO getCurrentTime
     let fileSize = fromIntegral . BS.length $ reqDto.content
-    let newAsset = fromCreateDTO tmlId aUuid reqDto.fileName reqDto.contentType fileSize appUuid now now
+    let newAsset = fromCreateDTO tmlId aUuid reqDto.fileName reqDto.contentType fileSize tenantUuid now now
     insertAsset newAsset
     touchDocumentTemplateById newAsset.documentTemplateId
     putAsset tmlId aUuid reqDto.contentType reqDto.content

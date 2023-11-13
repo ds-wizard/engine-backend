@@ -18,7 +18,7 @@ runMigration = do
 
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Locale) drop table"
-  let sql = "drop table if exists locale cascade;"
+  let sql = "DROP TABLE IF EXISTS locale CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -31,31 +31,26 @@ dropFunctions = do
 createTables = do
   logInfo _CMP_MIGRATION "(Table/Locale) create table"
   let sql =
-        "create table locale \
-        \ ( \
-        \     id                        varchar not null \
-        \         constraint locale_pk \
-        \             primary key, \
-        \     name                      varchar not null,\
-        \     description               varchar not null,\
-        \     code                      varchar not null,\
-        \     organization_id           varchar not null,\
-        \     locale_id                 varchar not null,\
-        \     version                   varchar not null,\
-        \     default_locale            bool not null,\
-        \     license                   varchar not null,\
-        \     readme                    varchar not null,\
-        \     recommended_app_version   varchar not null,\
-        \     enabled                   bool not null,\
-        \     app_uuid                  uuid not null \
-        \       constraint locale_app_uuid_fk \
-        \         references app, \
-        \     created_at timestamp with time zone not null,\
-        \     updated_at timestamp with time zone not null\
-        \ ); \
-        \  \
-        \ create unique index locale_uuid_uindex \
-        \     on locale (id);"
+        "CREATE TABLE locale\
+        \(\
+        \    id                      varchar     NOT NULL,\
+        \    name                    varchar     NOT NULL,\
+        \    description             varchar     NOT NULL,\
+        \    code                    varchar     NOT NULL,\
+        \    organization_id         varchar     NOT NULL,\
+        \    locale_id               varchar     NOT NULL,\
+        \    version                 varchar     NOT NULL,\
+        \    default_locale          bool        NOT NULL,\
+        \    license                 varchar     NOT NULL,\
+        \    readme                  varchar     NOT NULL,\
+        \    recommended_app_version varchar     NOT NULL,\
+        \    enabled                 bool        NOT NULL,\
+        \    tenant_uuid             uuid        NOT NULL,\
+        \    created_at              timestamptz NOT NULL,\
+        \    updated_at              timestamptz NOT NULL,\
+        \    CONSTRAINT locale_pk PRIMARY KEY (id, tenant_uuid),\
+        \    CONSTRAINT locale_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid)\
+        \);"
   let action conn = execute_ conn sql
   runDB action
 

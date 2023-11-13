@@ -8,7 +8,7 @@ import Database.PostgreSQL.Simple.ToRow
 import Database.PostgreSQL.Simple.Types
 
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireAclJM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnairePermJM ()
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionJM ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSharing ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireVisibility ()
@@ -32,7 +32,7 @@ instance ToRow Questionnaire where
     , toField description
     , toField isTemplate
     , toField squashed
-    , toField appUuid
+    , toField tenantUuid
     , toField . PGArray $ projectTags
     , toField answeredQuestions
     , toField unansweredQuestions
@@ -57,7 +57,7 @@ instance FromRow Questionnaire where
     description <- field
     isTemplate <- field
     squashed <- field
-    appUuid <- field
+    tenantUuid <- field
     projectTags <- fromPGArray <$> field
     answeredQuestions <- field
     unansweredQuestions <- field

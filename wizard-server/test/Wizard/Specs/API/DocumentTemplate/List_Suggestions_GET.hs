@@ -28,11 +28,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-templates/suggestions
+-- GET /wizard-api/document-templates/suggestions
 -- ------------------------------------------------------------------------
 list_suggestions_GET :: AppContext -> SpecWith ((), Application)
 list_suggestions_GET appContext =
-  describe "GET /document-templates/suggestions" $ do
+  describe "GET /wizard-api/document-templates/suggestions" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -42,7 +42,7 @@ list_suggestions_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/document-templates/suggestions"
+reqUrl = "/wizard-api/document-templates/suggestions"
 
 reqHeadersT reqAuthHeader = [reqNonAdminAuthHeader]
 
@@ -55,31 +55,31 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK"
     appContext
-    "/document-templates/suggestions"
+    "/wizard-api/document-templates/suggestions"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 1 1 0) [toSuggestionDTO wizardDocumentTemplate])
   create_test_200
     "HTTP 200 OK (query 'q')"
     appContext
-    "/document-templates/suggestions?q=Questionnaire Report"
+    "/wizard-api/document-templates/suggestions?q=Questionnaire Report"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 1 1 0) [toSuggestionDTO wizardDocumentTemplate])
   create_test_200
     "HTTP 200 OK (query 'pkgId')"
     appContext
-    "/document-templates/suggestions?pkgId=global:core:1.0.0"
+    "/wizard-api/document-templates/suggestions?pkgId=global:core:1.0.0"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 1 1 0) [toSuggestionDTO wizardDocumentTemplate])
   create_test_200
     "HTTP 200 OK (query 'pkgId' - no templates)"
     appContext
-    "/document-templates/suggestions?pkgId=org.nl:core-nl:1.0.0"
+    "/wizard-api/document-templates/suggestions?pkgId=org.nl:core-nl:1.0.0"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSuggestionDTO]))
   create_test_200
     "HTTP 200 OK (query 'q' for non-existing)"
     appContext
-    "/document-templates/suggestions?q=Non-existing Questionnaire Report"
+    "/wizard-api/document-templates/suggestions?q=Non-existing Questionnaire Report"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSuggestionDTO]))
 

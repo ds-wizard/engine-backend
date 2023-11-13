@@ -12,4 +12,4 @@ fromSystemDTO :: U.UUID -> User -> Integer -> String -> Maybe String -> Maybe St
 fromSystemDTO uuid user expiration secret mUserAgent mSessionState now tokenValue =
   let timeDelta = realToFrac $ expiration * nominalHourInSeconds
       expiresAt = addUTCTime timeDelta now
-   in toUserToken uuid "Token" LoginUserTokenType user.uuid expiresAt secret mUserAgent mSessionState user.appUuid now tokenValue
+   in toUserToken uuid "Token" LoginUserTokenType user.uuid expiresAt secret mUserAgent mSessionState user.tenantUuid now tokenValue

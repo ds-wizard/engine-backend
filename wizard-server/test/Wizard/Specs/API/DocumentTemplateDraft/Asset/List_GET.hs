@@ -23,11 +23,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-template-drafts/{documentTemplateId}/assets
+-- GET /wizard-api/document-template-drafts/{documentTemplateId}/assets
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /document-template-drafts/{documentTemplateId}/assets" $ do
+  describe "GET /wizard-api/document-template-drafts/{documentTemplateId}/assets" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +37,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/document-template-drafts/global:questionnaire-report:1.0.0/assets"
+reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/assets"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 

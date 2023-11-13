@@ -1,7 +1,6 @@
 module Wizard.Model.DocumentTemplate.DocumentTemplateList where
 
 import Data.Time
-import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
@@ -17,18 +16,13 @@ data DocumentTemplateList = DocumentTemplateList
   , phase :: DocumentTemplatePhase
   , metamodelVersion :: Int
   , description :: String
-  , readme :: String
-  , license :: String
   , allowedPackages :: [PackagePattern]
-  , formats :: [DocumentTemplateFormat]
   , state :: DocumentTemplateState
   , nonEditable :: Bool
   , remoteVersion :: Maybe String
   , remoteOrganizationName :: Maybe String
   , remoteOrganizationLogo :: Maybe String
-  , appUuid :: U.UUID
   , createdAt :: UTCTime
-  , updatedAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
 

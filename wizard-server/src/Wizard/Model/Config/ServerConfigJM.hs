@@ -57,7 +57,6 @@ instance FromJSON ServerConfigGeneral where
             Nothing -> fail _ERROR_SERVICE_CONFIG__VALIDATION_CFG_RSA_PRIVATE_KEY_FORMAT
         Nothing -> return dummyRsaPrivateKey
     integrationConfig <- o .:? "integrationConfig" .!= defaultGeneral.integrationConfig
-    clientStyleBuilderUrl <- o .:? "clientStyleBuilderUrl" .!= defaultGeneral.clientStyleBuilderUrl
     return ServerConfigGeneral {..}
   parseJSON _ = mzero
 

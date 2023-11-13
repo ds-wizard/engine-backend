@@ -8,7 +8,7 @@ import Shared.Common.Util.Aeson
 
 data DeleteUserCommand = DeleteUserCommand
   { uuid :: U.UUID
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   }
   deriving (Show, Eq, Generic)
 

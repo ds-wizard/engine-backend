@@ -1,5 +1,5 @@
 module Registry.Specs.API.Organization.Detail_Token_PUT (
-  detail_token_put,
+  detail_token_PUT,
 ) where
 
 import Network.HTTP.Types
@@ -24,8 +24,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- PUT /organizations/{orgId}/token
 -- ------------------------------------------------------------------------
-detail_token_put :: AppContext -> SpecWith ((), Application)
-detail_token_put appContext =
+detail_token_PUT :: AppContext -> SpecWith ((), Application)
+detail_token_PUT appContext =
   describe "PUT /organizations/{orgId}/token" $ do
     test_200 appContext
     test_404 appContext

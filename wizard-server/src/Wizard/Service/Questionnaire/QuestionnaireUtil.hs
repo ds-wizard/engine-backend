@@ -7,25 +7,22 @@ import GHC.Records
 
 import Shared.Common.Model.Common.Lens
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
-import Wizard.Database.DAO.Acl.GroupDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Model.Acl.Acl
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Report.Report
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
@@ -33,36 +30,38 @@ import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import Wizard.Service.Report.ReportGenerator
+import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.KnowledgeModel.Model.Package.Package
+import WizardLib.Public.Database.DAO.User.UserGroupDAO
 
 extractVisibility dto = do
-  appConfig <- getAppConfig
-  if appConfig.questionnaire.questionnaireVisibility.enabled
+  tenantConfig <- getCurrentTenantConfig
+  if tenantConfig.questionnaire.questionnaireVisibility.enabled
     then return dto.visibility
-    else return $ appConfig.questionnaire.questionnaireVisibility.defaultValue
+    else return $ tenantConfig.questionnaire.questionnaireVisibility.defaultValue
 
 extractSharing dto = do
-  appConfig <- getAppConfig
-  if appConfig.questionnaire.questionnaireSharing.enabled
+  tenantConfig <- getCurrentTenantConfig
+  if tenantConfig.questionnaire.questionnaireSharing.enabled
     then return dto.sharing
-    else return $ appConfig.questionnaire.questionnaireSharing.defaultValue
+    else return $ tenantConfig.questionnaire.questionnaireSharing.defaultValue
 
 enhanceQuestionnaire :: Questionnaire -> AppContextM QuestionnaireDTO
 enhanceQuestionnaire qtn = do
   pkg <- getPackageById qtn.packageId
   state <- getQuestionnaireState qtn.uuid pkg.pId
-  permissionDtos <- traverse enhanceQuestionnairePermRecord qtn.permissions
+  permissionDtos <- traverse enhanceQuestionnairePerm qtn.permissions
   return $ toDTO qtn pkg state permissionDtos
 
-enhanceQuestionnairePermRecord :: QuestionnairePermRecord -> AppContextM QuestionnairePermRecordDTO
-enhanceQuestionnairePermRecord record =
-  case record.member of
-    UserMember {uuid = userUuid} -> do
-      user <- findUserByUuid userUuid
-      return $ toUserPermRecordDTO record user
-    GroupMember {gId = groupId} -> do
-      group <- findGroupById groupId
-      return $ toGroupPermRecordDTO record group
+enhanceQuestionnairePerm :: QuestionnairePerm -> AppContextM QuestionnairePermDTO
+enhanceQuestionnairePerm qtnPerm =
+  case qtnPerm.memberType of
+    UserQuestionnairePermType -> do
+      user <- findUserByUuid qtnPerm.memberUuid
+      return $ toUserQuestionnairePermDTO qtnPerm user
+    UserGroupQuestionnairePermType -> do
+      userGroup <- findUserGroupByUuid qtnPerm.memberUuid
+      return $ toUserGroupQuestionnairePermDTO qtnPerm userGroup
 
 enhanceQuestionnaireEvent :: QuestionnaireEvent -> AppContextM QuestionnaireEventDTO
 enhanceQuestionnaireEvent event = do
@@ -98,7 +97,6 @@ getQuestionnaireReport
   -> AppContextM QuestionnaireReportDTO
 getQuestionnaireReport qtn = do
   qtnCtn <- compileQuestionnaire qtn
-  appConfig <- getAppConfig
   let _requiredPhaseUuid = qtnCtn.phaseUuid
   let _replies = M.toList $ qtnCtn.replies
   km <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
@@ -123,9 +121,9 @@ getPhasesAnsweredIndication qtn = do
 
 skipIfAssigningProject :: Questionnaire -> AppContextM () -> AppContextM ()
 skipIfAssigningProject qtn action = do
-  appConfig <- getAppConfig
-  let questionnaireSharingEnabled = appConfig.questionnaire.questionnaireSharing.enabled
-  let questionnaireSharingAnonymousEnabled = appConfig.questionnaire.questionnaireSharing.anonymousEnabled
+  tenantConfig <- getCurrentTenantConfig
+  let questionnaireSharingEnabled = tenantConfig.questionnaire.questionnaireSharing.enabled
+  let questionnaireSharingAnonymousEnabled = tenantConfig.questionnaire.questionnaireSharing.anonymousEnabled
   when
     (not (questionnaireSharingEnabled && questionnaireSharingAnonymousEnabled) || (not . null $ qtn.permissions))
     action

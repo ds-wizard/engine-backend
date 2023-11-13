@@ -17,10 +17,10 @@ documentTemplateAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
     describe "DOCUMENT TEMPLATE API Spec" $ do
       list_GET appContext
-      list_all_get appContext
+      list_all_GET appContext
       list_suggestions_GET appContext
-      list_delete appContext
-      detail_get appContext
-      detail_put appContext
-      detail_delete appContext
-      detail_pull_post appContext
+      list_DELETE appContext
+      detail_GET appContext
+      detail_PUT appContext
+      detail_DELETE appContext
+      detail_pull_POST appContext

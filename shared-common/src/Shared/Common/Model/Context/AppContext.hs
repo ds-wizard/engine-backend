@@ -26,7 +26,7 @@ class
   , HasField "s3Client'" s MinioConn
   , HasField "identity'" s (Maybe String)
   , HasField "traceUuid'" s U.UUID
-  , HasField "appUuid'" s U.UUID
+  , HasField "tenantUuid'" s U.UUID
   , HasField "serverConfig'" s sc
   , HasField "cloud'" sc ServerConfigCloud
   , HasField "s3'" sc ServerConfigS3

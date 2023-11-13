@@ -27,11 +27,11 @@ import Wizard.Specs.API.Branch.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- POST /branches
+-- POST /wizard-api/branches
 -- ------------------------------------------------------------------------
 list_POST :: AppContext -> SpecWith ((), Application)
 list_POST appContext =
-  describe "POST /branches" $ do
+  describe "POST /wizard-api/branches" $ do
     test_201 appContext
     test_400_invalid_json appContext
     test_400_not_valid_kmId appContext
@@ -44,7 +44,7 @@ list_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/branches"
+reqUrl = "/wizard-api/branches"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

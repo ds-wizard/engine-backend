@@ -8,18 +8,18 @@ import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
 import RegistryLib.Api.Resource.Package.PackageSimpleDTO
 import RegistryLib.Model.Organization.OrganizationSimple
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Registry.RegistryLocale
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Registry.RegistryPackage
 import Wizard.Model.Registry.RegistryTemplate
+import Wizard.Model.Tenant.Config.TenantConfig
 
-toOrganizationCreate :: AppConfig -> RegistryCreateDTO -> OrganizationCreateDTO
-toOrganizationCreate appConfig reqDto =
+toOrganizationCreate :: TenantConfig -> RegistryCreateDTO -> OrganizationCreateDTO
+toOrganizationCreate tenantConfig reqDto =
   OrganizationCreateDTO
-    { organizationId = appConfig.organization.organizationId
-    , name = appConfig.organization.name
-    , description = appConfig.organization.description
+    { organizationId = tenantConfig.organization.organizationId
+    , name = tenantConfig.organization.name
+    , description = tenantConfig.organization.description
     , email = reqDto.email
     }
 

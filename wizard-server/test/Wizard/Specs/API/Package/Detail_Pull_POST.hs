@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Package.Detail_Pull_POST (
-  detail_pull_post,
+  detail_pull_POST,
 ) where
 
 import Data.Aeson (encode)
@@ -24,11 +24,11 @@ import Wizard.Specs.API.Package.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /packages/{pkgId}
+-- GET /wizard-api/packages/{pkgId}
 -- ------------------------------------------------------------------------
-detail_pull_post :: AppContext -> SpecWith ((), Application)
-detail_pull_post appContext =
-  describe "POST /packages/{pkgId}/pull" $ do
+detail_pull_POST :: AppContext -> SpecWith ((), Application)
+detail_pull_POST appContext =
+  describe "POST /wizard-api/packages/{pkgId}/pull" $ do
     test_200 appContext
     test_400 appContext
     test_401 appContext
@@ -39,7 +39,7 @@ detail_pull_post appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = BS.pack $ "/packages/" ++ globalPackage.pId ++ "/pull"
+reqUrl = BS.pack $ "/wizard-api/packages/" ++ globalPackage.pId ++ "/pull"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -74,7 +74,7 @@ test_400 appContext =
   it "HTTP 400 BAD REQUEST - Package was not found in Registry" $
     -- GIVEN: Prepare request
     do
-      let reqUrl = "/packages/global:non-existing-package:1.0.0/pull"
+      let reqUrl = "/wizard-api/packages/global:non-existing-package:1.0.0/pull"
       -- AND: Prepare expectation
       let expStatus = 400
       let expHeaders = resCtHeader : resCorsHeaders

@@ -14,7 +14,7 @@ instance ToRow Prefab where
     , toField pType
     , toField name
     , toJSONField content
-    , toField appUuid
+    , toField tenantUuid
     , toField createdAt
     , toField updatedAt
     ]
@@ -25,7 +25,7 @@ instance FromRow Prefab where
     pType <- field
     name <- field
     content <- fieldWith fromJSONField
-    appUuid <- field
+    tenantUuid <- field
     createdAt <- field
     updatedAt <- field
     return $ Prefab {..}

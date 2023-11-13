@@ -1,5 +1,5 @@
 module Wizard.Specs.API.BookReference.Detail_GET (
-  detail_get,
+  detail_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -18,11 +18,11 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /book-references/{brShortUuid}
+-- GET /wizard-api/book-references/{brShortUuid}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith ((), Application)
-detail_get appContext =
-  describe "GET /book-references/{brShortUuid}" $ do
+detail_GET :: AppContext -> SpecWith ((), Application)
+detail_GET appContext =
+  describe "GET /wizard-api/book-references/{brShortUuid}" $ do
     test_200 appContext
     test_404 appContext
 
@@ -31,7 +31,7 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/book-references/bvq"
+reqUrl = "/wizard-api/book-references/bvq"
 
 reqHeaders = []
 
@@ -63,7 +63,7 @@ test_200 appContext =
 test_404 appContext =
   createNotFoundTest
     reqMethod
-    "/book-references/nonExistingShortUuid"
+    "/wizard-api/book-references/nonExistingShortUuid"
     reqHeaders
     reqBody
     "book_reference"

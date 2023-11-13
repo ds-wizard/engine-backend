@@ -21,7 +21,7 @@ instance ToRow UserToken where
     , toField userUuid
     , toField value
     , toField sessionState
-    , toField appUuid
+    , toField tenantUuid
     , toField createdAt
     , toField name
     , toField tType
@@ -35,7 +35,7 @@ instance FromRow UserToken where
     userUuid <- field
     value <- field
     sessionState <- field
-    appUuid <- field
+    tenantUuid <- field
     createdAt <- field
     name <- field
     tType <- field

@@ -33,11 +33,11 @@ import Wizard.Specs.API.User.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /users
+-- POST /wizard-api/users
 -- ------------------------------------------------------------------------
 list_POST :: AppContext -> SpecWith ((), Application)
 list_POST appContext =
-  describe "POST /users" $ do
+  describe "POST /wizard-api/users" $ do
     test_201 appContext
     test_400 appContext
 
@@ -46,7 +46,7 @@ list_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/users"
+reqUrl = "/wizard-api/users"
 
 reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 

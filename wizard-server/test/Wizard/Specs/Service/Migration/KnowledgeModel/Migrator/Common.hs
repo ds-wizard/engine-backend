@@ -4,9 +4,9 @@ import Data.Maybe
 import qualified Data.UUID as U
 
 import Shared.Common.Util.Date
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Model.App.App
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
+import Wizard.Model.Tenant.Tenant
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
@@ -23,6 +23,6 @@ createTestMigratorStateWithEvents branchEvents targetPackageEvents mKm =
     , targetPackageEvents = targetPackageEvents
     , resultEvents = []
     , currentKnowledgeModel = mKm
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdAt = dt'' 2018 1 1 1
     }

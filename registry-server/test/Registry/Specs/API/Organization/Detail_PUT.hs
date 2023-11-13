@@ -1,5 +1,5 @@
 module Registry.Specs.API.Organization.Detail_PUT (
-  detail_put,
+  detail_PUT,
 ) where
 
 import Data.Aeson (encode)
@@ -30,8 +30,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- PUT /organizations/{orgId}
 -- ------------------------------------------------------------------------
-detail_put :: AppContext -> SpecWith ((), Application)
-detail_put appContext =
+detail_PUT :: AppContext -> SpecWith ((), Application)
+detail_PUT appContext =
   describe "PUT /organizations/{orgId}" $ do
     test_200 appContext
     test_400 appContext

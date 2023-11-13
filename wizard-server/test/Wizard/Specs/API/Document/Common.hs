@@ -10,9 +10,9 @@ import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Document.DocumentDAO
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Model.App.App
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Document.Document
+import Wizard.Model.Tenant.Tenant
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -34,7 +34,7 @@ assertAbsenceOfDocumentInDB appContext doc = do
   liftIO $
     error
       `shouldBe` NotExistsError
-        (_ERROR_DATABASE__ENTITY_NOT_FOUND "document" [("app_uuid", U.toString defaultApp.uuid), ("uuid", U.toString doc.uuid)])
+        (_ERROR_DATABASE__ENTITY_NOT_FOUND "document" [("tenant_uuid", U.toString defaultTenant.uuid), ("uuid", U.toString doc.uuid)])
 
 -- --------------------------------
 -- COMPARATORS
@@ -42,5 +42,4 @@ assertAbsenceOfDocumentInDB appContext doc = do
 compareDocumentDtos resDto expDto = do
   liftIO $ resDto.name `shouldBe` expDto.name
   liftIO $ (fromJust resDto.questionnaire).uuid `shouldBe` expDto.questionnaireUuid
-  liftIO $ resDto.documentTemplate.tId `shouldBe` expDto.documentTemplateId
-  liftIO $ resDto.formatUuid `shouldBe` expDto.formatUuid
+  liftIO $ (fmap (.uuid) resDto.format) `shouldBe` Just expDto.formatUuid

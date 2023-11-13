@@ -19,9 +19,9 @@ import Wizard.Model.Context.AppContext
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
 import Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleAudit
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
-import Wizard.Service.Limit.AppLimitService
 import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import Wizard.Service.TemporaryFile.TemporaryFileService
+import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
@@ -73,16 +73,16 @@ importAndConvertBundle contentS fromRegistry =
       checkDocumentTemplateLimit
       let assetSize = foldl (\acc (_, content) -> acc + (fromIntegral . BS.length $ content)) 0 assetContents
       checkStorageSize assetSize
-      appUuid <- asks currentAppUuid
-      let tml = fromBundle bundle appUuid
+      tenantUuid <- asks currentTenantUuid
+      let tml = fromBundle bundle tenantUuid
       validateNewDocumentTemplate tml True
       deleteOldDocumentTemplateIfPresent bundle
       traverse_ (\(a, content) -> putAsset tml.tId a.uuid a.contentType content) assetContents
       insertDocumentTemplate tml
-      traverse_ (insertFile . fromFileDTO tml.tId appUuid tml.createdAt) bundle.files
+      traverse_ (insertFile . fromFileDTO tml.tId tenantUuid tml.createdAt) bundle.files
       traverse_
         ( \(assetDto, content) ->
-            insertAsset $ fromAssetDTO tml.tId (fromIntegral . BS.length $ content) appUuid tml.createdAt assetDto
+            insertAsset $ fromAssetDTO tml.tId (fromIntegral . BS.length $ content) tenantUuid tml.createdAt assetDto
         )
         assetContents
       if fromRegistry

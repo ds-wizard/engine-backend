@@ -16,7 +16,7 @@ instance FromRow Branch where
     createdBy <- field
     createdAt <- field
     updatedAt <- field
-    appUuid <- field
+    tenantUuid <- field
     version <- field
     description <- field
     readme <- field
@@ -32,7 +32,7 @@ instance ToRow Branch where
     , toField createdBy
     , toField createdAt
     , toField updatedAt
-    , toField appUuid
+    , toField tenantUuid
     , toField version
     , toField description
     , toField readme

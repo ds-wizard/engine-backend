@@ -1,5 +1,5 @@
 module Wizard.Specs.API.DocumentTemplate.List_DELETE (
-  list_delete,
+  list_DELETE,
 ) where
 
 import Data.Aeson (encode)
@@ -24,11 +24,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-templates
+-- GET /wizard-api/document-templates
 -- ------------------------------------------------------------------------
-list_delete :: AppContext -> SpecWith ((), Application)
-list_delete appContext =
-  describe "DELETE /document-templates" $ do
+list_DELETE :: AppContext -> SpecWith ((), Application)
+list_DELETE appContext =
+  describe "DELETE /wizard-api/document-templates" $ do
     test_204 appContext
     test_400 appContext
     test_401 appContext
@@ -39,7 +39,7 @@ list_delete appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/document-templates?organizationId=global&templateId=questionnaire-report"
+reqUrl = "/wizard-api/document-templates?organizationId=global&templateId=questionnaire-report"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

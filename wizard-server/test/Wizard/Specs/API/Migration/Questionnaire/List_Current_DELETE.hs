@@ -31,11 +31,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /questionnaires/{qtnUuid}/migrations/current
+-- DELETE /wizard-api/questionnaires/{qtnUuid}/migrations/current
 -- ------------------------------------------------------------------------
 list_current_DELETE :: AppContext -> SpecWith ((), Application)
 list_current_DELETE appContext =
-  describe "DELETE /questionnaires/{qtnUuid}/migrations/current" $ do
+  describe "DELETE /wizard-api/questionnaires/{qtnUuid}/migrations/current" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -46,7 +46,7 @@ list_current_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/migrations/current"
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid ++ "/migrations/current"
 
 reqHeadersT authHeader = [authHeader]
 

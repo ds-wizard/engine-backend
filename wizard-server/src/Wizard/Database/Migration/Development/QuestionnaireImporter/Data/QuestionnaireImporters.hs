@@ -3,7 +3,7 @@ module Wizard.Database.Migration.Development.QuestionnaireImporter.Data.Question
 import Data.Maybe (fromJust)
 import Data.Time
 
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
 import Wizard.Model.QuestionnaireImporter.QuestionnaireImporter
 import Wizard.Service.QuestionnaireImporter.QuestionnaireImporterMapper
@@ -25,7 +25,7 @@ questionnaireImporterBio1 =
     , allowedPackages = [packagePatternAll]
     , url = "http://example.com/questionnaire-importer-bio"
     , enabled = True
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -45,7 +45,7 @@ questionnaireImporterBio2 =
     , allowedPackages = [packagePatternAll]
     , url = "http://example.com/questionnaire-importer-bio"
     , enabled = True
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -65,7 +65,7 @@ questionnaireImporterBio3 =
     , allowedPackages = [packagePatternAll]
     , url = "http://example.com/questionnaire-importer-bio"
     , enabled = False
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -91,7 +91,7 @@ questionnaireExtImporter1 =
     , allowedPackages = [packagePatternGlobal]
     , url = "http://example.com/questionnaire-ext-importer"
     , enabled = True
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -111,7 +111,7 @@ questionnaireOntoImporter1 =
     , allowedPackages = [packagePatternGlobal]
     , url = "http://example.com/questionnaire-onto-importer"
     , enabled = False
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }

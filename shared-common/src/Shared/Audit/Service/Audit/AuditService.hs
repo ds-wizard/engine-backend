@@ -17,9 +17,9 @@ logAudit component action entity = logAuditWithBody component action entity M.em
 logAuditWithBody :: AppContextC s sc m => String -> String -> String -> M.Map String String -> m ()
 logAuditWithBody component action entity body = do
   aUuid <- liftIO generateUuid
-  appUuid <- asks (.appUuid')
+  tenantUuid <- asks (.tenantUuid')
   createdBy <- asks (.identity')
   now <- liftIO getCurrentTime
-  let audit = toAudit aUuid component action entity body (fmap (fromJust . U.fromString) createdBy) appUuid now
+  let audit = toAudit aUuid component action entity body (fmap (fromJust . U.fromString) createdBy) tenantUuid now
   insertAudit audit
   return ()

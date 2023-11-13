@@ -17,7 +17,7 @@ data Submission = Submission
   , returnedData :: Maybe String
   , serviceId :: String
   , documentUuid :: U.UUID
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdBy :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

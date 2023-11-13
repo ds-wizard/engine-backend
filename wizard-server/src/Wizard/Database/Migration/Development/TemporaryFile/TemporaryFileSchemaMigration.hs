@@ -16,30 +16,25 @@ runMigration = do
 
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/TemporaryFile) drop tables"
-  let sql = "drop table if exists temporary_file cascade;"
+  let sql = "DROP TABLE IF EXISTS temporary_file CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
 createTables = do
   logInfo _CMP_MIGRATION "(Table/TemporaryFile) create table"
   let sql =
-        "create table temporary_file \
-        \     ( \
-        \         uuid             uuid not null \
-        \             constraint temporary_file_pk \
-        \                 primary key, \
-        \         file_name        varchar not null, \
-        \         content_type     varchar not null, \
-        \         expires_at       timestamp with time zone not null, \
-        \         app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \           constraint temporary_file_app_uuid_fk \
-        \             references app, \
-        \         created_by       uuid not null \
-        \           constraint temporary_file_user_entity_uuid_fk \
-        \             references user_entity on delete cascade, \
-        \         created_at      timestamp with time zone not null \
-        \     ); \
-        \ create unique index temporary_file_uuid_uindex \
-        \     on temporary_file (uuid);"
+        "CREATE TABLE temporary_file \
+        \( \
+        \    uuid         uuid        NOT NULL, \
+        \    file_name    varchar     NOT NULL, \
+        \    content_type varchar     NOT NULL, \
+        \    expires_at   timestamptz NOT NULL, \
+        \    tenant_uuid  uuid        NOT NULL, \
+        \    created_by   uuid        NOT NULL, \
+        \    created_at   timestamptz NOT NULL, \
+        \    CONSTRAINT temporary_file_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT temporary_file_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
+        \    CONSTRAINT temporary_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
   let action conn = execute_ conn sql
   runDB action

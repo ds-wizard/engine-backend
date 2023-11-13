@@ -21,18 +21,18 @@ pageLabel = "submissions"
 
 findSubmissions :: AppContextM [Submission]
 findSubmissions = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findSubmissionsFiltered :: [(String, String)] -> AppContextM [Submission]
 findSubmissionsFiltered params = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName (appQueryUuid appUuid : params)
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName (tenantQueryUuid tenantUuid : params)
 
 findSubmissionsByDocumentUuid :: U.UUID -> AppContextM [Submission]
 findSubmissionsByDocumentUuid documentUuid = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("document_uuid", U.toString documentUuid)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_uuid", U.toString documentUuid)]
 
 insertSubmission :: Submission -> AppContextM Int64
 insertSubmission = createInsertFn entityName
@@ -40,12 +40,12 @@ insertSubmission = createInsertFn entityName
 updateSubmissionByUuid :: Submission -> AppContextM Submission
 updateSubmissionByUuid sub = do
   now <- liftIO getCurrentTime
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let updatedSub = sub {updatedAt = now}
   let sql =
         fromString
-          "UPDATE submission SET uuid = ?, state = ?, location = ?, returned_data = ?, service_id = ?, document_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
-  let params = toRow sub ++ [toField appUuid, toField updatedSub.uuid]
+          "UPDATE submission SET uuid = ?, state = ?, location = ?, returned_data = ?, service_id = ?, document_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, tenant_uuid = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = toRow sub ++ [toField tenantUuid, toField updatedSub.uuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -56,5 +56,5 @@ deleteSubmissions = createDeleteEntitiesFn entityName
 
 deleteSubmissionsFiltered :: [(String, String)] -> AppContextM Int64
 deleteSubmissionsFiltered params = do
-  appUuid <- asks currentAppUuid
-  createDeleteEntitiesByFn entityName (appQueryUuid appUuid : params)
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntitiesByFn entityName (tenantQueryUuid tenantUuid : params)

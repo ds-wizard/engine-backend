@@ -28,7 +28,7 @@ toList token currentSession =
     }
 
 toUserToken :: U.UUID -> String -> UserTokenType -> U.UUID -> UTCTime -> String -> Maybe String -> Maybe String -> U.UUID -> UTCTime -> String -> UserToken
-toUserToken uuid name tokenType userUuid expiresAt secret mUserAgent mSessionState appUuid now tokenValue =
+toUserToken uuid name tokenType userUuid expiresAt secret mUserAgent mSessionState tenantUuid now tokenValue =
   UserToken
     { uuid = uuid
     , name = name
@@ -38,20 +38,21 @@ toUserToken uuid name tokenType userUuid expiresAt secret mUserAgent mSessionSta
     , userAgent = fromMaybe "Unknown User Agent" mUserAgent
     , sessionState = mSessionState
     , expiresAt = expiresAt
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = now
     }
 
-toUserTokenClaims :: U.UUID -> U.UUID -> UTCTime -> Integer -> UserTokenClaimsDTO
-toUserTokenClaims userUuid tokenUuid now expiration =
+toUserTokenClaims :: U.UUID -> U.UUID -> U.UUID -> UTCTime -> Integer -> UserTokenClaimsDTO
+toUserTokenClaims userUuid tokenUuid tenantUuid now expiration =
   let timeDelta = realToFrac $ expiration * nominalHourInSeconds
-   in toUserTokenClaimsWithExpiration userUuid tokenUuid now (addUTCTime timeDelta now)
+   in toUserTokenClaimsWithExpiration userUuid tokenUuid tenantUuid now (addUTCTime timeDelta now)
 
-toUserTokenClaimsWithExpiration :: U.UUID -> U.UUID -> UTCTime -> UTCTime -> UserTokenClaimsDTO
-toUserTokenClaimsWithExpiration userUuid tokenUuid now expiresAt =
+toUserTokenClaimsWithExpiration :: U.UUID -> U.UUID -> U.UUID -> UTCTime -> UTCTime -> UserTokenClaimsDTO
+toUserTokenClaimsWithExpiration userUuid tokenUuid tenantUuid now expiresAt =
   UserTokenClaimsDTO
     { exp = JWT.IntDate $ utcTimeToPOSIXSeconds expiresAt
     , version = userTokenVersion
     , tokenUuid = tokenUuid
     , userUuid = userUuid
+    , tenantUuid = tenantUuid
     }

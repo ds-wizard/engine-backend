@@ -7,7 +7,7 @@ import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.App.AppValidation
+import Wizard.Service.Tenant.TenantValidation
 
 type List_GET =
   Header "Host" String
@@ -16,8 +16,8 @@ type List_GET =
     :> Verb GET 204 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] NoContent)
 
 list_GET :: Maybe String -> Maybe String -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
-list_GET mServerUrl mAppId =
+list_GET mServerUrl mTenantId =
   runInUnauthService mServerUrl NoTransaction $
     addTraceUuidHeader =<< do
-      validateAppId (fromMaybe "" mAppId)
+      validateTenantId (fromMaybe "" mTenantId)
       return NoContent

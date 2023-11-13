@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.Detail_Documents_GET (
-  detail_documents_get,
+  detail_documents_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -41,11 +41,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires/{qtnUuid}/documents
+-- GET /wizard-api/questionnaires/{qtnUuid}/documents
 -- ------------------------------------------------------------------------
-detail_documents_get :: AppContext -> SpecWith ((), Application)
-detail_documents_get appContext =
-  describe "GET /questionnaires/{qtnUuid}/documents" $ do
+detail_documents_GET :: AppContext -> SpecWith ((), Application)
+detail_documents_GET appContext =
+  describe "GET /wizard-api/questionnaires/{qtnUuid}/documents" $ do
     test_200 appContext
     test_403 appContext
     test_404 appContext
@@ -55,7 +55,7 @@ detail_documents_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/documents?sort=name,asc"
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid ++ "/documents?sort=name,asc"
 
 reqHeadersT authHeader = authHeader
 
@@ -83,7 +83,7 @@ create_test_200 title appContext authHeader =
       runInContextIO deleteDocuments appContext
       runInContextIO removeDocumentContents appContext
       runInContextIO (insertDocument (doc1 {questionnaireUuid = questionnaire6.uuid})) appContext
-      runInContextIO (insertDocument (doc2 {questionnaireUuid = questionnaire6.uuid, creatorUuid = Just userIsaac.uuid})) appContext
+      runInContextIO (insertDocument (doc2 {questionnaireUuid = questionnaire6.uuid, createdBy = Just userIsaac.uuid})) appContext
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
@@ -91,7 +91,7 @@ create_test_200 title appContext authHeader =
             Page
               "documents"
               (PageMetadata 20 2 1 0)
-              [toDTO doc1 (Just questionnaire6Simple) [], toDTO (doc2 {creatorUuid = Just userIsaac.uuid}) (Just questionnaire6Simple) []]
+              [toDTOWithDocTemplate doc1 (Just questionnaire6Simple) [], toDTOWithDocTemplate (doc2 {createdBy = Just userIsaac.uuid}) (Just questionnaire6Simple) []]
       let expBody = encode (fmap (\x -> x wizardDocumentTemplate) expDto)
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
@@ -151,7 +151,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/documents"
+    "/wizard-api/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/documents"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "questionnaire"

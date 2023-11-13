@@ -17,14 +17,14 @@ entityName = "document_template"
 
 findDocumentTemplatesFiltered :: [(String, String)] -> Maybe Int -> AppContextM [DocumentTemplate]
 findDocumentTemplatesFiltered queryParams mMetamodelVersion = do
-  appUuid <- asks (.appUuid')
-  let queryParamCondition = mapToDBQuerySql (appQueryUuid appUuid : queryParams)
+  tenantUuid <- asks (.tenantUuid')
+  let queryParamCondition = mapToDBQuerySql (tenantQueryUuid tenantUuid : queryParams)
   let metamodelVersionCondition =
         case mMetamodelVersion of
           Just _ -> "AND metamodel_version <= ?"
           Nothing -> ""
   let sql = fromString $ f' "SELECT * FROM document_template WHERE %s %s" [queryParamCondition, metamodelVersionCondition]
-  let params = [U.toString appUuid] ++ fmap snd queryParams ++ (fmap show . maybeToList $ mMetamodelVersion)
+  let params = [U.toString tenantUuid] ++ fmap snd queryParams ++ (fmap show . maybeToList $ mMetamodelVersion)
   logQuery sql params
   let action conn = query conn sql params
   runDB action

@@ -19,8 +19,8 @@ entityName = "temporary_file"
 
 findTemporaryFiles :: AppContextM [TemporaryFile]
 findTemporaryFiles = do
-  appUuid <- asks currentAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findTemporaryFilesOlderThen :: UTCTime -> AppContextM [TemporaryFile]
 findTemporaryFilesOlderThen date = do

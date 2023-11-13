@@ -20,8 +20,8 @@ findQuestionnaireProjectTagsPage :: Maybe String -> [String] -> Pageable -> [Sor
 findQuestionnaireProjectTagsPage mQuery excludeTags pageable sort =
   -- 1. Prepare variables
   do
-    appUuid <- asks currentAppUuid
-    let params = [U.toString appUuid, regex mQuery] ++ excludeTags
+    tenantUuid <- asks currentTenantUuid
+    let params = [U.toString tenantUuid, regexM mQuery] ++ excludeTags
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
     -- 2. Get total count
     count <- findCount excludeTags params
@@ -51,11 +51,11 @@ findCount excludeTags params = do
 sqlBase :: String
 sqlBase =
   "SELECT jsonb_array_elements_text((questionnaire -> 'projectTagging' ->> 'tags') ::jsonb) as project_tag \
-  \FROM app_config \
+  \FROM tenant_config \
   \UNION \
   \SELECT nested.project_tag \
-  \FROM (SELECT unnest(project_tags) as project_tag, app_uuid FROM questionnaire) nested \
-  \WHERE nested.app_uuid = ? "
+  \FROM (SELECT unnest(project_tags) as project_tag, tenant_uuid FROM questionnaire) nested \
+  \WHERE nested.tenant_uuid = ? "
 
 excludeTagsCondition :: [String] -> String
 excludeTagsCondition excludeTags =

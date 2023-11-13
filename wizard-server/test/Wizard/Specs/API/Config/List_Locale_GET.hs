@@ -19,17 +19,17 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /configs/locales/{localeId}
+-- GET /wizard-api/configs/locales/{localeId}
 -- ------------------------------------------------------------------------
 list_locale_GET :: AppContext -> SpecWith ((), Application)
-list_locale_GET appContext = describe "GET /configs/locales/{localeId}" $ test_200 appContext
+list_locale_GET appContext = describe "GET /wizard-api/configs/locales/{localeId}" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrlT localeId = BS.pack $ f' "/configs/locales/%s" [localeId]
+reqUrlT localeId = BS.pack $ f' "/wizard-api/configs/locales/%s" [localeId]
 
 reqHeaders = []
 

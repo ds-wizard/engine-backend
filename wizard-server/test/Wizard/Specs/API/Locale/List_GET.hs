@@ -22,11 +22,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /locales
+-- GET /wizard-api/locales
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /locales" $ do
+  describe "GET /wizard-api/locales" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -36,7 +36,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/locales?sort=code,asc"
+reqUrl = "/wizard-api/locales?sort=code,asc"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 

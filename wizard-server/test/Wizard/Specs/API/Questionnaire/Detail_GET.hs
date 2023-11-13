@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.Detail_GET (
-  detail_get,
+  detail_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -45,11 +45,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires/{qtnUuid}
+-- GET /wizard-api/questionnaires/{qtnUuid}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith ((), Application)
-detail_get appContext =
-  describe "GET /questionnaires/{qtnUuid}" $ do
+detail_GET :: AppContext -> SpecWith ((), Application)
+detail_GET appContext =
+  describe "GET /wizard-api/questionnaires/{qtnUuid}" $ do
     test_200 appContext
     test_403 appContext
     test_404 appContext
@@ -59,7 +59,7 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid
 
 reqHeadersT authHeader = authHeader
 
@@ -76,7 +76,7 @@ test_200 appContext = do
     questionnaire1Ctn
     True
     [reqAuthHeader]
-    [qtn1AlbertEditPermRecordDto]
+    [qtn1AlbertEditQtnPermDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleView)"
     appContext
@@ -84,7 +84,7 @@ test_200 appContext = do
     questionnaire2Ctn
     False
     [reqNonAdminAuthHeader]
-    [qtn2AlbertEditPermRecordDto]
+    [qtn2AlbertEditQtnPermDto]
   create_test_200
     "HTTP 200 OK (Commentator)"
     appContext
@@ -92,7 +92,7 @@ test_200 appContext = do
     questionnaire13Ctn
     True
     [reqNonAdminAuthHeader]
-    [qtn13NikolaCommentPermRecordDto]
+    [qtn13NikolaCommentQtnPermDto]
   create_test_200
     "HTTP 200 OK (Non-Commentator, VisibleComment)"
     appContext
@@ -100,7 +100,7 @@ test_200 appContext = do
     questionnaire13Ctn
     True
     [reqIsaacAuthTokenHeader]
-    [qtn13NikolaCommentPermRecordDto]
+    [qtn13NikolaCommentQtnPermDto]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleComment, AnyoneWithLinkComment)"
     appContext
@@ -108,7 +108,7 @@ test_200 appContext = do
     questionnaire13Ctn
     True
     []
-    [qtn13NikolaCommentPermRecordDto]
+    [qtn13NikolaCommentQtnPermDto]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleView, Sharing)"
     appContext
@@ -116,7 +116,7 @@ test_200 appContext = do
     questionnaire7Ctn
     False
     []
-    [qtn7AlbertEditPermRecordDto]
+    [qtn7AlbertEditQtnPermDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleEdit)"
     appContext
@@ -235,7 +235,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a"
+    "/wizard-api/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a"
     [reqHeadersT reqAuthHeader]
     reqBody
     "questionnaire"

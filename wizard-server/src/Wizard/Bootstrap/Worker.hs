@@ -18,12 +18,12 @@ import Wizard.Worker.Cron.Cache.CacheWorker
 import Wizard.Worker.Cron.Document.DocumentWorker
 import Wizard.Worker.Cron.Feedback.FeedbackWorker
 import Wizard.Worker.Cron.PersistentCommand.PersistentCommandRetryWorker
-import Wizard.Worker.Cron.Plan.AppPlanWorker
 import Wizard.Worker.Cron.Questionnaire.CleanQuestionnaireWorker
 import Wizard.Worker.Cron.Questionnaire.RecomputeQuestionnaireIndicationWorker
 import Wizard.Worker.Cron.Questionnaire.SquashQuestionnaireEventsWorker
 import Wizard.Worker.Cron.Registry.RegistrySyncWorker
 import Wizard.Worker.Cron.TemporaryFile.TemporaryFileWorker
+import Wizard.Worker.Cron.Tenant.TenantPlanWorker
 import Wizard.Worker.Cron.UserToken.CleanUserTokenWorker
 import Wizard.Worker.Cron.UserToken.ExpireUserTokenWorker
 import Wizard.Worker.Permanent.PersistentCommand.PersistentCommandListenerWorker
@@ -54,7 +54,7 @@ cronJob context = do
       feedbackWorker context
       documentWorker context
       persistentCommandRetryWorker context
-      appPlanWorker context
+      tenantPlanWorker context
       cleanQuestionnaireWorker context
       recomputeQuestionnaireIndicationWorker context
       squashQuestionnaireEventsWorker context

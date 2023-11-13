@@ -17,11 +17,11 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- GET /users/current
+-- GET /wizard-api/users/current
 -- ------------------------------------------------------------------------
 list_current_GET :: AppContext -> SpecWith ((), Application)
 list_current_GET appContext =
-  describe "GET /users/current" $ do
+  describe "GET /wizard-api/users/current" $ do
     test_200 appContext
     test_401 appContext
 
@@ -30,7 +30,7 @@ list_current_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/users/current"
+reqUrl = "/wizard-api/users/current"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

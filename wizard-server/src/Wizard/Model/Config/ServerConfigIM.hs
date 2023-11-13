@@ -40,7 +40,6 @@ instance FromEnv ServerConfigGeneral where
       , \c -> applyStringEnvVariable "GENERAL_SECRET" c.secret (\x -> c {secret = x})
       , \c -> applyRSAPrivateKeyEnvVariable "GENERAL_RSA_PRIVATE_KEY" c.rsaPrivateKey (\x -> c {rsaPrivateKey = x} :: ServerConfigGeneral)
       , \c -> applyStringEnvVariable "GENERAL_INTEGRATION_CONFIG" c.integrationConfig (\x -> c {integrationConfig = x})
-      , \c -> applyStringEnvVariable "GENERAL_CLIENT_STYLE_BUILDER_URL" c.clientStyleBuilderUrl (\x -> c {clientStyleBuilderUrl = x})
       ]
 
 instance FromEnv ServerConfigJwt where

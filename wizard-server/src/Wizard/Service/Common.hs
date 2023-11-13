@@ -6,11 +6,11 @@ import Control.Monad.Reader (asks)
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Service.Tenant.Config.ConfigService
 
-checkIfAppFeatureIsEnabled featureName accessor = do
-  appConfig <- getAppConfig
-  if accessor appConfig
+checkIfTenantFeatureIsEnabled featureName accessor = do
+  tenantConfig <- getCurrentTenantConfig
+  if accessor tenantConfig
     then return ()
     else throwError $ UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ featureName
 

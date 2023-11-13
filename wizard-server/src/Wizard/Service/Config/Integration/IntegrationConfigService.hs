@@ -9,10 +9,10 @@ import System.Environment (lookupEnv)
 
 import Shared.Common.Constant.Component
 import Shared.Common.Util.Logger
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Service.Tenant.Config.ConfigService
 
 getFileIntegrationConfig :: String -> AppContextM (M.Map String String)
 getFileIntegrationConfig sectionName = do
@@ -29,13 +29,13 @@ getFileIntegrationConfig sectionName = do
       logWarnI _CMP_SERVICE ("Failed to load file integration configuration (error: " ++ show error ++ ")")
       return M.empty
 
-getAppIntegrationConfig :: String -> AppContextM (M.Map String String)
-getAppIntegrationConfig sectionName = do
-  appConfig <- getAppConfig
-  let content = appConfig.knowledgeModel.integrationConfig
+getTenantIntegrationConfig :: String -> AppContextM (M.Map String String)
+getTenantIntegrationConfig sectionName = do
+  tenantConfig <- getCurrentTenantConfig
+  let content = tenantConfig.knowledgeModel.integrationConfig
   let eIntConfig = decodeEither' . BS.pack $ content
   case eIntConfig of
     Right intConfig -> return . fromMaybe M.empty . M.lookup sectionName $ intConfig
     Left error -> do
-      logWarnI _CMP_SERVICE ("Failed to load app integration configuration (error: " ++ show error ++ ")")
+      logWarnI _CMP_SERVICE ("Failed to load tenant integration configuration (error: " ++ show error ++ ")")
       return M.empty

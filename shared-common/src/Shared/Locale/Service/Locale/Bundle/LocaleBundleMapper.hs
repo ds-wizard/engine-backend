@@ -68,7 +68,7 @@ fromTranslationEntry lb archive =
     Nothing -> Left $ UserError (_ERROR_SERVICE_LB__MISSING_FILE "translation.json")
 
 fromLocaleBundle :: LocaleBundleDTO -> U.UUID -> Locale
-fromLocaleBundle lb appUuid =
+fromLocaleBundle lb tenantUuid =
   Locale
     { lId = lb.lId
     , name = lb.name
@@ -82,7 +82,7 @@ fromLocaleBundle lb appUuid =
     , license = lb.license
     , recommendedAppVersion = lb.recommendedAppVersion
     , enabled = False
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = lb.createdAt
     , updatedAt = lb.createdAt
     }

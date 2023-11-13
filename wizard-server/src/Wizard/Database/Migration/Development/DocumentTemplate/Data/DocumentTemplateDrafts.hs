@@ -19,7 +19,7 @@ wizardDocumentTemplateDraftData =
     { documentTemplateId = wizardDocumentTemplateDraft.tId
     , questionnaireUuid = Just questionnaire1.uuid
     , formatUuid = Just formatJson.uuid
-    , appUuid = wizardDocumentTemplateDraft.appUuid
+    , tenantUuid = wizardDocumentTemplateDraft.tenantUuid
     , createdAt = wizardDocumentTemplateDraft.createdAt
     , updatedAt = wizardDocumentTemplateDraft.updatedAt
     }

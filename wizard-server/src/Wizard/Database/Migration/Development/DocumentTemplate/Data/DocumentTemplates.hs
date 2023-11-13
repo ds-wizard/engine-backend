@@ -16,7 +16,6 @@ wizardDocumentTemplateSimpleDTO :: DocumentTemplateSimpleDTO
 wizardDocumentTemplateSimpleDTO =
   toSimpleDTO'
     True
-    [SPM.toPackage globalPackage, SPM.toPackage netherlandsPackageV2]
     ( toList
         wizardDocumentTemplate
         (Just commonWizardRegistryTemplate)

@@ -29,11 +29,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /documents/{documentId}
+-- DELETE /wizard-api/documents/{documentId}
 -- ------------------------------------------------------------------------
 detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
-  describe "DELETE /documents/{documentId}" $ do
+  describe "DELETE /wizard-api/documents/{documentId}" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -44,7 +44,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/documents/264ca352-1a99-4ffd-860e-32aee9a98428"
+reqUrl = "/wizard-api/documents/264ca352-1a99-4ffd-860e-32aee9a98428"
 
 reqHeadersT authHeader = authHeader
 
@@ -138,7 +138,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/documents/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+    "/wizard-api/documents/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "document"

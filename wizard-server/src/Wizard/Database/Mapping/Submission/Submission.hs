@@ -26,7 +26,7 @@ instance ToRow Submission where
     , toField createdBy
     , toField createdAt
     , toField updatedAt
-    , toField appUuid
+    , toField tenantUuid
     ]
 
 instance FromRow Submission where
@@ -40,5 +40,5 @@ instance FromRow Submission where
     createdBy <- field
     createdAt <- field
     updatedAt <- field
-    appUuid <- field
+    tenantUuid <- field
     return $ Submission {..}

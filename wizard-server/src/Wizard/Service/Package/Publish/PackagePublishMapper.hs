@@ -3,7 +3,7 @@ module Wizard.Service.Package.Publish.PackagePublishMapper where
 import Data.Time
 
 import Wizard.Model.Branch.Branch
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.Common.Util.Coordinate
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Event.Event
@@ -14,7 +14,7 @@ fromPackage
   :: Branch
   -> Maybe String
   -> Maybe String
-  -> AppConfigOrganization
+  -> TenantConfigOrganization
   -> String
   -> String
   -> String
@@ -38,6 +38,6 @@ fromPackage branch forkOfPkgId mergeCheckpointPkgId org version description read
     , mergeCheckpointPackageId = mergeCheckpointPkgId
     , events = events
     , nonEditable = False
-    , appUuid = branch.appUuid
+    , tenantUuid = branch.tenantUuid
     , createdAt = now
     }

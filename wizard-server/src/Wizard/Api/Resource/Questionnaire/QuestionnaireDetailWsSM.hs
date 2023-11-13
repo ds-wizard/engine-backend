@@ -3,9 +3,9 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsSM where
 import Data.Swagger
 
 import Shared.Common.Util.Swagger
-import Wizard.Api.Resource.Questionnaire.QuestionnaireAclSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsJM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnairePermSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires

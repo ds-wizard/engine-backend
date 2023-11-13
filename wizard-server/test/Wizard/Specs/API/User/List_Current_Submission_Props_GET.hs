@@ -17,11 +17,11 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- GET /users/current/submission-props
+-- GET /wizard-api/users/current/submission-props
 -- ------------------------------------------------------------------------
 list_current_submission_props_GET :: AppContext -> SpecWith ((), Application)
 list_current_submission_props_GET appContext =
-  describe "GET /users/current/submission-props" $ do
+  describe "GET /wizard-api/users/current/submission-props" $ do
     test_200 appContext
     test_401 appContext
 
@@ -30,7 +30,7 @@ list_current_submission_props_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/users/current/submission-props"
+reqUrl = "/wizard-api/users/current/submission-props"
 
 reqHeaders = [reqAuthHeader]
 

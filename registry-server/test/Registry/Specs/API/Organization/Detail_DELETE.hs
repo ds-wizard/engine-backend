@@ -1,5 +1,5 @@
 module Registry.Specs.API.Organization.Detail_DELETE (
-  detail_delete,
+  detail_DELETE,
 ) where
 
 import Network.HTTP.Types
@@ -15,8 +15,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- DELETE /organizations/{orgId}
 -- ------------------------------------------------------------------------
-detail_delete :: AppContext -> SpecWith ((), Application)
-detail_delete appContext =
+detail_DELETE :: AppContext -> SpecWith ((), Application)
+detail_DELETE appContext =
   describe "DELETE /organizations/{orgId}" $ do
     test_204 appContext
     test_401 appContext

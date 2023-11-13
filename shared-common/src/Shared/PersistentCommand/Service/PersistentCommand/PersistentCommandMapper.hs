@@ -19,7 +19,7 @@ toPersistentCommand
   -> Maybe identity
   -> UTCTime
   -> PersistentCommand identity
-toPersistentCommand uuid component function body maxAttempts internal destination appUuid mCreatedBy now =
+toPersistentCommand uuid component function body maxAttempts internal destination tenantUuid mCreatedBy now =
   PersistentCommand
     { uuid = uuid
     , state = NewPersistentCommandState
@@ -32,7 +32,7 @@ toPersistentCommand uuid component function body maxAttempts internal destinatio
     , maxAttempts = maxAttempts
     , internal = internal
     , destination = destination
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdBy = mCreatedBy
     , createdAt = now
     , updatedAt = now
@@ -43,7 +43,7 @@ toSimple command =
   PersistentCommandSimple
     { uuid = command.uuid
     , destination = command.destination
-    , appUuid = command.appUuid
+    , tenantUuid = command.tenantUuid
     , createdBy = command.createdBy
     }
 
@@ -61,7 +61,7 @@ fromChangeDTO command reqDto now =
     , maxAttempts = command.maxAttempts
     , internal = command.internal
     , destination = command.destination
-    , appUuid = command.appUuid
+    , tenantUuid = command.tenantUuid
     , createdBy = command.createdBy
     , createdAt = command.createdAt
     , updatedAt = now

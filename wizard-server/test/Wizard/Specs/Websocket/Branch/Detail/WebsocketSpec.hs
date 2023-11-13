@@ -9,6 +9,6 @@ import Wizard.Specs.Websocket.Branch.Detail.SetEventSpec
 
 branchesWebsocketAPI :: AppContext -> SpecWith ()
 branchesWebsocketAPI appContext =
-  describe "WS /branches/{bUuid}/websocket" $ do
+  describe "WS /wizard-api/branches/{bUuid}/websocket" $ do
     generalSpec appContext
     setEventSpec appContext

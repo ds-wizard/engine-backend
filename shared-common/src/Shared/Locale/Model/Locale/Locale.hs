@@ -17,7 +17,7 @@ data Locale = Locale
   , readme :: String
   , recommendedAppVersion :: String
   , enabled :: Bool
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

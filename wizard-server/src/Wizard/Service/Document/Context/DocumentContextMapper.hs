@@ -5,12 +5,12 @@ import qualified Data.UUID as U
 
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Report.Report
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.Package.PackageMapper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
@@ -31,7 +31,7 @@ toDocumentContext
   -> KnowledgeModel
   -> Report
   -> Package
-  -> AppConfigOrganization
+  -> TenantConfigOrganization
   -> Maybe User
   -> UTCTime
   -> DocumentContext

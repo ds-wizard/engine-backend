@@ -12,6 +12,6 @@ import Registry.Specs.API.DocumentTemplate.List_GET
 templateAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
     describe "TEMPLATE API Spec" $ do
-      list_get appContext
-      detail_get appContext
-      detail_bundle_get appContext
+      list_GET appContext
+      detail_GET appContext
+      detail_bundle_GET appContext

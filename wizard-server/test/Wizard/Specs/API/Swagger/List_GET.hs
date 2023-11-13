@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Swagger.List_GET (
-  list_get,
+  list_GET,
 ) where
 
 import Network.HTTP.Types
@@ -12,17 +12,17 @@ import Wizard.Model.Context.AppContext
 import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- GET /swaggers
+-- GET /wizard-api/swaggers
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext = describe "GET /swagger.json" $ test_200 appContext
+list_GET :: AppContext -> SpecWith ((), Application)
+list_GET appContext = describe "GET /wizard-api/swagger.json" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/swagger.json"
+reqUrl = "/wizard-api/swagger.json"
 
 reqHeaders = [reqCtHeader]
 

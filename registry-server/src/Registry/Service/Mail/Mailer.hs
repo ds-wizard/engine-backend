@@ -90,9 +90,9 @@ sendResetTokenMail org hash =
 sendEmail :: ToJSON dto => dto -> String -> AppContextM ()
 sendEmail dto createdBy = do
   runInTransaction $ do
-    pUuid <- liftIO generateUuid
+    uuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let body = encodeJsonToString dto
-    let command = toPersistentCommand pUuid "mailer" "sendMail" body 10 False Nothing U.nil (Just createdBy) now
+    let command = toPersistentCommand uuid "mailer" "sendMail" body 10 False Nothing U.nil (Just createdBy) now
     insertPersistentCommand command
     return ()

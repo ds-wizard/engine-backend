@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Package.Detail_DELETE (
-  detail_delete,
+  detail_DELETE,
 ) where
 
 import Data.Aeson (encode)
@@ -27,11 +27,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /packages/{pkgId}
+-- DELETE /wizard-api/packages/{pkgId}
 -- ------------------------------------------------------------------------
-detail_delete :: AppContext -> SpecWith ((), Application)
-detail_delete appContext =
-  describe "DELETE /packages/{pkgId}" $ do
+detail_DELETE :: AppContext -> SpecWith ((), Application)
+detail_DELETE appContext =
+  describe "DELETE /wizard-api/packages/{pkgId}" $ do
     test_204 appContext
     test_400 appContext
     test_401 appContext
@@ -43,7 +43,7 @@ detail_delete appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = BS.pack $ "/packages/" ++ netherlandsPackageV2.pId
+reqUrl = BS.pack $ "/wizard-api/packages/" ++ netherlandsPackageV2.pId
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -82,7 +82,7 @@ test_400 appContext =
   it "HTTP 400 BAD REQUEST when package can't be deleted" $
     -- GIVEN: Prepare request
     do
-      let reqUrl = BS.pack $ "/packages/" ++ netherlandsPackage.pId
+      let reqUrl = BS.pack $ "/wizard-api/packages/" ++ netherlandsPackage.pId
       -- AND: Prepare expectation
       let expStatus = 400
       let expHeaders = resCorsHeaders
@@ -124,7 +124,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/packages/global:non-existing-package:1.0.0"
+    "/wizard-api/packages/global:non-existing-package:1.0.0"
     reqHeaders
     reqBody
     "package"

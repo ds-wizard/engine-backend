@@ -11,44 +11,54 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Locale.Database.Migration.Development.Locale.Data.Locales
 import Wizard.Api.Resource.Config.ClientConfigJM ()
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Database.Migration.Development.User.Data.Users
+import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.Client.ClientConfigMapper
 
 import SharedTest.Specs.API.Common
+import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /configs/bootstrap
+-- GET /wizard-api/configs/bootstrap
 -- ------------------------------------------------------------------------
 list_bootstrap_GET :: AppContext -> SpecWith ((), Application)
-list_bootstrap_GET appContext = describe "GET /configs/bootstrap" $ test_200 appContext
+list_bootstrap_GET appContext = describe "GET /wizard-api/configs/bootstrap" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/configs/bootstrap"
+reqUrl = "/wizard-api/configs/bootstrap"
 
-reqHeaders = []
+reqHeadersT authHeaders = authHeaders
 
 reqBody = ""
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext =
-  it "HTTP 200 OK" $
-    -- GIVEN: Prepare expectation
+test_200 appContext = do
+  create_test_200 "HTTP 200 OK (anonymous)" appContext [] Nothing
+  create_test_200 "HTTP 200 OK (authenticated)" appContext [reqAuthHeader] (Just userAlbertProfile)
+
+create_test_200 title appContext authHeaders mUserProfile =
+  it title $
+    -- GIVEN: Prepare variables
     do
+      let reqHeaders = reqHeadersT authHeaders
+      -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = toClientConfigDTO appContext.serverConfig defaultAppConfig defaultApp [localeDefaultEn, localeNl]
+      let expDto = toClientConfigDTO appContext.serverConfig defaultTenantConfig mUserProfile defaultTenant [localeDefaultEn, localeNl]
       let expBody = encode expDto
       -- AND: Run migrations
+      runInContextIO U.runMigration appContext
       runInContextIO LOC.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

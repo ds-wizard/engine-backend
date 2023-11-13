@@ -3,7 +3,7 @@ module WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplat
 import Data.Maybe (fromJust)
 import Data.Time
 
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import WizardLib.DocumentTemplate.Constant.DocumentTemplate
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -33,7 +33,7 @@ wizardDocumentTemplate =
         , formatMarkdown
         ]
     , nonEditable = False
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -88,7 +88,7 @@ anotherWizardDocumentTemplate =
         , formatMarkdown
         ]
     , nonEditable = False
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -110,7 +110,7 @@ differentDocumentTemplate =
     , allowedPackages = [packagePatternAll]
     , formats = []
     , nonEditable = False
-    , appUuid = differentAppUuid
+    , tenantUuid = differentTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }

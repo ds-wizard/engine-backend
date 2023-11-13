@@ -8,8 +8,8 @@ import Shared.Common.Model.Localization.LocaleRecord
 -- VALIDATION
 -- --------------------------------------
 -- Uniqueness
-_ERROR_VALIDATION__APP_ID_UNIQUENESS =
-  LocaleRecord "error.validation.app_id_uniqueness" "Provided appId is already used" []
+_ERROR_VALIDATION__TENANT_ID_UNIQUENESS =
+  LocaleRecord "error.validation.tenant_id_uniqueness" "Provided tenantId is already used" []
 
 _ERROR_VALIDATION__DOC_TML_FILE_OR_ASSET_UNIQUENESS =
   LocaleRecord
@@ -27,7 +27,7 @@ _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email =
   LocaleRecord "error.validation.user_email_uniqueness" "User (email: '%s') already exists" [email]
 
 -- Absence
-_ERROR_VALIDATION__APP_ABSENCE host = LocaleRecord "error.validation.app_absence" "App ('%s') doesn't exist" [host]
+_ERROR_VALIDATION__TENANT_ABSENCE host = LocaleRecord "error.validation.tenant_absence" "Tenant ('%s') doesn't exist" [host]
 
 _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE =
   LocaleRecord "error.validation.branch_previous_pkg_absence" "Branch has to be based on a package" []

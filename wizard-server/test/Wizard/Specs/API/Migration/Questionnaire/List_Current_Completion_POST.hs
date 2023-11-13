@@ -31,11 +31,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /questionnaires/{qtnUuid}/migrations/current/completion
+-- POST /wizard-api/questionnaires/{qtnUuid}/migrations/current/completion
 -- ------------------------------------------------------------------------
 list_current_completion_POST :: AppContext -> SpecWith ((), Application)
 list_current_completion_POST appContext =
-  describe "POST /questionnaires/{qtnUuid}/migrations/current/completion" $ do
+  describe "POST /wizard-api/questionnaires/{qtnUuid}/migrations/current/completion" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -46,7 +46,7 @@ list_current_completion_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/migrations/current/completion"
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid ++ "/migrations/current/completion"
 
 reqHeadersT authHeader = [authHeader]
 

@@ -13,6 +13,9 @@ checkViewPermissionToDoc qtnUuid = do
   qtn <- findQuestionnaireByUuid qtnUuid
   checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
 
+checkViewPermissionToDoc' :: Questionnaire -> AppContextM ()
+checkViewPermissionToDoc' qtn = checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
+
 checkEditPermissionToDoc :: U.UUID -> AppContextM ()
 checkEditPermissionToDoc qtnUuid = do
   _ <- getCurrentUser

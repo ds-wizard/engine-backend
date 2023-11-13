@@ -22,14 +22,14 @@ toDTO asset url urlExpiration =
     }
 
 fromCreateDTO :: String -> U.UUID -> String -> String -> Int64 -> U.UUID -> UTCTime -> UTCTime -> DocumentTemplateAsset
-fromCreateDTO tmlId aUuid fileName contentType fileSize appUuid createdAt updatedAt =
+fromCreateDTO tmlId aUuid fileName contentType fileSize tenantUuid createdAt updatedAt =
   DocumentTemplateAsset
     { documentTemplateId = tmlId
     , uuid = aUuid
     , fileName = fileName
     , contentType = contentType
     , fileSize = fileSize
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = createdAt
     , updatedAt = updatedAt
     }
@@ -42,7 +42,7 @@ fromChangeDTO asset reqDto now =
     , fileName = reqDto.fileName
     , contentType = asset.contentType
     , fileSize = asset.fileSize
-    , appUuid = asset.appUuid
+    , tenantUuid = asset.tenantUuid
     , createdAt = asset.createdAt
     , updatedAt = now
     }
@@ -55,7 +55,7 @@ fromChangeContentDTO asset fileName contentType fileSize now =
     , fileName = fileName
     , contentType = contentType
     , fileSize = fileSize
-    , appUuid = asset.appUuid
+    , tenantUuid = asset.tenantUuid
     , createdAt = asset.createdAt
     , updatedAt = now
     }
@@ -68,7 +68,7 @@ fromDuplicateDTO asset documentTemplateId uuid now =
     , fileName = asset.fileName
     , contentType = asset.contentType
     , fileSize = asset.fileSize
-    , appUuid = asset.appUuid
+    , tenantUuid = asset.tenantUuid
     , createdAt = now
     , updatedAt = now
     }

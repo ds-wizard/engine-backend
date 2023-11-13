@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.Version.Detail_DELETE (
-  detail_delete,
+  detail_DELETE,
 ) where
 
 import Network.HTTP.Types
@@ -21,11 +21,11 @@ import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /questionnaires/{qtnUuid}/versions/{vUuid}
+-- DELETE /wizard-api/questionnaires/{qtnUuid}/versions/{vUuid}
 -- ------------------------------------------------------------------------
-detail_delete :: AppContext -> SpecWith ((), Application)
-detail_delete appContext =
-  describe "DELETE /questionnaires/{qtnUuid}/versions/{vUuid}" $ do
+detail_DELETE :: AppContext -> SpecWith ((), Application)
+detail_DELETE appContext =
+  describe "DELETE /wizard-api/questionnaires/{qtnUuid}/versions/{vUuid}" $ do
     test_204 appContext
     test_401 appContext
     test_404 appContext
@@ -35,7 +35,7 @@ detail_delete appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/versions/bd6611c8-ea11-48ab-adaa-3ce51b66aae5"
+reqUrl = "/wizard-api/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/versions/bd6611c8-ea11-48ab-adaa-3ce51b66aae5"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -74,7 +74,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaires/00084a75-56e3-49f8-b16f-d6b99599910a/versions/bd6611c8-ea11-48ab-adaa-3ce51b66aae5"
+    "/wizard-api/questionnaires/00084a75-56e3-49f8-b16f-d6b99599910a/versions/bd6611c8-ea11-48ab-adaa-3ce51b66aae5"
     reqHeaders
     reqBody
     "questionnaire"

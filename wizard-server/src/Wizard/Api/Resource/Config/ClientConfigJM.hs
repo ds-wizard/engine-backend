@@ -4,9 +4,10 @@ import Data.Aeson
 
 import Shared.Common.Api.Resource.Config.SimpleFeatureJM ()
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Locale.LocaleJM ()
+import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()
+import Wizard.Api.Resource.User.UserProfileJM ()
 
 instance FromJSON ClientConfigDTO where
   parseJSON = genericParseJSON jsonOptions

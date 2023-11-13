@@ -9,6 +9,6 @@ data MigratorStateDTO = MigratorStateDTO
   { oldQuestionnaire :: QuestionnaireDetailDTO
   , newQuestionnaire :: QuestionnaireDetailDTO
   , resolvedQuestionUuids :: [U.UUID]
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   }
   deriving (Show, Eq, Generic)

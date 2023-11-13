@@ -17,11 +17,11 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- GET /users/{uuid}
+-- GET /wizard-api/users/{uuid}
 -- ------------------------------------------------------------------------
 detail_GET :: AppContext -> SpecWith ((), Application)
 detail_GET appContext =
-  describe "GET /users/{uuid}" $ do
+  describe "GET /wizard-api/users/{uuid}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -32,7 +32,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
+reqUrl = "/wizard-api/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
 
 reqHeaders = [reqAuthHeader]
 
@@ -72,7 +72,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [] "" "
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+    "/wizard-api/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
     reqHeaders
     reqBody
     "user_entity"

@@ -18,7 +18,7 @@ data UserToken = UserToken
   , userAgent :: String
   , sessionState :: Maybe String
   , expiresAt :: UTCTime
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)
@@ -33,4 +33,4 @@ instance Eq UserToken where
       && userAgent a == userAgent b
       && sessionState a == sessionState b
       && expiresAt a == expiresAt b
-      && appUuid a == appUuid b
+      && tenantUuid a == tenantUuid b

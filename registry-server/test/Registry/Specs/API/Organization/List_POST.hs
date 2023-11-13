@@ -1,5 +1,5 @@
 module Registry.Specs.API.Organization.List_POST (
-  list_post,
+  list_POST,
 ) where
 
 import Data.Aeson (encode)
@@ -30,8 +30,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- POST /organizations
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith ((), Application)
-list_post appContext =
+list_POST :: AppContext -> SpecWith ((), Application)
+list_POST appContext =
   describe "POST /organizations" $ do
     test_201 appContext
     test_400_invalid_json appContext
@@ -85,7 +85,7 @@ test_400_invalid_organizationId appContext =
   it "HTTP 400 BAD REQUEST when organizationId is not in valid format" $
     -- GIVEN: Prepare request
     do
-      let reqDto = orgGlobalCreate {organizationId = "organization-amsterdam"} :: OrganizationCreateDTO
+      let reqDto = orgGlobalCreate {organizationId = "organization_amsterdam"} :: OrganizationCreateDTO
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400

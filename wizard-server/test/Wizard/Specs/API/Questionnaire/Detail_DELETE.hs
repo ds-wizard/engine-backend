@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.Detail_DELETE (
-  detail_delete,
+  detail_DELETE,
 ) where
 
 import Data.Aeson (encode)
@@ -32,11 +32,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /questionnaires/{qtnUuid}
+-- DELETE /wizard-api/questionnaires/{qtnUuid}
 -- ------------------------------------------------------------------------
-detail_delete :: AppContext -> SpecWith ((), Application)
-detail_delete appContext =
-  describe "DELETE /questionnaires/{qtnUuid}" $ do
+detail_DELETE :: AppContext -> SpecWith ((), Application)
+detail_DELETE appContext =
+  describe "DELETE /wizard-api/questionnaires/{qtnUuid}" $ do
     test_204 appContext
     test_400 appContext
     test_401 appContext
@@ -48,7 +48,7 @@ detail_delete appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid
 
 reqHeadersT authHeader = [authHeader]
 
@@ -161,7 +161,7 @@ create_test_403 title appContext qtn =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a"
+    "/wizard-api/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a"
     (reqHeadersT reqAuthHeader)
     reqBody
     "questionnaire"

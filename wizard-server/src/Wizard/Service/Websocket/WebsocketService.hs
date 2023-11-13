@@ -9,12 +9,12 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.User.UserMapper
 
-createRecord :: U.UUID -> Connection -> String -> WebsocketPerm -> AppContextM WebsocketRecord
-createRecord connectionUuid connection entityId permission = do
+createRecord :: U.UUID -> Connection -> String -> WebsocketPerm -> [U.UUID] -> AppContextM WebsocketRecord
+createRecord connectionUuid connection entityId permission userGroupUuids = do
   mCurrentUser <- asks currentUser
   avatarNumber <- liftIO $ generateInt 20
   colorNumber <- liftIO $ generateInt 12
-  let user = toOnlineUserInfo mCurrentUser avatarNumber colorNumber
+  let user = toOnlineUserInfo mCurrentUser avatarNumber colorNumber userGroupUuids
   return $ WebsocketRecord connectionUuid connection entityId permission user
 
 filterEditors :: [WebsocketRecord] -> [WebsocketRecord]

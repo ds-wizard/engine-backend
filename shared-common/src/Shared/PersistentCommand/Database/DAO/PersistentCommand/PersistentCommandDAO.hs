@@ -43,7 +43,7 @@ findPersistentCommandsPage states pageable sort = do
 findPersistentCommandsByStates :: (AppContextC s sc m, FromField identity) => m [PersistentCommandSimple identity]
 findPersistentCommandsByStates = do
   let sql =
-        "SELECT uuid, destination, app_uuid, created_by \
+        "SELECT uuid, destination, tenant_uuid, created_by \
         \FROM persistent_command \
         \WHERE (state = 'NewPersistentCommandState' \
         \  OR (state = 'ErrorPersistentCommandState' AND attempts < max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
@@ -63,7 +63,7 @@ findPersistentCommandByUuid' uuid = createFindEntityWithFieldsByFn' "*" entityNa
 
 findPersistentCommandSimpleByUuid :: (AppContextC s sc m, FromField identity) => U.UUID -> m (PersistentCommandSimple identity)
 findPersistentCommandSimpleByUuid uuid =
-  createFindEntityWithFieldsByFn "uuid, destination, app_uuid, created_by" False entityName [("uuid", U.toString uuid)]
+  createFindEntityWithFieldsByFn "uuid, destination, tenant_uuid, created_by" False entityName [("uuid", U.toString uuid)]
 
 insertPersistentCommand :: (AppContextC s sc m, ToField identity) => PersistentCommand identity -> m Int64
 insertPersistentCommand command = do
@@ -76,8 +76,8 @@ updatePersistentCommandByUuid :: (AppContextC s sc m, ToField identity) => Persi
 updatePersistentCommandByUuid command = do
   let sql =
         fromString
-          "UPDATE persistent_command SET uuid = ?, state = ?, component = ?, function = ?, body = ?, last_error_message = ?, attempts = ?, max_attempts = ?, app_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, internal = ?, destination = ?, last_trace_uuid = ? WHERE uuid = ?"
-  let params = toRow command ++ [toField . U.toText $ command.uuid]
+          "UPDATE persistent_command SET uuid = ?, state = ?, component = ?, function = ?, body = ?, last_error_message = ?, attempts = ?, max_attempts = ?, tenant_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, internal = ?, destination = ?, last_trace_uuid = ? WHERE uuid = ? AND tenant_uuid = ? AND state != 'DonePersistentCommandState'"
+  let params = toRow command ++ [toField command.uuid, toField command.tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -99,7 +99,7 @@ listenPersistentCommandChannel = createChannelListener channelName
 
 createChannelListener :: AppContextC s sc m => String -> m ()
 createChannelListener name = do
-  let sql = f' "listen %s" [name]
+  let sql = f' "LISTEN %s" [name]
   logInfoI _CMP_DATABASE (trim sql)
   let action conn = execute_ conn (fromString sql)
   runDB action

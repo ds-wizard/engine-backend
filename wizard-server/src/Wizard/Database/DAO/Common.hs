@@ -27,7 +27,7 @@ runInTransaction = S.runInTransaction logInfoI logWarnI
 createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel pageable sort fields entityId mQuery mEnabled mOrganizationId mEntityId mState stateCondition =
   -- 1. Prepare variables
   do
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
     let enabledCondition =
           case mEnabled of
@@ -52,12 +52,12 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
             \FROM %s \
             \LEFT JOIN registry_%s ON %s.organization_id = registry_%s.organization_id AND %s.%s = registry_%s.%s \
             \LEFT JOIN registry_organization ON %s.organization_id = registry_organization.organization_id \
-            \WHERE app_uuid = ? AND id IN ( \
+            \WHERE tenant_uuid = ? AND id IN ( \
             \    SELECT CONCAT(organization_id, ':', %s, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
             \                                                    (max(string_to_array(version, '.')::int[]))[2] || '.' || \
             \                                                    (max(string_to_array(version, '.')::int[]))[3]) \
             \    FROM %s \
-            \    WHERE %s app_uuid = ? AND (name ~* ? OR id ~* ?) %s \
+            \    WHERE %s tenant_uuid = ? AND (name ~* ? OR id ~* ?) %s \
             \    GROUP BY organization_id, %s \
             \) \
             \%s \
@@ -89,10 +89,10 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
           query
             conn
             (fromString sql)
-            ( U.toString appUuid
-                : U.toString appUuid
-                : regex mQuery
-                : regex mQuery
+            ( U.toString tenantUuid
+                : U.toString tenantUuid
+                : regexM mQuery
+                : regexM mQuery
                 : mapToDBCoordinatesParams mOrganizationId mEntityId
                 ++ maybeToList mState
             )
@@ -118,18 +118,18 @@ createCountGroupByCoordinateFn
   -> String
   -> AppContextM Int
 createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrganizationId mEntityId mState stateCondition = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         f'
           "SELECT count(*) \
           \FROM %s \
           \LEFT JOIN registry_%s ON %s.organization_id = registry_%s.organization_id AND %s.%s = registry_%s.%s \
-          \WHERE %s app_uuid = ? AND (name ~* ? OR id ~* ?) %s %s \
+          \WHERE %s tenant_uuid = ? AND (name ~* ? OR id ~* ?) %s %s \
           \  AND id IN (SELECT CONCAT(organization_id, ':', %s, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
           \                                                             (max(string_to_array(version, '.')::int[]))[2] || '.' || \
           \                                                             (max(string_to_array(version, '.')::int[]))[3]) \
           \             FROM %s \
-          \             WHERE app_uuid = ? \
+          \             WHERE tenant_uuid = ? \
           \               AND (name ~* ? OR id ~* ?) \
           \             GROUP BY organization_id, %s)"
           [ entityName
@@ -152,11 +152,11 @@ createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrga
         query
           conn
           (fromString sql)
-          ( [U.toString appUuid, regex mQuery, regex mQuery]
+          ( [U.toString tenantUuid, regexM mQuery, regexM mQuery]
               ++ mapToDBCoordinatesParams mOrganizationId mEntityId
               ++ maybeToList mState
-              ++ [U.toString appUuid]
-              ++ [regex mQuery, regex mQuery]
+              ++ [U.toString tenantUuid]
+              ++ [regexM mQuery, regexM mQuery]
           )
   result <- runDB action
   case result of

@@ -21,6 +21,7 @@ instance ToRow QuestionnaireCommentThread where
     , toField createdBy
     , toField createdAt
     , toField updatedAt
+    , toField tenantUuid
     ]
 
 instance FromRow QuestionnaireCommentThread where
@@ -33,6 +34,7 @@ instance FromRow QuestionnaireCommentThread where
     createdBy <- field
     createdAt <- field
     updatedAt <- field
+    tenantUuid <- field
     commentsArray <- fromPGArray <$> field
     let comments = fmap parseComment commentsArray
     return $ QuestionnaireCommentThread {..}
@@ -44,10 +46,11 @@ parseComment commentS =
         { uuid = u' (head parts)
         , text = parts !! 1
         , threadUuid = u' (parts !! 2)
+        , tenantUuid = u' (parts !! 3)
         , createdBy =
-            case parts !! 3 of
+            case parts !! 4 of
               "" -> Nothing
               u -> Just . u' $ u
-        , createdAt = parsePostgresDateTime' $ parts !! 4
-        , updatedAt = parsePostgresDateTime' $ parts !! 5
+        , createdAt = parsePostgresDateTime' $ parts !! 5
+        , updatedAt = parsePostgresDateTime' $ parts !! 6
         }

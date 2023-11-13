@@ -1,10 +1,10 @@
 module Wizard.Service.Feedback.FeedbackUtil where
 
 import Shared.Common.Util.String
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Feedback.Feedback
+import Wizard.Model.Tenant.Config.TenantConfig
 
-createIssueUrl :: ServerConfigFeedback -> AppConfigQuestionnaireFeedback -> Feedback -> String
-createIssueUrl serverConfig appConfig fbk =
-  f' "%s/%s/%s/issues/%s" [serverConfig.webUrl, appConfig.owner, appConfig.repo, show fbk.issueId]
+createIssueUrl :: ServerConfigFeedback -> TenantConfigQuestionnaireFeedback -> Feedback -> String
+createIssueUrl serverConfig tenantConfig fbk =
+  f' "%s/%s/%s/issues/%s" [serverConfig.webUrl, tenantConfig.owner, tenantConfig.repo, show fbk.issueId]

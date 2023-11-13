@@ -1,5 +1,5 @@
 module Registry.Specs.API.Package.Detail_Bundle_GET (
-  detail_bundle_get,
+  detail_bundle_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -26,8 +26,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /packages/{pkgId}/bundle
 -- ------------------------------------------------------------------------
-detail_bundle_get :: AppContext -> SpecWith ((), Application)
-detail_bundle_get appContext =
+detail_bundle_GET :: AppContext -> SpecWith ((), Application)
+detail_bundle_GET appContext =
   describe "GET /packages/{pkgId}/bundle" $ do
     test_200 appContext
     test_401 appContext

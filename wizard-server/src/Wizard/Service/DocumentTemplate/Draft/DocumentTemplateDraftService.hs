@@ -19,21 +19,21 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftDetail
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
-import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetService
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation hiding (validateChangeDto)
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftValidation
 import Wizard.Service.DocumentTemplate.File.DocumentTemplateFileService
-import Wizard.Service.Limit.AppLimitService
+import Wizard.Service.Tenant.Config.ConfigService
+import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
@@ -51,14 +51,14 @@ createDraft reqDto =
     checkPermission _DOC_TML_WRITE_PERM
     checkDocumentTemplateDraftLimit
     now <- liftIO getCurrentTime
-    appConfig <- getAppConfig
+    tenantConfig <- getCurrentTenantConfig
     case reqDto.basedOn of
       Just tmlId -> do
         tml <- findDocumentTemplateById tmlId
         when
           tml.nonEditable
           (throwError . UserError $ _ERROR_SERVICE_DOC_TML__NON_EDITABLE_DOC_TML)
-        let draft = fromCreateDTO reqDto tml appConfig.organization.organizationId now
+        let draft = fromCreateDTO reqDto tml tenantConfig.organization.organizationId now
         validateNewDocumentTemplate draft False
         insertDocumentTemplate draft
         assets <- findAssetsByDocumentTemplateId tmlId
@@ -69,7 +69,7 @@ createDraft reqDto =
         insertDraftData draftData
         return draft
       Nothing -> do
-        let draft = fromCreateDTO' reqDto appConfig.organization.organizationId appConfig.uuid now
+        let draft = fromCreateDTO' reqDto tenantConfig.organization.organizationId tenantConfig.uuid now
         validateNewDocumentTemplate draft False
         insertDocumentTemplate draft
         let draftData = fromCreateDraftData draft

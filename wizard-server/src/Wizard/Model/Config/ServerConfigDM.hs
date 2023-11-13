@@ -41,7 +41,6 @@ defaultGeneral =
     , secret = ""
     , rsaPrivateKey = undefined
     , integrationConfig = "wizard-server/config/integration.yml"
-    , clientStyleBuilderUrl = "http://wizard-style-builder:3002"
     }
 
 defaultJwt :: ServerConfigJwt

@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Info.List_GET (
-  list_get,
+  list_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -19,17 +19,17 @@ import SharedTest.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /
+-- GET /wizard-api/
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext = describe "GET /" $ test_200 appContext
+list_GET :: AppContext -> SpecWith ((), Application)
+list_GET appContext = describe "GET /wizard-api/" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/"
+reqUrl = "/wizard-api/"
 
 reqHeaders = []
 

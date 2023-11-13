@@ -1,5 +1,5 @@
 module Registry.Specs.API.Info.List_GET (
-  list_get,
+  list_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -21,8 +21,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext = describe "GET /" $ test_200 appContext
+list_GET :: AppContext -> SpecWith ((), Application)
+list_GET appContext = describe "GET /" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

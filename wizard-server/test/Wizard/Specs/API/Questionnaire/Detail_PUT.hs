@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.Detail_PUT (
-  detail_put,
+  detail_PUT,
 ) where
 
 import Data.Aeson (encode)
@@ -41,11 +41,11 @@ import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /questionnaires/{qtnUuid}
+-- PUT /wizard-api/questionnaires/{qtnUuid}
 -- ------------------------------------------------------------------------
-detail_put :: AppContext -> SpecWith ((), Application)
-detail_put appContext =
-  describe "PUT /questionnaires/{qtnUuid}" $ do
+detail_PUT :: AppContext -> SpecWith ((), Application)
+detail_PUT appContext =
+  describe "PUT /wizard-api/questionnaires/{qtnUuid}" $ do
     test_200 appContext
     test_400 appContext
     test_401 appContext
@@ -57,7 +57,7 @@ detail_put appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid
 
 reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
@@ -68,7 +68,7 @@ reqDtoT qtn =
     , visibility = qtn.visibility
     , sharing = qtn.sharing
     , projectTags = qtn.projectTags
-    , permissions = qtn.permissions
+    , permissions = fmap toQuestionnairePermChangeDTO qtn.permissions
     , documentTemplateId = qtn.documentTemplateId
     , formatUuid = qtn.formatUuid
     , isTemplate = qtn.isTemplate
@@ -106,7 +106,7 @@ test_200 appContext = do
     questionnaire10
     questionnaire10Edited
     questionnaire10Ctn
-    [qtn10NikolaEditPermRecordDto]
+    [qtn10NikolaEditQtnPermDto]
     False
     [reqNonAdminAuthHeader]
     True
@@ -224,7 +224,7 @@ create_test_403 title appContext qtn qtnEdited reason =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a"
+    "/wizard-api/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a"
     (reqHeadersT [reqAuthHeader])
     (reqBodyT questionnaire1)
     "questionnaire"

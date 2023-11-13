@@ -51,7 +51,7 @@ test200 appContext =
       let request =
             HttpRequest
               { requestMethod = "PUT"
-              , requestUrl = "/questionnaires/" ++ U.toString questionnaire10.uuid
+              , requestUrl = "/wizard-api/questionnaires/" ++ U.toString questionnaire10.uuid
               , requestHeaders = M.fromList [("Authorization", "Bearer " ++ reqAuthToken), ("Content-Type", "application/json")]
               , requestBody = BSL.toStrict . encode $ questionnaire10EditedChange
               , multipart = Nothing

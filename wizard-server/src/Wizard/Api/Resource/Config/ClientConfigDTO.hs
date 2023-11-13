@@ -4,21 +4,23 @@ import GHC.Generics
 
 import Shared.Common.Model.Config.SimpleFeature
 import Shared.OpenId.Model.OpenId.OpenIdClientStyle
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.User.UserProfile
 
 data ClientConfigDTO = ClientConfigDTO
-  { organization :: AppConfigOrganization
-  , feature :: AppConfigFeature
+  { user :: Maybe UserProfile
+  , organization :: TenantConfigOrganization
+  , feature :: TenantConfigFeature
   , authentication :: ClientConfigAuthDTO
-  , privacyAndSupport :: AppConfigPrivacyAndSupport
-  , dashboardAndLoginScreen :: AppConfigDashboardAndLoginScreen
-  , lookAndFeel :: AppConfigLookAndFeel
+  , privacyAndSupport :: TenantConfigPrivacyAndSupport
+  , dashboardAndLoginScreen :: TenantConfigDashboardAndLoginScreen
+  , lookAndFeel :: TenantConfigLookAndFeel
   , registry :: ClientConfigRegistryDTO
   , questionnaire :: ClientConfigQuestionnaireDTO
   , submission :: SimpleFeature
   , cloud :: ClientConfigCloudDTO
   , locales :: [ClientConfigLocaleDTO]
-  , owl :: AppConfigOwl
+  , owl :: TenantConfigOwl
   , admin :: ClientConfigAdminDTO
   , modules :: [ClientConfigModuleDTO]
   }
@@ -26,7 +28,7 @@ data ClientConfigDTO = ClientConfigDTO
 
 data ClientConfigAuthDTO = ClientConfigAuthDTO
   { defaultRole :: String
-  , internal :: AppConfigAuthInternal
+  , internal :: TenantConfigAuthInternal
   , external :: ClientConfigAuthExternalDTO
   }
   deriving (Generic, Eq, Show)
@@ -51,8 +53,8 @@ data ClientConfigRegistryDTO = ClientConfigRegistryDTO
   deriving (Show, Eq, Generic)
 
 data ClientConfigQuestionnaireDTO = ClientConfigQuestionnaireDTO
-  { questionnaireVisibility :: AppConfigQuestionnaireVisibility
-  , questionnaireSharing :: AppConfigQuestionnaireSharing
+  { questionnaireVisibility :: TenantConfigQuestionnaireVisibility
+  , questionnaireSharing :: TenantConfigQuestionnaireSharing
   , questionnaireCreation :: QuestionnaireCreation
   , projectTagging :: SimpleFeature
   , summaryReport :: SimpleFeature

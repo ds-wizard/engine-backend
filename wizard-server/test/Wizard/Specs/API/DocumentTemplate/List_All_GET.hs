@@ -1,5 +1,5 @@
 module Wizard.Specs.API.DocumentTemplate.List_All_GET (
-  list_all_get,
+  list_all_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -20,11 +20,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-templates/all
+-- GET /wizard-api/document-templates/all
 -- ------------------------------------------------------------------------
-list_all_get :: AppContext -> SpecWith ((), Application)
-list_all_get appContext =
-  describe "GET /document-templates/all" $ do
+list_all_GET :: AppContext -> SpecWith ((), Application)
+list_all_GET appContext =
+  describe "GET /wizard-api/document-templates/all" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -34,7 +34,7 @@ list_all_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/document-templates/all"
+reqUrl = "/wizard-api/document-templates/all"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 

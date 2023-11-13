@@ -6,8 +6,8 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Questionnaire.Questionnaire
@@ -40,7 +40,7 @@ data QuestionnaireDetailDTO = QuestionnaireDetailDTO
   , commentThreadsMap :: M.Map String [QuestionnaireCommentThreadDTO]
   , labels :: M.Map String [U.UUID]
   , creatorUuid :: Maybe U.UUID
-  , permissions :: [QuestionnairePermRecordDTO]
+  , permissions :: [QuestionnairePermDTO]
   , versions :: [QuestionnaireVersionDTO]
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID

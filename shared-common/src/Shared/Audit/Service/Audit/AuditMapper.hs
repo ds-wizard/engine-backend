@@ -2,7 +2,7 @@ module Shared.Audit.Service.Audit.AuditMapper where
 
 import Shared.Audit.Model.Audit.Audit
 
-toAudit uuid component action entity body createdBy appUuid createdAt =
+toAudit uuid component action entity body createdBy tenantUuid createdAt =
   Audit
     { uuid = uuid
     , component = component
@@ -10,6 +10,6 @@ toAudit uuid component action entity body createdBy appUuid createdAt =
     , entity = entity
     , body = body
     , createdBy = createdBy
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = createdAt
     }

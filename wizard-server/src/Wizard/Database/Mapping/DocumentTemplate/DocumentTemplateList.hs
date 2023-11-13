@@ -17,19 +17,14 @@ instance FromRow DocumentTemplateList where
     organizationId <- field
     templateId <- field
     version <- field
+    phase <- field
     metamodelVersion <- field
     description <- field
-    readme <- field
-    license <- field
     allowedPackages <- fieldWith fromJSONField
-    formats <- fieldWith fromJSONField
-    createdAt <- field
-    appUuid <- field
-    updatedAt <- field
-    phase <- field
-    nonEditable <- field
     state <- field
+    nonEditable <- field
     remoteVersion <- field
     remoteOrganizationName <- field
     remoteOrganizationLogo <- field
+    createdAt <- field
     return $ DocumentTemplateList {..}

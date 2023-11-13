@@ -2,8 +2,8 @@ module Wizard.Service.Acl.AclMapper where
 
 import Shared.Common.Util.Gravatar
 import Wizard.Api.Resource.Acl.MemberDTO
-import Wizard.Model.Acl.Acl
 import Wizard.Model.User.User
+import WizardLib.Public.Model.User.UserGroup
 
 toUserMemberDTO :: User -> MemberDTO
 toUserMemberDTO user =
@@ -15,5 +15,11 @@ toUserMemberDTO user =
     , imageUrl = user.imageUrl
     }
 
-toGroupMemberDTO :: Group -> MemberDTO
-toGroupMemberDTO group = GroupMemberDTO {gId = group.gId, name = group.name}
+toUserGroupMemberDTO :: UserGroup -> MemberDTO
+toUserGroupMemberDTO userGroup =
+  UserGroupMemberDTO
+    { uuid = userGroup.uuid
+    , name = userGroup.name
+    , description = userGroup.description
+    , private = userGroup.private
+    }

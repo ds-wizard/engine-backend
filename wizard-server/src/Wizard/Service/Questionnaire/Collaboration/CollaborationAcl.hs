@@ -7,22 +7,21 @@ import Prelude hiding (log)
 
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
-import Wizard.Model.Acl.Acl
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
+import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.User.User
 import Wizard.Model.Websocket.WebsocketRecord
 
 getPermission
   :: QuestionnaireVisibility
   -> QuestionnaireSharing
-  -> [QuestionnairePermRecord]
+  -> [QuestionnairePerm]
   -> Maybe U.UUID
   -> Maybe String
-  -> Maybe [GroupMembership]
+  -> [U.UUID]
   -> WebsocketPerm
-getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserRole mCurrentUserGroups
+getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserRole mCurrentUserGroupUuids
   | or
       [ isAdmin
       , isLogged && isExplicitlyOwner
@@ -53,13 +52,12 @@ getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserRole m
     isExplicitlyEditor = maybe False (`elem` getUserUuidsForEditorPerm permissions) mCurrentUserUuid
     isExplicitlyCommentator = maybe False (`elem` getUserUuidsForCommentatorPerm permissions) mCurrentUserUuid
     isExplicitlyViewer = maybe False (`elem` getUserUuidsForViewerPerm permissions) mCurrentUserUuid
-    isInOwnerGroup = or (fmap (`elem` getGroupIdsForOwnerPerm permissions) mCurrentUserGroupIds)
-    isInEditorGroup = or (fmap (`elem` getGroupIdsForEditorPerm permissions) mCurrentUserGroupIds)
-    isInCommentatorGroup = or (fmap (`elem` getGroupIdsForCommentatorPerm permissions) mCurrentUserGroupIds)
-    isInViewerGroup = or (fmap (`elem` getGroupIdsForViewerPerm permissions) mCurrentUserGroupIds)
+    isInOwnerGroup = or (fmap (`elem` getUserGroupUuidsForOwnerPerm permissions) mCurrentUserGroupUuids)
+    isInEditorGroup = or (fmap (`elem` getUserGroupUuidsForEditorPerm permissions) mCurrentUserGroupUuids)
+    isInCommentatorGroup = or (fmap (`elem` getUserGroupUuidsForCommentatorPerm permissions) mCurrentUserGroupUuids)
+    isInViewerGroup = or (fmap (`elem` getUserGroupUuidsForViewerPerm permissions) mCurrentUserGroupUuids)
     isLogged = isJust mCurrentUserUuid
     isAdmin = mCurrentUserRole == Just _USER_ROLE_ADMIN
-    mCurrentUserGroupIds = maybe [] (fmap (.groupId)) mCurrentUserGroups
 
 checkViewPermission myself =
   if myself.entityPerm == EditorWebsocketPerm || myself.entityPerm == CommentatorWebsocketPerm || myself.entityPerm == ViewerWebsocketPerm

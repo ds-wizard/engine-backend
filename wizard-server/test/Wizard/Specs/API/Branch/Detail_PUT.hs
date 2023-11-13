@@ -29,11 +29,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /branches/{branchId}
+-- PUT /wizard-api/branches/{branchId}
 -- ------------------------------------------------------------------------
 detail_PUT :: AppContext -> SpecWith ((), Application)
 detail_PUT appContext =
-  describe "PUT /branches/{branchId}" $ do
+  describe "PUT /wizard-api/branches/{branchId}" $ do
     test_200 appContext
     test_400_invalid_json appContext
     test_400_not_valid_kmId appContext
@@ -46,7 +46,7 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6"
+reqUrl = "/wizard-api/branches/6474b24b-262b-42b1-9451-008e8363f2b6"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -151,7 +151,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+    "/wizard-api/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
     reqHeaders
     reqBody
     "branch"

@@ -23,11 +23,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaire-importers
+-- GET /wizard-api/questionnaire-importers
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /questionnaire-importers" $ do
+  describe "GET /wizard-api/questionnaire-importers" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +37,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/questionnaire-importers"
+reqUrl = "/wizard-api/questionnaire-importers"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -50,7 +50,7 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK"
     appContext
-    "/questionnaire-importers"
+    "/wizard-api/questionnaire-importers"
     reqAuthHeader
     ( Page
         "questionnaireImporters"
@@ -60,13 +60,13 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (query 'q')"
     appContext
-    "/questionnaire-importers?q=QuestionnaireImporterBio"
+    "/wizard-api/questionnaire-importers?q=QuestionnaireImporterBio"
     reqAuthHeader
     (Page "questionnaireImporters" (PageMetadata 20 1 1 0) (fmap toDTO [questionnaireImporterBio3]))
   create_test_200
     "HTTP 200 OK (query 'q' for non-existing)"
     appContext
-    "/questionnaire-importers?q=Non-existing Questionnaire Report"
+    "/wizard-api/questionnaire-importers?q=Non-existing Questionnaire Report"
     reqAuthHeader
     (Page "questionnaireImporters" (PageMetadata 20 0 0 0) ([] :: [QuestionnaireImporterDTO]))
 

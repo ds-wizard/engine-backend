@@ -6,7 +6,7 @@ import Data.Pool
 import Data.Time
 import qualified Data.UUID as U
 
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.TransactionState
 import Shared.Common.Util.Logger
@@ -19,17 +19,17 @@ import Wizard.Service.User.UserMapper
 
 runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO (Either String a)
 runAppContextWithBaseContext function baseContext =
-  appContextFromBaseContext defaultAppUuid (Just . toDTO $ userSystem) Transactional baseContext $
+  appContextFromBaseContext defaultTenantUuid (Just . toDTO $ userSystem) Transactional baseContext $
     runAppContextWithAppContext function
 
 runAppContextWithBaseContext' :: AppContextM a -> BaseContext -> U.UUID -> IO (Either String a)
-runAppContextWithBaseContext' function baseContext appUuid =
-  appContextFromBaseContext appUuid (Just . toDTO $ userSystem) Transactional baseContext $
+runAppContextWithBaseContext' function baseContext tenantUuid =
+  appContextFromBaseContext tenantUuid (Just . toDTO $ userSystem) Transactional baseContext $
     runAppContextWithAppContext function
 
 runAppContextWithBaseContext'' :: AppContextM a -> BaseContext -> IO (Either String a)
 runAppContextWithBaseContext'' function baseContext =
-  appContextFromBaseContext defaultAppUuid (Just . toDTO $ userSystem) NoTransaction baseContext $
+  appContextFromBaseContext defaultTenantUuid (Just . toDTO $ userSystem) NoTransaction baseContext $
     runAppContextWithAppContext function
 
 runAppContextWithAppContext :: AppContextM a -> AppContext -> IO (Either String a)
@@ -60,7 +60,7 @@ runLogging' context =
   let loggingLevel = context.serverConfig.logging.level
    in runLogging loggingLevel
 
-appContextFromBaseContext appUuid mUser transactionState baseContext callback = do
+appContextFromBaseContext tenantUuid mUser transactionState baseContext callback = do
   cTraceUuid <- generateUuid
   now <- liftIO getCurrentTime
   let appContext =
@@ -73,7 +73,7 @@ appContextFromBaseContext appUuid mUser transactionState baseContext callback = 
           , httpClientManager = baseContext.httpClientManager
           , registryClient = baseContext.registryClient
           , traceUuid = cTraceUuid
-          , currentAppUuid = appUuid
+          , currentTenantUuid = tenantUuid
           , currentUser = mUser
           , shutdownFlag = baseContext.shutdownFlag
           , cache = baseContext.cache

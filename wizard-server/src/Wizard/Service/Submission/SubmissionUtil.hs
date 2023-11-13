@@ -4,16 +4,16 @@ import qualified Data.List as L
 
 import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Submission.Submission
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Submission.SubmissionMapper
+import Wizard.Service.Tenant.Config.ConfigService
 
 enhanceSubmission :: Submission -> AppContextM SubmissionDTO
 enhanceSubmission sub = do
   user <- findUserByUuid sub.createdBy
-  appConfig <- getAppConfig
+  tenantConfig <- getCurrentTenantConfig
   let mSubmissionName =
-        fmap (.name) . L.find (\s -> s.sId == sub.serviceId) $ appConfig.submission.services
+        fmap (.name) . L.find (\s -> s.sId == sub.serviceId) $ tenantConfig.submission.services
   return $ toDTO sub mSubmissionName user

@@ -1,5 +1,5 @@
 module Registry.Specs.API.ActionKey.List_POST (
-  list_post,
+  list_POST,
 ) where
 
 import Data.Aeson (encode)
@@ -28,8 +28,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- POST /action-keys
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith ((), Application)
-list_post appContext =
+list_POST :: AppContext -> SpecWith ((), Application)
+list_POST appContext =
   describe "POST /action-keys" $ do
     test_201 appContext
     test_400 appContext

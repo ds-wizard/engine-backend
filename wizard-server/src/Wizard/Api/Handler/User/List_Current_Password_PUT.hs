@@ -10,7 +10,7 @@ import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserPasswordJM ()
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.User.UserProfileService
+import Wizard.Service.User.Profile.UserProfileService
 
 type List_Current_Password_PUT =
   Header "Authorization" String

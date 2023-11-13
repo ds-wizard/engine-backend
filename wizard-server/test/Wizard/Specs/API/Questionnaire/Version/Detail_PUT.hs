@@ -24,11 +24,11 @@ import Wizard.Specs.API.Questionnaire.Version.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /questionnaires/{qtnUuid}/versions/{vUuid}
+-- PUT /wizard-api/questionnaires/{qtnUuid}/versions/{vUuid}
 -- ------------------------------------------------------------------------
 detail_PUT :: AppContext -> SpecWith ((), Application)
 detail_PUT appContext =
-  describe "PUT /questionnaires/{qtnUuid}/versions/{vUuid}" $ do
+  describe "PUT /wizard-api/questionnaires/{qtnUuid}/versions/{vUuid}" $ do
     test_200 appContext
     test_400 appContext
     test_401 appContext
@@ -39,7 +39,7 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/versions/bd6611c8-ea11-48ab-adaa-3ce51b66aae5"
+reqUrl = "/wizard-api/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/versions/bd6611c8-ea11-48ab-adaa-3ce51b66aae5"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -87,7 +87,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaires/00084a75-56e3-49f8-b16f-d6b99599910a/versions/bd6611c8-ea11-48ab-adaa-3ce51b66aae5"
+    "/wizard-api/questionnaires/00084a75-56e3-49f8-b16f-d6b99599910a/versions/bd6611c8-ea11-48ab-adaa-3ce51b66aae5"
     reqHeaders
     reqBody
     "questionnaire"

@@ -20,18 +20,18 @@ import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Integration.Http.Common.ServantClient
 import Wizard.Integration.Http.Registry.RequestMapper
 import Wizard.Integration.Http.Registry.ResponseMapper
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Statistics.InstanceStatistics
-import Wizard.Service.App.AppHelper
-import Wizard.Service.Config.App.AppConfigService
+import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Service.Tenant.Config.ConfigService
+import Wizard.Service.Tenant.TenantHelper
 import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleDTO
 
 retrieveOrganizations :: AppContextM [OrganizationSimple]
 retrieveOrganizations = do
-  appConfig <- getAppConfig
-  if appConfig.registry.enabled
+  tenantConfig <- getCurrentTenantConfig
+  if tenantConfig.registry.enabled
     then do
       let request = toRetrieveOrganizationsRequest
       res <- runRegistryClient request
@@ -41,7 +41,7 @@ retrieveOrganizations = do
 createOrganization :: OrganizationCreateDTO -> AppContextM OrganizationDTO
 createOrganization reqDto = do
   serverConfig <- asks serverConfig
-  clientUrl <- getAppClientUrl
+  clientUrl <- getClientUrl
   let request = toCreateOrganizationRequest serverConfig reqDto clientUrl
   res <- runRegistryClient request
   return . getResponse $ res
@@ -54,12 +54,12 @@ confirmOrganizationRegistration reqDto = do
 
 retrievePackages :: InstanceStatistics -> AppContextM [PackageSimpleDTO]
 retrievePackages iStat = do
-  appConfig <- getAppConfig
-  if appConfig.registry.enabled
+  tenantConfig <- getCurrentTenantConfig
+  if tenantConfig.registry.enabled
     then
       catchError
         ( do
-            let request = toRetrievePackagesRequest appConfig.registry iStat
+            let request = toRetrievePackagesRequest tenantConfig.registry iStat
             res <- runRegistryClient request
             return . getResponse $ res
         )
@@ -69,22 +69,22 @@ retrievePackages iStat = do
 retrievePackageBundleById :: String -> AppContextM BSL.ByteString
 retrievePackageBundleById pkgId = do
   serverConfig <- asks serverConfig
-  appConfig <- getAppConfig
-  if appConfig.registry.enabled
+  tenantConfig <- getCurrentTenantConfig
+  if tenantConfig.registry.enabled
     then
       runRequest
-        (toRetrievePackageBundleByIdRequest serverConfig.registry appConfig.registry pkgId)
+        (toRetrievePackageBundleByIdRequest serverConfig.registry tenantConfig.registry pkgId)
         toRetrievePackageBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
 retrieveTemplates :: AppContextM [DocumentTemplateSimpleDTO]
 retrieveTemplates = do
-  appConfig <- getAppConfig
-  if appConfig.registry.enabled
+  tenantConfig <- getCurrentTenantConfig
+  if tenantConfig.registry.enabled
     then
       catchError
         ( do
-            let request = toRetrieveTemplatesRequest appConfig.registry
+            let request = toRetrieveTemplatesRequest tenantConfig.registry
             res <- runRegistryClient request
             return . getResponse $ res
         )
@@ -94,23 +94,23 @@ retrieveTemplates = do
 retrieveTemplateBundleById :: String -> AppContextM BSL.ByteString
 retrieveTemplateBundleById tmlId = do
   serverConfig <- asks serverConfig
-  appConfig <- getAppConfig
-  if appConfig.registry.enabled
+  tenantConfig <- getCurrentTenantConfig
+  if tenantConfig.registry.enabled
     then
       runRequest
-        (toRetrieveTemplateBundleByIdRequest serverConfig.registry appConfig.registry tmlId)
+        (toRetrieveTemplateBundleByIdRequest serverConfig.registry tenantConfig.registry tmlId)
         toRetrieveTemplateBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
 retrieveLocales :: AppContextM [LocaleDTO]
 retrieveLocales = do
   buildInfoConfig <- asks buildInfoConfig
-  appConfig <- getAppConfig
-  if appConfig.registry.enabled
+  tenantConfig <- getCurrentTenantConfig
+  if tenantConfig.registry.enabled
     then
       catchError
         ( do
-            let request = toRetrieveLocaleRequest buildInfoConfig.releaseVersion appConfig.registry
+            let request = toRetrieveLocaleRequest buildInfoConfig.releaseVersion tenantConfig.registry
             res <- runRegistryClient request
             return . getResponse $ res
         )
@@ -120,33 +120,33 @@ retrieveLocales = do
 retrieveLocaleBundleById :: String -> AppContextM BSL.ByteString
 retrieveLocaleBundleById lclId = do
   serverConfig <- asks serverConfig
-  appConfig <- getAppConfig
-  if appConfig.registry.enabled
+  tenantConfig <- getCurrentTenantConfig
+  if tenantConfig.registry.enabled
     then
       runRequest
-        (toRetrieveLocaleBundleByIdRequest serverConfig.registry appConfig.registry lclId)
+        (toRetrieveLocaleBundleByIdRequest serverConfig.registry tenantConfig.registry lclId)
         toRetrieveLocaleBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
 uploadPackageBundle :: PackageBundleDTO -> AppContextM PackageBundleDTO
 uploadPackageBundle reqDto = do
-  appConfig <- getAppConfig
-  let request = toUploadPackageBundleRequest appConfig.registry reqDto
+  tenantConfig <- getCurrentTenantConfig
+  let request = toUploadPackageBundleRequest tenantConfig.registry reqDto
   res <- runRegistryClient request
   return . getResponse $ res
 
 uploadDocumentTemplateBundle :: BSL.ByteString -> AppContextM BSL.ByteString
 uploadDocumentTemplateBundle bundle = do
   serverConfig <- asks serverConfig
-  appConfig <- getAppConfig
+  tenantConfig <- getCurrentTenantConfig
   runRequest
-    (toUploadDocumentTemplateBundleRequest serverConfig.registry appConfig.registry bundle)
+    (toUploadDocumentTemplateBundleRequest serverConfig.registry tenantConfig.registry bundle)
     toUploadDocumentTemplateBundleResponse
 
 uploadLocaleBundle :: BSL.ByteString -> AppContextM BSL.ByteString
 uploadLocaleBundle bundle = do
   serverConfig <- asks serverConfig
-  appConfig <- getAppConfig
+  tenantConfig <- getCurrentTenantConfig
   runRequest
-    (toUploadLocaleBundleRequest serverConfig.registry appConfig.registry bundle)
+    (toUploadLocaleBundleRequest serverConfig.registry tenantConfig.registry bundle)
     toUploadLocaleBundleResponse

@@ -47,28 +47,28 @@ findQuestionnaireImportersPage mOrganizationId mImporterId mQuery mEnabled pagea
 
 findQuestionnaireImporterById :: String -> AppContextM QuestionnaireImporter
 findQuestionnaireImporterById qiId = do
-  appUuid <- asks currentAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("id", qiId)]
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", qiId)]
 
 insertQuestionnaireImporter :: QuestionnaireImporter -> AppContextM Int64
 insertQuestionnaireImporter = createInsertFn entityName
 
 updateQuestionnaireImporterById :: QuestionnaireImporter -> AppContextM Int64
 updateQuestionnaireImporterById importer = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE questionnaire_importer SET id = ?, name = ?, organization_id = ?, importer_id = ?, version = ?, metamodel_version = ?, description = ?, readme = ?, license = ?, allowed_packages = ?, url = ?, enabled = ?, app_uuid = ?, created_at = ?, updated_at = ? WHERE app_uuid = ? AND id = ?"
-  let params = toRow importer ++ [toField appUuid, toField importer.qiId]
+          "UPDATE questionnaire_importer SET id = ?, name = ?, organization_id = ?, importer_id = ?, version = ?, metamodel_version = ?, description = ?, readme = ?, license = ?, allowed_packages = ?, url = ?, enabled = ?, tenant_uuid = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND id = ?"
+  let params = toRow importer ++ [toField tenantUuid, toField importer.qiId]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
 
 updateQuestionnaireImporterPasswordById :: String -> Bool -> UTCTime -> AppContextM Int64
 updateQuestionnaireImporterPasswordById qiId enabled uUpdatedAt = do
-  appUuid <- asks currentAppUuid
-  let sql = fromString "UPDATE questionnaire_importer SET enabled = ?, updated_at = ? WHERE app_uuid = ? AND uuid = ?"
-  let params = [toField enabled, toField uUpdatedAt, toField appUuid, toField qiId]
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE questionnaire_importer SET enabled = ?, updated_at = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = [toField enabled, toField uUpdatedAt, toField tenantUuid, toField qiId]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -78,8 +78,8 @@ deleteQuestionnaireImporters = createDeleteEntitiesFn entityName
 
 deleteQuestionnaireImporterById :: String -> AppContextM Int64
 deleteQuestionnaireImporterById qiId = do
-  appUuid <- asks currentAppUuid
-  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("id", qiId)]
+  tenantUuid <- asks currentTenantUuid
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", qiId)]
 
 -- --------------------------------
 -- PRIVATE
@@ -87,7 +87,7 @@ deleteQuestionnaireImporterById qiId = do
 createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel pageable sort fields entityId mQuery mEnabled mOrganizationId mEntityId =
   -- 1. Prepare variables
   do
-    appUuid <- asks currentAppUuid
+    tenantUuid <- asks currentTenantUuid
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
     let enabledCondition =
           case mEnabled of
@@ -101,12 +101,12 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
           f'
             "SELECT %s \
             \FROM %s \
-            \WHERE app_uuid = ? AND id IN ( \
+            \WHERE tenant_uuid = ? AND id IN ( \
             \    SELECT CONCAT(organization_id, ':', %s, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
             \                                                    (max(string_to_array(version, '.')::int[]))[2] || '.' || \
             \                                                    (max(string_to_array(version, '.')::int[]))[3]) \
             \    FROM %s \
-            \    WHERE %s app_uuid = ? AND (name ~* ? OR id ~* ?) %s \
+            \    WHERE %s tenant_uuid = ? AND (name ~* ? OR id ~* ?) %s \
             \    GROUP BY organization_id, %s \
             \) \
             \%s \
@@ -128,10 +128,10 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
           query
             conn
             (fromString sql)
-            ( U.toString appUuid
-                : U.toString appUuid
-                : regex mQuery
-                : regex mQuery
+            ( U.toString tenantUuid
+                : U.toString tenantUuid
+                : regexM mQuery
+                : regexM mQuery
                 : mapToDBCoordinatesParams mOrganizationId mEntityId
             )
     entities <- runDB action
@@ -148,13 +148,13 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
 createCountGroupByCoordinateFn
   :: String -> String -> Maybe String -> String -> Maybe String -> Maybe String -> AppContextM Int
 createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrganizationId mEntityId = do
-  appUuid <- asks currentAppUuid
+  tenantUuid <- asks currentTenantUuid
   let sql =
         f'
           "SELECT COUNT(*) \
           \ FROM (SELECT COUNT(*) \
           \   FROM %s \
-          \   WHERE %s app_uuid = ? AND (name ~* ? OR id ~* ?) %s \
+          \   WHERE %s tenant_uuid = ? AND (name ~* ? OR id ~* ?) %s \
           \   GROUP BY organization_id, %s) p"
           [entityName, enabledCondition, mapToDBCoordinatesSql entityName entityId mOrganizationId mEntityId, entityId]
   logInfo _CMP_DATABASE sql
@@ -162,7 +162,7 @@ createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrga
         query
           conn
           (fromString sql)
-          (U.toString appUuid : regex mQuery : regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
+          (U.toString tenantUuid : regexM mQuery : regexM mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
   result <- runDB action
   case result of
     [count] -> return . fromOnly $ count

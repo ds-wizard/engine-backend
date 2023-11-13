@@ -11,21 +11,21 @@ import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 
 toDTO :: QuestionnaireDetailDTO -> QuestionnaireDetailDTO -> [U.UUID] -> U.UUID -> MigratorStateDTO
-toDTO oldQtn newQtn qtnUuids appUuid =
+toDTO oldQtn newQtn qtnUuids tenantUuid =
   MigratorStateDTO
     { oldQuestionnaire = oldQtn
     , newQuestionnaire = newQtn
     , resolvedQuestionUuids = qtnUuids
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     }
 
 fromCreateDTO :: U.UUID -> U.UUID -> U.UUID -> MigratorState
-fromCreateDTO oldQtnUuid newQtnUuid appUuid =
+fromCreateDTO oldQtnUuid newQtnUuid tenantUuid =
   MigratorState
     { oldQuestionnaireUuid = oldQtnUuid
     , newQuestionnaireUuid = newQtnUuid
     , resolvedQuestionUuids = []
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     }
 
 fromChangeDTO :: MigratorStateChangeDTO -> MigratorStateDTO -> MigratorState
@@ -34,7 +34,7 @@ fromChangeDTO changeDto ms =
     { oldQuestionnaireUuid = ms.oldQuestionnaire.uuid
     , newQuestionnaireUuid = ms.newQuestionnaire.uuid
     , resolvedQuestionUuids = changeDto.resolvedQuestionUuids
-    , appUuid = ms.appUuid
+    , tenantUuid = ms.tenantUuid
     }
 
 toPhaseEvent :: U.UUID -> Maybe U.UUID -> Maybe UserDTO -> UTCTime -> QuestionnaireEvent

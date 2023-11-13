@@ -6,8 +6,8 @@ import Data.Time
 import RegistryLib.Api.Resource.Package.PackageSimpleDTO
 import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import RegistryLib.Model.Organization.OrganizationSimple
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Model.App.App
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Model.Tenant.Tenant
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 import WizardLib.KnowledgeModel.Database.Migration.Development.Event.Data.Events
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
@@ -69,6 +69,6 @@ differentPackage =
     , mergeCheckpointPackageId = Nothing
     , nonEditable = False
     , events = [AddKnowledgeModelEvent' a_km1]
-    , appUuid = differentApp.uuid
+    , tenantUuid = differentTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }

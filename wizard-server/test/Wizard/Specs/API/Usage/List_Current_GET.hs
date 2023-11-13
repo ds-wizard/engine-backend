@@ -9,19 +9,19 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Api.Resource.Usage.UsageJM ()
-import Wizard.Database.Migration.Development.Usage.Data.Usages
+import Wizard.Api.Resource.Tenant.Usage.TenantUsageJM ()
+import Wizard.Database.Migration.Development.Tenant.Data.TenantUsages
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- GET /usage
+-- GET /wizard-api/usage
 -- ------------------------------------------------------------------------
 list_current_GET :: AppContext -> SpecWith ((), Application)
 list_current_GET appContext =
-  describe "GET /usage" $ do
+  describe "GET /wizard-api/usage" $ do
     test_200 appContext
     test_401 appContext
 
@@ -30,7 +30,7 @@ list_current_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/usage"
+reqUrl = "/wizard-api/usage"
 
 reqHeaders = [reqAuthHeader]
 
@@ -45,7 +45,7 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = defaultUsage
+      let expDto = defaultTenantUsage
       let expBody = encode expDto
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

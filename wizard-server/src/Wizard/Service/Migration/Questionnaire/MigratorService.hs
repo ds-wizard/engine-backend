@@ -17,9 +17,9 @@ import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEvent
+import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Report.Report
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
@@ -39,8 +39,8 @@ createQuestionnaireMigration oldQtnUuid reqDto =
     checkMigrationPermissionToQtn oldQtn.visibility oldQtn.permissions
     newQtn <- upgradeQuestionnaire reqDto oldQtn
     insertQuestionnaire newQtn
-    appUuid <- asks currentAppUuid
-    let state = fromCreateDTO oldQtn.uuid newQtn.uuid appUuid
+    tenantUuid <- asks currentTenantUuid
+    let state = fromCreateDTO oldQtn.uuid newQtn.uuid tenantUuid
     insertMigratorState state
     auditQuestionnaireMigrationCreate reqDto oldQtn newQtn
     getQuestionnaireMigration newQtn.uuid
@@ -55,7 +55,7 @@ getQuestionnaireMigration qtnUuid = do
   newQtn <- findQuestionnaireByUuid state.newQuestionnaireUuid
   checkMigrationPermissionToQtn oldQtn.visibility oldQtn.permissions
   checkMigrationPermissionToQtn newQtn.visibility newQtn.permissions
-  return $ toDTO oldQtnDto newQtnDto state.resolvedQuestionUuids state.appUuid
+  return $ toDTO oldQtnDto newQtnDto state.resolvedQuestionUuids state.tenantUuid
 
 modifyQuestionnaireMigration :: U.UUID -> MigratorStateChangeDTO -> AppContextM MigratorStateDTO
 modifyQuestionnaireMigration qtnUuid reqDto =
@@ -65,7 +65,7 @@ modifyQuestionnaireMigration qtnUuid reqDto =
     let updatedState = fromChangeDTO reqDto state
     updateMigratorStateByNewQuestionnaireUuid updatedState
     auditQuestionnaireMigrationModify state reqDto
-    return $ toDTO state.oldQuestionnaire state.newQuestionnaire updatedState.resolvedQuestionUuids updatedState.appUuid
+    return $ toDTO state.oldQuestionnaire state.newQuestionnaire updatedState.resolvedQuestionUuids updatedState.tenantUuid
 
 finishQuestionnaireMigration :: U.UUID -> AppContextM ()
 finishQuestionnaireMigration qtnUuid =
@@ -122,7 +122,7 @@ upgradeQuestionnaire reqDto oldQtn = do
   newKm <- compileKnowledgeModel [] (Just newPkgId) newTagUuids
   newUuid <- liftIO generateUuid
   newEvents <- sanitizeQuestionnaireEvents oldKm newKm oldQtn.events
-  newPermissions <- traverse (upgradeQuestionnairePerm newUuid) oldQtn.permissions
+  let newPermissions = fmap (\perm -> perm {questionnaireUuid = newUuid}) oldQtn.permissions
   let upgradedQtn =
         oldQtn
           { uuid = newUuid
@@ -135,16 +135,6 @@ upgradeQuestionnaire reqDto oldQtn = do
           }
         :: Questionnaire
   return upgradedQtn
-
-upgradeQuestionnairePerm :: U.UUID -> QuestionnairePermRecord -> AppContextM QuestionnairePermRecord
-upgradeQuestionnairePerm newQtnUuid perm = do
-  newUuid <- liftIO generateUuid
-  let upgradedPerm =
-        perm
-          { uuid = newUuid
-          , questionnaireUuid = newQtnUuid
-          }
-  return upgradedPerm
 
 ensurePhaseIsSetIfNecessary :: Questionnaire -> AppContextM [QuestionnaireEvent]
 ensurePhaseIsSetIfNecessary newQtn = do

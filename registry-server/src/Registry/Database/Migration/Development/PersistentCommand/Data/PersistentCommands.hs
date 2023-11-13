@@ -1,6 +1,6 @@
 module Registry.Database.Migration.Development.PersistentCommand.Data.PersistentCommands where
 
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
@@ -19,7 +19,7 @@ command1 =
     , maxAttempts = 10
     , internal = True
     , destination = Nothing
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = Nothing
     , createdAt = dt' 2018 1 25
     , updatedAt = dt' 2018 1 25

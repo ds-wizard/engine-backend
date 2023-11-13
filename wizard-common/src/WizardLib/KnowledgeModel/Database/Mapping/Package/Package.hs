@@ -23,7 +23,7 @@ instance FromRow Package where
     mergeCheckpointPackageId <- field
     _ <- field :: RowParser Value
     createdAt <- field
-    appUuid <- field
+    tenantUuid <- field
     phase <- field
     nonEditable <- field
     return $ Package {..}

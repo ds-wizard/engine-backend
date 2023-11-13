@@ -11,6 +11,6 @@ import Wizard.Specs.API.Feedback.List_POST
 feedbackAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
     describe "FEEDBACK API Spec" $ do
-      list_get appContext
-      list_post appContext
-      detail_get appContext
+      list_GET appContext
+      list_POST appContext
+      detail_GET appContext

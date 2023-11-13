@@ -7,4 +7,4 @@ import Wizard.Specs.API.BookReference.Detail_GET
 import Wizard.Specs.API.Common
 
 bookReferenceAPI baseContext appContext =
-  with (startWebApp baseContext appContext) $ describe "BOOK REFERENCE API Spec" $ detail_get appContext
+  with (startWebApp baseContext appContext) $ describe "BOOK REFERENCE API Spec" $ detail_GET appContext

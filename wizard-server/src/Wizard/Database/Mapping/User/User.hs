@@ -7,7 +7,6 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import Database.PostgreSQL.Simple.Types
 
-import Wizard.Api.Resource.Acl.AclJM ()
 import Wizard.Api.Resource.User.UserSubmissionPropsJM ()
 import Wizard.Model.User.User
 
@@ -25,11 +24,10 @@ instance ToRow User where
     , toField active
     , toJSONField submissionProps
     , toField imageUrl
-    , toJSONField groups
     , toField lastVisitedAt
     , toField createdAt
     , toField updatedAt
-    , toField appUuid
+    , toField tenantUuid
     , toField machine
     ]
 
@@ -47,10 +45,9 @@ instance FromRow User where
     active <- field
     submissionProps <- fieldWith fromJSONField
     imageUrl <- field
-    groups <- fieldWith fromJSONField
     lastVisitedAt <- field
     createdAt <- field
     updatedAt <- field
-    appUuid <- field
+    tenantUuid <- field
     machine <- field
     return $ User {..}

@@ -23,7 +23,7 @@ instance ToRow QuestionnaireImporter where
     , toJSONField allowedPackages
     , toField url
     , toField enabled
-    , toField appUuid
+    , toField tenantUuid
     , toField createdAt
     , toField updatedAt
     ]
@@ -42,7 +42,7 @@ instance FromRow QuestionnaireImporter where
     allowedPackages <- fieldWith fromJSONField
     url <- field
     enabled <- field
-    appUuid <- field
+    tenantUuid <- field
     createdAt <- field
     updatedAt <- field
     return $ QuestionnaireImporter {..}

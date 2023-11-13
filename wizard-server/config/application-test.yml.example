@@ -1,7 +1,7 @@
 general:
   environment: Test
   serverPort: 3000
-  clientUrl: http://localhost:3001
+  clientUrl: http://localhost:3001/wizard
   secret: "01234567890123456789012345678901"
   integrationConfig: config/integration-test.yml
   rsaPrivateKey: |

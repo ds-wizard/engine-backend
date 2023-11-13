@@ -6,15 +6,18 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Util.Gravatar (createGravatarHash)
-import Wizard.Api.Resource.App.AppCreateDTO
+import Wizard.Api.Resource.Tenant.TenantCreateDTO
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
+import Wizard.Model.User.UserProfile
 import Wizard.Model.User.UserSuggestion
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
+import WizardLib.Public.Model.User.UserGroupMembership
+import WizardLib.Public.Model.User.UserWithMembership
 
 toDTO :: User -> UserDTO
 toDTO user =
@@ -29,9 +32,21 @@ toDTO user =
     , permissions = user.permissions
     , active = user.active
     , imageUrl = user.imageUrl
-    , groups = user.groups
     , createdAt = user.createdAt
     , updatedAt = user.updatedAt
+    }
+
+toUserProfile :: UserDTO -> [U.UUID] -> UserProfile
+toUserProfile user userGroupUuids =
+  UserProfile
+    { uuid = user.uuid
+    , firstName = user.firstName
+    , lastName = user.lastName
+    , email = user.email
+    , imageUrl = user.imageUrl
+    , uRole = user.uRole
+    , permissions = user.permissions
+    , userGroupUuids = userGroupUuids
     }
 
 toSuggestion :: User -> UserSuggestion
@@ -44,6 +59,17 @@ toSuggestion user =
     , imageUrl = user.imageUrl
     }
 
+toWithMembership :: User -> UserGroupMembershipType -> UserWithMembership
+toWithMembership user membershipType =
+  UserWithMembership
+    { uuid = user.uuid
+    , firstName = user.firstName
+    , lastName = user.lastName
+    , email = user.email
+    , imageUrl = user.imageUrl
+    , membershipType = membershipType
+    }
+
 toSuggestionDTO :: UserSuggestion -> UserSuggestionDTO
 toSuggestionDTO user =
   UserSuggestionDTO
@@ -54,14 +80,14 @@ toSuggestionDTO user =
     , imageUrl = user.imageUrl
     }
 
-toOnlineUserInfo :: Maybe UserDTO -> Int -> Int -> OnlineUserInfo
-toOnlineUserInfo mUser avatarNumber colorNumber =
+toOnlineUserInfo :: Maybe UserDTO -> Int -> Int -> [U.UUID] -> OnlineUserInfo
+toOnlineUserInfo mUser avatarNumber colorNumber userGroupUuids =
   case mUser of
-    Just user -> toLoggedOnlineUserInfo user colorNumber
+    Just user -> toLoggedOnlineUserInfo user colorNumber userGroupUuids
     Nothing -> toAnonymousOnlineUserInfo avatarNumber colorNumber
 
-toLoggedOnlineUserInfo :: UserDTO -> Int -> OnlineUserInfo
-toLoggedOnlineUserInfo user colorNumber =
+toLoggedOnlineUserInfo :: UserDTO -> Int -> [U.UUID] -> OnlineUserInfo
+toLoggedOnlineUserInfo user colorNumber groupUuids =
   LoggedOnlineUserInfo
     { uuid = user.uuid
     , firstName = user.firstName
@@ -70,7 +96,7 @@ toLoggedOnlineUserInfo user colorNumber =
     , imageUrl = user.imageUrl
     , colorNumber = colorNumber
     , role = user.uRole
-    , groups = user.groups
+    , groupUuids = groupUuids
     }
 
 toAnonymousOnlineUserInfo :: Int -> Int -> OnlineUserInfo
@@ -81,7 +107,7 @@ toAnonymousOnlineUserInfo avatarNumber colorNumber =
     }
 
 fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> U.UUID -> UTCTime -> Bool -> User
-fromUserCreateDTO dto userUuid passwordHash role permissions appUuid now shouldSendRegistrationEmail =
+fromUserCreateDTO dto userUuid passwordHash role permissions tenantUuid now shouldSendRegistrationEmail =
   User
     { uuid = userUuid
     , firstName = dto.firstName
@@ -95,9 +121,8 @@ fromUserCreateDTO dto userUuid passwordHash role permissions appUuid now shouldS
     , active = not shouldSendRegistrationEmail
     , submissionProps = []
     , imageUrl = Nothing
-    , groups = []
     , machine = False
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , lastVisitedAt = now
     , createdAt = now
     , updatedAt = now
@@ -117,7 +142,7 @@ fromUserExternalDTO
   -> U.UUID
   -> UTCTime
   -> User
-fromUserExternalDTO userUuid firstName lastName email passwordHash sources uRole permissions active mImageUrl appUuid now =
+fromUserExternalDTO userUuid firstName lastName email passwordHash sources uRole permissions active mImageUrl tenantUuid now =
   User
     { uuid = userUuid
     , firstName = firstName
@@ -131,9 +156,8 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash sources uRole
     , active = active
     , submissionProps = []
     , imageUrl = mImageUrl
-    , groups = []
     , machine = False
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , lastVisitedAt = now
     , createdAt = now
     , updatedAt = now
@@ -157,9 +181,8 @@ fromUpdateUserExternalDTO oldUser firstName lastName mImageUrl serviceId now =
     , active = oldUser.active
     , submissionProps = oldUser.submissionProps
     , imageUrl = mImageUrl
-    , groups = oldUser.groups
     , machine = oldUser.machine
-    , appUuid = oldUser.appUuid
+    , tenantUuid = oldUser.tenantUuid
     , lastVisitedAt = now
     , createdAt = oldUser.createdAt
     , updatedAt = oldUser.updatedAt
@@ -180,16 +203,15 @@ fromUserChangeDTO dto oldUser permission =
     , active = dto.active
     , submissionProps = oldUser.submissionProps
     , imageUrl = oldUser.imageUrl
-    , groups = oldUser.groups
     , machine = oldUser.machine
-    , appUuid = oldUser.appUuid
+    , tenantUuid = oldUser.tenantUuid
     , lastVisitedAt = oldUser.lastVisitedAt
     , createdAt = oldUser.createdAt
     , updatedAt = oldUser.updatedAt
     }
 
-fromAppCreateToUserCreateDTO :: AppCreateDTO -> UserCreateDTO
-fromAppCreateToUserCreateDTO dto =
+fromTenantCreateToUserCreateDTO :: TenantCreateDTO -> UserCreateDTO
+fromTenantCreateToUserCreateDTO dto =
   UserCreateDTO
     { firstName = dto.firstName
     , lastName = dto.lastName
@@ -214,9 +236,8 @@ fromCommandCreateDTO command permissions now =
     , active = command.active
     , submissionProps = []
     , imageUrl = command.imageUrl
-    , groups = []
     , machine = False
-    , appUuid = command.appUuid
+    , tenantUuid = command.tenantUuid
     , lastVisitedAt = now
     , createdAt = now
     , updatedAt = now
@@ -237,9 +258,8 @@ fromCommandChangeDTO oldUser command permissions now =
     , active = command.active
     , submissionProps = oldUser.submissionProps
     , imageUrl = command.imageUrl
-    , groups = oldUser.groups
     , machine = oldUser.machine
-    , appUuid = oldUser.appUuid
+    , tenantUuid = oldUser.tenantUuid
     , lastVisitedAt = oldUser.lastVisitedAt
     , createdAt = oldUser.createdAt
     , updatedAt = now

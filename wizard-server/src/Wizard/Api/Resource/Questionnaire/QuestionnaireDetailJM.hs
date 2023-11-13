@@ -5,9 +5,9 @@ import Data.Aeson
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateStateJM ()
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireAclJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnairePermJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireStateJM ()

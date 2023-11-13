@@ -43,7 +43,6 @@ data ServerConfigCloud = ServerConfigCloud
   { enabled :: Bool
   , domain :: Maybe String
   , publicRegistrationEnabled :: Bool
-  , prefix :: String
   }
   deriving (Generic, Show)
 

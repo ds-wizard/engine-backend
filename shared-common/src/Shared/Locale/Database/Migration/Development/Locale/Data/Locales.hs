@@ -5,7 +5,7 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.Map.Strict as M
 
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Date
 import Shared.Locale.Constant.Locale
 import Shared.Locale.Model.Locale.Locale
@@ -25,7 +25,7 @@ localeDefaultEn =
     , readme = "# English Locale"
     , recommendedAppVersion = "3.15.0"
     , enabled = True
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = dt' 2022 1 21
     , updatedAt = dt' 2022 1 21
     }
@@ -45,7 +45,7 @@ localeNl =
     , readme = "# Dutch Translation"
     , recommendedAppVersion = "3.15.0"
     , enabled = True
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = dt' 2022 1 21
     , updatedAt = dt' 2022 1 21
     }
@@ -71,7 +71,7 @@ localeDe =
     , readme = "# German Translation"
     , recommendedAppVersion = "3.15.0"
     , enabled = False
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = dt' 2022 1 21
     , updatedAt = dt' 2022 1 21
     }
@@ -94,7 +94,7 @@ differentLocale =
     , readme = "# Different Translation"
     , recommendedAppVersion = "3.15.0"
     , enabled = True
-    , appUuid = differentAppUuid
+    , tenantUuid = differentTenantUuid
     , createdAt = dt' 2022 1 21
     , updatedAt = dt' 2022 1 21
     }

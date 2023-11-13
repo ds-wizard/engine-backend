@@ -30,11 +30,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /questionnaires/{qtnUuid}/migrations/current
+-- PUT /wizard-api/questionnaires/{qtnUuid}/migrations/current
 -- ------------------------------------------------------------------------
 list_current_PUT :: AppContext -> SpecWith ((), Application)
 list_current_PUT appContext =
-  describe "PUT /questionnaires/{qtnUuid}/migrations/current" $ do
+  describe "PUT /wizard-api/questionnaires/{qtnUuid}/migrations/current" $ do
     test_204 appContext
     test_400 appContext
     test_401 appContext
@@ -46,7 +46,7 @@ list_current_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/migrations/current"
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid ++ "/migrations/current"
 
 reqHeadersT authHeader = [authHeader, reqCtHeader]
 

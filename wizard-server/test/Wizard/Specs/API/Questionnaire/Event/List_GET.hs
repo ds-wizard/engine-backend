@@ -17,6 +17,7 @@ import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -31,11 +32,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires/{qtnUuid}/events
+-- GET /wizard-api/questionnaires/{qtnUuid}/events
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /questionnaires/{qtnUuid}/events" $ do
+  describe "GET /wizard-api/questionnaires/{qtnUuid}/events" $ do
     test_200 appContext
     test_403 appContext
     test_404 appContext
@@ -45,7 +46,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/events"
+reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid ++ "/events"
 
 reqHeadersT authHeader = authHeader
 
@@ -89,6 +90,7 @@ create_test_200 title appContext qtn authHeader =
       runInContextIO QTN.runMigration appContext
       runInContextIO deleteQuestionnaireComments appContext
       runInContextIO deleteQuestionnaireCommentThreads appContext
+      runInContextIO deleteQuestionnairePerms appContext
       runInContextIO deleteQuestionnaires appContext
       runInContextIO (insertQuestionnaire qtn) appContext
       -- WHEN: Call API
@@ -149,7 +151,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/events"
+    "/wizard-api/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/events"
     [reqHeadersT reqAuthHeader]
     reqBody
     "questionnaire"

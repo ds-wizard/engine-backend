@@ -17,76 +17,104 @@ runMigration = do
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/User) drop tables"
   let sql =
-        "drop table if exists user_token cascade;\
-        \drop table if exists user_entity cascade;"
+        "DROP TABLE IF EXISTS user_group_membership CASCADE;\
+        \DROP TABLE IF EXISTS user_group CASCADE;\
+        \DROP TABLE IF EXISTS user_token CASCADE;\
+        \DROP TABLE IF EXISTS user_entity CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
 createTables = do
   createUserTable
   createUserTokenTable
+  createUserGroupTable
+  createUserGroupMembershipTable
 
 createUserTable = do
   logInfo _CMP_MIGRATION "(Table/User) create tables"
   let sql =
-        "create table user_entity \
-        \ ( \
-        \     uuid              uuid    not null \
-        \         constraint user_pk \
-        \             primary key, \
-        \     first_name        varchar not null, \
-        \     last_name         varchar not null, \
-        \     email             varchar not null, \
-        \     password_hash     varchar not null, \
-        \     affiliation       varchar, \
-        \     sources           json    not null, \
-        \     role              varchar not null, \
-        \     permissions       text[]  not null, \
-        \     active            boolean not null, \
-        \     submissions_props json    not null, \
-        \     image_url         varchar, \
-        \     groups            json    not null, \
-        \     last_visited_at   timestamp with time zone not null, \
-        \     created_at        timestamp with time zone not null, \
-        \     updated_at        timestamp with time zone not null, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \         constraint user_entity_app_uuid_fk \
-        \             references app, \
-        \     machine           boolean not null default false \
-        \ ); \
-        \  \
-        \ create unique index user_uuid_uindex \
-        \     on user_entity (uuid, app_uuid); \
-        \  \
-        \ create unique index user_email_uindex \
-        \     on user_entity (email, app_uuid); "
+        "CREATE TABLE user_entity \
+        \( \
+        \    uuid              uuid        NOT NULL, \
+        \    first_name        varchar     NOT NULL, \
+        \    last_name         varchar     NOT NULL, \
+        \    email             varchar     NOT NULL, \
+        \    password_hash     varchar     NOT NULL, \
+        \    affiliation       varchar, \
+        \    sources           json        NOT NULL, \
+        \    role              varchar     NOT NULL, \
+        \    permissions       text[]      NOT NULL, \
+        \    active            boolean     NOT NULL, \
+        \    submissions_props json        NOT NULL, \
+        \    image_url         varchar, \
+        \    last_visited_at   timestamptz NOT NULL, \
+        \    created_at        timestamptz NOT NULL, \
+        \    updated_at        timestamptz NOT NULL, \
+        \    tenant_uuid       uuid        NOT NULL, \
+        \    machine           boolean     NOT NULL, \
+        \    CONSTRAINT user_entity_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT user_entity_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \); \
+        \ \
+        \CREATE UNIQUE INDEX user_email_uindex ON user_entity (email, tenant_uuid);"
   let action conn = execute_ conn sql
   runDB action
 
 createUserTokenTable = do
   logInfo _CMP_MIGRATION "(Table/UserToken) create tables"
   let sql =
-        "create table user_token \
-        \ ( \
-        \     uuid              uuid    not null \
-        \         constraint user_token_pk \
-        \             primary key, \
-        \     user_uuid uuid not null \
-        \         constraint user_token_user_uuid_fk \
-        \             references user_entity, \
-        \     value             varchar not null, \
-        \     session_state     varchar, \
-        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
-        \         constraint user_entity_app_uuid_fk \
-        \             references app, \
-        \     created_at        timestamp with time zone not null, \
-        \     name              varchar not null, \
-        \     type              varchar not null, \
-        \     user_agent        varchar not null, \
-        \     expires_at        timestamp with time zone not null \
-        \ ); \
-        \  \
-        \ create unique index user_token_uuid_uindex \
-        \     on user_token (uuid, app_uuid);"
+        "CREATE TABLE user_token \
+        \( \
+        \    uuid          uuid        NOT NULL, \
+        \    user_uuid     uuid        NOT NULL, \
+        \    value         varchar     NOT NULL, \
+        \    session_state varchar, \
+        \    tenant_uuid   uuid        NOT NULL, \
+        \    created_at    timestamptz NOT NULL, \
+        \    name          varchar     NOT NULL, \
+        \    type          varchar     NOT NULL, \
+        \    user_agent    varchar     NOT NULL, \
+        \    expires_at    timestamptz NOT NULL, \
+        \    CONSTRAINT user_token_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT user_token_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
+        \    CONSTRAINT user_token_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createUserGroupTable = do
+  logInfo _CMP_MIGRATION "(Table/UserGroup) create tables"
+  let sql =
+        "CREATE TABLE user_group \
+        \( \
+        \    uuid        uuid        NOT NULL, \
+        \    name        varchar     NOT NULL, \
+        \    description varchar, \
+        \    private     boolean     NOT NULL, \
+        \    tenant_uuid uuid        NOT NULL, \
+        \    created_at  TIMESTAMPTZ NOT NULL, \
+        \    updated_at  TIMESTAMPTZ NOT NULL, \
+        \    CONSTRAINT user_group_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT user_group_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createUserGroupMembershipTable = do
+  logInfo _CMP_MIGRATION "(Table/UserGroupMembership) create tables"
+  let sql =
+        "CREATE TABLE user_group_membership \
+        \( \
+        \    user_group_uuid uuid        NOT NULL, \
+        \    user_uuid       uuid        NOT NULL, \
+        \    type            varchar     NOT NULL, \
+        \    tenant_uuid     uuid        NOT NULL, \
+        \    created_at      TIMESTAMPTZ NOT NULL, \
+        \    updated_at      TIMESTAMPTZ NOT NULL, \
+        \    CONSTRAINT user_group_membership_pk PRIMARY KEY (user_group_uuid, user_uuid, tenant_uuid), \
+        \    CONSTRAINT user_group_membership_user_group_uuid_fk FOREIGN KEY (user_group_uuid, tenant_uuid) REFERENCES user_group (uuid, tenant_uuid), \
+        \    CONSTRAINT user_group_membership_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
+        \    CONSTRAINT user_group_membership_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
   let action conn = execute_ conn sql
   runDB action

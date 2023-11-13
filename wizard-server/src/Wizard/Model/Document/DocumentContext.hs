@@ -7,11 +7,11 @@ import GHC.Generics
 
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Package.PackageState
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Report.Report
+import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 data DocumentContext = DocumentContext
@@ -28,7 +28,7 @@ data DocumentContext = DocumentContext
   , knowledgeModel :: KnowledgeModel
   , report :: Report
   , package :: DocumentContextPackage
-  , organization :: AppConfigOrganization
+  , organization :: TenantConfigOrganization
   , documentTemplateMetamodelVersion :: Int
   , createdBy :: Maybe UserDTO
   , createdAt :: UTCTime

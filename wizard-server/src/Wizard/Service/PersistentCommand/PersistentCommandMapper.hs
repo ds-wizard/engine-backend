@@ -3,14 +3,14 @@ module Wizard.Service.PersistentCommand.PersistentCommandMapper where
 import qualified Data.UUID as U
 
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
-import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
+import Wizard.Api.Resource.Tenant.TenantDTO
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 
-toDTO :: PersistentCommand U.UUID -> Maybe User -> AppDTO -> PersistentCommandDTO
-toDTO command user app =
+toDTO :: PersistentCommand U.UUID -> Maybe User -> TenantDTO -> PersistentCommandDTO
+toDTO command user tenant =
   PersistentCommandDTO
     { uuid = command.uuid
     , state = command.state
@@ -18,14 +18,14 @@ toDTO command user app =
     , function = command.function
     , attempts = command.attempts
     , maxAttempts = command.maxAttempts
-    , app = app
+    , tenant = tenant
     , createdBy = fmap (U_Mapper.toSuggestionDTO . U_Mapper.toSuggestion) user
     , createdAt = command.createdAt
     , updatedAt = command.updatedAt
     }
 
-toDetailDTO :: PersistentCommand U.UUID -> Maybe User -> AppDTO -> PersistentCommandDetailDTO
-toDetailDTO command user app =
+toDetailDTO :: PersistentCommand U.UUID -> Maybe User -> TenantDTO -> PersistentCommandDetailDTO
+toDetailDTO command user tenant =
   PersistentCommandDetailDTO
     { uuid = command.uuid
     , state = command.state
@@ -36,7 +36,7 @@ toDetailDTO command user app =
     , lastErrorMessage = command.lastErrorMessage
     , attempts = command.attempts
     , maxAttempts = command.maxAttempts
-    , app = app
+    , tenant = tenant
     , createdBy = fmap (U_Mapper.toSuggestionDTO . U_Mapper.toSuggestion) user
     , createdAt = command.createdAt
     , updatedAt = command.updatedAt

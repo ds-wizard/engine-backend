@@ -25,21 +25,21 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Integration.Http.GitHub.Runner
 import Wizard.Integration.Resource.GitHub.IssueIDTO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Feedback.Feedback
+import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Common
-import Wizard.Service.Config.App.AppConfigService
 import Wizard.Service.Context.ContextService
 import Wizard.Service.Feedback.FeedbackMapper
+import Wizard.Service.Tenant.Config.ConfigService
 
 getFeedbacksFiltered :: [(String, String)] -> AppContextM [FeedbackDTO]
 getFeedbacksFiltered queryParams = do
   checkIfFeedbackIsEnabled
   feedbacks <- findFeedbacksFiltered queryParams
   serverConfig <- asks serverConfig
-  appConfig <- getAppConfig
-  return . fmap (toDTO serverConfig appConfig) $ feedbacks
+  tenantConfig <- getCurrentTenantConfig
+  return . fmap (toDTO serverConfig tenantConfig) $ feedbacks
 
 createFeedback :: FeedbackCreateDTO -> AppContextM FeedbackDTO
 createFeedback reqDto =
@@ -54,23 +54,23 @@ createFeedbackWithGivenUuid fUuid reqDto =
     checkIfFeedbackIsEnabled
     issue <- createIssue reqDto.packageId reqDto.questionUuid reqDto.title reqDto.content
     now <- liftIO getCurrentTime
-    appUuid <- asks currentAppUuid
-    let feedback = fromCreateDTO reqDto fUuid issue.number appUuid now
+    tenantUuid <- asks currentTenantUuid
+    let feedback = fromCreateDTO reqDto fUuid issue.number tenantUuid now
     insertFeedback feedback
     serverConfig <- asks serverConfig
-    appConfig <- getAppConfig
-    return $ toDTO serverConfig appConfig feedback
+    tenantConfig <- getCurrentTenantConfig
+    return $ toDTO serverConfig tenantConfig feedback
 
 getFeedbackByUuid :: U.UUID -> AppContextM FeedbackDTO
 getFeedbackByUuid fUuid = do
   checkIfFeedbackIsEnabled
   feedback <- findFeedbackByUuid fUuid
   serverConfig <- asks serverConfig
-  appConfig <- getAppConfig
-  return $ toDTO serverConfig appConfig feedback
+  tenantConfig <- getCurrentTenantConfig
+  return $ toDTO serverConfig tenantConfig feedback
 
 synchronizeFeedbacksInAllApplications :: AppContextM ()
-synchronizeFeedbacksInAllApplications = runFunctionForAllApps "synchronizeFeedbacks" synchronizeFeedbacks
+synchronizeFeedbacksInAllApplications = runFunctionForAllTenants "synchronizeFeedbacks" synchronizeFeedbacks
 
 -- --------------------------------
 -- PRIVATE
@@ -80,8 +80,8 @@ synchronizeFeedbacks =
   catchError
     ( do
         runInTransaction $ do
-          appConfig <- getAppConfig
-          if appConfig.questionnaire.feedback.enabled
+          tenantConfig <- getCurrentTenantConfig
+          if tenantConfig.questionnaire.feedback.enabled
             then do
               logInfoI _CMP_WORKER "synchronizing feedback"
               issues <- getIssues
@@ -102,4 +102,4 @@ synchronizeFeedbacks =
         Just issue -> updateFeedbackByUuid $ fromSimpleIssue feedback issue now
         Nothing -> deleteFeedbackByUuid feedback.uuid
 
-checkIfFeedbackIsEnabled = checkIfAppFeatureIsEnabled "Feedback" (\c -> c.questionnaire.feedback.enabled)
+checkIfFeedbackIsEnabled = checkIfTenantFeatureIsEnabled "Feedback" (\c -> c.questionnaire.feedback.enabled)

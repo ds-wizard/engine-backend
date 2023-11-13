@@ -6,14 +6,14 @@ import Data.Time
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionDTO
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Document.Data.Documents
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.App.App
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Document.Document
 import Wizard.Model.Submission.Submission
+import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.Submission.SubmissionMapper
 
@@ -29,7 +29,7 @@ submission1 =
     , returnedData = Nothing
     , serviceId = defaultSubmissionService.sId
     , documentUuid = doc1.uuid
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdBy = userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -47,7 +47,7 @@ submission2 =
     , returnedData = Nothing
     , serviceId = defaultSubmissionService.sId
     , documentUuid = doc1.uuid
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , createdBy = userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -65,7 +65,7 @@ differentSubmission =
     , returnedData = Nothing
     , serviceId = defaultSubmissionService.sId
     , documentUuid = differentDoc.uuid
-    , appUuid = differentApp.uuid
+    , tenantUuid = differentTenant.uuid
     , createdBy = userCharles.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0

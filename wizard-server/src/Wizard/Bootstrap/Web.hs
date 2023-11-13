@@ -11,6 +11,7 @@ import Network.Wai.Handler.Warp (defaultSettings, runSettings, setOnException, s
 import Network.Wai.Middleware.Servant.Errors (errorMw)
 import Servant
 
+import Shared.Common.Api.Handler.Root.Api
 import Shared.Common.Api.Middleware.CORSMiddleware
 import Shared.Common.Api.Middleware.ContentTypeMiddleware
 import Shared.Common.Api.Middleware.OptionsMiddleware
@@ -38,9 +39,7 @@ runWebServer context = do
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-type ServerAPI =
-  SwaggerAPI
-    :<|> ApplicationAPI
+type ServerAPI = RootAPI :<|> ("wizard-api" :> (SwaggerAPI :<|> ApplicationAPI))
 
 serverApi :: Proxy ServerAPI
 serverApi = Proxy
@@ -51,7 +50,9 @@ convert baseContext function =
    in Handler . runLogging loggingLevel $ runReaderT (runBaseContextM function) baseContext
 
 appToServer :: BaseContext -> Server ServerAPI
-appToServer baseContext = swaggerServer :<|> hoistServer applicationApi (convert baseContext) applicationServer
+appToServer baseContext =
+  hoistServer rootApi (convert baseContext) (rootServer "wizard")
+    :<|> (swaggerServer :<|> hoistServer applicationApi (convert baseContext) applicationServer)
 
 runApp :: BaseContext -> Application
 runApp baseContext = serve serverApi (appToServer baseContext)

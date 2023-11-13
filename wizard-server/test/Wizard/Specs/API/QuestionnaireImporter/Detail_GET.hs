@@ -19,11 +19,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaire-importers/{qi-id}
+-- GET /wizard-api/questionnaire-importers/{qi-id}
 -- ------------------------------------------------------------------------
 detail_GET :: AppContext -> SpecWith ((), Application)
 detail_GET appContext =
-  describe "GET /questionnaire-importers/{qi-id}" $ do
+  describe "GET /wizard-api/questionnaire-importers/{qi-id}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -34,7 +34,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/questionnaire-importers/global:questionnaire-importer-bio:3.0.0"
+reqUrl = "/wizard-api/questionnaire-importers/global:questionnaire-importer-bio:3.0.0"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 
@@ -80,7 +80,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/questionnaire-importers/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/questionnaire-importers/deab6c38-aeac-4b17-a501-4365a0a70176"
     (reqHeadersT reqAuthHeader)
     reqBody
     "questionnaire_importer"

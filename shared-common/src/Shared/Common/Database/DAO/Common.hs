@@ -256,6 +256,13 @@ createFindColumnBySqlPageFn pageLabel pageable sql params count =
             }
     return $ Page pageLabel metadata (concat entities)
 
+createFindEntitiesInFn :: (AppContextC s sc m, FromRow entity) => String -> U.UUID -> String -> [String] -> m [entity]
+createFindEntitiesInFn entityName tenantUuid paramName params = do
+  let sql = fromString $ f' "SELECT * FROM %s WHERE tenant_uuid = '%s' AND %s IN (%s)" [entityName, U.toString tenantUuid, paramName, generateQuestionMarks params]
+  logQuery sql params
+  let action conn = query conn sql params
+  runDB action
+
 createInsertFn :: (AppContextC s sc m, ToRow entity) => String -> entity -> m Int64
 createInsertFn entityName entity = do
   let sql = fromString $ f' "INSERT INTO %s VALUES (%s)" [entityName, generateQuestionMarks' entity]
@@ -344,7 +351,7 @@ createSumByFn entityName field condition queryParams = do
     [count] -> return . fromOnly $ count
     _ -> return 0
 
-generateQuestionMarks :: [String] -> String
+generateQuestionMarks :: [a] -> String
 generateQuestionMarks fields =
   let size = length fields
       generate :: Int -> String
@@ -357,8 +364,11 @@ generateQuestionMarks fields =
 generateQuestionMarks' :: ToRow entity => entity -> String
 generateQuestionMarks' = generateQuestionMarks . fmap show . toRow
 
-regex :: Maybe String -> String
-regex mQuery = ".*" ++ fromMaybe "" mQuery ++ ".*"
+regex :: String -> String
+regex query = ".*" ++ query ++ ".*"
+
+regexM :: Maybe String -> String
+regexM query = ".*" ++ fromMaybe "" query ++ ".*"
 
 mapToDBQuerySql :: [(String, String)] -> String
 mapToDBQuerySql [] = ""
@@ -413,17 +423,11 @@ computeTotalPage 0 0 = 0
 computeTotalPage _ 0 = 1
 computeTotalPage count size = ceiling $ fromIntegral count / fromIntegral size
 
-appQueryUuid :: U.UUID -> (String, String)
-appQueryUuid appUuid = ("app_uuid", U.toString appUuid)
+tenantQueryUuid :: U.UUID -> (String, String)
+tenantQueryUuid tenantUuid = ("tenant_uuid", U.toString tenantUuid)
 
-appQueryString :: String -> (String, String)
-appQueryString appUuid = ("app_uuid", appUuid)
-
-appCondition :: String
-appCondition = "WHERE app_uuid = ?"
-
-appSelector :: U.UUID -> String
-appSelector appUuid = "app_uuid = '" ++ U.toString appUuid ++ "'"
+tenantCondition :: String
+tenantCondition = "WHERE tenant_uuid = ?"
 
 showAction :: Action -> String
 showAction (Plain a) = BS.unpack . toByteString $ a

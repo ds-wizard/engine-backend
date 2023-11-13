@@ -15,14 +15,14 @@ import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
-import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Localization.Messages.Public
-import Wizard.Model.App.App
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Tenant.Tenant
 import Wizard.Service.Branch.BranchService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
@@ -35,11 +35,11 @@ import Wizard.Specs.API.Migration.KnowledgeModel.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /branches/{branchId}/migrations/current
+-- POST /wizard-api/branches/{branchId}/migrations/current
 -- ------------------------------------------------------------------------
 list_current_POST :: AppContext -> SpecWith ((), Application)
 list_current_POST appContext =
-  describe "POST /branches/{branchId}/migrations/current" $ do
+  describe "POST /wizard-api/branches/{branchId}/migrations/current" $ do
     test_201 appContext
     test_400 appContext
     test_401 appContext
@@ -51,7 +51,7 @@ list_current_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current"
+reqUrl = "/wizard-api/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -163,7 +163,7 @@ test_404 appContext = do
             NotExistsError
               ( _ERROR_DATABASE__ENTITY_NOT_FOUND
                   "package"
-                  [("app_uuid", U.toString defaultApp.uuid), ("id", "org.nl:core-nl:2.0.0")]
+                  [("tenant_uuid", U.toString defaultTenant.uuid), ("id", "org.nl:core-nl:2.0.0")]
               )
       let expBody = encode expDto
       -- AND: Prepare database

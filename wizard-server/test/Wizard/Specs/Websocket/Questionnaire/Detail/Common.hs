@@ -50,7 +50,7 @@ reqUrlT qtnUuid mUser =
         case mUser of
           Just user -> "?Authorization=Bearer%20" ++ user
           Nothing -> ""
-   in f' "/questionnaires/%s/websocket%s" [U.toString qtnUuid, suffix]
+   in f' "/wizard-api/questionnaires/%s/websocket%s" [U.toString qtnUuid, suffix]
 
 -- --------------------------------
 -- DATABASE

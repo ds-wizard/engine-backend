@@ -25,7 +25,7 @@ import Wizard.Util.Websocket
 
 putUserOnline :: U.UUID -> U.UUID -> Connection -> AppContextM ()
 putUserOnline branchUuid connectionUuid connection = do
-  myself <- createRecord connectionUuid connection (U.toString branchUuid) EditorWebsocketPerm
+  myself <- createRecord connectionUuid connection (U.toString branchUuid) EditorWebsocketPerm []
   checkViewPermission myself
   _ <- findBranchByUuid branchUuid
   addToCache myself

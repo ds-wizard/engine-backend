@@ -28,11 +28,11 @@ import Wizard.Specs.API.Migration.KnowledgeModel.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /branches/{branchId}/migrations/current/conflict
+-- POST /wizard-api/branches/{branchId}/migrations/current/conflict
 -- ------------------------------------------------------------------------
 list_current_conflict_POST :: AppContext -> SpecWith ((), Application)
 list_current_conflict_POST appContext =
-  describe "POST /branches/{branchId}/migrations/current/conflict" $ do
+  describe "POST /wizard-api/branches/{branchId}/migrations/current/conflict" $ do
     test_204 appContext
     test_400 appContext
     test_401 appContext
@@ -44,7 +44,7 @@ list_current_conflict_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current/conflict"
+reqUrl = "/wizard-api/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current/conflict"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 

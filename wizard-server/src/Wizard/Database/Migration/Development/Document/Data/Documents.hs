@@ -10,17 +10,17 @@ import qualified Data.UUID as U
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
-import Wizard.Database.Migration.Development.App.Data.Apps
-import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
+import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.App.App
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.Document.Context.DocumentContextMapper
 import Wizard.Service.Document.DocumentMapper
@@ -47,12 +47,12 @@ doc1 =
     , questionnaireRepliesHash = hash . M.toList $ questionnaire1Ctn.replies
     , documentTemplateId = wizardDocumentTemplate.tId
     , formatUuid = (head wizardDocumentTemplate.formats).uuid
-    , creatorUuid = Just $ userNikola.uuid
+    , createdBy = Just $ userNikola.uuid
     , fileName = Just "export.txt"
     , contentType = Just "text/plain"
     , fileSize = Just $ 50 * 1024
     , workerLog = Just "Success"
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , retrievedAt = Nothing
     , finishedAt = Nothing
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -72,7 +72,7 @@ dmp1 :: DocumentContext
 dmp1 =
   DocumentContext
     { uuid = u' "d87941ae-7725-4d22-b5c7-45dabc125199"
-    , config = DocumentContextConfig {clientUrl = "https://example.com"}
+    , config = DocumentContextConfig {clientUrl = "https://example.com/wizard"}
     , questionnaireUuid = U.toString $ questionnaire1.uuid
     , questionnaireName = questionnaire1.name
     , questionnaireDescription = questionnaire1.description
@@ -102,7 +102,7 @@ doc1Create =
     }
 
 doc1Dto :: DocumentDTO
-doc1Dto = toDTO doc1 (Just . QTN_Mapper.toSimple $ questionnaire1) [] wizardDocumentTemplate
+doc1Dto = toDTOWithDocTemplate doc1 (Just . QTN_Mapper.toSimple $ questionnaire1) [] wizardDocumentTemplate
 
 doc2 :: Document
 doc2 =
@@ -116,12 +116,12 @@ doc2 =
     , questionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn.replies
     , documentTemplateId = wizardDocumentTemplate.tId
     , formatUuid = (head wizardDocumentTemplate.formats).uuid
-    , creatorUuid = Just $ userNikola.uuid
+    , createdBy = Just $ userNikola.uuid
     , fileName = Just "export.txt"
     , contentType = Just "text/plain"
     , fileSize = Just $ 50 * 1024
     , workerLog = Just "Success"
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , retrievedAt = Nothing
     , finishedAt = Nothing
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -139,12 +139,12 @@ doc3 =
     , questionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn.replies
     , documentTemplateId = wizardDocumentTemplate.tId
     , formatUuid = (head wizardDocumentTemplate.formats).uuid
-    , creatorUuid = Just $ userAlbert.uuid
+    , createdBy = Just $ userAlbert.uuid
     , fileName = Just "export.txt"
     , contentType = Just "text/plain"
     , fileSize = Just $ 50 * 1024
     , workerLog = Just "Success"
-    , appUuid = defaultApp.uuid
+    , tenantUuid = defaultTenant.uuid
     , retrievedAt = Nothing
     , finishedAt = Nothing
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -222,12 +222,12 @@ differentDoc =
     , questionnaireRepliesHash = hash . M.toList $ questionnaire1Ctn.replies
     , documentTemplateId = anotherWizardDocumentTemplate.tId
     , formatUuid = (head anotherWizardDocumentTemplate.formats).uuid
-    , creatorUuid = Just $ userCharles.uuid
+    , createdBy = Just $ userCharles.uuid
     , fileName = Just "export.txt"
     , contentType = Just "text/plain"
     , fileSize = Just $ 50 * 1024
     , workerLog = Just "Success"
-    , appUuid = differentApp.uuid
+    , tenantUuid = differentTenant.uuid
     , retrievedAt = Nothing
     , finishedAt = Nothing
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0

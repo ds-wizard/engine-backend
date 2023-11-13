@@ -4,7 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireState
 import WizardLib.KnowledgeModel.Model.Package.PackageSimple
@@ -19,7 +19,7 @@ data QuestionnaireDTO = QuestionnaireDTO
   , package :: PackageSimple
   , answeredQuestions :: Int
   , unansweredQuestions :: Int
-  , permissions :: [QuestionnairePermRecordDTO]
+  , permissions :: [QuestionnairePermDTO]
   , isTemplate :: Bool
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

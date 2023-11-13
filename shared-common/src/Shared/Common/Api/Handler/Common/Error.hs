@@ -24,7 +24,7 @@ import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
 
 sendError
-  :: (MonadReader context m, HasField "serverConfig" context sc, HasField "sentry" sc ServerConfigSentry, HasField "buildInfoConfig" context BuildInfoConfig, MonadLogger m, MonadIO m)
+  :: (MonadReader context m, HasField "serverConfig'" context sc, HasField "sentry'" sc ServerConfigSentry, HasField "buildInfoConfig'" context BuildInfoConfig, MonadLogger m, MonadIO m)
   => AppError
   -> m ServerError
 sendError AcceptedError =
@@ -83,15 +83,15 @@ sendError (HttpClientError status message) = do
       }
 
 sendToSentry
-  :: (MonadReader context m, HasField "serverConfig" context sc, HasField "sentry" sc ServerConfigSentry, HasField "buildInfoConfig" context BuildInfoConfig, MonadLogger m, MonadIO m) => String -> m ()
+  :: (MonadReader context m, HasField "serverConfig'" context sc, HasField "sentry'" sc ServerConfigSentry, HasField "buildInfoConfig'" context BuildInfoConfig, MonadLogger m, MonadIO m) => String -> m ()
 sendToSentry message = do
   context <- ask
   when
-    context.serverConfig.sentry.enabled
+    context.serverConfig'.sentry'.enabled
     ( do
-        let sentryDsn = context.serverConfig.sentry.dsn
+        let sentryDsn = context.serverConfig'.sentry'.dsn
         sentryService <- liftIO $ initRaven sentryDsn id sendRecord stderrFallback
-        let buildVersion = context.buildInfoConfig.version
+        let buildVersion = context.buildInfoConfig'.version
         let sentryError = f' "GeneralServerError: %s" [message]
         liftIO $ register sentryService "sendErrorLogger" Error sentryError (recordUpdate buildVersion)
     )

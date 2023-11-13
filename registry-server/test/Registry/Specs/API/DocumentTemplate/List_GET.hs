@@ -1,5 +1,5 @@
 module Registry.Specs.API.DocumentTemplate.List_GET (
-  list_get,
+  list_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -20,8 +20,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /document-templates
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext = describe "GET /document-templates" $ test_200 appContext
+list_GET :: AppContext -> SpecWith ((), Application)
+list_GET appContext = describe "GET /document-templates" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

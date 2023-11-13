@@ -13,7 +13,7 @@ instance ToRow DocumentTemplateFile where
     , toField uuid
     , toField fileName
     , toField content
-    , toField appUuid
+    , toField tenantUuid
     , toField createdAt
     , toField updatedAt
     ]
@@ -24,7 +24,7 @@ instance FromRow DocumentTemplateFile where
     uuid <- field
     fileName <- field
     content <- field
-    appUuid <- field
+    tenantUuid <- field
     createdAt <- field
     updatedAt <- field
     return $ DocumentTemplateFile {..}

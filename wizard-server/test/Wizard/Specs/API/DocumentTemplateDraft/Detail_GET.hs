@@ -9,24 +9,30 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateDrafts
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
+import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
+import Wizard.Service.Questionnaire.QuestionnaireMapper
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
+import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
+import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /document-template-drafts/{documentTemplateId}
+-- GET /wizard-api/document-template-drafts/{documentTemplateId}
 -- ------------------------------------------------------------------------
 detail_GET :: AppContext -> SpecWith ((), Application)
 detail_GET appContext =
-  describe "GET /document-template-drafts/{documentTemplateId}" $ do
+  describe "GET /wizard-api/document-template-drafts/{documentTemplateId}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +43,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/document-template-drafts/global:questionnaire-report:2.0.0"
+reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:2.0.0"
 
 reqHeaders = [reqAuthHeader]
 
@@ -52,10 +58,13 @@ test_200 appContext = do
       -- GIVEN: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = toDraftDetail wizardDocumentTemplateDraft wizardDocumentTemplateDraftData Nothing
+      let expDto = toDraftDetail wizardDocumentTemplateDraft wizardDocumentTemplateDraftData (Just . toSuggestion $ questionnaire1)
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext
+      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertQuestionnaire questionnaire1) appContext
+      runInContextIO (insertDraftData wizardDocumentTemplateDraftData) appContext
       runInContextIO R_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
@@ -80,7 +89,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-template-drafts/global:questionnaire-report:9.9.9"
+    "/wizard-api/document-template-drafts/global:questionnaire-report:9.9.9"
     reqHeaders
     reqBody
     "document_template"

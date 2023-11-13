@@ -4,8 +4,8 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireEvent
+import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 
 data QuestionnaireVisibility
@@ -34,14 +34,14 @@ data Questionnaire = Questionnaire
   , documentTemplateId :: Maybe String
   , formatUuid :: Maybe U.UUID
   , creatorUuid :: Maybe U.UUID
-  , permissions :: [QuestionnairePermRecord]
+  , permissions :: [QuestionnairePerm]
   , events :: [QuestionnaireEvent]
   , versions :: [QuestionnaireVersion]
   , isTemplate :: Bool
   , squashed :: Bool
   , answeredQuestions :: Int
   , unansweredQuestions :: Int
-  , appUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -67,4 +67,4 @@ instance Eq Questionnaire where
       && a.squashed == b.squashed
       && a.answeredQuestions == b.answeredQuestions
       && a.unansweredQuestions == b.unansweredQuestions
-      && a.appUuid == b.appUuid
+      && a.tenantUuid == b.tenantUuid

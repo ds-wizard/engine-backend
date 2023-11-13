@@ -6,10 +6,10 @@ import Data.Swagger
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateStateSM ()
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireAclSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailJM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnairePermSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireStateSM ()

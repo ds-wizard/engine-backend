@@ -1,5 +1,5 @@
 module Registry.Specs.API.DocumentTemplate.Detail_GET (
-  detail_get,
+  detail_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -20,8 +20,8 @@ import SharedTest.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /document-templates/{documentTemplateId}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith ((), Application)
-detail_get appContext =
+detail_GET :: AppContext -> SpecWith ((), Application)
+detail_GET appContext =
   describe "GET /document-templates/{documentTemplateId}" $ do
     test_200 appContext
     test_404 appContext

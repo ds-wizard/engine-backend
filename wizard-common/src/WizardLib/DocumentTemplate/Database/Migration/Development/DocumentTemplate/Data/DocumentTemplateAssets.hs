@@ -4,7 +4,7 @@ import qualified Data.ByteString.Char8 as BS
 import Data.Maybe (fromJust)
 import Data.Time
 
-import Shared.Common.Constant.App
+import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Uuid
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -17,7 +17,7 @@ assetLogo =
     , fileName = "text.txt"
     , contentType = "text/plain"
     , fileSize = 5 * 1024
-    , appUuid = defaultAppUuid
+    , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }

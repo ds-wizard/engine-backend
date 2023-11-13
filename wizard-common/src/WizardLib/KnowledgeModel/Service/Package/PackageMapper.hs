@@ -24,7 +24,7 @@ toPackage pkg =
     , forkOfPackageId = pkg.forkOfPackageId
     , mergeCheckpointPackageId = pkg.mergeCheckpointPackageId
     , nonEditable = pkg.nonEditable
-    , appUuid = pkg.appUuid
+    , tenantUuid = pkg.tenantUuid
     , createdAt = pkg.createdAt
     }
 
@@ -58,7 +58,7 @@ toDTO pkg =
     }
 
 fromDTO :: PackageDTO -> U.UUID -> PackageWithEvents
-fromDTO dto appUuid =
+fromDTO dto tenantUuid =
   PackageWithEvents
     { pId = dto.pId
     , name = dto.name
@@ -75,6 +75,6 @@ fromDTO dto appUuid =
     , mergeCheckpointPackageId = dto.mergeCheckpointPackageId
     , nonEditable = dto.nonEditable
     , events = dto.events
-    , appUuid = appUuid
+    , tenantUuid = tenantUuid
     , createdAt = dto.createdAt
     }
