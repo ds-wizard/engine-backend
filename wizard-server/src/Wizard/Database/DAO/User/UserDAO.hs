@@ -23,6 +23,8 @@ import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
 import Wizard.Service.Cache.UserCache
+import WizardLib.Public.Database.Mapping.User.UserWithMembership ()
+import WizardLib.Public.Model.User.UserWithMembership
 
 entityName = "user_entity"
 
@@ -79,6 +81,21 @@ findUsersByEmails :: [String] -> AppContextM [User]
 findUsersByEmails emails = do
   tenantUuid <- asks currentTenantUuid
   createFindEntitiesInFn entityName tenantUuid "email" emails
+
+findUsersByUserGroupUuid :: U.UUID -> AppContextM [UserWithMembership]
+findUsersByUserGroupUuid userGroupUuid = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString
+          "SELECT u.uuid, u.first_name, u.last_name, u.email, u.image_url, ugm.type \
+          \FROM user_group_membership ugm \
+          \JOIN user_entity u ON u.uuid = ugm.user_uuid AND u.tenant_uuid = ugm.tenant_uuid \
+          \WHERE ugm.user_group_uuid = ? AND ugm.tenant_uuid = ? \
+          \ORDER BY u.uuid"
+  let params = [U.toString userGroupUuid, U.toString tenantUuid]
+  logQuery sql params
+  let action conn = query conn sql params
+  runDB action
 
 findUserByUuid :: U.UUID -> AppContextM User
 findUserByUuid uuid = do

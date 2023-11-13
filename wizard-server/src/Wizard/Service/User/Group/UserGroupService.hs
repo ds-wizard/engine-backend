@@ -11,6 +11,7 @@ import Shared.Common.Model.Common.Sort
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
+import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.DAO.User.UserGroupDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
@@ -18,9 +19,13 @@ import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireSimpleWithPerm
 import Wizard.Model.User.UserGroupSuggestion
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
+import Wizard.Service.User.Group.UserGroupAcl
 import Wizard.Service.User.Group.UserGroupMapper
+import WizardLib.Public.Api.Resource.User.Group.UserGroupDetailDTO
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
+import WizardLib.Public.Model.User.UserWithMembership
+import WizardLib.Public.Service.User.Group.UserGroupMapper
 
 getUserGroupSuggestions :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserGroupSuggestion)
 getUserGroupSuggestions = findUserGroupSuggestionsPage
@@ -32,6 +37,13 @@ createUserGroup uuid name description private = do
   let userGroup = fromCreate uuid name description private tenantUuid now
   insertUserGroup userGroup
   return ()
+
+getUserGroupByUuid :: U.UUID -> AppContextM UserGroupDetailDTO
+getUserGroupByUuid uuid = do
+  userGroup <- findUserGroupByUuid uuid
+  users <- findUsersByUserGroupUuid uuid
+  checkViewPermission userGroup users
+  return $ toDetailDTO userGroup users
 
 modifyUserGroup :: U.UUID -> String -> Maybe String -> Bool -> AppContextM ()
 modifyUserGroup uuid name description private = do

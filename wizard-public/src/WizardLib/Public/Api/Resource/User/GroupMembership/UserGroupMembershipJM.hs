@@ -1,4 +1,4 @@
-module WizardLib.Public.Api.Resource.User.UserGroupMembershipJM where
+module WizardLib.Public.Api.Resource.User.GroupMembership.UserGroupMembershipJM where
 
 import Data.Aeson
 

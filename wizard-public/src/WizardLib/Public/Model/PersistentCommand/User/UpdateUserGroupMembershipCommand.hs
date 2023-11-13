@@ -5,7 +5,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Util.Aeson
-import WizardLib.Public.Api.Resource.User.UserGroupMembershipJM ()
+import WizardLib.Public.Api.Resource.User.GroupMembership.UserGroupMembershipJM ()
 import WizardLib.Public.Model.User.UserGroupMembership
 
 data UpdateUserGroupMembershipCommand = UpdateUserGroupMembershipCommand

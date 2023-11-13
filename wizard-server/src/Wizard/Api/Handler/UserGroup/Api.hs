@@ -3,15 +3,20 @@ module Wizard.Api.Handler.UserGroup.Api where
 import Servant
 import Servant.Swagger.Tags
 
+import Wizard.Api.Handler.UserGroup.Detail_GET
 import Wizard.Api.Handler.UserGroup.List_Suggestions_GET
 import Wizard.Model.Context.BaseContext
 
 type UserGroupAPI =
   Tags "User Group"
-    :> List_Suggestions_GET
+    :> ( List_Suggestions_GET
+          :<|> Detail_GET
+       )
 
 userGroupApi :: Proxy UserGroupAPI
 userGroupApi = Proxy
 
 userGroupServer :: ServerT UserGroupAPI BaseContextM
-userGroupServer = list_suggestions_GET
+userGroupServer =
+  list_suggestions_GET
+    :<|> detail_GET

@@ -16,6 +16,8 @@ import Wizard.Model.User.User
 import Wizard.Model.User.UserProfile
 import Wizard.Model.User.UserSuggestion
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
+import WizardLib.Public.Model.User.UserGroupMembership
+import WizardLib.Public.Model.User.UserWithMembership
 
 toDTO :: User -> UserDTO
 toDTO user =
@@ -55,6 +57,17 @@ toSuggestion user =
     , lastName = user.lastName
     , email = user.email
     , imageUrl = user.imageUrl
+    }
+
+toWithMembership :: User -> UserGroupMembershipType -> UserWithMembership
+toWithMembership user membershipType =
+  UserWithMembership
+    { uuid = user.uuid
+    , firstName = user.firstName
+    , lastName = user.lastName
+    , email = user.email
+    , imageUrl = user.imageUrl
+    , membershipType = membershipType
     }
 
 toSuggestionDTO :: UserSuggestion -> UserSuggestionDTO

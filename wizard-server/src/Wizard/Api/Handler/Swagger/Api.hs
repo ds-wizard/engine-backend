@@ -115,6 +115,7 @@ import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChange
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePhaseSM ()
 import WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanChangeSM ()
 import WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanSM ()
+import WizardLib.Public.Api.Resource.User.Group.UserGroupDetailSM ()
 import WizardLib.Public.Api.Resource.UserToken.LoginSM ()
 import WizardLib.Public.Api.Resource.UserToken.UserTokenSM ()
 
