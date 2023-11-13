@@ -99,7 +99,7 @@ listenPersistentCommandChannel = createChannelListener channelName
 
 createChannelListener :: AppContextC s sc m => String -> m ()
 createChannelListener name = do
-  let sql = f' "listen %s" [name]
+  let sql = f' "LISTEN %s" [name]
   logInfoI _CMP_DATABASE (trim sql)
   let action conn = execute_ conn (fromString sql)
   runDB action

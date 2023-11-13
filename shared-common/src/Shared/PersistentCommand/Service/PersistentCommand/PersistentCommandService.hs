@@ -137,8 +137,8 @@ runPersistentCommandChannelListener
   -> (PersistentCommand U.UUID -> function)
   -> m ()
 runPersistentCommandChannelListener runAppContextWithAppContext updateContext createPersistentCommand execute = do
+  listenPersistentCommandChannel
   forever $ do
-    listenPersistentCommandChannel
     _ <- getChannelNotification
     runPersistentCommands runAppContextWithAppContext updateContext createPersistentCommand execute
 
