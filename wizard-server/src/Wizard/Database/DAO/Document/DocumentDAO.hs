@@ -69,7 +69,7 @@ findDocumentsPage mQtnUuid mQtnName mQuery pageable sort = do
               \       doc.created_at \
               \FROM document doc \
               \%s \
-              \LEFT JOIN document_template doc_tml ON doc_tml.id = doc.document_template_id \
+              \LEFT JOIN document_template doc_tml ON doc_tml.id = doc.document_template_id AND doc_tml.tenant_uuid = doc.tenant_uuid \
               \%s \
               \%s \
               \OFFSET %s \
