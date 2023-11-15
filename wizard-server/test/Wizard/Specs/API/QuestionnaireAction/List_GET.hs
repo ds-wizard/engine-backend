@@ -1,4 +1,4 @@
-module Wizard.Specs.API.QuestionnaireImporter.List_GET (
+module Wizard.Specs.API.QuestionnaireAction.List_GET (
   list_GET,
 ) where
 
@@ -11,23 +11,21 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
-import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
-import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterJM ()
-import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
-import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterMigration as QI_Migration
+import Wizard.Database.Migration.Development.QuestionnaireAction.Data.QuestionnaireActions
+import qualified Wizard.Database.Migration.Development.QuestionnaireAction.QuestionnaireActionMigration as QA_Migration
 import Wizard.Model.Context.AppContext
-import Wizard.Service.QuestionnaireImporter.QuestionnaireImporterMapper
+import Wizard.Service.QuestionnaireAction.QuestionnaireActionMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /wizard-api/questionnaire-importers
+-- GET /wizard-api/questionnaire-actions
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /wizard-api/questionnaire-importers" $ do
+  describe "GET /wizard-api/questionnaire-actions" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +35,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/wizard-api/questionnaire-importers"
+reqUrl = "/wizard-api/questionnaire-actions"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -50,27 +48,23 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK"
     appContext
-    "/wizard-api/questionnaire-importers"
+    "/wizard-api/questionnaire-actions"
     reqAuthHeader
-    ( Page
-        "questionnaireImporters"
-        (PageMetadata 20 3 1 0)
-        (fmap toDTO [questionnaireImporterBio3, questionnaireImporterExt1, questionnaireImporterOnto1])
-    )
+    (Page "questionnaireActions" (PageMetadata 20 3 1 0) [questionnaireActionFtp3, questionnaireActionMail1, questionnaireActionScp1])
   create_test_200
     "HTTP 200 OK (query 'q')"
     appContext
-    "/wizard-api/questionnaire-importers?q=QuestionnaireImporterBio"
+    "/wizard-api/questionnaire-actions?q=FTP"
     reqAuthHeader
-    (Page "questionnaireImporters" (PageMetadata 20 1 1 0) (fmap toDTO [questionnaireImporterBio3]))
+    (Page "questionnaireActions" (PageMetadata 20 1 1 0) [questionnaireActionFtp3])
   create_test_200
     "HTTP 200 OK (query 'q' for non-existing)"
     appContext
-    "/wizard-api/questionnaire-importers?q=Non-existing Questionnaire Report"
+    "/wizard-api/questionnaire-actions?q=Non-existing Questionnaire Report"
     reqAuthHeader
-    (Page "questionnaireImporters" (PageMetadata 20 0 0 0) ([] :: [QuestionnaireImporterDTO]))
+    (Page "questionnaireActions" (PageMetadata 20 0 0 0) [])
 
-create_test_200 title appContext reqUrl reqAuthHeader expDto =
+create_test_200 title appContext reqUrl reqAuthHeader expEntities =
   it title $
     -- GIVEN: Prepare request
     do
@@ -78,14 +72,14 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = fmap toDTO expEntities
       let expBody = encode expDto
       -- AND: Run migrations
-      runInContextIO QI_Migration.runMigration appContext
+      runInContextIO QA_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      let responseMatcher = ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------

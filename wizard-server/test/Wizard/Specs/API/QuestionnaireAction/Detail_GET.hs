@@ -1,5 +1,5 @@
-module Wizard.Specs.API.QuestionnaireImporter.Detail_PUT (
-  detail_PUT,
+module Wizard.Specs.API.QuestionnaireAction.Detail_GET (
+  detail_GET,
 ) where
 
 import Data.Aeson (encode)
@@ -7,26 +7,23 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
+import Test.Hspec.Wai.Matcher
 
-import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
-import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterJM ()
-import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
-import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterMigration as QI_Migration
+import Wizard.Database.Migration.Development.QuestionnaireAction.Data.QuestionnaireActions
+import qualified Wizard.Database.Migration.Development.QuestionnaireAction.QuestionnaireActionMigration as QA_Migration
 import Wizard.Model.Context.AppContext
-import Wizard.Model.QuestionnaireImporter.QuestionnaireImporter
-import Wizard.Service.QuestionnaireImporter.QuestionnaireImporterMapper
+import Wizard.Service.QuestionnaireAction.QuestionnaireActionMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
-import Wizard.Specs.API.QuestionnaireImporter.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /wizard-api/questionnaire-importers/{qi-id}
+-- GET /wizard-api/questionnaire-actions/{id}
 -- ------------------------------------------------------------------------
-detail_PUT :: AppContext -> SpecWith ((), Application)
-detail_PUT appContext =
-  describe "PUT /wizard-api/questionnaire-importers/{qi-id}" $ do
+detail_GET :: AppContext -> SpecWith ((), Application)
+detail_GET appContext =
+  describe "GET /wizard-api/questionnaire-actions/{id}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -35,15 +32,13 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-reqMethod = methodPut
+reqMethod = methodGet
 
-reqUrl = "/wizard-api/questionnaire-importers/global:questionnaire-importer-bio:3.0.0"
+reqUrl = "/wizard-api/questionnaire-actions/global:questionnaire-action-ftp:3.0.0"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 
-reqDto = toChangeDTO questionnaireImporterBio3Edited
-
-reqBody = encode reqDto
+reqBody = ""
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -57,19 +52,16 @@ create_test_200 title appContext reqAuthHeader =
       let reqHeaders = reqHeadersT reqAuthHeader
       -- AND: Prepare expectation
       let expStatus = 200
-      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-      let expDto = toDTO questionnaireImporterBio3Edited
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = toDTO questionnaireActionFtp3
       let expBody = encode expDto
-      let expType (a :: QuestionnaireImporterDTO) = a
       -- AND: Run migrations
-      runInContextIO QI_Migration.runMigration appContext
+      runInContextIO QA_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, QuestionnaireImporterDTO)
-      assertResponseWithoutFields expStatus expHeaders expDto expType response ["updatedAt"]
-      -- AND: Find result in DB and compare with expectation state
-      assertExistenceOfQuestionnaireImporterInDB appContext questionnaireImporterBio3Edited
+      let responseMatcher = ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -79,7 +71,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "QTN_IMPORTER_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -87,8 +79,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/questionnaire-importers/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/questionnaire-actions/deab6c38-aeac-4b17-a501-4365a0a70176"
     (reqHeadersT reqAuthHeader)
     reqBody
-    "questionnaire_importer"
+    "questionnaire_action"
     [("id", "deab6c38-aeac-4b17-a501-4365a0a70176")]

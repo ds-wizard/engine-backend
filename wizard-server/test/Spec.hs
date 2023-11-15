@@ -45,6 +45,7 @@ import Wizard.Specs.API.Questionnaire.APISpec
 import Wizard.Specs.API.Questionnaire.Event.APISpec
 import Wizard.Specs.API.Questionnaire.ProjectTag.APISpec
 import Wizard.Specs.API.Questionnaire.Version.APISpec
+import Wizard.Specs.API.QuestionnaireAction.APISpec
 import Wizard.Specs.API.QuestionnaireImporter.APISpec
 import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Swagger.APISpec
@@ -204,6 +205,7 @@ main =
               questionnaireEventAPI baseContext appContext
               questionnaireProjectTagAPI baseContext appContext
               questionnaireVersionAPI baseContext appContext
+              questionnaireActionAPI baseContext appContext
               questionnaireImporterAPI baseContext appContext
               submissionAPI baseContext appContext
               swaggerAPI baseContext appContext

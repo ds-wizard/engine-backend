@@ -46,6 +46,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0036_branchCreat
 import qualified Wizard.Database.Migration.Production.Migration_0037_pkgAndDocReadOnly.Migration as M_0037
 import qualified Wizard.Database.Migration.Production.Migration_0038_admin.Migration as M_0038
 import qualified Wizard.Database.Migration.Production.Migration_0039_tenant.Migration as M_0039
+import qualified Wizard.Database.Migration.Production.Migration_0040_qtnAction.Migration as M_0040
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 
@@ -95,4 +96,5 @@ migrationDefinitions =
   , M_0037.definition
   , M_0038.definition
   , M_0039.definition
+  , M_0040.definition
   ]
