@@ -15,17 +15,23 @@ import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
 
 class
-  ( MonadLogger m
-  , MonadIO m
-  , MonadError ServerError m
-  , MonadReader s m
-  , HasField "dbPool'" s (Pool Connection)
-  , HasField "s3Client'" s MinioConn
-  , HasField "serverConfig'" s sc
+  ( HasField "dbPool'" context (Pool Connection)
+  , HasField "s3Client'" context MinioConn
+  , HasField "serverConfig'" context sc
   , HasField "cloud'" sc ServerConfigCloud
   , HasField "s3'" sc ServerConfigS3
   , HasField "sentry'" sc ServerConfigSentry
-  , HasField "buildInfoConfig'" s BuildInfoConfig
-  , HasField "httpClientManager'" s Manager
+  , HasField "buildInfoConfig'" context BuildInfoConfig
+  , HasField "httpClientManager'" context Manager
+  , HasField "logging" sc ServerConfigLogging
   ) =>
-  BaseContextC s sc m
+  BaseContextType context sc
+
+class
+  ( MonadLogger m
+  , MonadIO m
+  , MonadError ServerError m
+  , MonadReader context m
+  , BaseContextType context sc
+  ) =>
+  BaseContextC context sc m

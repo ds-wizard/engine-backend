@@ -18,9 +18,13 @@ import Wizard.Model.Context.AclContext ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 
-instance S_AppContext.AppContextC AppContext ServerConfig AppContextM
+instance S_BaseContext.BaseContextType BaseContext ServerConfig
 
 instance S_BaseContext.BaseContextC BaseContext ServerConfig BaseContextM
+
+instance S_AppContext.AppContextType AppContext ServerConfig
+
+instance S_AppContext.AppContextC AppContext ServerConfig AppContextM
 
 instance HasField "serverConfig'" AppContext ServerConfig where
   getField = (.serverConfig)

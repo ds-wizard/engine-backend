@@ -15,7 +15,14 @@ import Shared.Common.Constant.Tenant
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
 import qualified Shared.Common.Model.Context.AppContext as S_AppContext
+import qualified Shared.Common.Model.Context.BaseContext as S_BaseContext
 import Shared.Common.Service.Acl.AclService
+
+instance S_BaseContext.BaseContextType BaseContext ServerConfig
+
+instance S_BaseContext.BaseContextC BaseContext ServerConfig BaseContextM
+
+instance S_AppContext.AppContextType AppContext ServerConfig
 
 instance S_AppContext.AppContextC AppContext ServerConfig AppContextM
 

@@ -29,6 +29,7 @@ library:
   - case-insensitive
   - conduit
   - containers
+  - cron
   - cryptonite
   - cryptostore
   - directory
@@ -63,6 +64,7 @@ library:
   - time-parsers
   - text
   - text-replace
+  - unix
   - unordered-containers
   - uuid
   - vector
