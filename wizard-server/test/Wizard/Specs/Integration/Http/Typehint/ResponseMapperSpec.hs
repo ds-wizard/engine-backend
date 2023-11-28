@@ -35,8 +35,8 @@ typehintResponseMapperSpec =
           -- AND: Expectations
           let expectation =
                 Right
-                  [ TypehintIDTO {intId = "op-p000001", name = "Life Science Ontology"}
-                  , TypehintIDTO {intId = "op-p000008", name = "Mathematical Ontology"}
+                  [ TypehintIDTO {intId = Just "op-p000001", name = "Life Science Ontology"}
+                  , TypehintIDTO {intId = Just "op-p000008", name = "Mathematical Ontology"}
                   ]
           -- WHEN:
           let result = toRetrieveTypehintsResponse ontologyPortal response
@@ -54,8 +54,8 @@ typehintResponseMapperSpec =
           -- AND: Expectations
           let expectation =
                 Right
-                  [ TypehintIDTO {intId = "op-p000001", name = "Life Science Ontology"}
-                  , TypehintIDTO {intId = "op-p000008", name = "Mathematical Ontology"}
+                  [ TypehintIDTO {intId = Just "op-p000001", name = "Life Science Ontology"}
+                  , TypehintIDTO {intId = Just "op-p000008", name = "Mathematical Ontology"}
                   ]
           -- WHEN:
           let result = toRetrieveTypehintsResponse bioPortal response
@@ -72,7 +72,7 @@ typehintResponseMapperSpec =
           let response = createResponse targetContent
           -- AND: Expectations
           let expectation =
-                Right [TypehintIDTO {intId = "op-p000001", name = "Life Science Ontology"}]
+                Right [TypehintIDTO {intId = Just "op-p000001", name = "Life Science Ontology"}]
           -- WHEN:
           let result = toRetrieveTypehintsResponse bioPortal response
           -- THEN:

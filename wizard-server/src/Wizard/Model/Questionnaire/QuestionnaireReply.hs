@@ -45,7 +45,7 @@ data IntegrationReplyType
       { value :: String
       }
   | IntegrationType
-      { intId :: String
+      { intId :: Maybe String
       , value :: String
       }
   deriving (Show, Eq, Generic)

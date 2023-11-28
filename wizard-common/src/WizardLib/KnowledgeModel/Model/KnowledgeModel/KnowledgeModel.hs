@@ -237,16 +237,16 @@ data ApiIntegration = ApiIntegration
   , iId :: String
   , name :: String
   , props :: [String]
-  , logo :: String
+  , logo :: Maybe String
   , requestMethod :: String
   , requestUrl :: String
   , requestHeaders :: [MapEntry String String]
   , requestBody :: String
   , requestEmptySearch :: Bool
-  , responseListField :: String
-  , responseItemId :: String
+  , responseListField :: Maybe String
+  , responseItemId :: Maybe String
   , responseItemTemplate :: String
-  , itemUrl :: String
+  , itemUrl :: Maybe String
   , annotations :: [MapEntry String String]
   }
   deriving (Show, Eq, Generic)
@@ -256,9 +256,9 @@ data WidgetIntegration = WidgetIntegration
   , iId :: String
   , name :: String
   , props :: [String]
-  , logo :: String
+  , logo :: Maybe String
   , widgetUrl :: String
-  , itemUrl :: String
+  , itemUrl :: Maybe String
   , annotations :: [MapEntry String String]
   }
   deriving (Show, Eq, Generic)

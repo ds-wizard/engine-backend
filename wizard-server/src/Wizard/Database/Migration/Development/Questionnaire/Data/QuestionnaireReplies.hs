@@ -273,7 +273,7 @@ rQ10 =
 
 rQ10IntValue :: IntegrationReplyType
 rQ10IntValue =
-  IntegrationType {intId = "bsg-p000007", value = "Integration reply to 9st question"}
+  IntegrationType {intId = Just "bsg-p000007", value = "Integration reply to 9st question"}
 
 -- ------------------------------------------------------------------------
 rQ11 :: ReplyTuple

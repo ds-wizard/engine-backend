@@ -10,25 +10,25 @@ import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 lifeScienceTypehint :: TypehintDTO
 lifeScienceTypehint =
   TypehintDTO
-    { intId = "op-p000001"
+    { intId = Just "op-p000001"
     , name = "Life Science Ontology"
-    , url = "https://example.com/ontologies/${id}"
+    , url = Just "https://example.com/ontologies/${id}"
     }
 
 mathematicalTypehint :: TypehintDTO
 mathematicalTypehint =
   TypehintDTO
-    { intId = "op-p000008"
+    { intId = Just "op-p000008"
     , name = "Mathematical Ontology"
-    , url = "https://example.com/ontologies/${id}"
+    , url = Just "https://example.com/ontologies/${id}"
     }
 
 legalTypehint :: TypehintDTO
 legalTypehint =
   TypehintDTO
-    { intId = "op-p000015"
+    { intId = Just "op-p000015"
     , name = "Legal Ontology"
-    , url = "https://example.com/ontologies/${id}"
+    , url = Just "https://example.com/ontologies/${id}"
     }
 
 typehintRequest :: TypehintRequestDTO

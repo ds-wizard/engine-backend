@@ -14,16 +14,16 @@ ontologyPortal =
     , iId = "ontologyPortal"
     , name = "Ontology Portal"
     , props = ["domain", "country"]
-    , logo = ""
+    , logo = Nothing
     , requestMethod = "GET"
     , requestUrl = "${baseurl}/${path}?domain=${domain}&country=${country}&q=${q}"
     , requestHeaders = [MapEntry "Api-Key" "${apikey}"]
     , requestBody = ""
     , requestEmptySearch = True
-    , responseListField = "nested.results"
-    , responseItemId = "{{item.id}}"
+    , responseListField = Just "nested.results"
+    , responseItemId = Just "{{item.id}}"
     , responseItemTemplate = "{{item.name}}"
-    , itemUrl = "https://example.com/ontologies/${id}"
+    , itemUrl = Just "https://example.com/ontologies/${id}"
     , annotations = []
     }
 
@@ -36,16 +36,16 @@ ontologyPortalEdited =
     { iId = "editedOntologyPortal"
     , name = "EDITED: Ontology Portal"
     , props = ["domain", "language"]
-    , logo = ""
+    , logo = Nothing
     , requestMethod = "PUT"
     , requestUrl = "${baseurl}/edited-${path}?domain=${domain}&language=${language}&q=${q}&edited"
     , requestHeaders = [MapEntry "Api-Key-Edited" "${apikey}-EDITED"]
     , requestBody = "{}"
     , requestEmptySearch = False
-    , responseListField = "nested.results"
-    , responseItemId = "EDITED: {{item.id}}"
+    , responseListField = Just "nested.results"
+    , responseItemId = Just "EDITED: {{item.id}}"
     , responseItemTemplate = "EDITED: {{item.name}}"
-    , itemUrl = "https://example.com/ontologies-edited/{{item.id}}"
+    , itemUrl = Just "https://example.com/ontologies-edited/{{item.id}}"
     , annotations = [MapEntry "newAnnotation" "someValue"]
     }
 
@@ -59,16 +59,16 @@ bioPortal =
     , iId = "bioPortal"
     , name = "Bio Portal"
     , props = ["domain", "branch"]
-    , logo = ""
+    , logo = Nothing
     , requestMethod = "GET"
     , requestUrl = "${baseurl}/${path}?domain=${domain}&branch=${branch}&q=${q}"
     , requestHeaders = [MapEntry "Api-Key" "${apikey}"]
     , requestBody = ""
     , requestEmptySearch = False
-    , responseListField = ""
-    , responseItemId = "{{item.id}}"
+    , responseListField = Nothing
+    , responseItemId = Just "{{item.id}}"
     , responseItemTemplate = "{{item.name}}"
-    , itemUrl = "https://example.com/portals/{{item.id}}"
+    , itemUrl = Just "https://example.com/portals/{{item.id}}"
     , annotations = []
     }
 
@@ -82,9 +82,9 @@ widgetPortal =
     , iId = "widgetPortal"
     , name = "Widget Portal"
     , props = ["domain", "widgetType"]
-    , logo = ""
+    , logo = Nothing
     , widgetUrl = "${baseurl}/widget-portal.json?domain=${domain}&widgetType=${widgetType}&q=${q}"
-    , itemUrl = "https://example.com/widgets/{{item.id}}"
+    , itemUrl = Just "https://example.com/widgets/{{item.id}}"
     , annotations = []
     }
 
@@ -98,8 +98,8 @@ widgetPortalEdited =
     , iId = "editedBioPortal"
     , name = "EDITED: Bio Portal"
     , props = ["domain", "branch"]
-    , logo = ""
+    , logo = Nothing
     , widgetUrl = "${baseurl}/bio-portal.json?domain=${domain}&branch=${branch}&q=${q}"
-    , itemUrl = "https://example.com/portals/{{item.id}}"
+    , itemUrl = Just "https://example.com/portals/{{item.id}}"
     , annotations = []
     }

@@ -23,12 +23,20 @@ toRetrieveTypehintsResponse intConfig response =
     Right dto -> Right dto
     Left error -> Left . show $ error
   where
-    listField = splitOn "." intConfig.responseListField
+    listField =
+      case intConfig.responseListField of
+        Just responseListField -> splitOn "." responseListField
+        Nothing -> []
     mapRecords :: [Value] -> Either AppError [TypehintIDTO]
     mapRecords = Right . rights . fmap mapRecord
     mapRecord :: Value -> Either String TypehintIDTO
     mapRecord record = do
       let contextMap = HM.fromList [("item", record)]
-      itemId <- renderEither' intConfig.responseItemId contextMap
+      itemId <-
+        case intConfig.responseItemId of
+          Just responseItemId -> do
+            result <- renderEither' responseItemId contextMap
+            Right . Just . T.unpack $ result
+          Nothing -> Right Nothing
       itemTemplate <- renderEither' intConfig.responseItemTemplate contextMap
-      Right $ TypehintIDTO {intId = T.unpack itemId, name = T.unpack itemTemplate}
+      Right $ TypehintIDTO {intId = itemId, name = T.unpack itemTemplate}
