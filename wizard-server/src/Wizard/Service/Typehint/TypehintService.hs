@@ -6,19 +6,18 @@ import Network.URI.Encode (encode)
 
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
-import Wizard.Api.Resource.Typehint.TypehintDTO
 import Wizard.Api.Resource.Typehint.TypehintRequestDTO
 import Wizard.Database.DAO.Common
 import Wizard.Integration.Http.Typehint.Runner
+import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.Integration.IntegrationConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
-import Wizard.Service.Typehint.TypehintMapper
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 
-getTypehints :: TypehintRequestDTO -> AppContextM [TypehintDTO]
+getTypehints :: TypehintRequestDTO -> AppContextM [TypehintIDTO]
 getTypehints reqDto =
   runInTransaction $ do
     km <- compileKnowledgeModel reqDto.events reqDto.packageId []
@@ -33,7 +32,7 @@ getTypehints reqDto =
         let variables = M.union userRequest . M.union kmQuestionConfig . M.union appIntConfig $ fileIntConfig
         eiDtos <- retrieveTypehints integration variables
         case eiDtos of
-          Right iDtos -> return . fmap (toDTO integration.itemUrl) $ iDtos
+          Right iDtos -> return iDtos
           Left error -> do
             logWarnI _CMP_SERVICE error
             throwError . UserError $ _ERROR_SERVICE_TYPEHINT__INTEGRATION_RETURNS_ERROR
