@@ -13,6 +13,8 @@ data Tenant = Tenant
   , clientUrl :: String
   , adminServerUrl :: Maybe String
   , adminClientUrl :: Maybe String
+  , integrationHubServerUrl :: Maybe String
+  , integrationHubClientUrl :: Maybe String
   , enabled :: Bool
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

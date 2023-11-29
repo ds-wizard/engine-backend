@@ -16,6 +16,7 @@ migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   createQtnActionTable dbPool
   addQtnActionPermission dbPool
+  addIntegrationHub dbPool
 
 createQtnActionTable dbPool = do
   let sql =
@@ -47,6 +48,18 @@ createQtnActionTable dbPool = do
 addQtnActionPermission dbPool = do
   let sql =
         "UPDATE user_entity set permissions = permissions || '{QTN_ACTION_PERM}' WHERE role = 'admin' OR role = 'dataSteward'"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addIntegrationHub dbPool = do
+  let sql =
+        "ALTER TABLE tenant ADD integration_hub_server_url VARCHAR; \
+        \ALTER TABLE tenant ADD integration_hub_client_url VARCHAR; \
+        \ \
+        \UPDATE tenant \
+        \SET integration_hub_server_url = replace(admin_server_url, 'admin', 'integration-hub'), \
+        \    integration_hub_client_url = replace(admin_client_url, 'admin', 'integration-hub')"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

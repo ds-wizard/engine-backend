@@ -192,7 +192,12 @@ defaultAdmin =
 
 defaultModules :: ServerConfigModules
 defaultModules =
-  ServerConfigModules {wizard = defaultModule, admin = defaultModule, guide = defaultModule}
+  ServerConfigModules
+    { wizard = defaultModule
+    , admin = defaultModule
+    , integrationHub = defaultModule
+    , guide = defaultModule
+    }
 
 defaultModule :: ServerConfigModule
 defaultModule =

@@ -20,6 +20,8 @@ instance ToRow Tenant where
     , toField serverUrl
     , toField adminServerUrl
     , toField adminClientUrl
+    , toField integrationHubServerUrl
+    , toField integrationHubClientUrl
     ]
 
 instance FromRow Tenant where
@@ -35,4 +37,6 @@ instance FromRow Tenant where
     serverUrl <- field
     adminServerUrl <- field
     adminClientUrl <- field
+    integrationHubServerUrl <- field
+    integrationHubClientUrl <- field
     return $ Tenant {..}
