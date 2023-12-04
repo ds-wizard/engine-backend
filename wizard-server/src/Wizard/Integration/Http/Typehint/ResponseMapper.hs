@@ -12,9 +12,9 @@ import Prelude hiding (lookup)
 
 import Shared.Common.Integration.Http.Common.ResponseMapper
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.Ginger
 import Shared.Common.Util.String (splitOn)
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
-import Wizard.Util.DocumentTemplate
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 toRetrieveTypehintsResponse :: ApiIntegration -> Response BSL.ByteString -> Either String [TypehintIDTO]
@@ -35,8 +35,8 @@ toRetrieveTypehintsResponse intConfig response =
       itemId <-
         case intConfig.responseItemId of
           Just responseItemId -> do
-            result <- renderEither' responseItemId contextMap
+            result <- renderEither responseItemId contextMap
             Right . Just . T.unpack $ result
           Nothing -> Right Nothing
-      itemTemplate <- renderEither' intConfig.responseItemTemplate contextMap
+      itemTemplate <- renderEither intConfig.responseItemTemplate contextMap
       Right $ TypehintIDTO {intId = itemId, name = T.unpack itemTemplate}
