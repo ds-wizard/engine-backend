@@ -7,7 +7,7 @@ HEALTHCHECK --interval=5m --timeout=10s \
 
 # Install necessary libraries
 RUN apt-get update \
- && apt-get -qq -y install libmemcached-dev ca-certificates netbase wget gdebi-core curl libpq5 libpq-dev
+ && apt-get -qq -y install libmemcached-dev ca-certificates netbase curl libpq5 libpq-dev
 
 # Add built exectutable binary
 ADD registry-server-bin /app/
