@@ -38,7 +38,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Registry API"
               , _infoDescription = Just "API specification for Registry"
-              , _infoVersion = "4.0.1"
+              , _infoVersion = "4.1.0"
               , _infoLicense =
                   Just $
                     License
