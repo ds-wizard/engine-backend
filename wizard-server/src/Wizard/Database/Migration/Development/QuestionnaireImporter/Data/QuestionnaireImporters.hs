@@ -1,9 +1,7 @@
 module Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters where
 
-import Data.Maybe (fromJust)
-import Data.Time
-
 import Shared.Common.Constant.Tenant
+import Shared.Common.Util.Date
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
 import Wizard.Model.QuestionnaireImporter.QuestionnaireImporter
 import Wizard.Service.QuestionnaireImporter.QuestionnaireImporterMapper
@@ -26,8 +24,8 @@ questionnaireImporterBio1 =
     , url = "http://example.com/questionnaire-importer-bio"
     , enabled = True
     , tenantUuid = defaultTenantUuid
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
-    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , createdAt = dt' 2018 1 21
+    , updatedAt = dt' 2018 1 21
     }
 
 questionnaireImporterBio2 :: QuestionnaireImporter
@@ -46,8 +44,8 @@ questionnaireImporterBio2 =
     , url = "http://example.com/questionnaire-importer-bio"
     , enabled = True
     , tenantUuid = defaultTenantUuid
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
-    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , createdAt = dt' 2018 1 21
+    , updatedAt = dt' 2018 1 21
     }
 
 questionnaireImporterBio3 :: QuestionnaireImporter
@@ -66,8 +64,8 @@ questionnaireImporterBio3 =
     , url = "http://example.com/questionnaire-importer-bio"
     , enabled = False
     , tenantUuid = defaultTenantUuid
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
-    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , createdAt = dt' 2018 1 21
+    , updatedAt = dt' 2018 1 21
     }
 
 questionnaireImporterBio3Edited :: QuestionnaireImporter
@@ -76,11 +74,11 @@ questionnaireImporterBio3Edited = questionnaireImporterBio3 {enabled = True}
 questionnaireImporterBio3Dto :: QuestionnaireImporterDTO
 questionnaireImporterBio3Dto = toDTO questionnaireImporterBio3
 
-questionnaireExtImporter1 :: QuestionnaireImporter
-questionnaireExtImporter1 =
+questionnaireImporterExt1 :: QuestionnaireImporter
+questionnaireImporterExt1 =
   QuestionnaireImporter
     { qiId = "global:questionnaire-ext-importer:1.0.0"
-    , name = "QuestionnaireExtImporter"
+    , name = "QuestionnaireImporterExt"
     , organizationId = "global"
     , importerId = "questionnaire-ext-importer"
     , version = "1.0.0"
@@ -92,26 +90,26 @@ questionnaireExtImporter1 =
     , url = "http://example.com/questionnaire-ext-importer"
     , enabled = True
     , tenantUuid = defaultTenantUuid
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
-    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , createdAt = dt' 2018 1 21
+    , updatedAt = dt' 2018 1 21
     }
 
-questionnaireOntoImporter1 :: QuestionnaireImporter
-questionnaireOntoImporter1 =
+questionnaireImporterOnto1 :: QuestionnaireImporter
+questionnaireImporterOnto1 =
   QuestionnaireImporter
-    { qiId = "global:questionnaire-onto-importer:1.0.0"
-    , name = "QuestionnaireOntoImporter"
+    { qiId = "global:questionnaire-importer-onto:1.0.0"
+    , name = "QuestionnaireImporterOnto"
     , organizationId = "global"
-    , importerId = "questionnaire-onto-importer"
+    , importerId = "questionnaire-importer-onto"
     , version = "1.0.0"
     , metamodelVersion = questionnaireImporterMetamodelVersion
     , description = "Import onto answers from questionnaire"
     , readme = "# Default Ext QuestionnaireImporter"
     , license = "Apache-2.0"
     , allowedPackages = [packagePatternGlobal]
-    , url = "http://example.com/questionnaire-onto-importer"
+    , url = "http://example.com/questionnaire-importer-onto"
     , enabled = False
     , tenantUuid = defaultTenantUuid
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
-    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , createdAt = dt' 2018 1 21
+    , updatedAt = dt' 2018 1 21
     }

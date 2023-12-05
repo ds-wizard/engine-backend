@@ -153,6 +153,7 @@ instance FromJSON ServerConfigModules where
   parseJSON (Object o) = do
     wizard <- o .:? "wizard" .!= defaultModules.wizard
     admin <- o .:? "admin" .!= defaultModules.admin
+    integrationHub <- o .:? "integrationHub" .!= defaultModules.integrationHub
     guide <- o .:? "guide" .!= defaultModules.guide
     return ServerConfigModules {..}
   parseJSON _ = mzero

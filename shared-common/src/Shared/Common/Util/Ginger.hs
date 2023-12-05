@@ -1,4 +1,4 @@
-module Wizard.Util.DocumentTemplate where
+module Shared.Common.Util.Ginger where
 
 import Control.Monad.Identity (Identity, runIdentity)
 import Control.Monad.Trans.Writer.Lazy (Writer)
@@ -17,6 +17,7 @@ import Text.Ginger (IncludeResolver, SourcePos, makeContextHtml, parseGinger, ru
 import Text.Ginger.AST (Template, VarName)
 import Text.Ginger.GVal (GVal, ToGVal, asList, asText, fromFunction)
 import Text.Ginger.Html (Html, htmlSource, unsafeRawHtml)
+import Text.Ginger.Parse (ParserError (..), formatParserError)
 import Text.Ginger.Run.Type (Run)
 import Text.Markdown
 import Text.Read (readMaybe)
@@ -30,19 +31,19 @@ render
 render template contextMap = htmlSource $ runGinger (makeContextHtml $ contextLookup contextMap) template
 
 renderEither
-  :: (ToGVal (Run p (Writer Html) Html) p, ToGVal (Run p (Writer Html) Html) b)
-  => Template p
+  :: ToGVal (Run SourcePos (Writer Html) Html) b
+  => String
   -> HashMap.HashMap VarName b
   -> Either String T.Text
-renderEither template contextMap =
-  let result = render template contextMap
-   in if T.null result || _ERROR_TEMPLATE_PLACEHOLDER `L.isSubsequenceOf` T.unpack result
+renderEither templateString contextMap = do
+  if null templateString
+    then Right ""
+    else do
+      template <- createTemplate templateString
+      let result = render template contextMap
+      if T.null result || _ERROR_TEMPLATE_PLACEHOLDER `L.isSubsequenceOf` T.unpack result
         then Left "There is a missing parameter(s) in the context"
         else Right result
-
-renderEither' templateString contextMap = do
-  template <- createTemplate templateString
-  renderEither template contextMap
 
 contextLookup contextMap key =
   case lookup key customFilters of
@@ -163,4 +164,4 @@ createTemplate :: String -> Either String (Template SourcePos)
 createTemplate template =
   case runIdentity $ parseGinger nullResolver Nothing template of
     Right result -> return result
-    Left error -> Left . show $ error
+    Left error -> Left $ formatParserError (fmap show . peSourcePosition $ error) error

@@ -57,7 +57,7 @@ test_200 appContext = do
     ( Page
         "questionnaireImporters"
         (PageMetadata 20 2 1 0)
-        (fmap toDTO [questionnaireImporterBio2, questionnaireExtImporter1])
+        (fmap toDTO [questionnaireImporterBio2, questionnaireImporterExt1])
     )
   create_test_200
     "HTTP 200 OK (query 'q')"

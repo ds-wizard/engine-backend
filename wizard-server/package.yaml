@@ -1,5 +1,5 @@
 name: wizard-server
-version: '4.0.1'
+version: '4.1.0'
 synopsis: Engine Wizard
 description: Engine Wizard
 category: Web
@@ -29,7 +29,6 @@ library:
   - aeson
   - async
   - base64
-  - blaze-html
   - bytestring
   - cache
   - case-insensitive
@@ -38,16 +37,13 @@ library:
   - containers
   - cron
   - cryptonite
-  - data-default
   - exceptions
-  - ginger
   - hashable
   - http-client
   - http-client-tls
   - http-types
   - jose-jwt
   - jwt
-  - markdown
   - minio-hs
   - mtl
   - monad-control
@@ -81,7 +77,6 @@ library:
   - text
   - text-replace
   - time
-  - transformers
   - unix
   - unordered-containers
   - uri-encode

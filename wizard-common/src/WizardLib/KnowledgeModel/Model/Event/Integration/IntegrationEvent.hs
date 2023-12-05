@@ -19,16 +19,16 @@ data AddApiIntegrationEvent = AddApiIntegrationEvent
   , iId :: String
   , name :: String
   , props :: [String]
-  , logo :: String
+  , logo :: Maybe String
   , requestMethod :: String
   , requestUrl :: String
   , requestHeaders :: [MapEntry String String]
   , requestBody :: String
   , requestEmptySearch :: Bool
-  , responseListField :: String
-  , responseItemId :: String
+  , responseListField :: Maybe String
+  , responseItemId :: Maybe String
   , responseItemTemplate :: String
-  , itemUrl :: String
+  , itemUrl :: Maybe String
   , annotations :: [MapEntry String String]
   , createdAt :: UTCTime
   }
@@ -41,9 +41,9 @@ data AddWidgetIntegrationEvent = AddWidgetIntegrationEvent
   , iId :: String
   , name :: String
   , props :: [String]
-  , logo :: String
+  , logo :: Maybe String
   , widgetUrl :: String
-  , itemUrl :: String
+  , itemUrl :: Maybe String
   , annotations :: [MapEntry String String]
   , createdAt :: UTCTime
   }
@@ -61,16 +61,16 @@ data EditApiIntegrationEvent = EditApiIntegrationEvent
   , iId :: EventField String
   , name :: EventField String
   , props :: EventField [String]
-  , logo :: EventField String
+  , logo :: EventField (Maybe String)
   , requestMethod :: EventField String
   , requestUrl :: EventField String
   , requestHeaders :: EventField [MapEntry String String]
   , requestBody :: EventField String
   , requestEmptySearch :: EventField Bool
-  , responseListField :: EventField String
-  , responseItemId :: EventField String
+  , responseListField :: EventField (Maybe String)
+  , responseItemId :: EventField (Maybe String)
   , responseItemTemplate :: EventField String
-  , itemUrl :: EventField String
+  , itemUrl :: EventField (Maybe String)
   , annotations :: EventField [MapEntry String String]
   , createdAt :: UTCTime
   }
@@ -83,9 +83,9 @@ data EditWidgetIntegrationEvent = EditWidgetIntegrationEvent
   , iId :: EventField String
   , name :: EventField String
   , props :: EventField [String]
-  , logo :: EventField String
+  , logo :: EventField (Maybe String)
   , widgetUrl :: EventField String
-  , itemUrl :: EventField String
+  , itemUrl :: EventField (Maybe String)
   , annotations :: EventField [MapEntry String String]
   , createdAt :: UTCTime
   }

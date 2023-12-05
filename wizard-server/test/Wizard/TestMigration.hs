@@ -20,6 +20,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
+import Wizard.Database.DAO.QuestionnaireAction.QuestionnaireActionDAO
 import Wizard.Database.DAO.QuestionnaireImporter.QuestionnaireImporterDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
@@ -46,6 +47,7 @@ import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
+import qualified Wizard.Database.Migration.Development.QuestionnaireAction.QuestionnaireActionSchemaMigration as QA_Schema
 import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QI_Schema
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as R_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
@@ -78,6 +80,7 @@ buildSchema appContext = do
   runInContext CMP_Schema.dropTables appContext
   runInContext LOC_Schema.dropTables appContext
   runInContext R_Schema.dropTables appContext
+  runInContext QA_Schema.dropTables appContext
   runInContext QI_Schema.dropTables appContext
   runInContext ADT_Schema.dropTables appContext
   runInContext PF_Schema.dropTables appContext
@@ -115,6 +118,7 @@ buildSchema appContext = do
   runInContext PC_Schema.createTables appContext
   runInContext PF_Schema.createTables appContext
   runInContext ADT_Schema.createTables appContext
+  runInContext QA_Schema.createTables appContext
   runInContext QI_Schema.createTables appContext
   runInContext R_Schema.createTables appContext
   runInContext LOC_Schema.createTables appContext
@@ -153,6 +157,7 @@ resetDB appContext = do
   runInContext deleteQuestionnaireCommentThreads appContext
   runInContext deleteQuestionnairePerms appContext
   runInContext deleteQuestionnaires appContext
+  runInContext deleteQuestionnaireActions appContext
   runInContext deleteQuestionnaireImporters appContext
   runInContext deleteDocumentTemplates appContext
   runInContext deletePackages appContext

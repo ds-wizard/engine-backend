@@ -26,6 +26,7 @@ import Wizard.Api.Handler.Prefab.Api
 import Wizard.Api.Handler.Questionnaire.Api
 import Wizard.Api.Handler.Questionnaire.Event.Api
 import Wizard.Api.Handler.Questionnaire.Version.Api
+import Wizard.Api.Handler.QuestionnaireAction.Api
 import Wizard.Api.Handler.QuestionnaireImporter.Api
 import Wizard.Api.Handler.Registry.Api
 import Wizard.Api.Handler.Submission.Api
@@ -62,6 +63,7 @@ type ApplicationAPI =
     :<|> QuestionnaireAPI
     :<|> QuestionnaireEventAPI
     :<|> QuestionnaireVersionAPI
+    :<|> QuestionnaireActionAPI
     :<|> QuestionnaireImporterAPI
     :<|> RegistryAPI
     :<|> SubmissionAPI
@@ -101,6 +103,7 @@ applicationServer =
     :<|> questionnaireServer
     :<|> questionnaireEventServer
     :<|> questionnaireVersionServer
+    :<|> questionnaireActionServer
     :<|> questionnaireImporterServer
     :<|> registryServer
     :<|> submissionServer

@@ -6,7 +6,8 @@ HEALTHCHECK --interval=5m --timeout=10s \
   CMD curl -f http://localhost:3000/ || exit 1
 
 # Install necessary libraries
-RUN apt-get update && apt-get -qq -y install libmemcached-dev ca-certificates netbase wget curl libpq5 libpq-dev
+RUN apt-get update \
+ && apt-get -qq -y install libmemcached-dev ca-certificates netbase curl libpq5 libpq-dev
 
 # Add built exectutable binary and run script
 ADD wizard-server-bin /app/
@@ -15,7 +16,8 @@ ADD wizard-server-bin /app/
 ADD config/application.yml config/integration.yml config/build-info.yml /app/config/
 
 # Setup non-root user
-RUN groupadd -r user && useradd -r -g user user
+RUN groupadd --system --gid 10001 user \
+ && useradd  --system --uid 10000 -g user user
 USER user
 
 # Set up env

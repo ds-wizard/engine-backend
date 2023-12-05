@@ -57,6 +57,7 @@ defaultRoles =
         , "PM_READ_PERM"
         , "PM_WRITE_PERM"
         , "QTN_PERM"
+        , "QTN_ACTION_PERM"
         , "QTN_IMPORTER_PERM"
         , "QTN_TML_PERM"
         , "DOC_TML_READ_PERM"
@@ -73,6 +74,7 @@ defaultRoles =
         , "PM_READ_PERM"
         , "PM_WRITE_PERM"
         , "QTN_PERM"
+        , "QTN_ACTION_PERM"
         , "QTN_IMPORTER_PERM"
         , "QTN_TML_PERM"
         , "DOC_TML_READ_PERM"
@@ -190,7 +192,12 @@ defaultAdmin =
 
 defaultModules :: ServerConfigModules
 defaultModules =
-  ServerConfigModules {wizard = defaultModule, admin = defaultModule, guide = defaultModule}
+  ServerConfigModules
+    { wizard = defaultModule
+    , admin = defaultModule
+    , integrationHub = defaultModule
+    , guide = defaultModule
+    }
 
 defaultModule :: ServerConfigModule
 defaultModule =

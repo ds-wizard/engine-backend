@@ -14,6 +14,6 @@ runMigration = do
   insertQuestionnaireImporter questionnaireImporterBio1
   insertQuestionnaireImporter questionnaireImporterBio2
   insertQuestionnaireImporter questionnaireImporterBio3
-  insertQuestionnaireImporter questionnaireExtImporter1
-  insertQuestionnaireImporter questionnaireOntoImporter1
+  insertQuestionnaireImporter questionnaireImporterExt1
+  insertQuestionnaireImporter questionnaireImporterOnto1
   logInfo _CMP_MIGRATION "(QuestionnaireImporter/QuestionnaireImporter) ended"

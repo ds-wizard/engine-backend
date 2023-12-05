@@ -1,5 +1,5 @@
 name: shared-common
-version: '4.0.1'
+version: '4.1.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -25,18 +25,24 @@ library:
   - aeson
   - attoparsec
   - base64
+  - blaze-html
   - bytestring
   - case-insensitive
   - conduit
   - containers
+  - cron
   - cryptonite
   - cryptostore
+  - data-default
   - directory
   - exceptions
   - fsutils
+  - ginger
+  - hashable
   - http-client
   - http-client-tls
   - http-types
+  - markdown
   - memory
   - minio-hs
   - mtl
@@ -63,6 +69,8 @@ library:
   - time-parsers
   - text
   - text-replace
+  - transformers
+  - unix
   - unordered-containers
   - uuid
   - vector

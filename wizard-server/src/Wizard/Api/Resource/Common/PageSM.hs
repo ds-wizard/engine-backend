@@ -23,6 +23,8 @@ import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSuggestionSM ()
+import Wizard.Api.Resource.QuestionnaireAction.QuestionnaireActionDTO
+import Wizard.Api.Resource.QuestionnaireAction.QuestionnaireActionSM ()
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterSM ()
 import Wizard.Api.Resource.Tenant.TenantDTO
@@ -38,6 +40,7 @@ import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTempl
 import Wizard.Database.Migration.Development.Locale.Data.Locales
 import Wizard.Database.Migration.Development.PersistentCommand.Data.PersistentCommands
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.QuestionnaireAction.Data.QuestionnaireActions
 import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -105,6 +108,12 @@ instance ToSchema (Page QuestionnaireDTO) where
 instance ToSchema (Page QuestionnaireSuggestion) where
   declareNamedSchema =
     toSwaggerWithDtoName "Page QuestionnaireSuggestion" (Page "questionnaires" pageMetadata [QTN_Mapper.toSuggestion questionnaire1])
+
+instance ToSchema (Page QuestionnaireActionDTO) where
+  declareNamedSchema =
+    toSwaggerWithDtoName
+      "Page QuestionnaireActionDTO"
+      (Page "questionnaireActions" pageMetadata [questionnaireActionFtp3Dto])
 
 instance ToSchema (Page QuestionnaireImporterDTO) where
   declareNamedSchema =

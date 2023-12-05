@@ -9,6 +9,7 @@ import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
+import Wizard.Model.User.User
 import Wizard.Model.User.UserProfile
 
 toClientConfigDTO :: ServerConfig -> TenantConfig -> Maybe UserProfile -> Tenant -> [Locale] -> ClientConfigDTO
@@ -30,11 +31,21 @@ toClientConfigDTO serverConfig tenantConfig mUserProfile tenant locales =
     , admin = toClientConfigAdminDTO serverConfig.admin tenant
     , modules =
         if serverConfig.admin.enabled
-          then
-            [ toClientConfigModuleDTO serverConfig.modules.wizard tenant.clientUrl False
-            , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" tenant.adminClientUrl) False
-            , toClientConfigModuleDTO serverConfig.modules.guide (fromMaybe "" serverConfig.modules.guide.url) True
-            ]
+          then case mUserProfile of
+            Just userProfile ->
+              if userProfile.uRole == _USER_ROLE_ADMIN || userProfile.uRole == _USER_ROLE_DATA_STEWARD
+                then
+                  [ toClientConfigModuleDTO serverConfig.modules.wizard tenant.clientUrl False
+                  , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" tenant.adminClientUrl) False
+                  , toClientConfigModuleDTO serverConfig.modules.integrationHub (fromMaybe "" tenant.integrationHubClientUrl) False
+                  , toClientConfigModuleDTO serverConfig.modules.guide (fromMaybe "" serverConfig.modules.guide.url) True
+                  ]
+                else
+                  [ toClientConfigModuleDTO serverConfig.modules.wizard tenant.clientUrl False
+                  , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" tenant.adminClientUrl) False
+                  , toClientConfigModuleDTO serverConfig.modules.guide (fromMaybe "" serverConfig.modules.guide.url) True
+                  ]
+            Nothing -> []
           else []
     }
 

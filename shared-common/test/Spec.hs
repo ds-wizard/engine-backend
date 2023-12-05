@@ -4,6 +4,7 @@ import Test.Hspec
 
 import Shared.Specs.Common.Integration.Http.Common.ResponseMapperSpec
 import Shared.Specs.Common.Model.Common.PageSpec
+import Shared.Specs.Common.Util.GingerSpec
 import Shared.Specs.Common.Util.ListSpec
 import Shared.Specs.Common.Util.MathSpec
 import Shared.Specs.Common.Util.StringSpec
@@ -20,6 +21,7 @@ main =
         describe "MODEL" $ do
           pageSpec
         describe "UTIL" $ do
+          gingerSpec
           mathSpec
           listSpec
           stringSpec

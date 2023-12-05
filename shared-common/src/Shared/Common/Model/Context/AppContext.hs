@@ -17,22 +17,27 @@ import Shared.Common.Model.Error.Error
 import Shared.Common.Service.Acl.AclService
 
 class
-  ( MonadLogger m
-  , MonadIO m
-  , MonadError AppError m
-  , MonadReader s m
-  , HasField "dbPool'" s (Pool Connection)
-  , HasField "dbConnection'" s (Maybe Connection)
-  , HasField "s3Client'" s MinioConn
-  , HasField "identity'" s (Maybe String)
-  , HasField "traceUuid'" s U.UUID
-  , HasField "tenantUuid'" s U.UUID
-  , HasField "serverConfig'" s sc
+  ( HasField "dbPool'" context (Pool Connection)
+  , HasField "dbConnection'" context (Maybe Connection)
+  , HasField "s3Client'" context MinioConn
+  , HasField "identity'" context (Maybe String)
+  , HasField "traceUuid'" context U.UUID
+  , HasField "tenantUuid'" context U.UUID
+  , HasField "serverConfig'" context sc
   , HasField "cloud'" sc ServerConfigCloud
   , HasField "s3'" sc ServerConfigS3
   , HasField "sentry'" sc ServerConfigSentry
-  , HasField "buildInfoConfig'" s BuildInfoConfig
-  , HasField "httpClientManager'" s Manager
+  , HasField "buildInfoConfig'" context BuildInfoConfig
+  , HasField "httpClientManager'" context Manager
+  ) =>
+  AppContextType context sc
+
+class
+  ( MonadLogger m
+  , MonadIO m
+  , MonadError AppError m
+  , MonadReader context m
+  , AppContextType context sc
   , AclContext m
   ) =>
-  AppContextC s sc m
+  AppContextC context sc m

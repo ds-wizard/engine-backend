@@ -37,7 +37,7 @@ updatePrefabByUuid :: AppContextC s sc m => Prefab -> m Int64
 updatePrefabByUuid prefab = do
   let sql =
         fromString
-          "UPDATE prefab SET uuid = ?, type = ?, name = ?, content = ?, tenant_uuid = ?, created_at = ?, updated_at = ? WHERE uuid = ? AND tenant_uuid"
+          "UPDATE prefab SET uuid = ?, type = ?, name = ?, content = ?, tenant_uuid = ?, created_at = ?, updated_at = ? WHERE uuid = ? AND tenant_uuid = ?"
   let params = toRow prefab ++ [toField prefab.uuid, toField prefab.tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params

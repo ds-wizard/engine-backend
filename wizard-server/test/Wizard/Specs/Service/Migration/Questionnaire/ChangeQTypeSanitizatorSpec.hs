@@ -98,7 +98,7 @@ fullIntegrationReply =
   createReply $
     IntegrationReply
       { iValue =
-          IntegrationType {intId = "", value = "Reply to 1st question"}
+          IntegrationType {intId = Nothing, value = "Reply to 1st question"}
       }
 
 createReply :: ReplyValue -> Reply

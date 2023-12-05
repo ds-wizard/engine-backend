@@ -1,34 +1,31 @@
 module Wizard.Database.Migration.Development.Typehint.Data.Typehints where
 
-import Wizard.Api.Resource.Typehint.TypehintDTO
 import Wizard.Api.Resource.Typehint.TypehintRequestDTO
+import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 
-lifeScienceTypehint :: TypehintDTO
+lifeScienceTypehint :: TypehintIDTO
 lifeScienceTypehint =
-  TypehintDTO
-    { intId = "op-p000001"
+  TypehintIDTO
+    { intId = Just "op-p000001"
     , name = "Life Science Ontology"
-    , url = "https://example.com/ontologies/${id}"
     }
 
-mathematicalTypehint :: TypehintDTO
+mathematicalTypehint :: TypehintIDTO
 mathematicalTypehint =
-  TypehintDTO
-    { intId = "op-p000008"
+  TypehintIDTO
+    { intId = Just "op-p000008"
     , name = "Mathematical Ontology"
-    , url = "https://example.com/ontologies/${id}"
     }
 
-legalTypehint :: TypehintDTO
+legalTypehint :: TypehintIDTO
 legalTypehint =
-  TypehintDTO
-    { intId = "op-p000015"
+  TypehintIDTO
+    { intId = Just "op-p000015"
     , name = "Legal Ontology"
-    , url = "https://example.com/ontologies/${id}"
     }
 
 typehintRequest :: TypehintRequestDTO

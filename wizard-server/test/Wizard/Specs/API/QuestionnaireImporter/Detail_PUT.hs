@@ -59,15 +59,15 @@ create_test_200 title appContext reqAuthHeader =
       let expStatus = 200
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       let expDto = toDTO questionnaireImporterBio3Edited
+      let expBody = encode expDto
+      let expType (a :: QuestionnaireImporterDTO) = a
       -- AND: Run migrations
       runInContextIO QI_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
       let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, QuestionnaireImporterDTO)
-      assertResStatus status expStatus
-      assertResHeaders headers expHeaders
-      compareQuestionnaireImporterDtos resDto expDto
+      assertResponseWithoutFields expStatus expHeaders expDto expType response ["updatedAt"]
       -- AND: Find result in DB and compare with expectation state
       assertExistenceOfQuestionnaireImporterInDB appContext questionnaireImporterBio3Edited
 

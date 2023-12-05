@@ -79,6 +79,8 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireSimpleSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSuggestionSM ()
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeSM ()
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionRevertSM ()
+import Wizard.Api.Resource.QuestionnaireAction.QuestionnaireActionChangeSM ()
+import Wizard.Api.Resource.QuestionnaireAction.QuestionnaireActionSM ()
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterChangeSM ()
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterSM ()
 import Wizard.Api.Resource.Registry.RegistryConfirmationSM ()
@@ -129,7 +131,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.0.1"
+              , _infoVersion = "4.1.0"
               , _infoLicense =
                   Just $
                     License
