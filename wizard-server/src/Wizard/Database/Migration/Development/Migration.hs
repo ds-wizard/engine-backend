@@ -11,6 +11,7 @@ import qualified Shared.Component.Database.Migration.Development.Component.Compo
 import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabMigration as PF
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
+import Wizard.Bootstrap.Common
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ACK
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
@@ -47,7 +48,7 @@ import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigrat
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as U_Schema
 
-runMigration = do
+runMigration = runAppContextWithBaseContext $ do
   logInfo _CMP_MIGRATION "started"
   -- 1. Drop DB functions
   B_Schema.dropFunctions

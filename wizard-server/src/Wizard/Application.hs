@@ -1,24 +1,16 @@
-module Wizard.Application (
-  runApplication,
-) where
+module Wizard.Application where
 
-import Control.Concurrent
-import Control.Concurrent.Async
-import Control.Monad.Reader (liftIO)
-import Data.Foldable (forM_)
-import System.Exit
-import System.IO
+import Control.Concurrent (MVar)
+import Control.Monad.IO.Class (MonadIO)
+import Control.Monad.Logger (MonadLogger)
+import Data.Pool (Pool)
+import Database.PostgreSQL.Simple (Connection)
+import Network.HTTP.Client (Manager)
+import Network.Minio (MinioConn)
 
-import Shared.Common.Bootstrap.Config
-import Shared.Common.Bootstrap.HttpClient
-import Shared.Common.Bootstrap.Postgres
-import Shared.Common.Bootstrap.S3
-import Shared.Common.Constant.Component
+import Shared.Common.Application
+import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
-import Shared.Common.Service.Config.BuildInfo.BuildInfoConfigService
-import Shared.Common.Service.Config.Server.ServerConfigService
-import Shared.Common.Util.Logger
-import Wizard.Bootstrap.DatabaseMigration
 import Wizard.Bootstrap.MetamodelMigration
 import Wizard.Bootstrap.RegistryClient
 import Wizard.Bootstrap.ServerCache
@@ -26,42 +18,31 @@ import Wizard.Bootstrap.Web
 import Wizard.Bootstrap.Worker
 import Wizard.Constant.ASCIIArt
 import Wizard.Constant.Resource
+import qualified Wizard.Database.Migration.Development.Migration as DevDB
+import qualified Wizard.Database.Migration.Production.Migration as ProdDB
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Config.Server.ServerConfigValidation
 
 runApplication :: IO ()
-runApplication = do
-  hSetBuffering stdout LineBuffering
-  putStrLn asciiLogo
-  serverConfig <- loadConfig serverConfigFile (getServerConfig validateServerConfig)
-  buildInfoConfig <- loadConfig buildInfoFile getBuildInfoConfig
-  result <-
-    runLogging serverConfig.logging.level $ do
-      logInfo _CMP_ENVIRONMENT $ "set to " ++ show serverConfig.general.environment
-      shutdownFlag <- liftIO newEmptyMVar
-      dbPool <- connectPostgresDB serverConfig.logging serverConfig.database
-      httpClientManager <- setupHttpClientManager serverConfig.logging
-      s3Client <- setupS3Client serverConfig.s3 httpClientManager
-      httpClientManager <- setupHttpClientManager serverConfig.logging
-      registryClient <- setupRegistryClient serverConfig httpClientManager
-      cache <- setupServerCache serverConfig
-      let baseContext =
-            BaseContext
-              { serverConfig = serverConfig
-              , buildInfoConfig = buildInfoConfig
-              , dbPool = dbPool
-              , s3Client = s3Client
-              , httpClientManager = httpClientManager
-              , registryClient = registryClient
-              , shutdownFlag = shutdownFlag
-              , cache = cache
-              }
-      result <- liftIO $ runDBMigrations baseContext
-      case result of
-        Just error -> return . Just $ error
-        Nothing -> do
-          liftIO $ runMetamodelMigrations baseContext
-          liftIO $ race_ (takeMVar shutdownFlag) (concurrently (runWebServer baseContext) (worker shutdownFlag baseContext))
-          return Nothing
-  forM_ result die
+runApplication =
+  runWebServerWithWorkers
+    asciiLogo
+    serverConfigFile
+    validateServerConfig
+    buildInfoFile
+    createBaseContext
+    ProdDB.migrationDefinitions
+    DevDB.runMigration
+    afterDbMigrationHook
+    runWebServer
+    worker
+
+createBaseContext :: (MonadIO m, MonadLogger m) => ServerConfig -> BuildInfoConfig -> Pool Connection -> MinioConn -> Manager -> MVar () -> m BaseContext
+createBaseContext serverConfig buildInfoConfig dbPool s3Client httpClientManager shutdownFlag = do
+  registryClient <- setupRegistryClient serverConfig httpClientManager
+  cache <- setupServerCache serverConfig
+  return BaseContext {..}
+
+afterDbMigrationHook :: BaseContext -> IO ()
+afterDbMigrationHook = runMetamodelMigrations

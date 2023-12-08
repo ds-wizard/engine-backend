@@ -2,6 +2,7 @@ module Registry.Database.Migration.Development.Migration (
   runMigration,
 ) where
 
+import Registry.Bootstrap.Common
 import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import qualified Registry.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
@@ -19,7 +20,7 @@ import qualified Shared.Component.Database.Migration.Development.Component.Compo
 import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
 import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 
-runMigration = do
+runMigration = runAppContextWithBaseContext $ do
   logInfo _CMP_MIGRATION "started"
   -- 1. Drop DB functions
   CMN_Schema.dropFunctions

@@ -23,6 +23,7 @@ library:
   dependencies:
   - base
   - aeson
+  - async
   - attoparsec
   - base64
   - blaze-html
@@ -51,6 +52,7 @@ library:
   - oidc-client
   - postgresql-simple
   - postgresql-libpq
+  - postgresql-migration
   - pretty-terminal
   - random
   - raven-haskell

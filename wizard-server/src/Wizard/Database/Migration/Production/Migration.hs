@@ -1,12 +1,7 @@
-module Wizard.Database.Migration.Production.Migration (
-  runMigration,
-) where
+module Wizard.Database.Migration.Production.Migration where
 
 import Database.PostgreSQL.Migration.Entity
-import Database.PostgreSQL.Migration.Migration
 
-import Shared.Common.Model.Config.ServerConfig
-import Shared.Common.Util.Logger
 import qualified Wizard.Database.Migration.Production.Migration_0001_init.Migration as M_0001
 import qualified Wizard.Database.Migration.Production.Migration_0002_projectTemplate.Migration as M_0002
 import qualified Wizard.Database.Migration.Production.Migration_0003_metricsAndPhases.Migration as M_0003
@@ -48,13 +43,6 @@ import qualified Wizard.Database.Migration.Production.Migration_0038_admin.Migra
 import qualified Wizard.Database.Migration.Production.Migration_0039_tenant.Migration as M_0039
 import qualified Wizard.Database.Migration.Production.Migration_0040_qtnAction.Migration as M_0040
 import qualified Wizard.Database.Migration.Production.Migration_0041_upgradeTmlMetamodel.Migration as M_0041
-import Wizard.Model.Config.ServerConfig
-import Wizard.Model.Context.BaseContext
-
-runMigration :: BaseContext -> IO (Maybe String)
-runMigration baseContext = do
-  let loggingLevel = baseContext.serverConfig.logging.level
-  runLogging loggingLevel $ migrateDatabase baseContext.dbPool migrationDefinitions (logInfo _CMP_MIGRATION)
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
