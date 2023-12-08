@@ -4,8 +4,9 @@ module Wizard.Model.Context.AclContext (
   module Wizard.Model.User.User,
 ) where
 
+import Control.Monad (unless)
 import Control.Monad.Except (throwError)
-import Control.Monad.Reader (asks, unless)
+import Control.Monad.Reader (asks)
 
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error

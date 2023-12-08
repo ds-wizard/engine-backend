@@ -1,8 +1,7 @@
 module Registry.Service.Organization.OrganizationValidation where
 
-import Control.Monad (unless, when)
+import Control.Monad (forM_, unless, when)
 import Control.Monad.Except (throwError)
-import Control.Monad.Reader (forM_)
 import qualified Data.Map.Strict as M
 import Data.Maybe (isJust)
 import Text.Regex (matchRegex, mkRegex)

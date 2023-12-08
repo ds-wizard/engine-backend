@@ -1,6 +1,5 @@
 module Shared.Common.Model.Common.Page where
 
-import Control.Applicative
 import qualified Data.List as L
 import GHC.Generics
 

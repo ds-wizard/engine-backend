@@ -49,6 +49,39 @@ packages:
   original:
     url: https://github.com/haskellify/servant-mock/archive/v0.8.7.tar.gz
 - completed:
+    name: cron
+    pantry-tree:
+      sha256: 74a97cf94a1272c96f8e25889978d36234a03e95b8c8d73c9ca34b9b0a790d0d
+      size: 1928
+    sha256: 4f71fa88c8f3a0cac0ca8a7ac2a0487e3e045581f03467dd8624514098d3abb6
+    size: 26965
+    url: https://github.com/haskellify/cron/archive/cef3249aae7977b607dd4638a65d6a985b2f5759.tar.gz
+    version: 0.7.0
+  original:
+    url: https://github.com/haskellify/cron/archive/cef3249aae7977b607dd4638a65d6a985b2f5759.tar.gz
+- completed:
+    name: minio-hs
+    pantry-tree:
+      sha256: 78fda4b96ecdb677c18f56d06c1ba465146aa17627fcd1669149e7d4d6a1df70
+      size: 4744
+    sha256: 7d591fcb502b70545f4dc41274cecde1debaf78c7094c5186b808d76458996ac
+    size: 98165
+    url: https://github.com/haskellify/minio-hs/archive/83446d193f9bba02b758d2f1bd34a642f575238c.tar.gz
+    version: 1.7.0
+  original:
+    url: https://github.com/haskellify/minio-hs/archive/83446d193f9bba02b758d2f1bd34a642f575238c.tar.gz
+- completed:
+    name: connection
+    pantry-tree:
+      sha256: 0b2c8a67df69307dcb32d33b4f7a33a90e81b3d6c3164ba8e9b2b855255ea0a1
+      size: 978
+    sha256: e00c8a7d9f2162974f68b6c8a5beeeae2301c4908f6f07520ae4b564ee3abb2f
+    size: 11513
+    url: https://github.com/JonathanLorimer/hs-connection/archive/1dc000d38963de0e4c3954b27d4fe0e5f1d9cee2.tar.gz
+    version: 0.4.1
+  original:
+    url: https://github.com/JonathanLorimer/hs-connection/archive/1dc000d38963de0e4c3954b27d4fe0e5f1d9cee2.tar.gz
+- completed:
     hackage: text-replace-0.0.0.4@sha256:88800aba160dfb512cf43b24063170d34900e1646ad21f28715a22679f42ae15,1738
     pantry-tree:
       sha256: a7d17c85a9637ef9cc6762ea4e9b932191ede485655b5d18d41292cc9475b105
@@ -83,51 +116,9 @@ packages:
       size: 632
   original:
     hackage: raven-haskell-0.1.4.1
-- completed:
-    hackage: ginger-0.10.4.0@sha256:7ca26896395fda951443ed3bba5f24fd6036c44167d424e744d1e0c8c6b138fd,3855
-    pantry-tree:
-      sha256: c3d93b51ba0e76853b217debb662cdcf5eca78288d49c809f823be27a072bfbf
-      size: 1430
-  original:
-    hackage: ginger-0.10.4.0
-- completed:
-    hackage: minio-hs-1.6.0@sha256:f1e2c9b9a0586d8ccf993642692dbb4a1fb907181e1fedb5d3e58d0394ac9a47,10866
-    pantry-tree:
-      sha256: 054ae4a413bda9b40015797ebdd2ea159ca63f005d71a10e067309709a39bf47
-      size: 4028
-  original:
-    hackage: minio-hs-1.6.0
-- completed:
-    hackage: servant-multipart-0.12.1@sha256:b482509b17371e56ef16179388f8221deffdf87fe32915bf3abb5eff4ce36bf2,2028
-    pantry-tree:
-      sha256: bb9f0808f90cf98cc23b169b3a99ea95548f958d2e773987351c4c9974323028
-      size: 332
-  original:
-    hackage: servant-multipart-0.12.1
-- completed:
-    hackage: relude-1.1.0.0@sha256:fe82b67d4560b9eff8d7dd12c5e1f786b25d52d64f7302ad82a3bbec9a0bd55e,11747
-    pantry-tree:
-      sha256: 1482f23099d4b66e2db69e90403456c51cd2573bb0f3e51b86d449c3cf47ebc8
-      size: 4286
-  original:
-    hackage: relude-1.1.0.0
-- completed:
-    hackage: servant-docs-0.12@sha256:73fd8901a9dbe4d2c563b7da0b94c75f7755ee9059eec80ff621f415a8d3ef6a,3383
-    pantry-tree:
-      sha256: 9b5c1fbbecfc901c58f46cbb944f40324e8ebeec82b7024c09fc89ab55e4ac83
-      size: 702
-  original:
-    hackage: servant-docs-0.12
-- completed:
-    hackage: servant-foreign-0.15.4@sha256:ba0b1bca0d9fa4b09b59f6b4fcaccdfac38bd3da6dad80f23242ad6e869e67b0,2873
-    pantry-tree:
-      sha256: 0e0552f97d1ccf6b79776dde4b5d9bc7d474233612312eb0888112d0f66d7e57
-      size: 590
-  original:
-    hackage: servant-foreign-0.15.4
 snapshots:
 - completed:
-    sha256: 64c6832b8a5f11f1435bc24fd41153d192796510751b628b65262989b160edd7
-    size: 639134
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2023/6/21.yaml
-  original: nightly-2023-06-21
+    sha256: 4bd22736896cecf9e1f3f6193e82b065d06c2bf5b5ec97d0079409d6d35f1f82
+    size: 710668
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2023/12/8.yaml
+  original: nightly-2023-12-08
