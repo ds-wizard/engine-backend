@@ -47,6 +47,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0037_pkgAndDocRe
 import qualified Wizard.Database.Migration.Production.Migration_0038_admin.Migration as M_0038
 import qualified Wizard.Database.Migration.Production.Migration_0039_tenant.Migration as M_0039
 import qualified Wizard.Database.Migration.Production.Migration_0040_qtnAction.Migration as M_0040
+import qualified Wizard.Database.Migration.Production.Migration_0041_upgradeTmlMetamodel.Migration as M_0041
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 
@@ -97,4 +98,5 @@ migrationDefinitions =
   , M_0038.definition
   , M_0039.definition
   , M_0040.definition
+  , M_0041.definition
   ]
