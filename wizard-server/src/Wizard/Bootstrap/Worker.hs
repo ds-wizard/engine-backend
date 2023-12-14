@@ -1,80 +1,14 @@
-module Wizard.Bootstrap.Worker (
-  worker,
-) where
+module Wizard.Bootstrap.Worker where
 
 import Control.Concurrent
-import Control.Monad.Logger (LoggingT)
-import Control.Monad.Reader (liftIO)
-import System.Cron
-import System.Posix.Signals (Handler (CatchOnce), installHandler, sigINT, sigTERM)
 
-import Shared.Common.Model.Config.ServerConfig
-import Shared.Common.Util.Logger
+import Shared.Worker.Bootstrap.Worker
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
-import Wizard.Worker.Cron.ActionKey.ActionKeyWorker
-import Wizard.Worker.Cron.Branch.SquashBranchEventsWorker
-import Wizard.Worker.Cron.Cache.CacheWorker
-import Wizard.Worker.Cron.Document.DocumentWorker
-import Wizard.Worker.Cron.Feedback.FeedbackWorker
-import Wizard.Worker.Cron.PersistentCommand.PersistentCommandRetryWorker
-import Wizard.Worker.Cron.Questionnaire.CleanQuestionnaireWorker
-import Wizard.Worker.Cron.Questionnaire.RecomputeQuestionnaireIndicationWorker
-import Wizard.Worker.Cron.Questionnaire.SquashQuestionnaireEventsWorker
-import Wizard.Worker.Cron.Registry.RegistrySyncWorker
-import Wizard.Worker.Cron.TemporaryFile.TemporaryFileWorker
-import Wizard.Worker.Cron.Tenant.TenantPlanWorker
-import Wizard.Worker.Cron.UserToken.CleanUserTokenWorker
-import Wizard.Worker.Cron.UserToken.ExpireUserTokenWorker
-import Wizard.Worker.Permanent.PersistentCommand.PersistentCommandListenerWorker
+import Wizard.Util.Context
+import Wizard.Worker.Cron.Workers
+import Wizard.Worker.Permanent.Workers
 
-worker :: MVar () -> BaseContext -> IO ()
-worker shutdownFlag context =
-  let loggingLevel = context.serverConfig.logging.level
-   in runLogging loggingLevel $ do
-        cronWorkerThreadIds <- cronJob context
-        permanentWorkerThreadIds <- permanentWorker context
-        setupHandlers loggingLevel shutdownFlag (cronWorkerThreadIds ++ permanentWorkerThreadIds)
-
--- ------------------------------------------------------------------
-permanentWorker :: BaseContext -> LoggingT IO [ThreadId]
-permanentWorker context = do
-  threadId <- liftIO $ forkIO (persistentCommandListenerJob context)
-  return [threadId]
-
--- ------------------------------------------------------------------
-cronJob :: BaseContext -> LoggingT IO [ThreadId]
-cronJob context = do
-  logInfo _CMP_WORKER "scheduling workers started"
-  threadIds <-
-    liftIO . execSchedule $ do
-      actionKeyWorker context
-      squashBranchEventsWorker context
-      cacheWorker context
-      feedbackWorker context
-      documentWorker context
-      persistentCommandRetryWorker context
-      tenantPlanWorker context
-      cleanQuestionnaireWorker context
-      recomputeQuestionnaireIndicationWorker context
-      squashQuestionnaireEventsWorker context
-      registrySyncWorker context
-      temporaryFileWorker context
-      cleanUserTokenWorker context
-      expireUserTokenWorker context
-  logInfo _CMP_WORKER "scheduling workers completed"
-  return threadIds
-
-setupHandlers loggingLevel shutdownFlag threadIds = do
-  logInfo _CMP_WORKER "installing handlers"
-  liftIO $ installHandler sigINT (handler loggingLevel shutdownFlag threadIds "sigINT") Nothing
-  liftIO $ installHandler sigTERM (handler loggingLevel shutdownFlag threadIds "sigTERM") Nothing
-  logInfo _CMP_WORKER "handlers installed"
-
-handler loggingLevel shutdownFlag threadIds typeSignal =
-  CatchOnce . runLogging loggingLevel $ do
-    logInfo _CMP_WORKER "shutting down workers: started"
-    liftIO $ traverse killThread threadIds
-    logInfo _CMP_WORKER "shutting down workers: notifing web server"
-    liftIO $ putMVar shutdownFlag ()
-    logInfo _CMP_WORKER "shutting down workers: completed"
+runWorker :: MVar () -> BaseContext -> IO ()
+runWorker shutdownFlag context =
+  worker runAppContextWithBaseContext runAppContextWithBaseContext'' shutdownFlag context workers permanentWorker

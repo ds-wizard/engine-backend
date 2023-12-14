@@ -36,7 +36,7 @@ runApplication =
     DevDB.runMigration
     afterDbMigrationHook
     runWebServer
-    worker
+    runWorker
 
 createBaseContext :: (MonadIO m, MonadLogger m) => ServerConfig -> BuildInfoConfig -> Pool Connection -> MinioConn -> Manager -> MVar () -> m BaseContext
 createBaseContext serverConfig buildInfoConfig dbPool s3Client httpClientManager shutdownFlag = do
