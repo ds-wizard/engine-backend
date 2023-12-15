@@ -2,12 +2,12 @@ module Wizard.TestMigration where
 
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.Audit.Database.DAO.Audit.AuditDAO
-import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
+import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMigration as Audit
 import Shared.Component.Database.DAO.Component.ComponentDAO
-import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as Component
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Shared.Prefab.Database.DAO.Prefab.PrefabDAO
-import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
+import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as Prefab
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Document.DocumentDAO
@@ -30,34 +30,34 @@ import Wizard.Database.DAO.Tenant.TenantConfigDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
 import Wizard.Database.DAO.User.UserDAO
-import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
-import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
-import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
-import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
-import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
-import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
-import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as TML_Schema
-import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
-import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMigration as INS_Schema
-import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC
-import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as LOC_Schema
-import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KM_MIG_Schema
-import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorSchemaMigration as QTN_MIG_Schema
+import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ActionKey
+import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BookReference
+import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as Branch
+import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as Common
+import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as Document
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DocumentTemplateMigration
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as DocumentTemplate
+import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as Feedback
+import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMigration as Instance
+import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LocaleMigration
+import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
+import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KnowledgeModelMigrator
+import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorSchemaMigration as QuestionnaireMigrator
 import Wizard.Database.Migration.Development.Package.Data.Packages
-import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
-import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
-import qualified Wizard.Database.Migration.Development.QuestionnaireAction.QuestionnaireActionSchemaMigration as QA_Schema
-import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QI_Schema
-import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as R_Schema
-import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
+import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as Package
+import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
+import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as Questionnaire
+import qualified Wizard.Database.Migration.Development.QuestionnaireAction.QuestionnaireActionSchemaMigration as QuestionnaireAction
+import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QuestionnaireImporter
+import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as Registry
+import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as Submission
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.TenantLimitBundles
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
-import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigration as TNT_Schema
+import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigration as Tenant
 import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
-import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as U_Schema
+import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as User
 import Wizard.Model.Cache.ServerCache
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
@@ -71,67 +71,67 @@ import Wizard.Specs.Common
 
 buildSchema appContext = do
   putStrLn "DB: dropping DB functions"
-  runInContext LOC_Schema.dropFunctions appContext
-  runInContext B_Schema.dropFunctions appContext
-  runInContext TML_Schema.dropFunctions appContext
-  runInContext PKG_Schema.dropFunctions appContext
-  runInContext CMN_Schema.dropFunctions appContext
+  runInContext Locale.dropFunctions appContext
+  runInContext Branch.dropFunctions appContext
+  runInContext DocumentTemplate.dropFunctions appContext
+  runInContext Package.dropFunctions appContext
+  runInContext Common.dropFunctions appContext
   putStrLn "DB: dropping schema"
-  runInContext CMP_Schema.dropTables appContext
-  runInContext LOC_Schema.dropTables appContext
-  runInContext R_Schema.dropTables appContext
-  runInContext QA_Schema.dropTables appContext
-  runInContext QI_Schema.dropTables appContext
-  runInContext ADT_Schema.dropTables appContext
-  runInContext PF_Schema.dropTables appContext
-  runInContext PC_Schema.dropTables appContext
-  runInContext SUB_Schema.dropTables appContext
-  runInContext ACK_Schema.dropTables appContext
-  runInContext BR_Schema.dropTables appContext
-  runInContext F_Schema.dropTables appContext
-  runInContext KM_MIG_Schema.dropTables appContext
-  runInContext B_Schema.dropTables appContext
-  runInContext DOC_Schema.dropTables appContext
-  runInContext QTN_MIG_Schema.dropTables appContext
-  runInContext QTN_Schema.dropTables appContext
-  runInContext TML_Schema.dropTables appContext
-  runInContext PKG_Schema.dropTables appContext
-  runInContext U_Schema.dropTables appContext
-  runInContext TNT_Schema.dropTables appContext
-  runInContext INS_Schema.dropTables appContext
+  runInContext Component.dropTables appContext
+  runInContext Locale.dropTables appContext
+  runInContext Registry.dropTables appContext
+  runInContext QuestionnaireAction.dropTables appContext
+  runInContext QuestionnaireImporter.dropTables appContext
+  runInContext Audit.dropTables appContext
+  runInContext Prefab.dropTables appContext
+  runInContext PersistentCommand.dropTables appContext
+  runInContext Submission.dropTables appContext
+  runInContext ActionKey.dropTables appContext
+  runInContext BookReference.dropTables appContext
+  runInContext Feedback.dropTables appContext
+  runInContext KnowledgeModelMigrator.dropTables appContext
+  runInContext Branch.dropTables appContext
+  runInContext Document.dropTables appContext
+  runInContext QuestionnaireMigrator.dropTables appContext
+  runInContext Questionnaire.dropTables appContext
+  runInContext DocumentTemplate.dropTables appContext
+  runInContext Package.dropTables appContext
+  runInContext User.dropTables appContext
+  runInContext Tenant.dropTables appContext
+  runInContext Instance.dropTables appContext
   putStrLn "DB: Creating schema"
-  runInContext INS_Schema.createTables appContext
-  runInContext TNT_Schema.createTables appContext
-  runInContext U_Schema.createTables appContext
-  runInContext TML_Schema.createTables appContext
-  runInContext PKG_Schema.createTables appContext
-  runInContext ACK_Schema.createTables appContext
-  runInContext BR_Schema.createTables appContext
-  runInContext F_Schema.createTables appContext
-  runInContext B_Schema.createTables appContext
-  runInContext QTN_Schema.createTables appContext
-  runInContext TML_Schema.createDraftDataTable appContext
-  runInContext DOC_Schema.createTables appContext
-  runInContext QTN_MIG_Schema.createTables appContext
-  runInContext KM_MIG_Schema.createTables appContext
-  runInContext SUB_Schema.createTables appContext
-  runInContext PC_Schema.createTables appContext
-  runInContext PF_Schema.createTables appContext
-  runInContext ADT_Schema.createTables appContext
-  runInContext QA_Schema.createTables appContext
-  runInContext QI_Schema.createTables appContext
-  runInContext R_Schema.createTables appContext
-  runInContext LOC_Schema.createTables appContext
-  runInContext CMP_Schema.createTables appContext
+  runInContext Instance.createTables appContext
+  runInContext Tenant.createTables appContext
+  runInContext User.createTables appContext
+  runInContext DocumentTemplate.createTables appContext
+  runInContext Package.createTables appContext
+  runInContext ActionKey.createTables appContext
+  runInContext BookReference.createTables appContext
+  runInContext Feedback.createTables appContext
+  runInContext Branch.createTables appContext
+  runInContext Questionnaire.createTables appContext
+  runInContext DocumentTemplate.createDraftDataTable appContext
+  runInContext Document.createTables appContext
+  runInContext QuestionnaireMigrator.createTables appContext
+  runInContext KnowledgeModelMigrator.createTables appContext
+  runInContext Submission.createTables appContext
+  runInContext PersistentCommand.createTables appContext
+  runInContext Prefab.createTables appContext
+  runInContext Audit.createTables appContext
+  runInContext QuestionnaireAction.createTables appContext
+  runInContext QuestionnaireImporter.createTables appContext
+  runInContext Registry.createTables appContext
+  runInContext Locale.createTables appContext
+  runInContext Component.createTables appContext
   putStrLn "DB: Creating DB functions"
-  runInContext CMN_Schema.createFunctions appContext
-  runInContext PKG_Schema.createFunctions appContext
-  runInContext TML_Schema.createFunctions appContext
-  runInContext B_Schema.createFunctions appContext
-  runInContext LOC_Schema.createFunctions appContext
+  runInContext Common.createFunctions appContext
+  runInContext Package.createFunctions appContext
+  runInContext DocumentTemplate.createFunctions appContext
+  runInContext Branch.createFunctions appContext
+  runInContext Locale.createFunctions appContext
   putStrLn "DB-S3: Purging and creating schema"
-  runInContext TML.runS3Migration appContext
-  runInContext LOC.runS3Migration appContext
+  runInContext DocumentTemplateMigration.runS3Migration appContext
+  runInContext LocaleMigration.runS3Migration appContext
 
 resetDB appContext = do
   runInContext deleteLocales appContext

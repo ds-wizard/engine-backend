@@ -1,25 +1,21 @@
 module Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration where
 
 import Database.PostgreSQL.Simple
+import GHC.Int
 
 import Registry.Database.DAO.Common
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Shared.Common.Util.Logger
 
-runMigration :: AppContextM ()
-runMigration = do
-  logInfo _CMP_MIGRATION "(Table/PersistentCommand) started"
-  dropTables
-  createTables
-  logInfo _CMP_MIGRATION "(Table/PersistentCommand) ended"
-
+dropTables :: AppContextM Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/PersistentCommand) drop tables"
   let sql = "DROP TABLE IF EXISTS persistent_command CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
+createTables :: AppContextM Int64
 createTables = do
   logInfo _CMP_MIGRATION "(Table/PersistentCommand) create table"
   let sql =

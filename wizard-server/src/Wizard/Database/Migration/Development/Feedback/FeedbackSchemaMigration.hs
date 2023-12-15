@@ -1,25 +1,21 @@
 module Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration where
 
 import Database.PostgreSQL.Simple
+import GHC.Int
 
 import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
-runMigration :: AppContextM ()
-runMigration = do
-  logInfo _CMP_MIGRATION "(Table/Feedback) started"
-  dropTables
-  createTables
-  logInfo _CMP_MIGRATION "(Table/Feedback) ended"
-
+dropTables :: AppContextM Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Feedback) drop tables"
   let sql = "DROP TABLE IF EXISTS feedback CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
+createTables :: AppContextM Int64
 createTables = do
   logInfo _CMP_MIGRATION "(Table/Feedback) create table"
   let sql =

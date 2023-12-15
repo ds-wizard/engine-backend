@@ -1,33 +1,28 @@
 module Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration where
 
 import Database.PostgreSQL.Simple
+import GHC.Int
 
 import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
-runMigration :: AppContextM ()
-runMigration = do
-  logInfo _CMP_MIGRATION "(Table/Locale) started"
-  dropFunctions
-  dropTables
-  createTables
-  createFunctions
-  logInfo _CMP_MIGRATION "(Table/Locale) ended"
-
+dropTables :: AppContextM Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Locale) drop table"
   let sql = "DROP TABLE IF EXISTS locale CASCADE;"
   let action conn = execute_ conn sql
   runDB action
 
+dropFunctions :: AppContextM Int64
 dropFunctions = do
   logInfo _CMP_MIGRATION "(Function/Locale) drop functions"
   let sql = "DROP FUNCTION IF EXISTS get_locale_state;"
   let action conn = execute_ conn sql
   runDB action
 
+createTables :: AppContextM Int64
 createTables = do
   logInfo _CMP_MIGRATION "(Table/Locale) create table"
   let sql =
@@ -54,6 +49,7 @@ createTables = do
   let action conn = execute_ conn sql
   runDB action
 
+createFunctions :: AppContextM Int64
 createFunctions = do
   logInfo _CMP_MIGRATION "(Function/Locale) create functions"
   createGetLocaleStateFn

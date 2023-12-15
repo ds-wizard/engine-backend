@@ -1,19 +1,14 @@
 module Wizard.Database.Migration.Development.Common.CommonSchemaMigration where
 
 import Database.PostgreSQL.Simple
+import GHC.Int
 
 import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
-runMigration :: AppContextM ()
-runMigration = do
-  logInfo _CMP_MIGRATION "(Table/Common) started"
-  dropFunctions
-  createFunctions
-  logInfo _CMP_MIGRATION "(Table/Common) ended"
-
+dropFunctions :: AppContextM Int64
 dropFunctions = do
   logInfo _CMP_MIGRATION "(Function/Common) drop functions"
   let sql =
@@ -24,6 +19,7 @@ dropFunctions = do
   let action conn = execute_ conn sql
   runDB action
 
+createFunctions :: AppContextM Int64
 createFunctions = do
   logInfo _CMP_MIGRATION "(Function/Common) create functions"
   createMajorVersionFn

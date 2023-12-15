@@ -8,13 +8,6 @@ import Shared.Common.Database.DAO.Common
 import Shared.Common.Model.Context.AppContext
 import Shared.Common.Util.Logger
 
-runMigration :: AppContextC s sc m => m ()
-runMigration = do
-  logInfo _CMP_MIGRATION "(Table/Audit) started"
-  dropTables
-  createTables
-  logInfo _CMP_MIGRATION "(Table/Audit) ended"
-
 dropTables :: AppContextC s sc m => m Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Audit) drop tables"

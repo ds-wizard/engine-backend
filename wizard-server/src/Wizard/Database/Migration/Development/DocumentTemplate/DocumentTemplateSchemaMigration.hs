@@ -11,16 +11,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
 
-runMigration :: AppContextM ()
-runMigration = do
-  logInfo _CMP_MIGRATION "(Table/DocumentTemplate) started"
-  dropFunctions
-  dropTables
-  dropBucket
-  createTables
-  createFunctions
-  logInfo _CMP_MIGRATION "(Table/DocumentTemplate) ended"
-
+dropTables :: AppContextM Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/DocumentTemplate) drop tables"
   let sql =
@@ -31,16 +22,19 @@ dropTables = do
   let action conn = execute_ conn sql
   runDB action
 
+dropBucket :: AppContextM ()
 dropBucket = do
   catchError purgeBucket (\e -> return ())
   catchError removeBucket (\e -> return ())
 
+dropFunctions :: AppContextM Int64
 dropFunctions = do
   logInfo _CMP_MIGRATION "(Function/DocumentTemplate) drop functions"
   let sql = "DROP FUNCTION IF EXISTS get_template_state;"
   let action conn = execute_ conn sql
   runDB action
 
+createTables :: AppContextM ()
 createTables = do
   createTemplateTable
   createTemplateFileTable
@@ -135,6 +129,7 @@ createDraftDataTable = do
   let action conn = execute_ conn sql
   runDB action
 
+createFunctions :: AppContextM Int64
 createFunctions = do
   logInfo _CMP_MIGRATION "(Function/DocumentTemplate) create functions"
   createGetTemplateStateFn
