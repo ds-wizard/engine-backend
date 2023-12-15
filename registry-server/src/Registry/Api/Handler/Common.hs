@@ -1,7 +1,7 @@
 module Registry.Api.Handler.Common where
 
 import Control.Monad.Except (runExceptT)
-import Control.Monad.Reader (asks, liftIO, runReaderT)
+import Control.Monad.Reader (ask, liftIO, runReaderT)
 import Data.Pool
 import Servant (throwError)
 
@@ -29,49 +29,41 @@ runInAuthService org = runIn (Just org)
 
 runIn :: Maybe Organization -> TransactionState -> AppContext.AppContextM a -> BaseContextM a
 runIn mOrganization transactionState function = do
+  baseContext <- ask
   traceUuid <- liftIO generateUuid
-  serverConf <- asks serverConfig
-  buildInfoConfig <- asks buildInfoConfig
-  dbPool <- asks dbPool
-  s3Client <- asks s3Client
-  httpClientManager <- asks httpClientManager
   let appContext =
         AppContext.AppContext
-          { serverConfig = serverConf
-          , buildInfoConfig = buildInfoConfig
-          , dbPool = dbPool
+          { serverConfig = baseContext.serverConfig
+          , buildInfoConfig = baseContext.buildInfoConfig
+          , dbPool = baseContext.dbPool
           , dbConnection = Nothing
-          , s3Client = s3Client
-          , httpClientManager = httpClientManager
+          , s3Client = baseContext.s3Client
+          , httpClientManager = baseContext.httpClientManager
           , traceUuid = traceUuid
           , currentOrganization = mOrganization
           }
-  let loggingLevel = serverConf.logging.level
+  let loggingLevel = baseContext.serverConfig.logging.level
   eResult <-
     case transactionState of
-      Transactional -> do
-        liftIO $ withResource dbPool $ \dbConn -> do
-          let appContextWithConn = appContext {AppContext.dbConnection = Just dbConn} :: AppContext.AppContext
-          liftIO $ runExceptT $ runLogging loggingLevel $ runReaderT (AppContext.runAppContextM function) appContextWithConn
+      Transactional ->
+        liftIO $ withResource baseContext.dbPool $ \dbConn ->
+          liftIO $ runExceptT $ runLogging loggingLevel $ runReaderT (AppContext.runAppContextM function) (appContext {AppContext.dbConnection = Just dbConn})
       NoTransaction -> liftIO $ runExceptT $ runLogging loggingLevel $ runReaderT (AppContext.runAppContextM function) appContext
   case eResult of
     Right result -> return result
     Left error -> throwError =<< sendError error
 
-getMaybeAuthServiceExecutor
-  :: Maybe String -> ((TransactionState -> AppContext.AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+getMaybeAuthServiceExecutor :: Maybe String -> ((TransactionState -> AppContext.AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
 getMaybeAuthServiceExecutor (Just tokenHeader) callback = do
   organization <- getCurrentOrganization tokenHeader
   callback (runInAuthService organization)
 getMaybeAuthServiceExecutor Nothing callback = callback runInUnauthService
 
-getAuthServiceExecutor
-  :: Maybe String -> ((TransactionState -> AppContext.AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+getAuthServiceExecutor :: Maybe String -> ((TransactionState -> AppContext.AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
 getAuthServiceExecutor (Just token) callback = do
   org <- getCurrentOrganization token
   callback (runInAuthService org)
-getAuthServiceExecutor Nothing _ =
-  throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
+getAuthServiceExecutor Nothing _ = throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
 
 getCurrentOrganization :: String -> BaseContextM Organization
 getCurrentOrganization tokenHeader = do
@@ -82,8 +74,7 @@ getCurrentOrganization tokenHeader = do
     Nothing -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_ORGANIZATION)
 
 getCurrentOrgToken :: String -> BaseContextM String
-getCurrentOrgToken tokenHeader = do
-  let orgTokenMaybe = separateToken tokenHeader
-  case orgTokenMaybe of
+getCurrentOrgToken tokenHeader =
+  case separateToken tokenHeader of
     Just orgToken -> return orgToken
     Nothing -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
