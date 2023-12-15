@@ -1,7 +1,8 @@
-module Wizard.Worker.Cron.Workers where
+module Wizard.Worker.CronWorkers where
 
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Worker.Model.Worker.CronWorker
+import Wizard.Cache.CacheUtil
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
@@ -9,7 +10,6 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Branch.Event.BranchEventService hiding (squash)
-import Wizard.Service.Cache.CacheService
 import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.PersistentCommand.PersistentCommandService

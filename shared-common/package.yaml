@@ -29,6 +29,7 @@ library:
   - blaze-html
   - bytestring
   - case-insensitive
+  - clock
   - conduit
   - containers
   - cron
@@ -63,6 +64,7 @@ library:
   - scientific
   - servant
   - servant-server
+  - servant-errors
   - servant-multipart
   - servant-swagger
   - swagger2
@@ -118,9 +120,9 @@ default-extensions:
   - ExistentialQuantification
   - ExtendedDefaultRules
   - FlexibleContexts
+  - FlexibleInstances
   - FunctionalDependencies
   - GeneralizedNewtypeDeriving
-  - FlexibleInstances
   - MultiParamTypeClasses
   - OverloadedStrings
   - QuasiQuotes
@@ -128,6 +130,7 @@ default-extensions:
   - RecordWildCards
   - ScopedTypeVariables
   - TemplateHaskell
+  - TypeApplications
   - TypeFamilies
   - TypeOperators
   - TypeSynonymInstances

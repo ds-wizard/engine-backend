@@ -1,4 +1,4 @@
-module Wizard.Service.Cache.UserCache where
+module Wizard.Cache.UserCache where
 
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.Cache as C

@@ -7,14 +7,16 @@ import Data.Either (isRight)
 import qualified Data.List as L
 import Network.HTTP.Types
 import Network.Wai (Application)
+import Servant (serve)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-
 import Test.Hspec.Wai.Matcher
 
+import Shared.Common.Bootstrap.Web
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
-import Wizard.Bootstrap.Web
+import Wizard.Api.Middleware.LoggingMiddleware
+import Wizard.Api.Web
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -33,7 +35,7 @@ startWebApp baseContext appContext = do
   let config = appContext.serverConfig
   let webPort = config.general.serverPort
   let env = config.general.environment
-  return $ runMiddleware env $ runApp baseContext
+  return $ runMiddleware env loggingMiddleware $ serve webApi (webServer baseContext)
 
 reqAuthToken :: String
 reqAuthToken = albertToken.value

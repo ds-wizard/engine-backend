@@ -32,7 +32,6 @@ library:
   - bytestring
   - cache
   - case-insensitive
-  - clock
   - conduit
   - containers
   - cron
@@ -66,7 +65,6 @@ library:
   - servant
   - servant-client
   - servant-client-core
-  - servant-errors
   - servant-multipart
   - servant-server
   - servant-swagger

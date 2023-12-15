@@ -8,16 +8,19 @@ import Data.Either (isRight)
 import qualified Data.List as L
 import Network.HTTP.Types
 import Network.Wai (Application)
+import Servant (serve)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Registry.Bootstrap.Web
+import Registry.Api.Middleware.LoggingMiddleware
+import Registry.Api.Web
 import Registry.Database.Migration.Development.Statistics.Data.InstanceStatistics
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Statistics.InstanceStatistics
+import Shared.Common.Bootstrap.Web
 import Shared.Common.Constant.Api
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
@@ -30,7 +33,7 @@ startWebApp baseContext appContext = do
   let config = appContext.serverConfig
   let webPort = config.general.serverPort
   let env = config.general.environment
-  return $ runMiddleware env $ runApp baseContext
+  return $ runMiddleware env loggingMiddleware $ serve webApi (webServer baseContext)
 
 reqAdminAuthHeader :: Header
 reqAdminAuthHeader = ("Authorization", "Bearer GlobalToken")

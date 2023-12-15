@@ -8,5 +8,7 @@ import Shared.Common.Util.Logger
 
 runDBMigration baseContext prodDBMigrations runDevDBMigrations =
   case baseContext.serverConfig.general.environment of
-    Development -> runDevDBMigrations baseContext
+    Development -> do
+      (Right result) <- runDevDBMigrations baseContext
+      return result
     Production -> runLogging baseContext.serverConfig.logging.level $ migrateDatabase baseContext.dbPool prodDBMigrations (logInfo _CMP_MIGRATION)

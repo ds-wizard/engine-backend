@@ -5,7 +5,7 @@ import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Config.ServerConfigDM
 import Shared.Worker.Model.Worker.CronWorker
 import Wizard.Model.Config.ServerConfig
-import Wizard.Worker.Cron.Workers
+import Wizard.Worker.CronWorkers
 
 defaultConfig :: ServerConfig
 defaultConfig =

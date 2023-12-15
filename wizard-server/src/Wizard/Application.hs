@@ -1,28 +1,36 @@
 module Wizard.Application where
 
-import Control.Concurrent (MVar)
+import Control.Concurrent
+import Control.Monad (void)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (MonadLogger)
+import Control.Monad.Reader (liftIO)
 import Data.Pool (Pool)
 import Database.PostgreSQL.Simple (Connection)
 import Network.HTTP.Client (Manager)
 import Network.Minio (MinioConn)
 
 import Shared.Common.Application
+import Shared.Common.Bootstrap.Web
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
-import Wizard.Bootstrap.MetamodelMigration
-import Wizard.Bootstrap.RegistryClient
-import Wizard.Bootstrap.ServerCache
-import Wizard.Bootstrap.Web
-import Wizard.Bootstrap.Worker
+import Shared.Worker.Bootstrap.Worker
+import Wizard.Api.Middleware.LoggingMiddleware
+import Wizard.Api.Sentry
+import Wizard.Api.Web
+import Wizard.Cache.CacheFactory
 import Wizard.Constant.ASCIIArt
 import Wizard.Constant.Resource
 import qualified Wizard.Database.Migration.Development.Migration as DevDB
 import qualified Wizard.Database.Migration.Production.Migration as ProdDB
+import Wizard.Integration.Http.Common.ServantClient
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
+import Wizard.Model.Context.ContextMappers
 import Wizard.Service.Config.Server.ServerConfigValidation
+import qualified Wizard.Service.Migration.Metamodel.MigratorService as MM
+import Wizard.Worker.CronWorkers
+import Wizard.Worker.PermanentWorkers
 
 runApplication :: IO ()
 runApplication =
@@ -40,9 +48,16 @@ runApplication =
 
 createBaseContext :: (MonadIO m, MonadLogger m) => ServerConfig -> BuildInfoConfig -> Pool Connection -> MinioConn -> Manager -> MVar () -> m BaseContext
 createBaseContext serverConfig buildInfoConfig dbPool s3Client httpClientManager shutdownFlag = do
-  registryClient <- setupRegistryClient serverConfig httpClientManager
-  cache <- setupServerCache serverConfig
+  registryClient <- liftIO $ createRegistryClient serverConfig httpClientManager
+  cache <- liftIO (createServerCache serverConfig)
   return BaseContext {..}
 
 afterDbMigrationHook :: BaseContext -> IO ()
-afterDbMigrationHook = runMetamodelMigrations
+afterDbMigrationHook context = void (runAppContextWithBaseContext MM.migrateCompleteDatabase context)
+
+runWebServer :: BaseContext -> IO ()
+runWebServer context = runWebServerFactory context getSentryIdentity loggingMiddleware webApi webServer
+
+runWorker :: MVar () -> BaseContext -> IO ()
+runWorker shutdownFlag context =
+  worker runAppContextWithBaseContext runAppContextWithBaseContext'' shutdownFlag context workers permanentWorker

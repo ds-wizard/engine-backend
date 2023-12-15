@@ -44,9 +44,9 @@ default-extensions:
   - ExistentialQuantification
   - ExtendedDefaultRules
   - FlexibleContexts
+  - FlexibleInstances
   - FunctionalDependencies
   - GeneralizedNewtypeDeriving
-  - FlexibleInstances
   - MultiParamTypeClasses
   - OverloadedStrings
   - QuasiQuotes
@@ -54,6 +54,7 @@ default-extensions:
   - RecordWildCards
   - ScopedTypeVariables
   - TemplateHaskell
+  - TypeApplications
   - TypeFamilies
   - TypeOperators
   - TypeSynonymInstances

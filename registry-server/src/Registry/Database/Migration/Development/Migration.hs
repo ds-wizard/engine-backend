@@ -2,7 +2,6 @@ module Registry.Database.Migration.Development.Migration (
   runMigration,
 ) where
 
-import Registry.Bootstrap.Common
 import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
 import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
 import qualified Registry.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
@@ -15,6 +14,7 @@ import qualified Registry.Database.Migration.Development.Organization.Organizati
 import qualified Registry.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Registry.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
+import Registry.Model.Context.ContextMappers
 import Shared.Common.Util.Logger
 import qualified Shared.Component.Database.Migration.Development.Component.ComponentMigration as CMP
 import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema

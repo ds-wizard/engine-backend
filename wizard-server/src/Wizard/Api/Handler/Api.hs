@@ -1,4 +1,4 @@
-module Wizard.Api.Api where
+module Wizard.Api.Handler.Api where
 
 import Servant
 

@@ -1,4 +1,4 @@
-module Wizard.Util.Sentry where
+module Wizard.Api.Sentry where
 
 import Data.Aeson (Value (..), toJSON)
 import qualified Data.HashMap.Strict as HashMap

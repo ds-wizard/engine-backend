@@ -1,4 +1,4 @@
-module Wizard.Service.Cache.BranchWebsocketCache where
+module Wizard.Cache.QuestionnaireWebsocketCache where
 
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
@@ -15,7 +15,7 @@ import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Websocket.WebsocketRecord
 import WizardLib.Public.Service.Cache.Common
 
-cacheName = "Branch Websocket"
+cacheName = "Questionnaire Websocket"
 
 cacheKey connectionUuid = f' "connection: '%s'" [U.toString connectionUuid]
 
@@ -23,23 +23,23 @@ addToCache :: WebsocketRecord -> AppContextM ()
 addToCache record = do
   let key = cacheKey record.connectionUuid
   logCacheAddBefore cacheName key
-  bwCache <- getCache
-  liftIO $ C.insert bwCache (H.hash key) record
+  qwCache <- getCache
+  liftIO $ C.insert qwCache (H.hash key) record
   logCacheAddAfter cacheName key
   return ()
 
 getAllFromCache :: AppContextM [WebsocketRecord]
 getAllFromCache = do
-  bwCache <- getCache
-  records <- liftIO $ C.toList bwCache
+  qwCache <- getCache
+  records <- liftIO $ C.toList qwCache
   return . fmap (\(_, v, _) -> v) $ records
 
 getFromCache :: U.UUID -> AppContextM (Maybe WebsocketRecord)
 getFromCache connectionUuid = do
   let key = cacheKey connectionUuid
   logCacheGetBefore cacheName key
-  bwCache <- getCache
-  mValue <- liftIO $ C.lookup bwCache (H.hash key)
+  qwCache <- getCache
+  mValue <- liftIO $ C.lookup qwCache (H.hash key)
   case mValue of
     Just value -> do
       logCacheGetFound cacheName key
@@ -52,8 +52,8 @@ updateCache :: WebsocketRecord -> AppContextM ()
 updateCache record = do
   let key = cacheKey record.connectionUuid
   logCacheModifyBefore cacheName key
-  bwCache <- getCache
-  liftIO $ C.insert bwCache (H.hash key) record
+  qwCache <- getCache
+  liftIO $ C.insert qwCache (H.hash key) record
   logCacheModifyAfter cacheName key
   return ()
 
@@ -68,8 +68,8 @@ deleteFromCache :: U.UUID -> AppContextM ()
 deleteFromCache connectionUuid = do
   let key = cacheKey connectionUuid
   logCacheDeleteBefore cacheName key
-  bwCache <- getCache
-  liftIO $ C.delete bwCache (H.hash key)
+  qwCache <- getCache
+  liftIO $ C.delete qwCache (H.hash key)
   logCacheDeleteFinished cacheName key
 
 countCache :: AppContextM Int
@@ -80,4 +80,4 @@ countCache = do
 getCache :: AppContextM (C.Cache Int WebsocketRecord)
 getCache = do
   cache <- asks cache
-  return $ cache.branchWebsocket
+  return $ cache.questionnaireWebsocket

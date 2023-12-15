@@ -1,4 +1,4 @@
-module Registry.Worker.Cron.Workers where
+module Registry.Worker.CronWorkers where
 
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext

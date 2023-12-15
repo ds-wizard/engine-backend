@@ -6,8 +6,8 @@ import qualified Data.UUID as U
 import Registry.Database.DAO.Common
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.AppContextHelpers
+import Registry.Model.Context.ContextMappers
 import Registry.Service.PersistentCommand.PersistentCommandExecutor
-import Registry.Util.Context
 import RegistryLib.Model.Organization.Organization
 import RegistryLib.Model.Organization.OrganizationRole
 import Shared.Common.Localization.Messages.Public

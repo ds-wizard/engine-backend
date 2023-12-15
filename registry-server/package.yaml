@@ -34,7 +34,6 @@ library:
   - cron
   - data-default
   - exceptions
-  - ginger
   - hashable
   - http-client
   - http-types
@@ -55,7 +54,6 @@ library:
   - regex-compat
   - resource-pool
   - servant
-  - servant-errors
   - servant-multipart
   - servant-server
   - servant-swagger

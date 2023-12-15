@@ -1,4 +1,4 @@
-module Registry.Api.Api where
+module Registry.Api.Handler.Api where
 
 import Servant
 
