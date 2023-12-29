@@ -38,6 +38,7 @@ getTemporaryFileWithBundle lclId =
 exportBundle :: String -> AppContextM BSL.ByteString
 exportBundle lclId =
   runInTransaction $ do
+    checkPermission _LOC_PERM
     locale <- findLocaleById lclId
     content <- retrieveLocale locale.lId
     return $ toLocaleArchive locale content
@@ -45,7 +46,7 @@ exportBundle lclId =
 pullBundleFromRegistry :: String -> AppContextM ()
 pullBundleFromRegistry lclId =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _LOC_PERM
     lb <- catchError (retrieveLocaleBundleById lclId) handleError
     _ <- importBundle lb True
     return ()

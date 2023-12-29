@@ -12,11 +12,13 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Questionnaire.Questionnaire
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -60,6 +62,7 @@ create_test_200 title appContext showComments authHeader =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
+      let expQtn = questionnaire1 {sharing = AnyoneWithLinkViewQuestionnaire}
       let expDto =
             if showComments
               then questionnaire1CtnRevertedDto
@@ -68,6 +71,7 @@ create_test_200 title appContext showComments authHeader =
       -- AND: Run migrations
       runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
+      runInContextIO (updateQuestionnaireByUuid expQtn) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
@@ -75,7 +79,7 @@ create_test_200 title appContext showComments authHeader =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find a result in DB
-      assertExistenceOfQuestionnaireInDB appContext questionnaire1
+      assertExistenceOfQuestionnaireInDB appContext expQtn
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
