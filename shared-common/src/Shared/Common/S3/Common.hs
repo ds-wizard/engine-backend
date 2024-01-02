@@ -27,7 +27,7 @@ import Shared.Common.Util.Logger
 createS3Client serverConfig manager = do
   let connectionInfo =
         setCreds
-          (Credentials (T.pack serverConfig.username) (T.pack serverConfig.password))
+          (CredentialValue (S.fromString serverConfig.username) (S.fromString serverConfig.password) Nothing)
           (S.fromString serverConfig.url)
   let connectionInfoWithRegion =
         case serverConfig.region of

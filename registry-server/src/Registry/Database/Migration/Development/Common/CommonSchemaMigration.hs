@@ -1,19 +1,14 @@
 module Registry.Database.Migration.Development.Common.CommonSchemaMigration where
 
 import Database.PostgreSQL.Simple
+import GHC.Int
 
 import Registry.Database.DAO.Common
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Shared.Common.Util.Logger
 
-runMigration :: AppContextM ()
-runMigration = do
-  logInfo _CMP_MIGRATION "(Table/Common) started"
-  dropFunctions
-  createFunctions
-  logInfo _CMP_MIGRATION "(Table/Common) ended"
-
+dropFunctions :: AppContextM Int64
 dropFunctions = do
   logInfo _CMP_MIGRATION "(Function/Common) drop functions"
   let sql =
@@ -24,6 +19,7 @@ dropFunctions = do
   let action conn = execute_ conn sql
   runDB action
 
+createFunctions :: AppContextM Int64
 createFunctions = do
   logInfo _CMP_MIGRATION "(Function/Common) create functions"
   createMajorVersionFn

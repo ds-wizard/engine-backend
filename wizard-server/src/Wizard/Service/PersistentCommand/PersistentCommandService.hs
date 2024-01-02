@@ -21,12 +21,12 @@ import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextMappers
 import Wizard.Service.PersistentCommand.PersistentCommandExecutor
 import Wizard.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Service.PersistentCommand.PersistentCommandUtil
 import Wizard.Service.Tenant.TenantUtil
 import qualified Wizard.Service.User.UserMapper as UM
-import Wizard.Util.Context
 
 getPersistentCommandsPage :: [String] -> Pageable -> [Sort] -> AppContextM (Page PersistentCommandDTO)
 getPersistentCommandsPage states pageable sort = do

@@ -9,13 +9,7 @@ import Registry.Model.Context.ContextLenses ()
 import Registry.S3.DocumentTemplate.DocumentTemplateS3
 import Shared.Common.Util.Logger
 
-runMigration :: AppContextM ()
-runMigration = do
-  logInfo _CMP_MIGRATION "(Table/DocumentTemplate) started"
-  dropTables
-  createTables
-  logInfo _CMP_MIGRATION "(Table/DocumentTemplate) ended"
-
+dropTables :: AppContextM ()
 dropTables = do
   dropTemplateAssetTable
   dropTemplateFileTable
@@ -41,6 +35,7 @@ dropTemplateAssetTable = do
   let action conn = execute_ conn sql
   runDB action
 
+createTables :: AppContextM ()
 createTables = do
   createTemplateTable
   createTemplateFileTable

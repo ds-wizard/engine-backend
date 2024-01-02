@@ -1,6 +1,7 @@
 module Shared.Common.Service.Config.Server.ServerConfigService where
 
-import Control.Monad.Reader (liftIO, when)
+import Control.Monad (when)
+import Control.Monad.Reader (liftIO)
 import Data.Aeson
 import Data.Maybe (fromJust, fromMaybe, isJust)
 import Data.Yaml (decodeFileEither)

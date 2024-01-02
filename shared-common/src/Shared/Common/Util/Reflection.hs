@@ -3,12 +3,13 @@ module Shared.Common.Util.Reflection (
   HasConstructor,
 ) where
 
+import Data.Kind
 import GHC.Generics
 
 constructorName :: (HasConstructor (Rep a), Generic a) => a -> String
 constructorName = genericConstructorName . from
 
-class HasConstructor (f :: * -> *) where
+class HasConstructor (f :: Type -> Type) where
   genericConstructorName :: f x -> String
 
 instance HasConstructor f => HasConstructor (D1 c f) where

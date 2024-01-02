@@ -1,5 +1,5 @@
 name: registry-server
-version: '4.1.1'
+version: '4.2.0'
 synopsis: Engine Registry
 description: Engine Registry
 category: Web
@@ -34,7 +34,6 @@ library:
   - cron
   - data-default
   - exceptions
-  - ginger
   - hashable
   - http-client
   - http-types
@@ -55,7 +54,6 @@ library:
   - regex-compat
   - resource-pool
   - servant
-  - servant-errors
   - servant-multipart
   - servant-server
   - servant-swagger

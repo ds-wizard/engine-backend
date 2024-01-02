@@ -23,11 +23,11 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Context.ContextLenses ()
+import Wizard.Model.Context.ContextMappers
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
-import Wizard.Util.Context
 import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsDTO
 import WizardLib.Public.Constant.UserToken
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
@@ -36,34 +36,28 @@ import WizardLib.Public.Model.User.UserToken
 import WizardLib.Public.Service.UserToken.UserTokenValidation
 
 runInUnauthService :: Maybe String -> TransactionState -> AppContextM a -> BaseContextM a
-runInUnauthService mServerUrl transactionState function = do
-  tenant <- getCurrentTenant mServerUrl
-  runIn tenant Nothing transactionState function
+runInUnauthService mServerUrl = runIn mServerUrl Nothing
 
 runInAuthService :: Maybe String -> UserDTO -> TransactionState -> AppContextM a -> BaseContextM a
-runInAuthService mServerUrl user transactionState function = do
-  tenant <- getCurrentTenant mServerUrl
-  runIn tenant (Just user) transactionState function
+runInAuthService mServerUrl user = runIn mServerUrl (Just user)
 
-runIn :: Tenant -> Maybe UserDTO -> TransactionState -> AppContextM a -> BaseContextM a
-runIn tenant mUser transactionState function = do
+runIn :: Maybe String -> Maybe UserDTO -> TransactionState -> AppContextM a -> BaseContextM a
+runIn mServerUrl mUser transactionState function = do
+  tenant <- getCurrentTenant mServerUrl
   if tenant.enabled
     then do
       baseContext <- ask
-      let loggingLevel = baseContext.serverConfig.logging.level
       eResult <-
         liftIO $ appContextFromBaseContext tenant.uuid mUser transactionState baseContext $ \appContext -> do
           liftIO $ runMonads (runAppContextM function) appContext
       case eResult of
         Right result -> return result
         Left error -> throwError =<< sendError error
-    else do
-      throwError =<< sendError LockedError
+    else throwError =<< sendError LockedError
 
 runWithSystemUser :: AppContextM a -> BaseContextM a
 runWithSystemUser function = do
   baseContext <- ask
-  let loggingLevel = baseContext.serverConfig.logging.level
   eResult <-
     liftIO $ appContextFromBaseContext defaultTenantUuid (Just . toDTO $ userSystem) NoTransaction baseContext $ \appContext -> do
       liftIO $ runMonads (runAppContextM function) appContext
@@ -71,20 +65,11 @@ runWithSystemUser function = do
     Right result -> return result
     Left error -> throwError =<< sendError error
 
-getMaybeAuthServiceExecutor
-  :: Maybe String
-  -> Maybe String
-  -> ((TransactionState -> AppContextM a -> BaseContextM a) -> BaseContextM b)
-  -> BaseContextM b
-getMaybeAuthServiceExecutor (Just tokenHeader) mServerUrl callback =
-  getAuthServiceExecutor (Just tokenHeader) mServerUrl callback
+getMaybeAuthServiceExecutor :: Maybe String -> Maybe String -> ((TransactionState -> AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+getMaybeAuthServiceExecutor (Just tokenHeader) mServerUrl callback = getAuthServiceExecutor (Just tokenHeader) mServerUrl callback
 getMaybeAuthServiceExecutor Nothing mServerUrl callback = callback (runInUnauthService mServerUrl)
 
-getAuthServiceExecutor
-  :: Maybe String
-  -> Maybe String
-  -> ((TransactionState -> AppContextM a -> BaseContextM a) -> BaseContextM b)
-  -> BaseContextM b
+getAuthServiceExecutor :: Maybe String -> Maybe String -> ((TransactionState -> AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
 getAuthServiceExecutor (Just token) mServerUrl callback = do
   userTokenClaims <- validateJwtToken token
   isTokenExistsInDb userTokenClaims mServerUrl
@@ -92,8 +77,7 @@ getAuthServiceExecutor (Just token) mServerUrl callback = do
   if user.active
     then callback (runInAuthService mServerUrl user)
     else throwError =<< (sendError . UnauthorizedError $ _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED)
-getAuthServiceExecutor Nothing _ _ =
-  throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
+getAuthServiceExecutor Nothing _ _ = throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
 
 getCurrentUser :: UserTokenClaimsDTO -> Maybe String -> BaseContextM UserDTO
 getCurrentUser userTokenClaims mServerUrl = do
@@ -127,15 +111,11 @@ isTokenExistsInDb userTokenClaims mServerUrl = do
 getCurrentTenant :: Maybe String -> BaseContextM Tenant
 getCurrentTenant mServerUrl = do
   baseContext <- ask
-  let serverConfig = baseContext.serverConfig
-  if serverConfig.cloud.enabled
+  if baseContext.serverConfig.cloud.enabled
     then case mServerUrl of
       Nothing -> runWithSystemUser . throwError $ UnauthorizedError (_ERROR_VALIDATION__TENANT_ABSENCE "not-provided")
-      Just serverUrl -> do
-        runWithSystemUser $ catchError (findTenantByServerDomain serverUrl) (handleError serverUrl)
-    else
-      runWithSystemUser $
-        catchError (findTenantByUuid defaultTenantUuid) (handleError (U.toString defaultTenantUuid))
+      Just serverUrl -> runWithSystemUser $ catchError (findTenantByServerDomain serverUrl) (handleError serverUrl)
+    else runWithSystemUser $ catchError (findTenantByUuid defaultTenantUuid) (handleError (U.toString defaultTenantUuid))
   where
     handleError host (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__TENANT_ABSENCE host)
     handleError host error = throwError error

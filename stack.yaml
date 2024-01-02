@@ -1,4 +1,4 @@
-resolver: nightly-2023-06-21
+resolver: nightly-2023-12-08
 
 packages:
 - shared-common
@@ -17,16 +17,16 @@ extra-deps:
     commit: v0.1.7.0
   - github: haskellify/servant-mock
     commit: v0.8.7
+  - github: haskellify/cron
+    commit: cef3249aae7977b607dd4638a65d6a985b2f5759
+  - github: haskellify/minio-hs
+    commit: 83446d193f9bba02b758d2f1bd34a642f575238c
+  - github: JonathanLorimer/hs-connection
+    commit: 1dc000d38963de0e4c3954b27d4fe0e5f1d9cee2
   - text-replace-0.0.0.4
   - servant-swagger-tags-0.1.0.1
   - fsutils-0.1.2
   - oidc-client-0.6.1.0
   - raven-haskell-0.1.4.1
-  - ginger-0.10.4.0
-  - minio-hs-1.6.0
-  - servant-multipart-0.12.1
-  - relude-1.1.0.0
-  - servant-docs-0.12
-  - servant-foreign-0.15.4
 
 allow-newer: true

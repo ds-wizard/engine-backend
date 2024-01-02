@@ -2,133 +2,133 @@ module Wizard.Database.Migration.Development.Migration (
   runMigration,
 ) where
 
-import qualified Shared.Audit.Database.Migration.Development.Audit.AuditMigration as ADT
-import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
+import qualified Shared.Audit.Database.Migration.Development.Audit.AuditMigration as Audit
+import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMigration as Audit
 import Shared.Common.Constant.Component
 import Shared.Common.Util.Logger
-import qualified Shared.Component.Database.Migration.Development.Component.ComponentMigration as CMP
-import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
-import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
-import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabMigration as PF
-import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
-import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ACK
-import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
-import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
-import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
-import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
-import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as B_Schema
-import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as CMN_Schema
-import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
-import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
-import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
-import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as TML_Schema
-import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as F
-import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
-import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMigration as INS_Schema
-import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC
-import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as LOC_Schema
-import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorMigration as KM_MIG
-import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KM_MIG_Schema
-import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration as QTN_MIG
-import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorSchemaMigration as QTN_MIG_Schema
-import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
-import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
-import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
-import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterMigration as QI
-import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QI_Schema
-import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R
-import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as R_Schema
-import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
-import qualified Wizard.Database.Migration.Development.TemporaryFile.TemporaryFileSchemaMigration as TF_Schema
-import qualified Wizard.Database.Migration.Development.Tenant.TenantMigration as TNT
-import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigration as TNT_Schema
-import qualified Wizard.Database.Migration.Development.User.UserMigration as U
-import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as U_Schema
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentMigration as Component
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as Component
+import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PersistentCommand
+import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabMigration as Prefab
+import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as Prefab
+import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ActionKey
+import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ActionKey
+import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BookReference
+import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BookReference
+import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as Branch
+import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as Branch
+import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as Common
+import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as Document
+import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as Document
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DocumentTemplate
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as DocumentTemplate
+import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as Feedback
+import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as Feedback
+import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMigration as Instance
+import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as Locale
+import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
+import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorMigration as KnowledgeModelMigrator
+import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KnowledgeModelMigrator
+import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration as QuestionnaireMigrator
+import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorSchemaMigration as QuestionnaireMigrator
+import qualified Wizard.Database.Migration.Development.Package.PackageMigration as Package
+import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as Package
+import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
+import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as Questionnaire
+import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as Questionnaire
+import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterMigration as QuestionnaireImporter
+import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QuestionnaireImporter
+import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as Registry
+import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as Registry
+import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as Submission
+import qualified Wizard.Database.Migration.Development.TemporaryFile.TemporaryFileSchemaMigration as TemporaryFile
+import qualified Wizard.Database.Migration.Development.Tenant.TenantMigration as Tenant
+import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigration as Tenant
+import qualified Wizard.Database.Migration.Development.User.UserMigration as User
+import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as User
+import Wizard.Model.Context.ContextMappers
 
-runMigration = do
+runMigration = runAppContextWithBaseContext $ do
   logInfo _CMP_MIGRATION "started"
   -- 1. Drop DB functions
-  B_Schema.dropFunctions
-  PKG_Schema.dropFunctions
-  TML_Schema.dropFunctions
-  CMN_Schema.dropFunctions
+  Branch.dropFunctions
+  DocumentTemplate.dropFunctions
+  Package.dropFunctions
+  Common.dropFunctions
   -- 2. Drop schema
-  CMP_Schema.dropTables
-  TF_Schema.dropTables
-  LOC_Schema.dropTables
-  R_Schema.dropTables
-  QI_Schema.dropTables
-  ADT_Schema.dropTables
-  PF_Schema.dropTables
-  PC_Schema.dropTables
-  SUB_Schema.dropTables
-  ACK_Schema.dropTables
-  BR_Schema.dropTables
-  F_Schema.dropTables
-  KM_MIG_Schema.dropTables
-  B_Schema.dropTables
-  DOC_Schema.dropTables
-  QTN_MIG_Schema.dropTables
-  QTN_Schema.dropTables
-  TML_Schema.dropTables
-  PKG_Schema.dropTables
-  PKG_Schema.dropFunctions
-  U_Schema.dropTables
-  TNT_Schema.dropTables
-  INS_Schema.dropTables
+  Component.dropTables
+  TemporaryFile.dropTables
+  Locale.dropTables
+  Registry.dropTables
+  QuestionnaireImporter.dropTables
+  Audit.dropTables
+  Prefab.dropTables
+  PersistentCommand.dropTables
+  Submission.dropTables
+  KnowledgeModelMigrator.dropTables
+  QuestionnaireMigrator.dropTables
+  Document.dropTables
+  Questionnaire.dropTables
+  Branch.dropTables
+  Feedback.dropTables
+  BookReference.dropTables
+  ActionKey.dropTables
+  DocumentTemplate.dropTables
+  Package.dropTables
+  User.dropTables
+  Tenant.dropTables
+  Instance.dropTables
   -- 3. Create schema
-  INS_Schema.createTables
-  TNT_Schema.createTables
-  U_Schema.createTables
-  TML_Schema.createTables
-  PKG_Schema.createTables
-  ACK_Schema.createTables
-  BR_Schema.createTables
-  F_Schema.createTables
-  B_Schema.createTables
-  QTN_Schema.createTables
-  TML_Schema.createDraftDataTable
-  DOC_Schema.createTables
-  QTN_MIG_Schema.createTables
-  KM_MIG_Schema.createTables
-  SUB_Schema.createTables
-  PC_Schema.createTables
-  PF_Schema.createTables
-  ADT_Schema.createTables
-  QI_Schema.createTables
-  R_Schema.createTables
-  LOC_Schema.createTables
-  TF_Schema.createTables
-  CMP_Schema.createTables
+  Instance.createTables
+  Tenant.createTables
+  User.createTables
+  Package.createTables
+  DocumentTemplate.createTables
+  ActionKey.createTables
+  BookReference.createTables
+  Feedback.createTables
+  Branch.createTables
+  Questionnaire.createTables
+  DocumentTemplate.createDraftDataTable
+  Document.createTables
+  QuestionnaireMigrator.createTables
+  KnowledgeModelMigrator.createTables
+  Submission.createTables
+  PersistentCommand.createTables
+  Prefab.createTables
+  Audit.createTables
+  QuestionnaireImporter.createTables
+  Registry.createTables
+  Locale.createTables
+  TemporaryFile.createTables
+  Component.createTables
   -- 4. Create DB functions
-  CMN_Schema.createFunctions
-  PKG_Schema.createFunctions
-  TML_Schema.createFunctions
-  B_Schema.createFunctions
+  Common.createFunctions
+  Package.createFunctions
+  DocumentTemplate.createFunctions
+  Branch.createFunctions
   -- 5. Load S3 fixtures
-  TML.runS3Migration
-  LOC.runS3Migration
+  DocumentTemplate.runS3Migration
+  Locale.runS3Migration
   -- 6. Load fixtures
-  TNT.runMigration
-  U.runMigration
-  TML.runMigration
-  PKG.runMigration
-  B.runMigration
-  KM_MIG.runMigration
-  QTN.runMigration
-  QTN_MIG.runMigration
-  BR.runMigration
-  F.runMigration
-  DOC.runMigration
-  ACK.runMigration
-  PC.runMigration
-  PF.runMigration
-  ADT.runMigration
-  QI.runMigration
-  R.runMigration
-  LOC.runMigration
-  CMP.runMigration
+  Tenant.runMigration
+  User.runMigration
+  Package.runMigration
+  DocumentTemplate.runMigration
+  ActionKey.runMigration
+  BookReference.runMigration
+  Feedback.runMigration
+  Branch.runMigration
+  Questionnaire.runMigration
+  Document.runMigration
+  QuestionnaireMigrator.runMigration
+  KnowledgeModelMigrator.runMigration
+  PersistentCommand.runMigration
+  Prefab.runMigration
+  Audit.runMigration
+  QuestionnaireImporter.runMigration
+  Registry.runMigration
+  Locale.runMigration
+  Component.runMigration
   logInfo _CMP_MIGRATION "ended"
   return Nothing

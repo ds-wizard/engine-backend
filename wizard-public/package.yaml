@@ -1,5 +1,5 @@
 name: wizard-public
-version: '4.1.1'
+version: '4.2.0'
 synopsis: Wizard Public
 description: Wizard Public
 category: Web
@@ -44,9 +44,9 @@ default-extensions:
   - ExistentialQuantification
   - ExtendedDefaultRules
   - FlexibleContexts
+  - FlexibleInstances
   - FunctionalDependencies
   - GeneralizedNewtypeDeriving
-  - FlexibleInstances
   - MultiParamTypeClasses
   - OverloadedStrings
   - QuasiQuotes
@@ -54,6 +54,7 @@ default-extensions:
   - RecordWildCards
   - ScopedTypeVariables
   - TemplateHaskell
+  - TypeApplications
   - TypeFamilies
   - TypeOperators
   - TypeSynonymInstances

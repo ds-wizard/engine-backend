@@ -13,7 +13,7 @@ import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.S3.Common
 import Shared.Common.Service.Config.BuildInfo.BuildInfoConfigService
 import Shared.Common.Service.Config.Server.ServerConfigService
-import Wizard.Bootstrap.ServerCache
+import Wizard.Cache.CacheFactory
 import Wizard.Constant.Resource
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.ServantClient

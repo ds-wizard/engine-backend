@@ -22,9 +22,9 @@ import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextMappers
 import Wizard.Model.Tenant.Tenant
 import qualified Wizard.Service.User.UserMapper as UM
-import Wizard.Util.Context
 
 runFunctionForAllTenants :: String -> AppContextM (ContextResult, Maybe String) -> AppContextM ()
 runFunctionForAllTenants functionName function = do

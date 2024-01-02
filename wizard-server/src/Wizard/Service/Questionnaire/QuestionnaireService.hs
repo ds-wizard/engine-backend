@@ -29,6 +29,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
@@ -356,6 +357,7 @@ modifyQuestionnaire qtnUuid reqDto =
 deleteQuestionnaire :: U.UUID -> Bool -> AppContextM ()
 deleteQuestionnaire qtnUuid shouldValidatePermission =
   runInTransaction $ do
+    unsetQuestionnaireFromDocumentTemplate qtnUuid
     qtn <- findQuestionnaireByUuid qtnUuid
     validateQuestionnaireDeletation qtnUuid
     when shouldValidatePermission (checkOwnerPermissionToQtn qtn.visibility qtn.permissions)

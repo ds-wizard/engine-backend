@@ -15,6 +15,7 @@ import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Util.Cache
 import Shared.Common.Util.String
+import Wizard.Cache.UserCache
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.User.User ()
 import Wizard.Database.Mapping.User.UserSuggestion ()
@@ -22,7 +23,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
-import Wizard.Service.Cache.UserCache
 import WizardLib.Public.Database.Mapping.User.UserWithMembership ()
 import WizardLib.Public.Model.User.UserWithMembership
 

@@ -2,17 +2,17 @@ module Registry.TestMigration where
 
 import Registry.Database.DAO.Audit.AuditEntryDAO
 import Registry.Database.DAO.Organization.OrganizationDAO
-import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
-import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as ADT_Schema
-import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as TML_Schema
-import qualified Registry.Database.Migration.Development.Locale.LocaleSchemaMigration as LOC_Schema
-import qualified Registry.Database.Migration.Development.Organization.OrganizationSchemaMigration as ORG_Schema
-import qualified Registry.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
-import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
+import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ActionKey
+import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as Audit
+import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as DocumentTemplate
+import qualified Registry.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
+import qualified Registry.Database.Migration.Development.Organization.OrganizationSchemaMigration as Organization
+import qualified Registry.Database.Migration.Development.Package.PackageSchemaMigration as Package
+import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
 import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.Component.Database.DAO.Component.ComponentDAO
-import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as CMP_Schema
+import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as Component
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
@@ -25,24 +25,24 @@ buildSchema appContext =
   -- 1. Drop
   do
     putStrLn "DB: dropping schema"
-    runInContext CMP_Schema.dropTables appContext
-    runInContext LOC_Schema.dropTables appContext
-    runInContext PC_Schema.dropTables appContext
-    runInContext ACK_Schema.dropTables appContext
-    runInContext ADT_Schema.dropTables appContext
-    runInContext ORG_Schema.dropTables appContext
-    runInContext PKG_Schema.dropTables appContext
-    runInContext TML_Schema.dropTables appContext
+    runInContext Component.dropTables appContext
+    runInContext Locale.dropTables appContext
+    runInContext PersistentCommand.dropTables appContext
+    runInContext ActionKey.dropTables appContext
+    runInContext Audit.dropTables appContext
+    runInContext Organization.dropTables appContext
+    runInContext Package.dropTables appContext
+    runInContext DocumentTemplate.dropTables appContext
     -- 2. Create
     putStrLn "DB: Creating schema"
-    runInContext ORG_Schema.createTables appContext
-    runInContext PKG_Schema.createTables appContext
-    runInContext ACK_Schema.createTables appContext
-    runInContext ADT_Schema.createTables appContext
-    runInContext TML_Schema.createTables appContext
-    runInContext PC_Schema.createTables appContext
-    runInContext LOC_Schema.createTables appContext
-    runInContext CMP_Schema.createTables appContext
+    runInContext Organization.createTables appContext
+    runInContext Package.createTables appContext
+    runInContext ActionKey.createTables appContext
+    runInContext Audit.createTables appContext
+    runInContext DocumentTemplate.createTables appContext
+    runInContext PersistentCommand.createTables appContext
+    runInContext Locale.createTables appContext
+    runInContext Component.createTables appContext
 
 resetDB appContext = do
   runInContext deletePersistentCommands appContext

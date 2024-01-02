@@ -1,21 +1,14 @@
 module Wizard.Database.Migration.Development.Branch.BranchSchemaMigration where
 
 import Database.PostgreSQL.Simple
+import GHC.Int
 
 import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
-runMigration :: AppContextM ()
-runMigration = do
-  logInfo _CMP_MIGRATION "(Table/Branch) started"
-  dropFunctions
-  dropTables
-  createTables
-  createFunctions
-  logInfo _CMP_MIGRATION "(Table/Branch) ended"
-
+dropTables :: AppContextM Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Branch) drop tables"
   let sql =
@@ -24,6 +17,7 @@ dropTables = do
   let action conn = execute_ conn sql
   runDB action
 
+dropFunctions :: AppContextM Int64
 dropFunctions = do
   logInfo _CMP_MIGRATION "(Function/Branch) drop functions"
   let sql =
@@ -32,6 +26,7 @@ dropFunctions = do
   let action conn = execute_ conn sql
   runDB action
 
+createTables :: AppContextM Int64
 createTables = do
   createBranchTable
   createBranchDataTable
@@ -80,6 +75,7 @@ createBranchDataTable = do
   let action conn = execute_ conn sql
   runDB action
 
+createFunctions :: AppContextM Int64
 createFunctions = do
   logInfo _CMP_MIGRATION "(Function/Branch) create functions"
   createGetBranchForkOfPackageIdFn

@@ -1,5 +1,5 @@
 name: shared-common
-version: '4.1.1'
+version: '4.2.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -23,11 +23,13 @@ library:
   dependencies:
   - base
   - aeson
+  - async
   - attoparsec
   - base64
   - blaze-html
   - bytestring
   - case-insensitive
+  - clock
   - conduit
   - containers
   - cron
@@ -51,6 +53,7 @@ library:
   - oidc-client
   - postgresql-simple
   - postgresql-libpq
+  - postgresql-migration
   - pretty-terminal
   - random
   - raven-haskell
@@ -61,6 +64,7 @@ library:
   - scientific
   - servant
   - servant-server
+  - servant-errors
   - servant-multipart
   - servant-swagger
   - swagger2
@@ -116,9 +120,9 @@ default-extensions:
   - ExistentialQuantification
   - ExtendedDefaultRules
   - FlexibleContexts
+  - FlexibleInstances
   - FunctionalDependencies
   - GeneralizedNewtypeDeriving
-  - FlexibleInstances
   - MultiParamTypeClasses
   - OverloadedStrings
   - QuasiQuotes
@@ -126,6 +130,7 @@ default-extensions:
   - RecordWildCards
   - ScopedTypeVariables
   - TemplateHaskell
+  - TypeApplications
   - TypeFamilies
   - TypeOperators
   - TypeSynonymInstances

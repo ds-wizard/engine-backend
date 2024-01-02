@@ -1,9 +1,6 @@
-module Registry.Database.Migration.Production.Migration (
-  runMigration,
-) where
+module Registry.Database.Migration.Production.Migration where
 
 import Database.PostgreSQL.Migration.Entity
-import Database.PostgreSQL.Migration.Migration
 
 import qualified Registry.Database.Migration.Production.Migration_0001_init.Migration as M_0001
 import qualified Registry.Database.Migration.Production.Migration_0002_app.Migration as M_0002
@@ -17,11 +14,6 @@ import qualified Registry.Database.Migration.Production.Migration_0009_persisten
 import qualified Registry.Database.Migration.Production.Migration_0010_pkgAndDocReadOnly.Migration as M_0010
 import qualified Registry.Database.Migration.Production.Migration_0011_traceUuid.Migration as M_0011
 import qualified Registry.Database.Migration.Production.Migration_0012_tenant.Migration as M_0012
-import Shared.Common.Util.Logger
-
-runMigration baseContext = do
-  let loggingLevel = baseContext.serverConfig.logging.level
-  runLogging loggingLevel $ migrateDatabase baseContext.dbPool migrationDefinitions (logInfo _CMP_MIGRATION)
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =

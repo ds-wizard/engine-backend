@@ -1,5 +1,5 @@
 name: wizard-common
-version: '4.1.1'
+version: '4.2.0'
 synopsis: Wizard Engine
 description: Wizard Engine
 category: Web
@@ -103,9 +103,9 @@ default-extensions:
   - ExistentialQuantification
   - ExtendedDefaultRules
   - FlexibleContexts
+  - FlexibleInstances
   - FunctionalDependencies
   - GeneralizedNewtypeDeriving
-  - FlexibleInstances
   - MultiParamTypeClasses
   - OverloadedStrings
   - QuasiQuotes
@@ -113,6 +113,7 @@ default-extensions:
   - RecordWildCards
   - ScopedTypeVariables
   - TemplateHaskell
+  - TypeApplications
   - TypeFamilies
   - TypeOperators
   - TypeSynonymInstances

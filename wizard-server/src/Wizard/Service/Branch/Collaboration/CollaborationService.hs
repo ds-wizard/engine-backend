@@ -11,6 +11,7 @@ import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Branch.Event.BranchEventDTO
 import Wizard.Api.Resource.Websocket.BranchActionJM ()
 import Wizard.Api.Resource.Websocket.WebsocketActionJM ()
+import Wizard.Cache.BranchWebsocketCache
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Localization.Messages.Public
@@ -19,7 +20,6 @@ import Wizard.Model.Websocket.WebsocketMessage
 import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.Branch.Collaboration.CollaborationAcl
 import Wizard.Service.Branch.Collaboration.CollaborationMapper
-import Wizard.Service.Cache.BranchWebsocketCache
 import Wizard.Service.Websocket.WebsocketService
 import Wizard.Util.Websocket
 

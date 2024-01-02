@@ -5,7 +5,7 @@ import Servant
 import Servant.Swagger
 import Servant.Swagger.UI
 
-import Registry.Api.Api
+import Registry.Api.Handler.Api
 import Registry.Api.Resource.ActionKey.ActionKeySM ()
 import Registry.Api.Resource.Config.ClientConfigSM ()
 import Registry.Api.Resource.DocumentTemplate.DocumentTemplateDetailSM ()
@@ -38,7 +38,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Registry API"
               , _infoDescription = Just "API specification for Registry"
-              , _infoVersion = "4.1.1"
+              , _infoVersion = "4.2.0"
               , _infoLicense =
                   Just $
                     License

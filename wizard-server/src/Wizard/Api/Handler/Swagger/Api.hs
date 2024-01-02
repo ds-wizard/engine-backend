@@ -18,7 +18,7 @@ import Shared.Component.Api.Resource.Component.ComponentSM ()
 import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandChangeSM ()
 import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Shared.Prefab.Api.Resource.Prefab.PrefabSM ()
-import Wizard.Api.Api
+import Wizard.Api.Handler.Api
 import Wizard.Api.Resource.ActionKey.ActionKeyTypeSM ()
 import Wizard.Api.Resource.Auth.AuthConsentSM ()
 import Wizard.Api.Resource.BookReference.BookReferenceSM ()
@@ -131,7 +131,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.1.1"
+              , _infoVersion = "4.2.0"
               , _infoLicense =
                   Just $
                     License

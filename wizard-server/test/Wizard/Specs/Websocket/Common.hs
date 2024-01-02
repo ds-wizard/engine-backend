@@ -8,8 +8,8 @@ import Network.Socket
 import Network.WebSockets hiding (serverPort)
 import Network.WebSockets.Stream hiding (close)
 
-import Wizard.Bootstrap.Web
-import Wizard.Util.Context
+import Wizard.Application
+import Wizard.Model.Context.ContextMappers
 
 runWebserver appContext = race_ (runWebServer (baseContextFromAppContext appContext))
 

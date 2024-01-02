@@ -36,6 +36,7 @@ createResponse body =
           , onRequestBodyException = \_ -> return ()
           , requestManagerOverride = Nothing
           , shouldStripHeaderOnRedirect = const True
+          , shouldStripHeaderOnRedirectIfOnDifferentHostOnly = False
           , proxySecureMode = ProxySecureWithConnect
           , redactHeaders = S.empty
           }

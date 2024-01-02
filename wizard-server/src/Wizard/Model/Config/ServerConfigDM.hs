@@ -3,7 +3,9 @@ module Wizard.Model.Config.ServerConfigDM where
 import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Config.ServerConfigDM
+import Shared.Worker.Model.Worker.CronWorker
 import Wizard.Model.Config.ServerConfig
+import Wizard.Worker.CronWorkers
 
 defaultConfig :: ServerConfig
 defaultConfig =
@@ -94,21 +96,21 @@ defaultRegistry =
 
 defaultRegistrySyncJob :: ServerConfigCronWorker
 defaultRegistrySyncJob =
-  ServerConfigCronWorker {enabled = True, cron = "*/15 * * * *"}
+  ServerConfigCronWorker {enabled = True, cron = registrySyncWorker.cronDefault}
 
 defaultActionKey :: ServerConfigActionKey
 defaultActionKey = ServerConfigActionKey {clean = defaultActionKeyClean}
 
 defaultActionKeyClean :: ServerConfigCronWorker
 defaultActionKeyClean =
-  ServerConfigCronWorker {enabled = True, cron = "20 0 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = actionKeyWorker.cronDefault}
 
 defaultBranch :: ServerConfigBranch
 defaultBranch = ServerConfigBranch {squash = defaultBranchSquash}
 
 defaultBranchSquash :: ServerConfigCronWorker
 defaultBranchSquash =
-  ServerConfigCronWorker {enabled = True, cron = "*/5 * * * *"}
+  ServerConfigCronWorker {enabled = True, cron = squashBranchEventsWorker.cronDefault}
 
 defaultCache :: ServerConfigCache
 defaultCache =
@@ -120,14 +122,14 @@ defaultCache =
 
 defaultCachePurgeExpired :: ServerConfigCronWorker
 defaultCachePurgeExpired =
-  ServerConfigCronWorker {enabled = True, cron = "45 * * * *"}
+  ServerConfigCronWorker {enabled = True, cron = cacheWorker.cronDefault}
 
 defaultDocument :: ServerConfigDocument
 defaultDocument = ServerConfigDocument {clean = defaultDocumentClean}
 
 defaultDocumentClean :: ServerConfigCronWorker
 defaultDocumentClean =
-  ServerConfigCronWorker {enabled = True, cron = "0 */4 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = documentWorker.cronDefault}
 
 defaultFeedback :: ServerConfigFeedback
 defaultFeedback =
@@ -139,14 +141,14 @@ defaultFeedback =
 
 defaultFeedbackSync :: ServerConfigCronWorker
 defaultFeedbackSync =
-  ServerConfigCronWorker {enabled = True, cron = "0 2 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = feedbackWorker.cronDefault}
 
 defaultPlan :: ServerConfigPlan
 defaultPlan = ServerConfigPlan {recomputeJob = defaultPlanRecomputeJob}
 
 defaultPlanRecomputeJob :: ServerConfigCronWorker
 defaultPlanRecomputeJob =
-  ServerConfigCronWorker {enabled = True, cron = "0 * * * *"}
+  ServerConfigCronWorker {enabled = False, cron = tenantPlanWorker.cronDefault}
 
 defaultQuestionnaire :: ServerConfigQuestionnaire
 defaultQuestionnaire =
@@ -158,33 +160,33 @@ defaultQuestionnaire =
 
 defaultQuestionnaireClean :: ServerConfigCronWorker
 defaultQuestionnaireClean =
-  ServerConfigCronWorker {enabled = True, cron = "15 */4 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = cleanQuestionnaireWorker.cronDefault}
 
 defaultQuestionnaireRecomputeIndication :: ServerConfigCronWorker
 defaultQuestionnaireRecomputeIndication =
-  ServerConfigCronWorker {enabled = True, cron = "20 1 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = recomputeQuestionnaireIndicationWorker.cronDefault}
 
 defaultQuestionnaireSquash :: ServerConfigCronWorker
 defaultQuestionnaireSquash =
-  ServerConfigCronWorker {enabled = True, cron = "*/4 * * * *"}
+  ServerConfigCronWorker {enabled = True, cron = squashQuestionnaireEventsWorker.cronDefault}
 
 defaultTemporaryFile :: ServerConfigTemporaryFile
 defaultTemporaryFile = ServerConfigTemporaryFile {clean = defaultTemporaryFileClean}
 
 defaultTemporaryFileClean :: ServerConfigCronWorker
 defaultTemporaryFileClean =
-  ServerConfigCronWorker {enabled = True, cron = "25 0 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = temporaryFileWorker.cronDefault}
 
 defaultUserToken :: ServerConfigUserToken
 defaultUserToken = ServerConfigUserToken {clean = defaultUserTokenClean, expire = defaultUserTokenExpire}
 
 defaultUserTokenClean :: ServerConfigCronWorker
 defaultUserTokenClean =
-  ServerConfigCronWorker {enabled = True, cron = "0 3 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = cleanUserTokenWorker.cronDefault}
 
 defaultUserTokenExpire :: ServerConfigCronWorker
 defaultUserTokenExpire =
-  ServerConfigCronWorker {enabled = True, cron = "0 4 * * *"}
+  ServerConfigCronWorker {enabled = True, cron = expireUserTokenWorker.cronDefault}
 
 defaultAdmin :: ServerConfigAdmin
 defaultAdmin =
