@@ -48,8 +48,10 @@ defaultCloud =
 defaultPersistentCommand :: ServerConfigPersistentCommand
 defaultPersistentCommand =
   ServerConfigPersistentCommand
-    { listenerJob = defaultPersistentCommandListenerJob
+    { lambdaFunctions = []
+    , listenerJob = defaultPersistentCommandListenerJob
     , retryJob = defaultPersistentCommandRetryJob
+    , retryLambdaJob = defaultPersistentCommandRetryLambdaJob
     }
 
 defaultPersistentCommandListenerJob :: ServerConfigPersistentCommandListenerJob
@@ -58,4 +60,8 @@ defaultPersistentCommandListenerJob =
 
 defaultPersistentCommandRetryJob :: ServerConfigCronWorker
 defaultPersistentCommandRetryJob =
+  ServerConfigCronWorker {enabled = True, cron = "* * * * *"}
+
+defaultPersistentCommandRetryLambdaJob :: ServerConfigCronWorker
+defaultPersistentCommandRetryLambdaJob =
   ServerConfigCronWorker {enabled = True, cron = "* * * * *"}

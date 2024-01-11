@@ -48,6 +48,9 @@ instance HasField "sentry'" ServerConfig ServerConfigSentry where
 instance HasField "cloud'" ServerConfig ServerConfigCloud where
   getField = (.cloud)
 
+instance HasField "persistentCommand'" ServerConfig ServerConfigPersistentCommand where
+  getField = (.persistentCommand)
+
 instance HasField "dbPool'" AppContext (Pool Connection) where
   getField = (.dbPool)
 

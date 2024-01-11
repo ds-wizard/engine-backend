@@ -53,12 +53,20 @@ data ServerConfigCronWorker = ServerConfigCronWorker
   deriving (Generic, Show)
 
 data ServerConfigPersistentCommand = ServerConfigPersistentCommand
-  { listenerJob :: ServerConfigPersistentCommandListenerJob
+  { lambdaFunctions :: [ServerConfigPersistentCommandLambda]
+  , listenerJob :: ServerConfigPersistentCommandListenerJob
   , retryJob :: ServerConfigCronWorker
+  , retryLambdaJob :: ServerConfigCronWorker
   }
   deriving (Generic, Show)
 
 data ServerConfigPersistentCommandListenerJob = ServerConfigPersistentCommandListenerJob
   { enabled :: Bool
+  }
+  deriving (Generic, Show)
+
+data ServerConfigPersistentCommandLambda = ServerConfigPersistentCommandLambda
+  { component :: String
+  , functionArn :: String
   }
   deriving (Generic, Show)

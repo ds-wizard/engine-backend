@@ -75,9 +75,18 @@ instance FromJSON ServerConfigCronWorker where
 
 instance FromJSON ServerConfigPersistentCommand where
   parseJSON (Object o) = do
+    lambdaFunctions <- o .:? "lambdaFunctions" .!= []
     listenerJob <- o .:? "listenerJob" .!= defaultPersistentCommand.listenerJob
     retryJob <- o .:? "retryJob" .!= defaultPersistentCommand.retryJob
+    retryLambdaJob <- o .:? "retryLambdaJob" .!= defaultPersistentCommand.retryLambdaJob
     return ServerConfigPersistentCommand {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigPersistentCommandLambda where
+  parseJSON (Object o) = do
+    component <- o .: "component"
+    functionArn <- o .: "functionArn"
+    return ServerConfigPersistentCommandLambda {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigPersistentCommandListenerJob where

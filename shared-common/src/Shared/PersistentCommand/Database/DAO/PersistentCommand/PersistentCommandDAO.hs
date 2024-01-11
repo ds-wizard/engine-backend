@@ -1,6 +1,8 @@
 module Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO where
 
+import Control.Monad.Reader (ask)
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.List as L
 import Data.String (fromString)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
@@ -14,13 +16,17 @@ import Shared.Common.Database.DAO.Common
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
+import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.AppContext
 import Shared.Common.Util.Logger
-import Shared.Common.Util.String (trim)
+import Shared.Common.Util.String (f'', trim)
+import Shared.PersistentCommand.Database.Mapping.PersistentCommand.LambdaInvocationResult ()
 import Shared.PersistentCommand.Database.Mapping.PersistentCommand.PersistentCommand ()
 import Shared.PersistentCommand.Database.Mapping.PersistentCommand.PersistentCommandSimple ()
+import Shared.PersistentCommand.Model.PersistentCommand.LambdaInvocationResult
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommandSimple
+import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
 
 entityName = "persistent_command"
 
@@ -40,19 +46,35 @@ findPersistentCommandsPage states pageable sort = do
           _ -> f' "WHERE state in (%s) " [generateQuestionMarks states]
   createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort "*" condition states
 
-findPersistentCommandsByStates :: (AppContextC s sc m, FromField identity) => m [PersistentCommandSimple identity]
-findPersistentCommandsByStates = do
+findPersistentCommandsForRetryByStates :: (AppContextC s sc m, FromField identity) => m [PersistentCommandSimple identity]
+findPersistentCommandsForRetryByStates = findPersistentCommandsByStates True []
+
+findPersistentCommandsForLambdaByStates :: (AppContextC s sc m, FromField identity) => [String] -> m [PersistentCommandSimple identity]
+findPersistentCommandsForLambdaByStates = findPersistentCommandsByStates False
+
+findPersistentCommandsByStates :: (AppContextC s sc m, FromField identity) => Bool -> [String] -> m [PersistentCommandSimple identity]
+findPersistentCommandsByStates internal components = do
+  let componentCondition =
+        case components of
+          [] -> ""
+          _ -> f' "AND component IN (%s) " [generateQuestionMarks components]
   let sql =
-        "SELECT uuid, destination, tenant_uuid, created_by \
-        \FROM persistent_command \
-        \WHERE (state = 'NewPersistentCommandState' \
-        \  OR (state = 'ErrorPersistentCommandState' AND attempts < max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
-        \  AND internal = true \
-        \ORDER BY created_at \
-        \LIMIT 5 \
-        \FOR UPDATE"
-  logInfoI _CMP_DATABASE (trim sql)
-  let action conn = query_ conn (fromString sql)
+        fromString $
+          f''
+            "SELECT uuid, destination, component, tenant_uuid, created_by \
+            \FROM persistent_command \
+            \WHERE (state = 'NewPersistentCommandState' \
+            \  OR (state = 'ErrorPersistentCommandState' AND attempts < max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
+            \  AND internal = ${internal} ${componentCondition} \
+            \ORDER BY created_at \
+            \LIMIT 5 \
+            \FOR UPDATE"
+            [ ("internal", show internal)
+            , ("componentCondition", componentCondition)
+            ]
+  let params = components
+  logQuery sql params
+  let action conn = query conn sql params
   runDB action
 
 findPersistentCommandByUuid :: (AppContextC s sc m, FromField identity) => U.UUID -> m (PersistentCommand identity)
@@ -68,9 +90,11 @@ findPersistentCommandSimpleByUuid uuid =
 insertPersistentCommand :: (AppContextC s sc m, ToField identity) => PersistentCommand identity -> m Int64
 insertPersistentCommand command = do
   createInsertFn entityName command
-  if command.internal
-    then notifyPersistentCommandQueue
-    else notifySpecificPersistentCommandQueue command
+  context <- ask
+  case (command.internal, L.find (\lf -> lf.component == command.component) (context.serverConfig'.persistentCommand'.lambdaFunctions)) of
+    (True, _) -> notifyPersistentCommandQueue
+    (False, Nothing) -> notifySpecificPersistentCommandQueue command
+    (False, Just lf) -> invokeLambdaFunction (toSimple command) lf
 
 updatePersistentCommandByUuid :: (AppContextC s sc m, ToField identity) => PersistentCommand identity -> m Int64
 updatePersistentCommandByUuid command = do
@@ -125,3 +149,12 @@ notifySpecificPersistentCommandQueue command = do
   logInfoI _CMP_DATABASE (trim sql)
   let action conn = execute_ conn (fromString sql)
   runDB action
+
+invokeLambdaFunction :: AppContextC s sc m => PersistentCommandSimple identity -> ServerConfigPersistentCommandLambda -> m Int64
+invokeLambdaFunction command lf = do
+  let sql = f' "SELECT * FROM aws_lambda.invoke('%s', '{}'::json, 'eu-central-1', 'Event');" [lf.functionArn]
+  logInfoI _CMP_DATABASE (trim sql)
+  let action conn = query_ conn (fromString sql)
+  result <- runDB action :: AppContextC s sc m => m [LambdaInvocationResult]
+  logInfoI _CMP_DATABASE (f' "Lambda function '%s' invoked with result: '%s'" [lf.functionArn, show result])
+  return 1

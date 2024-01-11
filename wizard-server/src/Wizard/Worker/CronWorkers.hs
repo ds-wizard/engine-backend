@@ -1,6 +1,7 @@
 module Wizard.Worker.CronWorkers where
 
 import Shared.Common.Model.Config.ServerConfig
+import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandService
 import Shared.Worker.Model.Worker.CronWorker
 import Wizard.Cache.CacheUtil
 import Wizard.Model.Cache.ServerCache
@@ -29,6 +30,7 @@ workers =
   , documentWorker
   , feedbackWorker
   , persistentCommandRetryWorker
+  , persistentCommandRetryLambdaWorker
   , cleanQuestionnaireWorker
   , recomputeQuestionnaireIndicationWorker
   , squashQuestionnaireEventsWorker
@@ -103,6 +105,17 @@ persistentCommandRetryWorker =
     , cronDefault = "* * * * *"
     , cron = (.serverConfig.persistentCommand.retryJob.cron)
     , function = runPersistentCommands'
+    , wrapInTransaction = False
+    }
+
+persistentCommandRetryLambdaWorker :: CronWorker BaseContext AppContextM
+persistentCommandRetryLambdaWorker =
+  CronWorker
+    { name = "persistentCommandRetryLambdaWorker"
+    , condition = (.serverConfig.persistentCommand.retryLambdaJob.enabled)
+    , cronDefault = "* * * * *"
+    , cron = (.serverConfig.persistentCommand.retryLambdaJob.cron)
+    , function = retryPersistentCommandsForLambda
     , wrapInTransaction = False
     }
 

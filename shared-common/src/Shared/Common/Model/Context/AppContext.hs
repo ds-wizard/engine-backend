@@ -26,6 +26,7 @@ class
   , HasField "serverConfig'" context sc
   , HasField "cloud'" sc ServerConfigCloud
   , HasField "s3'" sc ServerConfigS3
+  , HasField "persistentCommand'" sc ServerConfigPersistentCommand
   , HasField "sentry'" sc ServerConfigSentry
   , HasField "buildInfoConfig'" context BuildInfoConfig
   , HasField "httpClientManager'" context Manager
