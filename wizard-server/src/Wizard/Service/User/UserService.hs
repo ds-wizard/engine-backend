@@ -242,12 +242,15 @@ changeUserPasswordByHash userUuid hash userPasswordDto =
 resetUserPassword :: ActionKeyDTO ActionKeyType -> AppContextM ()
 resetUserPassword reqDto =
   runInTransaction $ do
-    user <- findUserByEmail reqDto.email
-    tenantUuid <- asks currentTenantUuid
-    actionKey <- createActionKey user.uuid ForgottenPasswordActionKey tenantUuid
-    catchError
-      (sendResetPasswordMail (toDTO user) actionKey.hash)
-      (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT)
+    mUser <- findUserByEmail' reqDto.email
+    case mUser of
+      Just user -> do
+        tenantUuid <- asks currentTenantUuid
+        actionKey <- createActionKey user.uuid ForgottenPasswordActionKey tenantUuid
+        catchError
+          (sendResetPasswordMail (toDTO user) actionKey.hash)
+          (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT)
+      Nothing -> return ()
 
 changeUserState :: String -> Bool -> AppContextM ()
 changeUserState hash active =
