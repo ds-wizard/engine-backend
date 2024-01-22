@@ -7,7 +7,6 @@ import GHC.Generics
 
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Model.Package.PackageState
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Report.Report
@@ -69,7 +68,6 @@ data DocumentContextPackage = DocumentContextPackage
   , versions :: [String]
   , remoteLatestVersion :: Maybe String
   , description :: String
-  , state :: PackageState
   , organization :: Maybe RegistryOrganization
   , createdAt :: UTCTime
   }

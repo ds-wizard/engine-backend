@@ -52,7 +52,6 @@ runMigration = runAppContextWithBaseContext $ do
   logInfo _CMP_MIGRATION "started"
   -- 1. Drop DB functions
   Branch.dropFunctions
-  DocumentTemplate.dropFunctions
   Package.dropFunctions
   Common.dropFunctions
   -- 2. Drop schema
@@ -105,7 +104,6 @@ runMigration = runAppContextWithBaseContext $ do
   -- 4. Create DB functions
   Common.createFunctions
   Package.createFunctions
-  DocumentTemplate.createFunctions
   Branch.createFunctions
   -- 5. Load S3 fixtures
   DocumentTemplate.runS3Migration

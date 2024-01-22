@@ -32,25 +32,25 @@ findPackagesPage
   :: Maybe String
   -> Maybe String
   -> Maybe String
-  -> Maybe String
+  -> Maybe Bool
   -> Pageable
   -> [Sort]
   -> AppContextM (Page PackageList)
-findPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort =
+findPackagesPage mOrganizationId mKmId mQuery mOutdated pageable sort =
   createFindEntitiesGroupByCoordinatePageableQuerySortFn
     entityName
     pageLabel
     pageable
     sort
-    "id, package.name, package.organization_id, package.km_id, version, phase, description, non_editable, get_package_state(registry_package.remote_version, version), registry_package.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, package.created_at"
+    "id, package.name, package.organization_id, package.km_id, version, phase, description, non_editable, registry_package.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, package.created_at"
     "km_id"
     mQuery
     Nothing
     mOrganizationId
     mKmId
-    mPackageState
-    ( case mPackageState of
-        Just _ -> " AND get_package_state(registry_package.remote_version, version) = ?"
+    mOutdated
+    ( case mOutdated of
+        Just _ -> " AND is_outdated(registry_package.remote_version, version) = ?"
         Nothing -> ""
     )
 

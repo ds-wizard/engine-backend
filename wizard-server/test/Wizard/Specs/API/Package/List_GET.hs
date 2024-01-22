@@ -86,20 +86,21 @@ test_200 appContext = do
     "/wizard-api/packages?q=Non-existing Knowledge Model"
     (Page "packages" (PageMetadata 20 0 0 0) ([] :: [PackageSimpleDTO]))
   create_test_200
-    "HTTP 200 OK (state - UpToDatePackageState)"
+    "HTTP 200 OK (outdated=false)"
     appContext
-    "/wizard-api/packages?state=UpToDatePackageState"
+    "/wizard-api/packages?outdated=false&sort=name,asc"
     ( Page
         "packages"
-        (PageMetadata 20 2 1 0)
-        [ toSimpleDTO' [globalRegistryPackage] expOrgRs (toPackage globalPackage)
+        (PageMetadata 20 3 1 0)
+        [ toSimpleDTO' [] expOrgRs (toPackage germanyPackage)
+        , toSimpleDTO' [globalRegistryPackage] expOrgRs (toPackage globalPackage)
         , toSimpleDTO' [nlRegistryPackage] expOrgRs (toPackage netherlandsPackageV2)
         ]
     )
   create_test_200
-    "HTTP 200 OK (state - OutdatedPackageState)"
+    "HTTP 200 OK (outdated=true)"
     appContext
-    "/wizard-api/packages?state=OutdatedPackageState"
+    "/wizard-api/packages?outdated=true"
     (Page "packages" (PageMetadata 20 0 0 0) ([] :: [PackageSimpleDTO]))
 
 create_test_200 title appContext reqUrl expDto =

@@ -8,17 +8,16 @@ import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Api.Resource.Locale.LocaleDetailDTO
 import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Model.Locale.LocaleList
-import Wizard.Model.Locale.LocaleState
 import Wizard.Service.Locale.LocaleMapper
 
 localeListDefaultEn :: LocaleList
-localeListDefaultEn = toLocaleList localeDefaultEn UnknownLocaleState
+localeListDefaultEn = toLocaleList localeDefaultEn
 
 localeDefaultEnDto :: LocaleDTO
 localeDefaultEnDto = toDTO False localeListDefaultEn
 
 localeListNl :: LocaleList
-localeListNl = toLocaleList localeNl UnknownLocaleState
+localeListNl = toLocaleList localeNl
 
 localeNlDto :: LocaleDTO
 localeNlDto = (toDTO False localeListNl) {organization = Just orgGlobalSimple}
@@ -34,7 +33,7 @@ localeNlChangeDto =
     }
 
 localeListDe :: LocaleList
-localeListDe = toLocaleList localeDe UnknownLocaleState
+localeListDe = toLocaleList localeDe
 
 localeDeDto :: LocaleDTO
 localeDeDto = (toDTO False localeListDe) {organization = Just orgGlobalSimple}

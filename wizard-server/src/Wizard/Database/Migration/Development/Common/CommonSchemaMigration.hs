@@ -12,7 +12,8 @@ dropFunctions :: AppContextM Int64
 dropFunctions = do
   logInfo _CMP_MIGRATION "(Function/Common) drop functions"
   let sql =
-        "DROP FUNCTION IF EXISTS major_version; \
+        "DROP FUNCTION IF EXISTS is_outdated; \
+        \DROP FUNCTION IF EXISTS major_version; \
         \DROP FUNCTION IF EXISTS minor_version;\
         \DROP FUNCTION IF EXISTS patch_version;\
         \DROP FUNCTION IF EXISTS compare_version;"
@@ -26,6 +27,7 @@ createFunctions = do
   createMinorVersionFn
   createPatchVersionFn
   createCompareVersionFn
+  createIsOutdatedVersionFn
 
 createMajorVersionFn = do
   let sql =
@@ -108,6 +110,27 @@ createCompareVersionFn = do
         \               END \
         \    INTO version_order; \
         \    RETURN version_order; \
+        \END; \
+        \$$;"
+  let action conn = execute_ conn sql
+  runDB action
+
+createIsOutdatedVersionFn = do
+  let sql =
+        "CREATE or REPLACE FUNCTION is_outdated(version_1 varchar, version_2 varchar) \
+        \    RETURNS bool \
+        \    LANGUAGE plpgsql \
+        \AS \
+        \$$ \
+        \DECLARE \
+        \    outdated varchar; \
+        \BEGIN \
+        \    SELECT CASE \
+        \               WHEN compare_version(version_1, version_2) = 'GT' THEN true \
+        \               ELSE false \
+        \               END \
+        \    INTO outdated; \
+        \    RETURN outdated; \
         \END; \
         \$$;"
   let action conn = execute_ conn sql

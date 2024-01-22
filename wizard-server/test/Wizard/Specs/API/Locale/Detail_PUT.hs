@@ -16,7 +16,6 @@ import Wizard.Api.Resource.Locale.LocaleJM ()
 import Wizard.Database.Migration.Development.Locale.Data.Locales
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC_Migration
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Locale.LocaleState
 import Wizard.Service.Locale.LocaleMapper
 
 import SharedTest.Specs.API.Common
@@ -56,7 +55,7 @@ test_200 appContext =
     -- GIVEN: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = toDTO False $ toLocaleList localeNlEdited UnknownLocaleState
+    let expDto = toDTO False $ toLocaleList localeNlEdited
     -- AND: Run migrations
     runInContextIO LOC_Migration.runMigration appContext
     -- WHEN: Call API

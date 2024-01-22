@@ -4,7 +4,6 @@ import Data.Time
 import GHC.Generics
 
 import RegistryLib.Model.Organization.OrganizationSimple
-import Wizard.Model.Locale.LocaleState
 
 data LocaleDTO = LocaleDTO
   { lId :: String
@@ -18,7 +17,6 @@ data LocaleDTO = LocaleDTO
   , enabled :: Bool
   , remoteLatestVersion :: Maybe String
   , organization :: Maybe OrganizationSimple
-  , state :: LocaleState
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

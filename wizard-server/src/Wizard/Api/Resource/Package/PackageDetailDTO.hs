@@ -3,7 +3,6 @@ module Wizard.Api.Resource.Package.PackageDetailDTO where
 import Data.Time
 import GHC.Generics
 
-import Wizard.Model.Package.PackageState
 import Wizard.Model.Registry.RegistryOrganization
 import WizardLib.KnowledgeModel.Model.Package.Package
 
@@ -26,7 +25,6 @@ data PackageDetailDTO = PackageDetailDTO
   , remoteLatestVersion :: Maybe String
   , organization :: Maybe RegistryOrganization
   , registryLink :: Maybe String
-  , state :: PackageState
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

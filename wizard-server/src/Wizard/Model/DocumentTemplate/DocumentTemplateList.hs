@@ -3,7 +3,6 @@ module Wizard.Model.DocumentTemplate.DocumentTemplateList where
 import Data.Time
 import GHC.Generics
 
-import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Model.Package.PackagePattern
 
@@ -17,7 +16,6 @@ data DocumentTemplateList = DocumentTemplateList
   , metamodelVersion :: Int
   , description :: String
   , allowedPackages :: [PackagePattern]
-  , state :: DocumentTemplateState
   , nonEditable :: Bool
   , remoteVersion :: Maybe String
   , remoteOrganizationName :: Maybe String

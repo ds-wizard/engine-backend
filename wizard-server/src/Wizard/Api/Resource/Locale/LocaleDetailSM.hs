@@ -5,7 +5,6 @@ import Data.Swagger
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Locale.LocaleDetailDTO
 import Wizard.Api.Resource.Locale.LocaleDetailJM ()
-import Wizard.Api.Resource.Locale.LocaleStateSM ()
 import Wizard.Api.Resource.Registry.RegistryOrganizationSM ()
 import Wizard.Database.Migration.Development.Locale.Data.Locales
 

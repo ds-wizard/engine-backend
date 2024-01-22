@@ -11,7 +11,6 @@ import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Wizard.Model.DocumentTemplate.DocumentTemplateList
-import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.DocumentTemplate.DocumentTemplateSuggestion
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Registry.RegistryTemplate
@@ -23,8 +22,8 @@ import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper hiding (toSuggestionDTO)
 import WizardLib.KnowledgeModel.Model.Package.Package
 
-toList :: DocumentTemplate -> Maybe RegistryTemplate -> Maybe RegistryOrganization -> DocumentTemplateState -> DocumentTemplatePhase -> DocumentTemplateList
-toList tml mTmlR mOrgR state phase =
+toList :: DocumentTemplate -> Maybe RegistryTemplate -> Maybe RegistryOrganization -> DocumentTemplatePhase -> DocumentTemplateList
+toList tml mTmlR mOrgR phase =
   DocumentTemplateList
     { tId = tml.tId
     , name = tml.name
@@ -36,7 +35,6 @@ toList tml mTmlR mOrgR state phase =
     , description = tml.description
     , allowedPackages = tml.allowedPackages
     , nonEditable = tml.nonEditable
-    , state = state
     , remoteVersion = fmap (.remoteVersion) mTmlR
     , remoteOrganizationName = fmap (.name) mOrgR
     , remoteOrganizationLogo =
@@ -47,10 +45,10 @@ toList tml mTmlR mOrgR state phase =
     }
 
 toSimpleDTO :: DocumentTemplate -> DocumentTemplateSimpleDTO
-toSimpleDTO tml = toSimpleDTO' False $ toList tml Nothing Nothing UnknownDocumentTemplateState ReleasedDocumentTemplatePhase
+toSimpleDTO tml = toSimpleDTO' $ toList tml Nothing Nothing ReleasedDocumentTemplatePhase
 
-toSimpleDTO' :: Bool -> DocumentTemplateList -> DocumentTemplateSimpleDTO
-toSimpleDTO' registryEnabled tml =
+toSimpleDTO' :: DocumentTemplateList -> DocumentTemplateSimpleDTO
+toSimpleDTO' tml =
   DocumentTemplateSimpleDTO
     { tId = tml.tId
     , name = tml.name
@@ -61,7 +59,7 @@ toSimpleDTO' registryEnabled tml =
     , remoteLatestVersion = tml.remoteVersion
     , description = tml.description
     , nonEditable = tml.nonEditable
-    , state = computeDocumentTemplateState' registryEnabled tml
+    , state = computeDocumentTemplateState' tml
     , organization =
         case tml.remoteOrganizationName of
           Just orgName ->

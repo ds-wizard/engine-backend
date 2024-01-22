@@ -21,7 +21,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.DocumentTemplate.DocumentTemplateList
 import Wizard.Model.DocumentTemplate.DocumentTemplateSuggestion
-import WizardLib.DocumentTemplate.Constant.DocumentTemplate
 import WizardLib.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplate ()
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
@@ -29,25 +28,22 @@ entityName = "document_template"
 
 pageLabel = "documentTemplates"
 
-findDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateList)
-findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState mNonEditable pageable sort =
+findDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe Bool -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateList)
+findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated mNonEditable pageable sort =
   -- 1. Prepare variables
   do
     tenantUuid <- asks currentTenantUuid
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
-    let stateCondition =
-          case mTemplateState of
-            Just _ ->
-              f'
-                "AND get_template_state(registry_document_template.remote_version, document_template.version, %s, document_template.metamodel_version) = ?"
-                [show documentTemplateMetamodelVersion]
+    let outdatedCondition =
+          case mOutdated of
+            Just _ -> "AND is_outdated(registry_document_template.remote_version, document_template.version) = ?"
             Nothing -> ""
     let nonEditableCondition =
           case mNonEditable of
             Just nonEditable -> f' "AND non_editable = '%s'" [show nonEditable]
             Nothing -> ""
     -- 2. Get total count
-    count <- countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mTemplateState stateCondition nonEditableCondition
+    count <- countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mOutdated outdatedCondition nonEditableCondition
     -- 3. Get entities
     let sql =
           fromString $
@@ -62,7 +58,6 @@ findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState mNon
               \   document_template.metamodel_version, \
               \   document_template.description, \
               \   document_template.allowed_packages, \
-              \   get_template_state(registry_document_template.remote_version, document_template.version, %s, document_template.metamodel_version), \
               \   document_template.non_editable, \
               \   registry_document_template.remote_version, \
               \   registry_organization.name as org_name, \
@@ -84,21 +79,20 @@ findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState mNon
               \%s \
               \OFFSET %s \
               \LIMIT %s"
-              [ show documentTemplateMetamodelVersion
-              , mapToDBCoordinatesSql entityName "template_id" mOrganizationId mTemplateId
-              , stateCondition
+              [ mapToDBCoordinatesSql entityName "template_id" mOrganizationId mTemplateId
+              , outdatedCondition
               , nonEditableCondition
               , mapSort sort
               , show skip
               , show sizeI
               ]
     let params =
-          U.toString tenantUuid
-            : U.toString tenantUuid
-            : regexM mQuery
-            : regexM mQuery
-            : mapToDBCoordinatesParams mOrganizationId mTemplateId
-            ++ maybeToList mTemplateState
+          toField tenantUuid
+            : toField tenantUuid
+            : toField (regexM mQuery)
+            : toField (regexM mQuery)
+            : fmap toField (mapToDBCoordinatesParams mOrganizationId mTemplateId)
+            ++ (maybeToList . fmap toField $ mOutdated)
     logQuery sql params
     let action conn = query conn sql params
     entities <- runDB action
@@ -149,8 +143,8 @@ findDocumentTemplatesSuggestions mQuery mNonEditable = do
   let action conn = query conn sql params
   runDB action
 
-countDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe String -> String -> String -> AppContextM Int
-countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mState stateCondition nonEditableCondition = do
+countDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe Bool -> String -> String -> AppContextM Int
+countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mOutdated outdatedCondition nonEditableCondition = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString $
@@ -166,17 +160,16 @@ countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mState stateCondit
             \             WHERE (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') AND tenant_uuid = ? AND (name ~* ? OR id ~* ?) \
             \             GROUP BY organization_id, template_id)"
             [ mapToDBCoordinatesSql entityName "template_id" mOrganizationId mTemplateId
-            , stateCondition
+            , outdatedCondition
             , nonEditableCondition
             ]
   let params =
-        U.toString tenantUuid
-          : regexM mQuery
-          : regexM mQuery
-          : mapToDBCoordinatesParams mOrganizationId mTemplateId
-          ++ maybeToList mState
-          ++ [U.toString tenantUuid]
-          ++ [regexM mQuery, regexM mQuery]
+        toField tenantUuid
+          : toField (regexM mQuery)
+          : toField (regexM mQuery)
+          : fmap toField (mapToDBCoordinatesParams mOrganizationId mTemplateId)
+          ++ (maybeToList . fmap toField $ mOutdated)
+          ++ [toField tenantUuid, toField $ regexM mQuery, toField $ regexM mQuery]
   logQuery sql params
   let action conn = query conn sql params
   result <- runDB action

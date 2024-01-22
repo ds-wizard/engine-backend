@@ -31,13 +31,12 @@ toSimpleDTO' pkgRs orgRs pkg =
           Nothing -> Nothing
     , description = pkg.description
     , nonEditable = pkg.nonEditable
-    , state = computePackageState pkgRs pkg
     , organization = selectOrganizationByOrgId pkg orgRs
     , createdAt = pkg.createdAt
     }
 
-toSimpleDTO'' :: Bool -> PackageList -> PackageSimpleDTO
-toSimpleDTO'' registryEnabled pkg =
+toSimpleDTO'' :: PackageList -> PackageSimpleDTO
+toSimpleDTO'' pkg =
   PackageSimpleDTO
     { pId = pkg.pId
     , name = pkg.name
@@ -47,7 +46,6 @@ toSimpleDTO'' registryEnabled pkg =
     , phase = pkg.phase
     , remoteLatestVersion = pkg.remoteVersion
     , description = pkg.description
-    , state = computePackageState' registryEnabled pkg
     , nonEditable = pkg.nonEditable
     , organization =
         case pkg.remoteOrganizationName of
@@ -85,7 +83,6 @@ toDetailDTO pkg pkgRs orgRs versionLs registryLink =
         case selectPackageByOrgIdAndKmId pkg pkgRs of
           Just pkgR -> Just $ pkgR.remoteVersion
           Nothing -> Nothing
-    , state = computePackageState pkgRs pkg
     , registryLink = registryLink
     , organization = selectOrganizationByOrgId pkg orgRs
     , createdAt = pkg.createdAt

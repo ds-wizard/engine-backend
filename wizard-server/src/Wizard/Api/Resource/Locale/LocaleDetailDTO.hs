@@ -3,7 +3,6 @@ module Wizard.Api.Resource.Locale.LocaleDetailDTO where
 import Data.Time
 import GHC.Generics
 
-import Wizard.Model.Locale.LocaleState
 import Wizard.Model.Registry.RegistryOrganization
 
 data LocaleDetailDTO = LocaleDetailDTO
@@ -23,7 +22,6 @@ data LocaleDetailDTO = LocaleDetailDTO
   , remoteLatestVersion :: Maybe String
   , organization :: Maybe RegistryOrganization
   , registryLink :: Maybe String
-  , state :: LocaleState
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

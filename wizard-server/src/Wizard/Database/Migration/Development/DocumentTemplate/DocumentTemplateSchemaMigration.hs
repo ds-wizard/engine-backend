@@ -27,13 +27,6 @@ dropBucket = do
   catchError purgeBucket (\e -> return ())
   catchError removeBucket (\e -> return ())
 
-dropFunctions :: AppContextM Int64
-dropFunctions = do
-  logInfo _CMP_MIGRATION "(Function/DocumentTemplate) drop functions"
-  let sql = "DROP FUNCTION IF EXISTS get_template_state;"
-  let action conn = execute_ conn sql
-  runDB action
-
 createTables :: AppContextM ()
 createTables = do
   createTemplateTable
@@ -126,34 +119,5 @@ createDraftDataTable = do
         \    CONSTRAINT document_template_draft_data_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
         \    CONSTRAINT document_template_draft_data_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
         \);"
-  let action conn = execute_ conn sql
-  runDB action
-
-createFunctions :: AppContextM Int64
-createFunctions = do
-  logInfo _CMP_MIGRATION "(Function/DocumentTemplate) create functions"
-  createGetTemplateStateFn
-
-createGetTemplateStateFn = do
-  let sql =
-        "CREATE or REPLACE FUNCTION get_template_state(remote_version varchar, local_version varchar, actual_metamodel_version int, template_metamodel_version int) \
-        \    RETURNS varchar \
-        \    LANGUAGE plpgsql \
-        \AS \
-        \$$ \
-        \DECLARE \
-        \    state varchar; \
-        \BEGIN \
-        \    SELECT CASE \
-        \               WHEN actual_metamodel_version != template_metamodel_version IS NULL THEN 'UnsupportedMetamodelVersionDocumentTemplateState' \
-        \               WHEN remote_version IS NULL THEN 'UnknownDocumentTemplateState' \
-        \               WHEN compare_version(remote_version, local_version) = 'LT' THEN 'UnpublishedDocumentTemplateState' \
-        \               WHEN compare_version(remote_version, local_version) = 'EQ' THEN 'UpToDateDocumentTemplateState' \
-        \               WHEN compare_version(remote_version, local_version) = 'GT' THEN 'OutdatedDocumentTemplateState' \
-        \               END \
-        \    INTO state; \
-        \    RETURN state; \
-        \END; \
-        \$$;"
   let action conn = execute_ conn sql
   runDB action

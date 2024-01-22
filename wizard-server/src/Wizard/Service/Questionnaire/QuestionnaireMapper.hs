@@ -258,7 +258,7 @@ toQuestionnaireDetailTemplateState =
     ( \tml ->
         if tml.metamodelVersion /= documentTemplateMetamodelVersion
           then UnsupportedMetamodelVersionDocumentTemplateState
-          else UnknownDocumentTemplateState
+          else DefaultDocumentTemplateState
     )
 
 fromChangeDTO

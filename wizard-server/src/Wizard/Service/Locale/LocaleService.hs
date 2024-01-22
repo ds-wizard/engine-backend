@@ -27,7 +27,6 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Locale.LocaleSimple
-import Wizard.Model.Locale.LocaleState
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
 import Wizard.S3.Locale.LocaleS3
@@ -58,7 +57,7 @@ createLocale reqDto =
     insertLocale locale
     putLocale locale.lId reqDto.content
     tenantConfig <- getCurrentTenantConfig
-    return . toDTO tenantConfig.registry.enabled $ toLocaleList locale UnknownLocaleState
+    return . toDTO tenantConfig.registry.enabled $ toLocaleList locale
 
 getLocaleForId :: String -> AppContextM LocaleDetailDTO
 getLocaleForId lclId = do
@@ -107,7 +106,7 @@ modifyLocale lclId reqDto = do
     when (updatedLocale.enabled && not locale.enabled) (unsetEnabledLocale updatedLocale.code)
     updateLocaleById updatedLocale
     tenantConfig <- getCurrentTenantConfig
-    return . toDTO tenantConfig.registry.enabled $ toLocaleList updatedLocale UnknownLocaleState
+    return . toDTO tenantConfig.registry.enabled $ toLocaleList updatedLocale
 
 deleteLocalesByQueryParams :: [(String, String)] -> AppContextM ()
 deleteLocalesByQueryParams queryParams =

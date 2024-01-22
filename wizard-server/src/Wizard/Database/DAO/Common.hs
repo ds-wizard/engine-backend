@@ -8,8 +8,8 @@ module Wizard.Database.DAO.Common (
 import Control.Monad.Reader (asks)
 import Data.Maybe (maybeToList)
 import Data.String (fromString)
-import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
+import Database.PostgreSQL.Simple.ToField
 
 import Shared.Common.Database.DAO.Common hiding (runInTransaction)
 import qualified Shared.Common.Database.DAO.Common as S
@@ -24,7 +24,7 @@ import WizardLib.KnowledgeModel.Database.Mapping.Package.Package ()
 runInTransaction :: AppContextM a -> AppContextM a
 runInTransaction = S.runInTransaction logInfoI logWarnI
 
-createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel pageable sort fields entityId mQuery mEnabled mOrganizationId mEntityId mState stateCondition =
+createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel pageable sort fields entityId mQuery mEnabled mOrganizationId mEntityId mOutdated outdatedCondition =
   -- 1. Prepare variables
   do
     tenantUuid <- asks currentTenantUuid
@@ -43,8 +43,8 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
         enabledCondition
         mOrganizationId
         mEntityId
-        mState
-        stateCondition
+        mOutdated
+        outdatedCondition
     -- 3. Get entities
     let sql =
           f'
@@ -79,7 +79,7 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
             , enabledCondition
             , mapToDBCoordinatesSql entityName entityId mOrganizationId mEntityId
             , entityId
-            , stateCondition
+            , outdatedCondition
             , mapSort sort
             , show skip
             , show sizeI
@@ -89,12 +89,12 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
           query
             conn
             (fromString sql)
-            ( U.toString tenantUuid
-                : U.toString tenantUuid
-                : regexM mQuery
-                : regexM mQuery
-                : mapToDBCoordinatesParams mOrganizationId mEntityId
-                ++ maybeToList mState
+            ( toField tenantUuid
+                : toField tenantUuid
+                : toField (regexM mQuery)
+                : toField (regexM mQuery)
+                : fmap toField (mapToDBCoordinatesParams mOrganizationId mEntityId)
+                ++ (maybeToList . fmap toField $ mOutdated)
             )
     entities <- runDB action
     -- 4. Constructor response
@@ -114,10 +114,10 @@ createCountGroupByCoordinateFn
   -> String
   -> Maybe String
   -> Maybe String
-  -> Maybe String
+  -> Maybe Bool
   -> String
   -> AppContextM Int
-createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrganizationId mEntityId mState stateCondition = do
+createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrganizationId mEntityId mOutdated outdatedCondition = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         f'
@@ -142,7 +142,7 @@ createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrga
           , entityId
           , enabledCondition
           , mapToDBCoordinatesSql entityName entityId mOrganizationId mEntityId
-          , stateCondition
+          , outdatedCondition
           , entityId
           , entityName
           , entityId
@@ -152,11 +152,11 @@ createCountGroupByCoordinateFn entityName entityId mQuery enabledCondition mOrga
         query
           conn
           (fromString sql)
-          ( [U.toString tenantUuid, regexM mQuery, regexM mQuery]
-              ++ mapToDBCoordinatesParams mOrganizationId mEntityId
-              ++ maybeToList mState
-              ++ [U.toString tenantUuid]
-              ++ [regexM mQuery, regexM mQuery]
+          ( [toField tenantUuid, toField (regexM mQuery), toField (regexM mQuery)]
+              ++ fmap toField (mapToDBCoordinatesParams mOrganizationId mEntityId)
+              ++ maybeToList (fmap toField mOutdated)
+              ++ [toField tenantUuid]
+              ++ [toField $ regexM mQuery, toField $ regexM mQuery]
           )
   result <- runDB action
   case result of
