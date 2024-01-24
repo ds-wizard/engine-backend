@@ -369,7 +369,7 @@ deleteQuestionnaire qtnUuid shouldValidatePermission =
           deleteQuestionnaireCommentThreadById t.uuid
       )
       threads
-    documents <- findDocumentsFiltered [("questionnaire_uuid", U.toString qtnUuid)]
+    documents <- findDocumentsForCurrentTenantFiltered [("questionnaire_uuid", U.toString qtnUuid)]
     traverse_
       ( \d -> do
           deleteSubmissionsFiltered [("document_uuid", U.toString d.uuid)]

@@ -24,3 +24,6 @@ removeDocumentContents = createRemoveObjectFn folderName
 
 removeDocumentContent :: U.UUID -> AppContextM ()
 removeDocumentContent documentUuid = createRemoveObjectFn (f' "%s/%s" [folderName, U.toString documentUuid])
+
+removeDocumentContentWithTenant :: U.UUID -> U.UUID -> AppContextM ()
+removeDocumentContentWithTenant tenantUuid documentUuid = createRemoveObjectWithTenantFn tenantUuid (f' "%s/%s" [folderName, U.toString documentUuid])
