@@ -133,7 +133,7 @@ createDocumentPreviewForDocTmlDraft tmlId =
 
 createDocumentPreview :: DocumentTemplate -> Questionnaire -> U.UUID -> AppContextM (Document, TemporaryFileDTO)
 createDocumentPreview tml qtn formatUuid = do
-  docs <- findDocumentsFiltered [("questionnaire_uuid", U.toString qtn.uuid), ("durability", "TemporallyDocumentDurability")]
+  docs <- findDocumentsForCurrentTenantFiltered [("questionnaire_uuid", U.toString qtn.uuid), ("durability", "TemporallyDocumentDurability")]
   qtnCtn <- compileQuestionnaire qtn
   tenantConfig <- getCurrentTenantConfig
   mCurrentUser <- asks currentUser

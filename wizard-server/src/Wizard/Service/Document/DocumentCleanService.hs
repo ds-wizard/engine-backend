@@ -16,15 +16,15 @@ cleanDocuments =
     let docsFiltered = filter (\d -> d.state == DoneDocumentState || d.state == ErrorDocumentState) docs
     traverse_
       ( \d -> do
-          deleteDocumentsFiltered [("uuid", U.toString $ d.uuid)]
-          removeDocumentContent d.uuid
+          deleteDocumentByUuidAndTenantUuid d.uuid d.tenantUuid
+          removeDocumentContentWithTenant d.tenantUuid d.uuid
       )
       docsFiltered
 
 cleanTemporallyDocumentsForTemplate :: String -> AppContextM ()
 cleanTemporallyDocumentsForTemplate documentTemplateId =
   runInTransaction $ do
-    docs <- findDocumentsFiltered [("document_template_id", documentTemplateId), ("durability", "TemporallyDocumentDurability")]
+    docs <- findDocumentsForCurrentTenantFiltered [("document_template_id", documentTemplateId), ("durability", "TemporallyDocumentDurability")]
     traverse_
       ( \d -> do
           deleteDocumentsFiltered [("uuid", U.toString $ d.uuid)]

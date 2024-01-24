@@ -107,6 +107,14 @@ createRemoveObjectFn object = do
   let action = removeObject (T.pack bucketName) (T.pack sanitizedObject)
   runMinioClient action
 
+createRemoveObjectWithTenantFn :: AppContextC s sc m => U.UUID -> String -> m ()
+createRemoveObjectWithTenantFn tenantUuid object = do
+  bucketName <- getBucketName
+  sanitizedObject <- sanitizeObjectWithTenant tenantUuid object
+  logInfoI _CMP_S3 (f' "Delete object: '%s'" [sanitizedObject])
+  let action = removeObject (T.pack bucketName) (T.pack sanitizedObject)
+  runMinioClient action
+
 createListObjectsFn :: AppContextC s sc m => m [String]
 createListObjectsFn = do
   bucketName <- getBucketName

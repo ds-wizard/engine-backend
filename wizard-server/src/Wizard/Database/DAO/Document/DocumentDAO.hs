@@ -30,7 +30,10 @@ findDocuments = do
   createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
 findDocumentsFiltered :: [(String, String)] -> AppContextM [Document]
-findDocumentsFiltered params = do
+findDocumentsFiltered = createFindEntitiesByFn entityName
+
+findDocumentsForCurrentTenantFiltered :: [(String, String)] -> AppContextM [Document]
+findDocumentsForCurrentTenantFiltered params = do
   tenantUuid <- asks currentTenantUuid
   createFindEntitiesByFn entityName (tenantQueryUuid tenantUuid : params)
 
@@ -129,6 +132,9 @@ deleteDocumentByUuid :: U.UUID -> AppContextM Int64
 deleteDocumentByUuid uuid = do
   tenantUuid <- asks currentTenantUuid
   createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
+
+deleteDocumentByUuidAndTenantUuid :: U.UUID -> U.UUID -> AppContextM Int64
+deleteDocumentByUuidAndTenantUuid uuid tenantUuid = createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 deleteTemporalDocumentsByQuestionnaireUuid :: U.UUID -> AppContextM Int64
 deleteTemporalDocumentsByQuestionnaireUuid qtnUuid = do
