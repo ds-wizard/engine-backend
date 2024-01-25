@@ -43,7 +43,7 @@ modifyPlan' findTenantByUuid recomputePlansForTenant runHook aUuid pUuid reqDto 
   let updatedPlan = fromChangeDTO reqDto plan.uuid plan.tenantUuid plan.createdAt plan.updatedAt
   updateTenantPlanByUuid updatedPlan
   recomputePlansForTenant tenant
-  runHook plan.tenantUuid plan
+  runHook plan.tenantUuid updatedPlan
   return updatedPlan
 
 deletePlan' :: AppContextC s sc m => (U.UUID -> m tenant) -> (tenant -> m ()) -> (U.UUID -> TenantPlan -> m ()) -> U.UUID -> U.UUID -> m ()
