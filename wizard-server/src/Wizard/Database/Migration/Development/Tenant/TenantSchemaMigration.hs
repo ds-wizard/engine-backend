@@ -44,6 +44,8 @@ createTenantTable = do
         \    admin_client_url varchar, \
         \    integration_hub_server_url varchar, \
         \    integration_hub_client_url varchar, \
+        \    reporting_server_url varchar, \
+        \    reporting_client_url varchar, \
         \    CONSTRAINT tenant_pk PRIMARY KEY (uuid) \
         \);"
   let action conn = execute_ conn sql

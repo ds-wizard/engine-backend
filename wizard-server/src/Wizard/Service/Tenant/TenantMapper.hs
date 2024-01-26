@@ -69,6 +69,8 @@ fromRegisterCreateDTO reqDto aUuid serverConfig now =
     , adminClientUrl = Just $ createAdminClientUrl serverConfig reqDto.tenantId
     , integrationHubServerUrl = Just $ createIntegrationHubServerUrl serverConfig reqDto.tenantId
     , integrationHubClientUrl = Just $ createIntegrationHubClientUrl serverConfig reqDto.tenantId
+    , reportingServerUrl = Just $ createReportingServerUrl serverConfig reqDto.tenantId
+    , reportingClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
     , enabled = True
     , createdAt = now
     , updatedAt = now
@@ -87,6 +89,8 @@ fromAdminCreateDTO reqDto aUuid serverConfig now =
     , adminClientUrl = Just $ createAdminClientUrl serverConfig reqDto.tenantId
     , integrationHubServerUrl = Just $ createIntegrationHubServerUrl serverConfig reqDto.tenantId
     , integrationHubClientUrl = Just $ createIntegrationHubClientUrl serverConfig reqDto.tenantId
+    , reportingServerUrl = Just $ createReportingServerUrl serverConfig reqDto.tenantId
+    , reportingClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
     , enabled = True
     , createdAt = now
     , updatedAt = now
@@ -105,6 +109,8 @@ fromCommand command serverConfig now =
     , adminClientUrl = Just $ createAdminClientUrl serverConfig command.tenantId
     , integrationHubServerUrl = Just $ createIntegrationHubServerUrl serverConfig command.tenantId
     , integrationHubClientUrl = Just $ createIntegrationHubClientUrl serverConfig command.tenantId
+    , reportingServerUrl = Just $ createReportingServerUrl serverConfig command.tenantId
+    , reportingClientUrl = Just $ createReportingClientUrl serverConfig command.tenantId
     , enabled = True
     , createdAt = now
     , updatedAt = now
@@ -123,6 +129,8 @@ fromChangeDTO tenant reqDto serverConfig =
     , adminClientUrl = Just $ createAdminClientUrl serverConfig reqDto.tenantId
     , integrationHubServerUrl = Just $ createIntegrationHubServerUrl serverConfig reqDto.tenantId
     , integrationHubClientUrl = Just $ createIntegrationHubClientUrl serverConfig reqDto.tenantId
+    , reportingServerUrl = Just $ createReportingServerUrl serverConfig reqDto.tenantId
+    , reportingClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
     , enabled = tenant.enabled
     , createdAt = tenant.createdAt
     , updatedAt = tenant.updatedAt
@@ -148,6 +156,12 @@ createIntegrationHubServerUrl serverConfig tenantId = f' "%s/integration-hub-api
 
 createIntegrationHubClientUrl :: ServerConfig -> String -> String
 createIntegrationHubClientUrl serverConfig tenantId = f' "%s/integration-hub" [createUrl serverConfig tenantId]
+
+createReportingServerUrl :: ServerConfig -> String -> String
+createReportingServerUrl serverConfig tenantId = f' "%s/reporting-api" [createUrl serverConfig tenantId]
+
+createReportingClientUrl :: ServerConfig -> String -> String
+createReportingClientUrl serverConfig tenantId = f' "%s/reporting" [createUrl serverConfig tenantId]
 
 createUrl :: ServerConfig -> String -> String
 createUrl serverConfig tenantId = f' "https://%s.%s" [tenantId, fromMaybe "" serverConfig.cloud.domain]

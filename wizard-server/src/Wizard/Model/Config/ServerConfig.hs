@@ -122,6 +122,7 @@ data ServerConfigModules = ServerConfigModules
   { wizard :: ServerConfigModule
   , admin :: ServerConfigModule
   , integrationHub :: ServerConfigModule
+  , reporting :: ServerConfigModule
   , guide :: ServerConfigModule
   }
   deriving (Generic, Show)

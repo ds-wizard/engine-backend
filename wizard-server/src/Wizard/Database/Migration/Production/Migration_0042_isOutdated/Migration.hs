@@ -18,6 +18,7 @@ migrate dbPool = do
   dropGetPackageStateFunction dbPool
   dropGetTemplateStateFunction dbPool
   dropGetLocaleStateFunction dbPool
+  addReporting dbPool
 
 addIsOutdatedFunction dbPool = do
   let sql =
@@ -55,6 +56,18 @@ dropGetTemplateStateFunction dbPool = do
 
 dropGetLocaleStateFunction dbPool = do
   let sql = "DROP FUNCTION get_locale_state"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addReporting dbPool = do
+  let sql =
+        "ALTER TABLE tenant ADD reporting_server_url VARCHAR; \
+        \ALTER TABLE tenant ADD reporting_client_url VARCHAR; \
+        \ \
+        \UPDATE tenant \
+        \SET reporting_server_url = replace(admin_server_url, 'admin', 'reporting'), \
+        \    reporting_client_url = replace(admin_client_url, 'admin', 'reporting')"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
