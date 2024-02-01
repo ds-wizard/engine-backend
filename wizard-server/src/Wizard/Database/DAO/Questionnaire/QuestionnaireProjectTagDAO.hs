@@ -21,7 +21,7 @@ findQuestionnaireProjectTagsPage mQuery excludeTags pageable sort =
   -- 1. Prepare variables
   do
     tenantUuid <- asks currentTenantUuid
-    let params = [U.toString tenantUuid, regexM mQuery] ++ excludeTags
+    let params = [U.toString tenantUuid, U.toString tenantUuid, regexM mQuery] ++ excludeTags
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
     -- 2. Get total count
     count <- findCount excludeTags params
@@ -52,6 +52,7 @@ sqlBase :: String
 sqlBase =
   "SELECT jsonb_array_elements_text((questionnaire -> 'projectTagging' ->> 'tags') ::jsonb) as project_tag \
   \FROM tenant_config \
+  \WHERE uuid = ? \
   \UNION \
   \SELECT nested.project_tag \
   \FROM (SELECT unnest(project_tags) as project_tag, tenant_uuid FROM questionnaire) nested \
