@@ -10,7 +10,7 @@ data TemporaryFile = TemporaryFile
   , contentType :: String
   , expiresAt :: UTCTime
   , tenantUuid :: U.UUID
-  , createdBy :: U.UUID
+  , createdBy :: Maybe U.UUID
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

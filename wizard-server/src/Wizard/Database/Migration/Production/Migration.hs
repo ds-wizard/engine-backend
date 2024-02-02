@@ -44,6 +44,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0039_tenant.Migr
 import qualified Wizard.Database.Migration.Production.Migration_0040_qtnAction.Migration as M_0040
 import qualified Wizard.Database.Migration.Production.Migration_0041_upgradeTmlMetamodel.Migration as M_0041
 import qualified Wizard.Database.Migration.Production.Migration_0042_isOutdated.Migration as M_0042
+import qualified Wizard.Database.Migration.Production.Migration_0043_temporaryFile.Migration as M_0043
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -89,4 +90,5 @@ migrationDefinitions =
   , M_0040.definition
   , M_0041.definition
   , M_0042.definition
+  , M_0043.definition
   ]

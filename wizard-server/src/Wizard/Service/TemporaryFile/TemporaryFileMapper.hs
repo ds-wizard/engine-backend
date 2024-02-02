@@ -4,6 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.TemporaryFile.TemporaryFile
 
 emptyFileDTO :: TemporaryFileDTO
@@ -20,15 +21,15 @@ toDTO url contentType =
     , contentType = contentType
     }
 
-toTemporaryFile :: U.UUID -> String -> String -> Int -> U.UUID -> U.UUID -> UTCTime -> TemporaryFile
-toTemporaryFile uuid fileName contentType expirationInSeconds tenantUuid createdBy now =
+toTemporaryFile :: U.UUID -> String -> String -> Int -> U.UUID -> Maybe UserDTO -> UTCTime -> TemporaryFile
+toTemporaryFile uuid fileName contentType expirationInSeconds tenantUuid mCreatedBy now =
   TemporaryFile
     { uuid = uuid
     , fileName = fileName
     , contentType = contentType
     , expiresAt = toExpiration expirationInSeconds now
     , tenantUuid = tenantUuid
-    , createdBy = createdBy
+    , createdBy = fmap (.uuid) mCreatedBy
     , createdAt = now
     }
 

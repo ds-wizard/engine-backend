@@ -26,7 +26,7 @@ createTables = do
         \    content_type varchar     NOT NULL, \
         \    expires_at   timestamptz NOT NULL, \
         \    tenant_uuid  uuid        NOT NULL, \
-        \    created_by   uuid        NOT NULL, \
+        \    created_by   uuid, \
         \    created_at   timestamptz NOT NULL, \
         \    CONSTRAINT temporary_file_pk PRIMARY KEY (uuid, tenant_uuid), \
         \    CONSTRAINT temporary_file_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
