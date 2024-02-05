@@ -212,11 +212,12 @@ createQuestionnairesFromCommands = runInTransaction . traverse_ create
     create :: CreateQuestionnaireCommand -> AppContextM ()
     create command = do
       uuid <- liftIO generateUuid
+      currentUser <- getCurrentUser
       now <- liftIO getCurrentTime
       tenantConfig <- getCurrentTenantConfig
       users <- findUsersByEmails command.emails
       let permissions = fmap (createPermission uuid) users
-      let questionnaire = fromCreateQuestionnaireCommand command uuid permissions tenantConfig now
+      let questionnaire = fromCreateQuestionnaireCommand command uuid permissions tenantConfig currentUser.uuid now
       insertQuestionnaire questionnaire
       return ()
     createPermission :: U.UUID -> User -> QuestionnairePerm

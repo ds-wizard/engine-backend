@@ -364,8 +364,8 @@ fromQuestionnairePermChangeDTO qtnUuid tenantUuid dto =
     , tenantUuid = tenantUuid
     }
 
-fromCreateQuestionnaireCommand :: CreateQuestionnaireCommand -> U.UUID -> [QuestionnairePerm] -> TenantConfig -> UTCTime -> Questionnaire
-fromCreateQuestionnaireCommand command uuid permissions tenantConfig now = do
+fromCreateQuestionnaireCommand :: CreateQuestionnaireCommand -> U.UUID -> [QuestionnairePerm] -> TenantConfig -> U.UUID -> UTCTime -> Questionnaire
+fromCreateQuestionnaireCommand command uuid permissions tenantConfig createdBy now = do
   Questionnaire
     { uuid = uuid
     , name = command.name
@@ -377,7 +377,7 @@ fromCreateQuestionnaireCommand command uuid permissions tenantConfig now = do
     , projectTags = []
     , documentTemplateId = command.documentTemplateId
     , formatUuid = Nothing
-    , creatorUuid = Nothing
+    , creatorUuid = Just createdBy
     , permissions = permissions
     , events = []
     , versions = []
