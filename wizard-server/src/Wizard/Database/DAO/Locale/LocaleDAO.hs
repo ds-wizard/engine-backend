@@ -37,7 +37,7 @@ findLocalesPage mOrganizationId mLocaleId mQuery pageable sort =
     pageLabel
     pageable
     sort
-    "locale.id, locale.name, locale.description, locale.code, locale.organization_id, locale.locale_id, locale.version, locale.default_locale, locale.enabled, get_locale_state(registry_locale.remote_version, locale.version), registry_locale.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, locale.created_at, locale.updated_at"
+    "locale.id, locale.name, locale.description, locale.code, locale.organization_id, locale.locale_id, locale.version, locale.default_locale, locale.enabled, registry_locale.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, locale.created_at, locale.updated_at"
     "locale_id"
     mQuery
     Nothing

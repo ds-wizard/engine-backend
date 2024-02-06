@@ -22,8 +22,7 @@ dropFunctions = do
         "DROP FUNCTION IF EXISTS get_newest_package; \
         \DROP FUNCTION IF EXISTS get_newest_package_2;\
         \DROP FUNCTION IF EXISTS get_organization_id;\
-        \DROP FUNCTION IF EXISTS get_km_id;\
-        \DROP FUNCTION IF EXISTS get_package_state;"
+        \DROP FUNCTION IF EXISTS get_km_id;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -70,7 +69,6 @@ createFunctions = do
   createGetNewestPackage2Fn
   createGetOrganizationIdFn
   createGetKmIdFn
-  createGetPackageStateFn
 
 createGetNewestPackageFn = do
   let sql =
@@ -151,29 +149,6 @@ createGetKmIdFn = do
         \BEGIN \
         \    SELECT split_part(req_p_id, ':', 2) \
         \    INTO km_id; \
-        \END; \
-        \$$;"
-  let action conn = execute_ conn sql
-  runDB action
-
-createGetPackageStateFn = do
-  let sql =
-        "CREATE or REPLACE FUNCTION get_package_state(remote_version varchar, local_version varchar) \
-        \    RETURNS varchar \
-        \    LANGUAGE plpgsql \
-        \AS \
-        \$$ \
-        \DECLARE \
-        \    state varchar; \
-        \BEGIN \
-        \    SELECT CASE \
-        \               WHEN remote_version IS NULL THEN 'UnknownPackageState' \
-        \               WHEN compare_version(remote_version, local_version) = 'LT' THEN 'UnpublishedPackageState' \
-        \               WHEN compare_version(remote_version, local_version) = 'EQ' THEN 'UpToDatePackageState' \
-        \               WHEN compare_version(remote_version, local_version) = 'GT' THEN 'OutdatedPackageState' \
-        \               END \
-        \    INTO state; \
-        \    RETURN state; \
         \END; \
         \$$;"
   let action conn = execute_ conn sql

@@ -3,12 +3,12 @@ module Wizard.Integration.Http.GitHub.RequestMapper where
 import Data.Aeson
 import Data.ByteString.Char8 as BS
 import Data.ByteString.Lazy.Char8 as BSL
-import Data.Map.Strict as M
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
-import Prelude hiding (lookup)
 
 import Shared.Common.Constant.Api
 import Shared.Common.Model.Http.HttpRequest
+import Shared.Common.Util.String
 import Wizard.Integration.Resource.GitHub.IssueCreateIDTO
 import Wizard.Integration.Resource.GitHub.IssueCreateIJM ()
 import Wizard.Model.Config.ServerConfig
@@ -28,9 +28,8 @@ toGetIssuesRequest serverConfig tenantConfig =
         , multipart = Nothing
         }
 
-toCreateIssueRequest
-  :: ServerConfigFeedback -> TenantConfigQuestionnaireFeedback -> String -> U.UUID -> String -> String -> HttpRequest
-toCreateIssueRequest serverConfig tenantConfig pkgId questionUuid title content =
+toCreateIssueRequest :: ServerConfigFeedback -> TenantConfigQuestionnaireFeedback -> String -> U.UUID -> String -> String -> Maybe U.UUID -> HttpRequest
+toCreateIssueRequest serverConfig tenantConfig pkgId questionUuid title content mCreatedBy =
   let variables = M.fromList [("owner", tenantConfig.owner), ("repo", tenantConfig.repo)]
    in HttpRequest
         { requestMethod = "POST"
@@ -42,7 +41,7 @@ toCreateIssueRequest serverConfig tenantConfig pkgId questionUuid title content 
             BSL.toStrict . encode $
               IssueCreateIDTO
                 { title = title
-                , body = content
+                , body = f' "%s\n\n**created by:** %s" [content, maybe "anonymous" U.toString mCreatedBy]
                 , assignees = []
                 , milestone = Nothing
                 , labels = [pkgId, U.toString questionUuid]

@@ -4,6 +4,7 @@ import Control.Monad.Reader (asks)
 import qualified Data.UUID as U
 
 import Shared.Common.Integration.Http.Common.HttpClient
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Integration.Http.GitHub.RequestMapper
 import Wizard.Integration.Http.GitHub.ResponseMapper
 import Wizard.Integration.Resource.GitHub.IssueIDTO
@@ -21,6 +22,7 @@ getIssues = do
 createIssue :: String -> U.UUID -> String -> String -> AppContextM IssueIDTO
 createIssue pkgId questionUuid title content = do
   serverConfig <- asks serverConfig
+  mCurrentUser <- asks currentUser
   tenantConfig <- getCurrentTenantConfig
   runRequest
     ( toCreateIssueRequest
@@ -30,5 +32,6 @@ createIssue pkgId questionUuid title content = do
         questionUuid
         title
         content
+        (fmap (.uuid) mCurrentUser)
     )
     toCreateIssueResponse

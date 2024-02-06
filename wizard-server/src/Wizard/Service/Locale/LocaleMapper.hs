@@ -11,7 +11,6 @@ import Wizard.Api.Resource.Locale.LocaleCreateDTO
 import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Api.Resource.Locale.LocaleDetailDTO
 import Wizard.Model.Locale.LocaleList
-import Wizard.Model.Locale.LocaleState
 import Wizard.Model.Registry.RegistryLocale
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Service.Locale.LocaleUtil
@@ -40,7 +39,6 @@ toDTO registryEnabled locale =
                 , logo = locale.remoteOrganizationLogo
                 }
           Nothing -> Nothing
-    , state = computeLocaleState' registryEnabled locale
     , createdAt = locale.createdAt
     , updatedAt = locale.updatedAt
     }
@@ -67,13 +65,12 @@ toDetailDTO locale localeRs orgRs versionLs registryLink =
           Nothing -> Nothing
     , registryLink = registryLink
     , organization = selectOrganizationByOrgId locale orgRs
-    , state = computeLocaleState localeRs locale
     , createdAt = locale.createdAt
     , updatedAt = locale.updatedAt
     }
 
-toLocaleList :: Locale -> LocaleState -> LocaleList
-toLocaleList locale state =
+toLocaleList :: Locale -> LocaleList
+toLocaleList locale =
   LocaleList
     { lId = locale.lId
     , name = locale.name
@@ -84,7 +81,6 @@ toLocaleList locale state =
     , version = locale.version
     , defaultLocale = locale.defaultLocale
     , enabled = locale.enabled
-    , state = state
     , remoteVersion = Nothing
     , remoteOrganizationName = Nothing
     , remoteOrganizationLogo = Nothing

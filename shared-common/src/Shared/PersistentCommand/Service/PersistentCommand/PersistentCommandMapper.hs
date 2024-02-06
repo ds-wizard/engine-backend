@@ -43,6 +43,7 @@ toSimple command =
   PersistentCommandSimple
     { uuid = command.uuid
     , destination = command.destination
+    , component = command.component
     , tenantUuid = command.tenantUuid
     , createdBy = command.createdBy
     }

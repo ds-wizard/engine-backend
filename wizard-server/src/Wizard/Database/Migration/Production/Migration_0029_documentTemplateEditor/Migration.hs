@@ -100,7 +100,7 @@ renameGetTemplateStateFn dbPool = do
         \               WHEN actual_metamodel_version != template_metamodel_version IS NULL THEN 'UnsupportedMetamodelVersionDocumentTemplateState' \
         \               WHEN remote_version IS NULL THEN 'UnknownDocumentTemplateState' \
         \               WHEN compare_version(remote_version, local_version) = 'LT' THEN 'UnpublishedDocumentTemplateState' \
-        \               WHEN compare_version(remote_version, local_version) = 'EQ' THEN 'UpToDateDocumentTemplateState' \
+        \               WHEN compare_version(remote_version, local_version) = 'EQ' THEN 'DefaultDocumentTemplateState' \
         \               WHEN compare_version(remote_version, local_version) = 'GT' THEN 'OutdatedDocumentTemplateState' \
         \               END \
         \    INTO state; \

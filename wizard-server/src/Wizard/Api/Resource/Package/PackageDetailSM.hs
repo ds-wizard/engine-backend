@@ -5,7 +5,6 @@ import Data.Swagger
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageDetailJM ()
-import Wizard.Api.Resource.Package.PackageStateSM ()
 import Wizard.Api.Resource.Registry.RegistryOrganizationSM ()
 import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Database.Migration.Development.Registry.Data.RegistryPackages

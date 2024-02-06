@@ -15,19 +15,12 @@ computeDocumentTemplateState :: [RegistryTemplate] -> DocumentTemplate -> Docume
 computeDocumentTemplateState tmlsFromRegistry tml =
   if not (isDocumentTemplateSupported False tml)
     then UnsupportedMetamodelVersionDocumentTemplateState
-    else case selectDocumentTemplateByOrgIdAndTmlId tml tmlsFromRegistry of
-      Just tmlFromRegistry ->
-        case compareVersion tmlFromRegistry.remoteVersion tml.version of
-          LT -> UnpublishedDocumentTemplateState
-          EQ -> UpToDateDocumentTemplateState
-          GT -> OutdatedDocumentTemplateState
-      Nothing -> UnknownDocumentTemplateState
+    else DefaultDocumentTemplateState
 
-computeDocumentTemplateState' :: Bool -> DocumentTemplateList -> DocumentTemplateState
-computeDocumentTemplateState' registryEnabled tml
+computeDocumentTemplateState' :: DocumentTemplateList -> DocumentTemplateState
+computeDocumentTemplateState' tml
   | not (isDocumentTemplateSupported False tml) = UnsupportedMetamodelVersionDocumentTemplateState
-  | registryEnabled = tml.state
-  | otherwise = UnknownDocumentTemplateState
+  | otherwise = DefaultDocumentTemplateState
 
 selectDocumentTemplateByOrgIdAndTmlId tml =
   L.find (\t -> t.organizationId == tml.organizationId && t.templateId == tml.templateId)

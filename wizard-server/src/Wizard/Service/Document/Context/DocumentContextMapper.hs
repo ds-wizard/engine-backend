@@ -69,7 +69,6 @@ toDocumentContextPackage pkg =
         , versions = []
         , remoteLatestVersion = dto.remoteLatestVersion
         , description = dto.description
-        , state = dto.state
         , organization = dto.organization
         , createdAt = dto.createdAt
         }

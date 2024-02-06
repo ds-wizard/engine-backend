@@ -55,6 +55,8 @@ instance FromEnv ServerConfigPersistentCommand where
       [ \c -> applyEnvVariable "PERSISTENT_COMMAND_LISTENER_JOB_ENABLED" c.listenerJob.enabled (\x -> c {listenerJob = c.listenerJob {enabled = x}} :: ServerConfigPersistentCommand)
       , \c -> applyEnvVariable "PERSISTENT_COMMAND_RETRY_JOB_ENABLED" c.retryJob.enabled (\x -> c {retryJob = c.retryJob {enabled = x}} :: ServerConfigPersistentCommand)
       , \c -> applyStringEnvVariable "PERSISTENT_COMMAND_RETRY_JOB_CRON" c.retryJob.cron (\x -> c {retryJob = c.retryJob {cron = x}} :: ServerConfigPersistentCommand)
+      , \c -> applyEnvVariable "PERSISTENT_COMMAND_RETRY_LAMBDA_JOB_ENABLED" c.retryLambdaJob.enabled (\x -> c {retryLambdaJob = c.retryLambdaJob {enabled = x}} :: ServerConfigPersistentCommand)
+      , \c -> applyStringEnvVariable "PERSISTENT_COMMAND_RETRY_LAMBDA_JOB_CRON" c.retryLambdaJob.cron (\x -> c {retryLambdaJob = c.retryLambdaJob {cron = x}} :: ServerConfigPersistentCommand)
       ]
 
 instance FromEnv ServerConfigLogging where

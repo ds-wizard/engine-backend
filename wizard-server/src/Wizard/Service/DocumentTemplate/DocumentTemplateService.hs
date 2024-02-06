@@ -22,7 +22,6 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.DocumentTemplate.DocumentTemplateSuggestion
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
@@ -46,15 +45,15 @@ getDocumentTemplates queryParams mPkgId = do
   templates <- findDocumentTemplatesFiltered queryParams
   return $ filterDocumentTemplates mPkgId templates
 
-getDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSimpleDTO)
-getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState pageable sort = do
+getDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSimpleDTO)
+getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated pageable sort = do
   checkPermission _DOC_TML_READ_PERM
   tenantConfig <- getCurrentTenantConfig
-  if mTemplateState == (Just . show $ OutdatedDocumentTemplateState) && not tenantConfig.registry.enabled
+  if mOutdated == Just True && not tenantConfig.registry.enabled
     then return $ Page "documentTemplates" (PageMetadata 0 0 0 0) []
     else do
-      templates <- findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mTemplateState Nothing pageable sort
-      return . fmap (toSimpleDTO' tenantConfig.registry.enabled) $ templates
+      templates <- findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated Nothing pageable sort
+      return . fmap toSimpleDTO' $ templates
 
 getDocumentTemplateSuggestions :: Maybe String -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
 getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable pageable sort = do

@@ -10,6 +10,7 @@ import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Tenant.Usage.UsageMapper
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
@@ -35,6 +36,7 @@ getUsage tenantUuid = do
 
 getUsageForCurrentApp :: AppContextM TenantUsageDTO
 getUsageForCurrentApp = do
+  checkPermission _CFG_PERM
   limitBundle <- findLimitBundleForCurrentTenant
   userCount <- countUsers
   activeUserCount <- countActiveUsers

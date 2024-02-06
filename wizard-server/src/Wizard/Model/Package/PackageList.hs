@@ -3,7 +3,6 @@ module Wizard.Model.Package.PackageList where
 import Data.Time
 import GHC.Generics
 
-import Wizard.Model.Package.PackageState
 import WizardLib.KnowledgeModel.Model.Package.Package (PackagePhase)
 
 data PackageList = PackageList
@@ -15,7 +14,6 @@ data PackageList = PackageList
   , phase :: PackagePhase
   , description :: String
   , nonEditable :: Bool
-  , state :: PackageState
   , remoteVersion :: Maybe String
   , remoteOrganizationName :: Maybe String
   , remoteOrganizationLogo :: Maybe String

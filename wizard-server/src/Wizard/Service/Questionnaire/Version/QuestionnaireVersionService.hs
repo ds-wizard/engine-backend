@@ -95,7 +95,9 @@ revertToEvent :: U.UUID -> QuestionnaireVersionRevertDTO -> Bool -> AppContextM 
 revertToEvent qtnUuid reqDto shouldSave =
   runInTransaction $ do
     qtn <- findQuestionnaireByUuid qtnUuid
-    when shouldSave (checkOwnerPermissionToQtn qtn.visibility qtn.permissions)
+    if shouldSave
+      then checkOwnerPermissionToQtn qtn.visibility qtn.permissions
+      else checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
     let updatedEvents = takeWhileInclusive (\e -> getUuid e /= reqDto.eventUuid) qtn.events
     let updatedEventUuids = S.fromList . fmap getUuid $ updatedEvents
     let updatedVersions = filter (\v -> S.member v.eventUuid updatedEventUuids) qtn.versions

@@ -60,6 +60,7 @@ getTemporaryFileWithBundle pbId =
 exportBundle :: String -> AppContextM PackageBundleDTO
 exportBundle pbId =
   runInTransaction $ do
+    checkPermission _PM_WRITE_PERM
     packages <- findSeriesOfPackagesRecursiveById pbId
     let newestPackage = last packages
     when

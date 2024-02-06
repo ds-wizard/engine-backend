@@ -16,7 +16,6 @@ import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Package.PackageState
 import Wizard.Model.Package.PackageSuggestion
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Package.PackageMapper
@@ -36,18 +35,18 @@ getPackagesPage
   :: Maybe String
   -> Maybe String
   -> Maybe String
-  -> Maybe String
+  -> Maybe Bool
   -> Pageable
   -> [Sort]
   -> AppContextM (Page PackageSimpleDTO)
-getPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort = do
+getPackagesPage mOrganizationId mKmId mQuery mOutdated pageable sort = do
   checkPermission _PM_READ_PERM
   tenantConfig <- getCurrentTenantConfig
-  if mPackageState == (Just . show $ OutdatedPackageState) && not (tenantConfig.registry.enabled)
+  if mOutdated == Just True && not (tenantConfig.registry.enabled)
     then return $ Page "packages" (PageMetadata 0 0 0 0) []
     else do
-      packages <- findPackagesPage mOrganizationId mKmId mQuery mPackageState pageable sort
-      return . fmap (toSimpleDTO'' (tenantConfig.registry.enabled)) $ packages
+      packages <- findPackagesPage mOrganizationId mKmId mQuery mOutdated pageable sort
+      return . fmap toSimpleDTO'' $ packages
 
 getPackageSuggestions
   :: Maybe String

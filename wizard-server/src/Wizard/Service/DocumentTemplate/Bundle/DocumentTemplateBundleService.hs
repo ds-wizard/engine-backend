@@ -70,6 +70,7 @@ importAndConvertBundle :: BSL.ByteString -> Bool -> AppContextM DocumentTemplate
 importAndConvertBundle contentS fromRegistry =
   case fromDocumentTemplateArchive contentS of
     Right (bundle, assetContents) -> do
+      checkPermission _DOC_TML_WRITE_PERM
       checkDocumentTemplateLimit
       let assetSize = foldl (\acc (_, content) -> acc + (fromIntegral . BS.length $ content)) 0 assetContents
       checkStorageSize assetSize

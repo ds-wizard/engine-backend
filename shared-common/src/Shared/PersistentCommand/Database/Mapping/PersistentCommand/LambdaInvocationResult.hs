@@ -1,0 +1,7 @@
+module Shared.PersistentCommand.Database.Mapping.PersistentCommand.LambdaInvocationResult where
+
+import Database.PostgreSQL.Simple
+
+import Shared.PersistentCommand.Model.PersistentCommand.LambdaInvocationResult
+
+instance FromRow LambdaInvocationResult

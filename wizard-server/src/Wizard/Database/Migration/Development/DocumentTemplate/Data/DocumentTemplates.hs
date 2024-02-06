@@ -5,7 +5,6 @@ import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Database.Migration.Development.Registry.Data.RegistryTemplates
-import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Service.DocumentTemplate.DocumentTemplateMapper
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -15,12 +14,10 @@ import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as SPM
 wizardDocumentTemplateSimpleDTO :: DocumentTemplateSimpleDTO
 wizardDocumentTemplateSimpleDTO =
   toSimpleDTO'
-    True
     ( toList
         wizardDocumentTemplate
         (Just commonWizardRegistryTemplate)
         (Just globalRegistryOrganization)
-        UpToDateDocumentTemplateState
         ReleasedDocumentTemplatePhase
     )
 

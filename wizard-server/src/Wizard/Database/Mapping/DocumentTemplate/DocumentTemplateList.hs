@@ -21,7 +21,6 @@ instance FromRow DocumentTemplateList where
     metamodelVersion <- field
     description <- field
     allowedPackages <- fieldWith fromJSONField
-    state <- field
     nonEditable <- field
     remoteVersion <- field
     remoteOrganizationName <- field

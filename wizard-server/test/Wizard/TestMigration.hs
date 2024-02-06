@@ -71,9 +71,7 @@ import Wizard.Specs.Common
 
 buildSchema appContext = do
   putStrLn "DB: dropping DB functions"
-  runInContext Locale.dropFunctions appContext
   runInContext Branch.dropFunctions appContext
-  runInContext DocumentTemplate.dropFunctions appContext
   runInContext Package.dropFunctions appContext
   runInContext Common.dropFunctions appContext
   putStrLn "DB: dropping schema"
@@ -126,9 +124,7 @@ buildSchema appContext = do
   putStrLn "DB: Creating DB functions"
   runInContext Common.createFunctions appContext
   runInContext Package.createFunctions appContext
-  runInContext DocumentTemplate.createFunctions appContext
   runInContext Branch.createFunctions appContext
-  runInContext Locale.createFunctions appContext
   putStrLn "DB-S3: Purging and creating schema"
   runInContext DocumentTemplateMigration.runS3Migration appContext
   runInContext LocaleMigration.runS3Migration appContext

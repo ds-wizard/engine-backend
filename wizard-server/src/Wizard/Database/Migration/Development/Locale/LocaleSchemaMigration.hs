@@ -15,13 +15,6 @@ dropTables = do
   let action conn = execute_ conn sql
   runDB action
 
-dropFunctions :: AppContextM Int64
-dropFunctions = do
-  logInfo _CMP_MIGRATION "(Function/Locale) drop functions"
-  let sql = "DROP FUNCTION IF EXISTS get_locale_state;"
-  let action conn = execute_ conn sql
-  runDB action
-
 createTables :: AppContextM Int64
 createTables = do
   logInfo _CMP_MIGRATION "(Table/Locale) create table"
@@ -46,33 +39,5 @@ createTables = do
         \    CONSTRAINT locale_pk PRIMARY KEY (id, tenant_uuid),\
         \    CONSTRAINT locale_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid)\
         \);"
-  let action conn = execute_ conn sql
-  runDB action
-
-createFunctions :: AppContextM Int64
-createFunctions = do
-  logInfo _CMP_MIGRATION "(Function/Locale) create functions"
-  createGetLocaleStateFn
-
-createGetLocaleStateFn = do
-  let sql =
-        "CREATE or REPLACE FUNCTION get_locale_state(remote_version varchar, local_version varchar) \
-        \    RETURNS varchar \
-        \    LANGUAGE plpgsql \
-        \AS \
-        \$$ \
-        \DECLARE \
-        \    state varchar; \
-        \BEGIN \
-        \    SELECT CASE \
-        \               WHEN remote_version IS NULL THEN 'UnknownLocaleState' \
-        \               WHEN compare_version(remote_version, local_version) = 'LT' THEN 'UnpublishedLocaleState' \
-        \               WHEN compare_version(remote_version, local_version) = 'EQ' THEN 'UpToDateLocaleState' \
-        \               WHEN compare_version(remote_version, local_version) = 'GT' THEN 'OutdatedLocaleState' \
-        \               END \
-        \    INTO state; \
-        \    RETURN state; \
-        \END; \
-        \$$;"
   let action conn = execute_ conn sql
   runDB action

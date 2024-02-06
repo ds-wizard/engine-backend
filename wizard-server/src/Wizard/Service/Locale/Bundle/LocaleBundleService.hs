@@ -18,7 +18,6 @@ import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Locale.LocaleState
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.Locale.LocaleS3
 import Wizard.Service.Locale.Bundle.LocaleBundleAudit
@@ -38,6 +37,7 @@ getTemporaryFileWithBundle lclId =
 exportBundle :: String -> AppContextM BSL.ByteString
 exportBundle lclId =
   runInTransaction $ do
+    checkPermission _LOC_PERM
     locale <- findLocaleById lclId
     content <- retrieveLocale locale.lId
     return $ toLocaleArchive locale content
@@ -45,7 +45,7 @@ exportBundle lclId =
 pullBundleFromRegistry :: String -> AppContextM ()
 pullBundleFromRegistry lclId =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _LOC_PERM
     lb <- catchError (retrieveLocaleBundleById lclId) handleError
     _ <- importBundle lb True
     return ()
@@ -68,5 +68,5 @@ importBundle contentS fromRegistry =
         then auditLocaleBundlePullFromRegistry locale.lId
         else auditLocaleBundleImportFromFile locale.lId
       tenantConfig <- getCurrentTenantConfig
-      return . toDTO tenantConfig.registry.enabled $ toLocaleList locale UnknownLocaleState
+      return . toDTO tenantConfig.registry.enabled $ toLocaleList locale
     Left error -> throwError error

@@ -5,7 +5,6 @@ import Data.Swagger
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
-import Wizard.Api.Resource.Package.PackageStateSM ()
 import Wizard.Api.Resource.Registry.RegistryOrganizationSM ()
 import Wizard.Service.Package.PackageMapper
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePhaseSM ()

@@ -78,15 +78,15 @@ test_200 appContext = do
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSimpleDTO]))
   create_test_200
-    "HTTP 200 OK (state - UpToDateDocumentTemplateState)"
+    "HTTP 200 OK (outdated=false)"
     appContext
-    "/wizard-api/document-templates?state=UpToDateDocumentTemplateState"
+    "/wizard-api/document-templates?outdated=false"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 1 1 0) [wizardDocumentTemplateSimpleDTO])
   create_test_200
-    "HTTP 200 OK (state - OutdatedDocumentTemplateState)"
+    "HTTP 200 OK (outdated=true)"
     appContext
-    "/wizard-api/document-templates?state=OutdatedDocumentTemplateState"
+    "/wizard-api/document-templates?outdated=true"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSimpleDTO]))
 
