@@ -4,6 +4,7 @@ import Servant
 
 import Wizard.Api.Handler.ActionKey.Api
 import Wizard.Api.Handler.ApiKey.Api
+import Wizard.Api.Handler.AppKey.Api
 import Wizard.Api.Handler.Auth.Api
 import Wizard.Api.Handler.BookReference.Api
 import Wizard.Api.Handler.Branch.Api
@@ -41,6 +42,7 @@ import Wizard.Model.Context.BaseContext
 type ApplicationAPI =
   ActionKeyAPI
     :<|> ApiKeyAPI
+    :<|> AppKeyAPI
     :<|> AuthAPI
     :<|> BookReferenceAPI
     :<|> BranchAPI
@@ -81,6 +83,7 @@ applicationServer :: ServerT ApplicationAPI BaseContextM
 applicationServer =
   actionKeyServer
     :<|> apiKeyServer
+    :<|> appKeyServer
     :<|> authServer
     :<|> bookReferenceServer
     :<|> branchServer

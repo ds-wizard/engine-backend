@@ -6,6 +6,7 @@ import Shared.Common.Util.Uuid
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.User.User
 import WizardLib.Public.Api.Resource.UserToken.ApiKeyCreateDTO
+import WizardLib.Public.Api.Resource.UserToken.AppKeyCreateDTO
 import WizardLib.Public.Api.Resource.UserToken.LoginDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Model.User.UserToken
@@ -48,9 +49,28 @@ albertApiKey =
     , createdAt = dt' 2022 1 21
     }
 
+myAppKey :: UserToken
+myAppKey =
+  UserToken
+    { uuid = u' "8591dd6f-c114-457a-9781-7411fc71e468"
+    , name = "My App Key"
+    , tType = AppKeyUserTokenType
+    , userUuid = userAlbert.uuid
+    , value = "eyJhbGciOiJSUzI1NiJ9.eyJleHAiOjE3MzU4ODQyOTAsInRlbmFudFV1aWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAiLCJ0b2tlblV1aWQiOiI0M2Q0NGM2YS1kMjJlLTQ5NTQtYmVlNi0wZmVkYzhjOTkwZGYiLCJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsInZlcnNpb24iOjR9.I39ofNurjfjDgeCgh3zFfrK6tC4KEQSOnxmvxY8lWFoO1szsKqKzWXQPfAnJzZF6tw6hS2Fj3p6xtvjHT-dzMcfP8DDzTO8bUua0l86u1jsVyNoqzM1V1SWcvfALah7_6WFcO9izXKvYV1VyL8ouTkaiTNxc365qeKFru6_wH5ts9vz3wcwvJaimeUEsacEacZXpmZGhs8zjVhzw9fluTyu_gOrx-58ci2JQJfQbP0JBfGhfhIxaVqBR25E-U8Zn1Tut-2mYHIcHx99iO6mbtllfOZHaUuwrrQYc6SLjY7ZNXFTFsjoagEVOdjeaU8MKLHvGum3cV7m7UVq8QMNi3KpRrLB7JRW8zG-GWZ1MRCRPrY9Otuevsb-jldQpJ6u-0fboYKHrJBIaQoCT0kEbtCS-hkgWeoCdezs-J94tJ7X5qNpjNrGl3aL6Z1xu01QH0DqpPKUatVPFleGcaaJmNWASHZWxN1_YZ6ZdlsYwFeiOm7MRGp8eY_LL0zDhJXEye0ridb0FG_PTbea_ztEbrcEulDffZWMhW4mJjkvDvrgwAvbkOMVfZJUwjbEsxp58KfRaJ6LTdIMSy69UNDl0k7HqF_v1Un84HchhZUmd_8nNV_EezMmV9an1wmzzjmQ0PhoZP0JQ05u96s7ciJo6mt0m8kz9YuYrHL0SN1HMA_E"
+    , userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
+    , sessionState = Nothing
+    , expiresAt = dt' 2052 1 21
+    , tenantUuid = defaultTenantUuid
+    , createdAt = dt' 2022 1 21
+    }
+
 albertCreateApiKey :: ApiKeyCreateDTO
 albertCreateApiKey =
   ApiKeyCreateDTO {name = albertApiKey.name, expiresAt = dt' 2052 1 21}
+
+myAppKeyCreate :: AppKeyCreateDTO
+myAppKeyCreate =
+  AppKeyCreateDTO {name = myAppKey.name}
 
 alternativeAlbertToken :: UserToken
 alternativeAlbertToken =
