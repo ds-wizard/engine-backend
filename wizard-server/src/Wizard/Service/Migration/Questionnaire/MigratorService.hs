@@ -77,6 +77,7 @@ finishQuestionnaireMigration qtnUuid =
     oldQtn <- findQuestionnaireByUuid state.oldQuestionnaireUuid
     newQtn <- findQuestionnaireByUuid state.newQuestionnaireUuid
     events <- ensurePhaseIsSetIfNecessary newQtn
+    now <- liftIO getCurrentTime
     let updatedQtn =
           oldQtn
             { formatUuid = newQtn.formatUuid
@@ -84,6 +85,7 @@ finishQuestionnaireMigration qtnUuid =
             , selectedQuestionTagUuids = newQtn.selectedQuestionTagUuids
             , packageId = newQtn.packageId
             , events = events
+            , updatedAt = now
             }
           :: Questionnaire
     mPhasesAnsweredIndication <- getPhasesAnsweredIndication updatedQtn
