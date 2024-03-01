@@ -40,7 +40,6 @@ import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireSimpleWithPerm
 import Wizard.Model.Questionnaire.QuestionnaireSquash
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
-import Wizard.Model.Report.Report
 import Wizard.Model.User.User
 
 entityName = "questionnaire"
@@ -201,8 +200,6 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
               \    qtn.visibility, \
               \    qtn.sharing, \
               \    qtn.is_template, \
-              \    qtn.answered_questions, \
-              \    qtn.unanswered_questions, \
               \    qtn.created_at, \
               \    qtn.updated_at, \
               \    CASE \
@@ -415,7 +412,7 @@ updateQuestionnaireByUuid qtn = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, document_template_id = ?, format_uuid = ?, created_by = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?, answered_questions = ?, unanswered_questions = ? WHERE  tenant_uuid = ? AND uuid = ?"
+          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, document_template_id = ?, format_uuid = ?, created_by = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ? WHERE  tenant_uuid = ? AND uuid = ?"
   let params = toRow qtn ++ [toField tenantUuid, toField . U.toText $ qtn.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
@@ -450,61 +447,17 @@ updateQuestionnaireEventsByUuid'' qtnUuid events = do
   runDB action
   return ()
 
-updateQuestionnaireIndicationByUuid :: U.UUID -> PhasesAnsweredIndication -> AppContextM ()
-updateQuestionnaireIndicationByUuid qtnUuid phasesAnsweredIndication = do
-  let sql = fromString "UPDATE questionnaire SET answered_questions = ?, unanswered_questions = ? WHERE uuid = ?"
-  let params =
-        [ toField $ phasesAnsweredIndication.answeredQuestions
-        , toField $ phasesAnsweredIndication.unansweredQuestions
-        , toField qtnUuid
-        ]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
-
-updateQuestionnaireEventsWithIndicationByUuid :: U.UUID -> Bool -> [QuestionnaireEvent] -> PhasesAnsweredIndication -> AppContextM ()
-updateQuestionnaireEventsWithIndicationByUuid qtnUuid squashed events phasesAnsweredIndication = do
-  let sql =
-        fromString
-          "UPDATE questionnaire SET squashed = ?, events = ?, answered_questions = ?, unanswered_questions = ?, updated_at = now() WHERE uuid = ?"
-  let params =
-        [ toField squashed
-        , toJSONField events
-        , toField $ phasesAnsweredIndication.answeredQuestions
-        , toField $ phasesAnsweredIndication.unansweredQuestions
-        , toField qtnUuid
-        ]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
-
-appendQuestionnaireEventByUuid :: U.UUID -> [QuestionnaireEvent] -> PhasesAnsweredIndication -> AppContextM ()
-appendQuestionnaireEventByUuid qtnUuid events phasesAnsweredIndication = do
-  tenantUuid <- asks currentTenantUuid
-  let sql =
-        fromString
-          "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb, answered_questions = ?, unanswered_questions = ?, updated_at = now() WHERE tenant_uuid = ? AND uuid = ?"
-  let params =
-        [ toJSONField events
-        , toField $ phasesAnsweredIndication.answeredQuestions
-        , toField $ phasesAnsweredIndication.unansweredQuestions
-        , toField tenantUuid
-        , toField qtnUuid
-        ]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
-
-appendQuestionnaireEventByUuid' :: U.UUID -> [QuestionnaireEvent] -> AppContextM ()
-appendQuestionnaireEventByUuid' qtnUuid events = do
+appendQuestionnaireEventByUuid :: U.UUID -> [QuestionnaireEvent] -> AppContextM ()
+appendQuestionnaireEventByUuid qtnUuid events = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
           "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb, updated_at = now() WHERE tenant_uuid = ? AND uuid = ?"
-  let params = [toJSONField events, toField tenantUuid, toField qtnUuid]
+  let params =
+        [ toJSONField events
+        , toField tenantUuid
+        , toField qtnUuid
+        ]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action

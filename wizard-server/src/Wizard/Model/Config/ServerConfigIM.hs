@@ -126,8 +126,6 @@ instance FromEnv ServerConfigQuestionnaire where
       serverConfig
       [ \c -> applyEnvVariable "QUESTIONNAIRE_CLEAN_ENABLED" c.clean.enabled (\x -> c {clean = c.clean {enabled = x}} :: ServerConfigQuestionnaire)
       , \c -> applyStringEnvVariable "QUESTIONNAIRE_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigQuestionnaire)
-      , \c -> applyEnvVariable "QUESTIONNAIRE_RECOMPUTE_INDICATION_ENABLED" c.recomputeIndication.enabled (\x -> c {recomputeIndication = c.recomputeIndication {enabled = x}} :: ServerConfigQuestionnaire)
-      , \c -> applyStringEnvVariable "QUESTIONNAIRE_RECOMPUTE_INDICATION_CRON" c.recomputeIndication.cron (\x -> c {recomputeIndication = c.recomputeIndication {cron = x}} :: ServerConfigQuestionnaire)
       , \c -> applyEnvVariable "QUESTIONNAIRE_SQUASH_ENABLED" c.squash.enabled (\x -> c {squash = c.squash {enabled = x}} :: ServerConfigQuestionnaire)
       , \c -> applyStringEnvVariable "QUESTIONNAIRE_SQUASH_CRON" c.squash.cron (\x -> c {squash = c.squash {cron = x}} :: ServerConfigQuestionnaire)
       ]

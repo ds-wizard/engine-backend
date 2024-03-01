@@ -39,8 +39,6 @@ data Questionnaire = Questionnaire
   , versions :: [QuestionnaireVersion]
   , isTemplate :: Bool
   , squashed :: Bool
-  , answeredQuestions :: Int
-  , unansweredQuestions :: Int
   , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
@@ -65,6 +63,4 @@ instance Eq Questionnaire where
       && a.versions == b.versions
       && a.isTemplate == b.isTemplate
       && a.squashed == b.squashed
-      && a.answeredQuestions == b.answeredQuestions
-      && a.unansweredQuestions == b.unansweredQuestions
       && a.tenantUuid == b.tenantUuid

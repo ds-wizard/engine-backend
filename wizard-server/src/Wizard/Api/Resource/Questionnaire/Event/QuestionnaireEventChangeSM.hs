@@ -7,10 +7,8 @@ import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeJM ()
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM ()
-import Wizard.Api.Resource.Report.ReportSM ()
 import Wizard.Api.Resource.User.UserSuggestionSM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
-import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 
 instance ToSchema QuestionnaireEventChangeDTO where
@@ -18,19 +16,19 @@ instance ToSchema QuestionnaireEventChangeDTO where
 
 instance ToSchema SetReplyEventChangeDTO where
   declareNamedSchema =
-    toSwagger (toSetReplyEventChangeDTO sre_rQ1 samplePhasesAnsweredIndication)
+    toSwagger (toSetReplyEventChangeDTO sre_rQ1)
 
 instance ToSchema ClearReplyEventChangeDTO where
   declareNamedSchema =
-    toSwagger (toClearReplyEventChangeDTO cre_rQ1 samplePhasesAnsweredIndication)
+    toSwagger (toClearReplyEventChangeDTO cre_rQ1)
 
 instance ToSchema SetPhaseEventChangeDTO where
   declareNamedSchema =
-    toSwagger (toSetPhaseEventChangeDTO sphse_1 samplePhasesAnsweredIndication)
+    toSwagger (toSetPhaseEventChangeDTO sphse_1)
 
 instance ToSchema SetLabelsEventChangeDTO where
   declareNamedSchema =
-    toSwagger (toSetLabelsEventChangeDTO slble_rQ2 samplePhasesAnsweredIndication)
+    toSwagger (toSetLabelsEventChangeDTO slble_rQ2)
 
 instance ToSchema ResolveCommentThreadEventChangeDTO where
   declareNamedSchema = toSwagger rtche_rQ1_t1

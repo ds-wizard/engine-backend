@@ -20,7 +20,6 @@ import qualified Wizard.Database.Migration.Development.DocumentTemplate.Document
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
@@ -54,7 +53,7 @@ reqHeadersT authHeader = reqCtHeader : authHeader
 
 reqDto =
   QuestionnaireContentChangeDTO
-    { events = [toEventChangeDTO slble_rQ2' samplePhasesAnsweredIndication]
+    { events = [toEventChangeDTO slble_rQ2']
     }
 
 reqBody = encode reqDto
