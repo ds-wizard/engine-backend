@@ -12,6 +12,7 @@ import qualified Data.UUID as U
 import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.ActionKey.Model.ActionKey.ActionKey
+import Shared.Audit.Database.DAO.Audit.AuditDAO
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
@@ -275,6 +276,7 @@ deleteUser userUuid =
   runInTransaction $ do
     checkPermission _UM_PERM
     _ <- findUserByUuid userUuid
+    deleteAuditByCreatedBy userUuid
     clearBranchCreatedBy userUuid
     deleteQuestionnairePermUserByUserUuid userUuid
     clearQuestionnaireCreatedBy userUuid
