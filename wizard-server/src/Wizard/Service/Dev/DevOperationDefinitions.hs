@@ -434,7 +434,6 @@ questionnaire =
     , description = Nothing
     , operations =
         [ questionnaire_cleanQuestionnaires
-        , questionnaire_recomputeQuestionnaireIndications
         , questionnaire_squashAllEvents
         , questionnaire_squashEventsForQuestionnaire
         ]
@@ -449,18 +448,6 @@ questionnaire_cleanQuestionnaires =
     , parameters = []
     , function = \reqDto -> do
         cleanQuestionnaires
-        return "Done"
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-questionnaire_recomputeQuestionnaireIndications :: DevOperation AppContextM
-questionnaire_recomputeQuestionnaireIndications =
-  DevOperation
-    { name = "Recompute Questionnaire Indications"
-    , description = Nothing
-    , parameters = []
-    , function = \reqDto -> do
-        recomputeQuestionnaireIndicationsInAllApplications
         return "Done"
     }
 

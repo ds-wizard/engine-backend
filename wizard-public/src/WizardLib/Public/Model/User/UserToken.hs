@@ -7,6 +7,7 @@ import GHC.Generics
 data UserTokenType
   = LoginUserTokenType
   | ApiKeyUserTokenType
+  | AppKeyUserTokenType
   deriving (Show, Eq, Generic, Read)
 
 data UserToken = UserToken

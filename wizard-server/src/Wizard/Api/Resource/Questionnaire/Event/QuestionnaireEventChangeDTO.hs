@@ -4,7 +4,6 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Questionnaire.QuestionnaireReply
-import Wizard.Model.Report.Report
 
 data QuestionnaireEventChangeDTO
   = SetReplyEventChangeDTO' SetReplyEventChangeDTO
@@ -23,21 +22,18 @@ data SetReplyEventChangeDTO = SetReplyEventChangeDTO
   { uuid :: U.UUID
   , path :: String
   , value :: ReplyValue
-  , phasesAnsweredIndication :: PhasesAnsweredIndication
   }
   deriving (Show, Eq, Generic)
 
 data ClearReplyEventChangeDTO = ClearReplyEventChangeDTO
   { uuid :: U.UUID
   , path :: String
-  , phasesAnsweredIndication :: PhasesAnsweredIndication
   }
   deriving (Show, Eq, Generic)
 
 data SetPhaseEventChangeDTO = SetPhaseEventChangeDTO
   { uuid :: U.UUID
   , phaseUuid :: Maybe U.UUID
-  , phasesAnsweredIndication :: PhasesAnsweredIndication
   }
   deriving (Show, Eq, Generic)
 

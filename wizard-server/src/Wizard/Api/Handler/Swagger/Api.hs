@@ -108,6 +108,7 @@ import Wizard.Api.Resource.User.UserProfileSM ()
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Api.Resource.User.UserStateSM ()
 import Wizard.Api.Resource.UserToken.ApiKeyCreateSM ()
+import Wizard.Api.Resource.UserToken.AppKeyCreateSM ()
 import Wizard.Api.Resource.UserToken.UserTokenListSM ()
 import Wizard.Api.Resource.Websocket.QuestionnaireActionSM ()
 import Wizard.Api.Resource.Websocket.WebsocketSM ()
@@ -131,7 +132,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.3.1"
+              , _infoVersion = "4.4.0"
               , _infoLicense =
                   Just $
                     License

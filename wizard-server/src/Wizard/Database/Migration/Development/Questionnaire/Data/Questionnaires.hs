@@ -18,7 +18,6 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEve
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireLabels
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
-import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.Questionnaire
@@ -64,8 +63,6 @@ questionnaire1 =
     , versions = qVersions
     , isTemplate = True
     , squashed = True
-    , answeredQuestions = 3
-    , unansweredQuestions = 1
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 25
@@ -169,8 +166,6 @@ questionnaire2 =
     , versions = qVersions
     , isTemplate = False
     , squashed = True
-    , answeredQuestions = 3
-    , unansweredQuestions = 1
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 22
@@ -195,8 +190,6 @@ questionnaire2Edited =
     , versions = questionnaire2.versions
     , isTemplate = False
     , squashed = True
-    , answeredQuestions = 3
-    , unansweredQuestions = 1
     , tenantUuid = defaultTenant.uuid
     , createdAt = questionnaire2.createdAt
     , updatedAt = questionnaire2.updatedAt
@@ -253,8 +246,6 @@ questionnaire3 =
     , versions = qVersions
     , isTemplate = False
     , squashed = True
-    , answeredQuestions = 3
-    , unansweredQuestions = 1
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 28
@@ -295,8 +286,6 @@ questionnaire4 =
     , versions = []
     , isTemplate = False
     , squashed = True
-    , answeredQuestions = 3
-    , unansweredQuestions = 1
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 25
@@ -664,8 +653,6 @@ questionnaire14 =
     , permissions = [qtn14NikolaEditQtnPerm]
     , packageId = amsterdamPackage.pId
     , events = []
-    , answeredQuestions = 0
-    , unansweredQuestions = 0
     , updatedAt = dt' 2018 1 26
     }
 
@@ -709,8 +696,6 @@ questionnaire15 =
     , versions = qVersions
     , isTemplate = False
     , squashed = True
-    , answeredQuestions = 3
-    , unansweredQuestions = 1
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 29
@@ -763,8 +748,6 @@ differentQuestionnaire =
     , versions = []
     , isTemplate = True
     , squashed = True
-    , answeredQuestions = 3
-    , unansweredQuestions = 1
     , tenantUuid = differentTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 25
@@ -785,7 +768,7 @@ differentCharlesOwnerQtnPerm =
 contentChangeDTO :: QuestionnaireContentChangeDTO
 contentChangeDTO =
   QuestionnaireContentChangeDTO
-    { events = fmap (`toEventChangeDTO` samplePhasesAnsweredIndication) fEvents
+    { events = fmap toEventChangeDTO fEvents
     }
 
 -- ------------------------------------------------------------------------

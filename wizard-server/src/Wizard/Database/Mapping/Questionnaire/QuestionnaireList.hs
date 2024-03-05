@@ -27,8 +27,6 @@ instance FromRow QuestionnaireList where
     visibility <- field
     sharing <- field
     isTemplate <- field
-    answeredQuestions <- field
-    unansweredQuestions <- field
     createdAt <- field
     updatedAt <- field
     state <- field

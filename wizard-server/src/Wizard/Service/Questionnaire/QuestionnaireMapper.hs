@@ -57,8 +57,6 @@ toDTO qtn package state permissions =
     , sharing = qtn.sharing
     , state = state
     , package = SPM.toSimple package
-    , answeredQuestions = qtn.answeredQuestions
-    , unansweredQuestions = qtn.unansweredQuestions
     , permissions = permissions
     , isTemplate = qtn.isTemplate
     , createdAt = qtn.createdAt
@@ -75,8 +73,6 @@ toDTO' qtn =
     , sharing = qtn.sharing
     , state = qtn.state
     , package = qtn.package
-    , answeredQuestions = qtn.answeredQuestions
-    , unansweredQuestions = qtn.unansweredQuestions
     , permissions = qtn.permissions
     , isTemplate = qtn.isTemplate
     , createdAt = qtn.createdAt
@@ -93,8 +89,6 @@ toSimpleDTO qtn package state permissions =
     , sharing = qtn.sharing
     , state = state
     , package = SPM.toSimple . SPM.toPackage $ package
-    , answeredQuestions = qtn.answeredQuestions
-    , unansweredQuestions = qtn.unansweredQuestions
     , permissions = permissions
     , isTemplate = qtn.isTemplate
     , createdAt = qtn.createdAt
@@ -290,8 +284,6 @@ fromChangeDTO qtn dto visibility sharing currentUser now =
           then dto.isTemplate
           else qtn.isTemplate
     , squashed = qtn.squashed
-    , answeredQuestions = qtn.answeredQuestions
-    , unansweredQuestions = qtn.unansweredQuestions
     , tenantUuid = qtn.tenantUuid
     , createdAt = qtn.createdAt
     , updatedAt = now
@@ -341,8 +333,6 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId
     , versions = []
     , isTemplate = False
     , squashed = True
-    , answeredQuestions = 0
-    , unansweredQuestions = 0
     , tenantUuid = tenantUuid
     , createdAt = now
     , updatedAt = now
@@ -364,8 +354,8 @@ fromQuestionnairePermChangeDTO qtnUuid tenantUuid dto =
     , tenantUuid = tenantUuid
     }
 
-fromCreateQuestionnaireCommand :: CreateQuestionnaireCommand -> U.UUID -> [QuestionnairePerm] -> TenantConfig -> UTCTime -> Questionnaire
-fromCreateQuestionnaireCommand command uuid permissions tenantConfig now = do
+fromCreateQuestionnaireCommand :: CreateQuestionnaireCommand -> U.UUID -> [QuestionnairePerm] -> TenantConfig -> U.UUID -> UTCTime -> Questionnaire
+fromCreateQuestionnaireCommand command uuid permissions tenantConfig createdBy now = do
   Questionnaire
     { uuid = uuid
     , name = command.name
@@ -377,14 +367,12 @@ fromCreateQuestionnaireCommand command uuid permissions tenantConfig now = do
     , projectTags = []
     , documentTemplateId = command.documentTemplateId
     , formatUuid = Nothing
-    , creatorUuid = Nothing
+    , creatorUuid = Just createdBy
     , permissions = permissions
     , events = []
     , versions = []
     , isTemplate = False
     , squashed = True
-    , answeredQuestions = 0
-    , unansweredQuestions = 0
     , tenantUuid = tenantConfig.uuid
     , createdAt = now
     , updatedAt = now

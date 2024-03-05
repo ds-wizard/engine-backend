@@ -154,17 +154,12 @@ defaultQuestionnaire :: ServerConfigQuestionnaire
 defaultQuestionnaire =
   ServerConfigQuestionnaire
     { clean = defaultQuestionnaireClean
-    , recomputeIndication = defaultQuestionnaireRecomputeIndication
     , squash = defaultQuestionnaireSquash
     }
 
 defaultQuestionnaireClean :: ServerConfigCronWorker
 defaultQuestionnaireClean =
   ServerConfigCronWorker {enabled = True, cron = cleanQuestionnaireWorker.cronDefault}
-
-defaultQuestionnaireRecomputeIndication :: ServerConfigCronWorker
-defaultQuestionnaireRecomputeIndication =
-  ServerConfigCronWorker {enabled = True, cron = recomputeQuestionnaireIndicationWorker.cronDefault}
 
 defaultQuestionnaireSquash :: ServerConfigCronWorker
 defaultQuestionnaireSquash =

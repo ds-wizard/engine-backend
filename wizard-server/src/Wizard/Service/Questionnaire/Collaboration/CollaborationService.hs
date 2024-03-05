@@ -139,7 +139,6 @@ setReply qtnUuid connectionUuid reqDto = do
   appendQuestionnaireEventByUuid
     qtnUuid
     [fromEventChangeDTO (SetReplyEventChangeDTO' reqDto) mCreatedByUuid now]
-    reqDto.phasesAnsweredIndication
   let resDto = toSetReplyEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   broadcast (U.toString qtnUuid) records (toSetReplyMessage resDto) disconnectUser
@@ -154,7 +153,6 @@ clearReply qtnUuid connectionUuid reqDto = do
   appendQuestionnaireEventByUuid
     qtnUuid
     [fromEventChangeDTO (ClearReplyEventChangeDTO' reqDto) mCreatedByUuid now]
-    reqDto.phasesAnsweredIndication
   let resDto = toClearReplyEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   broadcast (U.toString qtnUuid) records (toClearReplyMessage resDto) disconnectUser
@@ -169,7 +167,6 @@ setPhase qtnUuid connectionUuid reqDto = do
   appendQuestionnaireEventByUuid
     qtnUuid
     [fromEventChangeDTO (SetPhaseEventChangeDTO' reqDto) mCreatedByUuid now]
-    reqDto.phasesAnsweredIndication
   let resDto = toSetPhaseEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   broadcast (U.toString qtnUuid) records (toSetPhaseMessage resDto) disconnectUser
@@ -181,7 +178,7 @@ setLabel qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
-  appendQuestionnaireEventByUuid' qtnUuid [fromEventChangeDTO (SetLabelsEventChangeDTO' reqDto) mCreatedByUuid now]
+  appendQuestionnaireEventByUuid qtnUuid [fromEventChangeDTO (SetLabelsEventChangeDTO' reqDto) mCreatedByUuid now]
   let resDto = toSetLabelsEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   broadcast (U.toString qtnUuid) records (toSetLabelMessage resDto) disconnectUser

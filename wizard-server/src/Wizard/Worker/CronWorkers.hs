@@ -32,7 +32,6 @@ workers =
   , persistentCommandRetryWorker
   , persistentCommandRetryLambdaWorker
   , cleanQuestionnaireWorker
-  , recomputeQuestionnaireIndicationWorker
   , squashQuestionnaireEventsWorker
   , registrySyncWorker
   , temporaryFileWorker
@@ -127,17 +126,6 @@ cleanQuestionnaireWorker =
     , cronDefault = "15 */4 * * *"
     , cron = (.serverConfig.questionnaire.clean.cron)
     , function = cleanQuestionnaires
-    , wrapInTransaction = True
-    }
-
-recomputeQuestionnaireIndicationWorker :: CronWorker BaseContext AppContextM
-recomputeQuestionnaireIndicationWorker =
-  CronWorker
-    { name = "RecomputeIndicationWorker"
-    , condition = (.serverConfig.questionnaire.recomputeIndication.enabled)
-    , cronDefault = "20 1 * * *"
-    , cron = (.serverConfig.questionnaire.recomputeIndication.cron)
-    , function = recomputeQuestionnaireIndicationsInAllApplications
     , wrapInTransaction = True
     }
 

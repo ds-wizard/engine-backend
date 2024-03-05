@@ -17,8 +17,6 @@ data QuestionnaireDTO = QuestionnaireDTO
   , sharing :: QuestionnaireSharing
   , state :: QuestionnaireState
   , package :: PackageSimple
-  , answeredQuestions :: Int
-  , unansweredQuestions :: Int
   , permissions :: [QuestionnairePermDTO]
   , isTemplate :: Bool
   , createdAt :: UTCTime
@@ -35,7 +33,5 @@ instance Eq QuestionnaireDTO where
       && a.sharing == b.sharing
       && a.state == b.state
       && a.package == b.package
-      && a.answeredQuestions == b.answeredQuestions
-      && a.unansweredQuestions == b.unansweredQuestions
       && a.permissions == b.permissions
       && a.isTemplate == b.isTemplate

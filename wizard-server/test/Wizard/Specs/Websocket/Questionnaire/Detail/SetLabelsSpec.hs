@@ -11,7 +11,6 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Questionnaire.Questionnaire
@@ -42,7 +41,7 @@ test200 appContext =
       ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext questionnaire10.uuid
       ((c4, s4), (c5, s5), (c6, s6)) <- connectTestWebsocketUsers appContext questionnaire7.uuid
       -- WHEN:
-      write_SetLabels c1 (toEventChangeDTO slble_rQ1' samplePhasesAnsweredIndication)
+      write_SetLabels c1 (toEventChangeDTO slble_rQ1')
       -- THEN:
       read_SetLabels c1 (toEventDTO slble_rQ1' (Just userAlbert))
       read_SetLabels c2 (toEventDTO slble_rQ1' (Just userAlbert))

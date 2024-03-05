@@ -8,7 +8,6 @@ import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireReply
-import Wizard.Model.Report.Report
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as UM
 
@@ -193,45 +192,42 @@ toDeleteCommentEventDTO' event mCreatedBy now =
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------------------------
-toEventChangeDTO :: QuestionnaireEvent -> PhasesAnsweredIndication -> QuestionnaireEventChangeDTO
-toEventChangeDTO event phasesAnsweredIndication =
+toEventChangeDTO :: QuestionnaireEvent -> QuestionnaireEventChangeDTO
+toEventChangeDTO event =
   case event of
     SetReplyEvent' event@SetReplyEvent {..} ->
-      SetReplyEventChangeDTO' $ toSetReplyEventChangeDTO event phasesAnsweredIndication
+      SetReplyEventChangeDTO' $ toSetReplyEventChangeDTO event
     ClearReplyEvent' event@ClearReplyEvent {..} ->
-      ClearReplyEventChangeDTO' $ toClearReplyEventChangeDTO event phasesAnsweredIndication
+      ClearReplyEventChangeDTO' $ toClearReplyEventChangeDTO event
     SetPhaseEvent' event@SetPhaseEvent {..} ->
-      SetPhaseEventChangeDTO' $ toSetPhaseEventChangeDTO event phasesAnsweredIndication
+      SetPhaseEventChangeDTO' $ toSetPhaseEventChangeDTO event
     SetLabelsEvent' event@SetLabelsEvent {..} ->
-      SetLabelsEventChangeDTO' $ toSetLabelsEventChangeDTO event phasesAnsweredIndication
+      SetLabelsEventChangeDTO' $ toSetLabelsEventChangeDTO event
 
-toSetReplyEventChangeDTO :: SetReplyEvent -> PhasesAnsweredIndication -> SetReplyEventChangeDTO
-toSetReplyEventChangeDTO event phasesAnsweredIndication =
+toSetReplyEventChangeDTO :: SetReplyEvent -> SetReplyEventChangeDTO
+toSetReplyEventChangeDTO event =
   SetReplyEventChangeDTO
     { uuid = event.uuid
     , path = event.path
     , value = event.value
-    , phasesAnsweredIndication = phasesAnsweredIndication
     }
 
-toClearReplyEventChangeDTO :: ClearReplyEvent -> PhasesAnsweredIndication -> ClearReplyEventChangeDTO
-toClearReplyEventChangeDTO event phasesAnsweredIndication =
+toClearReplyEventChangeDTO :: ClearReplyEvent -> ClearReplyEventChangeDTO
+toClearReplyEventChangeDTO event =
   ClearReplyEventChangeDTO
     { uuid = event.uuid
     , path = event.path
-    , phasesAnsweredIndication = phasesAnsweredIndication
     }
 
-toSetPhaseEventChangeDTO :: SetPhaseEvent -> PhasesAnsweredIndication -> SetPhaseEventChangeDTO
-toSetPhaseEventChangeDTO event phasesAnsweredIndication =
+toSetPhaseEventChangeDTO :: SetPhaseEvent -> SetPhaseEventChangeDTO
+toSetPhaseEventChangeDTO event =
   SetPhaseEventChangeDTO
     { uuid = event.uuid
     , phaseUuid = event.phaseUuid
-    , phasesAnsweredIndication = phasesAnsweredIndication
     }
 
-toSetLabelsEventChangeDTO :: SetLabelsEvent -> PhasesAnsweredIndication -> SetLabelsEventChangeDTO
-toSetLabelsEventChangeDTO event phasesAnsweredIndication =
+toSetLabelsEventChangeDTO :: SetLabelsEvent -> SetLabelsEventChangeDTO
+toSetLabelsEventChangeDTO event =
   SetLabelsEventChangeDTO
     { uuid = event.uuid
     , path = event.path

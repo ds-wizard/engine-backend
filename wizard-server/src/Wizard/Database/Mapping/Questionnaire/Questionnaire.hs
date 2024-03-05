@@ -34,8 +34,6 @@ instance ToRow Questionnaire where
     , toField squashed
     , toField tenantUuid
     , toField . PGArray $ projectTags
-    , toField answeredQuestions
-    , toField unansweredQuestions
     ]
 
 instance FromRow Questionnaire where
@@ -59,6 +57,4 @@ instance FromRow Questionnaire where
     squashed <- field
     tenantUuid <- field
     projectTags <- fromPGArray <$> field
-    answeredQuestions <- field
-    unansweredQuestions <- field
     return $ Questionnaire {..}

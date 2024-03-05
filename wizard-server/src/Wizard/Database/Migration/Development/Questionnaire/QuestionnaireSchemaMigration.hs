@@ -51,8 +51,6 @@ createQtnTable = do
         \    squashed                    boolean     NOT NULL, \
         \    tenant_uuid                 uuid        NOT NULL, \
         \    project_tags                text[]      NOT NULL, \
-        \    answered_questions          int         NOT NULL, \
-        \    unanswered_questions        int         NOT NULL, \
         \    CONSTRAINT questionnaire_pk PRIMARY KEY (uuid, tenant_uuid), \
         \    CONSTRAINT questionnaire_package_id_fk FOREIGN KEY (package_id, tenant_uuid) REFERENCES package (id, tenant_uuid), \
         \    CONSTRAINT questionnaire_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid), \

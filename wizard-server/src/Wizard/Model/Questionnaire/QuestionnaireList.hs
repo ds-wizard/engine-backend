@@ -19,8 +19,6 @@ data QuestionnaireList = QuestionnaireList
   , package :: PackageSimple
   , permissions :: [QuestionnairePermDTO]
   , isTemplate :: Bool
-  , answeredQuestions :: Int
-  , unansweredQuestions :: Int
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -37,5 +35,3 @@ instance Eq QuestionnaireList where
       && a.package == b.package
       && a.permissions == b.permissions
       && a.isTemplate == b.isTemplate
-      && a.answeredQuestions == b.answeredQuestions
-      && a.unansweredQuestions == b.unansweredQuestions

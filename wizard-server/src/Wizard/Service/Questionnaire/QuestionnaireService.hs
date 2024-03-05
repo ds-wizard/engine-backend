@@ -13,7 +13,6 @@ import Shared.Common.Model.Common.Lens
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
-import Shared.Common.Model.Context.ContextResult
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.List
 import Shared.Common.Util.Logger
@@ -51,7 +50,6 @@ import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.Document.DocumentS3
-import Wizard.Service.Context.ContextService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Package.PackageService
@@ -137,7 +135,6 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
             tenantUuid
             now
     insertQuestionnaire qtn
-    recomputeQuestionnaireIndication qtn.uuid
     permissionDtos <- traverse enhanceQuestionnairePerm qtn.permissions
     qtnCtn <- compileQuestionnaire qtn
     return $ toSimpleDTO qtn package qtnState permissionDtos
@@ -171,7 +168,6 @@ createQuestionnaireFromTemplate reqDto =
             }
           :: Questionnaire
     insertQuestionnaire newQtn
-    recomputeQuestionnaireIndication newQtn.uuid
     duplicateCommentThreads reqDto.questionnaireUuid newUuid
     state <- getQuestionnaireState newUuid pkg.pId
     permissionDtos <- traverse enhanceQuestionnairePerm newQtn.permissions
@@ -201,7 +197,6 @@ cloneQuestionnaire cloneUuid =
           :: Questionnaire
     insertQuestionnaire newQtn
     duplicateCommentThreads cloneUuid newUuid
-    recomputeQuestionnaireIndication newQtn.uuid
     state <- getQuestionnaireState newUuid pkg.pId
     permissionDtos <- traverse enhanceQuestionnairePerm newQtn.permissions
     return $ toSimpleDTO newQtn pkg state permissionDtos
@@ -212,11 +207,12 @@ createQuestionnairesFromCommands = runInTransaction . traverse_ create
     create :: CreateQuestionnaireCommand -> AppContextM ()
     create command = do
       uuid <- liftIO generateUuid
+      currentUser <- getCurrentUser
       now <- liftIO getCurrentTime
       tenantConfig <- getCurrentTenantConfig
       users <- findUsersByEmails command.emails
       let permissions = fmap (createPermission uuid) users
-      let questionnaire = fromCreateQuestionnaireCommand command uuid permissions tenantConfig now
+      let questionnaire = fromCreateQuestionnaireCommand command uuid permissions tenantConfig currentUser.uuid now
       insertQuestionnaire questionnaire
       return ()
     createPermission :: U.UUID -> User -> QuestionnairePerm
@@ -390,11 +386,7 @@ modifyContent qtnUuid reqDto =
     mCurrentUser <- asks currentUser
     now <- liftIO getCurrentTime
     let updatedQtn = fromContentChangeDTO qtn reqDto mCurrentUser now
-    mPhasesAnsweredIndication <- getPhasesAnsweredIndication updatedQtn
-    case mPhasesAnsweredIndication of
-      Just phasesAnsweredIndication ->
-        updateQuestionnaireEventsWithIndicationByUuid qtnUuid False updatedQtn.events phasesAnsweredIndication
-      Nothing -> updateQuestionnaireEventsByUuid qtnUuid False updatedQtn.events
+    updateQuestionnaireEventsByUuid qtnUuid False updatedQtn.events
     return reqDto
 
 cleanQuestionnaires :: AppContextM ()
@@ -407,22 +399,3 @@ cleanQuestionnaires =
           deleteQuestionnaire qtn.uuid False
       )
       qtns
-
-recomputeQuestionnaireIndicationsInAllApplications :: AppContextM ()
-recomputeQuestionnaireIndicationsInAllApplications =
-  runFunctionForAllTenants "recomputeQuestionnaireIndications" recomputeQuestionnaireIndications
-
-recomputeQuestionnaireIndications :: AppContextM (ContextResult, Maybe String)
-recomputeQuestionnaireIndications = do
-  qtnUuids <- findQuestionnaireUuids
-  traverse_ recomputeQuestionnaireIndication qtnUuids
-  return (SuccessContextResult, Nothing)
-
-recomputeQuestionnaireIndication :: U.UUID -> AppContextM ()
-recomputeQuestionnaireIndication qtnUuid = do
-  qtn <- findQuestionnaireByUuid qtnUuid
-  mPhasesAnsweredIndication <- getPhasesAnsweredIndication qtn
-  case mPhasesAnsweredIndication of
-    Just phasesAnsweredIndication -> updateQuestionnaireIndicationByUuid qtnUuid phasesAnsweredIndication
-    Nothing ->
-      logErrorI _CMP_SERVICE (f' "Can not get phasesAnsweredIndication for the qtn uuid: %s" [U.toString qtnUuid])

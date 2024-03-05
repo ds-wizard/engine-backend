@@ -20,7 +20,6 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnairePerm
-import Wizard.Model.Report.Report
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
 import Wizard.Service.Migration.Questionnaire.MigratorAudit
@@ -77,6 +76,7 @@ finishQuestionnaireMigration qtnUuid =
     oldQtn <- findQuestionnaireByUuid state.oldQuestionnaireUuid
     newQtn <- findQuestionnaireByUuid state.newQuestionnaireUuid
     events <- ensurePhaseIsSetIfNecessary newQtn
+    now <- liftIO getCurrentTime
     let updatedQtn =
           oldQtn
             { formatUuid = newQtn.formatUuid
@@ -84,19 +84,11 @@ finishQuestionnaireMigration qtnUuid =
             , selectedQuestionTagUuids = newQtn.selectedQuestionTagUuids
             , packageId = newQtn.packageId
             , events = events
+            , updatedAt = now
             }
           :: Questionnaire
     mPhasesAnsweredIndication <- getPhasesAnsweredIndication updatedQtn
-    let updatedQtnWithIndication =
-          case mPhasesAnsweredIndication of
-            Just phasesAnsweredIndication ->
-              updatedQtn
-                { answeredQuestions = phasesAnsweredIndication.answeredQuestions
-                , unansweredQuestions = phasesAnsweredIndication.unansweredQuestions
-                }
-              :: Questionnaire
-            Nothing -> updatedQtn
-    updateQuestionnaireByUuid updatedQtnWithIndication
+    updateQuestionnaireByUuid updatedQtn
     deleteQuestionnaire newQtn.uuid False
     auditQuestionnaireMigrationFinish oldQtn newQtn
     return ()
