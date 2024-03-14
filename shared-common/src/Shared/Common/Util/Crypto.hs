@@ -4,12 +4,13 @@ import Crypto.Cipher.AES (AES256)
 import Crypto.Cipher.Types (BlockCipher (..), Cipher (..), nullIV)
 import Crypto.Error (throwCryptoError)
 import Crypto.Hash (Digest, MD5 (..), hash)
-import qualified Crypto.PubKey.RSA as RSA
+import qualified Crypto.PubKey.RSA.Types as RSA
 import Crypto.Random (getRandomBytes)
-import Crypto.Store.X509 (readPubKeyFileFromMemory)
+import qualified Data.Base64.Types as B64_Types
 import Data.ByteArray.Encoding (Base (..), convertToBase)
 import qualified Data.ByteString.Base64 as B64
 import qualified Data.ByteString.Char8 as BS
+import Data.PEM (pemContent, pemName, pemParseBS)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
 import qualified Data.X509 as X509
@@ -26,7 +27,7 @@ encryptAES256WithB64 :: String -> String -> String
 encryptAES256WithB64 key plainData =
   if B64.isBase64 (BS.pack plainData)
     then BS.unpack $ encryptAES256Raw (BS.pack key) (B64.decodeBase64Lenient . BS.pack $ plainData)
-    else BS.unpack . B64.encodeBase64' $ encryptAES256Raw (BS.pack key) (BS.pack plainData)
+    else BS.unpack . B64_Types.extractBase64 . B64.encodeBase64' $ encryptAES256Raw (BS.pack key) (BS.pack plainData)
 
 encryptAES256Raw :: BS.ByteString -> BS.ByteString -> BS.ByteString
 encryptAES256Raw key = ctrCombine ctx nullIV
@@ -55,6 +56,19 @@ readRSAPrivateKey bs =
 
 readRSAPublicKey :: BS.ByteString -> Maybe RSA.PublicKey
 readRSAPublicKey bs =
-  case readPubKeyFileFromMemory bs of
-    [X509.PubKeyRSA k] -> Just k
-    _ -> Nothing
+  case X509.decodeSignedCertificate bs of
+    Left err -> Nothing
+    Right signedCert ->
+      let cert = X509.getCertificate signedCert
+          pubKey = X509.certPubKey cert
+       in case pubKey of
+            X509.PubKeyRSA rsaPubKey -> Just rsaPubKey
+            _ -> Nothing
+
+decodePEM :: BS.ByteString -> Either String BS.ByteString
+decodePEM bs = case pemParseBS bs of
+  Left err -> Left $ "PEM parse error: " ++ show err
+  Right pems ->
+    case filter ((== "PUBLIC KEY") . pemName) pems of
+      [] -> Left "No valid RSA public key found"
+      (pem : _) -> Right $ pemContent pem

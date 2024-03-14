@@ -17,9 +17,9 @@ library:
   when:
   - condition: os(darwin)
     then:
-      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial
     else:
-      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial
   dependencies:
   - base
   - aeson
@@ -33,7 +33,7 @@ library:
   - conduit
   - containers
   - cron
-  - cryptonite
+  - crypton
   - cryptostore
   - data-default
   - directory
@@ -51,6 +51,7 @@ library:
   - monad-logger
   - network
   - oidc-client
+  - pem
   - postgresql-simple
   - postgresql-libpq
   - postgresql-migration
@@ -82,8 +83,8 @@ library:
   - wai-extra
   - warp
   - wreq
-  - x509
-  - x509-store
+  - crypton-x509
+  - crypton-x509-store
   - yaml
   - zip-archive
   - hspec
@@ -98,9 +99,9 @@ tests:
     when:
     - condition: os(darwin)
       then:
-        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial
       else:
-        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial
     dependencies:
     - base
     - aeson
