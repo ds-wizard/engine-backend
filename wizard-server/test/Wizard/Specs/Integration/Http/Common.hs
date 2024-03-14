@@ -14,6 +14,7 @@ createResponse body =
     , responseBody = encode body
     , responseCookieJar = undefined
     , responseClose' = undefined
+    , responseEarlyHints = undefined
     , responseOriginalRequest =
         Request
           { method = "POST"
@@ -39,5 +40,6 @@ createResponse body =
           , shouldStripHeaderOnRedirectIfOnDifferentHostOnly = False
           , proxySecureMode = ProxySecureWithConnect
           , redactHeaders = S.empty
+          , earlyHintHeadersReceived = \_ -> return ()
           }
     }

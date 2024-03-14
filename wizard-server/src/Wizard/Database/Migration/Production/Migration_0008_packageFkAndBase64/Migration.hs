@@ -6,6 +6,7 @@ import Control.Monad.Logger
 import Control.Monad.Reader (liftIO)
 import Data.Aeson
 import qualified Data.Aeson.KeyMap as KM
+import qualified Data.Base64.Types as B64_Types
 import qualified Data.ByteString.Base64 as B64
 import qualified Data.ByteString.Char8 as BS
 import Data.Foldable (traverse_)
@@ -173,4 +174,4 @@ instance FromRow AppConfig where
     questionnaire <- fieldWith fromJSONField
     return $ AppConfig {..}
 
-convertToBase64 = String . T.pack . BS.unpack . B64.encodeBase64' . BS.pack . T.unpack
+convertToBase64 = String . T.pack . BS.unpack . B64_Types.extractBase64 . B64.encodeBase64' . BS.pack . T.unpack
