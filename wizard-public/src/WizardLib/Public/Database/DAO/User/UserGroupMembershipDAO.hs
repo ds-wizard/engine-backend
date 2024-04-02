@@ -9,6 +9,7 @@ import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
 import Shared.Common.Database.DAO.Common
+import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Context.AppContext
 import Shared.Common.Util.String
 import WizardLib.Public.Database.Mapping.User.UserGroupMembership ()
@@ -24,7 +25,7 @@ findUserGroupMembershipsByUserUuid userUuid = do
 findUserGroupMembershipsByUserGroupUuid :: AppContextC s sc m => U.UUID -> m [UserGroupMembership]
 findUserGroupMembershipsByUserGroupUuid userGroupUuid = do
   tenantUuid <- asks (.tenantUuid')
-  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("user_group_uuid", U.toString userGroupUuid)]
+  createFindEntitiesBySortedFn entityName [tenantQueryUuid tenantUuid, ("user_group_uuid", U.toString userGroupUuid)] [Sort "user_uuid" Ascending]
 
 findUserGroupMembershipByUserGroupUuidAndUserUuid' :: AppContextC s sc m => U.UUID -> U.UUID -> m (Maybe UserGroupMembership)
 findUserGroupMembershipByUserGroupUuidAndUserUuid' userGroupUuid userUuid = do
