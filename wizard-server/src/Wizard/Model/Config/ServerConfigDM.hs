@@ -32,6 +32,7 @@ defaultConfig =
     , cloud = defaultCloud
     , admin = defaultAdmin
     , modules = defaultModules
+    , aws = defaultAws
     }
 
 defaultGeneral :: ServerConfigGeneral

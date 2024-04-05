@@ -28,6 +28,7 @@ instance FromEnv ServerConfig where
     cloud <- applyEnv serverConfig.cloud
     admin <- applyEnv serverConfig.admin
     modules <- applyEnv serverConfig.modules
+    aws <- applyEnv serverConfig.aws
     return ServerConfig {..}
 
 instance FromEnv ServerConfigGeneral where

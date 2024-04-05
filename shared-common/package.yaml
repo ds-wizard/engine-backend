@@ -23,6 +23,8 @@ library:
   dependencies:
   - base
   - aeson
+  - amazonka
+  - amazonka-lambda
   - async
   - attoparsec
   - base64
@@ -61,6 +63,7 @@ library:
   - raw-strings-qq
   - regex-compat
   - resource-pool
+  - resourcet
   - retry
   - scientific
   - servant

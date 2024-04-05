@@ -29,6 +29,7 @@ data ServerConfig = ServerConfig
   , cloud :: ServerConfigCloud
   , admin :: ServerConfigAdmin
   , modules :: ServerConfigModules
+  , aws :: ServerConfigAws
   }
   deriving (Generic, Show)
 

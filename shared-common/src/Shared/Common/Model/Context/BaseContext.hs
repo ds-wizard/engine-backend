@@ -24,9 +24,10 @@ class
   , HasField "sentry'" sc ServerConfigSentry
   , HasField "serverPort'" sc Int
   , HasField "environment'" sc Environment
+  , HasField "logging" sc ServerConfigLogging
+  , HasField "aws'" sc ServerConfigAws
   , HasField "buildInfoConfig'" context BuildInfoConfig
   , HasField "httpClientManager'" context Manager
-  , HasField "logging" sc ServerConfigLogging
   ) =>
   BaseContextType context sc
 

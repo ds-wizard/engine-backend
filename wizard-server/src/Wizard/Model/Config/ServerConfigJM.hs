@@ -39,6 +39,7 @@ instance FromJSON ServerConfig where
     cloud <- o .:? "cloud" .!= defaultCloud
     admin <- o .:? "admin" .!= defaultAdmin
     modules <- o .:? "modules" .!= defaultModules
+    aws <- o .:? "aws" .!= defaultAws
     return ServerConfig {..}
   parseJSON _ = mzero
 

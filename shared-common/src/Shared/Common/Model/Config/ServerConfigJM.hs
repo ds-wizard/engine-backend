@@ -94,3 +94,11 @@ instance FromJSON ServerConfigPersistentCommandListenerJob where
     enabled <- o .:? "enabled" .!= defaultPersistentCommandListenerJob.enabled
     return ServerConfigPersistentCommandListenerJob {..}
   parseJSON _ = mzero
+
+instance FromJSON ServerConfigAws where
+  parseJSON (Object o) = do
+    awsAccessKeyId <- o .:? "awsAccessKeyId" .!= defaultAws.awsAccessKeyId
+    awsSecretAccessKey <- o .:? "awsSecretAccessKey" .!= defaultAws.awsSecretAccessKey
+    awsRegion <- o .:? "awsRegion" .!= defaultAws.awsRegion
+    return ServerConfigAws {..}
+  parseJSON _ = mzero
