@@ -1,7 +1,6 @@
 module Wizard.Service.Questionnaire.QuestionnaireUtil where
 
 import Control.Monad (when)
-import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import GHC.Records
 
@@ -98,9 +97,8 @@ getQuestionnaireReport
 getQuestionnaireReport qtn = do
   qtnCtn <- compileQuestionnaire qtn
   let _requiredPhaseUuid = qtnCtn.phaseUuid
-  let _replies = M.toList $ qtnCtn.replies
   km <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
-  let indications = computeTotalReportIndications _requiredPhaseUuid km _replies
+  let indications = computeTotalReportIndications _requiredPhaseUuid km qtnCtn.replies
   qtnCtn <- compileQuestionnaire qtn
   return . toQuestionnaireReportDTO $ indications
 

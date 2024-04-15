@@ -27,7 +27,7 @@ createComputeChapterReportTest number chapter expectation =
     do
       let requiredPhaseUuidUuid = Just $ phase1.uuid
       let km = km1WithQ4
-      let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList questionnaire1Ctn.replies
+      let rs = M.fromList $ unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList questionnaire1Ctn.replies
       -- WHEN:
       let result = computeChapterReport requiredPhaseUuidUuid km rs chapter
       -- THEN
@@ -39,7 +39,7 @@ createComputeTotalReportTest number expectation =
     do
       let requiredPhaseUuidUuid = Just $ phase1.uuid
       let km = km1WithQ4
-      let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList questionnaire1Ctn.replies
+      let rs = M.fromList $ unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList questionnaire1Ctn.replies
       -- WHEN:
       let result = computeTotalReport requiredPhaseUuidUuid km rs
       -- THEN
