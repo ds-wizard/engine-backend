@@ -4,7 +4,6 @@ module Wizard.Service.Document.Context.DocumentContextService (
 
 import Control.Monad (forM)
 import Control.Monad.Reader (asks, liftIO)
-import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
@@ -45,7 +44,7 @@ createDocumentContext doc = do
           Just eventUuid -> takeWhileInclusive (\e -> getUuid e /= eventUuid) qtn.events
           Nothing -> qtn.events
   qtnCtn <- compileQuestionnairePreview qtnEvents
-  report <- generateReport qtnCtn.phaseUuid km (M.toList qtnCtn.replies)
+  report <- generateReport qtnCtn.phaseUuid km qtnCtn.replies
   let qtnVersion =
         case doc.questionnaireEventUuid of
           (Just eventUuid) -> findQuestionnaireVersionUuid eventUuid qtn.versions

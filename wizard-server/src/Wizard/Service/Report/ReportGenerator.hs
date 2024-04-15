@@ -1,6 +1,7 @@
 module Wizard.Service.Report.ReportGenerator where
 
 import Control.Monad.Reader (liftIO)
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
@@ -13,7 +14,7 @@ import Wizard.Service.Report.Evaluator.Metric
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
 
-computeChapterReport :: Maybe U.UUID -> KnowledgeModel -> [ReplyTuple] -> Chapter -> ChapterReport
+computeChapterReport :: Maybe U.UUID -> KnowledgeModel -> M.Map String Reply -> Chapter -> ChapterReport
 computeChapterReport requiredPhaseUuid km replies ch =
   ChapterReport
     { chapterUuid = ch.uuid
@@ -21,14 +22,14 @@ computeChapterReport requiredPhaseUuid km replies ch =
     , metrics = computeMetrics km replies (Just ch)
     }
 
-computeTotalReport :: Maybe U.UUID -> KnowledgeModel -> [ReplyTuple] -> TotalReport
+computeTotalReport :: Maybe U.UUID -> KnowledgeModel -> M.Map String Reply -> TotalReport
 computeTotalReport requiredPhaseUuid km replies =
   TotalReport
     { indications = computeTotalReportIndications requiredPhaseUuid km replies
     , metrics = computeMetrics km replies Nothing
     }
 
-computeTotalReportIndications :: Maybe U.UUID -> KnowledgeModel -> [ReplyTuple] -> [Indication]
+computeTotalReportIndications :: Maybe U.UUID -> KnowledgeModel -> M.Map String Reply -> [Indication]
 computeTotalReportIndications requiredPhaseUuid km replies =
   let chapterIndications = fmap (computeIndications requiredPhaseUuid km replies) (getChaptersForKmUuid km)
       mergeIndications [PhasesAnsweredIndication' (PhasesAnsweredIndication a1 b1), AnsweredIndication' (AnsweredIndication c1 d1)] [PhasesAnsweredIndication' (PhasesAnsweredIndication a2 b2), AnsweredIndication' (AnsweredIndication c2 d2)] =
@@ -42,7 +43,7 @@ computeTotalReportIndications requiredPhaseUuid km replies =
         [PhasesAnsweredIndication' (PhasesAnsweredIndication 0 0), AnsweredIndication' (AnsweredIndication 0 0)]
         chapterIndications
 
-generateReport :: Maybe U.UUID -> KnowledgeModel -> [ReplyTuple] -> AppContextM Report
+generateReport :: Maybe U.UUID -> KnowledgeModel -> M.Map String Reply -> AppContextM Report
 generateReport requiredPhaseUuid km replies = do
   rUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
