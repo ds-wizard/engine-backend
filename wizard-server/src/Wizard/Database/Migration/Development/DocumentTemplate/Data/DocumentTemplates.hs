@@ -14,6 +14,7 @@ import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as SPM
 wizardDocumentTemplateSimpleDTO :: DocumentTemplateSimpleDTO
 wizardDocumentTemplateSimpleDTO =
   toSimpleDTO'
+    True
     ( toList
         wizardDocumentTemplate
         (Just commonWizardRegistryTemplate)
@@ -25,6 +26,7 @@ wizardDocumentTemplateDetailDTO :: DocumentTemplateDetailDTO
 wizardDocumentTemplateDetailDTO =
   toDetailDTO
     wizardDocumentTemplate
+    True
     [commonWizardRegistryTemplate]
     [globalRegistryOrganization]
     ["1.0.0"]

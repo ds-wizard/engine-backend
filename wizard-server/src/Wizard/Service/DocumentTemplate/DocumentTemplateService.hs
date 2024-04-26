@@ -53,7 +53,7 @@ getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated pageable s
     then return $ Page "documentTemplates" (PageMetadata 0 0 0 0) []
     else do
       templates <- findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated Nothing pageable sort
-      return . fmap toSimpleDTO' $ templates
+      return . fmap (toSimpleDTO' tenantConfig.registry.enabled) $ templates
 
 getDocumentTemplateSuggestions :: Maybe String -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
 getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable pageable sort = do
@@ -93,7 +93,8 @@ getDocumentTemplateByUuidDto documentTemplateId = do
   serverConfig <- asks serverConfig
   let registryLink = buildRegistryTemplateUrl serverConfig.registry.clientUrl tml tmlRs
   let usablePackages = getUsablePackagesForDocumentTemplate tml pkgs
-  return $ toDetailDTO tml tmlRs orgRs versions registryLink usablePackages
+  tenantConfig <- getCurrentTenantConfig
+  return $ toDetailDTO tml tenantConfig.registry.enabled tmlRs orgRs versions registryLink usablePackages
 
 modifyDocumentTemplate :: String -> DocumentTemplateChangeDTO -> AppContextM DocumentTemplateDetailDTO
 modifyDocumentTemplate documentTemplateId reqDto =

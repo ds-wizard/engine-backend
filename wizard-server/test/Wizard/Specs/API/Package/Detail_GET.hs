@@ -76,6 +76,7 @@ create_test_200 title appContext authHeader pkgId =
       let expDto =
             toDetailDTO
               (toPackage globalPackage)
+              True
               [globalRegistryPackage]
               [globalRegistryOrganization, nlRegistryOrganization]
               ["0.0.1", "1.0.0"]

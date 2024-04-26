@@ -67,7 +67,8 @@ getLocaleForId lclId = do
   versions <- getLocaleVersions locale
   localeRs <- findRegistryLocales
   orgRs <- findRegistryOrganizations
-  return $ toDetailDTO locale localeRs orgRs versions (buildLocaleUrl serverConfig.registry.clientUrl locale localeRs)
+  tenantConfig <- getCurrentTenantConfig
+  return $ toDetailDTO locale tenantConfig.registry.enabled localeRs orgRs versions (buildLocaleUrl serverConfig.registry.clientUrl locale localeRs)
 
 getLocaleContentForId :: String -> Maybe String -> AppContextM BS.ByteString
 getLocaleContentForId code mClientUrl = do
