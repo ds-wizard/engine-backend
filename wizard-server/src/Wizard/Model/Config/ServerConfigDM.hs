@@ -31,6 +31,7 @@ defaultConfig =
     , logging = defaultLogging
     , cloud = defaultCloud
     , admin = defaultAdmin
+    , signalBridge = defaultSignalBridge
     , modules = defaultModules
     , aws = defaultAws
     }
@@ -187,6 +188,16 @@ defaultUserTokenExpire =
 defaultAdmin :: ServerConfigAdmin
 defaultAdmin =
   ServerConfigAdmin {enabled = False}
+
+defaultSignalBridge :: ServerConfigSignalBridge
+defaultSignalBridge =
+  ServerConfigSignalBridge
+    { enabled = False
+    , updatePermsArn = ""
+    , updateUserGroupArn = ""
+    , setQuestionnaireArn = ""
+    , logOutAllArn = ""
+    }
 
 defaultModules :: ServerConfigModules
 defaultModules =

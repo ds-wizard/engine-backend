@@ -28,6 +28,7 @@ toClientConfigDTO serverConfig tenantConfig mUserProfile tenant locales =
     , locales = fmap toClientConfigLocaleDTO locales
     , owl = tenantConfig.owl
     , admin = toClientConfigAdminDTO serverConfig.admin tenant
+    , signalBridge = toClientConfigSignalBridgeDTO tenant
     , modules =
         if serverConfig.admin.enabled
           then case mUserProfile of
@@ -110,6 +111,10 @@ toClientConfigLocaleDTO locale =
 toClientConfigAdminDTO :: ServerConfigAdmin -> Tenant -> ClientConfigAdminDTO
 toClientConfigAdminDTO serverConfig tenant =
   ClientConfigAdminDTO {enabled = serverConfig.enabled, clientUrl = tenant.adminClientUrl}
+
+toClientConfigSignalBridgeDTO :: Tenant -> ClientConfigSignalBridgeDTO
+toClientConfigSignalBridgeDTO tenant =
+  ClientConfigSignalBridgeDTO {webSocketUrl = tenant.signalBridgeUrl}
 
 toClientConfigModuleDTO :: ServerConfigModule -> String -> Bool -> ClientConfigModuleDTO
 toClientConfigModuleDTO serverConfig url external =

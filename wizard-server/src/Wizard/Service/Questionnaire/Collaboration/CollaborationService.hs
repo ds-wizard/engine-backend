@@ -3,12 +3,16 @@ module Wizard.Service.Questionnaire.Collaboration.CollaborationService where
 import Control.Monad (when)
 import Control.Monad.Except (catchError)
 import Control.Monad.Reader (asks, liftIO)
-import Data.Aeson (ToJSON)
+import qualified Data.Aeson as A
+import qualified Data.Aeson.KeyMap as AKM
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Foldable (traverse_)
+import Data.Maybe (isJust)
 import Data.Time
 import qualified Data.UUID as U
 import Network.WebSockets (Connection)
 
+import Shared.Common.Integration.Aws.Lambda
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
@@ -21,10 +25,13 @@ import Wizard.Cache.QuestionnaireWebsocketCache
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Localization.Messages.Public
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnairePerm
+import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.Websocket.WebsocketMessage
 import Wizard.Model.Websocket.WebsocketRecord
@@ -59,8 +66,17 @@ setUserList qtnUuid connectionUuid = do
 
 updatePermsForOnlineUsers :: U.UUID -> QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePerm] -> AppContextM ()
 updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
-  records <- getAllFromCache
-  traverse_ updatePerm records
+  currentTenantUuid <- asks currentTenantUuid
+  tenant <- findTenantByUuid currentTenantUuid
+  if isJust tenant.signalBridgeUrl
+    then do
+      serverConfig <- asks serverConfig
+      let dto = AKM.fromList [("questionnaireUuid", U.toString qtnUuid), ("tenantUuid", U.toString currentTenantUuid)]
+      invokeLambda serverConfig.signalBridge.updatePermsArn (BSL.toStrict . A.encode $ dto)
+      return ()
+    else do
+      records <- getAllFromCache
+      traverse_ updatePerm records
   where
     updatePerm :: WebsocketRecord -> AppContextM ()
     updatePerm record =
@@ -80,8 +96,17 @@ updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
 
 removeUserGroupFromUsers :: U.UUID -> [U.UUID] -> AppContextM ()
 removeUserGroupFromUsers userGroupUuid userUuids = do
-  records <- getAllFromCache
-  traverse_ updatePerm records
+  currentTenantUuid <- asks currentTenantUuid
+  tenant <- findTenantByUuid currentTenantUuid
+  if isJust tenant.signalBridgeUrl
+    then do
+      serverConfig <- asks serverConfig
+      let dto = AKM.fromList [("userGroupUuid", U.toString userGroupUuid), ("tenantUuid", U.toString currentTenantUuid)]
+      invokeLambda serverConfig.signalBridge.updateUserGroupArn (BSL.toStrict . A.encode $ dto)
+      return ()
+    else do
+      records <- getAllFromCache
+      traverse_ updatePerm records
   where
     updatePerm :: WebsocketRecord -> AppContextM ()
     updatePerm record =
@@ -97,16 +122,39 @@ removeUserGroupFromUsers userGroupUuid userUuids = do
 
 setQuestionnaire :: U.UUID -> QuestionnaireDetailWsDTO -> AppContextM ()
 setQuestionnaire qtnUuid reqDto = do
-  logWS U.nil "Informing other users about changed questionnaire"
-  records <- getAllFromCache
-  broadcast (U.toString qtnUuid) records (toSetQuestionnaireMessage reqDto) disconnectUser
-  logWS U.nil "Informed completed"
+  currentTenantUuid <- asks currentTenantUuid
+  tenant <- findTenantByUuid currentTenantUuid
+  if isJust tenant.signalBridgeUrl
+    then do
+      serverConfig <- asks serverConfig
+      let dto =
+            AKM.fromList
+              [ ("questionnaireUuid", A.String . U.toText $ qtnUuid)
+              , ("tenantUuid", A.String . U.toText $ currentTenantUuid)
+              , ("message", A.toJSON reqDto)
+              ]
+      invokeLambda serverConfig.signalBridge.setQuestionnaireArn (BSL.toStrict . A.encode $ dto)
+      return ()
+    else do
+      logWS U.nil "Informing other users about changed questionnaire"
+      records <- getAllFromCache
+      broadcast (U.toString qtnUuid) records (toSetQuestionnaireMessage reqDto) disconnectUser
+      logWS U.nil "Informed completed"
 
 logOutOnlineUsersWhenQtnDramaticallyChanged :: U.UUID -> AppContextM ()
 logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid = do
-  records <- getAllFromCache
-  let error = NotExistsError $ _ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT (U.toString qtnUuid)
-  traverse_ (logOut error) records
+  currentTenantUuid <- asks currentTenantUuid
+  tenant <- findTenantByUuid currentTenantUuid
+  if isJust tenant.signalBridgeUrl
+    then do
+      serverConfig <- asks serverConfig
+      let dto = AKM.fromList [("questionnaireUuid", U.toString qtnUuid), ("tenantUuid", U.toString currentTenantUuid)]
+      invokeLambda serverConfig.signalBridge.logOutAllArn (BSL.toStrict . A.encode $ dto)
+      return ()
+    else do
+      records <- getAllFromCache
+      let error = NotExistsError $ _ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT (U.toString qtnUuid)
+      traverse_ (logOut error) records
   where
     logOut :: AppError -> WebsocketRecord -> AppContextM ()
     logOut error record =
@@ -289,7 +337,7 @@ deleteComment qtnUuid connectionUuid reqDto = do
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-disconnectUser :: ToJSON resDto => WebsocketMessage resDto -> AppContextM ()
+disconnectUser :: A.ToJSON resDto => WebsocketMessage resDto -> AppContextM ()
 disconnectUser msg = deleteUser (u' msg.entityId) msg.connectionUuid
 
 disconnectUserIfLostPermission :: WebsocketRecord -> AppContextM ()
