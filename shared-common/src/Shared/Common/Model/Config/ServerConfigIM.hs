@@ -77,6 +77,15 @@ instance FromEnv ServerConfigCloud where
       , \c -> applyEnvVariable "CLOUD_PUBLIC_REGISTRATION_ENABLED" c.publicRegistrationEnabled (\x -> c {publicRegistrationEnabled = x})
       ]
 
+instance FromEnv ServerConfigAws where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyStringEnvVariable "AWS_AWS_ACCESS_KEY_ID" c.awsAccessKeyId (\x -> c {awsAccessKeyId = x} :: ServerConfigAws)
+      , \c -> applyStringEnvVariable "AWS_AWS_SECRET_ACCESS_KEY" c.awsSecretAccessKey (\x -> c {awsSecretAccessKey = x} :: ServerConfigAws)
+      , \c -> applyStringEnvVariable "AWS_AWS_REGION" c.awsRegion (\x -> c {awsRegion = x} :: ServerConfigAws)
+      ]
+
 -- --------------------------------------------------------------------------------------------------------------
 -- --------------------------------------------------------------------------------------------------------------
 class FromEnv config where

@@ -27,7 +27,9 @@ instance FromEnv ServerConfig where
     logging <- applyEnv serverConfig.logging
     cloud <- applyEnv serverConfig.cloud
     admin <- applyEnv serverConfig.admin
+    signalBridge <- applyEnv serverConfig.signalBridge
     modules <- applyEnv serverConfig.modules
+    aws <- applyEnv serverConfig.aws
     return ServerConfig {..}
 
 instance FromEnv ServerConfigGeneral where
@@ -153,6 +155,17 @@ instance FromEnv ServerConfigAdmin where
     applyEnvVariables
       serverConfig
       [ \c -> applyEnvVariable "ADMIN_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigAdmin)
+      ]
+
+instance FromEnv ServerConfigSignalBridge where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "SIGNAL_BRIDGE_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigSignalBridge)
+      , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_UPDATE_PERMS_ARN" c.updatePermsArn (\x -> c {updatePermsArn = x} :: ServerConfigSignalBridge)
+      , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_UPDATE_USER_GROUP_ARN" c.updateUserGroupArn (\x -> c {updateUserGroupArn = x} :: ServerConfigSignalBridge)
+      , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_SET_QUESTIONNAIRE_ARN" c.setQuestionnaireArn (\x -> c {setQuestionnaireArn = x} :: ServerConfigSignalBridge)
+      , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_LOG_OUT_ALL_ARN" c.logOutAllArn (\x -> c {logOutAllArn = x} :: ServerConfigSignalBridge)
       ]
 
 instance FromEnv ServerConfigModules where

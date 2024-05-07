@@ -45,5 +45,8 @@ instance ToSchema ClientConfigLocaleDTO where
 instance ToSchema ClientConfigAdminDTO where
   declareNamedSchema = toSwagger (toClientConfigAdminDTO S.defaultAdmin defaultTenant)
 
+instance ToSchema ClientConfigSignalBridgeDTO where
+  declareNamedSchema = toSwagger (toClientConfigSignalBridgeDTO defaultTenant)
+
 instance ToSchema ClientConfigModuleDTO where
   declareNamedSchema = toSwagger (toClientConfigModuleDTO S.defaultConfig.modules.wizard "https://wizard-client.com" False)

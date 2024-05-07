@@ -51,6 +51,9 @@ instance HasField "cloud'" ServerConfig ServerConfigCloud where
 instance HasField "persistentCommand'" ServerConfig ServerConfigPersistentCommand where
   getField = (.persistentCommand)
 
+instance HasField "aws'" ServerConfig ServerConfigAws where
+  getField = (.aws)
+
 instance HasField "dbPool'" AppContext (Pool Connection) where
   getField = (.dbPool)
 

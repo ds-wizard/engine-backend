@@ -82,6 +82,71 @@ packages:
   original:
     url: https://github.com/JonathanLorimer/hs-connection/archive/1dc000d38963de0e4c3954b27d4fe0e5f1d9cee2.tar.gz
 - completed:
+    name: amazonka
+    pantry-tree:
+      sha256: ca46d1e434972635cc1a5fdced6a33b1203227edd4614e09b3f59134c65b8983
+      size: 1528
+    sha256: a678b4c468ed87aad953b4c62eaae4a60a78c099f353e42439008fe33f5e67b2
+    size: 34732126
+    subdir: lib/amazonka
+    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    version: '2.0'
+  original:
+    subdir: lib/amazonka
+    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+- completed:
+    name: amazonka-core
+    pantry-tree:
+      sha256: b86f40dfb68a3f20032c595300fc4a7ba1c0769615dd707edb105349cc41908e
+      size: 3222
+    sha256: a678b4c468ed87aad953b4c62eaae4a60a78c099f353e42439008fe33f5e67b2
+    size: 34732126
+    subdir: lib/amazonka-core
+    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    version: '2.0'
+  original:
+    subdir: lib/amazonka-core
+    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+- completed:
+    name: amazonka-lambda
+    pantry-tree:
+      sha256: e99dc2ab8f03c47702d3ba13cd416942e2143b4e494136d482749d2d47ee09ac
+      size: 21343
+    sha256: a678b4c468ed87aad953b4c62eaae4a60a78c099f353e42439008fe33f5e67b2
+    size: 34732126
+    subdir: lib/services/amazonka-lambda
+    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    version: '2.0'
+  original:
+    subdir: lib/services/amazonka-lambda
+    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+- completed:
+    name: amazonka-sso
+    pantry-tree:
+      sha256: f8897d82072d662605f60dc3d18e921c04bbb337b5d7caaeaece36fc8aee7fb9
+      size: 1817
+    sha256: a678b4c468ed87aad953b4c62eaae4a60a78c099f353e42439008fe33f5e67b2
+    size: 34732126
+    subdir: lib/services/amazonka-sso
+    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    version: '2.0'
+  original:
+    subdir: lib/services/amazonka-sso
+    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+- completed:
+    name: amazonka-sts
+    pantry-tree:
+      sha256: b2a18c0a04c999f9f32e114ad94bf76a89e463dbb16063ebf0899ee28808f898
+      size: 2880
+    sha256: a678b4c468ed87aad953b4c62eaae4a60a78c099f353e42439008fe33f5e67b2
+    size: 34732126
+    subdir: lib/services/amazonka-sts
+    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    version: '2.0'
+  original:
+    subdir: lib/services/amazonka-sts
+    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+- completed:
     hackage: text-replace-0.0.0.4@sha256:88800aba160dfb512cf43b24063170d34900e1646ad21f28715a22679f42ae15,1738
     pantry-tree:
       sha256: a7d17c85a9637ef9cc6762ea4e9b932191ede485655b5d18d41292cc9475b105
@@ -95,6 +160,20 @@ packages:
       size: 279
   original:
     hackage: servant-swagger-tags-0.1.0.1
+- completed:
+    hackage: servant-swagger-ui-0.3.5.5.0.0@sha256:a008f166840f393eebccd634e7abfac0f2df1498713516037dc531607626fcc9,2305
+    pantry-tree:
+      sha256: a025f19ef094aec860ed8928312970fe90da20e543c2617c438ff4d031bf078a
+      size: 1754
+  original:
+    hackage: servant-swagger-ui-0.3.5.5.0.0
+- completed:
+    hackage: servant-swagger-ui-core-0.3.5@sha256:94620b21433a40f813a8b7adb570dfff4e1e8f8b09f1fc00b839d53a4018b338,1771
+    pantry-tree:
+      sha256: f3b31f567df321a49fa5538d18c0d3c7bb5ffd2c371f2989bb1b880364fd6814
+      size: 244
+  original:
+    hackage: servant-swagger-ui-core-0.3.5
 - completed:
     hackage: fsutils-0.1.2@sha256:fb3eb68e03e4317352032642d3ed18c796c30f5a3bec40caef69cee0b859df5e,1028
     pantry-tree:
@@ -116,9 +195,23 @@ packages:
       size: 632
   original:
     hackage: raven-haskell-0.1.4.1
+- completed:
+    hackage: ginger-0.10.5.2@sha256:a6657c23ca63d3d84587bb93bf7cc3e35fac1d1cb3fe8df4576dc58c0a18b3c9,3083
+    pantry-tree:
+      sha256: db9f63b22c17fe047ca26fdae4de2b0239b8a741a910578328ccda1fc72a4d0b
+      size: 1430
+  original:
+    hackage: ginger-0.10.5.2
+- completed:
+    hackage: time-parsers-0.2@sha256:393d52ebb968035129a90c9dfd56ea3de8e81900e8c26b33dce1b22571a040f2,1911
+    pantry-tree:
+      sha256: 4fb641abf3ca36aa085d5dd142b8b8ef01a034573cd4f0697641ddf7c082de83
+      size: 435
+  original:
+    hackage: time-parsers-0.2
 snapshots:
 - completed:
-    sha256: 4bd22736896cecf9e1f3f6193e82b065d06c2bf5b5ec97d0079409d6d35f1f82
-    size: 710668
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2023/12/8.yaml
-  original: nightly-2023-12-08
+    sha256: 9970615b9dba805bcf13388d3842092708284906c7584b7cc027b4898b307dfa
+    size: 622359
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2024/4/3.yaml
+  original: nightly-2024-04-03

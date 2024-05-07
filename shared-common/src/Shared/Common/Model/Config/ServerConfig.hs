@@ -70,3 +70,10 @@ data ServerConfigPersistentCommandLambda = ServerConfigPersistentCommandLambda
   , functionArn :: String
   }
   deriving (Generic, Show)
+
+data ServerConfigAws = ServerConfigAws
+  { awsAccessKeyId :: String
+  , awsSecretAccessKey :: String
+  , awsRegion :: String
+  }
+  deriving (Generic, Show)

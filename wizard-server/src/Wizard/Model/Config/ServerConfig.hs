@@ -29,6 +29,8 @@ data ServerConfig = ServerConfig
   , cloud :: ServerConfigCloud
   , admin :: ServerConfigAdmin
   , modules :: ServerConfigModules
+  , aws :: ServerConfigAws
+  , signalBridge :: ServerConfigSignalBridge
   }
   deriving (Generic, Show)
 
@@ -114,6 +116,15 @@ data ServerConfigUserToken = ServerConfigUserToken
 
 data ServerConfigAdmin = ServerConfigAdmin
   { enabled :: Bool
+  }
+  deriving (Generic, Show)
+
+data ServerConfigSignalBridge = ServerConfigSignalBridge
+  { enabled :: Bool
+  , updatePermsArn :: String
+  , updateUserGroupArn :: String
+  , setQuestionnaireArn :: String
+  , logOutAllArn :: String
   }
   deriving (Generic, Show)
 

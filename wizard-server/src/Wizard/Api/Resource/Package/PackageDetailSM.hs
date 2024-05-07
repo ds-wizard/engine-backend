@@ -18,6 +18,7 @@ instance ToSchema PackageDetailDTO where
     toSwagger
       ( toDetailDTO
           (toPackage globalPackage)
+          False
           [globalRegistryPackage]
           [globalRegistryOrganization]
           ["1.0.0"]

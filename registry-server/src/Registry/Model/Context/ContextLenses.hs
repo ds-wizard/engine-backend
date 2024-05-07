@@ -15,6 +15,7 @@ import Shared.Common.Constant.Tenant
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfig
+import Shared.Common.Model.Config.ServerConfigDM
 import qualified Shared.Common.Model.Context.AppContext as S_AppContext
 import qualified Shared.Common.Model.Context.BaseContext as S_BaseContext
 import Shared.Common.Service.Acl.AclService
@@ -50,6 +51,9 @@ instance HasField "cloud'" ServerConfig ServerConfigCloud where
 
 instance HasField "persistentCommand'" ServerConfig ServerConfigPersistentCommand where
   getField = (.persistentCommand)
+
+instance HasField "aws'" ServerConfig ServerConfigAws where
+  getField _ = defaultAws
 
 instance HasField "dbPool'" AppContext (Pool Connection) where
   getField = (.dbPool)

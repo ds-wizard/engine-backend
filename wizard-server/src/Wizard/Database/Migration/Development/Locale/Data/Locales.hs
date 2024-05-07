@@ -23,7 +23,7 @@ localeNlDto :: LocaleDTO
 localeNlDto = (toDTO False localeListNl) {organization = Just orgGlobalSimple}
 
 localeNlDetailDto :: LocaleDetailDTO
-localeNlDetailDto = toDetailDTO localeNl [] [globalRegistryOrganization] [localeNl.version] Nothing
+localeNlDetailDto = toDetailDTO localeNl True [] [globalRegistryOrganization] [localeNl.version] Nothing
 
 localeNlChangeDto :: LocaleChangeDTO
 localeNlChangeDto =

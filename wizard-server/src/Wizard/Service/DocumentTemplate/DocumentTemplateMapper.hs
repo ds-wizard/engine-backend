@@ -45,10 +45,10 @@ toList tml mTmlR mOrgR phase =
     }
 
 toSimpleDTO :: DocumentTemplate -> DocumentTemplateSimpleDTO
-toSimpleDTO tml = toSimpleDTO' $ toList tml Nothing Nothing ReleasedDocumentTemplatePhase
+toSimpleDTO tml = toSimpleDTO' False $ toList tml Nothing Nothing ReleasedDocumentTemplatePhase
 
-toSimpleDTO' :: DocumentTemplateList -> DocumentTemplateSimpleDTO
-toSimpleDTO' tml =
+toSimpleDTO' :: Bool -> DocumentTemplateList -> DocumentTemplateSimpleDTO
+toSimpleDTO' registryEnabled tml =
   DocumentTemplateSimpleDTO
     { tId = tml.tId
     , name = tml.name
@@ -56,20 +56,23 @@ toSimpleDTO' tml =
     , templateId = tml.templateId
     , version = tml.version
     , phase = tml.phase
-    , remoteLatestVersion = tml.remoteVersion
+    , remoteLatestVersion =
+        if registryEnabled
+          then tml.remoteVersion
+          else Nothing
     , description = tml.description
     , nonEditable = tml.nonEditable
     , state = computeDocumentTemplateState' tml
     , organization =
-        case tml.remoteOrganizationName of
-          Just orgName ->
+        case (registryEnabled, tml.remoteOrganizationName) of
+          (True, Just orgName) ->
             Just $
               OrganizationSimple
                 { organizationId = tml.organizationId
                 , name = orgName
                 , logo = tml.remoteOrganizationLogo
                 }
-          Nothing -> Nothing
+          _ -> Nothing
     , createdAt = tml.createdAt
     }
 
@@ -99,13 +102,14 @@ toSuggestionDTO tml =
 
 toDetailDTO
   :: DocumentTemplate
+  -> Bool
   -> [RegistryTemplate]
   -> [RegistryOrganization]
   -> [String]
   -> Maybe String
   -> [Package]
   -> DocumentTemplateDetailDTO
-toDetailDTO tml tmlRs orgRs versionLs registryLink pkgs =
+toDetailDTO tml registryEnabled tmlRs orgRs versionLs registryLink pkgs =
   DocumentTemplateDetailDTO
     { tId = tml.tId
     , name = tml.name
@@ -123,12 +127,18 @@ toDetailDTO tml tmlRs orgRs versionLs registryLink pkgs =
     , usablePackages = fmap PM_Mapper.toSimpleDTO pkgs
     , versions = versionLs
     , remoteLatestVersion =
-        case selectDocumentTemplateByOrgIdAndTmlId tml tmlRs of
-          Just tmlR -> Just $ tmlR.remoteVersion
-          Nothing -> Nothing
+        case (registryEnabled, selectDocumentTemplateByOrgIdAndTmlId tml tmlRs) of
+          (True, Just tmlR) -> Just $ tmlR.remoteVersion
+          _ -> Nothing
     , state = computeDocumentTemplateState tmlRs tml
-    , registryLink = registryLink
-    , organization = selectOrganizationByOrgId tml orgRs
+    , registryLink =
+        if registryEnabled
+          then registryLink
+          else Nothing
+    , organization =
+        if registryEnabled
+          then selectOrganizationByOrgId tml orgRs
+          else Nothing
     , createdAt = tml.createdAt
     }
 

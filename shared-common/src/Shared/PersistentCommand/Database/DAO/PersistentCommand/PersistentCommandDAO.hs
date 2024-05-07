@@ -13,6 +13,7 @@ import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
 import Shared.Common.Database.DAO.Common
+import Shared.Common.Integration.Aws.Lambda
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
@@ -23,7 +24,6 @@ import Shared.Common.Util.String (f'', trim)
 import Shared.PersistentCommand.Database.Mapping.PersistentCommand.LambdaInvocationResult ()
 import Shared.PersistentCommand.Database.Mapping.PersistentCommand.PersistentCommand ()
 import Shared.PersistentCommand.Database.Mapping.PersistentCommand.PersistentCommandSimple ()
-import Shared.PersistentCommand.Model.PersistentCommand.LambdaInvocationResult
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommandSimple
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
@@ -152,9 +152,5 @@ notifySpecificPersistentCommandQueue command = do
 
 invokeLambdaFunction :: AppContextC s sc m => PersistentCommandSimple identity -> ServerConfigPersistentCommandLambda -> m Int64
 invokeLambdaFunction command lf = do
-  let sql = f' "SELECT * FROM aws_lambda.invoke('%s', '{}'::json, 'eu-central-1', 'Event');" [lf.functionArn]
-  logInfoI _CMP_DATABASE (trim sql)
-  let action conn = query_ conn (fromString sql)
-  result <- runDB action :: AppContextC s sc m => m [LambdaInvocationResult]
-  logInfoI _CMP_DATABASE (f' "Lambda function '%s' invoked with result: '%s'" [lf.functionArn, show result])
+  invokeLambda (lf.functionArn) "{}"
   return 1

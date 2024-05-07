@@ -22,6 +22,7 @@ data ClientConfigDTO = ClientConfigDTO
   , locales :: [ClientConfigLocaleDTO]
   , owl :: TenantConfigOwl
   , admin :: ClientConfigAdminDTO
+  , signalBridge :: ClientConfigSignalBridgeDTO
   , modules :: [ClientConfigModuleDTO]
   }
   deriving (Show, Eq, Generic)
@@ -78,6 +79,11 @@ data ClientConfigLocaleDTO = ClientConfigLocaleDTO
 data ClientConfigAdminDTO = ClientConfigAdminDTO
   { enabled :: Bool
   , clientUrl :: Maybe String
+  }
+  deriving (Generic, Eq, Show)
+
+data ClientConfigSignalBridgeDTO = ClientConfigSignalBridgeDTO
+  { webSocketUrl :: Maybe String
   }
   deriving (Generic, Eq, Show)
 

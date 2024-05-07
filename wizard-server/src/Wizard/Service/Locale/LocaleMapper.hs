@@ -28,23 +28,26 @@ toDTO registryEnabled locale =
     , version = locale.version
     , defaultLocale = locale.defaultLocale
     , enabled = locale.enabled
-    , remoteLatestVersion = locale.remoteVersion
+    , remoteLatestVersion =
+        if registryEnabled
+          then locale.remoteVersion
+          else Nothing
     , organization =
-        case locale.remoteOrganizationName of
-          Just orgName ->
+        case (registryEnabled, locale.remoteOrganizationName) of
+          (True, Just orgName) ->
             Just $
               OrganizationSimple
                 { organizationId = locale.organizationId
                 , name = orgName
                 , logo = locale.remoteOrganizationLogo
                 }
-          Nothing -> Nothing
+          _ -> Nothing
     , createdAt = locale.createdAt
     , updatedAt = locale.updatedAt
     }
 
-toDetailDTO :: Locale -> [RegistryLocale] -> [RegistryOrganization] -> [String] -> Maybe String -> LocaleDetailDTO
-toDetailDTO locale localeRs orgRs versionLs registryLink =
+toDetailDTO :: Locale -> Bool -> [RegistryLocale] -> [RegistryOrganization] -> [String] -> Maybe String -> LocaleDetailDTO
+toDetailDTO locale registryEnabled localeRs orgRs versionLs registryLink =
   LocaleDetailDTO
     { lId = locale.lId
     , name = locale.name
@@ -60,11 +63,17 @@ toDetailDTO locale localeRs orgRs versionLs registryLink =
     , enabled = locale.enabled
     , versions = L.sort versionLs
     , remoteLatestVersion =
-        case selectLocaleByOrgIdAndLocaleId locale localeRs of
-          Just localeR -> Just $ localeR.remoteVersion
-          Nothing -> Nothing
-    , registryLink = registryLink
-    , organization = selectOrganizationByOrgId locale orgRs
+        case (registryEnabled, selectLocaleByOrgIdAndLocaleId locale localeRs) of
+          (True, Just localeR) -> Just $ localeR.remoteVersion
+          _ -> Nothing
+    , registryLink =
+        if registryEnabled
+          then registryLink
+          else Nothing
+    , organization =
+        if registryEnabled
+          then selectOrganizationByOrgId locale orgRs
+          else Nothing
     , createdAt = locale.createdAt
     , updatedAt = locale.updatedAt
     }

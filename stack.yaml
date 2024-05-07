@@ -1,4 +1,4 @@
-resolver: nightly-2023-12-08
+resolver: nightly-2024-04-03
 
 packages:
 - shared-common
@@ -23,10 +23,22 @@ extra-deps:
     commit: 83446d193f9bba02b758d2f1bd34a642f575238c
   - github: JonathanLorimer/hs-connection
     commit: 1dc000d38963de0e4c3954b27d4fe0e5f1d9cee2
+  - github: endgame/amazonka
+    commit: 0c1813fe8e48d726a91e7dcf239ac9e6db64dff3
+    subdirs:
+      - lib/amazonka
+      - lib/amazonka-core
+      - lib/services/amazonka-lambda
+      - lib/services/amazonka-sso
+      - lib/services/amazonka-sts
   - text-replace-0.0.0.4
   - servant-swagger-tags-0.1.0.1
+  - servant-swagger-ui-0.3.5.5.0.0
+  - servant-swagger-ui-core-0.3.5
   - fsutils-0.1.2
   - oidc-client-0.6.1.0
   - raven-haskell-0.1.4.1
+  - ginger-0.10.5.2
+  - time-parsers-0.2
 
 allow-newer: true

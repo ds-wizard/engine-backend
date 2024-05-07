@@ -28,6 +28,7 @@ class
   , HasField "s3'" sc ServerConfigS3
   , HasField "persistentCommand'" sc ServerConfigPersistentCommand
   , HasField "sentry'" sc ServerConfigSentry
+  , HasField "aws'" sc ServerConfigAws
   , HasField "buildInfoConfig'" context BuildInfoConfig
   , HasField "httpClientManager'" context Manager
   ) =>

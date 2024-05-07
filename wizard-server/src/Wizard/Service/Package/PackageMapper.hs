@@ -35,8 +35,8 @@ toSimpleDTO' pkgRs orgRs pkg =
     , createdAt = pkg.createdAt
     }
 
-toSimpleDTO'' :: PackageList -> PackageSimpleDTO
-toSimpleDTO'' pkg =
+toSimpleDTO'' :: Bool -> PackageList -> PackageSimpleDTO
+toSimpleDTO'' registryEnabled pkg =
   PackageSimpleDTO
     { pId = pkg.pId
     , name = pkg.name
@@ -44,12 +44,15 @@ toSimpleDTO'' pkg =
     , kmId = pkg.kmId
     , version = pkg.version
     , phase = pkg.phase
-    , remoteLatestVersion = pkg.remoteVersion
+    , remoteLatestVersion =
+        if registryEnabled
+          then pkg.remoteVersion
+          else Nothing
     , description = pkg.description
     , nonEditable = pkg.nonEditable
     , organization =
-        case pkg.remoteOrganizationName of
-          Just orgName ->
+        case (registryEnabled, pkg.remoteOrganizationName) of
+          (True, Just orgName) ->
             Just $
               RegistryOrganization
                 { organizationId = pkg.organizationId
@@ -57,12 +60,12 @@ toSimpleDTO'' pkg =
                 , logo = pkg.remoteOrganizationLogo
                 , createdAt = pkg.createdAt
                 }
-          Nothing -> Nothing
+          _ -> Nothing
     , createdAt = pkg.createdAt
     }
 
-toDetailDTO :: Package -> [RegistryPackage] -> [RegistryOrganization] -> [String] -> Maybe String -> PackageDetailDTO
-toDetailDTO pkg pkgRs orgRs versionLs registryLink =
+toDetailDTO :: Package -> Bool -> [RegistryPackage] -> [RegistryOrganization] -> [String] -> Maybe String -> PackageDetailDTO
+toDetailDTO pkg registryEnabled pkgRs orgRs versionLs registryLink =
   PackageDetailDTO
     { pId = pkg.pId
     , name = pkg.name
@@ -80,11 +83,17 @@ toDetailDTO pkg pkgRs orgRs versionLs registryLink =
     , nonEditable = pkg.nonEditable
     , versions = L.sort versionLs
     , remoteLatestVersion =
-        case selectPackageByOrgIdAndKmId pkg pkgRs of
-          Just pkgR -> Just $ pkgR.remoteVersion
-          Nothing -> Nothing
-    , registryLink = registryLink
-    , organization = selectOrganizationByOrgId pkg orgRs
+        case (registryEnabled, selectPackageByOrgIdAndKmId pkg pkgRs) of
+          (True, Just pkgR) -> Just $ pkgR.remoteVersion
+          _ -> Nothing
+    , registryLink =
+        if registryEnabled
+          then registryLink
+          else Nothing
+    , organization =
+        if registryEnabled
+          then selectOrganizationByOrgId pkg orgRs
+          else Nothing
     , createdAt = pkg.createdAt
     }
 

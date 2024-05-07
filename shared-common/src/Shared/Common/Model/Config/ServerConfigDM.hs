@@ -65,3 +65,11 @@ defaultPersistentCommandRetryJob =
 defaultPersistentCommandRetryLambdaJob :: ServerConfigCronWorker
 defaultPersistentCommandRetryLambdaJob =
   ServerConfigCronWorker {enabled = True, cron = "* * * * *"}
+
+defaultAws :: ServerConfigAws
+defaultAws =
+  ServerConfigAws
+    { awsAccessKeyId = ""
+    , awsSecretAccessKey = ""
+    , awsRegion = ""
+    }

@@ -38,7 +38,9 @@ instance FromJSON ServerConfig where
     logging <- o .:? "logging" .!= defaultLogging
     cloud <- o .:? "cloud" .!= defaultCloud
     admin <- o .:? "admin" .!= defaultAdmin
+    signalBridge <- o .:? "signalBridge" .!= defaultSignalBridge
     modules <- o .:? "modules" .!= defaultModules
+    aws <- o .:? "aws" .!= defaultAws
     return ServerConfig {..}
   parseJSON _ = mzero
 
@@ -146,6 +148,16 @@ instance FromJSON ServerConfigAdmin where
   parseJSON (Object o) = do
     enabled <- o .:? "enabled" .!= defaultAdmin.enabled
     return ServerConfigAdmin {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigSignalBridge where
+  parseJSON (Object o) = do
+    enabled <- o .:? "enabled" .!= defaultSignalBridge.enabled
+    updatePermsArn <- o .:? "updatePermsArn" .!= defaultSignalBridge.updatePermsArn
+    updateUserGroupArn <- o .:? "updateUserGroupArn" .!= defaultSignalBridge.updateUserGroupArn
+    setQuestionnaireArn <- o .:? "setQuestionnaireArn" .!= defaultSignalBridge.setQuestionnaireArn
+    logOutAllArn <- o .:? "logOutAllArn" .!= defaultSignalBridge.logOutAllArn
+    return ServerConfigSignalBridge {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigModules where
