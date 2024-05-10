@@ -58,7 +58,7 @@ getItemTemplateQuestionUuidsForQuestionUuid :: KnowledgeModel -> U.UUID -> [U.UU
 getItemTemplateQuestionUuidsForQuestionUuid km questionUuid =
   case M.lookup questionUuid (getQuestionsM km) of
     Just (ListQuestion' q) -> q.itemTemplateQuestionUuids
-    Nothing -> []
+    _ -> []
 
 getItemTemplateQuestionsForQuestionUuid :: KnowledgeModel -> U.UUID -> [Question]
 getItemTemplateQuestionsForQuestionUuid km qUuid =
