@@ -18,6 +18,7 @@ import Wizard.Service.User.GroupMembership.UserGroupMembershipMapper
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Model.PersistentCommand.User.UpdateUserGroupMembershipCommand
+import WizardLib.Public.Model.User.UserGroup
 import WizardLib.Public.Model.User.UserGroupMembership
 
 modifyUserGroupMemberships :: UpdateUserGroupMembershipCommand -> AppContextM ()
@@ -34,6 +35,8 @@ modifyUserGroupMemberships command =
     traverse_ insertUserGroupMembership . fmap (\dto -> fromCreateDTO dto command.userGroupUuid tenantUuid now) $ membershipsToAdd
     traverse_ updateUserGroupMembershipByUuid . fmap (\(membership, dto) -> fromChangeDTO membership dto now) $ membershipToEdit
     unless (null membershipsToDelete) (deleteUserGroupMembership command.userGroupUuid (fmap (.userUuid) membershipsToDelete))
+    updateUserGroupByUuid $ userGroup {updatedAt = now}
+    return ()
 
 deleteUserGroupMembership :: U.UUID -> [U.UUID] -> AppContextM ()
 deleteUserGroupMembership userGroupUuid userUuids = do
