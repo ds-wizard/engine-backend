@@ -13,7 +13,16 @@ instance FromJSON ServerConfigDatabase where
     stripeSize <- o .:? "stripeSize" .!= defaultDatabase.stripeSize
     connectionTimeout <- o .:? "connectionTimeout" .!= defaultDatabase.connectionTimeout
     maxConnections <- o .:? "maxConnections" .!= defaultDatabase.maxConnections
+    vacuumCleaner <- o .:? "vacuumCleaner" .!= defaultDatabase.vacuumCleaner
     return ServerConfigDatabase {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigDatabaseVacuumCleaner where
+  parseJSON (Object o) = do
+    enabled <- o .:? "enabled" .!= defaultDatabaseVacuumCleaner.enabled
+    cron <- o .:? "cron" .!= defaultDatabaseVacuumCleaner.cron
+    tables <- o .:? "tables" .!= defaultDatabaseVacuumCleaner.tables
+    return ServerConfigDatabaseVacuumCleaner {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigS3 where

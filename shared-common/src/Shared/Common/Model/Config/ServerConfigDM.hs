@@ -11,6 +11,15 @@ defaultDatabase =
     , stripeSize = 1
     , connectionTimeout = 10
     , maxConnections = 50
+    , vacuumCleaner = defaultDatabaseVacuumCleaner
+    }
+
+defaultDatabaseVacuumCleaner :: ServerConfigDatabaseVacuumCleaner
+defaultDatabaseVacuumCleaner =
+  ServerConfigDatabaseVacuumCleaner
+    { enabled = False
+    , cron = "45 1 * * *"
+    , tables = []
     }
 
 defaultS3 :: ServerConfigS3

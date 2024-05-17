@@ -21,6 +21,15 @@ instance FromEnv ServerConfigDatabase where
       , \c -> applyEnvVariable "DATABASE_MAX_CONNECTIONS" c.maxConnections (\x -> c {maxConnections = x})
       ]
 
+instance FromEnv ServerConfigDatabaseVacuumCleaner where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "DATABASE_VACUUM_CLEANER_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigDatabaseVacuumCleaner)
+      , \c -> applyStringEnvVariable "DATABASE_VACUUM_CLEANER_CRON" c.cron (\x -> c {cron = x} :: ServerConfigDatabaseVacuumCleaner)
+      , \c -> applyEnvVariable "DATABASE_VACUUM_CLEANER_TABLES" c.tables (\x -> c {tables = x} :: ServerConfigDatabaseVacuumCleaner)
+      ]
+
 instance FromEnv ServerConfigS3 where
   applyEnv serverConfig =
     applyEnvVariables

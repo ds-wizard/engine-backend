@@ -39,6 +39,9 @@ instance HasField "serverPort'" ServerConfig Int where
 instance HasField "environment'" ServerConfig Environment where
   getField = (.general.environment)
 
+instance HasField "database'" ServerConfig ServerConfigDatabase where
+  getField = (.database)
+
 instance HasField "s3'" ServerConfig ServerConfigS3 where
   getField = (.s3)
 

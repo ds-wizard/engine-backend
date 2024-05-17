@@ -8,6 +8,14 @@ data ServerConfigDatabase = ServerConfigDatabase
   , stripeSize :: Int
   , connectionTimeout :: Int
   , maxConnections :: Int
+  , vacuumCleaner :: ServerConfigDatabaseVacuumCleaner
+  }
+  deriving (Generic, Show)
+
+data ServerConfigDatabaseVacuumCleaner = ServerConfigDatabaseVacuumCleaner
+  { enabled :: Bool
+  , cron :: String
+  , tables :: [String]
   }
   deriving (Generic, Show)
 
