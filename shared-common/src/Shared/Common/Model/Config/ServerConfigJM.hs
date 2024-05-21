@@ -35,11 +35,12 @@ instance FromJSON ServerConfigS3 where
     return ServerConfigS3 {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigAnalytics where
+instance FromJSON ServerConfigAws where
   parseJSON (Object o) = do
-    enabled <- o .:? "enabled" .!= defaultAnalytics.enabled
-    email <- o .:? "email" .!= defaultAnalytics.email
-    return ServerConfigAnalytics {..}
+    awsAccessKeyId <- o .:? "awsAccessKeyId" .!= defaultAws.awsAccessKeyId
+    awsSecretAccessKey <- o .:? "awsSecretAccessKey" .!= defaultAws.awsSecretAccessKey
+    awsRegion <- o .:? "awsRegion" .!= defaultAws.awsRegion
+    return ServerConfigAws {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigSentry where
@@ -47,6 +48,19 @@ instance FromJSON ServerConfigSentry where
     enabled <- o .:? "enabled" .!= defaultSentry.enabled
     dsn <- o .:? "dsn" .!= defaultSentry.dsn
     return ServerConfigSentry {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigJwt where
+  parseJSON (Object o) = do
+    expiration <- o .:? "expiration" .!= defaultJwt.expiration
+    return ServerConfigJwt {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigAnalytics where
+  parseJSON (Object o) = do
+    enabled <- o .:? "enabled" .!= defaultAnalytics.enabled
+    email <- o .:? "email" .!= defaultAnalytics.email
+    return ServerConfigAnalytics {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigLogging where
@@ -75,11 +89,10 @@ instance FromJSON ServerConfigCloud where
     return ServerConfigCloud {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigCronWorker where
+instance FromJSON ServerConfigPlan where
   parseJSON (Object o) = do
-    enabled <- o .:? "enabled" .!= True
-    cron <- o .: "cron"
-    return ServerConfigCronWorker {..}
+    recomputeJob <- o .:? "recomputeJob" .!= defaultPlan.recomputeJob
+    return ServerConfigPlan {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigPersistentCommand where
@@ -104,10 +117,9 @@ instance FromJSON ServerConfigPersistentCommandListenerJob where
     return ServerConfigPersistentCommandListenerJob {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigAws where
+instance FromJSON ServerConfigCronWorker where
   parseJSON (Object o) = do
-    awsAccessKeyId <- o .:? "awsAccessKeyId" .!= defaultAws.awsAccessKeyId
-    awsSecretAccessKey <- o .:? "awsSecretAccessKey" .!= defaultAws.awsSecretAccessKey
-    awsRegion <- o .:? "awsRegion" .!= defaultAws.awsRegion
-    return ServerConfigAws {..}
+    enabled <- o .:? "enabled" .!= True
+    cron <- o .: "cron"
+    return ServerConfigCronWorker {..}
   parseJSON _ = mzero

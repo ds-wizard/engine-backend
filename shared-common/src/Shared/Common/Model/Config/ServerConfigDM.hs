@@ -32,11 +32,22 @@ defaultS3 =
     , region = Nothing
     }
 
-defaultAnalytics :: ServerConfigAnalytics
-defaultAnalytics = ServerConfigAnalytics {enabled = False, email = ""}
+defaultAws :: ServerConfigAws
+defaultAws =
+  ServerConfigAws
+    { awsAccessKeyId = ""
+    , awsSecretAccessKey = ""
+    , awsRegion = ""
+    }
 
 defaultSentry :: ServerConfigSentry
 defaultSentry = ServerConfigSentry {enabled = False, dsn = ""}
+
+defaultJwt :: ServerConfigJwt
+defaultJwt = ServerConfigJwt {expiration = 14 * 24}
+
+defaultAnalytics :: ServerConfigAnalytics
+defaultAnalytics = ServerConfigAnalytics {enabled = False, email = ""}
 
 defaultLogging :: ServerConfigLogging
 defaultLogging =
@@ -53,6 +64,13 @@ defaultCloud =
     , domain = Nothing
     , publicRegistrationEnabled = False
     }
+
+defaultPlan :: ServerConfigPlan
+defaultPlan = ServerConfigPlan {recomputeJob = defaultPlanRecomputeJob}
+
+defaultPlanRecomputeJob :: ServerConfigCronWorker
+defaultPlanRecomputeJob =
+  ServerConfigCronWorker {enabled = False, cron = "0 * * * *"}
 
 defaultPersistentCommand :: ServerConfigPersistentCommand
 defaultPersistentCommand =
@@ -74,11 +92,3 @@ defaultPersistentCommandRetryJob =
 defaultPersistentCommandRetryLambdaJob :: ServerConfigCronWorker
 defaultPersistentCommandRetryLambdaJob =
   ServerConfigCronWorker {enabled = True, cron = "* * * * *"}
-
-defaultAws :: ServerConfigAws
-defaultAws =
-  ServerConfigAws
-    { awsAccessKeyId = ""
-    , awsSecretAccessKey = ""
-    , awsRegion = ""
-    }

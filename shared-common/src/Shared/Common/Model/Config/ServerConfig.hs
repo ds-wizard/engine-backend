@@ -28,15 +28,27 @@ data ServerConfigS3 = ServerConfigS3
   }
   deriving (Generic, Show)
 
-data ServerConfigAnalytics = ServerConfigAnalytics
-  { enabled :: Bool
-  , email :: String
+data ServerConfigAws = ServerConfigAws
+  { awsAccessKeyId :: String
+  , awsSecretAccessKey :: String
+  , awsRegion :: String
   }
   deriving (Generic, Show)
 
 data ServerConfigSentry = ServerConfigSentry
   { enabled :: Bool
   , dsn :: String
+  }
+  deriving (Generic, Show)
+
+data ServerConfigJwt = ServerConfigJwt
+  { expiration :: Integer
+  }
+  deriving (Generic, Show)
+
+data ServerConfigAnalytics = ServerConfigAnalytics
+  { enabled :: Bool
+  , email :: String
   }
   deriving (Generic, Show)
 
@@ -54,9 +66,8 @@ data ServerConfigCloud = ServerConfigCloud
   }
   deriving (Generic, Show)
 
-data ServerConfigCronWorker = ServerConfigCronWorker
-  { enabled :: Bool
-  , cron :: String
+data ServerConfigPlan = ServerConfigPlan
+  { recomputeJob :: ServerConfigCronWorker
   }
   deriving (Generic, Show)
 
@@ -79,9 +90,8 @@ data ServerConfigPersistentCommandLambda = ServerConfigPersistentCommandLambda
   }
   deriving (Generic, Show)
 
-data ServerConfigAws = ServerConfigAws
-  { awsAccessKeyId :: String
-  , awsSecretAccessKey :: String
-  , awsRegion :: String
+data ServerConfigCronWorker = ServerConfigCronWorker
+  { enabled :: Bool
+  , cron :: String
   }
   deriving (Generic, Show)

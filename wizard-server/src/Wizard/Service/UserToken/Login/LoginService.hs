@@ -10,6 +10,7 @@ import qualified Data.UUID as U
 import qualified Jose.Jwt as JWT
 
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Number
 import Shared.Common.Util.Token

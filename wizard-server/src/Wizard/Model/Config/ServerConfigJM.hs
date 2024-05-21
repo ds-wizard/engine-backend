@@ -20,27 +20,27 @@ instance FromJSON ServerConfig where
     general <- o .:? "general" .!= defaultGeneral
     database <- o .:? "database" .!= defaultDatabase
     s3 <- o .:? "s3" .!= defaultS3
+    aws <- o .:? "aws" .!= defaultAws
+    sentry <- o .:? "sentry" .!= defaultSentry
     jwt <- o .:? "jwt" .!= defaultJwt
     roles <- o .:? "roles" .!= defaultRoles
-    registry <- o .:? "registry" .!= defaultRegistry
-    analytics <- o .:? "analytics" .!= defaultAnalytics
-    sentry <- o .:? "sentry" .!= defaultSentry
     actionKey <- o .:? "actionKey" .!= defaultActionKey
     branch <- o .:? "branch" .!= defaultBranch
     cache <- o .:? "cache" .!= defaultCache
     document <- o .:? "document" .!= defaultDocument
     feedback <- o .:? "feedback" .!= defaultFeedback
-    persistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
-    plan <- o .:? "plan" .!= defaultPlan
     questionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
     temporaryFile <- o .:? "temporaryFile" .!= defaultTemporaryFile
     userToken <- o .:? "userToken" .!= defaultUserToken
+    analytics <- o .:? "analytics" .!= defaultAnalytics
     logging <- o .:? "logging" .!= defaultLogging
     cloud <- o .:? "cloud" .!= defaultCloud
-    admin <- o .:? "admin" .!= defaultAdmin
+    plan <- o .:? "plan" .!= defaultPlan
+    persistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
     signalBridge <- o .:? "signalBridge" .!= defaultSignalBridge
+    admin <- o .:? "admin" .!= defaultAdmin
+    registry <- o .:? "registry" .!= defaultRegistry
     modules <- o .:? "modules" .!= defaultModules
-    aws <- o .:? "aws" .!= defaultAws
     return ServerConfig {..}
   parseJSON _ = mzero
 
@@ -62,26 +62,12 @@ instance FromJSON ServerConfigGeneral where
     return ServerConfigGeneral {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigJwt where
-  parseJSON (Object o) = do
-    expiration <- o .:? "expiration" .!= defaultJwt.expiration
-    return ServerConfigJwt {..}
-  parseJSON _ = mzero
-
 instance FromJSON ServerConfigRoles where
   parseJSON (Object o) = do
     admin <- o .:? fromString _USER_ROLE_ADMIN .!= defaultRoles.admin
     dataSteward <- o .:? fromString _USER_ROLE_DATA_STEWARD .!= defaultRoles.dataSteward
     researcher <- o .:? fromString _USER_ROLE_RESEARCHER .!= defaultRoles.researcher
     return ServerConfigRoles {..}
-  parseJSON _ = mzero
-
-instance FromJSON ServerConfigRegistry where
-  parseJSON (Object o) = do
-    url <- o .:? "url" .!= defaultRegistry.url
-    clientUrl <- o .:? "clientUrl" .!= defaultRegistry.clientUrl
-    sync <- o .:? "sync" .!= defaultRegistry.sync
-    return ServerConfigRegistry {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigActionKey where
@@ -118,12 +104,6 @@ instance FromJSON ServerConfigFeedback where
     return ServerConfigFeedback {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigPlan where
-  parseJSON (Object o) = do
-    recomputeJob <- o .:? "recomputeJob" .!= defaultPlan.recomputeJob
-    return ServerConfigPlan {..}
-  parseJSON _ = mzero
-
 instance FromJSON ServerConfigQuestionnaire where
   parseJSON (Object o) = do
     clean <- o .:? "clean" .!= defaultQuestionnaire.clean
@@ -144,12 +124,6 @@ instance FromJSON ServerConfigUserToken where
     return ServerConfigUserToken {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigAdmin where
-  parseJSON (Object o) = do
-    enabled <- o .:? "enabled" .!= defaultAdmin.enabled
-    return ServerConfigAdmin {..}
-  parseJSON _ = mzero
-
 instance FromJSON ServerConfigSignalBridge where
   parseJSON (Object o) = do
     enabled <- o .:? "enabled" .!= defaultSignalBridge.enabled
@@ -158,6 +132,20 @@ instance FromJSON ServerConfigSignalBridge where
     setQuestionnaireArn <- o .:? "setQuestionnaireArn" .!= defaultSignalBridge.setQuestionnaireArn
     logOutAllArn <- o .:? "logOutAllArn" .!= defaultSignalBridge.logOutAllArn
     return ServerConfigSignalBridge {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigAdmin where
+  parseJSON (Object o) = do
+    enabled <- o .:? "enabled" .!= defaultAdmin.enabled
+    return ServerConfigAdmin {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigRegistry where
+  parseJSON (Object o) = do
+    url <- o .:? "url" .!= defaultRegistry.url
+    clientUrl <- o .:? "clientUrl" .!= defaultRegistry.clientUrl
+    sync <- o .:? "sync" .!= defaultRegistry.sync
+    return ServerConfigRegistry {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigModules where
