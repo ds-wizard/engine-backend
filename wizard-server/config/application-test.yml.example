@@ -70,7 +70,7 @@ registry:
   url: https://api.registry-test.ds-wizard.org
   clientUrl: https://registry-test.ds-wizard.org
 
-analytics:
+analyticalMails:
   enabled: false
   email:
 

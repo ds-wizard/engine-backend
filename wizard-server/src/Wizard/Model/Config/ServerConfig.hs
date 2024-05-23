@@ -22,7 +22,7 @@ data ServerConfig = ServerConfig
   , questionnaire :: ServerConfigQuestionnaire
   , temporaryFile :: ServerConfigTemporaryFile
   , userToken :: ServerConfigUserToken
-  , analytics :: ServerConfigAnalytics
+  , analyticalMails :: ServerConfigAnalyticalMails
   , logging :: ServerConfigLogging
   , cloud :: ServerConfigCloud
   , plan :: ServerConfigPlan

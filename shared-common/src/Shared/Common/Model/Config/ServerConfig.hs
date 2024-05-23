@@ -46,7 +46,7 @@ data ServerConfigJwt = ServerConfigJwt
   }
   deriving (Generic, Show)
 
-data ServerConfigAnalytics = ServerConfigAnalytics
+data ServerConfigAnalyticalMails = ServerConfigAnalyticalMails
   { enabled :: Bool
   , email :: String
   }

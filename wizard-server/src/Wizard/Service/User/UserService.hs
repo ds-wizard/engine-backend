@@ -315,7 +315,7 @@ updateUserTimestamp user = do
 
 sendAnalyticsEmailIfEnabled user = do
   serverConfig <- asks serverConfig
-  when serverConfig.analytics.enabled (sendRegistrationCreatedAnalyticsMail user)
+  when serverConfig.analyticalMails.enabled (sendRegistrationCreatedAnalyticsMail user)
 
 checkIfRegistrationIsEnabled =
   checkIfTenantFeatureIsEnabled "Registration" (\c -> c.authentication.internal.registration.enabled)

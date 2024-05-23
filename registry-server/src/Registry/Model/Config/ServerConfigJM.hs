@@ -15,7 +15,7 @@ instance FromJSON ServerConfig where
     database <- o .:? "database" .!= defaultDatabase
     s3 <- o .:? "s3" .!= defaultS3
     sentry <- o .:? "sentry" .!= defaultSentry
-    analytics <- o .:? "analytics" .!= defaultAnalytics
+    analyticalMails <- o .:? "analyticalMails" .!= defaultAnalyticalMails
     logging <- o .:? "logging" .!= defaultLogging
     cloud <- o .:? "cloud" .!= defaultCloud
     persistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand

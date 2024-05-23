@@ -9,7 +9,7 @@ instance FromEnv ServerConfig where
     database <- applyEnv serverConfig.database
     s3 <- applyEnv serverConfig.s3
     sentry <- applyEnv serverConfig.sentry
-    analytics <- applyEnv serverConfig.analytics
+    analyticalMails <- applyEnv serverConfig.analyticalMails
     logging <- applyEnv serverConfig.logging
     cloud <- applyEnv serverConfig.cloud
     persistentCommand <- applyEnv serverConfig.persistentCommand

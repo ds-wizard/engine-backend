@@ -32,7 +32,7 @@ instance FromJSON ServerConfig where
     questionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
     temporaryFile <- o .:? "temporaryFile" .!= defaultTemporaryFile
     userToken <- o .:? "userToken" .!= defaultUserToken
-    analytics <- o .:? "analytics" .!= defaultAnalytics
+    analyticalMails <- o .:? "analyticalMails" .!= defaultAnalyticalMails
     logging <- o .:? "logging" .!= defaultLogging
     cloud <- o .:? "cloud" .!= defaultCloud
     plan <- o .:? "plan" .!= defaultPlan

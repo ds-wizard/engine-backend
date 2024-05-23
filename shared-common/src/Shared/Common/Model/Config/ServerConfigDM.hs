@@ -46,8 +46,8 @@ defaultSentry = ServerConfigSentry {enabled = False, dsn = ""}
 defaultJwt :: ServerConfigJwt
 defaultJwt = ServerConfigJwt {expiration = 14 * 24}
 
-defaultAnalytics :: ServerConfigAnalytics
-defaultAnalytics = ServerConfigAnalytics {enabled = False, email = ""}
+defaultAnalyticalMails :: ServerConfigAnalyticalMails
+defaultAnalyticalMails = ServerConfigAnalyticalMails {enabled = False, email = ""}
 
 defaultLogging :: ServerConfigLogging
 defaultLogging =

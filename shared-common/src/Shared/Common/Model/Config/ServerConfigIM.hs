@@ -65,12 +65,12 @@ instance FromEnv ServerConfigJwt where
       [ \c -> applyEnvVariable "JWT_EXPIRATION" c.expiration (\x -> c {expiration = x})
       ]
 
-instance FromEnv ServerConfigAnalytics where
+instance FromEnv ServerConfigAnalyticalMails where
   applyEnv serverConfig =
     applyEnvVariables
       serverConfig
-      [ \c -> applyEnvVariable "ANALYTICS_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigAnalytics)
-      , \c -> applyStringEnvVariable "ANALYTICS_EMAIL" c.email (\x -> c {email = x})
+      [ \c -> applyEnvVariable "ANALYTICAL_MAILS_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigAnalyticalMails)
+      , \c -> applyStringEnvVariable "ANALYTICAL_MAILS_EMAIL" c.email (\x -> c {email = x})
       ]
 
 instance FromEnv ServerConfigLogging where

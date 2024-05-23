@@ -21,7 +21,7 @@ instance FromEnv ServerConfig where
     questionnaire <- applyEnv serverConfig.questionnaire
     temporaryFile <- applyEnv serverConfig.temporaryFile
     userToken <- applyEnv serverConfig.userToken
-    analytics <- applyEnv serverConfig.analytics
+    analyticalMails <- applyEnv serverConfig.analyticalMails
     logging <- applyEnv serverConfig.logging
     cloud <- applyEnv serverConfig.cloud
     plan <- applyEnv serverConfig.plan

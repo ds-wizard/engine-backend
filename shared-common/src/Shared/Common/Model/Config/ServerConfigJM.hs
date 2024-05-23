@@ -56,11 +56,11 @@ instance FromJSON ServerConfigJwt where
     return ServerConfigJwt {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigAnalytics where
+instance FromJSON ServerConfigAnalyticalMails where
   parseJSON (Object o) = do
-    enabled <- o .:? "enabled" .!= defaultAnalytics.enabled
-    email <- o .:? "email" .!= defaultAnalytics.email
-    return ServerConfigAnalytics {..}
+    enabled <- o .:? "enabled" .!= defaultAnalyticalMails.enabled
+    email <- o .:? "email" .!= defaultAnalyticalMails.email
+    return ServerConfigAnalyticalMails {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigLogging where

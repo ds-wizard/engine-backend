@@ -60,7 +60,7 @@ sendRegistrationCreatedAnalyticsMail user =
           MC.MailCommand
             { mode = "wizard"
             , template = "registrationCreatedAnalytics"
-            , recipients = [serverConfig.analytics.email]
+            , recipients = [serverConfig.analyticalMails.email]
             , parameters =
                 M.fromList
                   [ ("userUuid", MC.uuid user.uuid)
