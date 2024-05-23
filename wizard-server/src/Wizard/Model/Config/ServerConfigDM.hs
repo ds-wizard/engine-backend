@@ -195,7 +195,7 @@ defaultModules =
     { wizard = defaultModule
     , admin = defaultModule
     , integrationHub = defaultModule
-    , reporting = defaultModule
+    , analytics = defaultModule
     , guide = defaultModule
     }
 

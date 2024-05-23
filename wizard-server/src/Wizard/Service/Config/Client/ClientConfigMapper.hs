@@ -38,7 +38,7 @@ toClientConfigDTO serverConfig tenantConfig mUserProfile tenant locales =
                   [ toClientConfigModuleDTO serverConfig.modules.wizard tenant.clientUrl False
                   , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" tenant.adminClientUrl) False
                   , toClientConfigModuleDTO serverConfig.modules.integrationHub (fromMaybe "" tenant.integrationHubClientUrl) False
-                  , toClientConfigModuleDTO serverConfig.modules.reporting (fromMaybe "" tenant.reportingClientUrl) False
+                  , toClientConfigModuleDTO serverConfig.modules.analytics (fromMaybe "" tenant.analyticsClientUrl) False
                   , toClientConfigModuleDTO serverConfig.modules.guide (fromMaybe "" serverConfig.modules.guide.url) True
                   ]
                 "dataSteward" ->
