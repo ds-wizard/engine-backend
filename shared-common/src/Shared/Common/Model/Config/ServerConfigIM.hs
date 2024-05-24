@@ -89,6 +89,7 @@ instance FromEnv ServerConfigCloud where
       [ \c -> applyEnvVariable "CLOUD_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigCloud)
       , \c -> applyMaybeStringEnvVariable "CLOUD_DOMAIN" c.domain (\x -> c {domain = x})
       , \c -> applyEnvVariable "CLOUD_PUBLIC_REGISTRATION_ENABLED" c.publicRegistrationEnabled (\x -> c {publicRegistrationEnabled = x})
+      , \c -> applyEnvVariable "CLOUD_SIGNAL_BRIDGE_URL" c.signalBridgeUrl (\x -> c {signalBridgeUrl = x})
       ]
 
 instance FromEnv ServerConfigPlan where

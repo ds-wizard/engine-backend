@@ -63,6 +63,7 @@ data ServerConfigCloud = ServerConfigCloud
   { enabled :: Bool
   , domain :: Maybe String
   , publicRegistrationEnabled :: Bool
+  , signalBridgeUrl :: Maybe String
   }
   deriving (Generic, Show)
 

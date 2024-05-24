@@ -63,6 +63,7 @@ defaultCloud =
     { enabled = False
     , domain = Nothing
     , publicRegistrationEnabled = False
+    , signalBridgeUrl = Nothing
     }
 
 defaultPlan :: ServerConfigPlan
