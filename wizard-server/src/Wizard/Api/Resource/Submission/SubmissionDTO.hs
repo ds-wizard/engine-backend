@@ -4,8 +4,8 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Model.Submission.Submission
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 
 data SubmissionDTO = SubmissionDTO
   { uuid :: U.UUID

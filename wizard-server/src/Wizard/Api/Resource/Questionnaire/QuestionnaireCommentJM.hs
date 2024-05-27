@@ -4,7 +4,7 @@ import Data.Aeson
 
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
-import Wizard.Api.Resource.User.UserSuggestionJM ()
+import WizardLib.Public.Api.Resource.User.UserSuggestionJM ()
 
 instance FromJSON QuestionnaireCommentThreadDTO where
   parseJSON = genericParseJSON jsonOptions

@@ -5,9 +5,9 @@ import Data.Swagger
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.Submission.SubmissionJM ()
-import Wizard.Api.Resource.User.UserSuggestionSM ()
 import Wizard.Database.Migration.Development.Submission.Data.Submissions
 import Wizard.Model.Submission.Submission
+import WizardLib.Public.Api.Resource.User.UserSuggestionSM ()
 
 instance ToSchema SubmissionState
 

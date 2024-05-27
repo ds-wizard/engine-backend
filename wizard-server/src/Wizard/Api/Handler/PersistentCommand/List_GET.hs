@@ -8,10 +8,10 @@ import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Context.TransactionState
 import Shared.Common.Util.String (splitOn)
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
-import Wizard.Api.Resource.PersistentCommand.PersistentCommandJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.PersistentCommand.PersistentCommandService
+import WizardLib.Public.Api.Resource.PersistentCommand.PersistentCommandListJM ()
+import WizardLib.Public.Model.PersistentCommand.PersistentCommandList
 
 type List_GET =
   Header "Authorization" String
@@ -21,7 +21,7 @@ type List_GET =
     :> QueryParam "page" Int
     :> QueryParam "size" Int
     :> QueryParam "sort" String
-    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] (Page PersistentCommandDTO))
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] (Page PersistentCommandList))
 
 list_GET
   :: Maybe String
@@ -30,7 +30,7 @@ list_GET
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
-  -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page PersistentCommandDTO))
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page PersistentCommandList))
 list_GET mTokenHeader mServerUrl mStatesL mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $

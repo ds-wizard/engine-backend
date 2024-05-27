@@ -8,10 +8,10 @@ import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Context.TransactionState
 import Shared.Common.Util.String (splitOn)
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.User.UserSuggestionDTO
-import Wizard.Api.Resource.User.UserSuggestionJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.User.UserService
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Api.Resource.User.UserSuggestionJM ()
 
 type List_Suggestions_GET =
   Header "Authorization" String

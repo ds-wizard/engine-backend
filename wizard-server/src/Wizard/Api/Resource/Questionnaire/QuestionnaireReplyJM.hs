@@ -3,8 +3,8 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM where
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.User.UserSuggestionJM ()
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import WizardLib.Public.Api.Resource.User.UserSuggestionJM ()
 
 instance ToJSON Reply where
   toJSON = genericToJSON jsonOptions

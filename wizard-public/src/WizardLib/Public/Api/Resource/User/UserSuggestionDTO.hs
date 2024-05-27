@@ -1,4 +1,4 @@
-module Wizard.Api.Resource.User.UserSuggestionDTO where
+module WizardLib.Public.Api.Resource.User.UserSuggestionDTO where
 
 import Data.Hashable
 import qualified Data.UUID as U

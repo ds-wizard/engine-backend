@@ -5,11 +5,11 @@ import qualified Data.UUID as U
 
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
-import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as UM
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 
 toEventDTO :: QuestionnaireEvent -> Maybe User -> QuestionnaireEventDTO
 toEventDTO event' mCreatedBy =

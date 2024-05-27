@@ -6,8 +6,8 @@ import Data.Aeson
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
-import Wizard.Api.Resource.User.UserSuggestionJM ()
 import Wizard.Model.Questionnaire.QuestionnaireEvent
+import WizardLib.Public.Api.Resource.User.UserSuggestionJM ()
 
 instance ToJSON QuestionnaireEventDTO where
   toJSON = toSumJSON

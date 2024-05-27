@@ -6,7 +6,7 @@ import GHC.Generics
 
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Api.Resource.Tenant.TenantDTO
-import Wizard.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 
 data PersistentCommandDetailDTO = PersistentCommandDetailDTO
   { uuid :: U.UUID

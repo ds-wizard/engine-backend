@@ -6,10 +6,10 @@ import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM ()
-import Wizard.Api.Resource.User.UserSuggestionSM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
+import WizardLib.Public.Api.Resource.User.UserSuggestionSM ()
 
 instance ToSchema QuestionnaireEventDTO where
   declareNamedSchema = genericDeclareNamedSchemaUnrestricted defaultSchemaOptions

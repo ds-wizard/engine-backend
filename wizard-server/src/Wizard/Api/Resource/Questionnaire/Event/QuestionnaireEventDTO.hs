@@ -4,8 +4,8 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 
 data QuestionnaireEventDTO
   = SetReplyEventDTO' SetReplyEventDTO

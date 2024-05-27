@@ -4,9 +4,9 @@ import Data.Swagger
 
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
-import Wizard.Api.Resource.User.UserSuggestionSM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import WizardLib.Public.Api.Resource.User.UserSuggestionSM ()
 
 instance ToSchema Reply where
   declareNamedSchema = toSwagger (fst rQ1Updated)

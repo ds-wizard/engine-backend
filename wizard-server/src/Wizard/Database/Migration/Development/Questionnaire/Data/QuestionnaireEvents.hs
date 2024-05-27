@@ -6,7 +6,6 @@ import Data.Time
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
-import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireLabels
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
@@ -19,6 +18,7 @@ import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.User.UserMapper
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 
 fEvents :: [QuestionnaireEvent]
 fEvents =

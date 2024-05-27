@@ -4,8 +4,8 @@ import Data.Aeson
 
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.Submission.SubmissionDTO
-import Wizard.Api.Resource.User.UserSuggestionJM ()
 import Wizard.Model.Submission.Submission
+import WizardLib.Public.Api.Resource.User.UserSuggestionJM ()
 
 instance FromJSON SubmissionState
 

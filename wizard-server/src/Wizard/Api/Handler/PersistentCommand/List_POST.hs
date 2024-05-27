@@ -7,7 +7,6 @@ import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.PersistentCommand.PersistentCommandJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.PersistentCommand.PersistentCommandService
 
