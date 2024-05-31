@@ -32,6 +32,6 @@ compareQtnMigrators resDto expDto = do
   liftIO $ resDto.resolvedQuestionUuids `shouldBe` expDto.resolvedQuestionUuids
 
 compareQtnMigratorDtos resDto expDto = do
-  compareQuestionnaireCreateDtos' resDto.oldQuestionnaire expDto.oldQuestionnaire
-  compareQuestionnaireCreateDtos' resDto.newQuestionnaire expDto.newQuestionnaire
+  compareQuestionnaireCreateDtos'' resDto.oldQuestionnaire expDto.oldQuestionnaire
+  compareQuestionnaireCreateDtos'' resDto.newQuestionnaire expDto.newQuestionnaire
   liftIO $ resDto.resolvedQuestionUuids `shouldBe` expDto.resolvedQuestionUuids

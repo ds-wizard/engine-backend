@@ -70,7 +70,7 @@ test403 appContext = do
       -- AND: Prepare expectation
       let expError = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "View Questionnaire"
       -- WHEN: Update permission
-      runInContext (modifyQuestionnaire updatedQtn.uuid (toChangeDTO updatedQtn)) appContext
+      runInContext (modifyQuestionnaireShare updatedQtn.uuid (toChangeDTO updatedQtn)) appContext
       -- THEN: Read response
       read_SetUserList c1 1
       read_SetUserList c1 0

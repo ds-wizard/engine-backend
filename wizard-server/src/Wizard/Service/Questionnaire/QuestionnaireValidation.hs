@@ -9,13 +9,13 @@ import Text.Regex (matchRegex, mkRegex)
 
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
-import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireSettingsChangeDTO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
-validateQuestionnaireChangeDTO :: QuestionnaireChangeDTO -> AppContextM ()
-validateQuestionnaireChangeDTO reqDto = validateQuestionnaireTags reqDto.projectTags
+validateQuestionnaireSettingsChangeDTO :: QuestionnaireSettingsChangeDTO -> AppContextM ()
+validateQuestionnaireSettingsChangeDTO reqDto = validateQuestionnaireTags reqDto.projectTags
 
 validateQuestionnaireDeletation :: U.UUID -> AppContextM ()
 validateQuestionnaireDeletation = validateUsageByQtnMigration

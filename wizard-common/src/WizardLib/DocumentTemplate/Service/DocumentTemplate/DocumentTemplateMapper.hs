@@ -4,7 +4,6 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Int
 
-import Shared.Common.Util.List
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatDTO
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
@@ -37,10 +36,6 @@ toFormatDTO format =
     { uuid = format.uuid
     , name = format.name
     , icon = format.icon
-    , isPdf =
-        case lastSafe $ format.steps of
-          Nothing -> False
-          Just step -> step.name == "wkhtmltopdf" || step.name == "weasyprint"
     }
 
 toFileDTO :: DocumentTemplateFile -> DocumentTemplateFileDTO

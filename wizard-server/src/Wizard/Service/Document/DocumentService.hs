@@ -86,7 +86,7 @@ createDocument reqDto =
     let doc = fromCreateDTO reqDto dUuid repliesHash qtn.events mCurrentUser tenantUuid now
     insertDocument doc
     publishToPersistentCommandQueue doc
-    return $ toDTOWithDocTemplate doc (Just qtnSimple) [] tml
+    return $ toDTOWithDocTemplate doc (Just qtnSimple) Nothing [] tml
 
 deleteDocument :: U.UUID -> AppContextM ()
 deleteDocument docUuid =

@@ -9,7 +9,7 @@ import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -48,8 +48,8 @@ getQuestionnaireMigration :: U.UUID -> AppContextM MigratorStateDTO
 getQuestionnaireMigration qtnUuid = do
   checkPermission _QTN_PERM
   state <- findMigratorStateByNewQuestionnaireUuid qtnUuid
-  oldQtnDto <- getQuestionnaireDetailById state.oldQuestionnaireUuid
-  newQtnDto <- getQuestionnaireDetailById state.newQuestionnaireUuid
+  oldQtnDto <- getQuestionnaireDetailQuestionnaireById state.oldQuestionnaireUuid
+  newQtnDto <- getQuestionnaireDetailQuestionnaireById state.newQuestionnaireUuid
   oldQtn <- findQuestionnaireByUuid state.oldQuestionnaireUuid
   newQtn <- findQuestionnaireByUuid state.newQuestionnaireUuid
   checkMigrationPermissionToQtn oldQtn.visibility oldQtn.permissions

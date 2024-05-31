@@ -63,6 +63,14 @@ findDocumentsPage mQtnUuid mQtnName mQuery pageable sort = do
               \       doc.questionnaire_uuid, \
               \       %s \
               \       doc.questionnaire_event_uuid, \
+              \       (SELECT version.name \
+              \        FROM (SELECT json_array_elements(versions) ->> 'name'      AS name, \
+              \                     json_array_elements(versions) ->> 'eventUuid' AS event_uuid \
+              \              FROM questionnaire qtn \
+              \              WHERE qtn.uuid = doc.questionnaire_uuid \
+              \                AND qtn.tenant_uuid = doc.tenant_uuid) version \
+              \        WHERE version.event_uuid = doc.questionnaire_event_uuid::text \
+              \       ) as questionnaire_version, \
               \       doc_tml.name, \
               \       doc_tml.formats, \
               \       doc.format_uuid, \

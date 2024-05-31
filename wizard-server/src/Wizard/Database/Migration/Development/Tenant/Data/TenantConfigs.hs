@@ -25,7 +25,6 @@ defaultTenantConfig =
   TenantConfig
     { uuid = defaultTenant.uuid
     , organization = defaultOrganization
-    , feature = defaultFeature
     , authentication = defaultAuth
     , privacyAndSupport = defaultPrivacyAndSupport
     , dashboardAndLoginScreen = defaultDashboardAndLoginScreen
@@ -50,13 +49,6 @@ defaultOrganization =
     , description = "Some description of Organization Amsterdam"
     , organizationId = "org.nl.amsterdam"
     , affiliations = []
-    }
-
-defaultFeature :: TenantConfigFeature
-defaultFeature =
-  TenantConfigFeature
-    { pdfOnlyEnabled = False
-    , pdfWatermarkEnabled = False
     }
 
 defaultAuth :: TenantConfigAuth

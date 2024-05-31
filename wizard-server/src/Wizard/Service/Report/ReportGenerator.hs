@@ -52,6 +52,8 @@ generateReport requiredPhaseUuid km replies = do
       { uuid = rUuid
       , totalReport = computeTotalReport requiredPhaseUuid km replies
       , chapterReports = computeChapterReport requiredPhaseUuid km replies <$> getChaptersForKmUuid km
+      , chapters = M.elems km.entities.chapters
+      , metrics = M.elems km.entities.metrics
       , createdAt = now
       , updatedAt = now
       }

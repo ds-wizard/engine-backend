@@ -31,7 +31,6 @@ fromChangeDTO dto oldConfig now =
   TenantConfig
     { uuid = oldConfig.uuid
     , organization = dto.organization
-    , feature = oldConfig.feature
     , authentication = dto.authentication
     , privacyAndSupport = dto.privacyAndSupport
     , dashboardAndLoginScreen = dto.dashboardAndLoginScreen

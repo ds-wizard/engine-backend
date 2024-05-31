@@ -1,9 +1,10 @@
 module Wizard.Service.Questionnaire.Version.QuestionnaireVersionService where
 
 import Control.Monad (when)
-import Control.Monad.Except (throwError)
+import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (liftIO)
 import qualified Data.List as L
+import qualified Data.Map.Strict as M
 import qualified Data.Set as S
 import Data.Time
 import qualified Data.UUID as U
@@ -107,5 +108,5 @@ revertToEvent qtnUuid reqDto shouldSave =
     eventsDto <- traverse enhanceQuestionnaireEvent updatedQtn.events
     versionDto <- traverse enhanceQuestionnaireVersion updatedQtn.versions
     when shouldSave (logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid)
-    commentThreadsMap <- getQuestionnaireComments qtn
+    commentThreadsMap <- catchError (getQuestionnaireCommentsByQuestionnaireUuid qtn.uuid Nothing Nothing) (\_ -> return M.empty)
     return $ toContentDTO qtnCtn commentThreadsMap eventsDto versionDto

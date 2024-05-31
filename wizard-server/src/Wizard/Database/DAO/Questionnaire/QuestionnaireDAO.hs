@@ -24,6 +24,9 @@ import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO (
   insertQuestionnairePerm,
  )
 import Wizard.Database.Mapping.Questionnaire.Questionnaire ()
+import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailPreview ()
+import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailQuestionnaire ()
+import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailSettings ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireEvent ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireList ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSimple ()
@@ -34,6 +37,9 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireDetailPreview
+import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
+import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireList
 import Wizard.Model.Questionnaire.QuestionnaireSimple
@@ -392,6 +398,132 @@ findQuestionnaireForSquashing = do
 findQuestionnaireSquashByUuid :: U.UUID -> AppContextM QuestionnaireSquash
 findQuestionnaireSquashByUuid uuid =
   createFindEntityWithFieldsByFn "uuid, events, versions" True entityName [("uuid", U.toString uuid)]
+
+findQuestionnaireDetail :: U.UUID -> AppContextM QuestionnaireDetailQuestionnaire
+findQuestionnaireDetail uuid = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString $
+          f''
+            "SELECT qtn.uuid, \
+            \       qtn.name, \
+            \       qtn.visibility, \
+            \       qtn.sharing, \
+            \       qtn.package_id, \
+            \       qtn.selected_question_tag_uuids, \
+            \       qtn.is_template, \
+            \       qtn.events, \
+            \       qtn_mig.new_questionnaire_uuid AS migration_uuid, \
+            \       ${questionnaireDetailPermSql}, \
+            \       ( \
+            \        SELECT count(*) \
+            \        FROM questionnaire_action \
+            \        WHERE tenant_uuid = '${tenantUuid}' \
+            \       ) as questionnaire_actions, \
+            \       ( \
+            \        SELECT count(*) \
+            \        FROM questionnaire_importer \
+            \        WHERE tenant_uuid = '${tenantUuid}' \
+            \       ) as questionnaire_impoters \
+            \FROM questionnaire qtn \
+            \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.old_questionnaire_uuid AND qtn.tenant_uuid = qtn_mig.tenant_uuid \
+            \WHERE qtn.tenant_uuid = ? AND qtn.uuid = ?"
+            [ ("questionnaireDetailPermSql", questionnaireDetailPermSql)
+            , ("tenantUuid", U.toString tenantUuid)
+            ]
+  let queryParams = [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
+  let params = fmap snd queryParams
+  logQuery sql params
+  let action conn = query conn sql params
+  runOneEntityDB entityName action queryParams
+
+findQuestionnaireDetailPreview :: U.UUID -> AppContextM QuestionnaireDetailPreview
+findQuestionnaireDetailPreview uuid = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString $
+          f''
+            "SELECT qtn.uuid, \
+            \       qtn.name, \
+            \       qtn.visibility, \
+            \       qtn.sharing, \
+            \       qtn.package_id, \
+            \       qtn.is_template, \
+            \       qtn.document_template_id, \
+            \       qtn.format_uuid, \
+            \       qtn_mig.new_questionnaire_uuid AS migration_uuid, \
+            \       ${questionnaireDetailPermSql}, \
+            \       dt.formats                     AS document_template_formats \
+            \FROM questionnaire qtn \
+            \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.old_questionnaire_uuid AND qtn.tenant_uuid = qtn_mig.tenant_uuid \
+            \LEFT JOIN document_template dt ON qtn.document_template_id = dt.id AND qtn.tenant_uuid = dt.tenant_uuid \
+            \WHERE qtn.tenant_uuid = ? AND qtn.uuid = ?"
+            [("questionnaireDetailPermSql", questionnaireDetailPermSql)]
+  let queryParams = [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
+  let params = fmap snd queryParams
+  logQuery sql params
+  let action conn = query conn sql params
+  runOneEntityDB entityName action queryParams
+
+findQuestionnaireDetailSettings :: U.UUID -> AppContextM QuestionnaireDetailSettings
+findQuestionnaireDetailSettings uuid = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString $
+          f''
+            "SELECT qtn.uuid, \
+            \       qtn.name, \
+            \       qtn.description, \
+            \       qtn.visibility, \
+            \       qtn.sharing, \
+            \       qtn.is_template, \
+            \       qtn.project_tags, \
+            \       qtn.selected_question_tag_uuids, \
+            \       qtn.format_uuid, \
+            \       qtn_mig.new_questionnaire_uuid AS migration_uuid, \
+            \       ${questionnaireDetailPermSql}, \
+            \       pkg.id                         as package_id, \
+            \       pkg.name                       as package_name, \
+            \       pkg.organization_id            as package_organization_id, \
+            \       pkg.km_id                      as package_km_id, \
+            \       pkg.version                    as package_version, \
+            \       pkg.phase                      as package_phase, \
+            \       pkg.description                as package_description, \
+            \       pkg.non_editable               as package_non_editable, \
+            \       pkg.created_at                 as package_created_at, \
+            \       dt.id                          as document_template_id, \
+            \       dt.name                        as document_template_name, \
+            \       dt.version                     as document_template_version, \
+            \       dt.phase                       as document_template_phase, \
+            \       dt.description                 as document_template_description, \
+            \       dt.formats                     as document_template_formats, \
+            \       dt.metamodel_version           as document_template_metamodel_version \
+            \FROM questionnaire qtn \
+            \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.old_questionnaire_uuid AND qtn.tenant_uuid = qtn_mig.tenant_uuid \
+            \LEFT JOIN package pkg ON qtn.package_id = pkg.id AND qtn.tenant_uuid = pkg.tenant_uuid \
+            \LEFT JOIN document_template dt ON qtn.document_template_id = dt.id AND qtn.tenant_uuid = dt.tenant_uuid \
+            \WHERE qtn.tenant_uuid = ? AND qtn.uuid = ?"
+            [("questionnaireDetailPermSql", questionnaireDetailPermSql)]
+  let queryParams = [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
+  let params = fmap snd queryParams
+  logQuery sql params
+  let action conn = query conn sql params
+  runOneEntityDB entityName action queryParams
+
+questionnaireDetailPermSql :: String
+questionnaireDetailPermSql =
+  "(SELECT array_agg(CONCAT(qtn_acl_user.user_uuid, '::', qtn_acl_user.perms, '::', u.uuid, '::', u.first_name, \
+  \                         '::', u.last_name, '::', u.email, '::', u.image_url)) \
+  \ FROM questionnaire_perm_user qtn_acl_user \
+  \          JOIN user_entity u on u.uuid = qtn_acl_user.user_uuid \
+  \ WHERE questionnaire_uuid = qtn.uuid \
+  \ GROUP BY questionnaire_uuid)  as user_permissions, \
+  \(SELECT array_agg(CONCAT(qtn_acl_group.user_group_uuid, '::', qtn_acl_group.perms, '::', ug.uuid, '::', ug.name, \
+  \                         '::', ug.private, '::', ug.description)) \
+  \ FROM questionnaire_perm_group qtn_acl_group \
+  \          JOIN user_group ug on ug.uuid = qtn_acl_group.user_group_uuid \
+  \ WHERE questionnaire_uuid = qtn.uuid \
+  \ GROUP BY questionnaire_uuid)  as group_permissions"
 
 countQuestionnaires :: AppContextM Int
 countQuestionnaires = do

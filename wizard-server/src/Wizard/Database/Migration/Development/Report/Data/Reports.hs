@@ -16,6 +16,8 @@ report1 =
     { uuid = fromJust (U.fromString "921bcb7e-e15f-49e4-b176-dbbe2f573af0")
     , totalReport = report1_total
     , chapterReports = [report1_ch1, report1_ch2, report1_ch3]
+    , chapters = [chapter1, chapter2, chapter3]
+    , metrics = [metricF, metricA, metricI, metricR]
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }

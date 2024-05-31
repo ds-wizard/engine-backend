@@ -8,10 +8,14 @@ import Wizard.Specs.API.Questionnaire.Detail_Content_PUT
 import Wizard.Specs.API.Questionnaire.Detail_DELETE
 import Wizard.Specs.API.Questionnaire.Detail_Documents_GET
 import Wizard.Specs.API.Questionnaire.Detail_GET
-import Wizard.Specs.API.Questionnaire.Detail_PUT
+import Wizard.Specs.API.Questionnaire.Detail_Preview_GET
+import Wizard.Specs.API.Questionnaire.Detail_Questionnaire_GET
 import Wizard.Specs.API.Questionnaire.Detail_Report_GET
 import Wizard.Specs.API.Questionnaire.Detail_Revert_POST
 import Wizard.Specs.API.Questionnaire.Detail_Revert_Preview_POST
+import Wizard.Specs.API.Questionnaire.Detail_Settings_GET
+import Wizard.Specs.API.Questionnaire.Detail_Settings_PUT
+import Wizard.Specs.API.Questionnaire.Detail_Share_PUT
 import Wizard.Specs.API.Questionnaire.List_GET
 import Wizard.Specs.API.Questionnaire.List_POST
 import Wizard.Specs.API.Questionnaire.List_POST_CloneUuid
@@ -25,7 +29,11 @@ questionnaireAPI baseContext appContext =
       list_POST_fromTemplate appContext
       list_POST_cloneUuid appContext
       detail_GET appContext
-      detail_PUT appContext
+      detail_questionnaire_GET appContext
+      detail_share_PUT appContext
+      detail_preview_GET appContext
+      detail_settings_GET appContext
+      detail_settings_PUT appContext
       detail_DELETE appContext
       detail_content_PUT appContext
       detail_report_GET appContext

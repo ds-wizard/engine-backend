@@ -5,6 +5,7 @@ import Data.Aeson
 
 import Shared.Common.Util.Aeson
 import Wizard.Model.Report.Report
+import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 
 -- --------------------------------------------------------------------
 instance FromJSON Report where

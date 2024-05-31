@@ -15,7 +15,7 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML

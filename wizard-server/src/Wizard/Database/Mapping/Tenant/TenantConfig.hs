@@ -23,7 +23,6 @@ instance ToRow TenantConfig where
     , toJSONField submission
     , toField createdAt
     , toField updatedAt
-    , toJSONField feature
     , toJSONField owl
     , toField mailConfigUuid
     ]
@@ -42,7 +41,6 @@ instance FromRow TenantConfig where
     submission <- fieldWith fromJSONField
     createdAt <- field
     updatedAt <- field
-    feature <- fieldWith fromJSONField
     owl <- fieldWith fromJSONField
     mailConfigUuid <- field
     return $ TenantConfig {..}

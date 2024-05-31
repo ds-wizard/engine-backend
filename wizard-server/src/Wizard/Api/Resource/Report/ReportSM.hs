@@ -6,6 +6,7 @@ import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Model.Report.Report
+import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Metrics
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 

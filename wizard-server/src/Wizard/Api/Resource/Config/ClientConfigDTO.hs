@@ -10,7 +10,6 @@ import Wizard.Model.User.UserProfile
 data ClientConfigDTO = ClientConfigDTO
   { user :: Maybe UserProfile
   , organization :: TenantConfigOrganization
-  , feature :: TenantConfigFeature
   , authentication :: ClientConfigAuthDTO
   , privacyAndSupport :: TenantConfigPrivacyAndSupport
   , dashboardAndLoginScreen :: TenantConfigDashboardAndLoginScreen

@@ -16,7 +16,6 @@ toClientConfigDTO serverConfig tenantConfig mUserProfile tenant locales =
   ClientConfigDTO
     { user = mUserProfile
     , organization = tenantConfig.organization
-    , feature = tenantConfig.feature
     , authentication = toClientAuthDTO $ tenantConfig.authentication
     , privacyAndSupport = tenantConfig.privacyAndSupport
     , dashboardAndLoginScreen = tenantConfig.dashboardAndLoginScreen

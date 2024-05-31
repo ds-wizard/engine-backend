@@ -7,6 +7,5 @@ data DocumentTemplateFormatDTO = DocumentTemplateFormatDTO
   { uuid :: U.UUID
   , name :: String
   , icon :: String
-  , isPdf :: Bool
   }
   deriving (Show, Eq, Generic)

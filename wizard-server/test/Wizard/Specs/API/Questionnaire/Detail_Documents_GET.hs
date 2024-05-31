@@ -91,7 +91,7 @@ create_test_200 title appContext authHeader =
             Page
               "documents"
               (PageMetadata 20 2 1 0)
-              [toDTOWithDocTemplate doc1 (Just questionnaire6Simple) [], toDTOWithDocTemplate (doc2 {createdBy = Just userIsaac.uuid}) (Just questionnaire6Simple) []]
+              [toDTOWithDocTemplate doc1 (Just questionnaire6Simple) (Just "Version 1") [], toDTOWithDocTemplate (doc2 {createdBy = Just userIsaac.uuid}) (Just questionnaire6Simple) (Just "Version 1") []]
       let expBody = encode (fmap (\x -> x wizardDocumentTemplate) expDto)
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

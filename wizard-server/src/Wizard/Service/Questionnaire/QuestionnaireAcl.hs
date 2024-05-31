@@ -41,19 +41,19 @@ checkCreateFromTemplatePermissionToQtn isTemplate = do
       throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Questionnaire Template"
     _ -> unless isTemplate (throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Questionnaire Template")
 
-checkClonePermissionToQtn :: QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePerm] -> AppContextM ()
+checkClonePermissionToQtn :: QuestionnairePermC questionnairePerm => QuestionnaireVisibility -> QuestionnaireSharing -> [questionnairePerm] -> AppContextM ()
 checkClonePermissionToQtn visibility sharing permissions = do
   checkPermission _QTN_PERM
   checkViewPermissionToQtn visibility sharing permissions
 
-checkViewPermissionToQtn :: QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePerm] -> AppContextM ()
+checkViewPermissionToQtn :: QuestionnairePermC questionnairePerm => QuestionnaireVisibility -> QuestionnaireSharing -> [questionnairePerm] -> AppContextM ()
 checkViewPermissionToQtn visibility sharing perms = do
   result <- hasViewPermissionToQtn visibility sharing perms
   if result
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "View Questionnaire"
 
-hasViewPermissionToQtn :: QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePerm] -> AppContextM Bool
+hasViewPermissionToQtn :: QuestionnairePermC questionnairePerm => QuestionnaireVisibility -> QuestionnaireSharing -> [questionnairePerm] -> AppContextM Bool
 hasViewPermissionToQtn visibility sharing perms =
   if sharing == AnyoneWithLinkViewQuestionnaire
     || sharing == AnyoneWithLinkCommentQuestionnaire
@@ -85,14 +85,14 @@ hasViewPermissionToQtn visibility sharing perms =
         then return True
         else return False
 
-checkCommentPermissionToQtn :: QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePerm] -> AppContextM ()
+checkCommentPermissionToQtn :: QuestionnairePermC questionnairePerm => QuestionnaireVisibility -> QuestionnaireSharing -> [questionnairePerm] -> AppContextM ()
 checkCommentPermissionToQtn visibility sharing perms = do
   result <- hasCommentPermissionToQtn visibility sharing perms
   if result
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Comment Questionnaire"
 
-hasCommentPermissionToQtn :: QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePerm] -> AppContextM Bool
+hasCommentPermissionToQtn :: QuestionnairePermC questionnairePerm => QuestionnaireVisibility -> QuestionnaireSharing -> [questionnairePerm] -> AppContextM Bool
 hasCommentPermissionToQtn visibility sharing perms =
   if sharing == AnyoneWithLinkCommentQuestionnaire || sharing == AnyoneWithLinkEditQuestionnaire
     then return True
@@ -118,14 +118,14 @@ hasCommentPermissionToQtn visibility sharing perms =
         then return True
         else return False
 
-checkEditPermissionToQtn :: QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePerm] -> AppContextM ()
+checkEditPermissionToQtn :: QuestionnairePermC questionnairePerm => QuestionnaireVisibility -> QuestionnaireSharing -> [questionnairePerm] -> AppContextM ()
 checkEditPermissionToQtn visibility sharing perms = do
   result <- hasEditPermissionToQtn visibility sharing perms
   if result
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire"
 
-hasEditPermissionToQtn :: QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePerm] -> AppContextM Bool
+hasEditPermissionToQtn :: QuestionnairePermC questionnairePerm => QuestionnaireVisibility -> QuestionnaireSharing -> [questionnairePerm] -> AppContextM Bool
 hasEditPermissionToQtn visibility sharing perms =
   if sharing == AnyoneWithLinkEditQuestionnaire
     then return True
@@ -148,14 +148,14 @@ hasEditPermissionToQtn visibility sharing perms =
         then return True
         else return False
 
-checkOwnerPermissionToQtn :: QuestionnaireVisibility -> [QuestionnairePerm] -> AppContextM ()
+checkOwnerPermissionToQtn :: QuestionnairePermC questionnairePerm => QuestionnaireVisibility -> [questionnairePerm] -> AppContextM ()
 checkOwnerPermissionToQtn visibility perms = do
   result <- hasOwnerPermissionToQtn visibility perms
   if result
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Administrate Questionnaire"
 
-hasOwnerPermissionToQtn :: QuestionnaireVisibility -> [QuestionnairePerm] -> AppContextM Bool
+hasOwnerPermissionToQtn :: QuestionnairePermC questionnairePerm => QuestionnaireVisibility -> [questionnairePerm] -> AppContextM Bool
 hasOwnerPermissionToQtn visibility perms = do
   checkPermission _QTN_PERM
   currentUser <- getCurrentUser
@@ -171,14 +171,14 @@ hasOwnerPermissionToQtn visibility perms = do
     then return True
     else return False
 
-checkMigrationPermissionToQtn :: QuestionnaireVisibility -> [QuestionnairePerm] -> AppContextM ()
+checkMigrationPermissionToQtn :: QuestionnairePermC questionnairePerm => QuestionnaireVisibility -> [questionnairePerm] -> AppContextM ()
 checkMigrationPermissionToQtn visibility perms = do
   result <- hasMigrationPermissionToQtn visibility perms
   if result
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Migrate Questionnaire"
 
-hasMigrationPermissionToQtn :: QuestionnaireVisibility -> [QuestionnairePerm] -> AppContextM Bool
+hasMigrationPermissionToQtn :: QuestionnairePermC questionnairePerm => QuestionnaireVisibility -> [questionnairePerm] -> AppContextM Bool
 hasMigrationPermissionToQtn visibility perms = do
   currentUser <- getCurrentUser
   userGroupMemberships <- findUserGroupMembershipsByUserUuid currentUser.uuid

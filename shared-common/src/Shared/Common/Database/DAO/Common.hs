@@ -51,6 +51,20 @@ runRawDB action = do
     Just dbConnection -> liftIO $ dbConnection `withConnection` action
     Nothing -> liftIO $ withResource context.dbPool' (`withConnection` action)
 
+runOneEntityDB :: AppContextC s sc m => String -> (Connection -> IO [b]) -> [(String, String)] -> m b
+runOneEntityDB entityName action queryParams = do
+  entities <- runDB action
+  case entities of
+    [] -> throwError $ NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName queryParams)
+    [entity] -> return entity
+    _ ->
+      throwError $
+        GeneralServerError
+          ( f'
+              "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)"
+              [entityName, show (fmap snd queryParams)]
+          )
+
 logQuery :: (AppContextC s sc m, ToRow q) => Query -> q -> m ()
 logQuery sql params = do
   context <- ask

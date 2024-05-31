@@ -1,0 +1,22 @@
+module Wizard.Service.Report.ReportMapper where
+
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailReportDTO
+import Wizard.Model.Report.Report
+
+toDTO :: QuestionnaireDetailQuestionnaireDTO -> Report -> QuestionnaireDetailReportDTO
+toDTO qtn report =
+  QuestionnaireDetailReportDTO
+    { uuid = qtn.uuid
+    , name = qtn.name
+    , visibility = qtn.visibility
+    , sharing = qtn.sharing
+    , packageId = qtn.packageId
+    , isTemplate = qtn.isTemplate
+    , permissions = qtn.permissions
+    , migrationUuid = qtn.migrationUuid
+    , totalReport = report.totalReport
+    , chapters = report.chapters
+    , chapterReports = report.chapterReports
+    , metrics = report.metrics
+    }

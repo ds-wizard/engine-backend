@@ -31,7 +31,7 @@ updateTenantConfig :: TenantConfig -> AppContextM Int64
 updateTenantConfig config = do
   let sql =
         fromString
-          "UPDATE tenant_config SET uuid = ?, organization = ?, authentication = ?, privacy_and_support = ?, dashboard_and_login_screen = ?, look_and_feel = ?, registry = ?, knowledge_model = ?, questionnaire = ?, submission = ?, created_at = ?, updated_at = ?, feature = ?, owl = ?, mail_config_uuid = ? WHERE uuid = ?"
+          "UPDATE tenant_config SET uuid = ?, organization = ?, authentication = ?, privacy_and_support = ?, dashboard_and_login_screen = ?, look_and_feel = ?, registry = ?, knowledge_model = ?, questionnaire = ?, submission = ?, created_at = ?, updated_at = ?, owl = ?, mail_config_uuid = ? WHERE uuid = ?"
   let params = toRow config ++ [toField config.uuid]
   logQuery sql params
   let action conn = execute conn sql params

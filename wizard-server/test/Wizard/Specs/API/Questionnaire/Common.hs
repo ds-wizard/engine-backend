@@ -81,6 +81,15 @@ compareQuestionnaireCreateDtos' resDto expDto = do
   liftIO $ resDto.knowledgeModel `shouldBe` expDto.knowledgeModel
   liftIO $ resDto.replies `shouldBe` expDto.replies
 
+compareQuestionnaireCreateDtos'' resDto expDto = do
+  liftIO $ resDto.name `shouldBe` expDto.name
+  liftIO $ resDto.phaseUuid `shouldBe` expDto.phaseUuid
+  liftIO $ resDto.visibility `shouldBe` expDto.visibility
+  liftIO $ resDto.sharing `shouldBe` expDto.sharing
+  liftIO $ resDto.selectedQuestionTagUuids `shouldBe` expDto.selectedQuestionTagUuids
+  liftIO $ resDto.knowledgeModel `shouldBe` expDto.knowledgeModel
+  liftIO $ resDto.replies `shouldBe` expDto.replies
+
 compareQuestionnaireDtos resDto expDto = liftIO $ resDto `shouldBe` expDto
 
 compareQuestionnaireContentDtos resDto expDto = liftIO $ resDto.events `shouldBe` expDto.events

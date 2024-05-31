@@ -5,22 +5,22 @@ import qualified Data.UUID as U
 import Wizard.Model.Acl.Acl
 import Wizard.Model.Questionnaire.QuestionnairePerm
 
-getUserUuidsForViewerPerm :: [QuestionnairePerm] -> [U.UUID]
+getUserUuidsForViewerPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
 getUserUuidsForViewerPerm = getUserUuidsForPerm _VIEW_PERM
 
-getUserUuidsForCommentatorPerm :: [QuestionnairePerm] -> [U.UUID]
+getUserUuidsForCommentatorPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
 getUserUuidsForCommentatorPerm = getUserUuidsForPerm _COMMENT_PERM
 
-getUserUuidsForEditorPerm :: [QuestionnairePerm] -> [U.UUID]
+getUserUuidsForEditorPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
 getUserUuidsForEditorPerm = getUserUuidsForPerm _EDIT_PERM
 
-getUserUuidsForOwnerPerm :: [QuestionnairePerm] -> [U.UUID]
+getUserUuidsForOwnerPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
 getUserUuidsForOwnerPerm = getUserUuidsForPerm _ADMIN_PERM
 
-getUserUuidsForPerm :: String -> [QuestionnairePerm] -> [U.UUID]
+getUserUuidsForPerm :: QuestionnairePermC questionnairePerm => String -> [questionnairePerm] -> [U.UUID]
 getUserUuidsForPerm desiredPerm = foldl go []
   where
-    go :: [U.UUID] -> QuestionnairePerm -> [U.UUID]
+    go :: QuestionnairePermC questionnairePerm => [U.UUID] -> questionnairePerm -> [U.UUID]
     go acc qtnPerm =
       case qtnPerm.memberType of
         UserQuestionnairePermType ->
@@ -29,22 +29,22 @@ getUserUuidsForPerm desiredPerm = foldl go []
             else acc
         _ -> acc
 
-getUserGroupUuidsForViewerPerm :: [QuestionnairePerm] -> [U.UUID]
+getUserGroupUuidsForViewerPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
 getUserGroupUuidsForViewerPerm = getUserGroupUuidsForPerm _VIEW_PERM
 
-getUserGroupUuidsForCommentatorPerm :: [QuestionnairePerm] -> [U.UUID]
+getUserGroupUuidsForCommentatorPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
 getUserGroupUuidsForCommentatorPerm = getUserGroupUuidsForPerm _COMMENT_PERM
 
-getUserGroupUuidsForEditorPerm :: [QuestionnairePerm] -> [U.UUID]
+getUserGroupUuidsForEditorPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
 getUserGroupUuidsForEditorPerm = getUserGroupUuidsForPerm _EDIT_PERM
 
-getUserGroupUuidsForOwnerPerm :: [QuestionnairePerm] -> [U.UUID]
+getUserGroupUuidsForOwnerPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
 getUserGroupUuidsForOwnerPerm = getUserGroupUuidsForPerm _ADMIN_PERM
 
-getUserGroupUuidsForPerm :: String -> [QuestionnairePerm] -> [U.UUID]
+getUserGroupUuidsForPerm :: QuestionnairePermC questionnairePerm => String -> [questionnairePerm] -> [U.UUID]
 getUserGroupUuidsForPerm desiredPerm = foldl go []
   where
-    go :: [U.UUID] -> QuestionnairePerm -> [U.UUID]
+    go :: QuestionnairePermC questionnairePerm => [U.UUID] -> questionnairePerm -> [U.UUID]
     go acc qtnPerm =
       case qtnPerm.memberType of
         UserGroupQuestionnairePermType ->
@@ -53,10 +53,10 @@ getUserGroupUuidsForPerm desiredPerm = foldl go []
             else acc
         _ -> acc
 
-removeUserPermission :: U.UUID -> [QuestionnairePerm] -> [QuestionnairePerm]
+removeUserPermission :: QuestionnairePermC questionnairePerm => U.UUID -> [questionnairePerm] -> [questionnairePerm]
 removeUserPermission userUuidToDelete = filter go
   where
-    go :: QuestionnairePerm -> Bool
+    go :: QuestionnairePermC questionnairePerm => questionnairePerm -> Bool
     go qtnPerm =
       case qtnPerm.memberType of
         UserQuestionnairePermType -> qtnPerm.memberUuid /= userUuidToDelete

@@ -5,6 +5,7 @@ import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
@@ -19,12 +20,14 @@ import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireSettingsChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireShareChangeDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
@@ -41,11 +44,12 @@ import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Document.Document
-import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
 import Wizard.Model.Questionnaire.QuestionnaireComment
-import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireDetailPreview
+import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
+import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Tenant.Config.TenantConfig
@@ -237,42 +241,38 @@ getQuestionnaireById' qtnUuid = do
       return . Just $ toDTO qtn package state permissionDtos
     Nothing -> return Nothing
 
-getQuestionnaireDetailById :: U.UUID -> AppContextM QuestionnaireDetailDTO
-getQuestionnaireDetailById qtnUuid = do
-  qtn <- findQuestionnaireByUuid qtnUuid
+getQuestionnaireDetailByUuid :: U.UUID -> AppContextM QuestionnaireDetailDTO
+getQuestionnaireDetailByUuid qtnUuid = do
+  qtn <- findQuestionnaireDetail qtnUuid
   checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
-  pkg <- getPackageById qtn.packageId
+  return $ toDetailDTO qtn
+
+getQuestionnaireDetailQuestionnaireById :: U.UUID -> AppContextM QuestionnaireDetailQuestionnaireDTO
+getQuestionnaireDetailQuestionnaireById qtnUuid = do
+  qtn <- findQuestionnaireDetail qtnUuid
+  checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
+  editor <- catchError (hasEditPermissionToQtn qtn.visibility qtn.sharing qtn.permissions) (\_ -> return False)
+  commenter <- catchError (hasCommentPermissionToQtn qtn.visibility qtn.sharing qtn.permissions) (\_ -> return False)
+  commentCounts <-
+    if commenter
+      then findQuestionnaireCommentThreadsSimple qtnUuid False editor
+      else return M.empty
   knowledgeModel <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
-  state <- getQuestionnaireState qtnUuid qtn.packageId
-  mTemplate <-
-    case qtn.documentTemplateId of
-      Just tId -> do
-        tml <- findDocumentTemplateById tId
-        return $ Just tml
-      _ -> return Nothing
-  mFormat <-
-    case (mTemplate, qtn.formatUuid) of
-      (Just tml, Just fUuid) -> return $ L.find (\f -> f.uuid == fUuid) tml.formats
-      _ -> return Nothing
-  permissionDtos <- traverse enhanceQuestionnairePerm qtn.permissions
   qtnCtn <- compileQuestionnaire qtn
-  versionDto <- traverse enhanceQuestionnaireVersion qtn.versions
-  commentThreadsMap <- getQuestionnaireComments qtn
-  migrations <- findMigratorStatesByOldQuestionnaireUuid qtnUuid
-  return $
-    toDetailWithPackageWithEventsDTO
-      qtn
-      qtnCtn
-      pkg
-      knowledgeModel
-      state
-      mTemplate
-      mFormat
-      qtnCtn.replies
-      commentThreadsMap
-      permissionDtos
-      versionDto
-      (fmap (.newQuestionnaireUuid) . headSafe $ migrations)
+  return $ toDetailQuestionnaireDTO qtn commentCounts knowledgeModel qtnCtn
+
+getQuestionnaireDetailPreviewById :: U.UUID -> AppContextM QuestionnaireDetailPreview
+getQuestionnaireDetailPreviewById qtnUuid = do
+  qtn <- findQuestionnaireDetailPreview qtnUuid
+  checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
+  return qtn
+
+getQuestionnaireDetailSettingsById :: U.UUID -> AppContextM QuestionnaireDetailSettings
+getQuestionnaireDetailSettingsById qtnUuid = do
+  qtn <- findQuestionnaireDetailSettings qtnUuid
+  checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
+  knowledgeModel <- compileKnowledgeModel [] (Just qtn.package.pId) qtn.selectedQuestionTagUuids
+  return $ qtn {knowledgeModelTags = M.elems knowledgeModel.entities.tags}
 
 getQuestionnaireEventsForQtnUuid :: U.UUID -> AppContextM [QuestionnaireEventDTO]
 getQuestionnaireEventsForQtnUuid qtnUuid = do
@@ -292,24 +292,17 @@ getQuestionnaireEventForQtnUuid qtnUuid eventUuid = do
       throwError . NotExistsError $
         _ERROR_DATABASE__ENTITY_NOT_FOUND "questionnaire_event" [("questionnaireUuid", U.toString qtnUuid), ("eventUuid", U.toString eventUuid)]
 
-modifyQuestionnaire :: U.UUID -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
-modifyQuestionnaire qtnUuid reqDto =
+modifyQuestionnaireShare :: U.UUID -> QuestionnaireShareChangeDTO -> AppContextM QuestionnaireShareChangeDTO
+modifyQuestionnaireShare qtnUuid reqDto =
   runInTransaction $ do
     checkPermission _QTN_PERM
-    validateQuestionnaireChangeDTO reqDto
     qtn <- findQuestionnaireByUuid qtnUuid
-    qtnDto <- getQuestionnaireDetailById qtnUuid
     skipIfAssigningProject qtn (checkOwnerPermissionToQtn qtn.visibility qtn.permissions)
-    currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
     qVisibility <- extractVisibility reqDto
     qSharing <- extractSharing reqDto
-    let updatedQtn = fromChangeDTO qtn reqDto qVisibility qSharing currentUser now
-    let pkgId = qtnDto.package.pId
-    pkg <- getPackageById qtn.packageId
+    let updatedQtn = fromShareChangeDTO qtn reqDto qVisibility qSharing now
     updateQuestionnaireByUuid updatedQtn
-    knowledgeModel <- compileKnowledgeModel [] (Just pkgId) updatedQtn.selectedQuestionTagUuids
-    state <- getQuestionnaireState qtnUuid pkgId
     updatePermsForOnlineUsers qtnUuid updatedQtn.visibility updatedQtn.sharing updatedQtn.permissions
     permissionDtos <- traverse enhanceQuestionnairePerm updatedQtn.permissions
     skipIfAssigningProject
@@ -318,11 +311,6 @@ modifyQuestionnaire qtnUuid reqDto =
           (sendQuestionnaireInvitationMail qtn updatedQtn)
           (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT)
       )
-    qtnCtn <- compileQuestionnaire updatedQtn
-    versionDto <- traverse enhanceQuestionnaireVersion qtn.versions
-    commentThreadsMap <- getQuestionnaireComments qtn
-    deleteTemporalDocumentsByQuestionnaireUuid qtn.uuid
-    migrations <- findMigratorStatesByOldQuestionnaireUuid qtnUuid
     mTemplate <-
       case updatedQtn.documentTemplateId of
         Just tId -> do
@@ -335,20 +323,34 @@ modifyQuestionnaire qtnUuid reqDto =
         _ -> return Nothing
     let restWsDto = toDetailWsDTO updatedQtn mTemplate mFormat permissionDtos
     setQuestionnaire qtnUuid restWsDto
-    return $
-      toDetailWithPackageWithEventsDTO
-        updatedQtn
-        qtnCtn
-        pkg
-        knowledgeModel
-        state
-        mTemplate
-        mFormat
-        qtnCtn.replies
-        commentThreadsMap
-        permissionDtos
-        versionDto
-        Nothing
+    return reqDto
+
+modifyQuestionnaireSettings :: U.UUID -> QuestionnaireSettingsChangeDTO -> AppContextM QuestionnaireSettingsChangeDTO
+modifyQuestionnaireSettings qtnUuid reqDto =
+  runInTransaction $ do
+    checkPermission _QTN_PERM
+    validateQuestionnaireSettingsChangeDTO reqDto
+    qtn <- findQuestionnaireByUuid qtnUuid
+    skipIfAssigningProject qtn (checkOwnerPermissionToQtn qtn.visibility qtn.permissions)
+    currentUser <- getCurrentUser
+    now <- liftIO getCurrentTime
+    let updatedQtn = fromSettingsChangeDTO qtn reqDto currentUser now
+    updateQuestionnaireByUuid updatedQtn
+    permissionDtos <- traverse enhanceQuestionnairePerm updatedQtn.permissions
+    deleteTemporalDocumentsByQuestionnaireUuid qtn.uuid
+    mTemplate <-
+      case updatedQtn.documentTemplateId of
+        Just tId -> do
+          tml <- findDocumentTemplateById tId
+          return $ Just tml
+        _ -> return Nothing
+    mFormat <-
+      case (mTemplate, updatedQtn.formatUuid) of
+        (Just tml, Just fUuid) -> return $ L.find (\f -> f.uuid == fUuid) tml.formats
+        _ -> return Nothing
+    let restWsDto = toDetailWsDTO updatedQtn mTemplate mFormat permissionDtos
+    setQuestionnaire qtnUuid restWsDto
+    return reqDto
 
 deleteQuestionnaire :: U.UUID -> Bool -> AppContextM ()
 deleteQuestionnaire qtnUuid shouldValidatePermission =

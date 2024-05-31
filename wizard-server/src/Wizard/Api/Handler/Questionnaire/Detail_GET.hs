@@ -19,10 +19,7 @@ type Detail_GET =
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] QuestionnaireDetailDTO)
 
 detail_GET
-  :: Maybe String
-  -> Maybe String
-  -> U.UUID
-  -> BaseContextM (Headers '[Header "x-trace-uuid" String] QuestionnaireDetailDTO)
+  :: Maybe String -> Maybe String -> U.UUID -> BaseContextM (Headers '[Header "x-trace-uuid" String] QuestionnaireDetailDTO)
 detail_GET mTokenHeader mServerUrl qtnUuid =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService NoTransaction $ addTraceUuidHeader =<< getQuestionnaireDetailById qtnUuid
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getQuestionnaireDetailByUuid qtnUuid

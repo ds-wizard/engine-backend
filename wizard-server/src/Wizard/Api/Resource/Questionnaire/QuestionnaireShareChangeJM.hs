@@ -1,15 +1,15 @@
-module Wizard.Api.Resource.Questionnaire.QuestionnaireChangeJM where
+module Wizard.Api.Resource.Questionnaire.QuestionnaireShareChangeJM where
 
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermChangeJM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireShareChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()
 
-instance FromJSON QuestionnaireChangeDTO where
+instance FromJSON QuestionnaireShareChangeDTO where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON QuestionnaireChangeDTO where
+instance ToJSON QuestionnaireShareChangeDTO where
   toJSON = genericToJSON jsonOptions
