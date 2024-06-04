@@ -13,7 +13,6 @@ import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommandSimple
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandService
-import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Tenant.TenantDAO
@@ -24,15 +23,15 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextMappers
 import Wizard.Service.PersistentCommand.PersistentCommandExecutor
 import Wizard.Service.PersistentCommand.PersistentCommandMapper
-import Wizard.Service.PersistentCommand.PersistentCommandUtil
 import Wizard.Service.Tenant.TenantUtil
 import qualified Wizard.Service.User.UserMapper as UM
+import WizardLib.Public.Database.DAO.PersistentCommand.PersistentCommandDAO
+import WizardLib.Public.Model.PersistentCommand.PersistentCommandList
 
-getPersistentCommandsPage :: [String] -> Pageable -> [Sort] -> AppContextM (Page PersistentCommandDTO)
+getPersistentCommandsPage :: [String] -> Pageable -> [Sort] -> AppContextM (Page PersistentCommandList)
 getPersistentCommandsPage states pageable sort = do
   checkPermission _DEV_PERM
-  commands <- findPersistentCommandsPage states pageable sort
-  traverse enhancePersistentCommand commands
+  findPersistentCommandsPage states pageable sort
 
 getPersistentCommandById :: U.UUID -> AppContextM PersistentCommandDetailDTO
 getPersistentCommandById uuid = do

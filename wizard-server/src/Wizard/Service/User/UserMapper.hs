@@ -10,11 +10,11 @@ import Wizard.Api.Resource.Tenant.TenantCreateDTO
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
 import Wizard.Model.User.UserProfile
 import Wizard.Model.User.UserSuggestion
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
 import WizardLib.Public.Model.User.UserGroupMembership
 import WizardLib.Public.Model.User.UserWithMembership

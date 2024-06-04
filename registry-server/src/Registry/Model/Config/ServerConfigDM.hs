@@ -10,11 +10,11 @@ defaultConfig =
     { general = defaultGeneral
     , database = defaultDatabase
     , s3 = defaultS3
-    , analytics = defaultAnalytics
     , sentry = defaultSentry
+    , analyticalMails = defaultAnalyticalMails
     , logging = defaultLogging
-    , persistentCommand = defaultPersistentCommand
     , cloud = defaultCloud
+    , persistentCommand = defaultPersistentCommand
     }
 
 defaultGeneral :: ServerConfigGeneral

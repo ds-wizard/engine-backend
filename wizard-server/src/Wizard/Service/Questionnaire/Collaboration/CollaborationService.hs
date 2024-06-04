@@ -18,7 +18,6 @@ import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Api.Resource.Websocket.QuestionnaireActionJM ()
 import Wizard.Api.Resource.Websocket.WebsocketActionJM ()
 import Wizard.Cache.QuestionnaireWebsocketCache
@@ -41,6 +40,7 @@ import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentMapper
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Websocket.WebsocketService
 import Wizard.Util.Websocket
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Model.User.UserGroupMembership
 

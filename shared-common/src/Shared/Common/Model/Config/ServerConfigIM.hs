@@ -21,6 +21,15 @@ instance FromEnv ServerConfigDatabase where
       , \c -> applyEnvVariable "DATABASE_MAX_CONNECTIONS" c.maxConnections (\x -> c {maxConnections = x})
       ]
 
+instance FromEnv ServerConfigDatabaseVacuumCleaner where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "DATABASE_VACUUM_CLEANER_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigDatabaseVacuumCleaner)
+      , \c -> applyStringEnvVariable "DATABASE_VACUUM_CLEANER_CRON" c.cron (\x -> c {cron = x} :: ServerConfigDatabaseVacuumCleaner)
+      , \c -> applyEnvVariable "DATABASE_VACUUM_CLEANER_TABLES" c.tables (\x -> c {tables = x} :: ServerConfigDatabaseVacuumCleaner)
+      ]
+
 instance FromEnv ServerConfigS3 where
   applyEnv serverConfig =
     applyEnvVariables
@@ -32,12 +41,13 @@ instance FromEnv ServerConfigS3 where
       , \c -> applyMaybeStringEnvVariable "S3_REGION" c.region (\x -> c {region = x})
       ]
 
-instance FromEnv ServerConfigAnalytics where
+instance FromEnv ServerConfigAws where
   applyEnv serverConfig =
     applyEnvVariables
       serverConfig
-      [ \c -> applyEnvVariable "ANALYTICS_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigAnalytics)
-      , \c -> applyStringEnvVariable "ANALYTICS_EMAIL" c.email (\x -> c {email = x})
+      [ \c -> applyStringEnvVariable "AWS_AWS_ACCESS_KEY_ID" c.awsAccessKeyId (\x -> c {awsAccessKeyId = x} :: ServerConfigAws)
+      , \c -> applyStringEnvVariable "AWS_AWS_SECRET_ACCESS_KEY" c.awsSecretAccessKey (\x -> c {awsSecretAccessKey = x} :: ServerConfigAws)
+      , \c -> applyStringEnvVariable "AWS_AWS_REGION" c.awsRegion (\x -> c {awsRegion = x} :: ServerConfigAws)
       ]
 
 instance FromEnv ServerConfigSentry where
@@ -48,15 +58,19 @@ instance FromEnv ServerConfigSentry where
       , \c -> applyStringEnvVariable "SENTRY_DSN" c.dsn (\x -> c {dsn = x})
       ]
 
-instance FromEnv ServerConfigPersistentCommand where
+instance FromEnv ServerConfigJwt where
   applyEnv serverConfig =
     applyEnvVariables
       serverConfig
-      [ \c -> applyEnvVariable "PERSISTENT_COMMAND_LISTENER_JOB_ENABLED" c.listenerJob.enabled (\x -> c {listenerJob = c.listenerJob {enabled = x}} :: ServerConfigPersistentCommand)
-      , \c -> applyEnvVariable "PERSISTENT_COMMAND_RETRY_JOB_ENABLED" c.retryJob.enabled (\x -> c {retryJob = c.retryJob {enabled = x}} :: ServerConfigPersistentCommand)
-      , \c -> applyStringEnvVariable "PERSISTENT_COMMAND_RETRY_JOB_CRON" c.retryJob.cron (\x -> c {retryJob = c.retryJob {cron = x}} :: ServerConfigPersistentCommand)
-      , \c -> applyEnvVariable "PERSISTENT_COMMAND_RETRY_LAMBDA_JOB_ENABLED" c.retryLambdaJob.enabled (\x -> c {retryLambdaJob = c.retryLambdaJob {enabled = x}} :: ServerConfigPersistentCommand)
-      , \c -> applyStringEnvVariable "PERSISTENT_COMMAND_RETRY_LAMBDA_JOB_CRON" c.retryLambdaJob.cron (\x -> c {retryLambdaJob = c.retryLambdaJob {cron = x}} :: ServerConfigPersistentCommand)
+      [ \c -> applyEnvVariable "JWT_EXPIRATION" c.expiration (\x -> c {expiration = x})
+      ]
+
+instance FromEnv ServerConfigAnalyticalMails where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "ANALYTICAL_MAILS_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigAnalyticalMails)
+      , \c -> applyStringEnvVariable "ANALYTICAL_MAILS_EMAIL" c.email (\x -> c {email = x})
       ]
 
 instance FromEnv ServerConfigLogging where
@@ -75,15 +89,26 @@ instance FromEnv ServerConfigCloud where
       [ \c -> applyEnvVariable "CLOUD_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigCloud)
       , \c -> applyMaybeStringEnvVariable "CLOUD_DOMAIN" c.domain (\x -> c {domain = x})
       , \c -> applyEnvVariable "CLOUD_PUBLIC_REGISTRATION_ENABLED" c.publicRegistrationEnabled (\x -> c {publicRegistrationEnabled = x})
+      , \c -> applyEnvVariable "CLOUD_SIGNAL_BRIDGE_URL" c.signalBridgeUrl (\x -> c {signalBridgeUrl = x})
       ]
 
-instance FromEnv ServerConfigAws where
+instance FromEnv ServerConfigPlan where
   applyEnv serverConfig =
     applyEnvVariables
       serverConfig
-      [ \c -> applyStringEnvVariable "AWS_AWS_ACCESS_KEY_ID" c.awsAccessKeyId (\x -> c {awsAccessKeyId = x} :: ServerConfigAws)
-      , \c -> applyStringEnvVariable "AWS_AWS_SECRET_ACCESS_KEY" c.awsSecretAccessKey (\x -> c {awsSecretAccessKey = x} :: ServerConfigAws)
-      , \c -> applyStringEnvVariable "AWS_AWS_REGION" c.awsRegion (\x -> c {awsRegion = x} :: ServerConfigAws)
+      [ \c -> applyEnvVariable "PLAN_RECOMPUTE_JOB_ENABLED" c.recomputeJob.enabled (\x -> c {recomputeJob = c.recomputeJob {enabled = x}} :: ServerConfigPlan)
+      , \c -> applyStringEnvVariable "PLAN_RECOMPUTE_JOB_CRON" c.recomputeJob.cron (\x -> c {recomputeJob = c.recomputeJob {cron = x}} :: ServerConfigPlan)
+      ]
+
+instance FromEnv ServerConfigPersistentCommand where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "PERSISTENT_COMMAND_LISTENER_JOB_ENABLED" c.listenerJob.enabled (\x -> c {listenerJob = c.listenerJob {enabled = x}} :: ServerConfigPersistentCommand)
+      , \c -> applyEnvVariable "PERSISTENT_COMMAND_RETRY_JOB_ENABLED" c.retryJob.enabled (\x -> c {retryJob = c.retryJob {enabled = x}} :: ServerConfigPersistentCommand)
+      , \c -> applyStringEnvVariable "PERSISTENT_COMMAND_RETRY_JOB_CRON" c.retryJob.cron (\x -> c {retryJob = c.retryJob {cron = x}} :: ServerConfigPersistentCommand)
+      , \c -> applyEnvVariable "PERSISTENT_COMMAND_RETRY_LAMBDA_JOB_ENABLED" c.retryLambdaJob.enabled (\x -> c {retryLambdaJob = c.retryLambdaJob {enabled = x}} :: ServerConfigPersistentCommand)
+      , \c -> applyStringEnvVariable "PERSISTENT_COMMAND_RETRY_LAMBDA_JOB_CRON" c.retryLambdaJob.cron (\x -> c {retryLambdaJob = c.retryLambdaJob {cron = x}} :: ServerConfigPersistentCommand)
       ]
 
 -- --------------------------------------------------------------------------------------------------------------

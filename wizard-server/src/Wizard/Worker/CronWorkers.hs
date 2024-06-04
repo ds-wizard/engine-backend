@@ -1,5 +1,6 @@
 module Wizard.Worker.CronWorkers where
 
+import Shared.Common.Database.VacuumCleaner
 import Shared.Common.Model.Config.ServerConfig
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandService
 import Shared.Worker.Model.Worker.CronWorker
@@ -38,6 +39,7 @@ workers =
   , tenantPlanWorker
   , cleanUserTokenWorker
   , expireUserTokenWorker
+  , vacuumCleanerWorker
   ]
 
 -- ------------------------------------------------------------------
@@ -193,4 +195,15 @@ expireUserTokenWorker =
     , cron = (.serverConfig.userToken.expire.cron)
     , function = expireApiKeys
     , wrapInTransaction = True
+    }
+
+vacuumCleanerWorker :: CronWorker BaseContext AppContextM
+vacuumCleanerWorker =
+  CronWorker
+    { name = "VacuumCleanerWorker"
+    , condition = (.serverConfig.database.vacuumCleaner.enabled)
+    , cronDefault = "45 1 * * *"
+    , cron = (.serverConfig.database.vacuumCleaner.cron)
+    , function = runVacuumCleaner
+    , wrapInTransaction = False
     }

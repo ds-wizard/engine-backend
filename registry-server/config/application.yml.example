@@ -9,6 +9,6 @@ database:
 s3:
   bucket: registry-server
 
-analytics:
+analyticalMails:
   enabled: false
   email:

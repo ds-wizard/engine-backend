@@ -9,27 +9,27 @@ instance FromEnv ServerConfig where
     general <- applyEnv serverConfig.general
     database <- applyEnv serverConfig.database
     s3 <- applyEnv serverConfig.s3
+    aws <- applyEnv serverConfig.aws
+    sentry <- applyEnv serverConfig.sentry
     jwt <- applyEnv serverConfig.jwt
     roles <- applyEnv serverConfig.roles
-    registry <- applyEnv serverConfig.registry
-    analytics <- applyEnv serverConfig.analytics
-    sentry <- applyEnv serverConfig.sentry
     actionKey <- applyEnv serverConfig.actionKey
     branch <- applyEnv serverConfig.branch
     cache <- applyEnv serverConfig.cache
     document <- applyEnv serverConfig.document
     feedback <- applyEnv serverConfig.feedback
-    persistentCommand <- applyEnv serverConfig.persistentCommand
-    plan <- applyEnv serverConfig.plan
     questionnaire <- applyEnv serverConfig.questionnaire
     temporaryFile <- applyEnv serverConfig.temporaryFile
     userToken <- applyEnv serverConfig.userToken
+    analyticalMails <- applyEnv serverConfig.analyticalMails
     logging <- applyEnv serverConfig.logging
     cloud <- applyEnv serverConfig.cloud
-    admin <- applyEnv serverConfig.admin
+    plan <- applyEnv serverConfig.plan
+    persistentCommand <- applyEnv serverConfig.persistentCommand
     signalBridge <- applyEnv serverConfig.signalBridge
+    admin <- applyEnv serverConfig.admin
+    registry <- applyEnv serverConfig.registry
     modules <- applyEnv serverConfig.modules
-    aws <- applyEnv serverConfig.aws
     return ServerConfig {..}
 
 instance FromEnv ServerConfigGeneral where
@@ -44,13 +44,6 @@ instance FromEnv ServerConfigGeneral where
       , \c -> applyStringEnvVariable "GENERAL_INTEGRATION_CONFIG" c.integrationConfig (\x -> c {integrationConfig = x})
       ]
 
-instance FromEnv ServerConfigJwt where
-  applyEnv serverConfig =
-    applyEnvVariables
-      serverConfig
-      [ \c -> applyEnvVariable "JWT_EXPIRATION" c.expiration (\x -> c {expiration = x})
-      ]
-
 instance FromEnv ServerConfigRoles where
   applyEnv serverConfig =
     applyEnvVariables
@@ -58,16 +51,6 @@ instance FromEnv ServerConfigRoles where
       [ \c -> applyEnvVariable "ROLES_ADMIN" c.admin (\x -> c {admin = x} :: ServerConfigRoles)
       , \c -> applyEnvVariable "ROLES_DATA_STEWARD" c.dataSteward (\x -> c {dataSteward = x} :: ServerConfigRoles)
       , \c -> applyEnvVariable "ROLES_RESEARCHER" c.researcher (\x -> c {researcher = x} :: ServerConfigRoles)
-      ]
-
-instance FromEnv ServerConfigRegistry where
-  applyEnv serverConfig =
-    applyEnvVariables
-      serverConfig
-      [ \c -> applyStringEnvVariable "REGISTRY_URL" c.url (\x -> c {url = x} :: ServerConfigRegistry)
-      , \c -> applyStringEnvVariable "REGISTRY_CLIENT_URL" c.clientUrl (\x -> c {clientUrl = x} :: ServerConfigRegistry)
-      , \c -> applyEnvVariable "REGISTRY_SYNC_ENABLED" c.sync.enabled (\x -> c {sync = c.sync {enabled = x}} :: ServerConfigRegistry)
-      , \c -> applyStringEnvVariable "REGISTRY_SYNC_CRON" c.sync.cron (\x -> c {sync = c.sync {cron = x}} :: ServerConfigRegistry)
       ]
 
 instance FromEnv ServerConfigActionKey where
@@ -114,14 +97,6 @@ instance FromEnv ServerConfigFeedback where
       , \c -> applyStringEnvVariable "FEEDBACK_SYNC_CRON" c.sync.cron (\x -> c {sync = c.sync {cron = x}} :: ServerConfigFeedback)
       ]
 
-instance FromEnv ServerConfigPlan where
-  applyEnv serverConfig =
-    applyEnvVariables
-      serverConfig
-      [ \c -> applyEnvVariable "PLAN_RECOMPUTE_JOB_ENABLED" c.recomputeJob.enabled (\x -> c {recomputeJob = c.recomputeJob {enabled = x}} :: ServerConfigPlan)
-      , \c -> applyStringEnvVariable "PLAN_RECOMPUTE_JOB_CRON" c.recomputeJob.cron (\x -> c {recomputeJob = c.recomputeJob {cron = x}} :: ServerConfigPlan)
-      ]
-
 instance FromEnv ServerConfigQuestionnaire where
   applyEnv serverConfig =
     applyEnvVariables
@@ -150,13 +125,6 @@ instance FromEnv ServerConfigUserToken where
       , \c -> applyStringEnvVariable "USER_TOKEN_EXPIRE_CRON" c.expire.cron (\x -> c {expire = c.expire {cron = x}} :: ServerConfigUserToken)
       ]
 
-instance FromEnv ServerConfigAdmin where
-  applyEnv serverConfig =
-    applyEnvVariables
-      serverConfig
-      [ \c -> applyEnvVariable "ADMIN_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigAdmin)
-      ]
-
 instance FromEnv ServerConfigSignalBridge where
   applyEnv serverConfig =
     applyEnvVariables
@@ -166,6 +134,23 @@ instance FromEnv ServerConfigSignalBridge where
       , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_UPDATE_USER_GROUP_ARN" c.updateUserGroupArn (\x -> c {updateUserGroupArn = x} :: ServerConfigSignalBridge)
       , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_SET_QUESTIONNAIRE_ARN" c.setQuestionnaireArn (\x -> c {setQuestionnaireArn = x} :: ServerConfigSignalBridge)
       , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_LOG_OUT_ALL_ARN" c.logOutAllArn (\x -> c {logOutAllArn = x} :: ServerConfigSignalBridge)
+      ]
+
+instance FromEnv ServerConfigAdmin where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "ADMIN_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigAdmin)
+      ]
+
+instance FromEnv ServerConfigRegistry where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyStringEnvVariable "REGISTRY_URL" c.url (\x -> c {url = x} :: ServerConfigRegistry)
+      , \c -> applyStringEnvVariable "REGISTRY_CLIENT_URL" c.clientUrl (\x -> c {clientUrl = x} :: ServerConfigRegistry)
+      , \c -> applyEnvVariable "REGISTRY_SYNC_ENABLED" c.sync.enabled (\x -> c {sync = c.sync {enabled = x}} :: ServerConfigRegistry)
+      , \c -> applyStringEnvVariable "REGISTRY_SYNC_CRON" c.sync.cron (\x -> c {sync = c.sync {cron = x}} :: ServerConfigRegistry)
       ]
 
 instance FromEnv ServerConfigModules where
@@ -184,10 +169,10 @@ instance FromEnv ServerConfigModules where
       , \c -> applyStringEnvVariable "MODULES_INTEGRATION_HUB_DESCRIPTION" c.integrationHub.description (\x -> c {integrationHub = c.integrationHub {description = x}} :: ServerConfigModules)
       , \c -> applyStringEnvVariable "MODULES_INTEGRATION_HUB_ICON" c.integrationHub.icon (\x -> c {integrationHub = c.integrationHub {icon = x}} :: ServerConfigModules)
       , \c -> applyMaybeStringEnvVariable "MODULES_INTEGRATION_HUB_URL" c.integrationHub.url (\x -> c {integrationHub = c.integrationHub {url = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_INTEGRATION_HUB_TITLE" c.reporting.title (\x -> c {reporting = c.reporting {title = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_INTEGRATION_HUB_DESCRIPTION" c.reporting.description (\x -> c {reporting = c.reporting {description = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_INTEGRATION_HUB_ICON" c.reporting.icon (\x -> c {reporting = c.reporting {icon = x}} :: ServerConfigModules)
-      , \c -> applyMaybeStringEnvVariable "MODULES_INTEGRATION_HUB_URL" c.reporting.url (\x -> c {reporting = c.reporting {url = x}} :: ServerConfigModules)
+      , \c -> applyStringEnvVariable "MODULES_ANALYTICS_TITLE" c.analytics.title (\x -> c {analytics = c.analytics {title = x}} :: ServerConfigModules)
+      , \c -> applyStringEnvVariable "MODULES_ANALYTICS_DESCRIPTION" c.analytics.description (\x -> c {analytics = c.analytics {description = x}} :: ServerConfigModules)
+      , \c -> applyStringEnvVariable "MODULES_ANALYTICS_ICON" c.analytics.icon (\x -> c {analytics = c.analytics {icon = x}} :: ServerConfigModules)
+      , \c -> applyMaybeStringEnvVariable "MODULES_ANALYTICS_URL" c.analytics.url (\x -> c {analytics = c.analytics {url = x}} :: ServerConfigModules)
       , \c -> applyStringEnvVariable "MODULES_GUIDE_TITLE" c.guide.title (\x -> c {guide = c.guide {title = x}} :: ServerConfigModules)
       , \c -> applyStringEnvVariable "MODULES_GUIDE_DESCRIPTION" c.guide.description (\x -> c {guide = c.guide {description = x}} :: ServerConfigModules)
       , \c -> applyStringEnvVariable "MODULES_GUIDE_ICON" c.guide.icon (\x -> c {guide = c.guide {icon = x}} :: ServerConfigModules)

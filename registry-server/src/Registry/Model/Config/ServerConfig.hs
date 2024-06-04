@@ -9,7 +9,7 @@ data ServerConfig = ServerConfig
   { general :: ServerConfigGeneral
   , database :: ServerConfigDatabase
   , s3 :: ServerConfigS3
-  , analytics :: ServerConfigAnalytics
+  , analyticalMails :: ServerConfigAnalyticalMails
   , sentry :: ServerConfigSentry
   , logging :: ServerConfigLogging
   , persistentCommand :: ServerConfigPersistentCommand

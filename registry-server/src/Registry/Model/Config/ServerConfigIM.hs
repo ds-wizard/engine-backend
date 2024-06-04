@@ -8,11 +8,11 @@ instance FromEnv ServerConfig where
     general <- applyEnv serverConfig.general
     database <- applyEnv serverConfig.database
     s3 <- applyEnv serverConfig.s3
-    analytics <- applyEnv serverConfig.analytics
     sentry <- applyEnv serverConfig.sentry
+    analyticalMails <- applyEnv serverConfig.analyticalMails
     logging <- applyEnv serverConfig.logging
-    persistentCommand <- applyEnv serverConfig.persistentCommand
     cloud <- applyEnv serverConfig.cloud
+    persistentCommand <- applyEnv serverConfig.persistentCommand
     return ServerConfig {..}
 
 instance FromEnv ServerConfigGeneral where

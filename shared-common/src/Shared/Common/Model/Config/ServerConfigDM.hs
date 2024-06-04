@@ -11,6 +11,15 @@ defaultDatabase =
     , stripeSize = 1
     , connectionTimeout = 10
     , maxConnections = 50
+    , vacuumCleaner = defaultDatabaseVacuumCleaner
+    }
+
+defaultDatabaseVacuumCleaner :: ServerConfigDatabaseVacuumCleaner
+defaultDatabaseVacuumCleaner =
+  ServerConfigDatabaseVacuumCleaner
+    { enabled = False
+    , cron = "45 1 * * *"
+    , tables = []
     }
 
 defaultS3 :: ServerConfigS3
@@ -23,11 +32,22 @@ defaultS3 =
     , region = Nothing
     }
 
-defaultAnalytics :: ServerConfigAnalytics
-defaultAnalytics = ServerConfigAnalytics {enabled = False, email = ""}
+defaultAws :: ServerConfigAws
+defaultAws =
+  ServerConfigAws
+    { awsAccessKeyId = ""
+    , awsSecretAccessKey = ""
+    , awsRegion = ""
+    }
 
 defaultSentry :: ServerConfigSentry
 defaultSentry = ServerConfigSentry {enabled = False, dsn = ""}
+
+defaultJwt :: ServerConfigJwt
+defaultJwt = ServerConfigJwt {expiration = 14 * 24}
+
+defaultAnalyticalMails :: ServerConfigAnalyticalMails
+defaultAnalyticalMails = ServerConfigAnalyticalMails {enabled = False, email = ""}
 
 defaultLogging :: ServerConfigLogging
 defaultLogging =
@@ -43,7 +63,15 @@ defaultCloud =
     { enabled = False
     , domain = Nothing
     , publicRegistrationEnabled = False
+    , signalBridgeUrl = Nothing
     }
+
+defaultPlan :: ServerConfigPlan
+defaultPlan = ServerConfigPlan {recomputeJob = defaultPlanRecomputeJob}
+
+defaultPlanRecomputeJob :: ServerConfigCronWorker
+defaultPlanRecomputeJob =
+  ServerConfigCronWorker {enabled = False, cron = "0 * * * *"}
 
 defaultPersistentCommand :: ServerConfigPersistentCommand
 defaultPersistentCommand =
@@ -65,11 +93,3 @@ defaultPersistentCommandRetryJob =
 defaultPersistentCommandRetryLambdaJob :: ServerConfigCronWorker
 defaultPersistentCommandRetryLambdaJob =
   ServerConfigCronWorker {enabled = True, cron = "* * * * *"}
-
-defaultAws :: ServerConfigAws
-defaultAws =
-  ServerConfigAws
-    { awsAccessKeyId = ""
-    , awsSecretAccessKey = ""
-    , awsRegion = ""
-    }

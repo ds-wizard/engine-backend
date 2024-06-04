@@ -13,27 +13,27 @@ defaultConfig =
     { general = defaultGeneral
     , database = defaultDatabase
     , s3 = defaultS3
+    , aws = defaultAws
+    , sentry = defaultSentry
     , jwt = defaultJwt
     , roles = defaultRoles
-    , registry = defaultRegistry
-    , analytics = defaultAnalytics
-    , sentry = defaultSentry
     , actionKey = defaultActionKey
     , branch = defaultBranch
     , cache = defaultCache
     , document = defaultDocument
     , feedback = defaultFeedback
-    , persistentCommand = defaultPersistentCommand
-    , plan = defaultPlan
     , questionnaire = defaultQuestionnaire
     , temporaryFile = defaultTemporaryFile
     , userToken = defaultUserToken
+    , analyticalMails = defaultAnalyticalMails
     , logging = defaultLogging
     , cloud = defaultCloud
-    , admin = defaultAdmin
+    , plan = defaultPlan
+    , persistentCommand = defaultPersistentCommand
     , signalBridge = defaultSignalBridge
+    , admin = defaultAdmin
+    , registry = defaultRegistry
     , modules = defaultModules
-    , aws = defaultAws
     }
 
 defaultGeneral :: ServerConfigGeneral
@@ -46,9 +46,6 @@ defaultGeneral =
     , rsaPrivateKey = undefined
     , integrationConfig = "wizard-server/config/integration.yml"
     }
-
-defaultJwt :: ServerConfigJwt
-defaultJwt = ServerConfigJwt {expiration = 14 * 24}
 
 defaultRoles :: ServerConfigRoles
 defaultRoles =
@@ -86,14 +83,6 @@ defaultRoles =
         , "DOC_TML_WRITE_PERM"
         ]
     , researcher = ["PM_READ_PERM", "QTN_PERM", "DOC_TML_READ_PERM", "SUBM_PERM"]
-    }
-
-defaultRegistry :: ServerConfigRegistry
-defaultRegistry =
-  ServerConfigRegistry
-    { url = "https://api.registry.ds-wizard.org"
-    , clientUrl = "https://registry.ds-wizard.org"
-    , sync = defaultRegistrySyncJob
     }
 
 defaultRegistrySyncJob :: ServerConfigCronWorker
@@ -145,13 +134,6 @@ defaultFeedbackSync :: ServerConfigCronWorker
 defaultFeedbackSync =
   ServerConfigCronWorker {enabled = True, cron = feedbackWorker.cronDefault}
 
-defaultPlan :: ServerConfigPlan
-defaultPlan = ServerConfigPlan {recomputeJob = defaultPlanRecomputeJob}
-
-defaultPlanRecomputeJob :: ServerConfigCronWorker
-defaultPlanRecomputeJob =
-  ServerConfigCronWorker {enabled = False, cron = tenantPlanWorker.cronDefault}
-
 defaultQuestionnaire :: ServerConfigQuestionnaire
 defaultQuestionnaire =
   ServerConfigQuestionnaire
@@ -185,10 +167,6 @@ defaultUserTokenExpire :: ServerConfigCronWorker
 defaultUserTokenExpire =
   ServerConfigCronWorker {enabled = True, cron = expireUserTokenWorker.cronDefault}
 
-defaultAdmin :: ServerConfigAdmin
-defaultAdmin =
-  ServerConfigAdmin {enabled = False}
-
 defaultSignalBridge :: ServerConfigSignalBridge
 defaultSignalBridge =
   ServerConfigSignalBridge
@@ -199,13 +177,25 @@ defaultSignalBridge =
     , logOutAllArn = ""
     }
 
+defaultAdmin :: ServerConfigAdmin
+defaultAdmin =
+  ServerConfigAdmin {enabled = False}
+
+defaultRegistry :: ServerConfigRegistry
+defaultRegistry =
+  ServerConfigRegistry
+    { url = "https://api.registry.ds-wizard.org"
+    , clientUrl = "https://registry.ds-wizard.org"
+    , sync = defaultRegistrySyncJob
+    }
+
 defaultModules :: ServerConfigModules
 defaultModules =
   ServerConfigModules
     { wizard = defaultModule
     , admin = defaultModule
     , integrationHub = defaultModule
-    , reporting = defaultModule
+    , analytics = defaultModule
     , guide = defaultModule
     }
 

@@ -46,6 +46,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0041_upgradeTmlM
 import qualified Wizard.Database.Migration.Production.Migration_0042_isOutdated.Migration as M_0042
 import qualified Wizard.Database.Migration.Production.Migration_0043_temporaryFile.Migration as M_0043
 import qualified Wizard.Database.Migration.Production.Migration_0044_signalBridge.Migration as M_0044
+import qualified Wizard.Database.Migration.Production.Migration_0045_analytics.Migration as M_0045
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -93,4 +94,5 @@ migrationDefinitions =
   , M_0042.definition
   , M_0043.definition
   , M_0044.definition
+  , M_0045.definition
   ]

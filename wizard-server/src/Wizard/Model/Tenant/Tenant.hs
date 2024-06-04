@@ -15,8 +15,8 @@ data Tenant = Tenant
   , adminClientUrl :: Maybe String
   , integrationHubServerUrl :: Maybe String
   , integrationHubClientUrl :: Maybe String
-  , reportingServerUrl :: Maybe String
-  , reportingClientUrl :: Maybe String
+  , analyticsServerUrl :: Maybe String
+  , analyticsClientUrl :: Maybe String
   , signalBridgeUrl :: Maybe String
   , enabled :: Bool
   , createdAt :: UTCTime

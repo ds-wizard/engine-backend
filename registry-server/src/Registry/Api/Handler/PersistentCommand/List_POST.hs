@@ -4,7 +4,6 @@ import qualified Data.UUID as U
 import Servant
 
 import Registry.Api.Handler.Common
-import Registry.Api.Resource.PersistentCommand.PersistentCommandJM ()
 import Registry.Model.Context.BaseContext
 import Registry.Service.PersistentCommand.PersistentCommandService
 import Shared.Common.Api.Handler.Common

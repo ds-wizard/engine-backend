@@ -52,7 +52,7 @@ sendRegistrationCreatedAnalyticsMail org =
           MC.MailCommand
             { mode = "registry"
             , template = "registrationCreatedAnalytics"
-            , recipients = [serverConfig.analytics.email]
+            , recipients = [serverConfig.analyticalMails.email]
             , parameters =
                 M.fromList
                   [ ("organizationId", MC.string org.organizationId)

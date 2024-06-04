@@ -14,9 +14,6 @@ import GHC.Int
 
 import Shared.Common.Database.DAO.Common
 import Shared.Common.Integration.Aws.Lambda
-import Shared.Common.Model.Common.Page
-import Shared.Common.Model.Common.Pageable
-import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.AppContext
 import Shared.Common.Util.Logger
@@ -32,19 +29,8 @@ entityName = "persistent_command"
 
 channelName = "persistent_command_channel"
 
-pageLabel = "persistentCommands"
-
 findPersistentCommands :: (AppContextC s sc m, FromField identity) => m [PersistentCommand identity]
 findPersistentCommands = createFindEntitiesFn entityName
-
-findPersistentCommandsPage :: (AppContextC s sc m, FromField identity) => [String] -> Pageable -> [Sort] -> m (Page (PersistentCommand identity))
-findPersistentCommandsPage states pageable sort = do
-  logInfoI "" (show states)
-  let condition =
-        case states of
-          [] -> ""
-          _ -> f' "WHERE state in (%s) " [generateQuestionMarks states]
-  createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort "*" condition states
 
 findPersistentCommandsForRetryByStates :: (AppContextC s sc m, FromField identity) => m [PersistentCommandSimple identity]
 findPersistentCommandsForRetryByStates = findPersistentCommandsByStates True []

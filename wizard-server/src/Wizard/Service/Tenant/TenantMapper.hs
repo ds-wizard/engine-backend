@@ -69,9 +69,9 @@ fromRegisterCreateDTO reqDto aUuid serverConfig now =
     , adminClientUrl = Just $ createAdminClientUrl serverConfig reqDto.tenantId
     , integrationHubServerUrl = Just $ createIntegrationHubServerUrl serverConfig reqDto.tenantId
     , integrationHubClientUrl = Just $ createIntegrationHubClientUrl serverConfig reqDto.tenantId
-    , reportingServerUrl = Just $ createReportingServerUrl serverConfig reqDto.tenantId
-    , reportingClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
-    , signalBridgeUrl = Nothing
+    , analyticsServerUrl = Just $ createReportingServerUrl serverConfig reqDto.tenantId
+    , analyticsClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
+    , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
     , enabled = True
     , createdAt = now
     , updatedAt = now
@@ -90,9 +90,9 @@ fromAdminCreateDTO reqDto aUuid serverConfig now =
     , adminClientUrl = Just $ createAdminClientUrl serverConfig reqDto.tenantId
     , integrationHubServerUrl = Just $ createIntegrationHubServerUrl serverConfig reqDto.tenantId
     , integrationHubClientUrl = Just $ createIntegrationHubClientUrl serverConfig reqDto.tenantId
-    , reportingServerUrl = Just $ createReportingServerUrl serverConfig reqDto.tenantId
-    , reportingClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
-    , signalBridgeUrl = Nothing
+    , analyticsServerUrl = Just $ createReportingServerUrl serverConfig reqDto.tenantId
+    , analyticsClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
+    , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
     , enabled = True
     , createdAt = now
     , updatedAt = now
@@ -111,9 +111,9 @@ fromCommand command serverConfig now =
     , adminClientUrl = Just $ createAdminClientUrl serverConfig command.tenantId
     , integrationHubServerUrl = Just $ createIntegrationHubServerUrl serverConfig command.tenantId
     , integrationHubClientUrl = Just $ createIntegrationHubClientUrl serverConfig command.tenantId
-    , reportingServerUrl = Just $ createReportingServerUrl serverConfig command.tenantId
-    , reportingClientUrl = Just $ createReportingClientUrl serverConfig command.tenantId
-    , signalBridgeUrl = Nothing
+    , analyticsServerUrl = Just $ createReportingServerUrl serverConfig command.tenantId
+    , analyticsClientUrl = Just $ createReportingClientUrl serverConfig command.tenantId
+    , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
     , enabled = True
     , createdAt = now
     , updatedAt = now
@@ -132,9 +132,9 @@ fromChangeDTO tenant reqDto serverConfig =
     , adminClientUrl = Just $ createAdminClientUrl serverConfig reqDto.tenantId
     , integrationHubServerUrl = Just $ createIntegrationHubServerUrl serverConfig reqDto.tenantId
     , integrationHubClientUrl = Just $ createIntegrationHubClientUrl serverConfig reqDto.tenantId
-    , reportingServerUrl = Just $ createReportingServerUrl serverConfig reqDto.tenantId
-    , reportingClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
-    , signalBridgeUrl = Nothing
+    , analyticsServerUrl = Just $ createReportingServerUrl serverConfig reqDto.tenantId
+    , analyticsClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
+    , signalBridgeUrl = tenant.signalBridgeUrl
     , enabled = tenant.enabled
     , createdAt = tenant.createdAt
     , updatedAt = tenant.updatedAt
@@ -162,10 +162,10 @@ createIntegrationHubClientUrl :: ServerConfig -> String -> String
 createIntegrationHubClientUrl serverConfig tenantId = f' "%s/integration-hub" [createUrl serverConfig tenantId]
 
 createReportingServerUrl :: ServerConfig -> String -> String
-createReportingServerUrl serverConfig tenantId = f' "%s/reporting-api" [createUrl serverConfig tenantId]
+createReportingServerUrl serverConfig tenantId = f' "%s/analytics-api" [createUrl serverConfig tenantId]
 
 createReportingClientUrl :: ServerConfig -> String -> String
-createReportingClientUrl serverConfig tenantId = f' "%s/reporting" [createUrl serverConfig tenantId]
+createReportingClientUrl serverConfig tenantId = f' "%s/analytics" [createUrl serverConfig tenantId]
 
 createUrl :: ServerConfig -> String -> String
 createUrl serverConfig tenantId = f' "https://%s.%s" [tenantId, fromMaybe "" serverConfig.cloud.domain]

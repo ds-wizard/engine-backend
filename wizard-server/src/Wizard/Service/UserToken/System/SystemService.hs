@@ -7,6 +7,7 @@ import Data.Time
 import qualified Jose.Jwk as JWK
 import qualified Jose.Jwt as JWT
 
+import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Uuid
 import Wizard.Database.DAO.Common

@@ -116,6 +116,7 @@ import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM ()
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePhaseSM ()
+import WizardLib.Public.Api.Resource.PersistentCommand.PersistentCommandListSM ()
 import WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanChangeSM ()
 import WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanSM ()
 import WizardLib.Public.Api.Resource.User.Group.UserGroupDetailSM ()
@@ -132,7 +133,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.6.0"
+              , _infoVersion = "4.7.0"
               , _infoLicense =
                   Just $
                     License

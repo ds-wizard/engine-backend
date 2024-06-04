@@ -5,8 +5,8 @@ import Data.Swagger
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentJM ()
-import Wizard.Api.Resource.User.UserSuggestionSM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
+import WizardLib.Public.Api.Resource.User.UserSuggestionSM ()
 
 instance ToSchema QuestionnaireCommentThreadDTO where
   declareNamedSchema = toSwagger cmtQ1_t1Dto

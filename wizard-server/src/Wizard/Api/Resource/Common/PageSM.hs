@@ -18,7 +18,6 @@ import Wizard.Api.Resource.Locale.LocaleSM ()
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
 import Wizard.Api.Resource.Package.PackageSuggestionSM ()
-import Wizard.Api.Resource.PersistentCommand.PersistentCommandDTO
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSM ()
@@ -32,13 +31,10 @@ import Wizard.Api.Resource.Tenant.TenantSM ()
 import Wizard.Api.Resource.User.Group.UserGroupSuggestionSM ()
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserSM ()
-import Wizard.Api.Resource.User.UserSuggestionDTO
-import Wizard.Api.Resource.User.UserSuggestionSM ()
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Wizard.Database.Migration.Development.Locale.Data.Locales
-import Wizard.Database.Migration.Development.PersistentCommand.Data.PersistentCommands
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.QuestionnaireAction.Data.QuestionnaireActions
 import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
@@ -51,7 +47,6 @@ import Wizard.Model.Questionnaire.QuestionnaireSuggestion
 import Wizard.Model.User.UserGroupSuggestion
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 import qualified Wizard.Service.Package.PackageMapper as P_Mapper
-import qualified Wizard.Service.PersistentCommand.PersistentCommandMapper as PC_Mapper
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
 import qualified Wizard.Service.Tenant.TenantMapper as TNT_Mapper
 import qualified Wizard.Service.User.Group.UserGroupMapper as UG_Mapper
@@ -62,7 +57,12 @@ import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplat
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as SP_Mapper
+import WizardLib.Public.Api.Resource.PersistentCommand.PersistentCommandListSM ()
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Api.Resource.User.UserSuggestionSM ()
+import WizardLib.Public.Database.Migration.Development.PersistentCommand.Data.PersistentCommands
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
+import WizardLib.Public.Model.PersistentCommand.PersistentCommandList
 
 instance ToSchema (Page String) where
   declareNamedSchema = toSwaggerWithDtoName "Page String" (Page "projectTags" pageMetadata ["value1"])
@@ -134,14 +134,14 @@ instance ToSchema (Page DocumentTemplateSuggestionDTO) where
 instance ToSchema (Page DocumentDTO) where
   declareNamedSchema = toSwaggerWithDtoName "Page DocumentDTO" (Page "documents" pageMetadata [doc1Dto])
 
-instance ToSchema (Page PersistentCommandDTO) where
+instance ToSchema (Page PersistentCommandList) where
   declareNamedSchema =
     toSwaggerWithDtoName
-      "Page PersistentCommandDTO"
+      "Page PersistentCommandList"
       ( Page
           "persistentCommands"
           pageMetadata
-          [PC_Mapper.toDTO command1 (Just userAlbert) (TNT_Mapper.toDTO defaultTenant Nothing Nothing)]
+          [command1List]
       )
 
 instance ToSchema (Page TenantDTO) where

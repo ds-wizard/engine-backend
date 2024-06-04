@@ -4,8 +4,8 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Util.Hashable ()
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 
 data QuestionnaireCommentThreadDTO = QuestionnaireCommentThreadDTO
   { uuid :: U.UUID

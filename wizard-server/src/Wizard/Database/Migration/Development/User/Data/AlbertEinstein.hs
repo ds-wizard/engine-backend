@@ -11,7 +11,6 @@ import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
-import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Tenant.Config.TenantConfig
@@ -21,6 +20,7 @@ import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
 import Wizard.Model.User.UserProfile
 import Wizard.Service.User.UserMapper
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
 import WizardLib.Public.Model.User.UserGroup
 import WizardLib.Public.Model.User.UserGroupMembership

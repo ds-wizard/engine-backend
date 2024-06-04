@@ -14,11 +14,11 @@ instance FromJSON ServerConfig where
     general <- o .: "general"
     database <- o .:? "database" .!= defaultDatabase
     s3 <- o .:? "s3" .!= defaultS3
-    analytics <- o .:? "analytics" .!= defaultAnalytics
     sentry <- o .:? "sentry" .!= defaultSentry
+    analyticalMails <- o .:? "analyticalMails" .!= defaultAnalyticalMails
     logging <- o .:? "logging" .!= defaultLogging
-    persistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
     cloud <- o .:? "cloud" .!= defaultCloud
+    persistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
     return ServerConfig {..}
   parseJSON _ = mzero
 
