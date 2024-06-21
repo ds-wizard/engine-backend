@@ -6,6 +6,7 @@ import Control.Monad.Reader (ask, liftIO)
 import qualified Data.ByteString.Builder as BSB
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
+import qualified Data.List as L
 import Data.Maybe
 import Data.Pool
 import Data.String
@@ -423,6 +424,21 @@ mapSortWithPrefix prefix xs = "ORDER BY " ++ createRecord xs
       case order of
         Ascending -> f' "%s.%s asc " [prefix, toSnake name]
         Descending -> f' "%s.%s desc " [prefix, toSnake name]
+
+mapSortWithCustomMapping :: [Sort] -> [(String, String)] -> String
+mapSortWithCustomMapping [] customMapping = ""
+mapSortWithCustomMapping xs customMapping = "ORDER BY " ++ createRecord xs
+  where
+    createRecord [sort] = create sort
+    createRecord (sort : xs) = create sort ++ ", " ++ mapSortWithCustomMapping xs customMapping
+    create (Sort name order) =
+      let sanitize name =
+            case L.find (\(cmName, value) -> cmName == name) customMapping of
+              Just (cmName, cmValue) -> cmValue
+              Nothing -> toSnake name
+       in case order of
+            Ascending -> f' "%s asc " [sanitize name]
+            Descending -> f' "%s desc " [sanitize name]
 
 preparePaginationVariables :: Pageable -> (Int, Int, Int, Int)
 preparePaginationVariables pageable =
