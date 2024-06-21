@@ -31,4 +31,5 @@ data DevOperationParameterType
   | DoubleDevOperationParameterType
   | BoolDevOperationParameterType
   | JsonDevOperationParameterType
+  | TenantDevOperationParameterType
   deriving (Show, Eq, Generic)
