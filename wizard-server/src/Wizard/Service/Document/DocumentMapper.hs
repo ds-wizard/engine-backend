@@ -34,6 +34,7 @@ toDTO doc submissions =
     , questionnaire = Just QuestionnaireSimple {uuid = doc.questionnaireUuid, name = doc.questionnaireName}
     , questionnaireEventUuid = doc.questionnaireEventUuid
     , questionnaireVersion = doc.questionnaireVersion
+    , documentTemplateId = doc.documentTemplateId
     , documentTemplateName = doc.documentTemplateName
     , format = fmap toFormatDTO . L.find (\f -> f.uuid == doc.formatUuid) $ doc.documentTemplateFormats
     , fileSize = doc.fileSize
@@ -55,6 +56,7 @@ toDTOWithDocTemplate doc mQtn mQtnVersion submissions tml =
     , questionnaire = mQtn
     , questionnaireEventUuid = doc.questionnaireEventUuid
     , questionnaireVersion = mQtnVersion
+    , documentTemplateId = tml.tId
     , documentTemplateName = tml.name
     , format = fmap toFormatDTO . L.find (\f -> f.uuid == doc.formatUuid) $ tml.formats
     , fileSize = doc.fileSize

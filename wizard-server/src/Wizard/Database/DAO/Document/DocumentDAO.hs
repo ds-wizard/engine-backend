@@ -12,6 +12,7 @@ import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Util.Logger
+import Shared.Common.Util.String
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Document.Document ()
 import Wizard.Database.Mapping.Document.DocumentList ()
@@ -37,8 +38,8 @@ findDocumentsForCurrentTenantFiltered params = do
   tenantUuid <- asks currentTenantUuid
   createFindEntitiesByFn entityName (tenantQueryUuid tenantUuid : params)
 
-findDocumentsPage :: Maybe U.UUID -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentList)
-findDocumentsPage mQtnUuid mQtnName mQuery pageable sort = do
+findDocumentsPage :: Maybe U.UUID -> Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentList)
+findDocumentsPage mQtnUuid mQtnName mDocumentTemplateId mQuery pageable sort = do
   -- 1. Prepare variables
   do
     tenantUuid <- asks currentTenantUuid
@@ -48,20 +49,24 @@ findDocumentsPage mQtnUuid mQtnName mQuery pageable sort = do
             (Just qtnUuid, Just qtnName) -> ("?, ", [qtnName], "", "AND doc.questionnaire_uuid = ?", [U.toString qtnUuid])
             (Just qtnUuid, Nothing) -> ("qtn.name, ", [], "LEFT JOIN questionnaire qtn ON qtn.uuid = doc.questionnaire_uuid", "AND doc.questionnaire_uuid = ?", [U.toString qtnUuid])
             _ -> ("qtn.name, ", [], "LEFT JOIN questionnaire qtn ON qtn.uuid = doc.questionnaire_uuid", "", [])
-    let condition = "WHERE doc.tenant_uuid = ? AND doc.name ~* ? AND doc.durability = 'PersistentDocumentDurability' " ++ questionnaireCondition
-    let baseParams = [U.toString tenantUuid, regexM mQuery] ++ questionnaireParam
+    let (documentTemplateIdCondition, documentTemplateIdParam) =
+          case mDocumentTemplateId of
+            Just documentTemplateId -> (" AND doc.document_template_id = ? ", [documentTemplateId])
+            Nothing -> ("", [])
+    let condition = "WHERE doc.tenant_uuid = ? AND doc.name ~* ? AND doc.durability = 'PersistentDocumentDurability' " ++ questionnaireCondition ++ documentTemplateIdCondition
+    let baseParams = [U.toString tenantUuid, regexM mQuery] ++ questionnaireParam ++ documentTemplateIdParam
     let params = questionnaireSelectParams ++ baseParams
     -- 2. Get total count
     count <- createCountByFn "document doc" condition baseParams
     -- 3. Get entities
     let sql =
           fromString $
-            f'
+            f''
               "SELECT doc.uuid, \
               \       doc.name, \
               \       doc.state, \
               \       doc.questionnaire_uuid, \
-              \       %s \
+              \       ${questionnaireSelect} \
               \       doc.questionnaire_event_uuid, \
               \       (SELECT version.name \
               \        FROM (SELECT json_array_elements(versions) ->> 'name'      AS name, \
@@ -71,6 +76,7 @@ findDocumentsPage mQtnUuid mQtnName mQuery pageable sort = do
               \                AND qtn.tenant_uuid = doc.tenant_uuid) version \
               \        WHERE version.event_uuid = doc.questionnaire_event_uuid::text \
               \       ) as questionnaire_version, \
+              \       doc_tml.id, \
               \       doc_tml.name, \
               \       doc_tml.formats, \
               \       doc.format_uuid, \
@@ -79,13 +85,19 @@ findDocumentsPage mQtnUuid mQtnName mQuery pageable sort = do
               \       doc.created_by, \
               \       doc.created_at \
               \FROM document doc \
-              \%s \
+              \${questionnaireJoin} \
               \LEFT JOIN document_template doc_tml ON doc_tml.id = doc.document_template_id AND doc_tml.tenant_uuid = doc.tenant_uuid \
-              \%s \
-              \%s \
-              \OFFSET %s \
-              \LIMIT %s"
-              [questionnaireSelect, questionnaireJoin, condition, mapSortWithPrefix "doc" sort, show skip, show sizeI]
+              \${condition} \
+              \${sort} \
+              \OFFSET ${offset} \
+              \LIMIT ${limit}"
+              [ ("questionnaireSelect", questionnaireSelect)
+              , ("questionnaireJoin", questionnaireJoin)
+              , ("condition", condition)
+              , ("sort", mapSortWithPrefix "doc" sort)
+              , ("offset", show skip)
+              , ("limit", show sizeI)
+              ]
     logQuery sql params
     let action conn = query conn sql params
     entities <- runDB action

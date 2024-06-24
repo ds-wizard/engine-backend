@@ -48,10 +48,10 @@ import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
-getDocumentsPageDto :: Maybe U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
-getDocumentsPageDto mQuestionnaireUuid mQuery pageable sort = do
+getDocumentsPageDto :: Maybe U.UUID -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
+getDocumentsPageDto mQuestionnaireUuid mDocumentTemplateId mQuery pageable sort = do
   checkPermission _DOC_PERM
-  docPage <- findDocumentsPage mQuestionnaireUuid Nothing mQuery pageable sort
+  docPage <- findDocumentsPage mQuestionnaireUuid Nothing mDocumentTemplateId mQuery pageable sort
   tenantConfig <- getCurrentTenantConfig
   traverse (enhanceDocument tenantConfig) docPage
 
@@ -59,7 +59,7 @@ getDocumentsForQtn :: U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContext
 getDocumentsForQtn qtnUuid mQuery pageable sort = do
   qtn <- findQuestionnaireByUuid qtnUuid
   checkViewPermissionToDoc' qtn
-  docPage <- findDocumentsPage (Just qtnUuid) (Just qtn.name) mQuery pageable sort
+  docPage <- findDocumentsPage (Just qtnUuid) (Just qtn.name) Nothing mQuery pageable sort
   tenantConfig <- getCurrentTenantConfig
   traverse (enhanceDocument tenantConfig) docPage
 
