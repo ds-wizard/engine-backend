@@ -44,8 +44,8 @@ findPersistentCommandsPage states pageable sort = do
               \       persistent_command.updated_at, \
               \       concat(tenant.uuid, '::', \
               \              tenant.name, '::', \
-              \              tenant_config.look_and_feel -> 'primaryColor', '::', \
-              \              tenant_config.look_and_feel -> 'logoUrl', '::', \
+              \              tenant_config.look_and_feel ->> 'logoUrl', '::', \
+              \              tenant_config.look_and_feel ->> 'primaryColor', '::', \
               \              tenant.client_url) AS tenant, \
               \       concat(user_entity.uuid, '::', \
               \              user_entity.first_name, '::', \
