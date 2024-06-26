@@ -36,11 +36,11 @@ instance FromRow PersistentCommandList where
               , name = parts !! 1
               , logoUrl =
                   case parts !! 2 of
-                    "null" -> Nothing
+                    "" -> Nothing
                     logoUrl -> Just logoUrl
               , primaryColor =
                   case parts !! 3 of
-                    "null" -> Nothing
+                    "" -> Nothing
                     primaryColor -> Just primaryColor
               , clientUrl = parts !! 4
               }
