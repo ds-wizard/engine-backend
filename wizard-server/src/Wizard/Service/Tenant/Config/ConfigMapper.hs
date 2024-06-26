@@ -7,6 +7,7 @@ import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateAuthenticationConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateDefaultRoleConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdatePrivacyAndSupportConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConfigCommand
@@ -110,6 +111,16 @@ fromPrivacyAndSupport oldConfig command now =
           , supportSiteName = command.supportSiteName
           , supportSiteUrl = command.supportSiteUrl
           , supportSiteIcon = command.supportSiteIcon
+          }
+    , updatedAt = now
+    }
+
+fromDefaultRole :: TenantConfig -> UpdateDefaultRoleConfigCommand -> UTCTime -> TenantConfig
+fromDefaultRole oldConfig command now =
+  oldConfig
+    { authentication =
+        oldConfig.authentication
+          { defaultRole = command.defaultRole
           }
     , updatedAt = now
     }
