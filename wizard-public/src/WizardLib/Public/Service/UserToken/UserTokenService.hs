@@ -22,7 +22,7 @@ getTokens tokenType mCurrentTokenUuid = do
   context <- ask
   let mIdentityUuid = fmap (fromJust . U.fromString) context.identity'
   case mIdentityUuid of
-    Just identityUuid -> findUserTokensByUserUuidAndType identityUuid tokenType mCurrentTokenUuid
+    Just identityUuid -> findUserTokensByUserUuidAndTypeAndTokenUuid identityUuid tokenType mCurrentTokenUuid
     Nothing -> throwError $ ForbiddenError _ERROR_SERVICE_USER__MISSING_USER
 
 deleteTokensExceptCurrentSession
@@ -38,7 +38,7 @@ deleteTokensExceptCurrentSession tokenValue =
     let mIdentityUuid = fmap (fromJust . U.fromString) context.identity'
     case mIdentityUuid of
       Just identityUuid -> do
-        userTokens <- findUserTokensByUserUuid identityUuid
+        userTokens <- findUserTokensByUserUuidAndType identityUuid "LoginUserTokenType"
         traverse_ deleteUserTokenByUuid . fmap (.uuid) . filter (\ut -> ut.value /= tokenValue) $ userTokens
       Nothing -> throwError $ ForbiddenError _ERROR_SERVICE_USER__MISSING_USER
 
