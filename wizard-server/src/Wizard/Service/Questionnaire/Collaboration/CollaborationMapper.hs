@@ -70,6 +70,15 @@ toReopenCommentThreadMessage reqDto record =
     Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . ReopenCommentThreadEventDTO' $
       reqDto
 
+toAssignCommentThreadMessage
+  :: AssignCommentThreadEventDTO
+  -> WebsocketRecord
+  -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
+toAssignCommentThreadMessage reqDto record =
+  toWebsocketMessage record $
+    Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . AssignCommentThreadEventDTO' $
+      reqDto
+
 toDeleteCommentThreadMessage
   :: DeleteCommentThreadEventDTO
   -> WebsocketRecord

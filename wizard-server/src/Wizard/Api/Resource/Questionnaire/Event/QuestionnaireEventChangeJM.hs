@@ -19,9 +19,9 @@ instance FromJSON QuestionnaireEventChangeDTO where
       "ClearReplyEvent" -> parseJSON (Object o) >>= \event -> return (ClearReplyEventChangeDTO' event)
       "SetPhaseEvent" -> parseJSON (Object o) >>= \event -> return (SetPhaseEventChangeDTO' event)
       "SetLabelsEvent" -> parseJSON (Object o) >>= \event -> return (SetLabelsEventChangeDTO' event)
-      "ResolveCommentThreadEvent" ->
-        parseJSON (Object o) >>= \event -> return (ResolveCommentThreadEventChangeDTO' event)
+      "ResolveCommentThreadEvent" -> parseJSON (Object o) >>= \event -> return (ResolveCommentThreadEventChangeDTO' event)
       "ReopenCommentThreadEvent" -> parseJSON (Object o) >>= \event -> return (ReopenCommentThreadEventChangeDTO' event)
+      "AssignCommentThreadEvent" -> parseJSON (Object o) >>= \event -> return (AssignCommentThreadEventChangeDTO' event)
       "DeleteCommentThreadEvent" -> parseJSON (Object o) >>= \event -> return (DeleteCommentThreadEventChangeDTO' event)
       "AddCommentEvent" -> parseJSON (Object o) >>= \event -> return (AddCommentEventChangeDTO' event)
       "EditCommentEvent" -> parseJSON (Object o) >>= \event -> return (EditCommentEventChangeDTO' event)
@@ -63,6 +63,12 @@ instance FromJSON ReopenCommentThreadEventChangeDTO where
   parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON ReopenCommentThreadEventChangeDTO where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON AssignCommentThreadEventChangeDTO where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON AssignCommentThreadEventChangeDTO where
   toJSON = genericToJSON jsonOptions
 
 instance FromJSON DeleteCommentThreadEventChangeDTO where

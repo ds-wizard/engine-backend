@@ -19,6 +19,7 @@ import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
 import Wizard.Api.Resource.Package.PackageSuggestionSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadAssignedSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSuggestionSM ()
@@ -35,6 +36,7 @@ import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Wizard.Database.Migration.Development.Locale.Data.Locales
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.QuestionnaireAction.Data.QuestionnaireActions
 import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
@@ -43,6 +45,7 @@ import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Model.Package.PackageSuggestion
+import Wizard.Model.Questionnaire.QuestionnaireCommentThreadAssigned
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
 import Wizard.Model.User.UserGroupSuggestion
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
@@ -108,6 +111,10 @@ instance ToSchema (Page QuestionnaireDTO) where
 instance ToSchema (Page QuestionnaireSuggestion) where
   declareNamedSchema =
     toSwaggerWithDtoName "Page QuestionnaireSuggestion" (Page "questionnaires" pageMetadata [QTN_Mapper.toSuggestion questionnaire1])
+
+instance ToSchema (Page QuestionnaireCommentThreadAssigned) where
+  declareNamedSchema =
+    toSwaggerWithDtoName "Page QuestionnaireCommentThreadAssigned" (Page "commentThreads" pageMetadata [cmtAssigned])
 
 instance ToSchema (Page QuestionnaireActionDTO) where
   declareNamedSchema =

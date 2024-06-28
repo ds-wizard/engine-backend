@@ -27,6 +27,7 @@ import Wizard.Specs.API.ApiKey.APISpec
 import Wizard.Specs.API.AppKey.APISpec
 import Wizard.Specs.API.BookReference.APISpec
 import Wizard.Specs.API.Branch.APISpec
+import Wizard.Specs.API.CommentThread.APISpec
 import Wizard.Specs.API.Config.APISpec
 import Wizard.Specs.API.Document.APISpec
 import Wizard.Specs.API.DocumentTemplate.APISpec
@@ -46,6 +47,7 @@ import Wizard.Specs.API.Questionnaire.APISpec
 import Wizard.Specs.API.Questionnaire.Comment.APISpec
 import Wizard.Specs.API.Questionnaire.Event.APISpec
 import Wizard.Specs.API.Questionnaire.ProjectTag.APISpec
+import Wizard.Specs.API.Questionnaire.User.APISpec
 import Wizard.Specs.API.Questionnaire.Version.APISpec
 import Wizard.Specs.API.QuestionnaireAction.APISpec
 import Wizard.Specs.API.QuestionnaireImporter.APISpec
@@ -189,6 +191,7 @@ main =
               appKeyAPI baseContext appContext
               bookReferenceAPI baseContext appContext
               branchAPI baseContext appContext
+              commentThreadAPI baseContext appContext
               configAPI baseContext appContext
               documentAPI baseContext appContext
               documentTemplateAPI baseContext appContext
@@ -208,6 +211,7 @@ main =
               questionnaireCommentAPI baseContext appContext
               questionnaireEventAPI baseContext appContext
               questionnaireProjectTagAPI baseContext appContext
+              questionnaireUserAPI baseContext appContext
               questionnaireVersionAPI baseContext appContext
               questionnaireActionAPI baseContext appContext
               questionnaireImporterAPI baseContext appContext

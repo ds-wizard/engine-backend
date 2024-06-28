@@ -4,6 +4,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 
 data QuestionnaireEventChangeDTO
   = SetReplyEventChangeDTO' SetReplyEventChangeDTO
@@ -12,6 +13,7 @@ data QuestionnaireEventChangeDTO
   | SetLabelsEventChangeDTO' SetLabelsEventChangeDTO
   | ResolveCommentThreadEventChangeDTO' ResolveCommentThreadEventChangeDTO
   | ReopenCommentThreadEventChangeDTO' ReopenCommentThreadEventChangeDTO
+  | AssignCommentThreadEventChangeDTO' AssignCommentThreadEventChangeDTO
   | DeleteCommentThreadEventChangeDTO' DeleteCommentThreadEventChangeDTO
   | AddCommentEventChangeDTO' AddCommentEventChangeDTO
   | EditCommentEventChangeDTO' EditCommentEventChangeDTO
@@ -59,6 +61,15 @@ data ReopenCommentThreadEventChangeDTO = ReopenCommentThreadEventChangeDTO
   , path :: String
   , private :: Bool
   , commentCount :: Int
+  }
+  deriving (Show, Eq, Generic)
+
+data AssignCommentThreadEventChangeDTO = AssignCommentThreadEventChangeDTO
+  { uuid :: U.UUID
+  , threadUuid :: U.UUID
+  , path :: String
+  , private :: Bool
+  , assignedTo :: Maybe UserSuggestionDTO
   }
   deriving (Show, Eq, Generic)
 

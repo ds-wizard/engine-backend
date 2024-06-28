@@ -22,6 +22,7 @@ instance FromJSON QuestionnaireEventDTO where
       "SetLabelsEvent" -> parseJSON (Object o) >>= \event -> return (SetLabelsEventDTO' event)
       "ResolveCommentThreadEvent" -> parseJSON (Object o) >>= \event -> return (ResolveCommentThreadEventDTO' event)
       "ReopenCommentThreadEvent" -> parseJSON (Object o) >>= \event -> return (ReopenCommentThreadEventDTO' event)
+      "AssignCommentThreadEvent" -> parseJSON (Object o) >>= \event -> return (AssignCommentThreadEventDTO' event)
       "DeleteCommentThreadEvent" -> parseJSON (Object o) >>= \event -> return (DeleteCommentThreadEventDTO' event)
       "AddCommentEvent" -> parseJSON (Object o) >>= \event -> return (AddCommentEventDTO' event)
       "EditCommentEvent" -> parseJSON (Object o) >>= \event -> return (EditCommentEventDTO' event)
@@ -63,6 +64,12 @@ instance FromJSON ReopenCommentThreadEventDTO where
   parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON ReopenCommentThreadEventDTO where
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
+
+instance FromJSON AssignCommentThreadEventDTO where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON AssignCommentThreadEventDTO where
   toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON DeleteCommentThreadEventDTO where

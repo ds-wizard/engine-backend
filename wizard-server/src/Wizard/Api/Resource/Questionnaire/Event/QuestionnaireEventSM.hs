@@ -32,6 +32,9 @@ instance ToSchema ResolveCommentThreadEventDTO where
 instance ToSchema ReopenCommentThreadEventDTO where
   declareNamedSchema = toSwagger ote_rQ1_t1
 
+instance ToSchema AssignCommentThreadEventDTO where
+  declareNamedSchema = toSwagger aste_rQ1_t1
+
 instance ToSchema DeleteCommentThreadEventDTO where
   declareNamedSchema = toSwagger dte_rQ1_t1
 
