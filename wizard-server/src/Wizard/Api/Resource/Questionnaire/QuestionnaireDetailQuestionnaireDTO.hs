@@ -23,7 +23,8 @@ data QuestionnaireDetailQuestionnaireDTO = QuestionnaireDetailQuestionnaireDTO
   , phaseUuid :: Maybe U.UUID
   , migrationUuid :: Maybe U.UUID
   , permissions :: [QuestionnairePermDTO]
-  , commentCounts :: M.Map String (M.Map U.UUID Int)
+  , resolvedCommentCounts :: M.Map String (M.Map U.UUID Int)
+  , unresolvedCommentCounts :: M.Map String (M.Map U.UUID Int)
   , questionnaireActionsAvailable :: Int
   , questionnaireImportersAvailable :: Int
   }

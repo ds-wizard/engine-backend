@@ -253,13 +253,17 @@ getQuestionnaireDetailQuestionnaireById qtnUuid = do
   checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
   editor <- catchError (hasEditPermissionToQtn qtn.visibility qtn.sharing qtn.permissions) (\_ -> return False)
   commenter <- catchError (hasCommentPermissionToQtn qtn.visibility qtn.sharing qtn.permissions) (\_ -> return False)
-  commentCounts <-
+  unresolvedCommentCounts <-
     if commenter
       then findQuestionnaireCommentThreadsSimple qtnUuid False editor
       else return M.empty
+  resolvedCommentCounts <-
+    if commenter
+      then findQuestionnaireCommentThreadsSimple qtnUuid True editor
+      else return M.empty
   knowledgeModel <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
   qtnCtn <- compileQuestionnaire qtn
-  return $ toDetailQuestionnaireDTO qtn commentCounts knowledgeModel qtnCtn
+  return $ toDetailQuestionnaireDTO qtn resolvedCommentCounts unresolvedCommentCounts knowledgeModel qtnCtn
 
 getQuestionnaireDetailPreviewById :: U.UUID -> AppContextM QuestionnaireDetailPreview
 getQuestionnaireDetailPreviewById qtnUuid = do

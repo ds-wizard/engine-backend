@@ -347,6 +347,7 @@ rtche_rQ1_t1 =
     , path = rte_rQ1_t1.path
     , threadUuid = rte_rQ1_t1.threadUuid
     , private = False
+    , commentCount = 1
     }
 
 ote_rQ1_t1' :: QuestionnaireEventDTO

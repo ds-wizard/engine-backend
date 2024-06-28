@@ -138,7 +138,7 @@ create_test_200 title appContext qtn qtnCtn showComments authHeader permissions 
       runInContextIO (insertQuestionnaireCommentThread thread1) appContext
       runInContextIO (insertQuestionnaireComment comment1) appContext
       runInContextIO (insertQuestionnaireComment comment2) appContext
-      let commentCounts =
+      let resolvedCommentCounts =
             if showComments
               then M.fromList [(cmtQ1_path, M.fromList [(thread1.uuid, 2)])]
               else M.empty
@@ -160,7 +160,8 @@ create_test_200 title appContext qtn qtnCtn showComments authHeader permissions 
               , phaseUuid = qtnCtn.phaseUuid
               , migrationUuid = Nothing
               , permissions = permissions
-              , commentCounts = commentCounts
+              , resolvedCommentCounts = resolvedCommentCounts
+              , unresolvedCommentCounts = M.empty
               , questionnaireActionsAvailable = 0
               , questionnaireImportersAvailable = 0
               }
