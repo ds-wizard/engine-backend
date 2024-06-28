@@ -84,6 +84,7 @@ data ResolveCommentThreadEventDTO = ResolveCommentThreadEventDTO
   { uuid :: U.UUID
   , path :: String
   , threadUuid :: U.UUID
+  , commentCount :: Int
   , createdBy :: Maybe UserSuggestionDTO
   , createdAt :: UTCTime
   }

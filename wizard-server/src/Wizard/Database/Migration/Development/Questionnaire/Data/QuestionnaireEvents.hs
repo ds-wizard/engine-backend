@@ -333,6 +333,7 @@ rte_rQ1_t1 =
     { uuid = u' "ad5ffe15-d895-4452-af31-3b952db0b8a8"
     , path = cmtQ1_path
     , threadUuid = cmtQ1_t1.uuid
+    , commentCount = 1
     , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
     , createdAt = cmtQ1_t1Resolved.createdAt
     }
@@ -347,6 +348,7 @@ rtche_rQ1_t1 =
     , path = rte_rQ1_t1.path
     , threadUuid = rte_rQ1_t1.threadUuid
     , private = False
+    , commentCount = 1
     }
 
 ote_rQ1_t1' :: QuestionnaireEventDTO

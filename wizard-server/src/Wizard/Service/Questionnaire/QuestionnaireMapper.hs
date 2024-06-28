@@ -117,8 +117,8 @@ toDetailDTO :: QuestionnaireDetailQuestionnaire -> QuestionnaireDetailDTO
 toDetailDTO QuestionnaireDetailQuestionnaire {..} =
   QuestionnaireDetailDTO {..}
 
-toDetailQuestionnaireDTO :: QuestionnaireDetailQuestionnaire -> M.Map String (M.Map U.UUID Int) -> KnowledgeModel -> QuestionnaireContent -> QuestionnaireDetailQuestionnaireDTO
-toDetailQuestionnaireDTO QuestionnaireDetailQuestionnaire {..} commentCounts knowledgeModel QuestionnaireContent {..} =
+toDetailQuestionnaireDTO :: QuestionnaireDetailQuestionnaire -> M.Map String (M.Map U.UUID Int) -> M.Map String (M.Map U.UUID Int) -> KnowledgeModel -> QuestionnaireContent -> QuestionnaireDetailQuestionnaireDTO
+toDetailQuestionnaireDTO QuestionnaireDetailQuestionnaire {..} resolvedCommentCounts unresolvedCommentCounts knowledgeModel QuestionnaireContent {..} =
   QuestionnaireDetailQuestionnaireDTO {..}
 
 toDetailWsDTO :: Questionnaire -> Maybe DocumentTemplate -> Maybe DocumentTemplateFormat -> [QuestionnairePermDTO] -> QuestionnaireDetailWsDTO

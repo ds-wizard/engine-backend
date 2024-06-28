@@ -49,6 +49,7 @@ data ResolveCommentThreadEventChangeDTO = ResolveCommentThreadEventChangeDTO
   , threadUuid :: U.UUID
   , path :: String
   , private :: Bool
+  , commentCount :: Int
   }
   deriving (Show, Eq, Generic)
 

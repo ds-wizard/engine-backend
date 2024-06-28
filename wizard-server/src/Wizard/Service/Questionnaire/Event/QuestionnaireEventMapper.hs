@@ -128,6 +128,7 @@ toResolveCommentThreadEventDTO' event mCreatedBy now =
     { uuid = event.uuid
     , path = event.path
     , threadUuid = event.threadUuid
+    , commentCount = event.commentCount
     , createdBy = mCreatedBy
     , createdAt = now
     }
