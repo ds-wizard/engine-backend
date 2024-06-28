@@ -378,6 +378,34 @@ otche_rQ1_t1 =
     , private = False
     }
 
+aste_rQ1_t1' :: QuestionnaireEventDTO
+aste_rQ1_t1' = AssignCommentThreadEventDTO' aste_rQ1_t1
+
+aste_rQ1_t1 :: AssignCommentThreadEventDTO
+aste_rQ1_t1 =
+  AssignCommentThreadEventDTO
+    { uuid = u' "444c89c8-ead9-44c7-9621-0c0c43ff5f9f"
+    , path = cmtQ1_path
+    , threadUuid = cmtQ1_t1.uuid
+    , private = False
+    , assignedTo = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , createdAt = cmtQ1_t1.createdAt
+    }
+
+asche_rQ1_t1' :: QuestionnaireEventChangeDTO
+asche_rQ1_t1' = AssignCommentThreadEventChangeDTO' asche_rQ1_t1
+
+asche_rQ1_t1 :: AssignCommentThreadEventChangeDTO
+asche_rQ1_t1 =
+  AssignCommentThreadEventChangeDTO
+    { uuid = aste_rQ1_t1.uuid
+    , path = aste_rQ1_t1.path
+    , threadUuid = aste_rQ1_t1.threadUuid
+    , private = aste_rQ1_t1.private
+    , assignedTo = aste_rQ1_t1.assignedTo
+    }
+
 dte_rQ1_t1' :: QuestionnaireEventDTO
 dte_rQ1_t1' = DeleteCommentThreadEventDTO' dte_rQ1_t1
 

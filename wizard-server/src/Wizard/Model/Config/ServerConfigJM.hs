@@ -108,6 +108,7 @@ instance FromJSON ServerConfigQuestionnaire where
   parseJSON (Object o) = do
     clean <- o .:? "clean" .!= defaultQuestionnaire.clean
     squash <- o .:? "squash" .!= defaultQuestionnaire.squash
+    assigneeNotification <- o .:? "assigneeNotification" .!= defaultQuestionnaire.assigneeNotification
     return ServerConfigQuestionnaire {..}
   parseJSON _ = mzero
 

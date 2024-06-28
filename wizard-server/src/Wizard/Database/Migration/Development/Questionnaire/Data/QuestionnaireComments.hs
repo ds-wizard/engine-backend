@@ -7,12 +7,15 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Constant.Tenant
+import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireCommentList
+import Wizard.Model.Questionnaire.QuestionnaireCommentThreadAssigned
 import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentMapper
+import Wizard.Service.User.UserMapper
 import WizardLib.Common.Model.Questionnaire.QuestionnaireUtil
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
@@ -34,6 +37,9 @@ cmtQ1_t1 =
     , private = False
     , questionnaireUuid = u' "af984a75-56e3-49f8-b16f-d6b99599910a"
     , tenantUuid = defaultTenantUuid
+    , assignedTo = Nothing
+    , assignedBy = Nothing
+    , notificationRequired = False
     , createdBy = Just userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -51,13 +57,16 @@ create_cmtQ1_t1 qtnUuid = do
       , private = False
       , questionnaireUuid = qtnUuid
       , tenantUuid = defaultTenantUuid
+      , assignedTo = Nothing
+      , assignedBy = Nothing
+      , notificationRequired = False
       , createdBy = Just userAlbert.uuid
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
       , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
       }
 
 cmtQ1_t1Dto :: QuestionnaireCommentThreadList
-cmtQ1_t1Dto = toCommentThreadList cmtQ1_t1 (Just userAlbert) [cmtQ1_t1_1Dto, cmtQ1_t1_2Dto]
+cmtQ1_t1Dto = toCommentThreadList cmtQ1_t1 Nothing (Just userAlbert) [cmtQ1_t1_1Dto, cmtQ1_t1_2Dto]
 
 cmtQ1_t1WithEditedCmt :: QuestionnaireCommentThread
 cmtQ1_t1WithEditedCmt = cmtQ1_t1 {comments = [cmtQ1_t1_1Edited, cmtQ1_t1_2]}
@@ -142,13 +151,16 @@ cmtQ2_t1 =
     , private = False
     , questionnaireUuid = u' "af984a75-56e3-49f8-b16f-d6b99599910a"
     , tenantUuid = defaultTenantUuid
+    , assignedTo = Nothing
+    , assignedBy = Nothing
+    , notificationRequired = False
     , createdBy = Just userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
 cmtQ2_t1Dto :: QuestionnaireCommentThreadList
-cmtQ2_t1Dto = toCommentThreadList cmtQ2_t1 (Just userAlbert) [cmtQ2_t1_1Dto]
+cmtQ2_t1Dto = toCommentThreadList cmtQ2_t1 Nothing (Just userAlbert) [cmtQ2_t1_1Dto]
 
 cmtQ2_t1_1 :: QuestionnaireComment
 cmtQ2_t1_1 =
@@ -164,3 +176,17 @@ cmtQ2_t1_1 =
 
 cmtQ2_t1_1Dto :: QuestionnaireCommentList
 cmtQ2_t1_1Dto = toCommentList cmtQ2_t1_1 (Just userAlbert)
+
+cmtAssigned :: QuestionnaireCommentThreadAssigned
+cmtAssigned =
+  QuestionnaireCommentThreadAssigned
+    { questionnaireUuid = u' "af984a75-56e3-49f8-b16f-d6b99599910a"
+    , questionnaireName = "My Private Questionnaire"
+    , commentThreadUuid = cmtQ1_t1.uuid
+    , path = cmtQ1_t1.path
+    , resolved = cmtQ1_t1.resolved
+    , private = cmtQ1_t1.private
+    , text = cmtQ1_t1_1.text
+    , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , updatedAt = dt' 2018 1 21
+    }

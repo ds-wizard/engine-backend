@@ -15,6 +15,7 @@ import Wizard.Service.Branch.Event.BranchEventService hiding (squash)
 import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.PersistentCommand.PersistentCommandService
+import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService hiding (squash)
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
@@ -34,6 +35,7 @@ workers =
   , persistentCommandRetryLambdaWorker
   , cleanQuestionnaireWorker
   , squashQuestionnaireEventsWorker
+  , assigneeNotificationWorker
   , registrySyncWorker
   , temporaryFileWorker
   , tenantPlanWorker
@@ -139,6 +141,17 @@ squashQuestionnaireEventsWorker =
     , cronDefault = "*/4 * * * *"
     , cron = (.serverConfig.questionnaire.squash.cron)
     , function = squashQuestionnaireEvents
+    , wrapInTransaction = True
+    }
+
+assigneeNotificationWorker :: CronWorker BaseContext AppContextM
+assigneeNotificationWorker =
+  CronWorker
+    { name = "AssigneeNotificationWorker"
+    , condition = (.serverConfig.questionnaire.assigneeNotification.enabled)
+    , cronDefault = "*/5 * * * *"
+    , cron = (.serverConfig.questionnaire.assigneeNotification.cron)
+    , function = sendNotificationToNewAssignees
     , wrapInTransaction = True
     }
 

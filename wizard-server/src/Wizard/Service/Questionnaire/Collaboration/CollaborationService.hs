@@ -172,6 +172,7 @@ setContent qtnUuid connectionUuid reqDto =
     SetLabelsEventChangeDTO' event -> setLabel qtnUuid connectionUuid event
     ResolveCommentThreadEventChangeDTO' event -> resolveCommentThread qtnUuid connectionUuid event
     ReopenCommentThreadEventChangeDTO' event -> reopenCommentThread qtnUuid connectionUuid event
+    AssignCommentThreadEventChangeDTO' event -> assignCommentThread qtnUuid connectionUuid event
     DeleteCommentThreadEventChangeDTO' event -> deleteCommentThread qtnUuid connectionUuid event
     AddCommentEventChangeDTO' event -> addComment qtnUuid connectionUuid event
     EditCommentEventChangeDTO' event -> editComment qtnUuid connectionUuid event
@@ -262,6 +263,22 @@ reopenCommentThread qtnUuid connectionUuid reqDto = do
           then filterEditors records
           else records
   broadcast (U.toString qtnUuid) filteredRecords (toReopenCommentThreadMessage resDto) disconnectUser
+
+assignCommentThread :: U.UUID -> U.UUID -> AssignCommentThreadEventChangeDTO -> AppContextM ()
+assignCommentThread qtnUuid connectionUuid reqDto = do
+  myself <- getFromCache' connectionUuid
+  checkCommentPermission myself
+  now <- liftIO getCurrentTime
+  let mCreatedBy = getMaybeCreatedBy myself
+  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  updateQuestionnaireCommentThreadAssignee reqDto.threadUuid (fmap (.uuid) reqDto.assignedTo) mCreatedByUuid
+  let resDto = toAssignCommentThreadEventDTO' reqDto mCreatedBy now
+  records <- getAllFromCache
+  let filteredRecords =
+        if reqDto.private
+          then filterEditors records
+          else records
+  broadcast (U.toString qtnUuid) filteredRecords (toAssignCommentThreadMessage resDto) disconnectUser
 
 deleteCommentThread :: U.UUID -> U.UUID -> DeleteCommentThreadEventChangeDTO -> AppContextM ()
 deleteCommentThread qtnUuid connectionUuid reqDto = do

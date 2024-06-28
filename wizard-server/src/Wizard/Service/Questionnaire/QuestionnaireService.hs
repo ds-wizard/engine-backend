@@ -263,7 +263,7 @@ getQuestionnaireDetailQuestionnaireById qtnUuid = do
       else return M.empty
   knowledgeModel <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
   qtnCtn <- compileQuestionnaire qtn
-  return $ toDetailQuestionnaireDTO qtn resolvedCommentCounts unresolvedCommentCounts knowledgeModel qtnCtn
+  return $ toDetailQuestionnaireDTO qtn unresolvedCommentCounts resolvedCommentCounts knowledgeModel qtnCtn
 
 getQuestionnaireDetailPreviewById :: U.UUID -> AppContextM QuestionnaireDetailPreview
 getQuestionnaireDetailPreviewById qtnUuid = do

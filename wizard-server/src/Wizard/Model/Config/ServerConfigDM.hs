@@ -139,6 +139,7 @@ defaultQuestionnaire =
   ServerConfigQuestionnaire
     { clean = defaultQuestionnaireClean
     , squash = defaultQuestionnaireSquash
+    , assigneeNotification = defaultQuestionnaireAssigneeNotification
     }
 
 defaultQuestionnaireClean :: ServerConfigCronWorker
@@ -148,6 +149,10 @@ defaultQuestionnaireClean =
 defaultQuestionnaireSquash :: ServerConfigCronWorker
 defaultQuestionnaireSquash =
   ServerConfigCronWorker {enabled = True, cron = squashQuestionnaireEventsWorker.cronDefault}
+
+defaultQuestionnaireAssigneeNotification :: ServerConfigCronWorker
+defaultQuestionnaireAssigneeNotification =
+  ServerConfigCronWorker {enabled = True, cron = assigneeNotificationWorker.cronDefault}
 
 defaultTemporaryFile :: ServerConfigTemporaryFile
 defaultTemporaryFile = ServerConfigTemporaryFile {clean = defaultTemporaryFileClean}

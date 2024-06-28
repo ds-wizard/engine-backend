@@ -99,17 +99,22 @@ createQtnCommentThreadTable = do
   let sql =
         "CREATE TABLE questionnaire_comment_thread \
         \( \
-        \    uuid               uuid        NOT NULL, \
-        \    path               text        NOT NULL, \
-        \    resolved           bool        NOT NULL, \
-        \    private            bool        NOT NULL, \
-        \    questionnaire_uuid uuid        NOT NULL, \
-        \    created_by         uuid, \
-        \    created_at         timestamptz NOT NULL, \
-        \    updated_at         timestamptz NOT NULL, \
-        \    tenant_uuid        uuid        NOT NULL, \
+        \    uuid                   uuid        NOT NULL, \
+        \    path                   text        NOT NULL, \
+        \    resolved               bool        NOT NULL, \
+        \    private                bool        NOT NULL, \
+        \    questionnaire_uuid     uuid        NOT NULL, \
+        \    created_by             uuid, \
+        \    created_at             timestamptz NOT NULL, \
+        \    updated_at             timestamptz NOT NULL, \
+        \    tenant_uuid            uuid        NOT NULL, \
+        \    assigned_to            uuid, \
+        \    assigned_by            uuid, \
+        \    notification_required  bool        NOT NULL DEFAULT false, \
         \    CONSTRAINT questionnaire_comment_thread_pk PRIMARY KEY (uuid, tenant_uuid), \
         \    CONSTRAINT questionnaire_comment_thread_questionnaire_uuid FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_comment_thread_assigned_to FOREIGN KEY (assigned_to, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_comment_thread_assigned_by FOREIGN KEY (assigned_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
         \    CONSTRAINT questionnaire_comment_thread_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
         \);"
   let action conn = execute_ conn sql

@@ -25,15 +25,16 @@ toCommentThreadsMap = foldl go M.empty
               Just threads -> threads
        in M.insert thread.path (thread : threads) commentThreadsMap
 
-toCommentThreadList :: QuestionnaireCommentThread -> Maybe User -> [QuestionnaireCommentList] -> QuestionnaireCommentThreadList
-toCommentThreadList thread mUser comments =
+toCommentThreadList :: QuestionnaireCommentThread -> Maybe User -> Maybe User -> [QuestionnaireCommentList] -> QuestionnaireCommentThreadList
+toCommentThreadList thread mAssignedTo mCreatedBy comments =
   QuestionnaireCommentThreadList
     { uuid = thread.uuid
     , path = thread.path
     , resolved = thread.resolved
     , comments = comments
     , private = thread.private
-    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mUser
+    , assignedTo = fmap (UM.toSuggestionDTO . UM.toSuggestion) mAssignedTo
+    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mCreatedBy
     , createdAt = thread.createdAt
     , updatedAt = thread.updatedAt
     }
@@ -48,6 +49,9 @@ toCommentThread event qtnUuid tenantUuid mCreatedByUuid now =
     , private = event.private
     , questionnaireUuid = qtnUuid
     , tenantUuid = tenantUuid
+    , assignedTo = Nothing
+    , assignedBy = Nothing
+    , notificationRequired = False
     , createdBy = mCreatedByUuid
     , createdAt = now
     , updatedAt = now

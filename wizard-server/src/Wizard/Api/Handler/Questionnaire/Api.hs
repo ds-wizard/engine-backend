@@ -23,6 +23,7 @@ import Wizard.Api.Handler.Questionnaire.List_POST
 import Wizard.Api.Handler.Questionnaire.List_POST_CloneUuid
 import Wizard.Api.Handler.Questionnaire.List_POST_FromTemplate
 import Wizard.Api.Handler.Questionnaire.ProjectTag.List_Suggestions_GET
+import Wizard.Api.Handler.Questionnaire.User.Api
 import Wizard.Model.Context.BaseContext
 
 type QuestionnaireAPI =
@@ -47,6 +48,7 @@ type QuestionnaireAPI =
           :<|> Detail_Revert_Preview_POST
           :<|> List_Suggestions_GET
           :<|> QuestionnaireCommentAPI
+          :<|> QuestionnaireUserAPI
        )
 
 questionnaireApi :: Proxy QuestionnaireAPI
@@ -74,3 +76,4 @@ questionnaireServer =
     :<|> detail_revert_preview_POST
     :<|> list_suggestions_GET
     :<|> questionnaireCommentServer
+    :<|> questionnaireUserServer

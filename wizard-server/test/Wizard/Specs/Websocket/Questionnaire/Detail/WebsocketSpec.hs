@@ -5,6 +5,7 @@ import Test.Hspec hiding (shouldBe)
 import Wizard.Model.Context.AppContext
 
 import Wizard.Specs.Websocket.Questionnaire.Detail.AddCommentSpec
+import Wizard.Specs.Websocket.Questionnaire.Detail.AssignCommentThreadSpec
 import Wizard.Specs.Websocket.Questionnaire.Detail.ClearReplySpec
 import Wizard.Specs.Websocket.Questionnaire.Detail.DeleteCommentSpec
 import Wizard.Specs.Websocket.Questionnaire.Detail.DeleteCommentThreadSpec
@@ -27,6 +28,7 @@ questionnaireWebsocketAPI appContext =
     setLabelsSpec appContext
     resolveCommentThreadSpec appContext
     reopenCommentThreadSpec appContext
+    assignCommentThreadSpec appContext
     deleteCommentThreadSpec appContext
     addCommentSpec appContext
     editCommentSpec appContext

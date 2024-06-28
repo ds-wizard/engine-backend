@@ -11,6 +11,9 @@ data QuestionnaireCommentThread = QuestionnaireCommentThread
   , comments :: [QuestionnaireComment]
   , private :: Bool
   , questionnaireUuid :: U.UUID
+  , assignedTo :: Maybe U.UUID
+  , assignedBy :: Maybe U.UUID
+  , notificationRequired :: Bool
   , createdBy :: Maybe U.UUID
   , tenantUuid :: U.UUID
   , createdAt :: UTCTime

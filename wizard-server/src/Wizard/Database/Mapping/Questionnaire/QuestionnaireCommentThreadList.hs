@@ -21,6 +21,23 @@ instance FromRow QuestionnaireCommentThreadList where
     private <- field
     createdAt <- field
     updatedAt <- field
+    mAssignedToUuid <- fieldWith (optionalField fromField)
+    mAssignedToFirstName <- fieldWith (optionalField fromField)
+    mAssignedToLastName <- fieldWith (optionalField fromField)
+    mAssignedToEmail <- fieldWith (optionalField fromField)
+    mAssignedToImageUrl <- fieldWith (optionalField fromField)
+    let assignedTo =
+          case (mAssignedToUuid, mAssignedToFirstName, mAssignedToLastName, mAssignedToEmail) of
+            (Just assignedToUuid, Just assignedToFirstName, Just assignedToLastName, Just assignedToEmail) ->
+              Just $
+                UserSuggestionDTO
+                  { uuid = assignedToUuid
+                  , firstName = assignedToFirstName
+                  , lastName = assignedToLastName
+                  , imageUrl = mAssignedToImageUrl
+                  , gravatarHash = createGravatarHash assignedToEmail
+                  }
+            _ -> Nothing
     mCreatedByUuid <- fieldWith (optionalField fromField)
     mCreatedByFirstName <- fieldWith (optionalField fromField)
     mCreatedByLastName <- fieldWith (optionalField fromField)
