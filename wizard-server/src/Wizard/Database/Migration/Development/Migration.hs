@@ -25,6 +25,7 @@ import qualified Wizard.Database.Migration.Development.DocumentTemplate.Document
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as Feedback
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as Feedback
 import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMigration as Instance
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSchemaMigration as KnowledgeModel
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as Locale
 import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorMigration as KnowledgeModelMigrator
@@ -55,6 +56,7 @@ runMigration = runAppContextWithBaseContext $ do
   Package.dropFunctions
   Common.dropFunctions
   -- 2. Drop schema
+  KnowledgeModel.dropTables
   Component.dropTables
   TemporaryFile.dropTables
   Locale.dropTables
@@ -101,6 +103,7 @@ runMigration = runAppContextWithBaseContext $ do
   Locale.createTables
   TemporaryFile.createTables
   Component.createTables
+  KnowledgeModel.createTables
   -- 4. Create DB functions
   Common.createFunctions
   Package.createFunctions

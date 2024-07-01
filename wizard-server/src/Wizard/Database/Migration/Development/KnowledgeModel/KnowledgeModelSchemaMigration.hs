@@ -1,29 +1,23 @@
-module Wizard.Database.Migration.Production.Migration_0046_tenantFeature.Migration (
-  definition,
-) where
+module Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSchemaMigration where
 
-import Control.Monad.Logger
-import Control.Monad.Reader (liftIO)
-import Data.Pool (Pool, withResource)
-import Database.PostgreSQL.Migration.Entity
 import Database.PostgreSQL.Simple
+import GHC.Int
 
-definition = (meta, migrate)
+import Shared.Common.Util.Logger
+import Wizard.Database.DAO.Common
+import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 
-meta = MigrationMeta {mmNumber = 46, mmName = "Tenant Feature", mmDescription = "Remove tenant feature column"}
-
-migrate :: Pool Connection -> LoggingT IO (Maybe Error)
-migrate dbPool = do
-  removeTenantConfigFeature dbPool
-  addKnowledgeModelCache dbPool
-
-removeTenantConfigFeature dbPool = do
-  let sql = "ALTER TABLE tenant_config DROP feature"
+dropTables :: AppContextM Int64
+dropTables = do
+  logInfo _CMP_MIGRATION "(Table/KnowledgeModel) drop tables"
+  let sql = "DROP TABLE IF EXISTS knowledge_model_cache;"
   let action conn = execute_ conn sql
-  liftIO $ withResource dbPool action
-  return Nothing
+  runDB action
 
-addKnowledgeModelCache dbPool = do
+createTables :: AppContextM Int64
+createTables = do
+  logInfo _CMP_MIGRATION "(Table/KnowledgeModel) create tables"
   let sql =
         "CREATE TABLE knowledge_model_cache \
         \( \
@@ -37,5 +31,4 @@ addKnowledgeModelCache dbPool = do
         \    CONSTRAINT knowledge_model_cache_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
         \);"
   let action conn = execute_ conn sql
-  liftIO $ withResource dbPool action
-  return Nothing
+  runDB action

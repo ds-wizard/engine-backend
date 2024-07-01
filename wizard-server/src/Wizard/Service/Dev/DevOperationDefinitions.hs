@@ -138,7 +138,15 @@ branch_squashEventsForBranch =
 -- ---------------------------------------------------------------------------------------------------------------------
 cache :: DevSection AppContextM
 cache =
-  DevSection {name = "Cache", description = Nothing, operations = [cache_purgeCache]}
+  DevSection
+    { name = "Cache"
+    , description = Nothing
+    , operations =
+        [ cache_purgeCache
+        , cache_getUserCacheSize
+        , cache_getUserTokenCacheSize
+        ]
+    }
 
 -- ---------------------------------------------------------------------------------------------------------------------
 cache_purgeCache :: DevOperation AppContextM
@@ -150,6 +158,26 @@ cache_purgeCache =
     , function = \reqDto -> do
         purgeCache
         return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+cache_getUserCacheSize :: DevOperation AppContextM
+cache_getUserCacheSize =
+  DevOperation
+    { name = "Get User Cache Size"
+    , description = Nothing
+    , parameters = []
+    , function = const computeUserCacheSize
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+cache_getUserTokenCacheSize :: DevOperation AppContextM
+cache_getUserTokenCacheSize =
+  DevOperation
+    { name = "Get User Token Cache Size"
+    , description = Nothing
+    , parameters = []
+    , function = const computeUserTokenCacheSize
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------

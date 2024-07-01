@@ -10,6 +10,7 @@ import Wizard.Api.Resource.Package.PackageChangeDTO
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelCacheDAO
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
@@ -139,6 +140,7 @@ deletePackagesByQueryParams queryParams =
     packages <- findPackagesFiltered queryParams
     let pIds = fmap (.pId) packages
     validatePackagesDeletation pIds
+    deleteKnowledgeModelCachesByPackageIds pIds
     deletePackagesFiltered queryParams
     return ()
 
@@ -148,6 +150,7 @@ deletePackage pkgId =
     checkPermission _PM_WRITE_PERM
     package <- findPackageById pkgId
     validatePackageDeletation pkgId
+    deleteKnowledgeModelCachesByPackageId pkgId
     deletePackageById pkgId
     return ()
 

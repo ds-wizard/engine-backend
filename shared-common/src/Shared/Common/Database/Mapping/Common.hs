@@ -3,6 +3,7 @@ module Shared.Common.Database.Mapping.Common where
 import Data.Aeson
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
+import qualified Data.List as L
 import qualified Data.Map.Strict as M
 import Data.Typeable
 import qualified Data.UUID as U
@@ -12,6 +13,8 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import GHC.Generics
 import Text.Read (readMaybe)
+
+import Shared.Common.Util.String
 
 toFieldGenericEnum :: Show enum => enum -> Action
 toFieldGenericEnum = Escape . BS.pack . show
@@ -48,3 +51,8 @@ instance FromRow U.UUID where
 
 instance FromRow Value where
   fromRow = fieldWith fromJSONField
+
+instance ToField [U.UUID] where
+  toField entities =
+    let encoded = f' "{%s}" [L.intercalate "," . fmap U.toString $ entities]
+     in Escape . BS.pack $ encoded
