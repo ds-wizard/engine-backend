@@ -5,18 +5,18 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Model.Questionnaire.QuestionnaireComment
+import Wizard.Model.Questionnaire.QuestionnaireCommentList
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as UM
 
-toCommentThreadsMap :: [QuestionnaireCommentThreadDTO] -> M.Map String [QuestionnaireCommentThreadDTO]
+toCommentThreadsMap :: [QuestionnaireCommentThreadList] -> M.Map String [QuestionnaireCommentThreadList]
 toCommentThreadsMap = foldl go M.empty
   where
     go
-      :: M.Map String [QuestionnaireCommentThreadDTO]
-      -> QuestionnaireCommentThreadDTO
-      -> M.Map String [QuestionnaireCommentThreadDTO]
+      :: M.Map String [QuestionnaireCommentThreadList]
+      -> QuestionnaireCommentThreadList
+      -> M.Map String [QuestionnaireCommentThreadList]
     go commentThreadsMap thread =
       let threads =
             case M.lookup thread.path commentThreadsMap of
@@ -25,10 +25,9 @@ toCommentThreadsMap = foldl go M.empty
               Just threads -> threads
        in M.insert thread.path (thread : threads) commentThreadsMap
 
-toCommentThreadDTO
-  :: QuestionnaireCommentThread -> Maybe User -> [QuestionnaireCommentDTO] -> QuestionnaireCommentThreadDTO
-toCommentThreadDTO thread mUser comments =
-  QuestionnaireCommentThreadDTO
+toCommentThreadList :: QuestionnaireCommentThread -> Maybe User -> [QuestionnaireCommentList] -> QuestionnaireCommentThreadList
+toCommentThreadList thread mUser comments =
+  QuestionnaireCommentThreadList
     { uuid = thread.uuid
     , path = thread.path
     , resolved = thread.resolved
@@ -54,9 +53,9 @@ toCommentThread event qtnUuid tenantUuid mCreatedByUuid now =
     , updatedAt = now
     }
 
-toCommentDTO :: QuestionnaireComment -> Maybe User -> QuestionnaireCommentDTO
-toCommentDTO comment mUser =
-  QuestionnaireCommentDTO
+toCommentList :: QuestionnaireComment -> Maybe User -> QuestionnaireCommentList
+toCommentList comment mUser =
+  QuestionnaireCommentList
     { uuid = comment.uuid
     , text = comment.text
     , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mUser

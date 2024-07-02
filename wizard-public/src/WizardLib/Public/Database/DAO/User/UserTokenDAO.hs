@@ -29,8 +29,8 @@ findUserTokens = do
   tenantUuid <- asks (.tenantUuid')
   createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
-findUserTokensByUserUuidAndType :: AppContextC s sc m => U.UUID -> UserTokenType -> Maybe U.UUID -> m [UserTokenList]
-findUserTokensByUserUuidAndType userUuid tokenType mCurrentTokenUuid = do
+findUserTokensByUserUuidAndTypeAndTokenUuid :: AppContextC s sc m => U.UUID -> UserTokenType -> Maybe U.UUID -> m [UserTokenList]
+findUserTokensByUserUuidAndTypeAndTokenUuid userUuid tokenType mCurrentTokenUuid = do
   tenantUuid <- asks (.tenantUuid')
   let currentSessionCondition =
         case mCurrentTokenUuid of
@@ -64,6 +64,11 @@ findUserTokensByUserUuid :: AppContextC s sc m => U.UUID -> m [UserToken]
 findUserTokensByUserUuid userUuid = do
   tenantUuid <- asks (.tenantUuid')
   createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("user_uuid", U.toString userUuid)]
+
+findUserTokensByUserUuidAndType :: AppContextC s sc m => U.UUID -> String -> m [UserToken]
+findUserTokensByUserUuidAndType userUuid aType = do
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("user_uuid", U.toString userUuid), ("type", aType)]
 
 findUserTokensBySessionState :: AppContextC s sc m => String -> m [UserToken]
 findUserTokensBySessionState sessionState = do

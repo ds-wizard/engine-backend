@@ -19,9 +19,6 @@ instance ToSchema TenantConfig where
 instance ToSchema TenantConfigOrganization where
   declareNamedSchema = toSwagger defaultOrganization
 
-instance ToSchema TenantConfigFeature where
-  declareNamedSchema = toSwagger defaultFeature
-
 instance ToSchema TenantConfigAuth where
   declareNamedSchema = toSwagger defaultAuth
 

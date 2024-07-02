@@ -4,10 +4,14 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+
 data Report = Report
   { uuid :: U.UUID
   , totalReport :: TotalReport
   , chapterReports :: [ChapterReport]
+  , chapters :: [Chapter]
+  , metrics :: [Metric]
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -18,6 +22,8 @@ instance Eq Report where
     a.uuid == b.uuid
       && a.totalReport == b.totalReport
       && a.chapterReports == b.chapterReports
+      && a.chapters == b.chapters
+      && a.metrics == b.metrics
 
 data TotalReport = TotalReport
   { indications :: [Indication]

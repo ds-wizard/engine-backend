@@ -6,6 +6,7 @@ import Control.Monad.Reader (ask, liftIO)
 import qualified Data.ByteString.Builder as BSB
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
+import qualified Data.List as L
 import Data.Maybe
 import Data.Pool
 import Data.String
@@ -50,6 +51,34 @@ runRawDB action = do
   case context.dbConnection' of
     Just dbConnection -> liftIO $ dbConnection `withConnection` action
     Nothing -> liftIO $ withResource context.dbPool' (`withConnection` action)
+
+runOneEntityDB :: AppContextC s sc m => String -> (Connection -> IO [b]) -> [(String, String)] -> m b
+runOneEntityDB entityName action queryParams = do
+  entities <- runDB action
+  case entities of
+    [] -> throwError $ NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName queryParams)
+    [entity] -> return entity
+    _ ->
+      throwError $
+        GeneralServerError
+          ( f'
+              "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)"
+              [entityName, show (fmap snd queryParams)]
+          )
+
+runOneEntityDB' :: AppContextC s sc m => String -> (Connection -> IO [b]) -> [(String, String)] -> m (Maybe b)
+runOneEntityDB' entityName action queryParams = do
+  entities <- runDB action
+  case entities of
+    [] -> return Nothing
+    [entity] -> return . Just $ entity
+    _ ->
+      throwError $
+        GeneralServerError
+          ( f'
+              "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)"
+              [entityName, show (fmap snd queryParams)]
+          )
 
 logQuery :: (AppContextC s sc m, ToRow q) => Query -> q -> m ()
 logQuery sql params = do
@@ -409,6 +438,21 @@ mapSortWithPrefix prefix xs = "ORDER BY " ++ createRecord xs
       case order of
         Ascending -> f' "%s.%s asc " [prefix, toSnake name]
         Descending -> f' "%s.%s desc " [prefix, toSnake name]
+
+mapSortWithCustomMapping :: [Sort] -> [(String, String)] -> String
+mapSortWithCustomMapping [] customMapping = ""
+mapSortWithCustomMapping xs customMapping = "ORDER BY " ++ createRecord xs
+  where
+    createRecord [sort] = create sort
+    createRecord (sort : xs) = create sort ++ ", " ++ mapSortWithCustomMapping xs customMapping
+    create (Sort name order) =
+      let sanitize name =
+            case L.find (\(cmName, value) -> cmName == name) customMapping of
+              Just (cmName, cmValue) -> cmValue
+              Nothing -> toSnake name
+       in case order of
+            Ascending -> f' "%s asc " [sanitize name]
+            Descending -> f' "%s desc " [sanitize name]
 
 preparePaginationVariables :: Pageable -> (Int, Int, Int, Int)
 preparePaginationVariables pageable =

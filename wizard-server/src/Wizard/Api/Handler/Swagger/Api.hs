@@ -66,15 +66,20 @@ import Wizard.Api.Resource.Package.Publish.PackagePublishMigrationSM ()
 import Wizard.Api.Resource.PackageBundle.PackageBundleFileSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailPreviewSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailReportSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailSettingsSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireSettingsChangeSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireShareChangeSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSimpleSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSuggestionSM ()
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeSM ()
@@ -133,7 +138,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.7.1"
+              , _infoVersion = "4.8.0"
               , _infoLicense =
                   Just $
                     License

@@ -8,9 +8,9 @@ import qualified Data.UUID as U
 
 import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Uuid
-import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.QuestionnaireComment
+import Wizard.Model.Questionnaire.QuestionnaireCommentList
 import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentMapper
 import WizardLib.Common.Model.Questionnaire.QuestionnaireUtil
@@ -18,7 +18,7 @@ import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Da
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
-qtnThreadsDto :: M.Map String [QuestionnaireCommentThreadDTO]
+qtnThreadsDto :: M.Map String [QuestionnaireCommentThreadList]
 qtnThreadsDto = M.fromList [(cmtQ1_path, [cmtQ1_t1Dto]), (cmtQ2_path, [cmtQ2_t1Dto])]
 
 cmtQ1_path :: String
@@ -56,8 +56,8 @@ create_cmtQ1_t1 qtnUuid = do
       , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
       }
 
-cmtQ1_t1Dto :: QuestionnaireCommentThreadDTO
-cmtQ1_t1Dto = toCommentThreadDTO cmtQ1_t1 (Just userAlbert) [cmtQ1_t1_1Dto, cmtQ1_t1_2Dto]
+cmtQ1_t1Dto :: QuestionnaireCommentThreadList
+cmtQ1_t1Dto = toCommentThreadList cmtQ1_t1 (Just userAlbert) [cmtQ1_t1_1Dto, cmtQ1_t1_2Dto]
 
 cmtQ1_t1WithEditedCmt :: QuestionnaireCommentThread
 cmtQ1_t1WithEditedCmt = cmtQ1_t1 {comments = [cmtQ1_t1_1Edited, cmtQ1_t1_2]}
@@ -94,8 +94,8 @@ create_cmtQ1_t1_1 threadUuid = do
       , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
       }
 
-cmtQ1_t1_1Dto :: QuestionnaireCommentDTO
-cmtQ1_t1_1Dto = toCommentDTO cmtQ1_t1_1 (Just userAlbert)
+cmtQ1_t1_1Dto :: QuestionnaireCommentList
+cmtQ1_t1_1Dto = toCommentList cmtQ1_t1_1 (Just userAlbert)
 
 cmtQ1_t1_1Edited :: QuestionnaireComment
 cmtQ1_t1_1Edited = cmtQ1_t1_1 {text = "EDITED: 1st comment to 1st question"}
@@ -103,7 +103,7 @@ cmtQ1_t1_1Edited = cmtQ1_t1_1 {text = "EDITED: 1st comment to 1st question"}
 cmtQ1_t1_2 :: QuestionnaireComment
 cmtQ1_t1_2 =
   QuestionnaireComment
-    { uuid = u' "09861528-7ca9-48d8-917c-3bf9f240bdf3"
+    { uuid = u' "a9861528-7ca9-48d8-917c-3bf9f240bdf3"
     , text = "2nd comment to 1st question"
     , threadUuid = cmtQ1_t1.uuid
     , tenantUuid = defaultTenantUuid
@@ -126,8 +126,8 @@ create_cmtQ1_t1_2 threadUuid = do
       , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
       }
 
-cmtQ1_t1_2Dto :: QuestionnaireCommentDTO
-cmtQ1_t1_2Dto = toCommentDTO cmtQ1_t1_2 (Just userAlbert)
+cmtQ1_t1_2Dto :: QuestionnaireCommentList
+cmtQ1_t1_2Dto = toCommentList cmtQ1_t1_2 (Just userAlbert)
 
 cmtQ2_path :: String
 cmtQ2_path = createReplyKey [chapter1.uuid, question2.uuid]
@@ -147,8 +147,8 @@ cmtQ2_t1 =
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
-cmtQ2_t1Dto :: QuestionnaireCommentThreadDTO
-cmtQ2_t1Dto = toCommentThreadDTO cmtQ2_t1 (Just userAlbert) [cmtQ2_t1_1Dto]
+cmtQ2_t1Dto :: QuestionnaireCommentThreadList
+cmtQ2_t1Dto = toCommentThreadList cmtQ2_t1 (Just userAlbert) [cmtQ2_t1_1Dto]
 
 cmtQ2_t1_1 :: QuestionnaireComment
 cmtQ2_t1_1 =
@@ -162,5 +162,5 @@ cmtQ2_t1_1 =
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
-cmtQ2_t1_1Dto :: QuestionnaireCommentDTO
-cmtQ2_t1_1Dto = toCommentDTO cmtQ2_t1_1 (Just userAlbert)
+cmtQ2_t1_1Dto :: QuestionnaireCommentList
+cmtQ2_t1_1Dto = toCommentList cmtQ2_t1_1 (Just userAlbert)

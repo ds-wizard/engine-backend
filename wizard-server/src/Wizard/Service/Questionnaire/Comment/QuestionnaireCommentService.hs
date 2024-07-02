@@ -1,27 +1,29 @@
 module Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService where
 
+import Control.Monad.Except (catchError)
 import Control.Monad.Reader (liftIO)
 import Data.Foldable (traverse_)
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
 import Shared.Common.Util.Uuid
-import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireComment
+import Wizard.Model.Questionnaire.QuestionnaireCommentList
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentMapper
-import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentUtil
+import Wizard.Service.Questionnaire.QuestionnaireAcl
 
-getQuestionnaireComments :: Questionnaire -> AppContextM (M.Map String [QuestionnaireCommentThreadDTO])
-getQuestionnaireComments qtn = do
-  threads <- findQuestionnaireCommentThreads qtn.uuid
-  filteredThreads <- filterComments qtn threads
-  threadsDto <- traverse enhanceQuestionnaireCommentThread filteredThreads
-  let commentThreadsMap = toCommentThreadsMap threadsDto
-  return commentThreadsMap
+getQuestionnaireCommentsByQuestionnaireUuid :: U.UUID -> Maybe String -> Maybe Bool -> AppContextM (M.Map String [QuestionnaireCommentThreadList])
+getQuestionnaireCommentsByQuestionnaireUuid qtnUuid mPath mResolved = do
+  qtn <- findQuestionnaireByUuid qtnUuid
+  checkCommentPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
+  editor <- catchError (hasEditPermissionToQtn qtn.visibility qtn.sharing qtn.permissions) (\_ -> return False)
+  threads <- findQuestionnaireCommentThreadsForQuestionnaire qtn.uuid mPath mResolved editor
+  return . toCommentThreadsMap $ threads
 
 duplicateCommentThreads :: U.UUID -> U.UUID -> AppContextM ()
 duplicateCommentThreads oldQtnUuid newQtnUuid = do

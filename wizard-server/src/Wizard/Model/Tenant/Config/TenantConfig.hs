@@ -23,7 +23,6 @@ data TenantConfig = TenantConfig
   , knowledgeModel :: TenantConfigKnowledgeModel
   , questionnaire :: TenantConfigQuestionnaire
   , submission :: TenantConfigSubmission
-  , feature :: TenantConfigFeature
   , owl :: TenantConfigOwl
   , mailConfigUuid :: Maybe U.UUID
   , createdAt :: UTCTime
@@ -42,7 +41,6 @@ instance Eq TenantConfig where
       && registry a == registry b
       && questionnaire a == questionnaire b
       && submission a == submission b
-      && feature a == feature b
       && owl a == owl b
       && mailConfigUuid a == mailConfigUuid b
 
@@ -241,12 +239,6 @@ data TenantConfigSubmissionServiceRequest = TenantConfigSubmissionServiceRequest
 data TenantConfigSubmissionServiceRequestMultipart = TenantConfigSubmissionServiceRequestMultipart
   { enabled :: Bool
   , fileName :: String
-  }
-  deriving (Generic, Eq, Show)
-
-data TenantConfigFeature = TenantConfigFeature
-  { pdfOnlyEnabled :: Bool
-  , pdfWatermarkEnabled :: Bool
   }
   deriving (Generic, Eq, Show)
 

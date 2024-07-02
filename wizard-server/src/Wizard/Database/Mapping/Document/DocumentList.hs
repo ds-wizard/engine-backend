@@ -16,6 +16,8 @@ instance FromRow DocumentList where
     questionnaireUuid <- field
     questionnaireName <- field
     questionnaireEventUuid <- field
+    questionnaireVersion <- field
+    documentTemplateId <- field
     documentTemplateName <- field
     documentTemplateFormats <- fieldWith fromJSONField
     formatUuid <- field

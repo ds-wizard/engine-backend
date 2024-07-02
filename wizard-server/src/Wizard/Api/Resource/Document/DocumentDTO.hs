@@ -17,6 +17,8 @@ data DocumentDTO = DocumentDTO
   , state :: DocumentState
   , questionnaire :: Maybe QuestionnaireSimple
   , questionnaireEventUuid :: Maybe U.UUID
+  , questionnaireVersion :: Maybe String
+  , documentTemplateId :: String
   , documentTemplateName :: String
   , format :: Maybe DocumentTemplateFormatDTO
   , fileSize :: Maybe Int64

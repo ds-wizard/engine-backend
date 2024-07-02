@@ -69,7 +69,6 @@ createTenantConfigTable = do
         \    submission                 json        NOT NULL, \
         \    created_at                 timestamptz NOT NULL, \
         \    updated_at                 timestamptz NOT NULL, \
-        \    feature                    json        NOT NULL, \
         \    owl                        json        NOT NULL, \
         \    mail_config_uuid           uuid, \
         \    CONSTRAINT tenant_config_pk PRIMARY KEY (uuid), \

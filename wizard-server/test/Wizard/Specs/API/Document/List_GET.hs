@@ -61,21 +61,33 @@ test_200 appContext = do
     ( Page
         "documents"
         (PageMetadata 20 3 1 0)
-        [ toDTOWithDocTemplate doc1 (Just questionnaire1Simple) [] wizardDocumentTemplate
-        , toDTOWithDocTemplate doc2 (Just questionnaire2Simple) [] wizardDocumentTemplate
-        , toDTOWithDocTemplate doc3 (Just questionnaire2Simple) [] wizardDocumentTemplate
+        [ toDTOWithDocTemplate doc1 (Just questionnaire1Simple) (Just "Version 1") [] wizardDocumentTemplate
+        , toDTOWithDocTemplate doc2 (Just questionnaire2Simple) (Just "Version 1") [] wizardDocumentTemplate
+        , toDTOWithDocTemplate doc3 (Just questionnaire2Simple) (Just "Version 1") [] wizardDocumentTemplate
         ]
     )
   create_test_200
     "HTTP 200 OK (query)"
     appContext
     "/wizard-api/documents?q=My exported document 2"
-    (Page "documents" (PageMetadata 20 1 1 0) [toDTOWithDocTemplate doc2 (Just questionnaire2Simple) [] wizardDocumentTemplate])
+    (Page "documents" (PageMetadata 20 1 1 0) [toDTOWithDocTemplate doc2 (Just questionnaire2Simple) (Just "Version 1") [] wizardDocumentTemplate])
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext
     "/wizard-api/documents?q=Non-existing document"
     (Page "documents" (PageMetadata 20 0 0 0) ([] :: [DocumentDTO]))
+  create_test_200
+    "HTTP 200 OK (documentTemplateId)"
+    appContext
+    "/wizard-api/documents?documentTemplateId=global:questionnaire-report:1.0.0&sort=name,asc"
+    ( Page
+        "documents"
+        (PageMetadata 20 3 1 0)
+        [ toDTOWithDocTemplate doc1 (Just questionnaire1Simple) (Just "Version 1") [] wizardDocumentTemplate
+        , toDTOWithDocTemplate doc2 (Just questionnaire2Simple) (Just "Version 1") [] wizardDocumentTemplate
+        , toDTOWithDocTemplate doc3 (Just questionnaire2Simple) (Just "Version 1") [] wizardDocumentTemplate
+        ]
+    )
 
 create_test_200 title appContext reqUrl expDto =
   it title $

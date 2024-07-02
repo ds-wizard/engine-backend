@@ -4,7 +4,7 @@ import Data.Aeson
 
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailJM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireJM ()
 
 instance FromJSON MigratorStateDTO where
   parseJSON = genericParseJSON jsonOptions

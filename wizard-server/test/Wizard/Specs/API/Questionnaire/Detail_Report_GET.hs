@@ -14,7 +14,8 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
-import Wizard.Api.Resource.Report.ReportJM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailReportDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailReportJM ()
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -83,7 +84,7 @@ create_test_200 title appContext qtn authHeader =
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
       result <- destructResponse' response
-      let (status, headers, resBody) = result :: (Int, ResponseHeaders, Report)
+      let (status, headers, resBody) = result :: (Int, ResponseHeaders, QuestionnaireDetailReportDTO)
       assertResStatus status expStatus
       assertResHeaders headers expHeaders
       compareReportDtos resBody expDto

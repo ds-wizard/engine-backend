@@ -5,13 +5,14 @@ import qualified Data.Map.Strict as M
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
-import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireSettingsChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireShareChangeDTO
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
@@ -78,6 +79,21 @@ questionnaire1Edited =
     , permissions = []
     }
 
+questionnaire1ShareEdited :: Questionnaire
+questionnaire1ShareEdited =
+  questionnaire1
+    { visibility = VisibleEditQuestionnaire
+    , sharing = RestrictedQuestionnaire
+    , permissions = []
+    }
+
+questionnaire1SettingsEdited :: Questionnaire
+questionnaire1SettingsEdited =
+  questionnaire1
+    { name = "EDITED: " ++ questionnaire1.name
+    , projectTags = [_QUESTIONNAIRE_PROJECT_TAG_1, _QUESTIONNAIRE_PROJECT_TAG_2]
+    }
+
 questionnaire1ContentEdited :: Questionnaire
 questionnaire1ContentEdited = questionnaire1 {events = fEventsEdited}
 
@@ -115,18 +131,23 @@ questionnaire1Create =
     , formatUuid = questionnaire1.formatUuid
     }
 
-questionnaire1EditedChange :: QuestionnaireChangeDTO
-questionnaire1EditedChange =
-  QuestionnaireChangeDTO
-    { name = questionnaire1Edited.name
-    , description = questionnaire1Edited.description
-    , visibility = questionnaire1Edited.visibility
-    , sharing = questionnaire1Edited.sharing
-    , projectTags = questionnaire1Edited.projectTags
-    , permissions = fmap toQuestionnairePermChangeDTO questionnaire1Edited.permissions
+questionnaire1EditedShareChange :: QuestionnaireShareChangeDTO
+questionnaire1EditedShareChange =
+  QuestionnaireShareChangeDTO
+    { visibility = questionnaire1ShareEdited.visibility
+    , sharing = questionnaire1ShareEdited.sharing
+    , permissions = fmap toQuestionnairePermChangeDTO questionnaire1ShareEdited.permissions
+    }
+
+questionnaire1SettingsChange :: QuestionnaireSettingsChangeDTO
+questionnaire1SettingsChange =
+  QuestionnaireSettingsChangeDTO
+    { name = questionnaire1SettingsEdited.name
+    , description = questionnaire1SettingsEdited.description
+    , projectTags = questionnaire1SettingsEdited.projectTags
     , documentTemplateId = Nothing
     , formatUuid = Nothing
-    , isTemplate = questionnaire1Edited.isTemplate
+    , isTemplate = questionnaire1SettingsEdited.isTemplate
     }
 
 qtn1AlbertEditQtnPerm :: QuestionnairePerm
@@ -193,6 +214,25 @@ questionnaire2Edited =
     , tenantUuid = defaultTenant.uuid
     , createdAt = questionnaire2.createdAt
     , updatedAt = questionnaire2.updatedAt
+    }
+
+questionnaire2ShareEdited :: Questionnaire
+questionnaire2ShareEdited =
+  questionnaire2
+    { visibility = VisibleEditQuestionnaire
+    , sharing = RestrictedQuestionnaire
+    , permissions = []
+    }
+
+questionnaire2SettingsEdited :: Questionnaire
+questionnaire2SettingsEdited =
+  questionnaire2
+    { name = "EDITED: " ++ questionnaire2.name
+    , description = Just "EDITED: Some description"
+    , documentTemplateId = Just $ wizardDocumentTemplate.tId
+    , formatUuid = Just $ formatJson.uuid
+    , creatorUuid = Just $ userAlbert.uuid
+    , isTemplate = False
     }
 
 questionnaire2Ctn :: QuestionnaireContent
@@ -493,8 +533,11 @@ questionnaire10Ctn =
     , labels = fLabels
     }
 
-questionnaire10Edited :: Questionnaire
-questionnaire10Edited = questionnaire10 {permissions = [qtn10NikolaEditQtnPerm]}
+questionnaire10EditedShare :: Questionnaire
+questionnaire10EditedShare = questionnaire10 {permissions = [qtn10NikolaEditQtnPerm]}
+
+questionnaire10EditedSettings :: Questionnaire
+questionnaire10EditedSettings = questionnaire10 {name = "EDITED: " ++ questionnaire10.name}
 
 qtn10NikolaEditQtnPerm :: QuestionnairePerm
 qtn10NikolaEditQtnPerm =
@@ -509,15 +552,12 @@ qtn10NikolaEditQtnPerm =
 qtn10NikolaEditQtnPermDto :: QuestionnairePermDTO
 qtn10NikolaEditQtnPermDto = toUserQuestionnairePermDTO qtn10NikolaEditQtnPerm userNikola
 
-questionnaire10EditedChange :: QuestionnaireChangeDTO
-questionnaire10EditedChange =
-  QuestionnaireChangeDTO
+questionnaire10EditedSettingsChange :: QuestionnaireSettingsChangeDTO
+questionnaire10EditedSettingsChange =
+  QuestionnaireSettingsChangeDTO
     { name = "EDITED: " ++ questionnaire10.name
     , description = questionnaire10.description
-    , visibility = questionnaire10.visibility
-    , sharing = questionnaire10.sharing
     , projectTags = questionnaire10.projectTags
-    , permissions = fmap toQuestionnairePermChangeDTO questionnaire10.permissions
     , documentTemplateId = Nothing
     , formatUuid = Nothing
     , isTemplate = questionnaire10.isTemplate
@@ -526,17 +566,17 @@ questionnaire10EditedChange =
 questionnaire10EditedWs :: QuestionnaireDetailWsDTO
 questionnaire10EditedWs =
   QuestionnaireDetailWsDTO
-    { name = questionnaire10EditedChange.name
-    , description = questionnaire10EditedChange.description
-    , visibility = questionnaire10EditedChange.visibility
-    , sharing = questionnaire10EditedChange.sharing
-    , projectTags = questionnaire10EditedChange.projectTags
+    { name = questionnaire10EditedSettingsChange.name
+    , description = questionnaire10EditedSettingsChange.description
+    , visibility = questionnaire10.visibility
+    , sharing = questionnaire10.sharing
+    , projectTags = questionnaire10EditedSettingsChange.projectTags
     , permissions = []
     , documentTemplateId = Nothing
     , documentTemplate = Nothing
     , formatUuid = Nothing
     , format = Nothing
-    , isTemplate = questionnaire10EditedChange.isTemplate
+    , isTemplate = questionnaire10EditedSettingsChange.isTemplate
     }
 
 -- ------------------------------------------------------------------------

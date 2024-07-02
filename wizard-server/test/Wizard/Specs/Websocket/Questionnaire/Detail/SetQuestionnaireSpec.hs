@@ -51,9 +51,9 @@ test200 appContext =
       let request =
             HttpRequest
               { requestMethod = "PUT"
-              , requestUrl = "/wizard-api/questionnaires/" ++ U.toString questionnaire10.uuid
+              , requestUrl = "/wizard-api/questionnaires/" ++ U.toString questionnaire10.uuid ++ "/settings"
               , requestHeaders = M.fromList [("Authorization", "Bearer " ++ reqAuthToken), ("Content-Type", "application/json")]
-              , requestBody = BSL.toStrict . encode $ questionnaire10EditedChange
+              , requestBody = BSL.toStrict . encode $ questionnaire10EditedSettingsChange
               , multipart = Nothing
               }
       -- AND: Prepare expectation

@@ -18,9 +18,7 @@ import Prelude hiding (until)
 import Shared.Common.Util.List
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
-import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanChangeDTO
 import WizardLib.Public.Database.DAO.Tenant.TenantPlanDAO
@@ -55,9 +53,6 @@ recomputePlansForTenant tenant = do
   -- Recompute features & limits
   case mActivePlan of
     Just activePlan -> do
-      tenantConfig <- getTenantConfigByUuid tenant.uuid
-      let updatedTenantConfig = turnTestPlanFeature activePlan.test tenantConfig
-      when (tenantConfig.feature /= updatedTenantConfig.feature) (void $ modifyTenantConfig updatedTenantConfig)
       recomputeLimitBundle tenant.uuid activePlan.users
       return ()
     Nothing -> return ()
@@ -72,13 +67,3 @@ isPlanActive now plan =
     (Just since, Nothing) -> since <= now
     (Nothing, Just until) -> now <= until
     (Nothing, Nothing) -> True
-
-turnTestPlanFeature :: Bool -> TenantConfig -> TenantConfig
-turnTestPlanFeature enabled tenantConfig =
-  tenantConfig
-    { feature =
-        tenantConfig.feature
-          { pdfOnlyEnabled = enabled
-          , pdfWatermarkEnabled = enabled
-          }
-    }

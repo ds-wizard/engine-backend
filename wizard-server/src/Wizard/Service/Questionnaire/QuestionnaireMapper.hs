@@ -5,28 +5,30 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireSettingsChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireShareChangeDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Constant.Acl
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireCommentList
 import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireList
 import Wizard.Model.Questionnaire.QuestionnairePerm
-import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
@@ -34,7 +36,6 @@ import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.Acl.AclMapper
-import qualified Wizard.Service.Package.PackageMapper as PM
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import WizardLib.DocumentTemplate.Constant.DocumentTemplate
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -95,50 +96,30 @@ toSimpleDTO qtn package state permissions =
     , updatedAt = qtn.updatedAt
     }
 
-toDetailWithPackageWithEventsDTO
-  :: Questionnaire
-  -> QuestionnaireContent
-  -> Package
-  -> KnowledgeModel
-  -> QuestionnaireState
-  -> Maybe DocumentTemplate
-  -> Maybe DocumentTemplateFormat
-  -> M.Map String Reply
-  -> M.Map String [QuestionnaireCommentThreadDTO]
-  -> [QuestionnairePermDTO]
-  -> [QuestionnaireVersionDTO]
-  -> Maybe U.UUID
-  -> QuestionnaireDetailDTO
-toDetailWithPackageWithEventsDTO qtn qtnCtn pkg knowledgeModel state mTemplate mFormat replies threads qtnPerms versions mMigrationUuid =
-  QuestionnaireDetailDTO
+toDetailQuestionnaire :: Questionnaire -> Maybe U.UUID -> [QuestionnairePermDTO] -> Int -> Int -> QuestionnaireDetailQuestionnaire
+toDetailQuestionnaire qtn migrationUuid permissions questionnaireActionsAvailable questionnaireImportersAvailable =
+  QuestionnaireDetailQuestionnaire
     { uuid = qtn.uuid
     , name = qtn.name
-    , description = qtn.description
-    , phaseUuid = qtnCtn.phaseUuid
     , visibility = qtn.visibility
     , sharing = qtn.sharing
-    , state = state
-    , package = PM.toSimpleDTO' [] [] pkg
+    , packageId = qtn.packageId
     , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
-    , projectTags = qtn.projectTags
-    , documentTemplateId = qtn.documentTemplateId
-    , documentTemplate = fmap STM.toDTO mTemplate
-    , formatUuid = qtn.formatUuid
-    , format = fmap toFormatDTO mFormat
-    , documentTemplateState = toQuestionnaireDetailTemplateState mTemplate
-    , documentTemplatePhase = fmap (.phase) mTemplate
-    , knowledgeModel = knowledgeModel
-    , replies = replies
-    , commentThreadsMap = threads
-    , labels = qtnCtn.labels
-    , permissions = qtnPerms
-    , versions = versions
-    , creatorUuid = qtn.creatorUuid
     , isTemplate = qtn.isTemplate
-    , migrationUuid = mMigrationUuid
-    , createdAt = qtn.createdAt
-    , updatedAt = qtn.updatedAt
+    , migrationUuid = migrationUuid
+    , permissions = permissions
+    , events = qtn.events
+    , questionnaireActionsAvailable = questionnaireActionsAvailable
+    , questionnaireImportersAvailable = questionnaireImportersAvailable
     }
+
+toDetailDTO :: QuestionnaireDetailQuestionnaire -> QuestionnaireDetailDTO
+toDetailDTO QuestionnaireDetailQuestionnaire {..} =
+  QuestionnaireDetailDTO {..}
+
+toDetailQuestionnaireDTO :: QuestionnaireDetailQuestionnaire -> M.Map String (M.Map U.UUID Int) -> KnowledgeModel -> QuestionnaireContent -> QuestionnaireDetailQuestionnaireDTO
+toDetailQuestionnaireDTO QuestionnaireDetailQuestionnaire {..} commentCounts knowledgeModel QuestionnaireContent {..} =
+  QuestionnaireDetailQuestionnaireDTO {..}
 
 toDetailWsDTO :: Questionnaire -> Maybe DocumentTemplate -> Maybe DocumentTemplateFormat -> [QuestionnairePermDTO] -> QuestionnaireDetailWsDTO
 toDetailWsDTO qtn mTemplate mFormat qtnPerms =
@@ -158,7 +139,7 @@ toDetailWsDTO qtn mTemplate mFormat qtnPerms =
 
 toContentDTO
   :: QuestionnaireContent
-  -> M.Map String [QuestionnaireCommentThreadDTO]
+  -> M.Map String [QuestionnaireCommentThreadList]
   -> [QuestionnaireEventDTO]
   -> [QuestionnaireVersionDTO]
   -> QuestionnaireContentDTO
@@ -175,18 +156,12 @@ toContentDTO qtnCtn threads events versions =
 toQuestionnaireReportDTO :: [Indication] -> QuestionnaireReportDTO
 toQuestionnaireReportDTO indications = QuestionnaireReportDTO {indications = indications}
 
-toChangeDTO :: Questionnaire -> QuestionnaireChangeDTO
+toChangeDTO :: Questionnaire -> QuestionnaireShareChangeDTO
 toChangeDTO qtn =
-  QuestionnaireChangeDTO
-    { name = qtn.name
-    , description = qtn.description
-    , visibility = qtn.visibility
+  QuestionnaireShareChangeDTO
+    { visibility = qtn.visibility
     , sharing = qtn.sharing
-    , projectTags = qtn.projectTags
     , permissions = fmap toQuestionnairePermChangeDTO qtn.permissions
-    , documentTemplateId = qtn.documentTemplateId
-    , formatUuid = qtn.formatUuid
-    , isTemplate = qtn.isTemplate
     }
 
 toUserQuestionnairePerm :: U.UUID -> U.UUID -> [String] -> U.UUID -> QuestionnairePerm
@@ -255,28 +230,45 @@ toQuestionnaireDetailTemplateState =
           else DefaultDocumentTemplateState
     )
 
-fromChangeDTO
-  :: Questionnaire
-  -> QuestionnaireChangeDTO
-  -> QuestionnaireVisibility
-  -> QuestionnaireSharing
-  -> UserDTO
-  -> UTCTime
-  -> Questionnaire
-fromChangeDTO qtn dto visibility sharing currentUser now =
+fromShareChangeDTO :: Questionnaire -> QuestionnaireShareChangeDTO -> QuestionnaireVisibility -> QuestionnaireSharing -> UTCTime -> Questionnaire
+fromShareChangeDTO qtn dto visibility sharing now =
+  Questionnaire
+    { uuid = qtn.uuid
+    , name = qtn.name
+    , description = qtn.description
+    , visibility = visibility
+    , sharing = sharing
+    , packageId = qtn.packageId
+    , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
+    , projectTags = qtn.projectTags
+    , documentTemplateId = qtn.documentTemplateId
+    , formatUuid = qtn.formatUuid
+    , creatorUuid = qtn.creatorUuid
+    , permissions = fmap (fromQuestionnairePermChangeDTO qtn.uuid qtn.tenantUuid) dto.permissions
+    , events = qtn.events
+    , versions = qtn.versions
+    , isTemplate = qtn.isTemplate
+    , squashed = qtn.squashed
+    , tenantUuid = qtn.tenantUuid
+    , createdAt = qtn.createdAt
+    , updatedAt = now
+    }
+
+fromSettingsChangeDTO :: Questionnaire -> QuestionnaireSettingsChangeDTO -> UserDTO -> UTCTime -> Questionnaire
+fromSettingsChangeDTO qtn dto currentUser now =
   Questionnaire
     { uuid = qtn.uuid
     , name = dto.name
     , description = dto.description
-    , visibility = visibility
-    , sharing = sharing
+    , visibility = qtn.visibility
+    , sharing = qtn.sharing
     , packageId = qtn.packageId
     , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
     , projectTags = dto.projectTags
     , documentTemplateId = dto.documentTemplateId
     , formatUuid = dto.formatUuid
     , creatorUuid = qtn.creatorUuid
-    , permissions = fmap (fromQuestionnairePermChangeDTO qtn.uuid qtn.tenantUuid) dto.permissions
+    , permissions = qtn.permissions
     , events = qtn.events
     , versions = qtn.versions
     , isTemplate =

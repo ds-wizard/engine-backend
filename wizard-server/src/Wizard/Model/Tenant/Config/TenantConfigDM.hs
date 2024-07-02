@@ -14,7 +14,6 @@ defaultTenantConfig =
   TenantConfig
     { uuid = U.nil
     , organization = defaultOrganization
-    , feature = defaultFeature
     , authentication = defaultAuth
     , privacyAndSupport = defaultPrivacyAndSupport
     , dashboardAndLoginScreen = defaultDashboardAndLoginScreen
@@ -36,13 +35,6 @@ defaultOrganization =
     , description = "My description"
     , organizationId = "organization"
     , affiliations = []
-    }
-
-defaultFeature :: TenantConfigFeature
-defaultFeature =
-  TenantConfigFeature
-    { pdfOnlyEnabled = False
-    , pdfWatermarkEnabled = False
     }
 
 defaultAuth :: TenantConfigAuth

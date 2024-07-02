@@ -15,6 +15,8 @@ data DocumentList = DocumentList
   , questionnaireUuid :: U.UUID
   , questionnaireName :: String
   , questionnaireEventUuid :: Maybe U.UUID
+  , questionnaireVersion :: Maybe String
+  , documentTemplateId :: String
   , documentTemplateName :: String
   , documentTemplateFormats :: [DocumentTemplateFormat]
   , formatUuid :: U.UUID

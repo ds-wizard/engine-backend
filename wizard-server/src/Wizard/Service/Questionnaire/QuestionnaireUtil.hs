@@ -6,7 +6,6 @@ import GHC.Records
 
 import Shared.Common.Model.Common.Lens
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
@@ -30,7 +29,6 @@ import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import Wizard.Service.Report.ReportGenerator
 import Wizard.Service.Tenant.Config.ConfigService
-import WizardLib.KnowledgeModel.Model.Package.Package
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 
 extractVisibility dto = do
@@ -44,13 +42,6 @@ extractSharing dto = do
   if tenantConfig.questionnaire.questionnaireSharing.enabled
     then return dto.sharing
     else return $ tenantConfig.questionnaire.questionnaireSharing.defaultValue
-
-enhanceQuestionnaire :: Questionnaire -> AppContextM QuestionnaireDTO
-enhanceQuestionnaire qtn = do
-  pkg <- getPackageById qtn.packageId
-  state <- getQuestionnaireState qtn.uuid pkg.pId
-  permissionDtos <- traverse enhanceQuestionnairePerm qtn.permissions
-  return $ toDTO qtn pkg state permissionDtos
 
 enhanceQuestionnairePerm :: QuestionnairePerm -> AppContextM QuestionnairePermDTO
 enhanceQuestionnairePerm qtnPerm =

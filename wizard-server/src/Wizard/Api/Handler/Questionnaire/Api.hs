@@ -3,15 +3,20 @@ module Wizard.Api.Handler.Questionnaire.Api where
 import Servant
 import Servant.Swagger.Tags
 
+import Wizard.Api.Handler.Questionnaire.Comment.Api
 import Wizard.Api.Handler.Questionnaire.Detail_Content_PUT
 import Wizard.Api.Handler.Questionnaire.Detail_DELETE
 import Wizard.Api.Handler.Questionnaire.Detail_Documents_GET
 import Wizard.Api.Handler.Questionnaire.Detail_Documents_Preview_GET
 import Wizard.Api.Handler.Questionnaire.Detail_GET
-import Wizard.Api.Handler.Questionnaire.Detail_PUT
+import Wizard.Api.Handler.Questionnaire.Detail_Preview_GET
+import Wizard.Api.Handler.Questionnaire.Detail_Questionnaire_GET
 import Wizard.Api.Handler.Questionnaire.Detail_Report_GET
 import Wizard.Api.Handler.Questionnaire.Detail_Revert_POST
 import Wizard.Api.Handler.Questionnaire.Detail_Revert_Preview_POST
+import Wizard.Api.Handler.Questionnaire.Detail_Settings_GET
+import Wizard.Api.Handler.Questionnaire.Detail_Settings_PUT
+import Wizard.Api.Handler.Questionnaire.Detail_Share_PUT
 import Wizard.Api.Handler.Questionnaire.Detail_WS
 import Wizard.Api.Handler.Questionnaire.List_GET
 import Wizard.Api.Handler.Questionnaire.List_POST
@@ -27,7 +32,11 @@ type QuestionnaireAPI =
           :<|> List_POST_FromTemplate
           :<|> List_POST_CloneUuid
           :<|> Detail_GET
-          :<|> Detail_PUT
+          :<|> Detail_Questionnaire_GET
+          :<|> Detail_Preview_GET
+          :<|> Detail_Settings_GET
+          :<|> Detail_Settings_PUT
+          :<|> Detail_Share_PUT
           :<|> Detail_DELETE
           :<|> Detail_Content_PUT
           :<|> Detail_Report_GET
@@ -37,6 +46,7 @@ type QuestionnaireAPI =
           :<|> Detail_Revert_POST
           :<|> Detail_Revert_Preview_POST
           :<|> List_Suggestions_GET
+          :<|> QuestionnaireCommentAPI
        )
 
 questionnaireApi :: Proxy QuestionnaireAPI
@@ -49,7 +59,11 @@ questionnaireServer =
     :<|> list_POST_FromTemplate
     :<|> list_POST_CloneUuid
     :<|> detail_GET
-    :<|> detail_PUT
+    :<|> detail_questionnaire_GET
+    :<|> detail_preview_GET
+    :<|> detail_settings_GET
+    :<|> detail_settings_PUT
+    :<|> detail_share_PUT
     :<|> detail_DELETE
     :<|> detail_content_PUT
     :<|> detail_report_GET
@@ -59,3 +73,4 @@ questionnaireServer =
     :<|> detail_revert_POST
     :<|> detail_revert_preview_POST
     :<|> list_suggestions_GET
+    :<|> questionnaireCommentServer

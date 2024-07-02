@@ -358,6 +358,7 @@ ote_rQ1_t1 =
     { uuid = u' "444c89c8-ead9-44c7-9621-0c0c43ff5f9f"
     , path = cmtQ1_path
     , threadUuid = cmtQ1_t1.uuid
+    , commentCount = 1
     , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
     , createdAt = cmtQ1_t1.createdAt
     }
@@ -371,6 +372,7 @@ otche_rQ1_t1 =
     { uuid = ote_rQ1_t1.uuid
     , path = ote_rQ1_t1.path
     , threadUuid = ote_rQ1_t1.threadUuid
+    , commentCount = 1
     , private = False
     }
 

@@ -5,12 +5,12 @@ import qualified Data.UUID as U
 
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 
-toDTO :: QuestionnaireDetailDTO -> QuestionnaireDetailDTO -> [U.UUID] -> U.UUID -> MigratorStateDTO
+toDTO :: QuestionnaireDetailQuestionnaireDTO -> QuestionnaireDetailQuestionnaireDTO -> [U.UUID] -> U.UUID -> MigratorStateDTO
 toDTO oldQtn newQtn qtnUuids tenantUuid =
   MigratorStateDTO
     { oldQuestionnaire = oldQtn

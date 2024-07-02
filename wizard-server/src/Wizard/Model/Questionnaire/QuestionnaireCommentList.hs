@@ -1,17 +1,16 @@
-module Wizard.Api.Resource.Questionnaire.QuestionnaireCommentDTO where
+module Wizard.Model.Questionnaire.QuestionnaireCommentList where
 
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Util.Hashable ()
 import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 
-data QuestionnaireCommentThreadDTO = QuestionnaireCommentThreadDTO
+data QuestionnaireCommentThreadList = QuestionnaireCommentThreadList
   { uuid :: U.UUID
   , path :: String
   , resolved :: Bool
-  , comments :: [QuestionnaireCommentDTO]
+  , comments :: [QuestionnaireCommentList]
   , private :: Bool
   , createdBy :: Maybe UserSuggestionDTO
   , createdAt :: UTCTime
@@ -19,7 +18,7 @@ data QuestionnaireCommentThreadDTO = QuestionnaireCommentThreadDTO
   }
   deriving (Show, Eq, Generic)
 
-data QuestionnaireCommentDTO = QuestionnaireCommentDTO
+data QuestionnaireCommentList = QuestionnaireCommentList
   { uuid :: U.UUID
   , text :: String
   , createdBy :: Maybe UserSuggestionDTO
@@ -27,3 +26,6 @@ data QuestionnaireCommentDTO = QuestionnaireCommentDTO
   , updatedAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance Ord QuestionnaireCommentList where
+  compare a b = compare a.uuid b.uuid
