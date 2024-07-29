@@ -134,10 +134,10 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
     tenantConfig <- getCurrentTenantConfig
     clientUrl <- getClientUrl
     currentUser <- getCurrentUser
-    traverse_ (sendOneEmail tenantConfig clientUrl currentUser) (filter filterPermissions newQtn.permissions)
+    traverse_ (sendOneEmail tenantConfig clientUrl currentUser) (filter (filterPermissions currentUser) newQtn.permissions)
   where
-    filterPermissions :: QuestionnairePerm -> Bool
-    filterPermissions perm = perm.memberUuid `notElem` fmap (.memberUuid) oldQtn.permissions
+    filterPermissions :: UserDTO -> QuestionnairePerm -> Bool
+    filterPermissions currentUser perm = perm.memberUuid /= currentUser.uuid && perm.memberUuid `notElem` fmap (.memberUuid) oldQtn.permissions
     sendOneEmail :: TenantConfig -> String -> UserDTO -> QuestionnairePerm -> AppContextM ()
     sendOneEmail tenantConfig clientUrl currentUser permission =
       case permission.memberType of
