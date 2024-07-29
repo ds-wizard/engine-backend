@@ -3,7 +3,7 @@ general:
   secret:
 
 database:
-  connectionString: postgresql://postgres:postgres@postgres:5432/wizard-server
+  connectionString: postgresql://postgres:postgres@postgres:5432/wizard
 
 registry:
   token:

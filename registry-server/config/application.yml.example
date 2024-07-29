@@ -4,7 +4,7 @@ general:
   clientUrl: http://localhost:3001
 
 database:
-  connectionString: postgresql://postgres:postgres@postgres:5432/registry-server
+  connectionString: postgresql://postgres:postgres@postgres:5432/registry
 
 s3:
   bucket: registry-server
