@@ -12,6 +12,7 @@ import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePatternSM ()
+import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigSM ()
 
 instance ToSchema TenantConfig where
   declareNamedSchema = toSwagger defaultTenantConfig
@@ -41,11 +42,6 @@ instance ToSchema TenantConfigDashboardAndLoginScreen where
   declareNamedSchema = toSwagger defaultDashboardAndLoginScreen
 
 instance ToSchema TenantConfigDashboardAndLoginScreenDashboardType
-
-instance ToSchema TenantConfigDashboardAndLoginScreenAnnouncement where
-  declareNamedSchema = toSwagger defaultDashboardAndLoginScreenAnnouncement
-
-instance ToSchema TenantConfigDashboardAndLoginScreenAnnouncementLevelType
 
 instance ToSchema TenantConfigLookAndFeel where
   declareNamedSchema = toSwagger defaultLookAndFeel

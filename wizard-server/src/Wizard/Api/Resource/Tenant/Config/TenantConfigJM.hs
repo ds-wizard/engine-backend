@@ -10,6 +10,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()
 import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePatternJM ()
+import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigJM ()
 
 instance FromJSON TenantConfig where
   parseJSON = genericParseJSON jsonOptions
@@ -68,16 +69,6 @@ instance ToJSON TenantConfigDashboardAndLoginScreen where
 instance FromJSON TenantConfigDashboardAndLoginScreenDashboardType
 
 instance ToJSON TenantConfigDashboardAndLoginScreenDashboardType
-
-instance FromJSON TenantConfigDashboardAndLoginScreenAnnouncement where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON TenantConfigDashboardAndLoginScreenAnnouncement where
-  toJSON = genericToJSON jsonOptions
-
-instance FromJSON TenantConfigDashboardAndLoginScreenAnnouncementLevelType
-
-instance ToJSON TenantConfigDashboardAndLoginScreenAnnouncementLevelType
 
 instance FromJSON TenantConfigLookAndFeel where
   parseJSON = genericParseJSON jsonOptions

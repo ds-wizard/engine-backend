@@ -5,6 +5,7 @@ import Shared.Common.Util.Crypto (encryptAES256WithB64)
 import Shared.OpenId.Model.OpenId.OpenIdClientParameter
 import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Tenant.Config.TenantConfig
+import WizardLib.Public.Model.Tenant.Config.TenantConfigEM ()
 
 instance SensitiveData TenantConfig where
   process key entity =
@@ -42,8 +43,6 @@ instance SensitiveData TenantConfigPrivacyAndSupport
 instance SensitiveData TenantConfigDashboardAndLoginScreen
 
 instance SensitiveData TenantConfigDashboardAndLoginScreenDashboardType
-
-instance SensitiveData TenantConfigDashboardAndLoginScreenAnnouncement
 
 instance SensitiveData TenantConfigLookAndFeel
 

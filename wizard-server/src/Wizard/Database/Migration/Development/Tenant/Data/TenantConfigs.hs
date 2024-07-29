@@ -17,6 +17,7 @@ import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplat
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
+import WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs
 
 defaultSecret = "01234567890123456789012345678901"
 
@@ -103,15 +104,6 @@ defaultDashboardAndLoginScreen =
     , announcements = [defaultDashboardAndLoginScreenAnnouncement]
     , loginInfo = Nothing
     , loginInfoSidebar = Nothing
-    }
-
-defaultDashboardAndLoginScreenAnnouncement :: TenantConfigDashboardAndLoginScreenAnnouncement
-defaultDashboardAndLoginScreenAnnouncement =
-  TenantConfigDashboardAndLoginScreenAnnouncement
-    { content = "Hello"
-    , level = InfoAnnouncementLevelType
-    , dashboard = True
-    , loginScreen = True
     }
 
 defaultLookAndFeel :: TenantConfigLookAndFeel

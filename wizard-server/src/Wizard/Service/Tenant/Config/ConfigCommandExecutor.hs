@@ -12,6 +12,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateAuthenticationConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateDefaultRoleConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdatePrivacyAndSupportConfigCommand
@@ -26,6 +27,7 @@ execute command
   | command.function == cUpdateLookAndFeelName = cUpdateLookAndFeel command
   | command.function == cUpdatePrivacyAndSupportName = cUpdatePrivacyAndSupport command
   | command.function == cUpdateDefaultRoleName = cUpdateDefaultRole command
+  | command.function == cUpdateAnnouncementsName = cUpdateAnnouncements command
 
 cCreateAuthenticationName = "createAuthentication"
 
@@ -93,6 +95,20 @@ cUpdateDefaultRole persistentCommand = do
       tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
       now <- liftIO getCurrentTime
       let updatedTenantConfig = fromDefaultRole tenantConfig command now
+      modifyTenantConfig updatedTenantConfig
+      return (DonePersistentCommandState, Nothing)
+    Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
+
+cUpdateAnnouncementsName = "updateAnnouncements"
+
+cUpdateAnnouncements :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
+cUpdateAnnouncements persistentCommand = do
+  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateAnnouncementConfigCommand
+  case eCommand of
+    Right command -> do
+      tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
+      now <- liftIO getCurrentTime
+      let updatedTenantConfig = fromAnnouncements tenantConfig command now
       modifyTenantConfig updatedTenantConfig
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
