@@ -34,11 +34,13 @@ nlQtnMigrationStateDto =
         toDetailQuestionnaireDTO
           (toDetailQuestionnaire questionnaire4 (Just questionnaire4Upgraded.uuid) [] 0 0)
           M.empty
+          M.empty
           km1Netherlands
           questionnaire4Ctn
     , newQuestionnaire =
         toDetailQuestionnaireDTO
           (toDetailQuestionnaire questionnaire4Upgraded Nothing [] 0 0)
+          M.empty
           M.empty
           km1NetherlandsV2
           questionnaire4Ctn
@@ -53,11 +55,13 @@ nlQtnMigrationStateVisibleViewDto =
         toDetailQuestionnaireDTO
           (toDetailQuestionnaire questionnaire4VisibleView (Just questionnaire4Upgraded.uuid) [] 0 0)
           M.empty
+          M.empty
           km1Netherlands
           questionnaire4Ctn
     , newQuestionnaire =
         toDetailQuestionnaireDTO
           (toDetailQuestionnaire questionnaire4VisibleViewUpgraded Nothing [] 0 0)
+          M.empty
           M.empty
           km1NetherlandsV2
           questionnaire4Ctn
@@ -72,11 +76,13 @@ nlQtnMigrationStateVisibleEditDto =
         toDetailQuestionnaireDTO
           (toDetailQuestionnaire questionnaire4VisibleEdit (Just questionnaire4Upgraded.uuid) [] 0 0)
           M.empty
+          M.empty
           km1Netherlands
           questionnaire4Ctn
     , newQuestionnaire =
         toDetailQuestionnaireDTO
           (toDetailQuestionnaire questionnaire4VisibleEditUpgraded Nothing [] 0 0)
+          M.empty
           M.empty
           km1NetherlandsV2
           questionnaire4Ctn

@@ -19,6 +19,7 @@ import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.Owl.OwlService
 import Wizard.Service.PersistentCommand.PersistentCommandService
+import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
@@ -464,6 +465,7 @@ questionnaire =
         [ questionnaire_cleanQuestionnaires
         , questionnaire_squashAllEvents
         , questionnaire_squashEventsForQuestionnaire
+        , questionnaire_sendNotificationToNewAssignees
         ]
     }
 
@@ -505,6 +507,18 @@ questionnaire_squashEventsForQuestionnaire =
         ]
     , function = \reqDto -> do
         squashQuestionnaireEventsForQuestionnaire (u' . head $ reqDto.parameters)
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+questionnaire_sendNotificationToNewAssignees :: DevOperation AppContextM
+questionnaire_sendNotificationToNewAssignees =
+  DevOperation
+    { name = "Send Notification to New Assignees"
+    , description = Nothing
+    , parameters = []
+    , function = \reqDto -> do
+        sendNotificationToNewAssignees
         return "Done"
     }
 

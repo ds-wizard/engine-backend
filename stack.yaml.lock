@@ -211,7 +211,7 @@ packages:
     hackage: time-parsers-0.2
 snapshots:
 - completed:
-    sha256: 9970615b9dba805bcf13388d3842092708284906c7584b7cc027b4898b307dfa
-    size: 622359
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2024/4/3.yaml
-  original: nightly-2024-04-03
+    sha256: 4a5024abfdc7093110da9dc70a734ec130c2f85861423e2a74947951d55a53ec
+    size: 646033
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2024/5/26.yaml
+  original: nightly-2024-05-26

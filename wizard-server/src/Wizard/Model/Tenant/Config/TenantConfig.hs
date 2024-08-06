@@ -11,6 +11,7 @@ import Shared.OpenId.Model.OpenId.OpenIdClientParameter
 import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Questionnaire.Questionnaire hiding (uuid)
 import WizardLib.KnowledgeModel.Model.Package.PackagePattern
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 data TenantConfig = TenantConfig
   { uuid :: U.UUID
@@ -111,20 +112,6 @@ data TenantConfigDashboardAndLoginScreen = TenantConfigDashboardAndLoginScreen
 data TenantConfigDashboardAndLoginScreenDashboardType
   = WelcomeDashboardType
   | RoleBasedDashboardType
-  deriving (Generic, Eq, Show)
-
-data TenantConfigDashboardAndLoginScreenAnnouncement = TenantConfigDashboardAndLoginScreenAnnouncement
-  { content :: String
-  , level :: TenantConfigDashboardAndLoginScreenAnnouncementLevelType
-  , loginScreen :: Bool
-  , dashboard :: Bool
-  }
-  deriving (Generic, Eq, Show)
-
-data TenantConfigDashboardAndLoginScreenAnnouncementLevelType
-  = InfoAnnouncementLevelType
-  | WarningAnnouncementLevelType
-  | CriticalAnnouncementLevelType
   deriving (Generic, Eq, Show)
 
 data TenantConfigLookAndFeel = TenantConfigLookAndFeel

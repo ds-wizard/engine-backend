@@ -66,6 +66,7 @@ import Wizard.Api.Resource.Package.Publish.PackagePublishMigrationSM ()
 import Wizard.Api.Resource.PackageBundle.PackageBundleFileSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadAssignedSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateSM ()
@@ -138,7 +139,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.8.0"
+              , _infoVersion = "4.9.0"
               , _infoLicense =
                   Just $
                     License

@@ -29,6 +29,9 @@ uuid = String . U.toText
 string :: String -> Value
 string = String . T.pack
 
+bool :: Bool -> Value
+bool = Bool
+
 maybeString :: Maybe String -> Value
 maybeString = maybe Null (String . T.pack)
 

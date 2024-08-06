@@ -30,6 +30,7 @@ import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
 import Wizard.Database.DAO.User.UserDAO
@@ -279,6 +280,7 @@ deleteUser userUuid =
     deleteAuditByCreatedBy userUuid
     clearBranchCreatedBy userUuid
     deleteQuestionnairePermUserByUserUuid userUuid
+    clearQuestionnaireCommentThreadAssignedTo userUuid
     clearQuestionnaireCreatedBy userUuid
     deletePersistentCommandByCreatedBy userUuid
     documents <- findDocumentsForCurrentTenantFiltered [("created_by", U.toString userUuid)]

@@ -12,6 +12,7 @@ data QuestionnaireCommentThreadList = QuestionnaireCommentThreadList
   , resolved :: Bool
   , comments :: [QuestionnaireCommentList]
   , private :: Bool
+  , assignedTo :: Maybe UserSuggestionDTO
   , createdBy :: Maybe UserSuggestionDTO
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

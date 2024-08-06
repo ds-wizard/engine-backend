@@ -1,18 +1,22 @@
 module Wizard.Service.Mail.Mailer where
 
 import Control.Monad.Reader (asks, liftIO)
-import Data.Aeson (ToJSON)
+import qualified Data.Aeson as A
+import qualified Data.Aeson.KeyMap as KM
 import Data.Foldable (traverse_)
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
+import qualified Data.Vector as Vector
 
+import Data.Aeson.Types
 import Shared.Common.Model.Config.ServerConfig
 import qualified Shared.Common.Model.PersistentCommand.Mail.MailCommand as MC
 import Shared.Common.Util.JSON
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadNotificationJM ()
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
@@ -20,9 +24,11 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireCommentThreadNotification
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
+import Wizard.Model.User.UserSuggestion
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.TenantHelper
 import WizardLib.Public.Model.User.UserToken
@@ -128,10 +134,10 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
     tenantConfig <- getCurrentTenantConfig
     clientUrl <- getClientUrl
     currentUser <- getCurrentUser
-    traverse_ (sendOneEmail tenantConfig clientUrl currentUser) (filter filterPermissions newQtn.permissions)
+    traverse_ (sendOneEmail tenantConfig clientUrl currentUser) (filter (filterPermissions currentUser) newQtn.permissions)
   where
-    filterPermissions :: QuestionnairePerm -> Bool
-    filterPermissions perm = perm.memberUuid `notElem` fmap (.memberUuid) oldQtn.permissions
+    filterPermissions :: UserDTO -> QuestionnairePerm -> Bool
+    filterPermissions currentUser perm = perm.memberUuid /= currentUser.uuid && perm.memberUuid `notElem` fmap (.memberUuid) oldQtn.permissions
     sendOneEmail :: TenantConfig -> String -> UserDTO -> QuestionnairePerm -> AppContextM ()
     sendOneEmail tenantConfig clientUrl currentUser permission =
       case permission.memberType of
@@ -162,6 +168,39 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
                         ]
                   }
           sendEmail body currentUser.uuid
+
+sendQuestionnaireCommentThreadAssignedMail :: [QuestionnaireCommentThreadNotification] -> AppContextM ()
+sendQuestionnaireCommentThreadAssignedMail notifications =
+  runInTransaction $ do
+    case notifications of
+      [] -> return ()
+      notification : _ -> do
+        let notificationFn n =
+              A.Object . KM.fromList $
+                [ ("questionnaireUuid", MC.uuid n.questionnaireUuid)
+                , ("questionnaireName", MC.string n.questionnaireName)
+                , ("commentThreadUuid", MC.uuid n.commentThreadUuid)
+                , ("path", MC.string n.path)
+                , ("resolved", MC.bool n.resolved)
+                , ("private", MC.bool n.private)
+                , ("assignedBy", A.toJSON n.assignedBy)
+                , ("text", MC.string n.text)
+                ]
+        let body =
+              MC.MailCommand
+                { mode = "wizard"
+                , template = "commentThreadAssigned"
+                , recipients = [notification.assignedTo.email]
+                , parameters =
+                    M.fromList
+                      [ ("userFirstName", MC.string notification.assignedTo.firstName)
+                      , ("notifications", A.Array . Vector.fromList . fmap notificationFn $ notifications)
+                      , ("clientUrl", MC.string notification.clientUrl)
+                      , ("appTitle", MC.maybeString notification.appTitle)
+                      , ("supportEmail", MC.maybeString notification.supportEmail)
+                      ]
+                }
+        sendEmailWithTenant body notification.assignedTo.uuid notification.tenantUuid
 
 sendApiKeyCreatedMail :: UserDTO -> UserToken -> AppContextM ()
 sendApiKeyCreatedMail user userToken =

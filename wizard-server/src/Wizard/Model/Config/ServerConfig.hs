@@ -83,6 +83,7 @@ data ServerConfigFeedback = ServerConfigFeedback
 data ServerConfigQuestionnaire = ServerConfigQuestionnaire
   { clean :: ServerConfigCronWorker
   , squash :: ServerConfigCronWorker
+  , assigneeNotification :: ServerConfigCronWorker
   }
   deriving (Generic, Show)
 

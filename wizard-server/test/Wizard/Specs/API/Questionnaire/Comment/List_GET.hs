@@ -118,7 +118,7 @@ create_test_200 title appContext qtn authHeader permissions =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = M.fromList [(cmtQ1_path, [toCommentThreadList thread1 (Just userAlbert) (L.sort [toCommentList comment1 (Just userAlbert), toCommentList comment2 (Just userAlbert)])])]
+      let expDto = M.fromList [(cmtQ1_path, [toCommentThreadList thread1 Nothing (Just userAlbert) (L.sort [toCommentList comment1 (Just userAlbert), toCommentList comment2 (Just userAlbert)])])]
       let expBody = encode expDto
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

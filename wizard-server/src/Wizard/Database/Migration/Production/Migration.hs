@@ -48,6 +48,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0043_temporaryFi
 import qualified Wizard.Database.Migration.Production.Migration_0044_signalBridge.Migration as M_0044
 import qualified Wizard.Database.Migration.Production.Migration_0045_analytics.Migration as M_0045
 import qualified Wizard.Database.Migration.Production.Migration_0046_tenantFeature.Migration as M_0046
+import qualified Wizard.Database.Migration.Production.Migration_0047_qtnCommentAssignedTo.Migration as M_0047
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -97,4 +98,5 @@ migrationDefinitions =
   , M_0044.definition
   , M_0045.definition
   , M_0046.definition
+  , M_0047.definition
   ]

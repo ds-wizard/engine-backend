@@ -35,7 +35,14 @@ instance ToSchema QuestionnaireDetailQuestionnaireDTO where
         , phaseUuid = Just . u' $ "4b376e49-1589-429b-9590-c654378f0bd5"
         , migrationUuid = Nothing
         , permissions = [qtn1AlbertEditQtnPermDto]
-        , commentCounts =
+        , unresolvedCommentCounts =
+            M.fromList
+              [
+                ( "4f61fdfa-ce82-41b5-a1e6-218beaf41660.0dc58313-eb80-4f74-a8c1-347b644665d5"
+                , M.fromList [(u' "f1de85a9-7f22-4d0c-bc23-3315cc4c85d7", 4)]
+                )
+              ]
+        , resolvedCommentCounts =
             M.fromList
               [
                 ( "4f61fdfa-ce82-41b5-a1e6-218beaf41660.0dc58313-eb80-4f74-a8c1-347b644665d5"

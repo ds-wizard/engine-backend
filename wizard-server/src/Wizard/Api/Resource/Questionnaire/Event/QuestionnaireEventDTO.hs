@@ -14,6 +14,7 @@ data QuestionnaireEventDTO
   | SetLabelsEventDTO' SetLabelsEventDTO
   | ResolveCommentThreadEventDTO' ResolveCommentThreadEventDTO
   | ReopenCommentThreadEventDTO' ReopenCommentThreadEventDTO
+  | AssignCommentThreadEventDTO' AssignCommentThreadEventDTO
   | DeleteCommentThreadEventDTO' DeleteCommentThreadEventDTO
   | AddCommentEventDTO' AddCommentEventDTO
   | EditCommentEventDTO' EditCommentEventDTO
@@ -84,6 +85,7 @@ data ResolveCommentThreadEventDTO = ResolveCommentThreadEventDTO
   { uuid :: U.UUID
   , path :: String
   , threadUuid :: U.UUID
+  , commentCount :: Int
   , createdBy :: Maybe UserSuggestionDTO
   , createdAt :: UTCTime
   }
@@ -107,6 +109,24 @@ data ReopenCommentThreadEventDTO = ReopenCommentThreadEventDTO
   deriving (Show, Generic)
 
 instance Eq ReopenCommentThreadEventDTO where
+  a == b =
+    a.uuid == b.uuid
+      && a.path == b.path
+      && a.threadUuid == b.threadUuid
+      && a.createdBy == b.createdBy
+
+data AssignCommentThreadEventDTO = AssignCommentThreadEventDTO
+  { uuid :: U.UUID
+  , path :: String
+  , threadUuid :: U.UUID
+  , private :: Bool
+  , assignedTo :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestionDTO
+  , createdAt :: UTCTime
+  }
+  deriving (Show, Generic)
+
+instance Eq AssignCommentThreadEventDTO where
   a == b =
     a.uuid == b.uuid
       && a.path == b.path

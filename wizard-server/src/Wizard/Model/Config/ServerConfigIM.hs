@@ -105,6 +105,8 @@ instance FromEnv ServerConfigQuestionnaire where
       , \c -> applyStringEnvVariable "QUESTIONNAIRE_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigQuestionnaire)
       , \c -> applyEnvVariable "QUESTIONNAIRE_SQUASH_ENABLED" c.squash.enabled (\x -> c {squash = c.squash {enabled = x}} :: ServerConfigQuestionnaire)
       , \c -> applyStringEnvVariable "QUESTIONNAIRE_SQUASH_CRON" c.squash.cron (\x -> c {squash = c.squash {cron = x}} :: ServerConfigQuestionnaire)
+      , \c -> applyEnvVariable "QUESTIONNAIRE_ASSIGNEE_NOTIFICATION_ENABLED" c.assigneeNotification.enabled (\x -> c {assigneeNotification = c.assigneeNotification {enabled = x}} :: ServerConfigQuestionnaire)
+      , \c -> applyStringEnvVariable "QUESTIONNAIRE_ASSIGNEE_NOTIFICATION_CRON" c.assigneeNotification.cron (\x -> c {assigneeNotification = c.assigneeNotification {cron = x}} :: ServerConfigQuestionnaire)
       ]
 
 instance FromEnv ServerConfigTemporaryFile where

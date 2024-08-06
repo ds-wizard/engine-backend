@@ -22,6 +22,9 @@ instance ToRow QuestionnaireCommentThread where
     , toField createdAt
     , toField updatedAt
     , toField tenantUuid
+    , toField assignedTo
+    , toField assignedBy
+    , toField notificationRequired
     ]
 
 instance FromRow QuestionnaireCommentThread where
@@ -35,6 +38,9 @@ instance FromRow QuestionnaireCommentThread where
     createdAt <- field
     updatedAt <- field
     tenantUuid <- field
+    assignedTo <- field
+    assignedBy <- field
+    notificationRequired <- field
     commentsArray <- fromPGArray <$> field
     let comments = fmap parseComment commentsArray
     return $ QuestionnaireCommentThread {..}
