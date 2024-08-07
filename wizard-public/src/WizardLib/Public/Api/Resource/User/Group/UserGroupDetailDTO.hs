@@ -15,4 +15,4 @@ data UserGroupDetailDTO = UserGroupDetailDTO
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
-  deriving (Generic)
+  deriving (Generic, Eq, Show)
