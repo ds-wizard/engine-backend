@@ -5,7 +5,6 @@ import Data.Hashable
 import qualified Data.Map.Strict as M
 import Data.Maybe
 import Data.Time
-import qualified Data.UUID as U
 
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentCreateDTO
@@ -71,24 +70,44 @@ doc1Content =
 dmp1 :: DocumentContext
 dmp1 =
   DocumentContext
-    { uuid = u' "d87941ae-7725-4d22-b5c7-45dabc125199"
-    , config = DocumentContextConfig {clientUrl = "https://example.com/wizard"}
-    , questionnaireUuid = U.toString $ questionnaire1.uuid
-    , questionnaireName = questionnaire1.name
-    , questionnaireDescription = questionnaire1.description
-    , questionnaireReplies = questionnaire1Ctn.replies
-    , questionnaireVersion = Nothing
-    , questionnaireVersions = fmap (`toVersionDTO` Just userAlbert) questionnaire1.versions
-    , questionnaireProjectTags = questionnaire1.projectTags
-    , phaseUuid = questionnaire1Ctn.phaseUuid
+    { config = DocumentContextConfig {clientUrl = "https://example.com/wizard"}
+    , document =
+        DocumentContextDocument
+          { uuid = doc1.uuid
+          , name = doc1.name
+          , documentTemplateId = doc1.documentTemplateId
+          , formatUuid = doc1.formatUuid
+          , createdBy = Just . USR_Mapper.toDTO $ userNikola
+          , createdAt = doc1.createdAt
+          }
+    , questionnaire =
+        DocumentContextQuestionnaire
+          { uuid = questionnaire1.uuid
+          , name = questionnaire1.name
+          , description = questionnaire1.description
+          , replies = questionnaire1Ctn.replies
+          , phaseUuid = questionnaire1Ctn.phaseUuid
+          , labels = questionnaire1Ctn.labels
+          , comments = M.empty
+          , versionUuid = Nothing
+          , versions = fmap (`toVersionDTO` Just userAlbert) questionnaire1.versions
+          , projectTags = questionnaire1.projectTags
+          , createdBy = Just . USR_Mapper.toDTO $ userAlbert
+          , createdAt = questionnaire1.createdAt
+          , updatedAt = questionnaire1.updatedAt
+          }
     , knowledgeModel = km1WithQ4
     , report = report1
     , package = toDocumentContextPackage . SPM.toPackage $ germanyPackage
     , organization = defaultOrganization
-    , documentTemplateMetamodelVersion = TemplateConstant.documentTemplateMetamodelVersion
-    , createdBy = Just . USR_Mapper.toDTO $ userAlbert
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    , metamodelVersion = TemplateConstant.documentTemplateMetamodelVersion
+    , users =
+        [ DocumentContextUserPerm
+            { user = USR_Mapper.toDTO userAlbert
+            , perms = ["VIEW", "COMMENT", "EDIT", "ADMIN"]
+            }
+        ]
+    , groups = []
     }
 
 doc1Create :: DocumentCreateDTO
