@@ -35,9 +35,6 @@ questionnaireVersion1 =
 questionnaireVersion1Dto :: QuestionnaireVersionDTO
 questionnaireVersion1Dto = toVersionDTO questionnaireVersion1 (Just userAlbert)
 
-questionnaireVersion1ChangeDto :: QuestionnaireVersionChangeDTO
-questionnaireVersion1ChangeDto = toVersionChangeDTO questionnaireVersion1
-
 questionnaireVersion1Edited :: QuestionnaireVersion
 questionnaireVersion1Edited =
   questionnaireVersion1
@@ -54,3 +51,17 @@ questionnaireVersion1EditedChangeDto = toVersionChangeDTO questionnaireVersion1E
 
 questionnaireVersion1RevertDto :: QuestionnaireVersionRevertDTO
 questionnaireVersion1RevertDto = toVersionRevertDTO sre_rQ2.uuid
+
+questionnaireVersion2 :: QuestionnaireVersion
+questionnaireVersion2 =
+  QuestionnaireVersion
+    { uuid = u' "1e57564e-77ff-438e-952c-515f1d45b24f"
+    , name = "Version 2"
+    , description = Just "Version 2 description"
+    , eventUuid = sre_rQ11.uuid
+    , createdBy = userAlbert.uuid
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    }
+questionnaireVersion2ChangeDto :: QuestionnaireVersionChangeDTO
+questionnaireVersion2ChangeDto = toVersionChangeDTO questionnaireVersion2

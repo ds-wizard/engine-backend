@@ -186,6 +186,12 @@ _ERROR_SERVICE_QTN_VERSION__NON_EXISTENT_EVENT_UUID eventUuid =
     "You can't create version for non-existent event (eventUuid: '%s')"
     [eventUuid]
 
+_ERROR_SERVICE_QTN_VERSION__VERSION_UNIQUENESS eventUuid =
+  LocaleRecord
+    "error.service.qtn.version.version_uniqueness"
+    "There is already a version for the event (eventUuid: '%s')"
+    [eventUuid]
+
 _ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW workerLog =
   LocaleRecord "error.service.qtn.unable_to_generate_document_preview" "%s" [fromMaybe "no log provided" workerLog]
 
