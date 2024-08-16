@@ -26,7 +26,7 @@ createTemporaryFile fileName contentType content = do
     let escapedFileName = filter isLetterOrDotOrDashOrUnderscore fileName
     let tf = toTemporaryFile uuid escapedFileName contentType expirationInSeconds tenantUuid mCurrentUser now
     insertTemporaryFile tf
-    let contentDisposition = f' "attachment;filename=\"%s\"" [fileName]
+    let contentDisposition = f' "attachment;filename=\"%s\"" [trim fileName]
     putTemporaryFile tf.uuid escapedFileName tf.contentType contentDisposition (BSL.toStrict content)
     presigneGetTemporaryFileUrl tf.uuid escapedFileName expirationInSeconds
 
