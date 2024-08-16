@@ -14,13 +14,12 @@
 
 ## Contribute
 
-For contributing guidelines, please read [CONTRIBUTING](CONTRIBUTING.md) 
-and [relevant section in our guide](https://img.shields.io/github/license/ds-wizard/document-worker).
+For contributing guidelines, please read [CONTRIBUTING](CONTRIBUTING.md) and [relevant section in our guide](https://guide.ds-wizard.org/en/latest/more/development/contributing.html).
 
 ### Requirements
 
- - **Stack** (recommended 2.9.1 or higher)
- - **Postgres & libpq** (recommended 11)
+ - **Stack** (recommended 2.15.3 or higher)
+ - **Postgres & libpq** (recommended 15.5)
  - **Fourmolu** (recommended 0.8.2.0, optional)
  - **HLint** (recommended 3.4.1, optional)
  - **Docker** (recommended 19.03.0-ce) - *for build of production image*
@@ -29,7 +28,9 @@ and [relevant section in our guide](https://img.shields.io/github/license/ds-wiz
 
 ### Build & Run
 
-For running application it's need to run MongoDB database and set up connection in configuration file.
+For running application it's need to run Postgres database and set up connection in configuration file.
+
+To set up feedback with GitHub, generate an API Key on GitHub and assign it to the environment variable named `FEEDBACK_TOKEN`.
 
 Run these comands from the root of the project
 
