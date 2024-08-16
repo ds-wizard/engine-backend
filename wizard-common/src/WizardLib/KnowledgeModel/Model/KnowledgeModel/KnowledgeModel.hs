@@ -17,6 +17,7 @@ data KnowledgeModel = KnowledgeModel
   , integrationUuids :: [U.UUID]
   , metricUuids :: [U.UUID]
   , phaseUuids :: [U.UUID]
+  , resourceCollectionUuids :: [U.UUID]
   , entities :: KnowledgeModelEntities
   }
   deriving (Show, Eq, Generic)
@@ -31,6 +32,8 @@ data KnowledgeModelEntities = KnowledgeModelEntities
   , integrations :: Map U.UUID Integration
   , tags :: Map U.UUID Tag
   , metrics :: Map U.UUID Metric
+  , resourceCollections :: Map U.UUID ResourceCollection
+  , resourcePages :: Map U.UUID ResourcePage
   , phases :: Map U.UUID Phase
   }
   deriving (Show, Eq, Generic)
@@ -169,7 +172,7 @@ data Reference
 
 data ResourcePageReference = ResourcePageReference
   { uuid :: U.UUID
-  , shortUuid :: String
+  , resourcePageUuid :: Maybe U.UUID
   , annotations :: [MapEntry String String]
   }
   deriving (Show, Eq, Generic)
@@ -222,6 +225,23 @@ data Tag = Tag
   , name :: String
   , description :: Maybe String
   , color :: String
+  , annotations :: [MapEntry String String]
+  }
+  deriving (Show, Eq, Generic)
+
+-- ------------------------------------------------
+data ResourceCollection = ResourceCollection
+  { uuid :: U.UUID
+  , title :: String
+  , resourcePageUuids :: [U.UUID]
+  , annotations :: [MapEntry String String]
+  }
+  deriving (Show, Eq, Generic)
+
+data ResourcePage = ResourcePage
+  { uuid :: U.UUID
+  , title :: String
+  , content :: String
   , annotations :: [MapEntry String String]
   }
   deriving (Show, Eq, Generic)

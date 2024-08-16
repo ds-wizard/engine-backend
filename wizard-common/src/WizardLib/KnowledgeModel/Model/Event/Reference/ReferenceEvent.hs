@@ -17,7 +17,7 @@ data AddResourcePageReferenceEvent = AddResourcePageReferenceEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
   , entityUuid :: U.UUID
-  , shortUuid :: String
+  , resourcePageUuid :: Maybe U.UUID
   , annotations :: [MapEntry String String]
   , createdAt :: UTCTime
   }
@@ -56,7 +56,7 @@ data EditResourcePageReferenceEvent = EditResourcePageReferenceEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
   , entityUuid :: U.UUID
-  , shortUuid :: EventField String
+  , resourcePageUuid :: EventField (Maybe U.UUID)
   , annotations :: EventField [MapEntry String String]
   , createdAt :: UTCTime
   }

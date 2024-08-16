@@ -16,6 +16,7 @@ instance CreateEntity AddKnowledgeModelEvent KnowledgeModel where
       , integrationUuids = []
       , metricUuids = []
       , phaseUuids = []
+      , resourceCollectionUuids = []
       , entities =
           KnowledgeModelEntities
             { chapters = M.empty
@@ -28,6 +29,8 @@ instance CreateEntity AddKnowledgeModelEvent KnowledgeModel where
             , tags = M.empty
             , metrics = M.empty
             , phases = M.empty
+            , resourceCollections = M.empty
+            , resourcePages = M.empty
             }
       }
 
@@ -40,4 +43,5 @@ instance EditEntity EditKnowledgeModelEvent KnowledgeModel where
       , integrationUuids = applyValue entity.integrationUuids event.integrationUuids
       , metricUuids = applyValue entity.metricUuids event.metricUuids
       , phaseUuids = applyValue entity.phaseUuids event.phaseUuids
+      , resourceCollectionUuids = applyValue entity.resourceCollectionUuids event.resourceCollectionUuids
       }

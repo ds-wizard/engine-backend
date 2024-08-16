@@ -2,6 +2,7 @@ module WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Da
 
 import Shared.Common.Model.Common.MapEntry
 import Shared.Common.Util.Uuid
+import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Resources
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 km1_ch1_q2_r1' :: Reference
@@ -11,7 +12,7 @@ km1_ch1_q2_r1 :: ResourcePageReference
 km1_ch1_q2_r1 =
   ResourcePageReference
     { uuid = u' "903d0f50-040c-420e-9a65-49ba20ec6493"
-    , shortUuid = "bvq"
+    , resourcePageUuid = Just rc1_rp1.uuid
     , annotations = []
     }
 
@@ -22,7 +23,7 @@ km1_ch1_q2_r1Edited :: ResourcePageReference
 km1_ch1_q2_r1Edited =
   ResourcePageReference
     { uuid = km1_ch1_q2_r1.uuid
-    , shortUuid = "bbb"
+    , resourcePageUuid = Just rc1_rp1.uuid
     , annotations = [MapEntry "newAnnotation" "someValue"]
     }
 
@@ -45,7 +46,7 @@ km1_ch2_q6_r1 :: ResourcePageReference
 km1_ch2_q6_r1 =
   ResourcePageReference
     { uuid = u' "832ed9f5-107c-46e4-a13b-bf68086fcba1"
-    , shortUuid = "bvq"
+    , resourcePageUuid = Just rc1_rp1.uuid
     , annotations = []
     }
 
@@ -130,7 +131,7 @@ km1_ch1_q2_r3WithNewType :: ResourcePageReference
 km1_ch1_q2_r3WithNewType =
   ResourcePageReference
     { uuid = km1_ch1_q2_r3.uuid
-    , shortUuid = "awp"
+    , resourcePageUuid = Just rc1_rp1.uuid
     , annotations = []
     }
 
@@ -142,7 +143,7 @@ km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2_r1 :: ResourcePageReference
 km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2_r1 =
   ResourcePageReference
     { uuid = u' "994c2c75-4305-49bf-b207-c0d6f8042eb2"
-    , shortUuid = "bvq"
+    , resourcePageUuid = Just rc1_rp1.uuid
     , annotations = []
     }
 

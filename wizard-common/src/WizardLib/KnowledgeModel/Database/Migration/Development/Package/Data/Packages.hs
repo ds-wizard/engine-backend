@@ -69,6 +69,11 @@ globalPackage =
         , AddIntegrationEvent' a_km1_iop'
         , AddIntegrationEvent' a_km1_ibp'
         , AddIntegrationEvent' a_km1_iwp'
+        , AddResourceCollectionEvent' a_km1_rc1
+        , AddResourcePageEvent' a_km1_rc1_rp1
+        , AddResourcePageEvent' a_km1_rc1_rp2
+        , AddResourceCollectionEvent' a_km1_rc2
+        , AddResourcePageEvent' a_km1_rc2_rp1
         ]
     , nonEditable = False
     , tenantUuid = U.nil
@@ -198,6 +203,11 @@ germanyPackage =
         , AddIntegrationEvent' a_km1_iop'
         , AddIntegrationEvent' a_km1_ibp'
         , AddIntegrationEvent' a_km1_iwp'
+        , AddResourceCollectionEvent' a_km1_rc1
+        , AddResourcePageEvent' a_km1_rc1_rp1
+        , AddResourcePageEvent' a_km1_rc1_rp2
+        , AddResourceCollectionEvent' a_km1_rc2
+        , AddResourcePageEvent' a_km1_rc2_rp1
         , AddChapterEvent' a_km1_ch1
         , AddQuestionEvent' a_km1_ch1_q1'
         , AddQuestionEvent' a_km1_ch1_q2'

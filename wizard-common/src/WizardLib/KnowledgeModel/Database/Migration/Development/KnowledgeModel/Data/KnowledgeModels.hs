@@ -11,6 +11,7 @@ import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Da
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.References
+import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Resources
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Tags
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
@@ -26,6 +27,7 @@ km1 =
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
     , phaseUuids = [phase1.uuid, phase2.uuid, phase3.uuid]
+    , resourceCollectionUuids = [rc1.uuid, rc2.uuid]
     , entities =
         KnowledgeModelEntities
           { chapters = toMap [chapter1, chapter2, chapter3]
@@ -59,6 +61,8 @@ km1 =
           , tags = toMap [tagDataScience, tagBioInformatic]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]
+          , resourceCollections = toMap [rc1, rc2]
+          , resourcePages = toMap [rc1_rp1, rc1_rp2, rc2_rp1]
           }
     }
 
@@ -73,6 +77,7 @@ km1Edited =
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
     , phaseUuids = [phase1.uuid, phase2.uuid, phase3.uuid]
+    , resourceCollectionUuids = [rc2.uuid, rc1.uuid]
     , entities = km1.entities
     }
 
@@ -86,6 +91,7 @@ km1WithoutChaptersAndTagsAndIntegrations =
     , integrationUuids = []
     , metricUuids = []
     , phaseUuids = []
+    , resourceCollectionUuids = []
     , entities =
         KnowledgeModelEntities
           { chapters = toMap []
@@ -98,6 +104,8 @@ km1WithoutChaptersAndTagsAndIntegrations =
           , tags = toMap []
           , metrics = toMap []
           , phases = toMap []
+          , resourceCollections = toMap []
+          , resourcePages = toMap []
           }
     }
 
@@ -112,6 +120,7 @@ km1WithQ4Plain =
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
     , phaseUuids = [phase1.uuid, phase2.uuid, phase3.uuid]
+    , resourceCollectionUuids = [rc1.uuid, rc2.uuid]
     , entities =
         KnowledgeModelEntities
           { chapters = toMap [chapter1, chapter2WithQ4Plain, chapter3]
@@ -146,6 +155,8 @@ km1WithQ4Plain =
           , tags = toMap [tagDataScience, tagBioInformatic]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]
+          , resourceCollections = toMap [rc1, rc2]
+          , resourcePages = toMap [rc1_rp1, rc1_rp2, rc2_rp1]
           }
     }
 
@@ -160,6 +171,7 @@ km1WithQ4 =
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
     , phaseUuids = [phase1.uuid, phase2.uuid, phase3.uuid]
+    , resourceCollectionUuids = [rc1.uuid, rc2.uuid]
     , entities =
         KnowledgeModelEntities
           { chapters = toMap [chapter1, chapter2WithQ4, chapter3]
@@ -205,6 +217,8 @@ km1WithQ4 =
           , tags = toMap [tagDataScience, tagBioInformatic]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]
+          , resourceCollections = toMap [rc1, rc2]
+          , resourcePages = toMap [rc1_rp1, rc1_rp2, rc2_rp1]
           }
     }
 
@@ -219,6 +233,7 @@ km1Global =
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
     , phaseUuids = [phase1.uuid, phase2.uuid, phase3.uuid]
+    , resourceCollectionUuids = [rc1.uuid, rc2.uuid]
     , entities =
         KnowledgeModelEntities
           { chapters = toMap []
@@ -231,6 +246,8 @@ km1Global =
           , tags = toMap [tagDataScience, tagBioInformatic]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]
+          , resourceCollections = toMap [rc1, rc2]
+          , resourcePages = toMap [rc1_rp1, rc1_rp2, rc2_rp1]
           }
     }
 
@@ -245,6 +262,7 @@ km1Netherlands =
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
     , phaseUuids = [phase1.uuid, phase2.uuid, phase3.uuid]
+    , resourceCollectionUuids = [rc1.uuid, rc2.uuid]
     , entities =
         KnowledgeModelEntities
           { chapters = toMap [chapter1WithoutQuestions]
@@ -257,6 +275,8 @@ km1Netherlands =
           , tags = toMap [tagDataScience, tagBioInformatic]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]
+          , resourceCollections = toMap [rc1, rc2]
+          , resourcePages = toMap [rc1_rp1, rc1_rp2, rc2_rp1]
           }
     }
 
@@ -271,6 +291,7 @@ km1NetherlandsV2 =
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
     , phaseUuids = [phase1.uuid, phase2.uuid, phase3.uuid]
+    , resourceCollectionUuids = [rc1.uuid, rc2.uuid]
     , entities =
         KnowledgeModelEntities
           { chapters = toMap [chapter1WithoutQuestions, chapter4WithoutQuestions]
@@ -283,5 +304,7 @@ km1NetherlandsV2 =
           , tags = toMap [tagDataScience, tagBioInformatic]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]
+          , resourceCollections = toMap [rc1, rc2]
+          , resourcePages = toMap [rc1_rp1, rc1_rp2, rc2_rp1]
           }
     }

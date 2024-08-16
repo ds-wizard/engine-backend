@@ -14,6 +14,7 @@ import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Da
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.References
+import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Resources
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Tags
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
@@ -448,6 +449,76 @@ compilatorSpec =
                   }
         computed `shouldBe` expected
     -- ---------------
+    describe "Apply: Resource Collection Events" $ do
+      it "Apply: AddResourceCollectionEvent" $ do
+        let (Right computed) = compile (Just km1WithoutChaptersAndTagsAndIntegrations) [AddResourceCollectionEvent' a_km1_rc1]
+        let expected =
+              km1WithoutChaptersAndTagsAndIntegrations
+                { resourceCollectionUuids = [rc1.uuid]
+                , entities =
+                    km1WithoutChaptersAndTagsAndIntegrations.entities
+                      { resourceCollections = toMap [rc1 {resourcePageUuids = []}]
+                      }
+                }
+        computed `shouldBe` expected
+      it "Apply: EditResourceCollectionEvent" $ do
+        let (Right computed) = compile (Just km1WithQ4) [EditResourceCollectionEvent' e_km1_rc1]
+        let expected =
+              km1WithQ4
+                { entities =
+                    km1WithQ4.entities
+                      { resourceCollections = toMap [rc1Edited, rc2]
+                      }
+                }
+        computed `shouldBe` expected
+      it "Apply: DeleteResourceCollectionnEvent" $ do
+        let (Right computed) = compile (Just km1WithQ4) [DeleteResourceCollectionEvent' d_km1_rc1]
+        let expected =
+              km1WithQ4
+                { resourceCollectionUuids = [rc2.uuid]
+                , entities =
+                    km1WithQ4.entities
+                      { resourceCollections = toMap [rc2]
+                      , resourcePages = toMap [rc2_rp1]
+                      }
+                }
+        computed `shouldBe` expected
+    -- ---------------
+    describe "Apply: Resource Page Events" $ do
+      it "Apply: AddResourcePageEvent" $ do
+        let kmWithoutResourcePage =
+              km1WithQ4
+                { entities =
+                    km1WithQ4.entities
+                      { resourceCollections = toMap [rc1 {resourcePageUuids = [rc1_rp1.uuid]}, rc2]
+                      , resourcePages = toMap [rc1_rp1, rc2_rp1]
+                      }
+                }
+        let (Right computed) = compile (Just kmWithoutResourcePage) [AddResourcePageEvent' a_km1_rc1_rp2]
+        let expected = km1WithQ4
+        computed `shouldBe` expected
+      it "Apply: EditResourcePageEvent" $ do
+        let (Right computed) = compile (Just km1WithQ4) [EditResourcePageEvent' e_km1_rc1_rp1]
+        let expected =
+              km1WithQ4
+                { entities =
+                    km1WithQ4.entities
+                      { resourcePages = toMap [rc1_rp1Edited, rc1_rp2, rc2_rp1]
+                      }
+                }
+        computed `shouldBe` expected
+      it "Apply: DeleteResourcePagenEvent" $ do
+        let (Right computed) = compile (Just km1WithQ4) [DeleteResourcePageEvent' d_km1_rc1_rp1]
+        let expected =
+              km1WithQ4
+                { entities =
+                    km1WithQ4.entities
+                      { resourceCollections = toMap [rc1 {resourcePageUuids = [rc1_rp2.uuid]}, rc2]
+                      , resourcePages = toMap [rc1_rp2, rc2_rp1]
+                      }
+                }
+        computed `shouldBe` expected
+    -- ---------------
     describe "Apply: Move Events" $ do
       it "Apply: MoveQuestionEvent" $ do
         let (Right computed) = compile (Just km1) [MoveQuestionEvent' m_km1_ch1_q1__to_ch2]
@@ -502,6 +573,11 @@ compilatorSpec =
             , AddIntegrationEvent' a_km1_iop'
             , AddIntegrationEvent' a_km1_ibp'
             , AddIntegrationEvent' a_km1_iwp'
+            , AddResourceCollectionEvent' a_km1_rc1
+            , AddResourcePageEvent' a_km1_rc1_rp1
+            , AddResourcePageEvent' a_km1_rc1_rp2
+            , AddResourceCollectionEvent' a_km1_rc2
+            , AddResourcePageEvent' a_km1_rc2_rp1
             , AddChapterEvent' a_km1_ch1
             , AddQuestionEvent' a_km1_ch1_q1'
             , AddQuestionEvent' a_km1_ch1_q2'

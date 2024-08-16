@@ -104,6 +104,24 @@ instance HasKnowledgeModelPhases KnowledgeModel where
   deleteFromPhasesM phaseUuid km = setPhasesM km $ M.delete phaseUuid km.entities.phases
 
 ------------------------------------------------------------------------------------------
+instance HasKnowledgeModelResourceCollection KnowledgeModel where
+  getResourceCollectionsL km = M.elems km.entities.resourceCollections
+  setResourceCollectionsL km newResourceCollections = km {entities = km.entities {resourceCollections = toMap newResourceCollections}}
+  getResourceCollectionsM km = km.entities.resourceCollections
+  setResourceCollectionsM km newResourceCollections = km {entities = km.entities {resourceCollections = newResourceCollections}}
+  putInResourceCollectionsM resourceCollectionUuid phase km = setResourceCollectionsM km $ M.insert resourceCollectionUuid phase km.entities.resourceCollections
+  deleteFromResourceCollectionsM resourceCollectionUuid km = setResourceCollectionsM km $ M.delete resourceCollectionUuid km.entities.resourceCollections
+
+------------------------------------------------------------------------------------------
+instance HasKnowledgeModelResourcePage KnowledgeModel where
+  getResourcePagesL km = M.elems km.entities.resourcePages
+  setResourcePagesL km newResourcePages = km {entities = km.entities {resourcePages = toMap newResourcePages}}
+  getResourcePagesM km = km.entities.resourcePages
+  setResourcePagesM km newResourcePages = km {entities = km.entities {resourcePages = newResourcePages}}
+  putInResourcePagesM resourcePageUuid phase km = setResourcePagesM km $ M.insert resourcePageUuid phase km.entities.resourcePages
+  deleteFromResourcePagesM resourcePageUuid km = setResourcePagesM km $ M.delete resourcePageUuid km.entities.resourcePages
+
+------------------------------------------------------------------------------------------
 toMap :: HasUuid' a => [a] -> M.Map U.UUID a
 toMap = M.fromList . fmap (\entity -> (getUuid entity, entity))
 
@@ -164,6 +182,14 @@ instance HasUuid' Metric where
   setUuid entity newValue = entity {uuid = newValue}
 
 instance HasUuid' Phase where
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
+
+instance HasUuid' ResourceCollection where
+  getUuid entity = entity.uuid
+  setUuid entity newValue = entity {uuid = newValue}
+
+instance HasUuid' ResourcePage where
   getUuid entity = entity.uuid
   setUuid entity newValue = entity {uuid = newValue}
 

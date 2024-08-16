@@ -205,7 +205,7 @@ a_ref1 =
     { uuid = u' "5d0eddba-ae27-47c2-81f6-ed5c892db884"
     , parentUuid = u' "70c0e4f3-7a67-49dd-8043-e504392d7903"
     , entityUuid = u' "1890b807-83e8-4a20-8515-83930cab0003"
-    , shortUuid = ""
+    , resourcePageUuid = Nothing
     , annotations = []
     , createdAt = dt'' 2018 1 1 5
     }

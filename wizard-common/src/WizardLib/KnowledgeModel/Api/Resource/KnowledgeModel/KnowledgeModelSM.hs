@@ -15,6 +15,7 @@ import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Da
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.References
+import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Resources
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Tags
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
@@ -109,6 +110,14 @@ instance ToSchema Phase where
 -- --------------------------------------------------------------------
 instance ToSchema Tag where
   declareNamedSchema = toSwagger tagBioInformatic
+
+-- --------------------------------------------------------------------
+-- --------------------------------------------------------------------
+instance ToSchema ResourceCollection where
+  declareNamedSchema = toSwagger rc1
+
+instance ToSchema ResourcePage where
+  declareNamedSchema = toSwagger rc1_rp1
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------

@@ -15,6 +15,7 @@ import WizardLib.KnowledgeModel.Api.Resource.Event.MoveEventSM ()
 import WizardLib.KnowledgeModel.Api.Resource.Event.PhaseEventSM ()
 import WizardLib.KnowledgeModel.Api.Resource.Event.QuestionEventSM ()
 import WizardLib.KnowledgeModel.Api.Resource.Event.ReferenceEventSM ()
+import WizardLib.KnowledgeModel.Api.Resource.Event.ResourceEventSM ()
 import WizardLib.KnowledgeModel.Api.Resource.Event.TagEventSM ()
 import WizardLib.KnowledgeModel.Model.Event.Event
 

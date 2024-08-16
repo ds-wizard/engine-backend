@@ -125,3 +125,19 @@ class HasKnowledgeModelPhases entity where
   setPhasesM :: entity -> M.Map U.UUID Phase -> entity
   putInPhasesM :: U.UUID -> Phase -> entity -> entity
   deleteFromPhasesM :: U.UUID -> entity -> entity
+
+class HasKnowledgeModelResourceCollection entity where
+  getResourceCollectionsL :: entity -> [ResourceCollection]
+  setResourceCollectionsL :: entity -> [ResourceCollection] -> entity
+  getResourceCollectionsM :: entity -> M.Map U.UUID ResourceCollection
+  setResourceCollectionsM :: entity -> M.Map U.UUID ResourceCollection -> entity
+  putInResourceCollectionsM :: U.UUID -> ResourceCollection -> entity -> entity
+  deleteFromResourceCollectionsM :: U.UUID -> entity -> entity
+
+class HasKnowledgeModelResourcePage entity where
+  getResourcePagesL :: entity -> [ResourcePage]
+  setResourcePagesL :: entity -> [ResourcePage] -> entity
+  getResourcePagesM :: entity -> M.Map U.UUID ResourcePage
+  setResourcePagesM :: entity -> M.Map U.UUID ResourcePage -> entity
+  putInResourcePagesM :: U.UUID -> ResourcePage -> entity -> entity
+  deleteFromResourcePagesM :: U.UUID -> entity -> entity

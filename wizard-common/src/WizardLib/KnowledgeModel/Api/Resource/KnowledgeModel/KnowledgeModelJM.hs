@@ -178,6 +178,20 @@ instance FromJSON Tag where
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
+instance ToJSON ResourceCollection where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON ResourceCollection where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON ResourcePage where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON ResourcePage where
+  parseJSON = genericParseJSON jsonOptions
+
+-- --------------------------------------------------------------------
+-- --------------------------------------------------------------------
 instance ToJSON Integration where
   toJSON = toSumJSON
 

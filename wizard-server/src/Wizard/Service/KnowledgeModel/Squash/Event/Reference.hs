@@ -20,7 +20,7 @@ instance SimpleEventSquash EditReferenceEvent where
         { uuid = newEvent.uuid
         , parentUuid = newEvent.parentUuid
         , entityUuid = newEvent.entityUuid
-        , shortUuid = applyValue oldEvent newEvent (.shortUuid)
+        , resourcePageUuid = applyValue oldEvent newEvent (.resourcePageUuid)
         , annotations = applyValue oldEvent newEvent (.annotations)
         , createdAt = newEvent.createdAt
         }

@@ -24,5 +24,6 @@ instance SimpleEventSquash EditKnowledgeModelEvent where
       , integrationUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.integrationUuids)
       , metricUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.metricUuids)
       , phaseUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.phaseUuids)
+      , resourceCollectionUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.resourceCollectionUuids)
       , createdAt = newEvent.createdAt
       }

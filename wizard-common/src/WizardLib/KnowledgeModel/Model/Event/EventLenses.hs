@@ -15,6 +15,7 @@ import WizardLib.KnowledgeModel.Model.Event.Move.MoveEventLenses ()
 import WizardLib.KnowledgeModel.Model.Event.Phase.PhaseEventLenses ()
 import WizardLib.KnowledgeModel.Model.Event.Question.QuestionEventLenses ()
 import WizardLib.KnowledgeModel.Model.Event.Reference.ReferenceEventLenses ()
+import WizardLib.KnowledgeModel.Model.Event.Resource.ResourceEventLenses ()
 import WizardLib.KnowledgeModel.Model.Event.Tag.TagEventLenses ()
 
 instance HasUuid' Event where
@@ -50,6 +51,12 @@ instance HasUuid' Event where
   getUuid (AddIntegrationEvent' entity) = getUuid entity
   getUuid (EditIntegrationEvent' entity) = getUuid entity
   getUuid (DeleteIntegrationEvent' entity) = getUuid entity
+  getUuid (AddResourceCollectionEvent' entity) = getUuid entity
+  getUuid (EditResourceCollectionEvent' entity) = getUuid entity
+  getUuid (DeleteResourceCollectionEvent' entity) = getUuid entity
+  getUuid (AddResourcePageEvent' entity) = getUuid entity
+  getUuid (EditResourcePageEvent' entity) = getUuid entity
+  getUuid (DeleteResourcePageEvent' entity) = getUuid entity
   getUuid (MoveQuestionEvent' entity) = getUuid entity
   getUuid (MoveAnswerEvent' entity) = getUuid entity
   getUuid (MoveChoiceEvent' entity) = getUuid entity
@@ -126,6 +133,12 @@ instance HasParentUuid' Event where
   getParentUuid (AddIntegrationEvent' entity) = getParentUuid entity
   getParentUuid (EditIntegrationEvent' entity) = getParentUuid entity
   getParentUuid (DeleteIntegrationEvent' entity) = getParentUuid entity
+  getParentUuid (AddResourceCollectionEvent' entity) = getParentUuid entity
+  getParentUuid (EditResourceCollectionEvent' entity) = getParentUuid entity
+  getParentUuid (DeleteResourceCollectionEvent' entity) = getParentUuid entity
+  getParentUuid (AddResourcePageEvent' entity) = getParentUuid entity
+  getParentUuid (EditResourcePageEvent' entity) = getParentUuid entity
+  getParentUuid (DeleteResourcePageEvent' entity) = getParentUuid entity
   getParentUuid (MoveQuestionEvent' entity) = getParentUuid entity
   getParentUuid (MoveAnswerEvent' entity) = getParentUuid entity
   getParentUuid (MoveChoiceEvent' entity) = getParentUuid entity
@@ -202,6 +215,12 @@ instance HasEntityUuid' Event where
   getEntityUuid (AddIntegrationEvent' entity) = getEntityUuid entity
   getEntityUuid (EditIntegrationEvent' entity) = getEntityUuid entity
   getEntityUuid (DeleteIntegrationEvent' entity) = getEntityUuid entity
+  getEntityUuid (AddResourceCollectionEvent' entity) = getEntityUuid entity
+  getEntityUuid (EditResourceCollectionEvent' entity) = getEntityUuid entity
+  getEntityUuid (DeleteResourceCollectionEvent' entity) = getEntityUuid entity
+  getEntityUuid (AddResourcePageEvent' entity) = getEntityUuid entity
+  getEntityUuid (EditResourcePageEvent' entity) = getEntityUuid entity
+  getEntityUuid (DeleteResourcePageEvent' entity) = getEntityUuid entity
   getEntityUuid (MoveQuestionEvent' entity) = getEntityUuid entity
   getEntityUuid (MoveAnswerEvent' entity) = getEntityUuid entity
   getEntityUuid (MoveChoiceEvent' entity) = getEntityUuid entity
@@ -278,6 +297,12 @@ instance HasCreatedAt' Event where
   getCreatedAt (AddIntegrationEvent' entity) = getCreatedAt entity
   getCreatedAt (EditIntegrationEvent' entity) = getCreatedAt entity
   getCreatedAt (DeleteIntegrationEvent' entity) = getCreatedAt entity
+  getCreatedAt (AddResourceCollectionEvent' entity) = getCreatedAt entity
+  getCreatedAt (EditResourceCollectionEvent' entity) = getCreatedAt entity
+  getCreatedAt (DeleteResourceCollectionEvent' entity) = getCreatedAt entity
+  getCreatedAt (AddResourcePageEvent' entity) = getCreatedAt entity
+  getCreatedAt (EditResourcePageEvent' entity) = getCreatedAt entity
+  getCreatedAt (DeleteResourcePageEvent' entity) = getCreatedAt entity
   getCreatedAt (MoveQuestionEvent' entity) = getCreatedAt entity
   getCreatedAt (MoveAnswerEvent' entity) = getCreatedAt entity
   getCreatedAt (MoveChoiceEvent' entity) = getCreatedAt entity
