@@ -24,7 +24,7 @@ createTables = do
         \    uuid        uuid        NOT NULL, \
         \    type        varchar     NOT NULL, \
         \    name        varchar     NOT NULL, \
-        \    content     json        NOT NULL, \
+        \    content     jsonb       NOT NULL, \
         \    tenant_uuid uuid        NOT NULL, \
         \    created_at  timestamptz NOT NULL, \
         \    updated_at  timestamptz NOT NULL, \

@@ -23,7 +23,7 @@ createTables = do
         \( \
         \    package_id      varchar     NOT NULL, \
         \    tag_uuids       text[]      NOT NULL, \
-        \    knowledge_model json        NOT NULL, \
+        \    knowledge_model jsonb       NOT NULL, \
         \    tenant_uuid     uuid        NOT NULL, \
         \    created_at      timestamptz NOT NULL, \
         \    CONSTRAINT knowledge_model_cache_pk PRIMARY KEY (package_id, tag_uuids, tenant_uuid), \

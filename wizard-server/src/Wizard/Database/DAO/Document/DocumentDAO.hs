@@ -69,8 +69,8 @@ findDocumentsPage mQtnUuid mQtnName mDocumentTemplateId mQuery pageable sort = d
               \       ${questionnaireSelect} \
               \       doc.questionnaire_event_uuid, \
               \       (SELECT version.name \
-              \        FROM (SELECT json_array_elements(versions) ->> 'name'      AS name, \
-              \                     json_array_elements(versions) ->> 'eventUuid' AS event_uuid \
+              \        FROM (SELECT jsonb_array_elements(versions) ->> 'name'      AS name, \
+              \                     jsonb_array_elements(versions) ->> 'eventUuid' AS event_uuid \
               \              FROM questionnaire qtn \
               \              WHERE qtn.uuid = doc.questionnaire_uuid \
               \                AND qtn.tenant_uuid = doc.tenant_uuid) version \

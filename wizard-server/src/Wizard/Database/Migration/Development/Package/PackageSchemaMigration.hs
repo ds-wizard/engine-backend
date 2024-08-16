@@ -44,7 +44,7 @@ createTables = do
         \    previous_package_id         varchar, \
         \    fork_of_package_id          varchar, \
         \    merge_checkpoint_package_id varchar, \
-        \    events                      json        NOT NULL, \
+        \    events                      jsonb       NOT NULL, \
         \    created_at                  timestamptz NOT NULL, \
         \    tenant_uuid                 uuid        NOT NULL, \
         \    phase                       varchar     NOT NULL, \

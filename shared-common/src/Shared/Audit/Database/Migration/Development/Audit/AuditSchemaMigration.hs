@@ -25,7 +25,7 @@ createTables = do
         \    component   varchar     NOT NULL, \
         \    action      varchar     NOT NULL, \
         \    entity      varchar     NOT NULL, \
-        \    body        json        NOT NULL, \
+        \    body        jsonb       NOT NULL, \
         \    created_by  uuid, \
         \    tenant_uuid uuid        NOT NULL, \
         \    created_at  timestamptz NOT NULL, \

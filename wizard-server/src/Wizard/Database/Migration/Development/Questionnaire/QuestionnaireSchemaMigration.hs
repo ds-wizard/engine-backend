@@ -38,12 +38,12 @@ createQtnTable = do
         \    visibility                  varchar     NOT NULL, \
         \    sharing                     varchar     NOT NULL, \
         \    package_id                  varchar     NOT NULL, \
-        \    selected_question_tag_uuids json        NOT NULL, \
+        \    selected_question_tag_uuids jsonb       NOT NULL, \
         \    document_template_id        varchar, \
         \    format_uuid                 uuid, \
         \    created_by                  uuid, \
-        \    events                      json        NOT NULL, \
-        \    versions                    json        NOT NULL, \
+        \    events                      jsonb       NOT NULL, \
+        \    versions                    jsonb       NOT NULL, \
         \    created_at                  timestamptz NOT NULL, \
         \    updated_at                  timestamptz NOT NULL, \
         \    description                 varchar, \

@@ -58,18 +58,18 @@ createTenantConfigTable = do
         "CREATE TABLE tenant_config \
         \( \
         \    uuid                       uuid        NOT NULL, \
-        \    organization               json        NOT NULL, \
-        \    authentication             json        NOT NULL, \
-        \    privacy_and_support        json        NOT NULL, \
-        \    dashboard_and_login_screen json        NOT NULL, \
-        \    look_and_feel              json        NOT NULL, \
-        \    registry                   json        NOT NULL, \
-        \    knowledge_model            json        NOT NULL, \
-        \    questionnaire              json        NOT NULL, \
-        \    submission                 json        NOT NULL, \
+        \    organization               jsonb       NOT NULL, \
+        \    authentication             jsonb       NOT NULL, \
+        \    privacy_and_support        jsonb       NOT NULL, \
+        \    dashboard_and_login_screen jsonb       NOT NULL, \
+        \    look_and_feel              jsonb       NOT NULL, \
+        \    registry                   jsonb       NOT NULL, \
+        \    knowledge_model            jsonb       NOT NULL, \
+        \    questionnaire              jsonb       NOT NULL, \
+        \    submission                 jsonb       NOT NULL, \
         \    created_at                 timestamptz NOT NULL, \
         \    updated_at                 timestamptz NOT NULL, \
-        \    owl                        json        NOT NULL, \
+        \    owl                        jsonb       NOT NULL, \
         \    mail_config_uuid           uuid, \
         \    CONSTRAINT tenant_config_pk PRIMARY KEY (uuid), \
         \    CONSTRAINT tenant_config_mail_config_uuid_fk FOREIGN KEY (mail_config_uuid) REFERENCES instance_config_mail (uuid) \

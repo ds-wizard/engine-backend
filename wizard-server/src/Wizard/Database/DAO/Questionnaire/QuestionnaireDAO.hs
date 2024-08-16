@@ -584,7 +584,7 @@ appendQuestionnaireEventByUuid qtnUuid events = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb, updated_at = now() WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE questionnaire SET squashed = false, events = events || ?, updated_at = now() WHERE tenant_uuid = ? AND uuid = ?"
   let params =
         [ toJSONField events
         , toField tenantUuid
