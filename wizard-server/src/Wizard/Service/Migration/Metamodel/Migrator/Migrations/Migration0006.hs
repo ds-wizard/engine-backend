@@ -9,8 +9,7 @@ import Wizard.Service.Migration.Metamodel.Migrator.Migrations.MigrationContext
 import Wizard.Service.Migration.Metamodel.Migrator.Migrations.Utils
 
 -- Migration #0006 (KM v6 -> v7)
-
--- * Delete "name" to add/edit KM events
+-- . Delete "name" to add/edit KM events
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ input = Right [migrate input]
 

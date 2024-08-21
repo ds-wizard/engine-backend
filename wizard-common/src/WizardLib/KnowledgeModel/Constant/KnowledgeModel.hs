@@ -1,4 +1,4 @@
 module WizardLib.KnowledgeModel.Constant.KnowledgeModel where
 
 kmMetamodelVersion :: Int
-kmMetamodelVersion = 14
+kmMetamodelVersion = 15

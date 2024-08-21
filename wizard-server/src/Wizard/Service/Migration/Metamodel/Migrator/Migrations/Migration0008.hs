@@ -10,10 +10,8 @@ import Wizard.Service.Migration.Metamodel.Migrator.Migrations.MigrationContext
 import Wizard.Service.Migration.Metamodel.Migrator.Migrations.Utils
 
 -- Migration #0008 (KM v8 -> v9)
-
--- * Add "annotations" to all add events (empty object)
-
--- * Add "annotations" to all edit events (no change)
+-- . Add "annotations" to all add events (empty object)
+-- . Add "annotations" to all edit events (no change)
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ input = Right [migrate input]
 

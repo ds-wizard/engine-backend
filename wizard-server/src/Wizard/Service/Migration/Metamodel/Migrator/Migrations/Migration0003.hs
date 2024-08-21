@@ -11,10 +11,8 @@ import Wizard.Service.Migration.Metamodel.Migrator.Migrations.MigrationContext
 import Wizard.Service.Migration.Metamodel.Migrator.Migrations.Utils
 
 -- Migration #0003 (KM v3 -> v4)
-
--- * Change "path" to "parentUuid"
-
--- * Change "<x>Uuid" to "entityUuid"
+-- . Change "path" to "parentUuid"
+-- . Change "<x>Uuid" to "entityUuid"
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ input = Right [migrate input]
 

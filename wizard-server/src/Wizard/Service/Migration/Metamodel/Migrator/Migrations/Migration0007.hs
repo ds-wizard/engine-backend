@@ -11,10 +11,8 @@ import Wizard.Service.Migration.Metamodel.Migrator.Migrations.MigrationContext
 import Wizard.Service.Migration.Metamodel.Migrator.Migrations.Utils
 
 -- Migration #0007 (KM v7 -> v8)
-
--- * Extend with default phases and metrics
-
--- * Change levels to phases in question events
+-- . Extend with default phases and metrics
+-- . Change levels to phases in question events
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ = Right . migrate
 
