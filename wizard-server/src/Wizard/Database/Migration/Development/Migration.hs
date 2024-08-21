@@ -13,8 +13,6 @@ import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabMigra
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as Prefab
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ActionKey
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ActionKey
-import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BookReference
-import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BookReference
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as Branch
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as Branch
 import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as Common
@@ -72,7 +70,6 @@ runMigration = runAppContextWithBaseContext $ do
   Questionnaire.dropTables
   Branch.dropTables
   Feedback.dropTables
-  BookReference.dropTables
   ActionKey.dropTables
   DocumentTemplate.dropTables
   Package.dropTables
@@ -86,7 +83,6 @@ runMigration = runAppContextWithBaseContext $ do
   Package.createTables
   DocumentTemplate.createTables
   ActionKey.createTables
-  BookReference.createTables
   Feedback.createTables
   Branch.createTables
   Questionnaire.createTables
@@ -117,7 +113,6 @@ runMigration = runAppContextWithBaseContext $ do
   Package.runMigration
   DocumentTemplate.runMigration
   ActionKey.runMigration
-  BookReference.runMigration
   Feedback.runMigration
   Branch.runMigration
   Questionnaire.runMigration

@@ -16,6 +16,7 @@ migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   changeColumnTypeFromJsonToJsonb dbPool
   replaceFunctionGetBranchStateWithJsonb dbPool
+  dropBookReferenceTable dbPool
 
 changeColumnTypeFromJsonToJsonb dbPool = do
   let sql =
@@ -79,6 +80,12 @@ replaceFunctionGetBranchStateWithJsonb dbPool = do
         \    RETURN state; \
         \END; \
         \$$;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+dropBookReferenceTable dbPool = do
+  let sql = "DROP TABLE book_reference"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

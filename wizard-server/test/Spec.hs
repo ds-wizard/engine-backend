@@ -25,7 +25,6 @@ import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.ApiKey.APISpec
 import Wizard.Specs.API.AppKey.APISpec
-import Wizard.Specs.API.BookReference.APISpec
 import Wizard.Specs.API.Branch.APISpec
 import Wizard.Specs.API.CommentThread.APISpec
 import Wizard.Specs.API.Config.APISpec
@@ -189,7 +188,6 @@ main =
             describe "API" $ do
               apiKeyAPI baseContext appContext
               appKeyAPI baseContext appContext
-              bookReferenceAPI baseContext appContext
               branchAPI baseContext appContext
               commentThreadAPI baseContext appContext
               configAPI baseContext appContext

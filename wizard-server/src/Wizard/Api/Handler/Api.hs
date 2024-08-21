@@ -6,7 +6,6 @@ import Wizard.Api.Handler.ActionKey.Api
 import Wizard.Api.Handler.ApiKey.Api
 import Wizard.Api.Handler.AppKey.Api
 import Wizard.Api.Handler.Auth.Api
-import Wizard.Api.Handler.BookReference.Api
 import Wizard.Api.Handler.Branch.Api
 import Wizard.Api.Handler.CommentThread.Api
 import Wizard.Api.Handler.Config.Api
@@ -45,7 +44,6 @@ type ApplicationAPI =
     :<|> ApiKeyAPI
     :<|> AppKeyAPI
     :<|> AuthAPI
-    :<|> BookReferenceAPI
     :<|> BranchAPI
     :<|> CommentThreadAPI
     :<|> ConfigAPI
@@ -87,7 +85,6 @@ applicationServer =
     :<|> apiKeyServer
     :<|> appKeyServer
     :<|> authServer
-    :<|> bookReferenceServer
     :<|> branchServer
     :<|> commentThreadServer
     :<|> configServer

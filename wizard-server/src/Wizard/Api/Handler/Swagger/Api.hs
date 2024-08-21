@@ -21,7 +21,6 @@ import Shared.Prefab.Api.Resource.Prefab.PrefabSM ()
 import Wizard.Api.Handler.Api
 import Wizard.Api.Resource.ActionKey.ActionKeyTypeSM ()
 import Wizard.Api.Resource.Auth.AuthConsentSM ()
-import Wizard.Api.Resource.BookReference.BookReferenceSM ()
 import Wizard.Api.Resource.Branch.BranchChangeSM ()
 import Wizard.Api.Resource.Branch.BranchCreateSM ()
 import Wizard.Api.Resource.Branch.BranchDetailSM ()
