@@ -42,6 +42,7 @@ km1 =
                 , question10'
                 , question11'
                 , question12'
+                , question13'
                 ]
           , answers =
               toMap
@@ -136,6 +137,7 @@ km1WithQ4Plain =
                 , question10'
                 , question11'
                 , question12'
+                , question13'
                 ]
           , answers =
               toMap
@@ -195,6 +197,7 @@ km1WithQ4 =
                 , question10'
                 , question11'
                 , question12'
+                , question13'
                 ]
           , answers =
               toMap

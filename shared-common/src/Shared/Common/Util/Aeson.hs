@@ -69,4 +69,5 @@ jsonSpecialFields "aValue" = "value"
 jsonSpecialFields "mcValue" = "value"
 jsonSpecialFields "ilValue" = "value"
 jsonSpecialFields "iValue" = "value"
+jsonSpecialFields "isValue" = "value"
 jsonSpecialFields field = field

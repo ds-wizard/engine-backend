@@ -141,11 +141,13 @@ instance HasUuid' Question where
   getUuid (ListQuestion' entity) = entity.uuid
   getUuid (ValueQuestion' entity) = entity.uuid
   getUuid (IntegrationQuestion' entity) = entity.uuid
+  getUuid (ItemSelectQuestion' entity) = entity.uuid
   setUuid (OptionsQuestion' entity) newValue = OptionsQuestion' $ entity {uuid = newValue}
   setUuid (MultiChoiceQuestion' entity) newValue = MultiChoiceQuestion' $ entity {uuid = newValue}
   setUuid (ListQuestion' entity) newValue = ListQuestion' $ entity {uuid = newValue}
   setUuid (ValueQuestion' entity) newValue = ValueQuestion' $ entity {uuid = newValue}
   setUuid (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity {uuid = newValue}
+  setUuid (ItemSelectQuestion' entity) newValue = ItemSelectQuestion' $ entity {uuid = newValue}
 
 instance HasUuid' Expert where
   getUuid entity = entity.uuid
@@ -208,11 +210,13 @@ instance HasAnnotations' Question where
   getAnnotations (ListQuestion' entity) = entity.annotations
   getAnnotations (ValueQuestion' entity) = entity.annotations
   getAnnotations (IntegrationQuestion' entity) = entity.annotations
+  getAnnotations (ItemSelectQuestion' entity) = entity.annotations
   setAnnotations (OptionsQuestion' entity) newValue = OptionsQuestion' $ entity {annotations = newValue}
   setAnnotations (MultiChoiceQuestion' entity) newValue = MultiChoiceQuestion' $ entity {annotations = newValue}
   setAnnotations (ListQuestion' entity) newValue = ListQuestion' $ entity {annotations = newValue}
   setAnnotations (ValueQuestion' entity) newValue = ValueQuestion' $ entity {annotations = newValue}
   setAnnotations (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity {annotations = newValue}
+  setAnnotations (ItemSelectQuestion' entity) newValue = ItemSelectQuestion' $ entity {annotations = newValue}
 
 instance HasAnnotations' Expert where
   getAnnotations entity = entity.annotations
@@ -259,11 +263,13 @@ instance HasTitle' Question where
   getTitle (ListQuestion' q) = q.title
   getTitle (ValueQuestion' q) = q.title
   getTitle (IntegrationQuestion' q) = q.title
+  getTitle (ItemSelectQuestion' q) = q.title
   setTitle (OptionsQuestion' q) newValue = OptionsQuestion' $ q {title = newValue}
   setTitle (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q {title = newValue}
   setTitle (ListQuestion' q) newValue = ListQuestion' $ q {title = newValue}
   setTitle (ValueQuestion' q) newValue = ValueQuestion' $ q {title = newValue}
   setTitle (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {title = newValue}
+  setTitle (ItemSelectQuestion' q) newValue = ItemSelectQuestion' $ q {title = newValue}
 
 ------------------------------------------------------------------------------------------
 instance HasText' Question where
@@ -272,11 +278,13 @@ instance HasText' Question where
   getText (ListQuestion' q) = q.text
   getText (ValueQuestion' q) = q.text
   getText (IntegrationQuestion' q) = q.text
+  getText (ItemSelectQuestion' q) = q.text
   setText (OptionsQuestion' q) newValue = OptionsQuestion' $ q {text = newValue}
   setText (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q {text = newValue}
   setText (ListQuestion' q) newValue = ListQuestion' $ q {text = newValue}
   setText (ValueQuestion' q) newValue = ValueQuestion' $ q {text = newValue}
   setText (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {text = newValue}
+  setText (ItemSelectQuestion' q) newValue = ItemSelectQuestion' $ q {text = newValue}
 
 ------------------------------------------------------------------------------------------
 instance HasRequiredPhaseUuid' Question where
@@ -285,11 +293,13 @@ instance HasRequiredPhaseUuid' Question where
   getRequiredPhaseUuid (ListQuestion' q) = q.requiredPhaseUuid
   getRequiredPhaseUuid (ValueQuestion' q) = q.requiredPhaseUuid
   getRequiredPhaseUuid (IntegrationQuestion' q) = q.requiredPhaseUuid
+  getRequiredPhaseUuid (ItemSelectQuestion' q) = q.requiredPhaseUuid
   setRequiredPhaseUuid (OptionsQuestion' q) newValue = OptionsQuestion' $ q {requiredPhaseUuid = newValue}
   setRequiredPhaseUuid (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q {requiredPhaseUuid = newValue}
   setRequiredPhaseUuid (ListQuestion' q) newValue = ListQuestion' $ q {requiredPhaseUuid = newValue}
   setRequiredPhaseUuid (ValueQuestion' q) newValue = ValueQuestion' $ q {requiredPhaseUuid = newValue}
   setRequiredPhaseUuid (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {requiredPhaseUuid = newValue}
+  setRequiredPhaseUuid (ItemSelectQuestion' q) newValue = ItemSelectQuestion' $ q {requiredPhaseUuid = newValue}
 
 ------------------------------------------------------------------------------------------
 instance HasTagUuids' Question where
@@ -298,11 +308,13 @@ instance HasTagUuids' Question where
   getTagUuids (ListQuestion' q) = q.tagUuids
   getTagUuids (ValueQuestion' q) = q.tagUuids
   getTagUuids (IntegrationQuestion' q) = q.tagUuids
+  getTagUuids (ItemSelectQuestion' q) = q.tagUuids
   setTagUuids (OptionsQuestion' q) newValue = OptionsQuestion' $ q {tagUuids = newValue}
   setTagUuids (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q {tagUuids = newValue}
   setTagUuids (ListQuestion' q) newValue = ListQuestion' $ q {tagUuids = newValue}
   setTagUuids (ValueQuestion' q) newValue = ValueQuestion' $ q {tagUuids = newValue}
   setTagUuids (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {tagUuids = newValue}
+  setTagUuids (ItemSelectQuestion' q) newValue = ItemSelectQuestion' $ q {tagUuids = newValue}
 
 -- ------------------------------------------------------------------------------------------
 instance HasExpertUuids' Question [U.UUID] where
@@ -311,11 +323,13 @@ instance HasExpertUuids' Question [U.UUID] where
   getExpertUuids (ListQuestion' entity) = entity.expertUuids
   getExpertUuids (ValueQuestion' entity) = entity.expertUuids
   getExpertUuids (IntegrationQuestion' entity) = entity.expertUuids
+  getExpertUuids (ItemSelectQuestion' entity) = entity.expertUuids
   setExpertUuids (OptionsQuestion' entity) newValue = OptionsQuestion' $ entity {expertUuids = newValue}
   setExpertUuids (MultiChoiceQuestion' entity) newValue = MultiChoiceQuestion' $ entity {expertUuids = newValue}
   setExpertUuids (ListQuestion' entity) newValue = ListQuestion' $ entity {expertUuids = newValue}
   setExpertUuids (ValueQuestion' entity) newValue = ValueQuestion' $ entity {expertUuids = newValue}
   setExpertUuids (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity {expertUuids = newValue}
+  setExpertUuids (ItemSelectQuestion' entity) newValue = ItemSelectQuestion' $ entity {expertUuids = newValue}
 
 -- ------------------------------------------------------------------------------------------
 instance HasReferenceUuids' Question [U.UUID] where
@@ -324,11 +338,13 @@ instance HasReferenceUuids' Question [U.UUID] where
   getReferenceUuids (ListQuestion' q) = q.referenceUuids
   getReferenceUuids (ValueQuestion' q) = q.referenceUuids
   getReferenceUuids (IntegrationQuestion' q) = q.referenceUuids
+  getReferenceUuids (ItemSelectQuestion' q) = q.referenceUuids
   setReferenceUuids (OptionsQuestion' q) newValue = OptionsQuestion' $ q {referenceUuids = newValue}
   setReferenceUuids (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q {referenceUuids = newValue}
   setReferenceUuids (ListQuestion' q) newValue = ListQuestion' $ q {referenceUuids = newValue}
   setReferenceUuids (ValueQuestion' q) newValue = ValueQuestion' $ q {referenceUuids = newValue}
   setReferenceUuids (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {referenceUuids = newValue}
+  setReferenceUuids (ItemSelectQuestion' q) newValue = ItemSelectQuestion' $ q {referenceUuids = newValue}
 
 -- ------------------------------------------------------------------------------------------
 instance HasAnswerUuids' Question where

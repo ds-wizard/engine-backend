@@ -249,6 +249,7 @@ germanyPackage =
         , AddChoiceEvent' a_km1_ch3_q11_cho1
         , AddChoiceEvent' a_km1_ch3_q11_cho2
         , AddQuestionEvent' a_km1_ch3_q12'
+        , AddQuestionEvent' a_km1_ch3_q13'
         ]
     , nonEditable = False
     , tenantUuid = U.nil

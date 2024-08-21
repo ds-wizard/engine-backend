@@ -15,6 +15,7 @@ data AddQuestionEvent
   | AddListQuestionEvent' AddListQuestionEvent
   | AddValueQuestionEvent' AddValueQuestionEvent
   | AddIntegrationQuestionEvent' AddIntegrationQuestionEvent
+  | AddItemSelectQuestionEvent' AddItemSelectQuestionEvent
   deriving (Show, Eq, Generic)
 
 data AddOptionsQuestionEvent = AddOptionsQuestionEvent
@@ -85,6 +86,20 @@ data AddIntegrationQuestionEvent = AddIntegrationQuestionEvent
   }
   deriving (Show, Eq, Generic)
 
+data AddItemSelectQuestionEvent = AddItemSelectQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: String
+  , text :: Maybe String
+  , requiredPhaseUuid :: Maybe U.UUID
+  , annotations :: [MapEntry String String]
+  , tagUuids :: [U.UUID]
+  , listQuestionUuid :: Maybe U.UUID
+  , createdAt :: UTCTime
+  }
+  deriving (Show, Eq, Generic)
+
 -- --------------------------------------------
 data EditQuestionEvent
   = EditOptionsQuestionEvent' EditOptionsQuestionEvent
@@ -92,6 +107,7 @@ data EditQuestionEvent
   | EditListQuestionEvent' EditListQuestionEvent
   | EditValueQuestionEvent' EditValueQuestionEvent
   | EditIntegrationQuestionEvent' EditIntegrationQuestionEvent
+  | EditItemSelectQuestionEvent' EditItemSelectQuestionEvent
   deriving (Show, Eq, Generic)
 
 data EditOptionsQuestionEvent = EditOptionsQuestionEvent
@@ -171,6 +187,22 @@ data EditIntegrationQuestionEvent = EditIntegrationQuestionEvent
   , referenceUuids :: EventField [U.UUID]
   , integrationUuid :: EventField U.UUID
   , props :: EventField (M.Map String String)
+  , createdAt :: UTCTime
+  }
+  deriving (Show, Eq, Generic)
+
+data EditItemSelectQuestionEvent = EditItemSelectQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: EventField String
+  , text :: EventField (Maybe String)
+  , requiredPhaseUuid :: EventField (Maybe U.UUID)
+  , annotations :: EventField [MapEntry String String]
+  , tagUuids :: EventField [U.UUID]
+  , expertUuids :: EventField [U.UUID]
+  , referenceUuids :: EventField [U.UUID]
+  , listQuestionUuid :: EventField (Maybe U.UUID)
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

@@ -303,6 +303,24 @@ a_km1_ch3_q12 =
     , createdAt = dt' 2018 1 21
     }
 
+a_km1_ch3_q13' :: AddQuestionEvent
+a_km1_ch3_q13' = AddItemSelectQuestionEvent' a_km1_ch3_q13
+
+a_km1_ch3_q13 :: AddItemSelectQuestionEvent
+a_km1_ch3_q13 =
+  AddItemSelectQuestionEvent
+    { uuid = u' "49039f8c-3389-4da3-a4a9-8d2c052b38cd"
+    , parentUuid = chapter3.uuid
+    , entityUuid = question13.uuid
+    , title = question13.title
+    , text = question13.text
+    , requiredPhaseUuid = question13.requiredPhaseUuid
+    , annotations = question13.annotations
+    , tagUuids = question13.tagUuids
+    , listQuestionUuid = question13.listQuestionUuid
+    , createdAt = dt' 2018 1 21
+    }
+
 e_km1_ch1_q1' :: EditQuestionEvent
 e_km1_ch1_q1' = EditValueQuestionEvent' e_km1_ch1_q1
 
@@ -502,6 +520,26 @@ e_km1_ch3_q11 =
     , expertUuids = ChangedValue $ question11Edited.expertUuids
     , referenceUuids = ChangedValue $ question11Edited.referenceUuids
     , choiceUuids = ChangedValue $ question11Edited.choiceUuids
+    , createdAt = dt' 2018 1 21
+    }
+
+e_km1_ch3_q13' :: EditQuestionEvent
+e_km1_ch3_q13' = EditItemSelectQuestionEvent' e_km1_ch3_q13
+
+e_km1_ch3_q13 :: EditItemSelectQuestionEvent
+e_km1_ch3_q13 =
+  EditItemSelectQuestionEvent
+    { uuid = u' "f95ace16-9a2c-4f66-b22f-e419e5014c58"
+    , parentUuid = chapter3.uuid
+    , entityUuid = question2.uuid
+    , title = ChangedValue $ question13Edited.title
+    , text = ChangedValue $ question13Edited.text
+    , requiredPhaseUuid = ChangedValue $ question13Edited.requiredPhaseUuid
+    , annotations = ChangedValue $ question13Edited.annotations
+    , tagUuids = ChangedValue $ question13Edited.tagUuids
+    , expertUuids = ChangedValue $ question13Edited.expertUuids
+    , referenceUuids = ChangedValue $ question13Edited.referenceUuids
+    , listQuestionUuid = ChangedValue $ question13Edited.listQuestionUuid
     , createdAt = dt' 2018 1 21
     }
 

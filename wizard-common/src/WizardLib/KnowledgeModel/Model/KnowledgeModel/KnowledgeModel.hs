@@ -67,6 +67,7 @@ data Question
   | ListQuestion' ListQuestion
   | ValueQuestion' ValueQuestion
   | IntegrationQuestion' IntegrationQuestion
+  | ItemSelectQuestion' ItemSelectQuestion
   deriving (Show, Eq, Generic)
 
 data OptionsQuestion = OptionsQuestion
@@ -132,6 +133,19 @@ data IntegrationQuestion = IntegrationQuestion
   , referenceUuids :: [U.UUID]
   , integrationUuid :: U.UUID
   , props :: Map String String
+  }
+  deriving (Show, Eq, Generic)
+
+data ItemSelectQuestion = ItemSelectQuestion
+  { uuid :: U.UUID
+  , title :: String
+  , text :: Maybe String
+  , requiredPhaseUuid :: Maybe U.UUID
+  , annotations :: [MapEntry String String]
+  , tagUuids :: [U.UUID]
+  , expertUuids :: [U.UUID]
+  , referenceUuids :: [U.UUID]
+  , listQuestionUuid :: Maybe U.UUID
   }
   deriving (Show, Eq, Generic)
 

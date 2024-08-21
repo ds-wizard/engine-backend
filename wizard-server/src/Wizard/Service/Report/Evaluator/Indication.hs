@@ -53,6 +53,7 @@ evaluateQuestion found notFound mQtnPhase km replies path q' =
         MultiChoiceQuestion' q -> evaluateMultiChoiceQuestion q found notFound mQtnPhase km replies currentPath
         ValueQuestion' q -> rFound
         IntegrationQuestion' q -> rFound
+        ItemSelectQuestion' q -> rFound
         OptionsQuestion' q -> rFound + evaluateOptionsQuestion q found notFound mQtnPhase km replies currentPath
         ListQuestion' q -> evaluateListQuestion found notFound mQtnPhase km replies currentPath q
       where

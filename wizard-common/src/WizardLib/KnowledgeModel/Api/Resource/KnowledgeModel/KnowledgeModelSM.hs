@@ -62,6 +62,10 @@ instance ToSchema IntegrationQuestion where
   declareNamedSchema = toSwaggerWithType "questionType" question9
 
 -- --------------------------------------------------------------------
+instance ToSchema ItemSelectQuestion where
+  declareNamedSchema = toSwaggerWithType "questionType" question13
+
+-- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToSchema Answer where
   declareNamedSchema = toSwagger q2_answerNo
