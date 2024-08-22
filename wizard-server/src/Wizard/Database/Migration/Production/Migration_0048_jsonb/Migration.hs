@@ -17,6 +17,7 @@ migrate dbPool = do
   changeColumnTypeFromJsonToJsonb dbPool
   replaceFunctionGetBranchStateWithJsonb dbPool
   dropBookReferenceTable dbPool
+  truncateKnowledgeModelTable dbPool
 
 changeColumnTypeFromJsonToJsonb dbPool = do
   let sql =
@@ -86,6 +87,12 @@ replaceFunctionGetBranchStateWithJsonb dbPool = do
 
 dropBookReferenceTable dbPool = do
   let sql = "DROP TABLE book_reference"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+truncateKnowledgeModelTable dbPool = do
+  let sql = "TRUNCATE knowledge_model_cache"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
