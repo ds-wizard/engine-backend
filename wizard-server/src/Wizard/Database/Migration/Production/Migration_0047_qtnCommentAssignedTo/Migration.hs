@@ -28,7 +28,7 @@ addAssignedTo dbPool = do
         \ALTER TABLE questionnaire_comment_thread \
         \  ADD CONSTRAINT questionnaire_comment_thread_assigned_by FOREIGN KEY (assigned_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid); \
         \ALTER TABLE questionnaire_comment_thread \
-        \  ADD COLUMN notification_required bool;"
+        \  ADD COLUMN notification_required bool DEFAULT false;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
