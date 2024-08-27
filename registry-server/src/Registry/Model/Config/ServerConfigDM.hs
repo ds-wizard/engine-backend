@@ -1,7 +1,6 @@
 module Registry.Model.Config.ServerConfigDM where
 
 import Registry.Model.Config.ServerConfig
-import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfigDM
 
 defaultConfig :: ServerConfig
@@ -20,7 +19,7 @@ defaultConfig =
 defaultGeneral :: ServerConfigGeneral
 defaultGeneral =
   ServerConfigGeneral
-    { environment = Production
+    { environment = "Production"
     , clientUrl = ""
     , serverPort = 3000
     , publicRegistrationEnabled = True

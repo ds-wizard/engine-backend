@@ -14,7 +14,6 @@ import Shared.Common.Api.Middleware.CORSMiddleware
 import Shared.Common.Api.Middleware.ContentTypeMiddleware
 import Shared.Common.Api.Middleware.OptionsMiddleware
 import Shared.Common.Model.Config.BuildInfoConfig
-import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.BaseContext
 import Shared.Common.Util.Logger
@@ -24,7 +23,7 @@ runWebServerFactory
   :: (BaseContextType context sc, HasServer api '[])
   => context
   -> (Maybe String -> [(String, Value)])
-  -> (Environment -> WAI.Middleware)
+  -> (String -> WAI.Middleware)
   -> Proxy api
   -> (context -> Server api)
   -> IO ()
@@ -45,7 +44,7 @@ convert baseContext runBaseContextM function =
   let loggingLevel = baseContext.serverConfig'.logging.level
    in Handler . runLogging loggingLevel $ runReaderT (runBaseContextM function) baseContext
 
-runMiddleware :: Environment -> (Environment -> WAI.Middleware) -> Application -> Application
+runMiddleware :: String -> (String -> WAI.Middleware) -> Application -> Application
 runMiddleware env loggingMiddleware =
   contentTypeMiddleware
     . corsMiddleware

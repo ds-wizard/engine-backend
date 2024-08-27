@@ -7,7 +7,6 @@ import Data.String (fromString)
 
 import Shared.Common.Constant.DummyRsaPrivateKey
 import Shared.Common.Localization.Messages.Internal
-import Shared.Common.Model.Config.EnvironmentJM ()
 import Shared.Common.Model.Config.ServerConfigDM
 import Shared.Common.Model.Config.ServerConfigJM ()
 import Shared.Common.Util.Crypto

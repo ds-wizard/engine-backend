@@ -59,6 +59,7 @@ general:
 
 database:
   connectionString: postgresql://postgres:postgres@localhost:5432/postgres
+  useDevMigration: true
 
 s3:
   url: http://localhost:9000

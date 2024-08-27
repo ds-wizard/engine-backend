@@ -3,7 +3,6 @@ module Wizard.Model.Config.ServerConfig where
 import qualified Crypto.PubKey.RSA as RSA
 import GHC.Generics
 
-import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfig
 
 data ServerConfig = ServerConfig
@@ -35,7 +34,7 @@ data ServerConfig = ServerConfig
   deriving (Generic, Show)
 
 data ServerConfigGeneral = ServerConfigGeneral
-  { environment :: Environment
+  { environment :: String
   , clientUrl :: String
   , serverPort :: Int
   , secret :: String

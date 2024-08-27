@@ -9,6 +9,7 @@ data ServerConfigDatabase = ServerConfigDatabase
   , connectionTimeout :: Int
   , maxConnections :: Int
   , vacuumCleaner :: ServerConfigDatabaseVacuumCleaner
+  , useDevMigration :: Bool
   }
   deriving (Generic, Show)
 

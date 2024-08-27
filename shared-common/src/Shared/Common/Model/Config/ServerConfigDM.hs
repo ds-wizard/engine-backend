@@ -12,6 +12,7 @@ defaultDatabase =
     , connectionTimeout = 10
     , maxConnections = 50
     , vacuumCleaner = defaultDatabaseVacuumCleaner
+    , useDevMigration = False
     }
 
 defaultDatabaseVacuumCleaner :: ServerConfigDatabaseVacuumCleaner
