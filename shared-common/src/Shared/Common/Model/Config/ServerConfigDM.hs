@@ -39,6 +39,7 @@ defaultAws =
     { awsAccessKeyId = ""
     , awsSecretAccessKey = ""
     , awsRegion = ""
+    , awsRole = ""
     }
 
 defaultSentry :: ServerConfigSentry

@@ -48,6 +48,7 @@ instance FromEnv ServerConfigAws where
       [ \c -> applyStringEnvVariable "AWS_AWS_ACCESS_KEY_ID" c.awsAccessKeyId (\x -> c {awsAccessKeyId = x} :: ServerConfigAws)
       , \c -> applyStringEnvVariable "AWS_AWS_SECRET_ACCESS_KEY" c.awsSecretAccessKey (\x -> c {awsSecretAccessKey = x} :: ServerConfigAws)
       , \c -> applyStringEnvVariable "AWS_AWS_REGION" c.awsRegion (\x -> c {awsRegion = x} :: ServerConfigAws)
+      , \c -> applyStringEnvVariable "AWS_AWS_ROLE" c.awsRole (\x -> c {awsRole = x} :: ServerConfigAws)
       ]
 
 instance FromEnv ServerConfigSentry where

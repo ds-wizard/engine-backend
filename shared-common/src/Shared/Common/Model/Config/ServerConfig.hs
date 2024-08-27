@@ -33,6 +33,7 @@ data ServerConfigAws = ServerConfigAws
   { awsAccessKeyId :: String
   , awsSecretAccessKey :: String
   , awsRegion :: String
+  , awsRole :: String
   }
   deriving (Generic, Show)
 

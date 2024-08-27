@@ -41,6 +41,7 @@ instance FromJSON ServerConfigAws where
     awsAccessKeyId <- o .:? "awsAccessKeyId" .!= defaultAws.awsAccessKeyId
     awsSecretAccessKey <- o .:? "awsSecretAccessKey" .!= defaultAws.awsSecretAccessKey
     awsRegion <- o .:? "awsRegion" .!= defaultAws.awsRegion
+    awsRole <- o .:? "awsRole" .!= defaultAws.awsRole
     return ServerConfigAws {..}
   parseJSON _ = mzero
 
