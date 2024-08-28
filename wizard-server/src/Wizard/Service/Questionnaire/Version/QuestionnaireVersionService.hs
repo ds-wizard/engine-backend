@@ -46,7 +46,7 @@ createVersion qtnUuid reqDto =
   runInTransaction $ do
     qtn <- findQuestionnaireByUuid qtnUuid
     checkOwnerPermissionToQtn qtn.visibility qtn.permissions
-    validateQuestionnaireVersion reqDto qtn
+    validateQuestionnaireVersionCreate reqDto qtn
     vUuid <- liftIO generateUuid
     currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
@@ -60,7 +60,7 @@ modifyVersion qtnUuid vUuid reqDto =
   runInTransaction $ do
     qtn <- findQuestionnaireByUuid qtnUuid
     checkOwnerPermissionToQtn qtn.visibility qtn.permissions
-    validateQuestionnaireVersion reqDto qtn
+    validateQuestionnaireVersionUpdate reqDto qtn
     now <- liftIO getCurrentTime
     version <-
       case L.find (\v -> v.uuid == vUuid) qtn.versions of
