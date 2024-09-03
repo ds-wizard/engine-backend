@@ -36,7 +36,7 @@ runWebServerWithWorkers
       buildInfoConfig <- loadConfig buildInfoFile getBuildInfoConfig
       result <-
         runLogging serverConfig.logging.level $ do
-          logInfo _CMP_ENVIRONMENT $ "set to " ++ show serverConfig.general.environment
+          logInfo _CMP_ENVIRONMENT $ "set to " ++ serverConfig.general.environment
           shutdownFlag <- liftIO newEmptyMVar
           dbPool <- connectPostgresDB serverConfig.logging serverConfig.database
           httpClientManager <- setupHttpClientManager serverConfig.logging

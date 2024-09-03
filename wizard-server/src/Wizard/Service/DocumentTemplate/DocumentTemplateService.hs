@@ -113,8 +113,8 @@ deleteDocumentTemplatesByQueryParams queryParams =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
     tmls <- findDocumentTemplatesFiltered queryParams
-    traverse_ (\t -> cleanTemporallyDocumentsForTemplate t.tId) tmls
     traverse_ (\t -> validateDocumentTemplateDeletation t.tId) tmls
+    traverse_ (\t -> cleanTemporallyDocumentsForTemplate t.tId) tmls
     deleteDocumentTemplatesFiltered queryParams
     return ()
 
@@ -124,8 +124,8 @@ deleteDocumentTemplate tmlId =
     checkPermission _DOC_TML_WRITE_PERM
     tml <- findDocumentTemplateById tmlId
     assets <- findAssetsByDocumentTemplateId tmlId
-    cleanTemporallyDocumentsForTemplate tmlId
     validateDocumentTemplateDeletation tmlId
+    cleanTemporallyDocumentsForTemplate tmlId
     deleteDocumentTemplateById tmlId
     let assetUuids = fmap (.uuid) assets
     traverse_ (removeAsset tmlId) assetUuids

@@ -49,8 +49,8 @@ createTemplateTable = do
         \    description       varchar     NOT NULL, \
         \    readme            varchar     NOT NULL, \
         \    license           varchar     NOT NULL, \
-        \    allowed_packages  json        NOT NULL, \
-        \    formats           json        NOT NULL, \
+        \    allowed_packages  jsonb       NOT NULL, \
+        \    formats           jsonb       NOT NULL, \
         \    created_at        timestamptz NOT NULL, \
         \    tenant_uuid       uuid        NOT NULL, \
         \    updated_at        timestamptz NOT NULL, \

@@ -12,47 +12,21 @@ import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import WizardLib.Public.Api.Resource.User.Group.UserGroupDetailDTO
 
 data DocumentContext = DocumentContext
-  { uuid :: U.UUID
-  , config :: DocumentContextConfig
-  , questionnaireUuid :: String
-  , questionnaireName :: String
-  , questionnaireDescription :: Maybe String
-  , questionnaireReplies :: M.Map String Reply
-  , questionnaireVersion :: Maybe U.UUID
-  , questionnaireVersions :: [QuestionnaireVersionDTO]
-  , questionnaireProjectTags :: [String]
-  , phaseUuid :: Maybe U.UUID
+  { config :: DocumentContextConfig
+  , document :: DocumentContextDocument
+  , questionnaire :: DocumentContextQuestionnaire
   , knowledgeModel :: KnowledgeModel
   , report :: Report
   , package :: DocumentContextPackage
   , organization :: TenantConfigOrganization
-  , documentTemplateMetamodelVersion :: Int
-  , createdBy :: Maybe UserDTO
-  , createdAt :: UTCTime
-  , updatedAt :: UTCTime
+  , metamodelVersion :: Int
+  , users :: [DocumentContextUserPerm]
+  , groups :: [DocumentContextUserGroupPerm]
   }
-  deriving (Show, Generic)
-
-instance Eq DocumentContext where
-  a == b =
-    a.uuid == b.uuid
-      && a.config == b.config
-      && a.questionnaireUuid == b.questionnaireUuid
-      && a.questionnaireName == b.questionnaireName
-      && a.questionnaireDescription == b.questionnaireDescription
-      && a.questionnaireReplies == b.questionnaireReplies
-      && a.questionnaireVersion == b.questionnaireVersion
-      && a.questionnaireVersions == b.questionnaireVersions
-      && a.questionnaireProjectTags == b.questionnaireProjectTags
-      && a.phaseUuid == b.phaseUuid
-      && a.knowledgeModel == b.knowledgeModel
-      && a.report == b.report
-      && a.package == b.package
-      && a.organization == b.organization
-      && a.documentTemplateMetamodelVersion == b.documentTemplateMetamodelVersion
-      && a.createdBy == b.createdBy
+  deriving (Show, Eq, Generic)
 
 data DocumentContextConfig = DocumentContextConfig
   { clientUrl :: String
@@ -70,5 +44,43 @@ data DocumentContextPackage = DocumentContextPackage
   , description :: String
   , organization :: Maybe RegistryOrganization
   , createdAt :: UTCTime
+  }
+  deriving (Show, Eq, Generic)
+
+data DocumentContextQuestionnaire = DocumentContextQuestionnaire
+  { uuid :: U.UUID
+  , name :: String
+  , description :: Maybe String
+  , replies :: M.Map String Reply
+  , phaseUuid :: Maybe U.UUID
+  , labels :: M.Map String [U.UUID]
+  , versionUuid :: Maybe U.UUID
+  , versions :: [QuestionnaireVersionDTO]
+  , projectTags :: [String]
+  , createdBy :: Maybe UserDTO
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
+  deriving (Show, Eq, Generic)
+
+data DocumentContextDocument = DocumentContextDocument
+  { uuid :: U.UUID
+  , name :: String
+  , documentTemplateId :: String
+  , formatUuid :: U.UUID
+  , createdBy :: Maybe UserDTO
+  , createdAt :: UTCTime
+  }
+  deriving (Show, Eq, Generic)
+
+data DocumentContextUserPerm = DocumentContextUserPerm
+  { user :: UserDTO
+  , perms :: [String]
+  }
+  deriving (Show, Eq, Generic)
+
+data DocumentContextUserGroupPerm = DocumentContextUserGroupPerm
+  { group :: UserGroupDetailDTO
+  , perms :: [String]
   }
   deriving (Show, Eq, Generic)

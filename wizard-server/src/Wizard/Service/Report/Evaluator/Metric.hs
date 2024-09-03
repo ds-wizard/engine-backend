@@ -63,6 +63,7 @@ evaluateQuestion km replies path q' =
         MultiChoiceQuestion' q -> []
         ValueQuestion' q -> []
         IntegrationQuestion' q -> []
+        ItemSelectQuestion' q -> []
         OptionsQuestion' q -> evaluateOptionsQuestion q km replies currentPath
         ListQuestion' q -> evaluateListQuestion km replies currentPath q
 

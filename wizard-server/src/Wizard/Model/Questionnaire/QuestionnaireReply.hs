@@ -36,6 +36,9 @@ data ReplyValue
   | IntegrationReply
       { iValue :: IntegrationReplyType
       }
+  | ItemSelectReply
+      { isValue :: U.UUID
+      }
   deriving (Show, Eq, Generic)
 
 instance Hashable ReplyValue

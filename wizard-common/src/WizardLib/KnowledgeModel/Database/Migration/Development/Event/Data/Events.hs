@@ -14,6 +14,7 @@ import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Da
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.References
+import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Resources
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Tags
 import WizardLib.KnowledgeModel.Model.Event.Answer.AnswerEvent
 import WizardLib.KnowledgeModel.Model.Event.Chapter.ChapterEvent
@@ -27,6 +28,7 @@ import WizardLib.KnowledgeModel.Model.Event.Move.MoveEvent
 import WizardLib.KnowledgeModel.Model.Event.Phase.PhaseEvent
 import WizardLib.KnowledgeModel.Model.Event.Question.QuestionEvent
 import WizardLib.KnowledgeModel.Model.Event.Reference.ReferenceEvent
+import WizardLib.KnowledgeModel.Model.Event.Resource.ResourceEvent
 import WizardLib.KnowledgeModel.Model.Event.Tag.TagEvent
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
@@ -52,6 +54,7 @@ e_km1 =
     , integrationUuids = ChangedValue $ km1Edited.integrationUuids
     , metricUuids = ChangedValue $ km1Edited.metricUuids
     , phaseUuids = ChangedValue $ km1Edited.phaseUuids
+    , resourceCollectionUuids = ChangedValue $ km1Edited.resourceCollectionUuids
     , createdAt = dt' 2018 1 21
     }
 
@@ -300,6 +303,24 @@ a_km1_ch3_q12 =
     , createdAt = dt' 2018 1 21
     }
 
+a_km1_ch3_q13' :: AddQuestionEvent
+a_km1_ch3_q13' = AddItemSelectQuestionEvent' a_km1_ch3_q13
+
+a_km1_ch3_q13 :: AddItemSelectQuestionEvent
+a_km1_ch3_q13 =
+  AddItemSelectQuestionEvent
+    { uuid = u' "49039f8c-3389-4da3-a4a9-8d2c052b38cd"
+    , parentUuid = chapter3.uuid
+    , entityUuid = question13.uuid
+    , title = question13.title
+    , text = question13.text
+    , requiredPhaseUuid = question13.requiredPhaseUuid
+    , annotations = question13.annotations
+    , tagUuids = question13.tagUuids
+    , listQuestionUuid = question13.listQuestionUuid
+    , createdAt = dt' 2018 1 21
+    }
+
 e_km1_ch1_q1' :: EditQuestionEvent
 e_km1_ch1_q1' = EditValueQuestionEvent' e_km1_ch1_q1
 
@@ -499,6 +520,26 @@ e_km1_ch3_q11 =
     , expertUuids = ChangedValue $ question11Edited.expertUuids
     , referenceUuids = ChangedValue $ question11Edited.referenceUuids
     , choiceUuids = ChangedValue $ question11Edited.choiceUuids
+    , createdAt = dt' 2018 1 21
+    }
+
+e_km1_ch3_q13' :: EditQuestionEvent
+e_km1_ch3_q13' = EditItemSelectQuestionEvent' e_km1_ch3_q13
+
+e_km1_ch3_q13 :: EditItemSelectQuestionEvent
+e_km1_ch3_q13 =
+  EditItemSelectQuestionEvent
+    { uuid = u' "f95ace16-9a2c-4f66-b22f-e419e5014c58"
+    , parentUuid = chapter3.uuid
+    , entityUuid = question2.uuid
+    , title = ChangedValue $ question13Edited.title
+    , text = ChangedValue $ question13Edited.text
+    , requiredPhaseUuid = ChangedValue $ question13Edited.requiredPhaseUuid
+    , annotations = ChangedValue $ question13Edited.annotations
+    , tagUuids = ChangedValue $ question13Edited.tagUuids
+    , expertUuids = ChangedValue $ question13Edited.expertUuids
+    , referenceUuids = ChangedValue $ question13Edited.referenceUuids
+    , listQuestionUuid = ChangedValue $ question13Edited.listQuestionUuid
     , createdAt = dt' 2018 1 21
     }
 
@@ -1195,7 +1236,7 @@ a_km1_ch1_q2_rCh1 =
     { uuid = u' "1177d72f-b7d8-466d-ad33-d5f82d0f192a"
     , parentUuid = question2.uuid
     , entityUuid = km1_ch1_q2_r1.uuid
-    , shortUuid = km1_ch1_q2_r1.shortUuid
+    , resourcePageUuid = km1_ch2_q6_r1.resourcePageUuid
     , annotations = km1_ch1_q2_r1.annotations
     , createdAt = dt' 2018 1 21
     }
@@ -1209,7 +1250,7 @@ a_km1_ch2_q6_rCh1 =
     { uuid = u' "a3f6ee9a-803f-4911-9566-734a6358913a"
     , parentUuid = q4_it1_question6.uuid
     , entityUuid = km1_ch2_q6_r1.uuid
-    , shortUuid = km1_ch2_q6_r1.shortUuid
+    , resourcePageUuid = km1_ch2_q6_r1.resourcePageUuid
     , annotations = km1_ch2_q6_r1.annotations
     , createdAt = dt' 2018 1 21
     }
@@ -1268,7 +1309,7 @@ e_km1_ch1_q2_rCh1 =
     { uuid = u' "08cd9afc-d416-48ab-8669-17e87ceb15dc"
     , parentUuid = question2.uuid
     , entityUuid = km1_ch1_q2_r1Edited.uuid
-    , shortUuid = ChangedValue $ km1_ch1_q2_r1Edited.shortUuid
+    , resourcePageUuid = ChangedValue $ km1_ch1_q2_r1Edited.resourcePageUuid
     , annotations = ChangedValue $ km1_ch1_q2_r1Edited.annotations
     , createdAt = dt' 2018 1 21
     }
@@ -1342,7 +1383,7 @@ e_km1_ch1_q2_rCh3_type =
     { uuid = u' "f8528e3b-4904-4ad8-87b8-809d7e40c087"
     , parentUuid = question2.uuid
     , entityUuid = km1_ch1_q2_r3WithNewType.uuid
-    , shortUuid = ChangedValue $ km1_ch1_q2_r3WithNewType.shortUuid
+    , resourcePageUuid = ChangedValue $ km1_ch1_q2_r3WithNewType.resourcePageUuid
     , annotations = ChangedValue $ km1_ch1_q2_r3WithNewType.annotations
     , createdAt = dt' 2018 1 21
     }
@@ -1691,6 +1732,109 @@ d_km1_phs1 =
     { uuid = u' "18ea7949-7e5a-4fae-8f5f-67b509ae397a"
     , parentUuid = km1.uuid
     , entityUuid = phase1.uuid
+    , createdAt = dt' 2018 1 21
+    }
+
+-- ----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
+a_km1_rc1 :: AddResourceCollectionEvent
+a_km1_rc1 =
+  AddResourceCollectionEvent
+    { uuid = u' "311d5db4-c075-4e28-97d1-b8a1501e062e"
+    , parentUuid = km1.uuid
+    , entityUuid = rc1.uuid
+    , title = rc1.title
+    , annotations = rc1.annotations
+    , createdAt = dt' 2018 1 21
+    }
+
+a_km1_rc2 :: AddResourceCollectionEvent
+a_km1_rc2 =
+  AddResourceCollectionEvent
+    { uuid = u' "65d02da0-e76e-47af-82e3-dc40c7fef880"
+    , parentUuid = km1.uuid
+    , entityUuid = rc2.uuid
+    , title = rc2.title
+    , annotations = rc2.annotations
+    , createdAt = dt' 2018 1 21
+    }
+
+e_km1_rc1 :: EditResourceCollectionEvent
+e_km1_rc1 =
+  EditResourceCollectionEvent
+    { uuid = u' "721f3fc9-8d2c-4c89-b4d1-e013c1e58a36"
+    , parentUuid = km1.uuid
+    , entityUuid = rc1Edited.uuid
+    , title = ChangedValue rc1Edited.title
+    , resourcePageUuids = ChangedValue rc1Edited.resourcePageUuids
+    , annotations = ChangedValue rc1Edited.annotations
+    , createdAt = dt' 2018 1 21
+    }
+
+d_km1_rc1 :: DeleteResourceCollectionEvent
+d_km1_rc1 =
+  DeleteResourceCollectionEvent
+    { uuid = u' "2ca967e3-4a3b-4c2a-9ad8-11177c00f457"
+    , parentUuid = km1.uuid
+    , entityUuid = rc1.uuid
+    , createdAt = dt' 2018 1 21
+    }
+
+-- ----------------------------------------------------------------------------
+a_km1_rc1_rp1 :: AddResourcePageEvent
+a_km1_rc1_rp1 =
+  AddResourcePageEvent
+    { uuid = u' "7be50408-2752-46fb-803d-81b136be1021"
+    , parentUuid = rc1.uuid
+    , entityUuid = rc1_rp1.uuid
+    , title = rc1_rp1.title
+    , content = rc1_rp1.content
+    , annotations = rc1_rp1.annotations
+    , createdAt = dt' 2018 1 21
+    }
+
+a_km1_rc1_rp2 :: AddResourcePageEvent
+a_km1_rc1_rp2 =
+  AddResourcePageEvent
+    { uuid = u' "317a09b4-acb7-47e9-bf7f-c48535a3209c"
+    , parentUuid = rc1.uuid
+    , entityUuid = rc1_rp2.uuid
+    , title = rc1_rp2.title
+    , content = rc1_rp2.content
+    , annotations = rc1_rp2.annotations
+    , createdAt = dt' 2018 1 21
+    }
+
+a_km1_rc2_rp1 :: AddResourcePageEvent
+a_km1_rc2_rp1 =
+  AddResourcePageEvent
+    { uuid = u' "0fc1cd12-d9a6-4ec7-9fd7-8e8babb2e229"
+    , parentUuid = rc2.uuid
+    , entityUuid = rc2_rp1.uuid
+    , title = rc2_rp1.title
+    , content = rc2_rp1.content
+    , annotations = rc2_rp1.annotations
+    , createdAt = dt' 2018 1 21
+    }
+
+e_km1_rc1_rp1 :: EditResourcePageEvent
+e_km1_rc1_rp1 =
+  EditResourcePageEvent
+    { uuid = u' "e9195024-2978-4edd-8f2c-f1031096b064"
+    , parentUuid = rc1.uuid
+    , entityUuid = rc1_rp1Edited.uuid
+    , title = ChangedValue rc1_rp1Edited.title
+    , content = ChangedValue rc1_rp1Edited.content
+    , annotations = ChangedValue rc1_rp1Edited.annotations
+    , createdAt = dt' 2018 1 21
+    }
+
+d_km1_rc1_rp1 :: DeleteResourcePageEvent
+d_km1_rc1_rp1 =
+  DeleteResourcePageEvent
+    { uuid = u' "185c6c76-c21d-4840-b48e-2ff454ad3b76"
+    , parentUuid = rc1.uuid
+    , entityUuid = rc1_rp1.uuid
     , createdAt = dt' 2018 1 21
     }
 

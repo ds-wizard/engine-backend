@@ -13,6 +13,7 @@ import WizardLib.KnowledgeModel.Model.Event.Move.MoveEvent
 import WizardLib.KnowledgeModel.Model.Event.Phase.PhaseEvent
 import WizardLib.KnowledgeModel.Model.Event.Question.QuestionEvent
 import WizardLib.KnowledgeModel.Model.Event.Reference.ReferenceEvent
+import WizardLib.KnowledgeModel.Model.Event.Resource.ResourceEvent
 import WizardLib.KnowledgeModel.Model.Event.Tag.TagEvent
 
 data Event
@@ -48,6 +49,12 @@ data Event
   | AddPhaseEvent' AddPhaseEvent
   | EditPhaseEvent' EditPhaseEvent
   | DeletePhaseEvent' DeletePhaseEvent
+  | AddResourceCollectionEvent' AddResourceCollectionEvent
+  | EditResourceCollectionEvent' EditResourceCollectionEvent
+  | DeleteResourceCollectionEvent' DeleteResourceCollectionEvent
+  | AddResourcePageEvent' AddResourcePageEvent
+  | EditResourcePageEvent' EditResourcePageEvent
+  | DeleteResourcePageEvent' DeleteResourcePageEvent
   | MoveQuestionEvent' MoveQuestionEvent
   | MoveAnswerEvent' MoveAnswerEvent
   | MoveChoiceEvent' MoveChoiceEvent

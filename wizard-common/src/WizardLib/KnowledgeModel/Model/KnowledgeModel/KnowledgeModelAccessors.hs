@@ -146,3 +146,10 @@ getPhasesForKmUuid km = foldl go [] km.phaseUuids
       case M.lookup phsUuid (getPhasesM km) of
         Just phs -> acc ++ [phs]
         Nothing -> acc
+
+-- -------------------
+-- RESOURCE PAGES ----
+-- -------------------
+getResourcePagesUuidsForResourceCollectionUuid :: KnowledgeModel -> U.UUID -> [U.UUID]
+getResourcePagesUuidsForResourceCollectionUuid km resourceCollectionUuid =
+  maybe [] (.resourcePageUuids) . M.lookup resourceCollectionUuid . getResourceCollectionsM $ km

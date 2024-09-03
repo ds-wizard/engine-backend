@@ -11,6 +11,7 @@ import Wizard.Service.KnowledgeModel.Squash.Event.Metric ()
 import Wizard.Service.KnowledgeModel.Squash.Event.Phase ()
 import Wizard.Service.KnowledgeModel.Squash.Event.Question ()
 import Wizard.Service.KnowledgeModel.Squash.Event.Reference ()
+import Wizard.Service.KnowledgeModel.Squash.Event.Resource ()
 import Wizard.Service.KnowledgeModel.Squash.Event.Tag ()
 import WizardLib.KnowledgeModel.Model.Event.Event
 
@@ -26,6 +27,8 @@ instance SimpleEventSquash Event where
   isSimpleEventSquashApplicable (EditQuestionEvent' event) = isSimpleEventSquashApplicable event
   isSimpleEventSquashApplicable (EditReferenceEvent' event) = isSimpleEventSquashApplicable event
   isSimpleEventSquashApplicable (EditTagEvent' event) = isSimpleEventSquashApplicable event
+  isSimpleEventSquashApplicable (EditResourceCollectionEvent' event) = isSimpleEventSquashApplicable event
+  isSimpleEventSquashApplicable (EditResourcePageEvent' event) = isSimpleEventSquashApplicable event
   isSimpleEventSquashApplicable _ = False
 
   --  --------------------------------------
@@ -50,6 +53,10 @@ instance SimpleEventSquash Event where
   isReorderEventSquashApplicable (EditReferenceEvent' previousEvent) (EditReferenceEvent' event) =
     isReorderEventSquashApplicable previousEvent event
   isReorderEventSquashApplicable (EditTagEvent' previousEvent) (EditTagEvent' event) =
+    isReorderEventSquashApplicable previousEvent event
+  isReorderEventSquashApplicable (EditResourceCollectionEvent' previousEvent) (EditResourceCollectionEvent' event) =
+    isReorderEventSquashApplicable previousEvent event
+  isReorderEventSquashApplicable (EditResourcePageEvent' previousEvent) (EditResourcePageEvent' event) =
     isReorderEventSquashApplicable previousEvent event
   isReorderEventSquashApplicable _ _ = False
 
@@ -82,4 +89,8 @@ instance SimpleEventSquash Event where
     EditReferenceEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
   simpleSquashEvent mPreviousEvent (EditTagEvent' oldEvent) (EditTagEvent' newEvent) =
     EditTagEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
+  simpleSquashEvent mPreviousEvent (EditResourceCollectionEvent' oldEvent) (EditResourceCollectionEvent' newEvent) =
+    EditResourceCollectionEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
+  simpleSquashEvent mPreviousEvent (EditResourcePageEvent' oldEvent) (EditResourcePageEvent' newEvent) =
+    EditResourcePageEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
   simpleSquashEvent _ _ newEvent = newEvent

@@ -88,3 +88,19 @@ deletePhase km uuid =
     Nothing -> km
   where
     deleteNode km = setPhasesM km (M.delete uuid (getPhasesM km))
+
+deleteResourceCollection :: KnowledgeModel -> U.UUID -> KnowledgeModel
+deleteResourceCollection km uuid =
+  case M.lookup uuid (getResourceCollectionsM km) of
+    Just entity -> deleteNode km
+    Nothing -> km
+  where
+    deleteNode km = setResourceCollectionsM km (M.delete uuid (getResourceCollectionsM km))
+
+deleteResourcePage :: KnowledgeModel -> U.UUID -> KnowledgeModel
+deleteResourcePage km uuid =
+  case M.lookup uuid (getResourcePagesM km) of
+    Just entity -> deleteNode km
+    Nothing -> km
+  where
+    deleteNode km = setResourcePagesM km (M.delete uuid (getResourcePagesM km))

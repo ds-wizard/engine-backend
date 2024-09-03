@@ -47,6 +47,7 @@ instance FromJSON Question where
       "ListQuestion" -> parseJSON (Object o) >>= \event -> return (ListQuestion' event)
       "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (ValueQuestion' event)
       "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (IntegrationQuestion' event)
+      "ItemSelectQuestion" -> parseJSON (Object o) >>= \event -> return (ItemSelectQuestion' event)
       _ -> fail "One of the questions has unsupported questionType"
   parseJSON _ = mzero
 
@@ -83,6 +84,13 @@ instance ToJSON IntegrationQuestion where
   toJSON = genericToJSON (jsonOptionsWithTypeField "questionType")
 
 instance FromJSON IntegrationQuestion where
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "questionType")
+
+-- --------------------------------------------------------------------
+instance ToJSON ItemSelectQuestion where
+  toJSON = genericToJSON (jsonOptionsWithTypeField "questionType")
+
+instance FromJSON ItemSelectQuestion where
   parseJSON = genericParseJSON (jsonOptionsWithTypeField "questionType")
 
 -- --------------------------------------------------------------------
@@ -174,6 +182,20 @@ instance ToJSON Tag where
   toJSON = genericToJSON jsonOptions
 
 instance FromJSON Tag where
+  parseJSON = genericParseJSON jsonOptions
+
+-- --------------------------------------------------------------------
+-- --------------------------------------------------------------------
+instance ToJSON ResourceCollection where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON ResourceCollection where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON ResourcePage where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON ResourcePage where
   parseJSON = genericParseJSON jsonOptions
 
 -- --------------------------------------------------------------------

@@ -12,7 +12,6 @@ import Network.Minio (MinioConn)
 import Servant (ServerError)
 
 import Shared.Common.Model.Config.BuildInfoConfig
-import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfig
 
 class
@@ -23,7 +22,7 @@ class
   , HasField "s3'" sc ServerConfigS3
   , HasField "sentry'" sc ServerConfigSentry
   , HasField "serverPort'" sc Int
-  , HasField "environment'" sc Environment
+  , HasField "environment'" sc String
   , HasField "logging" sc ServerConfigLogging
   , HasField "aws'" sc ServerConfigAws
   , HasField "buildInfoConfig'" context BuildInfoConfig

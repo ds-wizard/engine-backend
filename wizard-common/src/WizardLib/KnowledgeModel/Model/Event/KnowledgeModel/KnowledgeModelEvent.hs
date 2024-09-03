@@ -26,6 +26,7 @@ data EditKnowledgeModelEvent = EditKnowledgeModelEvent
   , integrationUuids :: EventField [U.UUID]
   , metricUuids :: EventField [U.UUID]
   , phaseUuids :: EventField [U.UUID]
+  , resourceCollectionUuids :: EventField [U.UUID]
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

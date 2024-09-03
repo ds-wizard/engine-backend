@@ -75,7 +75,7 @@ chapter3 =
     , title = "Data Capture/Measurement"
     , text = Just ""
     , annotations = []
-    , questionUuids = [question9.uuid, question10.uuid, question11.uuid, question12.uuid]
+    , questionUuids = [question9.uuid, question10.uuid, question11.uuid, question12.uuid, question13.uuid]
     }
 
 chapter4WithoutQuestions :: Chapter

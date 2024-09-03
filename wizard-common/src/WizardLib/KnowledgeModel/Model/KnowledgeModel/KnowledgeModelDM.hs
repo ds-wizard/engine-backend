@@ -14,6 +14,7 @@ defaultKnowledgeModel =
     , integrationUuids = []
     , metricUuids = []
     , phaseUuids = []
+    , resourceCollectionUuids = []
     , entities =
         KnowledgeModelEntities
           { chapters = M.empty
@@ -26,5 +27,7 @@ defaultKnowledgeModel =
           , tags = M.empty
           , metrics = M.empty
           , phases = M.empty
+          , resourceCollections = M.empty
+          , resourcePages = M.empty
           }
     }

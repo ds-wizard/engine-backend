@@ -23,13 +23,13 @@ createTables = do
         \( \
         \    branch_uuid                uuid        NOT NULL, \
         \    metamodel_version          int         NOT NULL, \
-        \    migration_state            json        NOT NULL, \
+        \    migration_state            jsonb       NOT NULL, \
         \    branch_previous_package_id varchar     NOT NULL, \
         \    target_package_id          varchar     NOT NULL, \
-        \    branch_events              json        NOT NULL, \
-        \    target_package_events      json        NOT NULL, \
-        \    result_events              json        NOT NULL, \
-        \    current_knowledge_model    json, \
+        \    branch_events              jsonb       NOT NULL, \
+        \    target_package_events      jsonb       NOT NULL, \
+        \    result_events              jsonb       NOT NULL, \
+        \    current_knowledge_model    jsonb, \
         \    tenant_uuid                uuid        NOT NULL, \
         \    created_at                 timestamptz NOT NULL, \
         \    CONSTRAINT knowledge_model_migration_pk PRIMARY KEY (branch_uuid, tenant_uuid), \

@@ -527,3 +527,37 @@ question12 =
     , expertUuids = []
     , choiceUuids = []
     }
+
+question13' :: Question
+question13' = ItemSelectQuestion' question13
+
+question13 :: ItemSelectQuestion
+question13 =
+  ItemSelectQuestion
+    { uuid = u' "00000000-0000-0000-0000-000000000f13"
+    , title = "Thirteen Question"
+    , text = Just "Some non-funny description"
+    , requiredPhaseUuid = Nothing
+    , annotations = []
+    , tagUuids = [tagBioInformatic.uuid]
+    , referenceUuids = []
+    , expertUuids = []
+    , listQuestionUuid = Just question4.uuid
+    }
+
+question13Edited' :: Question
+question13Edited' = ItemSelectQuestion' question13Edited
+
+question13Edited :: ItemSelectQuestion
+question13Edited =
+  ItemSelectQuestion
+    { uuid = question13.uuid
+    , title = "EDITED: Thirteen Question"
+    , text = Just "EDITED: Some non-funny description"
+    , requiredPhaseUuid = Just $ phase2.uuid
+    , annotations = []
+    , tagUuids = [tagBioInformatic.uuid]
+    , referenceUuids = []
+    , expertUuids = []
+    , listQuestionUuid = Just q4_it1_question5.uuid
+    }

@@ -39,6 +39,13 @@ instance SimpleEventSquash EditQuestionEvent where
         || isChanged (.expertUuids) event
         || isChanged (.referenceUuids) event
         || isChanged (.integrationUuid) event
+  isSimpleEventSquashApplicable (EditItemSelectQuestionEvent' event) =
+    not $
+      isChanged (.requiredPhaseUuid) event
+        || isChanged (.tagUuids) event
+        || isChanged (.expertUuids) event
+        || isChanged (.referenceUuids) event
+        || isChanged (.listQuestionUuid) event
 
   --  --------------------------------------
   isReorderEventSquashApplicable previousEvent newEvent = getEntityUuid previousEvent == getEntityUuid newEvent
@@ -49,6 +56,7 @@ instance SimpleEventSquash EditQuestionEvent where
   isTypeChanged (EditListQuestionEvent' oldEvent) (EditListQuestionEvent' newEvent) = False
   isTypeChanged (EditValueQuestionEvent' oldEvent) (EditValueQuestionEvent' newEvent) = False
   isTypeChanged (EditIntegrationQuestionEvent' oldEvent) (EditIntegrationQuestionEvent' newEvent) = False
+  isTypeChanged (EditItemSelectQuestionEvent' oldEvent) (EditItemSelectQuestionEvent' newEvent) = False
   isTypeChanged _ _ = True
 
   --  --------------------------------------
@@ -131,5 +139,21 @@ instance SimpleEventSquash EditQuestionEvent where
         , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
         , integrationUuid = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.integrationUuid)
         , props = applyValue oldEvent newEvent (.props)
+        , createdAt = newEvent.createdAt
+        }
+  simpleSquashEvent mPreviousEvent (EditItemSelectQuestionEvent' oldEvent) (EditItemSelectQuestionEvent' newEvent) =
+    EditItemSelectQuestionEvent' $
+      EditItemSelectQuestionEvent
+        { uuid = newEvent.uuid
+        , parentUuid = newEvent.parentUuid
+        , entityUuid = newEvent.entityUuid
+        , title = applyValue oldEvent newEvent (.title)
+        , text = applyValue oldEvent newEvent (.text)
+        , requiredPhaseUuid = applyValue oldEvent newEvent (.requiredPhaseUuid)
+        , annotations = applyValue oldEvent newEvent (.annotations)
+        , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.tagUuids)
+        , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
+        , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
+        , listQuestionUuid = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.listQuestionUuid)
         , createdAt = newEvent.createdAt
         }

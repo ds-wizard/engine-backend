@@ -37,11 +37,11 @@ createUserTable = do
         \    email             varchar     NOT NULL, \
         \    password_hash     varchar     NOT NULL, \
         \    affiliation       varchar, \
-        \    sources           json        NOT NULL, \
+        \    sources           jsonb       NOT NULL, \
         \    role              varchar     NOT NULL, \
         \    permissions       text[]      NOT NULL, \
         \    active            boolean     NOT NULL, \
-        \    submissions_props json        NOT NULL, \
+        \    submissions_props jsonb       NOT NULL, \
         \    image_url         varchar, \
         \    last_visited_at   timestamptz NOT NULL, \
         \    created_at        timestamptz NOT NULL, \

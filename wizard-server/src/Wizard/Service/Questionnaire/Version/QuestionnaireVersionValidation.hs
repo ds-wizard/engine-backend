@@ -13,10 +13,13 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 
-validateQuestionnaireVersion :: QuestionnaireVersionChangeDTO -> Questionnaire -> AppContextM ()
-validateQuestionnaireVersion reqDto qtn = do
+validateQuestionnaireVersionCreate :: QuestionnaireVersionChangeDTO -> Questionnaire -> AppContextM ()
+validateQuestionnaireVersionCreate reqDto qtn = do
   validateQuestionnaireVersionEventExistence reqDto qtn
   validateQuestionnaireVersionUniqueness reqDto qtn
+
+validateQuestionnaireVersionUpdate :: QuestionnaireVersionChangeDTO -> Questionnaire -> AppContextM ()
+validateQuestionnaireVersionUpdate = validateQuestionnaireVersionEventExistence
 
 validateQuestionnaireVersionUniqueness :: QuestionnaireVersionChangeDTO -> Questionnaire -> AppContextM ()
 validateQuestionnaireVersionUniqueness reqDto qtn =

@@ -27,6 +27,9 @@ instance ToSchema AddValueQuestionEvent where
 instance ToSchema AddIntegrationQuestionEvent where
   declareNamedSchema = toSwaggerWithType "eventType" a_km1_ch3_q9'
 
+instance ToSchema AddItemSelectQuestionEvent where
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_ch3_q13'
+
 -- --------------------------------------------
 -- --------------------------------------------
 instance ToSchema EditQuestionEvent
@@ -45,6 +48,9 @@ instance ToSchema EditValueQuestionEvent where
 
 instance ToSchema EditIntegrationQuestionEvent where
   declareNamedSchema = toSwaggerWithType "eventType" e_km1_ch3_q9'
+
+instance ToSchema EditItemSelectQuestionEvent where
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_ch3_q13'
 
 -- --------------------------------------------
 -- --------------------------------------------

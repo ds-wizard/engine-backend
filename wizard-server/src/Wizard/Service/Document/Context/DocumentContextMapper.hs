@@ -1,11 +1,10 @@
 module Wizard.Service.Document.Context.DocumentContextMapper where
 
-import Data.Time
 import qualified Data.UUID as U
 
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
-import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
@@ -19,42 +18,55 @@ import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Package.Package
 
 toDocumentContext
-  :: U.UUID
-  -> ServerConfig
+  :: Document
   -> String
   -> Questionnaire
   -> QuestionnaireContent
   -> Maybe U.UUID
   -> [QuestionnaireVersionDTO]
-  -> [String]
-  -> Maybe U.UUID
   -> KnowledgeModel
   -> Report
   -> Package
   -> TenantConfigOrganization
   -> Maybe User
-  -> UTCTime
+  -> Maybe User
+  -> [DocumentContextUserPerm]
+  -> [DocumentContextUserGroupPerm]
   -> DocumentContext
-toDocumentContext docUuid serverConfig appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos qtnProjectTags mPhase km report pkg org mCreatedBy now =
+toDocumentContext doc appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos km report pkg org mQtnCreatedBy mDocCreatedBy users groups =
   DocumentContext
-    { uuid = docUuid
-    , config = DocumentContextConfig {clientUrl = appClientUrl}
-    , questionnaireUuid = U.toString $ qtn.uuid
-    , questionnaireName = qtn.name
-    , questionnaireDescription = qtn.description
-    , questionnaireReplies = qtnCtn.replies
-    , questionnaireVersion = qtnVersion
-    , questionnaireVersions = qtnVersionDtos
-    , questionnaireProjectTags = qtnProjectTags
-    , phaseUuid = mPhase
+    { config = DocumentContextConfig {clientUrl = appClientUrl}
+    , document =
+        DocumentContextDocument
+          { uuid = doc.uuid
+          , name = doc.name
+          , documentTemplateId = doc.documentTemplateId
+          , formatUuid = doc.formatUuid
+          , createdBy = USR_Mapper.toDTO <$> mDocCreatedBy
+          , createdAt = doc.createdAt
+          }
+    , questionnaire =
+        DocumentContextQuestionnaire
+          { uuid = qtn.uuid
+          , name = qtn.name
+          , description = qtn.description
+          , replies = qtnCtn.replies
+          , phaseUuid = qtnCtn.phaseUuid
+          , labels = qtnCtn.labels
+          , versionUuid = qtnVersion
+          , versions = qtnVersionDtos
+          , projectTags = qtn.projectTags
+          , createdBy = USR_Mapper.toDTO <$> mQtnCreatedBy
+          , createdAt = qtn.createdAt
+          , updatedAt = qtn.updatedAt
+          }
     , knowledgeModel = km
     , report = report
     , package = toDocumentContextPackage pkg
     , organization = org
-    , documentTemplateMetamodelVersion = TemplateConstant.documentTemplateMetamodelVersion
-    , createdBy = USR_Mapper.toDTO <$> mCreatedBy
-    , createdAt = now
-    , updatedAt = now
+    , metamodelVersion = TemplateConstant.documentTemplateMetamodelVersion
+    , users = users
+    , groups = groups
     }
 
 toDocumentContextPackage :: Package -> DocumentContextPackage

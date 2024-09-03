@@ -82,6 +82,19 @@ instance CreateEntity AddQuestionEvent Question where
         , integrationUuid = event.integrationUuid
         , props = event.props
         }
+  createEntity (AddItemSelectQuestionEvent' event) =
+    ItemSelectQuestion' $
+      ItemSelectQuestion
+        { uuid = event.entityUuid
+        , title = event.title
+        , text = event.text
+        , requiredPhaseUuid = event.requiredPhaseUuid
+        , annotations = event.annotations
+        , tagUuids = event.tagUuids
+        , referenceUuids = []
+        , expertUuids = []
+        , listQuestionUuid = event.listQuestionUuid
+        }
 
 instance EditEntity EditQuestionEvent Question where
   editEntity event' q =
@@ -91,6 +104,7 @@ instance EditEntity EditQuestionEvent Question where
       (EditMultiChoiceQuestionEvent' event) -> applyToMultiChoiceQuestion event . convertToMultiChoiceQuestion $ q
       (EditValueQuestionEvent' event) -> applyToValueQuestion event . convertToValueQuestion $ q
       (EditIntegrationQuestionEvent' event) -> applyToIntegrationQuestion event . convertToIntegrationQuestion $ q
+      (EditItemSelectQuestionEvent' event) -> applyToItemSelectQuestion event . convertToItemSelectQuestion $ q
     where
       applyToOptionsQuestion event optionQuestion =
         OptionsQuestion' $
@@ -153,6 +167,18 @@ instance EditEntity EditQuestionEvent Question where
             , integrationUuid = applyValue integrationQuestion.integrationUuid event.integrationUuid
             , props = applyValue integrationQuestion.props event.props
             }
+      applyToItemSelectQuestion event itemSelectQuestion =
+        ItemSelectQuestion' $
+          itemSelectQuestion
+            { title = applyValue itemSelectQuestion.title event.title
+            , text = applyValue itemSelectQuestion.text event.text
+            , requiredPhaseUuid = applyValue itemSelectQuestion.requiredPhaseUuid event.requiredPhaseUuid
+            , annotations = applyValue itemSelectQuestion.annotations event.annotations
+            , tagUuids = applyValue itemSelectQuestion.tagUuids event.tagUuids
+            , referenceUuids = applyValue itemSelectQuestion.referenceUuids event.referenceUuids
+            , expertUuids = applyValue itemSelectQuestion.expertUuids event.expertUuids
+            , listQuestionUuid = applyValue itemSelectQuestion.listQuestionUuid event.listQuestionUuid
+            }
 
 convertToOptionsQuestion :: Question -> OptionsQuestion
 convertToOptionsQuestion (OptionsQuestion' q) = q
@@ -162,6 +188,7 @@ convertToOptionsQuestion q' =
     (ListQuestion' q) -> createQuestion q
     (ValueQuestion' q) -> createQuestion q
     (IntegrationQuestion' q) -> createQuestion q
+    (ItemSelectQuestion' q) -> createQuestion q
   where
     createQuestion q =
       OptionsQuestion
@@ -184,6 +211,7 @@ convertToListQuestion q' =
     (MultiChoiceQuestion' q) -> createQuestion q
     (ValueQuestion' q) -> createQuestion q
     (IntegrationQuestion' q) -> createQuestion q
+    (ItemSelectQuestion' q) -> createQuestion q
   where
     createQuestion q =
       ListQuestion
@@ -206,6 +234,7 @@ convertToMultiChoiceQuestion q' =
     (ListQuestion' q) -> createQuestion q
     (ValueQuestion' q) -> createQuestion q
     (IntegrationQuestion' q) -> createQuestion q
+    (ItemSelectQuestion' q) -> createQuestion q
   where
     createQuestion q =
       MultiChoiceQuestion
@@ -228,6 +257,7 @@ convertToValueQuestion q' =
     (MultiChoiceQuestion' q) -> createQuestion q
     (ListQuestion' q) -> createQuestion q
     (IntegrationQuestion' q) -> createQuestion q
+    (ItemSelectQuestion' q) -> createQuestion q
   where
     createQuestion q =
       ValueQuestion
@@ -250,6 +280,7 @@ convertToIntegrationQuestion q' =
     (MultiChoiceQuestion' q) -> createQuestion q
     (ListQuestion' q) -> createQuestion q
     (ValueQuestion' q) -> createQuestion q
+    (ItemSelectQuestion' q) -> createQuestion q
   where
     createQuestion q =
       IntegrationQuestion
@@ -263,6 +294,28 @@ convertToIntegrationQuestion q' =
         , expertUuids = q.expertUuids
         , integrationUuid = U.nil
         , props = M.empty
+        }
+
+convertToItemSelectQuestion :: Question -> ItemSelectQuestion
+convertToItemSelectQuestion (ItemSelectQuestion' q) = q
+convertToItemSelectQuestion q' =
+  case q' of
+    (OptionsQuestion' q) -> createQuestion q
+    (MultiChoiceQuestion' q) -> createQuestion q
+    (ListQuestion' q) -> createQuestion q
+    (ValueQuestion' q) -> createQuestion q
+  where
+    createQuestion q =
+      ItemSelectQuestion
+        { uuid = q.uuid
+        , title = q.title
+        , text = q.text
+        , requiredPhaseUuid = q.requiredPhaseUuid
+        , annotations = q.annotations
+        , tagUuids = q.tagUuids
+        , referenceUuids = q.referenceUuids
+        , expertUuids = q.expertUuids
+        , listQuestionUuid = Nothing
         }
 
 updateIntegrationProps :: EditIntegrationEvent -> Question -> Question

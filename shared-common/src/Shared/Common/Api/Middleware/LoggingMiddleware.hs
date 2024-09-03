@@ -20,12 +20,11 @@ import Network.Wai (Middleware, Request (..))
 import System.IO.Unsafe
 
 import Shared.Common.Constant.Api (authorizationHeaderName, xTraceUuidHeaderName)
-import Shared.Common.Model.Config.Environment
 import Shared.Common.Util.Http (extractMethod, extractPath, findHeader, processHeaderInMiddleware)
 import Shared.Common.Util.Logger
 
-createLoggingMiddleware :: (T.Text -> Maybe String) -> Environment -> Middleware
-createLoggingMiddleware extractIdentity Test application request sendResponse = application request sendResponse
+createLoggingMiddleware :: (T.Text -> Maybe String) -> String -> Middleware
+createLoggingMiddleware extractIdentity "Test" application request sendResponse = application request sendResponse
 createLoggingMiddleware extractIdentity _ application request sendResponse =
   application request $ sendResponse . processHeaderInMiddleware (logRequest extractIdentity) request
 

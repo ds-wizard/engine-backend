@@ -30,9 +30,9 @@ createTables = do
         \    description       varchar     NOT NULL, \
         \    readme            varchar     NOT NULL, \
         \    license           varchar     NOT NULL, \
-        \    allowed_packages  json        NOT NULL, \
+        \    allowed_packages  jsonb       NOT NULL, \
         \    url               varchar, \
-        \    config            json        NOT NULL, \
+        \    config            jsonb       NOT NULL, \
         \    enabled           bool        NOT NULL, \
         \    tenant_uuid       uuid        NOT NULL, \
         \    created_at        timestamptz NOT NULL, \

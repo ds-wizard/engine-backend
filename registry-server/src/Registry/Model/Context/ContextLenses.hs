@@ -13,7 +13,6 @@ import Registry.Model.Context.BaseContext
 import RegistryLib.Model.Organization.Organization
 import Shared.Common.Constant.Tenant
 import Shared.Common.Model.Config.BuildInfoConfig
-import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Config.ServerConfigDM
 import qualified Shared.Common.Model.Context.AppContext as S_AppContext
@@ -37,7 +36,7 @@ instance HasField "serverConfig'" BaseContext ServerConfig where
 instance HasField "serverPort'" ServerConfig Int where
   getField = (.general.serverPort)
 
-instance HasField "environment'" ServerConfig Environment where
+instance HasField "environment'" ServerConfig String where
   getField = (.general.environment)
 
 instance HasField "database'" ServerConfig ServerConfigDatabase where

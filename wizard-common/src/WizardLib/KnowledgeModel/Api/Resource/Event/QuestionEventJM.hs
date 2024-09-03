@@ -20,6 +20,7 @@ instance FromJSON AddQuestionEvent where
       "ListQuestion" -> parseJSON (Object o) >>= \event -> return (AddListQuestionEvent' event)
       "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (AddValueQuestionEvent' event)
       "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (AddIntegrationQuestionEvent' event)
+      "ItemSelectQuestion" -> parseJSON (Object o) >>= \event -> return (AddItemSelectQuestionEvent' event)
       _ -> fail "One of the events has unsupported questionType"
   parseJSON _ = mzero
 
@@ -59,6 +60,13 @@ instance ToJSON AddIntegrationQuestionEvent where
   toJSON = toJSONWithAdditionalData [("questionType", "IntegrationQuestion")]
 
 -- --------------------------------------------
+instance FromJSON AddItemSelectQuestionEvent where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON AddItemSelectQuestionEvent where
+  toJSON = toJSONWithAdditionalData [("questionType", "ItemSelectQuestion")]
+
+-- --------------------------------------------
 -- --------------------------------------------
 instance ToJSON EditQuestionEvent where
   toJSON = toSumJSON
@@ -72,6 +80,7 @@ instance FromJSON EditQuestionEvent where
       "ListQuestion" -> parseJSON (Object o) >>= \event -> return (EditListQuestionEvent' event)
       "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (EditValueQuestionEvent' event)
       "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (EditIntegrationQuestionEvent' event)
+      "ItemSelectQuestion" -> parseJSON (Object o) >>= \event -> return (EditItemSelectQuestionEvent' event)
       _ -> fail "One of the events has unsupported questionType"
   parseJSON _ = mzero
 
@@ -109,6 +118,13 @@ instance FromJSON EditIntegrationQuestionEvent where
 
 instance ToJSON EditIntegrationQuestionEvent where
   toJSON = toJSONWithAdditionalData [("questionType", "IntegrationQuestion")]
+
+-- --------------------------------------------
+instance FromJSON EditItemSelectQuestionEvent where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON EditItemSelectQuestionEvent where
+  toJSON = toJSONWithAdditionalData [("questionType", "ItemSelectQuestion")]
 
 -- --------------------------------------------
 -- --------------------------------------------

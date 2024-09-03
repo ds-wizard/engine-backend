@@ -45,7 +45,7 @@ hLoadConfig fileName loadFn callback = do
 prepareWebApp runCallback =
   hLoadConfig serverConfigFileTest (getServerConfig validateServerConfig) $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
-      putStrLn $ "ENVIRONMENT: set to " `mappend` show serverConfig.general.environment
+      putStrLn $ "ENVIRONMENT: set to " `mappend` serverConfig.general.environment
       dbPool <- createDatabaseConnectionPool serverConfig.database
       putStrLn "DATABASE: connected"
       httpClientManager <- createHttpClientManager serverConfig.logging

@@ -1,6 +1,5 @@
 module Wizard.Model.Config.ServerConfigDM where
 
-import Shared.Common.Model.Config.Environment
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Config.ServerConfigDM
 import Shared.Worker.Model.Worker.CronWorker
@@ -39,7 +38,7 @@ defaultConfig =
 defaultGeneral :: ServerConfigGeneral
 defaultGeneral =
   ServerConfigGeneral
-    { environment = Production
+    { environment = "Production"
     , clientUrl = ""
     , serverPort = 3000
     , secret = ""

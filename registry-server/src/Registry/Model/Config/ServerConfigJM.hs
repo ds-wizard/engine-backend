@@ -5,7 +5,6 @@ import Data.Aeson
 
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Config.ServerConfigDM
-import Shared.Common.Model.Config.EnvironmentJM ()
 import Shared.Common.Model.Config.ServerConfigDM
 import Shared.Common.Model.Config.ServerConfigJM ()
 

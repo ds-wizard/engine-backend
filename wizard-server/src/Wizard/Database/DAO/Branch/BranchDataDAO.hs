@@ -40,7 +40,7 @@ findBranchDataByIdForSquashingLocked branchUuid =
 
 findBranchDataLengthById :: U.UUID -> AppContextM BranchDataLength
 findBranchDataLengthById branchUuid =
-  createFindEntityWithFieldsByFn "branch_uuid, json_array_length(events)" True entityName [("branch_uuid", U.toString branchUuid)]
+  createFindEntityWithFieldsByFn "branch_uuid, jsonb_array_length(events)" True entityName [("branch_uuid", U.toString branchUuid)]
 
 insertBranchData :: BranchData -> AppContextM Int64
 insertBranchData = createInsertFn entityName
@@ -63,7 +63,7 @@ appendBranchEventByUuid branchUuid events = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE branch_data SET events = events::jsonb || ?::jsonb, squashed = false, updated_at = now() WHERE tenant_uuid = ? AND branch_uuid = ?"
+          "UPDATE branch_data SET events = events || ?, squashed = false, updated_at = now() WHERE tenant_uuid = ? AND branch_uuid = ?"
   let params = [toJSONField events, toField tenantUuid, toField branchUuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params

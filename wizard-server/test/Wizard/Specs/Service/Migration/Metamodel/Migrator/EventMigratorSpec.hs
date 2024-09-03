@@ -13,6 +13,7 @@ import qualified Wizard.Specs.Service.Migration.Metamodel.Migrator.Migration0008
 import qualified Wizard.Specs.Service.Migration.Metamodel.Migrator.Migration0009.MigrationSpec as M0009Spec
 import qualified Wizard.Specs.Service.Migration.Metamodel.Migrator.Migration0010.MigrationSpec as M0010Spec
 import qualified Wizard.Specs.Service.Migration.Metamodel.Migrator.Migration0011.MigrationSpec as M0011Spec
+import qualified Wizard.Specs.Service.Migration.Metamodel.Migrator.Migration0014.MigrationSpec as M0014Spec
 
 eventMigratorSpec :: Spec
 eventMigratorSpec = do
@@ -27,3 +28,4 @@ eventMigratorSpec = do
   describe "Migration #0009" M0009Spec.spec
   describe "Migration #0010" M0010Spec.spec
   describe "Migration #0011" M0011Spec.spec
+  describe "Migration #0014" M0014Spec.spec

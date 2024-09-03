@@ -9,14 +9,10 @@ import Wizard.Service.Migration.Metamodel.Migrator.Migrations.MigrationContext
 import Wizard.Service.Migration.Metamodel.Migrator.Migrations.Utils
 
 -- Migration #0009 (KM v9 -> v10)
-
--- * Rename "responseIdField" to "responseItemId" in integration events
-
--- * Rename "responseNameField" to "responseItemTemplate" in integration events
-
--- * Change "responseItemId" in integration events (from path to Jinja)
-
--- * Change "responseItemTemplate" in integration events (from path to Jinja)
+-- . Rename "responseIdField" to "responseItemId" in integration events
+-- . Rename "responseNameField" to "responseItemTemplate" in integration events
+-- . Change "responseItemId" in integration events (from path to Jinja)
+-- . Change "responseItemTemplate" in integration events (from path to Jinja)
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ input = Right [migrate input]
 

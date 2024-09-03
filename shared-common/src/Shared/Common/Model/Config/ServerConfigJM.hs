@@ -14,6 +14,7 @@ instance FromJSON ServerConfigDatabase where
     connectionTimeout <- o .:? "connectionTimeout" .!= defaultDatabase.connectionTimeout
     maxConnections <- o .:? "maxConnections" .!= defaultDatabase.maxConnections
     vacuumCleaner <- o .:? "vacuumCleaner" .!= defaultDatabase.vacuumCleaner
+    useDevMigration <- o .:? "useDevMigration" .!= defaultDatabase.useDevMigration
     return ServerConfigDatabase {..}
   parseJSON _ = mzero
 
@@ -40,6 +41,7 @@ instance FromJSON ServerConfigAws where
     awsAccessKeyId <- o .:? "awsAccessKeyId" .!= defaultAws.awsAccessKeyId
     awsSecretAccessKey <- o .:? "awsSecretAccessKey" .!= defaultAws.awsSecretAccessKey
     awsRegion <- o .:? "awsRegion" .!= defaultAws.awsRegion
+    awsRole <- o .:? "awsRole" .!= defaultAws.awsRole
     return ServerConfigAws {..}
   parseJSON _ = mzero
 

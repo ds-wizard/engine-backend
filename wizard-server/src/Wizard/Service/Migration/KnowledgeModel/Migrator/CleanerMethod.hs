@@ -56,6 +56,12 @@ doIsCleanerMethod km (DeleteMetricEvent' event) = isNothing $ M.lookup (getEntit
 doIsCleanerMethod km (AddPhaseEvent' event) = False
 doIsCleanerMethod km (EditPhaseEvent' event) = isNothing $ M.lookup (getEntityUuid event) (getPhasesM km)
 doIsCleanerMethod km (DeletePhaseEvent' event) = isNothing $ M.lookup (getEntityUuid event) (getPhasesM km)
+doIsCleanerMethod km (AddResourceCollectionEvent' event) = False
+doIsCleanerMethod km (EditResourceCollectionEvent' event) = isNothing $ M.lookup (getEntityUuid event) (getResourceCollectionsM km)
+doIsCleanerMethod km (DeleteResourceCollectionEvent' event) = isNothing $ M.lookup (getEntityUuid event) (getResourceCollectionsM km)
+doIsCleanerMethod km (AddResourcePageEvent' event) = isNothing $ M.lookup (getParentUuid event) (getResourceCollectionsM km)
+doIsCleanerMethod km (EditResourcePageEvent' event) = isNothing $ M.lookup (getEntityUuid event) (getResourcePagesM km)
+doIsCleanerMethod km (DeleteResourcePageEvent' event) = isNothing $ M.lookup (getEntityUuid event) (getResourcePagesM km)
 doIsCleanerMethod km (MoveQuestionEvent' event) =
   isNothing (M.lookup (getEntityUuid event) (getQuestionsM km))
     || ( isNothing (M.lookup event.targetUuid (getChaptersM km))

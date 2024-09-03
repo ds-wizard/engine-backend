@@ -32,7 +32,6 @@ import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
 import Wizard.Database.DAO.User.UserDAO
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ActionKey
-import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BookReference
 import qualified Wizard.Database.Migration.Development.Branch.BranchSchemaMigration as Branch
 import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as Common
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as Document
@@ -88,7 +87,6 @@ buildSchema appContext = do
   runInContext PersistentCommand.dropTables appContext
   runInContext Submission.dropTables appContext
   runInContext ActionKey.dropTables appContext
-  runInContext BookReference.dropTables appContext
   runInContext Feedback.dropTables appContext
   runInContext KnowledgeModelMigrator.dropTables appContext
   runInContext Branch.dropTables appContext
@@ -107,7 +105,6 @@ buildSchema appContext = do
   runInContext DocumentTemplate.createTables appContext
   runInContext Package.createTables appContext
   runInContext ActionKey.createTables appContext
-  runInContext BookReference.createTables appContext
   runInContext Feedback.createTables appContext
   runInContext Branch.createTables appContext
   runInContext Questionnaire.createTables appContext

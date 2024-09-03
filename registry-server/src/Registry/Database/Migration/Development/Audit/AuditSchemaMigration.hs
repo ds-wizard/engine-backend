@@ -23,7 +23,7 @@ createTables = do
         \( \
         \    type                varchar     NOT NULL, \
         \    organization_id     varchar     NOT NULL, \
-        \    instance_statistics json        NOT NULL, \
+        \    instance_statistics jsonb       NOT NULL, \
         \    package_id          varchar     NOT NULL, \
         \    created_at          timestamptz NOT NULL \
         \);"

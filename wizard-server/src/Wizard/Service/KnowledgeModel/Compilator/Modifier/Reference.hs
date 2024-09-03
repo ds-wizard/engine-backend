@@ -11,7 +11,7 @@ instance CreateEntity AddReferenceEvent Reference where
     ResourcePageReference' $
       ResourcePageReference
         { uuid = event.entityUuid
-        , shortUuid = event.shortUuid
+        , resourcePageUuid = event.resourcePageUuid
         , annotations = event.annotations
         }
   createEntity (AddURLReferenceEvent' event) =
@@ -41,7 +41,7 @@ instance EditEntity EditReferenceEvent Reference where
       applyToResourcePageReference event resourcePageReference =
         ResourcePageReference' $
           resourcePageReference
-            { shortUuid = applyValue resourcePageReference.shortUuid event.shortUuid
+            { resourcePageUuid = applyValue resourcePageReference.resourcePageUuid event.resourcePageUuid
             , annotations = applyValue resourcePageReference.annotations event.annotations
             }
       applyToURLReference event urlReference =
@@ -69,7 +69,7 @@ convertToResourcePageReference ref' =
     createQuestion ref =
       ResourcePageReference
         { uuid = ref.uuid
-        , shortUuid = ""
+        , resourcePageUuid = Nothing
         , annotations = ref.annotations
         }
 

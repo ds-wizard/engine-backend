@@ -9,8 +9,7 @@ import Wizard.Service.Migration.Metamodel.Migrator.Migrations.MigrationContext
 import Wizard.Service.Migration.Metamodel.Migrator.Migrations.Utils
 
 -- Migration #0002 (KM v2 -> v3)
-
--- * Change "valueType" of question events
+-- . Change "valueType" of question events
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ input = Right [migrate input]
 

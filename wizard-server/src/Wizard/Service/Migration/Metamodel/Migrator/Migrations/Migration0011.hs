@@ -9,12 +9,9 @@ import Wizard.Service.Migration.Metamodel.Migrator.Migrations.MigrationContext
 import Wizard.Service.Migration.Metamodel.Migrator.Migrations.Utils
 
 -- Migration #0011 (KM v11 -> v12)
-
--- * Add "integrationType" (older = "ApiIntegration") to integration events
-
--- * Add "requestEmptySearch" field to integration events
-
--- * Rename "responseItemUrl" to "itemUrl" in integration events
+-- . Add "integrationType" (older = "ApiIntegration") to integration events
+-- . Add "requestEmptySearch" field to integration events
+-- . Rename "responseItemUrl" to "itemUrl" in integration events
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ input = Right [migrate input]
 
