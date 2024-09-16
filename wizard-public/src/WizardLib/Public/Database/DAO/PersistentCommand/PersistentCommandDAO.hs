@@ -47,11 +47,13 @@ findPersistentCommandsPage states pageable sort = do
               \              tenant_config.look_and_feel ->> 'logoUrl', '::', \
               \              tenant_config.look_and_feel ->> 'primaryColor', '::', \
               \              tenant.client_url) AS tenant, \
-              \       concat(user_entity.uuid, '::', \
-              \              user_entity.first_name, '::', \
-              \              user_entity.last_name, '::', \
-              \              user_entity.email, '::', \
-              \              user_entity.image_url) AS created_by \
+              \       CASE \
+              \              WHEN user_entity.uuid IS NOT NULL THEN concat(user_entity.uuid, '::', \
+              \                                                            user_entity.first_name, '::', \
+              \                                                            user_entity.last_name, '::', \
+              \                                                            user_entity.email, '::', \
+              \                                                            user_entity.image_url) \
+              \       END AS created_by \
               \FROM persistent_command \
               \         LEFT JOIN tenant ON tenant.uuid = persistent_command.tenant_uuid \
               \         LEFT JOIN tenant_config ON tenant_config.uuid = persistent_command.tenant_uuid \
