@@ -2,15 +2,18 @@ module Wizard.Service.OpenId.Client.Flow.OpenIdClientFlowService where
 
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
+import qualified Data.Aeson as A
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.List as L
-import Data.Maybe (fromMaybe)
+import Data.Maybe (fromJust, fromMaybe)
 import qualified Data.Text as T
 import qualified Web.OIDC.Client as O
 
 import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Model.Error.Error
 import Shared.OpenId.Service.OpenId.Client.Flow.OpenIdClientFlowService
+import Shared.OpenId.Service.OpenId.Client.Flow.OpenIdClientFlowUtil
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Public
@@ -36,7 +39,13 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionStat
   runInTransaction $ do
     httpClientManager <- asks httpClientManager
     (_, openIDClient) <- createOpenIDClient authId mClientUrl
-    (email, firstName, lastName, mPicture, mUserUuid) <- getUserInfoFromOpenId openIDClient mCode mNonce mIdToken
+    idToken <-
+      case mIdToken of
+        Just idToken -> return . fromJust . A.decode . BSL.pack $ idToken
+        Nothing -> do
+          tokens <- requestTokensWithCode openIDClient mCode mNonce
+          return . O.idToken $ tokens
+    (email, firstName, lastName, mPicture, mUserUuid) <- parseIdToken idToken
     mUserFromDb <- findUserByEmail' email
     consentRequired <- isConsentRequired mUserFromDb
     user <- createUserFromExternalService mUserFromDb authId firstName lastName email mPicture mUserUuid (not consentRequired)

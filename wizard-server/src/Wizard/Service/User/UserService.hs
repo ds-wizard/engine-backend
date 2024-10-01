@@ -77,6 +77,7 @@ createUserByAdmin :: UserCreateDTO -> AppContextM UserDTO
 createUserByAdmin reqDto =
   runInTransaction $ do
     checkPermission _UM_PERM
+    checkIfAdminIsDisabled
     uUuid <- liftIO generateUuid
     tenantUuid <- asks currentTenantUuid
     clientUrl <- getClientUrl
@@ -97,6 +98,7 @@ createUserByAdminWithUuid reqDto uUuid tenantUuid clientUrl shouldSendRegistrati
 registerUser :: UserCreateDTO -> AppContextM UserDTO
 registerUser reqDto =
   runInTransaction $ do
+    checkIfAdminIsDisabled
     checkIfRegistrationIsEnabled
     uUuid <- liftIO generateUuid
     uPasswordHash <- generatePasswordHash reqDto.password
@@ -321,3 +323,6 @@ sendAnalyticsEmailIfEnabled user = do
 
 checkIfRegistrationIsEnabled =
   checkIfTenantFeatureIsEnabled "Registration" (\c -> c.authentication.internal.registration.enabled)
+
+checkIfAdminIsDisabled =
+  checkIfServerFeatureIsEnabled "User Management Endpoints" (\s -> not s.admin.enabled)
