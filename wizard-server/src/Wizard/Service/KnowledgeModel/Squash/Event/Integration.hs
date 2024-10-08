@@ -33,7 +33,7 @@ instance SimpleEventSquash EditIntegrationEvent where
         , responseItemTemplate = applyValue oldEvent newEvent (.responseItemTemplate)
         , itemUrl = applyValue oldEvent newEvent (.itemUrl)
         , annotations = applyValue oldEvent newEvent (.annotations)
-        , createdAt = newEvent.createdAt
+        , createdAt = oldEvent.createdAt
         }
   simpleSquashEvent previousEvent (EditWidgetIntegrationEvent' oldEvent) (EditWidgetIntegrationEvent' newEvent) =
     EditWidgetIntegrationEvent' $
@@ -48,5 +48,5 @@ instance SimpleEventSquash EditIntegrationEvent where
         , widgetUrl = applyValue oldEvent newEvent (.widgetUrl)
         , itemUrl = applyValue oldEvent newEvent (.itemUrl)
         , annotations = applyValue oldEvent newEvent (.annotations)
-        , createdAt = newEvent.createdAt
+        , createdAt = oldEvent.createdAt
         }

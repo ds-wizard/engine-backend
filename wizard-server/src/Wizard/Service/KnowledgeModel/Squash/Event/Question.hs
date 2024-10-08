@@ -74,7 +74,7 @@ instance SimpleEventSquash EditQuestionEvent where
         , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
         , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
         , answerUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.answerUuids)
-        , createdAt = newEvent.createdAt
+        , createdAt = oldEvent.createdAt
         }
   simpleSquashEvent mPreviousEvent (EditMultiChoiceQuestionEvent' oldEvent) (EditMultiChoiceQuestionEvent' newEvent) =
     EditMultiChoiceQuestionEvent' $
@@ -90,7 +90,7 @@ instance SimpleEventSquash EditQuestionEvent where
         , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
         , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
         , choiceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.choiceUuids)
-        , createdAt = newEvent.createdAt
+        , createdAt = oldEvent.createdAt
         }
   simpleSquashEvent mPreviousEvent (EditListQuestionEvent' oldEvent) (EditListQuestionEvent' newEvent) =
     EditListQuestionEvent' $
@@ -106,7 +106,7 @@ instance SimpleEventSquash EditQuestionEvent where
         , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
         , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
         , itemTemplateQuestionUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.itemTemplateQuestionUuids)
-        , createdAt = newEvent.createdAt
+        , createdAt = oldEvent.createdAt
         }
   simpleSquashEvent mPreviousEvent (EditValueQuestionEvent' oldEvent) (EditValueQuestionEvent' newEvent) =
     EditValueQuestionEvent' $
@@ -122,7 +122,7 @@ instance SimpleEventSquash EditQuestionEvent where
         , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
         , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
         , valueType = applyValue oldEvent newEvent (.valueType)
-        , createdAt = newEvent.createdAt
+        , createdAt = oldEvent.createdAt
         }
   simpleSquashEvent mPreviousEvent (EditIntegrationQuestionEvent' oldEvent) (EditIntegrationQuestionEvent' newEvent) =
     EditIntegrationQuestionEvent' $
@@ -139,7 +139,7 @@ instance SimpleEventSquash EditQuestionEvent where
         , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
         , integrationUuid = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.integrationUuid)
         , props = applyValue oldEvent newEvent (.props)
-        , createdAt = newEvent.createdAt
+        , createdAt = oldEvent.createdAt
         }
   simpleSquashEvent mPreviousEvent (EditItemSelectQuestionEvent' oldEvent) (EditItemSelectQuestionEvent' newEvent) =
     EditItemSelectQuestionEvent' $
@@ -155,5 +155,5 @@ instance SimpleEventSquash EditQuestionEvent where
         , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
         , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
         , listQuestionUuid = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.listQuestionUuid)
-        , createdAt = newEvent.createdAt
+        , createdAt = oldEvent.createdAt
         }

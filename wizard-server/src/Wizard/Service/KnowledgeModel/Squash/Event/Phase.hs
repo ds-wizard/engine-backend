@@ -15,5 +15,5 @@ instance SimpleEventSquash EditPhaseEvent where
       , title = applyValue oldEvent newEvent (.title)
       , description = applyValue oldEvent newEvent (.description)
       , annotations = applyValue oldEvent newEvent (.annotations)
-      , createdAt = newEvent.createdAt
+      , createdAt = oldEvent.createdAt
       }
