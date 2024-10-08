@@ -16,5 +16,5 @@ instance SimpleEventSquash EditTagEvent where
       , description = applyValue oldEvent newEvent (.description)
       , color = applyValue oldEvent newEvent (.color)
       , annotations = applyValue oldEvent newEvent (.annotations)
-      , createdAt = newEvent.createdAt
+      , createdAt = oldEvent.createdAt
       }

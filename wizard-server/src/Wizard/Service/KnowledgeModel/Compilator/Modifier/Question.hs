@@ -181,9 +181,9 @@ instance EditEntity EditQuestionEvent Question where
             }
 
 convertToOptionsQuestion :: Question -> OptionsQuestion
-convertToOptionsQuestion (OptionsQuestion' q) = q
 convertToOptionsQuestion q' =
   case q' of
+    (OptionsQuestion' q) -> q
     (MultiChoiceQuestion' q) -> createQuestion q
     (ListQuestion' q) -> createQuestion q
     (ValueQuestion' q) -> createQuestion q
@@ -204,11 +204,11 @@ convertToOptionsQuestion q' =
         }
 
 convertToListQuestion :: Question -> ListQuestion
-convertToListQuestion (ListQuestion' q) = q
 convertToListQuestion q' =
   case q' of
     (OptionsQuestion' q) -> createQuestion q
     (MultiChoiceQuestion' q) -> createQuestion q
+    (ListQuestion' q) -> q
     (ValueQuestion' q) -> createQuestion q
     (IntegrationQuestion' q) -> createQuestion q
     (ItemSelectQuestion' q) -> createQuestion q
@@ -227,10 +227,10 @@ convertToListQuestion q' =
         }
 
 convertToMultiChoiceQuestion :: Question -> MultiChoiceQuestion
-convertToMultiChoiceQuestion (MultiChoiceQuestion' q) = q
 convertToMultiChoiceQuestion q' =
   case q' of
     (OptionsQuestion' q) -> createQuestion q
+    (MultiChoiceQuestion' q) -> q
     (ListQuestion' q) -> createQuestion q
     (ValueQuestion' q) -> createQuestion q
     (IntegrationQuestion' q) -> createQuestion q
@@ -250,12 +250,12 @@ convertToMultiChoiceQuestion q' =
         }
 
 convertToValueQuestion :: Question -> ValueQuestion
-convertToValueQuestion (ValueQuestion' q) = q
 convertToValueQuestion q' =
   case q' of
     (OptionsQuestion' q) -> createQuestion q
     (MultiChoiceQuestion' q) -> createQuestion q
     (ListQuestion' q) -> createQuestion q
+    (ValueQuestion' q) -> q
     (IntegrationQuestion' q) -> createQuestion q
     (ItemSelectQuestion' q) -> createQuestion q
   where
@@ -273,13 +273,13 @@ convertToValueQuestion q' =
         }
 
 convertToIntegrationQuestion :: Question -> IntegrationQuestion
-convertToIntegrationQuestion (IntegrationQuestion' q) = q
 convertToIntegrationQuestion q' =
   case q' of
     (OptionsQuestion' q) -> createQuestion q
     (MultiChoiceQuestion' q) -> createQuestion q
     (ListQuestion' q) -> createQuestion q
     (ValueQuestion' q) -> createQuestion q
+    (IntegrationQuestion' q) -> q
     (ItemSelectQuestion' q) -> createQuestion q
   where
     createQuestion q =
@@ -297,13 +297,14 @@ convertToIntegrationQuestion q' =
         }
 
 convertToItemSelectQuestion :: Question -> ItemSelectQuestion
-convertToItemSelectQuestion (ItemSelectQuestion' q) = q
 convertToItemSelectQuestion q' =
   case q' of
     (OptionsQuestion' q) -> createQuestion q
     (MultiChoiceQuestion' q) -> createQuestion q
     (ListQuestion' q) -> createQuestion q
     (ValueQuestion' q) -> createQuestion q
+    (IntegrationQuestion' q) -> createQuestion q
+    (ItemSelectQuestion' q) -> q
   where
     createQuestion q =
       ItemSelectQuestion

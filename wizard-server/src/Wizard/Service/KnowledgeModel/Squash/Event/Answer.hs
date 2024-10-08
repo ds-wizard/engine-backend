@@ -18,5 +18,5 @@ instance SimpleEventSquash EditAnswerEvent where
       , annotations = applyValue oldEvent newEvent (.annotations)
       , followUpUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.followUpUuids)
       , metricMeasures = applyValue oldEvent newEvent (.metricMeasures)
-      , createdAt = newEvent.createdAt
+      , createdAt = oldEvent.createdAt
       }

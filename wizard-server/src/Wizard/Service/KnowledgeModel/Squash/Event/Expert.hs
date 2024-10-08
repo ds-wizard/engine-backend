@@ -15,5 +15,5 @@ instance SimpleEventSquash EditExpertEvent where
       , name = applyValue oldEvent newEvent (.name)
       , email = applyValue oldEvent newEvent (.email)
       , annotations = applyValue oldEvent newEvent (.annotations)
-      , createdAt = newEvent.createdAt
+      , createdAt = oldEvent.createdAt
       }
