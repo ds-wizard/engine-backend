@@ -22,7 +22,7 @@ instance SimpleEventSquash EditReferenceEvent where
         , entityUuid = newEvent.entityUuid
         , resourcePageUuid = applyValue oldEvent newEvent (.resourcePageUuid)
         , annotations = applyValue oldEvent newEvent (.annotations)
-        , createdAt = newEvent.createdAt
+        , createdAt = oldEvent.createdAt
         }
   simpleSquashEvent previousEvent (EditURLReferenceEvent' oldEvent) (EditURLReferenceEvent' newEvent) =
     EditURLReferenceEvent' $
@@ -33,7 +33,7 @@ instance SimpleEventSquash EditReferenceEvent where
         , url = applyValue oldEvent newEvent (.url)
         , aLabel = applyValue oldEvent newEvent (.aLabel)
         , annotations = applyValue oldEvent newEvent (.annotations)
-        , createdAt = newEvent.createdAt
+        , createdAt = oldEvent.createdAt
         }
   simpleSquashEvent previousEvent (EditCrossReferenceEvent' oldEvent) (EditCrossReferenceEvent' newEvent) =
     EditCrossReferenceEvent' $
@@ -44,5 +44,5 @@ instance SimpleEventSquash EditReferenceEvent where
         , targetUuid = applyValue oldEvent newEvent (.targetUuid)
         , description = applyValue oldEvent newEvent (.description)
         , annotations = applyValue oldEvent newEvent (.annotations)
-        , createdAt = newEvent.createdAt
+        , createdAt = oldEvent.createdAt
         }

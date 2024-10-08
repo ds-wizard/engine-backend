@@ -16,7 +16,7 @@ instance SimpleEventSquash EditResourceCollectionEvent where
       , title = applyValue oldEvent newEvent (.title)
       , resourcePageUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.resourcePageUuids)
       , annotations = applyValue oldEvent newEvent (.annotations)
-      , createdAt = newEvent.createdAt
+      , createdAt = oldEvent.createdAt
       }
 
 instance SimpleEventSquash EditResourcePageEvent where
@@ -31,5 +31,5 @@ instance SimpleEventSquash EditResourcePageEvent where
       , title = applyValue oldEvent newEvent (.title)
       , content = applyValue oldEvent newEvent (.content)
       , annotations = applyValue oldEvent newEvent (.annotations)
-      , createdAt = newEvent.createdAt
+      , createdAt = oldEvent.createdAt
       }

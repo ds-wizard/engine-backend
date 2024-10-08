@@ -14,5 +14,5 @@ instance SimpleEventSquash EditChoiceEvent where
       , entityUuid = newEvent.entityUuid
       , aLabel = applyValue oldEvent newEvent (.aLabel)
       , annotations = applyValue oldEvent newEvent (.annotations)
-      , createdAt = newEvent.createdAt
+      , createdAt = oldEvent.createdAt
       }

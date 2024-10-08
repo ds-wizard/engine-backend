@@ -17,5 +17,5 @@ instance SimpleEventSquash EditChapterEvent where
       , text = applyValue oldEvent newEvent (.text)
       , annotations = applyValue oldEvent newEvent (.annotations)
       , questionUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.questionUuids)
-      , createdAt = newEvent.createdAt
+      , createdAt = oldEvent.createdAt
       }

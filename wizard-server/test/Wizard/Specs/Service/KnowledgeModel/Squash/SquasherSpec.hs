@@ -42,16 +42,15 @@ squasherSpec =
         let expEvents =
               [ a_q1'
               , a_ch1'
-              , e_ch1_label_2'
-              , EditQuestionEvent' . EditOptionsQuestionEvent' $ e_q1_text {title = e_q1_title_1.title}
+              , EditChoiceEvent' $ e_ch1_label_2 {createdAt = e_ch1_label_1.createdAt}
+              , EditQuestionEvent' . EditOptionsQuestionEvent' $ e_q1_text {title = e_q1_title_1.title, createdAt = e_q1_title_1.createdAt}
               , a_ref1'
               , a_q2'
               , e_q2_title'
               , a_q3'
-              , EditQuestionEvent' . EditOptionsQuestionEvent' $
-                  e_q1_title_2 {answerUuids = e_q1_answerUuids_title.answerUuids}
+              , EditQuestionEvent' . EditOptionsQuestionEvent' $ e_q1_title_2 {answerUuids = e_q1_answerUuids_title.answerUuids, createdAt = e_q1_answerUuids_title.createdAt}
               , e_q1_type'
-              , e_ref1_url'
+              , EditReferenceEvent' . EditURLReferenceEvent' $ e_ref1_url {createdAt = e_ref1_type.createdAt}
               , e_ch1_label_3_day2'
               ]
         -- WHEN:
@@ -83,8 +82,8 @@ squasherSpec =
         let expEvents =
               [ a_q1'
               , a_ch1'
-              , e_ch1_label_2'
-              , EditQuestionEvent' . EditOptionsQuestionEvent' $ e_q1_text {title = e_q1_title_1.title}
+              , EditChoiceEvent' $ e_ch1_label_2 {createdAt = e_ch1_label_1.createdAt}
+              , EditQuestionEvent' . EditOptionsQuestionEvent' $ e_q1_text {title = e_q1_title_1.title, createdAt = e_q1_title_1.createdAt}
               , a_ref1'
               , a_q2'
               , e_q2_title'
@@ -93,7 +92,7 @@ squasherSpec =
               , e_q1_answerUuids_title'
               , e_q1_title_2'
               , e_q1_type'
-              , e_ref1_url'
+              , EditReferenceEvent' . EditURLReferenceEvent' $ e_ref1_url {createdAt = e_ref1_type.createdAt}
               ]
         -- WHEN:
         let resultEvents = squashSimple sourceEvents
@@ -102,13 +101,19 @@ squasherSpec =
     it "squashReorderEvents" $
       -- GIVEN: prepare data
       do
-        let sourceEvents = [e_q1_text', a_q3', e_q1_answerUuids', e_q1_answerUuids_title', e_q1_title_2', e_q1_type']
+        let sourceEvents =
+              [ e_q1_text'
+              , a_q3'
+              , e_q1_answerUuids'
+              , e_q1_answerUuids_title'
+              , e_q1_title_2'
+              , e_q1_type'
+              ]
         -- AND: prepare expectation
         let expEvents =
               [ e_q1_text'
               , a_q3'
-              , EditQuestionEvent' . EditOptionsQuestionEvent' $
-                  e_q1_title_2 {answerUuids = e_q1_answerUuids_title.answerUuids}
+              , EditQuestionEvent' . EditOptionsQuestionEvent' $ e_q1_title_2 {answerUuids = e_q1_answerUuids_title.answerUuids, createdAt = e_q1_answerUuids_title.createdAt}
               , e_q1_type'
               ]
         -- WHEN:
@@ -132,7 +137,7 @@ squasherSpec =
 --   11 e_q1_answerUuids_title   #1 	Edit	Option Question - title & answerUuids
 --   12 e_q1_title_2             #1 	Edit	Option Question - title
 --   13 e_q1_type                #1	  Edit	Option Question -> Value Question
---   14 e_ref1_type              #3	  Edit	Cross Reference -> URL Reference
+--   14 e_ref1_type              #3	  Edit	Resource Page Reference -> URL Reference
 --   15 e_ref1_url               #3	  Edit	URL Reference - url
 --   16 e_ch1_label_2            #2	  Edit	Choice - label
 --   17 e_ch1_label_3_day2       #2	  Edit	Choice - label

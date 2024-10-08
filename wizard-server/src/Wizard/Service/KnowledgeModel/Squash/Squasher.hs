@@ -23,39 +23,35 @@ squash events =
 
 squashSimple :: [Event] -> [Event]
 squashSimple events =
-  let (entities, eventsToDeleted, squashedEvents) = foldl go (M.empty, [], []) events
-   in foldr deleteEvent (reverse squashedEvents) eventsToDeleted
+  let (entities, squashedEvents) = foldl go (M.empty, []) events
+   in reverse squashedEvents
   where
     deleteEvent :: Event -> [Event] -> [Event]
     deleteEvent = L.deleteBy (\e1 e2 -> getUuid e1 == getUuid e2)
-    go :: (M.Map U.UUID Event, [Event], [Event]) -> Event -> (M.Map U.UUID Event, [Event], [Event])
-    go (entities, eventsToDeleted, events) newEvent =
+    go :: (M.Map U.UUID Event, [Event]) -> Event -> (M.Map U.UUID Event, [Event])
+    go (entities, events) newEvent =
       case M.lookup (getEntityUuid newEvent) entities of
         Just oldEvent ->
           if isTypeChanged oldEvent newEvent || not (isSimpleEventSquashApplicable newEvent)
             then
               let entities' = M.delete (getEntityUuid oldEvent) entities
-                  eventsToDeleted' = eventsToDeleted
                   events' = newEvent : events
-               in (entities', eventsToDeleted', events')
+               in (entities', events')
             else
               let squashedEvent = simpleSquashEvent Nothing oldEvent newEvent
                   entities' = M.insert (getEntityUuid newEvent) squashedEvent entities
-                  eventsToDeleted' = eventsToDeleted
                   events' = replace squashedEvent oldEvent events
-               in (entities', eventsToDeleted', events')
+               in (entities', events')
         Nothing ->
           if isSimpleEventSquashApplicable newEvent
             then
               let entities' = M.insert (getEntityUuid newEvent) newEvent entities
-                  eventsToDeleted' = eventsToDeleted
                   events' = newEvent : events
-               in (entities', eventsToDeleted', events')
+               in (entities', events')
             else
               let entities' = entities
-                  eventsToDeleted' = eventsToDeleted
                   events' = newEvent : events
-               in (entities', eventsToDeleted', events')
+               in (entities', events')
 
 squashReorderEvents :: [Event] -> [Event]
 squashReorderEvents events =
