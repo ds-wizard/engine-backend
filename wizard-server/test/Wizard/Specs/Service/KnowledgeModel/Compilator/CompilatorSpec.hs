@@ -68,7 +68,7 @@ compilatorSpec =
                 { entities =
                     km1.entities
                       { chapters = toMap [chapter2, chapter3]
-                      , questions = toMap [question3', question9', question10', question11', question12', question13']
+                      , questions = toMap [question3', question9', question10', question11', question12', question13', question14']
                       , answers = toMap [q3_answerNo, q3_answerYes]
                       , experts = toMap []
                       , references = toMap []
@@ -97,6 +97,7 @@ compilatorSpec =
                               , question11'
                               , question12'
                               , question13'
+                              , question14'
                               ]
                         }
                   }
@@ -119,6 +120,7 @@ compilatorSpec =
                             , question11'
                             , question12'
                             , question13'
+                            , question14'
                             ]
                       }
                 }
@@ -151,6 +153,7 @@ compilatorSpec =
                             , question11'
                             , question12'
                             , question13'
+                            , question14'
                             ]
                       , answers =
                           toMap
@@ -224,6 +227,7 @@ compilatorSpec =
                             , question11'
                             , question12'
                             , question13'
+                            , question14'
                             ]
                       , answers = toMap [q2_answerNo, q3_answerNo, q3_answerYes]
                       }
@@ -305,6 +309,7 @@ compilatorSpec =
                             , question11'
                             , question12'
                             , question13'
+                            , question14'
                             ]
                       }
                 }
@@ -625,6 +630,7 @@ compilatorSpec =
             , AddChoiceEvent' a_km1_ch3_q11_cho2
             , AddQuestionEvent' a_km1_ch3_q12'
             , AddQuestionEvent' a_km1_ch3_q13'
+            , AddQuestionEvent' a_km1_ch3_q14'
             ]
       let (Right computed) = compile Nothing events
       let expected = km1WithQ4

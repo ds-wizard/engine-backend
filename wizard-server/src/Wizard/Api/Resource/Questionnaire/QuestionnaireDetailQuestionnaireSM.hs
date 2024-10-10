@@ -5,6 +5,7 @@ import Data.Swagger
 
 import Shared.Common.Util.Swagger
 import Shared.Common.Util.Uuid
+import Wizard.Api.Resource.Questionnaire.File.QuestionnaireFileSimpleSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermSM ()
@@ -35,6 +36,7 @@ instance ToSchema QuestionnaireDetailQuestionnaireDTO where
         , phaseUuid = Just . u' $ "4b376e49-1589-429b-9590-c654378f0bd5"
         , migrationUuid = Nothing
         , permissions = [qtn1AlbertEditQtnPermDto]
+        , files = []
         , unresolvedCommentCounts =
             M.fromList
               [
@@ -51,4 +53,5 @@ instance ToSchema QuestionnaireDetailQuestionnaireDTO where
               ]
         , questionnaireActionsAvailable = 1
         , questionnaireImportersAvailable = 2
+        , fileCount = 0
         }

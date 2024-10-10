@@ -66,6 +66,10 @@ instance ToSchema ItemSelectQuestion where
   declareNamedSchema = toSwaggerWithType "questionType" question13
 
 -- --------------------------------------------------------------------
+instance ToSchema FileQuestion where
+  declareNamedSchema = toSwaggerWithType "questionType" question14
+
+-- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToSchema Answer where
   declareNamedSchema = toSwagger q2_answerNo
