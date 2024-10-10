@@ -24,6 +24,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO (
   insertQuestionnairePerm,
  )
 import Wizard.Database.Mapping.Questionnaire.Questionnaire ()
+import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetail ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailPreview ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailQuestionnaire ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailSettings ()
@@ -37,6 +38,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireDetailPreview
 import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
 import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
@@ -399,7 +401,7 @@ findQuestionnaireSquashByUuid :: U.UUID -> AppContextM QuestionnaireSquash
 findQuestionnaireSquashByUuid uuid =
   createFindEntityWithFieldsByFn "uuid, events, versions" True entityName [("uuid", U.toString uuid)]
 
-findQuestionnaireDetail :: U.UUID -> AppContextM QuestionnaireDetailQuestionnaire
+findQuestionnaireDetail :: U.UUID -> AppContextM QuestionnaireDetail
 findQuestionnaireDetail uuid = do
   tenantUuid <- asks currentTenantUuid
   let sql =
@@ -424,11 +426,65 @@ findQuestionnaireDetail uuid = do
             \        SELECT count(*) \
             \        FROM questionnaire_importer \
             \        WHERE tenant_uuid = '${tenantUuid}' \
-            \       ) as questionnaire_impoters \
+            \       ) as questionnaire_impoters, \
+            \       ( \
+            \        SELECT count(*) \
+            \        FROM questionnaire_file \
+            \        WHERE tenant_uuid = '${tenantUuid}' AND questionnaire_uuid = '${questionnaireUuid}' \
+            \       ) as file_count \
             \FROM questionnaire qtn \
             \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.old_questionnaire_uuid AND qtn.tenant_uuid = qtn_mig.tenant_uuid \
             \WHERE qtn.tenant_uuid = ? AND qtn.uuid = ?"
             [ ("questionnaireDetailPermSql", questionnaireDetailPermSql)
+            , ("questionnaireUuid", U.toString uuid)
+            , ("tenantUuid", U.toString tenantUuid)
+            ]
+  let queryParams = [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
+  let params = fmap snd queryParams
+  logQuery sql params
+  let action conn = query conn sql params
+  runOneEntityDB entityName action queryParams
+
+findQuestionnaireDetailQuestionnaire :: U.UUID -> AppContextM QuestionnaireDetailQuestionnaire
+findQuestionnaireDetailQuestionnaire uuid = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString $
+          f''
+            "SELECT qtn.uuid, \
+            \       qtn.name, \
+            \       qtn.visibility, \
+            \       qtn.sharing, \
+            \       qtn.package_id, \
+            \       qtn.selected_question_tag_uuids, \
+            \       qtn.is_template, \
+            \       qtn.events, \
+            \       qtn_mig.new_questionnaire_uuid AS migration_uuid, \
+            \       ${questionnaireDetailPermSql}, \
+            \       ( \
+            \        SELECT count(*) \
+            \        FROM questionnaire_action \
+            \        WHERE tenant_uuid = '${tenantUuid}' \
+            \       ) as questionnaire_actions, \
+            \       ( \
+            \        SELECT count(*) \
+            \        FROM questionnaire_importer \
+            \        WHERE tenant_uuid = '${tenantUuid}' \
+            \       ) as questionnaire_impoters, \
+            \       ( \
+            \        SELECT array_agg(concat(uuid, '<:::::>', \
+            \                                file_name, '<:::::>', \
+            \                                content_type, '<:::::>', \
+            \                                file_size \
+            \                        )) \
+            \        FROM questionnaire_file \
+            \        WHERE tenant_uuid = '${tenantUuid}' AND questionnaire_uuid = '${questionnaireUuid}' \
+            \       ) as files \
+            \FROM questionnaire qtn \
+            \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.old_questionnaire_uuid AND qtn.tenant_uuid = qtn_mig.tenant_uuid \
+            \WHERE qtn.tenant_uuid = ? AND qtn.uuid = ?"
+            [ ("questionnaireUuid", U.toString uuid)
+            , ("questionnaireDetailPermSql", questionnaireDetailPermSql)
             , ("tenantUuid", U.toString tenantUuid)
             ]
   let queryParams = [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
@@ -453,12 +509,20 @@ findQuestionnaireDetailPreview uuid = do
             \       qtn.format_uuid, \
             \       qtn_mig.new_questionnaire_uuid AS migration_uuid, \
             \       ${questionnaireDetailPermSql}, \
-            \       dt.formats                     AS document_template_formats \
+            \       dt.formats                     AS document_template_formats, \
+            \       ( \
+            \        SELECT count(*) \
+            \        FROM questionnaire_file \
+            \        WHERE tenant_uuid = '${tenantUuid}' AND questionnaire_uuid = '${questionnaireUuid}' \
+            \       ) as file_count \
             \FROM questionnaire qtn \
             \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.old_questionnaire_uuid AND qtn.tenant_uuid = qtn_mig.tenant_uuid \
             \LEFT JOIN document_template dt ON qtn.document_template_id = dt.id AND qtn.tenant_uuid = dt.tenant_uuid \
             \WHERE qtn.tenant_uuid = ? AND qtn.uuid = ?"
-            [("questionnaireDetailPermSql", questionnaireDetailPermSql)]
+            [ ("questionnaireDetailPermSql", questionnaireDetailPermSql)
+            , ("questionnaireUuid", U.toString uuid)
+            , ("tenantUuid", U.toString tenantUuid)
+            ]
   let queryParams = [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
   let params = fmap snd queryParams
   logQuery sql params
@@ -497,13 +561,21 @@ findQuestionnaireDetailSettings uuid = do
             \       dt.phase                       as document_template_phase, \
             \       dt.description                 as document_template_description, \
             \       dt.formats                     as document_template_formats, \
-            \       dt.metamodel_version           as document_template_metamodel_version \
+            \       dt.metamodel_version           as document_template_metamodel_version, \
+            \       ( \
+            \        SELECT count(*) \
+            \        FROM questionnaire_file \
+            \        WHERE tenant_uuid = '${tenantUuid}' AND questionnaire_uuid = '${questionnaireUuid}' \
+            \       ) as file_count \
             \FROM questionnaire qtn \
             \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.old_questionnaire_uuid AND qtn.tenant_uuid = qtn_mig.tenant_uuid \
             \LEFT JOIN package pkg ON qtn.package_id = pkg.id AND qtn.tenant_uuid = pkg.tenant_uuid \
             \LEFT JOIN document_template dt ON qtn.document_template_id = dt.id AND qtn.tenant_uuid = dt.tenant_uuid \
             \WHERE qtn.tenant_uuid = ? AND qtn.uuid = ?"
-            [("questionnaireDetailPermSql", questionnaireDetailPermSql)]
+            [ ("questionnaireDetailPermSql", questionnaireDetailPermSql)
+            , ("questionnaireUuid", U.toString uuid)
+            , ("tenantUuid", U.toString tenantUuid)
+            ]
   let queryParams = [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
   let params = fmap snd queryParams
   logQuery sql params

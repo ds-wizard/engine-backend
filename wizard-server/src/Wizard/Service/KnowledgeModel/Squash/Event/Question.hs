@@ -46,6 +46,12 @@ instance SimpleEventSquash EditQuestionEvent where
         || isChanged (.expertUuids) event
         || isChanged (.referenceUuids) event
         || isChanged (.listQuestionUuid) event
+  isSimpleEventSquashApplicable (EditFileQuestionEvent' event) =
+    not $
+      isChanged (.requiredPhaseUuid) event
+        || isChanged (.tagUuids) event
+        || isChanged (.expertUuids) event
+        || isChanged (.referenceUuids) event
 
   --  --------------------------------------
   isReorderEventSquashApplicable previousEvent newEvent = getEntityUuid previousEvent == getEntityUuid newEvent
@@ -57,6 +63,7 @@ instance SimpleEventSquash EditQuestionEvent where
   isTypeChanged (EditValueQuestionEvent' oldEvent) (EditValueQuestionEvent' newEvent) = False
   isTypeChanged (EditIntegrationQuestionEvent' oldEvent) (EditIntegrationQuestionEvent' newEvent) = False
   isTypeChanged (EditItemSelectQuestionEvent' oldEvent) (EditItemSelectQuestionEvent' newEvent) = False
+  isTypeChanged (EditFileQuestionEvent' oldEvent) (EditFileQuestionEvent' newEvent) = False
   isTypeChanged _ _ = True
 
   --  --------------------------------------
@@ -156,4 +163,21 @@ instance SimpleEventSquash EditQuestionEvent where
         , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
         , listQuestionUuid = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.listQuestionUuid)
         , createdAt = oldEvent.createdAt
+        }
+  simpleSquashEvent mPreviousEvent (EditFileQuestionEvent' oldEvent) (EditFileQuestionEvent' newEvent) =
+    EditFileQuestionEvent' $
+      EditFileQuestionEvent
+        { uuid = newEvent.uuid
+        , parentUuid = newEvent.parentUuid
+        , entityUuid = newEvent.entityUuid
+        , title = applyValue oldEvent newEvent (.title)
+        , text = applyValue oldEvent newEvent (.text)
+        , requiredPhaseUuid = applyValue oldEvent newEvent (.requiredPhaseUuid)
+        , annotations = applyValue oldEvent newEvent (.annotations)
+        , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.tagUuids)
+        , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
+        , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
+        , maxSize = applyValue oldEvent newEvent (.maxSize)
+        , fileTypes = applyValue oldEvent newEvent (.fileTypes)
+        , createdAt = newEvent.createdAt
         }

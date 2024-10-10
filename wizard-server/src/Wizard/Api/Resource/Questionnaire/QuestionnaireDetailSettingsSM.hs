@@ -50,4 +50,5 @@ instance ToSchema QuestionnaireDetailSettings where
         , documentTemplateState = Just DefaultDocumentTemplateState
         , documentTemplatePhase = Just DraftDocumentTemplatePhase
         , formatUuid = Just . u' $ "ae3b9e68-e09e-4ad7-b476-67ab5626e873"
+        , fileCount = 0
         }

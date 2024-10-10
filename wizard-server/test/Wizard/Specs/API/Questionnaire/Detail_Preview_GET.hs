@@ -132,6 +132,7 @@ create_test_200 title appContext qtn authHeader permissions =
               , permissions = permissions
               , documentTemplateId = qtn.documentTemplateId
               , format = Just . SDTM.toFormatDTO $ formatJson
+              , fileCount = 0
               }
       let expBody = encode expDto
       -- WHEN: Call API

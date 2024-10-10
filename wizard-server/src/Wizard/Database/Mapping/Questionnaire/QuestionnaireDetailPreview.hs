@@ -28,4 +28,5 @@ instance FromRow QuestionnaireDetailPreview where
     permissions <- loadPermissions uuid
     mDocumentTemplateFormats <- fieldWith (optionalField fromJSONField)
     let format = concatMaybe . fmap (L.find (\format -> Just format.uuid == mFormatUuid)) $ mDocumentTemplateFormats
+    fileCount <- field
     return $ QuestionnaireDetailPreview {..}

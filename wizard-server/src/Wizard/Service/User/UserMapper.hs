@@ -76,7 +76,17 @@ toSuggestionDTO user =
     { uuid = user.uuid
     , firstName = user.firstName
     , lastName = user.lastName
-    , gravatarHash = createGravatarHash $ user.email
+    , gravatarHash = createGravatarHash user.email
+    , imageUrl = user.imageUrl
+    }
+
+toSuggestionDTO' :: UserDTO -> UserSuggestionDTO
+toSuggestionDTO' user =
+  UserSuggestionDTO
+    { uuid = user.uuid
+    , firstName = user.firstName
+    , lastName = user.lastName
+    , gravatarHash = createGravatarHash user.email
     , imageUrl = user.imageUrl
     }
 

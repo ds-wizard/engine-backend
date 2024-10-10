@@ -160,10 +160,12 @@ create_test_200 title appContext qtn qtnCtn showComments authHeader permissions 
               , phaseUuid = qtnCtn.phaseUuid
               , migrationUuid = Nothing
               , permissions = permissions
+              , files = []
               , unresolvedCommentCounts = unresolvedCommentCounts
               , resolvedCommentCounts = M.empty
               , questionnaireActionsAvailable = 0
               , questionnaireImportersAvailable = 0
+              , fileCount = 0
               }
       let expBody = encode expDto
       -- WHEN: Call API

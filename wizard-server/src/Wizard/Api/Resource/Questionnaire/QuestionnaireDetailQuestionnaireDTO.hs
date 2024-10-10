@@ -6,6 +6,7 @@ import GHC.Generics
 
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireFileSimple
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
@@ -23,9 +24,11 @@ data QuestionnaireDetailQuestionnaireDTO = QuestionnaireDetailQuestionnaireDTO
   , phaseUuid :: Maybe U.UUID
   , migrationUuid :: Maybe U.UUID
   , permissions :: [QuestionnairePermDTO]
+  , files :: [QuestionnaireFileSimple]
   , unresolvedCommentCounts :: M.Map String (M.Map U.UUID Int)
   , resolvedCommentCounts :: M.Map String (M.Map U.UUID Int)
   , questionnaireActionsAvailable :: Int
   , questionnaireImportersAvailable :: Int
+  , fileCount :: Int
   }
   deriving (Show, Eq, Generic)
