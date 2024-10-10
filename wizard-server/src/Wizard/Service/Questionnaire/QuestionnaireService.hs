@@ -47,6 +47,7 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
 import Wizard.Model.Questionnaire.QuestionnaireComment
+import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireDetailPreview
 import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
 import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
@@ -60,6 +61,7 @@ import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
+import Wizard.Service.Questionnaire.File.QuestionnaireFileService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireAudit
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -249,7 +251,7 @@ getQuestionnaireDetailByUuid qtnUuid = do
 
 getQuestionnaireDetailQuestionnaireById :: U.UUID -> AppContextM QuestionnaireDetailQuestionnaireDTO
 getQuestionnaireDetailQuestionnaireById qtnUuid = do
-  qtn <- findQuestionnaireDetail qtnUuid
+  qtn <- findQuestionnaireDetailQuestionnaire qtnUuid
   checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
   editor <- catchError (hasEditPermissionToQtn qtn.visibility qtn.sharing qtn.permissions) (\_ -> return False)
   commenter <- catchError (hasCommentPermissionToQtn qtn.visibility qtn.sharing qtn.permissions) (\_ -> return False)
@@ -379,6 +381,7 @@ deleteQuestionnaire qtnUuid shouldValidatePermission =
           removeDocumentContent d.uuid
       )
       documents
+    deleteQuestionnaireFilesByQuestionnaireUuid qtnUuid
     deleteQuestionnairePermsFiltered [("questionnaire_uuid", U.toString qtnUuid)]
     deleteQuestionnaireByUuid qtnUuid
     logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid

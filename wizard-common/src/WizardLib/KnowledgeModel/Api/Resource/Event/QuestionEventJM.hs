@@ -21,6 +21,7 @@ instance FromJSON AddQuestionEvent where
       "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (AddValueQuestionEvent' event)
       "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (AddIntegrationQuestionEvent' event)
       "ItemSelectQuestion" -> parseJSON (Object o) >>= \event -> return (AddItemSelectQuestionEvent' event)
+      "FileQuestion" -> parseJSON (Object o) >>= \event -> return (AddFileQuestionEvent' event)
       _ -> fail "One of the events has unsupported questionType"
   parseJSON _ = mzero
 
@@ -67,6 +68,13 @@ instance ToJSON AddItemSelectQuestionEvent where
   toJSON = toJSONWithAdditionalData [("questionType", "ItemSelectQuestion")]
 
 -- --------------------------------------------
+instance FromJSON AddFileQuestionEvent where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON AddFileQuestionEvent where
+  toJSON = toJSONWithAdditionalData [("questionType", "FileQuestion")]
+
+-- --------------------------------------------
 -- --------------------------------------------
 instance ToJSON EditQuestionEvent where
   toJSON = toSumJSON
@@ -81,6 +89,7 @@ instance FromJSON EditQuestionEvent where
       "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (EditValueQuestionEvent' event)
       "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (EditIntegrationQuestionEvent' event)
       "ItemSelectQuestion" -> parseJSON (Object o) >>= \event -> return (EditItemSelectQuestionEvent' event)
+      "FileQuestion" -> parseJSON (Object o) >>= \event -> return (EditFileQuestionEvent' event)
       _ -> fail "One of the events has unsupported questionType"
   parseJSON _ = mzero
 
@@ -125,6 +134,13 @@ instance FromJSON EditItemSelectQuestionEvent where
 
 instance ToJSON EditItemSelectQuestionEvent where
   toJSON = toJSONWithAdditionalData [("questionType", "ItemSelectQuestion")]
+
+-- --------------------------------------------
+instance FromJSON EditFileQuestionEvent where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON EditFileQuestionEvent where
+  toJSON = toJSONWithAdditionalData [("questionType", "FileQuestion")]
 
 -- --------------------------------------------
 -- --------------------------------------------

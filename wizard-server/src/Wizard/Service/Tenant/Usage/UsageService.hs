@@ -8,6 +8,7 @@ import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AclContext
@@ -31,7 +32,8 @@ getUsage tenantUuid = do
   localeCount <- countLocalesGroupedByOrganizationIdAndLocaleIdWithTenant tenantUuid
   docSize <- sumDocumentFileSizeWithTenant tenantUuid
   templateAssetSize <- sumAssetFileSizeWithTenant tenantUuid
-  let storageCount = docSize + templateAssetSize
+  qtnFileSize <- sumQuestionnaireFileSizeWithTenant tenantUuid
+  let storageCount = docSize + templateAssetSize + qtnFileSize
   return $ toDTO limitBundle userCount activeUserCount branchCount kmCount qtnCount documentTemplateCount documentTemplateDraftCount docCount localeCount storageCount
 
 getUsageForCurrentApp :: AppContextM TenantUsageDTO
@@ -49,5 +51,6 @@ getUsageForCurrentApp = do
   localeCount <- countLocalesGroupedByOrganizationIdAndLocaleId
   docSize <- sumDocumentFileSize
   templateAssetSize <- sumAssetFileSize
-  let storageCount = docSize + templateAssetSize
+  qtnFileSize <- sumQuestionnaireFileSize
+  let storageCount = docSize + templateAssetSize + qtnFileSize
   return $ toDTO limitBundle userCount activeUserCount branchCount kmCount qtnCount documentTemplateCount documentTemplateDraftCount docCount localeCount storageCount

@@ -147,6 +147,7 @@ create_test_200 title appContext qtn authHeader permissions =
               , documentTemplatePhase = Just wizardDocumentTemplate.phase
               , formatUuid = Just formatJson.uuid
               , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
+              , fileCount = 0
               }
       let expBody = encode expDto
       -- WHEN: Call API

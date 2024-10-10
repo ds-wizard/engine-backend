@@ -23,4 +23,5 @@ instance ToSchema QuestionnaireDetailDTO where
         , isTemplate = questionnaire1.isTemplate
         , migrationUuid = Nothing
         , permissions = [qtn1AlbertEditQtnPermDto]
+        , fileCount = 0
         }

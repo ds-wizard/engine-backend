@@ -102,6 +102,7 @@ data ServerConfigSignalBridge = ServerConfigSignalBridge
   , updatePermsArn :: String
   , updateUserGroupArn :: String
   , setQuestionnaireArn :: String
+  , addFileArn :: String
   , logOutAllArn :: String
   }
   deriving (Generic, Show)

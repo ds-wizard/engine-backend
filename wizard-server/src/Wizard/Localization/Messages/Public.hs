@@ -86,6 +86,13 @@ _ERROR_VALIDATION__DEACTIVATE_DEFAULT_LOCALE =
 _ERROR_VALIDATION__LOCALE_DISABLED_DEFAULT =
   LocaleRecord "error.validation.locale_disabled_default" "You can't set disabled locale as default" []
 
+-- Questionnaire File
+_ERROR_VALIDATION__QUESTIONNAIRE_FILE_SIZE_EXCEEDS_LIMIT fileSize maxFileSize =
+  LocaleRecord "error.validation.questionnaire_file_size_exceeds_limit" "File exceeds the maximum allowed size (file: %s, maximum: %s)" [show fileSize, show maxFileSize]
+
+_ERROR_VALIDATION__QUESTIONNAIRE_FILE_QUESTION_ABSENCE_OR_WRONG_TYPE =
+  LocaleRecord "error.validation.questionnaire_file_question_absence_or_wrong_type" "The question either doesn't exist or is not a File Question" []
+
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------

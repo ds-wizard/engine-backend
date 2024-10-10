@@ -95,6 +95,20 @@ instance CreateEntity AddQuestionEvent Question where
         , expertUuids = []
         , listQuestionUuid = event.listQuestionUuid
         }
+  createEntity (AddFileQuestionEvent' event) =
+    FileQuestion' $
+      FileQuestion
+        { uuid = event.entityUuid
+        , title = event.title
+        , text = event.text
+        , requiredPhaseUuid = event.requiredPhaseUuid
+        , annotations = event.annotations
+        , tagUuids = event.tagUuids
+        , referenceUuids = []
+        , expertUuids = []
+        , maxSize = event.maxSize
+        , fileTypes = event.fileTypes
+        }
 
 instance EditEntity EditQuestionEvent Question where
   editEntity event' q =
@@ -105,6 +119,7 @@ instance EditEntity EditQuestionEvent Question where
       (EditValueQuestionEvent' event) -> applyToValueQuestion event . convertToValueQuestion $ q
       (EditIntegrationQuestionEvent' event) -> applyToIntegrationQuestion event . convertToIntegrationQuestion $ q
       (EditItemSelectQuestionEvent' event) -> applyToItemSelectQuestion event . convertToItemSelectQuestion $ q
+      (EditFileQuestionEvent' event) -> applyToFileQuestion event . convertToFileQuestion $ q
     where
       applyToOptionsQuestion event optionQuestion =
         OptionsQuestion' $
@@ -179,6 +194,19 @@ instance EditEntity EditQuestionEvent Question where
             , expertUuids = applyValue itemSelectQuestion.expertUuids event.expertUuids
             , listQuestionUuid = applyValue itemSelectQuestion.listQuestionUuid event.listQuestionUuid
             }
+      applyToFileQuestion event fileQuestion =
+        FileQuestion' $
+          fileQuestion
+            { title = applyValue fileQuestion.title event.title
+            , text = applyValue fileQuestion.text event.text
+            , requiredPhaseUuid = applyValue fileQuestion.requiredPhaseUuid event.requiredPhaseUuid
+            , annotations = applyValue fileQuestion.annotations event.annotations
+            , tagUuids = applyValue fileQuestion.tagUuids event.tagUuids
+            , referenceUuids = applyValue fileQuestion.referenceUuids event.referenceUuids
+            , expertUuids = applyValue fileQuestion.expertUuids event.expertUuids
+            , maxSize = applyValue fileQuestion.maxSize event.maxSize
+            , fileTypes = applyValue fileQuestion.fileTypes event.fileTypes
+            }
 
 convertToOptionsQuestion :: Question -> OptionsQuestion
 convertToOptionsQuestion q' =
@@ -189,6 +217,7 @@ convertToOptionsQuestion q' =
     (ValueQuestion' q) -> createQuestion q
     (IntegrationQuestion' q) -> createQuestion q
     (ItemSelectQuestion' q) -> createQuestion q
+    (FileQuestion' q) -> createQuestion q
   where
     createQuestion q =
       OptionsQuestion
@@ -212,6 +241,7 @@ convertToListQuestion q' =
     (ValueQuestion' q) -> createQuestion q
     (IntegrationQuestion' q) -> createQuestion q
     (ItemSelectQuestion' q) -> createQuestion q
+    (FileQuestion' q) -> createQuestion q
   where
     createQuestion q =
       ListQuestion
@@ -235,6 +265,7 @@ convertToMultiChoiceQuestion q' =
     (ValueQuestion' q) -> createQuestion q
     (IntegrationQuestion' q) -> createQuestion q
     (ItemSelectQuestion' q) -> createQuestion q
+    (FileQuestion' q) -> createQuestion q
   where
     createQuestion q =
       MultiChoiceQuestion
@@ -258,6 +289,7 @@ convertToValueQuestion q' =
     (ValueQuestion' q) -> q
     (IntegrationQuestion' q) -> createQuestion q
     (ItemSelectQuestion' q) -> createQuestion q
+    (FileQuestion' q) -> createQuestion q
   where
     createQuestion q =
       ValueQuestion
@@ -281,6 +313,7 @@ convertToIntegrationQuestion q' =
     (ValueQuestion' q) -> createQuestion q
     (IntegrationQuestion' q) -> q
     (ItemSelectQuestion' q) -> createQuestion q
+    (FileQuestion' q) -> createQuestion q
   where
     createQuestion q =
       IntegrationQuestion
@@ -305,6 +338,7 @@ convertToItemSelectQuestion q' =
     (ValueQuestion' q) -> createQuestion q
     (IntegrationQuestion' q) -> createQuestion q
     (ItemSelectQuestion' q) -> q
+    (FileQuestion' q) -> createQuestion q
   where
     createQuestion q =
       ItemSelectQuestion
@@ -317,6 +351,31 @@ convertToItemSelectQuestion q' =
         , referenceUuids = q.referenceUuids
         , expertUuids = q.expertUuids
         , listQuestionUuid = Nothing
+        }
+
+convertToFileQuestion :: Question -> FileQuestion
+convertToFileQuestion q' =
+  case q' of
+    (OptionsQuestion' q) -> createQuestion q
+    (MultiChoiceQuestion' q) -> createQuestion q
+    (ListQuestion' q) -> createQuestion q
+    (ValueQuestion' q) -> createQuestion q
+    (IntegrationQuestion' q) -> createQuestion q
+    (ItemSelectQuestion' q) -> createQuestion q
+    (FileQuestion' q) -> q
+  where
+    createQuestion q =
+      FileQuestion
+        { uuid = q.uuid
+        , title = q.title
+        , text = q.text
+        , requiredPhaseUuid = q.requiredPhaseUuid
+        , annotations = q.annotations
+        , tagUuids = q.tagUuids
+        , referenceUuids = q.referenceUuids
+        , expertUuids = q.expertUuids
+        , maxSize = Nothing
+        , fileTypes = Nothing
         }
 
 updateIntegrationProps :: EditIntegrationEvent -> Question -> Question

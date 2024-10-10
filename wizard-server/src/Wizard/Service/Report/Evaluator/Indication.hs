@@ -56,6 +56,7 @@ evaluateQuestion found notFound mQtnPhase km replies path q' =
         ItemSelectQuestion' q -> rFound
         OptionsQuestion' q -> rFound + evaluateOptionsQuestion q found notFound mQtnPhase km replies currentPath
         ListQuestion' q -> evaluateListQuestion found notFound mQtnPhase km replies currentPath q
+        FileQuestion' q -> rFound
       where
         rFound = isRequiredNow km.phaseUuids (getRequiredPhaseUuid q') mQtnPhase found
 
