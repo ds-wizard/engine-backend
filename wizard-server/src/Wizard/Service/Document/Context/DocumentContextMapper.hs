@@ -8,6 +8,7 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireFileSimple
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
@@ -24,6 +25,7 @@ toDocumentContext
   -> QuestionnaireContent
   -> Maybe U.UUID
   -> [QuestionnaireVersionDTO]
+  -> [QuestionnaireFileSimple]
   -> KnowledgeModel
   -> Report
   -> Package
@@ -33,7 +35,7 @@ toDocumentContext
   -> [DocumentContextUserPerm]
   -> [DocumentContextUserGroupPerm]
   -> DocumentContext
-toDocumentContext doc appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos km report pkg org mQtnCreatedBy mDocCreatedBy users groups =
+toDocumentContext doc appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos qtnFiles km report pkg org mQtnCreatedBy mDocCreatedBy users groups =
   DocumentContext
     { config = DocumentContextConfig {clientUrl = appClientUrl}
     , document =
@@ -56,6 +58,7 @@ toDocumentContext doc appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos km repor
           , versionUuid = qtnVersion
           , versions = qtnVersionDtos
           , projectTags = qtn.projectTags
+          , files = qtnFiles
           , createdBy = USR_Mapper.toDTO <$> mQtnCreatedBy
           , createdAt = qtn.createdAt
           , updatedAt = qtn.updatedAt

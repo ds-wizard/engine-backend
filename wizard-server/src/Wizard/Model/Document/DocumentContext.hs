@@ -7,6 +7,7 @@ import GHC.Generics
 
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Model.Questionnaire.QuestionnaireFileSimple
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Report.Report
@@ -57,6 +58,7 @@ data DocumentContextQuestionnaire = DocumentContextQuestionnaire
   , versionUuid :: Maybe U.UUID
   , versions :: [QuestionnaireVersionDTO]
   , projectTags :: [String]
+  , files :: [QuestionnaireFileSimple]
   , createdBy :: Maybe UserDTO
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

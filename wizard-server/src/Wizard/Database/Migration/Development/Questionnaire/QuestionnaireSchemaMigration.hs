@@ -1,5 +1,6 @@
 module Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration where
 
+import Control.Monad.Except (catchError)
 import Database.PostgreSQL.Simple
 import GHC.Int
 
@@ -7,12 +8,14 @@ import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
+import Wizard.S3.Questionnaire.QuestionnaireFileS3
 
 dropTables :: AppContextM Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Questionnaire) drop tables"
   let sql =
-        "DROP TABLE IF EXISTS questionnaire_comment CASCADE; \
+        "DROP TABLE IF EXISTS questionnaire_file CASCADE; \
+        \DROP TABLE IF EXISTS questionnaire_comment CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_comment_thread CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_perm_group CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_perm_user CASCADE; \
@@ -20,13 +23,20 @@ dropTables = do
   let action conn = execute_ conn sql
   runDB action
 
-createTables :: AppContextM Int64
+dropBucket :: AppContextM ()
+dropBucket = do
+  catchError purgeBucket (\e -> return ())
+  catchError removeBucket (\e -> return ())
+
+createTables :: AppContextM ()
 createTables = do
   createQtnTable
   createQtnAclUserTable
   createQtnAclGroupTable
   createQtnCommentThreadTable
   createQtnCommentTable
+  createQtnFileTable
+  makeBucket
 
 createQtnTable = do
   logInfo _CMP_MIGRATION "(Table/Questionnaire) create table"
@@ -135,6 +145,27 @@ createQtnCommentTable = do
         \    CONSTRAINT questionnaire_comment_pk PRIMARY KEY (uuid, tenant_uuid), \
         \    CONSTRAINT questionnaire_comment_comment_thread_uuid FOREIGN KEY (comment_thread_uuid, tenant_uuid) REFERENCES questionnaire_comment_thread (uuid, tenant_uuid), \
         \    CONSTRAINT questionnaire_comment_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createQtnFileTable = do
+  logInfo _CMP_MIGRATION "(Table/QuestionnaireFile) create table"
+  let sql =
+        "CREATE TABLE questionnaire_file \
+        \( \
+        \    uuid               uuid        NOT NULL, \
+        \    file_name          varchar     NOT NULL, \
+        \    content_type       varchar     NOT NULL, \
+        \    file_size          bigint      NOT NULL, \
+        \    questionnaire_uuid uuid        NOT NULL, \
+        \    created_by         uuid, \
+        \    tenant_uuid        uuid        NOT NULL, \
+        \    created_at         timestamptz NOT NULL, \
+        \    CONSTRAINT questionnaire_file_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_file_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_file_user_uuid_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
         \);"
   let action conn = execute_ conn sql
   runDB action

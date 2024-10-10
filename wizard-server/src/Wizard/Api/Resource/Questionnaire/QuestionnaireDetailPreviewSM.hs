@@ -31,4 +31,5 @@ instance ToSchema QuestionnaireDetailPreview where
         , migrationUuid = Nothing
         , permissions = [qtn1AlbertEditQtnPermDto]
         , format = Just . DocumentTemplateMapper.toFormatDTO $ formatJson
+        , fileCount = 0
         }

@@ -5,6 +5,7 @@ import Data.Swagger
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeSM ()
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventSM ()
+import Wizard.Api.Resource.Questionnaire.File.QuestionnaireFileSimpleSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM ()
 import Wizard.Api.Resource.User.OnlineUserInfoSM ()

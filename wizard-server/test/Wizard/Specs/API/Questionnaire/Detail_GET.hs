@@ -128,6 +128,7 @@ create_test_200 title appContext qtn authHeader permissions =
               , isTemplate = qtn.isTemplate
               , migrationUuid = Nothing
               , permissions = permissions
+              , fileCount = 0
               }
       let expBody = encode expDto
       -- WHEN: Call API

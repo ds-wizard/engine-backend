@@ -27,6 +27,7 @@ instance ToSchema QuestionnaireDetailReportDTO where
         , isTemplate = questionnaire1.isTemplate
         , migrationUuid = Nothing
         , permissions = [qtn1AlbertEditQtnPermDto]
+        , fileCount = 0
         , totalReport = report1.totalReport
         , chapterReports = report1.chapterReports
         , chapters = report1.chapters

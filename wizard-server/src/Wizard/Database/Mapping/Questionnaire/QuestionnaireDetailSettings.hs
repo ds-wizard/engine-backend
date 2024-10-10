@@ -85,5 +85,5 @@ instance FromRow QuestionnaireDetailSettings where
                 then Just UnsupportedMetamodelVersionDocumentTemplateState
                 else Just DefaultDocumentTemplateState
             _ -> Nothing
-
+    fileCount <- field
     return $ QuestionnaireDetailSettings {..}

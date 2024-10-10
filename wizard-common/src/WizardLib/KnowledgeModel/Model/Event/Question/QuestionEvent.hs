@@ -16,6 +16,7 @@ data AddQuestionEvent
   | AddValueQuestionEvent' AddValueQuestionEvent
   | AddIntegrationQuestionEvent' AddIntegrationQuestionEvent
   | AddItemSelectQuestionEvent' AddItemSelectQuestionEvent
+  | AddFileQuestionEvent' AddFileQuestionEvent
   deriving (Show, Eq, Generic)
 
 data AddOptionsQuestionEvent = AddOptionsQuestionEvent
@@ -100,6 +101,21 @@ data AddItemSelectQuestionEvent = AddItemSelectQuestionEvent
   }
   deriving (Show, Eq, Generic)
 
+data AddFileQuestionEvent = AddFileQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: String
+  , text :: Maybe String
+  , requiredPhaseUuid :: Maybe U.UUID
+  , annotations :: [MapEntry String String]
+  , tagUuids :: [U.UUID]
+  , maxSize :: Maybe Int
+  , fileTypes :: Maybe String
+  , createdAt :: UTCTime
+  }
+  deriving (Show, Eq, Generic)
+
 -- --------------------------------------------
 data EditQuestionEvent
   = EditOptionsQuestionEvent' EditOptionsQuestionEvent
@@ -108,6 +124,7 @@ data EditQuestionEvent
   | EditValueQuestionEvent' EditValueQuestionEvent
   | EditIntegrationQuestionEvent' EditIntegrationQuestionEvent
   | EditItemSelectQuestionEvent' EditItemSelectQuestionEvent
+  | EditFileQuestionEvent' EditFileQuestionEvent
   deriving (Show, Eq, Generic)
 
 data EditOptionsQuestionEvent = EditOptionsQuestionEvent
@@ -203,6 +220,23 @@ data EditItemSelectQuestionEvent = EditItemSelectQuestionEvent
   , expertUuids :: EventField [U.UUID]
   , referenceUuids :: EventField [U.UUID]
   , listQuestionUuid :: EventField (Maybe U.UUID)
+  , createdAt :: UTCTime
+  }
+  deriving (Show, Eq, Generic)
+
+data EditFileQuestionEvent = EditFileQuestionEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , title :: EventField String
+  , text :: EventField (Maybe String)
+  , requiredPhaseUuid :: EventField (Maybe U.UUID)
+  , annotations :: EventField [MapEntry String String]
+  , tagUuids :: EventField [U.UUID]
+  , expertUuids :: EventField [U.UUID]
+  , referenceUuids :: EventField [U.UUID]
+  , maxSize :: EventField (Maybe Int)
+  , fileTypes :: EventField (Maybe String)
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

@@ -29,5 +29,6 @@ data QuestionnaireDetailSettings = QuestionnaireDetailSettings
   , documentTemplatePhase :: Maybe DocumentTemplatePhase
   , formatUuid :: Maybe U.UUID
   , selectedQuestionTagUuids :: [U.UUID]
+  , fileCount :: Int
   }
   deriving (Show, Eq, Generic)

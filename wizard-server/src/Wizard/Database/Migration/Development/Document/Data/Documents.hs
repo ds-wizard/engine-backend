@@ -91,6 +91,7 @@ dmp1 =
           , versionUuid = Nothing
           , versions = fmap (`toVersionDTO` Just userAlbert) questionnaire1.versions
           , projectTags = questionnaire1.projectTags
+          , files = []
           , createdBy = Just . USR_Mapper.toDTO $ userAlbert
           , createdAt = questionnaire1.createdAt
           , updatedAt = questionnaire1.updatedAt
