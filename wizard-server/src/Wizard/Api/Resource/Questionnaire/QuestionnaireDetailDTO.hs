@@ -15,5 +15,6 @@ data QuestionnaireDetailDTO = QuestionnaireDetailDTO
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID
   , permissions :: [QuestionnairePermDTO]
+  , fileCount :: Int
   }
   deriving (Show, Eq, Generic)

@@ -15,6 +15,7 @@ toDTO qtn report =
     , isTemplate = qtn.isTemplate
     , permissions = qtn.permissions
     , migrationUuid = qtn.migrationUuid
+    , fileCount = qtn.fileCount
     , totalReport = report.totalReport
     , chapters = report.chapters
     , chapterReports = report.chapterReports

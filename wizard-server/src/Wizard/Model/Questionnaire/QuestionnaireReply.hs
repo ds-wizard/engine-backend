@@ -39,6 +39,9 @@ data ReplyValue
   | ItemSelectReply
       { isValue :: U.UUID
       }
+  | FileReply
+      { fValue :: U.UUID
+      }
   deriving (Show, Eq, Generic)
 
 instance Hashable ReplyValue

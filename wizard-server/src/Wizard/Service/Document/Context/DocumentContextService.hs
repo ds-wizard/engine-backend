@@ -13,6 +13,7 @@ import Shared.Common.Util.List
 import Wizard.Api.Resource.Acl.MemberDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
@@ -59,6 +60,7 @@ createDocumentContext doc = do
           (Just eventUuid) -> findQuestionnaireVersionUuid eventUuid qtn.versions
           _ -> Nothing
   qtnVersionDtos <- traverse enhanceQuestionnaireVersion qtn.versions
+  qtnFiles <- findQuestionnaireFilesByQuestionnaire doc.questionnaireUuid
   (users, groups) <- heSettingsToPerms qtnSettings
   return $
     toDocumentContext
@@ -68,6 +70,7 @@ createDocumentContext doc = do
       qtnCtn
       qtnVersion
       qtnVersionDtos
+      qtnFiles
       km
       report
       pkg

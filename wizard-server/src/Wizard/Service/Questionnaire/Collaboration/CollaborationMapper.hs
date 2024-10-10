@@ -4,6 +4,7 @@ import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
 import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
+import Wizard.Model.Questionnaire.QuestionnaireFileSimple
 import Wizard.Model.Websocket.WebsocketMessage
 import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Util.Websocket
@@ -115,3 +116,9 @@ toSetQuestionnaireMessage resWsDto record =
   toWebsocketMessage record $
     Success_ServerActionDTO . SetQuestionnaire_ServerQuestionnaireActionDTO $
       resWsDto
+
+toAddFileMessage :: QuestionnaireFileSimple -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
+toAddFileMessage file record =
+  toWebsocketMessage record $
+    Success_ServerActionDTO . AddFile_ServerQuestionnaireActionDTO $
+      file

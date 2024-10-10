@@ -18,5 +18,6 @@ data QuestionnaireDetailPreview = QuestionnaireDetailPreview
   , permissions :: [QuestionnairePermDTO]
   , documentTemplateId :: Maybe String
   , format :: Maybe DocumentTemplateFormatDTO
+  , fileCount :: Int
   }
   deriving (Show, Eq, Generic)

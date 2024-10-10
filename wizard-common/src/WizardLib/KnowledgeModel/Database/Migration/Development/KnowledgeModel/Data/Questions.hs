@@ -561,3 +561,39 @@ question13Edited =
     , expertUuids = []
     , listQuestionUuid = Just q4_it1_question5.uuid
     }
+
+question14' :: Question
+question14' = FileQuestion' question14
+
+question14 :: FileQuestion
+question14 =
+  FileQuestion
+    { uuid = u' "00000000-0000-0000-0000-000000000f14"
+    , title = "Fourteen Question"
+    , text = Just "Some non-funny description"
+    , requiredPhaseUuid = Nothing
+    , annotations = []
+    , tagUuids = [tagBioInformatic.uuid]
+    , referenceUuids = []
+    , expertUuids = []
+    , maxSize = Just 20000
+    , fileTypes = Just "application/json"
+    }
+
+question14Edited' :: Question
+question14Edited' = FileQuestion' question14Edited
+
+question14Edited :: FileQuestion
+question14Edited =
+  FileQuestion
+    { uuid = question14.uuid
+    , title = "EDITED: Fourteen Question"
+    , text = Just "EDITED: Some non-funny description"
+    , requiredPhaseUuid = Just $ phase2.uuid
+    , annotations = []
+    , tagUuids = [tagBioInformatic.uuid]
+    , referenceUuids = []
+    , expertUuids = []
+    , maxSize = Just 40000
+    , fileTypes = Just "text/html"
+    }
