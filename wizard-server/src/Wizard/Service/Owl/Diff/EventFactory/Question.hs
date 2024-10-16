@@ -103,14 +103,14 @@ instance EventFactory Question where
             , props = entity.props
             , createdAt = now
             }
-  createEditEvent (oldKm, newKm) parentUuid (OptionsQuestion' oldEntity) (OptionsQuestion' newEntity) = do
+  createEditEvent (oldKm, newKm) parentUuid (OptionsQuestion' newEntity) (OptionsQuestion' oldEntity) = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let event =
           EditOptionsQuestionEvent
             { uuid = eventUuid
             , parentUuid = parentUuid
-            , entityUuid = newEntity.uuid
+            , entityUuid = oldEntity.uuid
             , title = diffField oldEntity.title newEntity.title
             , text = diffField oldEntity.text newEntity.text
             , requiredPhaseUuid =
@@ -127,14 +127,14 @@ instance EventFactory Question where
     if isEmptyEvent event
       then return . Just . EditQuestionEvent' . EditOptionsQuestionEvent' $ event
       else return Nothing
-  createEditEvent (oldKm, newKm) parentUuid (MultiChoiceQuestion' oldEntity) (MultiChoiceQuestion' newEntity) = do
+  createEditEvent (oldKm, newKm) parentUuid (MultiChoiceQuestion' newEntity) (MultiChoiceQuestion' oldEntity) = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let event =
           EditMultiChoiceQuestionEvent
             { uuid = eventUuid
             , parentUuid = parentUuid
-            , entityUuid = newEntity.uuid
+            , entityUuid = oldEntity.uuid
             , title = diffField oldEntity.title newEntity.title
             , text = diffField oldEntity.text newEntity.text
             , requiredPhaseUuid =
@@ -151,14 +151,14 @@ instance EventFactory Question where
     if isEmptyEvent event
       then return . Just . EditQuestionEvent' . EditMultiChoiceQuestionEvent' $ event
       else return Nothing
-  createEditEvent (oldKm, newKm) parentUuid (ListQuestion' oldEntity) (ListQuestion' newEntity) = do
+  createEditEvent (oldKm, newKm) parentUuid (ListQuestion' newEntity) (ListQuestion' oldEntity) = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let event =
           EditListQuestionEvent
             { uuid = eventUuid
             , parentUuid = parentUuid
-            , entityUuid = newEntity.uuid
+            , entityUuid = oldEntity.uuid
             , title = diffField oldEntity.title newEntity.title
             , text = diffField oldEntity.text newEntity.text
             , requiredPhaseUuid =
@@ -179,14 +179,14 @@ instance EventFactory Question where
     if isEmptyEvent event
       then return . Just . EditQuestionEvent' . EditListQuestionEvent' $ event
       else return Nothing
-  createEditEvent (oldKm, newKm) parentUuid (ValueQuestion' oldEntity) (ValueQuestion' newEntity) = do
+  createEditEvent (oldKm, newKm) parentUuid (ValueQuestion' newEntity) (ValueQuestion' oldEntity) = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let event =
           EditValueQuestionEvent
             { uuid = eventUuid
             , parentUuid = parentUuid
-            , entityUuid = newEntity.uuid
+            , entityUuid = oldEntity.uuid
             , title = diffField oldEntity.title newEntity.title
             , text = diffField oldEntity.text newEntity.text
             , requiredPhaseUuid =
@@ -202,14 +202,14 @@ instance EventFactory Question where
     if isEmptyEvent event
       then return . Just . EditQuestionEvent' . EditValueQuestionEvent' $ event
       else return Nothing
-  createEditEvent (oldKm, newKm) parentUuid (IntegrationQuestion' oldEntity) (IntegrationQuestion' newEntity) = do
+  createEditEvent (oldKm, newKm) parentUuid (IntegrationQuestion' newEntity) (IntegrationQuestion' oldEntity) = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let event =
           EditIntegrationQuestionEvent
             { uuid = eventUuid
             , parentUuid = parentUuid
-            , entityUuid = newEntity.uuid
+            , entityUuid = oldEntity.uuid
             , title = diffField oldEntity.title newEntity.title
             , text = diffField oldEntity.text newEntity.text
             , requiredPhaseUuid =
