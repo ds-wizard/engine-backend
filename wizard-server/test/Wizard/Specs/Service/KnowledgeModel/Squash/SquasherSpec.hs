@@ -48,7 +48,7 @@ squasherSpec =
               , a_q2'
               , e_q2_title'
               , a_q3'
-              , EditQuestionEvent' . EditOptionsQuestionEvent' $ e_q1_title_2 {answerUuids = e_q1_answerUuids_title.answerUuids, createdAt = e_q1_answerUuids_title.createdAt}
+              , EditQuestionEvent' . EditOptionsQuestionEvent' $ e_q1_title_2 {answerUuids = e_q1_answerUuids_title.answerUuids, createdAt = e_q1_answerUuids.createdAt}
               , e_q1_type'
               , EditReferenceEvent' . EditURLReferenceEvent' $ e_ref1_url {createdAt = e_ref1_type.createdAt}
               , e_ch1_label_3_day2'
@@ -113,7 +113,7 @@ squasherSpec =
         let expEvents =
               [ e_q1_text'
               , a_q3'
-              , EditQuestionEvent' . EditOptionsQuestionEvent' $ e_q1_title_2 {answerUuids = e_q1_answerUuids_title.answerUuids, createdAt = e_q1_answerUuids_title.createdAt}
+              , EditQuestionEvent' . EditOptionsQuestionEvent' $ e_q1_title_2 {answerUuids = e_q1_answerUuids_title.answerUuids, createdAt = e_q1_answerUuids.createdAt}
               , e_q1_type'
               ]
         -- WHEN:

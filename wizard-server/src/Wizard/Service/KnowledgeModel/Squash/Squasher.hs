@@ -73,7 +73,7 @@ squashReorderEvents events =
               let squashedEvent = simpleSquashEvent mPreviousEvent previousEvent newEvent
                   eventsToDeleted' = previousEvent : eventsToDeleted
                   events' = squashedEvent : events
-               in (eventsToDeleted', events', Just newEvent)
+               in (eventsToDeleted', events', Just squashedEvent)
         Nothing ->
           let eventsToDeleted' = eventsToDeleted
               events' = newEvent : events
