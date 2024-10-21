@@ -137,7 +137,7 @@ instance SimpleEventSquash EditQuestionEvent where
         , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.tagUuids)
         , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
         , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
-        , integrationUuid = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.integrationUuid)
+        , integrationUuid = applyValue oldEvent newEvent (.integrationUuid)
         , props = applyValue oldEvent newEvent (.props)
         , createdAt = oldEvent.createdAt
         }
@@ -154,6 +154,6 @@ instance SimpleEventSquash EditQuestionEvent where
         , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.tagUuids)
         , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
         , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
-        , listQuestionUuid = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.listQuestionUuid)
+        , listQuestionUuid = applyValue oldEvent newEvent (.listQuestionUuid)
         , createdAt = oldEvent.createdAt
         }
