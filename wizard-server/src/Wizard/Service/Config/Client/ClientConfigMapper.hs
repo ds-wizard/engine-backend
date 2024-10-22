@@ -1,6 +1,7 @@
 module Wizard.Service.Config.Client.ClientConfigMapper where
 
 import Data.Maybe
+import qualified Data.UUID as U
 
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Config.SimpleFeature
@@ -27,6 +28,7 @@ toClientConfigDTO serverConfig tenantConfig mUserProfile tenant locales =
     , locales = fmap toClientConfigLocaleDTO locales
     , owl = tenantConfig.owl
     , admin = toClientConfigAdminDTO serverConfig.admin tenant
+    , aiAssistant = toClientConfigAiAssistantDTO serverConfig.admin tenant
     , signalBridge = toClientConfigSignalBridgeDTO tenant
     , modules =
         if serverConfig.admin.enabled
@@ -110,6 +112,12 @@ toClientConfigLocaleDTO locale =
 toClientConfigAdminDTO :: ServerConfigAdmin -> Tenant -> ClientConfigAdminDTO
 toClientConfigAdminDTO serverConfig tenant =
   ClientConfigAdminDTO {enabled = serverConfig.enabled, clientUrl = tenant.adminClientUrl}
+
+toClientConfigAiAssistantDTO :: ServerConfigAdmin -> Tenant -> ClientConfigAiAssistantDTO
+toClientConfigAiAssistantDTO serverConfig tenant =
+  ClientConfigAiAssistantDTO
+    { enabled = serverConfig.enabled && not (U.toString tenant.uuid == "731ccc18-b833-4927-9458-2dea090e26cc" || U.toString tenant.uuid == "61a65ac9-e055-49eb-89ae-f4a4b6410208")
+    }
 
 toClientConfigSignalBridgeDTO :: Tenant -> ClientConfigSignalBridgeDTO
 toClientConfigSignalBridgeDTO tenant =

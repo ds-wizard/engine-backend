@@ -21,6 +21,7 @@ data ClientConfigDTO = ClientConfigDTO
   , locales :: [ClientConfigLocaleDTO]
   , owl :: TenantConfigOwl
   , admin :: ClientConfigAdminDTO
+  , aiAssistant :: ClientConfigAiAssistantDTO
   , signalBridge :: ClientConfigSignalBridgeDTO
   , modules :: [ClientConfigModuleDTO]
   }
@@ -78,6 +79,11 @@ data ClientConfigLocaleDTO = ClientConfigLocaleDTO
 data ClientConfigAdminDTO = ClientConfigAdminDTO
   { enabled :: Bool
   , clientUrl :: Maybe String
+  }
+  deriving (Generic, Eq, Show)
+
+data ClientConfigAiAssistantDTO = ClientConfigAiAssistantDTO
+  { enabled :: Bool
   }
   deriving (Generic, Eq, Show)
 
