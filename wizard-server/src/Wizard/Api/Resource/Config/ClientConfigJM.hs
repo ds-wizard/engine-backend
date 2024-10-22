@@ -63,6 +63,12 @@ instance FromJSON ClientConfigAdminDTO where
 instance ToJSON ClientConfigAdminDTO where
   toJSON = genericToJSON jsonOptions
 
+instance FromJSON ClientConfigAiAssistantDTO where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON ClientConfigAiAssistantDTO where
+  toJSON = genericToJSON jsonOptions
+
 instance FromJSON ClientConfigSignalBridgeDTO where
   parseJSON = genericParseJSON jsonOptions
 

@@ -4,6 +4,7 @@ import qualified Data.List as L
 import qualified Data.Map.Strict as M
 import Data.Maybe (mapMaybe)
 
+import Shared.Common.Model.Common.MapEntry
 import WizardLib.KnowledgeModel.Model.Event.EventField
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 
@@ -30,7 +31,9 @@ getExistingEntities oldEntities newEntities =
     oldEntities
 
 isSameEntity :: HasAnnotations' entity => entity -> entity -> Bool
-isSameEntity entity1 entity2 = getAnnotations entity1 == getAnnotations entity2
+isSameEntity entity1 entity2 =
+  let sortAnnotations = L.sortBy (\a1 a2 -> a1.key `compare` a2.key)
+   in (sortAnnotations . getAnnotations $ entity1) == (sortAnnotations . getAnnotations $ entity2)
 
 diffListField (oldKm, newKm) oldList newList getEntitiesMFn =
   let accessorFn km uuid = M.lookup uuid (getEntitiesMFn km)
