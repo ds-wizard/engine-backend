@@ -19,7 +19,14 @@ data Tenant = Tenant
   , analyticsClientUrl :: Maybe String
   , signalBridgeUrl :: Maybe String
   , enabled :: Bool
+  , state :: TenantState
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+data TenantState
+  = PendingHousekeepingTenantState
+  | HousekeepingInProgressTenantState
+  | ReadyForUseTenantState
+  deriving (Show, Eq, Generic, Read)

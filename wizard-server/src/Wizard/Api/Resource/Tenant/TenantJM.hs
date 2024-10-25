@@ -12,6 +12,12 @@ instance FromJSON Tenant where
 instance ToJSON Tenant where
   toJSON = genericToJSON jsonOptions
 
+instance FromJSON TenantState where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON TenantState where
+  toJSON = genericToJSON jsonOptions
+
 instance FromJSON TenantDTO where
   parseJSON = genericParseJSON jsonOptions
 

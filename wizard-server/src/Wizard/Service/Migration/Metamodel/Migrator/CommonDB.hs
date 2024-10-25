@@ -1,9 +1,11 @@
 module Wizard.Service.Migration.Metamodel.Migrator.CommonDB where
 
+import Control.Monad.Reader (asks)
 import Data.Aeson
 import Data.String (fromString)
 import qualified Data.Vector as Vector
 import Database.PostgreSQL.Simple
+import Database.PostgreSQL.Simple.ToField
 
 import Shared.Common.Constant.Component
 import Shared.Common.Localization.Messages.Public
@@ -20,18 +22,21 @@ import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 -- COMMON
 -- --------------------------------
 findOutdatedModels entityName eventsField idField = do
+  tenantUuid <- asks (.tenantUuid')
   let sql =
         f'
-          "SELECT %s, created_at, metamodel_version, %s FROM %s WHERE metamodel_version != ?"
+          "SELECT %s, created_at, metamodel_version, %s FROM %s WHERE metamodel_version != ? AND tenant_uuid = ?"
           [idField, eventsField, entityName]
   logInfo _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) [kmMetamodelVersion]
+  let action conn = query conn (fromString sql) [toField kmMetamodelVersion, toField tenantUuid]
   runDB action
 
 updateOutdatedModels entityName eventsField idField params = do
-  let sql = f' "UPDATE %s SET metamodel_version = ?, %s WHERE %s = ?" [entityName, eventsField, idField]
+  tenantUuid <- asks (.tenantUuid')
+  let sql = f' "UPDATE %s SET metamodel_version = ?, %s WHERE %s = ? AND tenant_uuid = ?" [entityName, eventsField, idField]
   logInfo _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) params
+  let paramsWithTenant = params ++ [toField tenantUuid]
+  let action conn = execute conn (fromString sql) paramsWithTenant
   runDB action
   return ()
 

@@ -47,6 +47,7 @@ createTenantTable = do
         \    analytics_server_url varchar, \
         \    analytics_client_url varchar, \
         \    signal_bridge_url varchar, \
+        \    state varchar NOT NULL DEFAULT 'ReadyForUseTenantState', \
         \    CONSTRAINT tenant_pk PRIMARY KEY (uuid) \
         \);"
   let action conn = execute_ conn sql

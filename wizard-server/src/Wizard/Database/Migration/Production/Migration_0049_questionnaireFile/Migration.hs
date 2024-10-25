@@ -43,3 +43,9 @@ addQtnFileRole dbPool = do
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
+
+addStateForTenant dbPool = do
+  let sql = "UPDATE user_entity set permissions = permissions || '{QTN_FILE_PERM}' WHERE role = 'admin';"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing

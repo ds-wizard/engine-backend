@@ -1,5 +1,5 @@
 module Wizard.Service.Migration.Metamodel.Migrator.KnowledgeModelMigrationMigrator (
-  migrateAllInDB,
+  migrateAll,
 ) where
 
 import Data.Aeson
@@ -14,8 +14,8 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Migration.Metamodel.Migrator.CommonDB
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 
-migrateAllInDB :: AppContextM ()
-migrateAllInDB = do
+migrateAll :: AppContextM ()
+migrateAll = do
   let (entityName, idField, eventsField, eventsFieldUpdate) =
         ( "knowledge_model_migration"
         , "branch_uuid"

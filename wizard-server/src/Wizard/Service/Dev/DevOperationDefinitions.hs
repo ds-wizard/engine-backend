@@ -17,6 +17,7 @@ import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Branch.Event.BranchEventService
 import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.Feedback.FeedbackService
+import Wizard.Service.Migration.Metamodel.MigratorService
 import Wizard.Service.Owl.OwlService
 import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
@@ -36,6 +37,7 @@ sections =
   , cache
   , document
   , feedback
+  , metamodelMigrator
   , owl
   , persistentCommand
   , plan
@@ -224,6 +226,36 @@ feedback_synchronizeFeedbacks =
     , parameters = []
     , function = \reqDto -> do
         synchronizeFeedbacksInAllApplications
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- FEEDBACK
+-- ---------------------------------------------------------------------------------------------------------------------
+metamodelMigrator :: DevSection AppContextM
+metamodelMigrator =
+  DevSection
+    { name = "Metamodel Migrator"
+    , description = Nothing
+    , operations = [metamodelMigrator_migrate]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+metamodelMigrator_migrate :: DevOperation AppContextM
+metamodelMigrator_migrate =
+  DevOperation
+    { name = "Migrate"
+    , description = Nothing
+    , parameters =
+        [ DevOperationParameter
+            { name = "tenantUuid"
+            , aType = StringDevOperationParameterType
+            }
+        ]
+    , function = \reqDto -> do
+        let tenantUuid = u' . head $ reqDto.parameters
+        tenant <- findTenantByUuid tenantUuid
+        migrateToLatestMetamodelVersionCommand tenant Nothing
         return "Done"
     }
 

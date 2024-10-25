@@ -19,7 +19,7 @@ import Wizard.Service.Config.Client.ClientConfigMapper
 import Wizard.Service.User.UserMapper
 
 instance ToSchema ClientConfigDTO where
-  declareNamedSchema = toSwagger (toClientConfigDTO S.defaultConfig A.defaultTenantConfig (Just $ toUserProfile (toDTO userAlbert) []) defaultTenant [])
+  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig A.defaultTenantConfig (Just $ toUserProfile (toDTO userAlbert) []) defaultTenant [])
 
 instance ToSchema ClientConfigAuthDTO where
   declareNamedSchema = toSwagger (toClientAuthDTO A.defaultAuth)

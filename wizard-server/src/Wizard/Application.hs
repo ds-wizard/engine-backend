@@ -1,7 +1,6 @@
 module Wizard.Application where
 
 import Control.Concurrent
-import Control.Monad (void)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (MonadLogger)
 import Control.Monad.Reader (liftIO)
@@ -28,7 +27,6 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Context.ContextMappers
 import Wizard.Service.Config.Server.ServerConfigValidation
-import qualified Wizard.Service.Migration.Metamodel.MigratorService as MM
 import Wizard.Worker.CronWorkers
 import Wizard.Worker.PermanentWorkers
 
@@ -53,7 +51,7 @@ createBaseContext serverConfig buildInfoConfig dbPool s3Client httpClientManager
   return BaseContext {..}
 
 afterDbMigrationHook :: BaseContext -> IO ()
-afterDbMigrationHook context = void (runAppContextWithBaseContext MM.migrateCompleteDatabase context)
+afterDbMigrationHook _ = return ()
 
 runWebServer :: BaseContext -> IO ()
 runWebServer context = runWebServerFactory context getSentryIdentity loggingMiddleware webApi webServer

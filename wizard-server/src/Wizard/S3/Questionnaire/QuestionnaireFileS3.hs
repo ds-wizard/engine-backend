@@ -10,7 +10,7 @@ import Shared.Common.Util.String (f')
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
-folderName = "templates"
+folderName = "questionnaire-files"
 
 retrieveFile :: U.UUID -> U.UUID -> AppContextM BS.ByteString
 retrieveFile questionnaireUuid fileUuid = createGetObjectFn (f' "%s/%s/%s" [folderName, U.toString questionnaireUuid, U.toString fileUuid])
