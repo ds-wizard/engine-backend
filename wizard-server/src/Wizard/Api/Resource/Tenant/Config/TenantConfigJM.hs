@@ -169,3 +169,9 @@ instance FromJSON TenantConfigOwl where
 
 instance ToJSON TenantConfigOwl where
   toJSON = genericToJSON jsonOptions
+
+instance FromJSON TenantConfigAiAssistant where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON TenantConfigAiAssistant where
+  toJSON = genericToJSON jsonOptions

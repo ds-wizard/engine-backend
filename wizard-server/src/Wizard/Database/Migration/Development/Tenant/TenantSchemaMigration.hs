@@ -72,6 +72,7 @@ createTenantConfigTable = do
         \    updated_at                 timestamptz NOT NULL, \
         \    owl                        jsonb       NOT NULL, \
         \    mail_config_uuid           uuid, \
+        \    ai_assistant               jsonb       NOT NULL, \
         \    CONSTRAINT tenant_config_pk PRIMARY KEY (uuid), \
         \    CONSTRAINT tenant_config_mail_config_uuid_fk FOREIGN KEY (mail_config_uuid) REFERENCES instance_config_mail (uuid) \
         \);"

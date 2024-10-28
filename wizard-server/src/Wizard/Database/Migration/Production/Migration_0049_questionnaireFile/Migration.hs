@@ -16,6 +16,7 @@ migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   createQtnFileTable dbPool
   addQtnFileRole dbPool
+  addAiAssistantField dbPool
 
 createQtnFileTable dbPool = do
   let sql =
@@ -46,6 +47,12 @@ addQtnFileRole dbPool = do
 
 addStateForTenant dbPool = do
   let sql = "UPDATE user_entity set permissions = permissions || '{QTN_FILE_PERM}' WHERE role = 'admin';"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addAiAssistantField dbPool = do
+  let sql = "ALTER TABLE tenant_config ADD COLUMN ai_assistant jsonb NOT NULL DEFAULT '{\"enabled\": true}';"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

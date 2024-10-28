@@ -36,6 +36,7 @@ defaultTenantConfig =
     , submission = defaultSubmission
     , owl = defaultOwl
     , mailConfigUuid = Nothing
+    , aiAssistant = defaultAiAssistant
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
@@ -247,6 +248,12 @@ defaultOwl =
     , version = ""
     , previousPackageId = Nothing
     , rootElement = ""
+    }
+
+defaultAiAssistant :: TenantConfigAiAssistant
+defaultAiAssistant =
+  TenantConfigAiAssistant
+    { enabled = True
     }
 
 differentTenantConfig :: TenantConfig

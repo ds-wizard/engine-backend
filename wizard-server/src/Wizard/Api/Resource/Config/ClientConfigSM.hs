@@ -46,7 +46,7 @@ instance ToSchema ClientConfigAdminDTO where
   declareNamedSchema = toSwagger (toClientConfigAdminDTO S.defaultAdmin defaultTenant)
 
 instance ToSchema ClientConfigAiAssistantDTO where
-  declareNamedSchema = toSwagger (toClientConfigAiAssistantDTO S.defaultAdmin defaultTenant)
+  declareNamedSchema = toSwagger (toClientConfigAiAssistantDTO S.defaultAdmin A.defaultAiAssistant)
 
 instance ToSchema ClientConfigSignalBridgeDTO where
   declareNamedSchema = toSwagger (toClientConfigSignalBridgeDTO defaultTenant)
