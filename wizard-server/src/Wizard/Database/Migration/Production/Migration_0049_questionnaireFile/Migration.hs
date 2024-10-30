@@ -16,7 +16,10 @@ migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   createQtnFileTable dbPool
   addQtnFileRole dbPool
+  addStateForTenant dbPool
   addAiAssistantField dbPool
+  setTenantPhaseToPendingHousekeeping dbPool
+  updateMetamodelVersionForDocumentTemplateEditor dbPool
 
 createQtnFileTable dbPool = do
   let sql =
@@ -46,13 +49,25 @@ addQtnFileRole dbPool = do
   return Nothing
 
 addStateForTenant dbPool = do
-  let sql = "UPDATE user_entity set permissions = permissions || '{QTN_FILE_PERM}' WHERE role = 'admin';"
+  let sql = "ALTER TABLE tenant ADD COLUMN state VARCHAR NOT NULL DEFAULT 'ReadyForUseTenantState';"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
 
 addAiAssistantField dbPool = do
   let sql = "ALTER TABLE tenant_config ADD COLUMN ai_assistant jsonb NOT NULL DEFAULT '{\"enabled\": true}';"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+setTenantPhaseToPendingHousekeeping dbPool = do
+  let sql = "UPDATE tenant SET state = 'PendingHousekeepingTenantState';"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+updateMetamodelVersionForDocumentTemplateEditor dbPool = do
+  let sql = "UPDATE document_template SET metamodel_version = 15 WHERE phase = 'DraftDocumentTemplatePhase';"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
