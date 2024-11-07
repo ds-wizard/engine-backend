@@ -69,3 +69,30 @@ instance IsEmptyEvent EditIntegrationQuestionEvent where
       , isChangedValue event.integrationUuid
       , isChangedValue event.props
       ]
+
+instance IsEmptyEvent EditItemSelectQuestionEvent where
+  isEmptyEvent event =
+    or
+      [ isChangedValue event.title
+      , isChangedValue event.text
+      , isChangedValue event.requiredPhaseUuid
+      , isChangedValue event.annotations
+      , isChangedValue event.tagUuids
+      , isChangedValue event.expertUuids
+      , isChangedValue event.referenceUuids
+      , isChangedValue event.listQuestionUuid
+      ]
+
+instance IsEmptyEvent EditFileQuestionEvent where
+  isEmptyEvent event =
+    or
+      [ isChangedValue event.title
+      , isChangedValue event.text
+      , isChangedValue event.requiredPhaseUuid
+      , isChangedValue event.annotations
+      , isChangedValue event.tagUuids
+      , isChangedValue event.expertUuids
+      , isChangedValue event.referenceUuids
+      , isChangedValue event.maxSize
+      , isChangedValue event.fileTypes
+      ]

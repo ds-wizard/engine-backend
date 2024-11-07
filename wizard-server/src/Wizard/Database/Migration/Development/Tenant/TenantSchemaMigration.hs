@@ -47,6 +47,7 @@ createTenantTable = do
         \    analytics_server_url varchar, \
         \    analytics_client_url varchar, \
         \    signal_bridge_url varchar, \
+        \    state varchar NOT NULL DEFAULT 'ReadyForUseTenantState', \
         \    CONSTRAINT tenant_pk PRIMARY KEY (uuid) \
         \);"
   let action conn = execute_ conn sql
@@ -71,6 +72,7 @@ createTenantConfigTable = do
         \    updated_at                 timestamptz NOT NULL, \
         \    owl                        jsonb       NOT NULL, \
         \    mail_config_uuid           uuid, \
+        \    ai_assistant               jsonb       NOT NULL, \
         \    CONSTRAINT tenant_config_pk PRIMARY KEY (uuid), \
         \    CONSTRAINT tenant_config_mail_config_uuid_fk FOREIGN KEY (mail_config_uuid) REFERENCES instance_config_mail (uuid) \
         \);"

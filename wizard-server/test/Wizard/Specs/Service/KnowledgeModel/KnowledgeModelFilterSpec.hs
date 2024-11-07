@@ -75,6 +75,7 @@ knowledgeModelFilterSpec =
                               , question11'
                               , question12'
                               , question13'
+                              , question14'
                               ]
                         , answers = toMap [q2_answerNo, q2_answerYes, q2_aYes_fuq1_answerNo, q2_aYes_fuq1_answerYes]
                         , references = toMap [km1_ch1_q2_r1', km1_ch1_q2_r2']

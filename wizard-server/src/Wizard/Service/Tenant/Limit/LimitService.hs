@@ -13,6 +13,7 @@ import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
@@ -93,7 +94,8 @@ checkStorageSize newFileSize = do
   limit <- findLimitBundleForCurrentTenant
   docSize <- sumDocumentFileSize
   templateAssetSize <- sumAssetFileSize
-  let storageCount = docSize + templateAssetSize
+  qtnFileSize <- sumQuestionnaireFileSize
+  let storageCount = docSize + templateAssetSize + qtnFileSize
   checkLimit "storage" (storageCount + newFileSize) limit.storage
 
 checkLimit :: (Show number, Ord number) => String -> number -> Maybe number -> AppContextM ()

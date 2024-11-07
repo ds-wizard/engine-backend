@@ -20,6 +20,7 @@ import qualified Wizard.Service.Migration.Metamodel.Migrator.Migrations.Migratio
 import qualified Wizard.Service.Migration.Metamodel.Migrator.Migrations.Migration0012 as M12
 import qualified Wizard.Service.Migration.Metamodel.Migrator.Migrations.Migration0013 as M13
 import qualified Wizard.Service.Migration.Metamodel.Migrator.Migrations.Migration0014 as M14
+import qualified Wizard.Service.Migration.Metamodel.Migrator.Migrations.Migration0015 as M15
 import Wizard.Service.Migration.Metamodel.Migrator.Migrations.MigrationContext (MigrationContext)
 
 type Version = Int
@@ -42,6 +43,7 @@ migrations =
   , (12, M12.migrateEventValue)
   , (13, M13.migrateEventValue)
   , (14, M14.migrateEventValue)
+  , (15, M15.migrateEventValue)
   ]
 
 migrate :: MigrationContext -> Version -> Version -> Value -> Either String [Value]

@@ -25,6 +25,7 @@ instance ToRow TenantConfig where
     , toField updatedAt
     , toJSONField owl
     , toField mailConfigUuid
+    , toJSONField aiAssistant
     ]
 
 instance FromRow TenantConfig where
@@ -43,4 +44,5 @@ instance FromRow TenantConfig where
     updatedAt <- field
     owl <- fieldWith fromJSONField
     mailConfigUuid <- field
+    aiAssistant <- fieldWith fromJSONField
     return $ TenantConfig {..}

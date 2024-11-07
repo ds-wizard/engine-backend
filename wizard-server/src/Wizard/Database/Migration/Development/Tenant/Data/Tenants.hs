@@ -24,6 +24,7 @@ defaultTenant =
     , analyticsClientUrl = Nothing
     , signalBridgeUrl = Nothing
     , enabled = True
+    , state = ReadyForUseTenantState
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -45,6 +46,7 @@ differentTenant =
     , analyticsClientUrl = Nothing
     , signalBridgeUrl = Nothing
     , enabled = True
+    , state = ReadyForUseTenantState
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }

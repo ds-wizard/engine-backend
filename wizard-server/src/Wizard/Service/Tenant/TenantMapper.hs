@@ -73,6 +73,7 @@ fromRegisterCreateDTO reqDto aUuid serverConfig now =
     , analyticsClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
     , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
     , enabled = True
+    , state = ReadyForUseTenantState
     , createdAt = now
     , updatedAt = now
     }
@@ -94,6 +95,7 @@ fromAdminCreateDTO reqDto aUuid serverConfig now =
     , analyticsClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
     , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
     , enabled = True
+    , state = ReadyForUseTenantState
     , createdAt = now
     , updatedAt = now
     }
@@ -115,6 +117,7 @@ fromCommand command serverConfig now =
     , analyticsClientUrl = Just $ createReportingClientUrl serverConfig command.tenantId
     , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
     , enabled = True
+    , state = ReadyForUseTenantState
     , createdAt = now
     , updatedAt = now
     }
@@ -136,6 +139,7 @@ fromChangeDTO tenant reqDto serverConfig =
     , analyticsClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
     , signalBridgeUrl = tenant.signalBridgeUrl
     , enabled = tenant.enabled
+    , state = ReadyForUseTenantState
     , createdAt = tenant.createdAt
     , updatedAt = tenant.updatedAt
     }

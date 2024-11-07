@@ -29,6 +29,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireFileSimple
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.OnlineUserInfo
@@ -139,6 +140,27 @@ setQuestionnaire qtnUuid reqDto = do
       logWS U.nil "Informing other users about changed questionnaire"
       records <- getAllFromCache
       broadcast (U.toString qtnUuid) records (toSetQuestionnaireMessage reqDto) disconnectUser
+      logWS U.nil "Informed completed"
+
+addFile :: U.UUID -> QuestionnaireFileSimple -> AppContextM ()
+addFile qtnUuid reqDto = do
+  currentTenantUuid <- asks currentTenantUuid
+  tenant <- findTenantByUuid currentTenantUuid
+  if isJust tenant.signalBridgeUrl
+    then do
+      serverConfig <- asks serverConfig
+      let dto =
+            AKM.fromList
+              [ ("questionnaireUuid", A.String . U.toText $ qtnUuid)
+              , ("tenantUuid", A.String . U.toText $ currentTenantUuid)
+              , ("message", A.toJSON reqDto)
+              ]
+      invokeLambda serverConfig.signalBridge.addFileArn (BSL.toStrict . A.encode $ dto)
+      return ()
+    else do
+      logWS U.nil "Informing other users about added file"
+      records <- getAllFromCache
+      broadcast (U.toString qtnUuid) records (toAddFileMessage reqDto) disconnectUser
       logWS U.nil "Informed completed"
 
 logOutOnlineUsersWhenQtnDramaticallyChanged :: U.UUID -> AppContextM ()

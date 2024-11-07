@@ -5,14 +5,18 @@ import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.S3.Questionnaire.QuestionnaireFileS3
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 runMigration = do
   logInfo _CMP_MIGRATION "(Questionnaire/Questionnaire) started"
+  deleteQuestionnaireFiles
+  purgeBucket
   deleteQuestionnaireComments
   deleteQuestionnaireCommentThreads
   deleteQuestionnairePerms

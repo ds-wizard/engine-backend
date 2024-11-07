@@ -18,6 +18,7 @@ import Wizard.Api.Handler.Questionnaire.Detail_Settings_GET
 import Wizard.Api.Handler.Questionnaire.Detail_Settings_PUT
 import Wizard.Api.Handler.Questionnaire.Detail_Share_PUT
 import Wizard.Api.Handler.Questionnaire.Detail_WS
+import Wizard.Api.Handler.Questionnaire.File.Api
 import Wizard.Api.Handler.Questionnaire.List_GET
 import Wizard.Api.Handler.Questionnaire.List_POST
 import Wizard.Api.Handler.Questionnaire.List_POST_CloneUuid
@@ -48,6 +49,7 @@ type QuestionnaireAPI =
           :<|> Detail_Revert_Preview_POST
           :<|> List_Suggestions_GET
           :<|> QuestionnaireCommentAPI
+          :<|> QuestionnaireFileAPI
           :<|> QuestionnaireUserAPI
        )
 
@@ -76,4 +78,5 @@ questionnaireServer =
     :<|> detail_revert_preview_POST
     :<|> list_suggestions_GET
     :<|> questionnaireCommentServer
+    :<|> questionnaireFileServer
     :<|> questionnaireUserServer

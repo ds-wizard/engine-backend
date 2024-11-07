@@ -47,6 +47,16 @@ createGetObjectFn object = do
         C.connect (gorObjectStream src) foldFn
   runMinioClient action
 
+createGetObjectConduitActionFn :: AppContextC s sc m => String -> m (Minio (C.ConduitM () BS.ByteString Minio ()))
+createGetObjectConduitActionFn object = do
+  bucketName <- getBucketName
+  sanitizedObject <- sanitizeObject object
+  logInfoI _CMP_S3 (f' "Get object: '%s'" [sanitizedObject])
+  let action = do
+        src <- getObject (T.pack bucketName) (T.pack sanitizedObject) defaultGetObjectOptions
+        return $ gorObjectStream src
+  return action
+
 createGetObjectWithTenantFn :: AppContextC s sc m => U.UUID -> String -> m BS.ByteString
 createGetObjectWithTenantFn tenantUuid object = do
   bucketName <- getBucketName
@@ -96,6 +106,23 @@ createPutObjectWithTenantFn tenantUuid object mContentType content = do
   let kb15 = 15 * 1024
   let objectOptions = defaultPutObjectOptions {pooContentType = fmap T.pack mContentType}
   let action = putObject (T.pack bucketName) (T.pack sanitizedObject) req (Just kb15) objectOptions
+  runMinioClient action
+  buildObjectUrl sanitizedObject
+
+createPutObjectConduitFn :: AppContextC s sc m => String -> Maybe String -> Maybe String -> Minio (C.ConduitM () BS.ByteString Minio ()) -> m String
+createPutObjectConduitFn object mContentType mContentDisposition getAction = do
+  bucketName <- getBucketName
+  sanitizedObject <- sanitizeObject object
+  logInfoI _CMP_S3 (f' "Put object: '%s'" [sanitizedObject])
+  let kb15 = 15 * 1024
+  let objectOptions =
+        defaultPutObjectOptions
+          { pooContentType = fmap T.pack mContentType
+          , pooContentDisposition = fmap T.pack mContentDisposition
+          }
+  let action = do
+        object <- getAction
+        putObject (T.pack bucketName) (T.pack sanitizedObject) object (Just kb15) objectOptions
   runMinioClient action
   buildObjectUrl sanitizedObject
 

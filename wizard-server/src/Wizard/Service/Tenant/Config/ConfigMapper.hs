@@ -42,6 +42,7 @@ fromChangeDTO dto oldConfig now =
     , submission = dto.submission
     , owl = oldConfig.owl
     , mailConfigUuid = oldConfig.mailConfigUuid
+    , aiAssistant = oldConfig.aiAssistant
     , createdAt = oldConfig.createdAt
     , updatedAt = now
     }

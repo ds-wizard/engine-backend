@@ -7,24 +7,28 @@ import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.UserProfile
 
-data ClientConfigDTO = ClientConfigDTO
-  { user :: Maybe UserProfile
-  , organization :: TenantConfigOrganization
-  , authentication :: ClientConfigAuthDTO
-  , privacyAndSupport :: TenantConfigPrivacyAndSupport
-  , dashboardAndLoginScreen :: TenantConfigDashboardAndLoginScreen
-  , lookAndFeel :: TenantConfigLookAndFeel
-  , registry :: ClientConfigRegistryDTO
-  , questionnaire :: ClientConfigQuestionnaireDTO
-  , submission :: SimpleFeature
-  , cloud :: ClientConfigCloudDTO
-  , locales :: [ClientConfigLocaleDTO]
-  , owl :: TenantConfigOwl
-  , admin :: ClientConfigAdminDTO
-  , aiAssistant :: ClientConfigAiAssistantDTO
-  , signalBridge :: ClientConfigSignalBridgeDTO
-  , modules :: [ClientConfigModuleDTO]
-  }
+data ClientConfigDTO
+  = HousekeepingInProgressClientConfigDTO
+      { message :: String
+      }
+  | ClientConfigDTO
+      { user :: Maybe UserProfile
+      , organization :: TenantConfigOrganization
+      , authentication :: ClientConfigAuthDTO
+      , privacyAndSupport :: TenantConfigPrivacyAndSupport
+      , dashboardAndLoginScreen :: TenantConfigDashboardAndLoginScreen
+      , lookAndFeel :: TenantConfigLookAndFeel
+      , registry :: ClientConfigRegistryDTO
+      , questionnaire :: ClientConfigQuestionnaireDTO
+      , submission :: SimpleFeature
+      , cloud :: ClientConfigCloudDTO
+      , locales :: [ClientConfigLocaleDTO]
+      , owl :: TenantConfigOwl
+      , admin :: ClientConfigAdminDTO
+      , aiAssistant :: ClientConfigAiAssistantDTO
+      , signalBridge :: ClientConfigSignalBridgeDTO
+      , modules :: [ClientConfigModuleDTO]
+      }
   deriving (Show, Eq, Generic)
 
 data ClientConfigAuthDTO = ClientConfigAuthDTO

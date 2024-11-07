@@ -12,5 +12,8 @@ import Wizard.Service.Tenant.TenantMapper
 instance ToSchema Tenant where
   declareNamedSchema = toSwagger defaultTenant
 
+instance ToSchema TenantState where
+  declareNamedSchema = toSwagger ReadyForUseTenantState
+
 instance ToSchema TenantDTO where
   declareNamedSchema = toSwagger (toDTO defaultTenant Nothing Nothing)

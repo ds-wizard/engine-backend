@@ -178,6 +178,7 @@ defaultSignalBridge =
     , updatePermsArn = ""
     , updateUserGroupArn = ""
     , setQuestionnaireArn = ""
+    , addFileArn = ""
     , logOutAllArn = ""
     }
 

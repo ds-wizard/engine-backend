@@ -19,6 +19,7 @@ import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
 import Wizard.Api.Resource.Package.PackageSuggestionSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
+import Wizard.Api.Resource.Questionnaire.File.QuestionnaireFileListSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadAssignedSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSM ()
@@ -37,6 +38,7 @@ import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Wizard.Database.Migration.Development.Locale.Data.Locales
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireFiles
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.QuestionnaireAction.Data.QuestionnaireActions
 import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
@@ -46,6 +48,7 @@ import Wizard.Model.Branch.BranchList
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Model.Package.PackageSuggestion
 import Wizard.Model.Questionnaire.QuestionnaireCommentThreadAssigned
+import Wizard.Model.Questionnaire.QuestionnaireFileList
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
 import Wizard.Model.User.UserGroupSuggestion
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
@@ -121,6 +124,12 @@ instance ToSchema (Page QuestionnaireActionDTO) where
     toSwaggerWithDtoName
       "Page QuestionnaireActionDTO"
       (Page "questionnaireActions" pageMetadata [questionnaireActionFtp3Dto])
+
+instance ToSchema (Page QuestionnaireFileList) where
+  declareNamedSchema =
+    toSwaggerWithDtoName
+      "Page QuestionnaireFileList"
+      (Page "questionnaireFiles" pageMetadata [questionnaireFileList])
 
 instance ToSchema (Page QuestionnaireImporterDTO) where
   declareNamedSchema =

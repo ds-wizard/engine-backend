@@ -60,3 +60,5 @@ instance SensitiveData TenantConfigQuestionnaire where
 
 instance SensitiveData TenantConfigQuestionnaireFeedback where
   process key entity = entity {token = encryptAES256WithB64 key entity.token}
+
+instance SensitiveData TenantConfigAiAssistant

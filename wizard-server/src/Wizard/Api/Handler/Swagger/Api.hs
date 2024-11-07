@@ -46,6 +46,7 @@ import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileChangeSM ()
 import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileListSM ()
 import Wizard.Api.Resource.Feedback.FeedbackCreateSM ()
 import Wizard.Api.Resource.Feedback.FeedbackSM ()
+import Wizard.Api.Resource.File.FileCreateSM ()
 import Wizard.Api.Resource.Locale.LocaleChangeSM ()
 import Wizard.Api.Resource.Locale.LocaleCreateSM ()
 import Wizard.Api.Resource.Locale.LocaleDetailSM ()
@@ -138,7 +139,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.11.2"
+              , _infoVersion = "4.12.0"
               , _infoLicense =
                   Just $
                     License

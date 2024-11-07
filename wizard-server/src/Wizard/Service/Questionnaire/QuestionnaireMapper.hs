@@ -25,6 +25,7 @@ import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireCommentList
 import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireList
@@ -109,17 +110,19 @@ toDetailQuestionnaire qtn migrationUuid permissions questionnaireActionsAvailabl
     , migrationUuid = migrationUuid
     , permissions = permissions
     , events = qtn.events
+    , files = []
     , questionnaireActionsAvailable = questionnaireActionsAvailable
     , questionnaireImportersAvailable = questionnaireImportersAvailable
     }
 
-toDetailDTO :: QuestionnaireDetailQuestionnaire -> QuestionnaireDetailDTO
-toDetailDTO QuestionnaireDetailQuestionnaire {..} =
+toDetailDTO :: QuestionnaireDetail -> QuestionnaireDetailDTO
+toDetailDTO QuestionnaireDetail {..} =
   QuestionnaireDetailDTO {..}
 
 toDetailQuestionnaireDTO :: QuestionnaireDetailQuestionnaire -> M.Map String (M.Map U.UUID Int) -> M.Map String (M.Map U.UUID Int) -> KnowledgeModel -> QuestionnaireContent -> QuestionnaireDetailQuestionnaireDTO
 toDetailQuestionnaireDTO QuestionnaireDetailQuestionnaire {..} unresolvedCommentCounts resolvedCommentCounts knowledgeModel QuestionnaireContent {..} =
-  QuestionnaireDetailQuestionnaireDTO {..}
+  let fileCount = length files
+   in QuestionnaireDetailQuestionnaireDTO {..}
 
 toDetailWsDTO :: Questionnaire -> Maybe DocumentTemplate -> Maybe DocumentTemplateFormat -> [QuestionnairePermDTO] -> QuestionnaireDetailWsDTO
 toDetailWsDTO qtn mTemplate mFormat qtnPerms =

@@ -321,6 +321,25 @@ a_km1_ch3_q13 =
     , createdAt = dt' 2018 1 21
     }
 
+a_km1_ch3_q14' :: AddQuestionEvent
+a_km1_ch3_q14' = AddFileQuestionEvent' a_km1_ch3_q14
+
+a_km1_ch3_q14 :: AddFileQuestionEvent
+a_km1_ch3_q14 =
+  AddFileQuestionEvent
+    { uuid = u' "cdd54bfa-b2de-4ab3-9022-bc512cfa297f"
+    , parentUuid = chapter3.uuid
+    , entityUuid = question14.uuid
+    , title = question14.title
+    , text = question14.text
+    , requiredPhaseUuid = question14.requiredPhaseUuid
+    , annotations = question14.annotations
+    , tagUuids = question14.tagUuids
+    , maxSize = question14.maxSize
+    , fileTypes = question14.fileTypes
+    , createdAt = dt' 2018 1 21
+    }
+
 e_km1_ch1_q1' :: EditQuestionEvent
 e_km1_ch1_q1' = EditValueQuestionEvent' e_km1_ch1_q1
 
@@ -531,7 +550,7 @@ e_km1_ch3_q13 =
   EditItemSelectQuestionEvent
     { uuid = u' "f95ace16-9a2c-4f66-b22f-e419e5014c58"
     , parentUuid = chapter3.uuid
-    , entityUuid = question2.uuid
+    , entityUuid = question13Edited.uuid
     , title = ChangedValue $ question13Edited.title
     , text = ChangedValue $ question13Edited.text
     , requiredPhaseUuid = ChangedValue $ question13Edited.requiredPhaseUuid
@@ -540,6 +559,27 @@ e_km1_ch3_q13 =
     , expertUuids = ChangedValue $ question13Edited.expertUuids
     , referenceUuids = ChangedValue $ question13Edited.referenceUuids
     , listQuestionUuid = ChangedValue $ question13Edited.listQuestionUuid
+    , createdAt = dt' 2018 1 21
+    }
+
+e_km1_ch3_q14' :: EditQuestionEvent
+e_km1_ch3_q14' = EditFileQuestionEvent' e_km1_ch3_q14
+
+e_km1_ch3_q14 :: EditFileQuestionEvent
+e_km1_ch3_q14 =
+  EditFileQuestionEvent
+    { uuid = u' "cd144dd9-c722-400f-9972-2642177dee06"
+    , parentUuid = chapter3.uuid
+    , entityUuid = question14Edited.uuid
+    , title = ChangedValue question14Edited.title
+    , text = ChangedValue question14Edited.text
+    , requiredPhaseUuid = ChangedValue question14Edited.requiredPhaseUuid
+    , annotations = ChangedValue question14Edited.annotations
+    , tagUuids = ChangedValue question14Edited.tagUuids
+    , expertUuids = ChangedValue question14Edited.expertUuids
+    , referenceUuids = ChangedValue question14Edited.referenceUuids
+    , maxSize = ChangedValue question14Edited.maxSize
+    , fileTypes = ChangedValue question14Edited.fileTypes
     , createdAt = dt' 2018 1 21
     }
 

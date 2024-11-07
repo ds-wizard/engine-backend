@@ -17,6 +17,7 @@ data QuestionnaireDetailReportDTO = QuestionnaireDetailReportDTO
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID
   , permissions :: [QuestionnairePermDTO]
+  , fileCount :: Int
   , totalReport :: TotalReport
   , chapterReports :: [ChapterReport]
   , chapters :: [Chapter]

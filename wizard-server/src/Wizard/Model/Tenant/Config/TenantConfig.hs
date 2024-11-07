@@ -26,6 +26,7 @@ data TenantConfig = TenantConfig
   , submission :: TenantConfigSubmission
   , owl :: TenantConfigOwl
   , mailConfigUuid :: Maybe U.UUID
+  , aiAssistant :: TenantConfigAiAssistant
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -237,5 +238,10 @@ data TenantConfigOwl = TenantConfigOwl
   , version :: String
   , previousPackageId :: Maybe String
   , rootElement :: String
+  }
+  deriving (Generic, Eq, Show)
+
+data TenantConfigAiAssistant = TenantConfigAiAssistant
+  { enabled :: Bool
   }
   deriving (Generic, Eq, Show)

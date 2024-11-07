@@ -94,3 +94,6 @@ instance ToSchema TenantConfigSubmissionServiceRequestMultipart where
 
 instance ToSchema TenantConfigOwl where
   declareNamedSchema = toSwagger defaultOwl
+
+instance ToSchema TenantConfigAiAssistant where
+  declareNamedSchema = toSwagger defaultAiAssistant

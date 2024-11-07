@@ -10,10 +10,10 @@ import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()
 import Wizard.Api.Resource.User.UserProfileJM ()
 
 instance FromJSON ClientConfigDTO where
-  parseJSON = genericParseJSON jsonOptions
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "type")
 
 instance ToJSON ClientConfigDTO where
-  toJSON = genericToJSON jsonOptions
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
 
 instance FromJSON ClientConfigAuthDTO where
   parseJSON = genericParseJSON jsonOptions

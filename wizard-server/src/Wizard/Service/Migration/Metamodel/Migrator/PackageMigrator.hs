@@ -1,5 +1,5 @@
 module Wizard.Service.Migration.Metamodel.Migrator.PackageMigrator (
-  migrateAllInDB,
+  migrateAll,
 ) where
 
 import Data.Aeson
@@ -13,8 +13,8 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Migration.Metamodel.Migrator.CommonDB
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 
-migrateAllInDB :: AppContextM ()
-migrateAllInDB = do
+migrateAll :: AppContextM ()
+migrateAll = do
   let (entityName, idField, eventsField, eventsFieldUpdate) = ("package", "id", "events", "events = ?")
   logMigrationStarted entityName
   entities <- findOutdatedModels entityName eventsField idField

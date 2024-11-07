@@ -68,6 +68,7 @@ data Question
   | ValueQuestion' ValueQuestion
   | IntegrationQuestion' IntegrationQuestion
   | ItemSelectQuestion' ItemSelectQuestion
+  | FileQuestion' FileQuestion
   deriving (Show, Eq, Generic)
 
 data OptionsQuestion = OptionsQuestion
@@ -146,6 +147,20 @@ data ItemSelectQuestion = ItemSelectQuestion
   , expertUuids :: [U.UUID]
   , referenceUuids :: [U.UUID]
   , listQuestionUuid :: Maybe U.UUID
+  }
+  deriving (Show, Eq, Generic)
+
+data FileQuestion = FileQuestion
+  { uuid :: U.UUID
+  , title :: String
+  , text :: Maybe String
+  , requiredPhaseUuid :: Maybe U.UUID
+  , annotations :: [MapEntry String String]
+  , tagUuids :: [U.UUID]
+  , expertUuids :: [U.UUID]
+  , referenceUuids :: [U.UUID]
+  , maxSize :: Maybe Int
+  , fileTypes :: Maybe String
   }
   deriving (Show, Eq, Generic)
 
