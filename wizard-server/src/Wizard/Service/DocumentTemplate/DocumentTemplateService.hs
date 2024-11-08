@@ -113,10 +113,7 @@ deleteDocumentTemplatesByQueryParams queryParams =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
     tmls <- findDocumentTemplatesFiltered queryParams
-    traverse_ (\t -> validateDocumentTemplateDeletation t.tId) tmls
-    traverse_ (\t -> cleanTemporallyDocumentsForTemplate t.tId) tmls
-    deleteDocumentTemplatesFiltered queryParams
-    return ()
+    traverse_ (\t -> deleteDocumentTemplate t.tId) tmls
 
 deleteDocumentTemplate :: String -> AppContextM ()
 deleteDocumentTemplate tmlId =
