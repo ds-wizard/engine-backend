@@ -7,6 +7,7 @@ import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateAuthenticationConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAiAssistantConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateDefaultRoleConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
@@ -132,6 +133,16 @@ fromAnnouncements oldConfig command now =
     { dashboardAndLoginScreen =
         oldConfig.dashboardAndLoginScreen
           { announcements = command.announcements
+          }
+    , updatedAt = now
+    }
+
+fromAiAssitant :: TenantConfig -> UpdateAiAssistantConfigCommand -> UTCTime -> TenantConfig
+fromAiAssitant oldConfig command now =
+  oldConfig
+    { aiAssistant =
+        oldConfig.aiAssistant
+          { enabled = command.enabled
           }
     , updatedAt = now
     }
