@@ -33,6 +33,7 @@ import Wizard.Specs.API.DocumentTemplate.APISpec
 import Wizard.Specs.API.DocumentTemplateDraft.APISpec
 import Wizard.Specs.API.DocumentTemplateDraft.Asset.APISpec
 import Wizard.Specs.API.DocumentTemplateDraft.File.APISpec
+import Wizard.Specs.API.DocumentTemplateDraft.Folder.APISpec
 import Wizard.Specs.API.Domain.APISpec
 import Wizard.Specs.API.Feedback.APISpec
 import Wizard.Specs.API.Info.APISpec
@@ -194,6 +195,7 @@ main =
               documentAPI baseContext appContext
               documentTemplateAPI baseContext appContext
               documentTemplateDraftAPI baseContext appContext
+              documentTemplateDraftFolderAPI baseContext appContext
               documentTemplateDraftAssetAPI baseContext appContext
               documentTemplateDraftFileAPI baseContext appContext
               domainAPI baseContext appContext

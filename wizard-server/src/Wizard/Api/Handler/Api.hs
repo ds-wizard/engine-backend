@@ -15,6 +15,7 @@ import Wizard.Api.Handler.DocumentTemplate.Api
 import Wizard.Api.Handler.DocumentTemplateDraft.Api
 import Wizard.Api.Handler.DocumentTemplateDraft.Asset.Api
 import Wizard.Api.Handler.DocumentTemplateDraft.File.Api
+import Wizard.Api.Handler.DocumentTemplateDraft.Folder.Api
 import Wizard.Api.Handler.Domain.Api
 import Wizard.Api.Handler.Feedback.Api
 import Wizard.Api.Handler.Info.Api
@@ -51,6 +52,7 @@ type ApplicationAPI =
     :<|> DevAPI
     :<|> DocumentTemplateAPI
     :<|> DocumentTemplateDraftAPI
+    :<|> DocumentTemplateFolderAPI
     :<|> DocumentTemplateAssetAPI
     :<|> DocumentTemplateFileAPI
     :<|> DocumentAPI
@@ -93,6 +95,7 @@ applicationServer =
     :<|> devServer
     :<|> documentTemplateServer
     :<|> documentTemplateDraftServer
+    :<|> documentTemplateFolderServer
     :<|> documentTemplateAssetServer
     :<|> documentTemplateFileServer
     :<|> documentServer
