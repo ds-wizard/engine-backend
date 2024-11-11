@@ -4,6 +4,7 @@ import Control.Monad.Reader (asks)
 import Data.String
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
+import Database.PostgreSQL.Simple.ToField
 import GHC.Int
 
 import Shared.Common.Model.Common.Page
@@ -95,6 +96,34 @@ countDraftsGroupedByOrganizationIdAndKmIdWithTenant tenantUuid = do
   case result of
     [count] -> return . fromOnly $ count
     _ -> return 0
+
+moveFolder :: String -> String -> String -> AppContextM Int64
+moveFolder documentTemplateId currentFolder newFolder = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString
+          "UPDATE document_template_asset \
+          \SET file_name = concat(?, substr(file_name, length(?) + 1)) \
+          \WHERE tenant_uuid = ?  \
+          \  AND document_template_id = ? \
+          \  AND starts_with(file_name, ?); \
+          \ \
+          \UPDATE document_template_file \
+          \SET file_name = concat(?, substr(file_name, length(?) + 1)) \
+          \WHERE tenant_uuid = ?  \
+          \  AND document_template_id = ? \
+          \  AND starts_with(file_name, ?);"
+  let paramsForOneUpdate =
+        [ toField newFolder
+        , toField currentFolder
+        , toField tenantUuid
+        , toField documentTemplateId
+        , toField currentFolder
+        ]
+  let params = paramsForOneUpdate ++ paramsForOneUpdate
+  logQuery sql params
+  let action conn = execute conn sql params
+  runDB action
 
 deleteDrafts :: AppContextM Int64
 deleteDrafts = do
