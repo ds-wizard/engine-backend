@@ -82,6 +82,7 @@ instance EventFactory Question where
             , annotations = entity.annotations
             , tagUuids = entity.tagUuids
             , valueType = entity.valueType
+            , validations = entity.validations
             , createdAt = now
             }
   createAddEvent parentUuid (IntegrationQuestion' entity) = do
@@ -197,6 +198,7 @@ instance EventFactory Question where
             , referenceUuids =
                 diffField oldEntity.referenceUuids newEntity.referenceUuids
             , valueType = diffField oldEntity.valueType newEntity.valueType
+            , validations = diffField oldEntity.validations newEntity.validations
             , createdAt = now
             }
     if isEmptyEvent event

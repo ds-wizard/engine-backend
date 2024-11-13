@@ -54,6 +54,7 @@ instance IsEmptyEvent EditValueQuestionEvent where
       , isChangedValue event.expertUuids
       , isChangedValue event.referenceUuids
       , isChangedValue event.valueType
+      , isChangedValue event.validations
       ]
 
 instance IsEmptyEvent EditIntegrationQuestionEvent where

@@ -152,6 +152,7 @@ convertDataTypeToEvent parentUuid (RdfDataType nameT mCommentT rdfType) = do
           , tagUuids = []
           , annotations = [MapEntry _MAP_ENTRY_RDF_TYPE name]
           , valueType = valueType
+          , validations = []
           , createdAt = now
           }
 

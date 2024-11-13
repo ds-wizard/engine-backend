@@ -68,6 +68,7 @@ data AddValueQuestionEvent = AddValueQuestionEvent
   , annotations :: [MapEntry String String]
   , tagUuids :: [U.UUID]
   , valueType :: QuestionValueType
+  , validations :: [QuestionValidation]
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
@@ -187,6 +188,7 @@ data EditValueQuestionEvent = EditValueQuestionEvent
   , expertUuids :: EventField [U.UUID]
   , referenceUuids :: EventField [U.UUID]
   , valueType :: EventField QuestionValueType
+  , validations :: EventField [QuestionValidation]
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

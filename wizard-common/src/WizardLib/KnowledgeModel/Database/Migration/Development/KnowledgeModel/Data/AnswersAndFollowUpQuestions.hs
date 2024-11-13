@@ -371,4 +371,5 @@ q4_it1_q6_aYes_fuq5ConvertedToValue =
     , referenceUuids = q4_it1_q6_aYes_followUpQuestion5.referenceUuids
     , expertUuids = q4_it1_q6_aYes_followUpQuestion5.expertUuids
     , valueType = StringQuestionValueType
+    , validations = []
     }
