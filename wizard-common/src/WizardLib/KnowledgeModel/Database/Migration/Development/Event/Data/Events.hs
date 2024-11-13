@@ -160,6 +160,7 @@ a_km1_ch1_q1 =
     , annotations = question1.annotations
     , tagUuids = question1.tagUuids
     , valueType = question1.valueType
+    , validations = question1.validations
     , createdAt = dt' 2018 1 21
     }
 
@@ -349,14 +350,15 @@ e_km1_ch1_q1 =
     { uuid = u' "de86f82b-aaaf-482e-97c7-c7e93d834cd9"
     , parentUuid = chapter1.uuid
     , entityUuid = question1Edited.uuid
-    , title = ChangedValue $ question1Edited.title
+    , title = ChangedValue question1Edited.title
     , text = NothingChanged
     , requiredPhaseUuid = NothingChanged
-    , annotations = ChangedValue $ question1Edited.annotations
+    , annotations = ChangedValue question1Edited.annotations
     , tagUuids = NothingChanged
     , expertUuids = NothingChanged
     , referenceUuids = NothingChanged
     , valueType = NothingChanged
+    , validations = ChangedValue question1Edited.validations
     , createdAt = dt' 2018 1 21
     }
 
@@ -369,10 +371,10 @@ e_km1_ch1_q1_type =
     { uuid = u' "f56b1435-ec9f-4d79-88b3-04c39b73724d"
     , parentUuid = chapter1.uuid
     , entityUuid = question1WithNewType.uuid
-    , title = ChangedValue $ question1WithNewType.title
+    , title = ChangedValue question1WithNewType.title
     , text = NothingChanged
     , requiredPhaseUuid = NothingChanged
-    , annotations = ChangedValue $ question1WithNewType.annotations
+    , annotations = ChangedValue question1WithNewType.annotations
     , tagUuids = NothingChanged
     , expertUuids = NothingChanged
     , referenceUuids = NothingChanged
@@ -519,6 +521,7 @@ e_km1_ch3_q9_type =
     , expertUuids = NothingChanged
     , referenceUuids = NothingChanged
     , valueType = ChangedValue $ question9WithNewType.valueType
+    , validations = NothingChanged
     , createdAt = dt' 2018 1 21
     }
 
@@ -889,6 +892,7 @@ a_km1_ch2_q4_it1_q7 =
     , annotations = q4_it1_q5_it2_question7.annotations
     , tagUuids = q4_it1_q5_it2_question7.tagUuids
     , valueType = q4_it1_q5_it2_question7.valueType
+    , validations = q4_it1_q5_it2_question7.validations
     , createdAt = dt' 2018 1 21
     }
 
@@ -907,6 +911,7 @@ a_km1_ch2_q4_it1_q8 =
     , annotations = q4_it1_q5_it2_question8.annotations
     , tagUuids = q4_it1_q5_it2_question8.tagUuids
     , valueType = q4_it1_q5_it2_question8.valueType
+    , validations = q4_it1_q5_it2_question8.validations
     , createdAt = dt' 2018 1 21
     }
 

@@ -120,7 +120,25 @@ data ValueQuestion = ValueQuestion
   , expertUuids :: [U.UUID]
   , referenceUuids :: [U.UUID]
   , valueType :: QuestionValueType
+  , validations :: [QuestionValidation]
   }
+  deriving (Show, Eq, Generic)
+
+data QuestionValidation
+  = MinLengthQuestionValidation {iValue :: Int}
+  | MaxLengthQuestionValidation {iValue :: Int}
+  | RegexQuestionValidation {sValue :: String}
+  | OrcidQuestionValidation
+  | DoiQuestionValidation
+  | MinNumberQuestionValidation {dValue :: Double}
+  | MaxNumberQuestionValidation {dValue :: Double}
+  | FromDateQuestionValidation {sValue :: String}
+  | ToDateQuestionValidation {sValue :: String}
+  | FromDateTimeQuestionValidation {sValue :: String}
+  | ToDateTimeQuestionValidation {sValue :: String}
+  | FromTimeQuestionValidation {sValue :: String}
+  | ToTimeQuestionValidation {sValue :: String}
+  | DomainQuestionValidation {sValue :: String}
   deriving (Show, Eq, Generic)
 
 data IntegrationQuestion = IntegrationQuestion

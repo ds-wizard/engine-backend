@@ -28,6 +28,7 @@ question1 =
     , referenceUuids = []
     , expertUuids = []
     , valueType = StringQuestionValueType
+    , validations = [OrcidQuestionValidation]
     }
 
 question1Edited' :: Question
@@ -45,6 +46,7 @@ question1Edited =
     , referenceUuids = question1.referenceUuids
     , expertUuids = question1.expertUuids
     , valueType = question1.valueType
+    , validations = [OrcidQuestionValidation, DoiQuestionValidation]
     }
 
 question1WithNewType' :: Question
@@ -337,6 +339,7 @@ q4_it1_q5_it2_question7 =
     , referenceUuids = []
     , expertUuids = []
     , valueType = StringQuestionValueType
+    , validations = []
     }
 
 q4_it1_q5_it2_question8' :: Question
@@ -354,6 +357,7 @@ q4_it1_q5_it2_question8 =
     , referenceUuids = []
     , expertUuids = []
     , valueType = StringQuestionValueType
+    , validations = []
     }
 
 question9' :: Question
@@ -425,6 +429,7 @@ question9WithNewType =
     , referenceUuids = question9.referenceUuids
     , expertUuids = question9.expertUuids
     , valueType = DateQuestionValueType
+    , validations = []
     }
 
 question9ConvertedToValue' :: Question
@@ -442,6 +447,7 @@ question9ConvertedToValue =
     , referenceUuids = question9.referenceUuids
     , expertUuids = question9.expertUuids
     , valueType = StringQuestionValueType
+    , validations = []
     }
 
 question10' :: Question
@@ -477,6 +483,7 @@ question10ConvertedToValue =
     , referenceUuids = question10.referenceUuids
     , expertUuids = question10.expertUuids
     , valueType = StringQuestionValueType
+    , validations = []
     }
 
 question11' :: Question

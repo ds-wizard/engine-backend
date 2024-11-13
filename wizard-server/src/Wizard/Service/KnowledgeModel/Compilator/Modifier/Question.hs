@@ -67,6 +67,7 @@ instance CreateEntity AddQuestionEvent Question where
         , referenceUuids = []
         , expertUuids = []
         , valueType = event.valueType
+        , validations = event.validations
         }
   createEntity (AddIntegrationQuestionEvent' event) =
     IntegrationQuestion' $
@@ -168,6 +169,7 @@ instance EditEntity EditQuestionEvent Question where
             , referenceUuids = applyValue valueQuestion.referenceUuids event.referenceUuids
             , expertUuids = applyValue valueQuestion.expertUuids event.expertUuids
             , valueType = applyValue valueQuestion.valueType event.valueType
+            , validations = applyValue valueQuestion.validations event.validations
             }
       applyToIntegrationQuestion event integrationQuestion =
         IntegrationQuestion' $
@@ -302,6 +304,7 @@ convertToValueQuestion q' =
         , referenceUuids = q.referenceUuids
         , expertUuids = q.expertUuids
         , valueType = StringQuestionValueType
+        , validations = []
         }
 
 convertToIntegrationQuestion :: Question -> IntegrationQuestion

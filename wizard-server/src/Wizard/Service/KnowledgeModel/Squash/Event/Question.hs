@@ -129,6 +129,7 @@ instance SimpleEventSquash EditQuestionEvent where
         , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
         , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
         , valueType = applyValue oldEvent newEvent (.valueType)
+        , validations = applyValue oldEvent newEvent (.validations)
         , createdAt = oldEvent.createdAt
         }
   simpleSquashEvent mPreviousEvent (EditIntegrationQuestionEvent' oldEvent) (EditIntegrationQuestionEvent' newEvent) =
