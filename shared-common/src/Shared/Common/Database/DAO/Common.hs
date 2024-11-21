@@ -145,8 +145,11 @@ createFindEntitiesWithFieldsFn fields entityName = do
   runDB action
 
 createFindEntitiesSortedFn :: (AppContextC s sc m, FromRow entity) => String -> [Sort] -> m [entity]
-createFindEntitiesSortedFn entityName sort = do
-  let sql = f' "SELECT * FROM %s %s" [entityName, mapSort sort]
+createFindEntitiesSortedFn = createFindEntitiesWithFieldsSortedFn "*"
+
+createFindEntitiesWithFieldsSortedFn :: (AppContextC s sc m, FromRow entity) => String -> String -> [Sort] -> m [entity]
+createFindEntitiesWithFieldsSortedFn fields entityName sort = do
+  let sql = f' "SELECT %s FROM %s %s" [fields, entityName, mapSort sort]
   logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)
   runDB action
@@ -170,9 +173,12 @@ createFindEntitiesWithFieldsByFn fields entityName queryParams = do
   runDB action
 
 createFindEntitiesBySortedFn :: (AppContextC s sc m, FromRow entity) => String -> [(String, String)] -> [Sort] -> m [entity]
-createFindEntitiesBySortedFn entityName [] sort = createFindEntitiesSortedFn entityName sort
-createFindEntitiesBySortedFn entityName queryParams sort = do
-  let sql = fromString $ f' "SELECT * FROM %s WHERE %s %s" [entityName, mapToDBQuerySql queryParams, mapSort sort]
+createFindEntitiesBySortedFn = createFindEntitiesWithFieldsBySortedFn "*"
+
+createFindEntitiesWithFieldsBySortedFn :: (AppContextC s sc m, FromRow entity) => String -> String -> [(String, String)] -> [Sort] -> m [entity]
+createFindEntitiesWithFieldsBySortedFn fields entityName [] sort = createFindEntitiesWithFieldsSortedFn fields entityName sort
+createFindEntitiesWithFieldsBySortedFn fields entityName queryParams sort = do
+  let sql = fromString $ f' "SELECT %s FROM %s WHERE %s %s" [fields, entityName, mapToDBQuerySql queryParams, mapSort sort]
   let params = fmap snd queryParams
   logQuery sql params
   let action conn = query conn sql params
