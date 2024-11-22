@@ -64,7 +64,6 @@ import Wizard.Model.Cache.ServerCache
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.Public.Database.DAO.Tenant.TenantPlanDAO
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
@@ -166,7 +165,6 @@ resetDB appContext = do
   runInContext deleteUsers appContext
   runInContext deleteUserGroups appContext
   runInContext deleteLimitBundles appContext
-  runInContext deleteTenantPlans appContext
   runInContext deleteTenants appContext
   runInContext (insertTenant defaultTenant) appContext
   runInContext (insertLimitBundle defaultTenantLimitBundle) appContext

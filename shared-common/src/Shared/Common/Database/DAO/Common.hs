@@ -265,6 +265,41 @@ createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort fields 
             }
     return $ Page pageLabel metadata entities
 
+createFindEntitiesPageableQuerySortWithComputedEntityFn
+  :: (AppContextC s sc m, ToRow q, FromRow entity)
+  => String
+  -> String
+  -> Pageable
+  -> [Sort]
+  -> String
+  -> String
+  -> q
+  -> m (Page entity)
+createFindEntitiesPageableQuerySortWithComputedEntityFn withSelect pageLabel pageable sort fields condition conditionParams =
+  -- 1. Prepare variables
+  do
+    let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
+    -- 2. Get total count
+    count <- createCountByWithComputedEntityFn withSelect condition conditionParams
+    -- 3. Get entities
+    let sql =
+          fromString $
+            f'
+              "WITH computed_entity AS (%s) SELECT %s FROM computed_entity %s %s OFFSET %s LIMIT %s"
+              [withSelect, fields, condition, mapSort sort, show skip, show sizeI]
+    logQuery sql conditionParams
+    let action conn = query conn sql conditionParams
+    entities <- runDB action
+    -- 4. Constructor response
+    let metadata =
+          PageMetadata
+            { size = sizeI
+            , totalElements = count
+            , totalPages = computeTotalPage count sizeI
+            , number = pageI
+            }
+    return $ Page pageLabel metadata entities
+
 createFindColumnBySqlPageFn
   :: (AppContextC s sc m, FromField entity)
   => String
@@ -368,6 +403,17 @@ createCountByFn entityName condition queryParams = do
 
 createCountWithSqlFn :: AppContextC s sc m => Query -> [String] -> m Int
 createCountWithSqlFn sql params = do
+  logQuery sql params
+  let action conn = query conn sql params
+  result <- runDB action
+  case result of
+    [count] -> return . fromOnly $ count
+    _ -> return 0
+
+createCountByWithComputedEntityFn :: (AppContextC s sc m, ToRow q) => String -> String -> q -> m Int
+createCountByWithComputedEntityFn withSelect condition queryParams = do
+  let sql = fromString $ f' "WITH computed_entity AS (%s) SELECT COUNT(*) FROM computed_entity %s" [withSelect, condition]
+  let params = queryParams
   logQuery sql params
   let action conn = query conn sql params
   result <- runDB action

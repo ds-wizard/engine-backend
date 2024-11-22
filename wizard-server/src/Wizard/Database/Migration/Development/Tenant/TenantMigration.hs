@@ -10,8 +10,6 @@ import Wizard.Database.Migration.Development.Tenant.Data.TenantLimitBundles
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import WizardLib.Public.Database.DAO.Tenant.TenantPlanDAO
-import WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantPlans
 
 runMigration :: AppContextM ()
 runMigration = do
@@ -32,13 +30,6 @@ runConfigMigration = do
   deleteTenantConfigs
   insertTenantConfig defaultTenantConfigEncrypted
   insertTenantConfig differentTenantConfigEncrypted
-  return ()
-
-runPlanMigration :: AppContextM ()
-runPlanMigration = do
-  deleteTenantPlans
-  insertTenantPlan standardPlanExpired
-  insertTenantPlan standardPlan
   return ()
 
 runLimitMigration :: AppContextM ()

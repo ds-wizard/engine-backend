@@ -3,7 +3,9 @@ module Wizard.Service.Config.Client.ClientConfigService where
 import Control.Monad (unless)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks)
+import Data.Maybe (fromMaybe)
 
+import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Config.ClientConfigDTO
@@ -20,15 +22,15 @@ import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.TenantHelper
 import Wizard.Service.User.UserMapper
 
-getClientConfig :: Maybe String -> AppContextM ClientConfigDTO
-getClientConfig mClientUrl = do
+getClientConfig :: Maybe String -> Maybe String -> AppContextM ClientConfigDTO
+getClientConfig mServerUrl mClientUrl = do
   serverConfig <- asks serverConfig
   mCurrentUser <- asks currentUser
   tenant <-
     if serverConfig.cloud.enabled
       then maybe getCurrentTenant findTenantByClientUrl mClientUrl
       else getCurrentTenant
-  unless tenant.enabled (throwError LockedError)
+  unless tenant.enabled (throwError . NotExistsError $ _ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE (fromMaybe "not-provided" mServerUrl))
   case tenant.state of
     PendingHousekeepingTenantState -> do
       let mCreatedByUuid = fmap (.uuid) mCurrentUser

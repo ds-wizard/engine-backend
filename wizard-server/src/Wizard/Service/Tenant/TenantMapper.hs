@@ -10,13 +10,12 @@ import Wizard.Api.Resource.Tenant.TenantChangeDTO
 import Wizard.Api.Resource.Tenant.TenantCreateDTO
 import Wizard.Api.Resource.Tenant.TenantDTO
 import Wizard.Api.Resource.Tenant.TenantDetailDTO
-import Wizard.Api.Resource.Tenant.Usage.TenantUsageDTO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as U_Mapper
+import WizardLib.Public.Api.Resource.Tenant.Usage.WizardUsageDTO
 import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
-import WizardLib.Public.Model.Tenant.Plan.TenantPlan
 
 toDTO :: Tenant -> Maybe String -> Maybe String -> TenantDTO
 toDTO tenant mLogoUrl mPrimaryColor =
@@ -34,8 +33,8 @@ toDTO tenant mLogoUrl mPrimaryColor =
     , updatedAt = tenant.updatedAt
     }
 
-toDetailDTO :: Tenant -> Maybe String -> Maybe String -> [TenantPlan] -> TenantUsageDTO -> [User] -> TenantDetailDTO
-toDetailDTO tenant mLogoUrl mPrimaryColor plans usage users =
+toDetailDTO :: Tenant -> Maybe String -> Maybe String -> WizardUsageDTO -> [User] -> TenantDetailDTO
+toDetailDTO tenant mLogoUrl mPrimaryColor usage users =
   TenantDetailDTO
     { uuid = tenant.uuid
     , tenantId = tenant.tenantId
@@ -46,7 +45,6 @@ toDetailDTO tenant mLogoUrl mPrimaryColor plans usage users =
     , enabled = tenant.enabled
     , logoUrl = mLogoUrl
     , primaryColor = mPrimaryColor
-    , plans = plans
     , usage = usage
     , users = fmap U_Mapper.toDTO users
     , createdAt = tenant.createdAt
@@ -58,118 +56,125 @@ toChangeDTO tenant = TenantChangeDTO {tenantId = tenant.tenantId, name = tenant.
 
 fromRegisterCreateDTO :: TenantCreateDTO -> U.UUID -> ServerConfig -> UTCTime -> Tenant
 fromRegisterCreateDTO reqDto aUuid serverConfig now =
-  Tenant
-    { uuid = aUuid
-    , tenantId = reqDto.tenantId
-    , name = reqDto.tenantId
-    , serverDomain = createServerDomain serverConfig reqDto.tenantId
-    , serverUrl = createServerUrl serverConfig reqDto.tenantId
-    , clientUrl = createClientUrl serverConfig reqDto.tenantId
-    , adminServerUrl = Just $ createAdminServerUrl serverConfig reqDto.tenantId
-    , adminClientUrl = Just $ createAdminClientUrl serverConfig reqDto.tenantId
-    , integrationHubServerUrl = Just $ createIntegrationHubServerUrl serverConfig reqDto.tenantId
-    , integrationHubClientUrl = Just $ createIntegrationHubClientUrl serverConfig reqDto.tenantId
-    , analyticsServerUrl = Just $ createReportingServerUrl serverConfig reqDto.tenantId
-    , analyticsClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
-    , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
-    , enabled = True
-    , state = ReadyForUseTenantState
-    , createdAt = now
-    , updatedAt = now
-    }
+  let url = createUrl serverConfig reqDto.tenantId
+   in Tenant
+        { uuid = aUuid
+        , tenantId = reqDto.tenantId
+        , name = reqDto.tenantId
+        , serverDomain = createServerDomain serverConfig reqDto.tenantId
+        , serverUrl = createServerUrl url
+        , clientUrl = createClientUrl url
+        , adminServerUrl = Just $ createAdminServerUrl url
+        , adminClientUrl = Just $ createAdminClientUrl url
+        , integrationHubServerUrl = Just $ createIntegrationHubServerUrl url
+        , integrationHubClientUrl = Just $ createIntegrationHubClientUrl url
+        , analyticsServerUrl = Just $ createReportingServerUrl url
+        , analyticsClientUrl = Just $ createReportingClientUrl url
+        , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
+        , enabled = True
+        , state = ReadyForUseTenantState
+        , createdAt = now
+        , updatedAt = now
+        }
 
 fromAdminCreateDTO :: TenantCreateDTO -> U.UUID -> ServerConfig -> UTCTime -> Tenant
 fromAdminCreateDTO reqDto aUuid serverConfig now =
-  Tenant
-    { uuid = aUuid
-    , tenantId = reqDto.tenantId
-    , name = reqDto.tenantName
-    , serverDomain = createServerDomain serverConfig reqDto.tenantId
-    , serverUrl = createServerUrl serverConfig reqDto.tenantId
-    , clientUrl = createClientUrl serverConfig reqDto.tenantId
-    , adminServerUrl = Just $ createAdminServerUrl serverConfig reqDto.tenantId
-    , adminClientUrl = Just $ createAdminClientUrl serverConfig reqDto.tenantId
-    , integrationHubServerUrl = Just $ createIntegrationHubServerUrl serverConfig reqDto.tenantId
-    , integrationHubClientUrl = Just $ createIntegrationHubClientUrl serverConfig reqDto.tenantId
-    , analyticsServerUrl = Just $ createReportingServerUrl serverConfig reqDto.tenantId
-    , analyticsClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
-    , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
-    , enabled = True
-    , state = ReadyForUseTenantState
-    , createdAt = now
-    , updatedAt = now
-    }
+  let url = createUrl serverConfig reqDto.tenantId
+   in Tenant
+        { uuid = aUuid
+        , tenantId = reqDto.tenantId
+        , name = reqDto.tenantName
+        , serverDomain = createServerDomain serverConfig reqDto.tenantId
+        , serverUrl = createServerUrl url
+        , clientUrl = createClientUrl url
+        , adminServerUrl = Just $ createAdminServerUrl url
+        , adminClientUrl = Just $ createAdminClientUrl url
+        , integrationHubServerUrl = Just $ createIntegrationHubServerUrl url
+        , integrationHubClientUrl = Just $ createIntegrationHubClientUrl url
+        , analyticsServerUrl = Just $ createReportingServerUrl url
+        , analyticsClientUrl = Just $ createReportingClientUrl url
+        , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
+        , enabled = True
+        , state = ReadyForUseTenantState
+        , createdAt = now
+        , updatedAt = now
+        }
 
-fromCommand :: CreateOrUpdateTenantCommand -> ServerConfig -> UTCTime -> Tenant
-fromCommand command serverConfig now =
-  Tenant
-    { uuid = command.uuid
-    , tenantId = command.tenantId
-    , name = command.name
-    , serverDomain = createServerDomain serverConfig command.tenantId
-    , serverUrl = createServerUrl serverConfig command.tenantId
-    , clientUrl = createClientUrl serverConfig command.tenantId
-    , adminServerUrl = Just $ createAdminServerUrl serverConfig command.tenantId
-    , adminClientUrl = Just $ createAdminClientUrl serverConfig command.tenantId
-    , integrationHubServerUrl = Just $ createIntegrationHubServerUrl serverConfig command.tenantId
-    , integrationHubClientUrl = Just $ createIntegrationHubClientUrl serverConfig command.tenantId
-    , analyticsServerUrl = Just $ createReportingServerUrl serverConfig command.tenantId
-    , analyticsClientUrl = Just $ createReportingClientUrl serverConfig command.tenantId
-    , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
-    , enabled = True
-    , state = ReadyForUseTenantState
-    , createdAt = now
-    , updatedAt = now
-    }
+fromCommand :: CreateOrUpdateTenantCommand -> ServerConfig -> UTCTime -> UTCTime -> Tenant
+fromCommand command serverConfig createdAt updatedAt =
+  let (serverDomain, url) =
+        case command.customDomain of
+          Just customDomain -> (customDomain, f' "https://%s" [customDomain])
+          Nothing -> (createServerDomain serverConfig command.tenantId, createUrl serverConfig command.tenantId)
+   in Tenant
+        { uuid = command.uuid
+        , tenantId = command.tenantId
+        , name = command.name
+        , serverDomain = serverDomain
+        , serverUrl = createServerUrl url
+        , clientUrl = createClientUrl url
+        , adminServerUrl = Just $ createAdminServerUrl url
+        , adminClientUrl = Just $ createAdminClientUrl url
+        , integrationHubServerUrl = Just $ createIntegrationHubServerUrl url
+        , integrationHubClientUrl = Just $ createIntegrationHubClientUrl url
+        , analyticsServerUrl = Just $ createReportingServerUrl url
+        , analyticsClientUrl = Just $ createReportingClientUrl url
+        , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
+        , enabled = command.enabled
+        , state = ReadyForUseTenantState
+        , createdAt = createdAt
+        , updatedAt = updatedAt
+        }
 
 fromChangeDTO :: Tenant -> TenantChangeDTO -> ServerConfig -> Tenant
 fromChangeDTO tenant reqDto serverConfig =
-  Tenant
-    { uuid = tenant.uuid
-    , tenantId = reqDto.tenantId
-    , name = reqDto.name
-    , serverDomain = createServerDomain serverConfig reqDto.tenantId
-    , serverUrl = createServerUrl serverConfig reqDto.tenantId
-    , clientUrl = createClientUrl serverConfig reqDto.tenantId
-    , adminServerUrl = Just $ createAdminServerUrl serverConfig reqDto.tenantId
-    , adminClientUrl = Just $ createAdminClientUrl serverConfig reqDto.tenantId
-    , integrationHubServerUrl = Just $ createIntegrationHubServerUrl serverConfig reqDto.tenantId
-    , integrationHubClientUrl = Just $ createIntegrationHubClientUrl serverConfig reqDto.tenantId
-    , analyticsServerUrl = Just $ createReportingServerUrl serverConfig reqDto.tenantId
-    , analyticsClientUrl = Just $ createReportingClientUrl serverConfig reqDto.tenantId
-    , signalBridgeUrl = tenant.signalBridgeUrl
-    , enabled = tenant.enabled
-    , state = ReadyForUseTenantState
-    , createdAt = tenant.createdAt
-    , updatedAt = tenant.updatedAt
-    }
+  let url = createUrl serverConfig reqDto.tenantId
+   in Tenant
+        { uuid = tenant.uuid
+        , tenantId = reqDto.tenantId
+        , name = reqDto.name
+        , serverDomain = createServerDomain serverConfig reqDto.tenantId
+        , serverUrl = createServerUrl url
+        , clientUrl = createClientUrl url
+        , adminServerUrl = Just $ createAdminServerUrl url
+        , adminClientUrl = Just $ createAdminClientUrl url
+        , integrationHubServerUrl = Just $ createIntegrationHubServerUrl url
+        , integrationHubClientUrl = Just $ createIntegrationHubClientUrl url
+        , analyticsServerUrl = Just $ createReportingServerUrl url
+        , analyticsClientUrl = Just $ createReportingClientUrl url
+        , signalBridgeUrl = tenant.signalBridgeUrl
+        , enabled = tenant.enabled
+        , state = ReadyForUseTenantState
+        , createdAt = tenant.createdAt
+        , updatedAt = tenant.updatedAt
+        }
 
 createServerDomain :: ServerConfig -> String -> String
 createServerDomain serverConfig tenantId = f' "%s.%s" [tenantId, fromMaybe "" serverConfig.cloud.domain]
 
-createServerUrl :: ServerConfig -> String -> String
-createServerUrl serverConfig tenantId = f' "%s/wizard-api" [createUrl serverConfig tenantId]
+createServerUrl :: String -> String
+createServerUrl url = f' "%s/wizard-api" [url]
 
-createClientUrl :: ServerConfig -> String -> String
-createClientUrl serverConfig tenantId = f' "%s/wizard" [createUrl serverConfig tenantId]
+createClientUrl :: String -> String
+createClientUrl url = f' "%s/wizard" [url]
 
-createAdminServerUrl :: ServerConfig -> String -> String
-createAdminServerUrl serverConfig tenantId = f' "%s/admin-api" [createUrl serverConfig tenantId]
+createAdminServerUrl :: String -> String
+createAdminServerUrl url = f' "%s/admin-api" [url]
 
-createAdminClientUrl :: ServerConfig -> String -> String
-createAdminClientUrl serverConfig tenantId = f' "%s/admin" [createUrl serverConfig tenantId]
+createAdminClientUrl :: String -> String
+createAdminClientUrl url = f' "%s/admin" [url]
 
-createIntegrationHubServerUrl :: ServerConfig -> String -> String
-createIntegrationHubServerUrl serverConfig tenantId = f' "%s/integration-hub-api" [createUrl serverConfig tenantId]
+createIntegrationHubServerUrl :: String -> String
+createIntegrationHubServerUrl url = f' "%s/integration-hub-api" [url]
 
-createIntegrationHubClientUrl :: ServerConfig -> String -> String
-createIntegrationHubClientUrl serverConfig tenantId = f' "%s/integration-hub" [createUrl serverConfig tenantId]
+createIntegrationHubClientUrl :: String -> String
+createIntegrationHubClientUrl url = f' "%s/integration-hub" [url]
 
-createReportingServerUrl :: ServerConfig -> String -> String
-createReportingServerUrl serverConfig tenantId = f' "%s/analytics-api" [createUrl serverConfig tenantId]
+createReportingServerUrl :: String -> String
+createReportingServerUrl url = f' "%s/analytics-api" [url]
 
-createReportingClientUrl :: ServerConfig -> String -> String
-createReportingClientUrl serverConfig tenantId = f' "%s/analytics" [createUrl serverConfig tenantId]
+createReportingClientUrl :: String -> String
+createReportingClientUrl url = f' "%s/analytics" [url]
 
 createUrl :: ServerConfig -> String -> String
 createUrl serverConfig tenantId = f' "https://%s.%s" [tenantId, fromMaybe "" serverConfig.cloud.domain]

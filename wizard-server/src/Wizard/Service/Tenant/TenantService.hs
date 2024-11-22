@@ -33,7 +33,6 @@ import Wizard.Service.Tenant.TenantValidation
 import Wizard.Service.Tenant.Usage.UsageService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import Wizard.Service.User.UserService
-import WizardLib.Public.Database.DAO.Tenant.TenantPlanDAO
 import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
 
 getTenantsPage :: Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page TenantDTO)
@@ -82,7 +81,7 @@ createTenantByCommand :: CreateOrUpdateTenantCommand -> AppContextM ()
 createTenantByCommand command = do
   now <- liftIO getCurrentTime
   serverConfig <- asks serverConfig
-  let tenant = fromCommand command serverConfig now
+  let tenant = fromCommand command serverConfig now now
   insertTenant tenant
   createConfig tenant.uuid now
   createLimitBundle tenant.uuid now
@@ -93,13 +92,12 @@ getTenantByUuid :: U.UUID -> AppContextM TenantDetailDTO
 getTenantByUuid uuid = do
   checkPermission _TENANT_PERM
   tenant <- findTenantByUuid uuid
-  plans <- findTenantPlansForTenantUuid uuid
   usage <- getUsage uuid
   users <- findUsersWithTenantFiltered uuid [("role", _USER_ROLE_ADMIN)]
   tenantConfig <- getTenantConfigByUuid tenant.uuid
   let mLogoUrl = tenantConfig.lookAndFeel.logoUrl
   let mPrimaryColor = tenantConfig.lookAndFeel.primaryColor
-  return $ toDetailDTO tenant mLogoUrl mPrimaryColor plans usage users
+  return $ toDetailDTO tenant mLogoUrl mPrimaryColor usage users
 
 modifyTenant :: U.UUID -> TenantChangeDTO -> AppContextM Tenant
 modifyTenant uuid reqDto = do
@@ -109,6 +107,18 @@ modifyTenant uuid reqDto = do
   serverConfig <- asks serverConfig
   let updatedTenant = fromChangeDTO tenant reqDto serverConfig
   updateTenantByUuid updatedTenant
+
+modifyTenantFromCommand :: CreateOrUpdateTenantCommand -> AppContextM Tenant
+modifyTenantFromCommand command =
+  runInTransaction $ do
+    checkPermission _TENANT_PERM
+    now <- liftIO getCurrentTime
+    serverConfig <- asks serverConfig
+    tenant <- findTenantByUuid command.uuid
+    let updatedTenant = fromCommand command serverConfig tenant.createdAt now
+    updateTenantByUuid updatedTenant
+    modifyLimitBundle command.uuid command.limits
+    return updatedTenant
 
 deleteTenant :: U.UUID -> AppContextM ()
 deleteTenant uuid = do

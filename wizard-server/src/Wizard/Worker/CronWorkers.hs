@@ -20,7 +20,6 @@ import Wizard.Service.Questionnaire.Event.QuestionnaireEventService hiding (squa
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
 import Wizard.Service.TemporaryFile.TemporaryFileService
-import Wizard.Service.Tenant.Plan.PlanService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
 import WizardLib.Public.Service.UserToken.UserTokenService
 
@@ -38,7 +37,6 @@ workers =
   , assigneeNotificationWorker
   , registrySyncWorker
   , temporaryFileWorker
-  , tenantPlanWorker
   , cleanUserTokenWorker
   , expireUserTokenWorker
   , vacuumCleanerWorker
@@ -174,17 +172,6 @@ temporaryFileWorker =
     , cronDefault = "25 0 * * *"
     , cron = (.serverConfig.temporaryFile.clean.cron)
     , function = cleanTemporaryFiles
-    , wrapInTransaction = True
-    }
-
-tenantPlanWorker :: CronWorker BaseContext AppContextM
-tenantPlanWorker =
-  CronWorker
-    { name = "TenantPlanWorker"
-    , condition = (.serverConfig.plan.recomputeJob.enabled)
-    , cronDefault = "0 * * * *"
-    , cron = (.serverConfig.plan.recomputeJob.cron)
-    , function = recomputePlansForTenants
     , wrapInTransaction = True
     }
 

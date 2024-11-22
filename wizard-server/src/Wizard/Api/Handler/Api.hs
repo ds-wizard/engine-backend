@@ -36,7 +36,6 @@ import Wizard.Api.Handler.Submission.Api
 import Wizard.Api.Handler.Tenant.Api
 import Wizard.Api.Handler.Token.Api
 import Wizard.Api.Handler.Typehint.Api
-import Wizard.Api.Handler.Usage.Api
 import Wizard.Api.Handler.User.Api
 import Wizard.Api.Handler.UserGroup.Api
 import Wizard.Model.Context.BaseContext
@@ -76,7 +75,6 @@ type ApplicationAPI =
     :<|> TenantAPI
     :<|> TokenAPI
     :<|> TypehintAPI
-    :<|> UsageAPI
     :<|> UserAPI
     :<|> UserGroupAPI
 
@@ -119,6 +117,5 @@ applicationServer =
     :<|> tenantServer
     :<|> tokenServer
     :<|> typehintServer
-    :<|> usageServer
     :<|> userServer
     :<|> userGroupServer

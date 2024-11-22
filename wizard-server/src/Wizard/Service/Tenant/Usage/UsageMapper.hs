@@ -2,56 +2,57 @@ module Wizard.Service.Tenant.Usage.UsageMapper where
 
 import GHC.Int
 
-import Wizard.Api.Resource.Tenant.Usage.TenantUsageDTO
+import Shared.Common.Api.Resource.Tenant.Usage.UsageEntryDTO
 import Wizard.Model.Tenant.Limit.TenantLimitBundle
+import WizardLib.Public.Api.Resource.Tenant.Usage.WizardUsageDTO
 
-toDTO :: TenantLimitBundle -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int64 -> TenantUsageDTO
+toDTO :: TenantLimitBundle -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int64 -> WizardUsageDTO
 toDTO limitBundle userCount activeUserCount branchCount kmCount qtnCount tmlCount tmlDraftCount docCount localeCount storageSize =
-  TenantUsageDTO
+  WizardUsageDTO
     { users =
-        TenantUsageEntryDTO
+        UsageEntryDTO
           { current = fromIntegral userCount
-          , max = fmap fromIntegral limitBundle.users
+          , max = fromIntegral limitBundle.users
           }
     , activeUsers =
-        TenantUsageEntryDTO
+        UsageEntryDTO
           { current = fromIntegral activeUserCount
-          , max = fmap fromIntegral limitBundle.activeUsers
+          , max = fromIntegral limitBundle.activeUsers
           }
     , knowledgeModels =
-        TenantUsageEntryDTO
+        UsageEntryDTO
           { current = fromIntegral kmCount
-          , max = fmap fromIntegral limitBundle.knowledgeModels
+          , max = fromIntegral limitBundle.knowledgeModels
           }
     , branches =
-        TenantUsageEntryDTO
+        UsageEntryDTO
           { current = fromIntegral branchCount
-          , max = fmap fromIntegral limitBundle.branches
+          , max = fromIntegral limitBundle.branches
           }
     , documentTemplates =
-        TenantUsageEntryDTO
+        UsageEntryDTO
           { current = fromIntegral tmlCount
-          , max = fmap fromIntegral limitBundle.documentTemplates
+          , max = fromIntegral limitBundle.documentTemplates
           }
     , documentTemplateDrafts =
-        TenantUsageEntryDTO
+        UsageEntryDTO
           { current = fromIntegral tmlDraftCount
-          , max = fmap fromIntegral limitBundle.documentTemplateDrafts
+          , max = fromIntegral limitBundle.documentTemplateDrafts
           }
     , questionnaires =
-        TenantUsageEntryDTO
+        UsageEntryDTO
           { current = fromIntegral qtnCount
-          , max = fmap fromIntegral limitBundle.questionnaires
+          , max = fromIntegral limitBundle.questionnaires
           }
     , documents =
-        TenantUsageEntryDTO
+        UsageEntryDTO
           { current = fromIntegral docCount
-          , max = fmap fromIntegral limitBundle.documents
+          , max = fromIntegral limitBundle.documents
           }
     , locales =
-        TenantUsageEntryDTO
+        UsageEntryDTO
           { current = fromIntegral localeCount
-          , max = fmap fromIntegral limitBundle.locales
+          , max = fromIntegral limitBundle.locales
           }
-    , storage = TenantUsageEntryDTO {current = storageSize, max = limitBundle.storage}
+    , storage = UsageEntryDTO {current = storageSize, max = limitBundle.storage}
     }

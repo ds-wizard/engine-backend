@@ -22,4 +22,4 @@ list_bootstrap_GET :: Maybe String -> Maybe String -> Maybe String -> BaseContex
 list_bootstrap_GET mTokenHeader mServerUrl mClientUrl =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
-      addTraceUuidHeader =<< getClientConfig mClientUrl
+      addTraceUuidHeader =<< getClientConfig mServerUrl mClientUrl

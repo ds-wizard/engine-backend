@@ -2,6 +2,7 @@ module Wizard.Api.Handler.Common where
 
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (ask, asks, liftIO)
+import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -53,7 +54,7 @@ runIn mServerUrl mUser transactionState function = do
       case eResult of
         Right result -> return result
         Left error -> throwError =<< sendError error
-    else throwError =<< sendError LockedError
+    else throwError =<< sendError (NotExistsError (_ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE (fromMaybe "not-provided" mServerUrl)))
 
 runWithSystemUser :: AppContextM a -> BaseContextM a
 runWithSystemUser function = do
@@ -113,11 +114,11 @@ getCurrentTenant mServerUrl = do
   baseContext <- ask
   if baseContext.serverConfig.cloud.enabled
     then case mServerUrl of
-      Nothing -> runWithSystemUser . throwError $ UnauthorizedError (_ERROR_VALIDATION__TENANT_ABSENCE "not-provided")
+      Nothing -> runWithSystemUser . throwError $ NotExistsError (_ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE "not-provided")
       Just serverUrl -> runWithSystemUser $ catchError (findTenantByServerDomain serverUrl) (handleError serverUrl)
     else runWithSystemUser $ catchError (findTenantByUuid defaultTenantUuid) (handleError (U.toString defaultTenantUuid))
   where
-    handleError host (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__TENANT_ABSENCE host)
+    handleError host (NotExistsError _) = throwError $ NotExistsError (_ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE host)
     handleError host error = throwError error
 
 isAdmin :: AppContextM Bool
