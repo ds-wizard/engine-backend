@@ -359,6 +359,15 @@ clearQuestionnaireCommentThreadAssignedTo userUuid = do
   runDB action
   return ()
 
+clearQuestionnaireCommentThreadAssignedBy :: U.UUID -> AppContextM ()
+clearQuestionnaireCommentThreadAssignedBy userUuid = do
+  let sql = fromString "UPDATE questionnaire_comment_thread SET assigned_by = null, notification_required = false WHERE assigned_by = ?"
+  let params = [toField userUuid]
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
+  runDB action
+  return ()
+
 unsetQuestionnaireCommentThreadNotificationRequired :: AppContextM ()
 unsetQuestionnaireCommentThreadNotificationRequired = do
   let sql = "UPDATE questionnaire_comment_thread SET notification_required = false WHERE notification_required = true"
