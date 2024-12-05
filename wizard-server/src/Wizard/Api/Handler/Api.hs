@@ -15,6 +15,7 @@ import Wizard.Api.Handler.DocumentTemplate.Api
 import Wizard.Api.Handler.DocumentTemplateDraft.Api
 import Wizard.Api.Handler.DocumentTemplateDraft.Asset.Api
 import Wizard.Api.Handler.DocumentTemplateDraft.File.Api
+import Wizard.Api.Handler.DocumentTemplateDraft.Folder.Api
 import Wizard.Api.Handler.Domain.Api
 import Wizard.Api.Handler.Feedback.Api
 import Wizard.Api.Handler.Info.Api
@@ -35,7 +36,6 @@ import Wizard.Api.Handler.Submission.Api
 import Wizard.Api.Handler.Tenant.Api
 import Wizard.Api.Handler.Token.Api
 import Wizard.Api.Handler.Typehint.Api
-import Wizard.Api.Handler.Usage.Api
 import Wizard.Api.Handler.User.Api
 import Wizard.Api.Handler.UserGroup.Api
 import Wizard.Model.Context.BaseContext
@@ -51,6 +51,7 @@ type ApplicationAPI =
     :<|> DevAPI
     :<|> DocumentTemplateAPI
     :<|> DocumentTemplateDraftAPI
+    :<|> DocumentTemplateFolderAPI
     :<|> DocumentTemplateAssetAPI
     :<|> DocumentTemplateFileAPI
     :<|> DocumentAPI
@@ -74,7 +75,6 @@ type ApplicationAPI =
     :<|> TenantAPI
     :<|> TokenAPI
     :<|> TypehintAPI
-    :<|> UsageAPI
     :<|> UserAPI
     :<|> UserGroupAPI
 
@@ -93,6 +93,7 @@ applicationServer =
     :<|> devServer
     :<|> documentTemplateServer
     :<|> documentTemplateDraftServer
+    :<|> documentTemplateFolderServer
     :<|> documentTemplateAssetServer
     :<|> documentTemplateFileServer
     :<|> documentServer
@@ -116,6 +117,5 @@ applicationServer =
     :<|> tenantServer
     :<|> tokenServer
     :<|> typehintServer
-    :<|> usageServer
     :<|> userServer
     :<|> userGroupServer

@@ -80,6 +80,12 @@ instance ToJSON ValueQuestion where
 instance FromJSON ValueQuestion where
   parseJSON = genericParseJSON (jsonOptionsWithTypeField "questionType")
 
+instance ToJSON QuestionValidation where
+  toJSON = genericToJSON (jsonOptionsWithTypeField "type")
+
+instance FromJSON QuestionValidation where
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "type")
+
 -- --------------------------------------------------------------------
 instance ToJSON IntegrationQuestion where
   toJSON = genericToJSON (jsonOptionsWithTypeField "questionType")

@@ -7,16 +7,16 @@ import GHC.Int
 
 data TenantLimitBundle = TenantLimitBundle
   { uuid :: U.UUID
-  , users :: Maybe Int
-  , activeUsers :: Maybe Int
-  , knowledgeModels :: Maybe Int
-  , branches :: Maybe Int
-  , documentTemplates :: Maybe Int
-  , documentTemplateDrafts :: Maybe Int
-  , questionnaires :: Maybe Int
-  , documents :: Maybe Int
-  , locales :: Maybe Int
-  , storage :: Maybe Int64
+  , users :: Int
+  , activeUsers :: Int
+  , knowledgeModels :: Int
+  , branches :: Int
+  , documentTemplates :: Int
+  , documentTemplateDrafts :: Int
+  , questionnaires :: Int
+  , documents :: Int
+  , locales :: Int
+  , storage :: Int64
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

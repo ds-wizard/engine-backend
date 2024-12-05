@@ -51,6 +51,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0046_tenantFeatu
 import qualified Wizard.Database.Migration.Production.Migration_0047_qtnCommentAssignedTo.Migration as M_0047
 import qualified Wizard.Database.Migration.Production.Migration_0048_jsonb.Migration as M_0048
 import qualified Wizard.Database.Migration.Production.Migration_0049_questionnaireFile.Migration as M_0049
+import qualified Wizard.Database.Migration.Production.Migration_0050_kmValidation.Migration as M_0050
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -103,4 +104,5 @@ migrationDefinitions =
   , M_0047.definition
   , M_0048.definition
   , M_0049.definition
+  , M_0050.definition
   ]

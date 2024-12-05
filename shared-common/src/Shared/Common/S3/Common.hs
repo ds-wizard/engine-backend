@@ -97,14 +97,18 @@ createPutObjectFn object mContentType mContentDisposition content = do
   runMinioClient action
   buildObjectUrl sanitizedObject
 
-createPutObjectWithTenantFn :: AppContextC s sc m => U.UUID -> String -> Maybe String -> BS.ByteString -> m String
-createPutObjectWithTenantFn tenantUuid object mContentType content = do
+createPutObjectWithTenantFn :: AppContextC s sc m => U.UUID -> String -> Maybe String -> Maybe String -> BS.ByteString -> m String
+createPutObjectWithTenantFn tenantUuid object mContentType mContentDisposition content = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObjectWithTenant tenantUuid object
   logInfoI _CMP_S3 (f' "Put object: '%s'" [sanitizedObject])
   let req = C.yield content
   let kb15 = 15 * 1024
-  let objectOptions = defaultPutObjectOptions {pooContentType = fmap T.pack mContentType}
+  let objectOptions =
+        defaultPutObjectOptions
+          { pooContentType = fmap T.pack mContentType
+          , pooContentDisposition = fmap T.pack mContentDisposition
+          }
   let action = putObject (T.pack bucketName) (T.pack sanitizedObject) req (Just kb15) objectOptions
   runMinioClient action
   buildObjectUrl sanitizedObject
@@ -237,6 +241,15 @@ createMakePublicLink :: AppContextC s sc m => String -> m String
 createMakePublicLink object = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObject object
+  url <- getS3Url
+  let publicLink = f' "%s/%s/%s" [url, bucketName, sanitizedObject]
+  logInfoI _CMP_S3 (f' "Public URL to share: '%s'" [publicLink])
+  return publicLink
+
+createMakePublicLinkWithTenantFn :: AppContextC s sc m => U.UUID -> String -> m String
+createMakePublicLinkWithTenantFn tenantUuid object = do
+  bucketName <- getBucketName
+  sanitizedObject <- sanitizeObjectWithTenant tenantUuid object
   url <- getS3Url
   let publicLink = f' "%s/%s/%s" [url, bucketName, sanitizedObject]
   logInfoI _CMP_S3 (f' "Public URL to share: '%s'" [publicLink])

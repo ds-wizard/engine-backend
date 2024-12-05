@@ -1,27 +1,30 @@
 module Wizard.Service.Tenant.Limit.LimitService where
 
-import Control.Monad (when)
-import Control.Monad.Except (throwError)
+import Control.Monad.Reader (liftIO)
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Int
 
-import Shared.Common.Localization.Messages.Public
-import Shared.Common.Model.Error.Error
+import Shared.Common.Service.Tenant.Limit.LimitService
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Wizard.Database.DAO.Branch.BranchDAO
+import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Limit.TenantLimitBundle
 import Wizard.Service.Tenant.Limit.LimitMapper
+import Wizard.Service.Tenant.Usage.UsageService
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
+import WizardLib.Public.Api.Resource.Tenant.Usage.WizardUsageDTO
+import WizardLib.Public.Model.Tenant.Limit.TenantLimitBundleChange
 
 createLimitBundle :: U.UUID -> UTCTime -> AppContextM TenantLimitBundle
 createLimitBundle tenantUuid now = do
@@ -29,11 +32,15 @@ createLimitBundle tenantUuid now = do
   insertLimitBundle limitBundle
   return limitBundle
 
-recomputeLimitBundle :: U.UUID -> Maybe Int -> AppContextM TenantLimitBundle
-recomputeLimitBundle tenantUuid mUsers = do
-  limitBundle <- findLimitBundleByUuid tenantUuid
-  let updatedTenantLimitBundle = fromChange limitBundle mUsers
-  updateLimitBundleByUuid updatedTenantLimitBundle
+modifyLimitBundle :: U.UUID -> TenantLimitBundleChange -> AppContextM WizardUsageDTO
+modifyLimitBundle tenantUuid reqDto =
+  runInTransaction $ do
+    checkPermission _TENANT_PERM
+    limitBundle <- findLimitBundleByUuid tenantUuid
+    now <- liftIO getCurrentTime
+    let limitBundleUpdated = fromChangeDTO limitBundle reqDto now
+    updateLimitBundleByUuid limitBundleUpdated
+    getUsage tenantUuid
 
 checkUserLimit :: AppContextM ()
 checkUserLimit = do
@@ -97,10 +104,3 @@ checkStorageSize newFileSize = do
   qtnFileSize <- sumQuestionnaireFileSize
   let storageCount = docSize + templateAssetSize + qtnFileSize
   checkLimit "storage" (storageCount + newFileSize) limit.storage
-
-checkLimit :: (Show number, Ord number) => String -> number -> Maybe number -> AppContextM ()
-checkLimit name count mMaxCount =
-  case mMaxCount of
-    Just maxCount ->
-      when (count >= maxCount) (throwError . UserError $ _ERROR_SERVICE_TENANT__LIMIT_EXCEEDED name count maxCount)
-    Nothing -> return ()

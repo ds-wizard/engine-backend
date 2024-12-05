@@ -15,6 +15,8 @@ _ERROR_API_COMMON__UNABLE_TO_GET_ORGANIZATION =
 
 _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN = LocaleRecord "error.api.common.unable_to_get_token" "Unable to get token" []
 
+_ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE host = LocaleRecord "error.validation.tenant_or_active_plan_absence" "Tenant ('%s') doesn't exist or does not have any active plan" [host]
+
 -- Websocket
 _ERROR_API_WEBSOCKET__DESERIALIZATION_FAILED =
   LocaleRecord "error.api.websocket.cant_deserialize_obj" "Deserialization failed" []

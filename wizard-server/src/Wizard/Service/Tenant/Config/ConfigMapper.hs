@@ -6,12 +6,13 @@ import qualified Data.UUID as U
 import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Model.Tenant.Config.TenantConfig
-import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateAuthenticationConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateOrUpdateAuthenticationConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAiAssistantConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateDefaultRoleConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
-import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdatePrivacyAndSupportConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateSupportConfigCommand
 
 toChangeDTO :: TenantConfig -> TenantConfigChangeDTO
 toChangeDTO config =
@@ -47,7 +48,7 @@ fromChangeDTO dto oldConfig now =
     , updatedAt = now
     }
 
-fromAuthenticationCommand :: TenantConfig -> CreateAuthenticationConfigCommand -> UTCTime -> TenantConfig
+fromAuthenticationCommand :: TenantConfig -> CreateOrUpdateAuthenticationConfigCommand -> UTCTime -> TenantConfig
 fromAuthenticationCommand oldConfig command now =
   oldConfig
     { authentication =
@@ -101,14 +102,12 @@ fromLookAndFeel oldConfig command now =
     , updatedAt = now
     }
 
-fromPrivacyAndSupport :: TenantConfig -> UpdatePrivacyAndSupportConfigCommand -> UTCTime -> TenantConfig
+fromPrivacyAndSupport :: TenantConfig -> UpdateSupportConfigCommand -> UTCTime -> TenantConfig
 fromPrivacyAndSupport oldConfig command now =
   oldConfig
     { privacyAndSupport =
         oldConfig.privacyAndSupport
-          { privacyUrl = command.privacyUrl
-          , termsOfServiceUrl = command.termsOfServiceUrl
-          , supportEmail = command.supportEmail
+          { supportEmail = command.supportEmail
           , supportSiteName = command.supportSiteName
           , supportSiteUrl = command.supportSiteUrl
           , supportSiteIcon = command.supportSiteIcon
@@ -132,6 +131,16 @@ fromAnnouncements oldConfig command now =
     { dashboardAndLoginScreen =
         oldConfig.dashboardAndLoginScreen
           { announcements = command.announcements
+          }
+    , updatedAt = now
+    }
+
+fromAiAssitant :: TenantConfig -> UpdateAiAssistantConfigCommand -> UTCTime -> TenantConfig
+fromAiAssitant oldConfig command now =
+  oldConfig
+    { aiAssistant =
+        oldConfig.aiAssistant
+          { enabled = command.enabled
           }
     , updatedAt = now
     }

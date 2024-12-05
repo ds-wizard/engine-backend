@@ -68,6 +68,7 @@ createDocument reqDto =
   runInTransaction $ do
     checkEditPermissionToDoc reqDto.questionnaireUuid
     checkDocumentLimit
+    checkStorageSize 0
     qtnSimple <- findQuestionnaireSimpleByUuid reqDto.questionnaireUuid
     qtn <- findQuestionnaireByUuid reqDto.questionnaireUuid
     tml <- getDocumentTemplateByUuidAndPackageId reqDto.documentTemplateId (Just qtn.packageId)

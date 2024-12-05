@@ -14,7 +14,7 @@ fileDefaultHtml =
   DocumentTemplateFile
     { documentTemplateId = wizardDocumentTemplate.tId
     , uuid = u' "7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
-    , fileName = "default.html.j2"
+    , fileName = "src/default.html.j2"
     , content = html
     , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -25,12 +25,16 @@ fileDefaultHtmlEdited :: DocumentTemplateFile
 fileDefaultHtmlEdited =
   fileDefaultHtml {fileName = "default-edited.html.j2", content = "some new content"}
 
+fileDefaultHtmlMoved :: DocumentTemplateFile
+fileDefaultHtmlMoved =
+  fileDefaultHtml {fileName = "src-new/default.html.j2"}
+
 fileDefaultCss :: DocumentTemplateFile
 fileDefaultCss =
   DocumentTemplateFile
     { documentTemplateId = wizardDocumentTemplate.tId
     , uuid = u' "ae41aa74-9605-4dfb-b1f9-b6064adc1dbc"
-    , fileName = "default.css"
+    , fileName = "other-src/default.css"
     , content = css
     , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -57,7 +61,7 @@ anotherFileHtml =
   DocumentTemplateFile
     { documentTemplateId = anotherWizardDocumentTemplate.tId
     , uuid = u' "7444f722-4972-4bf8-86d8-d4f01875572d"
-    , fileName = "default.html.j2"
+    , fileName = "src/default.html.j2"
     , content = html
     , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -69,7 +73,7 @@ anotherFileCss =
   DocumentTemplateFile
     { documentTemplateId = anotherWizardDocumentTemplate.tId
     , uuid = u' "ac60ddb8-4561-4d4b-8d85-c8446bc96b56"
-    , fileName = "default.css"
+    , fileName = "src/default.css"
     , content = css
     , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -83,7 +87,7 @@ differentFileHtml =
   DocumentTemplateFile
     { documentTemplateId = differentDocumentTemplate.tId
     , uuid = u' "2d9eb63d-05fb-4eb7-9dc3-378b55d062ce"
-    , fileName = "default.html.j2"
+    , fileName = "src/default.html.j2"
     , content = html
     , tenantUuid = differentTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0

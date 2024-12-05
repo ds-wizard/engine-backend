@@ -57,6 +57,9 @@ instance ToSchema ListQuestion where
 instance ToSchema ValueQuestion where
   declareNamedSchema = toSwaggerWithType "questionType" question1
 
+instance ToSchema QuestionValidation where
+  declareNamedSchema = toSwaggerWithFlatType "type" OrcidQuestionValidation
+
 -- --------------------------------------------------------------------
 instance ToSchema IntegrationQuestion where
   declareNamedSchema = toSwaggerWithType "questionType" question9

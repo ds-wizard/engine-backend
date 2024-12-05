@@ -6,7 +6,6 @@ import qualified Data.UUID as U
 
 import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
-import Wizard.Api.Resource.Tenant.TenantChangeDTO
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Tenant.TenantService
 import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
@@ -36,7 +35,6 @@ cUpdateTenant persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String CreateOrUpdateTenantCommand
   case eCommand of
     Right command -> do
-      let reqDto = TenantChangeDTO {tenantId = command.tenantId, name = command.name}
-      modifyTenant command.uuid reqDto
+      modifyTenantFromCommand command
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])

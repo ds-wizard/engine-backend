@@ -358,6 +358,7 @@ e_q1_type =
     , expertUuids = NothingChanged
     , referenceUuids = NothingChanged
     , valueType = NothingChanged
+    , validations = NothingChanged
     , createdAt = dt'' 2018 1 1 13
     }
 

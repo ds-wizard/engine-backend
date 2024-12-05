@@ -44,6 +44,7 @@ import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDetailSM 
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftListSM ()
 import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileChangeSM ()
 import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileListSM ()
+import Wizard.Api.Resource.DocumentTemplate.Folder.DocumentTemplateFolderMoveSM ()
 import Wizard.Api.Resource.Feedback.FeedbackCreateSM ()
 import Wizard.Api.Resource.Feedback.FeedbackSM ()
 import Wizard.Api.Resource.File.FileCreateSM ()
@@ -103,7 +104,6 @@ import Wizard.Api.Resource.Tenant.TenantChangeSM ()
 import Wizard.Api.Resource.Tenant.TenantCreateSM ()
 import Wizard.Api.Resource.Tenant.TenantDetailSM ()
 import Wizard.Api.Resource.Tenant.TenantSM ()
-import Wizard.Api.Resource.Tenant.Usage.TenantUsageSM ()
 import Wizard.Api.Resource.Typehint.TypehintRequestSM ()
 import Wizard.Api.Resource.Typehint.TypehintSM ()
 import Wizard.Api.Resource.User.UserChangeSM ()
@@ -123,8 +123,8 @@ import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTe
 import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM ()
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePhaseSM ()
 import WizardLib.Public.Api.Resource.PersistentCommand.PersistentCommandListSM ()
-import WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanChangeSM ()
-import WizardLib.Public.Api.Resource.Tenant.Plan.TenantPlanSM ()
+import WizardLib.Public.Api.Resource.Tenant.Limit.TenantLimitBundleChangeSM ()
+import WizardLib.Public.Api.Resource.Tenant.Usage.WizardUsageSM ()
 import WizardLib.Public.Api.Resource.User.Group.UserGroupDetailSM ()
 import WizardLib.Public.Api.Resource.UserToken.LoginSM ()
 import WizardLib.Public.Api.Resource.UserToken.UserTokenSM ()
@@ -139,7 +139,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.12.0"
+              , _infoVersion = "4.13.0"
               , _infoLicense =
                   Just $
                     License

@@ -13,7 +13,6 @@ dropTables = do
   logInfo _CMP_MIGRATION "(Table/Tenant) drop table"
   let sql =
         "DROP TABLE IF EXISTS tenant_limit_bundle; \
-        \DROP TABLE IF EXISTS tenant_plan;\
         \DROP TABLE IF EXISTS tenant_config;\
         \DROP TABLE IF EXISTS tenant;"
   let action conn = execute_ conn sql
@@ -23,7 +22,6 @@ createTables :: AppContextM Int64
 createTables = do
   createTenantTable
   createTenantConfigTable
-  createTenantPlanTable
   createTenantLimitBundleTable
 
 createTenantTable = do
@@ -79,44 +77,24 @@ createTenantConfigTable = do
   let action conn = execute_ conn sql
   runDB action
 
-createTenantPlanTable = do
-  logInfo _CMP_MIGRATION "(Table/TenantPlan) create table"
-  let sql =
-        "CREATE TABLE tenant_plan \
-        \( \
-        \    uuid        uuid        NOT NULL, \
-        \    name        varchar     NOT NULL, \
-        \    users       integer, \
-        \    since       timestamptz, \
-        \    until       timestamptz, \
-        \    test        bool        NOT NULL, \
-        \    tenant_uuid uuid        NOT NULL, \
-        \    created_at  timestamptz NOT NULL, \
-        \    updated_at  timestamptz NOT NULL, \
-        \    CONSTRAINT tenant_plan_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT tenant_plan_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
-        \);"
-  let action conn = execute_ conn sql
-  runDB action
-
 createTenantLimitBundleTable = do
   logInfo _CMP_MIGRATION "(Table/TenantLimitBundle) create table"
   let sql =
         "CREATE TABLE tenant_limit_bundle \
         \( \
         \    uuid                     uuid        NOT NULL, \
-        \    users                    integer, \
-        \    active_users             integer, \
-        \    knowledge_models         integer, \
-        \    branches                 integer, \
-        \    document_templates       integer, \
-        \    questionnaires           integer, \
-        \    documents                integer, \
-        \    storage                  bigint, \
+        \    users                    integer     NOT NULL, \
+        \    active_users             integer     NOT NULL, \
+        \    knowledge_models         integer     NOT NULL, \
+        \    branches                 integer     NOT NULL, \
+        \    document_templates       integer     NOT NULL, \
+        \    questionnaires           integer     NOT NULL, \
+        \    documents                integer     NOT NULL, \
+        \    storage                  bigint      NOT NULL, \
         \    created_at               timestamptz NOT NULL, \
         \    updated_at               timestamptz NOT NULL, \
-        \    document_template_drafts integer, \
-        \    locales                  integer, \
+        \    document_template_drafts integer     NOT NULL, \
+        \    locales                  integer     NOT NULL, \
         \    CONSTRAINT tenant_limit_bundle_pk PRIMARY KEY (uuid) \
         \);"
   let action conn = execute_ conn sql

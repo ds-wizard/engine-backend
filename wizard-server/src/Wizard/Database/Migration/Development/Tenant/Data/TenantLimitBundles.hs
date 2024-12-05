@@ -10,34 +10,40 @@ defaultTenantLimitBundle :: TenantLimitBundle
 defaultTenantLimitBundle =
   TenantLimitBundle
     { uuid = defaultTenantUuid
-    , users = Nothing
-    , activeUsers = Nothing
-    , knowledgeModels = Nothing
-    , branches = Nothing
-    , documentTemplates = Nothing
-    , documentTemplateDrafts = Nothing
-    , questionnaires = Nothing
-    , documents = Nothing
-    , locales = Nothing
-    , storage = Nothing
+    , users = -1000
+    , activeUsers = -1000
+    , knowledgeModels = -1000
+    , branches = -1000
+    , documentTemplates = -1000
+    , documentTemplateDrafts = -1000
+    , questionnaires = -1000
+    , documents = -1000
+    , locales = -1000
+    , storage = -1000 * 5 * 1000 * 1000
     , createdAt = dt' 2018 1 25
     , updatedAt = dt' 2018 1 25
+    }
+
+defaultTenantLimitBundleEdited :: TenantLimitBundle
+defaultTenantLimitBundleEdited =
+  defaultTenantLimitBundle
+    { users = -2000
     }
 
 differentTenantLimitBundle :: TenantLimitBundle
 differentTenantLimitBundle =
   TenantLimitBundle
     { uuid = differentTenant.uuid
-    , users = Nothing
-    , activeUsers = Nothing
-    , knowledgeModels = Nothing
-    , branches = Nothing
-    , documentTemplates = Nothing
-    , documentTemplateDrafts = Nothing
-    , questionnaires = Nothing
-    , documents = Nothing
-    , locales = Nothing
-    , storage = Nothing
+    , users = -1000
+    , activeUsers = -1000
+    , knowledgeModels = -1000
+    , branches = -1000
+    , documentTemplates = -1000
+    , documentTemplateDrafts = -1000
+    , questionnaires = -1000
+    , documents = -1000
+    , locales = -1000
+    , storage = -1000 * 5 * 1000 * 1000
     , createdAt = dt' 2018 1 25
     , updatedAt = dt' 2018 1 25
     }

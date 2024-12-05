@@ -7,9 +7,10 @@ import Wizard.Api.Handler.Tenant.Config.Api
 import Wizard.Api.Handler.Tenant.Detail_DELETE
 import Wizard.Api.Handler.Tenant.Detail_GET
 import Wizard.Api.Handler.Tenant.Detail_PUT
+import Wizard.Api.Handler.Tenant.Limit.Api
 import Wizard.Api.Handler.Tenant.List_GET
 import Wizard.Api.Handler.Tenant.List_POST
-import Wizard.Api.Handler.Tenant.Plan.Api
+import Wizard.Api.Handler.Tenant.Usage.Api
 import Wizard.Model.Context.BaseContext
 
 type TenantAPI =
@@ -20,7 +21,8 @@ type TenantAPI =
           :<|> Detail_PUT
           :<|> Detail_DELETE
           :<|> TenantConfigAPI
-          :<|> TenantPlanAPI
+          :<|> TenantLimitAPI
+          :<|> TenantUsageAPI
        )
 
 tenantApi :: Proxy TenantAPI
@@ -34,4 +36,5 @@ tenantServer =
     :<|> detail_PUT
     :<|> detail_DELETE
     :<|> tenantConfigServer
-    :<|> tenantPlanServer
+    :<|> tenantLimitServer
+    :<|> tenantUsageServer

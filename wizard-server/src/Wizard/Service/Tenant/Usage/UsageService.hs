@@ -3,7 +3,6 @@ module Wizard.Service.Tenant.Usage.UsageService where
 import qualified Data.UUID as U
 
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
-import Wizard.Api.Resource.Tenant.Usage.TenantUsageDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
@@ -17,8 +16,9 @@ import Wizard.Service.Tenant.Usage.UsageMapper
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
+import WizardLib.Public.Api.Resource.Tenant.Usage.WizardUsageDTO
 
-getUsage :: U.UUID -> AppContextM TenantUsageDTO
+getUsage :: U.UUID -> AppContextM WizardUsageDTO
 getUsage tenantUuid = do
   limitBundle <- findLimitBundleByUuid tenantUuid
   userCount <- countUsersWithTenant tenantUuid
@@ -36,8 +36,8 @@ getUsage tenantUuid = do
   let storageCount = docSize + templateAssetSize + qtnFileSize
   return $ toDTO limitBundle userCount activeUserCount branchCount kmCount qtnCount documentTemplateCount documentTemplateDraftCount docCount localeCount storageCount
 
-getUsageForCurrentApp :: AppContextM TenantUsageDTO
-getUsageForCurrentApp = do
+getUsageForCurrentTenant :: AppContextM WizardUsageDTO
+getUsageForCurrentTenant = do
   checkPermission _CFG_PERM
   limitBundle <- findLimitBundleForCurrentTenant
   userCount <- countUsers

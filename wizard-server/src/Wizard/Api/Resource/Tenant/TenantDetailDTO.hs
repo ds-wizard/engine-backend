@@ -4,9 +4,8 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.Tenant.Usage.TenantUsageDTO
 import Wizard.Api.Resource.User.UserDTO
-import WizardLib.Public.Model.Tenant.Plan.TenantPlan
+import WizardLib.Public.Api.Resource.Tenant.Usage.WizardUsageDTO
 
 data TenantDetailDTO = TenantDetailDTO
   { uuid :: U.UUID
@@ -18,8 +17,7 @@ data TenantDetailDTO = TenantDetailDTO
   , enabled :: Bool
   , logoUrl :: Maybe String
   , primaryColor :: Maybe String
-  , plans :: [TenantPlan]
-  , usage :: TenantUsageDTO
+  , usage :: WizardUsageDTO
   , users :: [UserDTO]
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

@@ -33,6 +33,7 @@ import Wizard.Specs.API.DocumentTemplate.APISpec
 import Wizard.Specs.API.DocumentTemplateDraft.APISpec
 import Wizard.Specs.API.DocumentTemplateDraft.Asset.APISpec
 import Wizard.Specs.API.DocumentTemplateDraft.File.APISpec
+import Wizard.Specs.API.DocumentTemplateDraft.Folder.APISpec
 import Wizard.Specs.API.Domain.APISpec
 import Wizard.Specs.API.Feedback.APISpec
 import Wizard.Specs.API.Info.APISpec
@@ -54,10 +55,10 @@ import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Swagger.APISpec
 import Wizard.Specs.API.Tenant.APISpec
 import Wizard.Specs.API.Tenant.Config.APISpec
-import Wizard.Specs.API.Tenant.Plan.APISpec
+import Wizard.Specs.API.Tenant.Limit.APISpec
+import Wizard.Specs.API.Tenant.Usage.APISpec
 import Wizard.Specs.API.Token.APISpec
 import Wizard.Specs.API.Typehint.APISpec
-import Wizard.Specs.API.Usage.APISpec
 import Wizard.Specs.API.User.APISpec
 import Wizard.Specs.API.UserGroup.APISpec
 import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
@@ -194,6 +195,7 @@ main =
               documentAPI baseContext appContext
               documentTemplateAPI baseContext appContext
               documentTemplateDraftAPI baseContext appContext
+              documentTemplateDraftFolderAPI baseContext appContext
               documentTemplateDraftAssetAPI baseContext appContext
               documentTemplateDraftFileAPI baseContext appContext
               domainAPI baseContext appContext
@@ -217,7 +219,7 @@ main =
               swaggerAPI baseContext appContext
               tenantAPI baseContext appContext
               tenantConfigAPI baseContext appContext
-              tenantPlanAPI baseContext appContext
+              tenantLimitAPI baseContext appContext
               typehintAPI baseContext appContext
               tokenAPI baseContext appContext
               usageAPI baseContext appContext

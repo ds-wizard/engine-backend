@@ -25,7 +25,6 @@ import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
 import Wizard.Service.TemporaryFile.TemporaryFileService
-import Wizard.Service.Tenant.Plan.PlanService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
 import WizardLib.Public.Service.UserToken.UserTokenService
 
@@ -40,7 +39,6 @@ sections =
   , metamodelMigrator
   , owl
   , persistentCommand
-  , plan
   , registry
   , questionnaire
   , temporaryFile
@@ -385,29 +383,6 @@ persistentCommand_run =
     , function = \reqDto -> do
         command <- findPersistentCommandSimpleByUuid (u' . head $ reqDto.parameters)
         runPersistentCommand' True command
-        return "Done"
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
--- PLAN
--- ---------------------------------------------------------------------------------------------------------------------
-plan :: DevSection AppContextM
-plan =
-  DevSection
-    { name = "Plan"
-    , description = Nothing
-    , operations = [plan_recomputePlansForTenants]
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-plan_recomputePlansForTenants :: DevOperation AppContextM
-plan_recomputePlansForTenants =
-  DevOperation
-    { name = "Recompute Plans for Tenants"
-    , description = Nothing
-    , parameters = []
-    , function = \reqDto -> do
-        recomputePlansForTenants
         return "Done"
     }
 

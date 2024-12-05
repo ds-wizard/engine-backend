@@ -283,6 +283,7 @@ deleteUser userUuid =
     clearBranchCreatedBy userUuid
     deleteQuestionnairePermUserByUserUuid userUuid
     clearQuestionnaireCommentThreadAssignedTo userUuid
+    clearQuestionnaireCommentThreadAssignedBy userUuid
     clearQuestionnaireCreatedBy userUuid
     deletePersistentCommandByCreatedBy userUuid
     documents <- findDocumentsForCurrentTenantFiltered [("created_by", U.toString userUuid)]

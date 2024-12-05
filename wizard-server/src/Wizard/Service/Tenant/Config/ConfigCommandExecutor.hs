@@ -11,29 +11,31 @@ import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigService
-import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateAuthenticationConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateOrUpdateAuthenticationConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAiAssistantConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateDefaultRoleConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
-import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdatePrivacyAndSupportConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateSupportConfigCommand
 
 cComponent = "tenant_config"
 
 execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command
-  | command.function == cCreateAuthenticationName = cCreateAuthentication command
+  | command.function == cCreateOrUpdateAuthenticationName = cCreateOrUpdateAuthentication command
   | command.function == cUpdateRegistryName = cUpdateRegistry command
   | command.function == cUpdateLookAndFeelName = cUpdateLookAndFeel command
-  | command.function == cUpdatePrivacyAndSupportName = cUpdatePrivacyAndSupport command
+  | command.function == cUpdateSupportName = cUpdateSupport command
   | command.function == cUpdateDefaultRoleName = cUpdateDefaultRole command
   | command.function == cUpdateAnnouncementsName = cUpdateAnnouncements command
+  | command.function == cUpdateAiAssistantName = cUpdateAiAssistant command
 
-cCreateAuthenticationName = "createAuthentication"
+cCreateOrUpdateAuthenticationName = "createOrUpdateAuthentication"
 
-cCreateAuthentication :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
-cCreateAuthentication persistentCommand = do
-  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String CreateAuthenticationConfigCommand
+cCreateOrUpdateAuthentication :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
+cCreateOrUpdateAuthentication persistentCommand = do
+  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String CreateOrUpdateAuthenticationConfigCommand
   case eCommand of
     Right command -> do
       tenantConfig <- getTenantConfigByUuid command.tenantUuid
@@ -71,11 +73,11 @@ cUpdateLookAndFeel persistentCommand = do
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
 
-cUpdatePrivacyAndSupportName = "updatePrivacyAndSupport"
+cUpdateSupportName = "updateSupport"
 
-cUpdatePrivacyAndSupport :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
-cUpdatePrivacyAndSupport persistentCommand = do
-  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdatePrivacyAndSupportConfigCommand
+cUpdateSupport :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
+cUpdateSupport persistentCommand = do
+  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateSupportConfigCommand
   case eCommand of
     Right command -> do
       tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
@@ -109,6 +111,20 @@ cUpdateAnnouncements persistentCommand = do
       tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
       now <- liftIO getCurrentTime
       let updatedTenantConfig = fromAnnouncements tenantConfig command now
+      modifyTenantConfig updatedTenantConfig
+      return (DonePersistentCommandState, Nothing)
+    Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
+
+cUpdateAiAssistantName = "updateAiAssistant"
+
+cUpdateAiAssistant :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
+cUpdateAiAssistant persistentCommand = do
+  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateAiAssistantConfigCommand
+  case eCommand of
+    Right command -> do
+      tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
+      now <- liftIO getCurrentTime
+      let updatedTenantConfig = fromAiAssitant tenantConfig command now
       modifyTenantConfig updatedTenantConfig
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
