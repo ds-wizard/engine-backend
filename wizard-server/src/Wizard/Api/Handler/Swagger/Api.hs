@@ -44,6 +44,7 @@ import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDetailSM 
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftListSM ()
 import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileChangeSM ()
 import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileListSM ()
+import Wizard.Api.Resource.DocumentTemplate.Folder.DocumentTemplateFolderDeleteSM ()
 import Wizard.Api.Resource.DocumentTemplate.Folder.DocumentTemplateFolderMoveSM ()
 import Wizard.Api.Resource.Feedback.FeedbackCreateSM ()
 import Wizard.Api.Resource.Feedback.FeedbackSM ()

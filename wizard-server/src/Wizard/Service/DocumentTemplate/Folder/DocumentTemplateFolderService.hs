@@ -1,5 +1,6 @@
 module Wizard.Service.DocumentTemplate.Folder.DocumentTemplateFolderService where
 
+import Wizard.Api.Resource.DocumentTemplate.Folder.DocumentTemplateFolderDeleteDTO
 import Wizard.Api.Resource.DocumentTemplate.Folder.DocumentTemplateFolderMoveDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
@@ -14,6 +15,15 @@ moveDraftFolder documentTemplateId reqDto =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
     moveFolder documentTemplateId reqDto.current reqDto.new
+    touchDocumentTemplateById documentTemplateId
+    deleteTemporalDocumentsByDocumentTemplateId documentTemplateId
+    return ()
+
+deleteDraftFolder :: String -> DocumentTemplateFolderDeleteDTO -> AppContextM ()
+deleteDraftFolder documentTemplateId reqDto =
+  runInTransaction $ do
+    checkPermission _DOC_TML_WRITE_PERM
+    deleteFolder documentTemplateId reqDto.path
     touchDocumentTemplateById documentTemplateId
     deleteTemporalDocumentsByDocumentTemplateId documentTemplateId
     return ()
