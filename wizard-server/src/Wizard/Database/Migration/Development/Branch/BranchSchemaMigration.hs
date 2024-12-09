@@ -121,9 +121,9 @@ createGetBranchStateFn = do
         \    SELECT CASE \
         \               WHEN knowledge_model_migration.migration_state ->> 'stateType' IS NOT NULL AND \
         \                    knowledge_model_migration.migration_state ->> 'stateType' != 'CompletedState' THEN 'BSMigrating' \
-        \               WHEN jsonb_array_length(branch_data.events) > 0 THEN 'BSEdited' \
         \               WHEN knowledge_model_migration.migration_state ->> 'stateType' IS NOT NULL AND \
         \                    knowledge_model_migration.migration_state ->> 'stateType' = 'CompletedState' THEN 'BSMigrated' \
+        \               WHEN jsonb_array_length(branch_data.events) > 0 THEN 'BSEdited' \
         \               WHEN fork_of_package_id != get_newest_package_2(fork_of_package_id, tenant_uuid, ARRAY['ReleasedPackagePhase', 'DeprecatedPackagePhase']) THEN 'BSOutdated' \
         \               WHEN True THEN 'BSDefault' END \
         \    INTO state; \
