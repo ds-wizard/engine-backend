@@ -3,6 +3,7 @@ module Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataSM wh
 import Data.Swagger
 
 import Shared.Common.Util.Swagger
+import Wizard.Api.Resource.Branch.BranchSuggestionSM ()
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSuggestionSM ()

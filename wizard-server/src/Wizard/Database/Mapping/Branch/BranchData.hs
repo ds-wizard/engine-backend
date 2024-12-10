@@ -6,6 +6,7 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 
+import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
 import Wizard.Model.Branch.BranchData
 import WizardLib.KnowledgeModel.Api.Resource.Event.EventJM ()
 
@@ -18,6 +19,7 @@ instance ToRow BranchData where
     , toField createdAt
     , toField updatedAt
     , toField squashed
+    , toJSONField replies
     ]
 
 instance FromRow BranchData where
@@ -29,4 +31,5 @@ instance FromRow BranchData where
     createdAt <- field
     updatedAt <- field
     squashed <- field
+    replies <- fieldWith fromJSONField
     return $ BranchData {..}

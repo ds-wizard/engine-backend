@@ -1,11 +1,13 @@
 module Wizard.Api.Resource.Branch.BranchDetailDTO where
 
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Model.Branch.BranchState
+import Wizard.Model.Questionnaire.QuestionnaireReply
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
@@ -23,6 +25,7 @@ data BranchDetailDTO = BranchDetailDTO
   , forkOfPackage :: Maybe PackageSimpleDTO
   , createdBy :: Maybe U.UUID
   , events :: [Event]
+  , replies :: M.Map String Reply
   , knowledgeModel :: KnowledgeModel
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
@@ -44,4 +47,5 @@ instance Eq BranchDetailDTO where
       && a.forkOfPackage == b.forkOfPackage
       && a.createdBy == b.createdBy
       && a.events == b.events
+      && a.replies == b.replies
       && a.knowledgeModel == b.knowledgeModel

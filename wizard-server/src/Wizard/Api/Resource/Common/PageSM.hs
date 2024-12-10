@@ -8,6 +8,7 @@ import Shared.Common.Database.Migration.Development.Common.Data.Pages
 import Shared.Common.Model.Common.Page
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Branch.BranchListSM ()
+import Wizard.Api.Resource.Branch.BranchSuggestionSM ()
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentSM ()
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
@@ -45,6 +46,7 @@ import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.Question
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Branch.BranchList
+import Wizard.Model.Branch.BranchSuggestion
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Model.Package.PackageSuggestion
 import Wizard.Model.Questionnaire.QuestionnaireCommentThreadAssigned
@@ -106,6 +108,10 @@ instance ToSchema (Page PackageSuggestion) where
 instance ToSchema (Page BranchList) where
   declareNamedSchema =
     toSwaggerWithDtoName "Page BranchList" (Page "branches" pageMetadata [amsterdamBranchList])
+
+instance ToSchema (Page BranchSuggestion) where
+  declareNamedSchema =
+    toSwaggerWithDtoName "Page BranchSuggestion" (Page "branches" pageMetadata [amsterdamBranchSuggestion])
 
 instance ToSchema (Page QuestionnaireDTO) where
   declareNamedSchema =
