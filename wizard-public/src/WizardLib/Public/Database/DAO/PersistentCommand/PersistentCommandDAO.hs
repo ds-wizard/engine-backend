@@ -25,7 +25,7 @@ findPersistentCommandsPage states pageable sort = do
     let (statesCondition, statesParam) =
           case states of
             [] -> ("", [])
-            _ -> (f' "WHERE state in (%s)" [generateQuestionMarks states], states)
+            _ -> (f' "WHERE persistent_command.state in (%s)" [generateQuestionMarks states], states)
     let conditionParams = statesParam
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
     -- 2. Get total count
