@@ -11,6 +11,7 @@ data DocumentTemplateDraftData = DocumentTemplateDraftData
   , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
+  , branchUuid :: Maybe U.UUID
   }
   deriving (Show, Generic)
 
@@ -18,5 +19,6 @@ instance Eq DocumentTemplateDraftData where
   a == b =
     a.documentTemplateId == b.documentTemplateId
       && a.questionnaireUuid == b.questionnaireUuid
+      && a.branchUuid == b.branchUuid
       && a.formatUuid == b.formatUuid
       && a.tenantUuid == b.tenantUuid

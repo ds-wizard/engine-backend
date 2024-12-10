@@ -1,10 +1,12 @@
 module WizardLib.KnowledgeModel.Model.Event.KnowledgeModel.KnowledgeModelEvent where
 
+import Data.Hashable
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Common.MapEntry
+import WizardLib.Common.Util.Hashable ()
 import WizardLib.KnowledgeModel.Model.Event.EventField
 
 data AddKnowledgeModelEvent = AddKnowledgeModelEvent
@@ -15,6 +17,8 @@ data AddKnowledgeModelEvent = AddKnowledgeModelEvent
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance Hashable AddKnowledgeModelEvent
 
 data EditKnowledgeModelEvent = EditKnowledgeModelEvent
   { uuid :: U.UUID
@@ -30,3 +34,5 @@ data EditKnowledgeModelEvent = EditKnowledgeModelEvent
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance Hashable EditKnowledgeModelEvent

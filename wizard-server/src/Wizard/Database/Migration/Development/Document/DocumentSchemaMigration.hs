@@ -40,7 +40,6 @@ createTables = do
         \    tenant_uuid                uuid        NOT NULL, \
         \    file_size                  bigint, \
         \    CONSTRAINT document_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT document_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
         \    CONSTRAINT document_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid), \
         \    CONSTRAINT document_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
         \    CONSTRAINT document_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \

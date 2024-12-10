@@ -1,10 +1,12 @@
 module WizardLib.KnowledgeModel.Model.Event.Resource.ResourceEvent where
 
+import Data.Hashable
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Common.MapEntry
+import WizardLib.Common.Util.Hashable ()
 import WizardLib.KnowledgeModel.Model.Event.EventField
 
 data AddResourceCollectionEvent = AddResourceCollectionEvent
@@ -17,6 +19,8 @@ data AddResourceCollectionEvent = AddResourceCollectionEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable AddResourceCollectionEvent
+
 data EditResourceCollectionEvent = EditResourceCollectionEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -28,6 +32,8 @@ data EditResourceCollectionEvent = EditResourceCollectionEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable EditResourceCollectionEvent
+
 data DeleteResourceCollectionEvent = DeleteResourceCollectionEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -35,6 +41,8 @@ data DeleteResourceCollectionEvent = DeleteResourceCollectionEvent
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance Hashable DeleteResourceCollectionEvent
 
 -- ------------------------------------------------
 data AddResourcePageEvent = AddResourcePageEvent
@@ -48,6 +56,8 @@ data AddResourcePageEvent = AddResourcePageEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable AddResourcePageEvent
+
 data EditResourcePageEvent = EditResourcePageEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -59,6 +69,8 @@ data EditResourcePageEvent = EditResourcePageEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable EditResourcePageEvent
+
 data DeleteResourcePageEvent = DeleteResourcePageEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -66,3 +78,5 @@ data DeleteResourcePageEvent = DeleteResourcePageEvent
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance Hashable DeleteResourcePageEvent

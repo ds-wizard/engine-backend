@@ -1,5 +1,6 @@
 module Wizard.Service.Document.Context.DocumentContextMapper where
 
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
 import Wizard.Api.Resource.Package.PackageSimpleDTO
@@ -7,8 +8,8 @@ import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireFileSimple
+import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
@@ -22,7 +23,9 @@ toDocumentContext
   :: Document
   -> String
   -> Questionnaire
-  -> QuestionnaireContent
+  -> Maybe U.UUID
+  -> M.Map String Reply
+  -> M.Map String [U.UUID]
   -> Maybe U.UUID
   -> [QuestionnaireVersionDTO]
   -> [QuestionnaireFileSimple]
@@ -35,7 +38,7 @@ toDocumentContext
   -> [DocumentContextUserPerm]
   -> [DocumentContextUserGroupPerm]
   -> DocumentContext
-toDocumentContext doc appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos qtnFiles km report pkg org mQtnCreatedBy mDocCreatedBy users groups =
+toDocumentContext doc appClientUrl qtn phaseUuid replies labels qtnVersion qtnVersionDtos qtnFiles km report pkg org mQtnCreatedBy mDocCreatedBy users groups =
   DocumentContext
     { config = DocumentContextConfig {clientUrl = appClientUrl}
     , document =
@@ -52,9 +55,9 @@ toDocumentContext doc appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos qtnFiles
           { uuid = qtn.uuid
           , name = qtn.name
           , description = qtn.description
-          , replies = qtnCtn.replies
-          , phaseUuid = qtnCtn.phaseUuid
-          , labels = qtnCtn.labels
+          , replies = replies
+          , phaseUuid = phaseUuid
+          , labels = labels
           , versionUuid = qtnVersion
           , versions = qtnVersionDtos
           , projectTags = qtn.projectTags

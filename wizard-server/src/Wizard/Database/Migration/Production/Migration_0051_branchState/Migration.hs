@@ -14,6 +14,12 @@ meta = MigrationMeta {mmNumber = 51, mmName = "Branch State", mmDescription = "F
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
+  fixBranchGetStateFn dbPool
+  addRepliesToBranchData dbPool
+  removeDocumentQuestionnaireForeignKey dbPool
+  addBranchUuidtoDraftData dbPool
+
+fixBranchGetStateFn dbPool = do
   let sql =
         "CREATE or REPLACE FUNCTION get_branch_state(knowledge_model_migration knowledge_model_migration, \
         \                                           branch_data branch_data, \
@@ -38,6 +44,24 @@ migrate dbPool = do
         \    RETURN state; \
         \END; \
         \$$;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addRepliesToBranchData dbPool = do
+  let sql = "ALTER TABLE branch_data ADD COLUMN replies json NOT NULL DEFAULT '{}';"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+removeDocumentQuestionnaireForeignKey dbPool = do
+  let sql = "ALTER TABLE document DROP CONSTRAINT document_questionnaire_uuid_fk;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addBranchUuidtoDraftData dbPool = do
+  let sql = "ALTER TABLE document_template_draft_data ADD COLUMN branch_uuid uuid;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

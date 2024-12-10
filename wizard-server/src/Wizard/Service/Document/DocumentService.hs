@@ -7,6 +7,7 @@ import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
+import qualified Data.Map as M
 import Shared.Common.Constant.Component
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Model.Common.Page
@@ -20,6 +21,8 @@ import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommand
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
+import Wizard.Database.DAO.Branch.BranchDAO
+import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
@@ -27,11 +30,14 @@ import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Public
+import Wizard.Model.Branch.BranchData
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Document.Context.DocumentContextService
@@ -40,6 +46,7 @@ import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Document.DocumentUtil
 import Wizard.Service.DocumentTemplate.DocumentTemplateService
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
+import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
@@ -47,6 +54,8 @@ import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import WizardLib.KnowledgeModel.Model.Event.Event
+import WizardLib.KnowledgeModel.Model.Package.Package
 
 getDocumentsPageDto :: Maybe U.UUID -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
 getDocumentsPageDto mQuestionnaireUuid mDocumentTemplateId mQuery pageable sort = do
@@ -83,10 +92,11 @@ createDocument reqDto =
             Nothing -> qtn.events
     qtnCtn <- compileQuestionnairePreview qtnEvents
     tenantConfig <- getCurrentTenantConfig
-    let repliesHash = computeHash qtn qtnCtn tenantConfig mCurrentUser
-    let doc = fromCreateDTO reqDto dUuid repliesHash qtn.events mCurrentUser tenantUuid now
+    let docContextHash = computeHash [] qtn qtnCtn.phaseUuid qtnCtn.replies tenantConfig mCurrentUser
+    let doc = fromCreateDTO reqDto dUuid docContextHash qtn.events mCurrentUser tenantUuid now
     insertDocument doc
-    publishToPersistentCommandQueue doc
+    pkg <- getPackageById qtn.packageId
+    publishToPersistentCommandQueue doc pkg [] qtn Nothing
     return $ toDTOWithDocTemplate doc (Just qtnSimple) Nothing [] tml
 
 deleteDocument :: U.UUID -> AppContextM ()
@@ -117,28 +127,40 @@ createDocumentPreviewForQtn qtnUuid =
     case (qtn.documentTemplateId, qtn.formatUuid) of
       (Just tmlId, Just formatUuid) -> do
         tml <- getDocumentTemplateByUuidAndPackageId tmlId (Just qtn.packageId)
-        createDocumentPreview tml qtn formatUuid
+        pkg <- getPackageById qtn.packageId
+        qtnCtn <- compileQuestionnaire qtn
+        createDocumentPreview tml pkg [] qtn qtnCtn.phaseUuid qtnCtn.replies formatUuid
       _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP
 
 createDocumentPreviewForDocTmlDraft :: String -> AppContextM (Document, TemporaryFileDTO)
 createDocumentPreviewForDocTmlDraft tmlId =
   runInTransaction $ do
     draftData <- findDraftDataById tmlId
-    case (draftData.questionnaireUuid, draftData.formatUuid) of
-      (Just qtnUuid, Just formatUuid) -> do
+    case (draftData.questionnaireUuid, draftData.branchUuid, draftData.formatUuid) of
+      (Just qtnUuid, _, Just formatUuid) -> do
         draft <- findDraftById tmlId
         qtn <- findQuestionnaireByUuid qtnUuid
+        pkg <- getPackageById qtn.packageId
         checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
-        createDocumentPreview draft qtn formatUuid
+        qtnCtn <- compileQuestionnaire qtn
+        createDocumentPreview draft pkg [] qtn qtnCtn.phaseUuid qtnCtn.replies formatUuid
+      (_, Just branchUuid, Just formatUuid) -> do
+        draft <- findDraftById tmlId
+        let pkg = toTemporaryPackage draft.tenantUuid draft.createdAt
+        branch <- findBranchByUuid branchUuid
+        branchData <- findBranchDataById branchUuid
+        checkPermission _KM_PERM
+        mCurrentUser <- asks currentUser
+        let qtn = toTemporaryQuestionnaire branch pkg mCurrentUser
+        createDocumentPreview draft pkg branchData.events qtn Nothing branchData.replies formatUuid
       _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__QUESTIONNAIRE_OR_FORMAT_NOT_SET_UP
 
-createDocumentPreview :: DocumentTemplate -> Questionnaire -> U.UUID -> AppContextM (Document, TemporaryFileDTO)
-createDocumentPreview tml qtn formatUuid = do
+createDocumentPreview :: DocumentTemplate -> Package -> [Event] -> Questionnaire -> Maybe U.UUID -> M.Map String Reply -> U.UUID -> AppContextM (Document, TemporaryFileDTO)
+createDocumentPreview tml pkg branchEvents qtn phaseUuid replies formatUuid = do
   docs <- findDocumentsForCurrentTenantFiltered [("questionnaire_uuid", U.toString qtn.uuid), ("durability", "TemporallyDocumentDurability")]
-  qtnCtn <- compileQuestionnaire qtn
   tenantConfig <- getCurrentTenantConfig
   mCurrentUser <- asks currentUser
-  let repliesHash = computeHash qtn qtnCtn tenantConfig mCurrentUser
+  let repliesHash = computeHash branchEvents qtn phaseUuid replies tenantConfig mCurrentUser
   logDebugI _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
   let matchingDocs = filter (\d -> d.questionnaireRepliesHash == repliesHash) docs
   case filter (filterAlreadyDoneDocument tml.tId formatUuid) matchingDocs of
@@ -162,12 +184,12 @@ createDocumentPreview tml qtn formatUuid = do
           now <- liftIO getCurrentTime
           let doc = fromTemporallyCreateDTO dUuid qtn tml.tId formatUuid repliesHash mCurrentUser tenantConfig.uuid now
           insertDocument doc
-          publishToPersistentCommandQueue doc
+          publishToPersistentCommandQueue doc pkg branchEvents qtn (Just replies)
           return (doc, TemporaryFileMapper.emptyFileDTO)
 
-publishToPersistentCommandQueue :: Document -> AppContextM ()
-publishToPersistentCommandQueue doc = do
-  docContext <- createDocumentContext doc
+publishToPersistentCommandQueue :: Document -> Package -> [Event] -> Questionnaire -> Maybe (M.Map String Reply) -> AppContextM ()
+publishToPersistentCommandQueue doc pkg branchEvents qtn mReplies = do
+  docContext <- createDocumentContext doc pkg branchEvents qtn mReplies
   pUuid <- liftIO generateUuid
   let command = toDocPersistentCommand pUuid docContext doc
   insertPersistentCommand command

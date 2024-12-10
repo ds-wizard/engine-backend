@@ -1,6 +1,7 @@
 module Wizard.Database.Migration.Development.Branch.Data.Branches where
 
 import Data.Either (rights)
+import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import Data.Time
 
@@ -17,6 +18,7 @@ import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchData
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.Branch.BranchState
+import Wizard.Model.Branch.BranchSuggestion
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
@@ -61,6 +63,13 @@ amsterdamBranch =
     , updatedAt = amsterdamBranchList.updatedAt
     }
 
+amsterdamBranchSuggestion :: BranchSuggestion
+amsterdamBranchSuggestion =
+  BranchSuggestion
+    { uuid = amsterdamBranchList.uuid
+    , name = amsterdamBranchList.name
+    }
+
 amsterdamBranchData :: BranchData
 amsterdamBranchData =
   BranchData
@@ -86,6 +95,7 @@ amsterdamBranchData =
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
+    , replies = M.empty
     , squashed = True
     , tenantUuid = defaultTenant.uuid
     , createdAt = amsterdamBranchList.createdAt
@@ -132,6 +142,7 @@ amsterdamBranchDetail =
     , forkOfPackage = Just . PM.toSimpleDTO . SPM.toPackage $ netherlandsPackage
     , createdBy = amsterdamBranchList.createdBy
     , events = amsterdamBranchData.events
+    , replies = amsterdamBranchData.replies
     , knowledgeModel = amsterdamBranchKnowledgeModel
     , createdAt = amsterdamBranchList.createdAt
     , updatedAt = amsterdamBranchList.updatedAt
@@ -184,6 +195,7 @@ differentBranchData =
     { branchUuid = differentBranch.uuid
     , metamodelVersion = kmMetamodelVersion
     , events = []
+    , replies = M.empty
     , squashed = True
     , tenantUuid = differentTenant.uuid
     , createdAt = differentBranch.createdAt

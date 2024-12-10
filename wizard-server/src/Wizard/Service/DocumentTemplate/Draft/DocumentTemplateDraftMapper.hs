@@ -7,6 +7,7 @@ import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataDTO
+import Wizard.Model.Branch.BranchSuggestion
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftDetail
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
@@ -28,8 +29,8 @@ toDraftList tml =
     , updatedAt = tml.updatedAt
     }
 
-toDraftDetail :: DocumentTemplate -> DocumentTemplateDraftData -> Maybe QuestionnaireSuggestion -> DocumentTemplateDraftDetail
-toDraftDetail draft draftData mQestionnaire =
+toDraftDetail :: DocumentTemplate -> DocumentTemplateDraftData -> Maybe QuestionnaireSuggestion -> Maybe BranchSuggestion -> DocumentTemplateDraftDetail
+toDraftDetail draft draftData mQuestionnaire mBranch =
   DocumentTemplateDraftDetail
     { tId = draft.tId
     , name = draft.name
@@ -41,8 +42,10 @@ toDraftDetail draft draftData mQestionnaire =
     , allowedPackages = draft.allowedPackages
     , formats = draft.formats
     , questionnaireUuid = draftData.questionnaireUuid
+    , questionnaire = mQuestionnaire
+    , branchUuid = draftData.branchUuid
+    , branch = mBranch
     , formatUuid = draftData.formatUuid
-    , questionnaire = mQestionnaire
     , createdAt = draft.createdAt
     , updatedAt = draft.updatedAt
     }
@@ -60,18 +63,22 @@ toDraftDetail' draft =
     , allowedPackages = draft.allowedPackages
     , formats = draft.formats
     , questionnaireUuid = Nothing
-    , formatUuid = Nothing
     , questionnaire = Nothing
+    , branchUuid = Nothing
+    , branch = Nothing
+    , formatUuid = Nothing
     , createdAt = draft.createdAt
     , updatedAt = draft.updatedAt
     }
 
-toDraftDataDTO :: DocumentTemplateDraftData -> Maybe QuestionnaireSuggestion -> DocumentTemplateDraftDataDTO
-toDraftDataDTO draftData mQestionnaire =
+toDraftDataDTO :: DocumentTemplateDraftData -> Maybe QuestionnaireSuggestion -> Maybe BranchSuggestion -> DocumentTemplateDraftDataDTO
+toDraftDataDTO draftData mQuestionnaire mBranch =
   DocumentTemplateDraftDataDTO
     { questionnaireUuid = draftData.questionnaireUuid
+    , questionnaire = mQuestionnaire
+    , branchUuid = draftData.branchUuid
+    , branch = mBranch
     , formatUuid = draftData.formatUuid
-    , questionnaire = mQestionnaire
     }
 
 toChangeDTO :: DocumentTemplate -> DocumentTemplateDraftChangeDTO
@@ -156,6 +163,7 @@ fromCreateDraftData draft =
   DocumentTemplateDraftData
     { documentTemplateId = draft.tId
     , questionnaireUuid = Nothing
+    , branchUuid = Nothing
     , formatUuid = Nothing
     , tenantUuid = draft.tenantUuid
     , createdAt = draft.createdAt
@@ -167,6 +175,7 @@ fromDraftDataChangeDTO draftData reqDto =
   DocumentTemplateDraftData
     { documentTemplateId = draftData.documentTemplateId
     , questionnaireUuid = reqDto.questionnaireUuid
+    , branchUuid = reqDto.branchUuid
     , formatUuid = reqDto.formatUuid
     , tenantUuid = draftData.tenantUuid
     , createdAt = draftData.createdAt

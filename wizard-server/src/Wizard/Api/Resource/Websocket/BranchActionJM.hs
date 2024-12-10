@@ -4,6 +4,7 @@ import Data.Aeson
 
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.Branch.Event.BranchEventJM ()
+import Wizard.Api.Resource.Branch.Event.SetRepliesJM ()
 import Wizard.Api.Resource.User.OnlineUserInfoJM ()
 import Wizard.Api.Resource.Websocket.BranchActionDTO
 

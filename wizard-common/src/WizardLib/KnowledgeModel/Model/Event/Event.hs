@@ -1,7 +1,9 @@
 module WizardLib.KnowledgeModel.Model.Event.Event where
 
+import Data.Hashable
 import GHC.Generics
 
+import WizardLib.Common.Util.Hashable ()
 import WizardLib.KnowledgeModel.Model.Event.Answer.AnswerEvent
 import WizardLib.KnowledgeModel.Model.Event.Chapter.ChapterEvent
 import WizardLib.KnowledgeModel.Model.Event.Choice.ChoiceEvent
@@ -61,3 +63,5 @@ data Event
   | MoveExpertEvent' MoveExpertEvent
   | MoveReferenceEvent' MoveReferenceEvent
   deriving (Show, Eq, Generic)
+
+instance Hashable Event

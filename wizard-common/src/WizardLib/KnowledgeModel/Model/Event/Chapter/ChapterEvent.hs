@@ -1,10 +1,12 @@
 module WizardLib.KnowledgeModel.Model.Event.Chapter.ChapterEvent where
 
+import Data.Hashable
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Common.MapEntry
+import WizardLib.Common.Util.Hashable ()
 import WizardLib.KnowledgeModel.Model.Event.EventField
 
 data AddChapterEvent = AddChapterEvent
@@ -18,6 +20,8 @@ data AddChapterEvent = AddChapterEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable AddChapterEvent
+
 data EditChapterEvent = EditChapterEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -30,6 +34,8 @@ data EditChapterEvent = EditChapterEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable EditChapterEvent
+
 data DeleteChapterEvent = DeleteChapterEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -37,3 +43,5 @@ data DeleteChapterEvent = DeleteChapterEvent
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance Hashable DeleteChapterEvent

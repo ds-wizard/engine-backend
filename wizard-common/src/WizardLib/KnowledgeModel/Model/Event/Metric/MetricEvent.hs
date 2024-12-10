@@ -1,10 +1,12 @@
 module WizardLib.KnowledgeModel.Model.Event.Metric.MetricEvent where
 
+import Data.Hashable
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Common.MapEntry
+import WizardLib.Common.Util.Hashable ()
 import WizardLib.KnowledgeModel.Model.Event.EventField
 
 data AddMetricEvent = AddMetricEvent
@@ -19,6 +21,8 @@ data AddMetricEvent = AddMetricEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable AddMetricEvent
+
 data EditMetricEvent = EditMetricEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -31,6 +35,8 @@ data EditMetricEvent = EditMetricEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable EditMetricEvent
+
 data DeleteMetricEvent = DeleteMetricEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -38,3 +44,5 @@ data DeleteMetricEvent = DeleteMetricEvent
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance Hashable DeleteMetricEvent

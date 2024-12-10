@@ -1,5 +1,6 @@
 module Wizard.Service.KnowledgeModel.KnowledgeModelService where
 
+import Control.Monad (when)
 import Control.Monad.Except (liftEither)
 import Control.Monad.Reader (asks)
 import qualified Data.UUID as U
@@ -24,19 +25,27 @@ createKnowledgeModelPreview reqDto = do
   compileKnowledgeModel reqDto.events mResolvedPackageId reqDto.tagUuids
 
 compileKnowledgeModel :: [Event] -> Maybe String -> [U.UUID] -> AppContextM KnowledgeModel
-compileKnowledgeModel events mPackageId tagUuids = do
+compileKnowledgeModel events mPackageId tagUuids = compileKnowledgeModelWithCaching' events mPackageId tagUuids True
+
+compileKnowledgeModelWithCaching' :: [Event] -> Maybe String -> [U.UUID] -> Bool -> AppContextM KnowledgeModel
+compileKnowledgeModelWithCaching' events mPackageId tagUuids useCache = do
   mResolvedPackageId <- traverse resolvePackageId mPackageId
   case (events, mResolvedPackageId) of
     ([], Just resolvedPackageId) -> do
       tenantUuid <- asks currentTenantUuid
-      mKm <- getFromCache (resolvedPackageId, tagUuids, tenantUuid)
+      mKm <-
+        if useCache
+          then getFromCache (resolvedPackageId, tagUuids, tenantUuid)
+          else return Nothing
       case mKm of
         Just km -> return km
         Nothing -> do
           allEvents <- getEvents mResolvedPackageId
           km <- liftEither $ compile Nothing allEvents
           let filteredKm = filterKnowledgeModel tagUuids km
-          addToCache (resolvedPackageId, tagUuids, tenantUuid) filteredKm
+          when
+            useCache
+            (addToCache (resolvedPackageId, tagUuids, tenantUuid) filteredKm)
           return filteredKm
     _ -> do
       allEvents <- getEvents mPackageId

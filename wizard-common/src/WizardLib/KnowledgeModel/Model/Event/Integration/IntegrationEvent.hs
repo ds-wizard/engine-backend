@@ -1,16 +1,20 @@
 module WizardLib.KnowledgeModel.Model.Event.Integration.IntegrationEvent where
 
+import Data.Hashable
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Common.MapEntry
+import WizardLib.Common.Util.Hashable ()
 import WizardLib.KnowledgeModel.Model.Event.EventField
 
 data AddIntegrationEvent
   = AddApiIntegrationEvent' AddApiIntegrationEvent
   | AddWidgetIntegrationEvent' AddWidgetIntegrationEvent
   deriving (Show, Eq, Generic)
+
+instance Hashable AddIntegrationEvent
 
 data AddApiIntegrationEvent = AddApiIntegrationEvent
   { uuid :: U.UUID
@@ -34,6 +38,8 @@ data AddApiIntegrationEvent = AddApiIntegrationEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable AddApiIntegrationEvent
+
 data AddWidgetIntegrationEvent = AddWidgetIntegrationEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -49,10 +55,14 @@ data AddWidgetIntegrationEvent = AddWidgetIntegrationEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable AddWidgetIntegrationEvent
+
 data EditIntegrationEvent
   = EditApiIntegrationEvent' EditApiIntegrationEvent
   | EditWidgetIntegrationEvent' EditWidgetIntegrationEvent
   deriving (Show, Eq, Generic)
+
+instance Hashable EditIntegrationEvent
 
 data EditApiIntegrationEvent = EditApiIntegrationEvent
   { uuid :: U.UUID
@@ -76,6 +86,8 @@ data EditApiIntegrationEvent = EditApiIntegrationEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable EditApiIntegrationEvent
+
 data EditWidgetIntegrationEvent = EditWidgetIntegrationEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -91,6 +103,8 @@ data EditWidgetIntegrationEvent = EditWidgetIntegrationEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable EditWidgetIntegrationEvent
+
 data DeleteIntegrationEvent = DeleteIntegrationEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -98,3 +112,5 @@ data DeleteIntegrationEvent = DeleteIntegrationEvent
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance Hashable DeleteIntegrationEvent

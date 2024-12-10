@@ -8,6 +8,7 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
+import qualified Data.Map as M
 import Shared.Common.Util.Logger
 import Shared.Common.Util.String (trim)
 import Wizard.Database.DAO.Common
@@ -17,6 +18,7 @@ import Wizard.Model.Branch.BranchData
 import Wizard.Model.Branch.BranchDataLength
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
+import Wizard.Model.Questionnaire.QuestionnaireReply
 import WizardLib.KnowledgeModel.Model.Event.Event
 
 entityName = "branch_data"
@@ -50,7 +52,7 @@ updateBranchDataById branchData = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE branch_data SET branch_uuid = ?, metamodel_version = ?, events = ?, tenant_uuid = ?, created_at = ?, updated_at = ?, squashed = ? WHERE tenant_uuid = ? AND branch_uuid = ?;"
+          "UPDATE branch_data SET branch_uuid = ?, metamodel_version = ?, events = ?, tenant_uuid = ?, created_at = ?, updated_at = ?, squashed = ?, replies = ? WHERE tenant_uuid = ? AND branch_uuid = ?;"
   let params =
         toRow branchData
           ++ [toField tenantUuid, toField . U.toText $ branchData.branchUuid]
@@ -65,6 +67,18 @@ appendBranchEventByUuid branchUuid events = do
         fromString
           "UPDATE branch_data SET events = events || ?, squashed = false, updated_at = now() WHERE tenant_uuid = ? AND branch_uuid = ?"
   let params = [toJSONField events, toField tenantUuid, toField branchUuid]
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
+  runDB action
+  return ()
+
+updateRepliesByBranchUuid :: U.UUID -> M.Map String Reply -> AppContextM ()
+updateRepliesByBranchUuid branchUuid replies = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString
+          "UPDATE branch_data SET replies = ?, updated_at = now() WHERE tenant_uuid = ? AND branch_uuid = ?"
+  let params = [toJSONField replies, toField tenantUuid, toField branchUuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
