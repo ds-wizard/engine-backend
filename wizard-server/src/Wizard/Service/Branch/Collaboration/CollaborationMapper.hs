@@ -1,6 +1,7 @@
 module Wizard.Service.Branch.Collaboration.CollaborationMapper where
 
 import Wizard.Api.Resource.Branch.Event.BranchEventDTO
+import Wizard.Api.Resource.Branch.Event.SetRepliesDTO
 import Wizard.Api.Resource.Websocket.BranchActionDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Model.Websocket.WebsocketMessage
@@ -27,3 +28,7 @@ toAddBranchMessage
   :: AddBranchEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerBranchActionDTO)
 toAddBranchMessage reqDto record =
   toWebsocketMessage record $ Success_ServerActionDTO . SetContent_ServerBranchActionDTO . AddBranchEventDTO' $ reqDto
+
+toSetRepliesMessage :: SetRepliesDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerBranchActionDTO)
+toSetRepliesMessage reqDto record =
+  toWebsocketMessage record $ Success_ServerActionDTO . SetReplies_ServerBranchActionDTO $ reqDto

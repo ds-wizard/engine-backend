@@ -58,7 +58,7 @@ test_200 appContext = do
       -- GIVEN: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = toDraftDetail wizardDocumentTemplateDraft wizardDocumentTemplateDraftData (Just . toSuggestion $ questionnaire1)
+      let expDto = toDraftDetail wizardDocumentTemplateDraft wizardDocumentTemplateDraftData (Just . toSuggestion $ questionnaire1) Nothing
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext

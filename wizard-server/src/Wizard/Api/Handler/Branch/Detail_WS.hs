@@ -50,3 +50,7 @@ handleMessage branchUuid connectionUuid connection =
       log connectionUuid "SetContent"
       setContent branchUuid connectionUuid reqDto
       handleMessage branchUuid connectionUuid connection
+    handleAction (SetReplies_ClientBranchActionDTO reqDto) = do
+      log connectionUuid "SetReplies"
+      setReplies branchUuid connectionUuid reqDto
+      handleMessage branchUuid connectionUuid connection

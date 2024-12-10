@@ -27,10 +27,10 @@ detail_documents_preview_GET
   -> Maybe String
   -> String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] TemporaryFileDTO)
-detail_documents_preview_GET mTokenHeader mServerUrl qtnUuid =
+detail_documents_preview_GET mTokenHeader mServerUrl documentTemplateId =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
     runInMaybeAuthService Transactional $ do
-      (doc, fileDto) <- createDocumentPreviewForDocTmlDraft qtnUuid
+      (doc, fileDto) <- createDocumentPreviewForDocTmlDraft documentTemplateId
       case doc.state of
         DoneDocumentState -> addTraceUuidHeader fileDto
         ErrorDocumentState ->

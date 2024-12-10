@@ -14,6 +14,7 @@ import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataDTO
+import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
@@ -85,7 +86,11 @@ getDraft tmlId = do
     case draftData.questionnaireUuid of
       Just qtnUuid -> findQuestionnaireSuggestionByUuid' qtnUuid
       Nothing -> return Nothing
-  return $ toDraftDetail draft draftData mQtnSuggestion
+  mBranchSuggestion <-
+    case draftData.branchUuid of
+      Just branchUuid -> findBranchSuggestionByUuid' branchUuid
+      Nothing -> return Nothing
+  return $ toDraftDetail draft draftData mQtnSuggestion mBranchSuggestion
 
 modifyDraft :: String -> DocumentTemplateDraftChangeDTO -> AppContextM DocumentTemplateDraftDetail
 modifyDraft tmlId reqDto =
@@ -126,7 +131,11 @@ modifyDraftData tmlId reqDto =
       case updatedDraftData.questionnaireUuid of
         Just qtnUuid -> findQuestionnaireSuggestionByUuid' qtnUuid
         Nothing -> return Nothing
-    return $ toDraftDataDTO updatedDraftData mQtnSuggestion
+    mBranchSuggestion <-
+      case draftData.branchUuid of
+        Just branchUuid -> findBranchSuggestionByUuid' branchUuid
+        Nothing -> return Nothing
+    return $ toDraftDataDTO updatedDraftData mQtnSuggestion mBranchSuggestion
 
 deleteDraft :: String -> AppContextM ()
 deleteDraft tmlId =

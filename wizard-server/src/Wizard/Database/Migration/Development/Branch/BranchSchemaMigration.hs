@@ -68,6 +68,7 @@ createBranchDataTable = do
         \    created_at        timestamptz NOT NULL, \
         \    updated_at        timestamptz NOT NULL, \
         \    squashed          bool        NOT NULL, \
+        \    replies           json        NOT NULL, \
         \    CONSTRAINT branch_data_pk PRIMARY KEY (branch_uuid, tenant_uuid), \
         \    CONSTRAINT branch_data_branch_uuid_fk FOREIGN KEY (branch_uuid, tenant_uuid) REFERENCES branch (uuid, tenant_uuid), \
         \    CONSTRAINT branch_data_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \

@@ -16,8 +16,10 @@ import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Branch.Branch ()
 import Wizard.Database.Mapping.Branch.BranchList ()
+import Wizard.Database.Mapping.Branch.BranchSuggestion ()
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchList
+import Wizard.Model.Branch.BranchSuggestion
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
@@ -81,6 +83,18 @@ findBranchesPage mQuery pageable sort =
             }
     return $ Page pageLabel metadata entities
 
+findBranchSuggestionsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchSuggestion)
+findBranchSuggestionsPage mQuery pageable sort = do
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesPageableQuerySortFn
+    entityName
+    pageLabel
+    pageable
+    sort
+    "uuid, name"
+    "WHERE name ~* ? AND tenant_uuid = ?"
+    [regexM mQuery, U.toString tenantUuid]
+
 findBranchByUuid :: U.UUID -> AppContextM Branch
 findBranchByUuid uuid = do
   tenantUuid <- asks currentTenantUuid
@@ -95,6 +109,11 @@ findBranchByKmId' :: String -> AppContextM (Maybe Branch)
 findBranchByKmId' kmId = do
   tenantUuid <- asks currentTenantUuid
   createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("km_id", kmId)]
+
+findBranchSuggestionByUuid' :: U.UUID -> AppContextM (Maybe BranchSuggestion)
+findBranchSuggestionByUuid' uuid = do
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityWithFieldsByFn' "uuid, name" entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 countBranches :: AppContextM Int
 countBranches = do

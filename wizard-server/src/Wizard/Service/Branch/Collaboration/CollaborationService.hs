@@ -9,6 +9,7 @@ import Network.WebSockets (Connection)
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Branch.Event.BranchEventDTO
+import Wizard.Api.Resource.Branch.Event.SetRepliesDTO
 import Wizard.Api.Resource.Websocket.BranchActionJM ()
 import Wizard.Api.Resource.Websocket.WebsocketActionJM ()
 import Wizard.Cache.BranchWebsocketCache
@@ -69,6 +70,15 @@ addBranchEvent branchUuid connectionUuid reqDto = do
   appendBranchEventByUuid branchUuid [reqDto.event]
   records <- getAllFromCache
   broadcast (U.toString branchUuid) records (toAddBranchMessage reqDto) disconnectUser
+
+-- --------------------------------
+setReplies :: U.UUID -> U.UUID -> SetRepliesDTO -> AppContextM ()
+setReplies branchUuid connectionUuid reqDto = do
+  myself <- getFromCache' connectionUuid
+  checkEditPermission myself
+  updateRepliesByBranchUuid branchUuid reqDto.replies
+  records <- getAllFromCache
+  broadcast (U.toString branchUuid) records (toSetRepliesMessage reqDto) disconnectUser
 
 -- --------------------------------
 disconnectUser :: ToJSON resDto => WebsocketMessage resDto -> AppContextM ()
