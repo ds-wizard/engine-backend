@@ -32,6 +32,7 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
@@ -281,6 +282,7 @@ deleteUser userUuid =
     _ <- findUserByUuid userUuid
     deleteAuditByCreatedBy userUuid
     clearBranchCreatedBy userUuid
+    clearQuestionnaireFileCreatedBy userUuid
     deleteQuestionnairePermUserByUserUuid userUuid
     clearQuestionnaireCommentThreadAssignedTo userUuid
     clearQuestionnaireCommentThreadAssignedBy userUuid
