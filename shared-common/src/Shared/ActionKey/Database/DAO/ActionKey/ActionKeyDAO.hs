@@ -31,6 +31,11 @@ findActionKeyByHashAndType hash aType = do
   tenantUuid <- asks (.tenantUuid')
   createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("hash", hash), ("type", show aType)]
 
+findActionKeyByIdentityAndType' :: (AppContextC s sc m, ToField identity, FromField identity, FromField aType, Show aType) => String -> aType -> m (Maybe (ActionKey identity aType))
+findActionKeyByIdentityAndType' identity aType = do
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("identity", identity), ("type", show aType)]
+
 findActionKeyByIdentityAndHash'
   :: ( AppContextC s sc m
      , FromField aType
