@@ -1,13 +1,12 @@
 module Wizard.Service.User.Profile.UserProfileService where
 
 import Control.Monad.Reader (asks, liftIO)
+import qualified Data.List as L
 import qualified Data.Map.Strict as M
-import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Model.Common.SensitiveData
-import Shared.Common.Util.List (groupBy)
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
@@ -50,16 +49,18 @@ getUserProfileSubmissionProps :: U.UUID -> AppContextM [UserSubmissionPropsDTO]
 getUserProfileSubmissionProps userUuid = do
   userDecrypted <- getDecryptedUser userUuid
   tenantConfig <- getCurrentTenantConfig
-  let userPropsFromService = fmap fromService tenantConfig.submission.services
-  let userPropsFromUser = fmap fromUserSubmissionProps userDecrypted.submissionProps
-  let groupedProps = groupBy (\p1 p2 -> p1.sId == p2.sId) (userPropsFromService ++ userPropsFromUser)
-  return $ fmap merge groupedProps
+  return . fmap (mapFn userDecrypted) $ tenantConfig.submission.services
   where
-    merge :: [UserSubmissionPropsDTO] -> UserSubmissionPropsDTO
-    merge [p] = p
-    merge [pFromService, pFromUser] = pFromService {values = M.mapWithKey (mergeFn pFromUser) pFromService.values}
-    mergeFn :: UserSubmissionPropsDTO -> String -> String -> String
-    mergeFn pFromUser k v = fromMaybe "" (M.lookup k pFromUser.values)
+    mapFn :: User -> TenantConfigSubmissionService -> UserSubmissionPropsDTO
+    mapFn userDecrypted service =
+      UserSubmissionPropsDTO
+        { sId = service.sId
+        , name = service.name
+        , values =
+            let defaultProps = M.fromList . fmap (\v -> (v, "")) $ service.props
+                userProps = maybe M.empty ((.values)) . L.find (\s -> s.sId == service.sId) $ userDecrypted.submissionProps
+             in M.union userProps defaultProps
+        }
 
 modifyUserProfileSubmissionProps :: [UserSubmissionPropsDTO] -> AppContextM [UserSubmissionPropsDTO]
 modifyUserProfileSubmissionProps reqDto = do
