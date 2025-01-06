@@ -30,7 +30,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/wizard-api/tokens/43d44c6a-d22e-4954-bee6-0fedc8c990df"
+reqUrl = "/wizard-api/tokens/54ea072d-b5f9-4251-b3a4-ae177360509c"
 
 reqHeaders = [reqAuthHeader]
 
