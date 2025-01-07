@@ -1,10 +1,12 @@
 module WizardLib.KnowledgeModel.Model.Event.Reference.ReferenceEvent where
 
+import Data.Hashable
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Common.MapEntry
+import WizardLib.Common.Util.Hashable ()
 import WizardLib.KnowledgeModel.Model.Event.EventField
 
 data AddReferenceEvent
@@ -12,6 +14,8 @@ data AddReferenceEvent
   | AddURLReferenceEvent' AddURLReferenceEvent
   | AddCrossReferenceEvent' AddCrossReferenceEvent
   deriving (Show, Eq, Generic)
+
+instance Hashable AddReferenceEvent
 
 data AddResourcePageReferenceEvent = AddResourcePageReferenceEvent
   { uuid :: U.UUID
@@ -22,6 +26,8 @@ data AddResourcePageReferenceEvent = AddResourcePageReferenceEvent
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance Hashable AddResourcePageReferenceEvent
 
 data AddURLReferenceEvent = AddURLReferenceEvent
   { uuid :: U.UUID
@@ -34,6 +40,8 @@ data AddURLReferenceEvent = AddURLReferenceEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable AddURLReferenceEvent
+
 data AddCrossReferenceEvent = AddCrossReferenceEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -45,12 +53,16 @@ data AddCrossReferenceEvent = AddCrossReferenceEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable AddCrossReferenceEvent
+
 -- --------------------------------------------
 data EditReferenceEvent
   = EditResourcePageReferenceEvent' EditResourcePageReferenceEvent
   | EditURLReferenceEvent' EditURLReferenceEvent
   | EditCrossReferenceEvent' EditCrossReferenceEvent
   deriving (Show, Eq, Generic)
+
+instance Hashable EditReferenceEvent
 
 data EditResourcePageReferenceEvent = EditResourcePageReferenceEvent
   { uuid :: U.UUID
@@ -61,6 +73,8 @@ data EditResourcePageReferenceEvent = EditResourcePageReferenceEvent
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance Hashable EditResourcePageReferenceEvent
 
 data EditURLReferenceEvent = EditURLReferenceEvent
   { uuid :: U.UUID
@@ -73,6 +87,8 @@ data EditURLReferenceEvent = EditURLReferenceEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable EditURLReferenceEvent
+
 data EditCrossReferenceEvent = EditCrossReferenceEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
@@ -84,6 +100,8 @@ data EditCrossReferenceEvent = EditCrossReferenceEvent
   }
   deriving (Show, Eq, Generic)
 
+instance Hashable EditCrossReferenceEvent
+
 -- --------------------------------------------
 data DeleteReferenceEvent = DeleteReferenceEvent
   { uuid :: U.UUID
@@ -92,3 +110,5 @@ data DeleteReferenceEvent = DeleteReferenceEvent
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance Hashable DeleteReferenceEvent

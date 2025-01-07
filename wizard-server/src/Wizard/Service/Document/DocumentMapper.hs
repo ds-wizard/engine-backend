@@ -1,6 +1,7 @@
 module Wizard.Service.Document.DocumentMapper where
 
 import qualified Data.List as L
+import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -14,8 +15,9 @@ import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Model.Branch.Branch
 import Wizard.Model.Document.Document
-import Wizard.Model.Document.DocumentContext (DocumentContext)
+import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Document.DocumentContextJM ()
 import Wizard.Model.Document.DocumentList
 import Wizard.Model.Questionnaire.Questionnaire
@@ -24,6 +26,8 @@ import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
+import WizardLib.KnowledgeModel.Constant.KnowledgeModel
+import WizardLib.KnowledgeModel.Model.Package.Package
 
 toDTO :: DocumentList -> [SubmissionDTO] -> DocumentDTO
 toDTO doc submissions =
@@ -116,6 +120,51 @@ fromTemporallyCreateDTO docUuid qtn documentTemplateId formatUuid repliesHash mC
     , retrievedAt = Nothing
     , finishedAt = Nothing
     , createdAt = now
+    }
+
+toTemporaryPackage :: U.UUID -> UTCTime -> Package
+toTemporaryPackage tenantUuid createdAt =
+  Package
+    { pId = "org.example:km-example:1.0.0"
+    , name = "Example Knowledge Model"
+    , organizationId = "org.example"
+    , kmId = "km-example"
+    , version = "1.0.0"
+    , phase = ReleasedPackagePhase
+    , metamodelVersion = kmMetamodelVersion
+    , description = "Example description"
+    , readme = "# Example Knowledge Model\n\nThis is an example knowledge model."
+    , license = "Apache-2.0"
+    , previousPackageId = Nothing
+    , forkOfPackageId = Nothing
+    , mergeCheckpointPackageId = Nothing
+    , nonEditable = False
+    , tenantUuid = tenantUuid
+    , createdAt = createdAt
+    }
+
+toTemporaryQuestionnaire :: Branch -> Package -> Maybe UserDTO -> Questionnaire
+toTemporaryQuestionnaire branch package mCurrentUser =
+  Questionnaire
+    { uuid = branch.uuid
+    , name = branch.name
+    , description = Just branch.description
+    , visibility = PrivateQuestionnaire
+    , sharing = RestrictedQuestionnaire
+    , packageId = fromMaybe package.pId branch.previousPackageId
+    , selectedQuestionTagUuids = []
+    , projectTags = []
+    , documentTemplateId = Nothing
+    , formatUuid = Nothing
+    , creatorUuid = fmap (.uuid) mCurrentUser
+    , permissions = []
+    , events = []
+    , versions = []
+    , isTemplate = False
+    , squashed = True
+    , tenantUuid = branch.tenantUuid
+    , createdAt = branch.createdAt
+    , updatedAt = branch.updatedAt
     }
 
 toDocPersistentCommand :: U.UUID -> DocumentContext -> Document -> PersistentCommand U.UUID

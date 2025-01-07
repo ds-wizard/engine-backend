@@ -18,11 +18,13 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchData
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.Branch.BranchState
+import Wizard.Model.Branch.BranchSuggestion
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
@@ -42,6 +44,11 @@ getBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page Branc
 getBranchesPage mQuery pageable sort = do
   checkPermission _KM_PERM
   findBranchesPage mQuery pageable sort
+
+getBranchSuggestionsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchSuggestion)
+getBranchSuggestionsPage mQuery pageable sort = do
+  checkPermission _KM_PERM
+  findBranchSuggestionsPage mQuery pageable sort
 
 createBranch :: BranchCreateDTO -> AppContextM BranchList
 createBranch reqDto =
@@ -137,6 +144,7 @@ deleteBranch branchUuid =
   runInTransaction $ do
     checkPermission _KM_PERM
     branch <- findBranchByUuid branchUuid
+    unsetBranchFromDocumentTemplate branchUuid
     deleteMigratorStateByBranchUuid branchUuid
     deleteBranchDataById branchUuid
     deleteBranchByUuid branchUuid

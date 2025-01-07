@@ -52,6 +52,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0047_qtnCommentA
 import qualified Wizard.Database.Migration.Production.Migration_0048_jsonb.Migration as M_0048
 import qualified Wizard.Database.Migration.Production.Migration_0049_questionnaireFile.Migration as M_0049
 import qualified Wizard.Database.Migration.Production.Migration_0050_kmValidation.Migration as M_0050
+import qualified Wizard.Database.Migration.Production.Migration_0051_branchState.Migration as M_0051
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -105,4 +106,5 @@ migrationDefinitions =
   , M_0048.definition
   , M_0049.definition
   , M_0050.definition
+  , M_0051.definition
   ]

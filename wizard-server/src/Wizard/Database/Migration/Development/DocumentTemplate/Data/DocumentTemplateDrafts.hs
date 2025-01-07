@@ -18,6 +18,7 @@ wizardDocumentTemplateDraftData =
   DocumentTemplateDraftData
     { documentTemplateId = wizardDocumentTemplateDraft.tId
     , questionnaireUuid = Just questionnaire1.uuid
+    , branchUuid = Nothing
     , formatUuid = Just formatJson.uuid
     , tenantUuid = wizardDocumentTemplateDraft.tenantUuid
     , createdAt = wizardDocumentTemplateDraft.createdAt
@@ -47,13 +48,16 @@ wizardDocumentTemplateDraftDataDTO :: DocumentTemplateDraftDataDTO
 wizardDocumentTemplateDraftDataDTO =
   DocumentTemplateDraftDataDTO
     { questionnaireUuid = wizardDocumentTemplateDraftDataEdited.questionnaireUuid
-    , formatUuid = wizardDocumentTemplateDraftDataEdited.formatUuid
     , questionnaire = Just . QuestionnaireMapper.toSuggestion $ questionnaire2
+    , branchUuid = Nothing
+    , branch = Nothing
+    , formatUuid = wizardDocumentTemplateDraftDataEdited.formatUuid
     }
 
 wizardDocumentTemplateDraftDataChangeDTO :: DocumentTemplateDraftDataChangeDTO
 wizardDocumentTemplateDraftDataChangeDTO =
   DocumentTemplateDraftDataChangeDTO
     { questionnaireUuid = wizardDocumentTemplateDraftDataEdited.questionnaireUuid
+    , branchUuid = Nothing
     , formatUuid = wizardDocumentTemplateDraftDataEdited.formatUuid
     }

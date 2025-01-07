@@ -44,6 +44,7 @@ import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDetailSM 
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftListSM ()
 import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileChangeSM ()
 import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileListSM ()
+import Wizard.Api.Resource.DocumentTemplate.Folder.DocumentTemplateFolderDeleteSM ()
 import Wizard.Api.Resource.DocumentTemplate.Folder.DocumentTemplateFolderMoveSM ()
 import Wizard.Api.Resource.Feedback.FeedbackCreateSM ()
 import Wizard.Api.Resource.Feedback.FeedbackSM ()
@@ -139,7 +140,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.13.0"
+              , _infoVersion = "4.14.0"
               , _infoLicense =
                   Just $
                     License

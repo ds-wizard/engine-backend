@@ -97,6 +97,15 @@ findQuestionnaireFilesByQuestionnaire qtnUuid = do
   tenantUuid <- asks currentTenantUuid
   createFindEntitiesWithFieldsByFn "uuid, file_name, content_type, file_size" entityName [tenantQueryUuid tenantUuid, ("questionnaire_uuid", U.toString qtnUuid)]
 
+clearQuestionnaireFileCreatedBy :: U.UUID -> AppContextM ()
+clearQuestionnaireFileCreatedBy userUuid = do
+  let sql = fromString "UPDATE questionnaire_file SET created_by = null WHERE created_by = ?"
+  let params = [U.toString userUuid]
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
+  runDB action
+  return ()
+
 findQuestionnaireFileByUuid :: U.UUID -> AppContextM QuestionnaireFile
 findQuestionnaireFileByUuid uuid = do
   tenantUuid <- asks currentTenantUuid

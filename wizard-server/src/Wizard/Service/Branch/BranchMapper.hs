@@ -1,5 +1,6 @@
 module Wizard.Service.Branch.BranchMapper where
 
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
@@ -45,6 +46,7 @@ toDetailDTO branch branchData knowledgeModel mForkOfPackageId mForkOfPackage sta
     , forkOfPackageId = mForkOfPackageId
     , forkOfPackage = fmap toSimpleDTO mForkOfPackage
     , events = branchData.events
+    , replies = branchData.replies
     , knowledgeModel = knowledgeModel
     , createdBy = branch.createdBy
     , createdAt = branch.createdAt
@@ -57,6 +59,7 @@ toBranchData branch =
     { branchUuid = branch.uuid
     , metamodelVersion = kmMetamodelVersion
     , events = []
+    , replies = M.empty
     , squashed = True
     , tenantUuid = branch.tenantUuid
     , createdAt = branch.createdAt

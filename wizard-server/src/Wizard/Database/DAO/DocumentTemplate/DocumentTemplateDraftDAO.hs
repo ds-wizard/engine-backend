@@ -125,6 +125,30 @@ moveFolder documentTemplateId currentFolder newFolder = do
   let action conn = execute conn sql params
   runDB action
 
+deleteFolder :: String -> String -> AppContextM Int64
+deleteFolder documentTemplateId path = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString
+          "DELETE FROM document_template_asset \
+          \WHERE tenant_uuid = ?  \
+          \  AND document_template_id = ? \
+          \  AND starts_with(file_name, ?); \
+          \ \
+          \DELETE FROM document_template_file \
+          \WHERE tenant_uuid = ?  \
+          \  AND document_template_id = ? \
+          \  AND starts_with(file_name, ?);"
+  let paramsForOneUpdate =
+        [ toField tenantUuid
+        , toField documentTemplateId
+        , toField path
+        ]
+  let params = paramsForOneUpdate ++ paramsForOneUpdate
+  logQuery sql params
+  let action conn = execute conn sql params
+  runDB action
+
 deleteDrafts :: AppContextM Int64
 deleteDrafts = do
   tenantUuid <- asks currentTenantUuid

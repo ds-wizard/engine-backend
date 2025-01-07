@@ -29,7 +29,7 @@ updateDraftDataById draftData = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE document_template_draft_data SET document_template_id = ?, questionnaire_uuid = ?, format_uuid = ?, tenant_uuid = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND document_template_id = ?"
+          "UPDATE document_template_draft_data SET document_template_id = ?, questionnaire_uuid = ?, format_uuid = ?, tenant_uuid = ?, created_at = ?, updated_at = ?, branch_uuid = ? WHERE tenant_uuid = ? AND document_template_id = ?"
   let params = toRow draftData ++ [toField draftData.tenantUuid, toField draftData.documentTemplateId]
   logQuery sql params
   let action conn = execute conn sql params
@@ -41,6 +41,17 @@ unsetQuestionnaireFromDocumentTemplate qtnUuid = do
   let sql =
         fromString
           "UPDATE document_template_draft_data SET questionnaire_uuid = null, format_uuid = null WHERE tenant_uuid = ? AND questionnaire_uuid = ?"
+  let params = [toField tenantUuid, toField qtnUuid]
+  logQuery sql params
+  let action conn = execute conn sql params
+  runDB action
+
+unsetBranchFromDocumentTemplate :: U.UUID -> AppContextM Int64
+unsetBranchFromDocumentTemplate qtnUuid = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString
+          "UPDATE document_template_draft_data SET branch_uuid = null, format_uuid = null WHERE tenant_uuid = ? AND branch_uuid = ?"
   let params = [toField tenantUuid, toField qtnUuid]
   logQuery sql params
   let action conn = execute conn sql params
