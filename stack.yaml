@@ -1,4 +1,6 @@
-resolver: nightly-2024-05-26
+resolver: nightly-2024-01-10
+
+compiler: ghc-9.10.1
 
 packages:
 - shared-common
@@ -31,14 +33,24 @@ extra-deps:
       - lib/services/amazonka-lambda
       - lib/services/amazonka-sso
       - lib/services/amazonka-sts
-  - text-replace-0.0.0.4
+  - base64-1.0
+  - fsutils-0.1.2
+  - ginger-0.10.5.2
+  - hashable-1.5.0.0
+  - haskell-src-meta-0.8.14
+  - html-entities-1.1.4.7
+  - jose-jwt-0.10.0
+  - lens-5.3.3
+  - oidc-client-0.6.1.0
+  - raven-haskell-0.1.4.1
+  - servant-swagger-1.2
   - servant-swagger-tags-0.1.0.1
   - servant-swagger-ui-0.3.5.5.0.0
   - servant-swagger-ui-core-0.3.5
-  - fsutils-0.1.2
-  - oidc-client-0.6.1.0
-  - raven-haskell-0.1.4.1
-  - ginger-0.10.5.2
+  - swagger2-2.8.8
+  - text-short-0.1.6
+  - text-replace-0.0.0.4
+  - th-compat-0.1.6
   - time-parsers-0.2
 
 allow-newer: true

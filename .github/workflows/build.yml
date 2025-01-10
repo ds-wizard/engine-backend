@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         component: [registry, wizard]
-        stack: [2.15.3]
+        stack: [3.3.1]
     
     env:
       COMPONENT: ${{ matrix.component }}
