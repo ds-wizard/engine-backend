@@ -129,7 +129,7 @@ createDocumentPreviewForQtn qtnUuid =
         tml <- getDocumentTemplateByUuidAndPackageId tmlId (Just qtn.packageId)
         pkg <- getPackageById qtn.packageId
         qtnCtn <- compileQuestionnaire qtn
-        createDocumentPreview tml pkg [] qtn qtnCtn.phaseUuid qtnCtn.replies formatUuid
+        createDocumentPreview tml pkg [] qtn qtnCtn.phaseUuid qtnCtn.replies formatUuid False
       _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP
 
 createDocumentPreviewForDocTmlDraft :: String -> AppContextM (Document, TemporaryFileDTO)
@@ -143,7 +143,7 @@ createDocumentPreviewForDocTmlDraft tmlId =
         pkg <- getPackageById qtn.packageId
         checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
         qtnCtn <- compileQuestionnaire qtn
-        createDocumentPreview draft pkg [] qtn qtnCtn.phaseUuid qtnCtn.replies formatUuid
+        createDocumentPreview draft pkg [] qtn qtnCtn.phaseUuid qtnCtn.replies formatUuid False
       (_, Just branchUuid, Just formatUuid) -> do
         draft <- findDraftById tmlId
         let pkg = toTemporaryPackage draft.tenantUuid draft.createdAt
@@ -152,11 +152,11 @@ createDocumentPreviewForDocTmlDraft tmlId =
         checkPermission _KM_PERM
         mCurrentUser <- asks currentUser
         let qtn = toTemporaryQuestionnaire branch pkg mCurrentUser
-        createDocumentPreview draft pkg branchData.events qtn Nothing branchData.replies formatUuid
+        createDocumentPreview draft pkg branchData.events qtn Nothing branchData.replies formatUuid True
       _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__QUESTIONNAIRE_OR_FORMAT_NOT_SET_UP
 
-createDocumentPreview :: DocumentTemplate -> Package -> [Event] -> Questionnaire -> Maybe U.UUID -> M.Map String Reply -> U.UUID -> AppContextM (Document, TemporaryFileDTO)
-createDocumentPreview tml pkg branchEvents qtn phaseUuid replies formatUuid = do
+createDocumentPreview :: DocumentTemplate -> Package -> [Event] -> Questionnaire -> Maybe U.UUID -> M.Map String Reply -> U.UUID -> Bool -> AppContextM (Document, TemporaryFileDTO)
+createDocumentPreview tml pkg branchEvents qtn phaseUuid replies formatUuid fromBranch = do
   docs <- findDocumentsForCurrentTenantFiltered [("questionnaire_uuid", U.toString qtn.uuid), ("durability", "TemporallyDocumentDurability")]
   tenantConfig <- getCurrentTenantConfig
   mCurrentUser <- asks currentUser
@@ -184,7 +184,8 @@ createDocumentPreview tml pkg branchEvents qtn phaseUuid replies formatUuid = do
           now <- liftIO getCurrentTime
           let doc = fromTemporallyCreateDTO dUuid qtn tml.tId formatUuid repliesHash mCurrentUser tenantConfig.uuid now
           insertDocument doc
-          publishToPersistentCommandQueue doc pkg branchEvents qtn (Just replies)
+          let mReplies = if fromBranch then Just replies else Nothing
+          publishToPersistentCommandQueue doc pkg branchEvents qtn mReplies
           return (doc, TemporaryFileMapper.emptyFileDTO)
 
 publishToPersistentCommandQueue :: Document -> Package -> [Event] -> Questionnaire -> Maybe (M.Map String Reply) -> AppContextM ()
