@@ -125,7 +125,7 @@ findUserByEmail email = do
 findUserByEmail' :: String -> AppContextM (Maybe User)
 findUserByEmail' email = do
   tenantUuid <- asks currentTenantUuid
-  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("email", email)]
+  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("email", email), ("machine", "false")]
 
 findUserByEmailAndTenantUuid' :: String -> U.UUID -> AppContextM (Maybe User)
 findUserByEmailAndTenantUuid' email tenantUuid = createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("email", email)]
