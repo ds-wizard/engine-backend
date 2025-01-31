@@ -58,6 +58,7 @@ defaultRoles =
         , "PM_WRITE_PERM"
         , "QTN_PERM"
         , "QTN_ACTION_PERM"
+        , "QTN_FILE_PERM"
         , "QTN_IMPORTER_PERM"
         , "QTN_TML_PERM"
         , "DOC_TML_READ_PERM"
