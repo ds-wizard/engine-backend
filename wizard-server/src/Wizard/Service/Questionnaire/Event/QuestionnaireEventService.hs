@@ -11,6 +11,7 @@ import Shared.Common.Util.List (groupBy)
 import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
@@ -28,7 +29,7 @@ squashQuestionnaireEventsForQuestionnaire qtnUuid =
     logInfoI _CMP_SERVICE (f' "Squashing events for questionnaire (qtnUuid: '%s')" [U.toString qtnUuid])
     (QuestionnaireSquash _ events versions) <- findQuestionnaireSquashByUuid qtnUuid
     let squashedEvents = squash versions events
-    updateQuestionnaireEventsByUuid' qtnUuid True squashedEvents
+    updateQuestionnaireEventsByQuestionnaireUuid' qtnUuid True squashedEvents
     logInfoI
       _CMP_SERVICE
       ( f'

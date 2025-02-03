@@ -4,7 +4,6 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 
@@ -35,7 +34,6 @@ data Questionnaire = Questionnaire
   , formatUuid :: Maybe U.UUID
   , creatorUuid :: Maybe U.UUID
   , permissions :: [QuestionnairePerm]
-  , events :: [QuestionnaireEvent]
   , versions :: [QuestionnaireVersion]
   , isTemplate :: Bool
   , squashed :: Bool
@@ -59,7 +57,6 @@ instance Eq Questionnaire where
       && a.formatUuid == b.formatUuid
       && a.creatorUuid == b.creatorUuid
       && a.permissions == b.permissions
-      && a.events == b.events
       && a.versions == b.versions
       && a.isTemplate == b.isTemplate
       && a.squashed == b.squashed

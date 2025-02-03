@@ -107,7 +107,9 @@ fromTemporallyCreateDTO docUuid qtn documentTemplateId formatUuid repliesHash mC
     , state = QueuedDocumentState
     , durability = TemporallyDocumentDurability
     , questionnaireUuid = qtn.uuid
-    , questionnaireEventUuid = fmap getUuid (lastSafe qtn.events)
+    , -- TODO Update event
+      -- , questionnaireEventUuid = fmap getUuid (lastSafe qtn.events)
+      questionnaireEventUuid = Just qtn.uuid
     , questionnaireRepliesHash = repliesHash
     , documentTemplateId = documentTemplateId
     , formatUuid = formatUuid
@@ -158,7 +160,6 @@ toTemporaryQuestionnaire branch package mCurrentUser =
     , formatUuid = Nothing
     , creatorUuid = fmap (.uuid) mCurrentUser
     , permissions = []
-    , events = []
     , versions = []
     , isTemplate = False
     , squashed = True

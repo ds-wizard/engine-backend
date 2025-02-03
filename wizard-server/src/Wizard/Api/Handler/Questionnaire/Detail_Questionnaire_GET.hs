@@ -26,4 +26,4 @@ detail_questionnaire_GET
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] QuestionnaireDetailQuestionnaireDTO)
 detail_questionnaire_GET mTokenHeader mServerUrl qtnUuid =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService NoTransaction $ addTraceUuidHeader =<< getQuestionnaireDetailQuestionnaireById qtnUuid
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getQuestionnaireDetailQuestionnaireByUuid qtnUuid

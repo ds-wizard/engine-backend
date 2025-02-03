@@ -5,6 +5,7 @@ import Test.Hspec.Expectations.Pretty
 
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
+import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
@@ -26,9 +27,9 @@ sanitizatorIntegrationSpec appContext =
                 putInQuestionsM question1.uuid question1WithNewType'
                   . putInQuestionsM question9.uuid question9WithNewType'
                   $ km1WithQ4
-          let qtnEvents = fEvents
+          let qtnEvents = fEvents questionnaire1Uuid
           -- WHEN:
-          (Right result) <- runInContext (sanitizeQuestionnaireEvents oldKm newKm qtnEvents) appContext
+          (Right result) <- runInContext (sanitizeQuestionnaireEvents questionnaire1Uuid oldKm newKm qtnEvents) appContext
           -- THEN:
           extractEventPath (result !! 16) `shouldBe` fst rQ1
           extractEventPath (result !! 17) `shouldBe` fst rQ9

@@ -16,6 +16,7 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
@@ -59,52 +60,60 @@ test_200 appContext = do
     "HTTP 200 OK (Owner, Private)"
     appContext
     questionnaire1
+    questionnaire1Events
     [reqAuthHeader]
     [qtn1AlbertEditQtnPermDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleView)"
     appContext
     questionnaire2
+    questionnaire2Events
     [reqNonAdminAuthHeader]
     [qtn2AlbertEditQtnPermDto]
   create_test_200
     "HTTP 200 OK (Commentator)"
     appContext
     (questionnaire13 {visibility = PrivateQuestionnaire})
+    questionnaire13Events
     [reqNonAdminAuthHeader]
     [qtn13NikolaCommentQtnPermDto]
   create_test_200
     "HTTP 200 OK (Non-Commentator, VisibleComment)"
     appContext
     questionnaire13
+    questionnaire13Events
     [reqIsaacAuthTokenHeader]
     [qtn13NikolaCommentQtnPermDto]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleComment, AnyoneWithLinkComment)"
     appContext
     (questionnaire13 {sharing = AnyoneWithLinkCommentQuestionnaire})
+    questionnaire13Events
     []
     [qtn13NikolaCommentQtnPermDto]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleView, Sharing)"
     appContext
     questionnaire7
+    questionnaire7Events
     []
     [qtn7AlbertEditQtnPermDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleEdit)"
     appContext
     questionnaire3
+    questionnaire3Events
     [reqNonAdminAuthHeader]
     []
   create_test_200
     "HTTP 200 OK (Anonymous, Public, Sharing)"
     appContext
     questionnaire10
+    questionnaire10Events
     []
     []
 
-create_test_200 title appContext qtn authHeader permissions =
+create_test_200 title appContext qtn qtnEvents authHeader permissions =
   it title $
     -- GIVEN: Prepare request
     do
@@ -115,6 +124,7 @@ create_test_200 title appContext qtn authHeader permissions =
       runInContextIO TML.runMigration appContext
       runInContextIO (insertPackage germanyPackage) appContext
       runInContextIO (insertQuestionnaire qtn) appContext
+      runInContextIO (insertQuestionnaireEvents qtnEvents) appContext
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders

@@ -49,11 +49,11 @@ test200 appContext =
       ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext questionnaire10.uuid
       ((c4, s4), (c5, s5), (c6, s6)) <- connectTestWebsocketUsers appContext questionnaire7.uuid
       -- WHEN:
-      write_SetReply c1 (toEventChangeDTO sre_rQ1Updated')
+      write_SetReply c1 (toEventChangeDTO (sre_rQ1Updated' questionnaire10Uuid))
       -- THEN:
-      read_SetReply c1 (toEventDTO sre_rQ1Updated' (Just userAlbert))
-      read_SetReply c2 (toEventDTO sre_rQ1Updated' (Just userAlbert))
-      read_SetReply c3 (toEventDTO sre_rQ1Updated' (Just userAlbert))
+      read_SetReply c1 (toEventDTO (sre_rQ1Updated' questionnaire10Uuid) (Just userAlbert))
+      read_SetReply c2 (toEventDTO (sre_rQ1Updated' questionnaire10Uuid) (Just userAlbert))
+      read_SetReply c3 (toEventDTO (sre_rQ1Updated' questionnaire10Uuid) (Just userAlbert))
       nothingWasReceived c4
       nothingWasReceived c5
       nothingWasReceived c6
@@ -88,7 +88,7 @@ create_403_no_perm title appContext qtn authToken errorMessage =
       (c1, s1) <- createConnection appContext (reqUrlT qtn.uuid authToken)
       read_SetUserList c1 0
       -- WHEN: Send setReply
-      write_SetReply c1 (toEventChangeDTO sre_rQ1Updated')
+      write_SetReply c1 (toEventChangeDTO (sre_rQ1Updated' qtn.uuid))
       -- THEN: Read response
       read_Error c1 expError
       -- AND: Close sockets

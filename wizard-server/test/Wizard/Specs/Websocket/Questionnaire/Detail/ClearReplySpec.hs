@@ -41,11 +41,11 @@ test200 appContext =
       ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext questionnaire10.uuid
       ((c4, s4), (c5, s5), (c6, s6)) <- connectTestWebsocketUsers appContext questionnaire7.uuid
       -- WHEN:
-      write_ClearReply c1 (toEventChangeDTO cre_rQ1')
+      write_ClearReply c1 (toEventChangeDTO (cre_rQ1' questionnaire10Uuid))
       -- THEN:
-      read_ClearReply c1 (toEventDTO cre_rQ1' (Just userAlbert))
-      read_ClearReply c2 (toEventDTO cre_rQ1' (Just userAlbert))
-      read_ClearReply c3 (toEventDTO cre_rQ1' (Just userAlbert))
+      read_ClearReply c1 (toEventDTO (cre_rQ1' questionnaire10Uuid) (Just userAlbert))
+      read_ClearReply c2 (toEventDTO (cre_rQ1' questionnaire10Uuid) (Just userAlbert))
+      read_ClearReply c3 (toEventDTO (cre_rQ1' questionnaire10Uuid) (Just userAlbert))
       nothingWasReceived c4
       nothingWasReceived c5
       nothingWasReceived c6

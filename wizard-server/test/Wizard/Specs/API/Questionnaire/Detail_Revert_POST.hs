@@ -42,7 +42,7 @@ reqUrl = "/wizard-api/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/revert
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = questionnaireVersion1RevertDto
+reqDto = questionnaireVersion1RevertDto questionnaire1Uuid
 
 reqBody = encode reqDto
 
@@ -67,7 +67,7 @@ test_200 appContext =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find a result in DB
-      assertExistenceOfQuestionnaireInDB appContext (questionnaire1 {versions = [], events = [sre_rQ1', sre_rQ2']})
+      assertExistenceOfQuestionnaireInDB appContext (questionnaire1 {versions = []}) [sre_rQ1' questionnaire1Uuid, sre_rQ2' questionnaire1Uuid]
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

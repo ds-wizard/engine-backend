@@ -5,7 +5,6 @@ import GHC.Generics
 
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireEvent
 
 data QuestionnaireDetail = QuestionnaireDetail
   { uuid :: U.UUID
@@ -17,7 +16,6 @@ data QuestionnaireDetail = QuestionnaireDetail
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID
   , permissions :: [QuestionnairePermDTO]
-  , events :: [QuestionnaireEvent]
   , questionnaireActionsAvailable :: Int
   , questionnaireImportersAvailable :: Int
   , fileCount :: Int

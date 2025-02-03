@@ -25,7 +25,6 @@ instance FromRow QuestionnaireDetailQuestionnaire where
     packageId <- field
     selectedQuestionTagUuids <- fieldWith fromJSONField
     isTemplate <- field
-    events <- fieldWith fromJSONField
     migrationUuid <- field
     permissions <- loadPermissions uuid
     questionnaireActionsAvailable <- field

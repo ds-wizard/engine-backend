@@ -19,6 +19,9 @@ dropTables = do
         \DROP TABLE IF EXISTS questionnaire_comment_thread CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_perm_group CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_perm_user CASCADE; \
+        \DROP TABLE IF EXISTS questionnaire_event; \
+        \DROP TYPE IF EXISTS event_type; \
+        \DROP TYPE IF EXISTS value_type; \
         \DROP TABLE IF EXISTS questionnaire CASCADE; "
   let action conn = execute_ conn sql
   runDB action
@@ -31,6 +34,7 @@ dropBucket = do
 createTables :: AppContextM ()
 createTables = do
   createQtnTable
+  createQtnEventTable
   createQtnAclUserTable
   createQtnAclGroupTable
   createQtnCommentThreadTable
@@ -52,7 +56,6 @@ createQtnTable = do
         \    document_template_id        varchar, \
         \    format_uuid                 uuid, \
         \    created_by                  uuid, \
-        \    events                      jsonb       NOT NULL, \
         \    versions                    jsonb       NOT NULL, \
         \    created_at                  timestamptz NOT NULL, \
         \    updated_at                  timestamptz NOT NULL, \
@@ -66,6 +69,29 @@ createQtnTable = do
         \    CONSTRAINT questionnaire_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid), \
         \    CONSTRAINT questionnaire_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
         \    CONSTRAINT questionnaire_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createQtnEventTable = do
+  logInfo _CMP_MIGRATION "(Table/QuestionnaireEvent) create table"
+  let sql =
+        "CREATE TYPE event_type AS ENUM ('ClearReplyEvent', 'SetReplyEvent', 'SetLabelsEvent', 'SetPhaseEvent'); \
+        \CREATE TYPE value_type AS ENUM ('IntegrationReply', 'AnswerReply', 'MultiChoiceReply', 'ItemListReply', 'StringReply', 'ItemSelectReply', 'FileReply'); \
+        \CREATE TABLE IF NOT EXISTS questionnaire_event \
+        \( \
+        \    uuid               uuid                     NOT NULL, \
+        \    event_type         event_type               NOT NULL, \
+        \    path               text, \
+        \    created_at         timestamp with time zone NOT NULL, \
+        \    created_by         uuid, \
+        \    questionnaire_uuid uuid                     NOT NULL, \
+        \    tenant_uuid        uuid                     NOT NULL, \
+        \    value_type         value_type, \
+        \    value              text[], \
+        \    value_id           text, \
+        \    CONSTRAINT questionnaire_event_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_event_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) references questionnaire (uuid, tenant_uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

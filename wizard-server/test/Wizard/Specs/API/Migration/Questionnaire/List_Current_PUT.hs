@@ -15,6 +15,7 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration as QTN_MIG
@@ -71,8 +72,11 @@ test_204 appContext =
       -- AND: Prepare database
       runInContextIO TML.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire4) appContext
+      runInContextIO (insertQuestionnaireEvents questionnaire4Events) appContext
       runInContextIO (insertQuestionnaire questionnaire4Upgraded) appContext
+      runInContextIO (insertQuestionnaireEvents questionnaire4UpgradedEvents) appContext
       runInContextIO (insertQuestionnaire differentQuestionnaire) appContext
+      runInContextIO (insertQuestionnaireEvents differentQuestionnaireEvents) appContext
       runInContextIO QTN_MIG.runMigration appContext
       runInContextIO (insertMigratorState nlQtnMigrationState) appContext
       -- WHEN: Call API

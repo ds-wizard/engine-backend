@@ -1,8 +1,12 @@
 module Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents where
 
+import qualified Data.List as L
 import Data.Maybe (fromJust)
 import Data.Time
+import qualified Data.UUID as U
 
+import Shared.Common.Constant.Tenant
+import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
@@ -20,308 +24,350 @@ import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Da
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 
-fEvents :: [QuestionnaireEvent]
-fEvents =
-  [ sre_rQ1'
-  , sre_rQ2'
-  , sre_rQ2_aYes_fuQ1'
-  , sre_rQ3'
-  , sre_rQ4'
-  , sre_rQ4_it1_q5'
-  , sre_rQ4_it1_q5_it1_question7'
-  , sre_rQ4_it1_q5_it1_question8'
-  , sre_rQ4_it1_q6'
-  , sre_rQ4_it2_q5'
-  , sre_rQ4_it2_q6'
-  , sre_rQ9'
-  , sre_rQ10'
-  , sre_rQ11'
-  , sphse_1'
-  , slble_rQ1'
+fEvents :: U.UUID -> [QuestionnaireEvent]
+fEvents qtnUuid =
+  [ sre_rQ1' qtnUuid
+  , sre_rQ2' qtnUuid
+  , sre_rQ2_aYes_fuQ1' qtnUuid
+  , sre_rQ3' qtnUuid
+  , sre_rQ4' qtnUuid
+  , sre_rQ4_it1_q5' qtnUuid
+  , sre_rQ4_it1_q5_it1_question7' qtnUuid
+  , sre_rQ4_it1_q5_it1_question8' qtnUuid
+  , sre_rQ4_it1_q6' qtnUuid
+  , sre_rQ4_it2_q5' qtnUuid
+  , sre_rQ4_it2_q6' qtnUuid
+  , sre_rQ9' qtnUuid
+  , sre_rQ10' qtnUuid
+  , sre_rQ11' qtnUuid
+  , sphse_1' qtnUuid
+  , slble_rQ1' qtnUuid
   ]
 
-fEventsDto :: [QuestionnaireEventDTO]
-fEventsDto = fmap (\event -> toEventDTO event (Just userAlbert)) fEvents
+fEventsDto :: U.UUID -> [QuestionnaireEventDTO]
+fEventsDto qtnUuid = fmap (\event -> toEventDTO event (Just userAlbert)) (fEvents qtnUuid)
 
-fEventsWithUpdated :: [QuestionnaireEvent]
-fEventsWithUpdated = fEvents ++ [sre_rQ1Updated']
+fEventsWithUpdated :: U.UUID -> [QuestionnaireEvent]
+fEventsWithUpdated qtnUuid = fEvents qtnUuid ++ [sre_rQ1Updated' qtnUuid]
 
-fEventsWithDeleted :: [QuestionnaireEvent]
-fEventsWithDeleted = fEvents ++ [cre_rQ1']
+fEventsWithDeleted :: U.UUID -> [QuestionnaireEvent]
+fEventsWithDeleted qtnUuid = fEvents qtnUuid ++ [cre_rQ1' qtnUuid]
 
-fEventsEdited :: [QuestionnaireEvent]
-fEventsEdited = fEvents ++ [slble_rQ2']
+fEventsEdited :: U.UUID -> [QuestionnaireEvent]
+fEventsEdited qtnUuid = fEvents qtnUuid ++ [slble_rQ2' qtnUuid]
 
-sre_rQ1' :: QuestionnaireEvent
-sre_rQ1' = SetReplyEvent' sre_rQ1
+sre_rQ1' :: U.UUID -> QuestionnaireEvent
+sre_rQ1' = SetReplyEvent' . sre_rQ1
 
-sre_rQ1 :: SetReplyEvent
-sre_rQ1 =
+sre_rQ1 :: U.UUID -> SetReplyEvent
+sre_rQ1 qtnUuid =
   SetReplyEvent
-    { uuid = u' "8738f46e-0249-439e-95d9-12bc42247314"
+    { uuid = createEventUuid qtnUuid "12bc42247314"
     , path = fst rQ1
     , value = (snd rQ1).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ1).createdBy
     , createdAt = (snd rQ1).createdAt
     }
 
-sre_rQ1Updated' :: QuestionnaireEvent
-sre_rQ1Updated' = SetReplyEvent' sre_rQ1Updated
+sre_rQ1Updated' :: U.UUID -> QuestionnaireEvent
+sre_rQ1Updated' = SetReplyEvent' . sre_rQ1Updated
 
-sre_rQ1Updated :: SetReplyEvent
-sre_rQ1Updated =
+sre_rQ1Updated :: U.UUID -> SetReplyEvent
+sre_rQ1Updated qtnUuid =
   SetReplyEvent
-    { uuid = u' "88487886-ae2c-4820-9162-ede0aa4d6c5a"
+    { uuid = createEventUuid qtnUuid "ede0aa4d6c5a"
     , path = fst rQ1Updated
     , value = (snd rQ1Updated).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ1Updated).createdBy
     , createdAt = (snd rQ1Updated).createdAt
     }
 
-sre_rQ1Dto' :: QuestionnaireEventDTO
-sre_rQ1Dto' = toEventDTO sre_rQ1' (Just userAlbert)
+sre_rQ1Dto' :: U.UUID -> QuestionnaireEventDTO
+sre_rQ1Dto' qtnUuid = toEventDTO (sre_rQ1' qtnUuid) (Just userAlbert)
 
-sre_rQ2' :: QuestionnaireEvent
-sre_rQ2' = SetReplyEvent' sre_rQ2
+sre_rQ2' :: U.UUID -> QuestionnaireEvent
+sre_rQ2' = SetReplyEvent' . sre_rQ2
 
-sre_rQ2 :: SetReplyEvent
-sre_rQ2 =
+sre_rQ2 :: U.UUID -> SetReplyEvent
+sre_rQ2 qtnUuid =
   SetReplyEvent
-    { uuid = u' "381e1c54-99f4-443a-a702-5dc60233046e"
+    { uuid = createEventUuid qtnUuid "5dc60233046e"
     , path = fst rQ2
     , value = (snd rQ2).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ2).createdBy
     , createdAt = (snd rQ2).createdAt
     }
 
-sre_rQ2_aYes_fuQ1' :: QuestionnaireEvent
-sre_rQ2_aYes_fuQ1' = SetReplyEvent' sre_rQ2_aYes_fuQ1
+sre_rQ2_aYes_fuQ1' :: U.UUID -> QuestionnaireEvent
+sre_rQ2_aYes_fuQ1' = SetReplyEvent' . sre_rQ2_aYes_fuQ1
 
-sre_rQ2_aYes_fuQ1 :: SetReplyEvent
-sre_rQ2_aYes_fuQ1 =
+sre_rQ2_aYes_fuQ1 :: U.UUID -> SetReplyEvent
+sre_rQ2_aYes_fuQ1 qtnUuid =
   SetReplyEvent
-    { uuid = u' "80cf2212-8064-4268-8478-c4db3ec5fadd"
+    { uuid = createEventUuid qtnUuid "c4db3ec5fadd"
     , path = fst rQ2_aYes_fuQ1
     , value = (snd rQ2_aYes_fuQ1).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ2_aYes_fuQ1).createdBy
     , createdAt = (snd rQ2_aYes_fuQ1).createdAt
     }
 
-sre_rQ3' :: QuestionnaireEvent
-sre_rQ3' = SetReplyEvent' sre_rQ3
+sre_rQ3' :: U.UUID -> QuestionnaireEvent
+sre_rQ3' = SetReplyEvent' . sre_rQ3
 
-sre_rQ3 :: SetReplyEvent
-sre_rQ3 =
+sre_rQ3 :: U.UUID -> SetReplyEvent
+sre_rQ3 qtnUuid =
   SetReplyEvent
-    { uuid = u' "71b938b8-3a48-4335-a851-cf42760517d7"
+    { uuid = createEventUuid qtnUuid "cf42760517d7"
     , path = fst rQ3
     , value = (snd rQ3).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ3).createdBy
     , createdAt = (snd rQ3).createdAt
     }
 
-sre_rQ4' :: QuestionnaireEvent
-sre_rQ4' = SetReplyEvent' sre_rQ4
+sre_rQ4' :: U.UUID -> QuestionnaireEvent
+sre_rQ4' = SetReplyEvent' . sre_rQ4
 
-sre_rQ4 :: SetReplyEvent
-sre_rQ4 =
+sre_rQ4 :: U.UUID -> SetReplyEvent
+sre_rQ4 qtnUuid =
   SetReplyEvent
-    { uuid = u' "aa342fec-7e05-450b-b7ec-52d6816a471c"
+    { uuid = createEventUuid qtnUuid "52d6816a471c"
     , path = fst rQ4
     , value = (snd rQ4).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ4).createdBy
     , createdAt = (snd rQ4).createdAt
     }
 
-sre_rQ4_it1_q5' :: QuestionnaireEvent
-sre_rQ4_it1_q5' = SetReplyEvent' sre_rQ4_it1_q5
+sre_rQ4_it1_q5' :: U.UUID -> QuestionnaireEvent
+sre_rQ4_it1_q5' = SetReplyEvent' . sre_rQ4_it1_q5
 
-sre_rQ4_it1_q5 :: SetReplyEvent
-sre_rQ4_it1_q5 =
+sre_rQ4_it1_q5 :: U.UUID -> SetReplyEvent
+sre_rQ4_it1_q5 qtnUuid =
   SetReplyEvent
-    { uuid = u' "06c84eb0-966f-49e6-806e-51954a9feb0b"
+    { uuid = createEventUuid qtnUuid "51954a9feb0b"
     , path = fst rQ4_it1_q5
     , value = (snd rQ4_it1_q5).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ4_it1_q5).createdBy
     , createdAt = (snd rQ4_it1_q5).createdAt
     }
 
-sre_rQ4_it1_q5_it1_question7' :: QuestionnaireEvent
-sre_rQ4_it1_q5_it1_question7' = SetReplyEvent' sre_rQ4_it1_q5_it1_question7
+sre_rQ4_it1_q5_it1_question7' :: U.UUID -> QuestionnaireEvent
+sre_rQ4_it1_q5_it1_question7' = SetReplyEvent' . sre_rQ4_it1_q5_it1_question7
 
-sre_rQ4_it1_q5_it1_question7 :: SetReplyEvent
-sre_rQ4_it1_q5_it1_question7 =
+sre_rQ4_it1_q5_it1_question7 :: U.UUID -> SetReplyEvent
+sre_rQ4_it1_q5_it1_question7 qtnUuid =
   SetReplyEvent
-    { uuid = u' "3b352af1-4cee-403a-86e2-7927b71393bc"
+    { uuid = createEventUuid qtnUuid "7927b71393bc"
     , path = fst rQ4_it1_q5_it1_question7
     , value = (snd rQ4_it1_q5_it1_question7).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ4_it1_q5_it1_question7).createdBy
     , createdAt = (snd rQ4_it1_q5_it1_question7).createdAt
     }
 
-sre_rQ4_it1_q5_it1_question8' :: QuestionnaireEvent
-sre_rQ4_it1_q5_it1_question8' = SetReplyEvent' sre_rQ4_it1_q5_it1_question8
+sre_rQ4_it1_q5_it1_question8' :: U.UUID -> QuestionnaireEvent
+sre_rQ4_it1_q5_it1_question8' = SetReplyEvent' . sre_rQ4_it1_q5_it1_question8
 
-sre_rQ4_it1_q5_it1_question8 :: SetReplyEvent
-sre_rQ4_it1_q5_it1_question8 =
+sre_rQ4_it1_q5_it1_question8 :: U.UUID -> SetReplyEvent
+sre_rQ4_it1_q5_it1_question8 qtnUuid =
   SetReplyEvent
-    { uuid = u' "a5e38b38-3d50-4fd4-af8e-a8b3312ce8be"
+    { uuid = createEventUuid qtnUuid "a8b3312ce8be"
     , path = fst rQ4_it1_q5_it1_question8
     , value = (snd rQ4_it1_q5_it1_question8).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ4_it1_q5_it1_question8).createdBy
     , createdAt = (snd rQ4_it1_q5_it1_question8).createdAt
     }
 
-sre_rQ4_it1_q6' :: QuestionnaireEvent
-sre_rQ4_it1_q6' = SetReplyEvent' sre_rQ4_it1_q6
+sre_rQ4_it1_q6' :: U.UUID -> QuestionnaireEvent
+sre_rQ4_it1_q6' = SetReplyEvent' . sre_rQ4_it1_q6
 
-sre_rQ4_it1_q6 :: SetReplyEvent
-sre_rQ4_it1_q6 =
+sre_rQ4_it1_q6 :: U.UUID -> SetReplyEvent
+sre_rQ4_it1_q6 qtnUuid =
   SetReplyEvent
-    { uuid = u' "5fbe670c-5ea9-420d-a495-d270a461c2bb"
+    { uuid = createEventUuid qtnUuid "d270a461c2bb"
     , path = fst rQ4_it1_q6
     , value = (snd rQ4_it1_q6).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ4_it1_q6).createdBy
     , createdAt = (snd rQ4_it1_q6).createdAt
     }
 
-sre_rQ4_it2_q5' :: QuestionnaireEvent
-sre_rQ4_it2_q5' = SetReplyEvent' sre_rQ4_it2_q5
+sre_rQ4_it2_q5' :: U.UUID -> QuestionnaireEvent
+sre_rQ4_it2_q5' = SetReplyEvent' . sre_rQ4_it2_q5
 
-sre_rQ4_it2_q5 :: SetReplyEvent
-sre_rQ4_it2_q5 =
+sre_rQ4_it2_q5 :: U.UUID -> SetReplyEvent
+sre_rQ4_it2_q5 qtnUuid =
   SetReplyEvent
-    { uuid = u' "cc09e14f-305c-4d26-98eb-e30b5086cea2"
+    { uuid = createEventUuid qtnUuid "e30b5086cea2"
     , path = fst rQ4_it2_q5
     , value = (snd rQ4_it2_q5).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ4_it2_q5).createdBy
     , createdAt = (snd rQ4_it2_q5).createdAt
     }
 
-sre_rQ4_it2_q6' :: QuestionnaireEvent
-sre_rQ4_it2_q6' = SetReplyEvent' sre_rQ4_it2_q6
+sre_rQ4_it2_q6' :: U.UUID -> QuestionnaireEvent
+sre_rQ4_it2_q6' = SetReplyEvent' . sre_rQ4_it2_q6
 
-sre_rQ4_it2_q6 :: SetReplyEvent
-sre_rQ4_it2_q6 =
+sre_rQ4_it2_q6 :: U.UUID -> SetReplyEvent
+sre_rQ4_it2_q6 qtnUuid =
   SetReplyEvent
-    { uuid = u' "2682fa2e-bd54-4cb3-a23b-8a83232defb2"
+    { uuid = createEventUuid qtnUuid "8a83232defb2"
     , path = fst rQ4_it2_q6
     , value = (snd rQ4_it2_q6).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ4_it2_q6).createdBy
     , createdAt = (snd rQ4_it2_q6).createdAt
     }
 
-sre_rQ9' :: QuestionnaireEvent
-sre_rQ9' = SetReplyEvent' sre_rQ9
+sre_rQ9' :: U.UUID -> QuestionnaireEvent
+sre_rQ9' = SetReplyEvent' . sre_rQ9
 
-sre_rQ9 :: SetReplyEvent
-sre_rQ9 =
+sre_rQ9 :: U.UUID -> SetReplyEvent
+sre_rQ9 qtnUuid =
   SetReplyEvent
-    { uuid = u' "ce19fd6a-669c-4f62-a868-064a51dfe89a"
+    { uuid = createEventUuid qtnUuid "064a51dfe89a"
     , path = fst rQ9
     , value = (snd rQ9).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ9).createdBy
     , createdAt = (snd rQ9).createdAt
     }
 
-sre_rQ10' :: QuestionnaireEvent
-sre_rQ10' = SetReplyEvent' sre_rQ10
+sre_rQ10' :: U.UUID -> QuestionnaireEvent
+sre_rQ10' = SetReplyEvent' . sre_rQ10
 
-sre_rQ10 :: SetReplyEvent
-sre_rQ10 =
+sre_rQ10 :: U.UUID -> SetReplyEvent
+sre_rQ10 qtnUuid =
   SetReplyEvent
-    { uuid = u' "9e75ab96-3721-4eb5-adcb-40df71a81b92"
+    { uuid = createEventUuid qtnUuid "40df71a81b92"
     , path = fst rQ10
     , value = (snd rQ10).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ10).createdBy
     , createdAt = (snd rQ10).createdAt
     }
 
-sre_rQ11' :: QuestionnaireEvent
-sre_rQ11' = SetReplyEvent' sre_rQ11
+sre_rQ11' :: U.UUID -> QuestionnaireEvent
+sre_rQ11' = SetReplyEvent' . sre_rQ11
 
-sre_rQ11 :: SetReplyEvent
-sre_rQ11 =
+sre_rQ11 :: U.UUID -> SetReplyEvent
+sre_rQ11 qtnUuid =
   SetReplyEvent
-    { uuid = u' "3658de32-5033-4fa4-a89b-c4f4481d5670"
+    { uuid = createEventUuid qtnUuid "c4f4481d5670"
     , path = fst rQ11
     , value = (snd rQ11).value
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ11).createdBy
     , createdAt = (snd rQ11).createdAt
     }
 
-cre_rQ1' :: QuestionnaireEvent
-cre_rQ1' = ClearReplyEvent' cre_rQ1
+cre_rQ1' :: U.UUID -> QuestionnaireEvent
+cre_rQ1' = ClearReplyEvent' . cre_rQ1
 
-cre_rQ1 :: ClearReplyEvent
-cre_rQ1 =
+cre_rQ1 :: U.UUID -> ClearReplyEvent
+cre_rQ1 qtnUuid =
   ClearReplyEvent
-    { uuid = u' "1c9c9b1b-ba64-438e-a415-c513e14de55e"
+    { uuid = createEventUuid qtnUuid "c513e14de55e"
     , path = fst rQ1
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 17
     }
 
-sphse_1' :: QuestionnaireEvent
-sphse_1' = SetPhaseEvent' sphse_1
+sphse_1' :: U.UUID -> QuestionnaireEvent
+sphse_1' = SetPhaseEvent' . sphse_1
 
-sphse_1 :: SetPhaseEvent
-sphse_1 =
+sphse_1 :: U.UUID -> SetPhaseEvent
+sphse_1 qtnUuid =
   SetPhaseEvent
-    { uuid = u' "f5288ec0-16b4-4a22-8c4f-ee411f0005d3"
+    { uuid = createEventUuid qtnUuid "ee411f0005d3"
     , phaseUuid = Just $ phase1.uuid
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 18
     }
 
-sphse_2' :: QuestionnaireEvent
-sphse_2' = SetPhaseEvent' sphse_2
+sphse_2' :: U.UUID -> QuestionnaireEvent
+sphse_2' = SetPhaseEvent' . sphse_2
 
-sphse_2 :: SetPhaseEvent
-sphse_2 =
+sphse_2 :: U.UUID -> SetPhaseEvent
+sphse_2 qtnUuid =
   SetPhaseEvent
-    { uuid = u' "3bbd961e-eace-4b74-967e-43eae0986894"
+    { uuid = createEventUuid qtnUuid "43eae0986894"
     , phaseUuid = Just $ phase2.uuid
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 19
     }
 
-sphse_3' :: QuestionnaireEvent
-sphse_3' = SetPhaseEvent' sphse_3
+sphse_3' :: U.UUID -> QuestionnaireEvent
+sphse_3' = SetPhaseEvent' . sphse_3
 
-sphse_3 :: SetPhaseEvent
-sphse_3 =
+sphse_3 :: U.UUID -> SetPhaseEvent
+sphse_3 qtnUuid =
   SetPhaseEvent
-    { uuid = u' "c6c68cce-015d-4c6f-adba-dacc8f77de05"
+    { uuid = createEventUuid qtnUuid "dacc8f77de05"
     , phaseUuid = Just $ phase3.uuid
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 20
     }
 
-slble_rQ1' :: QuestionnaireEvent
-slble_rQ1' = SetLabelsEvent' slble_rQ1
+slble_rQ1' :: U.UUID -> QuestionnaireEvent
+slble_rQ1' = SetLabelsEvent' . slble_rQ1
 
-slble_rQ1 :: SetLabelsEvent
-slble_rQ1 =
+slble_rQ1 :: U.UUID -> SetLabelsEvent
+slble_rQ1 qtnUuid =
   SetLabelsEvent
-    { uuid = u' "530c93da-0af5-42eb-970e-dd016270ce7e"
+    { uuid = createEventUuid qtnUuid "dd016270ce7e"
     , path = fst rQ1
     , value = [fLabel1]
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 21
     }
 
-slble_rQ2' :: QuestionnaireEvent
-slble_rQ2' = SetLabelsEvent' slble_rQ2
+slble_rQ2' :: U.UUID -> QuestionnaireEvent
+slble_rQ2' = SetLabelsEvent' . slble_rQ2
 
-slble_rQ2 :: SetLabelsEvent
-slble_rQ2 =
+slble_rQ2 :: U.UUID -> SetLabelsEvent
+slble_rQ2 qtnUuid =
   SetLabelsEvent
-    { uuid = u' "91a574db-1b8b-444d-a8e6-e2acc52bf8db"
+    { uuid = createEventUuid qtnUuid "e2acc52bf8db"
     , path = fst rQ2
     , value = [fLabel1]
+    , questionnaireUuid = qtnUuid
+    , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 22
     }
 
 rte_rQ1_t1' :: QuestionnaireEventDTO
@@ -549,3 +595,8 @@ dcche_rQ1_t1_1 =
     , commentUuid = dce_rQ1_t1_1.commentUuid
     , private = False
     }
+
+createEventUuid :: U.UUID -> String -> U.UUID
+createEventUuid questionnaireUuid eventSuffix =
+  let parts = splitOn "-" . U.toString $ questionnaireUuid
+   in u' . L.intercalate "-" $ [head parts, parts !! 1, parts !! 2, parts !! 3, eventSuffix]

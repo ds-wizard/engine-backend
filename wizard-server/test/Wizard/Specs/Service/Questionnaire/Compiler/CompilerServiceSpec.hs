@@ -18,7 +18,7 @@ questionnaireCompilerServiceSpec appContext =
       it "SetReplyEvent" $
         -- GIVEN:
         do
-          let event = sre_rQ1Updated'
+          let event = sre_rQ1Updated' questionnaire1Uuid
           -- WHEN:
           (Right (_, updatedQtn)) <- runInContext (applyEvent (return ([], questionnaire1Ctn)) event) appContext
           -- THEN:
@@ -26,7 +26,7 @@ questionnaireCompilerServiceSpec appContext =
       it "ClearReplyEvent" $
         -- GIVEN:
         do
-          let event = cre_rQ1'
+          let event = cre_rQ1' questionnaire1Uuid
           -- WHEN:
           (Right (_, updatedQtn)) <- runInContext (applyEvent (return ([], questionnaire1Ctn)) event) appContext
           -- THEN:
@@ -34,15 +34,15 @@ questionnaireCompilerServiceSpec appContext =
       it "SetPhaseEvent" $
         -- GIVEN:
         do
-          let event = sphse_2'
+          let event = sphse_2' questionnaire1Uuid
           -- WHEN:
           (Right (_, updatedQtn)) <- runInContext (applyEvent (return ([], questionnaire1Ctn)) event) appContext
           -- THEN:
-          updatedQtn.phaseUuid `shouldBe` sphse_2.phaseUuid
+          updatedQtn.phaseUuid `shouldBe` (sphse_2 questionnaire1Uuid).phaseUuid
       it "SetLabelsEvent" $
         -- GIVEN:
         do
-          let event = slble_rQ2'
+          let event = slble_rQ2' questionnaire1Uuid
           -- WHEN:
           (Right (_, updatedQtn)) <- runInContext (applyEvent (return ([], questionnaire1Ctn)) event) appContext
           -- THEN:

@@ -2,9 +2,10 @@ module Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator (
   sanitizeQuestionnaireEvents,
 ) where
 
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import qualified Data.Map.Strict as M
 import Data.Time
+import qualified Data.UUID as U
 
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.User.UserDTO
@@ -18,15 +19,14 @@ import qualified Wizard.Service.Migration.Questionnaire.Migrator.MoveSanitizator
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
-sanitizeQuestionnaireEvents
-  :: KnowledgeModel -> KnowledgeModel -> [QuestionnaireEvent] -> AppContextM [QuestionnaireEvent]
-sanitizeQuestionnaireEvents oldKm newKm events = do
+sanitizeQuestionnaireEvents :: U.UUID -> KnowledgeModel -> KnowledgeModel -> [QuestionnaireEvent] -> AppContextM [QuestionnaireEvent]
+sanitizeQuestionnaireEvents qtnUuid oldKm newKm events = do
   oldQtnContent <- compileQuestionnairePreview events
   let oldReplies = oldQtnContent.replies
   now <- liftIO getCurrentTime
   let sanitizedReplies = M.fromList . sanitizeReplies now oldKm newKm . M.toList $ oldReplies
-  clearReplyEvents <- generateClearReplyEvents oldReplies sanitizedReplies
-  setReplyEvents <- generateSetReplyEvents oldReplies sanitizedReplies
+  clearReplyEvents <- generateClearReplyEvents qtnUuid oldReplies sanitizedReplies
+  setReplyEvents <- generateSetReplyEvents qtnUuid oldReplies sanitizedReplies
   return $ events ++ clearReplyEvents ++ setReplyEvents
 
 -- --------------------------------
@@ -35,8 +35,8 @@ sanitizeQuestionnaireEvents oldKm newKm events = do
 sanitizeReplies :: UTCTime -> KnowledgeModel -> KnowledgeModel -> [ReplyTuple] -> [ReplyTuple]
 sanitizeReplies now oldKm newKm = MS.sanitizeReplies now oldKm newKm . CTS.sanitizeReplies newKm
 
-generateClearReplyEvents :: M.Map String Reply -> M.Map String Reply -> AppContextM [QuestionnaireEvent]
-generateClearReplyEvents oldReplies sanitizedReplies = traverse generateEvent repliesToBeDeleted
+generateClearReplyEvents :: U.UUID -> M.Map String Reply -> M.Map String Reply -> AppContextM [QuestionnaireEvent]
+generateClearReplyEvents qtnUuid oldReplies sanitizedReplies = traverse generateEvent repliesToBeDeleted
   where
     repliesToBeDeleted :: [ReplyTuple]
     repliesToBeDeleted = M.toList . M.filterWithKey (\k _ -> k `M.notMember` sanitizedReplies) $ oldReplies
@@ -45,10 +45,11 @@ generateClearReplyEvents oldReplies sanitizedReplies = traverse generateEvent re
       eUuid <- liftIO generateUuid
       now <- liftIO getCurrentTime
       user <- getCurrentUser
-      return . ClearReplyEvent' $ ClearReplyEvent eUuid k (Just user.uuid) now
+      tenantUuid <- asks currentTenantUuid
+      return . ClearReplyEvent' $ ClearReplyEvent eUuid k qtnUuid tenantUuid (Just user.uuid) now
 
-generateSetReplyEvents :: M.Map String Reply -> M.Map String Reply -> AppContextM [QuestionnaireEvent]
-generateSetReplyEvents oldReplies sanitizedReplies = foldl generateEvent (return []) (M.toList sanitizedReplies)
+generateSetReplyEvents :: U.UUID -> M.Map String Reply -> M.Map String Reply -> AppContextM [QuestionnaireEvent]
+generateSetReplyEvents qtnUuid oldReplies sanitizedReplies = foldl generateEvent (return []) (M.toList sanitizedReplies)
   where
     generateEvent :: AppContextM [QuestionnaireEvent] -> ReplyTuple -> AppContextM [QuestionnaireEvent]
     generateEvent accM (keyFromSanitizedReply, valueFromSanitizedReply) = do
@@ -56,6 +57,7 @@ generateSetReplyEvents oldReplies sanitizedReplies = foldl generateEvent (return
       eUuid <- liftIO generateUuid
       now <- liftIO getCurrentTime
       user <- getCurrentUser
+      tenantUuid <- asks currentTenantUuid
       return $
         case M.lookup keyFromSanitizedReply oldReplies of
           Just valueFromOldReply ->
@@ -68,11 +70,13 @@ generateSetReplyEvents oldReplies sanitizedReplies = foldl generateEvent (return
                           eUuid
                           keyFromSanitizedReply
                           valueFromSanitizedReply.value
+                          qtnUuid
+                          tenantUuid
                           (Just user.uuid)
                           now
                      ]
           Nothing ->
             acc
               ++ [ SetReplyEvent' $
-                    SetReplyEvent eUuid keyFromSanitizedReply valueFromSanitizedReply.value (Just user.uuid) now
+                    SetReplyEvent eUuid keyFromSanitizedReply valueFromSanitizedReply.value qtnUuid tenantUuid (Just user.uuid) now
                  ]

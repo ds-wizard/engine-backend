@@ -43,7 +43,7 @@ reqUrl = "/wizard-api/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/revert
 
 reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
-reqDto = questionnaireVersion1RevertDto
+reqDto = questionnaireVersion1RevertDto questionnaire1Uuid
 
 reqBody = encode reqDto
 
@@ -63,6 +63,7 @@ create_test_200 title appContext showComments authHeader =
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
       let expQtn = questionnaire1 {sharing = AnyoneWithLinkViewQuestionnaire}
+      let expQtnEvents = questionnaire1Events
       let expDto =
             if showComments
               then questionnaire1CtnRevertedDto
@@ -79,7 +80,7 @@ create_test_200 title appContext showComments authHeader =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find a result in DB
-      assertExistenceOfQuestionnaireInDB appContext expQtn
+      assertExistenceOfQuestionnaireInDB appContext expQtn expQtnEvents
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -19,6 +19,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
@@ -67,6 +68,7 @@ test_200 appContext = do
     "HTTP 200 OK (Owner, Private)"
     appContext
     questionnaire1
+    questionnaire1Events
     questionnaire1Ctn
     True
     [reqAuthHeader]
@@ -75,6 +77,7 @@ test_200 appContext = do
     "HTTP 200 OK (Non-Owner, VisibleView)"
     appContext
     questionnaire2
+    questionnaire2Events
     questionnaire2Ctn
     False
     [reqNonAdminAuthHeader]
@@ -83,6 +86,7 @@ test_200 appContext = do
     "HTTP 200 OK (Commentator)"
     appContext
     (questionnaire13 {visibility = PrivateQuestionnaire})
+    questionnaire13Events
     questionnaire13Ctn
     True
     [reqNonAdminAuthHeader]
@@ -91,6 +95,7 @@ test_200 appContext = do
     "HTTP 200 OK (Non-Commentator, VisibleComment)"
     appContext
     questionnaire13
+    questionnaire13Events
     questionnaire13Ctn
     True
     [reqIsaacAuthTokenHeader]
@@ -99,6 +104,7 @@ test_200 appContext = do
     "HTTP 200 OK (Anonymous, VisibleComment, AnyoneWithLinkComment)"
     appContext
     (questionnaire13 {sharing = AnyoneWithLinkCommentQuestionnaire})
+    questionnaire13Events
     questionnaire13Ctn
     True
     []
@@ -107,6 +113,7 @@ test_200 appContext = do
     "HTTP 200 OK (Anonymous, VisibleView, Sharing)"
     appContext
     questionnaire7
+    questionnaire7Events
     questionnaire7Ctn
     False
     []
@@ -115,13 +122,14 @@ test_200 appContext = do
     "HTTP 200 OK (Non-Owner, VisibleEdit)"
     appContext
     questionnaire3
+    questionnaire3Events
     questionnaire3Ctn
     True
     [reqNonAdminAuthHeader]
     []
-  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 questionnaire10Ctn True [] []
+  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 questionnaire10Events questionnaire10Ctn True [] []
 
-create_test_200 title appContext qtn qtnCtn showComments authHeader permissions =
+create_test_200 title appContext qtn qtnEvents qtnCtn showComments authHeader permissions =
   it title $
     -- GIVEN: Prepare request
     do
@@ -135,6 +143,7 @@ create_test_200 title appContext qtn qtnCtn showComments authHeader permissions 
       comment1 <- liftIO . create_cmtQ1_t1_1 $ thread1.uuid
       comment2 <- liftIO . create_cmtQ1_t1_2 $ thread1.uuid
       runInContextIO (insertQuestionnaire qtn) appContext
+      runInContextIO (insertQuestionnaireEvents qtnEvents) appContext
       runInContextIO (insertQuestionnaireCommentThread thread1) appContext
       runInContextIO (insertQuestionnaireComment comment1) appContext
       runInContextIO (insertQuestionnaireComment comment2) appContext

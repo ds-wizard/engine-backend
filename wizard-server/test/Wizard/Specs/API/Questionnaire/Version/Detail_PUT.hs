@@ -43,7 +43,7 @@ reqUrl = "/wizard-api/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/versio
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = questionnaireVersion1EditedChangeDto
+reqDto = questionnaireVersion1EditedChangeDto questionnaire1Uuid
 
 reqBody = encode reqDto
 
@@ -56,7 +56,7 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-      let expDto = questionnaireVersion1EditedDto
+      let expDto = questionnaireVersion1EditedDto questionnaire1Uuid
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML.runMigration appContext
@@ -69,7 +69,7 @@ test_200 appContext =
       assertResHeaders headers expHeaders
       compareQuestionnaireVersionCreateDtos resBody expDto
       -- AND: Find a result in DB
-      assertExistenceOfQuestionnaireInDB appContext (questionnaire1 {versions = [questionnaireVersion1Edited]})
+      assertExistenceOfQuestionnaireInDB appContext (questionnaire1 {versions = [questionnaireVersion1Edited questionnaire1Uuid]}) questionnaire1Events
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

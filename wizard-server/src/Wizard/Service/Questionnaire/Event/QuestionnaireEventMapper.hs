@@ -226,52 +226,60 @@ toSetLabelsEventChangeDTO event =
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------------------------
-fromEventChangeDTO :: QuestionnaireEventChangeDTO -> Maybe U.UUID -> UTCTime -> QuestionnaireEvent
-fromEventChangeDTO event createdBy now =
+fromEventChangeDTO :: QuestionnaireEventChangeDTO -> U.UUID -> U.UUID -> Maybe U.UUID -> UTCTime -> QuestionnaireEvent
+fromEventChangeDTO event questionnaireUuid tenantUuid createdBy now =
   case event of
     SetReplyEventChangeDTO' event@SetReplyEventChangeDTO {..} ->
-      SetReplyEvent' $ fromSetReplyEventChangeDTO event createdBy now
+      SetReplyEvent' $ fromSetReplyEventChangeDTO event questionnaireUuid tenantUuid createdBy now
     ClearReplyEventChangeDTO' event@ClearReplyEventChangeDTO {..} ->
-      ClearReplyEvent' $ fromClearReplyEventChangeDTO event createdBy now
+      ClearReplyEvent' $ fromClearReplyEventChangeDTO event questionnaireUuid tenantUuid createdBy now
     SetPhaseEventChangeDTO' event@SetPhaseEventChangeDTO {..} ->
-      SetPhaseEvent' $ fromSetPhaseEventChangeDTO event createdBy now
+      SetPhaseEvent' $ fromSetPhaseEventChangeDTO event questionnaireUuid tenantUuid createdBy now
     SetLabelsEventChangeDTO' event@SetLabelsEventChangeDTO {..} ->
-      SetLabelsEvent' $ fromSetLabelsEventChangeDTO event createdBy now
+      SetLabelsEvent' $ fromSetLabelsEventChangeDTO event questionnaireUuid tenantUuid createdBy now
 
-fromSetReplyEventChangeDTO :: SetReplyEventChangeDTO -> Maybe U.UUID -> UTCTime -> SetReplyEvent
-fromSetReplyEventChangeDTO event createdBy now =
+fromSetReplyEventChangeDTO :: SetReplyEventChangeDTO -> U.UUID -> U.UUID -> Maybe U.UUID -> UTCTime -> SetReplyEvent
+fromSetReplyEventChangeDTO event questionnaireUuid tenantUuid createdBy now =
   SetReplyEvent
     { uuid = event.uuid
     , path = event.path
     , value = event.value
+    , questionnaireUuid = questionnaireUuid
+    , tenantUuid = tenantUuid
     , createdBy = createdBy
     , createdAt = now
     }
 
-fromClearReplyEventChangeDTO :: ClearReplyEventChangeDTO -> Maybe U.UUID -> UTCTime -> ClearReplyEvent
-fromClearReplyEventChangeDTO event createdBy now =
+fromClearReplyEventChangeDTO :: ClearReplyEventChangeDTO -> U.UUID -> U.UUID -> Maybe U.UUID -> UTCTime -> ClearReplyEvent
+fromClearReplyEventChangeDTO event questionnaireUuid tenantUuid createdBy now =
   ClearReplyEvent
     { uuid = event.uuid
     , path = event.path
+    , questionnaireUuid = questionnaireUuid
+    , tenantUuid = tenantUuid
     , createdBy = createdBy
     , createdAt = now
     }
 
-fromSetPhaseEventChangeDTO :: SetPhaseEventChangeDTO -> Maybe U.UUID -> UTCTime -> SetPhaseEvent
-fromSetPhaseEventChangeDTO event createdBy now =
+fromSetPhaseEventChangeDTO :: SetPhaseEventChangeDTO -> U.UUID -> U.UUID -> Maybe U.UUID -> UTCTime -> SetPhaseEvent
+fromSetPhaseEventChangeDTO event questionnaireUuid tenantUuid createdBy now =
   SetPhaseEvent
     { uuid = event.uuid
     , phaseUuid = event.phaseUuid
+    , questionnaireUuid = questionnaireUuid
+    , tenantUuid = tenantUuid
     , createdBy = createdBy
     , createdAt = now
     }
 
-fromSetLabelsEventChangeDTO :: SetLabelsEventChangeDTO -> Maybe U.UUID -> UTCTime -> SetLabelsEvent
-fromSetLabelsEventChangeDTO event createdBy now =
+fromSetLabelsEventChangeDTO :: SetLabelsEventChangeDTO -> U.UUID -> U.UUID -> Maybe U.UUID -> UTCTime -> SetLabelsEvent
+fromSetLabelsEventChangeDTO event questionnaireUuid tenantUuid createdBy now =
   SetLabelsEvent
     { uuid = event.uuid
     , path = event.path
     , value = event.value
+    , questionnaireUuid = questionnaireUuid
+    , tenantUuid = tenantUuid
     , createdBy = createdBy
     , createdAt = now
     }

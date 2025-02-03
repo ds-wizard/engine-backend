@@ -445,6 +445,11 @@ generateQuestionMarks fields =
 generateQuestionMarks' :: ToRow entity => entity -> String
 generateQuestionMarks' = generateQuestionMarks . fmap show . toRow
 
+generateQuestionMarksForEntities :: ToRow entity => [entity] -> String
+generateQuestionMarksForEntities entities =
+  let oneRow entity = "(" ++ generateQuestionMarks' entity ++ ")"
+   in L.intercalate "," . fmap oneRow $ entities
+
 regex :: String -> String
 regex query = ".*" ++ query ++ ".*"
 

@@ -24,6 +24,7 @@ import Wizard.Cache.QuestionnaireWebsocketCache
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.ServerConfig
@@ -205,11 +206,12 @@ setReply qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
   now <- liftIO getCurrentTime
+  tenantUuid <- asks currentTenantUuid
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
-  appendQuestionnaireEventByUuid
+  insertQuestionnaireEventWithTimestampUpdate
     qtnUuid
-    [fromEventChangeDTO (SetReplyEventChangeDTO' reqDto) mCreatedByUuid now]
+    (fromEventChangeDTO (SetReplyEventChangeDTO' reqDto) qtnUuid tenantUuid mCreatedByUuid now)
   let resDto = toSetReplyEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   broadcast (U.toString qtnUuid) records (toSetReplyMessage resDto) disconnectUser
@@ -219,11 +221,12 @@ clearReply qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
   now <- liftIO getCurrentTime
+  tenantUuid <- asks currentTenantUuid
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
-  appendQuestionnaireEventByUuid
+  insertQuestionnaireEventWithTimestampUpdate
     qtnUuid
-    [fromEventChangeDTO (ClearReplyEventChangeDTO' reqDto) mCreatedByUuid now]
+    (fromEventChangeDTO (ClearReplyEventChangeDTO' reqDto) qtnUuid tenantUuid mCreatedByUuid now)
   let resDto = toClearReplyEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   broadcast (U.toString qtnUuid) records (toClearReplyMessage resDto) disconnectUser
@@ -233,11 +236,12 @@ setPhase qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
   now <- liftIO getCurrentTime
+  tenantUuid <- asks currentTenantUuid
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
-  appendQuestionnaireEventByUuid
+  insertQuestionnaireEventWithTimestampUpdate
     qtnUuid
-    [fromEventChangeDTO (SetPhaseEventChangeDTO' reqDto) mCreatedByUuid now]
+    (fromEventChangeDTO (SetPhaseEventChangeDTO' reqDto) qtnUuid tenantUuid mCreatedByUuid now)
   let resDto = toSetPhaseEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   broadcast (U.toString qtnUuid) records (toSetPhaseMessage resDto) disconnectUser
@@ -247,9 +251,10 @@ setLabel qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
   now <- liftIO getCurrentTime
+  tenantUuid <- asks currentTenantUuid
   let mCreatedBy = getMaybeCreatedBy myself
   let mCreatedByUuid = getMaybeCreatedByUuid myself
-  appendQuestionnaireEventByUuid qtnUuid [fromEventChangeDTO (SetLabelsEventChangeDTO' reqDto) mCreatedByUuid now]
+  insertQuestionnaireEventWithTimestampUpdate qtnUuid (fromEventChangeDTO (SetLabelsEventChangeDTO' reqDto) qtnUuid tenantUuid mCreatedByUuid now)
   let resDto = toSetLabelsEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   broadcast (U.toString qtnUuid) records (toSetLabelMessage resDto) disconnectUser

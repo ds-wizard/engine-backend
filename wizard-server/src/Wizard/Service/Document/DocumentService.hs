@@ -28,6 +28,7 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Branch.BranchData
@@ -86,14 +87,15 @@ createDocument reqDto =
     dUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     tenantUuid <- asks currentTenantUuid
-    let qtnEvents =
+    qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtn.uuid
+    let filteredQtnEvents =
           case reqDto.questionnaireEventUuid of
-            Just eventUuid -> takeWhileInclusive (\e -> getUuid e /= eventUuid) qtn.events
-            Nothing -> qtn.events
-    qtnCtn <- compileQuestionnairePreview qtnEvents
+            Just eventUuid -> takeWhileInclusive (\e -> getUuid e /= eventUuid) qtnEvents
+            Nothing -> qtnEvents
+    qtnCtn <- compileQuestionnairePreview filteredQtnEvents
     tenantConfig <- getCurrentTenantConfig
     let docContextHash = computeHash [] qtn qtnCtn.phaseUuid qtnCtn.replies tenantConfig mCurrentUser
-    let doc = fromCreateDTO reqDto dUuid docContextHash qtn.events mCurrentUser tenantUuid now
+    let doc = fromCreateDTO reqDto dUuid docContextHash filteredQtnEvents mCurrentUser tenantUuid now
     insertDocument doc
     pkg <- getPackageById qtn.packageId
     publishToPersistentCommandQueue doc pkg [] qtn Nothing
@@ -128,7 +130,8 @@ createDocumentPreviewForQtn qtnUuid =
       (Just tmlId, Just formatUuid) -> do
         tml <- getDocumentTemplateByUuidAndPackageId tmlId (Just qtn.packageId)
         pkg <- getPackageById qtn.packageId
-        qtnCtn <- compileQuestionnaire qtn
+        qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
+        qtnCtn <- compileQuestionnaire qtnEvents
         createDocumentPreview tml pkg [] qtn qtnCtn.phaseUuid qtnCtn.replies formatUuid False
       _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP
 
@@ -142,7 +145,8 @@ createDocumentPreviewForDocTmlDraft tmlId =
         qtn <- findQuestionnaireByUuid qtnUuid
         pkg <- getPackageById qtn.packageId
         checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
-        qtnCtn <- compileQuestionnaire qtn
+        qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtn.uuid
+        qtnCtn <- compileQuestionnaire qtnEvents
         createDocumentPreview draft pkg [] qtn qtnCtn.phaseUuid qtnCtn.replies formatUuid False
       (_, Just branchUuid, Just formatUuid) -> do
         draft <- findDraftById tmlId
