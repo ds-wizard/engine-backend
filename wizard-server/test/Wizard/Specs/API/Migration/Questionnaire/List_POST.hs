@@ -18,6 +18,7 @@ import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration as QTN_MIG
@@ -66,7 +67,9 @@ test_201 appContext = do
     "HTTP 201 CREATED (Owner, Private)"
     appContext
     questionnaire4
+    questionnaire4Events
     questionnaire4Upgraded
+    questionnaire4UpgradedEvents
     nlQtnMigrationState
     nlQtnMigrationStateDto
     reqNonAdminAuthHeader
@@ -74,7 +77,9 @@ test_201 appContext = do
     "HTTP 201 CREATED (Non-Owner, VisibleView)"
     appContext
     questionnaire4VisibleView
+    questionnaire4VisibleViewEvents
     questionnaire4VisibleViewUpgraded
+    questionnaire4VisibleViewUpgradedEvents
     nlQtnMigrationState
     nlQtnMigrationStateVisibleViewDto
     reqNonAdminAuthHeader
@@ -82,12 +87,14 @@ test_201 appContext = do
     "HTTP 201 CREATED (Non-Owner, Public)"
     appContext
     questionnaire4VisibleEdit
+    questionnaire4VisibleEditEvents
     questionnaire4VisibleEditUpgraded
+    questionnaire4VisibleEditUpgradedEvents
     nlQtnMigrationState
     nlQtnMigrationStateVisibleEditDto
     reqNonAdminAuthHeader
 
-create_test_201 title appContext oldQtn newQtn state stateDto authHeader =
+create_test_201 title appContext oldQtn oldQtnEvents newQtn newQtnEvents state stateDto authHeader =
   it title $
     -- GIVEN: Prepare request
     do
@@ -101,8 +108,11 @@ create_test_201 title appContext oldQtn newQtn state stateDto authHeader =
       -- AND: Prepare database
       runInContextIO TML.runMigration appContext
       runInContextIO (insertQuestionnaire oldQtn) appContext
+      runInContextIO (insertQuestionnaireEvents oldQtnEvents) appContext
       runInContextIO (insertQuestionnaire newQtn) appContext
+      runInContextIO (insertQuestionnaireEvents newQtnEvents) appContext
       runInContextIO (insertQuestionnaire differentQuestionnaire) appContext
+      runInContextIO (insertQuestionnaireEvents differentQuestionnaireEvents) appContext
       runInContextIO QTN_MIG.runMigration appContext
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

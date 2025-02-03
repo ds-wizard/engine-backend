@@ -2,6 +2,7 @@ module Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVer
 
 import Data.Maybe (fromJust)
 import Data.Time
+import qualified Data.UUID as U
 
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeDTO
@@ -14,54 +15,54 @@ import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 
-qVersions :: [QuestionnaireVersion]
-qVersions = [questionnaireVersion1]
+qVersions :: U.UUID -> [QuestionnaireVersion]
+qVersions qtnUuid = [questionnaireVersion1 qtnUuid]
 
-qVersionsDto :: [QuestionnaireVersionDTO]
-qVersionsDto = [questionnaireVersion1Dto]
+qVersionsDto :: U.UUID -> [QuestionnaireVersionDTO]
+qVersionsDto qtnUuid = [questionnaireVersion1Dto qtnUuid]
 
-questionnaireVersion1 :: QuestionnaireVersion
-questionnaireVersion1 =
+questionnaireVersion1 :: U.UUID -> QuestionnaireVersion
+questionnaireVersion1 qtnUuid =
   QuestionnaireVersion
     { uuid = u' "bd6611c8-ea11-48ab-adaa-3ce51b66aae5"
     , name = "Version 1"
     , description = Just "Version 1 description"
-    , eventUuid = slble_rQ1.uuid
+    , eventUuid = (slble_rQ1 qtnUuid).uuid
     , createdBy = userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
-questionnaireVersion1Dto :: QuestionnaireVersionDTO
-questionnaireVersion1Dto = toVersionDTO questionnaireVersion1 (Just userAlbert)
+questionnaireVersion1Dto :: U.UUID -> QuestionnaireVersionDTO
+questionnaireVersion1Dto qtnUuid = toVersionDTO (questionnaireVersion1 qtnUuid) (Just userAlbert)
 
-questionnaireVersion1Edited :: QuestionnaireVersion
-questionnaireVersion1Edited =
-  questionnaireVersion1
-    { name = "EDITED: " ++ questionnaireVersion1.name
-    , description = fmap ("EDITED: " ++) questionnaireVersion1.description
-    , eventUuid = sre_rQ11.uuid
+questionnaireVersion1Edited :: U.UUID -> QuestionnaireVersion
+questionnaireVersion1Edited qtnUuid =
+  (questionnaireVersion1 qtnUuid)
+    { name = "EDITED: " ++ (questionnaireVersion1 qtnUuid).name
+    , description = fmap ("EDITED: " ++) (questionnaireVersion1 qtnUuid).description
+    , eventUuid = (sre_rQ11 qtnUuid).uuid
     }
 
-questionnaireVersion1EditedDto :: QuestionnaireVersionDTO
-questionnaireVersion1EditedDto = toVersionDTO questionnaireVersion1Edited (Just userAlbert)
+questionnaireVersion1EditedDto :: U.UUID -> QuestionnaireVersionDTO
+questionnaireVersion1EditedDto qtnUuid = toVersionDTO (questionnaireVersion1Edited qtnUuid) (Just userAlbert)
 
-questionnaireVersion1EditedChangeDto :: QuestionnaireVersionChangeDTO
-questionnaireVersion1EditedChangeDto = toVersionChangeDTO questionnaireVersion1Edited
+questionnaireVersion1EditedChangeDto :: U.UUID -> QuestionnaireVersionChangeDTO
+questionnaireVersion1EditedChangeDto qtnUuid = toVersionChangeDTO (questionnaireVersion1Edited qtnUuid)
 
-questionnaireVersion1RevertDto :: QuestionnaireVersionRevertDTO
-questionnaireVersion1RevertDto = toVersionRevertDTO sre_rQ2.uuid
+questionnaireVersion1RevertDto :: U.UUID -> QuestionnaireVersionRevertDTO
+questionnaireVersion1RevertDto qtnUuid = toVersionRevertDTO (sre_rQ2 qtnUuid).uuid
 
-questionnaireVersion2 :: QuestionnaireVersion
-questionnaireVersion2 =
+questionnaireVersion2 :: U.UUID -> QuestionnaireVersion
+questionnaireVersion2 qtnUuid =
   QuestionnaireVersion
     { uuid = u' "1e57564e-77ff-438e-952c-515f1d45b24f"
     , name = "Version 2"
     , description = Just "Version 2 description"
-    , eventUuid = sre_rQ11.uuid
+    , eventUuid = (sre_rQ11 qtnUuid).uuid
     , createdBy = userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
-questionnaireVersion2ChangeDto :: QuestionnaireVersionChangeDTO
-questionnaireVersion2ChangeDto = toVersionChangeDTO questionnaireVersion2
+questionnaireVersion2ChangeDto :: U.UUID -> QuestionnaireVersionChangeDTO
+questionnaireVersion2ChangeDto qtnUuid = toVersionChangeDTO (questionnaireVersion2 qtnUuid)

@@ -1,6 +1,6 @@
 module Wizard.Service.Questionnaire.Version.QuestionnaireVersionService where
 
-import Control.Monad (when)
+import Control.Monad (void, when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (liftIO)
 import qualified Data.List as L
@@ -21,6 +21,7 @@ import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionRevertDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
@@ -46,7 +47,8 @@ createVersion qtnUuid reqDto =
   runInTransaction $ do
     qtn <- findQuestionnaireByUuid qtnUuid
     checkOwnerPermissionToQtn qtn.visibility qtn.permissions
-    validateQuestionnaireVersionCreate reqDto qtn
+    qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
+    validateQuestionnaireVersionCreate reqDto qtn qtnEvents
     vUuid <- liftIO generateUuid
     currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
@@ -60,7 +62,8 @@ modifyVersion qtnUuid vUuid reqDto =
   runInTransaction $ do
     qtn <- findQuestionnaireByUuid qtnUuid
     checkOwnerPermissionToQtn qtn.visibility qtn.permissions
-    validateQuestionnaireVersionUpdate reqDto qtn
+    qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
+    validateQuestionnaireVersionUpdate reqDto qtnEvents
     now <- liftIO getCurrentTime
     version <-
       case L.find (\v -> v.uuid == vUuid) qtn.versions of
@@ -99,13 +102,19 @@ revertToEvent qtnUuid reqDto shouldSave =
     if shouldSave
       then checkOwnerPermissionToQtn qtn.visibility qtn.permissions
       else checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
-    let updatedEvents = takeWhileInclusive (\e -> getUuid e /= reqDto.eventUuid) qtn.events
+    qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
+    let updatedEvents = takeWhileInclusive (\e -> getUuid e /= reqDto.eventUuid) qtnEvents
     let updatedEventUuids = S.fromList . fmap getUuid $ updatedEvents
     let updatedVersions = filter (\v -> S.member v.eventUuid updatedEventUuids) qtn.versions
-    let updatedQtn = qtn {events = updatedEvents, versions = updatedVersions} :: Questionnaire
-    when shouldSave (updateQuestionnaireByUuid updatedQtn)
-    qtnCtn <- compileQuestionnaire updatedQtn
-    eventsDto <- traverse enhanceQuestionnaireEvent updatedQtn.events
+    let updatedQtn = qtn {versions = updatedVersions} :: Questionnaire
+    when
+      shouldSave
+      ( do
+          updateQuestionnaireByUuid updatedQtn
+          void $ updateQuestionnaireEventsByQuestionnaireUuid'' updatedQtn.uuid updatedEvents
+      )
+    qtnCtn <- compileQuestionnaire updatedEvents
+    eventsDto <- traverse enhanceQuestionnaireEvent updatedEvents
     versionDto <- traverse enhanceQuestionnaireVersion updatedQtn.versions
     when shouldSave (logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid)
     commentThreadsMap <- catchError (getQuestionnaireCommentsByQuestionnaireUuid qtn.uuid Nothing Nothing) (\_ -> return M.empty)

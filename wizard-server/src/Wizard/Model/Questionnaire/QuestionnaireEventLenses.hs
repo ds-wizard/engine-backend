@@ -1,6 +1,7 @@
 module Wizard.Model.Questionnaire.QuestionnaireEventLenses where
 
 import Shared.Common.Model.Common.Lens
+import Wizard.Model.Common.Lens
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 
 instance HasUuid' QuestionnaireEvent where
@@ -12,6 +13,16 @@ instance HasUuid' QuestionnaireEvent where
   setUuid (ClearReplyEvent' entity) newValue = ClearReplyEvent' $ entity {uuid = newValue}
   setUuid (SetPhaseEvent' entity) newValue = SetPhaseEvent' $ entity {uuid = newValue}
   setUuid (SetLabelsEvent' entity) newValue = SetLabelsEvent' $ entity {uuid = newValue}
+
+instance HasQuestionnaireUuid' QuestionnaireEvent where
+  getQuestionnaireUuid (SetReplyEvent' entity) = entity.questionnaireUuid
+  getQuestionnaireUuid (ClearReplyEvent' entity) = entity.questionnaireUuid
+  getQuestionnaireUuid (SetPhaseEvent' entity) = entity.questionnaireUuid
+  getQuestionnaireUuid (SetLabelsEvent' entity) = entity.questionnaireUuid
+  setQuestionnaireUuid (SetReplyEvent' entity) newValue = SetReplyEvent' $ entity {questionnaireUuid = newValue}
+  setQuestionnaireUuid (ClearReplyEvent' entity) newValue = ClearReplyEvent' $ entity {questionnaireUuid = newValue}
+  setQuestionnaireUuid (SetPhaseEvent' entity) newValue = SetPhaseEvent' $ entity {questionnaireUuid = newValue}
+  setQuestionnaireUuid (SetLabelsEvent' entity) newValue = SetLabelsEvent' $ entity {questionnaireUuid = newValue}
 
 instance HasCreatedAt' QuestionnaireEvent where
   getCreatedAt (SetReplyEvent' entity) = entity.createdAt

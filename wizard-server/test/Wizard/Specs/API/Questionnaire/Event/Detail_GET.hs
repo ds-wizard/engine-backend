@@ -18,6 +18,7 @@ import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
@@ -61,31 +62,34 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 sre_rQ1' [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (Non-Owner, VisibleView)" appContext questionnaire2 sre_rQ1' [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1Events (sre_rQ1' questionnaire1Uuid) [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleView)" appContext questionnaire2 questionnaire2Events (sre_rQ1' questionnaire2Uuid) [reqNonAdminAuthHeader]
   create_test_200
     "HTTP 200 OK (Commentator)"
     appContext
     (questionnaire13 {visibility = PrivateQuestionnaire})
-    sre_rQ1'
+    questionnaire13Events
+    (sre_rQ1' questionnaire13Uuid)
     [reqNonAdminAuthHeader]
   create_test_200
     "HTTP 200 OK (Non-Commentator, VisibleComment)"
     appContext
     questionnaire13
-    sre_rQ1'
+    questionnaire13Events
+    (sre_rQ1' questionnaire13Uuid)
     [reqIsaacAuthTokenHeader]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleComment, AnyoneWithLinkComment)"
     appContext
     (questionnaire13 {sharing = AnyoneWithLinkCommentQuestionnaire})
-    sre_rQ1'
+    questionnaire13Events
+    (sre_rQ1' questionnaire13Uuid)
     []
-  create_test_200 "HTTP 200 OK (Anonymous, VisibleView, Sharing)" appContext questionnaire7 sre_rQ1' []
-  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext questionnaire3 sre_rQ1' [reqNonAdminAuthHeader]
-  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 sre_rQ1' []
+  create_test_200 "HTTP 200 OK (Anonymous, VisibleView, Sharing)" appContext questionnaire7 questionnaire7Events (sre_rQ1' questionnaire7Uuid) []
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext questionnaire3 questionnaire3Events (sre_rQ1' questionnaire3Uuid) [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 questionnaire10Events (sre_rQ1' questionnaire10Uuid) []
 
-create_test_200 title appContext qtn qtnEvent authHeader =
+create_test_200 title appContext qtn qtnEvents qtnEvent authHeader =
   it title $
     -- GIVEN: Prepare request
     do
@@ -105,6 +109,7 @@ create_test_200 title appContext qtn qtnEvent authHeader =
       runInContextIO deleteQuestionnairePerms appContext
       runInContextIO deleteQuestionnaires appContext
       runInContextIO (insertQuestionnaire qtn) appContext
+      runInContextIO (insertQuestionnaireEvents qtnEvents) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
@@ -120,21 +125,21 @@ test_403 appContext = do
     "HTTP 403 FORBIDDEN (Non-Owner, Private)"
     appContext
     questionnaire1
-    sre_rQ1'
+    (sre_rQ1' questionnaire1Uuid)
     [reqNonAdminAuthHeader]
     (_ERROR_VALIDATION__FORBIDDEN "View Questionnaire")
   create_test_403
     "HTTP 403 FORBIDDEN (Anonymous, VisibleView)"
     appContext
     questionnaire2
-    sre_rQ1'
+    (sre_rQ1' questionnaire2Uuid)
     []
     _ERROR_SERVICE_USER__MISSING_USER
   create_test_403
     "HTTP 403 FORBIDDEN (Anonymous, Public)"
     appContext
     questionnaire3
-    sre_rQ1'
+    (sre_rQ1' questionnaire3Uuid)
     []
     _ERROR_SERVICE_USER__MISSING_USER
 

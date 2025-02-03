@@ -11,6 +11,7 @@ import qualified Data.UUID as U
 
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.List
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
@@ -50,11 +51,12 @@ createDocumentContext doc pkg branchEvents qtn mReplies = do
     case mReplies of
       Just replies -> return (Nothing, replies, M.empty)
       _ -> do
-        let qtnEvents =
+        qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtn.uuid
+        let filteredQtnEvents =
               case doc.questionnaireEventUuid of
-                Just eventUuid -> takeWhileInclusive (\e -> getUuid e /= eventUuid) qtn.events
-                Nothing -> qtn.events
-        qtnCtn <- compileQuestionnairePreview qtnEvents
+                Just eventUuid -> takeWhileInclusive (\e -> getUuid e /= eventUuid) qtnEvents
+                Nothing -> qtnEvents
+        qtnCtn <- compileQuestionnairePreview filteredQtnEvents
         return (qtnCtn.phaseUuid, qtnCtn.replies, qtnCtn.labels)
   report <- generateReport phaseUuid km replies
   let qtnVersion =

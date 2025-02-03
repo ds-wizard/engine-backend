@@ -13,6 +13,7 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
+import Shared.Common.Model.Common.Lens
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Error.Error
@@ -21,6 +22,7 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
@@ -76,14 +78,16 @@ create_test_200 title appContext authHeader =
       let reqUrl = reqUrlT questionnaire6.uuid
       let reqHeaders = reqHeadersT authHeader
       -- AND: Run migrations
+      let doc1' = doc1 {questionnaireUuid = questionnaire6.uuid, questionnaireEventUuid = Just . getUuid $ slble_rQ1' questionnaire6.uuid}
+      let doc2' = doc2 {questionnaireUuid = questionnaire6.uuid, questionnaireEventUuid = Just . getUuid $ slble_rQ1' questionnaire6.uuid, createdBy = Just userIsaac.uuid}
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO QTN_Migration.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire6) appContext
       runInContextIO deleteDocuments appContext
       runInContextIO removeDocumentContents appContext
-      runInContextIO (insertDocument (doc1 {questionnaireUuid = questionnaire6.uuid})) appContext
-      runInContextIO (insertDocument (doc2 {questionnaireUuid = questionnaire6.uuid, createdBy = Just userIsaac.uuid})) appContext
+      runInContextIO (insertDocument doc1') appContext
+      runInContextIO (insertDocument doc2') appContext
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
@@ -91,7 +95,7 @@ create_test_200 title appContext authHeader =
             Page
               "documents"
               (PageMetadata 20 2 1 0)
-              [toDTOWithDocTemplate doc1 (Just questionnaire6Simple) (Just "Version 1") [], toDTOWithDocTemplate (doc2 {createdBy = Just userIsaac.uuid}) (Just questionnaire6Simple) (Just "Version 1") []]
+              [toDTOWithDocTemplate doc1' (Just questionnaire6Simple) (Just "Version 1") [], toDTOWithDocTemplate doc2' (Just questionnaire6Simple) (Just "Version 1") []]
       let expBody = encode (fmap (\x -> x wizardDocumentTemplate) expDto)
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

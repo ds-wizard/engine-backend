@@ -13,6 +13,8 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
+import Wizard.Model.Common.Lens
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.Questionnaire.MigratorState
@@ -27,7 +29,6 @@ import Wizard.Service.Migration.Questionnaire.MigratorMapper
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireService
-import Wizard.Service.Questionnaire.QuestionnaireUtil
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 createQuestionnaireMigration :: U.UUID -> MigratorStateCreateDTO -> AppContextM MigratorStateDTO
@@ -36,8 +37,9 @@ createQuestionnaireMigration oldQtnUuid reqDto =
     checkPermission _QTN_PERM
     oldQtn <- findQuestionnaireByUuid oldQtnUuid
     checkMigrationPermissionToQtn oldQtn.visibility oldQtn.permissions
-    newQtn <- upgradeQuestionnaire reqDto oldQtn
+    (newQtn, newQtnEvents) <- upgradeQuestionnaire reqDto oldQtn
     insertQuestionnaire newQtn
+    insertQuestionnaireEvents newQtnEvents
     tenantUuid <- asks currentTenantUuid
     let state = fromCreateDTO oldQtn.uuid newQtn.uuid tenantUuid
     insertMigratorState state
@@ -48,8 +50,8 @@ getQuestionnaireMigration :: U.UUID -> AppContextM MigratorStateDTO
 getQuestionnaireMigration qtnUuid = do
   checkPermission _QTN_PERM
   state <- findMigratorStateByNewQuestionnaireUuid qtnUuid
-  oldQtnDto <- getQuestionnaireDetailQuestionnaireById state.oldQuestionnaireUuid
-  newQtnDto <- getQuestionnaireDetailQuestionnaireById state.newQuestionnaireUuid
+  oldQtnDto <- getQuestionnaireDetailQuestionnaireByUuid state.oldQuestionnaireUuid
+  newQtnDto <- getQuestionnaireDetailQuestionnaireByUuid state.newQuestionnaireUuid
   oldQtn <- findQuestionnaireByUuid state.oldQuestionnaireUuid
   newQtn <- findQuestionnaireByUuid state.newQuestionnaireUuid
   checkMigrationPermissionToQtn oldQtn.visibility oldQtn.permissions
@@ -75,21 +77,25 @@ finishQuestionnaireMigration qtnUuid =
     deleteMigratorStateByNewQuestionnaireUuid qtnUuid
     oldQtn <- findQuestionnaireByUuid state.oldQuestionnaireUuid
     newQtn <- findQuestionnaireByUuid state.newQuestionnaireUuid
-    events <- ensurePhaseIsSetIfNecessary newQtn
+    newQtnEvents <- ensurePhaseIsSetIfNecessary newQtn
     now <- liftIO getCurrentTime
-    let updatedQtn =
+    let updatedNewQtn =
           oldQtn
             { formatUuid = newQtn.formatUuid
             , documentTemplateId = newQtn.documentTemplateId
             , selectedQuestionTagUuids = newQtn.selectedQuestionTagUuids
             , packageId = newQtn.packageId
-            , events = events
             , updatedAt = now
             }
           :: Questionnaire
-    mPhasesAnsweredIndication <- getPhasesAnsweredIndication updatedQtn
-    updateQuestionnaireByUuid updatedQtn
+    let newQtnEventsWithOldQtnUuid = fmap (\event -> setQuestionnaireUuid event oldQtn.uuid) newQtnEvents
+    -- Delete the new questionnaire
+    deleteQuestionnaireEventsByQuestionnaireUuid newQtn.uuid
     deleteQuestionnaire newQtn.uuid False
+    -- Update the old questionnaire with values from new questionnaire
+    updateQuestionnaireByUuid updatedNewQtn
+    deleteQuestionnaireEventsByQuestionnaireUuid oldQtn.uuid
+    insertQuestionnaireEvents newQtnEventsWithOldQtnUuid
     auditQuestionnaireMigrationFinish oldQtn newQtn
     return ()
 
@@ -106,42 +112,44 @@ cancelQuestionnaireMigration qtnUuid =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-upgradeQuestionnaire :: MigratorStateCreateDTO -> Questionnaire -> AppContextM Questionnaire
+upgradeQuestionnaire :: MigratorStateCreateDTO -> Questionnaire -> AppContextM (Questionnaire, [QuestionnaireEvent])
 upgradeQuestionnaire reqDto oldQtn = do
   let newPkgId = reqDto.targetPackageId
   let newTagUuids = reqDto.targetTagUuids
   oldKm <- compileKnowledgeModel [] (Just oldQtn.packageId) newTagUuids
   newKm <- compileKnowledgeModel [] (Just newPkgId) newTagUuids
   newUuid <- liftIO generateUuid
-  newEvents <- sanitizeQuestionnaireEvents oldKm newKm oldQtn.events
-  let newPermissions = fmap (\perm -> perm {questionnaireUuid = newUuid}) oldQtn.permissions
+  oldQtnEvents <- findQuestionnaireEventsByQuestionnaireUuid oldQtn.uuid
+  clonedQtnEvents <- cloneQuestinonaireEvents newUuid oldQtnEvents
+  newQtnEvents <- sanitizeQuestionnaireEvents newUuid oldKm newKm clonedQtnEvents
+  let newPermissions = fmap (\perm -> perm {questionnaireUuid = newUuid} :: QuestionnairePerm) oldQtn.permissions
   let upgradedQtn =
         oldQtn
           { uuid = newUuid
           , packageId = newPkgId
-          , events = newEvents
           , selectedQuestionTagUuids = newTagUuids
           , documentTemplateId = Nothing
           , formatUuid = Nothing
           , permissions = newPermissions
           }
         :: Questionnaire
-  return upgradedQtn
+  return (upgradedQtn, newQtnEvents)
 
 ensurePhaseIsSetIfNecessary :: Questionnaire -> AppContextM [QuestionnaireEvent]
 ensurePhaseIsSetIfNecessary newQtn = do
   uuid <- liftIO generateUuid
   mCurrentUser <- asks currentUser
   now <- liftIO getCurrentTime
-  qtnCtn <- compileQuestionnaire newQtn
+  newQtnEvents <- findQuestionnaireEventsByQuestionnaireUuid newQtn.uuid
+  qtnCtn <- compileQuestionnaire newQtnEvents
   knowledgeModel <- compileKnowledgeModel [] (Just newQtn.packageId) newQtn.selectedQuestionTagUuids
   let events =
         case (headSafe knowledgeModel.phaseUuids, qtnCtn.phaseUuid) of
-          (Nothing, Nothing) -> newQtn.events
-          (Nothing, Just qtnPhaseUuid) -> newQtn.events ++ [toPhaseEvent uuid Nothing mCurrentUser now]
-          (Just kmPhaseUuid, Nothing) -> newQtn.events ++ [toPhaseEvent uuid (Just kmPhaseUuid) mCurrentUser now]
+          (Nothing, Nothing) -> newQtnEvents
+          (Nothing, Just qtnPhaseUuid) -> newQtnEvents ++ [toPhaseEvent uuid Nothing newQtn.uuid newQtn.tenantUuid mCurrentUser now]
+          (Just kmPhaseUuid, Nothing) -> newQtnEvents ++ [toPhaseEvent uuid (Just kmPhaseUuid) newQtn.uuid newQtn.tenantUuid mCurrentUser now]
           (Just kmPhaseUuid, Just qtnPhaseUuid) ->
             if qtnPhaseUuid `notElem` knowledgeModel.phaseUuids
-              then newQtn.events ++ [toPhaseEvent uuid (Just kmPhaseUuid) mCurrentUser now]
-              else newQtn.events
+              then newQtnEvents ++ [toPhaseEvent uuid (Just kmPhaseUuid) newQtn.uuid newQtn.tenantUuid mCurrentUser now]
+              else newQtnEvents
   return events

@@ -61,7 +61,7 @@ test_204 appContext =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find a result in DB
-      assertExistenceOfQuestionnaireInDB appContext (questionnaire1 {versions = []})
+      assertExistenceOfQuestionnaireInDB appContext (questionnaire1 {versions = []}) questionnaire1Events
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -28,7 +28,7 @@ import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetail ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailPreview ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailQuestionnaire ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailSettings ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireEvent ()
+import Wizard.Database.Mapping.Questionnaire.QuestionnaireEventBundle ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireList ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSimple ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSimpleWithPerm ()
@@ -42,7 +42,6 @@ import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireDetailPreview
 import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
 import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
-import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireList
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireSimpleWithPerm
@@ -82,11 +81,11 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
             Nothing -> ""
             Just True -> " AND qtn.is_template = true"
             Just False -> " AND qtn.is_template = false"
-    let isMigratingCondition =
+    let isMigratingCondition useWhere =
           case mIsMigrating of
             Nothing -> ""
-            Just True -> " AND qtn_mig.new_questionnaire_uuid IS NOT NULL"
-            Just False -> " AND qtn_mig.new_questionnaire_uuid IS NULL"
+            Just True -> f' " %s qtn_mig.new_questionnaire_uuid IS NOT NULL" [if useWhere then "WHERE" else "AND"]
+            Just False -> f' " %s qtn_mig.new_questionnaire_uuid IS NULL" [if useWhere then "WHERE" else "AND"]
     let qtnMigrationJoin =
           case mIsMigrating of
             Nothing -> ""
@@ -168,7 +167,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
               , ("aclCondition", aclCondition)
               , ("nameCondition", nameCondition)
               , ("isTemplateCondition", isTemplateCondition)
-              , ("isMigratingCondition", isMigratingCondition)
+              , ("isMigratingCondition", isMigratingCondition False)
               , ("projectTagsCondition", projectTagsCondition)
               , ("userUuidsCondition", userUuidsCondition)
               , ("packageCondition", packageCondition)
@@ -185,53 +184,65 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
     let sql =
           fromString $
             f''
-              "SELECT \
-              \  nested_qtn.*, \
-              \  ( \
-              \    SELECT array_agg(CONCAT(qtn_acl_user.user_uuid, '::', qtn_acl_user.perms, '::', u.uuid, '::', u.first_name, '::', u.last_name, '::', u.email, '::', u.image_url)) \
-              \    FROM questionnaire_perm_user qtn_acl_user \
-              \    JOIN user_entity u on u.uuid = qtn_acl_user.user_uuid \
-              \    WHERE questionnaire_uuid = nested_qtn.uuid \
-              \    GROUP BY questionnaire_uuid \
-              \  ) as user_permissions, \
-              \  ( \
-              \    SELECT array_agg(CONCAT(qtn_acl_group.user_group_uuid, '::', qtn_acl_group.perms, '::', ug.uuid, '::', ug.name, '::', ug.private, '::', ug.description)) \
-              \    FROM questionnaire_perm_group qtn_acl_group \
-              \    JOIN user_group ug on ug.uuid = qtn_acl_group.user_group_uuid \
-              \    WHERE questionnaire_uuid = nested_qtn.uuid \
-              \    GROUP BY questionnaire_uuid \
-              \  ) as group_permissions \
-              \FROM ( \
-              \  SELECT DISTINCT qtn.uuid, \
-              \    qtn.name, \
-              \    qtn.description, \
-              \    qtn.visibility, \
-              \    qtn.sharing, \
-              \    qtn.is_template, \
-              \    qtn.created_at, \
-              \    qtn.updated_at, \
-              \    CASE \
-              \      WHEN qtn_mig.new_questionnaire_uuid IS NOT NULL THEN 'Migrating' \
-              \      WHEN qtn.package_id != get_newest_package(pkg.organization_id, pkg.km_id, '${tenantUuid}', ARRAY['ReleasedPackagePhase']) THEN 'Outdated' \
-              \      WHEN qtn_mig.new_questionnaire_uuid IS NULL THEN 'Default' \
-              \    END, \
-              \    pkg.id, \
-              \    pkg.name, \
-              \    pkg.version \
-              \  FROM questionnaire qtn \
-              \  JOIN package pkg ON qtn.package_id = pkg.id AND qtn.tenant_uuid = pkg.tenant_uuid \
-              \  LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.new_questionnaire_uuid \
-              \  ${aclJoins} \
-              \  WHERE qtn.tenant_uuid = '${tenantUuid}' ${aclCondition} ${nameCondition} ${isTemplateCondition} ${isMigratingCondition} ${projectTagsCondition} ${userUuidsCondition} ${packageCondition} \
-              \  ${sort} \
-              \  OFFSET ${offset} LIMIT ${limit} \
-              \) nested_qtn"
+              "WITH qtn AS (SELECT DISTINCT qtn.uuid, \
+              \                             qtn.name, \
+              \                             qtn.description, \
+              \                             qtn.visibility, \
+              \                             qtn.sharing, \
+              \                             qtn.is_template, \
+              \                             qtn.created_at, \
+              \                             qtn.updated_at, \
+              \                             qtn.package_id \
+              \             FROM questionnaire qtn \
+              \             ${aclJoins} \
+              \             WHERE qtn.tenant_uuid = '${tenantUuid}' ${aclCondition} ${nameCondition} ${isTemplateCondition} ${projectTagsCondition} ${userUuidsCondition} ${packageCondition}), \
+              \     pkg AS (SELECT package.id, \
+              \                    package.name, \
+              \                    package.version, \
+              \                    package.organization_id, \
+              \                    package.km_id \
+              \             FROM package \
+              \             WHERE package.tenant_uuid = '${tenantUuid}'), \
+              \     qtn_mig AS (SELECT new_questionnaire_uuid \
+              \                 FROM questionnaire_migration \
+              \                 WHERE questionnaire_migration.tenant_uuid = '${tenantUuid}') \
+              \SELECT  qtn.uuid, \
+              \        qtn.name, \
+              \        qtn.description, \
+              \        qtn.visibility, \
+              \        qtn.sharing, \
+              \        qtn.is_template, \
+              \        qtn.created_at, \
+              \        qtn.updated_at, \
+              \        CASE \
+              \          WHEN qtn_mig.new_questionnaire_uuid IS NOT NULL THEN 'Migrating' \
+              \          WHEN qtn.package_id != get_newest_package(pkg.organization_id, pkg.km_id, '${tenantUuid}', ARRAY['ReleasedPackagePhase']) THEN 'Outdated' \
+              \          WHEN qtn_mig.new_questionnaire_uuid IS NULL THEN 'Default' END, \
+              \        pkg.id, \
+              \        pkg.name, \
+              \        pkg.version, \
+              \       (SELECT array_agg(CONCAT(qtn_acl_user.user_uuid, '::', qtn_acl_user.perms, '::', u.uuid, '::', u.first_name, '::', u.last_name, '::', u.email, '::', u.image_url)) \
+              \        FROM questionnaire_perm_user qtn_acl_user \
+              \        JOIN user_entity u on u.uuid = qtn_acl_user.user_uuid \
+              \        WHERE questionnaire_uuid = qtn.uuid \
+              \        GROUP BY questionnaire_uuid) as user_permissions, \
+              \       (SELECT array_agg(CONCAT(qtn_acl_group.user_group_uuid, '::', qtn_acl_group.perms, '::', ug.uuid, '::', ug.name, '::', ug.private, '::', ug.description)) \
+              \        FROM questionnaire_perm_group qtn_acl_group \
+              \        JOIN user_group ug on ug.uuid = qtn_acl_group.user_group_uuid \
+              \        WHERE questionnaire_uuid = qtn.uuid \
+              \        GROUP BY questionnaire_uuid) as group_permissions \
+              \FROM qtn \
+              \JOIN pkg ON qtn.package_id = pkg.id \
+              \LEFT JOIN qtn_mig ON qtn.uuid = qtn_mig.new_questionnaire_uuid \
+              \${isMigratingCondition} \
+              \${sort} \
+              \OFFSET ${offset} LIMIT ${limit}"
               [ ("aclJoins", aclJoins)
               , ("tenantUuid", U.toString tenantUuid)
               , ("aclCondition", aclCondition)
               , ("nameCondition", nameCondition)
               , ("isTemplateCondition", isTemplateCondition)
-              , ("isMigratingCondition", isMigratingCondition)
+              , ("isMigratingCondition", isMigratingCondition True)
               , ("projectTagsCondition", projectTagsCondition)
               , ("userUuidsCondition", userUuidsCondition)
               , ("packageCondition", packageCondition)
@@ -377,18 +388,6 @@ findQuestionnaireSuggestionByUuid' uuid = do
   tenantUuid <- asks currentTenantUuid
   createFindEntityWithFieldsByFn' "uuid, name, description" entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
-findQuestionnaireEventsByUuid :: U.UUID -> AppContextM [QuestionnaireEvent]
-findQuestionnaireEventsByUuid uuid = do
-  tenantUuid <- asks currentTenantUuid
-  let sql = fromString "SELECT events FROM questionnaire qtn WHERE tenant_uuid = ? AND uuid = ?"
-  let params = [toField tenantUuid, toField uuid]
-  logQuery sql params
-  let action conn = query conn sql params
-  entities <- runDB action :: AppContextM [QuestionnaireEventBundle]
-  case entities of
-    [entity] -> return entity.events
-    _ -> return []
-
 findQuestionnaireForSquashing :: AppContextM [U.UUID]
 findQuestionnaireForSquashing = do
   let sql = "SELECT uuid FROM questionnaire WHERE squashed = false"
@@ -399,7 +398,7 @@ findQuestionnaireForSquashing = do
 
 findQuestionnaireSquashByUuid :: U.UUID -> AppContextM QuestionnaireSquash
 findQuestionnaireSquashByUuid uuid =
-  createFindEntityWithFieldsByFn "uuid, events, versions" True entityName [("uuid", U.toString uuid)]
+  createFindEntityWithFieldsByFn "uuid, versions" True entityName [("uuid", U.toString uuid)]
 
 findQuestionnaireDetail :: U.UUID -> AppContextM QuestionnaireDetail
 findQuestionnaireDetail uuid = do
@@ -414,7 +413,6 @@ findQuestionnaireDetail uuid = do
             \       qtn.package_id, \
             \       qtn.selected_question_tag_uuids, \
             \       qtn.is_template, \
-            \       qtn.events, \
             \       qtn_mig.new_questionnaire_uuid AS migration_uuid, \
             \       ${questionnaireDetailPermSql}, \
             \       ( \
@@ -458,7 +456,6 @@ findQuestionnaireDetailQuestionnaire uuid = do
             \       qtn.package_id, \
             \       qtn.selected_question_tag_uuids, \
             \       qtn.is_template, \
-            \       qtn.events, \
             \       qtn_mig.new_questionnaire_uuid AS migration_uuid, \
             \       ${questionnaireDetailPermSql}, \
             \       ( \
@@ -616,56 +613,13 @@ updateQuestionnaireByUuid qtn = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, document_template_id = ?, format_uuid = ?, created_by = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ? WHERE  tenant_uuid = ? AND uuid = ?"
+          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, document_template_id = ?, format_uuid = ?, created_by = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ? WHERE  tenant_uuid = ? AND uuid = ?"
   let params = toRow qtn ++ [toField tenantUuid, toField . U.toText $ qtn.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
   deleteQuestionnairePermsFiltered [("questionnaire_uuid", U.toString qtn.uuid)]
   traverse_ insertQuestionnairePerm qtn.permissions
-
-updateQuestionnaireEventsByUuid :: U.UUID -> Bool -> [QuestionnaireEvent] -> AppContextM ()
-updateQuestionnaireEventsByUuid qtnUuid squashed events = do
-  let sql = fromString "UPDATE questionnaire SET squashed = ?, events = ?, updated_at = now() WHERE uuid = ?"
-  let params = [toField squashed, toJSONField events, toField qtnUuid]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
-
-updateQuestionnaireEventsByUuid' :: U.UUID -> Bool -> [QuestionnaireEvent] -> AppContextM ()
-updateQuestionnaireEventsByUuid' qtnUuid squashed events = do
-  let sql = fromString "UPDATE questionnaire SET squashed = ?, events = ? WHERE uuid = ?"
-  let params = [toField squashed, toJSONField events, toField qtnUuid]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
-
-updateQuestionnaireEventsByUuid'' :: U.UUID -> [QuestionnaireEvent] -> AppContextM ()
-updateQuestionnaireEventsByUuid'' qtnUuid events = do
-  let sql = fromString "UPDATE questionnaire SET events = ? WHERE uuid = ?"
-  let params = [toJSONField events, toField qtnUuid]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
-
-appendQuestionnaireEventByUuid :: U.UUID -> [QuestionnaireEvent] -> AppContextM ()
-appendQuestionnaireEventByUuid qtnUuid events = do
-  tenantUuid <- asks currentTenantUuid
-  let sql =
-        fromString
-          "UPDATE questionnaire SET squashed = false, events = events || ?, updated_at = now() WHERE tenant_uuid = ? AND uuid = ?"
-  let params =
-        [ toJSONField events
-        , toField tenantUuid
-        , toField qtnUuid
-        ]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
 
 clearQuestionnaireCreatedBy :: U.UUID -> AppContextM ()
 clearQuestionnaireCreatedBy userUuid = do

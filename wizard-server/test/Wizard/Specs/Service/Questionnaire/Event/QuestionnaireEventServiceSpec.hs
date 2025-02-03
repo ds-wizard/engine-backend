@@ -5,10 +5,13 @@ import Data.Time
 import qualified Data.UUID as U
 import Test.Hspec
 
+import Shared.Common.Constant.Tenant
 import Shared.Common.Model.Common.Lens
+import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
+import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireReply
@@ -25,32 +28,32 @@ questionnaireEventServiceSpec =
       do
         let versions = [version1]
         let events =
-              [ q1_event1
-              , cre_rQ1'
-              , q1_event2
-              , sphse_1'
-              , q1_event3
-              , slble_rQ1'
-              , q2_event1
-              , q1_event4
-              , q1_event5_nikola
-              , q1_event6_anonymous1
-              , q1_event7_nikola
-              , q1_event8_nikola
-              , q2_event2
+              [ setCreatedAt q1_event1 (dt'' 2018 1 21 1)
+              , setCreatedAt (cre_rQ1' questionnaire1Uuid) (dt'' 2018 1 21 2)
+              , setCreatedAt q1_event2 (dt'' 2018 1 21 3)
+              , setCreatedAt (sphse_1' questionnaire1Uuid) (dt'' 2018 1 21 4)
+              , setCreatedAt q1_event3 (dt'' 2018 1 21 5)
+              , setCreatedAt (slble_rQ1' questionnaire1Uuid) (dt'' 2018 1 21 6)
+              , setCreatedAt q2_event1 (dt'' 2018 1 21 7)
+              , setCreatedAt q1_event4 (dt'' 2018 1 21 8)
+              , setCreatedAt q1_event5_nikola (dt'' 2018 1 21 9)
+              , setCreatedAt q1_event6_anonymous1 (dt'' 2018 1 21 10)
+              , setCreatedAt q1_event7_nikola (dt'' 2018 1 21 11)
+              , setCreatedAt q1_event8_nikola (dt'' 2018 1 21 12)
+              , setCreatedAt q2_event2 (dt'' 2018 1 22 0)
               ]
         -- AND: prepare expectation
         let expEvents =
-              [ cre_rQ1'
-              , sphse_1'
-              , slble_rQ1'
-              , q2_event1
-              , q1_event4
-              , q1_event5_nikola
-              , q1_event6_anonymous1
-              , q1_event7_nikola
-              , q1_event8_nikola
-              , q2_event2
+              [ setCreatedAt (cre_rQ1' questionnaire1Uuid) (dt'' 2018 1 21 2)
+              , setCreatedAt (sphse_1' questionnaire1Uuid) (dt'' 2018 1 21 4)
+              , setCreatedAt (slble_rQ1' questionnaire1Uuid) (dt'' 2018 1 21 6)
+              , setCreatedAt q2_event1 (dt'' 2018 1 21 7)
+              , setCreatedAt q1_event4 (dt'' 2018 1 21 8)
+              , setCreatedAt q1_event5_nikola (dt'' 2018 1 21 9)
+              , setCreatedAt q1_event6_anonymous1 (dt'' 2018 1 21 10)
+              , setCreatedAt q1_event7_nikola (dt'' 2018 1 21 11)
+              , setCreatedAt q1_event8_nikola (dt'' 2018 1 21 12)
+              , setCreatedAt q2_event2 (dt'' 2018 1 22 0)
               ]
         -- WHEN:
         let resultEvents = squash versions events
@@ -64,108 +67,128 @@ q1_event1 :: QuestionnaireEvent
 q1_event1 =
   SetReplyEvent' $
     SetReplyEvent
-      { uuid = u' "a493a8a9-4fba-4e2d-80a9-4b2a1d62f725"
+      { uuid = createEventUuid questionnaire1Uuid "4b2a1d62f725"
       , path = "question1"
       , value = StringReply "question1_value_1"
+      , questionnaireUuid = questionnaire1Uuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = albert
-      , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+      , createdAt = dt'' 2018 1 21 0
       }
 
 q1_event2 :: QuestionnaireEvent
 q1_event2 =
   SetReplyEvent' $
     SetReplyEvent
-      { uuid = u' "313f6f3e-6fc1-4219-b370-0d2b486b3231"
+      { uuid = createEventUuid questionnaire1Uuid "0d2b486b3231"
       , path = "question1"
       , value = StringReply "question1_value_2"
+      , questionnaireUuid = questionnaire1Uuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = albert
-      , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 1
+      , createdAt = dt'' 2018 1 21 1
       }
 
 q1_event3 :: QuestionnaireEvent
 q1_event3 =
   SetReplyEvent' $
     SetReplyEvent
-      { uuid = u' "0bd527f9-e2ee-4d05-914d-04702766ab48"
+      { uuid = createEventUuid questionnaire1Uuid "04702766ab48"
       , path = "question1"
       , value = StringReply "question1_value_3"
+      , questionnaireUuid = questionnaire1Uuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = albert
-      , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 2
+      , createdAt = dt'' 2018 1 21 2
       }
 
 q2_event1 :: QuestionnaireEvent
 q2_event1 =
   SetReplyEvent' $
     SetReplyEvent
-      { uuid = u' "ea429c28-d5a6-47d7-ad5a-b2eb9e2aacc7"
+      { uuid = createEventUuid questionnaire1Uuid "b2eb9e2aacc7"
       , path = "question2"
       , value = StringReply "question2_value_1"
+      , questionnaireUuid = questionnaire1Uuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = albert
-      , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 3
+      , createdAt = dt'' 2018 1 21 3
       }
 
 q1_event4 :: QuestionnaireEvent
 q1_event4 =
   SetReplyEvent' $
     SetReplyEvent
-      { uuid = u' "be533d82-67e7-4de4-b46a-4db8b2bd8345"
+      { uuid = createEventUuid questionnaire1Uuid "4db8b2bd8345"
       , path = "question1"
       , value = StringReply "question1_value_4"
+      , questionnaireUuid = questionnaire1Uuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = albert
-      , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 4
+      , createdAt = dt'' 2018 1 21 4
       }
 
 q1_event5_nikola :: QuestionnaireEvent
 q1_event5_nikola =
   SetReplyEvent' $
     SetReplyEvent
-      { uuid = u' "401b39dc-f638-46ce-b139-3fa10bf8bc47"
+      { uuid = createEventUuid questionnaire1Uuid "3fa10bf8bc47"
       , path = "question1"
       , value = StringReply "question1_value_5"
+      , questionnaireUuid = questionnaire1Uuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = nikola
-      , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 5
+      , createdAt = dt'' 2018 1 21 5
       }
 
 q1_event6_anonymous1 :: QuestionnaireEvent
 q1_event6_anonymous1 =
   SetReplyEvent' $
     SetReplyEvent
-      { uuid = u' "10dc346f-babf-4e7c-a220-fbbb6cc6d91c"
+      { uuid = createEventUuid questionnaire1Uuid "fbbb6cc6d91c"
       , path = "question1"
       , value = StringReply "question1_value_6"
+      , questionnaireUuid = questionnaire1Uuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = Nothing
-      , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 6
+      , createdAt = dt'' 2018 1 21 6
       }
 
 q1_event7_nikola :: QuestionnaireEvent
 q1_event7_nikola =
   SetReplyEvent' $
     SetReplyEvent
-      { uuid = u' "204e4e95-d4f2-402a-95d8-fe7cfccc9c50"
+      { uuid = createEventUuid questionnaire1Uuid "fe7cfccc9c50"
       , path = "question1"
       , value = StringReply "question1_value_7"
+      , questionnaireUuid = questionnaire1Uuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = nikola
-      , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 7
+      , createdAt = dt'' 2018 1 21 7
       }
 
 q1_event8_nikola :: QuestionnaireEvent
 q1_event8_nikola =
   SetReplyEvent' $
     SetReplyEvent
-      { uuid = u' "58935613-63ff-4d7c-90b2-b9c6b1dd31f8"
+      { uuid = createEventUuid questionnaire1Uuid "b9c6b1dd31f8"
       , path = "question1"
       , value = StringReply "question1_value_8"
+      , questionnaireUuid = questionnaire1Uuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = nikola
-      , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 8
+      , createdAt = dt'' 2018 1 21 8
       }
 
 q2_event2 :: QuestionnaireEvent
 q2_event2 =
   SetReplyEvent' $
     SetReplyEvent
-      { uuid = u' "08576099-108d-4e22-ba7c-a023f5ef76f7"
+      { uuid = createEventUuid questionnaire1Uuid "a023f5ef76f7"
       , path = "question2"
       , value = StringReply "question2_value_2"
+      , questionnaireUuid = questionnaire1Uuid
+      , tenantUuid = defaultTenantUuid
       , createdBy = albert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
       }
@@ -173,7 +196,7 @@ q2_event2 =
 -- ---------------------------
 -- VERSIONS
 -- ---------------------------
-version1 = questionnaireVersion1 {eventUuid = getUuid q1_event7_nikola}
+version1 = (questionnaireVersion1 questionnaire1Uuid) {eventUuid = getUuid q1_event7_nikola}
 
 -- ---------------------------
 -- USERS

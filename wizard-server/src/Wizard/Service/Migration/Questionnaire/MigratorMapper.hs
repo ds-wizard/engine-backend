@@ -37,12 +37,14 @@ fromChangeDTO changeDto ms =
     , tenantUuid = ms.tenantUuid
     }
 
-toPhaseEvent :: U.UUID -> Maybe U.UUID -> Maybe UserDTO -> UTCTime -> QuestionnaireEvent
-toPhaseEvent phaseEventUuid kmPhaseUuid mCurrentUserUuid now =
+toPhaseEvent :: U.UUID -> Maybe U.UUID -> U.UUID -> U.UUID -> Maybe UserDTO -> UTCTime -> QuestionnaireEvent
+toPhaseEvent phaseEventUuid kmPhaseUuid questionnaireUuid tenantUuid mCurrentUserUuid now =
   SetPhaseEvent' $
     SetPhaseEvent
       { uuid = phaseEventUuid
       , phaseUuid = kmPhaseUuid
+      , questionnaireUuid = questionnaireUuid
+      , tenantUuid = tenantUuid
       , createdBy = fmap (.uuid) mCurrentUserUuid
       , createdAt = now
       }

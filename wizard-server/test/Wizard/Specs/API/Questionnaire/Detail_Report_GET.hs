@@ -17,6 +17,7 @@ import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailReportDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailReportJM ()
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
@@ -79,7 +80,9 @@ create_test_200 title appContext qtn authHeader =
       runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire7) appContext
+      runInContextIO (insertQuestionnaireEvents questionnaire7Events) appContext
       runInContextIO (insertQuestionnaire questionnaire10) appContext
+      runInContextIO (insertQuestionnaireEvents questionnaire10Events) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

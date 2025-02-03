@@ -78,31 +78,30 @@ getQuestionnaireState qtnUuid pkgId = do
         else return QSOutdated
 
 getQuestionnaireReport
-  :: ( HasField "events" questionnaire [QuestionnaireEvent]
-     , HasField "uuid" questionnaire U.UUID
+  :: ( HasField "uuid" questionnaire U.UUID
      , HasField "packageId" questionnaire String
      , HasField "selectedQuestionTagUuids" questionnaire [U.UUID]
      )
   => questionnaire
+  -> [QuestionnaireEvent]
   -> AppContextM QuestionnaireReportDTO
-getQuestionnaireReport qtn = do
-  qtnCtn <- compileQuestionnaire qtn
+getQuestionnaireReport qtn events = do
+  qtnCtn <- compileQuestionnaire events
   let _requiredPhaseUuid = qtnCtn.phaseUuid
   km <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
   let indications = computeTotalReportIndications _requiredPhaseUuid km qtnCtn.replies
-  qtnCtn <- compileQuestionnaire qtn
   return . toQuestionnaireReportDTO $ indications
 
 getPhasesAnsweredIndication
-  :: ( HasField "events" questionnaire [QuestionnaireEvent]
-     , HasField "uuid" questionnaire U.UUID
+  :: ( HasField "uuid" questionnaire U.UUID
      , HasField "packageId" questionnaire String
      , HasField "selectedQuestionTagUuids" questionnaire [U.UUID]
      )
   => questionnaire
+  -> [QuestionnaireEvent]
   -> AppContextM (Maybe PhasesAnsweredIndication)
-getPhasesAnsweredIndication qtn = do
-  report <- getQuestionnaireReport qtn
+getPhasesAnsweredIndication qtn events = do
+  report <- getQuestionnaireReport qtn events
   return $ foldl go Nothing report.indications
   where
     go acc (PhasesAnsweredIndication' indication) = Just indication

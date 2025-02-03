@@ -25,7 +25,6 @@ instance ToRow Questionnaire where
     , toField documentTemplateId
     , toField formatUuid
     , toField creatorUuid
-    , toJSONField events
     , toJSONField versions
     , toField createdAt
     , toField updatedAt
@@ -48,7 +47,6 @@ instance FromRow Questionnaire where
     formatUuid <- field
     creatorUuid <- field
     let permissions = []
-    events <- fieldWith fromJSONField
     versions <- fieldWith fromJSONField
     createdAt <- field
     updatedAt <- field
