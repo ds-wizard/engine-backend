@@ -21,6 +21,7 @@ migrate dbPool = do
   testEventCount dbPool
   testValueCount dbPool
   removeEventsColumnFromQuestionnaire dbPool
+  createExternalLinkTable dbPool
 
 regenerateQuestionnaireEventUuid dbPool = do
   let sql =
@@ -317,6 +318,21 @@ testValueCount dbPool = do
 
 removeEventsColumnFromQuestionnaire dbPool = do
   let sql = "ALTER TABLE questionnaire DROP COLUMN events;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createExternalLinkTable dbPool = do
+  let sql =
+        "CREATE TABLE external_link_usage \
+        \( \
+        \    uuid        uuid        NOT NULL, \
+        \    url         varchar     NOT NULL, \
+        \    tenant_uuid uuid        NOT NULL, \
+        \    created_at  timestamptz NOT NULL, \
+        \    CONSTRAINT external_link_usage_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT external_link_usage_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

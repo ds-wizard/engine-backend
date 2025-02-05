@@ -17,6 +17,7 @@ import Wizard.Api.Handler.DocumentTemplateDraft.Asset.Api
 import Wizard.Api.Handler.DocumentTemplateDraft.File.Api
 import Wizard.Api.Handler.DocumentTemplateDraft.Folder.Api
 import Wizard.Api.Handler.Domain.Api
+import Wizard.Api.Handler.ExternalLink.Api
 import Wizard.Api.Handler.Feedback.Api
 import Wizard.Api.Handler.Info.Api
 import Wizard.Api.Handler.KnowledgeModel.Api
@@ -56,6 +57,7 @@ type ApplicationAPI =
     :<|> DocumentTemplateFileAPI
     :<|> DocumentAPI
     :<|> DomainAPI
+    :<|> ExternalLinkAPI
     :<|> FeedbackAPI
     :<|> InfoAPI
     :<|> KnowledgeModelAPI
@@ -98,6 +100,7 @@ applicationServer =
     :<|> documentTemplateFileServer
     :<|> documentServer
     :<|> domainServer
+    :<|> externalLinkServer
     :<|> feedbackServer
     :<|> infoServer
     :<|> knowledgeModelServer
