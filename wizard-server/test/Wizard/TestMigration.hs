@@ -64,9 +64,11 @@ import Wizard.Model.Cache.ServerCache
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
+import WizardLib.Public.Database.DAO.ExternalLink.ExternalLinkUsageDAO
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
+import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.ExternalLinkSchemaMigration as ExternalLink
 
 import Wizard.Specs.Common
 
@@ -76,6 +78,7 @@ buildSchema appContext = do
   runInContext Package.dropFunctions appContext
   runInContext Common.dropFunctions appContext
   putStrLn "DB: dropping schema"
+  runInContext ExternalLink.dropTables appContext
   runInContext KnowledgeModel.dropTables appContext
   runInContext Component.dropTables appContext
   runInContext Locale.dropTables appContext
@@ -122,6 +125,7 @@ buildSchema appContext = do
   runInContext Locale.createTables appContext
   runInContext Component.createTables appContext
   runInContext KnowledgeModel.createTables appContext
+  runInContext ExternalLink.createTables appContext
   putStrLn "DB: Creating DB functions"
   runInContext Common.createFunctions appContext
   runInContext Package.createFunctions appContext
@@ -131,6 +135,7 @@ buildSchema appContext = do
   runInContext LocaleMigration.runS3Migration appContext
 
 resetDB appContext = do
+  runInContext deleteExternalLinkUsages appContext
   runInContext deleteKnowledgeModelCaches appContext
   runInContext deleteLocales appContext
   runInContext deleteRegistryOrganizations appContext

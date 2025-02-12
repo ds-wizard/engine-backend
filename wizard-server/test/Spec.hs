@@ -35,6 +35,7 @@ import Wizard.Specs.API.DocumentTemplateDraft.Asset.APISpec
 import Wizard.Specs.API.DocumentTemplateDraft.File.APISpec
 import Wizard.Specs.API.DocumentTemplateDraft.Folder.APISpec
 import Wizard.Specs.API.Domain.APISpec
+import Wizard.Specs.API.ExternalLink.APISpec
 import Wizard.Specs.API.Feedback.APISpec
 import Wizard.Specs.API.Info.APISpec
 import Wizard.Specs.API.KnowledgeModel.APISpec
@@ -199,6 +200,7 @@ main =
               documentTemplateDraftAssetAPI baseContext appContext
               documentTemplateDraftFileAPI baseContext appContext
               domainAPI baseContext appContext
+              externalLinkAPI baseContext appContext
               feedbackAPI baseContext appContext
               infoAPI baseContext appContext
               knowledgeModelAPI baseContext appContext
