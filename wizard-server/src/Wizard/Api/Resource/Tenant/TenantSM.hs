@@ -15,5 +15,7 @@ instance ToSchema Tenant where
 instance ToSchema TenantState where
   declareNamedSchema = toSwagger ReadyForUseTenantState
 
+instance ToParamSchema TenantState
+
 instance ToSchema TenantDTO where
   declareNamedSchema = toSwagger (toDTO defaultTenant Nothing Nothing)

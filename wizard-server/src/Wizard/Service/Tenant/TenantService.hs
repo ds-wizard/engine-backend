@@ -35,10 +35,10 @@ import qualified Wizard.Service.User.UserMapper as U_Mapper
 import Wizard.Service.User.UserService
 import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
 
-getTenantsPage :: Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page TenantDTO)
-getTenantsPage mQuery mEnabled pageable sort = do
+getTenantsPage :: Maybe String -> Maybe [TenantState] -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page TenantDTO)
+getTenantsPage mQuery mStates mEnabled pageable sort = do
   checkPermission _TENANT_PERM
-  tenants <- findTenantsPage mQuery mEnabled pageable sort
+  tenants <- findTenantsPage mQuery mStates mEnabled pageable sort
   traverse enhanceTenant tenants
 
 registerTenant :: TenantCreateDTO -> AppContextM TenantDTO
@@ -81,7 +81,7 @@ createTenantByCommand :: CreateOrUpdateTenantCommand -> AppContextM ()
 createTenantByCommand command = do
   now <- liftIO getCurrentTime
   serverConfig <- asks serverConfig
-  let tenant = fromCommand command serverConfig now now
+  let tenant = fromCommand command NotSeededTenantState serverConfig now now
   insertTenant tenant
   createConfig tenant.uuid now
   createLimitBundle tenant.uuid now
@@ -115,7 +115,7 @@ modifyTenantFromCommand command =
     now <- liftIO getCurrentTime
     serverConfig <- asks serverConfig
     tenant <- findTenantByUuid command.uuid
-    let updatedTenant = fromCommand command serverConfig tenant.createdAt now
+    let updatedTenant = fromCommand command tenant.state serverConfig tenant.createdAt now
     updateTenantByUuid updatedTenant
     modifyLimitBundle command.uuid command.limits
     return updatedTenant

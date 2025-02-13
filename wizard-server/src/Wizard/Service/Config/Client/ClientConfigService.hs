@@ -32,6 +32,8 @@ getClientConfig mServerUrl mClientUrl = do
       else getCurrentTenant
   unless tenant.enabled (throwError . NotExistsError $ _ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE (fromMaybe "not-provided" mServerUrl))
   case tenant.state of
+    NotSeededTenantState -> do
+      return $ NotSeededClientConfigDTO {message = "We’re currently preparing the instance for you"}
     PendingHousekeepingTenantState -> do
       let mCreatedByUuid = fmap (.uuid) mCurrentUser
       migrateToLatestMetamodelVersionCommand tenant mCreatedByUuid

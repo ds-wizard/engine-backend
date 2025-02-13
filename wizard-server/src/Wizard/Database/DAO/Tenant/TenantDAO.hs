@@ -1,6 +1,7 @@
 module Wizard.Database.DAO.Tenant.TenantDAO where
 
 import Control.Monad.Reader (liftIO)
+import qualified Data.List as L
 import Data.String
 import Data.Time
 import qualified Data.UUID as U
@@ -26,14 +27,21 @@ pageLabel = "tenants"
 findTenants :: AppContextM [Tenant]
 findTenants = createFindEntitiesFn entityName
 
-findTenantsPage :: Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page Tenant)
-findTenantsPage mQuery mEnabled pageable sort = do
+findTenantsPage :: Maybe String -> Maybe [TenantState] -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page Tenant)
+findTenantsPage mQuery mStates mEnabled pageable sort = do
+  let statesCondition =
+        case mStates of
+          Nothing -> ""
+          Just [] -> ""
+          Just states ->
+            let xs = fmap (\s -> f' "state = '%s'" [show s]) states
+             in " AND (" ++ L.intercalate " OR " xs ++ ")"
   let enabledCondition =
         case mEnabled of
           Nothing -> ""
           Just True -> " AND enabled = true"
           Just False -> " AND enabled = false"
-  let condition = f' "WHERE (name ~* ? OR tenant_id ~* ?) %s" [enabledCondition]
+  let condition = f' "WHERE (name ~* ? OR tenant_id ~* ?) %s %s" [statesCondition, enabledCondition]
   createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort "*" condition [regexM mQuery, regexM mQuery]
 
 findTenantByUuid :: U.UUID -> AppContextM Tenant

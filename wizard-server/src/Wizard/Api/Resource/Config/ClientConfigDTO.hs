@@ -8,7 +8,10 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.UserProfile
 
 data ClientConfigDTO
-  = HousekeepingInProgressClientConfigDTO
+  = NotSeededClientConfigDTO
+      { message :: String
+      }
+  | HousekeepingInProgressClientConfigDTO
       { message :: String
       }
   | ClientConfigDTO

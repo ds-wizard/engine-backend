@@ -10,6 +10,7 @@ import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Tenant.TenantDTO
 import Wizard.Api.Resource.Tenant.TenantJM ()
 import Wizard.Model.Context.BaseContext
+import Wizard.Model.Tenant.Tenant
 import Wizard.Service.Tenant.TenantService
 
 type List_GET =
@@ -17,6 +18,7 @@ type List_GET =
     :> Header "Host" String
     :> "tenants"
     :> QueryParam "q" String
+    :> QueryParam "states" [TenantState]
     :> QueryParam "enabled" Bool
     :> QueryParam "page" Int
     :> QueryParam "size" Int
@@ -27,12 +29,13 @@ list_GET
   :: Maybe String
   -> Maybe String
   -> Maybe String
+  -> Maybe [TenantState]
   -> Maybe Bool
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page TenantDTO))
-list_GET mTokenHeader mServerUrl mQuery mEnabled mPage mSize mSort =
+list_GET mTokenHeader mServerUrl mQuery mStates mEnabled mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
-      addTraceUuidHeader =<< getTenantsPage mQuery mEnabled (Pageable mPage mSize) (parseSortQuery mSort)
+      addTraceUuidHeader =<< getTenantsPage mQuery mStates mEnabled (Pageable mPage mSize) (parseSortQuery mSort)
