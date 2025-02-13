@@ -32,6 +32,7 @@ sanitizeQuestion km (questionUuidS : _) replyValue =
     (Just (ValueQuestion' q)) -> sanitizeValueQuestion km replyValue q
     (Just (IntegrationQuestion' q)) -> sanitizeIntegrationQuestion km replyValue q
     (Just (ItemSelectQuestion' q)) -> sanitizeItemSelectQuestion km replyValue q
+    (Just (FileQuestion' q)) -> sanitizeFileQuestion km replyValue q
     _ -> Nothing
 
 sanitizeOptionsQuestion :: KnowledgeModel -> ReplyValue -> OptionsQuestion -> Maybe ReplyValue
@@ -68,3 +69,7 @@ sanitizeIntegrationQuestion _ _ _ = Nothing
 sanitizeItemSelectQuestion :: KnowledgeModel -> ReplyValue -> ItemSelectQuestion -> Maybe ReplyValue
 sanitizeItemSelectQuestion km ItemSelectReply {..} q = Just $ ItemSelectReply {..}
 sanitizeItemSelectQuestion _ _ _ = Nothing
+
+sanitizeFileQuestion :: KnowledgeModel -> ReplyValue -> FileQuestion -> Maybe ReplyValue
+sanitizeFileQuestion km FileReply {..} q = Just $ FileReply {..}
+sanitizeFileQuestion _ _ _ = Nothing
