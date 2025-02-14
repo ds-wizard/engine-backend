@@ -60,6 +60,7 @@ library:
   - raw-strings-qq
   - rdf4h
   - regex-compat
+  - regex-tdfa
   - resource-pool
   - scientific
   - servant

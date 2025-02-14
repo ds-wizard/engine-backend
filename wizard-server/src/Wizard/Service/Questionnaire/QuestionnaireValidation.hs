@@ -3,9 +3,8 @@ module Wizard.Service.Questionnaire.QuestionnaireValidation where
 import Control.Monad.Except (throwError)
 import Data.Foldable (forM_, traverse_)
 import qualified Data.Map.Strict as M
-import Data.Maybe (isJust)
 import qualified Data.UUID as U
-import Text.Regex (matchRegex, mkRegex)
+import Text.Regex.TDFA
 
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
@@ -35,8 +34,6 @@ validateQuestionnaireTag tag = forM_ (isValidProjectTag tag) throwError
 
 isValidProjectTag :: String -> Maybe AppError
 isValidProjectTag tag =
-  if isJust $ matchRegex validationRegex tag
+  if tag =~ "^[^,]+$"
     then Nothing
     else Just $ ValidationError [] (M.singleton "tags" [_ERROR_VALIDATION__FORBIDDEN_CHARACTERS tag])
-  where
-    validationRegex = mkRegex "^[^,]+$"
