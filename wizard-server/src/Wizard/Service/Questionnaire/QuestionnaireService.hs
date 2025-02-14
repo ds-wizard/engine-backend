@@ -55,7 +55,9 @@ import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
 import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Model.Questionnaire.QuestionnaireFile
 import Wizard.Model.Questionnaire.QuestionnairePerm
+import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
@@ -178,13 +180,15 @@ createQuestionnaireFromTemplate reqDto =
             , updatedAt = now
             }
           :: Questionnaire
-    newQtnEvents <- cloneQuestinonaireEvents newQtnUuid originQtnEvents
     insertQuestionnaire newQtn
-    insertQuestionnaireEvents newQtnEvents
+    clonedFiles <- cloneQuestionnaireFiles originQtn.uuid newQtn.uuid
+    newQtnEvents <- cloneQuestinonaireEvents newQtnUuid originQtnEvents
+    let newQtnEventsWithReplacedFiles = replaceQuestinonaireEventsWithNewFiles clonedFiles newQtnEvents
+    insertQuestionnaireEvents newQtnEventsWithReplacedFiles
     duplicateCommentThreads reqDto.questionnaireUuid newQtnUuid
     state <- getQuestionnaireState newQtnUuid pkg.pId
     permissionDtos <- traverse enhanceQuestionnairePerm newQtn.permissions
-    qtnCtn <- compileQuestionnaire newQtnEvents
+    qtnCtn <- compileQuestionnaire newQtnEventsWithReplacedFiles
     return $ toSimpleDTO newQtn pkg state permissionDtos
 
 cloneQuestionnaire :: U.UUID -> AppContextM QuestionnaireDTO
@@ -209,9 +213,11 @@ cloneQuestionnaire cloneUuid =
             , updatedAt = now
             }
           :: Questionnaire
-    newQtnEvents <- cloneQuestinonaireEvents newQtnUuid originQtnEvents
     insertQuestionnaire newQtn
-    insertQuestionnaireEvents newQtnEvents
+    clonedFiles <- cloneQuestionnaireFiles originQtn.uuid newQtn.uuid
+    newQtnEvents <- cloneQuestinonaireEvents newQtnUuid originQtnEvents
+    let newQtnEventsWithReplacedFiles = replaceQuestinonaireEventsWithNewFiles clonedFiles newQtnEvents
+    insertQuestionnaireEvents newQtnEventsWithReplacedFiles
     duplicateCommentThreads cloneUuid newQtnUuid
     state <- getQuestionnaireState newQtnUuid pkg.pId
     permissionDtos <- traverse enhanceQuestionnairePerm newQtn.permissions
@@ -427,3 +433,20 @@ cloneQuestinonaireEvents newQtnUuid =
         newEventUuid <- liftIO generateUuid
         return $ setQuestionnaireUuid (setUuid event newEventUuid) newQtnUuid
     )
+
+replaceQuestinonaireEventsWithNewFiles :: [(QuestionnaireFile, QuestionnaireFile)] -> [QuestionnaireEvent] -> [QuestionnaireEvent]
+replaceQuestinonaireEventsWithNewFiles clonedFiles qtnEvents =
+  let findFile :: U.UUID -> Maybe (QuestionnaireFile, QuestionnaireFile)
+      findFile fileUuid = L.find (\(oldFile, newFile) -> oldFile.uuid == fileUuid) clonedFiles
+      replaceEvent :: QuestionnaireEvent -> QuestionnaireEvent
+      replaceEvent (SetReplyEvent' event) =
+        let value' =
+              case event.value of
+                r@FileReply {..} ->
+                  case findFile r.fValue of
+                    Just (oldFile, newFile) -> r {fValue = newFile.uuid}
+                    _ -> r
+                r -> r
+         in SetReplyEvent' (event {value = value'})
+      replaceEvent event' = event'
+   in fmap replaceEvent qtnEvents

@@ -64,7 +64,7 @@ createDocumentContext doc pkg branchEvents qtn mReplies = do
           (Just eventUuid) -> findQuestionnaireVersionUuid eventUuid qtn.versions
           _ -> Nothing
   qtnVersionDtos <- traverse enhanceQuestionnaireVersion qtn.versions
-  qtnFiles <- findQuestionnaireFilesByQuestionnaire doc.questionnaireUuid
+  qtnFiles <- findQuestionnaireFilesSimpleByQuestionnaire doc.questionnaireUuid
   (users, groups) <- heSettingsToPerms qtn
   return $
     toDocumentContext
