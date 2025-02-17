@@ -21,6 +21,7 @@ migrate dbPool = do
   testEventCount dbPool
   testValueCount dbPool
   removeEventsColumnFromQuestionnaire dbPool
+  changePasswordHashForSystemUser dbPool
   createExternalLinkTable dbPool
 
 regenerateQuestionnaireEventUuid dbPool = do
@@ -318,6 +319,12 @@ testValueCount dbPool = do
 
 removeEventsColumnFromQuestionnaire dbPool = do
   let sql = "ALTER TABLE questionnaire DROP COLUMN events;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+changePasswordHashForSystemUser dbPool = do
+  let sql = "UPDATE user_entity SET password_hash = 'no-hash' WHERE uuid = '00000000-0000-0000-0000-000000000000' AND tenant_uuid = '00000000-0000-0000-0000-000000000000';"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
