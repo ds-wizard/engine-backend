@@ -50,6 +50,9 @@ findTenantByUuid uuid = createFindEntityByFn entityName [("uuid", U.toString uui
 findTenantByServerDomain :: String -> AppContextM Tenant
 findTenantByServerDomain serverDomain = createFindEntityByFn entityName [("server_domain", serverDomain)]
 
+findTenantByServerDomain' :: String -> AppContextM (Maybe Tenant)
+findTenantByServerDomain' serverDomain = createFindEntityByFn' entityName [("server_domain", serverDomain)]
+
 findTenantByClientUrl :: String -> AppContextM Tenant
 findTenantByClientUrl clientUrl = createFindEntityByFn entityName [("client_url", clientUrl)]
 

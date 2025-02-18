@@ -30,17 +30,19 @@ getClientConfig mServerUrl mClientUrl = do
     if serverConfig.cloud.enabled
       then maybe getCurrentTenant findTenantByClientUrl mClientUrl
       else getCurrentTenant
-  unless tenant.enabled (throwError . NotExistsError $ _ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE (fromMaybe "not-provided" mServerUrl))
   case tenant.state of
     NotSeededTenantState -> do
-      return $ NotSeededClientConfigDTO {message = "We’re currently preparing the instance for you"}
+      throwError $ UserError (_ERROR_VALIDATION__NOT_SEEDED_TENANT (fromMaybe "not-provided" mServerUrl))
     PendingHousekeepingTenantState -> do
+      throwErrorIfTenantIsDisabled mServerUrl tenant
       let mCreatedByUuid = fmap (.uuid) mCurrentUser
       migrateToLatestMetamodelVersionCommand tenant mCreatedByUuid
       return $ HousekeepingInProgressClientConfigDTO {message = "We’re currently upgrading the data to the latest version to enhance your experience"}
     HousekeepingInProgressTenantState -> do
+      throwErrorIfTenantIsDisabled mServerUrl tenant
       return $ HousekeepingInProgressClientConfigDTO {message = "We’re currently upgrading the data to the latest version to enhance your experience"}
     ReadyForUseTenantState -> do
+      throwErrorIfTenantIsDisabled mServerUrl tenant
       tenantConfig <-
         if serverConfig.cloud.enabled
           then case mClientUrl of
@@ -55,3 +57,6 @@ getClientConfig mServerUrl mClientUrl = do
             return . Just $ toUserProfile currentUser userGroupUuids
           Nothing -> return Nothing
       return $ toClientConfigDTO serverConfig tenantConfig mUserProfile tenant locales
+
+throwErrorIfTenantIsDisabled :: Maybe String -> Tenant -> AppContextM ()
+throwErrorIfTenantIsDisabled mServerUrl tenant = unless tenant.enabled (throwError . NotExistsError $ _ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE (fromMaybe "not-provided" mServerUrl))
