@@ -84,68 +84,75 @@ packages:
 - completed:
     name: amazonka
     pantry-tree:
-      sha256: ca46d1e434972635cc1a5fdced6a33b1203227edd4614e09b3f59134c65b8983
-      size: 1528
-    sha256: a678b4c468ed87aad953b4c62eaae4a60a78c099f353e42439008fe33f5e67b2
-    size: 34732126
+      sha256: cd18f37f7578d8b48e4c625df28753a644f204933a7e665541b9878876f4e05e
+      size: 1529
+    sha256: 06f5e8430080e5a46e4489e12978725f4b01cfb896450a12a01bcde88168c7f2
+    size: 34855734
     subdir: lib/amazonka
-    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
     version: '2.0'
   original:
     subdir: lib/amazonka
-    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
 - completed:
     name: amazonka-core
     pantry-tree:
-      sha256: b86f40dfb68a3f20032c595300fc4a7ba1c0769615dd707edb105349cc41908e
+      sha256: fbd62e7df53cf2f5b944a99d0ef024c77a10e3bde2e519fb95bcb262aed29fc4
       size: 3222
-    sha256: a678b4c468ed87aad953b4c62eaae4a60a78c099f353e42439008fe33f5e67b2
-    size: 34732126
+    sha256: 06f5e8430080e5a46e4489e12978725f4b01cfb896450a12a01bcde88168c7f2
+    size: 34855734
     subdir: lib/amazonka-core
-    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
     version: '2.0'
   original:
     subdir: lib/amazonka-core
-    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
 - completed:
     name: amazonka-lambda
     pantry-tree:
-      sha256: e99dc2ab8f03c47702d3ba13cd416942e2143b4e494136d482749d2d47ee09ac
+      sha256: 249b7557046e64a2fae70acd3e7d7e20422ef7b3db49bf01d56c619e1d0a4470
       size: 21343
-    sha256: a678b4c468ed87aad953b4c62eaae4a60a78c099f353e42439008fe33f5e67b2
-    size: 34732126
+    sha256: 06f5e8430080e5a46e4489e12978725f4b01cfb896450a12a01bcde88168c7f2
+    size: 34855734
     subdir: lib/services/amazonka-lambda
-    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
     version: '2.0'
   original:
     subdir: lib/services/amazonka-lambda
-    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
 - completed:
     name: amazonka-sso
     pantry-tree:
-      sha256: f8897d82072d662605f60dc3d18e921c04bbb337b5d7caaeaece36fc8aee7fb9
+      sha256: c4575f7b7cf61c3de65e43d0d77a14dfa14c47ebff5f1a3dcd2f6e1313aaaf0a
       size: 1817
-    sha256: a678b4c468ed87aad953b4c62eaae4a60a78c099f353e42439008fe33f5e67b2
-    size: 34732126
+    sha256: 06f5e8430080e5a46e4489e12978725f4b01cfb896450a12a01bcde88168c7f2
+    size: 34855734
     subdir: lib/services/amazonka-sso
-    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
     version: '2.0'
   original:
     subdir: lib/services/amazonka-sso
-    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
 - completed:
     name: amazonka-sts
     pantry-tree:
-      sha256: b2a18c0a04c999f9f32e114ad94bf76a89e463dbb16063ebf0899ee28808f898
+      sha256: e0cb89013938230d257a2e546a78170dfdb6d507f37c6cb763a6cdf6290edb66
       size: 2880
-    sha256: a678b4c468ed87aad953b4c62eaae4a60a78c099f353e42439008fe33f5e67b2
-    size: 34732126
+    sha256: 06f5e8430080e5a46e4489e12978725f4b01cfb896450a12a01bcde88168c7f2
+    size: 34855734
     subdir: lib/services/amazonka-sts
-    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
     version: '2.0'
   original:
     subdir: lib/services/amazonka-sts
-    url: https://github.com/endgame/amazonka/archive/0c1813fe8e48d726a91e7dcf239ac9e6db64dff3.tar.gz
+    url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
+- completed:
+    hackage: microlens-pro-0.2.0.2@sha256:2fd14b7f87d6aa76700dabf65fcdda835aa329a4fdd8a44eebdf399e798af7ab,3377
+    pantry-tree:
+      sha256: be8ac1093c45ec46d640c56c06d8826d364ad1243d601e731e37581e8579e9c3
+      size: 430
+  original:
+    hackage: microlens-pro-0.2.0.2
 - completed:
     hackage: base64-1.0@sha256:ab8084608505f30d6cf7dd790271f927fd8a00956c5e7f5546f5cf56b298022c,2991
     pantry-tree:

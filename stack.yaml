@@ -25,14 +25,15 @@ extra-deps:
     commit: 83446d193f9bba02b758d2f1bd34a642f575238c
   - github: JonathanLorimer/hs-connection
     commit: 1dc000d38963de0e4c3954b27d4fe0e5f1d9cee2
-  - github: endgame/amazonka
-    commit: 0c1813fe8e48d726a91e7dcf239ac9e6db64dff3
+  - github: brendanhay/amazonka
+    commit: f3a7fca02fdbb832cc348e991983b1465225d50c
     subdirs:
       - lib/amazonka
       - lib/amazonka-core
       - lib/services/amazonka-lambda
       - lib/services/amazonka-sso
       - lib/services/amazonka-sts
+  - microlens-pro-0.2.0.2
   - base64-1.0
   - fsutils-0.1.2
   - ginger-0.10.5.2
