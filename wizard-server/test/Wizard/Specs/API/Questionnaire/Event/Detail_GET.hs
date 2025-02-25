@@ -20,6 +20,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -104,6 +105,8 @@ create_test_200 title appContext qtn qtnEvents qtnEvent authHeader =
       runInContextIO U.runMigration appContext
       runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
+      runInContextIO deleteQuestionnaireVersions appContext
+      runInContextIO deleteQuestionnaireEvents appContext
       runInContextIO deleteQuestionnaireComments appContext
       runInContextIO deleteQuestionnaireCommentThreads appContext
       runInContextIO deleteQuestionnairePerms appContext

@@ -8,9 +8,9 @@ import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeJM ()
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionJM ()
+import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionListJM ()
 import Wizard.Model.Context.BaseContext
+import Wizard.Model.Questionnaire.QuestionnaireVersionList
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionService
 
 type Detail_PUT =
@@ -21,7 +21,7 @@ type Detail_PUT =
     :> Capture "qtnUuid" U.UUID
     :> "versions"
     :> Capture "vUuid" U.UUID
-    :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] QuestionnaireVersionDTO)
+    :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] QuestionnaireVersionList)
 
 detail_PUT
   :: Maybe String
@@ -29,7 +29,7 @@ detail_PUT
   -> QuestionnaireVersionChangeDTO
   -> U.UUID
   -> U.UUID
-  -> BaseContextM (Headers '[Header "x-trace-uuid" String] QuestionnaireVersionDTO)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] QuestionnaireVersionList)
 detail_PUT mTokenHeader mServerUrl reqDto qtnUuid vUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< modifyVersion qtnUuid vUuid reqDto

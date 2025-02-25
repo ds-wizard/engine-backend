@@ -4,6 +4,7 @@ import Control.Monad.Reader (asks)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
 import Data.String (fromString)
+import Data.Time
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
@@ -28,11 +29,9 @@ import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetail ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailPreview ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailQuestionnaire ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailSettings ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireEventBundle ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireList ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSimple ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSimpleWithPerm ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireSquash ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSuggestion ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
@@ -45,7 +44,6 @@ import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
 import Wizard.Model.Questionnaire.QuestionnaireList
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireSimpleWithPerm
-import Wizard.Model.Questionnaire.QuestionnaireSquash
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
 import Wizard.Model.User.User
 
@@ -58,9 +56,9 @@ findQuestionnaires = do
   tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
   if currentUser.uRole == _USER_ROLE_ADMIN
-    then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid] >>= traverse enhance
+    then createFindEntitiesBySortedFn entityName [tenantQueryUuid tenantUuid] [Sort "name" Ascending] >>= traverse enhance
     else do
-      let sql = f' (qtnSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") [""]
+      let sql = f' (qtnSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") [""] ++ " ORDER BY qtn.name ASC"
       logInfoI _CMP_DATABASE sql
       let action conn = query_ conn (fromString sql)
       entities <- runDB action
@@ -396,10 +394,6 @@ findQuestionnaireForSquashing = do
   entities <- runDB action
   return . concat $ entities
 
-findQuestionnaireSquashByUuid :: U.UUID -> AppContextM QuestionnaireSquash
-findQuestionnaireSquashByUuid uuid =
-  createFindEntityWithFieldsByFn "uuid, versions" True entityName [("uuid", U.toString uuid)]
-
 findQuestionnaireDetail :: U.UUID -> AppContextM QuestionnaireDetail
 findQuestionnaireDetail uuid = do
   tenantUuid <- asks currentTenantUuid
@@ -613,13 +607,31 @@ updateQuestionnaireByUuid qtn = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, document_template_id = ?, format_uuid = ?, created_by = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ? WHERE  tenant_uuid = ? AND uuid = ?"
+          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, document_template_id = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ? WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow qtn ++ [toField tenantUuid, toField . U.toText $ qtn.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
   deleteQuestionnairePermsFiltered [("questionnaire_uuid", U.toString qtn.uuid)]
   traverse_ insertQuestionnairePerm qtn.permissions
+
+updateQuestionnaireSquashedByUuid :: U.UUID -> Bool -> AppContextM Int64
+updateQuestionnaireSquashedByUuid uuid squashed = do
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE questionnaire SET squashed = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = [toField squashed, toField tenantUuid, toField . U.toText $ uuid]
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
+  runDB action
+
+updateQuestionnaireSquashedAndUpdatedAtByUuid :: U.UUID -> Bool -> UTCTime -> AppContextM Int64
+updateQuestionnaireSquashedAndUpdatedAtByUuid uuid squashed updatedAt = do
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE questionnaire SET squashed = ?, updated_at = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = [toField squashed, toField updatedAt, toField tenantUuid, toField . U.toText $ uuid]
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
+  runDB action
 
 clearQuestionnaireCreatedBy :: U.UUID -> AppContextM ()
 clearQuestionnaireCreatedBy userUuid = do

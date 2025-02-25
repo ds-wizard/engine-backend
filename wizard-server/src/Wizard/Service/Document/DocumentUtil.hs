@@ -11,6 +11,7 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentList
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Submission.SubmissionService
@@ -28,13 +29,13 @@ filterAlreadyDoneDocument :: String -> U.UUID -> Document -> Bool
 filterAlreadyDoneDocument documentTemplateId formatUuid doc =
   (doc.state == DoneDocumentState || doc.state == ErrorDocumentState) && Just doc.documentTemplateId == Just documentTemplateId && Just doc.formatUuid == Just formatUuid
 
-computeHash :: [Event] -> Questionnaire -> Maybe U.UUID -> M.Map String Reply -> TenantConfig -> Maybe UserDTO -> Int
-computeHash branchEvents qtn phaseUuid replies tenantConfig mCurrentUser =
+computeHash :: [Event] -> Questionnaire -> [QuestionnaireVersion] -> Maybe U.UUID -> M.Map String Reply -> TenantConfig -> Maybe UserDTO -> Int
+computeHash branchEvents qtn versions phaseUuid replies tenantConfig mCurrentUser =
   sum
     [ hash branchEvents
     , hash qtn.name
     , hash qtn.description
-    , hash qtn.versions
+    , hash versions
     , hash qtn.projectTags
     , maybe 0 hash phaseUuid
     , hash . M.toList $ replies

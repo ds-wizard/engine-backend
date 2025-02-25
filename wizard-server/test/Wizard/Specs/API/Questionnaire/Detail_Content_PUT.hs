@@ -4,6 +4,7 @@ module Wizard.Specs.API.Questionnaire.Detail_Content_PUT (
 
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import Data.Foldable (traverse_)
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -18,6 +19,7 @@ import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -85,8 +87,10 @@ create_test_200 title appContext qtn qtnEventsEdited authHeader =
       runInContextIO QTN.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire7) appContext
       runInContextIO (insertQuestionnaireEvents questionnaire7Events) appContext
+      runInContextIO (traverse_ insertQuestionnaireVersion questionnaire7Versions) appContext
       runInContextIO (insertQuestionnaire questionnaire10) appContext
       runInContextIO (insertQuestionnaireEvents questionnaire10Events) appContext
+      runInContextIO (traverse_ insertQuestionnaireVersion questionnaire10Versions) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders (reqBody qtn.uuid)
       -- THEN: Compare response with expectation

@@ -28,6 +28,7 @@ questionnaireServiceSpec appContext =
         (Right ()) <- runInContext (createQuestionnairesFromCommands [command1, command2]) appContext
         -- THEN:
         (Right questionnaires) <- runInContext findQuestionnaires appContext
+        length questionnaires `shouldBe` 2
         compareQuestionnaire (head questionnaires) command1
         compareQuestionnaire (questionnaires !! 1) command2
 

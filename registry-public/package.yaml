@@ -33,6 +33,7 @@ library:
 default-extensions:
   - DataKinds
   - DeriveGeneric
+  - DisambiguateRecordFields
   - DuplicateRecordFields
   - ExistentialQuantification
   - ExtendedDefaultRules
@@ -40,8 +41,10 @@ default-extensions:
   - FlexibleInstances
   - FunctionalDependencies
   - GeneralizedNewtypeDeriving
+  - LambdaCase
   - MultiParamTypeClasses
   - OverloadedStrings
+  - OverloadedRecordDot
   - QuasiQuotes
   - RankNTypes
   - RecordWildCards
@@ -52,5 +55,3 @@ default-extensions:
   - TypeOperators
   - TypeSynonymInstances
   - UnicodeSyntax
-  - OverloadedRecordDot
-  - DisambiguateRecordFields

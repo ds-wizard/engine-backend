@@ -15,6 +15,7 @@ dropTables = do
   logInfo _CMP_MIGRATION "(Table/Questionnaire) drop tables"
   let sql =
         "DROP TABLE IF EXISTS questionnaire_file CASCADE; \
+        \DROP TABLE IF EXISTS questionnaire_version CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_comment CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_comment_thread CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_perm_group CASCADE; \
@@ -39,6 +40,7 @@ createTables = do
   createQtnAclGroupTable
   createQtnCommentThreadTable
   createQtnCommentTable
+  createQtnVersionTable
   createQtnFileTable
   makeBucket
 
@@ -56,7 +58,6 @@ createQtnTable = do
         \    document_template_id        varchar, \
         \    format_uuid                 uuid, \
         \    created_by                  uuid, \
-        \    versions                    jsonb       NOT NULL, \
         \    created_at                  timestamptz NOT NULL, \
         \    updated_at                  timestamptz NOT NULL, \
         \    description                 varchar, \
@@ -91,7 +92,9 @@ createQtnEventTable = do
         \    value              text[], \
         \    value_id           text, \
         \    CONSTRAINT questionnaire_event_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_event_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) references questionnaire (uuid, tenant_uuid) ON DELETE CASCADE \
+        \    CONSTRAINT questionnaire_event_created_by_fk FOREIGN KEY (created_by, tenant_uuid) references user_entity(uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_event_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) references questionnaire(uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_event_tenant_uuid_fk FOREIGN KEY (tenant_uuid) references tenant(uuid) \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -171,6 +174,29 @@ createQtnCommentTable = do
         \    CONSTRAINT questionnaire_comment_pk PRIMARY KEY (uuid, tenant_uuid), \
         \    CONSTRAINT questionnaire_comment_comment_thread_uuid FOREIGN KEY (comment_thread_uuid, tenant_uuid) REFERENCES questionnaire_comment_thread (uuid, tenant_uuid), \
         \    CONSTRAINT questionnaire_comment_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createQtnVersionTable = do
+  logInfo _CMP_MIGRATION "(Table/QuestionnaireVersion) create table"
+  let sql =
+        "CREATE TABLE questionnaire_version \
+        \( \
+        \    uuid               uuid        NOT NULL, \
+        \    name               varchar     NOT NULL, \
+        \    description        varchar, \
+        \    event_uuid         uuid        NOT NULL, \
+        \    questionnaire_uuid uuid        NOT NULL, \
+        \    tenant_uuid        uuid        NOT NULL, \
+        \    created_by         uuid, \
+        \    created_at         timestamptz NOT NULL, \
+        \    updated_at         timestamptz NOT NULL, \
+        \    CONSTRAINT questionnaire_version_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_version_event_uuid_fk FOREIGN KEY (event_uuid, tenant_uuid) REFERENCES questionnaire_event (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_version_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
+        \    CONSTRAINT questionnaire_version_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid), \
+        \    CONSTRAINT questionnaire_version_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid) \
         \);"
   let action conn = execute_ conn sql
   runDB action

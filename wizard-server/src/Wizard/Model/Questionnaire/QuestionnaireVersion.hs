@@ -13,7 +13,9 @@ data QuestionnaireVersion = QuestionnaireVersion
   , name :: String
   , description :: Maybe String
   , eventUuid :: U.UUID
-  , createdBy :: U.UUID
+  , questionnaireUuid :: U.UUID
+  , tenantUuid :: U.UUID
+  , createdBy :: Maybe U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

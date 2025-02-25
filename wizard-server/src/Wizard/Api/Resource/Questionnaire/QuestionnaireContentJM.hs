@@ -7,7 +7,7 @@ import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadListJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionJM ()
+import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionListJM ()
 
 instance FromJSON QuestionnaireContentDTO where
   parseJSON = genericParseJSON jsonOptions

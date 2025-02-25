@@ -68,14 +68,7 @@ findDocumentsPage mQtnUuid mQtnName mDocumentTemplateId mQuery pageable sort = d
               \       doc.questionnaire_uuid, \
               \       ${questionnaireSelect} \
               \       doc.questionnaire_event_uuid, \
-              \       (SELECT version.name \
-              \        FROM (SELECT jsonb_array_elements(versions) ->> 'name'      AS name, \
-              \                     jsonb_array_elements(versions) ->> 'eventUuid' AS event_uuid \
-              \              FROM questionnaire qtn \
-              \              WHERE qtn.uuid = doc.questionnaire_uuid \
-              \                AND qtn.tenant_uuid = doc.tenant_uuid) version \
-              \        WHERE version.event_uuid = doc.questionnaire_event_uuid::text \
-              \       ) as questionnaire_version, \
+              \       qtn_version.name, \
               \       doc_tml.id, \
               \       doc_tml.name, \
               \       doc_tml.formats, \
@@ -87,6 +80,7 @@ findDocumentsPage mQtnUuid mQtnName mDocumentTemplateId mQuery pageable sort = d
               \FROM document doc \
               \${questionnaireJoin} \
               \LEFT JOIN document_template doc_tml ON doc_tml.id = doc.document_template_id AND doc_tml.tenant_uuid = doc.tenant_uuid \
+              \LEFT JOIN questionnaire_version qtn_version ON qtn_version.event_uuid = doc.questionnaire_event_uuid AND qtn_version.tenant_uuid = doc.tenant_uuid \
               \${condition} \
               \${sort} \
               \OFFSET ${offset} \

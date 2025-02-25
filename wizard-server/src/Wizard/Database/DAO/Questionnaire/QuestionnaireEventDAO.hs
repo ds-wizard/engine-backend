@@ -1,6 +1,9 @@
 module Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO where
 
+import Control.Monad (unless, void)
 import Control.Monad.Reader (asks)
+import Data.Foldable (traverse_)
+import qualified Data.List as L
 import Data.String (fromString)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
@@ -8,23 +11,14 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
+import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
-import Wizard.Database.Mapping.Questionnaire.Questionnaire ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetail ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailPreview ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailQuestionnaire ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailSettings ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireEvent ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireEventBundle ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireList ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireSimple ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireSimpleWithPerm ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireSquash ()
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireSuggestion ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireEvent
+import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 
 entityName = "questionnaire_event"
 
@@ -47,6 +41,11 @@ findQuestionnaireEventByUuid :: U.UUID -> AppContextM QuestionnaireEvent
 findQuestionnaireEventByUuid uuid = do
   tenantUuid <- asks currentTenantUuid
   createFindEntityWithFieldsByFn "*" False entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
+
+findQuestionnaireEventByUuid' :: U.UUID -> AppContextM (Maybe QuestionnaireEvent)
+findQuestionnaireEventByUuid' uuid = do
+  tenantUuid <- asks currentTenantUuid
+  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 insertQuestionnaireEvent :: QuestionnaireEvent -> AppContextM Int64
 insertQuestionnaireEvent = createInsertFn entityName
@@ -86,70 +85,43 @@ insertQuestionnaireEvents events = do
       let action conn = execute conn sql params
       runDB action
 
-updateQuestionnaireEventsByQuestionnaireUuid :: U.UUID -> Bool -> [QuestionnaireEvent] -> AppContextM Int64
-updateQuestionnaireEventsByQuestionnaireUuid qtnUuid squashed events = do
+updateQuestionnaireEventByUuid :: QuestionnaireEvent -> AppContextM Int64
+updateQuestionnaireEventByUuid event = do
   tenantUuid <- asks currentTenantUuid
-  let insertSql =
-        if null events
-          then ""
-          else f' "INSERT INTO questionnaire_event VALUES %s;" [generateQuestionMarksForEntities events]
-  let sql =
-        fromString $
-          f'
-            "BEGIN TRANSACTION; \
-            \DELETE FROM questionnaire_event WHERE tenant_uuid = ? AND questionnaire_uuid = ?; \
-            \%s \
-            \UPDATE questionnaire SET squashed = ?, updated_at = now() WHERE uuid = ?; \
-            \COMMIT;"
-            [insertSql]
-  let params = [toField tenantUuid, toField . U.toText $ qtnUuid] ++ concatMap toRow events ++ [toField squashed, toField qtnUuid]
-  logInsertAndUpdate sql params
+  let sql = fromString "UPDATE questionnaire_event SET uuid = ?, event_type = ?, path = ?, created_at = ?, created_by = ?, questionnaire_uuid = ?, tenant_uuid = ?, value_type = ?, value = ?, value_id = ? WHERE uuid = ? AND tenant_uuid = ?"
+  let params = toRow event ++ [toField (getUuid event), toField tenantUuid]
+  logQuery sql params
   let action conn = execute conn sql params
   runDB action
 
-updateQuestionnaireEventsByQuestionnaireUuid' :: U.UUID -> Bool -> [QuestionnaireEvent] -> AppContextM Int64
-updateQuestionnaireEventsByQuestionnaireUuid' qtnUuid squashed events = do
-  tenantUuid <- asks currentTenantUuid
-  let insertSql =
-        if null events
-          then ""
-          else f' "INSERT INTO questionnaire_event VALUES %s;" [generateQuestionMarksForEntities events]
-  let sql =
-        fromString $
-          f'
-            "BEGIN TRANSACTION; \
-            \DELETE FROM questionnaire_event WHERE tenant_uuid = ? AND questionnaire_uuid = ?; \
-            \%s \
-            \UPDATE questionnaire SET squashed = ? WHERE uuid = ?; \
-            \COMMIT;"
-            [insertSql]
-  let params = [toField tenantUuid, toField . U.toText $ qtnUuid] ++ concatMap toRow events ++ [toField squashed, toField qtnUuid]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
+syncQuestionnaireEventsWithDb :: [QuestionnaireEvent] -> [QuestionnaireEvent] -> AppContextM ()
+syncQuestionnaireEventsWithDb oldEvents newEvents = do
+  let dbEventMap = map getUuid oldEvents
+  let newEventMap = map getUuid newEvents
+  let toDelete = dbEventMap L.\\ newEventMap
+  let toInsert = filter (\e -> getUuid e `notElem` dbEventMap) newEvents
+  let toUpdate = filter (\e -> e `notElem` oldEvents && getUuid e `elem` dbEventMap) newEvents
+  unless (null toInsert) (void $ insertQuestionnaireEvents toInsert)
+  traverse_ updateQuestionnaireEventByUuid toUpdate
+  void $ deleteQuestionnaireEventsByUuids toDelete
 
-updateQuestionnaireEventsByQuestionnaireUuid'' :: U.UUID -> [QuestionnaireEvent] -> AppContextM Int64
-updateQuestionnaireEventsByQuestionnaireUuid'' qtnUuid events = do
-  tenantUuid <- asks currentTenantUuid
-  let insertSql =
-        if null events
-          then ""
-          else f' "INSERT INTO questionnaire_event VALUES %s;" [generateQuestionMarksForEntities events]
-  let sql =
-        fromString $
-          f'
-            "BEGIN TRANSACTION; \
-            \DELETE FROM questionnaire_event WHERE tenant_uuid = ? AND questionnaire_uuid = ?; \
-            \%s \
-            \COMMIT;"
-            [insertSql]
-  let params = [toField tenantUuid, toField . U.toText $ qtnUuid] ++ concatMap toRow events
+clearQuestionnaireEventCreatedBy :: U.UUID -> AppContextM ()
+clearQuestionnaireEventCreatedBy userUuid = do
+  let sql = fromString "UPDATE questionnaire_event SET created_by = null WHERE created_by = ?"
+  let params = [U.toString userUuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
+  return ()
 
 deleteQuestionnaireEvents :: AppContextM Int64
 deleteQuestionnaireEvents = createDeleteEntitiesFn entityName
+
+deleteQuestionnaireEventsByUuids :: [U.UUID] -> AppContextM ()
+deleteQuestionnaireEventsByUuids eventUuids =
+  unless
+    (null eventUuids)
+    (void $ createDeleteEntityWhereInFn entityName "uuid" (fmap U.toString eventUuids))
 
 deleteQuestionnaireEventsByQuestionnaireUuid :: U.UUID -> AppContextM Int64
 deleteQuestionnaireEventsByQuestionnaireUuid questionnaireUuid = do

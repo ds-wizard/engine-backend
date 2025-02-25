@@ -10,14 +10,15 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireVersion
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
-import Wizard.Specs.API.Questionnaire.Common
+import Wizard.Specs.API.Questionnaire.Version.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
@@ -35,7 +36,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/wizard-api/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/versions/bd6611c8-ea11-48ab-adaa-3ce51b66aae5"
+reqUrl = "/wizard-api/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/versions/af984a75-56e3-49f8-b16f-dd016270ce7e"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -61,7 +62,7 @@ test_204 appContext =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find a result in DB
-      assertExistenceOfQuestionnaireInDB appContext (questionnaire1 {versions = []}) questionnaire1Events
+      assertAbsenceOfQuestionnaireVersionInDB appContext (questionnaireVersion1 questionnaire1Uuid)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -74,7 +75,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/questionnaires/00084a75-56e3-49f8-b16f-d6b99599910a/versions/bd6611c8-ea11-48ab-adaa-3ce51b66aae5"
+    "/wizard-api/questionnaires/00084a75-56e3-49f8-b16f-d6b99599910a/versions/00084a75-56e3-49f8-b16f-dd016270ce7e"
     reqHeaders
     reqBody
     "questionnaire"

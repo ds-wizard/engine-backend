@@ -100,7 +100,6 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
                 , description = Nothing
                 , isTemplate = False
                 , sharing = AnyoneWithLinkEditQuestionnaire
-                , versions = []
                 , projectTags = []
                 , permissions = []
                 , creatorUuid = Nothing
@@ -121,7 +120,6 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
                 { uuid = resBody.uuid
                 , description = Nothing
                 , isTemplate = False
-                , versions = []
                 , projectTags = []
                 , permissions = aPermissions
                 }
