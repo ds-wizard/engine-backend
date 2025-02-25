@@ -158,7 +158,6 @@ toTemporaryQuestionnaire branch package mCurrentUser =
     , formatUuid = Nothing
     , creatorUuid = fmap (.uuid) mCurrentUser
     , permissions = []
-    , versions = []
     , isTemplate = False
     , squashed = True
     , tenantUuid = branch.tenantUuid

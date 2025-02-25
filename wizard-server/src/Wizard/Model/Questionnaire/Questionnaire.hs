@@ -5,7 +5,6 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Questionnaire.QuestionnairePerm
-import Wizard.Model.Questionnaire.QuestionnaireVersion
 
 data QuestionnaireVisibility
   = PrivateQuestionnaire
@@ -34,7 +33,6 @@ data Questionnaire = Questionnaire
   , formatUuid :: Maybe U.UUID
   , creatorUuid :: Maybe U.UUID
   , permissions :: [QuestionnairePerm]
-  , versions :: [QuestionnaireVersion]
   , isTemplate :: Bool
   , squashed :: Bool
   , tenantUuid :: U.UUID
@@ -57,7 +55,6 @@ instance Eq Questionnaire where
       && a.formatUuid == b.formatUuid
       && a.creatorUuid == b.creatorUuid
       && a.permissions == b.permissions
-      && a.versions == b.versions
       && a.isTemplate == b.isTemplate
       && a.squashed == b.squashed
       && a.tenantUuid == b.tenantUuid

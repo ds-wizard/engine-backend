@@ -18,7 +18,6 @@ import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSettingsChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireShareChangeDTO
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Constant.Acl
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
@@ -33,6 +32,7 @@ import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
+import Wizard.Model.Questionnaire.QuestionnaireVersionList
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
@@ -143,7 +143,7 @@ toContentDTO
   :: QuestionnaireContent
   -> M.Map String [QuestionnaireCommentThreadList]
   -> [QuestionnaireEventDTO]
-  -> [QuestionnaireVersionDTO]
+  -> [QuestionnaireVersionList]
   -> QuestionnaireContentDTO
 toContentDTO qtnCtn threads events versions =
   QuestionnaireContentDTO
@@ -247,7 +247,6 @@ fromShareChangeDTO qtn dto visibility sharing now =
     , formatUuid = qtn.formatUuid
     , creatorUuid = qtn.creatorUuid
     , permissions = fmap (fromQuestionnairePermChangeDTO qtn.uuid qtn.tenantUuid) dto.permissions
-    , versions = qtn.versions
     , isTemplate = qtn.isTemplate
     , squashed = qtn.squashed
     , tenantUuid = qtn.tenantUuid
@@ -270,7 +269,6 @@ fromSettingsChangeDTO qtn dto currentUser now =
     , formatUuid = dto.formatUuid
     , creatorUuid = qtn.creatorUuid
     , permissions = qtn.permissions
-    , versions = qtn.versions
     , isTemplate =
         if _QTN_TML_PERM `elem` currentUser.permissions
           then dto.isTemplate
@@ -310,7 +308,6 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId
           case mCurrentUserUuid of
             Just currentUserUuid -> [toUserQuestionnairePerm qtnUuid currentUserUuid ownerPermissions tenantUuid]
             Nothing -> []
-      , versions = []
       , isTemplate = False
       , squashed = True
       , tenantUuid = tenantUuid
@@ -363,7 +360,6 @@ fromCreateQuestionnaireCommand command uuid permissions tenantConfig createdBy n
     , formatUuid = Nothing
     , creatorUuid = Just createdBy
     , permissions = permissions
-    , versions = []
     , isTemplate = False
     , squashed = True
     , tenantUuid = tenantConfig.uuid

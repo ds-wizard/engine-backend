@@ -9,7 +9,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadListSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM ()
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionSM ()
+import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionListSM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 

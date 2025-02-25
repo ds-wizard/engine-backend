@@ -5,9 +5,9 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.Questionnaire.QuestionnaireCommentList
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Questionnaire.QuestionnaireVersionList
 
 data QuestionnaireContentDTO = QuestionnaireContentDTO
   { phaseUuid :: Maybe U.UUID
@@ -15,6 +15,6 @@ data QuestionnaireContentDTO = QuestionnaireContentDTO
   , commentThreadsMap :: M.Map String [QuestionnaireCommentThreadList]
   , labels :: M.Map String [U.UUID]
   , events :: [QuestionnaireEventDTO]
-  , versions :: [QuestionnaireVersionDTO]
+  , versions :: [QuestionnaireVersionList]
   }
   deriving (Show, Eq, Generic)

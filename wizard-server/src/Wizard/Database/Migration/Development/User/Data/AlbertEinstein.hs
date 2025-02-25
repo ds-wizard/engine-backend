@@ -7,6 +7,7 @@ import Data.Time
 import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserStateDTO
@@ -75,6 +76,9 @@ userAlbertEdited =
     , email = "albert.einstein@example-edited.com"
     , affiliation = Just "EDITED: My University"
     }
+
+userAlbertDto :: UserDTO
+userAlbertDto = toDTO userAlbert
 
 userAlbertProfile :: UserProfile
 userAlbertProfile = toUserProfile (toDTO userAlbert) [bioGroup.uuid]

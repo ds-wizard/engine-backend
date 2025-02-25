@@ -12,10 +12,10 @@ import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
-import Wizard.Model.Questionnaire.QuestionnaireSquash
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 
 squashQuestionnaireEvents :: AppContextM ()
@@ -27,10 +27,11 @@ squashQuestionnaireEventsForQuestionnaire :: U.UUID -> AppContextM ()
 squashQuestionnaireEventsForQuestionnaire qtnUuid =
   runInTransaction $ do
     logInfoI _CMP_SERVICE (f' "Squashing events for questionnaire (qtnUuid: '%s')" [U.toString qtnUuid])
-    (QuestionnaireSquash _ versions) <- findQuestionnaireSquashByUuid qtnUuid
     events <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
+    versions <- findQuestionnaireVersionsByQuestionnaireUuid qtnUuid
     let squashedEvents = squash versions events
-    updateQuestionnaireEventsByQuestionnaireUuid' qtnUuid True squashedEvents
+    syncQuestionnaireEventsWithDb events squashedEvents
+    updateQuestionnaireSquashedByUuid qtnUuid True
     logInfoI
       _CMP_SERVICE
       ( f'

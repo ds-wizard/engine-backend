@@ -12,8 +12,6 @@ import GHC.Generics
 
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnairePermJM ()
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionJM ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSharing ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireVisibility ()
 import Wizard.Model.Questionnaire.QuestionnaireEvent

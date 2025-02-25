@@ -96,7 +96,7 @@ deletePersistentCommands :: AppContextC s sc m => m Int64
 deletePersistentCommands = createDeleteEntitiesFn entityName
 
 deletePersistentCommandsByCreatedBy :: AppContextC s sc m => [U.UUID] -> m Int64
-deletePersistentCommandsByCreatedBy createdBys = createDeleteEntityLikeFn entityName "created_by" (fmap U.toString createdBys)
+deletePersistentCommandsByCreatedBy createdBys = createDeleteEntityWhereInFn entityName "created_by" (fmap U.toString createdBys)
 
 deletePersistentCommandByUuid :: AppContextC s sc m => U.UUID -> m Int64
 deletePersistentCommandByUuid uuid = createDeleteEntityByFn entityName [("uuid", U.toString uuid)]

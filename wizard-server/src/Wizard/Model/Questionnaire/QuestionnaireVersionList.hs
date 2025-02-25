@@ -1,4 +1,4 @@
-module Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO where
+module Wizard.Model.Questionnaire.QuestionnaireVersionList where
 
 import Data.Time
 import qualified Data.UUID as U
@@ -6,7 +6,7 @@ import GHC.Generics
 
 import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 
-data QuestionnaireVersionDTO = QuestionnaireVersionDTO
+data QuestionnaireVersionList = QuestionnaireVersionList
   { uuid :: U.UUID
   , name :: String
   , description :: Maybe String
@@ -17,7 +17,7 @@ data QuestionnaireVersionDTO = QuestionnaireVersionDTO
   }
   deriving (Show, Generic)
 
-instance Eq QuestionnaireVersionDTO where
+instance Eq QuestionnaireVersionList where
   a == b =
     a.uuid == b.uuid
       && a.name == b.name

@@ -5,10 +5,10 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Questionnaire.QuestionnaireFileSimple
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Questionnaire.QuestionnaireVersionList
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
@@ -56,7 +56,7 @@ data DocumentContextQuestionnaire = DocumentContextQuestionnaire
   , phaseUuid :: Maybe U.UUID
   , labels :: M.Map String [U.UUID]
   , versionUuid :: Maybe U.UUID
-  , versions :: [QuestionnaireVersionDTO]
+  , versions :: [QuestionnaireVersionList]
   , projectTags :: [String]
   , files :: [QuestionnaireFileSimple]
   , createdBy :: Maybe UserDTO

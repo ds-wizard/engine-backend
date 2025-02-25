@@ -23,6 +23,14 @@ listSpec =
       it "[1,2] -> [1,2]" $ [1, 2] `elems` [1, 2] `shouldBe` True
       it "[2,1] -> [1,2]" $ [2, 1] `elems` [1, 2] `shouldBe` True
       it "[1,2] -> [1]" $ [1, 2] `elems` [1] `shouldBe` False
+    describe "dropWhileInclusive" $ do
+      it "(<= 3) [] -> []" $ dropWhileInclusive (<= 3) [] `shouldBe` []
+      it "(<= 3) [1,2,3,4,5,6] -> [4,5,6]" $ dropWhileInclusive (<= 3) [1, 2, 3, 4, 5, 6] `shouldBe` [4, 5, 6]
+      it "(/= 3) [1,2,3,4,5,6] -> [3,4,5,6]" $ dropWhileInclusive (/= 3) [1, 2, 3, 4, 5, 6] `shouldBe` [3, 4, 5, 6]
+    describe "dropWhileExclusive" $ do
+      it "(<= 3) [] -> []" $ dropWhileExclusive (<= 3) [] `shouldBe` []
+      it "(<= 3) [1,2,3,4,5,6] -> [5,6]" $ dropWhileExclusive (<= 3) [1, 2, 3, 4, 5, 6] `shouldBe` [5, 6]
+      it "(/= 3) [1,2,3,4,5,6] -> [4,5,6]" $ dropWhileExclusive (/= 3) [1, 2, 3, 4, 5, 6] `shouldBe` [4, 5, 6]
     describe "generateList" $ do
       it "0 -> []" $ generateList 0 `shouldBe` []
       it "1 -> [0]" $ generateList 1 `shouldBe` [0]

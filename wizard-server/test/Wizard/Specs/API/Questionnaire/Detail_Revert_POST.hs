@@ -16,11 +16,12 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVer
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireVersion
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Questionnaire.Common
+import Wizard.Specs.API.Questionnaire.Version.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
@@ -67,7 +68,8 @@ test_200 appContext =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find a result in DB
-      assertExistenceOfQuestionnaireInDB appContext (questionnaire1 {versions = []}) [sre_rQ1' questionnaire1Uuid, sre_rQ2' questionnaire1Uuid]
+      assertExistenceOfQuestionnaireInDB appContext questionnaire1 [sre_rQ1' questionnaire1Uuid, sre_rQ2' questionnaire1Uuid]
+      assertAbsenceOfQuestionnaireVersionInDB appContext (questionnaireVersion1 questionnaire1Uuid)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

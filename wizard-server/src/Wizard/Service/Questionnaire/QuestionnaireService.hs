@@ -38,6 +38,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
@@ -72,6 +73,7 @@ import Wizard.Service.Questionnaire.QuestionnaireAudit
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Questionnaire.QuestionnaireValidation
+import Wizard.Service.Questionnaire.Version.QuestionnaireVersionService
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
@@ -182,10 +184,12 @@ createQuestionnaireFromTemplate reqDto =
           :: Questionnaire
     insertQuestionnaire newQtn
     clonedFiles <- cloneQuestionnaireFiles originQtn.uuid newQtn.uuid
-    newQtnEvents <- cloneQuestinonaireEvents newQtnUuid originQtnEvents
+    newQtnEventsWithOldEventUuid <- cloneQuestinonaireEventsWithOldEventUuid newQtnUuid originQtnEvents
+    let newQtnEvents = fmap snd newQtnEventsWithOldEventUuid
     let newQtnEventsWithReplacedFiles = replaceQuestinonaireEventsWithNewFiles clonedFiles newQtnEvents
     insertQuestionnaireEvents newQtnEventsWithReplacedFiles
     duplicateCommentThreads reqDto.questionnaireUuid newQtnUuid
+    cloneQuestionnaireVersions originQtn.uuid newQtn.uuid newQtnEventsWithOldEventUuid
     state <- getQuestionnaireState newQtnUuid pkg.pId
     permissionDtos <- traverse enhanceQuestionnairePerm newQtn.permissions
     qtnCtn <- compileQuestionnaire newQtnEventsWithReplacedFiles
@@ -215,9 +219,11 @@ cloneQuestionnaire cloneUuid =
           :: Questionnaire
     insertQuestionnaire newQtn
     clonedFiles <- cloneQuestionnaireFiles originQtn.uuid newQtn.uuid
-    newQtnEvents <- cloneQuestinonaireEvents newQtnUuid originQtnEvents
+    newQtnEventsWithOldEventUuid <- cloneQuestinonaireEventsWithOldEventUuid newQtnUuid originQtnEvents
+    let newQtnEvents = fmap snd newQtnEventsWithOldEventUuid
     let newQtnEventsWithReplacedFiles = replaceQuestinonaireEventsWithNewFiles clonedFiles newQtnEvents
     insertQuestionnaireEvents newQtnEventsWithReplacedFiles
+    cloneQuestionnaireVersions originQtn.uuid newQtn.uuid newQtnEventsWithOldEventUuid
     duplicateCommentThreads cloneUuid newQtnUuid
     state <- getQuestionnaireState newQtnUuid pkg.pId
     permissionDtos <- traverse enhanceQuestionnairePerm newQtn.permissions
@@ -396,6 +402,7 @@ deleteQuestionnaire qtnUuid shouldValidatePermission =
           removeDocumentContent d.uuid
       )
       documents
+    deleteQuestionnaireVersionsByQuestionnaireUuid qtnUuid
     deleteQuestionnaireFilesByQuestionnaireUuid qtnUuid
     deleteQuestionnairePermsFiltered [("questionnaire_uuid", U.toString qtnUuid)]
     deleteQuestionnaireEventsByQuestionnaireUuid qtnUuid
@@ -412,7 +419,8 @@ modifyContent qtnUuid reqDto =
     now <- liftIO getCurrentTime
     qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
     let (updatedQtn, updatedQtnEvents) = fromContentChangeDTO qtn qtnEvents reqDto mCurrentUser now
-    updateQuestionnaireEventsByQuestionnaireUuid qtnUuid False updatedQtnEvents
+    syncQuestionnaireEventsWithDb qtnEvents updatedQtnEvents
+    updateQuestionnaireSquashedAndUpdatedAtByUuid qtnUuid False now
     return reqDto
 
 cleanQuestionnaires :: AppContextM ()
@@ -427,11 +435,16 @@ cleanQuestionnaires =
       qtns
 
 cloneQuestinonaireEvents :: U.UUID -> [QuestionnaireEvent] -> AppContextM [QuestionnaireEvent]
-cloneQuestinonaireEvents newQtnUuid =
+cloneQuestinonaireEvents newQtnUuid oldEvents = do
+  newEvents <- cloneQuestinonaireEventsWithOldEventUuid newQtnUuid oldEvents
+  return $ fmap snd newEvents
+
+cloneQuestinonaireEventsWithOldEventUuid :: U.UUID -> [QuestionnaireEvent] -> AppContextM [(U.UUID, QuestionnaireEvent)]
+cloneQuestinonaireEventsWithOldEventUuid newQtnUuid =
   traverse
     ( \event -> do
         newEventUuid <- liftIO generateUuid
-        return $ setQuestionnaireUuid (setUuid event newEventUuid) newQtnUuid
+        return (getUuid event, setQuestionnaireUuid (setUuid event newEventUuid) newQtnUuid)
     )
 
 replaceQuestinonaireEventsWithNewFiles :: [(QuestionnaireFile, QuestionnaireFile)] -> [QuestionnaireEvent] -> [QuestionnaireEvent]

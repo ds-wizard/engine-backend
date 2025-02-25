@@ -29,6 +29,7 @@ import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
+import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
@@ -65,7 +66,6 @@ questionnaire1 =
     , formatUuid = Just $ formatJson.uuid
     , creatorUuid = Just $ userAlbert.uuid
     , permissions = [qtn1AlbertEditQtnPerm]
-    , versions = qVersions questionnaire1Uuid
     , isTemplate = True
     , squashed = True
     , tenantUuid = defaultTenant.uuid
@@ -103,6 +103,9 @@ questionnaire1SettingsEdited =
 
 questionnaire1EventsEdited :: [QuestionnaireEvent]
 questionnaire1EventsEdited = fEventsEdited questionnaire1Uuid
+
+questionnaire1Versions :: [QuestionnaireVersion]
+questionnaire1Versions = qVersions questionnaire1Uuid
 
 questionnaire1Ctn :: QuestionnaireContent
 questionnaire1Ctn =
@@ -193,7 +196,6 @@ questionnaire2 =
     , formatUuid = Just $ formatJson.uuid
     , creatorUuid = Just $ userAlbert.uuid
     , permissions = [qtn2AlbertEditQtnPerm]
-    , versions = qVersions questionnaire2Uuid
     , isTemplate = False
     , squashed = True
     , tenantUuid = defaultTenant.uuid
@@ -216,7 +218,6 @@ questionnaire2Edited =
     , formatUuid = Just $ formatJson.uuid
     , creatorUuid = Just $ userAlbert.uuid
     , permissions = []
-    , versions = questionnaire2.versions
     , isTemplate = False
     , squashed = True
     , tenantUuid = defaultTenant.uuid
@@ -226,6 +227,9 @@ questionnaire2Edited =
 
 questionnaire2Events :: [QuestionnaireEvent]
 questionnaire2Events = fEvents questionnaire2Uuid
+
+questionnaire2Versions :: [QuestionnaireVersion]
+questionnaire2Versions = qVersions questionnaire2Uuid
 
 questionnaire2ShareEdited :: Questionnaire
 questionnaire2ShareEdited =
@@ -296,7 +300,6 @@ questionnaire3 =
     , formatUuid = Just $ formatJson.uuid
     , creatorUuid = Nothing
     , permissions = []
-    , versions = qVersions questionnaire3Uuid
     , isTemplate = False
     , squashed = True
     , tenantUuid = defaultTenant.uuid
@@ -306,6 +309,9 @@ questionnaire3 =
 
 questionnaire3Events :: [QuestionnaireEvent]
 questionnaire3Events = fEvents questionnaire3Uuid
+
+questionnaire3Versions :: [QuestionnaireVersion]
+questionnaire3Versions = qVersions questionnaire3Uuid
 
 questionnaire3Ctn :: QuestionnaireContent
 questionnaire3Ctn =
@@ -341,7 +347,6 @@ questionnaire4 =
     , formatUuid = Just $ formatJson.uuid
     , creatorUuid = Nothing
     , permissions = []
-    , versions = []
     , isTemplate = False
     , squashed = True
     , tenantUuid = defaultTenant.uuid
@@ -351,6 +356,9 @@ questionnaire4 =
 
 questionnaire4Events :: [QuestionnaireEvent]
 questionnaire4Events = [sphse_2' questionnaire4Uuid]
+
+questionnaire4Versions :: [QuestionnaireVersion]
+questionnaire4Versions = []
 
 questionnaire4Ctn :: QuestionnaireContent
 questionnaire4Ctn =
@@ -407,7 +415,6 @@ questionnaire5 =
     , visibility = PrivateQuestionnaire
     , sharing = AnyoneWithLinkViewQuestionnaire
     , permissions = [qtn5AlbertEditQtnPerm]
-    , versions = qVersions questionnaire5Uuid
     }
 
 questionnaire5Events :: [QuestionnaireEvent]
@@ -415,6 +422,9 @@ questionnaire5Events = fEvents questionnaire5Uuid
 
 questionnaire5EventsEdited :: [QuestionnaireEvent]
 questionnaire5EventsEdited = fEventsEdited questionnaire5Uuid
+
+questionnaire5Versions :: [QuestionnaireVersion]
+questionnaire5Versions = qVersions questionnaire5Uuid
 
 qtn5AlbertEditQtnPerm :: QuestionnairePerm
 qtn5AlbertEditQtnPerm =
@@ -439,11 +449,13 @@ questionnaire6 =
     , visibility = PrivateQuestionnaire
     , sharing = AnyoneWithLinkEditQuestionnaire
     , permissions = [qtn6AlbertEditQtnPerm]
-    , versions = qVersions questionnaire6Uuid
     }
 
 questionnaire6Events :: [QuestionnaireEvent]
 questionnaire6Events = fEvents questionnaire6Uuid
+
+questionnaire6Versions :: [QuestionnaireVersion]
+questionnaire6Versions = qVersions questionnaire6Uuid
 
 questionnaire6Ctn :: QuestionnaireContent
 questionnaire6Ctn =
@@ -488,7 +500,6 @@ questionnaire7 =
     , visibility = VisibleViewQuestionnaire
     , sharing = AnyoneWithLinkViewQuestionnaire
     , permissions = [qtn7AlbertEditQtnPerm]
-    , versions = qVersions questionnaire7Uuid
     }
 
 questionnaire7Events :: [QuestionnaireEvent]
@@ -496,6 +507,9 @@ questionnaire7Events = fEvents questionnaire7Uuid
 
 questionnaire7EventsEdited :: [QuestionnaireEvent]
 questionnaire7EventsEdited = fEventsEdited questionnaire8Uuid
+
+questionnaire7Versions :: [QuestionnaireVersion]
+questionnaire7Versions = qVersions questionnaire7Uuid
 
 questionnaire7Ctn :: QuestionnaireContent
 questionnaire7Ctn =
@@ -531,7 +545,6 @@ questionnaire8 =
     , visibility = VisibleViewQuestionnaire
     , sharing = AnyoneWithLinkEditQuestionnaire
     , permissions = [qtn8AlbertEditQtnPerm]
-    , versions = qVersions questionnaire8Uuid
     }
 
 questionnaire8Events :: [QuestionnaireEvent]
@@ -539,6 +552,9 @@ questionnaire8Events = fEvents questionnaire8Uuid
 
 questionnaire8EventsEdited :: [QuestionnaireEvent]
 questionnaire8EventsEdited = fEventsEdited questionnaire8Uuid
+
+questionnaire8Versions :: [QuestionnaireVersion]
+questionnaire8Versions = qVersions questionnaire8Uuid
 
 qtn8AlbertEditQtnPerm :: QuestionnairePerm
 qtn8AlbertEditQtnPerm =
@@ -563,7 +579,6 @@ questionnaire9 =
     , visibility = VisibleEditQuestionnaire
     , sharing = AnyoneWithLinkViewQuestionnaire
     , permissions = [qtn9AlbertEditQtnPerm]
-    , versions = qVersions questionnaire9Uuid
     }
 
 questionnaire9Events :: [QuestionnaireEvent]
@@ -571,6 +586,9 @@ questionnaire9Events = fEvents questionnaire9Uuid
 
 questionnaire9EventsEdited :: [QuestionnaireEvent]
 questionnaire9EventsEdited = fEventsEdited questionnaire9Uuid
+
+questionnaire9Versions :: [QuestionnaireVersion]
+questionnaire9Versions = qVersions questionnaire9Uuid
 
 qtn9AlbertEditQtnPerm :: QuestionnairePerm
 qtn9AlbertEditQtnPerm =
@@ -594,7 +612,6 @@ questionnaire10 =
     , name = "My VisibleEdit Questionnaire SharedEdit"
     , visibility = VisibleEditQuestionnaire
     , sharing = AnyoneWithLinkEditQuestionnaire
-    , versions = qVersions questionnaire10Uuid
     }
 
 questionnaire10Events :: [QuestionnaireEvent]
@@ -602,6 +619,9 @@ questionnaire10Events = fEvents questionnaire10Uuid
 
 questionnaire10EventsEdited :: [QuestionnaireEvent]
 questionnaire10EventsEdited = questionnaire10Events ++ [setCreatedBy (slble_rQ2' questionnaire10Uuid) Nothing]
+
+questionnaire10Versions :: [QuestionnaireVersion]
+questionnaire10Versions = qVersions questionnaire10Uuid
 
 questionnaire10Ctn :: QuestionnaireContent
 questionnaire10Ctn =
@@ -668,11 +688,13 @@ questionnaire11 =
     { uuid = questionnaire11Uuid
     , name = "My Questionnaire from project template"
     , permissions = [qtn11AlbertEditQtnPerm]
-    , versions = qVersions questionnaire11Uuid
     }
 
 questionnaire11Events :: [QuestionnaireEvent]
 questionnaire11Events = fEvents questionnaire11Uuid
+
+questionnaire11Versions :: [QuestionnaireVersion]
+questionnaire11Versions = qVersions questionnaire11Uuid
 
 questionnaire11Ctn :: QuestionnaireContent
 questionnaire11Ctn = questionnaire1Ctn
@@ -706,11 +728,13 @@ questionnaire12 =
     , visibility = VisibleEditQuestionnaire
     , sharing = AnyoneWithLinkEditQuestionnaire
     , permissions = [qtn12NikolaEditQtnPerm, qtn12AlbertEditQtnPerm]
-    , versions = qVersions questionnaire12Uuid
     }
 
 questionnaire12Events :: [QuestionnaireEvent]
 questionnaire12Events = fEvents questionnaire12Uuid
+
+questionnaire12Versions :: [QuestionnaireVersion]
+questionnaire12Versions = qVersions questionnaire12Uuid
 
 questionnaire12Ctn :: QuestionnaireContent
 questionnaire12Ctn = questionnaire1Ctn
@@ -757,11 +781,13 @@ questionnaire13 =
     , name = "My VisibleCommentQuestionnaire Questionnaire"
     , visibility = VisibleCommentQuestionnaire
     , permissions = [qtn13NikolaCommentQtnPerm]
-    , versions = qVersions questionnaire13Uuid
     }
 
 questionnaire13Events :: [QuestionnaireEvent]
 questionnaire13Events = fEvents questionnaire13Uuid
+
+questionnaire13Versions :: [QuestionnaireVersion]
+questionnaire13Versions = qVersions questionnaire13Uuid
 
 questionnaire13Ctn :: QuestionnaireContent
 questionnaire13Ctn = questionnaire1Ctn
@@ -836,7 +862,6 @@ questionnaire15 =
     , formatUuid = Just formatJson.uuid
     , creatorUuid = Nothing
     , permissions = [qtn15GroupEditQtnPerm]
-    , versions = qVersions questionnaire15Uuid
     , isTemplate = False
     , squashed = True
     , tenantUuid = defaultTenant.uuid
@@ -846,6 +871,9 @@ questionnaire15 =
 
 questionnaire15Events :: [QuestionnaireEvent]
 questionnaire15Events = fEvents questionnaire15Uuid
+
+questionnaire15Versions :: [QuestionnaireVersion]
+questionnaire15Versions = qVersions questionnaire15Uuid
 
 questionnaire15Dto :: QuestionnaireDTO
 questionnaire15Dto = toSimpleDTO questionnaire15 germanyPackage QSDefault [qtn15GroupEditQtnPermDto]
@@ -890,7 +918,6 @@ differentQuestionnaire =
     , formatUuid = Just $ formatJson.uuid
     , creatorUuid = Just $ userCharles.uuid
     , permissions = [differentCharlesOwnerQtnPerm]
-    , versions = []
     , isTemplate = True
     , squashed = True
     , tenantUuid = differentTenant.uuid
@@ -900,6 +927,9 @@ differentQuestionnaire =
 
 differentQuestionnaireEvents :: [QuestionnaireEvent]
 differentQuestionnaireEvents = []
+
+differentQuestionnaireVersions :: [QuestionnaireVersion]
+differentQuestionnaireVersions = []
 
 differentCharlesOwnerQtnPerm :: QuestionnairePerm
 differentCharlesOwnerQtnPerm =

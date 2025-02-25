@@ -4,6 +4,7 @@ module Wizard.Specs.API.Questionnaire.Detail_Documents_GET (
 
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import Data.Foldable (traverse_)
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -20,6 +21,8 @@ import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
@@ -84,6 +87,8 @@ create_test_200 title appContext authHeader =
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO QTN_Migration.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire6) appContext
+      runInContextIO (insertQuestionnaireEvents questionnaire6Events) appContext
+      runInContextIO (traverse_ insertQuestionnaireVersion questionnaire6Versions) appContext
       runInContextIO deleteDocuments appContext
       runInContextIO removeDocumentContents appContext
       runInContextIO (insertDocument doc1') appContext
