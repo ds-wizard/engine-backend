@@ -17,7 +17,9 @@ import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -56,24 +58,26 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (Non-Owner, VisibleView)" appContext questionnaire2 [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1Events [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleView)" appContext questionnaire2 questionnaire2Events [reqNonAdminAuthHeader]
   create_test_200
     "HTTP 200 OK (Commentator)"
     appContext
     (questionnaire13 {visibility = PrivateQuestionnaire})
+    questionnaire13Events
     [reqNonAdminAuthHeader]
-  create_test_200 "HTTP 200 OK (Non-Commentator, VisibleComment)" appContext questionnaire13 [reqIsaacAuthTokenHeader]
+  create_test_200 "HTTP 200 OK (Non-Commentator, VisibleComment)" appContext questionnaire13 questionnaire13Events [reqIsaacAuthTokenHeader]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleComment, AnyoneWithLinkComment)"
     appContext
     (questionnaire13 {sharing = AnyoneWithLinkCommentQuestionnaire})
+    questionnaire13Events
     []
-  create_test_200 "HTTP 200 OK (Anonymous, VisibleView, Sharing)" appContext questionnaire7 []
-  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext questionnaire3 [reqNonAdminAuthHeader]
-  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 []
+  create_test_200 "HTTP 200 OK (Anonymous, VisibleView, Sharing)" appContext questionnaire7 questionnaire7Events []
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext questionnaire3 questionnaire3Events [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 questionnaire10Events []
 
-create_test_200 title appContext qtn authHeader =
+create_test_200 title appContext qtn qtnEvents authHeader =
   it title $
     -- GIVEN: Prepare request
     do
@@ -82,17 +86,20 @@ create_test_200 title appContext qtn authHeader =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = fEventsDto
+      let expDto = fEventsDto qtn.uuid
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U.runMigration appContext
       runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
+      runInContextIO deleteQuestionnaireVersions appContext
+      runInContextIO deleteQuestionnaireEvents appContext
       runInContextIO deleteQuestionnaireComments appContext
       runInContextIO deleteQuestionnaireCommentThreads appContext
       runInContextIO deleteQuestionnairePerms appContext
       runInContextIO deleteQuestionnaires appContext
       runInContextIO (insertQuestionnaire qtn) appContext
+      runInContextIO (insertQuestionnaireEvents qtnEvents) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

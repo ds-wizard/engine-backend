@@ -99,15 +99,15 @@ fromCreateDTO dto docUuid repliesHash qtnEvents mCurrentUser tenantUuid now =
     , createdAt = now
     }
 
-fromTemporallyCreateDTO :: U.UUID -> Questionnaire -> String -> U.UUID -> Int -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
-fromTemporallyCreateDTO docUuid qtn documentTemplateId formatUuid repliesHash mCurrentUser tenantUuid now =
+fromTemporallyCreateDTO :: U.UUID -> Questionnaire -> Maybe U.UUID -> String -> U.UUID -> Int -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
+fromTemporallyCreateDTO docUuid qtn questionnaireEventUuid documentTemplateId formatUuid repliesHash mCurrentUser tenantUuid now =
   Document
     { uuid = docUuid
     , name = trim qtn.name
     , state = QueuedDocumentState
     , durability = TemporallyDocumentDurability
     , questionnaireUuid = qtn.uuid
-    , questionnaireEventUuid = fmap getUuid (lastSafe qtn.events)
+    , questionnaireEventUuid = questionnaireEventUuid
     , questionnaireRepliesHash = repliesHash
     , documentTemplateId = documentTemplateId
     , formatUuid = formatUuid
@@ -158,8 +158,6 @@ toTemporaryQuestionnaire branch package mCurrentUser =
     , formatUuid = Nothing
     , creatorUuid = fmap (.uuid) mCurrentUser
     , permissions = []
-    , events = []
-    , versions = []
     , isTemplate = False
     , squashed = True
     , tenantUuid = branch.tenantUuid

@@ -20,8 +20,10 @@ import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Database.DAO.QuestionnaireAction.QuestionnaireActionDAO
 import Wizard.Database.DAO.QuestionnaireImporter.QuestionnaireImporterDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
@@ -64,9 +66,11 @@ import Wizard.Model.Cache.ServerCache
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
+import WizardLib.Public.Database.DAO.ExternalLink.ExternalLinkUsageDAO
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
+import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.ExternalLinkSchemaMigration as ExternalLink
 
 import Wizard.Specs.Common
 
@@ -76,6 +80,7 @@ buildSchema appContext = do
   runInContext Package.dropFunctions appContext
   runInContext Common.dropFunctions appContext
   putStrLn "DB: dropping schema"
+  runInContext ExternalLink.dropTables appContext
   runInContext KnowledgeModel.dropTables appContext
   runInContext Component.dropTables appContext
   runInContext Locale.dropTables appContext
@@ -122,6 +127,7 @@ buildSchema appContext = do
   runInContext Locale.createTables appContext
   runInContext Component.createTables appContext
   runInContext KnowledgeModel.createTables appContext
+  runInContext ExternalLink.createTables appContext
   putStrLn "DB: Creating DB functions"
   runInContext Common.createFunctions appContext
   runInContext Package.createFunctions appContext
@@ -131,6 +137,7 @@ buildSchema appContext = do
   runInContext LocaleMigration.runS3Migration appContext
 
 resetDB appContext = do
+  runInContext deleteExternalLinkUsages appContext
   runInContext deleteKnowledgeModelCaches appContext
   runInContext deleteLocales appContext
   runInContext deleteRegistryOrganizations appContext
@@ -151,7 +158,10 @@ resetDB appContext = do
   runInContext deleteBranches appContext
   runInContext deleteDocuments appContext
   runInContext deleteDrafts appContext
+  runInContext deleteQuestionnaireVersions appContext
+  runInContext deleteQuestionnaireEvents appContext
   runInContext deleteQuestionnaireFiles appContext
+  runInContext deleteQuestionnaireVersions appContext
   runInContext deleteQuestionnaireComments appContext
   runInContext deleteQuestionnaireCommentThreads appContext
   runInContext deleteQuestionnairePerms appContext

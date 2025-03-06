@@ -54,6 +54,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0049_questionnai
 import qualified Wizard.Database.Migration.Production.Migration_0050_kmValidation.Migration as M_0050
 import qualified Wizard.Database.Migration.Production.Migration_0051_branchState.Migration as M_0051
 import qualified Wizard.Database.Migration.Production.Migration_0052_questionnaireFileFix.Migration as M_0052
+import qualified Wizard.Database.Migration.Production.Migration_0053_qtnEventsRefactoring.Migration as M_0053
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -109,4 +110,5 @@ migrationDefinitions =
   , M_0050.definition
   , M_0051.definition
   , M_0052.definition
+  , M_0053.definition
   ]

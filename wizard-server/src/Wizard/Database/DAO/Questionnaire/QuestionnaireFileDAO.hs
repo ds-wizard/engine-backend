@@ -92,8 +92,13 @@ findQuestionnaireFilesPage mQuery mQtnUuid pageable sort = do
             }
     return $ Page pageLabel metadata entities
 
-findQuestionnaireFilesByQuestionnaire :: U.UUID -> AppContextM [QuestionnaireFileSimple]
+findQuestionnaireFilesByQuestionnaire :: U.UUID -> AppContextM [QuestionnaireFile]
 findQuestionnaireFilesByQuestionnaire qtnUuid = do
+  tenantUuid <- asks currentTenantUuid
+  createFindEntitiesWithFieldsByFn "*" entityName [tenantQueryUuid tenantUuid, ("questionnaire_uuid", U.toString qtnUuid)]
+
+findQuestionnaireFilesSimpleByQuestionnaire :: U.UUID -> AppContextM [QuestionnaireFileSimple]
+findQuestionnaireFilesSimpleByQuestionnaire qtnUuid = do
   tenantUuid <- asks currentTenantUuid
   createFindEntitiesWithFieldsByFn "uuid, file_name, content_type, file_size" entityName [tenantQueryUuid tenantUuid, ("questionnaire_uuid", U.toString qtnUuid)]
 

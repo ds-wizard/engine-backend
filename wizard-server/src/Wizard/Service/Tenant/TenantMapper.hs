@@ -26,6 +26,7 @@ toDTO tenant mLogoUrl mPrimaryColor =
     , serverDomain = tenant.serverDomain
     , serverUrl = tenant.serverUrl
     , clientUrl = tenant.clientUrl
+    , state = tenant.state
     , enabled = tenant.enabled
     , logoUrl = mLogoUrl
     , primaryColor = mPrimaryColor
@@ -42,6 +43,7 @@ toDetailDTO tenant mLogoUrl mPrimaryColor usage users =
     , serverDomain = tenant.serverDomain
     , serverUrl = tenant.serverUrl
     , clientUrl = tenant.clientUrl
+    , state = tenant.state
     , enabled = tenant.enabled
     , logoUrl = mLogoUrl
     , primaryColor = mPrimaryColor
@@ -100,8 +102,8 @@ fromAdminCreateDTO reqDto aUuid serverConfig now =
         , updatedAt = now
         }
 
-fromCommand :: CreateOrUpdateTenantCommand -> ServerConfig -> UTCTime -> UTCTime -> Tenant
-fromCommand command serverConfig createdAt updatedAt =
+fromCommand :: CreateOrUpdateTenantCommand -> TenantState -> ServerConfig -> UTCTime -> UTCTime -> Tenant
+fromCommand command state serverConfig createdAt updatedAt =
   let (serverDomain, url) =
         case command.customDomain of
           Just customDomain -> (customDomain, f' "https://%s" [customDomain])
@@ -121,7 +123,7 @@ fromCommand command serverConfig createdAt updatedAt =
         , analyticsClientUrl = Just $ createReportingClientUrl url
         , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
         , enabled = command.enabled
-        , state = ReadyForUseTenantState
+        , state = state
         , createdAt = createdAt
         , updatedAt = updatedAt
         }
@@ -144,7 +146,7 @@ fromChangeDTO tenant reqDto serverConfig =
         , analyticsClientUrl = Just $ createReportingClientUrl url
         , signalBridgeUrl = tenant.signalBridgeUrl
         , enabled = tenant.enabled
-        , state = ReadyForUseTenantState
+        , state = tenant.state
         , createdAt = tenant.createdAt
         , updatedAt = tenant.updatedAt
         }

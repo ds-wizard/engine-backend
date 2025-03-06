@@ -1,35 +1,34 @@
 module Wizard.Service.Questionnaire.Version.QuestionnaireVersionValidation where
 
+import Control.Monad (when)
 import Control.Monad.Except (throwError)
-import qualified Data.List as L
+import Data.Maybe (isJust)
 import qualified Data.UUID as U
 
-import Shared.Common.Model.Common.Lens
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeDTO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
-import Wizard.Model.Questionnaire.QuestionnaireVersion
 
-validateQuestionnaireVersionCreate :: QuestionnaireVersionChangeDTO -> Questionnaire -> AppContextM ()
-validateQuestionnaireVersionCreate reqDto qtn = do
-  validateQuestionnaireVersionEventExistence reqDto qtn
-  validateQuestionnaireVersionUniqueness reqDto qtn
+validateQuestionnaireVersionCreate :: U.UUID -> QuestionnaireVersionChangeDTO -> AppContextM ()
+validateQuestionnaireVersionCreate qtnUuid reqDto = do
+  validateQuestionnaireVersionEventExistence reqDto
+  validateQuestionnaireVersionUniqueness qtnUuid reqDto
 
-validateQuestionnaireVersionUpdate :: QuestionnaireVersionChangeDTO -> Questionnaire -> AppContextM ()
+validateQuestionnaireVersionUpdate :: QuestionnaireVersionChangeDTO -> AppContextM ()
 validateQuestionnaireVersionUpdate = validateQuestionnaireVersionEventExistence
 
-validateQuestionnaireVersionUniqueness :: QuestionnaireVersionChangeDTO -> Questionnaire -> AppContextM ()
-validateQuestionnaireVersionUniqueness reqDto qtn =
-  case L.find (\v -> v.eventUuid == reqDto.eventUuid) qtn.versions of
-    Just _ -> throwError . UserError $ _ERROR_SERVICE_QTN_VERSION__VERSION_UNIQUENESS (U.toString $ reqDto.eventUuid)
-    Nothing -> return ()
+validateQuestionnaireVersionUniqueness :: U.UUID -> QuestionnaireVersionChangeDTO -> AppContextM ()
+validateQuestionnaireVersionUniqueness qtnUuid reqDto = do
+  mQtnVersion <- findQuestionnaireVersionByEventUuid' qtnUuid reqDto.eventUuid
+  when
+    (isJust mQtnVersion)
+    (throwError . UserError $ _ERROR_SERVICE_QTN_VERSION__VERSION_UNIQUENESS (U.toString $ reqDto.eventUuid))
 
-validateQuestionnaireVersionEventExistence :: QuestionnaireVersionChangeDTO -> Questionnaire -> AppContextM ()
-validateQuestionnaireVersionEventExistence reqDto qtn =
-  case L.find (\e -> getUuid e == reqDto.eventUuid) qtn.events of
+validateQuestionnaireVersionEventExistence :: QuestionnaireVersionChangeDTO -> AppContextM ()
+validateQuestionnaireVersionEventExistence reqDto =
+  findQuestionnaireEventByUuid' reqDto.eventUuid >>= \case
     Just _ -> return ()
-    Nothing ->
-      throwError . UserError $ _ERROR_SERVICE_QTN_VERSION__NON_EXISTENT_EVENT_UUID (U.toString $ reqDto.eventUuid)
+    Nothing -> throwError . UserError $ _ERROR_SERVICE_QTN_VERSION__NON_EXISTENT_EVENT_UUID (U.toString $ reqDto.eventUuid)

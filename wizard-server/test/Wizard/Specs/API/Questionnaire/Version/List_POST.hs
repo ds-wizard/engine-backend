@@ -9,18 +9,16 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireVersion
+import Wizard.Model.Questionnaire.QuestionnaireVersionList
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
-import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.API.Questionnaire.Version.Common
 import Wizard.Specs.Common
 
@@ -43,7 +41,7 @@ reqUrl = "/wizard-api/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/versio
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = questionnaireVersion2ChangeDto
+reqDto = questionnaireVersion2ChangeDto questionnaire1Uuid
 
 reqBody = encode reqDto
 
@@ -56,7 +54,7 @@ test_201 appContext =
     do
       let expStatus = 201
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-      let expDto = questionnaireVersion2
+      let expDto = questionnaireVersion2 questionnaire1Uuid
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML.runMigration appContext
@@ -64,13 +62,12 @@ test_201 appContext =
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, QuestionnaireVersionDTO)
+      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, QuestionnaireVersionList)
       assertResStatus status expStatus
       assertResHeaders headers expHeaders
       compareQuestionnaireVersionCreateDtos resBody expDto
       -- AND: Find a result in DB
-      let updatedVersions = [questionnaireVersion1, questionnaireVersion2 {uuid = resBody.uuid} :: QuestionnaireVersion]
-      assertExistenceOfQuestionnaireInDB appContext (questionnaire1 {versions = updatedVersions})
+      assertExistenceOfQuestionnaireVersionInDB appContext ((questionnaireVersion2 questionnaire1Uuid) {uuid = resBody.uuid} :: QuestionnaireVersion)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

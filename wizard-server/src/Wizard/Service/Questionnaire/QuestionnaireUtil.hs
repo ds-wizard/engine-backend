@@ -8,7 +8,6 @@ import Shared.Common.Model.Common.Lens
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
@@ -18,7 +17,6 @@ import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireState
-import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
@@ -26,7 +24,6 @@ import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
-import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import Wizard.Service.Report.ReportGenerator
 import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
@@ -61,11 +58,6 @@ enhanceQuestionnaireEvent event = do
       Nothing -> return Nothing
   return $ toEventDTO event mUser
 
-enhanceQuestionnaireVersion :: QuestionnaireVersion -> AppContextM QuestionnaireVersionDTO
-enhanceQuestionnaireVersion version = do
-  mUser <- findUserByUuid' version.createdBy
-  return $ toVersionDTO version mUser
-
 getQuestionnaireState :: U.UUID -> String -> AppContextM QuestionnaireState
 getQuestionnaireState qtnUuid pkgId = do
   mMs <- findMigratorStateByNewQuestionnaireUuid' qtnUuid
@@ -78,31 +70,30 @@ getQuestionnaireState qtnUuid pkgId = do
         else return QSOutdated
 
 getQuestionnaireReport
-  :: ( HasField "events" questionnaire [QuestionnaireEvent]
-     , HasField "uuid" questionnaire U.UUID
+  :: ( HasField "uuid" questionnaire U.UUID
      , HasField "packageId" questionnaire String
      , HasField "selectedQuestionTagUuids" questionnaire [U.UUID]
      )
   => questionnaire
+  -> [QuestionnaireEvent]
   -> AppContextM QuestionnaireReportDTO
-getQuestionnaireReport qtn = do
-  qtnCtn <- compileQuestionnaire qtn
+getQuestionnaireReport qtn events = do
+  qtnCtn <- compileQuestionnaire events
   let _requiredPhaseUuid = qtnCtn.phaseUuid
   km <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
   let indications = computeTotalReportIndications _requiredPhaseUuid km qtnCtn.replies
-  qtnCtn <- compileQuestionnaire qtn
   return . toQuestionnaireReportDTO $ indications
 
 getPhasesAnsweredIndication
-  :: ( HasField "events" questionnaire [QuestionnaireEvent]
-     , HasField "uuid" questionnaire U.UUID
+  :: ( HasField "uuid" questionnaire U.UUID
      , HasField "packageId" questionnaire String
      , HasField "selectedQuestionTagUuids" questionnaire [U.UUID]
      )
   => questionnaire
+  -> [QuestionnaireEvent]
   -> AppContextM (Maybe PhasesAnsweredIndication)
-getPhasesAnsweredIndication qtn = do
-  report <- getQuestionnaireReport qtn
+getPhasesAnsweredIndication qtn events = do
+  report <- getQuestionnaireReport qtn events
   return $ foldl go Nothing report.indications
   where
     go acc (PhasesAnsweredIndication' indication) = Just indication

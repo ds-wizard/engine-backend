@@ -16,6 +16,7 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSettingsChangeDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
@@ -70,6 +71,7 @@ test_200 appContext = do
     appContext
     questionnaire1
     questionnaire1SettingsEdited
+    questionnaire1Events
     questionnaire1Ctn
     []
     True
@@ -80,6 +82,7 @@ test_200 appContext = do
     appContext
     questionnaire2
     questionnaire2SettingsEdited
+    questionnaire2Events
     questionnaire2Ctn
     []
     False
@@ -90,13 +93,14 @@ test_200 appContext = do
     appContext
     questionnaire10
     questionnaire10EditedSettings
+    questionnaire10Events
     questionnaire10Ctn
     [qtn10NikolaEditQtnPermDto]
     False
     [reqNonAdminAuthHeader]
     True
 
-create_test_200 title appContext qtn qtnEdited qtnCtn permissions showComments authHeader anonymousEnabled =
+create_test_200 title appContext qtn qtnEdited qtnEvents qtnCtn permissions showComments authHeader anonymousEnabled =
   it title $
     -- GIVEN: Prepare request
     do
@@ -113,6 +117,7 @@ create_test_200 title appContext qtn qtnEdited qtnCtn permissions showComments a
       runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire10) appContext
+      runInContextIO (insertQuestionnaireEvents questionnaire10Events) appContext
       -- AND: Enabled anonymous sharing
       updateAnonymousQuestionnaireSharing appContext anonymousEnabled
       -- WHEN: Call API
@@ -122,7 +127,7 @@ create_test_200 title appContext qtn qtnEdited qtnCtn permissions showComments a
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find a result in DB
-      assertExistenceOfQuestionnaireInDB appContext qtnEdited
+      assertExistenceOfQuestionnaireInDB appContext qtnEdited qtnEvents
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

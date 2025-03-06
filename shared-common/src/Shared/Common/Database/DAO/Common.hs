@@ -365,8 +365,8 @@ createDeleteEntitiesByFn entityName queryParams = do
   let action conn = execute conn sql params
   runDB action
 
-createDeleteEntityLikeFn :: AppContextC s sc m => String -> String -> [String] -> m Int64
-createDeleteEntityLikeFn entityName key params = do
+createDeleteEntityWhereInFn :: AppContextC s sc m => String -> String -> [String] -> m Int64
+createDeleteEntityWhereInFn entityName key params = do
   let sql = fromString $ f' "DELETE FROM %s WHERE %s IN (%s)" [entityName, key, generateQuestionMarks params]
   logQuery sql params
   let action conn = execute conn sql params
@@ -444,6 +444,11 @@ generateQuestionMarks fields =
 
 generateQuestionMarks' :: ToRow entity => entity -> String
 generateQuestionMarks' = generateQuestionMarks . fmap show . toRow
+
+generateQuestionMarksForEntities :: ToRow entity => [entity] -> String
+generateQuestionMarksForEntities entities =
+  let oneRow entity = "(" ++ generateQuestionMarks' entity ++ ")"
+   in L.intercalate "," . fmap oneRow $ entities
 
 regex :: String -> String
 regex query = ".*" ++ query ++ ".*"

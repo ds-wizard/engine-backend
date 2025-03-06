@@ -6,11 +6,6 @@ import GHC.Generics
 
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
-data QuestionnaireEventBundle = QuestionnaireEventBundle
-  { events :: [QuestionnaireEvent]
-  }
-  deriving (Show, Generic)
-
 data QuestionnaireEvent
   = SetReplyEvent' SetReplyEvent
   | ClearReplyEvent' ClearReplyEvent
@@ -22,6 +17,8 @@ data SetReplyEvent = SetReplyEvent
   { uuid :: U.UUID
   , path :: String
   , value :: ReplyValue
+  , questionnaireUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdBy :: Maybe U.UUID
   , createdAt :: UTCTime
   }
@@ -32,11 +29,15 @@ instance Eq SetReplyEvent where
     a.uuid == b.uuid
       && a.path == b.path
       && a.value == b.value
+      && a.questionnaireUuid == b.questionnaireUuid
+      && a.tenantUuid == b.tenantUuid
       && a.createdBy == b.createdBy
 
 data ClearReplyEvent = ClearReplyEvent
   { uuid :: U.UUID
   , path :: String
+  , questionnaireUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdBy :: Maybe U.UUID
   , createdAt :: UTCTime
   }
@@ -46,11 +47,15 @@ instance Eq ClearReplyEvent where
   a == b =
     a.uuid == b.uuid
       && a.path == b.path
+      && a.questionnaireUuid == b.questionnaireUuid
+      && a.tenantUuid == b.tenantUuid
       && a.createdBy == b.createdBy
 
 data SetPhaseEvent = SetPhaseEvent
   { uuid :: U.UUID
   , phaseUuid :: Maybe U.UUID
+  , questionnaireUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdBy :: Maybe U.UUID
   , createdAt :: UTCTime
   }
@@ -60,12 +65,16 @@ instance Eq SetPhaseEvent where
   a == b =
     a.uuid == b.uuid
       && a.phaseUuid == b.phaseUuid
+      && a.questionnaireUuid == b.questionnaireUuid
+      && a.tenantUuid == b.tenantUuid
       && a.createdBy == b.createdBy
 
 data SetLabelsEvent = SetLabelsEvent
   { uuid :: U.UUID
   , path :: String
   , value :: [U.UUID]
+  , questionnaireUuid :: U.UUID
+  , tenantUuid :: U.UUID
   , createdBy :: Maybe U.UUID
   , createdAt :: UTCTime
   }
@@ -76,4 +85,6 @@ instance Eq SetLabelsEvent where
     a.uuid == b.uuid
       && a.path == b.path
       && a.value == b.value
+      && a.questionnaireUuid == b.questionnaireUuid
+      && a.tenantUuid == b.tenantUuid
       && a.createdBy == b.createdBy

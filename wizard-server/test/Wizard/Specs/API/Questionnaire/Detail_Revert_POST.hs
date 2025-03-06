@@ -16,11 +16,12 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVer
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireVersion
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Questionnaire.Common
+import Wizard.Specs.API.Questionnaire.Version.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
@@ -42,7 +43,7 @@ reqUrl = "/wizard-api/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/revert
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = questionnaireVersion1RevertDto
+reqDto = questionnaireVersion1RevertDto questionnaire1Uuid
 
 reqBody = encode reqDto
 
@@ -67,7 +68,8 @@ test_200 appContext =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find a result in DB
-      assertExistenceOfQuestionnaireInDB appContext (questionnaire1 {versions = [], events = [sre_rQ1', sre_rQ2']})
+      assertExistenceOfQuestionnaireInDB appContext questionnaire1 [sre_rQ1' questionnaire1Uuid, sre_rQ2' questionnaire1Uuid]
+      assertAbsenceOfQuestionnaireVersionInDB appContext (questionnaireVersion1 questionnaire1Uuid)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

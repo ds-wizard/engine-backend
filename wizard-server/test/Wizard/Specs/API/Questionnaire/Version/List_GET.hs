@@ -4,6 +4,7 @@ module Wizard.Specs.API.Questionnaire.Version.List_GET (
 
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import Data.Foldable (traverse_)
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -15,6 +16,8 @@ import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -92,14 +95,18 @@ create_test_200 title appContext qtn qtnCtn authHeader permissions =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = qVersionsDto
+      let expDto = qVersionsList qtn.uuid
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U.runMigration appContext
       runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire7) appContext
+      runInContextIO (insertQuestionnaireEvents questionnaire7Events) appContext
+      runInContextIO (traverse_ insertQuestionnaireVersion questionnaire7Versions) appContext
       runInContextIO (insertQuestionnaire questionnaire10) appContext
+      runInContextIO (insertQuestionnaireEvents questionnaire10Events) appContext
+      runInContextIO (traverse_ insertQuestionnaireVersion questionnaire10Versions) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

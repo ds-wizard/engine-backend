@@ -9,6 +9,7 @@ import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Service.Acl.AclService
+import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.File.FileCreateDTO
 import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
@@ -55,6 +56,22 @@ createQuestionnaireFile qtnUuid questionUuid reqDto =
     addFile qtnUuid (toSimple qtnFile)
     return $ toList qtnFile qtn mCurrentUser
 
+cloneQuestionnaireFiles :: U.UUID -> U.UUID -> AppContextM [(QuestionnaireFile, QuestionnaireFile)]
+cloneQuestionnaireFiles oldQtnUuid newQtnUuid = do
+  runInTransaction $ do
+    oldFiles <- findQuestionnaireFilesByQuestionnaire oldQtnUuid
+    traverse
+      ( \oldFile -> do
+          contentAction <- retrieveFileConduitAction oldQtnUuid oldFile.uuid
+          newFileUuid <- liftIO generateUuid
+          let newFile = oldFile {uuid = newFileUuid, questionnaireUuid = newQtnUuid}
+          let contentDisposition = f' "attachment;filename=\"%s\"" [trim newFile.fileName]
+          insertQuestionnaireFile newFile
+          putFileConduit newQtnUuid newFile.uuid newFile.contentType contentDisposition contentAction
+          return (oldFile, newFile)
+      )
+      oldFiles
+
 downloadQuestionnaireFile :: U.UUID -> U.UUID -> AppContextM TemporaryFileDTO
 downloadQuestionnaireFile qtnUuid fileUuid = do
   runInTransaction $ do
@@ -67,7 +84,7 @@ downloadQuestionnaireFile qtnUuid fileUuid = do
 deleteQuestionnaireFilesByQuestionnaireUuid :: U.UUID -> AppContextM ()
 deleteQuestionnaireFilesByQuestionnaireUuid qtnUuid = do
   runInTransaction $ do
-    files <- findQuestionnaireFilesByQuestionnaire qtnUuid
+    files <- findQuestionnaireFilesSimpleByQuestionnaire qtnUuid
     checkEditPermissionToFile qtnUuid
     traverse_
       ( \file -> do

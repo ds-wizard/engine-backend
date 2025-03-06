@@ -5,6 +5,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Model.Tenant.Tenant
 import WizardLib.Public.Api.Resource.Tenant.Usage.WizardUsageDTO
 
 data TenantDetailDTO = TenantDetailDTO
@@ -14,6 +15,7 @@ data TenantDetailDTO = TenantDetailDTO
   , serverDomain :: String
   , serverUrl :: String
   , clientUrl :: String
+  , state :: TenantState
   , enabled :: Bool
   , logoUrl :: Maybe String
   , primaryColor :: Maybe String

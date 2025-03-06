@@ -18,7 +18,6 @@ import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSettingsChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireShareChangeDTO
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Constant.Acl
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
@@ -33,6 +32,7 @@ import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
+import Wizard.Model.Questionnaire.QuestionnaireVersionList
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
@@ -109,7 +109,6 @@ toDetailQuestionnaire qtn migrationUuid permissions questionnaireActionsAvailabl
     , isTemplate = qtn.isTemplate
     , migrationUuid = migrationUuid
     , permissions = permissions
-    , events = qtn.events
     , files = []
     , questionnaireActionsAvailable = questionnaireActionsAvailable
     , questionnaireImportersAvailable = questionnaireImportersAvailable
@@ -144,7 +143,7 @@ toContentDTO
   :: QuestionnaireContent
   -> M.Map String [QuestionnaireCommentThreadList]
   -> [QuestionnaireEventDTO]
-  -> [QuestionnaireVersionDTO]
+  -> [QuestionnaireVersionList]
   -> QuestionnaireContentDTO
 toContentDTO qtnCtn threads events versions =
   QuestionnaireContentDTO
@@ -248,8 +247,6 @@ fromShareChangeDTO qtn dto visibility sharing now =
     , formatUuid = qtn.formatUuid
     , creatorUuid = qtn.creatorUuid
     , permissions = fmap (fromQuestionnairePermChangeDTO qtn.uuid qtn.tenantUuid) dto.permissions
-    , events = qtn.events
-    , versions = qtn.versions
     , isTemplate = qtn.isTemplate
     , squashed = qtn.squashed
     , tenantUuid = qtn.tenantUuid
@@ -272,8 +269,6 @@ fromSettingsChangeDTO qtn dto currentUser now =
     , formatUuid = dto.formatUuid
     , creatorUuid = qtn.creatorUuid
     , permissions = qtn.permissions
-    , events = qtn.events
-    , versions = qtn.versions
     , isTemplate =
         if _QTN_TML_PERM `elem` currentUser.permissions
           then dto.isTemplate
@@ -295,49 +290,50 @@ fromQuestionnaireCreateDTO
   -> Maybe U.UUID
   -> U.UUID
   -> UTCTime
-  -> Questionnaire
+  -> (Questionnaire, [QuestionnaireEvent])
 fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId phaseEventUuid mPhase tenantUuid now =
-  Questionnaire
-    { uuid = qtnUuid
-    , name = dto.name
-    , description = Nothing
-    , visibility = visibility
-    , sharing = sharing
-    , packageId = pkgId
-    , selectedQuestionTagUuids = dto.questionTagUuids
-    , projectTags = []
-    , documentTemplateId = dto.documentTemplateId
-    , formatUuid = dto.formatUuid
-    , creatorUuid = mCurrentUserUuid
-    , permissions =
-        case mCurrentUserUuid of
-          Just currentUserUuid -> [toUserQuestionnairePerm qtnUuid currentUserUuid ownerPermissions tenantUuid]
-          Nothing -> []
-    , events =
-        case mPhase of
-          Just phase ->
-            [ SetPhaseEvent' $
-                SetPhaseEvent
-                  { uuid = phaseEventUuid
-                  , phaseUuid = Just phase
-                  , createdBy = mCurrentUserUuid
-                  , createdAt = now
-                  }
-            ]
-          Nothing -> []
-    , versions = []
-    , isTemplate = False
-    , squashed = True
-    , tenantUuid = tenantUuid
-    , createdAt = now
-    , updatedAt = now
-    }
+  ( Questionnaire
+      { uuid = qtnUuid
+      , name = dto.name
+      , description = Nothing
+      , visibility = visibility
+      , sharing = sharing
+      , packageId = pkgId
+      , selectedQuestionTagUuids = dto.questionTagUuids
+      , projectTags = []
+      , documentTemplateId = dto.documentTemplateId
+      , formatUuid = dto.formatUuid
+      , creatorUuid = mCurrentUserUuid
+      , permissions =
+          case mCurrentUserUuid of
+            Just currentUserUuid -> [toUserQuestionnairePerm qtnUuid currentUserUuid ownerPermissions tenantUuid]
+            Nothing -> []
+      , isTemplate = False
+      , squashed = True
+      , tenantUuid = tenantUuid
+      , createdAt = now
+      , updatedAt = now
+      }
+  , case mPhase of
+      Just phase ->
+        [ SetPhaseEvent' $
+            SetPhaseEvent
+              { uuid = phaseEventUuid
+              , phaseUuid = Just phase
+              , questionnaireUuid = qtnUuid
+              , tenantUuid = tenantUuid
+              , createdBy = mCurrentUserUuid
+              , createdAt = now
+              }
+        ]
+      Nothing -> []
+  )
 
-fromContentChangeDTO :: Questionnaire -> QuestionnaireContentChangeDTO -> Maybe UserDTO -> UTCTime -> Questionnaire
-fromContentChangeDTO qtn dto mCurrentUser now =
-  let newTodoEvents = fmap (\e -> fromEventChangeDTO e (fmap (.uuid) mCurrentUser) now) dto.events
-      updatedEvents = qtn.events ++ newTodoEvents
-   in qtn {events = updatedEvents, updatedAt = now}
+fromContentChangeDTO :: Questionnaire -> [QuestionnaireEvent] -> QuestionnaireContentChangeDTO -> Maybe UserDTO -> UTCTime -> (Questionnaire, [QuestionnaireEvent])
+fromContentChangeDTO qtn events dto mCurrentUser now =
+  let newTodoEvents = fmap (\e -> fromEventChangeDTO e qtn.uuid qtn.tenantUuid (fmap (.uuid) mCurrentUser) now) dto.events
+      updatedEvents = events ++ newTodoEvents
+   in (qtn {updatedAt = now}, updatedEvents)
 
 fromQuestionnairePermChangeDTO :: U.UUID -> U.UUID -> QuestionnairePermChangeDTO -> QuestionnairePerm
 fromQuestionnairePermChangeDTO qtnUuid tenantUuid dto =
@@ -364,8 +360,6 @@ fromCreateQuestionnaireCommand command uuid permissions tenantConfig createdBy n
     , formatUuid = Nothing
     , creatorUuid = Just createdBy
     , permissions = permissions
-    , events = []
-    , versions = []
     , isTemplate = False
     , squashed = True
     , tenantUuid = tenantConfig.uuid

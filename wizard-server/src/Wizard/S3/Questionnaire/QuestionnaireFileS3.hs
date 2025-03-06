@@ -21,6 +21,9 @@ retrieveFileConduitAction questionnaireUuid fileUuid = createGetObjectConduitAct
 putFile :: U.UUID -> U.UUID -> String -> BS.ByteString -> AppContextM String
 putFile questionnaireUuid fileUuid contentType = createPutObjectFn (f' "%s/%s/%s" [folderName, U.toString questionnaireUuid, U.toString fileUuid]) (Just contentType) Nothing
 
+putFileConduit :: U.UUID -> U.UUID -> String -> String -> Minio (C.ConduitM () BS.ByteString Minio ()) -> AppContextM String
+putFileConduit questionnaireUuid fileUuid contentType contentDisposition = createPutObjectConduitFn (f' "%s/%s/%s" [folderName, U.toString questionnaireUuid, U.toString fileUuid]) (Just contentType) (Just contentDisposition)
+
 presigneGetFileUrl :: U.UUID -> U.UUID -> Int -> AppContextM String
 presigneGetFileUrl questionnaireUuid fileUuid = createPresignedGetObjectUrl (f' "%s/%s/%s" [folderName, U.toString questionnaireUuid, U.toString fileUuid])
 

@@ -13,7 +13,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireStateSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionSM ()
+import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionListSM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Questionnaire.Questionnaire

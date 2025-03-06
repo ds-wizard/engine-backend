@@ -9,6 +9,7 @@ import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Tenant.Config.TenantConfig
@@ -21,17 +22,21 @@ import Wizard.Specs.Common
 -- --------------------------------
 -- ASSERTS
 -- --------------------------------
-assertExistenceOfQuestionnaireInDB appContext qtn = do
+assertExistenceOfQuestionnaireInDB appContext qtn qtnEvents = do
   eQtn <- runInContextIO (findQuestionnaireByUuid qtn.uuid) appContext
   liftIO $ isRight eQtn `shouldBe` True
   let (Right qtnFromDb) = eQtn
   compareQuestionnaireDtos qtnFromDb qtn
+  eQtnEvents <- runInContextIO (findQuestionnaireEventsByQuestionnaireUuid qtn.uuid) appContext
+  liftIO $ isRight eQtnEvents `shouldBe` True
+  let (Right qtnEventsFromDb) = eQtnEvents
+  liftIO $ qtnEventsFromDb `shouldBe` qtnEvents
 
 assertExistenceOfQuestionnaireContentInDB appContext qtnUuid content = do
-  eQtn <- runInContextIO (findQuestionnaireByUuid qtnUuid) appContext
-  liftIO $ isRight eQtn `shouldBe` True
-  let (Right qtnFromDb) = eQtn
-  compareQuestionnaireContentDtos qtnFromDb content
+  eQtnEvents <- runInContextIO (findQuestionnaireEventsByQuestionnaireUuid qtnUuid) appContext
+  liftIO $ isRight eQtnEvents `shouldBe` True
+  let (Right qtnEventsFromDb) = eQtnEvents
+  compareQuestionnaireContentDtos qtnEventsFromDb content
 
 assertAbsenceOfQuestionnaireInDB appContext qtn = do
   eQtn <- runInContextIO (findQuestionnaireByUuid qtn.uuid) appContext
@@ -92,7 +97,8 @@ compareQuestionnaireCreateDtos'' resDto expDto = do
 
 compareQuestionnaireDtos resDto expDto = liftIO $ resDto `shouldBe` expDto
 
-compareQuestionnaireContentDtos resDto expDto = liftIO $ resDto.events `shouldBe` expDto.events
+compareQuestionnaireContentDtos resDto expDto =
+  liftIO $ resDto `shouldBe` expDto
 
 compareReportDtos resDto expDto = do
   liftIO $ resDto.totalReport `shouldBe` expDto.totalReport

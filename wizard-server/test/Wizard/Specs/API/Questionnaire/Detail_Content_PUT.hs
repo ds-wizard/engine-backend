@@ -4,6 +4,7 @@ module Wizard.Specs.API.Questionnaire.Detail_Content_PUT (
 
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import Data.Foldable (traverse_)
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -14,8 +15,11 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -51,33 +55,23 @@ reqUrlT qtnUuid = BS.pack $ "/wizard-api/questionnaires/" ++ U.toString qtnUuid 
 
 reqHeadersT authHeader = reqCtHeader : authHeader
 
-reqDto =
+reqDto qtnUuid =
   QuestionnaireContentChangeDTO
-    { events = [toEventChangeDTO slble_rQ2']
+    { events = [toEventChangeDTO (slble_rQ2' qtnUuid)]
     }
 
-reqBody = encode reqDto
+reqBody qtnUuid = encode (reqDto qtnUuid)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1ContentEdited [reqAuthHeader]
-  create_test_200
-    "HTTP 200 OK (Owner, VisibleView)"
-    appContext
-    questionnaire2
-    questionnaire2ContentEdited
-    [reqAuthHeader]
-  create_test_200
-    "HTTP 200 OK (Non-Owner, Public)"
-    appContext
-    questionnaire3
-    questionnaire3ContentEdited
-    [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing" appContext questionnaire10 questionnaire10ContentEdited []
+  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1EventsEdited [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (Owner, VisibleView)" appContext questionnaire2 questionnaire2EventsEdited [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3 questionnaire3EventsEdited [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing" appContext questionnaire10 questionnaire10EventsEdited []
 
-create_test_200 title appContext qtn qtnEdited authHeader =
+create_test_200 title appContext qtn qtnEventsEdited authHeader =
   it title $
     -- GIVEN: Prepare request
     do
@@ -86,22 +80,26 @@ create_test_200 title appContext qtn qtnEdited authHeader =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-      let expDto = reqDto
+      let expDto = reqDto qtn.uuid
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire7) appContext
+      runInContextIO (insertQuestionnaireEvents questionnaire7Events) appContext
+      runInContextIO (traverse_ insertQuestionnaireVersion questionnaire7Versions) appContext
       runInContextIO (insertQuestionnaire questionnaire10) appContext
+      runInContextIO (insertQuestionnaireEvents questionnaire10Events) appContext
+      runInContextIO (traverse_ insertQuestionnaireVersion questionnaire10Versions) appContext
       -- WHEN: Call API
-      response <- request reqMethod reqUrl reqHeaders reqBody
+      response <- request reqMethod reqUrl reqHeaders (reqBody qtn.uuid)
       -- THEN: Compare response with expectation
       let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, QuestionnaireContentChangeDTO)
       assertResStatus status expStatus
       assertResHeaders headers expHeaders
       compareQuestionnaireDtos resBody expDto
       -- AND: Find a result in DB
-      assertExistenceOfQuestionnaireContentInDB appContext qtn.uuid qtnEdited
+      assertExistenceOfQuestionnaireContentInDB appContext qtn.uuid qtnEventsEdited
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -116,32 +114,32 @@ test_403 appContext = do
     "HTTP 403 FORBIDDEN (Non-Owner, Private)"
     appContext
     questionnaire1
-    questionnaire1ContentEdited
+    questionnaire1EventsEdited
     [reqNonAdminAuthHeader]
     (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)"
     appContext
     questionnaire2
-    questionnaire2ContentEdited
+    questionnaire2EventsEdited
     [reqNonAdminAuthHeader]
     (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
   create_test_403
     "HTTP 403 FORBIDDEN (Anonymous, VisibleView, Sharing)"
     appContext
     questionnaire7
-    questionnaire7ContentEdited
+    questionnaire7EventsEdited
     []
     _ERROR_SERVICE_USER__MISSING_USER
   create_test_403
     "HTTP 403 FORBIDDEN (Anonymous, Public)"
     appContext
     questionnaire3
-    questionnaire3ContentEdited
+    questionnaire3EventsEdited
     []
     _ERROR_SERVICE_USER__MISSING_USER
 
-create_test_403 title appContext qtn qtnEdited authHeader reason =
+create_test_403 title appContext qtn qtnEventsEdited authHeader reason =
   it title $
     -- GIVEN: Prepare request
     do
@@ -159,7 +157,7 @@ create_test_403 title appContext qtn qtnEdited authHeader reason =
       runInContextIO (insertQuestionnaire questionnaire7) appContext
       runInContextIO (insertQuestionnaire questionnaire10) appContext
       -- WHEN: Call API
-      response <- request reqMethod reqUrl reqHeaders reqBody
+      response <- request reqMethod reqUrl reqHeaders (reqBody qtn.uuid)
       -- THEN: Compare response with expectation
       let responseMatcher =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
@@ -173,6 +171,6 @@ test_404 appContext =
     reqMethod
     "/wizard-api/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/content"
     (reqHeadersT [reqAuthHeader])
-    reqBody
+    (reqBody $ u' "f08ead5f-746d-411b-aee6-77ea3d24016a")
     "questionnaire"
     [("uuid", "f08ead5f-746d-411b-aee6-77ea3d24016a")]

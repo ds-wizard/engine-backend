@@ -55,6 +55,20 @@ takeWhileInclusive p (x : xs) =
       then takeWhileInclusive p xs
       else []
 
+dropWhileInclusive :: (a -> Bool) -> [a] -> [a]
+dropWhileInclusive _ [] = []
+dropWhileInclusive p (x : xs) =
+  if p x
+    then dropWhileInclusive p xs
+    else x : xs
+
+dropWhileExclusive :: (a -> Bool) -> [a] -> [a]
+dropWhileExclusive _ [] = []
+dropWhileExclusive p (x : xs) =
+  if p x
+    then dropWhileExclusive p xs
+    else xs
+
 generateList :: Int -> [Int]
 generateList size = [0 .. (size - 1)]
 

@@ -46,6 +46,8 @@ import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigrat
 import qualified Wizard.Database.Migration.Development.User.UserMigration as User
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as User
 import Wizard.Model.Context.ContextMappers
+import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.ExternalLinkMigration as ExternalLink
+import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.ExternalLinkSchemaMigration as ExternalLink
 
 runMigration = runAppContextWithBaseContext $ do
   logInfo _CMP_MIGRATION "started"
@@ -54,6 +56,7 @@ runMigration = runAppContextWithBaseContext $ do
   Package.dropFunctions
   Common.dropFunctions
   -- 2. Drop schema
+  ExternalLink.dropTables
   KnowledgeModel.dropTables
   Component.dropTables
   TemporaryFile.dropTables
@@ -100,6 +103,7 @@ runMigration = runAppContextWithBaseContext $ do
   TemporaryFile.createTables
   Component.createTables
   KnowledgeModel.createTables
+  ExternalLink.createTables
   -- 4. Create DB functions
   Common.createFunctions
   Package.createFunctions
@@ -126,5 +130,6 @@ runMigration = runAppContextWithBaseContext $ do
   Registry.runMigration
   Locale.runMigration
   Component.runMigration
+  ExternalLink.runMigration
   logInfo _CMP_MIGRATION "ended"
   return Nothing

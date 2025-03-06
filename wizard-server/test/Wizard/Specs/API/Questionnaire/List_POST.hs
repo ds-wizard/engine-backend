@@ -13,6 +13,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Context.AppContext
@@ -89,7 +90,7 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
       assertResHeaders headers expHeaders
       compareQuestionnaireCreateDtos resBody expDto
       -- AND: Find a result in DB
-      (Right eventsInDB) <- runInContextIO (findQuestionnaireEventsByUuid resBody.uuid) appContext
+      (Right eventsInDB) <- runInContextIO (findQuestionnaireEventsByQuestionnaireUuid resBody.uuid) appContext
       if anonymousSharingEnabled
         then
           assertExistenceOfQuestionnaireInDB
@@ -99,14 +100,13 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
                 , description = Nothing
                 , isTemplate = False
                 , sharing = AnyoneWithLinkEditQuestionnaire
-                , events = eventsInDB
-                , versions = []
                 , projectTags = []
                 , permissions = []
                 , creatorUuid = Nothing
                 }
               :: Questionnaire
             )
+            eventsInDB
         else do
           let aPermissions =
                 [ (head questionnaire1.permissions)
@@ -120,13 +120,12 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
                 { uuid = resBody.uuid
                 , description = Nothing
                 , isTemplate = False
-                , events = eventsInDB
-                , versions = []
                 , projectTags = []
                 , permissions = aPermissions
                 }
               :: Questionnaire
             )
+            eventsInDB
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

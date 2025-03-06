@@ -1,5 +1,5 @@
 name: wizard-server
-version: '4.15.0'
+version: '4.16.0'
 synopsis: Engine Wizard
 description: Engine Wizard
 category: Web
@@ -60,6 +60,7 @@ library:
   - raw-strings-qq
   - rdf4h
   - regex-compat
+  - regex-tdfa
   - resource-pool
   - scientific
   - servant
@@ -163,6 +164,7 @@ tests:
 default-extensions:
   - DataKinds
   - DeriveGeneric
+  - DisambiguateRecordFields
   - DuplicateRecordFields
   - ExistentialQuantification
   - ExtendedDefaultRules
@@ -170,8 +172,10 @@ default-extensions:
   - FlexibleInstances
   - FunctionalDependencies
   - GeneralizedNewtypeDeriving
+  - LambdaCase
   - MultiParamTypeClasses
   - OverloadedStrings
+  - OverloadedRecordDot
   - QuasiQuotes
   - RankNTypes
   - RecordWildCards
@@ -182,5 +186,3 @@ default-extensions:
   - TypeOperators
   - TypeSynonymInstances
   - UnicodeSyntax
-  - OverloadedRecordDot
-  - DisambiguateRecordFields

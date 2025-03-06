@@ -9,7 +9,6 @@ import Database.PostgreSQL.Simple.Types
 
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermJM ()
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionJM ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSharing ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireVisibility ()
 import Wizard.Model.Questionnaire.Questionnaire
@@ -25,8 +24,6 @@ instance ToRow Questionnaire where
     , toField documentTemplateId
     , toField formatUuid
     , toField creatorUuid
-    , toJSONField events
-    , toJSONField versions
     , toField createdAt
     , toField updatedAt
     , toField description
@@ -48,8 +45,6 @@ instance FromRow Questionnaire where
     formatUuid <- field
     creatorUuid <- field
     let permissions = []
-    events <- fieldWith fromJSONField
-    versions <- fieldWith fromJSONField
     createdAt <- field
     updatedAt <- field
     description <- field

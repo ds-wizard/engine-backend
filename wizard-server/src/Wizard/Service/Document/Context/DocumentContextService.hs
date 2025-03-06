@@ -11,7 +11,9 @@ import qualified Data.UUID as U
 
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.List
+import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
@@ -19,6 +21,7 @@ import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Document.DocumentContextJM ()
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireVersion
@@ -26,7 +29,6 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Document.Context.DocumentContextMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
-import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Report.ReportGenerator
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.TenantHelper
@@ -50,19 +52,20 @@ createDocumentContext doc pkg branchEvents qtn mReplies = do
     case mReplies of
       Just replies -> return (Nothing, replies, M.empty)
       _ -> do
-        let qtnEvents =
+        qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtn.uuid
+        let filteredQtnEvents =
               case doc.questionnaireEventUuid of
-                Just eventUuid -> takeWhileInclusive (\e -> getUuid e /= eventUuid) qtn.events
-                Nothing -> qtn.events
-        qtnCtn <- compileQuestionnairePreview qtnEvents
+                Just eventUuid -> takeWhileInclusive (\e -> getUuid e /= eventUuid) qtnEvents
+                Nothing -> qtnEvents
+        qtnCtn <- compileQuestionnairePreview filteredQtnEvents
         return (qtnCtn.phaseUuid, qtnCtn.replies, qtnCtn.labels)
   report <- generateReport phaseUuid km replies
-  let qtnVersion =
-        case doc.questionnaireEventUuid of
-          (Just eventUuid) -> findQuestionnaireVersionUuid eventUuid qtn.versions
-          _ -> Nothing
-  qtnVersionDtos <- traverse enhanceQuestionnaireVersion qtn.versions
-  qtnFiles <- findQuestionnaireFilesByQuestionnaire doc.questionnaireUuid
+  mQtnVersion <-
+    case doc.questionnaireEventUuid of
+      (Just eventUuid) -> findQuestionnaireVersionByEventUuid' qtn.uuid eventUuid
+      _ -> return Nothing
+  qtnVersionsList <- findQuestionnaireVersionListByQuestionnaireUuid qtn.uuid
+  qtnFiles <- findQuestionnaireFilesSimpleByQuestionnaire doc.questionnaireUuid
   (users, groups) <- heSettingsToPerms qtn
   return $
     toDocumentContext
@@ -72,8 +75,8 @@ createDocumentContext doc pkg branchEvents qtn mReplies = do
       phaseUuid
       replies
       labels
-      qtnVersion
-      qtnVersionDtos
+      mQtnVersion
+      qtnVersionsList
       qtnFiles
       km
       report

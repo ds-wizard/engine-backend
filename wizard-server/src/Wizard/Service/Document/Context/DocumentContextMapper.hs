@@ -4,12 +4,13 @@ import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireFileSimple
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Questionnaire.QuestionnaireVersion
+import Wizard.Model.Questionnaire.QuestionnaireVersionList
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
@@ -26,8 +27,8 @@ toDocumentContext
   -> Maybe U.UUID
   -> M.Map String Reply
   -> M.Map String [U.UUID]
-  -> Maybe U.UUID
-  -> [QuestionnaireVersionDTO]
+  -> Maybe QuestionnaireVersion
+  -> [QuestionnaireVersionList]
   -> [QuestionnaireFileSimple]
   -> KnowledgeModel
   -> Report
@@ -38,7 +39,7 @@ toDocumentContext
   -> [DocumentContextUserPerm]
   -> [DocumentContextUserGroupPerm]
   -> DocumentContext
-toDocumentContext doc appClientUrl qtn phaseUuid replies labels qtnVersion qtnVersionDtos qtnFiles km report pkg org mQtnCreatedBy mDocCreatedBy users groups =
+toDocumentContext doc appClientUrl qtn phaseUuid replies labels mQtnVersion qtnVersionDtos qtnFiles km report pkg org mQtnCreatedBy mDocCreatedBy users groups =
   DocumentContext
     { config = DocumentContextConfig {clientUrl = appClientUrl}
     , document =
@@ -58,7 +59,7 @@ toDocumentContext doc appClientUrl qtn phaseUuid replies labels qtnVersion qtnVe
           , replies = replies
           , phaseUuid = phaseUuid
           , labels = labels
-          , versionUuid = qtnVersion
+          , versionUuid = fmap (.uuid) mQtnVersion
           , versions = qtnVersionDtos
           , projectTags = qtn.projectTags
           , files = qtnFiles

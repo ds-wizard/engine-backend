@@ -26,7 +26,8 @@ data Tenant = Tenant
   deriving (Show, Eq, Generic)
 
 data TenantState
-  = PendingHousekeepingTenantState
+  = NotSeededTenantState
+  | PendingHousekeepingTenantState
   | HousekeepingInProgressTenantState
   | ReadyForUseTenantState
   deriving (Show, Eq, Generic, Read)

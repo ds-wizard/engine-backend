@@ -2,7 +2,6 @@ module Wizard.Service.Questionnaire.Compiler.CompilerService where
 
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
-import GHC.Records
 
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
@@ -12,9 +11,9 @@ import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 
-compileQuestionnaire :: HasField "events" s [QuestionnaireEvent] => s -> AppContextM QuestionnaireContent
-compileQuestionnaire qtn = do
-  (_, qtnCtn) <- foldl applyEvent (return ([], defaultQuestionnaireContent)) qtn.events
+compileQuestionnaire :: [QuestionnaireEvent] -> AppContextM QuestionnaireContent
+compileQuestionnaire events = do
+  (_, qtnCtn) <- foldl applyEvent (return ([], defaultQuestionnaireContent)) events
   return qtnCtn
 
 compileQuestionnairePreview :: [QuestionnaireEvent] -> AppContextM QuestionnaireContent

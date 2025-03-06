@@ -60,30 +60,30 @@ reqUrl = "/wizard-api/documents"
 
 reqHeadersT authHeader = reqCtHeader : authHeader
 
-reqDtoT qtn =
+reqDtoT qtn qtnEvents =
   DocumentCreateDTO
     { name = "Document"
     , questionnaireUuid = qtn.uuid
-    , questionnaireEventUuid = Just . getUuid . last $ qtn.events
+    , questionnaireEventUuid = Just . getUuid . last $ qtnEvents
     , documentTemplateId = doc1.documentTemplateId
     , formatUuid = doc1.formatUuid
     }
 
-reqBodyT = encode . reqDtoT
+reqBodyT qtn qtnEvents = encode $ reqDtoT qtn qtnEvents
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201 appContext = do
-  create_test_201 "HTTP 201 CREATED (Owner, Private)" appContext questionnaire1 [reqAuthHeader]
-  create_test_201 "HTTP 201 CREATED (Non-Owner, VisibleEdit)" appContext questionnaire3 [reqNonAdminAuthHeader]
+  create_test_201 "HTTP 201 CREATED (Owner, Private)" appContext questionnaire1 questionnaire1Events [reqAuthHeader]
+  create_test_201 "HTTP 201 CREATED (Non-Owner, VisibleEdit)" appContext questionnaire3 questionnaire3Events [reqNonAdminAuthHeader]
 
-create_test_201 title appContext qtn authHeader =
+create_test_201 title appContext qtn qtnEvents authHeader =
   it title $
     -- GIVEN: Prepare request
     do
       let reqHeaders = reqHeadersT authHeader
-      let reqDto = reqDtoT qtn
+      let reqDto = reqDtoT qtn qtnEvents
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 201
@@ -113,7 +113,7 @@ test_400 appContext = do
     -- GIVEN: Prepare request
     do
       let reqHeaders = reqHeadersT [reqAuthHeader]
-      let reqDto = reqDtoT questionnaire1
+      let reqDto = reqDtoT questionnaire1 questionnaire1Events
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400
@@ -140,7 +140,7 @@ test_400 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] (reqBodyT questionnaire1)
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] (reqBodyT questionnaire1 questionnaire1Events)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -150,21 +150,23 @@ test_403 appContext = do
     "HTTP 403 FORBIDDEN (Non-Owner, Private)"
     appContext
     questionnaire1
+    questionnaire1Events
     [reqNonAdminAuthHeader]
     (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)"
     appContext
     questionnaire2
+    questionnaire2Events
     [reqNonAdminAuthHeader]
     (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
 
-create_test_403 title appContext qtn authHeader errorMessage =
+create_test_403 title appContext qtn qtnEvents authHeader errorMessage =
   it title $
     -- GIVEN: Prepare request
     do
       let reqHeaders = reqHeadersT authHeader
-      let reqDto = reqDtoT qtn
+      let reqDto = reqDtoT qtn qtnEvents
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 403

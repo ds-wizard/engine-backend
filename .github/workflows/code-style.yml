@@ -5,7 +5,7 @@ on:
 
 jobs:
   hlint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     
     env:
       HLINT_VERSION: '3.5'
@@ -47,7 +47,7 @@ jobs:
         hlint wizard-server
 
   fourmolu:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     env:
       FOURMOLU_VERSION: '0.8.2.0'
