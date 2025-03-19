@@ -27,7 +27,6 @@ import Registry.Specs.API.Info.APISpec
 import Registry.Specs.API.Locale.APISpec
 import Registry.Specs.API.Organization.APISpec
 import Registry.Specs.API.Package.APISpec
-import Registry.Specs.Service.Organization.OrganizationValidationSpec
 import Registry.Specs.Service.Package.PackageValidationSpec
 import Registry.TestMigration
 
@@ -81,7 +80,6 @@ main =
     ( \baseContext appContext ->
         hspec $ do
           describe "UNIT TESTING" $ describe "SERVICE" $ do
-            describe "Organization" organizationValidationSpec
             describe "Package" packageValidationSpec
           before (resetDB appContext) $ describe "INTEGRATION TESTING" $ describe "API" $ do
             actionKeyAPI baseContext appContext

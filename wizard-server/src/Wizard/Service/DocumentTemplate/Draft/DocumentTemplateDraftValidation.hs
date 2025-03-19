@@ -16,7 +16,7 @@ import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 validateChangeDto :: DocumentTemplateDraftChangeDTO -> DocumentTemplate -> AppContextM ()
 validateChangeDto reqDto tml = do
   let tmlId = buildCoordinate tml.organizationId reqDto.templateId reqDto.version
-  validateCoordinateFormat False tmlId
+  validateCoordinateFormat False "templateId" tmlId
   validateCoordinateWithParams tml.tId tml.organizationId tml.templateId tml.version
   when
     (reqDto.templateId /= tml.templateId || reqDto.version /= tml.version)

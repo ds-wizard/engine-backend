@@ -22,7 +22,7 @@ import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 validateNewDocumentTemplate :: DocumentTemplate -> Bool -> AppContextM ()
 validateNewDocumentTemplate tml shouldValidateMetamodelVersion = do
-  validateCoordinateFormat False tml.tId
+  validateCoordinateFormat False "templateId" tml.tId
   validateDocumentTemplateIdUniqueness tml.tId
   validateCoordinateWithParams tml.tId tml.organizationId tml.templateId tml.version
   when shouldValidateMetamodelVersion (validateMetamodelVersion tml)
@@ -38,7 +38,7 @@ validatePhase tmlId newPhase = do
 
 validateExistingDocumentTemplate :: DocumentTemplate -> AppContextM ()
 validateExistingDocumentTemplate tml = do
-  validateCoordinateFormat False tml.tId
+  validateCoordinateFormat False "templateId" tml.tId
   validateCoordinateWithParams tml.tId tml.organizationId tml.templateId tml.version
 
 validateDocumentTemplateIdUniqueness :: String -> AppContextM ()

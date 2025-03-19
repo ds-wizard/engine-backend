@@ -5,10 +5,6 @@ import Shared.Common.Model.Localization.LocaleRecord
 -- --------------------------------------
 -- VALIDATION
 -- --------------------------------------
--- Form
-_ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT =
-  LocaleRecord "error.validation.invalid_organization_id_format" "OrganizationId is not in the valid format" []
-
 -- Absence
 _ERROR_VALIDATION__ORGANIZATION_EMAIL_ABSENCE email =
   LocaleRecord

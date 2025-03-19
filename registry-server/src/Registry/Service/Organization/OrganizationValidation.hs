@@ -1,10 +1,8 @@
 module Registry.Service.Organization.OrganizationValidation where
 
-import Control.Monad (forM_, unless, when)
+import Control.Monad (unless, when)
 import Control.Monad.Except (throwError)
 import qualified Data.Map.Strict as M
-import Data.Maybe (isJust)
-import Text.Regex (matchRegex, mkRegex)
 
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Public
@@ -14,13 +12,14 @@ import Registry.Model.Context.AppContextHelpers
 import Registry.Service.Common
 import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
 import Shared.Common.Model.Error.Error
+import WizardLib.Common.Service.Coordinate.CoordinateValidation
 
 validateOrganizationCreateDto :: OrganizationCreateDTO -> AppContextM ()
 validateOrganizationCreateDto reqDto = do
   validatePublicRegistrationEnabled
   _ <- validateOrganizationIdUniqueness reqDto.organizationId
   _ <- validateOrganizationEmailUniqueness reqDto.email
-  forM_ (validateOrganizationId reqDto.organizationId) throwError
+  validateCoordinatePartFormat "organizationId" reqDto.organizationId
 
 validatePublicRegistrationEnabled :: AppContextM ()
 validatePublicRegistrationEnabled = do
@@ -28,14 +27,6 @@ validatePublicRegistrationEnabled = do
   unless
     isAdmin
     (checkIfServerFeatureIsEnabled "Tenant Registration" (\s -> s.general.publicRegistrationEnabled))
-
-validateOrganizationId :: String -> Maybe AppError
-validateOrganizationId orgId =
-  if isJust $ matchRegex validationRegex orgId
-    then Nothing
-    else Just $ ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT])
-  where
-    validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9.-]*[a-zA-Z0-9]$"
 
 validateOrganizationIdUniqueness :: String -> AppContextM ()
 validateOrganizationIdUniqueness orgId = do

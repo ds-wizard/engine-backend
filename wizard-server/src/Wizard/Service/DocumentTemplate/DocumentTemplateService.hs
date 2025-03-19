@@ -41,7 +41,7 @@ import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 
 getDocumentTemplates :: [(String, String)] -> Maybe String -> AppContextM [DocumentTemplate]
 getDocumentTemplates queryParams mPkgId = do
-  validateCoordinateFormat' False mPkgId
+  validateCoordinateFormat' False "templateId" mPkgId
   templates <- findDocumentTemplatesFiltered queryParams
   return $ filterDocumentTemplates mPkgId templates
 
@@ -58,7 +58,7 @@ getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated pageable s
 getDocumentTemplateSuggestions :: Maybe String -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
 getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable pageable sort = do
   checkPermission _DOC_TML_READ_PERM
-  validateCoordinateFormat' False mPkgId
+  validateCoordinateFormat' False "templateId" mPkgId
   tmls <- findDocumentTemplatesSuggestions mQuery mNonEditable
   let entities = filterDocumentTemplatesInGroup tmls
   return $ toSuggestionDTOPage entities pageable

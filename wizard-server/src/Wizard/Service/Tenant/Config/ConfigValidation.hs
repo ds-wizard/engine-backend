@@ -27,7 +27,7 @@ isValidOrganizationId kmId =
     then Nothing
     else Just $ ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__INVALID_ORG_ID_FORMAT])
   where
-    validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9.]*[a-zA-Z0-9]$"
+    validationRegex = mkRegex "^[a-zA-Z0-9_.-]+$"
 
 validateQuestionnaire :: TenantConfigQuestionnaire -> AppContextM ()
 validateQuestionnaire config = validateQuestionnaireTags config.projectTagging.tags
