@@ -14,6 +14,7 @@ meta = MigrationMeta {mmNumber = 53, mmName = "Refactor questionnaire events", m
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
+  polishQuestionnaireEvents dbPool
   createQuestionnaireEventTable dbPool
   createAndInsertQuestionnaireEventUuidMappingTable dbPool
   insertQuestionnaireEvents dbPool
@@ -29,6 +30,68 @@ migrate dbPool = do
   updateDocumentQuestionnaireEventUuid dbPool
   dropQuestionnaireEventsColumn dbPool
   dropQuestionnaireVersionColumn dbPool
+
+polishQuestionnaireEvents dbPool = do
+  let sql =
+        "WITH duplicate_events AS (SELECT uuid            as questionnaire_uuid, \
+        \                                 elem ->> 'uuid' as event_uuid, \
+        \                                 array_agg(o)    as order, \
+        \                                 COUNT(o)        as len \
+        \                          FROM questionnaire \
+        \                               LEFT JOIN LATERAL jsonb_array_elements(events) WITH ORDINALITY AS values(elem, o) ON TRUE \
+        \                          GROUP BY uuid, event_uuid \
+        \                          HAVING COUNT(o) > 1 \
+        \                          ORDER BY len DESC), \
+        \ \
+        \     indices_to_regenerate AS (SELECT duplicate_events.questionnaire_uuid                                     as questionnaire_uuid, \
+        \                                   duplicate_events.event_uuid                                             as event_uuid, \
+        \                                   unnest(array_remove(duplicate_events.order, duplicate_events.order[1])) as order, \
+        \                                   gen_random_uuid()                                                       AS new_uuid \
+        \                            FROM duplicate_events), \
+        \ \
+        \     updated_event AS (SELECT indices_to_regenerate.questionnaire_uuid                     AS questionnaire_uuid, \
+        \                              indices_to_regenerate.event_uuid                             AS original_event_uuid, \
+        \                              indices_to_regenerate.new_uuid                               AS new_uuid, \
+        \                              indices_to_regenerate.order, \
+        \                              questionnaire.events -> indices_to_regenerate.order::integer AS original_event, \
+        \                              jsonb_set(questionnaire.events -> indices_to_regenerate.order::integer, '{uuid}', \
+        \                                        to_jsonb(new_uuid), false)                      AS new_event \
+        \                       FROM indices_to_regenerate \
+        \                            JOIN questionnaire ON indices_to_regenerate.questionnaire_uuid = questionnaire.uuid), \
+        \ \
+        \     original_event AS (SELECT updated_event.questionnaire_uuid, \
+        \                               elem ->> 'uuid' as event_uuid, \
+        \                               elem            as event, \
+        \                               o               as order \
+        \                        FROM updated_event \
+        \                             JOIN questionnaire ON updated_event.questionnaire_uuid = questionnaire.uuid \
+        \                             LEFT JOIN LATERAL jsonb_array_elements(questionnaire.events) WITH ORDINALITY AS values(elem, o) \
+        \                                       ON TRUE), \
+        \ \
+        \     result_event AS (SELECT original_event.*, \
+        \                             updated_event.new_uuid, \
+        \                             CASE \
+        \                                 WHEN updated_event.new_event IS NULL THEN original_event.event \
+        \                                 ELSE updated_event.new_event \
+        \                                 END AS new_event \
+        \                      FROM original_event \
+        \                           LEFT JOIN updated_event \
+        \                                     ON original_event.questionnaire_uuid = updated_event.questionnaire_uuid AND \
+        \                                        original_event.order = updated_event.order \
+        \                      ORDER BY original_event.order), \
+        \ \
+        \     final_events AS (SELECT result_event.questionnaire_uuid, \
+        \                             json_agg(result_event.new_event) as events \
+        \                      FROM result_event \
+        \                      GROUP BY result_event.questionnaire_uuid) \
+        \ \
+        \UPDATE questionnaire \
+        \SET events = final_events.events \
+        \FROM final_events \
+        \WHERE questionnaire.uuid = final_events.questionnaire_uuid;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
 
 createQuestionnaireEventTable dbPool = do
   let sql =
@@ -466,9 +529,9 @@ testValueOrder dbPool = do
         \        AND json1_elements.o <> json2_elements.o)) AS mismatches; \
         \ \
         \IF mismatch_count = 0 THEN \
-        \            RAISE NOTICE 'Test PASSED: Query returned no mismatched value counts.'; \
+        \            RAISE NOTICE 'Test PASSED: Query returned no mismatched value order counts.'; \
         \        ELSE \
-        \            RAISE EXCEPTION 'Test FAILED: Query returned mismatched value counts.'; \
+        \            RAISE EXCEPTION 'Test FAILED: Query returned mismatched value order counts.'; \
         \        END IF; \
         \    END \
         \$$;"
