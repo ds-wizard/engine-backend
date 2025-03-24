@@ -5,12 +5,14 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.List as L
 import qualified Data.Map.Strict as M
+import qualified Data.Text as T
 import Data.Typeable
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
+import Database.PostgreSQL.Simple.Types
 import GHC.Generics
 import Text.Read (readMaybe)
 
@@ -56,3 +58,8 @@ instance ToField [U.UUID] where
   toField entities =
     let encoded = f' "{%s}" [L.intercalate "," . fmap U.toString $ entities]
      in Escape . BS.pack $ encoded
+
+instance FromField [String] where
+  fromField f mdata = do
+    pgArray <- fromField f mdata :: Conversion (PGArray T.Text)
+    return (map T.unpack (fromPGArray pgArray))
