@@ -35,6 +35,7 @@ import Wizard.Service.Locale.LocaleValidation
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
 import Wizard.Service.Tenant.TenantHelper
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 getLocalesPage :: Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page LocaleDTO)
 getLocalesPage mOrganizationId mLocaleId mQuery pageable sort = do

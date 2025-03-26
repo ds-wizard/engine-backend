@@ -11,8 +11,10 @@ import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAiAssistantC
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateDefaultRoleConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateOrganizationConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateSupportConfigCommand
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 toChangeDTO :: TenantConfig -> TenantConfigChangeDTO
 toChangeDTO config =
@@ -141,6 +143,19 @@ fromAiAssitant oldConfig command now =
     { aiAssistant =
         oldConfig.aiAssistant
           { enabled = command.enabled
+          }
+    , updatedAt = now
+    }
+
+fromOrganization :: TenantConfig -> UpdateOrganizationConfigCommand -> UTCTime -> TenantConfig
+fromOrganization oldConfig command now =
+  oldConfig
+    { organization =
+        TenantConfigOrganization
+          { name = command.name
+          , description = command.description
+          , organizationId = command.organizationId
+          , affiliations = command.affiliations
           }
     , updatedAt = now
     }

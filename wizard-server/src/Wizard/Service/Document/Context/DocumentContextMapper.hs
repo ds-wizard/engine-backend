@@ -12,13 +12,13 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Questionnaire.QuestionnaireVersionList
 import Wizard.Model.Report.Report
-import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.Package.PackageMapper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
 import qualified WizardLib.DocumentTemplate.Constant.DocumentTemplate as TemplateConstant
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Package.Package
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 toDocumentContext
   :: Document
