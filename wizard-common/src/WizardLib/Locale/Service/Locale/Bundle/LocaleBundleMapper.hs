@@ -1,4 +1,4 @@
-module Shared.Locale.Service.Locale.Bundle.LocaleBundleMapper where
+module WizardLib.Locale.Service.Locale.Bundle.LocaleBundleMapper where
 
 import Codec.Archive.Zip
 import Data.Aeson

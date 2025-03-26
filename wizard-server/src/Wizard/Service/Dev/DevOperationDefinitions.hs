@@ -24,8 +24,8 @@ import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Registry.RegistryService
-import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
+import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
 import WizardLib.Public.Service.UserToken.UserTokenService
 
 sections :: [DevSection AppContextM]

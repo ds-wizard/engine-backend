@@ -1,11 +1,10 @@
-module Wizard.Service.TemporaryFile.TemporaryFileMapper where
+module WizardLib.Public.Service.TemporaryFile.TemporaryFileMapper where
 
 import Data.Time
 import qualified Data.UUID as U
 
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
-import Wizard.Api.Resource.User.UserDTO
-import Wizard.Model.TemporaryFile.TemporaryFile
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
+import WizardLib.Public.Model.TemporaryFile.TemporaryFile
 
 emptyFileDTO :: TemporaryFileDTO
 emptyFileDTO =
@@ -21,7 +20,7 @@ toDTO url contentType =
     , contentType = contentType
     }
 
-toTemporaryFile :: U.UUID -> String -> String -> Int -> U.UUID -> Maybe UserDTO -> UTCTime -> TemporaryFile
+toTemporaryFile :: U.UUID -> String -> String -> Int -> U.UUID -> Maybe U.UUID -> UTCTime -> TemporaryFile
 toTemporaryFile uuid fileName contentType expirationInSeconds tenantUuid mCreatedBy now =
   TemporaryFile
     { uuid = uuid
@@ -29,7 +28,7 @@ toTemporaryFile uuid fileName contentType expirationInSeconds tenantUuid mCreate
     , contentType = contentType
     , expiresAt = toExpiration expirationInSeconds now
     , tenantUuid = tenantUuid
-    , createdBy = fmap (.uuid) mCreatedBy
+    , createdBy = mCreatedBy
     , createdAt = now
     }
 

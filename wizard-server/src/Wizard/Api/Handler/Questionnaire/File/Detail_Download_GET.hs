@@ -6,10 +6,10 @@ import Servant
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Questionnaire.File.QuestionnaireFileService
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileJM ()
 
 type Detail_Download_GET =
   Header "Authorization" String

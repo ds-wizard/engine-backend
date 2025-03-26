@@ -4,15 +4,14 @@ import Data.Maybe
 
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Config.SimpleFeature
-import Shared.Locale.Model.Locale.Locale
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.UserProfile
 
-toClientConfigDTO :: ServerConfig -> TenantConfig -> Maybe UserProfile -> Tenant -> [Locale] -> ClientConfigDTO
-toClientConfigDTO serverConfig tenantConfig mUserProfile tenant locales =
+toClientConfigDTO :: ServerConfig -> TenantConfig -> Maybe UserProfile -> Tenant -> ClientConfigDTO
+toClientConfigDTO serverConfig tenantConfig mUserProfile tenant =
   ClientConfigDTO
     { user = mUserProfile
     , organization = tenantConfig.organization
@@ -24,7 +23,6 @@ toClientConfigDTO serverConfig tenantConfig mUserProfile tenant locales =
     , questionnaire = toClientConfigQuestionnaireDTO $ tenantConfig.questionnaire
     , submission = SimpleFeature $ tenantConfig.submission.enabled
     , cloud = toClientConfigCloudDTO serverConfig.cloud tenant
-    , locales = fmap toClientConfigLocaleDTO locales
     , owl = tenantConfig.owl
     , admin = toClientConfigAdminDTO serverConfig.admin tenant
     , aiAssistant = toClientConfigAiAssistantDTO serverConfig.admin tenantConfig.aiAssistant
@@ -103,10 +101,6 @@ toClientConfigCloudDTO serverConfig tenant =
     { enabled = serverConfig.enabled
     , serverUrl = tenant.serverUrl
     }
-
-toClientConfigLocaleDTO :: Locale -> ClientConfigLocaleDTO
-toClientConfigLocaleDTO locale =
-  ClientConfigLocaleDTO {name = locale.name, code = locale.code, defaultLocale = locale.defaultLocale}
 
 toClientConfigAdminDTO :: ServerConfigAdmin -> Tenant -> ClientConfigAdminDTO
 toClientConfigAdminDTO serverConfig tenant =

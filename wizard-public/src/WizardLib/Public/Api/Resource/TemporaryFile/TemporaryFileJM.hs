@@ -1,9 +1,9 @@
-module Wizard.Api.Resource.TemporaryFile.TemporaryFileJM where
+module WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileJM where
 
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
 
 instance FromJSON TemporaryFileDTO where
   parseJSON = genericParseJSON jsonOptions

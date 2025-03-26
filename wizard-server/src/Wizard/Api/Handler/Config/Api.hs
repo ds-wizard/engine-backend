@@ -4,19 +4,14 @@ import Servant
 import Servant.Swagger.Tags
 
 import Wizard.Api.Handler.Config.List_Bootstrap_GET
-import Wizard.Api.Handler.Config.List_Locale_GET
 import Wizard.Model.Context.BaseContext
 
 type ConfigAPI =
   Tags "Config"
-    :> ( List_Bootstrap_GET
-          :<|> List_Locale_GET
-       )
+    :> List_Bootstrap_GET
 
 configApi :: Proxy ConfigAPI
 configApi = Proxy
 
 configServer :: ServerT ConfigAPI BaseContextM
-configServer =
-  list_bootstrap_GET
-    :<|> list_locale_GET
+configServer = list_bootstrap_GET

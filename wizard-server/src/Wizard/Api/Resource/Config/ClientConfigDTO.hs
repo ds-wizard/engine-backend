@@ -23,7 +23,6 @@ data ClientConfigDTO
       , questionnaire :: ClientConfigQuestionnaireDTO
       , submission :: SimpleFeature
       , cloud :: ClientConfigCloudDTO
-      , locales :: [ClientConfigLocaleDTO]
       , owl :: TenantConfigOwl
       , admin :: ClientConfigAdminDTO
       , aiAssistant :: ClientConfigAiAssistantDTO
@@ -73,13 +72,6 @@ data ClientConfigCloudDTO = ClientConfigCloudDTO
   , serverUrl :: String
   }
   deriving (Generic, Eq, Show)
-
-data ClientConfigLocaleDTO = ClientConfigLocaleDTO
-  { name :: String
-  , code :: String
-  , defaultLocale :: Bool
-  }
-  deriving (Show, Eq, Generic)
 
 data ClientConfigAdminDTO = ClientConfigAdminDTO
   { enabled :: Bool

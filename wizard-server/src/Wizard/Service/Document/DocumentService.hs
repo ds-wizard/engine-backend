@@ -20,7 +20,6 @@ import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Common
@@ -35,6 +34,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Branch.BranchData
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Document.Document
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
 import Wizard.Model.Questionnaire.Questionnaire
@@ -52,13 +52,14 @@ import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
-import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
-import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.Package.Package
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
+import qualified WizardLib.Public.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
+import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
 
 getDocumentsPageDto :: Maybe U.UUID -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
 getDocumentsPageDto mQuestionnaireUuid mDocumentTemplateId mQuery pageable sort = do
@@ -121,7 +122,8 @@ downloadDocument docUuid = do
     content <- retrieveDocumentContent docUuid
     let fileName = fromMaybe "export" doc.fileName
     let contentType = fromMaybe "text/plain" doc.contentType
-    url <- createTemporaryFile fileName "application/octet-stream" (BSL.fromStrict content)
+    mCurrentUserUuid <- getCurrentUserUuid
+    url <- createTemporaryFile fileName "application/octet-stream" mCurrentUserUuid (BSL.fromStrict content)
     return $ TemporaryFileMapper.toDTO url contentType
 
 createDocumentPreviewForQtn :: U.UUID -> AppContextM (Document, TemporaryFileDTO)

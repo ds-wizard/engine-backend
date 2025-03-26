@@ -5,8 +5,6 @@ import Data.String
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
-import Database.PostgreSQL.Simple.ToRow
-import GHC.Int
 
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
@@ -70,16 +68,6 @@ findLocalesByCodeWithTenant tenantUuid code shortCode = do
   let action conn = query conn sql params
   runDB action
 
-findLocalesByOrganizationIdAndLocaleId :: String -> String -> AppContextM [Locale]
-findLocalesByOrganizationIdAndLocaleId organizationId localeId = do
-  tenantUuid <- asks currentTenantUuid
-  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("organization_id", organizationId), ("locale_id", localeId)]
-
-findLocaleById :: String -> AppContextM Locale
-findLocaleById lclId = do
-  tenantUuid <- asks currentTenantUuid
-  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", lclId)]
-
 findLocaleById' :: String -> AppContextM (Maybe Locale)
 findLocaleById' lclId = do
   tenantUuid <- asks currentTenantUuid
@@ -88,45 +76,3 @@ findLocaleById' lclId = do
 findSimpleLocaleByIdWithTenant :: U.UUID -> String -> AppContextM LocaleSimple
 findSimpleLocaleByIdWithTenant tenantUuid lclId =
   createFindEntityWithFieldsByFn "id, name, code, default_locale" False entityName [tenantQueryUuid tenantUuid, ("id", lclId)]
-
-updateLocaleById :: Locale -> AppContextM Int64
-updateLocaleById locale = do
-  tenantUuid <- asks currentTenantUuid
-  let sql =
-        fromString
-          "UPDATE locale SET id = ?, name = ?, description = ?, code = ?, organization_id = ?, locale_id = ?, version = ?, default_locale = ?, license = ?, readme = ?, recommended_app_version = ?, enabled = ?, tenant_uuid = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND id = ?"
-  let params = toRow locale ++ [toField tenantUuid, toField locale.lId]
-  logQuery sql params
-  let action conn = execute conn sql params
-  runDB action
-
-unsetDefaultLocale :: AppContextM ()
-unsetDefaultLocale = do
-  tenantUuid <- asks currentTenantUuid
-  let sql = fromString "UPDATE locale SET default_locale = false WHERE tenant_uuid = ?"
-  let params = [toField tenantUuid]
-  logQuery sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
-
-unsetEnabledLocale :: String -> AppContextM ()
-unsetEnabledLocale code = do
-  tenantUuid <- asks currentTenantUuid
-  let sql = fromString "UPDATE locale SET enabled = false WHERE tenant_uuid = ? AND code = ?"
-  let params = [toField tenantUuid, toField code]
-  logQuery sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
-
-insertLocale :: Locale -> AppContextM Int64
-insertLocale = createInsertFn entityName
-
-deleteLocales :: AppContextM Int64
-deleteLocales = createDeleteEntitiesFn entityName
-
-deleteLocaleById :: String -> AppContextM Int64
-deleteLocaleById lclId = do
-  tenantUuid <- asks currentTenantUuid
-  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", lclId)]

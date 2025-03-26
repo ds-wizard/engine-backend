@@ -40,6 +40,7 @@ userNikola =
     , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
     , submissionProps = []
     , imageUrl = Nothing
+    , locale = Nothing
     , machine = False
     , tenantUuid = defaultTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0

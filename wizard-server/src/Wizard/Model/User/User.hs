@@ -26,6 +26,7 @@ data User = User
   , active :: Bool
   , submissionProps :: [UserSubmissionProps]
   , imageUrl :: Maybe String
+  , locale :: Maybe String
   , machine :: Bool
   , tenantUuid :: U.UUID
   , lastVisitedAt :: UTCTime
@@ -54,5 +55,6 @@ instance Eq User where
       && a.active == b.active
       && a.submissionProps == b.submissionProps
       && a.imageUrl == b.imageUrl
+      && a.locale == b.locale
       && a.machine == b.machine
       && a.tenantUuid == b.tenantUuid

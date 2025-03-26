@@ -12,12 +12,12 @@ import Shared.Common.Service.Acl.AclService
 import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.File.FileCreateDTO
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Constant.Acl
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireFile
 import Wizard.Model.Questionnaire.QuestionnaireFileList
@@ -28,8 +28,9 @@ import Wizard.Service.Questionnaire.File.QuestionnaireFileAcl
 import Wizard.Service.Questionnaire.File.QuestionnaireFileMapper
 import Wizard.Service.Questionnaire.File.QuestionnaireFileValidation
 import Wizard.Service.Questionnaire.QuestionnaireAcl
-import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
-import Wizard.Service.TemporaryFile.TemporaryFileService
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
+import qualified WizardLib.Public.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
+import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
 
 getQuestionnaireFilesPage :: Maybe String -> Maybe U.UUID -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireFileList)
 getQuestionnaireFilesPage mQuery mQtnUuid pageable sort = do
@@ -78,7 +79,8 @@ downloadQuestionnaireFile qtnUuid fileUuid = do
     qtnFile <- findQuestionnaireFileByUuid fileUuid
     checkViewPermissionToFile qtnUuid
     contentAction <- retrieveFileConduitAction qtnUuid fileUuid
-    url <- createTemporaryFileConduit qtnFile.fileName "application/octet-stream" contentAction
+    mCurrentUserUuid <- getCurrentUserUuid
+    url <- createTemporaryFileConduit qtnFile.fileName "application/octet-stream" mCurrentUserUuid contentAction
     return $ TemporaryFileMapper.toDTO url qtnFile.contentType
 
 deleteQuestionnaireFilesByQuestionnaireUuid :: U.UUID -> AppContextM ()

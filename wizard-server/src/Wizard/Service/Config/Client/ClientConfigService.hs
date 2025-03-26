@@ -10,7 +10,6 @@ import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Database.DAO.Locale.LocaleDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.User.UserGroupMembershipDAO
 import Wizard.Model.Config.ServerConfig
@@ -49,14 +48,13 @@ getClientConfig mServerUrl mClientUrl = do
             Just clientUrl -> getTenantConfigByUuid tenant.uuid
             Nothing -> getCurrentTenantConfig
           else getCurrentTenantConfig
-      locales <- findLocalesFilteredWithTenant tenant.uuid [("enabled", show True)]
       mUserProfile <-
         case mCurrentUser of
           Just currentUser -> do
             userGroupUuids <- findUserGroupUuidsForUserUuidAndTenantUuid currentUser.uuid tenant.uuid
             return . Just $ toUserProfile currentUser userGroupUuids
           Nothing -> return Nothing
-      return $ toClientConfigDTO serverConfig tenantConfig mUserProfile tenant locales
+      return $ toClientConfigDTO serverConfig tenantConfig mUserProfile tenant
 
 throwErrorIfTenantIsDisabled :: Maybe String -> Tenant -> AppContextM ()
 throwErrorIfTenantIsDisabled mServerUrl tenant = unless tenant.enabled (throwError . NotExistsError $ _ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE (fromMaybe "not-provided" mServerUrl))

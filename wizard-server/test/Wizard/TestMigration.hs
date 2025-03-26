@@ -5,6 +5,7 @@ import Shared.Audit.Database.DAO.Audit.AuditDAO
 import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMigration as Audit
 import Shared.Component.Database.DAO.Component.ComponentDAO
 import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as Component
+import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Shared.Prefab.Database.DAO.Prefab.PrefabDAO
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as Prefab
@@ -14,7 +15,6 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelCacheDAO
-import Wizard.Database.DAO.Locale.LocaleDAO
 import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_MigratorDAO
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
@@ -83,7 +83,6 @@ buildSchema appContext = do
   runInContext ExternalLink.dropTables appContext
   runInContext KnowledgeModel.dropTables appContext
   runInContext Component.dropTables appContext
-  runInContext Locale.dropTables appContext
   runInContext Registry.dropTables appContext
   runInContext QuestionnaireAction.dropTables appContext
   runInContext QuestionnaireImporter.dropTables appContext
@@ -101,11 +100,13 @@ buildSchema appContext = do
   runInContext DocumentTemplate.dropTables appContext
   runInContext Package.dropTables appContext
   runInContext User.dropTables appContext
+  runInContext Locale.dropTables appContext
   runInContext Tenant.dropTables appContext
   runInContext Instance.dropTables appContext
   putStrLn "DB: Creating schema"
   runInContext Instance.createTables appContext
   runInContext Tenant.createTables appContext
+  runInContext Locale.createTables appContext
   runInContext User.createTables appContext
   runInContext DocumentTemplate.createTables appContext
   runInContext Package.createTables appContext
@@ -124,7 +125,6 @@ buildSchema appContext = do
   runInContext QuestionnaireAction.createTables appContext
   runInContext QuestionnaireImporter.createTables appContext
   runInContext Registry.createTables appContext
-  runInContext Locale.createTables appContext
   runInContext Component.createTables appContext
   runInContext KnowledgeModel.createTables appContext
   runInContext ExternalLink.createTables appContext
@@ -139,7 +139,6 @@ buildSchema appContext = do
 resetDB appContext = do
   runInContext deleteExternalLinkUsages appContext
   runInContext deleteKnowledgeModelCaches appContext
-  runInContext deleteLocales appContext
   runInContext deleteRegistryOrganizations appContext
   runInContext deleteRegistryPackages appContext
   runInContext deleteRegistryTemplates appContext
@@ -174,6 +173,7 @@ resetDB appContext = do
   runInContext deleteUserGroupMemberships appContext
   runInContext deleteUsers appContext
   runInContext deleteUserGroups appContext
+  runInContext deleteLocales appContext
   runInContext deleteLimitBundles appContext
   runInContext deleteTenants appContext
   runInContext (insertTenant defaultTenant) appContext

@@ -1,4 +1,4 @@
-module Wizard.Model.TemporaryFile.TemporaryFile where
+module WizardLib.Public.Model.TemporaryFile.TemporaryFile where
 
 import Data.Time
 import qualified Data.UUID as U
