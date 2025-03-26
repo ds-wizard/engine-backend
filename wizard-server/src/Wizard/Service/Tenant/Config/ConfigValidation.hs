@@ -12,6 +12,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Questionnaire.QuestionnaireValidation
 import WizardLib.Common.Localization.Messages.Public
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 validateTenantConfig :: TenantConfigChangeDTO -> AppContextM ()
 validateTenantConfig tenantConfig = do

@@ -10,3 +10,12 @@ defaultDashboardAndLoginScreenAnnouncement =
     , dashboard = True
     , loginScreen = True
     }
+
+defaultOrganization :: TenantConfigOrganization
+defaultOrganization =
+  TenantConfigOrganization
+    { name = "Organization Amsterdam"
+    , description = "Some description of Organization Amsterdam"
+    , organizationId = "org.nl.amsterdam"
+    , affiliations = []
+    }

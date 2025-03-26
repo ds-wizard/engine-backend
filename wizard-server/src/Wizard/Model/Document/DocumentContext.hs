@@ -11,9 +11,9 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireVersionList
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Report.Report
-import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.Public.Api.Resource.User.Group.UserGroupDetailDTO
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 data DocumentContext = DocumentContext
   { config :: DocumentContextConfig

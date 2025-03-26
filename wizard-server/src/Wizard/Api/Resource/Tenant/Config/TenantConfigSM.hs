@@ -17,9 +17,6 @@ import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigSM ()
 instance ToSchema TenantConfig where
   declareNamedSchema = toSwagger defaultTenantConfig
 
-instance ToSchema TenantConfigOrganization where
-  declareNamedSchema = toSwagger defaultOrganization
-
 instance ToSchema TenantConfigAuth where
   declareNamedSchema = toSwagger defaultAuth
 

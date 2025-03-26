@@ -6,6 +6,7 @@ import Shared.Common.Model.Config.SimpleFeature
 import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.UserProfile
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 data ClientConfigDTO
   = HousekeepingInProgressClientConfigDTO

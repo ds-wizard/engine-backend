@@ -9,6 +9,7 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.KnowledgeModel.Model.Package.Package
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 getBranchPreviousPackage :: Branch -> AppContextM (Maybe Package)
 getBranchPreviousPackage branch =

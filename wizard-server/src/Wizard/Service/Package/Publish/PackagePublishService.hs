@@ -31,6 +31,7 @@ import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 import WizardLib.KnowledgeModel.Service.Package.PackageUtil
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 publishPackageFromBranch :: PackagePublishBranchDTO -> AppContextM PackageSimpleDTO
 publishPackageFromBranch reqDto = do

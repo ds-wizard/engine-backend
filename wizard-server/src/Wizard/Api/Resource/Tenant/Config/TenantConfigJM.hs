@@ -18,12 +18,6 @@ instance FromJSON TenantConfig where
 instance ToJSON TenantConfig where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigOrganization where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON TenantConfigOrganization where
-  toJSON = genericToJSON jsonOptions
-
 instance FromJSON TenantConfigAuth where
   parseJSON = genericParseJSON jsonOptions
 

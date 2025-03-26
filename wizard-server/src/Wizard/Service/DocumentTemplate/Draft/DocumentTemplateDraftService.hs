@@ -40,6 +40,7 @@ import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Localization.Messages.Public
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 getDraftsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateDraftList)
 getDraftsPage mQuery pageable sort = do

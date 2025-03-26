@@ -13,6 +13,7 @@ import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Registry.RegistryPackage
 import Wizard.Model.Registry.RegistryTemplate
 import Wizard.Model.Tenant.Config.TenantConfig
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 toOrganizationCreate :: TenantConfig -> RegistryCreateDTO -> OrganizationCreateDTO
 toOrganizationCreate tenantConfig reqDto =
