@@ -9,6 +9,8 @@ import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Date
 import Shared.Locale.Constant.Locale
 import Shared.Locale.Model.Locale.Locale
+import Shared.Locale.Model.Locale.LocaleSuggestion
+import Shared.Locale.Service.Locale.LocaleMapper
 
 localeDefaultEn :: Locale
 localeDefaultEn =
@@ -52,6 +54,9 @@ localeNl =
 
 localeNlContent :: BS.ByteString
 localeNlContent = BSL.toStrict . encode . M.insert "someKey" "someValue" $ M.empty
+
+localeNlSuggestion :: LocaleSuggestion
+localeNlSuggestion = toLocaleSuggestion localeNl
 
 localeNlEdited :: Locale
 localeNlEdited = localeNl {enabled = False, defaultLocale = False}

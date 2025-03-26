@@ -20,9 +20,6 @@ _ERROR_VALIDATION__DOC_TML_FILE_OR_ASSET_UNIQUENESS =
 _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS =
   LocaleRecord "error.validation.km_migration_uniqueness" "Migration of Knowledge Model already exists" []
 
-_ERROR_VALIDATION__LCL_ID_UNIQUENESS lclId =
-  LocaleRecord "error.validation.lcl_id_uniqueness" "Locale '%s' already exists" [lclId]
-
 _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email =
   LocaleRecord "error.validation.user_email_uniqueness" "User (email: '%s') already exists" [email]
 
@@ -56,12 +53,6 @@ _ERROR_VALIDATION__SUBMISSION_DEFINITION_ABSENCE subId =
 _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId target =
   LocaleRecord "error.validation.tml_deletation" "DocumentTemplate '%s' can't be deleted. It's used by some %s" [tmlId, target]
 
-_ERROR_VALIDATION__DEFAULT_LOCALE_DELETATION =
-  LocaleRecord "error.validation.default_locale_deletation" "You can't delete default locale" []
-
-_ERROR_VALIDATION__DEFAULT_WIZARD_LOCALE_DELETATION =
-  LocaleRecord "error.validation.default_locale_deletation" "You can't delete default wizard locale" []
-
 -- Unsupported version
 _ERROR_VALIDATION__PKG_UNSUPPORTED_METAMODEL_VERSION pkgMetamodelVersion appPkgMetamodelVersion =
   LocaleRecord
@@ -78,13 +69,6 @@ _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION tmlId tmlMetamodelVers
 -- Unsupported State
 _ERROR_VALIDATION__DOC_TML_UNSUPPORTED_STATE tmlId phase =
   LocaleRecord "error.validation.doc_tml_unsupported_state" "You can not move '%s' into the following phase: %s" [tmlId, phase]
-
--- Locale
-_ERROR_VALIDATION__DEACTIVATE_DEFAULT_LOCALE =
-  LocaleRecord "error.validation.deactivate_default_locale" "You can't deactivate default locale" []
-
-_ERROR_VALIDATION__LOCALE_DISABLED_DEFAULT =
-  LocaleRecord "error.validation.locale_disabled_default" "You can't set disabled locale as default" []
 
 -- Questionnaire File
 _ERROR_VALIDATION__QUESTIONNAIRE_FILE_SIZE_EXCEEDS_LIMIT fileSize maxFileSize =

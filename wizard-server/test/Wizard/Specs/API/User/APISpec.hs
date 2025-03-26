@@ -11,6 +11,8 @@ import Wizard.Specs.API.User.Detail_Password_Hash_PUT
 import Wizard.Specs.API.User.Detail_Password_PUT
 import Wizard.Specs.API.User.Detail_State_PUT
 import Wizard.Specs.API.User.List_Current_GET
+import Wizard.Specs.API.User.List_Current_Locale_GET
+import Wizard.Specs.API.User.List_Current_Locale_PUT
 import Wizard.Specs.API.User.List_Current_PUT
 import Wizard.Specs.API.User.List_Current_Password_PUT
 import Wizard.Specs.API.User.List_Current_Submission_Props_GET
@@ -30,6 +32,8 @@ userAPI baseContext appContext =
       list_current_submission_props_GET appContext
       list_current_submission_props_PUT appContext
       list_current_password_PUT appContext
+      list_current_locale_GET appContext
+      list_current_locale_PUT appContext
       detail_GET appContext
       detail_PUT appContext
       detail_DELETE appContext

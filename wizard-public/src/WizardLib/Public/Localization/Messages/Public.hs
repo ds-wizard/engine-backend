@@ -3,6 +3,27 @@ module WizardLib.Public.Localization.Messages.Public where
 import Shared.Common.Model.Localization.LocaleRecord
 
 -- --------------------------------------
+-- VALIDATION
+-- --------------------------------------
+-- Delete
+_ERROR_VALIDATION__DEFAULT_LOCALE_DELETATION =
+  LocaleRecord "error.validation.default_locale_deletation" "You can't delete default locale" []
+
+_ERROR_VALIDATION__DEFAULT_WIZARD_LOCALE_DELETATION =
+  LocaleRecord "error.validation.default_locale_deletation" "You can't delete default wizard locale" []
+
+-- Uniqueness
+_ERROR_VALIDATION__LCL_ID_UNIQUENESS lclId =
+  LocaleRecord "error.validation.lcl_id_uniqueness" "Locale '%s' already exists" [lclId]
+
+-- Locale
+_ERROR_VALIDATION__DEACTIVATE_DEFAULT_LOCALE =
+  LocaleRecord "error.validation.deactivate_default_locale" "You can't deactivate default locale" []
+
+_ERROR_VALIDATION__LOCALE_DISABLED_DEFAULT =
+  LocaleRecord "error.validation.locale_disabled_default" "You can't set disabled locale as default" []
+
+-- --------------------------------------
 -- SERVICE
 -- --------------------------------------
 -- OpenId

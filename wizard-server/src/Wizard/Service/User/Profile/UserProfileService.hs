@@ -19,10 +19,12 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.User.Profile.UserProfileMapper
+import Wizard.Service.User.Profile.UserProfileValidation
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
 import Wizard.Service.User.UserUtil
 import Wizard.Service.User.UserValidation
+import WizardLib.Public.Api.Resource.User.UserLocaleDTO
 
 getUserProfile :: AppContextM UserDTO
 getUserProfile = getCurrentUser
@@ -71,4 +73,17 @@ modifyUserProfileSubmissionProps reqDto = do
   let updatedUser = fromUserSubmissionPropsDTO user reqDto now
   let encryptedUpdatedUser = process serverConfig.general.secret updatedUser
   updateUserByUuid encryptedUpdatedUser
+  return reqDto
+
+getLocale :: AppContextM UserLocaleDTO
+getLocale = do
+  user <- getCurrentUser
+  return . UserLocaleDTO $ user.locale
+
+modifyLocale :: UserLocaleDTO -> AppContextM UserLocaleDTO
+modifyLocale reqDto = do
+  validateLocale reqDto
+  user <- getCurrentUser
+  now <- liftIO getCurrentTime
+  updateUserLocaleByUuid user.uuid reqDto.lId now
   return reqDto

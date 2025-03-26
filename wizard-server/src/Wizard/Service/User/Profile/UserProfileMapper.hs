@@ -30,6 +30,7 @@ fromUserProfileChangeDTO oldUser dto now =
     , active = oldUser.active
     , submissionProps = oldUser.submissionProps
     , imageUrl = oldUser.imageUrl
+    , locale = oldUser.locale
     , machine = oldUser.machine
     , tenantUuid = oldUser.tenantUuid
     , lastVisitedAt = oldUser.lastVisitedAt

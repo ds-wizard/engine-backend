@@ -48,7 +48,9 @@ createUserTable = do
         \    updated_at        timestamptz NOT NULL, \
         \    tenant_uuid       uuid        NOT NULL, \
         \    machine           boolean     NOT NULL, \
+        \    locale            varchar, \
         \    CONSTRAINT user_entity_pk PRIMARY KEY (uuid, tenant_uuid), \
+        \    CONSTRAINT user_entity_locale_fk FOREIGN KEY (locale, tenant_uuid) REFERENCES locale(id, tenant_uuid) ON DELETE SET DEFAULT, \
         \    CONSTRAINT user_entity_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
         \); \
         \ \

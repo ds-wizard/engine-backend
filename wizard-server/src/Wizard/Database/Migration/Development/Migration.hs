@@ -60,7 +60,6 @@ runMigration = runAppContextWithBaseContext $ do
   KnowledgeModel.dropTables
   Component.dropTables
   TemporaryFile.dropTables
-  Locale.dropTables
   Registry.dropTables
   QuestionnaireImporter.dropTables
   Audit.dropTables
@@ -77,11 +76,13 @@ runMigration = runAppContextWithBaseContext $ do
   DocumentTemplate.dropTables
   Package.dropTables
   User.dropTables
+  Locale.dropTables
   Tenant.dropTables
   Instance.dropTables
   -- 3. Create schema
   Instance.createTables
   Tenant.createTables
+  Locale.createTables
   User.createTables
   Package.createTables
   DocumentTemplate.createTables
@@ -99,7 +100,6 @@ runMigration = runAppContextWithBaseContext $ do
   Audit.createTables
   QuestionnaireImporter.createTables
   Registry.createTables
-  Locale.createTables
   TemporaryFile.createTables
   Component.createTables
   KnowledgeModel.createTables

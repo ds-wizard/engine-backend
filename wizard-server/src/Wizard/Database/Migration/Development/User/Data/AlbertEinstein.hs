@@ -7,6 +7,8 @@ import Data.Time
 import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
+import Shared.Locale.Database.Migration.Development.Locale.Data.Locales
+import Shared.Locale.Model.Locale.Locale
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
@@ -61,6 +63,7 @@ userAlbert =
     , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
     , submissionProps = [process defaultSecret userAlbertApiToken]
     , imageUrl = Nothing
+    , locale = Nothing
     , machine = False
     , tenantUuid = defaultTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -154,4 +157,10 @@ userAlbertApiTokenEditedDto =
     { sId = defaultSubmissionService.sId
     , name = defaultSubmissionService.name
     , values = M.fromList [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]
+    }
+
+userAlbertEditedLocale :: User
+userAlbertEditedLocale =
+  userAlbert
+    { locale = Just localeNl.lId
     }

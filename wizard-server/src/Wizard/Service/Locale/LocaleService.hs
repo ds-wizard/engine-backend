@@ -1,32 +1,32 @@
 module Wizard.Service.Locale.LocaleService where
 
-import Control.Monad (when)
+import Control.Monad (void, when)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
 import Data.Foldable (traverse_)
-import qualified Data.List as L
 import Data.Time
 
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
-import Shared.Common.Model.Config.ServerConfig
-import Shared.Common.Util.String
 import Shared.Locale.Constant.Locale
+import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
+import Shared.Locale.Model.Locale.LocaleSuggestion
 import Wizard.Api.Resource.Locale.LocaleChangeDTO
 import Wizard.Api.Resource.Locale.LocaleCreateDTO
 import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Api.Resource.Locale.LocaleDetailDTO
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Locale.LocaleDAO
 import Wizard.Database.DAO.Registry.RegistryLocaleDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
+import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Locale.LocaleSimple
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
 import Wizard.S3.Locale.LocaleS3
@@ -43,6 +43,11 @@ getLocalesPage mOrganizationId mLocaleId mQuery pageable sort = do
   locales <- findLocalesPage mOrganizationId mLocaleId mQuery pageable sort
   tenantConfig <- getCurrentTenantConfig
   return . fmap (toDTO tenantConfig.registry.enabled) $ locales
+
+getLocaleSuggestions :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page LocaleSuggestion)
+getLocaleSuggestions mQuery pageable sort = do
+  checkPermission _LOC_PERM
+  findLocaleSuggestions mQuery pageable sort
 
 createLocale :: LocaleCreateDTO -> AppContextM LocaleDTO
 createLocale reqDto =
@@ -71,27 +76,17 @@ getLocaleForId lclId = do
   tenantConfig <- getCurrentTenantConfig
   return $ toDetailDTO locale tenantConfig.registry.enabled localeRs orgRs versions (buildLocaleUrl serverConfig.registry.clientUrl locale localeRs)
 
-getLocaleContentForId :: String -> Maybe String -> AppContextM BS.ByteString
-getLocaleContentForId code mClientUrl = do
-  serverConfig <- asks serverConfig
-  tenant <-
-    if serverConfig.cloud.enabled
-      then maybe getCurrentTenant findTenantByClientUrl mClientUrl
-      else getCurrentTenant
-  let shortCode =
-        case splitOn "-" code of
-          [] -> code
-          [x] -> code
-          (language : _) -> language
-  locales <- findLocalesByCodeWithTenant tenant.uuid code shortCode
+getLocaleContentForCurrentUser :: Maybe String -> AppContextM BS.ByteString
+getLocaleContentForCurrentUser mClientUrl = do
+  tenant <- maybe getCurrentTenant findTenantByClientUrl mClientUrl
+  mUser <- asks currentUser
   locale <-
-    case L.find (\l -> l.code == code) locales of
-      Just locale -> return locale
-      Nothing -> case L.find (\l -> l.code == shortCode) locales of
-        Just locale -> return locale
-        Nothing -> case L.find (\l -> l.defaultLocale) locales of
-          Just locale -> return locale
-          Nothing -> findSimpleLocaleByIdWithTenant tenant.uuid defaultLocaleId
+    case mUser of
+      Just user ->
+        case user.locale of
+          Just lclId -> findLocaleSuggestionBy [tenantQueryUuid tenant.uuid, ("id", lclId)]
+          Nothing -> findLocaleSuggestionBy [tenantQueryUuid tenant.uuid, ("default_locale", show True)]
+      Nothing -> findLocaleSuggestionBy [tenantQueryUuid tenant.uuid, ("default_locale", show True)]
   if locale.lId /= defaultLocaleId
     then retrieveLocaleWithTenant tenant.uuid locale.lId
     else return "{}"
@@ -124,9 +119,10 @@ deleteLocale lclId =
     checkPermission _LOC_PERM
     locale <- findLocaleById lclId
     validateLocaleDeletation locale
+    users <- findUsersFiltered [("locale", locale.lId)]
+    traverse_ (\u -> unsetUserLocale u.uuid) users
     deleteLocaleById lclId
-    removeLocale locale.lId
-    return ()
+    void $ removeLocale locale.lId
 
 -- --------------------------------
 -- PRIVATE

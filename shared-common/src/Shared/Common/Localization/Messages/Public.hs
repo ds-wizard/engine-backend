@@ -48,6 +48,8 @@ _ERROR_VALIDATION__FORBIDDEN_CHARACTERS word =
 _ERROR_VALIDATION__FIELDS_ABSENCE =
   LocaleRecord "error.validation.fields_absence" "Missing fields" []
 
+_ERROR_VALIDATION__ABSENCE value = LocaleRecord "error.validation.absence" "No matching data found: %s" [value]
+
 -- Security
 _ERROR_VALIDATION__FORBIDDEN action = LocaleRecord "error.validation.forbidden" "Forbidden to perform '%s'" [action]
 
