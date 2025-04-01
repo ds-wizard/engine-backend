@@ -53,7 +53,7 @@ fitsIntoKMSpec pkgIdSplit kmSpec = heCompareOrgId $ heCompareKmId $ heCompareVer
 
 resolvePackageId :: AppContextC s sc m => String -> m String
 resolvePackageId pId = do
-  validateCoordinateFormat True pId
+  validateCoordinateFormat True "kmId" pId
   let version = getVersionFromCoordinate pId
   if version == "latest"
     then do

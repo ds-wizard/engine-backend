@@ -20,7 +20,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
-import WizardLib.KnowledgeModel.Localization.Messages.Public
+import WizardLib.Common.Localization.Messages.Public
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Branch.Common
@@ -95,12 +95,12 @@ test_400_not_valid_kmId appContext =
   it "HTTP 400 BAD REQUEST when kmId is not in valid format" $
     -- GIVEN: Prepare request
     do
-      let reqDto = amsterdamBranchCreate {kmId = "amsterdam.km-"} :: BranchCreateDTO
+      let reqDto = amsterdamBranchCreate {kmId = "amsterdam:km"} :: BranchCreateDTO
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__INVALID_KM_ID_FORMAT])
+      let expDto = ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__INVALID_COORDINATE_PART_FORMAT "kmId" "amsterdam:km"])
       let expBody = encode expDto
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

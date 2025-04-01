@@ -15,11 +15,13 @@ tenantConfigValidationSpec =
       isValidOrganizationId "cz" `shouldBe` Nothing
       isValidOrganizationId "base.global" `shouldBe` Nothing
       isValidOrganizationId "base.global.e" `shouldBe` Nothing
-      isValidOrganizationId "a" `shouldBe` validationError
-      isValidOrganizationId "a-b" `shouldBe` validationError
-      isValidOrganizationId "a_bc" `shouldBe` validationError
-      isValidOrganizationId ".cz" `shouldBe` validationError
-      isValidOrganizationId "cz." `shouldBe` validationError
-      isValidOrganizationId "base.global." `shouldBe` validationError
-      isValidOrganizationId ".base.global" `shouldBe` validationError
-      isValidOrganizationId "base.global-" `shouldBe` validationError
+      isValidOrganizationId "a" `shouldBe` Nothing
+      isValidOrganizationId "a-b" `shouldBe` Nothing
+      isValidOrganizationId "a_bc" `shouldBe` Nothing
+      isValidOrganizationId ".cz" `shouldBe` Nothing
+      isValidOrganizationId "cz." `shouldBe` Nothing
+      isValidOrganizationId "base.global." `shouldBe` Nothing
+      isValidOrganizationId ".base.global" `shouldBe` Nothing
+      isValidOrganizationId "base.global-" `shouldBe` Nothing
+      isValidOrganizationId "base:global" `shouldBe` validationError
+      isValidOrganizationId "base$global" `shouldBe` validationError

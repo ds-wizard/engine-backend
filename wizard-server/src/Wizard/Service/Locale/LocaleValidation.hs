@@ -11,10 +11,13 @@ import Wizard.Api.Resource.Locale.LocaleCreateDTO
 import Wizard.Database.DAO.Locale.LocaleDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import WizardLib.Common.Service.Coordinate.CoordinateValidation
 import WizardLib.Common.Util.Coordinate
 
 validateLocaleCreate :: LocaleCreateDTO -> String -> AppContextM ()
-validateLocaleCreate reqDto organizationId = validateLocaleIdUniqueness (buildCoordinate organizationId reqDto.localeId reqDto.version)
+validateLocaleCreate reqDto organizationId = do
+  validateCoordinatePartFormat "localeId" reqDto.localeId
+  validateLocaleIdUniqueness (buildCoordinate organizationId reqDto.localeId reqDto.version)
 
 validateLocaleChange :: LocaleChangeDTO -> Locale -> AppContextM ()
 validateLocaleChange reqDto locale = do

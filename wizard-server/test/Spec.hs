@@ -64,8 +64,6 @@ import Wizard.Specs.API.User.APISpec
 import Wizard.Specs.API.UserGroup.APISpec
 import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
-import Wizard.Specs.Service.Branch.BranchValidationSpec
-import Wizard.Specs.Service.Coordinate.CoordinateValidationSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
 import Wizard.Specs.Service.DocumentTemplate.DocumentTemplateUtilSpec
 import Wizard.Specs.Service.Feedback.FeedbackServiceSpec
@@ -164,7 +162,6 @@ main =
               describe "Http" $
                 describe "Typehint" typehintResponseMapperSpec
             describe "SERVICE" $ do
-              describe "Branch" branchValidationSpec
               describe "Document Template" documentTemplateUtilSpec
               describe "KnowledgeModel" $ do
                 describe "Compilator" $ do
@@ -229,7 +226,6 @@ main =
               userGroupAPI baseContext appContext
             describe "SERVICE" $ do
               branchServiceIntegrationSpec appContext
-              coordinateValidationSpec appContext
               feedbackServiceIntegrationSpec appContext
               documentIntegrationSpec appContext
               describe "Migration" $ do

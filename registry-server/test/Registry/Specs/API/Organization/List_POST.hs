@@ -21,6 +21,7 @@ import RegistryLib.Database.Migration.Development.Organization.Data.Organization
 import RegistryLib.Model.Organization.Organization
 import RegistryLib.Model.Organization.OrganizationRole
 import Shared.Common.Model.Error.Error
+import WizardLib.Common.Localization.Messages.Public
 
 import Registry.Specs.API.Common
 import Registry.Specs.API.Organization.Common
@@ -85,12 +86,12 @@ test_400_invalid_organizationId appContext =
   it "HTTP 400 BAD REQUEST when organizationId is not in valid format" $
     -- GIVEN: Prepare request
     do
-      let reqDto = orgGlobalCreate {organizationId = "organization_amsterdam"} :: OrganizationCreateDTO
+      let reqDto = orgGlobalCreate {organizationId = "organization:amsterdam"} :: OrganizationCreateDTO
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-      let expDto = ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT])
+      let expDto = ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__INVALID_COORDINATE_PART_FORMAT "organizationId" "organization:amsterdam"])
       let expType (a :: AppError) = a
       -- AND: Prepare DB
       runInContextIO deleteOrganizations appContext

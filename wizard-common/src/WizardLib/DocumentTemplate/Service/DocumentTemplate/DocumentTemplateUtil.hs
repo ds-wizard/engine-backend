@@ -15,7 +15,7 @@ groupDocumentTemplates =
 
 resolveDocumentTemplateId :: AppContextC s sc m => String -> m String
 resolveDocumentTemplateId coordinate = do
-  validateCoordinateFormat True coordinate
+  validateCoordinateFormat True "templateId" coordinate
   let version = getVersionFromCoordinate coordinate
   if version == "latest"
     then do

@@ -24,5 +24,6 @@ findUserGroupSuggestionsPage mQuery pageable sort = do
     currentUser.uuid
     (currentUser.uRole == _USER_ROLE_ADMIN)
     mQuery
+    ""
     pageable
     sort

@@ -28,3 +28,6 @@ _ERROR_VALIDATION__INVALID_COORDINATE_VERSION_FORMAT =
 
 _ERROR_VALIDATION__INVALID_ORG_ID_FORMAT =
   LocaleRecord "error.validation.invalid_org_id_format" "OrganizationId is not in the valid format" []
+
+_ERROR_VALIDATION__INVALID_COORDINATE_PART_FORMAT coordinatePartName coordinatePart =
+  LocaleRecord "error.validation.invalid_coordinate_part_format" "%s '%s' is not in the valid format" [coordinatePartName, coordinatePart]

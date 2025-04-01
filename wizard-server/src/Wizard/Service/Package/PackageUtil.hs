@@ -17,7 +17,7 @@ selectOrganizationByOrgId pkg = L.find (\org -> org.organizationId == pkg.organi
 
 checkIfPackageIsPublic Nothing orCheckThisPerm = checkPermission orCheckThisPerm
 checkIfPackageIsPublic (Just pkgId) orCheckThisPerm = do
-  validateCoordinateFormat False pkgId
+  validateCoordinateFormat False "kmId" pkgId
   tenantConfig <- getCurrentTenantConfig
   let pkgIdSplit = splitCoordinate pkgId
   unless

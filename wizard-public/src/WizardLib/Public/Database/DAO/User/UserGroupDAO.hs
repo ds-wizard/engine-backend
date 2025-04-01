@@ -22,8 +22,8 @@ entityName = "user_group"
 
 pageLabel = "userGroups"
 
-createFindUserGroupPage :: (AppContextC s sc m, FromRow userGroup) => String -> U.UUID -> Bool -> Maybe String -> Pageable -> [Sort] -> m (Page userGroup)
-createFindUserGroupPage fields currentUserUuid isAdmin mQuery pageable sort =
+createFindUserGroupPage :: (AppContextC s sc m, FromRow userGroup) => String -> U.UUID -> Bool -> Maybe String -> String -> Pageable -> [Sort] -> m (Page userGroup)
+createFindUserGroupPage fields currentUserUuid isAdmin mQuery additionalCondition pageable sort =
   -- 1. Prepare variables
   do
     tenantUuid <- asks (.tenantUuid')
@@ -46,12 +46,13 @@ createFindUserGroupPage fields currentUserUuid isAdmin mQuery pageable sort =
               "SELECT COUNT(DISTINCT ug.uuid) \
               \FROM user_group ug \
               \${aclJoin} \
-              \WHERE ug.tenant_uuid = '${tenantUuid}' ${nameCondition} ${aclCondition}"
+              \WHERE ug.tenant_uuid = '${tenantUuid}' ${nameCondition} ${aclCondition} ${additionalCondition}"
               [ ("userUuid", U.toString currentUserUuid)
               , ("aclJoin", aclJoins)
               , ("tenantUuid", U.toString tenantUuid)
               , ("nameCondition", nameCondition)
               , ("aclCondition", aclCondition)
+              , ("additionalCondition", additionalCondition)
               ]
     let params = nameRegex
     logQuery countSql params
@@ -68,7 +69,7 @@ createFindUserGroupPage fields currentUserUuid isAdmin mQuery pageable sort =
               "SELECT DISTINCT ${fields} \
               \FROM user_group ug \
               \${aclJoin} \
-              \WHERE ug.tenant_uuid = '${tenantUuid}' ${nameCondition} ${aclCondition} \
+              \WHERE ug.tenant_uuid = '${tenantUuid}' ${nameCondition} ${aclCondition} ${additionalCondition} \
               \${sort} \
               \OFFSET ${offset} \
               \LIMIT ${limit}"
@@ -78,6 +79,7 @@ createFindUserGroupPage fields currentUserUuid isAdmin mQuery pageable sort =
               , ("tenantUuid", U.toString tenantUuid)
               , ("nameCondition", nameCondition)
               , ("aclCondition", aclCondition)
+              , ("additionalCondition", additionalCondition)
               , ("sort", mapSort sort)
               , ("offset", show skip)
               , ("limit", show sizeI)
