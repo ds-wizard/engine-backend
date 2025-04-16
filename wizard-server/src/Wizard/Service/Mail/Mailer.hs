@@ -52,7 +52,11 @@ sendRegistrationConfirmationMail user hash clientUrl =
                   , ("hash", A.string hash)
                   , ("clientUrl", A.string clientUrl)
                   , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                   ]
             }
     sendEmailWithTenant body user.uuid user.tenantUuid
@@ -76,7 +80,11 @@ sendRegistrationCreatedAnalyticsMail user =
                   , ("userEmail", A.string user.email)
                   , ("clientUrl", A.string clientUrl)
                   , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                   ]
             }
     sendEmailWithTenant body user.uuid user.tenantUuid
@@ -100,7 +108,11 @@ sendResetPasswordMail user hash =
                   , ("hash", A.string hash)
                   , ("clientUrl", A.string clientUrl)
                   , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                   ]
             }
     sendEmail body user.uuid
@@ -124,7 +136,11 @@ sendTwoFactorAuthMail user code =
                   , ("code", A.string code)
                   , ("clientUrl", A.string clientUrl)
                   , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                   ]
             }
     sendEmail body user.uuid
@@ -155,7 +171,11 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
                         [ ("userUuid", A.uuid user.uuid)
                         , ("clientUrl", A.string clientUrl)
                         , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                        , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                        , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                        , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
                         , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                        , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                         , ("inviteeUuid", A.uuid user.uuid)
                         , ("inviteeFirstName", A.string user.firstName)
                         , ("inviteeLastName", A.string user.lastName)
@@ -198,7 +218,11 @@ sendQuestionnaireCommentThreadAssignedMail notifications =
                       , ("notifications", A.Array . Vector.fromList . fmap notificationFn $ notifications)
                       , ("clientUrl", A.string notification.clientUrl)
                       , ("appTitle", A.maybeString notification.appTitle)
+                      , ("logoUrl", A.maybeString notification.logoUrl)
+                      , ("primaryColor", A.maybeString notification.primaryColor)
+                      , ("illustrationsColor", A.maybeString notification.illustrationsColor)
                       , ("supportEmail", A.maybeString notification.supportEmail)
+                      , ("mailConfigUuid", A.maybeUuid notification.mailConfigUuid)
                       ]
                 }
         sendEmailWithTenant body notification.assignedTo.uuid notification.tenantUuid
@@ -223,7 +247,11 @@ sendApiKeyCreatedMail user userToken =
                   , ("tokenExpiresAt", A.datetime userToken.expiresAt)
                   , ("clientUrl", A.string clientUrl)
                   , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                   ]
             }
     sendEmail body user.uuid
@@ -248,7 +276,11 @@ sendApiKeyExpirationMail user userToken =
                   , ("tokenExpiresAt", A.datetime userToken.expiresAt)
                   , ("clientUrl", A.string clientUrl)
                   , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                   ]
             }
     sendEmail body user.uuid

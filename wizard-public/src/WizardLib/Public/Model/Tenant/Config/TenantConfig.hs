@@ -15,7 +15,7 @@ data TenantConfigDashboardAndLoginScreenAnnouncementLevelType
   = InfoAnnouncementLevelType
   | WarningAnnouncementLevelType
   | CriticalAnnouncementLevelType
-  deriving (Generic, Eq, Show)
+  deriving (Generic, Eq, Show, Read)
 
 data TenantConfigOrganization = TenantConfigOrganization
   { name :: String

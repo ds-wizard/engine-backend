@@ -88,7 +88,10 @@ bool :: Bool -> Value
 bool = Bool
 
 maybeString :: Maybe String -> Value
-maybeString = maybe Null (String . T.pack)
+maybeString = maybe Null string
+
+maybeUuid :: Maybe U.UUID -> Value
+maybeUuid = maybe Null uuid
 
 datetime :: UTCTime -> Value
 datetime = toJSON

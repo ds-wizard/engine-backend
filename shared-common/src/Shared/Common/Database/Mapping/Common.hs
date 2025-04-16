@@ -59,6 +59,11 @@ instance ToField [U.UUID] where
     let encoded = f' "{%s}" [L.intercalate "," . fmap U.toString $ entities]
      in Escape . BS.pack $ encoded
 
+instance ToField [String] where
+  toField entities =
+    let encoded = f' "{%s}" [L.intercalate "," entities]
+     in Escape . BS.pack $ encoded
+
 instance FromField [String] where
   fromField f mdata = do
     pgArray <- fromField f mdata :: Conversion (PGArray T.Text)
