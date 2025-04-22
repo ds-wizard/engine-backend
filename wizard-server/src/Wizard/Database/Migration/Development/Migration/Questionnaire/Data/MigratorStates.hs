@@ -10,6 +10,7 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Tenant.Tenant
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
@@ -36,14 +37,18 @@ nlQtnMigrationStateDto =
           M.empty
           M.empty
           km1Netherlands
-          questionnaire4Ctn
+          questionnaire4Ctn.phaseUuid
+          questionnaire4Ctn.replies
+          questionnaire4Ctn.labels
     , newQuestionnaire =
         toDetailQuestionnaireDTO
           (toDetailQuestionnaire questionnaire4Upgraded Nothing [] 0 0)
           M.empty
           M.empty
           km1NetherlandsV2
-          questionnaire4Ctn
+          questionnaire4Ctn.phaseUuid
+          questionnaire4Ctn.replies
+          questionnaire4Ctn.labels
     , resolvedQuestionUuids = [question2.uuid]
     , tenantUuid = defaultTenant.uuid
     }
@@ -57,14 +62,18 @@ nlQtnMigrationStateVisibleViewDto =
           M.empty
           M.empty
           km1Netherlands
-          questionnaire4Ctn
+          questionnaire4Ctn.phaseUuid
+          questionnaire4Ctn.replies
+          questionnaire4Ctn.labels
     , newQuestionnaire =
         toDetailQuestionnaireDTO
           (toDetailQuestionnaire questionnaire4VisibleViewUpgraded Nothing [] 0 0)
           M.empty
           M.empty
           km1NetherlandsV2
-          questionnaire4Ctn
+          questionnaire4Ctn.phaseUuid
+          questionnaire4Ctn.replies
+          questionnaire4Ctn.labels
     , resolvedQuestionUuids = nlQtnMigrationStateDto.resolvedQuestionUuids
     , tenantUuid = defaultTenant.uuid
     }
@@ -78,14 +87,18 @@ nlQtnMigrationStateVisibleEditDto =
           M.empty
           M.empty
           km1Netherlands
-          questionnaire4Ctn
+          questionnaire4Ctn.phaseUuid
+          questionnaire4Ctn.replies
+          questionnaire4Ctn.labels
     , newQuestionnaire =
         toDetailQuestionnaireDTO
           (toDetailQuestionnaire questionnaire4VisibleEditUpgraded Nothing [] 0 0)
           M.empty
           M.empty
           km1NetherlandsV2
-          questionnaire4Ctn
+          questionnaire4Ctn.phaseUuid
+          questionnaire4Ctn.replies
+          questionnaire4Ctn.labels
     , resolvedQuestionUuids = nlQtnMigrationStateDto.resolvedQuestionUuids
     , tenantUuid = defaultTenant.uuid
     }

@@ -50,6 +50,7 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
 import Wizard.Model.Questionnaire.QuestionnaireComment
+import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireDetailPreview
 import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
@@ -288,7 +289,11 @@ getQuestionnaireDetailQuestionnaireByUuid qtnUuid = do
       else return M.empty
   knowledgeModel <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
   qtnCtn <- compileQuestionnaire qtnEvents
-  return $ toDetailQuestionnaireDTO qtn unresolvedCommentCounts resolvedCommentCounts knowledgeModel qtnCtn
+  let labels =
+        if editor
+          then qtnCtn.labels
+          else M.empty
+  return $ toDetailQuestionnaireDTO qtn unresolvedCommentCounts resolvedCommentCounts knowledgeModel qtnCtn.phaseUuid qtnCtn.replies labels
 
 getQuestionnaireDetailPreviewById :: U.UUID -> AppContextM QuestionnaireDetailPreview
 getQuestionnaireDetailPreviewById qtnUuid = do

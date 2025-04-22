@@ -78,7 +78,7 @@ test_200 appContext = do
     appContext
     questionnaire2
     questionnaire2Events
-    questionnaire2Ctn
+    (questionnaire2Ctn {labels = M.empty} :: QuestionnaireContent)
     False
     [reqNonAdminAuthHeader]
     [qtn2AlbertEditQtnPermDto]
@@ -87,7 +87,7 @@ test_200 appContext = do
     appContext
     (questionnaire13 {visibility = PrivateQuestionnaire})
     questionnaire13Events
-    questionnaire13Ctn
+    (questionnaire13Ctn {labels = M.empty} :: QuestionnaireContent)
     True
     [reqNonAdminAuthHeader]
     [qtn13NikolaCommentQtnPermDto]
@@ -96,7 +96,7 @@ test_200 appContext = do
     appContext
     questionnaire13
     questionnaire13Events
-    questionnaire13Ctn
+    (questionnaire13Ctn {labels = M.empty} :: QuestionnaireContent)
     True
     [reqIsaacAuthTokenHeader]
     [qtn13NikolaCommentQtnPermDto]
@@ -105,7 +105,7 @@ test_200 appContext = do
     appContext
     (questionnaire13 {sharing = AnyoneWithLinkCommentQuestionnaire})
     questionnaire13Events
-    questionnaire13Ctn
+    (questionnaire13Ctn {labels = M.empty} :: QuestionnaireContent)
     True
     []
     [qtn13NikolaCommentQtnPermDto]
@@ -114,7 +114,7 @@ test_200 appContext = do
     appContext
     questionnaire7
     questionnaire7Events
-    questionnaire7Ctn
+    (questionnaire7Ctn {labels = M.empty} :: QuestionnaireContent)
     False
     []
     [qtn7AlbertEditQtnPermDto]
