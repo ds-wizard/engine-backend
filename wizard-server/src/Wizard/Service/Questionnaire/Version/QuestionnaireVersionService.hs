@@ -119,6 +119,7 @@ revertToEvent qtnUuid reqDto shouldSave =
           let versionsToDelete = fmap (.uuid) . filter (\v -> not $ S.member v.eventUuid updatedEventUuids) $ qtnVersions
           deleteQuestionnaireVersionsByUuids versionsToDelete
           deleteQuestionnaireEventsByUuids (fmap getUuid eventsToDelete)
+          void $ updateQuestionnaireUpdatedAtByUuid qtnUuid
       )
     qtnCtn <- compileQuestionnaire updatedEvents
     eventsDto <- traverse enhanceQuestionnaireEvent updatedEvents

@@ -633,6 +633,15 @@ updateQuestionnaireSquashedAndUpdatedAtByUuid uuid squashed updatedAt = do
   let action conn = execute conn sql params
   runDB action
 
+updateQuestionnaireUpdatedAtByUuid :: U.UUID -> AppContextM Int64
+updateQuestionnaireUpdatedAtByUuid uuid = do
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE questionnaire SET updated_at = now() WHERE tenant_uuid = ? AND uuid = ?"
+  let params = [toField tenantUuid, toField . U.toText $ uuid]
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
+  runDB action
+
 clearQuestionnaireCreatedBy :: U.UUID -> AppContextM ()
 clearQuestionnaireCreatedBy userUuid = do
   let sql = fromString "UPDATE questionnaire SET created_by = null WHERE created_by = ?"
