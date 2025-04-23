@@ -353,7 +353,11 @@ modifyQuestionnaireShare qtnUuid reqDto =
       case (mTemplate, updatedQtn.formatUuid) of
         (Just tml, Just fUuid) -> return $ L.find (\f -> f.uuid == fUuid) tml.formats
         _ -> return Nothing
-    let restWsDto = toDetailWsDTO updatedQtn mTemplate mFormat permissionDtos
+    qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
+    qtnCtn <- compileQuestionnaire qtnEvents
+    unresolvedCommentCounts <- findQuestionnaireCommentThreadsSimple qtnUuid False True
+    resolvedCommentCounts <- findQuestionnaireCommentThreadsSimple qtnUuid True True
+    let restWsDto = toDetailWsDTO updatedQtn mTemplate mFormat permissionDtos qtnCtn.labels unresolvedCommentCounts resolvedCommentCounts
     setQuestionnaire qtnUuid restWsDto
     return reqDto
 
@@ -380,7 +384,11 @@ modifyQuestionnaireSettings qtnUuid reqDto =
       case (mTemplate, updatedQtn.formatUuid) of
         (Just tml, Just fUuid) -> return $ L.find (\f -> f.uuid == fUuid) tml.formats
         _ -> return Nothing
-    let restWsDto = toDetailWsDTO updatedQtn mTemplate mFormat permissionDtos
+    qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
+    qtnCtn <- compileQuestionnaire qtnEvents
+    unresolvedCommentCounts <- findQuestionnaireCommentThreadsSimple qtnUuid False True
+    resolvedCommentCounts <- findQuestionnaireCommentThreadsSimple qtnUuid True True
+    let restWsDto = toDetailWsDTO updatedQtn mTemplate mFormat permissionDtos qtnCtn.labels unresolvedCommentCounts resolvedCommentCounts
     setQuestionnaire qtnUuid restWsDto
     return reqDto
 

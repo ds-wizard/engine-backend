@@ -124,8 +124,8 @@ toDetailQuestionnaireDTO QuestionnaireDetailQuestionnaire {..} unresolvedComment
   let fileCount = length files
    in QuestionnaireDetailQuestionnaireDTO {..}
 
-toDetailWsDTO :: Questionnaire -> Maybe DocumentTemplate -> Maybe DocumentTemplateFormat -> [QuestionnairePermDTO] -> QuestionnaireDetailWsDTO
-toDetailWsDTO qtn mTemplate mFormat qtnPerms =
+toDetailWsDTO :: Questionnaire -> Maybe DocumentTemplate -> Maybe DocumentTemplateFormat -> [QuestionnairePermDTO] -> M.Map String [U.UUID] -> M.Map String (M.Map U.UUID Int) -> M.Map String (M.Map U.UUID Int) -> QuestionnaireDetailWsDTO
+toDetailWsDTO qtn mTemplate mFormat qtnPerms labels unresolvedCommentCounts resolvedCommentCounts =
   QuestionnaireDetailWsDTO
     { name = qtn.name
     , description = qtn.description
@@ -138,6 +138,9 @@ toDetailWsDTO qtn mTemplate mFormat qtnPerms =
     , format = fmap toFormatDTO mFormat
     , permissions = qtnPerms
     , isTemplate = qtn.isTemplate
+    , labels = labels
+    , unresolvedCommentCounts = unresolvedCommentCounts
+    , resolvedCommentCounts = resolvedCommentCounts
     }
 
 toContentDTO
