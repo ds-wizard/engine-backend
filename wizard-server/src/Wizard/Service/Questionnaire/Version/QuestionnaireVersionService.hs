@@ -41,7 +41,7 @@ getVersions :: U.UUID -> AppContextM [QuestionnaireVersionList]
 getVersions qtnUuid = do
   qtn <- findQuestionnaireByUuid qtnUuid
   checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
-  findQuestionnaireVersionListByQuestionnaireUuid qtnUuid
+  findQuestionnaireVersionListByQuestionnaireUuidAndCreatedAt qtnUuid Nothing
 
 createVersion :: U.UUID -> QuestionnaireVersionChangeDTO -> AppContextM QuestionnaireVersionList
 createVersion qtnUuid reqDto =
