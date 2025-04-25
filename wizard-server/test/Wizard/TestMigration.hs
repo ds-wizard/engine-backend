@@ -75,6 +75,9 @@ import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.Ex
 import Wizard.Specs.Common
 
 buildSchema appContext = do
+  putStrLn "DB: dropping DB triggers"
+  runInContext Locale.dropTriggers appContext
+  runInContext Questionnaire.dropTriggers appContext
   putStrLn "DB: dropping DB functions"
   runInContext Branch.dropFunctions appContext
   runInContext Package.dropFunctions appContext
@@ -132,6 +135,11 @@ buildSchema appContext = do
   runInContext Common.createFunctions appContext
   runInContext Package.createFunctions appContext
   runInContext Branch.createFunctions appContext
+  putStrLn "DB: Creating missing foregign key constraints"
+  runInContext User.createUserLocaleForeignKeyConstraint appContext
+  putStrLn "DB: Creating triggers"
+  runInContext Locale.createTriggers appContext
+  runInContext Questionnaire.createTriggers appContext
   putStrLn "DB-S3: Purging and creating schema"
   runInContext DocumentTemplateMigration.runS3Migration appContext
   runInContext LocaleMigration.runS3Migration appContext
@@ -174,6 +182,7 @@ resetDB appContext = do
   runInContext deleteUsers appContext
   runInContext deleteUserGroups appContext
   runInContext deleteLocales appContext
+  runInContext deletePersistentCommands appContext
   runInContext deleteLimitBundles appContext
   runInContext deleteTenants appContext
   runInContext (insertTenant defaultTenant) appContext

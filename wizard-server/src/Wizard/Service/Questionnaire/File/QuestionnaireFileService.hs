@@ -1,5 +1,6 @@
 module Wizard.Service.Questionnaire.File.QuestionnaireFileService where
 
+import Control.Monad (void)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Foldable (traverse_)
 import Data.Time
@@ -88,17 +89,11 @@ deleteQuestionnaireFilesByQuestionnaireUuid qtnUuid = do
   runInTransaction $ do
     files <- findQuestionnaireFilesSimpleByQuestionnaire qtnUuid
     checkEditPermissionToFile qtnUuid
-    traverse_
-      ( \file -> do
-          deleteQuestionnaireFileByUuid file.uuid
-          removeFile qtnUuid file.uuid
-      )
-      files
+    traverse_ (\file -> deleteQuestionnaireFileByUuid file.uuid) files
 
 deleteQuestionnaireFile :: U.UUID -> U.UUID -> AppContextM ()
 deleteQuestionnaireFile qtnUuid fileUuid = do
   runInTransaction $ do
     _ <- findQuestionnaireFileByUuid fileUuid
     checkEditPermissionToFile qtnUuid
-    deleteQuestionnaireFileByUuid fileUuid
-    removeFile qtnUuid fileUuid
+    void $ deleteQuestionnaireFileByUuid fileUuid

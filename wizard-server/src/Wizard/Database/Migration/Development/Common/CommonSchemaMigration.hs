@@ -12,7 +12,9 @@ dropFunctions :: AppContextM Int64
 dropFunctions = do
   logInfo _CMP_MIGRATION "(Function/Common) drop functions"
   let sql =
-        "DROP FUNCTION IF EXISTS is_outdated; \
+        "DROP FUNCTION IF EXISTS create_persistent_command_from_entity_id; \
+        \DROP FUNCTION IF EXISTS create_persistent_command; \
+        \DROP FUNCTION IF EXISTS is_outdated; \
         \DROP FUNCTION IF EXISTS major_version; \
         \DROP FUNCTION IF EXISTS minor_version;\
         \DROP FUNCTION IF EXISTS patch_version;\
@@ -28,6 +30,8 @@ createFunctions = do
   createPatchVersionFn
   createCompareVersionFn
   createIsOutdatedVersionFn
+  createPersistentCommandFunction
+  createPersistentCommandFromEntityIdFunction
 
 createMajorVersionFn = do
   let sql =
@@ -133,5 +137,69 @@ createIsOutdatedVersionFn = do
         \    RETURN outdated; \
         \END; \
         \$$;"
+  let action conn = execute_ conn sql
+  runDB action
+
+createPersistentCommandFunction = do
+  let sql =
+        "CREATE OR REPLACE FUNCTION create_persistent_command(component varchar, function varchar, body jsonb, tenant_uuid uuid) RETURNS int AS \
+        \$$ \
+        \BEGIN \
+        \    INSERT INTO persistent_command (uuid, \
+        \                                    state, \
+        \                                    component, \
+        \                                    function, \
+        \                                    body, \
+        \                                    last_error_message, \
+        \                                    attempts, \
+        \                                    max_attempts, \
+        \                                    tenant_uuid, \
+        \                                    created_by, \
+        \                                    created_at, \
+        \                                    updated_at, \
+        \                                    internal, \
+        \                                    destination, \
+        \                                    last_trace_uuid) \
+        \    VALUES (gen_random_uuid(), \
+        \            'NewPersistentCommandState', \
+        \            component, \
+        \            function, \
+        \            body, \
+        \            NULL, \
+        \            0, \
+        \            10, \
+        \            tenant_uuid, \
+        \            NULL, \
+        \            now(), \
+        \            now(), \
+        \            true, \
+        \            NULL, \
+        \            NULL); \
+        \    return 1; \
+        \END; \
+        \$$ LANGUAGE plpgsql;"
+  let action conn = execute_ conn sql
+  runDB action
+
+createPersistentCommandFromEntityIdFunction = do
+  let sql =
+        "CREATE OR REPLACE FUNCTION create_persistent_command_from_entity_id() \
+        \    RETURNS TRIGGER AS \
+        \$$ \
+        \DECLARE \
+        \    component varchar; \
+        \    function  varchar; \
+        \BEGIN \
+        \    component := TG_ARGV[0]; \
+        \    function := TG_ARGV[1]; \
+        \ \
+        \    PERFORM create_persistent_command( \
+        \            component, \
+        \            function, \
+        \            jsonb_build_object('id', OLD.id), \
+        \            OLD.tenant_uuid); \
+        \    RETURN OLD; \
+        \END; \
+        \$$ LANGUAGE plpgsql;"
   let action conn = execute_ conn sql
   runDB action

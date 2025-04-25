@@ -51,11 +51,15 @@ import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.Ex
 
 runMigration = runAppContextWithBaseContext $ do
   logInfo _CMP_MIGRATION "started"
-  -- 1. Drop DB functions
+  -- 1. Drop DB triggers
   Branch.dropFunctions
   Package.dropFunctions
   Common.dropFunctions
-  -- 2. Drop schema
+  -- 2. Drop DB functions
+  Branch.dropFunctions
+  Package.dropFunctions
+  Common.dropFunctions
+  -- 3. Drop schema
   ExternalLink.dropTables
   KnowledgeModel.dropTables
   Component.dropTables
@@ -79,7 +83,7 @@ runMigration = runAppContextWithBaseContext $ do
   Locale.dropTables
   Tenant.dropTables
   Instance.dropTables
-  -- 3. Create schema
+  -- 4. Create schema
   Instance.createTables
   Tenant.createTables
   Locale.createTables
@@ -104,14 +108,19 @@ runMigration = runAppContextWithBaseContext $ do
   Component.createTables
   KnowledgeModel.createTables
   ExternalLink.createTables
-  -- 4. Create DB functions
+  -- 5. Create DB functions
   Common.createFunctions
   Package.createFunctions
   Branch.createFunctions
-  -- 5. Load S3 fixtures
+  -- 6. Create missing foregign key constraints
+  User.createUserLocaleForeignKeyConstraint
+  -- 7. Create triggers
+  Locale.createTriggers
+  Questionnaire.createTriggers
+  -- 8. Load S3 fixtures
   DocumentTemplate.runS3Migration
   Locale.runS3Migration
-  -- 6. Load fixtures
+  -- 9. Load fixtures
   Tenant.runMigration
   User.runMigration
   Package.runMigration

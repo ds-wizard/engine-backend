@@ -129,8 +129,7 @@ deleteLocale lclId =
     validateLocaleDeletation locale
     users <- findUsersFiltered [("locale", locale.lId)]
     traverse_ (\u -> unsetUserLocale u.uuid) users
-    deleteLocaleById lclId
-    void $ removeLocale locale.lId
+    void $ deleteLocaleById lclId
 
 -- --------------------------------
 -- PRIVATE
