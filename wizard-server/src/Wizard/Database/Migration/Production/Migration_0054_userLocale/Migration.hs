@@ -21,6 +21,7 @@ migrate dbPool = do
   createPersistentCommandFromEntityUuidFunction dbPool
   createTriggerOnAfterQuestionnaireFileDelete dbPool
   deleteAllLocalesExceptDefault dbPool
+  addTildeToDefaultLocale dbPool
 
 addUserLocale dbPool = do
   let sql =
@@ -137,7 +138,13 @@ createTriggerOnAfterQuestionnaireFileDelete dbPool = do
   return Nothing
 
 deleteAllLocalesExceptDefault dbPool = do
-  let sql = "DELETE FROM locale WHERE id != 'wizard:default:1.0.0'"
+  let sql = "DELETE FROM locale WHERE id != 'wizard:default:1.0.0';"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addTildeToDefaultLocale dbPool = do
+  let sql = "UPDATE locale SET id = '~:default:1.0.0', organization_id='~' WHERE id = 'wizard:default:1.0.0';"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
