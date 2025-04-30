@@ -22,6 +22,7 @@ migrate dbPool = do
   createTriggerOnAfterQuestionnaireFileDelete dbPool
   deleteAllLocalesExceptDefault dbPool
   addTildeToDefaultLocale dbPool
+  changeTypeOfLimitCustomStorage dbPool
 
 addUserLocale dbPool = do
   let sql =
@@ -145,6 +146,12 @@ deleteAllLocalesExceptDefault dbPool = do
 
 addTildeToDefaultLocale dbPool = do
   let sql = "UPDATE locale SET id = '~:default:1.0.0', organization_id='~' WHERE id = 'wizard:default:1.0.0';"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+changeTypeOfLimitCustomStorage dbPool = do
+  let sql = "ALTER TABLE tenant_limit_bundle ALTER COLUMN storage TYPE bigint;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
