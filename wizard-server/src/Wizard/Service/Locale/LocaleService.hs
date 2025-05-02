@@ -64,7 +64,8 @@ createLocale reqDto =
     let defaultLocale = False
     let locale = fromCreateDTO reqDto organizationId defaultLocale tenantConfig.uuid now
     insertLocale locale
-    putLocale locale.lId reqDto.content
+    putLocale locale.lId "wizard.json" reqDto.wizardContent
+    putLocale locale.lId "mail.po" reqDto.mailContent
     tenantConfig <- getCurrentTenantConfig
     return . toDTO tenantConfig.registry.enabled $ toLocaleList locale
 
@@ -93,7 +94,7 @@ getLocaleContentForCurrentUser mClientUrl = do
           Nothing -> findLocaleSuggestionBy [tenantQueryUuid tenant.uuid, ("default_locale", show True)]
       Nothing -> findLocaleSuggestionBy [tenantQueryUuid tenant.uuid, ("default_locale", show True)]
   if locale.lId /= defaultLocaleId
-    then retrieveLocaleWithTenant tenant.uuid locale.lId
+    then retrieveLocaleWithTenant tenant.uuid locale.lId "wizard.json"
     else return "{}"
 
 modifyLocale :: String -> LocaleChangeDTO -> AppContextM LocaleDTO

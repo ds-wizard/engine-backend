@@ -18,16 +18,18 @@ exportBundle :: String -> AppContextM BSL.ByteString
 exportBundle lclId = do
   _ <- auditGetLocaleBundle lclId
   locale <- findLocaleById lclId
-  content <- retrieveLocale locale.lId
-  return $ toLocaleArchive locale content
+  wizardTranslation <- retrieveLocale locale.lId "wizard.json"
+  mailTranslation <- retrieveLocale locale.lId "mail.po"
+  return $ toLocaleArchive locale wizardTranslation mailTranslation
 
 importBundle :: BSL.ByteString -> AppContextM LocaleDTO
 importBundle contentS = do
   checkWritePermission
   case fromLocaleArchive contentS of
-    Right (bundle, content) -> do
+    Right (bundle, wizardTranslation, mailTranslation) -> do
       let locale = fromLocaleBundle bundle U.nil
-      putLocale locale.lId content
+      putLocale locale.lId "wizard.json" wizardTranslation
+      putLocale locale.lId "mail.po" mailTranslation
       insertLocale locale
       return . toDTO [] $ locale
     Left error -> throwError error

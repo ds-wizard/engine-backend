@@ -41,8 +41,9 @@ exportBundle lclId =
   runInTransaction $ do
     checkPermission _LOC_PERM
     locale <- findLocaleById lclId
-    content <- retrieveLocale locale.lId
-    return $ toLocaleArchive locale content
+    wizardTranslation <- retrieveLocale locale.lId "wizard.json"
+    mailTranslation <- retrieveLocale locale.lId "mail.po"
+    return $ toLocaleArchive locale wizardTranslation mailTranslation
 
 pullBundleFromRegistry :: String -> AppContextM ()
 pullBundleFromRegistry lclId =
@@ -60,11 +61,12 @@ pullBundleFromRegistry lclId =
 importBundle :: BSL.ByteString -> Bool -> AppContextM LocaleDTO
 importBundle contentS fromRegistry =
   case fromLocaleArchive contentS of
-    Right (bundle, content) -> do
+    Right (bundle, wizardTranslation, mailTranslation) -> do
       validateLocaleIdUniqueness bundle.lId
       tenantUuid <- asks currentTenantUuid
       let locale = fromLocaleBundle bundle tenantUuid
-      putLocale locale.lId content
+      putLocale locale.lId "wizard.json" wizardTranslation
+      putLocale locale.lId "mail.po" mailTranslation
       insertLocale locale
       if fromRegistry
         then auditLocaleBundlePullFromRegistry locale.lId

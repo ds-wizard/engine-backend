@@ -17,5 +17,6 @@ runMigration = do
 
 runS3Migration :: AppContextM ()
 runS3Migration = do
-  _ <- putLocale localeNl.lId localeNlContent
+  _ <- putLocale localeNl.lId "wizard.json" localeNlContent
+  _ <- putLocale localeNl.lId "mail.po" localeNlContent
   return ()

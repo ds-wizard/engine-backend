@@ -17,4 +17,5 @@ instance FromMultipart Mem LocaleCreateDTO where
       <*> fmap T.unpack (lookupInput "license" form)
       <*> fmap T.unpack (lookupInput "readme" form)
       <*> fmap T.unpack (lookupInput "recommendedAppVersion" form)
-      <*> fmap (BSL.toStrict . fdPayload) (lookupFile "file" form)
+      <*> fmap (BSL.toStrict . fdPayload) (lookupFile "wizardContent" form)
+      <*> fmap (BSL.toStrict . fdPayload) (lookupFile "mailContent" form)

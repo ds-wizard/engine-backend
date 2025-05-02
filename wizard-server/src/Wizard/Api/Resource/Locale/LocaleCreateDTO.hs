@@ -12,6 +12,7 @@ data LocaleCreateDTO = LocaleCreateDTO
   , license :: String
   , readme :: String
   , recommendedAppVersion :: String
-  , content :: BS.ByteString
+  , wizardContent :: BS.ByteString
+  , mailContent :: BS.ByteString
   }
   deriving (Show, Eq, Generic)

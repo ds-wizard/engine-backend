@@ -18,7 +18,8 @@ instance HasSwagger api => HasSwagger (MultipartForm Mem LocaleCreateDTO :> api)
       . addParam licenseField
       . addParam readmeField
       . addParam recommendedAppVersionField
-      . addParam fileField
+      . addParam wizardContentField
+      . addParam mailContentField
       $ toSwagger (Proxy :: Proxy api)
     where
       nameField =
@@ -117,10 +118,23 @@ instance HasSwagger api => HasSwagger (MultipartForm Mem LocaleCreateDTO :> api)
                     }
                 )
           }
-      fileField =
+      wizardContentField =
         Param
-          { _paramName = "file"
-          , _paramDescription = Just "File to upload"
+          { _paramName = "wizardContent"
+          , _paramDescription = Just "JSON translation file for Data Management Planner"
+          , _paramRequired = Just True
+          , _paramSchema =
+              ParamOther
+                ( mempty
+                    { _paramOtherSchemaIn = ParamFormData
+                    , _paramOtherSchemaParamSchema = mempty {_paramSchemaType = Just SwaggerFile}
+                    }
+                )
+          }
+      mailContentField =
+        Param
+          { _paramName = "mailContent"
+          , _paramDescription = Just "PO translation file for mails"
           , _paramRequired = Just True
           , _paramSchema =
               ParamOther

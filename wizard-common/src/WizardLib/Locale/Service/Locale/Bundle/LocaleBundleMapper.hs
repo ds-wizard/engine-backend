@@ -7,25 +7,32 @@ import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.UUID as U
 
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.String
 import Shared.Locale.Api.Resource.LocaleBundle.LocaleBundleDTO
 import Shared.Locale.Api.Resource.LocaleBundle.LocaleBundleJM ()
 import Shared.Locale.Localization.Messages.Public
 import Shared.Locale.Model.Locale.Locale
 
-toLocaleArchive :: Locale -> BS.ByteString -> BSL.ByteString
-toLocaleArchive lb = fromArchive . toLocaleZip lb
+toLocaleArchive :: Locale -> BS.ByteString -> BS.ByteString -> BSL.ByteString
+toLocaleArchive lb wizardTranslation mailTranslation = fromArchive $ toLocaleZip lb wizardTranslation mailTranslation
 
-toLocaleZip :: Locale -> BS.ByteString -> Archive
-toLocaleZip lb content =
-  foldr addEntryToArchive emptyArchive [toLocaleEntry . toLocaleBundle $ lb, toTranslationEntry content]
+toLocaleZip :: Locale -> BS.ByteString -> BS.ByteString -> Archive
+toLocaleZip lb wizardTranslation mailTranslation =
+  foldr
+    addEntryToArchive
+    emptyArchive
+    [ toLocaleEntry . toLocaleBundle $ lb
+    , toTranslationEntry "wizard.json" wizardTranslation
+    , toTranslationEntry "mail.po" mailTranslation
+    ]
 
 toLocaleEntry :: LocaleBundleDTO -> Entry
 toLocaleEntry lb =
   let localeJson = encode lb
    in toEntry "locale/locale.json" 0 localeJson
 
-toTranslationEntry :: BS.ByteString -> Entry
-toTranslationEntry content = toEntry "locale/translation.json" 0 (BSL.fromStrict content)
+toTranslationEntry :: String -> BS.ByteString -> Entry
+toTranslationEntry filename content = toEntry (f' "locale/%s" [filename]) 0 (BSL.fromStrict content)
 
 toLocaleBundle :: Locale -> LocaleBundleDTO
 toLocaleBundle locale =
@@ -43,14 +50,15 @@ toLocaleBundle locale =
     , createdAt = locale.createdAt
     }
 
-fromLocaleArchive :: BSL.ByteString -> Either AppError (LocaleBundleDTO, BS.ByteString)
+fromLocaleArchive :: BSL.ByteString -> Either AppError (LocaleBundleDTO, BS.ByteString, BS.ByteString)
 fromLocaleArchive = fromLocaleZip . toArchive
 
-fromLocaleZip :: Archive -> Either AppError (LocaleBundleDTO, BS.ByteString)
+fromLocaleZip :: Archive -> Either AppError (LocaleBundleDTO, BS.ByteString, BS.ByteString)
 fromLocaleZip archive = do
   lb <- fromLocaleEntry archive
-  content <- fromTranslationEntry lb archive
-  Right (lb, content)
+  wizard <- fromTranslationEntry "wizard.json" lb archive
+  mail <- fromTranslationEntry "mail.po" lb archive
+  Right (lb, wizard, mail)
 
 fromLocaleEntry :: Archive -> Either AppError LocaleBundleDTO
 fromLocaleEntry archive =
@@ -61,11 +69,11 @@ fromLocaleEntry archive =
         Left error -> Left $ UserError (_ERROR_SERVICE_LB__UNABLE_TO_DECODE_LOCALE_JSON error)
     Nothing -> Left $ UserError _ERROR_SERVICE_LB__MISSING_LOCALE_JSON
 
-fromTranslationEntry :: LocaleBundleDTO -> Archive -> Either AppError BS.ByteString
-fromTranslationEntry lb archive =
-  case findEntryByPath "locale/translation.json" archive of
+fromTranslationEntry :: String -> LocaleBundleDTO -> Archive -> Either AppError BS.ByteString
+fromTranslationEntry filename lb archive =
+  case findEntryByPath (f' "locale/%s" [filename]) archive of
     Just translationEntry -> Right . BSL.toStrict . fromEntry $ translationEntry
-    Nothing -> Left $ UserError (_ERROR_SERVICE_LB__MISSING_FILE "translation.json")
+    Nothing -> Left $ UserError (_ERROR_SERVICE_LB__MISSING_FILE filename)
 
 fromLocaleBundle :: LocaleBundleDTO -> U.UUID -> Locale
 fromLocaleBundle lb tenantUuid =
