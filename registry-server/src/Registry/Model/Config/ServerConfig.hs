@@ -21,5 +21,6 @@ data ServerConfigGeneral = ServerConfigGeneral
   , clientUrl :: String
   , serverPort :: Int
   , publicRegistrationEnabled :: Bool
+  , localeEnabled :: Bool
   }
   deriving (Generic, Show)

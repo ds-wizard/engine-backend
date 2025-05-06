@@ -23,4 +23,5 @@ defaultGeneral =
     , clientUrl = ""
     , serverPort = 3000
     , publicRegistrationEnabled = True
+    , localeEnabled = True
     }

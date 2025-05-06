@@ -23,4 +23,5 @@ instance FromEnv ServerConfigGeneral where
       , \c -> applyStringEnvVariable "GENERAL_CLIENT_URL" c.clientUrl (\x -> c {clientUrl = x} :: ServerConfigGeneral)
       , \c -> applyEnvVariable "GENERAL_SERVER_PORT" c.serverPort (\x -> c {serverPort = x})
       , \c -> applyEnvVariable "GENERAL_PUBLIC_REGISTRATION_ENABLED" c.publicRegistrationEnabled (\x -> c {publicRegistrationEnabled = x})
+      , \c -> applyEnvVariable "GENERAL_LOCALE_ENABLED" c.localeEnabled (\x -> c {localeEnabled = x})
       ]
