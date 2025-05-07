@@ -8,30 +8,32 @@ import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.String
 import Shared.Locale.Api.Resource.LocaleBundle.LocaleBundleDTO
+import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
-import Shared.Locale.Service.Locale.Bundle.LocaleBundleMapper
 import Wizard.Api.Resource.Locale.LocaleDTO
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.Locale.LocaleDAO
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.S3.Locale.LocaleS3
 import Wizard.Service.Locale.Bundle.LocaleBundleAudit
 import Wizard.Service.Locale.LocaleMapper
 import Wizard.Service.Locale.LocaleValidation
-import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
-import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Service.Tenant.Config.ConfigService
+import WizardLib.Locale.Service.Locale.Bundle.LocaleBundleMapper
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
+import qualified WizardLib.Public.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
+import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
 
 getTemporaryFileWithBundle :: String -> AppContextM TemporaryFileDTO
 getTemporaryFileWithBundle lclId =
   runInTransaction $ do
     bundle <- exportBundle lclId
-    url <- createTemporaryFile (f' "%s.zip" [lclId]) "application/octet-stream" bundle
+    mCurrentUserUuid <- getCurrentUserUuid
+    url <- createTemporaryFile (f' "%s.zip" [lclId]) "application/octet-stream" mCurrentUserUuid bundle
     return $ TemporaryFileMapper.toDTO url "application/octet-stream"
 
 exportBundle :: String -> AppContextM BSL.ByteString
@@ -39,8 +41,9 @@ exportBundle lclId =
   runInTransaction $ do
     checkPermission _LOC_PERM
     locale <- findLocaleById lclId
-    content <- retrieveLocale locale.lId
-    return $ toLocaleArchive locale content
+    wizardTranslation <- retrieveLocale locale.lId "wizard.json"
+    mailTranslation <- retrieveLocale locale.lId "mail.po"
+    return $ toLocaleArchive locale wizardTranslation mailTranslation
 
 pullBundleFromRegistry :: String -> AppContextM ()
 pullBundleFromRegistry lclId =
@@ -58,11 +61,12 @@ pullBundleFromRegistry lclId =
 importBundle :: BSL.ByteString -> Bool -> AppContextM LocaleDTO
 importBundle contentS fromRegistry =
   case fromLocaleArchive contentS of
-    Right (bundle, content) -> do
+    Right (bundle, wizardTranslation, mailTranslation) -> do
       validateLocaleIdUniqueness bundle.lId
       tenantUuid <- asks currentTenantUuid
       let locale = fromLocaleBundle bundle tenantUuid
-      putLocale locale.lId content
+      putLocale locale.lId "wizard.json" wizardTranslation
+      putLocale locale.lId "mail.po" mailTranslation
       insertLocale locale
       if fromRegistry
         then auditLocaleBundlePullFromRegistry locale.lId

@@ -29,6 +29,7 @@ import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireList
 import Wizard.Model.Questionnaire.QuestionnairePerm
+import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
@@ -118,13 +119,13 @@ toDetailDTO :: QuestionnaireDetail -> QuestionnaireDetailDTO
 toDetailDTO QuestionnaireDetail {..} =
   QuestionnaireDetailDTO {..}
 
-toDetailQuestionnaireDTO :: QuestionnaireDetailQuestionnaire -> M.Map String (M.Map U.UUID Int) -> M.Map String (M.Map U.UUID Int) -> KnowledgeModel -> QuestionnaireContent -> QuestionnaireDetailQuestionnaireDTO
-toDetailQuestionnaireDTO QuestionnaireDetailQuestionnaire {..} unresolvedCommentCounts resolvedCommentCounts knowledgeModel QuestionnaireContent {..} =
+toDetailQuestionnaireDTO :: QuestionnaireDetailQuestionnaire -> M.Map String (M.Map U.UUID Int) -> M.Map String (M.Map U.UUID Int) -> KnowledgeModel -> Maybe U.UUID -> M.Map String Reply -> M.Map String [U.UUID] -> QuestionnaireDetailQuestionnaireDTO
+toDetailQuestionnaireDTO QuestionnaireDetailQuestionnaire {..} unresolvedCommentCounts resolvedCommentCounts knowledgeModel phaseUuid replies labels =
   let fileCount = length files
    in QuestionnaireDetailQuestionnaireDTO {..}
 
-toDetailWsDTO :: Questionnaire -> Maybe DocumentTemplate -> Maybe DocumentTemplateFormat -> [QuestionnairePermDTO] -> QuestionnaireDetailWsDTO
-toDetailWsDTO qtn mTemplate mFormat qtnPerms =
+toDetailWsDTO :: Questionnaire -> Maybe DocumentTemplate -> Maybe DocumentTemplateFormat -> [QuestionnairePermDTO] -> M.Map String [U.UUID] -> M.Map String (M.Map U.UUID Int) -> M.Map String (M.Map U.UUID Int) -> QuestionnaireDetailWsDTO
+toDetailWsDTO qtn mTemplate mFormat qtnPerms labels unresolvedCommentCounts resolvedCommentCounts =
   QuestionnaireDetailWsDTO
     { name = qtn.name
     , description = qtn.description
@@ -137,6 +138,9 @@ toDetailWsDTO qtn mTemplate mFormat qtnPerms =
     , format = fmap toFormatDTO mFormat
     , permissions = qtnPerms
     , isTemplate = qtn.isTemplate
+    , labels = labels
+    , unresolvedCommentCounts = unresolvedCommentCounts
+    , resolvedCommentCounts = resolvedCommentCounts
     }
 
 toContentDTO

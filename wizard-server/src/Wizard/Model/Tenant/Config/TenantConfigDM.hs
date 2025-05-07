@@ -8,6 +8,7 @@ import Shared.Common.Model.Config.SimpleFeature
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 defaultTenantConfig :: TenantConfig
 defaultTenantConfig =

@@ -64,7 +64,7 @@ createDocumentContext doc pkg branchEvents qtn mReplies = do
     case doc.questionnaireEventUuid of
       (Just eventUuid) -> findQuestionnaireVersionByEventUuid' qtn.uuid eventUuid
       _ -> return Nothing
-  qtnVersionsList <- findQuestionnaireVersionListByQuestionnaireUuid qtn.uuid
+  qtnVersionsList <- findQuestionnaireVersionListByQuestionnaireUuidAndCreatedAt qtn.uuid (fmap (.createdAt) mQtnVersion)
   qtnFiles <- findQuestionnaireFilesSimpleByQuestionnaire doc.questionnaireUuid
   (users, groups) <- heSettingsToPerms qtn
   return $

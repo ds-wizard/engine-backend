@@ -7,6 +7,9 @@ import Shared.Common.Api.Resource.Common.PageMetadataSM ()
 import Shared.Common.Database.Migration.Development.Common.Data.Pages
 import Shared.Common.Model.Common.Page
 import Shared.Common.Util.Swagger
+import Shared.Locale.Api.Resource.Locale.LocaleSuggestionSM ()
+import Shared.Locale.Database.Migration.Development.Locale.Data.Locales
+import Shared.Locale.Model.Locale.LocaleSuggestion
 import Wizard.Api.Resource.Branch.BranchListSM ()
 import Wizard.Api.Resource.Branch.BranchSuggestionSM ()
 import Wizard.Api.Resource.Document.DocumentDTO
@@ -92,6 +95,10 @@ instance ToSchema (Page UserGroupSuggestion) where
 instance ToSchema (Page LocaleDTO) where
   declareNamedSchema =
     toSwaggerWithDtoName "Page Locale" (Page "locales" pageMetadata [localeNlDto])
+
+instance ToSchema (Page LocaleSuggestion) where
+  declareNamedSchema =
+    toSwaggerWithDtoName "Page LocaleSuggestion" (Page "locales" pageMetadata [localeNlSuggestion])
 
 instance ToSchema (Page PackageSimpleDTO) where
   declareNamedSchema =

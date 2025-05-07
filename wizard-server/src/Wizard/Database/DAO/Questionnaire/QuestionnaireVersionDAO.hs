@@ -3,6 +3,7 @@ module Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO where
 import Control.Monad (unless, void)
 import Control.Monad.Reader (asks)
 import Data.String (fromString)
+import Data.Time
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
@@ -10,6 +11,7 @@ import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
 import Shared.Common.Util.Logger
+import Shared.Common.Util.String
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireVersion ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireVersionList ()
@@ -27,26 +29,33 @@ findQuestionnaireVersionsByQuestionnaireUuid qtnUuid = do
   tenantUuid <- asks currentTenantUuid
   createFindEntitiesWithFieldsByFn "*" entityName [tenantQueryUuid tenantUuid, ("questionnaire_uuid", U.toString qtnUuid)]
 
-findQuestionnaireVersionListByQuestionnaireUuid :: U.UUID -> AppContextM [QuestionnaireVersionList]
-findQuestionnaireVersionListByQuestionnaireUuid questionnaireUuid = do
+findQuestionnaireVersionListByQuestionnaireUuidAndCreatedAt :: U.UUID -> Maybe UTCTime -> AppContextM [QuestionnaireVersionList]
+findQuestionnaireVersionListByQuestionnaireUuidAndCreatedAt questionnaireUuid mCreatedAt = do
   tenantUuid <- asks currentTenantUuid
+  let (createdAtCondition, createdAtParams) =
+        case mCreatedAt of
+          Just createdAt -> ("AND v.created_at <= ?", [toField createdAt])
+          Nothing -> ("", [])
   let sql =
-        "SELECT v.uuid, \
-        \       v.name, \
-        \       v.description, \
-        \       v.event_uuid, \
-        \       v.created_at, \
-        \       v.updated_at, \
-        \       u.uuid, \
-        \       u.first_name, \
-        \       u.last_name, \
-        \       u.email, \
-        \       u.image_url \
-        \FROM questionnaire_version v \
-        \JOIN user_entity u ON u.uuid = v.created_by AND u.tenant_uuid = v.tenant_uuid \
-        \WHERE v.tenant_uuid = ? AND v.questionnaire_uuid = ? \
-        \ORDER BY v.created_at"
-  let params = [U.toString tenantUuid, U.toString questionnaireUuid]
+        fromString $
+          f''
+            "SELECT v.uuid, \
+            \       v.name, \
+            \       v.description, \
+            \       v.event_uuid, \
+            \       v.created_at, \
+            \       v.updated_at, \
+            \       u.uuid, \
+            \       u.first_name, \
+            \       u.last_name, \
+            \       u.email, \
+            \       u.image_url \
+            \FROM questionnaire_version v \
+            \JOIN user_entity u ON u.uuid = v.created_by AND u.tenant_uuid = v.tenant_uuid ${createdAtCondition} \
+            \WHERE v.tenant_uuid = ? AND v.questionnaire_uuid = ? \
+            \ORDER BY v.created_at"
+            [("createdAtCondition", createdAtCondition)]
+  let params = createdAtParams ++ [toField tenantUuid, toField questionnaireUuid]
   logInfoI _CMP_DATABASE sql
   let action conn = query conn (fromString sql) params
   runDB action

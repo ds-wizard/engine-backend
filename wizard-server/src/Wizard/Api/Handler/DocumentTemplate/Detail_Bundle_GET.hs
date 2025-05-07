@@ -5,10 +5,10 @@ import Servant
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleService
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileJM ()
 
 type Detail_Bundle_GET =
   Header "Authorization" String

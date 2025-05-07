@@ -18,7 +18,11 @@ data QuestionnaireCommentThreadNotification = QuestionnaireCommentThreadNotifica
   , text :: String
   , clientUrl :: String
   , appTitle :: Maybe String
+  , logoUrl :: Maybe String
+  , primaryColor :: Maybe String
+  , illustrationsColor :: Maybe String
   , supportEmail :: Maybe String
+  , mailConfigUuid :: Maybe U.UUID
   }
   deriving (Show, Eq, Generic)
 

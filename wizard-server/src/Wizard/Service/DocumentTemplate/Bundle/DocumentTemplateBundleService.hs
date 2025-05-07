@@ -10,17 +10,15 @@ import Data.Foldable (traverse_)
 import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.String
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextHelpers
 import Wizard.S3.DocumentTemplate.DocumentTemplateS3
 import Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleAudit
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
-import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
-import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO
@@ -31,12 +29,16 @@ import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.Bundle.DocumentTemplateBundleMapper
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
 import WizardLib.KnowledgeModel.Localization.Messages.Public
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
+import qualified WizardLib.Public.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
+import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
 
 getTemporaryFileWithBundle :: String -> AppContextM TemporaryFileDTO
 getTemporaryFileWithBundle tmlId =
   runInTransaction $ do
     bundle <- exportBundle tmlId
-    url <- createTemporaryFile (f' "%s.zip" [tmlId]) "application/octet-stream" bundle
+    mCurrentUserUuid <- getCurrentUserUuid
+    url <- createTemporaryFile (f' "%s.zip" [tmlId]) "application/octet-stream" mCurrentUserUuid bundle
     return $ TemporaryFileMapper.toDTO url "application/zip"
 
 exportBundle :: String -> AppContextM BSL.ByteString

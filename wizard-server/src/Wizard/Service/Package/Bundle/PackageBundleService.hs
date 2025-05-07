@@ -20,7 +20,6 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
 import Wizard.Database.DAO.Common
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Public
@@ -34,14 +33,14 @@ import Wizard.Service.Package.PackageValidation (
   validateMaybePreviousPackageIdExistence,
   validatePackageIdUniqueness,
  )
-import qualified Wizard.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
-import Wizard.Service.TemporaryFile.TemporaryFileService
 import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.Common.Service.Coordinate.CoordinateValidation
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackageDTO
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackageJM ()
 import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleDTO
 import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleJM ()
+
+import Wizard.Model.Context.AppContextHelpers
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Localization.Messages.Public
@@ -49,12 +48,16 @@ import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 import WizardLib.KnowledgeModel.Model.PackageBundle.PackageBundle
 import WizardLib.KnowledgeModel.Service.Package.Bundle.PackageBundleMapper
 import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as PM
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
+import qualified WizardLib.Public.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
+import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
 
 getTemporaryFileWithBundle :: String -> AppContextM TemporaryFileDTO
 getTemporaryFileWithBundle pbId =
   runInTransaction $ do
     bundle <- exportBundle pbId
-    url <- createTemporaryFile (f' "%s.km" [pbId]) "application/octet-stream" (encode bundle)
+    mCurrentUserUuid <- getCurrentUserUuid
+    url <- createTemporaryFile (f' "%s.km" [pbId]) "application/octet-stream" mCurrentUserUuid (encode bundle)
     return $ TemporaryFileMapper.toDTO url "application/octet-stream"
 
 exportBundle :: String -> AppContextM PackageBundleDTO

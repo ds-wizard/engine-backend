@@ -15,6 +15,7 @@ import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMappe
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandService
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailDTO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
@@ -25,7 +26,6 @@ import Wizard.Service.PersistentCommand.PersistentCommandExecutor
 import Wizard.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Service.Tenant.TenantUtil
 import qualified Wizard.Service.User.UserMapper as UM
-import WizardLib.Public.Database.DAO.PersistentCommand.PersistentCommandDAO
 import WizardLib.Public.Model.PersistentCommand.PersistentCommandList
 
 getPersistentCommandsPage :: [String] -> Pageable -> [Sort] -> AppContextM (Page PersistentCommandList)

@@ -48,11 +48,20 @@ createUserTable = do
         \    updated_at        timestamptz NOT NULL, \
         \    tenant_uuid       uuid        NOT NULL, \
         \    machine           boolean     NOT NULL, \
+        \    locale            varchar, \
         \    CONSTRAINT user_entity_pk PRIMARY KEY (uuid, tenant_uuid), \
         \    CONSTRAINT user_entity_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
         \); \
         \ \
         \CREATE UNIQUE INDEX user_email_uindex ON user_entity (email, tenant_uuid);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createUserLocaleForeignKeyConstraint :: AppContextM Int64
+createUserLocaleForeignKeyConstraint = do
+  logInfo _CMP_MIGRATION "(Table/User) create tables"
+  let sql =
+        "ALTER TABLE user_entity ADD CONSTRAINT user_entity_locale_fk FOREIGN KEY (locale, tenant_uuid) REFERENCES locale(id, tenant_uuid);"
   let action conn = execute_ conn sql
   runDB action
 

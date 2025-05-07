@@ -276,7 +276,11 @@ findQuestionnaireCommentThreadsForNotifying = do
         \        LIMIT 1) comment_text, \
         \        tenant.client_url, \
         \        tenant_config.look_and_feel ->> 'appTitle' AS app_title, \
-        \        tenant_config.privacy_and_support ->> 'supportEmail' as support_email \
+        \        tenant_config.look_and_feel ->> 'logoUrl' AS logo_url, \
+        \        tenant_config.look_and_feel ->> 'primaryColor' AS primary_color, \
+        \        tenant_config.look_and_feel ->> 'illustrationColor' AS illustration_color, \
+        \        tenant_config.privacy_and_support ->> 'supportEmail' as support_email, \
+        \        tenant_config.mail_config_uuid as mail_config_uuid \
         \FROM questionnaire_comment_thread thread \
         \JOIN questionnaire qtn ON qtn.uuid = thread.questionnaire_uuid AND qtn.tenant_uuid = thread.tenant_uuid \
         \JOIN user_entity assigned_to ON assigned_to.uuid = thread.assigned_to AND assigned_to.tenant_uuid = thread.tenant_uuid \

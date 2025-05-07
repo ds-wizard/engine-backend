@@ -1,6 +1,5 @@
 module Wizard.Model.Tenant.Config.TenantConfig where
 
-import Data.Hashable
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
@@ -45,16 +44,6 @@ instance Eq TenantConfig where
       && submission a == submission b
       && owl a == owl b
       && mailConfigUuid a == mailConfigUuid b
-
-data TenantConfigOrganization = TenantConfigOrganization
-  { name :: String
-  , description :: String
-  , organizationId :: String
-  , affiliations :: [String]
-  }
-  deriving (Generic, Eq, Show)
-
-instance Hashable TenantConfigOrganization
 
 data TenantConfigAuth = TenantConfigAuth
   { defaultRole :: String

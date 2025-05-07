@@ -6,6 +6,7 @@ import Shared.Common.Model.Config.SimpleFeature
 import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.UserProfile
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 data ClientConfigDTO
   = HousekeepingInProgressClientConfigDTO
@@ -22,7 +23,6 @@ data ClientConfigDTO
       , questionnaire :: ClientConfigQuestionnaireDTO
       , submission :: SimpleFeature
       , cloud :: ClientConfigCloudDTO
-      , locales :: [ClientConfigLocaleDTO]
       , owl :: TenantConfigOwl
       , admin :: ClientConfigAdminDTO
       , aiAssistant :: ClientConfigAiAssistantDTO
@@ -72,13 +72,6 @@ data ClientConfigCloudDTO = ClientConfigCloudDTO
   , serverUrl :: String
   }
   deriving (Generic, Eq, Show)
-
-data ClientConfigLocaleDTO = ClientConfigLocaleDTO
-  { name :: String
-  , code :: String
-  , defaultLocale :: Bool
-  }
-  deriving (Show, Eq, Generic)
 
 data ClientConfigAdminDTO = ClientConfigAdminDTO
   { enabled :: Bool

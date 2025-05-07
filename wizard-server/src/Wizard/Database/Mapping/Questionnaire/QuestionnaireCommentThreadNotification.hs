@@ -47,5 +47,9 @@ instance FromRow QuestionnaireCommentThreadNotification where
     text <- field
     clientUrl <- field
     appTitle <- field
+    logoUrl <- field
+    primaryColor <- field
+    illustrationsColor <- field
     supportEmail <- field
+    mailConfigUuid <- field
     return QuestionnaireCommentThreadNotification {..}

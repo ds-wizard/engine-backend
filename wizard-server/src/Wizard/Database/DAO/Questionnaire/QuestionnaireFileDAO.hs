@@ -2,6 +2,7 @@ module Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO where
 
 import Control.Monad.Reader (asks)
 import Data.String
+import Data.Time
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import GHC.Int
@@ -129,6 +130,20 @@ insertQuestionnaireFile = createInsertFn entityName
 
 deleteQuestionnaireFiles :: AppContextM Int64
 deleteQuestionnaireFiles = createDeleteEntitiesFn entityName
+
+deleteQuestionnaireFilesNewerThen :: U.UUID -> UTCTime -> AppContextM Int64
+deleteQuestionnaireFilesNewerThen qtnUuid timestamp = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString
+          "DELETE FROM questionnaire_file \
+          \WHERE tenant_uuid = ? \
+          \  AND questionnaire_uuid = ? \
+          \  AND created_at > ?"
+  let params = [U.toString tenantUuid, U.toString qtnUuid, show timestamp]
+  logQuery sql params
+  let action conn = execute conn sql params
+  runDB action
 
 deleteQuestionnaireFileByUuid :: U.UUID -> AppContextM Int64
 deleteQuestionnaireFileByUuid uuid = do

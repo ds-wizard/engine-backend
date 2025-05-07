@@ -19,6 +19,7 @@ data UserDTO = UserDTO
   , permissions :: [String]
   , active :: Bool
   , imageUrl :: Maybe String
+  , locale :: Maybe String
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -36,5 +37,6 @@ instance Eq UserDTO where
       && a.permissions == b.permissions
       && a.active == b.active
       && a.imageUrl == b.imageUrl
+      && a.locale == b.locale
 
 instance Hashable UserDTO

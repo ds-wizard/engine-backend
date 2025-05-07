@@ -11,7 +11,16 @@ import Wizard.Model.Context.ContextLenses ()
 dropTables :: AppContextM Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Locale) drop table"
-  let sql = "DROP TABLE IF EXISTS locale CASCADE;"
+  let sql =
+        "DROP TRIGGER IF EXISTS trigger_on_after_locale_delete ON locale; \
+        \DROP TABLE IF EXISTS locale CASCADE;"
+  let action conn = execute_ conn sql
+  runDB action
+
+dropTriggers :: AppContextM Int64
+dropTriggers = do
+  logInfo _CMP_MIGRATION "(Trigger/Locale) drop tables"
+  let sql = "DROP TRIGGER IF EXISTS trigger_on_after_locale_delete ON locale;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -39,5 +48,17 @@ createTables = do
         \    CONSTRAINT locale_pk PRIMARY KEY (id, tenant_uuid),\
         \    CONSTRAINT locale_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid)\
         \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createTriggers :: AppContextM Int64
+createTriggers = do
+  logInfo _CMP_MIGRATION "(Trigger/Locale) create triggers"
+  let sql =
+        "CREATE OR REPLACE TRIGGER trigger_on_after_locale_delete \
+        \    AFTER DELETE \
+        \    ON locale \
+        \    FOR EACH ROW \
+        \EXECUTE FUNCTION create_persistent_command_from_entity_id('locale', 'deleteFromS3');"
   let action conn = execute_ conn sql
   runDB action

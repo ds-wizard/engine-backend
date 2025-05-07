@@ -1,5 +1,6 @@
 module Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsSM where
 
+import qualified Data.Map.Strict as M
 import Data.Swagger
 
 import Shared.Common.Util.Swagger
@@ -13,4 +14,4 @@ import Wizard.Service.Questionnaire.QuestionnaireMapper
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 
 instance ToSchema QuestionnaireDetailWsDTO where
-  declareNamedSchema = toSwagger (toDetailWsDTO questionnaire1 Nothing Nothing [])
+  declareNamedSchema = toSwagger (toDetailWsDTO questionnaire1 Nothing Nothing [] M.empty M.empty M.empty)

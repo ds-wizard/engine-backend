@@ -13,3 +13,6 @@ instance ToSchema ClientConfigDTO where
 
 instance ToSchema ClientConfigAuthDTO where
   declareNamedSchema = toSwagger (toClientAuthDTO S.defaultConfig)
+
+instance ToSchema ClientConfigLocaleDTO where
+  declareNamedSchema = toSwagger (toClientLocaleDTO S.defaultConfig)

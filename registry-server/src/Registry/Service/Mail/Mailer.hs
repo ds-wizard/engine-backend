@@ -16,6 +16,7 @@ import Registry.Model.Context.AppContext
 import RegistryLib.Api.Resource.Organization.OrganizationDTO
 import Shared.Common.Model.Config.ServerConfig
 import qualified Shared.Common.Model.PersistentCommand.Mail.MailCommand as MC
+import qualified Shared.Common.Util.Aeson as A
 import Shared.Common.Util.JSON
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
@@ -30,15 +31,15 @@ sendRegistrationConfirmationMail org hash mCallbackUrl = do
           MC.MailCommand
             { mode = "registry"
             , template = "registrationConfirmation"
-            , recipients = [org.email]
+            , recipients = [MC.MailRecipient {uuid = Nothing, email = org.email}]
             , parameters =
                 M.fromList
-                  [ ("organizationId", MC.string org.organizationId)
-                  , ("organizationName", MC.string org.name)
-                  , ("organizationEmail", MC.string org.email)
-                  , ("hash", MC.string hash)
-                  , ("clientUrl", MC.string clientAddress)
-                  , ("callbackUrl", MC.maybeString mCallbackUrl)
+                  [ ("organizationId", A.string org.organizationId)
+                  , ("organizationName", A.string org.name)
+                  , ("organizationEmail", A.string org.email)
+                  , ("hash", A.string hash)
+                  , ("clientUrl", A.string clientAddress)
+                  , ("callbackUrl", A.maybeString mCallbackUrl)
                   ]
             }
     sendEmail body org.organizationId
@@ -52,13 +53,13 @@ sendRegistrationCreatedAnalyticsMail org =
           MC.MailCommand
             { mode = "registry"
             , template = "registrationCreatedAnalytics"
-            , recipients = [serverConfig.analyticalMails.email]
+            , recipients = [MC.MailRecipient {uuid = Nothing, email = serverConfig.analyticalMails.email}]
             , parameters =
                 M.fromList
-                  [ ("organizationId", MC.string org.organizationId)
-                  , ("organizationName", MC.string org.name)
-                  , ("organizationEmail", MC.string org.email)
-                  , ("clientUrl", MC.string clientAddress)
+                  [ ("organizationId", A.string org.organizationId)
+                  , ("organizationName", A.string org.name)
+                  , ("organizationEmail", A.string org.email)
+                  , ("clientUrl", A.string clientAddress)
                   ]
             }
     sendEmail body org.organizationId
@@ -72,14 +73,14 @@ sendResetTokenMail org hash =
           MC.MailCommand
             { mode = "registry"
             , template = "resetToken"
-            , recipients = [org.email]
+            , recipients = [MC.MailRecipient {uuid = Nothing, email = org.email}]
             , parameters =
                 M.fromList
-                  [ ("organizationId", MC.string org.organizationId)
-                  , ("organizationName", MC.string org.name)
-                  , ("organizationEmail", MC.string org.email)
-                  , ("hash", MC.string hash)
-                  , ("clientUrl", MC.string clientAddress)
+                  [ ("organizationId", A.string org.organizationId)
+                  , ("organizationName", A.string org.name)
+                  , ("organizationEmail", A.string org.email)
+                  , ("hash", A.string hash)
+                  , ("clientUrl", A.string clientAddress)
                   ]
             }
     sendEmail body org.organizationId

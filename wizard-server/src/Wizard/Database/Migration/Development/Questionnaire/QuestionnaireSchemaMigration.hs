@@ -14,7 +14,9 @@ dropTables :: AppContextM Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Questionnaire) drop tables"
   let sql =
-        "DROP TABLE IF EXISTS questionnaire_file CASCADE; \
+        "DROP TRIGGER IF EXISTS trigger_on_after_questionnaire_file_delete ON questionnaire_file; \
+        \DROP FUNCTION IF EXISTS create_persistent_command_from_questionnaire_file_delete; \
+        \DROP TABLE IF EXISTS questionnaire_file CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_version CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_comment CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_comment_thread CASCADE; \
@@ -32,6 +34,13 @@ dropBucket = do
   catchError purgeBucket (\e -> return ())
   catchError removeBucket (\e -> return ())
 
+dropTriggers :: AppContextM Int64
+dropTriggers = do
+  logInfo _CMP_MIGRATION "(Trigger/Questionnaire) drop tables"
+  let sql = "DROP TRIGGER IF EXISTS trigger_on_after_questionnaire_file_delete ON questionnaire_file;"
+  let action conn = execute_ conn sql
+  runDB action
+
 createTables :: AppContextM ()
 createTables = do
   createQtnTable
@@ -42,6 +51,7 @@ createTables = do
   createQtnCommentTable
   createQtnVersionTable
   createQtnFileTable
+  createPersistentCommandFromQuestionnaireFileDeleteFunction
   makeBucket
 
 createQtnTable = do
@@ -219,5 +229,33 @@ createQtnFileTable = do
         \    CONSTRAINT questionnaire_file_user_uuid_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
         \    CONSTRAINT questionnaire_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
         \);"
+  let action conn = execute_ conn sql
+  runDB action
+createPersistentCommandFromQuestionnaireFileDeleteFunction = do
+  let sql =
+        "CREATE OR REPLACE FUNCTION create_persistent_command_from_questionnaire_file_delete() \
+        \    RETURNS TRIGGER AS \
+        \$$ \
+        \BEGIN \
+        \    PERFORM create_persistent_command( \
+        \            'questionnaire_file', \
+        \            'deleteFromS3', \
+        \            jsonb_build_object('questionnaireUuid', OLD.questionnaire_uuid, 'fileUuid', OLD.uuid), \
+        \            OLD.tenant_uuid); \
+        \    RETURN OLD; \
+        \END; \
+        \$$ LANGUAGE plpgsql;"
+  let action conn = execute_ conn sql
+  runDB action
+
+createTriggers :: AppContextM Int64
+createTriggers = do
+  logInfo _CMP_MIGRATION "(Trigger/QuestionnaireFile) create triggers"
+  let sql =
+        "CREATE OR REPLACE TRIGGER trigger_on_after_questionnaire_file_delete \
+        \    AFTER DELETE \
+        \    ON questionnaire_file \
+        \    FOR EACH ROW \
+        \EXECUTE FUNCTION create_persistent_command_from_questionnaire_file_delete();"
   let action conn = execute_ conn sql
   runDB action

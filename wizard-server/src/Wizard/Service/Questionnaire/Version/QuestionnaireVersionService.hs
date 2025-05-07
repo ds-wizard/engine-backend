@@ -19,6 +19,7 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
@@ -41,7 +42,7 @@ getVersions :: U.UUID -> AppContextM [QuestionnaireVersionList]
 getVersions qtnUuid = do
   qtn <- findQuestionnaireByUuid qtnUuid
   checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
-  findQuestionnaireVersionListByQuestionnaireUuid qtnUuid
+  findQuestionnaireVersionListByQuestionnaireUuidAndCreatedAt qtnUuid Nothing
 
 createVersion :: U.UUID -> QuestionnaireVersionChangeDTO -> AppContextM QuestionnaireVersionList
 createVersion qtnUuid reqDto =
@@ -119,6 +120,9 @@ revertToEvent qtnUuid reqDto shouldSave =
           let versionsToDelete = fmap (.uuid) . filter (\v -> not $ S.member v.eventUuid updatedEventUuids) $ qtnVersions
           deleteQuestionnaireVersionsByUuids versionsToDelete
           deleteQuestionnaireEventsByUuids (fmap getUuid eventsToDelete)
+          event <- findQuestionnaireEventByUuid reqDto.eventUuid
+          deleteQuestionnaireFilesNewerThen qtnUuid (getCreatedAt event)
+          void $ updateQuestionnaireUpdatedAtByUuid qtnUuid
       )
     qtnCtn <- compileQuestionnaire updatedEvents
     eventsDto <- traverse enhanceQuestionnaireEvent updatedEvents

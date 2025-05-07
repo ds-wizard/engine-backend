@@ -9,10 +9,10 @@ import Shared.Locale.Model.Locale.Locale
 import Wizard.Api.Resource.Locale.LocaleChangeDTO
 import Wizard.Api.Resource.Locale.LocaleCreateDTO
 import Wizard.Database.DAO.Locale.LocaleDAO
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import WizardLib.Common.Service.Coordinate.CoordinateValidation
 import WizardLib.Common.Util.Coordinate
+import WizardLib.Public.Localization.Messages.Public
 
 validateLocaleCreate :: LocaleCreateDTO -> String -> AppContextM ()
 validateLocaleCreate reqDto organizationId = do

@@ -1,5 +1,5 @@
 name: wizard-common
-version: '4.17.1'
+version: '4.18.0'
 synopsis: Wizard Engine
 description: Wizard Engine
 category: Web
@@ -17,9 +17,9 @@ library:
   when:
   - condition: os(darwin)
     then:
-      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial -Werror=missing-fields
     else:
-      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial
+      ghc-options: -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial -Werror=missing-fields
   dependencies:
   - shared-common
   - base
@@ -80,9 +80,9 @@ tests:
     when:
     - condition: os(darwin)
       then:
-        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial -Werror=missing-fields
       else:
-        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial
+        ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial -Werror=missing-fields
     dependencies:
     - shared-common
     - wizard-common

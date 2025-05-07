@@ -675,6 +675,9 @@ questionnaire10EditedWs =
     , formatUuid = Nothing
     , format = Nothing
     , isTemplate = questionnaire10EditedSettingsChange.isTemplate
+    , labels = M.empty
+    , unresolvedCommentCounts = M.empty
+    , resolvedCommentCounts = M.empty
     }
 
 -- ------------------------------------------------------------------------

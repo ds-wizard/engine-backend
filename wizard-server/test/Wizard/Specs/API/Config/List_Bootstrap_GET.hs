@@ -9,9 +9,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Shared.Locale.Database.Migration.Development.Locale.Data.Locales
 import Wizard.Api.Resource.Config.ClientConfigJM ()
-import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -55,11 +53,10 @@ create_test_200 title appContext authHeaders mUserProfile =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = toClientConfigDTO appContext.serverConfig defaultTenantConfig mUserProfile defaultTenant [localeDefaultEn, localeNl]
+      let expDto = toClientConfigDTO appContext.serverConfig defaultTenantConfig mUserProfile defaultTenant
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U.runMigration appContext
-      runInContextIO LOC.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

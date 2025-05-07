@@ -12,6 +12,7 @@ import qualified Data.Vector as Vector
 import Data.Aeson.Types
 import Shared.Common.Model.Config.ServerConfig
 import qualified Shared.Common.Model.PersistentCommand.Mail.MailCommand as MC
+import qualified Shared.Common.Util.Aeson as A
 import Shared.Common.Util.JSON
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
@@ -41,17 +42,21 @@ sendRegistrationConfirmationMail user hash clientUrl =
           MC.MailCommand
             { mode = "wizard"
             , template = "registrationConfirmation"
-            , recipients = [user.email]
+            , recipients = [MC.MailRecipient {uuid = Just user.uuid, email = user.email}]
             , parameters =
                 M.fromList
-                  [ ("userUuid", MC.uuid user.uuid)
-                  , ("userFirstName", MC.string user.firstName)
-                  , ("userLastName", MC.string user.lastName)
-                  , ("userEmail", MC.string user.email)
-                  , ("hash", MC.string hash)
-                  , ("clientUrl", MC.string clientUrl)
-                  , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
-                  , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  [ ("userUuid", A.uuid user.uuid)
+                  , ("userFirstName", A.string user.firstName)
+                  , ("userLastName", A.string user.lastName)
+                  , ("userEmail", A.string user.email)
+                  , ("hash", A.string hash)
+                  , ("clientUrl", A.string clientUrl)
+                  , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                   ]
             }
     sendEmailWithTenant body user.uuid user.tenantUuid
@@ -66,16 +71,20 @@ sendRegistrationCreatedAnalyticsMail user =
           MC.MailCommand
             { mode = "wizard"
             , template = "registrationCreatedAnalytics"
-            , recipients = [serverConfig.analyticalMails.email]
+            , recipients = [MC.MailRecipient {uuid = Nothing, email = serverConfig.analyticalMails.email}]
             , parameters =
                 M.fromList
-                  [ ("userUuid", MC.uuid user.uuid)
-                  , ("userFirstName", MC.string user.firstName)
-                  , ("userLastName", MC.string user.lastName)
-                  , ("userEmail", MC.string user.email)
-                  , ("clientUrl", MC.string clientUrl)
-                  , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
-                  , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  [ ("userUuid", A.uuid user.uuid)
+                  , ("userFirstName", A.string user.firstName)
+                  , ("userLastName", A.string user.lastName)
+                  , ("userEmail", A.string user.email)
+                  , ("clientUrl", A.string clientUrl)
+                  , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                   ]
             }
     sendEmailWithTenant body user.uuid user.tenantUuid
@@ -89,17 +98,21 @@ sendResetPasswordMail user hash =
           MC.MailCommand
             { mode = "wizard"
             , template = "resetPassword"
-            , recipients = [user.email]
+            , recipients = [MC.MailRecipient {uuid = Just user.uuid, email = user.email}]
             , parameters =
                 M.fromList
-                  [ ("userUuid", MC.uuid user.uuid)
-                  , ("userFirstName", MC.string user.firstName)
-                  , ("userLastName", MC.string user.lastName)
-                  , ("userEmail", MC.string user.email)
-                  , ("hash", MC.string hash)
-                  , ("clientUrl", MC.string clientUrl)
-                  , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
-                  , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  [ ("userUuid", A.uuid user.uuid)
+                  , ("userFirstName", A.string user.firstName)
+                  , ("userLastName", A.string user.lastName)
+                  , ("userEmail", A.string user.email)
+                  , ("hash", A.string hash)
+                  , ("clientUrl", A.string clientUrl)
+                  , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                   ]
             }
     sendEmail body user.uuid
@@ -113,17 +126,21 @@ sendTwoFactorAuthMail user code =
           MC.MailCommand
             { mode = "wizard"
             , template = "twoFactorAuth"
-            , recipients = [user.email]
+            , recipients = [MC.MailRecipient {uuid = Just user.uuid, email = user.email}]
             , parameters =
                 M.fromList
-                  [ ("userUuid", MC.uuid user.uuid)
-                  , ("userFirstName", MC.string user.firstName)
-                  , ("userLastName", MC.string user.lastName)
-                  , ("userEmail", MC.string user.email)
-                  , ("code", MC.string code)
-                  , ("clientUrl", MC.string clientUrl)
-                  , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
-                  , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  [ ("userUuid", A.uuid user.uuid)
+                  , ("userFirstName", A.string user.firstName)
+                  , ("userLastName", A.string user.lastName)
+                  , ("userEmail", A.string user.email)
+                  , ("code", A.string code)
+                  , ("clientUrl", A.string clientUrl)
+                  , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                   ]
             }
     sendEmail body user.uuid
@@ -148,23 +165,27 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
                 MC.MailCommand
                   { mode = "wizard"
                   , template = "questionnaireInvitation"
-                  , recipients = [user.email]
+                  , recipients = [MC.MailRecipient {uuid = Just user.uuid, email = user.email}]
                   , parameters =
                       M.fromList
-                        [ ("userUuid", MC.uuid user.uuid)
-                        , ("clientUrl", MC.string clientUrl)
-                        , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
-                        , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
-                        , ("inviteeUuid", MC.uuid user.uuid)
-                        , ("inviteeFirstName", MC.string user.firstName)
-                        , ("inviteeLastName", MC.string user.lastName)
-                        , ("inviteeEmail", MC.string user.email)
-                        , ("questionnaireUuid", MC.uuid newQtn.uuid)
-                        , ("questionnaireName", MC.string newQtn.name)
-                        , ("ownerUuid", MC.uuid currentUser.uuid)
-                        , ("ownerFirstName", MC.string currentUser.firstName)
-                        , ("ownerLastName", MC.string currentUser.lastName)
-                        , ("ownerEmail", MC.string currentUser.email)
+                        [ ("userUuid", A.uuid user.uuid)
+                        , ("clientUrl", A.string clientUrl)
+                        , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                        , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                        , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                        , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
+                        , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                        , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
+                        , ("inviteeUuid", A.uuid user.uuid)
+                        , ("inviteeFirstName", A.string user.firstName)
+                        , ("inviteeLastName", A.string user.lastName)
+                        , ("inviteeEmail", A.string user.email)
+                        , ("questionnaireUuid", A.uuid newQtn.uuid)
+                        , ("questionnaireName", A.string newQtn.name)
+                        , ("ownerUuid", A.uuid currentUser.uuid)
+                        , ("ownerFirstName", A.string currentUser.firstName)
+                        , ("ownerLastName", A.string currentUser.lastName)
+                        , ("ownerEmail", A.string currentUser.email)
                         ]
                   }
           sendEmail body currentUser.uuid
@@ -177,27 +198,31 @@ sendQuestionnaireCommentThreadAssignedMail notifications =
       notification : _ -> do
         let notificationFn n =
               A.Object . KM.fromList $
-                [ ("questionnaireUuid", MC.uuid n.questionnaireUuid)
-                , ("questionnaireName", MC.string n.questionnaireName)
-                , ("commentThreadUuid", MC.uuid n.commentThreadUuid)
-                , ("path", MC.string n.path)
-                , ("resolved", MC.bool n.resolved)
-                , ("private", MC.bool n.private)
+                [ ("questionnaireUuid", A.uuid n.questionnaireUuid)
+                , ("questionnaireName", A.string n.questionnaireName)
+                , ("commentThreadUuid", A.uuid n.commentThreadUuid)
+                , ("path", A.string n.path)
+                , ("resolved", A.bool n.resolved)
+                , ("private", A.bool n.private)
                 , ("assignedBy", A.toJSON n.assignedBy)
-                , ("text", MC.string n.text)
+                , ("text", A.string n.text)
                 ]
         let body =
               MC.MailCommand
                 { mode = "wizard"
                 , template = "commentThreadAssigned"
-                , recipients = [notification.assignedTo.email]
+                , recipients = [MC.MailRecipient {uuid = Just notification.assignedTo.uuid, email = notification.assignedTo.email}]
                 , parameters =
                     M.fromList
-                      [ ("userFirstName", MC.string notification.assignedTo.firstName)
+                      [ ("userFirstName", A.string notification.assignedTo.firstName)
                       , ("notifications", A.Array . Vector.fromList . fmap notificationFn $ notifications)
-                      , ("clientUrl", MC.string notification.clientUrl)
-                      , ("appTitle", MC.maybeString notification.appTitle)
-                      , ("supportEmail", MC.maybeString notification.supportEmail)
+                      , ("clientUrl", A.string notification.clientUrl)
+                      , ("appTitle", A.maybeString notification.appTitle)
+                      , ("logoUrl", A.maybeString notification.logoUrl)
+                      , ("primaryColor", A.maybeString notification.primaryColor)
+                      , ("illustrationsColor", A.maybeString notification.illustrationsColor)
+                      , ("supportEmail", A.maybeString notification.supportEmail)
+                      , ("mailConfigUuid", A.maybeUuid notification.mailConfigUuid)
                       ]
                 }
         sendEmailWithTenant body notification.assignedTo.uuid notification.tenantUuid
@@ -211,18 +236,22 @@ sendApiKeyCreatedMail user userToken =
           MC.MailCommand
             { mode = "wizard"
             , template = "apiKeyCreated"
-            , recipients = [user.email]
+            , recipients = [MC.MailRecipient {uuid = Just user.uuid, email = user.email}]
             , parameters =
                 M.fromList
-                  [ ("userUuid", MC.uuid user.uuid)
-                  , ("userFirstName", MC.string user.firstName)
-                  , ("userLastName", MC.string user.lastName)
-                  , ("userEmail", MC.string user.email)
-                  , ("tokenName", MC.string userToken.name)
-                  , ("tokenExpiresAt", MC.datetime userToken.expiresAt)
-                  , ("clientUrl", MC.string clientUrl)
-                  , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
-                  , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  [ ("userUuid", A.uuid user.uuid)
+                  , ("userFirstName", A.string user.firstName)
+                  , ("userLastName", A.string user.lastName)
+                  , ("userEmail", A.string user.email)
+                  , ("tokenName", A.string userToken.name)
+                  , ("tokenExpiresAt", A.datetime userToken.expiresAt)
+                  , ("clientUrl", A.string clientUrl)
+                  , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                   ]
             }
     sendEmail body user.uuid
@@ -236,18 +265,22 @@ sendApiKeyExpirationMail user userToken =
           MC.MailCommand
             { mode = "wizard"
             , template = "apiKeyExpiration"
-            , recipients = [user.email]
+            , recipients = [MC.MailRecipient {uuid = Just user.uuid, email = user.email}]
             , parameters =
                 M.fromList
-                  [ ("userUuid", MC.uuid user.uuid)
-                  , ("userFirstName", MC.string user.firstName)
-                  , ("userLastName", MC.string user.lastName)
-                  , ("userEmail", MC.string user.email)
-                  , ("tokenName", MC.string userToken.name)
-                  , ("tokenExpiresAt", MC.datetime userToken.expiresAt)
-                  , ("clientUrl", MC.string clientUrl)
-                  , ("appTitle", MC.maybeString tenantConfig.lookAndFeel.appTitle)
-                  , ("supportEmail", MC.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  [ ("userUuid", A.uuid user.uuid)
+                  , ("userFirstName", A.string user.firstName)
+                  , ("userLastName", A.string user.lastName)
+                  , ("userEmail", A.string user.email)
+                  , ("tokenName", A.string userToken.name)
+                  , ("tokenExpiresAt", A.datetime userToken.expiresAt)
+                  , ("clientUrl", A.string clientUrl)
+                  , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
                   ]
             }
     sendEmail body user.uuid

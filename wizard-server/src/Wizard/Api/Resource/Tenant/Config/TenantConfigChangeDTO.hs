@@ -3,6 +3,7 @@ module Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO where
 import GHC.Generics
 
 import Wizard.Model.Tenant.Config.TenantConfig
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 data TenantConfigChangeDTO = TenantConfigChangeDTO
   { organization :: TenantConfigOrganization

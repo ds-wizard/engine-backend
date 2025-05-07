@@ -6,12 +6,12 @@ import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileDTO
-import Wizard.Api.Resource.TemporaryFile.TemporaryFileJM ()
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Document.Document
 import Wizard.Service.Document.DocumentService
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
+import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileJM ()
 
 type Detail_Documents_Preview_GET =
   Header "Authorization" String

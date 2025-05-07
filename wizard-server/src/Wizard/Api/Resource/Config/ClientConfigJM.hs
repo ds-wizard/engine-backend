@@ -5,7 +5,6 @@ import Data.Aeson
 import Shared.Common.Api.Resource.Config.SimpleFeatureJM ()
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.Config.ClientConfigDTO
-import Wizard.Api.Resource.Locale.LocaleJM ()
 import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()
 import Wizard.Api.Resource.User.UserProfileJM ()
 
@@ -49,12 +48,6 @@ instance FromJSON ClientConfigCloudDTO where
   parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON ClientConfigCloudDTO where
-  toJSON = genericToJSON jsonOptions
-
-instance FromJSON ClientConfigLocaleDTO where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON ClientConfigLocaleDTO where
   toJSON = genericToJSON jsonOptions
 
 instance FromJSON ClientConfigAdminDTO where

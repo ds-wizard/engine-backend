@@ -27,5 +27,6 @@ instance FromJSON ServerConfigGeneral where
     clientUrl <- o .: "clientUrl"
     serverPort <- o .:? "serverPort" .!= defaultGeneral.serverPort
     publicRegistrationEnabled <- o .:? "publicRegistrationEnabled" .!= defaultGeneral.publicRegistrationEnabled
+    localeEnabled <- o .:? "localeEnabled" .!= defaultGeneral.localeEnabled
     return ServerConfigGeneral {..}
   parseJSON _ = mzero

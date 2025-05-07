@@ -11,3 +11,6 @@ instance ToSchema TenantConfigDashboardAndLoginScreenAnnouncement where
   declareNamedSchema = toSwagger defaultDashboardAndLoginScreenAnnouncement
 
 instance ToSchema TenantConfigDashboardAndLoginScreenAnnouncementLevelType
+
+instance ToSchema TenantConfigOrganization where
+  declareNamedSchema = toSwagger defaultOrganization

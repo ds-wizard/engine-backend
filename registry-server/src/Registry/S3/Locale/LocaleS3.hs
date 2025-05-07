@@ -10,14 +10,14 @@ import Shared.Common.Util.String (f')
 
 folderName = "locales"
 
-retrieveLocale :: String -> AppContextM BS.ByteString
-retrieveLocale localeId = createGetObjectFn (f' "%s/%s" [folderName, localeId])
+retrieveLocale :: String -> String -> AppContextM BS.ByteString
+retrieveLocale localeId filename = createGetObjectFn (f' "%s/%s/%s" [folderName, localeId, filename])
 
-retrieveLocale' :: String -> AppContextM (Either MinioErr BS.ByteString)
-retrieveLocale' localeId = createGetObjectFn' (f' "%s/%s" [folderName, localeId])
+retrieveLocale' :: String -> String -> AppContextM (Either MinioErr BS.ByteString)
+retrieveLocale' localeId filename = createGetObjectFn' (f' "%s/%s/%s" [folderName, localeId, filename])
 
-putLocale :: String -> BS.ByteString -> AppContextM String
-putLocale localeId = createPutObjectFn (f' "%s/%s" [folderName, localeId]) Nothing Nothing
+putLocale :: String -> String -> BS.ByteString -> AppContextM String
+putLocale localeId fileName = createPutObjectFn (f' "%s/%s/%s" [folderName, localeId, fileName]) Nothing Nothing
 
 removeLocales :: AppContextM ()
 removeLocales = createRemoveObjectFn folderName

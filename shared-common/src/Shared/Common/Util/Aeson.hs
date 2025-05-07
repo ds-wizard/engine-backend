@@ -4,6 +4,8 @@ import Data.Aeson
 import qualified Data.Aeson.KeyMap as KM
 import Data.String (fromString)
 import qualified Data.Text as T
+import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Util.Reflection (HasConstructor, constructorName)
@@ -75,3 +77,21 @@ jsonSpecialFields "ilValue" = "value"
 jsonSpecialFields "iValue" = "value"
 jsonSpecialFields "isValue" = "value"
 jsonSpecialFields field = field
+
+uuid :: U.UUID -> Value
+uuid = String . U.toText
+
+string :: String -> Value
+string = String . T.pack
+
+bool :: Bool -> Value
+bool = Bool
+
+maybeString :: Maybe String -> Value
+maybeString = maybe Null string
+
+maybeUuid :: Maybe U.UUID -> Value
+maybeUuid = maybe Null uuid
+
+datetime :: UTCTime -> Value
+datetime = toJSON
