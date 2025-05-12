@@ -19,10 +19,10 @@ migrate dbPool = do
         \SET default_locale = true, \
         \    enabled        = true \
         \WHERE tenant_uuid IN (SELECT tenant_uuid \
-        \                      FROM locale outter_locale \
+        \                      FROM locale outer_locale \
         \                      WHERE (SELECT count(*) \
         \                            FROM locale inner_locale \
-        \                            WHERE inner_locale.tenant_uuid = outter_locale.tenant_uuid) = 1 \
+        \                            WHERE inner_locale.tenant_uuid = outer_locale.tenant_uuid) = 1 \
         \                        AND id = '~:default:1.0.0' \
         \                        AND (default_locale = false OR \
         \                            enabled = false))"
