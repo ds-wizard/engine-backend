@@ -60,6 +60,18 @@ findApiUserTokensWithCloseExpiration = do
   let action conn = query_ conn (fromString sql)
   runDB action
 
+findApiUserTokensWithExpiration :: AppContextC s sc m => m [UserToken]
+findApiUserTokensWithExpiration = do
+  let sql =
+        f'
+          "SELECT * \
+          \FROM %s \
+          \WHERE expires_at <= now()"
+          [entityName]
+  logInfoI _CMP_DATABASE (trim sql)
+  let action conn = query_ conn (fromString sql)
+  runDB action
+
 findUserTokensByUserUuid :: AppContextC s sc m => U.UUID -> m [UserToken]
 findUserTokensByUserUuid userUuid = do
   tenantUuid <- asks (.tenantUuid')
