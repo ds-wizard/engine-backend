@@ -11,6 +11,7 @@ import Wizard.Model.User.User
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
 import WizardLib.Public.Model.User.UserGroup
 import WizardLib.Public.Model.User.UserGroupMembership
+import WizardLib.Public.Model.User.UserTour
 
 userNikola :: User
 userNikola =
@@ -57,4 +58,13 @@ userNikolaBioGroupMembership =
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 21
     , updatedAt = dt' 2018 1 21
+    }
+
+userNikolaTour1 :: UserTour
+userNikolaTour1 =
+  UserTour
+    { userUuid = userNikola.uuid
+    , tourId = "TOUR_1"
+    , tenantUuid = defaultTenant.uuid
+    , createdAt = dt' 2018 1 21
     }

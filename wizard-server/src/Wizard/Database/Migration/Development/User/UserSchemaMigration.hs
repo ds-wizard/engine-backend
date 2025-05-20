@@ -12,7 +12,8 @@ dropTables :: AppContextM Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/User) drop tables"
   let sql =
-        "DROP TABLE IF EXISTS user_group_membership CASCADE;\
+        "DROP TABLE IF EXISTS user_tour CASCADE;\
+        \DROP TABLE IF EXISTS user_group_membership CASCADE;\
         \DROP TABLE IF EXISTS user_group CASCADE;\
         \DROP TABLE IF EXISTS user_token CASCADE;\
         \DROP TABLE IF EXISTS user_entity CASCADE;"
@@ -25,6 +26,7 @@ createTables = do
   createUserTokenTable
   createUserGroupTable
   createUserGroupMembershipTable
+  createUserTourTable
 
 createUserTable = do
   logInfo _CMP_MIGRATION "(Table/User) create tables"
@@ -120,6 +122,22 @@ createUserGroupMembershipTable = do
         \    CONSTRAINT user_group_membership_user_group_uuid_fk FOREIGN KEY (user_group_uuid, tenant_uuid) REFERENCES user_group (uuid, tenant_uuid), \
         \    CONSTRAINT user_group_membership_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
         \    CONSTRAINT user_group_membership_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createUserTourTable = do
+  logInfo _CMP_MIGRATION "(Table/UserTour) create tables"
+  let sql =
+        "CREATE TABLE user_tour \
+        \( \
+        \    user_uuid               uuid        NOT NULL, \
+        \    tour_id                 varchar     NOT NULL, \
+        \    tenant_uuid             uuid        NOT NULL, \
+        \    created_at              timestamptz NOT NULL, \
+        \    CONSTRAINT user_tour_pk PRIMARY KEY (user_uuid, tour_id, tenant_uuid), \
+        \    CONSTRAINT user_tour_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT user_tour_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

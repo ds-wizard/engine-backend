@@ -13,6 +13,7 @@ import qualified Wizard.Service.Tenant.Config.ConfigCommandExecutor as TenantCon
 import qualified Wizard.Service.Tenant.TenantCommandExecutor as TenantCommandExecutor
 import qualified Wizard.Service.User.Group.UserGroupCommandExecutor as UserGroupCommandExecutor
 import qualified Wizard.Service.User.GroupMembership.UserGroupMembershipCommandExecutor as UserGroupMembershipCommandExecutor
+import qualified Wizard.Service.User.Tour.TourCommandExecutor as TourCommandExecutor
 import qualified Wizard.Service.User.UserCommandExecutor as UserCommandExecutor
 
 execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
@@ -24,6 +25,7 @@ execute command
   | command.component == QuestionnaireFileCommandExecutor.cComponent = QuestionnaireFileCommandExecutor.execute command
   | command.component == TenantCommandExecutor.cComponent = TenantCommandExecutor.execute command
   | command.component == TenantConfigCommandExecutor.cComponent = TenantConfigCommandExecutor.execute command
+  | command.component == TourCommandExecutor.cComponent = TourCommandExecutor.execute command
   | command.component == UserCommandExecutor.cComponent = UserCommandExecutor.execute command
   | command.component == UserGroupCommandExecutor.cComponent = UserGroupCommandExecutor.execute command
   | command.component == UserGroupMembershipCommandExecutor.cComponent = UserGroupMembershipCommandExecutor.execute command

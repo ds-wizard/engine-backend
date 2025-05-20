@@ -70,6 +70,7 @@ import WizardLib.Public.Database.DAO.ExternalLink.ExternalLinkUsageDAO
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
+import WizardLib.Public.Database.DAO.User.UserTourDAO
 import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.ExternalLinkSchemaMigration as ExternalLink
 
 import Wizard.Specs.Common
@@ -179,6 +180,7 @@ resetDB appContext = do
   runInContext deletePackages appContext
   runInContext deleteUserTokens appContext
   runInContext deleteUserGroupMemberships appContext
+  runInContext deleteTours appContext
   runInContext deleteUsers appContext
   runInContext deleteUserGroups appContext
   runInContext deleteLocales appContext

@@ -27,6 +27,7 @@ import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
 import WizardLib.Public.Model.User.UserGroup
 import WizardLib.Public.Model.User.UserGroupMembership
+import WizardLib.Public.Model.User.UserTour
 
 userAlbert :: User
 userAlbert =
@@ -119,6 +120,24 @@ userAlbertBioGroupMembership =
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 21
     , updatedAt = dt' 2018 1 21
+    }
+
+userAlbertTour1 :: UserTour
+userAlbertTour1 =
+  UserTour
+    { userUuid = userAlbert.uuid
+    , tourId = "TOUR_1"
+    , tenantUuid = defaultTenant.uuid
+    , createdAt = dt' 2018 1 21
+    }
+
+userAlbertTour2 :: UserTour
+userAlbertTour2 =
+  UserTour
+    { userUuid = userAlbert.uuid
+    , tourId = "TOUR_2"
+    , tenantUuid = defaultTenant.uuid
+    , createdAt = dt' 2018 1 21
     }
 
 -- --------------------------------------
