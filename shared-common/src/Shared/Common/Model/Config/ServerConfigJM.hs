@@ -70,6 +70,7 @@ instance FromJSON ServerConfigLogging where
     level <- o .:? "level" .!= defaultLogging.level
     httpClientDebug <- o .:? "httpClientDebug" .!= defaultLogging.httpClientDebug
     websocketDebug <- o .:? "websocketDebug" .!= defaultLogging.websocketDebug
+    databaseDebug <- o .:? "databaseDebug" .!= defaultLogging.databaseDebug
     return ServerConfigLogging {..}
   parseJSON _ = mzero
 

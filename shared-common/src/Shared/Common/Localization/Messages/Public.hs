@@ -32,6 +32,10 @@ _ERROR_API__WEBSOCKET_RECORD_NOT_FOUND connectionUUid =
 -- --------------------------------------
 -- DATABASE
 -- --------------------------------------
+_ERROR_DATABASE__UNIQUE_CONSTRAINT_VIOLATION = LocaleRecord "error.database.unique_constraint_violation" "Object already exists" []
+
+_ERROR_DATABASE__UNIQUE_CONSTRAINT_VIOLATION_WITH_ERROR errorMsg errorDetail = LocaleRecord "error.database.unique_constraint_violation" "Object already exists (msg: %s, detail: %s)" [errorMsg, errorDetail]
+
 _ERROR_DATABASE__ENTITY_NOT_FOUND entityName params =
   LocaleRecord
     "error.database.entity_not_found"

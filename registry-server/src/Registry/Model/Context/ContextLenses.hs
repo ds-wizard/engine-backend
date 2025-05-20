@@ -48,6 +48,9 @@ instance HasField "s3'" ServerConfig ServerConfigS3 where
 instance HasField "sentry'" ServerConfig ServerConfigSentry where
   getField = (.sentry)
 
+instance HasField "logging'" ServerConfig ServerConfigLogging where
+  getField = (.logging)
+
 instance HasField "cloud'" ServerConfig ServerConfigCloud where
   getField = (.cloud)
 
