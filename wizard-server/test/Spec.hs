@@ -61,6 +61,7 @@ import Wizard.Specs.API.Tenant.Usage.APISpec
 import Wizard.Specs.API.Token.APISpec
 import Wizard.Specs.API.Typehint.APISpec
 import Wizard.Specs.API.User.APISpec
+import Wizard.Specs.API.User.Tour.APISpec
 import Wizard.Specs.API.UserGroup.APISpec
 import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
@@ -223,6 +224,7 @@ main =
               tokenAPI baseContext appContext
               usageAPI baseContext appContext
               userAPI baseContext appContext
+              userTourAPI baseContext appContext
               userGroupAPI baseContext appContext
             describe "SERVICE" $ do
               branchServiceIntegrationSpec appContext

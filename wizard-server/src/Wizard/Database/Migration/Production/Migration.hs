@@ -57,6 +57,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0052_questionnai
 import qualified Wizard.Database.Migration.Production.Migration_0053_qtnEventsRefactoring.Migration as M_0053
 import qualified Wizard.Database.Migration.Production.Migration_0054_userLocale.Migration as M_0054
 import qualified Wizard.Database.Migration.Production.Migration_0055_localeFix.Migration as M_0055
+import qualified Wizard.Database.Migration.Production.Migration_0056_tour.Migration as M_0056
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -115,4 +116,5 @@ migrationDefinitions =
   , M_0053.definition
   , M_0054.definition
   , M_0055.definition
+  , M_0056.definition
   ]

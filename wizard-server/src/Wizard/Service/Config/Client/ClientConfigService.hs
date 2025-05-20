@@ -20,6 +20,7 @@ import Wizard.Service.Migration.Metamodel.MigratorService
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.TenantHelper
 import Wizard.Service.User.UserMapper
+import WizardLib.Public.Database.DAO.User.UserTourDAO
 
 getClientConfig :: Maybe String -> Maybe String -> AppContextM ClientConfigDTO
 getClientConfig mServerUrl mClientUrl = do
@@ -54,7 +55,11 @@ getClientConfig mServerUrl mClientUrl = do
             userGroupUuids <- findUserGroupUuidsForUserUuidAndTenantUuid currentUser.uuid tenant.uuid
             return . Just $ toUserProfile currentUser userGroupUuids
           Nothing -> return Nothing
-      return $ toClientConfigDTO serverConfig tenantConfig mUserProfile tenant
+      tours <-
+        case mCurrentUser of
+          Just currentUser -> findUserToursByUserUuid currentUser.uuid
+          _ -> return []
+      return $ toClientConfigDTO serverConfig tenantConfig mUserProfile tours tenant
 
 throwErrorIfTenantIsDisabled :: Maybe String -> Tenant -> AppContextM ()
 throwErrorIfTenantIsDisabled mServerUrl tenant = unless tenant.enabled (throwError . NotExistsError $ _ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE (fromMaybe "not-provided" mServerUrl))
