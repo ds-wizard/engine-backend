@@ -1,5 +1,6 @@
 module Shared.Common.Database.DAO.Common where
 
+import Control.Exception
 import Control.Monad (when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (ask, liftIO)
@@ -27,6 +28,7 @@ import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
+import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.AppContext
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.ByteString (toByteString)
@@ -37,20 +39,37 @@ runDB :: AppContextC s sc m => (Connection -> IO b) -> m b
 runDB action = do
   context <- ask
   case context.dbConnection' of
-    Just dbConnection -> liftIO $ action dbConnection
-    Nothing -> liftIO $ withResource context.dbPool' action
+    Just dbConnection -> handleSqlErrorIfPresent $ action dbConnection
+    Nothing -> handleSqlErrorIfPresent $ withResource context.dbPool' action
 
 runDBImmediately :: AppContextC s sc m => (Connection -> IO b) -> m b
 runDBImmediately action = do
   context <- ask
-  liftIO $ withResource context.dbPool' action
+  handleSqlErrorIfPresent $ withResource context.dbPool' action
 
 runRawDB :: AppContextC s sc m => (LibPQ.Connection -> IO b) -> m b
 runRawDB action = do
   context <- ask
   case context.dbConnection' of
-    Just dbConnection -> liftIO $ dbConnection `withConnection` action
-    Nothing -> liftIO $ withResource context.dbPool' (`withConnection` action)
+    Just dbConnection -> handleSqlErrorIfPresent $ dbConnection `withConnection` action
+    Nothing -> handleSqlErrorIfPresent $ withResource context.dbPool' (`withConnection` action)
+
+handleSqlErrorIfPresent :: AppContextC s sc m => IO b -> m b
+handleSqlErrorIfPresent eResultIO = do
+  context <- ask
+  eResult <- liftIO . try $ eResultIO
+  case eResult of
+    Right result -> return result
+    Left ex@SqlError {..} ->
+      case ex.sqlState of
+        "23505" -> do
+          logWarnI _CMP_DATABASE $ f' "Unique constraint violation: %s" [show ex]
+          let msg =
+                if context.serverConfig'.logging'.databaseDebug
+                  then _ERROR_DATABASE__UNIQUE_CONSTRAINT_VIOLATION_WITH_ERROR (BS.unpack ex.sqlErrorMsg) (BS.unpack ex.sqlErrorDetail)
+                  else _ERROR_DATABASE__UNIQUE_CONSTRAINT_VIOLATION
+          throwError . UserError $ msg
+        _ -> throw ex
 
 runOneEntityDB :: AppContextC s sc m => String -> (Connection -> IO [b]) -> [(String, String)] -> m b
 runOneEntityDB entityName action queryParams = do

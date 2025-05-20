@@ -58,6 +58,7 @@ data ServerConfigLogging = ServerConfigLogging
   { level :: LogLevel
   , httpClientDebug :: Bool
   , websocketDebug :: Bool
+  , databaseDebug :: Bool
   }
   deriving (Generic, Show)
 
