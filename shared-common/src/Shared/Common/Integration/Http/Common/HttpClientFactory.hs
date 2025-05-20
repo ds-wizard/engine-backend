@@ -43,7 +43,11 @@ createHttpClientManager serverConfig =
 
 modifyRequest :: Bool -> Request -> IO Request
 modifyRequest logHttpClient request = do
-  let updatedRequest = request {path = BS.pack . replace "//" "/" . BS.unpack . path $ request}
+  let updatedRequest =
+        request
+          { path = BS.pack . replace "//" "/" . BS.unpack . path $ request
+          , requestHeaders = ("User-Agent", "wizard-http-client") : requestHeaders request
+          }
   logRequest logHttpClient updatedRequest
   return updatedRequest
 
