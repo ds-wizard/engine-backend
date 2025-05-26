@@ -256,7 +256,7 @@ sendApiKeyCreatedMail user userToken =
             }
     sendEmail body user.uuid
 
-sendApiKeyExpirationMail :: UserDTO -> UserToken -> AppContextM ()
+sendApiKeyExpirationMail :: User -> UserToken -> AppContextM ()
 sendApiKeyExpirationMail user userToken =
   runInTransaction $ do
     tenantConfig <- getCurrentTenantConfig
