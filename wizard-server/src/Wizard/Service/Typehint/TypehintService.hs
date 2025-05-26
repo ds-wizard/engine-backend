@@ -28,9 +28,11 @@ getTypehints reqDto =
         fileIntConfig <- getFileIntegrationConfig integration.iId
         appIntConfig <- getTenantIntegrationConfig integration.iId
         let kmQuestionConfig = question.props
-        let userRequest = M.singleton "q" (encode reqDto.q)
+        let encodedUserRequest = M.singleton "q" (encode reqDto.q)
+        let userRequest = M.singleton "q" reqDto.q
+        let encodedVariables = M.union encodedUserRequest . M.union kmQuestionConfig . M.union appIntConfig $ fileIntConfig
         let variables = M.union userRequest . M.union kmQuestionConfig . M.union appIntConfig $ fileIntConfig
-        eiDtos <- retrieveTypehints integration variables
+        eiDtos <- retrieveTypehints integration encodedVariables variables
         case eiDtos of
           Right iDtos -> return iDtos
           Left error -> do
