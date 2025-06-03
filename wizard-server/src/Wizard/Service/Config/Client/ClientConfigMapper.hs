@@ -10,10 +10,11 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.UserProfile
 
-toClientConfigDTO :: ServerConfig -> TenantConfig -> Maybe UserProfile -> Tenant -> ClientConfigDTO
-toClientConfigDTO serverConfig tenantConfig mUserProfile tenant =
+toClientConfigDTO :: ServerConfig -> TenantConfig -> Maybe UserProfile -> [String] -> Tenant -> ClientConfigDTO
+toClientConfigDTO serverConfig tenantConfig mUserProfile tours tenant =
   ClientConfigDTO
     { user = mUserProfile
+    , tours = tours
     , organization = tenantConfig.organization
     , authentication = toClientAuthDTO $ tenantConfig.authentication
     , privacyAndSupport = tenantConfig.privacyAndSupport

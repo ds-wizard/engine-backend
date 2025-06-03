@@ -17,7 +17,6 @@ import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
 import Wizard.Service.Mail.Mailer
-import Wizard.Service.User.UserService
 import Wizard.Service.UserToken.ApiKey.ApiKeyMapper
 import WizardLib.Public.Api.Resource.UserToken.ApiKeyCreateDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
@@ -47,7 +46,7 @@ expireApiKeys = do
   userTokens <- findApiUserTokensWithCloseExpiration
   traverse_
     ( \userToken -> do
-        userDto <- getUserById userToken.userUuid
-        sendApiKeyExpirationMail userDto userToken
+        user <- findUserByUuidAndTenantUuidSystem userToken.userUuid userToken.tenantUuid
+        sendApiKeyExpirationMail user userToken
     )
     userTokens

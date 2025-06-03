@@ -57,6 +57,7 @@ defaultLogging =
     { level = LevelInfo
     , httpClientDebug = False
     , websocketDebug = False
+    , databaseDebug = False
     }
 
 defaultCloud :: ServerConfigCloud

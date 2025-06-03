@@ -14,6 +14,7 @@ data ClientConfigDTO
       }
   | ClientConfigDTO
       { user :: Maybe UserProfile
+      , tours :: [String]
       , organization :: TenantConfigOrganization
       , authentication :: ClientConfigAuthDTO
       , privacyAndSupport :: TenantConfigPrivacyAndSupport
