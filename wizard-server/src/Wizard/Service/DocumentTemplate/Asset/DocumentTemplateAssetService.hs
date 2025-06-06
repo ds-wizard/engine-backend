@@ -83,7 +83,7 @@ modifyAsset assetUuid reqDto =
     let updatedAsset = fromChangeDTO asset reqDto now
     updateAssetById updatedAsset
     touchDocumentTemplateById asset.documentTemplateId
-    deleteTemporalDocumentsByFileUuid assetUuid
+    deleteTemporalDocumentsByAssetUuid assetUuid
     return updatedAsset
 
 modifyAssetContent :: U.UUID -> DocumentTemplateAssetCreateDTO -> AppContextM DocumentTemplateAsset
