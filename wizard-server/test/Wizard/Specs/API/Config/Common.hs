@@ -21,4 +21,4 @@ assertExistenceOfTenantConfigInDB appContext tenantConfig = do
 -- --------------------------------
 -- COMPARATORS
 -- --------------------------------
-compareDtos resDto expDto = liftIO $ (resDto == expDto) `shouldBe` True
+compareDtos resDto expDto = liftIO $ resDto `shouldBe` expDto

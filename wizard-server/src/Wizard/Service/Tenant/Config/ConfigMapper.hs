@@ -5,7 +5,10 @@ import qualified Data.UUID as U
 
 import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
+import Wizard.Api.Resource.Tenant.Config.TenantConfigDTO
 import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Config.TenantConfigSubmission
+import Wizard.Model.Tenant.Config.TenantConfigSubmissionServiceSimple
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateOrUpdateAuthenticationConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAiAssistantConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
@@ -16,18 +19,18 @@ import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConf
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateSupportConfigCommand
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
-toChangeDTO :: TenantConfig -> TenantConfigChangeDTO
-toChangeDTO config =
-  TenantConfigChangeDTO
-    { organization = config.organization
-    , authentication = config.authentication
-    , privacyAndSupport = config.privacyAndSupport
-    , dashboardAndLoginScreen = config.dashboardAndLoginScreen
-    , lookAndFeel = config.lookAndFeel
-    , registry = config.registry
-    , knowledgeModel = config.knowledgeModel
-    , questionnaire = config.questionnaire
-    , submission = config.submission
+toDTO :: TenantConfig -> TenantConfigSubmission -> TenantConfigDTO
+toDTO TenantConfig {..} submission = TenantConfigDTO {..}
+
+toChangeDTO :: TenantConfig -> TenantConfigSubmissionChangeDTO -> TenantConfigChangeDTO
+toChangeDTO TenantConfig {..} submission = TenantConfigChangeDTO {..}
+
+toSubmissionServiceSimple :: TenantConfigSubmissionService -> TenantConfigSubmissionServiceSimple
+toSubmissionServiceSimple config =
+  TenantConfigSubmissionServiceSimple
+    { sId = config.sId
+    , name = config.name
+    , description = config.description
     }
 
 fromChangeDTO :: TenantConfigChangeDTO -> TenantConfig -> UTCTime -> TenantConfig
@@ -42,13 +45,35 @@ fromChangeDTO dto oldConfig now =
     , registry = dto.registry
     , knowledgeModel = dto.knowledgeModel
     , questionnaire = dto.questionnaire
-    , submission = dto.submission
     , owl = oldConfig.owl
     , mailConfigUuid = oldConfig.mailConfigUuid
     , aiAssistant = oldConfig.aiAssistant
     , createdAt = oldConfig.createdAt
     , updatedAt = now
     }
+
+fromSubmissionChangeDTO :: TenantConfigSubmissionChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigSubmission
+fromSubmissionChangeDTO dto@TenantConfigSubmissionChangeDTO {..} tenantUuid createdAt updatedAt =
+  let services = fmap (\s -> fromSubmissionServiceChangeDTO s tenantUuid createdAt updatedAt) dto.services
+   in TenantConfigSubmission {..}
+
+fromSubmissionServiceChangeDTO :: TenantConfigSubmissionServiceChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigSubmissionService
+fromSubmissionServiceChangeDTO dto@TenantConfigSubmissionServiceChangeDTO {..} tenantUuid createdAt updatedAt =
+  let supportedFormats = fmap (\f -> fromSubmissionServiceSupportedFormatChangeDTO f tenantUuid dto.sId) dto.supportedFormats
+      request = fromSubmissionServiceRequestChangeDTO dto.request
+   in TenantConfigSubmissionService {..}
+
+fromSubmissionServiceSupportedFormatChangeDTO :: TenantConfigSubmissionServiceSupportedFormatChangeDTO -> U.UUID -> String -> TenantConfigSubmissionServiceSupportedFormat
+fromSubmissionServiceSupportedFormatChangeDTO TenantConfigSubmissionServiceSupportedFormatChangeDTO {..} tenantUuid serviceId = TenantConfigSubmissionServiceSupportedFormat {..}
+
+fromSubmissionServiceRequestChangeDTO :: TenantConfigSubmissionServiceRequestChangeDTO -> TenantConfigSubmissionServiceRequest
+fromSubmissionServiceRequestChangeDTO dto@TenantConfigSubmissionServiceRequestChangeDTO {..} =
+  let multipart = fromSubmissionServiceRequestMultipartChangeDTO dto.multipart
+   in TenantConfigSubmissionServiceRequest {..}
+
+fromSubmissionServiceRequestMultipartChangeDTO :: TenantConfigSubmissionServiceRequestMultipartChangeDTO -> TenantConfigSubmissionServiceRequestMultipart
+fromSubmissionServiceRequestMultipartChangeDTO TenantConfigSubmissionServiceRequestMultipartChangeDTO {..} =
+  TenantConfigSubmissionServiceRequestMultipart {..}
 
 fromAuthenticationCommand :: TenantConfig -> CreateOrUpdateAuthenticationConfigCommand -> UTCTime -> TenantConfig
 fromAuthenticationCommand oldConfig command now =

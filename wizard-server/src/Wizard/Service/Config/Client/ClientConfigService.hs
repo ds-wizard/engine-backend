@@ -10,6 +10,7 @@ import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.User.UserGroupMembershipDAO
 import Wizard.Model.Config.ServerConfig
@@ -43,12 +44,21 @@ getClientConfig mServerUrl mClientUrl = do
       return $ HousekeepingInProgressClientConfigDTO {message = "We’re currently upgrading the data to the latest version to enhance your experience"}
     ReadyForUseTenantState -> do
       throwErrorIfTenantIsDisabled mServerUrl tenant
-      tenantConfig <-
+      (tenantConfig, tcSubmission) <-
         if serverConfig.cloud.enabled
           then case mClientUrl of
-            Just clientUrl -> getTenantConfigByUuid tenant.uuid
-            Nothing -> getCurrentTenantConfig
-          else getCurrentTenantConfig
+            Just clientUrl -> do
+              tenantConfig <- getTenantConfigByUuid tenant.uuid
+              tcSubmission <- findTenantConfigSubmissionByTenantUuid tenant.uuid
+              return (tenantConfig, tcSubmission)
+            Nothing -> do
+              tenantConfig <- getCurrentTenantConfig
+              tcSubmission <- findTenantConfigSubmission
+              return (tenantConfig, tcSubmission)
+          else do
+            tenantConfig <- getCurrentTenantConfig
+            tcSubmission <- findTenantConfigSubmission
+            return (tenantConfig, tcSubmission)
       mUserProfile <-
         case mCurrentUser of
           Just currentUser -> do
@@ -59,7 +69,7 @@ getClientConfig mServerUrl mClientUrl = do
         case mCurrentUser of
           Just currentUser -> findUserToursByUserUuid currentUser.uuid
           _ -> return []
-      return $ toClientConfigDTO serverConfig tenantConfig mUserProfile tours tenant
+      return $ toClientConfigDTO serverConfig tenantConfig tcSubmission mUserProfile tours tenant
 
 throwErrorIfTenantIsDisabled :: Maybe String -> Tenant -> AppContextM ()
 throwErrorIfTenantIsDisabled mServerUrl tenant = unless tenant.enabled (throwError . NotExistsError $ _ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE (fromMaybe "not-provided" mServerUrl))

@@ -1,4 +1,4 @@
-module Wizard.Api.Resource.Submission.SubmissionDTO where
+module Wizard.Model.Submission.SubmissionList where
 
 import Data.Time
 import qualified Data.UUID as U
@@ -7,7 +7,7 @@ import GHC.Generics
 import Wizard.Model.Submission.Submission
 import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 
-data SubmissionDTO = SubmissionDTO
+data SubmissionList = SubmissionList
   { uuid :: U.UUID
   , state :: SubmissionState
   , location :: Maybe String

@@ -14,6 +14,12 @@ checkIfTenantFeatureIsEnabled featureName accessor = do
     then return ()
     else throwError $ UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ featureName
 
+checkIfTenantFeatureIsEnabled' featureName dbFunction accessor = do
+  tenantConfig <- dbFunction
+  if accessor tenantConfig
+    then return ()
+    else throwError $ UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ featureName
+
 checkIfServerFeatureIsEnabled featureName accessor = do
   serverConfig <- asks serverConfig
   if accessor serverConfig

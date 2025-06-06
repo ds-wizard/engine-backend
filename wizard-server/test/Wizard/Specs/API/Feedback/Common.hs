@@ -7,6 +7,7 @@ import Test.Hspec
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.DAO.Feedback.FeedbackDAO
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Tenant.Config.TenantConfig
@@ -37,7 +38,7 @@ compareFeedbackDtos resDto expDto = do
 loadFeedbackTokenFromEnv = do
   tenantConfig <- getCurrentTenantConfig
   updatedTenantConfig <- applyEnvVariable "FEEDBACK_TOKEN" tenantConfig.questionnaire.feedback.token (\t -> tenantConfig {questionnaire = tenantConfig.questionnaire {feedback = tenantConfig.questionnaire.feedback {token = t}}})
-  modifyTenantConfigDto (toChangeDTO updatedTenantConfig)
+  modifyTenantConfigDto (toChangeDTO updatedTenantConfig defaultSubmissionChangeEmptyDto)
 
 applyEnvVariable :: String -> String -> (String -> TenantConfig) -> AppContextM TenantConfig
 applyEnvVariable envVariableName oldValue updateFn = do

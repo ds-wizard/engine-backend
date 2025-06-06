@@ -13,7 +13,6 @@ import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
-import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Document.Document
@@ -24,12 +23,13 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireSimple
+import Wizard.Model.Submission.SubmissionList
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Package.Package
 
-toDTO :: DocumentList -> [SubmissionDTO] -> DocumentDTO
+toDTO :: DocumentList -> [SubmissionList] -> DocumentDTO
 toDTO doc submissions =
   DocumentDTO
     { uuid = doc.uuid
@@ -51,7 +51,7 @@ toDTO doc submissions =
     , createdAt = doc.createdAt
     }
 
-toDTOWithDocTemplate :: Document -> Maybe QuestionnaireSimple -> Maybe String -> [SubmissionDTO] -> DocumentTemplate -> DocumentDTO
+toDTOWithDocTemplate :: Document -> Maybe QuestionnaireSimple -> Maybe String -> [SubmissionList] -> DocumentTemplate -> DocumentDTO
 toDTOWithDocTemplate doc mQtn mQtnVersion submissions tml =
   DocumentDTO
     { uuid = doc.uuid

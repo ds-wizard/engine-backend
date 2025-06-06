@@ -20,7 +20,6 @@ instance ToRow TenantConfig where
     , toJSONField registry
     , toJSONField knowledgeModel
     , toJSONField questionnaire
-    , toJSONField submission
     , toField createdAt
     , toField updatedAt
     , toJSONField owl
@@ -39,7 +38,6 @@ instance FromRow TenantConfig where
     registry <- fieldWith fromJSONField
     knowledgeModel <- fieldWith fromJSONField
     questionnaire <- fieldWith fromJSONField
-    submission <- fieldWith fromJSONField
     createdAt <- field
     updatedAt <- field
     owl <- fieldWith fromJSONField

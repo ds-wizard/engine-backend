@@ -19,6 +19,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
@@ -103,7 +104,7 @@ test_400 appContext =
       -- AND: Change tenantConfig
       (Right tenantConfig) <- runInContextIO getCurrentTenantConfig appContext
       let updatedTenantConfig = tenantConfig {questionnaire = tenantConfig.questionnaire {questionnaireCreation = CustomQuestionnaireCreation}}
-      runInContextIO (modifyTenantConfigDto (toChangeDTO updatedTenantConfig)) appContext
+      runInContextIO (modifyTenantConfigDto (toChangeDTO updatedTenantConfig defaultSubmissionChangeEmptyDto)) appContext
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext

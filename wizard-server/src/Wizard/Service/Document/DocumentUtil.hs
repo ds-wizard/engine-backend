@@ -6,6 +6,7 @@ import qualified Data.UUID as U
 
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentList
@@ -13,14 +14,16 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Config.TenantConfigSubmission
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Submission.SubmissionService
 import WizardLib.KnowledgeModel.Model.Event.Event
 
 enhanceDocument :: TenantConfig -> DocumentList -> AppContextM DocumentDTO
 enhanceDocument tenantConfig doc = do
+  tcSubmission <- findTenantConfigSubmission
   submissions <-
-    if tenantConfig.submission.enabled
+    if tcSubmission.enabled
       then getSubmissionsForDocument doc.uuid
       else return []
   return $ toDTO doc submissions

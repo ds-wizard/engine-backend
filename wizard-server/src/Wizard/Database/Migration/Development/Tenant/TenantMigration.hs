@@ -2,6 +2,7 @@ module Wizard.Database.Migration.Development.Tenant.TenantMigration where
 
 import Shared.Common.Constant.Component
 import Shared.Common.Util.Logger
+import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Database.DAO.Tenant.TenantConfigDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
@@ -29,6 +30,7 @@ runConfigMigration :: AppContextM ()
 runConfigMigration = do
   deleteTenantConfigs
   insertTenantConfig defaultTenantConfigEncrypted
+  insertTenantConfigSubmission defaultSubmission
   insertTenantConfig differentTenantConfigEncrypted
   return ()
 

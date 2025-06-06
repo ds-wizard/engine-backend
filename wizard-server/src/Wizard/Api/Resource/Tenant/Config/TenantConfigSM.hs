@@ -8,9 +8,12 @@ import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientParameter
 import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientStyleSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
+import Wizard.Api.Resource.Tenant.Config.TenantConfigDTO
 import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Config.TenantConfigSubmission
+import Wizard.Service.Tenant.Config.ConfigMapper
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePatternSM ()
 import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigSM ()
 
@@ -94,3 +97,6 @@ instance ToSchema TenantConfigOwl where
 
 instance ToSchema TenantConfigAiAssistant where
   declareNamedSchema = toSwagger defaultAiAssistant
+
+instance ToSchema TenantConfigDTO where
+  declareNamedSchema = toSwagger (toDTO defaultTenantConfig defaultSubmission)

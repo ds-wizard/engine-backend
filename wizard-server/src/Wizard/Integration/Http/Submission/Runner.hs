@@ -10,7 +10,7 @@ import Wizard.Integration.Http.Submission.RequestMapper
 import Wizard.Integration.Http.Submission.ResponseMapper
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Config.TenantConfigSubmission
 
 uploadDocument
   :: TenantConfigSubmissionServiceRequest

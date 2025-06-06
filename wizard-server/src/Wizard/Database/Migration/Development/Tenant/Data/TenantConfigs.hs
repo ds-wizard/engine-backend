@@ -1,18 +1,20 @@
 module Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs where
 
 import qualified Data.Map.Strict as M
-import Data.Maybe (fromJust)
-import Data.Time
 
 import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Model.Config.SimpleFeature
+import Shared.Common.Util.Date
 import Shared.OpenId.Database.Migration.Development.OpenId.Data.OpenIds
+import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Config.TenantConfigEM ()
+import Wizard.Model.Tenant.Config.TenantConfigSubmission
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
+import Wizard.Service.Tenant.Config.ConfigMapper
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -33,12 +35,11 @@ defaultTenantConfig =
     , registry = defaultRegistry
     , knowledgeModel = defaultKnowledgeModel
     , questionnaire = defaultQuestionnaire
-    , submission = defaultSubmission
     , owl = defaultOwl
     , mailConfigUuid = Nothing
     , aiAssistant = defaultAiAssistant
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
     }
 
 defaultTenantConfigEncrypted :: TenantConfig
@@ -186,18 +187,34 @@ defaultFeedback =
     }
 
 defaultSubmission :: TenantConfigSubmission
-defaultSubmission =
-  TenantConfigSubmission {enabled = True, services = [defaultSubmissionService]}
+defaultSubmission = fromSubmissionChangeDTO defaultSubmissionChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+defaultSubmissionChangeDto :: TenantConfigSubmissionChangeDTO
+defaultSubmissionChangeDto =
+  TenantConfigSubmissionChangeDTO
+    { enabled = True
+    , services = [defaultSubmissionServiceChangeDto]
+    }
+
+defaultSubmissionChangeEmptyDto :: TenantConfigSubmissionChangeDTO
+defaultSubmissionChangeEmptyDto =
+  TenantConfigSubmissionChangeDTO
+    { enabled = True
+    , services = []
+    }
 
 defaultSubmissionService :: TenantConfigSubmissionService
-defaultSubmissionService =
-  TenantConfigSubmissionService
+defaultSubmissionService = fromSubmissionServiceChangeDTO defaultSubmissionServiceChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+defaultSubmissionServiceChangeDto :: TenantConfigSubmissionServiceChangeDTO
+defaultSubmissionServiceChangeDto =
+  TenantConfigSubmissionServiceChangeDTO
     { sId = "mySubmissionServer"
     , name = "My Submission Server"
     , description = "Some description"
     , props = [defaultSubmissionServiceApiTokenProp, defaultSubmissionServiceSecretProp]
-    , supportedFormats = [defaultSubmissionServiceSupportedFormat]
-    , request = defaultSubmissionServiceRequest
+    , supportedFormats = [defaultSubmissionServiceSupportedFormatChangeDto]
+    , request = defaultSubmissionServiceRequestChangeDto
     }
 
 defaultSubmissionServiceApiTokenProp :: String
@@ -207,24 +224,33 @@ defaultSubmissionServiceSecretProp :: String
 defaultSubmissionServiceSecretProp = "Secret"
 
 defaultSubmissionServiceSupportedFormat :: TenantConfigSubmissionServiceSupportedFormat
-defaultSubmissionServiceSupportedFormat =
-  TenantConfigSubmissionServiceSupportedFormat
+defaultSubmissionServiceSupportedFormat = fromSubmissionServiceSupportedFormatChangeDTO defaultSubmissionServiceSupportedFormatChangeDto defaultTenant.uuid defaultSubmissionServiceChangeDto.sId
+
+defaultSubmissionServiceSupportedFormatChangeDto :: TenantConfigSubmissionServiceSupportedFormatChangeDTO
+defaultSubmissionServiceSupportedFormatChangeDto =
+  TenantConfigSubmissionServiceSupportedFormatChangeDTO
     { templateId = wizardDocumentTemplate.tId
     , formatUuid = formatJson.uuid
     }
 
 defaultSubmissionServiceRequest :: TenantConfigSubmissionServiceRequest
-defaultSubmissionServiceRequest =
-  TenantConfigSubmissionServiceRequest
+defaultSubmissionServiceRequest = fromSubmissionServiceRequestChangeDTO defaultSubmissionServiceRequestChangeDto
+
+defaultSubmissionServiceRequestChangeDto :: TenantConfigSubmissionServiceRequestChangeDTO
+defaultSubmissionServiceRequestChangeDto =
+  TenantConfigSubmissionServiceRequestChangeDTO
     { method = "GET"
     , url = "https://mockserver.ds-wizard.org/submission.json"
     , headers = M.fromList [("Api-Key", "${API Token}")]
-    , multipart = defaultSubmissionServiceRequestMultipart
+    , multipart = defaultSubmissionServiceRequestMultipartChangeDto
     }
 
 defaultSubmissionServiceRequestMultipart :: TenantConfigSubmissionServiceRequestMultipart
-defaultSubmissionServiceRequestMultipart =
-  TenantConfigSubmissionServiceRequestMultipart
+defaultSubmissionServiceRequestMultipart = fromSubmissionServiceRequestMultipartChangeDTO defaultSubmissionServiceRequestMultipartChangeDto
+
+defaultSubmissionServiceRequestMultipartChangeDto :: TenantConfigSubmissionServiceRequestMultipartChangeDTO
+defaultSubmissionServiceRequestMultipartChangeDto =
+  TenantConfigSubmissionServiceRequestMultipartChangeDTO
     { enabled = False
     , fileName = "file"
     }

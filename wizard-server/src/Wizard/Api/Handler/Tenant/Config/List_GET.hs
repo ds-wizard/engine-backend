@@ -5,9 +5,9 @@ import Servant
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
+import Wizard.Api.Resource.Tenant.Config.TenantConfigDTO
 import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Tenant.Config.ConfigService
 
 type List_GET =
@@ -16,9 +16,9 @@ type List_GET =
     :> "tenants"
     :> "current"
     :> "config"
-    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] TenantConfig)
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] TenantConfigDTO)
 
-list_GET :: Maybe String -> Maybe String -> BaseContextM (Headers '[Header "x-trace-uuid" String] TenantConfig)
+list_GET :: Maybe String -> Maybe String -> BaseContextM (Headers '[Header "x-trace-uuid" String] TenantConfigDTO)
 list_GET mTokenHeader mServerUrl =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $ addTraceUuidHeader =<< getCurrentTenantConfigDto

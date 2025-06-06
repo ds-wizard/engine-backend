@@ -8,7 +8,9 @@ import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientParameter
 import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientStyleJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()
+import Wizard.Api.Resource.Tenant.Config.TenantConfigDTO
 import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Config.TenantConfigSubmission
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePatternJM ()
 import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigJM ()
 
@@ -168,4 +170,10 @@ instance FromJSON TenantConfigAiAssistant where
   parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TenantConfigAiAssistant where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON TenantConfigDTO where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON TenantConfigDTO where
   toJSON = genericToJSON jsonOptions

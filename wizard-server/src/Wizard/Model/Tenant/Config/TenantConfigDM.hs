@@ -1,12 +1,12 @@
 module Wizard.Model.Tenant.Config.TenantConfigDM where
 
-import Data.Maybe (fromJust)
-import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Model.Config.SimpleFeature
+import Shared.Common.Util.Date
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Config.TenantConfigSubmission
 import Wizard.Model.User.User
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
@@ -22,12 +22,11 @@ defaultTenantConfig =
     , registry = defaultRegistry
     , knowledgeModel = defaultKnowledgeModel
     , questionnaire = defaultQuestionnaire
-    , submission = defaultSubmission
     , owl = defaultOwl
     , mailConfigUuid = Nothing
     , aiAssistant = defaultAiAssistant
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
     }
 
 defaultOrganization :: TenantConfigOrganization
@@ -152,7 +151,14 @@ defaultFeedback =
     }
 
 defaultSubmission :: TenantConfigSubmission
-defaultSubmission = TenantConfigSubmission {enabled = False, services = []}
+defaultSubmission =
+  TenantConfigSubmission
+    { tenantUuid = U.nil
+    , enabled = False
+    , services = []
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
+    }
 
 defaultOwl :: TenantConfigOwl
 defaultOwl =

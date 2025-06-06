@@ -7,7 +7,7 @@ import Data.Map.Strict as M
 import Prelude hiding (lookup)
 
 import Shared.Common.Model.Http.HttpRequest
-import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Config.TenantConfigSubmission
 import Wizard.Util.Interpolation (interpolateMapValues, interpolateString)
 
 toUploadDocumentRequest :: TenantConfigSubmissionServiceRequest -> M.Map String String -> BS.ByteString -> HttpRequest

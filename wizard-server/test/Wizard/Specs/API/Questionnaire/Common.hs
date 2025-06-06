@@ -10,6 +10,7 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Tenant.Config.TenantConfig
@@ -110,4 +111,4 @@ compareReportDtos resDto expDto = do
 updateAnonymousQuestionnaireSharing appContext value = do
   (Right tenantConfig) <- runInContextIO getCurrentTenantConfig appContext
   let updatedTenantConfig = tenantConfig {questionnaire = tenantConfig.questionnaire {questionnaireSharing = tenantConfig.questionnaire.questionnaireSharing {anonymousEnabled = value}}}
-  runInContextIO (modifyTenantConfigDto (toChangeDTO updatedTenantConfig)) appContext
+  runInContextIO (modifyTenantConfigDto (toChangeDTO updatedTenantConfig defaultSubmissionChangeDto)) appContext

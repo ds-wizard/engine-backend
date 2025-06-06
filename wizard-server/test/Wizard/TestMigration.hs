@@ -30,6 +30,7 @@ import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Database.DAO.Registry.RegistryTemplateDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Database.DAO.Tenant.TenantConfigDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
@@ -63,6 +64,7 @@ import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as User
 import Wizard.Model.Cache.ServerCache
+import Wizard.Model.Tenant.Config.TenantConfigSubmission
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
@@ -84,6 +86,7 @@ buildSchema appContext = do
   runInContext Package.dropFunctions appContext
   runInContext Common.dropFunctions appContext
   putStrLn "DB: dropping schema"
+  runInContext Tenant.dropConfigTables appContext
   runInContext ExternalLink.dropTables appContext
   runInContext KnowledgeModel.dropTables appContext
   runInContext Component.dropTables appContext
@@ -132,6 +135,7 @@ buildSchema appContext = do
   runInContext Component.createTables appContext
   runInContext KnowledgeModel.createTables appContext
   runInContext ExternalLink.createTables appContext
+  runInContext Tenant.createConfigTables appContext
   putStrLn "DB: Creating DB functions"
   runInContext Common.createFunctions appContext
   runInContext Package.createFunctions appContext
@@ -155,9 +159,8 @@ resetDB appContext = do
   runInContext deletePrefabs appContext
   runInContext deletePersistentCommands appContext
   runInContext deleteSubmissions appContext
+  runInContext deleteTenantConfigSubmissions appContext
   runInContext deleteTenantConfigs appContext
-  runInContext (insertTenantConfig defaultTenantConfigEncrypted) appContext
-  runInContext (insertTenantConfig differentTenantConfigEncrypted) appContext
   runInContext KM_MigratorDAO.deleteMigratorStates appContext
   runInContext QTN_MigratorDAO.deleteMigratorStates appContext
   runInContext deleteFeedbacks appContext
@@ -191,6 +194,9 @@ resetDB appContext = do
   runInContext (insertLimitBundle defaultTenantLimitBundle) appContext
   runInContext (insertTenant differentTenant) appContext
   runInContext (insertLimitBundle differentTenantLimitBundle) appContext
+  runInContext (insertTenantConfig defaultTenantConfigEncrypted) appContext
+  runInContext (insertTenantConfigSubmission (defaultSubmission {services = []})) appContext
+  runInContext (insertTenantConfig differentTenantConfigEncrypted) appContext
   runInContext (insertUser userSystem) appContext
   runInContext (insertUser userAlbert) appContext
   runInContext (insertUserToken albertToken) appContext

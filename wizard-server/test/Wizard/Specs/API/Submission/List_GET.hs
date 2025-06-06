@@ -32,7 +32,7 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /wizard-api/documents/{docUuid}/submissions
+-- GET /wizard-api/documents/{docUuid}/submissions
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
@@ -68,7 +68,7 @@ create_test_200 title appContext qtn authHeader =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = [submission1Dto]
+      let expDto = [submission1List]
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext

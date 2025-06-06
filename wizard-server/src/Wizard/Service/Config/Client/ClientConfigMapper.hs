@@ -7,11 +7,12 @@ import Shared.Common.Model.Config.SimpleFeature
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Config.TenantConfigSubmission
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.UserProfile
 
-toClientConfigDTO :: ServerConfig -> TenantConfig -> Maybe UserProfile -> [String] -> Tenant -> ClientConfigDTO
-toClientConfigDTO serverConfig tenantConfig mUserProfile tours tenant =
+toClientConfigDTO :: ServerConfig -> TenantConfig -> TenantConfigSubmission -> Maybe UserProfile -> [String] -> Tenant -> ClientConfigDTO
+toClientConfigDTO serverConfig tenantConfig tcSubmission mUserProfile tours tenant =
   ClientConfigDTO
     { user = mUserProfile
     , tours = tours
@@ -22,7 +23,7 @@ toClientConfigDTO serverConfig tenantConfig mUserProfile tours tenant =
     , lookAndFeel = tenantConfig.lookAndFeel
     , registry = toClientConfigRegistryDTO serverConfig.registry tenantConfig.registry
     , questionnaire = toClientConfigQuestionnaireDTO $ tenantConfig.questionnaire
-    , submission = SimpleFeature $ tenantConfig.submission.enabled
+    , submission = SimpleFeature $ tcSubmission.enabled
     , cloud = toClientConfigCloudDTO serverConfig.cloud tenant
     , owl = tenantConfig.owl
     , admin = toClientConfigAdminDTO serverConfig.admin tenant

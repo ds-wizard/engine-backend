@@ -1,6 +1,5 @@
 module Wizard.Model.Tenant.Config.TenantConfig where
 
-import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
@@ -22,7 +21,6 @@ data TenantConfig = TenantConfig
   , registry :: TenantConfigRegistry
   , knowledgeModel :: TenantConfigKnowledgeModel
   , questionnaire :: TenantConfigQuestionnaire
-  , submission :: TenantConfigSubmission
   , owl :: TenantConfigOwl
   , mailConfigUuid :: Maybe U.UUID
   , aiAssistant :: TenantConfigAiAssistant
@@ -41,7 +39,6 @@ instance Eq TenantConfig where
       && lookAndFeel a == lookAndFeel b
       && registry a == registry b
       && questionnaire a == questionnaire b
-      && submission a == submission b
       && owl a == owl b
       && mailConfigUuid a == mailConfigUuid b
 
@@ -182,43 +179,6 @@ data TenantConfigQuestionnaireFeedback = TenantConfigQuestionnaireFeedback
   , repo :: String
   }
   deriving (Generic, Eq, Show)
-
-data TenantConfigSubmission = TenantConfigSubmission
-  { enabled :: Bool
-  , services :: [TenantConfigSubmissionService]
-  }
-  deriving (Generic, Eq, Show)
-
-data TenantConfigSubmissionService = TenantConfigSubmissionService
-  { sId :: String
-  , name :: String
-  , description :: String
-  , props :: [String]
-  , supportedFormats :: [TenantConfigSubmissionServiceSupportedFormat]
-  , request :: TenantConfigSubmissionServiceRequest
-  }
-  deriving (Generic, Eq, Show)
-
-data TenantConfigSubmissionServiceSupportedFormat = TenantConfigSubmissionServiceSupportedFormat
-  { templateId :: String
-  , formatUuid :: U.UUID
-  }
-  deriving (Generic, Eq, Show)
-
-data TenantConfigSubmissionServiceRequest = TenantConfigSubmissionServiceRequest
-  { method :: String
-  , url :: String
-  , headers :: M.Map String String
-  , multipart :: TenantConfigSubmissionServiceRequestMultipart
-  }
-  deriving (Generic, Eq, Show)
-
-data TenantConfigSubmissionServiceRequestMultipart = TenantConfigSubmissionServiceRequestMultipart
-  { enabled :: Bool
-  , fileName :: String
-  }
-  deriving (Generic, Eq, Show)
-
 data TenantConfigOwl = TenantConfigOwl
   { enabled :: Bool
   , name :: String

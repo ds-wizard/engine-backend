@@ -12,7 +12,8 @@ dropFunctions :: AppContextM Int64
 dropFunctions = do
   logInfo _CMP_MIGRATION "(Function/Common) drop functions"
   let sql =
-        "DROP FUNCTION IF EXISTS create_persistent_command_from_entity_id; \
+        "DROP FUNCTION IF EXISTS gravatar_hash; \
+        \DROP FUNCTION IF EXISTS create_persistent_command_from_entity_id; \
         \DROP FUNCTION IF EXISTS create_persistent_command; \
         \DROP FUNCTION IF EXISTS is_outdated; \
         \DROP FUNCTION IF EXISTS major_version; \
@@ -32,6 +33,7 @@ createFunctions = do
   createIsOutdatedVersionFn
   createPersistentCommandFunction
   createPersistentCommandFromEntityIdFunction
+  createGravatarFunction
 
 createMajorVersionFn = do
   let sql =
@@ -201,5 +203,22 @@ createPersistentCommandFromEntityIdFunction = do
         \    RETURN OLD; \
         \END; \
         \$$ LANGUAGE plpgsql;"
+  let action conn = execute_ conn sql
+  runDB action
+
+createGravatarFunction = do
+  let sql =
+        "CREATE OR REPLACE FUNCTION gravatar_hash(email VARCHAR) RETURNS VARCHAR \
+        \    language plpgsql \
+        \as \
+        \$$ \
+        \DECLARE \
+        \    hash VARCHAR; \
+        \BEGIN \
+        \    SELECT md5(lower(trim(email))) \
+        \    INTO hash; \
+        \    RETURN hash; \
+        \END; \
+        \$$;"
   let action conn = execute_ conn sql
   runDB action

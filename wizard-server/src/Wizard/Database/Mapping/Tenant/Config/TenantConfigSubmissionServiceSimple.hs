@@ -1,0 +1,7 @@
+module Wizard.Database.Mapping.Tenant.Config.TenantConfigSubmissionServiceSimple where
+
+import Database.PostgreSQL.Simple
+
+import Wizard.Model.Tenant.Config.TenantConfigSubmissionServiceSimple
+
+instance FromRow TenantConfigSubmissionServiceSimple

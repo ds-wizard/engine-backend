@@ -10,4 +10,19 @@ import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Service.Tenant.Config.ConfigMapper
 
 instance ToSchema TenantConfigChangeDTO where
-  declareNamedSchema = toSwagger (toChangeDTO defaultTenantConfig)
+  declareNamedSchema = toSwagger (toChangeDTO defaultTenantConfig defaultSubmissionChangeDto)
+
+instance ToSchema TenantConfigSubmissionChangeDTO where
+  declareNamedSchema = toSwagger defaultSubmission
+
+instance ToSchema TenantConfigSubmissionServiceChangeDTO where
+  declareNamedSchema = toSwagger defaultSubmissionService
+
+instance ToSchema TenantConfigSubmissionServiceSupportedFormatChangeDTO where
+  declareNamedSchema = toSwagger defaultSubmissionServiceSupportedFormat
+
+instance ToSchema TenantConfigSubmissionServiceRequestChangeDTO where
+  declareNamedSchema = toSwagger defaultSubmissionServiceRequest
+
+instance ToSchema TenantConfigSubmissionServiceRequestMultipartChangeDTO where
+  declareNamedSchema = toSwagger defaultSubmissionServiceRequestMultipart
