@@ -1,6 +1,7 @@
 module Shared.Common.Database.Mapping.Common where
 
 import Data.Aeson
+import qualified Data.ByteString.Builder as BSB
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.List as L
@@ -60,9 +61,12 @@ instance ToField [U.UUID] where
      in Escape . BS.pack $ encoded
 
 instance ToField [String] where
-  toField entities =
-    let encoded = f' "{%s}" [L.intercalate "," entities]
-     in Escape . BS.pack $ encoded
+  toField [] = Plain (BSB.byteString "'{}'")
+  toField xs =
+    Many $
+      Plain (BSB.byteString "ARRAY[")
+        : (L.intersperse (Plain (BSB.char8 ',')) . map toField $ xs)
+        ++ [Plain (BSB.char8 ']')]
 
 instance FromField [String] where
   fromField f mdata = do
