@@ -20,6 +20,7 @@ import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMappe
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadNotificationJM ()
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
@@ -30,14 +31,18 @@ import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
-import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.TenantHelper
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Model.User.UserToken
 
 sendRegistrationConfirmationMail :: User -> String -> String -> AppContextM ()
 sendRegistrationConfirmationMail user hash clientUrl =
   runInTransaction $ do
-    tenantConfig <- getCurrentTenantConfig
+    tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupport
+    tcLookAndFeel <- findTenantConfigLookAndFeel
+    tcMail <- findTenantConfigMail
     let body =
           MC.MailCommand
             { mode = "wizard"
@@ -51,12 +56,12 @@ sendRegistrationConfirmationMail user hash clientUrl =
                   , ("userEmail", A.string user.email)
                   , ("hash", A.string hash)
                   , ("clientUrl", A.string clientUrl)
-                  , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
-                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
-                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
-                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
-                  , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
-                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
+                  , ("appTitle", A.maybeString tcLookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tcLookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tcLookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
                   ]
             }
     sendEmailWithTenant body user.uuid user.tenantUuid
@@ -65,7 +70,9 @@ sendRegistrationCreatedAnalyticsMail :: User -> AppContextM ()
 sendRegistrationCreatedAnalyticsMail user =
   runInTransaction $ do
     serverConfig <- asks serverConfig
-    tenantConfig <- getCurrentTenantConfig
+    tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupport
+    tcLookAndFeel <- findTenantConfigLookAndFeel
+    tcMail <- findTenantConfigMail
     clientUrl <- getClientUrl
     let body =
           MC.MailCommand
@@ -79,12 +86,12 @@ sendRegistrationCreatedAnalyticsMail user =
                   , ("userLastName", A.string user.lastName)
                   , ("userEmail", A.string user.email)
                   , ("clientUrl", A.string clientUrl)
-                  , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
-                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
-                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
-                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
-                  , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
-                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
+                  , ("appTitle", A.maybeString tcLookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tcLookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tcLookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
                   ]
             }
     sendEmailWithTenant body user.uuid user.tenantUuid
@@ -92,7 +99,9 @@ sendRegistrationCreatedAnalyticsMail user =
 sendResetPasswordMail :: UserDTO -> String -> AppContextM ()
 sendResetPasswordMail user hash =
   runInTransaction $ do
-    tenantConfig <- getCurrentTenantConfig
+    tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupport
+    tcLookAndFeel <- findTenantConfigLookAndFeel
+    tcMail <- findTenantConfigMail
     clientUrl <- getClientUrl
     let body =
           MC.MailCommand
@@ -107,12 +116,12 @@ sendResetPasswordMail user hash =
                   , ("userEmail", A.string user.email)
                   , ("hash", A.string hash)
                   , ("clientUrl", A.string clientUrl)
-                  , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
-                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
-                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
-                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
-                  , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
-                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
+                  , ("appTitle", A.maybeString tcLookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tcLookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tcLookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
                   ]
             }
     sendEmail body user.uuid
@@ -120,7 +129,9 @@ sendResetPasswordMail user hash =
 sendTwoFactorAuthMail :: UserDTO -> String -> AppContextM ()
 sendTwoFactorAuthMail user code =
   runInTransaction $ do
-    tenantConfig <- getCurrentTenantConfig
+    tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupport
+    tcLookAndFeel <- findTenantConfigLookAndFeel
+    tcMail <- findTenantConfigMail
     clientUrl <- getClientUrl
     let body =
           MC.MailCommand
@@ -135,12 +146,12 @@ sendTwoFactorAuthMail user code =
                   , ("userEmail", A.string user.email)
                   , ("code", A.string code)
                   , ("clientUrl", A.string clientUrl)
-                  , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
-                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
-                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
-                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
-                  , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
-                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
+                  , ("appTitle", A.maybeString tcLookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tcLookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tcLookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
                   ]
             }
     sendEmail body user.uuid
@@ -148,15 +159,17 @@ sendTwoFactorAuthMail user code =
 sendQuestionnaireInvitationMail :: Questionnaire -> Questionnaire -> AppContextM ()
 sendQuestionnaireInvitationMail oldQtn newQtn =
   runInTransaction $ do
-    tenantConfig <- getCurrentTenantConfig
+    tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupport
+    tcLookAndFeel <- findTenantConfigLookAndFeel
+    tcMail <- findTenantConfigMail
     clientUrl <- getClientUrl
     currentUser <- getCurrentUser
-    traverse_ (sendOneEmail tenantConfig clientUrl currentUser) (filter (filterPermissions currentUser) newQtn.permissions)
+    traverse_ (sendOneEmail tcPrivacyAndSupport tcLookAndFeel tcMail clientUrl currentUser) (filter (filterPermissions currentUser) newQtn.permissions)
   where
     filterPermissions :: UserDTO -> QuestionnairePerm -> Bool
     filterPermissions currentUser perm = perm.memberUuid /= currentUser.uuid && perm.memberUuid `notElem` fmap (.memberUuid) oldQtn.permissions
-    sendOneEmail :: TenantConfig -> String -> UserDTO -> QuestionnairePerm -> AppContextM ()
-    sendOneEmail tenantConfig clientUrl currentUser permission =
+    sendOneEmail :: TenantConfigPrivacyAndSupport -> TenantConfigLookAndFeel -> TenantConfigMail -> String -> UserDTO -> QuestionnairePerm -> AppContextM ()
+    sendOneEmail tcPrivacyAndSupport tcLookAndFeel tcMail clientUrl currentUser permission =
       case permission.memberType of
         UserGroupQuestionnairePermType -> return ()
         UserQuestionnairePermType -> do
@@ -170,12 +183,12 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
                       M.fromList
                         [ ("userUuid", A.uuid user.uuid)
                         , ("clientUrl", A.string clientUrl)
-                        , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
-                        , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
-                        , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
-                        , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
-                        , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
-                        , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
+                        , ("appTitle", A.maybeString tcLookAndFeel.appTitle)
+                        , ("logoUrl", A.maybeString tcLookAndFeel.logoUrl)
+                        , ("primaryColor", A.maybeString tcLookAndFeel.primaryColor)
+                        , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
+                        , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
+                        , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
                         , ("inviteeUuid", A.uuid user.uuid)
                         , ("inviteeFirstName", A.string user.firstName)
                         , ("inviteeLastName", A.string user.lastName)
@@ -230,7 +243,9 @@ sendQuestionnaireCommentThreadAssignedMail notifications =
 sendApiKeyCreatedMail :: UserDTO -> UserToken -> AppContextM ()
 sendApiKeyCreatedMail user userToken =
   runInTransaction $ do
-    tenantConfig <- getCurrentTenantConfig
+    tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupport
+    tcLookAndFeel <- findTenantConfigLookAndFeel
+    tcMail <- findTenantConfigMail
     clientUrl <- getClientUrl
     let body =
           MC.MailCommand
@@ -246,12 +261,12 @@ sendApiKeyCreatedMail user userToken =
                   , ("tokenName", A.string userToken.name)
                   , ("tokenExpiresAt", A.datetime userToken.expiresAt)
                   , ("clientUrl", A.string clientUrl)
-                  , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
-                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
-                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
-                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
-                  , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
-                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
+                  , ("appTitle", A.maybeString tcLookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tcLookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tcLookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
                   ]
             }
     sendEmail body user.uuid
@@ -259,7 +274,9 @@ sendApiKeyCreatedMail user userToken =
 sendApiKeyExpirationMail :: User -> UserToken -> AppContextM ()
 sendApiKeyExpirationMail user userToken =
   runInTransaction $ do
-    tenantConfig <- getCurrentTenantConfig
+    tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupport
+    tcLookAndFeel <- findTenantConfigLookAndFeel
+    tcMail <- findTenantConfigMail
     clientUrl <- getClientUrl
     let body =
           MC.MailCommand
@@ -275,12 +292,12 @@ sendApiKeyExpirationMail user userToken =
                   , ("tokenName", A.string userToken.name)
                   , ("tokenExpiresAt", A.datetime userToken.expiresAt)
                   , ("clientUrl", A.string clientUrl)
-                  , ("appTitle", A.maybeString tenantConfig.lookAndFeel.appTitle)
-                  , ("logoUrl", A.maybeString tenantConfig.lookAndFeel.logoUrl)
-                  , ("primaryColor", A.maybeString tenantConfig.lookAndFeel.primaryColor)
-                  , ("illustrationsColor", A.maybeString tenantConfig.lookAndFeel.illustrationsColor)
-                  , ("supportEmail", A.maybeString tenantConfig.privacyAndSupport.supportEmail)
-                  , ("mailConfigUuid", A.maybeUuid tenantConfig.mailConfigUuid)
+                  , ("appTitle", A.maybeString tcLookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tcLookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tcLookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
                   ]
             }
     sendEmail body user.uuid

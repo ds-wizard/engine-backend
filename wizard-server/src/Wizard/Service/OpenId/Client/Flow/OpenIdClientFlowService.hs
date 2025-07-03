@@ -58,13 +58,13 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionStat
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-createOpenIDClient :: String -> Maybe String -> AppContextM (TenantConfigAuthExternalService, O.OIDC)
+createOpenIDClient :: String -> Maybe String -> AppContextM (TenantConfigAuthenticationExternalService, O.OIDC)
 createOpenIDClient authId mClientUrl = do
   httpClientManager <- asks httpClientManager
   serverConfig <- asks serverConfig
-  tenantConfig <- getCurrentTenantConfig
+  tcAuthentication <- getCurrentTenantConfigAuthentication
   clientUrl <- getClientUrl
-  case L.find (\s -> s.aId == authId) tenantConfig.authentication.external.services of
+  case L.find (\s -> s.aId == authId) tcAuthentication.external.services of
     Just service -> do
       prov <- liftIO $ O.discover (T.pack service.url) httpClientManager
       let cId = BS.pack service.clientId

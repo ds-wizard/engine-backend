@@ -6,9 +6,9 @@ import Servant
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.Submission.SubmissionServiceSimpleDTO
-import Wizard.Api.Resource.Submission.SubmissionServiceSimpleJM ()
+import Wizard.Api.Resource.Tenant.Config.TenantConfigSubmissionServiceSimpleJM ()
 import Wizard.Model.Context.BaseContext
+import Wizard.Model.Tenant.Config.TenantConfigSubmissionServiceSimple
 import Wizard.Service.Submission.SubmissionService
 
 type Detail_Available_Submission_Services_GET =
@@ -17,13 +17,13 @@ type Detail_Available_Submission_Services_GET =
     :> "documents"
     :> Capture "docUuid" U.UUID
     :> "available-submission-services"
-    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] [SubmissionServiceSimpleDTO])
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] [TenantConfigSubmissionServiceSimple])
 
 detail_available_submission_Services_GET
   :: Maybe String
   -> Maybe String
   -> U.UUID
-  -> BaseContextM (Headers '[Header "x-trace-uuid" String] [SubmissionServiceSimpleDTO])
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] [TenantConfigSubmissionServiceSimple])
 detail_available_submission_Services_GET mTokenHeader mServerUrl docUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $ addTraceUuidHeader =<< getAvailableServicesForSubmission docUuid

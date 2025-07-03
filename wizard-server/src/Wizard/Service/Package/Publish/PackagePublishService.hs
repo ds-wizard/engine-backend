@@ -13,6 +13,7 @@ import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchData
 import Wizard.Model.Context.AclContext
@@ -27,11 +28,9 @@ import Wizard.Service.Migration.KnowledgeModel.MigratorAudit
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Package.Publish.PackagePublishMapper
 import Wizard.Service.Package.Publish.PackagePublishValidation
-import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 import WizardLib.KnowledgeModel.Service.Package.PackageUtil
-import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 publishPackageFromBranch :: PackagePublishBranchDTO -> AppContextM PackageSimpleDTO
 publishPackageFromBranch reqDto = do
@@ -87,13 +86,12 @@ doPublishPackage
   -> AppContextM PackageSimpleDTO
 doPublishPackage version branch branchData branchEvents description readme mForkOfPkgId mMergeCheckpointPkgId = do
   let squashedBranchEvents = squash branchEvents
-  tenantConfig <- getCurrentTenantConfig
-  let org = tenantConfig.organization
-  validateNewPackageVersion version branch org
+  tcOrganization <- findTenantConfigOrganization
+  validateNewPackageVersion version branch tcOrganization
   now <- liftIO getCurrentTime
-  let pkg = fromPackage branch mForkOfPkgId mMergeCheckpointPkgId org version description readme squashedBranchEvents now
+  let pkg = fromPackage branch mForkOfPkgId mMergeCheckpointPkgId tcOrganization version description readme squashedBranchEvents now
   createdPkg <- createPackage pkg
-  let updatedBranch = branch {previousPackageId = Just pkg.pId, updatedAt = now}
+  let updatedBranch = branch {previousPackageId = Just pkg.pId, updatedAt = now} :: Branch
   updateBranchById updatedBranch
   let updatedBranchData = branchData {events = [], updatedAt = now}
   updateBranchDataById updatedBranchData

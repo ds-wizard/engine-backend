@@ -48,8 +48,8 @@ test_200 appContext =
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto =
-            [ toDTO appContext.serverConfig defaultTenantConfig feedback1
-            , toDTO appContext.serverConfig defaultTenantConfig feedback2
+            [ toDTO appContext.serverConfig defaultQuestionnaire feedback1
+            , toDTO appContext.serverConfig defaultQuestionnaire feedback2
             ]
       let expBody = encode expDto
       -- AND: Run migrations

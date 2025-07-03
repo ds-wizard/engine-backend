@@ -8,15 +8,19 @@ import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
+import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO hiding (request)
+import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeJM ()
 import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()
+import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Config.TenantConfig hiding (request)
-import Wizard.Service.Tenant.Config.ConfigMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Config.Common
+import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- PUT /wizard-api/tenants/current/config
@@ -38,7 +42,7 @@ reqUrl = "/wizard-api/tenants/current/config"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = toChangeDTO editedTenantConfig
+reqDto = defaultTenantConfigChangeDto {questionnaire = editedQuestionnaireChangeDto} :: TenantConfigChangeDTO
 
 reqBody = encode reqDto
 
@@ -51,7 +55,10 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-      let expDto = editedTenantConfig
+      let expDto = defaultTenantConfig {questionnaire = editedQuestionnaire} :: TenantConfig
+      -- AND: Run migrations
+      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO (insertOrUpdateConfigSubmissionService defaultSubmissionService) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
@@ -60,7 +67,7 @@ test_200 appContext =
       assertResHeaders headers expHeaders
       compareDtos resBody expDto
       -- AND: Find result in DB and compare with expectation state
-      assertExistenceOfTenantConfigInDB appContext editedTenantConfig
+      assertExistenceOfTenantConfigQuestionnaireInDB appContext editedQuestionnaire
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -10,11 +10,15 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Wizard.Api.Resource.User.UserSubmissionPropsJM ()
+import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
+import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- GET /wizard-api/users/current/submission-props
@@ -47,6 +51,9 @@ test_200 appContext =
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto = [userAlbertApiTokenDto]
       let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO (insertOrUpdateConfigSubmissionService defaultSubmissionService) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

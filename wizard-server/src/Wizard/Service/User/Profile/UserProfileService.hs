@@ -11,13 +11,13 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
-import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.User.Profile.UserProfileMapper
 import Wizard.Service.User.Profile.UserProfileValidation
 import Wizard.Service.User.UserMapper
@@ -50,8 +50,8 @@ changeUserProfilePassword userUuid reqDto = do
 getUserProfileSubmissionProps :: U.UUID -> AppContextM [UserSubmissionPropsDTO]
 getUserProfileSubmissionProps userUuid = do
   userDecrypted <- getDecryptedUser userUuid
-  tenantConfig <- getCurrentTenantConfig
-  return . fmap (mapFn userDecrypted) $ tenantConfig.submission.services
+  tcSubmission <- findTenantConfigSubmission
+  return . fmap (mapFn userDecrypted) $ tcSubmission.services
   where
     mapFn :: User -> TenantConfigSubmissionService -> UserSubmissionPropsDTO
     mapFn userDecrypted service =

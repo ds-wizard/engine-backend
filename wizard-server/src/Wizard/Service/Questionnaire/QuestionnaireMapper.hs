@@ -349,14 +349,14 @@ fromQuestionnairePermChangeDTO qtnUuid tenantUuid dto =
     , tenantUuid = tenantUuid
     }
 
-fromCreateQuestionnaireCommand :: CreateQuestionnaireCommand -> U.UUID -> [QuestionnairePerm] -> TenantConfig -> U.UUID -> UTCTime -> Questionnaire
-fromCreateQuestionnaireCommand command uuid permissions tenantConfig createdBy now = do
+fromCreateQuestionnaireCommand :: CreateQuestionnaireCommand -> U.UUID -> [QuestionnairePerm] -> TenantConfigQuestionnaire -> U.UUID -> UTCTime -> Questionnaire
+fromCreateQuestionnaireCommand command uuid permissions tcQuestionnaire createdBy now = do
   Questionnaire
     { uuid = uuid
     , name = command.name
     , description = Nothing
-    , visibility = tenantConfig.questionnaire.questionnaireVisibility.defaultValue
-    , sharing = tenantConfig.questionnaire.questionnaireSharing.defaultValue
+    , visibility = tcQuestionnaire.questionnaireVisibility.defaultValue
+    , sharing = tcQuestionnaire.questionnaireSharing.defaultValue
     , packageId = command.packageId
     , selectedQuestionTagUuids = []
     , projectTags = []
@@ -366,7 +366,7 @@ fromCreateQuestionnaireCommand command uuid permissions tenantConfig createdBy n
     , permissions = permissions
     , isTemplate = False
     , squashed = True
-    , tenantUuid = tenantConfig.uuid
+    , tenantUuid = tcQuestionnaire.tenantUuid
     , createdAt = now
     , updatedAt = now
     }

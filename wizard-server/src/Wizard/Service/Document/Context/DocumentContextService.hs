@@ -14,6 +14,7 @@ import Shared.Common.Util.List
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
@@ -25,12 +26,10 @@ import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireVersion
-import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Document.Context.DocumentContextMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Report.ReportGenerator
-import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.TenantHelper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
 import WizardLib.KnowledgeModel.Model.Event.Event
@@ -44,9 +43,8 @@ createDocumentContext doc pkg branchEvents qtn mReplies = do
   km <- compileKnowledgeModelWithCaching' branchEvents (Just qtn.packageId) qtn.selectedQuestionTagUuids (not . null $ branchEvents)
   mQtnCreatedBy <- forM qtn.creatorUuid findUserByUuid
   mDocCreatedBy <- forM doc.createdBy findUserByUuid
-  tenantConfig <- getCurrentTenantConfig
+  tcOrganization <- findTenantConfigOrganization
   clientUrl <- getClientUrl
-  let org = tenantConfig.organization
   now <- liftIO getCurrentTime
   (phaseUuid, replies, labels) <-
     case mReplies of
@@ -81,7 +79,7 @@ createDocumentContext doc pkg branchEvents qtn mReplies = do
       km
       report
       pkg
-      org
+      tcOrganization
       mQtnCreatedBy
       mDocCreatedBy
       users

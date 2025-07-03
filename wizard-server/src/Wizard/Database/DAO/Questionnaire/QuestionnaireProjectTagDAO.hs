@@ -50,9 +50,9 @@ findCount excludeTags params = do
 
 sqlBase :: String
 sqlBase =
-  "SELECT jsonb_array_elements_text((questionnaire -> 'projectTagging' ->> 'tags') ::jsonb) as project_tag \
-  \FROM tenant_config \
-  \WHERE uuid = ? \
+  "SELECT unnest(project_tagging_tags) as project_tag \
+  \FROM config_questionnaire \
+  \WHERE tenant_uuid = ? \
   \UNION \
   \SELECT nested.project_tag \
   \FROM (SELECT unnest(project_tags) as project_tag, tenant_uuid FROM questionnaire) nested \

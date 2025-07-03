@@ -3,12 +3,12 @@ module Wizard.Service.Package.Publish.PackagePublishMapper where
 import Data.Time
 
 import Wizard.Model.Branch.Branch
+import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.Common.Util.Coordinate
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.Package.Package
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
-import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 fromPackage
   :: Branch

@@ -18,34 +18,40 @@ instance FromJSON TenantConfig where
 instance ToJSON TenantConfig where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigAuth where
+instance FromJSON TenantConfigOrganization where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigAuth where
+instance ToJSON TenantConfigOrganization where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigAuthInternal where
+instance FromJSON TenantConfigAuthentication where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigAuthInternal where
+instance ToJSON TenantConfigAuthentication where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigAuthInternalTwoFactorAuth where
+instance FromJSON TenantConfigAuthenticationInternal where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigAuthInternalTwoFactorAuth where
+instance ToJSON TenantConfigAuthenticationInternal where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigAuthExternal where
+instance FromJSON TenantConfigAuthenticationInternalTwoFactorAuth where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigAuthExternal where
+instance ToJSON TenantConfigAuthenticationInternalTwoFactorAuth where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigAuthExternalService where
+instance FromJSON TenantConfigAuthenticationExternal where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigAuthExternalService where
+instance ToJSON TenantConfigAuthenticationExternal where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON TenantConfigAuthenticationExternalService where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON TenantConfigAuthenticationExternalService where
   toJSON = genericToJSON jsonOptions
 
 instance FromJSON TenantConfigPrivacyAndSupport where
@@ -64,18 +70,6 @@ instance FromJSON TenantConfigDashboardAndLoginScreenDashboardType
 
 instance ToJSON TenantConfigDashboardAndLoginScreenDashboardType
 
-instance FromJSON TenantConfigLookAndFeel where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON TenantConfigLookAndFeel where
-  toJSON = genericToJSON jsonOptions
-
-instance FromJSON TenantConfigLookAndFeelCustomMenuLink where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON TenantConfigLookAndFeelCustomMenuLink where
-  toJSON = genericToJSON jsonOptions
-
 instance FromJSON TenantConfigRegistry where
   parseJSON = genericParseJSON jsonOptions
 
@@ -92,6 +86,12 @@ instance FromJSON TenantConfigKnowledgeModelPublic where
   parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TenantConfigKnowledgeModelPublic where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON TenantConfigKnowledgeModelPublicPackagePattern where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON TenantConfigKnowledgeModelPublicPackagePattern where
   toJSON = genericToJSON jsonOptions
 
 instance FromJSON TenantConfigQuestionnaire where
@@ -162,10 +162,4 @@ instance FromJSON TenantConfigOwl where
   parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TenantConfigOwl where
-  toJSON = genericToJSON jsonOptions
-
-instance FromJSON TenantConfigAiAssistant where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON TenantConfigAiAssistant where
   toJSON = genericToJSON jsonOptions

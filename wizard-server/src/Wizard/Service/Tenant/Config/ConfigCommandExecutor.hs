@@ -8,9 +8,14 @@ import qualified Data.UUID as U
 
 import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
+import Wizard.Database.DAO.Tenant.Config.TenantConfigDashboardAndLoginScreenDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigService
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigAiAssistantDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateOrUpdateAuthenticationConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAiAssistantConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
@@ -40,10 +45,10 @@ cCreateOrUpdateAuthentication persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String CreateOrUpdateAuthenticationConfigCommand
   case eCommand of
     Right command -> do
-      tenantConfig <- getTenantConfigByUuid command.tenantUuid
+      tcAuthentication <- getTenantConfigAuthenticationByUuid persistentCommand.tenantUuid
       now <- liftIO getCurrentTime
-      let updatedTenantConfig = fromAuthenticationCommand tenantConfig command now
-      modifyTenantConfig updatedTenantConfig
+      let tcAuthenticationUpdated = fromAuthenticationCommand tcAuthentication command now
+      modifyTenantConfigAuthentication tcAuthenticationUpdated
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
 
@@ -54,10 +59,10 @@ cUpdateRegistry persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateRegistryConfigCommand
   case eCommand of
     Right command -> do
-      tenantConfig <- getTenantConfigByUuid command.tenantUuid
+      tcRegistry <- getTenantConfigRegistryByUuid command.tenantUuid
       now <- liftIO getCurrentTime
-      let updatedTenantConfig = fromRegistry tenantConfig command now
-      modifyTenantConfig updatedTenantConfig
+      let tcRegistryUpdated = fromRegistry tcRegistry command now
+      modifyTenantConfigRegistry tcRegistryUpdated
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
 
@@ -68,10 +73,10 @@ cUpdateLookAndFeel persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateLookAndFeelConfigCommand
   case eCommand of
     Right command -> do
-      tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
+      tcLookAndFeel <- findTenantConfigLookAndFeelByUuid persistentCommand.tenantUuid
       now <- liftIO getCurrentTime
-      let updatedTenantConfig = fromLookAndFeel tenantConfig command now
-      modifyTenantConfig updatedTenantConfig
+      let tcLookAndFeelUpdated = fromLookAndFeel tcLookAndFeel command now
+      updateTenantConfigLookAndFeel tcLookAndFeelUpdated
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
 
@@ -82,10 +87,10 @@ cUpdateSupport persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateSupportConfigCommand
   case eCommand of
     Right command -> do
-      tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
+      tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupportByUuid persistentCommand.tenantUuid
       now <- liftIO getCurrentTime
-      let updatedTenantConfig = fromPrivacyAndSupport tenantConfig command now
-      modifyTenantConfig updatedTenantConfig
+      let tcPrivacyAndSupportUpdated = fromPrivacyAndSupport tcPrivacyAndSupport command now
+      updateTenantConfigPrivacyAndSupport tcPrivacyAndSupportUpdated
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
 
@@ -96,10 +101,10 @@ cUpdateDefaultRole persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateDefaultRoleConfigCommand
   case eCommand of
     Right command -> do
-      tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
+      tcAuthentication <- getTenantConfigAuthenticationByUuid persistentCommand.tenantUuid
       now <- liftIO getCurrentTime
-      let updatedTenantConfig = fromDefaultRole tenantConfig command now
-      modifyTenantConfig updatedTenantConfig
+      let tcAuthenticationUpdated = fromDefaultRole tcAuthentication command now
+      modifyTenantConfigAuthentication tcAuthenticationUpdated
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
 
@@ -110,10 +115,10 @@ cUpdateAnnouncements persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateAnnouncementConfigCommand
   case eCommand of
     Right command -> do
-      tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
+      tenantConfig <- findTenantConfigDashboardAndLoginScreenByUuid persistentCommand.tenantUuid
       now <- liftIO getCurrentTime
       let updatedTenantConfig = fromAnnouncements tenantConfig command now
-      modifyTenantConfig updatedTenantConfig
+      updateTenantConfigDashboardAndLoginScreen updatedTenantConfig
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
 
@@ -124,10 +129,10 @@ cUpdateAiAssistant persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateAiAssistantConfigCommand
   case eCommand of
     Right command -> do
-      tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
+      tcAiAssistant <- findTenantConfigAiAssistantByUuid persistentCommand.tenantUuid
       now <- liftIO getCurrentTime
-      let updatedTenantConfig = fromAiAssitant tenantConfig command now
-      modifyTenantConfig updatedTenantConfig
+      let tcAiAssistantUpdated = fromAiAssitant tcAiAssistant command now
+      updateTenantConfigAiAssistant tcAiAssistantUpdated
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
 
@@ -138,9 +143,9 @@ cUpdateOrganization persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateOrganizationConfigCommand
   case eCommand of
     Right command -> do
-      tenantConfig <- getTenantConfigByUuid persistentCommand.tenantUuid
+      tcOrganization <- findTenantConfigOrganizationByUuid persistentCommand.tenantUuid
       now <- liftIO getCurrentTime
-      let updatedTenantConfig = fromOrganization tenantConfig command now
-      modifyTenantConfig updatedTenantConfig
+      let tcOrganizationUpdated = fromOrganization tcOrganization command now
+      updateTenantConfigOrganization tcOrganizationUpdated
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])

@@ -7,6 +7,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
+import Wizard.Model.Context.ContextLenses ()
 
 import Wizard.Specs.Common
 

@@ -48,12 +48,12 @@ getDocumentTemplates queryParams mPkgId = do
 getDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSimpleDTO)
 getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated pageable sort = do
   checkPermission _DOC_TML_READ_PERM
-  tenantConfig <- getCurrentTenantConfig
-  if mOutdated == Just True && not tenantConfig.registry.enabled
+  tcRegistry <- getCurrentTenantConfigRegistry
+  if mOutdated == Just True && not tcRegistry.enabled
     then return $ Page "documentTemplates" (PageMetadata 0 0 0 0) []
     else do
       templates <- findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated Nothing pageable sort
-      return . fmap (toSimpleDTO' tenantConfig.registry.enabled) $ templates
+      return . fmap (toSimpleDTO' tcRegistry.enabled) $ templates
 
 getDocumentTemplateSuggestions :: Maybe String -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
 getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable pageable sort = do
@@ -93,8 +93,8 @@ getDocumentTemplateByUuidDto documentTemplateId = do
   serverConfig <- asks serverConfig
   let registryLink = buildRegistryTemplateUrl serverConfig.registry.clientUrl tml tmlRs
   let usablePackages = getUsablePackagesForDocumentTemplate tml pkgs
-  tenantConfig <- getCurrentTenantConfig
-  return $ toDetailDTO tml tenantConfig.registry.enabled tmlRs orgRs versions registryLink usablePackages
+  tcRegistry <- getCurrentTenantConfigRegistry
+  return $ toDetailDTO tml tcRegistry.enabled tmlRs orgRs versions registryLink usablePackages
 
 modifyDocumentTemplate :: String -> DocumentTemplateChangeDTO -> AppContextM DocumentTemplateDetailDTO
 modifyDocumentTemplate documentTemplateId reqDto =

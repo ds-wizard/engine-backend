@@ -19,10 +19,10 @@ import WizardLib.Public.Model.User.UserGroupMembership
 
 checkCreatePermissionToQtn :: AppContextM ()
 checkCreatePermissionToQtn = do
-  tenantConfig <- getCurrentTenantConfig
-  let qtnSharingEnabled = tenantConfig.questionnaire.questionnaireSharing.enabled
-  let qtnSharingAnonymousEnabled = tenantConfig.questionnaire.questionnaireSharing.anonymousEnabled
-  let qtnCreation = tenantConfig.questionnaire.questionnaireCreation
+  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
+  let qtnSharingEnabled = tcQuestionnaire.questionnaireSharing.enabled
+  let qtnSharingAnonymousEnabled = tcQuestionnaire.questionnaireSharing.anonymousEnabled
+  let qtnCreation = tcQuestionnaire.questionnaireCreation
   case (qtnSharingEnabled, qtnSharingAnonymousEnabled, qtnCreation) of
     (True, True, CustomQuestionnaireCreation) -> return ()
     (True, True, TemplateAndCustomQuestionnaireCreation) -> return ()
@@ -34,8 +34,8 @@ checkCreatePermissionToQtn = do
 checkCreateFromTemplatePermissionToQtn :: Bool -> AppContextM ()
 checkCreateFromTemplatePermissionToQtn isTemplate = do
   checkPermission _QTN_PERM
-  tenantConfig <- getCurrentTenantConfig
-  let qtnCreation = tenantConfig.questionnaire.questionnaireCreation
+  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
+  let qtnCreation = tcQuestionnaire.questionnaireCreation
   case qtnCreation of
     CustomQuestionnaireCreation ->
       throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Questionnaire Template"

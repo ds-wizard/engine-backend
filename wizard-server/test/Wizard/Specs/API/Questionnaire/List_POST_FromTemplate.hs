@@ -23,7 +23,6 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U_M
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Tenant.Config.TenantConfig hiding (request)
-import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigService
 
 import SharedTest.Specs.API.Common
@@ -101,9 +100,9 @@ test_400 appContext =
       let expDto = UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Questionnaire Template"
       let expBody = encode expDto
       -- AND: Change tenantConfig
-      (Right tenantConfig) <- runInContextIO getCurrentTenantConfig appContext
-      let updatedTenantConfig = tenantConfig {questionnaire = tenantConfig.questionnaire {questionnaireCreation = CustomQuestionnaireCreation}}
-      runInContextIO (modifyTenantConfigDto (toChangeDTO updatedTenantConfig)) appContext
+      (Right tcQuestionnaire) <- runInContextIO getCurrentTenantConfigQuestionnaire appContext
+      let tcQuestionnaireUpdated = tcQuestionnaire {questionnaireCreation = CustomQuestionnaireCreation}
+      runInContextIO (modifyTenantConfigQuestionnaire tcQuestionnaireUpdated) appContext
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext

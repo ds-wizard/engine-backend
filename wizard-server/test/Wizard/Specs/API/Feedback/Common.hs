@@ -10,7 +10,6 @@ import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Tenant.Config.TenantConfig
-import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigService
 
 import Wizard.Specs.API.Common
@@ -35,11 +34,11 @@ compareFeedbackDtos resDto expDto = do
 -- HELPER
 -- --------------------------------
 loadFeedbackTokenFromEnv = do
-  tenantConfig <- getCurrentTenantConfig
-  updatedTenantConfig <- applyEnvVariable "FEEDBACK_TOKEN" tenantConfig.questionnaire.feedback.token (\t -> tenantConfig {questionnaire = tenantConfig.questionnaire {feedback = tenantConfig.questionnaire.feedback {token = t}}})
-  modifyTenantConfigDto (toChangeDTO updatedTenantConfig)
+  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
+  updatedTcQuestionnaire <- applyEnvVariable "FEEDBACK_TOKEN" tcQuestionnaire.feedback.token (\t -> tcQuestionnaire {feedback = tcQuestionnaire.feedback {token = t}})
+  modifyTenantConfigQuestionnaire updatedTcQuestionnaire
 
-applyEnvVariable :: String -> String -> (String -> TenantConfig) -> AppContextM TenantConfig
+applyEnvVariable :: String -> String -> (String -> TenantConfigQuestionnaire) -> AppContextM TenantConfigQuestionnaire
 applyEnvVariable envVariableName oldValue updateFn = do
   envVariable <- liftIO $ lookupEnv envVariableName
   let newValue = fromMaybe oldValue envVariable

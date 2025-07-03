@@ -1,15 +1,14 @@
 module Wizard.Service.Branch.BranchUtil where
 
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchState
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Package.PackageService
-import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.KnowledgeModel.Model.Package.Package
-import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 getBranchPreviousPackage :: Branch -> AppContextM (Maybe Package)
 getBranchPreviousPackage branch =
@@ -24,9 +23,8 @@ getBranchForkOfPackageId branch = do
   mPreviousPkg <- getBranchPreviousPackage branch
   case mPreviousPkg of
     Just previousPkg -> do
-      tenantConfig <- getCurrentTenantConfig
-      let org = tenantConfig.organization
-      if (previousPkg.organizationId == org.organizationId) && (previousPkg.kmId == branch.kmId)
+      tcOrganization <- findTenantConfigOrganization
+      if (previousPkg.organizationId == tcOrganization.organizationId) && (previousPkg.kmId == branch.kmId)
         then return $ previousPkg.forkOfPackageId
         else return . Just $ previousPkg.pId
     Nothing -> return Nothing
@@ -36,9 +34,8 @@ getBranchMergeCheckpointPackageId branch = do
   mPreviousPkg <- getBranchPreviousPackage branch
   case mPreviousPkg of
     Just previousPkg -> do
-      tenantConfig <- getCurrentTenantConfig
-      let org = tenantConfig.organization
-      if (previousPkg.organizationId == org.organizationId) && (previousPkg.kmId == branch.kmId)
+      tcOrganization <- findTenantConfigOrganization
+      if (previousPkg.organizationId == tcOrganization.organizationId) && (previousPkg.kmId == branch.kmId)
         then return $ previousPkg.mergeCheckpointPackageId
         else return . Just $ previousPkg.pId
     Nothing -> return Nothing

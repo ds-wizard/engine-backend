@@ -1,5 +1,6 @@
 module Wizard.Service.Tenant.TenantService where
 
+import Control.Monad (void)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 import qualified Data.UUID as U
@@ -17,7 +18,15 @@ import Wizard.Api.Resource.Tenant.TenantCreateDTO
 import Wizard.Api.Resource.Tenant.TenantDTO
 import Wizard.Api.Resource.Tenant.TenantDetailDTO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.Tenant.TenantConfigDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigAuthenticationDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigDashboardAndLoginScreenDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigKnowledgeModelDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigQuestionnaireDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigRegistryDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AclContext
@@ -25,7 +34,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Config.TenantConfigDM
 import Wizard.Model.Tenant.Tenant
-import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
 import Wizard.Service.Tenant.TenantMapper
 import Wizard.Service.Tenant.TenantUtil
@@ -33,7 +41,12 @@ import Wizard.Service.Tenant.TenantValidation
 import Wizard.Service.Tenant.Usage.UsageService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import Wizard.Service.User.UserService
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigAiAssistantDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
 import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
+import WizardLib.Public.Model.Tenant.Config.TenantConfigDM
 
 getTenantsPage :: Maybe String -> Maybe [TenantState] -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page TenantDTO)
 getTenantsPage mQuery mStates mEnabled pageable sort = do
@@ -94,9 +107,9 @@ getTenantByUuid uuid = do
   tenant <- findTenantByUuid uuid
   usage <- getUsage uuid
   users <- findUsersWithTenantFiltered uuid [("role", _USER_ROLE_ADMIN)]
-  tenantConfig <- getTenantConfigByUuid tenant.uuid
-  let mLogoUrl = tenantConfig.lookAndFeel.logoUrl
-  let mPrimaryColor = tenantConfig.lookAndFeel.primaryColor
+  tcLookAndFeel <- findTenantConfigLookAndFeelByUuid uuid
+  let mLogoUrl = tcLookAndFeel.logoUrl
+  let mPrimaryColor = tcLookAndFeel.primaryColor
   return $ toDetailDTO tenant mLogoUrl mPrimaryColor usage users
 
 modifyTenant :: U.UUID -> TenantChangeDTO -> AppContextM Tenant
@@ -130,18 +143,21 @@ deleteTenant uuid = do
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-createConfig :: U.UUID -> UTCTime -> AppContextM TenantConfig
-createConfig tntUuid now = do
+createConfig :: U.UUID -> UTCTime -> AppContextM ()
+createConfig uuid now = do
   runInTransaction $ do
-    let tenantConfig =
-          defaultTenantConfig
-            { uuid = tntUuid
-            , createdAt = now
-            , updatedAt = now
-            }
-          :: TenantConfig
-    insertTenantConfig tenantConfig
-    return tenantConfig
+    insertTenantConfigOrganization (defaultOrganization {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigOrganization)
+    insertTenantConfigAuthentication (defaultAuthentication {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigAuthentication)
+    insertTenantConfigPrivacyAndSupport (defaultPrivacyAndSupport {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigPrivacyAndSupport)
+    insertTenantConfigDashboardAndLoginScreen (defaultDashboardAndLoginScreen {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigDashboardAndLoginScreen)
+    insertTenantConfigLookAndFeel (defaultLookAndFeel {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigLookAndFeel)
+    insertTenantConfigRegistry (defaultRegistry {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigRegistry)
+    insertTenantConfigKnowledgeModel (defaultKnowledgeModel {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigKnowledgeModel)
+    insertTenantConfigQuestionnaire (defaultQuestionnaire {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigQuestionnaire)
+    insertTenantConfigSubmission (defaultSubmission {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigSubmission)
+    insertTenantConfigMail (defaultMail {tenantUuid = uuid, createdAt = now, updatedAt = now})
+    insertTenantConfigAiAssistant (defaultAiAssistant {tenantUuid = uuid, createdAt = now, updatedAt = now})
+    void $ insertTenantConfigOwl (defaultOwl {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigOwl)
 
 createLocale :: U.UUID -> UTCTime -> AppContextM Locale
 createLocale tntUuid now = do

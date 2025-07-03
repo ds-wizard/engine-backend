@@ -8,6 +8,7 @@ import Shared.Common.Model.Config.SimpleFeature
 import Shared.Common.Model.Error.Error
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.User.UserService
 
 import Wizard.Specs.Common
@@ -20,7 +21,9 @@ userServiceIntegrationSpec appContext =
         do
           let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registration"
           -- AND: Update config in DB
-          runInContext (modifyTenantConfig (\c -> c {authentication = c.authentication {internal = c.authentication.internal {registration = c.authentication.internal.registration {enabled = False}}}})) appContext
+          (Right tcAuthentication) <- runInContext getCurrentTenantConfigAuthentication appContext
+          let tcAuthenticationUpdated = tcAuthentication {internal = tcAuthentication.internal {registration = tcAuthentication.internal.registration {enabled = False}}}
+          tcAuthentication <- runInContext (modifyTenantConfigAuthentication tcAuthenticationUpdated) appContext
           -- WHEN:
           result <- runInContext (registerUser userJohnCreate) appContext
           -- THEN:

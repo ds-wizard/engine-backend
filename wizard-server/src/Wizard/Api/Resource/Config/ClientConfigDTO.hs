@@ -34,7 +34,7 @@ data ClientConfigDTO
 
 data ClientConfigAuthDTO = ClientConfigAuthDTO
   { defaultRole :: String
-  , internal :: TenantConfigAuthInternal
+  , internal :: TenantConfigAuthenticationInternal
   , external :: ClientConfigAuthExternalDTO
   }
   deriving (Generic, Eq, Show)

@@ -29,16 +29,16 @@ import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 
 extractVisibility dto = do
-  tenantConfig <- getCurrentTenantConfig
-  if tenantConfig.questionnaire.questionnaireVisibility.enabled
+  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
+  if tcQuestionnaire.questionnaireVisibility.enabled
     then return dto.visibility
-    else return $ tenantConfig.questionnaire.questionnaireVisibility.defaultValue
+    else return $ tcQuestionnaire.questionnaireVisibility.defaultValue
 
 extractSharing dto = do
-  tenantConfig <- getCurrentTenantConfig
-  if tenantConfig.questionnaire.questionnaireSharing.enabled
+  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
+  if tcQuestionnaire.questionnaireSharing.enabled
     then return dto.sharing
-    else return $ tenantConfig.questionnaire.questionnaireSharing.defaultValue
+    else return $ tcQuestionnaire.questionnaireSharing.defaultValue
 
 enhanceQuestionnairePerm :: QuestionnairePerm -> AppContextM QuestionnairePermDTO
 enhanceQuestionnairePerm qtnPerm =
@@ -101,9 +101,9 @@ getPhasesAnsweredIndication qtn events = do
 
 skipIfAssigningProject :: Questionnaire -> AppContextM () -> AppContextM ()
 skipIfAssigningProject qtn action = do
-  tenantConfig <- getCurrentTenantConfig
-  let questionnaireSharingEnabled = tenantConfig.questionnaire.questionnaireSharing.enabled
-  let questionnaireSharingAnonymousEnabled = tenantConfig.questionnaire.questionnaireSharing.anonymousEnabled
+  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
+  let questionnaireSharingEnabled = tcQuestionnaire.questionnaireSharing.enabled
+  let questionnaireSharingAnonymousEnabled = tcQuestionnaire.questionnaireSharing.anonymousEnabled
   when
     (not (questionnaireSharingEnabled && questionnaireSharingAnonymousEnabled) || (not . null $ qtn.permissions))
     action

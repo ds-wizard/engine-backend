@@ -55,15 +55,15 @@ findBranchesPage mQuery pageable sort =
               \       branch.name, \
               \       branch.km_id, \
               \       branch.version, \
-              \       get_branch_state(knowledge_model_migration, branch_data, get_branch_fork_of_package_id(tenant_config, previous_pkg, branch), '%s') as state, \
+              \       get_branch_state(knowledge_model_migration, branch_data, get_branch_fork_of_package_id(config_organization, previous_pkg, branch), '%s') as state, \
               \       branch.previous_package_id, \
-              \       get_branch_fork_of_package_id(tenant_config, previous_pkg, branch) as fork_of_package_id, \
+              \       get_branch_fork_of_package_id(config_organization, previous_pkg, branch) as fork_of_package_id, \
               \       branch.created_by, \
               \       branch.created_at, \
               \       branch_data.updated_at  \
               \FROM branch \
               \         JOIN branch_data ON branch.uuid = branch_data.branch_uuid \
-              \         JOIN tenant_config ON branch.tenant_uuid = tenant_config.uuid \
+              \         JOIN config_organization ON branch.tenant_uuid = config_organization.tenant_uuid \
               \         LEFT JOIN knowledge_model_migration ON branch.uuid = knowledge_model_migration.branch_uuid \
               \         LEFT JOIN package previous_pkg \
               \                   ON branch.previous_package_id = previous_pkg.id and branch.tenant_uuid = previous_pkg.tenant_uuid \

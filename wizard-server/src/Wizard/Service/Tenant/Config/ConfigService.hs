@@ -7,7 +7,15 @@ import qualified Data.UUID as U
 import Shared.Common.Model.Common.SensitiveData
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.Tenant.TenantConfigDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigAuthenticationDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigDashboardAndLoginScreenDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigKnowledgeModelDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigQuestionnaireDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigRegistryDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
@@ -15,39 +23,151 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Config.TenantConfigEM ()
 import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigValidation
-
-getCurrentTenantConfig :: AppContextM TenantConfig
-getCurrentTenantConfig = do
-  serverConfig <- asks serverConfig
-  encryptedTenantConfig <- findCurrentTenantConfig
-  return $ process serverConfig.general.secret encryptedTenantConfig
-
-getTenantConfigByUuid :: U.UUID -> AppContextM TenantConfig
-getTenantConfigByUuid tenantUuid = do
-  serverConfig <- asks serverConfig
-  encryptedTenantConfig <- findCurrentTenantConfigByUuid tenantUuid
-  return $ process serverConfig.general.secret encryptedTenantConfig
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigAiAssistantDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
+import WizardLib.Public.Service.Tenant.Config.ConfigMapper
 
 getCurrentTenantConfigDto :: AppContextM TenantConfig
 getCurrentTenantConfigDto = do
   checkPermission _CFG_PERM
-  getCurrentTenantConfig
-
-modifyTenantConfig :: TenantConfig -> AppContextM TenantConfig
-modifyTenantConfig tenantConfig =
-  runInTransaction $ do
-    serverConfig <- asks serverConfig
-    let encryptedUpdatedTenantConfig = process serverConfig.general.secret tenantConfig
-    updateTenantConfig encryptedUpdatedTenantConfig
-    return tenantConfig
+  tcOrganization <- findTenantConfigOrganization
+  tcAuthentication <- getCurrentTenantConfigAuthentication
+  tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupport
+  tcDashboardAndLoginScreen <- findTenantConfigDashboardAndLoginScreen
+  tcLookAndFeel <- findTenantConfigLookAndFeel
+  tcRegistry <- getCurrentTenantConfigRegistry
+  tcKnowledgeModel <- getCurrentTenantConfigKnowledgeModel
+  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
+  tcSubmission <- findTenantConfigSubmission
+  tcAiAssistant <- findTenantConfigAiAssistant
+  tcOwl <- findTenantConfigOwl
+  return $ toTenantConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcKnowledgeModel tcQuestionnaire tcSubmission tcAiAssistant tcOwl
 
 modifyTenantConfigDto :: TenantConfigChangeDTO -> AppContextM TenantConfig
 modifyTenantConfigDto reqDto =
   runInTransaction $ do
     checkPermission _CFG_PERM
-    tenantConfig <- getCurrentTenantConfig
     validateTenantConfig reqDto
     now <- liftIO getCurrentTime
-    let updatedTenantConfig = fromChangeDTO reqDto tenantConfig now
-    modifyTenantConfig updatedTenantConfig
-    return updatedTenantConfig
+    -- Organization
+    tcOrganization <- findTenantConfigOrganization
+    let tcOrganizationUpdated = fromOrganizationChangeDTO reqDto.organization tcOrganization.tenantUuid tcOrganization.createdAt now
+    updateTenantConfigOrganization tcOrganizationUpdated
+    -- Authentication
+    tcAuthentication <- getCurrentTenantConfigAuthentication
+    let tcAuthenticationUpdated = fromAuthenticationChangeDTO reqDto.authentication tcAuthentication.tenantUuid tcAuthentication.createdAt now
+    modifyTenantConfigAuthentication tcAuthenticationUpdated
+    -- PrivacyAndSupport
+    tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupport
+    let tcPrivacyAndSupportUpdated = fromPrivacyAndSupportChangeDTO reqDto.privacyAndSupport tcPrivacyAndSupport.tenantUuid tcPrivacyAndSupport.createdAt now
+    updateTenantConfigPrivacyAndSupport tcPrivacyAndSupportUpdated
+    -- DashboardAndLoginScreen
+    tcDashboardAndLoginScreen <- findTenantConfigLookAndFeel
+    let tcDashboardAndLoginScreenUpdated = fromDashboardAndLoginScreenChangeDTO reqDto.dashboardAndLoginScreen tcDashboardAndLoginScreen.tenantUuid tcDashboardAndLoginScreen.createdAt now
+    updateTenantConfigDashboardAndLoginScreen tcDashboardAndLoginScreenUpdated
+    -- LookAndFeel
+    tcLookAndFeel <- findTenantConfigLookAndFeel
+    let tcLookAndFeelUpdated = fromLookAndFeelChangeDTO reqDto.lookAndFeel tcLookAndFeel.tenantUuid tcLookAndFeel.createdAt now
+    updateTenantConfigLookAndFeel tcLookAndFeelUpdated
+    -- Registry
+    tcRegistry <- getCurrentTenantConfigRegistry
+    let tcRegistryUpdated = fromRegistryChangeDTO reqDto.registry tcRegistry.tenantUuid tcRegistry.createdAt now
+    modifyTenantConfigRegistry tcRegistryUpdated
+    -- KnowledgeModel
+    tcKnowledgeModelUpdated <- getCurrentTenantConfigKnowledgeModel
+    let tcKnowledgeModelUpdatedUpdated = fromKnowledgeModelChangeDTO reqDto.knowledgeModel tcKnowledgeModelUpdated.tenantUuid tcKnowledgeModelUpdated.createdAt now
+    modifyTenantConfigKnowledgeModel tcKnowledgeModelUpdatedUpdated
+    -- Questionnaire
+    tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
+    let tcQuestionnaireUpdated = fromQuestionnaireChangeDTO reqDto.questionnaire tcQuestionnaire.tenantUuid tcQuestionnaire.createdAt now
+    modifyTenantConfigQuestionnaire tcQuestionnaireUpdated
+    -- Submission
+    tcSubmission <- findTenantConfigSubmission
+    let tcSubmissionUpdated = fromSubmissionChangeDTO reqDto.submission tcSubmission.tenantUuid tcSubmission.createdAt now
+    updateTenantConfigSubmission tcSubmissionUpdated
+    -- AiAssistant
+    tcAiAssistant <- findTenantConfigAiAssistant
+    -- Owl
+    tcOwl <- findTenantConfigOwl
+    return $ toTenantConfig tcOrganizationUpdated tcAuthenticationUpdated tcPrivacyAndSupportUpdated tcDashboardAndLoginScreenUpdated tcLookAndFeelUpdated tcRegistryUpdated tcKnowledgeModelUpdated tcQuestionnaireUpdated tcSubmissionUpdated tcAiAssistant tcOwl
+
+getCurrentTenantConfigAuthentication :: AppContextM TenantConfigAuthentication
+getCurrentTenantConfigAuthentication = do
+  serverConfig <- asks serverConfig
+  encryptedTcAuthentication <- findTenantConfigAuthentication
+  return $ process serverConfig.general.secret encryptedTcAuthentication
+
+getTenantConfigAuthenticationByUuid :: U.UUID -> AppContextM TenantConfigAuthentication
+getTenantConfigAuthenticationByUuid tenantUuid = do
+  serverConfig <- asks serverConfig
+  encryptedTcAuthentication <- findTenantConfigAuthenticationByUuid tenantUuid
+  return $ process serverConfig.general.secret encryptedTcAuthentication
+
+modifyTenantConfigAuthentication :: TenantConfigAuthentication -> AppContextM TenantConfigAuthentication
+modifyTenantConfigAuthentication tcAuthentication =
+  runInTransaction $ do
+    serverConfig <- asks serverConfig
+    let encryptedUpdatedTcAuthentication = process serverConfig.general.secret tcAuthentication
+    updateTenantConfigAuthentication encryptedUpdatedTcAuthentication
+    return tcAuthentication
+
+getCurrentTenantConfigRegistry :: AppContextM TenantConfigRegistry
+getCurrentTenantConfigRegistry = do
+  serverConfig <- asks serverConfig
+  encryptedTcRegistry <- findTenantConfigRegistry
+  return $ process serverConfig.general.secret encryptedTcRegistry
+
+getTenantConfigRegistryByUuid :: U.UUID -> AppContextM TenantConfigRegistry
+getTenantConfigRegistryByUuid tenantUuid = do
+  serverConfig <- asks serverConfig
+  encryptedTcRegistry <- findTenantConfigRegistryByUuid tenantUuid
+  return $ process serverConfig.general.secret encryptedTcRegistry
+
+modifyTenantConfigRegistry :: TenantConfigRegistry -> AppContextM TenantConfigRegistry
+modifyTenantConfigRegistry tcRegistry =
+  runInTransaction $ do
+    serverConfig <- asks serverConfig
+    let encryptedUpdatedTcRegistry = process serverConfig.general.secret tcRegistry
+    updateTenantConfigRegistry encryptedUpdatedTcRegistry
+    return tcRegistry
+
+getCurrentTenantConfigKnowledgeModel :: AppContextM TenantConfigKnowledgeModel
+getCurrentTenantConfigKnowledgeModel = do
+  serverConfig <- asks serverConfig
+  encryptedTcKnowledgeModel <- findTenantConfigKnowledgeModel
+  return $ process serverConfig.general.secret encryptedTcKnowledgeModel
+
+getTenantConfigKnowledgeModelByUuid :: U.UUID -> AppContextM TenantConfigKnowledgeModel
+getTenantConfigKnowledgeModelByUuid tenantUuid = do
+  serverConfig <- asks serverConfig
+  encryptedTcKnowledgeModel <- findTenantConfigKnowledgeModelByUuid tenantUuid
+  return $ process serverConfig.general.secret encryptedTcKnowledgeModel
+
+modifyTenantConfigKnowledgeModel :: TenantConfigKnowledgeModel -> AppContextM TenantConfigKnowledgeModel
+modifyTenantConfigKnowledgeModel tcKnowledgeModel =
+  runInTransaction $ do
+    serverConfig <- asks serverConfig
+    let encryptedUpdatedTcKnowledgeModel = process serverConfig.general.secret tcKnowledgeModel
+    updateTenantConfigKnowledgeModel encryptedUpdatedTcKnowledgeModel
+    return tcKnowledgeModel
+
+getCurrentTenantConfigQuestionnaire :: AppContextM TenantConfigQuestionnaire
+getCurrentTenantConfigQuestionnaire = do
+  serverConfig <- asks serverConfig
+  encryptedTcQuestionnaire <- findTenantConfigQuestionnaire
+  return $ process serverConfig.general.secret encryptedTcQuestionnaire
+
+getTenantConfigQuestionnaireByUuid :: U.UUID -> AppContextM TenantConfigQuestionnaire
+getTenantConfigQuestionnaireByUuid tenantUuid = do
+  serverConfig <- asks serverConfig
+  encryptedTcQuestionnaire <- findTenantConfigQuestionnaireByUuid tenantUuid
+  return $ process serverConfig.general.secret encryptedTcQuestionnaire
+
+modifyTenantConfigQuestionnaire :: TenantConfigQuestionnaire -> AppContextM TenantConfigQuestionnaire
+modifyTenantConfigQuestionnaire tcQuestionnaire =
+  runInTransaction $ do
+    serverConfig <- asks serverConfig
+    let encryptedUpdatedTcQuestionnaire = process serverConfig.general.secret tcQuestionnaire
+    updateTenantConfigQuestionnaire encryptedUpdatedTcQuestionnaire
+    return tcQuestionnaire

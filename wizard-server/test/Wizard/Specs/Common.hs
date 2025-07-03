@@ -6,7 +6,6 @@ import Control.Monad.Reader (liftIO, runReaderT)
 import Data.Either
 import Test.Hspec
 
-import Wizard.Database.DAO.Tenant.TenantConfigDAO
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.Common
@@ -24,8 +23,3 @@ shouldSucceed appContext fn = do
 shouldFailed appContext fn = do
   result <- runInContext fn appContext
   isRight result `shouldBe` False
-
-modifyTenantConfig updateFn = do
-  tenantConfig <- findCurrentTenantConfig
-  let updatedTenantConfig = updateFn tenantConfig
-  updateTenantConfig updatedTenantConfig

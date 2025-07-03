@@ -11,6 +11,7 @@ import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
+import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Document.Document
@@ -32,7 +33,6 @@ import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Da
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as SPM
-import WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs
 
 doc1 :: Document
 doc1 =
