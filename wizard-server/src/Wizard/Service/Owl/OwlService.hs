@@ -13,6 +13,7 @@ import Shared.Common.Util.Logger
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.PackageBundle.PackageBundleFileDTO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
@@ -20,7 +21,6 @@ import Wizard.Service.Owl.Convertor.OwlConvertor
 import Wizard.Service.Owl.Diff.Differ
 import Wizard.Service.Owl.OwlMapper
 import Wizard.Service.Package.PackageMapper
-import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
@@ -53,26 +53,24 @@ importEvents mPreviousPackageId rootElement content = do
 modifyOwlFeature :: Bool -> AppContextM ()
 modifyOwlFeature owlEnabled =
   runInTransaction $ do
-    tenantConfig <- getCurrentTenantConfig
-    let updatedTenantConfig = tenantConfig {owl = tenantConfig.owl {enabled = owlEnabled}}
-    modifyTenantConfig updatedTenantConfig
+    tcOwl <- findTenantConfigOwl
+    let tcOwlUpdated = tcOwl {enabled = owlEnabled} :: TenantConfigOwl
+    updateTenantConfigOwl tcOwlUpdated
     return ()
 
 setOwlProperties :: String -> String -> String -> String -> Maybe String -> String -> AppContextM ()
 setOwlProperties name organizationId kmId version previousPackageId rootElement =
   runInTransaction $ do
-    tenantConfig <- getCurrentTenantConfig
-    let updatedTenantConfig =
-          tenantConfig
-            { owl =
-                tenantConfig.owl
-                  { name = name
-                  , organizationId = organizationId
-                  , kmId = kmId
-                  , version = version
-                  , previousPackageId = previousPackageId
-                  , rootElement = rootElement
-                  }
+    tcOwl <- findTenantConfigOwl
+    let tcOwlUpdated =
+          tcOwl
+            { name = name
+            , organizationId = organizationId
+            , kmId = kmId
+            , version = version
+            , previousPackageId = previousPackageId
+            , rootElement = rootElement
             }
-    modifyTenantConfig updatedTenantConfig
+          :: TenantConfigOwl
+    updateTenantConfigOwl tcOwlUpdated
     return ()

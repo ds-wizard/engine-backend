@@ -13,6 +13,8 @@ import Wizard.Database.DAO.Registry.RegistryLocaleDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Database.DAO.Registry.RegistryTemplateDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigRegistryDAO
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Registry.RegistryOrganization
@@ -29,18 +31,18 @@ import Wizard.Service.Tenant.Config.ConfigService
 signUpToRegistry :: RegistryCreateDTO -> AppContextM OrganizationDTO
 signUpToRegistry reqDto =
   runInTransaction $ do
-    tenantConfig <- getCurrentTenantConfig
-    let orgCreateDto = toOrganizationCreate tenantConfig reqDto
+    tcOrganization <- findTenantConfigOrganization
+    let orgCreateDto = toOrganizationCreate tcOrganization reqDto
     createOrganization orgCreateDto
 
 confirmRegistration :: RegistryConfirmationDTO -> AppContextM OrganizationDTO
 confirmRegistration reqDto =
   runInTransaction $ do
     org <- confirmOrganizationRegistration reqDto
-    tenantConfig <- getCurrentTenantConfig
-    let updatedRegistry = TenantConfigRegistry {enabled = True, token = org.token}
-    let updatedTenantConfig = tenantConfig {registry = updatedRegistry}
-    modifyTenantConfig updatedTenantConfig
+    tcRegistry <- getCurrentTenantConfigRegistry
+    now <- liftIO getCurrentTime
+    let updatedRegistry = tcRegistry {enabled = True, token = org.token, updatedAt = now}
+    modifyTenantConfigRegistry updatedRegistry
     return org
 
 synchronizeData :: AppContextM ()
@@ -127,4 +129,4 @@ pushLocaleBundle lclId = do
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-checkIfRegistryIsEnabled = checkIfTenantFeatureIsEnabled "Registry" (\c -> c.registry.enabled)
+checkIfRegistryIsEnabled = checkIfTenantFeatureIsEnabled "Registry" findTenantConfigRegistry (.enabled)

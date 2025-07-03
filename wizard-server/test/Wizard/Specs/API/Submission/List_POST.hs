@@ -13,11 +13,11 @@ import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Submission.SubmissionCreateJM ()
-import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.Submission.SubmissionJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
@@ -30,7 +30,7 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U_M
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Tenant.Config.TenantConfig hiding (request)
+import Wizard.Model.Submission.SubmissionList
 import Wizard.Service.Submission.SubmissionMapper
 
 import SharedTest.Specs.API.Common
@@ -64,13 +64,13 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201 appContext = do
-  create_test_201 "HTTP 201 CREATED (Owner, Private)" appContext questionnaire1 [reqAuthHeader] userAlbert
+  create_test_201 "HTTP 201 CREATED (Owner, Private)" appContext questionnaire1 [reqAuthHeader] userAlbertSuggestion
   create_test_201
     "HTTP 201 CREATED (Non-Owner, VisibleEdit)"
     appContext
     questionnaire3
     [reqNonAdminAuthHeader]
-    userNikola
+    userNikolaSuggestionDto
 
 create_test_201 title appContext qtn authHeader user =
   it title $
@@ -80,9 +80,9 @@ create_test_201 title appContext qtn authHeader user =
       -- AND: Prepare expectation
       let expStatus = 201
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-      let expDto = toDTO submission2 (Just defaultSubmissionService.name) user
+      let expDto = toList submission2 defaultSubmissionService user
       let expBody = encode expDto
-      let expType (a :: SubmissionDTO) = a
+      let expType (a :: SubmissionList) = a
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
@@ -91,6 +91,7 @@ create_test_201 title appContext qtn authHeader user =
       runInContextIO DOC_Migration.runMigration appContext
       runInContextIO (deleteDocumentByUuid doc1.uuid) appContext
       runInContextIO (insertDocument (doc1 {questionnaireUuid = qtn.uuid})) appContext
+      runInContextIO (insertOrUpdateConfigSubmissionService defaultSubmissionService) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

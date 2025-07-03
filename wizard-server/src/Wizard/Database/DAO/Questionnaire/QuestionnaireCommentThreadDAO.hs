@@ -275,18 +275,20 @@ findQuestionnaireCommentThreadsForNotifying = do
         \        ORDER BY comment.created_at \
         \        LIMIT 1) comment_text, \
         \        tenant.client_url, \
-        \        tenant_config.look_and_feel ->> 'appTitle' AS app_title, \
-        \        tenant_config.look_and_feel ->> 'logoUrl' AS logo_url, \
-        \        tenant_config.look_and_feel ->> 'primaryColor' AS primary_color, \
-        \        tenant_config.look_and_feel ->> 'illustrationColor' AS illustration_color, \
-        \        tenant_config.privacy_and_support ->> 'supportEmail' as support_email, \
-        \        tenant_config.mail_config_uuid as mail_config_uuid \
+        \        config_look_and_feel.app_title AS app_title, \
+        \        config_look_and_feel.logo_url AS logo_url, \
+        \        config_look_and_feel.primary_color AS primary_color, \
+        \        config_look_and_feel.illustration_color AS illustration_color, \
+        \        config_privacy_and_support.support_email AS support_email, \
+        \        config_mail.config_uuid AS mail_config_uuid \
         \FROM questionnaire_comment_thread thread \
         \JOIN questionnaire qtn ON qtn.uuid = thread.questionnaire_uuid AND qtn.tenant_uuid = thread.tenant_uuid \
         \JOIN user_entity assigned_to ON assigned_to.uuid = thread.assigned_to AND assigned_to.tenant_uuid = thread.tenant_uuid \
         \LEFT JOIN user_entity assigned_by ON assigned_by.uuid = thread.assigned_by AND assigned_by.tenant_uuid = thread.tenant_uuid \
         \JOIN tenant ON tenant.uuid = thread.tenant_uuid \
-        \JOIN tenant_config ON tenant_config.uuid = thread.tenant_uuid \
+        \JOIN config_look_and_feel ON config_look_and_feel.tenant_uuid = thread.tenant_uuid \
+        \JOIN config_privacy_and_support ON config_privacy_and_support.tenant_uuid = thread.tenant_uuid \
+        \JOIN config_mail ON config_mail.tenant_uuid = thread.tenant_uuid \
         \WHERE thread.notification_required = true"
   logInfoI _CMP_DATABASE (trim sql)
   let action conn = query_ conn (fromString sql)

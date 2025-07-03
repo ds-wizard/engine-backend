@@ -164,11 +164,11 @@ createQuestionnaireFromTemplate reqDto =
     newQtnUuid <- liftIO generateUuid
     currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
-    tenantConfig <- getCurrentTenantConfig
+    tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
     originQtnEvents <- findQuestionnaireEventsByQuestionnaireUuid reqDto.questionnaireUuid
-    let newVisibility = tenantConfig.questionnaire.questionnaireVisibility.defaultValue
-    let newSharing = tenantConfig.questionnaire.questionnaireSharing.defaultValue
-    let newPermissions = [toUserQuestionnairePerm newQtnUuid currentUser.uuid ownerPermissions tenantConfig.uuid]
+    let newVisibility = tcQuestionnaire.questionnaireVisibility.defaultValue
+    let newSharing = tcQuestionnaire.questionnaireSharing.defaultValue
+    let newPermissions = [toUserQuestionnairePerm newQtnUuid currentUser.uuid ownerPermissions tcQuestionnaire.tenantUuid]
     let newQtn =
           originQtn
             { uuid = newQtnUuid
@@ -238,10 +238,10 @@ createQuestionnairesFromCommands = runInTransaction . traverse_ create
       uuid <- liftIO generateUuid
       currentUser <- getCurrentUser
       now <- liftIO getCurrentTime
-      tenantConfig <- getCurrentTenantConfig
+      tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
       users <- findUsersByEmails command.emails
       let permissions = fmap (createPermission uuid) users
-      let questionnaire = fromCreateQuestionnaireCommand command uuid permissions tenantConfig currentUser.uuid now
+      let questionnaire = fromCreateQuestionnaireCommand command uuid permissions tcQuestionnaire currentUser.uuid now
       insertQuestionnaire questionnaire
       return ()
     createPermission :: U.UUID -> User -> QuestionnairePerm

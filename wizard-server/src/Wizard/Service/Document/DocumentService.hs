@@ -30,6 +30,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Branch.BranchData
 import Wizard.Model.Context.AclContext
@@ -52,7 +53,6 @@ import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
-import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Model.Event.Event
@@ -65,16 +65,14 @@ getDocumentsPageDto :: Maybe U.UUID -> Maybe String -> Maybe String -> Pageable 
 getDocumentsPageDto mQuestionnaireUuid mDocumentTemplateId mQuery pageable sort = do
   checkPermission _DOC_PERM
   docPage <- findDocumentsPage mQuestionnaireUuid Nothing mDocumentTemplateId mQuery pageable sort
-  tenantConfig <- getCurrentTenantConfig
-  traverse (enhanceDocument tenantConfig) docPage
+  traverse enhanceDocument docPage
 
 getDocumentsForQtn :: U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
 getDocumentsForQtn qtnUuid mQuery pageable sort = do
   qtn <- findQuestionnaireByUuid qtnUuid
   checkViewPermissionToDoc' qtn
   docPage <- findDocumentsPage (Just qtnUuid) (Just qtn.name) Nothing mQuery pageable sort
-  tenantConfig <- getCurrentTenantConfig
-  traverse (enhanceDocument tenantConfig) docPage
+  traverse enhanceDocument docPage
 
 createDocument :: DocumentCreateDTO -> AppContextM DocumentDTO
 createDocument reqDto =
@@ -96,9 +94,9 @@ createDocument reqDto =
             Just eventUuid -> takeWhileInclusive (\e -> getUuid e /= eventUuid) qtnEvents
             Nothing -> qtnEvents
     qtnCtn <- compileQuestionnairePreview filteredQtnEvents
-    tenantConfig <- getCurrentTenantConfig
+    tcOrganization <- findTenantConfigOrganization
     qtnVersions <- findQuestionnaireVersionsByQuestionnaireUuid qtn.uuid
-    let docContextHash = computeHash [] qtn qtnVersions qtnCtn.phaseUuid qtnCtn.replies tenantConfig mCurrentUser
+    let docContextHash = computeHash [] qtn qtnVersions qtnCtn.phaseUuid qtnCtn.replies tcOrganization mCurrentUser
     let doc = fromCreateDTO reqDto dUuid docContextHash filteredQtnEvents mCurrentUser tenantUuid now
     insertDocument doc
     pkg <- getPackageById qtn.packageId
@@ -172,9 +170,9 @@ createDocumentPreviewForDocTmlDraft tmlId =
 createDocumentPreview :: DocumentTemplate -> Package -> [Event] -> Questionnaire -> [QuestionnaireVersion] -> Maybe U.UUID -> Maybe U.UUID -> M.Map String Reply -> U.UUID -> Bool -> AppContextM (Document, TemporaryFileDTO)
 createDocumentPreview tml pkg branchEvents qtn qtnVersions questionnaireEventUuid phaseUuid replies formatUuid fromBranch = do
   docs <- findDocumentsForCurrentTenantFiltered [("questionnaire_uuid", U.toString qtn.uuid), ("durability", "TemporallyDocumentDurability")]
-  tenantConfig <- getCurrentTenantConfig
+  tcOrganization <- findTenantConfigOrganization
   mCurrentUser <- asks currentUser
-  let repliesHash = computeHash branchEvents qtn qtnVersions phaseUuid replies tenantConfig mCurrentUser
+  let repliesHash = computeHash branchEvents qtn qtnVersions phaseUuid replies tcOrganization mCurrentUser
   logDebugI _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
   let matchingDocs = filter (\d -> d.questionnaireRepliesHash == repliesHash) docs
   case filter (filterAlreadyDoneDocument tml.tId formatUuid) matchingDocs of
@@ -196,7 +194,7 @@ createDocumentPreview tml pkg branchEvents qtn qtnVersions questionnaireEventUui
           validateMetamodelVersion tml
           dUuid <- liftIO generateUuid
           now <- liftIO getCurrentTime
-          let doc = fromTemporallyCreateDTO dUuid qtn questionnaireEventUuid tml.tId formatUuid repliesHash mCurrentUser tenantConfig.uuid now
+          let doc = fromTemporallyCreateDTO dUuid qtn questionnaireEventUuid tml.tId formatUuid repliesHash mCurrentUser tcOrganization.tenantUuid now
           insertDocument doc
           let mReplies = if fromBranch then Just replies else Nothing
           publishToPersistentCommandQueue doc pkg branchEvents qtn mReplies

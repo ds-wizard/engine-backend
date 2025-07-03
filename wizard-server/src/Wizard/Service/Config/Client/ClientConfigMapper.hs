@@ -9,24 +9,25 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.UserProfile
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
-toClientConfigDTO :: ServerConfig -> TenantConfig -> Maybe UserProfile -> [String] -> Tenant -> ClientConfigDTO
-toClientConfigDTO serverConfig tenantConfig mUserProfile tours tenant =
+toClientConfigDTO :: ServerConfig -> TenantConfigOrganization -> TenantConfigAuthentication -> TenantConfigPrivacyAndSupport -> TenantConfigDashboardAndLoginScreen -> TenantConfigLookAndFeel -> TenantConfigRegistry -> TenantConfigQuestionnaire -> TenantConfigSubmission -> TenantConfigAiAssistant -> TenantConfigOwl -> Maybe UserProfile -> [String] -> Tenant -> ClientConfigDTO
+toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcQuestionnaire tcSubmission tcAiAssistant tcOwl mUserProfile tours tenant =
   ClientConfigDTO
     { user = mUserProfile
     , tours = tours
-    , organization = tenantConfig.organization
-    , authentication = toClientAuthDTO $ tenantConfig.authentication
-    , privacyAndSupport = tenantConfig.privacyAndSupport
-    , dashboardAndLoginScreen = tenantConfig.dashboardAndLoginScreen
-    , lookAndFeel = tenantConfig.lookAndFeel
-    , registry = toClientConfigRegistryDTO serverConfig.registry tenantConfig.registry
-    , questionnaire = toClientConfigQuestionnaireDTO $ tenantConfig.questionnaire
-    , submission = SimpleFeature $ tenantConfig.submission.enabled
+    , organization = tcOrganization
+    , authentication = toClientAuthDTO tcAuthentication
+    , privacyAndSupport = tcPrivacyAndSupport
+    , dashboardAndLoginScreen = tcDashboardAndLoginScreen
+    , lookAndFeel = tcLookAndFeel
+    , registry = toClientConfigRegistryDTO serverConfig.registry tcRegistry
+    , questionnaire = toClientConfigQuestionnaireDTO tcQuestionnaire
+    , submission = SimpleFeature $ tcSubmission.enabled
     , cloud = toClientConfigCloudDTO serverConfig.cloud tenant
-    , owl = tenantConfig.owl
+    , owl = tcOwl
     , admin = toClientConfigAdminDTO serverConfig.admin tenant
-    , aiAssistant = toClientConfigAiAssistantDTO serverConfig.admin tenantConfig.aiAssistant
+    , aiAssistant = toClientConfigAiAssistantDTO serverConfig.admin tcAiAssistant
     , signalBridge = toClientConfigSignalBridgeDTO tenant
     , modules =
         if serverConfig.admin.enabled
@@ -55,21 +56,21 @@ toClientConfigDTO serverConfig tenantConfig mUserProfile tours tenant =
           else []
     }
 
-toClientAuthDTO :: TenantConfigAuth -> ClientConfigAuthDTO
-toClientAuthDTO config =
+toClientAuthDTO :: TenantConfigAuthentication -> ClientConfigAuthDTO
+toClientAuthDTO tcAuthentication =
   ClientConfigAuthDTO
-    { defaultRole = config.defaultRole
-    , internal = config.internal
-    , external = toClientAuthExternalDTO $ config.external
+    { defaultRole = tcAuthentication.defaultRole
+    , internal = tcAuthentication.internal
+    , external = toClientAuthExternalDTO tcAuthentication.external
     }
 
-toClientAuthExternalDTO :: TenantConfigAuthExternal -> ClientConfigAuthExternalDTO
+toClientAuthExternalDTO :: TenantConfigAuthenticationExternal -> ClientConfigAuthExternalDTO
 toClientAuthExternalDTO config =
   ClientConfigAuthExternalDTO
     { services = toClientAuthExternalServiceDTO <$> config.services
     }
 
-toClientAuthExternalServiceDTO :: TenantConfigAuthExternalService -> ClientConfigAuthExternalServiceDTO
+toClientAuthExternalServiceDTO :: TenantConfigAuthenticationExternalService -> ClientConfigAuthExternalServiceDTO
 toClientAuthExternalServiceDTO config =
   ClientConfigAuthExternalServiceDTO
     { aId = config.aId

@@ -45,8 +45,8 @@ findPersistentCommandsPage states pageable sort = do
               \       persistent_command.updated_at, \
               \       concat(tenant.uuid, '::', \
               \              tenant.name, '::', \
-              \              tenant_config.look_and_feel ->> 'logoUrl', '::', \
-              \              tenant_config.look_and_feel ->> 'primaryColor', '::', \
+              \              config_look_and_feel.logo_url, '::', \
+              \              config_look_and_feel.primary_color, '::', \
               \              tenant.client_url) AS tenant, \
               \       CASE \
               \              WHEN user_entity.uuid IS NOT NULL THEN concat(user_entity.uuid, '::', \
@@ -57,7 +57,7 @@ findPersistentCommandsPage states pageable sort = do
               \       END AS created_by \
               \FROM persistent_command \
               \         LEFT JOIN tenant ON tenant.uuid = persistent_command.tenant_uuid \
-              \         LEFT JOIN tenant_config ON tenant_config.uuid = persistent_command.tenant_uuid \
+              \         LEFT JOIN config_look_and_feel ON config_look_and_feel.tenant_uuid = persistent_command.tenant_uuid \
               \         LEFT JOIN user_entity ON user_entity.uuid = persistent_command.created_by AND user_entity.tenant_uuid = persistent_command.tenant_uuid \
               \${statesCondition} \
               \${sort} \

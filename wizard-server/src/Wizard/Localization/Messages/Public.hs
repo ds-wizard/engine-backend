@@ -46,9 +46,6 @@ _ERROR_VALIDATION__USER_ABSENCE userUuid =
 _ERROR_VALIDATION__TOKEN_ABSENCE tokenUuid =
   LocaleRecord "error.validation.token_absence" "Token ('%s') doesn't exist" [tokenUuid]
 
-_ERROR_VALIDATION__SUBMISSION_DEFINITION_ABSENCE subId =
-  LocaleRecord "error.validation.submission_definition_absence" "Definition of submission ('%s') is missing" [subId]
-
 -- Delete
 _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId target =
   LocaleRecord "error.validation.tml_deletation" "DocumentTemplate '%s' can't be deleted. It's used by some %s" [tmlId, target]

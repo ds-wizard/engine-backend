@@ -16,6 +16,7 @@ import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.Client.ClientConfigMapper
+import WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -53,7 +54,7 @@ create_test_200 title appContext authHeaders mUserProfile =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = toClientConfigDTO appContext.serverConfig defaultTenantConfig mUserProfile [] defaultTenant
+      let expDto = toClientConfigDTO appContext.serverConfig defaultOrganization defaultAuthentication defaultPrivacyAndSupport defaultDashboardAndLoginScreen defaultLookAndFeel defaultRegistry defaultQuestionnaire defaultSubmission defaultAiAssistant defaultOwl mUserProfile [] defaultTenant
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U.runMigration appContext

@@ -14,7 +14,6 @@ import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
-import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigService
 
 import Wizard.Specs.Common
@@ -108,6 +107,6 @@ compareReportDtos resDto expDto = do
 -- HELPERS
 -- --------------------------------
 updateAnonymousQuestionnaireSharing appContext value = do
-  (Right tenantConfig) <- runInContextIO getCurrentTenantConfig appContext
-  let updatedTenantConfig = tenantConfig {questionnaire = tenantConfig.questionnaire {questionnaireSharing = tenantConfig.questionnaire.questionnaireSharing {anonymousEnabled = value}}}
-  runInContextIO (modifyTenantConfigDto (toChangeDTO updatedTenantConfig)) appContext
+  (Right tcQuestionnaire) <- runInContextIO getCurrentTenantConfigQuestionnaire appContext
+  let tcQuestionnaireUpdated = tcQuestionnaire {questionnaireSharing = tcQuestionnaire.questionnaireSharing {anonymousEnabled = value}}
+  runInContextIO (modifyTenantConfigQuestionnaire tcQuestionnaireUpdated) appContext

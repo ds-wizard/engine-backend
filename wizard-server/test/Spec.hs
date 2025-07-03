@@ -67,7 +67,6 @@ import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
 import Wizard.Specs.Service.DocumentTemplate.DocumentTemplateUtilSpec
-import Wizard.Specs.Service.Feedback.FeedbackServiceSpec
 import Wizard.Specs.Service.KnowledgeModel.Compilator.CompilatorSpec
 import Wizard.Specs.Service.KnowledgeModel.Compilator.Modifier.ModifierSpec
 import Wizard.Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
@@ -228,7 +227,6 @@ main =
               userGroupAPI baseContext appContext
             describe "SERVICE" $ do
               branchServiceIntegrationSpec appContext
-              feedbackServiceIntegrationSpec appContext
               documentIntegrationSpec appContext
               describe "Migration" $ do
                 describe "KnowledgeModel" $

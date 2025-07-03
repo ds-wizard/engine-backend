@@ -13,14 +13,13 @@ import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Registry.RegistryPackage
 import Wizard.Model.Registry.RegistryTemplate
 import Wizard.Model.Tenant.Config.TenantConfig
-import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
-toOrganizationCreate :: TenantConfig -> RegistryCreateDTO -> OrganizationCreateDTO
-toOrganizationCreate tenantConfig reqDto =
+toOrganizationCreate :: TenantConfigOrganization -> RegistryCreateDTO -> OrganizationCreateDTO
+toOrganizationCreate tcOrganization reqDto =
   OrganizationCreateDTO
-    { organizationId = tenantConfig.organization.organizationId
-    , name = tenantConfig.organization.name
-    , description = tenantConfig.organization.description
+    { organizationId = tcOrganization.organizationId
+    , name = tcOrganization.name
+    , description = tcOrganization.description
     , email = reqDto.email
     }
 

@@ -84,7 +84,7 @@ createFunctions = do
 
 createGetBranchForkOfPackageIdFn = do
   let sql =
-        "CREATE or REPLACE FUNCTION get_branch_fork_of_package_id(tenant_config tenant_config, \
+        "CREATE or REPLACE FUNCTION get_branch_fork_of_package_id(config_organization config_organization, \
         \                                                         previous_pkg package, \
         \                                                         branch branch) \
         \    RETURNS varchar \
@@ -96,7 +96,7 @@ createGetBranchForkOfPackageIdFn = do
         \BEGIN \
         \    SELECT CASE \
         \               WHEN branch.previous_package_id IS NULL THEN NULL \
-        \               WHEN previous_pkg.organization_id = tenant_config.organization ->> 'organizationId' AND \
+        \               WHEN previous_pkg.organization_id = config_organization.organization_id AND \
         \                    previous_pkg.km_id = branch.km_id THEN previous_pkg.fork_of_package_id \
         \               WHEN True THEN branch.previous_package_id END as fork_of_package_id \
         \    INTO fork_of_package_id; \

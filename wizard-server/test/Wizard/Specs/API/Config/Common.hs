@@ -12,13 +12,13 @@ import Wizard.Specs.Common
 -- --------------------------------
 -- ASSERTS
 -- --------------------------------
-assertExistenceOfTenantConfigInDB appContext tenantConfig = do
-  eitherTenantConfig <- runInContextIO getCurrentTenantConfig appContext
-  liftIO $ isRight eitherTenantConfig `shouldBe` True
-  let (Right tenantConfigFromDb) = eitherTenantConfig
-  compareDtos tenantConfigFromDb tenantConfig
+assertExistenceOfTenantConfigQuestionnaireInDB appContext tcQuestionnaire = do
+  eitherTcQuestionnaire <- runInContextIO getCurrentTenantConfigQuestionnaire appContext
+  liftIO $ isRight eitherTcQuestionnaire `shouldBe` True
+  let (Right tcQuestionnaireFromDb) = eitherTcQuestionnaire
+  compareDtos tcQuestionnaireFromDb tcQuestionnaire
 
 -- --------------------------------
 -- COMPARATORS
 -- --------------------------------
-compareDtos resDto expDto = liftIO $ (resDto == expDto) `shouldBe` True
+compareDtos resDto expDto = liftIO $ resDto `shouldBe` expDto

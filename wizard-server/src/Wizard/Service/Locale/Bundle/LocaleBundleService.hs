@@ -71,6 +71,6 @@ importBundle contentS fromRegistry =
       if fromRegistry
         then auditLocaleBundlePullFromRegistry locale.lId
         else auditLocaleBundleImportFromFile locale.lId
-      tenantConfig <- getCurrentTenantConfig
-      return . toDTO tenantConfig.registry.enabled $ toLocaleList locale
+      tcRegistry <- getCurrentTenantConfigRegistry
+      return . toDTO tcRegistry.enabled $ toLocaleList locale
     Left error -> throwError error

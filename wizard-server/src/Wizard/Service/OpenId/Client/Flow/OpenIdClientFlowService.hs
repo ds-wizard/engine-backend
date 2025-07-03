@@ -32,7 +32,7 @@ import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 createAuthenticationUrl :: String -> Maybe String -> Maybe String -> AppContextM ()
 createAuthenticationUrl authId mFlow mClientUrl = do
   (service, openIDClient) <- createOpenIDClient authId mClientUrl
-  createAuthenticationUrl' openIDClient service.parameteres mFlow mClientUrl
+  createAuthenticationUrl' openIDClient service.parameters mFlow mClientUrl
 
 loginUser :: String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> AppContextM UserTokenDTO
 loginUser authId mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionState =
@@ -58,13 +58,13 @@ loginUser authId mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionStat
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-createOpenIDClient :: String -> Maybe String -> AppContextM (TenantConfigAuthExternalService, O.OIDC)
+createOpenIDClient :: String -> Maybe String -> AppContextM (TenantConfigAuthenticationExternalService, O.OIDC)
 createOpenIDClient authId mClientUrl = do
   httpClientManager <- asks httpClientManager
   serverConfig <- asks serverConfig
-  tenantConfig <- getCurrentTenantConfig
+  tcAuthentication <- getCurrentTenantConfigAuthentication
   clientUrl <- getClientUrl
-  case L.find (\s -> s.aId == authId) tenantConfig.authentication.external.services of
+  case L.find (\s -> s.aId == authId) tcAuthentication.external.services of
     Just service -> do
       prov <- liftIO $ O.discover (T.pack service.url) httpClientManager
       let cId = BS.pack service.clientId

@@ -36,12 +36,12 @@ validateUserPassword reqDto user =
     then return ()
     else throwError $ UserError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
 
-validateCode :: User -> Int -> TenantConfig -> AppContextM ()
-validateCode user code tenantConfig = do
+validateCode :: User -> Int -> TenantConfigAuthentication -> AppContextM ()
+validateCode user code tcAuthentication = do
   mActionKey <- findActionKeyByIdentityAndHash' (U.toString user.uuid) (show code) :: AppContextM (Maybe (ActionKey U.UUID ActionKeyType))
   case mActionKey of
     Just actionKey -> do
-      let timeDelta = realToFrac . toInteger $ tenantConfig.authentication.internal.twoFactorAuth.expiration
+      let timeDelta = realToFrac . toInteger $ tcAuthentication.internal.twoFactorAuth.expiration
       now <- liftIO getCurrentTime
       when (addUTCTime timeDelta actionKey.createdAt < now) (throwError $ UserError _ERROR_SERVICE_TOKEN__CODE_IS_EXPIRED)
     Nothing -> throwError $ UserError _ERROR_SERVICE_TOKEN__INCORRECT_CODE

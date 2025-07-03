@@ -5,13 +5,13 @@ import Data.Time
 
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
-import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Document.Document
 import Wizard.Model.Submission.Submission
+import Wizard.Model.Submission.SubmissionList
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
@@ -35,8 +35,8 @@ submission1 =
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
-submission1Dto :: SubmissionDTO
-submission1Dto = toDTO submission1 (Just defaultSubmissionService.name) userAlbert
+submission1List :: SubmissionList
+submission1List = toList submission1 defaultSubmissionService userAlbertSuggestion
 
 submission2 :: Submission
 submission2 =
@@ -53,8 +53,8 @@ submission2 =
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
-submission2Dto :: SubmissionDTO
-submission2Dto = toDTO submission1 (Just defaultSubmissionService.name) userAlbert
+submission2Dto :: SubmissionList
+submission2Dto = toList submission1 defaultSubmissionService userAlbertSuggestion
 
 differentSubmission :: Submission
 differentSubmission =

@@ -20,6 +20,7 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
@@ -33,14 +34,12 @@ import Wizard.Service.DocumentTemplate.DocumentTemplateValidation hiding (valida
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftValidation
 import Wizard.Service.DocumentTemplate.File.DocumentTemplateFileService
-import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Localization.Messages.Public
-import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 getDraftsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateDraftList)
 getDraftsPage mQuery pageable sort = do
@@ -53,14 +52,14 @@ createDraft reqDto =
     checkPermission _DOC_TML_WRITE_PERM
     checkDocumentTemplateDraftLimit
     now <- liftIO getCurrentTime
-    tenantConfig <- getCurrentTenantConfig
+    tcOrganization <- findTenantConfigOrganization
     case reqDto.basedOn of
       Just tmlId -> do
         tml <- findDocumentTemplateById tmlId
         when
           tml.nonEditable
           (throwError . UserError $ _ERROR_SERVICE_DOC_TML__NON_EDITABLE_DOC_TML)
-        let draft = fromCreateDTO reqDto tml tenantConfig.organization.organizationId now
+        let draft = fromCreateDTO reqDto tml tcOrganization.organizationId now
         validateNewDocumentTemplate draft False
         insertDocumentTemplate draft
         assets <- findAssetsByDocumentTemplateId tmlId
@@ -71,7 +70,7 @@ createDraft reqDto =
         insertDraftData draftData
         return draft
       Nothing -> do
-        let draft = fromCreateDTO' reqDto tenantConfig.organization.organizationId tenantConfig.uuid now
+        let draft = fromCreateDTO' reqDto tcOrganization.organizationId tcOrganization.tenantUuid now
         validateNewDocumentTemplate draft False
         insertDocumentTemplate draft
         let draftData = fromCreateDraftData draft
