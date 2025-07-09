@@ -20,6 +20,9 @@ _ERROR_VALIDATION__DOC_TML_FILE_OR_ASSET_UNIQUENESS =
 _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS =
   LocaleRecord "error.validation.km_migration_uniqueness" "Migration of Knowledge Model already exists" []
 
+_ERROR_VALIDATION__QTN_MIGRATION_UNIQUENESS =
+  LocaleRecord "error.validation.qtn_migration_uniqueness" "Migration of Questionnaire already exists" []
+
 _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email =
   LocaleRecord "error.validation.user_email_uniqueness" "User (email: '%s') already exists" [email]
 

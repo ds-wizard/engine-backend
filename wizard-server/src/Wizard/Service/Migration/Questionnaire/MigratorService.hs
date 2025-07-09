@@ -26,6 +26,7 @@ import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
 import Wizard.Service.Migration.Questionnaire.MigratorAudit
 import Wizard.Service.Migration.Questionnaire.MigratorMapper
+import Wizard.Service.Migration.Questionnaire.MigratorValidation
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireService
@@ -35,6 +36,7 @@ createQuestionnaireMigration :: U.UUID -> MigratorStateCreateDTO -> AppContextM 
 createQuestionnaireMigration oldQtnUuid reqDto =
   runInTransaction $ do
     checkPermission _QTN_PERM
+    validateMigrationExistence oldQtnUuid
     oldQtn <- findQuestionnaireByUuid oldQtnUuid
     checkMigrationPermissionToQtn oldQtn.visibility oldQtn.permissions
     (newQtn, newQtnEvents) <- upgradeQuestionnaire reqDto oldQtn
