@@ -300,7 +300,7 @@ sendApiKeyExpirationMail user userToken =
                   , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
                   ]
             }
-    sendEmail body user.uuid
+    sendEmailWithTenant body user.uuid user.tenantUuid
 
 -- --------------------------------
 -- PRIVATE
