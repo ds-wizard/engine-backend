@@ -423,7 +423,7 @@ modifierSpec =
             computed `shouldBe` expected
     describe "Integration level" $ do
       describe "createIntegration" $ do
-        describe "ApiIntegration" $
+        describe "ApiLegacyIntegration" $
           it "Successfully created" $
             -- GIVEN: Inputs
             do
@@ -446,7 +446,7 @@ modifierSpec =
               -- THEN:
               computed `shouldBe` expected
       describe "editIntegration" $ do
-        describe "ApiIntegration" $
+        describe "ApiLegacyIntegration" $
           it "Successfully edited" $
             -- GIVEN: Inputs
             do

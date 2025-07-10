@@ -24,7 +24,7 @@ getTypehints reqDto =
     question <- getQuestion km reqDto.questionUuid
     integration' <- getIntegration km question.integrationUuid
     case integration' of
-      ApiIntegration' integration -> do
+      ApiLegacyIntegration' integration -> do
         fileIntConfig <- getFileIntegrationConfig integration.iId
         appIntConfig <- getTenantIntegrationConfig integration.iId
         let kmQuestionConfig = question.props

@@ -12,7 +12,7 @@ import WizardLib.KnowledgeModel.Model.Event.Integration.IntegrationEvent
 
 instance ToSchema AddIntegrationEvent
 
-instance ToSchema AddApiIntegrationEvent where
+instance ToSchema AddApiLegacyIntegrationEvent where
   declareNamedSchema = toSwaggerWithType "eventType" a_km1_iop'
 
 instance ToSchema AddWidgetIntegrationEvent where
@@ -22,7 +22,7 @@ instance ToSchema AddWidgetIntegrationEvent where
 -- --------------------------------------------
 instance ToSchema EditIntegrationEvent
 
-instance ToSchema EditApiIntegrationEvent where
+instance ToSchema EditApiLegacyIntegrationEvent where
   declareNamedSchema = toSwaggerWithType "eventType" e_km1_iop'
 
 instance ToSchema EditWidgetIntegrationEvent where

@@ -1495,11 +1495,11 @@ d_km1_tds =
 -- ----------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------
 a_km1_iop' :: AddIntegrationEvent
-a_km1_iop' = AddApiIntegrationEvent' a_km1_iop
+a_km1_iop' = AddApiLegacyIntegrationEvent' a_km1_iop
 
-a_km1_iop :: AddApiIntegrationEvent
+a_km1_iop :: AddApiLegacyIntegrationEvent
 a_km1_iop =
-  AddApiIntegrationEvent
+  AddApiLegacyIntegrationEvent
     { uuid = u' "3f94cb01-6f92-4eb6-975b-385c02b831bc"
     , parentUuid = km1.uuid
     , entityUuid = ontologyPortal.uuid
@@ -1521,11 +1521,11 @@ a_km1_iop =
     }
 
 a_km1_ibp' :: AddIntegrationEvent
-a_km1_ibp' = AddApiIntegrationEvent' a_km1_ibp
+a_km1_ibp' = AddApiLegacyIntegrationEvent' a_km1_ibp
 
-a_km1_ibp :: AddApiIntegrationEvent
+a_km1_ibp :: AddApiLegacyIntegrationEvent
 a_km1_ibp =
-  AddApiIntegrationEvent
+  AddApiLegacyIntegrationEvent
     { uuid = u' "5c47b31c-84d0-4792-99ce-09154642105d"
     , parentUuid = km1.uuid
     , entityUuid = bioPortal.uuid
@@ -1566,11 +1566,11 @@ a_km1_iwp =
     }
 
 e_km1_iop' :: EditIntegrationEvent
-e_km1_iop' = EditApiIntegrationEvent' e_km1_iop
+e_km1_iop' = EditApiLegacyIntegrationEvent' e_km1_iop
 
-e_km1_iop :: EditApiIntegrationEvent
+e_km1_iop :: EditApiLegacyIntegrationEvent
 e_km1_iop =
-  EditApiIntegrationEvent
+  EditApiLegacyIntegrationEvent
     { uuid = u' "3456a254-c5bc-4c0e-8ff9-f5e080765a71"
     , parentUuid = km1.uuid
     , entityUuid = ontologyPortalEdited.uuid

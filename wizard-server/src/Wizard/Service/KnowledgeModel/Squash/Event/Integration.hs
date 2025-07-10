@@ -8,14 +8,14 @@ instance SimpleEventSquash EditIntegrationEvent where
   isReorderEventSquashApplicable _ _ = False
 
   --  --------------------------------------
-  isTypeChanged (EditApiIntegrationEvent' oldEvent) (EditApiIntegrationEvent' newEvent) = False
+  isTypeChanged (EditApiLegacyIntegrationEvent' oldEvent) (EditApiLegacyIntegrationEvent' newEvent) = False
   isTypeChanged (EditWidgetIntegrationEvent' oldEvent) (EditWidgetIntegrationEvent' newEvent) = False
   isTypeChanged _ _ = True
 
   --  --------------------------------------
-  simpleSquashEvent previousEvent (EditApiIntegrationEvent' oldEvent) (EditApiIntegrationEvent' newEvent) =
-    EditApiIntegrationEvent' $
-      EditApiIntegrationEvent
+  simpleSquashEvent previousEvent (EditApiLegacyIntegrationEvent' oldEvent) (EditApiLegacyIntegrationEvent' newEvent) =
+    EditApiLegacyIntegrationEvent' $
+      EditApiLegacyIntegrationEvent
         { uuid = newEvent.uuid
         , parentUuid = newEvent.parentUuid
         , entityUuid = newEvent.entityUuid

@@ -5,9 +5,9 @@ import WizardLib.KnowledgeModel.Model.Event.Integration.IntegrationEvent
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 instance CreateEntity AddIntegrationEvent Integration where
-  createEntity (AddApiIntegrationEvent' event) =
-    ApiIntegration' $
-      ApiIntegration
+  createEntity (AddApiLegacyIntegrationEvent' event) =
+    ApiLegacyIntegration' $
+      ApiLegacyIntegration
         { uuid = event.entityUuid
         , iId = event.iId
         , name = event.name
@@ -40,11 +40,11 @@ instance CreateEntity AddIntegrationEvent Integration where
 instance EditEntity EditIntegrationEvent Integration where
   editEntity event' integration =
     case event' of
-      (EditApiIntegrationEvent' event) -> applyToApiIntegration event . convertToApiIntegration $ integration
+      (EditApiLegacyIntegrationEvent' event) -> applyToApiLegacyIntegration event . convertToApiLegacyIntegration $ integration
       (EditWidgetIntegrationEvent' event) -> applyToWidgetIntegration event . convertToWidgetIntegration $ integration
     where
-      applyToApiIntegration event apiIntegration =
-        ApiIntegration' $
+      applyToApiLegacyIntegration event apiIntegration =
+        ApiLegacyIntegration' $
           apiIntegration
             { iId = applyValue apiIntegration.iId event.iId
             , name = applyValue apiIntegration.name event.name
@@ -73,14 +73,14 @@ instance EditEntity EditIntegrationEvent Integration where
             , annotations = applyValue widgetIntegration.annotations event.annotations
             }
 
-convertToApiIntegration :: Integration -> ApiIntegration
-convertToApiIntegration (ApiIntegration' integration) = integration
-convertToApiIntegration integration' =
+convertToApiLegacyIntegration :: Integration -> ApiLegacyIntegration
+convertToApiLegacyIntegration (ApiLegacyIntegration' integration) = integration
+convertToApiLegacyIntegration integration' =
   case integration' of
     (WidgetIntegration' integration) -> createIntegration integration
   where
     createIntegration integration =
-      ApiIntegration
+      ApiLegacyIntegration
         { uuid = integration.uuid
         , iId = integration.iId
         , name = integration.name
@@ -102,7 +102,7 @@ convertToWidgetIntegration :: Integration -> WidgetIntegration
 convertToWidgetIntegration (WidgetIntegration' integration) = integration
 convertToWidgetIntegration integration' =
   case integration' of
-    (ApiIntegration' integration) -> createIntegration integration
+    (ApiLegacyIntegration' integration) -> createIntegration integration
   where
     createIntegration integration =
       WidgetIntegration
