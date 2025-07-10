@@ -5,11 +5,11 @@ import Shared.Common.Util.Uuid
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 ontologyPortal' :: Integration
-ontologyPortal' = ApiIntegration' ontologyPortal
+ontologyPortal' = ApiLegacyIntegration' ontologyPortal
 
-ontologyPortal :: ApiIntegration
+ontologyPortal :: ApiLegacyIntegration
 ontologyPortal =
-  ApiIntegration
+  ApiLegacyIntegration
     { uuid = u' "e595a99e-5b10-4ac1-a6ef-379c849f9c84"
     , iId = "ontologyPortal"
     , name = "Ontology Portal"
@@ -28,9 +28,9 @@ ontologyPortal =
     }
 
 ontologyPortalEdited' :: Integration
-ontologyPortalEdited' = ApiIntegration' ontologyPortalEdited
+ontologyPortalEdited' = ApiLegacyIntegration' ontologyPortalEdited
 
-ontologyPortalEdited :: ApiIntegration
+ontologyPortalEdited :: ApiLegacyIntegration
 ontologyPortalEdited =
   ontologyPortal
     { iId = "editedOntologyPortal"
@@ -50,11 +50,11 @@ ontologyPortalEdited =
     }
 
 bioPortal' :: Integration
-bioPortal' = ApiIntegration' bioPortal
+bioPortal' = ApiLegacyIntegration' bioPortal
 
-bioPortal :: ApiIntegration
+bioPortal :: ApiLegacyIntegration
 bioPortal =
-  ApiIntegration
+  ApiLegacyIntegration
     { uuid = u' "32b5f11d-960b-4ce9-889f-fc7d29964122"
     , iId = "bioPortal"
     , name = "Bio Portal"

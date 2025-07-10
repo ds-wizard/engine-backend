@@ -12,6 +12,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
-retrieveTypehints :: ApiIntegration -> M.Map String String -> M.Map String String -> AppContextM (Either String [TypehintIDTO])
+retrieveTypehints :: ApiLegacyIntegration -> M.Map String String -> M.Map String String -> AppContextM (Either String [TypehintIDTO])
 retrieveTypehints integrationConfig encodedVariables variables =
   runRequest' (toRetrieveTypehintsRequest integrationConfig encodedVariables variables) (toRetrieveTypehintsResponse integrationConfig)

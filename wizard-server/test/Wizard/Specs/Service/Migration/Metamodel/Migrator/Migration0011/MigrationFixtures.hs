@@ -61,7 +61,7 @@ addIntegrationEventOut1 =
         }
       ],
       "responseListField": "results",
-      "integrationType": "ApiIntegration",
+      "integrationType": "ApiLegacyIntegration",
       "requestBody": "",
       "uuid": "82090e7d-7aa8-4339-a8c5-2330c27ae147",
       "responseItemId": "{{item.record_id}}",
@@ -148,7 +148,7 @@ editIntegrationEventOut1 =
       },
       "parentUuid": "6f6241d9-136c-4770-9d58-8a3f39607052",
       "eventType": "EditIntegrationEvent",
-      "integrationType": "ApiIntegration",
+      "integrationType": "ApiLegacyIntegration",
       "name": {
         "changed": true,
         "value": "Wikidata"

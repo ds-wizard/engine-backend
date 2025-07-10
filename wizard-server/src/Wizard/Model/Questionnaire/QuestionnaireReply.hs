@@ -50,7 +50,7 @@ data IntegrationReplyType
   = PlainType
       { value :: String
       }
-  | IntegrationType
+  | IntegrationLegacyType
       { intId :: Maybe String
       , value :: String
       }

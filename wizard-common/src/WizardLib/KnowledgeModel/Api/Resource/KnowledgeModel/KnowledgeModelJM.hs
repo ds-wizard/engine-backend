@@ -221,16 +221,16 @@ instance FromJSON Integration where
   parseJSON (Object o) = do
     referenceType <- o .: "integrationType"
     case referenceType of
-      "ApiIntegration" -> parseJSON (Object o) >>= \event -> return (ApiIntegration' event)
+      "ApiLegacyIntegration" -> parseJSON (Object o) >>= \event -> return (ApiLegacyIntegration' event)
       "WidgetIntegration" -> parseJSON (Object o) >>= \event -> return (WidgetIntegration' event)
       _ -> fail "One of the integrations has unsupported integrationType"
   parseJSON _ = mzero
 
 -- --------------------------------------------------------------------
-instance ToJSON ApiIntegration where
+instance ToJSON ApiLegacyIntegration where
   toJSON = genericToJSON (jsonOptionsWithTypeField "integrationType")
 
-instance FromJSON ApiIntegration where
+instance FromJSON ApiLegacyIntegration where
   parseJSON = genericParseJSON (jsonOptionsWithTypeField "integrationType")
 
 -- --------------------------------------------------------------------

@@ -10,13 +10,13 @@ import WizardLib.Common.Util.Hashable ()
 import WizardLib.KnowledgeModel.Model.Event.EventField
 
 data AddIntegrationEvent
-  = AddApiIntegrationEvent' AddApiIntegrationEvent
+  = AddApiLegacyIntegrationEvent' AddApiLegacyIntegrationEvent
   | AddWidgetIntegrationEvent' AddWidgetIntegrationEvent
   deriving (Show, Eq, Generic)
 
 instance Hashable AddIntegrationEvent
 
-data AddApiIntegrationEvent = AddApiIntegrationEvent
+data AddApiLegacyIntegrationEvent = AddApiLegacyIntegrationEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
   , entityUuid :: U.UUID
@@ -38,7 +38,7 @@ data AddApiIntegrationEvent = AddApiIntegrationEvent
   }
   deriving (Show, Eq, Generic)
 
-instance Hashable AddApiIntegrationEvent
+instance Hashable AddApiLegacyIntegrationEvent
 
 data AddWidgetIntegrationEvent = AddWidgetIntegrationEvent
   { uuid :: U.UUID
@@ -58,13 +58,13 @@ data AddWidgetIntegrationEvent = AddWidgetIntegrationEvent
 instance Hashable AddWidgetIntegrationEvent
 
 data EditIntegrationEvent
-  = EditApiIntegrationEvent' EditApiIntegrationEvent
+  = EditApiLegacyIntegrationEvent' EditApiLegacyIntegrationEvent
   | EditWidgetIntegrationEvent' EditWidgetIntegrationEvent
   deriving (Show, Eq, Generic)
 
 instance Hashable EditIntegrationEvent
 
-data EditApiIntegrationEvent = EditApiIntegrationEvent
+data EditApiLegacyIntegrationEvent = EditApiLegacyIntegrationEvent
   { uuid :: U.UUID
   , parentUuid :: U.UUID
   , entityUuid :: U.UUID
@@ -86,7 +86,7 @@ data EditApiIntegrationEvent = EditApiIntegrationEvent
   }
   deriving (Show, Eq, Generic)
 
-instance Hashable EditApiIntegrationEvent
+instance Hashable EditApiLegacyIntegrationEvent
 
 data EditWidgetIntegrationEvent = EditWidgetIntegrationEvent
   { uuid :: U.UUID

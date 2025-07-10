@@ -9,7 +9,7 @@ import Wizard.Service.Migration.Metamodel.Migrator.Migrations.MigrationContext
 import Wizard.Service.Migration.Metamodel.Migrator.Migrations.Utils
 
 -- Migration #0011 (KM v11 -> v12)
--- . Add "integrationType" (older = "ApiIntegration") to integration events
+-- . Add "integrationType" (older = "ApiLegacyIntegration") to integration events
 -- . Add "requestEmptySearch" field to integration events
 -- . Rename "responseItemUrl" to "itemUrl" in integration events
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
@@ -19,7 +19,7 @@ migrateAddIntegrationEvent :: Object -> Object
 migrateAddIntegrationEvent =
   runBasicOps
     [ Insert "requestEmptySearch" (Bool True)
-    , Insert "integrationType" (String "ApiIntegration")
+    , Insert "integrationType" (String "ApiLegacyIntegration")
     , Rename "responseItemUrl" "itemUrl"
     ]
 
@@ -27,7 +27,7 @@ migrateEditIntegrationEvent :: Object -> Object
 migrateEditIntegrationEvent =
   runBasicOps
     [ Insert "requestEmptySearch" unchangedValue
-    , Insert "integrationType" (String "ApiIntegration")
+    , Insert "integrationType" (String "ApiLegacyIntegration")
     , Rename "responseItemUrl" "itemUrl"
     ]
 

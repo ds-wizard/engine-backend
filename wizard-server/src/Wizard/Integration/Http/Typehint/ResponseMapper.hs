@@ -17,7 +17,7 @@ import Shared.Common.Util.String (splitOn)
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
-toRetrieveTypehintsResponse :: ApiIntegration -> Response BSL.ByteString -> Either String [TypehintIDTO]
+toRetrieveTypehintsResponse :: ApiLegacyIntegration -> Response BSL.ByteString -> Either String [TypehintIDTO]
 toRetrieveTypehintsResponse intConfig response =
   case extractResponseBody response >>= extractNestedField listField >>= convertToArray >>= mapRecords of
     Right dto -> Right dto

@@ -48,7 +48,7 @@ instance ToRow QuestionnaireEvent where
                   , toField . PGArray $ [value]
                   , toField (Nothing :: Maybe String)
                   ]
-                IntegrationType {..} ->
+                IntegrationLegacyType {..} ->
                   [ toField IntegrationReplyType
                   , toField . PGArray $ [value]
                   , case intId of
@@ -139,8 +139,8 @@ instance FromRow QuestionnaireEvent where
                   IntegrationReply
                     { iValue =
                         case mValueId of
-                          Just "<<integration-type-empty-id>>" -> IntegrationType {intId = Nothing, value = head valueText}
-                          Just valueId -> IntegrationType {intId = Just valueId, value = head valueText}
+                          Just "<<integration-type-empty-id>>" -> IntegrationLegacyType {intId = Nothing, value = head valueText}
+                          Just valueId -> IntegrationLegacyType {intId = Just valueId, value = head valueText}
                           Nothing -> PlainType {value = head valueText}
                     }
                 Just ItemSelectReplyType -> ItemSelectReply . u' . head $ valueText

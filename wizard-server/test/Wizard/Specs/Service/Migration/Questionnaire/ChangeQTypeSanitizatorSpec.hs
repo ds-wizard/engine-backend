@@ -86,7 +86,7 @@ itemListReply = createReply (ItemListReply {ilValue = [u' "58c1379d-8b1d-4d88-a8
 
 plainIntegrationReply = createReply (IntegrationReply {iValue = PlainType "Reply to 1st question"}) 0
 
-fullIntegrationReply = createReply (IntegrationReply {iValue = IntegrationType {intId = Nothing, value = "Reply to 1st question"}}) 0
+fullIntegrationReply = createReply (IntegrationReply {iValue = IntegrationLegacyType {intId = Nothing, value = "Reply to 1st question"}}) 0
 
 createReply :: ReplyValue -> DiffTime -> Reply
 createReply value minute =

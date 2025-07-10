@@ -11,7 +11,7 @@ import Shared.Common.Model.Http.HttpRequest
 import Wizard.Util.Interpolation (interpolateMapValues, interpolateString)
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
-toRetrieveTypehintsRequest :: ApiIntegration -> M.Map String String -> M.Map String String -> HttpRequest
+toRetrieveTypehintsRequest :: ApiLegacyIntegration -> M.Map String String -> M.Map String String -> HttpRequest
 toRetrieveTypehintsRequest intConfig encodedVariables variables =
   HttpRequest
     { requestMethod = intConfig.requestMethod

@@ -295,11 +295,11 @@ data ResourcePage = ResourcePage
 
 -- ------------------------------------------------
 data Integration
-  = ApiIntegration' ApiIntegration
+  = ApiLegacyIntegration' ApiLegacyIntegration
   | WidgetIntegration' WidgetIntegration
   deriving (Show, Eq, Generic)
 
-data ApiIntegration = ApiIntegration
+data ApiLegacyIntegration = ApiLegacyIntegration
   { uuid :: U.UUID
   , iId :: String
   , name :: String

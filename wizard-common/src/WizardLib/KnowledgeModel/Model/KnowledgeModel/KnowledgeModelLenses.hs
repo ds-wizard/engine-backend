@@ -176,9 +176,9 @@ instance HasUuid' Tag where
   setUuid entity newValue = entity {uuid = newValue}
 
 instance HasUuid' Integration where
-  getUuid (ApiIntegration' entity) = entity.uuid
+  getUuid (ApiLegacyIntegration' entity) = entity.uuid
   getUuid (WidgetIntegration' entity) = entity.uuid
-  setUuid (ApiIntegration' entity) newValue = ApiIntegration' $ entity {uuid = newValue}
+  setUuid (ApiLegacyIntegration' entity) newValue = ApiLegacyIntegration' $ entity {uuid = newValue}
   setUuid (WidgetIntegration' entity) newValue = WidgetIntegration' $ entity {uuid = newValue}
 
 instance HasUuid' Metric where
@@ -247,9 +247,9 @@ instance HasAnnotations' Tag where
   setAnnotations entity newValue = entity {annotations = newValue}
 
 instance HasAnnotations' Integration where
-  getAnnotations (ApiIntegration' entity) = entity.annotations
+  getAnnotations (ApiLegacyIntegration' entity) = entity.annotations
   getAnnotations (WidgetIntegration' entity) = entity.annotations
-  setAnnotations (ApiIntegration' entity) newValue = ApiIntegration' $ entity {annotations = newValue}
+  setAnnotations (ApiLegacyIntegration' entity) newValue = ApiLegacyIntegration' $ entity {annotations = newValue}
   setAnnotations (WidgetIntegration' entity) newValue = WidgetIntegration' $ entity {annotations = newValue}
 
 instance HasAnnotations' Metric where
@@ -405,7 +405,7 @@ instance HasProps' Question (M.Map String String) where
   setProps q newValue = q
 
 instance HasProps' Integration [String] where
-  getProps (ApiIntegration' integration) = integration.props
+  getProps (ApiLegacyIntegration' integration) = integration.props
   getProps (WidgetIntegration' integration) = integration.props
-  setProps (ApiIntegration' integration) newValue = ApiIntegration' $ integration {props = newValue}
+  setProps (ApiLegacyIntegration' integration) newValue = ApiLegacyIntegration' $ integration {props = newValue}
   setProps (WidgetIntegration' integration) newValue = WidgetIntegration' $ integration {props = newValue}
