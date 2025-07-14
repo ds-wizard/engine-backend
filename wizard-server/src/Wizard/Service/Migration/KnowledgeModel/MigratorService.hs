@@ -127,6 +127,7 @@ solveConflictAndMigrate branchUuid reqDto =
             (reqDto.action == MCAEdited && isNothing reqDto.event)
             (throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT)
         else throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__EVENT_UUIDS_MISMATCH
+    validateReqDto _ _ = error "Expected a ConflictState with CorrectorConflict containing an event"
 
 solveAllConflicts :: U.UUID -> AppContextM ()
 solveAllConflicts branchUuid =

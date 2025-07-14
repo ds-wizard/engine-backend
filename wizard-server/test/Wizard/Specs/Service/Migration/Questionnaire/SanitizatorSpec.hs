@@ -38,6 +38,8 @@ sanitizatorIntegrationSpec appContext =
 extractEventPath :: QuestionnaireEvent -> String
 extractEventPath (ClearReplyEvent' event) = event.path
 extractEventPath (SetReplyEvent' event) = event.path
+extractEventPath _ = error "Expected ClearReplyEvent' or SetReplyEvent'"
 
 extractSetEventValue :: QuestionnaireEvent -> ReplyValue
 extractSetEventValue (SetReplyEvent' event) = event.value
+extractSetEventValue _ = error "Expected SetReplyEvent'"

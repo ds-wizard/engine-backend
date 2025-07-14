@@ -39,6 +39,7 @@ solveConflict state mcDto =
           targetEvent =
             case state.migrationState of
               ConflictState (CorrectorConflict event) -> fromJust event
+              _ -> error "Expected a CorrectorConflict in MCAApply action"
        in createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
     MCAEdited ->
       let events = tail $ state.targetPackageEvents

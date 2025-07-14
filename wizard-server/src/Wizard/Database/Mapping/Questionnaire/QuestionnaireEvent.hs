@@ -145,6 +145,7 @@ instance FromRow QuestionnaireEvent where
                     }
                 Just ItemSelectReplyType -> ItemSelectReply . u' . head $ valueText
                 Just FileReplyType -> FileReply . u' . head $ valueText
+                _ -> error $ "Unknown value type: " ++ show valueType
         return . SetReplyEvent' $
           SetReplyEvent
             { uuid = uuid

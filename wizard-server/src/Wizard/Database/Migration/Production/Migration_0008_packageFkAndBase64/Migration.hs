@@ -129,6 +129,7 @@ updateAuthentication = updateEntity
         Just (Array services) -> KM.insert "services" (Array . fmap updateService $ services) external
         _ -> external
     updateService (Object service) = Object . updateClientSecret . updateClientId $ service
+    updateService _ = error "Expected an Object for service"
     updateClientId service =
       case KM.lookup "clientId" service of
         Just (String clientId) -> KM.insert "clientId" (convertToBase64 clientId) service

@@ -41,3 +41,4 @@ instance Eq AuditEntry where
   ae1@GetLocaleBundleAuditEntry {} == ae2@GetLocaleBundleAuditEntry {} =
     ae1.organizationId == ae2.organizationId
       && ae1.localeId == ae2.localeId
+  _ == _ = False

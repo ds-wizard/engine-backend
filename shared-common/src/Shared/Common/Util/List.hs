@@ -22,6 +22,7 @@ groupBy' xFn yFn xs ys =
 
 tuplify2 :: [a] -> (a, a)
 tuplify2 [x, y] = (x, y)
+tuplify2 _ = error "tuplify2: List must contain exactly two elements"
 
 removeDuplicates :: Eq a => [a] -> [a]
 removeDuplicates = rdHelper []

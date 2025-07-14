@@ -53,4 +53,5 @@ instance FromJSON AppError where
         return . NotExistsError $ message
       (423, _, _) -> return LockedError
       (500, _, _) -> return $ GeneralServerError ""
+      (_, _, _) -> return $ GeneralServerError ""
   parseJSON _ = mzero

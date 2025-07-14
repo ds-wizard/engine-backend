@@ -42,6 +42,7 @@ obValjOf t =
     (LNode (PlainL val)) -> val
     (LNode (PlainLL val _)) -> val
     (LNode (TypedL val _)) -> val
+    _ -> error "Expected a literal node"
 
 resolveClass :: RDF TList -> T.Text -> RdfClass
 resolveClass graph rootElement =

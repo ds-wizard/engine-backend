@@ -69,3 +69,4 @@ instance FromRow AuditEntry where
         localeId <- field
         createdAt <- field
         return $ GetLocaleBundleAuditEntry {..}
+      _ -> error $ "Unknown AuditEntry type: " ++ aType

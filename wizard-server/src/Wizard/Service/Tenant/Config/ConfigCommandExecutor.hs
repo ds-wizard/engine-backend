@@ -1,11 +1,13 @@
 module Wizard.Service.Tenant.Config.ConfigCommandExecutor where
 
+import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Database.DAO.Tenant.Config.TenantConfigDashboardAndLoginScreenDAO
@@ -37,6 +39,7 @@ execute command
   | command.function == cUpdateAnnouncementsName = cUpdateAnnouncements command
   | command.function == cUpdateAiAssistantName = cUpdateAiAssistant command
   | command.function == cUpdateOrganizationName = cUpdateOrganization command
+  | otherwise = throwError . GeneralServerError $ "Unknown command function: " <> command.function
 
 cCreateOrUpdateAuthenticationName = "createOrUpdateAuthentication"
 

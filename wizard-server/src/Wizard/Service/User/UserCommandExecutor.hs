@@ -1,9 +1,11 @@
 module Wizard.Service.User.UserCommandExecutor where
 
+import Control.Monad.Except (throwError)
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.UUID as U
 
+import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.Context.AppContext
@@ -18,6 +20,7 @@ execute command
   | command.function == cCreateUserName = cCreateUser command
   | command.function == cUpdateUserName = cUpdateUser command
   | command.function == cDeleteUserName = cDeleteUser command
+  | otherwise = throwError . GeneralServerError $ "Unknown command function: " <> command.function
 
 cCreateUserName = "createUser"
 

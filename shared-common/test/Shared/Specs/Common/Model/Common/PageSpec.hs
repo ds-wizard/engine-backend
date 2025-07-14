@@ -31,3 +31,4 @@ pageSpec =
 
 mapPageFn "a" = Just "aa"
 mapPageFn "b" = Nothing
+mapPageFn _ = error "Unexpected value in mapPageFn"

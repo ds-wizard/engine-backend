@@ -1,9 +1,11 @@
 module Wizard.Service.Questionnaire.QuestionnaireCommandExecutor where
 
+import Control.Monad.Except (throwError)
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.UUID as U
 
+import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.Context.AppContext
@@ -15,6 +17,7 @@ cComponent = "questionnaire"
 execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command
   | command.function == cCreateQuestionnairesName = cCreateQuestionnaires command
+  | otherwise = throwError . GeneralServerError $ "Unknown command function: " <> command.function
 
 cCreateQuestionnairesName = "createQuestionnaires"
 

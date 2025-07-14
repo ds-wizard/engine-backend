@@ -133,12 +133,14 @@ getColor LevelDebug = Default
 getColor LevelInfo = Default
 getColor LevelWarn = Magenta
 getColor LevelError = Red
+getColor (LevelOther _) = Default
 
 showLogLevel :: LogLevel -> String
 showLogLevel LevelDebug = "Debug"
 showLogLevel LevelInfo = "Info "
 showLogLevel LevelWarn = "Warn "
 showLogLevel LevelError = "Error"
+showLogLevel (LevelOther level) = T.unpack level
 
 -- ---------------------------------------------------------------------------
 sendToSentry

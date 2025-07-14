@@ -34,6 +34,7 @@ sanitizeQuestion km (questionUuidS : _) replyValue =
     (Just (ItemSelectQuestion' q)) -> sanitizeItemSelectQuestion km replyValue q
     (Just (FileQuestion' q)) -> sanitizeFileQuestion km replyValue q
     _ -> Nothing
+sanitizeQuestion _ _ _ = Nothing
 
 sanitizeOptionsQuestion :: KnowledgeModel -> ReplyValue -> OptionsQuestion -> Maybe ReplyValue
 sanitizeOptionsQuestion km AnswerReply {..} q =
