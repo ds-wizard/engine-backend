@@ -4,6 +4,7 @@ import Registry.Database.DAO.Audit.AuditEntryDAO
 import Registry.Database.DAO.Organization.OrganizationDAO
 import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ActionKey
 import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as Audit
+import qualified Registry.Database.Migration.Development.Common.CommonSchemaMigration as Common
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as DocumentTemplate
 import qualified Registry.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
 import qualified Registry.Database.Migration.Development.Organization.OrganizationSchemaMigration as Organization
@@ -33,7 +34,11 @@ buildSchema appContext =
     runInContext Organization.dropTables appContext
     runInContext Package.dropTables appContext
     runInContext DocumentTemplate.dropTables appContext
+    putStrLn "DB: Drop DB types"
+    runInContext Common.dropTypes appContext
     -- 2. Create
+    putStrLn "DB: Create DB types"
+    runInContext Common.createTypes appContext
     putStrLn "DB: Creating schema"
     runInContext Organization.createTables appContext
     runInContext Package.createTables appContext

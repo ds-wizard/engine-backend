@@ -2,6 +2,7 @@ module WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM wher
 
 import Data.Aeson
 
+import Shared.Common.Api.Resource.Common.SemVer2TupleJM ()
 import Shared.Common.Util.Aeson
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePatternJM ()

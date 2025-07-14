@@ -2,6 +2,7 @@ module WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplate
 
 import Data.Swagger
 
+import Shared.Common.Api.Resource.Common.SemVer2TupleSM ()
 import Shared.Common.Util.Swagger
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatSM ()

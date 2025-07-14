@@ -33,7 +33,11 @@ runMigration = runAppContextWithBaseContext $ do
   ActionKey.dropTables
   Package.dropTables
   Organization.dropTables
-  -- 3. Create schema
+  -- 3. Drop DB types
+  Common.dropTypes
+  -- 4. Create DB types
+  Common.createTypes
+  -- 5. Create schema
   Organization.createTables
   Package.createTables
   ActionKey.createTables
@@ -42,9 +46,9 @@ runMigration = runAppContextWithBaseContext $ do
   PersistentCommand.createTables
   Locale.createTables
   Component.createTables
-  -- 4. Create DB functions
+  -- 6. Create DB functions
   Common.createFunctions
-  -- 5. Load fixtures
+  -- 7. Load fixtures
   Organization.runMigration
   Package.runMigration
   DocumentTemplate.runMigration

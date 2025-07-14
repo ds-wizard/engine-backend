@@ -6,6 +6,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 import GHC.Int
 
+import Shared.Common.Model.Common.SemVer2Tuple
 import WizardLib.KnowledgeModel.Model.Package.PackagePattern
 
 data DocumentTemplatePhase
@@ -21,7 +22,7 @@ data DocumentTemplate = DocumentTemplate
   , templateId :: String
   , version :: String
   , phase :: DocumentTemplatePhase
-  , metamodelVersion :: Int
+  , metamodelVersion :: SemVer2Tuple
   , description :: String
   , readme :: String
   , license :: String

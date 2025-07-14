@@ -64,7 +64,7 @@ _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION tmlId tmlMetamodelVers
   LocaleRecord
     "error.validation.tml_unsupported_metamodel_version"
     "DocumentTemplate '%s' contains unsupported version of metamodel (template metamodel version: '%s', application metamodel version: '%s')"
-    [tmlId, show tmlMetamodelVersion, show appTmlMetamodelVersion]
+    [tmlId, tmlMetamodelVersion, appTmlMetamodelVersion]
 
 -- Unsupported State
 _ERROR_VALIDATION__DOC_TML_UNSUPPORTED_STATE tmlId phase =

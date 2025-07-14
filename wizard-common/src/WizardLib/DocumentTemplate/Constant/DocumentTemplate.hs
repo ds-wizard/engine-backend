@@ -1,4 +1,6 @@
 module WizardLib.DocumentTemplate.Constant.DocumentTemplate where
 
-documentTemplateMetamodelVersion :: Int
-documentTemplateMetamodelVersion = 16
+import Shared.Common.Model.Common.SemVer2Tuple
+
+documentTemplateMetamodelVersion :: SemVer2Tuple
+documentTemplateMetamodelVersion = SemVer2Tuple 17 0

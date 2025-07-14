@@ -4,6 +4,7 @@ import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 
+import Shared.Common.Database.Mapping.Common.SemVer2Tuple ()
 import Wizard.Database.Mapping.DocumentTemplate.DocumentTemplateState ()
 import Wizard.Model.DocumentTemplate.DocumentTemplateSuggestion
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()

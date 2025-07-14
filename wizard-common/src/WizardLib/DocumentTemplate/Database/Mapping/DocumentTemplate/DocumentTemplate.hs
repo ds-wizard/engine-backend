@@ -6,6 +6,7 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 
+import Shared.Common.Database.Mapping.Common.SemVer2Tuple ()
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
 import WizardLib.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplatePhase ()
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate

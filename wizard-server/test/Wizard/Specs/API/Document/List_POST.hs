@@ -12,6 +12,7 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Common.Lens
+import Shared.Common.Model.Common.SemVer2Tuple
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentCreateJM ()
@@ -120,13 +121,13 @@ test_400 appContext = do
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto =
             UserError $
-              _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION wizardDocumentTemplate.tId 1 documentTemplateMetamodelVersion
+              _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION wizardDocumentTemplate.tId "1.0" (show documentTemplateMetamodelVersion)
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO QTN_Migration.runMigration appContext
-      runInContextIO (updateDocumentTemplateById (wizardDocumentTemplate {metamodelVersion = 1})) appContext
+      runInContextIO (updateDocumentTemplateById (wizardDocumentTemplate {metamodelVersion = SemVer2Tuple 1 0})) appContext
       runInContextIO deleteDocuments appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

@@ -3,6 +3,7 @@ module Registry.Api.Resource.DocumentTemplate.Bundle.DocumentTemplateBundleJM wh
 import Data.Aeson
 
 import Registry.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
+import Shared.Common.Api.Resource.Common.SemVer2TupleJM ()
 import Shared.Common.Util.Aeson
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO
 import WizardLib.KnowledgeModel.Model.Package.PackagePattern

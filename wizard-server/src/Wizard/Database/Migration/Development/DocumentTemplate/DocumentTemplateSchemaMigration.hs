@@ -40,22 +40,22 @@ createTemplateTable = do
   let sql =
         "CREATE TABLE document_template \
         \( \
-        \    id                varchar     NOT NULL, \
-        \    name              varchar     NOT NULL, \
-        \    organization_id   varchar     NOT NULL, \
-        \    template_id       varchar     NOT NULL, \
-        \    version           varchar     NOT NULL, \
-        \    metamodel_version integer     NOT NULL, \
-        \    description       varchar     NOT NULL, \
-        \    readme            varchar     NOT NULL, \
-        \    license           varchar     NOT NULL, \
-        \    allowed_packages  jsonb       NOT NULL, \
-        \    formats           jsonb       NOT NULL, \
-        \    created_at        timestamptz NOT NULL, \
-        \    tenant_uuid       uuid        NOT NULL, \
-        \    updated_at        timestamptz NOT NULL, \
-        \    phase             varchar     NOT NULL, \
-        \    non_editable      boolean     NOT NULL, \
+        \    id                varchar          NOT NULL, \
+        \    name              varchar          NOT NULL, \
+        \    organization_id   varchar          NOT NULL, \
+        \    template_id       varchar          NOT NULL, \
+        \    version           varchar          NOT NULL, \
+        \    metamodel_version sem_ver_2_tuple  NOT NULL, \
+        \    description       varchar          NOT NULL, \
+        \    readme            varchar          NOT NULL, \
+        \    license           varchar          NOT NULL, \
+        \    allowed_packages  jsonb            NOT NULL, \
+        \    formats           jsonb            NOT NULL, \
+        \    created_at        timestamptz      NOT NULL, \
+        \    tenant_uuid       uuid             NOT NULL, \
+        \    updated_at        timestamptz      NOT NULL, \
+        \    phase             varchar          NOT NULL, \
+        \    non_editable      boolean          NOT NULL, \
         \    CONSTRAINT document_template_pk PRIMARY KEY (id, tenant_uuid), \
         \    CONSTRAINT document_template_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
         \); \
