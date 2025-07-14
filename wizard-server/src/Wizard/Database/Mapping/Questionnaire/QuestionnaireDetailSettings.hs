@@ -5,6 +5,7 @@ import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.Types
 
+import Shared.Common.Database.Mapping.Common.SemVer2Tuple ()
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermJM ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireAcl

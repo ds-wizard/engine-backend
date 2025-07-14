@@ -2,6 +2,7 @@ module Wizard.Model.Document.DocumentContextJM where
 
 import Data.Aeson
 
+import Shared.Common.Api.Resource.Common.SemVer2TupleJM ()
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Api.Resource.Questionnaire.File.QuestionnaireFileSimpleJM ()

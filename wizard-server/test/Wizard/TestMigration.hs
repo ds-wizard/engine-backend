@@ -123,6 +123,11 @@ buildSchema appContext = do
   runInContext Locale.dropTables appContext
   runInContext Tenant.dropTables appContext
   runInContext Instance.dropTables appContext
+  putStrLn "DB: Drop DB types"
+  runInContext Common.dropTypes appContext
+  -- 2. Create
+  putStrLn "DB: Create DB types"
+  runInContext Common.createTypes appContext
   putStrLn "DB: Creating schema"
   runInContext Instance.createTables appContext
   runInContext Tenant.createTables appContext

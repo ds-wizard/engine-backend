@@ -10,13 +10,15 @@ import Registry.Service.DocumentTemplate.DocumentTemplateService
 import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleJM ()
 import Shared.Common.Api.Handler.Common
+import Shared.Common.Api.Resource.Common.SemVer2TupleJM ()
+import Shared.Common.Model.Common.SemVer2Tuple
 import Shared.Common.Model.Context.TransactionState
 
 list_GET
   :: Maybe String
   -> Maybe String
   -> Maybe String
-  -> Maybe Int
+  -> Maybe SemVer2Tuple
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] [DocumentTemplateSimpleDTO])
 list_GET mTokenHeader mOrganizationId mTmlId mMetamodelVersion =
   getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->

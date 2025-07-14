@@ -8,6 +8,28 @@ import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Shared.Common.Util.Logger
 
+dropTypes :: AppContextM Int64
+dropTypes = do
+  logInfo _CMP_MIGRATION "(Type/Common) drop types"
+  let sql =
+        "DROP TYPE IF EXISTS sem_ver_2_tuple;"
+  let action conn = execute_ conn sql
+  runDB action
+
+createTypes :: AppContextM Int64
+createTypes = do
+  logInfo _CMP_MIGRATION "(Type/Common) create types"
+  createSemVer2TupleType
+
+createSemVer2TupleType = do
+  let sql =
+        "CREATE TYPE sem_ver_2_tuple AS ( \
+        \    major INT, \
+        \    minor INT \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
 dropFunctions :: AppContextM Int64
 dropFunctions = do
   logInfo _CMP_MIGRATION "(Function/Common) drop functions"

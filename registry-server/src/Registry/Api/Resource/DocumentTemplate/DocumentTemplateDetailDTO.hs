@@ -4,6 +4,7 @@ import Data.Time
 import GHC.Generics
 
 import RegistryLib.Model.Organization.OrganizationSimple
+import Shared.Common.Model.Common.SemVer2Tuple
 
 data DocumentTemplateDetailDTO = DocumentTemplateDetailDTO
   { tId :: String
@@ -11,7 +12,7 @@ data DocumentTemplateDetailDTO = DocumentTemplateDetailDTO
   , organizationId :: String
   , templateId :: String
   , version :: String
-  , metamodelVersion :: Int
+  , metamodelVersion :: SemVer2Tuple
   , description :: String
   , readme :: String
   , license :: String
