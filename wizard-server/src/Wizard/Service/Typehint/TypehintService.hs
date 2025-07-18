@@ -24,6 +24,7 @@ getTypehints reqDto =
     question <- getQuestion km reqDto.questionUuid
     integration' <- getIntegration km question.integrationUuid
     case integration' of
+      ApiIntegration' _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION
       ApiLegacyIntegration' integration -> do
         fileIntConfig <- getFileIntegrationConfig integration.iId
         appIntConfig <- getTenantIntegrationConfig integration.iId

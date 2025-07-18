@@ -21,6 +21,7 @@ import Wizard.Api.Handler.ExternalLink.Api
 import Wizard.Api.Handler.Feedback.Api
 import Wizard.Api.Handler.Info.Api
 import Wizard.Api.Handler.KnowledgeModel.Api
+import Wizard.Api.Handler.KnowledgeModelSecret.Api
 import Wizard.Api.Handler.Locale.Api
 import Wizard.Api.Handler.Migration.Api
 import Wizard.Api.Handler.Package.Api
@@ -61,6 +62,7 @@ type ApplicationAPI =
     :<|> FeedbackAPI
     :<|> InfoAPI
     :<|> KnowledgeModelAPI
+    :<|> KnowledgeModelSecretAPI
     :<|> LocaleAPI
     :<|> MigrationAPI
     :<|> PackageAPI
@@ -104,6 +106,7 @@ applicationServer =
     :<|> feedbackServer
     :<|> infoServer
     :<|> knowledgeModelServer
+    :<|> knowledgeModelSecretServer
     :<|> localeServer
     :<|> migrationServer
     :<|> packageServer

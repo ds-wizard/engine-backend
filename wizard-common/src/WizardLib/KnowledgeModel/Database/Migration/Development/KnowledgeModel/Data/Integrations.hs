@@ -1,8 +1,34 @@
 module WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Integrations where
 
+import qualified Data.Map.Strict as M
+
 import Shared.Common.Model.Common.MapEntry
 import Shared.Common.Util.Uuid
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+
+repositoryApi' :: Integration
+repositoryApi' = ApiIntegration' repositoryApi
+
+repositoryApi :: ApiIntegration
+repositoryApi =
+  ApiIntegration
+    { uuid = u' "40280ca6-aa18-4dee-9301-9b9c0800fef1"
+    , name = "Repository API"
+    , variables = ["domain", "country"]
+    , allowCustomReply = True
+    , requestMethod = "GET"
+    , requestUrl = "${baseurl}/${path}?domain=${domain}&country=${country}&q=${q}"
+    , requestHeaders = [MapEntry "Api-Key" "${apikey}"]
+    , requestBody = Nothing
+    , requestAllowEmptySearch = True
+    , responseListField = Just "nested.results"
+    , responseItemTemplate = "{{item.name}}"
+    , responseItemTemplateForSelection = Nothing
+    , testQ = "test"
+    , testVariables = M.fromList [("domain", "biology"), ("country", "cz")]
+    , testResponse = Just "Test response"
+    , annotations = []
+    }
 
 ontologyPortal' :: Integration
 ontologyPortal' = ApiLegacyIntegration' ontologyPortal

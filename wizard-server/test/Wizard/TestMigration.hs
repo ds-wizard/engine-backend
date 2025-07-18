@@ -16,6 +16,7 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelCacheDAO
+import Wizard.Database.DAO.KnowledgeModelSecret.KnowledgeModelSecretDAO
 import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_MigratorDAO
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
@@ -52,6 +53,7 @@ import qualified Wizard.Database.Migration.Development.DocumentTemplate.Document
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as Feedback
 import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMigration as Instance
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSchemaMigration as KnowledgeModel
+import qualified Wizard.Database.Migration.Development.KnowledgeModelSecret.KnowledgeModelSecretSchemaMigration as KnowledgeModelSecret
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LocaleMigration
 import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KnowledgeModelMigrator
@@ -118,6 +120,7 @@ buildSchema appContext = do
   runInContext QuestionnaireMigrator.dropTables appContext
   runInContext Questionnaire.dropTables appContext
   runInContext DocumentTemplate.dropTables appContext
+  runInContext KnowledgeModelSecret.dropTables appContext
   runInContext Package.dropTables appContext
   runInContext User.dropTables appContext
   runInContext Locale.dropTables appContext
@@ -135,6 +138,7 @@ buildSchema appContext = do
   runInContext User.createTables appContext
   runInContext DocumentTemplate.createTables appContext
   runInContext Package.createTables appContext
+  runInContext KnowledgeModelSecret.createTables appContext
   runInContext ActionKey.createTables appContext
   runInContext Feedback.createTables appContext
   runInContext Branch.createTables appContext
@@ -208,6 +212,7 @@ resetDB appContext = do
   runInContext deleteQuestionnaireActions appContext
   runInContext deleteQuestionnaireImporters appContext
   runInContext deleteDocumentTemplates appContext
+  runInContext deleteKnowledgeModelSecrets appContext
   runInContext deletePackages appContext
   runInContext deleteUserTokens appContext
   runInContext deleteUserGroupMemberships appContext

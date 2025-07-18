@@ -24,6 +24,8 @@ import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigratio
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as Feedback
 import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMigration as Instance
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSchemaMigration as KnowledgeModel
+import qualified Wizard.Database.Migration.Development.KnowledgeModelSecret.KnowledgeModelSecretMigration as KnowledgeModelSecret
+import qualified Wizard.Database.Migration.Development.KnowledgeModelSecret.KnowledgeModelSecretSchemaMigration as KnowledgeModelSecret
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as Locale
 import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorMigration as KnowledgeModelMigrator
@@ -78,6 +80,7 @@ runMigration = runAppContextWithBaseContext $ do
   Feedback.dropTables
   ActionKey.dropTables
   DocumentTemplate.dropTables
+  KnowledgeModelSecret.dropTables
   Package.dropTables
   User.dropTables
   Locale.dropTables
@@ -89,6 +92,7 @@ runMigration = runAppContextWithBaseContext $ do
   Locale.createTables
   User.createTables
   Package.createTables
+  KnowledgeModelSecret.createTables
   DocumentTemplate.createTables
   ActionKey.createTables
   Feedback.createTables
@@ -124,6 +128,7 @@ runMigration = runAppContextWithBaseContext $ do
   Tenant.runMigration
   User.runMigration
   Package.runMigration
+  KnowledgeModelSecret.runMigration
   DocumentTemplate.runMigration
   ActionKey.runMigration
   Feedback.runMigration

@@ -1494,6 +1494,33 @@ d_km1_tds =
 
 -- ----------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------
+a_km1_ir' :: AddIntegrationEvent
+a_km1_ir' = AddApiIntegrationEvent' a_km1_ir
+
+a_km1_ir :: AddApiIntegrationEvent
+a_km1_ir =
+  AddApiIntegrationEvent
+    { uuid = u' "beffa456-eecc-4cd3-bc93-07cad5f87ec9"
+    , parentUuid = km1.uuid
+    , entityUuid = repositoryApi.uuid
+    , name = repositoryApi.name
+    , variables = repositoryApi.variables
+    , allowCustomReply = repositoryApi.allowCustomReply
+    , requestMethod = repositoryApi.requestMethod
+    , requestUrl = repositoryApi.requestUrl
+    , requestHeaders = repositoryApi.requestHeaders
+    , requestBody = repositoryApi.requestBody
+    , requestAllowEmptySearch = repositoryApi.requestAllowEmptySearch
+    , responseListField = repositoryApi.responseListField
+    , responseItemTemplate = repositoryApi.responseItemTemplate
+    , responseItemTemplateForSelection = repositoryApi.responseItemTemplateForSelection
+    , testQ = repositoryApi.testQ
+    , testVariables = repositoryApi.testVariables
+    , testResponse = repositoryApi.testResponse
+    , annotations = repositoryApi.annotations
+    , createdAt = dt' 2018 1 21
+    }
+
 a_km1_iop' :: AddIntegrationEvent
 a_km1_iop' = AddApiLegacyIntegrationEvent' a_km1_iop
 
@@ -1562,6 +1589,33 @@ a_km1_iwp =
     , widgetUrl = widgetPortal.widgetUrl
     , itemUrl = widgetPortal.itemUrl
     , annotations = widgetPortal.annotations
+    , createdAt = dt' 2018 1 21
+    }
+
+e_km1_ir' :: EditIntegrationEvent
+e_km1_ir' = EditApiIntegrationEvent' e_km1_ir
+
+e_km1_ir :: EditApiIntegrationEvent
+e_km1_ir =
+  EditApiIntegrationEvent
+    { uuid = u' "f26be960-5705-4bc6-8348-bf8719a40eab"
+    , parentUuid = km1.uuid
+    , entityUuid = repositoryApi.uuid
+    , name = ChangedValue repositoryApi.name
+    , variables = ChangedValue repositoryApi.variables
+    , allowCustomReply = ChangedValue repositoryApi.allowCustomReply
+    , requestMethod = ChangedValue repositoryApi.requestMethod
+    , requestUrl = ChangedValue repositoryApi.requestUrl
+    , requestHeaders = ChangedValue repositoryApi.requestHeaders
+    , requestBody = ChangedValue repositoryApi.requestBody
+    , requestAllowEmptySearch = ChangedValue repositoryApi.requestAllowEmptySearch
+    , responseListField = ChangedValue repositoryApi.responseListField
+    , responseItemTemplate = ChangedValue repositoryApi.responseItemTemplate
+    , responseItemTemplateForSelection = ChangedValue repositoryApi.responseItemTemplateForSelection
+    , testQ = ChangedValue repositoryApi.testQ
+    , testVariables = ChangedValue repositoryApi.testVariables
+    , testResponse = ChangedValue repositoryApi.testResponse
+    , annotations = ChangedValue repositoryApi.annotations
     , createdAt = dt' 2018 1 21
     }
 
