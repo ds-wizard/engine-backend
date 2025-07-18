@@ -39,8 +39,8 @@ publishPackageFromBranch reqDto = do
     validateMigrationExistence reqDto.branchUuid
     branch <- findBranchByUuid reqDto.branchUuid
     branchData <- findBranchDataById reqDto.branchUuid
-    mMergeCheckpointPkgId <- getBranchForkOfPackageId branch
-    mForkOfPkgId <- getBranchMergeCheckpointPackageId branch
+    mForkOfPkgId <- getBranchForkOfPackageId branch
+    mMergeCheckpointPkgId <- getBranchMergeCheckpointPackageId branch
     auditBranchPublish branch branchData mForkOfPkgId
     doPublishPackage
       branch.version
