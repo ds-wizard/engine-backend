@@ -132,6 +132,10 @@ instance ToSchema ResourcePage where
 instance ToSchema Integration
 
 -- --------------------------------------------------------------------
+instance ToSchema ApiIntegration where
+  declareNamedSchema = toSwaggerWithType "integrationType" repositoryApi
+
+-- --------------------------------------------------------------------
 instance ToSchema ApiLegacyIntegration where
   declareNamedSchema = toSwaggerWithType "integrationType" bioPortal
 

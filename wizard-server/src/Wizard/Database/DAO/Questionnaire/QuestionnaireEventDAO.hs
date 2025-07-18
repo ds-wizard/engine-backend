@@ -88,7 +88,7 @@ insertQuestionnaireEvents events = do
 updateQuestionnaireEventByUuid :: QuestionnaireEvent -> AppContextM Int64
 updateQuestionnaireEventByUuid event = do
   tenantUuid <- asks currentTenantUuid
-  let sql = fromString "UPDATE questionnaire_event SET uuid = ?, event_type = ?, path = ?, created_at = ?, created_by = ?, questionnaire_uuid = ?, tenant_uuid = ?, value_type = ?, value = ?, value_id = ? WHERE uuid = ? AND tenant_uuid = ?"
+  let sql = fromString "UPDATE questionnaire_event SET uuid = ?, event_type = ?, path = ?, created_at = ?, created_by = ?, questionnaire_uuid = ?, tenant_uuid = ?, value_type = ?, value = ?, value_id = ?, value_raw = ? WHERE uuid = ? AND tenant_uuid = ?"
   let params = toRow event ++ [toField (getUuid event), toField tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params

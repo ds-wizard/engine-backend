@@ -50,6 +50,8 @@ import Wizard.Api.Resource.DocumentTemplate.Folder.DocumentTemplateFolderMoveSM 
 import Wizard.Api.Resource.Feedback.FeedbackCreateSM ()
 import Wizard.Api.Resource.Feedback.FeedbackSM ()
 import Wizard.Api.Resource.File.FileCreateSM ()
+import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretChangeSM ()
+import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretSM ()
 import Wizard.Api.Resource.Locale.LocaleChangeSM ()
 import Wizard.Api.Resource.Locale.LocaleCreateSM ()
 import Wizard.Api.Resource.Locale.LocaleDetailSM ()

@@ -295,8 +295,29 @@ data ResourcePage = ResourcePage
 
 -- ------------------------------------------------
 data Integration
-  = ApiLegacyIntegration' ApiLegacyIntegration
+  = ApiIntegration' ApiIntegration
+  | ApiLegacyIntegration' ApiLegacyIntegration
   | WidgetIntegration' WidgetIntegration
+  deriving (Show, Eq, Generic)
+
+data ApiIntegration = ApiIntegration
+  { uuid :: U.UUID
+  , name :: String
+  , variables :: [String]
+  , allowCustomReply :: Bool
+  , requestMethod :: String
+  , requestUrl :: String
+  , requestHeaders :: [MapEntry String String]
+  , requestBody :: Maybe String
+  , requestAllowEmptySearch :: Bool
+  , responseListField :: Maybe String
+  , responseItemTemplate :: String
+  , responseItemTemplateForSelection :: Maybe String
+  , testQ :: String
+  , testVariables :: M.Map String String
+  , testResponse :: Maybe String
+  , annotations :: [MapEntry String String]
+  }
   deriving (Show, Eq, Generic)
 
 data ApiLegacyIntegration = ApiLegacyIntegration

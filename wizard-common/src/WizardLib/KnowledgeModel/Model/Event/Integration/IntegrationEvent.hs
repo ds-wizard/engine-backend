@@ -1,6 +1,7 @@
 module WizardLib.KnowledgeModel.Model.Event.Integration.IntegrationEvent where
 
 import Data.Hashable
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
@@ -10,11 +11,37 @@ import WizardLib.Common.Util.Hashable ()
 import WizardLib.KnowledgeModel.Model.Event.EventField
 
 data AddIntegrationEvent
-  = AddApiLegacyIntegrationEvent' AddApiLegacyIntegrationEvent
+  = AddApiIntegrationEvent' AddApiIntegrationEvent
+  | AddApiLegacyIntegrationEvent' AddApiLegacyIntegrationEvent
   | AddWidgetIntegrationEvent' AddWidgetIntegrationEvent
   deriving (Show, Eq, Generic)
 
 instance Hashable AddIntegrationEvent
+
+data AddApiIntegrationEvent = AddApiIntegrationEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , name :: String
+  , variables :: [String]
+  , allowCustomReply :: Bool
+  , requestMethod :: String
+  , requestUrl :: String
+  , requestHeaders :: [MapEntry String String]
+  , requestBody :: Maybe String
+  , requestAllowEmptySearch :: Bool
+  , responseListField :: Maybe String
+  , responseItemTemplate :: String
+  , responseItemTemplateForSelection :: Maybe String
+  , testQ :: String
+  , testVariables :: M.Map String String
+  , testResponse :: Maybe String
+  , annotations :: [MapEntry String String]
+  , createdAt :: UTCTime
+  }
+  deriving (Show, Eq, Generic)
+
+instance Hashable AddApiIntegrationEvent
 
 data AddApiLegacyIntegrationEvent = AddApiLegacyIntegrationEvent
   { uuid :: U.UUID
@@ -58,11 +85,37 @@ data AddWidgetIntegrationEvent = AddWidgetIntegrationEvent
 instance Hashable AddWidgetIntegrationEvent
 
 data EditIntegrationEvent
-  = EditApiLegacyIntegrationEvent' EditApiLegacyIntegrationEvent
+  = EditApiIntegrationEvent' EditApiIntegrationEvent
+  | EditApiLegacyIntegrationEvent' EditApiLegacyIntegrationEvent
   | EditWidgetIntegrationEvent' EditWidgetIntegrationEvent
   deriving (Show, Eq, Generic)
 
 instance Hashable EditIntegrationEvent
+
+data EditApiIntegrationEvent = EditApiIntegrationEvent
+  { uuid :: U.UUID
+  , parentUuid :: U.UUID
+  , entityUuid :: U.UUID
+  , name :: EventField String
+  , variables :: EventField [String]
+  , allowCustomReply :: EventField Bool
+  , requestMethod :: EventField String
+  , requestUrl :: EventField String
+  , requestHeaders :: EventField [MapEntry String String]
+  , requestBody :: EventField (Maybe String)
+  , requestAllowEmptySearch :: EventField Bool
+  , responseListField :: EventField (Maybe String)
+  , responseItemTemplate :: EventField String
+  , responseItemTemplateForSelection :: EventField (Maybe String)
+  , testQ :: EventField String
+  , testVariables :: EventField (M.Map String String)
+  , testResponse :: EventField (Maybe String)
+  , annotations :: EventField [MapEntry String String]
+  , createdAt :: UTCTime
+  }
+  deriving (Show, Eq, Generic)
+
+instance Hashable EditApiIntegrationEvent
 
 data EditApiLegacyIntegrationEvent = EditApiLegacyIntegrationEvent
   { uuid :: U.UUID

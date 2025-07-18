@@ -101,6 +101,7 @@ createQtnEventTable = do
         \    value_type         value_type, \
         \    value              text[], \
         \    value_id           text, \
+        \    value_raw          jsonb, \
         \    CONSTRAINT questionnaire_event_pk PRIMARY KEY (uuid, tenant_uuid), \
         \    CONSTRAINT questionnaire_event_created_by_fk FOREIGN KEY (created_by, tenant_uuid) references user_entity(uuid, tenant_uuid), \
         \    CONSTRAINT questionnaire_event_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) references questionnaire(uuid, tenant_uuid), \

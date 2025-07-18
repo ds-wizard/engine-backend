@@ -54,6 +54,10 @@ data IntegrationReplyType
       { intId :: Maybe String
       , value :: String
       }
+  | IntegrationType
+      { value :: String
+      , raw :: String
+      }
   deriving (Show, Eq, Generic)
 
 instance Hashable IntegrationReplyType

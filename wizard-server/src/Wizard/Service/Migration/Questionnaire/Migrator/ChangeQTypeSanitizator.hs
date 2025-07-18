@@ -59,6 +59,7 @@ sanitizeValueQuestion km IntegrationReply {iValue = replyValue} q =
   case replyValue of
     PlainType value -> Just $ StringReply {sValue = value}
     IntegrationLegacyType {..} -> Just $ StringReply {sValue = value}
+    IntegrationType {..} -> Just $ StringReply {sValue = value}
 sanitizeValueQuestion _ _ _ = Nothing
 
 sanitizeIntegrationQuestion :: KnowledgeModel -> ReplyValue -> IntegrationQuestion -> Maybe ReplyValue
