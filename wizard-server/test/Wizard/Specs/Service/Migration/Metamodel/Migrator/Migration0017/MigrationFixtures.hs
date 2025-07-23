@@ -1,43 +1,8 @@
-module Wizard.Specs.Service.Migration.Metamodel.Migrator.Migration0011.MigrationFixtures where
+module Wizard.Specs.Service.Migration.Metamodel.Migrator.Migration0017.MigrationFixtures where
 
 import Data.Aeson.QQ
 
 addIntegrationEventIn1 =
-  [aesonQQ|
-    {
-      "annotations": [],
-      "requestUrl": "${apiUrl}/search/?q=${q}&registry=${registry}",
-      "createdAt": "2019-06-11T05:39:31.678Z",
-      "uuid": "82090e7d-7aa8-4339-a8c5-2330c27ae147",
-      "responseItemId": "{{item.record_id}}",
-      "entityUuid": "f3520558-707e-415a-8878-c7b8d6ccc2fb",
-      "props": [
-        "registry"
-      ],
-      "parentUuid": "6f6241d9-136c-4770-9d58-8a3f39607052",
-      "eventType": "AddIntegrationEvent",
-      "name": "FAIRsharing",
-      "requestHeaders": [
-        {
-          "value": "application/json",
-          "key": "Accept"
-        },
-        {
-          "value": "${apiKey}",
-          "key": "Api-Key"
-        }
-      ],
-      "id": "fairsharing",
-      "responseItemUrl": "https://fairsharing.org/${id}",
-      "responseListField": "results",
-      "logo": "exampleLogo",
-      "responseItemTemplate": "{{item.name}}",
-      "requestMethod": "GET",
-      "requestBody": ""
-    }
-  |]
-
-addIntegrationEventOut1 =
   [aesonQQ|
     {
       "annotations": [],
@@ -74,6 +39,43 @@ addIntegrationEventOut1 =
     }
   |]
 
+addIntegrationEventOut1 =
+  [aesonQQ|
+    {
+      "annotations": [],
+      "requestUrl": "${apiUrl}/search/?q=${q}&registry=${registry}",
+      "createdAt": "2019-06-11T05:39:31.678Z",
+      "entityUuid": "f3520558-707e-415a-8878-c7b8d6ccc2fb",
+      "props": [
+        "registry"
+      ],
+      "eventType": "AddIntegrationEvent",
+      "name": "FAIRsharing",
+      "id": "fairsharing",
+      "requestHeaders": [
+        {
+          "value": "application/json",
+          "key": "Accept"
+        },
+        {
+          "value": "${apiKey}",
+          "key": "Api-Key"
+        }
+      ],
+      "responseListField": "results",
+      "integrationType": "ApiLegacyIntegration",
+      "requestBody": "",
+      "uuid": "82090e7d-7aa8-4339-a8c5-2330c27ae147",
+      "responseItemId": "{{item.record_id}}",
+      "requestEmptySearch": true,
+      "parentUuid": "6f6241d9-136c-4770-9d58-8a3f39607052",
+      "logo": "exampleLogo",
+      "responseItemTemplate": "{{item.name}}",
+      "itemUrl": "https://fairsharing.org/${id}",
+      "requestMethod": "GET"
+    }
+  |]
+
 editIntegrationEventIn1 =
   [aesonQQ|
     {
@@ -95,9 +97,13 @@ editIntegrationEventIn1 =
       },
       "parentUuid": "6f6241d9-136c-4770-9d58-8a3f39607052",
       "eventType": "EditIntegrationEvent",
+      "integrationType": "ApiIntegration",
       "name": {
         "changed": true,
         "value": "Wikidata"
+      },
+      "requestEmptySearch": {
+        "changed": false
       },
       "requestHeaders": {
         "changed": false
@@ -105,7 +111,7 @@ editIntegrationEventIn1 =
       "id": {
         "changed": false
       },
-      "responseItemUrl": {
+      "itemUrl": {
         "changed": false
       },
       "responseListField": {
@@ -148,7 +154,7 @@ editIntegrationEventOut1 =
       },
       "parentUuid": "6f6241d9-136c-4770-9d58-8a3f39607052",
       "eventType": "EditIntegrationEvent",
-      "integrationType": "ApiIntegration",
+      "integrationType": "ApiLegacyIntegration",
       "name": {
         "changed": true,
         "value": "Wikidata"

@@ -60,12 +60,6 @@ _ERROR_VALIDATION__PKG_UNSUPPORTED_METAMODEL_VERSION pkgMetamodelVersion appPkgM
     "Package contains unsupported version of metamodel (pkg metamodel version: '%s', application metamodel version: '%s')"
     [show pkgMetamodelVersion, show appPkgMetamodelVersion]
 
-_ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION tmlId tmlMetamodelVersion appTmlMetamodelVersion =
-  LocaleRecord
-    "error.validation.tml_unsupported_metamodel_version"
-    "DocumentTemplate '%s' contains unsupported version of metamodel (template metamodel version: '%s', application metamodel version: '%s')"
-    [tmlId, tmlMetamodelVersion, appTmlMetamodelVersion]
-
 -- Unsupported State
 _ERROR_VALIDATION__DOC_TML_UNSUPPORTED_STATE tmlId phase =
   LocaleRecord "error.validation.doc_tml_unsupported_state" "You can not move '%s' into the following phase: %s" [tmlId, phase]
