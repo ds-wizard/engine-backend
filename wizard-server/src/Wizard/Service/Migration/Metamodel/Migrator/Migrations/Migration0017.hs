@@ -1,4 +1,4 @@
-module Wizard.Service.Migration.Metamodel.Migrator.Migrations.Migration0011 (
+module Wizard.Service.Migration.Metamodel.Migrator.Migrations.Migration0017 (
   migrateEventValue,
 ) where
 
@@ -8,27 +8,25 @@ import qualified Data.Text as T
 import Wizard.Service.Migration.Metamodel.Migrator.Migrations.MigrationContext
 import Wizard.Service.Migration.Metamodel.Migrator.Migrations.Utils
 
--- Migration #0011 (KM v11 -> v12)
--- . Add "integrationType" (older = "ApiIntegration") to integration events
--- . Add "requestEmptySearch" field to integration events
--- . Rename "responseItemUrl" to "itemUrl" in integration events
+-- Migration #0017 (KM v17 -> v18)
+-- . Change integrationType from ApiIntegration to ApiLegacyIntegration
 migrateEventValue :: MigrationContext -> Value -> Either String [Value]
 migrateEventValue _ input = Right [migrate input]
+
+changeIntegrationTypeValue :: Value -> Value
+changeIntegrationTypeValue (String "ApiIntegration") = String "ApiLegacyIntegration"
+changeIntegrationTypeValue value = value
 
 migrateAddIntegrationEvent :: Object -> Object
 migrateAddIntegrationEvent =
   runBasicOps
-    [ Insert "requestEmptySearch" (Bool True)
-    , Insert "integrationType" (String "ApiIntegration")
-    , Rename "responseItemUrl" "itemUrl"
+    [ Change "integrationType" changeIntegrationTypeValue
     ]
 
 migrateEditIntegrationEvent :: Object -> Object
 migrateEditIntegrationEvent =
   runBasicOps
-    [ Insert "requestEmptySearch" unchangedValue
-    , Insert "integrationType" (String "ApiIntegration")
-    , Rename "responseItemUrl" "itemUrl"
+    [ Change "integrationType" changeIntegrationTypeValue
     ]
 
 runMigration :: T.Text -> Object -> Object
