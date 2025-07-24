@@ -25,8 +25,21 @@ For contributing guidelines, please read [CONTRIBUTING](CONTRIBUTING.md) and [re
  - **Docker** (recommended 19.03.0-ce) - *for build of production image*
  - [**document-worker**](https://github.com/ds-wizard/engine-tools) (corresponding version)
  - [**mailer**](https://github.com/ds-wizard/engine-tools) (corresponding version)
+ - [**engine-jinja**](https://github.com/ds-wizard/engine-jinja) (1.0.0, see below)
 
 ### Build & Run
+
+To build and run the Wizard application, you need to have [**engine-jinja**](https://github.com/ds-wizard/engine-jinja) libraries 
+compiled and available in the `lib/` folder of the project. Either download it from the [releases](https://github.com/ds-wizard/engine-jinja/releases) 
+or compile it yourself. For development, make sure create a symlink to the `lib/` folder from `wizard-server/dist`. Additionally,
+set relevant environment variables for the application to work properly:
+
+```bash
+export PYTHONPATH=$(pwd)/lib:$PYTHONPATH
+export LD_LIBRARY_PATH=$(pwd)/lib:$LD_LIBRARY_PATH
+# For macOS users:
+export DYLD_LIBRARY_PATH=$(pwd)/lib:$DYLD_LIBRARY_PATH
+```
 
 For running application it's need to run Postgres database and set up connection in configuration file.
 
