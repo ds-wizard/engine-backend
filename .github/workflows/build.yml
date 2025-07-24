@@ -25,6 +25,9 @@ jobs:
       DOCKER_META_FILE: './${{ matrix.component }}-server/Dockerfile'
       DOCKER_META_PLATFORMS: 'linux/amd64'
       STACK_VERSION: ${{ matrix.stack }}
+      PYTHONPATH: ${{ github.workspace }}/lib
+      LD_LIBRARY_PATH: ${{ github.workspace }}/lib
+      ENGINE_JINJA_VERSION: 'v1.0.0'
 
     services:
       postgres:
@@ -57,6 +60,21 @@ jobs:
       run: |
         mkdir -p ~/.local/bin
         export PATH=~/.local/bin:$PATH
+
+    - name: Setup Python
+      if: matrix.component == 'wizard'
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Prepare lib directory
+      if: matrix.component == 'wizard'
+      run: |
+        mkdir -p lib
+        curl -L -o libjinja.tar.gz  https://github.com/ds-wizard/engine-jinja/releases/download/$ENGINE_JINJA_VERSION/libjinja-python3.10-ubuntu-22.04-X64.tar.gz
+        tar --strip-components=1 -xzf libjinja.tar.gz -C lib
+        rm libjinja.tar.gz
+        ls -la lib
 
 # (1) -> Setup cache
     - name: Cache ~/.stack
@@ -205,6 +223,12 @@ jobs:
         cp $(stack path --local-install-root)/bin/$COMPONENT-server $COMPONENT-server/$COMPONENT-server-bin
       env:
         FEEDBACK_TOKEN: ${{ secrets.FEEDBACK_TOKEN }}
+
+    - name: Prepare dist directory
+      run: |
+        cd $COMPONENT-server/
+        make dist
+        ls -lahR dist
 
 # (4.1) -> Docker build (test)
     - name: Docker meta [test]
