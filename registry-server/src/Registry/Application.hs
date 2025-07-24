@@ -32,7 +32,7 @@ import Shared.Worker.Bootstrap.Worker
 runApplication :: IO ()
 runApplication =
   runWebServerWithWorkers
-    asciiLogo
+    [putStrLn asciiLogo]
     serverConfigFile
     validateServerConfig
     buildInfoFile
