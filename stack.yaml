@@ -54,4 +54,7 @@ extra-deps:
   - th-compat-0.1.6
   - time-parsers-0.2
 
+extra-lib-dirs:
+  - ./lib
+
 allow-newer: true

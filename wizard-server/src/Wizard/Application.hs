@@ -27,11 +27,13 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Context.ContextMappers
 import Wizard.Service.Config.Server.ServerConfigValidation
+import Wizard.Util.Jinja (verifyJinja)
 import Wizard.Worker.CronWorkers
 import Wizard.Worker.PermanentWorkers
 
 runApplication :: IO ()
-runApplication =
+runApplication = do
+  verifyJinja
   runWebServerWithWorkers
     asciiLogo
     serverConfigFile

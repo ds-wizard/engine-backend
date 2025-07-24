@@ -90,6 +90,7 @@ import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Tenant.Config.TenantConfigValidationSpec
 import Wizard.Specs.Service.Tenant.TenantValidationSpec
 import Wizard.Specs.Service.User.UserServiceSpec
+import Wizard.Specs.Util.JinjaSpec
 import Wizard.Specs.Websocket.Branch.Detail.WebsocketSpec
 import Wizard.Specs.Websocket.Common
 import Wizard.Specs.Websocket.Questionnaire.Detail.WebsocketSpec
@@ -245,6 +246,8 @@ main =
                 questionnaireAclSpec appContext
                 questionnaireServiceSpec appContext
               userServiceIntegrationSpec appContext
+            describe "UTIL" $ do
+              jinjaSpec
             describe "WEBSOCKET" $ do
               branchesWebsocketAPI appContext
               questionnaireWebsocketAPI appContext
