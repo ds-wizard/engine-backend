@@ -128,7 +128,7 @@ jobs:
         )
         RET=0
         for FILE in $FILES; do
-          if ! fourmolu --mode check $FILE; then
+          if ! fourmolu --quiet --mode check $FILE; then
             echo "Unformatted file: " . $FILE
             RET=1
           fi
