@@ -23,7 +23,7 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Config.TenantConfigEM ()
 import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigValidation
-import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigAiAssistantDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Service.Tenant.Config.ConfigMapper
@@ -40,9 +40,9 @@ getCurrentTenantConfigDto = do
   tcKnowledgeModel <- getCurrentTenantConfigKnowledgeModel
   tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
   tcSubmission <- findTenantConfigSubmission
-  tcAiAssistant <- findTenantConfigAiAssistant
+  tcFeatures <- findTenantConfigFeatures
   tcOwl <- findTenantConfigOwl
-  return $ toTenantConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcKnowledgeModel tcQuestionnaire tcSubmission tcAiAssistant tcOwl
+  return $ toTenantConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcKnowledgeModel tcQuestionnaire tcSubmission tcFeatures tcOwl
 
 modifyTenantConfigDto :: TenantConfigChangeDTO -> AppContextM TenantConfig
 modifyTenantConfigDto reqDto =
@@ -86,11 +86,13 @@ modifyTenantConfigDto reqDto =
     tcSubmission <- findTenantConfigSubmission
     let tcSubmissionUpdated = fromSubmissionChangeDTO reqDto.submission tcSubmission.tenantUuid tcSubmission.createdAt now
     updateTenantConfigSubmission tcSubmissionUpdated
-    -- AiAssistant
-    tcAiAssistant <- findTenantConfigAiAssistant
+    -- Features
+    tcFeatures <- findTenantConfigFeatures
+    let tcFeaturesUpdated = fromFeaturesChangeDTO reqDto.features tcFeatures tcFeatures.tenantUuid tcFeatures.createdAt tcFeatures.updatedAt
+    updateTenantConfigFeatures tcFeaturesUpdated
     -- Owl
     tcOwl <- findTenantConfigOwl
-    return $ toTenantConfig tcOrganizationUpdated tcAuthenticationUpdated tcPrivacyAndSupportUpdated tcDashboardAndLoginScreenUpdated tcLookAndFeelUpdated tcRegistryUpdated tcKnowledgeModelUpdated tcQuestionnaireUpdated tcSubmissionUpdated tcAiAssistant tcOwl
+    return $ toTenantConfig tcOrganizationUpdated tcAuthenticationUpdated tcPrivacyAndSupportUpdated tcDashboardAndLoginScreenUpdated tcLookAndFeelUpdated tcRegistryUpdated tcKnowledgeModelUpdated tcQuestionnaireUpdated tcSubmissionUpdated tcFeaturesUpdated tcOwl
 
 getCurrentTenantConfigAuthentication :: AppContextM TenantConfigAuthentication
 getCurrentTenantConfigAuthentication = do

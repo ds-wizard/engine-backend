@@ -26,7 +26,7 @@ data ClientConfigDTO
       , cloud :: ClientConfigCloudDTO
       , owl :: TenantConfigOwl
       , admin :: ClientConfigAdminDTO
-      , aiAssistant :: ClientConfigAiAssistantDTO
+      , features :: ClientConfigFeaturesDTO
       , signalBridge :: ClientConfigSignalBridgeDTO
       , modules :: [ClientConfigModuleDTO]
       }
@@ -80,8 +80,9 @@ data ClientConfigAdminDTO = ClientConfigAdminDTO
   }
   deriving (Generic, Eq, Show)
 
-data ClientConfigAiAssistantDTO = ClientConfigAiAssistantDTO
-  { enabled :: Bool
+data ClientConfigFeaturesDTO = ClientConfigFeaturesDTO
+  { aiAssistantEnabled :: Bool
+  , toursEnabled :: Bool
   }
   deriving (Generic, Eq, Show)
 

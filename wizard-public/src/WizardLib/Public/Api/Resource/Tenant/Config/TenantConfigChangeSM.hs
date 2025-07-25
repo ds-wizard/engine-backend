@@ -17,5 +17,5 @@ instance ToSchema TenantConfigLookAndFeelChangeDTO where
 instance ToSchema TenantConfigLookAndFeelCustomMenuLinkChangeDTO where
   declareNamedSchema = toSwagger defaultLookAndFeelCustomLinkChangeDto
 
-instance ToSchema TenantConfigAiAssistantChangeDTO where
-  declareNamedSchema = toSwagger defaultAiAssistantChangeDto
+instance ToSchema TenantConfigFeaturesChangeFullDTO where
+  declareNamedSchema = toSwagger defaultFeaturesChangeFullDto

@@ -76,13 +76,20 @@ instance Eq TenantConfigLookAndFeelCustomMenuLink where
       && a.url == b.url
       && a.newWindow == b.newWindow
 
-data TenantConfigAiAssistant = TenantConfigAiAssistant
+data TenantConfigFeatures = TenantConfigFeatures
   { tenantUuid :: U.UUID
-  , enabled :: Bool
+  , aiAssistantEnabled :: Bool
+  , toursEnabled :: Bool
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
-  deriving (Show, Eq, Generic)
+  deriving (Show, Generic)
+
+instance Eq TenantConfigFeatures where
+  a == b =
+    a.tenantUuid == b.tenantUuid
+      && a.aiAssistantEnabled == b.aiAssistantEnabled
+      && a.toursEnabled == b.toursEnabled
 
 data TenantConfigMail = TenantConfigMail
   { tenantUuid :: U.UUID

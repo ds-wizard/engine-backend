@@ -24,8 +24,8 @@ instance FromJSON TenantConfigLookAndFeelCustomMenuLinkChangeDTO where
 instance ToJSON TenantConfigLookAndFeelCustomMenuLinkChangeDTO where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigAiAssistantChangeDTO where
+instance FromJSON TenantConfigFeaturesChangeFullDTO where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigAiAssistantChangeDTO where
+instance ToJSON TenantConfigFeaturesChangeFullDTO where
   toJSON = genericToJSON jsonOptions

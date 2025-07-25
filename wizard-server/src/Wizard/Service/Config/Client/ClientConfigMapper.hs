@@ -11,8 +11,8 @@ import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.UserProfile
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
-toClientConfigDTO :: ServerConfig -> TenantConfigOrganization -> TenantConfigAuthentication -> TenantConfigPrivacyAndSupport -> TenantConfigDashboardAndLoginScreen -> TenantConfigLookAndFeel -> TenantConfigRegistry -> TenantConfigQuestionnaire -> TenantConfigSubmission -> TenantConfigAiAssistant -> TenantConfigOwl -> Maybe UserProfile -> [String] -> Tenant -> ClientConfigDTO
-toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcQuestionnaire tcSubmission tcAiAssistant tcOwl mUserProfile tours tenant =
+toClientConfigDTO :: ServerConfig -> TenantConfigOrganization -> TenantConfigAuthentication -> TenantConfigPrivacyAndSupport -> TenantConfigDashboardAndLoginScreen -> TenantConfigLookAndFeel -> TenantConfigRegistry -> TenantConfigQuestionnaire -> TenantConfigSubmission -> TenantConfigFeatures -> TenantConfigOwl -> Maybe UserProfile -> [String] -> Tenant -> ClientConfigDTO
+toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcQuestionnaire tcSubmission tcFeatures tcOwl mUserProfile tours tenant =
   ClientConfigDTO
     { user = mUserProfile
     , tours = tours
@@ -27,7 +27,7 @@ toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSuppo
     , cloud = toClientConfigCloudDTO serverConfig.cloud tenant
     , owl = tcOwl
     , admin = toClientConfigAdminDTO serverConfig.admin tenant
-    , aiAssistant = toClientConfigAiAssistantDTO serverConfig.admin tcAiAssistant
+    , features = toClientConfigFeaturesDTO serverConfig.admin tcFeatures
     , signalBridge = toClientConfigSignalBridgeDTO tenant
     , modules =
         if serverConfig.admin.enabled
@@ -109,10 +109,11 @@ toClientConfigAdminDTO :: ServerConfigAdmin -> Tenant -> ClientConfigAdminDTO
 toClientConfigAdminDTO serverConfig tenant =
   ClientConfigAdminDTO {enabled = serverConfig.enabled, clientUrl = tenant.adminClientUrl}
 
-toClientConfigAiAssistantDTO :: ServerConfigAdmin -> TenantConfigAiAssistant -> ClientConfigAiAssistantDTO
-toClientConfigAiAssistantDTO serverConfig tenantConfig =
-  ClientConfigAiAssistantDTO
-    { enabled = serverConfig.enabled && tenantConfig.enabled
+toClientConfigFeaturesDTO :: ServerConfigAdmin -> TenantConfigFeatures -> ClientConfigFeaturesDTO
+toClientConfigFeaturesDTO serverConfig tenantConfig =
+  ClientConfigFeaturesDTO
+    { aiAssistantEnabled = serverConfig.enabled && tenantConfig.aiAssistantEnabled
+    , toursEnabled = tenantConfig.toursEnabled
     }
 
 toClientConfigSignalBridgeDTO :: Tenant -> ClientConfigSignalBridgeDTO

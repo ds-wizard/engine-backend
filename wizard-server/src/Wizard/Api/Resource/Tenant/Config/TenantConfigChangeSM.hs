@@ -57,3 +57,6 @@ instance ToSchema TenantConfigSubmissionServiceRequestChangeDTO where
 
 instance ToSchema TenantConfigSubmissionServiceRequestMultipartChangeDTO where
   declareNamedSchema = toSwagger defaultSubmissionServiceRequestMultipart
+
+instance ToSchema TenantConfigFeaturesChangeDTO where
+  declareNamedSchema = toSwagger defaultSubmissionServiceRequestMultipart

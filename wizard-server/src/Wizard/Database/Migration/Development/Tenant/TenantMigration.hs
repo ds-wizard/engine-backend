@@ -16,7 +16,7 @@ import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Tenant.Config.TenantConfig
-import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigAiAssistantDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
 import WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs
 
@@ -42,7 +42,7 @@ runConfigMigration = do
   insertTenantConfigRegistry defaultRegistryEncrypted
   insertTenantConfigQuestionnaire defaultQuestionnaireEncrypted
   insertTenantConfigSubmission (defaultSubmission {services = []})
-  insertTenantConfigAiAssistant defaultAiAssistant
+  insertTenantConfigFeatures defaultFeatures
   insertTenantConfigMail defaultMail
   insertTenantConfigOwl defaultOwl
   return ()

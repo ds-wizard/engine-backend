@@ -37,13 +37,13 @@ defaultTenantConfig =
     , submission = defaultSubmission
     , owl = defaultOwl
     , mailConfigUuid = Nothing
-    , aiAssistant = defaultAiAssistant
+    , features = defaultFeatures
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 20
     }
 
 defaultTenantConfigChangeDto :: TenantConfigChangeDTO
-defaultTenantConfigChangeDto = toChangeDTO defaultOrganizationChangeDto defaultAuthenticationChangeDto defaultPrivacyAndSupportChangeDto defaultDashboardAndLoginScreenChangeDto defaultLookAndFeelChangeDto defaultRegistryChangeDto defaultKnowledgeModelChangeDto defaultQuestionnaireChangeDto defaultSubmissionChangeDto
+defaultTenantConfigChangeDto = toChangeDTO defaultOrganizationChangeDto defaultAuthenticationChangeDto defaultPrivacyAndSupportChangeDto defaultDashboardAndLoginScreenChangeDto defaultLookAndFeelChangeDto defaultRegistryChangeDto defaultKnowledgeModelChangeDto defaultQuestionnaireChangeDto defaultSubmissionChangeDto defaultFeaturesChangeDto
 
 defaultOrganization :: TenantConfigOrganization
 defaultOrganization = fromOrganizationChangeDTO defaultOrganizationChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
@@ -308,6 +308,12 @@ defaultSubmissionServiceRequestMultipartChangeDto =
   TenantConfigSubmissionServiceRequestMultipartChangeDTO
     { enabled = False
     , fileName = "file"
+    }
+
+defaultFeaturesChangeDto :: TenantConfigFeaturesChangeDTO
+defaultFeaturesChangeDto =
+  TenantConfigFeaturesChangeDTO
+    { toursEnabled = True
     }
 
 defaultOwl :: TenantConfigOwl

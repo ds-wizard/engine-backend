@@ -30,7 +30,8 @@ data TenantConfigLookAndFeelCustomMenuLinkChangeDTO = TenantConfigLookAndFeelCus
   }
   deriving (Show, Eq, Generic)
 
-data TenantConfigAiAssistantChangeDTO = TenantConfigAiAssistantChangeDTO
-  { enabled :: Bool
+data TenantConfigFeaturesChangeFullDTO = TenantConfigFeaturesChangeFullDTO
+  { aiAssistantEnabled :: Bool
+  , toursEnabled :: Bool
   }
   deriving (Show, Eq, Generic)

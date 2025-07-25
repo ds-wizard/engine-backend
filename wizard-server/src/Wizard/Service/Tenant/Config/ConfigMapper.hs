@@ -10,9 +10,9 @@ import Wizard.Model.Tenant.Config.TenantConfigSubmissionServiceSimple
 import WizardLib.KnowledgeModel.Model.Package.PackagePattern
 import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateOrUpdateAuthenticationConfigCommand
-import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAiAssistantConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateDefaultRoleConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateFeaturesConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateOrganizationConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConfigCommand
@@ -30,8 +30,9 @@ toChangeDTO
   -> TenantConfigKnowledgeModelChangeDTO
   -> TenantConfigQuestionnaireChangeDTO
   -> TenantConfigSubmissionChangeDTO
+  -> TenantConfigFeaturesChangeDTO
   -> TenantConfigChangeDTO
-toChangeDTO organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry knowledgeModel questionnaire submission = TenantConfigChangeDTO {..}
+toChangeDTO organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry knowledgeModel questionnaire submission features = TenantConfigChangeDTO {..}
 
 toSubmissionServiceSimple :: TenantConfigSubmissionService -> TenantConfigSubmissionServiceSimple
 toSubmissionServiceSimple config =
@@ -51,10 +52,10 @@ toTenantConfig
   -> TenantConfigKnowledgeModel
   -> TenantConfigQuestionnaire
   -> TenantConfigSubmission
-  -> TenantConfigAiAssistant
+  -> TenantConfigFeatures
   -> TenantConfigOwl
   -> TenantConfig
-toTenantConfig organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry knowledgeModel questionnaire submission aiAssistant owl =
+toTenantConfig organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry knowledgeModel questionnaire submission features owl =
   let uuid = organization.tenantUuid
       mailConfigUuid = Nothing
       createdAt = organization.createdAt
@@ -118,6 +119,12 @@ fromSubmissionServiceRequestChangeDTO dto@TenantConfigSubmissionServiceRequestCh
 fromSubmissionServiceRequestMultipartChangeDTO :: TenantConfigSubmissionServiceRequestMultipartChangeDTO -> TenantConfigSubmissionServiceRequestMultipart
 fromSubmissionServiceRequestMultipartChangeDTO TenantConfigSubmissionServiceRequestMultipartChangeDTO {..} =
   TenantConfigSubmissionServiceRequestMultipart {..}
+
+fromFeaturesChangeDTO :: TenantConfigFeaturesChangeDTO -> TenantConfigFeatures -> U.UUID -> UTCTime -> UTCTime -> TenantConfigFeatures
+fromFeaturesChangeDTO dto oldConfig tenantUuid createdAt updatedAt =
+  let aiAssistantEnabled = oldConfig.aiAssistantEnabled
+      toursEnabled = dto.toursEnabled
+   in TenantConfigFeatures {..}
 
 fromAuthenticationCommand :: TenantConfigAuthentication -> CreateOrUpdateAuthenticationConfigCommand -> UTCTime -> TenantConfigAuthentication
 fromAuthenticationCommand oldConfig command now =
@@ -190,10 +197,11 @@ fromAnnouncements oldConfig command now =
     , updatedAt = now
     }
 
-fromAiAssitant :: TenantConfigAiAssistant -> UpdateAiAssistantConfigCommand -> UTCTime -> TenantConfigAiAssistant
-fromAiAssitant oldConfig command now =
+fromFeatures :: TenantConfigFeatures -> UpdateFeaturesConfigCommand -> UTCTime -> TenantConfigFeatures
+fromFeatures oldConfig command now =
   oldConfig
-    { enabled = command.enabled
+    { aiAssistantEnabled = command.aiAssistantEnabled
+    , toursEnabled = command.toursEnabled
     , updatedAt = now
     }
 

@@ -23,7 +23,7 @@ dropConfigTables = do
   let sql =
         "DROP TABLE IF EXISTS config_owl;\
         \DROP TABLE IF EXISTS config_mail;\
-        \DROP TABLE IF EXISTS config_ai_assistant;\
+        \DROP TABLE IF EXISTS config_features;\
         \DROP TABLE IF EXISTS config_submission_service_supported_format;\
         \DROP TABLE IF EXISTS config_submission_service_request_header;\
         \DROP TABLE IF EXISTS config_submission_service;\
@@ -91,7 +91,7 @@ createConfigTables = do
   createTcKnowledgeModelPublicPackagePatternTable
   createTcQuestionnaireTable
   createTcSubmissionTable
-  createTcAiAssistantTable
+  createTcFeaturesTable
   createTcMailTable
   createTcOwlTable
 
@@ -401,17 +401,18 @@ createTcOwlTable = do
   let action conn = execute_ conn sql
   runDB action
 
-createTcAiAssistantTable = do
-  logInfo _CMP_MIGRATION "(Table/ConfigAiAssistant) create tables"
+createTcFeaturesTable = do
+  logInfo _CMP_MIGRATION "(Table/ConfigFeatures) create tables"
   let sql =
-        "CREATE TABLE config_ai_assistant \
+        "CREATE TABLE config_features \
         \( \
-        \    tenant_uuid uuid        NOT NULL, \
-        \    enabled     bool        NOT NULL, \
-        \    created_at  timestamptz NOT NULL, \
-        \    updated_at  timestamptz NOT NULL, \
-        \    CONSTRAINT config_ai_assistant_pk PRIMARY KEY (tenant_uuid), \
-        \    CONSTRAINT config_ai_assistant_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
+        \    tenant_uuid          uuid        NOT NULL, \
+        \    ai_assistant_enabled bool        NOT NULL, \
+        \    tours_enabled        bool        NOT NULL, \
+        \    created_at           timestamptz NOT NULL, \
+        \    updated_at           timestamptz NOT NULL, \
+        \    CONSTRAINT config_features_pk PRIMARY KEY (tenant_uuid), \
+        \    CONSTRAINT config_features_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

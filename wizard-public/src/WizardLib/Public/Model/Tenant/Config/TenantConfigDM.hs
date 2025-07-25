@@ -19,11 +19,12 @@ defaultLookAndFeel =
     , updatedAt = dt' 2018 1 20
     }
 
-defaultAiAssistant :: TenantConfigAiAssistant
-defaultAiAssistant =
-  TenantConfigAiAssistant
+defaultFeatures :: TenantConfigFeatures
+defaultFeatures =
+  TenantConfigFeatures
     { tenantUuid = U.nil
-    , enabled = True
+    , aiAssistantEnabled = True
+    , toursEnabled = True
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 20
     }

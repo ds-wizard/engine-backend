@@ -18,5 +18,5 @@ instance ToSchema TenantConfigLookAndFeel where
 instance ToSchema TenantConfigLookAndFeelCustomMenuLink where
   declareNamedSchema = toSwagger defaultLookAndFeelCustomLink
 
-instance ToSchema TenantConfigAiAssistant where
-  declareNamedSchema = toSwagger defaultAiAssistant
+instance ToSchema TenantConfigFeatures where
+  declareNamedSchema = toSwagger defaultFeatures

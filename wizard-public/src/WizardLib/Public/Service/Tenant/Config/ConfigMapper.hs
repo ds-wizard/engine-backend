@@ -17,5 +17,5 @@ fromLookAndFeelChangeDTO a@TenantConfigLookAndFeelChangeDTO {..} tenantUuid crea
 fromLookAndFeelCustomMenuLinkChangeDTO :: TenantConfigLookAndFeelCustomMenuLinkChangeDTO -> U.UUID -> Int -> UTCTime -> UTCTime -> TenantConfigLookAndFeelCustomMenuLink
 fromLookAndFeelCustomMenuLinkChangeDTO TenantConfigLookAndFeelCustomMenuLinkChangeDTO {..} tenantUuid position createdAt updatedAt = TenantConfigLookAndFeelCustomMenuLink {..}
 
-fromAiAssistantChangeDTO :: TenantConfigAiAssistantChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigAiAssistant
-fromAiAssistantChangeDTO TenantConfigAiAssistantChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigAiAssistant {..}
+fromFeaturesChangeFullDTO :: TenantConfigFeaturesChangeFullDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigFeatures
+fromFeaturesChangeFullDTO TenantConfigFeaturesChangeFullDTO {..} tenantUuid createdAt updatedAt = TenantConfigFeatures {..}

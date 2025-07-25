@@ -77,7 +77,7 @@ import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.Public.Database.DAO.ExternalLink.ExternalLinkUsageDAO
-import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigAiAssistantDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
@@ -174,7 +174,7 @@ resetDB appContext = do
   runInContext deleteSubmissions appContext
   runInContext deleteTenantConfigOwls appContext
   runInContext deleteTenantConfigMails appContext
-  runInContext deleteTenantConfigAiAssistants appContext
+  runInContext deleteTenantConfigFeatures appContext
   runInContext deleteTenantConfigSubmissions appContext
   runInContext deleteTenantConfigQuestionnaires appContext
   runInContext deleteTenantConfigKnowledgeModels appContext
@@ -230,7 +230,7 @@ resetDB appContext = do
   runInContext (insertTenantConfigKnowledgeModelPublicPackagePattern defaultKnowledgeModelPublicPackagePattern) appContext
   runInContext (insertTenantConfigQuestionnaire defaultQuestionnaireEncrypted) appContext
   runInContext (insertTenantConfigSubmission (defaultSubmission {services = []})) appContext
-  runInContext (insertTenantConfigAiAssistant defaultAiAssistant) appContext
+  runInContext (insertTenantConfigFeatures defaultFeatures) appContext
   runInContext (insertTenantConfigMail defaultMail) appContext
   runInContext (insertTenantConfigOwl defaultOwl) appContext
   runInContext (insertTenantConfigLookAndFeel (defaultLookAndFeel {tenantUuid = differentTenantUuid})) appContext

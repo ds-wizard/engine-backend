@@ -21,6 +21,7 @@ data TenantConfigChangeDTO = TenantConfigChangeDTO
   , knowledgeModel :: TenantConfigKnowledgeModelChangeDTO
   , questionnaire :: TenantConfigQuestionnaireChangeDTO
   , submission :: TenantConfigSubmissionChangeDTO
+  , features :: TenantConfigFeaturesChangeDTO
   }
   deriving (Generic, Show)
 
@@ -133,5 +134,10 @@ data TenantConfigSubmissionServiceRequestChangeDTO = TenantConfigSubmissionServi
 data TenantConfigSubmissionServiceRequestMultipartChangeDTO = TenantConfigSubmissionServiceRequestMultipartChangeDTO
   { enabled :: Bool
   , fileName :: String
+  }
+  deriving (Generic, Eq, Show)
+
+data TenantConfigFeaturesChangeDTO = TenantConfigFeaturesChangeDTO
+  { toursEnabled :: Bool
   }
   deriving (Generic, Eq, Show)

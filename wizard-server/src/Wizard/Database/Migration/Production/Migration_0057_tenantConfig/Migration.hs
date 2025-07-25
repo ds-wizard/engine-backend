@@ -31,7 +31,7 @@ migrate dbPool = do
   createTcSubmissionServiceRequestHeaderTable dbPool
   createTcSubmissionServiceSupportedFormatTable dbPool
   createTcOwlTable dbPool
-  createTcAiAssistantTable dbPool
+  createTcFeaturesTable dbPool
   createTcMailTable dbPool
   createGravatarFunction dbPool
   recreateGetBranchForkOfPackageIdFunction dbPool
@@ -581,20 +581,22 @@ createTcOwlTable dbPool = do
   liftIO $ withResource dbPool action
   return Nothing
 
-createTcAiAssistantTable dbPool = do
+createTcFeaturesTable dbPool = do
   let sql =
-        "CREATE TABLE config_ai_assistant \
+        "CREATE TABLE config_features \
         \( \
-        \    tenant_uuid uuid        NOT NULL, \
-        \    enabled     bool        NOT NULL, \
-        \    created_at  timestamptz NOT NULL, \
-        \    updated_at  timestamptz NOT NULL, \
-        \    CONSTRAINT config_ai_assistant_pk PRIMARY KEY (tenant_uuid), \
-        \    CONSTRAINT config_ai_assistant_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
+        \    tenant_uuid          uuid        NOT NULL, \
+        \    ai_assistant_enabled bool        NOT NULL, \
+        \    tours_enabled        bool        NOT NULL, \
+        \    created_at           timestamptz NOT NULL, \
+        \    updated_at           timestamptz NOT NULL, \
+        \    CONSTRAINT config_features_pk PRIMARY KEY (tenant_uuid), \
+        \    CONSTRAINT config_features_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \); \
-        \INSERT INTO config_ai_assistant (tenant_uuid, enabled, created_at, updated_at) \
+        \INSERT INTO config_features (tenant_uuid, ai_assistant_enabled, tours_enabled, created_at, updated_at) \
         \SELECT uuid, \
         \       (ai_assistant ->> 'enabled')::bool, \
+        \       true, \
         \       created_at, \
         \       updated_at \
         \FROM tenant_config;"

@@ -18,7 +18,7 @@ import Wizard.Service.User.UserMapper
 import qualified WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs as STC
 
 instance ToSchema ClientConfigDTO where
-  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig TC.defaultOrganization TC.defaultAuthentication TC.defaultPrivacyAndSupport TC.defaultDashboardAndLoginScreen STC.defaultLookAndFeel TC.defaultRegistry TC.defaultQuestionnaire TC.defaultSubmission STC.defaultAiAssistant TC.defaultOwl (Just $ toUserProfile (toDTO userAlbert) []) [] defaultTenant)
+  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig TC.defaultOrganization TC.defaultAuthentication TC.defaultPrivacyAndSupport TC.defaultDashboardAndLoginScreen STC.defaultLookAndFeel TC.defaultRegistry TC.defaultQuestionnaire TC.defaultSubmission STC.defaultFeatures TC.defaultOwl (Just $ toUserProfile (toDTO userAlbert) []) [] defaultTenant)
 
 instance ToSchema ClientConfigAuthDTO where
   declareNamedSchema = toSwagger (toClientAuthDTO TC.defaultAuthentication)
@@ -41,8 +41,8 @@ instance ToSchema ClientConfigCloudDTO where
 instance ToSchema ClientConfigAdminDTO where
   declareNamedSchema = toSwagger (toClientConfigAdminDTO S.defaultAdmin defaultTenant)
 
-instance ToSchema ClientConfigAiAssistantDTO where
-  declareNamedSchema = toSwagger (toClientConfigAiAssistantDTO S.defaultAdmin STC.defaultAiAssistant)
+instance ToSchema ClientConfigFeaturesDTO where
+  declareNamedSchema = toSwagger (toClientConfigFeaturesDTO S.defaultAdmin STC.defaultFeatures)
 
 instance ToSchema ClientConfigSignalBridgeDTO where
   declareNamedSchema = toSwagger (toClientConfigSignalBridgeDTO defaultTenant)

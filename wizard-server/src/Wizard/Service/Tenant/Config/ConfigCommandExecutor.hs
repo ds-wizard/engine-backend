@@ -16,12 +16,12 @@ import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigService
-import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigAiAssistantDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateOrUpdateAuthenticationConfigCommand
-import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAiAssistantConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateDefaultRoleConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateFeaturesConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateOrganizationConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConfigCommand
@@ -37,7 +37,7 @@ execute command
   | command.function == cUpdateSupportName = cUpdateSupport command
   | command.function == cUpdateDefaultRoleName = cUpdateDefaultRole command
   | command.function == cUpdateAnnouncementsName = cUpdateAnnouncements command
-  | command.function == cUpdateAiAssistantName = cUpdateAiAssistant command
+  | command.function == cUpdateFeaturesName = cUpdateFeatures command
   | command.function == cUpdateOrganizationName = cUpdateOrganization command
   | otherwise = throwError . GeneralServerError $ "Unknown command function: " <> command.function
 
@@ -125,17 +125,17 @@ cUpdateAnnouncements persistentCommand = do
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
 
-cUpdateAiAssistantName = "updateAiAssistant"
+cUpdateFeaturesName = "updateFeatures"
 
-cUpdateAiAssistant :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
-cUpdateAiAssistant persistentCommand = do
-  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateAiAssistantConfigCommand
+cUpdateFeatures :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
+cUpdateFeatures persistentCommand = do
+  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateFeaturesConfigCommand
   case eCommand of
     Right command -> do
-      tcAiAssistant <- findTenantConfigAiAssistantByUuid persistentCommand.tenantUuid
+      tcFeatures <- findTenantConfigFeaturesByUuid persistentCommand.tenantUuid
       now <- liftIO getCurrentTime
-      let tcAiAssistantUpdated = fromAiAssitant tcAiAssistant command now
-      updateTenantConfigAiAssistant tcAiAssistantUpdated
+      let tcFeaturesUpdated = fromFeatures tcFeatures command now
+      updateTenantConfigFeatures tcFeaturesUpdated
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
 

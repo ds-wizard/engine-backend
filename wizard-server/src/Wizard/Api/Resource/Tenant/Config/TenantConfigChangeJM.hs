@@ -103,3 +103,9 @@ instance FromJSON TenantConfigSubmissionServiceRequestMultipartChangeDTO where
 
 instance ToJSON TenantConfigSubmissionServiceRequestMultipartChangeDTO where
   toJSON = genericToJSON jsonOptions
+
+instance FromJSON TenantConfigFeaturesChangeDTO where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON TenantConfigFeaturesChangeDTO where
+  toJSON = genericToJSON jsonOptions

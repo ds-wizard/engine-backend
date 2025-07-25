@@ -41,7 +41,7 @@ import Wizard.Service.Tenant.TenantValidation
 import Wizard.Service.Tenant.Usage.UsageService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import Wizard.Service.User.UserService
-import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigAiAssistantDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
 import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
@@ -156,7 +156,7 @@ createConfig uuid now = do
     insertTenantConfigQuestionnaire (defaultQuestionnaire {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigQuestionnaire)
     insertTenantConfigSubmission (defaultSubmission {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigSubmission)
     insertTenantConfigMail (defaultMail {tenantUuid = uuid, createdAt = now, updatedAt = now})
-    insertTenantConfigAiAssistant (defaultAiAssistant {tenantUuid = uuid, createdAt = now, updatedAt = now})
+    insertTenantConfigFeatures (defaultFeatures {tenantUuid = uuid, createdAt = now, updatedAt = now})
     void $ insertTenantConfigOwl (defaultOwl {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigOwl)
 
 createLocale :: U.UUID -> UTCTime -> AppContextM Locale

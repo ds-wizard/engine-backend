@@ -44,13 +44,14 @@ defaultLookAndFeelCustomLinkChangeDto =
     , newWindow = False
     }
 
-defaultAiAssistant :: TenantConfigAiAssistant
-defaultAiAssistant = fromAiAssistantChangeDTO defaultAiAssistantChangeDto defaultTenantUuid (dt' 2018 1 20) (dt' 2018 1 20)
+defaultFeatures :: TenantConfigFeatures
+defaultFeatures = fromFeaturesChangeFullDTO defaultFeaturesChangeFullDto defaultTenantUuid (dt' 2018 1 20) (dt' 2018 1 20)
 
-defaultAiAssistantChangeDto :: TenantConfigAiAssistantChangeDTO
-defaultAiAssistantChangeDto =
-  TenantConfigAiAssistantChangeDTO
-    { enabled = True
+defaultFeaturesChangeFullDto :: TenantConfigFeaturesChangeFullDTO
+defaultFeaturesChangeFullDto =
+  TenantConfigFeaturesChangeFullDTO
+    { aiAssistantEnabled = True
+    , toursEnabled = True
     }
 
 defaultMail :: TenantConfigMail

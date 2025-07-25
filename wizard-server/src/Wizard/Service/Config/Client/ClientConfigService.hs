@@ -26,7 +26,7 @@ import Wizard.Service.Migration.Metamodel.MigratorService
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.TenantHelper
 import Wizard.Service.User.UserMapper
-import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigAiAssistantDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.User.UserTourDAO
 
@@ -51,7 +51,7 @@ getClientConfig mServerUrl mClientUrl = do
       return $ HousekeepingInProgressClientConfigDTO {message = "We’re currently upgrading the data to the latest version to enhance your experience"}
     ReadyForUseTenantState -> do
       throwErrorIfTenantIsDisabled mServerUrl tenant
-      (tcOrganization, tcAuthentication, tcPrivacyAndSupport, tcDashboardAndLoginScreen, tcLookAndFeel, tcRegistry, tcQuestionnaire, tcSubmission, tcAiAssistant, tcOwl) <-
+      (tcOrganization, tcAuthentication, tcPrivacyAndSupport, tcDashboardAndLoginScreen, tcLookAndFeel, tcRegistry, tcQuestionnaire, tcSubmission, tcFeatures, tcOwl) <-
         case (serverConfig.cloud.enabled, mClientUrl) of
           (True, Just _) -> do
             tcOrganization <- findTenantConfigOrganizationByUuid tenant.uuid
@@ -62,9 +62,9 @@ getClientConfig mServerUrl mClientUrl = do
             tcRegistry <- getTenantConfigRegistryByUuid tenant.uuid
             tcQuestionnaire <- findTenantConfigQuestionnaireByUuid tenant.uuid
             tcSubmission <- findTenantConfigSubmissionByUuid tenant.uuid
-            tcAiAssistant <- findTenantConfigAiAssistantByUuid tenant.uuid
+            tcFeatures <- findTenantConfigFeaturesByUuid tenant.uuid
             tcOwl <- findTenantConfigOwlByUuid tenant.uuid
-            return (tcOrganization, tcAuthentication, tcPrivacyAndSupport, tcDashboardAndLoginScreen, tcLookAndFeel, tcRegistry, tcQuestionnaire, tcSubmission, tcAiAssistant, tcOwl)
+            return (tcOrganization, tcAuthentication, tcPrivacyAndSupport, tcDashboardAndLoginScreen, tcLookAndFeel, tcRegistry, tcQuestionnaire, tcSubmission, tcFeatures, tcOwl)
           _ -> do
             tcOrganization <- findTenantConfigOrganization
             tcAuthentication <- getCurrentTenantConfigAuthentication
@@ -74,9 +74,9 @@ getClientConfig mServerUrl mClientUrl = do
             tcRegistry <- getCurrentTenantConfigRegistry
             tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
             tcSubmission <- findTenantConfigSubmission
-            tcAiAssistant <- findTenantConfigAiAssistant
+            tcFeatures <- findTenantConfigFeatures
             tcOwl <- findTenantConfigOwl
-            return (tcOrganization, tcAuthentication, tcPrivacyAndSupport, tcDashboardAndLoginScreen, tcLookAndFeel, tcRegistry, tcQuestionnaire, tcSubmission, tcAiAssistant, tcOwl)
+            return (tcOrganization, tcAuthentication, tcPrivacyAndSupport, tcDashboardAndLoginScreen, tcLookAndFeel, tcRegistry, tcQuestionnaire, tcSubmission, tcFeatures, tcOwl)
       mUserProfile <-
         case mCurrentUser of
           Just currentUser -> do
@@ -87,7 +87,7 @@ getClientConfig mServerUrl mClientUrl = do
         case mCurrentUser of
           Just currentUser -> findUserToursByUserUuid currentUser.uuid
           _ -> return []
-      return $ toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcQuestionnaire tcSubmission tcAiAssistant tcOwl mUserProfile tours tenant
+      return $ toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcQuestionnaire tcSubmission tcFeatures tcOwl mUserProfile tours tenant
 
 throwErrorIfTenantIsDisabled :: Maybe String -> Tenant -> AppContextM ()
 throwErrorIfTenantIsDisabled mServerUrl tenant = unless tenant.enabled (throwError . NotExistsError $ _ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE (fromMaybe "not-provided" mServerUrl))

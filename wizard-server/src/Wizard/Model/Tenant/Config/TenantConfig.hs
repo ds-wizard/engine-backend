@@ -23,7 +23,7 @@ data TenantConfig = TenantConfig
   , knowledgeModel :: TenantConfigKnowledgeModel
   , questionnaire :: TenantConfigQuestionnaire
   , submission :: TenantConfigSubmission
-  , aiAssistant :: TenantConfigAiAssistant
+  , features :: TenantConfigFeatures
   , owl :: TenantConfigOwl
   , mailConfigUuid :: Maybe U.UUID
   , createdAt :: UTCTime
@@ -42,6 +42,7 @@ instance Eq TenantConfig where
       && registry a == registry b
       && questionnaire a == questionnaire b
       && submission a == submission b
+      && features a == features b
       && owl a == owl b
       && mailConfigUuid a == mailConfigUuid b
 
