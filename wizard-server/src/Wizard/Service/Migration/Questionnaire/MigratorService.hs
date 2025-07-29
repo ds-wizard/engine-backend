@@ -1,9 +1,13 @@
 module Wizard.Service.Migration.Questionnaire.MigratorService where
 
 import Control.Monad.Reader (asks, liftIO)
+import Data.Foldable (traverse_)
+import qualified Data.List as L
+import Data.Maybe (catMaybes)
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.List
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
@@ -14,6 +18,7 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Model.Common.Lens
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
@@ -22,6 +27,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnairePerm
+import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
 import Wizard.Service.Migration.Questionnaire.MigratorAudit
@@ -39,9 +45,10 @@ createQuestionnaireMigration oldQtnUuid reqDto =
     validateMigrationExistence oldQtnUuid
     oldQtn <- findQuestionnaireByUuid oldQtnUuid
     checkMigrationPermissionToQtn oldQtn.visibility oldQtn.permissions
-    (newQtn, newQtnEvents) <- upgradeQuestionnaire reqDto oldQtn
+    (newQtn, newQtnEvents, newQtnVersions) <- upgradeQuestionnaire reqDto oldQtn
     insertQuestionnaire newQtn
     insertQuestionnaireEvents newQtnEvents
+    traverse_ insertQuestionnaireVersion newQtnVersions
     tenantUuid <- asks currentTenantUuid
     let state = fromCreateDTO oldQtn.uuid newQtn.uuid tenantUuid
     insertMigratorState state
@@ -80,6 +87,7 @@ finishQuestionnaireMigration qtnUuid =
     oldQtn <- findQuestionnaireByUuid state.oldQuestionnaireUuid
     newQtn <- findQuestionnaireByUuid state.newQuestionnaireUuid
     newQtnEvents <- ensurePhaseIsSetIfNecessary newQtn
+    newQtnVersions <- findQuestionnaireVersionsByQuestionnaireUuid state.newQuestionnaireUuid
     now <- liftIO getCurrentTime
     let updatedNewQtn =
           oldQtn
@@ -91,6 +99,8 @@ finishQuestionnaireMigration qtnUuid =
             }
           :: Questionnaire
     let newQtnEventsWithOldQtnUuid = fmap (\event -> setQuestionnaireUuid event oldQtn.uuid) newQtnEvents
+    newVersionsWithNewUuid <- traverse generateNewVersionUuid newQtnVersions
+    let newVersionsWithOldQtnUuid = fmap (\v -> v {questionnaireUuid = oldQtn.uuid} :: QuestionnaireVersion) newVersionsWithNewUuid
     -- Delete the new questionnaire
     deleteQuestionnaireEventsByQuestionnaireUuid newQtn.uuid
     deleteQuestionnaire newQtn.uuid False
@@ -98,8 +108,8 @@ finishQuestionnaireMigration qtnUuid =
     updateQuestionnaireByUuid updatedNewQtn
     deleteQuestionnaireEventsByQuestionnaireUuid oldQtn.uuid
     insertQuestionnaireEvents newQtnEventsWithOldQtnUuid
+    traverse_ insertQuestionnaireVersion newVersionsWithOldQtnUuid
     auditQuestionnaireMigrationFinish oldQtn newQtn
-    return ()
 
 cancelQuestionnaireMigration :: U.UUID -> AppContextM ()
 cancelQuestionnaireMigration qtnUuid =
@@ -114,7 +124,7 @@ cancelQuestionnaireMigration qtnUuid =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-upgradeQuestionnaire :: MigratorStateCreateDTO -> Questionnaire -> AppContextM (Questionnaire, [QuestionnaireEvent])
+upgradeQuestionnaire :: MigratorStateCreateDTO -> Questionnaire -> AppContextM (Questionnaire, [QuestionnaireEvent], [QuestionnaireVersion])
 upgradeQuestionnaire reqDto oldQtn = do
   let newPkgId = reqDto.targetPackageId
   let newTagUuids = reqDto.targetTagUuids
@@ -122,8 +132,11 @@ upgradeQuestionnaire reqDto oldQtn = do
   newKm <- compileKnowledgeModel [] (Just newPkgId) newTagUuids
   newUuid <- liftIO generateUuid
   oldQtnEvents <- findQuestionnaireEventsByQuestionnaireUuid oldQtn.uuid
-  clonedQtnEvents <- cloneQuestinonaireEvents newUuid oldQtnEvents
+  clonedQtnEventsWithOldEventUuid <- cloneQuestinonaireEventsWithOldEventUuid newUuid oldQtnEvents
+  let clonedQtnEvents = fmap snd clonedQtnEventsWithOldEventUuid
   newQtnEvents <- sanitizeQuestionnaireEvents newUuid oldKm newKm clonedQtnEvents
+  let newQtnEventUuids = fmap getUuid newQtnEvents
+  let clonedQtnEventsFiltered = filter (\e -> getUuid (snd e) `elem` newQtnEventUuids) clonedQtnEventsWithOldEventUuid
   let newPermissions = fmap (\perm -> perm {questionnaireUuid = newUuid} :: QuestionnairePerm) oldQtn.permissions
   let upgradedQtn =
         oldQtn
@@ -135,7 +148,23 @@ upgradeQuestionnaire reqDto oldQtn = do
           , permissions = newPermissions
           }
         :: Questionnaire
-  return (upgradedQtn, newQtnEvents)
+  versionsWithOldQtnUuid <- findQuestionnaireVersionsByQuestionnaireUuid oldQtn.uuid
+  newVersionsWithNewUuid <- traverse generateNewVersionUuid versionsWithOldQtnUuid
+  let newVersionsWithNewEventUuid =
+        fmap
+          ( \v ->
+              case L.find (\(oldEventUuid, _) -> v.eventUuid == oldEventUuid) clonedQtnEventsWithOldEventUuid of
+                Just (_, newEvent) ->
+                  Just $
+                    v
+                      { questionnaireUuid = newUuid
+                      , eventUuid = getUuid newEvent
+                      }
+                Nothing -> Nothing
+          )
+          newVersionsWithNewUuid
+  let newVersions = catMaybes newVersionsWithNewEventUuid
+  return (upgradedQtn, newQtnEvents, newVersions)
 
 ensurePhaseIsSetIfNecessary :: Questionnaire -> AppContextM [QuestionnaireEvent]
 ensurePhaseIsSetIfNecessary newQtn = do
@@ -155,3 +184,8 @@ ensurePhaseIsSetIfNecessary newQtn = do
               then newQtnEvents ++ [toPhaseEvent uuid (Just kmPhaseUuid) newQtn.uuid newQtn.tenantUuid mCurrentUser now]
               else newQtnEvents
   return events
+
+generateNewVersionUuid :: QuestionnaireVersion -> AppContextM QuestionnaireVersion
+generateNewVersionUuid version = do
+  newVersionUuid <- liftIO generateUuid
+  return $ version {uuid = newVersionUuid}
