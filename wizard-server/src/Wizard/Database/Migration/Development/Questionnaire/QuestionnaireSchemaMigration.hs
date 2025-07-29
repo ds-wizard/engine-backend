@@ -203,10 +203,10 @@ createQtnVersionTable = do
         \    created_at         timestamptz NOT NULL, \
         \    updated_at         timestamptz NOT NULL, \
         \    CONSTRAINT questionnaire_version_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_version_event_uuid_fk FOREIGN KEY (event_uuid, tenant_uuid) REFERENCES questionnaire_event (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_version_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_version_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid), \
-        \    CONSTRAINT questionnaire_version_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid) \
+        \    CONSTRAINT questionnaire_version_event_uuid_fk FOREIGN KEY (event_uuid, tenant_uuid) REFERENCES questionnaire_event (uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_version_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_version_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_version_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid) ON DELETE SET NULL \
         \);"
   let action conn = execute_ conn sql
   runDB action
