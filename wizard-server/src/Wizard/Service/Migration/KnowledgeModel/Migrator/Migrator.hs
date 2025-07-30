@@ -6,7 +6,7 @@ import Data.Maybe
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Service.KnowledgeModel.Compilator.Compilator
+import Wizard.Service.KnowledgeModel.Compiler.Compiler
 import Wizard.Service.Migration.KnowledgeModel.Migrator.CleanerMethod
 import Wizard.Service.Migration.KnowledgeModel.Migrator.CorrectorMethod
 import WizardLib.KnowledgeModel.Model.Event.Event

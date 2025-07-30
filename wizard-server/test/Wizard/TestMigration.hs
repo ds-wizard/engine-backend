@@ -162,7 +162,7 @@ buildSchema appContext = do
   runInContext Common.createFunctions appContext
   runInContext Package.createFunctions appContext
   runInContext Branch.createFunctions appContext
-  putStrLn "DB: Creating missing foregign key constraints"
+  putStrLn "DB: Creating missing foreign key constraints"
   runInContext User.createUserLocaleForeignKeyConstraint appContext
   putStrLn "DB: Creating triggers"
   runInContext Locale.createTriggers appContext
@@ -197,7 +197,7 @@ resetDB appContext = do
   runInContext QTN_MigratorDAO.deleteMigratorStates appContext
   runInContext deleteFeedbacks appContext
   runInContext deleteActionKeys appContext
-  runInContext deleteBranchDatas appContext
+  runInContext deleteBranchData appContext
   runInContext deleteBranches appContext
   runInContext deleteDocuments appContext
   runInContext deleteDrafts appContext

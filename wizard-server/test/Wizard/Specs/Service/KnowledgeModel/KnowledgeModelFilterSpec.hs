@@ -55,7 +55,7 @@ knowledgeModelFilterSpec =
       it "2 tags provided" $
         -- GIVEN: Prepare inputs
         do
-          let inTags = [tagDataScience.uuid, tagBioInformatic.uuid]
+          let inTags = [tagDataScience.uuid, tagBioinformatics.uuid]
           let inKm = km1WithQ4
           -- AND: Prepare expectations
           let expectedKm =

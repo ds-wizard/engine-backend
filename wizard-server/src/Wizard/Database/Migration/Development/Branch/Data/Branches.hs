@@ -21,7 +21,7 @@ import Wizard.Model.Branch.BranchState
 import Wizard.Model.Branch.BranchSuggestion
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
-import Wizard.Service.KnowledgeModel.Compilator.Compilator
+import Wizard.Service.KnowledgeModel.Compiler.Compiler
 import qualified Wizard.Service.Package.PackageMapper as PM
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 import WizardLib.KnowledgeModel.Database.Migration.Development.Event.Data.Events
@@ -122,7 +122,7 @@ amsterdamBranchChange =
     , version = "2.0.0"
     , description = "EDITED: description"
     , readme = "EDITED: Readme"
-    , license = "Apacha-3.0"
+    , license = "Apache-3.0"
     }
 
 amsterdamBranchKnowledgeModel :: KnowledgeModel

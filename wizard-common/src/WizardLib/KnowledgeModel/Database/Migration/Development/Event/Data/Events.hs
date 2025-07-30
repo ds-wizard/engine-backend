@@ -1481,11 +1481,11 @@ a_km1_tbi =
   AddTagEvent
     { uuid = u' "b6b0e53c-5702-403c-950c-e04960e09e73"
     , parentUuid = km1.uuid
-    , entityUuid = tagBioInformatic.uuid
-    , name = tagBioInformatic.name
-    , description = tagBioInformatic.description
-    , color = tagBioInformatic.color
-    , annotations = tagBioInformatic.annotations
+    , entityUuid = tagBioinformatics.uuid
+    , name = tagBioinformatics.name
+    , description = tagBioinformatics.description
+    , color = tagBioinformatics.color
+    , annotations = tagBioinformatics.annotations
     , createdAt = dt' 2018 1 21
     }
 

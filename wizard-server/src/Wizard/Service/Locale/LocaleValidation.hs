@@ -24,10 +24,10 @@ validateLocaleChange reqDto locale = do
   when (not locale.enabled && not reqDto.enabled && reqDto.defaultLocale) (throwError . UserError $ _ERROR_VALIDATION__LOCALE_DISABLED_DEFAULT)
   when (locale.defaultLocale && reqDto.defaultLocale && not reqDto.enabled) (throwError . UserError $ _ERROR_VALIDATION__DEACTIVATE_DEFAULT_LOCALE)
 
-validateLocaleDeletation :: Locale -> AppContextM ()
-validateLocaleDeletation locale = do
-  when locale.defaultLocale (throwError . UserError $ _ERROR_VALIDATION__DEFAULT_LOCALE_DELETATION)
-  when (locale.lId == defaultLocaleId) (throwError . UserError $ _ERROR_VALIDATION__DEFAULT_WIZARD_LOCALE_DELETATION)
+validateLocaleDeletion :: Locale -> AppContextM ()
+validateLocaleDeletion locale = do
+  when locale.defaultLocale (throwError . UserError $ _ERROR_VALIDATION__DEFAULT_LOCALE_DELETION)
+  when (locale.lId == defaultLocaleId) (throwError . UserError $ _ERROR_VALIDATION__DEFAULT_WIZARD_LOCALE_DELETION)
 
 validateLocaleIdUniqueness :: String -> AppContextM ()
 validateLocaleIdUniqueness lclId = do

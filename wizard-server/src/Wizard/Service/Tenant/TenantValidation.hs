@@ -50,11 +50,11 @@ isValidTenantIdFormat tenantId =
     validationRegex = mkRegex "^[a-z0-9-]+$"
 
 validateTenantIdUniqueness :: String -> AppContextM ()
-validateTenantIdUniqueness tentantId = do
+validateTenantIdUniqueness tenantId = do
   tenants <- findTenants
   let usedTenantIds = fmap (.tenantId) tenants ++ forbiddenTenantIds
   when
-    (tentantId `elem` usedTenantIds)
+    (tenantId `elem` usedTenantIds)
     (throwError . ValidationError [] $ M.singleton "tenantId" [_ERROR_VALIDATION__TENANT_ID_UNIQUENESS])
 
 forbiddenTenantIds =

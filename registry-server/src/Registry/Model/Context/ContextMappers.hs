@@ -31,7 +31,7 @@ runAppContextWithAppContext function appContext = do
     Right result -> return . Right $ result
     Left error ->
       runLogging' appContext $ do
-        logError _CMP_SERVER ("Catched error: " ++ show error)
+        logError _CMP_SERVER ("Caught error: " ++ show error)
         return . Left $ show error
 
 runAppContextWithAppContext' :: AppContextM a -> AppContext -> IO (Either String a)
@@ -43,7 +43,7 @@ runAppContextWithAppContext' function appContext =
       Right result -> return . Right $ result
       Left error ->
         runLogging' updatedAppContext $ do
-          logError _CMP_SERVER ("Catched error: " ++ show error)
+          logError _CMP_SERVER ("Caught error: " ++ show error)
           return . Left $ show error
 
 runMonads fn context = runExceptT $ runLogging' context $ runReaderT fn context

@@ -4,7 +4,7 @@ import Test.Hspec hiding (shouldBe, shouldNotBe)
 import Test.Hspec.Expectations.Pretty
 
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Service.KnowledgeModel.Compilator.Compilator
+import Wizard.Service.KnowledgeModel.Compiler.Compiler
 import Wizard.Service.Migration.KnowledgeModel.Migrator.Migrator
 import WizardLib.KnowledgeModel.Database.Migration.Development.Event.Data.Events
 import WizardLib.KnowledgeModel.Model.Event.Chapter.ChapterEvent

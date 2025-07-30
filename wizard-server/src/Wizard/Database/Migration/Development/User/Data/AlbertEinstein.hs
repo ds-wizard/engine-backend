@@ -61,7 +61,7 @@ userAlbert =
         , "LOC_PERM"
         ]
     , active = True
-    , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
+    , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4=" -- cspell:disable-line
     , submissionProps = [process defaultSecret userAlbertApiToken]
     , imageUrl = Nothing
     , locale = Nothing

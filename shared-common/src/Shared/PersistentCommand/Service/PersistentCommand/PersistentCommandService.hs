@@ -54,7 +54,7 @@ runPersistentCommand
   -> m ()
 runPersistentCommand runAppContextWithAppContext' updateContext createPersistentCommand execute force commandSimple = do
   case commandSimple.destination of
-    Just destination -> tranferPersistentCommandByUuid destination createPersistentCommand commandSimple.uuid
+    Just destination -> transferPersistentCommandByUuid destination createPersistentCommand commandSimple.uuid
     Nothing -> do
       context <- ask
       updatedContext <- updateContext commandSimple context
@@ -96,14 +96,14 @@ executePersistentCommandByUuid runAppContextWithAppContext' execute force uuid c
         logInfoI _CMP_SERVICE (f' "Command finished with following state: '%s'" [show resultState])
     )
 
-tranferPersistentCommandByUuid
+transferPersistentCommandByUuid
   :: AppContextC s sc m
   => String
   -> (String -> PersistentCommand U.UUID -> m a)
   -> U.UUID
   -> m ()
-tranferPersistentCommandByUuid destination createPersistentCommand uuid = do
-  logInfoI _CMP_SERVICE (f' "Transfering command '%s'" [U.toString uuid])
+transferPersistentCommandByUuid destination createPersistentCommand uuid = do
+  logInfoI _CMP_SERVICE (f' "Transferring command '%s'" [U.toString uuid])
   command <- findPersistentCommandByUuid uuid
   when
     (command.attempts < command.maxAttempts)
@@ -127,7 +127,7 @@ tranferPersistentCommandByUuid destination createPersistentCommand uuid = do
               :: PersistentCommand U.UUID
         when (resultState == ErrorPersistentCommandState) (sendToSentry updatedCommand)
         updatePersistentCommandByUuid updatedCommand
-        logInfoI _CMP_SERVICE (f' "Command transfered with following state: '%s'" [show resultState])
+        logInfoI _CMP_SERVICE (f' "Command transferred with following state: '%s'" [show resultState])
     )
 
 runPersistentCommandChannelListener

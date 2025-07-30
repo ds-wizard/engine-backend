@@ -23,14 +23,14 @@ compareVersion versionA versionB =
             GT -> GT
             EQ -> EQ
   where
-    versionASplitted = splitVersion versionA
-    versionBSplitted = splitVersion versionB
-    versionAMajor = read (head versionASplitted) :: Int
-    versionAMinor = read (versionASplitted !! 1) :: Int
-    versionAPatch = read (versionASplitted !! 2) :: Int
-    versionBMajor = read (head versionBSplitted) :: Int
-    versionBMinor = read (versionBSplitted !! 1) :: Int
-    versionBPatch = read (versionBSplitted !! 2) :: Int
+    versionASplit = splitVersion versionA
+    versionBSplit = splitVersion versionB
+    versionAMajor = read (head versionASplit) :: Int
+    versionAMinor = read (versionASplit !! 1) :: Int
+    versionAPatch = read (versionASplit !! 2) :: Int
+    versionBMajor = read (head versionBSplit) :: Int
+    versionBMinor = read (versionBSplit !! 1) :: Int
+    versionBPatch = read (versionBSplit !! 2) :: Int
 
 splitCoordinate :: String -> [String]
 splitCoordinate = splitOn ":"

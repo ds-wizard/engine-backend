@@ -7,4 +7,4 @@ import Registry.Specs.API.ActionKey.List_POST
 import Registry.Specs.API.Common
 
 actionKeyAPI baseContext appContext =
-  with (startWebApp baseContext appContext) $ describe "ACTIONKEY API Spec" $ list_POST appContext
+  with (startWebApp baseContext appContext) $ describe "ACTION KEY API Spec" $ list_POST appContext

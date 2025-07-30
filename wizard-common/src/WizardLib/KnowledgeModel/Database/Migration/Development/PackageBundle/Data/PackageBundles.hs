@@ -4,8 +4,8 @@ import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Pack
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 import WizardLib.KnowledgeModel.Model.PackageBundle.PackageBundle
 
-netherlandsPackageBudle :: PackageBundle
-netherlandsPackageBudle =
+netherlandsPackageBundle :: PackageBundle
+netherlandsPackageBundle =
   PackageBundle
     { bundleId = netherlandsPackage.pId
     , name = netherlandsPackage.name
@@ -16,8 +16,8 @@ netherlandsPackageBudle =
     , packages = [globalPackage, netherlandsPackage]
     }
 
-netherlandsPackageV2Budle :: PackageBundle
-netherlandsPackageV2Budle =
+netherlandsPackageV2Bundle :: PackageBundle
+netherlandsPackageV2Bundle =
   PackageBundle
     { bundleId = netherlandsPackageV2.pId
     , name = netherlandsPackageV2.name

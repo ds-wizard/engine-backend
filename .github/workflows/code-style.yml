@@ -134,3 +134,34 @@ jobs:
           fi
         done
         exit $RET
+
+  # CSpell
+  cspell:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install CSpell
+        run: |
+          npm install -g cspell
+          npm install -g @cspell/dict-python
+
+      - name: Run CSpell
+        run: |
+          cspell \
+            --no-progress \
+            --no-summary \
+            --config .cspell/cspell.json \
+            **/*.hs \
+            **/*.md \
+            **/*.json \
+            **/*.toml \
+            **/*.yml \
+            **/*.yaml

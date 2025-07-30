@@ -43,7 +43,7 @@ reqUrl = "/action-keys"
 
 reqHeaders = [reqCtHeader]
 
-reqDto = forgTokActionKeyDto
+reqDto = forgottenTokenActionKeyDto
 
 reqBody = encode reqDto
 
@@ -76,7 +76,7 @@ test_400 appContext = do
   it "HTTP 400 BAD REQUEST when email doesn't exist" $
     -- GIVEN: Prepare request
     do
-      let reqDto = forgTokActionKeyDto {email = "non-existing@example.com"} :: ActionKeyDTO ActionKeyType
+      let reqDto = forgottenTokenActionKeyDto {email = "non-existing@example.com"} :: ActionKeyDTO ActionKeyType
       let reqBody = encode reqDto
       -- Prepare expectation
       let expStatus = 400

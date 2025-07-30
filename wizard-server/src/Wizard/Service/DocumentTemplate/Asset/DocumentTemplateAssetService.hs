@@ -31,7 +31,7 @@ getAssets tmlId = do
     ( \asset -> do
         let expirationInSeconds = 60
         let urlExpiration = addUTCTime (realToFrac expirationInSeconds) now
-        url <- presigneGetAssetUrl asset.documentTemplateId asset.uuid expirationInSeconds
+        url <- presignGetAssetUrl asset.documentTemplateId asset.uuid expirationInSeconds
         return $ toDTO asset url urlExpiration
     )
     assets
@@ -43,7 +43,7 @@ getAsset assetUuid = do
   let expirationInSeconds = 60
   now <- liftIO getCurrentTime
   let urlExpiration = addUTCTime (realToFrac expirationInSeconds) now
-  url <- presigneGetAssetUrl asset.documentTemplateId asset.uuid expirationInSeconds
+  url <- presignGetAssetUrl asset.documentTemplateId asset.uuid expirationInSeconds
   return $ toDTO asset url urlExpiration
 
 getAssetContent :: String -> U.UUID -> AppContextM (DocumentTemplateAsset, BS.ByteString)
@@ -70,7 +70,7 @@ createAsset tmlId reqDto =
     let expirationInSeconds = 60
     now <- liftIO getCurrentTime
     let urlExpiration = addUTCTime (realToFrac expirationInSeconds) now
-    url <- presigneGetAssetUrl newAsset.documentTemplateId aUuid expirationInSeconds
+    url <- presignGetAssetUrl newAsset.documentTemplateId aUuid expirationInSeconds
     return $ toDTO newAsset url urlExpiration
 
 modifyAsset :: U.UUID -> DocumentTemplateAssetChangeDTO -> AppContextM DocumentTemplateAsset

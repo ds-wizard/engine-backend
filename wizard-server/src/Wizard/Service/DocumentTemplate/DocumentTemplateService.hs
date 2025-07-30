@@ -121,7 +121,7 @@ deleteDocumentTemplate tmlId =
     checkPermission _DOC_TML_WRITE_PERM
     tml <- findDocumentTemplateById tmlId
     assets <- findAssetsByDocumentTemplateId tmlId
-    validateDocumentTemplateDeletation tmlId
+    validateDocumentTemplateDeletion tmlId
     cleanTemporallyDocumentsForTemplate tmlId
     deleteDocumentTemplateById tmlId
     let assetUuids = fmap (.uuid) assets

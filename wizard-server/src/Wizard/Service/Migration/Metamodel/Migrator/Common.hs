@@ -1,5 +1,5 @@
 module Wizard.Service.Migration.Metamodel.Migrator.Common (
-  convertValueToOject,
+  convertValueToObject,
   getField,
   getArrayField,
   migrateMetamodelVersionField,
@@ -13,7 +13,7 @@ import Data.String (fromString)
 import qualified Data.Vector as Vector
 
 import Shared.Common.Model.Error.Error
-import Shared.Common.Util.JSON (convertValueToOject, getArrayField, getField)
+import Shared.Common.Util.JSON (convertValueToObject, getArrayField, getField)
 import Shared.Common.Util.List (foldEither)
 import Wizard.Localization.Messages.Public
 import qualified Wizard.Service.Migration.Metamodel.Migrator.EventMigrator as EventMigrator
@@ -22,7 +22,7 @@ import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 
 validateMetamodelVersionField :: Value -> Either AppError Value
 validateMetamodelVersionField value =
-  convertValueToOject value $ \object ->
+  convertValueToObject value $ \object ->
     getField "metamodelVersion" object $ \metamodelVersion ->
       if metamodelVersion <= kmMetamodelVersion
         then Right value
@@ -30,12 +30,12 @@ validateMetamodelVersionField value =
 
 migrateMetamodelVersionField :: Value -> Either AppError Value
 migrateMetamodelVersionField value =
-  convertValueToOject value $ \object ->
+  convertValueToObject value $ \object ->
     Right . Object $ KM.insert "metamodelVersion" (toJSON kmMetamodelVersion) object
 
 migrateEventsField :: String -> Value -> Either AppError Value
 migrateEventsField eventsFieldName value =
-  convertValueToOject value $ \object ->
+  convertValueToObject value $ \object ->
     getField "metamodelVersion" object $ \oldMetamodelVersion ->
       getField "createdAt" object $ \createdAt ->
         getArrayField eventsFieldName object $ \events ->

@@ -51,7 +51,7 @@ test_204 appContext =
   it "HTTP 204 NO CONTENT" $
     -- GIVEN: Prepare DB
     do
-      eitherActionKey <- runInContextIO (insertActionKey forgPassActionKey) appContext
+      eitherActionKey <- runInContextIO (insertActionKey forgottenPasswordActionKey) appContext
       -- AND: Prepare expectation
       let expStatus = 204
       let expHeaders = resCorsHeaders

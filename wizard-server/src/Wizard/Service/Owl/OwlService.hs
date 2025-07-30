@@ -16,7 +16,7 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Config.TenantConfig
-import Wizard.Service.KnowledgeModel.Compilator.Compilator
+import Wizard.Service.KnowledgeModel.Compiler.Compiler
 import Wizard.Service.Owl.Convertor.OwlConvertor
 import Wizard.Service.Owl.Diff.Differ
 import Wizard.Service.Owl.OwlMapper

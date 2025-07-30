@@ -23,5 +23,5 @@ _ERROR_VALIDATION__ORGANIZATION_EMAIL_UNIQUENESS email =
 -- MODEL
 -- --------------------------------------
 -- AppContext
-_ERROR_MODEL_APPCONTEXT__MISSING_ORGANIZATION =
-  LocaleRecord "error.model.appcontext.missing_organization" "You have to be log in to run." []
+_ERROR_MODEL_APP_CONTEXT__MISSING_ORGANIZATION =
+  LocaleRecord "error.model.app_context.missing_organization" "You have to be log in to run." []

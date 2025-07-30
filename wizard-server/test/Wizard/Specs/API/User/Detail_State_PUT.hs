@@ -59,7 +59,7 @@ test_200 appContext =
       let expDto = reqDto
       let expBody = encode expDto
       -- AND: Prepare DB
-      runInContextIO (insertActionKey regActionKey) appContext
+      runInContextIO (insertActionKey registrationActionKey) appContext
       runInContextIO (updateUserByUuid (userAlbert {active = False})) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

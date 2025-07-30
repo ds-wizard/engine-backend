@@ -68,16 +68,16 @@ import Wizard.Specs.Integration.Http.TypeHint.ResponseMapperSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
 import Wizard.Specs.Service.DocumentTemplate.DocumentTemplateUtilSpec
-import Wizard.Specs.Service.KnowledgeModel.Compilator.CompilatorSpec
-import Wizard.Specs.Service.KnowledgeModel.Compilator.Modifier.ModifierSpec
+import Wizard.Specs.Service.KnowledgeModel.Compiler.CompilerSpec
+import Wizard.Specs.Service.KnowledgeModel.Compiler.Modifier.ModifierSpec
 import Wizard.Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
 import Wizard.Specs.Service.KnowledgeModel.Squash.SquasherSpec
 import Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.MigrationSpec
-import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.SanitizatorSpec as KM_SanitizatorSpec
+import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.SanitizerSpec as KM_SanitizerSpec
 import Wizard.Specs.Service.Migration.Metamodel.Migrator.EventMigratorSpec
-import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec as QTN_ChangeQTypeSanitizator
-import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec as QTN_MoveSanitizatorSpec
-import qualified Wizard.Specs.Service.Migration.Questionnaire.SanitizatorSpec as QTN_SanitizatorSpec
+import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizerSpec as QTN_ChangeQTypeSanitizer
+import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizerSpec as QTN_MoveSanitizerSpec
+import qualified Wizard.Specs.Service.Migration.Questionnaire.SanitizerSpec as QTN_SanitizerSpec
 import Wizard.Specs.Service.Package.PackageUtilSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
 import Wizard.Specs.Service.Questionnaire.Collaboration.CollaborationAclSpec
@@ -166,17 +166,17 @@ main =
             describe "SERVICE" $ do
               describe "Document Template" documentTemplateUtilSpec
               describe "KnowledgeModel" $ do
-                describe "Compilator" $ do
+                describe "Compiler" $ do
                   describe "Modifier" modifierSpec
-                  compilatorSpec
+                  compilerSpec
                 describe "Squash" $ do squasherSpec
                 knowledgeModelFilterSpec
               describe "Migration" $ do
                 describe "Metamodel" $ describe "Migrator" $ do
                   eventMigratorSpec
                 describe "Questionnaire" $ describe "Migrator" $ do
-                  QTN_ChangeQTypeSanitizator.sanitizatorSpec
-                  QTN_MoveSanitizatorSpec.sanitizatorSpec
+                  QTN_ChangeQTypeSanitizer.sanitizerSpec
+                  QTN_MoveSanitizerSpec.sanitizerSpec
               describe "Package" packageUtilSpec
               describe "Questionnaire" $ do
                 describe "Event" questionnaireEventServiceSpec
@@ -235,10 +235,10 @@ main =
                 describe "KnowledgeModel" $
                   describe "Migrator" $ do
                     migratorSpec appContext
-                    KM_SanitizatorSpec.sanitizatorSpec appContext
+                    KM_SanitizerSpec.sanitizerSpec appContext
                 describe "Questionnaire" $
                   describe "Migrator" $
-                    QTN_SanitizatorSpec.sanitizatorIntegrationSpec appContext
+                    QTN_SanitizerSpec.sanitizerIntegrationSpec appContext
               packageValidationSpec appContext
               describe "Questionnaire" $ do
                 questionnaireCollaborationAclSpec appContext
