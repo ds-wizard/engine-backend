@@ -30,6 +30,7 @@ addIndicationsToQuestionnaire dbPool = do
   return Nothing
 
 addSystemUser dbPool = do
+  -- cspell:disable
   let sql =
         "INSERT INTO user_entity \
         \VALUES ('00000000-0000-0000-0000-000000000000', \
@@ -49,6 +50,7 @@ addSystemUser dbPool = do
         \        '2018-01-25 00:00:00.000000 +00:00', \
         \        '00000000-0000-0000-0000-000000000000', \
         \        true);"
+  -- cspell:enable
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing

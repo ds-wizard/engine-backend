@@ -56,7 +56,7 @@ editKmEventIn1 =
       "annotations": {
         "changed": true,
         "value": {
-          "akey": "avalue"
+          "aKey": "aValue"
         }
       },
       "tagUuids": {
@@ -92,8 +92,8 @@ editKmEventOut1 =
         "changed": true,
         "value": [
           {
-            "key": "akey",
-            "value": "avalue"
+            "key": "aKey",
+            "value": "aValue"
           }
         ]
       },

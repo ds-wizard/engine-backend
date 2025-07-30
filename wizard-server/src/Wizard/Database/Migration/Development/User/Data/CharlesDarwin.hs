@@ -20,7 +20,7 @@ userCharles =
     , uRole = _USER_ROLE_RESEARCHER
     , permissions = ["PM_READ_PERM", "QTN_PERM", "DOC_TML_READ_PERM", "SUBM_PERM"]
     , active = True
-    , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
+    , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4=" -- cspell:disable-line
     , submissionProps = []
     , imageUrl = Nothing
     , locale = Nothing

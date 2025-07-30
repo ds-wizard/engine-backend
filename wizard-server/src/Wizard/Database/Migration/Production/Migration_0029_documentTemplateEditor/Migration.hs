@@ -32,7 +32,7 @@ migrate dbPool = do
   renameTemplateIdInAsset dbPool
   renameTemplateIdInFile dbPool
   renameTemplateIdInDocument dbPool
-  renameTemplateIdInQuestinonaire dbPool
+  renameTemplateIdInQuestionnaire dbPool
   createDocumentTemplateDraftDataTable dbPool
   renameTemplateInAppLimit dbPool
   addDocumentTemplateDraftToAppLimit dbPool
@@ -242,7 +242,7 @@ renameTemplateIdInDocument dbPool = do
   liftIO $ withResource dbPool action
   return Nothing
 
-renameTemplateIdInQuestinonaire dbPool = do
+renameTemplateIdInQuestionnaire dbPool = do
   let sql =
         "ALTER TABLE questionnaire\
         \   RENAME template_id TO document_template_id;"

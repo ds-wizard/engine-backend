@@ -32,7 +32,7 @@ createTemporaryFile fileName contentType mCreatedBy content = do
     insertTemporaryFile tf
     let contentDisposition = f' "attachment;filename=\"%s\"" [trim fileName]
     putTemporaryFile tf.uuid escapedFileName tf.contentType contentDisposition (BSL.toStrict content)
-    presigneGetTemporaryFileUrl tf.uuid escapedFileName expirationInSeconds
+    presignGetTemporaryFileUrl tf.uuid escapedFileName expirationInSeconds
 
 createTemporaryFileConduit :: AppContextC s sc m => String -> String -> Maybe U.UUID -> Minio (C.ConduitM () BS.ByteString Minio ()) -> m String
 createTemporaryFileConduit fileName contentType mCreatedBy contentAction = do
@@ -46,7 +46,7 @@ createTemporaryFileConduit fileName contentType mCreatedBy contentAction = do
     insertTemporaryFile tf
     let contentDisposition = f' "attachment;filename=\"%s\"" [trim fileName]
     putTemporaryFileConduit tf.uuid escapedFileName tf.contentType contentDisposition contentAction
-    presigneGetTemporaryFileUrl tf.uuid escapedFileName expirationInSeconds
+    presignGetTemporaryFileUrl tf.uuid escapedFileName expirationInSeconds
 
 deleteTemporaryFile :: AppContextC s sc m => TemporaryFile -> m ()
 deleteTemporaryFile tf = do

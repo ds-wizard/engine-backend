@@ -83,8 +83,8 @@ evaluateListQuestion found notFound mQtnPhase km replies currentPath q =
         if not (null items)
           then isRequiredNow km.phaseUuids q.requiredPhaseUuid mQtnPhase found
           else isRequiredNow km.phaseUuids q.requiredPhaseUuid mQtnPhase notFound
-      childrens = sum . concatMap evaluateQuestion' $ items
-   in current + childrens
+      children = sum . concatMap evaluateQuestion' $ items
+   in current + children
 
 evaluateMultiChoiceQuestion
   :: MultiChoiceQuestion -> Int -> Int -> Maybe U.UUID -> KnowledgeModel -> M.Map String Reply -> String -> Int

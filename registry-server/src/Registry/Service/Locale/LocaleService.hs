@@ -15,9 +15,9 @@ import WizardLib.Common.Util.Coordinate
 getLocales :: [(String, String)] -> Maybe String -> AppContextM [LocaleDTO]
 getLocales queryParams mRecommendedAppVersion = do
   checkIfLocaleEnabled
-  tmpls <- findLocalesFiltered queryParams mRecommendedAppVersion
+  locales <- findLocalesFiltered queryParams mRecommendedAppVersion
   orgs <- findOrganizations
-  return . fmap (toDTO orgs) . chooseTheNewest . groupLocales $ tmpls
+  return . fmap (toDTO orgs) . chooseTheNewest . groupLocales $ locales
 
 getLocaleById :: String -> AppContextM LocaleDetailDTO
 getLocaleById lclId = do

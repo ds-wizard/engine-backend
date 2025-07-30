@@ -53,7 +53,7 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = toDTO netherlandsPackageV2Budle
+      let expDto = toDTO netherlandsPackageV2Bundle
       let expBody = encode expDto
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

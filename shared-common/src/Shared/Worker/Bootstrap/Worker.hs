@@ -62,7 +62,7 @@ handler loggingLevel shutdownFlag threadIds typeSignal =
   CatchOnce . runLogging loggingLevel $ do
     logInfo _CMP_WORKER "shutting down workers: started"
     liftIO $ traverse killThread threadIds
-    logInfo _CMP_WORKER "shutting down workers: notifing web server"
+    logInfo _CMP_WORKER "shutting down workers: notifying web server"
     liftIO $ putMVar shutdownFlag ()
     logInfo _CMP_WORKER "shutting down workers: completed"
 

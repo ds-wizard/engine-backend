@@ -16,8 +16,8 @@ import Wizard.Model.Context.AppContext
 validateQuestionnaireSettingsChangeDTO :: QuestionnaireSettingsChangeDTO -> AppContextM ()
 validateQuestionnaireSettingsChangeDTO reqDto = validateQuestionnaireTags reqDto.projectTags
 
-validateQuestionnaireDeletation :: U.UUID -> AppContextM ()
-validateQuestionnaireDeletation = validateUsageByQtnMigration
+validateQuestionnaireDeletion :: U.UUID -> AppContextM ()
+validateQuestionnaireDeletion = validateUsageByQtnMigration
 
 validateUsageByQtnMigration :: U.UUID -> AppContextM ()
 validateUsageByQtnMigration qtnUuid = do

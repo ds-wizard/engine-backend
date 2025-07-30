@@ -17,7 +17,7 @@ migrate dbPool = do
   fixBranchGetStateFn dbPool
   addRepliesToBranchData dbPool
   removeDocumentQuestionnaireForeignKey dbPool
-  addBranchUuidtoDraftData dbPool
+  addBranchUuidToDraftData dbPool
   updateMetamodelVersionForDocumentTemplateEditor dbPool
 
 fixBranchGetStateFn dbPool = do
@@ -61,7 +61,7 @@ removeDocumentQuestionnaireForeignKey dbPool = do
   liftIO $ withResource dbPool action
   return Nothing
 
-addBranchUuidtoDraftData dbPool = do
+addBranchUuidToDraftData dbPool = do
   let sql = "ALTER TABLE document_template_draft_data ADD COLUMN branch_uuid uuid;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action

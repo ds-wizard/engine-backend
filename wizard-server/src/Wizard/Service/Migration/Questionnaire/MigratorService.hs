@@ -30,7 +30,7 @@ import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
-import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
+import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizer
 import Wizard.Service.Migration.Questionnaire.MigratorAudit
 import Wizard.Service.Migration.Questionnaire.MigratorMapper
 import Wizard.Service.Migration.Questionnaire.MigratorValidation
@@ -134,7 +134,7 @@ upgradeQuestionnaire reqDto oldQtn = do
   newKm <- compileKnowledgeModel [] (Just newPkgId) newTagUuids
   newUuid <- liftIO generateUuid
   oldQtnEvents <- findQuestionnaireEventsByQuestionnaireUuid oldQtn.uuid
-  clonedQtnEventsWithOldEventUuid <- cloneQuestinonaireEventsWithOldEventUuid newUuid oldQtnEvents
+  clonedQtnEventsWithOldEventUuid <- cloneQuestionnaireEventsWithOldEventUuid newUuid oldQtnEvents
   let clonedQtnEvents = fmap snd clonedQtnEventsWithOldEventUuid
   newQtnEvents <- sanitizeQuestionnaireEvents newUuid oldKm newKm clonedQtnEvents
   (newDocumentTemplateId, newFormatUuid) <- getNewDocumentTemplateIdAndFormatUuid oldQtn newPkgId

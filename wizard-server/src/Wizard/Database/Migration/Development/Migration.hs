@@ -116,7 +116,7 @@ runMigration = runAppContextWithBaseContext $ do
   Common.createFunctions
   Package.createFunctions
   Branch.createFunctions
-  -- 6. Create missing foregign key constraints
+  -- 6. Create missing foreign key constraints
   User.createUserLocaleForeignKeyConstraint
   -- 7. Create triggers
   Locale.createTriggers

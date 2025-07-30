@@ -17,7 +17,7 @@ import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 runMigration :: AppContextM ()
 runMigration = do
   logInfo _CMP_MIGRATION "(DocumentTemplate/DocumentTemplate) started"
-  deleteDraftDatas
+  deleteDraftData
   deleteDocumentTemplates
   insertDocumentTemplate wizardDocumentTemplate
   insertDocumentTemplate wizardDocumentTemplateDraft

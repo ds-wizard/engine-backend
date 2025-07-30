@@ -93,8 +93,8 @@ updateBranchEventsByUuid branchUuid events = do
   runDB action
   return ()
 
-deleteBranchDatas :: AppContextM Int64
-deleteBranchDatas = createDeleteEntitiesFn entityName
+deleteBranchData :: AppContextM Int64
+deleteBranchData = createDeleteEntitiesFn entityName
 
 deleteBranchDataById :: U.UUID -> AppContextM Int64
 deleteBranchDataById branchUuid = createDeleteEntityByFn entityName [("branch_uuid", U.toString branchUuid)]

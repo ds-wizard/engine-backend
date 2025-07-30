@@ -14,7 +14,7 @@ getCurrentOrganization = do
   mCurrentOrganization <- asks currentOrganization
   case mCurrentOrganization of
     Just org -> return org
-    Nothing -> throwError $ ForbiddenError _ERROR_MODEL_APPCONTEXT__MISSING_ORGANIZATION
+    Nothing -> throwError $ ForbiddenError _ERROR_MODEL_APP_CONTEXT__MISSING_ORGANIZATION
 
 isOrganizationAdmin :: AppContextM Bool
 isOrganizationAdmin = do

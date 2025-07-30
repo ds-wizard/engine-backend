@@ -12,7 +12,7 @@ import Wizard.Model.ActionKey.ActionKeyType
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 
-regActionKey =
+registrationActionKey =
   ActionKey
     { uuid = u' "23f934f2-05b2-45d3-bce9-7675c3f3e5e9"
     , identity = userAlbert.uuid
@@ -22,7 +22,7 @@ regActionKey =
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
-forgPassActionKey =
+forgottenPasswordActionKey =
   ActionKey
     { uuid = u' "23f934f2-05b2-45d3-bce9-7675c3f3e5e9"
     , identity = userAlbert.uuid
@@ -32,8 +32,8 @@ forgPassActionKey =
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
-forgTokActionKeyDto =
-  ActionKeyDTO {aType = forgPassActionKey.aType, email = userAlbert.email}
+forgottenPasswordActionKeyDto =
+  ActionKeyDTO {aType = forgottenPasswordActionKey.aType, email = userAlbert.email}
 
 differentActionKey =
   ActionKey

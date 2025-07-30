@@ -20,7 +20,7 @@ migrate dbPool = do
   removeConstrains dbPool
   refactorQuestionnaireAcl dbPool
   addConstrains dbPool
-  adjustQuestionniareComment dbPool
+  adjustQuestionnaireComment dbPool
 
 renameToTenant :: Pool Connection -> LoggingT IO (Maybe Error)
 renameToTenant dbPool = do
@@ -482,8 +482,8 @@ addConstrains dbPool = do
   liftIO $ withResource dbPool action
   return Nothing
 
-adjustQuestionniareComment :: Pool Connection -> LoggingT IO (Maybe Error)
-adjustQuestionniareComment dbPool = do
+adjustQuestionnaireComment :: Pool Connection -> LoggingT IO (Maybe Error)
+adjustQuestionnaireComment dbPool = do
   let sql =
         "ALTER TABLE questionnaire_comment DROP CONSTRAINT questionnaire_comment_pk; \
         \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT questionnaire_comment_thread_pk; \

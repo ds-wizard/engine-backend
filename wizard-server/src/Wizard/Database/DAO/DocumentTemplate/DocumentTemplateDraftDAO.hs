@@ -13,7 +13,7 @@ import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO (deleteDraftDataByDocumentTemplateId, deleteDraftDatas)
+import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO (deleteDraftData, deleteDraftDataByDocumentTemplateId)
 import Wizard.Database.Mapping.DocumentTemplate.DocumentTemplateDraftList ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
@@ -152,7 +152,7 @@ deleteFolder documentTemplateId path = do
 deleteDrafts :: AppContextM Int64
 deleteDrafts = do
   tenantUuid <- asks currentTenantUuid
-  deleteDraftDatas
+  deleteDraftData
   createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("phase", "DraftDocumentTemplatePhase")]
 
 deleteDraftByDocumentTemplateId :: String -> AppContextM Int64

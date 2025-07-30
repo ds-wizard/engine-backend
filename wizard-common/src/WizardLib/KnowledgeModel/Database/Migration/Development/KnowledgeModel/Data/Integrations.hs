@@ -18,7 +18,7 @@ repositoryApi =
     , allowCustomReply = True
     , requestMethod = "GET"
     , requestUrl = "${baseurl}/${path}?domain=${domain}&country=${country}&q=${q}"
-    , requestHeaders = [MapEntry "Api-Key" "${apikey}"]
+    , requestHeaders = [MapEntry "Api-Key" "${apiKey}"]
     , requestBody = Nothing
     , requestAllowEmptySearch = True
     , responseListField = Just "nested.results"
@@ -43,7 +43,7 @@ ontologyPortal =
     , logo = Nothing
     , requestMethod = "GET"
     , requestUrl = "${baseurl}/${path}?domain=${domain}&country=${country}&q=${q}"
-    , requestHeaders = [MapEntry "Api-Key" "${apikey}"]
+    , requestHeaders = [MapEntry "Api-Key" "${apiKey}"]
     , requestBody = ""
     , requestEmptySearch = True
     , responseListField = Just "nested.results"
@@ -65,7 +65,7 @@ ontologyPortalEdited =
     , logo = Nothing
     , requestMethod = "PUT"
     , requestUrl = "${baseurl}/edited-${path}?domain=${domain}&language=${language}&q=${q}&edited"
-    , requestHeaders = [MapEntry "Api-Key-Edited" "${apikey}-EDITED"]
+    , requestHeaders = [MapEntry "Api-Key-Edited" "${apiKey}-EDITED"]
     , requestBody = "{}"
     , requestEmptySearch = False
     , responseListField = Just "nested.results"
@@ -88,7 +88,7 @@ bioPortal =
     , logo = Nothing
     , requestMethod = "GET"
     , requestUrl = "${baseurl}/${path}?domain=${domain}&branch=${branch}&q=${q}"
-    , requestHeaders = [MapEntry "Api-Key" "${apikey}"]
+    , requestHeaders = [MapEntry "Api-Key" "${apiKey}"]
     , requestBody = ""
     , requestEmptySearch = False
     , responseListField = Nothing

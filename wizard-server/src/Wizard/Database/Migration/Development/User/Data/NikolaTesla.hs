@@ -40,7 +40,7 @@ userNikola =
         , "DOC_TML_WRITE_PERM"
         ]
     , active = True
-    , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
+    , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4=" -- cspell:disable-line
     , submissionProps = []
     , imageUrl = Nothing
     , locale = Nothing

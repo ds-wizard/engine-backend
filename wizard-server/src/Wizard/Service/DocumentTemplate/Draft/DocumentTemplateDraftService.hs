@@ -144,7 +144,7 @@ deleteDraft tmlId =
     draft <- findDraftById tmlId
     assets <- findAssetsByDocumentTemplateId tmlId
     cleanTemporallyDocumentsForTemplate tmlId
-    validateDocumentTemplateDeletation tmlId
+    validateDocumentTemplateDeletion tmlId
     deleteDraftByDocumentTemplateId tmlId
     let assetUuids = fmap (.uuid) assets
     traverse_ (removeAsset tmlId) assetUuids

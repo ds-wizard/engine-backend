@@ -64,7 +64,7 @@ test_201 appContext =
 -- ----------------------------------------------------
 test_400 appContext = do
   createInvalidJsonTest reqMethod reqUrl "password"
-  it "HTTP 400 BAD REQUEST when invalid creadentials are provided" $
+  it "HTTP 400 BAD REQUEST when invalid credentials are provided" $
     -- GIVEN: Prepare request
     do
       let reqDto = albertCreateToken {email = "albert.einstein@example.com2"}
