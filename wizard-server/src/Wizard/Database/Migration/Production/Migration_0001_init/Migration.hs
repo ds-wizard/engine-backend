@@ -547,6 +547,7 @@ createUserTable dbPool =
     \     on user_entity (uuid); "
 
 insertUsers dbPool = do
+  -- cspell:disable
   let sql =
         "INSERT INTO user_entity (uuid, \
         \                         first_name, \
@@ -644,6 +645,7 @@ insertUsers dbPool = do
         \        '2018-01-20 00:00:00.000000', \
         \        '2018-01-20 00:00:00.000000', \
         \        '2018-01-25 00:00:00.000000');"
+  -- cspell:enable
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

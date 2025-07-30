@@ -19,7 +19,7 @@ migrate value = migratePackagesField value >>= migrateMetamodelVersionField
 -- --------------------------------
 migratePackagesField :: Value -> Either AppError Value
 migratePackagesField value =
-  convertValueToOject value $ \object ->
+  convertValueToObject value $ \object ->
     getArrayField "packages" object $ \packages ->
       case foldEither $ migratePackage <$> Vector.toList packages of
         Right updatedPackages -> Right . Object $ KM.insert (fromString "packages") (toJSON updatedPackages) object

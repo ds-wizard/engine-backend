@@ -4,7 +4,7 @@ import qualified Data.Map.Strict as M
 import Data.Maybe (mapMaybe)
 import qualified Data.UUID as U
 
-import Wizard.Service.KnowledgeModel.Compilator.Modifier.Delete
+import Wizard.Service.KnowledgeModel.Compiler.Modifier.Delete
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses

@@ -11,5 +11,5 @@ tokenSpec =
       it "'Bearer token1' returns 'token1" $ separateToken "Bearer token1" `shouldBe` Just "token1"
       it "'Bearer ' returns 'Nothing" $ separateToken "Bearer " `shouldBe` Nothing
       it "'token1' returns 'Nothing" $ separateToken "token1" `shouldBe` Nothing
-      it "'Bearer sdsa asdasd' returns 'Nothing" $ separateToken "Bearer sdsa asdasd" `shouldBe` Nothing
+      it "'Bearer test1 test2' returns 'Nothing" $ separateToken "Bearer test1 test2" `shouldBe` Nothing
       it "'' returns 'Nothing" $ separateToken "" `shouldBe` Nothing

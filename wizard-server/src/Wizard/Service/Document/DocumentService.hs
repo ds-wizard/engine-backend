@@ -181,7 +181,7 @@ createDocumentPreview tml pkg branchEvents qtn qtnVersions questionnaireEventUui
       if doc.state == DoneDocumentState
         then do
           let expirationInSeconds = 60
-          link <- presigneGetDocumentUrl doc.uuid expirationInSeconds
+          link <- presignGetDocumentUrl doc.uuid expirationInSeconds
           return (doc, TemporaryFileDTO link (fromMaybe "text/plain" doc.contentType))
         else return (doc, TemporaryFileMapper.emptyFileDTO)
     [] ->

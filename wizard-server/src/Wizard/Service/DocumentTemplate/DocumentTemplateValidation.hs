@@ -48,8 +48,8 @@ validateDocumentTemplateIdUniqueness tmlId = do
     Nothing -> return ()
     Just _ -> throwError . UserError $ _ERROR_VALIDATION__DOC_TML_ID_UNIQUENESS tmlId
 
-validateDocumentTemplateDeletation :: String -> AppContextM ()
-validateDocumentTemplateDeletation tmlId = do
+validateDocumentTemplateDeletion :: String -> AppContextM ()
+validateDocumentTemplateDeletion tmlId = do
   validateUsageBySomeQuestionnaire tmlId
   validateUsageBySomeDocument tmlId
 

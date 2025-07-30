@@ -8,7 +8,7 @@ import qualified Data.UUID as U
 import Wizard.Cache.KnowledgeModelCache
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Service.KnowledgeModel.Compilator.Compilator
+import Wizard.Service.KnowledgeModel.Compiler.Compiler
 import Wizard.Service.KnowledgeModel.KnowledgeModelFilter
 import Wizard.Service.Package.PackageUtil
 import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO

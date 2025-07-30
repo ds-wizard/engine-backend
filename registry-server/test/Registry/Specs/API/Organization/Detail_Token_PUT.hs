@@ -53,7 +53,7 @@ test_200 appContext =
       let expDto = toDTO orgGlobal
       let expType (a :: OrganizationDTO) = a
       -- AND: Prepare DB
-      runInContextIO (insertActionKey forgTokActionKey) appContext
+      runInContextIO (insertActionKey forgottenTokenActionKey) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

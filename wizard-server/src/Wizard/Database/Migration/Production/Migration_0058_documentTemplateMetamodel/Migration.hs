@@ -10,7 +10,7 @@ import Database.PostgreSQL.Simple
 
 definition = (meta, migrate)
 
-meta = MigrationMeta {mmNumber = 58, mmName = "DT metamodel + new API integration", mmDescription = "Document template metamodel as tuple, new API integratio and KM secrets"}
+meta = MigrationMeta {mmNumber = 58, mmName = "DT metamodel + new API integration", mmDescription = "Document template metamodel as tuple, new API integration and KM secrets"}
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do

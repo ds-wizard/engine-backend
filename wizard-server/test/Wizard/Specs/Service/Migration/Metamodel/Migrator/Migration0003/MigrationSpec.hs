@@ -22,5 +22,5 @@ spec = do
     runMigration3 Fixtures.addKmEventIn1 `shouldBeJson` Fixtures.addKmEventOut1
   it "migrates EditKnowledgeModelEvent" $
     runMigration3 Fixtures.editKmEventIn1 `shouldBeJson` Fixtures.editKmEventOut1
-  it "migrates DeleteQuestionEevent" $
+  it "migrates DeleteQuestionEvent" $
     runMigration3 Fixtures.deleteQuestionEventIn1 `shouldBeJson` Fixtures.deleteQuestionEventOut1

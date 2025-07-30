@@ -111,10 +111,10 @@ importAndConvertBundle contentS fromRegistry =
               else auditPackageBundleImportFromFile pb.bundleId
             importBundle pb
           Left error -> do
-            logWarnI _CMP_SERVICE ("Couln't deserialize migrated PackageBundle content (" ++ show error ++ ")")
+            logWarnI _CMP_SERVICE ("Could not deserialize migrated PackageBundle content (" ++ show error ++ ")")
             throwError . UserError $ _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
       Left error -> do
-        logWarnI _CMP_SERVICE ("Couln't deserialize PackageBundle content (" ++ show error ++ ")")
+        logWarnI _CMP_SERVICE ("Could not deserialize PackageBundle content (" ++ show error ++ ")")
         throwError . UserError $ _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
 
 importBundle :: PackageBundleDTO -> AppContextM [PackageSimpleDTO]

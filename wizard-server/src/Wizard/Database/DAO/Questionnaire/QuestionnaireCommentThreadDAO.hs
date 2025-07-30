@@ -231,18 +231,18 @@ findQuestionnaireCommentThreadsSimple qtnUuid resolved editor = do
   let privateCondition =
         if editor
           then ""
-          else "AND qtn_cmnt_thr.private = false"
+          else "AND qtn_comment_thread.private = false"
   let sql =
         fromString $
           f''
-            "SELECT path, qtn_cmnt_thr.uuid::text, count(qtn_cmnt.uuid)::text \
-            \FROM questionnaire_comment_thread qtn_cmnt_thr \
-            \LEFT JOIN questionnaire_comment qtn_cmnt ON qtn_cmnt_thr.uuid = qtn_cmnt.comment_thread_uuid AND qtn_cmnt_thr.tenant_uuid = qtn_cmnt.tenant_uuid \
-            \WHERE qtn_cmnt_thr.questionnaire_uuid = ? \
-            \  AND qtn_cmnt_thr.tenant_uuid = ? \
-            \  AND qtn_cmnt_thr.resolved = ? \
+            "SELECT path, qtn_comment_thread.uuid::text, count(qtn_comment.uuid)::text \
+            \FROM questionnaire_comment_thread qtn_comment_thread \
+            \LEFT JOIN questionnaire_comment qtn_comment ON qtn_comment_thread.uuid = qtn_comment.comment_thread_uuid AND qtn_comment_thread.tenant_uuid = qtn_comment.tenant_uuid \
+            \WHERE qtn_comment_thread.questionnaire_uuid = ? \
+            \  AND qtn_comment_thread.tenant_uuid = ? \
+            \  AND qtn_comment_thread.resolved = ? \
             \  ${privateCondition} \
-            \GROUP BY path, qtn_cmnt_thr.uuid"
+            \GROUP BY path, qtn_comment_thread.uuid"
             [("privateCondition", privateCondition)]
   let params = [toField qtnUuid, toField tenantUuid, toField resolved]
   logQuery sql params

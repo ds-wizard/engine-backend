@@ -118,7 +118,7 @@ deleteLocalesByQueryParams queryParams =
     checkPermission _LOC_PERM
     checkIfAdminIsDisabled
     locales <- findLocalesFiltered queryParams
-    traverse_ validateLocaleDeletation locales
+    traverse_ validateLocaleDeletion locales
     traverse_ (deleteLocale . (.lId)) locales
 
 deleteLocale :: String -> AppContextM ()
@@ -127,7 +127,7 @@ deleteLocale lclId =
     checkPermission _LOC_PERM
     checkIfAdminIsDisabled
     locale <- findLocaleById lclId
-    validateLocaleDeletation locale
+    validateLocaleDeletion locale
     users <- findUsersFiltered [("locale", locale.lId)]
     traverse_ (\u -> unsetUserLocale u.uuid) users
     void $ deleteLocaleById lclId

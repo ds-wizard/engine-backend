@@ -24,12 +24,12 @@ tagDataScienceEdited =
     , annotations = [MapEntry "newAnnotation" "someValue"]
     }
 
-tagBioInformatic :: Tag
-tagBioInformatic =
+tagBioinformatics :: Tag
+tagBioinformatics =
   Tag
     { uuid = u' "e58abfb7-479d-4e81-95e0-83654e83da1a"
-    , name = "BioInformatic"
-    , description = Just "Questions related to bio informatic engineering"
+    , name = "Bioinformatics"
+    , description = Just "Questions related to Bioinformatics engineering"
     , color = "#F5A623"
     , annotations = []
     }

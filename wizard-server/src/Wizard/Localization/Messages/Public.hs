@@ -51,7 +51,7 @@ _ERROR_VALIDATION__TOKEN_ABSENCE tokenUuid =
 
 -- Delete
 _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId target =
-  LocaleRecord "error.validation.tml_deletation" "DocumentTemplate '%s' can't be deleted. It's used by some %s" [tmlId, target]
+  LocaleRecord "error.validation.tml_deletion" "DocumentTemplate '%s' can't be deleted. It's used by some %s" [tmlId, target]
 
 -- Unsupported version
 _ERROR_VALIDATION__PKG_UNSUPPORTED_METAMODEL_VERSION pkgMetamodelVersion appPkgMetamodelVersion =

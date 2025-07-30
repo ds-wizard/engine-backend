@@ -137,11 +137,11 @@ gfnReverse ((_, xs) : _) = return . toGVal . reverse . fromMaybe [] . asList $ x
 gfnReverse _ = return def
 
 gfnJoin :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
-gfnJoin ((_, txts) : (_, glue) : _) = return . toGVal $ T.intercalate (asText glue) (maybe [] (map asText) $ asList txts)
+gfnJoin ((_, texts) : (_, glue) : _) = return . toGVal $ T.intercalate (asText glue) (maybe [] (map asText) $ asList texts)
 gfnJoin _ = return def
 
 gfnToCharArray :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
-gfnToCharArray ((_, txt) : _) = return . toGVal . T.unpack . asText $ txt
+gfnToCharArray ((_, text) : _) = return . toGVal . T.unpack . asText $ text
 gfnToCharArray _ = return def
 
 -- ---------------------------------------------------------------------------------------------------------------------

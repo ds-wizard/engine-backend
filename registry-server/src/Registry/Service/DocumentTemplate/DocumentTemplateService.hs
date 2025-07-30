@@ -14,9 +14,9 @@ import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateUtil
 
 getDocumentTemplates :: [(String, String)] -> Maybe SemVer2Tuple -> AppContextM [DocumentTemplateSimpleDTO]
 getDocumentTemplates queryParams mMetamodelVersion = do
-  tmpls <- findDocumentTemplatesFiltered queryParams mMetamodelVersion
+  tmls <- findDocumentTemplatesFiltered queryParams mMetamodelVersion
   orgs <- findOrganizations
-  return . fmap (toSimpleDTO orgs) . chooseTheNewest . groupDocumentTemplates $ tmpls
+  return . fmap (toSimpleDTO orgs) . chooseTheNewest . groupDocumentTemplates $ tmls
 
 getDocumentTemplateById :: String -> AppContextM DocumentTemplateDetailDTO
 getDocumentTemplateById tId = do

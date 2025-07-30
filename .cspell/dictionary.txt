@@ -1,0 +1,120 @@
+# Haskell specific terms, functions, and libraries
+Hspec
+Aeson
+Wreq
+foldl
+foldr
+unwords
+uncurry
+mzero
+mappend
+mempty
+mdata
+fmap
+partitionEithers
+UTCTime
+utctDay
+rdfs
+unode
+elem
+elems
+amazonka
+attoparsec
+bytestring
+crypton
+cryptostore
+fsutils
+libpq
+pwstore
+resourcet
+tdfa
+Unrender
+fwarn
+Werror
+endswith
+tuplify
+Creds
+Unpadded
+OVERLAPPABLE
+KHTML
+unlines
+ccall
+
+# Document template example (Jinja)
+selectattr
+equalto
+pandoc
+endfor
+elif
+endif
+endmacro
+
+# PostgreSQL specific terms
+varchar
+timestamptz
+uindex
+plpgsql
+ordinality
+bigserial
+
+# Typical software development terms
+dto
+idto
+dtos
+pageable
+metamodel
+pem
+pems
+presign
+presigned
+
+# Domain specific terms
+fairsharing
+orcid
+findability
+typehint
+typehints
+bioinformatics
+
+# Testing and debugging terms
+nikola
+nicolaus
+
+# Used shorthands / acronyms for common terms
+pkg
+pkgs
+qtn
+qtns
+SUBM
+HJSON
+
+# Contributor names
+Vojtěch
+Knaisl
+
+# To fix in the future (will break something)
+signup
+myorg
+googleusercontent
+tml
+tmls
+minioadmin
+# TenantValidation names (to be in config file)
+chronograf
+datenzee
+fujtajbl
+keyclock
+mockserver
+rabbitmq
+swarmpit
+# Weird acronyms for events (to be removed with other unnecessary acronyms)
+sphse
+slble
+rtche
+otche
+asche
+dtche
+acche
+ecche
+dcche
+aste

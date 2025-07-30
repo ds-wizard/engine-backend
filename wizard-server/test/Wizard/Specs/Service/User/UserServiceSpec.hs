@@ -16,7 +16,7 @@ import Wizard.Specs.Common
 userServiceIntegrationSpec appContext =
   describe "User Service Integration" $
     describe "registerUser" $
-      it "Registation is disabled" $
+      it "Registration is disabled" $
         -- GIVEN: Prepare expectations
         do
           let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registration"

@@ -418,7 +418,7 @@ findQuestionnaireDetail uuid = do
             \        SELECT count(*) \
             \        FROM questionnaire_importer \
             \        WHERE tenant_uuid = '${tenantUuid}' \
-            \       ) as questionnaire_impoters, \
+            \       ) as questionnaire_importers, \
             \       ( \
             \        SELECT count(*) \
             \        FROM questionnaire_file \
@@ -461,7 +461,7 @@ findQuestionnaireDetailQuestionnaire uuid = do
             \        SELECT count(*) \
             \        FROM questionnaire_importer \
             \        WHERE tenant_uuid = '${tenantUuid}' \
-            \       ) as questionnaire_impoters, \
+            \       ) as questionnaire_importers, \
             \       ( \
             \        SELECT array_agg(concat(uuid, '<:::::>', \
             \                                file_name, '<:::::>', \

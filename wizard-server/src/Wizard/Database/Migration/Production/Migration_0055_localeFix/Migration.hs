@@ -10,7 +10,7 @@ import Database.PostgreSQL.Simple
 
 definition = (meta, migrate)
 
-meta = MigrationMeta {mmNumber = 55, mmName = "Fix missing default locale", mmDescription = "Fix misssing default locale"}
+meta = MigrationMeta {mmNumber = 55, mmName = "Fix missing default locale", mmDescription = "Fix missing default locale"}
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do

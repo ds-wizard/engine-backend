@@ -23,8 +23,8 @@ putTemporaryFileConduit uuid fileName contentType contentDisposition = createPut
 makeTemporaryFileLink :: AppContextC s sc m => U.UUID -> String -> m String
 makeTemporaryFileLink uuid fileName = createMakePublicLink (f' "%s/%s/%s" [folderName, U.toString uuid, fileName])
 
-presigneGetTemporaryFileUrl :: AppContextC s sc m => U.UUID -> String -> Int -> m String
-presigneGetTemporaryFileUrl uuid fileName = createPresignedGetObjectUrl (f' "%s/%s/%s" [folderName, U.toString uuid, fileName])
+presignGetTemporaryFileUrl :: AppContextC s sc m => U.UUID -> String -> Int -> m String
+presignGetTemporaryFileUrl uuid fileName = createPresignedGetObjectUrl (f' "%s/%s/%s" [folderName, U.toString uuid, fileName])
 
 removeTemporaryFiles :: AppContextC s sc m => m ()
 removeTemporaryFiles = createRemoveObjectFn (f' "%s" [folderName])

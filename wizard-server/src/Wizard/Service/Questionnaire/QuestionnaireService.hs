@@ -185,9 +185,9 @@ createQuestionnaireFromTemplate reqDto =
           :: Questionnaire
     insertQuestionnaire newQtn
     clonedFiles <- cloneQuestionnaireFiles originQtn.uuid newQtn.uuid
-    newQtnEventsWithOldEventUuid <- cloneQuestinonaireEventsWithOldEventUuid newQtnUuid originQtnEvents
+    newQtnEventsWithOldEventUuid <- cloneQuestionnaireEventsWithOldEventUuid newQtnUuid originQtnEvents
     let newQtnEvents = fmap snd newQtnEventsWithOldEventUuid
-    let newQtnEventsWithReplacedFiles = replaceQuestinonaireEventsWithNewFiles clonedFiles newQtnEvents
+    let newQtnEventsWithReplacedFiles = replaceQuestionnaireEventsWithNewFiles clonedFiles newQtnEvents
     insertQuestionnaireEvents newQtnEventsWithReplacedFiles
     duplicateCommentThreads reqDto.questionnaireUuid newQtnUuid
     cloneQuestionnaireVersions originQtn.uuid newQtn.uuid newQtnEventsWithOldEventUuid
@@ -220,9 +220,9 @@ cloneQuestionnaire cloneUuid =
           :: Questionnaire
     insertQuestionnaire newQtn
     clonedFiles <- cloneQuestionnaireFiles originQtn.uuid newQtn.uuid
-    newQtnEventsWithOldEventUuid <- cloneQuestinonaireEventsWithOldEventUuid newQtnUuid originQtnEvents
+    newQtnEventsWithOldEventUuid <- cloneQuestionnaireEventsWithOldEventUuid newQtnUuid originQtnEvents
     let newQtnEvents = fmap snd newQtnEventsWithOldEventUuid
-    let newQtnEventsWithReplacedFiles = replaceQuestinonaireEventsWithNewFiles clonedFiles newQtnEvents
+    let newQtnEventsWithReplacedFiles = replaceQuestionnaireEventsWithNewFiles clonedFiles newQtnEvents
     insertQuestionnaireEvents newQtnEventsWithReplacedFiles
     cloneQuestionnaireVersions originQtn.uuid newQtn.uuid newQtnEventsWithOldEventUuid
     duplicateCommentThreads cloneUuid newQtnUuid
@@ -397,7 +397,7 @@ deleteQuestionnaire qtnUuid shouldValidatePermission =
   runInTransaction $ do
     unsetQuestionnaireFromDocumentTemplate qtnUuid
     qtn <- findQuestionnaireByUuid qtnUuid
-    validateQuestionnaireDeletation qtnUuid
+    validateQuestionnaireDeletion qtnUuid
     when shouldValidatePermission (checkOwnerPermissionToQtn qtn.visibility qtn.permissions)
     deleteMigratorStateByNewQuestionnaireUuid qtnUuid
     threads <- findQuestionnaireCommentThreads qtnUuid
@@ -447,21 +447,21 @@ cleanQuestionnaires =
       )
       qtns
 
-cloneQuestinonaireEvents :: U.UUID -> [QuestionnaireEvent] -> AppContextM [QuestionnaireEvent]
-cloneQuestinonaireEvents newQtnUuid oldEvents = do
-  newEvents <- cloneQuestinonaireEventsWithOldEventUuid newQtnUuid oldEvents
+cloneQuestionnaireEvents :: U.UUID -> [QuestionnaireEvent] -> AppContextM [QuestionnaireEvent]
+cloneQuestionnaireEvents newQtnUuid oldEvents = do
+  newEvents <- cloneQuestionnaireEventsWithOldEventUuid newQtnUuid oldEvents
   return $ fmap snd newEvents
 
-cloneQuestinonaireEventsWithOldEventUuid :: U.UUID -> [QuestionnaireEvent] -> AppContextM [(U.UUID, QuestionnaireEvent)]
-cloneQuestinonaireEventsWithOldEventUuid newQtnUuid =
+cloneQuestionnaireEventsWithOldEventUuid :: U.UUID -> [QuestionnaireEvent] -> AppContextM [(U.UUID, QuestionnaireEvent)]
+cloneQuestionnaireEventsWithOldEventUuid newQtnUuid =
   traverse
     ( \event -> do
         newEventUuid <- liftIO generateUuid
         return (getUuid event, setQuestionnaireUuid (setUuid event newEventUuid) newQtnUuid)
     )
 
-replaceQuestinonaireEventsWithNewFiles :: [(QuestionnaireFile, QuestionnaireFile)] -> [QuestionnaireEvent] -> [QuestionnaireEvent]
-replaceQuestinonaireEventsWithNewFiles clonedFiles qtnEvents =
+replaceQuestionnaireEventsWithNewFiles :: [(QuestionnaireFile, QuestionnaireFile)] -> [QuestionnaireEvent] -> [QuestionnaireEvent]
+replaceQuestionnaireEventsWithNewFiles clonedFiles qtnEvents =
   let findFile :: U.UUID -> Maybe (QuestionnaireFile, QuestionnaireFile)
       findFile fileUuid = L.find (\(oldFile, newFile) -> oldFile.uuid == fileUuid) clonedFiles
       replaceEvent :: QuestionnaireEvent -> QuestionnaireEvent

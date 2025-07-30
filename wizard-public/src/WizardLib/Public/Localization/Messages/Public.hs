@@ -6,11 +6,11 @@ import Shared.Common.Model.Localization.LocaleRecord
 -- VALIDATION
 -- --------------------------------------
 -- Delete
-_ERROR_VALIDATION__DEFAULT_LOCALE_DELETATION =
-  LocaleRecord "error.validation.default_locale_deletation" "You can't delete default locale" []
+_ERROR_VALIDATION__DEFAULT_LOCALE_DELETION =
+  LocaleRecord "error.validation.default_locale_deletion" "You can't delete default locale" []
 
-_ERROR_VALIDATION__DEFAULT_WIZARD_LOCALE_DELETATION =
-  LocaleRecord "error.validation.default_locale_deletation" "You can't delete default wizard locale" []
+_ERROR_VALIDATION__DEFAULT_WIZARD_LOCALE_DELETION =
+  LocaleRecord "error.validation.default_locale_deletion" "You can't delete default wizard locale" []
 
 -- Uniqueness
 _ERROR_VALIDATION__LCL_ID_UNIQUENESS lclId =

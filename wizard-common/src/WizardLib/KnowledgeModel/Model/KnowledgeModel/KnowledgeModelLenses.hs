@@ -64,7 +64,7 @@ instance HasKnowledgeModelReferences KnowledgeModel where
   setReferencesL km newReferences = km {entities = km.entities {references = toMap newReferences}}
   getReferencesM km = km.entities.references
   setReferencesM km newReferences = km {entities = km.entities {references = newReferences}}
-  putInReferencesM referenceUuid refenrece km = setReferencesM km $ M.insert referenceUuid refenrece km.entities.references
+  putInReferencesM referenceUuid reference km = setReferencesM km $ M.insert referenceUuid reference km.entities.references
   deleteFromReferencesM referenceUuid km = setReferencesM km $ M.delete referenceUuid km.entities.references
 
 ------------------------------------------------------------------------------------------

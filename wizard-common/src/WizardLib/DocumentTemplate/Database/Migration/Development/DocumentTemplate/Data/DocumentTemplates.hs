@@ -67,7 +67,7 @@ wizardDocumentTemplateNlDraft =
 anotherWizardDocumentTemplate :: DocumentTemplate
 anotherWizardDocumentTemplate =
   DocumentTemplate
-    { tId = "dsw:another-temlate:1.0.0"
+    { tId = "dsw:another-template:1.0.0"
     , name = "Another DocumentTemplate"
     , organizationId = "dsw"
     , templateId = "another-template"
@@ -97,7 +97,7 @@ anotherWizardDocumentTemplate =
 differentDocumentTemplate :: DocumentTemplate
 differentDocumentTemplate =
   DocumentTemplate
-    { tId = "dsw:another-temlate:1.0.0"
+    { tId = "dsw:another-template:1.0.0"
     , name = "Another DocumentTemplate"
     , organizationId = "dsw"
     , templateId = "another-template"

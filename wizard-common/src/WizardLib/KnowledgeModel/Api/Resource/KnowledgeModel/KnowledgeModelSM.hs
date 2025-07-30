@@ -117,7 +117,7 @@ instance ToSchema Phase where
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToSchema Tag where
-  declareNamedSchema = toSwagger tagBioInformatic
+  declareNamedSchema = toSwagger tagBioinformatics
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
