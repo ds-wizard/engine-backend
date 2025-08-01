@@ -60,11 +60,11 @@ import Wizard.Specs.API.Tenant.Config.APISpec
 import Wizard.Specs.API.Tenant.Limit.APISpec
 import Wizard.Specs.API.Tenant.Usage.APISpec
 import Wizard.Specs.API.Token.APISpec
-import Wizard.Specs.API.Typehint.APISpec
+import Wizard.Specs.API.TypeHint.APISpec
 import Wizard.Specs.API.User.APISpec
 import Wizard.Specs.API.User.Tour.APISpec
 import Wizard.Specs.API.UserGroup.APISpec
-import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
+import Wizard.Specs.Integration.Http.TypeHint.ResponseMapperSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
 import Wizard.Specs.Service.DocumentTemplate.DocumentTemplateUtilSpec
@@ -162,7 +162,7 @@ main =
           describe "UNIT TESTING" $ do
             describe "INTEGRATION" $
               describe "Http" $
-                describe "Typehint" typehintResponseMapperSpec
+                describe "TypeHint" typeHintResponseMapperSpec
             describe "SERVICE" $ do
               describe "Document Template" documentTemplateUtilSpec
               describe "KnowledgeModel" $ do
@@ -222,7 +222,7 @@ main =
               tenantAPI baseContext appContext
               tenantConfigAPI baseContext appContext
               tenantLimitAPI baseContext appContext
-              typehintAPI baseContext appContext
+              typeHintAPI baseContext appContext
               tokenAPI baseContext appContext
               usageAPI baseContext appContext
               userAPI baseContext appContext

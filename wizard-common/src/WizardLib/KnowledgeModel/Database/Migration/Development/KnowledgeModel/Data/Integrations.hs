@@ -26,8 +26,33 @@ repositoryApi =
     , responseItemTemplateForSelection = Nothing
     , testQ = "test"
     , testVariables = M.fromList [("domain", "biology"), ("country", "cz")]
-    , testResponse = Just "Test response"
+    , testResponse = Nothing
     , annotations = []
+    }
+
+repositoryApiTypeHintResponse1 :: TypeHintResponse
+repositoryApiTypeHintResponse1 =
+  TypeHintResponse
+    { request = repositoryApiTypeHintResponseRequest1
+    , response = typeHintResponseResponse1
+    }
+
+repositoryApiTypeHintResponseRequest1 :: TypeHintResponseRequest
+repositoryApiTypeHintResponseRequest1 =
+  TypeHintResponseRequest
+    { method = "GET"
+    , url = "https://example.com/api/dataset-search?domain=biology&country=cz&q=test"
+    , headers = [MapEntry "Api-Key" "test-api-key"]
+    , body = Nothing
+    }
+
+typeHintResponseResponse1 :: TypeHintResponseResponse
+typeHintResponseResponse1 =
+  TypeHintResponseResponse
+    { responseType = SuccessTypeHintResponse
+    , status = Just 200
+    , contentType = Just "application/json"
+    , body = Just "{\"nested\":{\"results\":[{\"id\":\"1\",\"name\":\"Dataset 1\"},{\"id\":\"2\",\"name\":\"Dataset 2\"}]}}"
     }
 
 ontologyPortal' :: Integration

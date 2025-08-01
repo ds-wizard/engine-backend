@@ -315,9 +315,37 @@ data ApiIntegration = ApiIntegration
   , responseItemTemplateForSelection :: Maybe String
   , testQ :: String
   , testVariables :: M.Map String String
-  , testResponse :: Maybe String
+  , testResponse :: Maybe TypeHintResponse
   , annotations :: [MapEntry String String]
   }
+  deriving (Show, Eq, Generic)
+
+data TypeHintResponse = TypeHintResponse
+  { request :: TypeHintResponseRequest
+  , response :: TypeHintResponseResponse
+  }
+  deriving (Show, Eq, Generic)
+
+data TypeHintResponseRequest = TypeHintResponseRequest
+  { method :: String
+  , url :: String
+  , headers :: [MapEntry String String]
+  , body :: Maybe String
+  }
+  deriving (Show, Eq, Generic)
+
+data TypeHintResponseResponse = TypeHintResponseResponse
+  { responseType :: TypeHintResponseResponseType
+  , status :: Maybe Int
+  , contentType :: Maybe String
+  , body :: Maybe String
+  }
+  deriving (Show, Eq, Generic)
+
+data TypeHintResponseResponseType
+  = SuccessTypeHintResponse
+  | RemoteErrorTypeHintResponse
+  | RequestFailedTypeHintResponse
   deriving (Show, Eq, Generic)
 
 data ApiLegacyIntegration = ApiLegacyIntegration

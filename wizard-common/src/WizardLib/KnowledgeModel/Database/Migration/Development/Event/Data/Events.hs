@@ -341,6 +341,25 @@ a_km1_ch3_q14 =
     , createdAt = dt' 2018 1 21
     }
 
+a_km1_ch3_q15' :: AddQuestionEvent
+a_km1_ch3_q15' = AddIntegrationQuestionEvent' a_km1_ch3_q15
+
+a_km1_ch3_q15 :: AddIntegrationQuestionEvent
+a_km1_ch3_q15 =
+  AddIntegrationQuestionEvent
+    { uuid = u' "961ee868-9c87-4078-99ef-01719f8bd63e"
+    , parentUuid = chapter3.uuid
+    , entityUuid = question15.uuid
+    , title = question15.title
+    , text = question15.text
+    , requiredPhaseUuid = question15.requiredPhaseUuid
+    , annotations = question15.annotations
+    , tagUuids = question15.tagUuids
+    , integrationUuid = question15.integrationUuid
+    , props = question15.props
+    , createdAt = dt' 2018 1 21
+    }
+
 e_km1_ch1_q1' :: EditQuestionEvent
 e_km1_ch1_q1' = EditValueQuestionEvent' e_km1_ch1_q1
 

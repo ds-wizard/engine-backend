@@ -1,4 +1,4 @@
-module Wizard.Specs.API.Typehint.List_POST (
+module Wizard.Specs.API.TypeHint.List_POST (
   list_POST,
 ) where
 
@@ -10,7 +10,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
-import Wizard.Database.Migration.Development.Typehint.Data.Typehints
+import Wizard.Database.Migration.Development.TypeHint.Data.TypeHints
 import Wizard.Model.Context.AppContext
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
@@ -20,21 +20,21 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /wizard-api/typehints
+-- POST /wizard-api/type-hints
 -- ------------------------------------------------------------------------
 list_POST :: AppContext -> SpecWith ((), Application)
-list_POST appContext = describe "POST /wizard-api/typehints" $ test_200 appContext
+list_POST appContext = describe "POST /wizard-api/type-hints" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/wizard-api/typehints"
+reqUrl = "/wizard-api/type-hints"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = typehintRequest
+reqDto = typeHintRequest
 
 reqBody = encode reqDto
 
@@ -47,7 +47,7 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = [lifeScienceTypehint, mathematicalTypehint, legalTypehint]
+      let expDto = [lifeScienceTypeHint, mathematicalTypeHint, legalTypeHint]
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO PKG.runMigration appContext

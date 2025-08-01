@@ -1,5 +1,6 @@
 .stack-work
-lib
+lib/
+dist/
 *.cabal
 
 application.yml

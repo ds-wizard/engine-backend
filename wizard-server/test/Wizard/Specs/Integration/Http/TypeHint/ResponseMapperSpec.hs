@@ -1,18 +1,18 @@
-module Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec where
+module Wizard.Specs.Integration.Http.TypeHint.ResponseMapperSpec where
 
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import Shared.Common.Util.JSON
-import Wizard.Integration.Http.Typehint.ResponseMapper
-import Wizard.Integration.Resource.Typehint.TypehintIDTO
+import Wizard.Integration.Http.TypeHint.ResponseMapper
+import Wizard.Integration.Resource.TypeHint.TypeHintIDTO
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Integrations
 
 import Wizard.Specs.Integration.Http.Common
 
-typehintResponseMapperSpec =
+typeHintResponseMapperSpec =
   describe "ResponseMapper" $
-    describe "toRetrieveTypehintsResponse" $ do
+    describe "toRetrieveLegacyTypeHintsResponse" $ do
       it "it works (nested fields)" $
         -- GIVEN: Response
         do
@@ -35,11 +35,11 @@ typehintResponseMapperSpec =
           -- AND: Expectations
           let expectation =
                 Right
-                  [ TypehintIDTO {intId = Just "op-p000001", name = "Life Science Ontology"}
-                  , TypehintIDTO {intId = Just "op-p000008", name = "Mathematical Ontology"}
+                  [ TypeHintLegacyIDTO {intId = Just "op-p000001", name = "Life Science Ontology"}
+                  , TypeHintLegacyIDTO {intId = Just "op-p000008", name = "Mathematical Ontology"}
                   ]
           -- WHEN:
-          let result = toRetrieveTypehintsResponse ontologyPortal response
+          let result = toRetrieveLegacyTypeHintsResponse ontologyPortal response
           -- THEN:
           result `shouldBe` expectation
       it "it works (no nested fields)" $
@@ -54,11 +54,11 @@ typehintResponseMapperSpec =
           -- AND: Expectations
           let expectation =
                 Right
-                  [ TypehintIDTO {intId = Just "op-p000001", name = "Life Science Ontology"}
-                  , TypehintIDTO {intId = Just "op-p000008", name = "Mathematical Ontology"}
+                  [ TypeHintLegacyIDTO {intId = Just "op-p000001", name = "Life Science Ontology"}
+                  , TypeHintLegacyIDTO {intId = Just "op-p000008", name = "Mathematical Ontology"}
                   ]
           -- WHEN:
-          let result = toRetrieveTypehintsResponse bioPortal response
+          let result = toRetrieveLegacyTypeHintsResponse bioPortal response
           -- THEN:
           result `shouldBe` expectation
       it "bad 'id' and 'name' mapping" $
@@ -72,8 +72,8 @@ typehintResponseMapperSpec =
           let response = createResponse targetContent
           -- AND: Expectations
           let expectation =
-                Right [TypehintIDTO {intId = Just "op-p000001", name = "Life Science Ontology"}]
+                Right [TypeHintLegacyIDTO {intId = Just "op-p000001", name = "Life Science Ontology"}]
           -- WHEN:
-          let result = toRetrieveTypehintsResponse bioPortal response
+          let result = toRetrieveLegacyTypeHintsResponse bioPortal response
           -- THEN:
           result `shouldBe` expectation

@@ -234,6 +234,30 @@ instance ToJSON ApiIntegration where
 instance FromJSON ApiIntegration where
   parseJSON = genericParseJSON (jsonOptionsWithTypeField "integrationType")
 
+instance ToJSON TypeHintResponse where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON TypeHintResponse where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON TypeHintResponseRequest where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON TypeHintResponseRequest where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON TypeHintResponseResponse where
+  toJSON = genericToJSON (jsonOptionsWithTypeField "responseType")
+
+instance FromJSON TypeHintResponseResponse where
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "responseType")
+
+instance ToJSON TypeHintResponseResponseType where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON TypeHintResponseResponseType where
+  parseJSON = genericParseJSON jsonOptions
+
 -- --------------------------------------------------------------------
 instance ToJSON ApiLegacyIntegration where
   toJSON = genericToJSON (jsonOptionsWithTypeField "integrationType")
