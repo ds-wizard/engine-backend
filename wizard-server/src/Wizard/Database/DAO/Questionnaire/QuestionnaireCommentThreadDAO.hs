@@ -278,7 +278,7 @@ findQuestionnaireCommentThreadsForNotifying = do
         \        config_look_and_feel.app_title AS app_title, \
         \        config_look_and_feel.logo_url AS logo_url, \
         \        config_look_and_feel.primary_color AS primary_color, \
-        \        config_look_and_feel.illustration_color AS illustration_color, \
+        \        config_look_and_feel.illustrations_color AS illustrations_color, \
         \        config_privacy_and_support.support_email AS support_email, \
         \        config_mail.config_uuid AS mail_config_uuid \
         \FROM questionnaire_comment_thread thread \

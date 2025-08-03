@@ -57,12 +57,12 @@ createTcOrganizationTable dbPool = do
         \       (organization ->> 'description')::varchar, \
         \       (organization ->> 'organizationId')::varchar, \
         \       (SELECT coalesce(array_agg(value), ARRAY []::varchar[]) \
-        \        FROM (SELECT jsonb_array_elements_text((outter_tenant_config.organization ->> 'affiliations')::jsonb) AS value \
+        \        FROM (SELECT jsonb_array_elements_text((outer_tenant_config.organization ->> 'affiliations')::jsonb) AS value \
         \              FROM tenant_config inner_tenant_config \
-        \              WHERE inner_tenant_config.uuid = outter_tenant_config.uuid) sub), \
+        \              WHERE inner_tenant_config.uuid = outer_tenant_config.uuid) sub), \
         \       created_at, \
         \       updated_at \
-        \FROM tenant_config outter_tenant_config;"
+        \FROM tenant_config outer_tenant_config;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
@@ -93,7 +93,7 @@ createTcAuthenticationTable dbPool = do
         \       (((((authentication ->> 'internal')::jsonb) ->> 'twoFactorAuth')::jsonb) ->> 'expiration')::int, \
         \       created_at, \
         \       updated_at \
-        \FROM tenant_config;;"
+        \FROM tenant_config;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
@@ -167,7 +167,7 @@ createTcPrivacyAndSupportTable dbPool = do
         \       (privacy_and_support ->> 'supportSiteName')::varchar, \
         \       created_at, \
         \       updated_at \
-        \FROM tenant_config;;"
+        \FROM tenant_config;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
@@ -193,7 +193,7 @@ createTcDashboardAndLoginScreenTable dbPool = do
         \       (dashboard_and_login_screen ->> 'loginInfoSidebar')::varchar, \
         \       created_at, \
         \       updated_at \
-        \FROM tenant_config;;"
+        \FROM tenant_config;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
@@ -230,7 +230,7 @@ createTcDashboardAndLoginScreenTableAnnouncementTable dbPool = do
         \             created_at, \
         \             updated_at \
         \      FROM tenant_config, \
-        \           jsonb_array_elements((dashboard_and_login_screen ->> 'announcements')::jsonb) with ordinality as t(json_content, idx)) announcement;;"
+        \           jsonb_array_elements((dashboard_and_login_screen ->> 'announcements')::jsonb) with ordinality as t(json_content, idx)) announcement;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
@@ -239,18 +239,18 @@ createTcLookAndFeelTable dbPool = do
   let sql =
         "CREATE TABLE config_look_and_feel \
         \( \
-        \    tenant_uuid        uuid        NOT NULL, \
-        \    app_title          varchar, \
-        \    app_title_short    varchar, \
-        \    logo_url           varchar, \
-        \    primary_color      varchar, \
-        \    illustration_color varchar, \
-        \    created_at         timestamptz NOT NULL, \
-        \    updated_at         timestamptz NOT NULL, \
+        \    tenant_uuid         uuid        NOT NULL, \
+        \    app_title           varchar, \
+        \    app_title_short     varchar, \
+        \    logo_url            varchar, \
+        \    primary_color       varchar, \
+        \    illustrations_color varchar, \
+        \    created_at          timestamptz NOT NULL, \
+        \    updated_at          timestamptz NOT NULL, \
         \    CONSTRAINT config_look_and_feel_pk PRIMARY KEY (tenant_uuid), \
         \    CONSTRAINT config_look_and_feel_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \); \
-        \INSERT INTO config_look_and_feel (tenant_uuid, app_title, app_title_short, logo_url, primary_color, illustration_color, \
+        \INSERT INTO config_look_and_feel (tenant_uuid, app_title, app_title_short, logo_url, primary_color, illustrations_color, \
         \                                  created_at, updated_at) \
         \SELECT uuid, \
         \       (look_and_feel ->> 'appTitle')::varchar, \
@@ -260,7 +260,7 @@ createTcLookAndFeelTable dbPool = do
         \       (look_and_feel ->> 'illustrationsColor')::varchar, \
         \       created_at, \
         \       updated_at \
-        \FROM tenant_config;;"
+        \FROM tenant_config;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
@@ -296,7 +296,7 @@ createTcLookAndFeelCustomMenuLinkTable dbPool = do
         \             created_at, \
         \             updated_at \
         \      FROM tenant_config, \
-        \           jsonb_array_elements((look_and_feel ->> 'customMenuLinks')::jsonb) with ordinality as t(json_content, idx)) custom_menu_link;;"
+        \           jsonb_array_elements((look_and_feel ->> 'customMenuLinks')::jsonb) with ordinality as t(json_content, idx)) custom_menu_link;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
@@ -362,21 +362,23 @@ createTcKnowledgeModelPublicPackagePatternTable dbPool = do
         \    CONSTRAINT config_knowledge_model_public_package_pattern_pk PRIMARY KEY (tenant_uuid, position), \
         \    CONSTRAINT config_knowledge_model_public_package_pattern_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \); \
-        \INSERT INTO config_knowledge_model_public_package_pattern (tenant_uuid, organization_id, km_id, min_version, \
+        \INSERT INTO config_knowledge_model_public_package_pattern (tenant_uuid, position, organization_id, km_id, min_version, \
         \                                                           max_version, created_at, updated_at) \
         \SELECT nested.tenant_uuid, \
-        \       nested.json_content ->> 'organization_id', \
-        \       nested.json_content ->> 'km_id', \
-        \       nested.json_content ->> 'min_version', \
-        \       nested.json_content ->> 'max_version', \
+        \       nested.idx, \
+        \       nested.json_content ->> 'orgId', \
+        \       nested.json_content ->> 'kmId', \
+        \       nested.json_content ->> 'minVersion', \
+        \       nested.json_content ->> 'maxVersion', \
         \       nested.created_at, \
         \       nested.updated_at \
         \FROM (SELECT tenant_config.uuid                        as tenant_uuid, \
-        \             (jsonb_array_elements(((tenant_config.knowledge_model ->> 'public')::jsonb) -> \
-        \                                   'packagePatterns')) as json_content, \
+        \             json_content, \
+        \             idx, \
         \             tenant_config.created_at, \
         \             tenant_config.updated_at \
-        \      FROM tenant_config) nested;"
+        \      FROM tenant_config, \
+        \           jsonb_array_elements(((knowledge_model ->> 'public')::jsonb) -> 'packages') with ordinality as t(json_content, idx)) nested;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
@@ -390,15 +392,15 @@ createTcQuestionnaireTable dbPool = do
         \    visibility_default_value  varchar     NOT NULL, \
         \    sharing_enabled           boolean     NOT NULL, \
         \    sharing_default_value     varchar     NOT NULL, \
-        \    sharing_anonymous_enabled BOOLEAN     NOT NULL, \
+        \    sharing_anonymous_enabled boolean     NOT NULL, \
         \    creation                  varchar     NOT NULL, \
         \    project_tagging_enabled   boolean     NOT NULL, \
         \    project_tagging_tags      varchar[]   NOT NULL, \
         \    summary_report            boolean     NOT NULL, \
         \    feedback_enabled          boolean     NOT NULL, \
-        \    feedback_token            TEXT        NOT NULL, \
-        \    feedback_owner            TEXT        NOT NULL, \
-        \    feedback_repo             TEXT        NOT NULL, \
+        \    feedback_token            varchar     NOT NULL, \
+        \    feedback_owner            varchar     NOT NULL, \
+        \    feedback_repo             varchar     NOT NULL, \
         \    created_at                timestamptz NOT NULL, \
         \    updated_at                timestamptz NOT NULL, \
         \    CONSTRAINT config_questionnaire_pk PRIMARY KEY (tenant_uuid), \
@@ -417,10 +419,10 @@ createTcQuestionnaireTable dbPool = do
         \       questionnaire ->> 'questionnaireCreation', \
         \       (((questionnaire ->> 'projectTagging')::jsonb) ->> 'enabled')::boolean, \
         \       (SELECT coalesce(array_agg(value), ARRAY []::varchar[]) \
-        \        FROM (SELECT jsonb_array_elements_text((((outter_tenant_config.questionnaire ->> 'projectTagging')::jsonb) ->> \
+        \        FROM (SELECT jsonb_array_elements_text((((outer_tenant_config.questionnaire ->> 'projectTagging')::jsonb) ->> \
         \                                                'tags')::jsonb) AS value \
         \              FROM tenant_config inner_tenant_config \
-        \              WHERE inner_tenant_config.uuid = outter_tenant_config.uuid) sub), \
+        \              WHERE inner_tenant_config.uuid = outer_tenant_config.uuid) sub), \
         \       (((questionnaire ->> 'summaryReport')::jsonb) ->> 'enabled')::boolean, \
         \       (((questionnaire ->> 'feedback')::jsonb) ->> 'enabled')::boolean, \
         \       ((questionnaire ->> 'feedback')::jsonb) ->> 'token', \
@@ -428,7 +430,7 @@ createTcQuestionnaireTable dbPool = do
         \       ((questionnaire ->> 'feedback')::jsonb) ->> 'repo', \
         \       created_at, \
         \       updated_at \
-        \FROM tenant_config outter_tenant_config;"
+        \FROM tenant_config outer_tenant_config;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
@@ -531,7 +533,7 @@ createTcSubmissionServiceSupportedFormatTable dbPool = do
         \    format_uuid          uuid    NOT NULL, \
         \    CONSTRAINT config_submission_service_supported_format_pk PRIMARY KEY (tenant_uuid, service_id, document_template_id, format_uuid), \
         \    CONSTRAINT config_submission_service_supported_format_service_id_fk FOREIGN KEY (service_id, tenant_uuid) REFERENCES config_submission_service (id, tenant_uuid) ON DELETE CASCADE, \
-        \    CONSTRAINT config_submission_service_supported_format_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT config_submission_service_supported_format_dt_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
         \    CONSTRAINT config_submission_service_supported_format_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \); \
         \INSERT INTO config_submission_service_supported_format (tenant_uuid, service_id, document_template_id, format_uuid) \
@@ -576,7 +578,7 @@ createTcOwlTable dbPool = do
         \       coalesce(owl ->> 'rootElement', ''), \
         \       created_at, \
         \       updated_at \
-        \FROM tenant_config outter_tenant_config;"
+        \FROM tenant_config;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
@@ -670,7 +672,7 @@ recreateGetBranchForkOfPackageIdFunction dbPool = do
   return Nothing
 
 dropTenantConfigTable dbPool = do
-  let sql = "DROP TABLE tenant_config"
+  let sql = "DROP TABLE tenant_config;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

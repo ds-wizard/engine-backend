@@ -217,14 +217,14 @@ createTcLookAndFeelTable = do
   let sql =
         "CREATE TABLE config_look_and_feel \
         \( \
-        \    tenant_uuid        uuid        NOT NULL, \
-        \    app_title          varchar, \
-        \    app_title_short    varchar, \
-        \    logo_url           varchar, \
-        \    primary_color      varchar, \
-        \    illustration_color varchar, \
-        \    created_at         timestamptz NOT NULL, \
-        \    updated_at         timestamptz NOT NULL, \
+        \    tenant_uuid         uuid        NOT NULL, \
+        \    app_title           varchar, \
+        \    app_title_short     varchar, \
+        \    logo_url            varchar, \
+        \    primary_color       varchar, \
+        \    illustrations_color varchar, \
+        \    created_at          timestamptz NOT NULL, \
+        \    updated_at          timestamptz NOT NULL, \
         \    CONSTRAINT config_look_and_feel_pk PRIMARY KEY (tenant_uuid), \
         \    CONSTRAINT config_look_and_feel_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"

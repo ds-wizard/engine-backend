@@ -35,7 +35,7 @@ updateTenantConfigLookAndFeel :: AppContextC s sc m => TenantConfigLookAndFeel -
 updateTenantConfigLookAndFeel config = do
   let sql =
         fromString $
-          "UPDATE config_look_and_feel SET tenant_uuid = ?, app_title = ?, app_title_short = ?, logo_url = ?, primary_color = ?, illustration_color = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ?; \
+          "UPDATE config_look_and_feel SET tenant_uuid = ?, app_title = ?, app_title_short = ?, logo_url = ?, primary_color = ?, illustrations_color = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ?; \
           \DELETE FROM config_look_and_feel_custom_menu_link WHERE tenant_uuid = ?;"
             ++ concatMap (const "INSERT INTO config_look_and_feel_custom_menu_link VALUES (?, ?, ?, ?, ?, ?, ?, ?);") config.customMenuLinks
   let params =
