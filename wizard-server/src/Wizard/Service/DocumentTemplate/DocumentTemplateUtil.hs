@@ -43,3 +43,9 @@ filterDocumentTemplates mPkgId tmls =
     Nothing -> tmls
   where
     filterDocumentTemplate pkgIdSplit template = fitsIntoKMSpecs pkgIdSplit template.allowedPackages
+
+isPkgAllowedByDocumentTemplate :: String -> DocumentTemplate -> Bool
+isPkgAllowedByDocumentTemplate pkgId template =
+  fitsIntoKMSpecs pkgIdSplit template.allowedPackages
+  where
+    pkgIdSplit = splitCoordinate pkgId

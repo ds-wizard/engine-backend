@@ -28,6 +28,7 @@ import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireVersion
+import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
 import Wizard.Service.Migration.Questionnaire.MigratorAudit
@@ -36,6 +37,7 @@ import Wizard.Service.Migration.Questionnaire.MigratorValidation
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireService
+import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 createQuestionnaireMigration :: U.UUID -> MigratorStateCreateDTO -> AppContextM MigratorStateDTO
@@ -135,6 +137,7 @@ upgradeQuestionnaire reqDto oldQtn = do
   clonedQtnEventsWithOldEventUuid <- cloneQuestinonaireEventsWithOldEventUuid newUuid oldQtnEvents
   let clonedQtnEvents = fmap snd clonedQtnEventsWithOldEventUuid
   newQtnEvents <- sanitizeQuestionnaireEvents newUuid oldKm newKm clonedQtnEvents
+  (newDocumentTemplateId, newFormatUuid) <- getNewDocumentTemplateIdAndFormatUuid oldQtn newPkgId
   let newQtnEventUuids = fmap getUuid newQtnEvents
   let clonedQtnEventsFiltered = filter (\e -> getUuid (snd e) `elem` newQtnEventUuids) clonedQtnEventsWithOldEventUuid
   let newPermissions = fmap (\perm -> perm {questionnaireUuid = newUuid} :: QuestionnairePerm) oldQtn.permissions
@@ -143,8 +146,8 @@ upgradeQuestionnaire reqDto oldQtn = do
           { uuid = newUuid
           , packageId = newPkgId
           , selectedQuestionTagUuids = newTagUuids
-          , documentTemplateId = Nothing
-          , formatUuid = Nothing
+          , documentTemplateId = newDocumentTemplateId
+          , formatUuid = newFormatUuid
           , permissions = newPermissions
           }
         :: Questionnaire
@@ -189,3 +192,13 @@ generateNewVersionUuid :: QuestionnaireVersion -> AppContextM QuestionnaireVersi
 generateNewVersionUuid version = do
   newVersionUuid <- liftIO generateUuid
   return $ version {uuid = newVersionUuid}
+
+getNewDocumentTemplateIdAndFormatUuid :: Questionnaire -> String -> AppContextM (Maybe String, Maybe U.UUID)
+getNewDocumentTemplateIdAndFormatUuid oldQtn newPkgId = do
+  case oldQtn.documentTemplateId of
+    Just id -> do
+      documentTemplate <- findDocumentTemplateById id
+      if isPkgAllowedByDocumentTemplate newPkgId documentTemplate
+        then return (Just id, oldQtn.formatUuid)
+        else return (Nothing, Nothing)
+    Nothing -> return (Nothing, Nothing)
