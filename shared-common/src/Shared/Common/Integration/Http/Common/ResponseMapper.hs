@@ -71,7 +71,7 @@ extractIntField fieldName (Object obj) =
       case toBoundedInteger val of
         Just val -> Right val
         Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__UNABLE_TO_EXTRACT_NESTED_FIELDS fieldName
-    Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__UNABLE_TO_EXTRACT_NESTED_FIELDS fieldName
+    _ -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__UNABLE_TO_EXTRACT_NESTED_FIELDS fieldName
 extractIntField fieldName _ = Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__UNABLE_TO_EXTRACT_INTEGER_FIELD fieldName
 
 convertToArray :: Value -> Either AppError [Value]

@@ -45,15 +45,15 @@ createLoginTokenFromCredentials reqDto mUserAgent =
     case mUser of
       Just user -> do
         validate reqDto user
-        tenantConfig <- getCurrentTenantConfig
+        tcAuthentication <- getCurrentTenantConfigAuthentication
         now <- liftIO getCurrentTime
-        case (tenantConfig.authentication.internal.twoFactorAuth.enabled, reqDto.code) of
+        case (tcAuthentication.internal.twoFactorAuth.enabled, reqDto.code) of
           (False, _) -> do
             updateUserLastVisitedAtByUuid user.uuid now
             createLoginToken user mUserAgent Nothing
           (True, Nothing) -> do
             deleteActionKeyByIdentity (U.toString user.uuid)
-            let length = tenantConfig.authentication.internal.twoFactorAuth.codeLength
+            let length = tcAuthentication.internal.twoFactorAuth.codeLength
             let min = 10 ^ (length - 1)
             let max = (10 ^ length) - 1
             code <- liftIO $ generateIntInRange min max
@@ -61,7 +61,7 @@ createLoginTokenFromCredentials reqDto mUserAgent =
             sendTwoFactorAuthMail (UserMapper.toDTO user) (show code)
             return CodeRequiredDTO
           (True, Just code) -> do
-            validateCode user code tenantConfig
+            validateCode user code tcAuthentication
             deleteActionKeyByIdentityAndHash (U.toString user.uuid) (show code)
             updateUserLastVisitedAtByUuid user.uuid now
             createLoginToken user mUserAgent Nothing

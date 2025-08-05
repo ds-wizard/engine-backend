@@ -12,12 +12,12 @@ import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Feedback.FeedbackUtil
 
-toDTO :: ServerConfig -> TenantConfig -> Feedback -> FeedbackDTO
-toDTO serverConfig tenantConfig f =
+toDTO :: ServerConfig -> TenantConfigQuestionnaire -> Feedback -> FeedbackDTO
+toDTO serverConfig tcQuestionnaire f =
   FeedbackDTO
     { uuid = f.uuid
     , issueId = f.issueId
-    , issueUrl = createIssueUrl serverConfig.feedback tenantConfig.questionnaire.feedback f
+    , issueUrl = createIssueUrl serverConfig.feedback tcQuestionnaire.feedback f
     , questionUuid = f.questionUuid
     , packageId = f.packageId
     , title = f.title

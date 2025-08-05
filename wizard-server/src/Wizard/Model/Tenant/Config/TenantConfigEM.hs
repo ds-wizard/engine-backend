@@ -8,27 +8,18 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Model.Tenant.Config.TenantConfigEM ()
 
-instance SensitiveData TenantConfig where
-  process key entity =
-    entity
-      { authentication = process key entity.authentication
-      , registry = process key entity.registry
-      , knowledgeModel = process key entity.knowledgeModel
-      , questionnaire = process key entity.questionnaire
-      }
-
 instance SensitiveData TenantConfigOrganization
 
-instance SensitiveData TenantConfigAuth where
+instance SensitiveData TenantConfigAuthentication where
   process key entity = entity {external = process key entity.external}
 
-instance SensitiveData TenantConfigAuthInternal
+instance SensitiveData TenantConfigAuthenticationInternal
 
-instance SensitiveData TenantConfigAuthExternal where
+instance SensitiveData TenantConfigAuthenticationExternal where
   process key entity =
     entity {services = fmap (process key) entity.services}
 
-instance SensitiveData TenantConfigAuthExternalService where
+instance SensitiveData TenantConfigAuthenticationExternalService where
   process key entity =
     entity
       { clientId = encryptAES256WithB64 key entity.clientId
@@ -62,4 +53,4 @@ instance SensitiveData TenantConfigQuestionnaire where
 instance SensitiveData TenantConfigQuestionnaireFeedback where
   process key entity = entity {token = encryptAES256WithB64 key entity.token}
 
-instance SensitiveData TenantConfigAiAssistant
+instance SensitiveData TenantConfigFeatures

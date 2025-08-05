@@ -8,6 +8,8 @@ import Shared.Common.Util.Uuid
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
+import Wizard.Service.User.UserMapper
+import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
 import WizardLib.Public.Model.User.UserGroup
 import WizardLib.Public.Model.User.UserGroupMembership
@@ -68,3 +70,6 @@ userNikolaTour1 =
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 21
     }
+
+userNikolaSuggestionDto :: UserSuggestionDTO
+userNikolaSuggestionDto = toSuggestionDTO . toSuggestion $ userNikola

@@ -15,8 +15,20 @@ instance FromJSON TenantConfigDashboardAndLoginScreenAnnouncementLevelType
 
 instance ToJSON TenantConfigDashboardAndLoginScreenAnnouncementLevelType
 
-instance FromJSON TenantConfigOrganization where
+instance FromJSON TenantConfigLookAndFeel where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigOrganization where
+instance ToJSON TenantConfigLookAndFeel where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON TenantConfigLookAndFeelCustomMenuLink where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON TenantConfigLookAndFeelCustomMenuLink where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON TenantConfigFeatures where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON TenantConfigFeatures where
   toJSON = genericToJSON jsonOptions

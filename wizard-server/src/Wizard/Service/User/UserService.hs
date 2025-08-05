@@ -91,8 +91,8 @@ createUserByAdminWithUuid reqDto uUuid tenantUuid clientUrl shouldSendRegistrati
   runInTransaction $ do
     uPasswordHash <- generatePasswordHash reqDto.password
     serverConfig <- asks serverConfig
-    tenantConfig <- getCurrentTenantConfig
-    let uRole = fromMaybe tenantConfig.authentication.defaultRole reqDto.uRole
+    tcAuthentication <- getCurrentTenantConfigAuthentication
+    let uRole = fromMaybe tcAuthentication.defaultRole reqDto.uRole
     let uPermissions = getPermissionForRole serverConfig uRole
     userDto <- createUser reqDto uUuid uPasswordHash uRole uPermissions tenantUuid clientUrl shouldSendRegistrationEmail
     auditUserCreateByAdmin userDto
@@ -106,8 +106,8 @@ registerUser reqDto =
     uUuid <- liftIO generateUuid
     uPasswordHash <- generatePasswordHash reqDto.password
     serverConfig <- asks serverConfig
-    tenantConfig <- getCurrentTenantConfig
-    let uRole = tenantConfig.authentication.defaultRole
+    tcAuthentication <- getCurrentTenantConfigAuthentication
+    let uRole = tcAuthentication.defaultRole
     let uPermissions = getPermissionForRole serverConfig uRole
     clientUrl <- getClientUrl
     tenantUuid <- asks currentTenantUuid
@@ -155,8 +155,8 @@ createUserFromExternalService mUserFromDb serviceId firstName lastName email mIm
             Nothing -> liftIO generateUuid
         password <- liftIO $ generateRandomString 40
         uPasswordHash <- generatePasswordHash password
-        tenantConfig <- getCurrentTenantConfig
-        let uRole = tenantConfig.authentication.defaultRole
+        tcAuthentication <- getCurrentTenantConfigAuthentication
+        let uRole = tcAuthentication.defaultRole
         let uPerms = getPermissionForRole serverConfig uRole
         let user =
               fromUserExternalDTO
@@ -328,8 +328,7 @@ sendAnalyticsEmailIfEnabled user = do
   serverConfig <- asks serverConfig
   when serverConfig.analyticalMails.enabled (sendRegistrationCreatedAnalyticsMail user)
 
-checkIfRegistrationIsEnabled =
-  checkIfTenantFeatureIsEnabled "Registration" (\c -> c.authentication.internal.registration.enabled)
+checkIfRegistrationIsEnabled = checkIfTenantFeatureIsEnabled "Registration" getCurrentTenantConfigAuthentication (.internal.registration.enabled)
 
 checkIfAdminIsDisabled =
   checkIfServerFeatureIsEnabled "User Management Endpoints" (\s -> not s.admin.enabled)

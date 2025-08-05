@@ -17,20 +17,23 @@ import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigSM ()
 instance ToSchema TenantConfig where
   declareNamedSchema = toSwagger defaultTenantConfig
 
-instance ToSchema TenantConfigAuth where
-  declareNamedSchema = toSwagger defaultAuth
+instance ToSchema TenantConfigOrganization where
+  declareNamedSchema = toSwagger defaultOrganization
 
-instance ToSchema TenantConfigAuthInternal where
-  declareNamedSchema = toSwagger defaultAuthInternal
+instance ToSchema TenantConfigAuthentication where
+  declareNamedSchema = toSwagger defaultAuthentication
 
-instance ToSchema TenantConfigAuthInternalTwoFactorAuth where
-  declareNamedSchema = toSwagger defaultAuthInternalTwoFactorAuth
+instance ToSchema TenantConfigAuthenticationInternal where
+  declareNamedSchema = toSwagger defaultAuthenticationInternal
 
-instance ToSchema TenantConfigAuthExternal where
-  declareNamedSchema = toSwagger defaultAuthExternal
+instance ToSchema TenantConfigAuthenticationInternalTwoFactorAuth where
+  declareNamedSchema = toSwagger defaultAuthenticationInternalTwoFactorAuth
 
-instance ToSchema TenantConfigAuthExternalService where
-  declareNamedSchema = toSwagger defaultAuthExternalService
+instance ToSchema TenantConfigAuthenticationExternal where
+  declareNamedSchema = toSwagger defaultAuthenticationExternal
+
+instance ToSchema TenantConfigAuthenticationExternalService where
+  declareNamedSchema = toSwagger defaultAuthenticationExternalService
 
 instance ToSchema TenantConfigPrivacyAndSupport where
   declareNamedSchema = toSwagger defaultPrivacyAndSupport
@@ -40,12 +43,6 @@ instance ToSchema TenantConfigDashboardAndLoginScreen where
 
 instance ToSchema TenantConfigDashboardAndLoginScreenDashboardType
 
-instance ToSchema TenantConfigLookAndFeel where
-  declareNamedSchema = toSwagger defaultLookAndFeel
-
-instance ToSchema TenantConfigLookAndFeelCustomMenuLink where
-  declareNamedSchema = toSwagger defaultLookAndFeelCustomLink
-
 instance ToSchema TenantConfigRegistry where
   declareNamedSchema = toSwagger defaultRegistry
 
@@ -54,6 +51,9 @@ instance ToSchema TenantConfigKnowledgeModel where
 
 instance ToSchema TenantConfigKnowledgeModelPublic where
   declareNamedSchema = toSwagger defaultKnowledgeModelPublic
+
+instance ToSchema TenantConfigKnowledgeModelPublicPackagePattern where
+  declareNamedSchema = toSwagger defaultKnowledgeModelPublicPackagePattern
 
 instance ToSchema TenantConfigQuestionnaire where
   declareNamedSchema = toSwagger defaultQuestionnaire
@@ -91,6 +91,3 @@ instance ToSchema TenantConfigSubmissionServiceRequestMultipart where
 
 instance ToSchema TenantConfigOwl where
   declareNamedSchema = toSwagger defaultOwl
-
-instance ToSchema TenantConfigAiAssistant where
-  declareNamedSchema = toSwagger defaultAiAssistant

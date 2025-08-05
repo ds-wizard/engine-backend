@@ -28,6 +28,7 @@ toJSONWithAdditionalData :: (Generic a, GToJSON' Value Zero (Rep a)) => [(Key, V
 toJSONWithAdditionalData additionalData dto =
   case genericToJSON jsonOptions dto of
     Object o -> Object $ KM.union o (KM.fromList additionalData)
+    _ -> Null
 
 toSumJSON :: (Generic a, GToJSON Zero (Rep a)) => a -> Value
 toSumJSON = genericToJSON (defaultOptions {sumEncoding = UntaggedValue})
@@ -38,6 +39,7 @@ toSumJSONWithTypeField typeFieldName suffix dto =
     Object o -> do
       let typeMap = KM.fromList [(fromString typeFieldName, String . T.pack . stripSuffixIfExists suffix . stripSuffixIfExists "'" . constructorName $ dto)]
       Object $ KM.union typeMap o
+    _ -> Null
 
 -- ---------------------------------------------------------------------------------------------------------------------
 jsonSpecialFields :: String -> String

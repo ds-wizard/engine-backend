@@ -94,3 +94,4 @@ validateFileAndAssetUniqueness mTemplateEntityUuid templateId fileName = do
           if mTemplateEntityUuid == Just entity.uuid
             then return ()
             else throwError . UserError $ _ERROR_VALIDATION__DOC_TML_FILE_OR_ASSET_UNIQUENESS
+        _ -> throwError . UserError $ _ERROR_VALIDATION__DOC_TML_FILE_OR_ASSET_UNIQUENESS

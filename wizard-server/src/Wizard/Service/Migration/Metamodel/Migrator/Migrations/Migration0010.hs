@@ -24,6 +24,7 @@ transformMapToList (Object obj) =
   where
     tupleToEntry :: T.Text -> Value -> Value
     tupleToEntry key value = Object . KM.insert "key" (String key) $ KM.singleton "value" value
+transformMapToList _ = error "Expected an Object"
 
 migrateAnyEventAddCreatedAt :: Value -> Object -> Object
 migrateAnyEventAddCreatedAt createdAt = runBasicOp (Insert "createdAt" createdAt)

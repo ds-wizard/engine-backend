@@ -1,0 +1,18 @@
+module WizardLib.Public.Database.Mapping.Tenant.Config.TenantConfigDashboardAndLoginScreen where
+
+import Database.PostgreSQL.Simple
+import Database.PostgreSQL.Simple.FromField
+import Database.PostgreSQL.Simple.ToField
+
+import Shared.Common.Database.Mapping.Common
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
+
+instance FromRow TenantConfigDashboardAndLoginScreenAnnouncement
+
+instance ToRow TenantConfigDashboardAndLoginScreenAnnouncement
+
+instance ToField TenantConfigDashboardAndLoginScreenAnnouncementLevelType where
+  toField = toFieldGenericEnum
+
+instance FromField TenantConfigDashboardAndLoginScreenAnnouncementLevelType where
+  fromField = fromFieldGenericEnum

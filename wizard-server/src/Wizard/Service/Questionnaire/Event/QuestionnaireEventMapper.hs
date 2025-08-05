@@ -237,6 +237,7 @@ fromEventChangeDTO event questionnaireUuid tenantUuid createdBy now =
       SetPhaseEvent' $ fromSetPhaseEventChangeDTO event questionnaireUuid tenantUuid createdBy now
     SetLabelsEventChangeDTO' event@SetLabelsEventChangeDTO {..} ->
       SetLabelsEvent' $ fromSetLabelsEventChangeDTO event questionnaireUuid tenantUuid createdBy now
+    _ -> error "Unsupported event type in fromEventChangeDTO"
 
 fromSetReplyEventChangeDTO :: SetReplyEventChangeDTO -> U.UUID -> U.UUID -> Maybe U.UUID -> UTCTime -> SetReplyEvent
 fromSetReplyEventChangeDTO event questionnaireUuid tenantUuid createdBy now =

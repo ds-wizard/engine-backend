@@ -56,10 +56,10 @@ instance FromJSON ClientConfigAdminDTO where
 instance ToJSON ClientConfigAdminDTO where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON ClientConfigAiAssistantDTO where
+instance FromJSON ClientConfigFeaturesDTO where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON ClientConfigAiAssistantDTO where
+instance ToJSON ClientConfigFeaturesDTO where
   toJSON = genericToJSON jsonOptions
 
 instance FromJSON ClientConfigSignalBridgeDTO where

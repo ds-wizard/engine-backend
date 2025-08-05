@@ -3,6 +3,7 @@ module Wizard.TestMigration where
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.Audit.Database.DAO.Audit.AuditDAO
 import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMigration as Audit
+import Shared.Common.Constant.Tenant
 import Shared.Component.Database.DAO.Component.ComponentDAO
 import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as Component
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
@@ -30,7 +31,15 @@ import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Database.DAO.Registry.RegistryTemplateDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
-import Wizard.Database.DAO.Tenant.TenantConfigDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigAuthenticationDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigDashboardAndLoginScreenDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigKnowledgeModelDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigQuestionnaireDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigRegistryDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
 import Wizard.Database.DAO.User.UserDAO
@@ -63,15 +72,21 @@ import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as User
 import Wizard.Model.Cache.ServerCache
+import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.Public.Database.DAO.ExternalLink.ExternalLinkUsageDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
 import WizardLib.Public.Database.DAO.User.UserTourDAO
 import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.ExternalLinkSchemaMigration as ExternalLink
+import WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 import Wizard.Specs.Common
 
@@ -84,6 +99,7 @@ buildSchema appContext = do
   runInContext Package.dropFunctions appContext
   runInContext Common.dropFunctions appContext
   putStrLn "DB: dropping schema"
+  runInContext Tenant.dropConfigTables appContext
   runInContext ExternalLink.dropTables appContext
   runInContext KnowledgeModel.dropTables appContext
   runInContext Component.dropTables appContext
@@ -132,6 +148,7 @@ buildSchema appContext = do
   runInContext Component.createTables appContext
   runInContext KnowledgeModel.createTables appContext
   runInContext ExternalLink.createTables appContext
+  runInContext Tenant.createConfigTables appContext
   putStrLn "DB: Creating DB functions"
   runInContext Common.createFunctions appContext
   runInContext Package.createFunctions appContext
@@ -155,9 +172,18 @@ resetDB appContext = do
   runInContext deletePrefabs appContext
   runInContext deletePersistentCommands appContext
   runInContext deleteSubmissions appContext
-  runInContext deleteTenantConfigs appContext
-  runInContext (insertTenantConfig defaultTenantConfigEncrypted) appContext
-  runInContext (insertTenantConfig differentTenantConfigEncrypted) appContext
+  runInContext deleteTenantConfigOwls appContext
+  runInContext deleteTenantConfigMails appContext
+  runInContext deleteTenantConfigFeatures appContext
+  runInContext deleteTenantConfigSubmissions appContext
+  runInContext deleteTenantConfigQuestionnaires appContext
+  runInContext deleteTenantConfigKnowledgeModels appContext
+  runInContext deleteTenantConfigRegistries appContext
+  runInContext deleteTenantConfigLookAndFeels appContext
+  runInContext deleteTenantConfigDashboardAndLoginScreens appContext
+  runInContext deleteTenantConfigPrivacyAndSupports appContext
+  runInContext deleteTenantConfigAuthentications appContext
+  runInContext deleteTenantConfigOrganizations appContext
   runInContext KM_MigratorDAO.deleteMigratorStates appContext
   runInContext QTN_MigratorDAO.deleteMigratorStates appContext
   runInContext deleteFeedbacks appContext
@@ -191,6 +217,23 @@ resetDB appContext = do
   runInContext (insertLimitBundle defaultTenantLimitBundle) appContext
   runInContext (insertTenant differentTenant) appContext
   runInContext (insertLimitBundle differentTenantLimitBundle) appContext
+  runInContext (insertTenantConfigOrganization defaultOrganization) appContext
+  runInContext (insertTenantConfigAuthentication defaultAuthenticationEncrypted) appContext
+  runInContext (insertTenantConfigAuthenticationExternalService defaultAuthExternalServiceEncrypted) appContext
+  runInContext (insertTenantConfigPrivacyAndSupport defaultPrivacyAndSupport) appContext
+  runInContext (insertTenantConfigDashboardAndLoginScreen defaultDashboardAndLoginScreen) appContext
+  runInContext (insertTenantConfigDashboardAndLoginScreenAnnouncement defaultDashboardAndLoginScreenAnnouncement) appContext
+  runInContext (insertTenantConfigLookAndFeel defaultLookAndFeel) appContext
+  runInContext (insertTenantConfigLookAndFeelCustomMenuLink defaultLookAndFeelCustomLink) appContext
+  runInContext (insertTenantConfigRegistry defaultRegistryEncrypted) appContext
+  runInContext (insertTenantConfigKnowledgeModel defaultKnowledgeModelEncrypted) appContext
+  runInContext (insertTenantConfigKnowledgeModelPublicPackagePattern defaultKnowledgeModelPublicPackagePattern) appContext
+  runInContext (insertTenantConfigQuestionnaire defaultQuestionnaireEncrypted) appContext
+  runInContext (insertTenantConfigSubmission (defaultSubmission {services = []})) appContext
+  runInContext (insertTenantConfigFeatures defaultFeatures) appContext
+  runInContext (insertTenantConfigMail defaultMail) appContext
+  runInContext (insertTenantConfigOwl defaultOwl) appContext
+  runInContext (insertTenantConfigLookAndFeel (defaultLookAndFeel {tenantUuid = differentTenantUuid})) appContext
   runInContext (insertUser userSystem) appContext
   runInContext (insertUser userAlbert) appContext
   runInContext (insertUserToken albertToken) appContext

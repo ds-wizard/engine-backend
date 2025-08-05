@@ -13,15 +13,14 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Questionnaire.QuestionnaireValidation
 import WizardLib.Common.Localization.Messages.Public
-import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 validateTenantConfig :: TenantConfigChangeDTO -> AppContextM ()
-validateTenantConfig tenantConfig = do
-  validateOrganization tenantConfig.organization
-  validateAuthentication tenantConfig.authentication
-  validateQuestionnaire tenantConfig.questionnaire
+validateTenantConfig reqDto = do
+  validateOrganization reqDto.organization
+  validateAuthentication reqDto.authentication
+  validateQuestionnaire reqDto.questionnaire
 
-validateOrganization :: TenantConfigOrganization -> AppContextM ()
+validateOrganization :: TenantConfigOrganizationChangeDTO -> AppContextM ()
 validateOrganization config = forM_ (isValidOrganizationId config.organizationId) throwError
 
 isValidOrganizationId :: String -> Maybe AppError
@@ -32,7 +31,7 @@ isValidOrganizationId kmId =
   where
     validationRegex = mkRegex "^[a-zA-Z0-9_.-]+$"
 
-validateAuthentication :: TenantConfigAuth -> AppContextM ()
+validateAuthentication :: TenantConfigAuthenticationChangeDTO -> AppContextM ()
 validateAuthentication config =
   let validate service =
         if isJust $ matchRegex validationRegex service.aId
@@ -42,5 +41,5 @@ validateAuthentication config =
           validationRegex = mkRegex "^[a-z0-9-]+$"
    in traverse_ validate config.external.services
 
-validateQuestionnaire :: TenantConfigQuestionnaire -> AppContextM ()
+validateQuestionnaire :: TenantConfigQuestionnaireChangeDTO -> AppContextM ()
 validateQuestionnaire config = validateQuestionnaireTags config.projectTagging.tags

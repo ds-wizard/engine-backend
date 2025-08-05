@@ -1,18 +1,19 @@
 module Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs where
 
 import qualified Data.Map.Strict as M
-import Data.Maybe (fromJust)
-import Data.Time
 
 import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Model.Config.SimpleFeature
+import Shared.Common.Util.Date
 import Shared.OpenId.Database.Migration.Development.OpenId.Data.OpenIds
+import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Config.TenantConfigEM ()
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
+import Wizard.Service.Tenant.Config.ConfigMapper
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -26,7 +27,7 @@ defaultTenantConfig =
   TenantConfig
     { uuid = defaultTenant.uuid
     , organization = defaultOrganization
-    , authentication = defaultAuth
+    , authentication = defaultAuthentication
     , privacyAndSupport = defaultPrivacyAndSupport
     , dashboardAndLoginScreen = defaultDashboardAndLoginScreen
     , lookAndFeel = defaultLookAndFeel
@@ -36,51 +37,81 @@ defaultTenantConfig =
     , submission = defaultSubmission
     , owl = defaultOwl
     , mailConfigUuid = Nothing
-    , aiAssistant = defaultAiAssistant
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , features = defaultFeatures
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
     }
 
-defaultTenantConfigEncrypted :: TenantConfig
-defaultTenantConfigEncrypted = process defaultSecret defaultTenantConfig
+defaultTenantConfigChangeDto :: TenantConfigChangeDTO
+defaultTenantConfigChangeDto = toChangeDTO defaultOrganizationChangeDto defaultAuthenticationChangeDto defaultPrivacyAndSupportChangeDto defaultDashboardAndLoginScreenChangeDto defaultLookAndFeelChangeDto defaultRegistryChangeDto defaultKnowledgeModelChangeDto defaultQuestionnaireChangeDto defaultSubmissionChangeDto defaultFeaturesChangeDto
 
-defaultAuth :: TenantConfigAuth
-defaultAuth =
-  TenantConfigAuth
+defaultOrganization :: TenantConfigOrganization
+defaultOrganization = fromOrganizationChangeDTO defaultOrganizationChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+defaultOrganizationChangeDto :: TenantConfigOrganizationChangeDTO
+defaultOrganizationChangeDto =
+  TenantConfigOrganizationChangeDTO
+    { name = "Organization Amsterdam"
+    , description = "Some description of Organization Amsterdam"
+    , organizationId = "org.nl.amsterdam"
+    , affiliations = []
+    }
+
+defaultAuthentication :: TenantConfigAuthentication
+defaultAuthentication = fromAuthenticationChangeDTO defaultAuthenticationChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+defaultAuthenticationEncrypted :: TenantConfigAuthentication
+defaultAuthenticationEncrypted = process defaultSecret defaultAuthentication
+
+defaultAuthenticationChangeDto :: TenantConfigAuthenticationChangeDTO
+defaultAuthenticationChangeDto =
+  TenantConfigAuthenticationChangeDTO
     { defaultRole = _USER_ROLE_RESEARCHER
-    , internal = defaultAuthInternal
-    , external = defaultAuthExternal
+    , internal = defaultAuthenticationInternal
+    , external = defaultAuthenticationExternalChangeDto
     }
 
-defaultAuthInternal :: TenantConfigAuthInternal
-defaultAuthInternal = TenantConfigAuthInternal {registration = SimpleFeature True, twoFactorAuth = defaultAuthInternalTwoFactorAuth}
+defaultAuthenticationInternal :: TenantConfigAuthenticationInternal
+defaultAuthenticationInternal = TenantConfigAuthenticationInternal {registration = SimpleFeature True, twoFactorAuth = defaultAuthenticationInternalTwoFactorAuth}
 
-defaultAuthInternalTwoFactorAuth :: TenantConfigAuthInternalTwoFactorAuth
-defaultAuthInternalTwoFactorAuth =
-  TenantConfigAuthInternalTwoFactorAuth
+defaultAuthenticationInternalTwoFactorAuth :: TenantConfigAuthenticationInternalTwoFactorAuth
+defaultAuthenticationInternalTwoFactorAuth =
+  TenantConfigAuthenticationInternalTwoFactorAuth
     { enabled = False
     , codeLength = 6
     , expiration = 600
     }
 
-defaultAuthExternal :: TenantConfigAuthExternal
-defaultAuthExternal = TenantConfigAuthExternal {services = [defaultAuthExternalService]}
+defaultAuthenticationExternal :: TenantConfigAuthenticationExternal
+defaultAuthenticationExternal = TenantConfigAuthenticationExternal {services = [defaultAuthenticationExternalService]}
 
-defaultAuthExternalService :: TenantConfigAuthExternalService
-defaultAuthExternalService =
-  TenantConfigAuthExternalService
+defaultAuthenticationExternalChangeDto :: TenantConfigAuthenticationExternalChangeDTO
+defaultAuthenticationExternalChangeDto = TenantConfigAuthenticationExternalChangeDTO {services = [defaultAuthenticationExternalServiceChangeDto]}
+
+defaultAuthenticationExternalService :: TenantConfigAuthenticationExternalService
+defaultAuthenticationExternalService = fromAuthenticationExternalServiceChangeDTO defaultAuthenticationExternalServiceChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+defaultAuthExternalServiceEncrypted :: TenantConfigAuthenticationExternalService
+defaultAuthExternalServiceEncrypted = process defaultSecret defaultAuthenticationExternalService
+
+defaultAuthenticationExternalServiceChangeDto :: TenantConfigAuthenticationExternalServiceChangeDTO
+defaultAuthenticationExternalServiceChangeDto =
+  TenantConfigAuthenticationExternalServiceChangeDTO
     { aId = "google"
     , name = "Google"
     , url = "https://accounts.google.com"
     , clientId = "32559869123-a98908094.apps.googleusercontent.com"
     , clientSecret = "sad89089023"
-    , parameteres = [openIdClientDefinitionParameter]
-    , style = Just openIdClientDefinitionStyle
+    , parameters = [openIdClientDefinitionParameter]
+    , style = openIdClientDefinitionStyle
     }
 
 defaultPrivacyAndSupport :: TenantConfigPrivacyAndSupport
-defaultPrivacyAndSupport =
-  TenantConfigPrivacyAndSupport
+defaultPrivacyAndSupport = fromPrivacyAndSupportChangeDTO defaultPrivacyAndSupportChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+defaultPrivacyAndSupportChangeDto :: TenantConfigPrivacyAndSupportChangeDTO
+defaultPrivacyAndSupportChangeDto =
+  TenantConfigPrivacyAndSupportChangeDTO
     { privacyUrl = Nothing
     , termsOfServiceUrl = Nothing
     , supportEmail = Nothing
@@ -90,41 +121,40 @@ defaultPrivacyAndSupport =
     }
 
 defaultDashboardAndLoginScreen :: TenantConfigDashboardAndLoginScreen
-defaultDashboardAndLoginScreen =
-  TenantConfigDashboardAndLoginScreen
+defaultDashboardAndLoginScreen = fromDashboardAndLoginScreenChangeDTO defaultDashboardAndLoginScreenChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+defaultDashboardAndLoginScreenChangeDto :: TenantConfigDashboardAndLoginScreenChangeDTO
+defaultDashboardAndLoginScreenChangeDto =
+  TenantConfigDashboardAndLoginScreenChangeDTO
     { dashboardType = WelcomeDashboardType
-    , announcements = [defaultDashboardAndLoginScreenAnnouncement]
+    , announcements = [defaultDashboardAndLoginScreenAnnouncementChangeDto]
     , loginInfo = Nothing
     , loginInfoSidebar = Nothing
     }
 
-defaultLookAndFeel :: TenantConfigLookAndFeel
-defaultLookAndFeel =
-  TenantConfigLookAndFeel
-    { appTitle = Nothing
-    , appTitleShort = Nothing
-    , customMenuLinks = [defaultLookAndFeelCustomLink]
-    , logoUrl = Nothing
-    , primaryColor = Nothing
-    , illustrationsColor = Nothing
-    }
-
-defaultLookAndFeelCustomLink :: TenantConfigLookAndFeelCustomMenuLink
-defaultLookAndFeelCustomLink =
-  TenantConfigLookAndFeelCustomMenuLink
-    { icon = "faq"
-    , title = "My Link"
-    , url = "http://example.prg"
-    , newWindow = False
-    }
-
 defaultRegistry :: TenantConfigRegistry
-defaultRegistry = TenantConfigRegistry {enabled = True, token = "GlobalToken"}
+defaultRegistry = fromRegistryChangeDTO defaultRegistryChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+defaultRegistryEncrypted :: TenantConfigRegistry
+defaultRegistryEncrypted = process defaultSecret defaultRegistry
+
+defaultRegistryChangeDto :: TenantConfigRegistryChangeDTO
+defaultRegistryChangeDto =
+  TenantConfigRegistryChangeDTO
+    { enabled = True
+    , token = "GlobalToken"
+    }
 
 defaultKnowledgeModel :: TenantConfigKnowledgeModel
-defaultKnowledgeModel =
-  TenantConfigKnowledgeModel
-    { public = defaultKnowledgeModelPublic
+defaultKnowledgeModel = fromKnowledgeModelChangeDTO defaultKnowledgeModelChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+defaultKnowledgeModelEncrypted :: TenantConfigKnowledgeModel
+defaultKnowledgeModelEncrypted = process defaultSecret defaultKnowledgeModel
+
+defaultKnowledgeModelChangeDto :: TenantConfigKnowledgeModelChangeDTO
+defaultKnowledgeModelChangeDto =
+  TenantConfigKnowledgeModelChangeDTO
+    { public = defaultKnowledgeModelPublicChangeDto
     , integrationConfig =
         "ontologyPortal: \n\
         \  path: ontology-portal.json \n\
@@ -135,13 +165,39 @@ defaultKnowledgeModel =
 defaultKnowledgeModelPublic :: TenantConfigKnowledgeModelPublic
 defaultKnowledgeModelPublic =
   TenantConfigKnowledgeModelPublic
+    { enabled = defaultKnowledgeModelPublicChangeDto.enabled
+    , packages = zipWith (\i p -> fromKnowledgeModelPublicPackagePatternChangeDTO p defaultTenant.uuid i (dt' 2018 1 20) (dt' 2018 1 20)) [0 ..] defaultKnowledgeModelPublicChangeDto.packages
+    }
+
+defaultKnowledgeModelPublicChangeDto :: TenantConfigKnowledgeModelPublicChangeDTO
+defaultKnowledgeModelPublicChangeDto =
+  TenantConfigKnowledgeModelPublicChangeDTO
     { enabled = True
     , packages = [packagePatternGlobal]
     }
 
+defaultKnowledgeModelPublicPackagePattern :: TenantConfigKnowledgeModelPublicPackagePattern
+defaultKnowledgeModelPublicPackagePattern =
+  TenantConfigKnowledgeModelPublicPackagePattern
+    { tenantUuid = defaultTenant.uuid
+    , position = 0
+    , orgId = Just "global"
+    , kmId = Just "core"
+    , minVersion = Just "1.0.0"
+    , maxVersion = Just "1.0.0"
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
+    }
+
 defaultQuestionnaire :: TenantConfigQuestionnaire
-defaultQuestionnaire =
-  TenantConfigQuestionnaire
+defaultQuestionnaire = fromQuestionnaireChangeDTO defaultQuestionnaireChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+defaultQuestionnaireEncrypted :: TenantConfigQuestionnaire
+defaultQuestionnaireEncrypted = process defaultSecret defaultQuestionnaire
+
+defaultQuestionnaireChangeDto :: TenantConfigQuestionnaireChangeDTO
+defaultQuestionnaireChangeDto =
+  TenantConfigQuestionnaireChangeDTO
     { questionnaireVisibility = defaultQuestionnaireVisibility
     , questionnaireSharing = defaultQuestionnaireSharing
     , questionnaireCreation = TemplateAndCustomQuestionnaireCreation
@@ -186,18 +242,34 @@ defaultFeedback =
     }
 
 defaultSubmission :: TenantConfigSubmission
-defaultSubmission =
-  TenantConfigSubmission {enabled = True, services = [defaultSubmissionService]}
+defaultSubmission = fromSubmissionChangeDTO defaultSubmissionChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+defaultSubmissionChangeDto :: TenantConfigSubmissionChangeDTO
+defaultSubmissionChangeDto =
+  TenantConfigSubmissionChangeDTO
+    { enabled = True
+    , services = [defaultSubmissionServiceChangeDto]
+    }
+
+defaultSubmissionChangeEmptyDto :: TenantConfigSubmissionChangeDTO
+defaultSubmissionChangeEmptyDto =
+  TenantConfigSubmissionChangeDTO
+    { enabled = True
+    , services = []
+    }
 
 defaultSubmissionService :: TenantConfigSubmissionService
-defaultSubmissionService =
-  TenantConfigSubmissionService
+defaultSubmissionService = fromSubmissionServiceChangeDTO defaultSubmissionServiceChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+defaultSubmissionServiceChangeDto :: TenantConfigSubmissionServiceChangeDTO
+defaultSubmissionServiceChangeDto =
+  TenantConfigSubmissionServiceChangeDTO
     { sId = "mySubmissionServer"
     , name = "My Submission Server"
     , description = "Some description"
     , props = [defaultSubmissionServiceApiTokenProp, defaultSubmissionServiceSecretProp]
-    , supportedFormats = [defaultSubmissionServiceSupportedFormat]
-    , request = defaultSubmissionServiceRequest
+    , supportedFormats = [defaultSubmissionServiceSupportedFormatChangeDto]
+    , request = defaultSubmissionServiceRequestChangeDto
     }
 
 defaultSubmissionServiceApiTokenProp :: String
@@ -207,56 +279,62 @@ defaultSubmissionServiceSecretProp :: String
 defaultSubmissionServiceSecretProp = "Secret"
 
 defaultSubmissionServiceSupportedFormat :: TenantConfigSubmissionServiceSupportedFormat
-defaultSubmissionServiceSupportedFormat =
-  TenantConfigSubmissionServiceSupportedFormat
+defaultSubmissionServiceSupportedFormat = fromSubmissionServiceSupportedFormatChangeDTO defaultSubmissionServiceSupportedFormatChangeDto defaultTenant.uuid defaultSubmissionServiceChangeDto.sId
+
+defaultSubmissionServiceSupportedFormatChangeDto :: TenantConfigSubmissionServiceSupportedFormatChangeDTO
+defaultSubmissionServiceSupportedFormatChangeDto =
+  TenantConfigSubmissionServiceSupportedFormatChangeDTO
     { templateId = wizardDocumentTemplate.tId
     , formatUuid = formatJson.uuid
     }
 
 defaultSubmissionServiceRequest :: TenantConfigSubmissionServiceRequest
-defaultSubmissionServiceRequest =
-  TenantConfigSubmissionServiceRequest
+defaultSubmissionServiceRequest = fromSubmissionServiceRequestChangeDTO defaultSubmissionServiceRequestChangeDto
+
+defaultSubmissionServiceRequestChangeDto :: TenantConfigSubmissionServiceRequestChangeDTO
+defaultSubmissionServiceRequestChangeDto =
+  TenantConfigSubmissionServiceRequestChangeDTO
     { method = "GET"
     , url = "https://mockserver.ds-wizard.org/submission.json"
     , headers = M.fromList [("Api-Key", "${API Token}")]
-    , multipart = defaultSubmissionServiceRequestMultipart
+    , multipart = defaultSubmissionServiceRequestMultipartChangeDto
     }
 
 defaultSubmissionServiceRequestMultipart :: TenantConfigSubmissionServiceRequestMultipart
-defaultSubmissionServiceRequestMultipart =
-  TenantConfigSubmissionServiceRequestMultipart
+defaultSubmissionServiceRequestMultipart = fromSubmissionServiceRequestMultipartChangeDTO defaultSubmissionServiceRequestMultipartChangeDto
+
+defaultSubmissionServiceRequestMultipartChangeDto :: TenantConfigSubmissionServiceRequestMultipartChangeDTO
+defaultSubmissionServiceRequestMultipartChangeDto =
+  TenantConfigSubmissionServiceRequestMultipartChangeDTO
     { enabled = False
     , fileName = "file"
+    }
+
+defaultFeaturesChangeDto :: TenantConfigFeaturesChangeDTO
+defaultFeaturesChangeDto =
+  TenantConfigFeaturesChangeDTO
+    { toursEnabled = True
     }
 
 defaultOwl :: TenantConfigOwl
 defaultOwl =
   TenantConfigOwl
-    { enabled = False
+    { tenantUuid = defaultTenant.uuid
+    , enabled = False
     , name = ""
     , organizationId = ""
     , kmId = ""
     , version = ""
     , previousPackageId = Nothing
     , rootElement = ""
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
     }
-
-defaultAiAssistant :: TenantConfigAiAssistant
-defaultAiAssistant =
-  TenantConfigAiAssistant
-    { enabled = True
-    }
-
-differentTenantConfig :: TenantConfig
-differentTenantConfig = defaultTenantConfig {uuid = differentTenant.uuid}
-
-differentTenantConfigEncrypted :: TenantConfig
-differentTenantConfigEncrypted = process defaultSecret differentTenantConfig
 
 -- ------------------------------------------------------------
 -- ------------------------------------------------------------
-editedTenantConfig :: TenantConfig
-editedTenantConfig = defaultTenantConfig {questionnaire = editedQuestionnaire}
-
 editedQuestionnaire :: TenantConfigQuestionnaire
-editedQuestionnaire = defaultQuestionnaire {summaryReport = SimpleFeature False}
+editedQuestionnaire = fromQuestionnaireChangeDTO editedQuestionnaireChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+
+editedQuestionnaireChangeDto :: TenantConfigQuestionnaireChangeDTO
+editedQuestionnaireChangeDto = defaultQuestionnaireChangeDto {summaryReport = SimpleFeature False}

@@ -46,3 +46,4 @@ instance SimpleEventSquash EditReferenceEvent where
         , annotations = applyValue oldEvent newEvent (.annotations)
         , createdAt = oldEvent.createdAt
         }
+  simpleSquashEvent previousEvent oldEvent newEvent = error $ "Simple squash event is not applicable for " <> show (oldEvent, newEvent) <> " in " <> show previousEvent

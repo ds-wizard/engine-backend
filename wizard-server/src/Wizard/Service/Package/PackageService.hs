@@ -42,12 +42,12 @@ getPackagesPage
   -> AppContextM (Page PackageSimpleDTO)
 getPackagesPage mOrganizationId mKmId mQuery mOutdated pageable sort = do
   checkPermission _PM_READ_PERM
-  tenantConfig <- getCurrentTenantConfig
-  if mOutdated == Just True && not (tenantConfig.registry.enabled)
+  tcRegistry <- getCurrentTenantConfigRegistry
+  if mOutdated == Just True && not tcRegistry.enabled
     then return $ Page "packages" (PageMetadata 0 0 0 0) []
     else do
       packages <- findPackagesPage mOrganizationId mKmId mQuery mOutdated pageable sort
-      return . fmap (toSimpleDTO'' tenantConfig.registry.enabled) $ packages
+      return . fmap (toSimpleDTO'' tcRegistry.enabled) $ packages
 
 getPackageSuggestions
   :: Maybe String
@@ -74,8 +74,8 @@ getPackageDetailById pkgId excludeDeprecatedVersions = do
   versions <- getPackageVersions pkg excludeDeprecatedVersions
   pkgRs <- findRegistryPackages
   orgRs <- findRegistryOrganizations
-  tenantConfig <- getCurrentTenantConfig
-  return $ toDetailDTO pkg tenantConfig.registry.enabled pkgRs orgRs versions (buildPackageUrl serverConfig.registry.clientUrl pkg pkgRs)
+  tcRegistry <- getCurrentTenantConfigRegistry
+  return $ toDetailDTO pkg tcRegistry.enabled pkgRs orgRs versions (buildPackageUrl serverConfig.registry.clientUrl pkg pkgRs)
 
 getAllPreviousEventsSincePackageId :: String -> AppContextM [Event]
 getAllPreviousEventsSincePackageId pkgId = do

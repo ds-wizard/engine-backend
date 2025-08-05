@@ -48,10 +48,7 @@ instance ToSchema MultiChoiceQuestion where
 
 -- --------------------------------------------------------------------
 instance ToSchema ListQuestion where
-  declareNamedSchema = toSwaggerWithType "questionType" (extract dto)
-    where
-      extract (ListQuestion' e) = e
-      dto = question4'
+  declareNamedSchema = toSwaggerWithType "questionType" question4'
 
 -- --------------------------------------------------------------------
 instance ToSchema ValueQuestion where

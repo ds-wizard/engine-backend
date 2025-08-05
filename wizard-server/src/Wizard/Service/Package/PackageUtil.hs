@@ -5,6 +5,7 @@ import qualified Data.List as L
 
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.Common.Service.Coordinate.CoordinateValidation
 import WizardLib.Common.Util.Coordinate
@@ -18,10 +19,10 @@ selectOrganizationByOrgId pkg = L.find (\org -> org.organizationId == pkg.organi
 checkIfPackageIsPublic Nothing orCheckThisPerm = checkPermission orCheckThisPerm
 checkIfPackageIsPublic (Just pkgId) orCheckThisPerm = do
   validateCoordinateFormat False "kmId" pkgId
-  tenantConfig <- getCurrentTenantConfig
+  tcKnowledgeModel <- getCurrentTenantConfigKnowledgeModel
   let pkgIdSplit = splitCoordinate pkgId
   unless
-    ( tenantConfig.knowledgeModel.public.enabled
-        && fitsIntoKMSpecs pkgIdSplit tenantConfig.knowledgeModel.public.packages
+    ( tcKnowledgeModel.public.enabled
+        && fitsIntoKMSpecs pkgIdSplit (fmap toPackagePattern tcKnowledgeModel.public.packages)
     )
     (checkPermission orCheckThisPerm)

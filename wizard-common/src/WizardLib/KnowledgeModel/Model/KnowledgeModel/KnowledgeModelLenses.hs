@@ -342,6 +342,7 @@ instance HasExpertUuids' Question [U.UUID] where
   setExpertUuids (ListQuestion' entity) newValue = ListQuestion' $ entity {expertUuids = newValue}
   setExpertUuids (ValueQuestion' entity) newValue = ValueQuestion' $ entity {expertUuids = newValue}
   setExpertUuids (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity {expertUuids = newValue}
+  setExpertUuids (ItemSelectQuestion' entity) newValue = ItemSelectQuestion' $ entity {expertUuids = newValue}
   setExpertUuids (FileQuestion' entity) newValue = FileQuestion' $ entity {expertUuids = newValue}
 
 -- ------------------------------------------------------------------------------------------

@@ -6,156 +6,214 @@ import qualified Data.UUID as U
 import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Model.Tenant.Config.TenantConfig
+import Wizard.Model.Tenant.Config.TenantConfigSubmissionServiceSimple
+import WizardLib.KnowledgeModel.Model.Package.PackagePattern
+import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateOrUpdateAuthenticationConfigCommand
-import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAiAssistantConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateDefaultRoleConfigCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateFeaturesConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateLookAndFeelConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateOrganizationConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateRegistryConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateSupportConfigCommand
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
+import WizardLib.Public.Service.Tenant.Config.ConfigMapper
 
-toChangeDTO :: TenantConfig -> TenantConfigChangeDTO
-toChangeDTO config =
-  TenantConfigChangeDTO
-    { organization = config.organization
-    , authentication = config.authentication
-    , privacyAndSupport = config.privacyAndSupport
-    , dashboardAndLoginScreen = config.dashboardAndLoginScreen
-    , lookAndFeel = config.lookAndFeel
-    , registry = config.registry
-    , knowledgeModel = config.knowledgeModel
-    , questionnaire = config.questionnaire
-    , submission = config.submission
+toChangeDTO
+  :: TenantConfigOrganizationChangeDTO
+  -> TenantConfigAuthenticationChangeDTO
+  -> TenantConfigPrivacyAndSupportChangeDTO
+  -> TenantConfigDashboardAndLoginScreenChangeDTO
+  -> TenantConfigLookAndFeelChangeDTO
+  -> TenantConfigRegistryChangeDTO
+  -> TenantConfigKnowledgeModelChangeDTO
+  -> TenantConfigQuestionnaireChangeDTO
+  -> TenantConfigSubmissionChangeDTO
+  -> TenantConfigFeaturesChangeDTO
+  -> TenantConfigChangeDTO
+toChangeDTO organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry knowledgeModel questionnaire submission features = TenantConfigChangeDTO {..}
+
+toSubmissionServiceSimple :: TenantConfigSubmissionService -> TenantConfigSubmissionServiceSimple
+toSubmissionServiceSimple config =
+  TenantConfigSubmissionServiceSimple
+    { sId = config.sId
+    , name = config.name
+    , description = config.description
     }
 
-fromChangeDTO :: TenantConfigChangeDTO -> TenantConfig -> UTCTime -> TenantConfig
-fromChangeDTO dto oldConfig now =
-  TenantConfig
-    { uuid = oldConfig.uuid
-    , organization = dto.organization
-    , authentication = dto.authentication
-    , privacyAndSupport = dto.privacyAndSupport
-    , dashboardAndLoginScreen = dto.dashboardAndLoginScreen
-    , lookAndFeel = dto.lookAndFeel
-    , registry = dto.registry
-    , knowledgeModel = dto.knowledgeModel
-    , questionnaire = dto.questionnaire
-    , submission = dto.submission
-    , owl = oldConfig.owl
-    , mailConfigUuid = oldConfig.mailConfigUuid
-    , aiAssistant = oldConfig.aiAssistant
-    , createdAt = oldConfig.createdAt
-    , updatedAt = now
-    }
+toTenantConfig
+  :: TenantConfigOrganization
+  -> TenantConfigAuthentication
+  -> TenantConfigPrivacyAndSupport
+  -> TenantConfigDashboardAndLoginScreen
+  -> TenantConfigLookAndFeel
+  -> TenantConfigRegistry
+  -> TenantConfigKnowledgeModel
+  -> TenantConfigQuestionnaire
+  -> TenantConfigSubmission
+  -> TenantConfigFeatures
+  -> TenantConfigOwl
+  -> TenantConfig
+toTenantConfig organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry knowledgeModel questionnaire submission features owl =
+  let uuid = organization.tenantUuid
+      mailConfigUuid = Nothing
+      createdAt = organization.createdAt
+      updatedAt = organization.updatedAt
+   in TenantConfig {..}
 
-fromAuthenticationCommand :: TenantConfig -> CreateOrUpdateAuthenticationConfigCommand -> UTCTime -> TenantConfig
+fromOrganizationChangeDTO :: TenantConfigOrganizationChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigOrganization
+fromOrganizationChangeDTO TenantConfigOrganizationChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigOrganization {..}
+
+fromAuthenticationChangeDTO :: TenantConfigAuthenticationChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigAuthentication
+fromAuthenticationChangeDTO a@TenantConfigAuthenticationChangeDTO {..} tenantUuid createdAt updatedAt =
+  let services = fmap (\c -> fromAuthenticationExternalServiceChangeDTO c tenantUuid createdAt updatedAt) a.external.services
+      external = TenantConfigAuthenticationExternal {..}
+   in TenantConfigAuthentication {..}
+
+fromAuthenticationExternalServiceChangeDTO :: TenantConfigAuthenticationExternalServiceChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigAuthenticationExternalService
+fromAuthenticationExternalServiceChangeDTO TenantConfigAuthenticationExternalServiceChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigAuthenticationExternalService {..}
+
+fromPrivacyAndSupportChangeDTO :: TenantConfigPrivacyAndSupportChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigPrivacyAndSupport
+fromPrivacyAndSupportChangeDTO TenantConfigPrivacyAndSupportChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigPrivacyAndSupport {..}
+
+fromDashboardAndLoginScreenChangeDTO :: TenantConfigDashboardAndLoginScreenChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigDashboardAndLoginScreen
+fromDashboardAndLoginScreenChangeDTO a@TenantConfigDashboardAndLoginScreenChangeDTO {..} tenantUuid createdAt updatedAt =
+  let announcements = zipWith (\i c -> fromDashboardAndLoginScreenAnnouncementChangeDTO c tenantUuid i createdAt updatedAt) [0 ..] a.announcements
+   in TenantConfigDashboardAndLoginScreen {..}
+
+fromRegistryChangeDTO :: TenantConfigRegistryChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigRegistry
+fromRegistryChangeDTO TenantConfigRegistryChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigRegistry {..}
+
+fromKnowledgeModelChangeDTO :: TenantConfigKnowledgeModelChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigKnowledgeModel
+fromKnowledgeModelChangeDTO dto@TenantConfigKnowledgeModelChangeDTO {..} tenantUuid createdAt updatedAt =
+  let packages = zipWith (\i f -> fromKnowledgeModelPublicPackagePatternChangeDTO f tenantUuid i createdAt updatedAt) [0 ..] dto.public.packages
+      public = TenantConfigKnowledgeModelPublic {enabled = dto.public.enabled, packages = packages}
+   in TenantConfigKnowledgeModel {..}
+
+fromKnowledgeModelPublicPackagePatternChangeDTO :: PackagePattern -> U.UUID -> Int -> UTCTime -> UTCTime -> TenantConfigKnowledgeModelPublicPackagePattern
+fromKnowledgeModelPublicPackagePatternChangeDTO PackagePattern {..} tenantUuid position createdAt updatedAt = TenantConfigKnowledgeModelPublicPackagePattern {..}
+
+fromQuestionnaireChangeDTO :: TenantConfigQuestionnaireChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigQuestionnaire
+fromQuestionnaireChangeDTO TenantConfigQuestionnaireChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigQuestionnaire {..}
+
+fromSubmissionChangeDTO :: TenantConfigSubmissionChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigSubmission
+fromSubmissionChangeDTO dto@TenantConfigSubmissionChangeDTO {..} tenantUuid createdAt updatedAt =
+  let services = fmap (\s -> fromSubmissionServiceChangeDTO s tenantUuid createdAt updatedAt) dto.services
+   in TenantConfigSubmission {..}
+
+fromSubmissionServiceChangeDTO :: TenantConfigSubmissionServiceChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigSubmissionService
+fromSubmissionServiceChangeDTO dto@TenantConfigSubmissionServiceChangeDTO {..} tenantUuid createdAt updatedAt =
+  let supportedFormats = fmap (\f -> fromSubmissionServiceSupportedFormatChangeDTO f tenantUuid dto.sId) dto.supportedFormats
+      request = fromSubmissionServiceRequestChangeDTO dto.request
+   in TenantConfigSubmissionService {..}
+
+fromSubmissionServiceSupportedFormatChangeDTO :: TenantConfigSubmissionServiceSupportedFormatChangeDTO -> U.UUID -> String -> TenantConfigSubmissionServiceSupportedFormat
+fromSubmissionServiceSupportedFormatChangeDTO TenantConfigSubmissionServiceSupportedFormatChangeDTO {..} tenantUuid serviceId = TenantConfigSubmissionServiceSupportedFormat {..}
+
+fromSubmissionServiceRequestChangeDTO :: TenantConfigSubmissionServiceRequestChangeDTO -> TenantConfigSubmissionServiceRequest
+fromSubmissionServiceRequestChangeDTO dto@TenantConfigSubmissionServiceRequestChangeDTO {..} =
+  let multipart = fromSubmissionServiceRequestMultipartChangeDTO dto.multipart
+   in TenantConfigSubmissionServiceRequest {..}
+
+fromSubmissionServiceRequestMultipartChangeDTO :: TenantConfigSubmissionServiceRequestMultipartChangeDTO -> TenantConfigSubmissionServiceRequestMultipart
+fromSubmissionServiceRequestMultipartChangeDTO TenantConfigSubmissionServiceRequestMultipartChangeDTO {..} =
+  TenantConfigSubmissionServiceRequestMultipart {..}
+
+fromFeaturesChangeDTO :: TenantConfigFeaturesChangeDTO -> TenantConfigFeatures -> U.UUID -> UTCTime -> UTCTime -> TenantConfigFeatures
+fromFeaturesChangeDTO dto oldConfig tenantUuid createdAt updatedAt =
+  let aiAssistantEnabled = oldConfig.aiAssistantEnabled
+      toursEnabled = dto.toursEnabled
+   in TenantConfigFeatures {..}
+
+fromAuthenticationCommand :: TenantConfigAuthentication -> CreateOrUpdateAuthenticationConfigCommand -> UTCTime -> TenantConfigAuthentication
 fromAuthenticationCommand oldConfig command now =
   oldConfig
-    { authentication =
-        oldConfig.authentication
-          { external =
-              oldConfig.authentication.external
-                { services =
-                    [ TenantConfigAuthExternalService
-                        { aId = command.aId
-                        , name = command.name
-                        , url = command.url
-                        , clientId = U.toString command.clientId
-                        , clientSecret = command.clientSecret
-                        , parameteres = []
-                        , style =
-                            Just
-                              OpenIdClientStyle
-                                { icon = Nothing
-                                , background = Nothing
-                                , color = Nothing
-                                }
+    { external =
+        oldConfig.external
+          { services =
+              [ TenantConfigAuthenticationExternalService
+                  { aId = command.aId
+                  , name = command.name
+                  , url = command.url
+                  , clientId = U.toString command.clientId
+                  , clientSecret = command.clientSecret
+                  , parameters = []
+                  , style =
+                      OpenIdClientStyle
+                        { icon = Nothing
+                        , background = Nothing
+                        , color = Nothing
                         }
-                    ]
-                }
+                  , tenantUuid = command.tenantUuid
+                  , createdAt = now
+                  , updatedAt = now
+                  }
+              ]
           }
     , updatedAt = now
     }
 
-fromRegistry :: TenantConfig -> UpdateRegistryConfigCommand -> UTCTime -> TenantConfig
+fromRegistry :: TenantConfigRegistry -> UpdateRegistryConfigCommand -> UTCTime -> TenantConfigRegistry
 fromRegistry oldConfig command now =
   oldConfig
-    { registry =
-        TenantConfigRegistry
-          { enabled = command.enabled
-          , token = command.token
-          }
+    { enabled = command.enabled
+    , token = command.token
     , updatedAt = now
     }
 
-fromLookAndFeel :: TenantConfig -> UpdateLookAndFeelConfigCommand -> UTCTime -> TenantConfig
+fromLookAndFeel :: TenantConfigLookAndFeel -> UpdateLookAndFeelConfigCommand -> UTCTime -> TenantConfigLookAndFeel
 fromLookAndFeel oldConfig command now =
   oldConfig
-    { lookAndFeel =
-        oldConfig.lookAndFeel
-          { appTitle = command.appTitle
-          , appTitleShort = command.appTitleShort
-          , logoUrl = command.logoUrl
-          , primaryColor = command.primaryColor
-          , illustrationsColor = command.illustrationsColor
-          }
+    { appTitle = command.appTitle
+    , appTitleShort = command.appTitleShort
+    , logoUrl = command.logoUrl
+    , primaryColor = command.primaryColor
+    , illustrationsColor = command.illustrationsColor
     , updatedAt = now
     }
 
-fromPrivacyAndSupport :: TenantConfig -> UpdateSupportConfigCommand -> UTCTime -> TenantConfig
+fromPrivacyAndSupport :: TenantConfigPrivacyAndSupport -> UpdateSupportConfigCommand -> UTCTime -> TenantConfigPrivacyAndSupport
 fromPrivacyAndSupport oldConfig command now =
   oldConfig
-    { privacyAndSupport =
-        oldConfig.privacyAndSupport
-          { supportEmail = command.supportEmail
-          , supportSiteName = command.supportSiteName
-          , supportSiteUrl = command.supportSiteUrl
-          , supportSiteIcon = command.supportSiteIcon
-          }
+    { supportEmail = command.supportEmail
+    , supportSiteName = command.supportSiteName
+    , supportSiteUrl = command.supportSiteUrl
+    , supportSiteIcon = command.supportSiteIcon
     , updatedAt = now
     }
 
-fromDefaultRole :: TenantConfig -> UpdateDefaultRoleConfigCommand -> UTCTime -> TenantConfig
+fromDefaultRole :: TenantConfigAuthentication -> UpdateDefaultRoleConfigCommand -> UTCTime -> TenantConfigAuthentication
 fromDefaultRole oldConfig command now =
   oldConfig
-    { authentication =
-        oldConfig.authentication
-          { defaultRole = command.defaultRole
-          }
+    { defaultRole = command.defaultRole
     , updatedAt = now
     }
 
-fromAnnouncements :: TenantConfig -> UpdateAnnouncementConfigCommand -> UTCTime -> TenantConfig
+fromAnnouncements :: TenantConfigDashboardAndLoginScreen -> UpdateAnnouncementConfigCommand -> UTCTime -> TenantConfigDashboardAndLoginScreen
 fromAnnouncements oldConfig command now =
   oldConfig
-    { dashboardAndLoginScreen =
-        oldConfig.dashboardAndLoginScreen
-          { announcements = command.announcements
-          }
+    { announcements = command.announcements
     , updatedAt = now
     }
 
-fromAiAssitant :: TenantConfig -> UpdateAiAssistantConfigCommand -> UTCTime -> TenantConfig
-fromAiAssitant oldConfig command now =
+fromFeatures :: TenantConfigFeatures -> UpdateFeaturesConfigCommand -> UTCTime -> TenantConfigFeatures
+fromFeatures oldConfig command now =
   oldConfig
-    { aiAssistant =
-        oldConfig.aiAssistant
-          { enabled = command.enabled
-          }
+    { aiAssistantEnabled = command.aiAssistantEnabled
+    , toursEnabled = command.toursEnabled
     , updatedAt = now
     }
 
-fromOrganization :: TenantConfig -> UpdateOrganizationConfigCommand -> UTCTime -> TenantConfig
+fromOrganization :: TenantConfigOrganization -> UpdateOrganizationConfigCommand -> UTCTime -> TenantConfigOrganization
 fromOrganization oldConfig command now =
   oldConfig
-    { organization =
-        TenantConfigOrganization
-          { name = command.name
-          , description = command.description
-          , organizationId = command.organizationId
-          , affiliations = command.affiliations
-          }
+    { name = command.name
+    , description = command.description
+    , organizationId = command.organizationId
+    , affiliations = command.affiliations
     , updatedAt = now
     }
+
+toPackagePattern :: TenantConfigKnowledgeModelPublicPackagePattern -> PackagePattern
+toPackagePattern TenantConfigKnowledgeModelPublicPackagePattern {..} = PackagePattern {..}

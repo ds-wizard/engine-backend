@@ -98,9 +98,9 @@ import Wizard.Api.Resource.Registry.RegistryOrganizationSM ()
 import Wizard.Api.Resource.Report.ReportSM ()
 import Wizard.Api.Resource.Submission.SubmissionCreateSM ()
 import Wizard.Api.Resource.Submission.SubmissionSM ()
-import Wizard.Api.Resource.Submission.SubmissionServiceSimpleSM ()
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeSM ()
 import Wizard.Api.Resource.Tenant.Config.TenantConfigSM ()
+import Wizard.Api.Resource.Tenant.Config.TenantConfigSubmissionServiceSimpleSM ()
 import Wizard.Api.Resource.Tenant.TenantChangeSM ()
 import Wizard.Api.Resource.Tenant.TenantCreateSM ()
 import Wizard.Api.Resource.Tenant.TenantDetailSM ()
@@ -142,7 +142,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.20.1"
+              , _infoVersion = "4.21.0"
               , _infoLicense =
                   Just $
                     License

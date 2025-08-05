@@ -104,6 +104,7 @@ instance EventFactory Question where
             , props = entity.props
             , createdAt = now
             }
+  createAddEvent _ _ = error "Add event is not applicable for this type of question"
   createEditEvent (oldKm, newKm) parentUuid (OptionsQuestion' newEntity) (OptionsQuestion' oldEntity) = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
@@ -229,6 +230,7 @@ instance EventFactory Question where
     if isEmptyEvent event
       then return . Just . EditQuestionEvent' . EditIntegrationQuestionEvent' $ event
       else return Nothing
+  createEditEvent _ _ _ _ = error "Edit event is not applicable for this type of question"
   createDeleteEvent parentUuid entity = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime

@@ -8,7 +8,7 @@ import Wizard.Api.Handler.Submission.List_POST
 import Wizard.Model.Context.BaseContext
 
 type SubmissionAPI =
-  Tags "Documnet Submission"
+  Tags "Document Submission"
     :> ( List_GET
           :<|> List_POST
        )

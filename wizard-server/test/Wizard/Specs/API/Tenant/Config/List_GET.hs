@@ -9,11 +9,14 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
+import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- GET /wizard-api/tenants/current/config
@@ -47,6 +50,9 @@ test_200 appContext =
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto = defaultTenantConfig
       let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO (insertOrUpdateConfigSubmissionService defaultSubmissionService) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

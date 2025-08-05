@@ -497,8 +497,9 @@ mapSort :: [Sort] -> String
 mapSort [] = ""
 mapSort xs = "ORDER BY " ++ createRecord xs
   where
+    createRecord [] = ""
     createRecord [sort] = create sort
-    createRecord (sort : xs) = create sort ++ ", " ++ mapSort xs
+    createRecord (sort : xs) = create sort ++ ", " ++ createRecord xs
     create (Sort name order) =
       case order of
         Ascending -> f' "%s asc " [toSnake name]
@@ -508,6 +509,7 @@ mapSortWithPrefix :: String -> [Sort] -> String
 mapSortWithPrefix _ [] = ""
 mapSortWithPrefix prefix xs = "ORDER BY " ++ createRecord xs
   where
+    createRecord [] = ""
     createRecord [sort] = create sort
     createRecord (sort : xs) = create sort ++ ", " ++ mapSort xs
     create (Sort name order) =
@@ -519,6 +521,7 @@ mapSortWithCustomMapping :: [Sort] -> [(String, String)] -> String
 mapSortWithCustomMapping [] customMapping = ""
 mapSortWithCustomMapping xs customMapping = "ORDER BY " ++ createRecord xs
   where
+    createRecord [] = ""
     createRecord [sort] = create sort
     createRecord (sort : xs) = create sort ++ ", " ++ mapSortWithCustomMapping xs customMapping
     create (Sort name order) =

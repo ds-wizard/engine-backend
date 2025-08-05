@@ -31,9 +31,8 @@ getFileIntegrationConfig sectionName = do
 
 getTenantIntegrationConfig :: String -> AppContextM (M.Map String String)
 getTenantIntegrationConfig sectionName = do
-  tenantConfig <- getCurrentTenantConfig
-  let content = tenantConfig.knowledgeModel.integrationConfig
-  let eIntConfig = decodeEither' . BS.pack $ content
+  tcKnowledgeModel <- getCurrentTenantConfigKnowledgeModel
+  let eIntConfig = decodeEither' . BS.pack $ tcKnowledgeModel.integrationConfig
   case eIntConfig of
     Right intConfig -> return . fromMaybe M.empty . M.lookup sectionName $ intConfig
     Left error -> do

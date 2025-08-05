@@ -26,7 +26,7 @@ data ClientConfigDTO
       , cloud :: ClientConfigCloudDTO
       , owl :: TenantConfigOwl
       , admin :: ClientConfigAdminDTO
-      , aiAssistant :: ClientConfigAiAssistantDTO
+      , features :: ClientConfigFeaturesDTO
       , signalBridge :: ClientConfigSignalBridgeDTO
       , modules :: [ClientConfigModuleDTO]
       }
@@ -34,7 +34,7 @@ data ClientConfigDTO
 
 data ClientConfigAuthDTO = ClientConfigAuthDTO
   { defaultRole :: String
-  , internal :: TenantConfigAuthInternal
+  , internal :: TenantConfigAuthenticationInternal
   , external :: ClientConfigAuthExternalDTO
   }
   deriving (Generic, Eq, Show)
@@ -48,7 +48,7 @@ data ClientConfigAuthExternalServiceDTO = ClientConfigAuthExternalServiceDTO
   { aId :: String
   , name :: String
   , url :: String
-  , style :: Maybe OpenIdClientStyle
+  , style :: OpenIdClientStyle
   }
   deriving (Generic, Eq, Show)
 
@@ -80,8 +80,9 @@ data ClientConfigAdminDTO = ClientConfigAdminDTO
   }
   deriving (Generic, Eq, Show)
 
-data ClientConfigAiAssistantDTO = ClientConfigAiAssistantDTO
-  { enabled :: Bool
+data ClientConfigFeaturesDTO = ClientConfigFeaturesDTO
+  { aiAssistantEnabled :: Bool
+  , toursEnabled :: Bool
   }
   deriving (Generic, Eq, Show)
 

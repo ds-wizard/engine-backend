@@ -38,6 +38,7 @@ computeTotalReportIndications requiredPhaseUuid km replies =
         ]
       mergeIndications [AnsweredIndication' (AnsweredIndication c1 d1)] [AnsweredIndication' (AnsweredIndication c2 d2)] =
         [AnsweredIndication' (AnsweredIndication (c1 + c2) (d1 + d2))]
+      mergeIndications _ _ = []
    in foldl
         mergeIndications
         [PhasesAnsweredIndication' (PhasesAnsweredIndication 0 0), AnsweredIndication' (AnsweredIndication 0 0)]

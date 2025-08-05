@@ -50,7 +50,7 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = toDTO appContext.serverConfig defaultTenantConfig feedback1
+      let expDto = toDTO appContext.serverConfig defaultQuestionnaire feedback1
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO loadFeedbackTokenFromEnv appContext

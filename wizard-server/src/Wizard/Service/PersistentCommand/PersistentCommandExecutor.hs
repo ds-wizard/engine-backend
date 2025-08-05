@@ -1,7 +1,9 @@
 module Wizard.Service.PersistentCommand.PersistentCommandExecutor where
 
+import Control.Monad.Except (throwError)
 import qualified Data.UUID as U
 
+import Shared.Common.Model.Error.Error
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import qualified Shared.Prefab.Service.Prefab.PrefabCommandExecutor as PrefabCommandExecutor
 import Wizard.Model.Context.AppContext
@@ -29,3 +31,4 @@ execute command
   | command.component == UserCommandExecutor.cComponent = UserCommandExecutor.execute command
   | command.component == UserGroupCommandExecutor.cComponent = UserGroupCommandExecutor.execute command
   | command.component == UserGroupMembershipCommandExecutor.cComponent = UserGroupMembershipCommandExecutor.execute command
+  | otherwise = throwError . GeneralServerError $ "Unknown command component: " <> command.component

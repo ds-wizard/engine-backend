@@ -182,3 +182,4 @@ instance SimpleEventSquash EditQuestionEvent where
         , fileTypes = applyValue oldEvent newEvent (.fileTypes)
         , createdAt = oldEvent.createdAt
         }
+  simpleSquashEvent previousEvent oldEvent newEvent = error $ "Simple squash event is not applicable for " <> show (oldEvent, newEvent) <> " in " <> show previousEvent

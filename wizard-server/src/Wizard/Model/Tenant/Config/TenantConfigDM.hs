@@ -1,105 +1,94 @@
 module Wizard.Model.Tenant.Config.TenantConfigDM where
 
-import Data.Maybe (fromJust)
-import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Model.Config.SimpleFeature
+import Shared.Common.Util.Date
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
-import WizardLib.Public.Model.Tenant.Config.TenantConfig
-
-defaultTenantConfig :: TenantConfig
-defaultTenantConfig =
-  TenantConfig
-    { uuid = U.nil
-    , organization = defaultOrganization
-    , authentication = defaultAuth
-    , privacyAndSupport = defaultPrivacyAndSupport
-    , dashboardAndLoginScreen = defaultDashboardAndLoginScreen
-    , lookAndFeel = defaultLookAndFeel
-    , registry = defaultRegistry
-    , knowledgeModel = defaultKnowledgeModel
-    , questionnaire = defaultQuestionnaire
-    , submission = defaultSubmission
-    , owl = defaultOwl
-    , mailConfigUuid = Nothing
-    , aiAssistant = defaultAiAssistant
-    , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    }
 
 defaultOrganization :: TenantConfigOrganization
 defaultOrganization =
   TenantConfigOrganization
-    { name = "My Organization"
+    { tenantUuid = U.nil
+    , name = "My Organization"
     , description = "My description"
     , organizationId = "organization"
     , affiliations = []
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
     }
 
-defaultAuth :: TenantConfigAuth
-defaultAuth =
-  TenantConfigAuth
-    { defaultRole = _USER_ROLE_RESEARCHER
-    , internal = defaultAuthInternal
-    , external = defaultAuthExternal
+defaultAuthentication :: TenantConfigAuthentication
+defaultAuthentication =
+  TenantConfigAuthentication
+    { tenantUuid = U.nil
+    , defaultRole = _USER_ROLE_RESEARCHER
+    , internal = defaultAuthenticationInternal
+    , external = defaultAuthenticationExternal
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
     }
 
-defaultAuthInternal :: TenantConfigAuthInternal
-defaultAuthInternal = TenantConfigAuthInternal {registration = SimpleFeature True, twoFactorAuth = defaultAuthInternalTwoFactorAuth}
+defaultAuthenticationInternal :: TenantConfigAuthenticationInternal
+defaultAuthenticationInternal = TenantConfigAuthenticationInternal {registration = SimpleFeature True, twoFactorAuth = defaultAuthenticationInternalTwoFactorAuth}
 
-defaultAuthInternalTwoFactorAuth :: TenantConfigAuthInternalTwoFactorAuth
-defaultAuthInternalTwoFactorAuth =
-  TenantConfigAuthInternalTwoFactorAuth
+defaultAuthenticationInternalTwoFactorAuth :: TenantConfigAuthenticationInternalTwoFactorAuth
+defaultAuthenticationInternalTwoFactorAuth =
+  TenantConfigAuthenticationInternalTwoFactorAuth
     { enabled = False
     , codeLength = 6
     , expiration = 600
     }
 
-defaultAuthExternal :: TenantConfigAuthExternal
-defaultAuthExternal = TenantConfigAuthExternal {services = []}
+defaultAuthenticationExternal :: TenantConfigAuthenticationExternal
+defaultAuthenticationExternal = TenantConfigAuthenticationExternal {services = []}
 
 defaultPrivacyAndSupport :: TenantConfigPrivacyAndSupport
 defaultPrivacyAndSupport =
   TenantConfigPrivacyAndSupport
-    { privacyUrl = Nothing
+    { tenantUuid = U.nil
+    , privacyUrl = Nothing
     , termsOfServiceUrl = Nothing
     , supportEmail = Nothing
     , supportSiteName = Nothing
     , supportSiteUrl = Nothing
     , supportSiteIcon = Nothing
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
     }
 
 defaultDashboardAndLoginScreen :: TenantConfigDashboardAndLoginScreen
 defaultDashboardAndLoginScreen =
   TenantConfigDashboardAndLoginScreen
-    { dashboardType = RoleBasedDashboardType
+    { tenantUuid = U.nil
+    , dashboardType = RoleBasedDashboardType
     , announcements = []
     , loginInfo = Nothing
     , loginInfoSidebar = Nothing
-    }
-
-defaultLookAndFeel :: TenantConfigLookAndFeel
-defaultLookAndFeel =
-  TenantConfigLookAndFeel
-    { appTitle = Nothing
-    , appTitleShort = Nothing
-    , customMenuLinks = []
-    , logoUrl = Nothing
-    , primaryColor = Nothing
-    , illustrationsColor = Nothing
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
     }
 
 defaultRegistry :: TenantConfigRegistry
-defaultRegistry = TenantConfigRegistry {enabled = False, token = ""}
+defaultRegistry =
+  TenantConfigRegistry
+    { tenantUuid = U.nil
+    , enabled = False
+    , token = ""
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
+    }
 
 defaultKnowledgeModel :: TenantConfigKnowledgeModel
 defaultKnowledgeModel =
   TenantConfigKnowledgeModel
-    { public = defaultKnowledgeModelPublic
+    { tenantUuid = U.nil
+    , public = defaultKnowledgeModelPublic
     , integrationConfig = ""
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
     }
 
 defaultKnowledgeModelPublic :: TenantConfigKnowledgeModelPublic
@@ -112,12 +101,15 @@ defaultKnowledgeModelPublic =
 defaultQuestionnaire :: TenantConfigQuestionnaire
 defaultQuestionnaire =
   TenantConfigQuestionnaire
-    { questionnaireVisibility = defaultQuestionnaireVisibility
+    { tenantUuid = U.nil
+    , questionnaireVisibility = defaultQuestionnaireVisibility
     , questionnaireSharing = defaultQuestionnaireSharing
     , questionnaireCreation = TemplateAndCustomQuestionnaireCreation
     , projectTagging = defaultQuestionnaireProjectTagging
     , summaryReport = SimpleFeature True
     , feedback = defaultFeedback
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
     }
 
 defaultQuestionnaireVisibility :: TenantConfigQuestionnaireVisibility
@@ -152,22 +144,26 @@ defaultFeedback =
     }
 
 defaultSubmission :: TenantConfigSubmission
-defaultSubmission = TenantConfigSubmission {enabled = False, services = []}
+defaultSubmission =
+  TenantConfigSubmission
+    { tenantUuid = U.nil
+    , enabled = False
+    , services = []
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
+    }
 
 defaultOwl :: TenantConfigOwl
 defaultOwl =
   TenantConfigOwl
-    { enabled = False
+    { tenantUuid = U.nil
+    , enabled = False
     , name = ""
     , organizationId = ""
     , kmId = ""
     , version = ""
     , previousPackageId = Nothing
     , rootElement = ""
-    }
-
-defaultAiAssistant :: TenantConfigAiAssistant
-defaultAiAssistant =
-  TenantConfigAiAssistant
-    { enabled = True
+    , createdAt = dt' 2018 1 20
+    , updatedAt = dt' 2018 1 20
     }

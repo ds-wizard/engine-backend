@@ -30,8 +30,8 @@ import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleDTO
 
 retrieveOrganizations :: AppContextM [OrganizationSimple]
 retrieveOrganizations = do
-  tenantConfig <- getCurrentTenantConfig
-  if tenantConfig.registry.enabled
+  tcRegistry <- getCurrentTenantConfigRegistry
+  if tcRegistry.enabled
     then do
       let request = toRetrieveOrganizationsRequest
       res <- runRegistryClient request
@@ -54,12 +54,12 @@ confirmOrganizationRegistration reqDto = do
 
 retrievePackages :: InstanceStatistics -> AppContextM [PackageSimpleDTO]
 retrievePackages iStat = do
-  tenantConfig <- getCurrentTenantConfig
-  if tenantConfig.registry.enabled
+  tcRegistry <- getCurrentTenantConfigRegistry
+  if tcRegistry.enabled
     then
       catchError
         ( do
-            let request = toRetrievePackagesRequest tenantConfig.registry iStat
+            let request = toRetrievePackagesRequest tcRegistry iStat
             res <- runRegistryClient request
             return . getResponse $ res
         )
@@ -69,22 +69,22 @@ retrievePackages iStat = do
 retrievePackageBundleById :: String -> AppContextM BSL.ByteString
 retrievePackageBundleById pkgId = do
   serverConfig <- asks serverConfig
-  tenantConfig <- getCurrentTenantConfig
-  if tenantConfig.registry.enabled
+  tcRegistry <- getCurrentTenantConfigRegistry
+  if tcRegistry.enabled
     then
       runRequest
-        (toRetrievePackageBundleByIdRequest serverConfig.registry tenantConfig.registry pkgId)
+        (toRetrievePackageBundleByIdRequest serverConfig.registry tcRegistry pkgId)
         toRetrievePackageBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
 retrieveTemplates :: AppContextM [DocumentTemplateSimpleDTO]
 retrieveTemplates = do
-  tenantConfig <- getCurrentTenantConfig
-  if tenantConfig.registry.enabled
+  tcRegistry <- getCurrentTenantConfigRegistry
+  if tcRegistry.enabled
     then
       catchError
         ( do
-            let request = toRetrieveTemplatesRequest tenantConfig.registry
+            let request = toRetrieveTemplatesRequest tcRegistry
             res <- runRegistryClient request
             return . getResponse $ res
         )
@@ -94,23 +94,23 @@ retrieveTemplates = do
 retrieveTemplateBundleById :: String -> AppContextM BSL.ByteString
 retrieveTemplateBundleById tmlId = do
   serverConfig <- asks serverConfig
-  tenantConfig <- getCurrentTenantConfig
-  if tenantConfig.registry.enabled
+  tcRegistry <- getCurrentTenantConfigRegistry
+  if tcRegistry.enabled
     then
       runRequest
-        (toRetrieveTemplateBundleByIdRequest serverConfig.registry tenantConfig.registry tmlId)
+        (toRetrieveTemplateBundleByIdRequest serverConfig.registry tcRegistry tmlId)
         toRetrieveTemplateBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
 retrieveLocales :: AppContextM [LocaleDTO]
 retrieveLocales = do
   buildInfoConfig <- asks buildInfoConfig
-  tenantConfig <- getCurrentTenantConfig
-  if tenantConfig.registry.enabled
+  tcRegistry <- getCurrentTenantConfigRegistry
+  if tcRegistry.enabled
     then
       catchError
         ( do
-            let request = toRetrieveLocaleRequest buildInfoConfig.releaseVersion tenantConfig.registry
+            let request = toRetrieveLocaleRequest buildInfoConfig.releaseVersion tcRegistry
             res <- runRegistryClient request
             return . getResponse $ res
         )
@@ -120,33 +120,33 @@ retrieveLocales = do
 retrieveLocaleBundleById :: String -> AppContextM BSL.ByteString
 retrieveLocaleBundleById lclId = do
   serverConfig <- asks serverConfig
-  tenantConfig <- getCurrentTenantConfig
-  if tenantConfig.registry.enabled
+  tcRegistry <- getCurrentTenantConfigRegistry
+  if tcRegistry.enabled
     then
       runRequest
-        (toRetrieveLocaleBundleByIdRequest serverConfig.registry tenantConfig.registry lclId)
+        (toRetrieveLocaleBundleByIdRequest serverConfig.registry tcRegistry lclId)
         toRetrieveLocaleBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
 uploadPackageBundle :: PackageBundleDTO -> AppContextM PackageBundleDTO
 uploadPackageBundle reqDto = do
-  tenantConfig <- getCurrentTenantConfig
-  let request = toUploadPackageBundleRequest tenantConfig.registry reqDto
+  tcRegistry <- getCurrentTenantConfigRegistry
+  let request = toUploadPackageBundleRequest tcRegistry reqDto
   res <- runRegistryClient request
   return . getResponse $ res
 
 uploadDocumentTemplateBundle :: BSL.ByteString -> AppContextM BSL.ByteString
 uploadDocumentTemplateBundle bundle = do
   serverConfig <- asks serverConfig
-  tenantConfig <- getCurrentTenantConfig
+  tcRegistry <- getCurrentTenantConfigRegistry
   runRequest
-    (toUploadDocumentTemplateBundleRequest serverConfig.registry tenantConfig.registry bundle)
+    (toUploadDocumentTemplateBundleRequest serverConfig.registry tcRegistry bundle)
     toUploadDocumentTemplateBundleResponse
 
 uploadLocaleBundle :: BSL.ByteString -> AppContextM BSL.ByteString
 uploadLocaleBundle bundle = do
   serverConfig <- asks serverConfig
-  tenantConfig <- getCurrentTenantConfig
+  tcRegistry <- getCurrentTenantConfigRegistry
   runRequest
-    (toUploadLocaleBundleRequest serverConfig.registry tenantConfig.registry bundle)
+    (toUploadLocaleBundleRequest serverConfig.registry tcRegistry bundle)
     toUploadLocaleBundleResponse

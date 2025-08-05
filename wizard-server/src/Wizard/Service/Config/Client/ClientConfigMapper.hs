@@ -9,24 +9,25 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.UserProfile
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
-toClientConfigDTO :: ServerConfig -> TenantConfig -> Maybe UserProfile -> [String] -> Tenant -> ClientConfigDTO
-toClientConfigDTO serverConfig tenantConfig mUserProfile tours tenant =
+toClientConfigDTO :: ServerConfig -> TenantConfigOrganization -> TenantConfigAuthentication -> TenantConfigPrivacyAndSupport -> TenantConfigDashboardAndLoginScreen -> TenantConfigLookAndFeel -> TenantConfigRegistry -> TenantConfigQuestionnaire -> TenantConfigSubmission -> TenantConfigFeatures -> TenantConfigOwl -> Maybe UserProfile -> [String] -> Tenant -> ClientConfigDTO
+toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcQuestionnaire tcSubmission tcFeatures tcOwl mUserProfile tours tenant =
   ClientConfigDTO
     { user = mUserProfile
     , tours = tours
-    , organization = tenantConfig.organization
-    , authentication = toClientAuthDTO $ tenantConfig.authentication
-    , privacyAndSupport = tenantConfig.privacyAndSupport
-    , dashboardAndLoginScreen = tenantConfig.dashboardAndLoginScreen
-    , lookAndFeel = tenantConfig.lookAndFeel
-    , registry = toClientConfigRegistryDTO serverConfig.registry tenantConfig.registry
-    , questionnaire = toClientConfigQuestionnaireDTO $ tenantConfig.questionnaire
-    , submission = SimpleFeature $ tenantConfig.submission.enabled
+    , organization = tcOrganization
+    , authentication = toClientAuthDTO tcAuthentication
+    , privacyAndSupport = tcPrivacyAndSupport
+    , dashboardAndLoginScreen = tcDashboardAndLoginScreen
+    , lookAndFeel = tcLookAndFeel
+    , registry = toClientConfigRegistryDTO serverConfig.registry tcRegistry
+    , questionnaire = toClientConfigQuestionnaireDTO tcQuestionnaire
+    , submission = SimpleFeature $ tcSubmission.enabled
     , cloud = toClientConfigCloudDTO serverConfig.cloud tenant
-    , owl = tenantConfig.owl
+    , owl = tcOwl
     , admin = toClientConfigAdminDTO serverConfig.admin tenant
-    , aiAssistant = toClientConfigAiAssistantDTO serverConfig.admin tenantConfig.aiAssistant
+    , features = toClientConfigFeaturesDTO serverConfig.admin tcFeatures
     , signalBridge = toClientConfigSignalBridgeDTO tenant
     , modules =
         if serverConfig.admin.enabled
@@ -51,25 +52,26 @@ toClientConfigDTO serverConfig tenantConfig mUserProfile tours tenant =
                   , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" tenant.adminClientUrl) False
                   , toClientConfigModuleDTO serverConfig.modules.guide (fromMaybe "" serverConfig.modules.guide.url) True
                   ]
+                _ -> []
             Nothing -> []
           else []
     }
 
-toClientAuthDTO :: TenantConfigAuth -> ClientConfigAuthDTO
-toClientAuthDTO config =
+toClientAuthDTO :: TenantConfigAuthentication -> ClientConfigAuthDTO
+toClientAuthDTO tcAuthentication =
   ClientConfigAuthDTO
-    { defaultRole = config.defaultRole
-    , internal = config.internal
-    , external = toClientAuthExternalDTO $ config.external
+    { defaultRole = tcAuthentication.defaultRole
+    , internal = tcAuthentication.internal
+    , external = toClientAuthExternalDTO tcAuthentication.external
     }
 
-toClientAuthExternalDTO :: TenantConfigAuthExternal -> ClientConfigAuthExternalDTO
+toClientAuthExternalDTO :: TenantConfigAuthenticationExternal -> ClientConfigAuthExternalDTO
 toClientAuthExternalDTO config =
   ClientConfigAuthExternalDTO
     { services = toClientAuthExternalServiceDTO <$> config.services
     }
 
-toClientAuthExternalServiceDTO :: TenantConfigAuthExternalService -> ClientConfigAuthExternalServiceDTO
+toClientAuthExternalServiceDTO :: TenantConfigAuthenticationExternalService -> ClientConfigAuthExternalServiceDTO
 toClientAuthExternalServiceDTO config =
   ClientConfigAuthExternalServiceDTO
     { aId = config.aId
@@ -107,10 +109,11 @@ toClientConfigAdminDTO :: ServerConfigAdmin -> Tenant -> ClientConfigAdminDTO
 toClientConfigAdminDTO serverConfig tenant =
   ClientConfigAdminDTO {enabled = serverConfig.enabled, clientUrl = tenant.adminClientUrl}
 
-toClientConfigAiAssistantDTO :: ServerConfigAdmin -> TenantConfigAiAssistant -> ClientConfigAiAssistantDTO
-toClientConfigAiAssistantDTO serverConfig tenantConfig =
-  ClientConfigAiAssistantDTO
-    { enabled = serverConfig.enabled && tenantConfig.enabled
+toClientConfigFeaturesDTO :: ServerConfigAdmin -> TenantConfigFeatures -> ClientConfigFeaturesDTO
+toClientConfigFeaturesDTO serverConfig tenantConfig =
+  ClientConfigFeaturesDTO
+    { aiAssistantEnabled = serverConfig.enabled && tenantConfig.aiAssistantEnabled
+    , toursEnabled = tenantConfig.toursEnabled
     }
 
 toClientConfigSignalBridgeDTO :: Tenant -> ClientConfigSignalBridgeDTO

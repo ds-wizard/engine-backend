@@ -1,10 +1,12 @@
 module Shared.Prefab.Service.Prefab.PrefabCommandExecutor where
 
+import Control.Monad.Except (throwError)
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.UUID as U
 
 import Shared.Common.Model.Context.AppContext
+import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Shared.Prefab.Model.PersistentCommand.Prefab.CreateOrUpdatePrefabCommand
@@ -18,6 +20,7 @@ execute command
   | command.function == cCreatePrefabName = cCreatePrefab command
   | command.function == cUpdatePrefabName = cUpdatePrefab command
   | command.function == cDeletePrefabName = cDeletePrefab command
+  | otherwise = throwError . GeneralServerError $ "Unknown command function: " <> command.function
 
 cCreatePrefabName = "createPrefab"
 
