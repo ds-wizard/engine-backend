@@ -310,6 +310,7 @@ compilatorSpec =
                             , question12'
                             , question13'
                             , question14'
+                            , question15'
                             ]
                       }
                 }
@@ -444,7 +445,7 @@ compilatorSpec =
                 $ km1WithQ4
                   { entities =
                       km1WithQ4.entities
-                        { integrations = toMap [ontologyPortalEdited', bioPortal', widgetPortal']
+                        { integrations = toMap [repositoryApi', ontologyPortalEdited', bioPortal', widgetPortal']
                         }
                   }
         computed `shouldBe` expected
@@ -454,8 +455,8 @@ compilatorSpec =
               putInQuestionsM q4_it1_q6_aYes_fuq5ConvertedToValue.uuid q4_it1_q6_aYes_fuq5ConvertedToValue'
                 . putInQuestionsM question9ConvertedToValue.uuid question9ConvertedToValue'
                 $ km1WithQ4
-                  { integrationUuids = [bioPortal.uuid, widgetPortal.uuid]
-                  , entities = km1WithQ4.entities {integrations = toMap [bioPortal', widgetPortal']}
+                  { integrationUuids = [repositoryApi.uuid, bioPortal.uuid, widgetPortal.uuid]
+                  , entities = km1WithQ4.entities {integrations = toMap [repositoryApi', bioPortal', widgetPortal']}
                   }
         computed `shouldBe` expected
     -- ---------------
@@ -580,6 +581,7 @@ compilatorSpec =
             , AddPhaseEvent' a_km1_phs3
             , AddTagEvent' a_km1_tds
             , AddTagEvent' a_km1_tbi
+            , AddIntegrationEvent' a_km1_ir'
             , AddIntegrationEvent' a_km1_iop'
             , AddIntegrationEvent' a_km1_ibp'
             , AddIntegrationEvent' a_km1_iwp'
@@ -631,6 +633,7 @@ compilatorSpec =
             , AddQuestionEvent' a_km1_ch3_q12'
             , AddQuestionEvent' a_km1_ch3_q13'
             , AddQuestionEvent' a_km1_ch3_q14'
+            , AddQuestionEvent' a_km1_ch3_q15'
             ]
       let (Right computed) = compile Nothing events
       let expected = km1WithQ4

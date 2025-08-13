@@ -1,6 +1,7 @@
 module Shared.Common.Integration.Http.Common.HttpClient (
   runRequest,
   runRequest',
+  runRequestIO',
   runSimpleRequest,
   mapHeader,
 ) where
@@ -65,6 +66,26 @@ runRequest' req responseMapper = do
       if sc <= 399
         then do
           let eResDto = responseMapper response
+          logResponseBody eResDto
+          return eResDto
+        else do
+          logResponseErrorBody response
+          return . Left $
+            f' "Request Failed\nStatus Code: %s\nResponse Body: %s" [show sc, show . responseBody $ response]
+    Left error -> do
+      logResponseErrorGeneral error
+      return . Left $ f' "Request failed\nError: %s" [show error]
+
+runRequestIO' :: AppContextC s sc m => HttpRequest -> (Response BSL.ByteString -> IO (Either String a)) -> m (Either String a)
+runRequestIO' req responseMapper = do
+  logRequestMultipart req
+  eResponse <- runSimpleRequest req
+  case eResponse of
+    Right response -> do
+      let sc = statusCode . responseStatus $ response
+      if sc <= 399
+        then do
+          eResDto <- liftIO $ responseMapper response
           logResponseBody eResDto
           return eResDto
         else do

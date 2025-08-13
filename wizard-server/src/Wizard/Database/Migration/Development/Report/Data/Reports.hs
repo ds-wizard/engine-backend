@@ -32,7 +32,7 @@ report1_total =
               , unansweredQuestions = 1
               }
         , AnsweredIndication' $
-            AnsweredIndication {answeredQuestions = 13, unansweredQuestions = 4}
+            AnsweredIndication {answeredQuestions = 13, unansweredQuestions = 5}
         ]
     , metrics =
         [ MetricSummary {metricUuid = metricF.uuid, measure = Just 1.0}
@@ -52,7 +52,7 @@ report1_total_full =
               , unansweredQuestions = 1
               }
         , AnsweredIndication' $
-            AnsweredIndication {answeredQuestions = 13, unansweredQuestions = 4}
+            AnsweredIndication {answeredQuestions = 13, unansweredQuestions = 5}
         ]
     , metrics =
         [ MetricSummary {metricUuid = metricF.uuid, measure = Just 1.0}
@@ -127,7 +127,7 @@ report1_ch3 =
               , unansweredQuestions = 0
               }
         , AnsweredIndication' $
-            AnsweredIndication {answeredQuestions = 3, unansweredQuestions = 3}
+            AnsweredIndication {answeredQuestions = 3, unansweredQuestions = 4}
         ]
     , metrics = []
     }
@@ -152,7 +152,7 @@ questionnaireReport =
               , unansweredQuestions = 1
               }
         , AnsweredIndication' $
-            AnsweredIndication {answeredQuestions = 13, unansweredQuestions = 4}
+            AnsweredIndication {answeredQuestions = 13, unansweredQuestions = 5}
         ]
     }
 

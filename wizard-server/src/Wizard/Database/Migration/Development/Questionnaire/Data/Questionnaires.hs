@@ -872,6 +872,24 @@ questionnaire15 =
     , updatedAt = dt' 2018 1 29
     }
 
+questionnaire15AnonymousEdit :: Questionnaire
+questionnaire15AnonymousEdit =
+  questionnaire15
+    { sharing = AnyoneWithLinkEditQuestionnaire
+    }
+
+questionnaire15AnonymousComment :: Questionnaire
+questionnaire15AnonymousComment =
+  questionnaire15
+    { sharing = AnyoneWithLinkCommentQuestionnaire
+    }
+
+questionnaire15NoPerms :: Questionnaire
+questionnaire15NoPerms =
+  questionnaire15
+    { permissions = []
+    }
+
 questionnaire15Events :: [QuestionnaireEvent]
 questionnaire15Events = fEvents questionnaire15Uuid
 

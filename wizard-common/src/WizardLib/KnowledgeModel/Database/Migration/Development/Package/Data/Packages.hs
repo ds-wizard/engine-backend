@@ -200,6 +200,7 @@ germanyPackage =
         , AddPhaseEvent' a_km1_phs3
         , AddTagEvent' a_km1_tds
         , AddTagEvent' a_km1_tbi
+        , AddIntegrationEvent' a_km1_ir'
         , AddIntegrationEvent' a_km1_iop'
         , AddIntegrationEvent' a_km1_ibp'
         , AddIntegrationEvent' a_km1_iwp'
@@ -251,6 +252,7 @@ germanyPackage =
         , AddQuestionEvent' a_km1_ch3_q12'
         , AddQuestionEvent' a_km1_ch3_q13'
         , AddQuestionEvent' a_km1_ch3_q14'
+        , AddQuestionEvent' a_km1_ch3_q15'
         ]
     , nonEditable = False
     , tenantUuid = U.nil

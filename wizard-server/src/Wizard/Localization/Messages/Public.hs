@@ -190,12 +190,12 @@ _ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW workerLog =
 _ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =
   LocaleRecord "error.service.tb.pull_non_existing_tml" "Desired template ('%s') wasn't found in Registry" [tmlId]
 
--- Typehint
+-- TypeHint
 _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION =
-  LocaleRecord "error.service.typehint.bad_type_of_question" "Desired question has to be integration question" []
+  LocaleRecord "error.service.type_hint.bad_type_of_question" "Desired question has to be integration question" []
 
 _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION =
-  LocaleRecord "error.service.typehint.bad_type_of_integration" "Desired integration has to be API integration" []
+  LocaleRecord "error.service.type_hint.bad_type_of_integration" "Desired integration has to be API integration" []
 
 _ERROR_SERVICE_TYPEHINT__INTEGRATION_RETURNS_ERROR =
-  LocaleRecord "error.service.typehint.integration_request_failed" "Integration request failed" []
+  LocaleRecord "error.service.type_hint.integration_request_failed" "Integration request failed" []
