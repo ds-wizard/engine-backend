@@ -335,14 +335,14 @@ q4_it1_q6_aYes_followUpQuestion5 =
     , referenceUuids = []
     , expertUuids = []
     , integrationUuid = FI.ontologyPortal.uuid
-    , props = Map.fromList [("domain", "biology"), ("country", "be")]
+    , variables = Map.fromList [("domain", "biology"), ("country", "be")]
     }
 
-q4_it1_q6_aYes_fuq5PropsEdited' :: Question
-q4_it1_q6_aYes_fuq5PropsEdited' = IntegrationQuestion' q4_it1_q6_aYes_fuq5PropsEdited
+q4_it1_q6_aYes_fuq5VariablesEdited' :: Question
+q4_it1_q6_aYes_fuq5VariablesEdited' = IntegrationQuestion' q4_it1_q6_aYes_fuq5VariablesEdited
 
-q4_it1_q6_aYes_fuq5PropsEdited :: IntegrationQuestion
-q4_it1_q6_aYes_fuq5PropsEdited =
+q4_it1_q6_aYes_fuq5VariablesEdited :: IntegrationQuestion
+q4_it1_q6_aYes_fuq5VariablesEdited =
   IntegrationQuestion
     { uuid = q4_it1_q6_aYes_followUpQuestion5.uuid
     , title = q4_it1_q6_aYes_followUpQuestion5.title
@@ -353,7 +353,7 @@ q4_it1_q6_aYes_fuq5PropsEdited =
     , referenceUuids = q4_it1_q6_aYes_followUpQuestion5.referenceUuids
     , expertUuids = q4_it1_q6_aYes_followUpQuestion5.expertUuids
     , integrationUuid = q4_it1_q6_aYes_followUpQuestion5.integrationUuid
-    , props = Map.fromList [("domain", "biology"), ("language", "")]
+    , variables = Map.fromList [("domain", "biology"), ("language", "")]
     }
 
 q4_it1_q6_aYes_fuq5ConvertedToValue' :: Question

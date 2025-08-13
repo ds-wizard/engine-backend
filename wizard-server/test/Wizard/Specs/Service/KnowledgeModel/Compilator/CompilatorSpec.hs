@@ -440,8 +440,8 @@ compilatorSpec =
       it "Apply: EditIntegrationEvent" $ do
         let (Right computed) = compile (Just km1WithQ4) [EditIntegrationEvent' e_km1_iop']
         let expected =
-              putInQuestionsM q4_it1_q6_aYes_fuq5PropsEdited.uuid q4_it1_q6_aYes_fuq5PropsEdited'
-                . putInQuestionsM question9PropsEdited.uuid question9PropsEdited'
+              putInQuestionsM q4_it1_q6_aYes_fuq5VariablesEdited.uuid q4_it1_q6_aYes_fuq5VariablesEdited'
+                . putInQuestionsM question9VariablesEdited.uuid question9VariablesEdited'
                 $ km1WithQ4
                   { entities =
                       km1WithQ4.entities

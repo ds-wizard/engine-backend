@@ -37,6 +37,6 @@ class HasText' entity where
   getText :: entity -> Maybe String
   setText :: entity -> Maybe String -> entity
 
-class HasProps' entity fieldType where
-  getProps :: entity -> fieldType
-  setProps :: entity -> fieldType -> entity
+class HasVariables' entity fieldType where
+  getVariables :: entity -> fieldType
+  setVariables :: entity -> fieldType -> entity

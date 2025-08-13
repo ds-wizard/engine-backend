@@ -202,7 +202,7 @@ modifierSpec =
                 let computed = editEntity event question9'
                 -- THEN:
                 computed `shouldBe` expected
-      describe "updateIntegrationProps" $ do
+      describe "updateIntegrationVariables" $ do
         describe "OptionsQuestion" $
           it "Do nothing with the question" $
             -- GIVEN: Inputs
@@ -211,7 +211,7 @@ modifierSpec =
               -- AND: Expectations
               let expected = question2'
               -- WHEN:
-              let computed = updateIntegrationProps event question2'
+              let computed = updateIntegrationVariables event question2'
               -- THEN:
               computed `shouldBe` expected
         describe "ListQuestion" $
@@ -222,7 +222,7 @@ modifierSpec =
               -- AND: Expectations
               let expected = question4'
               -- WHEN:
-              let computed = updateIntegrationProps event question4'
+              let computed = updateIntegrationVariables event question4'
               -- THEN:
               computed `shouldBe` expected
         describe "ValueQuestion" $
@@ -233,18 +233,18 @@ modifierSpec =
               -- AND: Expectations
               let expected = question1'
               -- WHEN:
-              let computed = updateIntegrationProps event question1'
+              let computed = updateIntegrationVariables event question1'
               -- THEN:
               computed `shouldBe` expected
         describe "IntegrationQuestion" $
-          it "Update the props" $
+          it "Update the variables" $
             -- GIVEN: Inputs
             do
               let event = e_km1_iop'
               -- AND: Expectations
-              let expected = question9PropsEdited'
+              let expected = question9VariablesEdited'
               -- WHEN:
-              let computed = updateIntegrationProps event question9'
+              let computed = updateIntegrationVariables event question9'
               -- THEN:
               computed `shouldBe` expected
     describe "Answer level" $ do

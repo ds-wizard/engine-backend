@@ -21,7 +21,7 @@ instance SimpleEventSquash EditIntegrationEvent where
         , entityUuid = newEvent.entityUuid
         , iId = applyValue oldEvent newEvent (.iId)
         , name = applyValue oldEvent newEvent (.name)
-        , props = applyValue oldEvent newEvent (.props)
+        , variables = applyValue oldEvent newEvent (.variables)
         , logo = applyValue oldEvent newEvent (.logo)
         , requestMethod = applyValue oldEvent newEvent (.requestMethod)
         , requestUrl = applyValue oldEvent newEvent (.requestUrl)
@@ -43,7 +43,7 @@ instance SimpleEventSquash EditIntegrationEvent where
         , entityUuid = newEvent.entityUuid
         , iId = applyValue oldEvent newEvent (.iId)
         , name = applyValue oldEvent newEvent (.name)
-        , props = applyValue oldEvent newEvent (.props)
+        , variables = applyValue oldEvent newEvent (.variables)
         , logo = applyValue oldEvent newEvent (.logo)
         , widgetUrl = applyValue oldEvent newEvent (.widgetUrl)
         , itemUrl = applyValue oldEvent newEvent (.itemUrl)

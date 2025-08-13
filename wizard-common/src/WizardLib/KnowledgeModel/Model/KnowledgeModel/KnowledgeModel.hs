@@ -151,7 +151,7 @@ data IntegrationQuestion = IntegrationQuestion
   , expertUuids :: [U.UUID]
   , referenceUuids :: [U.UUID]
   , integrationUuid :: U.UUID
-  , props :: Map String String
+  , variables :: Map String String
   }
   deriving (Show, Eq, Generic)
 
@@ -363,7 +363,7 @@ data ApiLegacyIntegration = ApiLegacyIntegration
   { uuid :: U.UUID
   , iId :: String
   , name :: String
-  , props :: [String]
+  , variables :: [String]
   , logo :: Maybe String
   , requestMethod :: String
   , requestUrl :: String
@@ -382,7 +382,7 @@ data WidgetIntegration = WidgetIntegration
   { uuid :: U.UUID
   , iId :: String
   , name :: String
-  , props :: [String]
+  , variables :: [String]
   , logo :: Maybe String
   , widgetUrl :: String
   , itemUrl :: Maybe String

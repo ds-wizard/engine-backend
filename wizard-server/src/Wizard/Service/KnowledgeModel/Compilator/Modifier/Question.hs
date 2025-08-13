@@ -81,7 +81,7 @@ instance CreateEntity AddQuestionEvent Question where
         , referenceUuids = []
         , expertUuids = []
         , integrationUuid = event.integrationUuid
-        , props = event.props
+        , variables = event.variables
         }
   createEntity (AddItemSelectQuestionEvent' event) =
     ItemSelectQuestion' $
@@ -182,7 +182,7 @@ instance EditEntity EditQuestionEvent Question where
             , referenceUuids = applyValue integrationQuestion.referenceUuids event.referenceUuids
             , expertUuids = applyValue integrationQuestion.expertUuids event.expertUuids
             , integrationUuid = applyValue integrationQuestion.integrationUuid event.integrationUuid
-            , props = applyValue integrationQuestion.props event.props
+            , variables = applyValue integrationQuestion.variables event.variables
             }
       applyToItemSelectQuestion event itemSelectQuestion =
         ItemSelectQuestion' $
@@ -329,7 +329,7 @@ convertToIntegrationQuestion q' =
         , referenceUuids = q.referenceUuids
         , expertUuids = q.expertUuids
         , integrationUuid = U.nil
-        , props = M.empty
+        , variables = M.empty
         }
 
 convertToItemSelectQuestion :: Question -> ItemSelectQuestion
@@ -381,16 +381,16 @@ convertToFileQuestion q' =
         , fileTypes = Nothing
         }
 
-updateIntegrationProps :: EditIntegrationEvent -> Question -> Question
-updateIntegrationProps event (IntegrationQuestion' q) = IntegrationQuestion' $ q {props = updatedProps}
+updateIntegrationVariables :: EditIntegrationEvent -> Question -> Question
+updateIntegrationVariables event (IntegrationQuestion' q) = IntegrationQuestion' $ q {variables = updatedVariables}
   where
-    updatedProps =
+    updatedVariables =
       if q.integrationUuid == getEntityUuid event
-        then case getProps event of
-          ChangedValue ps -> M.fromList . fmap (\p -> (p, fromMaybe "" (M.lookup p q.props))) $ ps
-          NothingChanged -> q.props
-        else q.props
-updateIntegrationProps _ q' = q'
+        then case getVariables event of
+          ChangedValue ps -> M.fromList . fmap (\p -> (p, fromMaybe "" (M.lookup p q.variables))) $ ps
+          NothingChanged -> q.variables
+        else q.variables
+updateIntegrationVariables _ q' = q'
 
 deleteIntegrationReference :: DeleteIntegrationEvent -> Question -> Question
 deleteIntegrationReference event (IntegrationQuestion' q) =

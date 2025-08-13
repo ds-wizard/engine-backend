@@ -38,7 +38,7 @@ getLegacyTypeHints reqDto =
       ApiLegacyIntegration' integration -> do
         fileIntConfig <- getFileIntegrationConfig integration.iId
         appIntConfig <- getTenantIntegrationConfig integration.iId
-        let configs = M.union question.props . M.union appIntConfig $ fileIntConfig
+        let configs = M.union question.variables . M.union appIntConfig $ fileIntConfig
         let variables = M.insert "q" reqDto.q configs
         let urlVariables = M.insert "q" (encode reqDto.q) configs
         eiDtos <- retrieveLegacyTypeHints integration urlVariables variables
@@ -69,7 +69,7 @@ getTypeHints (BranchQuestionTypeHintRequest' reqDto) =
     question <- getQuestion km reqDto.questionUuid
     integration' <- getIntegration km question.integrationUuid
     case integration' of
-      ApiIntegration' integration -> runApiIntegrationTypeHints integration question.props reqDto.q
+      ApiIntegration' integration -> runApiIntegrationTypeHints integration question.variables reqDto.q
       _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION
 getTypeHints (QuestionnaireTypeHintRequest' reqDto) =
   runInTransaction $ do
@@ -79,7 +79,7 @@ getTypeHints (QuestionnaireTypeHintRequest' reqDto) =
     question <- getQuestion km reqDto.questionUuid
     integration' <- getIntegration km question.integrationUuid
     case integration' of
-      ApiIntegration' integration -> runApiIntegrationTypeHints integration question.props reqDto.q
+      ApiIntegration' integration -> runApiIntegrationTypeHints integration question.variables reqDto.q
       _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION
 
 runApiIntegrationTypeHints :: ApiIntegration -> M.Map String String -> String -> AppContextM [TypeHintIDTO]

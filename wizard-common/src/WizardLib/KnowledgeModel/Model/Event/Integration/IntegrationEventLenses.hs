@@ -70,13 +70,13 @@ instance HasEntityUuid' DeleteIntegrationEvent where
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
-instance HasProps' EditIntegrationEvent (EventField [String]) where
-  getProps (EditApiIntegrationEvent' e) = e.variables
-  getProps (EditApiLegacyIntegrationEvent' e) = e.props
-  getProps (EditWidgetIntegrationEvent' e) = e.props
-  setProps (EditApiIntegrationEvent' e) newValue = EditApiIntegrationEvent' $ e {variables = newValue}
-  setProps (EditApiLegacyIntegrationEvent' e) newValue = EditApiLegacyIntegrationEvent' $ e {props = newValue}
-  setProps (EditWidgetIntegrationEvent' e) newValue = EditWidgetIntegrationEvent' $ e {props = newValue}
+instance HasVariables' EditIntegrationEvent (EventField [String]) where
+  getVariables (EditApiIntegrationEvent' e) = e.variables
+  getVariables (EditApiLegacyIntegrationEvent' e) = e.variables
+  getVariables (EditWidgetIntegrationEvent' e) = e.variables
+  setVariables (EditApiIntegrationEvent' e) newValue = EditApiIntegrationEvent' $ e {variables = newValue}
+  setVariables (EditApiLegacyIntegrationEvent' e) newValue = EditApiLegacyIntegrationEvent' $ e {variables = newValue}
+  setVariables (EditWidgetIntegrationEvent' e) newValue = EditWidgetIntegrationEvent' $ e {variables = newValue}
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------

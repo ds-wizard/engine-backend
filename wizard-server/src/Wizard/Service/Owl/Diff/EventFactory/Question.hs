@@ -101,7 +101,7 @@ instance EventFactory Question where
             , annotations = entity.annotations
             , tagUuids = entity.tagUuids
             , integrationUuid = entity.integrationUuid
-            , props = entity.props
+            , variables = entity.variables
             , createdAt = now
             }
   createAddEvent _ _ = error "Add event is not applicable for this type of question"
@@ -224,7 +224,7 @@ instance EventFactory Question where
                 diffField oldEntity.referenceUuids newEntity.referenceUuids
             , integrationUuid =
                 diffField oldEntity.integrationUuid newEntity.integrationUuid
-            , props = diffField oldEntity.props newEntity.props
+            , variables = diffField oldEntity.variables newEntity.variables
             , createdAt = now
             }
     if isEmptyEvent event

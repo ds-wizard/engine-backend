@@ -29,11 +29,11 @@ instance ApplyEvent AddIntegrationEvent where
       addEntity = putInIntegrationsM (getEntityUuid event) (createEntity event)
 
 instance ApplyEvent EditIntegrationEvent where
-  apply event = updateIntegrationProps' event . applyEditEvent getIntegrationsM setIntegrationsM event
+  apply event = updateIntegrationVariables' event . applyEditEvent getIntegrationsM setIntegrationsM event
     where
-      updateIntegrationProps' :: EditIntegrationEvent -> Either AppError KnowledgeModel -> Either AppError KnowledgeModel
-      updateIntegrationProps' _ (Left error) = Left error
-      updateIntegrationProps' event (Right km) = Right . setQuestionsM km $ M.map (updateIntegrationProps event) km.entities.questions
+      updateIntegrationVariables' :: EditIntegrationEvent -> Either AppError KnowledgeModel -> Either AppError KnowledgeModel
+      updateIntegrationVariables' _ (Left error) = Left error
+      updateIntegrationVariables' event (Right km) = Right . setQuestionsM km $ M.map (updateIntegrationVariables event) km.entities.questions
 
 instance ApplyEvent DeleteIntegrationEvent where
   apply event = Right . deleteEntity . deleteEntityReference . deleteEntityChildrenReference

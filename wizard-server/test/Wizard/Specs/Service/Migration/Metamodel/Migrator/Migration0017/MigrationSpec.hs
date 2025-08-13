@@ -22,3 +22,7 @@ spec = do
     runMigration17 Fixtures.addIntegrationEventIn1 `shouldBeJson` Fixtures.addIntegrationEventOut1
   it "migrates EditIntegrationEvent" $
     runMigration17 Fixtures.editIntegrationEventIn1 `shouldBeJson` Fixtures.editIntegrationEventOut1
+  it "migrates AddQuestionEvent" $
+    runMigration17 Fixtures.addQuestionEventIn1 `shouldBeJson` Fixtures.addQuestionEventOut1
+  it "migrates EditQuestionEvent" $
+    runMigration17 Fixtures.editQuestionEventIn1 `shouldBeJson` Fixtures.editQuestionEventOut1
