@@ -21,17 +21,33 @@ migrateAddIntegrationEvent :: Object -> Object
 migrateAddIntegrationEvent =
   runBasicOps
     [ Change "integrationType" changeIntegrationTypeValue
+    , Rename "props" "variables"
     ]
 
 migrateEditIntegrationEvent :: Object -> Object
 migrateEditIntegrationEvent =
   runBasicOps
     [ Change "integrationType" changeIntegrationTypeValue
+    , Rename "props" "variables"
+    ]
+
+migrateAddQuestionEvent :: Object -> Object
+migrateAddQuestionEvent =
+  runBasicOps
+    [ Rename "props" "variables"
+    ]
+
+migrateEditQuestionEvent :: Object -> Object
+migrateEditQuestionEvent =
+  runBasicOps
+    [ Rename "props" "variables"
     ]
 
 runMigration :: T.Text -> Object -> Object
 runMigration "AddIntegrationEvent" obj = migrateAddIntegrationEvent obj
 runMigration "EditIntegrationEvent" obj = migrateEditIntegrationEvent obj
+runMigration "AddQuestionEvent" obj = migrateAddQuestionEvent obj
+runMigration "EditQuestionEvent" obj = migrateEditQuestionEvent obj
 runMigration _ obj = obj
 
 migrate :: Value -> Value

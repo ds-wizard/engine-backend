@@ -219,7 +219,7 @@ question4WithNewType =
     , referenceUuids = question4.referenceUuids
     , expertUuids = question4.expertUuids
     , integrationUuid = ontologyPortal.uuid
-    , props = Map.fromList [("domain", "biology"), ("country", "nl")]
+    , variables = Map.fromList [("domain", "biology"), ("country", "nl")]
     }
 
 question4Plain' :: Question
@@ -375,7 +375,7 @@ question9 =
     , referenceUuids = []
     , expertUuids = []
     , integrationUuid = ontologyPortal.uuid
-    , props = Map.fromList [("domain", "biology"), ("country", "nl")]
+    , variables = Map.fromList [("domain", "biology"), ("country", "nl")]
     }
 
 question9Edited' :: Question
@@ -393,14 +393,14 @@ question9Edited =
     , referenceUuids = question9.referenceUuids
     , expertUuids = question9.expertUuids
     , integrationUuid = question9.integrationUuid
-    , props = Map.fromList [("domain", "biology"), ("country", "de")]
+    , variables = Map.fromList [("domain", "biology"), ("country", "de")]
     }
 
-question9PropsEdited' :: Question
-question9PropsEdited' = IntegrationQuestion' question9PropsEdited
+question9VariablesEdited' :: Question
+question9VariablesEdited' = IntegrationQuestion' question9VariablesEdited
 
-question9PropsEdited :: IntegrationQuestion
-question9PropsEdited =
+question9VariablesEdited :: IntegrationQuestion
+question9VariablesEdited =
   IntegrationQuestion
     { uuid = question9.uuid
     , title = question9.title
@@ -411,7 +411,7 @@ question9PropsEdited =
     , referenceUuids = question9.referenceUuids
     , expertUuids = question9.expertUuids
     , integrationUuid = question9.integrationUuid
-    , props = Map.fromList [("domain", "biology"), ("language", "")]
+    , variables = Map.fromList [("domain", "biology"), ("language", "")]
     }
 
 question9WithNewType' :: Question
@@ -465,7 +465,7 @@ question10 =
     , referenceUuids = []
     , expertUuids = []
     , integrationUuid = bioPortal.uuid
-    , props = Map.fromList [("domain", "legal"), ("branch", "mammal")]
+    , variables = Map.fromList [("domain", "legal"), ("branch", "mammal")]
     }
 
 question10ConvertedToValue' :: Question
@@ -620,5 +620,5 @@ question15 =
     , referenceUuids = []
     , expertUuids = []
     , integrationUuid = repositoryApi.uuid
-    , props = Map.fromList [("domain", "biology"), ("country", "nl")]
+    , variables = Map.fromList [("domain", "biology"), ("country", "nl")]
     }

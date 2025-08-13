@@ -247,7 +247,7 @@ a_km1_ch3_q9 =
     , annotations = question9.annotations
     , tagUuids = question9.tagUuids
     , integrationUuid = question9.integrationUuid
-    , props = question9.props
+    , variables = question9.variables
     , createdAt = dt' 2018 1 21
     }
 
@@ -266,7 +266,7 @@ a_km1_ch3_q10 =
     , tagUuids = question10.tagUuids
     , integrationUuid = question10.integrationUuid
     , annotations = question10.annotations
-    , props = question10.props
+    , variables = question10.variables
     , createdAt = dt' 2018 1 21
     }
 
@@ -356,7 +356,7 @@ a_km1_ch3_q15 =
     , annotations = question15.annotations
     , tagUuids = question15.tagUuids
     , integrationUuid = question15.integrationUuid
-    , props = question15.props
+    , variables = question15.variables
     , createdAt = dt' 2018 1 21
     }
 
@@ -498,7 +498,7 @@ e_km1_ch2_q4_type =
     , expertUuids = NothingChanged
     , referenceUuids = NothingChanged
     , integrationUuid = ChangedValue $ question4WithNewType.integrationUuid
-    , props = ChangedValue $ question4WithNewType.props
+    , variables = ChangedValue $ question4WithNewType.variables
     , createdAt = dt' 2018 1 21
     }
 
@@ -519,7 +519,7 @@ e_km1_ch3_q9 =
     , expertUuids = ChangedValue $ question9Edited.expertUuids
     , referenceUuids = ChangedValue $ question9Edited.referenceUuids
     , integrationUuid = ChangedValue $ question9Edited.integrationUuid
-    , props = ChangedValue $ question9Edited.props
+    , variables = ChangedValue $ question9Edited.variables
     , createdAt = dt' 2018 1 21
     }
 
@@ -1073,7 +1073,7 @@ a_km1_ch2_ansYes6_fuq5 =
     , annotations = q4_it1_q6_aYes_followUpQuestion5.annotations
     , tagUuids = q4_it1_q6_aYes_followUpQuestion5.tagUuids
     , integrationUuid = q4_it1_q6_aYes_followUpQuestion5.integrationUuid
-    , props = q4_it1_q6_aYes_followUpQuestion5.props
+    , variables = q4_it1_q6_aYes_followUpQuestion5.variables
     , createdAt = dt' 2018 1 21
     }
 
@@ -1551,7 +1551,7 @@ a_km1_iop =
     , entityUuid = ontologyPortal.uuid
     , iId = ontologyPortal.iId
     , name = ontologyPortal.name
-    , props = ontologyPortal.props
+    , variables = ontologyPortal.variables
     , logo = ontologyPortal.logo
     , requestMethod = ontologyPortal.requestMethod
     , requestUrl = ontologyPortal.requestUrl
@@ -1577,7 +1577,7 @@ a_km1_ibp =
     , entityUuid = bioPortal.uuid
     , iId = bioPortal.iId
     , name = bioPortal.name
-    , props = bioPortal.props
+    , variables = bioPortal.variables
     , logo = bioPortal.logo
     , requestMethod = bioPortal.requestMethod
     , requestUrl = bioPortal.requestUrl
@@ -1603,7 +1603,7 @@ a_km1_iwp =
     , entityUuid = widgetPortal.uuid
     , iId = widgetPortal.iId
     , name = widgetPortal.name
-    , props = widgetPortal.props
+    , variables = widgetPortal.variables
     , logo = widgetPortal.logo
     , widgetUrl = widgetPortal.widgetUrl
     , itemUrl = widgetPortal.itemUrl
@@ -1649,7 +1649,7 @@ e_km1_iop =
     , entityUuid = ontologyPortalEdited.uuid
     , iId = ChangedValue $ ontologyPortalEdited.iId
     , name = ChangedValue $ ontologyPortalEdited.name
-    , props = ChangedValue $ ontologyPortalEdited.props
+    , variables = ChangedValue $ ontologyPortalEdited.variables
     , logo = ChangedValue $ ontologyPortalEdited.logo
     , requestMethod = ChangedValue $ ontologyPortalEdited.requestMethod
     , requestUrl = ChangedValue $ ontologyPortalEdited.requestUrl
@@ -1675,7 +1675,7 @@ e_km1_iwp =
     , entityUuid = widgetPortalEdited.uuid
     , iId = ChangedValue $ widgetPortalEdited.iId
     , name = ChangedValue $ widgetPortalEdited.name
-    , props = ChangedValue $ widgetPortalEdited.props
+    , variables = ChangedValue $ widgetPortalEdited.variables
     , logo = ChangedValue $ widgetPortalEdited.logo
     , widgetUrl = ChangedValue $ widgetPortalEdited.widgetUrl
     , itemUrl = ChangedValue $ widgetPortalEdited.itemUrl

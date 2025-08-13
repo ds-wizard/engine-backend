@@ -68,7 +68,7 @@ instance IsEmptyEvent EditIntegrationQuestionEvent where
       , isChangedValue event.expertUuids
       , isChangedValue event.referenceUuids
       , isChangedValue event.integrationUuid
-      , isChangedValue event.props
+      , isChangedValue event.variables
       ]
 
 instance IsEmptyEvent EditItemSelectQuestionEvent where
