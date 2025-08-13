@@ -171,7 +171,7 @@ km1WithQ4 =
     , annotations = []
     , chapterUuids = [chapter1.uuid, chapter2WithQ4.uuid, chapter3.uuid]
     , tagUuids = [tagDataScience.uuid, tagBioInformatic.uuid]
-    , integrationUuids = [ontologyPortal.uuid, bioPortal.uuid, widgetPortal.uuid]
+    , integrationUuids = [repositoryApi.uuid, ontologyPortal.uuid, bioPortal.uuid, widgetPortal.uuid]
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
     , phaseUuids = [phase1.uuid, phase2.uuid, phase3.uuid]
@@ -201,6 +201,7 @@ km1WithQ4 =
                 , question12'
                 , question13'
                 , question14'
+                , question15'
                 ]
           , answers =
               toMap
@@ -219,7 +220,7 @@ km1WithQ4 =
           , experts =
               toMap [km1_ch1_q2_eAlbert, km1_ch1_q2_eNikola, km1_ch2_q6_eAlbert, km1_ch2_q6_eNikola]
           , references = toMap [km1_ch1_q2_r1', km1_ch1_q2_r2', km1_ch2_q6_r1', km1_ch2_q6_r2']
-          , integrations = toMap [ontologyPortal', bioPortal', widgetPortal']
+          , integrations = toMap [repositoryApi', ontologyPortal', bioPortal', widgetPortal']
           , tags = toMap [tagDataScience, tagBioInformatic]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]

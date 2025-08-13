@@ -5,3 +5,8 @@ ontologyPortal:
 bioPortal:
   baseurl: https://mockserver.ds-wizard.org
   apikey: '123456'
+
+secrets:
+  repositoryApiUrl: https://mockserver.ds-wizard.org
+  repositoryApiKey: '123456'
+  repositoryPath: repository-api.json

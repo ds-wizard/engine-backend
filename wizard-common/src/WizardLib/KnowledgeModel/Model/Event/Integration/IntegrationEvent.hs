@@ -9,6 +9,7 @@ import GHC.Generics
 import Shared.Common.Model.Common.MapEntry
 import WizardLib.Common.Util.Hashable ()
 import WizardLib.KnowledgeModel.Model.Event.EventField
+import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 data AddIntegrationEvent
   = AddApiIntegrationEvent' AddApiIntegrationEvent
@@ -35,7 +36,7 @@ data AddApiIntegrationEvent = AddApiIntegrationEvent
   , responseItemTemplateForSelection :: Maybe String
   , testQ :: String
   , testVariables :: M.Map String String
-  , testResponse :: Maybe String
+  , testResponse :: Maybe TypeHintExchange
   , annotations :: [MapEntry String String]
   , createdAt :: UTCTime
   }
@@ -109,7 +110,7 @@ data EditApiIntegrationEvent = EditApiIntegrationEvent
   , responseItemTemplateForSelection :: EventField (Maybe String)
   , testQ :: EventField String
   , testVariables :: EventField (M.Map String String)
-  , testResponse :: EventField (Maybe String)
+  , testResponse :: EventField (Maybe TypeHintExchange)
   , annotations :: EventField [MapEntry String String]
   , createdAt :: UTCTime
   }
@@ -167,3 +168,15 @@ data DeleteIntegrationEvent = DeleteIntegrationEvent
   deriving (Show, Eq, Generic)
 
 instance Hashable DeleteIntegrationEvent
+
+instance Hashable TypeHintExchange
+
+instance Hashable TypeHintRequest
+
+instance Hashable TypeHintResponse
+
+instance Hashable SuccessTypeHintResponse
+
+instance Hashable RemoteErrorTypeHintResponse
+
+instance Hashable RequestFailedTypeHintResponse

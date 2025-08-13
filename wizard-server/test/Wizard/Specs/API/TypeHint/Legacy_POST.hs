@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Typehint.List_POST (
-  list_POST,
+module Wizard.Specs.API.TypeHint.Legacy_POST (
+  legacy_POST,
 ) where
 
 import Data.Aeson (encode)
@@ -10,7 +10,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
-import Wizard.Database.Migration.Development.Typehint.Data.Typehints
+import Wizard.Database.Migration.Development.TypeHint.Data.TypeHints
 import Wizard.Model.Context.AppContext
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
@@ -20,21 +20,21 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /wizard-api/typehints
+-- POST /wizard-api/type-hints-legacy
 -- ------------------------------------------------------------------------
-list_POST :: AppContext -> SpecWith ((), Application)
-list_POST appContext = describe "POST /wizard-api/typehints" $ test_200 appContext
+legacy_POST :: AppContext -> SpecWith ((), Application)
+legacy_POST appContext = describe "POST /wizard-api/type-hints-legacy" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/wizard-api/typehints"
+reqUrl = "/wizard-api/type-hints-legacy"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = typehintRequest
+reqDto = typeHintLegacyRequest
 
 reqBody = encode reqDto
 
@@ -47,7 +47,7 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = [lifeScienceTypehint, mathematicalTypehint, legalTypehint]
+      let expDto = [lifeScienceLegacyTypeHint, mathematicalLegacyTypeHint, legalLegacyTypeHint]
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO PKG.runMigration appContext

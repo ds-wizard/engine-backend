@@ -2,6 +2,7 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM where
 
 import Data.Swagger
 
+import Shared.Common.Api.Resource.Common.AesonSM ()
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies

@@ -135,6 +135,24 @@ instance ToSchema Integration
 instance ToSchema ApiIntegration where
   declareNamedSchema = toSwaggerWithType "integrationType" repositoryApi
 
+instance ToSchema TypeHintExchange where
+  declareNamedSchema = toSwagger repositoryApiTypeHintExchange1
+
+instance ToSchema TypeHintRequest where
+  declareNamedSchema = toSwagger repositoryApiTypeHintRequest1
+
+instance ToSchema TypeHintResponse where
+  declareNamedSchema = toSwagger typeHintResponse1
+
+instance ToSchema SuccessTypeHintResponse where
+  declareNamedSchema = toSwagger successTypeHintResponse1
+
+instance ToSchema RemoteErrorTypeHintResponse where
+  declareNamedSchema = toSwagger remoteErrorTypeHintResponse1
+
+instance ToSchema RequestFailedTypeHintResponse where
+  declareNamedSchema = toSwagger requestFailedTypeHintResponse1
+
 -- --------------------------------------------------------------------
 instance ToSchema ApiLegacyIntegration where
   declareNamedSchema = toSwaggerWithType "integrationType" bioPortal

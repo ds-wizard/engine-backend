@@ -1,7 +1,9 @@
 module Shared.Common.Util.Aeson where
 
 import Data.Aeson
+import qualified Data.Aeson.Key as K
 import qualified Data.Aeson.KeyMap as KM
+import qualified Data.Map.Strict as M
 import Data.String (fromString)
 import qualified Data.Text as T
 import Data.Time
@@ -97,3 +99,12 @@ maybeUuid = maybe Null uuid
 
 datetime :: UTCTime -> Value
 datetime = toJSON
+
+key :: String -> Key
+key = K.fromString
+
+mapToObject :: M.Map String String -> Value
+mapToObject = object . Prelude.map stringsToPair . M.toList
+
+stringsToPair :: (String, String) -> (Key, Value)
+stringsToPair (k, v) = (key k, string v)

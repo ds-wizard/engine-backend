@@ -234,6 +234,49 @@ instance ToJSON ApiIntegration where
 instance FromJSON ApiIntegration where
   parseJSON = genericParseJSON (jsonOptionsWithTypeField "integrationType")
 
+instance ToJSON TypeHintExchange where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON TypeHintExchange where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON TypeHintRequest where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON TypeHintRequest where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON TypeHintResponse where
+  toJSON = toSumJSON
+
+instance FromJSON TypeHintResponse where
+  parseJSON (Object o) = do
+    responseType <- o .: "responseType"
+    case responseType of
+      "SuccessTypeHintResponse" -> parseJSON (Object o) >>= \event -> return (SuccessTypeHintResponse' event)
+      "RemoteErrorTypeHintResponse" -> parseJSON (Object o) >>= \event -> return (RemoteErrorTypeHintResponse' event)
+      "RequestFailedTypeHintResponse" -> parseJSON (Object o) >>= \event -> return (RequestFailedTypeHintResponse' event)
+      _ -> fail "One of the integrations has unsupported responseType"
+  parseJSON _ = mzero
+
+instance ToJSON SuccessTypeHintResponse where
+  toJSON = genericToJSON (jsonOptionsWithTypeField "responseType")
+
+instance FromJSON SuccessTypeHintResponse where
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "responseType")
+
+instance ToJSON RemoteErrorTypeHintResponse where
+  toJSON = genericToJSON (jsonOptionsWithTypeField "responseType")
+
+instance FromJSON RemoteErrorTypeHintResponse where
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "responseType")
+
+instance ToJSON RequestFailedTypeHintResponse where
+  toJSON = genericToJSON (jsonOptionsWithTypeField "responseType")
+
+instance FromJSON RequestFailedTypeHintResponse where
+  parseJSON = genericParseJSON (jsonOptionsWithTypeField "responseType")
+
 -- --------------------------------------------------------------------
 instance ToJSON ApiLegacyIntegration where
   toJSON = genericToJSON (jsonOptionsWithTypeField "integrationType")
