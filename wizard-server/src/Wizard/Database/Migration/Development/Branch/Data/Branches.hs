@@ -94,6 +94,9 @@ amsterdamBranchData =
         , AddQuestionEvent' a_km1_ch2_q3'
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
+        , AddChapterEvent' a_km1_ch3
+        , AddIntegrationEvent' a_km1_ir'
+        , AddQuestionEvent' a_km1_ch3_q15'
         ]
     , replies = M.empty
     , squashed = True

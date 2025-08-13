@@ -604,3 +604,21 @@ question14Edited =
     , maxSize = Just 40000
     , fileTypes = Just "text/html"
     }
+
+question15' :: Question
+question15' = IntegrationQuestion' question15
+
+question15 :: IntegrationQuestion
+question15 =
+  IntegrationQuestion
+    { uuid = u' "00000000-0000-0000-0000-000000000f15"
+    , title = "Fifteen Question"
+    , text = Nothing
+    , requiredPhaseUuid = Nothing
+    , annotations = []
+    , tagUuids = [tagBioInformatic.uuid]
+    , referenceUuids = []
+    , expertUuids = []
+    , integrationUuid = repositoryApi.uuid
+    , props = Map.fromList [("domain", "biology"), ("country", "nl")]
+    }

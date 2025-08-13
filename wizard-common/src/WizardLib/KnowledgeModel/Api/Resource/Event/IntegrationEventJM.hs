@@ -6,6 +6,7 @@ import Data.Aeson
 import Shared.Common.Api.Resource.Common.MapEntryJM ()
 import Shared.Common.Util.Aeson
 import WizardLib.KnowledgeModel.Api.Resource.Event.EventFieldJM ()
+import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import WizardLib.KnowledgeModel.Model.Event.Integration.IntegrationEvent
 
 instance ToJSON AddIntegrationEvent where

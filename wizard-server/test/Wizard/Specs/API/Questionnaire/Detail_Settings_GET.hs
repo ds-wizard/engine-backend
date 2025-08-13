@@ -32,7 +32,7 @@ import qualified WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTem
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel hiding (request)
 import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as SPM
 import WizardLib.Public.Localization.Messages.Public
 
