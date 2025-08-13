@@ -402,16 +402,16 @@ instance HasIntegrationUuid' Question where
   setIntegrationUuid q newValue = q
 
 -- ------------------------------------------------------------------------------------------
-instance HasProps' Question (M.Map String String) where
-  getProps (IntegrationQuestion' q) = q.props
-  getProps q = M.empty
-  setProps (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {props = newValue}
-  setProps q newValue = q
+instance HasVariables' Question (M.Map String String) where
+  getVariables (IntegrationQuestion' q) = q.variables
+  getVariables q = M.empty
+  setVariables (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {variables = newValue}
+  setVariables q newValue = q
 
-instance HasProps' Integration [String] where
-  getProps (ApiIntegration' integration) = integration.variables
-  getProps (ApiLegacyIntegration' integration) = integration.props
-  getProps (WidgetIntegration' integration) = integration.props
-  setProps (ApiIntegration' integration) newValue = ApiIntegration' $ integration {variables = newValue}
-  setProps (ApiLegacyIntegration' integration) newValue = ApiLegacyIntegration' $ integration {props = newValue}
-  setProps (WidgetIntegration' integration) newValue = WidgetIntegration' $ integration {props = newValue}
+instance HasVariables' Integration [String] where
+  getVariables (ApiIntegration' integration) = integration.variables
+  getVariables (ApiLegacyIntegration' integration) = integration.variables
+  getVariables (WidgetIntegration' integration) = integration.variables
+  setVariables (ApiIntegration' integration) newValue = ApiIntegration' $ integration {variables = newValue}
+  setVariables (ApiLegacyIntegration' integration) newValue = ApiLegacyIntegration' $ integration {variables = newValue}
+  setVariables (WidgetIntegration' integration) newValue = WidgetIntegration' $ integration {variables = newValue}

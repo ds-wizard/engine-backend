@@ -146,7 +146,7 @@ instance SimpleEventSquash EditQuestionEvent where
         , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
         , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
         , integrationUuid = applyValue oldEvent newEvent (.integrationUuid)
-        , props = applyValue oldEvent newEvent (.props)
+        , variables = applyValue oldEvent newEvent (.variables)
         , createdAt = oldEvent.createdAt
         }
   simpleSquashEvent mPreviousEvent (EditItemSelectQuestionEvent' oldEvent) (EditItemSelectQuestionEvent' newEvent) =

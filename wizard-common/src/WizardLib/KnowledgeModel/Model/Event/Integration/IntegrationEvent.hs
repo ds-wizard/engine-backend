@@ -50,7 +50,7 @@ data AddApiLegacyIntegrationEvent = AddApiLegacyIntegrationEvent
   , entityUuid :: U.UUID
   , iId :: String
   , name :: String
-  , props :: [String]
+  , variables :: [String]
   , logo :: Maybe String
   , requestMethod :: String
   , requestUrl :: String
@@ -74,7 +74,7 @@ data AddWidgetIntegrationEvent = AddWidgetIntegrationEvent
   , entityUuid :: U.UUID
   , iId :: String
   , name :: String
-  , props :: [String]
+  , variables :: [String]
   , logo :: Maybe String
   , widgetUrl :: String
   , itemUrl :: Maybe String
@@ -124,7 +124,7 @@ data EditApiLegacyIntegrationEvent = EditApiLegacyIntegrationEvent
   , entityUuid :: U.UUID
   , iId :: EventField String
   , name :: EventField String
-  , props :: EventField [String]
+  , variables :: EventField [String]
   , logo :: EventField (Maybe String)
   , requestMethod :: EventField String
   , requestUrl :: EventField String
@@ -148,7 +148,7 @@ data EditWidgetIntegrationEvent = EditWidgetIntegrationEvent
   , entityUuid :: U.UUID
   , iId :: EventField String
   , name :: EventField String
-  , props :: EventField [String]
+  , variables :: EventField [String]
   , logo :: EventField (Maybe String)
   , widgetUrl :: EventField String
   , itemUrl :: EventField (Maybe String)

@@ -182,7 +182,7 @@ test_201_req_one_db_rest appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201_without_readme appContext =
-  it "HTTP 201 CREATED - Without 'readme' props" $
+  it "HTTP 201 CREATED - Without 'readme' field" $
     -- GIVEN: Prepare request
     do
       let reqDto = PBM.toDTO (netherlandsPackageBudle {packages = [netherlandsPackage]})
