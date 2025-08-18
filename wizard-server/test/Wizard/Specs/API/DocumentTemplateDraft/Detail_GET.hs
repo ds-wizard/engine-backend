@@ -18,6 +18,7 @@ import qualified Wizard.Database.Migration.Development.Registry.RegistryMigratio
 import Wizard.Model.Context.AppContext
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
+import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
@@ -58,7 +59,7 @@ test_200 appContext = do
       -- GIVEN: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = toDraftDetail wizardDocumentTemplateDraft wizardDocumentTemplateDraftData (Just . toSuggestion $ questionnaire1) Nothing
+      let expDto = toDraftDetail wizardDocumentTemplateDraft wizardDocumentTemplateDraftFormats wizardDocumentTemplateDraftData (Just . toSuggestion $ questionnaire1) Nothing
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext

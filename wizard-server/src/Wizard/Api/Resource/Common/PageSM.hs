@@ -64,6 +64,7 @@ import qualified Wizard.Service.User.Group.UserGroupMapper as UG_Mapper
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionSM ()
+import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
@@ -158,7 +159,7 @@ instance ToSchema (Page DocumentTemplateSuggestionDTO) where
   declareNamedSchema =
     toSwaggerWithDtoName
       "Page DocumentTemplateSuggestionDTO"
-      (Page "documentTemplates" pageMetadata [toSuggestionDTO wizardDocumentTemplate])
+      (Page "documentTemplates" pageMetadata [toSuggestionDTO wizardDocumentTemplate wizardDocumentTemplateFormats])
 
 instance ToSchema (Page DocumentDTO) where
   declareNamedSchema = toSwaggerWithDtoName "Page DocumentDTO" (Page "documents" pageMetadata [doc1Dto])

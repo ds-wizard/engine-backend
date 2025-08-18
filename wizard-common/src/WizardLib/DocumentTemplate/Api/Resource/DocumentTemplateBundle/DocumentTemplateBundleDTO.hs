@@ -5,7 +5,6 @@ import GHC.Generics
 
 import Shared.Common.Model.Common.SemVer2Tuple
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Model.Package.PackagePattern
 
 data DocumentTemplateBundleDTO = DocumentTemplateBundleDTO
@@ -19,7 +18,7 @@ data DocumentTemplateBundleDTO = DocumentTemplateBundleDTO
   , readme :: String
   , license :: String
   , allowedPackages :: [PackagePattern]
-  , formats :: [DocumentTemplateFormat]
+  , formats :: [DocumentTemplateFormatDTO]
   , files :: [DocumentTemplateFileDTO]
   , assets :: [DocumentTemplateAssetDTO]
   , createdAt :: UTCTime

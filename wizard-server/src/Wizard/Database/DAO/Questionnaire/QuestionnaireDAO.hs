@@ -42,7 +42,6 @@ import Wizard.Model.Questionnaire.QuestionnaireDetailPreview
 import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
 import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
 import Wizard.Model.Questionnaire.QuestionnaireList
-import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireSimpleWithPerm
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
 import Wizard.Model.User.User
@@ -371,16 +370,6 @@ findQuestionnaireByUuid' qtnUuid = do
     Just entity -> enhance entity >>= return . Just
     Nothing -> return Nothing
 
-findQuestionnaireSimpleByUuid :: U.UUID -> AppContextM QuestionnaireSimple
-findQuestionnaireSimpleByUuid uuid = do
-  tenantUuid <- asks currentTenantUuid
-  createFindEntityWithFieldsByFn "uuid, name" False entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
-
-findQuestionnaireSimpleByUuid' :: U.UUID -> AppContextM (Maybe QuestionnaireSimple)
-findQuestionnaireSimpleByUuid' uuid = do
-  tenantUuid <- asks currentTenantUuid
-  createFindEntityWithFieldsByFn' "uuid, name" entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
-
 findQuestionnaireSuggestionByUuid' :: U.UUID -> AppContextM (Maybe QuestionnaireSuggestion)
 findQuestionnaireSuggestionByUuid' uuid = do
   tenantUuid <- asks currentTenantUuid
@@ -497,10 +486,11 @@ findQuestionnaireDetailPreview uuid = do
             \       qtn.package_id, \
             \       qtn.is_template, \
             \       qtn.document_template_id, \
-            \       qtn.format_uuid, \
             \       qtn_mig.new_questionnaire_uuid AS migration_uuid, \
             \       ${questionnaireDetailPermSql}, \
-            \       dt.formats                     AS document_template_formats, \
+            \       dt_format.uuid, \
+            \       dt_format.name, \
+            \       dt_format.icon, \
             \       ( \
             \        SELECT count(*) \
             \        FROM questionnaire_file \
@@ -509,6 +499,7 @@ findQuestionnaireDetailPreview uuid = do
             \FROM questionnaire qtn \
             \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.old_questionnaire_uuid AND qtn.tenant_uuid = qtn_mig.tenant_uuid \
             \LEFT JOIN document_template dt ON qtn.document_template_id = dt.id AND qtn.tenant_uuid = dt.tenant_uuid \
+            \LEFT JOIN document_template_format dt_format ON qtn.document_template_id = dt_format.document_template_id AND qtn.format_uuid = dt_format.uuid AND qtn.tenant_uuid = dt_format.tenant_uuid \
             \WHERE qtn.tenant_uuid = ? AND qtn.uuid = ?"
             [ ("questionnaireDetailPermSql", questionnaireDetailPermSql)
             , ("questionnaireUuid", U.toString uuid)
@@ -551,7 +542,13 @@ findQuestionnaireDetailSettings uuid = do
             \       dt.version                     as document_template_version, \
             \       dt.phase                       as document_template_phase, \
             \       dt.description                 as document_template_description, \
-            \       dt.formats                     as document_template_formats, \
+            \       ( \
+            \        SELECT jsonb_agg(jsonb_build_object('uuid', uuid, 'name', name, 'icon', icon)) \
+            \        FROM (SELECT * \
+            \              FROM document_template_format dt_format \
+            \              WHERE dt_format.tenant_uuid = qtn.tenant_uuid AND dt_format.document_template_id = dt.id \
+            \              ORDER BY dt_format.name) nested \
+            \       ) AS document_template_formats, \
             \       dt.metamodel_version           as document_template_metamodel_version, \
             \       ( \
             \        SELECT count(*) \
@@ -598,7 +595,15 @@ countQuestionnairesWithTenant tenantUuid = createCountByFn entityName tenantCond
 
 insertQuestionnaire :: Questionnaire -> AppContextM Int64
 insertQuestionnaire qtn = do
-  createInsertFn entityName qtn
+  -- Insert questionnaire
+  let sql =
+        fromString
+          "INSERT INTO questionnaire VALUES (?, ?, ?, ?, ?, ?::uuid[], ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::text[])"
+  let params = toRow qtn
+  logQuery sql params
+  let action conn = execute conn sql params
+  runDB action
+  -- Insert questionnaire permissions
   traverse_ insertQuestionnairePerm qtn.permissions
   return 1
 
@@ -607,7 +612,7 @@ updateQuestionnaireByUuid qtn = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, document_template_id = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ? WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?::uuid[], document_template_id = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?::text[] WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow qtn ++ [toField tenantUuid, toField . U.toText $ qtn.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params

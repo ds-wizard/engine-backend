@@ -39,10 +39,10 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.Acl.AclMapper
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
+import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
 import WizardLib.DocumentTemplate.Constant.DocumentTemplate
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
-import qualified WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as STM
+import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Package.Package
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
@@ -124,7 +124,7 @@ toDetailQuestionnaireDTO QuestionnaireDetailQuestionnaire {..} unresolvedComment
   let fileCount = length files
    in QuestionnaireDetailQuestionnaireDTO {..}
 
-toDetailWsDTO :: Questionnaire -> Maybe DocumentTemplate -> Maybe DocumentTemplateFormat -> [QuestionnairePermDTO] -> M.Map String [U.UUID] -> M.Map String (M.Map U.UUID Int) -> M.Map String (M.Map U.UUID Int) -> QuestionnaireDetailWsDTO
+toDetailWsDTO :: Questionnaire -> Maybe DocumentTemplateDTO -> Maybe DocumentTemplateFormatSimple -> [QuestionnairePermDTO] -> M.Map String [U.UUID] -> M.Map String (M.Map U.UUID Int) -> M.Map String (M.Map U.UUID Int) -> QuestionnaireDetailWsDTO
 toDetailWsDTO qtn mTemplate mFormat qtnPerms labels unresolvedCommentCounts resolvedCommentCounts =
   QuestionnaireDetailWsDTO
     { name = qtn.name
@@ -133,9 +133,9 @@ toDetailWsDTO qtn mTemplate mFormat qtnPerms labels unresolvedCommentCounts reso
     , sharing = qtn.sharing
     , projectTags = qtn.projectTags
     , documentTemplateId = qtn.documentTemplateId
-    , documentTemplate = fmap STM.toDTO mTemplate
+    , documentTemplate = mTemplate
     , formatUuid = qtn.formatUuid
-    , format = fmap toFormatDTO mFormat
+    , format = mFormat
     , permissions = qtnPerms
     , isTemplate = qtn.isTemplate
     , labels = labels

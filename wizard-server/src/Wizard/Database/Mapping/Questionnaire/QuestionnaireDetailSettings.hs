@@ -30,7 +30,7 @@ instance FromRow QuestionnaireDetailSettings where
     sharing <- field
     isTemplate <- field
     projectTags <- fromPGArray <$> field
-    selectedQuestionTagUuids <- fieldWith fromJSONField
+    selectedQuestionTagUuids <- fromPGArray <$> field
     formatUuid <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid

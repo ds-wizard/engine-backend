@@ -23,6 +23,7 @@ import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigratio
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Document.DocumentMapper
+import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 
 import SharedTest.Specs.API.Common
@@ -61,16 +62,16 @@ test_200 appContext = do
     ( Page
         "documents"
         (PageMetadata 20 3 1 0)
-        [ toDTOWithDocTemplate doc1 (Just questionnaire1Simple) (Just "Version 1") [] wizardDocumentTemplate
-        , toDTOWithDocTemplate doc2 (Just questionnaire2Simple) (Just "Version 1") [] wizardDocumentTemplate
-        , toDTOWithDocTemplate doc3 (Just questionnaire2Simple) (Just "Version 1") [] wizardDocumentTemplate
+        [ toDTOWithDocTemplate doc1 questionnaire1 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
+        , toDTOWithDocTemplate doc2 questionnaire2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
+        , toDTOWithDocTemplate doc3 questionnaire2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
         ]
     )
   create_test_200
     "HTTP 200 OK (query)"
     appContext
     "/wizard-api/documents?q=My exported document 2"
-    (Page "documents" (PageMetadata 20 1 1 0) [toDTOWithDocTemplate doc2 (Just questionnaire2Simple) (Just "Version 1") [] wizardDocumentTemplate])
+    (Page "documents" (PageMetadata 20 1 1 0) [toDTOWithDocTemplate doc2 questionnaire2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple])
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext
@@ -83,9 +84,9 @@ test_200 appContext = do
     ( Page
         "documents"
         (PageMetadata 20 3 1 0)
-        [ toDTOWithDocTemplate doc1 (Just questionnaire1Simple) (Just "Version 1") [] wizardDocumentTemplate
-        , toDTOWithDocTemplate doc2 (Just questionnaire2Simple) (Just "Version 1") [] wizardDocumentTemplate
-        , toDTOWithDocTemplate doc3 (Just questionnaire2Simple) (Just "Version 1") [] wizardDocumentTemplate
+        [ toDTOWithDocTemplate doc1 questionnaire1 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
+        , toDTOWithDocTemplate doc2 questionnaire2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
+        , toDTOWithDocTemplate doc3 questionnaire2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
         ]
     )
 

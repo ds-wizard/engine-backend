@@ -1,6 +1,5 @@
 module Wizard.Model.User.User where
 
-import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
@@ -24,7 +23,6 @@ data User = User
   , uRole :: String
   , permissions :: [String]
   , active :: Bool
-  , submissionProps :: [UserSubmissionProps]
   , imageUrl :: Maybe String
   , locale :: Maybe String
   , machine :: Bool
@@ -34,12 +32,6 @@ data User = User
   , updatedAt :: UTCTime
   }
   deriving (Generic, Show)
-
-data UserSubmissionProps = UserSubmissionProps
-  { sId :: String
-  , values :: M.Map String String
-  }
-  deriving (Generic, Eq, Show)
 
 instance Eq User where
   a == b =
@@ -53,7 +45,6 @@ instance Eq User where
       && a.uRole == b.uRole
       && a.permissions == b.permissions
       && a.active == b.active
-      && a.submissionProps == b.submissionProps
       && a.imageUrl == b.imageUrl
       && a.locale == b.locale
       && a.machine == b.machine

@@ -4,6 +4,7 @@ import Data.Aeson
 
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftChangeDTO
+import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
 instance FromJSON DocumentTemplateDraftChangeDTO where

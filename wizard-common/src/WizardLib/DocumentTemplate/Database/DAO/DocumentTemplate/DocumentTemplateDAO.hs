@@ -93,7 +93,7 @@ updateDocumentTemplateById tml = do
   tenantUuid <- asks (.tenantUuid')
   let sql =
         fromString
-          "UPDATE document_template SET id = ?, name = ?, organization_id = ?, template_id = ?, version = ?, metamodel_version = ?, description = ?, readme = ?, license = ?, allowed_packages = ?, formats = ?, created_at = ?, tenant_uuid = ?, updated_at = ?, phase = ?, non_editable = ? WHERE tenant_uuid = ? AND id = ?"
+          "UPDATE document_template SET id = ?, name = ?, organization_id = ?, template_id = ?, version = ?, metamodel_version = ?, description = ?, readme = ?, license = ?, allowed_packages = ?, created_at = ?, tenant_uuid = ?, updated_at = ?, phase = ?, non_editable = ? WHERE tenant_uuid = ? AND id = ?"
   let params = toRow tml ++ [toField tenantUuid, toField tml.tId]
   logQuery sql params
   let action conn = execute conn sql params

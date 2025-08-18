@@ -10,8 +10,9 @@ import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTempl
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftDetail
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
+import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePatternSM ()
 
 instance ToSchema DocumentTemplateDraftDetail where
-  declareNamedSchema = toSwagger (toDraftDetail wizardDocumentTemplateDraft wizardDocumentTemplateDraftData Nothing Nothing)
+  declareNamedSchema = toSwagger (toDraftDetail wizardDocumentTemplateDraft wizardDocumentTemplateFormats wizardDocumentTemplateDraftData Nothing Nothing)

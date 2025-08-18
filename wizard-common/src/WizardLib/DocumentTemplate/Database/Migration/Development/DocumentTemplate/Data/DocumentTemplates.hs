@@ -5,7 +5,6 @@ import Data.Time
 
 import Shared.Common.Constant.Tenant
 import WizardLib.DocumentTemplate.Constant.DocumentTemplate
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
@@ -23,15 +22,6 @@ wizardDocumentTemplate =
     , readme = "# Default DocumentTemplate"
     , license = "Apache-2.0"
     , allowedPackages = [packagePatternAll]
-    , formats =
-        [ formatJson
-        , formatHtml
-        , formatPdf
-        , formatLatex
-        , formatDocx
-        , formatOdt
-        , formatMarkdown
-        ]
     , nonEditable = False
     , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -78,15 +68,6 @@ anotherWizardDocumentTemplate =
     , readme = "# Another DocumentTemplate"
     , license = "Apache-2.0"
     , allowedPackages = [packagePatternAll]
-    , formats =
-        [ formatJson
-        , formatHtml
-        , formatPdf
-        , formatLatex
-        , formatDocx
-        , formatOdt
-        , formatMarkdown
-        ]
     , nonEditable = False
     , tenantUuid = defaultTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -108,7 +89,6 @@ differentDocumentTemplate =
     , readme = "# Another DocumentTemplate"
     , license = "Apache-2.0"
     , allowedPackages = [packagePatternAll]
-    , formats = []
     , nonEditable = False
     , tenantUuid = differentTenantUuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0

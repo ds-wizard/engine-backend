@@ -101,7 +101,6 @@ buildSchema appContext = do
   runInContext Package.dropFunctions appContext
   runInContext Common.dropFunctions appContext
   putStrLn "DB: dropping schema"
-  runInContext Tenant.dropConfigTables appContext
   runInContext ExternalLink.dropTables appContext
   runInContext KnowledgeModel.dropTables appContext
   runInContext Component.dropTables appContext
@@ -119,10 +118,11 @@ buildSchema appContext = do
   runInContext Document.dropTables appContext
   runInContext QuestionnaireMigrator.dropTables appContext
   runInContext Questionnaire.dropTables appContext
-  runInContext DocumentTemplate.dropTables appContext
   runInContext KnowledgeModelSecret.dropTables appContext
   runInContext Package.dropTables appContext
   runInContext User.dropTables appContext
+  runInContext Tenant.dropConfigTables appContext
+  runInContext DocumentTemplate.dropTables appContext
   runInContext Locale.dropTables appContext
   runInContext Tenant.dropTables appContext
   runInContext Instance.dropTables appContext
@@ -135,8 +135,9 @@ buildSchema appContext = do
   runInContext Instance.createTables appContext
   runInContext Tenant.createTables appContext
   runInContext Locale.createTables appContext
-  runInContext User.createTables appContext
   runInContext DocumentTemplate.createTables appContext
+  runInContext Tenant.createConfigTables appContext
+  runInContext User.createTables appContext
   runInContext Package.createTables appContext
   runInContext KnowledgeModelSecret.createTables appContext
   runInContext ActionKey.createTables appContext
@@ -157,7 +158,6 @@ buildSchema appContext = do
   runInContext Component.createTables appContext
   runInContext KnowledgeModel.createTables appContext
   runInContext ExternalLink.createTables appContext
-  runInContext Tenant.createConfigTables appContext
   putStrLn "DB: Creating DB functions"
   runInContext Common.createFunctions appContext
   runInContext Package.createFunctions appContext

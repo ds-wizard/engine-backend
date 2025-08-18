@@ -126,7 +126,14 @@ findDocumentTemplatesSuggestions mQuery mNonEditable = do
             \   document_template.metamodel_version, \
             \   document_template.description, \
             \   document_template.allowed_packages, \
-            \   document_template.formats \
+            \   ( \
+            \    SELECT jsonb_agg(jsonb_build_object('uuid', uuid, 'name', name, 'icon', icon)) \
+            \    FROM (SELECT * \
+            \          FROM document_template_format dt_format \
+            \          WHERE dt_format.tenant_uuid = document_template.tenant_uuid \
+            \            AND dt_format.document_template_id = document_template.id \
+            \          ORDER BY dt_format.name) nested \
+            \   ) AS document_template_formats \
             \FROM document_template \
             \WHERE tenant_uuid = ? AND id IN ( \
             \    SELECT CONCAT(organization_id, ':', template_id, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \

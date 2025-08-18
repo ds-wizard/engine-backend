@@ -24,7 +24,6 @@ instance ToRow DocumentTemplate where
     , toField readme
     , toField license
     , toJSONField allowedPackages
-    , toJSONField formats
     , toField createdAt
     , toField tenantUuid
     , toField updatedAt
@@ -44,7 +43,6 @@ instance FromRow DocumentTemplate where
     readme <- field
     license <- field
     allowedPackages <- fieldWith fromJSONField
-    formats <- fieldWith fromJSONField
     createdAt <- field
     tenantUuid <- field
     updatedAt <- field

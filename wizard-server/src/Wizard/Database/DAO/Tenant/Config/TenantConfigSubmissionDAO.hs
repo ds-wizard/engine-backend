@@ -134,21 +134,22 @@ insertOrUpdateConfigSubmissionService service = do
   deleteTenantConfigSubmissionsSupportedFormatExcept service.sId service.supportedFormats
 
 deleteTenantConfigSubmissionsExcept :: [String] -> AppContextM Int64
-deleteTenantConfigSubmissionsExcept serviceIds =
-  case serviceIds of
-    [] -> return 0
-    _ -> do
-      tenantUuid <- asks currentTenantUuid
-      let sql =
-            fromString $
-              f'
-                "DELETE FROM config_submission_service \
-                \WHERE tenant_uuid = ? AND id NOT IN (%s)"
-                [generateQuestionMarks serviceIds]
-      let params = U.toString tenantUuid : serviceIds
-      logQuery sql params
-      let action conn = execute conn sql params
-      runDB action
+deleteTenantConfigSubmissionsExcept serviceIds = do
+  let serviceIdCondition =
+        case serviceIds of
+          [] -> ""
+          _ -> f' "AND id NOT IN (%s)" [generateQuestionMarks serviceIds]
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString $
+          f'
+            "DELETE FROM config_submission_service \
+            \WHERE tenant_uuid = ? %s"
+            [serviceIdCondition]
+  let params = U.toString tenantUuid : serviceIds
+  logQuery sql params
+  let action conn = execute conn sql params
+  runDB action
 
 -- --------------------------------------------------------
 -- SUBMISSION SERVICE SUPPORTED FORMAT

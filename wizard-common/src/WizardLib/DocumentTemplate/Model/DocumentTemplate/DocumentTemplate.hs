@@ -27,7 +27,6 @@ data DocumentTemplate = DocumentTemplate
   , readme :: String
   , license :: String
   , allowedPackages :: [PackagePattern]
-  , formats :: [DocumentTemplateFormat]
   , nonEditable :: Bool
   , tenantUuid :: U.UUID
   , createdAt :: UTCTime
@@ -36,16 +35,29 @@ data DocumentTemplate = DocumentTemplate
   deriving (Show, Eq, Generic)
 
 data DocumentTemplateFormat = DocumentTemplateFormat
-  { uuid :: U.UUID
+  { documentTemplateId :: String
+  , uuid :: U.UUID
   , name :: String
   , icon :: String
   , steps :: [DocumentTemplateFormatStep]
+  , tenantUuid :: U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
 
+instance Ord DocumentTemplateFormat where
+  compare f1 f2 = compare f1.name f2.name
+
 data DocumentTemplateFormatStep = DocumentTemplateFormatStep
-  { name :: String
+  { documentTemplateId :: String
+  , formatUuid :: U.UUID
+  , position :: Int
+  , name :: String
   , options :: M.Map String String
+  , tenantUuid :: U.UUID
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
 

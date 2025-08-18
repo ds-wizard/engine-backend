@@ -23,7 +23,7 @@ instance FromRow QuestionnaireDetailQuestionnaire where
     visibility <- field
     sharing <- field
     packageId <- field
-    selectedQuestionTagUuids <- fieldWith fromJSONField
+    selectedQuestionTagUuids <- fromPGArray <$> field
     isTemplate <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid

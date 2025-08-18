@@ -7,8 +7,10 @@ import Shared.Common.Util.Logger
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
+import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateAssets
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFiles
+import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
@@ -18,6 +20,13 @@ runMigration = do
   deleteDocumentTemplates
   purgeBucket
   insertDocumentTemplate wizardDocumentTemplate
+  insertDocumentTemplateFormat formatJson
+  insertDocumentTemplateFormat formatHtml
+  insertDocumentTemplateFormat formatPdf
+  insertDocumentTemplateFormat formatLatex
+  insertDocumentTemplateFormat formatDocx
+  insertDocumentTemplateFormat formatOdt
+  insertDocumentTemplateFormat formatMarkdown
   insertFile fileDefaultHtml
   insertFile fileDefaultCss
   insertAsset assetLogo

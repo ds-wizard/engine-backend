@@ -31,7 +31,6 @@ documentTemplateUtilSpec =
                     , readme = ""
                     , license = ""
                     , allowedPackages = []
-                    , formats = []
                     , nonEditable = False
                     , tenantUuid = defaultTenant.uuid
                     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -67,7 +66,6 @@ documentTemplateUtilSpec =
                             , maxVersion = Nothing
                             }
                         ]
-                    , formats = []
                     , nonEditable = False
                     , tenantUuid = defaultTenant.uuid
                     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -109,7 +107,6 @@ documentTemplateUtilSpec =
                             , maxVersion = Nothing
                             }
                         ]
-                    , formats = []
                     , nonEditable = False
                     , tenantUuid = defaultTenant.uuid
                     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0

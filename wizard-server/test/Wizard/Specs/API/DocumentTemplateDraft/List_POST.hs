@@ -8,6 +8,8 @@ import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
+import Shared.Common.Api.Resource.Common.EntityCreatedWithIdDTO
+import Shared.Common.Api.Resource.Common.EntityCreatedWithIdJM ()
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateJM ()
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
@@ -20,7 +22,6 @@ import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
-import Wizard.Specs.API.DocumentTemplateDraft.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
@@ -66,10 +67,10 @@ create_test_201 title appContext reqAuthHeader reqDto expDto =
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, DocumentTemplate)
+      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, EntityCreatedWithIdDTO)
       assertResStatus status expStatus
       assertResHeaders headers expHeaders
-      compareDtos resDto expDto
+      liftIO $ resDto.aId `shouldBe` expDto.tId
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findDrafts appContext 2
 

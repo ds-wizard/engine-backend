@@ -16,6 +16,7 @@ dropTables = do
         \DROP TABLE IF EXISTS user_group_membership CASCADE;\
         \DROP TABLE IF EXISTS user_group CASCADE;\
         \DROP TABLE IF EXISTS user_token CASCADE;\
+        \DROP TABLE IF EXISTS user_entity_submission_prop CASCADE; \
         \DROP TABLE IF EXISTS user_entity CASCADE;"
   let action conn = execute_ conn sql
   runDB action
@@ -23,6 +24,7 @@ dropTables = do
 createTables :: AppContextM Int64
 createTables = do
   createUserTable
+  createUserSubmissionPropsTable
   createUserTokenTable
   createUserGroupTable
   createUserGroupMembershipTable
@@ -39,11 +41,10 @@ createUserTable = do
         \    email             varchar     NOT NULL, \
         \    password_hash     varchar     NOT NULL, \
         \    affiliation       varchar, \
-        \    sources           jsonb       NOT NULL, \
+        \    sources           varchar[]   NOT NULL, \
         \    role              varchar     NOT NULL, \
         \    permissions       text[]      NOT NULL, \
         \    active            boolean     NOT NULL, \
-        \    submissions_props jsonb       NOT NULL, \
         \    image_url         varchar, \
         \    last_visited_at   timestamptz NOT NULL, \
         \    created_at        timestamptz NOT NULL, \
@@ -64,6 +65,25 @@ createUserLocaleForeignKeyConstraint = do
   logInfo _CMP_MIGRATION "(Table/User) create tables"
   let sql =
         "ALTER TABLE user_entity ADD CONSTRAINT user_entity_locale_fk FOREIGN KEY (locale, tenant_uuid) REFERENCES locale(id, tenant_uuid);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createUserSubmissionPropsTable = do
+  logInfo _CMP_MIGRATION "(Table/UserSubmissionProp) create tables"
+  let sql =
+        "CREATE TABLE user_entity_submission_prop \
+        \( \
+        \    user_uuid   uuid        NOT NULL, \
+        \    service_id  varchar     NOT NULL, \
+        \    values      jsonb       NOT NULL, \
+        \    tenant_uuid uuid        NOT NULL, \
+        \    created_at  timestamptz NOT NULL, \
+        \    updated_at  timestamptz NOT NULL, \
+        \    CONSTRAINT user_entity_submission_prop_pk PRIMARY KEY (user_uuid, service_id, tenant_uuid), \
+        \    CONSTRAINT user_entity_submission_prop_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT user_entity_submission_prop_service_id_fk FOREIGN KEY (tenant_uuid, service_id) REFERENCES config_submission_service (tenant_uuid, id) ON DELETE CASCADE, \
+        \    CONSTRAINT user_entity_submission_prop_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
+        \);"
   let action conn = execute_ conn sql
   runDB action
 

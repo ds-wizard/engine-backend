@@ -64,7 +64,7 @@ createQtnTable = do
         \    visibility                  varchar     NOT NULL, \
         \    sharing                     varchar     NOT NULL, \
         \    package_id                  varchar     NOT NULL, \
-        \    selected_question_tag_uuids jsonb       NOT NULL, \
+        \    selected_question_tag_uuids uuid[]      NOT NULL, \
         \    document_template_id        varchar, \
         \    format_uuid                 uuid, \
         \    created_by                  uuid, \

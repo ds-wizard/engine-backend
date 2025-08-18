@@ -1,8 +1,7 @@
 module Wizard.Service.User.Profile.UserProfileService where
 
 import Control.Monad.Reader (asks, liftIO)
-import qualified Data.List as L
-import qualified Data.Map.Strict as M
+import Data.Foldable (traverse_)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -10,19 +9,18 @@ import Shared.Common.Model.Common.SensitiveData
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
-import Wizard.Api.Resource.User.UserSubmissionPropsDTO
-import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.DAO.User.UserSubmissionPropDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
-import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
+import Wizard.Model.User.UserSubmissionPropEM ()
+import Wizard.Model.User.UserSubmissionPropList
 import Wizard.Service.User.Profile.UserProfileMapper
 import Wizard.Service.User.Profile.UserProfileValidation
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
-import Wizard.Service.User.UserUtil
 import Wizard.Service.User.UserValidation
 import WizardLib.Public.Api.Resource.User.UserLocaleDTO
 
@@ -47,32 +45,24 @@ changeUserProfilePassword userUuid reqDto = do
   updateUserPasswordByUuid userUuid passwordHash now
   return ()
 
-getUserProfileSubmissionProps :: U.UUID -> AppContextM [UserSubmissionPropsDTO]
+getUserProfileSubmissionProps :: U.UUID -> AppContextM [UserSubmissionPropList]
 getUserProfileSubmissionProps userUuid = do
-  userDecrypted <- getDecryptedUser userUuid
-  tcSubmission <- findTenantConfigSubmission
-  return . fmap (mapFn userDecrypted) $ tcSubmission.services
-  where
-    mapFn :: User -> TenantConfigSubmissionService -> UserSubmissionPropsDTO
-    mapFn userDecrypted service =
-      UserSubmissionPropsDTO
-        { sId = service.sId
-        , name = service.name
-        , values =
-            let defaultProps = M.fromList . fmap (\v -> (v, "")) $ service.props
-                userProps = maybe M.empty ((.values)) . L.find (\s -> s.sId == service.sId) $ userDecrypted.submissionProps
-             in M.union userProps defaultProps
-        }
+  serverConfig <- asks serverConfig
+  submissionProps <- findUserSubmissionPropsList userUuid
+  return . fmap (process serverConfig.general.secret) $ submissionProps
 
-modifyUserProfileSubmissionProps :: [UserSubmissionPropsDTO] -> AppContextM [UserSubmissionPropsDTO]
+modifyUserProfileSubmissionProps :: [UserSubmissionPropList] -> AppContextM [UserSubmissionPropList]
 modifyUserProfileSubmissionProps reqDto = do
   currentUser <- getCurrentUser
+  tenantUuid <- asks currentTenantUuid
   serverConfig <- asks serverConfig
-  user <- findUserByUuid currentUser.uuid
+  submissionPropsEncrypted <- findUserSubmissionProps currentUser.uuid
+  let submissionProps = fmap (process serverConfig.general.secret) submissionPropsEncrypted
   now <- liftIO getCurrentTime
-  let updatedUser = fromUserSubmissionPropsDTO user reqDto now
-  let encryptedUpdatedUser = process serverConfig.general.secret updatedUser
-  updateUserByUuid encryptedUpdatedUser
+  let submissionPropsUpdated = fromUserSubmissionPropsDTO currentUser.uuid tenantUuid submissionProps reqDto now
+  let submissionPropsUpdatedEncrypted = fmap (process serverConfig.general.secret) submissionPropsUpdated
+  traverse_ insertOrUpdateUserSubmissionProp submissionPropsUpdatedEncrypted
+  deleteUserSubmissionPropsExcept currentUser.uuid (map (.sId) reqDto)
   return reqDto
 
 getLocale :: AppContextM UserLocaleDTO

@@ -5,7 +5,7 @@ import Data.Time
 import Data.UUID
 import GHC.Generics
 
-import Wizard.Api.Resource.User.UserSubmissionPropsJM ()
+import Wizard.Api.Resource.User.UserSubmissionPropJM ()
 import Wizard.Util.Hashable ()
 
 data UserDTO = UserDTO

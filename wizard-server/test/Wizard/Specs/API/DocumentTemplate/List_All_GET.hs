@@ -11,6 +11,7 @@ import Test.Hspec.Wai.Matcher
 
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
+import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
@@ -53,7 +54,7 @@ create_test_200 title appContext reqAuthHeader =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = [toSuggestionDTO wizardDocumentTemplate]
+      let expDto = [toSuggestionDTO wizardDocumentTemplate wizardDocumentTemplateFormats]
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext

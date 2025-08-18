@@ -46,7 +46,7 @@ import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Tenant.Config.TenantConfig
-import Wizard.Model.User.UserEM ()
+import Wizard.Model.User.UserSubmissionPropEM ()
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Common

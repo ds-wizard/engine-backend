@@ -78,7 +78,8 @@ import Wizard.Service.Questionnaire.Version.QuestionnaireVersionService
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
+import qualified WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as STM
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Package.Package
@@ -347,11 +348,14 @@ modifyQuestionnaireShare qtnUuid reqDto =
       case updatedQtn.documentTemplateId of
         Just tId -> do
           tml <- findDocumentTemplateById tId
-          return $ Just tml
+          formats <- findDocumentTemplateFormats tId
+          return . Just $ STM.toDTO tml formats
         _ -> return Nothing
     mFormat <-
-      case (mTemplate, updatedQtn.formatUuid) of
-        (Just tml, Just fUuid) -> return $ L.find (\f -> f.uuid == fUuid) tml.formats
+      case (updatedQtn.documentTemplateId, updatedQtn.formatUuid) of
+        (Just dtId, Just formatUuid) -> do
+          format <- findDocumentTemplateFormatByDocumentTemplateIdAndUuid dtId formatUuid
+          return $ Just format
         _ -> return Nothing
     qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
     qtnCtn <- compileQuestionnaire qtnEvents
@@ -378,11 +382,14 @@ modifyQuestionnaireSettings qtnUuid reqDto =
       case updatedQtn.documentTemplateId of
         Just tId -> do
           tml <- findDocumentTemplateById tId
-          return $ Just tml
+          formats <- findDocumentTemplateFormats tId
+          return . Just $ STM.toDTO tml formats
         _ -> return Nothing
     mFormat <-
-      case (mTemplate, updatedQtn.formatUuid) of
-        (Just tml, Just fUuid) -> return $ L.find (\f -> f.uuid == fUuid) tml.formats
+      case (updatedQtn.documentTemplateId, updatedQtn.formatUuid) of
+        (Just dtId, Just formatUuid) -> do
+          format <- findDocumentTemplateFormatByDocumentTemplateIdAndUuid dtId formatUuid
+          return $ Just format
         _ -> return Nothing
     qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
     qtnCtn <- compileQuestionnaire qtnEvents

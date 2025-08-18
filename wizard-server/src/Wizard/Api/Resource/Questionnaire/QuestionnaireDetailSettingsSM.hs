@@ -20,6 +20,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
 import qualified Wizard.Service.Package.PackageMapper as PackageMapper
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
+import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import qualified WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as DocumentTemplateMapper
@@ -46,7 +47,7 @@ instance ToSchema QuestionnaireDetailSettings where
         , packageId = netherlandsPackageV2.pId
         , package = PackageMapper.toSimpleDTO . PackageMapper.toPackage $ netherlandsPackageV2
         , knowledgeModelTags = [tagDataScience]
-        , documentTemplate = Just . DocumentTemplateMapper.toDTO $ wizardDocumentTemplate
+        , documentTemplate = Just $ DocumentTemplateMapper.toDTO wizardDocumentTemplate wizardDocumentTemplateFormats
         , documentTemplateState = Just DefaultDocumentTemplateState
         , documentTemplatePhase = Just DraftDocumentTemplatePhase
         , formatUuid = Just . u' $ "ae3b9e68-e09e-4ad7-b476-67ab5626e873"

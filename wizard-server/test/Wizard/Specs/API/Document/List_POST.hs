@@ -24,17 +24,16 @@ import qualified Wizard.Database.Migration.Development.DocumentTemplate.Document
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireSimple
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatDTO
 import WizardLib.DocumentTemplate.Constant.DocumentTemplate
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

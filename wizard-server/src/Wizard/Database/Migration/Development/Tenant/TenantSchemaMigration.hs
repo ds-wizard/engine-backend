@@ -375,6 +375,7 @@ createTcSubmissionTable = do
         \    CONSTRAINT config_submission_service_supported_format_pk PRIMARY KEY (tenant_uuid, service_id, document_template_id, format_uuid), \
         \    CONSTRAINT config_submission_service_supported_format_service_id_fk FOREIGN KEY (service_id, tenant_uuid) REFERENCES config_submission_service (id, tenant_uuid) ON DELETE CASCADE, \
         \    CONSTRAINT config_submission_service_supported_format_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT config_submission_service_supported_format_format_uuid_fk FOREIGN KEY (document_template_id, format_uuid, tenant_uuid) REFERENCES document_template_format (document_template_id, uuid, tenant_uuid) ON DELETE CASCADE, \
         \    CONSTRAINT config_submission_service_supported_format_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql

@@ -35,8 +35,8 @@ toDocumentTemplateEntry tb =
 toAssetEntry :: (DocumentTemplateAsset, BS.ByteString) -> Entry
 toAssetEntry (asset, content) = toEntry ("template/assets/" ++ asset.fileName) 0 (BSL.fromStrict content)
 
-toBundle :: DocumentTemplate -> [DocumentTemplateFile] -> [DocumentTemplateAsset] -> DocumentTemplateBundleDTO
-toBundle tml files assets =
+toBundle :: DocumentTemplate -> [DocumentTemplateFormat] -> [DocumentTemplateFile] -> [DocumentTemplateAsset] -> DocumentTemplateBundleDTO
+toBundle tml formats files assets =
   DocumentTemplateBundleDTO
     { tId = tml.tId
     , name = tml.name
@@ -48,7 +48,7 @@ toBundle tml files assets =
     , readme = tml.readme
     , license = tml.license
     , allowedPackages = tml.allowedPackages
-    , formats = tml.formats
+    , formats = fmap toFormatDTO formats
     , files = fmap toFileDTO files
     , assets = fmap toAssetDTO assets
     , createdAt = tml.createdAt
@@ -95,7 +95,6 @@ fromBundle tb tenantUuid =
     , readme = tb.readme
     , license = tb.license
     , allowedPackages = tb.allowedPackages
-    , formats = tb.formats
     , nonEditable = False
     , tenantUuid = tenantUuid
     , createdAt = tb.createdAt

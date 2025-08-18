@@ -6,6 +6,7 @@ import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Database.Migration.Development.Registry.Data.RegistryTemplates
 import Wizard.Service.DocumentTemplate.DocumentTemplateMapper
+import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
@@ -26,6 +27,7 @@ wizardDocumentTemplateDetailDTO :: DocumentTemplateDetailDTO
 wizardDocumentTemplateDetailDTO =
   toDetailDTO
     wizardDocumentTemplate
+    wizardDocumentTemplateFormats
     True
     [commonWizardRegistryTemplate]
     [globalRegistryOrganization]

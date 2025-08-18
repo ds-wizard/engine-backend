@@ -10,4 +10,4 @@ import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplat
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.Bundle.DocumentTemplateBundleMapper
 
 instance ToSchema DocumentTemplateBundleDTO where
-  declareNamedSchema = toSwagger (toBundle wizardDocumentTemplate [] [])
+  declareNamedSchema = toSwagger (toBundle wizardDocumentTemplate [] [] [])
