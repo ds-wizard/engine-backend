@@ -32,6 +32,7 @@ import Wizard.Model.Questionnaire.QuestionnaireSimple
 import WizardLib.DocumentTemplate.Constant.DocumentTemplate
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import WizardLib.DocumentTemplate.Localization.Messages.Public
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
