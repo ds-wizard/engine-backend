@@ -64,6 +64,7 @@ data ServerConfigCache = ServerConfigCache
   { dataExpiration :: Integer
   , websocketExpiration :: Integer
   , purgeExpired :: ServerConfigCronWorker
+  , dataEnabled :: Bool
   }
   deriving (Generic, Show)
 

@@ -59,6 +59,12 @@ instance HasField "persistentCommand'" ServerConfig ServerConfigPersistentComman
 instance HasField "aws'" ServerConfig ServerConfigAws where
   getField = (.aws)
 
+instance HasField "cache'" ServerConfig ServerConfigCache where
+  getField = (.cache)
+
+instance HasField "dataEnabled'" ServerConfigCache Bool where
+  getField = (.dataEnabled)
+
 instance HasField "dbPool'" AppContext (Pool Connection) where
   getField = (.dbPool)
 
