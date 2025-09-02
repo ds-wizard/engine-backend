@@ -12,4 +12,4 @@ import Wizard.Model.ActionKey.ActionKeyType
 instance ToSchema ActionKeyType
 
 instance ToSchema (ActionKeyDTO ActionKeyType) where
-  declareNamedSchema = toSwagger forgTokActionKeyDto
+  declareNamedSchema = toSwagger forgottenPasswordActionKeyDto

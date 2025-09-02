@@ -9,7 +9,7 @@ import Shared.Common.Util.Logger
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Service.Migration.KnowledgeModel.Migrator.Sanitizator
+import Wizard.Service.Migration.KnowledgeModel.Migrator.Sanitizer
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.Event.EventLenses ()
 

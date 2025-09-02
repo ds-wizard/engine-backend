@@ -29,6 +29,8 @@ deleteTokensExceptCurrentSession
   :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
+     , HasField "cache'" sc scCache
+     , HasField "dataEnabled'" scCache Bool
      )
   => String
   -> m ()
@@ -46,6 +48,8 @@ deleteTokenByUuid
   :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
+     , HasField "cache'" sc scCache
+     , HasField "dataEnabled'" scCache Bool
      )
   => U.UUID
   -> m ()
@@ -58,6 +62,8 @@ deleteTokensByTenantUuid
   :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
+     , HasField "cache'" sc scCache
+     , HasField "dataEnabled'" scCache Bool
      )
   => U.UUID
   -> m ()
@@ -69,6 +75,8 @@ deleteTokenByUserUuid
   :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
+     , HasField "cache'" sc scCache
+     , HasField "dataEnabled'" scCache Bool
      )
   => U.UUID
   -> m ()
@@ -80,6 +88,8 @@ cleanTokens
   :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
+     , HasField "cache'" sc scCache
+     , HasField "dataEnabled'" scCache Bool
      )
   => m ()
 cleanTokens = do

@@ -3,7 +3,7 @@ module WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplate
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatJM ()
+import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatSimpleJM ()
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 
 instance FromJSON DocumentTemplateSuggestionDTO where

@@ -1,10 +1,11 @@
 module WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO where
 
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import GHC.Generics
 
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatDTO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
 data DocumentTemplateDTO = DocumentTemplateDTO
   { tId :: String
@@ -12,7 +13,21 @@ data DocumentTemplateDTO = DocumentTemplateDTO
   , version :: String
   , phase :: DocumentTemplatePhase
   , description :: String
-  , formats :: [DocumentTemplateFormatDTO]
+  , formats :: [DocumentTemplateFormatSimple]
+  }
+  deriving (Show, Eq, Generic)
+
+data DocumentTemplateFormatDTO = DocumentTemplateFormatDTO
+  { uuid :: U.UUID
+  , name :: String
+  , icon :: String
+  , steps :: [DocumentTemplateFormatStepDTO]
+  }
+  deriving (Show, Eq, Generic)
+
+data DocumentTemplateFormatStepDTO = DocumentTemplateFormatStepDTO
+  { name :: String
+  , options :: M.Map String String
   }
   deriving (Show, Eq, Generic)
 

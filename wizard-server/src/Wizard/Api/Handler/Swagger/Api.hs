@@ -8,6 +8,7 @@ import Servant.Swagger.UI
 import RegistryLib.Api.Resource.Organization.OrganizationSM ()
 import RegistryLib.Api.Resource.Organization.OrganizationSimpleSM ()
 import Shared.Common.Api.Resource.Common.AesonSM ()
+import Shared.Common.Api.Resource.Common.EntityCreatedWithIdSM ()
 import Shared.Common.Api.Resource.Common.FileSM ()
 import Shared.Common.Api.Resource.Common.PageMetadataSM ()
 import Shared.Common.Api.Resource.Dev.DevExecutionResultSM ()
@@ -50,6 +51,8 @@ import Wizard.Api.Resource.DocumentTemplate.Folder.DocumentTemplateFolderMoveSM 
 import Wizard.Api.Resource.Feedback.FeedbackCreateSM ()
 import Wizard.Api.Resource.Feedback.FeedbackSM ()
 import Wizard.Api.Resource.File.FileCreateSM ()
+import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretChangeSM ()
+import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretSM ()
 import Wizard.Api.Resource.Locale.LocaleChangeSM ()
 import Wizard.Api.Resource.Locale.LocaleCreateSM ()
 import Wizard.Api.Resource.Locale.LocaleDetailSM ()
@@ -105,8 +108,9 @@ import Wizard.Api.Resource.Tenant.TenantChangeSM ()
 import Wizard.Api.Resource.Tenant.TenantCreateSM ()
 import Wizard.Api.Resource.Tenant.TenantDetailSM ()
 import Wizard.Api.Resource.Tenant.TenantSM ()
-import Wizard.Api.Resource.Typehint.TypehintRequestSM ()
-import Wizard.Api.Resource.Typehint.TypehintSM ()
+import Wizard.Api.Resource.TypeHint.TypeHintISM ()
+import Wizard.Api.Resource.TypeHint.TypeHintRequestSM ()
+import Wizard.Api.Resource.TypeHint.TypeHintTestRequestSM ()
 import Wizard.Api.Resource.User.UserChangeSM ()
 import Wizard.Api.Resource.User.UserCreateSM ()
 import Wizard.Api.Resource.User.UserPasswordSM ()
@@ -114,6 +118,8 @@ import Wizard.Api.Resource.User.UserProfileChangeSM ()
 import Wizard.Api.Resource.User.UserProfileSM ()
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Api.Resource.User.UserStateSM ()
+import Wizard.Api.Resource.User.UserSubmissionPropListSM ()
+import Wizard.Api.Resource.User.UserSubmissionPropSM ()
 import Wizard.Api.Resource.UserToken.ApiKeyCreateSM ()
 import Wizard.Api.Resource.UserToken.AppKeyCreateSM ()
 import Wizard.Api.Resource.UserToken.UserTokenListSM ()
@@ -142,7 +148,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.21.0"
+              , _infoVersion = "4.22.0"
               , _infoLicense =
                   Just $
                     License

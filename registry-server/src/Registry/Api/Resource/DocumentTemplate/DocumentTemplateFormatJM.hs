@@ -3,10 +3,10 @@ module Registry.Api.Resource.DocumentTemplate.DocumentTemplateFormatJM where
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
 
-instance ToJSON DocumentTemplateFormat where
-  toJSON DocumentTemplateFormat {..} =
+instance ToJSON DocumentTemplateFormatDTO where
+  toJSON DocumentTemplateFormatDTO {..} =
     object
       [ "uuid" .= uuid
       , "name" .= name
@@ -16,5 +16,5 @@ instance ToJSON DocumentTemplateFormat where
       , "steps" .= steps
       ]
 
-instance ToJSON DocumentTemplateFormatStep where
+instance ToJSON DocumentTemplateFormatStepDTO where
   toJSON = genericToJSON jsonOptions

@@ -1,7 +1,6 @@
 module Wizard.Database.Mapping.Questionnaire.Questionnaire where
 
 import Database.PostgreSQL.Simple
-import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -20,7 +19,7 @@ instance ToRow Questionnaire where
     , toField visibility
     , toField sharing
     , toField packageId
-    , toJSONField selectedQuestionTagUuids
+    , toField . PGArray $ selectedQuestionTagUuids
     , toField documentTemplateId
     , toField formatUuid
     , toField creatorUuid
@@ -40,7 +39,7 @@ instance FromRow Questionnaire where
     visibility <- field
     sharing <- field
     packageId <- field
-    selectedQuestionTagUuids <- fieldWith fromJSONField
+    selectedQuestionTagUuids <- fromPGArray <$> field
     documentTemplateId <- field
     formatUuid <- field
     creatorUuid <- field

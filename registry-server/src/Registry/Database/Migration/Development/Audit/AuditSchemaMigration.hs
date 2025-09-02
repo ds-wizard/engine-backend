@@ -21,11 +21,18 @@ createTables = do
   let sql =
         "CREATE TABLE audit \
         \( \
-        \    type                varchar     NOT NULL, \
-        \    organization_id     varchar     NOT NULL, \
-        \    instance_statistics jsonb       NOT NULL, \
-        \    package_id          varchar     NOT NULL, \
-        \    created_at          timestamptz NOT NULL \
+        \    type                     varchar     NOT NULL, \
+        \    organization_id          varchar     NOT NULL, \
+        \    created_at               timestamptz NOT NULL, \
+        \    user_count               int, \
+        \    package_count            int, \
+        \    branch_count             int, \
+        \    questionnaire_count      int, \
+        \    document_template_count  int, \
+        \    document_count           int, \
+        \    package_id               varchar, \
+        \    document_template_id     varchar, \
+        \    locale_id                varchar \
         \);"
   let action conn = execute_ conn sql
   runDB action

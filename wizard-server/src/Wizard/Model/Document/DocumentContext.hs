@@ -5,6 +5,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Common.Model.Common.SemVer2Tuple
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Questionnaire.QuestionnaireFileSimple
 import Wizard.Model.Questionnaire.QuestionnaireReply
@@ -23,7 +24,7 @@ data DocumentContext = DocumentContext
   , report :: Report
   , package :: DocumentContextPackage
   , organization :: TenantConfigOrganization
-  , metamodelVersion :: Int
+  , metamodelVersion :: SemVer2Tuple
   , users :: [DocumentContextUserPerm]
   , groups :: [DocumentContextUserGroupPerm]
   }

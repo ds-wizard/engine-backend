@@ -71,7 +71,13 @@ findDocumentsPage mQtnUuid mQtnName mDocumentTemplateId mQuery pageable sort = d
               \       qtn_version.name, \
               \       doc_tml.id, \
               \       doc_tml.name, \
-              \       doc_tml.formats, \
+              \       ( \
+              \        SELECT jsonb_agg(jsonb_build_object('uuid', uuid, 'name', name, 'icon', icon)) \
+              \        FROM (SELECT * \
+              \              FROM document_template_format dt_format \
+              \              WHERE dt_format.tenant_uuid = doc.tenant_uuid AND dt_format.document_template_id = doc.document_template_id \
+              \              ORDER BY dt_format.name) nested \
+              \       ) AS document_template_formats, \
               \       doc.format_uuid, \
               \       doc.file_size, \
               \       doc.worker_log, \

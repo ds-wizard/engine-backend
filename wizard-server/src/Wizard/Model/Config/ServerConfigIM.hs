@@ -77,6 +77,7 @@ instance FromEnv ServerConfigCache where
       , \c -> applyEnvVariable "CACHE_WEBSOCKET_EXPIRATION" c.websocketExpiration (\x -> c {websocketExpiration = x})
       , \c -> applyEnvVariable "CACHE_PURGE_EXPIRED_ENABLED" c.purgeExpired.enabled (\x -> c {purgeExpired = c.purgeExpired {enabled = x}} :: ServerConfigCache)
       , \c -> applyStringEnvVariable "CACHE_PURGE_EXPIRED_CRON" c.purgeExpired.cron (\x -> c {purgeExpired = c.purgeExpired {cron = x}} :: ServerConfigCache)
+      , \c -> applyEnvVariable "CACHE_DATA_ENABLED" c.dataEnabled (\x -> c {dataEnabled = x} :: ServerConfigCache)
       ]
 
 instance FromEnv ServerConfigDocument where

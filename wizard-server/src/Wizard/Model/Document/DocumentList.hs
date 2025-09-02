@@ -6,7 +6,7 @@ import GHC.Generics
 import GHC.Int
 
 import Wizard.Model.Document.Document
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
 data DocumentList = DocumentList
   { uuid :: U.UUID
@@ -18,7 +18,7 @@ data DocumentList = DocumentList
   , questionnaireVersion :: Maybe String
   , documentTemplateId :: String
   , documentTemplateName :: String
-  , documentTemplateFormats :: [DocumentTemplateFormat]
+  , documentTemplateFormats :: [DocumentTemplateFormatSimple]
   , formatUuid :: U.UUID
   , fileSize :: Maybe Int64
   , workerLog :: Maybe String

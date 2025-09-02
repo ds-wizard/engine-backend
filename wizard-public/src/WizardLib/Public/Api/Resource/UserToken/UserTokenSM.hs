@@ -8,4 +8,4 @@ import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenJM ()
 
 instance ToSchema UserTokenDTO where
-  declareNamedSchema = toSwaggerWithFlatType "type" (UserTokenDTO {token = "sometToken", expiresAt = dt' 2018 1 25})
+  declareNamedSchema = toSwaggerWithFlatType "type" (UserTokenDTO {token = "someToken", expiresAt = dt' 2018 1 25})

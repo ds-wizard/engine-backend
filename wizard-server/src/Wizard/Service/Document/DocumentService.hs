@@ -54,6 +54,7 @@ import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Tenant.Limit.LimitService
+import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Model.Event.Event
 import WizardLib.KnowledgeModel.Model.Package.Package
@@ -80,14 +81,13 @@ createDocument reqDto =
     checkEditPermissionToDoc reqDto.questionnaireUuid
     checkDocumentLimit
     checkStorageSize 0
-    qtnSimple <- findQuestionnaireSimpleByUuid reqDto.questionnaireUuid
     qtn <- findQuestionnaireByUuid reqDto.questionnaireUuid
     tml <- getDocumentTemplateByUuidAndPackageId reqDto.documentTemplateId (Just qtn.packageId)
+    format <- findDocumentTemplateFormatByDocumentTemplateIdAndUuid reqDto.documentTemplateId reqDto.formatUuid
     validateMetamodelVersion tml
+    uuid <- liftIO generateUuid
     mCurrentUser <- asks currentUser
-    dUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
-    tenantUuid <- asks currentTenantUuid
     qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtn.uuid
     let filteredQtnEvents =
           case reqDto.questionnaireEventUuid of
@@ -97,11 +97,11 @@ createDocument reqDto =
     tcOrganization <- findTenantConfigOrganization
     qtnVersions <- findQuestionnaireVersionsByQuestionnaireUuid qtn.uuid
     let docContextHash = computeHash [] qtn qtnVersions qtnCtn.phaseUuid qtnCtn.replies tcOrganization mCurrentUser
-    let doc = fromCreateDTO reqDto dUuid docContextHash filteredQtnEvents mCurrentUser tenantUuid now
+    let doc = fromCreateDTO reqDto uuid docContextHash filteredQtnEvents mCurrentUser qtn.tenantUuid now
     insertDocument doc
     pkg <- getPackageById qtn.packageId
     publishToPersistentCommandQueue doc pkg [] qtn Nothing
-    return $ toDTOWithDocTemplate doc (Just qtnSimple) Nothing [] tml
+    return $ toDTOWithDocTemplate doc qtn Nothing [] tml format
 
 deleteDocument :: U.UUID -> AppContextM ()
 deleteDocument docUuid =
@@ -181,7 +181,7 @@ createDocumentPreview tml pkg branchEvents qtn qtnVersions questionnaireEventUui
       if doc.state == DoneDocumentState
         then do
           let expirationInSeconds = 60
-          link <- presigneGetDocumentUrl doc.uuid expirationInSeconds
+          link <- presignGetDocumentUrl doc.uuid expirationInSeconds
           return (doc, TemporaryFileDTO link (fromMaybe "text/plain" doc.contentType))
         else return (doc, TemporaryFileMapper.emptyFileDTO)
     [] ->

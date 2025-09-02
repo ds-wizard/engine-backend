@@ -12,4 +12,4 @@ import Shared.Common.Util.Swagger
 instance ToSchema ActionKeyType
 
 instance ToSchema (ActionKeyDTO ActionKeyType) where
-  declareNamedSchema = toSwagger forgTokActionKeyDto
+  declareNamedSchema = toSwagger forgottenTokenActionKeyDto

@@ -2,9 +2,10 @@ module WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplate
 
 import Data.Swagger
 
+import Shared.Common.Api.Resource.Common.SemVer2TupleSM ()
 import Shared.Common.Util.Swagger
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatSM ()
+import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatSimpleSM ()
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateAssets
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFiles
@@ -33,7 +34,13 @@ instance ToSchema DocumentTemplateAsset where
   declareNamedSchema = toSwagger assetLogo
 
 instance ToSchema DocumentTemplateDTO where
-  declareNamedSchema = toSwagger (toDTO wizardDocumentTemplate)
+  declareNamedSchema = toSwagger (toDTO wizardDocumentTemplate wizardDocumentTemplateFormats)
+
+instance ToSchema DocumentTemplateFormatDTO where
+  declareNamedSchema = toSwagger (toFormatDTO formatJson)
+
+instance ToSchema DocumentTemplateFormatStepDTO where
+  declareNamedSchema = toSwagger (toFormatStepDTO formatJsonStep)
 
 instance ToSchema DocumentTemplateFileDTO where
   declareNamedSchema = toSwagger (toFileDTO fileDefaultHtml)

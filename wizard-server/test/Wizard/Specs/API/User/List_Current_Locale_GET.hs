@@ -9,7 +9,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Api.Resource.User.UserSubmissionPropsJM ()
+import Wizard.Api.Resource.User.UserSubmissionPropJM ()
 import Wizard.Model.Context.AppContext
 import WizardLib.Public.Database.Migration.Development.User.Data.Users
 

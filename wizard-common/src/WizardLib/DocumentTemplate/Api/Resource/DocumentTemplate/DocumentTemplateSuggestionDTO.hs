@@ -2,13 +2,13 @@ module WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplate
 
 import GHC.Generics
 
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatDTO
+import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
 data DocumentTemplateSuggestionDTO = DocumentTemplateSuggestionDTO
   { tId :: String
   , name :: String
   , version :: String
   , description :: String
-  , formats :: [DocumentTemplateFormatDTO]
+  , formats :: [DocumentTemplateFormatSimple]
   }
   deriving (Show, Eq, Generic)

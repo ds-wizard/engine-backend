@@ -14,7 +14,7 @@ import Wizard.Model.Context.AppContext
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel hiding (request)
 import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 
 import SharedTest.Specs.API.Common

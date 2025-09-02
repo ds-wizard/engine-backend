@@ -63,7 +63,7 @@ reqUrl = "/wizard-api/packages"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = PBM.toDTO netherlandsPackageV2Budle
+reqDto = PBM.toDTO netherlandsPackageV2Bundle
 
 reqBody = encode reqDto
 
@@ -126,7 +126,7 @@ test_201_req_no_db_all appContext =
   it "HTTP 201 CREATED - In request: no previous packages, in DB: all previous packages" $
     -- GIVEN: Prepare request
     do
-      let reqDto = PBM.toDTO (netherlandsPackageV2Budle {packages = [netherlandsPackageV2]})
+      let reqDto = PBM.toDTO (netherlandsPackageV2Bundle {packages = [netherlandsPackageV2]})
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 201
@@ -156,7 +156,7 @@ test_201_req_one_db_rest appContext =
   it "HTTP 201 CREATED - In request: one previous package, in DB: rest of previous packages" $
     -- GIVEN: Prepare request
     do
-      let reqDto = PBM.toDTO (netherlandsPackageV2Budle {packages = [netherlandsPackage, netherlandsPackageV2]})
+      let reqDto = PBM.toDTO (netherlandsPackageV2Bundle {packages = [netherlandsPackage, netherlandsPackageV2]})
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 201
@@ -182,10 +182,10 @@ test_201_req_one_db_rest appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201_without_readme appContext =
-  it "HTTP 201 CREATED - Without 'readme' props" $
+  it "HTTP 201 CREATED - Without 'readme' field" $
     -- GIVEN: Prepare request
     do
-      let reqDto = PBM.toDTO (netherlandsPackageBudle {packages = [netherlandsPackage]})
+      let reqDto = PBM.toDTO (netherlandsPackageBundle {packages = [netherlandsPackage]})
       let reqBody = BSL.pack . replace "readme" "differentReadme" . BSL.unpack $ encode reqDto
       -- AND: Prepare expectation
       let expStatus = 201
@@ -253,7 +253,7 @@ test_400_missing_previous_package appContext =
   it "HTTP 400 BAD REQUEST when missing previous package" $
     -- GIVEN: Prepare request
     do
-      let reqDto = PBM.toDTO (netherlandsPackageV2Budle {packages = [netherlandsPackageV2]})
+      let reqDto = PBM.toDTO (netherlandsPackageV2Bundle {packages = [netherlandsPackageV2]})
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400
@@ -280,7 +280,7 @@ test_400_bad_package_coordinates appContext =
     -- GIVEN: Prepare request
     do
       let editedElixirNlPackageDto = netherlandsPackage {kmId = netherlandsPackage.kmId ++ "-2"} :: PackageWithEvents
-      let reqDto = PBM.toDTO (netherlandsPackageV2Budle {packages = [editedElixirNlPackageDto, netherlandsPackageV2]})
+      let reqDto = PBM.toDTO (netherlandsPackageV2Bundle {packages = [editedElixirNlPackageDto, netherlandsPackageV2]})
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400

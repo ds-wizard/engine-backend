@@ -34,6 +34,7 @@ import WizardLib.Common.Service.Coordinate.CoordinateValidation
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO hiding (findDocumentTemplatesFiltered)
+import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import qualified WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as STM
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateUtil
@@ -73,7 +74,12 @@ getDocumentTemplatesDto :: [(String, String)] -> AppContextM [DocumentTemplateSu
 getDocumentTemplatesDto queryParams = do
   checkPermission _DOC_TML_READ_PERM
   tmls <- findDocumentTemplatesFiltered queryParams
-  return . fmap STM.toSuggestionDTO $ tmls
+  traverse
+    ( \tml -> do
+        formats <- findDocumentTemplateFormats tml.tId
+        return $ STM.toSuggestionDTO tml formats
+    )
+    tmls
 
 getDocumentTemplateByUuidAndPackageId :: String -> Maybe String -> AppContextM DocumentTemplate
 getDocumentTemplateByUuidAndPackageId documentTemplateId mPkgId = do
@@ -86,6 +92,7 @@ getDocumentTemplateByUuidDto :: String -> AppContextM DocumentTemplateDetailDTO
 getDocumentTemplateByUuidDto documentTemplateId = do
   resolvedTmlId <- resolveDocumentTemplateId documentTemplateId
   tml <- findDocumentTemplateById resolvedTmlId
+  formats <- findDocumentTemplateFormats resolvedTmlId
   pkgs <- findPackages
   versions <- getDocumentTemplateVersions tml
   tmlRs <- findRegistryTemplates
@@ -94,7 +101,7 @@ getDocumentTemplateByUuidDto documentTemplateId = do
   let registryLink = buildRegistryTemplateUrl serverConfig.registry.clientUrl tml tmlRs
   let usablePackages = getUsablePackagesForDocumentTemplate tml pkgs
   tcRegistry <- getCurrentTenantConfigRegistry
-  return $ toDetailDTO tml tcRegistry.enabled tmlRs orgRs versions registryLink usablePackages
+  return $ toDetailDTO tml formats tcRegistry.enabled tmlRs orgRs versions registryLink usablePackages
 
 modifyDocumentTemplate :: String -> DocumentTemplateChangeDTO -> AppContextM DocumentTemplateDetailDTO
 modifyDocumentTemplate documentTemplateId reqDto =
@@ -121,7 +128,7 @@ deleteDocumentTemplate tmlId =
     checkPermission _DOC_TML_WRITE_PERM
     tml <- findDocumentTemplateById tmlId
     assets <- findAssetsByDocumentTemplateId tmlId
-    validateDocumentTemplateDeletation tmlId
+    validateDocumentTemplateDeletion tmlId
     cleanTemporallyDocumentsForTemplate tmlId
     deleteDocumentTemplateById tmlId
     let assetUuids = fmap (.uuid) assets

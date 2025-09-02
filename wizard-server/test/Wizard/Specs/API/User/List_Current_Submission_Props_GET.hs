@@ -3,14 +3,16 @@ module Wizard.Specs.API.User.List_Current_Submission_Props_GET (
 ) where
 
 import Data.Aeson (encode)
+import Data.Foldable (traverse_)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Api.Resource.User.UserSubmissionPropsJM ()
+import Wizard.Api.Resource.User.UserSubmissionPropJM ()
 import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
+import Wizard.Database.DAO.User.UserSubmissionPropDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -49,11 +51,12 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = [userAlbertApiTokenDto]
+      let expDto = [userAlbertApiTokenList]
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO (insertOrUpdateConfigSubmissionService defaultSubmissionService) appContext
+      runInContextIO (traverse_ insertOrUpdateUserSubmissionProp userAlbertSubmissionProps) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

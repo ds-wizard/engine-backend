@@ -109,12 +109,11 @@ html =
 {%- set metricDefinitions = ctx.metrics -%}
 {%- set levelDefinitions = ctx.levels -%}
 {# ------------------------------------------------------------------------------------ #}
-{#  TAGS, REFERNCES, and EXPERTS MACROS                                                 #}
+{#  TAGS, REFERENCES, and EXPERTS MACROS                                                #}
 {# ------------------------------------------------------------------------------------ #}
 {%- macro renderTags(tagUuids) -%}
   {% if tagUuids|length > 0 %}
     <div class="tags">
-      <?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 -256 1950 1950" id="svg4303" version="1.1" inkscape:version="0.48.3.1 r9886" width="100%" height="100%" sodipodi:docname="tags_font_awesome.svg"><defs id="defs4311" /><sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="640" inkscape:window-height="480" id="namedview4309" showgrid="false" inkscape:zoom="0.52187927" inkscape:cx="9.5432149" inkscape:cy="1022.7118" inkscape:window-x="0" inkscape:window-y="25" inkscape:window-maximized="0" inkscape:current-layer="svg4303" /><g transform="matrix(1,0,0,-1,21.678786,1392.819)" id="g4305"><path d="m 448,1088 q 0,53 -37.5,90.5 Q 373,1216 320,1216 267,1216 229.5,1178.5 192,1141 192,1088 192,1035 229.5,997.5 267,960 320,960 q 53,0 90.5,37.5 Q 448,1035 448,1088 z M 1515,512 q 0,-53 -37,-90 L 987,-70 q -39,-37 -91,-37 -53,0 -90,37 L 91,646 Q 53,683 26.5,747 0,811 0,864 v 416 q 0,52 38,90 38,38 90,38 h 416 q 53,0 117,-26.5 64,-26.5 102,-64.5 l 715,-714 q 37,-39 37,-91 z m 384,0 q 0,-53 -37,-90 L 1371,-70 q -39,-37 -91,-37 -36,0 -59,14 -23,14 -53,45 l 470,470 q 37,37 37,90 0,52 -37,91 l -715,714 q -38,38 -102,64.5 -64,26.5 -117,26.5 h 224 q 53,0 117,-26.5 64,-26.5 102,-64.5 l 715,-714 q 37,-39 37,-91 z" id="path4307" inkscape:connector-curvature="0" style="fill:currentColor" /></g></svg>
       <b>Tags:</b>
       {% for tagUuid in tagUuids %}
         {% set tag = km.entities.tags[tagUuid] %}
@@ -184,7 +183,7 @@ html =
         <span>{{reply.value.value}}</span>
       {% else %}
         <span>{{reply.value.value.value}}</span>
-        {% if reply.value.value.type == "IntegrationType" and reply.value.value.id %}
+        {% if reply.value.value.type == "IntegrationLegacyType" and reply.value.value.id %}
           {# Integration #}
           {% set integration = km.entities.integrations[question.integrationUuid] %}
           <div class="integration-link">
@@ -227,12 +226,12 @@ html =
     {% set hiPrefix = humanIdentifier ~ "." %}
     {% for i in range(0, reply.value.value) %}
       {% set itemPath = itemPathPrefix ~ i %}
-      {% set itemHumanIdenfifier = hiPrefix ~ i|of_alphabet %}
+      {% set itemHumanIdentifier = hiPrefix ~ i|of_alphabet %}
       <div class="answer-item" id="{{reply.path}}-{{reply.value.value}}">
         <div class="followups">
           {% for questionUuid in question.itemTemplateQuestionUuids %}
             {% set x = loop.index %}
-            {{ renderQuestion(km.entities.questions[questionUuid], itemPath, itemHumanIdenfifier ~ "." ~ x) }}
+            {{ renderQuestion(km.entities.questions[questionUuid], itemPath, itemHumanIdentifier ~ "." ~ x) }}
           {% else %}
             No follow up questions
           {% endfor %}

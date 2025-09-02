@@ -15,7 +15,7 @@ import Shared.Common.Model.Error.Error
 encodeJsonToString :: ToJSON dto => dto -> String
 encodeJsonToString = T.unpack . TE.decodeUtf8 . BSL.toStrict . encode
 
-convertValueToOject value callback =
+convertValueToObject value callback =
   case value of
     (Object obj) -> callback obj
     _ -> Left . UserError $ _ERROR_UTIL_JSON__VALUE_IS_NOT_OBJECT

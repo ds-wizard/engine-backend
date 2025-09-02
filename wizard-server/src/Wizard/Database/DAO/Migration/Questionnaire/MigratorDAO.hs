@@ -39,14 +39,21 @@ findMigratorStateByNewQuestionnaireUuid' newQuestionnaireUuid = do
   createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("new_questionnaire_uuid", U.toString newQuestionnaireUuid)]
 
 insertMigratorState :: MigratorState -> AppContextM Int64
-insertMigratorState = createInsertFn entityName
+insertMigratorState ms = do
+  let sql =
+        fromString
+          "INSERT INTO questionnaire_migration VALUES (?, ?, ?::uuid[], ?)"
+  let params = toRow ms
+  logQuery sql params
+  let action conn = execute conn sql params
+  runDB action
 
 updateMigratorStateByNewQuestionnaireUuid :: MigratorState -> AppContextM Int64
 updateMigratorStateByNewQuestionnaireUuid ms = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE questionnaire_migration SET old_questionnaire_uuid = ?, new_questionnaire_uuid = ?, resolved_question_uuids = ?, tenant_uuid = ? WHERE tenant_uuid = ? AND new_questionnaire_uuid = ?"
+          "UPDATE questionnaire_migration SET old_questionnaire_uuid = ?, new_questionnaire_uuid = ?, resolved_question_uuids = ?::uuid[], tenant_uuid = ? WHERE tenant_uuid = ? AND new_questionnaire_uuid = ?"
   let params = toRow ms ++ [toField tenantUuid, toField ms.newQuestionnaireUuid]
   logQuery sql params
   let action conn = execute conn sql params

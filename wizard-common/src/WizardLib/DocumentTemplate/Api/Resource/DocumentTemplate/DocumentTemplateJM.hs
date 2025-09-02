@@ -4,13 +4,25 @@ import Data.Aeson
 
 import Shared.Common.Util.Aeson
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatJM ()
+import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatSimpleJM ()
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
 instance FromJSON DocumentTemplateDTO where
   parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON DocumentTemplateDTO where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON DocumentTemplateFormatDTO where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON DocumentTemplateFormatDTO where
+  toJSON = genericToJSON jsonOptions
+
+instance FromJSON DocumentTemplateFormatStepDTO where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON DocumentTemplateFormatStepDTO where
   toJSON = genericToJSON jsonOptions
 
 instance FromJSON DocumentTemplateFileDTO where

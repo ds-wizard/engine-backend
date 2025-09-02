@@ -6,6 +6,7 @@ import Data.Aeson
 import Shared.Common.Api.Resource.Common.MapEntryJM ()
 import Shared.Common.Util.Aeson
 import WizardLib.KnowledgeModel.Api.Resource.Event.EventFieldJM ()
+import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import WizardLib.KnowledgeModel.Model.Event.Integration.IntegrationEvent
 
 instance ToJSON AddIntegrationEvent where
@@ -16,6 +17,7 @@ instance FromJSON AddIntegrationEvent where
     integrationType <- o .: "integrationType"
     case integrationType of
       "ApiIntegration" -> parseJSON (Object o) >>= \event -> return (AddApiIntegrationEvent' event)
+      "ApiLegacyIntegration" -> parseJSON (Object o) >>= \event -> return (AddApiLegacyIntegrationEvent' event)
       "WidgetIntegration" -> parseJSON (Object o) >>= \event -> return (AddWidgetIntegrationEvent' event)
       _ -> fail "One of the events has unsupported integrationType"
   parseJSON _ = mzero
@@ -26,6 +28,13 @@ instance FromJSON AddApiIntegrationEvent where
 
 instance ToJSON AddApiIntegrationEvent where
   toJSON = toJSONWithAdditionalData [("integrationType", "ApiIntegration")]
+
+-- --------------------------------------------
+instance FromJSON AddApiLegacyIntegrationEvent where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON AddApiLegacyIntegrationEvent where
+  toJSON = toJSONWithAdditionalData [("integrationType", "ApiLegacyIntegration")]
 
 -- --------------------------------------------
 instance FromJSON AddWidgetIntegrationEvent where
@@ -44,6 +53,7 @@ instance FromJSON EditIntegrationEvent where
     integrationType <- o .: "integrationType"
     case integrationType of
       "ApiIntegration" -> parseJSON (Object o) >>= \event -> return (EditApiIntegrationEvent' event)
+      "ApiLegacyIntegration" -> parseJSON (Object o) >>= \event -> return (EditApiLegacyIntegrationEvent' event)
       "WidgetIntegration" -> parseJSON (Object o) >>= \event -> return (EditWidgetIntegrationEvent' event)
       _ -> fail "One of the events has unsupported integrationType"
   parseJSON _ = mzero
@@ -54,6 +64,13 @@ instance FromJSON EditApiIntegrationEvent where
 
 instance ToJSON EditApiIntegrationEvent where
   toJSON = toJSONWithAdditionalData [("integrationType", "ApiIntegration")]
+
+-- --------------------------------------------
+instance FromJSON EditApiLegacyIntegrationEvent where
+  parseJSON = genericParseJSON jsonOptions
+
+instance ToJSON EditApiLegacyIntegrationEvent where
+  toJSON = toJSONWithAdditionalData [("integrationType", "ApiLegacyIntegration")]
 
 -- --------------------------------------------
 instance FromJSON EditWidgetIntegrationEvent where

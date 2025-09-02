@@ -3,6 +3,7 @@ module Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO where
 import Data.Time
 import GHC.Generics
 
+import Shared.Common.Model.Common.SemVer2Tuple
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Registry.RegistryOrganization
@@ -16,7 +17,7 @@ data DocumentTemplateDetailDTO = DocumentTemplateDetailDTO
   , templateId :: String
   , version :: String
   , phase :: DocumentTemplatePhase
-  , metamodelVersion :: Int
+  , metamodelVersion :: SemVer2Tuple
   , description :: String
   , readme :: String
   , license :: String

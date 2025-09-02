@@ -1,6 +1,6 @@
 module Wizard.Model.Questionnaire.QuestionnaireReply where
 
-import Data.Aeson ()
+import Data.Aeson
 import Data.Hashable
 import Data.Time
 import qualified Data.UUID as U
@@ -50,9 +50,13 @@ data IntegrationReplyType
   = PlainType
       { value :: String
       }
-  | IntegrationType
+  | IntegrationLegacyType
       { intId :: Maybe String
       , value :: String
+      }
+  | IntegrationType
+      { value :: String
+      , raw :: Value
       }
   deriving (Show, Eq, Generic)
 

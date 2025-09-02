@@ -30,6 +30,6 @@ instance ToSchema QuestionnaireDetailPreview where
         , documentTemplateId = Just wizardDocumentTemplate.tId
         , migrationUuid = Nothing
         , permissions = [qtn1AlbertEditQtnPermDto]
-        , format = Just . DocumentTemplateMapper.toFormatDTO $ formatJson
+        , format = Just . DocumentTemplateMapper.toFormatSimple $ formatJson
         , fileCount = 0
         }

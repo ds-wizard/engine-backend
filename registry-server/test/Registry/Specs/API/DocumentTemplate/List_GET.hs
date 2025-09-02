@@ -15,6 +15,7 @@ import Registry.Model.Context.AppContext
 import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleJM ()
 
 import Registry.Specs.Common
+import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
@@ -37,13 +38,17 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext =
-  it "HTTP 200 OK" $
+test_200 appContext = do
+  create_test_200 "HTTP 200 OK" appContext "/document-templates" [wizardDocumentTemplateSimpleDTO]
+  create_test_200 "HTTP 200 OK (metamodelVersion=99.0)" appContext "/document-templates?metamodelVersion=99.0" [wizardDocumentTemplateSimpleDTO]
+  create_test_200 "HTTP 200 OK (metamodelVersion=10.0)" appContext "/document-templates?metamodelVersion=10.0" ([] :: [DocumentTemplateSimpleDTO])
+
+create_test_200 title appContext reqUrl expDto =
+  it title $
     -- GIVEN: Prepare expectation
     do
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = [wizardDocumentTemplateSimpleDTO]
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext

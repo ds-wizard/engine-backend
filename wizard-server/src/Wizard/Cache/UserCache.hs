@@ -1,12 +1,14 @@
 module Wizard.Cache.UserCache where
 
-import Control.Monad.Reader (asks, liftIO)
+import Control.Monad (when)
+import Control.Monad.Reader (ask, liftIO)
 import qualified Data.Cache as C
 import qualified Data.Hashable as H
 import qualified Data.UUID as U
 
 import Shared.Common.Util.String
 import Wizard.Model.Cache.ServerCache
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
@@ -18,12 +20,17 @@ cacheKey uuid tenantUuid = f' "uuid: '%s', tenantUuid: '%s'" [uuid, tenantUuid]
 
 addToCache :: User -> AppContextM ()
 addToCache record = do
-  let key = cacheKey (U.toString record.uuid) (U.toString record.tenantUuid)
-  logCacheAddBefore cacheName key
-  cache <- getCache
-  liftIO $ C.insert cache (H.hash key) record
-  logCacheAddAfter cacheName key
-  return ()
+  context <- ask
+  when
+    context.serverConfig.cache.dataEnabled
+    ( do
+        let key = cacheKey (U.toString record.uuid) (U.toString record.tenantUuid)
+        logCacheAddBefore cacheName key
+        cache <- getCache
+        liftIO $ C.insert cache (H.hash key) record
+        logCacheAddAfter cacheName key
+        return ()
+    )
 
 getAllFromCache :: AppContextM [User]
 getAllFromCache = do
@@ -33,26 +40,35 @@ getAllFromCache = do
 
 getFromCache :: (String, String) -> AppContextM (Maybe User)
 getFromCache (uuid, tenantUuid) = do
-  let key = cacheKey uuid tenantUuid
-  logCacheGetBefore cacheName key
-  cache <- getCache
-  mValue <- liftIO $ C.lookup cache (H.hash key)
-  case mValue of
-    Just value -> do
-      logCacheGetFound cacheName key
-      return . Just $ value
-    Nothing -> do
-      logCacheGetMissed cacheName key
-      return Nothing
+  context <- ask
+  if context.serverConfig.cache.dataEnabled
+    then do
+      let key = cacheKey uuid tenantUuid
+      logCacheGetBefore cacheName key
+      cache <- getCache
+      mValue <- liftIO $ C.lookup cache (H.hash key)
+      case mValue of
+        Just value -> do
+          logCacheGetFound cacheName key
+          return . Just $ value
+        Nothing -> do
+          logCacheGetMissed cacheName key
+          return Nothing
+    else return Nothing
 
 updateCache :: User -> AppContextM ()
 updateCache record = do
-  let key = cacheKey (U.toString record.uuid) (U.toString record.tenantUuid)
-  logCacheModifyBefore cacheName key
-  cache <- getCache
-  liftIO $ C.insert cache (H.hash key) record
-  logCacheModifyAfter cacheName key
-  return ()
+  context <- ask
+  when
+    context.serverConfig.cache.dataEnabled
+    ( do
+        let key = cacheKey (U.toString record.uuid) (U.toString record.tenantUuid)
+        logCacheModifyBefore cacheName key
+        cache <- getCache
+        liftIO $ C.insert cache (H.hash key) record
+        logCacheModifyAfter cacheName key
+        return ()
+    )
 
 deleteAllFromCache :: AppContextM ()
 deleteAllFromCache = do
@@ -63,11 +79,16 @@ deleteAllFromCache = do
 
 deleteFromCache :: (String, String) -> AppContextM ()
 deleteFromCache (uuid, tenantUuid) = do
-  let key = cacheKey uuid tenantUuid
-  logCacheDeleteBefore cacheName key
-  cache <- getCache
-  liftIO $ C.delete cache (H.hash key)
-  logCacheDeleteFinished cacheName key
+  context <- ask
+  when
+    context.serverConfig.cache.dataEnabled
+    ( do
+        let key = cacheKey uuid tenantUuid
+        logCacheDeleteBefore cacheName key
+        cache <- getCache
+        liftIO $ C.delete cache (H.hash key)
+        logCacheDeleteFinished cacheName key
+    )
 
 countCache :: AppContextM Int
 countCache = do
@@ -76,5 +97,5 @@ countCache = do
 
 getCache :: AppContextM (C.Cache Int User)
 getCache = do
-  cache <- asks cache
-  return $ cache.user
+  context <- ask
+  return $ context.cache.user

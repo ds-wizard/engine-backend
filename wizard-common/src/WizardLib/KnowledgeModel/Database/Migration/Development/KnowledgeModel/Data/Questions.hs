@@ -24,7 +24,7 @@ question1 =
     , text = Just "Here is a description of question"
     , requiredPhaseUuid = Just $ phase1.uuid
     , annotations = []
-    , tagUuids = [tagDataScience.uuid, tagBioInformatic.uuid]
+    , tagUuids = [tagDataScience.uuid, tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
     , valueType = StringQuestionValueType
@@ -79,7 +79,7 @@ question2 =
         Just "Are there any data sets available in the world that are relevant to your planned research?"
     , requiredPhaseUuid = Just $ phase2.uuid
     , annotations = []
-    , tagUuids = [tagBioInformatic.uuid]
+    , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = [km1_ch1_q2_r1.uuid, km1_ch1_q2_r2.uuid]
     , expertUuids = [km1_ch1_q2_eAlbert.uuid, km1_ch1_q2_eNikola.uuid]
     , answerUuids = [q2_answerNo.uuid, q2_answerYes.uuid]
@@ -96,7 +96,7 @@ question2Edited =
     , text = Just "EDITED: Some long description"
     , requiredPhaseUuid = Just $ phase3.uuid
     , annotations = []
-    , tagUuids = [tagDataScience.uuid, tagBioInformatic.uuid]
+    , tagUuids = [tagDataScience.uuid, tagBioinformatics.uuid]
     , referenceUuids = [km1_ch1_q2_r2.uuid, km1_ch1_q2_r1.uuid]
     , expertUuids = [km1_ch1_q2_eNikola.uuid, km1_ch1_q2_eAlbert.uuid]
     , answerUuids = [q2_answerYes.uuid, q2_answerNo.uuid]
@@ -181,7 +181,7 @@ question4 =
     , text = Just "Some nice description"
     , requiredPhaseUuid = Nothing
     , annotations = []
-    , tagUuids = [tagBioInformatic.uuid]
+    , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
     , itemTemplateQuestionUuids = [q4_it1_question5.uuid, q4_it1_question6.uuid]
@@ -219,7 +219,7 @@ question4WithNewType =
     , referenceUuids = question4.referenceUuids
     , expertUuids = question4.expertUuids
     , integrationUuid = ontologyPortal.uuid
-    , props = Map.fromList [("domain", "biology"), ("country", "nl")]
+    , variables = Map.fromList [("domain", "biology"), ("country", "nl")]
     }
 
 question4Plain' :: Question
@@ -250,7 +250,7 @@ q4_it1_question5 =
     , text = Just "Some funny description"
     , requiredPhaseUuid = Just $ phase1.uuid
     , annotations = []
-    , tagUuids = [tagBioInformatic.uuid]
+    , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
     , itemTemplateQuestionUuids = [q4_it1_q5_it2_question7.uuid, q4_it1_q5_it2_question8.uuid]
@@ -371,11 +371,11 @@ question9 =
     , text = Just "Some nice description"
     , requiredPhaseUuid = Just $ phase1.uuid
     , annotations = []
-    , tagUuids = [tagBioInformatic.uuid]
+    , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
     , integrationUuid = ontologyPortal.uuid
-    , props = Map.fromList [("domain", "biology"), ("country", "nl")]
+    , variables = Map.fromList [("domain", "biology"), ("country", "nl")]
     }
 
 question9Edited' :: Question
@@ -393,14 +393,14 @@ question9Edited =
     , referenceUuids = question9.referenceUuids
     , expertUuids = question9.expertUuids
     , integrationUuid = question9.integrationUuid
-    , props = Map.fromList [("domain", "biology"), ("country", "de")]
+    , variables = Map.fromList [("domain", "biology"), ("country", "de")]
     }
 
-question9PropsEdited' :: Question
-question9PropsEdited' = IntegrationQuestion' question9PropsEdited
+question9VariablesEdited' :: Question
+question9VariablesEdited' = IntegrationQuestion' question9VariablesEdited
 
-question9PropsEdited :: IntegrationQuestion
-question9PropsEdited =
+question9VariablesEdited :: IntegrationQuestion
+question9VariablesEdited =
   IntegrationQuestion
     { uuid = question9.uuid
     , title = question9.title
@@ -411,7 +411,7 @@ question9PropsEdited =
     , referenceUuids = question9.referenceUuids
     , expertUuids = question9.expertUuids
     , integrationUuid = question9.integrationUuid
-    , props = Map.fromList [("domain", "biology"), ("language", "")]
+    , variables = Map.fromList [("domain", "biology"), ("language", "")]
     }
 
 question9WithNewType' :: Question
@@ -461,11 +461,11 @@ question10 =
     , text = Just "Some nice description"
     , requiredPhaseUuid = Nothing
     , annotations = []
-    , tagUuids = [tagBioInformatic.uuid]
+    , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
     , integrationUuid = bioPortal.uuid
-    , props = Map.fromList [("domain", "legal"), ("branch", "mammal")]
+    , variables = Map.fromList [("domain", "legal"), ("branch", "mammal")]
     }
 
 question10ConvertedToValue' :: Question
@@ -497,7 +497,7 @@ question11 =
     , text = Just "Some non-funny description"
     , requiredPhaseUuid = Nothing
     , annotations = []
-    , tagUuids = [tagBioInformatic.uuid]
+    , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
     , choiceUuids = [q11_choice1.uuid, q11_choice2.uuid]
@@ -529,7 +529,7 @@ question12 =
     , text = Just "Some non-funny description"
     , requiredPhaseUuid = Nothing
     , annotations = []
-    , tagUuids = [tagBioInformatic.uuid]
+    , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
     , choiceUuids = []
@@ -546,7 +546,7 @@ question13 =
     , text = Just "Some non-funny description"
     , requiredPhaseUuid = Nothing
     , annotations = []
-    , tagUuids = [tagBioInformatic.uuid]
+    , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
     , listQuestionUuid = Just question4.uuid
@@ -563,7 +563,7 @@ question13Edited =
     , text = Just "EDITED: Some non-funny description"
     , requiredPhaseUuid = Just $ phase2.uuid
     , annotations = []
-    , tagUuids = [tagBioInformatic.uuid]
+    , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
     , listQuestionUuid = Just q4_it1_question5.uuid
@@ -580,7 +580,7 @@ question14 =
     , text = Just "Some non-funny description"
     , requiredPhaseUuid = Nothing
     , annotations = []
-    , tagUuids = [tagBioInformatic.uuid]
+    , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
     , maxSize = Just 20000
@@ -598,9 +598,27 @@ question14Edited =
     , text = Just "EDITED: Some non-funny description"
     , requiredPhaseUuid = Just $ phase2.uuid
     , annotations = []
-    , tagUuids = [tagBioInformatic.uuid]
+    , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
     , maxSize = Just 40000
     , fileTypes = Just "text/html"
+    }
+
+question15' :: Question
+question15' = IntegrationQuestion' question15
+
+question15 :: IntegrationQuestion
+question15 =
+  IntegrationQuestion
+    { uuid = u' "00000000-0000-0000-0000-000000000f15"
+    , title = "Fifteen Question"
+    , text = Nothing
+    , requiredPhaseUuid = Nothing
+    , annotations = []
+    , tagUuids = [tagBioinformatics.uuid]
+    , referenceUuids = []
+    , expertUuids = []
+    , integrationUuid = repositoryApi.uuid
+    , variables = Map.fromList [("domain", "biology"), ("country", "nl")]
     }

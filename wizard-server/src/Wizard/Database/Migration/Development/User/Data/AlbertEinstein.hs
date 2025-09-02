@@ -13,15 +13,16 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserStateDTO
-import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
-import Wizard.Model.User.UserEM ()
 import Wizard.Model.User.UserProfile
+import Wizard.Model.User.UserSubmissionProp
+import Wizard.Model.User.UserSubmissionPropEM ()
+import Wizard.Model.User.UserSubmissionPropList
 import Wizard.Service.User.UserMapper
 import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
@@ -61,9 +62,10 @@ userAlbert =
         , "LOC_PERM"
         ]
     , active = True
-    , passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
-    , submissionProps = [process defaultSecret userAlbertApiToken]
-    , imageUrl = Nothing
+    , -- cspell:disable
+      passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
+    , -- cspell:enable
+      imageUrl = Nothing
     , locale = Nothing
     , machine = False
     , tenantUuid = defaultTenant.uuid
@@ -95,9 +97,6 @@ userAlbertEditedChange =
     , email = userAlbertEdited.email
     , affiliation = userAlbertEdited.affiliation
     }
-
-userAlbertDecrypted :: User
-userAlbertDecrypted = process defaultSecret userAlbert
 
 userPassword :: UserPasswordDTO
 userPassword = UserPasswordDTO {password = "newPassword"}
@@ -143,36 +142,40 @@ userAlbertTour2 =
 -- --------------------------------------
 -- SUBMISSION
 -- --------------------------------------
-userAlbertEditedSubmission :: User
-userAlbertEditedSubmission =
-  userAlbert
-    { submissionProps = [process defaultSecret userAlbertApiTokenEdited]
-    }
+userAlbertSubmissionProps :: [UserSubmissionProp]
+userAlbertSubmissionProps = [process defaultSecret userAlbertApiToken]
 
-userAlbertApiToken :: UserSubmissionProps
+userAlbertApiToken :: UserSubmissionProp
 userAlbertApiToken =
-  UserSubmissionProps
-    { sId = defaultSubmissionService.sId
+  UserSubmissionProp
+    { userUuid = userAlbert.uuid
+    , serviceId = defaultSubmissionService.sId
     , values = M.fromList [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "Some Token")]
+    , tenantUuid = defaultTenant.uuid
+    , createdAt = dt' 2018 1 21
+    , updatedAt = dt' 2018 1 21
     }
 
-userAlbertApiTokenDto :: UserSubmissionPropsDTO
-userAlbertApiTokenDto =
-  UserSubmissionPropsDTO
+userAlbertApiTokenList :: UserSubmissionPropList
+userAlbertApiTokenList =
+  UserSubmissionPropList
     { sId = defaultSubmissionService.sId
     , name = defaultSubmissionService.name
     , values = M.fromList [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "Some Token")]
     }
 
-userAlbertApiTokenEdited :: UserSubmissionProps
+userAlbertSubmissionPropsEdited :: [UserSubmissionProp]
+userAlbertSubmissionPropsEdited = [process defaultSecret userAlbertApiTokenEdited]
+
+userAlbertApiTokenEdited :: UserSubmissionProp
 userAlbertApiTokenEdited =
   userAlbertApiToken
     { values = M.fromList [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]
     }
 
-userAlbertApiTokenEditedDto :: UserSubmissionPropsDTO
+userAlbertApiTokenEditedDto :: UserSubmissionPropList
 userAlbertApiTokenEditedDto =
-  UserSubmissionPropsDTO
+  UserSubmissionPropList
     { sId = defaultSubmissionService.sId
     , name = defaultSubmissionService.name
     , values = M.fromList [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]

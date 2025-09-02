@@ -6,7 +6,10 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.UUID as U
 
+import Shared.Common.Api.Resource.Localization.LocaleRecordJM ()
 import Shared.Common.Model.Error.Error
+import Shared.Common.Model.Localization.LocaleRecord
+import Shared.Common.Util.String
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleJM ()
@@ -32,8 +35,8 @@ toDocumentTemplateEntry tb =
 toAssetEntry :: (DocumentTemplateAsset, BS.ByteString) -> Entry
 toAssetEntry (asset, content) = toEntry ("template/assets/" ++ asset.fileName) 0 (BSL.fromStrict content)
 
-toBundle :: DocumentTemplate -> [DocumentTemplateFile] -> [DocumentTemplateAsset] -> DocumentTemplateBundleDTO
-toBundle tml files assets =
+toBundle :: DocumentTemplate -> [DocumentTemplateFormat] -> [DocumentTemplateFile] -> [DocumentTemplateAsset] -> DocumentTemplateBundleDTO
+toBundle tml formats files assets =
   DocumentTemplateBundleDTO
     { tId = tml.tId
     , name = tml.name
@@ -45,7 +48,7 @@ toBundle tml files assets =
     , readme = tml.readme
     , license = tml.license
     , allowedPackages = tml.allowedPackages
-    , formats = tml.formats
+    , formats = fmap toFormatDTO formats
     , files = fmap toFileDTO files
     , assets = fmap toAssetDTO assets
     , createdAt = tml.createdAt
@@ -66,7 +69,10 @@ fromDocumentTemplateEntry archive =
     Just templateEntry ->
       case eitherDecode . fromEntry $ templateEntry of
         Right tb -> Right tb
-        Left error -> Left $ UserError (_ERROR_SERVICE_TB__UNABLE_TO_DECODE_TEMPLATE_JSON error)
+        Left error ->
+          case eitherDecode . BSL.pack . replace "Error in $:" "" $ error :: Either String LocaleRecord of
+            Right localeRecord -> Left $ UserError localeRecord
+            Left error -> Left $ UserError (_ERROR_SERVICE_TB__UNABLE_TO_DECODE_TEMPLATE_JSON error)
     Nothing -> Left $ UserError _ERROR_SERVICE_TB__MISSING_TEMPLATE_JSON
 
 fromAssetEntry :: DocumentTemplateBundleDTO -> Archive -> DocumentTemplateAssetDTO -> Either AppError (DocumentTemplateAssetDTO, BS.ByteString)
@@ -89,7 +95,6 @@ fromBundle tb tenantUuid =
     , readme = tb.readme
     , license = tb.license
     , allowedPackages = tb.allowedPackages
-    , formats = tb.formats
     , nonEditable = False
     , tenantUuid = tenantUuid
     , createdAt = tb.createdAt

@@ -5,30 +5,33 @@ import qualified Data.UUID as U
 import GHC.Int
 
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatDTO
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
-toDTO :: DocumentTemplate -> DocumentTemplateDTO
-toDTO tml =
+toDTO :: DocumentTemplate -> [DocumentTemplateFormat] -> DocumentTemplateDTO
+toDTO tml formats =
   DocumentTemplateDTO
     { tId = tml.tId
     , name = tml.name
     , version = tml.version
     , phase = tml.phase
     , description = tml.description
-    , formats = fmap toFormatDTO tml.formats
+    , formats = fmap toFormatSimple formats
     }
 
-toSuggestionDTO :: DocumentTemplate -> DocumentTemplateSuggestionDTO
-toSuggestionDTO tml =
+toSuggestionDTO :: DocumentTemplate -> [DocumentTemplateFormat] -> DocumentTemplateSuggestionDTO
+toSuggestionDTO tml formats =
   DocumentTemplateSuggestionDTO
     { tId = tml.tId
     , name = tml.name
     , version = tml.version
     , description = tml.description
-    , formats = fmap toFormatDTO tml.formats
+    , formats = fmap toFormatSimple formats
     }
+
+toFormatSimple :: DocumentTemplateFormat -> DocumentTemplateFormatSimple
+toFormatSimple DocumentTemplateFormat {..} = DocumentTemplateFormatSimple {..}
 
 toFormatDTO :: DocumentTemplateFormat -> DocumentTemplateFormatDTO
 toFormatDTO format =
@@ -36,6 +39,14 @@ toFormatDTO format =
     { uuid = format.uuid
     , name = format.name
     , icon = format.icon
+    , steps = fmap toFormatStepDTO format.steps
+    }
+
+toFormatStepDTO :: DocumentTemplateFormatStep -> DocumentTemplateFormatStepDTO
+toFormatStepDTO step =
+  DocumentTemplateFormatStepDTO
+    { name = step.name
+    , options = step.options
     }
 
 toFileDTO :: DocumentTemplateFile -> DocumentTemplateFileDTO
@@ -52,6 +63,32 @@ toAssetDTO asset =
     { uuid = asset.uuid
     , fileName = asset.fileName
     , contentType = asset.contentType
+    }
+
+fromFormatDTO :: String -> U.UUID -> UTCTime -> UTCTime -> DocumentTemplateFormatDTO -> DocumentTemplateFormat
+fromFormatDTO documentTemplateId tenantUuid createdAt updatedAt format =
+  DocumentTemplateFormat
+    { documentTemplateId = documentTemplateId
+    , uuid = format.uuid
+    , name = format.name
+    , icon = format.icon
+    , steps = zipWith (\i s -> fromFormatStepDTO documentTemplateId format.uuid i tenantUuid createdAt updatedAt s) [0 ..] format.steps
+    , tenantUuid = tenantUuid
+    , createdAt = createdAt
+    , updatedAt = updatedAt
+    }
+
+fromFormatStepDTO :: String -> U.UUID -> Int -> U.UUID -> UTCTime -> UTCTime -> DocumentTemplateFormatStepDTO -> DocumentTemplateFormatStep
+fromFormatStepDTO documentTemplateId formatUuid position tenantUuid createdAt updatedAt step =
+  DocumentTemplateFormatStep
+    { documentTemplateId = documentTemplateId
+    , formatUuid = formatUuid
+    , position = position
+    , name = step.name
+    , options = step.options
+    , tenantUuid = tenantUuid
+    , createdAt = createdAt
+    , updatedAt = updatedAt
     }
 
 fromFileDTO :: String -> U.UUID -> UTCTime -> DocumentTemplateFileDTO -> DocumentTemplateFile

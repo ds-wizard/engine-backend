@@ -21,6 +21,7 @@ import Wizard.Api.Handler.ExternalLink.Api
 import Wizard.Api.Handler.Feedback.Api
 import Wizard.Api.Handler.Info.Api
 import Wizard.Api.Handler.KnowledgeModel.Api
+import Wizard.Api.Handler.KnowledgeModelSecret.Api
 import Wizard.Api.Handler.Locale.Api
 import Wizard.Api.Handler.Migration.Api
 import Wizard.Api.Handler.Package.Api
@@ -36,7 +37,7 @@ import Wizard.Api.Handler.Registry.Api
 import Wizard.Api.Handler.Submission.Api
 import Wizard.Api.Handler.Tenant.Api
 import Wizard.Api.Handler.Token.Api
-import Wizard.Api.Handler.Typehint.Api
+import Wizard.Api.Handler.TypeHint.Api
 import Wizard.Api.Handler.User.Api
 import Wizard.Api.Handler.UserGroup.Api
 import Wizard.Model.Context.BaseContext
@@ -61,6 +62,7 @@ type ApplicationAPI =
     :<|> FeedbackAPI
     :<|> InfoAPI
     :<|> KnowledgeModelAPI
+    :<|> KnowledgeModelSecretAPI
     :<|> LocaleAPI
     :<|> MigrationAPI
     :<|> PackageAPI
@@ -76,7 +78,7 @@ type ApplicationAPI =
     :<|> SubmissionAPI
     :<|> TenantAPI
     :<|> TokenAPI
-    :<|> TypehintAPI
+    :<|> TypeHintAPI
     :<|> UserAPI
     :<|> UserGroupAPI
 
@@ -104,6 +106,7 @@ applicationServer =
     :<|> feedbackServer
     :<|> infoServer
     :<|> knowledgeModelServer
+    :<|> knowledgeModelSecretServer
     :<|> localeServer
     :<|> migrationServer
     :<|> packageServer
@@ -119,6 +122,6 @@ applicationServer =
     :<|> submissionServer
     :<|> tenantServer
     :<|> tokenServer
-    :<|> typehintServer
+    :<|> typeHintServer
     :<|> userServer
     :<|> userGroupServer

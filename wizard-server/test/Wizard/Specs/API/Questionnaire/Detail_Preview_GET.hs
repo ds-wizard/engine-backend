@@ -23,7 +23,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireDetailPreview
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import qualified WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as SDTM
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.Public.Localization.Messages.Public
@@ -131,7 +130,7 @@ create_test_200 title appContext qtn authHeader permissions =
               , migrationUuid = Nothing
               , permissions = permissions
               , documentTemplateId = qtn.documentTemplateId
-              , format = Just . SDTM.toFormatDTO $ formatJson
+              , format = Just formatJsonSimple
               , fileCount = 0
               }
       let expBody = encode expDto

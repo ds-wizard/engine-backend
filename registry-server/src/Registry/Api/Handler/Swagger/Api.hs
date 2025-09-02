@@ -21,6 +21,7 @@ import Registry.Api.Resource.Package.PackageSimpleSM ()
 import Registry.Api.Resource.PackageBundle.PackageBundleSM ()
 import Registry.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Shared.Common.Api.Resource.Common.FileSM ()
+import Shared.Common.Api.Resource.Common.SemVer2TupleSM ()
 import Shared.Common.Api.Resource.Info.InfoSM ()
 import Shared.Component.Api.Resource.Component.ComponentSM ()
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
@@ -38,7 +39,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Registry API"
               , _infoDescription = Just "API specification for Registry"
-              , _infoVersion = "4.21.0"
+              , _infoVersion = "4.22.0"
               , _infoLicense =
                   Just $
                     License

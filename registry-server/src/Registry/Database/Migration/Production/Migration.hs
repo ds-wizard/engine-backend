@@ -15,6 +15,7 @@ import qualified Registry.Database.Migration.Production.Migration_0010_pkgAndDoc
 import qualified Registry.Database.Migration.Production.Migration_0011_traceUuid.Migration as M_0011
 import qualified Registry.Database.Migration.Production.Migration_0012_tenant.Migration as M_0012
 import qualified Registry.Database.Migration.Production.Migration_0013_jsonb.Migration as M_0013
+import qualified Registry.Database.Migration.Production.Migration_0014_documentTemplateMetamodel.Migration as M_0014
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -31,4 +32,5 @@ migrationDefinitions =
   , M_0011.definition
   , M_0012.definition
   , M_0013.definition
+  , M_0014.definition
   ]

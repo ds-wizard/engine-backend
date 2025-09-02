@@ -16,8 +16,8 @@ retrieveDocumentContent documentUuid = createGetObjectFn (f' "%s/%s" [folderName
 putDocumentContent :: U.UUID -> BS.ByteString -> AppContextM String
 putDocumentContent documentUuid = createPutObjectFn (f' "%s/%s" [folderName, U.toString documentUuid]) Nothing Nothing
 
-presigneGetDocumentUrl :: U.UUID -> Int -> AppContextM String
-presigneGetDocumentUrl documentUuid = createPresignedGetObjectUrl (f' "%s/%s" [folderName, U.toString documentUuid])
+presignGetDocumentUrl :: U.UUID -> Int -> AppContextM String
+presignGetDocumentUrl documentUuid = createPresignedGetObjectUrl (f' "%s/%s" [folderName, U.toString documentUuid])
 
 removeDocumentContents :: AppContextM ()
 removeDocumentContents = createRemoveObjectFn folderName

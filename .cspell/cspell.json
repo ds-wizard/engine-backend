@@ -1,0 +1,10 @@
+{
+  "dictionaries": ["haskell", "lorem-ipsum", "custom-dictionary"],
+    "dictionaryDefinitions": [
+        {
+          "name": "custom-dictionary",
+          "path": "./dictionary.txt",
+          "addWords": true
+        }
+    ]
+}

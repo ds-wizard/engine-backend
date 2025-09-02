@@ -37,7 +37,7 @@ objUriOf t =
   let (UNode val) = objectOf t
    in val
 
-obValjOf t =
+objValOf t =
   case objectOf t of
     (LNode (PlainL val)) -> val
     (LNode (PlainLL val _)) -> val
@@ -65,4 +65,4 @@ resolveRange :: RDF TList -> T.Text -> T.Text
 resolveRange graph v = head . fmap objUriOf $ query graph (Just (unode v)) rdfsRange Nothing
 
 resolveComment :: RDF TList -> T.Text -> Maybe T.Text
-resolveComment graph o = fmap obValjOf . headSafe $ query graph (Just (unode o)) rdfsComment Nothing
+resolveComment graph o = fmap objValOf . headSafe $ query graph (Just (unode o)) rdfsComment Nothing

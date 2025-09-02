@@ -19,7 +19,6 @@ import qualified Wizard.Service.Package.PackageMapper as PM_Mapper
 import WizardLib.Common.Util.Coordinate
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper hiding (toSuggestionDTO)
 import WizardLib.KnowledgeModel.Model.Package.Package
 
 toList :: DocumentTemplate -> Maybe RegistryTemplate -> Maybe RegistryOrganization -> DocumentTemplatePhase -> DocumentTemplateList
@@ -91,17 +90,11 @@ toSuggestionDTOPage suggestions pageable =
    in Page "documentTemplates" metadata entities
 
 toSuggestionDTO :: DocumentTemplateSuggestion -> DocumentTemplateSuggestionDTO
-toSuggestionDTO tml =
-  DocumentTemplateSuggestionDTO
-    { tId = tml.tId
-    , name = tml.name
-    , version = tml.version
-    , description = tml.description
-    , formats = fmap toFormatDTO tml.formats
-    }
+toSuggestionDTO DocumentTemplateSuggestion {..} = DocumentTemplateSuggestionDTO {..}
 
 toDetailDTO
   :: DocumentTemplate
+  -> [DocumentTemplateFormat]
   -> Bool
   -> [RegistryTemplate]
   -> [RegistryOrganization]
@@ -109,7 +102,7 @@ toDetailDTO
   -> Maybe String
   -> [Package]
   -> DocumentTemplateDetailDTO
-toDetailDTO tml registryEnabled tmlRs orgRs versionLs registryLink pkgs =
+toDetailDTO tml formats registryEnabled tmlRs orgRs versionLs registryLink pkgs =
   DocumentTemplateDetailDTO
     { tId = tml.tId
     , name = tml.name
@@ -122,7 +115,7 @@ toDetailDTO tml registryEnabled tmlRs orgRs versionLs registryLink pkgs =
     , readme = tml.readme
     , license = tml.license
     , allowedPackages = tml.allowedPackages
-    , formats = tml.formats
+    , formats = formats
     , nonEditable = tml.nonEditable
     , usablePackages = fmap PM_Mapper.toSimpleDTO pkgs
     , versions = versionLs
@@ -162,7 +155,6 @@ fromChangeDTO dto tml =
     , readme = tml.readme
     , license = tml.license
     , allowedPackages = tml.allowedPackages
-    , formats = tml.formats
     , nonEditable = tml.nonEditable
     , tenantUuid = tml.tenantUuid
     , createdAt = tml.createdAt

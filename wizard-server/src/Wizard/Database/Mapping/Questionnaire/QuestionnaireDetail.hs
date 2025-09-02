@@ -1,8 +1,8 @@
 module Wizard.Database.Mapping.Questionnaire.QuestionnaireDetail where
 
 import Database.PostgreSQL.Simple
-import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
+import Database.PostgreSQL.Simple.Types
 
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireAcl
@@ -18,7 +18,7 @@ instance FromRow QuestionnaireDetail where
     visibility <- field
     sharing <- field
     packageId <- field
-    selectedQuestionTagUuids <- fieldWith fromJSONField
+    selectedQuestionTagUuids <- fromPGArray <$> field
     isTemplate <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid

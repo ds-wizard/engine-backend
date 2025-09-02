@@ -16,6 +16,7 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelCacheDAO
+import Wizard.Database.DAO.KnowledgeModelSecret.KnowledgeModelSecretDAO
 import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_MigratorDAO
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
@@ -52,6 +53,7 @@ import qualified Wizard.Database.Migration.Development.DocumentTemplate.Document
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as Feedback
 import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMigration as Instance
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSchemaMigration as KnowledgeModel
+import qualified Wizard.Database.Migration.Development.KnowledgeModelSecret.KnowledgeModelSecretSchemaMigration as KnowledgeModelSecret
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LocaleMigration
 import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KnowledgeModelMigrator
@@ -99,7 +101,6 @@ buildSchema appContext = do
   runInContext Package.dropFunctions appContext
   runInContext Common.dropFunctions appContext
   putStrLn "DB: dropping schema"
-  runInContext Tenant.dropConfigTables appContext
   runInContext ExternalLink.dropTables appContext
   runInContext KnowledgeModel.dropTables appContext
   runInContext Component.dropTables appContext
@@ -117,19 +118,28 @@ buildSchema appContext = do
   runInContext Document.dropTables appContext
   runInContext QuestionnaireMigrator.dropTables appContext
   runInContext Questionnaire.dropTables appContext
-  runInContext DocumentTemplate.dropTables appContext
+  runInContext KnowledgeModelSecret.dropTables appContext
   runInContext Package.dropTables appContext
   runInContext User.dropTables appContext
+  runInContext Tenant.dropConfigTables appContext
+  runInContext DocumentTemplate.dropTables appContext
   runInContext Locale.dropTables appContext
   runInContext Tenant.dropTables appContext
   runInContext Instance.dropTables appContext
+  putStrLn "DB: Drop DB types"
+  runInContext Common.dropTypes appContext
+  -- 2. Create
+  putStrLn "DB: Create DB types"
+  runInContext Common.createTypes appContext
   putStrLn "DB: Creating schema"
   runInContext Instance.createTables appContext
   runInContext Tenant.createTables appContext
   runInContext Locale.createTables appContext
-  runInContext User.createTables appContext
   runInContext DocumentTemplate.createTables appContext
+  runInContext Tenant.createConfigTables appContext
+  runInContext User.createTables appContext
   runInContext Package.createTables appContext
+  runInContext KnowledgeModelSecret.createTables appContext
   runInContext ActionKey.createTables appContext
   runInContext Feedback.createTables appContext
   runInContext Branch.createTables appContext
@@ -148,12 +158,11 @@ buildSchema appContext = do
   runInContext Component.createTables appContext
   runInContext KnowledgeModel.createTables appContext
   runInContext ExternalLink.createTables appContext
-  runInContext Tenant.createConfigTables appContext
   putStrLn "DB: Creating DB functions"
   runInContext Common.createFunctions appContext
   runInContext Package.createFunctions appContext
   runInContext Branch.createFunctions appContext
-  putStrLn "DB: Creating missing foregign key constraints"
+  putStrLn "DB: Creating missing foreign key constraints"
   runInContext User.createUserLocaleForeignKeyConstraint appContext
   putStrLn "DB: Creating triggers"
   runInContext Locale.createTriggers appContext
@@ -188,7 +197,7 @@ resetDB appContext = do
   runInContext QTN_MigratorDAO.deleteMigratorStates appContext
   runInContext deleteFeedbacks appContext
   runInContext deleteActionKeys appContext
-  runInContext deleteBranchDatas appContext
+  runInContext deleteBranchData appContext
   runInContext deleteBranches appContext
   runInContext deleteDocuments appContext
   runInContext deleteDrafts appContext
@@ -203,6 +212,7 @@ resetDB appContext = do
   runInContext deleteQuestionnaireActions appContext
   runInContext deleteQuestionnaireImporters appContext
   runInContext deleteDocumentTemplates appContext
+  runInContext deleteKnowledgeModelSecrets appContext
   runInContext deletePackages appContext
   runInContext deleteUserTokens appContext
   runInContext deleteUserGroupMemberships appContext

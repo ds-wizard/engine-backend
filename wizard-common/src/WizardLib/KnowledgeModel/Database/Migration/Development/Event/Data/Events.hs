@@ -247,7 +247,7 @@ a_km1_ch3_q9 =
     , annotations = question9.annotations
     , tagUuids = question9.tagUuids
     , integrationUuid = question9.integrationUuid
-    , props = question9.props
+    , variables = question9.variables
     , createdAt = dt' 2018 1 21
     }
 
@@ -266,7 +266,7 @@ a_km1_ch3_q10 =
     , tagUuids = question10.tagUuids
     , integrationUuid = question10.integrationUuid
     , annotations = question10.annotations
-    , props = question10.props
+    , variables = question10.variables
     , createdAt = dt' 2018 1 21
     }
 
@@ -338,6 +338,25 @@ a_km1_ch3_q14 =
     , tagUuids = question14.tagUuids
     , maxSize = question14.maxSize
     , fileTypes = question14.fileTypes
+    , createdAt = dt' 2018 1 21
+    }
+
+a_km1_ch3_q15' :: AddQuestionEvent
+a_km1_ch3_q15' = AddIntegrationQuestionEvent' a_km1_ch3_q15
+
+a_km1_ch3_q15 :: AddIntegrationQuestionEvent
+a_km1_ch3_q15 =
+  AddIntegrationQuestionEvent
+    { uuid = u' "961ee868-9c87-4078-99ef-01719f8bd63e"
+    , parentUuid = chapter3.uuid
+    , entityUuid = question15.uuid
+    , title = question15.title
+    , text = question15.text
+    , requiredPhaseUuid = question15.requiredPhaseUuid
+    , annotations = question15.annotations
+    , tagUuids = question15.tagUuids
+    , integrationUuid = question15.integrationUuid
+    , variables = question15.variables
     , createdAt = dt' 2018 1 21
     }
 
@@ -479,7 +498,7 @@ e_km1_ch2_q4_type =
     , expertUuids = NothingChanged
     , referenceUuids = NothingChanged
     , integrationUuid = ChangedValue $ question4WithNewType.integrationUuid
-    , props = ChangedValue $ question4WithNewType.props
+    , variables = ChangedValue $ question4WithNewType.variables
     , createdAt = dt' 2018 1 21
     }
 
@@ -500,7 +519,7 @@ e_km1_ch3_q9 =
     , expertUuids = ChangedValue $ question9Edited.expertUuids
     , referenceUuids = ChangedValue $ question9Edited.referenceUuids
     , integrationUuid = ChangedValue $ question9Edited.integrationUuid
-    , props = ChangedValue $ question9Edited.props
+    , variables = ChangedValue $ question9Edited.variables
     , createdAt = dt' 2018 1 21
     }
 
@@ -1054,7 +1073,7 @@ a_km1_ch2_ansYes6_fuq5 =
     , annotations = q4_it1_q6_aYes_followUpQuestion5.annotations
     , tagUuids = q4_it1_q6_aYes_followUpQuestion5.tagUuids
     , integrationUuid = q4_it1_q6_aYes_followUpQuestion5.integrationUuid
-    , props = q4_it1_q6_aYes_followUpQuestion5.props
+    , variables = q4_it1_q6_aYes_followUpQuestion5.variables
     , createdAt = dt' 2018 1 21
     }
 
@@ -1462,11 +1481,11 @@ a_km1_tbi =
   AddTagEvent
     { uuid = u' "b6b0e53c-5702-403c-950c-e04960e09e73"
     , parentUuid = km1.uuid
-    , entityUuid = tagBioInformatic.uuid
-    , name = tagBioInformatic.name
-    , description = tagBioInformatic.description
-    , color = tagBioInformatic.color
-    , annotations = tagBioInformatic.annotations
+    , entityUuid = tagBioinformatics.uuid
+    , name = tagBioinformatics.name
+    , description = tagBioinformatics.description
+    , color = tagBioinformatics.color
+    , annotations = tagBioinformatics.annotations
     , createdAt = dt' 2018 1 21
     }
 
@@ -1494,18 +1513,45 @@ d_km1_tds =
 
 -- ----------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------
-a_km1_iop' :: AddIntegrationEvent
-a_km1_iop' = AddApiIntegrationEvent' a_km1_iop
+a_km1_ir' :: AddIntegrationEvent
+a_km1_ir' = AddApiIntegrationEvent' a_km1_ir
 
-a_km1_iop :: AddApiIntegrationEvent
-a_km1_iop =
+a_km1_ir :: AddApiIntegrationEvent
+a_km1_ir =
   AddApiIntegrationEvent
+    { uuid = u' "beffa456-eecc-4cd3-bc93-07cad5f87ec9"
+    , parentUuid = km1.uuid
+    , entityUuid = repositoryApi.uuid
+    , name = repositoryApi.name
+    , variables = repositoryApi.variables
+    , allowCustomReply = repositoryApi.allowCustomReply
+    , requestMethod = repositoryApi.requestMethod
+    , requestUrl = repositoryApi.requestUrl
+    , requestHeaders = repositoryApi.requestHeaders
+    , requestBody = repositoryApi.requestBody
+    , requestAllowEmptySearch = repositoryApi.requestAllowEmptySearch
+    , responseListField = repositoryApi.responseListField
+    , responseItemTemplate = repositoryApi.responseItemTemplate
+    , responseItemTemplateForSelection = repositoryApi.responseItemTemplateForSelection
+    , testQ = repositoryApi.testQ
+    , testVariables = repositoryApi.testVariables
+    , testResponse = repositoryApi.testResponse
+    , annotations = repositoryApi.annotations
+    , createdAt = dt' 2018 1 21
+    }
+
+a_km1_iop' :: AddIntegrationEvent
+a_km1_iop' = AddApiLegacyIntegrationEvent' a_km1_iop
+
+a_km1_iop :: AddApiLegacyIntegrationEvent
+a_km1_iop =
+  AddApiLegacyIntegrationEvent
     { uuid = u' "3f94cb01-6f92-4eb6-975b-385c02b831bc"
     , parentUuid = km1.uuid
     , entityUuid = ontologyPortal.uuid
     , iId = ontologyPortal.iId
     , name = ontologyPortal.name
-    , props = ontologyPortal.props
+    , variables = ontologyPortal.variables
     , logo = ontologyPortal.logo
     , requestMethod = ontologyPortal.requestMethod
     , requestUrl = ontologyPortal.requestUrl
@@ -1521,17 +1567,17 @@ a_km1_iop =
     }
 
 a_km1_ibp' :: AddIntegrationEvent
-a_km1_ibp' = AddApiIntegrationEvent' a_km1_ibp
+a_km1_ibp' = AddApiLegacyIntegrationEvent' a_km1_ibp
 
-a_km1_ibp :: AddApiIntegrationEvent
+a_km1_ibp :: AddApiLegacyIntegrationEvent
 a_km1_ibp =
-  AddApiIntegrationEvent
+  AddApiLegacyIntegrationEvent
     { uuid = u' "5c47b31c-84d0-4792-99ce-09154642105d"
     , parentUuid = km1.uuid
     , entityUuid = bioPortal.uuid
     , iId = bioPortal.iId
     , name = bioPortal.name
-    , props = bioPortal.props
+    , variables = bioPortal.variables
     , logo = bioPortal.logo
     , requestMethod = bioPortal.requestMethod
     , requestUrl = bioPortal.requestUrl
@@ -1557,7 +1603,7 @@ a_km1_iwp =
     , entityUuid = widgetPortal.uuid
     , iId = widgetPortal.iId
     , name = widgetPortal.name
-    , props = widgetPortal.props
+    , variables = widgetPortal.variables
     , logo = widgetPortal.logo
     , widgetUrl = widgetPortal.widgetUrl
     , itemUrl = widgetPortal.itemUrl
@@ -1565,18 +1611,45 @@ a_km1_iwp =
     , createdAt = dt' 2018 1 21
     }
 
-e_km1_iop' :: EditIntegrationEvent
-e_km1_iop' = EditApiIntegrationEvent' e_km1_iop
+e_km1_ir' :: EditIntegrationEvent
+e_km1_ir' = EditApiIntegrationEvent' e_km1_ir
 
-e_km1_iop :: EditApiIntegrationEvent
-e_km1_iop =
+e_km1_ir :: EditApiIntegrationEvent
+e_km1_ir =
   EditApiIntegrationEvent
+    { uuid = u' "f26be960-5705-4bc6-8348-bf8719a40eab"
+    , parentUuid = km1.uuid
+    , entityUuid = repositoryApi.uuid
+    , name = ChangedValue repositoryApi.name
+    , variables = ChangedValue repositoryApi.variables
+    , allowCustomReply = ChangedValue repositoryApi.allowCustomReply
+    , requestMethod = ChangedValue repositoryApi.requestMethod
+    , requestUrl = ChangedValue repositoryApi.requestUrl
+    , requestHeaders = ChangedValue repositoryApi.requestHeaders
+    , requestBody = ChangedValue repositoryApi.requestBody
+    , requestAllowEmptySearch = ChangedValue repositoryApi.requestAllowEmptySearch
+    , responseListField = ChangedValue repositoryApi.responseListField
+    , responseItemTemplate = ChangedValue repositoryApi.responseItemTemplate
+    , responseItemTemplateForSelection = ChangedValue repositoryApi.responseItemTemplateForSelection
+    , testQ = ChangedValue repositoryApi.testQ
+    , testVariables = ChangedValue repositoryApi.testVariables
+    , testResponse = ChangedValue repositoryApi.testResponse
+    , annotations = ChangedValue repositoryApi.annotations
+    , createdAt = dt' 2018 1 21
+    }
+
+e_km1_iop' :: EditIntegrationEvent
+e_km1_iop' = EditApiLegacyIntegrationEvent' e_km1_iop
+
+e_km1_iop :: EditApiLegacyIntegrationEvent
+e_km1_iop =
+  EditApiLegacyIntegrationEvent
     { uuid = u' "3456a254-c5bc-4c0e-8ff9-f5e080765a71"
     , parentUuid = km1.uuid
     , entityUuid = ontologyPortalEdited.uuid
     , iId = ChangedValue $ ontologyPortalEdited.iId
     , name = ChangedValue $ ontologyPortalEdited.name
-    , props = ChangedValue $ ontologyPortalEdited.props
+    , variables = ChangedValue $ ontologyPortalEdited.variables
     , logo = ChangedValue $ ontologyPortalEdited.logo
     , requestMethod = ChangedValue $ ontologyPortalEdited.requestMethod
     , requestUrl = ChangedValue $ ontologyPortalEdited.requestUrl
@@ -1602,7 +1675,7 @@ e_km1_iwp =
     , entityUuid = widgetPortalEdited.uuid
     , iId = ChangedValue $ widgetPortalEdited.iId
     , name = ChangedValue $ widgetPortalEdited.name
-    , props = ChangedValue $ widgetPortalEdited.props
+    , variables = ChangedValue $ widgetPortalEdited.variables
     , logo = ChangedValue $ widgetPortalEdited.logo
     , widgetUrl = ChangedValue $ widgetPortalEdited.widgetUrl
     , itemUrl = ChangedValue $ widgetPortalEdited.itemUrl

@@ -78,7 +78,8 @@ import Wizard.Service.Questionnaire.Version.QuestionnaireVersionService
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
+import qualified WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as STM
 import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Package.Package
@@ -185,9 +186,9 @@ createQuestionnaireFromTemplate reqDto =
           :: Questionnaire
     insertQuestionnaire newQtn
     clonedFiles <- cloneQuestionnaireFiles originQtn.uuid newQtn.uuid
-    newQtnEventsWithOldEventUuid <- cloneQuestinonaireEventsWithOldEventUuid newQtnUuid originQtnEvents
+    newQtnEventsWithOldEventUuid <- cloneQuestionnaireEventsWithOldEventUuid newQtnUuid originQtnEvents
     let newQtnEvents = fmap snd newQtnEventsWithOldEventUuid
-    let newQtnEventsWithReplacedFiles = replaceQuestinonaireEventsWithNewFiles clonedFiles newQtnEvents
+    let newQtnEventsWithReplacedFiles = replaceQuestionnaireEventsWithNewFiles clonedFiles newQtnEvents
     insertQuestionnaireEvents newQtnEventsWithReplacedFiles
     duplicateCommentThreads reqDto.questionnaireUuid newQtnUuid
     cloneQuestionnaireVersions originQtn.uuid newQtn.uuid newQtnEventsWithOldEventUuid
@@ -220,9 +221,9 @@ cloneQuestionnaire cloneUuid =
           :: Questionnaire
     insertQuestionnaire newQtn
     clonedFiles <- cloneQuestionnaireFiles originQtn.uuid newQtn.uuid
-    newQtnEventsWithOldEventUuid <- cloneQuestinonaireEventsWithOldEventUuid newQtnUuid originQtnEvents
+    newQtnEventsWithOldEventUuid <- cloneQuestionnaireEventsWithOldEventUuid newQtnUuid originQtnEvents
     let newQtnEvents = fmap snd newQtnEventsWithOldEventUuid
-    let newQtnEventsWithReplacedFiles = replaceQuestinonaireEventsWithNewFiles clonedFiles newQtnEvents
+    let newQtnEventsWithReplacedFiles = replaceQuestionnaireEventsWithNewFiles clonedFiles newQtnEvents
     insertQuestionnaireEvents newQtnEventsWithReplacedFiles
     cloneQuestionnaireVersions originQtn.uuid newQtn.uuid newQtnEventsWithOldEventUuid
     duplicateCommentThreads cloneUuid newQtnUuid
@@ -347,11 +348,14 @@ modifyQuestionnaireShare qtnUuid reqDto =
       case updatedQtn.documentTemplateId of
         Just tId -> do
           tml <- findDocumentTemplateById tId
-          return $ Just tml
+          formats <- findDocumentTemplateFormats tId
+          return . Just $ STM.toDTO tml formats
         _ -> return Nothing
     mFormat <-
-      case (mTemplate, updatedQtn.formatUuid) of
-        (Just tml, Just fUuid) -> return $ L.find (\f -> f.uuid == fUuid) tml.formats
+      case (updatedQtn.documentTemplateId, updatedQtn.formatUuid) of
+        (Just dtId, Just formatUuid) -> do
+          format <- findDocumentTemplateFormatByDocumentTemplateIdAndUuid dtId formatUuid
+          return $ Just format
         _ -> return Nothing
     qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
     qtnCtn <- compileQuestionnaire qtnEvents
@@ -378,11 +382,14 @@ modifyQuestionnaireSettings qtnUuid reqDto =
       case updatedQtn.documentTemplateId of
         Just tId -> do
           tml <- findDocumentTemplateById tId
-          return $ Just tml
+          formats <- findDocumentTemplateFormats tId
+          return . Just $ STM.toDTO tml formats
         _ -> return Nothing
     mFormat <-
-      case (mTemplate, updatedQtn.formatUuid) of
-        (Just tml, Just fUuid) -> return $ L.find (\f -> f.uuid == fUuid) tml.formats
+      case (updatedQtn.documentTemplateId, updatedQtn.formatUuid) of
+        (Just dtId, Just formatUuid) -> do
+          format <- findDocumentTemplateFormatByDocumentTemplateIdAndUuid dtId formatUuid
+          return $ Just format
         _ -> return Nothing
     qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
     qtnCtn <- compileQuestionnaire qtnEvents
@@ -397,7 +404,7 @@ deleteQuestionnaire qtnUuid shouldValidatePermission =
   runInTransaction $ do
     unsetQuestionnaireFromDocumentTemplate qtnUuid
     qtn <- findQuestionnaireByUuid qtnUuid
-    validateQuestionnaireDeletation qtnUuid
+    validateQuestionnaireDeletion qtnUuid
     when shouldValidatePermission (checkOwnerPermissionToQtn qtn.visibility qtn.permissions)
     deleteMigratorStateByNewQuestionnaireUuid qtnUuid
     threads <- findQuestionnaireCommentThreads qtnUuid
@@ -447,21 +454,21 @@ cleanQuestionnaires =
       )
       qtns
 
-cloneQuestinonaireEvents :: U.UUID -> [QuestionnaireEvent] -> AppContextM [QuestionnaireEvent]
-cloneQuestinonaireEvents newQtnUuid oldEvents = do
-  newEvents <- cloneQuestinonaireEventsWithOldEventUuid newQtnUuid oldEvents
+cloneQuestionnaireEvents :: U.UUID -> [QuestionnaireEvent] -> AppContextM [QuestionnaireEvent]
+cloneQuestionnaireEvents newQtnUuid oldEvents = do
+  newEvents <- cloneQuestionnaireEventsWithOldEventUuid newQtnUuid oldEvents
   return $ fmap snd newEvents
 
-cloneQuestinonaireEventsWithOldEventUuid :: U.UUID -> [QuestionnaireEvent] -> AppContextM [(U.UUID, QuestionnaireEvent)]
-cloneQuestinonaireEventsWithOldEventUuid newQtnUuid =
+cloneQuestionnaireEventsWithOldEventUuid :: U.UUID -> [QuestionnaireEvent] -> AppContextM [(U.UUID, QuestionnaireEvent)]
+cloneQuestionnaireEventsWithOldEventUuid newQtnUuid =
   traverse
     ( \event -> do
         newEventUuid <- liftIO generateUuid
         return (getUuid event, setQuestionnaireUuid (setUuid event newEventUuid) newQtnUuid)
     )
 
-replaceQuestinonaireEventsWithNewFiles :: [(QuestionnaireFile, QuestionnaireFile)] -> [QuestionnaireEvent] -> [QuestionnaireEvent]
-replaceQuestinonaireEventsWithNewFiles clonedFiles qtnEvents =
+replaceQuestionnaireEventsWithNewFiles :: [(QuestionnaireFile, QuestionnaireFile)] -> [QuestionnaireEvent] -> [QuestionnaireEvent]
+replaceQuestionnaireEventsWithNewFiles clonedFiles qtnEvents =
   let findFile :: U.UUID -> Maybe (QuestionnaireFile, QuestionnaireFile)
       findFile fileUuid = L.find (\(oldFile, newFile) -> oldFile.uuid == fileUuid) clonedFiles
       replaceEvent :: QuestionnaireEvent -> QuestionnaireEvent

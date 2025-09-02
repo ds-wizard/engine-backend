@@ -19,6 +19,7 @@ import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTe
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
+import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.Bundle.DocumentTemplateBundleMapper (fromBundle, fromDocumentTemplateArchive, toBundle)
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
@@ -29,10 +30,11 @@ exportBundle tmlId = do
   _ <- auditGetDocumentTemplateBundle tmlId
   resolvedId <- resolveDocumentTemplateId tmlId
   tml <- findDocumentTemplateById resolvedId
+  formats <- findDocumentTemplateFormats resolvedId
   files <- findFilesByDocumentTemplateId resolvedId
   assets <- findAssetsByDocumentTemplateId resolvedId
   assetContents <- traverse (findAsset tml.tId) assets
-  return $ toDocumentTemplateArchive (toBundle tml files assets) assetContents
+  return $ toDocumentTemplateArchive (toBundle tml formats files assets) assetContents
 
 importBundle :: BSL.ByteString -> AppContextM DocumentTemplateDetailDTO
 importBundle contentS = do
@@ -43,6 +45,7 @@ importBundle contentS = do
       let tml = fromBundle bundle tenantUuid
       traverse_ (\(a, content) -> putAsset tml.tId a.uuid a.contentType content) assetContents
       insertDocumentTemplate tml
+      traverse_ (insertDocumentTemplateFormat . fromFormatDTO tml.tId tenantUuid tml.createdAt tml.updatedAt) bundle.formats
       traverse_ (insertFile . fromFileDTO tml.tId tenantUuid tml.createdAt) bundle.files
       traverse_
         ( \(assetDto, content) ->

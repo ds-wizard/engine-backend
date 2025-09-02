@@ -10,7 +10,7 @@ import RegistryLib.Model.Organization.Organization
 import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
 import Shared.ActionKey.Model.ActionKey.ActionKey
 
-regActionKey =
+registrationActionKey =
   ActionKey
     { uuid = fromJust . U.fromString $ "23f934f2-05b2-45d3-bce9-7675c3f3e5e9"
     , identity = orgGlobal.organizationId
@@ -20,7 +20,7 @@ regActionKey =
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
-forgTokActionKey =
+forgottenTokenActionKey =
   ActionKey
     { uuid = fromJust . U.fromString $ "2728460f-ba9a-4a05-8e47-7faa4dc931bf"
     , identity = orgGlobal.organizationId
@@ -30,5 +30,5 @@ forgTokActionKey =
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
-forgTokActionKeyDto =
-  ActionKeyDTO {aType = forgTokActionKey.aType, email = orgGlobal.email}
+forgottenTokenActionKeyDto =
+  ActionKeyDTO {aType = forgottenTokenActionKey.aType, email = orgGlobal.email}

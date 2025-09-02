@@ -23,6 +23,7 @@ import RegistryLib.Api.Resource.Organization.OrganizationStateDTO
 import RegistryLib.Api.Resource.Organization.OrganizationStateJM ()
 import RegistryLib.Api.Resource.Package.PackageSimpleDTO
 import RegistryLib.Model.Organization.OrganizationSimple
+import Shared.Common.Api.Resource.Common.SemVer2TupleJM ()
 import Shared.Common.Constant.Api
 import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.String (f', splitOn)

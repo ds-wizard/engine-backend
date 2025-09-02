@@ -57,8 +57,8 @@ unsetBranchFromDocumentTemplate qtnUuid = do
   let action conn = execute conn sql params
   runDB action
 
-deleteDraftDatas :: AppContextM Int64
-deleteDraftDatas = createDeleteEntitiesFn entityName
+deleteDraftData :: AppContextM Int64
+deleteDraftData = createDeleteEntitiesFn entityName
 
 deleteDraftDataByDocumentTemplateId :: String -> AppContextM Int64
 deleteDraftDataByDocumentTemplateId tmlId = do

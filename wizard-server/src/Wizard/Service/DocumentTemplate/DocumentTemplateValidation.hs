@@ -48,8 +48,8 @@ validateDocumentTemplateIdUniqueness tmlId = do
     Nothing -> return ()
     Just _ -> throwError . UserError $ _ERROR_VALIDATION__DOC_TML_ID_UNIQUENESS tmlId
 
-validateDocumentTemplateDeletation :: String -> AppContextM ()
-validateDocumentTemplateDeletation tmlId = do
+validateDocumentTemplateDeletion :: String -> AppContextM ()
+validateDocumentTemplateDeletion tmlId = do
   validateUsageBySomeQuestionnaire tmlId
   validateUsageBySomeDocument tmlId
 
@@ -76,7 +76,7 @@ validateMetamodelVersion tml =
   when
     (tml.metamodelVersion /= documentTemplateMetamodelVersion)
     ( throwError . UserError $
-        _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION tml.tId tml.metamodelVersion documentTemplateMetamodelVersion
+        _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION tml.tId (show tml.metamodelVersion) (show documentTemplateMetamodelVersion)
     )
 
 validateFileAndAssetUniqueness :: Maybe U.UUID -> String -> String -> AppContextM ()

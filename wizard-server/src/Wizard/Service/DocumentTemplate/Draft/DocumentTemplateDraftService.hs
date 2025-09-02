@@ -6,6 +6,7 @@ import Control.Monad.Reader (liftIO)
 import Data.Foldable (traverse_)
 import Data.Time
 
+import Shared.Common.Api.Resource.Common.EntityCreatedWithIdDTO
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
@@ -38,7 +39,9 @@ import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
+import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
 import WizardLib.KnowledgeModel.Localization.Messages.Public
 
 getDraftsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateDraftList)
@@ -46,7 +49,7 @@ getDraftsPage mQuery pageable sort = do
   checkPermission _DOC_TML_WRITE_PERM
   findDraftsPage mQuery pageable sort
 
-createDraft :: DocumentTemplateDraftCreateDTO -> AppContextM DocumentTemplate
+createDraft :: DocumentTemplateDraftCreateDTO -> AppContextM EntityCreatedWithIdDTO
 createDraft reqDto =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
@@ -56,31 +59,34 @@ createDraft reqDto =
     case reqDto.basedOn of
       Just tmlId -> do
         tml <- findDocumentTemplateById tmlId
+        formats <- findDocumentTemplateFormats tmlId
         when
           tml.nonEditable
           (throwError . UserError $ _ERROR_SERVICE_DOC_TML__NON_EDITABLE_DOC_TML)
-        let draft = fromCreateDTO reqDto tml tcOrganization.organizationId now
+        let (draft, draftFormats) = fromCreateDTO reqDto tml formats tcOrganization.organizationId now
         validateNewDocumentTemplate draft False
         insertDocumentTemplate draft
+        traverse_ insertDocumentTemplateFormat draftFormats
         assets <- findAssetsByDocumentTemplateId tmlId
         traverse_ (duplicateAsset draft.tId) assets
         files <- findFilesByDocumentTemplateId tmlId
         traverse_ (duplicateFile draft.tId) files
         let draftData = fromCreateDraftData draft
         insertDraftData draftData
-        return draft
+        return $ EntityCreatedWithIdDTO draft.tId
       Nothing -> do
         let draft = fromCreateDTO' reqDto tcOrganization.organizationId tcOrganization.tenantUuid now
         validateNewDocumentTemplate draft False
         insertDocumentTemplate draft
         let draftData = fromCreateDraftData draft
         insertDraftData draftData
-        return draft
+        return $ EntityCreatedWithIdDTO draft.tId
 
 getDraft :: String -> AppContextM DocumentTemplateDraftDetail
 getDraft tmlId = do
   checkPermission _DOC_TML_WRITE_PERM
   draft <- findDraftById tmlId
+  formats <- findDocumentTemplateFormats draft.tId
   draftData <- findDraftDataById tmlId
   mQtnSuggestion <-
     case draftData.questionnaireUuid of
@@ -90,21 +96,28 @@ getDraft tmlId = do
     case draftData.branchUuid of
       Just branchUuid -> findBranchSuggestionByUuid' branchUuid
       Nothing -> return Nothing
-  return $ toDraftDetail draft draftData mQtnSuggestion mBranchSuggestion
+  return $ toDraftDetail draft formats draftData mQtnSuggestion mBranchSuggestion
 
 modifyDraft :: String -> DocumentTemplateDraftChangeDTO -> AppContextM DocumentTemplateDraftDetail
 modifyDraft tmlId reqDto =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
+    -- Update draft
+    now <- liftIO getCurrentTime
     draft <- findDraftById tmlId
     validateChangeDto reqDto draft
-    let draftUpdated = fromChangeDTO reqDto draft
+    let draftUpdated = fromChangeDTO reqDto draft now
     updateDocumentTemplateById draftUpdated
+    -- Update formats
+    let formatsUpdated = fmap (fromFormatDTO tmlId draft.tenantUuid draft.createdAt now) reqDto.formats
+    traverse_ insertOrUpdateDocumentTemplateFormat formatsUpdated
+    deleteDocumentTemplateFormatsExcept tmlId (fmap (.uuid) formatsUpdated)
+    -- Delete temporary documents for the template
     deleteTemporalDocumentsByDocumentTemplateId tmlId
     if reqDto.phase == ReleasedDocumentTemplatePhase
       then do
         deleteDraftDataByDocumentTemplateId tmlId
-        return . toDraftDetail' $ draftUpdated
+        return $ toDraftDetail' draftUpdated formatsUpdated
       else do
         if reqDto.templateId /= draft.templateId || reqDto.version /= draft.version
           then do
@@ -117,7 +130,7 @@ modifyDraft tmlId reqDto =
                     }
             newDraft <- createDraft createDto
             deleteDraft tmlId
-            getDraft newDraft.tId
+            getDraft newDraft.aId
           else getDraft tmlId
 
 modifyDraftData :: String -> DocumentTemplateDraftDataChangeDTO -> AppContextM DocumentTemplateDraftDataDTO
@@ -144,7 +157,7 @@ deleteDraft tmlId =
     draft <- findDraftById tmlId
     assets <- findAssetsByDocumentTemplateId tmlId
     cleanTemporallyDocumentsForTemplate tmlId
-    validateDocumentTemplateDeletation tmlId
+    validateDocumentTemplateDeletion tmlId
     deleteDraftByDocumentTemplateId tmlId
     let assetUuids = fmap (.uuid) assets
     traverse_ (removeAsset tmlId) assetUuids

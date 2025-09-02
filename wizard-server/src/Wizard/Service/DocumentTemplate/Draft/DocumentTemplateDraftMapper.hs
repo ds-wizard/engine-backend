@@ -29,8 +29,8 @@ toDraftList tml =
     , updatedAt = tml.updatedAt
     }
 
-toDraftDetail :: DocumentTemplate -> DocumentTemplateDraftData -> Maybe QuestionnaireSuggestion -> Maybe BranchSuggestion -> DocumentTemplateDraftDetail
-toDraftDetail draft draftData mQuestionnaire mBranch =
+toDraftDetail :: DocumentTemplate -> [DocumentTemplateFormat] -> DocumentTemplateDraftData -> Maybe QuestionnaireSuggestion -> Maybe BranchSuggestion -> DocumentTemplateDraftDetail
+toDraftDetail draft formats draftData mQuestionnaire mBranch =
   DocumentTemplateDraftDetail
     { tId = draft.tId
     , name = draft.name
@@ -40,7 +40,7 @@ toDraftDetail draft draftData mQuestionnaire mBranch =
     , readme = draft.readme
     , license = draft.license
     , allowedPackages = draft.allowedPackages
-    , formats = draft.formats
+    , formats = formats
     , questionnaireUuid = draftData.questionnaireUuid
     , questionnaire = mQuestionnaire
     , branchUuid = draftData.branchUuid
@@ -50,8 +50,8 @@ toDraftDetail draft draftData mQuestionnaire mBranch =
     , updatedAt = draft.updatedAt
     }
 
-toDraftDetail' :: DocumentTemplate -> DocumentTemplateDraftDetail
-toDraftDetail' draft =
+toDraftDetail' :: DocumentTemplate -> [DocumentTemplateFormat] -> DocumentTemplateDraftDetail
+toDraftDetail' draft formats =
   DocumentTemplateDraftDetail
     { tId = draft.tId
     , name = draft.name
@@ -61,7 +61,7 @@ toDraftDetail' draft =
     , readme = draft.readme
     , license = draft.license
     , allowedPackages = draft.allowedPackages
-    , formats = draft.formats
+    , formats = formats
     , questionnaireUuid = Nothing
     , questionnaire = Nothing
     , branchUuid = Nothing
@@ -92,29 +92,51 @@ toChangeDTO tml =
     , readme = tml.readme
     , license = tml.license
     , allowedPackages = tml.allowedPackages
-    , formats = tml.formats
+    , formats = []
     }
 
-fromCreateDTO :: DocumentTemplateDraftCreateDTO -> DocumentTemplate -> String -> UTCTime -> DocumentTemplate
-fromCreateDTO dto tml organizationId now =
-  DocumentTemplate
-    { tId = buildCoordinate organizationId dto.templateId dto.version
-    , name = dto.name
-    , organizationId = organizationId
-    , templateId = dto.templateId
-    , version = dto.version
-    , phase = DraftDocumentTemplatePhase
-    , metamodelVersion = documentTemplateMetamodelVersion
-    , description = tml.description
-    , readme = tml.readme
-    , license = tml.license
-    , allowedPackages = tml.allowedPackages
-    , formats = tml.formats
-    , nonEditable = False
-    , tenantUuid = tml.tenantUuid
-    , createdAt = now
-    , updatedAt = now
-    }
+fromCreateDTO :: DocumentTemplateDraftCreateDTO -> DocumentTemplate -> [DocumentTemplateFormat] -> String -> UTCTime -> (DocumentTemplate, [DocumentTemplateFormat])
+fromCreateDTO dto tml formats organizationId now =
+  let documentTemplateId = buildCoordinate organizationId dto.templateId dto.version
+   in ( DocumentTemplate
+          { tId = documentTemplateId
+          , name = dto.name
+          , organizationId = organizationId
+          , templateId = dto.templateId
+          , version = dto.version
+          , phase = DraftDocumentTemplatePhase
+          , metamodelVersion = documentTemplateMetamodelVersion
+          , description = tml.description
+          , readme = tml.readme
+          , license = tml.license
+          , allowedPackages = tml.allowedPackages
+          , nonEditable = False
+          , tenantUuid = tml.tenantUuid
+          , createdAt = now
+          , updatedAt = now
+          }
+      , fmap
+          ( \f ->
+              f
+                { documentTemplateId = documentTemplateId
+                , steps =
+                    fmap
+                      ( \s ->
+                          s
+                            { documentTemplateId = documentTemplateId
+                            , createdAt = now
+                            , updatedAt = now
+                            }
+                          :: DocumentTemplateFormatStep
+                      )
+                      (steps f)
+                , createdAt = now
+                , updatedAt = now
+                }
+              :: DocumentTemplateFormat
+          )
+          formats
+      )
 
 fromCreateDTO' :: DocumentTemplateDraftCreateDTO -> String -> U.UUID -> UTCTime -> DocumentTemplate
 fromCreateDTO' dto organizationId tenantUuid now =
@@ -130,15 +152,14 @@ fromCreateDTO' dto organizationId tenantUuid now =
     , readme = ""
     , license = ""
     , allowedPackages = []
-    , formats = []
     , nonEditable = False
     , tenantUuid = tenantUuid
     , createdAt = now
     , updatedAt = now
     }
 
-fromChangeDTO :: DocumentTemplateDraftChangeDTO -> DocumentTemplate -> DocumentTemplate
-fromChangeDTO dto tml =
+fromChangeDTO :: DocumentTemplateDraftChangeDTO -> DocumentTemplate -> UTCTime -> DocumentTemplate
+fromChangeDTO dto tml now =
   DocumentTemplate
     { tId = tml.tId
     , name = dto.name
@@ -151,11 +172,10 @@ fromChangeDTO dto tml =
     , readme = dto.readme
     , license = dto.license
     , allowedPackages = dto.allowedPackages
-    , formats = dto.formats
     , nonEditable = tml.nonEditable
     , tenantUuid = tml.tenantUuid
     , createdAt = tml.createdAt
-    , updatedAt = tml.updatedAt
+    , updatedAt = now
     }
 
 fromCreateDraftData :: DocumentTemplate -> DocumentTemplateDraftData

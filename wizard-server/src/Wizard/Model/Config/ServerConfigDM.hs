@@ -109,6 +109,7 @@ defaultCache =
     { dataExpiration = 14 * 24
     , websocketExpiration = 24
     , purgeExpired = defaultCachePurgeExpired
+    , dataEnabled = True
     }
 
 defaultCachePurgeExpired :: ServerConfigCronWorker

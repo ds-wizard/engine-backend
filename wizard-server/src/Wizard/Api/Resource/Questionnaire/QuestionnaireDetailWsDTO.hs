@@ -7,7 +7,7 @@ import GHC.Generics
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Model.Questionnaire.Questionnaire
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatDTO
+import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
 data QuestionnaireDetailWsDTO = QuestionnaireDetailWsDTO
   { name :: String
@@ -19,7 +19,7 @@ data QuestionnaireDetailWsDTO = QuestionnaireDetailWsDTO
   , documentTemplateId :: Maybe String
   , documentTemplate :: Maybe DocumentTemplateDTO
   , formatUuid :: Maybe U.UUID
-  , format :: Maybe DocumentTemplateFormatDTO
+  , format :: Maybe DocumentTemplateFormatSimple
   , isTemplate :: Bool
   , labels :: M.Map String [U.UUID]
   , unresolvedCommentCounts :: M.Map String (M.Map U.UUID Int)

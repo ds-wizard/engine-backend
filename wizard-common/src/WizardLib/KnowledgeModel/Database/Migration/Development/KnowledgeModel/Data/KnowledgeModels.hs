@@ -22,7 +22,7 @@ km1 =
     { uuid = u' "ff672529-e837-4201-b7b1-7ada557d9725"
     , annotations = []
     , chapterUuids = [chapter1.uuid, chapter2.uuid, chapter3.uuid]
-    , tagUuids = [tagDataScience.uuid, tagBioInformatic.uuid]
+    , tagUuids = [tagDataScience.uuid, tagBioinformatics.uuid]
     , integrationUuids = [ontologyPortal.uuid, bioPortal.uuid]
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
@@ -60,7 +60,7 @@ km1 =
           , experts = toMap [km1_ch1_q2_eAlbert, km1_ch1_q2_eNikola]
           , references = toMap [km1_ch1_q2_r1', km1_ch1_q2_r2']
           , integrations = toMap [ontologyPortal', bioPortal', widgetPortal']
-          , tags = toMap [tagDataScience, tagBioInformatic]
+          , tags = toMap [tagDataScience, tagBioinformatics]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]
           , resourceCollections = toMap [rc1, rc2]
@@ -74,7 +74,7 @@ km1Edited =
     { uuid = km1.uuid
     , annotations = [MapEntry "newAnnotation" "someValue"]
     , chapterUuids = [chapter3.uuid, chapter2.uuid, chapter1.uuid]
-    , tagUuids = [tagBioInformatic.uuid, tagDataScience.uuid]
+    , tagUuids = [tagBioinformatics.uuid, tagDataScience.uuid]
     , integrationUuids = [widgetPortal.uuid, bioPortal.uuid, ontologyPortal.uuid]
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
@@ -117,7 +117,7 @@ km1WithQ4Plain =
     { uuid = km1.uuid
     , annotations = []
     , chapterUuids = [chapter1.uuid, chapter2WithQ4Plain.uuid, chapter3.uuid]
-    , tagUuids = [tagDataScience.uuid, tagBioInformatic.uuid]
+    , tagUuids = [tagDataScience.uuid, tagBioinformatics.uuid]
     , integrationUuids = [ontologyPortal.uuid, bioPortal.uuid, widgetPortal.uuid]
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
@@ -156,7 +156,7 @@ km1WithQ4Plain =
           , experts = toMap [km1_ch1_q2_eAlbert, km1_ch1_q2_eNikola]
           , references = toMap [km1_ch1_q2_r1', km1_ch1_q2_r2']
           , integrations = toMap [ontologyPortal', bioPortal', widgetPortal']
-          , tags = toMap [tagDataScience, tagBioInformatic]
+          , tags = toMap [tagDataScience, tagBioinformatics]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]
           , resourceCollections = toMap [rc1, rc2]
@@ -170,8 +170,8 @@ km1WithQ4 =
     { uuid = km1.uuid
     , annotations = []
     , chapterUuids = [chapter1.uuid, chapter2WithQ4.uuid, chapter3.uuid]
-    , tagUuids = [tagDataScience.uuid, tagBioInformatic.uuid]
-    , integrationUuids = [ontologyPortal.uuid, bioPortal.uuid, widgetPortal.uuid]
+    , tagUuids = [tagDataScience.uuid, tagBioinformatics.uuid]
+    , integrationUuids = [repositoryApi.uuid, ontologyPortal.uuid, bioPortal.uuid, widgetPortal.uuid]
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
     , phaseUuids = [phase1.uuid, phase2.uuid, phase3.uuid]
@@ -201,6 +201,7 @@ km1WithQ4 =
                 , question12'
                 , question13'
                 , question14'
+                , question15'
                 ]
           , answers =
               toMap
@@ -219,8 +220,8 @@ km1WithQ4 =
           , experts =
               toMap [km1_ch1_q2_eAlbert, km1_ch1_q2_eNikola, km1_ch2_q6_eAlbert, km1_ch2_q6_eNikola]
           , references = toMap [km1_ch1_q2_r1', km1_ch1_q2_r2', km1_ch2_q6_r1', km1_ch2_q6_r2']
-          , integrations = toMap [ontologyPortal', bioPortal', widgetPortal']
-          , tags = toMap [tagDataScience, tagBioInformatic]
+          , integrations = toMap [repositoryApi', ontologyPortal', bioPortal', widgetPortal']
+          , tags = toMap [tagDataScience, tagBioinformatics]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]
           , resourceCollections = toMap [rc1, rc2]
@@ -234,7 +235,7 @@ km1Global =
     { uuid = km1.uuid
     , annotations = []
     , chapterUuids = []
-    , tagUuids = [tagDataScience.uuid, tagBioInformatic.uuid]
+    , tagUuids = [tagDataScience.uuid, tagBioinformatics.uuid]
     , integrationUuids = [ontologyPortal.uuid, bioPortal.uuid, widgetPortal.uuid]
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
@@ -249,7 +250,7 @@ km1Global =
           , experts = toMap []
           , references = toMap []
           , integrations = toMap [ontologyPortal', bioPortal', widgetPortal']
-          , tags = toMap [tagDataScience, tagBioInformatic]
+          , tags = toMap [tagDataScience, tagBioinformatics]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]
           , resourceCollections = toMap [rc1, rc2]
@@ -263,7 +264,7 @@ km1Netherlands =
     { uuid = km1.uuid
     , annotations = []
     , chapterUuids = [chapter1WithoutQuestions.uuid]
-    , tagUuids = [tagDataScience.uuid, tagBioInformatic.uuid]
+    , tagUuids = [tagDataScience.uuid, tagBioinformatics.uuid]
     , integrationUuids = [ontologyPortal.uuid, bioPortal.uuid, widgetPortal.uuid]
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
@@ -278,7 +279,7 @@ km1Netherlands =
           , experts = toMap []
           , references = toMap []
           , integrations = toMap [ontologyPortal', bioPortal', widgetPortal']
-          , tags = toMap [tagDataScience, tagBioInformatic]
+          , tags = toMap [tagDataScience, tagBioinformatics]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]
           , resourceCollections = toMap [rc1, rc2]
@@ -292,7 +293,7 @@ km1NetherlandsV2 =
     { uuid = km1.uuid
     , annotations = []
     , chapterUuids = [chapter1WithoutQuestions.uuid, chapter4WithoutQuestions.uuid]
-    , tagUuids = [tagDataScience.uuid, tagBioInformatic.uuid]
+    , tagUuids = [tagDataScience.uuid, tagBioinformatics.uuid]
     , integrationUuids = [ontologyPortal.uuid, bioPortal.uuid, widgetPortal.uuid]
     , metricUuids =
         [metricF.uuid, metricA.uuid, metricI.uuid, metricR.uuid, metricG.uuid, metricO.uuid]
@@ -307,7 +308,7 @@ km1NetherlandsV2 =
           , experts = toMap []
           , references = toMap []
           , integrations = toMap [ontologyPortal', bioPortal', widgetPortal']
-          , tags = toMap [tagDataScience, tagBioInformatic]
+          , tags = toMap [tagDataScience, tagBioinformatics]
           , metrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
           , phases = toMap [phase1, phase2, phase3]
           , resourceCollections = toMap [rc1, rc2]

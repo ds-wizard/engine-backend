@@ -25,7 +25,7 @@ import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Submission.SubmissionList
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
+import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 import WizardLib.KnowledgeModel.Model.Package.Package
 
@@ -40,7 +40,7 @@ toDTO doc submissions =
     , questionnaireVersion = doc.questionnaireVersion
     , documentTemplateId = doc.documentTemplateId
     , documentTemplateName = doc.documentTemplateName
-    , format = fmap toFormatDTO . L.find (\f -> f.uuid == doc.formatUuid) $ doc.documentTemplateFormats
+    , format = L.find (\f -> f.uuid == doc.formatUuid) $ doc.documentTemplateFormats
     , fileSize = doc.fileSize
     , workerLog =
         case doc.state of
@@ -51,18 +51,18 @@ toDTO doc submissions =
     , createdAt = doc.createdAt
     }
 
-toDTOWithDocTemplate :: Document -> Maybe QuestionnaireSimple -> Maybe String -> [SubmissionList] -> DocumentTemplate -> DocumentDTO
-toDTOWithDocTemplate doc mQtn mQtnVersion submissions tml =
+toDTOWithDocTemplate :: Document -> Questionnaire -> Maybe String -> [SubmissionList] -> DocumentTemplate -> DocumentTemplateFormatSimple -> DocumentDTO
+toDTOWithDocTemplate doc qtn mQtnVersion submissions tml format =
   DocumentDTO
     { uuid = doc.uuid
     , name = doc.name
     , state = doc.state
-    , questionnaire = mQtn
+    , questionnaire = Just $ QuestionnaireSimple {uuid = qtn.uuid, name = qtn.name}
     , questionnaireEventUuid = doc.questionnaireEventUuid
     , questionnaireVersion = mQtnVersion
     , documentTemplateId = tml.tId
     , documentTemplateName = tml.name
-    , format = fmap toFormatDTO . L.find (\f -> f.uuid == doc.formatUuid) $ tml.formats
+    , format = Just format
     , fileSize = doc.fileSize
     , workerLog =
         case doc.state of

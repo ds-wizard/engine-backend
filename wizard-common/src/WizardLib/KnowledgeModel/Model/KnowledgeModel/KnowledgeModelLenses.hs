@@ -64,7 +64,7 @@ instance HasKnowledgeModelReferences KnowledgeModel where
   setReferencesL km newReferences = km {entities = km.entities {references = toMap newReferences}}
   getReferencesM km = km.entities.references
   setReferencesM km newReferences = km {entities = km.entities {references = newReferences}}
-  putInReferencesM referenceUuid refenrece km = setReferencesM km $ M.insert referenceUuid refenrece km.entities.references
+  putInReferencesM referenceUuid reference km = setReferencesM km $ M.insert referenceUuid reference km.entities.references
   deleteFromReferencesM referenceUuid km = setReferencesM km $ M.delete referenceUuid km.entities.references
 
 ------------------------------------------------------------------------------------------
@@ -177,8 +177,10 @@ instance HasUuid' Tag where
 
 instance HasUuid' Integration where
   getUuid (ApiIntegration' entity) = entity.uuid
+  getUuid (ApiLegacyIntegration' entity) = entity.uuid
   getUuid (WidgetIntegration' entity) = entity.uuid
   setUuid (ApiIntegration' entity) newValue = ApiIntegration' $ entity {uuid = newValue}
+  setUuid (ApiLegacyIntegration' entity) newValue = ApiLegacyIntegration' $ entity {uuid = newValue}
   setUuid (WidgetIntegration' entity) newValue = WidgetIntegration' $ entity {uuid = newValue}
 
 instance HasUuid' Metric where
@@ -248,8 +250,10 @@ instance HasAnnotations' Tag where
 
 instance HasAnnotations' Integration where
   getAnnotations (ApiIntegration' entity) = entity.annotations
+  getAnnotations (ApiLegacyIntegration' entity) = entity.annotations
   getAnnotations (WidgetIntegration' entity) = entity.annotations
   setAnnotations (ApiIntegration' entity) newValue = ApiIntegration' $ entity {annotations = newValue}
+  setAnnotations (ApiLegacyIntegration' entity) newValue = ApiLegacyIntegration' $ entity {annotations = newValue}
   setAnnotations (WidgetIntegration' entity) newValue = WidgetIntegration' $ entity {annotations = newValue}
 
 instance HasAnnotations' Metric where
@@ -398,14 +402,16 @@ instance HasIntegrationUuid' Question where
   setIntegrationUuid q newValue = q
 
 -- ------------------------------------------------------------------------------------------
-instance HasProps' Question (M.Map String String) where
-  getProps (IntegrationQuestion' q) = q.props
-  getProps q = M.empty
-  setProps (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {props = newValue}
-  setProps q newValue = q
+instance HasVariables' Question (M.Map String String) where
+  getVariables (IntegrationQuestion' q) = q.variables
+  getVariables q = M.empty
+  setVariables (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q {variables = newValue}
+  setVariables q newValue = q
 
-instance HasProps' Integration [String] where
-  getProps (ApiIntegration' integration) = integration.props
-  getProps (WidgetIntegration' integration) = integration.props
-  setProps (ApiIntegration' integration) newValue = ApiIntegration' $ integration {props = newValue}
-  setProps (WidgetIntegration' integration) newValue = WidgetIntegration' $ integration {props = newValue}
+instance HasVariables' Integration [String] where
+  getVariables (ApiIntegration' integration) = integration.variables
+  getVariables (ApiLegacyIntegration' integration) = integration.variables
+  getVariables (WidgetIntegration' integration) = integration.variables
+  setVariables (ApiIntegration' integration) newValue = ApiIntegration' $ integration {variables = newValue}
+  setVariables (ApiLegacyIntegration' integration) newValue = ApiLegacyIntegration' $ integration {variables = newValue}
+  setVariables (WidgetIntegration' integration) newValue = WidgetIntegration' $ integration {variables = newValue}

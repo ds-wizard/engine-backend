@@ -1,6 +1,7 @@
 module WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateUtil where
 
 import qualified Data.List as L
+import qualified Data.UUID as U
 
 import Shared.Common.Model.Context.AppContext
 import Shared.Common.Util.List (groupBy)
@@ -28,3 +29,24 @@ resolveDocumentTemplateId coordinate = do
 getLatestDocumentTemplateVersion orgId tId = do
   versions <- findVersionsForDocumentTemplate orgId tId
   return $ L.maximumBy compareVersion versions
+
+changeDocumentTemplateIdInFormats :: String -> U.UUID -> [DocumentTemplateFormat] -> [DocumentTemplateFormat]
+changeDocumentTemplateIdInFormats documentTemplateId tenantUuid =
+  fmap
+    ( \f ->
+        f
+          { documentTemplateId = documentTemplateId
+          , steps =
+              fmap
+                ( \s ->
+                    s
+                      { documentTemplateId = documentTemplateId
+                      , tenantUuid = tenantUuid
+                      }
+                    :: DocumentTemplateFormatStep
+                )
+                (steps f)
+          , tenantUuid = tenantUuid
+          }
+        :: DocumentTemplateFormat
+    )

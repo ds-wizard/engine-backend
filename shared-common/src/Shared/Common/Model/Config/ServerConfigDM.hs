@@ -7,7 +7,7 @@ import Shared.Common.Model.Config.ServerConfig
 defaultDatabase :: ServerConfigDatabase
 defaultDatabase =
   ServerConfigDatabase
-    { connectionString = "postgresql://posgres:posgres@postgres:5432/wizard-server"
+    { connectionString = "postgresql://postgres:postgres@postgres:5432/wizard-server"
     , stripeSize = 1
     , connectionTimeout = 10
     , maxConnections = 50

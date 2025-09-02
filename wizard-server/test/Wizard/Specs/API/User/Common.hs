@@ -9,9 +9,12 @@ import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.DAO.User.UserSubmissionPropDAO
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
+import Wizard.Model.User.UserSubmissionProp
 import Wizard.Service.User.UserUtil
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
 import WizardLib.Public.Model.User.UserToken
@@ -42,6 +45,13 @@ assertAbsenceOfUserInDB appContext user = do
     error
       `shouldBe` NotExistsError
         (_ERROR_DATABASE__ENTITY_NOT_FOUND "user_entity" [("tenant_uuid", U.toString defaultTenant.uuid), ("uuid", U.toString user.uuid)])
+
+assertExistenceOfUserSubmissionPropsInDB :: AppContext -> User -> [UserSubmissionProp] -> WaiSession st ()
+assertExistenceOfUserSubmissionPropsInDB appContext user submissionProps = do
+  eSubmissionProps <- runInContextIO (findUserSubmissionProps user.uuid) appContext
+  liftIO $ isRight eSubmissionProps `shouldBe` True
+  let (Right submissionPropsFromDB) = eSubmissionProps
+  liftIO $ (submissionPropsFromDB == submissionProps) `shouldBe` True
 
 assertUserTokenInDB appContext user size = do
   eUserTokens <- runInContextIO (findUserTokensByUserUuid user.uuid) appContext

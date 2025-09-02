@@ -8,20 +8,20 @@ instance SimpleEventSquash EditIntegrationEvent where
   isReorderEventSquashApplicable _ _ = False
 
   --  --------------------------------------
-  isTypeChanged (EditApiIntegrationEvent' oldEvent) (EditApiIntegrationEvent' newEvent) = False
+  isTypeChanged (EditApiLegacyIntegrationEvent' oldEvent) (EditApiLegacyIntegrationEvent' newEvent) = False
   isTypeChanged (EditWidgetIntegrationEvent' oldEvent) (EditWidgetIntegrationEvent' newEvent) = False
   isTypeChanged _ _ = True
 
   --  --------------------------------------
-  simpleSquashEvent previousEvent (EditApiIntegrationEvent' oldEvent) (EditApiIntegrationEvent' newEvent) =
-    EditApiIntegrationEvent' $
-      EditApiIntegrationEvent
+  simpleSquashEvent previousEvent (EditApiLegacyIntegrationEvent' oldEvent) (EditApiLegacyIntegrationEvent' newEvent) =
+    EditApiLegacyIntegrationEvent' $
+      EditApiLegacyIntegrationEvent
         { uuid = newEvent.uuid
         , parentUuid = newEvent.parentUuid
         , entityUuid = newEvent.entityUuid
         , iId = applyValue oldEvent newEvent (.iId)
         , name = applyValue oldEvent newEvent (.name)
-        , props = applyValue oldEvent newEvent (.props)
+        , variables = applyValue oldEvent newEvent (.variables)
         , logo = applyValue oldEvent newEvent (.logo)
         , requestMethod = applyValue oldEvent newEvent (.requestMethod)
         , requestUrl = applyValue oldEvent newEvent (.requestUrl)
@@ -43,7 +43,7 @@ instance SimpleEventSquash EditIntegrationEvent where
         , entityUuid = newEvent.entityUuid
         , iId = applyValue oldEvent newEvent (.iId)
         , name = applyValue oldEvent newEvent (.name)
-        , props = applyValue oldEvent newEvent (.props)
+        , variables = applyValue oldEvent newEvent (.variables)
         , logo = applyValue oldEvent newEvent (.logo)
         , widgetUrl = applyValue oldEvent newEvent (.widgetUrl)
         , itemUrl = applyValue oldEvent newEvent (.itemUrl)

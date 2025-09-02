@@ -27,7 +27,6 @@ import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnairePerm
-import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Tenant.Tenant
@@ -173,9 +172,6 @@ qtn1AlbertEditQtnPerm =
 qtn1AlbertEditQtnPermDto :: QuestionnairePermDTO
 qtn1AlbertEditQtnPermDto = toUserQuestionnairePermDTO qtn1AlbertEditQtnPerm userAlbert
 
-questionnaire1Simple :: QuestionnaireSimple
-questionnaire1Simple = toSimple questionnaire1
-
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 questionnaire2Uuid :: U.UUID
@@ -276,9 +272,6 @@ qtn2AlbertEditQtnPerm =
 
 qtn2AlbertEditQtnPermDto :: QuestionnairePermDTO
 qtn2AlbertEditQtnPermDto = toUserQuestionnairePermDTO qtn2AlbertEditQtnPerm userAlbert
-
-questionnaire2Simple :: QuestionnaireSimple
-questionnaire2Simple = toSimple questionnaire2
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -483,9 +476,6 @@ qtn6AlbertEditQtnPerm =
 
 qtn6AlbertEditQtnPermDto :: QuestionnairePermDTO
 qtn6AlbertEditQtnPermDto = toUserQuestionnairePermDTO qtn6AlbertEditQtnPerm userAlbert
-
-questionnaire6Simple :: QuestionnaireSimple
-questionnaire6Simple = toSimple questionnaire6
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -731,6 +721,7 @@ questionnaire12 =
     , visibility = VisibleEditQuestionnaire
     , sharing = AnyoneWithLinkEditQuestionnaire
     , permissions = [qtn12NikolaEditQtnPerm, qtn12AlbertEditQtnPerm]
+    , updatedAt = dt' 2018 1 23
     }
 
 questionnaire12Events :: [QuestionnaireEvent]
@@ -870,6 +861,24 @@ questionnaire15 =
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 29
+    }
+
+questionnaire15AnonymousEdit :: Questionnaire
+questionnaire15AnonymousEdit =
+  questionnaire15
+    { sharing = AnyoneWithLinkEditQuestionnaire
+    }
+
+questionnaire15AnonymousComment :: Questionnaire
+questionnaire15AnonymousComment =
+  questionnaire15
+    { sharing = AnyoneWithLinkCommentQuestionnaire
+    }
+
+questionnaire15NoPerms :: Questionnaire
+questionnaire15NoPerms =
+  questionnaire15
+    { permissions = []
     }
 
 questionnaire15Events :: [QuestionnaireEvent]

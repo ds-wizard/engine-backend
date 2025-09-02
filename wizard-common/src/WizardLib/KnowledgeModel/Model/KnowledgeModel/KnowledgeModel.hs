@@ -151,7 +151,7 @@ data IntegrationQuestion = IntegrationQuestion
   , expertUuids :: [U.UUID]
   , referenceUuids :: [U.UUID]
   , integrationUuid :: U.UUID
-  , props :: Map String String
+  , variables :: Map String String
   }
   deriving (Show, Eq, Generic)
 
@@ -296,14 +296,74 @@ data ResourcePage = ResourcePage
 -- ------------------------------------------------
 data Integration
   = ApiIntegration' ApiIntegration
+  | ApiLegacyIntegration' ApiLegacyIntegration
   | WidgetIntegration' WidgetIntegration
   deriving (Show, Eq, Generic)
 
 data ApiIntegration = ApiIntegration
   { uuid :: U.UUID
+  , name :: String
+  , variables :: [String]
+  , allowCustomReply :: Bool
+  , requestMethod :: String
+  , requestUrl :: String
+  , requestHeaders :: [MapEntry String String]
+  , requestBody :: Maybe String
+  , requestAllowEmptySearch :: Bool
+  , responseListField :: Maybe String
+  , responseItemTemplate :: String
+  , responseItemTemplateForSelection :: Maybe String
+  , testQ :: String
+  , testVariables :: M.Map String String
+  , testResponse :: Maybe TypeHintExchange
+  , annotations :: [MapEntry String String]
+  }
+  deriving (Show, Eq, Generic)
+
+data TypeHintExchange = TypeHintExchange
+  { request :: TypeHintRequest
+  , response :: TypeHintResponse
+  }
+  deriving (Show, Eq, Generic)
+
+data TypeHintRequest = TypeHintRequest
+  { method :: String
+  , url :: String
+  , headers :: [MapEntry String String]
+  , body :: Maybe String
+  }
+  deriving (Show, Eq, Generic)
+
+data TypeHintResponse
+  = SuccessTypeHintResponse' SuccessTypeHintResponse
+  | RemoteErrorTypeHintResponse' RemoteErrorTypeHintResponse
+  | RequestFailedTypeHintResponse' RequestFailedTypeHintResponse
+  deriving (Show, Eq, Generic)
+
+data SuccessTypeHintResponse = SuccessTypeHintResponse
+  { status :: Int
+  , contentType :: Maybe String
+  , body :: String
+  }
+  deriving (Show, Eq, Generic)
+
+data RemoteErrorTypeHintResponse = RemoteErrorTypeHintResponse
+  { status :: Int
+  , contentType :: Maybe String
+  , body :: String
+  }
+  deriving (Show, Eq, Generic)
+
+data RequestFailedTypeHintResponse = RequestFailedTypeHintResponse
+  { message :: String
+  }
+  deriving (Show, Eq, Generic)
+
+data ApiLegacyIntegration = ApiLegacyIntegration
+  { uuid :: U.UUID
   , iId :: String
   , name :: String
-  , props :: [String]
+  , variables :: [String]
   , logo :: Maybe String
   , requestMethod :: String
   , requestUrl :: String
@@ -322,7 +382,7 @@ data WidgetIntegration = WidgetIntegration
   { uuid :: U.UUID
   , iId :: String
   , name :: String
-  , props :: [String]
+  , variables :: [String]
   , logo :: Maybe String
   , widgetUrl :: String
   , itemUrl :: Maybe String

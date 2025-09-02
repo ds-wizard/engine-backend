@@ -95,7 +95,7 @@ data AddIntegrationQuestionEvent = AddIntegrationQuestionEvent
   , annotations :: [MapEntry String String]
   , tagUuids :: [U.UUID]
   , integrationUuid :: U.UUID
-  , props :: M.Map String String
+  , variables :: M.Map String String
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
@@ -233,7 +233,7 @@ data EditIntegrationQuestionEvent = EditIntegrationQuestionEvent
   , expertUuids :: EventField [U.UUID]
   , referenceUuids :: EventField [U.UUID]
   , integrationUuid :: EventField U.UUID
-  , props :: EventField (M.Map String String)
+  , variables :: EventField (M.Map String String)
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

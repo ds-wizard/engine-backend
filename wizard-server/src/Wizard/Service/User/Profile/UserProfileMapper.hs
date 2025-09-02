@@ -1,19 +1,14 @@
 module Wizard.Service.User.Profile.UserProfileMapper where
 
 import Data.Char (toLower)
+import qualified Data.List as L
+import qualified Data.UUID as U
 
 import Data.Time (UTCTime)
 import Wizard.Api.Resource.User.UserProfileChangeDTO
-import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Model.User.User
-
-toUserSubmissionPropsDTO :: UserSubmissionProps -> String -> UserSubmissionPropsDTO
-toUserSubmissionPropsDTO props name =
-  UserSubmissionPropsDTO
-    { sId = props.sId
-    , name = name
-    , values = props.values
-    }
+import Wizard.Model.User.UserSubmissionProp
+import Wizard.Model.User.UserSubmissionPropList
 
 fromUserProfileChangeDTO :: User -> UserProfileChangeDTO -> UTCTime -> User
 fromUserProfileChangeDTO oldUser dto now =
@@ -28,7 +23,6 @@ fromUserProfileChangeDTO oldUser dto now =
     , uRole = oldUser.uRole
     , permissions = oldUser.permissions
     , active = oldUser.active
-    , submissionProps = oldUser.submissionProps
     , imageUrl = oldUser.imageUrl
     , locale = oldUser.locale
     , machine = oldUser.machine
@@ -38,9 +32,18 @@ fromUserProfileChangeDTO oldUser dto now =
     , updatedAt = now
     }
 
-fromUserSubmissionPropsDTO :: User -> [UserSubmissionPropsDTO] -> UTCTime -> User
-fromUserSubmissionPropsDTO user submissionProps now =
-  user
-    { submissionProps = fmap (\sp -> UserSubmissionProps {sId = sp.sId, values = sp.values}) submissionProps
-    , updatedAt = now
-    }
+fromUserSubmissionPropsDTO :: U.UUID -> U.UUID -> [UserSubmissionProp] -> [UserSubmissionPropList] -> UTCTime -> [UserSubmissionProp]
+fromUserSubmissionPropsDTO userUuid tenantUuid submissionProps reqDtos now =
+  let mapFn reqDto =
+        UserSubmissionProp
+          { userUuid = userUuid
+          , serviceId = reqDto.sId
+          , values = reqDto.values
+          , tenantUuid = tenantUuid
+          , createdAt =
+              case L.find (\p -> p.serviceId == reqDto.sId) submissionProps of
+                Just submissionProp -> submissionProp.createdAt
+                Nothing -> now
+          , updatedAt = now
+          }
+   in map mapFn reqDtos

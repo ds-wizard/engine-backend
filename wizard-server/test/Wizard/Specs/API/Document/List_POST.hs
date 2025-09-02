@@ -12,6 +12,7 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Common.Lens
+import Shared.Common.Model.Common.SemVer2Tuple
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentCreateJM ()
@@ -23,17 +24,17 @@ import qualified Wizard.Database.Migration.Development.DocumentTemplate.Document
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireSimple
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatDTO
 import WizardLib.DocumentTemplate.Constant.DocumentTemplate
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import WizardLib.DocumentTemplate.Localization.Messages.Public
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -120,13 +121,13 @@ test_400 appContext = do
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto =
             UserError $
-              _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION wizardDocumentTemplate.tId 1 documentTemplateMetamodelVersion
+              _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION wizardDocumentTemplate.tId "1.0" (show documentTemplateMetamodelVersion)
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO QTN_Migration.runMigration appContext
-      runInContextIO (updateDocumentTemplateById (wizardDocumentTemplate {metamodelVersion = 1})) appContext
+      runInContextIO (updateDocumentTemplateById (wizardDocumentTemplate {metamodelVersion = SemVer2Tuple 1 0})) appContext
       runInContextIO deleteDocuments appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

@@ -1,10 +1,10 @@
 module Wizard.Database.Mapping.Migration.Questionnaire.MigratorState where
 
 import Database.PostgreSQL.Simple
-import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
+import Database.PostgreSQL.Simple.Types
 
 import Wizard.Model.Migration.Questionnaire.MigratorState
 
@@ -12,7 +12,7 @@ instance ToRow MigratorState where
   toRow MigratorState {..} =
     [ toField oldQuestionnaireUuid
     , toField newQuestionnaireUuid
-    , toJSONField resolvedQuestionUuids
+    , toField . PGArray $ resolvedQuestionUuids
     , toField tenantUuid
     ]
 
@@ -20,6 +20,6 @@ instance FromRow MigratorState where
   fromRow = do
     oldQuestionnaireUuid <- field
     newQuestionnaireUuid <- field
-    resolvedQuestionUuids <- fieldWith fromJSONField
+    resolvedQuestionUuids <- fromPGArray <$> field
     tenantUuid <- field
     return $ MigratorState {..}

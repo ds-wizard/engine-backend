@@ -9,7 +9,7 @@ import Wizard.Api.Resource.Submission.SubmissionJM ()
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Submission.SubmissionList
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatDTO
+import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
 data DocumentDTO = DocumentDTO
   { uuid :: U.UUID
@@ -20,7 +20,7 @@ data DocumentDTO = DocumentDTO
   , questionnaireVersion :: Maybe String
   , documentTemplateId :: String
   , documentTemplateName :: String
-  , format :: Maybe DocumentTemplateFormatDTO
+  , format :: Maybe DocumentTemplateFormatSimple
   , fileSize :: Maybe Int64
   , workerLog :: Maybe String
   , submissions :: [SubmissionList]

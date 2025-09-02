@@ -25,6 +25,7 @@ import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTe
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
+import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.Bundle.DocumentTemplateBundleMapper
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
@@ -48,11 +49,12 @@ exportBundle tmlId =
     when
       tml.nonEditable
       (throwError . UserError $ _ERROR_SERVICE_DOC_TML__NON_EDITABLE_DOC_TML)
+    formats <- findDocumentTemplateFormats tmlId
     files <- findFilesByDocumentTemplateId tmlId
     assets <- findAssetsByDocumentTemplateId tmlId
     assetContents <- traverse (findAsset tml.tId) assets
     auditBundleExport tmlId
-    return $ toDocumentTemplateArchive (toBundle tml files assets) assetContents
+    return $ toDocumentTemplateArchive (toBundle tml formats files assets) assetContents
 
 pullBundleFromRegistry :: String -> AppContextM ()
 pullBundleFromRegistry tmlId =
@@ -82,6 +84,7 @@ importAndConvertBundle contentS fromRegistry =
       deleteOldDocumentTemplateIfPresent bundle
       traverse_ (\(a, content) -> putAsset tml.tId a.uuid a.contentType content) assetContents
       insertDocumentTemplate tml
+      traverse_ (insertDocumentTemplateFormat . fromFormatDTO tml.tId tenantUuid tml.createdAt tml.updatedAt) bundle.formats
       traverse_ (insertFile . fromFileDTO tml.tId tenantUuid tml.createdAt) bundle.files
       traverse_
         ( \(assetDto, content) ->

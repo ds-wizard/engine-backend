@@ -6,16 +6,17 @@ import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Model.Context.AppContext
 import Registry.Service.DocumentTemplate.DocumentTemplateMapper
 import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
+import Shared.Common.Model.Common.SemVer2Tuple
 import WizardLib.Common.Util.Coordinate
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO hiding (findDocumentTemplatesFiltered)
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateUtil
 
-getDocumentTemplates :: [(String, String)] -> Maybe Int -> AppContextM [DocumentTemplateSimpleDTO]
+getDocumentTemplates :: [(String, String)] -> Maybe SemVer2Tuple -> AppContextM [DocumentTemplateSimpleDTO]
 getDocumentTemplates queryParams mMetamodelVersion = do
-  tmpls <- findDocumentTemplatesFiltered queryParams mMetamodelVersion
+  tmls <- findDocumentTemplatesFiltered queryParams mMetamodelVersion
   orgs <- findOrganizations
-  return . fmap (toSimpleDTO orgs) . chooseTheNewest . groupDocumentTemplates $ tmpls
+  return . fmap (toSimpleDTO orgs) . chooseTheNewest . groupDocumentTemplates $ tmls
 
 getDocumentTemplateById :: String -> AppContextM DocumentTemplateDetailDTO
 getDocumentTemplateById tId = do

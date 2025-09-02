@@ -3,6 +3,7 @@ module Wizard.Model.DocumentTemplate.DocumentTemplateList where
 import Data.Time
 import GHC.Generics
 
+import Shared.Common.Model.Common.SemVer2Tuple
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.KnowledgeModel.Model.Package.PackagePattern
 
@@ -13,7 +14,7 @@ data DocumentTemplateList = DocumentTemplateList
   , templateId :: String
   , version :: String
   , phase :: DocumentTemplatePhase
-  , metamodelVersion :: Int
+  , metamodelVersion :: SemVer2Tuple
   , description :: String
   , allowedPackages :: [PackagePattern]
   , nonEditable :: Bool

@@ -51,7 +51,7 @@ _ERROR_VALIDATION__TOKEN_ABSENCE tokenUuid =
 
 -- Delete
 _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId target =
-  LocaleRecord "error.validation.tml_deletation" "DocumentTemplate '%s' can't be deleted. It's used by some %s" [tmlId, target]
+  LocaleRecord "error.validation.tml_deletion" "DocumentTemplate '%s' can't be deleted. It's used by some %s" [tmlId, target]
 
 -- Unsupported version
 _ERROR_VALIDATION__PKG_UNSUPPORTED_METAMODEL_VERSION pkgMetamodelVersion appPkgMetamodelVersion =
@@ -59,12 +59,6 @@ _ERROR_VALIDATION__PKG_UNSUPPORTED_METAMODEL_VERSION pkgMetamodelVersion appPkgM
     "error.validation.pkg_unsupported_metamodel_version"
     "Package contains unsupported version of metamodel (pkg metamodel version: '%s', application metamodel version: '%s')"
     [show pkgMetamodelVersion, show appPkgMetamodelVersion]
-
-_ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION tmlId tmlMetamodelVersion appTmlMetamodelVersion =
-  LocaleRecord
-    "error.validation.tml_unsupported_metamodel_version"
-    "DocumentTemplate '%s' contains unsupported version of metamodel (template metamodel version: '%s', application metamodel version: '%s')"
-    [tmlId, show tmlMetamodelVersion, show appTmlMetamodelVersion]
 
 -- Unsupported State
 _ERROR_VALIDATION__DOC_TML_UNSUPPORTED_STATE tmlId phase =
@@ -190,12 +184,12 @@ _ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW workerLog =
 _ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =
   LocaleRecord "error.service.tb.pull_non_existing_tml" "Desired template ('%s') wasn't found in Registry" [tmlId]
 
--- Typehint
+-- TypeHint
 _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION =
-  LocaleRecord "error.service.typehint.bad_type_of_question" "Desired question has to be integration question" []
+  LocaleRecord "error.service.type_hint.bad_type_of_question" "Desired question has to be integration question" []
 
 _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION =
-  LocaleRecord "error.service.typehint.bad_type_of_integration" "Desired integration has to be API integration" []
+  LocaleRecord "error.service.type_hint.bad_type_of_integration" "Desired integration has to be API integration" []
 
 _ERROR_SERVICE_TYPEHINT__INTEGRATION_RETURNS_ERROR =
-  LocaleRecord "error.service.typehint.integration_request_failed" "Integration request failed" []
+  LocaleRecord "error.service.type_hint.integration_request_failed" "Integration request failed" []

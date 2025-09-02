@@ -88,6 +88,8 @@ findUserTokenByUuid
   :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
+     , HasField "cache'" sc scCache
+     , HasField "dataEnabled'" scCache Bool
      )
   => U.UUID
   -> m UserToken
@@ -101,6 +103,8 @@ insertUserToken
   :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
+     , HasField "cache'" sc scCache
+     , HasField "dataEnabled'" scCache Bool
      )
   => UserToken
   -> m Int64
@@ -123,6 +127,8 @@ deleteUserTokenByUuid
   :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
+     , HasField "cache'" sc scCache
+     , HasField "dataEnabled'" scCache Bool
      )
   => U.UUID
   -> m Int64
@@ -136,6 +142,8 @@ deleteUserTokenByUuidAndTenantUuid
   :: ( AppContextC s sc m
      , HasField "cache'" s serverCache
      , HasField "userToken" serverCache (C.Cache Int UserToken)
+     , HasField "cache'" sc scCache
+     , HasField "dataEnabled'" scCache Bool
      )
   => U.UUID
   -> U.UUID

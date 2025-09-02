@@ -139,7 +139,7 @@ deletePackagesByQueryParams queryParams =
     checkPermission _PM_WRITE_PERM
     packages <- findPackagesFiltered queryParams
     let pIds = fmap (.pId) packages
-    validatePackagesDeletation pIds
+    validatePackagesDeletion pIds
     deleteKnowledgeModelCachesByPackageIds pIds
     deletePackagesFiltered queryParams
     return ()
@@ -149,7 +149,7 @@ deletePackage pkgId =
   runInTransaction $ do
     checkPermission _PM_WRITE_PERM
     package <- findPackageById pkgId
-    validatePackageDeletation pkgId
+    validatePackageDeletion pkgId
     deleteKnowledgeModelCachesByPackageId pkgId
     deletePackageById pkgId
     return ()

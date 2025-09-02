@@ -21,7 +21,7 @@ import Wizard.Model.Branch.BranchState
 import Wizard.Model.Branch.BranchSuggestion
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
-import Wizard.Service.KnowledgeModel.Compilator.Compilator
+import Wizard.Service.KnowledgeModel.Compiler.Compiler
 import qualified Wizard.Service.Package.PackageMapper as PM
 import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 import WizardLib.KnowledgeModel.Database.Migration.Development.Event.Data.Events
@@ -94,6 +94,9 @@ amsterdamBranchData =
         , AddQuestionEvent' a_km1_ch2_q3'
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
+        , AddChapterEvent' a_km1_ch3
+        , AddIntegrationEvent' a_km1_ir'
+        , AddQuestionEvent' a_km1_ch3_q15'
         ]
     , replies = M.empty
     , squashed = True
@@ -119,7 +122,7 @@ amsterdamBranchChange =
     , version = "2.0.0"
     , description = "EDITED: description"
     , readme = "EDITED: Readme"
-    , license = "Apacha-3.0"
+    , license = "Apache-3.0"
     }
 
 amsterdamBranchKnowledgeModel :: KnowledgeModel

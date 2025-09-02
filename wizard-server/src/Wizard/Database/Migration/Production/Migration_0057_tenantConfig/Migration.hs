@@ -99,6 +99,7 @@ createTcAuthenticationTable dbPool = do
   return Nothing
 
 createTcAuthenticationOpenIdTable dbPool = do
+  -- cspell: disable  (contains parameteres spelling error fix in migration)
   let sql =
         "CREATE TABLE config_authentication_openid \
         \( \
@@ -136,6 +137,7 @@ createTcAuthenticationOpenIdTable dbPool = do
         \             tenant_config.created_at, \
         \             tenant_config.updated_at \
         \      FROM tenant_config) nested;"
+  -- cspell: enable
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

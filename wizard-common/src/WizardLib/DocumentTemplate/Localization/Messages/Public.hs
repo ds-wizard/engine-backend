@@ -27,3 +27,9 @@ _ERROR_SERVICE_TB__UNABLE_TO_DECODE_TEMPLATE_JSON errorMessage =
     "error.service.tb.unable_to_decode_template_json"
     "Desired definition ('template.json') couldn't be decoded (error: '%s')"
     [errorMessage]
+
+_ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION tmlId tmlMetamodelVersion appTmlMetamodelVersion =
+  LocaleRecord
+    "error.validation.tml_unsupported_metamodel_version"
+    "DocumentTemplate '%s' contains unsupported version of metamodel (template metamodel version: '%s', application metamodel version: '%s')"
+    [tmlId, tmlMetamodelVersion, appTmlMetamodelVersion]

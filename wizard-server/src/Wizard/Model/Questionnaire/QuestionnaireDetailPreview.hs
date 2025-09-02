@@ -5,7 +5,7 @@ import GHC.Generics
 
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Model.Questionnaire.Questionnaire
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatDTO
+import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
 data QuestionnaireDetailPreview = QuestionnaireDetailPreview
   { uuid :: U.UUID
@@ -17,7 +17,7 @@ data QuestionnaireDetailPreview = QuestionnaireDetailPreview
   , migrationUuid :: Maybe U.UUID
   , permissions :: [QuestionnairePermDTO]
   , documentTemplateId :: Maybe String
-  , format :: Maybe DocumentTemplateFormatDTO
+  , format :: Maybe DocumentTemplateFormatSimple
   , fileCount :: Int
   }
   deriving (Show, Eq, Generic)

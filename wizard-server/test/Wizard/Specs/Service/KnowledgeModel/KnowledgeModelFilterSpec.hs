@@ -55,7 +55,7 @@ knowledgeModelFilterSpec =
       it "2 tags provided" $
         -- GIVEN: Prepare inputs
         do
-          let inTags = [tagDataScience.uuid, tagBioInformatic.uuid]
+          let inTags = [tagDataScience.uuid, tagBioinformatics.uuid]
           let inKm = km1WithQ4
           -- AND: Prepare expectations
           let expectedKm =
@@ -76,6 +76,7 @@ knowledgeModelFilterSpec =
                               , question12'
                               , question13'
                               , question14'
+                              , question15'
                               ]
                         , answers = toMap [q2_answerNo, q2_answerYes, q2_aYes_fuq1_answerNo, q2_aYes_fuq1_answerYes]
                         , references = toMap [km1_ch1_q2_r1', km1_ch1_q2_r2']

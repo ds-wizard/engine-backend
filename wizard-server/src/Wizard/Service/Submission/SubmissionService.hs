@@ -9,7 +9,6 @@ import qualified Data.UUID as U
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
@@ -22,6 +21,7 @@ import Wizard.Model.Submission.Submission
 import Wizard.Model.Submission.SubmissionList
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Config.TenantConfigSubmissionServiceSimple
+import Wizard.Model.User.UserSubmissionPropList
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Common
 import Wizard.Service.Document.DocumentAcl

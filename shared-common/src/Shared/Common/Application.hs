@@ -19,7 +19,7 @@ import Shared.Common.Service.Config.Server.ServerConfigService
 import Shared.Common.Util.Logger
 
 runWebServerWithWorkers
-  asciiLogo
+  beforeLoadActions
   serverConfigFile
   validateServerConfig
   buildInfoFile
@@ -31,7 +31,7 @@ runWebServerWithWorkers
   worker =
     do
       hSetBuffering stdout LineBuffering
-      putStrLn asciiLogo
+      sequence_ beforeLoadActions
       serverConfig <- loadConfig serverConfigFile (getServerConfig validateServerConfig)
       buildInfoConfig <- loadConfig buildInfoFile getBuildInfoConfig
       result <-

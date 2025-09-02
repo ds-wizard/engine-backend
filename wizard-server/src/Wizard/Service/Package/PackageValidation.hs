@@ -37,8 +37,8 @@ validateMaybePreviousPackageIdExistence :: String -> Maybe String -> AppContextM
 validateMaybePreviousPackageIdExistence pkgId mPreviousPkgId =
   forM_ mPreviousPkgId (validatePreviousPackageIdExistence pkgId)
 
-validatePackagesDeletation :: [String] -> AppContextM ()
-validatePackagesDeletation pkgIds = forM_ pkgIds validateOnePackage
+validatePackagesDeletion :: [String] -> AppContextM ()
+validatePackagesDeletion pkgIds = forM_ pkgIds validateOnePackage
   where
     validateOnePackage :: String -> AppContextM ()
     validateOnePackage pkgId = do
@@ -54,8 +54,8 @@ validatePackagesDeletation pkgIds = forM_ pkgIds validateOnePackage
           throwError . UserError $
             _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
 
-validatePackageDeletation :: String -> AppContextM ()
-validatePackageDeletation pkgId = do
+validatePackageDeletion :: String -> AppContextM ()
+validatePackageDeletion pkgId = do
   validateUsageBySomeBranch pkgId
   validateUsageBySomeQuestionnaire pkgId
   validateUsageBySomeOtherPackage pkgId

@@ -38,6 +38,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.User.User
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Document.DocumentMapper
+import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.Public.Localization.Messages.Public
 
@@ -100,8 +101,10 @@ create_test_200 title appContext authHeader =
             Page
               "documents"
               (PageMetadata 20 2 1 0)
-              [toDTOWithDocTemplate doc1' (Just questionnaire6Simple) (Just "Version 1") [], toDTOWithDocTemplate doc2' (Just questionnaire6Simple) (Just "Version 1") []]
-      let expBody = encode (fmap (\x -> x wizardDocumentTemplate) expDto)
+              [ toDTOWithDocTemplate doc1' questionnaire6 (Just "Version 1") []
+              , toDTOWithDocTemplate doc2' questionnaire6 (Just "Version 1") []
+              ]
+      let expBody = encode (fmap (\x -> x wizardDocumentTemplate formatJsonSimple) expDto)
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

@@ -17,6 +17,7 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U_M
 import Wizard.Model.Context.AppContext
 import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
@@ -57,19 +58,19 @@ test_200 appContext = do
     appContext
     "/wizard-api/document-templates/suggestions"
     reqAuthHeader
-    (Page "documentTemplates" (PageMetadata 20 1 1 0) [toSuggestionDTO wizardDocumentTemplate])
+    (Page "documentTemplates" (PageMetadata 20 1 1 0) [toSuggestionDTO wizardDocumentTemplate wizardDocumentTemplateFormats])
   create_test_200
     "HTTP 200 OK (query 'q')"
     appContext
     "/wizard-api/document-templates/suggestions?q=Questionnaire Report"
     reqAuthHeader
-    (Page "documentTemplates" (PageMetadata 20 1 1 0) [toSuggestionDTO wizardDocumentTemplate])
+    (Page "documentTemplates" (PageMetadata 20 1 1 0) [toSuggestionDTO wizardDocumentTemplate wizardDocumentTemplateFormats])
   create_test_200
     "HTTP 200 OK (query 'pkgId')"
     appContext
     "/wizard-api/document-templates/suggestions?pkgId=global:core:1.0.0"
     reqAuthHeader
-    (Page "documentTemplates" (PageMetadata 20 1 1 0) [toSuggestionDTO wizardDocumentTemplate])
+    (Page "documentTemplates" (PageMetadata 20 1 1 0) [toSuggestionDTO wizardDocumentTemplate wizardDocumentTemplateFormats])
   create_test_200
     "HTTP 200 OK (query 'pkgId' - no templates)"
     appContext

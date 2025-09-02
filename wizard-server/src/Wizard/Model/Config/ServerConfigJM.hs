@@ -86,6 +86,7 @@ instance FromJSON ServerConfigCache where
     dataExpiration <- o .:? "dataExpiration" .!= defaultCache.dataExpiration
     websocketExpiration <- o .:? "websocketExpiration" .!= defaultCache.websocketExpiration
     purgeExpired <- o .:? "purgeExpired" .!= defaultCache.purgeExpired
+    dataEnabled <- o .:? "dataEnabled" .!= defaultCache.dataEnabled
     return ServerConfigCache {..}
   parseJSON _ = mzero
 
