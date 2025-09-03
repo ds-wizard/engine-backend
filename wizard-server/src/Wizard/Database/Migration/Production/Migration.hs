@@ -60,6 +60,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0055_localeFix.M
 import qualified Wizard.Database.Migration.Production.Migration_0056_tour.Migration as M_0056
 import qualified Wizard.Database.Migration.Production.Migration_0057_tenantConfig.Migration as M_0057
 import qualified Wizard.Database.Migration.Production.Migration_0058_documentTemplateMetamodel.Migration as M_0058
+import qualified Wizard.Database.Migration.Production.Migration_0059_integrationReplyFix.Migration as M_0059
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -121,4 +122,5 @@ migrationDefinitions =
   , M_0056.definition
   , M_0057.definition
   , M_0058.definition
+  , M_0059.definition
   ]
