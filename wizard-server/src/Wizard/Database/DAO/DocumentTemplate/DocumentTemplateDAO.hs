@@ -127,7 +127,7 @@ findDocumentTemplatesSuggestions mQuery mNonEditable = do
             \   document_template.description, \
             \   document_template.allowed_packages, \
             \   ( \
-            \    SELECT jsonb_agg(jsonb_build_object('uuid', uuid, 'name', name, 'icon', icon)) \
+            \    SELECT coalesce(jsonb_agg(jsonb_build_object('uuid', uuid, 'name', name, 'icon', icon)), '[]'::jsonb) \
             \    FROM (SELECT * \
             \          FROM document_template_format dt_format \
             \          WHERE dt_format.tenant_uuid = document_template.tenant_uuid \
