@@ -1,5 +1,7 @@
 module Wizard.Service.Migration.Questionnaire.Migrator.ChangeQTypeSanitizer where
 
+import qualified Data.Aeson as A
+import qualified Data.Aeson.KeyMap as KM
 import qualified Data.Map.Strict as M
 import Data.Maybe (mapMaybe)
 import qualified Data.UUID as U
@@ -63,7 +65,18 @@ sanitizeValueQuestion km IntegrationReply {iValue = replyValue} q =
 sanitizeValueQuestion _ _ _ = Nothing
 
 sanitizeIntegrationQuestion :: KnowledgeModel -> ReplyValue -> IntegrationQuestion -> Maybe ReplyValue
-sanitizeIntegrationQuestion km IntegrationReply {..} q = Just $ IntegrationReply {..}
+sanitizeIntegrationQuestion km IntegrationReply {..} q =
+  case M.lookup q.integrationUuid (getIntegrationsM km) of
+    Just (ApiLegacyIntegration' _) -> Just $ IntegrationReply {..}
+    Just (ApiIntegration' _) ->
+      case iValue of
+        PlainType value -> Just $ IntegrationReply {iValue = PlainType value}
+        IntegrationLegacyType {..} ->
+          let raw = A.Object . KM.fromList $ []
+           in Just $ IntegrationReply {iValue = IntegrationType {..}}
+        IntegrationType {..} -> Just $ IntegrationReply {iValue = IntegrationType {..}}
+    Just (WidgetIntegration' _) -> Just $ IntegrationReply {..}
+    Nothing -> Nothing
 sanitizeIntegrationQuestion km StringReply {..} q =
   Just $ IntegrationReply {iValue = PlainType sValue}
 sanitizeIntegrationQuestion _ _ _ = Nothing
