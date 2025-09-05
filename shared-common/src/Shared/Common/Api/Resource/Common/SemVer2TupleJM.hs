@@ -41,4 +41,4 @@ instance FromHttpApiData SemVer2Tuple where
           _ -> Left "Unable to parse SemVer2Tuple"
 
 instance ToHttpApiData SemVer2Tuple where
-  toUrlPiece (SemVer2Tuple major minor) = toUrlPiece major <> "," <> toUrlPiece minor
+  toUrlPiece (SemVer2Tuple major minor) = toUrlPiece major <> "." <> toUrlPiece minor
