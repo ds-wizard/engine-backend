@@ -34,16 +34,6 @@ findDocumentTemplateFormatSteps documentTemplateId formatUuid = do
   tenantUuid <- asks (.tenantUuid')
   createFindEntitiesByFn "document_template_format_step" [("tenant_uuid", U.toString tenantUuid), ("document_template_id", documentTemplateId), ("format_uuid", U.toString formatUuid)]
 
--- findFormatListsByDocumentTemplateId :: AppContextC s sc m => String -> m [DocumentTemplateFormatList]
--- findFormatListsByDocumentTemplateId documentTemplateId = do
---   tenantUuid <- asks (.tenantUuid')
---   createFindEntitiesWithFieldsByFn "uuid, format_name, created_at, updated_at" entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId)]
-
--- findFormatsByDocumentTemplateIdAndFormatName :: AppContextC s sc m => String -> String -> m [DocumentTemplateFormat]
--- findFormatsByDocumentTemplateIdAndFormatName documentTemplateId formatName = do
---   tenantUuid <- asks (.tenantUuid')
---   createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId), ("format_name", formatName)]
-
 findDocumentTemplateFormatByDocumentTemplateIdAndUuid :: AppContextC s sc m => String -> U.UUID -> m DocumentTemplateFormatSimple
 findDocumentTemplateFormatByDocumentTemplateIdAndUuid documentTemplateId uuid = do
   tenantUuid <- asks (.tenantUuid')
@@ -98,13 +88,3 @@ deleteDocumentTemplateFormatsExcept documentTemplateId formatUuids = do
 
 deleteFormats :: AppContextC s sc m => m Int64
 deleteFormats = createDeleteEntitiesFn "document_template_format"
-
--- deleteFormatsByDocumentTemplateId :: AppContextC s sc m => String -> m Int64
--- deleteFormatsByDocumentTemplateId tmlId = do
---   tenantUuid <- asks (.tenantUuid')
---   createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", tmlId)]
-
--- deleteFormatById :: AppContextC s sc m => U.UUID -> m Int64
--- deleteFormatById uuid = do
---   tenantUuid <- asks (.tenantUuid')
---   createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]

@@ -148,7 +148,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.22.1"
+              , _infoVersion = "4.22.2"
               , _infoLicense =
                   Just $
                     License
