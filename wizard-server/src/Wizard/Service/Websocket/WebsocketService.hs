@@ -21,3 +21,8 @@ filterEditors :: [WebsocketRecord] -> [WebsocketRecord]
 filterEditors records =
   let isEditor record = record.entityPerm == EditorWebsocketPerm
    in filter isEditor records
+
+filterCommenters :: [WebsocketRecord] -> [WebsocketRecord]
+filterCommenters records =
+  let isCommenter record = record.entityPerm == EditorWebsocketPerm || record.entityPerm == CommenterWebsocketPerm
+   in filter isCommenter records

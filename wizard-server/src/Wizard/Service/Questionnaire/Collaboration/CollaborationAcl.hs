@@ -33,12 +33,12 @@ getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserRole m
       ] =
       EditorWebsocketPerm
   | or
-      [ isLogged && isExplicitlyCommentator
-      , isLogged && isInCommentatorGroup
+      [ isLogged && isExplicitlyCommenter
+      , isLogged && isInCommenterGroup
       , isLogged && visibility == VisibleCommentQuestionnaire
       , sharing == AnyoneWithLinkCommentQuestionnaire
       ] =
-      CommentatorWebsocketPerm
+      CommenterWebsocketPerm
   | or
       [ isLogged && isExplicitlyViewer
       , isLogged && isInViewerGroup
@@ -50,22 +50,22 @@ getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserRole m
   where
     isExplicitlyOwner = maybe False (`elem` getUserUuidsForOwnerPerm permissions) mCurrentUserUuid
     isExplicitlyEditor = maybe False (`elem` getUserUuidsForEditorPerm permissions) mCurrentUserUuid
-    isExplicitlyCommentator = maybe False (`elem` getUserUuidsForCommentatorPerm permissions) mCurrentUserUuid
+    isExplicitlyCommenter = maybe False (`elem` getUserUuidsForCommenterPerm permissions) mCurrentUserUuid
     isExplicitlyViewer = maybe False (`elem` getUserUuidsForViewerPerm permissions) mCurrentUserUuid
     isInOwnerGroup = or (fmap (`elem` getUserGroupUuidsForOwnerPerm permissions) mCurrentUserGroupUuids)
     isInEditorGroup = or (fmap (`elem` getUserGroupUuidsForEditorPerm permissions) mCurrentUserGroupUuids)
-    isInCommentatorGroup = or (fmap (`elem` getUserGroupUuidsForCommentatorPerm permissions) mCurrentUserGroupUuids)
+    isInCommenterGroup = or (fmap (`elem` getUserGroupUuidsForCommenterPerm permissions) mCurrentUserGroupUuids)
     isInViewerGroup = or (fmap (`elem` getUserGroupUuidsForViewerPerm permissions) mCurrentUserGroupUuids)
     isLogged = isJust mCurrentUserUuid
     isAdmin = mCurrentUserRole == Just _USER_ROLE_ADMIN
 
 checkViewPermission myself =
-  if myself.entityPerm == EditorWebsocketPerm || myself.entityPerm == CommentatorWebsocketPerm || myself.entityPerm == ViewerWebsocketPerm
+  if myself.entityPerm == EditorWebsocketPerm || myself.entityPerm == CommenterWebsocketPerm || myself.entityPerm == ViewerWebsocketPerm
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "View Questionnaire"
 
 checkCommentPermission myself =
-  if myself.entityPerm == EditorWebsocketPerm || myself.entityPerm == CommentatorWebsocketPerm
+  if myself.entityPerm == EditorWebsocketPerm || myself.entityPerm == CommenterWebsocketPerm
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Comment Questionnaire"
 

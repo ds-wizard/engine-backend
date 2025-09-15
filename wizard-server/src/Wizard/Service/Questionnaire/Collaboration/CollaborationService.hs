@@ -272,7 +272,7 @@ resolveCommentThread qtnUuid connectionUuid reqDto = do
   let filteredRecords =
         if reqDto.private
           then filterEditors records
-          else records
+          else filterCommenters records
   broadcast (U.toString qtnUuid) filteredRecords (toResolveCommentThreadMessage resDto) disconnectUser
 
 reopenCommentThread :: U.UUID -> U.UUID -> ReopenCommentThreadEventChangeDTO -> AppContextM ()
@@ -288,7 +288,7 @@ reopenCommentThread qtnUuid connectionUuid reqDto = do
   let filteredRecords =
         if reqDto.private
           then filterEditors records
-          else records
+          else filterCommenters records
   broadcast (U.toString qtnUuid) filteredRecords (toReopenCommentThreadMessage resDto) disconnectUser
 
 assignCommentThread :: U.UUID -> U.UUID -> AssignCommentThreadEventChangeDTO -> AppContextM ()
@@ -304,7 +304,7 @@ assignCommentThread qtnUuid connectionUuid reqDto = do
   let filteredRecords =
         if reqDto.private
           then filterEditors records
-          else records
+          else filterCommenters records
   broadcast (U.toString qtnUuid) filteredRecords (toAssignCommentThreadMessage resDto) disconnectUser
 
 deleteCommentThread :: U.UUID -> U.UUID -> DeleteCommentThreadEventChangeDTO -> AppContextM ()
@@ -321,7 +321,7 @@ deleteCommentThread qtnUuid connectionUuid reqDto = do
   let filteredRecords =
         if reqDto.private
           then filterEditors records
-          else records
+          else filterCommenters records
   broadcast (U.toString qtnUuid) filteredRecords (toDeleteCommentThreadMessage resDto) disconnectUser
 
 addComment :: U.UUID -> U.UUID -> AddCommentEventChangeDTO -> AppContextM ()
@@ -343,7 +343,7 @@ addComment qtnUuid connectionUuid reqDto = do
   let filteredRecords =
         if reqDto.private
           then filterEditors records
-          else records
+          else filterCommenters records
   broadcast (U.toString qtnUuid) filteredRecords (toAddCommentMessage resDto) disconnectUser
 
 editComment :: U.UUID -> U.UUID -> EditCommentEventChangeDTO -> AppContextM ()
@@ -359,7 +359,7 @@ editComment qtnUuid connectionUuid reqDto = do
   let filteredRecords =
         if reqDto.private
           then filterEditors records
-          else records
+          else filterCommenters records
   broadcast (U.toString qtnUuid) filteredRecords (toEditCommentMessage resDto) disconnectUser
 
 deleteComment :: U.UUID -> U.UUID -> DeleteCommentEventChangeDTO -> AppContextM ()
@@ -375,7 +375,7 @@ deleteComment qtnUuid connectionUuid reqDto = do
   let filteredRecords =
         if reqDto.private
           then filterEditors records
-          else records
+          else filterCommenters records
   broadcast (U.toString qtnUuid) filteredRecords (toDeleteCommentMessage resDto) disconnectUser
 
 -- --------------------------------

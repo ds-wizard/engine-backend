@@ -64,13 +64,13 @@ test_200 appContext = do
     [reqAuthHeader]
     (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestionDTO . toSuggestion) [userAlbert]))
   create_test_200
-    "HTTP 200 OK (Commentator)"
+    "HTTP 200 OK (Commenter)"
     appContext
     (questionnaire13 {visibility = PrivateQuestionnaire})
     [reqNonAdminAuthHeader]
     (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola]))
   create_test_200
-    "HTTP 200 OK (Non-Commentator, VisibleComment)"
+    "HTTP 200 OK (Non-Commenter, VisibleComment)"
     appContext
     questionnaire13
     [reqIsaacAuthTokenHeader]
