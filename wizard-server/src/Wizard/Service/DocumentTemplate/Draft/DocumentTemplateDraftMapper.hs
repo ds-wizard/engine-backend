@@ -174,7 +174,7 @@ fromChangeDTO dto tml now =
     , allowedPackages = dto.allowedPackages
     , nonEditable = tml.nonEditable
     , tenantUuid = tml.tenantUuid
-    , createdAt = tml.createdAt
+    , createdAt = now
     , updatedAt = now
     }
 
