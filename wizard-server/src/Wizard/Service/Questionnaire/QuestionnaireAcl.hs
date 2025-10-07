@@ -73,12 +73,12 @@ hasViewPermissionToQtn visibility sharing perms =
         , visibility == VisibleEditQuestionnaire
         , -- Check membership
           currentUser.uuid `elem` getUserUuidsForViewerPerm perms
-        , currentUser.uuid `elem` getUserUuidsForCommentatorPerm perms
+        , currentUser.uuid `elem` getUserUuidsForCommenterPerm perms
         , currentUser.uuid `elem` getUserUuidsForEditorPerm perms
         , currentUser.uuid `elem` getUserUuidsForOwnerPerm perms
         , -- Check groups
           or (fmap (`elem` getUserGroupUuidsForViewerPerm perms) currentUserGroupUuids)
-        , or (fmap (`elem` getUserGroupUuidsForCommentatorPerm perms) currentUserGroupUuids)
+        , or (fmap (`elem` getUserGroupUuidsForCommenterPerm perms) currentUserGroupUuids)
         , or (fmap (`elem` getUserGroupUuidsForEditorPerm perms) currentUserGroupUuids)
         , or (fmap (`elem` getUserGroupUuidsForOwnerPerm perms) currentUserGroupUuids)
         ]
@@ -107,11 +107,11 @@ hasCommentPermissionToQtn visibility sharing perms =
           visibility == VisibleCommentQuestionnaire
         , visibility == VisibleEditQuestionnaire
         , -- Check membership
-          currentUser.uuid `elem` getUserUuidsForCommentatorPerm perms
+          currentUser.uuid `elem` getUserUuidsForCommenterPerm perms
         , currentUser.uuid `elem` getUserUuidsForEditorPerm perms
         , currentUser.uuid `elem` getUserUuidsForOwnerPerm perms
         , -- Check groups
-          or (fmap (`elem` getUserGroupUuidsForCommentatorPerm perms) currentUserGroupUuids)
+          or (fmap (`elem` getUserGroupUuidsForCommenterPerm perms) currentUserGroupUuids)
         , or (fmap (`elem` getUserGroupUuidsForEditorPerm perms) currentUserGroupUuids)
         , or (fmap (`elem` getUserGroupUuidsForOwnerPerm perms) currentUserGroupUuids)
         ]

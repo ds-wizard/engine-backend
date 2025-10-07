@@ -16,6 +16,6 @@ data WebsocketRecord = WebsocketRecord
 data WebsocketPerm
   = NoWebsocketPerm
   | ViewerWebsocketPerm
-  | CommentatorWebsocketPerm
+  | CommenterWebsocketPerm
   | EditorWebsocketPerm
   deriving (Show, Eq)

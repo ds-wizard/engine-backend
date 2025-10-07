@@ -8,8 +8,8 @@ import Wizard.Model.Questionnaire.QuestionnairePerm
 getUserUuidsForViewerPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
 getUserUuidsForViewerPerm = getUserUuidsForPerm _VIEW_PERM
 
-getUserUuidsForCommentatorPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
-getUserUuidsForCommentatorPerm = getUserUuidsForPerm _COMMENT_PERM
+getUserUuidsForCommenterPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
+getUserUuidsForCommenterPerm = getUserUuidsForPerm _COMMENT_PERM
 
 getUserUuidsForEditorPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
 getUserUuidsForEditorPerm = getUserUuidsForPerm _EDIT_PERM
@@ -32,8 +32,8 @@ getUserUuidsForPerm desiredPerm = foldl go []
 getUserGroupUuidsForViewerPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
 getUserGroupUuidsForViewerPerm = getUserGroupUuidsForPerm _VIEW_PERM
 
-getUserGroupUuidsForCommentatorPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
-getUserGroupUuidsForCommentatorPerm = getUserGroupUuidsForPerm _COMMENT_PERM
+getUserGroupUuidsForCommenterPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
+getUserGroupUuidsForCommenterPerm = getUserGroupUuidsForPerm _COMMENT_PERM
 
 getUserGroupUuidsForEditorPerm :: QuestionnairePermC questionnairePerm => [questionnairePerm] -> [U.UUID]
 getUserGroupUuidsForEditorPerm = getUserGroupUuidsForPerm _EDIT_PERM

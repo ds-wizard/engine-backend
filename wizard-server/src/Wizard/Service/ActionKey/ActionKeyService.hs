@@ -38,7 +38,7 @@ createActionKeyWithHash userUuid actionType tenantUuid hash =
 cleanActionKeys :: AppContextM ()
 cleanActionKeys = do
   now <- liftIO getCurrentTime
-  let timeDelta = realToFrac . toInteger $ nominalDayInSeconds * (-1)
+  let timeDelta = realToFrac . toInteger $ nominalDayInSeconds * (-1) * 14
   let dayBefore = addUTCTime timeDelta now
   deleteActionKeyOlderThen dayBefore
   return ()

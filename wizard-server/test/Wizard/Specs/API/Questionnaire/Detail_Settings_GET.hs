@@ -78,13 +78,13 @@ test_200 appContext = do
     [reqNonAdminAuthHeader]
     [qtn2AlbertEditQtnPermDto]
   create_test_200
-    "HTTP 200 OK (Commentator)"
+    "HTTP 200 OK (Commenter)"
     appContext
     (questionnaire13 {visibility = PrivateQuestionnaire})
     [reqNonAdminAuthHeader]
     [qtn13NikolaCommentQtnPermDto]
   create_test_200
-    "HTTP 200 OK (Non-Commentator, VisibleComment)"
+    "HTTP 200 OK (Non-Commenter, VisibleComment)"
     appContext
     questionnaire13
     [reqIsaacAuthTokenHeader]

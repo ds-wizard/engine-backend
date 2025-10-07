@@ -61,12 +61,12 @@ test_200 appContext = do
   create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1Events [reqAuthHeader]
   create_test_200 "HTTP 200 OK (Non-Owner, VisibleView)" appContext questionnaire2 questionnaire2Events [reqNonAdminAuthHeader]
   create_test_200
-    "HTTP 200 OK (Commentator)"
+    "HTTP 200 OK (Commenter)"
     appContext
     (questionnaire13 {visibility = PrivateQuestionnaire})
     questionnaire13Events
     [reqNonAdminAuthHeader]
-  create_test_200 "HTTP 200 OK (Non-Commentator, VisibleComment)" appContext questionnaire13 questionnaire13Events [reqIsaacAuthTokenHeader]
+  create_test_200 "HTTP 200 OK (Non-Commenter, VisibleComment)" appContext questionnaire13 questionnaire13Events [reqIsaacAuthTokenHeader]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleComment, AnyoneWithLinkComment)"
     appContext
