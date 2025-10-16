@@ -164,9 +164,9 @@ createTcPrivacyAndSupportTable dbPool = do
         \       (privacy_and_support ->> 'privacyUrl')::varchar, \
         \       (privacy_and_support ->> 'termsOfServiceUrl')::varchar, \
         \       (privacy_and_support ->> 'supportEmail')::varchar, \
+        \       (privacy_and_support ->> 'supportSiteName')::varchar, \
         \       (privacy_and_support ->> 'supportSiteUrl')::varchar, \
         \       (privacy_and_support ->> 'supportSiteIcon')::varchar, \
-        \       (privacy_and_support ->> 'supportSiteName')::varchar, \
         \       created_at, \
         \       updated_at \
         \FROM tenant_config;"
