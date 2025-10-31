@@ -19,7 +19,7 @@ dropTables = do
 
 dropTriggers :: AppContextM Int64
 dropTriggers = do
-  logInfo _CMP_MIGRATION "(Trigger/Locale) drop tables"
+  logInfo _CMP_MIGRATION "(Trigger/Locale) drop triggers"
   let sql = "DROP TRIGGER IF EXISTS trigger_on_after_locale_delete ON locale;"
   let action conn = execute_ conn sql
   runDB action
