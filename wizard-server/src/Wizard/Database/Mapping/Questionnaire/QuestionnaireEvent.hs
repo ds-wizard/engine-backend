@@ -2,6 +2,7 @@ module Wizard.Database.Mapping.Questionnaire.QuestionnaireEvent where
 
 import Data.Maybe (fromJust)
 import qualified Data.Text as T
+import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
@@ -110,7 +111,9 @@ instance ToRow QuestionnaireEvent where
     , toField questionnaireUuid
     , toField tenantUuid
     , toField (Nothing :: Maybe String)
-    , toField . PGArray $ [phaseUuid]
+    , case phaseUuid of
+        Just pUuid -> toField . PGArray $ [pUuid]
+        Nothing -> toField . PGArray $ ([] :: [U.UUID])
     , toField (Nothing :: Maybe String)
     , toField (Nothing :: Maybe String)
     ]
