@@ -4,16 +4,16 @@ import qualified Data.Map.Strict as M
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Experts
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.References
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Tags
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.KnowledgeModelFilter
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Experts
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.References
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Tags
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 
 knowledgeModelFilterSpec =
   describe "KnowledgeModelFilter" $

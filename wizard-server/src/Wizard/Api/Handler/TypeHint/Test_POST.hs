@@ -4,13 +4,13 @@ import Servant
 
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.TypeHint.TypeHintIJM ()
 import Wizard.Api.Resource.TypeHint.TypeHintTestRequestDTO
 import Wizard.Api.Resource.TypeHint.TypeHintTestRequestJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.TypeHint.TypeHintService
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 type Test_POST =
   Header "Authorization" String

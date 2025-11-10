@@ -206,7 +206,7 @@ instance Eq TenantConfigKnowledgeModel where
 
 data TenantConfigKnowledgeModelPublic = TenantConfigKnowledgeModelPublic
   { enabled :: Bool
-  , packages :: [TenantConfigKnowledgeModelPublicPackagePattern]
+  , knowledgeModelPackages :: [TenantConfigKnowledgeModelPublicPackagePattern]
   }
   deriving (Generic, Eq, Show)
 
@@ -352,7 +352,7 @@ data TenantConfigOwl = TenantConfigOwl
   , organizationId :: String
   , kmId :: String
   , version :: String
-  , previousPackageId :: Maybe String
+  , previousKnowledgeModelPackageId :: Maybe String
   , rootElement :: String
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
@@ -367,5 +367,5 @@ instance Eq TenantConfigOwl where
       && a.organizationId == b.organizationId
       && a.kmId == b.kmId
       && a.version == b.version
-      && a.previousPackageId == b.previousPackageId
+      && a.previousKnowledgeModelPackageId == b.previousKnowledgeModelPackageId
       && a.rootElement == b.rootElement

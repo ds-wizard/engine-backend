@@ -72,7 +72,7 @@ findDocumentsPage mQtnUuid mQtnName mDocumentTemplateId mQuery pageable sort = d
               \       doc_tml.id, \
               \       doc_tml.name, \
               \       ( \
-              \        SELECT jsonb_agg(jsonb_build_object('uuid', uuid, 'name', name, 'icon', icon)) \
+              \        SELECT coalesce(jsonb_agg(jsonb_build_object('uuid', uuid, 'name', name, 'icon', icon)), '[]'::jsonb) \
               \        FROM (SELECT * \
               \              FROM document_template_format dt_format \
               \              WHERE dt_format.tenant_uuid = doc.tenant_uuid AND dt_format.document_template_id = doc.document_template_id \

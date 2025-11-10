@@ -8,8 +8,8 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Database.DAO.KnowledgeModelSecret.KnowledgeModelSecretDAO
-import qualified Wizard.Database.Migration.Development.KnowledgeModelSecret.KnowledgeModelSecretMigration as KMS_Migration
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelSecretDAO
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSecretMigration as KMS_Migration
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common

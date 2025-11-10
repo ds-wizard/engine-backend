@@ -11,12 +11,12 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Shared.Locale.Database.Migration.Development.Locale.Data.Locales
 import Shared.Locale.Service.Locale.LocaleMapper
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LOC_Migration
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
 import Wizard.Model.Context.AppContext
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

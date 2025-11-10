@@ -7,7 +7,7 @@ import Wizard.Model.Tenant.Limit.TenantLimitBundle
 import WizardLib.Public.Api.Resource.Tenant.Usage.WizardUsageDTO
 
 toDTO :: TenantLimitBundle -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int64 -> WizardUsageDTO
-toDTO limitBundle userCount activeUserCount branchCount kmCount qtnCount tmlCount tmlDraftCount docCount localeCount storageSize =
+toDTO limitBundle userCount activeUserCount knowledgeModelEditorCount kmCount qtnCount tmlCount tmlDraftCount docCount localeCount storageSize =
   WizardUsageDTO
     { users =
         UsageEntryDTO
@@ -24,10 +24,10 @@ toDTO limitBundle userCount activeUserCount branchCount kmCount qtnCount tmlCoun
           { current = fromIntegral kmCount
           , max = fromIntegral limitBundle.knowledgeModels
           }
-    , branches =
+    , knowledgeModelEditors =
         UsageEntryDTO
-          { current = fromIntegral branchCount
-          , max = fromIntegral limitBundle.branches
+          { current = fromIntegral knowledgeModelEditorCount
+          , max = fromIntegral limitBundle.knowledgeModelEditors
           }
     , documentTemplates =
         UsageEntryDTO

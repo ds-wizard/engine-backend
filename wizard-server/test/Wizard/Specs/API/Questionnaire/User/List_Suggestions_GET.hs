@@ -4,6 +4,7 @@ module Wizard.Specs.API.Questionnaire.User.List_Suggestions_GET (
 
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import Data.Foldable (traverse_)
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -16,6 +17,9 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Error.Error
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -24,8 +28,6 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.User.UserMapper
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.Public.Localization.Messages.Public
 
 import SharedTest.Specs.API.Common
@@ -103,7 +105,8 @@ create_test_200 title appContext qtn authHeader expDto =
       -- AND: Run migrations
       runInContextIO U.runMigration appContext
       runInContextIO TML.runMigration appContext
-      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       runInContextIO (insertQuestionnaire qtn) appContext
       -- AND: Prepare expectation
       let expStatus = 200
@@ -165,7 +168,8 @@ create_test_403 title appContext qtn authHeader errorMessage =
       -- AND: Run migrations
       runInContextIO U.runMigration appContext
       runInContextIO TML.runMigration appContext
-      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       runInContextIO (insertQuestionnaire qtn) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

@@ -4,13 +4,13 @@ import Servant
 
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeJM ()
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
-import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
-import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeJM ()
-import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 type List_POST =
   Header "Authorization" String

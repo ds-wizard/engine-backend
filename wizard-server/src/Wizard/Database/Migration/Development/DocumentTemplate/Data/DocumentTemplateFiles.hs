@@ -1,8 +1,8 @@
 module Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFiles where
 
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFiles
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileChangeDTO
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFiles
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 fileDefaultHtmlEditedChangeDTO :: DocumentTemplateFileChangeDTO
 fileDefaultHtmlEditedChangeDTO =

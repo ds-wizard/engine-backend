@@ -14,10 +14,10 @@ data ServerConfig = ServerConfig
   , jwt :: ServerConfigJwt
   , roles :: ServerConfigRoles
   , actionKey :: ServerConfigActionKey
-  , branch :: ServerConfigBranch
   , cache :: ServerConfigCache
   , document :: ServerConfigDocument
   , feedback :: ServerConfigFeedback
+  , knowledgeModelEditor :: ServerConfigKnowledgeModelEditor
   , questionnaire :: ServerConfigQuestionnaire
   , temporaryFile :: ServerConfigTemporaryFile
   , userToken :: ServerConfigUserToken
@@ -55,11 +55,6 @@ data ServerConfigActionKey = ServerConfigActionKey
   }
   deriving (Generic, Show)
 
-data ServerConfigBranch = ServerConfigBranch
-  { squash :: ServerConfigCronWorker
-  }
-  deriving (Generic, Show)
-
 data ServerConfigCache = ServerConfigCache
   { dataExpiration :: Integer
   , websocketExpiration :: Integer
@@ -77,6 +72,11 @@ data ServerConfigFeedback = ServerConfigFeedback
   { apiUrl :: String
   , webUrl :: String
   , sync :: ServerConfigCronWorker
+  }
+  deriving (Generic, Show)
+
+data ServerConfigKnowledgeModelEditor = ServerConfigKnowledgeModelEditor
+  { squash :: ServerConfigCronWorker
   }
   deriving (Generic, Show)
 

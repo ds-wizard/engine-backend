@@ -6,19 +6,19 @@ import qualified Data.UUID as U
 import GHC.Records
 
 import Shared.Common.Model.Error.Error
+import Shared.Coordinate.Service.Coordinate.CoordinateValidation
+import Shared.DocumentTemplate.Constant.DocumentTemplate
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
+import Shared.DocumentTemplate.Localization.Messages.Public
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateChangeDTO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import WizardLib.Common.Service.Coordinate.CoordinateValidation
-import WizardLib.DocumentTemplate.Constant.DocumentTemplate
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
-import WizardLib.DocumentTemplate.Localization.Messages.Public
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 validateNewDocumentTemplate :: DocumentTemplate -> Bool -> AppContextM ()
 validateNewDocumentTemplate tml shouldValidateMetamodelVersion = do

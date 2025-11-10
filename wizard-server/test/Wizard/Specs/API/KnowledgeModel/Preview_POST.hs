@@ -3,6 +3,7 @@ module Wizard.Specs.API.KnowledgeModel.Preview_POST (
 ) where
 
 import Data.Aeson (encode)
+import Data.Foldable (traverse_)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -10,14 +11,15 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
-import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
+import Shared.Coordinate.Util.Coordinate
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as KnowledgeModelPackage
 import Wizard.Model.Context.AppContext
-import WizardLib.Common.Util.Coordinate
-import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -43,7 +45,7 @@ reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
 reqDtoT pkgId =
   KnowledgeModelChangeDTO
-    { packageId = Just pkgId
+    { knowledgeModelPackageId = Just pkgId
     , events = []
     , tagUuids = []
     }
@@ -54,21 +56,21 @@ reqBodyT pkg = encode (reqDtoT pkg)
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (with token)" appContext [reqAuthHeader] germanyPackage germanyPackage.pId km1WithQ4
+  create_test_200 "HTTP 200 OK (with token)" appContext [reqAuthHeader] germanyKmPackage germanyKmPackage.pId km1WithQ4
   create_test_200
     "HTTP 200 OK (with token)"
     appContext
     [reqAuthHeader]
-    germanyPackage
-    (buildCoordinate germanyPackage.organizationId germanyPackage.kmId "latest")
+    germanyKmPackage
+    (buildCoordinate germanyKmPackage.organizationId germanyKmPackage.kmId "latest")
     km1WithQ4
-  create_test_200 "HTTP 200 OK (without token)" appContext [] globalPackage globalPackage.pId km1Global
+  create_test_200 "HTTP 200 OK (without token)" appContext [] globalKmPackage globalKmPackage.pId km1Global
   create_test_200
     "HTTP 200 OK (without token)"
     appContext
     []
-    globalPackage
-    (buildCoordinate globalPackage.organizationId globalPackage.kmId "latest")
+    globalKmPackage
+    (buildCoordinate globalKmPackage.organizationId globalKmPackage.kmId "latest")
     km1Global
 
 create_test_200 title appContext authHeader pkg pkgId expDto =
@@ -82,8 +84,9 @@ create_test_200 title appContext authHeader pkg pkgId expDto =
       let expHeaders = resCtHeader : resCorsHeaders
       let expBody = encode expDto
       -- AND: Run migrations
-      runInContextIO PKG.runMigration appContext
-      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO KnowledgeModelPackage.runMigration appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
@@ -95,4 +98,4 @@ create_test_200 title appContext authHeader pkg pkgId expDto =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext =
-  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (reqBodyT germanyPackage.pId) "QTN_PERM"
+  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (reqBodyT germanyKmPackage.pId) "QTN_PERM"

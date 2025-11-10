@@ -29,8 +29,8 @@ _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email =
 -- Absence
 _ERROR_VALIDATION__TENANT_ABSENCE host = LocaleRecord "error.validation.tenant_absence" "Tenant ('%s') doesn't exist" [host]
 
-_ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE =
-  LocaleRecord "error.validation.branch_previous_pkg_absence" "Branch has to be based on a package" []
+_ERROR_VALIDATION__KM_EDITOR_PREVIOUS_PKG_ABSENCE =
+  LocaleRecord "error.validation.km_editor_previous_pkg_absence" "Knowledge Model Editor has to be based on a package" []
 
 _ERROR_VALIDATION__INTEGRATION_ABSENCE =
   LocaleRecord "error.validation.integration_absence" "Desired integrations doesn't exist" []
@@ -84,9 +84,15 @@ _ERROR_SERVICE_DOCUMENT__QUESTIONNAIRE_OR_FORMAT_NOT_SET_UP =
 _ERROR_SERVICE_AUTH__SERVICE_NOT_DEFINED authId =
   LocaleRecord "error.service.auth.service_not_defined" "Service '%s' is not defined" [authId]
 
--- Branch
-_ERROR_SERVICE_BRANCH__KM_MIGRATION_EXISTS =
-  LocaleRecord "error.service.branch.km_migration_exists" "You can't publish the branch when there is ongoing KM migration" []
+-- Knowledge Model Editor
+_ERROR_SERVICE_KNOWLEDGE_MODEL_EDITOR__KM_MIGRATION_EXISTS =
+  LocaleRecord "error.service.knowledge_model_editor.km_migration_exists" "You can't publish the KM editor when there is ongoing KM migration" []
+
+_ERROR_SERVICE_KNOWLEDGE_MODEL_EDITOR__COLLABORATION__FORCE_DISCONNECT qtnUuid =
+  LocaleRecord
+    "error.service.knowledge_model_editor.collaboration.force_disconnect"
+    "Knowledge Model Editor ('%s') dramatically changed its state. Therefore, users has to be disconnected"
+    [qtnUuid]
 
 -- Locale Bundle
 _ERROR_SERVICE_LB__PULL_NON_EXISTING_LOCALE lclId =
@@ -99,16 +105,16 @@ _ERROR_SERVICE_MIGRATION_KM__TARGET_PKG_IS_NOT_HIGHER =
     "You have to choose a knowledge model which is newer than current knowledge model"
     []
 
-_ERROR_SERVICE_MIGRATION_KM__BRANCH_MISSING_MERGE_CHECKPOINT_PACKAGE_ID =
+_ERROR_SERVICE_MIGRATION_KM__EDITOR_MISSING_MERGE_CHECKPOINT_PACKAGE_ID =
   LocaleRecord
-    "error.service.migration.km.branch_missing_merge_checkpoint_package_id"
-    "Branch is missing some metadata ('mergeCheckpointPackageId')"
+    "error.service.migration.km.editor_missing_merge_checkpoint_package_id"
+    "Knowledge Model Editor is missing some metadata ('mergeCheckpointPackageId')"
     []
 
-_ERROR_SERVICE_MIGRATION_KM__BRANCH_MISSING_FORK_OF_PACKAGE_ID =
+_ERROR_SERVICE_MIGRATION_KM__EDITOR_MISSING_FORK_OF_PACKAGE_ID =
   LocaleRecord
-    "error.service.migration.km.branch_missing_fork_of_package_id"
-    "Branch is missing some metadata ('forkOfPackageId')"
+    "error.service.migration.km.editor_missing_fork_of_package_id"
+    "Knowledge Model Editor is missing some metadata ('forkOfPackageId')"
     []
 
 _ERROR_SERVICE_MIGRATION_KM__NO_CONFLICTS_TO_SOLVE =
@@ -119,12 +125,6 @@ _ERROR_SERVICE_MIGRATION_KM__NO_CONFLICTS_TO_SOLVE =
 
 _ERROR_SERVICE_MIGRATION_KM__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE =
   LocaleRecord "error.service.migration.km.no_events_in_target_pkg_event_queue" "There no more events to solve" []
-
-_ERROR_SERVICE_MIGRATION_KM__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT =
-  LocaleRecord
-    "error.service.migration.km.edit_action_has_to_provide_target_event"
-    "Migration action is missing information about currently solving event"
-    []
 
 _ERROR_SERVICE_MIGRATION_KM__EVENT_UUIDS_MISMATCH =
   LocaleRecord
@@ -145,7 +145,7 @@ _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY 
     "Knowledge model ('%s') can't be deleted because some %s depends on it"
     [pkgId, target]
 
--- Package Bundle
+-- Knowledge Model Bundle
 _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId =
   LocaleRecord
     "error.service.pb.pull_non_existing_pkg"

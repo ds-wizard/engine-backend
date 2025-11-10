@@ -26,7 +26,7 @@ assertExistenceOfFeedbackInDB appContext feedback = do
 -- --------------------------------
 compareFeedbackDtos resDto expDto = do
   liftIO $ resDto.questionUuid `shouldBe` expDto.questionUuid
-  liftIO $ resDto.packageId `shouldBe` expDto.packageId
+  liftIO $ resDto.knowledgeModelPackageId `shouldBe` expDto.knowledgeModelPackageId
   liftIO $ resDto.title `shouldBe` expDto.title
   liftIO $ resDto.content `shouldBe` expDto.content
 

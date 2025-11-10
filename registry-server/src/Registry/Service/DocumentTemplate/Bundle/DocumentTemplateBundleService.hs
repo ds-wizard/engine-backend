@@ -14,16 +14,16 @@ import Registry.Service.Audit.AuditService
 import Registry.Service.DocumentTemplate.Bundle.DocumentTemplateBundleAcl
 import Registry.Service.DocumentTemplate.Bundle.DocumentTemplateBundleMapper (toDocumentTemplateArchive)
 import Registry.Service.DocumentTemplate.DocumentTemplateService
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Service.DocumentTemplate.Bundle.DocumentTemplateBundleMapper (fromBundle, fromDocumentTemplateArchive, toBundle)
-import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
-import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateUtil
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Service.DocumentTemplate.Bundle.DocumentTemplateBundleMapper (fromBundle, fromDocumentTemplateArchive, toBundle)
+import Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
+import Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateUtil
 
 exportBundle :: String -> AppContextM BSL.ByteString
 exportBundle tmlId = do

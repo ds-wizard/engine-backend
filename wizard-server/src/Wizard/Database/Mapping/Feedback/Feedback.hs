@@ -12,7 +12,7 @@ instance ToRow Feedback where
     [ toField uuid
     , toField issueId
     , toField questionUuid
-    , toField packageId
+    , toField knowledgeModelPackageId
     , toField title
     , toField content
     , toField createdAt
@@ -25,7 +25,7 @@ instance FromRow Feedback where
     uuid <- field
     issueId <- field
     questionUuid <- field
-    packageId <- field
+    knowledgeModelPackageId <- field
     title <- field
     content <- field
     createdAt <- field

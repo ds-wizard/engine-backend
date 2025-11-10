@@ -3,7 +3,7 @@ module Registry.Api.Resource.DocumentTemplate.DocumentTemplateFormatJM where
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
 
 instance ToJSON DocumentTemplateFormatDTO where
   toJSON DocumentTemplateFormatDTO {..} =

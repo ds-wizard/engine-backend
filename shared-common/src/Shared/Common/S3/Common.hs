@@ -1,5 +1,6 @@
 module Shared.Common.S3.Common where
 
+import Control.Monad (unless)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (ask, liftIO)
 import Data.Aeson (encode)
@@ -169,10 +170,12 @@ createBucketExistsFn = do
 
 createMakeBucketFn :: AppContextC s sc m => m ()
 createMakeBucketFn = do
-  bucketName <- getBucketName
-  logInfoI _CMP_S3 (f' "Make bucket: '%s'" [bucketName])
-  let action = makeBucket (T.pack bucketName) Nothing
-  runMinioClient action
+  exists <- createBucketExistsFn
+  unless exists $ do
+    bucketName <- getBucketName
+    logInfoI _CMP_S3 (f' "Make bucket: '%s'" [bucketName])
+    let action = makeBucket (T.pack bucketName) Nothing
+    runMinioClient action
 
 createPurgeBucketFn :: AppContextC s sc m => m ()
 createPurgeBucketFn = do

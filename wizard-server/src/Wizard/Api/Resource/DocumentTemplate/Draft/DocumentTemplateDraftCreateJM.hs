@@ -3,8 +3,8 @@ module Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateJM 
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateDTO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
 instance FromJSON DocumentTemplateDraftCreateDTO where
   parseJSON = genericParseJSON jsonOptions

@@ -3,17 +3,19 @@ module Wizard.Specs.API.TypeHint.Legacy_POST (
 ) where
 
 import Data.Aeson (encode)
+import Data.Foldable (traverse_)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as KnowledgeModelPackage
 import Wizard.Database.Migration.Development.TypeHint.Data.TypeHints
 import Wizard.Model.Context.AppContext
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -50,8 +52,9 @@ test_200 appContext =
       let expDto = [lifeScienceLegacyTypeHint, mathematicalLegacyTypeHint, legalLegacyTypeHint]
       let expBody = encode expDto
       -- AND: Run migrations
-      runInContextIO PKG.runMigration appContext
-      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO KnowledgeModelPackage.runMigration appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

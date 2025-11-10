@@ -5,7 +5,7 @@ import Data.Time
 import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import RegistryLib.Api.Resource.Locale.LocaleDTO
 import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
-import RegistryLib.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Api.Resource.Package.KnowledgeModelPackageSimpleDTO
 import RegistryLib.Model.Organization.OrganizationSimple
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Model.Registry.RegistryLocale
@@ -32,7 +32,7 @@ toRegistryOrganization dto now =
     , createdAt = now
     }
 
-toRegistryPackage :: PackageSimpleDTO -> UTCTime -> RegistryPackage
+toRegistryPackage :: KnowledgeModelPackageSimpleDTO -> UTCTime -> RegistryPackage
 toRegistryPackage dto now =
   RegistryPackage
     { organizationId = dto.organizationId

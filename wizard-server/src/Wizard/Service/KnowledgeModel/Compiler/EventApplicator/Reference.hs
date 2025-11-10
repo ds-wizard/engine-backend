@@ -1,5 +1,8 @@
 module Wizard.Service.KnowledgeModel.Compiler.EventApplicator.Reference where
 
+import Shared.KnowledgeModel.Model.Common.Lens
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.Reference.ReferenceEvent
 import Wizard.Service.KnowledgeModel.Compiler.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Chapter ()
@@ -12,9 +15,6 @@ import Wizard.Service.KnowledgeModel.Compiler.Modifier.Phase ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Question ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Tag ()
-import WizardLib.KnowledgeModel.Model.Common.Lens
-import WizardLib.KnowledgeModel.Model.Event.EventLenses
-import WizardLib.KnowledgeModel.Model.Event.Reference.ReferenceEvent
 
 instance ApplyEvent AddReferenceEvent where
   apply =
@@ -24,5 +24,5 @@ instance ApplyEvent EditReferenceEvent where
   apply = applyEditEvent getReferencesM setReferencesM
 
 instance ApplyEvent DeleteReferenceEvent where
-  apply event km =
-    deleteEntityReferenceFromParentNode event getQuestionsM setQuestionsM getReferenceUuids setReferenceUuids $ deleteReference km (getEntityUuid event)
+  apply event content km =
+    deleteEntityReferenceFromParentNode event getQuestionsM setQuestionsM getReferenceUuids setReferenceUuids $ deleteReference km event.entityUuid

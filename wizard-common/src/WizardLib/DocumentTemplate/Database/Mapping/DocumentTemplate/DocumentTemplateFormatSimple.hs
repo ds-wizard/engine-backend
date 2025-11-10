@@ -1,7 +1,0 @@
-module WizardLib.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplateFormatSimple where
-
-import Database.PostgreSQL.Simple
-
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
-
-instance FromRow DocumentTemplateFormatSimple

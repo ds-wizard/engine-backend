@@ -3,9 +3,9 @@ module Wizard.Model.DocumentTemplate.DocumentTemplateSuggestion where
 import GHC.Generics
 
 import Shared.Common.Model.Common.SemVer2Tuple
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
-import WizardLib.KnowledgeModel.Model.Package.PackagePattern
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 
 data DocumentTemplateSuggestion = DocumentTemplateSuggestion
   { tId :: String
@@ -16,7 +16,7 @@ data DocumentTemplateSuggestion = DocumentTemplateSuggestion
   , phase :: DocumentTemplatePhase
   , metamodelVersion :: SemVer2Tuple
   , description :: String
-  , allowedPackages :: [PackagePattern]
+  , allowedPackages :: [KnowledgeModelPackagePattern]
   , formats :: [DocumentTemplateFormatSimple]
   }
   deriving (Show, Eq, Generic)

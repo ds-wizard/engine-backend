@@ -9,14 +9,14 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Common.Model.Config.ServerConfig
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateAssets
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetDTO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetMapper
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateAssets
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

@@ -5,12 +5,12 @@ module Wizard.Service.Report.Evaluator.Indication (
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Service.Report.Evaluator.Common
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 
 computeIndications :: Maybe U.UUID -> KnowledgeModel -> M.Map String Reply -> Chapter -> [Indication]
 computeIndications mQtnPhase km replies ch =

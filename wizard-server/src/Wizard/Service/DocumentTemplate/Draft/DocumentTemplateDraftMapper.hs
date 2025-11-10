@@ -3,18 +3,18 @@ module Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper where
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Coordinate.Util.Coordinate
+import Shared.DocumentTemplate.Constant.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataDTO
-import Wizard.Model.Branch.BranchSuggestion
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftDetail
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
+import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
-import WizardLib.Common.Util.Coordinate
-import WizardLib.DocumentTemplate.Constant.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 toDraftList :: DocumentTemplate -> DocumentTemplateDraftList
 toDraftList tml =
@@ -29,8 +29,8 @@ toDraftList tml =
     , updatedAt = tml.updatedAt
     }
 
-toDraftDetail :: DocumentTemplate -> [DocumentTemplateFormat] -> DocumentTemplateDraftData -> Maybe QuestionnaireSuggestion -> Maybe BranchSuggestion -> DocumentTemplateDraftDetail
-toDraftDetail draft formats draftData mQuestionnaire mBranch =
+toDraftDetail :: DocumentTemplate -> [DocumentTemplateFormat] -> DocumentTemplateDraftData -> Maybe QuestionnaireSuggestion -> Maybe KnowledgeModelEditorSuggestion -> DocumentTemplateDraftDetail
+toDraftDetail draft formats draftData mQuestionnaire mKmEditor =
   DocumentTemplateDraftDetail
     { tId = draft.tId
     , name = draft.name
@@ -43,8 +43,8 @@ toDraftDetail draft formats draftData mQuestionnaire mBranch =
     , formats = formats
     , questionnaireUuid = draftData.questionnaireUuid
     , questionnaire = mQuestionnaire
-    , branchUuid = draftData.branchUuid
-    , branch = mBranch
+    , knowledgeModelEditorUuid = draftData.knowledgeModelEditorUuid
+    , knowledgeModelEditor = mKmEditor
     , formatUuid = draftData.formatUuid
     , createdAt = draft.createdAt
     , updatedAt = draft.updatedAt
@@ -64,20 +64,20 @@ toDraftDetail' draft formats =
     , formats = formats
     , questionnaireUuid = Nothing
     , questionnaire = Nothing
-    , branchUuid = Nothing
-    , branch = Nothing
+    , knowledgeModelEditorUuid = Nothing
+    , knowledgeModelEditor = Nothing
     , formatUuid = Nothing
     , createdAt = draft.createdAt
     , updatedAt = draft.updatedAt
     }
 
-toDraftDataDTO :: DocumentTemplateDraftData -> Maybe QuestionnaireSuggestion -> Maybe BranchSuggestion -> DocumentTemplateDraftDataDTO
-toDraftDataDTO draftData mQuestionnaire mBranch =
+toDraftDataDTO :: DocumentTemplateDraftData -> Maybe QuestionnaireSuggestion -> Maybe KnowledgeModelEditorSuggestion -> DocumentTemplateDraftDataDTO
+toDraftDataDTO draftData mQuestionnaire mKmEditor =
   DocumentTemplateDraftDataDTO
     { questionnaireUuid = draftData.questionnaireUuid
     , questionnaire = mQuestionnaire
-    , branchUuid = draftData.branchUuid
-    , branch = mBranch
+    , knowledgeModelEditorUuid = draftData.knowledgeModelEditorUuid
+    , knowledgeModelEditor = mKmEditor
     , formatUuid = draftData.formatUuid
     }
 
@@ -183,7 +183,7 @@ fromCreateDraftData draft =
   DocumentTemplateDraftData
     { documentTemplateId = draft.tId
     , questionnaireUuid = Nothing
-    , branchUuid = Nothing
+    , knowledgeModelEditorUuid = Nothing
     , formatUuid = Nothing
     , tenantUuid = draft.tenantUuid
     , createdAt = draft.createdAt
@@ -195,7 +195,7 @@ fromDraftDataChangeDTO draftData reqDto =
   DocumentTemplateDraftData
     { documentTemplateId = draftData.documentTemplateId
     , questionnaireUuid = reqDto.questionnaireUuid
-    , branchUuid = reqDto.branchUuid
+    , knowledgeModelEditorUuid = reqDto.knowledgeModelEditorUuid
     , formatUuid = reqDto.formatUuid
     , tenantUuid = draftData.tenantUuid
     , createdAt = draftData.createdAt

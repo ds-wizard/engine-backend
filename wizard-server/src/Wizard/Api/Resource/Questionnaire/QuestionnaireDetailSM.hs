@@ -19,7 +19,7 @@ instance ToSchema QuestionnaireDetailDTO where
         , name = questionnaire1.name
         , visibility = questionnaire1.visibility
         , sharing = questionnaire1.sharing
-        , packageId = questionnaire1.packageId
+        , knowledgeModelPackageId = questionnaire1.knowledgeModelPackageId
         , isTemplate = questionnaire1.isTemplate
         , migrationUuid = Nothing
         , permissions = [qtn1AlbertEditQtnPermDto]

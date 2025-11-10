@@ -24,10 +24,10 @@ import Registry.Specs.API.ActionKey.APISpec
 import Registry.Specs.API.Config.APISpec
 import Registry.Specs.API.DocumentTemplate.APISpec
 import Registry.Specs.API.Info.APISpec
+import Registry.Specs.API.KnowledgeModelPackage.APISpec
 import Registry.Specs.API.Locale.APISpec
 import Registry.Specs.API.Organization.APISpec
-import Registry.Specs.API.Package.APISpec
-import Registry.Specs.Service.Package.PackageValidationSpec
+import Registry.Specs.Service.KnowledgeModel.Package.PackageValidationSpec
 import Registry.TestMigration
 
 hLoadConfig fileName loadFn callback = do
@@ -80,13 +80,16 @@ main =
     ( \baseContext appContext ->
         hspec $ do
           describe "UNIT TESTING" $ describe "SERVICE" $ do
-            describe "Package" packageValidationSpec
+            describe "KnowledgeModel" $
+              describe
+                "Package"
+                packageValidationSpec
           before (resetDB appContext) $ describe "INTEGRATION TESTING" $ describe "API" $ do
             actionKeyAPI baseContext appContext
             configAPI baseContext appContext
             infoAPI baseContext appContext
+            knowledgeModelPackageAPI baseContext appContext
             localeAPI baseContext appContext
             organizationAPI baseContext appContext
-            packageAPI baseContext appContext
             templateAPI baseContext appContext
     )

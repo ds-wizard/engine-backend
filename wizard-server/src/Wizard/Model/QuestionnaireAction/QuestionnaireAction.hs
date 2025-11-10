@@ -5,7 +5,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import WizardLib.KnowledgeModel.Model.Package.PackagePattern
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 
 data QuestionnaireAction = QuestionnaireAction
   { qaId :: String
@@ -17,7 +17,7 @@ data QuestionnaireAction = QuestionnaireAction
   , description :: String
   , readme :: String
   , license :: String
-  , allowedPackages :: [PackagePattern]
+  , allowedPackages :: [KnowledgeModelPackagePattern]
   , url :: String
   , config :: Object
   , enabled :: Bool

@@ -15,7 +15,7 @@ import WizardLib.Public.Api.Resource.UserToken.UserTokenJM ()
 purgeCache :: AppContextM ()
 purgeCache = do
   cache <- asks cache
-  liftIO . C.purge $ cache.branchWebsocket
+  liftIO . C.purge $ cache.knowledgeModelEditorWebsocket
   liftIO . C.purge $ cache.questionnaireWebsocket
   liftIO . C.purge $ cache.user
   liftIO . C.purge $ cache.userToken
@@ -23,7 +23,7 @@ purgeCache = do
 purgeExpiredCache :: AppContextM ()
 purgeExpiredCache = do
   cache <- asks cache
-  liftIO . C.purgeExpired $ cache.branchWebsocket
+  liftIO . C.purgeExpired $ cache.knowledgeModelEditorWebsocket
   liftIO . C.purgeExpired $ cache.questionnaireWebsocket
   liftIO . C.purgeExpired $ cache.user
   liftIO . C.purgeExpired $ cache.userToken

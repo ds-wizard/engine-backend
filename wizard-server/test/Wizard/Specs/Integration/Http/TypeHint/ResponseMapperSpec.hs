@@ -4,9 +4,9 @@ import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import Shared.Common.Util.JSON
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Wizard.Integration.Http.TypeHint.ResponseMapper
 import Wizard.Integration.Resource.TypeHint.TypeHintIDTO
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Integrations
 
 import Wizard.Specs.Integration.Http.Common
 

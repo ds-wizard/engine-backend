@@ -4,8 +4,8 @@ import Data.Time
 import GHC.Generics
 
 import RegistryLib.Model.Organization.OrganizationSimple
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 data DocumentTemplateSimpleDTO = DocumentTemplateSimpleDTO
   { tId :: String

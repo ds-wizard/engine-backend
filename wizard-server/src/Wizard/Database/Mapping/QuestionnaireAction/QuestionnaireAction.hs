@@ -6,8 +6,8 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePatternJM ()
 import Wizard.Model.QuestionnaireAction.QuestionnaireAction
-import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePatternJM ()
 
 instance ToRow QuestionnaireAction where
   toRow QuestionnaireAction {..} =

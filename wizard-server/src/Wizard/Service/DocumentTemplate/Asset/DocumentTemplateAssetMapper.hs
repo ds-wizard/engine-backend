@@ -4,9 +4,9 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Int
 
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetDTO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 toDTO :: DocumentTemplateAsset -> String -> UTCTime -> DocumentTemplateAssetDTO
 toDTO asset url urlExpiration =

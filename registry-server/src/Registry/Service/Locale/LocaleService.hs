@@ -8,9 +8,9 @@ import Registry.Service.Locale.LocaleMapper
 import Registry.Service.Locale.LocaleUtil
 import Registry.Service.Locale.LocaleValidation
 import RegistryLib.Api.Resource.Locale.LocaleDTO
+import Shared.Coordinate.Util.Coordinate
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
-import WizardLib.Common.Util.Coordinate
 
 getLocales :: [(String, String)] -> Maybe String -> AppContextM [LocaleDTO]
 getLocales queryParams mRecommendedAppVersion = do

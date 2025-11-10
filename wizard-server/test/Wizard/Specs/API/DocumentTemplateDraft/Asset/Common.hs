@@ -8,11 +8,11 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Tenant.Tenant
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 import Wizard.Specs.Common
 

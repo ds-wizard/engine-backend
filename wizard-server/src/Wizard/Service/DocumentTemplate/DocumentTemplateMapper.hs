@@ -7,6 +7,10 @@ import Shared.Common.Database.DAO.Common
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
+import Shared.Coordinate.Util.Coordinate
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
@@ -15,11 +19,7 @@ import Wizard.Model.DocumentTemplate.DocumentTemplateSuggestion
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Registry.RegistryTemplate
 import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
-import qualified Wizard.Service.Package.PackageMapper as PM_Mapper
-import WizardLib.Common.Util.Coordinate
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Model.Package.Package
+import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as PM_Mapper
 
 toList :: DocumentTemplate -> Maybe RegistryTemplate -> Maybe RegistryOrganization -> DocumentTemplatePhase -> DocumentTemplateList
 toList tml mTmlR mOrgR phase =
@@ -100,7 +100,7 @@ toDetailDTO
   -> [RegistryOrganization]
   -> [String]
   -> Maybe String
-  -> [Package]
+  -> [KnowledgeModelPackage]
   -> DocumentTemplateDetailDTO
 toDetailDTO tml formats registryEnabled tmlRs orgRs versionLs registryLink pkgs =
   DocumentTemplateDetailDTO
@@ -117,7 +117,7 @@ toDetailDTO tml formats registryEnabled tmlRs orgRs versionLs registryLink pkgs 
     , allowedPackages = tml.allowedPackages
     , formats = formats
     , nonEditable = tml.nonEditable
-    , usablePackages = fmap PM_Mapper.toSimpleDTO pkgs
+    , usableKnowledgeModels = fmap PM_Mapper.toSimpleDTO pkgs
     , versions = versionLs
     , remoteLatestVersion =
         case (registryEnabled, selectDocumentTemplateByOrgIdAndTmlId tml tmlRs) of

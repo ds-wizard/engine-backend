@@ -18,6 +18,8 @@ import Shared.Common.Model.Common.Lens
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Error.Error
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -38,8 +40,6 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.User.User
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Document.DocumentMapper
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.Public.Localization.Messages.Public
 
 import SharedTest.Specs.API.Common

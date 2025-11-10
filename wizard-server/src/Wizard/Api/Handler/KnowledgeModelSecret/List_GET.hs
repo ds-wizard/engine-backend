@@ -6,7 +6,7 @@ import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
-import Wizard.Model.KnowledgeModelSecret.KnowledgeModelSecret
+import Wizard.Model.KnowledgeModel.KnowledgeModelSecret
 import Wizard.Service.KnowledgeModel.Secret.KnowledgeModelSecretService
 
 type List_GET =

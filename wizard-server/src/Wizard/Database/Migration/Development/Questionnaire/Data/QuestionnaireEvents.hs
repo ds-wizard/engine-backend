@@ -8,6 +8,8 @@ import qualified Data.UUID as U
 import Shared.Common.Constant.Tenant
 import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
@@ -20,8 +22,6 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.User.UserMapper
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 
 fEvents :: U.UUID -> [QuestionnaireEvent]

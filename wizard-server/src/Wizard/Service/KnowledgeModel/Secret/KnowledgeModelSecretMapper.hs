@@ -4,8 +4,8 @@ import Data.Time
 import qualified Data.UUID as U
 import Prelude hiding (id)
 
-import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretChangeDTO
-import Wizard.Model.KnowledgeModelSecret.KnowledgeModelSecret
+import Wizard.Api.Resource.KnowledgeModel.Secret.KnowledgeModelSecretChangeDTO
+import Wizard.Model.KnowledgeModel.KnowledgeModelSecret
 
 fromCreateDTO :: KnowledgeModelSecretChangeDTO -> U.UUID -> U.UUID -> UTCTime -> KnowledgeModelSecret
 fromCreateDTO dto uuid tenantUuid now =

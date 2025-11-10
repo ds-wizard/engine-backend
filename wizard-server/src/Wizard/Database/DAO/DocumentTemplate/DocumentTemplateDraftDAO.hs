@@ -12,16 +12,16 @@ import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Util.Logger
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO (deleteAssetsByDocumentTemplateId)
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO (deleteFilesByDocumentTemplateId)
+import Shared.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplate ()
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO (deleteDraftData, deleteDraftDataByDocumentTemplateId)
 import Wizard.Database.Mapping.DocumentTemplate.DocumentTemplateDraftList ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO (deleteAssetsByDocumentTemplateId)
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO (deleteFilesByDocumentTemplateId)
-import WizardLib.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplate ()
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 entityName = "document_template"
 

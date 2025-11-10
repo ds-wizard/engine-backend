@@ -5,10 +5,10 @@ import Servant
 
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.DocumentTemplate.DocumentTemplateService
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 
 type List_All_GET =
   Header "Authorization" String

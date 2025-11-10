@@ -4,6 +4,10 @@ import qualified Data.List as L
 import qualified Data.Map.Strict as M
 import Prelude hiding (lookup)
 
+import Shared.KnowledgeModel.Model.Common.Lens
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.Question.QuestionEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compiler.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Chapter ()
@@ -16,49 +20,45 @@ import Wizard.Service.KnowledgeModel.Compiler.Modifier.Modifier
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Phase ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Tag ()
-import WizardLib.KnowledgeModel.Model.Common.Lens
-import WizardLib.KnowledgeModel.Model.Event.EventLenses
-import WizardLib.KnowledgeModel.Model.Event.Question.QuestionEvent
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 instance ApplyEvent AddQuestionEvent where
-  apply event = Right . addEntity . addEntityReference
+  apply event content = Right . addEntity . addEntityReference
     where
       addEntityReference :: KnowledgeModel -> KnowledgeModel
       addEntityReference km =
-        case M.lookup (getParentUuid event) (getChaptersM km) of
+        case M.lookup event.parentUuid (getChaptersM km) of
           Just parent ->
-            putInChaptersM (getParentUuid event) (parent {questionUuids = parent.questionUuids ++ [getEntityUuid event]}) km
+            putInChaptersM event.parentUuid (parent {questionUuids = parent.questionUuids ++ [event.entityUuid]}) km
           Nothing ->
-            case M.lookup (getParentUuid event) (getQuestionsM km) of
+            case M.lookup event.parentUuid (getQuestionsM km) of
               Just parent ->
-                putInQuestionsM (getParentUuid event) (setItemTemplateQuestionUuids parent (getItemTemplateQuestionUuids parent ++ [getEntityUuid event])) km
+                putInQuestionsM event.parentUuid (setItemTemplateQuestionUuids parent (getItemTemplateQuestionUuids parent ++ [event.entityUuid])) km
               Nothing ->
-                case M.lookup (getParentUuid event) (getAnswersM km) of
+                case M.lookup event.parentUuid (getAnswersM km) of
                   Just parent ->
-                    putInAnswersM (getParentUuid event) (parent {followUpUuids = parent.followUpUuids ++ [getEntityUuid event]}) km
+                    putInAnswersM event.parentUuid (parent {followUpUuids = parent.followUpUuids ++ [event.entityUuid]}) km
                   Nothing -> km
       addEntity :: KnowledgeModel -> KnowledgeModel
-      addEntity = putInQuestionsM (getEntityUuid event) (createEntity event)
+      addEntity = putInQuestionsM event.entityUuid (createEntity event content)
 
 instance ApplyEvent EditQuestionEvent where
   apply = applyEditEvent getQuestionsM setQuestionsM
 
 instance ApplyEvent DeleteQuestionEvent where
-  apply event = Right . deleteEntity . deleteEntityReference
+  apply event content = Right . deleteEntity . deleteEntityReference
     where
       deleteEntityReference :: KnowledgeModel -> KnowledgeModel
       deleteEntityReference km =
-        case M.lookup (getParentUuid event) (getChaptersM km) of
+        case M.lookup event.parentUuid (getChaptersM km) of
           Just parent ->
-            putInChaptersM (getParentUuid event) (parent {questionUuids = L.delete (getEntityUuid event) parent.questionUuids}) km
+            putInChaptersM event.parentUuid (parent {questionUuids = L.delete event.entityUuid parent.questionUuids}) km
           Nothing ->
-            case M.lookup (getParentUuid event) (getQuestionsM km) of
+            case M.lookup event.parentUuid (getQuestionsM km) of
               Just parent ->
-                putInQuestionsM (getParentUuid event) (setItemTemplateQuestionUuids parent (L.delete (getEntityUuid event) (getItemTemplateQuestionUuids parent))) km
+                putInQuestionsM event.parentUuid (setItemTemplateQuestionUuids parent (L.delete event.entityUuid (getItemTemplateQuestionUuids parent))) km
               Nothing ->
-                case M.lookup (getParentUuid event) (getAnswersM km) of
-                  Just parent -> putInAnswersM (getParentUuid event) (parent {followUpUuids = L.delete (getEntityUuid event) parent.followUpUuids}) km
+                case M.lookup event.parentUuid (getAnswersM km) of
+                  Just parent -> putInAnswersM event.parentUuid (parent {followUpUuids = L.delete event.entityUuid parent.followUpUuids}) km
                   Nothing -> km
       deleteEntity :: KnowledgeModel -> KnowledgeModel
-      deleteEntity km = deleteQuestion km (getEntityUuid event)
+      deleteEntity km = deleteQuestion km event.entityUuid

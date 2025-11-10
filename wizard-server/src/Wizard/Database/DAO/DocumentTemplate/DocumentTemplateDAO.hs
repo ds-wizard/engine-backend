@@ -14,6 +14,8 @@ import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Util.String
+import Shared.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplate ()
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Database.DAO.Common hiding (createCountGroupByCoordinateFn, createFindEntitiesGroupByCoordinatePageableQuerySortFn)
 import Wizard.Database.Mapping.DocumentTemplate.DocumentTemplateList ()
 import Wizard.Database.Mapping.DocumentTemplate.DocumentTemplateSuggestion ()
@@ -21,8 +23,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.DocumentTemplate.DocumentTemplateList
 import Wizard.Model.DocumentTemplate.DocumentTemplateSuggestion
-import WizardLib.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplate ()
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 entityName = "document_template"
 

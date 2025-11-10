@@ -5,7 +5,7 @@ import Test.Hspec
 
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
-import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG_Migration
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as PKG_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireCommands
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
@@ -46,6 +46,6 @@ questionnaireServiceSpec appContext =
 compareQuestionnaire :: Questionnaire -> CreateQuestionnaireCommand -> IO ()
 compareQuestionnaire questionnaire command = liftIO $ do
   questionnaire.name `shouldBe` command.name
-  questionnaire.packageId `shouldBe` command.packageId
+  questionnaire.knowledgeModelPackageId `shouldBe` command.knowledgeModelPackageId
   questionnaire.documentTemplateId `shouldBe` command.documentTemplateId
   length questionnaire.permissions `shouldBe` length command.emails

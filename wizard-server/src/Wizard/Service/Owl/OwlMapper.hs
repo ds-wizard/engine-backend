@@ -3,21 +3,19 @@ module Wizard.Service.Owl.OwlMapper where
 import Data.Time
 import qualified Data.UUID as U
 
-import WizardLib.Common.Util.Coordinate
-import WizardLib.KnowledgeModel.Constant.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.Event.Event
-import WizardLib.KnowledgeModel.Model.Package.Package
-import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
+import Shared.Coordinate.Util.Coordinate
+import Shared.KnowledgeModel.Constant.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 
-fromOwl :: String -> String -> String -> String -> Maybe String -> [Event] -> U.UUID -> UTCTime -> PackageWithEvents
-fromOwl name organizationId kmId version mPreviousPackageId events tenantUuid now =
-  PackageWithEvents
+fromOwl :: String -> String -> String -> String -> Maybe String -> U.UUID -> UTCTime -> KnowledgeModelPackage
+fromOwl name organizationId kmId version mPreviousPackageId tenantUuid now =
+  KnowledgeModelPackage
     { pId = buildCoordinate organizationId kmId version
     , name = name
     , organizationId = organizationId
     , kmId = kmId
     , version = version
-    , phase = ReleasedPackagePhase
+    , phase = ReleasedKnowledgeModelPackagePhase
     , metamodelVersion = kmMetamodelVersion
     , description = ""
     , readme = ""
@@ -25,7 +23,6 @@ fromOwl name organizationId kmId version mPreviousPackageId events tenantUuid no
     , previousPackageId = mPreviousPackageId
     , forkOfPackageId = Nothing
     , mergeCheckpointPackageId = Nothing
-    , events = events
     , nonEditable = False
     , tenantUuid = tenantUuid
     , createdAt = now

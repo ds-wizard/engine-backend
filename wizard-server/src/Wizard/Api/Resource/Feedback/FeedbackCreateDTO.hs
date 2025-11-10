@@ -5,7 +5,7 @@ import GHC.Generics
 
 data FeedbackCreateDTO = FeedbackCreateDTO
   { questionUuid :: U.UUID
-  , packageId :: String
+  , knowledgeModelPackageId :: String
   , title :: String
   , content :: String
   }

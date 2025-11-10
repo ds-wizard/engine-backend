@@ -1,8 +1,8 @@
 module Wizard.Database.Migration.Development.Registry.Data.RegistryTemplates where
 
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Model.Registry.RegistryTemplate
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 commonWizardRegistryTemplate :: RegistryTemplate
 commonWizardRegistryTemplate =

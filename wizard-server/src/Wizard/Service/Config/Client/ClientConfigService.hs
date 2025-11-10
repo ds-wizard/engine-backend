@@ -22,7 +22,7 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Tenant
 import Wizard.Service.Config.Client.ClientConfigMapper
-import Wizard.Service.Migration.Metamodel.MigratorService
+import Wizard.Service.KnowledgeModel.Metamodel.MigrationService
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.TenantHelper
 import Wizard.Service.User.UserMapper

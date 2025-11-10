@@ -11,8 +11,8 @@ import Shared.Common.Database.DAO.Common
 import Shared.Common.Database.Mapping.Common.SemVer2Tuple ()
 import Shared.Common.Model.Common.SemVer2Tuple
 import Shared.Common.Util.String
-import WizardLib.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplate ()
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplate ()
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 entityName = "document_template"
 

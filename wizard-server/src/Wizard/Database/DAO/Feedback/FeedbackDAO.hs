@@ -37,7 +37,7 @@ updateFeedbackByUuid feedback = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE feedback SET uuid = ?, issue_id = ?, question_uuid = ?, package_id = ?, title = ?, content = ?, created_at = ?, updated_at = ?, tenant_uuid = ? WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE feedback SET uuid = ?, issue_id = ?, question_uuid = ?, knowledge_model_package_id = ?, title = ?, content = ?, created_at = ?, updated_at = ?, tenant_uuid = ? WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow feedback ++ [toField tenantUuid, toField feedback.uuid]
   logQuery sql params
   let action conn = execute conn sql params

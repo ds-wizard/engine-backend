@@ -1,24 +1,25 @@
 module Wizard.Service.KnowledgeModel.Compiler.Modifier.Chapter where
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.Chapter.ChapterEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Modifier
-import WizardLib.KnowledgeModel.Model.Event.Chapter.ChapterEvent
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 instance CreateEntity AddChapterEvent Chapter where
-  createEntity event =
+  createEntity event content =
     Chapter
       { uuid = event.entityUuid
-      , title = event.title
-      , text = event.text
-      , annotations = event.annotations
+      , title = content.title
+      , text = content.text
+      , annotations = content.annotations
       , questionUuids = []
       }
 
 instance EditEntity EditChapterEvent Chapter where
-  editEntity event entity =
+  editEntity event content entity =
     entity
-      { title = applyValue entity.title event.title
-      , text = applyValue entity.text event.text
-      , annotations = applyValue entity.annotations event.annotations
-      , questionUuids = applyValue entity.questionUuids event.questionUuids
+      { title = applyValue entity.title content.title
+      , text = applyValue entity.text content.text
+      , annotations = applyValue entity.annotations content.annotations
+      , questionUuids = applyValue entity.questionUuids content.questionUuids
       }

@@ -9,25 +9,25 @@ import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.JSON
 import Shared.Common.Util.List
 import Shared.Common.Util.String (trim)
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
+import Shared.KnowledgeModel.Constant.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Model.Branch.Branch
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Document.DocumentContextJM ()
 import Wizard.Model.Document.DocumentList
+import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Submission.SubmissionList
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
-import WizardLib.KnowledgeModel.Constant.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.Package.Package
 
 toDTO :: DocumentList -> [SubmissionList] -> DocumentDTO
 toDTO doc submissions =
@@ -122,15 +122,15 @@ fromTemporallyCreateDTO docUuid qtn questionnaireEventUuid documentTemplateId fo
     , createdAt = now
     }
 
-toTemporaryPackage :: U.UUID -> UTCTime -> Package
+toTemporaryPackage :: U.UUID -> UTCTime -> KnowledgeModelPackage
 toTemporaryPackage tenantUuid createdAt =
-  Package
+  KnowledgeModelPackage
     { pId = "org.example:km-example:1.0.0"
     , name = "Example Knowledge Model"
     , organizationId = "org.example"
     , kmId = "km-example"
     , version = "1.0.0"
-    , phase = ReleasedPackagePhase
+    , phase = ReleasedKnowledgeModelPackagePhase
     , metamodelVersion = kmMetamodelVersion
     , description = "Example description"
     , readme = "# Example Knowledge Model\n\nThis is an example knowledge model."
@@ -143,15 +143,15 @@ toTemporaryPackage tenantUuid createdAt =
     , createdAt = createdAt
     }
 
-toTemporaryQuestionnaire :: Branch -> Package -> Maybe UserDTO -> Questionnaire
-toTemporaryQuestionnaire branch package mCurrentUser =
+toTemporaryQuestionnaire :: KnowledgeModelEditor -> KnowledgeModelPackage -> Maybe UserDTO -> Questionnaire
+toTemporaryQuestionnaire kmEditor package mCurrentUser =
   Questionnaire
-    { uuid = branch.uuid
-    , name = branch.name
-    , description = Just branch.description
+    { uuid = kmEditor.uuid
+    , name = kmEditor.name
+    , description = Just kmEditor.description
     , visibility = PrivateQuestionnaire
     , sharing = RestrictedQuestionnaire
-    , packageId = fromMaybe package.pId branch.previousPackageId
+    , knowledgeModelPackageId = fromMaybe package.pId kmEditor.previousPackageId
     , selectedQuestionTagUuids = []
     , projectTags = []
     , documentTemplateId = Nothing
@@ -160,9 +160,9 @@ toTemporaryQuestionnaire branch package mCurrentUser =
     , permissions = []
     , isTemplate = False
     , squashed = True
-    , tenantUuid = branch.tenantUuid
-    , createdAt = branch.createdAt
-    , updatedAt = branch.updatedAt
+    , tenantUuid = kmEditor.tenantUuid
+    , createdAt = kmEditor.createdAt
+    , updatedAt = kmEditor.updatedAt
     }
 
 toDocPersistentCommand :: U.UUID -> DocumentContext -> Document -> PersistentCommand U.UUID

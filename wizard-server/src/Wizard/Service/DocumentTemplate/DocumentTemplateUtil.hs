@@ -2,14 +2,14 @@ module Wizard.Service.DocumentTemplate.DocumentTemplateUtil where
 
 import qualified Data.List as L
 
+import Shared.Coordinate.Util.Coordinate
+import Shared.DocumentTemplate.Constant.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 import Wizard.Model.DocumentTemplate.DocumentTemplateList
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Registry.RegistryTemplate
-import WizardLib.Common.Util.Coordinate
-import WizardLib.DocumentTemplate.Constant.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Model.Package.Package
-import WizardLib.KnowledgeModel.Service.Package.PackageUtil
 
 computeDocumentTemplateState :: [RegistryTemplate] -> DocumentTemplate -> DocumentTemplateState
 computeDocumentTemplateState tmlsFromRegistry tml =
@@ -27,7 +27,7 @@ selectDocumentTemplateByOrgIdAndTmlId tml =
 
 selectOrganizationByOrgId tml = L.find (\org -> org.organizationId == tml.organizationId)
 
-getUsablePackagesForDocumentTemplate tml = chooseTheNewest . groupPackages . filterPackages tml
+getUsableKnowledgeModelPackagesForDocumentTemplate tml = chooseTheNewest . groupPackages . filterPackages tml
   where
     filterPackages tml = filter (\pkg -> not . null $ filterDocumentTemplates (Just pkg.pId) [tml])
 

@@ -13,7 +13,7 @@ dropTables = do
   logInfo _CMP_MIGRATION "(Table/Registry) drop tables"
   let sql =
         "DROP TABLE IF EXISTS registry_organization CASCADE; \
-        \DROP TABLE IF EXISTS registry_package CASCADE; \
+        \DROP TABLE IF EXISTS registry_knowledge_model_package CASCADE; \
         \DROP TABLE IF EXISTS registry_document_template CASCADE; \
         \DROP TABLE IF EXISTS registry_locale CASCADE;"
   let action conn = execute_ conn sql
@@ -22,7 +22,7 @@ dropTables = do
 createTables :: AppContextM Int64
 createTables = do
   createOrganizationTable
-  createPackageTable
+  createKnowledgeModelPackageTable
   createTemplateTable
   createLocaleTable
 
@@ -40,16 +40,16 @@ createOrganizationTable = do
   let action conn = execute_ conn sql
   runDB action
 
-createPackageTable = do
+createKnowledgeModelPackageTable = do
   logInfo _CMP_MIGRATION "(Table/RegistryPackage) create table"
   let sql =
-        "CREATE TABLE registry_package \
+        "CREATE TABLE registry_knowledge_model_package \
         \( \
         \    organization_id varchar     NOT NULL, \
         \    km_id           varchar     NOT NULL, \
         \    remote_version  varchar     NOT NULL, \
         \    created_at      timestamptz NOT NULL, \
-        \    CONSTRAINT registry_package_pk PRIMARY KEY (organization_id, km_id) \
+        \    CONSTRAINT registry_knowledge_model_package_pk PRIMARY KEY (organization_id, km_id) \
         \);"
   let action conn = execute_ conn sql
   runDB action

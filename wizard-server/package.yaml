@@ -24,7 +24,6 @@ library:
   dependencies:
   - shared-common
   - registry-public
-  - wizard-common
   - wizard-public
   - base
   - aeson
@@ -117,7 +116,6 @@ tests:
         ghc-options: -threaded -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial -Werror=missing-fields -Werror=incomplete-patterns
     dependencies:
     - shared-common
-    - wizard-common
     - wizard-public
     - wizard-server
     - base

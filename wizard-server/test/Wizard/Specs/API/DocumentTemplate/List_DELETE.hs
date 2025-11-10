@@ -11,13 +11,13 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Model.Error.Error
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

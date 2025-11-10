@@ -17,9 +17,9 @@ import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Util.Logger
 import Shared.Common.Util.String
+import Shared.KnowledgeModel.Database.Mapping.KnowledgeModel.Package.KnowledgeModelPackage ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import WizardLib.KnowledgeModel.Database.Mapping.Package.Package ()
 
 runInTransaction :: AppContextM a -> AppContextM a
 runInTransaction = S.runInTransaction logInfoI logWarnI

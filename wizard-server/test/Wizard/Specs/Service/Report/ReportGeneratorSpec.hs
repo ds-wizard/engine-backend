@@ -3,15 +3,15 @@ module Wizard.Specs.Service.Report.ReportGeneratorSpec where
 import qualified Data.Map.Strict as M
 import Test.Hspec
 
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Service.Report.ReportGenerator
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 reportGeneratorSpec =
   describe "Report Generator" $ do

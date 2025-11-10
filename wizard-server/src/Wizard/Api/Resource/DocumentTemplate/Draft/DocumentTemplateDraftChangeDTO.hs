@@ -2,9 +2,9 @@ module Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftChangeDTO
 
 import GHC.Generics
 
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Model.Package.PackagePattern
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 
 data DocumentTemplateDraftChangeDTO = DocumentTemplateDraftChangeDTO
   { name :: String
@@ -14,7 +14,7 @@ data DocumentTemplateDraftChangeDTO = DocumentTemplateDraftChangeDTO
   , description :: String
   , readme :: String
   , license :: String
-  , allowedPackages :: [PackagePattern]
+  , allowedPackages :: [KnowledgeModelPackagePattern]
   , formats :: [DocumentTemplateFormatDTO]
   }
   deriving (Show, Eq, Generic)

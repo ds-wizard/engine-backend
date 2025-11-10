@@ -26,9 +26,9 @@ import Shared.Common.Integration.Http.Common.ResponseMapper
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Ginger
 import Shared.Common.Util.String (splitOn)
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Integration.Resource.TypeHint.TypeHintIDTO
 import Wizard.Util.Jinja (renderJinjaBatch)
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 toRetrieveLegacyTypeHintsResponse :: ApiLegacyIntegration -> Response BSL.ByteString -> Either String [TypeHintLegacyIDTO]
 toRetrieveLegacyTypeHintsResponse intConfig response =

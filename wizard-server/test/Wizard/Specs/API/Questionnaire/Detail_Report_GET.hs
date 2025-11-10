@@ -4,6 +4,7 @@ module Wizard.Specs.API.Questionnaire.Detail_Report_GET (
 
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import Data.Foldable (traverse_)
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -14,6 +15,9 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailReportDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailReportJM ()
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -79,6 +83,8 @@ create_test_200 title appContext qtn authHeader =
       runInContextIO U.runMigration appContext
       runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       runInContextIO (insertQuestionnaire questionnaire7) appContext
       runInContextIO (insertQuestionnaireEvents questionnaire7Events) appContext
       runInContextIO (insertQuestionnaire questionnaire10) appContext

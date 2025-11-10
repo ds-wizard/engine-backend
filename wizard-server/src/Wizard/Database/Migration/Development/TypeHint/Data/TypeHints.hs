@@ -3,19 +3,19 @@ module Wizard.Database.Migration.Development.TypeHint.Data.TypeHints where
 import Data.Aeson
 import qualified Data.Map.Strict as M
 
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Integrations
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.TypeHint.TypeHintRequestDTO
 import Wizard.Api.Resource.TypeHint.TypeHintTestRequestDTO
-import Wizard.Database.Migration.Development.Branch.Data.Branches
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Integration.Resource.TypeHint.TypeHintIDTO
-import Wizard.Model.Branch.Branch
+import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
 import Wizard.Model.Questionnaire.Questionnaire
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Integrations
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 
 forestDatasetTypeHint :: TypeHintIDTO
 forestDatasetTypeHint =
@@ -65,32 +65,32 @@ legalLegacyTypeHint =
 typeHintLegacyRequest :: TypeHintLegacyRequestDTO
 typeHintLegacyRequest =
   TypeHintLegacyRequestDTO
-    { packageId = Just germanyPackage.pId
+    { knowledgeModelPackageId = Just germanyKmPackage.pId
     , events = []
     , questionUuid = q4_it1_q6_aYes_followUpQuestion5.uuid
     , q = "dog"
     }
 
-branchIntegrationTypeHintRequest :: TypeHintRequestDTO
-branchIntegrationTypeHintRequest = BranchIntegrationTypeHintRequest' branchIntegrationTypeHintRequest'
+kmEditorIntegrationTypeHintRequest :: TypeHintRequestDTO
+kmEditorIntegrationTypeHintRequest = KnowledgeModelEditorIntegrationTypeHintRequest' kmEditorIntegrationTypeHintRequest'
 
-branchQuestionTypeHintRequest :: TypeHintRequestDTO
-branchQuestionTypeHintRequest = BranchQuestionTypeHintRequest' branchQuestionTypeHintRequest'
+kmEditorQuestionTypeHintRequest :: TypeHintRequestDTO
+kmEditorQuestionTypeHintRequest = KnowledgeModelEditorQuestionTypeHintRequest' kmEditorQuestionTypeHintRequest'
 
 questionnaireTypeHintRequest :: TypeHintRequestDTO
 questionnaireTypeHintRequest = QuestionnaireTypeHintRequest' questionnaireTypeHintRequest'
 
-branchIntegrationTypeHintRequest' :: BranchIntegrationTypeHintRequest
-branchIntegrationTypeHintRequest' =
-  BranchIntegrationTypeHintRequest
-    { branchUuid = amsterdamBranch.uuid
+kmEditorIntegrationTypeHintRequest' :: KnowledgeModelEditorIntegrationTypeHintRequest
+kmEditorIntegrationTypeHintRequest' =
+  KnowledgeModelEditorIntegrationTypeHintRequest
+    { knowledgeModelEditorUuid = amsterdamKnowledgeModelEditor.uuid
     , integrationUuid = repositoryApi.uuid
     }
 
-branchQuestionTypeHintRequest' :: BranchQuestionTypeHintRequest
-branchQuestionTypeHintRequest' =
-  BranchQuestionTypeHintRequest
-    { branchUuid = amsterdamBranch.uuid
+kmEditorQuestionTypeHintRequest' :: KnowledgeModelEditorQuestionTypeHintRequest
+kmEditorQuestionTypeHintRequest' =
+  KnowledgeModelEditorQuestionTypeHintRequest
+    { knowledgeModelEditorUuid = amsterdamKnowledgeModelEditor.uuid
     , questionUuid = question15.uuid
     , q = "dog"
     }
@@ -106,7 +106,7 @@ questionnaireTypeHintRequest' =
 typeHintTestRequest :: TypeHintTestRequestDTO
 typeHintTestRequest =
   TypeHintTestRequestDTO
-    { branchUuid = amsterdamBranch.uuid
+    { knowledgeModelEditorUuid = amsterdamKnowledgeModelEditor.uuid
     , integrationUuid = repositoryApi.uuid
     , variables = M.fromList [("domain", "biology"), ("country", "cz")]
     , q = "biology"

@@ -9,7 +9,7 @@ data FeedbackDTO = FeedbackDTO
   , issueId :: Int
   , issueUrl :: String
   , questionUuid :: U.UUID
-  , packageId :: String
+  , knowledgeModelPackageId :: String
   , title :: String
   , content :: String
   , createdAt :: UTCTime
@@ -23,6 +23,6 @@ instance Eq FeedbackDTO where
       && issueId a == issueId b
       && issueUrl a == issueUrl b
       && questionUuid a == questionUuid b
-      && packageId a == packageId b
+      && knowledgeModelPackageId a == knowledgeModelPackageId b
       && title a == title b
       && content a == content b

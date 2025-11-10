@@ -3,8 +3,8 @@ module Wizard.Specs.API.KnowledgeModelSecret.Common where
 import Control.Monad.Reader (liftIO)
 import Test.Hspec
 
-import Wizard.Database.DAO.KnowledgeModelSecret.KnowledgeModelSecretDAO
-import Wizard.Model.KnowledgeModelSecret.KnowledgeModelSecret
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelSecretDAO
+import Wizard.Model.KnowledgeModel.KnowledgeModelSecret
 
 import Wizard.Specs.API.Common
 

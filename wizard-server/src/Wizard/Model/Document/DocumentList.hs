@@ -5,8 +5,8 @@ import qualified Data.UUID as U
 import GHC.Generics
 import GHC.Int
 
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 import Wizard.Model.Document.Document
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
 data DocumentList = DocumentList
   { uuid :: U.UUID

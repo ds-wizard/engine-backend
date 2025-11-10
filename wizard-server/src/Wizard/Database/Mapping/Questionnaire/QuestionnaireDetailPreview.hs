@@ -3,13 +3,13 @@ module Wizard.Database.Mapping.Questionnaire.QuestionnaireDetailPreview where
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromRow
 
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermJM ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireAcl
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSharing ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireVisibility ()
 import Wizard.Model.Questionnaire.QuestionnaireDetailPreview
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
 instance FromRow QuestionnaireDetailPreview where
   fromRow = do
@@ -17,7 +17,7 @@ instance FromRow QuestionnaireDetailPreview where
     name <- field
     visibility <- field
     sharing <- field
-    packageId <- field
+    knowledgeModelPackageId <- field
     isTemplate <- field
     documentTemplateId <- field
     migrationUuid <- field

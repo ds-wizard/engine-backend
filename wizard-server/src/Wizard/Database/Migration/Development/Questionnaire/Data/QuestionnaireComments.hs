@@ -9,17 +9,17 @@ import qualified Data.UUID as U
 import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireCommentList
 import Wizard.Model.Questionnaire.QuestionnaireCommentThreadAssigned
+import Wizard.Model.Questionnaire.QuestionnaireUtil
 import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentMapper
 import Wizard.Service.User.UserMapper
-import WizardLib.Common.Model.Questionnaire.QuestionnaireUtil
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 qtnThreadsDto :: M.Map String [QuestionnaireCommentThreadList]
 qtnThreadsDto = M.fromList [(cmtQ1_path, [cmtQ1_t1Dto]), (cmtQ2_path, [cmtQ2_t1Dto])]

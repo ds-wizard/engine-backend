@@ -11,7 +11,7 @@ data QuestionnaireDetailDTO = QuestionnaireDetailDTO
   , name :: String
   , sharing :: QuestionnaireSharing
   , visibility :: QuestionnaireVisibility
-  , packageId :: String
+  , knowledgeModelPackageId :: String
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID
   , permissions :: [QuestionnairePermDTO]

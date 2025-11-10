@@ -17,7 +17,7 @@ instance FromRow QuestionnaireDetail where
     name <- field
     visibility <- field
     sharing <- field
-    packageId <- field
+    knowledgeModelPackageId <- field
     selectedQuestionTagUuids <- fromPGArray <$> field
     isTemplate <- field
     migrationUuid <- field

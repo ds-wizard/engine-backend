@@ -11,9 +11,9 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Service.ActionKey.ActionKeyService
-import Wizard.Service.Branch.Event.BranchEventService hiding (squash)
 import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.Feedback.FeedbackService
+import Wizard.Service.KnowledgeModel.Editor.Event.EditorEventService hiding (squash)
 import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService hiding (squash)
@@ -26,10 +26,10 @@ import WizardLib.Public.Service.UserToken.UserTokenService
 workers :: [CronWorker BaseContext AppContextM]
 workers =
   [ actionKeyWorker
-  , squashBranchEventsWorker
   , cacheWorker
   , documentWorker
   , feedbackWorker
+  , squashKnowledgeModelEditorEventsWorker
   , persistentCommandRetryWorker
   , persistentCommandRetryLambdaWorker
   , cleanQuestionnaireWorker
@@ -51,17 +51,6 @@ actionKeyWorker =
     , cronDefault = "20 0 * * *"
     , cron = (.serverConfig.actionKey.clean.cron)
     , function = cleanActionKeys
-    , wrapInTransaction = True
-    }
-
-squashBranchEventsWorker :: CronWorker BaseContext AppContextM
-squashBranchEventsWorker =
-  CronWorker
-    { name = "SquashBranchEventsWorker"
-    , condition = (.serverConfig.branch.squash.enabled)
-    , cronDefault = "*/5 * * * *"
-    , cron = (.serverConfig.branch.squash.cron)
-    , function = squashEvents
     , wrapInTransaction = True
     }
 
@@ -95,6 +84,17 @@ feedbackWorker =
     , cronDefault = "0 2 * * *"
     , cron = (.serverConfig.feedback.sync.cron)
     , function = synchronizeFeedbacksInAllApplications
+    , wrapInTransaction = True
+    }
+
+squashKnowledgeModelEditorEventsWorker :: CronWorker BaseContext AppContextM
+squashKnowledgeModelEditorEventsWorker =
+  CronWorker
+    { name = "SquashKnowledgeModelEditorEventsWorker"
+    , condition = (.serverConfig.knowledgeModelEditor.squash.enabled)
+    , cronDefault = "*/5 * * * *"
+    , cron = (.serverConfig.knowledgeModelEditor.squash.cron)
+    , function = squashEvents
     , wrapInTransaction = True
     }
 

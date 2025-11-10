@@ -6,6 +6,13 @@ import qualified Data.UUID as U
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
@@ -14,7 +21,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailWsDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSettingsChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireShareChangeDTO
-import Wizard.Database.Migration.Development.Package.Data.Packages
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireLabels
@@ -33,13 +40,6 @@ import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
 import WizardLib.Public.Model.User.UserGroup
 
@@ -58,7 +58,7 @@ questionnaire1 =
     , description = Just "Some description"
     , visibility = PrivateQuestionnaire
     , sharing = RestrictedQuestionnaire
-    , packageId = germanyPackage.pId
+    , knowledgeModelPackageId = germanyKmPackage.pId
     , selectedQuestionTagUuids = []
     , projectTags = [_QUESTIONNAIRE_PROJECT_TAG_1]
     , documentTemplateId = Just $ wizardDocumentTemplate.tId
@@ -126,13 +126,13 @@ questionnaire1CtnRevertedDto =
     }
 
 questionnaire1Dto :: QuestionnaireDTO
-questionnaire1Dto = toSimpleDTO questionnaire1 germanyPackage QSDefault [qtn1AlbertEditQtnPermDto]
+questionnaire1Dto = toSimpleDTO questionnaire1 germanyKmPackage QSDefault [qtn1AlbertEditQtnPermDto]
 
 questionnaire1Create :: QuestionnaireCreateDTO
 questionnaire1Create =
   QuestionnaireCreateDTO
     { name = questionnaire1.name
-    , packageId = questionnaire1.packageId
+    , knowledgeModelPackageId = questionnaire1.knowledgeModelPackageId
     , visibility = questionnaire1.visibility
     , sharing = questionnaire1.sharing
     , questionTagUuids = []
@@ -185,7 +185,7 @@ questionnaire2 =
     , description = Just "Some description"
     , visibility = VisibleViewQuestionnaire
     , sharing = RestrictedQuestionnaire
-    , packageId = germanyPackage.pId
+    , knowledgeModelPackageId = germanyKmPackage.pId
     , selectedQuestionTagUuids = []
     , projectTags = [_QUESTIONNAIRE_PROJECT_TAG_1, _QUESTIONNAIRE_PROJECT_TAG_2]
     , documentTemplateId = Just $ wizardDocumentTemplate.tId
@@ -207,7 +207,7 @@ questionnaire2Edited =
     , description = Just "EDITED: Some description"
     , visibility = VisibleEditQuestionnaire
     , sharing = RestrictedQuestionnaire
-    , packageId = questionnaire2.packageId
+    , knowledgeModelPackageId = questionnaire2.knowledgeModelPackageId
     , selectedQuestionTagUuids = questionnaire2.selectedQuestionTagUuids
     , projectTags = questionnaire2.projectTags
     , documentTemplateId = Just $ wizardDocumentTemplate.tId
@@ -258,7 +258,7 @@ questionnaire2EventsEdited :: [QuestionnaireEvent]
 questionnaire2EventsEdited = fEventsEdited questionnaire2Uuid
 
 questionnaire2Dto :: QuestionnaireDTO
-questionnaire2Dto = toSimpleDTO questionnaire2 germanyPackage QSDefault [qtn2AlbertEditQtnPermDto]
+questionnaire2Dto = toSimpleDTO questionnaire2 germanyKmPackage QSDefault [qtn2AlbertEditQtnPermDto]
 
 qtn2AlbertEditQtnPerm :: QuestionnairePerm
 qtn2AlbertEditQtnPerm =
@@ -286,7 +286,7 @@ questionnaire3 =
     , description = Just "Some description"
     , visibility = VisibleEditQuestionnaire
     , sharing = RestrictedQuestionnaire
-    , packageId = germanyPackage.pId
+    , knowledgeModelPackageId = germanyKmPackage.pId
     , selectedQuestionTagUuids = []
     , projectTags = []
     , documentTemplateId = Just $ wizardDocumentTemplate.tId
@@ -318,7 +318,7 @@ questionnaire3EventsEdited :: [QuestionnaireEvent]
 questionnaire3EventsEdited = fEventsEdited questionnaire3Uuid
 
 questionnaire3Dto :: QuestionnaireDTO
-questionnaire3Dto = toSimpleDTO questionnaire3 germanyPackage QSDefault []
+questionnaire3Dto = toSimpleDTO questionnaire3 germanyKmPackage QSDefault []
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -333,7 +333,7 @@ questionnaire4 =
     , description = Just "Some description"
     , visibility = PrivateQuestionnaire
     , sharing = RestrictedQuestionnaire
-    , packageId = netherlandsPackage.pId
+    , knowledgeModelPackageId = netherlandsKmPackage.pId
     , selectedQuestionTagUuids = []
     , projectTags = []
     , documentTemplateId = Just $ wizardDocumentTemplate.tId
@@ -377,7 +377,7 @@ questionnaire4Upgraded :: Questionnaire
 questionnaire4Upgraded =
   questionnaire4
     { uuid = u' "5deabef8-f526-421c-90e2-dd7aed1a25c5"
-    , packageId = netherlandsPackageV2.pId
+    , knowledgeModelPackageId = netherlandsKmPackageV2.pId
     }
 
 questionnaire4UpgradedEvents :: [QuestionnaireEvent]
@@ -462,7 +462,7 @@ questionnaire6EventsEdited :: [QuestionnaireEvent]
 questionnaire6EventsEdited = fEventsEdited questionnaire6Uuid
 
 questionnaire6Dto :: QuestionnaireDTO
-questionnaire6Dto = toSimpleDTO questionnaire6 germanyPackage QSDefault [qtn6AlbertEditQtnPermDto]
+questionnaire6Dto = toSimpleDTO questionnaire6 germanyKmPackage QSDefault [qtn6AlbertEditQtnPermDto]
 
 qtn6AlbertEditQtnPerm :: QuestionnairePerm
 qtn6AlbertEditQtnPerm =
@@ -693,7 +693,7 @@ questionnaire11Ctn :: QuestionnaireContent
 questionnaire11Ctn = questionnaire1Ctn
 
 questionnaire11Dto :: QuestionnaireDTO
-questionnaire11Dto = toSimpleDTO questionnaire11 germanyPackage QSDefault [qtn11AlbertEditQtnPermDto]
+questionnaire11Dto = toSimpleDTO questionnaire11 germanyKmPackage QSDefault [qtn11AlbertEditQtnPermDto]
 
 qtn11AlbertEditQtnPerm :: QuestionnairePerm
 qtn11AlbertEditQtnPerm =
@@ -735,7 +735,7 @@ questionnaire12Ctn = questionnaire1Ctn
 
 questionnaire12Dto :: QuestionnaireDTO
 questionnaire12Dto =
-  toSimpleDTO questionnaire12 germanyPackage QSDefault [qtn12NikolaEditQtnPermDto, qtn12AlbertEditQtnPermDto]
+  toSimpleDTO questionnaire12 germanyKmPackage QSDefault [qtn12NikolaEditQtnPermDto, qtn12AlbertEditQtnPermDto]
 
 qtn12AlbertEditQtnPerm :: QuestionnairePerm
 qtn12AlbertEditQtnPerm =
@@ -787,7 +787,7 @@ questionnaire13Ctn :: QuestionnaireContent
 questionnaire13Ctn = questionnaire1Ctn
 
 questionnaire13Dto :: QuestionnaireDTO
-questionnaire13Dto = toSimpleDTO questionnaire13 germanyPackage QSDefault [qtn13NikolaCommentQtnPermDto]
+questionnaire13Dto = toSimpleDTO questionnaire13 germanyKmPackage QSDefault [qtn13NikolaCommentQtnPermDto]
 
 qtn13NikolaCommentQtnPerm :: QuestionnairePerm
 qtn13NikolaCommentQtnPerm =
@@ -810,7 +810,7 @@ questionnaire14 =
     { uuid = u' "8355fe3c-47b9-4078-b5b6-08aa0188e85f"
     , name = "My different KM Questionnaire"
     , permissions = [qtn14NikolaEditQtnPerm]
-    , packageId = amsterdamPackage.pId
+    , knowledgeModelPackageId = amsterdamKmPackage.pId
     , updatedAt = dt' 2018 1 26
     }
 
@@ -821,7 +821,7 @@ questionnaire14Ctn :: QuestionnaireContent
 questionnaire14Ctn = questionnaire1Ctn
 
 questionnaire14Dto :: QuestionnaireDTO
-questionnaire14Dto = toSimpleDTO questionnaire14 amsterdamPackage QSDefault [qtn14NikolaEditQtnPermDto]
+questionnaire14Dto = toSimpleDTO questionnaire14 amsterdamKmPackage QSDefault [qtn14NikolaEditQtnPermDto]
 
 qtn14NikolaEditQtnPerm :: QuestionnairePerm
 qtn14NikolaEditQtnPerm =
@@ -849,7 +849,7 @@ questionnaire15 =
     , description = Just "Some description"
     , visibility = PrivateQuestionnaire
     , sharing = RestrictedQuestionnaire
-    , packageId = germanyPackage.pId
+    , knowledgeModelPackageId = germanyKmPackage.pId
     , selectedQuestionTagUuids = []
     , projectTags = []
     , documentTemplateId = Just wizardDocumentTemplate.tId
@@ -888,7 +888,7 @@ questionnaire15Versions :: [QuestionnaireVersion]
 questionnaire15Versions = qVersions questionnaire15Uuid
 
 questionnaire15Dto :: QuestionnaireDTO
-questionnaire15Dto = toSimpleDTO questionnaire15 germanyPackage QSDefault [qtn15GroupEditQtnPermDto]
+questionnaire15Dto = toSimpleDTO questionnaire15 germanyKmPackage QSDefault [qtn15GroupEditQtnPermDto]
 
 qtn15GroupEditQtnPerm :: QuestionnairePerm
 qtn15GroupEditQtnPerm =
@@ -923,7 +923,7 @@ differentQuestionnaire =
     , description = Just "Some description"
     , visibility = PrivateQuestionnaire
     , sharing = RestrictedQuestionnaire
-    , packageId = differentPackage.pId
+    , knowledgeModelPackageId = differentPackage.pId
     , selectedQuestionTagUuids = []
     , projectTags = []
     , documentTemplateId = Just $ anotherWizardDocumentTemplate.tId

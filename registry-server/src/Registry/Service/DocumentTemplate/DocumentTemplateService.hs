@@ -7,10 +7,10 @@ import Registry.Model.Context.AppContext
 import Registry.Service.DocumentTemplate.DocumentTemplateMapper
 import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Shared.Common.Model.Common.SemVer2Tuple
-import WizardLib.Common.Util.Coordinate
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO hiding (findDocumentTemplatesFiltered)
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateUtil
+import Shared.Coordinate.Util.Coordinate
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO hiding (findDocumentTemplatesFiltered)
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateUtil
 
 getDocumentTemplates :: [(String, String)] -> Maybe SemVer2Tuple -> AppContextM [DocumentTemplateSimpleDTO]
 getDocumentTemplates queryParams mMetamodelVersion = do

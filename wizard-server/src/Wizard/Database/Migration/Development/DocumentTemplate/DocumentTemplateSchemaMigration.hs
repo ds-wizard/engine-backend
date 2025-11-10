@@ -151,11 +151,12 @@ createDraftDataTable = do
         \    format_uuid          uuid, \
         \    tenant_uuid          uuid        NOT NULL, \
         \    created_at           timestamptz NOT NULL, \
-        \    updated_at           timestamptz NOT NULL, \
-        \    branch_uuid          uuid, \
+        \    updated_at                   timestamptz NOT NULL, \
+        \    knowledge_model_editor_uuid  uuid, \
         \    CONSTRAINT document_template_draft_data_pk PRIMARY KEY (document_template_id, tenant_uuid), \
+        \    CONSTRAINT document_template_draft_data_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid), \
         \    CONSTRAINT document_template_draft_data_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
-        \    CONSTRAINT document_template_draft_data_branch_uuid_fk FOREIGN KEY (branch_uuid, tenant_uuid) REFERENCES branch (uuid, tenant_uuid), \
+        \    CONSTRAINT document_template_draft_data_knowledge_model_editor_uuid_fk FOREIGN KEY (knowledge_model_editor_uuid, tenant_uuid) REFERENCES knowledge_model_editor (uuid, tenant_uuid), \
         \    CONSTRAINT document_template_draft_data_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
         \);"
   let action conn = execute_ conn sql

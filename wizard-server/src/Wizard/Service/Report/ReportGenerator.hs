@@ -6,13 +6,13 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Util.Uuid
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Service.Report.Evaluator.Indication
 import Wizard.Service.Report.Evaluator.Metric
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
 
 computeChapterReport :: Maybe U.UUID -> KnowledgeModel -> M.Map String Reply -> Chapter -> ChapterReport
 computeChapterReport requiredPhaseUuid km replies ch =

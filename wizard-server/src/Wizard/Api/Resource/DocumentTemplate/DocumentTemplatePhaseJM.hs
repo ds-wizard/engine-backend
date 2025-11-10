@@ -4,7 +4,7 @@ import qualified Data.Text as T
 import Servant.API
 import Text.Read (readMaybe)
 
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 instance FromHttpApiData DocumentTemplatePhase where
   parseQueryParam a =

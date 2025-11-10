@@ -5,6 +5,9 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Util.Uuid
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFileList
 import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileChangeDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
@@ -14,9 +17,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.DocumentTemplate.File.DocumentTemplateFileMapper
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFileList
 
 getFiles :: String -> AppContextM [DocumentTemplateFileList]
 getFiles tmlId = do

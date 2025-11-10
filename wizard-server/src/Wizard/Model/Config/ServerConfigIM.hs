@@ -14,10 +14,10 @@ instance FromEnv ServerConfig where
     jwt <- applyEnv serverConfig.jwt
     roles <- applyEnv serverConfig.roles
     actionKey <- applyEnv serverConfig.actionKey
-    branch <- applyEnv serverConfig.branch
     cache <- applyEnv serverConfig.cache
     document <- applyEnv serverConfig.document
     feedback <- applyEnv serverConfig.feedback
+    knowledgeModelEditor <- applyEnv serverConfig.knowledgeModelEditor
     questionnaire <- applyEnv serverConfig.questionnaire
     temporaryFile <- applyEnv serverConfig.temporaryFile
     userToken <- applyEnv serverConfig.userToken
@@ -61,14 +61,6 @@ instance FromEnv ServerConfigActionKey where
       , \c -> applyStringEnvVariable "ACTION_KEY_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigActionKey)
       ]
 
-instance FromEnv ServerConfigBranch where
-  applyEnv serverConfig =
-    applyEnvVariables
-      serverConfig
-      [ \c -> applyEnvVariable "BRANCH_SQUASH_ENABLED" c.squash.enabled (\x -> c {squash = c.squash {enabled = x}} :: ServerConfigBranch)
-      , \c -> applyStringEnvVariable "BRANCH_SQUASH_CRON" c.squash.cron (\x -> c {squash = c.squash {cron = x}} :: ServerConfigBranch)
-      ]
-
 instance FromEnv ServerConfigCache where
   applyEnv serverConfig =
     applyEnvVariables
@@ -96,6 +88,14 @@ instance FromEnv ServerConfigFeedback where
       , \c -> applyStringEnvVariable "FEEDBACK_WEB_URL" c.webUrl (\x -> c {webUrl = x} :: ServerConfigFeedback)
       , \c -> applyEnvVariable "FEEDBACK_SYNC_ENABLED" c.sync.enabled (\x -> c {sync = c.sync {enabled = x}} :: ServerConfigFeedback)
       , \c -> applyStringEnvVariable "FEEDBACK_SYNC_CRON" c.sync.cron (\x -> c {sync = c.sync {cron = x}} :: ServerConfigFeedback)
+      ]
+
+instance FromEnv ServerConfigKnowledgeModelEditor where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "KNOWLEDGE_MODEL_EDITOR_SQUASH_ENABLED" c.squash.enabled (\x -> c {squash = c.squash {enabled = x}} :: ServerConfigKnowledgeModelEditor)
+      , \c -> applyStringEnvVariable "KNOWLEDGE_MODEL_EDITOR_SQUASH_CRON" c.squash.cron (\x -> c {squash = c.squash {cron = x}} :: ServerConfigKnowledgeModelEditor)
       ]
 
 instance FromEnv ServerConfigQuestionnaire where

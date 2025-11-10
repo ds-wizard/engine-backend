@@ -21,7 +21,7 @@ import RegistryLib.Database.Migration.Development.Organization.Data.Organization
 import RegistryLib.Model.Organization.Organization
 import RegistryLib.Model.Organization.OrganizationRole
 import Shared.Common.Model.Error.Error
-import WizardLib.Common.Localization.Messages.Public
+import Shared.Coordinate.Localization.Messages.Public
 
 import Registry.Specs.API.Common
 import Registry.Specs.API.Organization.Common

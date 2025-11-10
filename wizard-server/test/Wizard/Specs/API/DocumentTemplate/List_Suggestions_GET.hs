@@ -11,18 +11,18 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
+import Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
-import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -97,7 +97,7 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO R_Migration.runMigration appContext
-      runInContextIO (updateDocumentTemplateById $ wizardDocumentTemplate {allowedPackages = [packagePatternAllEdited]}) appContext
+      runInContextIO (updateDocumentTemplateById $ wizardDocumentTemplate {allowedPackages = [kmPackagePatternAllEdited]}) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

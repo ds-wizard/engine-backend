@@ -25,7 +25,6 @@ import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.ApiKey.APISpec
 import Wizard.Specs.API.AppKey.APISpec
-import Wizard.Specs.API.Branch.APISpec
 import Wizard.Specs.API.CommentThread.APISpec
 import Wizard.Specs.API.Config.APISpec
 import Wizard.Specs.API.Document.APISpec
@@ -39,11 +38,12 @@ import Wizard.Specs.API.ExternalLink.APISpec
 import Wizard.Specs.API.Feedback.APISpec
 import Wizard.Specs.API.Info.APISpec
 import Wizard.Specs.API.KnowledgeModel.APISpec
+import Wizard.Specs.API.KnowledgeModelEditor.APISpec
+import Wizard.Specs.API.KnowledgeModelPackage.APISpec
 import Wizard.Specs.API.KnowledgeModelSecret.APISpec
 import Wizard.Specs.API.Locale.APISpec
 import qualified Wizard.Specs.API.Migration.KnowledgeModel.APISpec as KM_MigrationAPI
 import qualified Wizard.Specs.API.Migration.Questionnaire.APISpec as QTN_MigrationAPI
-import Wizard.Specs.API.Package.APISpec
 import Wizard.Specs.API.Prefab.APISpec
 import Wizard.Specs.API.Questionnaire.APISpec
 import Wizard.Specs.API.Questionnaire.Comment.APISpec
@@ -65,24 +65,24 @@ import Wizard.Specs.API.User.APISpec
 import Wizard.Specs.API.User.Tour.APISpec
 import Wizard.Specs.API.UserGroup.APISpec
 import Wizard.Specs.Integration.Http.TypeHint.ResponseMapperSpec
-import Wizard.Specs.Service.Branch.BranchServiceSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
 import Wizard.Specs.Service.DocumentTemplate.DocumentTemplateUtilSpec
 import Wizard.Specs.Service.KnowledgeModel.Compiler.CompilerSpec
 import Wizard.Specs.Service.KnowledgeModel.Compiler.Modifier.ModifierSpec
+import Wizard.Specs.Service.KnowledgeModel.Editor.KnowledgeModelEditorServiceSpec
 import Wizard.Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
+import Wizard.Specs.Service.KnowledgeModel.Metamodel.Migrator.EventMigratorSpec
+import Wizard.Specs.Service.KnowledgeModel.Migration.Migrator.MigrationSpec
+import qualified Wizard.Specs.Service.KnowledgeModel.Migration.Migrator.SanitizerSpec as KM_SanitizerSpec
+import Wizard.Specs.Service.KnowledgeModel.Package.PackageUtilSpec
+import Wizard.Specs.Service.KnowledgeModel.Package.PackageValidationSpec
 import Wizard.Specs.Service.KnowledgeModel.Squash.SquasherSpec
-import Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.MigrationSpec
-import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.SanitizerSpec as KM_SanitizerSpec
-import Wizard.Specs.Service.Migration.Metamodel.Migrator.EventMigratorSpec
-import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizerSpec as QTN_ChangeQTypeSanitizer
-import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizerSpec as QTN_MoveSanitizerSpec
-import qualified Wizard.Specs.Service.Migration.Questionnaire.SanitizerSpec as QTN_SanitizerSpec
-import Wizard.Specs.Service.Package.PackageUtilSpec
-import Wizard.Specs.Service.Package.PackageValidationSpec
 import Wizard.Specs.Service.Questionnaire.Collaboration.CollaborationAclSpec
 import Wizard.Specs.Service.Questionnaire.Compiler.CompilerServiceSpec
 import Wizard.Specs.Service.Questionnaire.Event.QuestionnaireEventServiceSpec
+import qualified Wizard.Specs.Service.Questionnaire.Migration.Migrator.ChangeQTypeSanitizerSpec as QTN_ChangeQTypeSanitizer
+import qualified Wizard.Specs.Service.Questionnaire.Migration.Migrator.MoveSanitizerSpec as QTN_MoveSanitizerSpec
+import qualified Wizard.Specs.Service.Questionnaire.Migration.Migrator.SanitizerSpec as QTN_SanitizerSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireAclSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireServiceSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireValidationSpec
@@ -91,8 +91,8 @@ import Wizard.Specs.Service.Tenant.Config.TenantConfigValidationSpec
 import Wizard.Specs.Service.Tenant.TenantValidationSpec
 import Wizard.Specs.Service.User.UserServiceSpec
 import Wizard.Specs.Util.JinjaSpec
-import Wizard.Specs.Websocket.Branch.Detail.WebsocketSpec
 import Wizard.Specs.Websocket.Common
+import Wizard.Specs.Websocket.KnowledgeModelEditor.Detail.WebsocketSpec
 import Wizard.Specs.Websocket.Questionnaire.Detail.WebsocketSpec
 import Wizard.TestMigration
 
@@ -169,6 +169,7 @@ main =
                 describe "Compiler" $ do
                   describe "Modifier" modifierSpec
                   compilerSpec
+                describe "Package" packageUtilSpec
                 describe "Squash" $ do squasherSpec
                 knowledgeModelFilterSpec
               describe "Migration" $ do
@@ -177,7 +178,6 @@ main =
                 describe "Questionnaire" $ describe "Migrator" $ do
                   QTN_ChangeQTypeSanitizer.sanitizerSpec
                   QTN_MoveSanitizerSpec.sanitizerSpec
-              describe "Package" packageUtilSpec
               describe "Questionnaire" $ do
                 describe "Event" questionnaireEventServiceSpec
                 questionnaireValidationSpec
@@ -189,7 +189,6 @@ main =
             describe "API" $ do
               apiKeyAPI baseContext appContext
               appKeyAPI baseContext appContext
-              branchAPI baseContext appContext
               commentThreadAPI baseContext appContext
               configAPI baseContext appContext
               documentAPI baseContext appContext
@@ -203,11 +202,12 @@ main =
               feedbackAPI baseContext appContext
               infoAPI baseContext appContext
               knowledgeModelAPI baseContext appContext
+              knowledgeModelEditorAPI baseContext appContext
+              knowledgeModelPackageAPI baseContext appContext
               knowledgeModelSecretAPI baseContext appContext
               localeAPI baseContext appContext
               KM_MigrationAPI.migrationAPI baseContext appContext
               QTN_MigrationAPI.migrationAPI baseContext appContext
-              packageAPI baseContext appContext
               prefabAPI baseContext appContext
               questionnaireAPI baseContext appContext
               questionnaireCommentAPI baseContext appContext
@@ -229,26 +229,26 @@ main =
               userTourAPI baseContext appContext
               userGroupAPI baseContext appContext
             describe "SERVICE" $ do
-              branchServiceIntegrationSpec appContext
               documentIntegrationSpec appContext
-              describe "Migration" $ do
-                describe "KnowledgeModel" $
+              describe "KnowledgeModel" $ do
+                describe "Editor" $ knowledgeModelEditorServiceSpec appContext
+                describe "Migration" $
                   describe "Migrator" $ do
                     migratorSpec appContext
                     KM_SanitizerSpec.sanitizerSpec appContext
-                describe "Questionnaire" $
+                describe "Package" $ packageValidationSpec appContext
+              describe "Questionnaire" $ do
+                describe "Migration" $
                   describe "Migrator" $
                     QTN_SanitizerSpec.sanitizerIntegrationSpec appContext
-              packageValidationSpec appContext
-              describe "Questionnaire" $ do
+                questionnaireAclSpec appContext
                 questionnaireCollaborationAclSpec appContext
                 questionnaireCompilerServiceSpec appContext
-                questionnaireAclSpec appContext
                 questionnaireServiceSpec appContext
               userServiceIntegrationSpec appContext
             describe "UTIL" $ do
               jinjaSpec
             describe "WEBSOCKET" $ do
-              branchesWebsocketAPI appContext
+              knowledgeModelEditorWebsocketAPI appContext
               questionnaireWebsocketAPI appContext
     )

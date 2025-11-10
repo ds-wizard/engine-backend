@@ -1,7 +1,0 @@
-module WizardLib.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplateFileList where
-
-import Database.PostgreSQL.Simple
-
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFileList
-
-instance FromRow DocumentTemplateFileList

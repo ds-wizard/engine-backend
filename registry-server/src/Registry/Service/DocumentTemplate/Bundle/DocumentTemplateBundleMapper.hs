@@ -6,9 +6,9 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 
 import Registry.Api.Resource.DocumentTemplate.Bundle.DocumentTemplateBundleJM ()
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
 toDocumentTemplateArchive :: DocumentTemplateBundleDTO -> [(DocumentTemplateAsset, BS.ByteString)] -> BSL.ByteString
 toDocumentTemplateArchive tb = fromArchive . toDocumentTemplateZip tb

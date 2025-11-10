@@ -9,7 +9,7 @@ defaultUsage =
     { users = defaultUsageUsers
     , activeUsers = defaultUsageActiveUsers
     , knowledgeModels = defaultUsageKnowledgeModels
-    , branches = defaultUsageBranches
+    , knowledgeModelEditors = defaultUsageKnowledgeModelEditors
     , documentTemplates = defaultUsageDocumentTemplates
     , documentTemplateDrafts = defaultUsageDocumentTemplateDrafts
     , questionnaires = defaultUsageQuestionnaires
@@ -33,8 +33,8 @@ defaultUsageActiveUsers = UsageEntryDTO {current = 1, max = -1000}
 defaultUsageKnowledgeModels :: UsageEntryDTO
 defaultUsageKnowledgeModels = UsageEntryDTO {current = 2, max = -1000}
 
-defaultUsageBranches :: UsageEntryDTO
-defaultUsageBranches = UsageEntryDTO {current = 0, max = -1000}
+defaultUsageKnowledgeModelEditors :: UsageEntryDTO
+defaultUsageKnowledgeModelEditors = UsageEntryDTO {current = 0, max = -1000}
 
 defaultUsageDocumentTemplates :: UsageEntryDTO
 defaultUsageDocumentTemplates = UsageEntryDTO {current = 0, max = -1000}

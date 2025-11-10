@@ -4,6 +4,7 @@ module Wizard.Specs.API.Questionnaire.Detail_Settings_GET (
 
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import Data.Foldable (traverse_)
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import Network.HTTP.Types
@@ -15,6 +16,15 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import qualified Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as STM
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel hiding (request)
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -23,17 +33,8 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
-import qualified Wizard.Service.Package.PackageMapper as PM
+import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as PM
 import Wizard.Service.Questionnaire.QuestionnaireMapper
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import qualified WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as STM
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel hiding (request)
-import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as SPM
 import WizardLib.Public.Localization.Messages.Public
 
 import SharedTest.Specs.API.Common
@@ -123,7 +124,8 @@ create_test_200 title appContext qtn authHeader permissions =
       -- AND: Run migrations
       runInContextIO U.runMigration appContext
       runInContextIO TML.runMigration appContext
-      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       runInContextIO (insertQuestionnaire qtn) appContext
       -- AND: Prepare expectation
       let expStatus = 200
@@ -139,8 +141,8 @@ create_test_200 title appContext qtn authHeader permissions =
               , migrationUuid = Nothing
               , permissions = permissions
               , projectTags = qtn.projectTags
-              , packageId = qtn.packageId
-              , package = PM.toSimpleDTO' [] [] (SPM.toPackage germanyPackage)
+              , knowledgeModelPackageId = qtn.knowledgeModelPackageId
+              , knowledgeModelPackage = PM.toSimpleDTO' [] [] germanyKmPackage
               , knowledgeModelTags = M.elems km1WithQ4.entities.tags
               , documentTemplate = Just $ STM.toDTO wizardDocumentTemplate wizardDocumentTemplateFormats
               , documentTemplateState = toQuestionnaireDetailTemplateState (Just wizardDocumentTemplate)

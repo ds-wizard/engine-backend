@@ -14,7 +14,7 @@ import Wizard.Service.Feedback.FeedbackService
 type List_GET =
   Header "Host" String
     :> "feedbacks"
-    :> QueryParam "packageId" String
+    :> QueryParam "knowledgeModelPackageId" String
     :> QueryParam "questionUuid" String
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] [FeedbackDTO])
 
@@ -26,5 +26,5 @@ list_GET
 list_GET mServerUrl mPackageId mQuestionUuid =
   runInUnauthService mServerUrl NoTransaction $
     addTraceUuidHeader =<< do
-      let queryParams = catMaybes [(,) "package_id" <$> mPackageId, (,) "question_uuid" <$> mQuestionUuid]
+      let queryParams = catMaybes [(,) "knowledge_model_package_id" <$> mPackageId, (,) "question_uuid" <$> mQuestionUuid]
       getFeedbacksFiltered queryParams

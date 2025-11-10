@@ -3,12 +3,12 @@ module Wizard.Api.Resource.Report.ReportSM where
 import Data.Swagger
 
 import Shared.Common.Util.Swagger
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Metrics
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Model.Report.Report
-import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Metrics
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 instance ToSchema Report where
   declareNamedSchema = toSwagger report1

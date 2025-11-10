@@ -8,21 +8,21 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
-import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
+import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationDTO
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Migration.KnowledgeModelMigrations
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Migration.KnowledgeModel.MigratorState
+import Wizard.Model.KnowledgeModel.Migration.KnowledgeModelMigration
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Migration.KnowledgeModel.Common
 
 -- ------------------------------------------------------------------------
--- POST /wizard-api/branches/{branchId}/migrations/current/conflict/all
+-- POST /wizard-api/knowledge-model-editors/uuid/migrations/current/conflict/all
 -- ------------------------------------------------------------------------
 list_Current_Conflict_All_POST :: AppContext -> SpecWith ((), Application)
 list_Current_Conflict_All_POST appContext =
-  describe "POST /wizard-api/branches/{branchId}/migrations/current/conflict/all" $ do
+  describe "POST /wizard-api/knowledge-model-editors/uuid/migrations/current/conflict/all" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -33,7 +33,7 @@ list_Current_Conflict_All_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/wizard-api/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current/conflict/all"
+reqUrl = "/wizard-api/knowledge-model-editors/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current/conflict/all"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -58,7 +58,7 @@ test_204 appContext =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find result in DB and compare with expectation state
-      assertStateOfMigrationInDB appContext migratorState CompletedState
+      assertStateOfMigrationInDB appContext migratorState CompletedKnowledgeModelMigrationState
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -80,4 +80,4 @@ test_404 appContext =
     reqHeaders
     reqBody
     "knowledge_model_migration"
-    [("branch_uuid", "6474b24b-262b-42b1-9451-008e8363f2b6")]
+    [("editor_uuid", "6474b24b-262b-42b1-9451-008e8363f2b6")]

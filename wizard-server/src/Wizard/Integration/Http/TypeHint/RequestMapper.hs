@@ -16,9 +16,9 @@ import Prelude hiding (lookup)
 import Shared.Common.Model.Common.MapEntry
 import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.Aeson as A
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Util.Interpolation (interpolateMapValues, interpolateString)
 import Wizard.Util.Jinja (renderJinjaMultiple, renderJinjaSingle)
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 toRetrieveLegacyTypeHintsRequest :: ApiLegacyIntegration -> M.Map String String -> M.Map String String -> HttpRequest
 toRetrieveLegacyTypeHintsRequest intConfig encodedVariables variables =

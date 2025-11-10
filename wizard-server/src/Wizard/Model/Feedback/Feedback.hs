@@ -8,7 +8,7 @@ data Feedback = Feedback
   { uuid :: U.UUID
   , issueId :: Int
   , questionUuid :: U.UUID
-  , packageId :: String
+  , knowledgeModelPackageId :: String
   , title :: String
   , content :: String
   , tenantUuid :: U.UUID
@@ -22,7 +22,7 @@ instance Eq Feedback where
     uuid a == uuid b
       && issueId a == issueId b
       && questionUuid a == questionUuid b
-      && packageId a == packageId b
+      && knowledgeModelPackageId a == knowledgeModelPackageId b
       && title a == title b
       && content a == content b
       && tenantUuid a == tenantUuid b

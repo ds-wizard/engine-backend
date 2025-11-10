@@ -6,7 +6,6 @@ packages:
 - shared-common
 - registry-public
 - registry-server
-- wizard-common
 - wizard-public
 - wizard-server
 

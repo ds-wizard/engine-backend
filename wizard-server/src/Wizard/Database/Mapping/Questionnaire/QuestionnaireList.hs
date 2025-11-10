@@ -10,6 +10,7 @@ import Database.PostgreSQL.Simple.Types
 import Shared.Common.Util.Gravatar
 import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackageSimple
 import Wizard.Api.Resource.Acl.MemberDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermJM ()
@@ -17,7 +18,6 @@ import Wizard.Database.Mapping.Questionnaire.QuestionnaireSharing ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireState ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireVisibility ()
 import Wizard.Model.Questionnaire.QuestionnaireList
-import WizardLib.KnowledgeModel.Model.Package.PackageSimple
 
 instance FromRow QuestionnaireList where
   fromRow = do
@@ -33,7 +33,7 @@ instance FromRow QuestionnaireList where
     packageId <- field
     packageName <- field
     packageVersion <- field
-    let package = PackageSimple {pId = packageId, name = packageName, version = packageVersion}
+    let knowledgeModelPackage = KnowledgeModelPackageSimple {pId = packageId, name = packageName, version = packageVersion}
     mUserPermissions <- fieldWith (optionalField fromField)
     let userPermissions =
           case mUserPermissions of

@@ -5,6 +5,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import RegistryLib.Model.Organization.OrganizationSimple
+import Shared.Coordinate.Util.Coordinate
 import Shared.Locale.Model.Locale.Locale
 import Wizard.Api.Resource.Locale.LocaleChangeDTO
 import Wizard.Api.Resource.Locale.LocaleCreateDTO
@@ -14,7 +15,6 @@ import Wizard.Model.Locale.LocaleList
 import Wizard.Model.Registry.RegistryLocale
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Service.Locale.LocaleUtil
-import WizardLib.Common.Util.Coordinate
 
 toDTO :: Bool -> LocaleList -> LocaleDTO
 toDTO registryEnabled locale =

@@ -1,22 +1,23 @@
 module Wizard.Service.KnowledgeModel.Compiler.Modifier.Expert where
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.Expert.ExpertEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Modifier
-import WizardLib.KnowledgeModel.Model.Event.Expert.ExpertEvent
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 instance CreateEntity AddExpertEvent Expert where
-  createEntity event =
+  createEntity event content =
     Expert
       { uuid = event.entityUuid
-      , name = event.name
-      , email = event.email
-      , annotations = event.annotations
+      , name = content.name
+      , email = content.email
+      , annotations = content.annotations
       }
 
 instance EditEntity EditExpertEvent Expert where
-  editEntity event entity =
+  editEntity event content entity =
     entity
-      { name = applyValue entity.name event.name
-      , email = applyValue entity.email event.email
-      , annotations = applyValue entity.annotations event.annotations
+      { name = applyValue entity.name content.name
+      , email = applyValue entity.email content.email
+      , annotations = applyValue entity.annotations content.annotations
       }

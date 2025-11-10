@@ -23,8 +23,8 @@ findTenantConfigKnowledgeModel = do
 findTenantConfigKnowledgeModelByUuid :: U.UUID -> AppContextM TenantConfigKnowledgeModel
 findTenantConfigKnowledgeModelByUuid tenantUuid = do
   config <- createFindEntityByFn "config_knowledge_model" [("tenant_uuid", U.toString tenantUuid)]
-  publicPackages <- createFindEntitiesBySortedFn "config_knowledge_model_public_package_pattern" [("tenant_uuid", U.toString tenantUuid)] [Sort "position" Ascending]
-  return $ config {public = config.public {packages = publicPackages}}
+  knowledgeModelPackages <- createFindEntitiesBySortedFn "config_knowledge_model_public_package_pattern" [("tenant_uuid", U.toString tenantUuid)] [Sort "position" Ascending]
+  return $ config {public = config.public {knowledgeModelPackages = knowledgeModelPackages}}
 
 insertTenantConfigKnowledgeModel :: TenantConfigKnowledgeModel -> AppContextM Int64
 insertTenantConfigKnowledgeModel = createInsertFn "config_knowledge_model"
@@ -38,11 +38,11 @@ updateTenantConfigKnowledgeModel config = do
         fromString $
           "UPDATE config_knowledge_model SET tenant_uuid = ?, public_enabled = ?, integration_config = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ?; \
           \DELETE FROM config_knowledge_model_public_package_pattern WHERE tenant_uuid = ?;"
-            ++ concatMap (const "INSERT INTO config_knowledge_model_public_package_pattern VALUES (?, ?, ?, ?, ?, ?, ?, ?);") config.public.packages
+            ++ concatMap (const "INSERT INTO config_knowledge_model_public_package_pattern VALUES (?, ?, ?, ?, ?, ?, ?, ?);") config.public.knowledgeModelPackages
   let params =
         toRow config
           ++ [toField config.tenantUuid, toField config.tenantUuid]
-          ++ concatMap toRow config.public.packages
+          ++ concatMap toRow config.public.knowledgeModelPackages
   logQuery sql params
   let action conn = execute conn sql params
   runDB action

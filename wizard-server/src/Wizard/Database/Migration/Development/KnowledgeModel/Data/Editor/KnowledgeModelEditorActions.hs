@@ -1,0 +1,11 @@
+module Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditorActions where
+
+import Wizard.Api.Resource.Websocket.KnowledgeModelEditorActionDTO
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditorEvents
+import Wizard.Database.Migration.Development.User.Data.Users
+
+ensureOnlineUserAction :: ClientKnowledgeModelEditorActionDTO
+ensureOnlineUserAction = SetContent_ClientKnowledgeModelEditorActionDTO knowledgeModelEditorWebsocketEvent1'
+
+setUserListAction :: ServerKnowledgeModelEditorActionDTO
+setUserListAction = SetUserList_ServerKnowledgeModelEditorActionDTO [userAlbertOnlineInfo]

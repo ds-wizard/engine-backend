@@ -5,10 +5,10 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Config.SimpleFeature
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 import Shared.OpenId.Model.OpenId.OpenIdClientParameter
 import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Tenant.Config.TenantConfig
-import WizardLib.KnowledgeModel.Model.Package.PackagePattern
 import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 
 data TenantConfigChangeDTO = TenantConfigChangeDTO
@@ -87,7 +87,7 @@ data TenantConfigKnowledgeModelChangeDTO = TenantConfigKnowledgeModelChangeDTO
   deriving (Generic, Show)
 data TenantConfigKnowledgeModelPublicChangeDTO = TenantConfigKnowledgeModelPublicChangeDTO
   { enabled :: Bool
-  , packages :: [PackagePattern]
+  , knowledgeModelPackages :: [KnowledgeModelPackagePattern]
   }
   deriving (Generic, Show)
 

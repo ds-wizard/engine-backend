@@ -6,12 +6,12 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Util.Uuid
-import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretChangeDTO
+import Wizard.Api.Resource.KnowledgeModel.Secret.KnowledgeModelSecretChangeDTO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.KnowledgeModelSecret.KnowledgeModelSecretDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelSecretDAO
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Model.KnowledgeModelSecret.KnowledgeModelSecret
+import Wizard.Model.KnowledgeModel.KnowledgeModelSecret
 import Wizard.Service.KnowledgeModel.Secret.KnowledgeModelSecretMapper
 
 getKnowledgeModelSecrets :: AppContextM [KnowledgeModelSecret]

@@ -17,7 +17,7 @@ _ERROR_SERVICE_ORGANIZATION__RECOVERY_EMAIL_NOT_SENT =
 _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId =
   "The parent ('"
     ++ parentPkgId
-    ++ "') of imported package ('"
+    ++ "') of imported knowledge model package ('"
     ++ pkgId
     ++ "') is missing. Please import the parent first."
 

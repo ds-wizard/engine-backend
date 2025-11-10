@@ -5,12 +5,12 @@ import Data.Maybe (mapMaybe)
 import qualified Data.UUID as U
 
 import Shared.Common.Util.Math
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Service.Report.Evaluator.Common
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 
 computeMetrics :: KnowledgeModel -> M.Map String Reply -> Maybe Chapter -> [MetricSummary]
 computeMetrics km replies mCh =

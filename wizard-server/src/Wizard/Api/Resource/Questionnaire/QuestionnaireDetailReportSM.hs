@@ -3,6 +3,7 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireDetailReportSM where
 import Data.Swagger
 
 import Shared.Common.Util.Swagger
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailReportDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailReportJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermSM ()
@@ -13,7 +14,6 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Report.Report
-import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
 
 instance ToSchema QuestionnaireDetailReportDTO where
   declareNamedSchema =
@@ -23,7 +23,7 @@ instance ToSchema QuestionnaireDetailReportDTO where
         , name = questionnaire1.name
         , visibility = questionnaire1.visibility
         , sharing = questionnaire1.sharing
-        , packageId = questionnaire1.packageId
+        , knowledgeModelPackageId = questionnaire1.knowledgeModelPackageId
         , isTemplate = questionnaire1.isTemplate
         , migrationUuid = Nothing
         , permissions = [qtn1AlbertEditQtnPermDto]

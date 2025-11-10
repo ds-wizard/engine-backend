@@ -4,12 +4,12 @@ import Data.Maybe (fromJust)
 import Data.Time
 import Test.Hspec
 
+import Shared.DocumentTemplate.Constant.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Tenant.Tenant
 import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
-import WizardLib.DocumentTemplate.Constant.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Model.Package.PackagePattern
 
 documentTemplateUtilSpec =
   describe "Document DocumentTemplate Utils" $ do
@@ -59,7 +59,7 @@ documentTemplateUtilSpec =
                     , readme = ""
                     , license = ""
                     , allowedPackages =
-                        [ PackagePattern
+                        [ KnowledgeModelPackagePattern
                             { orgId = Nothing
                             , kmId = Nothing
                             , minVersion = Nothing
@@ -94,13 +94,13 @@ documentTemplateUtilSpec =
                     , readme = ""
                     , license = ""
                     , allowedPackages =
-                        [ PackagePattern
+                        [ KnowledgeModelPackagePattern
                             { orgId = Nothing
                             , kmId = Nothing
                             , minVersion = Nothing
                             , maxVersion = Nothing
                             }
-                        , PackagePattern
+                        , KnowledgeModelPackagePattern
                             { orgId = Nothing
                             , kmId = Just "core-de"
                             , minVersion = Nothing

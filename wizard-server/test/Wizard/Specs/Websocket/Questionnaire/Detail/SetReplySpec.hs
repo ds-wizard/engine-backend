@@ -1,12 +1,16 @@
 module Wizard.Specs.Websocket.Questionnaire.Detail.SetReplySpec where
 
 import Data.Aeson
+import Data.Foldable (traverse_)
 import Network.WebSockets
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -19,8 +23,6 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -42,7 +44,8 @@ test200 appContext =
       let qtn = questionnaire10
       runInContext U.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
-      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       runInContextIO (insertQuestionnaire questionnaire10) appContext
       runInContextIO (insertQuestionnaire questionnaire7) appContext
       -- AND: Connect to websocket

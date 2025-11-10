@@ -3,9 +3,9 @@ module Wizard.Service.DocumentTemplate.File.DocumentTemplateFileMapper where
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFileList
 import Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileChangeDTO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFileList
 
 toList :: DocumentTemplateFile -> DocumentTemplateFileList
 toList file =

@@ -386,16 +386,16 @@ createTcOwlTable = do
   let sql =
         "CREATE TABLE config_owl \
         \( \
-        \    tenant_uuid         uuid        NOT NULL, \
-        \    enabled             boolean     NOT NULL, \
-        \    name                varchar     NOT NULL, \
-        \    organization_id     varchar     NOT NULL, \
-        \    km_id               varchar     NOT NULL, \
-        \    version             varchar     NOT NULL, \
-        \    previous_package_id varchar, \
-        \    root_element        varchar     NOT NULL, \
-        \    created_at          timestamptz NOT NULL, \
-        \    updated_at          timestamptz NOT NULL, \
+        \    tenant_uuid                          uuid        NOT NULL, \
+        \    enabled                              boolean     NOT NULL, \
+        \    name                                 varchar     NOT NULL, \
+        \    organization_id                      varchar     NOT NULL, \
+        \    km_id                                varchar     NOT NULL, \
+        \    version                              varchar     NOT NULL, \
+        \    previous_knowledge_model_package_id  varchar, \
+        \    root_element                         varchar     NOT NULL, \
+        \    created_at                           timestamptz NOT NULL, \
+        \    updated_at                           timestamptz NOT NULL, \
         \    CONSTRAINT config_owl_pk PRIMARY KEY (tenant_uuid), \
         \    CONSTRAINT config_owl_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
@@ -443,7 +443,7 @@ createTenantLimitBundleTable = do
         \    users                    integer     NOT NULL, \
         \    active_users             integer     NOT NULL, \
         \    knowledge_models         integer     NOT NULL, \
-        \    branches                 integer     NOT NULL, \
+        \    knowledge_model_editors  integer     NOT NULL, \
         \    document_templates       integer     NOT NULL, \
         \    questionnaires           integer     NOT NULL, \
         \    documents                integer     NOT NULL, \

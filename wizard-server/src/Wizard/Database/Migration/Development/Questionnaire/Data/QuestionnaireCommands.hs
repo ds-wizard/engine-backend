@@ -1,11 +1,11 @@
 module Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireCommands where
 
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.User.User
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 import WizardLib.Public.Model.PersistentCommand.Questionnaire.CreateQuestionnaireCommand
 
 command1 :: CreateQuestionnaireCommand
@@ -16,7 +16,7 @@ command1 =
         [ userAlbert.email
         , userNikola.email
         ]
-    , packageId = netherlandsPackageV2.pId
+    , knowledgeModelPackageId = netherlandsKmPackageV2.pId
     , documentTemplateId = Just wizardDocumentTemplate.tId
     }
 
@@ -28,6 +28,6 @@ command2 =
         [ userAlbert.email
         , userIsaac.email
         ]
-    , packageId = netherlandsPackageV2.pId
+    , knowledgeModelPackageId = netherlandsKmPackageV2.pId
     , documentTemplateId = Nothing
     }

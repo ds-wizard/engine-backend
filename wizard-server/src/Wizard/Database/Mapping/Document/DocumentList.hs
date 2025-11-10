@@ -4,9 +4,9 @@ import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
 import Wizard.Database.Mapping.Document.Document ()
 import Wizard.Model.Document.DocumentList
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
 
 instance FromRow DocumentList where
   fromRow = do

@@ -12,22 +12,22 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
-import Wizard.Api.Resource.Branch.BranchCreateDTO
-import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
-import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
-import Wizard.Database.Migration.Development.Branch.Data.Branches
-import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorCreateDTO
+import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationCreateDTO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelMigrationDAO
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Migration.KnowledgeModelMigrations
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Localization.Messages.Public
-import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.AppContext
+import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
 import Wizard.Model.Tenant.Tenant
-import Wizard.Service.Branch.BranchService
+import Wizard.Service.KnowledgeModel.Editor.EditorService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -35,11 +35,11 @@ import Wizard.Specs.API.Migration.KnowledgeModel.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /wizard-api/branches/{branchId}/migrations/current
+-- POST /wizard-api/knowledge-model-editors/{uuid}/migrations/current
 -- ------------------------------------------------------------------------
 list_current_POST :: AppContext -> SpecWith ((), Application)
 list_current_POST appContext =
-  describe "POST /wizard-api/branches/{branchId}/migrations/current" $ do
+  describe "POST /wizard-api/knowledge-model-editors/{uuid}/migrations/current" $ do
     test_201 appContext
     test_400 appContext
     test_401 appContext
@@ -51,7 +51,7 @@ list_current_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/wizard-api/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current"
+reqUrl = "/wizard-api/knowledge-model-editors/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -104,7 +104,7 @@ test_400 appContext = do
   it "HTTP 400 BAD REQUEST when target Package is not higher than current one" $
     -- GIVEN: Prepare request
     do
-      let reqDto = MigratorStateCreateDTO {targetPackageId = "org.nl:core-nl:0.9.0"}
+      let reqDto = KnowledgeModelMigrationCreateDTO {targetPackageId = "org.nl:core-nl:0.9.0"}
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400
@@ -119,19 +119,19 @@ test_400 appContext = do
       let responseMatcher =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
-  it "HTTP 400 BAD REQUEST when branch has to have a previous package" $
+  it "HTTP 400 BAD REQUEST when KM editor has to have a previous package" $
     -- AND: Prepare expectation
     do
       let expStatus = 400
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = UserError _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE
+      let expDto = UserError _ERROR_VALIDATION__KM_EDITOR_PREVIOUS_PKG_ABSENCE
       let expBody = encode expDto
       -- AND: Prepare database
-      let branch = amsterdamBranchCreate {previousPackageId = Nothing} :: BranchCreateDTO
-      let branchUuid = amsterdamBranchList.uuid
-      let timestamp = amsterdamBranchList.createdAt
+      let editor = amsterdamKnowledgeModelEditorCreate {previousPackageId = Nothing} :: KnowledgeModelEditorCreateDTO
+      let editorUuid = amsterdamKnowledgeModelEditorList.uuid
+      let timestamp = amsterdamKnowledgeModelEditorList.createdAt
       let user = U_Mapper.toDTO userAlbert
-      runInContextIO (createBranchWithParams branchUuid timestamp user branch) appContext
+      runInContextIO (createEditorWithParams editorUuid timestamp user editor) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- AND: Compare response with expectation
@@ -153,7 +153,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext = do
-  createNotFoundTest' reqMethod reqUrl reqHeaders reqBody "branch" [("uuid", "6474b24b-262b-42b1-9451-008e8363f2b6")]
+  createNotFoundTest' reqMethod reqUrl reqHeaders reqBody "knowledge_model_editor" [("uuid", "6474b24b-262b-42b1-9451-008e8363f2b6")]
   it "HTTP 404 NOT FOUND when target previous package doesn’t exist" $
     -- GIVEN: Prepare expectation
     do
@@ -162,13 +162,13 @@ test_404 appContext = do
       let expDto =
             NotExistsError
               ( _ERROR_DATABASE__ENTITY_NOT_FOUND
-                  "package"
+                  "knowledge_model_package"
                   [("tenant_uuid", U.toString defaultTenant.uuid), ("id", "org.nl:core-nl:2.0.0")]
               )
       let expBody = encode expDto
       -- AND: Prepare database
       runMigrationWithEmptyDB appContext
-      runInContextIO (deletePackageById netherlandsPackageV2.pId) appContext
+      runInContextIO (deletePackageById netherlandsKmPackageV2.pId) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- AND: Compare response with expectation

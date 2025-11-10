@@ -4,10 +4,10 @@ import qualified Data.Map.Strict as M
 import Data.Maybe (mapMaybe)
 import qualified Data.UUID as U
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Delete
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 
 filterKnowledgeModel :: [U.UUID] -> KnowledgeModel -> KnowledgeModel
 filterKnowledgeModel [] km = km

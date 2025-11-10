@@ -102,22 +102,6 @@ jobs:
       run: |
         rm -rf shared-common/.stack-work
     
-    - name: Cache wizard-common
-      id: cache-wizard-common
-      uses: actions/cache@v3
-      with:
-        path: wizard-common/.stack-work
-        key: wizard-common-ubuntu22-${{ hashFiles('wizard-common/package.yaml')}}-${{ hashFiles('wizard-common/**/*.hs') }}
-        restore-keys: |
-          wizard-common-ubuntu22-${{ hashFiles('wizard-common/package.yaml')}}-
-          wizard-common-ubuntu22-
-    
-    - name: Invalidate wizard-common cache (force push)
-      id: invalidate-cache-wizard-common
-      if: github.event_name == 'push' && github.event.forced && steps.cache-wizard-common.outputs.cache-hit != 'true'
-      run: |
-        rm -rf wizard-common/.stack-work
-    
     - name: Cache wizard-public
       id: cache-wizard-public
       uses: actions/cache@v3

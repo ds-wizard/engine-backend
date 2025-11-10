@@ -1,0 +1,28 @@
+module Wizard.Specs.API.KnowledgeModelPackage.Common where
+
+import Test.Hspec
+import Test.Hspec.Wai hiding (shouldRespondWith)
+
+import Shared.Common.Api.Resource.Error.ErrorJM ()
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+
+import Wizard.Specs.API.Common
+
+-- --------------------------------
+-- ASSERTS
+-- --------------------------------
+assertExistenceOfPackageInDB appContext package = do
+  packageFromDb <- getOneFromDB (findPackageById package.pId) appContext
+  comparePackageDtos packageFromDb package
+
+-- --------------------------------
+-- COMPARATORS
+-- --------------------------------
+comparePackageDtos resDto expDto = do
+  liftIO $ resDto.pId `shouldBe` expDto.pId
+  liftIO $ resDto.name `shouldBe` expDto.name
+  liftIO $ resDto.organizationId `shouldBe` expDto.organizationId
+  liftIO $ resDto.kmId `shouldBe` expDto.kmId
+  liftIO $ resDto.version `shouldBe` expDto.version
+  liftIO $ resDto.description `shouldBe` expDto.description

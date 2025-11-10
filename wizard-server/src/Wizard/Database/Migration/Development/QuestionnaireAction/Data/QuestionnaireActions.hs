@@ -4,11 +4,11 @@ import qualified Data.Aeson.KeyMap as KM
 
 import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Date
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Api.Resource.QuestionnaireAction.QuestionnaireActionDTO
+import Wizard.Constant.QuestionnaireAction
 import Wizard.Model.QuestionnaireAction.QuestionnaireAction
 import Wizard.Service.QuestionnaireAction.QuestionnaireActionMapper
-import WizardLib.Common.Constant.QuestionnaireAction
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 questionnaireActionFtp1 :: QuestionnaireAction
 questionnaireActionFtp1 =
@@ -22,7 +22,7 @@ questionnaireActionFtp1 =
     , description = "Uploading questionnaire to FTP"
     , readme = "# Questionnaire Action FTP"
     , license = "Apache-2.0"
-    , allowedPackages = [packagePatternAll]
+    , allowedPackages = [kmPackagePatternAll]
     , url = "http://example.com/questionnaire-action-ftp"
     , config = KM.empty
     , enabled = True
@@ -43,7 +43,7 @@ questionnaireActionFtp2 =
     , description = "Uploading questionnaire to FTP"
     , readme = "# Questionnaire Action FTP"
     , license = "Apache-2.0"
-    , allowedPackages = [packagePatternAll]
+    , allowedPackages = [kmPackagePatternAll]
     , url = "http://example.com/questionnaire-action-ftp"
     , config = KM.empty
     , enabled = True
@@ -64,7 +64,7 @@ questionnaireActionFtp3 =
     , description = "Uploading questionnaire to FTP"
     , readme = "# Questionnaire Action FTP"
     , license = "Apache-2.0"
-    , allowedPackages = [packagePatternAll]
+    , allowedPackages = [kmPackagePatternAll]
     , url = "http://example.com/questionnaire-action-ftp"
     , config = KM.empty
     , enabled = False
@@ -91,7 +91,7 @@ questionnaireActionMail1 =
     , description = "Sending questionnaire via mail"
     , readme = "# Questionnaire Action Mail"
     , license = "Apache-2.0"
-    , allowedPackages = [packagePatternGlobal]
+    , allowedPackages = [kmPackagePatternGlobal]
     , url = "http://example.com/questionnaire-action-mail"
     , config = KM.empty
     , enabled = True
@@ -112,7 +112,7 @@ questionnaireActionScp1 =
     , description = "Uploading questionnaire via SCP"
     , readme = "# Questionnaire Action SCP"
     , license = "Apache-2.0"
-    , allowedPackages = [packagePatternGlobal]
+    , allowedPackages = [kmPackagePatternGlobal]
     , url = "http://example.com/questionnaire-action-onto"
     , config = KM.empty
     , enabled = False

@@ -2,11 +2,11 @@ module Wizard.Database.Migration.Development.QuestionnaireImporter.Data.Question
 
 import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Date
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
+import Wizard.Constant.QuestionnaireImporter
 import Wizard.Model.QuestionnaireImporter.QuestionnaireImporter
 import Wizard.Service.QuestionnaireImporter.QuestionnaireImporterMapper
-import WizardLib.Common.Constant.QuestionnaireImporter
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 questionnaireImporterBio1 :: QuestionnaireImporter
 questionnaireImporterBio1 =
@@ -20,7 +20,7 @@ questionnaireImporterBio1 =
     , description = "Import bio answers from questionnaire"
     , readme = "# Default QuestionnaireImporter BIO 1"
     , license = "Apache-2.0"
-    , allowedPackages = [packagePatternAll]
+    , allowedPackages = [kmPackagePatternAll]
     , url = "http://example.com/questionnaire-importer-bio"
     , enabled = True
     , tenantUuid = defaultTenantUuid
@@ -40,7 +40,7 @@ questionnaireImporterBio2 =
     , description = "Import bio answers from questionnaire"
     , readme = "# Default QuestionnaireImporter BIO 2"
     , license = "Apache-2.0"
-    , allowedPackages = [packagePatternAll]
+    , allowedPackages = [kmPackagePatternAll]
     , url = "http://example.com/questionnaire-importer-bio"
     , enabled = True
     , tenantUuid = defaultTenantUuid
@@ -60,7 +60,7 @@ questionnaireImporterBio3 =
     , description = "Import bio answers from questionnaire"
     , readme = "# Default QuestionnaireImporter BIO 3"
     , license = "Apache-2.0"
-    , allowedPackages = [packagePatternAll]
+    , allowedPackages = [kmPackagePatternAll]
     , url = "http://example.com/questionnaire-importer-bio"
     , enabled = False
     , tenantUuid = defaultTenantUuid
@@ -86,7 +86,7 @@ questionnaireImporterExt1 =
     , description = "Import ext answers from questionnaire"
     , readme = "# Default Ext QuestionnaireImporter"
     , license = "Apache-2.0"
-    , allowedPackages = [packagePatternGlobal]
+    , allowedPackages = [kmPackagePatternGlobal]
     , url = "http://example.com/questionnaire-ext-importer"
     , enabled = True
     , tenantUuid = defaultTenantUuid
@@ -106,7 +106,7 @@ questionnaireImporterOnto1 =
     , description = "Import onto answers from questionnaire"
     , readme = "# Default Ext QuestionnaireImporter"
     , license = "Apache-2.0"
-    , allowedPackages = [packagePatternGlobal]
+    , allowedPackages = [kmPackagePatternGlobal]
     , url = "http://example.com/questionnaire-importer-onto"
     , enabled = False
     , tenantUuid = defaultTenantUuid

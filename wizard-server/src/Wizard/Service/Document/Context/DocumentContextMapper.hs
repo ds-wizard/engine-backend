@@ -3,7 +3,10 @@ module Wizard.Service.Document.Context.DocumentContextMapper where
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
-import Wizard.Api.Resource.Package.PackageSimpleDTO
+import qualified Shared.DocumentTemplate.Constant.DocumentTemplate as TemplateConstant
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Questionnaire.Questionnaire
@@ -14,11 +17,8 @@ import Wizard.Model.Questionnaire.QuestionnaireVersionList
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
-import Wizard.Service.Package.PackageMapper
+import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
-import qualified WizardLib.DocumentTemplate.Constant.DocumentTemplate as TemplateConstant
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.Package.Package
 
 toDocumentContext
   :: Document
@@ -32,7 +32,7 @@ toDocumentContext
   -> [QuestionnaireFileSimple]
   -> KnowledgeModel
   -> Report
-  -> Package
+  -> KnowledgeModelPackage
   -> TenantConfigOrganization
   -> Maybe User
   -> Maybe User
@@ -76,7 +76,7 @@ toDocumentContext doc appClientUrl qtn phaseUuid replies labels mQtnVersion qtnV
     , groups = groups
     }
 
-toDocumentContextPackage :: Package -> DocumentContextPackage
+toDocumentContextPackage :: KnowledgeModelPackage -> DocumentContextPackage
 toDocumentContextPackage pkg =
   let dto = toSimpleDTO pkg
    in DocumentContextPackage

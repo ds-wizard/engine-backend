@@ -56,8 +56,8 @@ submission2 =
 submission2Dto :: SubmissionList
 submission2Dto = toList submission1 defaultSubmissionService userAlbertSuggestion
 
-differentSubmission :: Submission
-differentSubmission =
+differentSubmission1 :: Submission
+differentSubmission1 =
   Submission
     { uuid = u' "de51c280-2a6f-49d0-b3de-405401ffba74"
     , state = DoneSubmissionState

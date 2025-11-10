@@ -8,7 +8,7 @@ import Shared.Common.Model.Common.Lens
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
-import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
+import Wizard.Database.DAO.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
@@ -20,7 +20,7 @@ import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
-import Wizard.Service.Package.PackageService
+import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -71,7 +71,7 @@ getQuestionnaireState qtnUuid pkgId = do
 
 getQuestionnaireReport
   :: ( HasField "uuid" questionnaire U.UUID
-     , HasField "packageId" questionnaire String
+     , HasField "knowledgeModelPackageId" questionnaire String
      , HasField "selectedQuestionTagUuids" questionnaire [U.UUID]
      )
   => questionnaire
@@ -80,13 +80,13 @@ getQuestionnaireReport
 getQuestionnaireReport qtn events = do
   qtnCtn <- compileQuestionnaire events
   let _requiredPhaseUuid = qtnCtn.phaseUuid
-  km <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
+  km <- compileKnowledgeModel [] (Just qtn.knowledgeModelPackageId) qtn.selectedQuestionTagUuids
   let indications = computeTotalReportIndications _requiredPhaseUuid km qtnCtn.replies
   return . toQuestionnaireReportDTO $ indications
 
 getPhasesAnsweredIndication
   :: ( HasField "uuid" questionnaire U.UUID
-     , HasField "packageId" questionnaire String
+     , HasField "knowledgeModelPackageId" questionnaire String
      , HasField "selectedQuestionTagUuids" questionnaire [U.UUID]
      )
   => questionnaire

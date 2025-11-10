@@ -3,14 +3,14 @@ module Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataDTO w
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Model.Branch.BranchSuggestion
+import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
 
 data DocumentTemplateDraftDataDTO = DocumentTemplateDraftDataDTO
   { questionnaireUuid :: Maybe U.UUID
   , questionnaire :: Maybe QuestionnaireSuggestion
-  , branchUuid :: Maybe U.UUID
-  , branch :: Maybe BranchSuggestion
+  , knowledgeModelEditorUuid :: Maybe U.UUID
+  , knowledgeModelEditor :: Maybe KnowledgeModelEditorSuggestion
   , formatUuid :: Maybe U.UUID
   }
   deriving (Show, Eq, Generic)

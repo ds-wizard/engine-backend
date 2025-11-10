@@ -5,8 +5,8 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
-import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
-import Wizard.Model.Migration.Questionnaire.MigratorState
+import Wizard.Database.DAO.Questionnaire.MigratorDAO
+import Wizard.Model.Questionnaire.MigratorState
 
 import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common

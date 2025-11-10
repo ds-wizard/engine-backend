@@ -6,13 +6,13 @@ import Servant.Multipart
 
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetCreateJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetService
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
 type Detail_Content_PUT =
   Header "Authorization" String

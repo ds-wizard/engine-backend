@@ -14,16 +14,16 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
-import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
+import Wizard.Database.DAO.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
-import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
-import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration as QTN_MIG
+import Wizard.Database.Migration.Development.Questionnaire.Data.MigratorStates
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import qualified Wizard.Database.Migration.Development.Questionnaire.MigratorMigration as QTN_MIG
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Migration.Questionnaire.MigratorState
+import Wizard.Model.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.Questionnaire
 
 import SharedTest.Specs.API.Common

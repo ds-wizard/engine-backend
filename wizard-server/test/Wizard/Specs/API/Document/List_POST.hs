@@ -14,6 +14,12 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Model.Common.SemVer2Tuple
 import Shared.Common.Model.Error.Error
+import Shared.DocumentTemplate.Constant.DocumentTemplate
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Localization.Messages.Public
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentCreateJM ()
 import Wizard.Api.Resource.Document.DocumentDTO
@@ -29,12 +35,6 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireSimple
-import WizardLib.DocumentTemplate.Constant.DocumentTemplate
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Localization.Messages.Public
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

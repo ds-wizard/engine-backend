@@ -6,32 +6,32 @@ import Network.URI.Encode (encode)
 
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Api.Resource.TypeHint.TypeHintRequestDTO
 import Wizard.Api.Resource.TypeHint.TypeHintTestRequestDTO
-import Wizard.Database.DAO.Branch.BranchDAO
-import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.KnowledgeModelSecret.KnowledgeModelSecretDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorEventDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelSecretDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Integration.Http.TypeHint.Runner
 import Wizard.Integration.Resource.TypeHint.TypeHintIDTO
 import Wizard.Localization.Messages.Public
-import Wizard.Model.Branch.Branch
-import Wizard.Model.Branch.BranchData
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Model.KnowledgeModelSecret.KnowledgeModelSecret
+import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
+import Wizard.Model.KnowledgeModel.KnowledgeModelSecret
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.Config.Integration.IntegrationConfigService
+import Wizard.Service.KnowledgeModel.Editor.EditorMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 
 getLegacyTypeHints :: TypeHintLegacyRequestDTO -> AppContextM [TypeHintLegacyIDTO]
 getLegacyTypeHints reqDto =
   runInTransaction $ do
-    km <- compileKnowledgeModel reqDto.events reqDto.packageId []
+    km <- compileKnowledgeModel reqDto.events reqDto.knowledgeModelPackageId []
     question <- getQuestion km reqDto.questionUuid
     integration' <- getIntegration km question.integrationUuid
     case integration' of
@@ -50,22 +50,24 @@ getLegacyTypeHints reqDto =
       _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION
 
 getTypeHints :: TypeHintRequestDTO -> AppContextM [TypeHintIDTO]
-getTypeHints (BranchIntegrationTypeHintRequest' reqDto) =
+getTypeHints (KnowledgeModelEditorIntegrationTypeHintRequest' reqDto) =
   runInTransaction $ do
     checkPermission _KM_PERM
-    branch <- findBranchByUuid reqDto.branchUuid
-    branchData <- findBranchDataById reqDto.branchUuid
-    km <- compileKnowledgeModel branchData.events branch.previousPackageId []
+    kmEditor <- findKnowledgeModelEditorByUuid reqDto.knowledgeModelEditorUuid
+    kmEditorEvents <- findKnowledgeModelEventsByEditorUuid reqDto.knowledgeModelEditorUuid
+    let kmEvents = fmap toKnowledgeModelEvent kmEditorEvents
+    km <- compileKnowledgeModel kmEvents kmEditor.previousPackageId []
     integration' <- getIntegration km reqDto.integrationUuid
     case integration' of
       ApiIntegration' integration -> runApiIntegrationTypeHints integration integration.testVariables integration.testQ
       _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION
-getTypeHints (BranchQuestionTypeHintRequest' reqDto) =
+getTypeHints (KnowledgeModelEditorQuestionTypeHintRequest' reqDto) =
   runInTransaction $ do
     checkPermission _KM_PERM
-    branch <- findBranchByUuid reqDto.branchUuid
-    branchData <- findBranchDataById reqDto.branchUuid
-    km <- compileKnowledgeModel branchData.events branch.previousPackageId []
+    kmEditor <- findKnowledgeModelEditorByUuid reqDto.knowledgeModelEditorUuid
+    kmEditorEvents <- findKnowledgeModelEventsByEditorUuid reqDto.knowledgeModelEditorUuid
+    let kmEvents = fmap toKnowledgeModelEvent kmEditorEvents
+    km <- compileKnowledgeModel kmEvents kmEditor.previousPackageId []
     question <- getQuestion km reqDto.questionUuid
     integration' <- getIntegration km question.integrationUuid
     case integration' of
@@ -75,7 +77,7 @@ getTypeHints (QuestionnaireTypeHintRequest' reqDto) =
   runInTransaction $ do
     qtn <- findQuestionnaireByUuid reqDto.questionnaireUuid
     checkEditPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
-    km <- compileKnowledgeModel [] (Just qtn.packageId) []
+    km <- compileKnowledgeModel [] (Just qtn.knowledgeModelPackageId) []
     question <- getQuestion km reqDto.questionUuid
     integration' <- getIntegration km question.integrationUuid
     case integration' of
@@ -97,9 +99,10 @@ testTypeHints :: TypeHintTestRequestDTO -> AppContextM TypeHintExchange
 testTypeHints reqDto =
   runInTransaction $ do
     checkPermission _KM_PERM
-    branch <- findBranchByUuid reqDto.branchUuid
-    branchData <- findBranchDataById reqDto.branchUuid
-    km <- compileKnowledgeModel branchData.events branch.previousPackageId []
+    kmEditor <- findKnowledgeModelEditorByUuid reqDto.knowledgeModelEditorUuid
+    kmEditorEvents <- findKnowledgeModelEventsByEditorUuid reqDto.knowledgeModelEditorUuid
+    let kmEvents = fmap toKnowledgeModelEvent kmEditorEvents
+    km <- compileKnowledgeModel kmEvents kmEditor.previousPackageId []
     integration' <- getIntegration km reqDto.integrationUuid
     case integration' of
       ApiIntegration' integration -> do

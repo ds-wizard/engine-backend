@@ -4,11 +4,11 @@ import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Metrics
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Model.Report.Report
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Metrics
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 report1 :: Report
 report1 =

@@ -4,8 +4,8 @@ import Data.Time
 import GHC.Generics
 
 import Shared.Common.Model.Common.SemVer2Tuple
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Model.Package.PackagePattern
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 
 data DocumentTemplateList = DocumentTemplateList
   { tId :: String
@@ -16,7 +16,7 @@ data DocumentTemplateList = DocumentTemplateList
   , phase :: DocumentTemplatePhase
   , metamodelVersion :: SemVer2Tuple
   , description :: String
-  , allowedPackages :: [PackagePattern]
+  , allowedPackages :: [KnowledgeModelPackagePattern]
   , nonEditable :: Bool
   , remoteVersion :: Maybe String
   , remoteOrganizationName :: Maybe String

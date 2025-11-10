@@ -26,7 +26,7 @@ data Questionnaire = Questionnaire
   , description :: Maybe String
   , visibility :: QuestionnaireVisibility
   , sharing :: QuestionnaireSharing
-  , packageId :: String
+  , knowledgeModelPackageId :: String
   , selectedQuestionTagUuids :: [U.UUID]
   , projectTags :: [String]
   , documentTemplateId :: Maybe String
@@ -48,7 +48,7 @@ instance Eq Questionnaire where
       && a.description == b.description
       && a.visibility == b.visibility
       && a.sharing == b.sharing
-      && a.packageId == b.packageId
+      && a.knowledgeModelPackageId == b.knowledgeModelPackageId
       && a.selectedQuestionTagUuids == b.selectedQuestionTagUuids
       && a.projectTags == b.projectTags
       && a.documentTemplateId == b.documentTemplateId

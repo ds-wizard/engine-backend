@@ -6,10 +6,10 @@ import Servant
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
-import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateJM ()
+import Wizard.Api.Resource.Questionnaire.Migration.MigratorStateDTO
+import Wizard.Api.Resource.Questionnaire.Migration.MigratorStateJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Migration.Questionnaire.MigratorService
+import Wizard.Service.Questionnaire.Migration.MigrationService
 
 type List_Current_GET =
   Header "Authorization" String

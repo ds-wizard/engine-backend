@@ -6,9 +6,9 @@ import Registry.Api.Handler.ActionKey.Api
 import Registry.Api.Handler.Config.Api
 import Registry.Api.Handler.DocumentTemplate.Api
 import Registry.Api.Handler.Info.Api
+import Registry.Api.Handler.KnowledgeModelPackage.Api
 import Registry.Api.Handler.Locale.Api
 import Registry.Api.Handler.Organization.Api
-import Registry.Api.Handler.Package.Api
 import Registry.Api.Handler.PersistentCommand.Api
 import Registry.Model.Context.BaseContext
 
@@ -17,9 +17,9 @@ type ApplicationAPI =
     :<|> ActionKeyAPI
     :<|> ConfigAPI
     :<|> DocumentTemplateAPI
+    :<|> KnowledgeModelPackageAPI
     :<|> LocaleAPI
     :<|> OrganizationAPI
-    :<|> PackageAPI
     :<|> PersistentCommandAPI
 
 applicationApi :: Proxy ApplicationAPI
@@ -31,7 +31,7 @@ applicationServer =
     :<|> actionKeyServer
     :<|> configServer
     :<|> documentTemplateServer
+    :<|> knowledgeModelPackageServer
     :<|> localeServer
     :<|> organizationServer
-    :<|> packageServer
     :<|> persistentCommandServer

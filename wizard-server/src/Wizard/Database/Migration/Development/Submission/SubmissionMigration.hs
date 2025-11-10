@@ -13,5 +13,6 @@ runMigration = do
   deleteSubmissions
   insertTenantConfigSubmission defaultSubmission
   insertSubmission submission1
-  insertSubmission differentSubmission
+  insertTenantConfigSubmission differentSubmission
+  insertSubmission differentSubmission1
   logInfo _CMP_MIGRATION "(Submission/Submission) ended"

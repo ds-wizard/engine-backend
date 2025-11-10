@@ -10,7 +10,7 @@ data TenantLimitBundle = TenantLimitBundle
   , users :: Int
   , activeUsers :: Int
   , knowledgeModels :: Int
-  , branches :: Int
+  , knowledgeModelEditors :: Int
   , documentTemplates :: Int
   , documentTemplateDrafts :: Int
   , questionnaires :: Int

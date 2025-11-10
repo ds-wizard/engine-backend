@@ -3,19 +3,21 @@ module Wizard.Specs.API.Feedback.List_POST (
 ) where
 
 import Data.Aeson (encode)
+import Data.Foldable (traverse_)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel hiding (request)
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
 import Wizard.Model.Context.AppContext
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel hiding (request)
-import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -43,7 +45,7 @@ reqHeaders = [reqAuthHeader, reqCtHeader]
 reqDto =
   FeedbackCreateDTO
     { questionUuid = question1.uuid
-    , packageId = germanyPackage.pId
+    , knowledgeModelPackageId = germanyKmPackage.pId
     , title = "New feedback"
     , content = "Some new feedback description"
     }
@@ -61,7 +63,8 @@ test_200 appContext =
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       -- AND: Run migrations
       runInContextIO loadFeedbackTokenFromEnv appContext
-      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

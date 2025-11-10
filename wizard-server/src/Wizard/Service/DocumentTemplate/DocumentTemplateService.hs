@@ -10,6 +10,15 @@ import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Error.Error
+import Shared.Coordinate.Service.Coordinate.CoordinateValidation
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO hiding (findDocumentTemplatesFiltered)
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import qualified Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as STM
+import Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateUtil
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
@@ -30,15 +39,6 @@ import Wizard.Service.DocumentTemplate.DocumentTemplateMapper
 import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Tenant.Config.ConfigService
-import WizardLib.Common.Service.Coordinate.CoordinateValidation
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO hiding (findDocumentTemplatesFiltered)
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import qualified WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as STM
-import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateUtil
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 
 getDocumentTemplates :: [(String, String)] -> Maybe String -> AppContextM [DocumentTemplate]
 getDocumentTemplates queryParams mPkgId = do
@@ -99,9 +99,9 @@ getDocumentTemplateByUuidDto documentTemplateId = do
   orgRs <- findRegistryOrganizations
   serverConfig <- asks serverConfig
   let registryLink = buildRegistryTemplateUrl serverConfig.registry.clientUrl tml tmlRs
-  let usablePackages = getUsablePackagesForDocumentTemplate tml pkgs
+  let usableKnowledgeModels = getUsableKnowledgeModelPackagesForDocumentTemplate tml pkgs
   tcRegistry <- getCurrentTenantConfigRegistry
-  return $ toDetailDTO tml formats tcRegistry.enabled tmlRs orgRs versions registryLink usablePackages
+  return $ toDetailDTO tml formats tcRegistry.enabled tmlRs orgRs versions registryLink usableKnowledgeModels
 
 modifyDocumentTemplate :: String -> DocumentTemplateChangeDTO -> AppContextM DocumentTemplateDetailDTO
 modifyDocumentTemplate documentTemplateId reqDto =
