@@ -23,7 +23,7 @@ dropTables = do
         \DROP TABLE IF EXISTS questionnaire_perm_group CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_perm_user CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_event; \
-        \DROP TYPE IF EXISTS event_type; \
+        \DROP TYPE IF EXISTS questionnaire_event_type; \
         \DROP TYPE IF EXISTS value_type; \
         \DROP TABLE IF EXISTS questionnaire CASCADE; "
   let action conn = execute_ conn sql
@@ -63,7 +63,7 @@ createQtnTable = do
         \    name                        varchar     NOT NULL, \
         \    visibility                  varchar     NOT NULL, \
         \    sharing                     varchar     NOT NULL, \
-        \    package_id                  varchar     NOT NULL, \
+        \    knowledge_model_package_id  varchar     NOT NULL, \
         \    selected_question_tag_uuids uuid[]      NOT NULL, \
         \    document_template_id        varchar, \
         \    format_uuid                 uuid, \
@@ -76,7 +76,7 @@ createQtnTable = do
         \    tenant_uuid                 uuid        NOT NULL, \
         \    project_tags                text[]      NOT NULL, \
         \    CONSTRAINT questionnaire_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_package_id_fk FOREIGN KEY (package_id, tenant_uuid) REFERENCES package (id, tenant_uuid), \
+        \    CONSTRAINT questionnaire_knowledge_model_package_id_fk FOREIGN KEY (knowledge_model_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid), \
         \    CONSTRAINT questionnaire_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid), \
         \    CONSTRAINT questionnaire_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
         \    CONSTRAINT questionnaire_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
@@ -87,14 +87,14 @@ createQtnTable = do
 createQtnEventTable = do
   logInfo _CMP_MIGRATION "(Table/QuestionnaireEvent) create table"
   let sql =
-        "CREATE TYPE event_type AS ENUM ('ClearReplyEvent', 'SetReplyEvent', 'SetLabelsEvent', 'SetPhaseEvent'); \
+        "CREATE TYPE questionnaire_event_type AS ENUM ('ClearReplyEvent', 'SetReplyEvent', 'SetLabelsEvent', 'SetPhaseEvent'); \
         \CREATE TYPE value_type AS ENUM ('IntegrationReply', 'AnswerReply', 'MultiChoiceReply', 'ItemListReply', 'StringReply', 'ItemSelectReply', 'FileReply'); \
         \CREATE TABLE IF NOT EXISTS questionnaire_event \
         \( \
         \    uuid               uuid                     NOT NULL, \
-        \    event_type         event_type               NOT NULL, \
+        \    event_type         questionnaire_event_type NOT NULL, \
         \    path               text, \
-        \    created_at         timestamp with time zone NOT NULL, \
+        \    created_at         timestamptz              NOT NULL, \
         \    created_by         uuid, \
         \    questionnaire_uuid uuid                     NOT NULL, \
         \    tenant_uuid        uuid                     NOT NULL, \
@@ -232,6 +232,7 @@ createQtnFileTable = do
         \);"
   let action conn = execute_ conn sql
   runDB action
+
 createPersistentCommandFromQuestionnaireFileDeleteFunction = do
   let sql =
         "CREATE OR REPLACE FUNCTION create_persistent_command_from_questionnaire_file_delete() \

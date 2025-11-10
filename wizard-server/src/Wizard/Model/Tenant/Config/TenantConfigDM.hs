@@ -95,7 +95,7 @@ defaultKnowledgeModelPublic :: TenantConfigKnowledgeModelPublic
 defaultKnowledgeModelPublic =
   TenantConfigKnowledgeModelPublic
     { enabled = False
-    , packages = []
+    , knowledgeModelPackages = []
     }
 
 defaultQuestionnaire :: TenantConfigQuestionnaire
@@ -162,7 +162,7 @@ defaultOwl =
     , organizationId = ""
     , kmId = ""
     , version = ""
-    , previousPackageId = Nothing
+    , previousKnowledgeModelPackageId = Nothing
     , rootElement = ""
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 20

@@ -18,7 +18,14 @@ import Shared.Common.Model.Error.Error
 import Shared.Common.Util.List
 import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
-import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
+import qualified Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as STM
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
@@ -32,7 +39,7 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
-import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
+import Wizard.Database.DAO.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -61,10 +68,9 @@ import Wizard.Model.Questionnaire.QuestionnaireFile
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Tenant.Config.TenantConfig
-import Wizard.S3.Document.DocumentS3
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageService
 import Wizard.Service.Mail.Mailer
-import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
@@ -77,14 +83,6 @@ import Wizard.Service.Questionnaire.QuestionnaireValidation
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionService
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
-import qualified WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as STM
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.Package.Package
-import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
-import WizardLib.KnowledgeModel.Service.Package.PackageUtil
 import WizardLib.Public.Model.PersistentCommand.Questionnaire.CreateQuestionnaireCommand
 
 getQuestionnairesForCurrentUserPageDto
@@ -100,7 +98,7 @@ getQuestionnairesForCurrentUserPageDto
   -> Pageable
   -> [Sort]
   -> AppContextM (Page QuestionnaireDTO)
-getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mPackageIds mPackageIdsOp pageable sort = do
+getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mKnowledgeModelPackageIds mKnowledgeModelPackageIdsOp pageable sort = do
   checkPermission _QTN_PERM
   currentUser <- getCurrentUser
   qtnPage <-
@@ -112,8 +110,8 @@ getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectT
       mProjectTagsOp
       mUserUuids
       mUserUuidsOp
-      mPackageIds
-      mPackageIdsOp
+      mKnowledgeModelPackageIds
+      mKnowledgeModelPackageIdsOp
       pageable
       sort
   return . fmap toDTO' $ qtnPage
@@ -127,8 +125,8 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
   runInTransaction $ do
     checkQuestionnaireLimit
     checkCreatePermissionToQtn
-    pkgId <- resolvePackageId reqDto.packageId
-    package <- findPackageWithEventsById pkgId
+    pkgId <- resolvePackageId reqDto.knowledgeModelPackageId
+    pkg <- findPackageById pkgId
     qtnState <- getQuestionnaireState qtnUuid pkgId
     now <- liftIO getCurrentTime
     tenantUuid <- asks currentTenantUuid
@@ -153,7 +151,7 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
     insertQuestionnaireEvents qtnEvents
     permissionDtos <- traverse enhanceQuestionnairePerm qtn.permissions
     qtnCtn <- compileQuestionnaire qtnEvents
-    return $ toSimpleDTO qtn package qtnState permissionDtos
+    return $ toSimpleDTO qtn pkg qtnState permissionDtos
 
 createQuestionnaireFromTemplate :: QuestionnaireCreateFromTemplateDTO -> AppContextM QuestionnaireDTO
 createQuestionnaireFromTemplate reqDto =
@@ -161,7 +159,7 @@ createQuestionnaireFromTemplate reqDto =
     checkQuestionnaireLimit
     originQtn <- findQuestionnaireByUuid reqDto.questionnaireUuid
     checkCreateFromTemplatePermissionToQtn originQtn.isTemplate
-    pkg <- findPackageWithEventsById originQtn.packageId
+    pkg <- findPackageById originQtn.knowledgeModelPackageId
     newQtnUuid <- liftIO generateUuid
     currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
@@ -203,7 +201,7 @@ cloneQuestionnaire cloneUuid =
     checkQuestionnaireLimit
     originQtn <- findQuestionnaireByUuid cloneUuid
     checkClonePermissionToQtn originQtn.visibility originQtn.sharing originQtn.permissions
-    pkg <- findPackageWithEventsById originQtn.packageId
+    pkg <- findPackageById originQtn.knowledgeModelPackageId
     newQtnUuid <- liftIO generateUuid
     currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
@@ -261,7 +259,7 @@ getQuestionnaireById' qtnUuid = do
   case mQtn of
     Just qtn -> do
       checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
-      package <- getPackageById qtn.packageId
+      package <- getPackageById qtn.knowledgeModelPackageId
       state <- getQuestionnaireState qtnUuid package.pId
       permissionDtos <- traverse enhanceQuestionnairePerm qtn.permissions
       return . Just $ toDTO qtn package state permissionDtos
@@ -288,7 +286,7 @@ getQuestionnaireDetailQuestionnaireByUuid qtnUuid = do
     if commenter
       then findQuestionnaireCommentThreadsSimple qtnUuid True editor
       else return M.empty
-  knowledgeModel <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
+  knowledgeModel <- compileKnowledgeModel [] (Just qtn.knowledgeModelPackageId) qtn.selectedQuestionTagUuids
   qtnCtn <- compileQuestionnaire qtnEvents
   let labels =
         if editor
@@ -306,7 +304,7 @@ getQuestionnaireDetailSettingsById :: U.UUID -> AppContextM QuestionnaireDetailS
 getQuestionnaireDetailSettingsById qtnUuid = do
   qtn <- findQuestionnaireDetailSettings qtnUuid
   checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
-  knowledgeModel <- compileKnowledgeModel [] (Just qtn.package.pId) qtn.selectedQuestionTagUuids
+  knowledgeModel <- compileKnowledgeModel [] (Just qtn.knowledgeModelPackage.pId) qtn.selectedQuestionTagUuids
   return $ qtn {knowledgeModelTags = M.elems knowledgeModel.entities.tags}
 
 getQuestionnaireEventsForQtnUuid :: U.UUID -> AppContextM [QuestionnaireEventDTO]
@@ -419,7 +417,6 @@ deleteQuestionnaire qtnUuid shouldValidatePermission =
       ( \d -> do
           deleteSubmissionsFiltered [("document_uuid", U.toString d.uuid)]
           deleteDocumentsFiltered [("uuid", U.toString d.uuid)]
-          removeDocumentContent d.uuid
       )
       documents
     deleteQuestionnaireVersionsByQuestionnaireUuid qtnUuid

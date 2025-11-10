@@ -1,5 +1,8 @@
 module Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateDrafts where
 
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataChangeDTO
@@ -9,16 +12,13 @@ import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QuestionnaireMapper
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 wizardDocumentTemplateDraftData :: DocumentTemplateDraftData
 wizardDocumentTemplateDraftData =
   DocumentTemplateDraftData
     { documentTemplateId = wizardDocumentTemplateDraft.tId
     , questionnaireUuid = Just questionnaire1.uuid
-    , branchUuid = Nothing
+    , knowledgeModelEditorUuid = Nothing
     , formatUuid = Just formatJson.uuid
     , tenantUuid = wizardDocumentTemplateDraft.tenantUuid
     , createdAt = wizardDocumentTemplateDraft.createdAt
@@ -49,8 +49,8 @@ wizardDocumentTemplateDraftDataDTO =
   DocumentTemplateDraftDataDTO
     { questionnaireUuid = wizardDocumentTemplateDraftDataEdited.questionnaireUuid
     , questionnaire = Just . QuestionnaireMapper.toSuggestion $ questionnaire2
-    , branchUuid = Nothing
-    , branch = Nothing
+    , knowledgeModelEditorUuid = Nothing
+    , knowledgeModelEditor = Nothing
     , formatUuid = wizardDocumentTemplateDraftDataEdited.formatUuid
     }
 
@@ -58,6 +58,6 @@ wizardDocumentTemplateDraftDataChangeDTO :: DocumentTemplateDraftDataChangeDTO
 wizardDocumentTemplateDraftDataChangeDTO =
   DocumentTemplateDraftDataChangeDTO
     { questionnaireUuid = wizardDocumentTemplateDraftDataEdited.questionnaireUuid
-    , branchUuid = Nothing
+    , knowledgeModelEditorUuid = Nothing
     , formatUuid = wizardDocumentTemplateDraftDataEdited.formatUuid
     }

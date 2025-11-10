@@ -1,8 +1,8 @@
 module Wizard.Service.KnowledgeModel.Squash.Event.Question where
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.Question.QuestionEvent
 import Wizard.Service.KnowledgeModel.Squash.Event.Common
-import WizardLib.KnowledgeModel.Model.Event.EventLenses
-import WizardLib.KnowledgeModel.Model.Event.Question.QuestionEvent
 
 instance SimpleEventSquash EditQuestionEvent where
   isSimpleEventSquashApplicable (EditOptionsQuestionEvent' event) =
@@ -54,7 +54,7 @@ instance SimpleEventSquash EditQuestionEvent where
         || isChanged (.referenceUuids) event
 
   --  --------------------------------------
-  isReorderEventSquashApplicable previousEvent newEvent = getEntityUuid previousEvent == getEntityUuid newEvent
+  isReorderEventSquashApplicable (previousEvent, _) (newEvent, _) = previousEvent.entityUuid == newEvent.entityUuid
 
   --  --------------------------------------
   isTypeChanged (EditOptionsQuestionEvent' oldEvent) (EditOptionsQuestionEvent' newEvent) = False
@@ -67,119 +67,105 @@ instance SimpleEventSquash EditQuestionEvent where
   isTypeChanged _ _ = True
 
   --  --------------------------------------
-  simpleSquashEvent mPreviousEvent (EditOptionsQuestionEvent' oldEvent) (EditOptionsQuestionEvent' newEvent) =
-    EditOptionsQuestionEvent' $
-      EditOptionsQuestionEvent
-        { uuid = newEvent.uuid
-        , parentUuid = newEvent.parentUuid
-        , entityUuid = newEvent.entityUuid
-        , title = applyValue oldEvent newEvent (.title)
-        , text = applyValue oldEvent newEvent (.text)
-        , requiredPhaseUuid = applyValue oldEvent newEvent (.requiredPhaseUuid)
-        , annotations = applyValue oldEvent newEvent (.annotations)
-        , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.tagUuids)
-        , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
-        , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
-        , answerUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.answerUuids)
-        , createdAt = oldEvent.createdAt
-        }
-  simpleSquashEvent mPreviousEvent (EditMultiChoiceQuestionEvent' oldEvent) (EditMultiChoiceQuestionEvent' newEvent) =
-    EditMultiChoiceQuestionEvent' $
-      EditMultiChoiceQuestionEvent
-        { uuid = newEvent.uuid
-        , parentUuid = newEvent.parentUuid
-        , entityUuid = newEvent.entityUuid
-        , title = applyValue oldEvent newEvent (.title)
-        , text = applyValue oldEvent newEvent (.text)
-        , requiredPhaseUuid = applyValue oldEvent newEvent (.requiredPhaseUuid)
-        , annotations = applyValue oldEvent newEvent (.annotations)
-        , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.tagUuids)
-        , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
-        , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
-        , choiceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.choiceUuids)
-        , createdAt = oldEvent.createdAt
-        }
-  simpleSquashEvent mPreviousEvent (EditListQuestionEvent' oldEvent) (EditListQuestionEvent' newEvent) =
-    EditListQuestionEvent' $
-      EditListQuestionEvent
-        { uuid = newEvent.uuid
-        , parentUuid = newEvent.parentUuid
-        , entityUuid = newEvent.entityUuid
-        , title = applyValue oldEvent newEvent (.title)
-        , text = applyValue oldEvent newEvent (.text)
-        , requiredPhaseUuid = applyValue oldEvent newEvent (.requiredPhaseUuid)
-        , annotations = applyValue oldEvent newEvent (.annotations)
-        , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.tagUuids)
-        , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
-        , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
-        , itemTemplateQuestionUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.itemTemplateQuestionUuids)
-        , createdAt = oldEvent.createdAt
-        }
-  simpleSquashEvent mPreviousEvent (EditValueQuestionEvent' oldEvent) (EditValueQuestionEvent' newEvent) =
-    EditValueQuestionEvent' $
-      EditValueQuestionEvent
-        { uuid = newEvent.uuid
-        , parentUuid = newEvent.parentUuid
-        , entityUuid = newEvent.entityUuid
-        , title = applyValue oldEvent newEvent (.title)
-        , text = applyValue oldEvent newEvent (.text)
-        , requiredPhaseUuid = applyValue oldEvent newEvent (.requiredPhaseUuid)
-        , annotations = applyValue oldEvent newEvent (.annotations)
-        , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.tagUuids)
-        , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
-        , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
-        , valueType = applyValue oldEvent newEvent (.valueType)
-        , validations = applyValue oldEvent newEvent (.validations)
-        , createdAt = oldEvent.createdAt
-        }
-  simpleSquashEvent mPreviousEvent (EditIntegrationQuestionEvent' oldEvent) (EditIntegrationQuestionEvent' newEvent) =
-    EditIntegrationQuestionEvent' $
-      EditIntegrationQuestionEvent
-        { uuid = newEvent.uuid
-        , parentUuid = newEvent.parentUuid
-        , entityUuid = newEvent.entityUuid
-        , title = applyValue oldEvent newEvent (.title)
-        , text = applyValue oldEvent newEvent (.text)
-        , requiredPhaseUuid = applyValue oldEvent newEvent (.requiredPhaseUuid)
-        , annotations = applyValue oldEvent newEvent (.annotations)
-        , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.tagUuids)
-        , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
-        , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
-        , integrationUuid = applyValue oldEvent newEvent (.integrationUuid)
-        , variables = applyValue oldEvent newEvent (.variables)
-        , createdAt = oldEvent.createdAt
-        }
-  simpleSquashEvent mPreviousEvent (EditItemSelectQuestionEvent' oldEvent) (EditItemSelectQuestionEvent' newEvent) =
-    EditItemSelectQuestionEvent' $
-      EditItemSelectQuestionEvent
-        { uuid = newEvent.uuid
-        , parentUuid = newEvent.parentUuid
-        , entityUuid = newEvent.entityUuid
-        , title = applyValue oldEvent newEvent (.title)
-        , text = applyValue oldEvent newEvent (.text)
-        , requiredPhaseUuid = applyValue oldEvent newEvent (.requiredPhaseUuid)
-        , annotations = applyValue oldEvent newEvent (.annotations)
-        , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.tagUuids)
-        , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
-        , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
-        , listQuestionUuid = applyValue oldEvent newEvent (.listQuestionUuid)
-        , createdAt = oldEvent.createdAt
-        }
-  simpleSquashEvent mPreviousEvent (EditFileQuestionEvent' oldEvent) (EditFileQuestionEvent' newEvent) =
-    EditFileQuestionEvent' $
-      EditFileQuestionEvent
-        { uuid = newEvent.uuid
-        , parentUuid = newEvent.parentUuid
-        , entityUuid = newEvent.entityUuid
-        , title = applyValue oldEvent newEvent (.title)
-        , text = applyValue oldEvent newEvent (.text)
-        , requiredPhaseUuid = applyValue oldEvent newEvent (.requiredPhaseUuid)
-        , annotations = applyValue oldEvent newEvent (.annotations)
-        , tagUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.tagUuids)
-        , expertUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.expertUuids)
-        , referenceUuids = applyValueIfSameEntity mPreviousEvent oldEvent newEvent (.referenceUuids)
-        , maxSize = applyValue oldEvent newEvent (.maxSize)
-        , fileTypes = applyValue oldEvent newEvent (.fileTypes)
-        , createdAt = oldEvent.createdAt
-        }
+  simpleSquashEvent mPreviousEvent (oldEvent, EditOptionsQuestionEvent' oldContent) (newEvent, EditOptionsQuestionEvent' newContent) =
+    createSquashedEvent oldEvent newEvent $
+      EditQuestionEvent' $
+        EditOptionsQuestionEvent' $
+          EditOptionsQuestionEvent
+            { title = applyValue oldContent newContent (.title)
+            , text = applyValue oldContent newContent (.text)
+            , requiredPhaseUuid = applyValue oldContent newContent (.requiredPhaseUuid)
+            , annotations = applyValue oldContent newContent (.annotations)
+            , tagUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.tagUuids)
+            , expertUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.expertUuids)
+            , referenceUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.referenceUuids)
+            , answerUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.answerUuids)
+            }
+  simpleSquashEvent mPreviousEvent (oldEvent, EditMultiChoiceQuestionEvent' oldContent) (newEvent, EditMultiChoiceQuestionEvent' newContent) =
+    createSquashedEvent oldEvent newEvent $
+      EditQuestionEvent' $
+        EditMultiChoiceQuestionEvent' $
+          EditMultiChoiceQuestionEvent
+            { title = applyValue oldContent newContent (.title)
+            , text = applyValue oldContent newContent (.text)
+            , requiredPhaseUuid = applyValue oldContent newContent (.requiredPhaseUuid)
+            , annotations = applyValue oldContent newContent (.annotations)
+            , tagUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.tagUuids)
+            , expertUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.expertUuids)
+            , referenceUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.referenceUuids)
+            , choiceUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.choiceUuids)
+            }
+  simpleSquashEvent mPreviousEvent (oldEvent, EditListQuestionEvent' oldContent) (newEvent, EditListQuestionEvent' newContent) =
+    createSquashedEvent oldEvent newEvent $
+      EditQuestionEvent' $
+        EditListQuestionEvent' $
+          EditListQuestionEvent
+            { title = applyValue oldContent newContent (.title)
+            , text = applyValue oldContent newContent (.text)
+            , requiredPhaseUuid = applyValue oldContent newContent (.requiredPhaseUuid)
+            , annotations = applyValue oldContent newContent (.annotations)
+            , tagUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.tagUuids)
+            , expertUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.expertUuids)
+            , referenceUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.referenceUuids)
+            , itemTemplateQuestionUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.itemTemplateQuestionUuids)
+            }
+  simpleSquashEvent mPreviousEvent (oldEvent, EditValueQuestionEvent' oldContent) (newEvent, EditValueQuestionEvent' newContent) =
+    createSquashedEvent oldEvent newEvent $
+      EditQuestionEvent' $
+        EditValueQuestionEvent' $
+          EditValueQuestionEvent
+            { title = applyValue oldContent newContent (.title)
+            , text = applyValue oldContent newContent (.text)
+            , requiredPhaseUuid = applyValue oldContent newContent (.requiredPhaseUuid)
+            , annotations = applyValue oldContent newContent (.annotations)
+            , tagUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.tagUuids)
+            , expertUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.expertUuids)
+            , referenceUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.referenceUuids)
+            , valueType = applyValue oldContent newContent (.valueType)
+            , validations = applyValue oldContent newContent (.validations)
+            }
+  simpleSquashEvent mPreviousEvent (oldEvent, EditIntegrationQuestionEvent' oldContent) (newEvent, EditIntegrationQuestionEvent' newContent) =
+    createSquashedEvent oldEvent newEvent $
+      EditQuestionEvent' $
+        EditIntegrationQuestionEvent' $
+          EditIntegrationQuestionEvent
+            { title = applyValue oldContent newContent (.title)
+            , text = applyValue oldContent newContent (.text)
+            , requiredPhaseUuid = applyValue oldContent newContent (.requiredPhaseUuid)
+            , annotations = applyValue oldContent newContent (.annotations)
+            , tagUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.tagUuids)
+            , expertUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.expertUuids)
+            , referenceUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.referenceUuids)
+            , integrationUuid = applyValue oldContent newContent (.integrationUuid)
+            , variables = applyValue oldContent newContent (.variables)
+            }
+  simpleSquashEvent mPreviousEvent (oldEvent, EditItemSelectQuestionEvent' oldContent) (newEvent, EditItemSelectQuestionEvent' newContent) =
+    createSquashedEvent oldEvent newEvent $
+      EditQuestionEvent' $
+        EditItemSelectQuestionEvent' $
+          EditItemSelectQuestionEvent
+            { title = applyValue oldContent newContent (.title)
+            , text = applyValue oldContent newContent (.text)
+            , requiredPhaseUuid = applyValue oldContent newContent (.requiredPhaseUuid)
+            , annotations = applyValue oldContent newContent (.annotations)
+            , tagUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.tagUuids)
+            , expertUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.expertUuids)
+            , referenceUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.referenceUuids)
+            , listQuestionUuid = applyValue oldContent newContent (.listQuestionUuid)
+            }
+  simpleSquashEvent mPreviousEvent (oldEvent, EditFileQuestionEvent' oldContent) (newEvent, EditFileQuestionEvent' newContent) =
+    createSquashedEvent oldEvent newEvent $
+      EditQuestionEvent' $
+        EditFileQuestionEvent' $
+          EditFileQuestionEvent
+            { title = applyValue oldContent newContent (.title)
+            , text = applyValue oldContent newContent (.text)
+            , requiredPhaseUuid = applyValue oldContent newContent (.requiredPhaseUuid)
+            , annotations = applyValue oldContent newContent (.annotations)
+            , tagUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.tagUuids)
+            , expertUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.expertUuids)
+            , referenceUuids = applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) (.referenceUuids)
+            , maxSize = applyValue oldContent newContent (.maxSize)
+            , fileTypes = applyValue oldContent newContent (.fileTypes)
+            }
   simpleSquashEvent previousEvent oldEvent newEvent = error $ "Simple squash event is not applicable for " <> show (oldEvent, newEvent) <> " in " <> show previousEvent

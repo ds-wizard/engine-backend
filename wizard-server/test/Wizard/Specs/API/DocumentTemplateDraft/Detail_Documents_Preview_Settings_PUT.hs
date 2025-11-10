@@ -3,11 +3,15 @@ module Wizard.Specs.API.DocumentTemplateDraft.Detail_Documents_Preview_Settings_
 ) where
 
 import Data.Aeson (encode)
+import Data.Foldable (traverse_)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataChangeJM ()
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataJM ()
@@ -17,8 +21,6 @@ import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTempl
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Context.AppContext
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -65,7 +67,8 @@ create_test_200 title appContext reqAuthHeader =
       let expDto = wizardDocumentTemplateDraftDataDTO
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext
-      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       runInContextIO (insertQuestionnaire questionnaire1) appContext
       runInContextIO (insertQuestionnaire questionnaire2) appContext
       runInContextIO (insertDraftData wizardDocumentTemplateDraftData) appContext

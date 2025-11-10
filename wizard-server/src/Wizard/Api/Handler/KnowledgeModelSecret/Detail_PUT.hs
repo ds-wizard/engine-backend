@@ -6,11 +6,11 @@ import Servant
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretChangeDTO
-import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretChangeJM ()
-import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretJM ()
+import Wizard.Api.Resource.KnowledgeModel.Secret.KnowledgeModelSecretChangeDTO
+import Wizard.Api.Resource.KnowledgeModel.Secret.KnowledgeModelSecretChangeJM ()
+import Wizard.Api.Resource.KnowledgeModel.Secret.KnowledgeModelSecretJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Model.KnowledgeModelSecret.KnowledgeModelSecret
+import Wizard.Model.KnowledgeModel.KnowledgeModelSecret
 import Wizard.Service.KnowledgeModel.Secret.KnowledgeModelSecretService
 
 type Detail_PUT =

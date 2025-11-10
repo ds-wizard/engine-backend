@@ -4,12 +4,12 @@ import Data.Aeson
 
 import Shared.Common.Api.Resource.Config.SimpleFeatureJM ()
 import Shared.Common.Util.Aeson
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePatternJM ()
 import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientParameterJM ()
 import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientStyleJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()
 import Wizard.Model.Tenant.Config.TenantConfig
-import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePatternJM ()
 import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigJM ()
 
 instance FromJSON TenantConfig where

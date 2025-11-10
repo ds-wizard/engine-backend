@@ -4,10 +4,10 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Model.Branch.BranchSuggestion
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
+import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Model.Package.PackagePattern
 
 data DocumentTemplateDraftDetail = DocumentTemplateDraftDetail
   { tId :: String
@@ -17,12 +17,12 @@ data DocumentTemplateDraftDetail = DocumentTemplateDraftDetail
   , description :: String
   , readme :: String
   , license :: String
-  , allowedPackages :: [PackagePattern]
+  , allowedPackages :: [KnowledgeModelPackagePattern]
   , formats :: [DocumentTemplateFormat]
   , questionnaireUuid :: Maybe U.UUID
   , questionnaire :: Maybe QuestionnaireSuggestion
-  , branchUuid :: Maybe U.UUID
-  , branch :: Maybe BranchSuggestion
+  , knowledgeModelEditorUuid :: Maybe U.UUID
+  , knowledgeModelEditor :: Maybe KnowledgeModelEditorSuggestion
   , formatUuid :: Maybe U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

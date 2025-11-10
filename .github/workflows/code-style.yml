@@ -42,7 +42,6 @@ jobs:
         hlint shared-common
         hlint registry-public
         hlint registry-server
-        hlint wizard-common
         hlint wizard-public
         hlint wizard-server
 
@@ -102,10 +101,6 @@ jobs:
         hpack --force
         cd ..
 
-        cd wizard-common
-        hpack --force
-        cd ..
-
         cd wizard-public
         hpack --force
         cd ..
@@ -121,7 +116,6 @@ jobs:
           shared-common/src \
           registry-public/src \
           registry-server/src registry-server/test \
-          wizard-common/src wizard-common/test \
           wizard-public/src \
           wizard-server/src wizard-server/test \
           -name '*.hs'

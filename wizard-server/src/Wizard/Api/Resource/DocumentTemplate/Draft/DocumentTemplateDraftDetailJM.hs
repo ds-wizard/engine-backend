@@ -3,11 +3,11 @@ module Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDetailJM 
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.Branch.BranchSuggestionJM ()
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePatternJM ()
+import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorSuggestionJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSuggestionJM ()
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftDetail
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
-import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePatternJM ()
 
 instance FromJSON DocumentTemplateDraftDetail where
   parseJSON = genericParseJSON jsonOptions

@@ -7,8 +7,8 @@ import Registry.Database.Migration.Development.Statistics.Data.InstanceStatistic
 import Registry.Model.Audit.AuditEntry
 import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import RegistryLib.Model.Organization.Organization
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 
 listPackagesAuditEntry :: AuditEntry
 listPackagesAuditEntry =
@@ -18,10 +18,10 @@ listPackagesAuditEntry =
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
-getPackageBundleAuditEntry :: AuditEntry
-getPackageBundleAuditEntry =
-  GetPackageBundleAuditEntry
+getKnowledgeModelBundleAuditEntry :: AuditEntry
+getKnowledgeModelBundleAuditEntry =
+  GetKnowledgeModelBundleAuditEntry
     { organizationId = orgGlobal.organizationId
-    , packageId = netherlandsPackageV2.pId
+    , knowledgeModelPackageId = netherlandsKmPackageV2.pId
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }

@@ -14,7 +14,7 @@ import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.TransactionState
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Token
-import Wizard.Api.Resource.Package.PackageSimpleJM ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleJM ()
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.Migration.Development.User.Data.Users

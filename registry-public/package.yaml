@@ -22,7 +22,6 @@ library:
       ghc-options: -threaded -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial -Werror=missing-fields -Werror=incomplete-patterns
   dependencies:
   - shared-common
-  - wizard-common
   - base
   - aeson
   - servant-server

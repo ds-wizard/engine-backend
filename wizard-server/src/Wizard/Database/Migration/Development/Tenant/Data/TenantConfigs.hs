@@ -2,9 +2,14 @@ module Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs where
 
 import qualified Data.Map.Strict as M
 
+import Shared.Common.Constant.Tenant
 import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Model.Config.SimpleFeature
 import Shared.Common.Util.Date
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Shared.OpenId.Database.Migration.Development.OpenId.Data.OpenIds
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
@@ -14,10 +19,6 @@ import Wizard.Model.Tenant.Config.TenantConfigEM ()
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.Tenant.Config.ConfigMapper
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs
 
 defaultSecret = "01234567890123456789012345678901"
@@ -166,14 +167,14 @@ defaultKnowledgeModelPublic :: TenantConfigKnowledgeModelPublic
 defaultKnowledgeModelPublic =
   TenantConfigKnowledgeModelPublic
     { enabled = defaultKnowledgeModelPublicChangeDto.enabled
-    , packages = zipWith (\i p -> fromKnowledgeModelPublicPackagePatternChangeDTO p defaultTenant.uuid i (dt' 2018 1 20) (dt' 2018 1 20)) [0 ..] defaultKnowledgeModelPublicChangeDto.packages
+    , knowledgeModelPackages = zipWith (\i p -> fromKnowledgeModelPublicPackagePatternChangeDTO p defaultTenant.uuid i (dt' 2018 1 20) (dt' 2018 1 20)) [0 ..] defaultKnowledgeModelPublicChangeDto.knowledgeModelPackages
     }
 
 defaultKnowledgeModelPublicChangeDto :: TenantConfigKnowledgeModelPublicChangeDTO
 defaultKnowledgeModelPublicChangeDto =
   TenantConfigKnowledgeModelPublicChangeDTO
     { enabled = True
-    , packages = [packagePatternGlobal]
+    , knowledgeModelPackages = [kmPackagePatternGlobal]
     }
 
 defaultKnowledgeModelPublicPackagePattern :: TenantConfigKnowledgeModelPublicPackagePattern
@@ -325,7 +326,7 @@ defaultOwl =
     , organizationId = ""
     , kmId = ""
     , version = ""
-    , previousPackageId = Nothing
+    , previousKnowledgeModelPackageId = Nothing
     , rootElement = ""
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 20
@@ -338,3 +339,18 @@ editedQuestionnaire = fromQuestionnaireChangeDTO editedQuestionnaireChangeDto de
 
 editedQuestionnaireChangeDto :: TenantConfigQuestionnaireChangeDTO
 editedQuestionnaireChangeDto = defaultQuestionnaireChangeDto {summaryReport = SimpleFeature False}
+
+-- ------------------------------------------------------------
+-- ------------------------------------------------------------
+differentSubmission :: TenantConfigSubmission
+differentSubmission =
+  defaultSubmission
+    { tenantUuid = differentTenantUuid
+    , services = [differentSubmissionService]
+    }
+
+differentSubmissionService :: TenantConfigSubmissionService
+differentSubmissionService =
+  defaultSubmissionService
+    { tenantUuid = differentTenantUuid
+    }

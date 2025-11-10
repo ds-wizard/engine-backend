@@ -4,6 +4,13 @@ import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
+import Shared.DocumentTemplate.Constant.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import qualified Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as SPM
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
@@ -39,19 +46,11 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.Acl.AclMapper
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
-import WizardLib.DocumentTemplate.Constant.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.Package.Package
-import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
-import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as SPM
 import WizardLib.Public.Model.PersistentCommand.Questionnaire.CreateQuestionnaireCommand
 import WizardLib.Public.Model.User.UserGroup
 
-toDTO :: Questionnaire -> Package -> QuestionnaireState -> [QuestionnairePermDTO] -> QuestionnaireDTO
-toDTO qtn package state permissions =
+toDTO :: Questionnaire -> KnowledgeModelPackage -> QuestionnaireState -> [QuestionnairePermDTO] -> QuestionnaireDTO
+toDTO qtn kmPackage state permissions =
   QuestionnaireDTO
     { uuid = qtn.uuid
     , name = qtn.name
@@ -59,7 +58,7 @@ toDTO qtn package state permissions =
     , visibility = qtn.visibility
     , sharing = qtn.sharing
     , state = state
-    , package = SPM.toSimple package
+    , knowledgeModelPackage = SPM.toSimple kmPackage
     , permissions = permissions
     , isTemplate = qtn.isTemplate
     , createdAt = qtn.createdAt
@@ -75,15 +74,15 @@ toDTO' qtn =
     , visibility = qtn.visibility
     , sharing = qtn.sharing
     , state = qtn.state
-    , package = qtn.package
+    , knowledgeModelPackage = qtn.knowledgeModelPackage
     , permissions = qtn.permissions
     , isTemplate = qtn.isTemplate
     , createdAt = qtn.createdAt
     , updatedAt = qtn.updatedAt
     }
 
-toSimpleDTO :: Questionnaire -> PackageWithEvents -> QuestionnaireState -> [QuestionnairePermDTO] -> QuestionnaireDTO
-toSimpleDTO qtn package state permissions =
+toSimpleDTO :: Questionnaire -> KnowledgeModelPackage -> QuestionnaireState -> [QuestionnairePermDTO] -> QuestionnaireDTO
+toSimpleDTO qtn kmPackage state permissions =
   QuestionnaireDTO
     { uuid = qtn.uuid
     , name = qtn.name
@@ -91,7 +90,7 @@ toSimpleDTO qtn package state permissions =
     , visibility = qtn.visibility
     , sharing = qtn.sharing
     , state = state
-    , package = SPM.toSimple . SPM.toPackage $ package
+    , knowledgeModelPackage = SPM.toSimple kmPackage
     , permissions = permissions
     , isTemplate = qtn.isTemplate
     , createdAt = qtn.createdAt
@@ -105,7 +104,7 @@ toDetailQuestionnaire qtn migrationUuid permissions questionnaireActionsAvailabl
     , name = qtn.name
     , visibility = qtn.visibility
     , sharing = qtn.sharing
-    , packageId = qtn.packageId
+    , knowledgeModelPackageId = qtn.knowledgeModelPackageId
     , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
     , isTemplate = qtn.isTemplate
     , migrationUuid = migrationUuid
@@ -244,7 +243,7 @@ fromShareChangeDTO qtn dto visibility sharing now =
     , description = qtn.description
     , visibility = visibility
     , sharing = sharing
-    , packageId = qtn.packageId
+    , knowledgeModelPackageId = qtn.knowledgeModelPackageId
     , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
     , projectTags = qtn.projectTags
     , documentTemplateId = qtn.documentTemplateId
@@ -266,7 +265,7 @@ fromSettingsChangeDTO qtn dto currentUser now =
     , description = dto.description
     , visibility = qtn.visibility
     , sharing = qtn.sharing
-    , packageId = qtn.packageId
+    , knowledgeModelPackageId = qtn.knowledgeModelPackageId
     , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
     , projectTags = dto.projectTags
     , documentTemplateId = dto.documentTemplateId
@@ -302,7 +301,7 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId
       , description = Nothing
       , visibility = visibility
       , sharing = sharing
-      , packageId = pkgId
+      , knowledgeModelPackageId = pkgId
       , selectedQuestionTagUuids = dto.questionTagUuids
       , projectTags = []
       , documentTemplateId = dto.documentTemplateId
@@ -357,7 +356,7 @@ fromCreateQuestionnaireCommand command uuid permissions tcQuestionnaire createdB
     , description = Nothing
     , visibility = tcQuestionnaire.questionnaireVisibility.defaultValue
     , sharing = tcQuestionnaire.questionnaireSharing.defaultValue
-    , packageId = command.packageId
+    , knowledgeModelPackageId = command.knowledgeModelPackageId
     , selectedQuestionTagUuids = []
     , projectTags = []
     , documentTemplateId = command.documentTemplateId

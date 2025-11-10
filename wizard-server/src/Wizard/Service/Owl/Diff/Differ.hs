@@ -6,17 +6,17 @@ import Control.Monad.IO.Class (MonadIO)
 import Data.Maybe (catMaybes)
 import qualified Data.UUID as U
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
 import Wizard.Service.Owl.Diff.Accessor.Accessor
 import Wizard.Service.Owl.Diff.EventFactory.Answer ()
 import Wizard.Service.Owl.Diff.EventFactory.Chapter ()
 import Wizard.Service.Owl.Diff.EventFactory.Choice ()
 import Wizard.Service.Owl.Diff.EventFactory.EventFactory
 import Wizard.Service.Owl.Diff.EventFactory.Question ()
-import WizardLib.KnowledgeModel.Model.Event.Event
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
 
-diffKnowledgeModel :: MonadIO m => (KnowledgeModel, KnowledgeModel) -> m [Event]
+diffKnowledgeModel :: MonadIO m => (KnowledgeModel, KnowledgeModel) -> m [KnowledgeModelEvent]
 diffKnowledgeModel (oldKm, newKm) = do
   let oldChapters = getChaptersForKmUuid oldKm
   let newChapters = getChaptersForKmUuid newKm
@@ -25,7 +25,7 @@ diffKnowledgeModel (oldKm, newKm) = do
   deleteChapterEvents <- traverse (createDeleteEvent newKm.uuid) (getDiffEntities newChapters oldChapters)
   return $ concat existingChaptersDiff ++ newChapterEvents ++ deleteChapterEvents
 
-diffChapter :: MonadIO m => (KnowledgeModel, KnowledgeModel) -> (Chapter, Chapter) -> m [Event]
+diffChapter :: MonadIO m => (KnowledgeModel, KnowledgeModel) -> (Chapter, Chapter) -> m [KnowledgeModelEvent]
 diffChapter (oldKm, newKm) (oldCh, newCh) = do
   editChapterEvent <- createEditEvent (oldKm, newKm) U.nil oldCh newCh
   let oldQuestions = getQuestionsForChapterUuid oldKm oldCh.uuid
@@ -35,7 +35,7 @@ diffChapter (oldKm, newKm) (oldCh, newCh) = do
   deletedQuestionEvents <- traverse (createDeleteEvent newCh.uuid) (getDiffEntities newQuestions oldQuestions)
   return $ catMaybes [editChapterEvent] ++ concat existingQuestionsDiff ++ newQuestionEvents ++ deletedQuestionEvents
 
-diffQuestion :: MonadIO m => (KnowledgeModel, KnowledgeModel) -> (Question, Question) -> m [Event]
+diffQuestion :: MonadIO m => (KnowledgeModel, KnowledgeModel) -> (Question, Question) -> m [KnowledgeModelEvent]
 diffQuestion (oldKm, newKm) (OptionsQuestion' oldQ, OptionsQuestion' newQ) = do
   editQuestionEvent <- createEditEvent (oldKm, newKm) U.nil (OptionsQuestion' oldQ) (OptionsQuestion' newQ)
   let oldAnswers = getAnswersForQuestionUuid oldKm oldQ.uuid
@@ -65,7 +65,7 @@ diffQuestion (oldKm, newKm) (ValueQuestion' oldQ, ValueQuestion' newQ) = do
   return $ catMaybes [editQuestionEvent]
 diffQuestion (oldKm, newKm) _ = return []
 
-diffAnswer :: MonadIO m => (KnowledgeModel, KnowledgeModel) -> (Answer, Answer) -> m [Event]
+diffAnswer :: MonadIO m => (KnowledgeModel, KnowledgeModel) -> (Answer, Answer) -> m [KnowledgeModelEvent]
 diffAnswer (oldKm, newKm) (oldAnswer, newAnswer) = do
   editAnswerEvent <- createEditEvent (oldKm, newKm) U.nil oldAnswer newAnswer
   let oldQuestions = getQuestionsForAnswerUuid oldKm oldAnswer.uuid
@@ -75,7 +75,7 @@ diffAnswer (oldKm, newKm) (oldAnswer, newAnswer) = do
   deletedQuestionEvents <- traverse (createDeleteEvent oldAnswer.uuid) (getDiffEntities newQuestions oldQuestions)
   return $ catMaybes [editAnswerEvent] ++ concat existingQuestionsDiff ++ newQuestionEvents ++ deletedQuestionEvents
 
-diffChoice :: MonadIO m => (KnowledgeModel, KnowledgeModel) -> (Choice, Choice) -> m [Event]
+diffChoice :: MonadIO m => (KnowledgeModel, KnowledgeModel) -> (Choice, Choice) -> m [KnowledgeModelEvent]
 diffChoice (oldKm, newKm) (oldChoice, newChoice) = do
   editChoiceEvent <- createEditEvent (oldKm, newKm) U.nil oldChoice newChoice
   return $ catMaybes [editChoiceEvent]

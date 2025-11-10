@@ -7,21 +7,27 @@ import Shared.Common.Api.Resource.Common.PageMetadataSM ()
 import Shared.Common.Database.Migration.Development.Common.Data.Pages
 import Shared.Common.Model.Common.Page
 import Shared.Common.Util.Swagger
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionSM ()
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Shared.Locale.Api.Resource.Locale.LocaleSuggestionSM ()
 import Shared.Locale.Database.Migration.Development.Locale.Data.Locales
 import Shared.Locale.Model.Locale.LocaleSuggestion
-import Wizard.Api.Resource.Branch.BranchListSM ()
-import Wizard.Api.Resource.Branch.BranchSuggestionSM ()
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentSM ()
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleSM ()
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftListSM ()
+import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorListSM ()
+import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorSuggestionSM ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleSM ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSuggestionSM ()
 import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Api.Resource.Locale.LocaleSM ()
-import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Api.Resource.Package.PackageSimpleSM ()
-import Wizard.Api.Resource.Package.PackageSuggestionSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Wizard.Api.Resource.Questionnaire.File.QuestionnaireFileListSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadAssignedSM ()
@@ -37,9 +43,9 @@ import Wizard.Api.Resource.Tenant.TenantSM ()
 import Wizard.Api.Resource.User.Group.UserGroupSuggestionSM ()
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserSM ()
-import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
 import Wizard.Database.Migration.Development.Locale.Data.Locales
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireFiles
@@ -48,27 +54,20 @@ import Wizard.Database.Migration.Development.QuestionnaireAction.Data.Questionna
 import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.Branch.BranchList
-import Wizard.Model.Branch.BranchSuggestion
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
-import Wizard.Model.Package.PackageSuggestion
+import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
+import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Questionnaire.QuestionnaireCommentThreadAssigned
 import Wizard.Model.Questionnaire.QuestionnaireFileList
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
 import Wizard.Model.User.UserGroupSuggestion
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
-import qualified Wizard.Service.Package.PackageMapper as P_Mapper
+import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as P_Mapper
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
 import qualified Wizard.Service.Tenant.TenantMapper as TNT_Mapper
 import qualified Wizard.Service.User.Group.UserGroupMapper as UG_Mapper
 import qualified Wizard.Service.User.UserMapper as U_Mapper
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionSM ()
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as SP_Mapper
 import WizardLib.Public.Api.Resource.PersistentCommand.PersistentCommandListSM ()
 import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Api.Resource.User.UserSuggestionSM ()
@@ -101,25 +100,25 @@ instance ToSchema (Page LocaleSuggestion) where
   declareNamedSchema =
     toSwaggerWithDtoName "Page LocaleSuggestion" (Page "locales" pageMetadata [localeNlSuggestion])
 
-instance ToSchema (Page PackageSimpleDTO) where
+instance ToSchema (Page KnowledgeModelPackageSimpleDTO) where
   declareNamedSchema =
     toSwaggerWithDtoName
-      "Page PackageSimpleDTO"
-      (Page "packages" pageMetadata [P_Mapper.toSimpleDTO (SP_Mapper.toPackage globalPackage)])
+      "Page KnowledgeModelPackageSimpleDTO"
+      (Page "knowledgeModelPackages" pageMetadata [P_Mapper.toSimpleDTO globalKmPackage])
 
-instance ToSchema (Page PackageSuggestion) where
+instance ToSchema (Page KnowledgeModelPackageSuggestion) where
   declareNamedSchema =
     toSwaggerWithDtoName
-      "Page PackageSuggestion"
-      (Page "packages" pageMetadata [P_Mapper.toSuggestion (SP_Mapper.toPackage globalPackage)])
+      "Page KnowledgeModelPackageSuggestion"
+      (Page "knowledgeModelPackages" pageMetadata [P_Mapper.toSuggestion globalKmPackage])
 
-instance ToSchema (Page BranchList) where
+instance ToSchema (Page KnowledgeModelEditorList) where
   declareNamedSchema =
-    toSwaggerWithDtoName "Page BranchList" (Page "branches" pageMetadata [amsterdamBranchList])
+    toSwaggerWithDtoName "Page KnowledgeModelEditorList" (Page "knowledgeModelEditors" pageMetadata [amsterdamKnowledgeModelEditorList])
 
-instance ToSchema (Page BranchSuggestion) where
+instance ToSchema (Page KnowledgeModelEditorSuggestion) where
   declareNamedSchema =
-    toSwaggerWithDtoName "Page BranchSuggestion" (Page "branches" pageMetadata [amsterdamBranchSuggestion])
+    toSwaggerWithDtoName "Page KnowledgeModelEditorSuggestion" (Page "knowledgeModelEditors" pageMetadata [amsterdamKnowledgeModelEditorSuggestion])
 
 instance ToSchema (Page QuestionnaireDTO) where
   declareNamedSchema =

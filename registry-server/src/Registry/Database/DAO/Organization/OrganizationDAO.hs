@@ -28,7 +28,7 @@ findUsedOrganizations = do
         "SELECT organization_id, name, logo \
         \FROM organization \
         \WHERE organization_id IN (SELECT DISTINCT nested.organization_id \
-        \                          FROM (SELECT DISTINCT organization_id FROM package \
+        \                          FROM (SELECT DISTINCT organization_id FROM knowledge_model_package \
         \                                UNION ALL \
         \                                SELECT DISTINCT organization_id FROM document_template \
         \                                UNION ALL \

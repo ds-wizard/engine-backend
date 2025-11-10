@@ -8,7 +8,7 @@ data WizardUsageDTO = WizardUsageDTO
   { users :: UsageEntryDTO
   , activeUsers :: UsageEntryDTO
   , knowledgeModels :: UsageEntryDTO
-  , branches :: UsageEntryDTO
+  , knowledgeModelEditors :: UsageEntryDTO
   , documentTemplates :: UsageEntryDTO
   , documentTemplateDrafts :: UsageEntryDTO
   , questionnaires :: UsageEntryDTO

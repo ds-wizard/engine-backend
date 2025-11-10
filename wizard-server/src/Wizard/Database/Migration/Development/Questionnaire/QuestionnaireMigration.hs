@@ -4,6 +4,8 @@ import Data.Foldable (traverse_)
 
 import Shared.Common.Constant.Component
 import Shared.Common.Util.Logger
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -15,8 +17,6 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireCom
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.S3.Questionnaire.QuestionnaireFileS3
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 runMigration = do
   logInfo _CMP_MIGRATION "(Questionnaire/Questionnaire) started"
@@ -27,7 +27,7 @@ runMigration = do
   deleteQuestionnairePerms
   deleteQuestionnaireEvents
   deleteQuestionnaires
-  insertPackage germanyPackage
+  insertPackage germanyKmPackage
   insertQuestionnaire questionnaire1
   insertQuestionnaireEvents (fEvents questionnaire1Uuid)
   traverse_ insertQuestionnaireVersion questionnaire1Versions

@@ -4,6 +4,10 @@ import qualified Data.List as L
 import qualified Data.Map.Strict as M
 import Prelude hiding (lookup)
 
+import Shared.KnowledgeModel.Model.Common.Lens
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.Phase.PhaseEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compiler.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Chapter ()
@@ -17,24 +21,20 @@ import Wizard.Service.KnowledgeModel.Compiler.Modifier.Phase ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Question
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Tag ()
-import WizardLib.KnowledgeModel.Model.Common.Lens
-import WizardLib.KnowledgeModel.Model.Event.EventLenses
-import WizardLib.KnowledgeModel.Model.Event.Phase.PhaseEvent
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 instance ApplyEvent AddPhaseEvent where
-  apply event = Right . addEntity . addEntityReference
+  apply event content = Right . addEntity . addEntityReference
     where
-      addEntityReference km = km {phaseUuids = km.phaseUuids ++ [getEntityUuid event]}
-      addEntity = putInPhasesM (getEntityUuid event) (createEntity event)
+      addEntityReference km = km {phaseUuids = km.phaseUuids ++ [event.entityUuid]}
+      addEntity = putInPhasesM event.entityUuid (createEntity event content)
 
 instance ApplyEvent EditPhaseEvent where
   apply = applyEditEvent getPhasesM setPhasesM
 
 instance ApplyEvent DeletePhaseEvent where
-  apply event = Right . deleteEntity . deleteEntityReference . deleteEntityChildrenReference
+  apply event content = Right . deleteEntity . deleteEntityReference . deleteEntityChildrenReference
     where
-      deleteEntityReference km = km {phaseUuids = L.delete (getEntityUuid event) km.phaseUuids}
-      deleteEntity km = deletePhase km (getEntityUuid event)
+      deleteEntityReference km = km {phaseUuids = L.delete event.entityUuid km.phaseUuids}
+      deleteEntity km = deletePhase km event.entityUuid
       deleteEntityChildrenReference km =
         setQuestionsM km $ M.map (deletePhaseReference event) km.entities.questions

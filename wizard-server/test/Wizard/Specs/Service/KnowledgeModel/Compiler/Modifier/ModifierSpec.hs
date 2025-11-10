@@ -3,6 +3,18 @@ module Wizard.Specs.Service.KnowledgeModel.Compiler.Modifier.ModifierSpec where
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Event.KnowledgeModelEvents
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Experts
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Integrations
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Metrics
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.References
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Tags
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Chapter ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Expert ()
@@ -14,17 +26,6 @@ import Wizard.Service.KnowledgeModel.Compiler.Modifier.Phase ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Question
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Tag ()
-import WizardLib.KnowledgeModel.Database.Migration.Development.Event.Data.Events
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Experts
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Integrations
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Metrics
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.References
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Tags
 
 modifierSpec =
   describe "Modifier" $ do
@@ -34,10 +35,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = a_km1
+            let (AddKnowledgeModelEvent' content) = event.content
             -- AND: Expectations
             let expected = km1WithoutChaptersAndTagsAndIntegrations
             -- WHEN:
-            let computed = createEntity event
+            let computed = createEntity event content
             -- THEN:
             computed `shouldBe` expected
       describe "editKM" $
@@ -45,10 +47,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = e_km1
+            let (EditKnowledgeModelEvent' content) = event.content
             -- AND: Expectations
             let expected = km1Edited
             -- WHEN:
-            let computed = editEntity event km1
+            let computed = editEntity event content km1
             -- THEN:
             computed `shouldBe` expected
     describe "Chapter level" $ do
@@ -57,10 +60,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = a_km1_ch1
+            let (AddChapterEvent' content) = event.content
             -- AND: Expectations
             let expected = chapter1WithoutQuestions
             -- WHEN:
-            let computed = createEntity event
+            let computed = createEntity event content
             -- THEN:
             computed `shouldBe` expected
       describe "editChapter" $
@@ -68,10 +72,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = e_km1_ch1
+            let (EditChapterEvent' content) = event.content
             -- AND: Expectations
             let expected = chapter1Edited
             -- WHEN:
-            let computed = editEntity event chapter1
+            let computed = editEntity event content chapter1
             -- THEN:
             computed `shouldBe` expected
     describe "Question level" $ do
@@ -80,33 +85,36 @@ modifierSpec =
           it "Successfully created" $
             -- GIVEN: Inputs
             do
-              let event = a_km1_ch1_q2'
+              let event = a_km1_ch1_q2
+              let (AddQuestionEvent' content) = event.content
               -- AND: Expectations
               let expected = question2Plain'
               -- WHEN:
-              let computed = createEntity event
+              let computed = createEntity event content
               -- THEN:
               computed `shouldBe` expected
         describe "ListQuestion" $
           it "Successfully created" $
             -- GIVEN: Inputs
             do
-              let event = a_km1_ch2_q4'
+              let event = a_km1_ch2_q4
+              let (AddQuestionEvent' content) = event.content
               -- AND: Expectations
               let expected = question4Plain'
               -- WHEN:
-              let computed = createEntity event
+              let computed = createEntity event content
               -- THEN:
               computed `shouldBe` expected
         describe "ValueQuestion" $
           it "Successfully created" $
             -- GIVEN: Inputs
             do
-              let event = a_km1_ch1_q1'
+              let event = a_km1_ch1_q1
+              let (AddQuestionEvent' content) = event.content
               -- AND: Expectations
               let expected = question1'
               -- WHEN:
-              let computed = createEntity event
+              let computed = createEntity event content
               -- THEN:
               computed `shouldBe` expected
       describe "editEntity" $ do
@@ -115,22 +123,24 @@ modifierSpec =
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch1_q2'
+                let event = e_km1_ch1_q2
+                let (EditQuestionEvent' content) = event.content
                 -- AND: Expectations
                 let expected = question2Edited'
                 -- WHEN:
-                let computed = editEntity event question2'
+                let computed = editEntity event content question2'
                 -- THEN:
                 computed `shouldBe` expected
           describe "With changing question type" $
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch1_q2_type'
+                let event = e_km1_ch1_q2_type
+                let (EditQuestionEvent' content) = event.content
                 -- AND: Expectations
                 let expected = question2WithNewType'
                 -- WHEN:
-                let computed = editEntity event question2'
+                let computed = editEntity event content question2'
                 -- THEN:
                 computed `shouldBe` expected
         describe "ListQuestion" $ do
@@ -138,22 +148,24 @@ modifierSpec =
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch2_q4'
+                let event = e_km1_ch2_q4
+                let (EditQuestionEvent' content) = event.content
                 -- AND: Expectations
                 let expected = question4Edited'
                 -- WHEN:
-                let computed = editEntity event question4'
+                let computed = editEntity event content question4'
                 -- THEN:
                 computed `shouldBe` expected
           describe "With changing question type" $
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch2_q4_type'
+                let event = e_km1_ch2_q4_type
+                let (EditQuestionEvent' content) = event.content
                 -- AND: Expectations
                 let expected = question4WithNewType'
                 -- WHEN:
-                let computed = editEntity event question4'
+                let computed = editEntity event content question4'
                 -- THEN:
                 computed `shouldBe` expected
         describe "ValueQuestion" $ do
@@ -161,22 +173,24 @@ modifierSpec =
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch1_q1'
+                let event = e_km1_ch1_q1
+                let (EditQuestionEvent' content) = event.content
                 -- AND: Expectations
                 let expected = question1Edited'
                 -- WHEN:
-                let computed = editEntity event question1'
+                let computed = editEntity event content question1'
                 -- THEN:
                 computed `shouldBe` expected
           describe "With changing question type" $
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch1_q1_type'
+                let event = e_km1_ch1_q1_type
+                let (EditQuestionEvent' content) = event.content
                 -- AND: Expectations
                 let expected = question1WithNewType'
                 -- WHEN:
-                let computed = editEntity event question1'
+                let computed = editEntity event content question1'
                 -- THEN:
                 computed `shouldBe` expected
         describe "IntegrationQuestion" $ do
@@ -184,22 +198,24 @@ modifierSpec =
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch3_q9'
+                let event = e_km1_ch3_q9
+                let (EditQuestionEvent' content) = event.content
                 -- AND: Expectations
                 let expected = question9Edited'
                 -- WHEN:
-                let computed = editEntity event question9'
+                let computed = editEntity event content question9'
                 -- THEN:
                 computed `shouldBe` expected
           describe "With changing question type" $
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch3_q9_type'
+                let event = e_km1_ch3_q9_type
+                let (EditQuestionEvent' content) = event.content
                 -- AND: Expectations
                 let expected = question9WithNewType'
                 -- WHEN:
-                let computed = editEntity event question9'
+                let computed = editEntity event content question9'
                 -- THEN:
                 computed `shouldBe` expected
       describe "updateIntegrationVariables" $ do
@@ -207,44 +223,48 @@ modifierSpec =
           it "Do nothing with the question" $
             -- GIVEN: Inputs
             do
-              let event = e_km1_iop'
+              let event = e_km1_iop
+              let (EditIntegrationEvent' content) = event.content
               -- AND: Expectations
               let expected = question2'
               -- WHEN:
-              let computed = updateIntegrationVariables event question2'
+              let computed = updateIntegrationVariables event content question2'
               -- THEN:
               computed `shouldBe` expected
         describe "ListQuestion" $
           it "Do nothing with the question" $
             -- GIVEN: Inputs
             do
-              let event = e_km1_iop'
+              let event = e_km1_iop
+              let (EditIntegrationEvent' content) = event.content
               -- AND: Expectations
               let expected = question4'
               -- WHEN:
-              let computed = updateIntegrationVariables event question4'
+              let computed = updateIntegrationVariables event content question4'
               -- THEN:
               computed `shouldBe` expected
         describe "ValueQuestion" $
           it "Do nothing with the question" $
             -- GIVEN: Inputs
             do
-              let event = e_km1_iop'
+              let event = e_km1_iop
+              let (EditIntegrationEvent' content) = event.content
               -- AND: Expectations
               let expected = question1'
               -- WHEN:
-              let computed = updateIntegrationVariables event question1'
+              let computed = updateIntegrationVariables event content question1'
               -- THEN:
               computed `shouldBe` expected
         describe "IntegrationQuestion" $
           it "Update the variables" $
             -- GIVEN: Inputs
             do
-              let event = e_km1_iop'
+              let event = e_km1_iop
+              let (EditIntegrationEvent' content) = event.content
               -- AND: Expectations
               let expected = question9VariablesEdited'
               -- WHEN:
-              let computed = updateIntegrationVariables event question9'
+              let computed = updateIntegrationVariables event content question9'
               -- THEN:
               computed `shouldBe` expected
     describe "Answer level" $ do
@@ -253,10 +273,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = a_km1_ch1_q2_aNo1
+            let (AddAnswerEvent' content) = event.content
             -- AND: Expectations
             let expected = q2_answerNo
             -- WHEN:
-            let computed = createEntity event
+            let computed = createEntity event content
             -- THEN:
             computed `shouldBe` expected
       describe "editAnswer" $
@@ -264,10 +285,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = e_km1_ch1_q2_aYes1
+            let (EditAnswerEvent' content) = event.content
             -- AND: Expectations
             let expected = q2_answerYesEdited
             -- WHEN:
-            let computed = editEntity event q2_answerYes
+            let computed = editEntity event content q2_answerYes
             -- THEN:
             computed `shouldBe` expected
     describe "Expert level" $ do
@@ -276,10 +298,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = a_km1_ch1_q2_eAlbert
+            let (AddExpertEvent' content) = event.content
             -- AND: Expectations
             let expected = km1_ch1_q2_eAlbert
             -- WHEN:
-            let computed = createEntity event
+            let computed = createEntity event content
             -- THEN:
             computed `shouldBe` expected
       describe "editExpert" $
@@ -287,10 +310,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = e_km1_ch1_q2_eAlbert
+            let (EditExpertEvent' content) = event.content
             -- AND: Expectations
             let expected = km1_ch1_q2_eAlbertEdited
             -- WHEN:
-            let computed = editEntity event km1_ch1_q2_eAlbert
+            let computed = editEntity event content km1_ch1_q2_eAlbert
             -- THEN:
             computed `shouldBe` expected
     describe "Reference level" $ do
@@ -299,33 +323,36 @@ modifierSpec =
           it "Successfully created" $
             -- GIVEN: Inputs
             do
-              let event = a_km1_ch1_q2_rCh1'
+              let event = a_km1_ch1_q2_rCh1
+              let (AddReferenceEvent' content) = event.content
               -- AND: Expectations
               let expected = km1_ch1_q2_r1'
               -- WHEN:
-              let computed = createEntity event
+              let computed = createEntity event content
               -- THEN:
               computed `shouldBe` expected
         describe "URLReference" $
           it "Successfully created" $
             -- GIVEN: Inputs
             do
-              let event = a_km1_ch1_q2_rCh2'
+              let event = a_km1_ch1_q2_rCh2
+              let (AddReferenceEvent' content) = event.content
               -- AND: Expectations
               let expected = km1_ch1_q2_r2'
               -- WHEN:
-              let computed = createEntity event
+              let computed = createEntity event content
               -- THEN:
               computed `shouldBe` expected
         describe "CrossReference" $
           it "Successfully created" $
             -- GIVEN: Inputs
             do
-              let event = a_km1_ch1_q2_rCh3'
+              let event = a_km1_ch1_q2_rCh3
+              let (AddReferenceEvent' content) = event.content
               -- AND: Expectations
               let expected = km1_ch1_q2_r3'
               -- WHEN:
-              let computed = createEntity event
+              let computed = createEntity event content
               -- THEN:
               computed `shouldBe` expected
       describe "editEntity" $ do
@@ -334,22 +361,24 @@ modifierSpec =
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch1_q2_rCh1'
+                let event = e_km1_ch1_q2_rCh1
+                let (EditReferenceEvent' content) = event.content
                 -- AND: Expectations
                 let expected = km1_ch1_q2_r1Edited'
                 -- WHEN:
-                let computed = editEntity event km1_ch1_q2_r1'
+                let computed = editEntity event content km1_ch1_q2_r1'
                 -- THEN:
                 computed `shouldBe` expected
           describe "With changing question type" $
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch1_q2_rCh1_type'
+                let event = e_km1_ch1_q2_rCh1_type
+                let (EditReferenceEvent' content) = event.content
                 -- AND: Expectations
                 let expected = km1_ch1_q2_r1WithNewType'
                 -- WHEN:
-                let computed = editEntity event km1_ch1_q2_r1'
+                let computed = editEntity event content km1_ch1_q2_r1'
                 -- THEN:
                 computed `shouldBe` expected
         describe "URLReference" $ do
@@ -357,22 +386,24 @@ modifierSpec =
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch1_q2_rCh2'
+                let event = e_km1_ch1_q2_rCh2
+                let (EditReferenceEvent' content) = event.content
                 -- AND: Expectations
                 let expected = km1_ch1_q2_r2Edited'
                 -- WHEN:
-                let computed = editEntity event km1_ch1_q2_r2'
+                let computed = editEntity event content km1_ch1_q2_r2'
                 -- THEN:
                 computed `shouldBe` expected
           describe "With changing question type" $
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch1_q2_rCh2_type'
+                let event = e_km1_ch1_q2_rCh2_type
+                let (EditReferenceEvent' content) = event.content
                 -- AND: Expectations
                 let expected = km1_ch1_q2_r2WithNewType'
                 -- WHEN:
-                let computed = editEntity event km1_ch1_q2_r2'
+                let computed = editEntity event content km1_ch1_q2_r2'
                 -- THEN:
                 computed `shouldBe` expected
         describe "CrossReference" $ do
@@ -380,22 +411,24 @@ modifierSpec =
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch1_q2_rCh3'
+                let event = e_km1_ch1_q2_rCh3
+                let (EditReferenceEvent' content) = event.content
                 -- AND: Expectations
                 let expected = km1_ch1_q2_r3Edited'
                 -- WHEN:
-                let computed = editEntity event km1_ch1_q2_r3'
+                let computed = editEntity event content km1_ch1_q2_r3'
                 -- THEN:
                 computed `shouldBe` expected
           describe "With changing question type" $
             it "Successfully created" $
               -- GIVEN: Inputs
               do
-                let event = e_km1_ch1_q2_rCh3_type'
+                let event = e_km1_ch1_q2_rCh3_type
+                let (EditReferenceEvent' content) = event.content
                 -- AND: Expectations
                 let expected = km1_ch1_q2_r3WithNewType'
                 -- WHEN:
-                let computed = editEntity event km1_ch1_q2_r3'
+                let computed = editEntity event content km1_ch1_q2_r3'
                 -- THEN:
                 computed `shouldBe` expected
     describe "Tag level" $ do
@@ -404,10 +437,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = a_km1_tds
+            let (AddTagEvent' content) = event.content
             -- AND: Expectations
             let expected = tagDataScience
             -- WHEN:
-            let computed = createEntity event
+            let computed = createEntity event content
             -- THEN:
             computed `shouldBe` expected
       describe "editTag" $
@@ -415,10 +449,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = e_km1_tds
+            let (EditTagEvent' content) = event.content
             -- AND: Expectations
             let expected = tagDataScienceEdited
             -- WHEN:
-            let computed = editEntity event tagDataScience
+            let computed = editEntity event content tagDataScience
             -- THEN:
             computed `shouldBe` expected
     describe "Integration level" $ do
@@ -427,22 +462,24 @@ modifierSpec =
           it "Successfully created" $
             -- GIVEN: Inputs
             do
-              let event = a_km1_iop'
+              let event = a_km1_iop
+              let (AddIntegrationEvent' content) = event.content
               -- AND: Expectations
               let expected = ontologyPortal'
               -- WHEN:
-              let computed = createEntity event
+              let computed = createEntity event content
               -- THEN:
               computed `shouldBe` expected
         describe "WidgetIntegration" $
           it "Successfully created" $
             -- GIVEN: Inputs
             do
-              let event = a_km1_iwp'
+              let event = a_km1_iwp
+              let (AddIntegrationEvent' content) = event.content
               -- AND: Expectations
               let expected = widgetPortal'
               -- WHEN:
-              let computed = createEntity event
+              let computed = createEntity event content
               -- THEN:
               computed `shouldBe` expected
       describe "editIntegration" $ do
@@ -450,22 +487,24 @@ modifierSpec =
           it "Successfully edited" $
             -- GIVEN: Inputs
             do
-              let event = e_km1_iop'
+              let event = e_km1_iop
+              let (EditIntegrationEvent' content) = event.content
               -- AND: Expectations
               let expected = ontologyPortalEdited'
               -- WHEN:
-              let computed = editEntity event ontologyPortal'
+              let computed = editEntity event content ontologyPortal'
               -- THEN:
               computed `shouldBe` expected
         describe "WidgetIntegration" $
           it "Successfully edited" $
             -- GIVEN: Inputs
             do
-              let event = e_km1_iwp'
+              let event = e_km1_iwp
+              let (EditIntegrationEvent' content) = event.content
               -- AND: Expectations
               let expected = widgetPortalEdited'
               -- WHEN:
-              let computed = editEntity event widgetPortal'
+              let computed = editEntity event content widgetPortal'
               -- THEN:
               computed `shouldBe` expected
     describe "Metric level" $ do
@@ -474,10 +513,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = a_km1_mtrF
+            let (AddMetricEvent' content) = event.content
             -- AND: Expectations
             let expected = metricF
             -- WHEN:
-            let computed = createEntity event
+            let computed = createEntity event content
             -- THEN:
             computed `shouldBe` expected
       describe "editMetric" $
@@ -485,10 +525,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = e_km1_mtrF
+            let (EditMetricEvent' content) = event.content
             -- AND: Expectations
             let expected = metricFEdited
             -- WHEN:
-            let computed = editEntity event metricF
+            let computed = editEntity event content metricF
             -- THEN:
             computed `shouldBe` expected
     describe "Phase level" $ do
@@ -497,10 +538,11 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = a_km1_phs1
+            let (AddPhaseEvent' content) = event.content
             -- AND: Expectations
             let expected = phase1
             -- WHEN:
-            let computed = createEntity event
+            let computed = createEntity event content
             -- THEN:
             computed `shouldBe` expected
       describe "editPhase" $
@@ -508,9 +550,10 @@ modifierSpec =
           -- GIVEN: Inputs
           do
             let event = e_km1_phs1
+            let (EditPhaseEvent' content) = event.content
             -- AND: Expectations
             let expected = phase1Edited
             -- WHEN:
-            let computed = editEntity event phase1
+            let computed = editEntity event content phase1
             -- THEN:
             computed `shouldBe` expected

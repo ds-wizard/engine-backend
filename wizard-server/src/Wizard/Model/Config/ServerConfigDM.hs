@@ -17,10 +17,10 @@ defaultConfig =
     , jwt = defaultJwt
     , roles = defaultRoles
     , actionKey = defaultActionKey
-    , branch = defaultBranch
     , cache = defaultCache
     , document = defaultDocument
     , feedback = defaultFeedback
+    , knowledgeModelEditor = defaultKnowledgeModelEditor
     , questionnaire = defaultQuestionnaire
     , temporaryFile = defaultTemporaryFile
     , userToken = defaultUserToken
@@ -96,13 +96,6 @@ defaultActionKeyClean :: ServerConfigCronWorker
 defaultActionKeyClean =
   ServerConfigCronWorker {enabled = True, cron = actionKeyWorker.cronDefault}
 
-defaultBranch :: ServerConfigBranch
-defaultBranch = ServerConfigBranch {squash = defaultBranchSquash}
-
-defaultBranchSquash :: ServerConfigCronWorker
-defaultBranchSquash =
-  ServerConfigCronWorker {enabled = True, cron = squashBranchEventsWorker.cronDefault}
-
 defaultCache :: ServerConfigCache
 defaultCache =
   ServerConfigCache
@@ -134,6 +127,13 @@ defaultFeedback =
 defaultFeedbackSync :: ServerConfigCronWorker
 defaultFeedbackSync =
   ServerConfigCronWorker {enabled = True, cron = feedbackWorker.cronDefault}
+
+defaultKnowledgeModelEditor :: ServerConfigKnowledgeModelEditor
+defaultKnowledgeModelEditor = ServerConfigKnowledgeModelEditor {squash = defaultKnowledgeModelEditorSquash}
+
+defaultKnowledgeModelEditorSquash :: ServerConfigCronWorker
+defaultKnowledgeModelEditorSquash =
+  ServerConfigCronWorker {enabled = True, cron = squashKnowledgeModelEditorEventsWorker.cronDefault}
 
 defaultQuestionnaire :: ServerConfigQuestionnaire
 defaultQuestionnaire =

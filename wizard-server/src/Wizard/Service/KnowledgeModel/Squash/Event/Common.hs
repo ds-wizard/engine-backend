@@ -1,33 +1,39 @@
 module Wizard.Service.KnowledgeModel.Squash.Event.Common where
 
-import WizardLib.KnowledgeModel.Model.Event.Event
-import WizardLib.KnowledgeModel.Model.Event.EventField
-import WizardLib.KnowledgeModel.Model.Event.EventLenses
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEventField
 
-class EventSquash oldEvent newEvent where
-  squashEvent :: oldEvent -> newEvent -> [Event]
-
-applyValue :: event -> event -> (event -> EventField value) -> EventField value
-applyValue oldEvent newEvent getter =
-  case getter newEvent of
+applyValue :: eventContent -> eventContent -> (eventContent -> EventField value) -> EventField value
+applyValue oldContent newContent getter =
+  case getter newContent of
     (ChangedValue value) -> ChangedValue value
-    NothingChanged -> getter oldEvent
+    NothingChanged -> getter oldContent
 
-class SimpleEventSquash event where
-  isSimpleEventSquashApplicable :: event -> Bool
-  isReorderEventSquashApplicable :: event -> event -> Bool
-  isTypeChanged :: event -> event -> Bool
-  simpleSquashEvent :: Maybe Event -> event -> event -> event
+class SimpleEventSquash content where
+  isSimpleEventSquashApplicable :: content -> Bool
+  isReorderEventSquashApplicable :: (KnowledgeModelEvent, content) -> (KnowledgeModelEvent, content) -> Bool
+  isTypeChanged :: content -> content -> Bool
+  simpleSquashEvent :: Maybe KnowledgeModelEvent -> (KnowledgeModelEvent, content) -> (KnowledgeModelEvent, content) -> KnowledgeModelEvent
 
 isChanged getter event =
   case getter event of
     (ChangedValue _) -> True
     NothingChanged -> False
 
-applyValueIfSameEntity mPreviousEvent oldEvent newEvent accessor =
+applyValueIfSameEntity mPreviousEvent (oldEvent, oldContent) (newEvent, newContent) accessor =
   case mPreviousEvent of
     Just previousEvent ->
-      if getEntityUuid previousEvent == newEvent.entityUuid
-        then applyValue oldEvent newEvent accessor
+      if previousEvent.entityUuid == newEvent.entityUuid
+        then applyValue oldContent newContent accessor
         else NothingChanged
     _ -> NothingChanged
+
+createSquashedEvent :: KnowledgeModelEvent -> KnowledgeModelEvent -> KnowledgeModelEventData -> KnowledgeModelEvent
+createSquashedEvent oldEvent newEvent content =
+  KnowledgeModelEvent
+    { uuid = newEvent.uuid
+    , parentUuid = newEvent.parentUuid
+    , entityUuid = newEvent.entityUuid
+    , content = content
+    , createdAt = oldEvent.createdAt
+    }

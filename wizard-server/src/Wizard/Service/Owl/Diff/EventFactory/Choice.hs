@@ -4,51 +4,58 @@ import Control.Monad.Reader (liftIO)
 import Data.Time
 
 import Shared.Common.Util.Uuid
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.Choice.ChoiceEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEventField
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEventUtil
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses ()
 import Wizard.Service.Owl.Diff.EventFactory.EventFactory
-import WizardLib.KnowledgeModel.Model.Event.Choice.ChoiceEvent
-import WizardLib.KnowledgeModel.Model.Event.Event
-import WizardLib.KnowledgeModel.Model.Event.EventField
-import WizardLib.KnowledgeModel.Model.Event.EventUtil
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses ()
 
 instance EventFactory Choice where
   createAddEvent parentUuid entity = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     return $
-      AddChoiceEvent' $
-        AddChoiceEvent
-          { uuid = eventUuid
-          , parentUuid = parentUuid
-          , entityUuid = entity.uuid
-          , aLabel = entity.aLabel
-          , annotations = entity.annotations
-          , createdAt = now
-          }
+      KnowledgeModelEvent
+        { uuid = eventUuid
+        , parentUuid = parentUuid
+        , entityUuid = entity.uuid
+        , content =
+            AddChoiceEvent' $
+              AddChoiceEvent
+                { aLabel = entity.aLabel
+                , annotations = entity.annotations
+                }
+        , createdAt = now
+        }
   createEditEvent (oldKm, newKm) parentUuid oldEntity newEntity = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     let event =
-          EditChoiceEvent
+          KnowledgeModelEvent
             { uuid = eventUuid
             , parentUuid = parentUuid
             , entityUuid = newEntity.uuid
-            , aLabel = diffField oldEntity.aLabel newEntity.aLabel
-            , annotations = diffField oldEntity.annotations newEntity.annotations
+            , content =
+                EditChoiceEvent' $
+                  EditChoiceEvent
+                    { aLabel = diffField oldEntity.aLabel newEntity.aLabel
+                    , annotations = diffField oldEntity.annotations newEntity.annotations
+                    }
             , createdAt = now
             }
-    if isEmptyEvent event
-      then return . Just . EditChoiceEvent' $ event
+    if isEmptyEvent event.content
+      then return . Just $ event
       else return Nothing
   createDeleteEvent parentUuid entity = do
     eventUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     return $
-      DeleteChoiceEvent' $
-        DeleteChoiceEvent
-          { uuid = eventUuid
-          , parentUuid = parentUuid
-          , entityUuid = entity.uuid
-          , createdAt = now
-          }
+      KnowledgeModelEvent
+        { uuid = eventUuid
+        , parentUuid = parentUuid
+        , entityUuid = entity.uuid
+        , content = DeleteChoiceEvent' DeleteChoiceEvent
+        , createdAt = now
+        }

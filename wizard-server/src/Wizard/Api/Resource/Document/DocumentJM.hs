@@ -3,10 +3,10 @@ module Wizard.Api.Resource.Document.DocumentJM where
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatSimpleJM ()
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSimpleJM ()
 import Wizard.Model.Document.Document
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatSimpleJM ()
 
 instance FromJSON DocumentState
 

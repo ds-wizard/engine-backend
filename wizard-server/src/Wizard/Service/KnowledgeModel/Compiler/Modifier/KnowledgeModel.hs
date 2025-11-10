@@ -2,15 +2,16 @@ module Wizard.Service.KnowledgeModel.Compiler.Modifier.KnowledgeModel where
 
 import qualified Data.Map.Strict as M
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Modifier
-import WizardLib.KnowledgeModel.Model.Event.KnowledgeModel.KnowledgeModelEvent
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 instance CreateEntity AddKnowledgeModelEvent KnowledgeModel where
-  createEntity e =
+  createEntity event content =
     KnowledgeModel
-      { uuid = e.entityUuid
-      , annotations = e.annotations
+      { uuid = event.entityUuid
+      , annotations = content.annotations
       , chapterUuids = []
       , tagUuids = []
       , integrationUuids = []
@@ -35,13 +36,13 @@ instance CreateEntity AddKnowledgeModelEvent KnowledgeModel where
       }
 
 instance EditEntity EditKnowledgeModelEvent KnowledgeModel where
-  editEntity event entity =
+  editEntity event content entity =
     entity
-      { annotations = applyValue entity.annotations event.annotations
-      , chapterUuids = applyValue entity.chapterUuids event.chapterUuids
-      , tagUuids = applyValue entity.tagUuids event.tagUuids
-      , integrationUuids = applyValue entity.integrationUuids event.integrationUuids
-      , metricUuids = applyValue entity.metricUuids event.metricUuids
-      , phaseUuids = applyValue entity.phaseUuids event.phaseUuids
-      , resourceCollectionUuids = applyValue entity.resourceCollectionUuids event.resourceCollectionUuids
+      { annotations = applyValue entity.annotations content.annotations
+      , chapterUuids = applyValue entity.chapterUuids content.chapterUuids
+      , tagUuids = applyValue entity.tagUuids content.tagUuids
+      , integrationUuids = applyValue entity.integrationUuids content.integrationUuids
+      , metricUuids = applyValue entity.metricUuids content.metricUuids
+      , phaseUuids = applyValue entity.phaseUuids content.phaseUuids
+      , resourceCollectionUuids = applyValue entity.resourceCollectionUuids content.resourceCollectionUuids
       }

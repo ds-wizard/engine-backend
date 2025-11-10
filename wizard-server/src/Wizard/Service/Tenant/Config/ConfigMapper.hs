@@ -3,11 +3,11 @@ module Wizard.Service.Tenant.Config.ConfigMapper where
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Config.TenantConfigSubmissionServiceSimple
-import WizardLib.KnowledgeModel.Model.Package.PackagePattern
 import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateOrUpdateAuthenticationConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
@@ -87,12 +87,12 @@ fromRegistryChangeDTO TenantConfigRegistryChangeDTO {..} tenantUuid createdAt up
 
 fromKnowledgeModelChangeDTO :: TenantConfigKnowledgeModelChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigKnowledgeModel
 fromKnowledgeModelChangeDTO dto@TenantConfigKnowledgeModelChangeDTO {..} tenantUuid createdAt updatedAt =
-  let packages = zipWith (\i f -> fromKnowledgeModelPublicPackagePatternChangeDTO f tenantUuid i createdAt updatedAt) [0 ..] dto.public.packages
-      public = TenantConfigKnowledgeModelPublic {enabled = dto.public.enabled, packages = packages}
+  let knowledgeModelPackages = zipWith (\i f -> fromKnowledgeModelPublicPackagePatternChangeDTO f tenantUuid i createdAt updatedAt) [0 ..] dto.public.knowledgeModelPackages
+      public = TenantConfigKnowledgeModelPublic {enabled = dto.public.enabled, knowledgeModelPackages = knowledgeModelPackages}
    in TenantConfigKnowledgeModel {..}
 
-fromKnowledgeModelPublicPackagePatternChangeDTO :: PackagePattern -> U.UUID -> Int -> UTCTime -> UTCTime -> TenantConfigKnowledgeModelPublicPackagePattern
-fromKnowledgeModelPublicPackagePatternChangeDTO PackagePattern {..} tenantUuid position createdAt updatedAt = TenantConfigKnowledgeModelPublicPackagePattern {..}
+fromKnowledgeModelPublicPackagePatternChangeDTO :: KnowledgeModelPackagePattern -> U.UUID -> Int -> UTCTime -> UTCTime -> TenantConfigKnowledgeModelPublicPackagePattern
+fromKnowledgeModelPublicPackagePatternChangeDTO KnowledgeModelPackagePattern {..} tenantUuid position createdAt updatedAt = TenantConfigKnowledgeModelPublicPackagePattern {..}
 
 fromQuestionnaireChangeDTO :: TenantConfigQuestionnaireChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigQuestionnaire
 fromQuestionnaireChangeDTO TenantConfigQuestionnaireChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigQuestionnaire {..}
@@ -215,5 +215,5 @@ fromOrganization oldConfig command now =
     , updatedAt = now
     }
 
-toPackagePattern :: TenantConfigKnowledgeModelPublicPackagePattern -> PackagePattern
-toPackagePattern TenantConfigKnowledgeModelPublicPackagePattern {..} = PackagePattern {..}
+toPackagePattern :: TenantConfigKnowledgeModelPublicPackagePattern -> KnowledgeModelPackagePattern
+toPackagePattern TenantConfigKnowledgeModelPublicPackagePattern {..} = KnowledgeModelPackagePattern {..}

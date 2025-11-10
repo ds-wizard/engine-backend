@@ -1,5 +1,6 @@
 module Wizard.Service.KnowledgeModel.Squash.Event.Event where
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Wizard.Service.KnowledgeModel.Squash.Event.Answer ()
 import Wizard.Service.KnowledgeModel.Squash.Event.Chapter ()
 import Wizard.Service.KnowledgeModel.Squash.Event.Choice ()
@@ -13,84 +14,68 @@ import Wizard.Service.KnowledgeModel.Squash.Event.Question ()
 import Wizard.Service.KnowledgeModel.Squash.Event.Reference ()
 import Wizard.Service.KnowledgeModel.Squash.Event.Resource ()
 import Wizard.Service.KnowledgeModel.Squash.Event.Tag ()
-import WizardLib.KnowledgeModel.Model.Event.Event
 
-instance SimpleEventSquash Event where
-  isSimpleEventSquashApplicable (EditAnswerEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable (EditChapterEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable (EditChoiceEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable (EditExpertEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable (EditIntegrationEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable (EditKnowledgeModelEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable (EditMetricEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable (EditPhaseEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable (EditQuestionEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable (EditReferenceEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable (EditTagEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable (EditResourceCollectionEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable (EditResourcePageEvent' event) = isSimpleEventSquashApplicable event
-  isSimpleEventSquashApplicable _ = False
+isSimpleEventSquashApplicable' :: KnowledgeModelEvent -> Bool
+isSimpleEventSquashApplicable' event =
+  case event.content of
+    (EditAnswerEvent' event) -> isSimpleEventSquashApplicable event
+    (EditChapterEvent' event) -> isSimpleEventSquashApplicable event
+    (EditChoiceEvent' event) -> isSimpleEventSquashApplicable event
+    (EditExpertEvent' event) -> isSimpleEventSquashApplicable event
+    (EditIntegrationEvent' event) -> isSimpleEventSquashApplicable event
+    (EditKnowledgeModelEvent' event) -> isSimpleEventSquashApplicable event
+    (EditMetricEvent' event) -> isSimpleEventSquashApplicable event
+    (EditPhaseEvent' event) -> isSimpleEventSquashApplicable event
+    (EditQuestionEvent' event) -> isSimpleEventSquashApplicable event
+    (EditReferenceEvent' event) -> isSimpleEventSquashApplicable event
+    (EditTagEvent' event) -> isSimpleEventSquashApplicable event
+    (EditResourceCollectionEvent' event) -> isSimpleEventSquashApplicable event
+    (EditResourcePageEvent' event) -> isSimpleEventSquashApplicable event
+    _ -> False
 
-  --  --------------------------------------
-  isReorderEventSquashApplicable (EditAnswerEvent' previousEvent) (EditAnswerEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable (EditChapterEvent' previousEvent) (EditChapterEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable (EditChoiceEvent' previousEvent) (EditChoiceEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable (EditExpertEvent' previousEvent) (EditExpertEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable (EditIntegrationEvent' previousEvent) (EditIntegrationEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable (EditKnowledgeModelEvent' previousEvent) (EditKnowledgeModelEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable (EditMetricEvent' previousEvent) (EditMetricEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable (EditPhaseEvent' previousEvent) (EditPhaseEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable (EditQuestionEvent' previousEvent) (EditQuestionEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable (EditReferenceEvent' previousEvent) (EditReferenceEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable (EditTagEvent' previousEvent) (EditTagEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable (EditResourceCollectionEvent' previousEvent) (EditResourceCollectionEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable (EditResourcePageEvent' previousEvent) (EditResourcePageEvent' event) =
-    isReorderEventSquashApplicable previousEvent event
-  isReorderEventSquashApplicable _ _ = False
+--  --------------------------------------
+isReorderEventSquashApplicable' :: KnowledgeModelEvent -> KnowledgeModelEvent -> Bool
+isReorderEventSquashApplicable' previousEvent newEvent =
+  case (previousEvent.content, newEvent.content) of
+    (EditAnswerEvent' previousContent, EditAnswerEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (EditChapterEvent' previousContent, EditChapterEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (EditChoiceEvent' previousContent, EditChoiceEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (EditExpertEvent' previousContent, EditExpertEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (EditIntegrationEvent' previousContent, EditIntegrationEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (EditKnowledgeModelEvent' previousContent, EditKnowledgeModelEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (EditMetricEvent' previousContent, EditMetricEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (EditPhaseEvent' previousContent, EditPhaseEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (EditQuestionEvent' previousContent, EditQuestionEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (EditReferenceEvent' previousContent, EditReferenceEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (EditTagEvent' previousContent, EditTagEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (EditResourceCollectionEvent' previousContent, EditResourceCollectionEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (EditResourcePageEvent' previousContent, EditResourcePageEvent' newContent) -> isReorderEventSquashApplicable (previousEvent, previousContent) (newEvent, newContent)
+    (_, _) -> False
 
-  --  --------------------------------------
-  isTypeChanged (EditIntegrationEvent' oldEvent) (EditIntegrationEvent' newEvent) = isTypeChanged oldEvent newEvent
-  isTypeChanged (EditQuestionEvent' oldEvent) (EditQuestionEvent' newEvent) = isTypeChanged oldEvent newEvent
-  isTypeChanged (EditReferenceEvent' oldEvent) (EditReferenceEvent' newEvent) = isTypeChanged oldEvent newEvent
-  isTypeChanged _ _ = False
+--  --------------------------------------
+isTypeChanged' :: KnowledgeModelEvent -> KnowledgeModelEvent -> Bool
+isTypeChanged' oldEvent newEvent =
+  case (oldEvent.content, newEvent.content) of
+    (EditIntegrationEvent' oldContent, EditIntegrationEvent' newContent) -> isTypeChanged oldContent newContent
+    (EditQuestionEvent' oldContent, EditQuestionEvent' newContent) -> isTypeChanged oldContent newContent
+    (EditReferenceEvent' oldContent, EditReferenceEvent' newContent) -> isTypeChanged oldContent newContent
+    (_, _) -> False
 
-  --  --------------------------------------
-  simpleSquashEvent mPreviousEvent (EditAnswerEvent' oldEvent) (EditAnswerEvent' newEvent) =
-    EditAnswerEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent mPreviousEvent (EditChapterEvent' oldEvent) (EditChapterEvent' newEvent) =
-    EditChapterEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent mPreviousEvent (EditChoiceEvent' oldEvent) (EditChoiceEvent' newEvent) =
-    EditChoiceEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent mPreviousEvent (EditExpertEvent' oldEvent) (EditExpertEvent' newEvent) =
-    EditExpertEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent mPreviousEvent (EditIntegrationEvent' oldEvent) (EditIntegrationEvent' newEvent) =
-    EditIntegrationEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent mPreviousEvent (EditKnowledgeModelEvent' oldEvent) (EditKnowledgeModelEvent' newEvent) =
-    EditKnowledgeModelEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent mPreviousEvent (EditMetricEvent' oldEvent) (EditMetricEvent' newEvent) =
-    EditMetricEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent mPreviousEvent (EditPhaseEvent' oldEvent) (EditPhaseEvent' newEvent) =
-    EditPhaseEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent mPreviousEvent (EditQuestionEvent' oldEvent) (EditQuestionEvent' newEvent) =
-    EditQuestionEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent mPreviousEvent (EditReferenceEvent' oldEvent) (EditReferenceEvent' newEvent) =
-    EditReferenceEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent mPreviousEvent (EditTagEvent' oldEvent) (EditTagEvent' newEvent) =
-    EditTagEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent mPreviousEvent (EditResourceCollectionEvent' oldEvent) (EditResourceCollectionEvent' newEvent) =
-    EditResourceCollectionEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent mPreviousEvent (EditResourcePageEvent' oldEvent) (EditResourcePageEvent' newEvent) =
-    EditResourcePageEvent' $ simpleSquashEvent mPreviousEvent oldEvent newEvent
-  simpleSquashEvent _ _ newEvent = newEvent
+--  --------------------------------------
+simpleSquashEvent' :: Maybe KnowledgeModelEvent -> KnowledgeModelEvent -> KnowledgeModelEvent -> KnowledgeModelEvent
+simpleSquashEvent' mPreviousEvent oldEvent newEvent =
+  case (oldEvent.content, newEvent.content) of
+    (EditAnswerEvent' oldContent, EditAnswerEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (EditChapterEvent' oldContent, EditChapterEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (EditChoiceEvent' oldContent, EditChoiceEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (EditExpertEvent' oldContent, EditExpertEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (EditIntegrationEvent' oldContent, EditIntegrationEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (EditKnowledgeModelEvent' oldContent, EditKnowledgeModelEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (EditMetricEvent' oldContent, EditMetricEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (EditPhaseEvent' oldContent, EditPhaseEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (EditQuestionEvent' oldContent, EditQuestionEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (EditReferenceEvent' oldContent, EditReferenceEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (EditTagEvent' oldContent, EditTagEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (EditResourceCollectionEvent' oldContent, EditResourceCollectionEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (EditResourcePageEvent' oldContent, EditResourcePageEvent' newContent) -> simpleSquashEvent mPreviousEvent (oldEvent, oldContent) (newEvent, newContent)
+    (_, _) -> newEvent

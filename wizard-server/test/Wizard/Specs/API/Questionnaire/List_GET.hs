@@ -14,6 +14,8 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
@@ -23,8 +25,6 @@ import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -150,9 +150,9 @@ test_200 appContext = do
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire2Dto])
   create_test_200
-    "HTTP 200 OK (Admin - package)"
+    "HTTP 200 OK (Admin - knowledgePackage)"
     appContext
-    "/wizard-api/questionnaires?sort=uuid,asc&packageIds=org.nl.amsterdam:core-amsterdam:all"
+    "/wizard-api/questionnaires?sort=uuid,asc&knowledgeModelPackageIds=org.nl.amsterdam:core-amsterdam:all"
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire14Dto])
   create_test_200
@@ -204,9 +204,9 @@ test_200 appContext = do
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire14Dto, questionnaire2Dto, questionnaire12Dto])
   create_test_200
-    "HTTP 200 OK (Non-Admin - package)"
+    "HTTP 200 OK (Non-Admin - knowledgeModelPackage)"
     appContext
-    "/wizard-api/questionnaires?sort=uuid,asc&packageIds=org.nl.amsterdam:core-amsterdam:all"
+    "/wizard-api/questionnaires?sort=uuid,asc&knowledgeModelPackageIds=org.nl.amsterdam:core-amsterdam:all"
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire14Dto])
   create_test_200
@@ -251,7 +251,7 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
       runInContextIO U.runMigration appContext
       runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
-      runInContextIO (insertPackage amsterdamPackage) appContext
+      runInContextIO (insertPackage amsterdamKmPackage) appContext
       runInContextIO (insertQuestionnaire questionnaire12) appContext
       runInContextIO (insertQuestionnaire questionnaire14) appContext
       runInContextIO (insertQuestionnaire questionnaire15) appContext

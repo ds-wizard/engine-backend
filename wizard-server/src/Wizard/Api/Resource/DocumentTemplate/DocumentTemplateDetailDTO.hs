@@ -4,11 +4,11 @@ import Data.Time
 import GHC.Generics
 
 import Shared.Common.Model.Common.SemVer2Tuple
-import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Registry.RegistryOrganization
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Model.Package.PackagePattern
 
 data DocumentTemplateDetailDTO = DocumentTemplateDetailDTO
   { tId :: String
@@ -21,10 +21,10 @@ data DocumentTemplateDetailDTO = DocumentTemplateDetailDTO
   , description :: String
   , readme :: String
   , license :: String
-  , allowedPackages :: [PackagePattern]
+  , allowedPackages :: [KnowledgeModelPackagePattern]
   , formats :: [DocumentTemplateFormat]
   , nonEditable :: Bool
-  , usablePackages :: [PackageSimpleDTO]
+  , usableKnowledgeModels :: [KnowledgeModelPackageSimpleDTO]
   , versions :: [String]
   , remoteLatestVersion :: Maybe String
   , organization :: Maybe RegistryOrganization

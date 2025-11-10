@@ -3,6 +3,9 @@ module Wizard.Service.KnowledgeModel.Compiler.Compiler (
 ) where
 
 import Shared.Common.Model.Error.Error
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelDM
 import Wizard.Service.KnowledgeModel.Compiler.EventApplicator.Answer ()
 import Wizard.Service.KnowledgeModel.Compiler.EventApplicator.Chapter ()
 import Wizard.Service.KnowledgeModel.Compiler.EventApplicator.Choice ()
@@ -17,59 +20,58 @@ import Wizard.Service.KnowledgeModel.Compiler.EventApplicator.Question ()
 import Wizard.Service.KnowledgeModel.Compiler.EventApplicator.Reference ()
 import Wizard.Service.KnowledgeModel.Compiler.EventApplicator.Resource ()
 import Wizard.Service.KnowledgeModel.Compiler.EventApplicator.Tag ()
-import WizardLib.KnowledgeModel.Model.Event.Event
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelDM
 
-compile :: Maybe KnowledgeModel -> [Event] -> Either AppError KnowledgeModel
+compile :: Maybe KnowledgeModel -> [KnowledgeModelEvent] -> Either AppError KnowledgeModel
 compile (Just km) events = foldl foldEvent (Right km) events
 compile Nothing events = foldl foldEvent (Right defaultKnowledgeModel) events
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-foldEvent :: Either AppError KnowledgeModel -> Event -> Either AppError KnowledgeModel
-foldEvent (Right km) (AddKnowledgeModelEvent' e) = apply e km
-foldEvent (Right km) (EditKnowledgeModelEvent' e) = apply e km
-foldEvent (Right km) (AddChapterEvent' e) = apply e km
-foldEvent (Right km) (EditChapterEvent' e) = apply e km
-foldEvent (Right km) (DeleteChapterEvent' e) = apply e km
-foldEvent (Right km) (AddQuestionEvent' e) = apply e km
-foldEvent (Right km) (EditQuestionEvent' e) = apply e km
-foldEvent (Right km) (DeleteQuestionEvent' e) = apply e km
-foldEvent (Right km) (AddAnswerEvent' e) = apply e km
-foldEvent (Right km) (EditAnswerEvent' e) = apply e km
-foldEvent (Right km) (DeleteAnswerEvent' e) = apply e km
-foldEvent (Right km) (AddChoiceEvent' e) = apply e km
-foldEvent (Right km) (EditChoiceEvent' e) = apply e km
-foldEvent (Right km) (DeleteChoiceEvent' e) = apply e km
-foldEvent (Right km) (AddExpertEvent' e) = apply e km
-foldEvent (Right km) (EditExpertEvent' e) = apply e km
-foldEvent (Right km) (DeleteExpertEvent' e) = apply e km
-foldEvent (Right km) (AddReferenceEvent' e) = apply e km
-foldEvent (Right km) (EditReferenceEvent' e) = apply e km
-foldEvent (Right km) (DeleteReferenceEvent' e) = apply e km
-foldEvent (Right km) (AddTagEvent' e) = apply e km
-foldEvent (Right km) (EditTagEvent' e) = apply e km
-foldEvent (Right km) (DeleteTagEvent' e) = apply e km
-foldEvent (Right km) (AddIntegrationEvent' e) = apply e km
-foldEvent (Right km) (EditIntegrationEvent' e) = apply e km
-foldEvent (Right km) (DeleteIntegrationEvent' e) = apply e km
-foldEvent (Right km) (AddMetricEvent' e) = apply e km
-foldEvent (Right km) (EditMetricEvent' e) = apply e km
-foldEvent (Right km) (DeleteMetricEvent' e) = apply e km
-foldEvent (Right km) (AddPhaseEvent' e) = apply e km
-foldEvent (Right km) (EditPhaseEvent' e) = apply e km
-foldEvent (Right km) (DeletePhaseEvent' e) = apply e km
-foldEvent (Right km) (AddResourceCollectionEvent' e) = apply e km
-foldEvent (Right km) (EditResourceCollectionEvent' e) = apply e km
-foldEvent (Right km) (DeleteResourceCollectionEvent' e) = apply e km
-foldEvent (Right km) (AddResourcePageEvent' e) = apply e km
-foldEvent (Right km) (EditResourcePageEvent' e) = apply e km
-foldEvent (Right km) (DeleteResourcePageEvent' e) = apply e km
-foldEvent (Right km) (MoveQuestionEvent' e) = apply e km
-foldEvent (Right km) (MoveAnswerEvent' e) = apply e km
-foldEvent (Right km) (MoveChoiceEvent' e) = apply e km
-foldEvent (Right km) (MoveExpertEvent' e) = apply e km
-foldEvent (Right km) (MoveReferenceEvent' e) = apply e km
+foldEvent :: Either AppError KnowledgeModel -> KnowledgeModelEvent -> Either AppError KnowledgeModel
+foldEvent (Right km) event =
+  case event.content of
+    AddKnowledgeModelEvent' content -> apply event content km
+    EditKnowledgeModelEvent' content -> apply event content km
+    AddChapterEvent' content -> apply event content km
+    EditChapterEvent' content -> apply event content km
+    DeleteChapterEvent' content -> apply event content km
+    AddQuestionEvent' content -> apply event content km
+    EditQuestionEvent' content -> apply event content km
+    DeleteQuestionEvent' content -> apply event content km
+    AddAnswerEvent' content -> apply event content km
+    EditAnswerEvent' content -> apply event content km
+    DeleteAnswerEvent' content -> apply event content km
+    AddChoiceEvent' content -> apply event content km
+    EditChoiceEvent' content -> apply event content km
+    DeleteChoiceEvent' content -> apply event content km
+    AddExpertEvent' content -> apply event content km
+    EditExpertEvent' content -> apply event content km
+    DeleteExpertEvent' content -> apply event content km
+    AddReferenceEvent' content -> apply event content km
+    EditReferenceEvent' content -> apply event content km
+    DeleteReferenceEvent' content -> apply event content km
+    AddTagEvent' content -> apply event content km
+    EditTagEvent' content -> apply event content km
+    DeleteTagEvent' content -> apply event content km
+    AddIntegrationEvent' content -> apply event content km
+    EditIntegrationEvent' content -> apply event content km
+    DeleteIntegrationEvent' content -> apply event content km
+    AddMetricEvent' content -> apply event content km
+    EditMetricEvent' content -> apply event content km
+    DeleteMetricEvent' content -> apply event content km
+    AddPhaseEvent' content -> apply event content km
+    EditPhaseEvent' content -> apply event content km
+    DeletePhaseEvent' content -> apply event content km
+    AddResourceCollectionEvent' content -> apply event content km
+    EditResourceCollectionEvent' content -> apply event content km
+    DeleteResourceCollectionEvent' content -> apply event content km
+    AddResourcePageEvent' content -> apply event content km
+    EditResourcePageEvent' content -> apply event content km
+    DeleteResourcePageEvent' content -> apply event content km
+    MoveQuestionEvent' content -> apply event content km
+    MoveAnswerEvent' content -> apply event content km
+    MoveChoiceEvent' content -> apply event content km
+    MoveExpertEvent' content -> apply event content km
+    MoveReferenceEvent' content -> apply event content km
 foldEvent (Left error) _ = Left error

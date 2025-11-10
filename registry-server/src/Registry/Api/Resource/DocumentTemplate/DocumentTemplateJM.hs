@@ -4,7 +4,7 @@ import Data.Aeson
 
 import Registry.Api.Resource.DocumentTemplate.DocumentTemplateFormatJM ()
 import Shared.Common.Util.Aeson
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
 
 instance ToJSON DocumentTemplateFileDTO where
   toJSON = genericToJSON jsonOptions

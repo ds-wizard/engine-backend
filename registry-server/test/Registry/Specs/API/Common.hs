@@ -44,9 +44,9 @@ reqUserAuthHeader = ("Authorization", "Bearer NetherlandsToken")
 reqStatisticsHeader :: [Header]
 reqStatisticsHeader =
   [ (CI.mk . BS.pack $ xUserCountHeaderName, BS.pack . show $ iStat.userCount)
-  , (CI.mk . BS.pack $ xPkgCountHeaderName, BS.pack . show $ iStat.pkgCount)
+  , (CI.mk . BS.pack $ xKnowledgeModelPackageCountHeaderName, BS.pack . show $ iStat.pkgCount)
   , (CI.mk . BS.pack $ xQtnCountHeaderName, BS.pack . show $ iStat.qtnCount)
-  , (CI.mk . BS.pack $ xBranchCountHeaderName, BS.pack . show $ iStat.branchCount)
+  , (CI.mk . BS.pack $ xKnowledgeModelEditorCountHeaderName, BS.pack . show $ iStat.kmEditorCount)
   , (CI.mk . BS.pack $ xDocCountHeaderName, BS.pack . show $ iStat.docCount)
   , (CI.mk . BS.pack $ xTmlCountHeaderName, BS.pack . show $ iStat.tmlCount)
   ]

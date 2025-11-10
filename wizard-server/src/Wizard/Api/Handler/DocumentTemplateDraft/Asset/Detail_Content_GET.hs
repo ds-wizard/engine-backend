@@ -6,11 +6,11 @@ import Servant
 
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetService
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 type Detail_Content_GET =
   Header "Authorization" String

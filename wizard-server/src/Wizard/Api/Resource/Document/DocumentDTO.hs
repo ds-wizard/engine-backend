@@ -5,11 +5,11 @@ import qualified Data.UUID as U
 import GHC.Generics
 import GHC.Int
 
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 import Wizard.Api.Resource.Submission.SubmissionJM ()
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Submission.SubmissionList
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
 data DocumentDTO = DocumentDTO
   { uuid :: U.UUID

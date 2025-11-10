@@ -11,9 +11,9 @@ data AuditEntry
       , instanceStatistics :: InstanceStatistics
       , createdAt :: UTCTime
       }
-  | GetPackageBundleAuditEntry
+  | GetKnowledgeModelBundleAuditEntry
       { organizationId :: String
-      , packageId :: String
+      , knowledgeModelPackageId :: String
       , createdAt :: UTCTime
       }
   | GetDocumentTemplateBundleAuditEntry
@@ -32,9 +32,9 @@ instance Eq AuditEntry where
   ae1@ListPackagesAuditEntry {} == ae2@ListPackagesAuditEntry {} =
     ae1.organizationId == ae2.organizationId
       && ae1.instanceStatistics == ae2.instanceStatistics
-  ae1@GetPackageBundleAuditEntry {} == ae2@GetPackageBundleAuditEntry {} =
+  ae1@GetKnowledgeModelBundleAuditEntry {} == ae2@GetKnowledgeModelBundleAuditEntry {} =
     ae1.organizationId == ae2.organizationId
-      && ae1.packageId == ae2.packageId
+      && ae1.knowledgeModelPackageId == ae2.knowledgeModelPackageId
   ae1@GetDocumentTemplateBundleAuditEntry {} == ae2@GetDocumentTemplateBundleAuditEntry {} =
     ae1.organizationId == ae2.organizationId
       && ae1.documentTemplateId == ae2.documentTemplateId

@@ -7,6 +7,13 @@ import Data.Maybe
 import Data.Time
 
 import Shared.Common.Util.Uuid
+import qualified Shared.DocumentTemplate.Constant.DocumentTemplate as TemplateConstant
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -25,14 +32,6 @@ import Wizard.Service.Document.Context.DocumentContextMapper
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
-import qualified WizardLib.DocumentTemplate.Constant.DocumentTemplate as TemplateConstant
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
-import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as SPM
 
 doc1 :: Document
 doc1 =
@@ -98,7 +97,7 @@ dmp1 =
           }
     , knowledgeModel = km1WithQ4
     , report = report1
-    , package = toDocumentContextPackage . SPM.toPackage $ germanyPackage
+    , package = toDocumentContextPackage germanyKmPackage
     , organization = defaultOrganization
     , metamodelVersion = TemplateConstant.documentTemplateMetamodelVersion
     , users =

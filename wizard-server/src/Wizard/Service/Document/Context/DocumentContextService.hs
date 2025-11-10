@@ -11,6 +11,8 @@ import qualified Data.UUID as U
 
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.List
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
@@ -32,15 +34,13 @@ import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Report.ReportGenerator
 import Wizard.Service.Tenant.TenantHelper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
-import WizardLib.KnowledgeModel.Model.Event.Event
-import WizardLib.KnowledgeModel.Model.Package.Package
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Model.User.UserGroup
 import qualified WizardLib.Public.Service.User.Group.UserGroupMapper as UGR_Mapper
 
-createDocumentContext :: Document -> Package -> [Event] -> Questionnaire -> Maybe (M.Map String Reply) -> AppContextM DocumentContext
-createDocumentContext doc pkg branchEvents qtn mReplies = do
-  km <- compileKnowledgeModelWithCaching' branchEvents (Just qtn.packageId) qtn.selectedQuestionTagUuids (not . null $ branchEvents)
+createDocumentContext :: Document -> KnowledgeModelPackage -> [KnowledgeModelEvent] -> Questionnaire -> Maybe (M.Map String Reply) -> AppContextM DocumentContext
+createDocumentContext doc pkg kmEditorEvents qtn mReplies = do
+  km <- compileKnowledgeModelWithCaching' kmEditorEvents (Just qtn.knowledgeModelPackageId) qtn.selectedQuestionTagUuids (not . null $ kmEditorEvents)
   mQtnCreatedBy <- forM qtn.creatorUuid findUserByUuid
   mDocCreatedBy <- forM doc.createdBy findUserByUuid
   tcOrganization <- findTenantConfigOrganization

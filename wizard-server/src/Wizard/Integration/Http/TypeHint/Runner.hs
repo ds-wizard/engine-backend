@@ -8,12 +8,12 @@ import Control.Monad.IO.Class (liftIO)
 import Data.Map.Strict as M
 
 import Shared.Common.Integration.Http.Common.HttpClient
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Integration.Http.TypeHint.RequestMapper
 import Wizard.Integration.Http.TypeHint.ResponseMapper
 import Wizard.Integration.Resource.TypeHint.TypeHintIDTO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 retrieveLegacyTypeHints :: ApiLegacyIntegration -> M.Map String String -> M.Map String String -> AppContextM (Either String [TypeHintLegacyIDTO])
 retrieveLegacyTypeHints intConfig encodedVariables variables =

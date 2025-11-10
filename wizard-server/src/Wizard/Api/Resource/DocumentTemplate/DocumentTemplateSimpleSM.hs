@@ -4,12 +4,12 @@ import Data.Swagger
 
 import RegistryLib.Api.Resource.Organization.OrganizationSimpleSM ()
 import Shared.Common.Util.Swagger
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleJM ()
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateStateSM ()
-import Wizard.Api.Resource.Package.PackageSimpleSM ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleSM ()
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 
 instance ToSchema DocumentTemplateSimpleDTO where
   declareNamedSchema = toSwagger wizardDocumentTemplateSimpleDTO

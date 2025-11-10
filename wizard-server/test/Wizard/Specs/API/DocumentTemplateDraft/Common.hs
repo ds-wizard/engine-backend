@@ -5,10 +5,10 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 import Wizard.Specs.Common
 

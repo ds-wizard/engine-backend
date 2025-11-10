@@ -12,14 +12,14 @@ xTraceUuidHeaderName = "x-trace-uuid"
 xUserCountHeaderName :: String
 xUserCountHeaderName = "x-user-count"
 
-xPkgCountHeaderName :: String
-xPkgCountHeaderName = "x-pkg-count"
+xKnowledgeModelPackageCountHeaderName :: String
+xKnowledgeModelPackageCountHeaderName = "x-knowledge-model-package-count"
 
 xQtnCountHeaderName :: String
 xQtnCountHeaderName = "x-qtn-count"
 
-xBranchCountHeaderName :: String
-xBranchCountHeaderName = "x-branch-count"
+xKnowledgeModelEditorCountHeaderName :: String
+xKnowledgeModelEditorCountHeaderName = "x-knowledge-model-editor-count"
 
 xDocCountHeaderName :: String
 xDocCountHeaderName = "x-doc-count"

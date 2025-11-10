@@ -1,9 +1,9 @@
 module Wizard.Service.QuestionnaireAction.QuestionnaireActionUtil where
 
+import Shared.Coordinate.Util.Coordinate
+import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
+import Wizard.Constant.QuestionnaireAction
 import Wizard.Model.QuestionnaireAction.QuestionnaireAction
-import WizardLib.Common.Constant.QuestionnaireAction
-import WizardLib.Common.Util.Coordinate
-import WizardLib.KnowledgeModel.Service.Package.PackageUtil
 
 isQuestionnaireActionSupported :: QuestionnaireAction -> Bool
 isQuestionnaireActionSupported importer = importer.metamodelVersion == questionnaireActionMetamodelVersion

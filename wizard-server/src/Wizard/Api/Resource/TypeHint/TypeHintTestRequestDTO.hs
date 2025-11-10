@@ -5,7 +5,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 data TypeHintTestRequestDTO = TypeHintTestRequestDTO
-  { branchUuid :: U.UUID
+  { knowledgeModelEditorUuid :: U.UUID
   , integrationUuid :: U.UUID
   , q :: String
   , variables :: M.Map String String

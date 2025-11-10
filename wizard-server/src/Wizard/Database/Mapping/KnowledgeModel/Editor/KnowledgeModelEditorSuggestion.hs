@@ -1,0 +1,7 @@
+module Wizard.Database.Mapping.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion where
+
+import Database.PostgreSQL.Simple
+
+import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
+
+instance FromRow KnowledgeModelEditorSuggestion

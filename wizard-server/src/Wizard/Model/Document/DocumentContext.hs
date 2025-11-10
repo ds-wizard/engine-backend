@@ -6,6 +6,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Common.SemVer2Tuple
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Questionnaire.QuestionnaireFileSimple
 import Wizard.Model.Questionnaire.QuestionnaireReply
@@ -13,7 +14,6 @@ import Wizard.Model.Questionnaire.QuestionnaireVersionList
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import WizardLib.Public.Api.Resource.User.Group.UserGroupDetailDTO
 
 data DocumentContext = DocumentContext

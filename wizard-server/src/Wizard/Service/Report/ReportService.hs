@@ -13,6 +13,6 @@ import Wizard.Service.Report.ReportMapper
 getReportByQuestionnaireUuid :: U.UUID -> AppContextM QuestionnaireDetailReportDTO
 getReportByQuestionnaireUuid qtnUuid = do
   qtnDto <- getQuestionnaireDetailQuestionnaireByUuid qtnUuid
-  knowledgeModel <- compileKnowledgeModel [] (Just qtnDto.packageId) qtnDto.selectedQuestionTagUuids
+  knowledgeModel <- compileKnowledgeModel [] (Just qtnDto.knowledgeModelPackageId) qtnDto.selectedQuestionTagUuids
   report <- generateReport qtnDto.phaseUuid knowledgeModel qtnDto.replies
   return $ toDTO qtnDto report

@@ -1,6 +1,6 @@
 module Wizard.Service.User.UserService where
 
-import Control.Monad (forM_, when)
+import Control.Monad (when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Crypto.PasswordStore as PasswordStore
@@ -27,9 +27,9 @@ import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
-import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
@@ -44,10 +44,8 @@ import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Document.Document
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.UserSubmissionPropEM ()
-import Wizard.S3.Document.DocumentS3
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Common
 import Wizard.Service.Mail.Mailer
@@ -283,7 +281,7 @@ deleteUser userUuid =
     checkPermission _UM_PERM
     _ <- findUserByUuid userUuid
     deleteAuditByCreatedBy userUuid
-    clearBranchCreatedBy userUuid
+    clearKnowledgeModelEditorCreatedBy userUuid
     clearQuestionnaireFileCreatedBy userUuid
     clearQuestionnaireVersionCreatedBy userUuid
     clearQuestionnaireEventCreatedBy userUuid
@@ -293,12 +291,7 @@ deleteUser userUuid =
     clearQuestionnaireCreatedBy userUuid
     deletePersistentCommandByCreatedBy userUuid
     documents <- findDocumentsForCurrentTenantFiltered [("created_by", U.toString userUuid)]
-    forM_
-      documents
-      ( \d -> do
-          deleteDocumentsFiltered [("uuid", U.toString d.uuid)]
-          removeDocumentContent d.uuid
-      )
+    deleteDocumentsFiltered [("created_by", U.toString userUuid)]
     deleteUserGroupMembershipsByUserUuid userUuid
     deleteTokenByUserUuid userUuid
     deleteUserByUuid userUuid

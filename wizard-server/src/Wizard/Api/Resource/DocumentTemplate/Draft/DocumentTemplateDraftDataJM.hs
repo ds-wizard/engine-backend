@@ -3,8 +3,8 @@ module Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataJM wh
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.Branch.BranchSuggestionJM ()
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataDTO
+import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorSuggestionJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSuggestionJM ()
 
 instance FromJSON DocumentTemplateDraftDataDTO where

@@ -8,12 +8,12 @@ import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretChangeJM ()
-import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretJM ()
-import Wizard.Database.Migration.Development.KnowledgeModelSecret.Data.KnowledgeModelSecrets
-import qualified Wizard.Database.Migration.Development.KnowledgeModelSecret.KnowledgeModelSecretMigration as KMS_Migration
+import Wizard.Api.Resource.KnowledgeModel.Secret.KnowledgeModelSecretChangeJM ()
+import Wizard.Api.Resource.KnowledgeModel.Secret.KnowledgeModelSecretJM ()
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Secret.KnowledgeModelSecrets
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSecretMigration as KMS_Migration
 import Wizard.Model.Context.AppContext
-import Wizard.Model.KnowledgeModelSecret.KnowledgeModelSecret
+import Wizard.Model.KnowledgeModel.KnowledgeModelSecret
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

@@ -12,15 +12,15 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Model.Error.Error
-import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
-import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
-import Wizard.Database.Migration.Development.Branch.Data.Branches
-import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
+import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationDTO
+import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationResolutionDTO
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Migration.KnowledgeModelMigrations
 import Wizard.Localization.Messages.Public
-import Wizard.Model.Branch.BranchList
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Service.Migration.KnowledgeModel.MigratorService
+import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
+import Wizard.Model.KnowledgeModel.Migration.KnowledgeModelMigration
+import Wizard.Service.KnowledgeModel.Migration.MigrationService
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -28,11 +28,11 @@ import Wizard.Specs.API.Migration.KnowledgeModel.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /wizard-api/branches/{branchId}/migrations/current/conflict
+-- POST /wizard-api/knowledge-model-editors/uuid/migrations/current/conflict
 -- ------------------------------------------------------------------------
 list_current_conflict_POST :: AppContext -> SpecWith ((), Application)
 list_current_conflict_POST appContext =
-  describe "POST /wizard-api/branches/{branchId}/migrations/current/conflict" $ do
+  describe "POST /wizard-api/knowledge-model-editors/{uuid}/migrations/current/conflict" $ do
     test_204 appContext
     test_400 appContext
     test_401 appContext
@@ -44,7 +44,7 @@ list_current_conflict_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/wizard-api/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current/conflict"
+reqUrl = "/wizard-api/knowledge-model-editors/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current/conflict"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -71,7 +71,7 @@ test_204 appContext =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find result in DB and compare with expectation state
-      assertStateOfMigrationInDB appContext migratorState CompletedState
+      assertStateOfMigrationInDB appContext migratorState CompletedKnowledgeModelMigrationState
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -96,24 +96,6 @@ test_400 appContext = do
       let responseMatcher =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
-  it "HTTP 400 BAD REQUEST when edit migration action has to provide target event" $
-    -- GIVEN: Prepare request
-    do
-      let reqDtoEdited = reqDto {event = Nothing}
-      let reqBody = encode reqDtoEdited
-      -- AND: Prepare expectation
-      let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = UserError _ERROR_SERVICE_MIGRATION_KM__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
-      let expBody = encode expDto
-      -- AND: Prepare database
-      runMigrationWithFullDB appContext
-      -- WHEN: Call API
-      response <- request reqMethod reqUrl reqHeaders reqBody
-      -- AND: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
   it "HTTP 400 BAD REQUEST when you can't solve conflicts because Migration state isn't in conflict state" $
     -- GIVEN: Prepare expectation
     do
@@ -123,7 +105,7 @@ test_400 appContext = do
       let expBody = encode expDto
       -- AND: Prepare database
       runMigrationWithFullDB appContext
-      runInContextIO (solveConflictAndMigrate amsterdamBranchList.uuid reqDto) appContext
+      runInContextIO (solveConflictAndMigrate amsterdamKnowledgeModelEditorList.uuid reqDto) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- AND: Compare response with expectation
@@ -151,4 +133,4 @@ test_404 appContext =
     reqHeaders
     reqBody
     "knowledge_model_migration"
-    [("branch_uuid", "6474b24b-262b-42b1-9451-008e8363f2b6")]
+    [("editor_uuid", "6474b24b-262b-42b1-9451-008e8363f2b6")]

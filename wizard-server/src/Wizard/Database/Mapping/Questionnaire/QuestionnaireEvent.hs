@@ -219,14 +219,14 @@ instance FromField QuestionnaireEventType where
   fromField f mdata = do
     typename <- typename f -- Get the PostgreSQL type name
     case mdata of
-      Just bs | typename == "event_type" ->
+      Just bs | typename == "questionnaire_event_type" ->
         case bs of
           "SetReplyEvent" -> pure SetReplyEventType
           "ClearReplyEvent" -> pure ClearReplyEventType
           "SetPhaseEvent" -> pure SetPhaseEventType
           "SetLabelsEvent" -> pure SetLabelsEventType
           _ -> returnError ConversionFailed f "Invalid ENUM value"
-      _ -> returnError Incompatible f "Expected event_type ENUM"
+      _ -> returnError Incompatible f "Expected questionnaire_event_type ENUM"
 
 instance ToField QuestionnaireEventType where
   toField SetReplyEventType = toField ("SetReplyEvent" :: T.Text)
@@ -248,7 +248,7 @@ instance FromField QuestionnaireReplyType where
   fromField f mdata = do
     typename <- typename f -- Get the PostgreSQL type name
     case mdata of
-      Just bs | typename == "value_type" ->
+      Just bs ->
         case bs of
           "StringReply" -> pure StringReplyType
           "AnswerReply" -> pure AnswerReplyType

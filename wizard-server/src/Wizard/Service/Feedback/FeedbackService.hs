@@ -53,7 +53,7 @@ createFeedbackWithGivenUuid :: U.UUID -> FeedbackCreateDTO -> AppContextM Feedba
 createFeedbackWithGivenUuid fUuid reqDto =
   runInTransaction $ do
     checkIfFeedbackIsEnabled
-    issue <- createIssue reqDto.packageId reqDto.questionUuid reqDto.title reqDto.content
+    issue <- createIssue reqDto.knowledgeModelPackageId reqDto.questionUuid reqDto.title reqDto.content
     now <- liftIO getCurrentTime
     tenantUuid <- asks currentTenantUuid
     let feedback = fromCreateDTO reqDto fUuid issue.number tenantUuid now

@@ -8,7 +8,7 @@ iStat =
     { userCount = 10
     , pkgCount = 20
     , qtnCount = 30
-    , branchCount = 40
+    , kmEditorCount = 40
     , docCount = 50
     , tmlCount = 60
     }

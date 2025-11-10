@@ -8,10 +8,10 @@ import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretChangeDTO
-import Wizard.Database.Migration.Development.KnowledgeModelSecret.Data.KnowledgeModelSecrets
+import Wizard.Api.Resource.KnowledgeModel.Secret.KnowledgeModelSecretChangeDTO
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Secret.KnowledgeModelSecrets
 import Wizard.Model.Context.AppContext
-import Wizard.Model.KnowledgeModelSecret.KnowledgeModelSecret
+import Wizard.Model.KnowledgeModel.KnowledgeModelSecret
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

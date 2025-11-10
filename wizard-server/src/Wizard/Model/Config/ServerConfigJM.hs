@@ -24,7 +24,7 @@ instance FromJSON ServerConfig where
     jwt <- o .:? "jwt" .!= defaultJwt
     roles <- o .:? "roles" .!= defaultRoles
     actionKey <- o .:? "actionKey" .!= defaultActionKey
-    branch <- o .:? "branch" .!= defaultBranch
+    knowledgeModelEditor <- o .:? "knowledgeModelEditor" .!= defaultKnowledgeModelEditor
     cache <- o .:? "cache" .!= defaultCache
     document <- o .:? "document" .!= defaultDocument
     feedback <- o .:? "feedback" .!= defaultFeedback
@@ -75,10 +75,10 @@ instance FromJSON ServerConfigActionKey where
     return ServerConfigActionKey {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigBranch where
+instance FromJSON ServerConfigKnowledgeModelEditor where
   parseJSON (Object o) = do
-    squash <- o .:? "squash" .!= defaultBranch.squash
-    return ServerConfigBranch {..}
+    squash <- o .:? "squash" .!= defaultKnowledgeModelEditor.squash
+    return ServerConfigKnowledgeModelEditor {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigCache where

@@ -6,7 +6,13 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.Types
 
 import Shared.Common.Database.Mapping.Common.SemVer2Tuple ()
-import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
+import Shared.DocumentTemplate.Constant.DocumentTemplate
+import Shared.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplatePhase ()
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
+import Shared.KnowledgeModel.Database.Mapping.KnowledgeModel.Package.KnowledgeModelPackagePhase ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermJM ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireAcl
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSharing ()
@@ -14,12 +20,6 @@ import Wizard.Database.Mapping.Questionnaire.QuestionnaireState ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireVisibility ()
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
-import WizardLib.DocumentTemplate.Constant.DocumentTemplate
-import WizardLib.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplatePhase ()
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
-import WizardLib.KnowledgeModel.Database.Mapping.Package.PackagePhase ()
 
 instance FromRow QuestionnaireDetailSettings where
   fromRow = do
@@ -34,28 +34,28 @@ instance FromRow QuestionnaireDetailSettings where
     formatUuid <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid
-    packageId <- field
-    packageName <- field
-    packageOrganizationId <- field
-    packageKmId <- field
-    packageVersion <- field
-    packagePhase <- field
-    packageDescription <- field
-    packageNonEditable <- field
-    packageCreatedAt <- field
-    let package =
-          PackageSimpleDTO
-            { pId = packageId
-            , name = packageName
-            , organizationId = packageOrganizationId
-            , kmId = packageKmId
-            , version = packageVersion
-            , phase = packagePhase
+    knowledgeModelPackageId <- field
+    knowledgeModelPackageName <- field
+    knowledgeModelPackageOrganizationId <- field
+    knowledgeModelPackageKmId <- field
+    knowledgeModelPackageVersion <- field
+    knowledgeModelPackagePhase <- field
+    knowledgeModelPackageDescription <- field
+    knowledgeModelPackageNonEditable <- field
+    knowledgeModelPackageCreatedAt <- field
+    let knowledgeModelPackage =
+          KnowledgeModelPackageSimpleDTO
+            { pId = knowledgeModelPackageId
+            , name = knowledgeModelPackageName
+            , organizationId = knowledgeModelPackageOrganizationId
+            , kmId = knowledgeModelPackageKmId
+            , version = knowledgeModelPackageVersion
+            , phase = knowledgeModelPackagePhase
             , remoteLatestVersion = Nothing
-            , description = packageDescription
+            , description = knowledgeModelPackageDescription
             , organization = Nothing
-            , nonEditable = packageNonEditable
-            , createdAt = packageCreatedAt
+            , nonEditable = knowledgeModelPackageNonEditable
+            , createdAt = knowledgeModelPackageCreatedAt
             }
     let knowledgeModelTags = []
     mDocumentTemplateId <- field

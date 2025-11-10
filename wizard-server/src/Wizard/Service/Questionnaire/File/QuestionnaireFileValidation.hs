@@ -6,19 +6,19 @@ import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
 import Shared.Common.Model.Error.Error
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireFile
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Tenant.Limit.LimitService
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 
 validateQuestionnaireFile :: Questionnaire -> U.UUID -> QuestionnaireFile -> AppContextM ()
 validateQuestionnaireFile qtn questionUuid qtnFile = do
   checkStorageSize qtnFile.fileSize
-  km <- compileKnowledgeModel [] (Just qtn.packageId) qtn.selectedQuestionTagUuids
+  km <- compileKnowledgeModel [] (Just qtn.knowledgeModelPackageId) qtn.selectedQuestionTagUuids
   case M.lookup questionUuid (getQuestionsM km) of
     Just (FileQuestion' question) ->
       case question.maxSize of

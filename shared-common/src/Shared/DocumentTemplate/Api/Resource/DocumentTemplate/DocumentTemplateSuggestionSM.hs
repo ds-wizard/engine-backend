@@ -1,0 +1,14 @@
+module Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionSM where
+
+import Data.Swagger
+
+import Shared.Common.Util.Swagger
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateFormatSimpleSM ()
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionJM ()
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
+
+instance ToSchema DocumentTemplateSuggestionDTO where
+  declareNamedSchema = toSwagger (toSuggestionDTO wizardDocumentTemplate wizardDocumentTemplateFormats)

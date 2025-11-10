@@ -9,7 +9,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Migration.KnowledgeModelMigrations
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
@@ -17,11 +17,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.API.Migration.KnowledgeModel.Common
 
 -- ------------------------------------------------------------------------
--- GET /wizard-api/branches/{branchId}/migrations/current
+-- GET /wizard-api/knowledge-model-editors/{uuid}/migrations/current
 -- ------------------------------------------------------------------------
 list_current_GET :: AppContext -> SpecWith ((), Application)
 list_current_GET appContext =
-  describe "GET /wizard-api/branches/{branchId}/migrations/current" $ do
+  describe "GET /wizard-api/knowledge-model-editors/{uuid}/migrations/current" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -32,7 +32,7 @@ list_current_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/wizard-api/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current"
+reqUrl = "/wizard-api/knowledge-model-editors/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -78,4 +78,4 @@ test_404 appContext =
     reqHeaders
     reqBody
     "knowledge_model_migration"
-    [("branch_uuid", "6474b24b-262b-42b1-9451-008e8363f2b6")]
+    [("editor_uuid", "6474b24b-262b-42b1-9451-008e8363f2b6")]

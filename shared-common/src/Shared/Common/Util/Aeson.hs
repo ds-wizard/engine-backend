@@ -108,3 +108,7 @@ mapToObject = object . Prelude.map stringsToPair . M.toList
 
 stringsToPair :: (String, String) -> (Key, Value)
 stringsToPair (k, v) = (key k, string v)
+
+mergeValue :: Value -> Value -> Value
+mergeValue (Object o1) (Object o2) = Object (o1 <> o2)
+mergeValue _ v = v

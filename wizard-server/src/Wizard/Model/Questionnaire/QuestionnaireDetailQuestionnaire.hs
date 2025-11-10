@@ -12,7 +12,7 @@ data QuestionnaireDetailQuestionnaire = QuestionnaireDetailQuestionnaire
   , name :: String
   , visibility :: QuestionnaireVisibility
   , sharing :: QuestionnaireSharing
-  , packageId :: String
+  , knowledgeModelPackageId :: String
   , selectedQuestionTagUuids :: [U.UUID]
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID

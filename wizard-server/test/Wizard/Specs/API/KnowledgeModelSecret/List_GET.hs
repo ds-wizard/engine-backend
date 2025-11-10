@@ -9,9 +9,9 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Api.Resource.KnowledgeModelSecret.KnowledgeModelSecretJM ()
-import Wizard.Database.Migration.Development.KnowledgeModelSecret.Data.KnowledgeModelSecrets
-import qualified Wizard.Database.Migration.Development.KnowledgeModelSecret.KnowledgeModelSecretMigration as KMS
+import Wizard.Api.Resource.KnowledgeModel.Secret.KnowledgeModelSecretJM ()
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Secret.KnowledgeModelSecrets
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSecretMigration as KMS
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common

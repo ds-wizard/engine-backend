@@ -7,11 +7,11 @@ import Shared.Common.Api.Handler.Common
 import Shared.Common.Api.Resource.Common.FileDTO
 import Shared.Common.Api.Resource.Common.FileJM ()
 import Shared.Common.Model.Context.TransactionState
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO hiding (files)
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleJM ()
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleService
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO hiding (files)
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleJM ()
 
 type List_Bundle_POST =
   Header "Authorization" String

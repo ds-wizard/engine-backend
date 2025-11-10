@@ -7,7 +7,7 @@ import Wizard.Model.Cache.ServerCache
 
 createServerCache serverConfig = do
   let [dataExp, websocketExp] = fmap (Just . fromHoursToTimeSpec) [serverConfig.cache.dataExpiration, serverConfig.cache.websocketExpiration]
-  branchWebsocket <- C.newCache websocketExp
+  knowledgeModelEditorWebsocket <- C.newCache websocketExp
   questionnaireWebsocket <- C.newCache websocketExp
   user <- C.newCache dataExp
   userToken <- C.newCache dataExp
