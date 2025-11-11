@@ -80,10 +80,10 @@ $ stack test <application> --jobs=1 --fast --coverage --ghc-options "-fforce-rec
 
 ### Build an app version and built date
 
-Run these comands from the `scripts` folder
+Run the following command from the project root, for the given application:
 
 ```bash
-$ ./<application>/build-info.sh
+$ ./scripts/generate-build-info.sh <application>
 ```
 
 ## License
