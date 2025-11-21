@@ -26,9 +26,9 @@ createTables = do
         \    resolved_question_uuids uuid[] NOT NULL, \
         \    tenant_uuid             uuid   NOT NULL, \
         \    CONSTRAINT questionnaire_migration_pk PRIMARY KEY (old_questionnaire_uuid, new_questionnaire_uuid), \
-        \    CONSTRAINT questionnaire_migration_old_questionnaire_uuid_fk FOREIGN KEY (old_questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_migration_new_questionnaire_uuid_fk FOREIGN KEY (new_questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_migration_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT questionnaire_migration_old_questionnaire_uuid_fk FOREIGN KEY (old_questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_migration_new_questionnaire_uuid_fk FOREIGN KEY (new_questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_migration_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

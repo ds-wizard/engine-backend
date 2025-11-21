@@ -2,7 +2,6 @@ module Wizard.Service.Questionnaire.File.QuestionnaireFileService where
 
 import Control.Monad (void)
 import Control.Monad.Reader (asks, liftIO)
-import Data.Foldable (traverse_)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -22,7 +21,6 @@ import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireFile
 import Wizard.Model.Questionnaire.QuestionnaireFileList
-import Wizard.Model.Questionnaire.QuestionnaireFileSimple
 import Wizard.S3.Questionnaire.QuestionnaireFileS3
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
 import Wizard.Service.Questionnaire.File.QuestionnaireFileAcl
@@ -83,13 +81,6 @@ downloadQuestionnaireFile qtnUuid fileUuid = do
     mCurrentUserUuid <- getCurrentUserUuid
     url <- createTemporaryFileConduit qtnFile.fileName "application/octet-stream" mCurrentUserUuid contentAction
     return $ TemporaryFileMapper.toDTO url qtnFile.contentType
-
-deleteQuestionnaireFilesByQuestionnaireUuid :: U.UUID -> AppContextM ()
-deleteQuestionnaireFilesByQuestionnaireUuid qtnUuid = do
-  runInTransaction $ do
-    files <- findQuestionnaireFilesSimpleByQuestionnaire qtnUuid
-    checkEditPermissionToFile qtnUuid
-    traverse_ (\file -> deleteQuestionnaireFileByUuid file.uuid) files
 
 deleteQuestionnaireFile :: U.UUID -> U.UUID -> AppContextM ()
 deleteQuestionnaireFile qtnUuid fileUuid = do

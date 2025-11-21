@@ -60,6 +60,8 @@ runMigration = runAppContextWithBaseContext $ do
   Questionnaire.dropTriggers
   Locale.dropTriggers
   -- 2. Drop DB functions
+  Questionnaire.dropFunctions
+  DocumentTemplate.dropFunctions
   KnowledgeModelEditor.dropFunctions
   KnowledgeModelPackage.dropFunctions
   Common.dropFunctions
@@ -126,6 +128,8 @@ runMigration = runAppContextWithBaseContext $ do
   Common.createFunctions
   KnowledgeModelPackage.createFunctions
   KnowledgeModelEditor.createFunctions
+  DocumentTemplate.createFunctions
+  Questionnaire.createFunctions
   -- 8. Create missing foreign key constraints
   User.createUserLocaleForeignKeyConstraint
   -- 9. Create DB triggers
@@ -133,8 +137,8 @@ runMigration = runAppContextWithBaseContext $ do
   Questionnaire.createTriggers
   Document.createTriggers
   -- 10. Load S3 fixtures
-  -- DocumentTemplate.runS3Migration
-  -- Locale.runS3Migration
+  DocumentTemplate.runS3Migration
+  Locale.runS3Migration
   -- 11. Load fixtures
   Tenant.runMigration
   User.runMigration

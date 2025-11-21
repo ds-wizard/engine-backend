@@ -1,6 +1,6 @@
 module Wizard.Service.Questionnaire.QuestionnaireService where
 
-import Control.Monad (when)
+import Control.Monad (void, when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Foldable (traverse_)
@@ -38,25 +38,17 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireShareChangeDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
-import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
-import Wizard.Database.DAO.Questionnaire.MigratorDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
-import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Common.Lens
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
-import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
-import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireDetailPreview
@@ -400,32 +392,11 @@ modifyQuestionnaireSettings qtnUuid reqDto =
 deleteQuestionnaire :: U.UUID -> Bool -> AppContextM ()
 deleteQuestionnaire qtnUuid shouldValidatePermission =
   runInTransaction $ do
-    unsetQuestionnaireFromDocumentTemplate qtnUuid
     qtn <- findQuestionnaireByUuid qtnUuid
     validateQuestionnaireDeletion qtnUuid
     when shouldValidatePermission (checkOwnerPermissionToQtn qtn.visibility qtn.permissions)
-    deleteMigratorStateByNewQuestionnaireUuid qtnUuid
-    threads <- findQuestionnaireCommentThreads qtnUuid
-    traverse_
-      ( \t -> do
-          deleteQuestionnaireCommentsByThreadUuid t.uuid
-          deleteQuestionnaireCommentThreadById t.uuid
-      )
-      threads
-    documents <- findDocumentsForCurrentTenantFiltered [("questionnaire_uuid", U.toString qtnUuid)]
-    traverse_
-      ( \d -> do
-          deleteSubmissionsFiltered [("document_uuid", U.toString d.uuid)]
-          deleteDocumentsFiltered [("uuid", U.toString d.uuid)]
-      )
-      documents
-    deleteQuestionnaireVersionsByQuestionnaireUuid qtnUuid
-    deleteQuestionnaireFilesByQuestionnaireUuid qtnUuid
-    deleteQuestionnairePermsFiltered [("questionnaire_uuid", U.toString qtnUuid)]
-    deleteQuestionnaireEventsByQuestionnaireUuid qtnUuid
     deleteQuestionnaireByUuid qtnUuid
-    logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid
-    return ()
+    void $ logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid
 
 modifyContent :: U.UUID -> QuestionnaireContentChangeDTO -> AppContextM QuestionnaireContentChangeDTO
 modifyContent qtnUuid reqDto =

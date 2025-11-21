@@ -29,6 +29,20 @@ dropBucket = do
   catchError purgeBucket (\e -> return ())
   catchError removeBucket (\e -> return ())
 
+dropFunctions :: AppContextM Int64
+dropFunctions = do
+  logInfo _CMP_MIGRATION "(Function/DocumentTemplate) drop functions"
+  let sql = "DROP FUNCTION IF EXISTS create_persistent_command_from_questionnaire_file_delete;"
+  let action conn = execute_ conn sql
+  runDB action
+
+dropTriggers :: AppContextM Int64
+dropTriggers = do
+  logInfo _CMP_MIGRATION "(Trigger/DocumentTemplate) drop tables"
+  let sql = "DROP TRIGGER IF EXISTS trigger_on_after_questionnaire_file_delete ON questionnaire_file;"
+  let action conn = execute_ conn sql
+  runDB action
+
 createTables :: AppContextM ()
 createTables = do
   createTemplateTable
@@ -59,7 +73,7 @@ createTemplateTable = do
         \    phase             varchar          NOT NULL, \
         \    non_editable      boolean          NOT NULL, \
         \    CONSTRAINT document_template_pk PRIMARY KEY (id, tenant_uuid), \
-        \    CONSTRAINT document_template_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT document_template_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \); \
         \ \
         \CREATE INDEX document_template_organization_id_template_id_index ON document_template (organization_id, template_id, tenant_uuid);"
@@ -114,8 +128,8 @@ createTemplateFileTable = do
         \    created_at           timestamptz NOT NULL, \
         \    updated_at           timestamptz NOT NULL, \
         \    CONSTRAINT document_template_file_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT document_template_file_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid), \
-        \    CONSTRAINT document_template_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT document_template_file_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT document_template_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -134,8 +148,8 @@ createTemplateAssetTable = do
         \    created_at           timestamptz NOT NULL, \
         \    updated_at           timestamptz NOT NULL, \
         \    CONSTRAINT document_template_asset_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT document_template_asset_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid), \
-        \    CONSTRAINT document_template_asset_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT document_template_asset_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT document_template_asset_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -154,10 +168,44 @@ createDraftDataTable = do
         \    updated_at                   timestamptz NOT NULL, \
         \    knowledge_model_editor_uuid  uuid, \
         \    CONSTRAINT document_template_draft_data_pk PRIMARY KEY (document_template_id, tenant_uuid), \
-        \    CONSTRAINT document_template_draft_data_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid), \
-        \    CONSTRAINT document_template_draft_data_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
-        \    CONSTRAINT document_template_draft_data_knowledge_model_editor_uuid_fk FOREIGN KEY (knowledge_model_editor_uuid, tenant_uuid) REFERENCES knowledge_model_editor (uuid, tenant_uuid), \
-        \    CONSTRAINT document_template_draft_data_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT document_template_draft_data_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT document_template_draft_data_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE SET NULL, \
+        \    CONSTRAINT document_template_draft_data_knowledge_model_editor_uuid_fk FOREIGN KEY (knowledge_model_editor_uuid) REFERENCES knowledge_model_editor (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT document_template_draft_data_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createFunctions :: AppContextM Int64
+createFunctions = do
+  logInfo _CMP_MIGRATION "(Function/DocumentTemplate) create functions"
+  createPersistentCommandFromDocumentTemplateAssetDeleteFunction
+
+createPersistentCommandFromDocumentTemplateAssetDeleteFunction = do
+  let sql =
+        "CREATE OR REPLACE FUNCTION create_persistent_command_from_document_template_asset_delete() \
+        \    RETURNS TRIGGER AS \
+        \$$ \
+        \BEGIN \
+        \    PERFORM create_persistent_command( \
+        \            'document_template_asset', \
+        \            'deleteFromS3', \
+        \            jsonb_build_object('documentTemplateId', OLD.document_template_id, 'assetUuid', OLD.uuid), \
+        \            OLD.tenant_uuid); \
+        \    RETURN OLD; \
+        \END; \
+        \$$ LANGUAGE plpgsql;"
+  let action conn = execute_ conn sql
+  runDB action
+
+createTriggers :: AppContextM Int64
+createTriggers = do
+  logInfo _CMP_MIGRATION "(Trigger/DocumentTemplate) create triggers"
+  let sql =
+        "CREATE OR REPLACE TRIGGER trigger_on_after_document_template_asset_delete \
+        \    AFTER DELETE \
+        \    ON document_template_asset \
+        \    FOR EACH ROW \
+        \EXECUTE FUNCTION create_persistent_command_from_document_template_asset_delete();"
   let action conn = execute_ conn sql
   runDB action

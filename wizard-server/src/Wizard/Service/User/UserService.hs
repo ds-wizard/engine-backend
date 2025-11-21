@@ -1,6 +1,6 @@
 module Wizard.Service.User.UserService where
 
-import Control.Monad (when)
+import Control.Monad (void, when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Crypto.PasswordStore as PasswordStore
@@ -12,7 +12,6 @@ import qualified Data.UUID as U
 import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.ActionKey.Model.ActionKey.ActionKey
-import Shared.Audit.Database.DAO.Audit.AuditDAO
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
@@ -21,26 +20,16 @@ import Shared.Common.Model.Config.SimpleFeature
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
 import Shared.Common.Util.Uuid
-import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Api.Resource.Auth.AuthConsentDTO
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.Document.DocumentDAO
-import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.ActionKey.ActionKeyType
-import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
@@ -58,10 +47,8 @@ import Wizard.Service.User.UserValidation
 import Wizard.Service.UserToken.Login.LoginService
 import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
-import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Localization.Messages.Public
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
-import WizardLib.Public.Service.UserToken.UserTokenService
 
 getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
 getUsersPage mQuery mRole pageable sort = do
@@ -280,22 +267,7 @@ deleteUser userUuid =
   runInTransaction $ do
     checkPermission _UM_PERM
     _ <- findUserByUuid userUuid
-    deleteAuditByCreatedBy userUuid
-    clearKnowledgeModelEditorCreatedBy userUuid
-    clearQuestionnaireFileCreatedBy userUuid
-    clearQuestionnaireVersionCreatedBy userUuid
-    clearQuestionnaireEventCreatedBy userUuid
-    deleteQuestionnairePermUserByUserUuid userUuid
-    clearQuestionnaireCommentThreadAssignedTo userUuid
-    clearQuestionnaireCommentThreadAssignedBy userUuid
-    clearQuestionnaireCreatedBy userUuid
-    deletePersistentCommandByCreatedBy userUuid
-    documents <- findDocumentsForCurrentTenantFiltered [("created_by", U.toString userUuid)]
-    deleteDocumentsFiltered [("created_by", U.toString userUuid)]
-    deleteUserGroupMembershipsByUserUuid userUuid
-    deleteTokenByUserUuid userUuid
-    deleteUserByUuid userUuid
-    return ()
+    void $ deleteUserByUuid userUuid
 
 -- --------------------------------
 -- PRIVATE

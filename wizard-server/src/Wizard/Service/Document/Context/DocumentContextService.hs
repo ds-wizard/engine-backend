@@ -63,7 +63,10 @@ createDocumentContext doc pkg kmEditorEvents qtn mReplies = do
       (Just eventUuid) -> findQuestionnaireVersionByEventUuid' qtn.uuid eventUuid
       _ -> return Nothing
   qtnVersionsList <- findQuestionnaireVersionListByQuestionnaireUuidAndCreatedAt qtn.uuid (fmap (.createdAt) mQtnVersion)
-  qtnFiles <- findQuestionnaireFilesSimpleByQuestionnaire doc.questionnaireUuid
+  qtnFiles <-
+    case doc.questionnaireUuid of
+      Just questionnaireUuid -> findQuestionnaireFilesSimpleByQuestionnaire questionnaireUuid
+      Nothing -> return []
   (users, groups) <- heSettingsToPerms qtn
   return $
     toDocumentContext

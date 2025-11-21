@@ -82,22 +82,8 @@ updateQuestionnaireVersionByUuid version = do
   let action conn = execute conn sql params
   runDB action
 
-clearQuestionnaireVersionCreatedBy :: U.UUID -> AppContextM ()
-clearQuestionnaireVersionCreatedBy userUuid = do
-  let sql = fromString "UPDATE questionnaire_version SET created_by = null WHERE created_by = ?"
-  let params = [U.toString userUuid]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
-
 deleteQuestionnaireVersions :: AppContextM Int64
 deleteQuestionnaireVersions = createDeleteEntitiesFn entityName
-
-deleteQuestionnaireVersionsByQuestionnaireUuid :: U.UUID -> AppContextM Int64
-deleteQuestionnaireVersionsByQuestionnaireUuid questionnaireUuid = do
-  tenantUuid <- asks currentTenantUuid
-  createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("questionnaire_uuid", U.toString questionnaireUuid)]
 
 deleteQuestionnaireVersionsByUuids :: [U.UUID] -> AppContextM ()
 deleteQuestionnaireVersionsByUuids versionUuids =

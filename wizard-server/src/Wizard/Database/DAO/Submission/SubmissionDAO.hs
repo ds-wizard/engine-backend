@@ -79,8 +79,3 @@ updateSubmissionByUuid sub = do
 
 deleteSubmissions :: AppContextM Int64
 deleteSubmissions = createDeleteEntitiesFn entityName
-
-deleteSubmissionsFiltered :: [(String, String)] -> AppContextM Int64
-deleteSubmissionsFiltered params = do
-  tenantUuid <- asks currentTenantUuid
-  createDeleteEntitiesByFn entityName (tenantQueryUuid tenantUuid : params)

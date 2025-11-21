@@ -21,11 +21,9 @@ import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorCreateDTO
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorDetailDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorEventDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorReplyDAO
-import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelMigrationDAO
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
@@ -148,8 +146,5 @@ deleteEditor kmEditorUuid =
   runInTransaction $ do
     checkPermission _KM_PERM
     _ <- findKnowledgeModelEditorByUuid kmEditorUuid
-    unsetKnowledgeModelEditorFromDocumentTemplate kmEditorUuid
-    deleteMigratorStateByEditorUuid kmEditorUuid
     deleteKnowledgeModelEditorByUuid kmEditorUuid
-    logOutOnlineUsersWhenKnowledgeModelEditorDramaticallyChanged kmEditorUuid
-    return ()
+    void $ logOutOnlineUsersWhenKnowledgeModelEditorDramaticallyChanged kmEditorUuid

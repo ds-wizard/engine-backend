@@ -147,15 +147,6 @@ updateKnowledgeModelEditorByUuid kmEditor = do
   let action conn = execute conn sql params
   runDB action
 
-clearKnowledgeModelEditorCreatedBy :: U.UUID -> AppContextM ()
-clearKnowledgeModelEditorCreatedBy userUuid = do
-  let sql = fromString "UPDATE knowledge_model_editor SET created_by = null WHERE created_by = ?"
-  let params = [toField userUuid]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
-
 deleteKnowledgeModelEditors :: AppContextM Int64
 deleteKnowledgeModelEditors = createDeleteEntitiesFn entityName
 

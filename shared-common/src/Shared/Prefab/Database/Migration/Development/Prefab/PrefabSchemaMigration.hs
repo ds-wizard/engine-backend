@@ -29,7 +29,7 @@ createTables = do
         \    created_at  timestamptz NOT NULL, \
         \    updated_at  timestamptz NOT NULL, \
         \    CONSTRAINT prefab_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT prefab_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT prefab_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

@@ -647,15 +647,6 @@ updateQuestionnaireUpdatedAtByUuid uuid = do
   let action conn = execute conn sql params
   runDB action
 
-clearQuestionnaireCreatedBy :: U.UUID -> AppContextM ()
-clearQuestionnaireCreatedBy userUuid = do
-  let sql = fromString "UPDATE questionnaire SET created_by = null WHERE created_by = ?"
-  let params = [toField userUuid]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
-
 deleteQuestionnaires :: AppContextM Int64
 deleteQuestionnaires = createDeleteEntitiesFn entityName
 

@@ -56,12 +56,12 @@ insertOrUpdateUserSubmissionProp submissionProps = do
         fromString
           "INSERT INTO user_entity_submission_prop \
           \VALUES (?, ?, ?, ?, ?, ?) \
-          \ON CONFLICT (user_uuid, service_id, tenant_uuid) DO UPDATE SET user_uuid   = ?, \
-          \                                                               service_id  = ?, \
-          \                                                               values      = ?, \
-          \                                                               tenant_uuid = ?, \
-          \                                                               created_at  = ?, \
-          \                                                               updated_at  = ?;"
+          \ON CONFLICT (user_uuid, service_id) DO UPDATE SET user_uuid   = ?, \
+          \                                                  service_id  = ?, \
+          \                                                  values      = ?, \
+          \                                                  tenant_uuid = ?, \
+          \                                                  created_at  = ?, \
+          \                                                  updated_at  = ?;"
   let params = toRow submissionProps ++ toRow submissionProps
   logQuery sql params
   let action conn = execute conn sql params

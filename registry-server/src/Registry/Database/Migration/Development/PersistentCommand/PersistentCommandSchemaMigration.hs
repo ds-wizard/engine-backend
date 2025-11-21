@@ -37,7 +37,7 @@ createTables = do
         \    destination        varchar, \
         \    last_trace_uuid    uuid, \
         \    CONSTRAINT persistent_command_pk PRIMARY KEY (uuid), \
-        \    CONSTRAINT persistent_command_created_by_fk FOREIGN KEY (created_by) REFERENCES organization (organization_id) \
+        \    CONSTRAINT persistent_command_created_by_fk FOREIGN KEY (created_by) REFERENCES organization (organization_id) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

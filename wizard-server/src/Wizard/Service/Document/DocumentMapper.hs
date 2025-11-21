@@ -80,7 +80,7 @@ fromCreateDTO dto docUuid repliesHash qtnEvents mCurrentUser tenantUuid now =
     , name = trim dto.name
     , state = QueuedDocumentState
     , durability = PersistentDocumentDurability
-    , questionnaireUuid = dto.questionnaireUuid
+    , questionnaireUuid = Just dto.questionnaireUuid
     , questionnaireEventUuid =
         case dto.questionnaireEventUuid of
           Just questionnaireEventUuid -> Just questionnaireEventUuid
@@ -99,14 +99,17 @@ fromCreateDTO dto docUuid repliesHash qtnEvents mCurrentUser tenantUuid now =
     , createdAt = now
     }
 
-fromTemporallyCreateDTO :: U.UUID -> Questionnaire -> Maybe U.UUID -> String -> U.UUID -> Int -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
-fromTemporallyCreateDTO docUuid qtn questionnaireEventUuid documentTemplateId formatUuid repliesHash mCurrentUser tenantUuid now =
+fromTemporallyCreateDTO :: U.UUID -> Questionnaire -> Maybe U.UUID -> String -> U.UUID -> Int -> Maybe UserDTO -> U.UUID -> UTCTime -> Bool -> Document
+fromTemporallyCreateDTO docUuid qtn questionnaireEventUuid documentTemplateId formatUuid repliesHash mCurrentUser tenantUuid now fromKnowledgeModelEditor =
   Document
     { uuid = docUuid
     , name = trim qtn.name
     , state = QueuedDocumentState
     , durability = TemporallyDocumentDurability
-    , questionnaireUuid = qtn.uuid
+    , questionnaireUuid =
+        if fromKnowledgeModelEditor
+          then Nothing
+          else Just qtn.uuid
     , questionnaireEventUuid = questionnaireEventUuid
     , questionnaireRepliesHash = repliesHash
     , documentTemplateId = documentTemplateId

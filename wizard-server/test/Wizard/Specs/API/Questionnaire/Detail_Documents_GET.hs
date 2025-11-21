@@ -82,8 +82,8 @@ create_test_200 title appContext authHeader =
       let reqUrl = reqUrlT questionnaire6.uuid
       let reqHeaders = reqHeadersT authHeader
       -- AND: Run migrations
-      let doc1' = doc1 {questionnaireUuid = questionnaire6.uuid, questionnaireEventUuid = Just . getUuid $ slble_rQ1' questionnaire6.uuid}
-      let doc2' = doc2 {questionnaireUuid = questionnaire6.uuid, questionnaireEventUuid = Just . getUuid $ slble_rQ1' questionnaire6.uuid, createdBy = Just userIsaac.uuid}
+      let doc1' = doc1 {questionnaireUuid = Just questionnaire6.uuid, questionnaireEventUuid = Just . getUuid $ slble_rQ1' questionnaire6.uuid}
+      let doc2' = doc2 {questionnaireUuid = Just questionnaire6.uuid, questionnaireEventUuid = Just . getUuid $ slble_rQ1' questionnaire6.uuid, createdBy = Just userIsaac.uuid}
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO QTN_Migration.runMigration appContext

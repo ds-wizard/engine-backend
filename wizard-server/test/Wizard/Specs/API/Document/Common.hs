@@ -23,7 +23,7 @@ import Wizard.Specs.Common
 assertExistenceOfDocumentInDB appContext reqDto = do
   docFromDb <- getFirstFromDB findDocuments appContext
   liftIO $ docFromDb.name `shouldBe` reqDto.name
-  liftIO $ docFromDb.questionnaireUuid `shouldBe` reqDto.questionnaireUuid
+  liftIO $ docFromDb.questionnaireUuid `shouldBe` Just reqDto.questionnaireUuid
   liftIO $ docFromDb.documentTemplateId `shouldBe` reqDto.documentTemplateId
   liftIO $ docFromDb.formatUuid `shouldBe` reqDto.formatUuid
 

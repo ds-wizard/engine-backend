@@ -27,8 +27,8 @@ createTables = do
         \    tenant_uuid uuid        NOT NULL, \
         \    created_at  timestamptz NOT NULL, \
         \    updated_at  timestamptz NOT NULL, \
-        \    CONSTRAINT knowledge_model_secret_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT knowledge_model_secret_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT knowledge_model_secret_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT knowledge_model_secret_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

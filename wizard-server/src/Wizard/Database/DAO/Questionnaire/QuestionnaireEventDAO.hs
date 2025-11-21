@@ -105,15 +105,6 @@ syncQuestionnaireEventsWithDb oldEvents newEvents = do
   traverse_ updateQuestionnaireEventByUuid toUpdate
   void $ deleteQuestionnaireEventsByUuids toDelete
 
-clearQuestionnaireEventCreatedBy :: U.UUID -> AppContextM ()
-clearQuestionnaireEventCreatedBy userUuid = do
-  let sql = fromString "UPDATE questionnaire_event SET created_by = null WHERE created_by = ?"
-  let params = [U.toString userUuid]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
-
 deleteQuestionnaireEvents :: AppContextM Int64
 deleteQuestionnaireEvents = createDeleteEntitiesFn entityName
 

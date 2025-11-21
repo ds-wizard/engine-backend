@@ -150,7 +150,7 @@ createTcInternalAuthenticationOpenIdTable = do
         \    created_at       timestamptz NOT NULL, \
         \    updated_at       timestamptz NOT NULL, \
         \    CONSTRAINT config_authentication_openid_pk PRIMARY KEY (id, tenant_uuid), \
-        \    CONSTRAINT config_authentication_openid_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT config_authentication_openid_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -386,16 +386,16 @@ createTcOwlTable = do
   let sql =
         "CREATE TABLE config_owl \
         \( \
-        \    tenant_uuid                          uuid        NOT NULL, \
-        \    enabled                              boolean     NOT NULL, \
-        \    name                                 varchar     NOT NULL, \
-        \    organization_id                      varchar     NOT NULL, \
-        \    km_id                                varchar     NOT NULL, \
-        \    version                              varchar     NOT NULL, \
-        \    previous_knowledge_model_package_id  varchar, \
-        \    root_element                         varchar     NOT NULL, \
-        \    created_at                           timestamptz NOT NULL, \
-        \    updated_at                           timestamptz NOT NULL, \
+        \    tenant_uuid          uuid        NOT NULL, \
+        \    enabled              boolean     NOT NULL, \
+        \    name                 varchar     NOT NULL, \
+        \    organization_id      varchar     NOT NULL, \
+        \    km_id                varchar     NOT NULL, \
+        \    version              varchar     NOT NULL, \
+        \    previous_package_id  varchar, \
+        \    root_element         varchar     NOT NULL, \
+        \    created_at           timestamptz NOT NULL, \
+        \    updated_at           timestamptz NOT NULL, \
         \    CONSTRAINT config_owl_pk PRIMARY KEY (tenant_uuid), \
         \    CONSTRAINT config_owl_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
@@ -428,7 +428,7 @@ createTcMailTable = do
         \    created_at  timestamptz NOT NULL, \
         \    updated_at  timestamptz NOT NULL, \
         \    CONSTRAINT config_mail_pk PRIMARY KEY (tenant_uuid), \
-        \    CONSTRAINT config_mail_config_uuid_fk FOREIGN KEY (config_uuid) REFERENCES instance_config_mail (uuid) ON DELETE SET DEFAULT, \
+        \    CONSTRAINT config_mail_config_uuid_fk FOREIGN KEY (config_uuid) REFERENCES instance_config_mail (uuid) ON DELETE SET NULL, \
         \    CONSTRAINT config_mail_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql

@@ -1,6 +1,6 @@
 module Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftService where
 
-import Control.Monad (when)
+import Control.Monad (void, when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
 import Data.Foldable (traverse_)
@@ -35,8 +35,6 @@ import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftDetail
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Model.Tenant.Config.TenantConfig
-import Wizard.S3.DocumentTemplate.DocumentTemplateS3
-import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetService
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation hiding (validateChangeDto)
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
@@ -156,8 +154,5 @@ deleteDraft tmlId =
     checkPermission _DOC_TML_WRITE_PERM
     draft <- findDraftById tmlId
     assets <- findAssetsByDocumentTemplateId tmlId
-    cleanTemporallyDocumentsForTemplate tmlId
     validateDocumentTemplateDeletion tmlId
-    deleteDraftByDocumentTemplateId tmlId
-    let assetUuids = fmap (.uuid) assets
-    traverse_ (removeAsset tmlId) assetUuids
+    void $ deleteDraftByDocumentTemplateId tmlId

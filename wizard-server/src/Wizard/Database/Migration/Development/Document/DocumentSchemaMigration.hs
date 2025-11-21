@@ -36,7 +36,7 @@ createDocumentTable = do
         \    name                       varchar     NOT NULL, \
         \    state                      varchar     NOT NULL, \
         \    durability                 varchar     NOT NULL, \
-        \    questionnaire_uuid         uuid        NOT NULL, \
+        \    questionnaire_uuid         uuid, \
         \    questionnaire_event_uuid   uuid, \
         \    questionnaire_replies_hash bigint      NOT NULL, \
         \    document_template_id       varchar     NOT NULL, \
@@ -50,13 +50,12 @@ createDocumentTable = do
         \    worker_log                 varchar, \
         \    tenant_uuid                uuid        NOT NULL, \
         \    file_size                  bigint, \
-        \    CONSTRAINT document_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT document_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid) ON DELETE SET NULL, \
-        \    CONSTRAINT document_questionnaire_event_uuid_fk FOREIGN KEY (questionnaire_event_uuid, tenant_uuid) REFERENCES questionnaire_event (uuid, tenant_uuid) ON DELETE SET NULL, \
-        \    CONSTRAINT document_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid), \
-        \    CONSTRAINT document_format_uuid_fk FOREIGN KEY (document_template_id, format_uuid, tenant_uuid) REFERENCES document_template_format (document_template_id, uuid, tenant_uuid), \
-        \    CONSTRAINT document_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
-        \    CONSTRAINT document_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT document_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT document_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT document_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT document_format_uuid_fk FOREIGN KEY (document_template_id, format_uuid, tenant_uuid) REFERENCES document_template_format (document_template_id, uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT document_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL, \
+        \    CONSTRAINT document_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

@@ -36,9 +36,9 @@ createTables = do
         \    internal           bool        not null, \
         \    destination        varchar, \
         \    last_trace_uuid    uuid, \
-        \    CONSTRAINT persistent_command_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT persistent_command_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
-        \    CONSTRAINT persistent_command_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT persistent_command_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT persistent_command_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT persistent_command_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

@@ -33,9 +33,8 @@ import Wizard.Service.User.UserMapper (toSuggestionDTO')
 getAvailableServicesForSubmission :: U.UUID -> AppContextM [TenantConfigSubmissionServiceSimple]
 getAvailableServicesForSubmission docUuid = do
   checkIfSubmissionIsEnabled
-  checkPermissionToSubmission docUuid
   doc <- findDocumentByUuid docUuid
-  checkEditPermissionToDoc doc.questionnaireUuid
+  checkEditPermissionToSubmission doc
   findTenantConfigSubmissionServicesByDocumentTemplateIdAndFormatUuid doc.documentTemplateId doc.formatUuid
 
 getSubmissionsForDocument :: U.UUID -> AppContextM [SubmissionList]
@@ -49,10 +48,9 @@ submitDocument :: U.UUID -> SubmissionCreateDTO -> AppContextM SubmissionList
 submitDocument docUuid reqDto =
   runInTransaction $ do
     checkIfSubmissionIsEnabled
-    checkPermissionToSubmission docUuid
-    tcSubmission <- findTenantConfigSubmissionServiceByServiceId reqDto.serviceId
     doc <- findDocumentByUuid docUuid
-    checkEditPermissionToDoc doc.questionnaireUuid
+    checkEditPermissionToSubmission doc
+    tcSubmission <- findTenantConfigSubmissionServiceByServiceId reqDto.serviceId
     docContent <- retrieveDocumentContent docUuid
     userProps <- getUserProps tcSubmission
     sub <- createSubmission docUuid reqDto

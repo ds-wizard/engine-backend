@@ -8,6 +8,7 @@ import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import qualified Shared.Prefab.Service.Prefab.PrefabCommandExecutor as PrefabCommandExecutor
 import Wizard.Model.Context.AppContext
 import qualified Wizard.Service.Document.DocumentCommandExecutor as DocumentCommandExecutor
+import qualified Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetCommandExecutor as DocumentTemplateAssetCommandExecutor
 import qualified Wizard.Service.KnowledgeModel.Metamodel.MigrationCommandExecutor as MetamodelMigratorCommandExecutor
 import qualified Wizard.Service.Locale.LocaleCommandExecutor as LocaleCommandExecutor
 import qualified Wizard.Service.Questionnaire.File.QuestionnaireFileCommandExecutor as QuestionnaireFileCommandExecutor
@@ -22,6 +23,7 @@ import qualified Wizard.Service.User.UserCommandExecutor as UserCommandExecutor
 execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command
   | command.component == DocumentCommandExecutor.cComponent = DocumentCommandExecutor.execute command
+  | command.component == DocumentTemplateAssetCommandExecutor.cComponent = DocumentTemplateAssetCommandExecutor.execute command
   | command.component == LocaleCommandExecutor.cComponent = LocaleCommandExecutor.execute command
   | command.component == MetamodelMigratorCommandExecutor.cComponent = MetamodelMigratorCommandExecutor.execute command
   | command.component == PrefabCommandExecutor.cComponent = PrefabCommandExecutor.execute command

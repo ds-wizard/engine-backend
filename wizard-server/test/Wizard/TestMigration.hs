@@ -99,8 +99,11 @@ buildSchema appContext = do
   runInContext Questionnaire.dropTriggers appContext
   runInContext Locale.dropTriggers appContext
   putStrLn "DB: dropping DB functions"
+  runInContext Questionnaire.dropFunctions appContext
+  runInContext DocumentTemplate.dropFunctions appContext
   runInContext KnowledgeModelEditor.dropFunctions appContext
   runInContext KnowledgeModelPackage.dropFunctions appContext
+  runInContext Locale.dropFunctions appContext
   runInContext Common.dropFunctions appContext
   putStrLn "DB: dropping schema"
   runInContext ExternalLink.dropTables appContext
@@ -162,8 +165,11 @@ buildSchema appContext = do
   runInContext ExternalLink.createTables appContext
   putStrLn "DB: Creating DB functions"
   runInContext Common.createFunctions appContext
+  runInContext Locale.createFunctions appContext
   runInContext KnowledgeModelPackage.createFunctions appContext
   runInContext KnowledgeModelEditor.createFunctions appContext
+  runInContext DocumentTemplate.createFunctions appContext
+  runInContext Questionnaire.createFunctions appContext
   putStrLn "DB: Creating missing foreign key constraints"
   runInContext User.createUserLocaleForeignKeyConstraint appContext
   putStrLn "DB: Creating triggers"

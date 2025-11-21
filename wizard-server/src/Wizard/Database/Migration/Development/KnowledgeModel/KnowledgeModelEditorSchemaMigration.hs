@@ -53,9 +53,9 @@ createKnowledgeModelEditorTable = do
         \    license              varchar     NOT NULL, \
         \    metamodel_version    integer     NOT NULL, \
         \    squashed             boolean     NOT NULL, \
-        \    CONSTRAINT knowledge_model_editor_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT knowledge_model_editor_previous_package_id_fk FOREIGN KEY (previous_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid), \
-        \    CONSTRAINT knowledge_model_editor_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
+        \    CONSTRAINT knowledge_model_editor_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT knowledge_model_editor_previous_package_id_fk FOREIGN KEY (previous_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT knowledge_model_editor_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL, \
         \    CONSTRAINT knowledge_model_editor_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
@@ -73,8 +73,8 @@ createKnowledgeModelEditorEventTable = do
         \    editor_uuid UUID        NOT NULL, \
         \    tenant_uuid UUID        NOT NULL, \
         \    created_at  TIMESTAMPTZ NOT NULL, \
-        \    CONSTRAINT knowledge_model_editor_event_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT knowledge_model_editor_event_editor_uuid_fk FOREIGN KEY (editor_uuid, tenant_uuid) REFERENCES knowledge_model_editor (uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT knowledge_model_editor_event_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT knowledge_model_editor_event_editor_uuid_fk FOREIGN KEY (editor_uuid) REFERENCES knowledge_model_editor (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT knowledge_model_editor_event_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
@@ -104,8 +104,8 @@ createKnowledgeModelEditorReplyTable = do
         \    created_by  jsonb, \
         \    tenant_uuid uuid                              NOT NULL, \
         \    created_at  timestamptz                       NOT NULL, \
-        \    CONSTRAINT knowledge_model_editor_reply_pk PRIMARY KEY (editor_uuid, path, tenant_uuid), \
-        \    CONSTRAINT knowledge_model_editor_reply_editor_uuid FOREIGN KEY (editor_uuid, tenant_uuid) REFERENCES knowledge_model_editor (uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT knowledge_model_editor_reply_pk PRIMARY KEY (editor_uuid, path), \
+        \    CONSTRAINT knowledge_model_editor_reply_editor_uuid FOREIGN KEY (editor_uuid) REFERENCES knowledge_model_editor (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT knowledge_model_editor_reply_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql

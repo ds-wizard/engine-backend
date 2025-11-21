@@ -2,7 +2,6 @@ module Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO where
 
 import Control.Monad.Reader (asks)
 import Data.String (fromString)
-import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -31,28 +30,6 @@ updateDraftDataById draftData = do
         fromString
           "UPDATE document_template_draft_data SET document_template_id = ?, questionnaire_uuid = ?, format_uuid = ?, tenant_uuid = ?, created_at = ?, updated_at = ?, knowledge_model_editor_uuid = ? WHERE tenant_uuid = ? AND document_template_id = ?"
   let params = toRow draftData ++ [toField draftData.tenantUuid, toField draftData.documentTemplateId]
-  logQuery sql params
-  let action conn = execute conn sql params
-  runDB action
-
-unsetQuestionnaireFromDocumentTemplate :: U.UUID -> AppContextM Int64
-unsetQuestionnaireFromDocumentTemplate qtnUuid = do
-  tenantUuid <- asks currentTenantUuid
-  let sql =
-        fromString
-          "UPDATE document_template_draft_data SET questionnaire_uuid = null, format_uuid = null WHERE tenant_uuid = ? AND questionnaire_uuid = ?"
-  let params = [toField tenantUuid, toField qtnUuid]
-  logQuery sql params
-  let action conn = execute conn sql params
-  runDB action
-
-unsetKnowledgeModelEditorFromDocumentTemplate :: U.UUID -> AppContextM Int64
-unsetKnowledgeModelEditorFromDocumentTemplate qtnUuid = do
-  tenantUuid <- asks currentTenantUuid
-  let sql =
-        fromString
-          "UPDATE document_template_draft_data SET knowledge_model_editor_uuid = null, format_uuid = null WHERE tenant_uuid = ? AND knowledge_model_editor_uuid = ?"
-  let params = [toField tenantUuid, toField qtnUuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action

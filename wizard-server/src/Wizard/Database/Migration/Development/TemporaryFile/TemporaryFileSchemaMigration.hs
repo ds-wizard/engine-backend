@@ -28,9 +28,9 @@ createTables = do
         \    tenant_uuid  uuid        NOT NULL, \
         \    created_by   uuid, \
         \    created_at   timestamptz NOT NULL, \
-        \    CONSTRAINT temporary_file_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT temporary_file_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
-        \    CONSTRAINT temporary_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT temporary_file_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT temporary_file_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT temporary_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

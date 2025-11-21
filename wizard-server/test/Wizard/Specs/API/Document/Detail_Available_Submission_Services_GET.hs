@@ -77,7 +77,7 @@ create_test_200 title appContext qtn authHeader =
       runInContextIO (insertQuestionnaire questionnaire10) appContext
       runInContextIO DOC_Migration.runMigration appContext
       runInContextIO (deleteDocumentByUuid doc1.uuid) appContext
-      runInContextIO (insertDocument (doc1 {questionnaireUuid = qtn.uuid})) appContext
+      runInContextIO (insertDocument (doc1 {questionnaireUuid = Just qtn.uuid})) appContext
       runInContextIO (insertOrUpdateConfigSubmissionService defaultSubmissionService) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
@@ -125,7 +125,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
       runInContextIO DOC_Migration.runMigration appContext
       runInContextIO (insertQuestionnaire questionnaire7) appContext
       runInContextIO (deleteDocumentByUuid doc1.uuid) appContext
-      runInContextIO (insertDocument (doc1 {questionnaireUuid = qtn.uuid})) appContext
+      runInContextIO (insertDocument (doc1 {questionnaireUuid = Just qtn.uuid})) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

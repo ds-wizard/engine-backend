@@ -56,9 +56,8 @@ createKnowledgeModelPackageTable = do
         \    phase                       varchar     NOT NULL, \
         \    non_editable                bool        NOT NULL, \
         \    CONSTRAINT knowledge_model_package_pk PRIMARY KEY (id, tenant_uuid), \
-        \    CONSTRAINT knowledge_model_package_previous_package_id_fk FOREIGN KEY (previous_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid), \
-        \    CONSTRAINT knowledge_model_package_merge_checkpoint_package_id_fk FOREIGN KEY (merge_checkpoint_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid), \
-        \    CONSTRAINT knowledge_model_package_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT knowledge_model_package_previous_package_id_fk FOREIGN KEY (previous_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT knowledge_model_package_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \); \
         \ \
         \CREATE INDEX knowledge_model_package_organization_id_km_id_index ON knowledge_model_package (organization_id, km_id, tenant_uuid); \
@@ -82,7 +81,7 @@ createKnowledgeModelPackageEventTable = do
         \    created_at  timestamptz NOT NULL, \
         \    CONSTRAINT knowledge_model_package_event_pk PRIMARY KEY (uuid, package_id, tenant_uuid), \
         \    CONSTRAINT knowledge_model_package_event_package_id_fk FOREIGN KEY (package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE, \
-        \    CONSTRAINT knowledge_model_package_event_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT knowledge_model_package_event_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -174,6 +173,7 @@ createGetKmIdFn = do
         \BEGIN \
         \    SELECT split_part(req_p_id, ':', 2) \
         \    INTO km_id; \
+        \    RETURN km_id;\
         \END; \
         \$$;"
   let action conn = execute_ conn sql

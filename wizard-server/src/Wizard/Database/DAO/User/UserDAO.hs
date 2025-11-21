@@ -208,16 +208,6 @@ updateUserLocaleByUuid userUuid mLocale uUpdatedAt = do
   deleteFromCache (U.toString userUuid, U.toString tenantUuid)
   runDB action
 
-unsetUserLocale :: U.UUID -> AppContextM Int64
-unsetUserLocale userUuid = do
-  tenantUuid <- asks currentTenantUuid
-  let sql = fromString "UPDATE user_entity SET locale = NULL WHERE tenant_uuid = ? AND uuid = ?"
-  let params = [toField tenantUuid, toField userUuid]
-  logQuery sql params
-  let action conn = execute conn sql params
-  deleteFromCache (U.toString userUuid, U.toString tenantUuid)
-  runDB action
-
 deleteUsers :: AppContextM Int64
 deleteUsers = do
   result <- createDeleteEntitiesFn entityName

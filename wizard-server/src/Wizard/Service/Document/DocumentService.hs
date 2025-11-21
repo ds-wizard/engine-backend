@@ -35,7 +35,6 @@ import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorReplyDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
-import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AclContext
@@ -80,7 +79,7 @@ getDocumentsForQtn qtnUuid mQuery pageable sort = do
 createDocument :: DocumentCreateDTO -> AppContextM DocumentDTO
 createDocument reqDto =
   runInTransaction $ do
-    checkEditPermissionToDoc reqDto.questionnaireUuid
+    checkEditPermissionToDoc (Just reqDto.questionnaireUuid)
     checkDocumentLimit
     checkStorageSize 0
     qtn <- findQuestionnaireByUuid reqDto.questionnaireUuid
@@ -110,7 +109,6 @@ deleteDocument docUuid =
   runInTransaction $ do
     doc <- findDocumentByUuid docUuid
     checkEditPermissionToDoc doc.questionnaireUuid
-    deleteSubmissionsFiltered [("document_uuid", U.toString docUuid)]
     void $ deleteDocumentByUuid docUuid
 
 downloadDocument :: U.UUID -> AppContextM TemporaryFileDTO
@@ -173,13 +171,15 @@ createDocumentPreviewForDocTmlDraft tmlId =
 
 createDocumentPreview :: DocumentTemplate -> KnowledgeModelPackage -> [KnowledgeModelEvent] -> Questionnaire -> [QuestionnaireVersion] -> Maybe U.UUID -> Maybe U.UUID -> M.Map String Reply -> U.UUID -> Bool -> AppContextM (Document, TemporaryFileDTO)
 createDocumentPreview tml pkg kmEditorEvents qtn qtnVersions questionnaireEventUuid phaseUuid replies formatUuid fromKnowledgeModelEditor = do
-  docs <- findDocumentsForCurrentTenantFiltered [("questionnaire_uuid", U.toString qtn.uuid), ("durability", "TemporallyDocumentDurability")]
   tcOrganization <- findTenantConfigOrganization
   mCurrentUser <- asks currentUser
   let repliesHash = computeHash kmEditorEvents qtn qtnVersions phaseUuid replies tcOrganization mCurrentUser
   logDebugI _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
-  let matchingDocs = filter (\d -> d.questionnaireRepliesHash == repliesHash) docs
-  case filter (filterAlreadyDoneDocument tml.tId formatUuid) matchingDocs of
+  docs <-
+    if fromKnowledgeModelEditor
+      then findDocumentsForCurrentTenantFiltered [("questionnaire_replies_hash", show repliesHash), ("durability", "TemporallyDocumentDurability")]
+      else findDocumentsForCurrentTenantFiltered [("questionnaire_uuid", U.toString qtn.uuid), ("questionnaire_replies_hash", show repliesHash), ("durability", "TemporallyDocumentDurability")]
+  case filter (filterAlreadyDoneDocument tml.tId formatUuid) docs of
     (doc : _) -> do
       logInfoI _CMP_SERVICE "Retrieving from cache"
       if doc.state == DoneDocumentState
@@ -189,7 +189,7 @@ createDocumentPreview tml pkg kmEditorEvents qtn qtnVersions questionnaireEventU
           return (doc, TemporaryFileDTO link (fromMaybe "text/plain" doc.contentType))
         else return (doc, TemporaryFileMapper.emptyFileDTO)
     [] ->
-      case filter (\d -> d.state == QueuedDocumentState || d.state == InProgressDocumentState) matchingDocs of
+      case filter (\d -> d.state == QueuedDocumentState || d.state == InProgressDocumentState) docs of
         (doc : _) -> do
           logInfoI _CMP_SERVICE "Waiting to generation"
           return (doc, TemporaryFileMapper.emptyFileDTO)
@@ -198,7 +198,7 @@ createDocumentPreview tml pkg kmEditorEvents qtn qtnVersions questionnaireEventU
           validateMetamodelVersion tml
           dUuid <- liftIO generateUuid
           now <- liftIO getCurrentTime
-          let doc = fromTemporallyCreateDTO dUuid qtn questionnaireEventUuid tml.tId formatUuid repliesHash mCurrentUser tcOrganization.tenantUuid now
+          let doc = fromTemporallyCreateDTO dUuid qtn questionnaireEventUuid tml.tId formatUuid repliesHash mCurrentUser tcOrganization.tenantUuid now fromKnowledgeModelEditor
           insertDocument doc
           let mReplies = if fromKnowledgeModelEditor then Just replies else Nothing
           publishToPersistentCommandQueue doc pkg kmEditorEvents qtn mReplies

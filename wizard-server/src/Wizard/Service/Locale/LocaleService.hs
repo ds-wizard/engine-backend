@@ -24,7 +24,6 @@ import Wizard.Database.DAO.Registry.RegistryLocaleDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
-import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
@@ -128,8 +127,6 @@ deleteLocale lclId =
     checkIfAdminIsDisabled
     locale <- findLocaleById lclId
     validateLocaleDeletion locale
-    users <- findUsersFiltered [("locale", locale.lId)]
-    traverse_ (\u -> unsetUserLocale u.uuid) users
     void $ deleteLocaleById lclId
 
 -- --------------------------------

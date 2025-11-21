@@ -101,9 +101,6 @@ deletePersistentCommandsByCreatedBy createdBys = createDeleteEntityWhereInFn ent
 deletePersistentCommandByUuid :: AppContextC s sc m => U.UUID -> m Int64
 deletePersistentCommandByUuid uuid = createDeleteEntityByFn entityName [("uuid", U.toString uuid)]
 
-deletePersistentCommandByCreatedBy :: AppContextC s sc m => U.UUID -> m Int64
-deletePersistentCommandByCreatedBy createdBy = createDeleteEntityByFn entityName [("created_by", U.toString createdBy)]
-
 listenPersistentCommandChannel :: AppContextC s sc m => m ()
 listenPersistentCommandChannel = createChannelListener channelName
 
