@@ -121,7 +121,7 @@ questionnaire1CtnRevertedDto =
     , replies = M.fromList [rQ1, rQ2]
     , commentThreadsMap = qtnThreadsDto
     , labels = M.empty
-    , events = [toEventDTO (sre_rQ1' questionnaire1Uuid) (Just userAlbert), toEventDTO (sre_rQ2' questionnaire1Uuid) (Just userAlbert)]
+    , events = [toEventList (sre_rQ1' questionnaire1Uuid) (Just userAlbert), toEventList (sre_rQ2' questionnaire1Uuid) (Just userAlbert)]
     , versions = []
     }
 

@@ -11,7 +11,6 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimp
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import qualified Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as SPM
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
@@ -34,6 +33,7 @@ import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
 import Wizard.Model.Questionnaire.QuestionnaireEvent
+import Wizard.Model.Questionnaire.QuestionnaireEventList
 import Wizard.Model.Questionnaire.QuestionnaireList
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireReply
@@ -145,7 +145,7 @@ toDetailWsDTO qtn mTemplate mFormat qtnPerms labels unresolvedCommentCounts reso
 toContentDTO
   :: QuestionnaireContent
   -> M.Map String [QuestionnaireCommentThreadList]
-  -> [QuestionnaireEventDTO]
+  -> [QuestionnaireEventList]
   -> [QuestionnaireVersionList]
   -> QuestionnaireContentDTO
 toContentDTO qtnCtn threads events versions =

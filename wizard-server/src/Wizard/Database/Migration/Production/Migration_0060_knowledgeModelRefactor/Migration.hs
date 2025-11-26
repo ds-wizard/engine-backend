@@ -1291,7 +1291,7 @@ renamePackageIdAtQuestionnaire dbPool = do
 -- ------------------------------------------------------------------------------------------------------------------------
 addOnDeleteCascadeToPackageIdInKnowledgeModelCache dbPool = do
   let sql =
-        "ALTER TABLE knowledge_model_cache DROP CONSTRAINT knowledge_model_cache_package_id_fk; \
+        "ALTER TABLE knowledge_model_cache DROP CONSTRAINT IF EXISTS knowledge_model_cache_package_id_fk; \
         \ALTER TABLE knowledge_model_cache ADD CONSTRAINT knowledge_model_cache_package_id_fk FOREIGN KEY (package_id, tenant_uuid) REFERENCES knowledge_model_package ON DELETE CASCADE;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
@@ -1348,33 +1348,33 @@ deleteDocumentWithoutQuestionnaire dbPool = do
 
 removeTenantUuidFromPrimaryKey dbPool = do
   let sql =
-        "ALTER TABLE action_key DROP CONSTRAINT action_key_pk CASCADE; \
-        \ALTER TABLE audit DROP CONSTRAINT audit_pk CASCADE; \
-        \ALTER TABLE document DROP CONSTRAINT document_pk CASCADE; \
-        \ALTER TABLE external_link_usage DROP CONSTRAINT external_link_usage_pk CASCADE; \
-        \ALTER TABLE feedback DROP CONSTRAINT feedback_pk CASCADE; \
-        \ALTER TABLE knowledge_model_editor DROP CONSTRAINT knowledge_model_editor_pk CASCADE; \
-        \ALTER TABLE knowledge_model_editor_event DROP CONSTRAINT knowledge_model_editor_event_pk CASCADE; \
-        \ALTER TABLE knowledge_model_editor_reply DROP CONSTRAINT knowledge_model_editor_reply_pk CASCADE; \
-        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT knowledge_model_migration_pk CASCADE; \
-        \ALTER TABLE knowledge_model_secret DROP CONSTRAINT knowledge_model_secret_pk CASCADE; \
-        \ALTER TABLE persistent_command DROP CONSTRAINT persistent_command_pk CASCADE; \
-        \ALTER TABLE questionnaire DROP CONSTRAINT questionnaire_pk CASCADE; \
-        \ALTER TABLE questionnaire_comment DROP CONSTRAINT questionnaire_comment_pk CASCADE; \
-        \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT questionnaire_comment_thread_pk CASCADE; \
-        \ALTER TABLE questionnaire_event DROP CONSTRAINT questionnaire_event_pk CASCADE; \
-        \ALTER TABLE questionnaire_file DROP CONSTRAINT questionnaire_file_pk CASCADE; \
-        \ALTER TABLE questionnaire_perm_group DROP CONSTRAINT questionnaire_perm_group_pk CASCADE; \
-        \ALTER TABLE questionnaire_perm_user DROP CONSTRAINT questionnaire_perm_user_pk CASCADE; \
-        \ALTER TABLE questionnaire_version DROP CONSTRAINT questionnaire_version_pk CASCADE; \
-        \ALTER TABLE submission DROP CONSTRAINT submission_pk CASCADE; \
-        \ALTER TABLE temporary_file DROP CONSTRAINT temporary_file_pk CASCADE; \
-        \ALTER TABLE user_entity DROP CONSTRAINT user_entity_pk CASCADE; \
-        \ALTER TABLE user_entity_submission_prop DROP CONSTRAINT user_entity_submission_prop_pk CASCADE; \
-        \ALTER TABLE user_group DROP CONSTRAINT user_group_pk CASCADE; \
-        \ALTER TABLE user_group_membership DROP CONSTRAINT user_group_membership_pk CASCADE; \
-        \ALTER TABLE user_token DROP CONSTRAINT user_token_pk CASCADE; \
-        \ALTER TABLE user_tour DROP CONSTRAINT user_tour_pk CASCADE; \
+        "ALTER TABLE action_key DROP CONSTRAINT IF EXISTS action_key_pk CASCADE; \
+        \ALTER TABLE audit DROP CONSTRAINT IF EXISTS audit_pk CASCADE; \
+        \ALTER TABLE document DROP CONSTRAINT IF EXISTS document_pk CASCADE; \
+        \ALTER TABLE external_link_usage DROP CONSTRAINT IF EXISTS external_link_usage_pk CASCADE; \
+        \ALTER TABLE feedback DROP CONSTRAINT IF EXISTS feedback_pk CASCADE; \
+        \ALTER TABLE knowledge_model_editor DROP CONSTRAINT IF EXISTS knowledge_model_editor_pk CASCADE; \
+        \ALTER TABLE knowledge_model_editor_event DROP CONSTRAINT IF EXISTS knowledge_model_editor_event_pk CASCADE; \
+        \ALTER TABLE knowledge_model_editor_reply DROP CONSTRAINT IF EXISTS knowledge_model_editor_reply_pk CASCADE; \
+        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT IF EXISTS knowledge_model_migration_pk CASCADE; \
+        \ALTER TABLE knowledge_model_secret DROP CONSTRAINT IF EXISTS knowledge_model_secret_pk CASCADE; \
+        \ALTER TABLE persistent_command DROP CONSTRAINT IF EXISTS persistent_command_pk CASCADE; \
+        \ALTER TABLE questionnaire DROP CONSTRAINT IF EXISTS questionnaire_pk CASCADE; \
+        \ALTER TABLE questionnaire_comment DROP CONSTRAINT IF EXISTS questionnaire_comment_pk CASCADE; \
+        \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT IF EXISTS questionnaire_comment_thread_pk CASCADE; \
+        \ALTER TABLE questionnaire_event DROP CONSTRAINT IF EXISTS questionnaire_event_pk CASCADE; \
+        \ALTER TABLE questionnaire_file DROP CONSTRAINT IF EXISTS questionnaire_file_pk CASCADE; \
+        \ALTER TABLE questionnaire_perm_group DROP CONSTRAINT IF EXISTS questionnaire_perm_group_pk CASCADE; \
+        \ALTER TABLE questionnaire_perm_user DROP CONSTRAINT IF EXISTS questionnaire_perm_user_pk CASCADE; \
+        \ALTER TABLE questionnaire_version DROP CONSTRAINT IF EXISTS questionnaire_version_pk CASCADE; \
+        \ALTER TABLE submission DROP CONSTRAINT IF EXISTS submission_pk CASCADE; \
+        \ALTER TABLE temporary_file DROP CONSTRAINT IF EXISTS temporary_file_pk CASCADE; \
+        \ALTER TABLE user_entity DROP CONSTRAINT IF EXISTS user_entity_pk CASCADE; \
+        \ALTER TABLE user_entity_submission_prop DROP CONSTRAINT IF EXISTS user_entity_submission_prop_pk CASCADE; \
+        \ALTER TABLE user_group DROP CONSTRAINT IF EXISTS user_group_pk CASCADE; \
+        \ALTER TABLE user_group_membership DROP CONSTRAINT IF EXISTS user_group_membership_pk CASCADE; \
+        \ALTER TABLE user_token DROP CONSTRAINT IF EXISTS user_token_pk CASCADE; \
+        \ALTER TABLE user_tour DROP CONSTRAINT IF EXISTS user_tour_pk CASCADE; \
         \ \
         \ALTER TABLE action_key ADD CONSTRAINT action_key_pk PRIMARY KEY (uuid); \
         \ALTER TABLE audit ADD CONSTRAINT audit_pk PRIMARY KEY (uuid); \
@@ -1404,52 +1404,52 @@ removeTenantUuidFromPrimaryKey dbPool = do
         \ALTER TABLE user_group_membership ADD CONSTRAINT user_group_membership_pk PRIMARY KEY (user_group_uuid, user_uuid); \
         \ALTER TABLE user_tour ADD CONSTRAINT user_tour_pk PRIMARY KEY (user_uuid, tour_id); \
         \ \
-        \ALTER TABLE action_key DROP CONSTRAINT action_key_identity_fk; \
+        \ALTER TABLE action_key DROP CONSTRAINT IF EXISTS action_key_identity_fk; \
         \ALTER TABLE action_key ADD CONSTRAINT action_key_identity_fk FOREIGN KEY (identity) REFERENCES user_entity (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE action_key DROP CONSTRAINT action_key_tenant_uuid_fk; \
+        \ALTER TABLE action_key DROP CONSTRAINT IF EXISTS action_key_tenant_uuid_fk; \
         \ALTER TABLE action_key ADD CONSTRAINT action_key_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE audit DROP CONSTRAINT audit_created_by_fk; \
+        \ALTER TABLE audit DROP CONSTRAINT IF EXISTS audit_created_by_fk; \
         \ALTER TABLE audit ADD CONSTRAINT audit_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE CASCADE; \
         \ \
         \ALTER TABLE document ADD CONSTRAINT document_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE document DROP CONSTRAINT document_document_template_id_fk; \
+        \ALTER TABLE document DROP CONSTRAINT IF EXISTS document_document_template_id_fk; \
         \ALTER TABLE document ADD CONSTRAINT document_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE; \
-        \ALTER TABLE document DROP CONSTRAINT document_format_uuid_fk; \
+        \ALTER TABLE document DROP CONSTRAINT IF EXISTS document_format_uuid_fk; \
         \ALTER TABLE document ADD CONSTRAINT document_format_uuid_fk FOREIGN KEY (document_template_id, format_uuid, tenant_uuid) REFERENCES document_template_format (document_template_id, uuid, tenant_uuid) ON DELETE CASCADE; \
-        \ALTER TABLE document DROP CONSTRAINT document_created_by_fk; \
+        \ALTER TABLE document DROP CONSTRAINT IF EXISTS document_created_by_fk; \
         \ALTER TABLE document ADD CONSTRAINT document_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL; \
-        \ALTER TABLE document DROP CONSTRAINT document_tenant_uuid_fk; \
+        \ALTER TABLE document DROP CONSTRAINT IF EXISTS document_tenant_uuid_fk; \
         \ALTER TABLE document ADD CONSTRAINT document_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE document_template DROP CONSTRAINT document_template_tenant_uuid_fk; \
+        \ALTER TABLE document_template DROP CONSTRAINT IF EXISTS document_template_tenant_uuid_fk; \
         \ALTER TABLE document_template ADD CONSTRAINT document_template_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE document_template_file DROP CONSTRAINT document_template_file_document_template_id_fk; \
+        \ALTER TABLE document_template_file DROP CONSTRAINT IF EXISTS document_template_file_document_template_id_fk; \
         \ALTER TABLE document_template_file ADD CONSTRAINT document_template_file_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE; \
-        \ALTER TABLE document_template_file DROP CONSTRAINT document_template_file_tenant_uuid_fk; \
+        \ALTER TABLE document_template_file DROP CONSTRAINT IF EXISTS document_template_file_tenant_uuid_fk; \
         \ALTER TABLE document_template_file ADD CONSTRAINT document_template_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE document_template_asset DROP CONSTRAINT document_template_asset_document_template_id_fk; \
+        \ALTER TABLE document_template_asset DROP CONSTRAINT IF EXISTS document_template_asset_document_template_id_fk; \
         \ALTER TABLE document_template_asset ADD CONSTRAINT document_template_asset_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE; \
-        \ALTER TABLE document_template_asset DROP CONSTRAINT document_template_asset_tenant_uuid_fk; \
+        \ALTER TABLE document_template_asset DROP CONSTRAINT IF EXISTS document_template_asset_tenant_uuid_fk; \
         \ALTER TABLE document_template_asset ADD CONSTRAINT document_template_asset_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE document_template_draft_data DROP CONSTRAINT document_template_draft_data_document_template_id_fk; \
+        \ALTER TABLE document_template_draft_data DROP CONSTRAINT IF EXISTS document_template_draft_data_document_template_id_fk; \
         \ALTER TABLE document_template_draft_data ADD CONSTRAINT document_template_draft_data_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE; \
         \ALTER TABLE document_template_draft_data ADD CONSTRAINT document_template_draft_data_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE SET NULL; \
         \ALTER TABLE document_template_draft_data ADD CONSTRAINT document_template_draft_data_knowledge_model_editor_uuid_fk FOREIGN KEY (knowledge_model_editor_uuid) REFERENCES knowledge_model_editor (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE document_template_draft_data DROP CONSTRAINT document_template_draft_data_tenant_uuid_fk; \
+        \ALTER TABLE document_template_draft_data DROP CONSTRAINT IF EXISTS document_template_draft_data_tenant_uuid_fk; \
         \ALTER TABLE document_template_draft_data ADD CONSTRAINT document_template_draft_data_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE feedback DROP CONSTRAINT feedback_knowledge_model_package_id_fk; \
+        \ALTER TABLE feedback DROP CONSTRAINT IF EXISTS feedback_knowledge_model_package_id_fk; \
         \ALTER TABLE feedback ADD CONSTRAINT feedback_knowledge_model_package_id_fk FOREIGN KEY (knowledge_model_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE; \
-        \ALTER TABLE feedback DROP CONSTRAINT feedback_tenant_uuid_fk; \
+        \ALTER TABLE feedback DROP CONSTRAINT IF EXISTS feedback_tenant_uuid_fk; \
         \ALTER TABLE feedback ADD CONSTRAINT feedback_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE knowledge_model_editor DROP CONSTRAINT knowledge_model_editor_previous_package_id_fk; \
+        \ALTER TABLE knowledge_model_editor DROP CONSTRAINT IF EXISTS knowledge_model_editor_previous_package_id_fk; \
         \ALTER TABLE knowledge_model_editor ADD CONSTRAINT knowledge_model_editor_previous_package_id_fk FOREIGN KEY (previous_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE; \
-        \ALTER TABLE knowledge_model_editor DROP CONSTRAINT knowledge_model_editor_created_by_fk; \
+        \ALTER TABLE knowledge_model_editor DROP CONSTRAINT IF EXISTS knowledge_model_editor_created_by_fk; \
         \ALTER TABLE knowledge_model_editor ADD CONSTRAINT knowledge_model_editor_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL; \
         \ \
         \ALTER TABLE knowledge_model_editor_event ADD CONSTRAINT knowledge_model_editor_event_editor_uuid_fk FOREIGN KEY (editor_uuid) REFERENCES knowledge_model_editor (uuid) ON DELETE CASCADE; \
@@ -1457,135 +1457,135 @@ removeTenantUuidFromPrimaryKey dbPool = do
         \ALTER TABLE knowledge_model_editor_reply ADD CONSTRAINT knowledge_model_editor_reply_editor_uuid FOREIGN KEY (editor_uuid) REFERENCES knowledge_model_editor (uuid) ON DELETE CASCADE; \
         \ \
         \ALTER TABLE knowledge_model_migration ADD CONSTRAINT knowledge_model_migration_editor_uuid_fk FOREIGN KEY (editor_uuid) REFERENCES knowledge_model_editor (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT knowledge_model_migration_editor_previous_package_id_fk; \
+        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT IF EXISTS knowledge_model_migration_editor_previous_package_id_fk; \
         \ALTER TABLE knowledge_model_migration ADD CONSTRAINT knowledge_model_migration_editor_previous_package_id_fk FOREIGN KEY (editor_previous_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE; \
-        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT knowledge_model_migration_target_package_id_fk; \
+        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT IF EXISTS knowledge_model_migration_target_package_id_fk; \
         \ALTER TABLE knowledge_model_migration ADD CONSTRAINT knowledge_model_migration_target_package_id_fk FOREIGN KEY (target_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE; \
-        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT knowledge_model_migration_tenant_uuid_fk; \
+        \ALTER TABLE knowledge_model_migration DROP CONSTRAINT IF EXISTS knowledge_model_migration_tenant_uuid_fk; \
         \ALTER TABLE knowledge_model_migration ADD CONSTRAINT knowledge_model_migration_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE knowledge_model_package DROP CONSTRAINT knowledge_model_package_previous_package_id_fk; \
+        \ALTER TABLE knowledge_model_package DROP CONSTRAINT IF EXISTS knowledge_model_package_previous_package_id_fk; \
         \ALTER TABLE knowledge_model_package ADD CONSTRAINT knowledge_model_package_previous_package_id_fk FOREIGN KEY (previous_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE; \
-        \ALTER TABLE knowledge_model_package DROP CONSTRAINT knowledge_model_package_tenant_uuid_fk; \
+        \ALTER TABLE knowledge_model_package DROP CONSTRAINT IF EXISTS knowledge_model_package_tenant_uuid_fk; \
         \ALTER TABLE knowledge_model_package ADD CONSTRAINT knowledge_model_package_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE knowledge_model_package_event DROP CONSTRAINT knowledge_model_package_event_tenant_uuid_fk; \
+        \ALTER TABLE knowledge_model_package_event DROP CONSTRAINT IF EXISTS knowledge_model_package_event_tenant_uuid_fk; \
         \ALTER TABLE knowledge_model_package_event ADD CONSTRAINT knowledge_model_package_event_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE knowledge_model_secret DROP CONSTRAINT knowledge_model_secret_tenant_uuid_fk; \
+        \ALTER TABLE knowledge_model_secret DROP CONSTRAINT IF EXISTS knowledge_model_secret_tenant_uuid_fk; \
         \ALTER TABLE knowledge_model_secret ADD CONSTRAINT knowledge_model_secret_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE locale DROP CONSTRAINT locale_tenant_uuid_fk; \
+        \ALTER TABLE locale DROP CONSTRAINT IF EXISTS locale_tenant_uuid_fk; \
         \ALTER TABLE locale ADD CONSTRAINT locale_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE persistent_command DROP CONSTRAINT persistent_command_created_by_fk; \
+        \ALTER TABLE persistent_command DROP CONSTRAINT IF EXISTS persistent_command_created_by_fk; \
         \ALTER TABLE persistent_command ADD CONSTRAINT persistent_command_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE persistent_command DROP CONSTRAINT persistent_command_tenant_uuid_fk; \
+        \ALTER TABLE persistent_command DROP CONSTRAINT IF EXISTS persistent_command_tenant_uuid_fk; \
         \ALTER TABLE persistent_command ADD CONSTRAINT persistent_command_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
         \ALTER TABLE questionnaire_migration ADD CONSTRAINT questionnaire_migration_old_questionnaire_uuid_fk FOREIGN KEY (old_questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE; \
         \ALTER TABLE questionnaire_migration ADD CONSTRAINT questionnaire_migration_new_questionnaire_uuid_fk FOREIGN KEY (new_questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE questionnaire_migration DROP CONSTRAINT questionnaire_migration_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire_migration DROP CONSTRAINT IF EXISTS questionnaire_migration_tenant_uuid_fk; \
         \ALTER TABLE questionnaire_migration ADD CONSTRAINT questionnaire_migration_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE questionnaire DROP CONSTRAINT questionnaire_knowledge_model_package_id_fk; \
+        \ALTER TABLE questionnaire DROP CONSTRAINT IF EXISTS questionnaire_knowledge_model_package_id_fk; \
         \ALTER TABLE questionnaire ADD CONSTRAINT questionnaire_knowledge_model_package_id_fk FOREIGN KEY (knowledge_model_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE; \
-        \ALTER TABLE questionnaire DROP CONSTRAINT questionnaire_document_template_id_fk; \
+        \ALTER TABLE questionnaire DROP CONSTRAINT IF EXISTS questionnaire_document_template_id_fk; \
         \ALTER TABLE questionnaire ADD CONSTRAINT questionnaire_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE; \
-        \ALTER TABLE questionnaire DROP CONSTRAINT questionnaire_created_by_fk; \
+        \ALTER TABLE questionnaire DROP CONSTRAINT IF EXISTS questionnaire_created_by_fk; \
         \ALTER TABLE questionnaire ADD CONSTRAINT questionnaire_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL; \
-        \ALTER TABLE questionnaire DROP CONSTRAINT questionnaire_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire DROP CONSTRAINT IF EXISTS questionnaire_tenant_uuid_fk; \
         \ALTER TABLE questionnaire ADD CONSTRAINT questionnaire_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE questionnaire_event DROP CONSTRAINT questionnaire_event_created_by_fk; \
+        \ALTER TABLE questionnaire_event DROP CONSTRAINT IF EXISTS questionnaire_event_created_by_fk; \
         \ALTER TABLE questionnaire_event ADD CONSTRAINT questionnaire_event_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity(uuid) ON DELETE SET NULL; \
         \ALTER TABLE questionnaire_event ADD CONSTRAINT questionnaire_event_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire(uuid) ON DELETE CASCADE; \
-        \ALTER TABLE questionnaire_event DROP CONSTRAINT questionnaire_event_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire_event DROP CONSTRAINT IF EXISTS questionnaire_event_tenant_uuid_fk; \
         \ALTER TABLE questionnaire_event ADD CONSTRAINT questionnaire_event_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant(uuid) ON DELETE CASCADE; \
         \ \
         \ALTER TABLE questionnaire_perm_user ADD CONSTRAINT questionnaire_perm_user_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE questionnaire_perm_user DROP CONSTRAINT questionnaire_perm_user_user_uuid_fk; \
+        \ALTER TABLE questionnaire_perm_user DROP CONSTRAINT IF EXISTS questionnaire_perm_user_user_uuid_fk; \
         \ALTER TABLE questionnaire_perm_user ADD CONSTRAINT questionnaire_perm_user_user_uuid_fk FOREIGN KEY (user_uuid) REFERENCES user_entity (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE questionnaire_perm_user DROP CONSTRAINT questionnaire_perm_user_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire_perm_user DROP CONSTRAINT IF EXISTS questionnaire_perm_user_tenant_uuid_fk; \
         \ALTER TABLE questionnaire_perm_user ADD CONSTRAINT questionnaire_perm_user_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
         \ALTER TABLE questionnaire_perm_group ADD CONSTRAINT questionnaire_perm_group_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE; \
         \ALTER TABLE questionnaire_perm_group ADD CONSTRAINT questionnaire_perm_group_user_group_uuid_fk FOREIGN KEY (user_group_uuid) REFERENCES user_group (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE questionnaire_perm_group DROP CONSTRAINT questionnaire_perm_group_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire_perm_group DROP CONSTRAINT IF EXISTS questionnaire_perm_group_tenant_uuid_fk; \
         \ALTER TABLE questionnaire_perm_group ADD CONSTRAINT questionnaire_perm_group_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
         \ALTER TABLE questionnaire_comment_thread ADD CONSTRAINT questionnaire_comment_thread_questionnaire_uuid FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT questionnaire_comment_thread_assigned_to; \
+        \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT IF EXISTS questionnaire_comment_thread_assigned_to; \
         \ALTER TABLE questionnaire_comment_thread ADD CONSTRAINT questionnaire_comment_thread_assigned_to FOREIGN KEY (assigned_to) REFERENCES user_entity (uuid) ON DELETE SET NULL; \
-        \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT questionnaire_comment_thread_assigned_by; \
+        \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT IF EXISTS questionnaire_comment_thread_assigned_by; \
         \ALTER TABLE questionnaire_comment_thread ADD CONSTRAINT questionnaire_comment_thread_assigned_by FOREIGN KEY (assigned_by) REFERENCES user_entity (uuid) ON DELETE SET NULL; \
-        \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT questionnaire_comment_thread_tenant_uuid; \
+        \ALTER TABLE questionnaire_comment_thread DROP CONSTRAINT IF EXISTS questionnaire_comment_thread_tenant_uuid; \
         \ALTER TABLE questionnaire_comment_thread ADD CONSTRAINT questionnaire_comment_thread_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
         \ALTER TABLE questionnaire_comment ADD CONSTRAINT questionnaire_comment_comment_thread_uuid FOREIGN KEY (comment_thread_uuid) REFERENCES questionnaire_comment_thread (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE questionnaire_comment DROP CONSTRAINT questionnaire_comment_tenant_uuid; \
+        \ALTER TABLE questionnaire_comment DROP CONSTRAINT IF EXISTS questionnaire_comment_tenant_uuid; \
         \ALTER TABLE questionnaire_comment ADD CONSTRAINT questionnaire_comment_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
         \ALTER TABLE questionnaire_version ADD CONSTRAINT questionnaire_version_event_uuid_fk FOREIGN KEY (event_uuid) REFERENCES questionnaire_event (uuid) ON DELETE CASCADE; \
         \ALTER TABLE questionnaire_version ADD CONSTRAINT questionnaire_version_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE questionnaire_version DROP CONSTRAINT questionnaire_version_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire_version DROP CONSTRAINT IF EXISTS questionnaire_version_tenant_uuid_fk; \
         \ALTER TABLE questionnaire_version ADD CONSTRAINT questionnaire_version_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE questionnaire_version DROP CONSTRAINT questionnaire_version_created_by_fk; \
+        \ALTER TABLE questionnaire_version DROP CONSTRAINT IF EXISTS questionnaire_version_created_by_fk; \
         \ALTER TABLE questionnaire_version ADD CONSTRAINT questionnaire_version_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL; \
         \ \
         \ALTER TABLE questionnaire_file ADD CONSTRAINT questionnaire_file_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE questionnaire_file DROP CONSTRAINT questionnaire_file_user_uuid_fk; \
+        \ALTER TABLE questionnaire_file DROP CONSTRAINT IF EXISTS questionnaire_file_user_uuid_fk; \
         \ALTER TABLE questionnaire_file ADD CONSTRAINT questionnaire_file_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL; \
-        \ALTER TABLE questionnaire_file DROP CONSTRAINT questionnaire_file_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire_file DROP CONSTRAINT IF EXISTS questionnaire_file_tenant_uuid_fk; \
         \ALTER TABLE questionnaire_file ADD CONSTRAINT questionnaire_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE questionnaire_action DROP CONSTRAINT questionnaire_action_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire_action DROP CONSTRAINT IF EXISTS questionnaire_action_tenant_uuid_fk; \
         \ALTER TABLE questionnaire_action ADD CONSTRAINT questionnaire_action_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE questionnaire_importer DROP CONSTRAINT questionnaire_importer_tenant_uuid_fk; \
+        \ALTER TABLE questionnaire_importer DROP CONSTRAINT IF EXISTS questionnaire_importer_tenant_uuid_fk; \
         \ALTER TABLE questionnaire_importer ADD CONSTRAINT questionnaire_importer_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
         \ALTER TABLE submission ADD CONSTRAINT submission_document_uuid_fk FOREIGN KEY (document_uuid) REFERENCES document (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE submission DROP CONSTRAINT submission_created_by_fk; \
+        \ALTER TABLE submission DROP CONSTRAINT IF EXISTS submission_created_by_fk; \
         \ALTER TABLE submission ADD CONSTRAINT submission_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL; \
-        \ALTER TABLE submission DROP CONSTRAINT submission_tenant_uuid_fk; \
+        \ALTER TABLE submission DROP CONSTRAINT IF EXISTS submission_tenant_uuid_fk; \
         \ALTER TABLE submission ADD CONSTRAINT submission_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE temporary_file DROP CONSTRAINT temporary_file_created_by_fk; \
+        \ALTER TABLE temporary_file DROP CONSTRAINT IF EXISTS temporary_file_created_by_fk; \
         \ALTER TABLE temporary_file ADD CONSTRAINT temporary_file_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE temporary_file DROP CONSTRAINT temporary_file_tenant_uuid_fk; \
+        \ALTER TABLE temporary_file DROP CONSTRAINT IF EXISTS temporary_file_tenant_uuid_fk; \
         \ALTER TABLE temporary_file ADD CONSTRAINT temporary_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE config_authentication_openid DROP CONSTRAINT config_authentication_openid_tenant_uuid_fk; \
+        \ALTER TABLE config_authentication_openid DROP CONSTRAINT IF EXISTS config_authentication_openid_tenant_uuid_fk; \
         \ALTER TABLE config_authentication_openid ADD CONSTRAINT config_authentication_openid_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE config_mail DROP CONSTRAINT config_mail_config_uuid_fk; \
+        \ALTER TABLE config_mail DROP CONSTRAINT IF EXISTS config_mail_config_uuid_fk; \
         \ALTER TABLE config_mail ADD CONSTRAINT config_mail_config_uuid_fk FOREIGN KEY (config_uuid) REFERENCES instance_config_mail (uuid) ON DELETE SET NULL; \
         \ \
-        \ALTER TABLE user_entity DROP CONSTRAINT user_entity_tenant_uuid_fk; \
+        \ALTER TABLE user_entity DROP CONSTRAINT IF EXISTS user_entity_tenant_uuid_fk; \
         \ALTER TABLE user_entity ADD CONSTRAINT user_entity_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE user_entity_submission_prop DROP CONSTRAINT user_entity_submission_prop_user_uuid_fk; \
+        \ALTER TABLE user_entity_submission_prop DROP CONSTRAINT IF EXISTS user_entity_submission_prop_user_uuid_fk; \
         \ALTER TABLE user_entity_submission_prop ADD CONSTRAINT user_entity_submission_prop_user_uuid_fk FOREIGN KEY (user_uuid) REFERENCES user_entity (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE user_token DROP CONSTRAINT user_token_user_uuid_fk; \
+        \ALTER TABLE user_token DROP CONSTRAINT IF EXISTS user_token_user_uuid_fk; \
         \ALTER TABLE user_token ADD CONSTRAINT user_token_user_uuid_fk FOREIGN KEY (user_uuid) REFERENCES user_entity (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE user_token DROP CONSTRAINT user_token_tenant_uuid_fk; \
+        \ALTER TABLE user_token DROP CONSTRAINT IF EXISTS user_token_tenant_uuid_fk; \
         \ALTER TABLE user_token ADD CONSTRAINT user_token_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE user_group DROP CONSTRAINT user_group_tenant_uuid_fk; \
+        \ALTER TABLE user_group DROP CONSTRAINT IF EXISTS user_group_tenant_uuid_fk; \
         \ALTER TABLE user_group ADD CONSTRAINT user_group_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
         \ALTER TABLE user_group_membership ADD CONSTRAINT user_group_membership_user_group_uuid_fk FOREIGN KEY (user_group_uuid) REFERENCES user_group (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE user_group_membership DROP CONSTRAINT user_group_membership_user_uuid_fk; \
+        \ALTER TABLE user_group_membership DROP CONSTRAINT IF EXISTS user_group_membership_user_uuid_fk; \
         \ALTER TABLE user_group_membership ADD CONSTRAINT user_group_membership_user_uuid_fk FOREIGN KEY (user_uuid) REFERENCES user_entity (uuid) ON DELETE CASCADE; \
-        \ALTER TABLE user_group_membership DROP CONSTRAINT user_group_membership_tenant_uuid_fk; \
+        \ALTER TABLE user_group_membership DROP CONSTRAINT IF EXISTS user_group_membership_tenant_uuid_fk; \
         \ALTER TABLE user_group_membership ADD CONSTRAINT user_group_membership_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE user_tour DROP CONSTRAINT user_tour_user_uuid_fk; \
+        \ALTER TABLE user_tour DROP CONSTRAINT IF EXISTS user_tour_user_uuid_fk; \
         \ALTER TABLE user_tour ADD CONSTRAINT user_tour_user_uuid_fk FOREIGN KEY (user_uuid) REFERENCES user_entity (uuid) ON DELETE CASCADE; \
         \ \
-        \ALTER TABLE prefab DROP CONSTRAINT prefab_tenant_uuid_fk; \
+        \ALTER TABLE prefab DROP CONSTRAINT IF EXISTS prefab_tenant_uuid_fk; \
         \ALTER TABLE prefab ADD CONSTRAINT prefab_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE; \
         \ \
         \ALTER TABLE tenant_limit_bundle ADD CONSTRAINT tenant_limit_bundle_uuid_fk FOREIGN KEY (uuid) REFERENCES tenant (uuid) ON DELETE CASCADE;"

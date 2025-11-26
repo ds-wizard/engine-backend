@@ -37,8 +37,8 @@ fromChangeDTO changeDto ms =
     , tenantUuid = ms.tenantUuid
     }
 
-toPhaseEvent :: U.UUID -> Maybe U.UUID -> U.UUID -> U.UUID -> Maybe UserDTO -> UTCTime -> QuestionnaireEvent
-toPhaseEvent phaseEventUuid kmPhaseUuid questionnaireUuid tenantUuid mCurrentUserUuid now =
+toQuestionnairePhaseEvent :: U.UUID -> Maybe U.UUID -> U.UUID -> U.UUID -> Maybe UserDTO -> UTCTime -> QuestionnaireEvent
+toQuestionnairePhaseEvent phaseEventUuid kmPhaseUuid questionnaireUuid tenantUuid mCurrentUserUuid now =
   SetPhaseEvent' $
     SetPhaseEvent
       { uuid = phaseEventUuid

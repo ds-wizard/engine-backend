@@ -106,6 +106,34 @@ findQuestionnaireEventsByQuestionnaireUuid questionnaireUuid = do
   let action conn = query conn (fromString sql) params
   runDB action
 
+findQuestionnaireEventListsByQuestionnaireUuid :: U.UUID -> AppContextM [QuestionnaireEventList]
+findQuestionnaireEventListsByQuestionnaireUuid questionnaireUuid = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString
+          "SELECT questionnaire_event.uuid, \
+          \       questionnaire_event.event_type, \
+          \       questionnaire_event.path, \
+          \       questionnaire_event.created_at, \
+          \       questionnaire_event.value_type, \
+          \       questionnaire_event.value, \
+          \       questionnaire_event.value_id, \
+          \       questionnaire_event.value_raw, \
+          \       questionnaire_event.created_by   AS created_by_uuid, \
+          \       user_entity.first_name           AS created_by_first_name, \
+          \       user_entity.last_name            AS created_by_last_name, \
+          \       gravatar_hash(user_entity.email) AS created_by_gravatar_hash, \
+          \       user_entity.image_url            AS created_by_email \
+          \FROM questionnaire_event \
+          \     LEFT JOIN user_entity ON user_entity.uuid = questionnaire_event.created_by \
+          \WHERE questionnaire_event.tenant_uuid = ? \
+          \  AND questionnaire_event.questionnaire_uuid = ? \
+          \ORDER BY created_at"
+  let params = [U.toString tenantUuid, U.toString questionnaireUuid]
+  logInfoI _CMP_DATABASE sql
+  let action conn = query conn (fromString sql) params
+  runDB action
+
 findQuestionnaireEventByUuid :: U.UUID -> AppContextM QuestionnaireEvent
 findQuestionnaireEventByUuid uuid = do
   tenantUuid <- asks currentTenantUuid

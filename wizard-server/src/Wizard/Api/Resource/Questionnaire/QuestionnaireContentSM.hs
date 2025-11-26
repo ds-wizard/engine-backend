@@ -4,7 +4,7 @@ import qualified Data.Map.Strict as M
 import Data.Swagger
 
 import Shared.Common.Util.Swagger
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventSM ()
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventListSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadListSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentJM ()

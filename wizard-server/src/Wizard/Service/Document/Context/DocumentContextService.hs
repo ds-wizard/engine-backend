@@ -24,7 +24,7 @@ import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Document.DocumentContextJM ()
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
-import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Model.Questionnaire.QuestionnaireEventListLenses ()
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireVersion
@@ -50,12 +50,12 @@ createDocumentContext doc pkg kmEditorEvents qtn mReplies = do
     case mReplies of
       Just replies -> return (Nothing, replies, M.empty)
       _ -> do
-        qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtn.uuid
+        qtnEvents <- findQuestionnaireEventListsByQuestionnaireUuid qtn.uuid
         let filteredQtnEvents =
               case doc.questionnaireEventUuid of
                 Just eventUuid -> takeWhileInclusive (\e -> getUuid e /= eventUuid) qtnEvents
                 Nothing -> qtnEvents
-        qtnCtn <- compileQuestionnairePreview filteredQtnEvents
+        let qtnCtn = compileQuestionnaire filteredQtnEvents
         return (qtnCtn.phaseUuid, qtnCtn.replies, qtnCtn.labels)
   report <- generateReport phaseUuid km replies
   mQtnVersion <-

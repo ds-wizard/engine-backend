@@ -18,6 +18,7 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireRep
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireEvent
+import Wizard.Model.Questionnaire.QuestionnaireEventList
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
@@ -46,6 +47,9 @@ fEvents qtnUuid =
 
 fEventsDto :: U.UUID -> [QuestionnaireEventDTO]
 fEventsDto qtnUuid = fmap (\event -> toEventDTO event (Just userAlbert)) (fEvents qtnUuid)
+
+fEventsList :: U.UUID -> [QuestionnaireEventList]
+fEventsList qtnUuid = fmap (\event -> toEventList event (Just userAlbert)) (fEvents qtnUuid)
 
 fEventsWithUpdated :: U.UUID -> [QuestionnaireEvent]
 fEventsWithUpdated qtnUuid = fEvents qtnUuid ++ [sre_rQ1Updated' qtnUuid]

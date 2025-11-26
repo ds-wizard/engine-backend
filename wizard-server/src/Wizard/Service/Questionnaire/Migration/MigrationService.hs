@@ -33,6 +33,7 @@ import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
+import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.Migration.MigrationAudit
 import Wizard.Service.Questionnaire.Migration.MigrationMapper
 import Wizard.Service.Questionnaire.Migration.MigrationValidation
@@ -133,8 +134,8 @@ upgradeQuestionnaire reqDto oldQtn = do
   oldKm <- compileKnowledgeModel [] (Just oldQtn.knowledgeModelPackageId) newTagUuids
   newKm <- compileKnowledgeModel [] (Just newPkgId) newTagUuids
   newUuid <- liftIO generateUuid
-  oldQtnEvents <- findQuestionnaireEventsByQuestionnaireUuid oldQtn.uuid
-  clonedQtnEventsWithOldEventUuid <- cloneQuestionnaireEventsWithOldEventUuid newUuid oldQtnEvents
+  oldQtnEvents <- findQuestionnaireEventListsByQuestionnaireUuid oldQtn.uuid
+  clonedQtnEventsWithOldEventUuid <- cloneQuestionnaireEventsWithOldEventUuid oldQtnEvents
   let clonedQtnEvents = fmap snd clonedQtnEventsWithOldEventUuid
   newQtnEvents <- sanitizeQuestionnaireEvents newUuid oldKm newKm clonedQtnEvents
   (newDocumentTemplateId, newFormatUuid) <- getNewDocumentTemplateIdAndFormatUuid oldQtn newPkgId
@@ -167,26 +168,26 @@ upgradeQuestionnaire reqDto oldQtn = do
           )
           newVersionsWithNewUuid
   let newVersions = catMaybes newVersionsWithNewEventUuid
-  return (upgradedQtn, newQtnEvents, newVersions)
+  return (upgradedQtn, fmap (toEvent upgradedQtn.uuid upgradedQtn.tenantUuid) newQtnEvents, newVersions)
 
 ensurePhaseIsSetIfNecessary :: Questionnaire -> AppContextM [QuestionnaireEvent]
 ensurePhaseIsSetIfNecessary newQtn = do
   uuid <- liftIO generateUuid
   mCurrentUser <- asks currentUser
   now <- liftIO getCurrentTime
-  newQtnEvents <- findQuestionnaireEventsByQuestionnaireUuid newQtn.uuid
-  qtnCtn <- compileQuestionnaire newQtnEvents
+  newQtnListEvents <- findQuestionnaireEventListsByQuestionnaireUuid newQtn.uuid
+  let qtnCtn = compileQuestionnaire newQtnListEvents
   knowledgeModel <- compileKnowledgeModel [] (Just newQtn.knowledgeModelPackageId) newQtn.selectedQuestionTagUuids
-  let events =
-        case (headSafe knowledgeModel.phaseUuids, qtnCtn.phaseUuid) of
-          (Nothing, Nothing) -> newQtnEvents
-          (Nothing, Just qtnPhaseUuid) -> newQtnEvents ++ [toPhaseEvent uuid Nothing newQtn.uuid newQtn.tenantUuid mCurrentUser now]
-          (Just kmPhaseUuid, Nothing) -> newQtnEvents ++ [toPhaseEvent uuid (Just kmPhaseUuid) newQtn.uuid newQtn.tenantUuid mCurrentUser now]
-          (Just kmPhaseUuid, Just qtnPhaseUuid) ->
-            if qtnPhaseUuid `notElem` knowledgeModel.phaseUuids
-              then newQtnEvents ++ [toPhaseEvent uuid (Just kmPhaseUuid) newQtn.uuid newQtn.tenantUuid mCurrentUser now]
-              else newQtnEvents
-  return events
+  let newQtnEvents = fmap (toEvent newQtn.uuid newQtn.tenantUuid) newQtnListEvents
+  return $
+    case (headSafe knowledgeModel.phaseUuids, qtnCtn.phaseUuid) of
+      (Nothing, Nothing) -> newQtnEvents
+      (Nothing, Just qtnPhaseUuid) -> newQtnEvents ++ [toQuestionnairePhaseEvent uuid Nothing newQtn.uuid newQtn.tenantUuid mCurrentUser now]
+      (Just kmPhaseUuid, Nothing) -> newQtnEvents ++ [toQuestionnairePhaseEvent uuid (Just kmPhaseUuid) newQtn.uuid newQtn.tenantUuid mCurrentUser now]
+      (Just kmPhaseUuid, Just qtnPhaseUuid) ->
+        if qtnPhaseUuid `notElem` knowledgeModel.phaseUuids
+          then newQtnEvents ++ [toQuestionnairePhaseEvent uuid (Just kmPhaseUuid) newQtn.uuid newQtn.tenantUuid mCurrentUser now]
+          else newQtnEvents
 
 generateNewVersionUuid :: QuestionnaireVersion -> AppContextM QuestionnaireVersion
 generateNewVersionUuid version = do

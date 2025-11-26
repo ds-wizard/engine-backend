@@ -25,7 +25,6 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
-import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.Document.Context.DocumentContextMapper

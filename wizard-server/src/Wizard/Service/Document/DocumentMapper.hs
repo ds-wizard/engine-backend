@@ -24,8 +24,8 @@ import Wizard.Model.Document.DocumentContextJM ()
 import Wizard.Model.Document.DocumentList
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireEvent
-import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Model.Questionnaire.QuestionnaireEventList
+import Wizard.Model.Questionnaire.QuestionnaireEventListLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Submission.SubmissionList
 
@@ -73,7 +73,7 @@ toDTOWithDocTemplate doc qtn mQtnVersion submissions tml format =
     , createdAt = doc.createdAt
     }
 
-fromCreateDTO :: DocumentCreateDTO -> U.UUID -> Int -> [QuestionnaireEvent] -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
+fromCreateDTO :: DocumentCreateDTO -> U.UUID -> Int -> [QuestionnaireEventList] -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
 fromCreateDTO dto docUuid repliesHash qtnEvents mCurrentUser tenantUuid now =
   Document
     { uuid = docUuid

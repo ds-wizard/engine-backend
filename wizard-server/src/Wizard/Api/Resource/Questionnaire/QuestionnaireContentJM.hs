@@ -3,7 +3,7 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireContentJM where
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventListJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadListJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()

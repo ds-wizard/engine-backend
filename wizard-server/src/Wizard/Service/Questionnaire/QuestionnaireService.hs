@@ -43,7 +43,6 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
-import Wizard.Model.Common.Lens
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
@@ -54,8 +53,6 @@ import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireDetailPreview
 import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
 import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
-import Wizard.Model.Questionnaire.QuestionnaireEvent
-import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireEventList
 import Wizard.Model.Questionnaire.QuestionnaireFile
 import Wizard.Model.Questionnaire.QuestionnairePerm
@@ -67,6 +64,7 @@ import Wizard.Service.Mail.Mailer
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
+import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.File.QuestionnaireFileService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireAudit
@@ -143,7 +141,6 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
     insertQuestionnaire qtn
     insertQuestionnaireEvents qtnEvents
     permissionDtos <- traverse enhanceQuestionnairePerm qtn.permissions
-    qtnCtn <- compileQuestionnaire qtnEvents
     return $ toSimpleDTO qtn pkg qtnState permissionDtos
 
 createQuestionnaireFromTemplate :: QuestionnaireCreateFromTemplateDTO -> AppContextM QuestionnaireDTO
@@ -157,7 +154,7 @@ createQuestionnaireFromTemplate reqDto =
     currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
     tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
-    originQtnEvents <- findQuestionnaireEventsByQuestionnaireUuid reqDto.questionnaireUuid
+    originQtnEvents <- findQuestionnaireEventListsByQuestionnaireUuid reqDto.questionnaireUuid
     let newVisibility = tcQuestionnaire.questionnaireVisibility.defaultValue
     let newSharing = tcQuestionnaire.questionnaireSharing.defaultValue
     let newPermissions = [toUserQuestionnairePerm newQtnUuid currentUser.uuid ownerPermissions tcQuestionnaire.tenantUuid]
@@ -177,15 +174,14 @@ createQuestionnaireFromTemplate reqDto =
           :: Questionnaire
     insertQuestionnaire newQtn
     clonedFiles <- cloneQuestionnaireFiles originQtn.uuid newQtn.uuid
-    newQtnEventsWithOldEventUuid <- cloneQuestionnaireEventsWithOldEventUuid newQtnUuid originQtnEvents
+    newQtnEventsWithOldEventUuid <- cloneQuestionnaireEventsWithOldEventUuid originQtnEvents
     let newQtnEvents = fmap snd newQtnEventsWithOldEventUuid
     let newQtnEventsWithReplacedFiles = replaceQuestionnaireEventsWithNewFiles clonedFiles newQtnEvents
-    insertQuestionnaireEvents newQtnEventsWithReplacedFiles
+    insertQuestionnaireEvents (fmap (toEvent newQtnUuid newQtn.tenantUuid) newQtnEventsWithReplacedFiles)
     duplicateCommentThreads reqDto.questionnaireUuid newQtnUuid
     cloneQuestionnaireVersions originQtn.uuid newQtn.uuid newQtnEventsWithOldEventUuid
     state <- getQuestionnaireState newQtnUuid pkg.pId
     permissionDtos <- traverse enhanceQuestionnairePerm newQtn.permissions
-    qtnCtn <- compileQuestionnaire newQtnEventsWithReplacedFiles
     return $ toSimpleDTO newQtn pkg state permissionDtos
 
 cloneQuestionnaire :: U.UUID -> AppContextM QuestionnaireDTO
@@ -198,7 +194,7 @@ cloneQuestionnaire cloneUuid =
     newQtnUuid <- liftIO generateUuid
     currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
-    originQtnEvents <- findQuestionnaireEventsByQuestionnaireUuid originQtn.uuid
+    originQtnEvents <- findQuestionnaireEventListsByQuestionnaireUuid originQtn.uuid
     let ownerPerm = toUserQuestionnairePerm newQtnUuid currentUser.uuid ownerPermissions originQtn.tenantUuid
     let newPermissions = ownerPerm : removeUserPermission currentUser.uuid originQtn.permissions
     let newDuplicatedPermissions = fmap (\permission -> permission {questionnaireUuid = newQtnUuid} :: QuestionnairePerm) newPermissions
@@ -212,10 +208,10 @@ cloneQuestionnaire cloneUuid =
           :: Questionnaire
     insertQuestionnaire newQtn
     clonedFiles <- cloneQuestionnaireFiles originQtn.uuid newQtn.uuid
-    newQtnEventsWithOldEventUuid <- cloneQuestionnaireEventsWithOldEventUuid newQtnUuid originQtnEvents
+    newQtnEventsWithOldEventUuid <- cloneQuestionnaireEventsWithOldEventUuid originQtnEvents
     let newQtnEvents = fmap snd newQtnEventsWithOldEventUuid
     let newQtnEventsWithReplacedFiles = replaceQuestionnaireEventsWithNewFiles clonedFiles newQtnEvents
-    insertQuestionnaireEvents newQtnEventsWithReplacedFiles
+    insertQuestionnaireEvents (fmap (toEvent newQtnUuid newQtn.tenantUuid) newQtnEventsWithReplacedFiles)
     cloneQuestionnaireVersions originQtn.uuid newQtn.uuid newQtnEventsWithOldEventUuid
     duplicateCommentThreads cloneUuid newQtnUuid
     state <- getQuestionnaireState newQtnUuid pkg.pId
@@ -267,7 +263,7 @@ getQuestionnaireDetailByUuid qtnUuid = do
 getQuestionnaireDetailQuestionnaireByUuid :: U.UUID -> AppContextM QuestionnaireDetailQuestionnaireDTO
 getQuestionnaireDetailQuestionnaireByUuid qtnUuid = do
   qtn <- findQuestionnaireDetailQuestionnaire qtnUuid
-  qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
+  qtnEvents <- findQuestionnaireEventListsByQuestionnaireUuid qtnUuid
   checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
   editor <- catchError (hasEditPermissionToQtn qtn.visibility qtn.sharing qtn.permissions) (\_ -> return False)
   commenter <- catchError (hasCommentPermissionToQtn qtn.visibility qtn.sharing qtn.permissions) (\_ -> return False)
@@ -280,7 +276,7 @@ getQuestionnaireDetailQuestionnaireByUuid qtnUuid = do
       then findQuestionnaireCommentThreadsSimple qtnUuid True editor
       else return M.empty
   knowledgeModel <- compileKnowledgeModel [] (Just qtn.knowledgeModelPackageId) qtn.selectedQuestionTagUuids
-  qtnCtn <- compileQuestionnaire qtnEvents
+  let qtnCtn = compileQuestionnaire qtnEvents
   let labels =
         if editor
           then qtnCtn.labels
@@ -314,7 +310,11 @@ getQuestionnaireEventForQtnUuid qtnUuid eventUuid = do
   checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
   auditQuestionnaireDetailEvent qtnUuid
   event <- findQuestionnaireEventByUuid eventUuid
-  enhanceQuestionnaireEvent event
+  mUser <-
+    case getCreatedBy event of
+      Just userUuid -> findUserByUuid' userUuid
+      Nothing -> return Nothing
+  return $ toEventDTO event mUser
 
 modifyQuestionnaireShare :: U.UUID -> QuestionnaireShareChangeDTO -> AppContextM QuestionnaireShareChangeDTO
 modifyQuestionnaireShare qtnUuid reqDto =
@@ -348,8 +348,8 @@ modifyQuestionnaireShare qtnUuid reqDto =
           format <- findDocumentTemplateFormatByDocumentTemplateIdAndUuid dtId formatUuid
           return $ Just format
         _ -> return Nothing
-    qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
-    qtnCtn <- compileQuestionnaire qtnEvents
+    qtnEvents <- findQuestionnaireEventListsByQuestionnaireUuid qtnUuid
+    let qtnCtn = compileQuestionnaire qtnEvents
     unresolvedCommentCounts <- findQuestionnaireCommentThreadsSimple qtnUuid False True
     resolvedCommentCounts <- findQuestionnaireCommentThreadsSimple qtnUuid True True
     let restWsDto = toDetailWsDTO updatedQtn mTemplate mFormat permissionDtos qtnCtn.labels unresolvedCommentCounts resolvedCommentCounts
@@ -382,8 +382,8 @@ modifyQuestionnaireSettings qtnUuid reqDto =
           format <- findDocumentTemplateFormatByDocumentTemplateIdAndUuid dtId formatUuid
           return $ Just format
         _ -> return Nothing
-    qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
-    qtnCtn <- compileQuestionnaire qtnEvents
+    qtnEvents <- findQuestionnaireEventListsByQuestionnaireUuid qtnUuid
+    let qtnCtn = compileQuestionnaire qtnEvents
     unresolvedCommentCounts <- findQuestionnaireCommentThreadsSimple qtnUuid False True
     resolvedCommentCounts <- findQuestionnaireCommentThreadsSimple qtnUuid True True
     let restWsDto = toDetailWsDTO updatedQtn mTemplate mFormat permissionDtos qtnCtn.labels unresolvedCommentCounts resolvedCommentCounts
@@ -423,25 +423,25 @@ cleanQuestionnaires =
       )
       qtns
 
-cloneQuestionnaireEvents :: U.UUID -> [QuestionnaireEvent] -> AppContextM [QuestionnaireEvent]
-cloneQuestionnaireEvents newQtnUuid oldEvents = do
-  newEvents <- cloneQuestionnaireEventsWithOldEventUuid newQtnUuid oldEvents
+cloneQuestionnaireEvents :: [QuestionnaireEventList] -> AppContextM [QuestionnaireEventList]
+cloneQuestionnaireEvents oldEvents = do
+  newEvents <- cloneQuestionnaireEventsWithOldEventUuid oldEvents
   return $ fmap snd newEvents
 
-cloneQuestionnaireEventsWithOldEventUuid :: U.UUID -> [QuestionnaireEvent] -> AppContextM [(U.UUID, QuestionnaireEvent)]
-cloneQuestionnaireEventsWithOldEventUuid newQtnUuid =
+cloneQuestionnaireEventsWithOldEventUuid :: [QuestionnaireEventList] -> AppContextM [(U.UUID, QuestionnaireEventList)]
+cloneQuestionnaireEventsWithOldEventUuid =
   traverse
     ( \event -> do
         newEventUuid <- liftIO generateUuid
-        return (getUuid event, setQuestionnaireUuid (setUuid event newEventUuid) newQtnUuid)
+        return (getUuid event, setUuid event newEventUuid)
     )
 
-replaceQuestionnaireEventsWithNewFiles :: [(QuestionnaireFile, QuestionnaireFile)] -> [QuestionnaireEvent] -> [QuestionnaireEvent]
+replaceQuestionnaireEventsWithNewFiles :: [(QuestionnaireFile, QuestionnaireFile)] -> [QuestionnaireEventList] -> [QuestionnaireEventList]
 replaceQuestionnaireEventsWithNewFiles clonedFiles qtnEvents =
   let findFile :: U.UUID -> Maybe (QuestionnaireFile, QuestionnaireFile)
       findFile fileUuid = L.find (\(oldFile, newFile) -> oldFile.uuid == fileUuid) clonedFiles
-      replaceEvent :: QuestionnaireEvent -> QuestionnaireEvent
-      replaceEvent (SetReplyEvent' event) =
+      replaceEvent :: QuestionnaireEventList -> QuestionnaireEventList
+      replaceEvent (SetReplyEventList' event) =
         let value' =
               case event.value of
                 r@FileReply {..} ->
@@ -449,6 +449,6 @@ replaceQuestionnaireEventsWithNewFiles clonedFiles qtnEvents =
                     Just (oldFile, newFile) -> r {fValue = newFile.uuid}
                     _ -> r
                 r -> r
-         in SetReplyEvent' (event {value = value'})
+         in SetReplyEventList' (event {value = value'})
       replaceEvent event' = event'
    in fmap replaceEvent qtnEvents

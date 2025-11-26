@@ -20,6 +20,22 @@ toEventDTO event' mCreatedBy =
     SetPhaseEvent' event@SetPhaseEvent {..} -> SetPhaseEventDTO' $ toSetPhaseEventDTO event mCreatedBy
     SetLabelsEvent' event@SetLabelsEvent {..} -> SetLabelsEventDTO' $ toSetLabelsEventDTO event mCreatedBy
 
+toEventList :: QuestionnaireEvent -> Maybe User -> QuestionnaireEventList
+toEventList event' mCreatedBy =
+  case event' of
+    SetReplyEvent' event@SetReplyEvent {..} -> SetReplyEventList' $ toSetReplyEventList event mCreatedBy
+    ClearReplyEvent' event@ClearReplyEvent {..} -> ClearReplyEventList' $ toClearReplyEventList event mCreatedBy
+    SetPhaseEvent' event@SetPhaseEvent {..} -> SetPhaseEventList' $ toSetPhaseEventList event mCreatedBy
+    SetLabelsEvent' event@SetLabelsEvent {..} -> SetLabelsEventList' $ toSetLabelsEventList event mCreatedBy
+
+toEvent :: U.UUID -> U.UUID -> QuestionnaireEventList -> QuestionnaireEvent
+toEvent questionnaireUuid tenantUuid event' =
+  case event' of
+    SetReplyEventList' event@SetReplyEventList {..} -> SetReplyEvent' $ toSetReplyEvent questionnaireUuid tenantUuid event
+    ClearReplyEventList' event@ClearReplyEventList {..} -> ClearReplyEvent' $ toClearReplyEvent questionnaireUuid tenantUuid event
+    SetPhaseEventList' event@SetPhaseEventList {..} -> SetPhaseEvent' $ toSetPhaseEvent questionnaireUuid tenantUuid event
+    SetLabelsEventList' event@SetLabelsEventList {..} -> SetLabelsEvent' $ toSetLabelsEvent questionnaireUuid tenantUuid event
+
 toSetReplyEventDTO :: SetReplyEvent -> Maybe User -> SetReplyEventDTO
 toSetReplyEventDTO event user =
   SetReplyEventDTO
@@ -37,6 +53,18 @@ toSetReplyEventList event user =
     , path = event.path
     , value = event.value
     , createdBy = fmap (UM.toSuggestion . UM.toSimple) user
+    , createdAt = event.createdAt
+    }
+
+toSetReplyEvent :: U.UUID -> U.UUID -> SetReplyEventList -> SetReplyEvent
+toSetReplyEvent questionnaireUuid tenantUuid event =
+  SetReplyEvent
+    { uuid = event.uuid
+    , path = event.path
+    , value = event.value
+    , questionnaireUuid = questionnaireUuid
+    , tenantUuid = tenantUuid
+    , createdBy = fmap (.uuid) event.createdBy
     , createdAt = event.createdAt
     }
 
@@ -58,6 +86,17 @@ toClearReplyEventList event user =
     , createdAt = event.createdAt
     }
 
+toClearReplyEvent :: U.UUID -> U.UUID -> ClearReplyEventList -> ClearReplyEvent
+toClearReplyEvent questionnaireUuid tenantUuid event =
+  ClearReplyEvent
+    { uuid = event.uuid
+    , path = event.path
+    , questionnaireUuid = questionnaireUuid
+    , tenantUuid = tenantUuid
+    , createdBy = fmap (.uuid) event.createdBy
+    , createdAt = event.createdAt
+    }
+
 toSetPhaseEventDTO :: SetPhaseEvent -> Maybe User -> SetPhaseEventDTO
 toSetPhaseEventDTO event user =
   SetPhaseEventDTO
@@ -73,6 +112,17 @@ toSetPhaseEventList event user =
     { uuid = event.uuid
     , phaseUuid = event.phaseUuid
     , createdBy = fmap (UM.toSuggestion . UM.toSimple) user
+    , createdAt = event.createdAt
+    }
+
+toSetPhaseEvent :: U.UUID -> U.UUID -> SetPhaseEventList -> SetPhaseEvent
+toSetPhaseEvent questionnaireUuid tenantUuid event =
+  SetPhaseEvent
+    { uuid = event.uuid
+    , phaseUuid = event.phaseUuid
+    , questionnaireUuid = questionnaireUuid
+    , tenantUuid = tenantUuid
+    , createdBy = fmap (.uuid) event.createdBy
     , createdAt = event.createdAt
     }
 
@@ -93,6 +143,18 @@ toSetLabelsEventList event user =
     , path = event.path
     , value = event.value
     , createdBy = fmap (UM.toSuggestion . UM.toSimple) user
+    , createdAt = event.createdAt
+    }
+
+toSetLabelsEvent :: U.UUID -> U.UUID -> SetLabelsEventList -> SetLabelsEvent
+toSetLabelsEvent questionnaireUuid tenantUuid event =
+  SetLabelsEvent
+    { uuid = event.uuid
+    , path = event.path
+    , value = event.value
+    , questionnaireUuid = questionnaireUuid
+    , tenantUuid = tenantUuid
+    , createdBy = fmap (.uuid) event.createdBy
     , createdAt = event.createdAt
     }
 
@@ -333,3 +395,6 @@ toReply event mUser =
     , createdBy = fmap (UM.toSuggestion . UM.toSimple) mUser
     , createdAt = event.createdAt
     }
+
+toReply' :: SetReplyEventList -> Reply
+toReply' SetReplyEventList {..} = Reply {..}

@@ -179,7 +179,9 @@ main =
                   QTN_ChangeQTypeSanitizer.sanitizerSpec
                   QTN_MoveSanitizerSpec.sanitizerSpec
               describe "Questionnaire" $ do
-                describe "Event" questionnaireEventServiceSpec
+                describe "Event" $ do
+                  questionnaireCompilerServiceSpec
+                  questionnaireEventServiceSpec
                 questionnaireValidationSpec
               describe "Report" reportGeneratorSpec
               describe "Tenant" $ do
@@ -243,7 +245,6 @@ main =
                     QTN_SanitizerSpec.sanitizerIntegrationSpec appContext
                 questionnaireAclSpec appContext
                 questionnaireCollaborationAclSpec appContext
-                questionnaireCompilerServiceSpec appContext
                 questionnaireServiceSpec appContext
               userServiceIntegrationSpec appContext
             describe "UTIL" $ do

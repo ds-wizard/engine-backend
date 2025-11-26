@@ -44,6 +44,7 @@ import Wizard.Model.Document.Document
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireEventListLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Tenant.Config.TenantConfig
@@ -89,12 +90,12 @@ createDocument reqDto =
     uuid <- liftIO generateUuid
     mCurrentUser <- asks currentUser
     now <- liftIO getCurrentTime
-    qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtn.uuid
+    qtnEvents <- findQuestionnaireEventListsByQuestionnaireUuid qtn.uuid
     let filteredQtnEvents =
           case reqDto.questionnaireEventUuid of
             Just eventUuid -> takeWhileInclusive (\e -> getUuid e /= eventUuid) qtnEvents
             Nothing -> qtnEvents
-    qtnCtn <- compileQuestionnairePreview filteredQtnEvents
+    let qtnCtn = compileQuestionnaire filteredQtnEvents
     tcOrganization <- findTenantConfigOrganization
     qtnVersions <- findQuestionnaireVersionsByQuestionnaireUuid qtn.uuid
     let docContextHash = computeHash [] qtn qtnVersions qtnCtn.phaseUuid qtnCtn.replies tcOrganization mCurrentUser
@@ -132,9 +133,9 @@ createDocumentPreviewForQtn qtnUuid =
       (Just tmlId, Just formatUuid) -> do
         tml <- getDocumentTemplateByUuidAndPackageId tmlId (Just qtn.knowledgeModelPackageId)
         pkg <- getPackageById qtn.knowledgeModelPackageId
-        qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
+        qtnEvents <- findQuestionnaireEventListsByQuestionnaireUuid qtnUuid
         let questionnaireEventUuid = fmap getUuid (lastSafe qtnEvents)
-        qtnCtn <- compileQuestionnaire qtnEvents
+        let qtnCtn = compileQuestionnaire qtnEvents
         qtnVersions <- findQuestionnaireVersionsByQuestionnaireUuid qtn.uuid
         createDocumentPreview tml pkg [] qtn qtnVersions questionnaireEventUuid qtnCtn.phaseUuid qtnCtn.replies formatUuid False
       _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP
@@ -149,9 +150,9 @@ createDocumentPreviewForDocTmlDraft tmlId =
         qtn <- findQuestionnaireByUuid qtnUuid
         pkg <- getPackageById qtn.knowledgeModelPackageId
         checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
-        qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtn.uuid
+        qtnEvents <- findQuestionnaireEventListsByQuestionnaireUuid qtn.uuid
         let questionnaireEventUuid = fmap getUuid (lastSafe qtnEvents)
-        qtnCtn <- compileQuestionnaire qtnEvents
+        let qtnCtn = compileQuestionnaire qtnEvents
         qtnVersions <- findQuestionnaireVersionsByQuestionnaireUuid qtn.uuid
         createDocumentPreview draft pkg [] qtn qtnVersions questionnaireEventUuid qtnCtn.phaseUuid qtnCtn.replies formatUuid False
       (_, Just kmEditorUuid, Just formatUuid) -> do
