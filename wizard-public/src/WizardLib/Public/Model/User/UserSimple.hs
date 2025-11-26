@@ -1,9 +1,9 @@
-module Wizard.Model.User.UserSuggestion where
+module WizardLib.Public.Model.User.UserSimple where
 
 import qualified Data.UUID as U
 import GHC.Generics
 
-data UserSuggestion = UserSuggestion
+data UserSimple = UserSimple
   { uuid :: U.UUID
   , firstName :: String
   , lastName :: String

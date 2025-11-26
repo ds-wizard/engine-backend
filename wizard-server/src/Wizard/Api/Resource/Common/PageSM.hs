@@ -29,6 +29,7 @@ import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSuggestio
 import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Api.Resource.Locale.LocaleSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventListSM ()
 import Wizard.Api.Resource.Questionnaire.File.QuestionnaireFileListSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadAssignedSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
@@ -48,6 +49,7 @@ import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTempl
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
 import Wizard.Database.Migration.Development.Locale.Data.Locales
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireFiles
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.QuestionnaireAction.Data.QuestionnaireActions
@@ -58,22 +60,25 @@ import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
 import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireCommentThreadAssigned
+import Wizard.Model.Questionnaire.QuestionnaireEventList
 import Wizard.Model.Questionnaire.QuestionnaireFileList
 import Wizard.Model.Questionnaire.QuestionnaireSuggestion
 import Wizard.Model.User.UserGroupSuggestion
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as P_Mapper
+import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
 import qualified Wizard.Service.Tenant.TenantMapper as TNT_Mapper
 import qualified Wizard.Service.User.Group.UserGroupMapper as UG_Mapper
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import WizardLib.Public.Api.Resource.PersistentCommand.PersistentCommandListSM ()
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Api.Resource.User.UserSuggestionSM ()
 import WizardLib.Public.Database.Migration.Development.PersistentCommand.Data.PersistentCommands
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
 import WizardLib.Public.Model.PersistentCommand.PersistentCommandList
+import WizardLib.Public.Model.User.UserSuggestion
 
 instance ToSchema (Page String) where
   declareNamedSchema = toSwaggerWithDtoName "Page String" (Page "projectTags" pageMetadata ["value1"])
@@ -82,11 +87,11 @@ instance ToSchema (Page UserDTO) where
   declareNamedSchema =
     toSwaggerWithDtoName "Page UserDTO" (Page "users" pageMetadata [U_Mapper.toDTO userAlbert])
 
-instance ToSchema (Page UserSuggestionDTO) where
+instance ToSchema (Page UserSuggestion) where
   declareNamedSchema =
     toSwaggerWithDtoName
-      "Page UserSuggestionDTO"
-      (Page "users" pageMetadata [U_Mapper.toSuggestionDTO . U_Mapper.toSuggestion $ userAlbert])
+      "Page UserSuggestion"
+      (Page "users" pageMetadata [U_Mapper.toSuggestion . U_Mapper.toSimple $ userAlbert])
 
 instance ToSchema (Page UserGroupSuggestion) where
   declareNamedSchema =
@@ -137,6 +142,12 @@ instance ToSchema (Page QuestionnaireActionDTO) where
     toSwaggerWithDtoName
       "Page QuestionnaireActionDTO"
       (Page "questionnaireActions" pageMetadata [questionnaireActionFtp3Dto])
+
+instance ToSchema (Page QuestionnaireEventList) where
+  declareNamedSchema =
+    toSwaggerWithDtoName
+      "Page QuestionnaireEventList"
+      (Page "questionnaireEvents" pageMetadata [SetReplyEventList' (toSetReplyEventList (sre_rQ1 questionnaire1.uuid) (Just userAlbert))])
 
 instance ToSchema (Page QuestionnaireFileList) where
   declareNamedSchema =

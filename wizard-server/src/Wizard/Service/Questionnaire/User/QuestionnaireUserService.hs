@@ -12,9 +12,9 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
-getQuestionnaireUserSuggestionsPage :: U.UUID -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)
+getQuestionnaireUserSuggestionsPage :: U.UUID -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
 getQuestionnaireUserSuggestionsPage qtnUuid mQuery mEditor pageable sort = do
   qtn <- findQuestionnaireByUuid qtnUuid
   checkCommentPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
@@ -26,4 +26,4 @@ getQuestionnaireUserSuggestionsPage qtnUuid mQuery mEditor pageable sort = do
               Just True -> "EDIT"
               _ -> "COMMENT"
       suggestionPage <- findQuestionnaireUserSuggestionsPage qtnUuid perm mQuery pageable sort
-      return . fmap toSuggestionDTO $ suggestionPage
+      return . fmap toSuggestion $ suggestionPage

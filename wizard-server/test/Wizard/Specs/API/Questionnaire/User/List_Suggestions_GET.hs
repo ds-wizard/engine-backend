@@ -64,37 +64,37 @@ test_200 appContext = do
     appContext
     questionnaire1
     [reqAuthHeader]
-    (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestionDTO . toSuggestion) [userAlbert]))
+    (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestion . toSimple) [userAlbert]))
   create_test_200
     "HTTP 200 OK (Commenter)"
     appContext
     (questionnaire13 {visibility = PrivateQuestionnaire})
     [reqNonAdminAuthHeader]
-    (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola]))
+    (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestion . toSimple) [userNikola]))
   create_test_200
     "HTTP 200 OK (Non-Commenter, VisibleComment)"
     appContext
     questionnaire13
     [reqIsaacAuthTokenHeader]
-    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
+    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestion . toSimple) [userNikola, userIsaac, userAlbert]))
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleComment, AnyoneWithLinkComment)"
     appContext
     (questionnaire13 {sharing = AnyoneWithLinkCommentQuestionnaire})
     []
-    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
+    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestion . toSimple) [userNikola, userIsaac, userAlbert]))
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleEdit)"
     appContext
     questionnaire3
     [reqNonAdminAuthHeader]
-    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
+    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestion . toSimple) [userNikola, userIsaac, userAlbert]))
   create_test_200
     "HTTP 200 OK (Anonymous, Public, Sharing)"
     appContext
     questionnaire10
     []
-    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
+    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestion . toSimple) [userNikola, userIsaac, userAlbert]))
 
 create_test_200 title appContext qtn authHeader expDto =
   it title $

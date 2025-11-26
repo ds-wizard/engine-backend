@@ -5,13 +5,13 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Questionnaire.QuestionnaireReply
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 data KnowledgeModelEditorReply = KnowledgeModelEditorReply
   { path :: String
   , value :: ReplyValue
   , knowledgeModelEditorUuid :: U.UUID
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   }

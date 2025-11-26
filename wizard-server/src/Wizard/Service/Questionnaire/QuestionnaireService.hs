@@ -56,6 +56,7 @@ import Wizard.Model.Questionnaire.QuestionnaireDetailQuestionnaire
 import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Model.Questionnaire.QuestionnaireEventList
 import Wizard.Model.Questionnaire.QuestionnaireFile
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireReply
@@ -299,13 +300,13 @@ getQuestionnaireDetailSettingsById qtnUuid = do
   knowledgeModel <- compileKnowledgeModel [] (Just qtn.knowledgeModelPackage.pId) qtn.selectedQuestionTagUuids
   return $ qtn {knowledgeModelTags = M.elems knowledgeModel.entities.tags}
 
-getQuestionnaireEventsForQtnUuid :: U.UUID -> AppContextM [QuestionnaireEventDTO]
-getQuestionnaireEventsForQtnUuid qtnUuid = do
+getQuestionnaireEventsPage :: U.UUID -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireEventList)
+getQuestionnaireEventsPage qtnUuid pageable sort = do
   qtn <- findQuestionnaireByUuid qtnUuid
-  events <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
+  events <- findQuestionnaireEventsPage qtnUuid pageable sort
   checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
   auditQuestionnaireListEvents qtnUuid
-  traverse enhanceQuestionnaireEvent events
+  return events
 
 getQuestionnaireEventForQtnUuid :: U.UUID -> U.UUID -> AppContextM QuestionnaireEventDTO
 getQuestionnaireEventForQtnUuid qtnUuid eventUuid = do

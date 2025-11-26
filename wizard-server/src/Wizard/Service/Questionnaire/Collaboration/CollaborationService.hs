@@ -42,9 +42,9 @@ import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentMapper
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Websocket.WebsocketService
 import Wizard.Util.Websocket
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Model.User.UserGroupMembership
+import WizardLib.Public.Model.User.UserSuggestion
 
 putUserOnline :: U.UUID -> U.UUID -> Connection -> AppContextM ()
 putUserOnline qtnUuid connectionUuid connection = do
@@ -409,7 +409,7 @@ createQuestionnaireRecord connectionUuid connection qtnUuid = do
           userGroupUuids
   createRecord connectionUuid connection (U.toString qtnUuid) permission userGroupUuids
 
-getMaybeCreatedBy :: WebsocketRecord -> Maybe UserSuggestionDTO
+getMaybeCreatedBy :: WebsocketRecord -> Maybe UserSuggestion
 getMaybeCreatedBy myself =
   case myself.user of
     u@LoggedOnlineUserInfo
@@ -420,7 +420,7 @@ getMaybeCreatedBy myself =
       , imageUrl = imageUrl
       } ->
         Just $
-          UserSuggestionDTO
+          UserSuggestion
             { uuid = uuid
             , firstName = firstName
             , lastName = lastName

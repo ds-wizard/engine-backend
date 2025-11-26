@@ -3,7 +3,7 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadNotificationJ
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.User.UserSuggestionJM ()
+import Wizard.Api.Resource.User.UserSimpleJM ()
 import Wizard.Model.Questionnaire.QuestionnaireCommentThreadNotification
 
 instance FromJSON QuestionnaireCommentThreadNotification where

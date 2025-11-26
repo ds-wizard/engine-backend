@@ -21,7 +21,7 @@ toList QuestionnaireFile {..} questionnaire mCreatedBy =
     , contentType = contentType
     , fileSize = fileSize
     , questionnaire = QuestionnaireMapper.toSimple questionnaire
-    , createdBy = fmap UserMapper.toSuggestionDTO' mCreatedBy
+    , createdBy = fmap UserMapper.toSuggestion' mCreatedBy
     , createdAt = createdAt
     }
 

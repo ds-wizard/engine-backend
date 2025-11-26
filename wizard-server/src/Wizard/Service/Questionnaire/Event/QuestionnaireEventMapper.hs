@@ -6,10 +6,11 @@ import qualified Data.UUID as U
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Model.Questionnaire.QuestionnaireEvent
+import Wizard.Model.Questionnaire.QuestionnaireEventList
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as UM
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 toEventDTO :: QuestionnaireEvent -> Maybe User -> QuestionnaireEventDTO
 toEventDTO event' mCreatedBy =
@@ -25,7 +26,17 @@ toSetReplyEventDTO event user =
     { uuid = event.uuid
     , path = event.path
     , value = event.value
-    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
+    , createdBy = fmap (UM.toSuggestion . UM.toSimple) user
+    , createdAt = event.createdAt
+    }
+
+toSetReplyEventList :: SetReplyEvent -> Maybe User -> SetReplyEventList
+toSetReplyEventList event user =
+  SetReplyEventList
+    { uuid = event.uuid
+    , path = event.path
+    , value = event.value
+    , createdBy = fmap (UM.toSuggestion . UM.toSimple) user
     , createdAt = event.createdAt
     }
 
@@ -34,7 +45,16 @@ toClearReplyEventDTO event user =
   ClearReplyEventDTO
     { uuid = event.uuid
     , path = event.path
-    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
+    , createdBy = fmap (UM.toSuggestion . UM.toSimple) user
+    , createdAt = event.createdAt
+    }
+
+toClearReplyEventList :: ClearReplyEvent -> Maybe User -> ClearReplyEventList
+toClearReplyEventList event user =
+  ClearReplyEventList
+    { uuid = event.uuid
+    , path = event.path
+    , createdBy = fmap (UM.toSuggestion . UM.toSimple) user
     , createdAt = event.createdAt
     }
 
@@ -43,7 +63,16 @@ toSetPhaseEventDTO event user =
   SetPhaseEventDTO
     { uuid = event.uuid
     , phaseUuid = event.phaseUuid
-    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
+    , createdBy = fmap (UM.toSuggestion . UM.toSimple) user
+    , createdAt = event.createdAt
+    }
+
+toSetPhaseEventList :: SetPhaseEvent -> Maybe User -> SetPhaseEventList
+toSetPhaseEventList event user =
+  SetPhaseEventList
+    { uuid = event.uuid
+    , phaseUuid = event.phaseUuid
+    , createdBy = fmap (UM.toSuggestion . UM.toSimple) user
     , createdAt = event.createdAt
     }
 
@@ -53,13 +82,23 @@ toSetLabelsEventDTO event user =
     { uuid = event.uuid
     , path = event.path
     , value = event.value
-    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
+    , createdBy = fmap (UM.toSuggestion . UM.toSimple) user
+    , createdAt = event.createdAt
+    }
+
+toSetLabelsEventList :: SetLabelsEvent -> Maybe User -> SetLabelsEventList
+toSetLabelsEventList event user =
+  SetLabelsEventList
+    { uuid = event.uuid
+    , path = event.path
+    , value = event.value
+    , createdBy = fmap (UM.toSuggestion . UM.toSimple) user
     , createdAt = event.createdAt
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------------------------
-toSetReplyEventDTO' :: SetReplyEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> SetReplyEventDTO
+toSetReplyEventDTO' :: SetReplyEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> SetReplyEventDTO
 toSetReplyEventDTO' event mCreatedBy now =
   SetReplyEventDTO
     { uuid = event.uuid
@@ -69,7 +108,7 @@ toSetReplyEventDTO' event mCreatedBy now =
     , createdAt = now
     }
 
-toClearReplyEventDTO' :: ClearReplyEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> ClearReplyEventDTO
+toClearReplyEventDTO' :: ClearReplyEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> ClearReplyEventDTO
 toClearReplyEventDTO' event mCreatedBy now =
   ClearReplyEventDTO
     { uuid = event.uuid
@@ -78,7 +117,7 @@ toClearReplyEventDTO' event mCreatedBy now =
     , createdAt = now
     }
 
-toSetPhaseEventDTO' :: SetPhaseEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> SetPhaseEventDTO
+toSetPhaseEventDTO' :: SetPhaseEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> SetPhaseEventDTO
 toSetPhaseEventDTO' event mCreatedBy now =
   SetPhaseEventDTO
     { uuid = event.uuid
@@ -87,7 +126,7 @@ toSetPhaseEventDTO' event mCreatedBy now =
     , createdAt = now
     }
 
-toSetLabelsEventDTO' :: SetLabelsEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> SetLabelsEventDTO
+toSetLabelsEventDTO' :: SetLabelsEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> SetLabelsEventDTO
 toSetLabelsEventDTO' event mCreatedBy now =
   SetLabelsEventDTO
     { uuid = event.uuid
@@ -98,7 +137,7 @@ toSetLabelsEventDTO' event mCreatedBy now =
     }
 
 toResolveCommentThreadEventDTO'
-  :: ResolveCommentThreadEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> ResolveCommentThreadEventDTO
+  :: ResolveCommentThreadEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> ResolveCommentThreadEventDTO
 toResolveCommentThreadEventDTO' event mCreatedBy now =
   ResolveCommentThreadEventDTO
     { uuid = event.uuid
@@ -110,7 +149,7 @@ toResolveCommentThreadEventDTO' event mCreatedBy now =
     }
 
 toReopenCommentThreadEventDTO'
-  :: ReopenCommentThreadEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> ReopenCommentThreadEventDTO
+  :: ReopenCommentThreadEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> ReopenCommentThreadEventDTO
 toReopenCommentThreadEventDTO' event mCreatedBy now =
   ReopenCommentThreadEventDTO
     { uuid = event.uuid
@@ -121,7 +160,7 @@ toReopenCommentThreadEventDTO' event mCreatedBy now =
     , createdAt = now
     }
 
-toAssignCommentThreadEventDTO' :: AssignCommentThreadEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> AssignCommentThreadEventDTO
+toAssignCommentThreadEventDTO' :: AssignCommentThreadEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> AssignCommentThreadEventDTO
 toAssignCommentThreadEventDTO' event mCreatedBy now =
   AssignCommentThreadEventDTO
     { uuid = event.uuid
@@ -134,7 +173,7 @@ toAssignCommentThreadEventDTO' event mCreatedBy now =
     }
 
 toDeleteCommentThreadEventDTO'
-  :: DeleteCommentThreadEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> DeleteCommentThreadEventDTO
+  :: DeleteCommentThreadEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> DeleteCommentThreadEventDTO
 toDeleteCommentThreadEventDTO' event mCreatedBy now =
   DeleteCommentThreadEventDTO
     { uuid = event.uuid
@@ -144,7 +183,7 @@ toDeleteCommentThreadEventDTO' event mCreatedBy now =
     , createdAt = now
     }
 
-toAddCommentEventDTO' :: AddCommentEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> AddCommentEventDTO
+toAddCommentEventDTO' :: AddCommentEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> AddCommentEventDTO
 toAddCommentEventDTO' event mCreatedBy now =
   AddCommentEventDTO
     { uuid = event.uuid
@@ -157,7 +196,7 @@ toAddCommentEventDTO' event mCreatedBy now =
     , createdAt = now
     }
 
-toEditCommentEventDTO' :: EditCommentEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> EditCommentEventDTO
+toEditCommentEventDTO' :: EditCommentEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> EditCommentEventDTO
 toEditCommentEventDTO' event mCreatedBy now =
   EditCommentEventDTO
     { uuid = event.uuid
@@ -169,7 +208,7 @@ toEditCommentEventDTO' event mCreatedBy now =
     , createdAt = now
     }
 
-toDeleteCommentEventDTO' :: DeleteCommentEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> DeleteCommentEventDTO
+toDeleteCommentEventDTO' :: DeleteCommentEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> DeleteCommentEventDTO
 toDeleteCommentEventDTO' event mCreatedBy now =
   DeleteCommentEventDTO
     { uuid = event.uuid
@@ -291,6 +330,6 @@ toReply :: SetReplyEvent -> Maybe User -> Reply
 toReply event mUser =
   Reply
     { value = event.value
-    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mUser
+    , createdBy = fmap (UM.toSuggestion . UM.toSimple) mUser
     , createdAt = event.createdAt
     }

@@ -92,6 +92,6 @@ createReply :: ReplyValue -> DiffTime -> Reply
 createReply value minute =
   Reply
     { value = value
-    , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+    , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) minute
     }

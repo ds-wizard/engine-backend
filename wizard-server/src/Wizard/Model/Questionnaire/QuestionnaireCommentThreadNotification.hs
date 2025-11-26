@@ -3,7 +3,7 @@ module Wizard.Model.Questionnaire.QuestionnaireCommentThreadNotification where
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Model.User.UserSuggestion
+import WizardLib.Public.Model.User.UserSimple
 
 data QuestionnaireCommentThreadNotification = QuestionnaireCommentThreadNotification
   { questionnaireUuid :: U.UUID
@@ -13,8 +13,8 @@ data QuestionnaireCommentThreadNotification = QuestionnaireCommentThreadNotifica
   , path :: String
   , resolved :: Bool
   , private :: Bool
-  , assignedTo :: UserSuggestion
-  , assignedBy :: Maybe UserSuggestion
+  , assignedTo :: UserSimple
+  , assignedBy :: Maybe UserSimple
   , text :: String
   , clientUrl :: String
   , appTitle :: Maybe String

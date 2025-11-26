@@ -1,10 +1,10 @@
-module WizardLib.Public.Api.Resource.User.UserSuggestionDTO where
+module WizardLib.Public.Model.User.UserSuggestion where
 
 import Data.Hashable
 import qualified Data.UUID as U
 import GHC.Generics
 
-data UserSuggestionDTO = UserSuggestionDTO
+data UserSuggestion = UserSuggestion
   { uuid :: U.UUID
   , firstName :: String
   , lastName :: String
@@ -13,4 +13,4 @@ data UserSuggestionDTO = UserSuggestionDTO
   }
   deriving (Show, Eq, Generic)
 
-instance Hashable UserSuggestionDTO
+instance Hashable UserSuggestion

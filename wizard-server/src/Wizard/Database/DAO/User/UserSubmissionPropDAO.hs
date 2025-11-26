@@ -12,7 +12,6 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.User.User ()
 import Wizard.Database.Mapping.User.UserSubmissionProp ()
 import Wizard.Database.Mapping.User.UserSubmissionPropList ()
-import Wizard.Database.Mapping.User.UserSuggestion ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.UserSubmissionProp

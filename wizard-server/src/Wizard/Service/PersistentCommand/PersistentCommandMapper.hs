@@ -21,7 +21,7 @@ toDetailDTO command user tenant =
     , attempts = command.attempts
     , maxAttempts = command.maxAttempts
     , tenant = tenant
-    , createdBy = fmap (U_Mapper.toSuggestionDTO . U_Mapper.toSuggestion) user
+    , createdBy = fmap (U_Mapper.toSuggestion . U_Mapper.toSimple) user
     , createdAt = command.createdAt
     , updatedAt = command.updatedAt
     }

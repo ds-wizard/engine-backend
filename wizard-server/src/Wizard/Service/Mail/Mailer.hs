@@ -30,11 +30,11 @@ import Wizard.Model.Questionnaire.QuestionnaireCommentThreadNotification
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
-import Wizard.Model.User.UserSuggestion
 import Wizard.Service.Tenant.TenantHelper
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
+import WizardLib.Public.Model.User.UserSimple
 import WizardLib.Public.Model.User.UserToken
 
 sendRegistrationConfirmationMail :: User -> String -> String -> AppContextM ()

@@ -17,7 +17,7 @@ toVersionList version createdBy =
     , name = version.name
     , description = version.description
     , eventUuid = version.eventUuid
-    , createdBy = fmap UM.toSuggestionDTO' createdBy
+    , createdBy = fmap UM.toSuggestion' createdBy
     , createdAt = version.createdAt
     , updatedAt = version.updatedAt
     }

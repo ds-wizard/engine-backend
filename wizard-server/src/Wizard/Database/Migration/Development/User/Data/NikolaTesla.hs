@@ -9,10 +9,10 @@ import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.User.UserMapper
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
 import WizardLib.Public.Model.User.UserGroup
 import WizardLib.Public.Model.User.UserGroupMembership
+import WizardLib.Public.Model.User.UserSuggestion
 import WizardLib.Public.Model.User.UserTour
 
 userNikola :: User
@@ -72,5 +72,5 @@ userNikolaTour1 =
     , createdAt = dt' 2018 1 21
     }
 
-userNikolaSuggestionDto :: UserSuggestionDTO
-userNikolaSuggestionDto = toSuggestionDTO . toSuggestion $ userNikola
+userNikolaSuggestionDto :: UserSuggestion
+userNikolaSuggestionDto = toSuggestion . toSimple $ userNikola

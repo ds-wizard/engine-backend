@@ -5,7 +5,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Questionnaire.QuestionnaireReply
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 data QuestionnaireEventDTO
   = SetReplyEventDTO' SetReplyEventDTO
@@ -25,7 +25,7 @@ data SetReplyEventDTO = SetReplyEventDTO
   { uuid :: U.UUID
   , path :: String
   , value :: ReplyValue
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)
@@ -40,7 +40,7 @@ instance Eq SetReplyEventDTO where
 data ClearReplyEventDTO = ClearReplyEventDTO
   { uuid :: U.UUID
   , path :: String
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)
@@ -54,7 +54,7 @@ instance Eq ClearReplyEventDTO where
 data SetPhaseEventDTO = SetPhaseEventDTO
   { uuid :: U.UUID
   , phaseUuid :: Maybe U.UUID
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)
@@ -69,7 +69,7 @@ data SetLabelsEventDTO = SetLabelsEventDTO
   { uuid :: U.UUID
   , path :: String
   , value :: [U.UUID]
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)
@@ -86,7 +86,7 @@ data ResolveCommentThreadEventDTO = ResolveCommentThreadEventDTO
   , path :: String
   , threadUuid :: U.UUID
   , commentCount :: Int
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)
@@ -103,7 +103,7 @@ data ReopenCommentThreadEventDTO = ReopenCommentThreadEventDTO
   , path :: String
   , threadUuid :: U.UUID
   , commentCount :: Int
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)
@@ -120,8 +120,8 @@ data AssignCommentThreadEventDTO = AssignCommentThreadEventDTO
   , path :: String
   , threadUuid :: U.UUID
   , private :: Bool
-  , assignedTo :: Maybe UserSuggestionDTO
-  , createdBy :: Maybe UserSuggestionDTO
+  , assignedTo :: Maybe UserSuggestion
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)
@@ -137,7 +137,7 @@ data DeleteCommentThreadEventDTO = DeleteCommentThreadEventDTO
   { uuid :: U.UUID
   , path :: String
   , threadUuid :: U.UUID
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)
@@ -156,7 +156,7 @@ data AddCommentEventDTO = AddCommentEventDTO
   , commentUuid :: U.UUID
   , text :: String
   , private :: Bool
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)
@@ -176,7 +176,7 @@ data EditCommentEventDTO = EditCommentEventDTO
   , threadUuid :: U.UUID
   , commentUuid :: U.UUID
   , text :: String
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)
@@ -195,7 +195,7 @@ data DeleteCommentEventDTO = DeleteCommentEventDTO
   , path :: String
   , threadUuid :: U.UUID
   , commentUuid :: U.UUID
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Generic)

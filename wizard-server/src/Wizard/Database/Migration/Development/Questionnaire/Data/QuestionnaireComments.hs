@@ -187,6 +187,6 @@ cmtAssigned =
     , resolved = cmtQ1_t1.resolved
     , private = cmtQ1_t1.private
     , text = cmtQ1_t1_1.text
-    , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , updatedAt = dt' 2018 1 21
     }

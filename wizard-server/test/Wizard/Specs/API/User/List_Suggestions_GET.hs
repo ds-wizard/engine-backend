@@ -48,37 +48,37 @@ test_200 appContext = do
     "HTTP 200 OK (Admin)"
     appContext
     "/wizard-api/users/suggestions?sort=uuid,asc"
-    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
+    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestion . toSimple) [userNikola, userIsaac, userAlbert]))
   create_test_200
     "HTTP 200 OK (Admin - pagination)"
     appContext
     "/wizard-api/users/suggestions?sort=uuid,asc&page=1&size=1"
-    (Page "users" (PageMetadata 1 3 3 1) [toSuggestionDTO . toSuggestion $ userIsaac])
+    (Page "users" (PageMetadata 1 3 3 1) [toSuggestion . toSimple $ userIsaac])
   create_test_200
     "HTTP 200 OK (Admin - query)"
     appContext
     "/wizard-api/users/suggestions?sort=uuid,asc&q=te"
-    (Page "users" (PageMetadata 20 2 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userAlbert]))
+    (Page "users" (PageMetadata 20 2 1 0) (fmap (toSuggestion . toSimple) [userNikola, userAlbert]))
   create_test_200
     "HTTP 200 OK (Admin - select)"
     appContext
     "/wizard-api/users/suggestions?sort=uuid,asc&select=30d48cf4-8c8a-496f-bafe-585bd238f798,e1c58e52-0824-4526-8ebe-ec38eec67030"
-    (Page "users" (PageMetadata 20 2 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac]))
+    (Page "users" (PageMetadata 20 2 1 0) (fmap (toSuggestion . toSimple) [userNikola, userIsaac]))
   create_test_200
     "HTTP 200 OK (Admin - exclude)"
     appContext
     "/wizard-api/users/suggestions?sort=uuid,asc&exclude=30d48cf4-8c8a-496f-bafe-585bd238f798,e1c58e52-0824-4526-8ebe-ec38eec67030"
-    (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestionDTO . toSuggestion) [userAlbert]))
+    (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestion . toSimple) [userAlbert]))
   create_test_200
     "HTTP 200 OK (Admin - sort asc)"
     appContext
     "/wizard-api/users/suggestions?sort=first_name,asc"
-    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userAlbert, userIsaac, userNikola]))
+    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestion . toSimple) [userAlbert, userIsaac, userNikola]))
   create_test_200
     "HTTP 200 OK (Admin - sort desc)"
     appContext
     "/wizard-api/users/suggestions?sort=first_name,desc"
-    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
+    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestion . toSimple) [userNikola, userIsaac, userAlbert]))
 
 create_test_200 title appContext reqUrl expDto =
   it title $

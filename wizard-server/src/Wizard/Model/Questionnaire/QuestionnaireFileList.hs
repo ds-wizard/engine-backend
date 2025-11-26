@@ -6,7 +6,7 @@ import GHC.Generics
 import GHC.Int
 
 import Wizard.Model.Questionnaire.QuestionnaireSimple
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 data QuestionnaireFileList = QuestionnaireFileList
   { uuid :: U.UUID
@@ -14,7 +14,7 @@ data QuestionnaireFileList = QuestionnaireFileList
   , contentType :: String
   , fileSize :: Int64
   , questionnaire :: QuestionnaireSimple
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

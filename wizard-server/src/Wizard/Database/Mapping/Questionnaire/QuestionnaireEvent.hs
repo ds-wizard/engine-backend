@@ -141,40 +141,16 @@ instance FromRow QuestionnaireEvent where
     questionnaireUuid <- field
     tenantUuid <- field
     valueType <- field
-    mValueText <- field
-    let valueText =
-          case mValueText :: Maybe (PGArray T.Text) of
-            Just valueText -> fmap T.unpack . fromPGArray $ valueText
-            Nothing -> []
+    valueText <- fieldValueText
     mValueId <- field
     mValueRaw <- field
     case aType of
       SetReplyEventType -> do
-        let value =
-              case valueType of
-                Just StringReplyType -> StringReply . head $ valueText
-                Just AnswerReplyType -> AnswerReply . u' . head $ valueText
-                Just MultiChoiceReplyType -> MultiChoiceReply . fmap u' $ valueText
-                Just ItemListReplyType -> ItemListReply . fmap u' $ valueText
-                Just IntegrationReplyType ->
-                  IntegrationReply
-                    { iValue =
-                        case mValueRaw of
-                          Just raw -> IntegrationType {value = head valueText, raw = raw}
-                          Nothing ->
-                            case mValueId of
-                              Just "<<integration-type-empty-id>>" -> IntegrationLegacyType {intId = Nothing, value = head valueText}
-                              Just valueId -> IntegrationLegacyType {intId = Just valueId, value = head valueText}
-                              Nothing -> PlainType {value = head valueText}
-                    }
-                Just ItemSelectReplyType -> ItemSelectReply . u' . head $ valueText
-                Just FileReplyType -> FileReply . u' . head $ valueText
-                _ -> error $ "Unknown value type: " ++ show valueType
         return . SetReplyEvent' $
           SetReplyEvent
             { uuid = uuid
             , path = fromJust mPath
-            , value = value
+            , value = parseValue valueType valueText mValueId mValueRaw
             , questionnaireUuid = questionnaireUuid
             , tenantUuid = tenantUuid
             , createdBy = createdBy
@@ -207,6 +183,44 @@ instance FromRow QuestionnaireEvent where
             , createdBy = createdBy
             , createdAt = createdAt
             }
+
+parseValue valueType valueText mValueId mValueRaw =
+  case valueType of
+    Just StringReplyType -> StringReply . head $ valueText
+    Just AnswerReplyType -> AnswerReply . u' . head $ valueText
+    Just MultiChoiceReplyType -> MultiChoiceReply . fmap u' $ valueText
+    Just ItemListReplyType -> ItemListReply . fmap u' $ valueText
+    Just IntegrationReplyType ->
+      IntegrationReply
+        { iValue =
+            case mValueRaw of
+              Just raw -> IntegrationType {value = head valueText, raw = raw}
+              Nothing ->
+                case mValueId of
+                  Just "<<integration-type-empty-id>>" -> IntegrationLegacyType {intId = Nothing, value = head valueText}
+                  Just valueId -> IntegrationLegacyType {intId = Just valueId, value = head valueText}
+                  Nothing -> PlainType {value = head valueText}
+        }
+    Just ItemSelectReplyType -> ItemSelectReply . u' . head $ valueText
+    Just FileReplyType -> FileReply . u' . head $ valueText
+    _ -> error $ "Unknown value type: " ++ show valueType
+
+parseValueText :: Maybe (PGArray T.Text) -> [String]
+parseValueText mValueText =
+  case mValueText :: Maybe (PGArray T.Text) of
+    Just valueText -> fmap T.unpack . fromPGArray $ valueText
+    Nothing -> []
+
+fieldValueText :: RowParser [String]
+fieldValueText = do
+  mValueText <- field
+  return $ parseValueText mValueText
+
+parsePhaseUuid :: [String] -> Maybe U.UUID
+parsePhaseUuid valueText =
+  case valueText of
+    [value] -> Just . u' $ value
+    _ -> Nothing
 
 data QuestionnaireEventType
   = SetReplyEventType

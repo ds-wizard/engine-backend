@@ -10,8 +10,8 @@ import Shared.Common.Util.String (splitOn)
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.User.UserService
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Api.Resource.User.UserSuggestionJM ()
+import WizardLib.Public.Model.User.UserSuggestion
 
 type List_Suggestions_GET =
   Header "Authorization" String
@@ -24,7 +24,7 @@ type List_Suggestions_GET =
     :> QueryParam "page" Int
     :> QueryParam "size" Int
     :> QueryParam "sort" String
-    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] (Page UserSuggestionDTO))
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] (Page UserSuggestion))
 
 list_suggestions_GET
   :: Maybe String
@@ -35,7 +35,7 @@ list_suggestions_GET
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
-  -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page UserSuggestionDTO))
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page UserSuggestion))
 list_suggestions_GET mTokenHeader mServerUrl mQuery mSelect mExclude mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $

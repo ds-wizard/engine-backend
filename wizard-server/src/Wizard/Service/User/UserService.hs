@@ -45,10 +45,10 @@ import Wizard.Service.User.UserAudit
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
 import Wizard.Service.UserToken.Login.LoginService
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Localization.Messages.Public
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
+import WizardLib.Public.Model.User.UserSuggestion
 
 getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
 getUsersPage mQuery mRole pageable sort = do
@@ -56,10 +56,8 @@ getUsersPage mQuery mRole pageable sort = do
   userPage <- findUsersPage mQuery mRole pageable sort
   return . fmap toDTO $ userPage
 
-getUserSuggestionsPage :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)
-getUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
-  suggestionPage <- findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort
-  return . fmap toSuggestionDTO $ suggestionPage
+getUserSuggestionsPage :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
+getUserSuggestionsPage = findUserSuggestionsPage
 
 createUserByAdmin :: UserCreateDTO -> AppContextM UserDTO
 createUserByAdmin reqDto =

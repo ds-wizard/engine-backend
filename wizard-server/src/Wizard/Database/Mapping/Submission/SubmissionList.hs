@@ -5,7 +5,7 @@ import Database.PostgreSQL.Simple.FromRow
 
 import Wizard.Database.Mapping.Submission.Submission ()
 import Wizard.Model.Submission.SubmissionList
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 instance FromRow SubmissionList where
   fromRow = do
@@ -24,7 +24,7 @@ instance FromRow SubmissionList where
     createdByGravatarHash <- field
     createdByImageUrl <- field
     let createdBy =
-          UserSuggestionDTO
+          UserSuggestion
             { uuid = createdByUuid
             , firstName = createdByFirstName
             , lastName = createdByLastName

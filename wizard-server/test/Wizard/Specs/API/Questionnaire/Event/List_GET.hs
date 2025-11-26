@@ -13,6 +13,8 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
+import Shared.Common.Model.Common.Page
+import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Error.Error
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
@@ -86,7 +88,7 @@ create_test_200 title appContext qtn qtnEvents authHeader =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = fEventsDto qtn.uuid
+      let expDto = Page "questionnaireEvents" (PageMetadata 20 16 1 0) (fEventsDto qtn.uuid)
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U.runMigration appContext

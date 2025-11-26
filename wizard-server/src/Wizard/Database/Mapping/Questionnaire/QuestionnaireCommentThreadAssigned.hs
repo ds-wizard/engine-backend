@@ -6,7 +6,7 @@ import Database.PostgreSQL.Simple.FromRow
 
 import Shared.Common.Util.Gravatar
 import Wizard.Model.Questionnaire.QuestionnaireCommentThreadAssigned
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 instance FromRow QuestionnaireCommentThreadAssigned where
   fromRow = do
@@ -27,7 +27,7 @@ instance FromRow QuestionnaireCommentThreadAssigned where
           case (mCreatedByUuid, mCreatedByFirstName, mCreatedByLastName, mCreatedByEmail) of
             (Just createdByUuid, Just createdByFirstName, Just createdByLastName, Just createdByEmail) ->
               Just $
-                UserSuggestionDTO
+                UserSuggestion
                   { uuid = createdByUuid
                   , firstName = createdByFirstName
                   , lastName = createdByLastName

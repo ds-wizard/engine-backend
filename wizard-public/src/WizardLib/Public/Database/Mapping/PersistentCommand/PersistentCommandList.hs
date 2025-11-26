@@ -9,8 +9,8 @@ import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.Mapping.PersistentCommand.PersistentCommand ()
 import WizardLib.Public.Api.Resource.Tenant.TenantSuggestionDTO
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Model.PersistentCommand.PersistentCommandList
+import WizardLib.Public.Model.User.UserSuggestion
 
 instance FromRow PersistentCommandList where
   fromRow = do
@@ -44,10 +44,10 @@ instance FromRow PersistentCommandList where
                     primaryColor -> Just primaryColor
               , clientUrl = parts !! 4
               }
-      parseUser :: String -> UserSuggestionDTO
+      parseUser :: String -> UserSuggestion
       parseUser user =
         let parts = splitOn "::" user
-         in UserSuggestionDTO
+         in UserSuggestion
               { uuid = u' . head $ parts
               , firstName = parts !! 1
               , lastName = parts !! 2

@@ -28,7 +28,7 @@ import Wizard.Service.Document.DocumentAcl
 import Wizard.Service.Submission.SubmissionAcl
 import Wizard.Service.Submission.SubmissionMapper
 import Wizard.Service.User.Profile.UserProfileService
-import Wizard.Service.User.UserMapper (toSuggestionDTO')
+import Wizard.Service.User.UserMapper (toSuggestion')
 
 getAvailableServicesForSubmission :: U.UUID -> AppContextM [TenantConfigSubmissionServiceSimple]
 getAvailableServicesForSubmission docUuid = do
@@ -71,7 +71,7 @@ submitDocument docUuid reqDto =
               :: Submission
     savedSubmission <- updateSubmissionByUuid updatedSub
     currentUser <- getCurrentUser
-    return $ toList savedSubmission tcSubmission (toSuggestionDTO' currentUser)
+    return $ toList savedSubmission tcSubmission (toSuggestion' currentUser)
   where
     getUserProps tcSubmission = do
       mUser <- asks currentUser

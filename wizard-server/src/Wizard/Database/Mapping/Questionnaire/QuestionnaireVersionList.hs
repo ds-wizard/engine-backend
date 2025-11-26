@@ -5,7 +5,7 @@ import Database.PostgreSQL.Simple.FromRow
 
 import Shared.Common.Util.Gravatar
 import Wizard.Model.Questionnaire.QuestionnaireVersionList
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 instance FromRow QuestionnaireVersionList where
   fromRow = do
@@ -24,6 +24,6 @@ instance FromRow QuestionnaireVersionList where
           case (createdByUuid, createdByFirstName, createdByLastName, createdByEmail, createdByImageUrl) of
             (Just uuid, Just firstName, Just lastName, Just email, imageUrl) ->
               let gravatarHash = createGravatarHash email
-               in Just UserSuggestionDTO {..}
+               in Just UserSuggestion {..}
             _ -> Nothing
     return $ QuestionnaireVersionList {..}
