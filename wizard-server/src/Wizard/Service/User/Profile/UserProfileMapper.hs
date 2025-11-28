@@ -26,6 +26,7 @@ fromUserProfileChangeDTO oldUser dto now =
     , imageUrl = oldUser.imageUrl
     , locale = oldUser.locale
     , machine = oldUser.machine
+    , lastSeenNewsId = oldUser.lastSeenNewsId
     , tenantUuid = oldUser.tenantUuid
     , lastVisitedAt = oldUser.lastVisitedAt
     , createdAt = oldUser.createdAt

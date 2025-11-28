@@ -33,6 +33,7 @@ userIsaac =
       imageUrl = Nothing
     , locale = Nothing
     , machine = False
+    , lastSeenNewsId = Nothing
     , tenantUuid = defaultTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0

@@ -62,6 +62,7 @@ import Wizard.Specs.API.Tenant.Usage.APISpec
 import Wizard.Specs.API.Token.APISpec
 import Wizard.Specs.API.TypeHint.APISpec
 import Wizard.Specs.API.User.APISpec
+import Wizard.Specs.API.User.News.APISpec
 import Wizard.Specs.API.User.Tour.APISpec
 import Wizard.Specs.API.UserGroup.APISpec
 import Wizard.Specs.Integration.Http.TypeHint.ResponseMapperSpec
@@ -228,6 +229,7 @@ main =
               tokenAPI baseContext appContext
               usageAPI baseContext appContext
               userAPI baseContext appContext
+              userNewsAPI baseContext appContext
               userTourAPI baseContext appContext
               userGroupAPI baseContext appContext
             describe "SERVICE" $ do

@@ -46,6 +46,7 @@ userSystem =
       imageUrl = Nothing
     , locale = Nothing
     , machine = True
+    , lastSeenNewsId = Nothing
     , tenantUuid = defaultTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0

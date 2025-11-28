@@ -26,6 +26,7 @@ userCharles =
       imageUrl = Nothing
     , locale = Nothing
     , machine = False
+    , lastSeenNewsId = Nothing
     , tenantUuid = differentTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0

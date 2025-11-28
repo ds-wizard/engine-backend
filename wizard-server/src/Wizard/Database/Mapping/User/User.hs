@@ -28,6 +28,7 @@ instance ToRow User where
     , toField tenantUuid
     , toField machine
     , toField locale
+    , toField lastSeenNewsId
     ]
 
 instance FromRow User where
@@ -49,4 +50,5 @@ instance FromRow User where
     tenantUuid <- field
     machine <- field
     locale <- field
+    lastSeenNewsId <- field
     return $ User {..}

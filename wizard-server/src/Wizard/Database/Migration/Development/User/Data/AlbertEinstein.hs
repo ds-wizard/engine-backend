@@ -68,6 +68,7 @@ userAlbert =
       imageUrl = Nothing
     , locale = Nothing
     , machine = False
+    , lastSeenNewsId = Nothing
     , tenantUuid = defaultTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -81,6 +82,12 @@ userAlbertEdited =
     , lastName = "EDITED: Einstein"
     , email = "albert.einstein@example-edited.com"
     , affiliation = Just "EDITED: My University"
+    }
+
+userAlbertWithNewsId :: User
+userAlbertWithNewsId =
+  userAlbert
+    { lastSeenNewsId = Just "my-news-id"
     }
 
 userAlbertDto :: UserDTO

@@ -26,6 +26,7 @@ data User = User
   , imageUrl :: Maybe String
   , locale :: Maybe String
   , machine :: Bool
+  , lastSeenNewsId :: Maybe String
   , tenantUuid :: U.UUID
   , lastVisitedAt :: UTCTime
   , createdAt :: UTCTime
@@ -48,4 +49,5 @@ instance Eq User where
       && a.imageUrl == b.imageUrl
       && a.locale == b.locale
       && a.machine == b.machine
+      && a.lastSeenNewsId == b.lastSeenNewsId
       && a.tenantUuid == b.tenantUuid
