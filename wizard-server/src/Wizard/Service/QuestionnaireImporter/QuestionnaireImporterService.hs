@@ -38,7 +38,7 @@ getQuestionnaireImporterSuggestions mQuestionnaireUuid mQuery mEnabled pageable 
     case mQuestionnaireUuid of
       Just qtnUuid -> do
         qtn <- findQuestionnaireByUuid qtnUuid
-        return . Just $ qtn.packageId
+        return . Just $ qtn.knowledgeModelPackageId
       Nothing -> return Nothing
   page <- findQuestionnaireImportersPage Nothing Nothing mQuery mEnabled (Pageable (Just 0) (Just 999999999)) sort
   return . fmap toDTO . updatePage page . filterImportersInGroup mPkgId $ page

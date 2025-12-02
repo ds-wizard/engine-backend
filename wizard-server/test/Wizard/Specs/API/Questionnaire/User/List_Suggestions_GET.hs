@@ -4,6 +4,7 @@ module Wizard.Specs.API.Questionnaire.User.List_Suggestions_GET (
 
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import Data.Foldable (traverse_)
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -16,6 +17,9 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Error.Error
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -24,8 +28,6 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.User.UserMapper
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.Public.Localization.Messages.Public
 
 import SharedTest.Specs.API.Common
@@ -62,37 +64,37 @@ test_200 appContext = do
     appContext
     questionnaire1
     [reqAuthHeader]
-    (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestionDTO . toSuggestion) [userAlbert]))
+    (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestion . toSimple) [userAlbert]))
   create_test_200
     "HTTP 200 OK (Commenter)"
     appContext
     (questionnaire13 {visibility = PrivateQuestionnaire})
     [reqNonAdminAuthHeader]
-    (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola]))
+    (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestion . toSimple) [userNikola]))
   create_test_200
     "HTTP 200 OK (Non-Commenter, VisibleComment)"
     appContext
     questionnaire13
     [reqIsaacAuthTokenHeader]
-    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
+    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestion . toSimple) [userNikola, userIsaac, userAlbert]))
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleComment, AnyoneWithLinkComment)"
     appContext
     (questionnaire13 {sharing = AnyoneWithLinkCommentQuestionnaire})
     []
-    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
+    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestion . toSimple) [userNikola, userIsaac, userAlbert]))
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleEdit)"
     appContext
     questionnaire3
     [reqNonAdminAuthHeader]
-    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
+    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestion . toSimple) [userNikola, userIsaac, userAlbert]))
   create_test_200
     "HTTP 200 OK (Anonymous, Public, Sharing)"
     appContext
     questionnaire10
     []
-    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
+    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestion . toSimple) [userNikola, userIsaac, userAlbert]))
 
 create_test_200 title appContext qtn authHeader expDto =
   it title $
@@ -103,7 +105,8 @@ create_test_200 title appContext qtn authHeader expDto =
       -- AND: Run migrations
       runInContextIO U.runMigration appContext
       runInContextIO TML.runMigration appContext
-      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       runInContextIO (insertQuestionnaire qtn) appContext
       -- AND: Prepare expectation
       let expStatus = 200
@@ -165,7 +168,8 @@ create_test_403 title appContext qtn authHeader errorMessage =
       -- AND: Run migrations
       runInContextIO U.runMigration appContext
       runInContextIO TML.runMigration appContext
-      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       runInContextIO (insertQuestionnaire qtn) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

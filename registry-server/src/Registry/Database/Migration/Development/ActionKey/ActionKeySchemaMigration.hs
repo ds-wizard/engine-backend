@@ -28,7 +28,7 @@ createTables = do
         \    created_at  timestamptz NOT NULL, \
         \    tenant_uuid uuid                     NOT NULL, \
         \    CONSTRAINT action_key_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT action_key_identity_fk FOREIGN KEY (identity) REFERENCES organization (organization_id) \
+        \    CONSTRAINT action_key_identity_fk FOREIGN KEY (identity) REFERENCES organization (organization_id) ON DELETE CASCADE \
         \); \
         \ \
         \CREATE UNIQUE INDEX action_key_hash_uindex ON action_key (hash);"

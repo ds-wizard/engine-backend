@@ -12,7 +12,6 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.User.User ()
 import Wizard.Database.Mapping.User.UserSubmissionProp ()
 import Wizard.Database.Mapping.User.UserSubmissionPropList ()
-import Wizard.Database.Mapping.User.UserSuggestion ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.UserSubmissionProp
@@ -56,12 +55,12 @@ insertOrUpdateUserSubmissionProp submissionProps = do
         fromString
           "INSERT INTO user_entity_submission_prop \
           \VALUES (?, ?, ?, ?, ?, ?) \
-          \ON CONFLICT (user_uuid, service_id, tenant_uuid) DO UPDATE SET user_uuid   = ?, \
-          \                                                               service_id  = ?, \
-          \                                                               values      = ?, \
-          \                                                               tenant_uuid = ?, \
-          \                                                               created_at  = ?, \
-          \                                                               updated_at  = ?;"
+          \ON CONFLICT (user_uuid, service_id) DO UPDATE SET user_uuid   = ?, \
+          \                                                  service_id  = ?, \
+          \                                                  values      = ?, \
+          \                                                  tenant_uuid = ?, \
+          \                                                  created_at  = ?, \
+          \                                                  updated_at  = ?;"
   let params = toRow submissionProps ++ toRow submissionProps
   logQuery sql params
   let action conn = execute conn sql params

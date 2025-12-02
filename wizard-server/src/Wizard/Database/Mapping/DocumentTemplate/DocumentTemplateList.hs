@@ -5,11 +5,11 @@ import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 
 import Shared.Common.Database.Mapping.Common.SemVer2Tuple ()
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
+import Shared.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplatePhase ()
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Wizard.Database.Mapping.DocumentTemplate.DocumentTemplateState ()
 import Wizard.Model.DocumentTemplate.DocumentTemplateList
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
-import WizardLib.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplatePhase ()
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
 instance FromRow DocumentTemplateList where
   fromRow = do

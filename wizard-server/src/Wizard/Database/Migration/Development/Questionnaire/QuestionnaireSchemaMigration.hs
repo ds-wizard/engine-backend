@@ -23,7 +23,7 @@ dropTables = do
         \DROP TABLE IF EXISTS questionnaire_perm_group CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_perm_user CASCADE; \
         \DROP TABLE IF EXISTS questionnaire_event; \
-        \DROP TYPE IF EXISTS event_type; \
+        \DROP TYPE IF EXISTS questionnaire_event_type; \
         \DROP TYPE IF EXISTS value_type; \
         \DROP TABLE IF EXISTS questionnaire CASCADE; "
   let action conn = execute_ conn sql
@@ -33,6 +33,13 @@ dropBucket :: AppContextM ()
 dropBucket = do
   catchError purgeBucket (\e -> return ())
   catchError removeBucket (\e -> return ())
+
+dropFunctions :: AppContextM Int64
+dropFunctions = do
+  logInfo _CMP_MIGRATION "(Function/Questionnaire) drop functions"
+  let sql = "DROP FUNCTION IF EXISTS create_persistent_command_from_questionnaire_file_delete;"
+  let action conn = execute_ conn sql
+  runDB action
 
 dropTriggers :: AppContextM Int64
 dropTriggers = do
@@ -63,7 +70,7 @@ createQtnTable = do
         \    name                        varchar     NOT NULL, \
         \    visibility                  varchar     NOT NULL, \
         \    sharing                     varchar     NOT NULL, \
-        \    package_id                  varchar     NOT NULL, \
+        \    knowledge_model_package_id  varchar     NOT NULL, \
         \    selected_question_tag_uuids uuid[]      NOT NULL, \
         \    document_template_id        varchar, \
         \    format_uuid                 uuid, \
@@ -75,11 +82,11 @@ createQtnTable = do
         \    squashed                    boolean     NOT NULL, \
         \    tenant_uuid                 uuid        NOT NULL, \
         \    project_tags                text[]      NOT NULL, \
-        \    CONSTRAINT questionnaire_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_package_id_fk FOREIGN KEY (package_id, tenant_uuid) REFERENCES package (id, tenant_uuid), \
-        \    CONSTRAINT questionnaire_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid), \
-        \    CONSTRAINT questionnaire_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT questionnaire_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT questionnaire_knowledge_model_package_id_fk FOREIGN KEY (knowledge_model_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL, \
+        \    CONSTRAINT questionnaire_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -87,14 +94,14 @@ createQtnTable = do
 createQtnEventTable = do
   logInfo _CMP_MIGRATION "(Table/QuestionnaireEvent) create table"
   let sql =
-        "CREATE TYPE event_type AS ENUM ('ClearReplyEvent', 'SetReplyEvent', 'SetLabelsEvent', 'SetPhaseEvent'); \
+        "CREATE TYPE questionnaire_event_type AS ENUM ('ClearReplyEvent', 'SetReplyEvent', 'SetLabelsEvent', 'SetPhaseEvent'); \
         \CREATE TYPE value_type AS ENUM ('IntegrationReply', 'AnswerReply', 'MultiChoiceReply', 'ItemListReply', 'StringReply', 'ItemSelectReply', 'FileReply'); \
         \CREATE TABLE IF NOT EXISTS questionnaire_event \
         \( \
         \    uuid               uuid                     NOT NULL, \
-        \    event_type         event_type               NOT NULL, \
+        \    event_type         questionnaire_event_type NOT NULL, \
         \    path               text, \
-        \    created_at         timestamp with time zone NOT NULL, \
+        \    created_at         timestamptz              NOT NULL, \
         \    created_by         uuid, \
         \    questionnaire_uuid uuid                     NOT NULL, \
         \    tenant_uuid        uuid                     NOT NULL, \
@@ -102,10 +109,10 @@ createQtnEventTable = do
         \    value              text[], \
         \    value_id           text, \
         \    value_raw          jsonb, \
-        \    CONSTRAINT questionnaire_event_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_event_created_by_fk FOREIGN KEY (created_by, tenant_uuid) references user_entity(uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_event_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) references questionnaire(uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_event_tenant_uuid_fk FOREIGN KEY (tenant_uuid) references tenant(uuid) \
+        \    CONSTRAINT questionnaire_event_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT questionnaire_event_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity(uuid) ON DELETE SET NULL, \
+        \    CONSTRAINT questionnaire_event_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire(uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_event_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant(uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -119,10 +126,10 @@ createQtnAclUserTable = do
         \    user_uuid          uuid   NOT NULL, \
         \    perms              text[] NOT NULL, \
         \    tenant_uuid        uuid   NOT NULL, \
-        \    CONSTRAINT questionnaire_perm_user_pk PRIMARY KEY (user_uuid, questionnaire_uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_perm_user_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_perm_user_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_perm_user_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT questionnaire_perm_user_pk PRIMARY KEY (user_uuid, questionnaire_uuid), \
+        \    CONSTRAINT questionnaire_perm_user_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_perm_user_user_uuid_fk FOREIGN KEY (user_uuid) REFERENCES user_entity (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_perm_user_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -136,10 +143,10 @@ createQtnAclGroupTable = do
         \    user_group_uuid    uuid   NOT NULL, \
         \    perms              text[] NOT NULL, \
         \    tenant_uuid        uuid   NOT NULL, \
-        \    CONSTRAINT questionnaire_perm_group_pk PRIMARY KEY (user_group_uuid, questionnaire_uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_perm_group_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_perm_group_user_group_uuid_fk FOREIGN KEY (user_group_uuid, tenant_uuid) REFERENCES user_group (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_perm_group_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT questionnaire_perm_group_pk PRIMARY KEY (user_group_uuid, questionnaire_uuid), \
+        \    CONSTRAINT questionnaire_perm_group_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_perm_group_user_group_uuid_fk FOREIGN KEY (user_group_uuid) REFERENCES user_group (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_perm_group_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -161,11 +168,11 @@ createQtnCommentThreadTable = do
         \    assigned_to            uuid, \
         \    assigned_by            uuid, \
         \    notification_required  bool        NOT NULL DEFAULT false, \
-        \    CONSTRAINT questionnaire_comment_thread_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_comment_thread_questionnaire_uuid FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_comment_thread_assigned_to FOREIGN KEY (assigned_to, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_comment_thread_assigned_by FOREIGN KEY (assigned_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_comment_thread_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT questionnaire_comment_thread_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT questionnaire_comment_thread_questionnaire_uuid FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_comment_thread_assigned_to FOREIGN KEY (assigned_to) REFERENCES user_entity (uuid) ON DELETE SET NULL, \
+        \    CONSTRAINT questionnaire_comment_thread_assigned_by FOREIGN KEY (assigned_by) REFERENCES user_entity (uuid) ON DELETE SET NULL, \
+        \    CONSTRAINT questionnaire_comment_thread_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -182,9 +189,9 @@ createQtnCommentTable = do
         \    created_at          timestamptz NOT NULL, \
         \    updated_at          timestamptz NOT NULL, \
         \    tenant_uuid         uuid        NOT NULL, \
-        \    CONSTRAINT questionnaire_comment_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_comment_comment_thread_uuid FOREIGN KEY (comment_thread_uuid, tenant_uuid) REFERENCES questionnaire_comment_thread (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_comment_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT questionnaire_comment_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT questionnaire_comment_comment_thread_uuid FOREIGN KEY (comment_thread_uuid) REFERENCES questionnaire_comment_thread (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_comment_tenant_uuid FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -203,11 +210,11 @@ createQtnVersionTable = do
         \    created_by         uuid, \
         \    created_at         timestamptz NOT NULL, \
         \    updated_at         timestamptz NOT NULL, \
-        \    CONSTRAINT questionnaire_version_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_version_event_uuid_fk FOREIGN KEY (event_uuid, tenant_uuid) REFERENCES questionnaire_event (uuid, tenant_uuid) ON DELETE CASCADE, \
-        \    CONSTRAINT questionnaire_version_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_version_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT questionnaire_version_event_uuid_fk FOREIGN KEY (event_uuid) REFERENCES questionnaire_event (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_version_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT questionnaire_version_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE, \
-        \    CONSTRAINT questionnaire_version_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid) ON DELETE SET NULL \
+        \    CONSTRAINT questionnaire_version_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -225,13 +232,19 @@ createQtnFileTable = do
         \    created_by         uuid, \
         \    tenant_uuid        uuid        NOT NULL, \
         \    created_at         timestamptz NOT NULL, \
-        \    CONSTRAINT questionnaire_file_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_file_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid, tenant_uuid) REFERENCES questionnaire (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_file_user_uuid_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
-        \    CONSTRAINT questionnaire_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT questionnaire_file_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT questionnaire_file_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT questionnaire_file_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL, \
+        \    CONSTRAINT questionnaire_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
+
+createFunctions :: AppContextM Int64
+createFunctions = do
+  logInfo _CMP_MIGRATION "(Function/Questionnaire) create functions"
+  createPersistentCommandFromQuestionnaireFileDeleteFunction
+
 createPersistentCommandFromQuestionnaireFileDeleteFunction = do
   let sql =
         "CREATE OR REPLACE FUNCTION create_persistent_command_from_questionnaire_file_delete() \
@@ -251,7 +264,7 @@ createPersistentCommandFromQuestionnaireFileDeleteFunction = do
 
 createTriggers :: AppContextM Int64
 createTriggers = do
-  logInfo _CMP_MIGRATION "(Trigger/QuestionnaireFile) create triggers"
+  logInfo _CMP_MIGRATION "(Trigger/Questionnaire) create triggers"
   let sql =
         "CREATE OR REPLACE TRIGGER trigger_on_after_questionnaire_file_delete \
         \    AFTER DELETE \

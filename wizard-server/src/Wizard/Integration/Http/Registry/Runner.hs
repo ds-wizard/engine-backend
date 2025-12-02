@@ -10,12 +10,13 @@ import RegistryLib.Api.Resource.Locale.LocaleDTO
 import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
 import RegistryLib.Api.Resource.Organization.OrganizationDTO
 import RegistryLib.Api.Resource.Organization.OrganizationStateJM ()
-import RegistryLib.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Api.Resource.Package.KnowledgeModelPackageSimpleDTO
 import RegistryLib.Model.Organization.OrganizationSimple
 import Shared.Common.Integration.Http.Common.HttpClient
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Error.Error
+import Shared.KnowledgeModel.Model.KnowledgeModel.Bundle.KnowledgeModelBundle
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Integration.Http.Common.ServantClient
 import Wizard.Integration.Http.Registry.RequestMapper
@@ -26,7 +27,6 @@ import Wizard.Model.Statistics.InstanceStatistics
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.TenantHelper
-import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleDTO
 
 retrieveOrganizations :: AppContextM [OrganizationSimple]
 retrieveOrganizations = do
@@ -52,7 +52,7 @@ confirmOrganizationRegistration reqDto = do
   res <- runRegistryClient request
   return . getResponse $ res
 
-retrievePackages :: InstanceStatistics -> AppContextM [PackageSimpleDTO]
+retrievePackages :: InstanceStatistics -> AppContextM [KnowledgeModelPackageSimpleDTO]
 retrievePackages iStat = do
   tcRegistry <- getCurrentTenantConfigRegistry
   if tcRegistry.enabled
@@ -66,15 +66,15 @@ retrievePackages iStat = do
         (\_ -> return [])
     else return []
 
-retrievePackageBundleById :: String -> AppContextM BSL.ByteString
-retrievePackageBundleById pkgId = do
+retrieveKnowledgeModelBundleById :: String -> AppContextM BSL.ByteString
+retrieveKnowledgeModelBundleById pkgId = do
   serverConfig <- asks serverConfig
   tcRegistry <- getCurrentTenantConfigRegistry
   if tcRegistry.enabled
     then
       runRequest
-        (toRetrievePackageBundleByIdRequest serverConfig.registry tcRegistry pkgId)
-        toRetrievePackageBundleByIdResponse
+        (toRetrieveKnowledgeModelBundleByIdRequest serverConfig.registry tcRegistry pkgId)
+        toRetrieveKnowledgeModelBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
 retrieveTemplates :: AppContextM [DocumentTemplateSimpleDTO]
@@ -128,10 +128,10 @@ retrieveLocaleBundleById lclId = do
         toRetrieveLocaleBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
-uploadPackageBundle :: PackageBundleDTO -> AppContextM PackageBundleDTO
-uploadPackageBundle reqDto = do
+uploadKnowledgeModelBundle :: KnowledgeModelBundle -> AppContextM KnowledgeModelBundle
+uploadKnowledgeModelBundle reqDto = do
   tcRegistry <- getCurrentTenantConfigRegistry
-  let request = toUploadPackageBundleRequest tcRegistry reqDto
+  let request = toUploadKnowledgeModelBundleRequest tcRegistry reqDto
   res <- runRegistryClient request
   return . getResponse $ res
 

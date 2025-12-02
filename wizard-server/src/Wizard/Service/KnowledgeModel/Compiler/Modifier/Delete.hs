@@ -4,6 +4,8 @@ import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import Prelude hiding (lookup)
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Chapter ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Expert ()
@@ -13,8 +15,6 @@ import Wizard.Service.KnowledgeModel.Compiler.Modifier.Metric ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Question ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Tag ()
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 
 deleteChapter :: KnowledgeModel -> U.UUID -> KnowledgeModel
 deleteChapter km uuid =

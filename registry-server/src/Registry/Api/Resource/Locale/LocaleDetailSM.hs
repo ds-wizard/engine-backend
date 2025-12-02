@@ -2,9 +2,9 @@ module Registry.Api.Resource.Locale.LocaleDetailSM where
 
 import Data.Swagger
 
+import Registry.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleSM ()
 import Registry.Api.Resource.Locale.LocaleDetailDTO
 import Registry.Api.Resource.Locale.LocaleDetailJM ()
-import Registry.Api.Resource.Package.PackageSimpleSM ()
 import Registry.Service.Locale.LocaleMapper
 import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Common.Util.Swagger

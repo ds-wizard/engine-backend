@@ -7,7 +7,7 @@ import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Migration.Questionnaire.MigratorService
+import Wizard.Service.Questionnaire.Migration.MigrationService
 
 type List_Current_DELETE =
   Header "Authorization" String

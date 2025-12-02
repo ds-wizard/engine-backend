@@ -10,6 +10,7 @@ import Shared.Common.Util.String
 import Shared.Locale.Api.Resource.LocaleBundle.LocaleBundleDTO
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
+import Shared.Locale.Service.Locale.Bundle.LocaleBundleMapper
 import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Database.DAO.Common
 import Wizard.Integration.Http.Registry.Runner
@@ -23,7 +24,6 @@ import Wizard.Service.Locale.Bundle.LocaleBundleAudit
 import Wizard.Service.Locale.LocaleMapper
 import Wizard.Service.Locale.LocaleValidation
 import Wizard.Service.Tenant.Config.ConfigService
-import WizardLib.Locale.Service.Locale.Bundle.LocaleBundleMapper
 import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
 import qualified WizardLib.Public.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import WizardLib.Public.Service.TemporaryFile.TemporaryFileService

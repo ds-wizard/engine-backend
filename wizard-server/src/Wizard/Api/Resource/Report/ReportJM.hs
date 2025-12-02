@@ -4,8 +4,8 @@ import Control.Monad
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Wizard.Model.Report.Report
-import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 
 -- --------------------------------------------------------------------
 instance FromJSON Report where

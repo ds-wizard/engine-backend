@@ -51,11 +51,6 @@ deleteQuestionnairePermsFiltered queryParams = do
   createDeleteEntitiesByFn entityName_user queryParams
   createDeleteEntitiesByFn entityName_group queryParams
 
-deleteQuestionnairePermUserByUserUuid :: U.UUID -> AppContextM Int64
-deleteQuestionnairePermUserByUserUuid userUuid = do
-  tenantUuid <- asks currentTenantUuid
-  createDeleteEntitiesByFn entityName_user [tenantQueryUuid tenantUuid, ("user_uuid", U.toString userUuid)]
-
 deleteQuestionnairePermGroupByUserGroupUuid :: U.UUID -> AppContextM Int64
 deleteQuestionnairePermGroupByUserGroupUuid userGroupUuid = do
   tenantUuid <- asks currentTenantUuid

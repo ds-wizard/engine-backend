@@ -12,7 +12,7 @@ import Registry.Model.Context.AppContextHelpers
 import Registry.Service.Common
 import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
 import Shared.Common.Model.Error.Error
-import WizardLib.Common.Service.Coordinate.CoordinateValidation
+import Shared.Coordinate.Service.Coordinate.CoordinateValidation
 
 validateOrganizationCreateDto :: OrganizationCreateDTO -> AppContextM ()
 validateOrganizationCreateDto reqDto = do

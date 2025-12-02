@@ -71,19 +71,6 @@ deleteTokensByTenantUuid tenantUuid = do
   userTokens <- findUserTokensByTenantUuid tenantUuid
   traverse_ (\t -> deleteUserTokenByUuidAndTenantUuid t.uuid tenantUuid) userTokens
 
-deleteTokenByUserUuid
-  :: ( AppContextC s sc m
-     , HasField "cache'" s serverCache
-     , HasField "userToken" serverCache (C.Cache Int UserToken)
-     , HasField "cache'" sc scCache
-     , HasField "dataEnabled'" scCache Bool
-     )
-  => U.UUID
-  -> m ()
-deleteTokenByUserUuid userUuid = do
-  userTokens <- findUserTokensByUserUuid userUuid
-  traverse_ (\t -> deleteUserTokenByUuid t.uuid) userTokens
-
 cleanTokens
   :: ( AppContextC s sc m
      , HasField "cache'" s serverCache

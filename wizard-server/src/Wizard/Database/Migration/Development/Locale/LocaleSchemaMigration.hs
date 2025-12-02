@@ -12,15 +12,23 @@ dropTables :: AppContextM Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Locale) drop table"
   let sql =
-        "DROP TRIGGER IF EXISTS trigger_on_after_locale_delete ON locale; \
-        \DROP TABLE IF EXISTS locale CASCADE;"
+        "DROP TABLE IF EXISTS locale CASCADE;"
+  let action conn = execute_ conn sql
+  runDB action
+
+dropFunctions :: AppContextM Int64
+dropFunctions = do
+  logInfo _CMP_MIGRATION "(Function/Locale) drop functions"
+  let sql = "DROP FUNCTION IF EXISTS unset_user_entity_locale;"
   let action conn = execute_ conn sql
   runDB action
 
 dropTriggers :: AppContextM Int64
 dropTriggers = do
-  logInfo _CMP_MIGRATION "(Trigger/Locale) drop tables"
-  let sql = "DROP TRIGGER IF EXISTS trigger_on_after_locale_delete ON locale;"
+  logInfo _CMP_MIGRATION "(Trigger/Locale) drop triggers"
+  let sql =
+        "DROP TRIGGER IF EXISTS trg_locale_before_delete_unset_user ON locale; \
+        \DROP TRIGGER IF EXISTS trg_locale_after_delete_s3 ON locale;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -46,8 +54,25 @@ createTables = do
         \    created_at              timestamptz NOT NULL,\
         \    updated_at              timestamptz NOT NULL,\
         \    CONSTRAINT locale_pk PRIMARY KEY (id, tenant_uuid),\
-        \    CONSTRAINT locale_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid)\
+        \    CONSTRAINT locale_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createFunctions :: AppContextM Int64
+createFunctions = do
+  logInfo _CMP_MIGRATION "(Function/Locale) no functions to create"
+  let sql =
+        "CREATE OR REPLACE FUNCTION unset_user_entity_locale() RETURNS TRIGGER AS \
+        \$$ \
+        \BEGIN \
+        \    UPDATE user_entity \
+        \    SET locale = NULL \
+        \    WHERE locale = OLD.id \
+        \      AND tenant_uuid = OLD.tenant_uuid; \
+        \    RETURN OLD; \
+        \END; \
+        \$$ LANGUAGE plpgsql;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -55,10 +80,16 @@ createTriggers :: AppContextM Int64
 createTriggers = do
   logInfo _CMP_MIGRATION "(Trigger/Locale) create triggers"
   let sql =
-        "CREATE OR REPLACE TRIGGER trigger_on_after_locale_delete \
+        "CREATE OR REPLACE TRIGGER trg_locale_after_delete_s3 \
         \    AFTER DELETE \
         \    ON locale \
         \    FOR EACH ROW \
-        \EXECUTE FUNCTION create_persistent_command_from_entity_id('locale', 'deleteFromS3');"
+        \EXECUTE FUNCTION create_persistent_command_from_entity_id('locale', 'deleteFromS3'); \
+        \ \
+        \CREATE OR REPLACE TRIGGER trg_locale_before_delete_unset_user \
+        \    BEFORE DELETE \
+        \    ON locale \
+        \    FOR EACH ROW \
+        \EXECUTE FUNCTION unset_user_entity_locale();"
   let action conn = execute_ conn sql
   runDB action

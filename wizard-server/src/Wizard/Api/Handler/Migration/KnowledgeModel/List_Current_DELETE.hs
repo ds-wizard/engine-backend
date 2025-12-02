@@ -7,12 +7,12 @@ import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Migration.KnowledgeModel.MigratorService
+import Wizard.Service.KnowledgeModel.Migration.MigrationService
 
 type List_Current_DELETE =
   Header "Authorization" String
     :> Header "Host" String
-    :> "branches"
+    :> "knowledge-model-editors"
     :> Capture "bUuid" U.UUID
     :> "migrations"
     :> "current"

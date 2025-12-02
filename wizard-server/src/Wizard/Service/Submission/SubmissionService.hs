@@ -28,14 +28,13 @@ import Wizard.Service.Document.DocumentAcl
 import Wizard.Service.Submission.SubmissionAcl
 import Wizard.Service.Submission.SubmissionMapper
 import Wizard.Service.User.Profile.UserProfileService
-import Wizard.Service.User.UserMapper (toSuggestionDTO')
+import Wizard.Service.User.UserMapper (toSuggestion')
 
 getAvailableServicesForSubmission :: U.UUID -> AppContextM [TenantConfigSubmissionServiceSimple]
 getAvailableServicesForSubmission docUuid = do
   checkIfSubmissionIsEnabled
-  checkPermissionToSubmission docUuid
   doc <- findDocumentByUuid docUuid
-  checkEditPermissionToDoc doc.questionnaireUuid
+  checkEditPermissionToSubmission doc
   findTenantConfigSubmissionServicesByDocumentTemplateIdAndFormatUuid doc.documentTemplateId doc.formatUuid
 
 getSubmissionsForDocument :: U.UUID -> AppContextM [SubmissionList]
@@ -49,10 +48,9 @@ submitDocument :: U.UUID -> SubmissionCreateDTO -> AppContextM SubmissionList
 submitDocument docUuid reqDto =
   runInTransaction $ do
     checkIfSubmissionIsEnabled
-    checkPermissionToSubmission docUuid
-    tcSubmission <- findTenantConfigSubmissionServiceByServiceId reqDto.serviceId
     doc <- findDocumentByUuid docUuid
-    checkEditPermissionToDoc doc.questionnaireUuid
+    checkEditPermissionToSubmission doc
+    tcSubmission <- findTenantConfigSubmissionServiceByServiceId reqDto.serviceId
     docContent <- retrieveDocumentContent docUuid
     userProps <- getUserProps tcSubmission
     sub <- createSubmission docUuid reqDto
@@ -73,7 +71,7 @@ submitDocument docUuid reqDto =
               :: Submission
     savedSubmission <- updateSubmissionByUuid updatedSub
     currentUser <- getCurrentUser
-    return $ toList savedSubmission tcSubmission (toSuggestionDTO' currentUser)
+    return $ toList savedSubmission tcSubmission (toSuggestion' currentUser)
   where
     getUserProps tcSubmission = do
       mUser <- asks currentUser

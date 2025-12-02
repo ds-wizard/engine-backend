@@ -1,0 +1,30 @@
+module Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailDTO where
+
+import Data.Time
+import GHC.Generics
+
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import Wizard.Model.Registry.RegistryOrganization
+
+data KnowledgeModelPackageDetailDTO = KnowledgeModelPackageDetailDTO
+  { pId :: String
+  , name :: String
+  , organizationId :: String
+  , kmId :: String
+  , version :: String
+  , phase :: KnowledgeModelPackagePhase
+  , description :: String
+  , readme :: String
+  , license :: String
+  , metamodelVersion :: Int
+  , previousPackageId :: Maybe String
+  , forkOfPackageId :: Maybe String
+  , mergeCheckpointPackageId :: Maybe String
+  , nonEditable :: Bool
+  , versions :: [String]
+  , remoteLatestVersion :: Maybe String
+  , organization :: Maybe RegistryOrganization
+  , registryLink :: Maybe String
+  , createdAt :: UTCTime
+  }
+  deriving (Show, Eq, Generic)

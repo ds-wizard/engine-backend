@@ -15,7 +15,6 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireEvent
-import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 
 squashQuestionnaireEvents :: AppContextM ()

@@ -1,0 +1,7 @@
+module Shared.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplateFormatSimple where
+
+import Database.PostgreSQL.Simple
+
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
+
+instance FromRow DocumentTemplateFormatSimple

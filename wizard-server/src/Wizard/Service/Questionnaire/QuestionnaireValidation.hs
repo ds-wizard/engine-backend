@@ -9,7 +9,7 @@ import Text.Regex.TDFA
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSettingsChangeDTO
-import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
+import Wizard.Database.DAO.Questionnaire.MigratorDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 

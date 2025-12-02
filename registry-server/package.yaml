@@ -1,5 +1,5 @@
 name: registry-server
-version: '4.24.0'
+version: '4.25.0'
 synopsis: Engine Registry
 description: Engine Registry
 category: Web
@@ -23,7 +23,6 @@ library:
   dependencies:
   - shared-common
   - registry-public
-  - wizard-common
   - base
   - aeson
   - async
@@ -101,7 +100,6 @@ tests:
     dependencies:
     - shared-common
     - registry-public
-    - wizard-common
     - base
     - aeson
     - bytestring

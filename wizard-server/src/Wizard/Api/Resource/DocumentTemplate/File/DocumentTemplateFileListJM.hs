@@ -3,7 +3,7 @@ module Wizard.Api.Resource.DocumentTemplate.File.DocumentTemplateFileListJM wher
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFileList
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFileList
 
 instance FromJSON DocumentTemplateFileList where
   parseJSON = genericParseJSON jsonOptions

@@ -14,10 +14,10 @@ import Wizard.Model.Context.AppContext hiding (cache)
 import Wizard.Model.Context.ContextMappers
 import Wizard.Model.Tenant.Tenant
 import Wizard.Service.ActionKey.ActionKeyService
-import Wizard.Service.Branch.Event.BranchEventService
 import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.Feedback.FeedbackService
-import Wizard.Service.Migration.Metamodel.MigratorService
+import Wizard.Service.KnowledgeModel.Editor.Event.EditorEventService
+import Wizard.Service.KnowledgeModel.Metamodel.MigrationService
 import Wizard.Service.Owl.OwlService
 import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
@@ -32,10 +32,10 @@ sections :: [DevSection AppContextM]
 sections =
   [ actionKey
   , apiKey
-  , branch
   , cache
   , document
   , feedback
+  , knowledgeModelEditor
   , metamodelMigrator
   , owl
   , persistentCommand
@@ -92,22 +92,22 @@ apiKey_expireApiKeys =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- BRANCH
+-- KNOWLEDGE MODEL EDITOR
 -- ---------------------------------------------------------------------------------------------------------------------
-branch :: DevSection AppContextM
-branch =
+knowledgeModelEditor :: DevSection AppContextM
+knowledgeModelEditor =
   DevSection
-    { name = "Branch"
+    { name = "Knowledge Model Editor"
     , description = Nothing
     , operations =
-        [ branch_squashAllEvents
-        , branch_squashEventsForBranch
+        [ knowledgeModelEditor_squashAllEvents
+        , knowledgeModelEditor_squashEventsForEditor
         ]
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-branch_squashAllEvents :: DevOperation AppContextM
-branch_squashAllEvents =
+knowledgeModelEditor_squashAllEvents :: DevOperation AppContextM
+knowledgeModelEditor_squashAllEvents =
   DevOperation
     { name = "Squash All Events"
     , description = Nothing
@@ -118,19 +118,19 @@ branch_squashAllEvents =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-branch_squashEventsForBranch :: DevOperation AppContextM
-branch_squashEventsForBranch =
+knowledgeModelEditor_squashEventsForEditor :: DevOperation AppContextM
+knowledgeModelEditor_squashEventsForEditor =
   DevOperation
-    { name = "Squash Events for Branch"
+    { name = "Squash Events for Knowledge Model Editor"
     , description = Nothing
     , parameters =
         [ DevOperationParameter
-            { name = "branchUuid"
+            { name = "editorUuid"
             , aType = StringDevOperationParameterType
             }
         ]
     , function = \reqDto -> do
-        squashEventsForBranch (u' . head $ reqDto.parameters)
+        squashEventsForEditor (u' . head $ reqDto.parameters)
         return "Done"
     }
 
@@ -394,7 +394,7 @@ registry =
   DevSection
     { name = "Registry"
     , description = Nothing
-    , operations = [registry_syncWithRegistry, registry_pushPackageBundle, registry_pushDocumentTemplateBundle, registry_pushLocaleBundle]
+    , operations = [registry_syncWithRegistry, registry_pushKnowledgeModelBundle, registry_pushDocumentTemplateBundle, registry_pushLocaleBundle]
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -410,10 +410,10 @@ registry_syncWithRegistry =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
-registry_pushPackageBundle :: DevOperation AppContextM
-registry_pushPackageBundle =
+registry_pushKnowledgeModelBundle :: DevOperation AppContextM
+registry_pushKnowledgeModelBundle =
   DevOperation
-    { name = "Push Package Bundle"
+    { name = "Push Knowledge model Bundle"
     , description = Nothing
     , parameters =
         [ DevOperationParameter
@@ -422,7 +422,7 @@ registry_pushPackageBundle =
             }
         ]
     , function = \reqDto -> do
-        pushPackageBundle (head reqDto.parameters)
+        pushKnowledgeModelBundle (head reqDto.parameters)
         return "Done"
     }
 

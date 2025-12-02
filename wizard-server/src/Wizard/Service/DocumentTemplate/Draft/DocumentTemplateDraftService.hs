@@ -1,6 +1,6 @@
 module Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftService where
 
-import Control.Monad (when)
+import Control.Monad (void, when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
 import Data.Foldable (traverse_)
@@ -11,15 +11,22 @@ import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Error.Error
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
+import Shared.KnowledgeModel.Localization.Messages.Public
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataDTO
-import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Model.Context.AclContext
@@ -28,21 +35,12 @@ import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftDetail
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Model.Tenant.Config.TenantConfig
-import Wizard.S3.DocumentTemplate.DocumentTemplateS3
-import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetService
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation hiding (validateChangeDto)
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftValidation
 import Wizard.Service.DocumentTemplate.File.DocumentTemplateFileService
 import Wizard.Service.Tenant.Limit.LimitService
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
-import WizardLib.KnowledgeModel.Localization.Messages.Public
 
 getDraftsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateDraftList)
 getDraftsPage mQuery pageable sort = do
@@ -92,11 +90,11 @@ getDraft tmlId = do
     case draftData.questionnaireUuid of
       Just qtnUuid -> findQuestionnaireSuggestionByUuid' qtnUuid
       Nothing -> return Nothing
-  mBranchSuggestion <-
-    case draftData.branchUuid of
-      Just branchUuid -> findBranchSuggestionByUuid' branchUuid
+  mKmEditorSuggestion <-
+    case draftData.knowledgeModelEditorUuid of
+      Just knowledgeModelEditorUuid -> findKnowledgeModelEditorSuggestionByUuid' knowledgeModelEditorUuid
       Nothing -> return Nothing
-  return $ toDraftDetail draft formats draftData mQtnSuggestion mBranchSuggestion
+  return $ toDraftDetail draft formats draftData mQtnSuggestion mKmEditorSuggestion
 
 modifyDraft :: String -> DocumentTemplateDraftChangeDTO -> AppContextM DocumentTemplateDraftDetail
 modifyDraft tmlId reqDto =
@@ -144,11 +142,11 @@ modifyDraftData tmlId reqDto =
       case updatedDraftData.questionnaireUuid of
         Just qtnUuid -> findQuestionnaireSuggestionByUuid' qtnUuid
         Nothing -> return Nothing
-    mBranchSuggestion <-
-      case draftData.branchUuid of
-        Just branchUuid -> findBranchSuggestionByUuid' branchUuid
+    mKmEditorSuggestion <-
+      case draftData.knowledgeModelEditorUuid of
+        Just knowledgeModelEditorUuid -> findKnowledgeModelEditorSuggestionByUuid' knowledgeModelEditorUuid
         Nothing -> return Nothing
-    return $ toDraftDataDTO updatedDraftData mQtnSuggestion mBranchSuggestion
+    return $ toDraftDataDTO updatedDraftData mQtnSuggestion mKmEditorSuggestion
 
 deleteDraft :: String -> AppContextM ()
 deleteDraft tmlId =
@@ -156,8 +154,5 @@ deleteDraft tmlId =
     checkPermission _DOC_TML_WRITE_PERM
     draft <- findDraftById tmlId
     assets <- findAssetsByDocumentTemplateId tmlId
-    cleanTemporallyDocumentsForTemplate tmlId
     validateDocumentTemplateDeletion tmlId
-    deleteDraftByDocumentTemplateId tmlId
-    let assetUuids = fmap (.uuid) assets
-    traverse_ (removeAsset tmlId) assetUuids
+    void $ deleteDraftByDocumentTemplateId tmlId

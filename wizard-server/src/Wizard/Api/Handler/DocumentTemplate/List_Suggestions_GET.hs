@@ -7,12 +7,12 @@ import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Context.TransactionState
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplatePhaseJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.DocumentTemplate.DocumentTemplateService
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 type List_Suggestions_GET =
   Header "Authorization" String

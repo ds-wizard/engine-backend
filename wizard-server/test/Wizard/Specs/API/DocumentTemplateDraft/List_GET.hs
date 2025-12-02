@@ -11,13 +11,13 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

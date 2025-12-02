@@ -6,8 +6,8 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePatternJM ()
 import Wizard.Model.QuestionnaireImporter.QuestionnaireImporter
-import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePatternJM ()
 
 instance ToRow QuestionnaireImporter where
   toRow QuestionnaireImporter {..} =

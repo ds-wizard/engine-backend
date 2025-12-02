@@ -7,12 +7,12 @@ import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigrat
 import qualified Registry.Database.Migration.Development.Common.CommonSchemaMigration as Common
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DocumentTemplate
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as DocumentTemplate
+import qualified Registry.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as KnowledgeModelPackage
+import qualified Registry.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageSchemaMigration as KnowledgeModelPackage
 import qualified Registry.Database.Migration.Development.Locale.LocaleMigration as Locale
 import qualified Registry.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
 import qualified Registry.Database.Migration.Development.Organization.OrganizationMigration as Organization
 import qualified Registry.Database.Migration.Development.Organization.OrganizationSchemaMigration as Organization
-import qualified Registry.Database.Migration.Development.Package.PackageMigration as Package
-import qualified Registry.Database.Migration.Development.Package.PackageSchemaMigration as Package
 import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
 import Registry.Model.Context.ContextMappers
 import Shared.Common.Util.Logger
@@ -31,7 +31,7 @@ runMigration = runAppContextWithBaseContext $ do
   DocumentTemplate.dropTables
   Audit.dropTables
   ActionKey.dropTables
-  Package.dropTables
+  KnowledgeModelPackage.dropTables
   Organization.dropTables
   -- 3. Drop DB types
   Common.dropTypes
@@ -39,7 +39,7 @@ runMigration = runAppContextWithBaseContext $ do
   Common.createTypes
   -- 5. Create schema
   Organization.createTables
-  Package.createTables
+  KnowledgeModelPackage.createTables
   ActionKey.createTables
   Audit.createTables
   DocumentTemplate.createTables
@@ -50,7 +50,7 @@ runMigration = runAppContextWithBaseContext $ do
   Common.createFunctions
   -- 7. Load fixtures
   Organization.runMigration
-  Package.runMigration
+  KnowledgeModelPackage.runMigration
   DocumentTemplate.runMigration
   PersistentCommand.runMigration
   Locale.runMigration

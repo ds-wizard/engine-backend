@@ -8,11 +8,11 @@ import Text.Regex (matchRegex, mkRegex)
 
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.Coordinate.Localization.Messages.Public
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Questionnaire.QuestionnaireValidation
-import WizardLib.Common.Localization.Messages.Public
 
 validateTenantConfig :: TenantConfigChangeDTO -> AppContextM ()
 validateTenantConfig reqDto = do

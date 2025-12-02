@@ -6,7 +6,7 @@ import Database.PostgreSQL.Simple.FromRow
 import Shared.Common.Util.Gravatar
 import Wizard.Model.Questionnaire.QuestionnaireFileList
 import Wizard.Model.Questionnaire.QuestionnaireSimple
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 instance FromRow QuestionnaireFileList where
   fromRow = do
@@ -31,6 +31,6 @@ instance FromRow QuestionnaireFileList where
           case (createdByUuid, createdByFirstName, createdByLastName, createdByEmail, createdByImageUrl) of
             (Just uuid, Just firstName, Just lastName, Just email, imageUrl) ->
               let gravatarHash = createGravatarHash email
-               in Just UserSuggestionDTO {..}
+               in Just UserSuggestion {..}
             _ -> Nothing
     return $ QuestionnaireFileList {..}

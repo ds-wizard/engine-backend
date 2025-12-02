@@ -5,8 +5,8 @@ import Data.Aeson
 import Registry.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
 import Shared.Common.Api.Resource.Common.SemVer2TupleJM ()
 import Shared.Common.Util.Aeson
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO
-import WizardLib.KnowledgeModel.Model.Package.PackagePattern
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 
 instance ToJSON DocumentTemplateBundleDTO where
   toJSON DocumentTemplateBundleDTO {..} =
@@ -28,5 +28,5 @@ instance ToJSON DocumentTemplateBundleDTO where
       , "createdAt" .= createdAt
       ]
 
-instance ToJSON PackagePattern where
+instance ToJSON KnowledgeModelPackagePattern where
   toJSON = genericToJSON jsonOptions

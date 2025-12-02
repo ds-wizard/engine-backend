@@ -4,8 +4,8 @@ import qualified Data.Map.Strict as M
 import Test.Hspec
 
 import Shared.Common.Model.Error.Error
+import Shared.Coordinate.Localization.Messages.Public
 import Wizard.Service.Tenant.Config.ConfigValidation
-import WizardLib.Common.Localization.Messages.Public
 
 tenantConfigValidationSpec =
   describe "TenantConfigValidation" $

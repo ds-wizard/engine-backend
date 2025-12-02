@@ -18,7 +18,7 @@ instance ToRow Questionnaire where
     , toField name
     , toField visibility
     , toField sharing
-    , toField packageId
+    , toField knowledgeModelPackageId
     , toField . PGArray $ selectedQuestionTagUuids
     , toField documentTemplateId
     , toField formatUuid
@@ -38,7 +38,7 @@ instance FromRow Questionnaire where
     name <- field
     visibility <- field
     sharing <- field
-    packageId <- field
+    knowledgeModelPackageId <- field
     selectedQuestionTagUuids <- fromPGArray <$> field
     documentTemplateId <- field
     formatUuid <- field

@@ -5,6 +5,8 @@ import Data.Swagger
 
 import Shared.Common.Util.Swagger
 import Shared.Common.Util.Uuid
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Wizard.Api.Resource.Questionnaire.File.QuestionnaireFileSimpleSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireJM ()
@@ -16,8 +18,6 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireLab
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Questionnaire.Questionnaire
-import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 
 instance ToSchema QuestionnaireDetailQuestionnaireDTO where
   declareNamedSchema =
@@ -27,7 +27,7 @@ instance ToSchema QuestionnaireDetailQuestionnaireDTO where
         , name = questionnaire1.name
         , visibility = questionnaire1.visibility
         , sharing = questionnaire1.sharing
-        , packageId = questionnaire1.packageId
+        , knowledgeModelPackageId = questionnaire1.knowledgeModelPackageId
         , selectedQuestionTagUuids = questionnaire1.selectedQuestionTagUuids
         , isTemplate = questionnaire1.isTemplate
         , knowledgeModel = km1

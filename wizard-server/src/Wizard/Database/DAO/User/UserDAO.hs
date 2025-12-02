@@ -18,12 +18,12 @@ import Shared.Common.Util.String
 import Wizard.Cache.UserCache
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.User.User ()
-import Wizard.Database.Mapping.User.UserSuggestion ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
-import Wizard.Model.User.UserSuggestion
+import WizardLib.Public.Database.Mapping.User.UserSuggestion ()
 import WizardLib.Public.Database.Mapping.User.UserWithMembership ()
+import WizardLib.Public.Model.User.UserSuggestion
 import WizardLib.Public.Model.User.UserWithMembership
 
 entityName = "user_entity"
@@ -78,7 +78,7 @@ findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
     pageLabel
     pageable
     sort
-    "uuid, first_name, last_name, email, image_url"
+    "uuid, first_name, last_name, gravatar_hash(email), image_url"
     condition
     ([regexM mQuery, regexM mQuery, U.toString tenantUuid] ++ fromMaybe [] mSelectUuids ++ fromMaybe [] mExcludeUuids)
 
@@ -203,16 +203,6 @@ updateUserLocaleByUuid userUuid mLocale uUpdatedAt = do
   tenantUuid <- asks currentTenantUuid
   let sql = fromString "UPDATE user_entity SET locale = ?, updated_at = ? WHERE tenant_uuid = ? AND uuid = ?"
   let params = [toField mLocale, toField uUpdatedAt, toField tenantUuid, toField userUuid]
-  logQuery sql params
-  let action conn = execute conn sql params
-  deleteFromCache (U.toString userUuid, U.toString tenantUuid)
-  runDB action
-
-unsetUserLocale :: U.UUID -> AppContextM Int64
-unsetUserLocale userUuid = do
-  tenantUuid <- asks currentTenantUuid
-  let sql = fromString "UPDATE user_entity SET locale = NULL WHERE tenant_uuid = ? AND uuid = ?"
-  let params = [toField tenantUuid, toField userUuid]
   logQuery sql params
   let action conn = execute conn sql params
   deleteFromCache (U.toString userUuid, U.toString tenantUuid)

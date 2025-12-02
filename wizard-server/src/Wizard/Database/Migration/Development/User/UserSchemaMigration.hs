@@ -52,8 +52,8 @@ createUserTable = do
         \    tenant_uuid       uuid        NOT NULL, \
         \    machine           boolean     NOT NULL, \
         \    locale            varchar, \
-        \    CONSTRAINT user_entity_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT user_entity_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT user_entity_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT user_entity_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \); \
         \ \
         \CREATE UNIQUE INDEX user_email_uindex ON user_entity (email, tenant_uuid);"
@@ -79,8 +79,8 @@ createUserSubmissionPropsTable = do
         \    tenant_uuid uuid        NOT NULL, \
         \    created_at  timestamptz NOT NULL, \
         \    updated_at  timestamptz NOT NULL, \
-        \    CONSTRAINT user_entity_submission_prop_pk PRIMARY KEY (user_uuid, service_id, tenant_uuid), \
-        \    CONSTRAINT user_entity_submission_prop_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT user_entity_submission_prop_pk PRIMARY KEY (user_uuid, service_id), \
+        \    CONSTRAINT user_entity_submission_prop_user_uuid_fk FOREIGN KEY (user_uuid) REFERENCES user_entity (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT user_entity_submission_prop_service_id_fk FOREIGN KEY (tenant_uuid, service_id) REFERENCES config_submission_service (tenant_uuid, id) ON DELETE CASCADE, \
         \    CONSTRAINT user_entity_submission_prop_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
@@ -102,9 +102,9 @@ createUserTokenTable = do
         \    type          varchar     NOT NULL, \
         \    user_agent    varchar     NOT NULL, \
         \    expires_at    timestamptz NOT NULL, \
-        \    CONSTRAINT user_token_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT user_token_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
-        \    CONSTRAINT user_token_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT user_token_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT user_token_user_uuid_fk FOREIGN KEY (user_uuid) REFERENCES user_entity (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT user_token_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -121,8 +121,8 @@ createUserGroupTable = do
         \    tenant_uuid uuid        NOT NULL, \
         \    created_at  TIMESTAMPTZ NOT NULL, \
         \    updated_at  TIMESTAMPTZ NOT NULL, \
-        \    CONSTRAINT user_group_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT user_group_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT user_group_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT user_group_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -138,10 +138,10 @@ createUserGroupMembershipTable = do
         \    tenant_uuid     uuid        NOT NULL, \
         \    created_at      TIMESTAMPTZ NOT NULL, \
         \    updated_at      TIMESTAMPTZ NOT NULL, \
-        \    CONSTRAINT user_group_membership_pk PRIMARY KEY (user_group_uuid, user_uuid, tenant_uuid), \
-        \    CONSTRAINT user_group_membership_user_group_uuid_fk FOREIGN KEY (user_group_uuid, tenant_uuid) REFERENCES user_group (uuid, tenant_uuid), \
-        \    CONSTRAINT user_group_membership_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
-        \    CONSTRAINT user_group_membership_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT user_group_membership_pk PRIMARY KEY (user_group_uuid, user_uuid), \
+        \    CONSTRAINT user_group_membership_user_group_uuid_fk FOREIGN KEY (user_group_uuid) REFERENCES user_group (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT user_group_membership_user_uuid_fk FOREIGN KEY (user_uuid) REFERENCES user_entity (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT user_group_membership_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -155,8 +155,8 @@ createUserTourTable = do
         \    tour_id                 varchar     NOT NULL, \
         \    tenant_uuid             uuid        NOT NULL, \
         \    created_at              timestamptz NOT NULL, \
-        \    CONSTRAINT user_tour_pk PRIMARY KEY (user_uuid, tour_id, tenant_uuid), \
-        \    CONSTRAINT user_tour_user_uuid_fk FOREIGN KEY (user_uuid, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT user_tour_pk PRIMARY KEY (user_uuid, tour_id), \
+        \    CONSTRAINT user_tour_user_uuid_fk FOREIGN KEY (user_uuid) REFERENCES user_entity (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT user_tour_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql

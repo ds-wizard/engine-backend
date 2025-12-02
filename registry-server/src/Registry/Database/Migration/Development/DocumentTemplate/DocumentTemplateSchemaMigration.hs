@@ -104,7 +104,7 @@ createTemplateFileTable = do
         \    created_at           timestamptz NOT NULL, \
         \    updated_at           timestamptz NOT NULL, \
         \    CONSTRAINT document_template_file_pk PRIMARY KEY (uuid), \
-        \    CONSTRAINT document_template_file_document_template_id_fk FOREIGN KEY (document_template_id) REFERENCES document_template (id) \
+        \    CONSTRAINT document_template_file_document_template_id_fk FOREIGN KEY (document_template_id) REFERENCES document_template (id) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -123,7 +123,7 @@ createTemplateAssetTable = do
         \    created_at           timestamptz NOT NULL, \
         \    updated_at           timestamptz NOT NULL, \
         \    CONSTRAINT document_template_asset_pk PRIMARY KEY (uuid), \
-        \    CONSTRAINT document_template_asset_document_template_id_fk FOREIGN KEY (document_template_id) REFERENCES document_template (id) \
+        \    CONSTRAINT document_template_asset_document_template_id_fk FOREIGN KEY (document_template_id) REFERENCES document_template (id) ON DELETE CASCADE \
         \); \
         \ \
         \CREATE UNIQUE INDEX document_template_asset_uuid_uindex ON document_template_asset (uuid);"

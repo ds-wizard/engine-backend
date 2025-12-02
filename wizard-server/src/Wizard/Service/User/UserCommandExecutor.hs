@@ -8,6 +8,7 @@ import qualified Data.UUID as U
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
+import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Service.User.UserService
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
@@ -51,6 +52,6 @@ cDeleteUser persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String DeleteUserCommand
   case eCommand of
     Right command -> do
-      deleteUser command.uuid
+      deleteUserByUuid command.uuid
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])

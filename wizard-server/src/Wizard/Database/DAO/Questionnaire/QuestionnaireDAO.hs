@@ -64,7 +64,7 @@ findQuestionnaires = do
       traverse enhance entities
 
 findQuestionnairesForCurrentUserPage :: Maybe String -> Maybe Bool -> Maybe Bool -> Maybe [String] -> Maybe String -> Maybe [String] -> Maybe String -> Maybe [String] -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireList)
-findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mPackageIds mPackageIdsOp pageable sort =
+findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mKnowledgeModelPackageIds mKnowledgeModelPackageIdsOp pageable sort =
   -- 1. Prepare variables
   do
     tenantUuid <- asks currentTenantUuid
@@ -119,13 +119,13 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
                 else
                   let mapFn _ = " qtn_acl_user.user_uuid = ? "
                    in (" AND (" ++ L.intercalate " OR " (fmap mapFn userUuids) ++ ")", userUuids)
-    let (packageCondition, packageIdsParam) =
-          case mPackageIds of
+    let (knowledgeModelPackageCondition, knowledgeModelPackageIdsParam) =
+          case mKnowledgeModelPackageIds of
             Nothing -> ("", [])
             Just [] -> ("", [])
             Just packageIds ->
-              let operator = if isAndOperator mPackageIdsOp then " AND " else " OR "
-               in ( f' " AND (%s)" [L.intercalate operator . fmap (const " qtn.package_id LIKE ?") $ packageIds]
+              let operator = if isAndOperator mKnowledgeModelPackageIdsOp then " AND " else " OR "
+               in ( f' " AND (%s)" [L.intercalate operator . fmap (const " qtn.knowledge_model_package_id LIKE ?") $ packageIds]
                   , fmap (replace "all" "%") packageIds
                   )
     let (aclJoins, aclCondition) =
@@ -157,7 +157,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
               \FROM questionnaire qtn \
               \${qtnMigrationJoin} \
               \${aclJoins} \
-              \WHERE qtn.tenant_uuid = '${tenantUuid}' ${aclCondition} ${nameCondition} ${isTemplateCondition} ${isMigratingCondition} ${projectTagsCondition} ${userUuidsCondition} ${packageCondition}"
+              \WHERE qtn.tenant_uuid = '${tenantUuid}' ${aclCondition} ${nameCondition} ${isTemplateCondition} ${isMigratingCondition} ${projectTagsCondition} ${userUuidsCondition} ${knowledgeModelPackageCondition}"
               [ ("qtnMigrationJoin", qtnMigrationJoin)
               , ("aclJoins", aclJoins)
               , ("tenantUuid", U.toString tenantUuid)
@@ -167,9 +167,9 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
               , ("isMigratingCondition", isMigratingCondition False)
               , ("projectTagsCondition", projectTagsCondition)
               , ("userUuidsCondition", userUuidsCondition)
-              , ("packageCondition", packageCondition)
+              , ("knowledgeModelPackageCondition", knowledgeModelPackageCondition)
               ]
-    let params = nameRegex ++ projectTagsParam ++ userUuidsParam ++ packageIdsParam
+    let params = nameRegex ++ projectTagsParam ++ userUuidsParam ++ knowledgeModelPackageIdsParam
     logQuery countSql params
     let action conn = query conn countSql params
     result <- runDB action
@@ -189,17 +189,17 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
               \                             qtn.is_template, \
               \                             qtn.created_at, \
               \                             qtn.updated_at, \
-              \                             qtn.package_id \
+              \                             qtn.knowledge_model_package_id \
               \             FROM questionnaire qtn \
               \             ${aclJoins} \
-              \             WHERE qtn.tenant_uuid = '${tenantUuid}' ${aclCondition} ${nameCondition} ${isTemplateCondition} ${projectTagsCondition} ${userUuidsCondition} ${packageCondition}), \
-              \     pkg AS (SELECT package.id, \
-              \                    package.name, \
-              \                    package.version, \
-              \                    package.organization_id, \
-              \                    package.km_id \
-              \             FROM package \
-              \             WHERE package.tenant_uuid = '${tenantUuid}'), \
+              \             WHERE qtn.tenant_uuid = '${tenantUuid}' ${aclCondition} ${nameCondition} ${isTemplateCondition} ${projectTagsCondition} ${userUuidsCondition} ${knowledgeModelPackageCondition}), \
+              \     pkg AS (SELECT knowledge_model_package.id, \
+              \                    knowledge_model_package.name, \
+              \                    knowledge_model_package.version, \
+              \                    knowledge_model_package.organization_id, \
+              \                    knowledge_model_package.km_id \
+              \             FROM knowledge_model_package \
+              \             WHERE knowledge_model_package.tenant_uuid = '${tenantUuid}'), \
               \     qtn_mig AS (SELECT new_questionnaire_uuid \
               \                 FROM questionnaire_migration \
               \                 WHERE questionnaire_migration.tenant_uuid = '${tenantUuid}') \
@@ -213,7 +213,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
               \        qtn.updated_at, \
               \        CASE \
               \          WHEN qtn_mig.new_questionnaire_uuid IS NOT NULL THEN 'Migrating' \
-              \          WHEN qtn.package_id != get_newest_package(pkg.organization_id, pkg.km_id, '${tenantUuid}', ARRAY['ReleasedPackagePhase']) THEN 'Outdated' \
+              \          WHEN qtn.knowledge_model_package_id != get_newest_knowledge_model_package(pkg.organization_id, pkg.km_id, '${tenantUuid}', ARRAY['ReleasedKnowledgeModelPackagePhase']) THEN 'Outdated' \
               \          WHEN qtn_mig.new_questionnaire_uuid IS NULL THEN 'Default' END, \
               \        pkg.id, \
               \        pkg.name, \
@@ -229,7 +229,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
               \        WHERE questionnaire_uuid = qtn.uuid \
               \        GROUP BY questionnaire_uuid) as group_permissions \
               \FROM qtn \
-              \JOIN pkg ON qtn.package_id = pkg.id \
+              \JOIN pkg ON qtn.knowledge_model_package_id = pkg.id \
               \LEFT JOIN qtn_mig ON qtn.uuid = qtn_mig.new_questionnaire_uuid \
               \${isMigratingCondition} \
               \${sort} \
@@ -242,7 +242,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTag
               , ("isMigratingCondition", isMigratingCondition True)
               , ("projectTagsCondition", projectTagsCondition)
               , ("userUuidsCondition", userUuidsCondition)
-              , ("packageCondition", packageCondition)
+              , ("knowledgeModelPackageCondition", knowledgeModelPackageCondition)
               , ("sort", mapSortWithPrefix "qtn" sort)
               , ("offset", show skip)
               , ("limit", show sizeI)
@@ -265,11 +265,11 @@ findQuestionnairesByPackageId packageId = do
   tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
   if currentUser.uRole == _USER_ROLE_ADMIN
-    then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("package_id", packageId)] >>= traverse enhance
+    then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("knowledge_model_package_id", packageId)] >>= traverse enhance
     else do
       let sql =
             fromString $
-              f' (qtnSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["AND package_id = ?"]
+              f' (qtnSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["AND knowledge_model_package_id = ?"]
       let params = [packageId]
       logQuery sql params
       let action conn = query conn sql params
@@ -393,7 +393,7 @@ findQuestionnaireDetail uuid = do
             \       qtn.name, \
             \       qtn.visibility, \
             \       qtn.sharing, \
-            \       qtn.package_id, \
+            \       qtn.knowledge_model_package_id, \
             \       qtn.selected_question_tag_uuids, \
             \       qtn.is_template, \
             \       qtn_mig.new_questionnaire_uuid AS migration_uuid, \
@@ -436,7 +436,7 @@ findQuestionnaireDetailQuestionnaire uuid = do
             \       qtn.name, \
             \       qtn.visibility, \
             \       qtn.sharing, \
-            \       qtn.package_id, \
+            \       qtn.knowledge_model_package_id, \
             \       qtn.selected_question_tag_uuids, \
             \       qtn.is_template, \
             \       qtn_mig.new_questionnaire_uuid AS migration_uuid, \
@@ -483,7 +483,7 @@ findQuestionnaireDetailPreview uuid = do
             \       qtn.name, \
             \       qtn.visibility, \
             \       qtn.sharing, \
-            \       qtn.package_id, \
+            \       qtn.knowledge_model_package_id, \
             \       qtn.is_template, \
             \       qtn.document_template_id, \
             \       qtn_mig.new_questionnaire_uuid AS migration_uuid, \
@@ -528,15 +528,15 @@ findQuestionnaireDetailSettings uuid = do
             \       qtn.format_uuid, \
             \       qtn_mig.new_questionnaire_uuid AS migration_uuid, \
             \       ${questionnaireDetailPermSql}, \
-            \       pkg.id                         as package_id, \
-            \       pkg.name                       as package_name, \
-            \       pkg.organization_id            as package_organization_id, \
-            \       pkg.km_id                      as package_km_id, \
-            \       pkg.version                    as package_version, \
-            \       pkg.phase                      as package_phase, \
-            \       pkg.description                as package_description, \
-            \       pkg.non_editable               as package_non_editable, \
-            \       pkg.created_at                 as package_created_at, \
+            \       pkg.id                         as knowledge_model_package_id, \
+            \       pkg.name                       as knowledge_model_package_name, \
+            \       pkg.organization_id            as knowledge_model_package_organization_id, \
+            \       pkg.km_id                      as knowledge_model_package_km_id, \
+            \       pkg.version                    as knowledge_model_package_version, \
+            \       pkg.phase                      as knowledge_model_package_phase, \
+            \       pkg.description                as knowledge_model_package_description, \
+            \       pkg.non_editable               as knowledge_model_package_non_editable, \
+            \       pkg.created_at                 as knowledge_model_package_created_at, \
             \       dt.id                          as document_template_id, \
             \       dt.name                        as document_template_name, \
             \       dt.version                     as document_template_version, \
@@ -557,7 +557,7 @@ findQuestionnaireDetailSettings uuid = do
             \       ) as file_count \
             \FROM questionnaire qtn \
             \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.old_questionnaire_uuid AND qtn.tenant_uuid = qtn_mig.tenant_uuid \
-            \LEFT JOIN package pkg ON qtn.package_id = pkg.id AND qtn.tenant_uuid = pkg.tenant_uuid \
+            \LEFT JOIN knowledge_model_package pkg ON qtn.knowledge_model_package_id = pkg.id AND qtn.tenant_uuid = pkg.tenant_uuid \
             \LEFT JOIN document_template dt ON qtn.document_template_id = dt.id AND qtn.tenant_uuid = dt.tenant_uuid \
             \WHERE qtn.tenant_uuid = ? AND qtn.uuid = ?"
             [ ("questionnaireDetailPermSql", questionnaireDetailPermSql)
@@ -612,7 +612,7 @@ updateQuestionnaireByUuid qtn = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?::uuid[], document_template_id = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?::text[] WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, knowledge_model_package_id = ?, selected_question_tag_uuids = ?::uuid[], document_template_id = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?::text[] WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow qtn ++ [toField tenantUuid, toField . U.toText $ qtn.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
@@ -646,15 +646,6 @@ updateQuestionnaireUpdatedAtByUuid uuid = do
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
-
-clearQuestionnaireCreatedBy :: U.UUID -> AppContextM ()
-clearQuestionnaireCreatedBy userUuid = do
-  let sql = fromString "UPDATE questionnaire SET created_by = null WHERE created_by = ?"
-  let params = [toField userUuid]
-  logInsertAndUpdate sql params
-  let action conn = execute conn sql params
-  runDB action
-  return ()
 
 deleteQuestionnaires :: AppContextM Int64
 deleteQuestionnaires = createDeleteEntitiesFn entityName

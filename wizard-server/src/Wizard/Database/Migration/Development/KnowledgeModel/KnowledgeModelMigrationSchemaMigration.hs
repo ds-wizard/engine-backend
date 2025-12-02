@@ -1,0 +1,42 @@
+module Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelMigrationSchemaMigration where
+
+import Database.PostgreSQL.Simple
+import GHC.Int
+
+import Shared.Common.Util.Logger
+import Wizard.Database.DAO.Common
+import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
+
+dropTables :: AppContextM Int64
+dropTables = do
+  logInfo _CMP_MIGRATION "(Table/Migration/KnowledgeModel) drop tables"
+  let sql = "DROP TABLE IF EXISTS knowledge_model_migration;"
+  let action conn = execute_ conn sql
+  runDB action
+
+createTables :: AppContextM Int64
+createTables = do
+  logInfo _CMP_MIGRATION "(Table/Migration/KnowledgeModel) create table"
+  let sql =
+        "CREATE TABLE knowledge_model_migration \
+        \( \
+        \    editor_uuid                    uuid        NOT NULL, \
+        \    metamodel_version              int         NOT NULL, \
+        \    state                          jsonb       NOT NULL, \
+        \    editor_previous_package_id     varchar     NOT NULL, \
+        \    target_package_id              varchar     NOT NULL, \
+        \    editor_previous_package_events jsonb       NOT NULL, \
+        \    target_package_events          jsonb       NOT NULL, \
+        \    result_events                  jsonb       NOT NULL, \
+        \    current_knowledge_model        jsonb, \
+        \    tenant_uuid                    uuid        NOT NULL, \
+        \    created_at                     timestamptz NOT NULL, \
+        \    CONSTRAINT knowledge_model_migration_pk PRIMARY KEY (editor_uuid), \
+        \    CONSTRAINT knowledge_model_migration_editor_uuid_fk FOREIGN KEY (editor_uuid) REFERENCES knowledge_model_editor (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT knowledge_model_migration_editor_previous_package_id_fk FOREIGN KEY (editor_previous_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT knowledge_model_migration_target_package_id_fk FOREIGN KEY (target_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT knowledge_model_migration_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action

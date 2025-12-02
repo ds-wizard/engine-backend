@@ -4,6 +4,7 @@ import Data.Swagger
 
 import Shared.Common.Api.Resource.Config.SimpleFeatureSM ()
 import Shared.Common.Util.Swagger
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePatternSM ()
 import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientParameterSM ()
 import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientStyleSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingSM ()
@@ -11,7 +12,6 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
 import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Model.Tenant.Config.TenantConfig
-import WizardLib.KnowledgeModel.Api.Resource.Package.PackagePatternSM ()
 import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigSM ()
 
 instance ToSchema TenantConfig where

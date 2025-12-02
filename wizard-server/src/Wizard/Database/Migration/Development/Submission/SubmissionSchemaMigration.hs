@@ -31,10 +31,11 @@ createTables = do
         \    created_at    timestamptz, \
         \    updated_at    timestamptz NOT NULL, \
         \    tenant_uuid   uuid        NOT NULL, \
-        \    CONSTRAINT submission_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT submission_document_uuid_fk FOREIGN KEY (document_uuid, tenant_uuid) REFERENCES document (uuid, tenant_uuid), \
-        \    CONSTRAINT submission_created_by_fk FOREIGN KEY (created_by, tenant_uuid) REFERENCES user_entity (uuid, tenant_uuid), \
-        \    CONSTRAINT submission_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) \
+        \    CONSTRAINT submission_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT submission_service_id_fk FOREIGN KEY (tenant_uuid, service_id) REFERENCES config_submission_service (tenant_uuid, id) ON DELETE CASCADE, \
+        \    CONSTRAINT submission_document_uuid_fk FOREIGN KEY (document_uuid) REFERENCES document (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT submission_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL, \
+        \    CONSTRAINT submission_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \); \
         \ \
         \CREATE INDEX submission_document_uuid_index ON submission (document_uuid, tenant_uuid);"

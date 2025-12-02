@@ -23,10 +23,10 @@ import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireCommentList
 import Wizard.Model.Questionnaire.QuestionnaireCommentThreadAssigned
 import Wizard.Model.Questionnaire.QuestionnaireCommentThreadNotification
-import Wizard.Model.User.UserSuggestion
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentMapper
 import Wizard.Service.Questionnaire.QuestionnaireAcl
+import WizardLib.Public.Model.User.UserSimple
 
 getQuestionnaireCommentThreadsPage :: Maybe String -> Maybe U.UUID -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireCommentThreadAssigned)
 getQuestionnaireCommentThreadsPage mQuery mQuestionnaireUuid resolved pageable sort = do

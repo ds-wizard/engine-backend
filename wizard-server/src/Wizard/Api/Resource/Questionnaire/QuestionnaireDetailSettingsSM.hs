@@ -4,8 +4,17 @@ import Data.Swagger
 
 import Shared.Common.Util.Swagger
 import Shared.Common.Util.Uuid
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import qualified Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as DocumentTemplateMapper
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Tags
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateStateSM ()
-import Wizard.Api.Resource.Package.PackageSimpleSM ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadListSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailSettingsJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermSM ()
@@ -18,17 +27,7 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireDetailSettings
-import qualified Wizard.Service.Package.PackageMapper as PackageMapper
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import qualified WizardLib.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as DocumentTemplateMapper
-import WizardLib.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Tags
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.Package.PackageWithEvents
-import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as PackageMapper
+import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as PackageMapper
 
 instance ToSchema QuestionnaireDetailSettings where
   declareNamedSchema =
@@ -44,8 +43,8 @@ instance ToSchema QuestionnaireDetailSettings where
         , migrationUuid = Nothing
         , permissions = [qtn1AlbertEditQtnPermDto]
         , projectTags = questionnaire1.projectTags
-        , packageId = netherlandsPackageV2.pId
-        , package = PackageMapper.toSimpleDTO . PackageMapper.toPackage $ netherlandsPackageV2
+        , knowledgeModelPackageId = netherlandsKmPackageV2.pId
+        , knowledgeModelPackage = PackageMapper.toSimpleDTO netherlandsKmPackageV2
         , knowledgeModelTags = [tagDataScience]
         , documentTemplate = Just $ DocumentTemplateMapper.toDTO wizardDocumentTemplate wizardDocumentTemplateFormats
         , documentTemplateState = Just DefaultDocumentTemplateState

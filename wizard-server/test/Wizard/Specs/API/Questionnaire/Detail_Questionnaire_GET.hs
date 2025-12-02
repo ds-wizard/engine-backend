@@ -4,6 +4,7 @@ module Wizard.Specs.API.Questionnaire.Detail_Questionnaire_GET (
 
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import Data.Foldable (traverse_)
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import Network.HTTP.Types
@@ -15,6 +16,10 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
@@ -30,9 +35,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireContent
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.Public.Localization.Messages.Public
 
 import SharedTest.Specs.API.Common
@@ -138,7 +140,8 @@ create_test_200 title appContext qtn qtnEvents qtnCtn showComments authHeader pe
       -- AND: Run migrations
       runInContextIO U.runMigration appContext
       runInContextIO TML.runMigration appContext
-      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       thread1 <- liftIO . create_cmtQ1_t1 $ qtn.uuid
       comment1 <- liftIO . create_cmtQ1_t1_1 $ thread1.uuid
       comment2 <- liftIO . create_cmtQ1_t1_2 $ thread1.uuid
@@ -160,7 +163,7 @@ create_test_200 title appContext qtn qtnEvents qtnCtn showComments authHeader pe
               , name = qtn.name
               , visibility = qtn.visibility
               , sharing = qtn.sharing
-              , packageId = qtn.packageId
+              , knowledgeModelPackageId = qtn.knowledgeModelPackageId
               , selectedQuestionTagUuids = qtn.selectedQuestionTagUuids
               , isTemplate = qtn.isTemplate
               , knowledgeModel = km1WithQ4

@@ -1,23 +1,18 @@
 module Wizard.Database.DAO.KnowledgeModel.KnowledgeModelCacheDAO where
 
-import Control.Monad.Reader (asks)
 import Data.String
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import GHC.Int
 
-import Shared.Common.Util.String
 import Wizard.Database.DAO.Common
-import Wizard.Database.Mapping.KnowledgeModel.KnowledgeModelCache ()
+import Wizard.Database.Mapping.KnowledgeModel.Cache.KnowledgeModelCache ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.KnowledgeModel.KnowledgeModelCache
 
 entityName = "knowledge_model_cache"
-
-findKnowledgeModelCaches :: AppContextM [KnowledgeModelCache]
-findKnowledgeModelCaches = createFindEntitiesFn entityName
 
 findKnowledgeModelCacheById' :: String -> [U.UUID] -> U.UUID -> AppContextM (Maybe KnowledgeModelCache)
 findKnowledgeModelCacheById' packageId tagUuids tenantUuid = do
@@ -34,26 +29,3 @@ findKnowledgeModelCacheById' packageId tagUuids tenantUuid = do
 
 insertKnowledgeModelCache :: KnowledgeModelCache -> AppContextM Int64
 insertKnowledgeModelCache = createInsertFn entityName
-
-deleteKnowledgeModelCaches :: AppContextM Int64
-deleteKnowledgeModelCaches = createDeleteEntitiesFn entityName
-
-deleteKnowledgeModelCachesByPackageId :: String -> AppContextM Int64
-deleteKnowledgeModelCachesByPackageId packageId = do
-  tenantUuid <- asks currentTenantUuid
-  createDeleteEntitiesByFn entityName [("package_id", packageId), ("tenant_uuid", U.toString tenantUuid)]
-
-deleteKnowledgeModelCachesByPackageIds :: [String] -> AppContextM Int64
-deleteKnowledgeModelCachesByPackageIds packageIds = do
-  tenantUuid <- asks currentTenantUuid
-  let sql =
-        fromString $
-          f'
-            "DELETE \
-            \FROM knowledge_model_cache \
-            \WHERE package_id IN (%s) AND tenant_uuid = ?"
-            [generateQuestionMarks packageIds]
-  let params = packageIds ++ [U.toString tenantUuid]
-  logQuery sql params
-  let action conn = execute conn sql params
-  runDB action

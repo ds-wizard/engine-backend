@@ -4,14 +4,14 @@ import Control.Monad (when)
 import Control.Monad.Except (throwError)
 
 import Shared.Common.Model.Error.Error
+import Shared.Coordinate.Service.Coordinate.CoordinateValidation
+import Shared.Coordinate.Util.Coordinate
 import Shared.Locale.Constant.Locale
 import Shared.Locale.Model.Locale.Locale
 import Wizard.Api.Resource.Locale.LocaleChangeDTO
 import Wizard.Api.Resource.Locale.LocaleCreateDTO
 import Wizard.Database.DAO.Locale.LocaleDAO
 import Wizard.Model.Context.AppContext
-import WizardLib.Common.Service.Coordinate.CoordinateValidation
-import WizardLib.Common.Util.Coordinate
 import WizardLib.Public.Localization.Messages.Public
 
 validateLocaleCreate :: LocaleCreateDTO -> String -> AppContextM ()

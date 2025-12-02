@@ -8,7 +8,7 @@ import Shared.Common.Util.Aeson
 data CreateQuestionnaireCommand = CreateQuestionnaireCommand
   { name :: String
   , emails :: [String]
-  , packageId :: String
+  , knowledgeModelPackageId :: String
   , documentTemplateId :: Maybe String
   }
   deriving (Show, Eq, Generic)

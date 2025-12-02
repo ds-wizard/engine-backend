@@ -13,7 +13,7 @@ instance FromRow TenantLimitBundle where
     users <- field
     activeUsers <- field
     knowledgeModels <- field
-    branches <- field
+    knowledgeModelEditors <- field
     documentTemplates <- field
     questionnaires <- field
     documents <- field
@@ -30,7 +30,7 @@ instance ToRow TenantLimitBundle where
     , toField users
     , toField activeUsers
     , toField knowledgeModels
-    , toField branches
+    , toField knowledgeModelEditors
     , toField documentTemplates
     , toField questionnaires
     , toField documents

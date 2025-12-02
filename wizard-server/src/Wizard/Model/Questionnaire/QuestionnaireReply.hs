@@ -7,13 +7,13 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Util.Hashable ()
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 type ReplyTuple = (String, Reply)
 
 data Reply = Reply
   { value :: ReplyValue
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

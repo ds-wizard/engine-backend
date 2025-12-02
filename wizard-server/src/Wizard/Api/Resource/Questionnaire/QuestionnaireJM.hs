@@ -3,7 +3,7 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireJM where
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import Wizard.Api.Resource.Package.PackageSimpleJM ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportJM ()

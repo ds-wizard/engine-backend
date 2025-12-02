@@ -1,22 +1,23 @@
 module Wizard.Service.KnowledgeModel.Compiler.Modifier.Phase where
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.Phase.PhaseEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Modifier
-import WizardLib.KnowledgeModel.Model.Event.Phase.PhaseEvent
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 instance CreateEntity AddPhaseEvent Phase where
-  createEntity event =
+  createEntity event content =
     Phase
       { uuid = event.entityUuid
-      , title = event.title
-      , description = event.description
-      , annotations = event.annotations
+      , title = content.title
+      , description = content.description
+      , annotations = content.annotations
       }
 
 instance EditEntity EditPhaseEvent Phase where
-  editEntity event entity =
+  editEntity event content entity =
     entity
-      { title = applyValue entity.title event.title
-      , description = applyValue entity.description event.description
-      , annotations = applyValue entity.annotations event.annotations
+      { title = applyValue entity.title content.title
+      , description = applyValue entity.description content.description
+      , annotations = applyValue entity.annotations content.annotations
       }

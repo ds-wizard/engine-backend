@@ -6,6 +6,8 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Util.Uuid
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetDTO
@@ -19,8 +21,6 @@ import Wizard.S3.DocumentTemplate.DocumentTemplateS3
 import Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetMapper
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Tenant.Limit.LimitService
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 getAssets :: String -> AppContextM [DocumentTemplateAssetDTO]
 getAssets tmlId = do

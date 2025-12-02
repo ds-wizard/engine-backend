@@ -20,7 +20,7 @@ instance FromRow TenantConfigKnowledgeModel where
   fromRow = do
     tenantUuid <- field
     publicEnabled <- field
-    let public = TenantConfigKnowledgeModelPublic {enabled = publicEnabled, packages = []}
+    let public = TenantConfigKnowledgeModelPublic {enabled = publicEnabled, knowledgeModelPackages = []}
     integrationConfig <- field
     createdAt <- field
     updatedAt <- field

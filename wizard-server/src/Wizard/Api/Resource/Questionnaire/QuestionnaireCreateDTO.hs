@@ -7,7 +7,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 
 data QuestionnaireCreateDTO = QuestionnaireCreateDTO
   { name :: String
-  , packageId :: String
+  , knowledgeModelPackageId :: String
   , visibility :: QuestionnaireVisibility
   , sharing :: QuestionnaireSharing
   , questionTagUuids :: [U.UUID]

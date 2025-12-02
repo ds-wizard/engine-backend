@@ -4,7 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 data Report = Report
   { uuid :: U.UUID

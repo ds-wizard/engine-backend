@@ -8,6 +8,8 @@ import qualified Data.UUID as U
 import Shared.Common.Constant.Tenant
 import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
@@ -16,13 +18,12 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireRep
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireEvent
+import Wizard.Model.Questionnaire.QuestionnaireEventList
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.User.UserMapper
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 fEvents :: U.UUID -> [QuestionnaireEvent]
 fEvents qtnUuid =
@@ -46,6 +47,9 @@ fEvents qtnUuid =
 
 fEventsDto :: U.UUID -> [QuestionnaireEventDTO]
 fEventsDto qtnUuid = fmap (\event -> toEventDTO event (Just userAlbert)) (fEvents qtnUuid)
+
+fEventsList :: U.UUID -> [QuestionnaireEventList]
+fEventsList qtnUuid = fmap (\event -> toEventList event (Just userAlbert)) (fEvents qtnUuid)
 
 fEventsWithUpdated :: U.UUID -> [QuestionnaireEvent]
 fEventsWithUpdated qtnUuid = fEvents qtnUuid ++ [sre_rQ1Updated' qtnUuid]
@@ -380,7 +384,7 @@ rte_rQ1_t1 =
     , path = cmtQ1_path
     , threadUuid = cmtQ1_t1.uuid
     , commentCount = 1
-    , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , createdAt = cmtQ1_t1Resolved.createdAt
     }
 
@@ -407,7 +411,7 @@ ote_rQ1_t1 =
     , path = cmtQ1_path
     , threadUuid = cmtQ1_t1.uuid
     , commentCount = 1
-    , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , createdAt = cmtQ1_t1.createdAt
     }
 
@@ -434,8 +438,8 @@ aste_rQ1_t1 =
     , path = cmtQ1_path
     , threadUuid = cmtQ1_t1.uuid
     , private = False
-    , assignedTo = Just . toSuggestionDTO . toSuggestion $ userAlbert
-    , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , assignedTo = Just . toSuggestion . toSimple $ userAlbert
+    , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , createdAt = cmtQ1_t1.createdAt
     }
 
@@ -461,7 +465,7 @@ dte_rQ1_t1 =
     { uuid = u' "0e8a5812-90da-43b1-bb20-dbf8a95aa00d"
     , path = cmtQ1_path
     , threadUuid = cmtQ1_t1.uuid
-    , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , createdAt = cmtQ1_t1.createdAt
     }
 
@@ -489,7 +493,7 @@ ace_rQ1_t1_1 =
     , commentUuid = cmtQ1_t1_1.uuid
     , text = cmtQ1_t1_1.text
     , private = cmtQ1_t1.private
-    , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , createdAt = cmtQ1_t1_1.createdAt
     }
 
@@ -505,7 +509,7 @@ ace_rQ1_t1_2 =
     , commentUuid = cmtQ1_t1_2.uuid
     , text = cmtQ1_t1_2.text
     , private = cmtQ1_t1.private
-    , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , createdAt = cmtQ1_t1_2.createdAt
     }
 
@@ -521,7 +525,7 @@ ace_rQ2_t1_1 =
     , commentUuid = cmtQ2_t1_1.uuid
     , text = cmtQ2_t1_1.text
     , private = cmtQ2_t1.private
-    , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , createdAt = cmtQ2_t1_1.createdAt
     }
 
@@ -551,7 +555,7 @@ ece_rQ1_t1_1 =
     , threadUuid = cmtQ1_t1.uuid
     , commentUuid = cmtQ1_t1_1Edited.uuid
     , text = cmtQ1_t1_1Edited.text
-    , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , createdAt = cmtQ1_t1_1Edited.updatedAt
     }
 
@@ -579,7 +583,7 @@ dce_rQ1_t1_1 =
     , path = cmtQ1_path
     , threadUuid = cmtQ1_t1.uuid
     , commentUuid = cmtQ1_t1_1.uuid
-    , createdBy = Just . toSuggestionDTO . toSuggestion $ userAlbert
+    , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , createdAt = cmtQ1_t1_1.createdAt
     }
 

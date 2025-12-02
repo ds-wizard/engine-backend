@@ -6,9 +6,9 @@ import qualified Data.UUID as U
 import Wizard.Model.Submission.Submission
 import Wizard.Model.Submission.SubmissionList
 import Wizard.Model.Tenant.Config.TenantConfig
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
-toList :: Submission -> TenantConfigSubmissionService -> UserSuggestionDTO -> SubmissionList
+toList :: Submission -> TenantConfigSubmissionService -> UserSuggestion -> SubmissionList
 toList Submission {..} service createdBy2 =
   let serviceName = Just service.name
       createdBy = createdBy2

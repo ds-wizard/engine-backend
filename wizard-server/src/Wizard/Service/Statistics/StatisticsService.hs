@@ -1,20 +1,20 @@
 module Wizard.Service.Statistics.StatisticsService where
 
-import Wizard.Database.DAO.Branch.BranchDAO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Statistics.InstanceStatistics
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 
 getInstanceStatistics :: AppContextM InstanceStatistics
 getInstanceStatistics = do
   uCount <- countUsers
   pCount <- countPackagesGroupedByOrganizationIdAndKmId
   qCount <- countQuestionnaires
-  bCount <- countBranches
+  bCount <- countKnowledgeModelEditors
   docCount <- countDocuments
   tmlCount <- countDocumentTemplatesGroupedByOrganizationIdAndKmId
   return
@@ -22,7 +22,7 @@ getInstanceStatistics = do
       { userCount = uCount
       , pkgCount = pCount
       , qtnCount = qCount
-      , branchCount = bCount
+      , knowledgeModelEditorCount = bCount
       , docCount = docCount
       , tmlCount = tmlCount
       }

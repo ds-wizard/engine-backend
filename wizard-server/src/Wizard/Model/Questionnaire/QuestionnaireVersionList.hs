@@ -4,14 +4,14 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 data QuestionnaireVersionList = QuestionnaireVersionList
   { uuid :: U.UUID
   , name :: String
   , description :: Maybe String
   , eventUuid :: U.UUID
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

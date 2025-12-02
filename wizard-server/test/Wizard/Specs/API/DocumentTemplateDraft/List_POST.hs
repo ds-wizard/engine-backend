@@ -10,15 +10,15 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Common.Api.Resource.Common.EntityCreatedWithIdDTO
 import Shared.Common.Api.Resource.Common.EntityCreatedWithIdJM ()
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateJM ()
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateDrafts
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

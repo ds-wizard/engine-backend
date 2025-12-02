@@ -1,0 +1,7 @@
+module Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationActionSM where
+
+import Data.Swagger
+
+import Wizard.Model.KnowledgeModel.Migration.KnowledgeModelMigration
+
+instance ToSchema KnowledgeModelMigrationAction

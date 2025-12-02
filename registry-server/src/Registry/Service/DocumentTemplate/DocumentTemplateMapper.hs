@@ -5,7 +5,7 @@ import Registry.Service.DocumentTemplate.DocumentTemplateUtil
 import qualified Registry.Service.Organization.OrganizationMapper as OM_Mapper
 import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import RegistryLib.Model.Organization.Organization
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 toSimpleDTO :: [Organization] -> DocumentTemplate -> DocumentTemplateSimpleDTO
 toSimpleDTO orgs tml =

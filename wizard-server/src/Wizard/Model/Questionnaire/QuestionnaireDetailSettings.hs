@@ -3,13 +3,13 @@ module Wizard.Model.Questionnaire.QuestionnaireDetailSettings where
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnairePermDTO
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Questionnaire.Questionnaire
-import WizardLib.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 data QuestionnaireDetailSettings = QuestionnaireDetailSettings
   { uuid :: U.UUID
@@ -21,8 +21,8 @@ data QuestionnaireDetailSettings = QuestionnaireDetailSettings
   , migrationUuid :: Maybe U.UUID
   , permissions :: [QuestionnairePermDTO]
   , projectTags :: [String]
-  , packageId :: String
-  , package :: PackageSimpleDTO
+  , knowledgeModelPackageId :: String
+  , knowledgeModelPackage :: KnowledgeModelPackageSimpleDTO
   , knowledgeModelTags :: [Tag]
   , documentTemplate :: Maybe DocumentTemplateDTO
   , documentTemplateState :: Maybe DocumentTemplateState

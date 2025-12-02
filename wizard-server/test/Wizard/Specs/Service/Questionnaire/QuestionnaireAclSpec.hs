@@ -4,6 +4,10 @@ import Data.Foldable (traverse_)
 import Test.Hspec
 
 import Shared.Common.Util.Uuid
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
 import Wizard.Database.DAO.User.UserDAO
@@ -16,10 +20,6 @@ import Wizard.Model.User.User
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import qualified Wizard.Service.User.UserMapper as U_Mapper
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
@@ -399,7 +399,7 @@ questionnaireAclSpec appContext =
 runLocalTestMigration appContext = do
   runInContext deleteQuestionnairePerms appContext
   runInContext deleteQuestionnaires appContext
-  runInContext (insertPackage germanyPackage) appContext
+  runInContext (insertPackage germanyKmPackage) appContext
   runInContext (insertDocumentTemplate wizardDocumentTemplate) appContext
   runInContext (insertQuestionnaire questionnaire1) appContext
   runInContext (insertUser userIsaac) appContext

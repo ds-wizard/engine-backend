@@ -24,8 +24,8 @@ type List_GET =
     :> QueryParam "projectTagsOp" String
     :> QueryParam "userUuids" String
     :> QueryParam "userUuidsOp" String
-    :> QueryParam "packageIds" String
-    :> QueryParam "packageIdsOp" String
+    :> QueryParam "knowledgeModelPackageIds" String
+    :> QueryParam "knowledgeModelPackageIdsOp" String
     :> QueryParam "page" Int
     :> QueryParam "size" Int
     :> QueryParam "sort" String
@@ -47,13 +47,13 @@ list_GET
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page QuestionnaireDTO))
-list_GET mTokenHeader mServerUrl mQuery mIsTemplate mIsMigrating mProjectTagsL mProjectTagsOp mUserUuidsL mUserUuidsOp mPackageIdsL mPackageIdsOp mPage mSize mSort =
+list_GET mTokenHeader mServerUrl mQuery mIsTemplate mIsMigrating mProjectTagsL mProjectTagsOp mUserUuidsL mUserUuidsOp mKnowledgeModelPackageIdsL mKnowledgeModelPackageIdsOp mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
       addTraceUuidHeader =<< do
         let mUserUuids = fmap (splitOn ",") mUserUuidsL
         let mProjectTags = fmap (splitOn ",") mProjectTagsL
-        let mPackageIds = fmap (splitOn ",") mPackageIdsL
+        let mKnowledgeModelPackageIds = fmap (splitOn ",") mKnowledgeModelPackageIdsL
         getQuestionnairesForCurrentUserPageDto
           mQuery
           mIsTemplate
@@ -62,7 +62,7 @@ list_GET mTokenHeader mServerUrl mQuery mIsTemplate mIsMigrating mProjectTagsL m
           mProjectTagsOp
           mUserUuids
           mUserUuidsOp
-          mPackageIds
-          mPackageIdsOp
+          mKnowledgeModelPackageIds
+          mKnowledgeModelPackageIdsOp
           (Pageable mPage mSize)
           (parseSortQuery mSort)

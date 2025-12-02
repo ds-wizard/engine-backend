@@ -6,7 +6,6 @@ import Wizard.Api.Handler.ActionKey.Api
 import Wizard.Api.Handler.ApiKey.Api
 import Wizard.Api.Handler.AppKey.Api
 import Wizard.Api.Handler.Auth.Api
-import Wizard.Api.Handler.Branch.Api
 import Wizard.Api.Handler.CommentThread.Api
 import Wizard.Api.Handler.Config.Api
 import Wizard.Api.Handler.Dev.Api
@@ -21,10 +20,11 @@ import Wizard.Api.Handler.ExternalLink.Api
 import Wizard.Api.Handler.Feedback.Api
 import Wizard.Api.Handler.Info.Api
 import Wizard.Api.Handler.KnowledgeModel.Api
+import Wizard.Api.Handler.KnowledgeModelEditor.Api
+import Wizard.Api.Handler.KnowledgeModelPackage.Api
 import Wizard.Api.Handler.KnowledgeModelSecret.Api
 import Wizard.Api.Handler.Locale.Api
 import Wizard.Api.Handler.Migration.Api
-import Wizard.Api.Handler.Package.Api
 import Wizard.Api.Handler.PersistentCommand.Api
 import Wizard.Api.Handler.Prefab.Api
 import Wizard.Api.Handler.Questionnaire.Api
@@ -47,7 +47,6 @@ type ApplicationAPI =
     :<|> ApiKeyAPI
     :<|> AppKeyAPI
     :<|> AuthAPI
-    :<|> BranchAPI
     :<|> CommentThreadAPI
     :<|> ConfigAPI
     :<|> DevAPI
@@ -62,10 +61,11 @@ type ApplicationAPI =
     :<|> FeedbackAPI
     :<|> InfoAPI
     :<|> KnowledgeModelAPI
+    :<|> KnowledgeModelEditorAPI
+    :<|> KnowledgeModelPackageAPI
     :<|> KnowledgeModelSecretAPI
     :<|> LocaleAPI
     :<|> MigrationAPI
-    :<|> PackageAPI
     :<|> PersistentCommandAPI
     :<|> PrefabAPI
     :<|> QuestionnaireAPI
@@ -91,7 +91,6 @@ applicationServer =
     :<|> apiKeyServer
     :<|> appKeyServer
     :<|> authServer
-    :<|> branchServer
     :<|> commentThreadServer
     :<|> configServer
     :<|> devServer
@@ -106,10 +105,11 @@ applicationServer =
     :<|> feedbackServer
     :<|> infoServer
     :<|> knowledgeModelServer
+    :<|> knowledgeModelEditorServer
+    :<|> knowledgeModelPackageServer
     :<|> knowledgeModelSecretServer
     :<|> localeServer
     :<|> migrationServer
-    :<|> packageServer
     :<|> persistentCommandServer
     :<|> prefabServer
     :<|> questionnaireServer

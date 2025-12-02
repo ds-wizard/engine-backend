@@ -16,7 +16,7 @@ instance ToRow AuditEntry where
     , toField createdAt
     , toField instanceStatistics.userCount
     , toField instanceStatistics.pkgCount
-    , toField instanceStatistics.branchCount
+    , toField instanceStatistics.kmEditorCount
     , toField instanceStatistics.qtnCount
     , toField instanceStatistics.tmlCount
     , toField instanceStatistics.docCount
@@ -24,8 +24,8 @@ instance ToRow AuditEntry where
     , toField (Nothing :: Maybe String)
     , toField (Nothing :: Maybe String)
     ]
-  toRow GetPackageBundleAuditEntry {..} =
-    [ toStringField "GetPackageBundleAuditEntry"
+  toRow GetKnowledgeModelBundleAuditEntry {..} =
+    [ toStringField "GetKnowledgeModelBundleAuditEntry"
     , toField organizationId
     , toField createdAt
     , toField (Nothing :: Maybe String)
@@ -34,7 +34,7 @@ instance ToRow AuditEntry where
     , toField (Nothing :: Maybe String)
     , toField (Nothing :: Maybe String)
     , toField (Nothing :: Maybe String)
-    , toField packageId
+    , toField knowledgeModelPackageId
     , toField (Nothing :: Maybe String)
     , toField (Nothing :: Maybe String)
     ]
@@ -76,7 +76,7 @@ instance FromRow AuditEntry where
         createdAt <- field
         userCount <- field
         pkgCount <- field
-        branchCount <- field
+        kmEditorCount <- field
         qtnCount <- field
         tmlCount <- field
         docCount <- field
@@ -85,7 +85,7 @@ instance FromRow AuditEntry where
         _ <- field :: RowParser (Maybe String)
         _ <- field :: RowParser (Maybe String)
         return $ ListPackagesAuditEntry {..}
-      "GetPackageBundleAuditEntry" -> do
+      "GetKnowledgeModelBundleAuditEntry" -> do
         organizationId <- field
         createdAt <- field
         _ <- field :: RowParser (Maybe String)
@@ -94,10 +94,10 @@ instance FromRow AuditEntry where
         _ <- field :: RowParser (Maybe String)
         _ <- field :: RowParser (Maybe String)
         _ <- field :: RowParser (Maybe String)
-        packageId <- field
+        knowledgeModelPackageId <- field
         _ <- field :: RowParser (Maybe String)
         _ <- field :: RowParser (Maybe String)
-        return $ GetPackageBundleAuditEntry {..}
+        return $ GetKnowledgeModelBundleAuditEntry {..}
       "GetDocumentTemplateBundleAuditEntry" -> do
         organizationId <- field
         createdAt <- field

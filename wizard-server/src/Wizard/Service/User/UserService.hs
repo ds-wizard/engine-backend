@@ -1,6 +1,6 @@
 module Wizard.Service.User.UserService where
 
-import Control.Monad (forM_, when)
+import Control.Monad (void, when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Crypto.PasswordStore as PasswordStore
@@ -12,7 +12,6 @@ import qualified Data.UUID as U
 import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
 import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.ActionKey.Model.ActionKey.ActionKey
-import Shared.Audit.Database.DAO.Audit.AuditDAO
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
@@ -21,33 +20,21 @@ import Shared.Common.Model.Config.SimpleFeature
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
 import Shared.Common.Util.Uuid
-import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Api.Resource.Auth.AuthConsentDTO
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
-import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.Document.DocumentDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.ActionKey.ActionKeyType
-import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Document.Document
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.UserSubmissionPropEM ()
-import Wizard.S3.Document.DocumentS3
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Common
 import Wizard.Service.Mail.Mailer
@@ -58,12 +45,10 @@ import Wizard.Service.User.UserAudit
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
 import Wizard.Service.UserToken.Login.LoginService
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
-import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Localization.Messages.Public
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
-import WizardLib.Public.Service.UserToken.UserTokenService
+import WizardLib.Public.Model.User.UserSuggestion
 
 getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
 getUsersPage mQuery mRole pageable sort = do
@@ -71,10 +56,8 @@ getUsersPage mQuery mRole pageable sort = do
   userPage <- findUsersPage mQuery mRole pageable sort
   return . fmap toDTO $ userPage
 
-getUserSuggestionsPage :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)
-getUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
-  suggestionPage <- findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort
-  return . fmap toSuggestionDTO $ suggestionPage
+getUserSuggestionsPage :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
+getUserSuggestionsPage = findUserSuggestionsPage
 
 createUserByAdmin :: UserCreateDTO -> AppContextM UserDTO
 createUserByAdmin reqDto =
@@ -282,27 +265,7 @@ deleteUser userUuid =
   runInTransaction $ do
     checkPermission _UM_PERM
     _ <- findUserByUuid userUuid
-    deleteAuditByCreatedBy userUuid
-    clearBranchCreatedBy userUuid
-    clearQuestionnaireFileCreatedBy userUuid
-    clearQuestionnaireVersionCreatedBy userUuid
-    clearQuestionnaireEventCreatedBy userUuid
-    deleteQuestionnairePermUserByUserUuid userUuid
-    clearQuestionnaireCommentThreadAssignedTo userUuid
-    clearQuestionnaireCommentThreadAssignedBy userUuid
-    clearQuestionnaireCreatedBy userUuid
-    deletePersistentCommandByCreatedBy userUuid
-    documents <- findDocumentsForCurrentTenantFiltered [("created_by", U.toString userUuid)]
-    forM_
-      documents
-      ( \d -> do
-          deleteDocumentsFiltered [("uuid", U.toString d.uuid)]
-          removeDocumentContent d.uuid
-      )
-    deleteUserGroupMembershipsByUserUuid userUuid
-    deleteTokenByUserUuid userUuid
-    deleteUserByUuid userUuid
-    return ()
+    void $ deleteUserByUuid userUuid
 
 -- --------------------------------
 -- PRIVATE

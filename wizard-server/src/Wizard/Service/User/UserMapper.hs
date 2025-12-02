@@ -13,10 +13,10 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
 import Wizard.Model.User.UserProfile
-import Wizard.Model.User.UserSuggestion
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
 import WizardLib.Public.Model.User.UserGroupMembership
+import WizardLib.Public.Model.User.UserSimple
+import WizardLib.Public.Model.User.UserSuggestion
 import WizardLib.Public.Model.User.UserWithMembership
 
 toDTO :: User -> UserDTO
@@ -50,9 +50,9 @@ toUserProfile user userGroupUuids =
     , userGroupUuids = userGroupUuids
     }
 
-toSuggestion :: User -> UserSuggestion
-toSuggestion user =
-  UserSuggestion
+toSimple :: User -> UserSimple
+toSimple user =
+  UserSimple
     { uuid = user.uuid
     , firstName = user.firstName
     , lastName = user.lastName
@@ -71,9 +71,9 @@ toWithMembership user membershipType =
     , membershipType = membershipType
     }
 
-toSuggestionDTO :: UserSuggestion -> UserSuggestionDTO
-toSuggestionDTO user =
-  UserSuggestionDTO
+toSuggestion :: UserSimple -> UserSuggestion
+toSuggestion user =
+  UserSuggestion
     { uuid = user.uuid
     , firstName = user.firstName
     , lastName = user.lastName
@@ -81,9 +81,9 @@ toSuggestionDTO user =
     , imageUrl = user.imageUrl
     }
 
-toSuggestionDTO' :: UserDTO -> UserSuggestionDTO
-toSuggestionDTO' user =
-  UserSuggestionDTO
+toSuggestion' :: UserDTO -> UserSuggestion
+toSuggestion' user =
+  UserSuggestion
     { uuid = user.uuid
     , firstName = user.firstName
     , lastName = user.lastName

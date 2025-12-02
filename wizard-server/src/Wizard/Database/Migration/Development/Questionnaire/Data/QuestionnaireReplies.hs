@@ -6,15 +6,15 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Util.Uuid
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Choices
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Questionnaire.QuestionnaireUtil
 import qualified Wizard.Service.User.UserMapper as UM
-import WizardLib.Common.Model.Questionnaire.QuestionnaireUtil
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Choices
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 fReplies :: M.Map String Reply
 fReplies =
@@ -80,7 +80,7 @@ rQ1 =
   ( createReplyKey [chapter1.uuid, question1.uuid]
   , Reply
       { value = StringReply {sValue = "Reply to 1st question"}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
       }
   )
@@ -90,7 +90,7 @@ rQ1Updated =
   ( createReplyKey [chapter1.uuid, question1.uuid]
   , Reply
       { value = StringReply {sValue = "Updated Reply to 1st question"}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 1
       }
   )
@@ -100,7 +100,7 @@ rQ2 =
   ( createReplyKey [chapter1.uuid, question2.uuid]
   , Reply
       { value = AnswerReply {aValue = q2_answerYes.uuid}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 2
       }
   )
@@ -110,7 +110,7 @@ rQ2_aYes_fuQ1 =
   ( createReplyKey [chapter1.uuid, question2.uuid, q2_answerYes.uuid, q2_aYes_fuQuestion1.uuid]
   , Reply
       { value = AnswerReply {aValue = q2_aYes_fuq1_answerNo.uuid}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 3
       }
   )
@@ -127,7 +127,7 @@ unused_rQ2_aYes_fuQ1_aYes_fuq2 =
       ]
   , Reply
       { value = AnswerReply {aValue = q2_aYes_fuq1_aYes_fuq2_answerNo.uuid}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 4
       }
   )
@@ -137,7 +137,7 @@ rQ3 =
   ( createReplyKey [chapter2.uuid, question3.uuid]
   , Reply
       { value = AnswerReply {aValue = q3_answerNo.uuid}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 5
       }
   )
@@ -148,7 +148,7 @@ rQ4 =
   ( createReplyKey [chapter2.uuid, question4.uuid]
   , Reply
       { value = ItemListReply {ilValue = [rQ4_it1, rQ4_it2]}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 6
       }
   )
@@ -161,7 +161,7 @@ rQ4_it1_q5 =
   ( createReplyKey [chapter2.uuid, question4.uuid, rQ4_it1, q4_it1_question5.uuid]
   , Reply
       { value = ItemListReply {ilValue = [rQ4_it1_q5_it1]}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 7
       }
   )
@@ -181,7 +181,7 @@ rQ4_it1_q5_it1_question7 =
       ]
   , Reply
       { value = StringReply {sValue = "Ai1: q5: Ai1: Reply to 7th question"}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 8
       }
   )
@@ -198,7 +198,7 @@ rQ4_it1_q5_it1_question8 =
       ]
   , Reply
       { value = StringReply {sValue = "Ai1: q5: Ai1: Reply to 8th question"}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 9
       }
   )
@@ -208,7 +208,7 @@ rQ4_it1_q6 =
   ( createReplyKey [chapter2.uuid, question4.uuid, rQ4_it1, q4_it1_question6.uuid]
   , Reply
       { value = AnswerReply {aValue = q4_it1_q6_answerNo.uuid}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 10
       }
   )
@@ -222,7 +222,7 @@ rQ4_it2_q5 =
   ( createReplyKey [chapter2.uuid, question4.uuid, rQ4_it2, q4_it1_question5.uuid]
   , Reply
       { value = ItemListReply {ilValue = []}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 11
       }
   )
@@ -232,7 +232,7 @@ rQ4_it2_q6 =
   ( createReplyKey [chapter2.uuid, question4.uuid, rQ4_it2, q4_it1_question6.uuid]
   , Reply
       { value = AnswerReply {aValue = q4_it1_q6_answerNo.uuid}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 12
       }
   )
@@ -243,7 +243,7 @@ rQ9 =
   ( createReplyKey [chapter3.uuid, question9.uuid]
   , Reply
       { value = IntegrationReply {iValue = PlainType rQ9Value}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 13
       }
   )
@@ -256,7 +256,7 @@ rQ9WithNewType =
   ( createReplyKey [chapter3.uuid, question9.uuid]
   , Reply
       { value = StringReply {sValue = rQ9Value}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 14
       }
   )
@@ -266,7 +266,7 @@ rQ10 =
   ( createReplyKey [chapter3.uuid, question10.uuid]
   , Reply
       { value = IntegrationReply {iValue = rQ10IntValue}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 15
       }
   )
@@ -281,7 +281,7 @@ rQ11 =
   ( createReplyKey [chapter3.uuid, question11.uuid]
   , Reply
       { value = MultiChoiceReply {mcValue = [q11_choice2.uuid]}
-      , createdBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 16
       }
   )

@@ -5,47 +5,44 @@ import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
-import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.List (groupBy, replace)
-import Wizard.Service.KnowledgeModel.Squash.Event.Common
-import Wizard.Service.KnowledgeModel.Squash.Event.Event ()
-import WizardLib.KnowledgeModel.Model.Event.Event
-import WizardLib.KnowledgeModel.Model.Event.EventLenses ()
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Wizard.Service.KnowledgeModel.Squash.Event.Event
 
-instance Ord Event where
-  compare a b = compare (getCreatedAt a) (getCreatedAt b)
+instance Ord KnowledgeModelEvent where
+  compare a b = compare a.createdAt b.createdAt
 
-squash :: [Event] -> [Event]
+squash :: [KnowledgeModelEvent] -> [KnowledgeModelEvent]
 squash events =
-  let groupedEvents = groupBy (\e1 e2 -> utctDay (getCreatedAt e1) == utctDay (getCreatedAt e2)) events
+  let groupedEvents = groupBy (\e1 e2 -> utctDay (e1.createdAt) == utctDay (e2.createdAt)) events
       squashedEvents = fmap (squashReorderEvents . squashSimple) groupedEvents
    in concat squashedEvents
 
-squashSimple :: [Event] -> [Event]
+squashSimple :: [KnowledgeModelEvent] -> [KnowledgeModelEvent]
 squashSimple events =
   let (entities, squashedEvents) = foldl go (M.empty, []) events
    in reverse squashedEvents
   where
-    deleteEvent :: Event -> [Event] -> [Event]
-    deleteEvent = L.deleteBy (\e1 e2 -> getUuid e1 == getUuid e2)
-    go :: (M.Map U.UUID Event, [Event]) -> Event -> (M.Map U.UUID Event, [Event])
+    deleteEvent :: KnowledgeModelEvent -> [KnowledgeModelEvent] -> [KnowledgeModelEvent]
+    deleteEvent = L.deleteBy (\e1 e2 -> e1.uuid == e2.uuid)
+    go :: (M.Map U.UUID KnowledgeModelEvent, [KnowledgeModelEvent]) -> KnowledgeModelEvent -> (M.Map U.UUID KnowledgeModelEvent, [KnowledgeModelEvent])
     go (entities, events) newEvent =
-      case M.lookup (getEntityUuid newEvent) entities of
+      case M.lookup newEvent.entityUuid entities of
         Just oldEvent ->
-          if isTypeChanged oldEvent newEvent || not (isSimpleEventSquashApplicable newEvent)
+          if isTypeChanged' oldEvent newEvent || not (isSimpleEventSquashApplicable' newEvent)
             then
-              let entities' = M.delete (getEntityUuid oldEvent) entities
+              let entities' = M.delete oldEvent.entityUuid entities
                   events' = newEvent : events
                in (entities', events')
             else
-              let squashedEvent = simpleSquashEvent Nothing oldEvent newEvent
-                  entities' = M.insert (getEntityUuid newEvent) squashedEvent entities
+              let squashedEvent = simpleSquashEvent' Nothing oldEvent newEvent
+                  entities' = M.insert newEvent.entityUuid squashedEvent entities
                   events' = replace squashedEvent oldEvent events
                in (entities', events')
         Nothing ->
-          if isSimpleEventSquashApplicable newEvent
+          if isSimpleEventSquashApplicable' newEvent
             then
-              let entities' = M.insert (getEntityUuid newEvent) newEvent entities
+              let entities' = M.insert newEvent.entityUuid newEvent entities
                   events' = newEvent : events
                in (entities', events')
             else
@@ -53,24 +50,24 @@ squashSimple events =
                   events' = newEvent : events
                in (entities', events')
 
-squashReorderEvents :: [Event] -> [Event]
+squashReorderEvents :: [KnowledgeModelEvent] -> [KnowledgeModelEvent]
 squashReorderEvents events =
   let (eventsToDeleted, squashedEvents, _) = foldl go ([], [], Nothing) events
    in foldr deleteEvent (reverse squashedEvents) eventsToDeleted
   where
-    deleteEvent :: Event -> [Event] -> [Event]
-    deleteEvent = L.deleteBy (\e1 e2 -> getUuid e1 == getUuid e2)
-    go :: ([Event], [Event], Maybe Event) -> Event -> ([Event], [Event], Maybe Event)
+    deleteEvent :: KnowledgeModelEvent -> [KnowledgeModelEvent] -> [KnowledgeModelEvent]
+    deleteEvent = L.deleteBy (\e1 e2 -> e1.uuid == e2.uuid)
+    go :: ([KnowledgeModelEvent], [KnowledgeModelEvent], Maybe KnowledgeModelEvent) -> KnowledgeModelEvent -> ([KnowledgeModelEvent], [KnowledgeModelEvent], Maybe KnowledgeModelEvent)
     go (eventsToDeleted, events, mPreviousEvent) newEvent =
       case mPreviousEvent of
         Just previousEvent ->
-          if isTypeChanged previousEvent newEvent || not (isReorderEventSquashApplicable previousEvent newEvent)
+          if isTypeChanged' previousEvent newEvent || not (isReorderEventSquashApplicable' previousEvent newEvent)
             then
               let eventsToDeleted' = eventsToDeleted
                   events' = newEvent : events
                in (eventsToDeleted', events', Just newEvent)
             else
-              let squashedEvent = simpleSquashEvent mPreviousEvent previousEvent newEvent
+              let squashedEvent = simpleSquashEvent' mPreviousEvent previousEvent newEvent
                   eventsToDeleted' = previousEvent : eventsToDeleted
                   events' = squashedEvent : events
                in (eventsToDeleted', events', Just squashedEvent)

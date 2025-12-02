@@ -24,8 +24,8 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireEvent
-import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Model.Questionnaire.QuestionnaireEventList
+import Wizard.Model.Questionnaire.QuestionnaireEventListLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Questionnaire.QuestionnaireVersionList
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
@@ -33,7 +33,6 @@ import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireMapper
-import Wizard.Service.Questionnaire.QuestionnaireUtil
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionValidation
 import Wizard.Service.User.UserService
@@ -58,7 +57,7 @@ createVersion qtnUuid reqDto =
     insertQuestionnaireVersion version
     return $ toVersionList version (Just currentUser)
 
-cloneQuestionnaireVersions :: U.UUID -> U.UUID -> [(U.UUID, QuestionnaireEvent)] -> AppContextM [(QuestionnaireVersion, QuestionnaireVersion)]
+cloneQuestionnaireVersions :: U.UUID -> U.UUID -> [(U.UUID, QuestionnaireEventList)] -> AppContextM [(QuestionnaireVersion, QuestionnaireVersion)]
 cloneQuestionnaireVersions oldQtnUuid newQtnUuid newQtnEventsWithOldEventUuid = do
   runInTransaction $ do
     oldVersions <- findQuestionnaireVersionsByQuestionnaireUuid oldQtnUuid
@@ -109,7 +108,7 @@ revertToEvent qtnUuid reqDto shouldSave =
       then checkOwnerPermissionToQtn qtn.visibility qtn.permissions
       else checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
     qtnVersions <- findQuestionnaireVersionsByQuestionnaireUuid qtnUuid
-    qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtnUuid
+    qtnEvents <- findQuestionnaireEventListsByQuestionnaireUuid qtnUuid
     let updatedEvents = takeWhileInclusive (\e -> getUuid e /= reqDto.eventUuid) qtnEvents
     let eventsToDelete = dropWhileExclusive (\e -> getUuid e /= reqDto.eventUuid) qtnEvents
     let updatedEventUuids = S.fromList . fmap getUuid $ updatedEvents
@@ -124,8 +123,7 @@ revertToEvent qtnUuid reqDto shouldSave =
           deleteQuestionnaireFilesNewerThen qtnUuid (getCreatedAt event)
           void $ updateQuestionnaireUpdatedAtByUuid qtnUuid
       )
-    qtnCtn <- compileQuestionnaire updatedEvents
-    eventsDto <- traverse enhanceQuestionnaireEvent updatedEvents
+    let qtnCtn = compileQuestionnaire updatedEvents
     versionDto <-
       traverse
         ( \version -> do
@@ -140,4 +138,4 @@ revertToEvent qtnUuid reqDto shouldSave =
         updatedVersions
     when shouldSave (logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid)
     commentThreadsMap <- catchError (getQuestionnaireCommentsByQuestionnaireUuid qtnUuid Nothing Nothing) (\_ -> return M.empty)
-    return $ toContentDTO qtnCtn commentThreadsMap eventsDto versionDto
+    return $ toContentDTO qtnCtn commentThreadsMap updatedEvents versionDto

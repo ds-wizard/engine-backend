@@ -6,11 +6,14 @@ import qualified Data.UUID as U
 import GHC.Int
 
 import Shared.Common.Service.Tenant.Limit.LimitService
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
-import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
@@ -20,9 +23,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Limit.TenantLimitBundle
 import Wizard.Service.Tenant.Limit.LimitMapper
 import Wizard.Service.Tenant.Usage.UsageService
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
-import WizardLib.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
 import WizardLib.Public.Api.Resource.Tenant.Usage.WizardUsageDTO
 import WizardLib.Public.Model.Tenant.Limit.TenantLimitBundleChange
 
@@ -54,11 +54,11 @@ checkActiveUserLimit = do
   count <- countActiveUsers
   checkLimit "active users" count limit.activeUsers
 
-checkBranchLimit :: AppContextM ()
-checkBranchLimit = do
+checkKnowledgeModelEditorLimit :: AppContextM ()
+checkKnowledgeModelEditorLimit = do
   limit <- findLimitBundleForCurrentTenant
-  count <- countBranches
-  checkLimit "branches" count limit.branches
+  count <- countKnowledgeModelEditors
+  checkLimit "knowledgeModelEditors" count limit.knowledgeModelEditors
 
 checkPackageLimit :: AppContextM ()
 checkPackageLimit = do

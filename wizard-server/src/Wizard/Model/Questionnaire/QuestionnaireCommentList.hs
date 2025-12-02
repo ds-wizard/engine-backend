@@ -4,7 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 data QuestionnaireCommentThreadList = QuestionnaireCommentThreadList
   { uuid :: U.UUID
@@ -12,8 +12,8 @@ data QuestionnaireCommentThreadList = QuestionnaireCommentThreadList
   , resolved :: Bool
   , comments :: [QuestionnaireCommentList]
   , private :: Bool
-  , assignedTo :: Maybe UserSuggestionDTO
-  , createdBy :: Maybe UserSuggestionDTO
+  , assignedTo :: Maybe UserSuggestion
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -22,7 +22,7 @@ data QuestionnaireCommentThreadList = QuestionnaireCommentThreadList
 data QuestionnaireCommentList = QuestionnaireCommentList
   { uuid :: U.UUID
   , text :: String
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

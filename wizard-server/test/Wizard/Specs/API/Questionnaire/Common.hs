@@ -56,7 +56,7 @@ compareQuestionnaireCreateDtos resDto expDto = do
   liftIO $ resDto.name `shouldBe` expDto.name
   liftIO $ resDto.visibility `shouldBe` expDto.visibility
   liftIO $ resDto.sharing `shouldBe` expDto.sharing
-  liftIO $ resDto.package `shouldBe` expDto.package
+  liftIO $ resDto.knowledgeModelPackage `shouldBe` expDto.knowledgeModelPackage
 
 compareQuestionnaireCreateFromTemplateDtos resDto expDto = do
   liftIO $ resDto.uuid `shouldNotBe` expDto.uuid
@@ -64,7 +64,7 @@ compareQuestionnaireCreateFromTemplateDtos resDto expDto = do
   liftIO $ resDto.visibility `shouldBe` expDto.visibility
   liftIO $ resDto.sharing `shouldBe` expDto.sharing
   liftIO $ resDto.state `shouldBe` expDto.state
-  liftIO $ resDto.package `shouldBe` expDto.package
+  liftIO $ resDto.knowledgeModelPackage `shouldBe` expDto.knowledgeModelPackage
 
 compareQuestionnaireCloneDtos resDto expDto = do
   liftIO $ resDto.uuid `shouldNotBe` expDto.uuid
@@ -72,7 +72,7 @@ compareQuestionnaireCloneDtos resDto expDto = do
   liftIO $ resDto.visibility `shouldBe` expDto.visibility
   liftIO $ resDto.sharing `shouldBe` expDto.sharing
   liftIO $ resDto.state `shouldBe` expDto.state
-  liftIO $ resDto.package `shouldBe` expDto.package
+  liftIO $ resDto.knowledgeModelPackage `shouldBe` expDto.knowledgeModelPackage
 
 compareQuestionnaireCreateDtos' resDto expDto = do
   liftIO $ resDto.name `shouldBe` expDto.name
@@ -80,7 +80,7 @@ compareQuestionnaireCreateDtos' resDto expDto = do
   liftIO $ resDto.visibility `shouldBe` expDto.visibility
   liftIO $ resDto.sharing `shouldBe` expDto.sharing
   liftIO $ resDto.state `shouldBe` expDto.state
-  liftIO $ resDto.package `shouldBe` expDto.package
+  liftIO $ resDto.knowledgeModelPackage `shouldBe` expDto.knowledgeModelPackage
   liftIO $ resDto.selectedQuestionTagUuids `shouldBe` expDto.selectedQuestionTagUuids
   liftIO $ resDto.knowledgeModel `shouldBe` expDto.knowledgeModel
   liftIO $ resDto.replies `shouldBe` expDto.replies

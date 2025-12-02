@@ -9,9 +9,9 @@ import Shared.Common.Util.Logger
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.Registry.RegistryKnowledgeModelPackageDAO
 import Wizard.Database.DAO.Registry.RegistryLocaleDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
-import Wizard.Database.DAO.Registry.RegistryPackageDAO
 import Wizard.Database.DAO.Registry.RegistryTemplateDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigRegistryDAO
@@ -21,8 +21,8 @@ import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.Common
 import qualified Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleService as DocumentTemplateBundleService
+import qualified Wizard.Service.KnowledgeModel.Bundle.KnowledgeModelBundleService as KnowledgeModelBundleService
 import qualified Wizard.Service.Locale.Bundle.LocaleBundleService as LocaleBundleService
-import qualified Wizard.Service.Package.Bundle.PackageBundleService as PackageBundleService
 import Wizard.Service.Registry.RegistryMapper
 import Wizard.Service.Registry.RegistryUtil
 import Wizard.Service.Statistics.StatisticsService
@@ -105,12 +105,12 @@ synchronizeLocales now = do
   traverse_ insertRegistryLocale registryLocales
   logInfoI _CMP_SERVICE "Organization Synchronization successfully finished"
 
-pushPackageBundle :: String -> AppContextM ()
-pushPackageBundle pkgId = do
-  logInfoI _CMP_SERVICE (f' "Pushing package bundle with the id ('%s') to registry" [pkgId])
-  bundle <- PackageBundleService.exportBundle pkgId
-  uploadPackageBundle bundle
-  logInfoI _CMP_SERVICE (f' "Pushing package bundle with the id ('%s') successfully completed" [pkgId])
+pushKnowledgeModelBundle :: String -> AppContextM ()
+pushKnowledgeModelBundle pkgId = do
+  logInfoI _CMP_SERVICE (f' "Pushing knowledge model bundle with the id ('%s') to registry" [pkgId])
+  bundle <- KnowledgeModelBundleService.exportBundle pkgId
+  uploadKnowledgeModelBundle bundle
+  logInfoI _CMP_SERVICE (f' "Pushing knowledge model bundle with the id ('%s') successfully completed" [pkgId])
 
 pushDocumentTemplateBundle :: String -> AppContextM ()
 pushDocumentTemplateBundle tmlId = do

@@ -1,24 +1,25 @@
 module Wizard.Service.KnowledgeModel.Compiler.Modifier.Metric where
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.Metric.MetricEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Modifier
-import WizardLib.KnowledgeModel.Model.Event.Metric.MetricEvent
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 instance CreateEntity AddMetricEvent Metric where
-  createEntity event =
+  createEntity event content =
     Metric
       { uuid = event.entityUuid
-      , title = event.title
-      , abbreviation = event.abbreviation
-      , description = event.description
-      , annotations = event.annotations
+      , title = content.title
+      , abbreviation = content.abbreviation
+      , description = content.description
+      , annotations = content.annotations
       }
 
 instance EditEntity EditMetricEvent Metric where
-  editEntity event entity =
+  editEntity event content entity =
     entity
-      { title = applyValue entity.title event.title
-      , abbreviation = applyValue entity.abbreviation event.abbreviation
-      , description = applyValue entity.description event.description
-      , annotations = applyValue entity.annotations event.annotations
+      { title = applyValue entity.title content.title
+      , abbreviation = applyValue entity.abbreviation content.abbreviation
+      , description = applyValue entity.description content.description
+      , annotations = applyValue entity.annotations content.annotations
       }

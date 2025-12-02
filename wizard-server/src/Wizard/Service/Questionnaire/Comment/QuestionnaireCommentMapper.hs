@@ -33,8 +33,8 @@ toCommentThreadList thread mAssignedTo mCreatedBy comments =
     , resolved = thread.resolved
     , comments = comments
     , private = thread.private
-    , assignedTo = fmap (UM.toSuggestionDTO . UM.toSuggestion) mAssignedTo
-    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mCreatedBy
+    , assignedTo = fmap (UM.toSuggestion . UM.toSimple) mAssignedTo
+    , createdBy = fmap (UM.toSuggestion . UM.toSimple) mCreatedBy
     , createdAt = thread.createdAt
     , updatedAt = thread.updatedAt
     }
@@ -62,7 +62,7 @@ toCommentList comment mUser =
   QuestionnaireCommentList
     { uuid = comment.uuid
     , text = comment.text
-    , createdBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mUser
+    , createdBy = fmap (UM.toSuggestion . UM.toSimple) mUser
     , createdAt = comment.createdAt
     , updatedAt = comment.updatedAt
     }

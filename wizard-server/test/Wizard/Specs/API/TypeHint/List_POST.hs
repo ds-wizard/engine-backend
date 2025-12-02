@@ -3,6 +3,7 @@ module Wizard.Specs.API.TypeHint.List_POST (
 ) where
 
 import Data.Aeson (encode)
+import Data.Foldable (traverse_)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -12,10 +13,13 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
-import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelEditorMigration as KnowledgeModelEditor
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as KnowledgeModelPackage
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.TypeHint.Data.TypeHints
@@ -53,8 +57,8 @@ test_200 appContext = do
   create_test_200 "HTTP 200 OK (Questionnaire, Owner)" appContext questionnaireTypeHintRequest questionnaire15 [reqAuthHeader]
   create_test_200 "HTTP 200 OK (Questionnaire, Editor)" appContext questionnaireTypeHintRequest questionnaire15 [reqNonAdminAuthHeader]
   create_test_200 "HTTP 200 OK (Questionnaire, Anonymous)" appContext questionnaireTypeHintRequest questionnaire15AnonymousEdit []
-  create_test_200 "HTTP 200 OK (Branch-Integration)" appContext branchIntegrationTypeHintRequest questionnaire15 [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (Branch-Question)" appContext branchQuestionTypeHintRequest questionnaire15 [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (KM Editor-Integration)" appContext kmEditorIntegrationTypeHintRequest questionnaire15 [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (KM Editor-Question)" appContext kmEditorQuestionTypeHintRequest questionnaire15 [reqAuthHeader]
 
 create_test_200 title appContext reqDto qtn authHeader =
   it title $ do
@@ -69,9 +73,11 @@ create_test_200 title appContext reqDto qtn authHeader =
     -- AND: Run migrations
     runInContextIO U.runMigration appContext
     runInContextIO TML.runMigration appContext
-    runInContextIO PKG.runMigration appContext
+    runInContextIO KnowledgeModelPackage.runMigration appContext
     runInContextIO QTN.runMigration appContext
-    runInContextIO B.runMigration appContext
+    runInContextIO KnowledgeModelEditor.runMigration appContext
+    runInContextIO (insertPackage germanyKmPackage) appContext
+    runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
     runInContextIO (insertQuestionnaire qtn) appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -84,8 +90,8 @@ create_test_200 title appContext reqDto qtn authHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_401 appContext = do
-  create_test_401 appContext branchIntegrationTypeHintRequest
-  create_test_401 appContext branchQuestionTypeHintRequest
+  create_test_401 appContext kmEditorIntegrationTypeHintRequest
+  create_test_401 appContext kmEditorQuestionTypeHintRequest
 
 create_test_401 appContext reqDto =
   createAuthTest reqMethod reqUrl [reqCtHeader] (encode reqDto)
@@ -122,8 +128,8 @@ test_403 appContext = do
     questionnaire15AnonymousComment
     []
     _ERROR_SERVICE_USER__MISSING_USER
-  create_test_403_branch appContext branchIntegrationTypeHintRequest
-  create_test_403_branch appContext branchQuestionTypeHintRequest
+  create_test_403_knowledge_model_editor appContext kmEditorIntegrationTypeHintRequest
+  create_test_403_knowledge_model_editor appContext kmEditorQuestionTypeHintRequest
 
 create_test_403_questionnaire title appContext reqDto qtn authHeader reason =
   it title $ do
@@ -138,7 +144,7 @@ create_test_403_questionnaire title appContext reqDto qtn authHeader reason =
     -- AND: Run migrations
     runInContextIO U.runMigration appContext
     runInContextIO TML.runMigration appContext
-    runInContextIO PKG.runMigration appContext
+    runInContextIO KnowledgeModelPackage.runMigration appContext
     runInContextIO QTN.runMigration appContext
     runInContextIO (insertQuestionnaire qtn) appContext
     -- WHEN: Call API
@@ -148,5 +154,5 @@ create_test_403_questionnaire title appContext reqDto qtn authHeader reason =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
-create_test_403_branch appContext reqDto =
+create_test_403_knowledge_model_editor appContext reqDto =
   createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (encode reqDto) "KM_PERM"

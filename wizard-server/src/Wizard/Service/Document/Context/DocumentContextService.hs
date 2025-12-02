@@ -11,6 +11,8 @@ import qualified Data.UUID as U
 
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.List
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
@@ -22,7 +24,7 @@ import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Document.DocumentContextJM ()
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
-import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Model.Questionnaire.QuestionnaireEventListLenses ()
 import Wizard.Model.Questionnaire.QuestionnairePerm
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireVersion
@@ -32,15 +34,13 @@ import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Report.ReportGenerator
 import Wizard.Service.Tenant.TenantHelper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
-import WizardLib.KnowledgeModel.Model.Event.Event
-import WizardLib.KnowledgeModel.Model.Package.Package
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Model.User.UserGroup
 import qualified WizardLib.Public.Service.User.Group.UserGroupMapper as UGR_Mapper
 
-createDocumentContext :: Document -> Package -> [Event] -> Questionnaire -> Maybe (M.Map String Reply) -> AppContextM DocumentContext
-createDocumentContext doc pkg branchEvents qtn mReplies = do
-  km <- compileKnowledgeModelWithCaching' branchEvents (Just qtn.packageId) qtn.selectedQuestionTagUuids (not . null $ branchEvents)
+createDocumentContext :: Document -> KnowledgeModelPackage -> [KnowledgeModelEvent] -> Questionnaire -> Maybe (M.Map String Reply) -> AppContextM DocumentContext
+createDocumentContext doc pkg kmEditorEvents qtn mReplies = do
+  km <- compileKnowledgeModelWithCaching' kmEditorEvents (Just qtn.knowledgeModelPackageId) qtn.selectedQuestionTagUuids (not . null $ kmEditorEvents)
   mQtnCreatedBy <- forM qtn.creatorUuid findUserByUuid
   mDocCreatedBy <- forM doc.createdBy findUserByUuid
   tcOrganization <- findTenantConfigOrganization
@@ -50,12 +50,12 @@ createDocumentContext doc pkg branchEvents qtn mReplies = do
     case mReplies of
       Just replies -> return (Nothing, replies, M.empty)
       _ -> do
-        qtnEvents <- findQuestionnaireEventsByQuestionnaireUuid qtn.uuid
+        qtnEvents <- findQuestionnaireEventListsByQuestionnaireUuid qtn.uuid
         let filteredQtnEvents =
               case doc.questionnaireEventUuid of
                 Just eventUuid -> takeWhileInclusive (\e -> getUuid e /= eventUuid) qtnEvents
                 Nothing -> qtnEvents
-        qtnCtn <- compileQuestionnairePreview filteredQtnEvents
+        let qtnCtn = compileQuestionnaire filteredQtnEvents
         return (qtnCtn.phaseUuid, qtnCtn.replies, qtnCtn.labels)
   report <- generateReport phaseUuid km replies
   mQtnVersion <-
@@ -63,7 +63,10 @@ createDocumentContext doc pkg branchEvents qtn mReplies = do
       (Just eventUuid) -> findQuestionnaireVersionByEventUuid' qtn.uuid eventUuid
       _ -> return Nothing
   qtnVersionsList <- findQuestionnaireVersionListByQuestionnaireUuidAndCreatedAt qtn.uuid (fmap (.createdAt) mQtnVersion)
-  qtnFiles <- findQuestionnaireFilesSimpleByQuestionnaire doc.questionnaireUuid
+  qtnFiles <-
+    case doc.questionnaireUuid of
+      Just questionnaireUuid -> findQuestionnaireFilesSimpleByQuestionnaire questionnaireUuid
+      Nothing -> return []
   (users, groups) <- heSettingsToPerms qtn
   return $
     toDocumentContext

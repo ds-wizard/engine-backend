@@ -3,12 +3,19 @@ module Wizard.Specs.API.DocumentTemplateDraft.Detail_GET (
 ) where
 
 import Data.Aeson (encode)
+import Data.Foldable (traverse_)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateDrafts
@@ -18,11 +25,6 @@ import qualified Wizard.Database.Migration.Development.Registry.RegistryMigratio
 import Wizard.Model.Context.AppContext
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -63,7 +65,8 @@ test_200 appContext = do
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext
-      runInContextIO (insertPackage germanyPackage) appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       runInContextIO (insertQuestionnaire questionnaire1) appContext
       runInContextIO (insertDraftData wizardDocumentTemplateDraftData) appContext
       runInContextIO R_Migration.runMigration appContext

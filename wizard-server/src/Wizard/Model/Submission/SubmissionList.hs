@@ -5,7 +5,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Submission.Submission
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 data SubmissionList = SubmissionList
   { uuid :: U.UUID
@@ -15,7 +15,7 @@ data SubmissionList = SubmissionList
   , serviceId :: String
   , serviceName :: Maybe String
   , documentUuid :: U.UUID
-  , createdBy :: UserSuggestionDTO
+  , createdBy :: UserSuggestion
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

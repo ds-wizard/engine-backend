@@ -4,7 +4,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Questionnaire.QuestionnaireReply
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 data QuestionnaireEventChangeDTO
   = SetReplyEventChangeDTO' SetReplyEventChangeDTO
@@ -69,7 +69,7 @@ data AssignCommentThreadEventChangeDTO = AssignCommentThreadEventChangeDTO
   , threadUuid :: U.UUID
   , path :: String
   , private :: Bool
-  , assignedTo :: Maybe UserSuggestionDTO
+  , assignedTo :: Maybe UserSuggestion
   }
   deriving (Show, Eq, Generic)
 

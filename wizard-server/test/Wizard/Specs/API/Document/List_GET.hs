@@ -14,6 +14,8 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Error.Error
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
@@ -23,8 +25,6 @@ import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigratio
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Document.DocumentMapper
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common

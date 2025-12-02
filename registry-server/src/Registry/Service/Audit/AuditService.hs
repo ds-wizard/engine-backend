@@ -1,6 +1,6 @@
 module Registry.Service.Audit.AuditService (
   auditListPackages,
-  auditGetPackageBundle,
+  auditGetKnowledgeModelBundle,
   auditGetDocumentTemplateBundle,
   auditGetLocaleBundle,
 ) where
@@ -29,11 +29,11 @@ auditListPackages headers =
     insertAuditEntry entry
     return . Right . Just $ entry
 
-auditGetPackageBundle :: String -> AppContextM (Either AppError (Maybe AuditEntry))
-auditGetPackageBundle pkgId =
+auditGetKnowledgeModelBundle :: String -> AppContextM (Either AppError (Maybe AuditEntry))
+auditGetKnowledgeModelBundle pkgId =
   heGetOrganizationFromContext $ \org -> do
     now <- liftIO getCurrentTime
-    let entry = GetPackageBundleAuditEntry {organizationId = org.organizationId, packageId = pkgId, createdAt = now}
+    let entry = GetKnowledgeModelBundleAuditEntry {organizationId = org.organizationId, knowledgeModelPackageId = pkgId, createdAt = now}
     insertAuditEntry entry
     return . Right . Just $ entry
 
@@ -67,9 +67,9 @@ getInstanceStaticsFromHeaders headers =
   let get key = fromMaybe (-1) (M.lookup key (M.fromList headers) >>= readMaybe)
    in InstanceStatistics
         { userCount = get xUserCountHeaderName
-        , pkgCount = get xPkgCountHeaderName
+        , pkgCount = get xKnowledgeModelPackageCountHeaderName
         , qtnCount = get xQtnCountHeaderName
-        , branchCount = get xBranchCountHeaderName
+        , kmEditorCount = get xKnowledgeModelEditorCountHeaderName
         , docCount = get xDocCountHeaderName
         , tmlCount = get xTmlCountHeaderName
         }

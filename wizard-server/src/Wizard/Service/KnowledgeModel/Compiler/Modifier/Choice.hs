@@ -1,16 +1,21 @@
 module Wizard.Service.KnowledgeModel.Compiler.Modifier.Choice where
 
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.Choice.ChoiceEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compiler.Modifier.Modifier
-import WizardLib.KnowledgeModel.Model.Event.Choice.ChoiceEvent
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 instance CreateEntity AddChoiceEvent Choice where
-  createEntity event =
-    Choice {uuid = event.entityUuid, aLabel = event.aLabel, annotations = event.annotations}
+  createEntity event content =
+    Choice
+      { uuid = event.entityUuid
+      , aLabel = content.aLabel
+      , annotations = content.annotations
+      }
 
 instance EditEntity EditChoiceEvent Choice where
-  editEntity event entity =
+  editEntity event content entity =
     entity
-      { aLabel = applyValue entity.aLabel event.aLabel
-      , annotations = applyValue entity.annotations event.annotations
+      { aLabel = applyValue entity.aLabel content.aLabel
+      , annotations = applyValue entity.annotations content.annotations
       }

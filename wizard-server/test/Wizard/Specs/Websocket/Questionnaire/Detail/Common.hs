@@ -18,6 +18,9 @@ import Shared.Common.Integration.Http.Common.HttpClientFactory
 import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.JSON
 import Shared.Common.Util.String
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Cache.QuestionnaireWebsocketCache
@@ -28,8 +31,6 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
-import WizardLib.KnowledgeModel.Database.DAO.Package.PackageDAO
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -60,7 +61,8 @@ insertQuestionnaireAndUsers appContext qtn =
   do
     runInContext U.runMigration appContext
     runInContextIO TML_Migration.runMigration appContext
-    runInContextIO (insertPackage germanyPackage) appContext
+    runInContextIO (insertPackage germanyKmPackage) appContext
+    runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
     runInContextIO (insertQuestionnaire qtn) appContext
 
 -- --------------------------------

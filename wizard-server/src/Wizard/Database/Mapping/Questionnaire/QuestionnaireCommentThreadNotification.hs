@@ -5,7 +5,7 @@ import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 
 import Wizard.Model.Questionnaire.QuestionnaireCommentThreadNotification
-import Wizard.Model.User.UserSuggestion
+import WizardLib.Public.Model.User.UserSimple
 
 instance FromRow QuestionnaireCommentThreadNotification where
   fromRow = do
@@ -21,7 +21,7 @@ instance FromRow QuestionnaireCommentThreadNotification where
     assignedToLastName <- field
     assignedToEmail <- field
     let assignedTo =
-          UserSuggestion
+          UserSimple
             { uuid = assignedToUuid
             , firstName = assignedToFirstName
             , lastName = assignedToLastName
@@ -36,7 +36,7 @@ instance FromRow QuestionnaireCommentThreadNotification where
           case (mAssignedByUuid, mAssignedByFirstName, mAssignedByLastName, mAssignedByEmail) of
             (Just assignedByUuid, Just assignedByFirstName, Just assignedByLastName, Just assignedByEmail) ->
               Just $
-                UserSuggestion
+                UserSimple
                   { uuid = assignedByUuid
                   , firstName = assignedByFirstName
                   , lastName = assignedByLastName

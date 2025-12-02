@@ -4,11 +4,13 @@ import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
+import Shared.Common.Model.Common.Page
+import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventListJM ()
 import Wizard.Model.Context.BaseContext
+import Wizard.Model.Questionnaire.QuestionnaireEventList
 import Wizard.Service.Questionnaire.QuestionnaireService
 
 type List_GET =
@@ -17,13 +19,21 @@ type List_GET =
     :> "questionnaires"
     :> Capture "qtnUuid" U.UUID
     :> "events"
-    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] [QuestionnaireEventDTO])
+    :> QueryParam "page" Int
+    :> QueryParam "size" Int
+    :> QueryParam "sort" String
+    :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] (Page QuestionnaireEventList))
 
 list_GET
   :: Maybe String
   -> Maybe String
   -> U.UUID
-  -> BaseContextM (Headers '[Header "x-trace-uuid" String] [QuestionnaireEventDTO])
-list_GET mTokenHeader mServerUrl qtnUuid =
+  -> Maybe Int
+  -> Maybe Int
+  -> Maybe String
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page QuestionnaireEventList))
+list_GET mTokenHeader mServerUrl qtnUuid mPage mSize mSort =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService NoTransaction $ addTraceUuidHeader =<< getQuestionnaireEventsForQtnUuid qtnUuid
+    runInAuthService NoTransaction $
+      addTraceUuidHeader
+        =<< getQuestionnaireEventsPage qtnUuid (Pageable mPage mSize) (parseSortQuery mSort)

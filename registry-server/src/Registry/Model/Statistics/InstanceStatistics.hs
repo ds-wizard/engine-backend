@@ -6,7 +6,7 @@ data InstanceStatistics = InstanceStatistics
   { userCount :: Int
   , pkgCount :: Int
   , qtnCount :: Int
-  , branchCount :: Int
+  , kmEditorCount :: Int
   , docCount :: Int
   , tmlCount :: Int
   }

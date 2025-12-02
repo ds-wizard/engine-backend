@@ -18,6 +18,8 @@ import Shared.Common.Model.Common.Lens
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Error.Error
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -38,8 +40,6 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.User.User
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Document.DocumentMapper
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import WizardLib.Public.Localization.Messages.Public
 
 import SharedTest.Specs.API.Common
@@ -82,8 +82,8 @@ create_test_200 title appContext authHeader =
       let reqUrl = reqUrlT questionnaire6.uuid
       let reqHeaders = reqHeadersT authHeader
       -- AND: Run migrations
-      let doc1' = doc1 {questionnaireUuid = questionnaire6.uuid, questionnaireEventUuid = Just . getUuid $ slble_rQ1' questionnaire6.uuid}
-      let doc2' = doc2 {questionnaireUuid = questionnaire6.uuid, questionnaireEventUuid = Just . getUuid $ slble_rQ1' questionnaire6.uuid, createdBy = Just userIsaac.uuid}
+      let doc1' = doc1 {questionnaireUuid = Just questionnaire6.uuid, questionnaireEventUuid = Just . getUuid $ slble_rQ1' questionnaire6.uuid}
+      let doc2' = doc2 {questionnaireUuid = Just questionnaire6.uuid, questionnaireEventUuid = Just . getUuid $ slble_rQ1' questionnaire6.uuid, createdBy = Just userIsaac.uuid}
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO QTN_Migration.runMigration appContext

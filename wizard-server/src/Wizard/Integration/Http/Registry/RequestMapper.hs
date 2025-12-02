@@ -8,12 +8,12 @@ import Servant.Client
 import Prelude hiding (lookup)
 
 import qualified RegistryLib.Api.Handler.DocumentTemplate.List_GET as TML_List_GET
+import qualified RegistryLib.Api.Handler.KnowledgeModelPackage.List_Bundle_POST as PKG_List_Bundle_POST
+import qualified RegistryLib.Api.Handler.KnowledgeModelPackage.List_GET as PKG_List_GET
 import qualified RegistryLib.Api.Handler.Locale.List_GET as LOC_List_GET
 import RegistryLib.Api.Handler.Organization.Detail_State_PUT
 import RegistryLib.Api.Handler.Organization.List_POST as ORG_List_POST
 import RegistryLib.Api.Handler.Organization.List_Simple_GET
-import qualified RegistryLib.Api.Handler.Package.List_Bundle_POST as PKG_List_Bundle_POST
-import qualified RegistryLib.Api.Handler.Package.List_GET as PKG_List_GET
 import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import RegistryLib.Api.Resource.Locale.LocaleDTO
 import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
@@ -21,20 +21,20 @@ import RegistryLib.Api.Resource.Organization.OrganizationCreateJM ()
 import RegistryLib.Api.Resource.Organization.OrganizationDTO
 import RegistryLib.Api.Resource.Organization.OrganizationStateDTO
 import RegistryLib.Api.Resource.Organization.OrganizationStateJM ()
-import RegistryLib.Api.Resource.Package.PackageSimpleDTO
+import RegistryLib.Api.Resource.Package.KnowledgeModelPackageSimpleDTO
 import RegistryLib.Model.Organization.OrganizationSimple
 import Shared.Common.Api.Resource.Common.SemVer2TupleJM ()
 import Shared.Common.Constant.Api
 import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.String (f', splitOn)
+import Shared.DocumentTemplate.Constant.DocumentTemplate
+import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Bundle.KnowledgeModelBundleJM ()
+import Shared.KnowledgeModel.Constant.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.Bundle.KnowledgeModelBundle
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Statistics.InstanceStatistics
 import Wizard.Model.Tenant.Config.TenantConfig
-import WizardLib.DocumentTemplate.Constant.DocumentTemplate
-import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleDTO
-import WizardLib.KnowledgeModel.Api.Resource.PackageBundle.PackageBundleJM ()
-import WizardLib.KnowledgeModel.Constant.KnowledgeModel
 
 toRetrieveOrganizationsRequest :: ClientM (Headers '[Header "x-trace-uuid" String] [OrganizationSimple])
 toRetrieveOrganizationsRequest = client list_simple_GET_Api
@@ -56,15 +56,15 @@ toConfirmOrganizationRegistrationRequest reqDto =
     reqDto.hash
 
 toRetrievePackagesRequest
-  :: TenantConfigRegistry -> InstanceStatistics -> ClientM (Headers '[Header "x-trace-uuid" String] [PackageSimpleDTO])
+  :: TenantConfigRegistry -> InstanceStatistics -> ClientM (Headers '[Header "x-trace-uuid" String] [KnowledgeModelPackageSimpleDTO])
 toRetrievePackagesRequest tenantConfig iStat =
   client
     PKG_List_GET.list_GET_Api
     mTokenHeader
     xUserCountHeaderName
-    xPkgCountHeaderName
+    xKnowledgeModelPackageCountHeaderName
     xQtnCountHeaderName
-    xBranchCountHeaderName
+    xKnowledgeModelEditorCountHeaderName
     xDocCountHeaderName
     xTmlCountHeaderName
     organizationId
@@ -73,9 +73,9 @@ toRetrievePackagesRequest tenantConfig iStat =
   where
     mTokenHeader = Just $ "Bearer " ++ tenantConfig.token
     xUserCountHeaderName = Just . show $ iStat.userCount
-    xPkgCountHeaderName = Just . show $ iStat.pkgCount
+    xKnowledgeModelPackageCountHeaderName = Just . show $ iStat.pkgCount
     xQtnCountHeaderName = Just . show $ iStat.qtnCount
-    xBranchCountHeaderName = Just . show $ iStat.branchCount
+    xKnowledgeModelEditorCountHeaderName = Just . show $ iStat.knowledgeModelEditorCount
     xDocCountHeaderName = Just . show $ iStat.docCount
     xTmlCountHeaderName = Just . show $ iStat.tmlCount
     organizationId = Nothing
@@ -104,11 +104,11 @@ toRetrieveLocaleRequest version tenantConfig =
         [major, minor, _] -> Just . f' "%s.%s.%s" $ [major, minor, "0"]
         _ -> Just "1.0.0"
 
-toRetrievePackageBundleByIdRequest :: ServerConfigRegistry -> TenantConfigRegistry -> String -> HttpRequest
-toRetrievePackageBundleByIdRequest serverConfig tenantConfig pkgId =
+toRetrieveKnowledgeModelBundleByIdRequest :: ServerConfigRegistry -> TenantConfigRegistry -> String -> HttpRequest
+toRetrieveKnowledgeModelBundleByIdRequest serverConfig tenantConfig pkgId =
   HttpRequest
     { requestMethod = "GET"
-    , requestUrl = serverConfig.url ++ "/packages/" ++ pkgId ++ "/bundle"
+    , requestUrl = serverConfig.url ++ "/knowledge-model-packages/" ++ pkgId ++ "/bundle"
     , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ tenantConfig.token)]
     , requestBody = BS.empty
     , multipart = Nothing
@@ -134,8 +134,8 @@ toRetrieveLocaleBundleByIdRequest serverConfig tenantConfig lclId =
     , multipart = Nothing
     }
 
-toUploadPackageBundleRequest :: TenantConfigRegistry -> PackageBundleDTO -> ClientM (Headers '[Header "x-trace-uuid" String] PackageBundleDTO)
-toUploadPackageBundleRequest tenantConfig =
+toUploadKnowledgeModelBundleRequest :: TenantConfigRegistry -> KnowledgeModelBundle -> ClientM (Headers '[Header "x-trace-uuid" String] KnowledgeModelBundle)
+toUploadKnowledgeModelBundleRequest tenantConfig =
   client PKG_List_Bundle_POST.list_bundle_POST_Api mTokenHeader
   where
     mTokenHeader = Just $ "Bearer " ++ tenantConfig.token

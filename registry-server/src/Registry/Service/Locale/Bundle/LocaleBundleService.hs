@@ -12,7 +12,7 @@ import Registry.Service.Locale.LocaleMapper
 import RegistryLib.Api.Resource.Locale.LocaleDTO
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
-import WizardLib.Locale.Service.Locale.Bundle.LocaleBundleMapper
+import Shared.Locale.Service.Locale.Bundle.LocaleBundleMapper
 
 exportBundle :: String -> AppContextM BSL.ByteString
 exportBundle lclId = do

@@ -5,8 +5,8 @@ import qualified Data.Map.Strict as M
 import Data.Maybe (mapMaybe)
 
 import Shared.Common.Model.Common.MapEntry
-import WizardLib.KnowledgeModel.Model.Event.EventField
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEventField
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 
 getDiffEntities :: HasAnnotations' entity => [entity] -> [entity] -> [entity]
 getDiffEntities oldEntities newEntities =

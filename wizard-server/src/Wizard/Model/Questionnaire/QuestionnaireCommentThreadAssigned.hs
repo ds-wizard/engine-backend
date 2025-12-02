@@ -4,7 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 data QuestionnaireCommentThreadAssigned = QuestionnaireCommentThreadAssigned
   { questionnaireUuid :: U.UUID
@@ -14,7 +14,7 @@ data QuestionnaireCommentThreadAssigned = QuestionnaireCommentThreadAssigned
   , resolved :: Bool
   , private :: Bool
   , text :: String
-  , createdBy :: Maybe UserSuggestionDTO
+  , createdBy :: Maybe UserSuggestion
   , updatedAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

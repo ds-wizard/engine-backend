@@ -11,12 +11,12 @@ import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Util.String
 import Wizard.Database.DAO.Common
-import Wizard.Database.Mapping.User.UserSuggestion ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Model.User.UserSuggestion
+import WizardLib.Public.Database.Mapping.User.UserSimple ()
+import WizardLib.Public.Model.User.UserSimple
 
-findQuestionnaireUserSuggestionsPage :: U.UUID -> String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
+findQuestionnaireUserSuggestionsPage :: U.UUID -> String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserSimple)
 findQuestionnaireUserSuggestionsPage qtnUuid perm mQuery pageable sort =
   -- 1. Prepare variables
   do

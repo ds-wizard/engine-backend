@@ -24,10 +24,10 @@ import Wizard.Model.User.UserSubmissionProp
 import Wizard.Model.User.UserSubmissionPropEM ()
 import Wizard.Model.User.UserSubmissionPropList
 import Wizard.Service.User.UserMapper
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
 import WizardLib.Public.Model.User.UserGroup
 import WizardLib.Public.Model.User.UserGroupMembership
+import WizardLib.Public.Model.User.UserSuggestion
 import WizardLib.Public.Model.User.UserTour
 
 userAlbert :: User
@@ -107,8 +107,8 @@ userState = UserStateDTO {active = True}
 userAlbertOnlineInfo :: OnlineUserInfo
 userAlbertOnlineInfo = toLoggedOnlineUserInfo (toDTO userAlbert) 10 [bioGroup.uuid]
 
-userAlbertSuggestion :: UserSuggestionDTO
-userAlbertSuggestion = toSuggestionDTO . toSuggestion $ userAlbert
+userAlbertSuggestion :: UserSuggestion
+userAlbertSuggestion = toSuggestion . toSimple $ userAlbert
 
 userAlbertBioGroupMembership :: UserGroupMembership
 userAlbertBioGroupMembership =

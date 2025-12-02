@@ -7,6 +7,13 @@ import Data.Maybe
 import Data.Time
 
 import Shared.Common.Util.Uuid
+import qualified Shared.DocumentTemplate.Constant.DocumentTemplate as TemplateConstant
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -18,21 +25,12 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
-import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.Document.Context.DocumentContextMapper
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
-import qualified WizardLib.DocumentTemplate.Constant.DocumentTemplate as TemplateConstant
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
-import WizardLib.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import WizardLib.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import WizardLib.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import WizardLib.KnowledgeModel.Database.Migration.Development.Package.Data.Packages
-import WizardLib.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
-import qualified WizardLib.KnowledgeModel.Service.Package.PackageMapper as SPM
 
 doc1 :: Document
 doc1 =
@@ -41,7 +39,7 @@ doc1 =
     , name = "My exported document"
     , state = DoneDocumentState
     , durability = PersistentDocumentDurability
-    , questionnaireUuid = questionnaire1.uuid
+    , questionnaireUuid = Just questionnaire1.uuid
     , questionnaireEventUuid = Just . getUuid . last $ questionnaire1Events
     , questionnaireRepliesHash = hash . M.toList $ questionnaire1Ctn.replies
     , documentTemplateId = wizardDocumentTemplate.tId
@@ -98,7 +96,7 @@ dmp1 =
           }
     , knowledgeModel = km1WithQ4
     , report = report1
-    , package = toDocumentContextPackage . SPM.toPackage $ germanyPackage
+    , package = toDocumentContextPackage germanyKmPackage
     , organization = defaultOrganization
     , metamodelVersion = TemplateConstant.documentTemplateMetamodelVersion
     , users =
@@ -114,7 +112,7 @@ doc1Create :: DocumentCreateDTO
 doc1Create =
   DocumentCreateDTO
     { name = doc1.name
-    , questionnaireUuid = doc1.questionnaireUuid
+    , questionnaireUuid = questionnaire1.uuid
     , questionnaireEventUuid = Just . getUuid . last $ questionnaire1Events
     , documentTemplateId = doc1.documentTemplateId
     , formatUuid = doc1.formatUuid
@@ -130,7 +128,7 @@ doc2 =
     , name = "My exported document 2"
     , state = DoneDocumentState
     , durability = PersistentDocumentDurability
-    , questionnaireUuid = questionnaire2.uuid
+    , questionnaireUuid = Just questionnaire2.uuid
     , questionnaireEventUuid = Just . getUuid . last $ questionnaire2Events
     , questionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn.replies
     , documentTemplateId = wizardDocumentTemplate.tId
@@ -153,7 +151,7 @@ doc3 =
     , name = "My exported document 3"
     , state = DoneDocumentState
     , durability = PersistentDocumentDurability
-    , questionnaireUuid = questionnaire2.uuid
+    , questionnaireUuid = Just questionnaire2.uuid
     , questionnaireEventUuid = Just . getUuid . last $ questionnaire2Events
     , questionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn.replies
     , documentTemplateId = wizardDocumentTemplate.tId
@@ -236,7 +234,7 @@ differentDoc =
     , name = "My different document"
     , state = DoneDocumentState
     , durability = PersistentDocumentDurability
-    , questionnaireUuid = differentQuestionnaire.uuid
+    , questionnaireUuid = Just differentQuestionnaire.uuid
     , questionnaireEventUuid = Nothing
     , questionnaireRepliesHash = hash . M.toList $ questionnaire1Ctn.replies
     , documentTemplateId = anotherWizardDocumentTemplate.tId

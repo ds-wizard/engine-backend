@@ -11,7 +11,7 @@ import Shared.Common.Util.Gravatar
 import Shared.Common.Util.String (splitOn)
 import Shared.Common.Util.Uuid
 import Wizard.Model.Questionnaire.QuestionnaireCommentList
-import WizardLib.Public.Api.Resource.User.UserSuggestionDTO
+import WizardLib.Public.Model.User.UserSuggestion
 
 instance FromRow QuestionnaireCommentThreadList where
   fromRow = do
@@ -30,7 +30,7 @@ instance FromRow QuestionnaireCommentThreadList where
           case (mAssignedToUuid, mAssignedToFirstName, mAssignedToLastName, mAssignedToEmail) of
             (Just assignedToUuid, Just assignedToFirstName, Just assignedToLastName, Just assignedToEmail) ->
               Just $
-                UserSuggestionDTO
+                UserSuggestion
                   { uuid = assignedToUuid
                   , firstName = assignedToFirstName
                   , lastName = assignedToLastName
@@ -47,7 +47,7 @@ instance FromRow QuestionnaireCommentThreadList where
           case (mCreatedByUuid, mCreatedByFirstName, mCreatedByLastName, mCreatedByEmail) of
             (Just createdByUuid, Just createdByFirstName, Just createdByLastName, Just createdByEmail) ->
               Just $
-                UserSuggestionDTO
+                UserSuggestion
                   { uuid = createdByUuid
                   , firstName = createdByFirstName
                   , lastName = createdByLastName
@@ -72,7 +72,7 @@ parseComment commentS =
               "" -> Nothing
               _ ->
                 Just $
-                  UserSuggestionDTO
+                  UserSuggestion
                     { uuid = u' $ parts !! 4
                     , firstName = parts !! 5
                     , lastName = parts !! 6

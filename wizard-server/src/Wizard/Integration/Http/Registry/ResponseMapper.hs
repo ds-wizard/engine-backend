@@ -6,8 +6,8 @@ import Prelude hiding (lookup)
 
 import Shared.Common.Model.Error.Error
 
-toRetrievePackageBundleByIdResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
-toRetrievePackageBundleByIdResponse = Right . responseBody
+toRetrieveKnowledgeModelBundleByIdResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
+toRetrieveKnowledgeModelBundleByIdResponse = Right . responseBody
 
 toRetrieveTemplateBundleByIdResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
 toRetrieveTemplateBundleByIdResponse = Right . responseBody
