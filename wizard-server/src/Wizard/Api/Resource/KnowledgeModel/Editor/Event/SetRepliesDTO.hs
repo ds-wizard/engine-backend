@@ -4,7 +4,7 @@ import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Project.ProjectReply
 
 data SetRepliesDTO = SetRepliesDTO
   { uuid :: U.UUID

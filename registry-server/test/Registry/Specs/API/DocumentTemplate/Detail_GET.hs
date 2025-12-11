@@ -31,7 +31,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/document-templates/global:questionnaire-report:1.0.0"
+reqUrl = "/document-templates/global:project-report:1.0.0"
 
 reqHeaders = [reqCtHeader]
 

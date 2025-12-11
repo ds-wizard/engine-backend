@@ -5,7 +5,7 @@ import Network.WebSockets
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
-import Wizard.Api.Resource.Websocket.KnowledgeModelEditorActionDTO
+import Wizard.Api.Resource.Websocket.KnowledgeModelEditorMessageDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditorEvents
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
@@ -44,11 +44,11 @@ test200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 write_SetReplies connection replyDto = do
-  let reqDto = SetReplies_ClientKnowledgeModelEditorActionDTO replyDto
+  let reqDto = SetReplies_ClientKnowledgeModelEditorMessageDTO replyDto
   sendMessage connection reqDto
 
 read_SetReplies connection expRepliesDto = do
   resDto <- receiveData connection
-  let eResult = eitherDecode resDto :: Either String (Success_ServerActionDTO ServerKnowledgeModelEditorActionDTO)
-  let (Right (Success_ServerActionDTO (SetReplies_ServerKnowledgeModelEditorActionDTO replyDto))) = eResult
+  let eResult = eitherDecode resDto :: Either String (Success_ServerActionDTO ServerKnowledgeModelEditorMessageDTO)
+  let (Right (Success_ServerActionDTO (SetReplies_ServerKnowledgeModelEditorMessageDTO replyDto))) = eResult
   expRepliesDto `shouldBe` replyDto

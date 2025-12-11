@@ -26,7 +26,7 @@ import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorEvent
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorState
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
-import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Project.ProjectReply
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.KnowledgeModel.Compiler.Compiler

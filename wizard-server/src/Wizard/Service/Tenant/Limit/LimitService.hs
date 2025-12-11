@@ -14,8 +14,8 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
+import Wizard.Database.DAO.Project.ProjectDAO
+import Wizard.Database.DAO.Project.ProjectFileDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AclContext
@@ -66,11 +66,11 @@ checkPackageLimit = do
   count <- countPackagesGroupedByOrganizationIdAndKmId
   checkLimit "knowledge models" count limit.knowledgeModels
 
-checkQuestionnaireLimit :: AppContextM ()
-checkQuestionnaireLimit = do
+checkProjectLimit :: AppContextM ()
+checkProjectLimit = do
   limit <- findLimitBundleForCurrentTenant
-  count <- countQuestionnaires
-  checkLimit "questionnaires" count limit.questionnaires
+  count <- countProjects
+  checkLimit "projects" count limit.projects
 
 checkDocumentTemplateLimit :: AppContextM ()
 checkDocumentTemplateLimit = do
@@ -101,6 +101,6 @@ checkStorageSize newFileSize = do
   limit <- findLimitBundleForCurrentTenant
   docSize <- sumDocumentFileSize
   templateAssetSize <- sumAssetFileSize
-  qtnFileSize <- sumQuestionnaireFileSize
-  let storageCount = docSize + templateAssetSize + qtnFileSize
+  projectFileSize <- sumProjectFileSize
+  let storageCount = docSize + templateAssetSize + projectFileSize
   checkLimit "storage" (storageCount + newFileSize) limit.storage

@@ -9,9 +9,9 @@ import Database.PostgreSQL.Simple.ToRow
 import Database.PostgreSQL.Simple.Types
 
 import Shared.Common.Util.Uuid
-import Wizard.Database.Mapping.Questionnaire.QuestionnaireEvent
+import Wizard.Database.Mapping.Project.ProjectEvent
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorReply
-import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Project.ProjectReply
 
 instance ToRow KnowledgeModelEditorReply where
   toRow KnowledgeModelEditorReply {..} =

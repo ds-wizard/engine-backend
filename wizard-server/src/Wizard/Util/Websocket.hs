@@ -67,7 +67,7 @@ exceptMyself :: U.UUID -> WebsocketRecord -> Bool
 exceptMyself myConnectionUuid record = record.connectionUuid /= myConnectionUuid
 
 filterByEntityId :: String -> WebsocketRecord -> Bool
-filterByEntityId questionnaireUuid record = questionnaireUuid == record.entityId
+filterByEntityId projectUuid record = projectUuid == record.entityId
 
 -- Accessors
 getCollaborators :: U.UUID -> String -> [WebsocketRecord] -> [OnlineUserInfo]

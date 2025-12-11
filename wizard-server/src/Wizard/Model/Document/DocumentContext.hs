@@ -8,9 +8,9 @@ import GHC.Generics
 import Shared.Common.Model.Common.SemVer2Tuple
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Model.Questionnaire.QuestionnaireFileSimple
-import Wizard.Model.Questionnaire.QuestionnaireReply
-import Wizard.Model.Questionnaire.QuestionnaireVersionList
+import Wizard.Model.Project.File.ProjectFileSimple
+import Wizard.Model.Project.ProjectReply
+import Wizard.Model.Project.Version.ProjectVersionList
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
@@ -57,9 +57,9 @@ data DocumentContextQuestionnaire = DocumentContextQuestionnaire
   , phaseUuid :: Maybe U.UUID
   , labels :: M.Map String [U.UUID]
   , versionUuid :: Maybe U.UUID
-  , versions :: [QuestionnaireVersionList]
+  , versions :: [ProjectVersionList]
   , projectTags :: [String]
-  , files :: [QuestionnaireFileSimple]
+  , files :: [ProjectFileSimple]
   , createdBy :: Maybe UserDTO
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

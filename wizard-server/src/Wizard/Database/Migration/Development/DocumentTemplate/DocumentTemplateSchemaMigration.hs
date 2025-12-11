@@ -32,14 +32,14 @@ dropBucket = do
 dropFunctions :: AppContextM Int64
 dropFunctions = do
   logInfo _CMP_MIGRATION "(Function/DocumentTemplate) drop functions"
-  let sql = "DROP FUNCTION IF EXISTS create_persistent_command_from_questionnaire_file_delete;"
+  let sql = "DROP FUNCTION IF EXISTS create_persistent_command_from_project_file_delete;"
   let action conn = execute_ conn sql
   runDB action
 
 dropTriggers :: AppContextM Int64
 dropTriggers = do
   logInfo _CMP_MIGRATION "(Trigger/DocumentTemplate) drop tables"
-  let sql = "DROP TRIGGER IF EXISTS trigger_on_after_questionnaire_file_delete ON questionnaire_file;"
+  let sql = "DROP TRIGGER IF EXISTS trigger_on_after_document_template_asset_delete ON project_file;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -161,7 +161,7 @@ createDraftDataTable = do
         "CREATE TABLE document_template_draft_data \
         \( \
         \    document_template_id varchar     NOT NULL, \
-        \    questionnaire_uuid   uuid, \
+        \    project_uuid   uuid, \
         \    format_uuid          uuid, \
         \    tenant_uuid          uuid        NOT NULL, \
         \    created_at           timestamptz NOT NULL, \
@@ -169,7 +169,7 @@ createDraftDataTable = do
         \    knowledge_model_editor_uuid  uuid, \
         \    CONSTRAINT document_template_draft_data_pk PRIMARY KEY (document_template_id, tenant_uuid), \
         \    CONSTRAINT document_template_draft_data_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
-        \    CONSTRAINT document_template_draft_data_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE SET NULL, \
+        \    CONSTRAINT document_template_draft_data_project_uuid_fk FOREIGN KEY (project_uuid) REFERENCES project (uuid) ON DELETE SET NULL, \
         \    CONSTRAINT document_template_draft_data_knowledge_model_editor_uuid_fk FOREIGN KEY (knowledge_model_editor_uuid) REFERENCES knowledge_model_editor (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT document_template_draft_data_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"

@@ -14,18 +14,18 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.Submission.SubmissionJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
+import Wizard.Database.Migration.Development.Project.Data.Projects
+import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ_Migration
 import Wizard.Database.Migration.Development.Submission.Data.Submissions
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionMigration as SUB_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
-import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Project.Project
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -56,11 +56,11 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext questionnaire3 [reqNonAdminAuthHeader]
-  create_test_200 "HTTP 200 OK (Non-Owner, VisibleView)" appContext questionnaire2 [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 OK (Owner, Private)" appContext project1 [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext project3 [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleView)" appContext project2 [reqNonAdminAuthHeader]
 
-create_test_200 title appContext qtn authHeader =
+create_test_200 title appContext project authHeader =
   it title $
     -- GIVEN: Prepare request
     do
@@ -73,11 +73,11 @@ create_test_200 title appContext qtn authHeader =
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
-      runInContextIO QTN_Migration.runMigration appContext
-      runInContextIO (insertQuestionnaire questionnaire10) appContext
+      runInContextIO PRJ_Migration.runMigration appContext
+      runInContextIO (insertProject project10) appContext
       runInContextIO DOC_Migration.runMigration appContext
       runInContextIO (deleteDocumentByUuid doc1.uuid) appContext
-      runInContextIO (insertDocument (doc1 {questionnaireUuid = Just qtn.uuid})) appContext
+      runInContextIO (insertDocument (doc1 {projectUuid = Just project.uuid})) appContext
       runInContextIO SUB_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
@@ -98,11 +98,11 @@ test_403 appContext =
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, Private)"
     appContext
-    questionnaire1
+    project1
     [reqNonAdminAuthHeader]
-    (_ERROR_VALIDATION__FORBIDDEN "View Questionnaire")
+    (_ERROR_VALIDATION__FORBIDDEN "View Project")
 
-create_test_403 title appContext qtn authHeader errorMessage =
+create_test_403 title appContext project authHeader errorMessage =
   it title $
     -- GIVEN: Prepare request
     do
@@ -115,11 +115,11 @@ create_test_403 title appContext qtn authHeader errorMessage =
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
-      runInContextIO QTN_Migration.runMigration appContext
-      runInContextIO (insertQuestionnaire questionnaire7) appContext
+      runInContextIO PRJ_Migration.runMigration appContext
+      runInContextIO (insertProject project7) appContext
       runInContextIO DOC_Migration.runMigration appContext
       runInContextIO (deleteDocumentByUuid doc1.uuid) appContext
-      runInContextIO (insertDocument (doc1 {questionnaireUuid = Just qtn.uuid})) appContext
+      runInContextIO (insertDocument (doc1 {projectUuid = Just project.uuid})) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

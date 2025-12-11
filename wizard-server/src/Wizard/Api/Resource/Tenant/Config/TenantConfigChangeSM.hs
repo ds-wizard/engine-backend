@@ -40,8 +40,8 @@ instance ToSchema TenantConfigKnowledgeModelChangeDTO where
 instance ToSchema TenantConfigKnowledgeModelPublicChangeDTO where
   declareNamedSchema = toSwagger defaultKnowledgeModelPublicChangeDto
 
-instance ToSchema TenantConfigQuestionnaireChangeDTO where
-  declareNamedSchema = toSwagger defaultQuestionnaireChangeDto
+instance ToSchema TenantConfigProjectChangeDTO where
+  declareNamedSchema = toSwagger defaultProjectChangeDto
 
 instance ToSchema TenantConfigSubmissionChangeDTO where
   declareNamedSchema = toSwagger defaultSubmission

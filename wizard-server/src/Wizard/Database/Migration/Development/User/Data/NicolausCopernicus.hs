@@ -18,7 +18,7 @@ userNicolaus =
     , affiliation = Nothing
     , sources = [_USER_SOURCE_INTERNAL]
     , uRole = _USER_ROLE_RESEARCHER
-    , permissions = ["PM_READ_PERM", "QTN_PERM", "DOC_TML_READ_PERM", "SUBM_PERM"]
+    , permissions = ["PM_READ_PERM", "PRJ_PERM", "DOC_TML_READ_PERM", "SUBM_PERM"]
     , active = True
     , -- cspell:disable
       passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="

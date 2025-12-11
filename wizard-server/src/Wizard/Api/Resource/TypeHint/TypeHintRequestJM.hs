@@ -22,7 +22,7 @@ instance FromJSON TypeHintRequestDTO where
     case requestType of
       "KnowledgeModelEditorIntegrationTypeHintRequest" -> parseJSON (Object o) >>= \v -> return (KnowledgeModelEditorIntegrationTypeHintRequest' v)
       "KnowledgeModelEditorQuestionTypeHintRequest" -> parseJSON (Object o) >>= \v -> return (KnowledgeModelEditorQuestionTypeHintRequest' v)
-      "QuestionnaireTypeHintRequest" -> parseJSON (Object o) >>= \v -> return (QuestionnaireTypeHintRequest' v)
+      "ProjectTypeHintRequest" -> parseJSON (Object o) >>= \v -> return (ProjectTypeHintRequest' v)
       _ -> fail "One of the integrations has unsupported requestType"
   parseJSON _ = mzero
 
@@ -38,8 +38,8 @@ instance FromJSON KnowledgeModelEditorQuestionTypeHintRequest where
 instance ToJSON KnowledgeModelEditorQuestionTypeHintRequest where
   toJSON = genericToJSON (jsonOptionsWithTypeField "requestType")
 
-instance FromJSON QuestionnaireTypeHintRequest where
+instance FromJSON ProjectTypeHintRequest where
   parseJSON = genericParseJSON (jsonOptionsWithTypeField "requestType")
 
-instance ToJSON QuestionnaireTypeHintRequest where
+instance ToJSON ProjectTypeHintRequest where
   toJSON = genericToJSON (jsonOptionsWithTypeField "requestType")

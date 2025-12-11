@@ -17,7 +17,7 @@ type List_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "documents"
-    :> QueryParam "questionnaireUuid" U.UUID
+    :> QueryParam "projectUuid" U.UUID
     :> QueryParam "documentTemplateId" String
     :> QueryParam "q" String
     :> QueryParam "page" Int
@@ -35,7 +35,7 @@ list_GET
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page DocumentDTO))
-list_GET mTokenHeader mServerUrl mQuestionnaireUuid mDocumentTemplateId mQuery mPage mSize mSort =
+list_GET mTokenHeader mServerUrl mProjectUuid mDocumentTemplateId mQuery mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
-      addTraceUuidHeader =<< getDocumentsPageDto mQuestionnaireUuid mDocumentTemplateId mQuery (Pageable mPage mSize) (parseSortQuery mSort)
+      addTraceUuidHeader =<< getDocumentsPageDto mProjectUuid mDocumentTemplateId mQuery (Pageable mPage mSize) (parseSortQuery mSort)

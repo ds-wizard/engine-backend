@@ -9,7 +9,7 @@ import Shared.Common.Util.Uuid
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Project.ProjectReply
 import Wizard.Model.Report.Report
 import Wizard.Service.Report.Evaluator.Indication
 import Wizard.Service.Report.Evaluator.Metric

@@ -8,7 +8,7 @@ import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorDetailDTO
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorDetailJM ()
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorStateSM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleSM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM ()
+import Wizard.Api.Resource.Project.ProjectReplySM ()
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
 
 instance ToSchema KnowledgeModelEditorDetailDTO where

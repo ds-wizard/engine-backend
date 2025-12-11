@@ -10,6 +10,7 @@ import Wizard.Api.Handler.KnowledgeModelEditor.Detail_WS
 import Wizard.Api.Handler.KnowledgeModelEditor.List_GET
 import Wizard.Api.Handler.KnowledgeModelEditor.List_POST
 import Wizard.Api.Handler.KnowledgeModelEditor.List_Suggestions_GET
+import Wizard.Api.Handler.KnowledgeModelEditor.Migration.Api
 import Wizard.Model.Context.BaseContext
 
 type KnowledgeModelEditorAPI =
@@ -21,6 +22,7 @@ type KnowledgeModelEditorAPI =
           :<|> Detail_PUT
           :<|> Detail_DELETE
           :<|> Detail_WS
+          :<|> MigrationAPI
        )
 
 knowledgeModelEditorApi :: Proxy KnowledgeModelEditorAPI
@@ -35,3 +37,4 @@ knowledgeModelEditorServer =
     :<|> detail_PUT
     :<|> detail_DELETE
     :<|> detail_WS
+    :<|> migrationServer

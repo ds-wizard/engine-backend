@@ -18,7 +18,7 @@ instance FromEnv ServerConfig where
     document <- applyEnv serverConfig.document
     feedback <- applyEnv serverConfig.feedback
     knowledgeModelEditor <- applyEnv serverConfig.knowledgeModelEditor
-    questionnaire <- applyEnv serverConfig.questionnaire
+    project <- applyEnv serverConfig.project
     temporaryFile <- applyEnv serverConfig.temporaryFile
     userToken <- applyEnv serverConfig.userToken
     analyticalMails <- applyEnv serverConfig.analyticalMails
@@ -98,16 +98,16 @@ instance FromEnv ServerConfigKnowledgeModelEditor where
       , \c -> applyStringEnvVariable "KNOWLEDGE_MODEL_EDITOR_SQUASH_CRON" c.squash.cron (\x -> c {squash = c.squash {cron = x}} :: ServerConfigKnowledgeModelEditor)
       ]
 
-instance FromEnv ServerConfigQuestionnaire where
+instance FromEnv ServerConfigProject where
   applyEnv serverConfig =
     applyEnvVariables
       serverConfig
-      [ \c -> applyEnvVariable "QUESTIONNAIRE_CLEAN_ENABLED" c.clean.enabled (\x -> c {clean = c.clean {enabled = x}} :: ServerConfigQuestionnaire)
-      , \c -> applyStringEnvVariable "QUESTIONNAIRE_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigQuestionnaire)
-      , \c -> applyEnvVariable "QUESTIONNAIRE_SQUASH_ENABLED" c.squash.enabled (\x -> c {squash = c.squash {enabled = x}} :: ServerConfigQuestionnaire)
-      , \c -> applyStringEnvVariable "QUESTIONNAIRE_SQUASH_CRON" c.squash.cron (\x -> c {squash = c.squash {cron = x}} :: ServerConfigQuestionnaire)
-      , \c -> applyEnvVariable "QUESTIONNAIRE_ASSIGNEE_NOTIFICATION_ENABLED" c.assigneeNotification.enabled (\x -> c {assigneeNotification = c.assigneeNotification {enabled = x}} :: ServerConfigQuestionnaire)
-      , \c -> applyStringEnvVariable "QUESTIONNAIRE_ASSIGNEE_NOTIFICATION_CRON" c.assigneeNotification.cron (\x -> c {assigneeNotification = c.assigneeNotification {cron = x}} :: ServerConfigQuestionnaire)
+      [ \c -> applyEnvVariable "PROJECT_CLEAN_ENABLED" c.clean.enabled (\x -> c {clean = c.clean {enabled = x}} :: ServerConfigProject)
+      , \c -> applyStringEnvVariable "PROJECT_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigProject)
+      , \c -> applyEnvVariable "PROJECT_SQUASH_ENABLED" c.squash.enabled (\x -> c {squash = c.squash {enabled = x}} :: ServerConfigProject)
+      , \c -> applyStringEnvVariable "PROJECT_SQUASH_CRON" c.squash.cron (\x -> c {squash = c.squash {cron = x}} :: ServerConfigProject)
+      , \c -> applyEnvVariable "PROJECT_ASSIGNEE_NOTIFICATION_ENABLED" c.assigneeNotification.enabled (\x -> c {assigneeNotification = c.assigneeNotification {enabled = x}} :: ServerConfigProject)
+      , \c -> applyStringEnvVariable "PROJECT_ASSIGNEE_NOTIFICATION_CRON" c.assigneeNotification.cron (\x -> c {assigneeNotification = c.assigneeNotification {cron = x}} :: ServerConfigProject)
       ]
 
 instance FromEnv ServerConfigTemporaryFile where
@@ -135,7 +135,7 @@ instance FromEnv ServerConfigSignalBridge where
       [ \c -> applyEnvVariable "SIGNAL_BRIDGE_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigSignalBridge)
       , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_UPDATE_PERMS_ARN" c.updatePermsArn (\x -> c {updatePermsArn = x} :: ServerConfigSignalBridge)
       , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_UPDATE_USER_GROUP_ARN" c.updateUserGroupArn (\x -> c {updateUserGroupArn = x} :: ServerConfigSignalBridge)
-      , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_SET_QUESTIONNAIRE_ARN" c.setQuestionnaireArn (\x -> c {setQuestionnaireArn = x} :: ServerConfigSignalBridge)
+      , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_SET_PROJECT_ARN" c.setProjectArn (\x -> c {setProjectArn = x} :: ServerConfigSignalBridge)
       , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_ADD_FILE_ARN" c.addFileArn (\x -> c {addFileArn = x} :: ServerConfigSignalBridge)
       , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_LOG_OUT_ALL_ARN" c.logOutAllArn (\x -> c {logOutAllArn = x} :: ServerConfigSignalBridge)
       ]

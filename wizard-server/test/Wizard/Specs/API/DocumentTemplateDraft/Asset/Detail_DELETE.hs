@@ -34,7 +34,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+reqUrl = "/wizard-api/document-template-drafts/global:project-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -81,7 +81,7 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+    "/wizard-api/document-template-drafts/global:project-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template_asset"

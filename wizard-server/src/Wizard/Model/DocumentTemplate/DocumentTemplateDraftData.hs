@@ -6,7 +6,7 @@ import GHC.Generics
 
 data DocumentTemplateDraftData = DocumentTemplateDraftData
   { documentTemplateId :: String
-  , questionnaireUuid :: Maybe U.UUID
+  , projectUuid :: Maybe U.UUID
   , formatUuid :: Maybe U.UUID
   , tenantUuid :: U.UUID
   , createdAt :: UTCTime
@@ -18,7 +18,7 @@ data DocumentTemplateDraftData = DocumentTemplateDraftData
 instance Eq DocumentTemplateDraftData where
   a == b =
     a.documentTemplateId == b.documentTemplateId
-      && a.questionnaireUuid == b.questionnaireUuid
+      && a.projectUuid == b.projectUuid
       && a.knowledgeModelEditorUuid == b.knowledgeModelEditorUuid
       && a.formatUuid == b.formatUuid
       && a.tenantUuid == b.tenantUuid

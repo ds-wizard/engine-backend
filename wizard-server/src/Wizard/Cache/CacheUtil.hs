@@ -16,7 +16,7 @@ purgeCache :: AppContextM ()
 purgeCache = do
   cache <- asks cache
   liftIO . C.purge $ cache.knowledgeModelEditorWebsocket
-  liftIO . C.purge $ cache.questionnaireWebsocket
+  liftIO . C.purge $ cache.projectWebsocket
   liftIO . C.purge $ cache.user
   liftIO . C.purge $ cache.userToken
 
@@ -24,7 +24,7 @@ purgeExpiredCache :: AppContextM ()
 purgeExpiredCache = do
   cache <- asks cache
   liftIO . C.purgeExpired $ cache.knowledgeModelEditorWebsocket
-  liftIO . C.purgeExpired $ cache.questionnaireWebsocket
+  liftIO . C.purgeExpired $ cache.projectWebsocket
   liftIO . C.purgeExpired $ cache.user
   liftIO . C.purgeExpired $ cache.userToken
 

@@ -39,23 +39,23 @@ findDocumentsForCurrentTenantFiltered params = do
   createFindEntitiesByFn entityName (tenantQueryUuid tenantUuid : params)
 
 findDocumentsPage :: Maybe U.UUID -> Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentList)
-findDocumentsPage mQtnUuid mQtnName mDocumentTemplateId mQuery pageable sort = do
+findDocumentsPage mProjectUuid mProjectName mDocumentTemplateId mQuery pageable sort = do
   -- 1. Prepare variables
   do
     tenantUuid <- asks currentTenantUuid
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
-    let (questionnaireSelect, questionnaireSelectParams, questionnaireJoin, questionnaireCondition, questionnaireParam) =
-          case (mQtnUuid, mQtnName) of
-            (Just qtnUuid, Just qtnName) -> ("?, ", [qtnName], "", "AND doc.questionnaire_uuid = ?", [U.toString qtnUuid])
-            (Just qtnUuid, Nothing) -> ("qtn.name, ", [], "LEFT JOIN questionnaire qtn ON qtn.uuid = doc.questionnaire_uuid", "AND doc.questionnaire_uuid = ?", [U.toString qtnUuid])
-            _ -> ("qtn.name, ", [], "LEFT JOIN questionnaire qtn ON qtn.uuid = doc.questionnaire_uuid", "", [])
+    let (projectSelect, projectSelectParams, projectJoin, projectCondition, projectParam) =
+          case (mProjectUuid, mProjectName) of
+            (Just projectUuid, Just projectName) -> ("?, ", [projectName], "", "AND doc.project_uuid = ?", [U.toString projectUuid])
+            (Just projectUuid, Nothing) -> ("project.name, ", [], "LEFT JOIN project ON project.uuid = doc.project_uuid", "AND doc.project_uuid = ?", [U.toString projectUuid])
+            _ -> ("project.name, ", [], "LEFT JOIN project ON project.uuid = doc.project_uuid", "", [])
     let (documentTemplateIdCondition, documentTemplateIdParam) =
           case mDocumentTemplateId of
             Just documentTemplateId -> (" AND doc.document_template_id = ? ", [documentTemplateId])
             Nothing -> ("", [])
-    let condition = "WHERE doc.tenant_uuid = ? AND doc.name ~* ? AND doc.durability = 'PersistentDocumentDurability' " ++ questionnaireCondition ++ documentTemplateIdCondition
-    let baseParams = [U.toString tenantUuid, regexM mQuery] ++ questionnaireParam ++ documentTemplateIdParam
-    let params = questionnaireSelectParams ++ baseParams
+    let condition = "WHERE doc.tenant_uuid = ? AND doc.name ~* ? AND doc.durability = 'PersistentDocumentDurability' " ++ projectCondition ++ documentTemplateIdCondition
+    let baseParams = [U.toString tenantUuid, regexM mQuery] ++ projectParam ++ documentTemplateIdParam
+    let params = projectSelectParams ++ baseParams
     -- 2. Get total count
     count <- createCountByFn "document doc" condition baseParams
     -- 3. Get entities
@@ -65,10 +65,10 @@ findDocumentsPage mQtnUuid mQtnName mDocumentTemplateId mQuery pageable sort = d
               "SELECT doc.uuid, \
               \       doc.name, \
               \       doc.state, \
-              \       doc.questionnaire_uuid, \
-              \       ${questionnaireSelect} \
-              \       doc.questionnaire_event_uuid, \
-              \       qtn_version.name, \
+              \       doc.project_uuid, \
+              \       ${projectSelect} \
+              \       doc.project_event_uuid, \
+              \       project_version.name, \
               \       doc_tml.id, \
               \       doc_tml.name, \
               \       ( \
@@ -84,15 +84,15 @@ findDocumentsPage mQtnUuid mQtnName mDocumentTemplateId mQuery pageable sort = d
               \       doc.created_by, \
               \       doc.created_at \
               \FROM document doc \
-              \${questionnaireJoin} \
+              \${projectJoin} \
               \LEFT JOIN document_template doc_tml ON doc_tml.id = doc.document_template_id AND doc_tml.tenant_uuid = doc.tenant_uuid \
-              \LEFT JOIN questionnaire_version qtn_version ON qtn_version.event_uuid = doc.questionnaire_event_uuid AND qtn_version.tenant_uuid = doc.tenant_uuid \
+              \LEFT JOIN project_version ON project_version.event_uuid = doc.project_event_uuid AND project_version.tenant_uuid = doc.tenant_uuid \
               \${condition} \
               \${sort} \
               \OFFSET ${offset} \
               \LIMIT ${limit}"
-              [ ("questionnaireSelect", questionnaireSelect)
-              , ("questionnaireJoin", questionnaireJoin)
+              [ ("projectSelect", projectSelect)
+              , ("projectJoin", projectJoin)
               , ("condition", condition)
               , ("sort", mapSortWithPrefix "doc" sort)
               , ("offset", show skip)
@@ -156,11 +156,11 @@ deleteDocumentByUuid uuid = do
 deleteDocumentByUuidAndTenantUuid :: U.UUID -> U.UUID -> AppContextM Int64
 deleteDocumentByUuidAndTenantUuid uuid tenantUuid = createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
-deleteTemporalDocumentsByQuestionnaireUuid :: U.UUID -> AppContextM Int64
-deleteTemporalDocumentsByQuestionnaireUuid qtnUuid = do
+deleteTemporalDocumentsByProjectUuid :: U.UUID -> AppContextM Int64
+deleteTemporalDocumentsByProjectUuid projectUuid = do
   tenantUuid <- asks currentTenantUuid
   deleteDocumentsFiltered
-    [tenantQueryUuid tenantUuid, ("questionnaire_uuid", U.toString qtnUuid), ("durability", "TemporallyDocumentDurability")]
+    [tenantQueryUuid tenantUuid, ("project_uuid", U.toString projectUuid), ("durability", "TemporallyDocumentDurability")]
 
 deleteTemporalDocumentsByDocumentTemplateId :: String -> AppContextM Int64
 deleteTemporalDocumentsByDocumentTemplateId documentTemplateId = do

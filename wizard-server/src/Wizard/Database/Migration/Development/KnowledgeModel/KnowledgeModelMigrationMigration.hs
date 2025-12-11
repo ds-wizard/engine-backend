@@ -7,6 +7,6 @@ import Wizard.Database.Migration.Development.KnowledgeModel.Data.Migration.Knowl
 
 runMigration = do
   logInfo _CMP_MIGRATION "(Migration/KnowledgeModel) started"
-  deleteMigratorStates
-  insertMigratorState differentMigratorState
+  deleteKnowledgeModelMigrations
+  insertKnowledgeModelMigration differentKnowledgeModelMigration
   logInfo _CMP_MIGRATION "(Migration/KnowledgeModel) ended"

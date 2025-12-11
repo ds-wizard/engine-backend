@@ -28,7 +28,7 @@ dropConfigTables = do
         \DROP TABLE IF EXISTS config_submission_service_request_header;\
         \DROP TABLE IF EXISTS config_submission_service;\
         \DROP TABLE IF EXISTS config_submission;\
-        \DROP TABLE IF EXISTS config_questionnaire;\
+        \DROP TABLE IF EXISTS config_project;\
         \DROP TABLE IF EXISTS config_knowledge_model_public_package_pattern;\
         \DROP TABLE IF EXISTS config_knowledge_model;\
         \DROP TABLE IF EXISTS config_registry;\
@@ -89,7 +89,7 @@ createConfigTables = do
   createTcRegistryTable
   createTcKnowledgeModelTable
   createTcKnowledgeModelPublicPackagePatternTable
-  createTcQuestionnaireTable
+  createTcProjectTable
   createTcSubmissionTable
   createTcFeaturesTable
   createTcMailTable
@@ -301,10 +301,10 @@ createTcKnowledgeModelPublicPackagePatternTable = do
   let action conn = execute_ conn sql
   runDB action
 
-createTcQuestionnaireTable = do
-  logInfo _CMP_MIGRATION "(Table/ConfigQuestionnaire) create tables"
+createTcProjectTable = do
+  logInfo _CMP_MIGRATION "(Table/ConfigProject) create tables"
   let sql =
-        "CREATE TABLE config_questionnaire\
+        "CREATE TABLE config_project\
         \( \
         \    tenant_uuid               uuid        NOT NULL, \
         \    visibility_enabled        boolean     NOT NULL, \
@@ -322,8 +322,8 @@ createTcQuestionnaireTable = do
         \    feedback_repo             TEXT        NOT NULL, \
         \    created_at                timestamptz NOT NULL, \
         \    updated_at                timestamptz NOT NULL, \
-        \    CONSTRAINT config_questionnaire_pk PRIMARY KEY (tenant_uuid), \
-        \    CONSTRAINT config_questionnaire_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
+        \    CONSTRAINT config_project_pk PRIMARY KEY (tenant_uuid), \
+        \    CONSTRAINT config_project_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -445,7 +445,7 @@ createTenantLimitBundleTable = do
         \    knowledge_models         integer     NOT NULL, \
         \    knowledge_model_editors  integer     NOT NULL, \
         \    document_templates       integer     NOT NULL, \
-        \    questionnaires           integer     NOT NULL, \
+        \    projects                 integer     NOT NULL, \
         \    documents                integer     NOT NULL, \
         \    storage                  bigint      NOT NULL, \
         \    created_at               timestamptz NOT NULL, \

@@ -13,7 +13,7 @@ import Shared.Common.Util.String
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
-import Wizard.Api.Resource.Websocket.KnowledgeModelEditorActionDTO
+import Wizard.Api.Resource.Websocket.KnowledgeModelEditorMessageDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Cache.KnowledgeModelEditorWebsocketCache
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
@@ -86,8 +86,8 @@ connectTestWebsocketUsers appContext bUuid =
 
 read_SetUserList connection expConnectionCount = do
   resDto <- receiveData connection
-  let eResult = eitherDecode resDto :: Either String (Success_ServerActionDTO ServerKnowledgeModelEditorActionDTO)
-  let (Right (Success_ServerActionDTO (SetUserList_ServerKnowledgeModelEditorActionDTO resConnection))) = eResult
+  let eResult = eitherDecode resDto :: Either String (Success_ServerActionDTO ServerKnowledgeModelEditorMessageDTO)
+  let (Right (Success_ServerActionDTO (SetUserList_ServerKnowledgeModelEditorMessageDTO resConnection))) = eResult
   length resConnection `shouldBe` expConnectionCount
 
 read_Error connection expError = do

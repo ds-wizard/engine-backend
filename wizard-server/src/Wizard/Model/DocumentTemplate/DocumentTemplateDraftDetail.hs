@@ -7,7 +7,7 @@ import GHC.Generics
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
-import Wizard.Model.Questionnaire.QuestionnaireSuggestion
+import Wizard.Model.Project.ProjectSuggestion
 
 data DocumentTemplateDraftDetail = DocumentTemplateDraftDetail
   { tId :: String
@@ -19,8 +19,8 @@ data DocumentTemplateDraftDetail = DocumentTemplateDraftDetail
   , license :: String
   , allowedPackages :: [KnowledgeModelPackagePattern]
   , formats :: [DocumentTemplateFormat]
-  , questionnaireUuid :: Maybe U.UUID
-  , questionnaire :: Maybe QuestionnaireSuggestion
+  , projectUuid :: Maybe U.UUID
+  , project :: Maybe ProjectSuggestion
   , knowledgeModelEditorUuid :: Maybe U.UUID
   , knowledgeModelEditor :: Maybe KnowledgeModelEditorSuggestion
   , formatUuid :: Maybe U.UUID

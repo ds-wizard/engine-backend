@@ -40,7 +40,7 @@ list_delete_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/folders/delete"
+reqUrl = "/wizard-api/document-template-drafts/global:project-report:1.0.0/folders/delete"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 

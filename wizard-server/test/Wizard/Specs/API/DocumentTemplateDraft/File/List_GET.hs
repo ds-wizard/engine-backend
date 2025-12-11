@@ -34,7 +34,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:1.0.0/files"
+reqUrl = "/wizard-api/document-template-drafts/global:project-report:1.0.0/files"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 

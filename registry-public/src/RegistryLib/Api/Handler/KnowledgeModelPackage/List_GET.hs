@@ -10,7 +10,7 @@ type List_GET =
   Header "Authorization" String
     :> Header "x-user-count" String
     :> Header "x-knowledge-model-package-count" String
-    :> Header "x-qtn-count" String
+    :> Header "x-project-count" String
     :> Header "x-knowledge-model-editor-count" String
     :> Header "x-doc-count" String
     :> Header "x-tml-count" String

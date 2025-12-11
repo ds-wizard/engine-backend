@@ -7,7 +7,7 @@ import qualified Data.UUID as U
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Metrics
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
+import Wizard.Api.Resource.Project.ProjectReportDTO
 import Wizard.Model.Report.Report
 
 report1 :: Report
@@ -142,9 +142,9 @@ report1_ch3_full =
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
-questionnaireReport :: QuestionnaireReportDTO
-questionnaireReport =
-  QuestionnaireReportDTO
+projectReport :: ProjectReportDTO
+projectReport =
+  ProjectReportDTO
     { indications =
         [ PhasesAnsweredIndication' $
             PhasesAnsweredIndication

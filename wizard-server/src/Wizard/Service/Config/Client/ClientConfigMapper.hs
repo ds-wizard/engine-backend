@@ -11,8 +11,8 @@ import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.UserProfile
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
-toClientConfigDTO :: ServerConfig -> TenantConfigOrganization -> TenantConfigAuthentication -> TenantConfigPrivacyAndSupport -> TenantConfigDashboardAndLoginScreen -> TenantConfigLookAndFeel -> TenantConfigRegistry -> TenantConfigQuestionnaire -> TenantConfigSubmission -> TenantConfigFeatures -> TenantConfigOwl -> Maybe UserProfile -> [String] -> Tenant -> ClientConfigDTO
-toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcQuestionnaire tcSubmission tcFeatures tcOwl mUserProfile tours tenant =
+toClientConfigDTO :: ServerConfig -> TenantConfigOrganization -> TenantConfigAuthentication -> TenantConfigPrivacyAndSupport -> TenantConfigDashboardAndLoginScreen -> TenantConfigLookAndFeel -> TenantConfigRegistry -> TenantConfigProject -> TenantConfigSubmission -> TenantConfigFeatures -> TenantConfigOwl -> Maybe UserProfile -> [String] -> Tenant -> ClientConfigDTO
+toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcProject tcSubmission tcFeatures tcOwl mUserProfile tours tenant =
   ClientConfigDTO
     { user = mUserProfile
     , tours = tours
@@ -22,7 +22,7 @@ toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSuppo
     , dashboardAndLoginScreen = tcDashboardAndLoginScreen
     , lookAndFeel = tcLookAndFeel
     , registry = toClientConfigRegistryDTO serverConfig.registry tcRegistry
-    , questionnaire = toClientConfigQuestionnaireDTO tcQuestionnaire
+    , project = toClientConfigProjectDTO tcProject
     , submission = SimpleFeature $ tcSubmission.enabled
     , cloud = toClientConfigCloudDTO serverConfig.cloud tenant
     , owl = tcOwl
@@ -87,12 +87,12 @@ toClientConfigRegistryDTO serverConfig tenantConfig =
     , url = serverConfig.clientUrl
     }
 
-toClientConfigQuestionnaireDTO :: TenantConfigQuestionnaire -> ClientConfigQuestionnaireDTO
-toClientConfigQuestionnaireDTO tenantConfig =
-  ClientConfigQuestionnaireDTO
-    { questionnaireVisibility = tenantConfig.questionnaireVisibility
-    , questionnaireSharing = tenantConfig.questionnaireSharing
-    , questionnaireCreation = tenantConfig.questionnaireCreation
+toClientConfigProjectDTO :: TenantConfigProject -> ClientConfigProjectDTO
+toClientConfigProjectDTO tenantConfig =
+  ClientConfigProjectDTO
+    { projectVisibility = tenantConfig.projectVisibility
+    , projectSharing = tenantConfig.projectSharing
+    , projectCreation = tenantConfig.projectCreation
     , projectTagging = SimpleFeature $ tenantConfig.projectTagging.enabled
     , summaryReport = tenantConfig.summaryReport
     , feedback = SimpleFeature $ tenantConfig.feedback.enabled

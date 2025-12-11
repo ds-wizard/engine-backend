@@ -26,7 +26,7 @@ import Wizard.Service.KnowledgeModel.Editor.Collaboration.CollaborationService
 import Wizard.Service.KnowledgeModel.Editor.EditorAudit
 import Wizard.Service.KnowledgeModel.Editor.EditorMapper
 import Wizard.Service.KnowledgeModel.Editor.EditorUtil
-import Wizard.Service.KnowledgeModel.Migration.MigrationAudit
+import Wizard.Service.KnowledgeModel.Migration.KnowledgeModelMigrationAudit
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageService
 import Wizard.Service.KnowledgeModel.Publish.KnowledgeModelPublishMapper
 import Wizard.Service.KnowledgeModel.Publish.KnowledgeModelPublishValidation
@@ -57,8 +57,8 @@ publishPackageFromMigration reqDto = do
   runInTransaction $ do
     checkPermission _KM_PUBLISH_PERM
     kmEditor <- findKnowledgeModelEditorByUuid reqDto.editorUuid
-    ms <- findMigratorStateByEditorUuid reqDto.editorUuid
-    deleteMigratorStateByEditorUuid reqDto.editorUuid
+    ms <- findKnowledgeModelMigrationByEditorUuid reqDto.editorUuid
+    deleteKnowledgeModelMigrationByEditorUuid reqDto.editorUuid
     auditKmMigrationFinish reqDto.editorUuid
     doPublishPackage
       reqDto.version

@@ -9,7 +9,7 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorState
-import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Project.ProjectReply
 
 data KnowledgeModelEditorDetailDTO = KnowledgeModelEditorDetailDTO
   { uuid :: U.UUID

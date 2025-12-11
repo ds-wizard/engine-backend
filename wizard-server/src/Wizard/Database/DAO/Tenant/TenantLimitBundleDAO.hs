@@ -34,7 +34,7 @@ updateLimitBundleByUuid limitBundle = do
   let updatedTenantLimitBundle = limitBundle {updatedAt = now}
   let sql =
         fromString
-          "UPDATE tenant_limit_bundle SET uuid = ?, users = ?, active_users = ?, knowledge_models = ?, knowledge_model_editors = ?, document_templates = ?, questionnaires = ?, documents =?, storage = ?, created_at = ?, updated_at = ?, document_template_drafts = ?, locales = ? WHERE uuid = ?"
+          "UPDATE tenant_limit_bundle SET uuid = ?, users = ?, active_users = ?, knowledge_models = ?, knowledge_model_editors = ?, document_templates = ?, projects = ?, documents =?, storage = ?, created_at = ?, updated_at = ?, document_template_drafts = ?, locales = ? WHERE uuid = ?"
   let params = toRow updatedTenantLimitBundle ++ [toField updatedTenantLimitBundle.uuid]
   logQuery sql params
   let action conn = execute conn sql params

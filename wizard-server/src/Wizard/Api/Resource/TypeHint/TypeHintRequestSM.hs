@@ -12,7 +12,7 @@ instance ToSchema TypeHintLegacyRequestDTO where
   declareNamedSchema = toSwagger typeHintLegacyRequest
 
 instance ToSchema TypeHintRequestDTO where
-  declareNamedSchema = toSwaggerWithType "requestType" questionnaireTypeHintRequest
+  declareNamedSchema = toSwaggerWithType "requestType" projectTypeHintRequest
 
 instance ToSchema KnowledgeModelEditorIntegrationTypeHintRequest where
   declareNamedSchema = toSwaggerWithType "requestType" kmEditorIntegrationTypeHintRequest'
@@ -20,5 +20,5 @@ instance ToSchema KnowledgeModelEditorIntegrationTypeHintRequest where
 instance ToSchema KnowledgeModelEditorQuestionTypeHintRequest where
   declareNamedSchema = toSwaggerWithType "requestType" kmEditorQuestionTypeHintRequest'
 
-instance ToSchema QuestionnaireTypeHintRequest where
-  declareNamedSchema = toSwaggerWithType "requestType" questionnaireTypeHintRequest'
+instance ToSchema ProjectTypeHintRequest where
+  declareNamedSchema = toSwaggerWithType "requestType" projectTypeHintRequest'

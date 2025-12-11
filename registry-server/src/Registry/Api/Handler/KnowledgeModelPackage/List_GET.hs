@@ -25,7 +25,7 @@ list_GET
   -> Maybe String
   -> Maybe Int
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] [KnowledgeModelPackageSimpleDTO])
-list_GET mTokenHeader xUserCountHeaderValue xPkgCountHeaderValue xQtnCountHeaderValue xKnowledgeModelEditorCountHeaderValue xDocCountHeaderValue xTmlCountHeaderValue mOrganizationId mKmId mMetamodelVersion =
+list_GET mTokenHeader xUserCountHeaderValue xPkgCountHeaderValue xProjectCountHeaderValue xKnowledgeModelEditorCountHeaderValue xDocCountHeaderValue xTmlCountHeaderValue mOrganizationId mKmId mMetamodelVersion =
   getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
     runInMaybeAuthService Transactional $
       addTraceUuidHeader =<< do
@@ -34,7 +34,7 @@ list_GET mTokenHeader xUserCountHeaderValue xPkgCountHeaderValue xQtnCountHeader
               catMaybes
                 [ (,) xUserCountHeaderName <$> xUserCountHeaderValue
                 , (,) xKnowledgeModelPackageCountHeaderName <$> xPkgCountHeaderValue
-                , (,) xQtnCountHeaderName <$> xQtnCountHeaderValue
+                , (,) xProjectCountHeaderName <$> xProjectCountHeaderValue
                 , (,) xKnowledgeModelEditorCountHeaderName <$> xKnowledgeModelEditorCountHeaderValue
                 , (,) xDocCountHeaderName <$> xDocCountHeaderValue
                 , (,) xTmlCountHeaderName <$> xTmlCountHeaderValue

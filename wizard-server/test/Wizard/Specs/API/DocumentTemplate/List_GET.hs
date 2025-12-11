@@ -56,19 +56,19 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (query 'q')"
     appContext
-    "/wizard-api/document-templates?q=Questionnaire Report"
+    "/wizard-api/document-templates?q=Project Report"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 1 1 0) [wizardDocumentTemplateSimpleDTO])
   create_test_200
     "HTTP 200 OK (query 'q' for non-existing)"
     appContext
-    "/wizard-api/document-templates?q=Non-existing Questionnaire Report"
+    "/wizard-api/document-templates?q=Non-existing Project Report"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSimpleDTO]))
   create_test_200
     "HTTP 200 OK (query 'templateId')"
     appContext
-    "/wizard-api/document-templates?templateId=questionnaire-report"
+    "/wizard-api/document-templates?templateId=project-report"
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 1 1 0) [wizardDocumentTemplateSimpleDTO])
   create_test_200

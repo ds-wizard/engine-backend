@@ -17,7 +17,7 @@ instance ToRow AuditEntry where
     , toField instanceStatistics.userCount
     , toField instanceStatistics.pkgCount
     , toField instanceStatistics.kmEditorCount
-    , toField instanceStatistics.qtnCount
+    , toField instanceStatistics.prjCount
     , toField instanceStatistics.tmlCount
     , toField instanceStatistics.docCount
     , toField (Nothing :: Maybe String)
@@ -77,7 +77,7 @@ instance FromRow AuditEntry where
         userCount <- field
         pkgCount <- field
         kmEditorCount <- field
-        qtnCount <- field
+        prjCount <- field
         tmlCount <- field
         docCount <- field
         let instanceStatistics = InstanceStatistics {..}

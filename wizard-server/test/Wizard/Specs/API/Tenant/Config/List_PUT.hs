@@ -42,7 +42,7 @@ reqUrl = "/wizard-api/tenants/current/config"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = defaultTenantConfigChangeDto {questionnaire = editedQuestionnaireChangeDto} :: TenantConfigChangeDTO
+reqDto = defaultTenantConfigChangeDto {project = editedProjectChangeDto} :: TenantConfigChangeDTO
 
 reqBody = encode reqDto
 
@@ -55,7 +55,7 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-      let expDto = defaultTenantConfig {questionnaire = editedQuestionnaire} :: TenantConfig
+      let expDto = defaultTenantConfig {project = editedProject} :: TenantConfig
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO (insertOrUpdateConfigSubmissionService defaultSubmissionService) appContext
@@ -67,7 +67,7 @@ test_200 appContext =
       assertResHeaders headers expHeaders
       compareDtos resBody expDto
       -- AND: Find result in DB and compare with expectation state
-      assertExistenceOfTenantConfigQuestionnaireInDB appContext editedQuestionnaire
+      assertExistenceOfTenantConfigProjectInDB appContext editedProject
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

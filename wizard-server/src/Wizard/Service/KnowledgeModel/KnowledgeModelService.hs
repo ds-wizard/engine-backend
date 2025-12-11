@@ -23,7 +23,7 @@ import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM KnowledgeModel
 createKnowledgeModelPreview reqDto = do
   mResolvedPackageId <- traverse resolvePackageId reqDto.knowledgeModelPackageId
-  checkIfPackageIsPublic mResolvedPackageId _QTN_PERM
+  checkIfPackageIsPublic mResolvedPackageId _PRJ_PERM
   compileKnowledgeModel reqDto.events mResolvedPackageId reqDto.tagUuids
 
 compileKnowledgeModel :: [KnowledgeModelEvent] -> Maybe String -> [U.UUID] -> AppContextM KnowledgeModel

@@ -4,7 +4,7 @@ import Data.Aeson
 
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.KnowledgeModel.Editor.Event.SetRepliesDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
+import Wizard.Api.Resource.Project.ProjectReplyJM ()
 
 instance FromJSON SetRepliesDTO where
   parseJSON = genericParseJSON jsonOptions

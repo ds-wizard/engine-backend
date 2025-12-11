@@ -98,4 +98,4 @@ create_test_200 title appContext authHeader pkg pkgId expDto =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext =
-  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (reqBodyT germanyKmPackage.pId) "QTN_PERM"
+  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (reqBodyT germanyKmPackage.pId) "PRJ_PERM"

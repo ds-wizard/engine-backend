@@ -8,9 +8,9 @@ import Wizard.Service.Document.DocumentAcl
 checkViewPermissionToSubmission :: Document -> AppContextM ()
 checkViewPermissionToSubmission doc = do
   checkPermission _SUBM_PERM
-  checkViewPermissionToDoc doc.questionnaireUuid
+  checkViewPermissionToDoc doc.projectUuid
 
 checkEditPermissionToSubmission :: Document -> AppContextM ()
 checkEditPermissionToSubmission doc = do
   checkPermission _SUBM_PERM
-  checkEditPermissionToDoc doc.questionnaireUuid
+  checkEditPermissionToDoc doc.projectUuid

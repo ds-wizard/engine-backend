@@ -20,7 +20,7 @@ import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorState
 import Wizard.Model.KnowledgeModel.Migration.KnowledgeModelMigration
 import Wizard.Service.KnowledgeModel.Editor.EditorUtil
-import Wizard.Service.KnowledgeModel.Migration.MigrationService
+import Wizard.Service.KnowledgeModel.Migration.KnowledgeModelMigrationService
 
 import Wizard.Specs.Common
 
