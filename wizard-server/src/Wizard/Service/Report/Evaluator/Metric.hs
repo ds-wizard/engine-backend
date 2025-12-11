@@ -8,7 +8,7 @@ import Shared.Common.Util.Math
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelAccessors
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
-import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Project.ProjectReply
 import Wizard.Model.Report.Report
 import Wizard.Service.Report.Evaluator.Common
 

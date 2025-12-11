@@ -68,10 +68,10 @@ instance FromJSON TenantConfigKnowledgeModelPublicChangeDTO where
 instance ToJSON TenantConfigKnowledgeModelPublicChangeDTO where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigQuestionnaireChangeDTO where
+instance FromJSON TenantConfigProjectChangeDTO where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigQuestionnaireChangeDTO where
+instance ToJSON TenantConfigProjectChangeDTO where
   toJSON = genericToJSON jsonOptions
 
 instance FromJSON TenantConfigSubmissionChangeDTO where

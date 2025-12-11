@@ -10,4 +10,4 @@ import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationResol
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Migration.KnowledgeModelMigrations
 
 instance ToSchema KnowledgeModelMigrationResolutionDTO where
-  declareNamedSchema = toSwagger migratorConflict
+  declareNamedSchema = toSwagger knowledgeModelMigrationResolutionDTO

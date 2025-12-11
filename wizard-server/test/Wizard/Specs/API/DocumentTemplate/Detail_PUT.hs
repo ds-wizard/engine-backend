@@ -38,7 +38,7 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/wizard-api/document-templates/global:questionnaire-report:1.0.0"
+reqUrl = "/wizard-api/document-templates/global:project-report:1.0.0"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 

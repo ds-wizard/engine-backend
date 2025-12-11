@@ -13,10 +13,10 @@ instance FromRow DocumentList where
     uuid <- field
     name <- field
     state <- field
-    questionnaireUuid <- field
-    questionnaireName <- field
-    questionnaireEventUuid <- field
-    questionnaireVersion <- field
+    projectUuid <- field
+    projectName <- field
+    projectEventUuid <- field
+    projectVersion <- field
     documentTemplateId <- field
     documentTemplateName <- field
     documentTemplateFormats <- fieldWith fromJSONField

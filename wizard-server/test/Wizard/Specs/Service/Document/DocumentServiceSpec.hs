@@ -8,8 +8,8 @@ import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import Wizard.Database.Migration.Development.Project.Data.Projects
+import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ
 import qualified Wizard.Database.Migration.Development.User.UserMigration as USR
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Report.Report
@@ -28,10 +28,10 @@ documentIntegrationSpec appContext =
           -- AND: Run migrations
           runInContextIO USR.runMigration appContext
           runInContextIO TML.runMigration appContext
-          runInContextIO QTN.runMigration appContext
+          runInContextIO PRJ.runMigration appContext
           runInContextIO (insertPackage germanyKmPackage) appContext
           runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
           -- WHEN:
-          (Right result) <- runInContext (createDocumentContext doc1 germanyKmPackage [] questionnaire1 Nothing) appContext
+          (Right result) <- runInContext (createDocumentContext doc1 germanyKmPackage [] project1 Nothing) appContext
           -- THEN:
           compareDocumentContexts result expectation

@@ -4,11 +4,11 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
-import Wizard.Model.Questionnaire.QuestionnaireSuggestion
+import Wizard.Model.Project.ProjectSuggestion
 
 data DocumentTemplateDraftDataDTO = DocumentTemplateDraftDataDTO
-  { questionnaireUuid :: Maybe U.UUID
-  , questionnaire :: Maybe QuestionnaireSuggestion
+  { projectUuid :: Maybe U.UUID
+  , project :: Maybe ProjectSuggestion
   , knowledgeModelEditorUuid :: Maybe U.UUID
   , knowledgeModelEditor :: Maybe KnowledgeModelEditorSuggestion
   , formatUuid :: Maybe U.UUID

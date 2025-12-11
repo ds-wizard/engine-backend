@@ -16,7 +16,7 @@ data TypeHintLegacyRequestDTO = TypeHintLegacyRequestDTO
 data TypeHintRequestDTO
   = KnowledgeModelEditorIntegrationTypeHintRequest' KnowledgeModelEditorIntegrationTypeHintRequest
   | KnowledgeModelEditorQuestionTypeHintRequest' KnowledgeModelEditorQuestionTypeHintRequest
-  | QuestionnaireTypeHintRequest' QuestionnaireTypeHintRequest
+  | ProjectTypeHintRequest' ProjectTypeHintRequest
   deriving (Show, Eq, Generic)
 
 data KnowledgeModelEditorIntegrationTypeHintRequest = KnowledgeModelEditorIntegrationTypeHintRequest
@@ -32,8 +32,8 @@ data KnowledgeModelEditorQuestionTypeHintRequest = KnowledgeModelEditorQuestionT
   }
   deriving (Show, Eq, Generic)
 
-data QuestionnaireTypeHintRequest = QuestionnaireTypeHintRequest
-  { questionnaireUuid :: U.UUID
+data ProjectTypeHintRequest = ProjectTypeHintRequest
+  { projectUuid :: U.UUID
   , questionUuid :: U.UUID
   , q :: String
   }

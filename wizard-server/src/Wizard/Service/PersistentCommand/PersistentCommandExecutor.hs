@@ -11,8 +11,8 @@ import qualified Wizard.Service.Document.DocumentCommandExecutor as DocumentComm
 import qualified Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetCommandExecutor as DocumentTemplateAssetCommandExecutor
 import qualified Wizard.Service.KnowledgeModel.Metamodel.MigrationCommandExecutor as MetamodelMigratorCommandExecutor
 import qualified Wizard.Service.Locale.LocaleCommandExecutor as LocaleCommandExecutor
-import qualified Wizard.Service.Questionnaire.File.QuestionnaireFileCommandExecutor as QuestionnaireFileCommandExecutor
-import qualified Wizard.Service.Questionnaire.QuestionnaireCommandExecutor as QuestionnaireCommandExecutor
+import qualified Wizard.Service.Project.File.ProjectFileCommandExecutor as ProjectFileCommandExecutor
+import qualified Wizard.Service.Project.ProjectCommandExecutor as ProjectCommandExecutor
 import qualified Wizard.Service.Tenant.Config.ConfigCommandExecutor as TenantConfigCommandExecutor
 import qualified Wizard.Service.Tenant.TenantCommandExecutor as TenantCommandExecutor
 import qualified Wizard.Service.User.Group.UserGroupCommandExecutor as UserGroupCommandExecutor
@@ -27,8 +27,8 @@ execute command
   | command.component == LocaleCommandExecutor.cComponent = LocaleCommandExecutor.execute command
   | command.component == MetamodelMigratorCommandExecutor.cComponent = MetamodelMigratorCommandExecutor.execute command
   | command.component == PrefabCommandExecutor.cComponent = PrefabCommandExecutor.execute command
-  | command.component == QuestionnaireCommandExecutor.cComponent = QuestionnaireCommandExecutor.execute command
-  | command.component == QuestionnaireFileCommandExecutor.cComponent = QuestionnaireFileCommandExecutor.execute command
+  | command.component == ProjectCommandExecutor.cComponent = ProjectCommandExecutor.execute command
+  | command.component == ProjectFileCommandExecutor.cComponent = ProjectFileCommandExecutor.execute command
   | command.component == TenantCommandExecutor.cComponent = TenantCommandExecutor.execute command
   | command.component == TenantConfigCommandExecutor.cComponent = TenantConfigCommandExecutor.execute command
   | command.component == TourCommandExecutor.cComponent = TourCommandExecutor.execute command

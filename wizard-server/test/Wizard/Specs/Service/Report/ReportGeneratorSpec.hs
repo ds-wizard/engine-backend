@@ -7,10 +7,10 @@ import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.Project.Data.ProjectReplies
+import Wizard.Database.Migration.Development.Project.Data.Projects
 import Wizard.Database.Migration.Development.Report.Data.Reports
-import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Project.ProjectContent
 import Wizard.Service.Report.ReportGenerator
 
 reportGeneratorSpec =
@@ -27,7 +27,7 @@ createComputeChapterReportTest number chapter expectation =
     do
       let requiredPhaseUuidUuid = Just $ phase1.uuid
       let km = km1WithQ4
-      let rs = M.fromList $ unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList questionnaire1Ctn.replies
+      let rs = M.fromList $ unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList project1Ctn.replies
       -- WHEN:
       let result = computeChapterReport requiredPhaseUuidUuid km rs chapter
       -- THEN
@@ -39,7 +39,7 @@ createComputeTotalReportTest number expectation =
     do
       let requiredPhaseUuidUuid = Just $ phase1.uuid
       let km = km1WithQ4
-      let rs = M.fromList $ unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList questionnaire1Ctn.replies
+      let rs = M.fromList $ unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList project1Ctn.replies
       -- WHEN:
       let result = computeTotalReport requiredPhaseUuidUuid km rs
       -- THEN

@@ -29,16 +29,16 @@ import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSuggestio
 import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Api.Resource.Locale.LocaleSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventListSM ()
-import Wizard.Api.Resource.Questionnaire.File.QuestionnaireFileListSM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadAssignedSM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireSM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireSuggestionSM ()
-import Wizard.Api.Resource.QuestionnaireAction.QuestionnaireActionDTO
-import Wizard.Api.Resource.QuestionnaireAction.QuestionnaireActionSM ()
-import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterDTO
-import Wizard.Api.Resource.QuestionnaireImporter.QuestionnaireImporterSM ()
+import Wizard.Api.Resource.Project.Action.ProjectActionDTO
+import Wizard.Api.Resource.Project.Action.ProjectActionSM ()
+import Wizard.Api.Resource.Project.Comment.ProjectCommentThreadAssignedSM ()
+import Wizard.Api.Resource.Project.Event.ProjectEventListSM ()
+import Wizard.Api.Resource.Project.File.ProjectFileListSM ()
+import Wizard.Api.Resource.Project.Importer.ProjectImporterDTO
+import Wizard.Api.Resource.Project.Importer.ProjectImporterSM ()
+import Wizard.Api.Resource.Project.ProjectDTO
+import Wizard.Api.Resource.Project.ProjectSM ()
+import Wizard.Api.Resource.Project.ProjectSuggestionSM ()
 import Wizard.Api.Resource.Tenant.TenantDTO
 import Wizard.Api.Resource.Tenant.TenantSM ()
 import Wizard.Api.Resource.User.Group.UserGroupSuggestionSM ()
@@ -48,28 +48,28 @@ import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
 import Wizard.Database.Migration.Development.Locale.Data.Locales
-import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
-import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
-import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireFiles
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import Wizard.Database.Migration.Development.QuestionnaireAction.Data.QuestionnaireActions
-import Wizard.Database.Migration.Development.QuestionnaireImporter.Data.QuestionnaireImporters
+import Wizard.Database.Migration.Development.Project.Data.ProjectActions
+import Wizard.Database.Migration.Development.Project.Data.ProjectComments
+import Wizard.Database.Migration.Development.Project.Data.ProjectEvents
+import Wizard.Database.Migration.Development.Project.Data.ProjectFiles
+import Wizard.Database.Migration.Development.Project.Data.ProjectImporters
+import Wizard.Database.Migration.Development.Project.Data.Projects
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
 import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
-import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireCommentThreadAssigned
-import Wizard.Model.Questionnaire.QuestionnaireEventList
-import Wizard.Model.Questionnaire.QuestionnaireFileList
-import Wizard.Model.Questionnaire.QuestionnaireSuggestion
+import Wizard.Model.Project.Comment.ProjectCommentThreadAssigned
+import Wizard.Model.Project.Event.ProjectEventList
+import Wizard.Model.Project.File.ProjectFileList
+import Wizard.Model.Project.Project
+import Wizard.Model.Project.ProjectSuggestion
 import Wizard.Model.User.UserGroupSuggestion
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
 import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as P_Mapper
-import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
-import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
+import Wizard.Service.Project.Event.ProjectEventMapper
+import qualified Wizard.Service.Project.ProjectMapper as PRJ_Mapper
 import qualified Wizard.Service.Tenant.TenantMapper as TNT_Mapper
 import qualified Wizard.Service.User.Group.UserGroupMapper as UG_Mapper
 import qualified Wizard.Service.User.UserMapper as U_Mapper
@@ -125,41 +125,41 @@ instance ToSchema (Page KnowledgeModelEditorSuggestion) where
   declareNamedSchema =
     toSwaggerWithDtoName "Page KnowledgeModelEditorSuggestion" (Page "knowledgeModelEditors" pageMetadata [amsterdamKnowledgeModelEditorSuggestion])
 
-instance ToSchema (Page QuestionnaireDTO) where
+instance ToSchema (Page ProjectDTO) where
   declareNamedSchema =
-    toSwaggerWithDtoName "Page QuestionnaireDTO" (Page "questionnaires" pageMetadata [questionnaire1Dto])
+    toSwaggerWithDtoName "Page ProjectDTO" (Page "projects" pageMetadata [project1Dto])
 
-instance ToSchema (Page QuestionnaireSuggestion) where
+instance ToSchema (Page ProjectSuggestion) where
   declareNamedSchema =
-    toSwaggerWithDtoName "Page QuestionnaireSuggestion" (Page "questionnaires" pageMetadata [QTN_Mapper.toSuggestion questionnaire1])
+    toSwaggerWithDtoName "Page ProjectSuggestion" (Page "projects" pageMetadata [PRJ_Mapper.toSuggestion project1])
 
-instance ToSchema (Page QuestionnaireCommentThreadAssigned) where
+instance ToSchema (Page ProjectCommentThreadAssigned) where
   declareNamedSchema =
-    toSwaggerWithDtoName "Page QuestionnaireCommentThreadAssigned" (Page "commentThreads" pageMetadata [cmtAssigned])
+    toSwaggerWithDtoName "Page ProjectCommentThreadAssigned" (Page "commentThreads" pageMetadata [cmtAssigned])
 
-instance ToSchema (Page QuestionnaireActionDTO) where
+instance ToSchema (Page ProjectActionDTO) where
   declareNamedSchema =
     toSwaggerWithDtoName
-      "Page QuestionnaireActionDTO"
-      (Page "questionnaireActions" pageMetadata [questionnaireActionFtp3Dto])
+      "Page ProjectActionDTO"
+      (Page "projectActions" pageMetadata [projectActionFtp3Dto])
 
-instance ToSchema (Page QuestionnaireEventList) where
+instance ToSchema (Page ProjectEventList) where
   declareNamedSchema =
     toSwaggerWithDtoName
-      "Page QuestionnaireEventList"
-      (Page "questionnaireEvents" pageMetadata [SetReplyEventList' (toSetReplyEventList (sre_rQ1 questionnaire1.uuid) (Just userAlbert))])
+      "Page ProjectEventList"
+      (Page "projectEvents" pageMetadata [SetReplyEventList' (toSetReplyEventList (sre_rQ1 project1.uuid) (Just userAlbert))])
 
-instance ToSchema (Page QuestionnaireFileList) where
+instance ToSchema (Page ProjectFileList) where
   declareNamedSchema =
     toSwaggerWithDtoName
-      "Page QuestionnaireFileList"
-      (Page "questionnaireFiles" pageMetadata [questionnaireFileList])
+      "Page ProjectFileList"
+      (Page "projectFiles" pageMetadata [projectFileList])
 
-instance ToSchema (Page QuestionnaireImporterDTO) where
+instance ToSchema (Page ProjectImporterDTO) where
   declareNamedSchema =
     toSwaggerWithDtoName
-      "Page QuestionnaireImporterDTO"
-      (Page "questionnaireImporters" pageMetadata [questionnaireImporterBio3Dto])
+      "Page ProjectImporterDTO"
+      (Page "projectImporters" pageMetadata [projectImporterBio3Dto])
 
 instance ToSchema (Page DocumentTemplateSimpleDTO) where
   declareNamedSchema =

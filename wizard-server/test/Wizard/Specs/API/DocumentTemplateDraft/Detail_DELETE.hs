@@ -32,7 +32,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:2.0.0"
+reqUrl = "/wizard-api/document-template-drafts/global:project-report:2.0.0"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 

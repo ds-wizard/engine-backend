@@ -23,7 +23,7 @@ import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Feedback.FeedbackDAO
-import Wizard.Database.DAO.Tenant.Config.TenantConfigQuestionnaireDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigProjectDAO
 import Wizard.Integration.Http.GitHub.Runner
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Model.Context.AppContext
@@ -39,8 +39,8 @@ getFeedbacksFiltered queryParams = do
   checkIfFeedbackIsEnabled
   feedbacks <- findFeedbacksFiltered queryParams
   serverConfig <- asks serverConfig
-  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
-  return . fmap (toDTO serverConfig tcQuestionnaire) $ feedbacks
+  tcProject <- getCurrentTenantConfigProject
+  return . fmap (toDTO serverConfig tcProject) $ feedbacks
 
 createFeedback :: FeedbackCreateDTO -> AppContextM FeedbackDTO
 createFeedback reqDto =
@@ -59,16 +59,16 @@ createFeedbackWithGivenUuid fUuid reqDto =
     let feedback = fromCreateDTO reqDto fUuid issue.number tenantUuid now
     insertFeedback feedback
     serverConfig <- asks serverConfig
-    tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
-    return $ toDTO serverConfig tcQuestionnaire feedback
+    tcProject <- getCurrentTenantConfigProject
+    return $ toDTO serverConfig tcProject feedback
 
 getFeedbackByUuid :: U.UUID -> AppContextM FeedbackDTO
 getFeedbackByUuid fUuid = do
   checkIfFeedbackIsEnabled
   feedback <- findFeedbackByUuid fUuid
   serverConfig <- asks serverConfig
-  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
-  return $ toDTO serverConfig tcQuestionnaire feedback
+  tcProject <- getCurrentTenantConfigProject
+  return $ toDTO serverConfig tcProject feedback
 
 synchronizeFeedbacksInAllApplications :: AppContextM ()
 synchronizeFeedbacksInAllApplications = runFunctionForAllTenants "synchronizeFeedbacks" synchronizeFeedbacks
@@ -81,8 +81,8 @@ synchronizeFeedbacks =
   catchError
     ( do
         runInTransaction $ do
-          tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
-          if tcQuestionnaire.feedback.enabled
+          tcProject <- getCurrentTenantConfigProject
+          if tcProject.feedback.enabled
             then do
               logInfoI _CMP_WORKER "synchronizing feedback"
               issues <- getIssues
@@ -103,4 +103,4 @@ synchronizeFeedbacks =
         Just issue -> updateFeedbackByUuid $ fromSimpleIssue feedback issue now
         Nothing -> deleteFeedbackByUuid feedback.uuid
 
-checkIfFeedbackIsEnabled = checkIfTenantFeatureIsEnabled "Feedback" findTenantConfigQuestionnaire (.feedback.enabled)
+checkIfFeedbackIsEnabled = checkIfTenantFeatureIsEnabled "Feedback" findTenantConfigProject (.feedback.enabled)

@@ -14,7 +14,7 @@ import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftDetail
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
-import Wizard.Model.Questionnaire.QuestionnaireSuggestion
+import Wizard.Model.Project.ProjectSuggestion
 
 toDraftList :: DocumentTemplate -> DocumentTemplateDraftList
 toDraftList tml =
@@ -29,8 +29,8 @@ toDraftList tml =
     , updatedAt = tml.updatedAt
     }
 
-toDraftDetail :: DocumentTemplate -> [DocumentTemplateFormat] -> DocumentTemplateDraftData -> Maybe QuestionnaireSuggestion -> Maybe KnowledgeModelEditorSuggestion -> DocumentTemplateDraftDetail
-toDraftDetail draft formats draftData mQuestionnaire mKmEditor =
+toDraftDetail :: DocumentTemplate -> [DocumentTemplateFormat] -> DocumentTemplateDraftData -> Maybe ProjectSuggestion -> Maybe KnowledgeModelEditorSuggestion -> DocumentTemplateDraftDetail
+toDraftDetail draft formats draftData mProject mKmEditor =
   DocumentTemplateDraftDetail
     { tId = draft.tId
     , name = draft.name
@@ -41,8 +41,8 @@ toDraftDetail draft formats draftData mQuestionnaire mKmEditor =
     , license = draft.license
     , allowedPackages = draft.allowedPackages
     , formats = formats
-    , questionnaireUuid = draftData.questionnaireUuid
-    , questionnaire = mQuestionnaire
+    , projectUuid = draftData.projectUuid
+    , project = mProject
     , knowledgeModelEditorUuid = draftData.knowledgeModelEditorUuid
     , knowledgeModelEditor = mKmEditor
     , formatUuid = draftData.formatUuid
@@ -62,8 +62,8 @@ toDraftDetail' draft formats =
     , license = draft.license
     , allowedPackages = draft.allowedPackages
     , formats = formats
-    , questionnaireUuid = Nothing
-    , questionnaire = Nothing
+    , projectUuid = Nothing
+    , project = Nothing
     , knowledgeModelEditorUuid = Nothing
     , knowledgeModelEditor = Nothing
     , formatUuid = Nothing
@@ -71,11 +71,11 @@ toDraftDetail' draft formats =
     , updatedAt = draft.updatedAt
     }
 
-toDraftDataDTO :: DocumentTemplateDraftData -> Maybe QuestionnaireSuggestion -> Maybe KnowledgeModelEditorSuggestion -> DocumentTemplateDraftDataDTO
-toDraftDataDTO draftData mQuestionnaire mKmEditor =
+toDraftDataDTO :: DocumentTemplateDraftData -> Maybe ProjectSuggestion -> Maybe KnowledgeModelEditorSuggestion -> DocumentTemplateDraftDataDTO
+toDraftDataDTO draftData mProject mKmEditor =
   DocumentTemplateDraftDataDTO
-    { questionnaireUuid = draftData.questionnaireUuid
-    , questionnaire = mQuestionnaire
+    { projectUuid = draftData.projectUuid
+    , project = mProject
     , knowledgeModelEditorUuid = draftData.knowledgeModelEditorUuid
     , knowledgeModelEditor = mKmEditor
     , formatUuid = draftData.formatUuid
@@ -182,7 +182,7 @@ fromCreateDraftData :: DocumentTemplate -> DocumentTemplateDraftData
 fromCreateDraftData draft =
   DocumentTemplateDraftData
     { documentTemplateId = draft.tId
-    , questionnaireUuid = Nothing
+    , projectUuid = Nothing
     , knowledgeModelEditorUuid = Nothing
     , formatUuid = Nothing
     , tenantUuid = draft.tenantUuid
@@ -194,7 +194,7 @@ fromDraftDataChangeDTO :: DocumentTemplateDraftData -> DocumentTemplateDraftData
 fromDraftDataChangeDTO draftData reqDto =
   DocumentTemplateDraftData
     { documentTemplateId = draftData.documentTemplateId
-    , questionnaireUuid = reqDto.questionnaireUuid
+    , projectUuid = reqDto.projectUuid
     , knowledgeModelEditorUuid = reqDto.knowledgeModelEditorUuid
     , formatUuid = reqDto.formatUuid
     , tenantUuid = draftData.tenantUuid

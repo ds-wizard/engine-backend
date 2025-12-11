@@ -12,7 +12,7 @@ defaultUsage =
     , knowledgeModelEditors = defaultUsageKnowledgeModelEditors
     , documentTemplates = defaultUsageDocumentTemplates
     , documentTemplateDrafts = defaultUsageDocumentTemplateDrafts
-    , questionnaires = defaultUsageQuestionnaires
+    , projects = defaultUsageProjects
     , documents = defaultUsageDocuments
     , locales = defaultUsageLocales
     , storage = defaultUsageStorage
@@ -42,8 +42,8 @@ defaultUsageDocumentTemplates = UsageEntryDTO {current = 0, max = -1000}
 defaultUsageDocumentTemplateDrafts :: UsageEntryDTO
 defaultUsageDocumentTemplateDrafts = UsageEntryDTO {current = 0, max = -1000}
 
-defaultUsageQuestionnaires :: UsageEntryDTO
-defaultUsageQuestionnaires = UsageEntryDTO {current = 0, max = -1000}
+defaultUsageProjects :: UsageEntryDTO
+defaultUsageProjects = UsageEntryDTO {current = 0, max = -1000}
 
 defaultUsageDocuments :: UsageEntryDTO
 defaultUsageDocuments = UsageEntryDTO {current = 0, max = -1000}

@@ -18,10 +18,10 @@ import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateChangeJM ()
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDetailJM ()
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateDrafts
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.Project.Data.Projects
 import Wizard.Model.Context.AppContext
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftDetail
 
@@ -46,7 +46,7 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:2.0.0"
+reqUrl = "/wizard-api/document-template-drafts/global:project-report:2.0.0"
 
 reqHeaders = [reqCtHeader, reqAuthHeader]
 
@@ -84,7 +84,7 @@ create_test_200 title appContext reqDto expDto =
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO (insertPackage germanyKmPackage) appContext
       runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
-      runInContextIO (insertQuestionnaire questionnaire1) appContext
+      runInContextIO (insertProject project1) appContext
       runInContextIO (insertDraftData wizardDocumentTemplateDraftData) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders (reqBodyT reqDto)

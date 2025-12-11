@@ -11,7 +11,7 @@ data WizardUsageDTO = WizardUsageDTO
   , knowledgeModelEditors :: UsageEntryDTO
   , documentTemplates :: UsageEntryDTO
   , documentTemplateDrafts :: UsageEntryDTO
-  , questionnaires :: UsageEntryDTO
+  , projects :: UsageEntryDTO
   , documents :: UsageEntryDTO
   , locales :: UsageEntryDTO
   , storage :: UsageEntryDTO

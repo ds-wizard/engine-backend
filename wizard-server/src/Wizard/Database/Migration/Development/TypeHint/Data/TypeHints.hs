@@ -12,10 +12,10 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.TypeHint.TypeHintRequestDTO
 import Wizard.Api.Resource.TypeHint.TypeHintTestRequestDTO
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.Project.Data.Projects
 import Wizard.Integration.Resource.TypeHint.TypeHintIDTO
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
-import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Project.Project
 
 forestDatasetTypeHint :: TypeHintIDTO
 forestDatasetTypeHint =
@@ -77,8 +77,8 @@ kmEditorIntegrationTypeHintRequest = KnowledgeModelEditorIntegrationTypeHintRequ
 kmEditorQuestionTypeHintRequest :: TypeHintRequestDTO
 kmEditorQuestionTypeHintRequest = KnowledgeModelEditorQuestionTypeHintRequest' kmEditorQuestionTypeHintRequest'
 
-questionnaireTypeHintRequest :: TypeHintRequestDTO
-questionnaireTypeHintRequest = QuestionnaireTypeHintRequest' questionnaireTypeHintRequest'
+projectTypeHintRequest :: TypeHintRequestDTO
+projectTypeHintRequest = ProjectTypeHintRequest' projectTypeHintRequest'
 
 kmEditorIntegrationTypeHintRequest' :: KnowledgeModelEditorIntegrationTypeHintRequest
 kmEditorIntegrationTypeHintRequest' =
@@ -95,10 +95,10 @@ kmEditorQuestionTypeHintRequest' =
     , q = "dog"
     }
 
-questionnaireTypeHintRequest' :: QuestionnaireTypeHintRequest
-questionnaireTypeHintRequest' =
-  QuestionnaireTypeHintRequest
-    { questionnaireUuid = questionnaire15.uuid
+projectTypeHintRequest' :: ProjectTypeHintRequest
+projectTypeHintRequest' =
+  ProjectTypeHintRequest
+    { projectUuid = project15.uuid
     , questionUuid = question15.uuid
     , q = "dog"
     }

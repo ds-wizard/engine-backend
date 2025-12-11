@@ -28,11 +28,11 @@ toChangeDTO
   -> TenantConfigLookAndFeelChangeDTO
   -> TenantConfigRegistryChangeDTO
   -> TenantConfigKnowledgeModelChangeDTO
-  -> TenantConfigQuestionnaireChangeDTO
+  -> TenantConfigProjectChangeDTO
   -> TenantConfigSubmissionChangeDTO
   -> TenantConfigFeaturesChangeDTO
   -> TenantConfigChangeDTO
-toChangeDTO organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry knowledgeModel questionnaire submission features = TenantConfigChangeDTO {..}
+toChangeDTO organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry knowledgeModel project submission features = TenantConfigChangeDTO {..}
 
 toSubmissionServiceSimple :: TenantConfigSubmissionService -> TenantConfigSubmissionServiceSimple
 toSubmissionServiceSimple config =
@@ -50,12 +50,12 @@ toTenantConfig
   -> TenantConfigLookAndFeel
   -> TenantConfigRegistry
   -> TenantConfigKnowledgeModel
-  -> TenantConfigQuestionnaire
+  -> TenantConfigProject
   -> TenantConfigSubmission
   -> TenantConfigFeatures
   -> TenantConfigOwl
   -> TenantConfig
-toTenantConfig organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry knowledgeModel questionnaire submission features owl =
+toTenantConfig organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry knowledgeModel project submission features owl =
   let uuid = organization.tenantUuid
       mailConfigUuid = Nothing
       createdAt = organization.createdAt
@@ -94,8 +94,8 @@ fromKnowledgeModelChangeDTO dto@TenantConfigKnowledgeModelChangeDTO {..} tenantU
 fromKnowledgeModelPublicPackagePatternChangeDTO :: KnowledgeModelPackagePattern -> U.UUID -> Int -> UTCTime -> UTCTime -> TenantConfigKnowledgeModelPublicPackagePattern
 fromKnowledgeModelPublicPackagePatternChangeDTO KnowledgeModelPackagePattern {..} tenantUuid position createdAt updatedAt = TenantConfigKnowledgeModelPublicPackagePattern {..}
 
-fromQuestionnaireChangeDTO :: TenantConfigQuestionnaireChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigQuestionnaire
-fromQuestionnaireChangeDTO TenantConfigQuestionnaireChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigQuestionnaire {..}
+fromProjectChangeDTO :: TenantConfigProjectChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigProject
+fromProjectChangeDTO TenantConfigProjectChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigProject {..}
 
 fromSubmissionChangeDTO :: TenantConfigSubmissionChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigSubmission
 fromSubmissionChangeDTO dto@TenantConfigSubmissionChangeDTO {..} tenantUuid createdAt updatedAt =

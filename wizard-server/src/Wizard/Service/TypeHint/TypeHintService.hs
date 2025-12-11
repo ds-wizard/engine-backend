@@ -14,7 +14,7 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorEventDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelSecretDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Integration.Http.TypeHint.Runner
 import Wizard.Integration.Resource.TypeHint.TypeHintIDTO
 import Wizard.Localization.Messages.Public
@@ -22,11 +22,11 @@ import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
 import Wizard.Model.KnowledgeModel.KnowledgeModelSecret
-import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Project.Project
 import Wizard.Service.Config.Integration.IntegrationConfigService
 import Wizard.Service.KnowledgeModel.Editor.EditorMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
-import Wizard.Service.Questionnaire.QuestionnaireAcl
+import Wizard.Service.Project.ProjectAcl
 
 getLegacyTypeHints :: TypeHintLegacyRequestDTO -> AppContextM [TypeHintLegacyIDTO]
 getLegacyTypeHints reqDto =
@@ -73,11 +73,11 @@ getTypeHints (KnowledgeModelEditorQuestionTypeHintRequest' reqDto) =
     case integration' of
       ApiIntegration' integration -> runApiIntegrationTypeHints integration question.variables reqDto.q
       _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION
-getTypeHints (QuestionnaireTypeHintRequest' reqDto) =
+getTypeHints (ProjectTypeHintRequest' reqDto) =
   runInTransaction $ do
-    qtn <- findQuestionnaireByUuid reqDto.questionnaireUuid
-    checkEditPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
-    km <- compileKnowledgeModel [] (Just qtn.knowledgeModelPackageId) []
+    project <- findProjectByUuid reqDto.projectUuid
+    checkEditPermissionToProject project.visibility project.sharing project.permissions
+    km <- compileKnowledgeModel [] (Just project.knowledgeModelPackageId) []
     question <- getQuestion km reqDto.questionUuid
     integration' <- getIntegration km question.integrationUuid
     case integration' of

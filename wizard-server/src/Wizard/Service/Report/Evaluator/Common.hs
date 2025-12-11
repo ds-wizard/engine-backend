@@ -4,20 +4,20 @@ import qualified Data.List as L
 import Data.Maybe (fromMaybe, isNothing)
 import qualified Data.UUID as U
 
-import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Project.ProjectReply
 
 getReply :: [ReplyTuple] -> String -> Maybe ReplyTuple
 getReply replies p = L.find (\(path, _) -> path == p) replies
 
 isRequiredNow :: [U.UUID] -> Maybe U.UUID -> Maybe U.UUID -> Int -> Int
-isRequiredNow phaseUuids mQPhase mQtnPhase currentValue
-  | isNothing mQtnPhase = currentValue
-  | qPhaseIndex <= qtnPhaseIndex = currentValue
+isRequiredNow phaseUuids mQPhase mProjectPhase currentValue
+  | isNothing mProjectPhase = currentValue
+  | qPhaseIndex <= projectPhaseIndex = currentValue
   | otherwise = 0
   where
-    qtnPhaseIndex =
-      case mQtnPhase of
-        Just qtnPhase -> fromMaybe 9999 (qtnPhase `L.elemIndex` phaseUuids)
+    projectPhaseIndex =
+      case mProjectPhase of
+        Just projectPhase -> fromMaybe 9999 (projectPhase `L.elemIndex` phaseUuids)
         Nothing -> 9999
     qPhaseIndex =
       case mQPhase of

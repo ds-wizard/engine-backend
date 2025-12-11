@@ -16,12 +16,12 @@ import Shared.Common.Model.Error.Error
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Project.ProjectDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelEditorMigration as KnowledgeModelEditor
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as KnowledgeModelPackage
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import Wizard.Database.Migration.Development.Project.Data.Projects
+import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ
 import Wizard.Database.Migration.Development.TypeHint.Data.TypeHints
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
@@ -54,13 +54,13 @@ reqHeadersT authHeader = reqCtHeader : authHeader
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Questionnaire, Owner)" appContext questionnaireTypeHintRequest questionnaire15 [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (Questionnaire, Editor)" appContext questionnaireTypeHintRequest questionnaire15 [reqNonAdminAuthHeader]
-  create_test_200 "HTTP 200 OK (Questionnaire, Anonymous)" appContext questionnaireTypeHintRequest questionnaire15AnonymousEdit []
-  create_test_200 "HTTP 200 OK (KM Editor-Integration)" appContext kmEditorIntegrationTypeHintRequest questionnaire15 [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (KM Editor-Question)" appContext kmEditorQuestionTypeHintRequest questionnaire15 [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (Project, Owner)" appContext projectTypeHintRequest project15 [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (Project, Editor)" appContext projectTypeHintRequest project15 [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 OK (Project, Anonymous)" appContext projectTypeHintRequest project15AnonymousEdit []
+  create_test_200 "HTTP 200 OK (KM Editor-Integration)" appContext kmEditorIntegrationTypeHintRequest project15 [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (KM Editor-Question)" appContext kmEditorQuestionTypeHintRequest project15 [reqAuthHeader]
 
-create_test_200 title appContext reqDto qtn authHeader =
+create_test_200 title appContext reqDto project authHeader =
   it title $ do
     -- GIVEN: Prepare request
     let reqBody = encode reqDto
@@ -74,11 +74,11 @@ create_test_200 title appContext reqDto qtn authHeader =
     runInContextIO U.runMigration appContext
     runInContextIO TML.runMigration appContext
     runInContextIO KnowledgeModelPackage.runMigration appContext
-    runInContextIO QTN.runMigration appContext
+    runInContextIO PRJ.runMigration appContext
     runInContextIO KnowledgeModelEditor.runMigration appContext
     runInContextIO (insertPackage germanyKmPackage) appContext
     runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
-    runInContextIO (insertQuestionnaire qtn) appContext
+    runInContextIO (insertProject project) appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -100,38 +100,38 @@ create_test_401 appContext reqDto =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  create_test_403_questionnaire
-    "HTTP 403 FORBIDDEN (Questionnaire, Non-Owner)"
+  create_test_403_project
+    "HTTP 403 FORBIDDEN (Project, Non-Owner)"
     appContext
-    questionnaireTypeHintRequest
-    questionnaire15NoPerms
+    projectTypeHintRequest
+    project15NoPerms
     [reqNonAdminAuthHeader]
-    (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
-  create_test_403_questionnaire
-    "HTTP 403 FORBIDDEN (Questionnaire, Viewer)"
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Project")
+  create_test_403_project
+    "HTTP 403 FORBIDDEN (Project, Viewer)"
     appContext
-    questionnaireTypeHintRequest
-    questionnaire15
+    projectTypeHintRequest
+    project15
     [reqIsaacAuthTokenHeader]
-    (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
-  create_test_403_questionnaire
-    "HTTP 403 FORBIDDEN (Questionnaire, Anonymous)"
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Project")
+  create_test_403_project
+    "HTTP 403 FORBIDDEN (Project, Anonymous)"
     appContext
-    questionnaireTypeHintRequest
-    questionnaire15
+    projectTypeHintRequest
+    project15
     []
     _ERROR_SERVICE_USER__MISSING_USER
-  create_test_403_questionnaire
-    "HTTP 403 FORBIDDEN (Questionnaire, Anonymous Commenter)"
+  create_test_403_project
+    "HTTP 403 FORBIDDEN (Project, Anonymous Commenter)"
     appContext
-    questionnaireTypeHintRequest
-    questionnaire15AnonymousComment
+    projectTypeHintRequest
+    project15AnonymousComment
     []
     _ERROR_SERVICE_USER__MISSING_USER
   create_test_403_knowledge_model_editor appContext kmEditorIntegrationTypeHintRequest
   create_test_403_knowledge_model_editor appContext kmEditorQuestionTypeHintRequest
 
-create_test_403_questionnaire title appContext reqDto qtn authHeader reason =
+create_test_403_project title appContext reqDto project authHeader reason =
   it title $ do
     -- GIVEN: Prepare request
     let reqBody = encode reqDto
@@ -145,8 +145,8 @@ create_test_403_questionnaire title appContext reqDto qtn authHeader reason =
     runInContextIO U.runMigration appContext
     runInContextIO TML.runMigration appContext
     runInContextIO KnowledgeModelPackage.runMigration appContext
-    runInContextIO QTN.runMigration appContext
-    runInContextIO (insertQuestionnaire qtn) appContext
+    runInContextIO PRJ.runMigration appContext
+    runInContextIO (insertProject project) appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation

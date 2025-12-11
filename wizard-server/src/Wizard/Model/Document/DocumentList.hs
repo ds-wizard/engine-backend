@@ -12,10 +12,10 @@ data DocumentList = DocumentList
   { uuid :: U.UUID
   , name :: String
   , state :: DocumentState
-  , questionnaireUuid :: U.UUID
-  , questionnaireName :: String
-  , questionnaireEventUuid :: Maybe U.UUID
-  , questionnaireVersion :: Maybe String
+  , projectUuid :: U.UUID
+  , projectName :: String
+  , projectEventUuid :: Maybe U.UUID
+  , projectVersion :: Maybe String
   , documentTemplateId :: String
   , documentTemplateName :: String
   , documentTemplateFormats :: [DocumentTemplateFormatSimple]

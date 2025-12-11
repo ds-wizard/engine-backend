@@ -9,16 +9,16 @@ import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
+import Wizard.Database.DAO.Project.ProjectDAO
+import Wizard.Database.DAO.Project.ProjectPermDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.DAO.User.UserGroupDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Model.Questionnaire.QuestionnairePerm
-import Wizard.Model.Questionnaire.QuestionnaireSimpleWithPerm
+import Wizard.Model.Project.Acl.ProjectPerm
+import Wizard.Model.Project.ProjectSimpleWithPerm
 import Wizard.Model.User.UserGroupSuggestion
-import Wizard.Service.Questionnaire.Collaboration.CollaborationService
+import Wizard.Service.Project.Collaboration.ProjectCollaborationService
 import Wizard.Service.User.Group.UserGroupAcl
 import Wizard.Service.User.Group.UserGroupMapper
 import WizardLib.Public.Api.Resource.User.Group.UserGroupDetailDTO
@@ -56,12 +56,12 @@ modifyUserGroup uuid name description private = do
 deleteUserGroup :: U.UUID -> AppContextM ()
 deleteUserGroup userGroupUuid =
   runInTransaction $ do
-    -- 1. Recompute all questionnaire permissions for websockets
-    questionnaires <- findQuestionnairesSimpleWithPermByUserGroupUuid userGroupUuid
-    let questionnairesWithoutUserGroup = fmap (\qtn -> qtn {permissions = filter (\qtnPerm -> qtnPerm.memberUuid /= userGroupUuid) qtn.permissions}) questionnaires
-    traverse_ (\qtn -> updatePermsForOnlineUsers qtn.uuid qtn.visibility qtn.sharing qtn.permissions) questionnairesWithoutUserGroup
-    -- 2. Delete questionnaire perm group
-    deleteQuestionnairePermGroupByUserGroupUuid userGroupUuid
+    -- 1. Recompute all project permissions for websockets
+    projects <- findProjectsSimpleWithPermByUserGroupUuid userGroupUuid
+    let projectsWithoutUserGroup = fmap (\project -> project {permissions = filter (\projectPerm -> projectPerm.memberUuid /= userGroupUuid) project.permissions}) projects
+    traverse_ (\project -> updatePermsForOnlineUsers project.uuid project.visibility project.sharing project.permissions) projectsWithoutUserGroup
+    -- 2. Delete project perm group
+    deleteProjectPermGroupByUserGroupUuid userGroupUuid
     -- 3. Delete user group memberships
     deleteUserGroupMembershipsByUserGroupUuid userGroupUuid
     -- 4. Delete user group

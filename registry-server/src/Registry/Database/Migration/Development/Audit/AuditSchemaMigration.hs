@@ -27,7 +27,7 @@ createTables = do
         \    user_count                     int, \
         \    knowledge_model_package_count  int, \
         \    knowledge_model_editor_count   int, \
-        \    questionnaire_count            int, \
+        \    project_count                  int, \
         \    document_template_count        int, \
         \    document_count                 int, \
         \    knowledge_model_package_id     varchar, \

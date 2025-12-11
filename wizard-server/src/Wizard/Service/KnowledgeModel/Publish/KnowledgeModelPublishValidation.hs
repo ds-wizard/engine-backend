@@ -13,7 +13,7 @@ import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageService
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageValidation
 
 validateMigrationExistence editorUuid = do
-  mMs <- findMigratorStateByEditorUuid' editorUuid
+  mMs <- findKnowledgeModelMigrationByEditorUuid' editorUuid
   when (isJust mMs) (throwError . UserError $ _ERROR_SERVICE_KNOWLEDGE_MODEL_EDITOR__KM_MIGRATION_EXISTS)
 
 validateNewPackageVersion pkgVersion kmEditor org = do

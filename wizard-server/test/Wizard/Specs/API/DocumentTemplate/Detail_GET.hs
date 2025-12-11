@@ -33,7 +33,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/wizard-api/document-templates/global:questionnaire-report:1.0.0"
+reqUrl = "/wizard-api/document-templates/global:project-report:1.0.0"
 
 reqHeadersT reqAuthHeader = reqAuthHeader
 
@@ -72,8 +72,8 @@ create_test_200 title appContext reqAuthHeader =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/document-templates/global:questionnaire-report:9.9.9"
+    "/wizard-api/document-templates/global:project-report:9.9.9"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "document_template"
-    [("id", "global:questionnaire-report:9.9.9")]
+    [("id", "global:project-report:9.9.9")]

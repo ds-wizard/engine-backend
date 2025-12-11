@@ -13,7 +13,7 @@ import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.
 import Shared.OpenId.Database.Migration.Development.OpenId.Data.OpenIds
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
-import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Project.Project
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Config.TenantConfigEM ()
 import Wizard.Model.Tenant.Tenant
@@ -34,7 +34,7 @@ defaultTenantConfig =
     , lookAndFeel = defaultLookAndFeel
     , registry = defaultRegistry
     , knowledgeModel = defaultKnowledgeModel
-    , questionnaire = defaultQuestionnaire
+    , project = defaultProject
     , submission = defaultSubmission
     , owl = defaultOwl
     , mailConfigUuid = Nothing
@@ -44,7 +44,7 @@ defaultTenantConfig =
     }
 
 defaultTenantConfigChangeDto :: TenantConfigChangeDTO
-defaultTenantConfigChangeDto = toChangeDTO defaultOrganizationChangeDto defaultAuthenticationChangeDto defaultPrivacyAndSupportChangeDto defaultDashboardAndLoginScreenChangeDto defaultLookAndFeelChangeDto defaultRegistryChangeDto defaultKnowledgeModelChangeDto defaultQuestionnaireChangeDto defaultSubmissionChangeDto defaultFeaturesChangeDto
+defaultTenantConfigChangeDto = toChangeDTO defaultOrganizationChangeDto defaultAuthenticationChangeDto defaultPrivacyAndSupportChangeDto defaultDashboardAndLoginScreenChangeDto defaultLookAndFeelChangeDto defaultRegistryChangeDto defaultKnowledgeModelChangeDto defaultProjectChangeDto defaultSubmissionChangeDto defaultFeaturesChangeDto
 
 defaultOrganization :: TenantConfigOrganization
 defaultOrganization = fromOrganizationChangeDTO defaultOrganizationChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
@@ -190,52 +190,52 @@ defaultKnowledgeModelPublicPackagePattern =
     , updatedAt = dt' 2018 1 20
     }
 
-defaultQuestionnaire :: TenantConfigQuestionnaire
-defaultQuestionnaire = fromQuestionnaireChangeDTO defaultQuestionnaireChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+defaultProject :: TenantConfigProject
+defaultProject = fromProjectChangeDTO defaultProjectChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
 
-defaultQuestionnaireEncrypted :: TenantConfigQuestionnaire
-defaultQuestionnaireEncrypted = process defaultSecret defaultQuestionnaire
+defaultProjectEncrypted :: TenantConfigProject
+defaultProjectEncrypted = process defaultSecret defaultProject
 
-defaultQuestionnaireChangeDto :: TenantConfigQuestionnaireChangeDTO
-defaultQuestionnaireChangeDto =
-  TenantConfigQuestionnaireChangeDTO
-    { questionnaireVisibility = defaultQuestionnaireVisibility
-    , questionnaireSharing = defaultQuestionnaireSharing
-    , questionnaireCreation = TemplateAndCustomQuestionnaireCreation
-    , projectTagging = defaultQuestionnaireProjectTagging
+defaultProjectChangeDto :: TenantConfigProjectChangeDTO
+defaultProjectChangeDto =
+  TenantConfigProjectChangeDTO
+    { projectVisibility = defaultProjectVisibility
+    , projectSharing = defaultProjectSharing
+    , projectCreation = TemplateAndCustomProjectCreation
+    , projectTagging = defaultProjectProjectTagging
     , summaryReport = SimpleFeature True
     , feedback = defaultFeedback
     }
 
-defaultQuestionnaireVisibility :: TenantConfigQuestionnaireVisibility
-defaultQuestionnaireVisibility =
-  TenantConfigQuestionnaireVisibility
+defaultProjectVisibility :: TenantConfigProjectVisibility
+defaultProjectVisibility =
+  TenantConfigProjectVisibility
     { enabled = True
-    , defaultValue = PrivateQuestionnaire
+    , defaultValue = PrivateProjectVisibility
     }
 
-defaultQuestionnaireSharing :: TenantConfigQuestionnaireSharing
-defaultQuestionnaireSharing =
-  TenantConfigQuestionnaireSharing
+defaultProjectSharing :: TenantConfigProjectSharing
+defaultProjectSharing =
+  TenantConfigProjectSharing
     { enabled = True
-    , defaultValue = RestrictedQuestionnaire
+    , defaultValue = RestrictedProjectSharing
     , anonymousEnabled = False
     }
 
-_SETTINGS_PROJECT_TAG_1 = "settingsProjectTag1"
+_SETTINGS__PROJECT_TAG_1 = "settingsProjectTag1"
 
-_SETTINGS_PROJECT_TAG_2 = "settingsProjectTag2"
+_SETTINGS__PROJECT_TAG_2 = "settingsProjectTag2"
 
-defaultQuestionnaireProjectTagging :: TenantConfigQuestionnaireProjectTagging
-defaultQuestionnaireProjectTagging =
-  TenantConfigQuestionnaireProjectTagging
+defaultProjectProjectTagging :: TenantConfigProjectProjectTagging
+defaultProjectProjectTagging =
+  TenantConfigProjectProjectTagging
     { enabled = True
-    , tags = [_SETTINGS_PROJECT_TAG_1, _SETTINGS_PROJECT_TAG_2]
+    , tags = [_SETTINGS__PROJECT_TAG_1, _SETTINGS__PROJECT_TAG_2]
     }
 
-defaultFeedback :: TenantConfigQuestionnaireFeedback
+defaultFeedback :: TenantConfigProjectFeedback
 defaultFeedback =
-  TenantConfigQuestionnaireFeedback
+  TenantConfigProjectFeedback
     { enabled = True
     , token = ""
     , owner = "DSWGlobal"
@@ -334,11 +334,11 @@ defaultOwl =
 
 -- ------------------------------------------------------------
 -- ------------------------------------------------------------
-editedQuestionnaire :: TenantConfigQuestionnaire
-editedQuestionnaire = fromQuestionnaireChangeDTO editedQuestionnaireChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
+editedProject :: TenantConfigProject
+editedProject = fromProjectChangeDTO editedProjectChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
 
-editedQuestionnaireChangeDto :: TenantConfigQuestionnaireChangeDTO
-editedQuestionnaireChangeDto = defaultQuestionnaireChangeDto {summaryReport = SimpleFeature False}
+editedProjectChangeDto :: TenantConfigProjectChangeDTO
+editedProjectChangeDto = defaultProjectChangeDto {summaryReport = SimpleFeature False}
 
 -- ------------------------------------------------------------
 -- ------------------------------------------------------------

@@ -24,8 +24,8 @@ import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMi
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelCacheSchemaMigration as KnowledgeModelCache
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelEditorMigration as KnowledgeModelEditor
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelEditorSchemaMigration as KnowledgeModelEditor
-import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelMigrationMigration as KnowledgeModelMigrator
-import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelMigrationSchemaMigration as KnowledgeModelMigrator
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelMigrationMigration as KnowledgeModelMigration
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelMigrationSchemaMigration as KnowledgeModelMigration
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as KnowledgeModelPackage
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageSchemaMigration as KnowledgeModelPackage
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSecretMigration as KnowledgeModelSecret
@@ -33,14 +33,14 @@ import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeM
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as Locale
 import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
-import qualified Wizard.Database.Migration.Development.Questionnaire.MigratorMigration as QuestionnaireMigrator
-import qualified Wizard.Database.Migration.Development.Questionnaire.MigratorSchemaMigration as QuestionnaireMigrator
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as Questionnaire
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as Questionnaire
-import qualified Wizard.Database.Migration.Development.QuestionnaireAction.QuestionnaireActionMigration as QuestionnaireAction
-import qualified Wizard.Database.Migration.Development.QuestionnaireAction.QuestionnaireActionSchemaMigration as QuestionnaireAction
-import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterMigration as QuestionnaireImporter
-import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QuestionnaireImporter
+import qualified Wizard.Database.Migration.Development.Project.ProjectActionMigration as ProjectAction
+import qualified Wizard.Database.Migration.Development.Project.ProjectActionSchemaMigration as ProjectAction
+import qualified Wizard.Database.Migration.Development.Project.ProjectImporterMigration as ProjectImporter
+import qualified Wizard.Database.Migration.Development.Project.ProjectImporterSchemaMigration as ProjectImporter
+import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as Project
+import qualified Wizard.Database.Migration.Development.Project.ProjectMigrationMigration as ProjectMigration
+import qualified Wizard.Database.Migration.Development.Project.ProjectMigrationSchemaMigration as ProjectMigration
+import qualified Wizard.Database.Migration.Development.Project.ProjectSchemaMigration as Project
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as Registry
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as Registry
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as Submission
@@ -57,10 +57,10 @@ runMigration = runAppContextWithBaseContext $ do
   logInfo _CMP_MIGRATION "started"
   -- 1. Drop DB triggers
   Document.dropTriggers
-  Questionnaire.dropTriggers
+  Project.dropTriggers
   Locale.dropTriggers
   -- 2. Drop DB functions
-  Questionnaire.dropFunctions
+  Project.dropFunctions
   DocumentTemplate.dropFunctions
   KnowledgeModelEditor.dropFunctions
   KnowledgeModelPackage.dropFunctions
@@ -69,20 +69,20 @@ runMigration = runAppContextWithBaseContext $ do
   ExternalLink.dropTables
   Component.dropTables
   Registry.dropTables
-  QuestionnaireAction.dropTables
-  QuestionnaireImporter.dropTables
+  ProjectAction.dropTables
+  ProjectImporter.dropTables
   Audit.dropTables
   Prefab.dropTables
   PersistentCommand.dropTables
   Submission.dropTables
   ActionKey.dropTables
   Feedback.dropTables
-  KnowledgeModelMigrator.dropTables
+  KnowledgeModelMigration.dropTables
   KnowledgeModelEditor.dropTables
   KnowledgeModelCache.dropTables
   Document.dropTables
-  QuestionnaireMigrator.dropTables
-  Questionnaire.dropTables
+  ProjectMigration.dropTables
+  Project.dropTables
   KnowledgeModelSecret.dropTables
   KnowledgeModelPackage.dropTables
   TemporaryFile.dropTables
@@ -110,17 +110,17 @@ runMigration = runAppContextWithBaseContext $ do
   Feedback.createTables
   KnowledgeModelEditor.createTables
   KnowledgeModelCache.createTables
-  Questionnaire.createTables
+  Project.createTables
   DocumentTemplate.createDraftDataTable
   Document.createTables
-  QuestionnaireMigrator.createTables
-  KnowledgeModelMigrator.createTables
+  ProjectMigration.createTables
+  KnowledgeModelMigration.createTables
   Submission.createTables
   PersistentCommand.createTables
   Prefab.createTables
   Audit.createTables
-  QuestionnaireAction.createTables
-  QuestionnaireImporter.createTables
+  ProjectAction.createTables
+  ProjectImporter.createTables
   Registry.createTables
   Component.createTables
   ExternalLink.createTables
@@ -129,12 +129,12 @@ runMigration = runAppContextWithBaseContext $ do
   KnowledgeModelPackage.createFunctions
   KnowledgeModelEditor.createFunctions
   DocumentTemplate.createFunctions
-  Questionnaire.createFunctions
+  Project.createFunctions
   -- 8. Create missing foreign key constraints
   User.createUserLocaleForeignKeyConstraint
   -- 9. Create DB triggers
   Locale.createTriggers
-  Questionnaire.createTriggers
+  Project.createTriggers
   Document.createTriggers
   -- 10. Load S3 fixtures
   DocumentTemplate.runS3Migration
@@ -147,16 +147,16 @@ runMigration = runAppContextWithBaseContext $ do
   DocumentTemplate.runMigration
   ActionKey.runMigration
   KnowledgeModelEditor.runMigration
-  Questionnaire.runMigration
+  Project.runMigration
   Feedback.runMigration
   Document.runMigration
-  QuestionnaireMigrator.runMigration
-  KnowledgeModelMigrator.runMigration
+  ProjectMigration.runMigration
+  KnowledgeModelMigration.runMigration
   PersistentCommand.runMigration
   Prefab.runMigration
   Audit.runMigration
-  QuestionnaireAction.runMigration
-  QuestionnaireImporter.runMigration
+  ProjectAction.runMigration
+  ProjectImporter.runMigration
   Registry.runMigration
   Locale.runMigration
   Component.runMigration

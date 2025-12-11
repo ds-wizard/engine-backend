@@ -25,7 +25,6 @@ import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.ApiKey.APISpec
 import Wizard.Specs.API.AppKey.APISpec
-import Wizard.Specs.API.CommentThread.APISpec
 import Wizard.Specs.API.Config.APISpec
 import Wizard.Specs.API.Document.APISpec
 import Wizard.Specs.API.DocumentTemplate.APISpec
@@ -42,17 +41,11 @@ import Wizard.Specs.API.KnowledgeModelEditor.APISpec
 import Wizard.Specs.API.KnowledgeModelPackage.APISpec
 import Wizard.Specs.API.KnowledgeModelSecret.APISpec
 import Wizard.Specs.API.Locale.APISpec
-import qualified Wizard.Specs.API.Migration.KnowledgeModel.APISpec as KM_MigrationAPI
-import qualified Wizard.Specs.API.Migration.Questionnaire.APISpec as QTN_MigrationAPI
 import Wizard.Specs.API.Prefab.APISpec
-import Wizard.Specs.API.Questionnaire.APISpec
-import Wizard.Specs.API.Questionnaire.Comment.APISpec
-import Wizard.Specs.API.Questionnaire.Event.APISpec
-import Wizard.Specs.API.Questionnaire.ProjectTag.APISpec
-import Wizard.Specs.API.Questionnaire.User.APISpec
-import Wizard.Specs.API.Questionnaire.Version.APISpec
-import Wizard.Specs.API.QuestionnaireAction.APISpec
-import Wizard.Specs.API.QuestionnaireImporter.APISpec
+import Wizard.Specs.API.Project.APISpec
+import Wizard.Specs.API.ProjectAction.APISpec
+import Wizard.Specs.API.ProjectCommentThread.APISpec
+import Wizard.Specs.API.ProjectImporter.APISpec
 import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Swagger.APISpec
 import Wizard.Specs.API.Tenant.APISpec
@@ -78,15 +71,15 @@ import qualified Wizard.Specs.Service.KnowledgeModel.Migration.Migrator.Sanitize
 import Wizard.Specs.Service.KnowledgeModel.Package.PackageUtilSpec
 import Wizard.Specs.Service.KnowledgeModel.Package.PackageValidationSpec
 import Wizard.Specs.Service.KnowledgeModel.Squash.SquasherSpec
-import Wizard.Specs.Service.Questionnaire.Collaboration.CollaborationAclSpec
-import Wizard.Specs.Service.Questionnaire.Compiler.CompilerServiceSpec
-import Wizard.Specs.Service.Questionnaire.Event.QuestionnaireEventServiceSpec
-import qualified Wizard.Specs.Service.Questionnaire.Migration.Migrator.ChangeQTypeSanitizerSpec as QTN_ChangeQTypeSanitizer
-import qualified Wizard.Specs.Service.Questionnaire.Migration.Migrator.MoveSanitizerSpec as QTN_MoveSanitizerSpec
-import qualified Wizard.Specs.Service.Questionnaire.Migration.Migrator.SanitizerSpec as QTN_SanitizerSpec
-import Wizard.Specs.Service.Questionnaire.QuestionnaireAclSpec
-import Wizard.Specs.Service.Questionnaire.QuestionnaireServiceSpec
-import Wizard.Specs.Service.Questionnaire.QuestionnaireValidationSpec
+import Wizard.Specs.Service.Project.Collaboration.ProjectCollaborationAclSpec
+import Wizard.Specs.Service.Project.Compiler.ProjectCompilerServiceSpec
+import Wizard.Specs.Service.Project.Event.ProjectEventServiceSpec
+import qualified Wizard.Specs.Service.Project.Migration.Migrator.ChangeQTypeSanitizerSpec as PRJ_ChangeQTypeSanitizer
+import qualified Wizard.Specs.Service.Project.Migration.Migrator.MoveSanitizerSpec as PRJ_MoveSanitizerSpec
+import qualified Wizard.Specs.Service.Project.Migration.Migrator.SanitizerSpec as PRJ_SanitizerSpec
+import Wizard.Specs.Service.Project.ProjectAclSpec
+import Wizard.Specs.Service.Project.ProjectServiceSpec
+import Wizard.Specs.Service.Project.ProjectValidationSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Tenant.Config.TenantConfigValidationSpec
 import Wizard.Specs.Service.Tenant.TenantValidationSpec
@@ -94,7 +87,7 @@ import Wizard.Specs.Service.User.UserServiceSpec
 import Wizard.Specs.Util.JinjaSpec
 import Wizard.Specs.Websocket.Common
 import Wizard.Specs.Websocket.KnowledgeModelEditor.Detail.WebsocketSpec
-import Wizard.Specs.Websocket.Questionnaire.Detail.WebsocketSpec
+import Wizard.Specs.Websocket.Project.Detail.WebsocketSpec
 import Wizard.TestMigration
 
 hLoadConfig fileName loadFn callback = do
@@ -167,6 +160,10 @@ main =
             describe "SERVICE" $ do
               describe "Document Template" documentTemplateUtilSpec
               describe "KnowledgeModel" $ do
+                describe "Metamodel" $
+                  describe
+                    "Migration"
+                    eventMigratorSpec
                 describe "Compiler" $ do
                   describe "Modifier" modifierSpec
                   compilerSpec
@@ -174,16 +171,14 @@ main =
                 describe "Squash" $ do squasherSpec
                 knowledgeModelFilterSpec
               describe "Migration" $ do
-                describe "Metamodel" $ describe "Migrator" $ do
-                  eventMigratorSpec
-                describe "Questionnaire" $ describe "Migrator" $ do
-                  QTN_ChangeQTypeSanitizer.sanitizerSpec
-                  QTN_MoveSanitizerSpec.sanitizerSpec
-              describe "Questionnaire" $ do
+                describe "Project" $ describe "Migration" $ do
+                  PRJ_ChangeQTypeSanitizer.sanitizerSpec
+                  PRJ_MoveSanitizerSpec.sanitizerSpec
+              describe "Project" $ do
                 describe "Event" $ do
-                  questionnaireCompilerServiceSpec
-                  questionnaireEventServiceSpec
-                questionnaireValidationSpec
+                  projectCompilerServiceSpec
+                  projectEventServiceSpec
+                projectValidationSpec
               describe "Report" reportGeneratorSpec
               describe "Tenant" $ do
                 describe "Config" tenantConfigValidationSpec
@@ -192,7 +187,6 @@ main =
             describe "API" $ do
               apiKeyAPI baseContext appContext
               appKeyAPI baseContext appContext
-              commentThreadAPI baseContext appContext
               configAPI baseContext appContext
               documentAPI baseContext appContext
               documentTemplateAPI baseContext appContext
@@ -209,17 +203,11 @@ main =
               knowledgeModelPackageAPI baseContext appContext
               knowledgeModelSecretAPI baseContext appContext
               localeAPI baseContext appContext
-              KM_MigrationAPI.migrationAPI baseContext appContext
-              QTN_MigrationAPI.migrationAPI baseContext appContext
               prefabAPI baseContext appContext
-              questionnaireAPI baseContext appContext
-              questionnaireCommentAPI baseContext appContext
-              questionnaireEventAPI baseContext appContext
-              questionnaireProjectTagAPI baseContext appContext
-              questionnaireUserAPI baseContext appContext
-              questionnaireVersionAPI baseContext appContext
-              questionnaireActionAPI baseContext appContext
-              questionnaireImporterAPI baseContext appContext
+              projectAPI baseContext appContext
+              projectActionAPI baseContext appContext
+              projectCommentThreadAPI baseContext appContext
+              projectImporterAPI baseContext appContext
               submissionAPI baseContext appContext
               swaggerAPI baseContext appContext
               tenantAPI baseContext appContext
@@ -235,23 +223,22 @@ main =
             describe "SERVICE" $ do
               documentIntegrationSpec appContext
               describe "KnowledgeModel" $ do
-                describe "Editor" $ knowledgeModelEditorServiceSpec appContext
-                describe "Migration" $
-                  describe "Migrator" $ do
+                describe "Editor" $ do
+                  describe "Migration" $ do
                     migratorSpec appContext
                     KM_SanitizerSpec.sanitizerSpec appContext
+                  knowledgeModelEditorServiceSpec appContext
                 describe "Package" $ packageValidationSpec appContext
-              describe "Questionnaire" $ do
+              describe "Project" $ do
                 describe "Migration" $
-                  describe "Migrator" $
-                    QTN_SanitizerSpec.sanitizerIntegrationSpec appContext
-                questionnaireAclSpec appContext
-                questionnaireCollaborationAclSpec appContext
-                questionnaireServiceSpec appContext
+                  PRJ_SanitizerSpec.sanitizerIntegrationSpec appContext
+                projectAclSpec appContext
+                projectCollaborationAclSpec appContext
+                projectServiceSpec appContext
               userServiceIntegrationSpec appContext
             describe "UTIL" $ do
               jinjaSpec
             describe "WEBSOCKET" $ do
               knowledgeModelEditorWebsocketAPI appContext
-              questionnaireWebsocketAPI appContext
+              projectWebsocketAPI appContext
     )

@@ -5,7 +5,7 @@ import GHC.Generics
 data InstanceStatistics = InstanceStatistics
   { userCount :: Int
   , pkgCount :: Int
-  , qtnCount :: Int
+  , prjCount :: Int
   , kmEditorCount :: Int
   , docCount :: Int
   , tmlCount :: Int

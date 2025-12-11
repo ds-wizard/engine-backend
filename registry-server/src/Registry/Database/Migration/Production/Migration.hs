@@ -17,6 +17,7 @@ import qualified Registry.Database.Migration.Production.Migration_0012_tenant.Mi
 import qualified Registry.Database.Migration.Production.Migration_0013_jsonb.Migration as M_0013
 import qualified Registry.Database.Migration.Production.Migration_0014_documentTemplateMetamodel.Migration as M_0014
 import qualified Registry.Database.Migration.Production.Migration_0015_knowledgeModelRefactor.Migration as M_0015
+import qualified Registry.Database.Migration.Production.Migration_0016_project.Migration as M_0016
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -35,4 +36,5 @@ migrationDefinitions =
   , M_0013.definition
   , M_0014.definition
   , M_0015.definition
+  , M_0016.definition
   ]

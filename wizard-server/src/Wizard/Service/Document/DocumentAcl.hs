@@ -5,28 +5,28 @@ import qualified Data.UUID as U
 
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
-import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Service.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Project.Project
+import Wizard.Service.Project.ProjectAcl
 
 checkViewPermissionToDoc :: Maybe U.UUID -> AppContextM ()
-checkViewPermissionToDoc mQtnUuid = do
-  case mQtnUuid of
-    Just qtnUuid -> do
-      qtn <- findQuestionnaireByUuid qtnUuid
-      checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
+checkViewPermissionToDoc mProjectUuid = do
+  case mProjectUuid of
+    Just projectUuid -> do
+      project <- findProjectByUuid projectUuid
+      checkViewPermissionToProject project.visibility project.sharing project.permissions
     Nothing -> throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Read Document"
 
-checkViewPermissionToDoc' :: Questionnaire -> AppContextM ()
-checkViewPermissionToDoc' qtn = checkViewPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
+checkViewPermissionToDoc' :: Project -> AppContextM ()
+checkViewPermissionToDoc' project = checkViewPermissionToProject project.visibility project.sharing project.permissions
 
 checkEditPermissionToDoc :: Maybe U.UUID -> AppContextM ()
-checkEditPermissionToDoc mQtnUuid = do
-  case mQtnUuid of
-    Just qtnUuid -> do
+checkEditPermissionToDoc mProjectUuid = do
+  case mProjectUuid of
+    Just projectUuid -> do
       _ <- getCurrentUser
-      qtn <- findQuestionnaireByUuid qtnUuid
-      checkEditPermissionToQtn qtn.visibility qtn.sharing qtn.permissions
+      project <- findProjectByUuid projectUuid
+      checkEditPermissionToProject project.visibility project.sharing project.permissions
     Nothing -> throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Document"

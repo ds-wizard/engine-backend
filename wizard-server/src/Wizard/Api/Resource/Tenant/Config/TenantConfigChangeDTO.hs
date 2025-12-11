@@ -19,7 +19,7 @@ data TenantConfigChangeDTO = TenantConfigChangeDTO
   , lookAndFeel :: TenantConfigLookAndFeelChangeDTO
   , registry :: TenantConfigRegistryChangeDTO
   , knowledgeModel :: TenantConfigKnowledgeModelChangeDTO
-  , questionnaire :: TenantConfigQuestionnaireChangeDTO
+  , project :: TenantConfigProjectChangeDTO
   , submission :: TenantConfigSubmissionChangeDTO
   , features :: TenantConfigFeaturesChangeDTO
   }
@@ -91,13 +91,13 @@ data TenantConfigKnowledgeModelPublicChangeDTO = TenantConfigKnowledgeModelPubli
   }
   deriving (Generic, Show)
 
-data TenantConfigQuestionnaireChangeDTO = TenantConfigQuestionnaireChangeDTO
-  { questionnaireVisibility :: TenantConfigQuestionnaireVisibility
-  , questionnaireSharing :: TenantConfigQuestionnaireSharing
-  , questionnaireCreation :: QuestionnaireCreation
-  , projectTagging :: TenantConfigQuestionnaireProjectTagging
+data TenantConfigProjectChangeDTO = TenantConfigProjectChangeDTO
+  { projectVisibility :: TenantConfigProjectVisibility
+  , projectSharing :: TenantConfigProjectSharing
+  , projectCreation :: ProjectCreation
+  , projectTagging :: TenantConfigProjectProjectTagging
   , summaryReport :: SimpleFeature
-  , feedback :: TenantConfigQuestionnaireFeedback
+  , feedback :: TenantConfigProjectFeedback
   }
   deriving (Generic, Eq, Show)
 

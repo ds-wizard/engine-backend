@@ -23,10 +23,10 @@ import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Document.DocumentContextJM ()
 import Wizard.Model.Document.DocumentList
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
-import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireEventList
-import Wizard.Model.Questionnaire.QuestionnaireEventListLenses ()
-import Wizard.Model.Questionnaire.QuestionnaireSimple
+import Wizard.Model.Project.Event.ProjectEventList
+import Wizard.Model.Project.Event.ProjectEventListLenses ()
+import Wizard.Model.Project.Project
+import Wizard.Model.Project.ProjectSimple
 import Wizard.Model.Submission.SubmissionList
 
 toDTO :: DocumentList -> [SubmissionList] -> DocumentDTO
@@ -35,9 +35,9 @@ toDTO doc submissions =
     { uuid = doc.uuid
     , name = doc.name
     , state = doc.state
-    , questionnaire = Just QuestionnaireSimple {uuid = doc.questionnaireUuid, name = doc.questionnaireName}
-    , questionnaireEventUuid = doc.questionnaireEventUuid
-    , questionnaireVersion = doc.questionnaireVersion
+    , project = Just ProjectSimple {uuid = doc.projectUuid, name = doc.projectName}
+    , projectEventUuid = doc.projectEventUuid
+    , projectVersion = doc.projectVersion
     , documentTemplateId = doc.documentTemplateId
     , documentTemplateName = doc.documentTemplateName
     , format = L.find (\f -> f.uuid == doc.formatUuid) $ doc.documentTemplateFormats
@@ -51,15 +51,15 @@ toDTO doc submissions =
     , createdAt = doc.createdAt
     }
 
-toDTOWithDocTemplate :: Document -> Questionnaire -> Maybe String -> [SubmissionList] -> DocumentTemplate -> DocumentTemplateFormatSimple -> DocumentDTO
-toDTOWithDocTemplate doc qtn mQtnVersion submissions tml format =
+toDTOWithDocTemplate :: Document -> Project -> Maybe String -> [SubmissionList] -> DocumentTemplate -> DocumentTemplateFormatSimple -> DocumentDTO
+toDTOWithDocTemplate doc project mProjectVersion submissions tml format =
   DocumentDTO
     { uuid = doc.uuid
     , name = doc.name
     , state = doc.state
-    , questionnaire = Just $ QuestionnaireSimple {uuid = qtn.uuid, name = qtn.name}
-    , questionnaireEventUuid = doc.questionnaireEventUuid
-    , questionnaireVersion = mQtnVersion
+    , project = Just $ ProjectSimple {uuid = project.uuid, name = project.name}
+    , projectEventUuid = doc.projectEventUuid
+    , projectVersion = mProjectVersion
     , documentTemplateId = tml.tId
     , documentTemplateName = tml.name
     , format = Just format
@@ -73,19 +73,19 @@ toDTOWithDocTemplate doc qtn mQtnVersion submissions tml format =
     , createdAt = doc.createdAt
     }
 
-fromCreateDTO :: DocumentCreateDTO -> U.UUID -> Int -> [QuestionnaireEventList] -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
-fromCreateDTO dto docUuid repliesHash qtnEvents mCurrentUser tenantUuid now =
+fromCreateDTO :: DocumentCreateDTO -> U.UUID -> Int -> [ProjectEventList] -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
+fromCreateDTO dto docUuid repliesHash projectEvents mCurrentUser tenantUuid now =
   Document
     { uuid = docUuid
     , name = trim dto.name
     , state = QueuedDocumentState
     , durability = PersistentDocumentDurability
-    , questionnaireUuid = Just dto.questionnaireUuid
-    , questionnaireEventUuid =
-        case dto.questionnaireEventUuid of
-          Just questionnaireEventUuid -> Just questionnaireEventUuid
-          Nothing -> fmap getUuid (lastSafe qtnEvents)
-    , questionnaireRepliesHash = repliesHash
+    , projectUuid = Just dto.projectUuid
+    , projectEventUuid =
+        case dto.projectEventUuid of
+          Just projectEventUuid -> Just projectEventUuid
+          Nothing -> fmap getUuid (lastSafe projectEvents)
+    , projectRepliesHash = repliesHash
     , documentTemplateId = dto.documentTemplateId
     , formatUuid = dto.formatUuid
     , createdBy = fmap (.uuid) mCurrentUser
@@ -99,19 +99,19 @@ fromCreateDTO dto docUuid repliesHash qtnEvents mCurrentUser tenantUuid now =
     , createdAt = now
     }
 
-fromTemporallyCreateDTO :: U.UUID -> Questionnaire -> Maybe U.UUID -> String -> U.UUID -> Int -> Maybe UserDTO -> U.UUID -> UTCTime -> Bool -> Document
-fromTemporallyCreateDTO docUuid qtn questionnaireEventUuid documentTemplateId formatUuid repliesHash mCurrentUser tenantUuid now fromKnowledgeModelEditor =
+fromTemporallyCreateDTO :: U.UUID -> Project -> Maybe U.UUID -> String -> U.UUID -> Int -> Maybe UserDTO -> U.UUID -> UTCTime -> Bool -> Document
+fromTemporallyCreateDTO docUuid project projectEventUuid documentTemplateId formatUuid repliesHash mCurrentUser tenantUuid now fromKnowledgeModelEditor =
   Document
     { uuid = docUuid
-    , name = trim qtn.name
+    , name = trim project.name
     , state = QueuedDocumentState
     , durability = TemporallyDocumentDurability
-    , questionnaireUuid =
+    , projectUuid =
         if fromKnowledgeModelEditor
           then Nothing
-          else Just qtn.uuid
-    , questionnaireEventUuid = questionnaireEventUuid
-    , questionnaireRepliesHash = repliesHash
+          else Just project.uuid
+    , projectEventUuid = projectEventUuid
+    , projectRepliesHash = repliesHash
     , documentTemplateId = documentTemplateId
     , formatUuid = formatUuid
     , createdBy = fmap (.uuid) mCurrentUser
@@ -146,14 +146,14 @@ toTemporaryPackage tenantUuid createdAt =
     , createdAt = createdAt
     }
 
-toTemporaryQuestionnaire :: KnowledgeModelEditor -> KnowledgeModelPackage -> Maybe UserDTO -> Questionnaire
-toTemporaryQuestionnaire kmEditor package mCurrentUser =
-  Questionnaire
+toTemporaryProject :: KnowledgeModelEditor -> KnowledgeModelPackage -> Maybe UserDTO -> Project
+toTemporaryProject kmEditor package mCurrentUser =
+  Project
     { uuid = kmEditor.uuid
     , name = kmEditor.name
     , description = Just kmEditor.description
-    , visibility = PrivateQuestionnaire
-    , sharing = RestrictedQuestionnaire
+    , visibility = PrivateProjectVisibility
+    , sharing = RestrictedProjectSharing
     , knowledgeModelPackageId = fromMaybe package.pId kmEditor.previousPackageId
     , selectedQuestionTagUuids = []
     , projectTags = []

@@ -38,10 +38,10 @@ instance FromJSON ClientConfigRegistryDTO where
 instance ToJSON ClientConfigRegistryDTO where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON ClientConfigQuestionnaireDTO where
+instance FromJSON ClientConfigProjectDTO where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON ClientConfigQuestionnaireDTO where
+instance ToJSON ClientConfigProjectDTO where
   toJSON = genericToJSON jsonOptions
 
 instance FromJSON ClientConfigCloudDTO where

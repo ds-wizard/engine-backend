@@ -7,17 +7,17 @@ import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataDTO
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.Project.Data.Projects
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftData
-import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Project.Project
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
-import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QuestionnaireMapper
+import qualified Wizard.Service.Project.ProjectMapper as ProjectMapper
 
 wizardDocumentTemplateDraftData :: DocumentTemplateDraftData
 wizardDocumentTemplateDraftData =
   DocumentTemplateDraftData
     { documentTemplateId = wizardDocumentTemplateDraft.tId
-    , questionnaireUuid = Just questionnaire1.uuid
+    , projectUuid = Just project1.uuid
     , knowledgeModelEditorUuid = Nothing
     , formatUuid = Just formatJson.uuid
     , tenantUuid = wizardDocumentTemplateDraft.tenantUuid
@@ -28,7 +28,7 @@ wizardDocumentTemplateDraftData =
 wizardDocumentTemplateDraftDataEdited :: DocumentTemplateDraftData
 wizardDocumentTemplateDraftDataEdited =
   wizardDocumentTemplateDraftData
-    { questionnaireUuid = Just questionnaire2.uuid
+    { projectUuid = Just project2.uuid
     , formatUuid = Just formatPdf.uuid
     }
 
@@ -47,8 +47,8 @@ wizardDocumentTemplateDraftChangeDTO = toChangeDTO wizardDocumentTemplateDraft
 wizardDocumentTemplateDraftDataDTO :: DocumentTemplateDraftDataDTO
 wizardDocumentTemplateDraftDataDTO =
   DocumentTemplateDraftDataDTO
-    { questionnaireUuid = wizardDocumentTemplateDraftDataEdited.questionnaireUuid
-    , questionnaire = Just . QuestionnaireMapper.toSuggestion $ questionnaire2
+    { projectUuid = wizardDocumentTemplateDraftDataEdited.projectUuid
+    , project = Just . ProjectMapper.toSuggestion $ project2
     , knowledgeModelEditorUuid = Nothing
     , knowledgeModelEditor = Nothing
     , formatUuid = wizardDocumentTemplateDraftDataEdited.formatUuid
@@ -57,7 +57,7 @@ wizardDocumentTemplateDraftDataDTO =
 wizardDocumentTemplateDraftDataChangeDTO :: DocumentTemplateDraftDataChangeDTO
 wizardDocumentTemplateDraftDataChangeDTO =
   DocumentTemplateDraftDataChangeDTO
-    { questionnaireUuid = wizardDocumentTemplateDraftDataEdited.questionnaireUuid
+    { projectUuid = wizardDocumentTemplateDraftDataEdited.projectUuid
     , knowledgeModelEditorUuid = Nothing
     , formatUuid = wizardDocumentTemplateDraftDataEdited.formatUuid
     }

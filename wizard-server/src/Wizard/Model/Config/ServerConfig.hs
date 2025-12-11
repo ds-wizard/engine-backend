@@ -18,7 +18,7 @@ data ServerConfig = ServerConfig
   , document :: ServerConfigDocument
   , feedback :: ServerConfigFeedback
   , knowledgeModelEditor :: ServerConfigKnowledgeModelEditor
-  , questionnaire :: ServerConfigQuestionnaire
+  , project :: ServerConfigProject
   , temporaryFile :: ServerConfigTemporaryFile
   , userToken :: ServerConfigUserToken
   , analyticalMails :: ServerConfigAnalyticalMails
@@ -80,7 +80,7 @@ data ServerConfigKnowledgeModelEditor = ServerConfigKnowledgeModelEditor
   }
   deriving (Generic, Show)
 
-data ServerConfigQuestionnaire = ServerConfigQuestionnaire
+data ServerConfigProject = ServerConfigProject
   { clean :: ServerConfigCronWorker
   , squash :: ServerConfigCronWorker
   , assigneeNotification :: ServerConfigCronWorker
@@ -102,7 +102,7 @@ data ServerConfigSignalBridge = ServerConfigSignalBridge
   { enabled :: Bool
   , updatePermsArn :: String
   , updateUserGroupArn :: String
-  , setQuestionnaireArn :: String
+  , setProjectArn :: String
   , addFileArn :: String
   , logOutAllArn :: String
   }

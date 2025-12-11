@@ -81,7 +81,7 @@ test404 appContext = do
       read_Error c1 expError
       -- AND: Close sockets
       closeSockets [s1]
-  it "WS 404 NOT FOUND - questionnaire was deleted" $
+  it "WS 404 NOT FOUND - project was deleted" $
     -- GIVEN: Prepare database
     do
       let editor = amsterdamKnowledgeModelEditor

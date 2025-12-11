@@ -6,7 +6,6 @@ import Wizard.Api.Handler.ActionKey.Api
 import Wizard.Api.Handler.ApiKey.Api
 import Wizard.Api.Handler.AppKey.Api
 import Wizard.Api.Handler.Auth.Api
-import Wizard.Api.Handler.CommentThread.Api
 import Wizard.Api.Handler.Config.Api
 import Wizard.Api.Handler.Dev.Api
 import Wizard.Api.Handler.Document.Api
@@ -24,15 +23,13 @@ import Wizard.Api.Handler.KnowledgeModelEditor.Api
 import Wizard.Api.Handler.KnowledgeModelPackage.Api
 import Wizard.Api.Handler.KnowledgeModelSecret.Api
 import Wizard.Api.Handler.Locale.Api
-import Wizard.Api.Handler.Migration.Api
 import Wizard.Api.Handler.PersistentCommand.Api
 import Wizard.Api.Handler.Prefab.Api
-import Wizard.Api.Handler.Questionnaire.Api
-import Wizard.Api.Handler.Questionnaire.Event.Api
-import Wizard.Api.Handler.Questionnaire.Version.Api
-import Wizard.Api.Handler.QuestionnaireAction.Api
-import Wizard.Api.Handler.QuestionnaireFile.Api
-import Wizard.Api.Handler.QuestionnaireImporter.Api
+import Wizard.Api.Handler.Project.Api
+import Wizard.Api.Handler.ProjectAction.Api
+import Wizard.Api.Handler.ProjectCommentThread.Api
+import Wizard.Api.Handler.ProjectFile.Api
+import Wizard.Api.Handler.ProjectImporter.Api
 import Wizard.Api.Handler.Registry.Api
 import Wizard.Api.Handler.Submission.Api
 import Wizard.Api.Handler.Tenant.Api
@@ -47,7 +44,6 @@ type ApplicationAPI =
     :<|> ApiKeyAPI
     :<|> AppKeyAPI
     :<|> AuthAPI
-    :<|> CommentThreadAPI
     :<|> ConfigAPI
     :<|> DevAPI
     :<|> DocumentTemplateAPI
@@ -65,15 +61,13 @@ type ApplicationAPI =
     :<|> KnowledgeModelPackageAPI
     :<|> KnowledgeModelSecretAPI
     :<|> LocaleAPI
-    :<|> MigrationAPI
     :<|> PersistentCommandAPI
     :<|> PrefabAPI
-    :<|> QuestionnaireAPI
-    :<|> QuestionnaireEventAPI
-    :<|> QuestionnaireVersionAPI
-    :<|> QuestionnaireFileAPI
-    :<|> QuestionnaireActionAPI
-    :<|> QuestionnaireImporterAPI
+    :<|> ProjectAPI
+    :<|> ProjectActionAPI
+    :<|> ProjectCommentThreadAPI
+    :<|> ProjectFileAPI
+    :<|> ProjectImporterAPI
     :<|> RegistryAPI
     :<|> SubmissionAPI
     :<|> TenantAPI
@@ -91,7 +85,6 @@ applicationServer =
     :<|> apiKeyServer
     :<|> appKeyServer
     :<|> authServer
-    :<|> commentThreadServer
     :<|> configServer
     :<|> devServer
     :<|> documentTemplateServer
@@ -109,15 +102,13 @@ applicationServer =
     :<|> knowledgeModelPackageServer
     :<|> knowledgeModelSecretServer
     :<|> localeServer
-    :<|> migrationServer
     :<|> persistentCommandServer
     :<|> prefabServer
-    :<|> questionnaireServer
-    :<|> questionnaireEventServer
-    :<|> questionnaireVersionServer
-    :<|> questionnaireFileServer
-    :<|> questionnaireActionServer
-    :<|> questionnaireImporterServer
+    :<|> projectServer
+    :<|> projectActionServer
+    :<|> projectCommentThreadServer
+    :<|> projectFileServer
+    :<|> projectImporterServer
     :<|> registryServer
     :<|> submissionServer
     :<|> tenantServer

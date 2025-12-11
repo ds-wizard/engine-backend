@@ -9,11 +9,11 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
-import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireFileSimple
-import Wizard.Model.Questionnaire.QuestionnaireReply
-import Wizard.Model.Questionnaire.QuestionnaireVersion
-import Wizard.Model.Questionnaire.QuestionnaireVersionList
+import Wizard.Model.Project.File.ProjectFileSimple
+import Wizard.Model.Project.Project
+import Wizard.Model.Project.ProjectReply
+import Wizard.Model.Project.Version.ProjectVersion
+import Wizard.Model.Project.Version.ProjectVersionList
 import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
@@ -23,13 +23,13 @@ import qualified Wizard.Service.User.UserMapper as USR_Mapper
 toDocumentContext
   :: Document
   -> String
-  -> Questionnaire
+  -> Project
   -> Maybe U.UUID
   -> M.Map String Reply
   -> M.Map String [U.UUID]
-  -> Maybe QuestionnaireVersion
-  -> [QuestionnaireVersionList]
-  -> [QuestionnaireFileSimple]
+  -> Maybe ProjectVersion
+  -> [ProjectVersionList]
+  -> [ProjectFileSimple]
   -> KnowledgeModel
   -> Report
   -> KnowledgeModelPackage
@@ -39,7 +39,7 @@ toDocumentContext
   -> [DocumentContextUserPerm]
   -> [DocumentContextUserGroupPerm]
   -> DocumentContext
-toDocumentContext doc appClientUrl qtn phaseUuid replies labels mQtnVersion qtnVersionDtos qtnFiles km report pkg org mQtnCreatedBy mDocCreatedBy users groups =
+toDocumentContext doc appClientUrl project phaseUuid replies labels mProjectVersion projectVersionDtos projectFiles km report pkg org mProjectCreatedBy mDocCreatedBy users groups =
   DocumentContext
     { config = DocumentContextConfig {clientUrl = appClientUrl}
     , document =
@@ -51,21 +51,21 @@ toDocumentContext doc appClientUrl qtn phaseUuid replies labels mQtnVersion qtnV
           , createdBy = USR_Mapper.toDTO <$> mDocCreatedBy
           , createdAt = doc.createdAt
           }
-    , questionnaire =
+    , project =
         DocumentContextQuestionnaire
-          { uuid = qtn.uuid
-          , name = qtn.name
-          , description = qtn.description
+          { uuid = project.uuid
+          , name = project.name
+          , description = project.description
           , replies = replies
           , phaseUuid = phaseUuid
           , labels = labels
-          , versionUuid = fmap (.uuid) mQtnVersion
-          , versions = qtnVersionDtos
-          , projectTags = qtn.projectTags
-          , files = qtnFiles
-          , createdBy = USR_Mapper.toDTO <$> mQtnCreatedBy
-          , createdAt = qtn.createdAt
-          , updatedAt = qtn.updatedAt
+          , versionUuid = fmap (.uuid) mProjectVersion
+          , versions = projectVersionDtos
+          , projectTags = project.projectTags
+          , files = projectFiles
+          , createdBy = USR_Mapper.toDTO <$> mProjectCreatedBy
+          , createdAt = project.createdAt
+          , updatedAt = project.updatedAt
           }
     , knowledgeModel = km
     , report = report

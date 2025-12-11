@@ -20,18 +20,18 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
-import qualified Wizard.Database.DAO.KnowledgeModel.KnowledgeModelMigrationDAO as KM_MigratorDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelMigrationDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelSecretDAO
-import qualified Wizard.Database.DAO.Questionnaire.MigratorDAO as QTN_MigratorDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireCommentThreadDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireEventDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnairePermDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireVersionDAO
-import Wizard.Database.DAO.QuestionnaireAction.QuestionnaireActionDAO
-import Wizard.Database.DAO.QuestionnaireImporter.QuestionnaireImporterDAO
+import Wizard.Database.DAO.Project.ProjectActionDAO
+import Wizard.Database.DAO.Project.ProjectCommentDAO
+import Wizard.Database.DAO.Project.ProjectCommentThreadDAO
+import Wizard.Database.DAO.Project.ProjectDAO
+import Wizard.Database.DAO.Project.ProjectEventDAO
+import Wizard.Database.DAO.Project.ProjectFileDAO
+import Wizard.Database.DAO.Project.ProjectImporterDAO
+import Wizard.Database.DAO.Project.ProjectMigrationDAO
+import Wizard.Database.DAO.Project.ProjectPermDAO
+import Wizard.Database.DAO.Project.ProjectVersionDAO
 import Wizard.Database.DAO.Registry.RegistryKnowledgeModelPackageDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Database.DAO.Registry.RegistryTemplateDAO
@@ -42,7 +42,7 @@ import Wizard.Database.DAO.Tenant.Config.TenantConfigKnowledgeModelDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
-import Wizard.Database.DAO.Tenant.Config.TenantConfigQuestionnaireDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigProjectDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigRegistryDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
@@ -58,16 +58,16 @@ import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMi
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelCacheSchemaMigration as KnowledgeModelCache
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelEditorSchemaMigration as KnowledgeModelEditor
-import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelMigrationSchemaMigration as KnowledgeModelMigrator
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelMigrationSchemaMigration as KnowledgeModelMigration
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageSchemaMigration as KnowledgeModelPackage
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSecretSchemaMigration as KnowledgeModelSecret
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LocaleMigration
 import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
-import qualified Wizard.Database.Migration.Development.Questionnaire.MigratorSchemaMigration as QuestionnaireMigrator
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as Questionnaire
-import qualified Wizard.Database.Migration.Development.QuestionnaireAction.QuestionnaireActionSchemaMigration as QuestionnaireAction
-import qualified Wizard.Database.Migration.Development.QuestionnaireImporter.QuestionnaireImporterSchemaMigration as QuestionnaireImporter
+import qualified Wizard.Database.Migration.Development.Project.ProjectActionSchemaMigration as ProjectAction
+import qualified Wizard.Database.Migration.Development.Project.ProjectImporterSchemaMigration as ProjectImporter
+import qualified Wizard.Database.Migration.Development.Project.ProjectMigrationSchemaMigration as ProjectMigration
+import qualified Wizard.Database.Migration.Development.Project.ProjectSchemaMigration as Project
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as Registry
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as Submission
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
@@ -96,10 +96,10 @@ import Wizard.Specs.Common
 buildSchema appContext = do
   putStrLn "DB: dropping DB triggers"
   runInContext Document.dropTriggers appContext
-  runInContext Questionnaire.dropTriggers appContext
+  runInContext Project.dropTriggers appContext
   runInContext Locale.dropTriggers appContext
   putStrLn "DB: dropping DB functions"
-  runInContext Questionnaire.dropFunctions appContext
+  runInContext Project.dropFunctions appContext
   runInContext DocumentTemplate.dropFunctions appContext
   runInContext KnowledgeModelEditor.dropFunctions appContext
   runInContext KnowledgeModelPackage.dropFunctions appContext
@@ -109,20 +109,20 @@ buildSchema appContext = do
   runInContext ExternalLink.dropTables appContext
   runInContext Component.dropTables appContext
   runInContext Registry.dropTables appContext
-  runInContext QuestionnaireAction.dropTables appContext
-  runInContext QuestionnaireImporter.dropTables appContext
+  runInContext ProjectAction.dropTables appContext
+  runInContext ProjectImporter.dropTables appContext
   runInContext Audit.dropTables appContext
   runInContext Prefab.dropTables appContext
   runInContext PersistentCommand.dropTables appContext
   runInContext Submission.dropTables appContext
   runInContext ActionKey.dropTables appContext
   runInContext Feedback.dropTables appContext
-  runInContext KnowledgeModelMigrator.dropTables appContext
+  runInContext KnowledgeModelMigration.dropTables appContext
   runInContext KnowledgeModelCache.dropTables appContext
   runInContext KnowledgeModelEditor.dropTables appContext
   runInContext Document.dropTables appContext
-  runInContext QuestionnaireMigrator.dropTables appContext
-  runInContext Questionnaire.dropTables appContext
+  runInContext ProjectMigration.dropTables appContext
+  runInContext Project.dropTables appContext
   runInContext KnowledgeModelSecret.dropTables appContext
   runInContext KnowledgeModelPackage.dropTables appContext
   runInContext User.dropTables appContext
@@ -149,17 +149,17 @@ buildSchema appContext = do
   runInContext Feedback.createTables appContext
   runInContext KnowledgeModelEditor.createTables appContext
   runInContext KnowledgeModelCache.createTables appContext
-  runInContext Questionnaire.createTables appContext
+  runInContext Project.createTables appContext
   runInContext DocumentTemplate.createDraftDataTable appContext
   runInContext Document.createTables appContext
-  runInContext QuestionnaireMigrator.createTables appContext
-  runInContext KnowledgeModelMigrator.createTables appContext
+  runInContext ProjectMigration.createTables appContext
+  runInContext KnowledgeModelMigration.createTables appContext
   runInContext Submission.createTables appContext
   runInContext PersistentCommand.createTables appContext
   runInContext Prefab.createTables appContext
   runInContext Audit.createTables appContext
-  runInContext QuestionnaireAction.createTables appContext
-  runInContext QuestionnaireImporter.createTables appContext
+  runInContext ProjectAction.createTables appContext
+  runInContext ProjectImporter.createTables appContext
   runInContext Registry.createTables appContext
   runInContext Component.createTables appContext
   runInContext ExternalLink.createTables appContext
@@ -169,12 +169,12 @@ buildSchema appContext = do
   runInContext KnowledgeModelPackage.createFunctions appContext
   runInContext KnowledgeModelEditor.createFunctions appContext
   runInContext DocumentTemplate.createFunctions appContext
-  runInContext Questionnaire.createFunctions appContext
+  runInContext Project.createFunctions appContext
   putStrLn "DB: Creating missing foreign key constraints"
   runInContext User.createUserLocaleForeignKeyConstraint appContext
   putStrLn "DB: Creating triggers"
   runInContext Locale.createTriggers appContext
-  runInContext Questionnaire.createTriggers appContext
+  runInContext Project.createTriggers appContext
   runInContext Document.createTriggers appContext
   putStrLn "DB-S3: Purging and creating schema"
   runInContext DocumentTemplateMigration.runS3Migration appContext
@@ -193,7 +193,7 @@ resetDB appContext = do
   runInContext deleteTenantConfigMails appContext
   runInContext deleteTenantConfigFeatures appContext
   runInContext deleteTenantConfigSubmissions appContext
-  runInContext deleteTenantConfigQuestionnaires appContext
+  runInContext deleteTenantConfigProjects appContext
   runInContext deleteTenantConfigKnowledgeModels appContext
   runInContext deleteTenantConfigRegistries appContext
   runInContext deleteTenantConfigLookAndFeels appContext
@@ -201,23 +201,23 @@ resetDB appContext = do
   runInContext deleteTenantConfigPrivacyAndSupports appContext
   runInContext deleteTenantConfigAuthentications appContext
   runInContext deleteTenantConfigOrganizations appContext
-  runInContext KM_MigratorDAO.deleteMigratorStates appContext
-  runInContext QTN_MigratorDAO.deleteMigratorStates appContext
+  runInContext deleteKnowledgeModelMigrations appContext
+  runInContext deleteProjectMigrations appContext
   runInContext deleteFeedbacks appContext
   runInContext deleteActionKeys appContext
   runInContext deleteKnowledgeModelEditors appContext
   runInContext deleteDocuments appContext
   runInContext deleteDrafts appContext
-  runInContext deleteQuestionnaireVersions appContext
-  runInContext deleteQuestionnaireEvents appContext
-  runInContext deleteQuestionnaireFiles appContext
-  runInContext deleteQuestionnaireVersions appContext
-  runInContext deleteQuestionnaireComments appContext
-  runInContext deleteQuestionnaireCommentThreads appContext
-  runInContext deleteQuestionnairePerms appContext
-  runInContext deleteQuestionnaires appContext
-  runInContext deleteQuestionnaireActions appContext
-  runInContext deleteQuestionnaireImporters appContext
+  runInContext deleteProjectVersions appContext
+  runInContext deleteProjectEvents appContext
+  runInContext deleteProjectFiles appContext
+  runInContext deleteProjectVersions appContext
+  runInContext deleteProjectComments appContext
+  runInContext deleteProjectCommentThreads appContext
+  runInContext deleteProjectPerms appContext
+  runInContext deleteProjects appContext
+  runInContext deleteProjectActions appContext
+  runInContext deleteProjectImporters appContext
   runInContext deleteDocumentTemplates appContext
   runInContext deleteKnowledgeModelSecrets appContext
   runInContext deletePackages appContext
@@ -245,7 +245,7 @@ resetDB appContext = do
   runInContext (insertTenantConfigRegistry defaultRegistryEncrypted) appContext
   runInContext (insertTenantConfigKnowledgeModel defaultKnowledgeModelEncrypted) appContext
   runInContext (insertTenantConfigKnowledgeModelPublicPackagePattern defaultKnowledgeModelPublicPackagePattern) appContext
-  runInContext (insertTenantConfigQuestionnaire defaultQuestionnaireEncrypted) appContext
+  runInContext (insertTenantConfigProject defaultProjectEncrypted) appContext
   runInContext (insertTenantConfigSubmission (defaultSubmission {services = []})) appContext
   runInContext (insertTenantConfigFeatures defaultFeatures) appContext
   runInContext (insertTenantConfigMail defaultMail) appContext

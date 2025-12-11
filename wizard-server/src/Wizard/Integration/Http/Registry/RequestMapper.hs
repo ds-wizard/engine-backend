@@ -63,7 +63,7 @@ toRetrievePackagesRequest tenantConfig iStat =
     mTokenHeader
     xUserCountHeaderName
     xKnowledgeModelPackageCountHeaderName
-    xQtnCountHeaderName
+    xProjectCountHeaderName
     xKnowledgeModelEditorCountHeaderName
     xDocCountHeaderName
     xTmlCountHeaderName
@@ -74,7 +74,7 @@ toRetrievePackagesRequest tenantConfig iStat =
     mTokenHeader = Just $ "Bearer " ++ tenantConfig.token
     xUserCountHeaderName = Just . show $ iStat.userCount
     xKnowledgeModelPackageCountHeaderName = Just . show $ iStat.pkgCount
-    xQtnCountHeaderName = Just . show $ iStat.qtnCount
+    xProjectCountHeaderName = Just . show $ iStat.prjCount
     xKnowledgeModelEditorCountHeaderName = Just . show $ iStat.knowledgeModelEditorCount
     xDocCountHeaderName = Just . show $ iStat.docCount
     xTmlCountHeaderName = Just . show $ iStat.tmlCount

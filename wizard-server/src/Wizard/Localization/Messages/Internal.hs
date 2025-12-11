@@ -16,9 +16,9 @@ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_ENTITIES entityName = "Fai
 _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_NEW_METAMODEL entityName =
   "Failed to convert entity ('" ++ entityName ++ "') to new metamodel"
 
--- Questionnaire
-_ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT =
-  "The questionnaire invitation email could not be sent. Please contact administrator."
+-- Project
+_ERROR_SERVICE_PROJECT__INVITATION_EMAIL_NOT_SENT =
+  "The project invitation email could not be sent. Please contact administrator."
 
 -- Token
 _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN = "Unable to get token"

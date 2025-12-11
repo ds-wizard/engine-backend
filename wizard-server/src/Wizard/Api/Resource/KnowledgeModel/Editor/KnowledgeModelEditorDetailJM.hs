@@ -7,7 +7,7 @@ import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Event.KnowledgeModelEve
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorDetailDTO
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorStateJM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
+import Wizard.Api.Resource.Project.ProjectReplyJM ()
 
 instance FromJSON KnowledgeModelEditorDetailDTO where
   parseJSON = genericParseJSON jsonOptions

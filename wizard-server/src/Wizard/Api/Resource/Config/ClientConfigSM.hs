@@ -18,7 +18,7 @@ import Wizard.Service.User.UserMapper
 import qualified WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs as STC
 
 instance ToSchema ClientConfigDTO where
-  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig TC.defaultOrganization TC.defaultAuthentication TC.defaultPrivacyAndSupport TC.defaultDashboardAndLoginScreen STC.defaultLookAndFeel TC.defaultRegistry TC.defaultQuestionnaire TC.defaultSubmission STC.defaultFeatures TC.defaultOwl (Just $ toUserProfile (toDTO userAlbert) []) [] defaultTenant)
+  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig TC.defaultOrganization TC.defaultAuthentication TC.defaultPrivacyAndSupport TC.defaultDashboardAndLoginScreen STC.defaultLookAndFeel TC.defaultRegistry TC.defaultProject TC.defaultSubmission STC.defaultFeatures TC.defaultOwl (Just $ toUserProfile (toDTO userAlbert) []) [] defaultTenant)
 
 instance ToSchema ClientConfigAuthDTO where
   declareNamedSchema = toSwagger (toClientAuthDTO TC.defaultAuthentication)
@@ -32,8 +32,8 @@ instance ToSchema ClientConfigAuthExternalServiceDTO where
 instance ToSchema ClientConfigRegistryDTO where
   declareNamedSchema = toSwagger (toClientConfigRegistryDTO S.defaultRegistry TC.defaultRegistry)
 
-instance ToSchema ClientConfigQuestionnaireDTO where
-  declareNamedSchema = toSwagger (toClientConfigQuestionnaireDTO TC.defaultQuestionnaire)
+instance ToSchema ClientConfigProjectDTO where
+  declareNamedSchema = toSwagger (toClientConfigProjectDTO TC.defaultProject)
 
 instance ToSchema ClientConfigCloudDTO where
   declareNamedSchema = toSwagger (toClientConfigCloudDTO S_S.defaultCloud defaultTenant)

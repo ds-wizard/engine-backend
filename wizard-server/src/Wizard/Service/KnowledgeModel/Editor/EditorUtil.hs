@@ -42,7 +42,7 @@ getEditorMergeCheckpointPackageId editor = do
 
 getEditorState :: KnowledgeModelEditor -> Int -> Maybe String -> AppContextM KnowledgeModelEditorState
 getEditorState editor eventSize mForkOfPackageId = do
-  mMs <- findMigratorStateByEditorUuid' editor.uuid
+  mMs <- findKnowledgeModelMigrationByEditorUuid' editor.uuid
   isMigrating mMs $ isEditing $ isMigrated mMs $ isOutdated isDefault
   where
     isMigrating mMs continue =

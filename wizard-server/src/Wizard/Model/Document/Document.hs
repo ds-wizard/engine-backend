@@ -22,9 +22,9 @@ data Document = Document
   , name :: String
   , state :: DocumentState
   , durability :: DocumentDurability
-  , questionnaireUuid :: Maybe U.UUID
-  , questionnaireEventUuid :: Maybe U.UUID
-  , questionnaireRepliesHash :: Int
+  , projectUuid :: Maybe U.UUID
+  , projectEventUuid :: Maybe U.UUID
+  , projectRepliesHash :: Int
   , documentTemplateId :: String
   , formatUuid :: U.UUID
   , createdBy :: Maybe U.UUID

@@ -20,8 +20,8 @@ _ERROR_VALIDATION__DOC_TML_FILE_OR_ASSET_UNIQUENESS =
 _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS =
   LocaleRecord "error.validation.km_migration_uniqueness" "Migration of Knowledge Model already exists" []
 
-_ERROR_VALIDATION__QTN_MIGRATION_UNIQUENESS =
-  LocaleRecord "error.validation.qtn_migration_uniqueness" "Migration of Questionnaire already exists" []
+_ERROR_VALIDATION__PROJECT_MIGRATION_UNIQUENESS =
+  LocaleRecord "error.validation.project_migration_uniqueness" "Project Migration already exists" []
 
 _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email =
   LocaleRecord "error.validation.user_email_uniqueness" "User (email: '%s') already exists" [email]
@@ -64,12 +64,12 @@ _ERROR_VALIDATION__PKG_UNSUPPORTED_METAMODEL_VERSION pkgMetamodelVersion appPkgM
 _ERROR_VALIDATION__DOC_TML_UNSUPPORTED_STATE tmlId phase =
   LocaleRecord "error.validation.doc_tml_unsupported_state" "You can not move '%s' into the following phase: %s" [tmlId, phase]
 
--- Questionnaire File
-_ERROR_VALIDATION__QUESTIONNAIRE_FILE_SIZE_EXCEEDS_LIMIT fileSize maxFileSize =
-  LocaleRecord "error.validation.questionnaire_file_size_exceeds_limit" "File exceeds the maximum allowed size (file: %s, maximum: %s)" [show fileSize, show maxFileSize]
+-- Project File
+_ERROR_VALIDATION__PROJECT_FILE_SIZE_EXCEEDS_LIMIT fileSize maxFileSize =
+  LocaleRecord "error.validation.project_file_size_exceeds_limit" "File exceeds the maximum allowed size (file: %s, maximum: %s)" [show fileSize, show maxFileSize]
 
-_ERROR_VALIDATION__QUESTIONNAIRE_FILE_QUESTION_ABSENCE_OR_WRONG_TYPE =
-  LocaleRecord "error.validation.questionnaire_file_question_absence_or_wrong_type" "The question either doesn't exist or is not a File Question" []
+_ERROR_VALIDATION__PROJECT_FILE_QUESTION_ABSENCE_OR_WRONG_TYPE =
+  LocaleRecord "error.validation.project_file_question_absence_or_wrong_type" "The question either doesn't exist or is not a File Question" []
 
 -- --------------------------------------
 -- SERVICE
@@ -77,8 +77,8 @@ _ERROR_VALIDATION__QUESTIONNAIRE_FILE_QUESTION_ABSENCE_OR_WRONG_TYPE =
 _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP =
   LocaleRecord "error.service.template.template_or_format_not_set_up" "DocumentTemplate or format is not set up" []
 
-_ERROR_SERVICE_DOCUMENT__QUESTIONNAIRE_OR_FORMAT_NOT_SET_UP =
-  LocaleRecord "error.service.template.questionnaire_or_format_not_set_up" "Questionnaire or format is not set up" []
+_ERROR_SERVICE_DOCUMENT__PROJECT_OR_FORMAT_NOT_SET_UP =
+  LocaleRecord "error.service.template.project_or_format_not_set_up" "Project or format is not set up" []
 
 -- Auth
 _ERROR_SERVICE_AUTH__SERVICE_NOT_DEFINED authId =
@@ -88,11 +88,11 @@ _ERROR_SERVICE_AUTH__SERVICE_NOT_DEFINED authId =
 _ERROR_SERVICE_KNOWLEDGE_MODEL_EDITOR__KM_MIGRATION_EXISTS =
   LocaleRecord "error.service.knowledge_model_editor.km_migration_exists" "You can't publish the KM editor when there is ongoing KM migration" []
 
-_ERROR_SERVICE_KNOWLEDGE_MODEL_EDITOR__COLLABORATION__FORCE_DISCONNECT qtnUuid =
+_ERROR_SERVICE_KNOWLEDGE_MODEL_EDITOR__COLLABORATION__FORCE_DISCONNECT projectUuid =
   LocaleRecord
     "error.service.knowledge_model_editor.collaboration.force_disconnect"
     "Knowledge Model Editor ('%s') dramatically changed its state. Therefore, users has to be disconnected"
-    [qtnUuid]
+    [projectUuid]
 
 -- Locale Bundle
 _ERROR_SERVICE_LB__PULL_NON_EXISTING_LOCALE lclId =
@@ -152,33 +152,33 @@ _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId =
     "Desired knowledge model ('%s') wasn't found in Registry"
     [pkgId]
 
--- Questionnaire
-_ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION =
+-- Project
+_ERROR_SERVICE_PROJECT__PROJECT_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION =
   LocaleRecord
-    "error.service.qtn.qtn_cant_be_deleted_because_it_is_used_in_migration"
-    "Questionnaire can't be deleted because it's used in some questionnaire migration"
+    "error.service.project.project_cant_be_deleted_because_it_is_used_in_migration"
+    "Project can't be deleted because it's used in some project migration"
     []
 
-_ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT qtnUuid =
+_ERROR_SERVICE_PROJECT_COLLABORATION__FORCE_DISCONNECT projectUuid =
   LocaleRecord
-    "error.service.qtn.collaboration.force_disconnect"
-    "Questionnaire ('%s') dramatically changed its state. Therefore, users has to be disconnected"
-    [qtnUuid]
+    "error.service.project.collaboration.force_disconnect"
+    "Project ('%s') dramatically changed its state. Therefore, users has to be disconnected"
+    [projectUuid]
 
-_ERROR_SERVICE_QTN_VERSION__NON_EXISTENT_EVENT_UUID eventUuid =
+_ERROR_SERVICE_PROJECT_VERSION__NON_EXISTENT_EVENT_UUID eventUuid =
   LocaleRecord
-    "error.service.qtn.version.non_existent_event_uuid"
+    "error.service.project.version.non_existent_event_uuid"
     "You can't create version for non-existent event (eventUuid: '%s')"
     [eventUuid]
 
-_ERROR_SERVICE_QTN_VERSION__VERSION_UNIQUENESS eventUuid =
+_ERROR_SERVICE_PROJECT_VERSION__VERSION_UNIQUENESS eventUuid =
   LocaleRecord
-    "error.service.qtn.version.version_uniqueness"
+    "error.service.project.version.version_uniqueness"
     "There is already a version for the event (eventUuid: '%s')"
     [eventUuid]
 
-_ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW workerLog =
-  LocaleRecord "error.service.qtn.unable_to_generate_document_preview" "%s" [fromMaybe "no log provided" workerLog]
+_ERROR_SERVICE_PROJECT__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW workerLog =
+  LocaleRecord "error.service.project.unable_to_generate_document_preview" "%s" [fromMaybe "no log provided" workerLog]
 
 -- DocumentTemplate Bundle
 _ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =

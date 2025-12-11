@@ -17,14 +17,14 @@ import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateDrafts
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.Project.Data.Projects
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper
-import Wizard.Service.Questionnaire.QuestionnaireMapper
+import Wizard.Service.Project.ProjectMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -46,7 +46,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/wizard-api/document-template-drafts/global:questionnaire-report:2.0.0"
+reqUrl = "/wizard-api/document-template-drafts/global:project-report:2.0.0"
 
 reqHeaders = [reqAuthHeader]
 
@@ -61,13 +61,13 @@ test_200 appContext = do
       -- GIVEN: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = toDraftDetail wizardDocumentTemplateDraft wizardDocumentTemplateDraftFormats wizardDocumentTemplateDraftData (Just . toSuggestion $ questionnaire1) Nothing
+      let expDto = toDraftDetail wizardDocumentTemplateDraft wizardDocumentTemplateDraftFormats wizardDocumentTemplateDraftData (Just . toSuggestion $ project1) Nothing
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML_Migration.runMigration appContext
       runInContextIO (insertPackage germanyKmPackage) appContext
       runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
-      runInContextIO (insertQuestionnaire questionnaire1) appContext
+      runInContextIO (insertProject project1) appContext
       runInContextIO (insertDraftData wizardDocumentTemplateDraftData) appContext
       runInContextIO R_Migration.runMigration appContext
       -- WHEN: Call API
@@ -93,8 +93,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/document-template-drafts/global:questionnaire-report:9.9.9"
+    "/wizard-api/document-template-drafts/global:project-report:9.9.9"
     reqHeaders
     reqBody
     "document_template"
-    [("id", "global:questionnaire-report:9.9.9"), ("phase", "DraftDocumentTemplatePhase")]
+    [("id", "global:project-report:9.9.9"), ("phase", "DraftDocumentTemplatePhase")]

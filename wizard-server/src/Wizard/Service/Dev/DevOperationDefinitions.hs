@@ -20,9 +20,9 @@ import Wizard.Service.KnowledgeModel.Editor.Event.EditorEventService
 import Wizard.Service.KnowledgeModel.Metamodel.MigrationService
 import Wizard.Service.Owl.OwlService
 import Wizard.Service.PersistentCommand.PersistentCommandService
-import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
-import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
-import Wizard.Service.Questionnaire.QuestionnaireService
+import Wizard.Service.Project.Comment.ProjectCommentService
+import Wizard.Service.Project.Event.ProjectEventService
+import Wizard.Service.Project.ProjectService
 import Wizard.Service.Registry.RegistryService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
 import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
@@ -39,8 +39,8 @@ sections =
   , metamodelMigrator
   , owl
   , persistentCommand
+  , project
   , registry
-  , questionnaire
   , temporaryFile
   , user
   ]
@@ -387,6 +387,75 @@ persistentCommand_run =
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------
+-- PROJECT
+-- ---------------------------------------------------------------------------------------------------------------------
+project :: DevSection AppContextM
+project =
+  DevSection
+    { name = "Project"
+    , description = Nothing
+    , operations =
+        [ project_cleanProjects
+        , project_squashAllEvents
+        , project_squashEventsForProject
+        , project_sendNotificationToNewAssignees
+        ]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+project_cleanProjects :: DevOperation AppContextM
+project_cleanProjects =
+  DevOperation
+    { name = "Clean Projects"
+    , description = Nothing
+    , parameters = []
+    , function = \reqDto -> do
+        cleanProjects
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+project_squashAllEvents :: DevOperation AppContextM
+project_squashAllEvents =
+  DevOperation
+    { name = "Squash All Events"
+    , description = Nothing
+    , parameters = []
+    , function = \reqDto -> do
+        squashProjectEvents
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+project_squashEventsForProject :: DevOperation AppContextM
+project_squashEventsForProject =
+  DevOperation
+    { name = "Squash Events for Project"
+    , description = Nothing
+    , parameters =
+        [ DevOperationParameter
+            { name = "projectUuid"
+            , aType = StringDevOperationParameterType
+            }
+        ]
+    , function = \reqDto -> do
+        squashProjectEventsForProject (u' . head $ reqDto.parameters)
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+project_sendNotificationToNewAssignees :: DevOperation AppContextM
+project_sendNotificationToNewAssignees =
+  DevOperation
+    { name = "Send Notification to New Assignees"
+    , description = Nothing
+    , parameters = []
+    , function = \reqDto -> do
+        sendNotificationToNewAssignees
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
 -- REGISTRY
 -- ---------------------------------------------------------------------------------------------------------------------
 registry :: DevSection AppContextM
@@ -457,75 +526,6 @@ registry_pushLocaleBundle =
         ]
     , function = \reqDto -> do
         pushLocaleBundle (head reqDto.parameters)
-        return "Done"
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
--- QUESTIONNAIRE
--- ---------------------------------------------------------------------------------------------------------------------
-questionnaire :: DevSection AppContextM
-questionnaire =
-  DevSection
-    { name = "Questionnaire"
-    , description = Nothing
-    , operations =
-        [ questionnaire_cleanQuestionnaires
-        , questionnaire_squashAllEvents
-        , questionnaire_squashEventsForQuestionnaire
-        , questionnaire_sendNotificationToNewAssignees
-        ]
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-questionnaire_cleanQuestionnaires :: DevOperation AppContextM
-questionnaire_cleanQuestionnaires =
-  DevOperation
-    { name = "Clean Questionnaires"
-    , description = Nothing
-    , parameters = []
-    , function = \reqDto -> do
-        cleanQuestionnaires
-        return "Done"
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-questionnaire_squashAllEvents :: DevOperation AppContextM
-questionnaire_squashAllEvents =
-  DevOperation
-    { name = "Squash All Events"
-    , description = Nothing
-    , parameters = []
-    , function = \reqDto -> do
-        squashQuestionnaireEvents
-        return "Done"
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-questionnaire_squashEventsForQuestionnaire :: DevOperation AppContextM
-questionnaire_squashEventsForQuestionnaire =
-  DevOperation
-    { name = "Squash Events for Questionnaire"
-    , description = Nothing
-    , parameters =
-        [ DevOperationParameter
-            { name = "questionnaireUuid"
-            , aType = StringDevOperationParameterType
-            }
-        ]
-    , function = \reqDto -> do
-        squashQuestionnaireEventsForQuestionnaire (u' . head $ reqDto.parameters)
-        return "Done"
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-questionnaire_sendNotificationToNewAssignees :: DevOperation AppContextM
-questionnaire_sendNotificationToNewAssignees =
-  DevOperation
-    { name = "Send Notification to New Assignees"
-    , description = Nothing
-    , parameters = []
-    , function = \reqDto -> do
-        sendNotificationToNewAssignees
         return "Done"
     }
 

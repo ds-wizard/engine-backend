@@ -1,21 +1,21 @@
 module Wizard.Service.Report.ReportMapper where
 
-import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailQuestionnaireDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailReportDTO
+import Wizard.Api.Resource.Project.Detail.ProjectDetailQuestionnaireDTO
+import Wizard.Api.Resource.Project.Detail.ProjectDetailReportDTO
 import Wizard.Model.Report.Report
 
-toDTO :: QuestionnaireDetailQuestionnaireDTO -> Report -> QuestionnaireDetailReportDTO
-toDTO qtn report =
-  QuestionnaireDetailReportDTO
-    { uuid = qtn.uuid
-    , name = qtn.name
-    , visibility = qtn.visibility
-    , sharing = qtn.sharing
-    , knowledgeModelPackageId = qtn.knowledgeModelPackageId
-    , isTemplate = qtn.isTemplate
-    , permissions = qtn.permissions
-    , migrationUuid = qtn.migrationUuid
-    , fileCount = qtn.fileCount
+toDTO :: ProjectDetailQuestionnaireDTO -> Report -> ProjectDetailReportDTO
+toDTO project report =
+  ProjectDetailReportDTO
+    { uuid = project.uuid
+    , name = project.name
+    , visibility = project.visibility
+    , sharing = project.sharing
+    , knowledgeModelPackageId = project.knowledgeModelPackageId
+    , isTemplate = project.isTemplate
+    , permissions = project.permissions
+    , migrationUuid = project.migrationUuid
+    , fileCount = project.fileCount
     , totalReport = report.totalReport
     , chapters = report.chapters
     , chapterReports = report.chapterReports
