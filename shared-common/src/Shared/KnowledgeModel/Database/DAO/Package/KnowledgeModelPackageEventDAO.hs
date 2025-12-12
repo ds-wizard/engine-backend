@@ -32,4 +32,4 @@ insertPackageRawEvent = createInsertFn entityName
 deletePackageEventsById :: AppContextC s sc m => String -> m Int64
 deletePackageEventsById id = do
   tenantUuid <- asks (.tenantUuid')
-  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("knowledge_model_package_id", id)]
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("package_id", id)]
