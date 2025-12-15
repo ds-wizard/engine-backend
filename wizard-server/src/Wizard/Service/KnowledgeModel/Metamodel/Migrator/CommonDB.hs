@@ -20,7 +20,7 @@ migrateEventField entityName createdAt oldMetamodelVersion events callback =
   case events of
     A.Array eventArray ->
       case foldEither $
-        EventMigrator.migrate (EventMigrator.MigrationContext createdAt) oldMetamodelVersion kmMetamodelVersion
+        EventMigrator.migrate (EventMigrator.MigrationContext createdAt) oldMetamodelVersion knowledgeModelMetamodelVersion
           <$> Vector.toList eventArray of
         Right updatedEvents -> do
           logMigrationMigrationApplied entityName

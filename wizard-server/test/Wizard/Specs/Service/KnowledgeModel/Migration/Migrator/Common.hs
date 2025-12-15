@@ -15,7 +15,7 @@ createTestMigratorStateWithEvents :: [KnowledgeModelEvent] -> [KnowledgeModelEve
 createTestMigratorStateWithEvents editorEvents targetPackageEvents mKm =
   KnowledgeModelMigration
     { editorUuid = fromJust . U.fromString $ "09080ce7-f513-4493-9583-dce567b8e9c5"
-    , metamodelVersion = kmMetamodelVersion
+    , metamodelVersion = knowledgeModelMetamodelVersion
     , state = RunningKnowledgeModelMigrationState
     , editorPreviousPackageId = "b"
     , targetPackageId = "t"

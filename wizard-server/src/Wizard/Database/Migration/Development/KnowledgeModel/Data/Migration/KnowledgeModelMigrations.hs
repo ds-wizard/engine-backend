@@ -44,7 +44,7 @@ differentMigratorState :: KnowledgeModelMigration
 differentMigratorState =
   KnowledgeModelMigration
     { editorUuid = differentKnowledgeModelEditor.uuid
-    , metamodelVersion = kmMetamodelVersion
+    , metamodelVersion = knowledgeModelMetamodelVersion
     , state = CompletedKnowledgeModelMigrationState
     , editorPreviousPackageId = differentPackage.pId
     , targetPackageId = differentPackage.pId

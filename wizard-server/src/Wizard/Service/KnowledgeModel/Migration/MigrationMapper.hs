@@ -26,7 +26,7 @@ fromCreateDTO :: KnowledgeModelEditor -> KnowledgeModelPackage -> [KnowledgeMode
 fromCreateDTO kmEditor previousPkg editorPreviousPackageEvents targetPkgId targetPkgEvents km tenantUuid now =
   KnowledgeModelMigration
     { editorUuid = kmEditor.uuid
-    , metamodelVersion = kmMetamodelVersion
+    , metamodelVersion = knowledgeModelMetamodelVersion
     , state = RunningKnowledgeModelMigrationState
     , editorPreviousPackageId = previousPkg.pId
     , targetPackageId = targetPkgId

@@ -31,7 +31,7 @@ fromPackage editor forkOfPkgId mergeCheckpointPkgId org version description read
           , kmId = editor.kmId
           , version = version
           , phase = ReleasedKnowledgeModelPackagePhase
-          , metamodelVersion = kmMetamodelVersion
+          , metamodelVersion = knowledgeModelMetamodelVersion
           , description = description
           , readme = readme
           , license = editor.license

@@ -16,4 +16,4 @@ type List_GET = Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] InfoDTO
 list_GET :: BaseContextM (Headers '[Header "x-trace-uuid" String] InfoDTO)
 list_GET =
   runInUnauthService NoTransaction $
-    addTraceUuidHeader =<< getInfo
+    addTraceUuidHeader =<< getInfo []

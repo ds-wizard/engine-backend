@@ -11,6 +11,7 @@ import Test.Hspec.Wai.Matcher
 
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
+import Shared.Common.Api.Resource.Info.InfoDTO
 import Shared.Common.Api.Resource.Info.InfoJM ()
 import Shared.Common.Database.Migration.Development.Info.Data.Infos
 import qualified Shared.Component.Database.Migration.Development.Component.ComponentMigration as CMP_Migration
@@ -44,7 +45,7 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = appInfo
+      let expDto = infoDTO {metamodelVersions = []}
       let expBody = encode expDto
       -- AND: Prepare DB
       runInContextIO CMP_Migration.runMigration appContext

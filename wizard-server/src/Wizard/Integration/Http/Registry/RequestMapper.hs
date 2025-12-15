@@ -80,7 +80,7 @@ toRetrievePackagesRequest tenantConfig iStat =
     xTmlCountHeaderName = Just . show $ iStat.tmlCount
     organizationId = Nothing
     kmId = Nothing
-    metamodelVersion = Just kmMetamodelVersion
+    metamodelVersion = Just knowledgeModelMetamodelVersion
 
 toRetrieveTemplatesRequest
   :: TenantConfigRegistry -> ClientM (Headers '[Header "x-trace-uuid" String] [DocumentTemplateSimpleDTO])

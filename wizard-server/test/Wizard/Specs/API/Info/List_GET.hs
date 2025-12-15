@@ -9,11 +9,16 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.Common.Api.Resource.Info.InfoDTO
 import Shared.Common.Api.Resource.Info.InfoJM ()
 import Shared.Common.Database.Migration.Development.Info.Data.Infos
 import qualified Shared.Component.Database.Migration.Development.Component.ComponentMigration as CMP_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
+import Wizard.Constant.ProjectAction
+import Wizard.Constant.ProjectImporter
+import Shared.DocumentTemplate.Constant.DocumentTemplate
+import Shared.KnowledgeModel.Constant.KnowledgeModel
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.Common
@@ -44,7 +49,15 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = appInfo
+      let expDto =
+            infoDTO
+              { metamodelVersions =
+                  [ InfoMetamodelVersionDTO {name = "Knowledge Model", version = show knowledgeModelMetamodelVersion}
+                  , InfoMetamodelVersionDTO {name = "Document Template", version = show documentTemplateMetamodelVersion}
+                  , InfoMetamodelVersionDTO {name = "Project Importer", version = show projectImporterMetamodelVersion}
+                  , InfoMetamodelVersionDTO {name = "Project Action", version = show projectActionMetamodelVersion}
+                  ]
+              }
       let expBody = encode expDto
       -- AND: Prepare DB
       runInContextIO CMP_Migration.runMigration appContext

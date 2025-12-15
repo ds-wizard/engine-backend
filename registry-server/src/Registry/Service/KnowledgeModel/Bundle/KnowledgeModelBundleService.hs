@@ -46,7 +46,7 @@ exportBundle pbId = do
               , organizationId = newestPackage.organizationId
               , kmId = newestPackage.kmId
               , version = newestPackage.version
-              , metamodelVersion = kmMetamodelVersion
+              , metamodelVersion = knowledgeModelMetamodelVersion
               , packages = packages
               }
       return pb
