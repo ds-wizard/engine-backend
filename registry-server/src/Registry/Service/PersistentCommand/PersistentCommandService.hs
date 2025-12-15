@@ -1,7 +1,6 @@
 module Registry.Service.PersistentCommand.PersistentCommandService where
 
 import Control.Monad.Except (throwError)
-import qualified Data.UUID as U
 
 import Registry.Database.DAO.Common
 import Registry.Model.Context.AppContext
@@ -17,11 +16,11 @@ import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommandSimple
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandService
 
-createPersistentCommand :: PersistentCommand U.UUID -> AppContextM (PersistentCommand U.UUID)
+createPersistentCommand :: PersistentCommand String -> AppContextM (PersistentCommand String)
 createPersistentCommand persistentCommand =
   runInTransaction $ do
     checkPermissionToCreatePersistentCommand
-    mPersistentCommandFromDb <- findPersistentCommandByUuid' persistentCommand.uuid :: AppContextM (Maybe (PersistentCommand U.UUID))
+    mPersistentCommandFromDb <- findPersistentCommandByUuid' persistentCommand.uuid :: AppContextM (Maybe (PersistentCommand String))
     case mPersistentCommandFromDb of
       Just _ -> return persistentCommand
       Nothing -> do
@@ -34,10 +33,10 @@ runPersistentCommands' = runPersistentCommands runAppContextWithAppContext' upda
 runPersistentCommandChannelListener' :: AppContextM ()
 runPersistentCommandChannelListener' = runPersistentCommandChannelListener runAppContextWithAppContext' updateContext emptyTransferFn execute
 
-emptyTransferFn :: String -> PersistentCommand U.UUID -> AppContextM ()
+emptyTransferFn :: String -> PersistentCommand String -> AppContextM ()
 emptyTransferFn _ _ = return ()
 
-updateContext :: PersistentCommandSimple U.UUID -> AppContext -> AppContextM AppContext
+updateContext :: PersistentCommandSimple String -> AppContext -> AppContextM AppContext
 updateContext commandSimple = return
 
 -- --------------------------------

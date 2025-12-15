@@ -13,12 +13,12 @@ import Shared.Common.Api.Resource.Info.InfoDTO
 import Shared.Common.Api.Resource.Info.InfoJM ()
 import Shared.Common.Database.Migration.Development.Info.Data.Infos
 import qualified Shared.Component.Database.Migration.Development.Component.ComponentMigration as CMP_Migration
-import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.ContextLenses ()
-import Wizard.Constant.ProjectAction
-import Wizard.Constant.ProjectImporter
 import Shared.DocumentTemplate.Constant.DocumentTemplate
 import Shared.KnowledgeModel.Constant.KnowledgeModel
+import Wizard.Constant.ProjectAction
+import Wizard.Constant.ProjectImporter
+import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.Common
