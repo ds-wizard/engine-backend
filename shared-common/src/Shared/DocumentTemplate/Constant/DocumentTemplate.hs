@@ -3,7 +3,7 @@ module Shared.DocumentTemplate.Constant.DocumentTemplate where
 import Shared.Common.Model.Common.SemVer2Tuple
 
 documentTemplateMetamodelVersion :: SemVer2Tuple
-documentTemplateMetamodelVersion = SemVer2Tuple 17 0
+documentTemplateMetamodelVersion = SemVer2Tuple 17 1
 
 isDocumentTemplateSupported :: SemVer2Tuple -> Bool
 isDocumentTemplateSupported metamodelVersion

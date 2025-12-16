@@ -34,6 +34,7 @@ import Wizard.Service.Project.Compiler.ProjectCompilerService
 import Wizard.Service.Report.ReportGenerator
 import Wizard.Service.Tenant.TenantHelper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
+import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Model.User.UserGroup
 import qualified WizardLib.Public.Service.User.Group.UserGroupMapper as UGR_Mapper
@@ -44,6 +45,7 @@ createDocumentContext doc pkg kmEditorEvents project mReplies = do
   mProjectCreatedBy <- forM project.creatorUuid findUserByUuid
   mDocCreatedBy <- forM doc.createdBy findUserByUuid
   tcOrganization <- findTenantConfigOrganization
+  tcLookAndFeel <- findTenantConfigLookAndFeel
   clientUrl <- getClientUrl
   now <- liftIO getCurrentTime
   (phaseUuid, replies, labels) <-
@@ -83,6 +85,7 @@ createDocumentContext doc pkg kmEditorEvents project mReplies = do
       report
       pkg
       tcOrganization
+      tcLookAndFeel
       mProjectCreatedBy
       mDocCreatedBy
       users
