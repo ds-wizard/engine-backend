@@ -13,13 +13,13 @@ import Wizard.Model.Registry.RegistryTemplate
 
 computeDocumentTemplateState :: [RegistryTemplate] -> DocumentTemplate -> DocumentTemplateState
 computeDocumentTemplateState tmlsFromRegistry tml =
-  if not (isDocumentTemplateSupported False tml)
+  if not (isDocumentTemplateSupported tml.metamodelVersion)
     then UnsupportedMetamodelVersionDocumentTemplateState
     else DefaultDocumentTemplateState
 
 computeDocumentTemplateState' :: DocumentTemplateList -> DocumentTemplateState
 computeDocumentTemplateState' tml
-  | not (isDocumentTemplateSupported False tml) = UnsupportedMetamodelVersionDocumentTemplateState
+  | not (isDocumentTemplateSupported tml.metamodelVersion) = UnsupportedMetamodelVersionDocumentTemplateState
   | otherwise = DefaultDocumentTemplateState
 
 selectDocumentTemplateByOrgIdAndTmlId tml =
@@ -30,9 +30,6 @@ selectOrganizationByOrgId tml = L.find (\org -> org.organizationId == tml.organi
 getUsableKnowledgeModelPackagesForDocumentTemplate tml = chooseTheNewest . groupPackages . filterPackages tml
   where
     filterPackages tml = filter (\pkg -> not . null $ filterDocumentTemplates (Just pkg.pId) [tml])
-
-isDocumentTemplateSupported True tml = True
-isDocumentTemplateSupported False tml = tml.metamodelVersion == documentTemplateMetamodelVersion
 
 isDocumentTemplateInPhase (Just phase) tml = tml.phase == phase
 isDocumentTemplateInPhase _ _ = True

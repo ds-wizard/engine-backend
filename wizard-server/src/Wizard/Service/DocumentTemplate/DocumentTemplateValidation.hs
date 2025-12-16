@@ -74,7 +74,7 @@ validateUsageBySomeDocument tmlId = do
 validateMetamodelVersion :: DocumentTemplate -> AppContextM ()
 validateMetamodelVersion tml =
   when
-    (tml.metamodelVersion /= documentTemplateMetamodelVersion)
+    (isDocumentTemplateUnsupported tml.metamodelVersion)
     ( throwError . UserError $
         _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION tml.tId (show tml.metamodelVersion) (show documentTemplateMetamodelVersion)
     )
