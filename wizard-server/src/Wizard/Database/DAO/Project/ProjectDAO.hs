@@ -18,6 +18,8 @@ import Shared.Common.Model.Common.Sort
 import Shared.Common.Util.Logger
 import Shared.Common.Util.String (f'', replace, trim)
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Constant.ProjectAction
+import Wizard.Constant.ProjectImporter
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Project.ProjectPermDAO (
   deleteProjectPermsFiltered,
@@ -381,15 +383,41 @@ findProjectDetail uuid = do
             \       project_mig.new_project_uuid AS migration_uuid, \
             \       ${projectDetailPermSql}, \
             \       ( \
+            \        WITH pkg AS (SELECT (string_to_array(project.knowledge_model_package_id, ':'))[1] AS org_id, \
+            \                            (string_to_array(project.knowledge_model_package_id, ':'))[2] AS km_id, \
+            \                            (string_to_array(project.knowledge_model_package_id, ':'))[3] AS ver) \
             \        SELECT count(*) \
             \        FROM project_action \
-            \        WHERE tenant_uuid = '${tenantUuid}' \
-            \       ) as project_actions, \
+            \             LEFT JOIN pkg k ON true \
+            \        WHERE project_action.metamodel_version = ${projectActionMetamodelVersion} \
+            \          AND exists (SELECT 1 \
+            \                       FROM jsonb_array_elements(project_action.allowed_packages) AS spec(elem) \
+            \                       WHERE ((spec.elem ->> 'kmId') IS NULL OR (spec.elem ->> 'kmId') = k.km_id) \
+            \                         AND ((spec.elem ->> 'orgId') IS NULL OR (spec.elem ->> 'orgId') = k.org_id) \
+            \                         AND ((spec.elem ->> 'minVersion') IS NULL OR \
+            \                              compare_version(k.ver, spec.elem ->> 'minVersion') IN ('GT', 'EQ')) \
+            \                         AND ((spec.elem ->> 'maxVersion') IS NULL OR \
+            \                              compare_version(k.ver, spec.elem ->> 'maxVersion') IN ('LT', 'EQ')) \
+            \            ) \
+            \       ) AS project_actions, \
             \       ( \
+            \        WITH pkg AS (SELECT (string_to_array(project.knowledge_model_package_id, ':'))[1] AS org_id, \
+            \                            (string_to_array(project.knowledge_model_package_id, ':'))[2] AS km_id, \
+            \                            (string_to_array(project.knowledge_model_package_id, ':'))[3] AS ver) \
             \        SELECT count(*) \
             \        FROM project_importer \
-            \        WHERE tenant_uuid = '${tenantUuid}' \
-            \       ) as project_importers, \
+            \             LEFT JOIN pkg k ON true \
+            \        WHERE project_importer.metamodel_version = ${projectImporterMetamodelVersion} \
+            \          AND exists (SELECT 1 \
+            \                       FROM jsonb_array_elements(project_importer.allowed_packages) AS spec(elem) \
+            \                       WHERE ((spec.elem ->> 'kmId') IS NULL OR (spec.elem ->> 'kmId') = k.km_id) \
+            \                         AND ((spec.elem ->> 'orgId') IS NULL OR (spec.elem ->> 'orgId') = k.org_id) \
+            \                         AND ((spec.elem ->> 'minVersion') IS NULL OR \
+            \                              compare_version(k.ver, spec.elem ->> 'minVersion') IN ('GT', 'EQ')) \
+            \                         AND ((spec.elem ->> 'maxVersion') IS NULL OR \
+            \                              compare_version(k.ver, spec.elem ->> 'maxVersion') IN ('LT', 'EQ')) \
+            \            ) \
+            \       ) AS project_importers, \
             \       ( \
             \        SELECT count(*) \
             \        FROM project_file \
@@ -398,8 +426,10 @@ findProjectDetail uuid = do
             \FROM project \
             \LEFT JOIN project_migration project_mig ON project.uuid = project_mig.old_project_uuid AND project.tenant_uuid = project_mig.tenant_uuid \
             \WHERE project.tenant_uuid = ? AND project.uuid = ?"
-            [ ("projectDetailPermSql", projectDetailPermSql)
-            , ("projectUuid", U.toString uuid)
+            [ ("projectUuid", U.toString uuid)
+            , ("projectDetailPermSql", projectDetailPermSql)
+            , ("projectActionMetamodelVersion", show projectActionMetamodelVersion)
+            , ("projectImporterMetamodelVersion", show projectImporterMetamodelVersion)
             , ("tenantUuid", U.toString tenantUuid)
             ]
   let queryParams = [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
@@ -424,15 +454,41 @@ findProjectDetailQuestionnaire uuid = do
             \       project_mig.new_project_uuid AS migration_uuid, \
             \       ${projectDetailPermSql}, \
             \       ( \
+            \        WITH pkg AS (SELECT (string_to_array(project.knowledge_model_package_id, ':'))[1] AS org_id, \
+            \                            (string_to_array(project.knowledge_model_package_id, ':'))[2] AS km_id, \
+            \                            (string_to_array(project.knowledge_model_package_id, ':'))[3] AS ver) \
             \        SELECT count(*) \
             \        FROM project_action \
-            \        WHERE tenant_uuid = '${tenantUuid}' \
-            \       ) as project_actions, \
+            \             LEFT JOIN pkg k ON true \
+            \        WHERE project_action.metamodel_version = ${projectActionMetamodelVersion} \
+            \          AND exists (SELECT 1 \
+            \                       FROM jsonb_array_elements(project_action.allowed_packages) AS spec(elem) \
+            \                       WHERE ((spec.elem ->> 'kmId') IS NULL OR (spec.elem ->> 'kmId') = k.km_id) \
+            \                         AND ((spec.elem ->> 'orgId') IS NULL OR (spec.elem ->> 'orgId') = k.org_id) \
+            \                         AND ((spec.elem ->> 'minVersion') IS NULL OR \
+            \                              compare_version(k.ver, spec.elem ->> 'minVersion') IN ('GT', 'EQ')) \
+            \                         AND ((spec.elem ->> 'maxVersion') IS NULL OR \
+            \                              compare_version(k.ver, spec.elem ->> 'maxVersion') IN ('LT', 'EQ')) \
+            \            ) \
+            \       ) AS project_actions, \
             \       ( \
+            \        WITH pkg AS (SELECT (string_to_array(project.knowledge_model_package_id, ':'))[1] AS org_id, \
+            \                            (string_to_array(project.knowledge_model_package_id, ':'))[2] AS km_id, \
+            \                            (string_to_array(project.knowledge_model_package_id, ':'))[3] AS ver) \
             \        SELECT count(*) \
             \        FROM project_importer \
-            \        WHERE tenant_uuid = '${tenantUuid}' \
-            \       ) as project_importers, \
+            \             LEFT JOIN pkg k ON true \
+            \        WHERE project_importer.metamodel_version = ${projectImporterMetamodelVersion} \
+            \          AND exists (SELECT 1 \
+            \                       FROM jsonb_array_elements(project_importer.allowed_packages) AS spec(elem) \
+            \                       WHERE ((spec.elem ->> 'kmId') IS NULL OR (spec.elem ->> 'kmId') = k.km_id) \
+            \                         AND ((spec.elem ->> 'orgId') IS NULL OR (spec.elem ->> 'orgId') = k.org_id) \
+            \                         AND ((spec.elem ->> 'minVersion') IS NULL OR \
+            \                              compare_version(k.ver, spec.elem ->> 'minVersion') IN ('GT', 'EQ')) \
+            \                         AND ((spec.elem ->> 'maxVersion') IS NULL OR \
+            \                              compare_version(k.ver, spec.elem ->> 'maxVersion') IN ('LT', 'EQ')) \
+            \            ) \
+            \       ) AS project_importers, \
             \       ( \
             \        SELECT array_agg(concat(uuid, '<:::::>', \
             \                                file_name, '<:::::>', \
@@ -447,6 +503,8 @@ findProjectDetailQuestionnaire uuid = do
             \WHERE project.tenant_uuid = ? AND project.uuid = ?"
             [ ("projectUuid", U.toString uuid)
             , ("projectDetailPermSql", projectDetailPermSql)
+            , ("projectActionMetamodelVersion", show projectActionMetamodelVersion)
+            , ("projectImporterMetamodelVersion", show projectImporterMetamodelVersion)
             , ("tenantUuid", U.toString tenantUuid)
             ]
   let queryParams = [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
