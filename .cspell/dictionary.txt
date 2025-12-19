@@ -56,6 +56,7 @@ uindex
 plpgsql
 ordinality
 bigserial
+autovacuum
 
 # Typical software development terms
 dto

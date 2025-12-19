@@ -17,6 +17,7 @@ migrate dbPool = do
   addLastSeeNewsIdColumnToUser dbPool
   renameQuestionnaireToProject dbPool
   renameAuditLogsAndPersistentCommands dbPool
+  adjustAutovacuum dbPool
 
 addLastSeeNewsIdColumnToUser dbPool = do
   let sql = "ALTER TABLE user_entity ADD COLUMN last_seen_news_id varchar;"
@@ -188,6 +189,29 @@ renameAuditLogsAndPersistentCommands dbPool = do
         \UPDATE audit SET component = 'project_migration' WHERE component = 'questionnaire.migration'; \
         \UPDATE audit SET component = 'document_template_bundle' WHERE component = 'template_bundle'; \
         \UPDATE audit SET action = 'createByAdmin' WHERE action = 'create_by_admin';"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+adjustAutovacuum dbPool = do
+  let sql =
+        "ALTER TABLE project \
+        \    SET (autovacuum_vacuum_scale_factor = 0.05, \
+        \         autovacuum_analyze_scale_factor = 0.02); \
+        \ \
+        \ALTER TABLE project_event \
+        \    SET (autovacuum_vacuum_scale_factor = 0.05, \
+        \         autovacuum_vacuum_insert_scale_factor = 0.02, \
+        \         autovacuum_analyze_scale_factor = 0.01); \
+        \ \
+        \ALTER TABLE persistent_command \
+        \    SET (autovacuum_vacuum_scale_factor = 0.05, \
+        \         autovacuum_analyze_scale_factor = 0.02); \
+        \ \
+        \ALTER TABLE knowledge_model_package \
+        \    SET (autovacuum_vacuum_scale_factor = 0.1, \
+        \         autovacuum_vacuum_insert_scale_factor = 0.1, \
+        \         autovacuum_analyze_scale_factor = 0.05);"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
