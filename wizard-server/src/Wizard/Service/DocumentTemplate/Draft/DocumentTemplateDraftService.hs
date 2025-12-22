@@ -153,6 +153,4 @@ deleteDraft tmlId =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
     draft <- findDraftById tmlId
-    assets <- findAssetsByDocumentTemplateId tmlId
-    validateDocumentTemplateDeletion tmlId
     void $ deleteDraftByDocumentTemplateId tmlId

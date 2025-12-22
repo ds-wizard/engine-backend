@@ -114,7 +114,7 @@ findDocumentsPage mProjectUuid mProjectName mDocumentTemplateId mQuery pageable 
 findDocumentsByDocumentTemplateId :: String -> AppContextM [Document]
 findDocumentsByDocumentTemplateId documentTemplateId = do
   tenantUuid <- asks currentTenantUuid
-  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId)]
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId), ("durability", "PersistentDocumentDurability")]
 
 findDocumentByUuid :: U.UUID -> AppContextM Document
 findDocumentByUuid uuid = do
