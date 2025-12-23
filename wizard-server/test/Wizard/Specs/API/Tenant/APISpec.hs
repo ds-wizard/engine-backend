@@ -8,6 +8,7 @@ import Wizard.Specs.API.Tenant.Detail_GET
 import Wizard.Specs.API.Tenant.Detail_PUT
 import Wizard.Specs.API.Tenant.List_GET
 import Wizard.Specs.API.Tenant.List_POST
+import Wizard.Specs.API.Tenant.PluginSettings.APISpec
 
 tenantAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
@@ -16,3 +17,4 @@ tenantAPI baseContext appContext =
       list_POST appContext
       detail_GET appContext
       detail_PUT appContext
+      tenantPluginSettingsAPI appContext

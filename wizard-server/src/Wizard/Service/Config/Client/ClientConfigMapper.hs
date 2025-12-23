@@ -1,6 +1,9 @@
 module Wizard.Service.Config.Client.ClientConfigMapper where
 
+import qualified Data.Aeson as A
+import qualified Data.Map.Strict as M
 import Data.Maybe
+import qualified Data.UUID as U
 
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Config.SimpleFeature
@@ -11,8 +14,8 @@ import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.UserProfile
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
-toClientConfigDTO :: ServerConfig -> TenantConfigOrganization -> TenantConfigAuthentication -> TenantConfigPrivacyAndSupport -> TenantConfigDashboardAndLoginScreen -> TenantConfigLookAndFeel -> TenantConfigRegistry -> TenantConfigProject -> TenantConfigSubmission -> TenantConfigFeatures -> TenantConfigOwl -> Maybe UserProfile -> [String] -> Tenant -> ClientConfigDTO
-toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcProject tcSubmission tcFeatures tcOwl mUserProfile tours tenant =
+toClientConfigDTO :: ServerConfig -> TenantConfigOrganization -> TenantConfigAuthentication -> TenantConfigPrivacyAndSupport -> TenantConfigDashboardAndLoginScreen -> TenantConfigLookAndFeel -> TenantConfigRegistry -> TenantConfigProject -> TenantConfigSubmission -> TenantConfigFeatures -> TenantConfigOwl -> Maybe UserProfile -> [String] -> M.Map U.UUID A.Value -> Tenant -> ClientConfigDTO
+toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcProject tcSubmission tcFeatures tcOwl mUserProfile tours pluginSettings tenant =
   ClientConfigDTO
     { user = mUserProfile
     , tours = tours
@@ -28,6 +31,7 @@ toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSuppo
     , owl = tcOwl
     , admin = toClientConfigAdminDTO serverConfig.admin tenant
     , features = toClientConfigFeaturesDTO serverConfig.admin tcFeatures
+    , pluginSettings = pluginSettings
     , signalBridge = toClientConfigSignalBridgeDTO tenant
     , modules =
         if serverConfig.admin.enabled

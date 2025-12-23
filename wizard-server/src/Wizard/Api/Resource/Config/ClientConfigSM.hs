@@ -1,7 +1,9 @@
 module Wizard.Api.Resource.Config.ClientConfigSM where
 
+import qualified Data.Map.Strict as M
 import Data.Swagger
 
+import Shared.Common.Api.Resource.Common.AesonSM ()
 import qualified Shared.Common.Model.Config.ServerConfigDM as S_S
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Config.ClientConfigDTO
@@ -18,7 +20,7 @@ import Wizard.Service.User.UserMapper
 import qualified WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs as STC
 
 instance ToSchema ClientConfigDTO where
-  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig TC.defaultOrganization TC.defaultAuthentication TC.defaultPrivacyAndSupport TC.defaultDashboardAndLoginScreen STC.defaultLookAndFeel TC.defaultRegistry TC.defaultProject TC.defaultSubmission STC.defaultFeatures TC.defaultOwl (Just $ toUserProfile (toDTO userAlbert) []) [] defaultTenant)
+  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig TC.defaultOrganization TC.defaultAuthentication TC.defaultPrivacyAndSupport TC.defaultDashboardAndLoginScreen STC.defaultLookAndFeel TC.defaultRegistry TC.defaultProject TC.defaultSubmission STC.defaultFeatures TC.defaultOwl (Just $ toUserProfile (toDTO userAlbert) [] M.empty) [] M.empty defaultTenant)
 
 instance ToSchema ClientConfigAuthDTO where
   declareNamedSchema = toSwagger (toClientAuthDTO TC.defaultAuthentication)

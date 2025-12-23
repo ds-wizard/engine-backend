@@ -12,7 +12,8 @@ dropTables :: AppContextM Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Tenant) drop table"
   let sql =
-        "DROP TABLE IF EXISTS tenant_limit_bundle; \
+        "DROP TABLE IF EXISTS tenant_plugin_settings; \
+        \DROP TABLE IF EXISTS tenant_limit_bundle; \
         \DROP TABLE IF EXISTS tenant;"
   let action conn = execute_ conn sql
   runDB action
@@ -48,6 +49,7 @@ createTables :: AppContextM Int64
 createTables = do
   createTenantTable
   createTenantLimitBundleTable
+  createTenantPluginSettingsTable
 
 createTenantTable = do
   logInfo _CMP_MIGRATION "(Table/Tenant) create table"
@@ -453,6 +455,22 @@ createTenantLimitBundleTable = do
         \    document_template_drafts integer     NOT NULL, \
         \    locales                  integer     NOT NULL, \
         \    CONSTRAINT tenant_limit_bundle_pk PRIMARY KEY (uuid) \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createTenantPluginSettingsTable = do
+  logInfo _CMP_MIGRATION "(Table/TenantPluginSettings) create tables"
+  let sql =
+        "CREATE TABLE tenant_plugin_settings \
+        \( \
+        \    tenant_uuid  uuid        NOT NULL, \
+        \    plugin_uuid  uuid        NOT NULL, \
+        \    values       jsonb       NOT NULL, \
+        \    created_at   timestamptz NOT NULL, \
+        \    updated_at   timestamptz NOT NULL, \
+        \    CONSTRAINT tenant_plugin_settings_pk PRIMARY KEY (tenant_uuid, plugin_uuid), \
+        \    CONSTRAINT tenant_plugin_settings_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

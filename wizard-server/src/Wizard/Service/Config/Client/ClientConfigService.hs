@@ -16,8 +16,10 @@ import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigProjectDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
+import Wizard.Database.DAO.Tenant.PluginSettings.TenantPluginSettingsDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.User.UserGroupMembershipDAO
+import Wizard.Database.DAO.User.UserPluginSettingsDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Tenant
@@ -81,13 +83,15 @@ getClientConfig mServerUrl mClientUrl = do
         case mCurrentUser of
           Just currentUser -> do
             userGroupUuids <- findUserGroupUuidsForUserUuidAndTenantUuid currentUser.uuid tenant.uuid
-            return . Just $ toUserProfile currentUser userGroupUuids
+            userPluginSettings <- findUserPluginSettingValuesByUserUuidAndTenantUuid currentUser.uuid tenant.uuid
+            return . Just $ toUserProfile currentUser userGroupUuids userPluginSettings
           Nothing -> return Nothing
+      pluginSettings <- findTenantPluginSettingValues
       tours <-
         case mCurrentUser of
           Just currentUser -> findUserToursByUserUuid currentUser.uuid
           _ -> return []
-      return $ toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcProject tcSubmission tcFeatures tcOwl mUserProfile tours tenant
+      return $ toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcProject tcSubmission tcFeatures tcOwl mUserProfile tours pluginSettings tenant
 
 throwErrorIfTenantIsDisabled :: Maybe String -> Tenant -> AppContextM ()
 throwErrorIfTenantIsDisabled mServerUrl tenant = unless tenant.enabled (throwError . NotExistsError $ _ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE (fromMaybe "not-provided" mServerUrl))

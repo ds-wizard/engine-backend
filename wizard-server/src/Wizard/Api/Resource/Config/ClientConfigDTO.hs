@@ -1,5 +1,8 @@
 module Wizard.Api.Resource.Config.ClientConfigDTO where
 
+import qualified Data.Aeson as A
+import qualified Data.Map.Strict as M
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Config.SimpleFeature
@@ -27,6 +30,7 @@ data ClientConfigDTO
       , owl :: TenantConfigOwl
       , admin :: ClientConfigAdminDTO
       , features :: ClientConfigFeaturesDTO
+      , pluginSettings :: M.Map U.UUID A.Value
       , signalBridge :: ClientConfigSignalBridgeDTO
       , modules :: [ClientConfigModuleDTO]
       }
