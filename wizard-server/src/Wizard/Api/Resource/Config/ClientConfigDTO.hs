@@ -21,7 +21,7 @@ data ClientConfigDTO
       , dashboardAndLoginScreen :: TenantConfigDashboardAndLoginScreen
       , lookAndFeel :: TenantConfigLookAndFeel
       , registry :: ClientConfigRegistryDTO
-      , questionnaire :: ClientConfigQuestionnaireDTO
+      , project :: ClientConfigProjectDTO
       , submission :: SimpleFeature
       , cloud :: ClientConfigCloudDTO
       , owl :: TenantConfigOwl
@@ -58,10 +58,10 @@ data ClientConfigRegistryDTO = ClientConfigRegistryDTO
   }
   deriving (Show, Eq, Generic)
 
-data ClientConfigQuestionnaireDTO = ClientConfigQuestionnaireDTO
-  { questionnaireVisibility :: TenantConfigQuestionnaireVisibility
-  , questionnaireSharing :: TenantConfigQuestionnaireSharing
-  , questionnaireCreation :: QuestionnaireCreation
+data ClientConfigProjectDTO = ClientConfigProjectDTO
+  { projectVisibility :: TenantConfigProjectVisibility
+  , projectSharing :: TenantConfigProjectSharing
+  , projectCreation :: ProjectCreation
   , projectTagging :: SimpleFeature
   , summaryReport :: SimpleFeature
   , feedback :: SimpleFeature

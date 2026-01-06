@@ -10,5 +10,12 @@ data InfoDTO = InfoDTO
   , version :: String
   , builtAt :: UTCTime
   , components :: [Component]
+  , metamodelVersions :: [InfoMetamodelVersionDTO]
+  }
+  deriving (Show, Eq, Generic)
+
+data InfoMetamodelVersionDTO = InfoMetamodelVersionDTO
+  { name :: String
+  , version :: String
   }
   deriving (Show, Eq, Generic)

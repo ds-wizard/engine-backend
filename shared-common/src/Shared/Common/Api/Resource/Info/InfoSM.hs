@@ -9,4 +9,7 @@ import Shared.Common.Util.Swagger
 import Shared.Component.Api.Resource.Component.ComponentSM ()
 
 instance ToSchema InfoDTO where
-  declareNamedSchema = toSwagger appInfo
+  declareNamedSchema = toSwagger infoDTO
+
+instance ToSchema InfoMetamodelVersionDTO where
+  declareNamedSchema = toSwagger infoMetamodelVersionA

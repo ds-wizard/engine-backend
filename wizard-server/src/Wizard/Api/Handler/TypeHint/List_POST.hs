@@ -24,7 +24,7 @@ list_POST
   -> Maybe String
   -> TypeHintRequestDTO
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] [TypeHintIDTO])
-list_POST mTokenHeader mServerUrl reqDto@(QuestionnaireTypeHintRequest' _) =
+list_POST mTokenHeader mServerUrl reqDto@(ProjectTypeHintRequest' _) =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< getTypeHints reqDto
 list_POST mTokenHeader mServerUrl reqDto =

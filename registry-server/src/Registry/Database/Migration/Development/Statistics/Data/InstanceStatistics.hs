@@ -7,7 +7,7 @@ iStat =
   InstanceStatistics
     { userCount = 10
     , pkgCount = 20
-    , qtnCount = 30
+    , prjCount = 30
     , kmEditorCount = 40
     , docCount = 50
     , tmlCount = 60

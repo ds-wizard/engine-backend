@@ -18,6 +18,7 @@ import Wizard.Api.Handler.User.List_Current_Submission_Props_PUT
 import Wizard.Api.Handler.User.List_GET
 import Wizard.Api.Handler.User.List_POST
 import Wizard.Api.Handler.User.List_Suggestions_GET
+import Wizard.Api.Handler.User.News.Api
 import Wizard.Api.Handler.User.Tour.Api
 import Wizard.Model.Context.BaseContext
 
@@ -38,6 +39,7 @@ type UserAPI =
           :<|> Detail_Password_PUT
           :<|> Detail_State_PUT
           :<|> Detail_DELETE
+          :<|> NewsAPI
           :<|> TourAPI
        )
 
@@ -61,4 +63,5 @@ userServer =
     :<|> detail_password_PUT
     :<|> detail_state_PUT
     :<|> detail_DELETE
+    :<|> newsServer
     :<|> tourServer

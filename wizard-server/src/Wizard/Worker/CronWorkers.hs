@@ -15,9 +15,9 @@ import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.KnowledgeModel.Editor.Event.EditorEventService hiding (squash)
 import Wizard.Service.PersistentCommand.PersistentCommandService
-import Wizard.Service.Questionnaire.Comment.QuestionnaireCommentService
-import Wizard.Service.Questionnaire.Event.QuestionnaireEventService hiding (squash)
-import Wizard.Service.Questionnaire.QuestionnaireService
+import Wizard.Service.Project.Comment.ProjectCommentService
+import Wizard.Service.Project.Event.ProjectEventService hiding (squash)
+import Wizard.Service.Project.ProjectService
 import Wizard.Service.Registry.RegistryService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
 import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
@@ -32,8 +32,8 @@ workers =
   , squashKnowledgeModelEditorEventsWorker
   , persistentCommandRetryWorker
   , persistentCommandRetryLambdaWorker
-  , cleanQuestionnaireWorker
-  , squashQuestionnaireEventsWorker
+  , cleanProjectWorker
+  , squashProjectEventsWorker
   , assigneeNotificationWorker
   , registrySyncWorker
   , temporaryFileWorker
@@ -69,9 +69,9 @@ documentWorker :: CronWorker BaseContext AppContextM
 documentWorker =
   CronWorker
     { name = "DocumentWorker"
-    , condition = (.serverConfig.questionnaire.clean.enabled)
+    , condition = (.serverConfig.project.clean.enabled)
     , cronDefault = "0 */4 * * *"
-    , cron = (.serverConfig.questionnaire.clean.cron)
+    , cron = (.serverConfig.project.clean.cron)
     , function = cleanDocuments
     , wrapInTransaction = True
     }
@@ -120,25 +120,25 @@ persistentCommandRetryLambdaWorker =
     , wrapInTransaction = False
     }
 
-cleanQuestionnaireWorker :: CronWorker BaseContext AppContextM
-cleanQuestionnaireWorker =
+cleanProjectWorker :: CronWorker BaseContext AppContextM
+cleanProjectWorker =
   CronWorker
-    { name = "CleanQuestionnaireWorker"
-    , condition = (.serverConfig.questionnaire.clean.enabled)
+    { name = "CleanProjectWorker"
+    , condition = (.serverConfig.project.clean.enabled)
     , cronDefault = "15 */4 * * *"
-    , cron = (.serverConfig.questionnaire.clean.cron)
-    , function = cleanQuestionnaires
+    , cron = (.serverConfig.project.clean.cron)
+    , function = cleanProjects
     , wrapInTransaction = True
     }
 
-squashQuestionnaireEventsWorker :: CronWorker BaseContext AppContextM
-squashQuestionnaireEventsWorker =
+squashProjectEventsWorker :: CronWorker BaseContext AppContextM
+squashProjectEventsWorker =
   CronWorker
-    { name = "SquashQuestionnaireEventsWorker"
-    , condition = (.serverConfig.questionnaire.squash.enabled)
+    { name = "SquashProjectEventsWorker"
+    , condition = (.serverConfig.project.squash.enabled)
     , cronDefault = "*/4 * * * *"
-    , cron = (.serverConfig.questionnaire.squash.cron)
-    , function = squashQuestionnaireEvents
+    , cron = (.serverConfig.project.squash.cron)
+    , function = squashProjectEvents
     , wrapInTransaction = True
     }
 
@@ -146,9 +146,9 @@ assigneeNotificationWorker :: CronWorker BaseContext AppContextM
 assigneeNotificationWorker =
   CronWorker
     { name = "AssigneeNotificationWorker"
-    , condition = (.serverConfig.questionnaire.assigneeNotification.enabled)
+    , condition = (.serverConfig.project.assigneeNotification.enabled)
     , cronDefault = "*/5 * * * *"
-    , cron = (.serverConfig.questionnaire.assigneeNotification.cron)
+    , cron = (.serverConfig.project.assigneeNotification.cron)
     , function = sendNotificationToNewAssignees
     , wrapInTransaction = True
     }

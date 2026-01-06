@@ -4,7 +4,7 @@ import Shared.Common.Util.Uuid
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Event.KnowledgeModelEvents
 import Wizard.Api.Resource.KnowledgeModel.Editor.Event.KnowledgeModelEditorWebSocketEventDTO
 import Wizard.Api.Resource.KnowledgeModel.Editor.Event.SetRepliesDTO
-import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
+import Wizard.Database.Migration.Development.Project.Data.ProjectReplies
 
 knowledgeModelEditorWebsocketEvent1' :: KnowledgeModelEditorWebSocketEventDTO
 knowledgeModelEditorWebsocketEvent1' = AddKnowledgeModelEditorWebSocketEventDTO' knowledgeModelEditorWebsocketEvent1

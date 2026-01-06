@@ -34,11 +34,11 @@ compareFeedbackDtos resDto expDto = do
 -- HELPER
 -- --------------------------------
 loadFeedbackTokenFromEnv = do
-  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
-  updatedTcQuestionnaire <- applyEnvVariable "FEEDBACK_TOKEN" tcQuestionnaire.feedback.token (\t -> tcQuestionnaire {feedback = tcQuestionnaire.feedback {token = t}})
-  modifyTenantConfigQuestionnaire updatedTcQuestionnaire
+  tcProject <- getCurrentTenantConfigProject
+  updatedTcProject <- applyEnvVariable "FEEDBACK_TOKEN" tcProject.feedback.token (\t -> tcProject {feedback = tcProject.feedback {token = t}})
+  modifyTenantConfigProject updatedTcProject
 
-applyEnvVariable :: String -> String -> (String -> TenantConfigQuestionnaire) -> AppContextM TenantConfigQuestionnaire
+applyEnvVariable :: String -> String -> (String -> TenantConfigProject) -> AppContextM TenantConfigProject
 applyEnvVariable envVariableName oldValue updateFn = do
   envVariable <- liftIO $ lookupEnv envVariableName
   let newValue = fromMaybe oldValue envVariable

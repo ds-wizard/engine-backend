@@ -47,10 +47,10 @@ instance SensitiveData TenantConfigKnowledgeModel where
   process key entity =
     entity {integrationConfig = encryptAES256WithB64 key entity.integrationConfig}
 
-instance SensitiveData TenantConfigQuestionnaire where
+instance SensitiveData TenantConfigProject where
   process key entity = entity {feedback = process key entity.feedback}
 
-instance SensitiveData TenantConfigQuestionnaireFeedback where
+instance SensitiveData TenantConfigProjectFeedback where
   process key entity = entity {token = encryptAES256WithB64 key entity.token}
 
 instance SensitiveData TenantConfigFeatures

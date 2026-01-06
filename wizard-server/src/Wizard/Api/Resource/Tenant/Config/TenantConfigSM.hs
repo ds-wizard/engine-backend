@@ -7,8 +7,8 @@ import Shared.Common.Util.Swagger
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePatternSM ()
 import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientParameterSM ()
 import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientStyleSM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingSM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
+import Wizard.Api.Resource.Project.ProjectSharingSM ()
+import Wizard.Api.Resource.Project.ProjectVisibilitySM ()
 import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Model.Tenant.Config.TenantConfig
@@ -55,21 +55,21 @@ instance ToSchema TenantConfigKnowledgeModelPublic where
 instance ToSchema TenantConfigKnowledgeModelPublicPackagePattern where
   declareNamedSchema = toSwagger defaultKnowledgeModelPublicPackagePattern
 
-instance ToSchema TenantConfigQuestionnaire where
-  declareNamedSchema = toSwagger defaultQuestionnaire
+instance ToSchema TenantConfigProject where
+  declareNamedSchema = toSwagger defaultProject
 
-instance ToSchema TenantConfigQuestionnaireVisibility where
-  declareNamedSchema = toSwagger defaultQuestionnaireVisibility
+instance ToSchema TenantConfigProjectVisibility where
+  declareNamedSchema = toSwagger defaultProjectVisibility
 
-instance ToSchema TenantConfigQuestionnaireSharing where
-  declareNamedSchema = toSwagger defaultQuestionnaireSharing
+instance ToSchema TenantConfigProjectSharing where
+  declareNamedSchema = toSwagger defaultProjectSharing
 
-instance ToSchema QuestionnaireCreation
+instance ToSchema ProjectCreation
 
-instance ToSchema TenantConfigQuestionnaireProjectTagging where
-  declareNamedSchema = toSwagger defaultQuestionnaireProjectTagging
+instance ToSchema TenantConfigProjectProjectTagging where
+  declareNamedSchema = toSwagger defaultProjectProjectTagging
 
-instance ToSchema TenantConfigQuestionnaireFeedback where
+instance ToSchema TenantConfigProjectFeedback where
   declareNamedSchema = toSwagger defaultFeedback
 
 instance ToSchema TenantConfigSubmission where

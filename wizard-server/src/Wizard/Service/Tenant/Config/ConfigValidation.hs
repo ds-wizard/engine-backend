@@ -12,13 +12,13 @@ import Shared.Coordinate.Localization.Messages.Public
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Config.TenantConfig
-import Wizard.Service.Questionnaire.QuestionnaireValidation
+import Wizard.Service.Project.ProjectValidation
 
 validateTenantConfig :: TenantConfigChangeDTO -> AppContextM ()
 validateTenantConfig reqDto = do
   validateOrganization reqDto.organization
   validateAuthentication reqDto.authentication
-  validateQuestionnaire reqDto.questionnaire
+  validateProject reqDto.project
 
 validateOrganization :: TenantConfigOrganizationChangeDTO -> AppContextM ()
 validateOrganization config = forM_ (isValidOrganizationId config.organizationId) throwError
@@ -41,5 +41,5 @@ validateAuthentication config =
           validationRegex = mkRegex "^[a-z0-9-]+$"
    in traverse_ validate config.external.services
 
-validateQuestionnaire :: TenantConfigQuestionnaireChangeDTO -> AppContextM ()
-validateQuestionnaire config = validateQuestionnaireTags config.projectTagging.tags
+validateProject :: TenantConfigProjectChangeDTO -> AppContextM ()
+validateProject config = validateProjectTags config.projectTagging.tags

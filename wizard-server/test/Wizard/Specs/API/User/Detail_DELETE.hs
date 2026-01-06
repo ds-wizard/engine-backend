@@ -12,20 +12,20 @@ import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import Wizard.Database.Migration.Development.Project.Data.Projects
+import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
-import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Project.Project
 import Wizard.Model.User.User
-import Wizard.Service.Questionnaire.QuestionnaireService
+import Wizard.Service.Project.ProjectService
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Document.Common
-import Wizard.Specs.API.Questionnaire.Common
+import Wizard.Specs.API.Project.Common
 import Wizard.Specs.API.User.Common
 import Wizard.Specs.Common
 
@@ -63,7 +63,7 @@ test_204 appContext =
       -- AND: Run migrations
       runInContextIO U.runMigration appContext
       runInContextIO TML.runMigration appContext
-      runInContextIO QTN.runMigration appContext
+      runInContextIO PRJ.runMigration appContext
       runInContextIO DOC.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
@@ -72,10 +72,10 @@ test_204 appContext =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
       response `shouldRespondWith` responseMatcher
       -- AND: Compare state in DB with expectation
-      runInContextIO cleanQuestionnaires appContext
+      runInContextIO cleanProjects appContext
       assertAbsenceOfUserInDB appContext userAlbert
-      assertAbsenceOfQuestionnaireInDB appContext questionnaire1
-      assertAbsenceOfQuestionnaireInDB appContext questionnaire2
+      assertAbsenceOfProjectInDB appContext project1
+      assertAbsenceOfProjectInDB appContext project2
       assertAbsenceOfDocumentInDB appContext doc3
 
 -- ----------------------------------------------------

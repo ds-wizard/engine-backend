@@ -9,8 +9,8 @@ import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireFileDAO
+import Wizard.Database.DAO.Project.ProjectDAO
+import Wizard.Database.DAO.Project.ProjectFileDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AclContext
@@ -25,16 +25,16 @@ getUsage tenantUuid = do
   activeUserCount <- countActiveUsersWithTenant tenantUuid
   knowledgeModelEditorCount <- countKnowledgeModelEditorsWithTenant tenantUuid
   kmCount <- countPackagesGroupedByOrganizationIdAndKmIdWithTenant tenantUuid
-  qtnCount <- countQuestionnairesWithTenant tenantUuid
+  prjCount <- countProjectsWithTenant tenantUuid
   documentTemplateCount <- countDocumentTemplatesGroupedByOrganizationIdAndKmIdWithTenant tenantUuid
   documentTemplateDraftCount <- countDraftsGroupedByOrganizationIdAndKmIdWithTenant tenantUuid
   docCount <- countDocumentsWithTenant tenantUuid
   localeCount <- countLocalesGroupedByOrganizationIdAndLocaleIdWithTenant tenantUuid
   docSize <- sumDocumentFileSizeWithTenant tenantUuid
   templateAssetSize <- sumAssetFileSizeWithTenant tenantUuid
-  qtnFileSize <- sumQuestionnaireFileSizeWithTenant tenantUuid
-  let storageCount = docSize + templateAssetSize + qtnFileSize
-  return $ toDTO limitBundle userCount activeUserCount knowledgeModelEditorCount kmCount qtnCount documentTemplateCount documentTemplateDraftCount docCount localeCount storageCount
+  projectFileSize <- sumProjectFileSizeWithTenant tenantUuid
+  let storageCount = docSize + templateAssetSize + projectFileSize
+  return $ toDTO limitBundle userCount activeUserCount knowledgeModelEditorCount kmCount prjCount documentTemplateCount documentTemplateDraftCount docCount localeCount storageCount
 
 getUsageForCurrentTenant :: AppContextM WizardUsageDTO
 getUsageForCurrentTenant = do
@@ -44,13 +44,13 @@ getUsageForCurrentTenant = do
   activeUserCount <- countActiveUsers
   knowledgeModelEditorCount <- countKnowledgeModelEditors
   kmCount <- countPackagesGroupedByOrganizationIdAndKmId
-  qtnCount <- countQuestionnaires
+  prjCount <- countProjects
   documentTemplateCount <- countDocumentTemplatesGroupedByOrganizationIdAndKmId
   documentTemplateDraftCount <- countDraftsGroupedByOrganizationIdAndKmId
   docCount <- countDocuments
   localeCount <- countLocalesGroupedByOrganizationIdAndLocaleId
   docSize <- sumDocumentFileSize
   templateAssetSize <- sumAssetFileSize
-  qtnFileSize <- sumQuestionnaireFileSize
-  let storageCount = docSize + templateAssetSize + qtnFileSize
-  return $ toDTO limitBundle userCount activeUserCount knowledgeModelEditorCount kmCount qtnCount documentTemplateCount documentTemplateDraftCount docCount localeCount storageCount
+  projectFileSize <- sumProjectFileSize
+  let storageCount = docSize + templateAssetSize + projectFileSize
+  return $ toDTO limitBundle userCount activeUserCount knowledgeModelEditorCount kmCount prjCount documentTemplateCount documentTemplateDraftCount docCount localeCount storageCount

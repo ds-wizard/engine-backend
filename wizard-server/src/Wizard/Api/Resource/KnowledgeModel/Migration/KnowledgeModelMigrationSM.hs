@@ -9,4 +9,4 @@ import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationState
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Migration.KnowledgeModelMigrations
 
 instance ToSchema KnowledgeModelMigrationDTO where
-  declareNamedSchema = toSwagger migratorState
+  declareNamedSchema = toSwagger knowledgeModelMigrationDTO

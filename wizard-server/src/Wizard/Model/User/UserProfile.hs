@@ -11,6 +11,7 @@ data UserProfile = UserProfile
   , imageUrl :: Maybe String
   , uRole :: String
   , permissions :: [String]
+  , lastSeenNewsId :: Maybe String
   , userGroupUuids :: [U.UUID]
   }
   deriving (Show, Eq, Generic)

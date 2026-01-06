@@ -4,7 +4,7 @@ import qualified Data.UUID as U
 
 import Shared.Common.Model.Config.SimpleFeature
 import Shared.Common.Util.Date
-import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Project.Project
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 
@@ -98,45 +98,45 @@ defaultKnowledgeModelPublic =
     , knowledgeModelPackages = []
     }
 
-defaultQuestionnaire :: TenantConfigQuestionnaire
-defaultQuestionnaire =
-  TenantConfigQuestionnaire
+defaultProject :: TenantConfigProject
+defaultProject =
+  TenantConfigProject
     { tenantUuid = U.nil
-    , questionnaireVisibility = defaultQuestionnaireVisibility
-    , questionnaireSharing = defaultQuestionnaireSharing
-    , questionnaireCreation = TemplateAndCustomQuestionnaireCreation
-    , projectTagging = defaultQuestionnaireProjectTagging
+    , projectVisibility = defaultProjectVisibility
+    , projectSharing = defaultProjectSharing
+    , projectCreation = TemplateAndCustomProjectCreation
+    , projectTagging = defaultProjectProjectTagging
     , summaryReport = SimpleFeature True
     , feedback = defaultFeedback
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 20
     }
 
-defaultQuestionnaireVisibility :: TenantConfigQuestionnaireVisibility
-defaultQuestionnaireVisibility =
-  TenantConfigQuestionnaireVisibility
+defaultProjectVisibility :: TenantConfigProjectVisibility
+defaultProjectVisibility =
+  TenantConfigProjectVisibility
     { enabled = True
-    , defaultValue = PrivateQuestionnaire
+    , defaultValue = PrivateProjectVisibility
     }
 
-defaultQuestionnaireSharing :: TenantConfigQuestionnaireSharing
-defaultQuestionnaireSharing =
-  TenantConfigQuestionnaireSharing
+defaultProjectSharing :: TenantConfigProjectSharing
+defaultProjectSharing =
+  TenantConfigProjectSharing
     { enabled = True
-    , defaultValue = RestrictedQuestionnaire
+    , defaultValue = RestrictedProjectSharing
     , anonymousEnabled = True
     }
 
-defaultQuestionnaireProjectTagging :: TenantConfigQuestionnaireProjectTagging
-defaultQuestionnaireProjectTagging =
-  TenantConfigQuestionnaireProjectTagging
+defaultProjectProjectTagging :: TenantConfigProjectProjectTagging
+defaultProjectProjectTagging =
+  TenantConfigProjectProjectTagging
     { enabled = True
     , tags = []
     }
 
-defaultFeedback :: TenantConfigQuestionnaireFeedback
+defaultFeedback :: TenantConfigProjectFeedback
 defaultFeedback =
-  TenantConfigQuestionnaireFeedback
+  TenantConfigProjectFeedback
     { enabled = False
     , token = ""
     , owner = ""

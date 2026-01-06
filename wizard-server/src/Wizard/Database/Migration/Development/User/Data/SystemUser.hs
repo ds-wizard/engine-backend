@@ -27,11 +27,11 @@ userSystem =
         , "KM_PUBLISH_PERM"
         , "PM_READ_PERM"
         , "PM_WRITE_PERM"
-        , "QTN_PERM"
-        , "QTN_FILE_PERM"
-        , "QTN_ACTION_PERM"
-        , "QTN_IMPORTER_PERM"
-        , "QTN_TML_PERM"
+        , "PRJ_PERM"
+        , "PRJ_FILE_PERM"
+        , "PRJ_ACTION_PERM"
+        , "PRJ_IMPORTER_PERM"
+        , "PJR_TML_PERM"
         , "DOC_TML_READ_PERM"
         , "CFG_PERM"
         , "SUBM_PERM"
@@ -46,6 +46,7 @@ userSystem =
       imageUrl = Nothing
     , locale = Nothing
     , machine = True
+    , lastSeenNewsId = Nothing
     , tenantUuid = defaultTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0

@@ -41,7 +41,7 @@ getSubmissionsForDocument :: U.UUID -> AppContextM [SubmissionList]
 getSubmissionsForDocument docUuid = do
   checkIfSubmissionIsEnabled
   doc <- findDocumentByUuid docUuid
-  checkViewPermissionToDoc doc.questionnaireUuid
+  checkViewPermissionToDoc doc.projectUuid
   findSubmissionsByDocumentUuid docUuid
 
 submitDocument :: U.UUID -> SubmissionCreateDTO -> AppContextM SubmissionList

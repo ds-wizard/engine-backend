@@ -28,7 +28,7 @@ updateDraftDataById draftData = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE document_template_draft_data SET document_template_id = ?, questionnaire_uuid = ?, format_uuid = ?, tenant_uuid = ?, created_at = ?, updated_at = ?, knowledge_model_editor_uuid = ? WHERE tenant_uuid = ? AND document_template_id = ?"
+          "UPDATE document_template_draft_data SET document_template_id = ?, project_uuid = ?, format_uuid = ?, tenant_uuid = ?, created_at = ?, updated_at = ?, knowledge_model_editor_uuid = ? WHERE tenant_uuid = ? AND document_template_id = ?"
   let params = toRow draftData ++ [toField draftData.tenantUuid, toField draftData.documentTemplateId]
   logQuery sql params
   let action conn = execute conn sql params

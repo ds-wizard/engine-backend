@@ -15,7 +15,7 @@ import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
@@ -39,7 +39,7 @@ list_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/wizard-api/document-templates?organizationId=global&templateId=questionnaire-report"
+reqUrl = "/wizard-api/document-templates?organizationId=global&templateId=project-report"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -79,11 +79,11 @@ test_400 appContext =
             UserError $
               _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY
                 wizardDocumentTemplate.tId
-                "questionnaire"
+                "project"
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO TML.runMigration appContext
-      runInContextIO QTN.runMigration appContext
+      runInContextIO PRJ.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

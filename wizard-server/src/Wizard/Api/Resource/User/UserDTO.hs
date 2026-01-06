@@ -20,6 +20,7 @@ data UserDTO = UserDTO
   , active :: Bool
   , imageUrl :: Maybe String
   , locale :: Maybe String
+  , lastSeenNewsId :: Maybe String
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -38,5 +39,6 @@ instance Eq UserDTO where
       && a.active == b.active
       && a.imageUrl == b.imageUrl
       && a.locale == b.locale
+      && a.lastSeenNewsId == b.lastSeenNewsId
 
 instance Hashable UserDTO

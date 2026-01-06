@@ -23,7 +23,7 @@ import Wizard.Specs.Common
 assertExistenceOfDocumentInDB appContext reqDto = do
   docFromDb <- getFirstFromDB findDocuments appContext
   liftIO $ docFromDb.name `shouldBe` reqDto.name
-  liftIO $ docFromDb.questionnaireUuid `shouldBe` Just reqDto.questionnaireUuid
+  liftIO $ docFromDb.projectUuid `shouldBe` Just reqDto.projectUuid
   liftIO $ docFromDb.documentTemplateId `shouldBe` reqDto.documentTemplateId
   liftIO $ docFromDb.formatUuid `shouldBe` reqDto.formatUuid
 
@@ -41,5 +41,5 @@ assertAbsenceOfDocumentInDB appContext doc = do
 -- --------------------------------
 compareDocumentDtos resDto expDto = do
   liftIO $ resDto.name `shouldBe` expDto.name
-  liftIO $ (fromJust resDto.questionnaire).uuid `shouldBe` expDto.questionnaireUuid
+  liftIO $ (fromJust resDto.project).uuid `shouldBe` expDto.projectUuid
   liftIO $ (fmap (.uuid) resDto.format) `shouldBe` Just expDto.formatUuid

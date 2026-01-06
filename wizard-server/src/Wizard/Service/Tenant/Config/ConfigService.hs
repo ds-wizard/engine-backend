@@ -13,7 +13,7 @@ import Wizard.Database.DAO.Tenant.Config.TenantConfigKnowledgeModelDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
-import Wizard.Database.DAO.Tenant.Config.TenantConfigQuestionnaireDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigProjectDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigRegistryDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Model.Config.ServerConfig
@@ -38,11 +38,11 @@ getCurrentTenantConfigDto = do
   tcLookAndFeel <- findTenantConfigLookAndFeel
   tcRegistry <- getCurrentTenantConfigRegistry
   tcKnowledgeModel <- getCurrentTenantConfigKnowledgeModel
-  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
+  tcProject <- getCurrentTenantConfigProject
   tcSubmission <- findTenantConfigSubmission
   tcFeatures <- findTenantConfigFeatures
   tcOwl <- findTenantConfigOwl
-  return $ toTenantConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcKnowledgeModel tcQuestionnaire tcSubmission tcFeatures tcOwl
+  return $ toTenantConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcKnowledgeModel tcProject tcSubmission tcFeatures tcOwl
 
 modifyTenantConfigDto :: TenantConfigChangeDTO -> AppContextM TenantConfig
 modifyTenantConfigDto reqDto =
@@ -78,10 +78,10 @@ modifyTenantConfigDto reqDto =
     tcKnowledgeModelUpdated <- getCurrentTenantConfigKnowledgeModel
     let tcKnowledgeModelUpdatedUpdated = fromKnowledgeModelChangeDTO reqDto.knowledgeModel tcKnowledgeModelUpdated.tenantUuid tcKnowledgeModelUpdated.createdAt now
     modifyTenantConfigKnowledgeModel tcKnowledgeModelUpdatedUpdated
-    -- Questionnaire
-    tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
-    let tcQuestionnaireUpdated = fromQuestionnaireChangeDTO reqDto.questionnaire tcQuestionnaire.tenantUuid tcQuestionnaire.createdAt now
-    modifyTenantConfigQuestionnaire tcQuestionnaireUpdated
+    -- Project
+    tcProject <- getCurrentTenantConfigProject
+    let tcProjectUpdated = fromProjectChangeDTO reqDto.project tcProject.tenantUuid tcProject.createdAt now
+    modifyTenantConfigProject tcProjectUpdated
     -- Submission
     tcSubmission <- findTenantConfigSubmission
     let tcSubmissionUpdated = fromSubmissionChangeDTO reqDto.submission tcSubmission.tenantUuid tcSubmission.createdAt now
@@ -92,7 +92,7 @@ modifyTenantConfigDto reqDto =
     updateTenantConfigFeatures tcFeaturesUpdated
     -- Owl
     tcOwl <- findTenantConfigOwl
-    return $ toTenantConfig tcOrganizationUpdated tcAuthenticationUpdated tcPrivacyAndSupportUpdated tcDashboardAndLoginScreenUpdated tcLookAndFeelUpdated tcRegistryUpdated tcKnowledgeModelUpdated tcQuestionnaireUpdated tcSubmissionUpdated tcFeaturesUpdated tcOwl
+    return $ toTenantConfig tcOrganizationUpdated tcAuthenticationUpdated tcPrivacyAndSupportUpdated tcDashboardAndLoginScreenUpdated tcLookAndFeelUpdated tcRegistryUpdated tcKnowledgeModelUpdated tcProjectUpdated tcSubmissionUpdated tcFeaturesUpdated tcOwl
 
 getCurrentTenantConfigAuthentication :: AppContextM TenantConfigAuthentication
 getCurrentTenantConfigAuthentication = do
@@ -154,22 +154,22 @@ modifyTenantConfigKnowledgeModel tcKnowledgeModel =
     updateTenantConfigKnowledgeModel encryptedUpdatedTcKnowledgeModel
     return tcKnowledgeModel
 
-getCurrentTenantConfigQuestionnaire :: AppContextM TenantConfigQuestionnaire
-getCurrentTenantConfigQuestionnaire = do
+getCurrentTenantConfigProject :: AppContextM TenantConfigProject
+getCurrentTenantConfigProject = do
   serverConfig <- asks serverConfig
-  encryptedTcQuestionnaire <- findTenantConfigQuestionnaire
-  return $ process serverConfig.general.secret encryptedTcQuestionnaire
+  encryptedTcProject <- findTenantConfigProject
+  return $ process serverConfig.general.secret encryptedTcProject
 
-getTenantConfigQuestionnaireByUuid :: U.UUID -> AppContextM TenantConfigQuestionnaire
-getTenantConfigQuestionnaireByUuid tenantUuid = do
+getTenantConfigProjectByUuid :: U.UUID -> AppContextM TenantConfigProject
+getTenantConfigProjectByUuid tenantUuid = do
   serverConfig <- asks serverConfig
-  encryptedTcQuestionnaire <- findTenantConfigQuestionnaireByUuid tenantUuid
-  return $ process serverConfig.general.secret encryptedTcQuestionnaire
+  encryptedTcProject <- findTenantConfigProjectByUuid tenantUuid
+  return $ process serverConfig.general.secret encryptedTcProject
 
-modifyTenantConfigQuestionnaire :: TenantConfigQuestionnaire -> AppContextM TenantConfigQuestionnaire
-modifyTenantConfigQuestionnaire tcQuestionnaire =
+modifyTenantConfigProject :: TenantConfigProject -> AppContextM TenantConfigProject
+modifyTenantConfigProject tcProject =
   runInTransaction $ do
     serverConfig <- asks serverConfig
-    let encryptedUpdatedTcQuestionnaire = process serverConfig.general.secret tcQuestionnaire
-    updateTenantConfigQuestionnaire encryptedUpdatedTcQuestionnaire
-    return tcQuestionnaire
+    let encryptedUpdatedTcProject = process serverConfig.general.secret tcProject
+    updateTenantConfigProject encryptedUpdatedTcProject
+    return tcProject

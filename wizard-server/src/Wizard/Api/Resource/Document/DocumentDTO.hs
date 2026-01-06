@@ -8,16 +8,16 @@ import GHC.Int
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 import Wizard.Api.Resource.Submission.SubmissionJM ()
 import Wizard.Model.Document.Document
-import Wizard.Model.Questionnaire.QuestionnaireSimple
+import Wizard.Model.Project.ProjectSimple
 import Wizard.Model.Submission.SubmissionList
 
 data DocumentDTO = DocumentDTO
   { uuid :: U.UUID
   , name :: String
   , state :: DocumentState
-  , questionnaire :: Maybe QuestionnaireSimple
-  , questionnaireEventUuid :: Maybe U.UUID
-  , questionnaireVersion :: Maybe String
+  , project :: Maybe ProjectSimple
+  , projectEventUuid :: Maybe U.UUID
+  , projectVersion :: Maybe String
   , documentTemplateId :: String
   , documentTemplateName :: String
   , format :: Maybe DocumentTemplateFormatSimple

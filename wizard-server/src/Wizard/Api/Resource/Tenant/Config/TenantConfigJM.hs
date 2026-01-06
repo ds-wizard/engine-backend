@@ -7,8 +7,8 @@ import Shared.Common.Util.Aeson
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePatternJM ()
 import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientParameterJM ()
 import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientStyleJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()
+import Wizard.Api.Resource.Project.ProjectSharingJM ()
+import Wizard.Api.Resource.Project.ProjectVisibilityJM ()
 import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigJM ()
 
@@ -94,38 +94,38 @@ instance FromJSON TenantConfigKnowledgeModelPublicPackagePattern where
 instance ToJSON TenantConfigKnowledgeModelPublicPackagePattern where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigQuestionnaire where
+instance FromJSON TenantConfigProject where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigQuestionnaire where
+instance ToJSON TenantConfigProject where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigQuestionnaireVisibility where
+instance FromJSON TenantConfigProjectVisibility where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigQuestionnaireVisibility where
+instance ToJSON TenantConfigProjectVisibility where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigQuestionnaireSharing where
+instance FromJSON TenantConfigProjectSharing where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigQuestionnaireSharing where
+instance ToJSON TenantConfigProjectSharing where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON QuestionnaireCreation
+instance FromJSON ProjectCreation
 
-instance ToJSON QuestionnaireCreation
+instance ToJSON ProjectCreation
 
-instance FromJSON TenantConfigQuestionnaireProjectTagging where
+instance FromJSON TenantConfigProjectProjectTagging where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigQuestionnaireProjectTagging where
+instance ToJSON TenantConfigProjectProjectTagging where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigQuestionnaireFeedback where
+instance FromJSON TenantConfigProjectFeedback where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantConfigQuestionnaireFeedback where
+instance ToJSON TenantConfigProjectFeedback where
   toJSON = genericToJSON jsonOptions
 
 instance FromJSON TenantConfigSubmission where

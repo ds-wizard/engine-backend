@@ -5,8 +5,8 @@ import GHC.Generics
 
 data DocumentCreateDTO = DocumentCreateDTO
   { name :: String
-  , questionnaireUuid :: U.UUID
-  , questionnaireEventUuid :: Maybe U.UUID
+  , projectUuid :: U.UUID
+  , projectEventUuid :: Maybe U.UUID
   , documentTemplateId :: String
   , formatUuid :: U.UUID
   }

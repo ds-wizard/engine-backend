@@ -31,7 +31,7 @@ wizardDocumentTemplateDetailDTO =
     [commonWizardRegistryTemplate]
     [globalRegistryOrganization]
     ["1.0.0"]
-    (Just "https://registry-test.ds-wizard.org/document-templates/global:questionnaire-report:1.0.0")
+    (Just "https://registry-test.ds-wizard.org/document-templates/global:project-report:1.0.0")
     [globalKmPackage, netherlandsKmPackageV2]
 
 wizardDocumentTemplateDeprecatedChangeDTO :: DocumentTemplateChangeDTO

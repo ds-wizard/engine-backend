@@ -9,11 +9,11 @@ import qualified Data.UUID as U
 
 import Shared.Common.Util.List
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Model.Questionnaire.QuestionnaireSimpleWithPerm
-import Wizard.Service.Questionnaire.Collaboration.CollaborationService
+import Wizard.Model.Project.ProjectSimpleWithPerm
+import Wizard.Service.Project.Collaboration.ProjectCollaborationService
 import Wizard.Service.User.GroupMembership.UserGroupMembershipMapper
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
@@ -44,6 +44,6 @@ deleteUserGroupMembership userGroupUuid userUuids = do
   deleteUserGroupMembershipsByUserGroupUuidAndUserUuids userGroupUuid userUuids
   -- 2. Remove user group from cached websocket records
   removeUserGroupFromUsers userGroupUuid userUuids
-  -- 3. Recompute all questionnaire permissions for websockets
-  questionnaires <- findQuestionnairesSimpleWithPermByUserGroupUuid userGroupUuid
-  traverse_ (\qtn -> updatePermsForOnlineUsers qtn.uuid qtn.visibility qtn.sharing qtn.permissions) questionnaires
+  -- 3. Recompute all project permissions for websockets
+  projects <- findProjectsSimpleWithPermByUserGroupUuid userGroupUuid
+  traverse_ (\project -> updatePermsForOnlineUsers project.uuid project.visibility project.sharing project.permissions) projects

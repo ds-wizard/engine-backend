@@ -32,26 +32,26 @@ createDocumentTable = do
   let sql =
         "CREATE TABLE document \
         \( \
-        \    uuid                       uuid        NOT NULL, \
-        \    name                       varchar     NOT NULL, \
-        \    state                      varchar     NOT NULL, \
-        \    durability                 varchar     NOT NULL, \
-        \    questionnaire_uuid         uuid, \
-        \    questionnaire_event_uuid   uuid, \
-        \    questionnaire_replies_hash bigint      NOT NULL, \
-        \    document_template_id       varchar     NOT NULL, \
-        \    format_uuid                uuid        NOT NULL, \
-        \    created_by                 uuid, \
-        \    retrieved_at               timestamptz, \
-        \    finished_at                timestamptz, \
-        \    created_at                 timestamptz NOT NULL, \
-        \    file_name                  varchar, \
-        \    content_type               varchar, \
-        \    worker_log                 varchar, \
-        \    tenant_uuid                uuid        NOT NULL, \
-        \    file_size                  bigint, \
+        \    uuid                 uuid        NOT NULL, \
+        \    name                 varchar     NOT NULL, \
+        \    state                varchar     NOT NULL, \
+        \    durability           varchar     NOT NULL, \
+        \    project_uuid         uuid, \
+        \    project_event_uuid   uuid, \
+        \    project_replies_hash bigint      NOT NULL, \
+        \    document_template_id varchar     NOT NULL, \
+        \    format_uuid          uuid        NOT NULL, \
+        \    created_by           uuid, \
+        \    retrieved_at         timestamptz, \
+        \    finished_at          timestamptz, \
+        \    created_at           timestamptz NOT NULL, \
+        \    file_name            varchar, \
+        \    content_type         varchar, \
+        \    worker_log           varchar, \
+        \    tenant_uuid          uuid        NOT NULL, \
+        \    file_size            bigint, \
         \    CONSTRAINT document_pk PRIMARY KEY (uuid), \
-        \    CONSTRAINT document_questionnaire_uuid_fk FOREIGN KEY (questionnaire_uuid) REFERENCES questionnaire (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT document_project_uuid_fk FOREIGN KEY (project_uuid) REFERENCES project (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT document_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
         \    CONSTRAINT document_format_uuid_fk FOREIGN KEY (document_template_id, format_uuid, tenant_uuid) REFERENCES document_template_format (document_template_id, uuid, tenant_uuid) ON DELETE CASCADE, \
         \    CONSTRAINT document_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL, \

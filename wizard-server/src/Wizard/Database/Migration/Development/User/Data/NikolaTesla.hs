@@ -31,10 +31,10 @@ userNikola =
         , "KM_PUBLISH_PERM"
         , "PM_READ_PERM"
         , "PM_WRITE_PERM"
-        , "QTN_PERM"
-        , "QTN_ACTION_PERM"
-        , "QTN_IMPORTER_PERM"
-        , "QTN_TML_PERM"
+        , "PRJ_PERM"
+        , "PRJ_ACTION_PERM"
+        , "PRJ_IMPORTER_PERM"
+        , "PJR_TML_PERM"
         , "DOC_TML_READ_PERM"
         , "SUBM_PERM"
         , "DOC_TML_WRITE_PERM"
@@ -46,6 +46,7 @@ userNikola =
       imageUrl = Nothing
     , locale = Nothing
     , machine = False
+    , lastSeenNewsId = Nothing
     , tenantUuid = defaultTenant.uuid
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0

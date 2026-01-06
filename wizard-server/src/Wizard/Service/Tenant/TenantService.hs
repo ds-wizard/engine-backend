@@ -24,7 +24,7 @@ import Wizard.Database.DAO.Tenant.Config.TenantConfigKnowledgeModelDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
-import Wizard.Database.DAO.Tenant.Config.TenantConfigQuestionnaireDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigProjectDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigRegistryDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
@@ -153,7 +153,7 @@ createConfig uuid now = do
     insertTenantConfigLookAndFeel (defaultLookAndFeel {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigLookAndFeel)
     insertTenantConfigRegistry (defaultRegistry {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigRegistry)
     insertTenantConfigKnowledgeModel (defaultKnowledgeModel {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigKnowledgeModel)
-    insertTenantConfigQuestionnaire (defaultQuestionnaire {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigQuestionnaire)
+    insertTenantConfigProject (defaultProject {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigProject)
     insertTenantConfigSubmission (defaultSubmission {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigSubmission)
     insertTenantConfigMail (defaultMail {tenantUuid = uuid, createdAt = now, updatedAt = now})
     insertTenantConfigFeatures (defaultFeatures {tenantUuid = uuid, createdAt = now, updatedAt = now})

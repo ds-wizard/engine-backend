@@ -16,20 +16,20 @@ import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.Project.Data.Projects
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
-import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Project.Project
+import Wizard.Model.Project.ProjectContent
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.Document.Context.DocumentContextMapper
 import Wizard.Service.Document.DocumentMapper
-import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
+import Wizard.Service.Project.Version.ProjectVersionMapper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
 
 doc1 :: Document
@@ -39,9 +39,9 @@ doc1 =
     , name = "My exported document"
     , state = DoneDocumentState
     , durability = PersistentDocumentDurability
-    , questionnaireUuid = Just questionnaire1.uuid
-    , questionnaireEventUuid = Just . getUuid . last $ questionnaire1Events
-    , questionnaireRepliesHash = hash . M.toList $ questionnaire1Ctn.replies
+    , projectUuid = Just project1.uuid
+    , projectEventUuid = Just . getUuid . last $ project1Events
+    , projectRepliesHash = hash . M.toList $ project1Ctn.replies
     , documentTemplateId = wizardDocumentTemplate.tId
     , formatUuid = formatJson.uuid
     , createdBy = Just $ userNikola.uuid
@@ -68,7 +68,15 @@ doc1Content =
 dmp1 :: DocumentContext
 dmp1 =
   DocumentContext
-    { config = DocumentContextConfig {clientUrl = "https://example.com/wizard"}
+    { config =
+        DocumentContextConfig
+          { clientUrl = "https://example.com/wizard"
+          , appTitle = Nothing
+          , appTitleShort = Nothing
+          , illustrationsColor = Nothing
+          , primaryColor = Nothing
+          , logoUrl = Nothing
+          }
     , document =
         DocumentContextDocument
           { uuid = doc1.uuid
@@ -80,19 +88,19 @@ dmp1 =
           }
     , questionnaire =
         DocumentContextQuestionnaire
-          { uuid = questionnaire1.uuid
-          , name = questionnaire1.name
-          , description = questionnaire1.description
-          , replies = questionnaire1Ctn.replies
-          , phaseUuid = questionnaire1Ctn.phaseUuid
-          , labels = questionnaire1Ctn.labels
+          { uuid = project1.uuid
+          , name = project1.name
+          , description = project1.description
+          , replies = project1Ctn.replies
+          , phaseUuid = project1Ctn.phaseUuid
+          , labels = project1Ctn.labels
           , versionUuid = Nothing
-          , versions = fmap (`toVersionList` Just userAlbertDto) questionnaire1Versions
-          , projectTags = questionnaire1.projectTags
+          , versions = fmap (`toVersionList` Just userAlbertDto) project1Versions
+          , projectTags = project1.projectTags
           , files = []
           , createdBy = Just . USR_Mapper.toDTO $ userAlbert
-          , createdAt = questionnaire1.createdAt
-          , updatedAt = questionnaire1.updatedAt
+          , createdAt = project1.createdAt
+          , updatedAt = project1.updatedAt
           }
     , knowledgeModel = km1WithQ4
     , report = report1
@@ -112,14 +120,14 @@ doc1Create :: DocumentCreateDTO
 doc1Create =
   DocumentCreateDTO
     { name = doc1.name
-    , questionnaireUuid = questionnaire1.uuid
-    , questionnaireEventUuid = Just . getUuid . last $ questionnaire1Events
+    , projectUuid = project1.uuid
+    , projectEventUuid = Just . getUuid . last $ project1Events
     , documentTemplateId = doc1.documentTemplateId
     , formatUuid = doc1.formatUuid
     }
 
 doc1Dto :: DocumentDTO
-doc1Dto = toDTOWithDocTemplate doc1 questionnaire1 Nothing [] wizardDocumentTemplate formatJsonSimple
+doc1Dto = toDTOWithDocTemplate doc1 project1 Nothing [] wizardDocumentTemplate formatJsonSimple
 
 doc2 :: Document
 doc2 =
@@ -128,9 +136,9 @@ doc2 =
     , name = "My exported document 2"
     , state = DoneDocumentState
     , durability = PersistentDocumentDurability
-    , questionnaireUuid = Just questionnaire2.uuid
-    , questionnaireEventUuid = Just . getUuid . last $ questionnaire2Events
-    , questionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn.replies
+    , projectUuid = Just project2.uuid
+    , projectEventUuid = Just . getUuid . last $ project2Events
+    , projectRepliesHash = hash . M.toList $ project2Ctn.replies
     , documentTemplateId = wizardDocumentTemplate.tId
     , formatUuid = formatJson.uuid
     , createdBy = Just $ userNikola.uuid
@@ -151,9 +159,9 @@ doc3 =
     , name = "My exported document 3"
     , state = DoneDocumentState
     , durability = PersistentDocumentDurability
-    , questionnaireUuid = Just questionnaire2.uuid
-    , questionnaireEventUuid = Just . getUuid . last $ questionnaire2Events
-    , questionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn.replies
+    , projectUuid = Just project2.uuid
+    , projectEventUuid = Just . getUuid . last $ project2Events
+    , projectRepliesHash = hash . M.toList $ project2Ctn.replies
     , documentTemplateId = wizardDocumentTemplate.tId
     , formatUuid = formatJson.uuid
     , createdBy = Just $ userAlbert.uuid
@@ -234,9 +242,9 @@ differentDoc =
     , name = "My different document"
     , state = DoneDocumentState
     , durability = PersistentDocumentDurability
-    , questionnaireUuid = Just differentQuestionnaire.uuid
-    , questionnaireEventUuid = Nothing
-    , questionnaireRepliesHash = hash . M.toList $ questionnaire1Ctn.replies
+    , projectUuid = Just differentProject.uuid
+    , projectEventUuid = Nothing
+    , projectRepliesHash = hash . M.toList $ project1Ctn.replies
     , documentTemplateId = anotherWizardDocumentTemplate.tId
     , formatUuid = formatJson.uuid
     , createdBy = Just $ userCharles.uuid

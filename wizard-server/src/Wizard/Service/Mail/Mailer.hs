@@ -17,7 +17,7 @@ import Shared.Common.Util.JSON
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
-import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentThreadNotificationJM ()
+import Wizard.Api.Resource.Project.Comment.ProjectCommentThreadNotificationJM ()
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
@@ -25,9 +25,9 @@ import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
-import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireCommentThreadNotification
-import Wizard.Model.Questionnaire.QuestionnairePerm
+import Wizard.Model.Project.Acl.ProjectPerm
+import Wizard.Model.Project.Comment.ProjectCommentThreadNotification
+import Wizard.Model.Project.Project
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.Tenant.TenantHelper
@@ -156,28 +156,28 @@ sendTwoFactorAuthMail user code =
             }
     sendEmail body user.uuid
 
-sendQuestionnaireInvitationMail :: Questionnaire -> Questionnaire -> AppContextM ()
-sendQuestionnaireInvitationMail oldQtn newQtn =
+sendProjectInvitationMail :: Project -> Project -> AppContextM ()
+sendProjectInvitationMail oldProject newProject =
   runInTransaction $ do
     tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupport
     tcLookAndFeel <- findTenantConfigLookAndFeel
     tcMail <- findTenantConfigMail
     clientUrl <- getClientUrl
     currentUser <- getCurrentUser
-    traverse_ (sendOneEmail tcPrivacyAndSupport tcLookAndFeel tcMail clientUrl currentUser) (filter (filterPermissions currentUser) newQtn.permissions)
+    traverse_ (sendOneEmail tcPrivacyAndSupport tcLookAndFeel tcMail clientUrl currentUser) (filter (filterPermissions currentUser) newProject.permissions)
   where
-    filterPermissions :: UserDTO -> QuestionnairePerm -> Bool
-    filterPermissions currentUser perm = perm.memberUuid /= currentUser.uuid && perm.memberUuid `notElem` fmap (.memberUuid) oldQtn.permissions
-    sendOneEmail :: TenantConfigPrivacyAndSupport -> TenantConfigLookAndFeel -> TenantConfigMail -> String -> UserDTO -> QuestionnairePerm -> AppContextM ()
+    filterPermissions :: UserDTO -> ProjectPerm -> Bool
+    filterPermissions currentUser perm = perm.memberUuid /= currentUser.uuid && perm.memberUuid `notElem` fmap (.memberUuid) oldProject.permissions
+    sendOneEmail :: TenantConfigPrivacyAndSupport -> TenantConfigLookAndFeel -> TenantConfigMail -> String -> UserDTO -> ProjectPerm -> AppContextM ()
     sendOneEmail tcPrivacyAndSupport tcLookAndFeel tcMail clientUrl currentUser permission =
       case permission.memberType of
-        UserGroupQuestionnairePermType -> return ()
-        UserQuestionnairePermType -> do
+        UserGroupProjectPermType -> return ()
+        UserProjectPermType -> do
           user <- findUserByUuid permission.memberUuid
           let body =
                 MC.MailCommand
                   { mode = "wizard"
-                  , template = "questionnaireInvitation"
+                  , template = "projectInvitation"
                   , recipients = [MC.MailRecipient {uuid = Just user.uuid, email = user.email}]
                   , parameters =
                       M.fromList
@@ -193,8 +193,8 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
                         , ("inviteeFirstName", A.string user.firstName)
                         , ("inviteeLastName", A.string user.lastName)
                         , ("inviteeEmail", A.string user.email)
-                        , ("questionnaireUuid", A.uuid newQtn.uuid)
-                        , ("questionnaireName", A.string newQtn.name)
+                        , ("projectUuid", A.uuid newProject.uuid)
+                        , ("projectName", A.string newProject.name)
                         , ("ownerUuid", A.uuid currentUser.uuid)
                         , ("ownerFirstName", A.string currentUser.firstName)
                         , ("ownerLastName", A.string currentUser.lastName)
@@ -203,16 +203,16 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
                   }
           sendEmail body currentUser.uuid
 
-sendQuestionnaireCommentThreadAssignedMail :: [QuestionnaireCommentThreadNotification] -> AppContextM ()
-sendQuestionnaireCommentThreadAssignedMail notifications =
+sendProjectCommentThreadAssignedMail :: [ProjectCommentThreadNotification] -> AppContextM ()
+sendProjectCommentThreadAssignedMail notifications =
   runInTransaction $ do
     case notifications of
       [] -> return ()
       notification : _ -> do
         let notificationFn n =
               A.Object . KM.fromList $
-                [ ("questionnaireUuid", A.uuid n.questionnaireUuid)
-                , ("questionnaireName", A.string n.questionnaireName)
+                [ ("projectUuid", A.uuid n.projectUuid)
+                , ("projectName", A.string n.projectName)
                 , ("commentThreadUuid", A.uuid n.commentThreadUuid)
                 , ("path", A.string n.path)
                 , ("resolved", A.bool n.resolved)

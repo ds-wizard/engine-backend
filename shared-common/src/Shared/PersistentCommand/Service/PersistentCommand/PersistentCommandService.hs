@@ -11,6 +11,8 @@ import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Data.Time
 import qualified Data.UUID as U
+import Database.PostgreSQL.Simple.FromField
+import Database.PostgreSQL.Simple.ToField
 import System.Log.Raven (initRaven, register, stderrFallback)
 import System.Log.Raven.Transport.HttpConduit (sendRecord)
 import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..))
@@ -27,11 +29,11 @@ import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommandSimple
 import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandMapper
 
 runPersistentCommands
-  :: AppContextC s sc m
+  :: (Show identity, FromField identity, ToField identity, AppContextC s sc m)
   => (function -> appContext -> IO (Either String (PersistentCommandState, Maybe String)))
-  -> (PersistentCommandSimple U.UUID -> s -> m appContext)
-  -> (String -> PersistentCommand U.UUID -> m a)
-  -> (PersistentCommand U.UUID -> function)
+  -> (PersistentCommandSimple identity -> s -> m appContext)
+  -> (String -> PersistentCommand identity -> m a)
+  -> (PersistentCommand identity -> function)
   -> m ()
 runPersistentCommands runAppContextWithAppContext' updateContext createPersistentCommand execute = do
   checkPermission _DEV_PERM
@@ -44,13 +46,13 @@ runPersistentCommands runAppContextWithAppContext' updateContext createPersisten
     )
 
 runPersistentCommand
-  :: AppContextC s sc m
+  :: (Show identity, FromField identity, ToField identity, AppContextC s sc m)
   => (function -> appContext -> IO (Either String (PersistentCommandState, Maybe String)))
-  -> (PersistentCommandSimple U.UUID -> s -> m appContext)
-  -> (String -> PersistentCommand U.UUID -> m a)
-  -> (PersistentCommand U.UUID -> function)
+  -> (PersistentCommandSimple identity -> s -> m appContext)
+  -> (String -> PersistentCommand identity -> m a)
+  -> (PersistentCommand identity -> function)
   -> Bool
-  -> PersistentCommandSimple U.UUID
+  -> PersistentCommandSimple identity
   -> m ()
 runPersistentCommand runAppContextWithAppContext' updateContext createPersistentCommand execute force commandSimple = do
   case commandSimple.destination of
@@ -61,9 +63,9 @@ runPersistentCommand runAppContextWithAppContext' updateContext createPersistent
       executePersistentCommandByUuid runAppContextWithAppContext' execute force commandSimple.uuid updatedContext
 
 executePersistentCommandByUuid
-  :: AppContextC s sc m
+  :: (Show identity, FromField identity, ToField identity, AppContextC s sc m)
   => (function -> appContext -> IO (Either String (PersistentCommandState, Maybe String)))
-  -> (PersistentCommand U.UUID -> function)
+  -> (PersistentCommand identity -> function)
   -> Bool
   -> U.UUID
   -> appContext
@@ -90,16 +92,15 @@ executePersistentCommandByUuid runAppContextWithAppContext' execute force uuid c
                 , attempts = command.attempts + 1
                 , updatedAt = now
                 }
-              :: PersistentCommand U.UUID
         when (resultState == ErrorPersistentCommandState) (sendToSentry updatedCommand)
         updatePersistentCommandByUuid updatedCommand
         logInfoI _CMP_SERVICE (f' "Command finished with following state: '%s'" [show resultState])
     )
 
 transferPersistentCommandByUuid
-  :: AppContextC s sc m
+  :: (Show identity, FromField identity, ToField identity, AppContextC s sc m)
   => String
-  -> (String -> PersistentCommand U.UUID -> m a)
+  -> (String -> PersistentCommand identity -> m a)
   -> U.UUID
   -> m ()
 transferPersistentCommandByUuid destination createPersistentCommand uuid = do
@@ -124,18 +125,18 @@ transferPersistentCommandByUuid destination createPersistentCommand uuid = do
                 , attempts = command.attempts + 1
                 , updatedAt = now
                 }
-              :: PersistentCommand U.UUID
+        -- :: PersistentCommand identity
         when (resultState == ErrorPersistentCommandState) (sendToSentry updatedCommand)
         updatePersistentCommandByUuid updatedCommand
         logInfoI _CMP_SERVICE (f' "Command transferred with following state: '%s'" [show resultState])
     )
 
 runPersistentCommandChannelListener
-  :: AppContextC s sc m
+  :: (Show identity, FromField identity, ToField identity, AppContextC s sc m)
   => (function -> appContext -> IO (Either String (PersistentCommandState, Maybe String)))
-  -> (PersistentCommandSimple U.UUID -> s -> m appContext)
-  -> (String -> PersistentCommand U.UUID -> m a)
-  -> (PersistentCommand U.UUID -> function)
+  -> (PersistentCommandSimple identity -> s -> m appContext)
+  -> (String -> PersistentCommand identity -> m a)
+  -> (PersistentCommand identity -> function)
   -> m ()
 runPersistentCommandChannelListener runAppContextWithAppContext updateContext createPersistentCommand execute = do
   listenPersistentCommandChannel
@@ -150,7 +151,7 @@ retryPersistentCommandsForLambda = do
   persistentCommands <- findPersistentCommandsForLambdaByStates components
   traverse_ retryPersistentCommandForLambda persistentCommands
 
-retryPersistentCommandForLambda :: AppContextC s sc m => PersistentCommandSimple U.UUID -> m ()
+retryPersistentCommandForLambda :: (Show identity, FromField identity, ToField identity, AppContextC s sc m) => PersistentCommandSimple identity -> m ()
 retryPersistentCommandForLambda command = do
   context <- ask
   case L.find (\lf -> lf.component == command.component) (context.serverConfig'.persistentCommand'.lambdaFunctions) of
@@ -160,10 +161,7 @@ retryPersistentCommandForLambda command = do
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-sendToSentry
-  :: AppContextC s sc m
-  => PersistentCommand U.UUID
-  -> m ()
+sendToSentry :: (Show identity, FromField identity, ToField identity, AppContextC s sc m) => PersistentCommand identity -> m ()
 sendToSentry command = do
   context <- ask
   when
@@ -176,9 +174,9 @@ sendToSentry command = do
         liftIO $ register sentryService "persistentCommandLogger" Error message (recordUpdate buildVersion command)
     )
 
-recordUpdate :: String -> PersistentCommand U.UUID -> SentryRecord -> SentryRecord
+recordUpdate :: Show identity => String -> PersistentCommand identity -> SentryRecord -> SentryRecord
 recordUpdate buildVersion command record =
-  let commandUserUuid = maybe "anonymous" U.toString command.createdBy
+  let commandUserUuid = maybe "anonymous" show command.createdBy
       commandUuid = U.toString $ command.uuid
       commandTenantUuid = U.toString $ command.tenantUuid
    in record

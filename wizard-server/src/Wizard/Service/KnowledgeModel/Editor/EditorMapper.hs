@@ -18,7 +18,7 @@ import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorRawEvent
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorReply
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorState
-import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Project.ProjectReply
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
 
 toList :: KnowledgeModelEditor -> Maybe String -> KnowledgeModelEditorState -> KnowledgeModelEditorList
@@ -69,7 +69,7 @@ fromCreateDTO dto uuid mPreviousPkg createdBy tenantUuid now =
     , readme = maybe "" (.readme) mPreviousPkg
     , license = maybe "" (.license) mPreviousPkg
     , previousPackageId = dto.previousPackageId
-    , metamodelVersion = kmMetamodelVersion
+    , metamodelVersion = knowledgeModelMetamodelVersion
     , squashed = True
     , createdBy = Just createdBy
     , tenantUuid = tenantUuid

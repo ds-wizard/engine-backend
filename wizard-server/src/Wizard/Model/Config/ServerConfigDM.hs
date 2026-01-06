@@ -21,7 +21,7 @@ defaultConfig =
     , document = defaultDocument
     , feedback = defaultFeedback
     , knowledgeModelEditor = defaultKnowledgeModelEditor
-    , questionnaire = defaultQuestionnaire
+    , project = defaultProject
     , temporaryFile = defaultTemporaryFile
     , userToken = defaultUserToken
     , analyticalMails = defaultAnalyticalMails
@@ -56,11 +56,11 @@ defaultRoles =
         , "KM_PUBLISH_PERM"
         , "PM_READ_PERM"
         , "PM_WRITE_PERM"
-        , "QTN_PERM"
-        , "QTN_ACTION_PERM"
-        , "QTN_FILE_PERM"
-        , "QTN_IMPORTER_PERM"
-        , "QTN_TML_PERM"
+        , "PRJ_PERM"
+        , "PRJ_ACTION_PERM"
+        , "PRJ_FILE_PERM"
+        , "PRJ_IMPORTER_PERM"
+        , "PJR_TML_PERM"
         , "DOC_TML_READ_PERM"
         , "CFG_PERM"
         , "SUBM_PERM"
@@ -74,15 +74,15 @@ defaultRoles =
         , "KM_PUBLISH_PERM"
         , "PM_READ_PERM"
         , "PM_WRITE_PERM"
-        , "QTN_PERM"
-        , "QTN_ACTION_PERM"
-        , "QTN_IMPORTER_PERM"
-        , "QTN_TML_PERM"
+        , "PRJ_PERM"
+        , "PRJ_ACTION_PERM"
+        , "PRJ_IMPORTER_PERM"
+        , "PJR_TML_PERM"
         , "DOC_TML_READ_PERM"
         , "SUBM_PERM"
         , "DOC_TML_WRITE_PERM"
         ]
-    , researcher = ["PM_READ_PERM", "QTN_PERM", "DOC_TML_READ_PERM", "SUBM_PERM"]
+    , researcher = ["PM_READ_PERM", "PRJ_PERM", "DOC_TML_READ_PERM", "SUBM_PERM"]
     }
 
 defaultRegistrySyncJob :: ServerConfigCronWorker
@@ -135,24 +135,24 @@ defaultKnowledgeModelEditorSquash :: ServerConfigCronWorker
 defaultKnowledgeModelEditorSquash =
   ServerConfigCronWorker {enabled = True, cron = squashKnowledgeModelEditorEventsWorker.cronDefault}
 
-defaultQuestionnaire :: ServerConfigQuestionnaire
-defaultQuestionnaire =
-  ServerConfigQuestionnaire
-    { clean = defaultQuestionnaireClean
-    , squash = defaultQuestionnaireSquash
-    , assigneeNotification = defaultQuestionnaireAssigneeNotification
+defaultProject :: ServerConfigProject
+defaultProject =
+  ServerConfigProject
+    { clean = defaultProjectClean
+    , squash = defaultProjectSquash
+    , assigneeNotification = defaultProjectAssigneeNotification
     }
 
-defaultQuestionnaireClean :: ServerConfigCronWorker
-defaultQuestionnaireClean =
-  ServerConfigCronWorker {enabled = True, cron = cleanQuestionnaireWorker.cronDefault}
+defaultProjectClean :: ServerConfigCronWorker
+defaultProjectClean =
+  ServerConfigCronWorker {enabled = True, cron = cleanProjectWorker.cronDefault}
 
-defaultQuestionnaireSquash :: ServerConfigCronWorker
-defaultQuestionnaireSquash =
-  ServerConfigCronWorker {enabled = True, cron = squashQuestionnaireEventsWorker.cronDefault}
+defaultProjectSquash :: ServerConfigCronWorker
+defaultProjectSquash =
+  ServerConfigCronWorker {enabled = True, cron = squashProjectEventsWorker.cronDefault}
 
-defaultQuestionnaireAssigneeNotification :: ServerConfigCronWorker
-defaultQuestionnaireAssigneeNotification =
+defaultProjectAssigneeNotification :: ServerConfigCronWorker
+defaultProjectAssigneeNotification =
   ServerConfigCronWorker {enabled = True, cron = assigneeNotificationWorker.cronDefault}
 
 defaultTemporaryFile :: ServerConfigTemporaryFile
@@ -179,7 +179,7 @@ defaultSignalBridge =
     { enabled = False
     , updatePermsArn = ""
     , updateUserGroupArn = ""
-    , setQuestionnaireArn = ""
+    , setProjectArn = ""
     , addFileArn = ""
     , logOutAllArn = ""
     }

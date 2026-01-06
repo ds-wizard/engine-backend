@@ -34,5 +34,5 @@ detail_documents_preview_GET mTokenHeader mServerUrl documentTemplateId =
       case doc.state of
         DoneDocumentState -> addTraceUuidHeader fileDto
         ErrorDocumentState ->
-          throwError $ SystemLogError (_ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW $ doc.workerLog)
+          throwError $ SystemLogError (_ERROR_SERVICE_PROJECT__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW $ doc.workerLog)
         _ -> throwError AcceptedError

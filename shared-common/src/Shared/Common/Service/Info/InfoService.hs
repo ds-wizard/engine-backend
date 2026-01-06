@@ -7,8 +7,8 @@ import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Context.AppContext
 import Shared.Component.Database.DAO.Component.ComponentDAO
 
-getInfo :: AppContextC s sc m => m InfoDTO
-getInfo = do
+getInfo :: AppContextC s sc m => [InfoMetamodelVersionDTO] -> m InfoDTO
+getInfo metamodelVersions = do
   buildInfoConfig <- asks (.buildInfoConfig')
   components <- findComponents
   return
@@ -17,4 +17,5 @@ getInfo = do
       , version = buildInfoConfig.version
       , builtAt = buildInfoConfig.builtAt
       , components = components
+      , metamodelVersions = metamodelVersions
       }

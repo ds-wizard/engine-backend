@@ -79,7 +79,7 @@ exportBundle pbId =
                 , organizationId = newestPackage.organizationId
                 , kmId = newestPackage.kmId
                 , version = newestPackage.version
-                , metamodelVersion = kmMetamodelVersion
+                , metamodelVersion = knowledgeModelMetamodelVersion
                 , packages = packages
                 }
         auditKnowledgeModelBundleExport pbId

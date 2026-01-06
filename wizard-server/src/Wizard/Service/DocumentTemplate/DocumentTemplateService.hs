@@ -12,6 +12,7 @@ import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Error.Error
 import Shared.Coordinate.Service.Coordinate.CoordinateValidation
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
+import Shared.DocumentTemplate.Constant.DocumentTemplate
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO hiding (findDocumentTemplatesFiltered)
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
@@ -66,7 +67,7 @@ getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase 
   where
     filterDocumentTemplatesInGroup :: [DocumentTemplateSuggestion] -> [DocumentTemplateSuggestion]
     filterDocumentTemplatesInGroup =
-      filter (isDocumentTemplateSupported includeUnsupportedMetamodelVersion)
+      filter (\dt -> includeUnsupportedMetamodelVersion || isDocumentTemplateSupported dt.metamodelVersion)
         . filter (isDocumentTemplateInPhase mPhase)
         . filterDocumentTemplates mPkgId
 

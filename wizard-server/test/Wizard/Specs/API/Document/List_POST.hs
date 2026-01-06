@@ -27,14 +27,14 @@ import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
+import Wizard.Database.Migration.Development.Project.Data.Projects
+import Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
-import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
-import Wizard.Model.Questionnaire.QuestionnaireSimple
+import Wizard.Model.Project.Event.ProjectEventLenses ()
+import Wizard.Model.Project.Project
+import Wizard.Model.Project.ProjectSimple
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -61,30 +61,30 @@ reqUrl = "/wizard-api/documents"
 
 reqHeadersT authHeader = reqCtHeader : authHeader
 
-reqDtoT qtn qtnEvents =
+reqDtoT project projectEvents =
   DocumentCreateDTO
     { name = "Document"
-    , questionnaireUuid = qtn.uuid
-    , questionnaireEventUuid = Just . getUuid . last $ qtnEvents
+    , projectUuid = project.uuid
+    , projectEventUuid = Just . getUuid . last $ projectEvents
     , documentTemplateId = doc1.documentTemplateId
     , formatUuid = doc1.formatUuid
     }
 
-reqBodyT qtn qtnEvents = encode $ reqDtoT qtn qtnEvents
+reqBodyT project projectEvents = encode $ reqDtoT project projectEvents
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201 appContext = do
-  create_test_201 "HTTP 201 CREATED (Owner, Private)" appContext questionnaire1 questionnaire1Events [reqAuthHeader]
-  create_test_201 "HTTP 201 CREATED (Non-Owner, VisibleEdit)" appContext questionnaire3 questionnaire3Events [reqNonAdminAuthHeader]
+  create_test_201 "HTTP 201 CREATED (Owner, Private)" appContext project1 project1Events [reqAuthHeader]
+  create_test_201 "HTTP 201 CREATED (Non-Owner, VisibleEdit)" appContext project3 project3Events [reqNonAdminAuthHeader]
 
-create_test_201 title appContext qtn qtnEvents authHeader =
+create_test_201 title appContext project projectEvents authHeader =
   it title $
     -- GIVEN: Prepare request
     do
       let reqHeaders = reqHeadersT authHeader
-      let reqDto = reqDtoT qtn qtnEvents
+      let reqDto = reqDtoT project projectEvents
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 201
@@ -92,7 +92,7 @@ create_test_201 title appContext qtn qtnEvents authHeader =
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
-      runInContextIO QTN_Migration.runMigration appContext
+      runInContextIO PRJ_Migration.runMigration appContext
       runInContextIO deleteDocuments appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
@@ -114,7 +114,7 @@ test_400 appContext = do
     -- GIVEN: Prepare request
     do
       let reqHeaders = reqHeadersT [reqAuthHeader]
-      let reqDto = reqDtoT questionnaire1 questionnaire1Events
+      let reqDto = reqDtoT project1 project1Events
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400
@@ -126,7 +126,7 @@ test_400 appContext = do
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
-      runInContextIO QTN_Migration.runMigration appContext
+      runInContextIO PRJ_Migration.runMigration appContext
       runInContextIO (updateDocumentTemplateById (wizardDocumentTemplate {metamodelVersion = SemVer2Tuple 1 0})) appContext
       runInContextIO deleteDocuments appContext
       -- WHEN: Call API
@@ -141,7 +141,7 @@ test_400 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] (reqBodyT questionnaire1 questionnaire1Events)
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] (reqBodyT project1 project1Events)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -150,24 +150,24 @@ test_403 appContext = do
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, Private)"
     appContext
-    questionnaire1
-    questionnaire1Events
+    project1
+    project1Events
     [reqNonAdminAuthHeader]
-    (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Project")
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)"
     appContext
-    questionnaire2
-    questionnaire2Events
+    project2
+    project2Events
     [reqNonAdminAuthHeader]
-    (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Project")
 
-create_test_403 title appContext qtn qtnEvents authHeader errorMessage =
+create_test_403 title appContext project projectEvents authHeader errorMessage =
   it title $
     -- GIVEN: Prepare request
     do
       let reqHeaders = reqHeadersT authHeader
-      let reqDto = reqDtoT qtn qtnEvents
+      let reqDto = reqDtoT project projectEvents
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 403
@@ -177,7 +177,7 @@ create_test_403 title appContext qtn qtnEvents authHeader errorMessage =
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
-      runInContextIO QTN_Migration.runMigration appContext
+      runInContextIO PRJ_Migration.runMigration appContext
       runInContextIO deleteDocuments appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

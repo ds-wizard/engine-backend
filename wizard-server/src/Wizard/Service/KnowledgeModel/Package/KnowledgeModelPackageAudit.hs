@@ -8,7 +8,7 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
-import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Project.Project
 
 auditPackageFailedToDelete :: String -> String -> String -> AppContextM ()
 auditPackageFailedToDelete entityId reasonType reasonId =
@@ -26,6 +26,6 @@ auditPackageFailedToDeleteDueKmEditors :: String -> [KnowledgeModelEditor] -> Ap
 auditPackageFailedToDeleteDueKmEditors entityId knowledgeModelEditors =
   auditPackageFailedToDelete entityId "Knowledge Model Editor" (show $ fmap (\b -> U.toString $ b.uuid) knowledgeModelEditors)
 
-auditPackageFailedToDeleteDueQuestionnaires :: String -> [Questionnaire] -> AppContextM ()
-auditPackageFailedToDeleteDueQuestionnaires entityId questionnaires =
-  auditPackageFailedToDelete entityId "Knowledge Model Editor" (show $ fmap (\qtn -> U.toString $ qtn.uuid) questionnaires)
+auditPackageFailedToDeleteDueProjects :: String -> [Project] -> AppContextM ()
+auditPackageFailedToDeleteDueProjects entityId projects =
+  auditPackageFailedToDelete entityId "Knowledge Model Editor" (show $ fmap (\project -> U.toString $ project.uuid) projects)

@@ -9,7 +9,7 @@ import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.D
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePatternSM ()
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDetailJM ()
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorSuggestionSM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireSuggestionSM ()
+import Wizard.Api.Resource.Project.ProjectSuggestionSM ()
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateDrafts
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftDetail
 import Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftMapper

@@ -9,7 +9,7 @@ import GHC.Generics
 import Shared.Common.Model.Config.SimpleFeature
 import Shared.OpenId.Model.OpenId.OpenIdClientParameter
 import Shared.OpenId.Model.OpenId.OpenIdClientStyle
-import Wizard.Model.Questionnaire.Questionnaire hiding (uuid)
+import Wizard.Model.Project.Project hiding (uuid)
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 data TenantConfig = TenantConfig
@@ -21,7 +21,7 @@ data TenantConfig = TenantConfig
   , lookAndFeel :: TenantConfigLookAndFeel
   , registry :: TenantConfigRegistry
   , knowledgeModel :: TenantConfigKnowledgeModel
-  , questionnaire :: TenantConfigQuestionnaire
+  , project :: TenantConfigProject
   , submission :: TenantConfigSubmission
   , features :: TenantConfigFeatures
   , owl :: TenantConfigOwl
@@ -40,7 +40,7 @@ instance Eq TenantConfig where
       && dashboardAndLoginScreen a == dashboardAndLoginScreen b
       && lookAndFeel a == lookAndFeel b
       && registry a == registry b
-      && questionnaire a == questionnaire b
+      && project a == project b
       && submission a == submission b
       && features a == features b
       && owl a == owl b
@@ -230,54 +230,54 @@ instance Eq TenantConfigKnowledgeModelPublicPackagePattern where
       && a.minVersion == b.minVersion
       && a.maxVersion == b.maxVersion
 
-data TenantConfigQuestionnaire = TenantConfigQuestionnaire
+data TenantConfigProject = TenantConfigProject
   { tenantUuid :: U.UUID
-  , questionnaireVisibility :: TenantConfigQuestionnaireVisibility
-  , questionnaireSharing :: TenantConfigQuestionnaireSharing
-  , questionnaireCreation :: QuestionnaireCreation
-  , projectTagging :: TenantConfigQuestionnaireProjectTagging
+  , projectVisibility :: TenantConfigProjectVisibility
+  , projectSharing :: TenantConfigProjectSharing
+  , projectCreation :: ProjectCreation
+  , projectTagging :: TenantConfigProjectProjectTagging
   , summaryReport :: SimpleFeature
-  , feedback :: TenantConfigQuestionnaireFeedback
+  , feedback :: TenantConfigProjectFeedback
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
   deriving (Generic, Show)
 
-instance Eq TenantConfigQuestionnaire where
+instance Eq TenantConfigProject where
   a == b =
-    a.questionnaireVisibility == b.questionnaireVisibility
-      && a.questionnaireSharing == b.questionnaireSharing
-      && a.questionnaireCreation == b.questionnaireCreation
+    a.projectVisibility == b.projectVisibility
+      && a.projectSharing == b.projectSharing
+      && a.projectCreation == b.projectCreation
       && a.projectTagging == b.projectTagging
       && a.summaryReport == b.summaryReport
       && a.feedback == b.feedback
 
-data TenantConfigQuestionnaireVisibility = TenantConfigQuestionnaireVisibility
+data TenantConfigProjectVisibility = TenantConfigProjectVisibility
   { enabled :: Bool
-  , defaultValue :: QuestionnaireVisibility
+  , defaultValue :: ProjectVisibility
   }
   deriving (Generic, Eq, Show)
 
-data TenantConfigQuestionnaireSharing = TenantConfigQuestionnaireSharing
+data TenantConfigProjectSharing = TenantConfigProjectSharing
   { enabled :: Bool
-  , defaultValue :: QuestionnaireSharing
+  , defaultValue :: ProjectSharing
   , anonymousEnabled :: Bool
   }
   deriving (Generic, Eq, Show)
 
-data QuestionnaireCreation
-  = CustomQuestionnaireCreation
-  | TemplateQuestionnaireCreation
-  | TemplateAndCustomQuestionnaireCreation
+data ProjectCreation
+  = CustomProjectCreation
+  | TemplateProjectCreation
+  | TemplateAndCustomProjectCreation
   deriving (Generic, Eq, Show, Read)
 
-data TenantConfigQuestionnaireProjectTagging = TenantConfigQuestionnaireProjectTagging
+data TenantConfigProjectProjectTagging = TenantConfigProjectProjectTagging
   { enabled :: Bool
   , tags :: [String]
   }
   deriving (Generic, Eq, Show)
 
-data TenantConfigQuestionnaireFeedback = TenantConfigQuestionnaireFeedback
+data TenantConfigProjectFeedback = TenantConfigProjectFeedback
   { enabled :: Bool
   , token :: String
   , owner :: String

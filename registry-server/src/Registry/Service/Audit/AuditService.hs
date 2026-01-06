@@ -68,7 +68,7 @@ getInstanceStaticsFromHeaders headers =
    in InstanceStatistics
         { userCount = get xUserCountHeaderName
         , pkgCount = get xKnowledgeModelPackageCountHeaderName
-        , qtnCount = get xQtnCountHeaderName
+        , prjCount = get xProjectCountHeaderName
         , kmEditorCount = get xKnowledgeModelEditorCountHeaderName
         , docCount = get xDocCountHeaderName
         , tmlCount = get xTmlCountHeaderName

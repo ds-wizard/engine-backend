@@ -5,10 +5,10 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
 auditBundleExport :: String -> AppContextM ()
-auditBundleExport = logAudit "template_bundle" "export"
+auditBundleExport = logAudit "document_template_bundle" "export"
 
 auditBundlePullFromRegistry :: String -> AppContextM ()
-auditBundlePullFromRegistry = logAudit "template_bundle" "pullFromRegistry"
+auditBundlePullFromRegistry = logAudit "document_template_bundle" "pullFromRegistry"
 
 auditBundleImportFromFile :: String -> AppContextM ()
-auditBundleImportFromFile = logAudit "template_bundle" "importFromFile"
+auditBundleImportFromFile = logAudit "document_template_bundle" "importFromFile"

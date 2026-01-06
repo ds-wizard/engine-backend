@@ -1,4 +1,4 @@
 module Shared.KnowledgeModel.Constant.KnowledgeModel where
 
-kmMetamodelVersion :: Int
-kmMetamodelVersion = 19
+knowledgeModelMetamodelVersion :: Int
+knowledgeModelMetamodelVersion = 19

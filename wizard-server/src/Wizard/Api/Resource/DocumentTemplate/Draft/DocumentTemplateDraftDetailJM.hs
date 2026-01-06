@@ -6,7 +6,7 @@ import Shared.Common.Util.Aeson
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePatternJM ()
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorSuggestionJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireSuggestionJM ()
+import Wizard.Api.Resource.Project.ProjectSuggestionJM ()
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftDetail
 
 instance FromJSON DocumentTemplateDraftDetail where

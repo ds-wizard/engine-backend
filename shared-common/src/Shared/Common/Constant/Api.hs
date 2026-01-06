@@ -15,8 +15,8 @@ xUserCountHeaderName = "x-user-count"
 xKnowledgeModelPackageCountHeaderName :: String
 xKnowledgeModelPackageCountHeaderName = "x-knowledge-model-package-count"
 
-xQtnCountHeaderName :: String
-xQtnCountHeaderName = "x-qtn-count"
+xProjectCountHeaderName :: String
+xProjectCountHeaderName = "x-project-count"
 
 xKnowledgeModelEditorCountHeaderName :: String
 xKnowledgeModelEditorCountHeaderName = "x-knowledge-model-editor-count"

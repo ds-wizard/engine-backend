@@ -27,7 +27,7 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
@@ -86,15 +86,15 @@ getDraft tmlId = do
   draft <- findDraftById tmlId
   formats <- findDocumentTemplateFormats draft.tId
   draftData <- findDraftDataById tmlId
-  mQtnSuggestion <-
-    case draftData.questionnaireUuid of
-      Just qtnUuid -> findQuestionnaireSuggestionByUuid' qtnUuid
+  mProjectSuggestion <-
+    case draftData.projectUuid of
+      Just projectUuid -> findProjectSuggestionByUuid' projectUuid
       Nothing -> return Nothing
   mKmEditorSuggestion <-
     case draftData.knowledgeModelEditorUuid of
       Just knowledgeModelEditorUuid -> findKnowledgeModelEditorSuggestionByUuid' knowledgeModelEditorUuid
       Nothing -> return Nothing
-  return $ toDraftDetail draft formats draftData mQtnSuggestion mKmEditorSuggestion
+  return $ toDraftDetail draft formats draftData mProjectSuggestion mKmEditorSuggestion
 
 modifyDraft :: String -> DocumentTemplateDraftChangeDTO -> AppContextM DocumentTemplateDraftDetail
 modifyDraft tmlId reqDto =
@@ -138,21 +138,19 @@ modifyDraftData tmlId reqDto =
     draftData <- findDraftDataById tmlId
     let updatedDraftData = fromDraftDataChangeDTO draftData reqDto
     updateDraftDataById updatedDraftData
-    mQtnSuggestion <-
-      case updatedDraftData.questionnaireUuid of
-        Just qtnUuid -> findQuestionnaireSuggestionByUuid' qtnUuid
+    mProjectSuggestion <-
+      case updatedDraftData.projectUuid of
+        Just projectUuid -> findProjectSuggestionByUuid' projectUuid
         Nothing -> return Nothing
     mKmEditorSuggestion <-
       case draftData.knowledgeModelEditorUuid of
         Just knowledgeModelEditorUuid -> findKnowledgeModelEditorSuggestionByUuid' knowledgeModelEditorUuid
         Nothing -> return Nothing
-    return $ toDraftDataDTO updatedDraftData mQtnSuggestion mKmEditorSuggestion
+    return $ toDraftDataDTO updatedDraftData mProjectSuggestion mKmEditorSuggestion
 
 deleteDraft :: String -> AppContextM ()
 deleteDraft tmlId =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
     draft <- findDraftById tmlId
-    assets <- findAssetsByDocumentTemplateId tmlId
-    validateDocumentTemplateDeletion tmlId
     void $ deleteDraftByDocumentTemplateId tmlId

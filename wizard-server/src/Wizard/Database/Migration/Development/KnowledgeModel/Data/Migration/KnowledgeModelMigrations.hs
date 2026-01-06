@@ -19,8 +19,8 @@ import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
 import Wizard.Model.KnowledgeModel.Migration.KnowledgeModelMigration
 import Wizard.Model.Tenant.Tenant
 
-migratorState :: KnowledgeModelMigrationDTO
-migratorState =
+knowledgeModelMigrationDTO :: KnowledgeModelMigrationDTO
+knowledgeModelMigrationDTO =
   KnowledgeModelMigrationDTO
     { editorUuid = amsterdamKnowledgeModelEditorList.uuid
     , editorName = amsterdamKnowledgeModelEditorList.name
@@ -30,21 +30,21 @@ migratorState =
     , currentKnowledgeModel = Just km1Netherlands
     }
 
-migratorStateCreate :: KnowledgeModelMigrationCreateDTO
-migratorStateCreate = KnowledgeModelMigrationCreateDTO {targetPackageId = netherlandsKmPackageV2.pId}
+knowledgeModelMigrationCreateDTO :: KnowledgeModelMigrationCreateDTO
+knowledgeModelMigrationCreateDTO = KnowledgeModelMigrationCreateDTO {targetPackageId = netherlandsKmPackageV2.pId}
 
-migratorConflict :: KnowledgeModelMigrationResolutionDTO
-migratorConflict =
+knowledgeModelMigrationResolutionDTO :: KnowledgeModelMigrationResolutionDTO
+knowledgeModelMigrationResolutionDTO =
   KnowledgeModelMigrationResolutionDTO
     { originalEventUuid = a_km1_ch4.uuid
     , action = RejectKnowledgeModelMigrationAction
     }
 
-differentMigratorState :: KnowledgeModelMigration
-differentMigratorState =
+differentKnowledgeModelMigration :: KnowledgeModelMigration
+differentKnowledgeModelMigration =
   KnowledgeModelMigration
     { editorUuid = differentKnowledgeModelEditor.uuid
-    , metamodelVersion = kmMetamodelVersion
+    , metamodelVersion = knowledgeModelMetamodelVersion
     , state = CompletedKnowledgeModelMigrationState
     , editorPreviousPackageId = differentPackage.pId
     , targetPackageId = differentPackage.pId

@@ -52,6 +52,7 @@ createUserTable = do
         \    tenant_uuid       uuid        NOT NULL, \
         \    machine           boolean     NOT NULL, \
         \    locale            varchar, \
+        \    last_seen_news_id varchar, \
         \    CONSTRAINT user_entity_pk PRIMARY KEY (uuid), \
         \    CONSTRAINT user_entity_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \); \

@@ -54,7 +54,7 @@ create_test_200 title appContext authHeaders mUserProfile =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = toClientConfigDTO appContext.serverConfig defaultOrganization defaultAuthentication defaultPrivacyAndSupport defaultDashboardAndLoginScreen defaultLookAndFeel defaultRegistry defaultQuestionnaire defaultSubmission defaultFeatures defaultOwl mUserProfile [] defaultTenant
+      let expDto = toClientConfigDTO appContext.serverConfig defaultOrganization defaultAuthentication defaultPrivacyAndSupport defaultDashboardAndLoginScreen defaultLookAndFeel defaultRegistry defaultProject defaultSubmission defaultFeatures defaultOwl mUserProfile [] defaultTenant
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U.runMigration appContext

@@ -8,7 +8,7 @@ import Shared.Coordinate.Util.Coordinate
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Localization.Messages.Public
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageAudit
@@ -43,7 +43,7 @@ validatePackagesDeletion pkgIds = forM_ pkgIds validateOnePackage
     validateOnePackage :: String -> AppContextM ()
     validateOnePackage pkgId = do
       validateUsageBySomeKnowledgeModelEditor pkgId
-      validateUsageBySomeQuestionnaire pkgId
+      validateUsageBySomeProject pkgId
       validateUsageBySomeOtherPackage pkgId
     validateUsageBySomeOtherPackage pkgId = do
       pkgs <- findPackagesByForkOfPackageId pkgId
@@ -57,7 +57,7 @@ validatePackagesDeletion pkgIds = forM_ pkgIds validateOnePackage
 validatePackageDeletion :: String -> AppContextM ()
 validatePackageDeletion pkgId = do
   validateUsageBySomeKnowledgeModelEditor pkgId
-  validateUsageBySomeQuestionnaire pkgId
+  validateUsageBySomeProject pkgId
   validateUsageBySomeOtherPackage pkgId
   where
     validateUsageBySomeOtherPackage pkgId = do
@@ -86,12 +86,12 @@ validateUsageBySomeKnowledgeModelEditor pkgId = do
       throwError . UserError $
         _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "knowledge model"
 
-validateUsageBySomeQuestionnaire :: String -> AppContextM ()
-validateUsageBySomeQuestionnaire pkgId = do
-  questionnaires <- findQuestionnairesByPackageId pkgId
-  case questionnaires of
+validateUsageBySomeProject :: String -> AppContextM ()
+validateUsageBySomeProject pkgId = do
+  projects <- findProjectsByKnowledgeModelPackageId pkgId
+  case projects of
     [] -> return ()
     _ -> do
-      auditPackageFailedToDeleteDueQuestionnaires pkgId questionnaires
+      auditPackageFailedToDeleteDueProjects pkgId projects
       throwError . UserError $
-        _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "questionnaire"
+        _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "project"

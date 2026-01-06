@@ -20,8 +20,8 @@ import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
+import Wizard.Database.Migration.Development.Project.Data.Projects
+import Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Document.DocumentMapper
@@ -62,16 +62,16 @@ test_200 appContext = do
     ( Page
         "documents"
         (PageMetadata 20 3 1 0)
-        [ toDTOWithDocTemplate doc1 questionnaire1 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
-        , toDTOWithDocTemplate doc2 questionnaire2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
-        , toDTOWithDocTemplate doc3 questionnaire2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
+        [ toDTOWithDocTemplate doc1 project1 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
+        , toDTOWithDocTemplate doc2 project2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
+        , toDTOWithDocTemplate doc3 project2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
         ]
     )
   create_test_200
     "HTTP 200 OK (query)"
     appContext
     "/wizard-api/documents?q=My exported document 2"
-    (Page "documents" (PageMetadata 20 1 1 0) [toDTOWithDocTemplate doc2 questionnaire2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple])
+    (Page "documents" (PageMetadata 20 1 1 0) [toDTOWithDocTemplate doc2 project2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple])
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext
@@ -80,13 +80,13 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (documentTemplateId)"
     appContext
-    "/wizard-api/documents?documentTemplateId=global:questionnaire-report:1.0.0&sort=name,asc"
+    "/wizard-api/documents?documentTemplateId=global:project-report:1.0.0&sort=name,asc"
     ( Page
         "documents"
         (PageMetadata 20 3 1 0)
-        [ toDTOWithDocTemplate doc1 questionnaire1 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
-        , toDTOWithDocTemplate doc2 questionnaire2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
-        , toDTOWithDocTemplate doc3 questionnaire2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
+        [ toDTOWithDocTemplate doc1 project1 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
+        , toDTOWithDocTemplate doc2 project2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
+        , toDTOWithDocTemplate doc3 project2 (Just "Version 1") [] wizardDocumentTemplate formatJsonSimple
         ]
     )
 
@@ -102,7 +102,7 @@ create_test_200 title appContext reqUrl expDto =
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
-      runInContextIO QTN_Migration.runMigration appContext
+      runInContextIO PRJ_Migration.runMigration appContext
       runInContextIO DOC_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
@@ -132,7 +132,7 @@ test_403 appContext =
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
       runInContextIO TML_Migration.runMigration appContext
-      runInContextIO QTN_Migration.runMigration appContext
+      runInContextIO PRJ_Migration.runMigration appContext
       runInContextIO DOC_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

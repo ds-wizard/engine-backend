@@ -20,7 +20,7 @@ import Wizard.Service.KnowledgeModel.Metamodel.Migrator.CommonDB
 migrateAll :: AppContextM ()
 migrateAll = do
   logMigrationStarted "knowledge_model_Editor"
-  kmPkgs <- findEditorsByUnsupportedMetamodelVersion kmMetamodelVersion
+  kmPkgs <- findEditorsByUnsupportedMetamodelVersion knowledgeModelMetamodelVersion
   tenantUuid <- asks currentTenantUuid
   traverse_ (migrateOneInDB tenantUuid) kmPkgs
   logMigrationCompleted "knowledge_model_Editor"

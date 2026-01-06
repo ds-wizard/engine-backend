@@ -9,6 +9,7 @@ import Wizard.Specs.API.KnowledgeModelEditor.Detail_GET
 import Wizard.Specs.API.KnowledgeModelEditor.Detail_PUT
 import Wizard.Specs.API.KnowledgeModelEditor.List_GET
 import Wizard.Specs.API.KnowledgeModelEditor.List_POST
+import Wizard.Specs.API.KnowledgeModelEditor.Migration.APISpec
 
 knowledgeModelEditorAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
@@ -18,3 +19,4 @@ knowledgeModelEditorAPI baseContext appContext =
       detail_GET appContext
       detail_PUT appContext
       detail_DELETE appContext
+      knowledgeModelEditorMigrationAPI appContext

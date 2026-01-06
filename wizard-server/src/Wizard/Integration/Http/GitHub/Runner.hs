@@ -16,18 +16,18 @@ import Wizard.Service.Tenant.Config.ConfigService
 getIssues :: AppContextM [IssueIDTO]
 getIssues = do
   serverConfig <- asks serverConfig
-  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
-  runRequest (toGetIssuesRequest serverConfig.feedback tcQuestionnaire.feedback) toGetIssuesResponse
+  tcProject <- getCurrentTenantConfigProject
+  runRequest (toGetIssuesRequest serverConfig.feedback tcProject.feedback) toGetIssuesResponse
 
 createIssue :: String -> U.UUID -> String -> String -> AppContextM IssueIDTO
 createIssue pkgId questionUuid title content = do
   serverConfig <- asks serverConfig
   mCurrentUser <- asks currentUser
-  tcQuestionnaire <- getCurrentTenantConfigQuestionnaire
+  tcProject <- getCurrentTenantConfigProject
   runRequest
     ( toCreateIssueRequest
         serverConfig.feedback
-        tcQuestionnaire.feedback
+        tcProject.feedback
         pkgId
         questionUuid
         title

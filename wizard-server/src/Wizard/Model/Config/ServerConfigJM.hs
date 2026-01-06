@@ -28,7 +28,7 @@ instance FromJSON ServerConfig where
     cache <- o .:? "cache" .!= defaultCache
     document <- o .:? "document" .!= defaultDocument
     feedback <- o .:? "feedback" .!= defaultFeedback
-    questionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
+    project <- o .:? "project" .!= defaultProject
     temporaryFile <- o .:? "temporaryFile" .!= defaultTemporaryFile
     userToken <- o .:? "userToken" .!= defaultUserToken
     analyticalMails <- o .:? "analyticalMails" .!= defaultAnalyticalMails
@@ -104,12 +104,12 @@ instance FromJSON ServerConfigFeedback where
     return ServerConfigFeedback {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigQuestionnaire where
+instance FromJSON ServerConfigProject where
   parseJSON (Object o) = do
-    clean <- o .:? "clean" .!= defaultQuestionnaire.clean
-    squash <- o .:? "squash" .!= defaultQuestionnaire.squash
-    assigneeNotification <- o .:? "assigneeNotification" .!= defaultQuestionnaire.assigneeNotification
-    return ServerConfigQuestionnaire {..}
+    clean <- o .:? "clean" .!= defaultProject.clean
+    squash <- o .:? "squash" .!= defaultProject.squash
+    assigneeNotification <- o .:? "assigneeNotification" .!= defaultProject.assigneeNotification
+    return ServerConfigProject {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigTemporaryFile where
@@ -130,7 +130,7 @@ instance FromJSON ServerConfigSignalBridge where
     enabled <- o .:? "enabled" .!= defaultSignalBridge.enabled
     updatePermsArn <- o .:? "updatePermsArn" .!= defaultSignalBridge.updatePermsArn
     updateUserGroupArn <- o .:? "updateUserGroupArn" .!= defaultSignalBridge.updateUserGroupArn
-    setQuestionnaireArn <- o .:? "setQuestionnaireArn" .!= defaultSignalBridge.setQuestionnaireArn
+    setProjectArn <- o .:? "setProjectArn" .!= defaultSignalBridge.setProjectArn
     addFileArn <- o .:? "addFileArn" .!= defaultSignalBridge.addFileArn
     logOutAllArn <- o .:? "logOutAllArn" .!= defaultSignalBridge.logOutAllArn
     return ServerConfigSignalBridge {..}

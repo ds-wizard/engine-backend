@@ -11,7 +11,7 @@ import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.KnowledgeModel.Editor.Event.KnowledgeModelEditorWebSocketEventDTO
 import Wizard.Api.Resource.KnowledgeModel.Editor.Event.SetRepliesDTO
-import Wizard.Api.Resource.Websocket.KnowledgeModelEditorActionJM ()
+import Wizard.Api.Resource.Websocket.KnowledgeModelEditorMessageJM ()
 import Wizard.Api.Resource.Websocket.WebsocketActionJM ()
 import Wizard.Cache.KnowledgeModelEditorWebsocketCache
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO

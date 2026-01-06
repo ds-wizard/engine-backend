@@ -16,7 +16,7 @@ import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as KnowledgeModelPackage
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ
 import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Database.Migration.Development.Registry.Data.RegistryPackages
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
@@ -113,7 +113,7 @@ create_test_200 title appContext reqUrl expDto =
       runInContextIO R_Migration.runMigration appContext
       runInContextIO KnowledgeModelPackage.runMigration appContext
       runInContextIO TML.runMigration appContext
-      runInContextIO QTN.runMigration appContext
+      runInContextIO PRJ.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

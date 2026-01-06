@@ -8,7 +8,7 @@ import Wizard.Database.DAO.Tenant.Config.TenantConfigKnowledgeModelDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
-import Wizard.Database.DAO.Tenant.Config.TenantConfigQuestionnaireDAO
+import Wizard.Database.DAO.Tenant.Config.TenantConfigProjectDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigRegistryDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
@@ -53,7 +53,7 @@ runConfigMigration = do
   insertTenantConfigRegistry defaultRegistryEncrypted
   insertTenantConfigKnowledgeModel defaultKnowledgeModelEncrypted
   insertTenantConfigKnowledgeModelPublicPackagePattern defaultKnowledgeModelPublicPackagePattern
-  insertTenantConfigQuestionnaire defaultQuestionnaireEncrypted
+  insertTenantConfigProject defaultProjectEncrypted
   insertTenantConfigSubmission (defaultSubmission {services = []})
   insertTenantConfigFeatures defaultFeatures
   insertTenantConfigMail defaultMail

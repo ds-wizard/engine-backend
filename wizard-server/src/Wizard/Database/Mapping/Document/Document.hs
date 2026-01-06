@@ -27,9 +27,9 @@ instance ToRow Document where
     , toField name
     , toField state
     , toField durability
-    , toField questionnaireUuid
-    , toField questionnaireEventUuid
-    , toField questionnaireRepliesHash
+    , toField projectUuid
+    , toField projectEventUuid
+    , toField projectRepliesHash
     , toField documentTemplateId
     , toField formatUuid
     , toField createdBy
@@ -49,9 +49,9 @@ instance FromRow Document where
     name <- field
     state <- field
     durability <- field
-    questionnaireUuid <- field
-    questionnaireEventUuid <- field
-    questionnaireRepliesHash <- field
+    projectUuid <- field
+    projectEventUuid <- field
+    projectRepliesHash <- field
     documentTemplateId <- field
     formatUuid <- field
     createdBy <- field

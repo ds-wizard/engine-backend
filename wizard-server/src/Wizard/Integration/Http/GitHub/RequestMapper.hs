@@ -15,7 +15,7 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Util.Interpolation (interpolateString)
 
-toGetIssuesRequest :: ServerConfigFeedback -> TenantConfigQuestionnaireFeedback -> HttpRequest
+toGetIssuesRequest :: ServerConfigFeedback -> TenantConfigProjectFeedback -> HttpRequest
 toGetIssuesRequest serverConfig tenantConfig =
   let variables = M.fromList [("owner", tenantConfig.owner), ("repo", tenantConfig.repo)]
    in HttpRequest
@@ -28,7 +28,7 @@ toGetIssuesRequest serverConfig tenantConfig =
         , multipart = Nothing
         }
 
-toCreateIssueRequest :: ServerConfigFeedback -> TenantConfigQuestionnaireFeedback -> String -> U.UUID -> String -> String -> Maybe U.UUID -> HttpRequest
+toCreateIssueRequest :: ServerConfigFeedback -> TenantConfigProjectFeedback -> String -> U.UUID -> String -> String -> Maybe U.UUID -> HttpRequest
 toCreateIssueRequest serverConfig tenantConfig pkgId questionUuid title content mCreatedBy =
   let variables = M.fromList [("owner", tenantConfig.owner), ("repo", tenantConfig.repo)]
    in HttpRequest

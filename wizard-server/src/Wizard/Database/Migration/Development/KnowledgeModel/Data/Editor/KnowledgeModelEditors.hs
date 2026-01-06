@@ -26,7 +26,7 @@ import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorEvent
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorState
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
-import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Project.ProjectReply
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.KnowledgeModel.Compiler.Compiler
@@ -59,7 +59,7 @@ amsterdamKnowledgeModelEditor =
     , readme = "# Netherlands Knowledge Model"
     , license = "Apache-2.0"
     , previousPackageId = amsterdamKnowledgeModelEditorList.previousPackageId
-    , metamodelVersion = kmMetamodelVersion
+    , metamodelVersion = knowledgeModelMetamodelVersion
     , squashed = True
     , createdBy = amsterdamKnowledgeModelEditorList.createdBy
     , tenantUuid = defaultTenant.uuid
@@ -186,7 +186,7 @@ differentKnowledgeModelEditor =
     , readme = "Some readme"
     , license = "Apache-2.0"
     , previousPackageId = Just $ differentPackage.pId
-    , metamodelVersion = kmMetamodelVersion
+    , metamodelVersion = knowledgeModelMetamodelVersion
     , squashed = True
     , createdBy = Just $ userCharles.uuid
     , tenantUuid = differentTenant.uuid

@@ -11,14 +11,14 @@ import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.
 wizardDocumentTemplate :: DocumentTemplate
 wizardDocumentTemplate =
   DocumentTemplate
-    { tId = "global:questionnaire-report:1.0.0"
-    , name = "Questionnaire Report"
+    { tId = "global:project-report:1.0.0"
+    , name = "Project Report"
     , organizationId = "global"
-    , templateId = "questionnaire-report"
+    , templateId = "project-report"
     , version = "1.0.0"
     , phase = ReleasedDocumentTemplatePhase
     , metamodelVersion = documentTemplateMetamodelVersion
-    , description = "Exported questions and answers from a questionnaire"
+    , description = "Exported questions and answers from a project"
     , readme = "# Default DocumentTemplate"
     , license = "Apache-2.0"
     , allowedPackages = [kmPackagePatternAll]
@@ -34,7 +34,7 @@ wizardDocumentTemplateDeprecated = wizardDocumentTemplate {phase = DeprecatedDoc
 wizardDocumentTemplateDraft :: DocumentTemplate
 wizardDocumentTemplateDraft =
   wizardDocumentTemplate
-    { tId = "global:questionnaire-report:2.0.0"
+    { tId = "global:project-report:2.0.0"
     , name = "DRAFT: " ++ wizardDocumentTemplate.name
     , version = "2.0.0"
     , phase = DraftDocumentTemplatePhase
@@ -45,7 +45,7 @@ wizardDocumentTemplateDraft =
 wizardDocumentTemplateNlDraft :: DocumentTemplate
 wizardDocumentTemplateNlDraft =
   wizardDocumentTemplate
-    { tId = "org.nl.amsterdam:questionnaire-report:3.0.0"
+    { tId = "org.nl.amsterdam:project-report:3.0.0"
     , name = "New Document Template"
     , organizationId = "org.nl.amsterdam"
     , version = "3.0.0"

@@ -10,8 +10,8 @@ import Prelude hiding (log)
 import Shared.Common.Model.Context.TransactionState
 import Wizard.Api.Handler.Common
 import Wizard.Api.Handler.Websocket
-import Wizard.Api.Resource.Websocket.KnowledgeModelEditorActionDTO
-import Wizard.Api.Resource.Websocket.KnowledgeModelEditorActionJM ()
+import Wizard.Api.Resource.Websocket.KnowledgeModelEditorMessageDTO
+import Wizard.Api.Resource.Websocket.KnowledgeModelEditorMessageJM ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.KnowledgeModel.Editor.Collaboration.CollaborationService
@@ -45,12 +45,12 @@ handleMessage editorUuid connectionUuid connection =
     handleClose :: AppContextM ()
     handleClose = deleteUser editorUuid connectionUuid
     -- ------------------------------------------------------------------------------------
-    handleAction :: ClientKnowledgeModelEditorActionDTO -> AppContextM ()
-    handleAction (SetContent_ClientKnowledgeModelEditorActionDTO reqDto) = do
+    handleAction :: ClientKnowledgeModelEditorMessageDTO -> AppContextM ()
+    handleAction (SetContent_ClientKnowledgeModelEditorMessageDTO reqDto) = do
       log connectionUuid "SetContent"
       setContent editorUuid connectionUuid reqDto
       handleMessage editorUuid connectionUuid connection
-    handleAction (SetReplies_ClientKnowledgeModelEditorActionDTO reqDto) = do
+    handleAction (SetReplies_ClientKnowledgeModelEditorMessageDTO reqDto) = do
       log connectionUuid "SetReplies"
       setReplies editorUuid connectionUuid reqDto
       handleMessage editorUuid connectionUuid connection

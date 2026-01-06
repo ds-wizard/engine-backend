@@ -15,7 +15,7 @@ import Shared.DocumentTemplate.Localization.Messages.Public
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateChangeDTO
 import Wizard.Database.DAO.Document.DocumentDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
@@ -50,22 +50,22 @@ validateDocumentTemplateIdUniqueness tmlId = do
 
 validateDocumentTemplateDeletion :: String -> AppContextM ()
 validateDocumentTemplateDeletion tmlId = do
-  validateUsageBySomeQuestionnaire tmlId
+  validateUsageBySomeProject tmlId
   validateUsageBySomeDocument tmlId
 
-validateUsageBySomeQuestionnaire :: String -> AppContextM ()
-validateUsageBySomeQuestionnaire tmlId = do
-  questionnaires <- findQuestionnairesByDocumentTemplateId tmlId
-  case questionnaires of
+validateUsageBySomeProject :: String -> AppContextM ()
+validateUsageBySomeProject tmlId = do
+  projects <- findProjectsByDocumentTemplateId tmlId
+  case projects of
     [] -> return ()
     _ ->
       throwError . UserError $
-        _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId "questionnaire"
+        _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId "project"
 
 validateUsageBySomeDocument :: String -> AppContextM ()
 validateUsageBySomeDocument tmlId = do
-  questionnaires <- findDocumentsByDocumentTemplateId tmlId
-  case questionnaires of
+  projects <- findDocumentsByDocumentTemplateId tmlId
+  case projects of
     [] -> return ()
     _ ->
       throwError . UserError $
@@ -74,7 +74,7 @@ validateUsageBySomeDocument tmlId = do
 validateMetamodelVersion :: DocumentTemplate -> AppContextM ()
 validateMetamodelVersion tml =
   when
-    (tml.metamodelVersion /= documentTemplateMetamodelVersion)
+    (isDocumentTemplateUnsupported tml.metamodelVersion)
     ( throwError . UserError $
         _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION tml.tId (show tml.metamodelVersion) (show documentTemplateMetamodelVersion)
     )
