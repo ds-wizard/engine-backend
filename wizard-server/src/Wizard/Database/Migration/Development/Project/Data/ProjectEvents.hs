@@ -493,6 +493,7 @@ ace_rQ1_t1_1 =
     , commentUuid = cmtQ1_t1_1.uuid
     , text = cmtQ1_t1_1.text
     , private = cmtQ1_t1.private
+    , newThread = True
     , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , createdAt = cmtQ1_t1_1.createdAt
     }
@@ -509,6 +510,7 @@ ace_rQ1_t1_2 =
     , commentUuid = cmtQ1_t1_2.uuid
     , text = cmtQ1_t1_2.text
     , private = cmtQ1_t1.private
+    , newThread = False
     , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , createdAt = cmtQ1_t1_2.createdAt
     }
@@ -525,6 +527,7 @@ ace_rQ2_t1_1 =
     , commentUuid = cmtQ2_t1_1.uuid
     , text = cmtQ2_t1_1.text
     , private = cmtQ2_t1.private
+    , newThread = True
     , createdBy = Just . toSuggestion . toSimple $ userAlbert
     , createdAt = cmtQ2_t1_1.createdAt
     }

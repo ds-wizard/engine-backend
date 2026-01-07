@@ -18,36 +18,31 @@ toWebsocketMessage record content =
     , content = content
     }
 
-toSetUserListMessage
-  :: [WebsocketRecord] -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
+toSetUserListMessage :: [WebsocketRecord] -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
 toSetUserListMessage records record =
   toWebsocketMessage record $
     Success_ServerActionDTO . SetUserList_ServerProjectMessageDTO $
       getCollaborators record.connectionUuid record.entityId records
 
-toSetReplyMessage
-  :: SetReplyEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
+toSetReplyMessage :: SetReplyEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
 toSetReplyMessage reqDto record =
   toWebsocketMessage record $
     Success_ServerActionDTO . SetContent_ServerProjectMessageDTO . SetReplyEventDTO' $
       reqDto
 
-toClearReplyMessage
-  :: ClearReplyEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
+toClearReplyMessage :: ClearReplyEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
 toClearReplyMessage reqDto record =
   toWebsocketMessage record $
     Success_ServerActionDTO . SetContent_ServerProjectMessageDTO . ClearReplyEventDTO' $
       reqDto
 
-toSetPhaseMessage
-  :: SetPhaseEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
+toSetPhaseMessage :: SetPhaseEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
 toSetPhaseMessage reqDto record =
   toWebsocketMessage record $
     Success_ServerActionDTO . SetContent_ServerProjectMessageDTO . SetPhaseEventDTO' $
       reqDto
 
-toSetLabelMessage
-  :: SetLabelsEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
+toSetLabelMessage :: SetLabelsEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
 toSetLabelMessage reqDto record =
   toWebsocketMessage record $
     Success_ServerActionDTO . SetContent_ServerProjectMessageDTO . SetLabelsEventDTO' $
@@ -89,33 +84,35 @@ toDeleteCommentThreadMessage reqDto record =
     Success_ServerActionDTO . SetContent_ServerProjectMessageDTO . DeleteCommentThreadEventDTO' $
       reqDto
 
-toAddCommentMessage
-  :: AddCommentEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
+toAddCommentMessage :: AddCommentEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
 toAddCommentMessage reqDto record =
   toWebsocketMessage record $
     Success_ServerActionDTO . SetContent_ServerProjectMessageDTO . AddCommentEventDTO' $
       reqDto
 
-toEditCommentMessage
-  :: EditCommentEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
+toEditCommentMessage :: EditCommentEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
 toEditCommentMessage reqDto record =
   toWebsocketMessage record $
     Success_ServerActionDTO . SetContent_ServerProjectMessageDTO . EditCommentEventDTO' $
       reqDto
 
-toDeleteCommentMessage
-  :: DeleteCommentEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
+toDeleteCommentMessage :: DeleteCommentEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
 toDeleteCommentMessage reqDto record =
   toWebsocketMessage record $
     Success_ServerActionDTO . SetContent_ServerProjectMessageDTO . DeleteCommentEventDTO' $
       reqDto
 
-toSetProjectMessage
-  :: ProjectDetailWsDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
+toSetProjectMessage :: ProjectDetailWsDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
 toSetProjectMessage resWsDto record =
   toWebsocketMessage record $
     Success_ServerActionDTO . SetProject_ServerProjectMessageDTO $
       resWsDto
+
+toAddEventMessage :: ProjectEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
+toAddEventMessage event record =
+  toWebsocketMessage record $
+    Success_ServerActionDTO . SetContent_ServerProjectMessageDTO $
+      event
 
 toAddFileMessage :: ProjectFileSimple -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerProjectMessageDTO)
 toAddFileMessage file record =
