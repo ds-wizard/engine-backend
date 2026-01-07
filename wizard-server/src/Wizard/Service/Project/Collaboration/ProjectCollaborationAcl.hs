@@ -59,17 +59,17 @@ getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserRole m
     isLogged = isJust mCurrentUserUuid
     isAdmin = mCurrentUserRole == Just _USER_ROLE_ADMIN
 
-checkViewPermission myself =
-  if myself.entityPerm == EditorWebsocketPerm || myself.entityPerm == CommenterWebsocketPerm || myself.entityPerm == ViewerWebsocketPerm
+checkViewPermission entityPerm =
+  if entityPerm == EditorWebsocketPerm || entityPerm == CommenterWebsocketPerm || entityPerm == ViewerWebsocketPerm
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "View Project"
 
-checkCommentPermission myself =
-  if myself.entityPerm == EditorWebsocketPerm || myself.entityPerm == CommenterWebsocketPerm
+checkCommentPermission entityPerm =
+  if entityPerm == EditorWebsocketPerm || entityPerm == CommenterWebsocketPerm
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Comment Project"
 
-checkEditPermission myself =
-  if myself.entityPerm == EditorWebsocketPerm
+checkEditPermission entityPerm =
+  if entityPerm == EditorWebsocketPerm
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Project"
