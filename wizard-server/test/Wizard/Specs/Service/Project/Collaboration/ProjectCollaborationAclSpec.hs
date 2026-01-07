@@ -181,10 +181,10 @@ projectCollaborationAclSpec appContext =
               , user = undefined
               }
       it "checkViewPermission" $ do
-        shouldSucceed appContext (checkViewPermission (record EditorWebsocketPerm))
-        shouldSucceed appContext (checkViewPermission (record ViewerWebsocketPerm))
-        shouldFailed appContext (checkViewPermission (record NoWebsocketPerm))
+        shouldSucceed appContext (checkViewPermission EditorWebsocketPerm)
+        shouldSucceed appContext (checkViewPermission ViewerWebsocketPerm)
+        shouldFailed appContext (checkViewPermission NoWebsocketPerm)
       it "checkEditPermission" $ do
-        shouldSucceed appContext (checkEditPermission (record EditorWebsocketPerm))
-        shouldFailed appContext (checkEditPermission (record ViewerWebsocketPerm))
-        shouldFailed appContext (checkEditPermission (record NoWebsocketPerm))
+        shouldSucceed appContext (checkEditPermission EditorWebsocketPerm)
+        shouldFailed appContext (checkEditPermission ViewerWebsocketPerm)
+        shouldFailed appContext (checkEditPermission NoWebsocketPerm)

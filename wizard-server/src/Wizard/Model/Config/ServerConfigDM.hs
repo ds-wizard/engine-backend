@@ -180,6 +180,7 @@ defaultSignalBridge =
     , updatePermsArn = ""
     , updateUserGroupArn = ""
     , setProjectArn = ""
+    , addEventArn = ""
     , addFileArn = ""
     , logOutAllArn = ""
     }

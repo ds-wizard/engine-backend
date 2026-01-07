@@ -131,6 +131,7 @@ instance FromJSON ServerConfigSignalBridge where
     updatePermsArn <- o .:? "updatePermsArn" .!= defaultSignalBridge.updatePermsArn
     updateUserGroupArn <- o .:? "updateUserGroupArn" .!= defaultSignalBridge.updateUserGroupArn
     setProjectArn <- o .:? "setProjectArn" .!= defaultSignalBridge.setProjectArn
+    addEventArn <- o .:? "addEventArn" .!= defaultSignalBridge.addEventArn
     addFileArn <- o .:? "addFileArn" .!= defaultSignalBridge.addFileArn
     logOutAllArn <- o .:? "logOutAllArn" .!= defaultSignalBridge.logOutAllArn
     return ServerConfigSignalBridge {..}

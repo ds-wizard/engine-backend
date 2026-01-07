@@ -103,6 +103,7 @@ data ServerConfigSignalBridge = ServerConfigSignalBridge
   , updatePermsArn :: String
   , updateUserGroupArn :: String
   , setProjectArn :: String
+  , addEventArn :: String
   , addFileArn :: String
   , logOutAllArn :: String
   }
