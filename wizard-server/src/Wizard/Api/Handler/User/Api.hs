@@ -19,6 +19,7 @@ import Wizard.Api.Handler.User.List_GET
 import Wizard.Api.Handler.User.List_POST
 import Wizard.Api.Handler.User.List_Suggestions_GET
 import Wizard.Api.Handler.User.News.Api
+import Wizard.Api.Handler.User.PluginSettings.Api
 import Wizard.Api.Handler.User.Tour.Api
 import Wizard.Model.Context.BaseContext
 
@@ -40,6 +41,7 @@ type UserAPI =
           :<|> Detail_State_PUT
           :<|> Detail_DELETE
           :<|> NewsAPI
+          :<|> PluginSettingsAPI
           :<|> TourAPI
        )
 
@@ -64,4 +66,5 @@ userServer =
     :<|> detail_state_PUT
     :<|> detail_DELETE
     :<|> newsServer
+    :<|> pluginSettingsServer
     :<|> tourServer

@@ -1,7 +1,9 @@
 module Wizard.Service.User.UserMapper where
 
+import qualified Data.Aeson as A
 import Data.Char (toLower)
 import qualified Data.List as L
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
@@ -38,8 +40,8 @@ toDTO user =
     , updatedAt = user.updatedAt
     }
 
-toUserProfile :: UserDTO -> [U.UUID] -> UserProfile
-toUserProfile user userGroupUuids =
+toUserProfile :: UserDTO -> [U.UUID] -> M.Map U.UUID A.Value -> UserProfile
+toUserProfile user userGroupUuids pluginSettings =
   UserProfile
     { uuid = user.uuid
     , firstName = user.firstName
@@ -50,6 +52,7 @@ toUserProfile user userGroupUuids =
     , permissions = user.permissions
     , lastSeenNewsId = user.lastSeenNewsId
     , userGroupUuids = userGroupUuids
+    , pluginSettings = pluginSettings
     }
 
 toSimple :: User -> UserSimple

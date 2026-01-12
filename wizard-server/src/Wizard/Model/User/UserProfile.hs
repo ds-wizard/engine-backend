@@ -1,5 +1,7 @@
 module Wizard.Model.User.UserProfile where
 
+import qualified Data.Aeson as A
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -13,5 +15,6 @@ data UserProfile = UserProfile
   , permissions :: [String]
   , lastSeenNewsId :: Maybe String
   , userGroupUuids :: [U.UUID]
+  , pluginSettings :: M.Map U.UUID A.Value
   }
   deriving (Show, Eq, Generic)

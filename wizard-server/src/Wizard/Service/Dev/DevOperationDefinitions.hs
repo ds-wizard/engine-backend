@@ -8,6 +8,7 @@ import Shared.Common.Model.Dev.Dev
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Cache.CacheUtil
+import Wizard.Database.DAO.Plugin.PluginDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Model.Cache.ServerCache hiding (user)
 import Wizard.Model.Context.AppContext hiding (cache)
@@ -20,6 +21,7 @@ import Wizard.Service.KnowledgeModel.Editor.Event.EditorEventService
 import Wizard.Service.KnowledgeModel.Metamodel.MigrationService
 import Wizard.Service.Owl.OwlService
 import Wizard.Service.PersistentCommand.PersistentCommandService
+import Wizard.Service.Plugin.PluginService
 import Wizard.Service.Project.Comment.ProjectCommentService
 import Wizard.Service.Project.Event.ProjectEventService
 import Wizard.Service.Project.ProjectService
@@ -39,6 +41,7 @@ sections =
   , metamodelMigrator
   , owl
   , persistentCommand
+  , plugin
   , project
   , registry
   , temporaryFile
@@ -383,6 +386,154 @@ persistentCommand_run =
     , function = \reqDto -> do
         command <- findPersistentCommandSimpleByUuid (u' . head $ reqDto.parameters)
         runPersistentCommand' True command
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- PLUGIN
+-- ---------------------------------------------------------------------------------------------------------------------
+plugin :: DevSection AppContextM
+plugin =
+  DevSection
+    { name = "Plugin"
+    , description = Nothing
+    , operations =
+        [ plugin_addAll
+        , plugin_addForTenant
+        , plugin_updateAll
+        , plugin_updateForTenant
+        , plugin_deleteAll
+        , plugin_deleteForTenant
+        ]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+plugin_addAll :: DevOperation AppContextM
+plugin_addAll =
+  DevOperation
+    { name = "Add Plugin for All Tenants"
+    , description = Nothing
+    , parameters =
+        [ DevOperationParameter
+            { name = "uuid"
+            , aType = StringDevOperationParameterType
+            }
+        , DevOperationParameter
+            { name = "url"
+            , aType = StringDevOperationParameterType
+            }
+        ]
+    , function = \reqDto -> do
+        createPluginForAllTenants (u' . head $ reqDto.parameters) (reqDto.parameters !! 1)
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+plugin_addForTenant :: DevOperation AppContextM
+plugin_addForTenant =
+  DevOperation
+    { name = "Add Plugin for Tenant"
+    , description = Nothing
+    , parameters =
+        [ DevOperationParameter
+            { name = "tenantUuid"
+            , aType = TenantDevOperationParameterType
+            }
+        , DevOperationParameter
+            { name = "uuid"
+            , aType = StringDevOperationParameterType
+            }
+        , DevOperationParameter
+            { name = "url"
+            , aType = StringDevOperationParameterType
+            }
+        ]
+    , function = \reqDto -> do
+        createPluginForTenant (u' . head $ reqDto.parameters) (u' $ reqDto.parameters !! 1) (reqDto.parameters !! 2)
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+plugin_updateAll :: DevOperation AppContextM
+plugin_updateAll =
+  DevOperation
+    { name = "Update Plugin for All Tenants"
+    , description = Nothing
+    , parameters =
+        [ DevOperationParameter
+            { name = "uuid"
+            , aType = StringDevOperationParameterType
+            }
+        , DevOperationParameter
+            { name = "url"
+            , aType = StringDevOperationParameterType
+            }
+        ]
+    , function = \reqDto -> do
+        updatePluginUrlForAllTenants (u' . head $ reqDto.parameters) (reqDto.parameters !! 1)
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+plugin_updateForTenant :: DevOperation AppContextM
+plugin_updateForTenant =
+  DevOperation
+    { name = "Update Plugin for Tenant"
+    , description = Nothing
+    , parameters =
+        [ DevOperationParameter
+            { name = "tenantUuid"
+            , aType = TenantDevOperationParameterType
+            }
+        , DevOperationParameter
+            { name = "uuid"
+            , aType = StringDevOperationParameterType
+            }
+        , DevOperationParameter
+            { name = "url"
+            , aType = StringDevOperationParameterType
+            }
+        ]
+    , function = \reqDto -> do
+        updatePluginUrlForTenant (u' . head $ reqDto.parameters) (u' $ reqDto.parameters !! 1) (reqDto.parameters !! 2)
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+plugin_deleteAll :: DevOperation AppContextM
+plugin_deleteAll =
+  DevOperation
+    { name = "Delete Plugin for All Tenants"
+    , description = Nothing
+    , parameters =
+        [ DevOperationParameter
+            { name = "uuid"
+            , aType = StringDevOperationParameterType
+            }
+        ]
+    , function = \reqDto -> do
+        deletePluginForAllTenants (u' . head $ reqDto.parameters)
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+plugin_deleteForTenant :: DevOperation AppContextM
+plugin_deleteForTenant =
+  DevOperation
+    { name = "Delete Plugin for Tenant"
+    , description = Nothing
+    , parameters =
+        [ DevOperationParameter
+            { name = "tenantUuid"
+            , aType = TenantDevOperationParameterType
+            }
+        , DevOperationParameter
+            { name = "uuid"
+            , aType = StringDevOperationParameterType
+            }
+        ]
+    , function = \reqDto -> do
+        deletePluginForTenant (u' . head $ reqDto.parameters) (u' $ reqDto.parameters !! 1)
         return "Done"
     }
 

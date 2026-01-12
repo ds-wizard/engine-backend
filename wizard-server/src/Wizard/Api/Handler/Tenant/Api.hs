@@ -10,6 +10,7 @@ import Wizard.Api.Handler.Tenant.Detail_PUT
 import Wizard.Api.Handler.Tenant.Limit.Api
 import Wizard.Api.Handler.Tenant.List_GET
 import Wizard.Api.Handler.Tenant.List_POST
+import Wizard.Api.Handler.Tenant.PluginSettings.Api
 import Wizard.Api.Handler.Tenant.Usage.Api
 import Wizard.Model.Context.BaseContext
 
@@ -22,6 +23,7 @@ type TenantAPI =
           :<|> Detail_DELETE
           :<|> TenantConfigAPI
           :<|> TenantLimitAPI
+          :<|> TenantPluginSettingsAPI
           :<|> TenantUsageAPI
        )
 
@@ -37,4 +39,5 @@ tenantServer =
     :<|> detail_DELETE
     :<|> tenantConfigServer
     :<|> tenantLimitServer
+    :<|> tenantPluginSettingsServer
     :<|> tenantUsageServer

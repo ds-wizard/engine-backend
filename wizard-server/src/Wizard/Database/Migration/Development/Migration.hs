@@ -33,6 +33,8 @@ import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeM
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as Locale
 import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
+import qualified Wizard.Database.Migration.Development.Plugin.PluginMigration as Plugin
+import qualified Wizard.Database.Migration.Development.Plugin.PluginSchemaMigration as Plugin
 import qualified Wizard.Database.Migration.Development.Project.ProjectActionMigration as ProjectAction
 import qualified Wizard.Database.Migration.Development.Project.ProjectActionSchemaMigration as ProjectAction
 import qualified Wizard.Database.Migration.Development.Project.ProjectImporterMigration as ProjectImporter
@@ -90,6 +92,7 @@ runMigration = runAppContextWithBaseContext $ do
   Tenant.dropConfigTables
   DocumentTemplate.dropTables
   Locale.dropTables
+  Plugin.dropTables
   Tenant.dropTables
   Instance.dropTables
   -- 4. Drop DB Types
@@ -99,6 +102,7 @@ runMigration = runAppContextWithBaseContext $ do
   -- 6. Create schema
   Instance.createTables
   Tenant.createTables
+  Plugin.createTables
   Locale.createTables
   DocumentTemplate.createTables
   Tenant.createConfigTables
@@ -141,6 +145,7 @@ runMigration = runAppContextWithBaseContext $ do
   Locale.runS3Migration
   -- 11. Load fixtures
   Tenant.runMigration
+  Plugin.runMigration
   User.runMigration
   KnowledgeModelPackage.runMigration
   KnowledgeModelSecret.runMigration

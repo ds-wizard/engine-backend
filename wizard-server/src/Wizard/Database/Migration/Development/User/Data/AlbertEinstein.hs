@@ -13,12 +13,16 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserStateDTO
+import Wizard.Database.Migration.Development.Plugin.Data.PluginSettings
+import Wizard.Database.Migration.Development.Plugin.Data.Plugins
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Model.Plugin.Plugin
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
+import Wizard.Model.User.UserPluginSettings
 import Wizard.Model.User.UserProfile
 import Wizard.Model.User.UserSubmissionProp
 import Wizard.Model.User.UserSubmissionPropEM ()
@@ -94,7 +98,7 @@ userAlbertDto :: UserDTO
 userAlbertDto = toDTO userAlbert
 
 userAlbertProfile :: UserProfile
-userAlbertProfile = toUserProfile (toDTO userAlbert) [bioGroup.uuid]
+userAlbertProfile = toUserProfile (toDTO userAlbert) [bioGroup.uuid] plugin1Dict
 
 userAlbertEditedChange :: UserProfileChangeDTO
 userAlbertEditedChange =
@@ -144,6 +148,23 @@ userAlbertTour2 =
     , tourId = "TOUR_2"
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 21
+    }
+
+userAlbertPluginSettings :: UserPluginSettings
+userAlbertPluginSettings =
+  UserPluginSettings
+    { userUuid = userAlbert.uuid
+    , pluginUuid = plugin1.uuid
+    , values = plugin1Values1
+    , tenantUuid = defaultTenant.uuid
+    , createdAt = dt' 2018 1 21
+    , updatedAt = dt' 2018 1 21
+    }
+
+userAlbertPluginSettingsEdited :: UserPluginSettings
+userAlbertPluginSettingsEdited =
+  userAlbertPluginSettings
+    { values = plugin1Values1Edited
     }
 
 -- --------------------------------------
