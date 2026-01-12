@@ -1,10 +1,10 @@
 module Wizard.Database.Mapping.Document.DocumentList where
 
 import Database.PostgreSQL.Simple
-import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
+import Shared.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplateFormatSimple
 import Wizard.Database.Mapping.Document.Document ()
 import Wizard.Model.Document.DocumentList
 
@@ -19,8 +19,7 @@ instance FromRow DocumentList where
     projectVersion <- field
     documentTemplateId <- field
     documentTemplateName <- field
-    documentTemplateFormats <- fieldWith fromJSONField
-    formatUuid <- field
+    documentTemplateFormat <- fieldDocumentTemplateFormatSimple
     fileSize <- field
     workerLog <- field
     createdBy <- field
