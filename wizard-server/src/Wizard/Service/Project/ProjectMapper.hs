@@ -230,7 +230,7 @@ toProjectDetailTemplateState :: Maybe DocumentTemplate -> Maybe DocumentTemplate
 toProjectDetailTemplateState =
   fmap
     ( \tml ->
-        if tml.metamodelVersion /= documentTemplateMetamodelVersion
+        if isDocumentTemplateUnsupported tml.metamodelVersion
           then UnsupportedMetamodelVersionDocumentTemplateState
           else DefaultDocumentTemplateState
     )

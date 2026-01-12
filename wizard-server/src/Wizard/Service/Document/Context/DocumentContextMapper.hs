@@ -19,6 +19,7 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
+import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 toDocumentContext
   :: Document
@@ -34,14 +35,23 @@ toDocumentContext
   -> Report
   -> KnowledgeModelPackage
   -> TenantConfigOrganization
+  -> TenantConfigLookAndFeel
   -> Maybe User
   -> Maybe User
   -> [DocumentContextUserPerm]
   -> [DocumentContextUserGroupPerm]
   -> DocumentContext
-toDocumentContext doc appClientUrl project phaseUuid replies labels mProjectVersion projectVersionDtos projectFiles km report pkg org mProjectCreatedBy mDocCreatedBy users groups =
+toDocumentContext doc appClientUrl project phaseUuid replies labels mProjectVersion projectVersionDtos projectFiles km report pkg org lookAndFeel mProjectCreatedBy mDocCreatedBy users groups =
   DocumentContext
-    { config = DocumentContextConfig {clientUrl = appClientUrl}
+    { config =
+        DocumentContextConfig
+          { clientUrl = appClientUrl
+          , appTitle = lookAndFeel.appTitle
+          , appTitleShort = lookAndFeel.appTitleShort
+          , illustrationsColor = lookAndFeel.illustrationsColor
+          , primaryColor = lookAndFeel.primaryColor
+          , logoUrl = lookAndFeel.logoUrl
+          }
     , document =
         DocumentContextDocument
           { uuid = doc.uuid

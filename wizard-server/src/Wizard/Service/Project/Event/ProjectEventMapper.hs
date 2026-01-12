@@ -160,6 +160,21 @@ toSetLabelsEvent projectUuid tenantUuid event =
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------------------------------------------------
+toEventDTO' :: ProjectEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> ProjectEventDTO
+toEventDTO' event mCreatedBy now =
+  case event of
+    SetReplyEventChangeDTO' event@SetReplyEventChangeDTO {..} -> SetReplyEventDTO' $ toSetReplyEventDTO' event mCreatedBy now
+    ClearReplyEventChangeDTO' event@ClearReplyEventChangeDTO {..} -> ClearReplyEventDTO' $ toClearReplyEventDTO' event mCreatedBy now
+    SetPhaseEventChangeDTO' event@SetPhaseEventChangeDTO {..} -> SetPhaseEventDTO' $ toSetPhaseEventDTO' event mCreatedBy now
+    SetLabelsEventChangeDTO' event@SetLabelsEventChangeDTO {..} -> SetLabelsEventDTO' $ toSetLabelsEventDTO' event mCreatedBy now
+    ResolveCommentThreadEventChangeDTO' event@ResolveCommentThreadEventChangeDTO {..} -> ResolveCommentThreadEventDTO' $ toResolveCommentThreadEventDTO' event mCreatedBy now
+    ReopenCommentThreadEventChangeDTO' event@ReopenCommentThreadEventChangeDTO {..} -> ReopenCommentThreadEventDTO' $ toReopenCommentThreadEventDTO' event mCreatedBy now
+    AssignCommentThreadEventChangeDTO' event@AssignCommentThreadEventChangeDTO {..} -> AssignCommentThreadEventDTO' $ toAssignCommentThreadEventDTO' event mCreatedBy now
+    DeleteCommentThreadEventChangeDTO' event@DeleteCommentThreadEventChangeDTO {..} -> DeleteCommentThreadEventDTO' $ toDeleteCommentThreadEventDTO' event mCreatedBy now
+    AddCommentEventChangeDTO' event@AddCommentEventChangeDTO {..} -> AddCommentEventDTO' $ toAddCommentEventDTO' event mCreatedBy now
+    EditCommentEventChangeDTO' event@EditCommentEventChangeDTO {..} -> EditCommentEventDTO' $ toEditCommentEventDTO' event mCreatedBy now
+    DeleteCommentEventChangeDTO' event@DeleteCommentEventChangeDTO {..} -> DeleteCommentEventDTO' $ toDeleteCommentEventDTO' event mCreatedBy now
+
 toSetReplyEventDTO' :: SetReplyEventChangeDTO -> Maybe UserSuggestion -> UTCTime -> SetReplyEventDTO
 toSetReplyEventDTO' event mCreatedBy now =
   SetReplyEventDTO

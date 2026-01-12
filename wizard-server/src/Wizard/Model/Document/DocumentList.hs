@@ -18,8 +18,7 @@ data DocumentList = DocumentList
   , projectVersion :: Maybe String
   , documentTemplateId :: String
   , documentTemplateName :: String
-  , documentTemplateFormats :: [DocumentTemplateFormatSimple]
-  , formatUuid :: U.UUID
+  , documentTemplateFormat :: DocumentTemplateFormatSimple
   , fileSize :: Maybe Int64
   , workerLog :: Maybe String
   , createdBy :: Maybe U.UUID

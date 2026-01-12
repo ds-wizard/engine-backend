@@ -68,7 +68,15 @@ doc1Content =
 dmp1 :: DocumentContext
 dmp1 =
   DocumentContext
-    { config = DocumentContextConfig {clientUrl = "https://example.com/wizard"}
+    { config =
+        DocumentContextConfig
+          { clientUrl = "https://example.com/wizard"
+          , appTitle = Nothing
+          , appTitleShort = Nothing
+          , illustrationsColor = Nothing
+          , primaryColor = Nothing
+          , logoUrl = Nothing
+          }
     , document =
         DocumentContextDocument
           { uuid = doc1.uuid

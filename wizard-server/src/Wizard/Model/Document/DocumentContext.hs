@@ -32,6 +32,11 @@ data DocumentContext = DocumentContext
 
 data DocumentContextConfig = DocumentContextConfig
   { clientUrl :: String
+  , appTitle :: Maybe String
+  , appTitleShort :: Maybe String
+  , illustrationsColor :: Maybe String
+  , primaryColor :: Maybe String
+  , logoUrl :: Maybe String
   }
   deriving (Show, Eq, Generic)
 

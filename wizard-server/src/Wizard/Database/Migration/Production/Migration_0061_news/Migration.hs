@@ -17,6 +17,7 @@ migrate dbPool = do
   addLastSeeNewsIdColumnToUser dbPool
   renameQuestionnaireToProject dbPool
   renameAuditLogsAndPersistentCommands dbPool
+  adjustAutovacuum dbPool
 
 addLastSeeNewsIdColumnToUser dbPool = do
   let sql = "ALTER TABLE user_entity ADD COLUMN last_seen_news_id varchar;"
@@ -62,8 +63,26 @@ renameQuestionnaireToProject dbPool = do
         \ALTER TABLE project_file RENAME CONSTRAINT questionnaire_file_questionnaire_uuid_fk TO project_file_project_uuid_fk; \
         \ALTER TABLE project_file RENAME CONSTRAINT questionnaire_file_created_by_fk TO project_file_created_by_fk; \
         \ALTER TABLE project_file RENAME CONSTRAINT questionnaire_file_tenant_uuid_fk TO project_file_tenant_uuid_fk; \
-        \ALTER TRIGGER trigger_on_after_questionnaire_file_delete ON project_file RENAME TO trigger_on_after_project_file_delete; \
-        \ALTER FUNCTION create_persistent_command_from_questionnaire_file_delete() RENAME TO create_persistent_command_from_project_file_delete; \
+        \ \
+        \DROP TRIGGER trigger_on_after_questionnaire_file_delete ON project_file; \
+        \DROP FUNCTION create_persistent_command_from_questionnaire_file_delete(); \
+        \CREATE OR REPLACE FUNCTION create_persistent_command_from_project_file_delete() \
+        \    RETURNS TRIGGER AS \
+        \$$ \
+        \BEGIN \
+        \    PERFORM create_persistent_command( \
+        \            'project_file', \
+        \            'deleteFromS3', \
+        \            jsonb_build_object('projectUuid', OLD.project_uuid, 'fileUuid', OLD.uuid), \
+        \            OLD.tenant_uuid); \
+        \    RETURN OLD; \
+        \END; \
+        \$$ LANGUAGE plpgsql; \
+        \CREATE OR REPLACE TRIGGER trigger_on_after_project_file_delete \
+        \    AFTER DELETE \
+        \    ON project_file \
+        \    FOR EACH ROW \
+        \EXECUTE FUNCTION create_persistent_command_from_project_file_delete(); \
         \ \
         \ALTER TABLE questionnaire_perm_user RENAME TO project_perm_user; \
         \ALTER TABLE project_perm_user RENAME COLUMN questionnaire_uuid TO project_uuid; \
@@ -170,6 +189,29 @@ renameAuditLogsAndPersistentCommands dbPool = do
         \UPDATE audit SET component = 'project_migration' WHERE component = 'questionnaire.migration'; \
         \UPDATE audit SET component = 'document_template_bundle' WHERE component = 'template_bundle'; \
         \UPDATE audit SET action = 'createByAdmin' WHERE action = 'create_by_admin';"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+adjustAutovacuum dbPool = do
+  let sql =
+        "ALTER TABLE project \
+        \    SET (autovacuum_vacuum_scale_factor = 0.05, \
+        \         autovacuum_analyze_scale_factor = 0.02); \
+        \ \
+        \ALTER TABLE project_event \
+        \    SET (autovacuum_vacuum_scale_factor = 0.05, \
+        \         autovacuum_vacuum_insert_scale_factor = 0.02, \
+        \         autovacuum_analyze_scale_factor = 0.01); \
+        \ \
+        \ALTER TABLE persistent_command \
+        \    SET (autovacuum_vacuum_scale_factor = 0.05, \
+        \         autovacuum_analyze_scale_factor = 0.02); \
+        \ \
+        \ALTER TABLE knowledge_model_package \
+        \    SET (autovacuum_vacuum_scale_factor = 0.1, \
+        \         autovacuum_vacuum_insert_scale_factor = 0.1, \
+        \         autovacuum_analyze_scale_factor = 0.05);"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

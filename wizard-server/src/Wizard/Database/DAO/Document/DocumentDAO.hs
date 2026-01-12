@@ -71,14 +71,9 @@ findDocumentsPage mProjectUuid mProjectName mDocumentTemplateId mQuery pageable 
               \       project_version.name, \
               \       doc_tml.id, \
               \       doc_tml.name, \
-              \       ( \
-              \        SELECT coalesce(jsonb_agg(jsonb_build_object('uuid', uuid, 'name', name, 'icon', icon)), '[]'::jsonb) \
-              \        FROM (SELECT * \
-              \              FROM document_template_format dt_format \
-              \              WHERE dt_format.tenant_uuid = doc.tenant_uuid AND dt_format.document_template_id = doc.document_template_id \
-              \              ORDER BY dt_format.name) nested \
-              \       ) AS document_template_formats, \
-              \       doc.format_uuid, \
+              \       dt_format.uuid, \
+              \       dt_format.name, \
+              \       dt_format.icon, \
               \       doc.file_size, \
               \       doc.worker_log, \
               \       doc.created_by, \
@@ -86,6 +81,7 @@ findDocumentsPage mProjectUuid mProjectName mDocumentTemplateId mQuery pageable 
               \FROM document doc \
               \${projectJoin} \
               \LEFT JOIN document_template doc_tml ON doc_tml.id = doc.document_template_id AND doc_tml.tenant_uuid = doc.tenant_uuid \
+              \LEFT JOIN document_template_format dt_format ON dt_format.tenant_uuid = doc.tenant_uuid AND dt_format.document_template_id = doc.document_template_id AND dt_format.uuid = doc.format_uuid \
               \LEFT JOIN project_version ON project_version.event_uuid = doc.project_event_uuid AND project_version.tenant_uuid = doc.tenant_uuid \
               \${condition} \
               \${sort} \
@@ -114,7 +110,7 @@ findDocumentsPage mProjectUuid mProjectName mDocumentTemplateId mQuery pageable 
 findDocumentsByDocumentTemplateId :: String -> AppContextM [Document]
 findDocumentsByDocumentTemplateId documentTemplateId = do
   tenantUuid <- asks currentTenantUuid
-  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId)]
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId), ("durability", "PersistentDocumentDurability")]
 
 findDocumentByUuid :: U.UUID -> AppContextM Document
 findDocumentByUuid uuid = do

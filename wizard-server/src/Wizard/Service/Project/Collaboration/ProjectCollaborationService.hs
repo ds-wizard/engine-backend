@@ -49,7 +49,7 @@ import WizardLib.Public.Model.User.UserSuggestion
 putUserOnline :: U.UUID -> U.UUID -> Connection -> AppContextM ()
 putUserOnline projectUuid connectionUuid connection = do
   myself <- createProjectRecord connectionUuid connection projectUuid
-  checkViewPermission myself
+  checkViewPermission myself.entityPerm
   addToCache myself
   logWS connectionUuid "New user added to the list"
   setUserList projectUuid connectionUuid
@@ -143,6 +143,28 @@ setProject projectUuid reqDto = do
       broadcast (U.toString projectUuid) records (toSetProjectMessage reqDto) disconnectUser
       logWS U.nil "Informed completed"
 
+addEvent :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> ProjectEventChangeDTO -> AppContextM ()
+addEvent projectUuid entityPerm mCreatedBy reqDto = do
+  currentTenantUuid <- asks currentTenantUuid
+  tenant <- findTenantByUuid currentTenantUuid
+  if isJust tenant.signalBridgeUrl
+    then do
+      serverConfig <- asks serverConfig
+      now <- liftIO getCurrentTime
+      let resDto = toEventDTO' reqDto mCreatedBy now
+      let dto =
+            AKM.fromList
+              [ ("projectUuid", A.String . U.toText $ projectUuid)
+              , ("tenantUuid", A.String . U.toText $ currentTenantUuid)
+              , ("message", A.toJSON resDto)
+              ]
+      invokeLambda serverConfig.signalBridge.addEventArn (BSL.toStrict . A.encode $ dto)
+      return ()
+    else do
+      logWS U.nil "Informing other users about new event"
+      processSetContent projectUuid entityPerm mCreatedBy reqDto
+      logWS U.nil "Informed completed"
+
 addFile :: U.UUID -> ProjectFileSimple -> AppContextM ()
 addFile projectUuid reqDto = do
   currentTenantUuid <- asks currentTenantUuid
@@ -187,28 +209,32 @@ logOutOnlineUsersWhenProjectDramaticallyChanged projectUuid = do
 
 -- --------------------------------
 setContent :: U.UUID -> U.UUID -> ProjectEventChangeDTO -> AppContextM ()
-setContent projectUuid connectionUuid reqDto =
-  case reqDto of
-    SetReplyEventChangeDTO' event -> setReply projectUuid connectionUuid event
-    ClearReplyEventChangeDTO' event -> clearReply projectUuid connectionUuid event
-    SetPhaseEventChangeDTO' event -> setPhase projectUuid connectionUuid event
-    SetLabelsEventChangeDTO' event -> setLabel projectUuid connectionUuid event
-    ResolveCommentThreadEventChangeDTO' event -> resolveCommentThread projectUuid connectionUuid event
-    ReopenCommentThreadEventChangeDTO' event -> reopenCommentThread projectUuid connectionUuid event
-    AssignCommentThreadEventChangeDTO' event -> assignCommentThread projectUuid connectionUuid event
-    DeleteCommentThreadEventChangeDTO' event -> deleteCommentThread projectUuid connectionUuid event
-    AddCommentEventChangeDTO' event -> addComment projectUuid connectionUuid event
-    EditCommentEventChangeDTO' event -> editComment projectUuid connectionUuid event
-    DeleteCommentEventChangeDTO' event -> deleteComment projectUuid connectionUuid event
-
-setReply :: U.UUID -> U.UUID -> SetReplyEventChangeDTO -> AppContextM ()
-setReply projectUuid connectionUuid reqDto = do
+setContent projectUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
-  checkEditPermission myself
+  let mCreatedBy = getMaybeCreatedBy myself
+  processSetContent projectUuid myself.entityPerm mCreatedBy reqDto
+
+processSetContent :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> ProjectEventChangeDTO -> AppContextM ()
+processSetContent projectUuid perm mCreatedBy reqDto =
+  case reqDto of
+    SetReplyEventChangeDTO' event -> setReply projectUuid perm mCreatedBy event
+    ClearReplyEventChangeDTO' event -> clearReply projectUuid perm mCreatedBy event
+    SetPhaseEventChangeDTO' event -> setPhase projectUuid perm mCreatedBy event
+    SetLabelsEventChangeDTO' event -> setLabel projectUuid perm mCreatedBy event
+    ResolveCommentThreadEventChangeDTO' event -> resolveCommentThread projectUuid perm mCreatedBy event
+    ReopenCommentThreadEventChangeDTO' event -> reopenCommentThread projectUuid perm mCreatedBy event
+    AssignCommentThreadEventChangeDTO' event -> assignCommentThread projectUuid perm mCreatedBy event
+    DeleteCommentThreadEventChangeDTO' event -> deleteCommentThread projectUuid perm mCreatedBy event
+    AddCommentEventChangeDTO' event -> addComment projectUuid perm mCreatedBy event
+    EditCommentEventChangeDTO' event -> editComment projectUuid perm mCreatedBy event
+    DeleteCommentEventChangeDTO' event -> deleteComment projectUuid perm mCreatedBy event
+
+setReply :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> SetReplyEventChangeDTO -> AppContextM ()
+setReply projectUuid entityPerm mCreatedBy reqDto = do
+  checkEditPermission entityPerm
   now <- liftIO getCurrentTime
   tenantUuid <- asks currentTenantUuid
-  let mCreatedBy = getMaybeCreatedBy myself
-  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  let mCreatedByUuid = fmap (.uuid) mCreatedBy
   insertProjectEventWithTimestampUpdate
     projectUuid
     (fromEventChangeDTO (SetReplyEventChangeDTO' reqDto) projectUuid tenantUuid mCreatedByUuid now)
@@ -216,14 +242,12 @@ setReply projectUuid connectionUuid reqDto = do
   records <- getAllFromCache
   broadcast (U.toString projectUuid) records (toSetReplyMessage resDto) disconnectUser
 
-clearReply :: U.UUID -> U.UUID -> ClearReplyEventChangeDTO -> AppContextM ()
-clearReply projectUuid connectionUuid reqDto = do
-  myself <- getFromCache' connectionUuid
-  checkEditPermission myself
+clearReply :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> ClearReplyEventChangeDTO -> AppContextM ()
+clearReply projectUuid entityPerm mCreatedBy reqDto = do
+  checkEditPermission entityPerm
   now <- liftIO getCurrentTime
   tenantUuid <- asks currentTenantUuid
-  let mCreatedBy = getMaybeCreatedBy myself
-  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  let mCreatedByUuid = fmap (.uuid) mCreatedBy
   insertProjectEventWithTimestampUpdate
     projectUuid
     (fromEventChangeDTO (ClearReplyEventChangeDTO' reqDto) projectUuid tenantUuid mCreatedByUuid now)
@@ -231,14 +255,12 @@ clearReply projectUuid connectionUuid reqDto = do
   records <- getAllFromCache
   broadcast (U.toString projectUuid) records (toClearReplyMessage resDto) disconnectUser
 
-setPhase :: U.UUID -> U.UUID -> SetPhaseEventChangeDTO -> AppContextM ()
-setPhase projectUuid connectionUuid reqDto = do
-  myself <- getFromCache' connectionUuid
-  checkEditPermission myself
+setPhase :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> SetPhaseEventChangeDTO -> AppContextM ()
+setPhase projectUuid entityPerm mCreatedBy reqDto = do
+  checkEditPermission entityPerm
   now <- liftIO getCurrentTime
   tenantUuid <- asks currentTenantUuid
-  let mCreatedBy = getMaybeCreatedBy myself
-  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  let mCreatedByUuid = fmap (.uuid) mCreatedBy
   insertProjectEventWithTimestampUpdate
     projectUuid
     (fromEventChangeDTO (SetPhaseEventChangeDTO' reqDto) projectUuid tenantUuid mCreatedByUuid now)
@@ -246,26 +268,22 @@ setPhase projectUuid connectionUuid reqDto = do
   records <- getAllFromCache
   broadcast (U.toString projectUuid) records (toSetPhaseMessage resDto) disconnectUser
 
-setLabel :: U.UUID -> U.UUID -> SetLabelsEventChangeDTO -> AppContextM ()
-setLabel projectUuid connectionUuid reqDto = do
-  myself <- getFromCache' connectionUuid
-  checkEditPermission myself
+setLabel :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> SetLabelsEventChangeDTO -> AppContextM ()
+setLabel projectUuid entityPerm mCreatedBy reqDto = do
+  checkEditPermission entityPerm
   now <- liftIO getCurrentTime
   tenantUuid <- asks currentTenantUuid
-  let mCreatedBy = getMaybeCreatedBy myself
-  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  let mCreatedByUuid = fmap (.uuid) mCreatedBy
   insertProjectEventWithTimestampUpdate projectUuid (fromEventChangeDTO (SetLabelsEventChangeDTO' reqDto) projectUuid tenantUuid mCreatedByUuid now)
   let resDto = toSetLabelsEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
   broadcast (U.toString projectUuid) records (toSetLabelMessage resDto) disconnectUser
 
-resolveCommentThread :: U.UUID -> U.UUID -> ResolveCommentThreadEventChangeDTO -> AppContextM ()
-resolveCommentThread projectUuid connectionUuid reqDto = do
-  myself <- getFromCache' connectionUuid
-  checkCommentPermission myself
+resolveCommentThread :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> ResolveCommentThreadEventChangeDTO -> AppContextM ()
+resolveCommentThread projectUuid entityPerm mCreatedBy reqDto = do
+  checkCommentPermission entityPerm
   now <- liftIO getCurrentTime
-  let mCreatedBy = getMaybeCreatedBy myself
-  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  let mCreatedByUuid = fmap (.uuid) mCreatedBy
   updateProjectCommentThreadResolvedById reqDto.threadUuid True
   let resDto = toResolveCommentThreadEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
@@ -275,13 +293,11 @@ resolveCommentThread projectUuid connectionUuid reqDto = do
           else filterCommenters records
   broadcast (U.toString projectUuid) filteredRecords (toResolveCommentThreadMessage resDto) disconnectUser
 
-reopenCommentThread :: U.UUID -> U.UUID -> ReopenCommentThreadEventChangeDTO -> AppContextM ()
-reopenCommentThread projectUuid connectionUuid reqDto = do
-  myself <- getFromCache' connectionUuid
-  checkCommentPermission myself
+reopenCommentThread :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> ReopenCommentThreadEventChangeDTO -> AppContextM ()
+reopenCommentThread projectUuid entityPerm mCreatedBy reqDto = do
+  checkCommentPermission entityPerm
   now <- liftIO getCurrentTime
-  let mCreatedBy = getMaybeCreatedBy myself
-  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  let mCreatedByUuid = fmap (.uuid) mCreatedBy
   updateProjectCommentThreadResolvedById reqDto.threadUuid False
   let resDto = toReopenCommentThreadEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
@@ -291,13 +307,11 @@ reopenCommentThread projectUuid connectionUuid reqDto = do
           else filterCommenters records
   broadcast (U.toString projectUuid) filteredRecords (toReopenCommentThreadMessage resDto) disconnectUser
 
-assignCommentThread :: U.UUID -> U.UUID -> AssignCommentThreadEventChangeDTO -> AppContextM ()
-assignCommentThread projectUuid connectionUuid reqDto = do
-  myself <- getFromCache' connectionUuid
-  checkCommentPermission myself
+assignCommentThread :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> AssignCommentThreadEventChangeDTO -> AppContextM ()
+assignCommentThread projectUuid entityPerm mCreatedBy reqDto = do
+  checkCommentPermission entityPerm
   now <- liftIO getCurrentTime
-  let mCreatedBy = getMaybeCreatedBy myself
-  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  let mCreatedByUuid = fmap (.uuid) mCreatedBy
   updateProjectCommentThreadAssignee reqDto.threadUuid (fmap (.uuid) reqDto.assignedTo) mCreatedByUuid
   let resDto = toAssignCommentThreadEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
@@ -307,13 +321,11 @@ assignCommentThread projectUuid connectionUuid reqDto = do
           else filterCommenters records
   broadcast (U.toString projectUuid) filteredRecords (toAssignCommentThreadMessage resDto) disconnectUser
 
-deleteCommentThread :: U.UUID -> U.UUID -> DeleteCommentThreadEventChangeDTO -> AppContextM ()
-deleteCommentThread projectUuid connectionUuid reqDto = do
-  myself <- getFromCache' connectionUuid
-  checkCommentPermission myself
+deleteCommentThread :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> DeleteCommentThreadEventChangeDTO -> AppContextM ()
+deleteCommentThread projectUuid entityPerm mCreatedBy reqDto = do
+  checkCommentPermission entityPerm
   now <- liftIO getCurrentTime
-  let mCreatedBy = getMaybeCreatedBy myself
-  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  let mCreatedByUuid = fmap (.uuid) mCreatedBy
   deleteProjectCommentsByThreadUuid reqDto.threadUuid
   deleteProjectCommentThreadById reqDto.threadUuid
   let resDto = toDeleteCommentThreadEventDTO' reqDto mCreatedBy now
@@ -324,14 +336,12 @@ deleteCommentThread projectUuid connectionUuid reqDto = do
           else filterCommenters records
   broadcast (U.toString projectUuid) filteredRecords (toDeleteCommentThreadMessage resDto) disconnectUser
 
-addComment :: U.UUID -> U.UUID -> AddCommentEventChangeDTO -> AppContextM ()
-addComment projectUuid connectionUuid reqDto = do
-  myself <- getFromCache' connectionUuid
-  checkCommentPermission myself
+addComment :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> AddCommentEventChangeDTO -> AppContextM ()
+addComment projectUuid entityPerm mCreatedBy reqDto = do
+  checkCommentPermission entityPerm
   tenantUuid <- asks currentTenantUuid
   now <- liftIO getCurrentTime
-  let mCreatedBy = getMaybeCreatedBy myself
-  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  let mCreatedByUuid = fmap (.uuid) mCreatedBy
   let comment = toComment reqDto tenantUuid mCreatedByUuid now
   if reqDto.newThread
     then do
@@ -346,13 +356,11 @@ addComment projectUuid connectionUuid reqDto = do
           else filterCommenters records
   broadcast (U.toString projectUuid) filteredRecords (toAddCommentMessage resDto) disconnectUser
 
-editComment :: U.UUID -> U.UUID -> EditCommentEventChangeDTO -> AppContextM ()
-editComment projectUuid connectionUuid reqDto = do
-  myself <- getFromCache' connectionUuid
-  checkCommentPermission myself
+editComment :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> EditCommentEventChangeDTO -> AppContextM ()
+editComment projectUuid entityPerm mCreatedBy reqDto = do
+  checkCommentPermission entityPerm
   now <- liftIO getCurrentTime
-  let mCreatedBy = getMaybeCreatedBy myself
-  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  let mCreatedByUuid = fmap (.uuid) mCreatedBy
   updateProjectCommentTextById reqDto.commentUuid reqDto.text
   let resDto = toEditCommentEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
@@ -362,13 +370,11 @@ editComment projectUuid connectionUuid reqDto = do
           else filterCommenters records
   broadcast (U.toString projectUuid) filteredRecords (toEditCommentMessage resDto) disconnectUser
 
-deleteComment :: U.UUID -> U.UUID -> DeleteCommentEventChangeDTO -> AppContextM ()
-deleteComment projectUuid connectionUuid reqDto = do
-  myself <- getFromCache' connectionUuid
-  checkCommentPermission myself
+deleteComment :: U.UUID -> WebsocketPerm -> Maybe UserSuggestion -> DeleteCommentEventChangeDTO -> AppContextM ()
+deleteComment projectUuid entityPerm mCreatedBy reqDto = do
+  checkCommentPermission entityPerm
   now <- liftIO getCurrentTime
-  let mCreatedBy = getMaybeCreatedBy myself
-  let mCreatedByUuid = getMaybeCreatedByUuid myself
+  let mCreatedByUuid = fmap (.uuid) mCreatedBy
   deleteProjectCommentById reqDto.commentUuid
   let resDto = toDeleteCommentEventDTO' reqDto mCreatedBy now
   records <- getAllFromCache
@@ -385,7 +391,7 @@ disconnectUser :: A.ToJSON resDto => WebsocketMessage resDto -> AppContextM ()
 disconnectUser msg = deleteUser (u' msg.entityId) msg.connectionUuid
 
 disconnectUserIfLostPermission :: WebsocketRecord -> AppContextM ()
-disconnectUserIfLostPermission record = catchError (checkViewPermission record) handleError
+disconnectUserIfLostPermission record = catchError (checkViewPermission record.entityPerm) handleError
   where
     handleError = sendError record.connectionUuid record.connection record.entityId disconnectUser
 
@@ -427,10 +433,4 @@ getMaybeCreatedBy myself =
             , gravatarHash = gravatarHash
             , imageUrl = imageUrl
             }
-    u@AnonymousOnlineUserInfo {..} -> Nothing
-
-getMaybeCreatedByUuid :: WebsocketRecord -> Maybe U.UUID
-getMaybeCreatedByUuid myself =
-  case myself.user of
-    u@LoggedOnlineUserInfo {uuid = uuid} -> Just uuid
     u@AnonymousOnlineUserInfo {..} -> Nothing

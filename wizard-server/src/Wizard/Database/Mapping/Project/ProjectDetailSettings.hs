@@ -82,7 +82,7 @@ instance FromRow ProjectDetailSettings where
     let documentTemplateState =
           case mDocumentTemplateMetamodelVersion of
             Just metamodelVersion ->
-              if metamodelVersion /= documentTemplateMetamodelVersion
+              if isDocumentTemplateUnsupported metamodelVersion
                 then Just UnsupportedMetamodelVersionDocumentTemplateState
                 else Just DefaultDocumentTemplateState
             _ -> Nothing
