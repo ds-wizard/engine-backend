@@ -43,10 +43,14 @@ createHttpClientManager serverConfig =
 
 modifyRequest :: Bool -> Request -> IO Request
 modifyRequest logHttpClient request = do
-  let updatedRequest =
+  let originalHeaders = requestHeaders request
+      -- Filter out "User-Agent" headers (case-insensitive) and (re-)add our explicit "User-Agent" header, to ensure there's only one User-Agent header.
+      -- Note: Reason for using case-insensitive search for header key(s) is because HTTP spec. states that header keys are case-insensitive.
+      headersWithoutUA = filter (\(headerName, _) -> headerName /= CI.mk (BS.pack "User-Agent")) originalHeaders
+      updatedRequest =
         request
           { path = BS.pack . replace "//" "/" . BS.unpack . path $ request
-          , requestHeaders = ("User-Agent", "wizard-http-client") : requestHeaders request
+          , requestHeaders = ("User-Agent", "wizard-http-client") : headersWithoutUA
           }
   logRequest logHttpClient updatedRequest
   return updatedRequest
