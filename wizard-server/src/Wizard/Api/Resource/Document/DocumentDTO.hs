@@ -20,7 +20,7 @@ data DocumentDTO = DocumentDTO
   , projectVersion :: Maybe String
   , documentTemplateId :: String
   , documentTemplateName :: String
-  , format :: Maybe DocumentTemplateFormatSimple
+  , format :: DocumentTemplateFormatSimple
   , fileSize :: Maybe Int64
   , workerLog :: Maybe String
   , submissions :: [SubmissionList]
