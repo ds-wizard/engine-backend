@@ -12,7 +12,8 @@ dropTables :: AppContextM Int64
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/User) drop tables"
   let sql =
-        "DROP TABLE IF EXISTS user_tour CASCADE;\
+        "DROP TABLE IF EXISTS user_plugin_settings CASCADE;\
+        \DROP TABLE IF EXISTS user_tour CASCADE;\
         \DROP TABLE IF EXISTS user_group_membership CASCADE;\
         \DROP TABLE IF EXISTS user_group CASCADE;\
         \DROP TABLE IF EXISTS user_token CASCADE;\
@@ -29,6 +30,7 @@ createTables = do
   createUserGroupTable
   createUserGroupMembershipTable
   createUserTourTable
+  createUserPluginSettingsTable
 
 createUserTable = do
   logInfo _CMP_MIGRATION "(Table/User) create tables"
@@ -159,6 +161,25 @@ createUserTourTable = do
         \    CONSTRAINT user_tour_pk PRIMARY KEY (user_uuid, tour_id), \
         \    CONSTRAINT user_tour_user_uuid_fk FOREIGN KEY (user_uuid) REFERENCES user_entity (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT user_tour_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createUserPluginSettingsTable = do
+  logInfo _CMP_MIGRATION "(Table/UserPluginSettings) create tables"
+  let sql =
+        "CREATE TABLE user_plugin_settings \
+        \( \
+        \    user_uuid    uuid        NOT NULL, \
+        \    plugin_uuid  uuid        NOT NULL, \
+        \    values       jsonb       NOT NULL, \
+        \    tenant_uuid  uuid        NOT NULL, \
+        \    created_at   timestamptz NOT NULL, \
+        \    updated_at   timestamptz NOT NULL, \
+        \    CONSTRAINT user_plugin_settings_pk PRIMARY KEY (user_uuid, plugin_uuid), \
+        \    CONSTRAINT user_plugin_settings_user_uuid_fk FOREIGN KEY (user_uuid) REFERENCES user_entity (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT user_plugin_settings_plugin_uuid_fk FOREIGN KEY (plugin_uuid, tenant_uuid) REFERENCES plugin (uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT user_plugin_settings_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

@@ -22,6 +22,7 @@ import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelMigrationDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelSecretDAO
+import Wizard.Database.DAO.Plugin.PluginDAO
 import Wizard.Database.DAO.Project.ProjectActionDAO
 import Wizard.Database.DAO.Project.ProjectCommentDAO
 import Wizard.Database.DAO.Project.ProjectCommentThreadDAO
@@ -64,6 +65,8 @@ import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeM
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as LocaleMigration
 import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
+import Wizard.Database.Migration.Development.Plugin.Data.Plugins
+import qualified Wizard.Database.Migration.Development.Plugin.PluginSchemaMigration as Plugin
 import qualified Wizard.Database.Migration.Development.Project.ProjectActionSchemaMigration as ProjectAction
 import qualified Wizard.Database.Migration.Development.Project.ProjectImporterSchemaMigration as ProjectImporter
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigrationSchemaMigration as ProjectMigration
@@ -129,6 +132,7 @@ buildSchema appContext = do
   runInContext Tenant.dropConfigTables appContext
   runInContext DocumentTemplate.dropTables appContext
   runInContext Locale.dropTables appContext
+  runInContext Plugin.dropTables appContext
   runInContext Tenant.dropTables appContext
   runInContext Instance.dropTables appContext
   putStrLn "DB: Drop DB types"
@@ -139,6 +143,7 @@ buildSchema appContext = do
   putStrLn "DB: Creating schema"
   runInContext Instance.createTables appContext
   runInContext Tenant.createTables appContext
+  runInContext Plugin.createTables appContext
   runInContext Locale.createTables appContext
   runInContext DocumentTemplate.createTables appContext
   runInContext Tenant.createConfigTables appContext
@@ -229,8 +234,11 @@ resetDB appContext = do
   runInContext deleteLocales appContext
   runInContext deletePersistentCommands appContext
   runInContext deleteLimitBundles appContext
+  runInContext deletePlugins appContext
   runInContext deleteTenants appContext
   runInContext (insertTenant defaultTenant) appContext
+  runInContext (insertPlugin plugin1) appContext
+  runInContext (insertPlugin differentPlugin1) appContext
   runInContext (insertLimitBundle defaultTenantLimitBundle) appContext
   runInContext (insertTenant differentTenant) appContext
   runInContext (insertLimitBundle differentTenantLimitBundle) appContext
