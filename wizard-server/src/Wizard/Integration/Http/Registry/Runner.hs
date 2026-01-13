@@ -16,6 +16,7 @@ import Shared.Common.Integration.Http.Common.HttpClient
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Error.Error
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Bundle.KnowledgeModelBundle
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Integration.Http.Common.ServantClient
@@ -117,14 +118,14 @@ retrieveLocales = do
         (\_ -> return [])
     else return []
 
-retrieveLocaleBundleById :: String -> AppContextM BSL.ByteString
-retrieveLocaleBundleById lclId = do
+retrieveLocaleBundleByCoordinate :: Coordinate -> AppContextM BSL.ByteString
+retrieveLocaleBundleByCoordinate coordinate = do
   serverConfig <- asks serverConfig
   tcRegistry <- getCurrentTenantConfigRegistry
   if tcRegistry.enabled
     then
       runRequest
-        (toRetrieveLocaleBundleByIdRequest serverConfig.registry tcRegistry lclId)
+        (toRetrieveLocaleBundleByIdRequest serverConfig.registry tcRegistry coordinate)
         toRetrieveLocaleBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 

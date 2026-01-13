@@ -18,7 +18,7 @@ import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Service.Project.Comment.ProjectCommentService
 import Wizard.Service.Project.Event.ProjectEventService hiding (squash)
 import Wizard.Service.Project.ProjectService
-import Wizard.Service.Registry.RegistryService
+import Wizard.Service.Registry.Synchronization.RegistrySynchronizationService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
 import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
 import WizardLib.Public.Service.UserToken.UserTokenService

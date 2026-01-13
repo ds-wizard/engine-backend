@@ -198,7 +198,7 @@ updateUserLastVisitedAtByUuid userUuid lastVisitedAt = do
   deleteFromCache (U.toString userUuid, U.toString tenantUuid)
   return result
 
-updateUserLocaleByUuid :: U.UUID -> Maybe String -> UTCTime -> AppContextM Int64
+updateUserLocaleByUuid :: U.UUID -> Maybe U.UUID -> UTCTime -> AppContextM Int64
 updateUserLocaleByUuid userUuid mLocale uUpdatedAt = do
   tenantUuid <- asks currentTenantUuid
   let sql = fromString "UPDATE user_entity SET locale = ?, updated_at = ? WHERE tenant_uuid = ? AND uuid = ?"

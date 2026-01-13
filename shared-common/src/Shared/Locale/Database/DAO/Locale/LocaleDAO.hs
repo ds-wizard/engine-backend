@@ -14,6 +14,7 @@ import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Context.AppContext
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.Locale.Database.Mapping.Locale.Locale ()
 import Shared.Locale.Database.Mapping.Locale.LocaleSuggestion ()
 import Shared.Locale.Model.Locale.Locale
@@ -36,28 +37,38 @@ findLocalesByOrganizationIdAndLocaleId organizationId localeId = do
 findLocaleSuggestions :: AppContextC s sc m => Maybe String -> Pageable -> [Sort] -> m (Page LocaleSuggestion)
 findLocaleSuggestions mQuery pageable sort = do
   tenantUuid <- asks (.tenantUuid')
-  let condition = "WHERE (id ~* ? OR name ~* ?) AND enabled = true AND tenant_uuid = ?"
+  let condition = "WHERE (organization_id ~* ? OR locale_id ~* ? OR version ~* ? OR name ~* ?) AND enabled = true AND tenant_uuid = ?"
   createFindEntitiesPageableQuerySortFn
     entityName
     pageLabel
     pageable
     sort
-    "id, name, description, code, default_locale"
+    "uuid, name, description, code, organization_id, locale_id, version, default_locale"
     condition
-    [regexM mQuery, regexM mQuery, U.toString tenantUuid]
+    [regexM mQuery, regexM mQuery, regexM mQuery, regexM mQuery, U.toString tenantUuid]
 
-findLocaleById :: AppContextC s sc m => String -> m Locale
-findLocaleById lclId = do
+findLocaleByUuid :: AppContextC s sc m => U.UUID -> m Locale
+findLocaleByUuid uuid = do
   tenantUuid <- asks (.tenantUuid')
-  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", lclId)]
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
-findLocaleById' :: AppContextC s sc m => String -> m (Maybe Locale)
-findLocaleById' lclId = do
+findLocaleByCoordinate :: AppContextC s sc m => Coordinate -> m Locale
+findLocaleByCoordinate Coordinate {..} = do
   tenantUuid <- asks (.tenantUuid')
-  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("id", lclId)]
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("organization_id", organizationId), ("locale_id", entityId), ("version", version)]
+
+findLocaleByCoordinate' :: AppContextC s sc m => Coordinate -> m (Maybe Locale)
+findLocaleByCoordinate' Coordinate {..} = do
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("organization_id", organizationId), ("locale_id", entityId), ("version", version)]
+
+findLocaleByUuid' :: AppContextC s sc m => U.UUID -> m (Maybe Locale)
+findLocaleByUuid' uuid = do
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 findLocaleSuggestionBy :: AppContextC s sc m => [(String, String)] -> m LocaleSuggestion
-findLocaleSuggestionBy = createFindEntityWithFieldsByFn "id, name, description, code, default_locale" False entityName
+findLocaleSuggestionBy = createFindEntityWithFieldsByFn "uuid, name, description, code, organization_id, locale_id, version, default_locale" False entityName
 
 countLocalesGroupedByOrganizationIdAndLocaleId :: AppContextC s sc m => m Int
 countLocalesGroupedByOrganizationIdAndLocaleId = do
@@ -80,13 +91,13 @@ countLocalesGroupedByOrganizationIdAndLocaleIdWithTenant tenantUuid = do
     [count] -> return . fromOnly $ count
     _ -> return 0
 
-updateLocaleById :: AppContextC s sc m => Locale -> m Int64
-updateLocaleById locale = do
+updateLocaleByUuid :: AppContextC s sc m => Locale -> m Int64
+updateLocaleByUuid locale = do
   tenantUuid <- asks (.tenantUuid')
   let sql =
         fromString
-          "UPDATE locale SET id = ?, name = ?, description = ?, code = ?, organization_id = ?, locale_id = ?, version = ?, default_locale = ?, license = ?, readme = ?, recommended_app_version = ?, enabled = ?, tenant_uuid = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND id = ?"
-  let params = toRow locale ++ [toField tenantUuid, toField locale.lId]
+          "UPDATE locale SET uuid = ?, name = ?, description = ?, code = ?, organization_id = ?, locale_id = ?, version = ?, default_locale = ?, license = ?, readme = ?, recommended_app_version = ?, enabled = ?, tenant_uuid = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = toRow locale ++ [toField tenantUuid, toField locale.uuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
@@ -115,7 +126,7 @@ insertLocale = createInsertFn entityName
 deleteLocales :: AppContextC s sc m => m Int64
 deleteLocales = createDeleteEntitiesFn entityName
 
-deleteLocaleById :: AppContextC s sc m => String -> m Int64
-deleteLocaleById lclId = do
+deleteLocaleByUuid :: AppContextC s sc m => U.UUID -> m Int64
+deleteLocaleByUuid uuid = do
   tenantUuid <- asks (.tenantUuid')
-  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", lclId)]
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]

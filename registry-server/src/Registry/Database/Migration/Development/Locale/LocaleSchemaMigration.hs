@@ -21,7 +21,7 @@ createTables = do
   let sql =
         "CREATE TABLE locale \
         \( \
-        \    id                      varchar     NOT NULL, \
+        \    uuid                    uuid        NOT NULL, \
         \    name                    varchar     NOT NULL, \
         \    description             varchar     NOT NULL, \
         \    code                    varchar     NOT NULL, \
@@ -36,9 +36,9 @@ createTables = do
         \    tenant_uuid             uuid        NOT NULL, \
         \    created_at              timestamptz NOT NULL, \
         \    updated_at              timestamptz NOT NULL, \
-        \    CONSTRAINT locale_pk PRIMARY KEY (id) \
+        \    CONSTRAINT locale_pk PRIMARY KEY (uuid) \
         \); \
         \ \
-        \CREATE UNIQUE INDEX locale_uuid_uindex ON locale (id);"
+        \CREATE UNIQUE INDEX locale_organization_id_locale_id_version_uindex ON locale (organization_id, locale_id, version);"
   let action conn = execute_ conn sql
   runDB action

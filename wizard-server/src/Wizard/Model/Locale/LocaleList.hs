@@ -1,10 +1,11 @@
 module Wizard.Model.Locale.LocaleList where
 
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 data LocaleList = LocaleList
-  { lId :: String
+  { uuid :: U.UUID
   , name :: String
   , description :: String
   , code :: String

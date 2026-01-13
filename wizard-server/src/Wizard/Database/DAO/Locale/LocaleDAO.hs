@@ -11,13 +11,13 @@ import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Locale.Database.Mapping.Locale.Locale ()
 import Shared.Locale.Model.Locale.Locale
+import Shared.Locale.Model.Locale.LocaleSimple
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Locale.LocaleList ()
 import Wizard.Database.Mapping.Locale.LocaleSimple ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Locale.LocaleList
-import Wizard.Model.Locale.LocaleSimple
 
 entityName = "locale"
 
@@ -30,12 +30,12 @@ findLocales = do
 
 findLocalesPage :: Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page LocaleList)
 findLocalesPage mOrganizationId mLocaleId mQuery pageable sort =
-  createFindEntitiesGroupByCoordinatePageableQuerySortFn
+  createFindEntitiesGroupByCoordinatePageableQuerySortFn'
     entityName
     pageLabel
     pageable
     sort
-    "locale.id, locale.name, locale.description, locale.code, locale.organization_id, locale.locale_id, locale.version, locale.default_locale, locale.enabled, registry_locale.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, locale.created_at, locale.updated_at"
+    "locale.uuid, locale.name, locale.description, locale.code, locale.organization_id, locale.locale_id, locale.version, locale.default_locale, locale.enabled, registry_locale.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, locale.created_at, locale.updated_at"
     "locale_id"
     mQuery
     Nothing
@@ -56,7 +56,7 @@ findLocalesByCodeWithTenant :: U.UUID -> String -> String -> AppContextM [Locale
 findLocalesByCodeWithTenant tenantUuid code shortCode = do
   let sql =
         fromString
-          "SELECT id, name, code, default_locale \
+          "SELECT uuid, name, code, default_locale \
           \FROM locale \
           \WHERE tenant_uuid = ? \
           \  AND enabled = true \
@@ -67,12 +67,3 @@ findLocalesByCodeWithTenant tenantUuid code shortCode = do
   logQuery sql params
   let action conn = query conn sql params
   runDB action
-
-findLocaleById' :: String -> AppContextM (Maybe Locale)
-findLocaleById' lclId = do
-  tenantUuid <- asks currentTenantUuid
-  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("id", lclId)]
-
-findSimpleLocaleByIdWithTenant :: U.UUID -> String -> AppContextM LocaleSimple
-findSimpleLocaleByIdWithTenant tenantUuid lclId =
-  createFindEntityWithFieldsByFn "id, name, code, default_locale" False entityName [tenantQueryUuid tenantUuid, ("id", lclId)]

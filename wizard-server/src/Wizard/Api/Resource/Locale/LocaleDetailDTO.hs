@@ -1,12 +1,13 @@
 module Wizard.Api.Resource.Locale.LocaleDetailDTO where
 
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Registry.RegistryOrganization
 
 data LocaleDetailDTO = LocaleDetailDTO
-  { lId :: String
+  { uuid :: U.UUID
   , name :: String
   , description :: String
   , code :: String

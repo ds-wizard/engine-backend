@@ -8,6 +8,7 @@ import qualified Data.UUID as U
 
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.String
+import Shared.Coordinate.Util.Coordinate
 import Shared.Locale.Api.Resource.LocaleBundle.LocaleBundleDTO
 import Shared.Locale.Api.Resource.LocaleBundle.LocaleBundleJM ()
 import Shared.Locale.Localization.Messages.Public
@@ -37,7 +38,7 @@ toTranslationEntry filename content = toEntry (f' "locale/%s" [filename]) 0 (BSL
 toLocaleBundle :: Locale -> LocaleBundleDTO
 toLocaleBundle locale =
   LocaleBundleDTO
-    { lId = locale.lId
+    { lId = buildCoordinate locale.organizationId locale.localeId locale.version
     , name = locale.name
     , description = locale.description
     , code = locale.code
@@ -75,10 +76,10 @@ fromTranslationEntry filename lb archive =
     Just translationEntry -> Right . BSL.toStrict . fromEntry $ translationEntry
     Nothing -> Left $ UserError (_ERROR_SERVICE_LB__MISSING_FILE filename)
 
-fromLocaleBundle :: LocaleBundleDTO -> U.UUID -> Locale
-fromLocaleBundle lb tenantUuid =
+fromLocaleBundle :: LocaleBundleDTO -> U.UUID -> U.UUID -> Locale
+fromLocaleBundle lb uuid tenantUuid =
   Locale
-    { lId = lb.lId
+    { uuid = uuid
     , name = lb.name
     , description = lb.description
     , code = lb.code

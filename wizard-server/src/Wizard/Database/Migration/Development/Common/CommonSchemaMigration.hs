@@ -35,6 +35,7 @@ dropFunctions = do
   logInfo _CMP_MIGRATION "(Function/Common) drop functions"
   let sql =
         "DROP FUNCTION IF EXISTS gravatar_hash; \
+        \DROP FUNCTION IF EXISTS create_persistent_command_from_entity_uuid; \
         \DROP FUNCTION IF EXISTS create_persistent_command_from_entity_id; \
         \DROP FUNCTION IF EXISTS create_persistent_command; \
         \DROP FUNCTION IF EXISTS is_outdated; \
@@ -55,6 +56,7 @@ createFunctions = do
   createIsOutdatedVersionFn
   createPersistentCommandFunction
   createPersistentCommandFromEntityIdFunction
+  createPersistentCommandFromEntityUuidFunction
   createGravatarFunction
 
 createMajorVersionFn = do
@@ -221,6 +223,31 @@ createPersistentCommandFromEntityIdFunction = do
         \            component, \
         \            function, \
         \            jsonb_build_object('id', OLD.id), \
+        \            OLD.tenant_uuid); \
+        \    RETURN OLD; \
+        \END; \
+        \$$ LANGUAGE plpgsql;"
+  let action conn = execute_ conn sql
+  runDB action
+
+createPersistentCommandFromEntityUuidFunction = do
+  let sql =
+        "CREATE OR REPLACE FUNCTION create_persistent_command_from_entity_uuid() \
+        \    RETURNS TRIGGER AS \
+        \$$ \
+        \DECLARE \
+        \    component varchar; \
+        \    function  varchar; \
+        \    destination  varchar; \
+        \BEGIN \
+        \    component := TG_ARGV[0]; \
+        \    function := TG_ARGV[1]; \
+        \    destination := TG_ARGV[2]; \
+        \ \
+        \    PERFORM create_persistent_command( \
+        \            component, \
+        \            function, \
+        \            jsonb_build_object('uuid', OLD.uuid), \
         \            OLD.tenant_uuid); \
         \    RETURN OLD; \
         \END; \

@@ -18,6 +18,7 @@ import Registry.Model.Statistics.InstanceStatistics
 import RegistryLib.Model.Organization.Organization
 import Shared.Common.Constant.Api
 import Shared.Common.Model.Error.Error
+import Shared.Coordinate.Model.Coordinate.Coordinate
 
 auditListPackages :: [(String, String)] -> AppContextM (Either AppError (Maybe AuditEntry))
 auditListPackages headers =
@@ -45,11 +46,11 @@ auditGetDocumentTemplateBundle documentTemplateId =
     insertAuditEntry entry
     return . Right . Just $ entry
 
-auditGetLocaleBundle :: String -> AppContextM (Either AppError (Maybe AuditEntry))
-auditGetLocaleBundle localeId =
+auditGetLocaleBundle :: Coordinate -> AppContextM (Either AppError (Maybe AuditEntry))
+auditGetLocaleBundle lId =
   heGetOrganizationFromContext $ \org -> do
     now <- liftIO getCurrentTime
-    let entry = GetLocaleBundleAuditEntry {organizationId = org.organizationId, localeId = localeId, createdAt = now}
+    let entry = GetLocaleBundleAuditEntry {organizationId = org.organizationId, localeId = show lId, createdAt = now}
     insertAuditEntry entry
     return . Right . Just $ entry
 

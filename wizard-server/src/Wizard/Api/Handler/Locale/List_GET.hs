@@ -17,7 +17,7 @@ type List_GET =
     :> Header "Host" String
     :> "locales"
     :> QueryParam "organizationId" String
-    :> QueryParam "mLocaleId" String
+    :> QueryParam "localeId" String
     :> QueryParam "q" String
     :> QueryParam "page" Int
     :> QueryParam "size" Int

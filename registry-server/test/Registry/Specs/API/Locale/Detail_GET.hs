@@ -70,4 +70,4 @@ test_404 appContext =
     reqHeaders
     reqBody
     "locale"
-    [("id", "global:non-existing-locale:1.0.0")]
+    [("organization_id", "global"), ("locale_id", "non-existing-locale"), ("version", "1.0.0")]

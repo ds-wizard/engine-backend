@@ -1,9 +1,10 @@
-module Wizard.Model.Locale.LocaleSimple where
+module Shared.Locale.Model.Locale.LocaleSimple where
 
+import qualified Data.UUID as U
 import GHC.Generics
 
 data LocaleSimple = LocaleSimple
-  { lId :: String
+  { uuid :: U.UUID
   , name :: String
   , code :: String
   , defaultLocale :: Bool

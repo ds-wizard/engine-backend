@@ -212,5 +212,5 @@ userAlbertApiTokenEditedDto =
 userAlbertEditedLocale :: User
 userAlbertEditedLocale =
   userAlbert
-    { locale = Just localeNl.lId
+    { locale = Just localeNl.uuid
     }

@@ -2,14 +2,14 @@ module Wizard.Api.Resource.User.UserDTO where
 
 import Data.Hashable
 import Data.Time
-import Data.UUID
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Api.Resource.User.UserSubmissionPropJM ()
 import Wizard.Util.Hashable ()
 
 data UserDTO = UserDTO
-  { uuid :: UUID
+  { uuid :: U.UUID
   , firstName :: String
   , lastName :: String
   , email :: String
@@ -19,7 +19,7 @@ data UserDTO = UserDTO
   , permissions :: [String]
   , active :: Bool
   , imageUrl :: Maybe String
-  , locale :: Maybe String
+  , locale :: Maybe U.UUID
   , lastSeenNewsId :: Maybe String
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

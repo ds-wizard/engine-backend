@@ -10,7 +10,7 @@ import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Api.Resource.Registry.RegistryCreateJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Registry.RegistryService
+import Wizard.Service.Registry.Registration.RegistryRegistrationService
 
 type List_Signup_POST =
   Header "Host" String

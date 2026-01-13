@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Locale.Detail_DELETE where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -12,14 +13,13 @@ type Detail_DELETE =
   Header "Authorization" String
     :> Header "Host" String
     :> "locales"
-    :> Capture "lclId" String
+    :> Capture "uuid" U.UUID
     :> Verb DELETE 204 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] NoContent)
 
-detail_DELETE
-  :: Maybe String -> Maybe String -> String -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
-detail_DELETE mTokenHeader mServerUrl lclId =
+detail_DELETE :: Maybe String -> Maybe String -> U.UUID -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
+detail_DELETE mTokenHeader mServerUrl uuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        deleteLocale lclId
+        deleteLocale uuid
         return NoContent

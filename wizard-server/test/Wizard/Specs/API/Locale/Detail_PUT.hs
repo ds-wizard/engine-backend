@@ -24,11 +24,11 @@ import Wizard.Specs.API.Locale.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /wizard-api/locales/{lclId}
+-- PUT /wizard-api/locales/{uuid}
 -- ------------------------------------------------------------------------
 detail_PUT :: AppContext -> SpecWith ((), Application)
 detail_PUT appContext =
-  describe "PUT /wizard-api/locales/{lclId}" $ do
+  describe "PUT /wizard-api/locales/{uuid}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -39,7 +39,7 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/wizard-api/locales/global:dutch:1.0.0"
+reqUrl = "/wizard-api/locales/d9894fb9-c6a5-4294-98d6-b46d75684d53"
 
 reqHeaders = [reqCtHeader, reqAuthHeader]
 
@@ -84,8 +84,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/locales/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/locales/99193032-99e3-4676-acd8-222983ea0b88"
     reqHeaders
     reqBody
     "locale"
-    [("id", "deab6c38-aeac-4b17-a501-4365a0a70176")]
+    [("uuid", "99193032-99e3-4676-acd8-222983ea0b88")]

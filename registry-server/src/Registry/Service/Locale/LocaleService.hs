@@ -8,6 +8,7 @@ import Registry.Service.Locale.LocaleMapper
 import Registry.Service.Locale.LocaleUtil
 import Registry.Service.Locale.LocaleValidation
 import RegistryLib.Api.Resource.Locale.LocaleDTO
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.Coordinate.Util.Coordinate
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
@@ -19,10 +20,10 @@ getLocales queryParams mRecommendedAppVersion = do
   orgs <- findOrganizations
   return . fmap (toDTO orgs) . chooseTheNewest . groupLocales $ locales
 
-getLocaleById :: String -> AppContextM LocaleDetailDTO
-getLocaleById lclId = do
+getLocaleByCoordinate :: Coordinate -> AppContextM LocaleDetailDTO
+getLocaleByCoordinate lId = do
   checkIfLocaleEnabled
-  locale <- findLocaleById lclId
+  locale <- findLocaleByCoordinate lId
   versions <- getLocaleVersions locale
   org <- findOrganizationByOrgId locale.organizationId
   return $ toDetailDTO locale versions org

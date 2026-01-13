@@ -2,19 +2,20 @@ module Shared.Locale.Model.Locale.LocaleDM where
 
 import Shared.Common.Constant.Tenant
 import Shared.Common.Util.Date
+import Shared.Common.Util.Uuid
 import Shared.Locale.Constant.Locale
 import Shared.Locale.Model.Locale.Locale
 
 localeDefault :: Locale
 localeDefault =
   Locale
-    { lId = defaultLocaleId
+    { uuid = u' "7fb838c5-9279-4a78-8c2b-86ee9762a95f"
     , name = "English"
     , description = "Default English locale"
     , code = "en"
-    , organizationId = "wizard"
-    , localeId = "default"
-    , version = "1.0.0"
+    , organizationId = defaultLocaleOrganizationId
+    , localeId = defaultLocaleLocaleId
+    , version = defaultLocaleVersion
     , defaultLocale = True
     , license = "Apache-2.0"
     , readme = "# English Locale"
