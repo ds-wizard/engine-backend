@@ -27,6 +27,7 @@ import Shared.Common.Api.Resource.Common.SemVer2TupleJM ()
 import Shared.Common.Constant.Api
 import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.String (f', splitOn)
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.DocumentTemplate.Constant.DocumentTemplate
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Bundle.KnowledgeModelBundleJM ()
 import Shared.KnowledgeModel.Constant.KnowledgeModel
@@ -124,11 +125,11 @@ toRetrieveTemplateBundleByIdRequest serverConfig tenantConfig tmlId =
     , multipart = Nothing
     }
 
-toRetrieveLocaleBundleByIdRequest :: ServerConfigRegistry -> TenantConfigRegistry -> String -> HttpRequest
-toRetrieveLocaleBundleByIdRequest serverConfig tenantConfig lclId =
+toRetrieveLocaleBundleByIdRequest :: ServerConfigRegistry -> TenantConfigRegistry -> Coordinate -> HttpRequest
+toRetrieveLocaleBundleByIdRequest serverConfig tenantConfig coordinate =
   HttpRequest
     { requestMethod = "GET"
-    , requestUrl = serverConfig.url ++ "/locales/" ++ lclId ++ "/bundle"
+    , requestUrl = serverConfig.url ++ "/locales/" ++ show coordinate ++ "/bundle"
     , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ tenantConfig.token)]
     , requestBody = BS.empty
     , multipart = Nothing

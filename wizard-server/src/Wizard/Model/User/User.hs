@@ -24,7 +24,7 @@ data User = User
   , permissions :: [String]
   , active :: Bool
   , imageUrl :: Maybe String
-  , locale :: Maybe String
+  , locale :: Maybe U.UUID
   , machine :: Bool
   , lastSeenNewsId :: Maybe String
   , tenantUuid :: U.UUID

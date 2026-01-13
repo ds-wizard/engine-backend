@@ -30,7 +30,7 @@ userAlbertSuggestion =
     }
 
 userLocaleEmpty :: UserLocaleDTO
-userLocaleEmpty = UserLocaleDTO {lId = Nothing}
+userLocaleEmpty = UserLocaleDTO {uuid = Nothing}
 
 userLocale :: UserLocaleDTO
-userLocale = UserLocaleDTO {lId = Just localeNl.lId}
+userLocale = UserLocaleDTO {uuid = Just localeNl.uuid}

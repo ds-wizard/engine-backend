@@ -106,7 +106,6 @@ buildSchema appContext = do
   runInContext DocumentTemplate.dropFunctions appContext
   runInContext KnowledgeModelEditor.dropFunctions appContext
   runInContext KnowledgeModelPackage.dropFunctions appContext
-  runInContext Locale.dropFunctions appContext
   runInContext Common.dropFunctions appContext
   putStrLn "DB: dropping schema"
   runInContext ExternalLink.dropTables appContext
@@ -170,7 +169,6 @@ buildSchema appContext = do
   runInContext ExternalLink.createTables appContext
   putStrLn "DB: Creating DB functions"
   runInContext Common.createFunctions appContext
-  runInContext Locale.createFunctions appContext
   runInContext KnowledgeModelPackage.createFunctions appContext
   runInContext KnowledgeModelEditor.createFunctions appContext
   runInContext DocumentTemplate.createFunctions appContext

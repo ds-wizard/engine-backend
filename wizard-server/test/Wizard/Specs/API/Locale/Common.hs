@@ -15,7 +15,7 @@ import Wizard.Specs.Common
 -- ASSERTS
 -- --------------------------------
 assertExistenceOfLocaleInDB appContext locale = do
-  eLocale <- runInContextIO (findLocaleById locale.lId) appContext
+  eLocale <- runInContextIO (findLocaleByUuid locale.uuid) appContext
   liftIO $ isRight eLocale `shouldBe` True
   let (Right localeFromDB) = eLocale
   compareLocaleDtos localeFromDB locale
@@ -24,6 +24,6 @@ assertExistenceOfLocaleInDB appContext locale = do
 -- COMPARATORS
 -- --------------------------------
 compareLocaleDtos resDto expDto = do
-  liftIO $ resDto.lId `shouldBe` expDto.lId
+  liftIO $ resDto.uuid `shouldBe` expDto.uuid
   liftIO $ resDto.enabled `shouldBe` expDto.enabled
   liftIO $ resDto.defaultLocale `shouldBe` expDto.defaultLocale

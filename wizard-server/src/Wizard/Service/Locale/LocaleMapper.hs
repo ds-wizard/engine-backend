@@ -7,6 +7,7 @@ import qualified Data.UUID as U
 import RegistryLib.Model.Organization.OrganizationSimple
 import Shared.Coordinate.Util.Coordinate
 import Shared.Locale.Model.Locale.Locale
+import Shared.Locale.Model.Locale.LocaleSimple
 import Wizard.Api.Resource.Locale.LocaleChangeDTO
 import Wizard.Api.Resource.Locale.LocaleCreateDTO
 import Wizard.Api.Resource.Locale.LocaleDTO
@@ -19,7 +20,7 @@ import Wizard.Service.Locale.LocaleUtil
 toDTO :: Bool -> LocaleList -> LocaleDTO
 toDTO registryEnabled locale =
   LocaleDTO
-    { lId = locale.lId
+    { uuid = locale.uuid
     , name = locale.name
     , description = locale.description
     , code = locale.code
@@ -46,10 +47,13 @@ toDTO registryEnabled locale =
     , updatedAt = locale.updatedAt
     }
 
+toSimple :: Locale -> LocaleSimple
+toSimple Locale {..} = LocaleSimple {..}
+
 toDetailDTO :: Locale -> Bool -> [RegistryLocale] -> [RegistryOrganization] -> [String] -> Maybe String -> LocaleDetailDTO
 toDetailDTO locale registryEnabled localeRs orgRs versionLs registryLink =
   LocaleDetailDTO
-    { lId = locale.lId
+    { uuid = locale.uuid
     , name = locale.name
     , description = locale.description
     , code = locale.code
@@ -81,7 +85,7 @@ toDetailDTO locale registryEnabled localeRs orgRs versionLs registryLink =
 toLocaleList :: Locale -> LocaleList
 toLocaleList locale =
   LocaleList
-    { lId = locale.lId
+    { uuid = locale.uuid
     , name = locale.name
     , description = locale.description
     , code = locale.code
@@ -97,10 +101,10 @@ toLocaleList locale =
     , updatedAt = locale.updatedAt
     }
 
-fromCreateDTO :: LocaleCreateDTO -> String -> Bool -> U.UUID -> UTCTime -> Locale
-fromCreateDTO reqDto organizationId defaultLocale tenantUuid now =
+fromCreateDTO :: LocaleCreateDTO -> U.UUID -> String -> Bool -> U.UUID -> UTCTime -> Locale
+fromCreateDTO reqDto uuid organizationId defaultLocale tenantUuid now =
   Locale
-    { lId = buildCoordinate organizationId reqDto.localeId reqDto.version
+    { uuid = uuid
     , name = reqDto.name
     , description = reqDto.description
     , code = reqDto.code
@@ -120,7 +124,7 @@ fromCreateDTO reqDto organizationId defaultLocale tenantUuid now =
 fromChangeDTO :: Locale -> LocaleChangeDTO -> UTCTime -> Locale
 fromChangeDTO locale reqDto now =
   Locale
-    { lId = locale.lId
+    { uuid = locale.uuid
     , name = locale.name
     , description = locale.description
     , code = locale.code

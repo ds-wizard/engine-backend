@@ -4,8 +4,10 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Coordinate.Model.Coordinate.Coordinate
+
 data Locale = Locale
-  { lId :: String
+  { uuid :: U.UUID
   , name :: String
   , description :: String
   , code :: String
@@ -28,3 +30,11 @@ instance Ord Locale where
     compare a.organizationId b.organizationId
       <> compare a.localeId b.localeId
       <> compare a.version b.version
+
+instance CoordinateFactory Locale where
+  createCoordinate locale =
+    Coordinate
+      { organizationId = locale.organizationId
+      , entityId = locale.localeId
+      , version = locale.version
+      }
