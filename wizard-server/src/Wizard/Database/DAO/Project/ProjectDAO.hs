@@ -390,7 +390,7 @@ findProjectDetail uuid = do
             \        FROM project_action \
             \             LEFT JOIN pkg k ON true \
             \        WHERE project_action.metamodel_version = ${projectActionMetamodelVersion} \
-            \          AND exists (SELECT 1 \
+            \          AND tenant_uuid = '${tenantUuid}' AND exists (SELECT 1 \
             \                       FROM jsonb_array_elements(project_action.allowed_packages) AS spec(elem) \
             \                       WHERE ((spec.elem ->> 'kmId') IS NULL OR (spec.elem ->> 'kmId') = k.km_id) \
             \                         AND ((spec.elem ->> 'orgId') IS NULL OR (spec.elem ->> 'orgId') = k.org_id) \
@@ -408,7 +408,7 @@ findProjectDetail uuid = do
             \        FROM project_importer \
             \             LEFT JOIN pkg k ON true \
             \        WHERE project_importer.metamodel_version = ${projectImporterMetamodelVersion} \
-            \          AND exists (SELECT 1 \
+            \          AND tenant_uuid = '${tenantUuid}' AND exists (SELECT 1 \
             \                       FROM jsonb_array_elements(project_importer.allowed_packages) AS spec(elem) \
             \                       WHERE ((spec.elem ->> 'kmId') IS NULL OR (spec.elem ->> 'kmId') = k.km_id) \
             \                         AND ((spec.elem ->> 'orgId') IS NULL OR (spec.elem ->> 'orgId') = k.org_id) \
@@ -461,7 +461,7 @@ findProjectDetailQuestionnaire uuid = do
             \        FROM project_action \
             \             LEFT JOIN pkg k ON true \
             \        WHERE project_action.metamodel_version = ${projectActionMetamodelVersion} \
-            \          AND exists (SELECT 1 \
+            \          AND tenant_uuid = '${tenantUuid}' AND exists (SELECT 1 \
             \                       FROM jsonb_array_elements(project_action.allowed_packages) AS spec(elem) \
             \                       WHERE ((spec.elem ->> 'kmId') IS NULL OR (spec.elem ->> 'kmId') = k.km_id) \
             \                         AND ((spec.elem ->> 'orgId') IS NULL OR (spec.elem ->> 'orgId') = k.org_id) \
@@ -479,7 +479,7 @@ findProjectDetailQuestionnaire uuid = do
             \        FROM project_importer \
             \             LEFT JOIN pkg k ON true \
             \        WHERE project_importer.metamodel_version = ${projectImporterMetamodelVersion} \
-            \          AND exists (SELECT 1 \
+            \          AND tenant_uuid = '${tenantUuid}' AND exists (SELECT 1 \
             \                       FROM jsonb_array_elements(project_importer.allowed_packages) AS spec(elem) \
             \                       WHERE ((spec.elem ->> 'kmId') IS NULL OR (spec.elem ->> 'kmId') = k.km_id) \
             \                         AND ((spec.elem ->> 'orgId') IS NULL OR (spec.elem ->> 'orgId') = k.org_id) \
