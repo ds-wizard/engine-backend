@@ -2,6 +2,7 @@ module Wizard.Service.KnowledgeModel.Metamodel.Migrator.KnowledgeModelEditorMigr
   migrateAll,
 ) where
 
+import Control.Monad (void)
 import Control.Monad.Reader (asks)
 import qualified Data.Aeson as A
 import Data.Foldable (traverse_)
@@ -39,3 +40,4 @@ migrateOneInDB tenantUuid editor = do
         deleteKnowledgeModelEventsByEditorUuid editor.uuid
         let kmEventsMigrated = fmap (toKnowledgeModelEditorRawEvent editor.uuid tenantUuid) eventsMigrated
         traverse_ insertKnowledgeModelRawEvent kmEventsMigrated
+        void $ updateKnowledgeModelEditorMetamodelVersion editor.uuid kmMetamodelVersion
