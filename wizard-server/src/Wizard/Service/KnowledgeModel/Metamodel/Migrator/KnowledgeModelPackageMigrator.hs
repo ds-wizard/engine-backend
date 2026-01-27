@@ -2,6 +2,7 @@ module Wizard.Service.KnowledgeModel.Metamodel.Migrator.KnowledgeModelPackageMig
   migrateAll,
 ) where
 
+import Control.Monad (void)
 import Control.Monad.Reader (asks)
 import qualified Data.Aeson as A
 import Data.Foldable (traverse_)
@@ -14,6 +15,7 @@ import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelPackageDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Service.KnowledgeModel.Metamodel.Migrator.CommonDB
 
@@ -39,3 +41,4 @@ migrateOneInDB tenantUuid pkg = do
         let kmEventsMigrated = fmap (toPackageRawEvent pkg.pId tenantUuid) eventsMigrated
         deletePackageEventsById pkg.pId
         traverse_ insertPackageRawEvent kmEventsMigrated
+        void $ updatePackageMetamodelVersion pkg.pId knowledgeModelMetamodelVersion

@@ -147,6 +147,15 @@ updateKnowledgeModelEditorByUuid kmEditor = do
   let action conn = execute conn sql params
   runDB action
 
+updateKnowledgeModelEditorMetamodelVersion :: U.UUID -> Int -> AppContextM Int64
+updateKnowledgeModelEditorMetamodelVersion uuid metamodelVersion = do
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE knowledge_model_editor SET metamodel_version = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = [toField metamodelVersion, toField tenantUuid, toField uuid]
+  logQuery sql params
+  let action conn = execute conn sql params
+  runDB action
+
 deleteKnowledgeModelEditors :: AppContextM Int64
 deleteKnowledgeModelEditors = createDeleteEntitiesFn entityName
 

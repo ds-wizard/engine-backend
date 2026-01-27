@@ -63,6 +63,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0058_documentTem
 import qualified Wizard.Database.Migration.Production.Migration_0059_integrationReplyFix.Migration as M_0059
 import qualified Wizard.Database.Migration.Production.Migration_0060_knowledgeModelRefactor.Migration as M_0060
 import qualified Wizard.Database.Migration.Production.Migration_0061_news.Migration as M_0061
+import qualified Wizard.Database.Migration.Production.Migration_0062_metamodelFix.Migration as M_0062
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -127,4 +128,5 @@ migrationDefinitions =
   , M_0059.definition
   , M_0060.definition
   , M_0061.definition
+  , M_0062.definition
   ]

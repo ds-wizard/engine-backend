@@ -150,6 +150,15 @@ countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike m
     [count] -> return . fromOnly $ count
     _ -> return 0
 
+updatePackageMetamodelVersion :: String -> Int -> AppContextM Int64
+updatePackageMetamodelVersion pkgId metamodelVersion = do
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "UPDATE knowledge_model_package SET metamodel_version = ? WHERE tenant_uuid = ? AND id = ?"
+  let params = [toField metamodelVersion, toField tenantUuid, toField pkgId]
+  logQuery sql params
+  let action conn = execute conn sql params
+  runDB action
+
 updatePackagePhaseById :: String -> KnowledgeModelPackagePhase -> AppContextM Int64
 updatePackagePhaseById pkgId phase = do
   tenantUuid <- asks currentTenantUuid
