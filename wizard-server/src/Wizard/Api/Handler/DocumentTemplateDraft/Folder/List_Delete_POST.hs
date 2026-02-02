@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.DocumentTemplateDraft.Folder.List_Delete_POST where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -15,7 +16,7 @@ type List_Delete_POST =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] DocumentTemplateFolderDeleteDTO
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "uuid" U.UUID
     :> "folders"
     :> "delete"
     :> Verb POST 204 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] NoContent)
@@ -24,11 +25,11 @@ list_delete_POST
   :: Maybe String
   -> Maybe String
   -> DocumentTemplateFolderDeleteDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
-list_delete_POST mTokenHeader mServerUrl reqDto documentTemplateId =
+list_delete_POST mTokenHeader mServerUrl reqDto documentTemplateUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        deleteDraftFolder documentTemplateId reqDto
+        deleteDraftFolder documentTemplateUuid reqDto
         return NoContent

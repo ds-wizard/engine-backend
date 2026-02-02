@@ -7,6 +7,7 @@ import GHC.Int
 
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 import Wizard.Model.Document.Document
+import Wizard.Model.DocumentTemplate.DocumentTemplateWithCoordinate
 
 data DocumentList = DocumentList
   { uuid :: U.UUID
@@ -16,8 +17,7 @@ data DocumentList = DocumentList
   , projectName :: String
   , projectEventUuid :: Maybe U.UUID
   , projectVersion :: Maybe String
-  , documentTemplateId :: String
-  , documentTemplateName :: String
+  , documentTemplate :: DocumentTemplateWithCoordinate
   , documentTemplateFormat :: DocumentTemplateFormatSimple
   , fileSize :: Maybe Int64
   , workerLog :: Maybe String

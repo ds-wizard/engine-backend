@@ -20,7 +20,7 @@ instance ToRow Project where
     , toField sharing
     , toField knowledgeModelPackageId
     , toField . PGArray $ selectedQuestionTagUuids
-    , toField documentTemplateId
+    , toField documentTemplateUuid
     , toField formatUuid
     , toField creatorUuid
     , toField createdAt
@@ -40,7 +40,7 @@ instance FromRow Project where
     sharing <- field
     knowledgeModelPackageId <- field
     selectedQuestionTagUuids <- fromPGArray <$> field
-    documentTemplateId <- field
+    documentTemplateUuid <- field
     formatUuid <- field
     creatorUuid <- field
     let permissions = []

@@ -18,26 +18,26 @@ import Shared.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplat
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 
-findDocumentTemplateFormats :: AppContextC s sc m => String -> m [DocumentTemplateFormat]
-findDocumentTemplateFormats documentTemplateId = do
+findDocumentTemplateFormats :: AppContextC s sc m => U.UUID -> m [DocumentTemplateFormat]
+findDocumentTemplateFormats documentTemplateUuid = do
   tenantUuid <- asks (.tenantUuid')
-  formats <- createFindEntitiesBySortedFn "document_template_format" [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId)] [Sort "name" Ascending]
+  formats <- createFindEntitiesBySortedFn "document_template_format" [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid)] [Sort "name" Ascending]
   traverse
     ( \format -> do
-        steps <- findDocumentTemplateFormatSteps documentTemplateId format.uuid
+        steps <- findDocumentTemplateFormatSteps documentTemplateUuid format.uuid
         return $ format {steps = steps}
     )
     formats
 
-findDocumentTemplateFormatSteps :: AppContextC s sc m => String -> U.UUID -> m [DocumentTemplateFormatStep]
-findDocumentTemplateFormatSteps documentTemplateId formatUuid = do
+findDocumentTemplateFormatSteps :: AppContextC s sc m => U.UUID -> U.UUID -> m [DocumentTemplateFormatStep]
+findDocumentTemplateFormatSteps documentTemplateUuid formatUuid = do
   tenantUuid <- asks (.tenantUuid')
-  createFindEntitiesByFn "document_template_format_step" [("tenant_uuid", U.toString tenantUuid), ("document_template_id", documentTemplateId), ("format_uuid", U.toString formatUuid)]
+  createFindEntitiesByFn "document_template_format_step" [("tenant_uuid", U.toString tenantUuid), ("document_template_uuid", U.toString documentTemplateUuid), ("format_uuid", U.toString formatUuid)]
 
-findDocumentTemplateFormatByDocumentTemplateIdAndUuid :: AppContextC s sc m => String -> U.UUID -> m DocumentTemplateFormatSimple
-findDocumentTemplateFormatByDocumentTemplateIdAndUuid documentTemplateId uuid = do
+findDocumentTemplateFormatByDocumentTemplateIdAndUuid :: AppContextC s sc m => U.UUID -> U.UUID -> m DocumentTemplateFormatSimple
+findDocumentTemplateFormatByDocumentTemplateIdAndUuid documentTemplateUuid uuid = do
   tenantUuid <- asks (.tenantUuid')
-  createFindEntityWithFieldsByFn "uuid, name, icon" False "document_template_format" [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId), ("uuid", U.toString uuid)]
+  createFindEntityWithFieldsByFn "uuid, name, icon" False "document_template_format" [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid), ("uuid", U.toString uuid)]
 
 insertDocumentTemplateFormat :: AppContextC s sc m => DocumentTemplateFormat -> m ()
 insertDocumentTemplateFormat format = do
@@ -50,26 +50,26 @@ insertOrUpdateDocumentTemplateFormat format = do
         fromString $
           "INSERT INTO document_template_format \
           \VALUES (?, ?, ?, ?, ?, ?, ?) \
-          \ON CONFLICT (tenant_uuid, document_template_id, uuid) DO UPDATE SET document_template_id = ?, \
-          \                                                                    uuid                 = ?, \
-          \                                                                    name                 = ?, \
-          \                                                                    icon                 = ?, \
-          \                                                                    tenant_uuid          = ?, \
-          \                                                                    created_at           = ?, \
-          \                                                                    updated_at           = ?; \
-          \DELETE FROM document_template_format_step WHERE tenant_uuid = ? AND document_template_id = ? AND format_uuid = ?;"
+          \ON CONFLICT (document_template_uuid, uuid) DO UPDATE SET document_template_uuid = ?, \
+          \                                                         uuid                   = ?, \
+          \                                                         name                   = ?, \
+          \                                                         icon                   = ?, \
+          \                                                         tenant_uuid            = ?, \
+          \                                                         created_at             = ?, \
+          \                                                         updated_at             = ?; \
+          \DELETE FROM document_template_format_step WHERE tenant_uuid = ? AND document_template_uuid = ? AND format_uuid = ?;"
             ++ concatMap (const "INSERT INTO document_template_format_step VALUES (?, ?, ?, ?, ?, ?, ?, ?);") format.steps
   let params =
         toRow format
           ++ toRow format
-          ++ [toField format.tenantUuid, toField format.documentTemplateId, toField format.uuid]
+          ++ [toField format.tenantUuid, toField format.documentTemplateUuid, toField format.uuid]
           ++ concatMap toRow format.steps
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
 
-deleteDocumentTemplateFormatsExcept :: AppContextC s sc m => String -> [U.UUID] -> m Int64
-deleteDocumentTemplateFormatsExcept documentTemplateId formatUuids = do
+deleteDocumentTemplateFormatsExcept :: AppContextC s sc m => U.UUID -> [U.UUID] -> m Int64
+deleteDocumentTemplateFormatsExcept documentTemplateUuid formatUuids = do
   let formatUuidsCondition =
         case formatUuids of
           [] -> ""
@@ -79,9 +79,9 @@ deleteDocumentTemplateFormatsExcept documentTemplateId formatUuids = do
         fromString $
           f'
             "DELETE FROM document_template_format \
-            \WHERE tenant_uuid = ? AND document_template_id = ? %s"
+            \WHERE tenant_uuid = ? AND document_template_uuid = ? %s"
             [formatUuidsCondition]
-  let params = [U.toString tenantUuid, documentTemplateId] ++ fmap U.toString formatUuids
+  let params = [U.toString tenantUuid, U.toString documentTemplateUuid] ++ fmap U.toString formatUuids
   logQuery sql params
   let action conn = execute conn sql params
   runDB action

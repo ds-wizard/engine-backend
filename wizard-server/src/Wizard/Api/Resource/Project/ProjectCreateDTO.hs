@@ -11,7 +11,7 @@ data ProjectCreateDTO = ProjectCreateDTO
   , visibility :: ProjectVisibility
   , sharing :: ProjectSharing
   , questionTagUuids :: [U.UUID]
-  , documentTemplateId :: Maybe String
+  , documentTemplateUuid :: Maybe U.UUID
   , formatUuid :: Maybe U.UUID
   }
   deriving (Show, Eq, Generic)

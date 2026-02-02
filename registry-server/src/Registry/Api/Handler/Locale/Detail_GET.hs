@@ -15,7 +15,7 @@ import Shared.Coordinate.Model.Coordinate.Coordinate
 
 type Detail_GET =
   "locales"
-    :> Capture "id" Coordinate
+    :> Capture "coordinate" Coordinate
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] LocaleDetailDTO)
 
 detail_GET :: Coordinate -> BaseContextM (Headers '[Header "x-trace-uuid" String] LocaleDetailDTO)

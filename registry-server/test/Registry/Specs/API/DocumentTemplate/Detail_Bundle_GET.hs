@@ -11,7 +11,6 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Registry.Model.Context.AppContext
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 import Registry.Specs.API.Common
 import Registry.Specs.Common
@@ -32,7 +31,7 @@ detail_bundle_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = BS.pack $ "/document-templates/" ++ wizardDocumentTemplate.tId ++ "/bundle"
+reqUrl = BS.pack $ "/document-templates/" ++ show wizardDocumentTemplateCoordinate ++ "/bundle"
 
 reqHeaders = [reqAdminAuthHeader, reqCtHeader]
 
@@ -71,4 +70,4 @@ test_404 appContext =
     reqHeaders
     reqBody
     "document_template"
-    [("id", "global:non-existing-template:1.0.0")]
+    [("organization_id", "global"), ("template_id", "non-existing-template"), ("version", "1.0.0")]

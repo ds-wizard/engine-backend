@@ -31,7 +31,7 @@ createTables = do
         \    document_template_count        int, \
         \    document_count                 int, \
         \    knowledge_model_package_id     varchar, \
-        \    document_template_id           varchar, \
+        \    document_template_uuid           varchar, \
         \    locale_id                      varchar \
         \);"
   let action conn = execute_ conn sql

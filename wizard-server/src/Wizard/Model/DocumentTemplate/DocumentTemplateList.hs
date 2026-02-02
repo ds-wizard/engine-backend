@@ -1,6 +1,7 @@
 module Wizard.Model.DocumentTemplate.DocumentTemplateList where
 
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Common.SemVer2Tuple
@@ -8,7 +9,7 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 
 data DocumentTemplateList = DocumentTemplateList
-  { tId :: String
+  { uuid :: U.UUID
   , name :: String
   , organizationId :: String
   , templateId :: String

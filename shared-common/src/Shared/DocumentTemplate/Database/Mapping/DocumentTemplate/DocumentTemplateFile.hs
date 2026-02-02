@@ -9,7 +9,7 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 instance ToRow DocumentTemplateFile where
   toRow DocumentTemplateFile {..} =
-    [ toField documentTemplateId
+    [ toField documentTemplateUuid
     , toField uuid
     , toField fileName
     , toField content
@@ -20,7 +20,7 @@ instance ToRow DocumentTemplateFile where
 
 instance FromRow DocumentTemplateFile where
   fromRow = do
-    documentTemplateId <- field
+    documentTemplateUuid <- field
     uuid <- field
     fileName <- field
     content <- field

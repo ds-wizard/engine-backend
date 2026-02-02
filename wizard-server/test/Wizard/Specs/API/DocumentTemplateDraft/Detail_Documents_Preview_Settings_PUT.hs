@@ -3,12 +3,16 @@ module Wizard.Specs.API.DocumentTemplateDraft.Detail_Documents_Preview_Settings_
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
 import Data.Foldable (traverse_)
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
@@ -18,7 +22,7 @@ import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftDataJM ()
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO
 import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateDrafts
-import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DT_Migration
 import Wizard.Database.Migration.Development.Project.Data.Projects
 import Wizard.Model.Context.AppContext
 
@@ -28,11 +32,11 @@ import Wizard.Specs.API.DocumentTemplateDraft.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /wizard-api/document-template-drafts/{documentTemplateId}/documents/preview/settings
+-- PUT /wizard-api/document-template-drafts/{dtUuid}/documents/preview/settings
 -- ------------------------------------------------------------------------
 detail_documents_preview_settings_PUT :: AppContext -> SpecWith ((), Application)
 detail_documents_preview_settings_PUT appContext =
-  describe "PUT /wizard-api/document-template-drafts/{documentTemplateId}/documents/preview/settings" $ do
+  describe "PUT /wizard-api/document-template-drafts/{dtUuid}/documents/preview/settings" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -43,7 +47,7 @@ detail_documents_preview_settings_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/wizard-api/document-template-drafts/global:project-report:2.0.0/documents/preview/settings"
+reqUrl = BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplateDraft.uuid ++ "/documents/preview/settings"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 
@@ -66,7 +70,7 @@ create_test_200 title appContext reqAuthHeader =
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       let expDto = wizardDocumentTemplateDraftDataDTO
       -- AND: Run migrations
-      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO DT_Migration.runMigration appContext
       runInContextIO (insertPackage germanyKmPackage) appContext
       runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
       runInContextIO (insertProject project1) appContext
@@ -98,8 +102,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/document-template-drafts/deab6c38-aeac-4b17-a501-4365a0a70176/documents/preview/settings"
+    "/wizard-api/document-template-drafts/3db4265e-8ba2-433d-97fb-6cc504866bbd/documents/preview/settings"
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template_draft_data"
-    [("document_template_id", "deab6c38-aeac-4b17-a501-4365a0a70176")]
+    [("document_template_uuid", "3db4265e-8ba2-433d-97fb-6cc504866bbd")]

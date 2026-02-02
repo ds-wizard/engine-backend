@@ -12,12 +12,10 @@ import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Util.Logger
-import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO (deleteAssetsByDocumentTemplateId)
-import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFileDAO (deleteFilesByDocumentTemplateId)
 import Shared.DocumentTemplate.Database.Mapping.DocumentTemplate.DocumentTemplate ()
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO (deleteDraftData, deleteDraftDataByDocumentTemplateId)
+import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDataDAO (deleteDraftData)
 import Wizard.Database.Mapping.DocumentTemplate.DocumentTemplateDraftList ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
@@ -46,7 +44,7 @@ findDraftsPage mQuery pageable sort =
     let sql =
           fromString $
             f'
-              "SELECT id, \
+              "SELECT uuid, \
               \       name, \
               \       organization_id, \
               \       template_id, \
@@ -71,10 +69,10 @@ findDraftsPage mQuery pageable sort =
             }
     return $ Page pageLabel metadata entities
 
-findDraftById :: String -> AppContextM DocumentTemplate
-findDraftById id = do
+findDraftByUuid :: U.UUID -> AppContextM DocumentTemplate
+findDraftByUuid uuid = do
   tenantUuid <- asks currentTenantUuid
-  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("id", id), ("phase", "DraftDocumentTemplatePhase")]
+  createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid), ("phase", "DraftDocumentTemplatePhase")]
 
 countDraftsGroupedByOrganizationIdAndKmId :: AppContextM Int
 countDraftsGroupedByOrganizationIdAndKmId = do
@@ -97,27 +95,27 @@ countDraftsGroupedByOrganizationIdAndKmIdWithTenant tenantUuid = do
     [count] -> return . fromOnly $ count
     _ -> return 0
 
-moveFolder :: String -> String -> String -> AppContextM Int64
-moveFolder documentTemplateId currentFolder newFolder = do
+moveFolder :: U.UUID -> String -> String -> AppContextM Int64
+moveFolder documentTemplateUuid currentFolder newFolder = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
           "UPDATE document_template_asset \
           \SET file_name = concat(?, substr(file_name, length(?) + 1)) \
           \WHERE tenant_uuid = ?  \
-          \  AND document_template_id = ? \
+          \  AND document_template_uuid = ? \
           \  AND starts_with(file_name, ?); \
           \ \
           \UPDATE document_template_file \
           \SET file_name = concat(?, substr(file_name, length(?) + 1)) \
           \WHERE tenant_uuid = ?  \
-          \  AND document_template_id = ? \
+          \  AND document_template_uuid = ? \
           \  AND starts_with(file_name, ?);"
   let paramsForOneUpdate =
         [ toField newFolder
         , toField currentFolder
         , toField tenantUuid
-        , toField documentTemplateId
+        , toField documentTemplateUuid
         , toField currentFolder
         ]
   let params = paramsForOneUpdate ++ paramsForOneUpdate
@@ -125,23 +123,23 @@ moveFolder documentTemplateId currentFolder newFolder = do
   let action conn = execute conn sql params
   runDB action
 
-deleteFolder :: String -> String -> AppContextM Int64
-deleteFolder documentTemplateId path = do
+deleteFolder :: U.UUID -> String -> AppContextM Int64
+deleteFolder documentTemplateUuid path = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
           "DELETE FROM document_template_asset \
           \WHERE tenant_uuid = ?  \
-          \  AND document_template_id = ? \
+          \  AND document_template_uuid = ? \
           \  AND starts_with(file_name, ?); \
           \ \
           \DELETE FROM document_template_file \
           \WHERE tenant_uuid = ?  \
-          \  AND document_template_id = ? \
+          \  AND document_template_uuid = ? \
           \  AND starts_with(file_name, ?);"
   let paramsForOneUpdate =
         [ toField tenantUuid
-        , toField documentTemplateId
+        , toField documentTemplateUuid
         , toField path
         ]
   let params = paramsForOneUpdate ++ paramsForOneUpdate
@@ -155,10 +153,7 @@ deleteDrafts = do
   deleteDraftData
   createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("phase", "DraftDocumentTemplatePhase")]
 
-deleteDraftByDocumentTemplateId :: String -> AppContextM Int64
-deleteDraftByDocumentTemplateId documentTemplateId = do
+deleteDraftByUuid :: U.UUID -> AppContextM Int64
+deleteDraftByUuid uuid = do
   tenantUuid <- asks currentTenantUuid
-  deleteDraftDataByDocumentTemplateId documentTemplateId
-  deleteFilesByDocumentTemplateId documentTemplateId
-  deleteAssetsByDocumentTemplateId documentTemplateId
-  createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("id", documentTemplateId), ("phase", "DraftDocumentTemplatePhase")]
+  createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid), ("phase", "DraftDocumentTemplatePhase")]

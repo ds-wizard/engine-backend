@@ -16,7 +16,7 @@ type Detail_Content_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "documentTemplateUuid" U.UUID
     :> "assets"
     :> Capture "assetUuid" U.UUID
     :> "content"
@@ -25,13 +25,13 @@ type Detail_Content_GET =
 detail_content_GET
   :: Maybe String
   -> Maybe String
-  -> String
+  -> U.UUID
   -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
-detail_content_GET mTokenHeader mServerUrl tmlId assetUuid =
+detail_content_GET mTokenHeader mServerUrl dtUuid assetUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $ do
-      (asset, result) <- getAssetContent tmlId assetUuid
+      (asset, result) <- getAssetContent dtUuid assetUuid
       let cdHeader = asset.contentType
       traceUuid <- asks traceUuid
       return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStream $ result

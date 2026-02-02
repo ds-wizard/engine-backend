@@ -7,6 +7,7 @@ import Registry.Model.Context.AppContext
 import Registry.Service.DocumentTemplate.DocumentTemplateMapper
 import RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Shared.Common.Model.Common.SemVer2Tuple
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.Coordinate.Util.Coordinate
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO hiding (findDocumentTemplatesFiltered)
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -18,10 +19,9 @@ getDocumentTemplates queryParams mMetamodelVersion = do
   orgs <- findOrganizations
   return . fmap (toSimpleDTO orgs) . chooseTheNewest . groupDocumentTemplates $ tmls
 
-getDocumentTemplateById :: String -> AppContextM DocumentTemplateDetailDTO
-getDocumentTemplateById tId = do
-  resolvedId <- resolveDocumentTemplateId tId
-  tml <- findDocumentTemplateById resolvedId
+getDocumentTemplateByCoordinate :: Coordinate -> AppContextM DocumentTemplateDetailDTO
+getDocumentTemplateByCoordinate coordinate = do
+  tml <- findDocumentTemplateByCoordinate coordinate
   versions <- getDocumentTemplateVersions tml
   org <- findOrganizationByOrgId tml.organizationId
   return $ toDetailDTO tml versions org

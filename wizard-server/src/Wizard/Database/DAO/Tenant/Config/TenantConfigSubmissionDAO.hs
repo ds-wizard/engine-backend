@@ -72,8 +72,8 @@ findTenantConfigSubmissionServices = do
     )
     tcSubmissionServices
 
-findTenantConfigSubmissionServicesByDocumentTemplateIdAndFormatUuid :: String -> U.UUID -> AppContextM [TenantConfigSubmissionServiceSimple]
-findTenantConfigSubmissionServicesByDocumentTemplateIdAndFormatUuid documentTemplateId formatUuid = do
+findTenantConfigSubmissionServicesByDocumentTemplateUuidAndFormatUuid :: U.UUID -> U.UUID -> AppContextM [TenantConfigSubmissionServiceSimple]
+findTenantConfigSubmissionServicesByDocumentTemplateUuidAndFormatUuid documentTemplateUuid formatUuid = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
@@ -85,10 +85,10 @@ findTenantConfigSubmissionServicesByDocumentTemplateIdAndFormatUuid documentTemp
           \          ON service.tenant_uuid = supported_format.tenant_uuid AND \
           \             service.id = supported_format.service_id \
           \WHERE service.tenant_uuid = ? \
-          \  AND supported_format.document_template_id = ? \
+          \  AND supported_format.document_template_uuid = ? \
           \  AND supported_format.format_uuid = ? \
           \ORDER BY service.id;"
-  let params = [toField tenantUuid, toField documentTemplateId, toField formatUuid]
+  let params = [toField tenantUuid, toField documentTemplateUuid, toField formatUuid]
   logQuery sql params
   let action conn = query conn sql params
   runDB action
@@ -165,7 +165,7 @@ insertOrUpdateConfigSubmissionServiceSupportedFormat supportedFormat = do
         fromString
           "INSERT INTO config_submission_service_supported_format \
           \VALUES (?, ?, ?, ?) \
-          \ON CONFLICT (tenant_uuid, service_id, document_template_id, format_uuid) DO NOTHING"
+          \ON CONFLICT (tenant_uuid, service_id, document_template_uuid, format_uuid) DO NOTHING"
   let params = toRow supportedFormat
   logQuery sql params
   let action conn = execute conn sql params
@@ -180,9 +180,9 @@ deleteTenantConfigSubmissionsSupportedFormatExcept serviceId supportedFormats = 
           _ ->
             f'
               "AND NOT (%s)"
-              [L.intercalate " OR " (replicate (length supportedFormats) "(document_template_id = ? AND format_uuid = ?)")]
+              [L.intercalate " OR " (replicate (length supportedFormats) "(document_template_uuid = ? AND format_uuid = ?)")]
   let sql = fromString $ f' "DELETE FROM config_submission_service_supported_format WHERE tenant_uuid = ? AND service_id = ? %s" [condition]
-  let params = [toField tenantUuid, toField serviceId] ++ concatMap (\supportedFormat -> [toField supportedFormat.templateId, toField supportedFormat.formatUuid]) supportedFormats
+  let params = [toField tenantUuid, toField serviceId] ++ concatMap (\supportedFormat -> [toField supportedFormat.templateUuid, toField supportedFormat.formatUuid]) supportedFormats
   logQuery sql params
   let action conn = execute conn sql params
   runDB action

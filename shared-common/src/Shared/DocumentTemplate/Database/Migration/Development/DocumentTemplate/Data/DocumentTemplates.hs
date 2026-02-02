@@ -4,14 +4,18 @@ import Data.Maybe (fromJust)
 import Data.Time
 
 import Shared.Common.Constant.Tenant
+import Shared.Common.Util.Uuid
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.DocumentTemplate.Constant.DocumentTemplate
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateSimple
+import Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 
 wizardDocumentTemplate :: DocumentTemplate
 wizardDocumentTemplate =
   DocumentTemplate
-    { tId = "global:project-report:1.0.0"
+    { uuid = u' "557e76d8-338a-4664-886a-f6af2228776c"
     , name = "Project Report"
     , organizationId = "global"
     , templateId = "project-report"
@@ -28,13 +32,19 @@ wizardDocumentTemplate =
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
+wizardDocumentTemplateCoordinate :: Coordinate
+wizardDocumentTemplateCoordinate = Coordinate wizardDocumentTemplate.organizationId wizardDocumentTemplate.templateId wizardDocumentTemplate.version
+
+wizardDocumentTemplateSimple :: DocumentTemplateSimple
+wizardDocumentTemplateSimple = toSimple wizardDocumentTemplate
+
 wizardDocumentTemplateDeprecated :: DocumentTemplate
 wizardDocumentTemplateDeprecated = wizardDocumentTemplate {phase = DeprecatedDocumentTemplatePhase}
 
 wizardDocumentTemplateDraft :: DocumentTemplate
 wizardDocumentTemplateDraft =
   wizardDocumentTemplate
-    { tId = "global:project-report:2.0.0"
+    { uuid = u' "d66e9224-caf5-45d4-a752-bf9dbae2d756"
     , name = "DRAFT: " ++ wizardDocumentTemplate.name
     , version = "2.0.0"
     , phase = DraftDocumentTemplatePhase
@@ -45,7 +55,7 @@ wizardDocumentTemplateDraft =
 wizardDocumentTemplateNlDraft :: DocumentTemplate
 wizardDocumentTemplateNlDraft =
   wizardDocumentTemplate
-    { tId = "org.nl.amsterdam:project-report:3.0.0"
+    { uuid = u' "2d511419-deb3-476d-a470-02a039511500"
     , name = "New Document Template"
     , organizationId = "org.nl.amsterdam"
     , version = "3.0.0"
@@ -57,7 +67,7 @@ wizardDocumentTemplateNlDraft =
 anotherWizardDocumentTemplate :: DocumentTemplate
 anotherWizardDocumentTemplate =
   DocumentTemplate
-    { tId = "dsw:another-template:1.0.0"
+    { uuid = u' "1a6f6ca4-80b3-41b1-8821-518f0d12fa95"
     , name = "Another DocumentTemplate"
     , organizationId = "dsw"
     , templateId = "another-template"
@@ -78,7 +88,7 @@ anotherWizardDocumentTemplate =
 differentDocumentTemplate :: DocumentTemplate
 differentDocumentTemplate =
   DocumentTemplate
-    { tId = "dsw:another-template:1.0.0"
+    { uuid = u' "1026d13d-53ee-45c8-b322-cabc29e68f14"
     , name = "Another DocumentTemplate"
     , organizationId = "dsw"
     , templateId = "another-template"

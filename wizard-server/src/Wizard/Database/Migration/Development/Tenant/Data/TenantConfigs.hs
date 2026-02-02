@@ -285,7 +285,7 @@ defaultSubmissionServiceSupportedFormat = fromSubmissionServiceSupportedFormatCh
 defaultSubmissionServiceSupportedFormatChangeDto :: TenantConfigSubmissionServiceSupportedFormatChangeDTO
 defaultSubmissionServiceSupportedFormatChangeDto =
   TenantConfigSubmissionServiceSupportedFormatChangeDTO
-    { templateId = wizardDocumentTemplate.tId
+    { templateUuid = wizardDocumentTemplate.uuid
     , formatUuid = formatJson.uuid
     }
 

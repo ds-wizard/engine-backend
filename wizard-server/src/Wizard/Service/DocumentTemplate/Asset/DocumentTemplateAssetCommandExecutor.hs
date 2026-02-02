@@ -26,6 +26,6 @@ cDeleteFromS3 persistentCommand = do
   let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String DocumentTemplateAssetDeleteFromS3Command
   case eCommand of
     Right command -> do
-      removeAsset command.documentTemplateId command.assetUuid
+      removeAsset command.documentTemplateUuid command.assetUuid
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])

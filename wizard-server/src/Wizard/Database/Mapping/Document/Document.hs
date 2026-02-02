@@ -30,7 +30,7 @@ instance ToRow Document where
     , toField projectUuid
     , toField projectEventUuid
     , toField projectRepliesHash
-    , toField documentTemplateId
+    , toField documentTemplateUuid
     , toField formatUuid
     , toField createdBy
     , toField retrievedAt
@@ -52,7 +52,7 @@ instance FromRow Document where
     projectUuid <- field
     projectEventUuid <- field
     projectRepliesHash <- field
-    documentTemplateId <- field
+    documentTemplateUuid <- field
     formatUuid <- field
     createdBy <- field
     retrievedAt <- field

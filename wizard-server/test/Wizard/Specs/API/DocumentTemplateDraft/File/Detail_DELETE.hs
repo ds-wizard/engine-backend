@@ -2,6 +2,8 @@ module Wizard.Specs.API.DocumentTemplateDraft.File.Detail_DELETE (
   detail_DELETE,
 ) where
 
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -9,6 +11,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFiles
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
@@ -19,11 +22,11 @@ import Wizard.Specs.API.DocumentTemplateDraft.File.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /wizard-api/document-template-drafts/{documentTemplateId}/files/{fileUuid}
+-- DELETE /wizard-api/document-template-drafts/{dtUuid}/files/{fileUuid}
 -- ------------------------------------------------------------------------
 detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
-  describe "DELETE /wizard-api/document-template-drafts/{documentTemplateId}/files/{fileUuid}" $ do
+  describe "DELETE /wizard-api/document-template-drafts/{dtUuid}/files/{fileUuid}" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -34,7 +37,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/wizard-api/document-template-drafts/global:project-report:1.0.0/files/7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
+reqUrl = BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/files/" ++ U.toString fileDefaultHtml.uuid
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -81,8 +84,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/document-template-drafts/global:project-report:1.0.0/files/7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
+    (BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/files/fed88104-7cf1-489a-bfd0-24c120bb1cda")
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template_file"
-    [("uuid", "7f83f7ce-4096-49a5-88d1-bd509bf72a9b")]
+    [("uuid", "fed88104-7cf1-489a-bfd0-24c120bb1cda")]

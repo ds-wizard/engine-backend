@@ -55,7 +55,7 @@ reqDtoT project =
     { name = project.name
     , description = project.description
     , projectTags = project.projectTags
-    , documentTemplateId = project.documentTemplateId
+    , documentTemplateUuid = project.documentTemplateUuid
     , formatUuid = project.formatUuid
     , isTemplate = project.isTemplate
     }

@@ -8,22 +8,22 @@ import Shared.Common.Util.String (f')
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
-folderName = "templates"
+folderName = "document-templates"
 
-retrieveAsset :: String -> U.UUID -> AppContextM BS.ByteString
-retrieveAsset documentTemplateId assetUuid = createGetObjectFn (f' "%s/%s/%s" [folderName, documentTemplateId, U.toString assetUuid])
+retrieveAsset :: U.UUID -> U.UUID -> AppContextM BS.ByteString
+retrieveAsset documentTemplateUuid assetUuid = createGetObjectFn (f' "%s/%s/%s" [folderName, U.toString documentTemplateUuid, U.toString assetUuid])
 
-putAsset :: String -> U.UUID -> String -> BS.ByteString -> AppContextM String
-putAsset documentTemplateId assetUuid contentType = createPutObjectFn (f' "%s/%s/%s" [folderName, documentTemplateId, U.toString assetUuid]) (Just contentType) Nothing
+putAsset :: U.UUID -> U.UUID -> String -> BS.ByteString -> AppContextM String
+putAsset documentTemplateUuid assetUuid contentType = createPutObjectFn (f' "%s/%s/%s" [folderName, U.toString documentTemplateUuid, U.toString assetUuid]) (Just contentType) Nothing
 
-presignGetAssetUrl :: String -> U.UUID -> Int -> AppContextM String
-presignGetAssetUrl documentTemplateId assetUuid = createPresignedGetObjectUrl (f' "%s/%s/%s" [folderName, documentTemplateId, U.toString assetUuid])
+presignGetAssetUrl :: U.UUID -> U.UUID -> Int -> AppContextM String
+presignGetAssetUrl documentTemplateUuid assetUuid = createPresignedGetObjectUrl (f' "%s/%s/%s" [folderName, U.toString documentTemplateUuid, U.toString assetUuid])
 
-removeAssets :: String -> AppContextM ()
-removeAssets documentTemplateId = createRemoveObjectFn (f' "%s/%s" [folderName, documentTemplateId])
+removeAssets :: U.UUID -> AppContextM ()
+removeAssets documentTemplateUuid = createRemoveObjectFn (f' "%s/%s" [folderName, U.toString documentTemplateUuid])
 
-removeAsset :: String -> U.UUID -> AppContextM ()
-removeAsset documentTemplateId assetUuid = createRemoveObjectFn (f' "%s/%s/%s" [folderName, documentTemplateId, U.toString assetUuid])
+removeAsset :: U.UUID -> U.UUID -> AppContextM ()
+removeAsset documentTemplateUuid assetUuid = createRemoveObjectFn (f' "%s/%s/%s" [folderName, U.toString documentTemplateUuid, U.toString assetUuid])
 
 makeBucket :: AppContextM ()
 makeBucket = createMakeBucketFn

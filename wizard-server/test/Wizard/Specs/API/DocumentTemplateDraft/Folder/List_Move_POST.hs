@@ -3,6 +3,8 @@ module Wizard.Specs.API.DocumentTemplateDraft.Folder.List_Move_POST (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -24,11 +26,11 @@ import Wizard.Specs.API.DocumentTemplateDraft.File.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /wizard-api/document-template-drafts/{documentTemplateId}/folders/move
+-- POST /wizard-api/document-template-drafts/{dtUuid}/folders/move
 -- ------------------------------------------------------------------------
 list_move_POST :: AppContext -> SpecWith ((), Application)
 list_move_POST appContext =
-  describe "POST /wizard-api/document-template-drafts/{documentTemplateId}/folders/move" $ do
+  describe "POST /wizard-api/document-template-drafts/{dtUuid}/folders/move" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -38,7 +40,7 @@ list_move_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/wizard-api/document-template-drafts/global:project-report:1.0.0/folders/move"
+reqUrl = BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/folders/move"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 
@@ -69,8 +71,8 @@ create_test_204 title appContext reqAuthHeader =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
       -- AND: Find result in DB and compare with expectation state
-      assertExistenceOfTemplateFileInDB appContext fileDefaultHtmlMoved wizardDocumentTemplate.tId
-      assertExistenceOfTemplateFileInDB appContext fileDefaultCss wizardDocumentTemplate.tId
+      assertExistenceOfTemplateFileInDB appContext fileDefaultHtmlMoved
+      assertExistenceOfTemplateFileInDB appContext fileDefaultCss
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

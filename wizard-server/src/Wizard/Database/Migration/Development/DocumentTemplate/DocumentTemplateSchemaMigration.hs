@@ -57,7 +57,7 @@ createTemplateTable = do
   let sql =
         "CREATE TABLE document_template \
         \( \
-        \    id                varchar          NOT NULL, \
+        \    uuid              uuid             NOT NULL, \
         \    name              varchar          NOT NULL, \
         \    organization_id   varchar          NOT NULL, \
         \    template_id       varchar          NOT NULL, \
@@ -72,7 +72,7 @@ createTemplateTable = do
         \    updated_at        timestamptz      NOT NULL, \
         \    phase             varchar          NOT NULL, \
         \    non_editable      boolean          NOT NULL, \
-        \    CONSTRAINT document_template_pk PRIMARY KEY (id, tenant_uuid), \
+        \    CONSTRAINT document_template_pk PRIMARY KEY (uuid), \
         \    CONSTRAINT document_template_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \); \
         \ \
@@ -85,31 +85,31 @@ createTemplateFormatTable = do
   let sql =
         "CREATE TABLE document_template_format \
         \( \
-        \    document_template_id varchar     NOT NULL, \
-        \    uuid                 uuid        NOT NULL, \
-        \    name                 varchar     NOT NULL, \
-        \    icon                 varchar     NOT NULL, \
-        \    tenant_uuid          uuid        NOT NULL, \
-        \    created_at           timestamptz NOT NULL, \
-        \    updated_at           timestamptz NOT NULL, \
-        \    CONSTRAINT document_template_format_pk PRIMARY KEY (uuid, document_template_id, tenant_uuid), \
-        \    CONSTRAINT document_template_format_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
+        \    document_template_uuid uuid        NOT NULL, \
+        \    uuid                   uuid        NOT NULL, \
+        \    name                   varchar     NOT NULL, \
+        \    icon                   varchar     NOT NULL, \
+        \    tenant_uuid            uuid        NOT NULL, \
+        \    created_at             timestamptz NOT NULL, \
+        \    updated_at             timestamptz NOT NULL, \
+        \    CONSTRAINT document_template_format_pk PRIMARY KEY (uuid, document_template_uuid), \
+        \    CONSTRAINT document_template_format_document_template_uuid_fk FOREIGN KEY (document_template_uuid) REFERENCES document_template (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT document_template_format_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \); \
         \ \
         \CREATE TABLE document_template_format_step \
         \( \
-        \    document_template_id varchar     NOT NULL, \
-        \    format_uuid          uuid        NOT NULL, \
-        \    position             int         NOT NULL, \
-        \    name                 varchar     NOT NULL, \
-        \    options              jsonb       NOT NULL, \
-        \    tenant_uuid          uuid        NOT NULL, \
-        \    created_at           timestamptz NOT NULL, \
-        \    updated_at           timestamptz NOT NULL, \
-        \    CONSTRAINT document_template_format_step_pk PRIMARY KEY (document_template_id, format_uuid, position, tenant_uuid), \
-        \    CONSTRAINT document_template_format_step_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
-        \    CONSTRAINT document_template_format_step_format_uuid_fk FOREIGN KEY (document_template_id, format_uuid, tenant_uuid) REFERENCES document_template_format (document_template_id, uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    document_template_uuid uuid        NOT NULL, \
+        \    format_uuid            uuid        NOT NULL, \
+        \    position               int         NOT NULL, \
+        \    name                   varchar     NOT NULL, \
+        \    options                jsonb       NOT NULL, \
+        \    tenant_uuid            uuid        NOT NULL, \
+        \    created_at             timestamptz NOT NULL, \
+        \    updated_at             timestamptz NOT NULL, \
+        \    CONSTRAINT document_template_format_step_pk PRIMARY KEY (document_template_uuid, format_uuid, position), \
+        \    CONSTRAINT document_template_format_step_document_template_uuid_fk FOREIGN KEY (document_template_uuid) REFERENCES document_template (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT document_template_format_step_format_uuid_fk FOREIGN KEY (document_template_uuid, format_uuid) REFERENCES document_template_format (document_template_uuid, uuid) ON DELETE CASCADE, \
         \    CONSTRAINT document_template_format_step_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
@@ -120,15 +120,15 @@ createTemplateFileTable = do
   let sql =
         "CREATE TABLE document_template_file \
         \( \
-        \    document_template_id varchar     NOT NULL, \
-        \    uuid                 uuid        NOT NULL, \
-        \    file_name            varchar     NOT NULL, \
-        \    content              varchar     NOT NULL, \
-        \    tenant_uuid          uuid        NOT NULL, \
-        \    created_at           timestamptz NOT NULL, \
-        \    updated_at           timestamptz NOT NULL, \
-        \    CONSTRAINT document_template_file_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT document_template_file_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
+        \    document_template_uuid uuid        NOT NULL, \
+        \    uuid                   uuid        NOT NULL, \
+        \    file_name              varchar     NOT NULL, \
+        \    content                varchar     NOT NULL, \
+        \    tenant_uuid            uuid        NOT NULL, \
+        \    created_at             timestamptz NOT NULL, \
+        \    updated_at             timestamptz NOT NULL, \
+        \    CONSTRAINT document_template_file_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT document_template_file_document_template_uuid_fk FOREIGN KEY (document_template_uuid) REFERENCES document_template (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT document_template_file_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
@@ -139,16 +139,16 @@ createTemplateAssetTable = do
   let sql =
         "CREATE TABLE document_template_asset \
         \( \
-        \    document_template_id varchar     NOT NULL, \
-        \    uuid                 uuid        NOT NULL, \
-        \    file_name            varchar     NOT NULL, \
-        \    content_type         varchar     NOT NULL, \
-        \    tenant_uuid          uuid        NOT NULL, \
-        \    file_size            bigint      NOT NULL, \
-        \    created_at           timestamptz NOT NULL, \
-        \    updated_at           timestamptz NOT NULL, \
-        \    CONSTRAINT document_template_asset_pk PRIMARY KEY (uuid, tenant_uuid), \
-        \    CONSTRAINT document_template_asset_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
+        \    document_template_uuid uuid        NOT NULL, \
+        \    uuid                   uuid        NOT NULL, \
+        \    file_name              varchar     NOT NULL, \
+        \    content_type           varchar     NOT NULL, \
+        \    tenant_uuid            uuid        NOT NULL, \
+        \    file_size              bigint      NOT NULL, \
+        \    created_at             timestamptz NOT NULL, \
+        \    updated_at             timestamptz NOT NULL, \
+        \    CONSTRAINT document_template_asset_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT document_template_asset_document_template_uuid_fk FOREIGN KEY (document_template_uuid) REFERENCES document_template (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT document_template_asset_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
@@ -160,15 +160,15 @@ createDraftDataTable = do
   let sql =
         "CREATE TABLE document_template_draft_data \
         \( \
-        \    document_template_id varchar     NOT NULL, \
-        \    project_uuid   uuid, \
-        \    format_uuid          uuid, \
-        \    tenant_uuid          uuid        NOT NULL, \
-        \    created_at           timestamptz NOT NULL, \
-        \    updated_at                   timestamptz NOT NULL, \
+        \    document_template_uuid uuid        NOT NULL, \
+        \    project_uuid           uuid, \
+        \    format_uuid            uuid, \
+        \    tenant_uuid            uuid        NOT NULL, \
+        \    created_at             timestamptz NOT NULL, \
+        \    updated_at             timestamptz NOT NULL, \
         \    knowledge_model_editor_uuid  uuid, \
-        \    CONSTRAINT document_template_draft_data_pk PRIMARY KEY (document_template_id, tenant_uuid), \
-        \    CONSTRAINT document_template_draft_data_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT document_template_draft_data_pk PRIMARY KEY (document_template_uuid), \
+        \    CONSTRAINT document_template_draft_data_document_template_uuid_fk FOREIGN KEY (document_template_uuid) REFERENCES document_template (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT document_template_draft_data_project_uuid_fk FOREIGN KEY (project_uuid) REFERENCES project (uuid) ON DELETE SET NULL, \
         \    CONSTRAINT document_template_draft_data_knowledge_model_editor_uuid_fk FOREIGN KEY (knowledge_model_editor_uuid) REFERENCES knowledge_model_editor (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT document_template_draft_data_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
@@ -190,7 +190,7 @@ createPersistentCommandFromDocumentTemplateAssetDeleteFunction = do
         \    PERFORM create_persistent_command( \
         \            'document_template_asset', \
         \            'deleteFromS3', \
-        \            jsonb_build_object('documentTemplateId', OLD.document_template_id, 'assetUuid', OLD.uuid), \
+        \            jsonb_build_object('documentTemplateUuid', OLD.document_template_uuid, 'assetUuid', OLD.uuid), \
         \            OLD.tenant_uuid); \
         \    RETURN OLD; \
         \END; \

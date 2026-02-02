@@ -118,7 +118,7 @@ data TenantConfigSubmissionServiceChangeDTO = TenantConfigSubmissionServiceChang
   deriving (Generic, Eq, Show)
 
 data TenantConfigSubmissionServiceSupportedFormatChangeDTO = TenantConfigSubmissionServiceSupportedFormatChangeDTO
-  { templateId :: String
+  { templateUuid :: U.UUID
   , formatUuid :: U.UUID
   }
   deriving (Generic, Eq, Show)

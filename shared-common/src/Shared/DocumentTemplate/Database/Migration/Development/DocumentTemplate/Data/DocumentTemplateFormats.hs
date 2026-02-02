@@ -23,15 +23,15 @@ wizardDocumentTemplateFormats =
   ]
 
 wizardDocumentTemplateDraftFormats :: [DocumentTemplateFormat]
-wizardDocumentTemplateDraftFormats = changeDocumentTemplateIdInFormats wizardDocumentTemplateDraft.tId wizardDocumentTemplateDraft.tenantUuid wizardDocumentTemplateFormats
+wizardDocumentTemplateDraftFormats = changeDocumentTemplateIdInFormats wizardDocumentTemplateDraft.uuid wizardDocumentTemplateDraft.tenantUuid wizardDocumentTemplateFormats
 
 differentDocumentTemplateFormats :: [DocumentTemplateFormat]
-differentDocumentTemplateFormats = changeDocumentTemplateIdInFormats differentDocumentTemplate.tId differentDocumentTemplate.tenantUuid wizardDocumentTemplateFormats
+differentDocumentTemplateFormats = changeDocumentTemplateIdInFormats differentDocumentTemplate.uuid differentDocumentTemplate.tenantUuid wizardDocumentTemplateFormats
 
 formatJson :: DocumentTemplateFormat
 formatJson =
   DocumentTemplateFormat
-    { documentTemplateId = wizardDocumentTemplate.tId
+    { documentTemplateUuid = wizardDocumentTemplate.uuid
     , uuid = u' "d3e98eb6-344d-481f-8e37-6a67b6cd1ad2"
     , name = "JSON Data"
     , icon = "far fa-file"
@@ -47,7 +47,7 @@ formatJsonSimple = toFormatSimple formatJson
 formatJsonStep :: DocumentTemplateFormatStep
 formatJsonStep =
   DocumentTemplateFormatStep
-    { documentTemplateId = wizardDocumentTemplate.tId
+    { documentTemplateUuid = wizardDocumentTemplate.uuid
     , formatUuid = u' "d3e98eb6-344d-481f-8e37-6a67b6cd1ad2"
     , position = 0
     , name = "json"
@@ -60,13 +60,13 @@ formatJsonStep =
 formatHtml :: DocumentTemplateFormat
 formatHtml =
   DocumentTemplateFormat
-    { documentTemplateId = wizardDocumentTemplate.tId
+    { documentTemplateUuid = wizardDocumentTemplate.uuid
     , uuid = u' "a9293d08-59a4-4e6b-ae62-7a6a570b031c"
     , name = "HTML Document"
     , icon = "far fa-file-code"
     , steps =
         [ DocumentTemplateFormatStep
-            { documentTemplateId = wizardDocumentTemplate.tId
+            { documentTemplateUuid = wizardDocumentTemplate.uuid
             , formatUuid = u' "a9293d08-59a4-4e6b-ae62-7a6a570b031c"
             , position = 0
             , name = "jinja"
@@ -85,13 +85,13 @@ formatHtml =
 formatPdf :: DocumentTemplateFormat
 formatPdf =
   DocumentTemplateFormat
-    { documentTemplateId = wizardDocumentTemplate.tId
+    { documentTemplateUuid = wizardDocumentTemplate.uuid
     , uuid = u' "68c26e34-5e77-4e15-9bf7-06ff92582257"
     , name = "PDF Document"
     , icon = "far fa-file-pdf"
     , steps =
         [ DocumentTemplateFormatStep
-            { documentTemplateId = wizardDocumentTemplate.tId
+            { documentTemplateUuid = wizardDocumentTemplate.uuid
             , formatUuid = u' "68c26e34-5e77-4e15-9bf7-06ff92582257"
             , position = 0
             , name = "jinja"
@@ -102,7 +102,7 @@ formatPdf =
             , updatedAt = dt' 2018 1 21
             }
         , DocumentTemplateFormatStep
-            { documentTemplateId = wizardDocumentTemplate.tId
+            { documentTemplateUuid = wizardDocumentTemplate.uuid
             , formatUuid = u' "68c26e34-5e77-4e15-9bf7-06ff92582257"
             , position = 1
             , name = "wkhtmltopdf"
@@ -120,13 +120,13 @@ formatPdf =
 formatLatex :: DocumentTemplateFormat
 formatLatex =
   DocumentTemplateFormat
-    { documentTemplateId = wizardDocumentTemplate.tId
+    { documentTemplateUuid = wizardDocumentTemplate.uuid
     , uuid = u' "dbc94579-40d7-42c3-975c-71e30d07778b"
     , name = "LaTeX Document"
     , icon = "far fa-file-alt"
     , steps =
         [ DocumentTemplateFormatStep
-            { documentTemplateId = wizardDocumentTemplate.tId
+            { documentTemplateUuid = wizardDocumentTemplate.uuid
             , formatUuid = u' "dbc94579-40d7-42c3-975c-71e30d07778b"
             , position = 0
             , name = "jinja"
@@ -137,7 +137,7 @@ formatLatex =
             , updatedAt = dt' 2018 1 21
             }
         , DocumentTemplateFormatStep
-            { documentTemplateId = wizardDocumentTemplate.tId
+            { documentTemplateUuid = wizardDocumentTemplate.uuid
             , formatUuid = u' "dbc94579-40d7-42c3-975c-71e30d07778b"
             , position = 1
             , name = "pandoc"
@@ -155,13 +155,13 @@ formatLatex =
 formatDocx :: DocumentTemplateFormat
 formatDocx =
   DocumentTemplateFormat
-    { documentTemplateId = wizardDocumentTemplate.tId
+    { documentTemplateUuid = wizardDocumentTemplate.uuid
     , uuid = u' "f4bd941a-dfbe-4226-a1fc-200fb5269311"
     , name = "Word Document"
     , icon = "far fa-file-word"
     , steps =
         [ DocumentTemplateFormatStep
-            { documentTemplateId = wizardDocumentTemplate.tId
+            { documentTemplateUuid = wizardDocumentTemplate.uuid
             , formatUuid = u' "f4bd941a-dfbe-4226-a1fc-200fb5269311"
             , position = 0
             , name = "jinja"
@@ -172,7 +172,7 @@ formatDocx =
             , updatedAt = dt' 2018 1 21
             }
         , DocumentTemplateFormatStep
-            { documentTemplateId = wizardDocumentTemplate.tId
+            { documentTemplateUuid = wizardDocumentTemplate.uuid
             , formatUuid = u' "f4bd941a-dfbe-4226-a1fc-200fb5269311"
             , position = 1
             , name = "pandoc"
@@ -190,13 +190,13 @@ formatDocx =
 formatOdt :: DocumentTemplateFormat
 formatOdt =
   DocumentTemplateFormat
-    { documentTemplateId = wizardDocumentTemplate.tId
+    { documentTemplateUuid = wizardDocumentTemplate.uuid
     , uuid = u' "15e53172-bbae-4a0c-a4d9-8f3ddf60e7b6"
     , name = "OpenDocument Text"
     , icon = "far fa-file-alt"
     , steps =
         [ DocumentTemplateFormatStep
-            { documentTemplateId = wizardDocumentTemplate.tId
+            { documentTemplateUuid = wizardDocumentTemplate.uuid
             , formatUuid = u' "15e53172-bbae-4a0c-a4d9-8f3ddf60e7b6"
             , position = 0
             , name = "jinja"
@@ -207,7 +207,7 @@ formatOdt =
             , updatedAt = dt' 2018 1 21
             }
         , DocumentTemplateFormatStep
-            { documentTemplateId = wizardDocumentTemplate.tId
+            { documentTemplateUuid = wizardDocumentTemplate.uuid
             , formatUuid = u' "15e53172-bbae-4a0c-a4d9-8f3ddf60e7b6"
             , position = 1
             , name = "pandoc"
@@ -225,13 +225,13 @@ formatOdt =
 formatMarkdown :: DocumentTemplateFormat
 formatMarkdown =
   DocumentTemplateFormat
-    { documentTemplateId = wizardDocumentTemplate.tId
+    { documentTemplateUuid = wizardDocumentTemplate.uuid
     , uuid = u' "f0533e48-f4c5-4af2-b2c1-5a47d4a247c0"
     , name = "Markdown Document"
     , icon = "far fa-file-alt"
     , steps =
         [ DocumentTemplateFormatStep
-            { documentTemplateId = wizardDocumentTemplate.tId
+            { documentTemplateUuid = wizardDocumentTemplate.uuid
             , formatUuid = u' "f0533e48-f4c5-4af2-b2c1-5a47d4a247c0"
             , position = 0
             , name = "jinja"
@@ -242,7 +242,7 @@ formatMarkdown =
             , updatedAt = dt' 2018 1 21
             }
         , DocumentTemplateFormatStep
-            { documentTemplateId = wizardDocumentTemplate.tId
+            { documentTemplateUuid = wizardDocumentTemplate.uuid
             , formatUuid = u' "f0533e48-f4c5-4af2-b2c1-5a47d4a247c0"
             , position = 1
             , name = "pandoc"

@@ -29,7 +29,7 @@ data Project = Project
   , knowledgeModelPackageId :: String
   , selectedQuestionTagUuids :: [U.UUID]
   , projectTags :: [String]
-  , documentTemplateId :: Maybe String
+  , documentTemplateUuid :: Maybe U.UUID
   , formatUuid :: Maybe U.UUID
   , creatorUuid :: Maybe U.UUID
   , permissions :: [ProjectPerm]
@@ -51,7 +51,7 @@ instance Eq Project where
       && a.knowledgeModelPackageId == b.knowledgeModelPackageId
       && a.selectedQuestionTagUuids == b.selectedQuestionTagUuids
       && a.projectTags == b.projectTags
-      && a.documentTemplateId == b.documentTemplateId
+      && a.documentTemplateUuid == b.documentTemplateUuid
       && a.formatUuid == b.formatUuid
       && a.creatorUuid == b.creatorUuid
       && a.permissions == b.permissions

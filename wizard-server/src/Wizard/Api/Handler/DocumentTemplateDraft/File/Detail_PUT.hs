@@ -18,7 +18,7 @@ type Detail_PUT =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] DocumentTemplateFileChangeDTO
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "documentTemplateUuid" U.UUID
     :> "files"
     :> Capture "fileUuid" U.UUID
     :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] DocumentTemplateFile)
@@ -27,9 +27,9 @@ detail_PUT
   :: Maybe String
   -> Maybe String
   -> DocumentTemplateFileChangeDTO
-  -> String
+  -> U.UUID
   -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateFile)
-detail_PUT mTokenHeader mServerUrl reqDto tmlId fileUuid =
+detail_PUT mTokenHeader mServerUrl reqDto _ fileUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< modifyFile fileUuid reqDto

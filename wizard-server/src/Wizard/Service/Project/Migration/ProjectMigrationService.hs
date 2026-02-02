@@ -95,7 +95,7 @@ finishProjectMigration projectUuid =
     let newProjectUpdated =
           oldProject
             { formatUuid = newProject.formatUuid
-            , documentTemplateId = newProject.documentTemplateId
+            , documentTemplateUuid = newProject.documentTemplateUuid
             , selectedQuestionTagUuids = newProject.selectedQuestionTagUuids
             , knowledgeModelPackageId = newProject.knowledgeModelPackageId
             , updatedAt = now
@@ -147,7 +147,7 @@ upgradeProject reqDto oldProject = do
           { uuid = newUuid
           , knowledgeModelPackageId = newPkgId
           , selectedQuestionTagUuids = newTagUuids
-          , documentTemplateId = newDocumentTemplateId
+          , documentTemplateUuid = newDocumentTemplateId
           , formatUuid = newFormatUuid
           , permissions = newPermissions
           }
@@ -194,12 +194,12 @@ generateNewVersionUuid version = do
   newVersionUuid <- liftIO generateUuid
   return $ version {uuid = newVersionUuid}
 
-getNewDocumentTemplateIdAndFormatUuid :: Project -> String -> AppContextM (Maybe String, Maybe U.UUID)
+getNewDocumentTemplateIdAndFormatUuid :: Project -> String -> AppContextM (Maybe U.UUID, Maybe U.UUID)
 getNewDocumentTemplateIdAndFormatUuid oldProject newPkgId = do
-  case oldProject.documentTemplateId of
-    Just id -> do
-      documentTemplate <- findDocumentTemplateById id
+  case oldProject.documentTemplateUuid of
+    Just dtUuid -> do
+      documentTemplate <- findDocumentTemplateByUuid dtUuid
       if isPkgAllowedByDocumentTemplate newPkgId documentTemplate
-        then return (Just id, oldProject.formatUuid)
+        then return (Just dtUuid, oldProject.formatUuid)
         else return (Nothing, Nothing)
     Nothing -> return (Nothing, Nothing)

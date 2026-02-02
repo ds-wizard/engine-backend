@@ -9,6 +9,7 @@ import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Database.Migration.Development.Registry.Data.RegistryTemplates
+import Wizard.Model.DocumentTemplate.DocumentTemplateWithCoordinate
 import Wizard.Service.DocumentTemplate.DocumentTemplateMapper
 
 wizardDocumentTemplateSimpleDTO :: DocumentTemplateSimpleDTO
@@ -36,3 +37,6 @@ wizardDocumentTemplateDetailDTO =
 
 wizardDocumentTemplateDeprecatedChangeDTO :: DocumentTemplateChangeDTO
 wizardDocumentTemplateDeprecatedChangeDTO = toChangeDTO wizardDocumentTemplateDeprecated
+
+wizardDocumentTemplateWithCoordinate :: DocumentTemplateWithCoordinate
+wizardDocumentTemplateWithCoordinate = toWithCoordinate wizardDocumentTemplate

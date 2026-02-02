@@ -83,9 +83,9 @@ toRetrievePackagesRequest tenantConfig iStat =
     kmId = Nothing
     metamodelVersion = Just knowledgeModelMetamodelVersion
 
-toRetrieveTemplatesRequest
+toRetrieveDocumentTemplatesRequest
   :: TenantConfigRegistry -> ClientM (Headers '[Header "x-trace-uuid" String] [DocumentTemplateSimpleDTO])
-toRetrieveTemplatesRequest tenantConfig =
+toRetrieveDocumentTemplatesRequest tenantConfig =
   client TML_List_GET.list_GET_Api mTokenHeader organizationId tmlId metamodelVersion
   where
     mTokenHeader = Just $ "Bearer " ++ tenantConfig.token
@@ -115,18 +115,18 @@ toRetrieveKnowledgeModelBundleByIdRequest serverConfig tenantConfig pkgId =
     , multipart = Nothing
     }
 
-toRetrieveTemplateBundleByIdRequest :: ServerConfigRegistry -> TenantConfigRegistry -> String -> HttpRequest
-toRetrieveTemplateBundleByIdRequest serverConfig tenantConfig tmlId =
+toRetrieveDocumentTemplateBundleByCoordinateRequest :: ServerConfigRegistry -> TenantConfigRegistry -> Coordinate -> HttpRequest
+toRetrieveDocumentTemplateBundleByCoordinateRequest serverConfig tenantConfig coordinate =
   HttpRequest
     { requestMethod = "GET"
-    , requestUrl = serverConfig.url ++ "/document-templates/" ++ tmlId ++ "/bundle"
+    , requestUrl = serverConfig.url ++ "/document-templates/" ++ show coordinate ++ "/bundle"
     , requestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ tenantConfig.token)]
     , requestBody = BS.empty
     , multipart = Nothing
     }
 
-toRetrieveLocaleBundleByIdRequest :: ServerConfigRegistry -> TenantConfigRegistry -> Coordinate -> HttpRequest
-toRetrieveLocaleBundleByIdRequest serverConfig tenantConfig coordinate =
+toRetrieveLocaleBundleByCoordinateRequest :: ServerConfigRegistry -> TenantConfigRegistry -> Coordinate -> HttpRequest
+toRetrieveLocaleBundleByCoordinateRequest serverConfig tenantConfig coordinate =
   HttpRequest
     { requestMethod = "GET"
     , requestUrl = serverConfig.url ++ "/locales/" ++ show coordinate ++ "/bundle"

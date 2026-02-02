@@ -335,24 +335,24 @@ modifyProjectShare projectUuid reqDto =
           (sendProjectInvitationMail project updatedProject)
           (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_PROJECT__INVITATION_EMAIL_NOT_SENT)
       )
-    mTemplate <-
-      case updatedProject.documentTemplateId of
-        Just tId -> do
-          tml <- findDocumentTemplateById tId
-          formats <- findDocumentTemplateFormats tId
-          return . Just $ STM.toDTO tml formats
+    mDt <-
+      case updatedProject.documentTemplateUuid of
+        Just dtUuid -> do
+          dt <- findDocumentTemplateByUuid dtUuid
+          formats <- findDocumentTemplateFormats dtUuid
+          return . Just $ STM.toDTO dt formats
         _ -> return Nothing
     mFormat <-
-      case (updatedProject.documentTemplateId, updatedProject.formatUuid) of
-        (Just dtId, Just formatUuid) -> do
-          format <- findDocumentTemplateFormatByDocumentTemplateIdAndUuid dtId formatUuid
+      case (updatedProject.documentTemplateUuid, updatedProject.formatUuid) of
+        (Just dtUuid, Just formatUuid) -> do
+          format <- findDocumentTemplateFormatByDocumentTemplateIdAndUuid dtUuid formatUuid
           return $ Just format
         _ -> return Nothing
     projectEvents <- findProjectEventListsByProjectUuid projectUuid
     let projectContent = compileProjectEvents projectEvents
     unresolvedCommentCounts <- findProjectCommentThreadsSimple projectUuid False True
     resolvedCommentCounts <- findProjectCommentThreadsSimple projectUuid True True
-    let restWsDto = toDetailWsDTO updatedProject mTemplate mFormat permissionDtos projectContent.labels unresolvedCommentCounts resolvedCommentCounts
+    let restWsDto = toDetailWsDTO updatedProject mDt mFormat permissionDtos projectContent.labels unresolvedCommentCounts resolvedCommentCounts
     setProject projectUuid restWsDto
     return reqDto
 
@@ -370,14 +370,14 @@ modifyProjectSettings projectUuid reqDto =
     permissionDtos <- traverse enhanceProjectPerm updatedProject.permissions
     deleteTemporalDocumentsByProjectUuid project.uuid
     mTemplate <-
-      case updatedProject.documentTemplateId of
+      case updatedProject.documentTemplateUuid of
         Just tId -> do
-          tml <- findDocumentTemplateById tId
+          tml <- findDocumentTemplateByUuid tId
           formats <- findDocumentTemplateFormats tId
           return . Just $ STM.toDTO tml formats
         _ -> return Nothing
     mFormat <-
-      case (updatedProject.documentTemplateId, updatedProject.formatUuid) of
+      case (updatedProject.documentTemplateUuid, updatedProject.formatUuid) of
         (Just dtId, Just formatUuid) -> do
           format <- findDocumentTemplateFormatByDocumentTemplateIdAndUuid dtId formatUuid
           return $ Just format

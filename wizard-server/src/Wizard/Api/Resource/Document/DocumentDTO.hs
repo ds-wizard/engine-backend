@@ -8,6 +8,7 @@ import GHC.Int
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 import Wizard.Api.Resource.Submission.SubmissionJM ()
 import Wizard.Model.Document.Document
+import Wizard.Model.DocumentTemplate.DocumentTemplateWithCoordinate
 import Wizard.Model.Project.ProjectSimple
 import Wizard.Model.Submission.SubmissionList
 
@@ -18,8 +19,7 @@ data DocumentDTO = DocumentDTO
   , project :: Maybe ProjectSimple
   , projectEventUuid :: Maybe U.UUID
   , projectVersion :: Maybe String
-  , documentTemplateId :: String
-  , documentTemplateName :: String
+  , documentTemplate :: DocumentTemplateWithCoordinate
   , format :: DocumentTemplateFormatSimple
   , fileSize :: Maybe Int64
   , workerLog :: Maybe String

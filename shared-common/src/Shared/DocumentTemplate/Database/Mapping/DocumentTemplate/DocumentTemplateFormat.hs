@@ -10,7 +10,7 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 instance ToRow DocumentTemplateFormat where
   toRow DocumentTemplateFormat {..} =
-    [ toField documentTemplateId
+    [ toField documentTemplateUuid
     , toField uuid
     , toField name
     , toField icon
@@ -21,7 +21,7 @@ instance ToRow DocumentTemplateFormat where
 
 instance FromRow DocumentTemplateFormat where
   fromRow = do
-    documentTemplateId <- field
+    documentTemplateUuid <- field
     uuid <- field
     name <- field
     icon <- field
@@ -33,7 +33,7 @@ instance FromRow DocumentTemplateFormat where
 
 instance ToRow DocumentTemplateFormatStep where
   toRow DocumentTemplateFormatStep {..} =
-    [ toField documentTemplateId
+    [ toField documentTemplateUuid
     , toField formatUuid
     , toField position
     , toField name
@@ -45,7 +45,7 @@ instance ToRow DocumentTemplateFormatStep where
 
 instance FromRow DocumentTemplateFormatStep where
   fromRow = do
-    documentTemplateId <- field
+    documentTemplateUuid <- field
     formatUuid <- field
     position <- field
     name <- field

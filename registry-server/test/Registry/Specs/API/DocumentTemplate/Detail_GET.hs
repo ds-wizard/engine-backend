@@ -3,6 +3,7 @@ module Registry.Specs.API.DocumentTemplate.Detail_GET (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -13,6 +14,8 @@ import Registry.Api.Resource.DocumentTemplate.DocumentTemplateDetailJM ()
 import Registry.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Registry.Model.Context.AppContext
+import Shared.Coordinate.Model.Coordinate.Coordinate
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 
 import Registry.Specs.Common
 import SharedTest.Specs.API.Common
@@ -31,7 +34,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/document-templates/global:project-report:1.0.0"
+reqUrl = BS.pack $ "/document-templates/" ++ show (createCoordinate wizardDocumentTemplate)
 
 reqHeaders = [reqCtHeader]
 
@@ -63,8 +66,8 @@ test_200 appContext =
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/document-templates/global:non-existing-template:1.0.0"
+    "/document-templates/global:non-existing-dt:1.0.0"
     reqHeaders
     reqBody
     "document_template"
-    [("id", "global:non-existing-template:1.0.0")]
+    [("organization_id", "global"), ("template_id", "non-existing-dt"), ("version", "1.0.0")]

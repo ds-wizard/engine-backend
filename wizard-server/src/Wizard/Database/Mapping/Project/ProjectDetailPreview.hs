@@ -19,7 +19,7 @@ instance FromRow ProjectDetailPreview where
     sharing <- field
     knowledgeModelPackageId <- field
     isTemplate <- field
-    documentTemplateId <- field
+    documentTemplateUuid <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid
     mFormatUuid <- field

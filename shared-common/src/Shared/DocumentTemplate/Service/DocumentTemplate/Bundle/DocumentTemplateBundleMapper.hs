@@ -10,6 +10,7 @@ import Shared.Common.Api.Resource.Localization.LocaleRecordJM ()
 import Shared.Common.Model.Error.Error
 import Shared.Common.Model.Localization.LocaleRecord
 import Shared.Common.Util.String
+import Shared.Coordinate.Util.Coordinate
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleJM ()
@@ -38,7 +39,7 @@ toAssetEntry (asset, content) = toEntry ("template/assets/" ++ asset.fileName) 0
 toBundle :: DocumentTemplate -> [DocumentTemplateFormat] -> [DocumentTemplateFile] -> [DocumentTemplateAsset] -> DocumentTemplateBundleDTO
 toBundle tml formats files assets =
   DocumentTemplateBundleDTO
-    { tId = tml.tId
+    { tId = buildCoordinate tml.organizationId tml.templateId tml.version
     , name = tml.name
     , organizationId = tml.organizationId
     , templateId = tml.templateId
@@ -81,10 +82,10 @@ fromAssetEntry tb archive asset =
     Just assetEntry -> Right (asset, BSL.toStrict . fromEntry $ assetEntry)
     Nothing -> Left $ UserError (_ERROR_SERVICE_TB__MISSING_ASSET asset.fileName)
 
-fromBundle :: DocumentTemplateBundleDTO -> U.UUID -> DocumentTemplate
-fromBundle tb tenantUuid =
+fromBundle :: DocumentTemplateBundleDTO -> U.UUID -> U.UUID -> DocumentTemplate
+fromBundle tb uuid tenantUuid =
   DocumentTemplate
-    { tId = tb.tId
+    { uuid = uuid
     , name = tb.name
     , organizationId = tb.organizationId
     , templateId = tb.templateId

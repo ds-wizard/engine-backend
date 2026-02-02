@@ -19,12 +19,12 @@ import Wizard.Specs.Common
 -- --------------------------------
 -- ASSERTS
 -- --------------------------------
-assertExistenceOfTemplateFileInDB appContext file documentTemplateId = do
-  fileFromDB <- getOneFromDB (findFileById file.uuid) appContext
+assertExistenceOfTemplateFileInDB appContext file = do
+  fileFromDB <- getOneFromDB (findFileByUuid file.uuid) appContext
   compareTemplateFileDtos fileFromDB file
 
 assertAbsenceOfTemplateFileInDB appContext file = do
-  eFile <- runInContextIO (findFileById file.uuid) appContext
+  eFile <- runInContextIO (findFileByUuid file.uuid) appContext
   liftIO $ isLeft eFile `shouldBe` True
   let (Left error) = eFile
   liftIO $

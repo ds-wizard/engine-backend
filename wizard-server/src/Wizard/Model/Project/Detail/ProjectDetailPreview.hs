@@ -16,7 +16,7 @@ data ProjectDetailPreview = ProjectDetailPreview
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
-  , documentTemplateId :: Maybe String
+  , documentTemplateUuid :: Maybe U.UUID
   , format :: Maybe DocumentTemplateFormatSimple
   , fileCount :: Int
   }

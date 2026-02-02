@@ -8,16 +8,15 @@ import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import Shared.Common.Api.Resource.Common.EntityCreatedWithIdDTO
-import Shared.Common.Api.Resource.Common.EntityCreatedWithIdJM ()
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateSimple
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateJM ()
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateDrafts
-import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DT_Migration
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
@@ -63,14 +62,14 @@ create_test_201 title appContext reqAuthHeader reqDto expDto =
       let expStatus = 201
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       -- AND: Run migrations
-      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO DT_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, EntityCreatedWithIdDTO)
+      let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, DocumentTemplateSimple)
       assertResStatus status expStatus
       assertResHeaders headers expHeaders
-      liftIO $ resDto.aId `shouldBe` expDto.tId
+      liftIO $ resDto.name `shouldBe` expDto.name
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findDrafts appContext 2
 

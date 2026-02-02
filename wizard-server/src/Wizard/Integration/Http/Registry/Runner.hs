@@ -78,29 +78,29 @@ retrieveKnowledgeModelBundleById pkgId = do
         toRetrieveKnowledgeModelBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
-retrieveTemplates :: AppContextM [DocumentTemplateSimpleDTO]
-retrieveTemplates = do
+retrieveDocumentTemplates :: AppContextM [DocumentTemplateSimpleDTO]
+retrieveDocumentTemplates = do
   tcRegistry <- getCurrentTenantConfigRegistry
   if tcRegistry.enabled
     then
       catchError
         ( do
-            let request = toRetrieveTemplatesRequest tcRegistry
+            let request = toRetrieveDocumentTemplatesRequest tcRegistry
             res <- runRegistryClient request
             return . getResponse $ res
         )
         (\_ -> return [])
     else return []
 
-retrieveTemplateBundleById :: String -> AppContextM BSL.ByteString
-retrieveTemplateBundleById tmlId = do
+retrieveDocumentTemplateBundleByCoordinate :: Coordinate -> AppContextM BSL.ByteString
+retrieveDocumentTemplateBundleByCoordinate coordinate = do
   serverConfig <- asks serverConfig
   tcRegistry <- getCurrentTenantConfigRegistry
   if tcRegistry.enabled
     then
       runRequest
-        (toRetrieveTemplateBundleByIdRequest serverConfig.registry tcRegistry tmlId)
-        toRetrieveTemplateBundleByIdResponse
+        (toRetrieveDocumentTemplateBundleByCoordinateRequest serverConfig.registry tcRegistry coordinate)
+        toRetrieveDocumentTemplateBundleByCoordinateResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
 retrieveLocales :: AppContextM [LocaleDTO]
@@ -125,8 +125,8 @@ retrieveLocaleBundleByCoordinate coordinate = do
   if tcRegistry.enabled
     then
       runRequest
-        (toRetrieveLocaleBundleByIdRequest serverConfig.registry tcRegistry coordinate)
-        toRetrieveLocaleBundleByIdResponse
+        (toRetrieveLocaleBundleByCoordinateRequest serverConfig.registry tcRegistry coordinate)
+        toRetrieveLocaleBundleByCoordinateResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
 uploadKnowledgeModelBundle :: KnowledgeModelBundle -> AppContextM KnowledgeModelBundle

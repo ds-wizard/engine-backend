@@ -3,6 +3,8 @@ module Wizard.Specs.API.DocumentTemplate.Detail_PUT (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -14,7 +16,7 @@ import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateChangeJM ()
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailJM ()
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
-import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DT_Migration
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
@@ -23,11 +25,11 @@ import Wizard.Specs.API.DocumentTemplate.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /wizard-api/document-templates/{documentTemplateId}
+-- PUT /wizard-api/document-templates/{uuid}
 -- ------------------------------------------------------------------------
 detail_PUT :: AppContext -> SpecWith ((), Application)
 detail_PUT appContext =
-  describe "PUT /wizard-api/document-templates/{documentTemplateId}" $ do
+  describe "PUT /wizard-api/document-templates/{uuid}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -38,7 +40,7 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/wizard-api/document-templates/global:project-report:1.0.0"
+reqUrl = BS.pack $ "/wizard-api/document-templates/" ++ U.toString wizardDocumentTemplate.uuid
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 
@@ -61,7 +63,7 @@ create_test_200 title appContext reqAuthHeader =
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       let expDto = wizardDocumentTemplateDeprecated
       -- AND: Run migrations
-      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO DT_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
@@ -70,7 +72,7 @@ create_test_200 title appContext reqAuthHeader =
       assertResHeaders headers expHeaders
       compareTemplateDtos resDto expDto
       -- AND: Find result in DB and compare with expectation state
-      assertExistenceOfTemplateInDB appContext wizardDocumentTemplateDeprecated
+      assertExistenceOfDocumentTemplateInDB appContext wizardDocumentTemplateDeprecated
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -88,8 +90,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/document-templates/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/document-templates/3db4265e-8ba2-433d-97fb-6cc504866bbd"
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template"
-    [("id", "deab6c38-aeac-4b17-a501-4365a0a70176")]
+    [("uuid", "3db4265e-8ba2-433d-97fb-6cc504866bbd")]

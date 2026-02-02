@@ -27,7 +27,7 @@ instance ToSchema ProjectDetailPreview where
         , sharing = project1.sharing
         , knowledgeModelPackageId = project1.knowledgeModelPackageId
         , isTemplate = project1.isTemplate
-        , documentTemplateId = Just wizardDocumentTemplate.tId
+        , documentTemplateUuid = Just wizardDocumentTemplate.uuid
         , migrationUuid = Nothing
         , permissions = [project1AlbertEditProjectPermDto]
         , format = Just . DocumentTemplateMapper.toFormatSimple $ formatJson

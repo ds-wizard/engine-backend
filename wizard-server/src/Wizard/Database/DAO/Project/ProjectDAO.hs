@@ -276,17 +276,17 @@ findProjectsByKnowledgeModelPackageId packageId = do
       entities <- runDB action
       traverse enhance entities
 
-findProjectsByDocumentTemplateId :: String -> AppContextM [Project]
-findProjectsByDocumentTemplateId documentTemplateId = do
+findProjectsByDocumentTemplateUuid :: U.UUID -> AppContextM [Project]
+findProjectsByDocumentTemplateUuid documentTemplateUuid = do
   tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
   if currentUser.uRole == _USER_ROLE_ADMIN
-    then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId)] >>= traverse enhance
+    then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid)] >>= traverse enhance
     else do
       let sql =
             fromString $
-              f' (projectSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["AND document_template_id = ?"]
-      let params = [documentTemplateId]
+              f' (projectSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["AND document_template_uuid = ?"]
+      let params = [documentTemplateUuid]
       logQuery sql params
       let action conn = query conn sql params
       entities <- runDB action
@@ -447,7 +447,7 @@ findProjectDetailPreview uuid = do
             \       project.sharing, \
             \       project.knowledge_model_package_id, \
             \       project.is_template, \
-            \       project.document_template_id, \
+            \       project.document_template_uuid, \
             \       project_mig.new_project_uuid AS migration_uuid, \
             \       ${projectDetailPermSql}, \
             \       dt_format.uuid, \
@@ -460,8 +460,8 @@ findProjectDetailPreview uuid = do
             \       ) as file_count \
             \FROM project \
             \LEFT JOIN project_migration project_mig ON project.uuid = project_mig.old_project_uuid AND project.tenant_uuid = project_mig.tenant_uuid \
-            \LEFT JOIN document_template dt ON project.document_template_id = dt.id AND project.tenant_uuid = dt.tenant_uuid \
-            \LEFT JOIN document_template_format dt_format ON project.document_template_id = dt_format.document_template_id AND project.format_uuid = dt_format.uuid AND project.tenant_uuid = dt_format.tenant_uuid \
+            \LEFT JOIN document_template dt ON project.document_template_uuid = dt.uuid AND project.tenant_uuid = dt.tenant_uuid \
+            \LEFT JOIN document_template_format dt_format ON project.document_template_uuid = dt_format.document_template_uuid AND project.format_uuid = dt_format.uuid AND project.tenant_uuid = dt_format.tenant_uuid \
             \WHERE project.tenant_uuid = ? AND project.uuid = ?"
             [ ("projectDetailPermSql", projectDetailPermSql)
             , ("projectUuid", U.toString uuid)
@@ -499,7 +499,7 @@ findProjectDetailSettings uuid = do
             \       pkg.description                as knowledge_model_package_description, \
             \       pkg.non_editable               as knowledge_model_package_non_editable, \
             \       pkg.created_at                 as knowledge_model_package_created_at, \
-            \       dt.id                          as document_template_id, \
+            \       dt.uuid                          as document_template_uuid, \
             \       dt.name                        as document_template_name, \
             \       dt.version                     as document_template_version, \
             \       dt.phase                       as document_template_phase, \
@@ -508,7 +508,7 @@ findProjectDetailSettings uuid = do
             \        SELECT jsonb_agg(jsonb_build_object('uuid', uuid, 'name', name, 'icon', icon)) \
             \        FROM (SELECT * \
             \              FROM document_template_format dt_format \
-            \              WHERE dt_format.tenant_uuid = project.tenant_uuid AND dt_format.document_template_id = dt.id \
+            \              WHERE dt_format.tenant_uuid = project.tenant_uuid AND dt_format.document_template_uuid = dt.uuid \
             \              ORDER BY dt_format.name) nested \
             \       ) AS document_template_formats, \
             \       dt.metamodel_version           as document_template_metamodel_version, \
@@ -520,7 +520,7 @@ findProjectDetailSettings uuid = do
             \FROM project \
             \LEFT JOIN project_migration project_mig ON project.uuid = project_mig.old_project_uuid AND project.tenant_uuid = project_mig.tenant_uuid \
             \LEFT JOIN knowledge_model_package pkg ON project.knowledge_model_package_id = pkg.id AND project.tenant_uuid = pkg.tenant_uuid \
-            \LEFT JOIN document_template dt ON project.document_template_id = dt.id AND project.tenant_uuid = dt.tenant_uuid \
+            \LEFT JOIN document_template dt ON project.document_template_uuid = dt.uuid AND project.tenant_uuid = dt.tenant_uuid \
             \WHERE project.tenant_uuid = ? AND project.uuid = ?"
             [ ("projectDetailPermSql", projectDetailPermSql)
             , ("projectUuid", U.toString uuid)
@@ -574,7 +574,7 @@ updateProjectByUuid project = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE project SET uuid = ?, name = ?, visibility = ?, sharing = ?, knowledge_model_package_id = ?, selected_question_tag_uuids = ?::uuid[], document_template_id = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?::text[] WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE project SET uuid = ?, name = ?, visibility = ?, sharing = ?, knowledge_model_package_id = ?, selected_question_tag_uuids = ?::uuid[], document_template_uuid = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?::text[] WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow project ++ [toField tenantUuid, toField . U.toText $ project.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params

@@ -5,7 +5,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 data DocumentTemplateDraftData = DocumentTemplateDraftData
-  { documentTemplateId :: String
+  { documentTemplateUuid :: U.UUID
   , projectUuid :: Maybe U.UUID
   , formatUuid :: Maybe U.UUID
   , tenantUuid :: U.UUID
@@ -17,7 +17,7 @@ data DocumentTemplateDraftData = DocumentTemplateDraftData
 
 instance Eq DocumentTemplateDraftData where
   a == b =
-    a.documentTemplateId == b.documentTemplateId
+    a.documentTemplateUuid == b.documentTemplateUuid
       && a.projectUuid == b.projectUuid
       && a.knowledgeModelEditorUuid == b.knowledgeModelEditorUuid
       && a.formatUuid == b.formatUuid

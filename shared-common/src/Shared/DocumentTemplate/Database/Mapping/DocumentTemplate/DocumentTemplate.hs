@@ -14,7 +14,7 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 
 instance ToRow DocumentTemplate where
   toRow DocumentTemplate {..} =
-    [ toField tId
+    [ toField uuid
     , toField name
     , toField organizationId
     , toField templateId
@@ -33,7 +33,7 @@ instance ToRow DocumentTemplate where
 
 instance FromRow DocumentTemplate where
   fromRow = do
-    tId <- field
+    uuid <- field
     name <- field
     organizationId <- field
     templateId <- field

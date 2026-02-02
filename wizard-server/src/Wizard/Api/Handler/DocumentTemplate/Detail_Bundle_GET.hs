@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.DocumentTemplate.Detail_Bundle_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -14,15 +15,15 @@ type Detail_Bundle_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "document-templates"
-    :> Capture "documentTemplateId" String
+    :> Capture "uuid" U.UUID
     :> "bundle"
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] TemporaryFileDTO)
 
 detail_bundle_GET
   :: Maybe String
   -> Maybe String
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] TemporaryFileDTO)
-detail_bundle_GET mTokenHeader mServerUrl tmlId =
+detail_bundle_GET mTokenHeader mServerUrl uuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< getTemporaryFileWithBundle tmlId
+    runInAuthService Transactional $ addTraceUuidHeader =<< getTemporaryFileWithBundle uuid

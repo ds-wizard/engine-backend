@@ -24,7 +24,7 @@ assertExistenceOfDocumentInDB appContext reqDto = do
   docFromDb <- getFirstFromDB findDocuments appContext
   liftIO $ docFromDb.name `shouldBe` reqDto.name
   liftIO $ docFromDb.projectUuid `shouldBe` Just reqDto.projectUuid
-  liftIO $ docFromDb.documentTemplateId `shouldBe` reqDto.documentTemplateId
+  liftIO $ docFromDb.documentTemplateUuid `shouldBe` reqDto.documentTemplateUuid
   liftIO $ docFromDb.formatUuid `shouldBe` reqDto.formatUuid
 
 assertAbsenceOfDocumentInDB appContext doc = do

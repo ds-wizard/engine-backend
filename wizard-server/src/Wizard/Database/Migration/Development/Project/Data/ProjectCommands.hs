@@ -17,7 +17,7 @@ command1 =
         , userNikola.email
         ]
     , knowledgeModelPackageId = netherlandsKmPackageV2.pId
-    , documentTemplateId = Just wizardDocumentTemplate.tId
+    , documentTemplateUuid = Just wizardDocumentTemplate.uuid
     }
 
 command2 :: CreateProjectCommand
@@ -29,5 +29,5 @@ command2 =
         , userIsaac.email
         ]
     , knowledgeModelPackageId = netherlandsKmPackageV2.pId
-    , documentTemplateId = Nothing
+    , documentTemplateUuid = Nothing
     }

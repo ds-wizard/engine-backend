@@ -66,10 +66,10 @@ instance FromRow ProjectDetailSettings where
     mDocumentTemplateFormats <- fieldWith (optionalField fromJSONField)
     let documentTemplate =
           case (mDocumentTemplateId, mDocumentTemplateName, mDocumentTemplateVersion, mDocumentTemplatePhase, mDocumentTemplateDescription, mDocumentTemplateFormats) of
-            (Just documentTemplateId, Just documentTemplateName, Just documentTemplateVersion, Just documentTemplatePhase, Just documentTemplateDescription, Just documentTemplateFormats) ->
+            (Just documentTemplateUuid, Just documentTemplateName, Just documentTemplateVersion, Just documentTemplatePhase, Just documentTemplateDescription, Just documentTemplateFormats) ->
               Just $
                 DocumentTemplateDTO
-                  { tId = documentTemplateId
+                  { uuid = documentTemplateUuid
                   , name = documentTemplateName
                   , version = documentTemplateVersion
                   , phase = documentTemplatePhase

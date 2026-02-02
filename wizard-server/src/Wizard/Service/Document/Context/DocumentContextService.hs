@@ -11,6 +11,7 @@ import qualified Data.UUID as U
 
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.List
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Database.DAO.Project.ProjectEventDAO
@@ -42,6 +43,7 @@ import qualified WizardLib.Public.Service.User.Group.UserGroupMapper as UGR_Mapp
 createDocumentContext :: Document -> KnowledgeModelPackage -> [KnowledgeModelEvent] -> Project -> Maybe (M.Map String Reply) -> AppContextM DocumentContext
 createDocumentContext doc pkg kmEditorEvents project mReplies = do
   km <- compileKnowledgeModelWithCaching' kmEditorEvents (Just project.knowledgeModelPackageId) project.selectedQuestionTagUuids (not . null $ kmEditorEvents)
+  dt <- findDocumentTemplateByUuid doc.documentTemplateUuid
   mProjectCreatedBy <- forM project.creatorUuid findUserByUuid
   mDocCreatedBy <- forM doc.createdBy findUserByUuid
   tcOrganization <- findTenantConfigOrganization
@@ -82,6 +84,7 @@ createDocumentContext doc pkg kmEditorEvents project mReplies = do
       projectVersionsList
       projectFiles
       km
+      dt
       report
       pkg
       tcOrganization

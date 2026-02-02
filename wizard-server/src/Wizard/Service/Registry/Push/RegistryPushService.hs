@@ -2,6 +2,8 @@ module Wizard.Service.Registry.Push.RegistryPushService where
 
 import Shared.Common.Util.Logger
 import Shared.Coordinate.Util.Coordinate
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
 import Wizard.Integration.Http.Registry.Runner
@@ -18,11 +20,13 @@ pushKnowledgeModelBundle pkgId = do
   logInfoI _CMP_SERVICE (f' "Pushing knowledge model bundle with the id ('%s') successfully completed" [pkgId])
 
 pushDocumentTemplateBundle :: String -> AppContextM ()
-pushDocumentTemplateBundle tmlId = do
-  logInfoI _CMP_SERVICE (f' "Pushing document template bundle with the id ('%s') to registry" [tmlId])
-  bundle <- DocumentTemplateBundleService.exportBundle tmlId
+pushDocumentTemplateBundle dtId = do
+  logInfoI _CMP_SERVICE (f' "Pushing document template bundle with the id ('%s') to registry" [dtId])
+  coordinate <- parseCoordinate dtId
+  dt <- findDocumentTemplateByCoordinate coordinate
+  (coordinate, bundle) <- DocumentTemplateBundleService.exportBundle dt.uuid
   uploadDocumentTemplateBundle bundle
-  logInfoI _CMP_SERVICE (f' "Pushing document template bundle with the id ('%s') successfully completed" [tmlId])
+  logInfoI _CMP_SERVICE (f' "Pushing document template bundle with the id ('%s') successfully completed" [dtId])
 
 pushLocaleBundle :: String -> AppContextM ()
 pushLocaleBundle lId = do

@@ -132,7 +132,7 @@ create_test_200 title appContext project authHeader permissions =
               , isTemplate = project.isTemplate
               , migrationUuid = Nothing
               , permissions = permissions
-              , documentTemplateId = project.documentTemplateId
+              , documentTemplateUuid = project.documentTemplateUuid
               , format = Just formatJsonSimple
               , fileCount = 0
               }

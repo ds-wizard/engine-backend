@@ -15,7 +15,7 @@ type Detail_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "documentTemplateUuid" U.UUID
     :> "files"
     :> Capture "fileUuid" U.UUID
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] DocumentTemplateFile)
@@ -23,9 +23,9 @@ type Detail_GET =
 detail_GET
   :: Maybe String
   -> Maybe String
-  -> String
+  -> U.UUID
   -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateFile)
-detail_GET mTokenHeader mServerUrl tmlId fileUuid =
+detail_GET mTokenHeader mServerUrl _ fileUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $ addTraceUuidHeader =<< getFile fileUuid

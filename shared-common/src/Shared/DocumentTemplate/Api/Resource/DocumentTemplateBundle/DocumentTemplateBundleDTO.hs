@@ -4,6 +4,7 @@ import Data.Time
 import GHC.Generics
 
 import Shared.Common.Model.Common.SemVer2Tuple
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 
@@ -24,3 +25,11 @@ data DocumentTemplateBundleDTO = DocumentTemplateBundleDTO
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance CoordinateFactory DocumentTemplateBundleDTO where
+  createCoordinate dt =
+    Coordinate
+      { organizationId = dt.organizationId
+      , entityId = dt.templateId
+      , version = dt.version
+      }

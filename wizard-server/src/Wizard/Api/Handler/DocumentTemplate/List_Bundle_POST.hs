@@ -7,8 +7,7 @@ import Shared.Common.Api.Handler.Common
 import Shared.Common.Api.Resource.Common.FileDTO
 import Shared.Common.Api.Resource.Common.FileJM ()
 import Shared.Common.Model.Context.TransactionState
-import Shared.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleDTO hiding (files)
-import Shared.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleJM ()
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateSimple
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.DocumentTemplate.Bundle.DocumentTemplateBundleService
@@ -19,13 +18,13 @@ type List_Bundle_POST =
     :> MultipartForm Mem FileDTO
     :> "document-templates"
     :> "bundle"
-    :> PostCreated '[SafeJSON] (Headers '[Header "x-trace-uuid" String] DocumentTemplateBundleDTO)
+    :> PostCreated '[SafeJSON] (Headers '[Header "x-trace-uuid" String] DocumentTemplateSimple)
 
 list_bundle_POST
   :: Maybe String
   -> Maybe String
   -> FileDTO
-  -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateBundleDTO)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateSimple)
 list_bundle_POST mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $

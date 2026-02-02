@@ -15,7 +15,7 @@ type Detail_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "documentTemplateUuid" U.UUID
     :> "assets"
     :> Capture "assetUuid" U.UUID
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] DocumentTemplateAssetDTO)
@@ -23,7 +23,7 @@ type Detail_GET =
 detail_GET
   :: Maybe String
   -> Maybe String
-  -> String
+  -> U.UUID
   -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateAssetDTO)
 detail_GET mTokenHeader mServerUrl tmlId assetUuid =

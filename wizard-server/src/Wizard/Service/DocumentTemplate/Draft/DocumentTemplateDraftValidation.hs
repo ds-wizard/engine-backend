@@ -2,10 +2,10 @@ module Wizard.Service.DocumentTemplate.Draft.DocumentTemplateDraftValidation whe
 
 import Control.Monad (when)
 import Control.Monad.Except (throwError)
+import qualified Data.UUID as U
 
 import Shared.Common.Model.Error.Error
-import Shared.Coordinate.Service.Coordinate.CoordinateValidation
-import Shared.Coordinate.Util.Coordinate
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftChangeDTO
 import Wizard.Localization.Messages.Public
@@ -14,17 +14,15 @@ import Wizard.Model.Context.ContextLenses ()
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation (validateDocumentTemplateIdUniqueness)
 
 validateChangeDto :: DocumentTemplateDraftChangeDTO -> DocumentTemplate -> AppContextM ()
-validateChangeDto reqDto tml = do
-  let tmlId = buildCoordinate tml.organizationId reqDto.templateId reqDto.version
-  validateCoordinateFormat False "templateId" tmlId
-  validateCoordinateWithParams tml.tId tml.organizationId tml.templateId tml.version
+validateChangeDto reqDto dt = do
+  let newCoordinate = Coordinate dt.organizationId reqDto.templateId reqDto.version
   when
-    (reqDto.templateId /= tml.templateId || reqDto.version /= tml.version)
-    (validateDocumentTemplateIdUniqueness tmlId)
-  validatePhase tmlId reqDto.phase
+    (reqDto.templateId /= dt.templateId || reqDto.version /= dt.version)
+    (validateDocumentTemplateIdUniqueness newCoordinate)
+  validatePhase dt.uuid reqDto.phase
 
-validatePhase :: String -> DocumentTemplatePhase -> AppContextM ()
-validatePhase tmlId newPhase = do
+validatePhase :: U.UUID -> DocumentTemplatePhase -> AppContextM ()
+validatePhase dtUuid newPhase = do
   when
     (newPhase == DeprecatedDocumentTemplatePhase)
-    (throwError . UserError $ _ERROR_VALIDATION__DOC_TML_UNSUPPORTED_STATE tmlId (show newPhase))
+    (throwError . UserError $ _ERROR_VALIDATION__DOC_TML_UNSUPPORTED_STATE (U.toString dtUuid) (show newPhase))

@@ -2,6 +2,7 @@ module Wizard.Specs.Service.DocumentTemplate.DocumentTemplateUtilSpec where
 
 import Data.Maybe (fromJust)
 import Data.Time
+import qualified Data.UUID as U
 import Test.Hspec
 
 import Shared.DocumentTemplate.Constant.DocumentTemplate
@@ -20,7 +21,7 @@ documentTemplateUtilSpec =
         do
           let templates =
                 [ DocumentTemplate
-                    { tId = ""
+                    { uuid = U.nil
                     , name = ""
                     , organizationId = ""
                     , templateId = ""
@@ -48,7 +49,7 @@ documentTemplateUtilSpec =
         do
           let templates =
                 [ DocumentTemplate
-                    { tId = ""
+                    { uuid = U.nil
                     , name = ""
                     , organizationId = ""
                     , templateId = ""
@@ -83,7 +84,7 @@ documentTemplateUtilSpec =
         do
           let templates =
                 [ DocumentTemplate
-                    { tId = ""
+                    { uuid = U.nil
                     , name = ""
                     , organizationId = ""
                     , templateId = ""

@@ -3,6 +3,8 @@ module Wizard.Specs.API.DocumentTemplate.Detail_DELETE (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -13,7 +15,7 @@ import Shared.Common.Model.Error.Error
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DT_Migration
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ_Migration
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -23,11 +25,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /wizard-api/document-templates/{documentTemplateId}
+-- GET /wizard-api/document-templates/{uuid}
 -- ------------------------------------------------------------------------
 detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
-  describe "DELETE /wizard-api/document-templates/{documentTemplateId}" $ do
+  describe "DELETE /wizard-api/document-templates/{uuid}" $ do
     test_204 appContext
     test_400 appContext
     test_401 appContext
@@ -39,7 +41,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/wizard-api/document-templates/global:project-report:1.0.0"
+reqUrl = BS.pack $ "/wizard-api/document-templates/" ++ U.toString wizardDocumentTemplate.uuid
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -60,7 +62,7 @@ create_test_204 title appContext reqAuthHeader =
       let expHeaders = resCorsHeaders
       let expBody = ""
       -- AND: Run migrations
-      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO DT_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
@@ -84,11 +86,11 @@ test_400 appContext =
       let expDto =
             UserError $
               _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY
-                wizardDocumentTemplate.tId
+                (U.toString wizardDocumentTemplate.uuid)
                 "project"
       let expBody = encode expDto
       -- AND: Run migrations
-      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO DT_Migration.runMigration appContext
       runInContextIO PRJ_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
@@ -118,8 +120,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/document-templates/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/document-templates/3db4265e-8ba2-433d-97fb-6cc504866bbd"
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template"
-    [("id", "deab6c38-aeac-4b17-a501-4365a0a70176")]
+    [("uuid", "3db4265e-8ba2-433d-97fb-6cc504866bbd")]

@@ -16,10 +16,10 @@ toList file =
     , updatedAt = file.updatedAt
     }
 
-fromChangeDTO :: DocumentTemplateFileChangeDTO -> String -> U.UUID -> U.UUID -> UTCTime -> UTCTime -> DocumentTemplateFile
-fromChangeDTO dto tmlId uuid tenantUuid createdAt updatedAt =
+fromChangeDTO :: DocumentTemplateFileChangeDTO -> U.UUID -> U.UUID -> U.UUID -> UTCTime -> UTCTime -> DocumentTemplateFile
+fromChangeDTO dto documentTemplateUuid uuid tenantUuid createdAt updatedAt =
   DocumentTemplateFile
-    { documentTemplateId = tmlId
+    { documentTemplateUuid = documentTemplateUuid
     , uuid = uuid
     , fileName = dto.fileName
     , content = dto.content
@@ -31,7 +31,7 @@ fromChangeDTO dto tmlId uuid tenantUuid createdAt updatedAt =
 fromContentChangeDTO :: DocumentTemplateFile -> String -> UTCTime -> DocumentTemplateFile
 fromContentChangeDTO file content now =
   DocumentTemplateFile
-    { documentTemplateId = file.documentTemplateId
+    { documentTemplateUuid = file.documentTemplateUuid
     , uuid = file.uuid
     , fileName = file.fileName
     , content = content
@@ -40,10 +40,10 @@ fromContentChangeDTO file content now =
     , updatedAt = now
     }
 
-fromDuplicateDTO :: DocumentTemplateFile -> String -> U.UUID -> UTCTime -> DocumentTemplateFile
-fromDuplicateDTO file documentTemplateId uuid now =
+fromDuplicateDTO :: DocumentTemplateFile -> U.UUID -> U.UUID -> UTCTime -> DocumentTemplateFile
+fromDuplicateDTO file documentTemplateUuid uuid now =
   DocumentTemplateFile
-    { documentTemplateId = documentTemplateId
+    { documentTemplateUuid = documentTemplateUuid
     , uuid = uuid
     , fileName = file.fileName
     , content = file.content

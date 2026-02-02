@@ -17,7 +17,7 @@ type Detail_Content_PUT =
     :> Header "Host" String
     :> ReqBody '[PlainText] T.Text
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "documentTemplateUuid" U.UUID
     :> "files"
     :> Capture "fileUuid" U.UUID
     :> "content"
@@ -27,10 +27,10 @@ detail_content_PUT
   :: Maybe String
   -> Maybe String
   -> T.Text
-  -> String
+  -> U.UUID
   -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateFile)
-detail_content_PUT mTokenHeader mServerUrl reqContent tmlId fileUuid =
+detail_content_PUT mTokenHeader mServerUrl reqContent _ fileUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< modifyFileContent fileUuid (T.unpack reqContent)

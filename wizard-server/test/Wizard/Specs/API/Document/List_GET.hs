@@ -78,9 +78,9 @@ test_200 appContext = do
     "/wizard-api/documents?q=Non-existing document"
     (Page "documents" (PageMetadata 20 0 0 0) ([] :: [DocumentDTO]))
   create_test_200
-    "HTTP 200 OK (documentTemplateId)"
+    "HTTP 200 OK (documentTemplateUuid)"
     appContext
-    "/wizard-api/documents?documentTemplateId=global:project-report:1.0.0&sort=name,asc"
+    "/wizard-api/documents?documentTemplateUuid=557e76d8-338a-4664-886a-f6af2228776c&sort=name,asc"
     ( Page
         "documents"
         (PageMetadata 20 3 1 0)

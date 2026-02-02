@@ -2,6 +2,7 @@ module Wizard.Service.Document.DocumentCleanService where
 
 import Control.Monad (void)
 import Data.Foldable (traverse_)
+import qualified Data.UUID as U
 
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
@@ -21,6 +22,6 @@ cleanDocuments =
       )
       docsFiltered
 
-cleanTemporallyDocumentsForTemplate :: String -> AppContextM ()
-cleanTemporallyDocumentsForTemplate documentTemplateId =
-  void $ deleteDocumentsFiltered [("document_template_id", documentTemplateId), ("durability", "TemporallyDocumentDurability")]
+cleanTemporallyDocumentsForTemplate :: U.UUID -> AppContextM ()
+cleanTemporallyDocumentsForTemplate dtUuid =
+  void $ deleteDocumentsFiltered [("document_template_uuid", U.toString dtUuid), ("durability", "TemporallyDocumentDurability")]

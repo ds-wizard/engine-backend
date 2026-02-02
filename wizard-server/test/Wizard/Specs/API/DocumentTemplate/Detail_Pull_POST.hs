@@ -12,9 +12,11 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Model.Error.Error
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateSimple
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
@@ -24,12 +26,12 @@ import Wizard.Specs.API.DocumentTemplate.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /wizard-api/document-templates/{documentTemplateId}
+-- GET /wizard-api/document-templates/{uuid}
 -- ------------------------------------------------------------------------
 detail_pull_POST :: AppContext -> SpecWith ((), Application)
 detail_pull_POST appContext =
-  describe "POST /wizard-api/document-templates/{documentTemplateId}/pull" $ do
-    test_204 appContext
+  describe "POST /wizard-api/document-templates/{uuid}/pull" $ do
+    test_201 appContext
     test_400 appContext
     test_401 appContext
     test_403 appContext
@@ -39,7 +41,7 @@ detail_pull_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = BS.pack $ "/wizard-api/document-templates/" ++ wizardDocumentTemplate.tId ++ "/pull"
+reqUrl = BS.pack $ "/wizard-api/document-templates/" ++ show (createCoordinate wizardDocumentTemplate) ++ "/pull"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -48,28 +50,31 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_204 appContext = create_test_204 "HTTP 204 NO CONTENT" appContext reqAuthHeader
+test_201 appContext = create_test_201 "HTTP 201 NO CONTENT" appContext reqAuthHeader
 
-create_test_204 title appContext reqAuthHeader =
+create_test_201 title appContext reqAuthHeader =
   it title $
     -- GIVEN: Prepare request
     do
       let reqHeaders = reqHeadersT reqAuthHeader
       -- AND: Prepare expectation
-      let expStatus = 204
-      let expHeaders = resCorsHeaders
-      let expBody = ""
+      let expStatus = 201
+      let expHeaders = resCorsHeadersPlain
+      let expDto = wizardDocumentTemplateSimple
+      let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO deleteDocumentTemplates appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      result <- destructResponse' response
+      let (status, headers, resDto) = result :: (Int, ResponseHeaders, DocumentTemplateSimple)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      liftIO $ resDto.name `shouldBe` expDto.name
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findDocumentTemplates appContext 1
-      assertExistenceOfTemplateInDB appContext wizardDocumentTemplate
+      assertExistenceOfDocumentTemplateInDB appContext wizardDocumentTemplate
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

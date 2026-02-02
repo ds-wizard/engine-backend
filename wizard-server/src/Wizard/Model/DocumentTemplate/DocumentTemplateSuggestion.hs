@@ -1,5 +1,6 @@
 module Wizard.Model.DocumentTemplate.DocumentTemplateSuggestion where
 
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Common.SemVer2Tuple
@@ -8,7 +9,7 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimp
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 
 data DocumentTemplateSuggestion = DocumentTemplateSuggestion
-  { tId :: String
+  { uuid :: U.UUID
   , name :: String
   , organizationId :: String
   , templateId :: String

@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.DocumentTemplate.Detail_PUT where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -17,15 +18,15 @@ type Detail_PUT =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] DocumentTemplateChangeDTO
     :> "document-templates"
-    :> Capture "documentTemplateId" String
+    :> Capture "uuid" U.UUID
     :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] DocumentTemplateDetailDTO)
 
 detail_PUT
   :: Maybe String
   -> Maybe String
   -> DocumentTemplateChangeDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateDetailDTO)
-detail_PUT mTokenHeader mServerUrl reqDto tmlId =
+detail_PUT mTokenHeader mServerUrl reqDto uuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< modifyDocumentTemplate tmlId reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< modifyDocumentTemplate uuid reqDto

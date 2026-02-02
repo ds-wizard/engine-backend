@@ -3,6 +3,8 @@ module Wizard.Specs.API.DocumentTemplateDraft.File.Detail_PUT (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -23,11 +25,11 @@ import Wizard.Specs.API.DocumentTemplateDraft.File.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /wizard-api/document-template-drafts/{documentTemplateId}/files/{fileUuid}
+-- PUT /wizard-api/document-template-drafts/{dtUuid}/files/{fileUuid}
 -- ------------------------------------------------------------------------
 detail_PUT :: AppContext -> SpecWith ((), Application)
 detail_PUT appContext =
-  describe "PUT /wizard-api/document-template-drafts/{documentTemplateId}/files/{fileUuid}" $ do
+  describe "PUT /wizard-api/document-template-drafts/{dtUuid}/files/{fileUuid}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -38,7 +40,7 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/wizard-api/document-template-drafts/global:project-report:1.0.0/files/7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
+reqUrl = BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/files/" ++ U.toString fileDefaultHtml.uuid
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 
@@ -70,7 +72,7 @@ create_test_200 title appContext reqAuthHeader =
       assertResHeaders headers expHeaders
       compareTemplateFileDtos resDto expDto
       -- AND: Find result in DB and compare with expectation state
-      assertExistenceOfTemplateFileInDB appContext fileDefaultHtmlEdited wizardDocumentTemplate.tId
+      assertExistenceOfTemplateFileInDB appContext fileDefaultHtmlEdited
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -88,8 +90,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/document-template-drafts/global:project-report:1.0.0/files/deab6c38-aeac-4b17-a501-4365a0a70176"
+    (BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/files/fed88104-7cf1-489a-bfd0-24c120bb1cda")
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template_file"
-    [("uuid", "deab6c38-aeac-4b17-a501-4365a0a70176")]
+    [("uuid", "fed88104-7cf1-489a-bfd0-24c120bb1cda")]

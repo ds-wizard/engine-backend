@@ -16,7 +16,7 @@ data ProjectDetailWsDTO = ProjectDetailWsDTO
   , sharing :: ProjectSharing
   , projectTags :: [String]
   , permissions :: [ProjectPermDTO]
-  , documentTemplateId :: Maybe String
+  , documentTemplateUuid :: Maybe U.UUID
   , documentTemplate :: Maybe DocumentTemplateDTO
   , formatUuid :: Maybe U.UUID
   , format :: Maybe DocumentTemplateFormatSimple

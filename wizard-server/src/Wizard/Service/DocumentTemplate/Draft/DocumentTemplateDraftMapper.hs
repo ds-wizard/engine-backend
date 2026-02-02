@@ -17,22 +17,22 @@ import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
 import Wizard.Model.Project.ProjectSuggestion
 
 toDraftList :: DocumentTemplate -> DocumentTemplateDraftList
-toDraftList tml =
+toDraftList dt =
   DocumentTemplateDraftList
-    { tId = tml.tId
-    , name = tml.name
-    , organizationId = tml.organizationId
-    , templateId = tml.templateId
-    , version = tml.version
-    , description = tml.description
-    , createdAt = tml.createdAt
-    , updatedAt = tml.updatedAt
+    { uuid = dt.uuid
+    , name = dt.name
+    , organizationId = dt.organizationId
+    , templateId = dt.templateId
+    , version = dt.version
+    , description = dt.description
+    , createdAt = dt.createdAt
+    , updatedAt = dt.updatedAt
     }
 
 toDraftDetail :: DocumentTemplate -> [DocumentTemplateFormat] -> DocumentTemplateDraftData -> Maybe ProjectSuggestion -> Maybe KnowledgeModelEditorSuggestion -> DocumentTemplateDraftDetail
 toDraftDetail draft formats draftData mProject mKmEditor =
   DocumentTemplateDraftDetail
-    { tId = draft.tId
+    { uuid = draft.uuid
     , name = draft.name
     , templateId = draft.templateId
     , version = draft.version
@@ -53,7 +53,7 @@ toDraftDetail draft formats draftData mProject mKmEditor =
 toDraftDetail' :: DocumentTemplate -> [DocumentTemplateFormat] -> DocumentTemplateDraftDetail
 toDraftDetail' draft formats =
   DocumentTemplateDraftDetail
-    { tId = draft.tId
+    { uuid = draft.uuid
     , name = draft.name
     , templateId = draft.templateId
     , version = draft.version
@@ -82,48 +82,48 @@ toDraftDataDTO draftData mProject mKmEditor =
     }
 
 toChangeDTO :: DocumentTemplate -> DocumentTemplateDraftChangeDTO
-toChangeDTO tml =
+toChangeDTO dt =
   DocumentTemplateDraftChangeDTO
-    { name = tml.name
-    , templateId = tml.templateId
-    , version = tml.version
-    , phase = tml.phase
-    , description = tml.description
-    , readme = tml.readme
-    , license = tml.license
-    , allowedPackages = tml.allowedPackages
+    { name = dt.name
+    , templateId = dt.templateId
+    , version = dt.version
+    , phase = dt.phase
+    , description = dt.description
+    , readme = dt.readme
+    , license = dt.license
+    , allowedPackages = dt.allowedPackages
     , formats = []
     }
 
-fromCreateDTO :: DocumentTemplateDraftCreateDTO -> DocumentTemplate -> [DocumentTemplateFormat] -> String -> UTCTime -> (DocumentTemplate, [DocumentTemplateFormat])
-fromCreateDTO dto tml formats organizationId now =
-  let documentTemplateId = buildCoordinate organizationId dto.templateId dto.version
+fromCreateDTO :: DocumentTemplateDraftCreateDTO -> U.UUID -> DocumentTemplate -> [DocumentTemplateFormat] -> String -> UTCTime -> (DocumentTemplate, [DocumentTemplateFormat])
+fromCreateDTO dto uuid dt formats organizationId now =
+  let documentTemplateUuid = buildCoordinate organizationId dto.templateId dto.version
    in ( DocumentTemplate
-          { tId = documentTemplateId
+          { uuid = uuid
           , name = dto.name
           , organizationId = organizationId
           , templateId = dto.templateId
           , version = dto.version
           , phase = DraftDocumentTemplatePhase
           , metamodelVersion = documentTemplateMetamodelVersion
-          , description = tml.description
-          , readme = tml.readme
-          , license = tml.license
-          , allowedPackages = tml.allowedPackages
+          , description = dt.description
+          , readme = dt.readme
+          , license = dt.license
+          , allowedPackages = dt.allowedPackages
           , nonEditable = False
-          , tenantUuid = tml.tenantUuid
+          , tenantUuid = dt.tenantUuid
           , createdAt = now
           , updatedAt = now
           }
       , fmap
           ( \f ->
               f
-                { documentTemplateId = documentTemplateId
+                { documentTemplateUuid = uuid
                 , steps =
                     fmap
                       ( \s ->
                           s
-                            { documentTemplateId = documentTemplateId
+                            { documentTemplateUuid = uuid
                             , createdAt = now
                             , updatedAt = now
                             }
@@ -138,10 +138,10 @@ fromCreateDTO dto tml formats organizationId now =
           formats
       )
 
-fromCreateDTO' :: DocumentTemplateDraftCreateDTO -> String -> U.UUID -> UTCTime -> DocumentTemplate
-fromCreateDTO' dto organizationId tenantUuid now =
+fromCreateDTO' :: DocumentTemplateDraftCreateDTO -> U.UUID -> String -> U.UUID -> UTCTime -> DocumentTemplate
+fromCreateDTO' dto uuid organizationId tenantUuid now =
   DocumentTemplate
-    { tId = buildCoordinate organizationId dto.templateId dto.version
+    { uuid = uuid
     , name = dto.name
     , organizationId = organizationId
     , templateId = dto.templateId
@@ -159,21 +159,21 @@ fromCreateDTO' dto organizationId tenantUuid now =
     }
 
 fromChangeDTO :: DocumentTemplateDraftChangeDTO -> DocumentTemplate -> UTCTime -> DocumentTemplate
-fromChangeDTO dto tml now =
+fromChangeDTO dto dt now =
   DocumentTemplate
-    { tId = tml.tId
+    { uuid = dt.uuid
     , name = dto.name
-    , organizationId = tml.organizationId
-    , templateId = tml.templateId
-    , version = tml.version
+    , organizationId = dt.organizationId
+    , templateId = dto.templateId
+    , version = dto.version
     , phase = dto.phase
-    , metamodelVersion = tml.metamodelVersion
+    , metamodelVersion = dt.metamodelVersion
     , description = dto.description
     , readme = dto.readme
     , license = dto.license
     , allowedPackages = dto.allowedPackages
-    , nonEditable = tml.nonEditable
-    , tenantUuid = tml.tenantUuid
+    , nonEditable = dt.nonEditable
+    , tenantUuid = dt.tenantUuid
     , createdAt = now
     , updatedAt = now
     }
@@ -181,7 +181,7 @@ fromChangeDTO dto tml now =
 fromCreateDraftData :: DocumentTemplate -> DocumentTemplateDraftData
 fromCreateDraftData draft =
   DocumentTemplateDraftData
-    { documentTemplateId = draft.tId
+    { documentTemplateUuid = draft.uuid
     , projectUuid = Nothing
     , knowledgeModelEditorUuid = Nothing
     , formatUuid = Nothing
@@ -193,7 +193,7 @@ fromCreateDraftData draft =
 fromDraftDataChangeDTO :: DocumentTemplateDraftData -> DocumentTemplateDraftDataChangeDTO -> DocumentTemplateDraftData
 fromDraftDataChangeDTO draftData reqDto =
   DocumentTemplateDraftData
-    { documentTemplateId = draftData.documentTemplateId
+    { documentTemplateUuid = draftData.documentTemplateUuid
     , projectUuid = reqDto.projectUuid
     , knowledgeModelEditorUuid = reqDto.knowledgeModelEditorUuid
     , formatUuid = reqDto.formatUuid

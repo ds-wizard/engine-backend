@@ -15,14 +15,14 @@ import Wizard.Specs.Common
 -- --------------------------------
 -- ASSERTS
 -- --------------------------------
-assertExistenceOfTemplateInDB appContext tml = do
-  eTemplate <- runInContextIO (findDraftById tml.tId) appContext
-  liftIO $ isRight eTemplate `shouldBe` True
-  let (Right templateFromDB) = eTemplate
-  compareDtos templateFromDB tml
+assertExistenceOfDocumentTemplateInDB appContext dt = do
+  eDt <- runInContextIO (findDraftByUuid dt.uuid) appContext
+  liftIO $ isRight eDt `shouldBe` True
+  let (Right dtFromDB) = eDt
+  compareDtos dtFromDB dt
 
 assertExistenceOfDraftDataInDB appContext draftData = do
-  eDraftData <- runInContextIO (findDraftDataById draftData.documentTemplateId) appContext
+  eDraftData <- runInContextIO (findDraftDataByUuid draftData.documentTemplateUuid) appContext
   liftIO $ isRight eDraftData `shouldBe` True
   let (Right draftDataFromDB) = eDraftData
   liftIO $ draftDataFromDB `shouldBe` draftData
@@ -31,7 +31,7 @@ assertExistenceOfDraftDataInDB appContext draftData = do
 -- COMPARATORS
 -- --------------------------------
 compareDtos resDto expDto = do
-  liftIO $ resDto.tId `shouldBe` expDto.tId
+  liftIO $ resDto.uuid `shouldBe` expDto.uuid
   liftIO $ resDto.organizationId `shouldBe` expDto.organizationId
   liftIO $ resDto.templateId `shouldBe` expDto.templateId
   liftIO $ resDto.version `shouldBe` expDto.version

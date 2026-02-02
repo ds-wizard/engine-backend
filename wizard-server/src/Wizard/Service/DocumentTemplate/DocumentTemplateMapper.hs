@@ -16,63 +16,64 @@ import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Wizard.Model.DocumentTemplate.DocumentTemplateList
 import Wizard.Model.DocumentTemplate.DocumentTemplateSuggestion
+import Wizard.Model.DocumentTemplate.DocumentTemplateWithCoordinate
 import Wizard.Model.Registry.RegistryOrganization
 import Wizard.Model.Registry.RegistryTemplate
 import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
 import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as PM_Mapper
 
 toList :: DocumentTemplate -> Maybe RegistryTemplate -> Maybe RegistryOrganization -> DocumentTemplatePhase -> DocumentTemplateList
-toList tml mTmlR mOrgR phase =
+toList dt mDtR mOrgR phase =
   DocumentTemplateList
-    { tId = tml.tId
-    , name = tml.name
-    , organizationId = tml.organizationId
-    , templateId = tml.templateId
-    , version = tml.version
-    , phase = tml.phase
-    , metamodelVersion = tml.metamodelVersion
-    , description = tml.description
-    , allowedPackages = tml.allowedPackages
-    , nonEditable = tml.nonEditable
-    , remoteVersion = fmap (.remoteVersion) mTmlR
+    { uuid = dt.uuid
+    , name = dt.name
+    , organizationId = dt.organizationId
+    , templateId = dt.templateId
+    , version = dt.version
+    , phase = dt.phase
+    , metamodelVersion = dt.metamodelVersion
+    , description = dt.description
+    , allowedPackages = dt.allowedPackages
+    , nonEditable = dt.nonEditable
+    , remoteVersion = fmap (.remoteVersion) mDtR
     , remoteOrganizationName = fmap (.name) mOrgR
     , remoteOrganizationLogo =
         case mOrgR of
           Just orgR -> orgR.logo
           Nothing -> Nothing
-    , createdAt = tml.createdAt
+    , createdAt = dt.createdAt
     }
 
 toSimpleDTO :: DocumentTemplate -> DocumentTemplateSimpleDTO
-toSimpleDTO tml = toSimpleDTO' False $ toList tml Nothing Nothing ReleasedDocumentTemplatePhase
+toSimpleDTO dt = toSimpleDTO' False $ toList dt Nothing Nothing ReleasedDocumentTemplatePhase
 
 toSimpleDTO' :: Bool -> DocumentTemplateList -> DocumentTemplateSimpleDTO
-toSimpleDTO' registryEnabled tml =
+toSimpleDTO' registryEnabled dt =
   DocumentTemplateSimpleDTO
-    { tId = tml.tId
-    , name = tml.name
-    , organizationId = tml.organizationId
-    , templateId = tml.templateId
-    , version = tml.version
-    , phase = tml.phase
+    { uuid = dt.uuid
+    , name = dt.name
+    , organizationId = dt.organizationId
+    , templateId = dt.templateId
+    , version = dt.version
+    , phase = dt.phase
     , remoteLatestVersion =
         if registryEnabled
-          then tml.remoteVersion
+          then dt.remoteVersion
           else Nothing
-    , description = tml.description
-    , nonEditable = tml.nonEditable
-    , state = computeDocumentTemplateState' tml
+    , description = dt.description
+    , nonEditable = dt.nonEditable
+    , state = computeDocumentTemplateState' dt
     , organization =
-        case (registryEnabled, tml.remoteOrganizationName) of
+        case (registryEnabled, dt.remoteOrganizationName) of
           (True, Just orgName) ->
             Just $
               OrganizationSimple
-                { organizationId = tml.organizationId
+                { organizationId = dt.organizationId
                 , name = orgName
-                , logo = tml.remoteOrganizationLogo
+                , logo = dt.remoteOrganizationLogo
                 }
           _ -> Nothing
-    , createdAt = tml.createdAt
+    , createdAt = dt.createdAt
     }
 
 toSuggestionDTOPage :: [DocumentTemplateSuggestion] -> Pageable -> Page DocumentTemplateSuggestionDTO
@@ -92,6 +93,9 @@ toSuggestionDTOPage suggestions pageable =
 toSuggestionDTO :: DocumentTemplateSuggestion -> DocumentTemplateSuggestionDTO
 toSuggestionDTO DocumentTemplateSuggestion {..} = DocumentTemplateSuggestionDTO {..}
 
+toWithCoordinate :: DocumentTemplate -> DocumentTemplateWithCoordinate
+toWithCoordinate DocumentTemplate {..} = DocumentTemplateWithCoordinate {..}
+
 toDetailDTO
   :: DocumentTemplate
   -> [DocumentTemplateFormat]
@@ -104,7 +108,7 @@ toDetailDTO
   -> DocumentTemplateDetailDTO
 toDetailDTO tml formats registryEnabled tmlRs orgRs versionLs registryLink pkgs =
   DocumentTemplateDetailDTO
-    { tId = tml.tId
+    { uuid = tml.uuid
     , name = tml.name
     , organizationId = tml.organizationId
     , templateId = tml.templateId
@@ -142,23 +146,23 @@ toChangeDTO tml =
     }
 
 fromChangeDTO :: DocumentTemplateChangeDTO -> DocumentTemplate -> DocumentTemplate
-fromChangeDTO dto tml =
+fromChangeDTO dto dt =
   DocumentTemplate
-    { tId = tml.tId
-    , name = tml.name
-    , organizationId = tml.organizationId
-    , templateId = tml.templateId
-    , version = tml.version
+    { uuid = dt.uuid
+    , name = dt.name
+    , organizationId = dt.organizationId
+    , templateId = dt.templateId
+    , version = dt.version
     , phase = dto.phase
-    , metamodelVersion = tml.metamodelVersion
-    , description = tml.description
-    , readme = tml.readme
-    , license = tml.license
-    , allowedPackages = tml.allowedPackages
-    , nonEditable = tml.nonEditable
-    , tenantUuid = tml.tenantUuid
-    , createdAt = tml.createdAt
-    , updatedAt = tml.updatedAt
+    , metamodelVersion = dt.metamodelVersion
+    , description = dt.description
+    , readme = dt.readme
+    , license = dt.license
+    , allowedPackages = dt.allowedPackages
+    , nonEditable = dt.nonEditable
+    , tenantUuid = dt.tenantUuid
+    , createdAt = dt.createdAt
+    , updatedAt = dt.updatedAt
     }
 
 buildRegistryTemplateUrl :: String -> DocumentTemplate -> [RegistryTemplate] -> Maybe String

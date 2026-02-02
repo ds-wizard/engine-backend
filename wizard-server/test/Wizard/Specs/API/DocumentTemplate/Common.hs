@@ -5,6 +5,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Model.Context.ContextLenses ()
@@ -14,11 +15,11 @@ import Wizard.Specs.Common
 -- --------------------------------
 -- ASSERTS
 -- --------------------------------
-assertExistenceOfTemplateInDB appContext tml = do
-  eTemplate <- runInContextIO (findDocumentTemplateById tml.tId) appContext
+assertExistenceOfDocumentTemplateInDB appContext dt = do
+  eTemplate <- runInContextIO (findDocumentTemplateByCoordinate (createCoordinate dt)) appContext
   liftIO $ isRight eTemplate `shouldBe` True
   let (Right templateFromDB) = eTemplate
-  compareTemplateDtos templateFromDB tml
+  compareTemplateDtos templateFromDB dt
 
 -- --------------------------------
 -- COMPARATORS

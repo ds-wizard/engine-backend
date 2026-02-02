@@ -9,11 +9,11 @@ import Shared.Common.Model.Error.Error
 toRetrieveKnowledgeModelBundleByIdResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
 toRetrieveKnowledgeModelBundleByIdResponse = Right . responseBody
 
-toRetrieveTemplateBundleByIdResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
-toRetrieveTemplateBundleByIdResponse = Right . responseBody
+toRetrieveDocumentTemplateBundleByCoordinateResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
+toRetrieveDocumentTemplateBundleByCoordinateResponse = Right . responseBody
 
-toRetrieveLocaleBundleByIdResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
-toRetrieveLocaleBundleByIdResponse = Right . responseBody
+toRetrieveLocaleBundleByCoordinateResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
+toRetrieveLocaleBundleByCoordinateResponse = Right . responseBody
 
 toUploadDocumentTemplateBundleResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
 toUploadDocumentTemplateBundleResponse = Right . responseBody

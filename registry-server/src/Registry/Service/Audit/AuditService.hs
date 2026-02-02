@@ -38,19 +38,19 @@ auditGetKnowledgeModelBundle pkgId =
     insertAuditEntry entry
     return . Right . Just $ entry
 
-auditGetDocumentTemplateBundle :: String -> AppContextM (Either AppError (Maybe AuditEntry))
-auditGetDocumentTemplateBundle documentTemplateId =
+auditGetDocumentTemplateBundle :: Coordinate -> AppContextM (Either AppError (Maybe AuditEntry))
+auditGetDocumentTemplateBundle coordinate =
   heGetOrganizationFromContext $ \org -> do
     now <- liftIO getCurrentTime
-    let entry = GetDocumentTemplateBundleAuditEntry {organizationId = org.organizationId, documentTemplateId = documentTemplateId, createdAt = now}
+    let entry = GetDocumentTemplateBundleAuditEntry {organizationId = org.organizationId, documentTemplateId = show coordinate, createdAt = now}
     insertAuditEntry entry
     return . Right . Just $ entry
 
 auditGetLocaleBundle :: Coordinate -> AppContextM (Either AppError (Maybe AuditEntry))
-auditGetLocaleBundle lId =
+auditGetLocaleBundle coordinate =
   heGetOrganizationFromContext $ \org -> do
     now <- liftIO getCurrentTime
-    let entry = GetLocaleBundleAuditEntry {organizationId = org.organizationId, localeId = show lId, createdAt = now}
+    let entry = GetLocaleBundleAuditEntry {organizationId = org.organizationId, localeId = show coordinate, createdAt = now}
     insertAuditEntry entry
     return . Right . Just $ entry
 

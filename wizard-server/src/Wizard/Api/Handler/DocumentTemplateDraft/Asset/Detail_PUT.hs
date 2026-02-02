@@ -18,7 +18,7 @@ type Detail_PUT =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] DocumentTemplateAssetChangeDTO
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "documentTemplateUuid" U.UUID
     :> "assets"
     :> Capture "assetUuid" U.UUID
     :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] DocumentTemplateAsset)
@@ -27,9 +27,9 @@ detail_PUT
   :: Maybe String
   -> Maybe String
   -> DocumentTemplateAssetChangeDTO
-  -> String
+  -> U.UUID
   -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateAsset)
-detail_PUT mTokenHeader mServerUrl reqDto tmlId assetUuid =
+detail_PUT mTokenHeader mServerUrl reqDto dtUuid assetUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< modifyAsset assetUuid reqDto

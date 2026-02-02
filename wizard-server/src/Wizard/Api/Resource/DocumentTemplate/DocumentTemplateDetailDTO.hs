@@ -1,6 +1,7 @@
 module Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO where
 
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Common.SemVer2Tuple
@@ -11,7 +12,7 @@ import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.Registry.RegistryOrganization
 
 data DocumentTemplateDetailDTO = DocumentTemplateDetailDTO
-  { tId :: String
+  { uuid :: U.UUID
   , name :: String
   , organizationId :: String
   , templateId :: String

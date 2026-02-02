@@ -326,7 +326,7 @@ instance Eq TenantConfigSubmissionService where
 data TenantConfigSubmissionServiceSupportedFormat = TenantConfigSubmissionServiceSupportedFormat
   { tenantUuid :: U.UUID
   , serviceId :: String
-  , templateId :: String
+  , templateUuid :: U.UUID
   , formatUuid :: U.UUID
   }
   deriving (Generic, Eq, Show)

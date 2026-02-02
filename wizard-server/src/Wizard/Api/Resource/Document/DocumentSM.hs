@@ -6,6 +6,7 @@ import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleSM ()
+import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateWithCoordinateSM ()
 import Wizard.Api.Resource.Project.ProjectSimpleSM ()
 import Wizard.Api.Resource.Submission.SubmissionSM ()
 import Wizard.Database.Migration.Development.Document.Data.Documents
