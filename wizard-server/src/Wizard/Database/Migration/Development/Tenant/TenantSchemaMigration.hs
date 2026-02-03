@@ -21,7 +21,8 @@ dropConfigTables :: AppContextM Int64
 dropConfigTables = do
   logInfo _CMP_MIGRATION "(Table/Config) drop table"
   let sql =
-        "DROP TABLE IF EXISTS config_owl;\
+        "DROP TABLE IF EXISTS tenant_plugin_settings; \
+        \DROP TABLE IF EXISTS config_owl;\
         \DROP TABLE IF EXISTS config_mail;\
         \DROP TABLE IF EXISTS config_features;\
         \DROP TABLE IF EXISTS config_submission_service_supported_format;\
@@ -94,6 +95,7 @@ createConfigTables = do
   createTcFeaturesTable
   createTcMailTable
   createTcOwlTable
+  createTenantPluginSettingsTable
 
 createTcOrganizationTable = do
   logInfo _CMP_MIGRATION "(Table/ConfigOrganization) create tables"
@@ -453,6 +455,23 @@ createTenantLimitBundleTable = do
         \    document_template_drafts integer     NOT NULL, \
         \    locales                  integer     NOT NULL, \
         \    CONSTRAINT tenant_limit_bundle_pk PRIMARY KEY (uuid) \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createTenantPluginSettingsTable = do
+  logInfo _CMP_MIGRATION "(Table/TenantPluginSettings) create tables"
+  let sql =
+        "CREATE TABLE tenant_plugin_settings \
+        \( \
+        \    tenant_uuid  uuid        NOT NULL, \
+        \    plugin_uuid  uuid        NOT NULL, \
+        \    values       jsonb       NOT NULL, \
+        \    created_at   timestamptz NOT NULL, \
+        \    updated_at   timestamptz NOT NULL, \
+        \    CONSTRAINT tenant_plugin_settings_pk PRIMARY KEY (tenant_uuid, plugin_uuid), \
+        \    CONSTRAINT tenant_plugin_settings_plugin_uuid_fk FOREIGN KEY (plugin_uuid, tenant_uuid) REFERENCES plugin (uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT tenant_plugin_settings_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

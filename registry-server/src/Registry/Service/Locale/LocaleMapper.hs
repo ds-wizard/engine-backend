@@ -10,7 +10,7 @@ import Shared.Locale.Model.Locale.Locale
 toDTO :: [Organization] -> Locale -> LocaleDTO
 toDTO orgs locale =
   LocaleDTO
-    { lId = locale.lId
+    { uuid = locale.uuid
     , name = locale.name
     , description = locale.description
     , code = locale.code
@@ -24,7 +24,7 @@ toDTO orgs locale =
 toDetailDTO :: Locale -> [String] -> Organization -> LocaleDetailDTO
 toDetailDTO locale versions org =
   LocaleDetailDTO
-    { lId = locale.lId
+    { uuid = locale.uuid
     , name = locale.name
     , description = locale.description
     , code = locale.code

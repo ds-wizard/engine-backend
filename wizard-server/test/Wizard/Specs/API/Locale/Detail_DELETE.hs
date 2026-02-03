@@ -17,11 +17,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /wizard-api/locales/{lclId}
+-- GET /wizard-api/locales/{uuid}
 -- ------------------------------------------------------------------------
 detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
-  describe "DELETE /wizard-api/locales/{lclId}" $ do
+  describe "DELETE /wizard-api/locales/{uuid}" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -32,7 +32,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/wizard-api/locales/global:dutch:1.0.0"
+reqUrl = "/wizard-api/locales/d9894fb9-c6a5-4294-98d6-b46d75684d53"
 
 reqHeaders = [reqAuthHeader]
 
@@ -74,8 +74,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/locales/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/locales/99193032-99e3-4676-acd8-222983ea0b88"
     reqHeaders
     reqBody
     "locale"
-    [("id", "deab6c38-aeac-4b17-a501-4365a0a70176")]
+    [("uuid", "99193032-99e3-4676-acd8-222983ea0b88")]

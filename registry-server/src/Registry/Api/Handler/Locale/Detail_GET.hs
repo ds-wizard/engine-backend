@@ -10,11 +10,13 @@ import Registry.Model.Context.ContextLenses ()
 import Registry.Service.Locale.LocaleService
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
+import Shared.Coordinate.Api.Resource.Coordinate.CoordinateJM ()
+import Shared.Coordinate.Model.Coordinate.Coordinate
 
 type Detail_GET =
   "locales"
-    :> Capture "documentTemplateId" String
+    :> Capture "id" Coordinate
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] LocaleDetailDTO)
 
-detail_GET :: String -> BaseContextM (Headers '[Header "x-trace-uuid" String] LocaleDetailDTO)
-detail_GET tmlId = runInUnauthService NoTransaction $ addTraceUuidHeader =<< getLocaleById tmlId
+detail_GET :: Coordinate -> BaseContextM (Headers '[Header "x-trace-uuid" String] LocaleDetailDTO)
+detail_GET coordinate = runInUnauthService NoTransaction $ addTraceUuidHeader =<< getLocaleByCoordinate coordinate

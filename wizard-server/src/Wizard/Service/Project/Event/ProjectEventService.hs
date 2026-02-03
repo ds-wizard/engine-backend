@@ -1,5 +1,6 @@
 module Wizard.Service.Project.Event.ProjectEventService where
 
+import Control.Monad.Reader (asks)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
 import qualified Data.Map.Strict as M
@@ -9,13 +10,28 @@ import qualified Data.UUID as U
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.List (groupBy)
 import Shared.Common.Util.Logger
+import Wizard.Api.Resource.Project.Event.ProjectEventChangeDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.DAO.Project.ProjectEventDAO
 import Wizard.Database.DAO.Project.ProjectVersionDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Project.Event.ProjectEvent
+import Wizard.Model.Project.Project
 import Wizard.Model.Project.Version.ProjectVersion
+import Wizard.Model.Websocket.WebsocketRecord
+import Wizard.Service.Project.Collaboration.ProjectCollaborationService
+import Wizard.Service.Project.ProjectAcl
+import Wizard.Service.User.UserMapper
+
+addEventToProject :: U.UUID -> ProjectEventChangeDTO -> AppContextM ()
+addEventToProject projectUuid reqDto =
+  runInTransaction $ do
+    project <- findProjectByUuid projectUuid
+    checkEditPermissionToProject project.visibility project.sharing project.permissions
+    mCurrentUser <- asks currentUser
+    let mCreatedBy = fmap toSuggestion' mCurrentUser
+    addEvent projectUuid EditorWebsocketPerm mCreatedBy reqDto
 
 squashProjectEvents :: AppContextM ()
 squashProjectEvents = do

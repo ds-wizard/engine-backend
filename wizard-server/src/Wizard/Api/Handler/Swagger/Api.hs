@@ -16,10 +16,12 @@ import Shared.Common.Api.Resource.Dev.DevExecutionSM ()
 import Shared.Common.Api.Resource.Dev.DevSectionSM ()
 import Shared.Common.Api.Resource.Info.InfoSM ()
 import Shared.Component.Api.Resource.Component.ComponentSM ()
+import Shared.Coordinate.Api.Resource.Coordinate.CoordinateSM ()
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePhaseSM ()
+import Shared.Locale.Api.Resource.Locale.LocaleSimpleSM ()
 import Shared.Locale.Api.Resource.Locale.LocaleSuggestionSM ()
 import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandChangeSM ()
 import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandSM ()
@@ -149,7 +151,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.26.2"
+              , _infoVersion = "4.27.0"
               , _infoLicense =
                   Just $
                     License

@@ -1,9 +1,14 @@
 module Shared.Coordinate.Util.Coordinate where
 
+import Control.Monad.Except (throwError)
 import qualified Data.List as L
 import GHC.Records
 
+import Shared.Common.Model.Context.AppContext
+import Shared.Common.Model.Error.Error
 import Shared.Common.Util.String (splitOn)
+import Shared.Coordinate.Localization.Messages.Public
+import Shared.Coordinate.Model.Coordinate.Coordinate
 
 compareVersionNeg :: String -> String -> Ordering
 compareVersionNeg verA verB = compareVersion verB verA
@@ -31,6 +36,12 @@ compareVersion versionA versionB =
     versionBMajor = read (head versionBSplit) :: Int
     versionBMinor = read (versionBSplit !! 1) :: Int
     versionBPatch = read (versionBSplit !! 2) :: Int
+
+parseCoordinate :: AppContextC s sc m => String -> m Coordinate
+parseCoordinate coordinateS =
+  case splitOn ":" coordinateS of
+    [organizationId, entityId, version] -> return Coordinate {..}
+    _ -> throwError . UserError $ _ERROR_VALIDATION__INVALID_COORDINATE_FORMAT
 
 splitCoordinate :: String -> [String]
 splitCoordinate = splitOn ":"

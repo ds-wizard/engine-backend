@@ -10,7 +10,7 @@ import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.Context.AppContext
 import Wizard.S3.Locale.LocaleS3
-import WizardLib.Public.Model.PersistentCommand.Trigger.TriggerEntityIdCommand
+import WizardLib.Public.Model.PersistentCommand.Trigger.TriggerEntityUuidCommand
 
 cComponent = "locale"
 
@@ -23,9 +23,9 @@ cDeleteFromS3Name = "deleteFromS3"
 
 cDeleteFromS3 :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 cDeleteFromS3 persistentCommand = do
-  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String TriggerEntityIdCommand
+  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String TriggerEntityUuidCommand
   case eCommand of
     Right command -> do
-      removeLocale command.aId
+      removeLocale command.uuid
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])

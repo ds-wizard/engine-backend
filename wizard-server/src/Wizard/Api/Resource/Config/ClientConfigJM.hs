@@ -5,6 +5,7 @@ import Data.Aeson
 import Shared.Common.Api.Resource.Config.SimpleFeatureJM ()
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.Config.ClientConfigDTO
+import Wizard.Api.Resource.Plugin.PluginListJM ()
 import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()
 import Wizard.Api.Resource.User.UserProfileJM ()
 

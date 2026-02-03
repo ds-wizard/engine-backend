@@ -136,6 +136,7 @@ instance FromEnv ServerConfigSignalBridge where
       , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_UPDATE_PERMS_ARN" c.updatePermsArn (\x -> c {updatePermsArn = x} :: ServerConfigSignalBridge)
       , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_UPDATE_USER_GROUP_ARN" c.updateUserGroupArn (\x -> c {updateUserGroupArn = x} :: ServerConfigSignalBridge)
       , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_SET_PROJECT_ARN" c.setProjectArn (\x -> c {setProjectArn = x} :: ServerConfigSignalBridge)
+      , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_ADD_EVENT_ARN" c.addEventArn (\x -> c {addEventArn = x} :: ServerConfigSignalBridge)
       , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_ADD_FILE_ARN" c.addFileArn (\x -> c {addFileArn = x} :: ServerConfigSignalBridge)
       , \c -> applyStringEnvVariable "SIGNAL_BRIDGE_LOG_OUT_ALL_ARN" c.logOutAllArn (\x -> c {logOutAllArn = x} :: ServerConfigSignalBridge)
       ]

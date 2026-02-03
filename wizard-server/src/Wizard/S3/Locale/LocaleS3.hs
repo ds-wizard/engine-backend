@@ -10,17 +10,17 @@ import Wizard.Model.Context.ContextLenses ()
 
 folderName = "locales"
 
-retrieveLocale :: String -> String -> AppContextM BS.ByteString
-retrieveLocale localeId filename = createGetObjectFn (f' "%s/%s/%s" [folderName, localeId, filename])
+retrieveLocale :: U.UUID -> String -> AppContextM BS.ByteString
+retrieveLocale localeUuid filename = createGetObjectFn (f' "%s/%s/%s" [folderName, U.toString localeUuid, filename])
 
-retrieveLocaleWithTenant :: U.UUID -> String -> String -> AppContextM BS.ByteString
-retrieveLocaleWithTenant tenantUuid localeId fileName = createGetObjectWithTenantFn tenantUuid (f' "%s/%s/%s" [folderName, localeId, fileName])
+retrieveLocaleWithTenant :: U.UUID -> U.UUID -> String -> AppContextM BS.ByteString
+retrieveLocaleWithTenant tenantUuid localeUuid fileName = createGetObjectWithTenantFn tenantUuid (f' "%s/%s/%s" [folderName, U.toString localeUuid, fileName])
 
-putLocale :: String -> String -> BS.ByteString -> AppContextM String
-putLocale localeId fileName = createPutObjectFn (f' "%s/%s/%s" [folderName, localeId, fileName]) Nothing Nothing
+putLocale :: U.UUID -> String -> BS.ByteString -> AppContextM String
+putLocale localeUuid fileName = createPutObjectFn (f' "%s/%s/%s" [folderName, U.toString localeUuid, fileName]) Nothing Nothing
 
 removeLocales :: AppContextM ()
 removeLocales = createRemoveObjectFn folderName
 
-removeLocale :: String -> AppContextM ()
-removeLocale localeId = createRemoveObjectFn (f' "%s/%s" [folderName, localeId])
+removeLocale :: U.UUID -> AppContextM ()
+removeLocale localeUuid = createRemoveObjectFn (f' "%s/%s" [folderName, U.toString localeUuid])

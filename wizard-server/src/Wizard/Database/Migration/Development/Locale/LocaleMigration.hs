@@ -24,12 +24,12 @@ runMigration = do
 runS3Migration :: AppContextM ()
 runS3Migration =
   traverse_
-    ( \(lclId, content) -> do
-        _ <- putLocale lclId "wizard.json" content
-        _ <- putLocale lclId "mail.po" content
+    ( \(uuid, content) -> do
+        _ <- putLocale uuid "wizard.json" content
+        _ <- putLocale uuid "mail.po" content
         return ()
     )
-    [ (localeNl.lId, localeNlContent)
-    , (localeDe.lId, localeDeContent)
-    , (differentLocale.lId, differentLocaleContent)
+    [ (localeNl.uuid, localeNlContent)
+    , (localeDe.uuid, localeDeContent)
+    , (differentLocale.uuid, differentLocaleContent)
     ]

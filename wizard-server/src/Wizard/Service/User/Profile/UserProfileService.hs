@@ -75,5 +75,5 @@ modifyLocale reqDto = do
   validateLocale reqDto
   user <- getCurrentUser
   now <- liftIO getCurrentTime
-  updateUserLocaleByUuid user.uuid reqDto.lId now
+  updateUserLocaleByUuid user.uuid reqDto.uuid now
   return reqDto

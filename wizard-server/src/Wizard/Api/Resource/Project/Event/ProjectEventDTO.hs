@@ -156,6 +156,7 @@ data AddCommentEventDTO = AddCommentEventDTO
   , commentUuid :: U.UUID
   , text :: String
   , private :: Bool
+  , newThread :: Bool
   , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   }

@@ -20,6 +20,7 @@ import Wizard.Specs.API.User.List_Current_Submission_Props_PUT
 import Wizard.Specs.API.User.List_GET
 import Wizard.Specs.API.User.List_POST
 import Wizard.Specs.API.User.List_Suggestions_GET
+import Wizard.Specs.API.User.PluginSettings.APISpec
 
 userAPI baseContext appContext =
   with (startWebApp baseContext appContext) $
@@ -40,3 +41,4 @@ userAPI baseContext appContext =
       detail_password_PUT appContext
       detail_password_hash_PUT appContext
       detail_state_PUT appContext
+      userPluginSettingsAPI appContext

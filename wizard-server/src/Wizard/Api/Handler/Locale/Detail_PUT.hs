@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.Locale.Detail_PUT where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -17,15 +18,15 @@ type Detail_PUT =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] LocaleChangeDTO
     :> "locales"
-    :> Capture "lclId" String
+    :> Capture "uuid" U.UUID
     :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] LocaleDTO)
 
 detail_PUT
   :: Maybe String
   -> Maybe String
   -> LocaleChangeDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] LocaleDTO)
-detail_PUT mTokenHeader mServerUrl reqDto lclId =
+detail_PUT mTokenHeader mServerUrl reqDto uuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< modifyLocale lclId reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< modifyLocale uuid reqDto

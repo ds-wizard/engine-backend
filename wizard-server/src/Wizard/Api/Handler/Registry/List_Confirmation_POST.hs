@@ -10,7 +10,7 @@ import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryConfirmationJM ()
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Registry.RegistryService
+import Wizard.Service.Registry.Registration.RegistryRegistrationService
 
 type List_Confirmation_POST =
   Header "Host" String

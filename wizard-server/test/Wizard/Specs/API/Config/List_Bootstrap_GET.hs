@@ -10,7 +10,12 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Wizard.Api.Resource.Config.ClientConfigJM ()
+import Wizard.Database.DAO.Tenant.PluginSettings.TenantPluginSettingsDAO
+import Wizard.Database.DAO.User.UserPluginSettingsDAO
+import Wizard.Database.Migration.Development.Plugin.Data.PluginSettings
+import Wizard.Database.Migration.Development.Plugin.Data.Plugins
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
+import Wizard.Database.Migration.Development.Tenant.Data.TenantPluginSettings
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
@@ -54,10 +59,14 @@ create_test_200 title appContext authHeaders mUserProfile =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = toClientConfigDTO appContext.serverConfig defaultOrganization defaultAuthentication defaultPrivacyAndSupport defaultDashboardAndLoginScreen defaultLookAndFeel defaultRegistry defaultProject defaultSubmission defaultFeatures defaultOwl mUserProfile [] defaultTenant
+      let expDto = toClientConfigDTO appContext.serverConfig defaultOrganization defaultAuthentication defaultPrivacyAndSupport defaultDashboardAndLoginScreen defaultLookAndFeel defaultRegistry defaultProject defaultSubmission defaultFeatures defaultOwl mUserProfile [] [plugin1List] plugin1Dict defaultTenant
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U.runMigration appContext
+      runInContextIO (insertTenantPluginSettings defaultTenantPluginSettings) appContext
+      runInContextIO (insertTenantPluginSettings differentTenantPluginSettings) appContext
+      runInContextIO (insertUserPluginSettings userAlbertPluginSettings) appContext
+      runInContextIO (insertUserPluginSettings userCharlesPluginSettings) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

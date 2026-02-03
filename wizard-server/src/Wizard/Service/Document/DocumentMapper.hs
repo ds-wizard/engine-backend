@@ -1,6 +1,5 @@
 module Wizard.Service.Document.DocumentMapper where
 
-import qualified Data.List as L
 import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
@@ -40,7 +39,7 @@ toDTO doc submissions =
     , projectVersion = doc.projectVersion
     , documentTemplateId = doc.documentTemplateId
     , documentTemplateName = doc.documentTemplateName
-    , format = L.find (\f -> f.uuid == doc.formatUuid) $ doc.documentTemplateFormats
+    , format = doc.documentTemplateFormat
     , fileSize = doc.fileSize
     , workerLog =
         case doc.state of
@@ -62,7 +61,7 @@ toDTOWithDocTemplate doc project mProjectVersion submissions tml format =
     , projectVersion = mProjectVersion
     , documentTemplateId = tml.tId
     , documentTemplateName = tml.name
-    , format = Just format
+    , format = format
     , fileSize = doc.fileSize
     , workerLog =
         case doc.state of
