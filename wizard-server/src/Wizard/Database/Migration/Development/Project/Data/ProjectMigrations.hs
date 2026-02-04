@@ -33,7 +33,7 @@ projectMigrationDto =
   ProjectMigrationDTO
     { oldProject =
         toDetailProjectDTO
-          (toDetailQuestionnaire project4 (Just project4Upgraded.uuid) [] 0 0)
+          (toDetailQuestionnaire project4 (Just project4Upgraded.uuid) [])
           M.empty
           M.empty
           km1Netherlands
@@ -42,7 +42,7 @@ projectMigrationDto =
           project4Ctn.labels
     , newProject =
         toDetailProjectDTO
-          (toDetailQuestionnaire project4Upgraded Nothing [] 0 0)
+          (toDetailQuestionnaire project4Upgraded Nothing [])
           M.empty
           M.empty
           km1NetherlandsV2
@@ -58,7 +58,7 @@ projectMigrationVisibleViewDto =
   ProjectMigrationDTO
     { oldProject =
         toDetailProjectDTO
-          (toDetailQuestionnaire project4VisibleView (Just project4Upgraded.uuid) [] 0 0)
+          (toDetailQuestionnaire project4VisibleView (Just project4Upgraded.uuid) [])
           M.empty
           M.empty
           km1Netherlands
@@ -67,7 +67,7 @@ projectMigrationVisibleViewDto =
           project4Ctn.labels
     , newProject =
         toDetailProjectDTO
-          (toDetailQuestionnaire project4VisibleViewUpgraded Nothing [] 0 0)
+          (toDetailQuestionnaire project4VisibleViewUpgraded Nothing [])
           M.empty
           M.empty
           km1NetherlandsV2
@@ -83,7 +83,7 @@ projectMigrationVisibleEditDto =
   ProjectMigrationDTO
     { oldProject =
         toDetailProjectDTO
-          (toDetailQuestionnaire project4VisibleEdit (Just project4Upgraded.uuid) [] 0 0)
+          (toDetailQuestionnaire project4VisibleEdit (Just project4Upgraded.uuid) [])
           M.empty
           M.empty
           km1Netherlands
@@ -92,7 +92,7 @@ projectMigrationVisibleEditDto =
           project4Ctn.labels
     , newProject =
         toDetailProjectDTO
-          (toDetailQuestionnaire project4VisibleEditUpgraded Nothing [] 0 0)
+          (toDetailQuestionnaire project4VisibleEditUpgraded Nothing [])
           M.empty
           M.empty
           km1NetherlandsV2

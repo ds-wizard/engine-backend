@@ -27,8 +27,6 @@ data ProjectDetailQuestionnaireDTO = ProjectDetailQuestionnaireDTO
   , files :: [ProjectFileSimple]
   , unresolvedCommentCounts :: M.Map String (M.Map U.UUID Int)
   , resolvedCommentCounts :: M.Map String (M.Map U.UUID Int)
-  , projectActionsAvailable :: Int
-  , projectImportersAvailable :: Int
   , fileCount :: Int
   }
   deriving (Show, Eq, Generic)

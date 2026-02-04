@@ -97,8 +97,8 @@ toSimpleDTO project kmPackage state permissions =
     , updatedAt = project.updatedAt
     }
 
-toDetailQuestionnaire :: Project -> Maybe U.UUID -> [ProjectPermDTO] -> Int -> Int -> ProjectDetailQuestionnaire
-toDetailQuestionnaire project migrationUuid permissions projectActionsAvailable projectImportersAvailable =
+toDetailQuestionnaire :: Project -> Maybe U.UUID -> [ProjectPermDTO] -> ProjectDetailQuestionnaire
+toDetailQuestionnaire project migrationUuid permissions =
   ProjectDetailQuestionnaire
     { uuid = project.uuid
     , name = project.name
@@ -110,8 +110,6 @@ toDetailQuestionnaire project migrationUuid permissions projectActionsAvailable 
     , migrationUuid = migrationUuid
     , permissions = permissions
     , files = []
-    , projectActionsAvailable = projectActionsAvailable
-    , projectImportersAvailable = projectImportersAvailable
     }
 
 toDetailDTO :: ProjectDetail -> ProjectDetailDTO

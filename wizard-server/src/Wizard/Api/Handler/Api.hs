@@ -26,10 +26,8 @@ import Wizard.Api.Handler.Locale.Api
 import Wizard.Api.Handler.PersistentCommand.Api
 import Wizard.Api.Handler.Prefab.Api
 import Wizard.Api.Handler.Project.Api
-import Wizard.Api.Handler.ProjectAction.Api
 import Wizard.Api.Handler.ProjectCommentThread.Api
 import Wizard.Api.Handler.ProjectFile.Api
-import Wizard.Api.Handler.ProjectImporter.Api
 import Wizard.Api.Handler.Registry.Api
 import Wizard.Api.Handler.Submission.Api
 import Wizard.Api.Handler.Tenant.Api
@@ -64,10 +62,8 @@ type ApplicationAPI =
     :<|> PersistentCommandAPI
     :<|> PrefabAPI
     :<|> ProjectAPI
-    :<|> ProjectActionAPI
     :<|> ProjectCommentThreadAPI
     :<|> ProjectFileAPI
-    :<|> ProjectImporterAPI
     :<|> RegistryAPI
     :<|> SubmissionAPI
     :<|> TenantAPI
@@ -105,10 +101,8 @@ applicationServer =
     :<|> persistentCommandServer
     :<|> prefabServer
     :<|> projectServer
-    :<|> projectActionServer
     :<|> projectCommentThreadServer
     :<|> projectFileServer
-    :<|> projectImporterServer
     :<|> registryServer
     :<|> submissionServer
     :<|> tenantServer

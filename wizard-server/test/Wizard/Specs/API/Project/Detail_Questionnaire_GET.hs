@@ -175,8 +175,6 @@ create_test_200 title appContext project projectEvents projectContent showCommen
               , files = []
               , unresolvedCommentCounts = unresolvedCommentCounts
               , resolvedCommentCounts = M.empty
-              , projectActionsAvailable = 0
-              , projectImportersAvailable = 0
               , fileCount = 0
               }
       let expBody = encode expDto

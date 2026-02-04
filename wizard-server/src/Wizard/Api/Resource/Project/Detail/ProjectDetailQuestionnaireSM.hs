@@ -51,7 +51,5 @@ instance ToSchema ProjectDetailQuestionnaireDTO where
                 , M.fromList [(u' "f1de85a9-7f22-4d0c-bc23-3315cc4c85d7", 2)]
                 )
               ]
-        , projectActionsAvailable = 1
-        , projectImportersAvailable = 2
         , fileCount = 0
         }

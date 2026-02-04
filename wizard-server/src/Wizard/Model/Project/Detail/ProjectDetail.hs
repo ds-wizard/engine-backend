@@ -16,8 +16,6 @@ data ProjectDetail = ProjectDetail
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
-  , projectActionsAvailable :: Int
-  , projectImportersAvailable :: Int
   , fileCount :: Int
   }
   deriving (Show, Eq, Generic)

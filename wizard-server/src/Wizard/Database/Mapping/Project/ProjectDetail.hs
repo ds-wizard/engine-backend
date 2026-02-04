@@ -22,7 +22,5 @@ instance FromRow ProjectDetail where
     isTemplate <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid
-    projectActionsAvailable <- field
-    projectImportersAvailable <- field
     fileCount <- field
     return $ ProjectDetail {..}

@@ -27,8 +27,6 @@ instance FromRow ProjectDetailQuestionnaire where
     isTemplate <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid
-    projectActionsAvailable <- field
-    projectImportersAvailable <- field
     mFiles <- fieldWith (optionalField fromField)
     let files =
           case mFiles of

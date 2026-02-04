@@ -18,7 +18,5 @@ data ProjectDetailQuestionnaire = ProjectDetailQuestionnaire
   , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
   , files :: [ProjectFileSimple]
-  , projectActionsAvailable :: Int
-  , projectImportersAvailable :: Int
   }
   deriving (Show, Eq, Generic)

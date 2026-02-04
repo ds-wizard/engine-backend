@@ -55,8 +55,6 @@ userAlbert =
         , "PM_WRITE_PERM"
         , "PRJ_PERM"
         , "PRJ_FILE_PERM"
-        , "PRJ_ACTION_PERM"
-        , "PRJ_IMPORTER_PERM"
         , "PRJ_TML_PERM"
         , "DOC_TML_READ_PERM"
         , "CFG_PERM"
