@@ -139,12 +139,6 @@ _ERROR_SERVICE_PKG__IMPORT_PREVIOUS_PKG_AT_FIRST previousPkgId pkgId =
     "The knowledge model ('%s') depends on '%s'. Therefore, you should import the knowledge model '%s' at first."
     [pkgId, previousPkgId, previousPkgId]
 
-_ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId target =
-  LocaleRecord
-    "error.service.pkg.pkg_cant_be_deleted_because_it_is_used_by_some_other_entity"
-    "Knowledge model ('%s') can't be deleted because some %s depends on it"
-    [pkgId, target]
-
 -- Knowledge Model Bundle
 _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId =
   LocaleRecord

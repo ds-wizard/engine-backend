@@ -5,6 +5,7 @@ import Data.Either
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Event.KnowledgeModelEvents
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
@@ -32,11 +33,11 @@ knowledgeModelEditorServiceSpec appContext =
         do
           runInContext KnowledgeModelPackage.runMigration appContext
           runInContext KnowledgeModelEditor.runMigration appContext
-          runInContext (deletePackageById netherlandsKmPackageV2.pId) appContext
+          runInContext (deletePackageByUuid netherlandsKmPackageV2.uuid) appContext
           -- AND: Prepare KM editor
           let editor = amsterdamKnowledgeModelEditor
           let kmEditorEvents = []
-          let forkOfPackageId = Just netherlandsKmPackage.pId
+          let forkOfPackageId = Just . createCoordinate $ netherlandsKmPackage
           -- AND: Prepare expectations
           let expState = DefaultKnowledgeModelEditorState
           -- WHEN:
@@ -53,7 +54,7 @@ knowledgeModelEditorServiceSpec appContext =
           -- AND: Prepare KM editor
           let editor = amsterdamKnowledgeModelEditor
           let kmEditorEvents = amsterdamKnowledgeModelEditorEvents
-          let forkOfPackageId = Just netherlandsKmPackage.pId
+          let forkOfPackageId = Just . createCoordinate $ netherlandsKmPackage
           -- AND: Prepare expectations
           let expState = EditedKnowledgeModelEditorState
           -- WHEN:
@@ -70,7 +71,7 @@ knowledgeModelEditorServiceSpec appContext =
           -- AND: Prepare KM editor
           let editor = amsterdamKnowledgeModelEditor
           let kmEditorEvents = amsterdamKnowledgeModelEditorEvents
-          let forkOfPackageId = Just netherlandsKmPackage.pId
+          let forkOfPackageId = Just . createCoordinate $ netherlandsKmPackage
           -- AND: Prepare expectations
           let expState = EditedKnowledgeModelEditorState
           -- WHEN:
@@ -87,7 +88,7 @@ knowledgeModelEditorServiceSpec appContext =
           -- AND: Prepare KM editor
           let editor = amsterdamKnowledgeModelEditor
           let kmEditorEvents = []
-          let forkOfPackageId = Just netherlandsKmPackage.pId
+          let forkOfPackageId = Just . createCoordinate $ netherlandsKmPackage
           -- AND: Prepare expectations
           let expState = OutdatedKnowledgeModelEditorState
           -- WHEN:
@@ -103,12 +104,12 @@ knowledgeModelEditorServiceSpec appContext =
           runInContext KnowledgeModelEditor.runMigration appContext
           runInContext (deleteKnowledgeModelEventsByEditorUuid amsterdamKnowledgeModelEditor.uuid) appContext
           let migratorCreateDto =
-                KnowledgeModelMigrationCreateDTO {targetPackageId = netherlandsKmPackageV2.pId}
+                KnowledgeModelMigrationCreateDTO {targetPackageUuid = netherlandsKmPackageV2.uuid}
           runInContext (createMigration amsterdamKnowledgeModelEditor.uuid migratorCreateDto) appContext
           -- AND: Prepare KM editor
           let editor = amsterdamKnowledgeModelEditor
           let kmEditorEvents = amsterdamKnowledgeModelEditorEvents
-          let forkOfPackageId = Just netherlandsKmPackage.pId
+          let forkOfPackageId = Just . createCoordinate $ netherlandsKmPackage
           -- AND: Prepare expectations
           let expState = MigratingKnowledgeModelEditorState
           -- WHEN:
@@ -123,7 +124,7 @@ knowledgeModelEditorServiceSpec appContext =
           runInContext KnowledgeModelPackage.runMigration appContext
           runInContext KnowledgeModelEditor.runMigration appContext
           let migratorCreateDto =
-                KnowledgeModelMigrationCreateDTO {targetPackageId = netherlandsKmPackageV2.pId}
+                KnowledgeModelMigrationCreateDTO {targetPackageUuid = netherlandsKmPackageV2.uuid}
           runInContext (createMigration amsterdamKnowledgeModelEditor.uuid migratorCreateDto) appContext
           let reqDto =
                 KnowledgeModelMigrationResolutionDTO
@@ -134,7 +135,7 @@ knowledgeModelEditorServiceSpec appContext =
           -- AND: Prepare KM editor
           let editor = amsterdamKnowledgeModelEditor
           let kmEditorEvents = []
-          let forkOfPackageId = Just netherlandsKmPackage.pId
+          let forkOfPackageId = Just . createCoordinate $ netherlandsKmPackage
           -- AND: Prepare expectations
           let expState = MigratedKnowledgeModelEditorState
           -- WHEN:

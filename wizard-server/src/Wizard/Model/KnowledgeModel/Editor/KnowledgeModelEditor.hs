@@ -12,7 +12,7 @@ data KnowledgeModelEditor = KnowledgeModelEditor
   , description :: String
   , readme :: String
   , license :: String
-  , previousPackageId :: Maybe String
+  , previousPackageUuid :: Maybe U.UUID
   , metamodelVersion :: Int
   , squashed :: Bool
   , createdBy :: Maybe U.UUID

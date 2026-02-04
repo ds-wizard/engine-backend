@@ -14,6 +14,7 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Model.Error.Error
 import Shared.Coordinate.Localization.Messages.Public
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackageSimple
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorChangeDTO
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorDetailDTO
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
@@ -82,15 +83,15 @@ test_200 appContext =
       compareEditorDtos
         resBody
         reqDto
-        resBody.previousPackageId
-        resBody.previousPackageId
+        resBody.previousPackage
+        resBody.previousPackage
         (Just userAlbert.uuid)
       -- AND: Find result in DB and compare with expectation state
       assertExistenceOfEditorInDB
         appContext
         reqDto
-        resBody.previousPackageId
-        resBody.previousPackageId
+        (fmap (.uuid) resBody.previousPackage)
+        (fmap (.uuid) resBody.previousPackage)
         (Just userAlbert.uuid)
 
 -- ----------------------------------------------------
@@ -131,8 +132,8 @@ test_400_not_valid_kmId appContext =
       assertExistenceOfEditorInDB
         appContext
         amsterdamKnowledgeModelEditorList
-        amsterdamKnowledgeModelEditorList.previousPackageId
-        amsterdamKnowledgeModelEditorList.previousPackageId
+        amsterdamKnowledgeModelEditorList.previousPackageUuid
+        amsterdamKnowledgeModelEditorList.previousPackageUuid
         (Just userAlbert.uuid)
 
 -- ----------------------------------------------------

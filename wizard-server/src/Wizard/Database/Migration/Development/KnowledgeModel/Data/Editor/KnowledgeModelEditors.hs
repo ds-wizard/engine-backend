@@ -40,8 +40,8 @@ amsterdamKnowledgeModelEditorList =
     , name = amsterdamKmPackage.name
     , kmId = amsterdamKmPackage.kmId
     , version = amsterdamKmPackage.version
-    , previousPackageId = Just netherlandsKmPackage.pId
-    , forkOfPackageId = Just netherlandsKmPackage.pId
+    , previousPackageUuid = Just netherlandsKmPackage.uuid
+    , forkOfPackage = Just $ PM.toSuggestion netherlandsKmPackage
     , state = EditedKnowledgeModelEditorState
     , createdBy = Just $ userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -58,7 +58,7 @@ amsterdamKnowledgeModelEditor =
     , description = "First Release"
     , readme = "# Netherlands Knowledge Model"
     , license = "Apache-2.0"
-    , previousPackageId = amsterdamKnowledgeModelEditorList.previousPackageId
+    , previousPackageUuid = amsterdamKnowledgeModelEditorList.previousPackageUuid
     , metamodelVersion = knowledgeModelMetamodelVersion
     , squashed = True
     , createdBy = amsterdamKnowledgeModelEditorList.createdBy
@@ -111,7 +111,7 @@ amsterdamKnowledgeModelEditorCreate =
     { name = amsterdamKnowledgeModelEditorList.name
     , kmId = amsterdamKnowledgeModelEditorList.kmId
     , version = "1.0.0"
-    , previousPackageId = amsterdamKnowledgeModelEditorList.previousPackageId
+    , previousPackageUuid = amsterdamKnowledgeModelEditorList.previousPackageUuid
     }
 
 amsterdamKnowledgeModelEditorChange :: KnowledgeModelEditorChangeDTO
@@ -140,8 +140,7 @@ amsterdamKnowledgeModelEditorDetail =
     , readme = amsterdamKnowledgeModelEditor.readme
     , license = amsterdamKnowledgeModelEditor.license
     , state = EditedKnowledgeModelEditorState
-    , previousPackageId = amsterdamKnowledgeModelEditorList.previousPackageId
-    , forkOfPackageId = amsterdamKnowledgeModelEditorList.forkOfPackageId
+    , previousPackage = Just . SPM.toSimple $ netherlandsKmPackage
     , forkOfPackage = Just . PM.toSimpleDTO $ netherlandsKmPackage
     , createdBy = amsterdamKnowledgeModelEditorList.createdBy
     , events = amsterdamEvents
@@ -159,8 +158,8 @@ leidenKnowledgeModelEditor =
     , kmId = "leiden-km"
     , version = "1.0.0"
     , state = DefaultKnowledgeModelEditorState
-    , previousPackageId = Just netherlandsKmPackage.pId
-    , forkOfPackageId = Just netherlandsKmPackage.pId
+    , previousPackageUuid = Just netherlandsKmPackage.uuid
+    , forkOfPackage = Just $ PM.toSuggestion netherlandsKmPackage
     , createdBy = Just $ userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -172,7 +171,7 @@ leidenKnowledgeModelEditorCreate =
     { name = leidenKnowledgeModelEditor.name
     , kmId = leidenKnowledgeModelEditor.kmId
     , version = "1.0.0"
-    , previousPackageId = leidenKnowledgeModelEditor.previousPackageId
+    , previousPackageUuid = leidenKnowledgeModelEditor.previousPackageUuid
     }
 
 differentKnowledgeModelEditor :: KnowledgeModelEditor
@@ -185,7 +184,7 @@ differentKnowledgeModelEditor =
     , description = "Some desc"
     , readme = "Some readme"
     , license = "Apache-2.0"
-    , previousPackageId = Just $ differentPackage.pId
+    , previousPackageUuid = Just $ differentPackage.uuid
     , metamodelVersion = knowledgeModelMetamodelVersion
     , squashed = True
     , createdBy = Just $ userCharles.uuid

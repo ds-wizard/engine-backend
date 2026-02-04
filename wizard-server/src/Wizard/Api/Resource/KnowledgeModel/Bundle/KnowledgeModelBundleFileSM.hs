@@ -6,6 +6,7 @@ import Servant.Multipart
 import Servant.Swagger
 import Servant.Swagger.Internal
 
+import Shared.Coordinate.Api.Resource.Coordinate.CoordinateSM ()
 import Wizard.Model.KnowledgeModel.Bundle.KnowledgeModelBundleFile hiding (name)
 
 instance HasSwagger api => HasSwagger (MultipartForm Mem KnowledgeModelBundleFile :> api) where

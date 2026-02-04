@@ -21,7 +21,7 @@ data ProjectDetailSettings = ProjectDetailSettings
   , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
   , projectTags :: [String]
-  , knowledgeModelPackageId :: String
+  , knowledgeModelPackageUuid :: U.UUID
   , knowledgeModelPackage :: KnowledgeModelPackageSimpleDTO
   , knowledgeModelTags :: [Tag]
   , documentTemplate :: Maybe DocumentTemplateDTO

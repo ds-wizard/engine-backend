@@ -8,7 +8,6 @@ import Wizard.Specs.API.KnowledgeModelPackage.Detail_DELETE
 import Wizard.Specs.API.KnowledgeModelPackage.Detail_GET
 import Wizard.Specs.API.KnowledgeModelPackage.Detail_PUT
 import Wizard.Specs.API.KnowledgeModelPackage.Detail_Pull_POST
-import Wizard.Specs.API.KnowledgeModelPackage.List_DELETE
 import Wizard.Specs.API.KnowledgeModelPackage.List_From_Editor_POST
 import Wizard.Specs.API.KnowledgeModelPackage.List_GET
 import Wizard.Specs.API.KnowledgeModelPackage.List_POST
@@ -21,7 +20,6 @@ knowledgeModelPackageAPI baseContext appContext =
       list_suggestions_GET appContext
       list_POST appContext
       list_from_editor_POST appContext
-      list_DELETE appContext
       detail_GET appContext
       detail_PUT appContext
       detail_DELETE appContext

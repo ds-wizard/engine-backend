@@ -3,6 +3,7 @@ module Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailSM 
 import Data.Swagger
 
 import Shared.Common.Util.Swagger
+import Shared.Coordinate.Api.Resource.Coordinate.CoordinateSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePhaseSM ()
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailDTO

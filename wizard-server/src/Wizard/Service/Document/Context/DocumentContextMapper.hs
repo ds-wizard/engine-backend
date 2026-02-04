@@ -3,6 +3,7 @@ module Wizard.Service.Document.Context.DocumentContextMapper where
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.Coordinate.Util.Coordinate
 import qualified Shared.DocumentTemplate.Constant.DocumentTemplate as TemplateConstant
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -93,7 +94,7 @@ toDocumentContextPackage :: KnowledgeModelPackage -> DocumentContextPackage
 toDocumentContextPackage pkg =
   let dto = toSimpleDTO pkg
    in DocumentContextPackage
-        { pId = dto.pId
+        { pId = show . createCoordinate $ pkg
         , name = dto.name
         , organizationId = dto.organizationId
         , kmId = pkg.kmId

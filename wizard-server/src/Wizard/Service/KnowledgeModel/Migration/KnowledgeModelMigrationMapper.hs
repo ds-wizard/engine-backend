@@ -10,26 +10,27 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationDTO
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
 import Wizard.Model.KnowledgeModel.Migration.KnowledgeModelMigration
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 
-toDTO :: KnowledgeModelMigration -> KnowledgeModelEditor -> KnowledgeModelMigrationDTO
-toDTO ms kmEditor =
+toDTO :: KnowledgeModelMigration -> KnowledgeModelPackageSuggestion -> KnowledgeModelPackageSuggestion -> KnowledgeModelEditor -> KnowledgeModelMigrationDTO
+toDTO ms previousPackage targetPackage kmEditor =
   KnowledgeModelMigrationDTO
     { editorUuid = ms.editorUuid
     , editorName = kmEditor.name
-    , editorPreviousPackageId = ms.editorPreviousPackageId
+    , editorPreviousPackage = previousPackage
     , state = ms.state
-    , targetPackageId = ms.targetPackageId
+    , targetPackage = targetPackage
     , currentKnowledgeModel = ms.currentKnowledgeModel
     }
 
-fromCreateDTO :: KnowledgeModelEditor -> KnowledgeModelPackage -> [KnowledgeModelEvent] -> String -> [KnowledgeModelEvent] -> KnowledgeModel -> U.UUID -> UTCTime -> KnowledgeModelMigration
-fromCreateDTO kmEditor previousPkg editorPreviousPackageEvents targetPkgId targetPkgEvents km tenantUuid now =
+fromCreateDTO :: KnowledgeModelEditor -> KnowledgeModelPackage -> [KnowledgeModelEvent] -> U.UUID -> [KnowledgeModelEvent] -> KnowledgeModel -> U.UUID -> UTCTime -> KnowledgeModelMigration
+fromCreateDTO kmEditor previousPkg editorPreviousPackageEvents targetPkgUuid targetPkgEvents km tenantUuid now =
   KnowledgeModelMigration
     { editorUuid = kmEditor.uuid
     , metamodelVersion = knowledgeModelMetamodelVersion
     , state = RunningKnowledgeModelMigrationState
-    , editorPreviousPackageId = previousPkg.pId
-    , targetPackageId = targetPkgId
+    , editorPreviousPackageUuid = previousPkg.uuid
+    , targetPackageUuid = targetPkgUuid
     , editorPreviousPackageEvents = editorPreviousPackageEvents
     , targetPackageEvents = targetPkgEvents
     , resultEvents = []

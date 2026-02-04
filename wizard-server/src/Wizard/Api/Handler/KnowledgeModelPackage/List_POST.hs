@@ -16,13 +16,13 @@ type List_POST =
     :> Header "Host" String
     :> ReqBody '[JSONPlain] String
     :> "knowledge-model-packages"
-    :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] [KnowledgeModelPackageSimpleDTO])
+    :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] KnowledgeModelPackageSimpleDTO)
 
 list_POST
   :: Maybe String
   -> Maybe String
   -> String
-  -> BaseContextM (Headers '[Header "x-trace-uuid" String] [KnowledgeModelPackageSimpleDTO])
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] KnowledgeModelPackageSimpleDTO)
 list_POST mTokenHeader mServerUrl reqBody =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< importAndConvertBundle (BSL.pack reqBody) False

@@ -33,10 +33,10 @@ findKnowledgeModelEditors = do
   tenantUuid <- asks currentTenantUuid
   createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid]
 
-findKnowledgeModelEditorsByPreviousPackageId :: String -> AppContextM [KnowledgeModelEditor]
-findKnowledgeModelEditorsByPreviousPackageId previousPackageId = do
+findKnowledgeModelEditorsByPreviousPackageUuid :: U.UUID -> AppContextM [KnowledgeModelEditor]
+findKnowledgeModelEditorsByPreviousPackageUuid previousPackageUuid = do
   tenantUuid <- asks currentTenantUuid
-  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("previous_package_id", previousPackageId)]
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("previous_package_uuid", U.toString previousPackageUuid)]
 
 findKnowledgeModelEditorsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page KnowledgeModelEditorList)
 findKnowledgeModelEditorsPage mQuery pageable sort =
@@ -56,17 +56,22 @@ findKnowledgeModelEditorsPage mQuery pageable sort =
               \       knowledge_model_editor.name, \
               \       knowledge_model_editor.km_id, \
               \       knowledge_model_editor.version, \
-              \       get_knowledge_model_editor_state(knowledge_model_editor.uuid, knowledge_model_migration, get_knowledge_model_editor_fork_of_package_id(config_organization, previous_pkg, knowledge_model_editor), '%s') as state, \
-              \       knowledge_model_editor.previous_package_id, \
-              \       get_knowledge_model_editor_fork_of_package_id(config_organization, previous_pkg, knowledge_model_editor) as fork_of_package_id, \
+              \       get_knowledge_model_editor_state(knowledge_model_editor, knowledge_model_migration, get_knowledge_model_editor_fork_of_package_id(config_organization, previous_pkg, knowledge_model_editor), '%s') as state, \
+              \       knowledge_model_editor.previous_package_uuid, \
+              \       fork_of_package.uuid, \
+              \       fork_of_package.name, \
+              \       fork_of_package.organization_id, \
+              \       fork_of_package.km_id, \
+              \       fork_of_package.version, \
+              \       fork_of_package.description, \
               \       knowledge_model_editor.created_by, \
               \       knowledge_model_editor.created_at, \
               \       knowledge_model_editor.updated_at  \
               \FROM knowledge_model_editor \
-              \         JOIN config_organization ON knowledge_model_editor.tenant_uuid = config_organization.tenant_uuid \
-              \         LEFT JOIN knowledge_model_migration ON knowledge_model_editor.uuid = knowledge_model_migration.editor_uuid \
-              \         LEFT JOIN knowledge_model_package previous_pkg \
-              \                   ON knowledge_model_editor.previous_package_id = previous_pkg.id and knowledge_model_editor.tenant_uuid = previous_pkg.tenant_uuid \
+              \JOIN config_organization ON knowledge_model_editor.tenant_uuid = config_organization.tenant_uuid \
+              \LEFT JOIN knowledge_model_migration ON knowledge_model_editor.uuid = knowledge_model_migration.editor_uuid \
+              \LEFT JOIN knowledge_model_package previous_pkg ON knowledge_model_editor.previous_package_uuid = previous_pkg.uuid and knowledge_model_editor.tenant_uuid = previous_pkg.tenant_uuid \
+              \LEFT JOIN knowledge_model_package fork_of_package ON get_knowledge_model_editor_fork_of_package_id(config_organization, previous_pkg, knowledge_model_editor) = concat(fork_of_package.organization_id, ':', fork_of_package.km_id, ':', fork_of_package.version) AND knowledge_model_editor.tenant_uuid = fork_of_package.tenant_uuid \
               \WHERE (knowledge_model_editor.name ~* ? OR knowledge_model_editor.km_id ~* ?) AND knowledge_model_editor.tenant_uuid = ? \
               \%s OFFSET %s LIMIT %s"
               [U.toString tenantUuid, mapSort sort, show skip, show sizeI]
@@ -141,7 +146,7 @@ updateKnowledgeModelEditorByUuid kmEditor = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE knowledge_model_editor SET uuid = ?, name = ?, km_id = ?, previous_package_id = ?, created_by = ?, created_at = ?, updated_at = ?, tenant_uuid = ?, version = ?, description = ?, readme = ?, license = ?, metamodel_version = ?, squashed = ? WHERE tenant_uuid = ? AND uuid = ?;"
+          "UPDATE knowledge_model_editor SET uuid = ?, name = ?, km_id = ?, previous_package_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, tenant_uuid = ?, version = ?, description = ?, readme = ?, license = ?, metamodel_version = ?, squashed = ? WHERE tenant_uuid = ? AND uuid = ?;"
   let params = toRow kmEditor ++ [toField tenantUuid, toField . U.toText $ kmEditor.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params

@@ -5,13 +5,14 @@ import GHC.Generics
 
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Model.KnowledgeModel.Migration.KnowledgeModelMigration
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 
 data KnowledgeModelMigrationDTO = KnowledgeModelMigrationDTO
   { editorUuid :: U.UUID
   , editorName :: String
-  , editorPreviousPackageId :: String
+  , editorPreviousPackage :: KnowledgeModelPackageSuggestion
   , state :: KnowledgeModelMigrationState
-  , targetPackageId :: String
+  , targetPackage :: KnowledgeModelPackageSuggestion
   , currentKnowledgeModel :: Maybe KnowledgeModel
   }
   deriving (Show, Eq, Generic)

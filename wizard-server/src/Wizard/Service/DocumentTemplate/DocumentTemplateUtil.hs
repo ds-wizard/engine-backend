@@ -2,10 +2,8 @@ module Wizard.Service.DocumentTemplate.DocumentTemplateUtil where
 
 import qualified Data.List as L
 
-import Shared.Coordinate.Util.Coordinate
 import Shared.DocumentTemplate.Constant.DocumentTemplate
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 import Wizard.Model.DocumentTemplate.DocumentTemplateList
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
@@ -27,22 +25,12 @@ selectDocumentTemplateByOrgIdAndTmlId tml =
 
 selectOrganizationByOrgId tml = L.find (\org -> org.organizationId == tml.organizationId)
 
-getUsableKnowledgeModelPackagesForDocumentTemplate tml = chooseTheNewest . groupPackages . filterPackages tml
-  where
-    filterPackages tml = filter (\pkg -> not . null $ filterDocumentTemplates (Just pkg.pId) [tml])
-
 isDocumentTemplateInPhase (Just phase) tml = tml.phase == phase
 isDocumentTemplateInPhase _ _ = True
 
-filterDocumentTemplates mPkgId tmls =
-  case mPkgId of
-    Just pkgId -> filter (filterDocumentTemplate . splitCoordinate $ pkgId) tmls
+filterDocumentTemplates mCoordinate tmls =
+  case mCoordinate of
+    Just coordinate -> filter (filterDocumentTemplate coordinate) tmls
     Nothing -> tmls
   where
-    filterDocumentTemplate pkgIdSplit template = fitsIntoKMSpecs pkgIdSplit template.allowedPackages
-
-isPkgAllowedByDocumentTemplate :: String -> DocumentTemplate -> Bool
-isPkgAllowedByDocumentTemplate pkgId template =
-  fitsIntoKMSpecs pkgIdSplit template.allowedPackages
-  where
-    pkgIdSplit = splitCoordinate pkgId
+    filterDocumentTemplate coordinate template = fitsIntoKMSpecs coordinate template.allowedPackages

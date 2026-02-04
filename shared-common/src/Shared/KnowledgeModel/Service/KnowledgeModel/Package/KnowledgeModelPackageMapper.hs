@@ -2,6 +2,7 @@ module Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackag
 
 import qualified Data.UUID as U
 
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Bundle.KnowledgeModelBundlePackage
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelRawEvent
@@ -10,11 +11,11 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackageE
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackageRawEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackageSimple
 
-toPackageEvent :: String -> U.UUID -> KnowledgeModelEvent -> KnowledgeModelPackageEvent
-toPackageEvent packageId tenantUuid KnowledgeModelEvent {..} = KnowledgeModelPackageEvent {..}
+toPackageEvent :: U.UUID -> U.UUID -> KnowledgeModelEvent -> KnowledgeModelPackageEvent
+toPackageEvent packageUuid tenantUuid KnowledgeModelEvent {..} = KnowledgeModelPackageEvent {..}
 
-toPackageRawEvent :: String -> U.UUID -> KnowledgeModelRawEvent -> KnowledgeModelPackageRawEvent
-toPackageRawEvent packageId tenantUuid KnowledgeModelRawEvent {..} = KnowledgeModelPackageRawEvent {..}
+toPackageRawEvent :: U.UUID -> U.UUID -> KnowledgeModelRawEvent -> KnowledgeModelPackageRawEvent
+toPackageRawEvent packageUuid tenantUuid KnowledgeModelRawEvent {..} = KnowledgeModelPackageRawEvent {..}
 
 toEvent :: KnowledgeModelPackageEvent -> KnowledgeModelEvent
 toEvent KnowledgeModelPackageEvent {..} = KnowledgeModelEvent {..}
@@ -25,15 +26,15 @@ toRawEvent KnowledgeModelPackageRawEvent {..} = KnowledgeModelRawEvent {..}
 toSimple :: KnowledgeModelPackage -> KnowledgeModelPackageSimple
 toSimple pkg =
   KnowledgeModelPackageSimple
-    { pId = pkg.pId
+    { uuid = pkg.uuid
     , name = pkg.name
     , version = pkg.version
     }
 
-toKnowledgeModelBundlePackage :: KnowledgeModelPackage -> [KnowledgeModelPackageEvent] -> KnowledgeModelBundlePackage
-toKnowledgeModelBundlePackage pkg pkgEvents =
+toKnowledgeModelBundlePackage :: KnowledgeModelPackage -> [KnowledgeModelPackageEvent] -> Maybe Coordinate -> KnowledgeModelBundlePackage
+toKnowledgeModelBundlePackage pkg pkgEvents previousPackageCoordinate =
   KnowledgeModelBundlePackage
-    { pId = pkg.pId
+    { pId = createCoordinate pkg
     , name = pkg.name
     , organizationId = pkg.organizationId
     , kmId = pkg.kmId
@@ -43,7 +44,7 @@ toKnowledgeModelBundlePackage pkg pkgEvents =
     , description = pkg.description
     , readme = pkg.readme
     , license = pkg.license
-    , previousPackageId = pkg.previousPackageId
+    , previousPackageId = previousPackageCoordinate
     , forkOfPackageId = pkg.forkOfPackageId
     , mergeCheckpointPackageId = pkg.mergeCheckpointPackageId
     , nonEditable = pkg.nonEditable
@@ -51,10 +52,10 @@ toKnowledgeModelBundlePackage pkg pkgEvents =
     , createdAt = pkg.createdAt
     }
 
-fromKnowledgeModelBundlePackage :: KnowledgeModelBundlePackage -> U.UUID -> (KnowledgeModelPackage, [KnowledgeModelPackageEvent])
-fromKnowledgeModelBundlePackage dto tenantUuid =
+fromKnowledgeModelBundlePackage :: KnowledgeModelBundlePackage -> U.UUID -> Maybe U.UUID -> U.UUID -> (KnowledgeModelPackage, [KnowledgeModelPackageEvent])
+fromKnowledgeModelBundlePackage dto pkgUuid previousPackageUuid tenantUuid =
   ( KnowledgeModelPackage
-      { pId = dto.pId
+      { uuid = pkgUuid
       , name = dto.name
       , organizationId = dto.organizationId
       , kmId = dto.kmId
@@ -64,12 +65,13 @@ fromKnowledgeModelBundlePackage dto tenantUuid =
       , description = dto.description
       , readme = dto.readme
       , license = dto.license
-      , previousPackageId = dto.previousPackageId
+      , previousPackageUuid = previousPackageUuid
       , forkOfPackageId = dto.forkOfPackageId
       , mergeCheckpointPackageId = dto.mergeCheckpointPackageId
       , nonEditable = dto.nonEditable
+      , public = False
       , tenantUuid = tenantUuid
       , createdAt = dto.createdAt
       }
-  , fmap (toPackageEvent dto.pId tenantUuid) dto.events
+  , fmap (toPackageEvent pkgUuid tenantUuid) dto.events
   )

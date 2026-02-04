@@ -28,8 +28,8 @@ toGetIssuesRequest serverConfig tenantConfig =
         , multipart = Nothing
         }
 
-toCreateIssueRequest :: ServerConfigFeedback -> TenantConfigProjectFeedback -> String -> U.UUID -> String -> String -> Maybe U.UUID -> HttpRequest
-toCreateIssueRequest serverConfig tenantConfig pkgId questionUuid title content mCreatedBy =
+toCreateIssueRequest :: ServerConfigFeedback -> TenantConfigProjectFeedback -> U.UUID -> U.UUID -> String -> String -> Maybe U.UUID -> HttpRequest
+toCreateIssueRequest serverConfig tenantConfig pkgUuid questionUuid title content mCreatedBy =
   let variables = M.fromList [("owner", tenantConfig.owner), ("repo", tenantConfig.repo)]
    in HttpRequest
         { requestMethod = "POST"
@@ -44,7 +44,7 @@ toCreateIssueRequest serverConfig tenantConfig pkgId questionUuid title content 
                 , body = f' "%s\n\n**created by:** %s" [content, maybe "anonymous" U.toString mCreatedBy]
                 , assignees = []
                 , milestone = Nothing
-                , labels = [pkgId, U.toString questionUuid]
+                , labels = [U.toString pkgUuid, U.toString questionUuid]
                 }
         , multipart = Nothing
         }

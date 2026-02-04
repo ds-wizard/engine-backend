@@ -22,6 +22,7 @@ import Wizard.Api.Resource.Project.Detail.ProjectDetailDTO
 import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.DAO.Project.ProjectEventDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.Migration.Development.Project.Data.Projects
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
@@ -63,6 +64,7 @@ test_200 appContext = do
     appContext
     project1
     project1Events
+    germanyPackageSuggestion
     [reqAuthHeader]
     [project1AlbertEditProjectPermDto]
   create_test_200
@@ -70,6 +72,7 @@ test_200 appContext = do
     appContext
     project2
     project2Events
+    germanyPackageSuggestion
     [reqNonAdminAuthHeader]
     [project2AlbertEditProjectPermDto]
   create_test_200
@@ -77,6 +80,7 @@ test_200 appContext = do
     appContext
     (project13 {visibility = PrivateProjectVisibility})
     project13Events
+    germanyPackageSuggestion
     [reqNonAdminAuthHeader]
     [project13NikolaCommentProjectPermDto]
   create_test_200
@@ -84,6 +88,7 @@ test_200 appContext = do
     appContext
     project13
     project13Events
+    germanyPackageSuggestion
     [reqIsaacAuthTokenHeader]
     [project13NikolaCommentProjectPermDto]
   create_test_200
@@ -91,6 +96,7 @@ test_200 appContext = do
     appContext
     (project13 {sharing = AnyoneWithLinkCommentProjectSharing})
     project13Events
+    germanyPackageSuggestion
     []
     [project13NikolaCommentProjectPermDto]
   create_test_200
@@ -98,6 +104,7 @@ test_200 appContext = do
     appContext
     project7
     project7Events
+    germanyPackageSuggestion
     []
     [project7AlbertEditProjectPermDto]
   create_test_200
@@ -105,6 +112,7 @@ test_200 appContext = do
     appContext
     project3
     project3Events
+    germanyPackageSuggestion
     [reqNonAdminAuthHeader]
     []
   create_test_200
@@ -112,10 +120,11 @@ test_200 appContext = do
     appContext
     project10
     project10Events
+    germanyPackageSuggestion
     []
     []
 
-create_test_200 title appContext project projectEvents authHeader permissions =
+create_test_200 title appContext project projectEvents kmPackage authHeader permissions =
   it title $
     -- GIVEN: Prepare request
     do
@@ -137,7 +146,7 @@ create_test_200 title appContext project projectEvents authHeader permissions =
               , name = project.name
               , sharing = project.sharing
               , visibility = project.visibility
-              , knowledgeModelPackageId = project.knowledgeModelPackageId
+              , knowledgeModelPackage = kmPackage
               , isTemplate = project.isTemplate
               , migrationUuid = Nothing
               , permissions = permissions

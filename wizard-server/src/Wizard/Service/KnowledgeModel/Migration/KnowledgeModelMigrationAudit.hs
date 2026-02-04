@@ -1,7 +1,6 @@
 module Wizard.Service.KnowledgeModel.Migration.KnowledgeModelMigrationAudit where
 
 import qualified Data.Map.Strict as M
-import Data.Maybe
 import qualified Data.UUID as U
 
 import Shared.Audit.Service.Audit.AuditService
@@ -18,7 +17,7 @@ auditKmMigrationCreate reqDto kmEditor =
     "create"
     (U.toString kmEditor.uuid)
     ( M.fromList
-        [("sourcePackageId", fromMaybe "" $ kmEditor.previousPackageId), ("targetPackageId", reqDto.targetPackageId)]
+        [("sourcePackageId", maybe "" U.toString kmEditor.previousPackageUuid), ("targetPackageUuid", U.toString reqDto.targetPackageUuid)]
     )
 
 auditKmMigrationSolve :: U.UUID -> KnowledgeModelMigrationResolutionDTO -> AppContextM ()

@@ -32,13 +32,13 @@ migrateAll = do
 -- --------------------------------
 migrateOneInDB :: U.UUID -> KnowledgeModelPackage -> AppContextM ()
 migrateOneInDB tenantUuid pkg = do
-  kmEvents <- findPackageRawEvents pkg.pId
+  kmEvents <- findPackageRawEvents pkg.uuid
   let events = A.Array . Vector.fromList . fmap (A.toJSON . toRawEvent) $ kmEvents
   migrateEventField "knowledge_model_package" pkg.createdAt pkg.metamodelVersion events $ \eventsMigratedValue -> do
     case A.fromJSON eventsMigratedValue of
       A.Error error -> logMigrationFailedToConvertToNewMetamodelVersion "knowledge_model_package" error
       A.Success eventsMigrated -> do
-        let kmEventsMigrated = fmap (toPackageRawEvent pkg.pId tenantUuid) eventsMigrated
-        deletePackageEventsById pkg.pId
+        let kmEventsMigrated = fmap (toPackageRawEvent pkg.uuid tenantUuid) eventsMigrated
+        deletePackageEventsByPackageUuid pkg.uuid
         traverse_ insertPackageRawEvent kmEventsMigrated
-        void $ updatePackageMetamodelVersion pkg.pId knowledgeModelMetamodelVersion
+        void $ updatePackageMetamodelVersion pkg.uuid knowledgeModelMetamodelVersion

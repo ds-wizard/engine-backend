@@ -28,7 +28,7 @@ createKnowledgeModelPackageTable = do
   let sql =
         "CREATE TABLE knowledge_model_package \
         \( \
-        \    id                          varchar     NOT NULL, \
+        \    uuid                        uuid        NOT NULL, \
         \    name                        varchar     NOT NULL, \
         \    organization_id             varchar     NOT NULL, \
         \    km_id                       varchar     NOT NULL, \
@@ -37,19 +37,20 @@ createKnowledgeModelPackageTable = do
         \    description                 varchar     NOT NULL, \
         \    readme                      varchar     NOT NULL, \
         \    license                     varchar     NOT NULL, \
-        \    previous_package_id         varchar, \
+        \    previous_package_uuid       uuid, \
         \    fork_of_package_id          varchar, \
         \    merge_checkpoint_package_id varchar, \
         \    created_at                  timestamptz NOT NULL, \
         \    tenant_uuid                 uuid        NOT NULL, \
         \    phase                       varchar     NOT NULL, \
         \    non_editable                bool        NOT NULL, \
-        \    CONSTRAINT knowledge_model_package_pk PRIMARY KEY (id) \
+        \    public                      bool        NOT NULL, \
+        \    CONSTRAINT knowledge_model_package_pk PRIMARY KEY (uuid) \
         \); \
         \ \
         \CREATE INDEX knowledge_model_package_organization_id_km_id_index ON knowledge_model_package (organization_id, km_id); \
         \ \
-        \CREATE INDEX knowledge_model_package_previous_package_id_index ON knowledge_model_package (previous_package_id);"
+        \CREATE INDEX knowledge_model_package_previous_package_id_index ON knowledge_model_package (previous_package_uuid);"
   let action conn = execute_ conn sql
   runDB action
 
@@ -59,15 +60,15 @@ createKnowledgeModelPackageEventTable = do
   let sql =
         "CREATE TABLE IF NOT EXISTS knowledge_model_package_event \
         \( \
-        \    uuid        uuid        NOT NULL, \
-        \    parent_uuid uuid        NOT NULL, \
-        \    entity_uuid uuid        NOT NULL, \
-        \    content     jsonb       NOT NULL, \
-        \    package_id  varchar     NOT NULL, \
-        \    tenant_uuid uuid        NOT NULL, \
-        \    created_at  timestamptz NOT NULL, \
-        \    CONSTRAINT knowledge_model_package_event_pk PRIMARY KEY (uuid, package_id), \
-        \    CONSTRAINT knowledge_model_package_event_package_id_fk FOREIGN KEY (package_id) REFERENCES knowledge_model_package (id) ON DELETE CASCADE \
+        \    uuid         uuid        NOT NULL, \
+        \    parent_uuid  uuid        NOT NULL, \
+        \    entity_uuid  uuid        NOT NULL, \
+        \    content      jsonb       NOT NULL, \
+        \    package_uuid uuid        NOT NULL, \
+        \    tenant_uuid  uuid        NOT NULL, \
+        \    created_at   timestamptz NOT NULL, \
+        \    CONSTRAINT knowledge_model_package_event_pk PRIMARY KEY (uuid, package_uuid), \
+        \    CONSTRAINT knowledge_model_package_event_package_uuid_fk FOREIGN KEY (package_uuid) REFERENCES knowledge_model_package (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

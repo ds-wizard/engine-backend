@@ -1,12 +1,13 @@
 module RegistryLib.Api.Resource.Package.KnowledgeModelPackageSimpleDTO where
 
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 import RegistryLib.Model.Organization.OrganizationSimple
 
 data KnowledgeModelPackageSimpleDTO = KnowledgeModelPackageSimpleDTO
-  { pId :: String
+  { uuid :: U.UUID
   , name :: String
   , organizationId :: String
   , kmId :: String

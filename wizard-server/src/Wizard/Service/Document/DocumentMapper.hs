@@ -126,7 +126,7 @@ fromTemporallyCreateDTO docUuid project projectEventUuid documentTemplateUuid fo
 toTemporaryPackage :: U.UUID -> UTCTime -> KnowledgeModelPackage
 toTemporaryPackage tenantUuid createdAt =
   KnowledgeModelPackage
-    { pId = "org.example:km-example:1.0.0"
+    { uuid = U.nil
     , name = "Example Knowledge Model"
     , organizationId = "org.example"
     , kmId = "km-example"
@@ -136,10 +136,11 @@ toTemporaryPackage tenantUuid createdAt =
     , description = "Example description"
     , readme = "# Example Knowledge Model\n\nThis is an example knowledge model."
     , license = "Apache-2.0"
-    , previousPackageId = Nothing
+    , previousPackageUuid = Nothing
     , forkOfPackageId = Nothing
     , mergeCheckpointPackageId = Nothing
     , nonEditable = False
+    , public = False
     , tenantUuid = tenantUuid
     , createdAt = createdAt
     }
@@ -152,7 +153,7 @@ toTemporaryProject kmEditor package mCurrentUser =
     , description = Just kmEditor.description
     , visibility = PrivateProjectVisibility
     , sharing = RestrictedProjectSharing
-    , knowledgeModelPackageId = fromMaybe package.pId kmEditor.previousPackageId
+    , knowledgeModelPackageUuid = fromMaybe package.uuid kmEditor.previousPackageUuid
     , selectedQuestionTagUuids = []
     , projectTags = []
     , documentTemplateUuid = Nothing

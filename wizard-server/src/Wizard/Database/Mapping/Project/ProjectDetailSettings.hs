@@ -34,7 +34,7 @@ instance FromRow ProjectDetailSettings where
     formatUuid <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid
-    knowledgeModelPackageId <- field
+    knowledgeModelPackageUuid <- field
     knowledgeModelPackageName <- field
     knowledgeModelPackageOrganizationId <- field
     knowledgeModelPackageKmId <- field
@@ -42,10 +42,11 @@ instance FromRow ProjectDetailSettings where
     knowledgeModelPackagePhase <- field
     knowledgeModelPackageDescription <- field
     knowledgeModelPackageNonEditable <- field
+    knowledgeModelPackagePublic <- field
     knowledgeModelPackageCreatedAt <- field
     let knowledgeModelPackage =
           KnowledgeModelPackageSimpleDTO
-            { pId = knowledgeModelPackageId
+            { uuid = knowledgeModelPackageUuid
             , name = knowledgeModelPackageName
             , organizationId = knowledgeModelPackageOrganizationId
             , kmId = knowledgeModelPackageKmId
@@ -55,6 +56,7 @@ instance FromRow ProjectDetailSettings where
             , description = knowledgeModelPackageDescription
             , organization = Nothing
             , nonEditable = knowledgeModelPackageNonEditable
+            , public = knowledgeModelPackagePublic
             , createdAt = knowledgeModelPackageCreatedAt
             }
     let knowledgeModelTags = []

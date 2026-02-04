@@ -18,7 +18,7 @@ instance ToRow Project where
     , toField name
     , toField visibility
     , toField sharing
-    , toField knowledgeModelPackageId
+    , toField knowledgeModelPackageUuid
     , toField . PGArray $ selectedQuestionTagUuids
     , toField documentTemplateUuid
     , toField formatUuid
@@ -38,7 +38,7 @@ instance FromRow Project where
     name <- field
     visibility <- field
     sharing <- field
-    knowledgeModelPackageId <- field
+    knowledgeModelPackageUuid <- field
     selectedQuestionTagUuids <- fromPGArray <$> field
     documentTemplateUuid <- field
     formatUuid <- field

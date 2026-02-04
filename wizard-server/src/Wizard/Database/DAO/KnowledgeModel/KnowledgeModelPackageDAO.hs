@@ -2,7 +2,6 @@ module Wizard.Database.DAO.KnowledgeModel.KnowledgeModelPackageDAO where
 
 import Control.Monad.Reader (asks)
 import qualified Data.List as L
-import Data.Maybe (fromMaybe)
 import Data.String (fromString)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
@@ -14,7 +13,7 @@ import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Util.Logger
-import Shared.Common.Util.String (replace)
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.KnowledgeModel.Package.KnowledgeModelPackageList ()
@@ -42,7 +41,7 @@ findPackagesPage mOrganizationId mKmId mQuery mOutdated pageable sort =
     pageLabel
     pageable
     sort
-    "id, knowledge_model_package.name, knowledge_model_package.organization_id, knowledge_model_package.km_id, version, phase, description, non_editable, registry_knowledge_model_package.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, knowledge_model_package.created_at"
+    "uuid, knowledge_model_package.name, knowledge_model_package.organization_id, knowledge_model_package.km_id, version, phase, description, non_editable, public, registry_knowledge_model_package.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, knowledge_model_package.created_at"
     "km_id"
     mQuery
     Nothing
@@ -54,28 +53,31 @@ findPackagesPage mOrganizationId mKmId mQuery mOutdated pageable sort =
         Nothing -> ""
     )
 
-findPackageSuggestionsPage :: Maybe String -> Maybe [String] -> Maybe [String] -> Maybe KnowledgeModelPackagePhase -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page KnowledgeModelPackageSuggestion)
-findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pageable sort =
+findPackageSuggestionByUuid :: U.UUID -> AppContextM KnowledgeModelPackageSuggestion
+findPackageSuggestionByUuid uuid = do
+  tenantUuid <- asks (.tenantUuid')
+  createFindEntityWithFieldsByFn "uuid, name, organization_id, km_id, version, description" False entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
+
+findPackageSuggestionsPage :: Maybe String -> Maybe [Coordinate] -> Maybe [Coordinate] -> Maybe KnowledgeModelPackagePhase -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page KnowledgeModelPackageSuggestion)
+findPackageSuggestionsPage mQuery mSelectCoordinates mExcludeCoordinates mPhase mNonEditable pageable sort =
   -- 1. Prepare variables
   do
     tenantUuid <- asks currentTenantUuid
     let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
-    let mSelectIdsLike = fmap (fmap (replace "all" "%")) mSelectIds
-    let selectCondition =
-          case mSelectIds of
-            Nothing -> ""
-            Just [] -> ""
-            Just selectIds ->
-              let mapFn _ = " id LIKE ?"
-               in " AND (" ++ L.intercalate " OR " (fmap mapFn selectIds) ++ ")"
-    let mExcludeIdsLike = fmap (fmap (replace "all" "%")) mExcludeIds
-    let excludeCondition =
-          case mExcludeIds of
-            Nothing -> ""
-            Just [] -> ""
-            Just excludeIds ->
-              let mapFn _ = " id NOT LIKE ?"
-               in " AND (" ++ L.intercalate " AND " (fmap mapFn excludeIds) ++ ")"
+    let (selectCondition, selectParams) =
+          case mSelectCoordinates of
+            Nothing -> ("", [])
+            Just [] -> ("", [])
+            Just selectCoordinates ->
+              let mapFn _ = " (organization_id = ? AND km_id = ?)"
+               in (" AND (" ++ L.intercalate " OR " (fmap mapFn selectCoordinates) ++ ")", concatMap (\c -> [c.organizationId, c.entityId]) selectCoordinates)
+    let (excludeCondition, excludeParams) =
+          case mExcludeCoordinates of
+            Nothing -> ("", [])
+            Just [] -> ("", [])
+            Just excludeCoordinates ->
+              let mapFn _ = " NOT(organization_id = ? AND km_id = ?)"
+               in (" AND (" ++ L.intercalate " AND " (fmap mapFn excludeCoordinates) ++ ")", concatMap (\c -> [c.organizationId, c.entityId]) excludeCoordinates)
     let phaseCondition =
           case mPhase of
             Just phase -> f' "AND phase = '%s'" [show phase]
@@ -85,24 +87,26 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pag
             Just nonEditable -> f' "AND non_editable = '%s'" [show nonEditable]
             Nothing -> ""
     -- 2. Get total count
-    count <- countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike mExcludeIdsLike phaseCondition nonEditableCondition
+    count <- countPackageSuggestions mQuery selectCondition excludeCondition selectParams excludeParams phaseCondition nonEditableCondition
     -- 3. Get entities
     let sql =
           fromString $
             f'
-              "SELECT id, \
-              \        name, \
-              \        version, \
-              \        description \
+              "SELECT uuid, \
+              \       name, \
+              \       organization_id, \
+              \       km_id, \
+              \       version, \
+              \       description \
               \FROM knowledge_model_package outer_package \
-              \WHERE tenant_uuid = ? AND id IN ( \
+              \WHERE tenant_uuid = ? AND concat(organization_id, ':', km_id, ':', version) IN ( \
               \    SELECT CONCAT(organization_id, ':', km_id, ':', \
               \                  (max(string_to_array(version, '.')::int[]))[1] || '.' || \
               \                  (max(string_to_array(version, '.')::int[]))[2] || '.' || \
               \                  (max(string_to_array(version, '.')::int[]))[3]) \
               \    FROM knowledge_model_package \
               \    WHERE tenant_uuid = ? \
-              \      AND (name ~* ? OR id ~* ?) %s %s %s %s \
+              \      AND (name ~* ? OR organization_id ~* ? OR km_id ~* ? OR version ~* ?) %s %s %s %s \
               \    GROUP BY organization_id, km_id) \
               \%s \
               \OFFSET %s \
@@ -112,8 +116,10 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pag
           [U.toString tenantUuid, U.toString tenantUuid]
             ++ [regexM mQuery]
             ++ [regexM mQuery]
-            ++ fromMaybe [] mSelectIdsLike
-            ++ fromMaybe [] mExcludeIdsLike
+            ++ [regexM mQuery]
+            ++ [regexM mQuery]
+            ++ selectParams
+            ++ excludeParams
     logQuery sql params
     let action conn = query conn sql params
     entities <- runDB action
@@ -127,8 +133,8 @@ findPackageSuggestionsPage mQuery mSelectIds mExcludeIds mPhase mNonEditable pag
             }
     return $ Page pageLabel metadata entities
 
-countPackageSuggestions :: Maybe String -> String -> String -> Maybe [String] -> Maybe [String] -> String -> String -> AppContextM Int
-countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike mExcludeIdsLike phaseCondition nonEditableCondition = do
+countPackageSuggestions :: Maybe String -> String -> String -> [String] -> [String] -> String -> String -> AppContextM Int
+countPackageSuggestions mQuery selectCondition excludeCondition selectParams excludeParams phaseCondition nonEditableCondition = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString $
@@ -136,13 +142,13 @@ countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike m
             "SELECT COUNT(*) \
             \FROM (SELECT COUNT(*) \
             \   FROM knowledge_model_package \
-            \   WHERE tenant_uuid = ? AND (name ~* ? OR id ~* ?) %s %s %s %s \
+            \   WHERE tenant_uuid = ? AND (name ~* ? OR organization_id ~* ? OR km_id ~* ? OR version ~* ?) %s %s %s %s \
             \   GROUP BY organization_id, km_id) nested"
             [selectCondition, excludeCondition, phaseCondition, nonEditableCondition]
   let params =
-        [U.toString tenantUuid, regexM mQuery, regexM mQuery]
-          ++ fromMaybe [] mSelectIdsLike
-          ++ fromMaybe [] mExcludeIdsLike
+        [U.toString tenantUuid, regexM mQuery, regexM mQuery, regexM mQuery, regexM mQuery]
+          ++ selectParams
+          ++ excludeParams
   logQuery sql params
   let action conn = query conn sql params
   result <- runDB action
@@ -150,20 +156,20 @@ countPackageSuggestions mQuery selectCondition excludeCondition mSelectIdsLike m
     [count] -> return . fromOnly $ count
     _ -> return 0
 
-updatePackageMetamodelVersion :: String -> Int -> AppContextM Int64
-updatePackageMetamodelVersion pkgId metamodelVersion = do
+updatePackageMetamodelVersion :: U.UUID -> Int -> AppContextM Int64
+updatePackageMetamodelVersion pkgUuid metamodelVersion = do
   tenantUuid <- asks currentTenantUuid
-  let sql = fromString "UPDATE knowledge_model_package SET metamodel_version = ? WHERE tenant_uuid = ? AND id = ?"
-  let params = [toField metamodelVersion, toField tenantUuid, toField pkgId]
+  let sql = fromString "UPDATE knowledge_model_package SET metamodel_version = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = [toField metamodelVersion, toField tenantUuid, toField pkgUuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action
 
-updatePackagePhaseById :: String -> KnowledgeModelPackagePhase -> AppContextM Int64
-updatePackagePhaseById pkgId phase = do
+updatePackagePhaseAndPublicByUuid :: U.UUID -> KnowledgeModelPackagePhase -> Bool -> AppContextM Int64
+updatePackagePhaseAndPublicByUuid pkgUuid phase public = do
   tenantUuid <- asks currentTenantUuid
-  let sql = fromString "UPDATE knowledge_model_package SET phase = ? WHERE tenant_uuid = ? AND id = ?"
-  let params = [toField phase, toField tenantUuid, toField pkgId]
+  let sql = fromString "UPDATE knowledge_model_package SET phase = ?, public = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = [toField phase, toField public, toField tenantUuid, toField pkgUuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action

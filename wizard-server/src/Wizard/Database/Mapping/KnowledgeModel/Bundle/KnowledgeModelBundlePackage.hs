@@ -6,6 +6,7 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 
+import Shared.Coordinate.Database.Mapping.Coordinate.Coordinate ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Event.KnowledgeModelEventJM ()
 import Shared.KnowledgeModel.Database.Mapping.KnowledgeModel.Package.KnowledgeModelPackagePhase ()
 import Shared.KnowledgeModel.Model.KnowledgeModel.Bundle.KnowledgeModelBundlePackage

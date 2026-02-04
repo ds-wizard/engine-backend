@@ -11,7 +11,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
-import Shared.Coordinate.Util.Coordinate
+import Shared.Common.Model.Error.Error
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
@@ -20,6 +20,7 @@ import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as KnowledgeModelPackage
 import Wizard.Model.Context.AppContext
+import WizardLib.Public.Localization.Messages.Public
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -43,9 +44,9 @@ reqUrl = "/wizard-api/knowledge-models/preview"
 
 reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
-reqDtoT pkgId =
+reqDtoT pkg =
   KnowledgeModelChangeDTO
-    { knowledgeModelPackageId = Just pkgId
+    { knowledgeModelPackageUuid = Just pkg.uuid
     , events = []
     , tagUuids = []
     }
@@ -56,29 +57,15 @@ reqBodyT pkg = encode (reqDtoT pkg)
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (with token)" appContext [reqAuthHeader] germanyKmPackage germanyKmPackage.pId km1WithQ4
-  create_test_200
-    "HTTP 200 OK (with token)"
-    appContext
-    [reqAuthHeader]
-    germanyKmPackage
-    (buildCoordinate germanyKmPackage.organizationId germanyKmPackage.kmId "latest")
-    km1WithQ4
-  create_test_200 "HTTP 200 OK (without token)" appContext [] globalKmPackage globalKmPackage.pId km1Global
-  create_test_200
-    "HTTP 200 OK (without token)"
-    appContext
-    []
-    globalKmPackage
-    (buildCoordinate globalKmPackage.organizationId globalKmPackage.kmId "latest")
-    km1Global
+  create_test_200 "HTTP 200 OK (with token)" appContext [reqAuthHeader] germanyKmPackage km1WithQ4
+  create_test_200 "HTTP 200 OK (without token)" appContext [] globalKmPackage km1Global
 
-create_test_200 title appContext authHeader pkg pkgId expDto =
+create_test_200 title appContext authHeader pkg expDto =
   it title $
     -- GIVEN: Prepare request
     do
       let reqHeaders = reqHeadersT authHeader
-      let reqBody = reqBodyT pkgId
+      let reqBody = reqBodyT pkg
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
@@ -98,4 +85,21 @@ create_test_200 title appContext authHeader pkg pkgId expDto =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext =
-  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (reqBodyT germanyKmPackage.pId) "PRJ_PERM"
+  it "HTTP 403 FORBIDDEN - private" $
+    -- GIVEN: Prepare request
+    do
+      let reqHeaders = reqHeadersT []
+      let reqBody = reqBodyT netherlandsKmPackage
+      -- AND: Prepare expectation
+      let expStatus = 403
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = ForbiddenError _ERROR_SERVICE_USER__MISSING_USER
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO KnowledgeModelPackage.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher

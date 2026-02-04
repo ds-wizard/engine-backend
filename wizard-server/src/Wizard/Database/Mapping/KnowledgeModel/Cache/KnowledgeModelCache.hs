@@ -13,7 +13,7 @@ import Wizard.Model.KnowledgeModel.KnowledgeModelCache
 
 instance ToRow KnowledgeModelCache where
   toRow KnowledgeModelCache {..} =
-    [ toField knowledgeModelPackageId
+    [ toField knowledgeModelPackageUuid
     , toField . PGArray $ tagUuids
     , toJSONField knowledgeModel
     , toField tenantUuid
@@ -22,7 +22,7 @@ instance ToRow KnowledgeModelCache where
 
 instance FromRow KnowledgeModelCache where
   fromRow = do
-    knowledgeModelPackageId <- field
+    knowledgeModelPackageUuid <- field
     tagUuidsS <- fromPGArray <$> field
     let tagUuids = fmap u' tagUuidsS
     knowledgeModel <- fieldWith fromJSONField

@@ -305,7 +305,7 @@ owl_setOwlProperties :: DevOperation AppContextM
 owl_setOwlProperties =
   DevOperation
     { name = "Set OWL properties"
-    , description = Just "If you do not want to fill `previousPackageId`, please fill empty space (`' '`)"
+    , description = Just "If you do not want to fill `previousPackageUuid`, please fill empty space (`' '`)"
     , parameters =
         [ DevOperationParameter
             { name = "name"
@@ -324,7 +324,7 @@ owl_setOwlProperties =
             , aType = StringDevOperationParameterType
             }
         , DevOperationParameter
-            { name = "previousPackageId"
+            { name = "previousPackageUuid"
             , aType = StringDevOperationParameterType
             }
         , DevOperationParameter
@@ -337,12 +337,12 @@ owl_setOwlProperties =
         let organizationId = reqDto.parameters !! 1
         let kmId = reqDto.parameters !! 2
         let version = reqDto.parameters !! 3
-        let previousPackageId =
+        let previousPackageUuid =
               case reqDto.parameters !! 4 of
                 " " -> Nothing
                 p -> Just p
         let rootElement = reqDto.parameters !! 5
-        setOwlProperties name organizationId kmId version previousPackageId rootElement
+        setOwlProperties name organizationId kmId version previousPackageUuid rootElement
         return "Done"
     }
 

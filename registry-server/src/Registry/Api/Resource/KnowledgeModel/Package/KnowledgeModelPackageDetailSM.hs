@@ -8,6 +8,7 @@ import Registry.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
 import RegistryLib.Api.Resource.Organization.OrganizationSimpleSM ()
 import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Common.Util.Swagger
+import Shared.Coordinate.Api.Resource.Coordinate.CoordinateSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePhaseSM ()
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 

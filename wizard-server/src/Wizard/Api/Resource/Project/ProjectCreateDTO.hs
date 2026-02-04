@@ -7,7 +7,7 @@ import Wizard.Model.Project.Project
 
 data ProjectCreateDTO = ProjectCreateDTO
   { name :: String
-  , knowledgeModelPackageId :: String
+  , knowledgeModelPackageUuid :: U.UUID
   , visibility :: ProjectVisibility
   , sharing :: ProjectSharing
   , questionTagUuids :: [U.UUID]

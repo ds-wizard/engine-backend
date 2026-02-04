@@ -5,6 +5,7 @@ import Data.Aeson
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationDTO
 import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationStateJM ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSuggestionJM ()
 
 instance FromJSON KnowledgeModelMigrationDTO where
   parseJSON = genericParseJSON jsonOptions

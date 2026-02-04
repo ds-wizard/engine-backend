@@ -82,18 +82,6 @@ instance FromJSON TenantConfigKnowledgeModel where
 instance ToJSON TenantConfigKnowledgeModel where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigKnowledgeModelPublic where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON TenantConfigKnowledgeModelPublic where
-  toJSON = genericToJSON jsonOptions
-
-instance FromJSON TenantConfigKnowledgeModelPublicPackagePattern where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON TenantConfigKnowledgeModelPublicPackagePattern where
-  toJSON = genericToJSON jsonOptions
-
 instance FromJSON TenantConfigProject where
   parseJSON = genericParseJSON jsonOptions
 

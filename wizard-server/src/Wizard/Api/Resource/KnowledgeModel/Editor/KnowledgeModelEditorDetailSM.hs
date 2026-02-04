@@ -3,6 +3,7 @@ module Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorDetailSM wh
 import Data.Swagger
 
 import Shared.Common.Util.Swagger
+import Shared.Coordinate.Api.Resource.Coordinate.CoordinateSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Event.KnowledgeModelEventSM ()
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorDetailDTO
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorDetailJM ()

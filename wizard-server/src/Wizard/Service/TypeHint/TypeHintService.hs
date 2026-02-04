@@ -31,7 +31,7 @@ import Wizard.Service.Project.ProjectAcl
 getLegacyTypeHints :: TypeHintLegacyRequestDTO -> AppContextM [TypeHintLegacyIDTO]
 getLegacyTypeHints reqDto =
   runInTransaction $ do
-    km <- compileKnowledgeModel reqDto.events reqDto.knowledgeModelPackageId []
+    km <- compileKnowledgeModel reqDto.events reqDto.knowledgeModelPackageUuid []
     question <- getQuestion km reqDto.questionUuid
     integration' <- getIntegration km question.integrationUuid
     case integration' of
@@ -56,7 +56,7 @@ getTypeHints (KnowledgeModelEditorIntegrationTypeHintRequest' reqDto) =
     kmEditor <- findKnowledgeModelEditorByUuid reqDto.knowledgeModelEditorUuid
     kmEditorEvents <- findKnowledgeModelEventsByEditorUuid reqDto.knowledgeModelEditorUuid
     let kmEvents = fmap toKnowledgeModelEvent kmEditorEvents
-    km <- compileKnowledgeModel kmEvents kmEditor.previousPackageId []
+    km <- compileKnowledgeModel kmEvents kmEditor.previousPackageUuid []
     integration' <- getIntegration km reqDto.integrationUuid
     case integration' of
       ApiIntegration' integration -> runApiIntegrationTypeHints integration integration.testVariables integration.testQ
@@ -67,7 +67,7 @@ getTypeHints (KnowledgeModelEditorQuestionTypeHintRequest' reqDto) =
     kmEditor <- findKnowledgeModelEditorByUuid reqDto.knowledgeModelEditorUuid
     kmEditorEvents <- findKnowledgeModelEventsByEditorUuid reqDto.knowledgeModelEditorUuid
     let kmEvents = fmap toKnowledgeModelEvent kmEditorEvents
-    km <- compileKnowledgeModel kmEvents kmEditor.previousPackageId []
+    km <- compileKnowledgeModel kmEvents kmEditor.previousPackageUuid []
     question <- getQuestion km reqDto.questionUuid
     integration' <- getIntegration km question.integrationUuid
     case integration' of
@@ -77,7 +77,7 @@ getTypeHints (ProjectTypeHintRequest' reqDto) =
   runInTransaction $ do
     project <- findProjectByUuid reqDto.projectUuid
     checkEditPermissionToProject project.visibility project.sharing project.permissions
-    km <- compileKnowledgeModel [] (Just project.knowledgeModelPackageId) []
+    km <- compileKnowledgeModel [] (Just project.knowledgeModelPackageUuid) []
     question <- getQuestion km reqDto.questionUuid
     integration' <- getIntegration km question.integrationUuid
     case integration' of
@@ -102,7 +102,7 @@ testTypeHints reqDto =
     kmEditor <- findKnowledgeModelEditorByUuid reqDto.knowledgeModelEditorUuid
     kmEditorEvents <- findKnowledgeModelEventsByEditorUuid reqDto.knowledgeModelEditorUuid
     let kmEvents = fmap toKnowledgeModelEvent kmEditorEvents
-    km <- compileKnowledgeModel kmEvents kmEditor.previousPackageId []
+    km <- compileKnowledgeModel kmEvents kmEditor.previousPackageUuid []
     integration' <- getIntegration km reqDto.integrationUuid
     case integration' of
       ApiIntegration' integration -> do

@@ -11,7 +11,7 @@ data KnowledgeModelPackageEvent = KnowledgeModelPackageEvent
   , parentUuid :: U.UUID
   , entityUuid :: U.UUID
   , content :: KnowledgeModelEventData
-  , packageId :: String
+  , packageUuid :: U.UUID
   , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   }

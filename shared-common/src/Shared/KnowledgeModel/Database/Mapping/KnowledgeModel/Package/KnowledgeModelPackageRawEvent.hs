@@ -14,7 +14,7 @@ instance ToRow KnowledgeModelPackageRawEvent where
     , toField parentUuid
     , toField entityUuid
     , toJSONField content
-    , toField packageId
+    , toField packageUuid
     , toField tenantUuid
     , toField createdAt
     ]
@@ -25,7 +25,7 @@ instance FromRow KnowledgeModelPackageRawEvent where
     parentUuid <- field
     entityUuid <- field
     content <- fieldWith fromJSONField
-    packageId <- field
+    packageUuid <- field
     tenantUuid <- field
     createdAt <- field
     return $ KnowledgeModelPackageRawEvent {..}

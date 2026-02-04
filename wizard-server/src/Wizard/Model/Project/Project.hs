@@ -26,7 +26,7 @@ data Project = Project
   , description :: Maybe String
   , visibility :: ProjectVisibility
   , sharing :: ProjectSharing
-  , knowledgeModelPackageId :: String
+  , knowledgeModelPackageUuid :: U.UUID
   , selectedQuestionTagUuids :: [U.UUID]
   , projectTags :: [String]
   , documentTemplateUuid :: Maybe U.UUID
@@ -48,7 +48,7 @@ instance Eq Project where
       && a.description == b.description
       && a.visibility == b.visibility
       && a.sharing == b.sharing
-      && a.knowledgeModelPackageId == b.knowledgeModelPackageId
+      && a.knowledgeModelPackageUuid == b.knowledgeModelPackageUuid
       && a.selectedQuestionTagUuids == b.selectedQuestionTagUuids
       && a.projectTags == b.projectTags
       && a.documentTemplateUuid == b.documentTemplateUuid

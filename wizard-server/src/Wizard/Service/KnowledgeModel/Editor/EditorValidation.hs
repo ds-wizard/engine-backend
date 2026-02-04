@@ -2,6 +2,7 @@ module Wizard.Service.KnowledgeModel.Editor.EditorValidation where
 
 import Control.Monad.Except (throwError)
 import qualified Data.Map.Strict as M
+import qualified Data.UUID as U
 
 import Shared.Common.Model.Error.Error
 import Shared.Coordinate.Service.Coordinate.CoordinateValidation
@@ -16,20 +17,20 @@ validateCreateDto :: KnowledgeModelEditorCreateDTO -> AppContextM ()
 validateCreateDto reqDto = do
   validateCoordinatePartFormat "kmId" reqDto.kmId
   validateVersionFormat False reqDto.version
-  validatePackageExistence reqDto.previousPackageId
+  validatePackageExistence reqDto.previousPackageUuid
 
 validateChangeDto :: KnowledgeModelEditorChangeDTO -> AppContextM ()
 validateChangeDto reqDto = do
   validateCoordinatePartFormat "kmId" reqDto.kmId
   validateVersionFormat False reqDto.version
 
-validatePackageExistence :: Maybe String -> AppContextM ()
-validatePackageExistence mPkgId =
-  case mPkgId of
-    Just pkgId -> do
-      mPkg <- findPackageById' pkgId
+validatePackageExistence :: Maybe U.UUID -> AppContextM ()
+validatePackageExistence mPkgUuid =
+  case mPkgUuid of
+    Just pkgUuid -> do
+      mPkg <- findPackageByUuid' pkgUuid
       case mPkg of
         Just _ -> return ()
         Nothing ->
-          throwError $ ValidationError [] (M.singleton "previousPackageId" [_ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE])
+          throwError $ ValidationError [] (M.singleton "previousPackageUuid" [_ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE])
     Nothing -> return ()

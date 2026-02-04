@@ -14,15 +14,15 @@ import Wizard.Model.KnowledgeModel.KnowledgeModelCache
 
 entityName = "knowledge_model_cache"
 
-findKnowledgeModelCacheById' :: String -> [U.UUID] -> U.UUID -> AppContextM (Maybe KnowledgeModelCache)
-findKnowledgeModelCacheById' packageId tagUuids tenantUuid = do
+findKnowledgeModelCacheByUuid' :: U.UUID -> [U.UUID] -> U.UUID -> AppContextM (Maybe KnowledgeModelCache)
+findKnowledgeModelCacheByUuid' pkgUuid tagUuids tenantUuid = do
   let sql =
         fromString
           "SELECT * \
           \FROM knowledge_model_cache \
-          \WHERE package_id = ? AND tag_uuids = ? AND tenant_uuid = ?"
-  let params = [toField packageId, toField tagUuids, toField tenantUuid]
-  let queryParams = [("package_id", packageId), ("tag_uuids", show tagUuids), ("tenant_uuid", U.toString tenantUuid)]
+          \WHERE package_uuid = ? AND tag_uuids = ? AND tenant_uuid = ?"
+  let params = [toField pkgUuid, toField tagUuids, toField tenantUuid]
+  let queryParams = [("package_uuid", U.toString pkgUuid), ("tag_uuids", show tagUuids), ("tenant_uuid", U.toString tenantUuid)]
   logQuery sql params
   let action conn = query conn sql params
   runOneEntityDB' entityName action queryParams

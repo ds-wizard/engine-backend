@@ -13,7 +13,7 @@ type List_Current_Conflict_All_POST =
   Header "Authorization" String
     :> Header "Host" String
     :> "knowledge-model-editors"
-    :> Capture "bUuid" U.UUID
+    :> Capture "uuid" U.UUID
     :> "migrations"
     :> "current"
     :> "conflict"
@@ -22,9 +22,9 @@ type List_Current_Conflict_All_POST =
 
 list_Current_Conflict_All_POST
   :: Maybe String -> Maybe String -> U.UUID -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
-list_Current_Conflict_All_POST mTokenHeader mServerUrl bUuid =
+list_Current_Conflict_All_POST mTokenHeader mServerUrl uuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        solveAllConflicts bUuid
+        solveAllConflicts uuid
         return NoContent

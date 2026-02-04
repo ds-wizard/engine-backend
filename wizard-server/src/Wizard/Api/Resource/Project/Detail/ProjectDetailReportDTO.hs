@@ -5,6 +5,7 @@ import GHC.Generics
 
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Project.Acl.ProjectPermDTO
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Project.Project
 import Wizard.Model.Report.Report
 
@@ -13,7 +14,7 @@ data ProjectDetailReportDTO = ProjectDetailReportDTO
   , name :: String
   , sharing :: ProjectSharing
   , visibility :: ProjectVisibility
-  , knowledgeModelPackageId :: String
+  , knowledgeModelPackage :: KnowledgeModelPackageSuggestion
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]

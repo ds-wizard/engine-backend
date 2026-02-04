@@ -191,7 +191,6 @@ instance Eq TenantConfigRegistry where
 
 data TenantConfigKnowledgeModel = TenantConfigKnowledgeModel
   { tenantUuid :: U.UUID
-  , public :: TenantConfigKnowledgeModelPublic
   , integrationConfig :: String
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
@@ -201,34 +200,7 @@ data TenantConfigKnowledgeModel = TenantConfigKnowledgeModel
 instance Eq TenantConfigKnowledgeModel where
   a == b =
     a.tenantUuid == b.tenantUuid
-      && a.public == b.public
       && a.integrationConfig == b.integrationConfig
-
-data TenantConfigKnowledgeModelPublic = TenantConfigKnowledgeModelPublic
-  { enabled :: Bool
-  , knowledgeModelPackages :: [TenantConfigKnowledgeModelPublicPackagePattern]
-  }
-  deriving (Generic, Eq, Show)
-
-data TenantConfigKnowledgeModelPublicPackagePattern = TenantConfigKnowledgeModelPublicPackagePattern
-  { tenantUuid :: U.UUID
-  , position :: Int
-  , orgId :: Maybe String
-  , kmId :: Maybe String
-  , minVersion :: Maybe String
-  , maxVersion :: Maybe String
-  , createdAt :: UTCTime
-  , updatedAt :: UTCTime
-  }
-  deriving (Generic, Show)
-
-instance Eq TenantConfigKnowledgeModelPublicPackagePattern where
-  a == b =
-    a.tenantUuid == b.tenantUuid
-      && a.orgId == b.orgId
-      && a.kmId == b.kmId
-      && a.minVersion == b.minVersion
-      && a.maxVersion == b.maxVersion
 
 data TenantConfigProject = TenantConfigProject
   { tenantUuid :: U.UUID

@@ -15,13 +15,12 @@ type List_Current_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "knowledge-model-editors"
-    :> Capture "bUuid" U.UUID
+    :> Capture "uuid" U.UUID
     :> "migrations"
     :> "current"
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] KnowledgeModelMigrationDTO)
 
-list_current_GET
-  :: Maybe String -> Maybe String -> U.UUID -> BaseContextM (Headers '[Header "x-trace-uuid" String] KnowledgeModelMigrationDTO)
-list_current_GET mTokenHeader mServerUrl bUuid =
+list_current_GET :: Maybe String -> Maybe String -> U.UUID -> BaseContextM (Headers '[Header "x-trace-uuid" String] KnowledgeModelMigrationDTO)
+list_current_GET mTokenHeader mServerUrl uuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService NoTransaction $ addTraceUuidHeader =<< getCurrentMigrationDto bUuid
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getCurrentMigrationDto uuid

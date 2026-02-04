@@ -11,7 +11,7 @@ import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Error.Error
-import Shared.Coordinate.Service.Coordinate.CoordinateValidation
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import Shared.DocumentTemplate.Constant.DocumentTemplate
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
@@ -41,12 +41,6 @@ import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Tenant.Config.ConfigService
 
-getDocumentTemplates :: [(String, String)] -> Maybe String -> AppContextM [DocumentTemplate]
-getDocumentTemplates queryParams mPkgId = do
-  validateCoordinateFormat' False "templateId" mPkgId
-  templates <- findDocumentTemplatesFiltered queryParams
-  return $ filterDocumentTemplates mPkgId templates
-
 getDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSimpleDTO)
 getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated pageable sort = do
   checkPermission _DOC_TML_READ_PERM
@@ -57,16 +51,21 @@ getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated pageable s
       templates <- findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated Nothing pageable sort
       return . fmap (toSimpleDTO' tcRegistry.enabled) $ templates
 
-getDocumentTemplateSuggestions :: Maybe String -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
-getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable pageable sort = do
+getDocumentTemplateSuggestions :: Maybe U.UUID -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
+getDocumentTemplateSuggestions mPkgUuid includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable pageable sort = do
   checkPermission _DOC_TML_READ_PERM
-  validateCoordinateFormat' False "templateId" mPkgId
+  mPkgId <-
+    case mPkgUuid of
+      Just pkgUuid -> do
+        pkg <- findPackageByUuid pkgUuid
+        return $ Just $ createCoordinate pkg
+      Nothing -> return Nothing
   tmls <- findDocumentTemplatesSuggestions mQuery mNonEditable
-  let entities = filterDocumentTemplatesInGroup tmls
+  let entities = filterDocumentTemplatesInGroup mPkgId tmls
   return $ toSuggestionDTOPage entities pageable
   where
-    filterDocumentTemplatesInGroup :: [DocumentTemplateSuggestion] -> [DocumentTemplateSuggestion]
-    filterDocumentTemplatesInGroup =
+    filterDocumentTemplatesInGroup :: Maybe Coordinate -> [DocumentTemplateSuggestion] -> [DocumentTemplateSuggestion]
+    filterDocumentTemplatesInGroup mPkgId =
       filter (\dt -> includeUnsupportedMetamodelVersion || isDocumentTemplateSupported dt.metamodelVersion)
         . filter (isDocumentTemplateInPhase mPhase)
         . filterDocumentTemplates mPkgId
@@ -82,9 +81,11 @@ getDocumentTemplatesDto queryParams = do
     )
     dts
 
-getDocumentTemplateByUuidAndPackageId :: U.UUID -> Maybe String -> AppContextM DocumentTemplate
-getDocumentTemplateByUuidAndPackageId documentTemplateUuid mPkgId = do
-  dts <- getDocumentTemplates [] mPkgId
+getDocumentTemplateByUuidAndPackageId :: U.UUID -> U.UUID -> AppContextM DocumentTemplate
+getDocumentTemplateByUuidAndPackageId documentTemplateUuid pkgUuid = do
+  templates <- findDocumentTemplatesFiltered []
+  pkg <- findPackageByUuid pkgUuid
+  let dts = filterDocumentTemplates (Just . createCoordinate $ pkg) templates
   case L.find (\dt -> dt.uuid == documentTemplateUuid) dts of
     Just dt -> return dt
     Nothing -> throwError . NotExistsError $ _ERROR_VALIDATION__TEMPLATE_ABSENCE
@@ -93,13 +94,12 @@ getDocumentTemplateByUuidDto :: U.UUID -> AppContextM DocumentTemplateDetailDTO
 getDocumentTemplateByUuidDto uuid = do
   tml <- findDocumentTemplateByUuid uuid
   formats <- findDocumentTemplateFormats uuid
-  pkgs <- findPackages
   versions <- getDocumentTemplateVersions tml
   tmlRs <- findRegistryTemplates
   orgRs <- findRegistryOrganizations
   serverConfig <- asks serverConfig
   let registryLink = buildRegistryTemplateUrl serverConfig.registry.clientUrl tml tmlRs
-  let usableKnowledgeModels = getUsableKnowledgeModelPackagesForDocumentTemplate tml pkgs
+  usableKnowledgeModels <- findUsablePackagesForDocumentTemplate tml.uuid
   tcRegistry <- getCurrentTenantConfigRegistry
   return $ toDetailDTO tml formats tcRegistry.enabled tmlRs orgRs versions registryLink usableKnowledgeModels
 

@@ -46,6 +46,6 @@ projectServiceSpec appContext =
 compareProject :: Project -> CreateProjectCommand -> IO ()
 compareProject project command = liftIO $ do
   project.name `shouldBe` command.name
-  project.knowledgeModelPackageId `shouldBe` command.knowledgeModelPackageId
+  project.knowledgeModelPackageUuid `shouldBe` command.knowledgeModelPackageUuid
   project.documentTemplateUuid `shouldBe` command.documentTemplateUuid
   length project.permissions `shouldBe` length command.emails

@@ -9,7 +9,6 @@ import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
-import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
@@ -18,13 +17,13 @@ import Shared.Common.Model.Error.Error
 import Shared.Common.Util.List
 import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
+import Shared.Coordinate.Model.Coordinate.Coordinate (Coordinate)
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
 import qualified Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as STM
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
-import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Api.Resource.Project.Detail.ProjectDetailDTO
 import Wizard.Api.Resource.Project.Detail.ProjectDetailQuestionnaireDTO
@@ -46,6 +45,7 @@ import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Project.Acl.ProjectAclHelpers
 import Wizard.Model.Project.Acl.ProjectPerm
 import Wizard.Model.Project.Detail.ProjectDetail
@@ -59,7 +59,6 @@ import Wizard.Model.Project.ProjectContent
 import Wizard.Model.Project.ProjectReply
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
-import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Project.Collaboration.ProjectCollaborationService
 import Wizard.Service.Project.Comment.ProjectCommentService
@@ -84,12 +83,12 @@ getProjectsForCurrentUserPageDto
   -> Maybe String
   -> Maybe [String]
   -> Maybe String
-  -> Maybe [String]
+  -> Maybe [Coordinate]
   -> Maybe String
   -> Pageable
   -> [Sort]
   -> AppContextM (Page ProjectDTO)
-getProjectsForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mKnowledgeModelPackageIds mKnowledgeModelPackageIdsOp pageable sort = do
+getProjectsForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp pageable sort = do
   checkPermission _PRJ_PERM
   currentUser <- getCurrentUser
   projectPage <-
@@ -101,8 +100,8 @@ getProjectsForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mP
       mProjectTagsOp
       mUserUuids
       mUserUuidsOp
-      mKnowledgeModelPackageIds
-      mKnowledgeModelPackageIdsOp
+      mKnowledgeModelPackageCoordinates
+      mKnowledgeModelPackageCoordinatesOp
       pageable
       sort
   return . fmap toDTO' $ projectPage
@@ -116,15 +115,14 @@ createProjectWithGivenUuid reqDto projectUuid =
   runInTransaction $ do
     checkProjectLimit
     checkCreatePermissionToProject
-    pkgId <- resolvePackageId reqDto.knowledgeModelPackageId
-    pkg <- findPackageById pkgId
-    projectState <- getProjectState projectUuid pkgId
+    pkg <- findPackageByUuid reqDto.knowledgeModelPackageUuid
+    projectState <- getProjectState projectUuid pkg
     now <- liftIO getCurrentTime
     tenantUuid <- asks currentTenantUuid
     visibility <- extractVisibility reqDto
     sharing <- extractSharing reqDto
     mCurrentUser <- asks currentUser
-    knowledgeModel <- compileKnowledgeModel [] (Just pkgId) reqDto.questionTagUuids
+    knowledgeModel <- compileKnowledgeModel [] (Just pkg.uuid) reqDto.questionTagUuids
     phaseEventUuid <- liftIO generateUuid
     let (project, projectEvents) =
           fromProjectCreateDTO
@@ -133,7 +131,7 @@ createProjectWithGivenUuid reqDto projectUuid =
             visibility
             sharing
             (fmap (.uuid) mCurrentUser)
-            pkgId
+            pkg.uuid
             phaseEventUuid
             (headSafe knowledgeModel.phaseUuids)
             tenantUuid
@@ -149,7 +147,7 @@ createProjectFromTemplate reqDto =
     checkProjectLimit
     originProject <- findProjectByUuid reqDto.projectUuid
     checkCreateFromTemplatePermissionToProject originProject.isTemplate
-    pkg <- findPackageById originProject.knowledgeModelPackageId
+    pkg <- findPackageByUuid originProject.knowledgeModelPackageUuid
     newProjectUuid <- liftIO generateUuid
     currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
@@ -180,7 +178,7 @@ createProjectFromTemplate reqDto =
     insertProjectEvents (fmap (toEvent newProjectUuid newProject.tenantUuid) newProjectEventsWithReplacedFiles)
     duplicateCommentThreads reqDto.projectUuid newProjectUuid
     cloneProjectVersions originProject.uuid newProject.uuid newProjectEventsWithOldEventUuid
-    state <- getProjectState newProjectUuid pkg.pId
+    state <- getProjectState newProjectUuid pkg
     permissionDtos <- traverse enhanceProjectPerm newProject.permissions
     return $ toSimpleDTO newProject pkg state permissionDtos
 
@@ -190,7 +188,7 @@ cloneProject cloneUuid =
     checkProjectLimit
     originProject <- findProjectByUuid cloneUuid
     checkClonePermissionToProject originProject.visibility originProject.sharing originProject.permissions
-    pkg <- findPackageById originProject.knowledgeModelPackageId
+    pkg <- findPackageByUuid originProject.knowledgeModelPackageUuid
     newProjectUuid <- liftIO generateUuid
     currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
@@ -214,7 +212,7 @@ cloneProject cloneUuid =
     insertProjectEvents (fmap (toEvent newProjectUuid newProject.tenantUuid) newProjectEventsWithReplacedFiles)
     cloneProjectVersions originProject.uuid newProject.uuid newProjectEventsWithOldEventUuid
     duplicateCommentThreads cloneUuid newProjectUuid
-    state <- getProjectState newProjectUuid pkg.pId
+    state <- getProjectState newProjectUuid pkg
     permissionDtos <- traverse enhanceProjectPerm newProject.permissions
     return $ toSimpleDTO newProject pkg state permissionDtos
 
@@ -234,25 +232,6 @@ createProjectsFromCommands = runInTransaction . traverse_ create
       return ()
     createPermission :: U.UUID -> User -> ProjectPerm
     createPermission projectUuid user = toUserProjectPerm projectUuid user.uuid ownerPermissions user.tenantUuid
-
-getProjectById :: U.UUID -> AppContextM ProjectDTO
-getProjectById projectUuid = do
-  mProject <- getProjectById' projectUuid
-  case mProject of
-    Just project -> return project
-    Nothing -> throwError $ NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "project" [("uuid", U.toString projectUuid)]
-
-getProjectById' :: U.UUID -> AppContextM (Maybe ProjectDTO)
-getProjectById' projectUuid = do
-  mProject <- findProjectByUuid' projectUuid
-  case mProject of
-    Just project -> do
-      checkViewPermissionToProject project.visibility project.sharing project.permissions
-      package <- getPackageById project.knowledgeModelPackageId
-      state <- getProjectState projectUuid package.pId
-      permissionDtos <- traverse enhanceProjectPerm project.permissions
-      return . Just $ toDTO project package state permissionDtos
-    Nothing -> return Nothing
 
 getProjectDetailByUuid :: U.UUID -> AppContextM ProjectDetailDTO
 getProjectDetailByUuid projectUuid = do
@@ -275,7 +254,7 @@ getProjectDetailQuestionnaireByUuid projectUuid = do
     if commenter
       then findProjectCommentThreadsSimple projectUuid True editor
       else return M.empty
-  knowledgeModel <- compileKnowledgeModel [] (Just project.knowledgeModelPackageId) project.selectedQuestionTagUuids
+  knowledgeModel <- compileKnowledgeModel [] (Just project.knowledgeModelPackage.uuid) project.selectedQuestionTagUuids
   let projectContent = compileProjectEvents projectEvents
   let labels =
         if editor
@@ -293,7 +272,7 @@ getProjectDetailSettingsById :: U.UUID -> AppContextM ProjectDetailSettings
 getProjectDetailSettingsById projectUuid = do
   project <- findProjectDetailSettings projectUuid
   checkViewPermissionToProject project.visibility project.sharing project.permissions
-  knowledgeModel <- compileKnowledgeModel [] (Just project.knowledgeModelPackage.pId) project.selectedQuestionTagUuids
+  knowledgeModel <- compileKnowledgeModel [] (Just project.knowledgeModelPackage.uuid) project.selectedQuestionTagUuids
   return $ project {knowledgeModelTags = M.elems knowledgeModel.entities.tags}
 
 getProjectEventsPage :: U.UUID -> Pageable -> [Sort] -> AppContextM (Page ProjectEventList)

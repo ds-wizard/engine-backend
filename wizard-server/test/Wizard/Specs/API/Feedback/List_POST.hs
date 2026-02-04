@@ -45,7 +45,7 @@ reqHeaders = [reqAuthHeader, reqCtHeader]
 reqDto =
   FeedbackCreateDTO
     { questionUuid = question1.uuid
-    , knowledgeModelPackageId = germanyKmPackage.pId
+    , knowledgeModelPackageUuid = germanyKmPackage.uuid
     , title = "New feedback"
     , content = "Some new feedback description"
     }

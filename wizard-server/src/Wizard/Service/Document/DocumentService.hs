@@ -20,6 +20,7 @@ import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
@@ -56,7 +57,6 @@ import Wizard.Service.Document.DocumentUtil
 import Wizard.Service.DocumentTemplate.DocumentTemplateService
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import qualified Wizard.Service.KnowledgeModel.Editor.EditorMapper as EditorMapper
-import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageService
 import Wizard.Service.Project.Compiler.ProjectCompilerService
 import Wizard.Service.Project.ProjectAcl
 import Wizard.Service.Tenant.Limit.LimitService
@@ -84,7 +84,7 @@ createDocument reqDto =
     checkDocumentLimit
     checkStorageSize 0
     project <- findProjectByUuid reqDto.projectUuid
-    tml <- getDocumentTemplateByUuidAndPackageId reqDto.documentTemplateUuid (Just project.knowledgeModelPackageId)
+    tml <- getDocumentTemplateByUuidAndPackageId reqDto.documentTemplateUuid project.knowledgeModelPackageUuid
     format <- findDocumentTemplateFormatByDocumentTemplateIdAndUuid reqDto.documentTemplateUuid reqDto.formatUuid
     validateMetamodelVersion tml
     uuid <- liftIO generateUuid
@@ -101,7 +101,7 @@ createDocument reqDto =
     let docContextHash = computeHash [] project projectVersions projectContent.phaseUuid projectContent.replies tcOrganization mCurrentUser
     let doc = fromCreateDTO reqDto uuid docContextHash filteredProjectEvents mCurrentUser project.tenantUuid now
     insertDocument doc
-    pkg <- getPackageById project.knowledgeModelPackageId
+    pkg <- findPackageByUuid project.knowledgeModelPackageUuid
     publishToPersistentCommandQueue doc pkg [] project Nothing
     return $ toDTOWithDocTemplate doc project Nothing [] tml format
 
@@ -131,8 +131,8 @@ createDocumentPreviewForProject projectUuid =
     checkViewPermissionToProject project.visibility project.sharing project.permissions
     case (project.documentTemplateUuid, project.formatUuid) of
       (Just dtUuid, Just formatUuid) -> do
-        tml <- getDocumentTemplateByUuidAndPackageId dtUuid (Just project.knowledgeModelPackageId)
-        pkg <- getPackageById project.knowledgeModelPackageId
+        tml <- getDocumentTemplateByUuidAndPackageId dtUuid project.knowledgeModelPackageUuid
+        pkg <- findPackageByUuid project.knowledgeModelPackageUuid
         projectEvents <- findProjectEventListsByProjectUuid projectUuid
         let projectEventUuid = fmap getUuid (lastSafe projectEvents)
         let projectContent = compileProjectEvents projectEvents
@@ -148,7 +148,7 @@ createDocumentPreviewForDocTmlDraft dtUuid =
       (Just projectUuid, _, Just formatUuid) -> do
         draft <- findDraftByUuid dtUuid
         project <- findProjectByUuid projectUuid
-        pkg <- getPackageById project.knowledgeModelPackageId
+        pkg <- findPackageByUuid project.knowledgeModelPackageUuid
         checkViewPermissionToProject project.visibility project.sharing project.permissions
         projectEvents <- findProjectEventListsByProjectUuid project.uuid
         let projectEventUuid = fmap getUuid (lastSafe projectEvents)

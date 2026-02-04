@@ -6,9 +6,11 @@ module Wizard.Service.KnowledgeModel.Publish.KnowledgeModelPublishService (
 import Control.Monad.Reader (liftIO)
 import Data.Time
 
+import Shared.Common.Util.Uuid
+import Shared.Coordinate.Model.Coordinate.Coordinate
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
-import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Api.Resource.KnowledgeModel.Package.Publish.KnowledgeModelPackagePublishEditorDTO
 import Wizard.Api.Resource.KnowledgeModel.Package.Publish.KnowledgeModelPackagePublishMigrationDTO
@@ -60,14 +62,18 @@ publishPackageFromMigration reqDto = do
     ms <- findKnowledgeModelMigrationByEditorUuid reqDto.editorUuid
     deleteKnowledgeModelMigrationByEditorUuid reqDto.editorUuid
     auditKmMigrationFinish reqDto.editorUuid
+    mForkOfPkg <- findPackageByUuid ms.targetPackageUuid
+    let mForkOfPkgId = Just $ createCoordinate mForkOfPkg
+    editorPreviousPackage <- findPackageByUuid ms.editorPreviousPackageUuid
+    let mMergeCheckpointPkgId = Just $ Coordinate {organizationId = editorPreviousPackage.organizationId, entityId = editorPreviousPackage.kmId, version = reqDto.version}
     doPublishPackage
       reqDto.version
       kmEditor
       ms.resultEvents
       reqDto.description
       reqDto.readme
-      (Just ms.targetPackageId)
-      (Just $ upgradePackageVersion ms.editorPreviousPackageId reqDto.version)
+      mForkOfPkgId
+      mMergeCheckpointPkgId
 
 -- --------------------------------
 -- PRIVATE
@@ -78,17 +84,18 @@ doPublishPackage
   -> [KnowledgeModelEvent]
   -> String
   -> String
-  -> Maybe String
-  -> Maybe String
+  -> Maybe Coordinate
+  -> Maybe Coordinate
   -> AppContextM KnowledgeModelPackageSimpleDTO
 doPublishPackage version kmEditor kmEvents description readme mForkOfPkgId mMergeCheckpointPkgId = do
   let squashedKmEvents = squash kmEvents
   tcOrganization <- findTenantConfigOrganization
   validateNewPackageVersion version kmEditor tcOrganization
+  uuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
-  let (pkg, pkgEvents) = fromPackage kmEditor mForkOfPkgId mMergeCheckpointPkgId tcOrganization version description readme squashedKmEvents now
+  let (pkg, pkgEvents) = fromPackage kmEditor uuid mForkOfPkgId mMergeCheckpointPkgId tcOrganization version description readme squashedKmEvents now
   createdPkg <- createPackage (pkg, pkgEvents)
-  let updatedKmEditor = kmEditor {previousPackageId = Just pkg.pId, updatedAt = now} :: KnowledgeModelEditor
+  let updatedKmEditor = kmEditor {previousPackageUuid = Just pkg.uuid, updatedAt = now} :: KnowledgeModelEditor
   updateKnowledgeModelEditorByUuid updatedKmEditor
   deleteKnowledgeModelEventsByEditorUuid kmEditor.uuid
   logOutOnlineUsersWhenKnowledgeModelEditorDramaticallyChanged kmEditor.uuid

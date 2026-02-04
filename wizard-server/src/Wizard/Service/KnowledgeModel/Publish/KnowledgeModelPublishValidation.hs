@@ -6,10 +6,10 @@ import Data.Maybe (isJust)
 
 import Shared.Common.Model.Error.Error
 import Shared.Coordinate.Service.Coordinate.CoordinateValidation
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelMigrationDAO
 import Wizard.Localization.Messages.Public
-import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageService
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageValidation
 
 validateMigrationExistence editorUuid = do
@@ -18,7 +18,7 @@ validateMigrationExistence editorUuid = do
 
 validateNewPackageVersion pkgVersion kmEditor org = do
   validateVersionFormat False pkgVersion
-  mPkg <- getTheNewestPackageByOrganizationIdAndKmId org.organizationId kmEditor.kmId
+  mPkg <- findLatestPackageByOrganizationIdAndKmId' org.organizationId kmEditor.kmId Nothing
   case mPkg of
     Just pkg -> validateIsVersionHigher pkgVersion pkg.version
     Nothing -> return ()

@@ -58,7 +58,7 @@ project1 =
     , description = Just "Some description"
     , visibility = PrivateProjectVisibility
     , sharing = RestrictedProjectSharing
-    , knowledgeModelPackageId = germanyKmPackage.pId
+    , knowledgeModelPackageUuid = germanyKmPackage.uuid
     , selectedQuestionTagUuids = []
     , projectTags = [_PROJECT_TAG_1]
     , documentTemplateUuid = Just $ wizardDocumentTemplate.uuid
@@ -132,7 +132,7 @@ project1Create :: ProjectCreateDTO
 project1Create =
   ProjectCreateDTO
     { name = project1.name
-    , knowledgeModelPackageId = project1.knowledgeModelPackageId
+    , knowledgeModelPackageUuid = project1.knowledgeModelPackageUuid
     , visibility = project1.visibility
     , sharing = project1.sharing
     , questionTagUuids = []
@@ -185,7 +185,7 @@ project2 =
     , description = Just "Some description"
     , visibility = VisibleViewProjectVisibility
     , sharing = RestrictedProjectSharing
-    , knowledgeModelPackageId = germanyKmPackage.pId
+    , knowledgeModelPackageUuid = germanyKmPackage.uuid
     , selectedQuestionTagUuids = []
     , projectTags = [_PROJECT_TAG_1, _PROJECT_TAG_2]
     , documentTemplateUuid = Just $ wizardDocumentTemplate.uuid
@@ -207,7 +207,7 @@ project2Edited =
     , description = Just "EDITED: Some description"
     , visibility = VisibleEditProjectVisibility
     , sharing = RestrictedProjectSharing
-    , knowledgeModelPackageId = project2.knowledgeModelPackageId
+    , knowledgeModelPackageUuid = project2.knowledgeModelPackageUuid
     , selectedQuestionTagUuids = project2.selectedQuestionTagUuids
     , projectTags = project2.projectTags
     , documentTemplateUuid = Just $ wizardDocumentTemplate.uuid
@@ -286,7 +286,7 @@ project3 =
     , description = Just "Some description"
     , visibility = VisibleEditProjectVisibility
     , sharing = RestrictedProjectSharing
-    , knowledgeModelPackageId = germanyKmPackage.pId
+    , knowledgeModelPackageUuid = germanyKmPackage.uuid
     , selectedQuestionTagUuids = []
     , projectTags = []
     , documentTemplateUuid = Just $ wizardDocumentTemplate.uuid
@@ -333,7 +333,7 @@ project4 =
     , description = Just "Some description"
     , visibility = PrivateProjectVisibility
     , sharing = RestrictedProjectSharing
-    , knowledgeModelPackageId = netherlandsKmPackage.pId
+    , knowledgeModelPackageUuid = netherlandsKmPackage.uuid
     , selectedQuestionTagUuids = []
     , projectTags = []
     , documentTemplateUuid = Just $ wizardDocumentTemplate.uuid
@@ -377,7 +377,7 @@ project4Upgraded :: Project
 project4Upgraded =
   project4
     { uuid = u' "5deabef8-f526-421c-90e2-dd7aed1a25c5"
-    , knowledgeModelPackageId = netherlandsKmPackageV2.pId
+    , knowledgeModelPackageUuid = netherlandsKmPackageV2.uuid
     }
 
 project4UpgradedEvents :: [ProjectEvent]
@@ -810,7 +810,7 @@ project14 =
     { uuid = u' "8355fe3c-47b9-4078-b5b6-08aa0188e85f"
     , name = "My different KM Project"
     , permissions = [project14NikolaEditProjectPerm]
-    , knowledgeModelPackageId = amsterdamKmPackage.pId
+    , knowledgeModelPackageUuid = amsterdamKmPackage.uuid
     , updatedAt = dt' 2018 1 26
     }
 
@@ -849,7 +849,7 @@ project15 =
     , description = Just "Some description"
     , visibility = PrivateProjectVisibility
     , sharing = RestrictedProjectSharing
-    , knowledgeModelPackageId = germanyKmPackage.pId
+    , knowledgeModelPackageUuid = germanyKmPackage.uuid
     , selectedQuestionTagUuids = []
     , projectTags = []
     , documentTemplateUuid = Just wizardDocumentTemplate.uuid
@@ -913,7 +913,7 @@ differentProject =
     , description = Just "Some description"
     , visibility = PrivateProjectVisibility
     , sharing = RestrictedProjectSharing
-    , knowledgeModelPackageId = differentPackage.pId
+    , knowledgeModelPackageUuid = differentPackage.uuid
     , selectedQuestionTagUuids = []
     , projectTags = []
     , documentTemplateUuid = Just $ differentDocumentTemplate.uuid

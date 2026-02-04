@@ -10,8 +10,13 @@ import qualified Data.UUID as U
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.List
 import Shared.Common.Util.Uuid
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO (findPackageByUuid)
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 import Wizard.Api.Resource.Project.Detail.ProjectDetailQuestionnaireDTO
 import Wizard.Api.Resource.Project.Migration.ProjectMigrationChangeDTO
 import Wizard.Api.Resource.Project.Migration.ProjectMigrationCreateDTO
@@ -30,7 +35,6 @@ import Wizard.Model.Project.Migration.ProjectMigration
 import Wizard.Model.Project.Project
 import Wizard.Model.Project.ProjectContent
 import Wizard.Model.Project.Version.ProjectVersion
-import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Project.Compiler.ProjectCompilerService
 import Wizard.Service.Project.Event.ProjectEventMapper
@@ -97,7 +101,7 @@ finishProjectMigration projectUuid =
             { formatUuid = newProject.formatUuid
             , documentTemplateUuid = newProject.documentTemplateUuid
             , selectedQuestionTagUuids = newProject.selectedQuestionTagUuids
-            , knowledgeModelPackageId = newProject.knowledgeModelPackageId
+            , knowledgeModelPackageUuid = newProject.knowledgeModelPackageUuid
             , updatedAt = now
             }
           :: Project
@@ -129,23 +133,24 @@ cancelProjectMigration projectUuid =
 -- --------------------------------
 upgradeProject :: ProjectMigrationCreateDTO -> Project -> AppContextM (Project, [ProjectEvent], [ProjectVersion])
 upgradeProject reqDto oldProject = do
-  let newPkgId = reqDto.targetKnowledgeModelPackageId
+  let newPkgUuid = reqDto.targetKnowledgeModelPackageUuid
+  newPkg <- findPackageByUuid newPkgUuid
   let newTagUuids = reqDto.targetTagUuids
-  oldKm <- compileKnowledgeModel [] (Just oldProject.knowledgeModelPackageId) newTagUuids
-  newKm <- compileKnowledgeModel [] (Just newPkgId) newTagUuids
+  oldKm <- compileKnowledgeModel [] (Just oldProject.knowledgeModelPackageUuid) newTagUuids
+  newKm <- compileKnowledgeModel [] (Just newPkgUuid) newTagUuids
   newUuid <- liftIO generateUuid
   oldProjectEvents <- findProjectEventListsByProjectUuid oldProject.uuid
   clonedProjectEventsWithOldEventUuid <- cloneProjectEventsWithOldEventUuid oldProjectEvents
   let clonedProjectEvents = fmap snd clonedProjectEventsWithOldEventUuid
   newProjectEvents <- sanitizeProjectEvents newUuid oldKm newKm clonedProjectEvents
-  (newDocumentTemplateId, newFormatUuid) <- getNewDocumentTemplateIdAndFormatUuid oldProject newPkgId
+  (newDocumentTemplateId, newFormatUuid) <- getNewDocumentTemplateIdAndFormatUuid oldProject newPkg
   let newProjectEventUuids = fmap getUuid newProjectEvents
   let clonedProjectEventsFiltered = filter (\e -> getUuid (snd e) `elem` newProjectEventUuids) clonedProjectEventsWithOldEventUuid
   let newPermissions = fmap (\perm -> perm {projectUuid = newUuid} :: ProjectPerm) oldProject.permissions
   let upgradedProject =
         oldProject
           { uuid = newUuid
-          , knowledgeModelPackageId = newPkgId
+          , knowledgeModelPackageUuid = newPkgUuid
           , selectedQuestionTagUuids = newTagUuids
           , documentTemplateUuid = newDocumentTemplateId
           , formatUuid = newFormatUuid
@@ -177,7 +182,7 @@ ensurePhaseIsSetIfNecessary newProject = do
   now <- liftIO getCurrentTime
   newProjectListEvents <- findProjectEventListsByProjectUuid newProject.uuid
   let projectContent = compileProjectEvents newProjectListEvents
-  knowledgeModel <- compileKnowledgeModel [] (Just newProject.knowledgeModelPackageId) newProject.selectedQuestionTagUuids
+  knowledgeModel <- compileKnowledgeModel [] (Just newProject.knowledgeModelPackageUuid) newProject.selectedQuestionTagUuids
   let newProjectEvents = fmap (toEvent newProject.uuid newProject.tenantUuid) newProjectListEvents
   return $
     case (headSafe knowledgeModel.phaseUuids, projectContent.phaseUuid) of
@@ -194,12 +199,12 @@ generateNewVersionUuid version = do
   newVersionUuid <- liftIO generateUuid
   return $ version {uuid = newVersionUuid}
 
-getNewDocumentTemplateIdAndFormatUuid :: Project -> String -> AppContextM (Maybe U.UUID, Maybe U.UUID)
-getNewDocumentTemplateIdAndFormatUuid oldProject newPkgId = do
+getNewDocumentTemplateIdAndFormatUuid :: Project -> KnowledgeModelPackage -> AppContextM (Maybe U.UUID, Maybe U.UUID)
+getNewDocumentTemplateIdAndFormatUuid oldProject newPkg = do
   case oldProject.documentTemplateUuid of
     Just dtUuid -> do
       documentTemplate <- findDocumentTemplateByUuid dtUuid
-      if isPkgAllowedByDocumentTemplate newPkgId documentTemplate
+      if fitsIntoKMSpecs (createCoordinate newPkg) documentTemplate.allowedPackages
         then return (Just dtUuid, oldProject.formatUuid)
         else return (Nothing, Nothing)
     Nothing -> return (Nothing, Nothing)

@@ -16,7 +16,7 @@ command1 =
         [ userAlbert.email
         , userNikola.email
         ]
-    , knowledgeModelPackageId = netherlandsKmPackageV2.pId
+    , knowledgeModelPackageUuid = netherlandsKmPackageV2.uuid
     , documentTemplateUuid = Just wizardDocumentTemplate.uuid
     }
 
@@ -28,6 +28,6 @@ command2 =
         [ userAlbert.email
         , userIsaac.email
         ]
-    , knowledgeModelPackageId = netherlandsKmPackageV2.pId
+    , knowledgeModelPackageUuid = netherlandsKmPackageV2.uuid
     , documentTemplateUuid = Nothing
     }

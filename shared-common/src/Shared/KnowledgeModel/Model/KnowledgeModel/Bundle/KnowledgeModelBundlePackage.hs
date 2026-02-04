@@ -3,11 +3,12 @@ module Shared.KnowledgeModel.Model.KnowledgeModel.Bundle.KnowledgeModelBundlePac
 import Data.Time
 import GHC.Generics
 
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 
 data KnowledgeModelBundlePackage = KnowledgeModelBundlePackage
-  { pId :: String
+  { pId :: Coordinate
   , name :: String
   , organizationId :: String
   , kmId :: String
@@ -17,11 +18,19 @@ data KnowledgeModelBundlePackage = KnowledgeModelBundlePackage
   , description :: String
   , readme :: String
   , license :: String
-  , previousPackageId :: Maybe String
-  , forkOfPackageId :: Maybe String
-  , mergeCheckpointPackageId :: Maybe String
+  , previousPackageId :: Maybe Coordinate
+  , forkOfPackageId :: Maybe Coordinate
+  , mergeCheckpointPackageId :: Maybe Coordinate
   , events :: [KnowledgeModelEvent]
   , nonEditable :: Bool
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
+
+instance CoordinateFactory KnowledgeModelBundlePackage where
+  createCoordinate dt =
+    Coordinate
+      { organizationId = dt.organizationId
+      , entityId = dt.kmId
+      , version = dt.version
+      }

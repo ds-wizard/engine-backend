@@ -1,7 +1,9 @@
 module Shared.Coordinate.Util.Coordinate where
 
 import Control.Monad.Except (throwError)
+import qualified Data.ByteString.Char8 as BS
 import qualified Data.List as L
+import qualified Data.Text as T
 import GHC.Records
 
 import Shared.Common.Model.Context.AppContext
@@ -42,6 +44,20 @@ parseCoordinate coordinateS =
   case splitOn ":" coordinateS of
     [organizationId, entityId, version] -> return Coordinate {..}
     _ -> throwError . UserError $ _ERROR_VALIDATION__INVALID_COORDINATE_FORMAT
+
+parseCoordinateT :: T.Text -> Either String Coordinate
+parseCoordinateT bs =
+  let parts = splitOn ":" (T.unpack bs)
+   in case parts of
+        [organizationId, entityId, version] -> Right (Coordinate {..})
+        _ -> Left $ "Unable to parse Coordinate '" ++ T.unpack bs ++ "'"
+
+parseCoordinateBS :: BS.ByteString -> Either String Coordinate
+parseCoordinateBS bs =
+  let parts = splitOn ":" (BS.unpack bs)
+   in case parts of
+        [organizationId, entityId, version] -> Right (Coordinate {..})
+        _ -> Left $ "Unable to parse Coordinate '" ++ BS.unpack bs ++ "'"
 
 splitCoordinate :: String -> [String]
 splitCoordinate = splitOn ":"

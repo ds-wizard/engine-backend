@@ -9,7 +9,7 @@ import Shared.Common.Util.Aeson
 data CreateProjectCommand = CreateProjectCommand
   { name :: String
   , emails :: [String]
-  , knowledgeModelPackageId :: String
+  , knowledgeModelPackageUuid :: U.UUID
   , documentTemplateUuid :: Maybe U.UUID
   }
   deriving (Show, Eq, Generic)

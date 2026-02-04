@@ -52,7 +52,6 @@ runConfigMigration = do
   insertTenantConfigLookAndFeelCustomMenuLink defaultLookAndFeelCustomLink
   insertTenantConfigRegistry defaultRegistryEncrypted
   insertTenantConfigKnowledgeModel defaultKnowledgeModelEncrypted
-  insertTenantConfigKnowledgeModelPublicPackagePattern defaultKnowledgeModelPublicPackagePattern
   insertTenantConfigProject defaultProjectEncrypted
   insertTenantConfigSubmission (defaultSubmission {services = []})
   insertTenantConfigFeatures defaultFeatures

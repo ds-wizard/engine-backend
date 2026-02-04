@@ -4,6 +4,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Api.Resource.Project.Acl.ProjectPermDTO
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Project.Project
 
 data ProjectDetailDTO = ProjectDetailDTO
@@ -11,7 +12,7 @@ data ProjectDetailDTO = ProjectDetailDTO
   , name :: String
   , sharing :: ProjectSharing
   , visibility :: ProjectVisibility
-  , knowledgeModelPackageId :: String
+  , knowledgeModelPackage :: KnowledgeModelPackageSuggestion
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]

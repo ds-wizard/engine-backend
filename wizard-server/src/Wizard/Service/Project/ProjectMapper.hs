@@ -27,6 +27,7 @@ import Wizard.Api.Resource.Project.ProjectShareChangeDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Constant.Acl
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Project.Acl.ProjectPerm
 import Wizard.Model.Project.Comment.ProjectCommentList
 import Wizard.Model.Project.Detail.ProjectDetail
@@ -97,14 +98,14 @@ toSimpleDTO project kmPackage state permissions =
     , updatedAt = project.updatedAt
     }
 
-toDetailQuestionnaire :: Project -> Maybe U.UUID -> [ProjectPermDTO] -> ProjectDetailQuestionnaire
-toDetailQuestionnaire project migrationUuid permissions =
+toDetailQuestionnaire :: Project -> KnowledgeModelPackageSuggestion -> Maybe U.UUID -> [ProjectPermDTO] -> ProjectDetailQuestionnaire
+toDetailQuestionnaire project kmPackage migrationUuid permissions =
   ProjectDetailQuestionnaire
     { uuid = project.uuid
     , name = project.name
     , visibility = project.visibility
     , sharing = project.sharing
-    , knowledgeModelPackageId = project.knowledgeModelPackageId
+    , knowledgeModelPackage = kmPackage
     , selectedQuestionTagUuids = project.selectedQuestionTagUuids
     , isTemplate = project.isTemplate
     , migrationUuid = migrationUuid
@@ -241,7 +242,7 @@ fromShareChangeDTO project dto visibility sharing now =
     , description = project.description
     , visibility = visibility
     , sharing = sharing
-    , knowledgeModelPackageId = project.knowledgeModelPackageId
+    , knowledgeModelPackageUuid = project.knowledgeModelPackageUuid
     , selectedQuestionTagUuids = project.selectedQuestionTagUuids
     , projectTags = project.projectTags
     , documentTemplateUuid = project.documentTemplateUuid
@@ -263,7 +264,7 @@ fromSettingsChangeDTO project dto currentUser now =
     , description = dto.description
     , visibility = project.visibility
     , sharing = project.sharing
-    , knowledgeModelPackageId = project.knowledgeModelPackageId
+    , knowledgeModelPackageUuid = project.knowledgeModelPackageUuid
     , selectedQuestionTagUuids = project.selectedQuestionTagUuids
     , projectTags = dto.projectTags
     , documentTemplateUuid = dto.documentTemplateUuid
@@ -286,20 +287,20 @@ fromProjectCreateDTO
   -> ProjectVisibility
   -> ProjectSharing
   -> Maybe U.UUID
-  -> String
+  -> U.UUID
   -> U.UUID
   -> Maybe U.UUID
   -> U.UUID
   -> UTCTime
   -> (Project, [ProjectEvent])
-fromProjectCreateDTO dto projectUuid visibility sharing mCurrentUserUuid pkgId phaseEventUuid mPhase tenantUuid now =
+fromProjectCreateDTO dto projectUuid visibility sharing mCurrentUserUuid pkgUuid phaseEventUuid mPhase tenantUuid now =
   ( Project
       { uuid = projectUuid
       , name = dto.name
       , description = Nothing
       , visibility = visibility
       , sharing = sharing
-      , knowledgeModelPackageId = pkgId
+      , knowledgeModelPackageUuid = pkgUuid
       , selectedQuestionTagUuids = dto.questionTagUuids
       , projectTags = []
       , documentTemplateUuid = dto.documentTemplateUuid
@@ -354,7 +355,7 @@ fromCreateProjectCommand command uuid permissions tcProject createdBy now = do
     , description = Nothing
     , visibility = tcProject.projectVisibility.defaultValue
     , sharing = tcProject.projectSharing.defaultValue
-    , knowledgeModelPackageId = command.knowledgeModelPackageId
+    , knowledgeModelPackageUuid = command.knowledgeModelPackageUuid
     , selectedQuestionTagUuids = []
     , projectTags = []
     , documentTemplateUuid = command.documentTemplateUuid

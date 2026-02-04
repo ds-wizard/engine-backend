@@ -55,7 +55,7 @@ test_200 appContext =
       let expDto = amsterdamKnowledgeModelEditorDetail
       let expBody = encode expDto
       -- AND: Run migrations
-      runInContextIO (deletePackageById netherlandsKmPackageV2.pId) appContext
+      runInContextIO (deletePackageByUuid netherlandsKmPackageV2.uuid) appContext
       runInContextIO KnowledgeModelEditor.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

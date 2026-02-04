@@ -1,8 +1,9 @@
 module Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationCreateDTO where
 
+import qualified Data.UUID as U
 import GHC.Generics
 
 data KnowledgeModelMigrationCreateDTO = KnowledgeModelMigrationCreateDTO
-  { targetPackageId :: String
+  { targetPackageUuid :: U.UUID
   }
   deriving (Show, Eq, Generic)

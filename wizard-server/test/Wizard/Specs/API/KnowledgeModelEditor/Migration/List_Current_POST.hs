@@ -16,7 +16,6 @@ import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorCreateDTO
-import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationCreateDTO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelMigrationDAO
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Migration.KnowledgeModelMigrations
@@ -85,7 +84,7 @@ test_201 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext = do
-  createInvalidJsonTest reqMethod reqUrl "targetPackageId"
+  createInvalidJsonTest reqMethod reqUrl "targetPackageUuid"
   it "HTTP 400 BAD REQUEST when migration is already created" $
     -- GIVEN: Prepare expectation
     do
@@ -101,24 +100,6 @@ test_400 appContext = do
       let responseMatcher =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
-  it "HTTP 400 BAD REQUEST when target Package is not higher than current one" $
-    -- GIVEN: Prepare request
-    do
-      let reqDto = KnowledgeModelMigrationCreateDTO {targetPackageId = "org.nl:core-nl:0.9.0"}
-      let reqBody = encode reqDto
-      -- AND: Prepare expectation
-      let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = UserError _ERROR_SERVICE_MIGRATION_KM__TARGET_PKG_IS_NOT_HIGHER
-      let expBody = encode expDto
-      -- AND: Prepare database
-      runMigrationWithEmptyDB appContext
-      -- WHEN: Call API
-      response <- request reqMethod reqUrl reqHeaders reqBody
-      -- AND: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
   it "HTTP 400 BAD REQUEST when KM editor has to have a previous package" $
     -- AND: Prepare expectation
     do
@@ -127,7 +108,7 @@ test_400 appContext = do
       let expDto = UserError _ERROR_VALIDATION__KM_EDITOR_PREVIOUS_PKG_ABSENCE
       let expBody = encode expDto
       -- AND: Prepare database
-      let editor = amsterdamKnowledgeModelEditorCreate {previousPackageId = Nothing} :: KnowledgeModelEditorCreateDTO
+      let editor = amsterdamKnowledgeModelEditorCreate {previousPackageUuid = Nothing} :: KnowledgeModelEditorCreateDTO
       let editorUuid = amsterdamKnowledgeModelEditorList.uuid
       let timestamp = amsterdamKnowledgeModelEditorList.createdAt
       let user = U_Mapper.toDTO userAlbert
@@ -163,12 +144,12 @@ test_404 appContext = do
             NotExistsError
               ( _ERROR_DATABASE__ENTITY_NOT_FOUND
                   "knowledge_model_package"
-                  [("tenant_uuid", U.toString defaultTenant.uuid), ("id", "org.nl:core-nl:2.0.0")]
+                  [("tenant_uuid", U.toString defaultTenant.uuid), ("uuid", U.toString netherlandsKmPackageV2.uuid)]
               )
       let expBody = encode expDto
       -- AND: Prepare database
       runMigrationWithEmptyDB appContext
-      runInContextIO (deletePackageById netherlandsKmPackageV2.pId) appContext
+      runInContextIO (deletePackageByUuid netherlandsKmPackageV2.uuid) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- AND: Compare response with expectation

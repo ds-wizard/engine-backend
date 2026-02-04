@@ -9,7 +9,6 @@ import Wizard.Api.Handler.KnowledgeModelPackage.Detail_GET
 import Wizard.Api.Handler.KnowledgeModelPackage.Detail_PUT
 import Wizard.Api.Handler.KnowledgeModelPackage.Detail_Pull_POST
 import Wizard.Api.Handler.KnowledgeModelPackage.List_Bundle_POST
-import Wizard.Api.Handler.KnowledgeModelPackage.List_DELETE
 import Wizard.Api.Handler.KnowledgeModelPackage.List_From_Editor_POST
 import Wizard.Api.Handler.KnowledgeModelPackage.List_From_Migration_POST
 import Wizard.Api.Handler.KnowledgeModelPackage.List_GET
@@ -22,7 +21,6 @@ type KnowledgeModelPackageAPI =
     :> ( List_GET
           :<|> List_Suggestions_GET
           :<|> List_POST
-          :<|> List_DELETE
           :<|> Detail_GET
           :<|> Detail_PUT
           :<|> Detail_DELETE
@@ -41,7 +39,6 @@ knowledgeModelPackageServer =
   list_GET
     :<|> list_suggestions_GET
     :<|> list_POST
-    :<|> list_DELETE
     :<|> detail_GET
     :<|> detail_PUT
     :<|> detail_DELETE

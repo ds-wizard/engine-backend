@@ -42,7 +42,7 @@ import qualified WizardLib.Public.Service.User.Group.UserGroupMapper as UGR_Mapp
 
 createDocumentContext :: Document -> KnowledgeModelPackage -> [KnowledgeModelEvent] -> Project -> Maybe (M.Map String Reply) -> AppContextM DocumentContext
 createDocumentContext doc pkg kmEditorEvents project mReplies = do
-  km <- compileKnowledgeModelWithCaching' kmEditorEvents (Just project.knowledgeModelPackageId) project.selectedQuestionTagUuids (not . null $ kmEditorEvents)
+  km <- compileKnowledgeModelWithCaching' kmEditorEvents (Just project.knowledgeModelPackageUuid) project.selectedQuestionTagUuids (not . null $ kmEditorEvents)
   dt <- findDocumentTemplateByUuid doc.documentTemplateUuid
   mProjectCreatedBy <- forM project.creatorUuid findUserByUuid
   mDocCreatedBy <- forM doc.createdBy findUserByUuid

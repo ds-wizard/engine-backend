@@ -10,7 +10,7 @@ data KnowledgeModelPackageRawEvent = KnowledgeModelPackageRawEvent
   , parentUuid :: U.UUID
   , entityUuid :: U.UUID
   , content :: Value
-  , packageId :: String
+  , packageUuid :: U.UUID
   , tenantUuid :: U.UUID
   , createdAt :: UTCTime
   }

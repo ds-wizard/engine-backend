@@ -7,10 +7,12 @@ import Data.Foldable (traverse_)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
 import Data.Time
+import qualified Data.UUID as U
 
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
+import Shared.Common.Util.Uuid
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
@@ -28,29 +30,36 @@ import Wizard.Service.Owl.Convertor.OwlConvertor
 import Wizard.Service.Owl.Diff.Differ
 import Wizard.Service.Owl.OwlMapper
 
-importOwl :: KnowledgeModelBundleFile -> AppContextM [KnowledgeModelPackageSimpleDTO]
+importOwl :: KnowledgeModelBundleFile -> AppContextM KnowledgeModelPackageSimpleDTO
 importOwl reqDto = do
   logInfoI _CMP_SERVICE "Importing OWL..."
   case (reqDto.rootElement, reqDto.name, reqDto.organizationId, reqDto.kmId, reqDto.version) of
     (Just rootElement, Just name, Just organizationId, Just kmId, Just version) -> do
       tenantUuid <- asks currentTenantUuid
+      uuid <- liftIO generateUuid
       now <- liftIO getCurrentTime
-      events <- importEvents reqDto.previousPackageId rootElement (TE.decodeUtf8 . BSL.toStrict $ reqDto.content)
-      let pkg = fromOwl name organizationId kmId version reqDto.previousPackageId tenantUuid now
-      let pkgEvents = fmap (toPackageEvent pkg.pId tenantUuid) events
+      previousPackageUuid <-
+        case reqDto.previousPackageId of
+          Just previousPackageId -> do
+            pkg <- findPackageByCoordinate previousPackageId
+            return . Just $ pkg.uuid
+          Nothing -> return Nothing
+      events <- importEvents previousPackageUuid rootElement (TE.decodeUtf8 . BSL.toStrict $ reqDto.content)
+      let pkg = fromOwl uuid name organizationId kmId version previousPackageUuid tenantUuid now
+      let pkgEvents = fmap (toPackageEvent pkg.uuid tenantUuid) events
       insertPackage pkg
       traverse_ insertPackageEvent pkgEvents
-      return [toSimpleDTO pkg]
+      return $ toSimpleDTO pkg
     _ -> throwError . UserError $ _ERROR_VALIDATION__FIELDS_ABSENCE
 
-importEvents :: Maybe String -> T.Text -> T.Text -> AppContextM [KnowledgeModelEvent]
-importEvents mPreviousPackageId rootElement content = do
+importEvents :: Maybe U.UUID -> T.Text -> T.Text -> AppContextM [KnowledgeModelEvent]
+importEvents mPreviousPackageUuid rootElement content = do
   pkgEvents <- convertOwlToEvents rootElement content
-  case mPreviousPackageId of
-    Just previousKnowledgeModelPackageId -> do
-      previousKnowledgeModelPackageEvents <- findPackageEvents previousKnowledgeModelPackageId
+  case mPreviousPackageUuid of
+    Just previousPackageUuid -> do
+      previousPackageEvents <- findPackageEvents previousPackageUuid
       let (Right km1) = compile Nothing pkgEvents
-      let (Right km2) = compile Nothing (fmap toEvent previousKnowledgeModelPackageEvents)
+      let (Right km2) = compile Nothing (fmap toEvent previousPackageEvents)
       diffKnowledgeModel (km1, km2)
     Nothing -> return pkgEvents
 

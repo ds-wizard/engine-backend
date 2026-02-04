@@ -10,7 +10,6 @@ import Wizard.Model.Tenant.Config.TenantConfig
 instance ToRow TenantConfigKnowledgeModel where
   toRow TenantConfigKnowledgeModel {..} =
     [ toField tenantUuid
-    , toField public.enabled
     , toField integrationConfig
     , toField createdAt
     , toField updatedAt
@@ -19,13 +18,7 @@ instance ToRow TenantConfigKnowledgeModel where
 instance FromRow TenantConfigKnowledgeModel where
   fromRow = do
     tenantUuid <- field
-    publicEnabled <- field
-    let public = TenantConfigKnowledgeModelPublic {enabled = publicEnabled, knowledgeModelPackages = []}
     integrationConfig <- field
     createdAt <- field
     updatedAt <- field
     return $ TenantConfigKnowledgeModel {..}
-
-instance ToRow TenantConfigKnowledgeModelPublicPackagePattern
-
-instance FromRow TenantConfigKnowledgeModelPublicPackagePattern

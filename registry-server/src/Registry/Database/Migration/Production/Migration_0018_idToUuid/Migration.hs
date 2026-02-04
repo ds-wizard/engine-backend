@@ -15,6 +15,7 @@ meta = MigrationMeta {mmNumber = 18, mmName = "Switch from ID to UUID", mmDescri
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   changeDocumentTemplatePrimaryKeyFromIdToUuid dbPool
+  changeKnowledgeModelPrimaryKeyFromIdToUuid dbPool
 
 changeDocumentTemplatePrimaryKeyFromIdToUuid dbPool = do
   let sql =
@@ -54,6 +55,40 @@ changeDocumentTemplatePrimaryKeyFromIdToUuid dbPool = do
         \ALTER TABLE document_template_format ADD CONSTRAINT document_template_format_pk PRIMARY KEY (document_template_uuid, uuid); \
         \ \
         \ALTER TABLE document_template_format_step ADD CONSTRAINT document_template_format_step_format_uuid_fk FOREIGN KEY (document_template_uuid, format_uuid) REFERENCES document_template_format (document_template_uuid, uuid) ON DELETE CASCADE;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+changeKnowledgeModelPrimaryKeyFromIdToUuid dbPool = do
+  let sql =
+        "ALTER TABLE knowledge_model_package_event DROP CONSTRAINT knowledge_model_package_event_package_id_fk; \
+        \ALTER TABLE knowledge_model_package_event DROP CONSTRAINT knowledge_model_package_event_pk; \
+        \ \
+        \DROP INDEX package_previous_package_id_index; \
+        \DROP INDEX package_id_uindex; \
+        \DROP INDEX package_organization_id_km_id_index; \
+        \ALTER TABLE knowledge_model_package DROP CONSTRAINT package_pk; \
+        \ \
+        \ \
+        \ALTER TABLE knowledge_model_package_event RENAME COLUMN package_id TO package_uuid; \
+        \ \
+        \ALTER TABLE knowledge_model_package RENAME COLUMN previous_package_id TO previous_package_uuid; \
+        \ALTER TABLE knowledge_model_package RENAME COLUMN id TO uuid; \
+        \ \
+        \ \
+        \ALTER TABLE knowledge_model_package ALTER COLUMN uuid TYPE uuid USING gen_random_uuid(); \
+        \ALTER TABLE knowledge_model_package ADD CONSTRAINT knowledge_model_package_pk PRIMARY KEY (uuid); \
+        \ \
+        \UPDATE knowledge_model_package SET previous_package_uuid = previous_pkg.uuid FROM knowledge_model_package previous_pkg WHERE knowledge_model_package.previous_package_uuid = previous_pkg.organization_id || ':' || previous_pkg.km_id || ':' || previous_pkg.version AND knowledge_model_package.tenant_uuid = previous_pkg.tenant_uuid; \
+        \ALTER TABLE knowledge_model_package ALTER COLUMN previous_package_uuid TYPE uuid USING previous_package_uuid::uuid; \
+        \ALTER TABLE knowledge_model_package ADD CONSTRAINT knowledge_model_package_previous_package_uuid_fk FOREIGN KEY (previous_package_uuid) REFERENCES knowledge_model_package(uuid) ON DELETE CASCADE ; \
+        \ \
+        \UPDATE knowledge_model_package_event SET package_uuid = knowledge_model_package.uuid FROM knowledge_model_package WHERE knowledge_model_package_event.package_uuid = knowledge_model_package.organization_id || ':' || knowledge_model_package.km_id || ':' || knowledge_model_package.version AND knowledge_model_package_event.tenant_uuid = knowledge_model_package.tenant_uuid; \
+        \ALTER TABLE knowledge_model_package_event ALTER COLUMN package_uuid TYPE uuid USING package_uuid::uuid; \
+        \ALTER TABLE knowledge_model_package_event ADD CONSTRAINT knowledge_model_package_event_pk PRIMARY KEY (package_uuid, uuid); \
+        \ALTER TABLE knowledge_model_package_event ADD CONSTRAINT knowledge_model_package_event_package_uuid_fk FOREIGN KEY (package_uuid) REFERENCES knowledge_model_package(uuid) ON DELETE CASCADE; \
+        \ \
+        \ALTER TABLE knowledge_model_package ADD COLUMN public boolean NOT NULL DEFAULT FALSE;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

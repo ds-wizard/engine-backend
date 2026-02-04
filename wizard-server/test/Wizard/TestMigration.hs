@@ -240,7 +240,6 @@ resetDB appContext = do
   runInContext (insertTenantConfigLookAndFeelCustomMenuLink defaultLookAndFeelCustomLink) appContext
   runInContext (insertTenantConfigRegistry defaultRegistryEncrypted) appContext
   runInContext (insertTenantConfigKnowledgeModel defaultKnowledgeModelEncrypted) appContext
-  runInContext (insertTenantConfigKnowledgeModelPublicPackagePattern defaultKnowledgeModelPublicPackagePattern) appContext
   runInContext (insertTenantConfigProject defaultProjectEncrypted) appContext
   runInContext (insertTenantConfigSubmission (defaultSubmission {services = []})) appContext
   runInContext (insertTenantConfigFeatures defaultFeatures) appContext

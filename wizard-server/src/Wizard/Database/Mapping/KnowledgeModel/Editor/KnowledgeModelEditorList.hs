@@ -3,7 +3,9 @@ module Wizard.Database.Mapping.KnowledgeModel.Editor.KnowledgeModelEditorList wh
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromRow
 
+import Shared.Coordinate.Database.Mapping.Coordinate.Coordinate ()
 import Wizard.Database.Mapping.KnowledgeModel.Editor.KnowledgeModelEditorState ()
+import Wizard.Database.Mapping.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
 
 instance FromRow KnowledgeModelEditorList where
@@ -13,8 +15,8 @@ instance FromRow KnowledgeModelEditorList where
     kmId <- field
     version <- field
     state <- field
-    previousPackageId <- field
-    forkOfPackageId <- field
+    previousPackageUuid <- field
+    forkOfPackage <- fieldKnowledgeModelPackageSuggestion'
     createdBy <- field
     createdAt <- field
     updatedAt <- field

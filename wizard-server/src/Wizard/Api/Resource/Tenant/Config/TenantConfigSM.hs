@@ -49,12 +49,6 @@ instance ToSchema TenantConfigRegistry where
 instance ToSchema TenantConfigKnowledgeModel where
   declareNamedSchema = toSwagger defaultKnowledgeModel
 
-instance ToSchema TenantConfigKnowledgeModelPublic where
-  declareNamedSchema = toSwagger defaultKnowledgeModelPublic
-
-instance ToSchema TenantConfigKnowledgeModelPublicPackagePattern where
-  declareNamedSchema = toSwagger defaultKnowledgeModelPublicPackagePattern
-
 instance ToSchema TenantConfigProject where
   declareNamedSchema = toSwagger defaultProject
 

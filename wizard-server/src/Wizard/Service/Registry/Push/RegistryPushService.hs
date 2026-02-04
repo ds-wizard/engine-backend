@@ -4,6 +4,8 @@ import Shared.Common.Util.Logger
 import Shared.Coordinate.Util.Coordinate
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
 import Wizard.Integration.Http.Registry.Runner
@@ -15,7 +17,9 @@ import qualified Wizard.Service.Locale.Bundle.LocaleBundleService as LocaleBundl
 pushKnowledgeModelBundle :: String -> AppContextM ()
 pushKnowledgeModelBundle pkgId = do
   logInfoI _CMP_SERVICE (f' "Pushing knowledge model bundle with the id ('%s') to registry" [pkgId])
-  bundle <- KnowledgeModelBundleService.exportBundle pkgId
+  coordinate <- parseCoordinate pkgId
+  pkg <- findPackageByCoordinate coordinate
+  bundle <- KnowledgeModelBundleService.exportBundle pkg.uuid
   uploadKnowledgeModelBundle bundle
   logInfoI _CMP_SERVICE (f' "Pushing knowledge model bundle with the id ('%s') successfully completed" [pkgId])
 

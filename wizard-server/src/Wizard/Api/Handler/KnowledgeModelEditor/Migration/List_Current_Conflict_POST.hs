@@ -16,7 +16,7 @@ type List_Current_Conflict_POST =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] KnowledgeModelMigrationResolutionDTO
     :> "knowledge-model-editors"
-    :> Capture "bUuid" U.UUID
+    :> Capture "uuid" U.UUID
     :> "migrations"
     :> "current"
     :> "conflict"
@@ -28,9 +28,9 @@ list_current_conflict_POST
   -> KnowledgeModelMigrationResolutionDTO
   -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
-list_current_conflict_POST mTokenHeader mServerUrl reqDto bUuid =
+list_current_conflict_POST mTokenHeader mServerUrl reqDto uuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        solveConflictAndMigrate bUuid reqDto
+        solveConflictAndMigrate uuid reqDto
         return NoContent

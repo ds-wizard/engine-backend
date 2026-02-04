@@ -38,7 +38,7 @@ updateKnowledgeModelMigration :: KnowledgeModelMigration -> AppContextM Int64
 updateKnowledgeModelMigration migration = do
   let sql =
         fromString
-          "UPDATE knowledge_model_migration SET editor_uuid = ?, metamodel_version = ?, state = ?, editor_previous_package_id = ?, target_package_id = ?, editor_previous_package_events = ?, target_package_events = ?, result_events = ?, current_knowledge_model = ?, tenant_uuid = ?, created_at = ? WHERE tenant_uuid = ? AND editor_uuid = ?"
+          "UPDATE knowledge_model_migration SET editor_uuid = ?, metamodel_version = ?, state = ?, editor_previous_package_uuid = ?, target_package_uuid = ?, editor_previous_package_events = ?, target_package_events = ?, result_events = ?, current_knowledge_model = ?, tenant_uuid = ?, created_at = ? WHERE tenant_uuid = ? AND editor_uuid = ?"
   let params = toRow migration ++ [toField migration.tenantUuid, toField migration.editorUuid]
   logQuery sql params
   let action conn = execute conn sql params

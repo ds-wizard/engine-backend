@@ -5,6 +5,8 @@ import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Common.Util.Uuid
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Constant.KnowledgeModel
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Event.KnowledgeModelEvents
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
@@ -17,7 +19,7 @@ import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackag
 globalKmPackageEmpty :: KnowledgeModelPackage
 globalKmPackageEmpty =
   KnowledgeModelPackage
-    { pId = "global:core:0.0.1"
+    { uuid = u' "27e06879-3f42-40fa-901d-1849acf50888"
     , name = "Global Knowledge Model"
     , organizationId = "global"
     , kmId = "core"
@@ -27,10 +29,11 @@ globalKmPackageEmpty =
     , description = "Empty package"
     , readme = "# Global Knowledge Model"
     , license = "Apache-2.0"
-    , previousPackageId = Nothing
+    , previousPackageUuid = Nothing
     , forkOfPackageId = Nothing
     , mergeCheckpointPackageId = Nothing
     , nonEditable = False
+    , public = False
     , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -38,13 +41,13 @@ globalKmPackageEmpty =
 globalKmPackageEmptyEvents :: [KnowledgeModelPackageEvent]
 globalKmPackageEmptyEvents =
   fmap
-    (toPackageEvent globalKmPackageEmpty.pId U.nil)
+    (toPackageEvent globalKmPackageEmpty.uuid U.nil)
     [a_km1_ch1_q1]
 
 globalKmPackage :: KnowledgeModelPackage
 globalKmPackage =
   KnowledgeModelPackage
-    { pId = "global:core:1.0.0"
+    { uuid = u' "5afc40d0-f1a6-4d87-9325-286ce4193ea6"
     , name = "Global Knowledge Model"
     , organizationId = "global"
     , kmId = "core"
@@ -54,10 +57,11 @@ globalKmPackage =
     , description = "First Release"
     , readme = "# Global Knowledge Model"
     , license = "Apache-2.0"
-    , previousPackageId = Nothing
+    , previousPackageUuid = Nothing
     , forkOfPackageId = Nothing
     , mergeCheckpointPackageId = Nothing
     , nonEditable = False
+    , public = True
     , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -65,7 +69,7 @@ globalKmPackage =
 globalKmPackageEvents :: [KnowledgeModelPackageEvent]
 globalKmPackageEvents =
   fmap
-    (toPackageEvent globalKmPackage.pId U.nil)
+    (toPackageEvent globalKmPackage.uuid U.nil)
     [ a_km1
     , a_km1_mtrF
     , a_km1_mtrA
@@ -105,7 +109,7 @@ globalKmPackageGroup =
 netherlandsKmPackage :: KnowledgeModelPackage
 netherlandsKmPackage =
   KnowledgeModelPackage
-    { pId = "org.nl:core-nl:1.0.0"
+    { uuid = u' "e19181bd-a034-4e49-af95-7fe1791e6c0f"
     , name = "Netherlands Knowledge Model"
     , organizationId = "org.nl"
     , kmId = "core-nl"
@@ -115,10 +119,11 @@ netherlandsKmPackage =
     , description = "First Release"
     , readme = "# Netherlands Knowledge Model"
     , license = "Apache-2.0"
-    , previousPackageId = Just $ globalKmPackage.pId
-    , forkOfPackageId = Just $ globalKmPackage.pId
-    , mergeCheckpointPackageId = Just $ globalKmPackage.pId
+    , previousPackageUuid = Just globalKmPackage.uuid
+    , forkOfPackageId = Just . createCoordinate $ globalKmPackage
+    , mergeCheckpointPackageId = Just . createCoordinate $ globalKmPackage
     , nonEditable = False
+    , public = False
     , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -126,13 +131,13 @@ netherlandsKmPackage =
 netherlandsKmPackageEvents :: [KnowledgeModelPackageEvent]
 netherlandsKmPackageEvents =
   fmap
-    (toPackageEvent netherlandsKmPackage.pId U.nil)
+    (toPackageEvent netherlandsKmPackage.uuid U.nil)
     [a_km1_ch1]
 
 netherlandsKmPackageV2 :: KnowledgeModelPackage
 netherlandsKmPackageV2 =
   KnowledgeModelPackage
-    { pId = "org.nl:core-nl:2.0.0"
+    { uuid = u' "1463cde8-ddae-4171-bc5d-31252838026d"
     , name = "Netherlands Knowledge Model"
     , organizationId = "org.nl"
     , kmId = "core-nl"
@@ -142,10 +147,11 @@ netherlandsKmPackageV2 =
     , description = "Second Release"
     , readme = "# Netherlands Knowledge Model"
     , license = "Apache-2.0"
-    , previousPackageId = Just netherlandsKmPackage.pId
-    , forkOfPackageId = Just $ globalKmPackage.pId
-    , mergeCheckpointPackageId = Just $ globalKmPackage.pId
+    , previousPackageUuid = Just netherlandsKmPackage.uuid
+    , forkOfPackageId = Just . createCoordinate $ globalKmPackage
+    , mergeCheckpointPackageId = Just . createCoordinate $ globalKmPackage
     , nonEditable = False
+    , public = False
     , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -153,13 +159,13 @@ netherlandsKmPackageV2 =
 netherlandsKmPackageV2Events :: [KnowledgeModelPackageEvent]
 netherlandsKmPackageV2Events =
   fmap
-    (toPackageEvent netherlandsKmPackageV2.pId U.nil)
+    (toPackageEvent netherlandsKmPackageV2.uuid U.nil)
     [a_km1_ch4]
 
 amsterdamKmPackage :: KnowledgeModelPackage
 amsterdamKmPackage =
   KnowledgeModelPackage
-    { pId = "org.nl.amsterdam:core-amsterdam:1.0.0"
+    { uuid = u' "e5528009-c172-4db6-afa0-cac1089d0f42"
     , name = "Amsterdam Knowledge Model"
     , organizationId = "org.nl.amsterdam"
     , kmId = "core-amsterdam"
@@ -169,10 +175,11 @@ amsterdamKmPackage =
     , description = "First Release"
     , readme = "# Amsterdam Knowledge Model"
     , license = "Apache-2.0"
-    , previousPackageId = Just netherlandsKmPackage.pId
-    , forkOfPackageId = Just netherlandsKmPackage.pId
-    , mergeCheckpointPackageId = Just netherlandsKmPackage.pId
+    , previousPackageUuid = Just netherlandsKmPackage.uuid
+    , forkOfPackageId = Just . createCoordinate $ netherlandsKmPackage
+    , mergeCheckpointPackageId = Just . createCoordinate $ netherlandsKmPackage
     , nonEditable = False
+    , public = False
     , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -180,7 +187,7 @@ amsterdamKmPackage =
 germanyKmPackage :: KnowledgeModelPackage
 germanyKmPackage =
   KnowledgeModelPackage
-    { pId = "org.de:core-de:1.0.0"
+    { uuid = u' "8ebf77b3-3e1e-42e3-8523-df8eb473227a"
     , name = "Germany Knowledge Model"
     , organizationId = "org.de"
     , kmId = "core-de"
@@ -190,10 +197,11 @@ germanyKmPackage =
     , description = "First Release"
     , readme = "# Germany Knowledge Model"
     , license = "Apache-2.0"
-    , previousPackageId = Just $ globalKmPackageEmpty.pId
-    , forkOfPackageId = Just $ globalKmPackageEmpty.pId
-    , mergeCheckpointPackageId = Just $ globalKmPackageEmpty.pId
+    , previousPackageUuid = Just globalKmPackageEmpty.uuid
+    , forkOfPackageId = Just . createCoordinate $ globalKmPackageEmpty
+    , mergeCheckpointPackageId = Just . createCoordinate $ globalKmPackageEmpty
     , nonEditable = False
+    , public = False
     , tenantUuid = U.nil
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
@@ -201,7 +209,7 @@ germanyKmPackage =
 germanyKmPackageEvents :: [KnowledgeModelPackageEvent]
 germanyKmPackageEvents =
   fmap
-    (toPackageEvent germanyKmPackage.pId U.nil)
+    (toPackageEvent germanyKmPackage.uuid U.nil)
     [ a_km1
     , a_km1_mtrF
     , a_km1_mtrA

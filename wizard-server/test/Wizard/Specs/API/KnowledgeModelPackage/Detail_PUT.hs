@@ -3,6 +3,7 @@ module Wizard.Specs.API.KnowledgeModelPackage.Detail_PUT (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -21,11 +22,11 @@ import Wizard.Specs.API.KnowledgeModelPackage.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /wizard-api/knowledge-model-packages/{pkgId}
+-- PUT /wizard-api/knowledge-model-packages/{uuid}
 -- ------------------------------------------------------------------------
 detail_PUT :: AppContext -> SpecWith ((), Application)
 detail_PUT appContext =
-  describe "PUT /wizard-api/knowledge-model-packages/{pkgId}" $ do
+  describe "PUT /wizard-api/knowledge-model-packages/{uuid}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -36,7 +37,7 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/wizard-api/knowledge-model-packages/global:core:1.0.0"
+reqUrl = BS.pack $ "/wizard-api/knowledge-model-packages/" ++ show globalKmPackage.uuid
 
 reqHeaders = [reqCtHeader, reqAuthHeader]
 
@@ -87,4 +88,4 @@ test_404 appContext =
     reqHeaders
     reqBody
     "knowledge_model_package"
-    [("id", "deab6c38-aeac-4b17-a501-4365a0a70176")]
+    [("uuid", "deab6c38-aeac-4b17-a501-4365a0a70176")]

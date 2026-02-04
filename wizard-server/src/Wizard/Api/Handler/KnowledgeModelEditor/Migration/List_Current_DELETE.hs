@@ -13,16 +13,15 @@ type List_Current_DELETE =
   Header "Authorization" String
     :> Header "Host" String
     :> "knowledge-model-editors"
-    :> Capture "bUuid" U.UUID
+    :> Capture "uuid" U.UUID
     :> "migrations"
     :> "current"
     :> Verb DELETE 204 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] NoContent)
 
-list_current_DELETE
-  :: Maybe String -> Maybe String -> U.UUID -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
-list_current_DELETE mTokenHeader mServerUrl bUuid =
+list_current_DELETE :: Maybe String -> Maybe String -> U.UUID -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
+list_current_DELETE mTokenHeader mServerUrl uuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        deleteCurrentMigration bUuid
+        deleteCurrentMigration uuid
         return NoContent

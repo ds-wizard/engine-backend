@@ -4,10 +4,11 @@ import Data.Aeson
 import Data.Time
 import GHC.Generics
 
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 
 data KnowledgeModelPackageRaw = KnowledgeModelPackageRaw
-  { pId :: String
+  { pId :: Coordinate
   , name :: String
   , organizationId :: String
   , kmId :: String
@@ -17,9 +18,9 @@ data KnowledgeModelPackageRaw = KnowledgeModelPackageRaw
   , description :: String
   , readme :: String
   , license :: String
-  , previousPackageId :: Maybe String
-  , forkOfPackageId :: Maybe String
-  , mergeCheckpointPackageId :: Maybe String
+  , previousPackageId :: Maybe Coordinate
+  , forkOfPackageId :: Maybe Coordinate
+  , mergeCheckpointPackageId :: Maybe Coordinate
   , events :: Value
   , nonEditable :: Bool
   , createdAt :: UTCTime

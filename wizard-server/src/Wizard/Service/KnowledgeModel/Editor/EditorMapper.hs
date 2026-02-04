@@ -4,11 +4,13 @@ import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Constant.KnowledgeModel
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelRawEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import qualified Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as KMP
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorChangeDTO
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorCreateDTO
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorDetailDTO
@@ -18,26 +20,27 @@ import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorRawEvent
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorReply
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorState
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Project.ProjectReply
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
 
-toList :: KnowledgeModelEditor -> Maybe String -> KnowledgeModelEditorState -> KnowledgeModelEditorList
-toList editor mForkOfPackageId state =
+toList :: KnowledgeModelEditor -> Maybe KnowledgeModelPackageSuggestion -> KnowledgeModelEditorState -> KnowledgeModelEditorList
+toList editor mForkOfPackage state =
   KnowledgeModelEditorList
     { uuid = editor.uuid
     , name = editor.name
     , kmId = editor.kmId
     , version = editor.version
     , state = state
-    , previousPackageId = editor.previousPackageId
-    , forkOfPackageId = mForkOfPackageId
+    , previousPackageUuid = editor.previousPackageUuid
+    , forkOfPackage = mForkOfPackage
     , createdBy = editor.createdBy
     , createdAt = editor.createdAt
     , updatedAt = editor.updatedAt
     }
 
-toDetailDTO :: KnowledgeModelEditor -> [KnowledgeModelEditorEvent] -> [KnowledgeModelEditorReply] -> KnowledgeModel -> Maybe String -> Maybe KnowledgeModelPackage -> KnowledgeModelEditorState -> KnowledgeModelEditorDetailDTO
-toDetailDTO editor kmEditorEvents kmEditorReplies knowledgeModel mForkOfPackageId mForkOfPackage state =
+toDetailDTO :: KnowledgeModelEditor -> [KnowledgeModelEditorEvent] -> [KnowledgeModelEditorReply] -> Maybe KnowledgeModelPackage -> KnowledgeModel -> Maybe Coordinate -> Maybe KnowledgeModelPackage -> KnowledgeModelEditorState -> KnowledgeModelEditorDetailDTO
+toDetailDTO editor kmEditorEvents kmEditorReplies mPreviousPackage knowledgeModel mForkOfPackageId mForkOfPackage state =
   KnowledgeModelEditorDetailDTO
     { uuid = editor.uuid
     , name = editor.name
@@ -47,8 +50,7 @@ toDetailDTO editor kmEditorEvents kmEditorReplies knowledgeModel mForkOfPackageI
     , readme = editor.readme
     , license = editor.license
     , state = state
-    , previousPackageId = editor.previousPackageId
-    , forkOfPackageId = mForkOfPackageId
+    , previousPackage = fmap KMP.toSimple mPreviousPackage
     , forkOfPackage = fmap toSimpleDTO mForkOfPackage
     , events = fmap (\KnowledgeModelEditorEvent {..} -> KnowledgeModelEvent {..}) kmEditorEvents
     , replies = M.fromList . fmap (\KnowledgeModelEditorReply {..} -> (path, Reply {..})) $ kmEditorReplies
@@ -68,7 +70,7 @@ fromCreateDTO dto uuid mPreviousPkg createdBy tenantUuid now =
     , description = maybe "" (.description) mPreviousPkg
     , readme = maybe "" (.readme) mPreviousPkg
     , license = maybe "" (.license) mPreviousPkg
-    , previousPackageId = dto.previousPackageId
+    , previousPackageUuid = dto.previousPackageUuid
     , metamodelVersion = knowledgeModelMetamodelVersion
     , squashed = True
     , createdBy = Just createdBy
@@ -87,7 +89,7 @@ fromChangeDTO dto editor bUpdatedAt =
     , description = dto.description
     , readme = dto.readme
     , license = dto.license
-    , previousPackageId = editor.previousPackageId
+    , previousPackageUuid = editor.previousPackageUuid
     , metamodelVersion = editor.metamodelVersion
     , squashed = editor.squashed
     , createdBy = editor.createdBy

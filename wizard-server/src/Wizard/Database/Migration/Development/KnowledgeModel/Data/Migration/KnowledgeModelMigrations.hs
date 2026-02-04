@@ -18,20 +18,21 @@ import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
 import Wizard.Model.KnowledgeModel.Migration.KnowledgeModelMigration
 import Wizard.Model.Tenant.Tenant
+import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as PM
 
 knowledgeModelMigrationDTO :: KnowledgeModelMigrationDTO
 knowledgeModelMigrationDTO =
   KnowledgeModelMigrationDTO
     { editorUuid = amsterdamKnowledgeModelEditorList.uuid
     , editorName = amsterdamKnowledgeModelEditorList.name
-    , editorPreviousPackageId = netherlandsKmPackage.pId
+    , editorPreviousPackage = PM.toSuggestion netherlandsKmPackage
     , state = ConflictKnowledgeModelMigrationState {targetEvent = Just . Prelude.head . fmap toEvent $ netherlandsKmPackageV2Events}
-    , targetPackageId = netherlandsKmPackageV2.pId
+    , targetPackage = PM.toSuggestion netherlandsKmPackageV2
     , currentKnowledgeModel = Just km1Netherlands
     }
 
 knowledgeModelMigrationCreateDTO :: KnowledgeModelMigrationCreateDTO
-knowledgeModelMigrationCreateDTO = KnowledgeModelMigrationCreateDTO {targetPackageId = netherlandsKmPackageV2.pId}
+knowledgeModelMigrationCreateDTO = KnowledgeModelMigrationCreateDTO {targetPackageUuid = netherlandsKmPackageV2.uuid}
 
 knowledgeModelMigrationResolutionDTO :: KnowledgeModelMigrationResolutionDTO
 knowledgeModelMigrationResolutionDTO =
@@ -46,8 +47,8 @@ differentKnowledgeModelMigration =
     { editorUuid = differentKnowledgeModelEditor.uuid
     , metamodelVersion = knowledgeModelMetamodelVersion
     , state = CompletedKnowledgeModelMigrationState
-    , editorPreviousPackageId = differentPackage.pId
-    , targetPackageId = differentPackage.pId
+    , editorPreviousPackageUuid = differentPackage.uuid
+    , targetPackageUuid = differentPackage.uuid
     , editorPreviousPackageEvents = []
     , targetPackageEvents = []
     , resultEvents = []

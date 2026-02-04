@@ -14,7 +14,7 @@ import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.String (replace)
-import Shared.Coordinate.Localization.Messages.Public
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Bundle.KnowledgeModelBundleJM ()
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Bundle.KnowledgeModelBundles
@@ -47,7 +47,6 @@ list_POST appContext =
     test_400 appContext
     test_400_main_package_duplication appContext
     test_400_missing_previous_package appContext
-    test_400_bad_package_coordinates appContext
     test_401 appContext
     test_403 appContext
 
@@ -72,8 +71,8 @@ test_201_req_all_db_all appContext =
     -- GIVEN: Prepare expectation
     do
       let expStatus = 201
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = fmap toSimpleDTO [netherlandsKmPackageV2]
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = toSimpleDTO netherlandsKmPackageV2
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO deletePackages appContext
@@ -82,14 +81,15 @@ test_201_req_all_db_all appContext =
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, KnowledgeModelPackageSimpleDTO)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      comparePackageDtos resBody expDto
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findPackages appContext 3
-      assertExistenceOfPackageInDB appContext (head reqDto.packages)
-      assertExistenceOfPackageInDB appContext (reqDto.packages !! 1)
-      assertExistenceOfPackageInDB appContext (reqDto.packages !! 2)
+      assertExistenceOfBundlePackageInDB appContext (head reqDto.packages)
+      assertExistenceOfBundlePackageInDB appContext (reqDto.packages !! 1)
+      assertExistenceOfBundlePackageInDB appContext (reqDto.packages !! 2)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -99,22 +99,23 @@ test_201_req_all_db_no appContext =
     -- GIVEN: Prepare expectation
     do
       let expStatus = 201
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = fmap toSimpleDTO [globalKmPackage, netherlandsKmPackage, netherlandsKmPackageV2]
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = toSimpleDTO netherlandsKmPackageV2
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO deletePackages appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, KnowledgeModelPackageSimpleDTO)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      comparePackageDtos resBody expDto
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findPackages appContext 3
-      assertExistenceOfPackageInDB appContext globalKmPackage
-      assertExistenceOfPackageInDB appContext netherlandsKmPackage
-      assertExistenceOfPackageInDB appContext netherlandsKmPackageV2
+      assertExistenceOfBundlePackageInDB appContext globalKmPackage
+      assertExistenceOfBundlePackageInDB appContext netherlandsKmPackage
+      assertExistenceOfBundlePackageInDB appContext netherlandsKmPackageV2
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -127,8 +128,8 @@ test_201_req_no_db_all appContext =
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 201
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = fmap toSimpleDTO [netherlandsKmPackageV2]
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = toSimpleDTO netherlandsKmPackageV2
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO deletePackages appContext
@@ -137,14 +138,15 @@ test_201_req_no_db_all appContext =
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, KnowledgeModelPackageSimpleDTO)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      comparePackageDtos resBody expDto
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findPackages appContext 3
-      assertExistenceOfPackageInDB appContext globalKmPackage
-      assertExistenceOfPackageInDB appContext netherlandsKmPackage
-      assertExistenceOfPackageInDB appContext netherlandsKmPackageV2
+      assertExistenceOfBundlePackageInDB appContext globalKmPackage
+      assertExistenceOfBundlePackageInDB appContext netherlandsKmPackage
+      assertExistenceOfBundlePackageInDB appContext netherlandsKmPackageV2
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -157,8 +159,8 @@ test_201_req_one_db_rest appContext =
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 201
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = fmap toSimpleDTO [netherlandsKmPackage, netherlandsKmPackageV2]
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = toSimpleDTO netherlandsKmPackageV2
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO deletePackages appContext
@@ -166,14 +168,15 @@ test_201_req_one_db_rest appContext =
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, KnowledgeModelPackageSimpleDTO)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      comparePackageDtos resBody expDto
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findPackages appContext 3
-      assertExistenceOfPackageInDB appContext globalKmPackage
-      assertExistenceOfPackageInDB appContext netherlandsKmPackage
-      assertExistenceOfPackageInDB appContext netherlandsKmPackageV2
+      assertExistenceOfBundlePackageInDB appContext globalKmPackage
+      assertExistenceOfBundlePackageInDB appContext netherlandsKmPackage
+      assertExistenceOfBundlePackageInDB appContext netherlandsKmPackageV2
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -186,8 +189,8 @@ test_201_without_readme appContext =
       let reqBody = BSL.pack . replace "readme" "differentReadme" . BSL.unpack $ encode reqDto
       -- AND: Prepare expectation
       let expStatus = 201
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = fmap toSimpleDTO [netherlandsKmPackage {readme = ""} :: KnowledgeModelPackage, netherlandsKmPackageV2 {readme = ""} :: KnowledgeModelPackage]
+      let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+      let expDto = toSimpleDTO $ netherlandsKmPackageV2 {readme = ""}
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO deletePackages appContext
@@ -195,12 +198,13 @@ test_201_without_readme appContext =
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, KnowledgeModelPackageSimpleDTO)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      comparePackageDtos resBody expDto
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findPackages appContext 3
-      assertExistenceOfPackageInDB appContext (head expDto)
+      assertExistenceOfBundlePackageInDB appContext expDto
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -230,7 +234,7 @@ test_400_main_package_duplication appContext =
     do
       let expStatus = 400
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = UserError $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS netherlandsKmPackageV2.pId
+      let expDto = UserError $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS (show . createCoordinate $ netherlandsKmPackageV2)
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO deletePackages appContext
@@ -257,7 +261,7 @@ test_400_missing_previous_package appContext =
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto =
             UserError $
-              _ERROR_SERVICE_PKG__IMPORT_PREVIOUS_PKG_AT_FIRST netherlandsKmPackage.pId netherlandsKmPackageV2.pId
+              _ERROR_SERVICE_PKG__IMPORT_PREVIOUS_PKG_AT_FIRST (show . createCoordinate $ netherlandsKmPackage) (show . createCoordinate $ netherlandsKmPackageV2)
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO deletePackages appContext
@@ -270,31 +274,7 @@ test_400_missing_previous_package appContext =
       response `shouldRespondWith` responseMatcher
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findPackages appContext 1
-      assertExistenceOfPackageInDB appContext globalKmPackage
-
-test_400_bad_package_coordinates appContext =
-  it "HTTP 400 BAD REQUEST when package ID doesn't match with package coordinates" $
-    -- GIVEN: Prepare request
-    do
-      let editedElixirNlPackageDto = netherlandsKmBundlePackage {kmId = netherlandsKmPackage.kmId ++ "-2"} :: KnowledgeModelBundlePackage
-      let reqDto = netherlandsV2KmBundle {packages = [editedElixirNlPackageDto, netherlandsV2KmBundlePackage]}
-      let reqBody = encode reqDto
-      -- AND: Prepare expectation
-      let expStatus = 400
-      let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = UserError $ _ERROR_VALIDATION__COORDINATE_MISMATCH netherlandsKmPackage.pId
-      let expBody = encode expDto
-      -- AND: Run migrations
-      runInContextIO deletePackages appContext
-      runInContextIO (insertPackage globalKmPackage) appContext
-      -- WHEN: Call API
-      response <- request reqMethod reqUrl reqHeaders reqBody
-      -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
-      -- AND: Find result in DB and compare with expectation state
-      assertCountInDB findPackages appContext 1
+      assertExistenceOfBundlePackageInDB appContext globalKmPackage
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

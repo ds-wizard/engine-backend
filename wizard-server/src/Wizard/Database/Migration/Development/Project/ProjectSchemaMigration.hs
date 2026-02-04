@@ -64,24 +64,24 @@ createProjectTable = do
   let sql =
         "CREATE TABLE project \
         \( \
-        \    uuid                        uuid        NOT NULL, \
-        \    name                        varchar     NOT NULL, \
-        \    visibility                  varchar     NOT NULL, \
-        \    sharing                     varchar     NOT NULL, \
-        \    knowledge_model_package_id  varchar     NOT NULL, \
-        \    selected_question_tag_uuids uuid[]      NOT NULL, \
-        \    document_template_uuid      uuid, \
-        \    format_uuid                 uuid, \
-        \    created_by                  uuid, \
-        \    created_at                  timestamptz NOT NULL, \
-        \    updated_at                  timestamptz NOT NULL, \
-        \    description                 varchar, \
-        \    is_template                 boolean     NOT NULL, \
-        \    squashed                    boolean     NOT NULL, \
-        \    tenant_uuid                 uuid        NOT NULL, \
-        \    project_tags                text[]      NOT NULL, \
+        \    uuid                         uuid        NOT NULL, \
+        \    name                         varchar     NOT NULL, \
+        \    visibility                   varchar     NOT NULL, \
+        \    sharing                      varchar     NOT NULL, \
+        \    knowledge_model_package_uuid uuid     NOT NULL, \
+        \    selected_question_tag_uuids  uuid[]      NOT NULL, \
+        \    document_template_uuid       uuid, \
+        \    format_uuid                  uuid, \
+        \    created_by                   uuid, \
+        \    created_at                   timestamptz NOT NULL, \
+        \    updated_at                   timestamptz NOT NULL, \
+        \    description                  varchar, \
+        \    is_template                  boolean     NOT NULL, \
+        \    squashed                     boolean     NOT NULL, \
+        \    tenant_uuid                  uuid        NOT NULL, \
+        \    project_tags                 text[]      NOT NULL, \
         \    CONSTRAINT project_pk PRIMARY KEY (uuid), \
-        \    CONSTRAINT project_knowledge_model_package_id_fk FOREIGN KEY (knowledge_model_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT project_knowledge_model_package_uuid_fk FOREIGN KEY (knowledge_model_package_uuid) REFERENCES knowledge_model_package (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT project_document_template_uuid_fk FOREIGN KEY (document_template_uuid) REFERENCES document_template (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT project_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL, \
         \    CONSTRAINT project_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \

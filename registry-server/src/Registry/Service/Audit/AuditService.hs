@@ -30,11 +30,11 @@ auditListPackages headers =
     insertAuditEntry entry
     return . Right . Just $ entry
 
-auditGetKnowledgeModelBundle :: String -> AppContextM (Either AppError (Maybe AuditEntry))
-auditGetKnowledgeModelBundle pkgId =
+auditGetKnowledgeModelBundle :: Coordinate -> AppContextM (Either AppError (Maybe AuditEntry))
+auditGetKnowledgeModelBundle coordinate =
   heGetOrganizationFromContext $ \org -> do
     now <- liftIO getCurrentTime
-    let entry = GetKnowledgeModelBundleAuditEntry {organizationId = org.organizationId, knowledgeModelPackageId = pkgId, createdAt = now}
+    let entry = GetKnowledgeModelBundleAuditEntry {organizationId = org.organizationId, knowledgeModelPackageId = show coordinate, createdAt = now}
     insertAuditEntry entry
     return . Right . Just $ entry
 

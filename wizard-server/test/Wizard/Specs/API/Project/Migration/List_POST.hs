@@ -131,7 +131,7 @@ create_test_201 title appContext oldProject oldProjectEvents newProject newProje
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = createInvalidJsonTest reqMethod (reqUrlT project4.uuid) "targetKnowledgeModelPackageId"
+test_400 appContext = createInvalidJsonTest reqMethod (reqUrlT project4.uuid) "targetKnowledgeModelPackageUuid"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -7,6 +7,7 @@ import GHC.Generics
 
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackageSimple
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorState
 import Wizard.Model.Project.ProjectReply
@@ -20,8 +21,7 @@ data KnowledgeModelEditorDetailDTO = KnowledgeModelEditorDetailDTO
   , readme :: String
   , license :: String
   , state :: KnowledgeModelEditorState
-  , previousPackageId :: Maybe String
-  , forkOfPackageId :: Maybe String
+  , previousPackage :: Maybe KnowledgeModelPackageSimple
   , forkOfPackage :: Maybe KnowledgeModelPackageSimpleDTO
   , createdBy :: Maybe U.UUID
   , events :: [KnowledgeModelEvent]
@@ -42,8 +42,7 @@ instance Eq KnowledgeModelEditorDetailDTO where
       && a.readme == b.readme
       && a.license == b.license
       && a.state == b.state
-      && a.previousPackageId == b.previousPackageId
-      && a.forkOfPackageId == b.forkOfPackageId
+      && a.previousPackage == b.previousPackage
       && a.forkOfPackage == b.forkOfPackage
       && a.createdBy == b.createdBy
       && a.events == b.events

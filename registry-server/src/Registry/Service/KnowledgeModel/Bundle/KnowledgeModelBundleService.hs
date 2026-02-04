@@ -4,6 +4,7 @@ module Registry.Service.KnowledgeModel.Bundle.KnowledgeModelBundleService (
 ) where
 
 import Control.Monad.Except (throwError)
+import Control.Monad.Reader (liftIO)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
 import qualified Data.UUID as U
@@ -21,6 +22,8 @@ import Shared.Common.Constant.Tenant
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.List
+import Shared.Common.Util.Uuid
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Bundle.KnowledgeModelBundlePackageJM ()
 import Shared.KnowledgeModel.Constant.KnowledgeModel
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
@@ -32,11 +35,11 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import qualified Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as PM
 import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 
-exportBundle :: String -> AppContextM R_KnowledgeModelBundle.KnowledgeModelBundle
-exportBundle pbId = do
-  _ <- auditGetKnowledgeModelBundle pbId
-  resolvedPbId <- resolvePackageId pbId
-  packages <- findSeriesOfPackagesRecursiveById resolvedPbId
+exportBundle :: Coordinate -> AppContextM R_KnowledgeModelBundle.KnowledgeModelBundle
+exportBundle coordinate = do
+  _ <- auditGetKnowledgeModelBundle coordinate
+  resolvedPb <- resolvePackageCoordinate coordinate
+  packages <- findSeriesOfPackagesRecursiveByUuid resolvedPb.uuid
   case lastSafe packages of
     Just newestPackage -> do
       let pb =
@@ -50,7 +53,7 @@ exportBundle pbId = do
               , packages = packages
               }
       return pb
-    Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "knowledge_model_package" [("tenant_uuid", U.toString defaultTenantUuid), ("id", resolvedPbId)]
+    Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "knowledge_model_package" [("tenant_uuid", U.toString defaultTenantUuid), ("uuid", U.toString resolvedPb.uuid)]
 
 importBundle :: S_KnowledgeModelBundle.KnowledgeModelBundle -> AppContextM S_KnowledgeModelBundle.KnowledgeModelBundle
 importBundle pb =
@@ -71,10 +74,17 @@ importBundle pb =
 importPackage :: KnowledgeModelBundlePackage -> AppContextM ()
 importPackage dto =
   runInTransaction $ do
-    let (pkg, pkgEvents) = PM.fromKnowledgeModelBundlePackage dto U.nil
-    eitherPackage <- findPackageById' pkg.pId
+    eitherPackage <- findPackageByCoordinate' (createCoordinate dto)
     case eitherPackage of
       Nothing -> do
+        pkgUuid <- liftIO generateUuid
+        mPreviousPackageUuid <-
+          case dto.previousPackageId of
+            Just previousPackageId -> do
+              previousPackage <- findPackageByCoordinate previousPackageId
+              return . Just $ previousPackage.uuid
+            Nothing -> return Nothing
+        let (pkg, pkgEvents) = PM.fromKnowledgeModelBundlePackage dto pkgUuid mPreviousPackageUuid U.nil
         insertPackage pkg
         traverse_ insertPackageEvent pkgEvents
       Just _ -> return ()

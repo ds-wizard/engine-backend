@@ -36,7 +36,6 @@ dropFunctions = do
   let sql =
         "DROP FUNCTION IF EXISTS gravatar_hash; \
         \DROP FUNCTION IF EXISTS create_persistent_command_from_entity_uuid; \
-        \DROP FUNCTION IF EXISTS create_persistent_command_from_entity_id; \
         \DROP FUNCTION IF EXISTS create_persistent_command; \
         \DROP FUNCTION IF EXISTS is_outdated; \
         \DROP FUNCTION IF EXISTS major_version; \
@@ -55,7 +54,6 @@ createFunctions = do
   createCompareVersionFn
   createIsOutdatedVersionFn
   createPersistentCommandFunction
-  createPersistentCommandFromEntityIdFunction
   createPersistentCommandFromEntityUuidFunction
   createGravatarFunction
 
@@ -202,29 +200,6 @@ createPersistentCommandFunction = do
         \            NULL, \
         \            NULL); \
         \    return 1; \
-        \END; \
-        \$$ LANGUAGE plpgsql;"
-  let action conn = execute_ conn sql
-  runDB action
-
-createPersistentCommandFromEntityIdFunction = do
-  let sql =
-        "CREATE OR REPLACE FUNCTION create_persistent_command_from_entity_id() \
-        \    RETURNS TRIGGER AS \
-        \$$ \
-        \DECLARE \
-        \    component varchar; \
-        \    function  varchar; \
-        \BEGIN \
-        \    component := TG_ARGV[0]; \
-        \    function := TG_ARGV[1]; \
-        \ \
-        \    PERFORM create_persistent_command( \
-        \            component, \
-        \            function, \
-        \            jsonb_build_object('id', OLD.id), \
-        \            OLD.tenant_uuid); \
-        \    RETURN OLD; \
         \END; \
         \$$ LANGUAGE plpgsql;"
   let action conn = execute_ conn sql

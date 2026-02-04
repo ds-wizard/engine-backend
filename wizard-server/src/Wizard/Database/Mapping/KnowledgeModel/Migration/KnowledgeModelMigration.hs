@@ -15,8 +15,8 @@ instance ToRow KnowledgeModelMigration where
     [ toField editorUuid
     , toField metamodelVersion
     , toJSONField state
-    , toField editorPreviousPackageId
-    , toField targetPackageId
+    , toField editorPreviousPackageUuid
+    , toField targetPackageUuid
     , toJSONField editorPreviousPackageEvents
     , toJSONField targetPackageEvents
     , toJSONField resultEvents
@@ -30,8 +30,8 @@ instance FromRow KnowledgeModelMigration where
     editorUuid <- field
     metamodelVersion <- field
     state <- fieldWith fromJSONField
-    editorPreviousPackageId <- field
-    targetPackageId <- field
+    editorPreviousPackageUuid <- field
+    targetPackageUuid <- field
     editorPreviousPackageEvents <- fieldWith fromJSONField
     targetPackageEvents <- fieldWith fromJSONField
     resultEvents <- fieldWith fromJSONField
