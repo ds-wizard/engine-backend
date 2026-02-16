@@ -1,5 +1,6 @@
 module Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageService where
 
+import Control.Monad (void)
 import Control.Monad.Reader (asks)
 import Data.Foldable (traverse_)
 import qualified Data.UUID as U
@@ -23,6 +24,7 @@ import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageDeletionImpact
 import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
@@ -56,6 +58,16 @@ getPackageDetailByUuid pkgUuid excludeDeprecatedVersions = do
   tcRegistry <- getCurrentTenantConfigRegistry
   return $ toDetailDTO pkg tcRegistry.enabled pkgRs orgRs versions (buildPackageUrl serverConfig.registry.clientUrl pkg pkgRs)
 
+getDependentPackageResources :: U.UUID -> Maybe Bool -> AppContextM [KnowledgeModelPackageDeletionImpact]
+getDependentPackageResources uuid mAllVersions = do
+  checkPermission _PM_READ_PERM
+  case mAllVersions of
+    Just True -> do
+      pkg <- findPackageByUuid uuid
+      allPkgs <- findPackagesByOrganizationIdAndKmId pkg.organizationId pkg.kmId
+      findDependentPackageResources (fmap (.uuid) allPkgs)
+    _ -> findDependentPackageResources [uuid]
+
 createPackage :: (KnowledgeModelPackage, [KnowledgeModelPackageEvent]) -> AppContextM KnowledgeModelPackageSimpleDTO
 createPackage (pkg, pkgEvents) =
   runInTransaction $ do
@@ -72,13 +84,17 @@ modifyPackage pkgUuid reqDto =
     updatePackagePhaseAndPublicByUuid pkgUuid reqDto.phase reqDto.public
     return reqDto
 
-deletePackage :: U.UUID -> AppContextM ()
-deletePackage uuid =
+deletePackage :: U.UUID -> Maybe Bool -> AppContextM ()
+deletePackage uuid mAllVersions =
   runInTransaction $ do
     checkPermission _PM_WRITE_PERM
-    _ <- findPackageByUuid uuid
-    deletePackageByUuid uuid
-    return ()
+    case mAllVersions of
+      Just True -> do
+        pkg <- findPackageByUuid uuid
+        void $ deletePackagesFiltered [("organization_id", pkg.organizationId), ("km_id", pkg.kmId)]
+      _ -> do
+        _ <- findPackageByUuid uuid
+        void $ deletePackageByUuid uuid
 
 -- --------------------------------
 -- PRIVATE

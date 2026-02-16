@@ -4,6 +4,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Wizard.Specs.API.Common
+import Wizard.Specs.API.KnowledgeModelPackage.Dependent.APISpec
 import Wizard.Specs.API.KnowledgeModelPackage.Detail_DELETE
 import Wizard.Specs.API.KnowledgeModelPackage.Detail_GET
 import Wizard.Specs.API.KnowledgeModelPackage.Detail_PUT
@@ -24,3 +25,4 @@ knowledgeModelPackageAPI baseContext appContext =
       detail_PUT appContext
       detail_DELETE appContext
       detail_pull_POST appContext
+      dependentAPI appContext

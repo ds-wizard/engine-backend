@@ -3,6 +3,7 @@ module Wizard.Api.Handler.KnowledgeModelPackage.Api where
 import Servant
 import Servant.Swagger.Tags
 
+import Wizard.Api.Handler.KnowledgeModelPackage.Dependent.Api
 import Wizard.Api.Handler.KnowledgeModelPackage.Detail_Bundle_GET
 import Wizard.Api.Handler.KnowledgeModelPackage.Detail_DELETE
 import Wizard.Api.Handler.KnowledgeModelPackage.Detail_GET
@@ -17,7 +18,7 @@ import Wizard.Api.Handler.KnowledgeModelPackage.List_Suggestions_GET
 import Wizard.Model.Context.BaseContext
 
 type KnowledgeModelPackageAPI =
-  Tags "Package"
+  Tags "Knowledge Model Package"
     :> ( List_GET
           :<|> List_Suggestions_GET
           :<|> List_POST
@@ -29,6 +30,7 @@ type KnowledgeModelPackageAPI =
           :<|> List_From_Migration_POST
           :<|> Detail_Bundle_GET
           :<|> Detail_Pull_POST
+          :<|> DependentAPI
        )
 
 knowledgeModelPackageApi :: Proxy KnowledgeModelPackageAPI
@@ -47,3 +49,4 @@ knowledgeModelPackageServer =
     :<|> list_from_migration_POST
     :<|> detail_bundle_GET
     :<|> detail_pull_POST
+    :<|> dependentServer

@@ -13,13 +13,16 @@ import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Util.Logger
+import Shared.Common.Util.String
 import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Database.DAO.Common
+import Wizard.Database.Mapping.KnowledgeModel.Package.KnowledgeModelPackageDeletionImpact ()
 import Wizard.Database.Mapping.KnowledgeModel.Package.KnowledgeModelPackageList ()
 import Wizard.Database.Mapping.KnowledgeModel.Package.KnowledgeModelPackageSuggestion ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageDeletionImpact
 import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageList
 import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 
@@ -155,6 +158,70 @@ countPackageSuggestions mQuery selectCondition excludeCondition selectParams exc
   case result of
     [count] -> return . fromOnly $ count
     _ -> return 0
+
+findDependentPackageResources :: [U.UUID] -> AppContextM [KnowledgeModelPackageDeletionImpact]
+findDependentPackageResources pkgUuids = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        f''
+          "WITH RECURSIVE package_tree AS ( \
+          \    SELECT  \
+          \        uuid, \
+          \        name, \
+          \        version, \
+          \        previous_package_uuid, \
+          \        tenant_uuid \
+          \    FROM knowledge_model_package \
+          \    WHERE uuid IN (${pkgUuids}) \
+          \      AND tenant_uuid = '${tenantUuid}' \
+          \ \
+          \    UNION \
+          \ \
+          \    SELECT  \
+          \        p.uuid, \
+          \        p.name, \
+          \        p.version, \
+          \        p.previous_package_uuid, \
+          \        p.tenant_uuid \
+          \    FROM knowledge_model_package p \
+          \    INNER JOIN package_tree pt ON p.previous_package_uuid = pt.uuid \
+          \    WHERE p.tenant_uuid = '${tenantUuid}' \
+          \) \
+          \SELECT  \
+          \    pt.uuid, \
+          \    pt.name, \
+          \    pt.version, \
+          \    (SELECT COALESCE(jsonb_agg(jsonb_build_object( \
+          \        'uuid', child.uuid, \
+          \        'name', child.name, \
+          \        'version', child.version \
+          \    )), '[]'::jsonb) \
+          \    FROM knowledge_model_package child \
+          \    WHERE child.previous_package_uuid = pt.uuid \
+          \      AND child.tenant_uuid = pt.tenant_uuid) AS packages, \
+          \ \
+          \    (SELECT COALESCE(jsonb_agg(jsonb_build_object( \
+          \        'uuid', e.uuid, \
+          \        'name', e.name \
+          \    )), '[]'::jsonb) \
+          \    FROM knowledge_model_editor e \
+          \    WHERE e.previous_package_uuid = pt.uuid \
+          \      AND e.tenant_uuid = pt.tenant_uuid) AS editors, \
+          \ \
+          \    (SELECT COALESCE(jsonb_agg(jsonb_build_object( \
+          \        'uuid', pr.uuid, \
+          \        'name', pr.name \
+          \    )), '[]'::jsonb) \
+          \    FROM project pr \
+          \    WHERE pr.knowledge_model_package_uuid = pt.uuid \
+          \      AND pr.tenant_uuid = pt.tenant_uuid) AS projects \
+          \FROM package_tree pt;"
+          [ ("pkgUuids", L.intercalate "," . fmap (\u -> f' "'%s'" [U.toString u]) $ pkgUuids)
+          , ("tenantUuid", U.toString tenantUuid)
+          ]
+  logInfoI _CMP_DATABASE (trim sql)
+  let action conn = query_ conn (fromString sql)
+  runDB action
 
 updatePackageMetamodelVersion :: U.UUID -> Int -> AppContextM Int64
 updatePackageMetamodelVersion pkgUuid metamodelVersion = do

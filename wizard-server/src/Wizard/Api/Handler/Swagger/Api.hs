@@ -63,6 +63,7 @@ import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationResol
 import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationSM ()
 import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationStateSM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageChangeSM ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDeletionImpactSM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailSM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSuggestionSM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.Publish.KnowledgeModelPackagePublishEditorSM ()
