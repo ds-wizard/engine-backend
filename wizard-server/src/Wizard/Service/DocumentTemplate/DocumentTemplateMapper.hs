@@ -1,12 +1,15 @@
 module Wizard.Service.DocumentTemplate.DocumentTemplateMapper where
 
+import qualified Data.List as L
 import Data.Maybe (fromMaybe)
+import qualified Data.UUID as U
 
 import RegistryLib.Model.Organization.OrganizationSimple
 import Shared.Common.Database.DAO.Common
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
+import Shared.Common.Service.Version.VersionMapper
 import Shared.Coordinate.Util.Coordinate
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -102,7 +105,7 @@ toDetailDTO
   -> Bool
   -> [RegistryTemplate]
   -> [RegistryOrganization]
-  -> [String]
+  -> [(U.UUID, String)]
   -> Maybe String
   -> [KnowledgeModelPackage]
   -> DocumentTemplateDetailDTO
@@ -122,7 +125,7 @@ toDetailDTO tml formats registryEnabled tmlRs orgRs versionLs registryLink pkgs 
     , formats = formats
     , nonEditable = tml.nonEditable
     , usableKnowledgeModels = fmap PM_Mapper.toSimpleDTO pkgs
-    , versions = versionLs
+    , versions = map toVersionDTO . L.sortBy (\(_, v1) (_, v2) -> compare v2 v1) $ versionLs
     , remoteLatestVersion =
         case (registryEnabled, selectDocumentTemplateByOrgIdAndTmlId tml tmlRs) of
           (True, Just tmlR) -> Just $ tmlR.remoteVersion

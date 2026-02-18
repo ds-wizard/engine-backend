@@ -47,7 +47,7 @@ globalKmPackageDetailDto =
     True
     [globalRegistryPackage]
     [globalRegistryOrganization, nlRegistryOrganization]
-    ["0.0.1", "1.0.0"]
+    [(globalKmPackageEmpty.uuid, globalKmPackageEmpty.version), (globalKmPackage.uuid, globalKmPackage.version)]
     (Just $ "https://registry-test.ds-wizard.org/knowledge-models/" ++ show (createCoordinate globalKmPackage))
 
 globalNetherlandsPackage :: KnowledgeModelPackageSimpleDTO
@@ -75,7 +75,7 @@ globalNetherlandsPackageDetailDto =
     True
     [nlRegistryPackage]
     [globalRegistryOrganization, nlRegistryOrganization]
-    ["1.0.0", "2.0.0"]
+    [(netherlandsKmPackage.uuid, netherlandsKmPackage.version), (netherlandsKmPackageV2.uuid, netherlandsKmPackageV2.version)]
     (Just $ "https://registry-test.ds-wizard.org/knowledge-models/" ++ show (createCoordinate netherlandsKmPackageV2))
 
 germanyPackageSuggestion :: KnowledgeModelPackageSuggestion

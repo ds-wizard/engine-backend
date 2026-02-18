@@ -136,7 +136,7 @@ deleteDocumentTemplate uuid =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getDocumentTemplateVersions :: DocumentTemplate -> AppContextM [String]
+getDocumentTemplateVersions :: DocumentTemplate -> AppContextM [(U.UUID, String)]
 getDocumentTemplateVersions tml = do
   allTmls <- findDocumentTemplatesByOrganizationIdAndKmId tml.organizationId tml.templateId
-  return . fmap (.version) . filter (\t -> t.phase == ReleasedDocumentTemplatePhase || t.phase == DeprecatedDocumentTemplatePhase) $ allTmls
+  return . fmap (\t -> (t.uuid, t.version)) . filter (\t -> t.phase == ReleasedDocumentTemplatePhase || t.phase == DeprecatedDocumentTemplatePhase) $ allTmls

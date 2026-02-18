@@ -2,6 +2,7 @@ module Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailSM where
 
 import Data.Swagger
 
+import Shared.Common.Api.Resource.Version.VersionSM ()
 import Shared.Common.Util.Swagger
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO

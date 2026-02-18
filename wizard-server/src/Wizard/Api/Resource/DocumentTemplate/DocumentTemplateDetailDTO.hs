@@ -4,6 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Common.Api.Resource.Version.VersionDTO
 import Shared.Common.Model.Common.SemVer2Tuple
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
@@ -26,7 +27,7 @@ data DocumentTemplateDetailDTO = DocumentTemplateDetailDTO
   , formats :: [DocumentTemplateFormat]
   , nonEditable :: Bool
   , usableKnowledgeModels :: [KnowledgeModelPackageSimpleDTO]
-  , versions :: [String]
+  , versions :: [VersionDTO]
   , remoteLatestVersion :: Maybe String
   , organization :: Maybe RegistryOrganization
   , registryLink :: Maybe String

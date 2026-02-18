@@ -1,7 +1,9 @@
 module Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper where
 
 import qualified Data.List as L
+import qualified Data.UUID as U
 
+import Shared.Common.Service.Version.VersionMapper
 import Shared.Coordinate.Util.Coordinate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageChangeDTO
@@ -66,7 +68,7 @@ toSimpleDTO'' registryEnabled pkg =
     , createdAt = pkg.createdAt
     }
 
-toDetailDTO :: KnowledgeModelPackage -> Bool -> [RegistryPackage] -> [RegistryOrganization] -> [String] -> Maybe String -> KnowledgeModelPackageDetailDTO
+toDetailDTO :: KnowledgeModelPackage -> Bool -> [RegistryPackage] -> [RegistryOrganization] -> [(U.UUID, String)] -> Maybe String -> KnowledgeModelPackageDetailDTO
 toDetailDTO pkg registryEnabled pkgRs orgRs versionLs registryLink =
   KnowledgeModelPackageDetailDTO
     { uuid = pkg.uuid
@@ -84,7 +86,7 @@ toDetailDTO pkg registryEnabled pkgRs orgRs versionLs registryLink =
     , mergeCheckpointPackageId = pkg.mergeCheckpointPackageId
     , nonEditable = pkg.nonEditable
     , public = pkg.public
-    , versions = L.sort versionLs
+    , versions = map toVersionDTO . L.sortBy (\(_, v1) (_, v2) -> compare v2 v1) $ versionLs
     , remoteLatestVersion =
         case (registryEnabled, selectPackageByOrgIdAndKmId pkg pkgRs) of
           (True, Just pkgR) -> Just $ pkgR.remoteVersion

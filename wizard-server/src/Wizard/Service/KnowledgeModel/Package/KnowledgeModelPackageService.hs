@@ -99,10 +99,10 @@ deletePackage uuid mAllVersions =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getPackageVersions :: KnowledgeModelPackage -> Bool -> AppContextM [String]
+getPackageVersions :: KnowledgeModelPackage -> Bool -> AppContextM [(U.UUID, String)]
 getPackageVersions pkg excludeDeprecatedVersions = do
   allPkgs <- findPackagesByOrganizationIdAndKmId pkg.organizationId pkg.kmId
-  return . fmap (.version) . filter (filterPkg excludeDeprecatedVersions) $ allPkgs
+  return . fmap (\p -> (p.uuid, p.version)) . filter (filterPkg excludeDeprecatedVersions) $ allPkgs
   where
     filterPkg :: Bool -> KnowledgeModelPackage -> Bool
     filterPkg True pkg = pkg.phase == ReleasedKnowledgeModelPackagePhase

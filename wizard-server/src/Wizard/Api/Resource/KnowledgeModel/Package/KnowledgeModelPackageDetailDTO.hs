@@ -4,6 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Common.Api.Resource.Version.VersionDTO
 import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Model.Registry.RegistryOrganization
@@ -24,7 +25,7 @@ data KnowledgeModelPackageDetailDTO = KnowledgeModelPackageDetailDTO
   , mergeCheckpointPackageId :: Maybe Coordinate
   , nonEditable :: Bool
   , public :: Bool
-  , versions :: [String]
+  , versions :: [VersionDTO]
   , remoteLatestVersion :: Maybe String
   , organization :: Maybe RegistryOrganization
   , registryLink :: Maybe String

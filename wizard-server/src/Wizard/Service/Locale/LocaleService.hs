@@ -137,10 +137,10 @@ deleteLocale uuid =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getLocaleVersions :: Locale -> AppContextM [String]
+getLocaleVersions :: Locale -> AppContextM [(U.UUID, String)]
 getLocaleVersions locale = do
   allLocales <- findLocalesByOrganizationIdAndLocaleId locale.organizationId locale.localeId
-  return . fmap (.version) $ allLocales
+  return . fmap (\l -> (l.uuid, l.version)) $ allLocales
 
 checkIfAdminIsDisabled =
   checkIfServerFeatureIsEnabled "Locale Endpoints" (\s -> not s.admin.enabled)

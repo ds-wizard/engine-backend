@@ -2,6 +2,7 @@ module Wizard.Api.Resource.Locale.LocaleDetailJM where
 
 import Data.Aeson
 
+import Shared.Common.Api.Resource.Version.VersionJM ()
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.Locale.LocaleDetailDTO
 import Wizard.Api.Resource.Registry.RegistryOrganizationJM ()
