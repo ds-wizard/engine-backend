@@ -2,7 +2,6 @@ module Wizard.Service.TypeHint.TypeHintService where
 
 import Control.Monad.Except (throwError)
 import Data.Map.Strict as M
-import Network.URI.Encode (encode)
 
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Logger
@@ -27,27 +26,6 @@ import Wizard.Service.Config.Integration.IntegrationConfigService
 import Wizard.Service.KnowledgeModel.Editor.EditorMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Project.ProjectAcl
-
-getLegacyTypeHints :: TypeHintLegacyRequestDTO -> AppContextM [TypeHintLegacyIDTO]
-getLegacyTypeHints reqDto =
-  runInTransaction $ do
-    km <- compileKnowledgeModel reqDto.events reqDto.knowledgeModelPackageUuid []
-    question <- getQuestion km reqDto.questionUuid
-    integration' <- getIntegration km question.integrationUuid
-    case integration' of
-      ApiLegacyIntegration' integration -> do
-        fileIntConfig <- getFileIntegrationConfig integration.iId
-        appIntConfig <- getTenantIntegrationConfig integration.iId
-        let configs = M.union question.variables . M.union appIntConfig $ fileIntConfig
-        let variables = M.insert "q" reqDto.q configs
-        let urlVariables = M.insert "q" (encode reqDto.q) configs
-        eiDtos <- retrieveLegacyTypeHints integration urlVariables variables
-        case eiDtos of
-          Right iDtos -> return iDtos
-          Left error -> do
-            logWarnI _CMP_SERVICE error
-            throwError . UserError $ _ERROR_SERVICE_TYPEHINT__INTEGRATION_RETURNS_ERROR
-      _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION
 
 getTypeHints :: TypeHintRequestDTO -> AppContextM [TypeHintIDTO]
 getTypeHints (KnowledgeModelEditorIntegrationTypeHintRequest' reqDto) =

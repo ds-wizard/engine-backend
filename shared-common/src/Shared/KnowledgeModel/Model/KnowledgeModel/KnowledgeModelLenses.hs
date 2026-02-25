@@ -177,11 +177,9 @@ instance HasUuid' Tag where
 
 instance HasUuid' Integration where
   getUuid (ApiIntegration' entity) = entity.uuid
-  getUuid (ApiLegacyIntegration' entity) = entity.uuid
-  getUuid (WidgetIntegration' entity) = entity.uuid
+  getUuid (PluginIntegration' entity) = entity.uuid
   setUuid (ApiIntegration' entity) newValue = ApiIntegration' $ entity {uuid = newValue}
-  setUuid (ApiLegacyIntegration' entity) newValue = ApiLegacyIntegration' $ entity {uuid = newValue}
-  setUuid (WidgetIntegration' entity) newValue = WidgetIntegration' $ entity {uuid = newValue}
+  setUuid (PluginIntegration' entity) newValue = PluginIntegration' $ entity {uuid = newValue}
 
 instance HasUuid' Metric where
   getUuid entity = entity.uuid
@@ -250,11 +248,9 @@ instance HasAnnotations' Tag where
 
 instance HasAnnotations' Integration where
   getAnnotations (ApiIntegration' entity) = entity.annotations
-  getAnnotations (ApiLegacyIntegration' entity) = entity.annotations
-  getAnnotations (WidgetIntegration' entity) = entity.annotations
+  getAnnotations (PluginIntegration' entity) = entity.annotations
   setAnnotations (ApiIntegration' entity) newValue = ApiIntegration' $ entity {annotations = newValue}
-  setAnnotations (ApiLegacyIntegration' entity) newValue = ApiLegacyIntegration' $ entity {annotations = newValue}
-  setAnnotations (WidgetIntegration' entity) newValue = WidgetIntegration' $ entity {annotations = newValue}
+  setAnnotations (PluginIntegration' entity) newValue = PluginIntegration' $ entity {annotations = newValue}
 
 instance HasAnnotations' Metric where
   getAnnotations entity = entity.annotations
@@ -410,8 +406,6 @@ instance HasVariables' Question (M.Map String String) where
 
 instance HasVariables' Integration [String] where
   getVariables (ApiIntegration' integration) = integration.variables
-  getVariables (ApiLegacyIntegration' integration) = integration.variables
-  getVariables (WidgetIntegration' integration) = integration.variables
+  getVariables (PluginIntegration' integration) = []
   setVariables (ApiIntegration' integration) newValue = ApiIntegration' $ integration {variables = newValue}
-  setVariables (ApiLegacyIntegration' integration) newValue = ApiLegacyIntegration' $ integration {variables = newValue}
-  setVariables (WidgetIntegration' integration) newValue = WidgetIntegration' $ integration {variables = newValue}
+  setVariables (PluginIntegration' integration) _ = PluginIntegration' integration

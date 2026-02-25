@@ -2,6 +2,7 @@ module Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelSM where
 
 import Data.Swagger hiding (Reference, Tag)
 
+import Shared.Common.Api.Resource.Common.AesonSM ()
 import Shared.Common.Api.Resource.Common.MapEntrySM ()
 import Shared.Common.Util.Swagger
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
@@ -154,9 +155,5 @@ instance ToSchema RequestFailedTypeHintResponse where
   declareNamedSchema = toSwagger requestFailedTypeHintResponse1
 
 -- --------------------------------------------------------------------
-instance ToSchema ApiLegacyIntegration where
-  declareNamedSchema = toSwaggerWithType "integrationType" bioPortal
-
--- --------------------------------------------------------------------
-instance ToSchema WidgetIntegration where
-  declareNamedSchema = toSwaggerWithType "integrationType" widgetPortal
+instance ToSchema PluginIntegration where
+  declareNamedSchema = toSwaggerWithType "integrationType" orcidPluginIntegration

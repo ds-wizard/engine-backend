@@ -10,8 +10,7 @@ instance SimpleEventSquash EditIntegrationEvent where
 
   --  --------------------------------------
   isTypeChanged (EditApiIntegrationEvent' oldEvent) (EditApiIntegrationEvent' newEvent) = False
-  isTypeChanged (EditApiLegacyIntegrationEvent' oldEvent) (EditApiLegacyIntegrationEvent' newEvent) = False
-  isTypeChanged (EditWidgetIntegrationEvent' oldEvent) (EditWidgetIntegrationEvent' newEvent) = False
+  isTypeChanged (EditPluginIntegrationEvent' oldEvent) (EditPluginIntegrationEvent' newEvent) = False
   isTypeChanged _ _ = True
 
   --  --------------------------------------
@@ -36,37 +35,14 @@ instance SimpleEventSquash EditIntegrationEvent where
             , testResponse = applyValue oldContent newContent (.testResponse)
             , annotations = applyValue oldContent newContent (.annotations)
             }
-  simpleSquashEvent previousEvent (oldEvent, EditApiLegacyIntegrationEvent' oldContent) (newEvent, EditApiLegacyIntegrationEvent' newContent) =
+  simpleSquashEvent previousEvent (oldEvent, EditPluginIntegrationEvent' oldContent) (newEvent, EditPluginIntegrationEvent' newContent) =
     createSquashedEvent oldEvent newEvent $
       EditIntegrationEvent' $
-        EditApiLegacyIntegrationEvent' $
-          EditApiLegacyIntegrationEvent
-            { iId = applyValue oldContent newContent (.iId)
-            , name = applyValue oldContent newContent (.name)
-            , variables = applyValue oldContent newContent (.variables)
-            , logo = applyValue oldContent newContent (.logo)
-            , requestMethod = applyValue oldContent newContent (.requestMethod)
-            , requestUrl = applyValue oldContent newContent (.requestUrl)
-            , requestHeaders = applyValue oldContent newContent (.requestHeaders)
-            , requestBody = applyValue oldContent newContent (.requestBody)
-            , requestEmptySearch = applyValue oldContent newContent (.requestEmptySearch)
-            , responseListField = applyValue oldContent newContent (.responseListField)
-            , responseItemId = applyValue oldContent newContent (.responseItemId)
-            , responseItemTemplate = applyValue oldContent newContent (.responseItemTemplate)
-            , itemUrl = applyValue oldContent newContent (.itemUrl)
-            , annotations = applyValue oldContent newContent (.annotations)
-            }
-  simpleSquashEvent previousEvent (oldEvent, EditWidgetIntegrationEvent' oldContent) (newEvent, EditWidgetIntegrationEvent' newContent) =
-    createSquashedEvent oldEvent newEvent $
-      EditIntegrationEvent' $
-        EditWidgetIntegrationEvent' $
-          EditWidgetIntegrationEvent
-            { iId = applyValue oldContent newContent (.iId)
-            , name = applyValue oldContent newContent (.name)
-            , variables = applyValue oldContent newContent (.variables)
-            , logo = applyValue oldContent newContent (.logo)
-            , widgetUrl = applyValue oldContent newContent (.widgetUrl)
-            , itemUrl = applyValue oldContent newContent (.itemUrl)
+        EditPluginIntegrationEvent' $
+          EditPluginIntegrationEvent
+            { pluginUuid = applyValue oldContent newContent (.pluginUuid)
+            , pluginIntegrationId = applyValue oldContent newContent (.pluginIntegrationId)
+            , pluginIntegrationSettings = applyValue oldContent newContent (.pluginIntegrationSettings)
             , annotations = applyValue oldContent newContent (.annotations)
             }
   simpleSquashEvent previousEvent oldEvent newEvent = error $ "Simple squash event is not applicable for " <> show (oldEvent, newEvent) <> " in " <> show previousEvent

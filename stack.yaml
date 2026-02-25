@@ -35,7 +35,6 @@ extra-deps:
   - microlens-pro-0.2.0.2
   - base64-1.0
   - fsutils-0.1.2
-  - ginger-0.10.5.2
   - hashable-1.5.0.0
   - haskell-src-meta-0.8.14
   - html-entities-1.1.4.7

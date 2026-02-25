@@ -82,9 +82,8 @@ globalKmPackageEvents =
     , a_km1_phs3
     , a_km1_tds
     , a_km1_tbi
-    , a_km1_iop
-    , a_km1_ibp
-    , a_km1_iwp
+    , a_km1_ir
+    , a_km1_io
     , a_km1_rc1
     , a_km1_rc1_rp1
     , a_km1_rc1_rp2
@@ -223,9 +222,7 @@ germanyKmPackageEvents =
     , a_km1_tds
     , a_km1_tbi
     , a_km1_ir
-    , a_km1_iop
-    , a_km1_ibp
-    , a_km1_iwp
+    , a_km1_io
     , a_km1_rc1
     , a_km1_rc1_rp1
     , a_km1_rc1_rp2

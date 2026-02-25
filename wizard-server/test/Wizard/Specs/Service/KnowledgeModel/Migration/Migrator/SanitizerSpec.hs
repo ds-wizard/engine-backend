@@ -51,7 +51,7 @@ sanitizerSpec appContext =
           do
             let kmChapterUuids = fmap (.uuid) [chapter3, chapter2]
             let kmTagUuids = (.uuid) <$> [tagBioinformatics]
-            let kmIntegrationUuids = [widgetPortal.uuid, bioPortal.uuid]
+            let kmIntegrationUuids = [orcidPluginIntegration.uuid, repositoryApi.uuid]
             let (EditKnowledgeModelEvent' eventContent) = e_km1.content
             let editedEvent =
                   e_km1
@@ -73,7 +73,7 @@ sanitizerSpec appContext =
             resEvent.uuid `shouldNotBe` e_km1.uuid
             resEventContent.chapterUuids `shouldBe` ChangedValue [chapter3.uuid, chapter2.uuid, chapter1.uuid]
             resEventContent.tagUuids `shouldBe` ChangedValue [tagBioinformatics.uuid, tagDataScience.uuid]
-            resEventContent.integrationUuids `shouldBe` ChangedValue [widgetPortal.uuid, bioPortal.uuid, ontologyPortal.uuid]
+            resEventContent.integrationUuids `shouldBe` ChangedValue [orcidPluginIntegration.uuid, repositoryApi.uuid]
         it "Event - all KM uuids exists, new added in event but without existing in KM" $
           -- Given:
           do
@@ -87,9 +87,9 @@ sanitizerSpec appContext =
                     ++ [fromJust . U.fromString $ "b28d289b-e373-49a2-9c91-b153cb62d894"]
                     ++ [tagDataScience.uuid]
             let kmIntegrationUuids =
-                  [bioPortal.uuid]
+                  [orcidPluginIntegration.uuid]
                     ++ [fromJust . U.fromString $ "eb75a1a7-2760-446a-9a44-17b8f38679bf"]
-                    ++ [widgetPortal.uuid, ontologyPortal.uuid]
+                    ++ [orcidPluginIntegration.uuid, repositoryApi.uuid]
             let (EditKnowledgeModelEvent' eventContent) = e_km1.content
             let editedEvent =
                   e_km1
@@ -111,7 +111,7 @@ sanitizerSpec appContext =
             resEvent.uuid `shouldNotBe` e_km1.uuid
             resEventContent.chapterUuids `shouldBe` ChangedValue [chapter3.uuid, chapter2.uuid, chapter1.uuid]
             resEventContent.tagUuids `shouldBe` ChangedValue [tagBioinformatics.uuid, tagDataScience.uuid]
-            resEventContent.integrationUuids `shouldBe` ChangedValue [bioPortal.uuid, widgetPortal.uuid, ontologyPortal.uuid]
+            resEventContent.integrationUuids `shouldBe` ChangedValue [orcidPluginIntegration.uuid, repositoryApi.uuid]
       -- -------------------------------------------------------------
       -- -------------------------------------------------------------
       describe "Sanitize: EditChapterEvent" $ do

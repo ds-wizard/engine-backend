@@ -32,7 +32,6 @@ defaultTenantConfig =
     , dashboardAndLoginScreen = defaultDashboardAndLoginScreen
     , lookAndFeel = defaultLookAndFeel
     , registry = defaultRegistry
-    , knowledgeModel = defaultKnowledgeModel
     , project = defaultProject
     , submission = defaultSubmission
     , owl = defaultOwl
@@ -43,7 +42,7 @@ defaultTenantConfig =
     }
 
 defaultTenantConfigChangeDto :: TenantConfigChangeDTO
-defaultTenantConfigChangeDto = toChangeDTO defaultOrganizationChangeDto defaultAuthenticationChangeDto defaultPrivacyAndSupportChangeDto defaultDashboardAndLoginScreenChangeDto defaultLookAndFeelChangeDto defaultRegistryChangeDto defaultKnowledgeModelChangeDto defaultProjectChangeDto defaultSubmissionChangeDto defaultFeaturesChangeDto
+defaultTenantConfigChangeDto = toChangeDTO defaultOrganizationChangeDto defaultAuthenticationChangeDto defaultPrivacyAndSupportChangeDto defaultDashboardAndLoginScreenChangeDto defaultLookAndFeelChangeDto defaultRegistryChangeDto defaultProjectChangeDto defaultSubmissionChangeDto defaultFeaturesChangeDto
 
 defaultOrganization :: TenantConfigOrganization
 defaultOrganization = fromOrganizationChangeDTO defaultOrganizationChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
@@ -143,22 +142,6 @@ defaultRegistryChangeDto =
   TenantConfigRegistryChangeDTO
     { enabled = True
     , token = "GlobalToken"
-    }
-
-defaultKnowledgeModel :: TenantConfigKnowledgeModel
-defaultKnowledgeModel = fromKnowledgeModelChangeDTO defaultKnowledgeModelChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
-
-defaultKnowledgeModelEncrypted :: TenantConfigKnowledgeModel
-defaultKnowledgeModelEncrypted = process defaultSecret defaultKnowledgeModel
-
-defaultKnowledgeModelChangeDto :: TenantConfigKnowledgeModelChangeDTO
-defaultKnowledgeModelChangeDto =
-  TenantConfigKnowledgeModelChangeDTO
-    { integrationConfig =
-        "ontologyPortal: \n\
-        \  path: ontology-portal.json \n\
-        \bioPortal: \n\
-        \  path: bio-portal.json "
     }
 
 defaultProject :: TenantConfigProject
