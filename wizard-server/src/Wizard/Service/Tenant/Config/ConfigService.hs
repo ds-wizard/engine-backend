@@ -9,7 +9,6 @@ import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Tenant.Config.TenantConfigAuthenticationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigDashboardAndLoginScreenDAO
-import Wizard.Database.DAO.Tenant.Config.TenantConfigKnowledgeModelDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
@@ -37,12 +36,11 @@ getCurrentTenantConfigDto = do
   tcDashboardAndLoginScreen <- findTenantConfigDashboardAndLoginScreen
   tcLookAndFeel <- findTenantConfigLookAndFeel
   tcRegistry <- getCurrentTenantConfigRegistry
-  tcKnowledgeModel <- getCurrentTenantConfigKnowledgeModel
   tcProject <- getCurrentTenantConfigProject
   tcSubmission <- findTenantConfigSubmission
   tcFeatures <- findTenantConfigFeatures
   tcOwl <- findTenantConfigOwl
-  return $ toTenantConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcKnowledgeModel tcProject tcSubmission tcFeatures tcOwl
+  return $ toTenantConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcProject tcSubmission tcFeatures tcOwl
 
 modifyTenantConfigDto :: TenantConfigChangeDTO -> AppContextM TenantConfig
 modifyTenantConfigDto reqDto =
@@ -74,10 +72,6 @@ modifyTenantConfigDto reqDto =
     tcRegistry <- getCurrentTenantConfigRegistry
     let tcRegistryUpdated = fromRegistryChangeDTO reqDto.registry tcRegistry.tenantUuid tcRegistry.createdAt now
     modifyTenantConfigRegistry tcRegistryUpdated
-    -- KnowledgeModel
-    tcKnowledgeModelUpdated <- getCurrentTenantConfigKnowledgeModel
-    let tcKnowledgeModelUpdatedUpdated = fromKnowledgeModelChangeDTO reqDto.knowledgeModel tcKnowledgeModelUpdated.tenantUuid tcKnowledgeModelUpdated.createdAt now
-    modifyTenantConfigKnowledgeModel tcKnowledgeModelUpdatedUpdated
     -- Project
     tcProject <- getCurrentTenantConfigProject
     let tcProjectUpdated = fromProjectChangeDTO reqDto.project tcProject.tenantUuid tcProject.createdAt now
@@ -92,7 +86,7 @@ modifyTenantConfigDto reqDto =
     updateTenantConfigFeatures tcFeaturesUpdated
     -- Owl
     tcOwl <- findTenantConfigOwl
-    return $ toTenantConfig tcOrganizationUpdated tcAuthenticationUpdated tcPrivacyAndSupportUpdated tcDashboardAndLoginScreenUpdated tcLookAndFeelUpdated tcRegistryUpdated tcKnowledgeModelUpdated tcProjectUpdated tcSubmissionUpdated tcFeaturesUpdated tcOwl
+    return $ toTenantConfig tcOrganizationUpdated tcAuthenticationUpdated tcPrivacyAndSupportUpdated tcDashboardAndLoginScreenUpdated tcLookAndFeelUpdated tcRegistryUpdated tcProjectUpdated tcSubmissionUpdated tcFeaturesUpdated tcOwl
 
 getCurrentTenantConfigAuthentication :: AppContextM TenantConfigAuthentication
 getCurrentTenantConfigAuthentication = do
@@ -133,26 +127,6 @@ modifyTenantConfigRegistry tcRegistry =
     let encryptedUpdatedTcRegistry = process serverConfig.general.secret tcRegistry
     updateTenantConfigRegistry encryptedUpdatedTcRegistry
     return tcRegistry
-
-getCurrentTenantConfigKnowledgeModel :: AppContextM TenantConfigKnowledgeModel
-getCurrentTenantConfigKnowledgeModel = do
-  serverConfig <- asks serverConfig
-  encryptedTcKnowledgeModel <- findTenantConfigKnowledgeModel
-  return $ process serverConfig.general.secret encryptedTcKnowledgeModel
-
-getTenantConfigKnowledgeModelByUuid :: U.UUID -> AppContextM TenantConfigKnowledgeModel
-getTenantConfigKnowledgeModelByUuid tenantUuid = do
-  serverConfig <- asks serverConfig
-  encryptedTcKnowledgeModel <- findTenantConfigKnowledgeModelByUuid tenantUuid
-  return $ process serverConfig.general.secret encryptedTcKnowledgeModel
-
-modifyTenantConfigKnowledgeModel :: TenantConfigKnowledgeModel -> AppContextM TenantConfigKnowledgeModel
-modifyTenantConfigKnowledgeModel tcKnowledgeModel =
-  runInTransaction $ do
-    serverConfig <- asks serverConfig
-    let encryptedUpdatedTcKnowledgeModel = process serverConfig.general.secret tcKnowledgeModel
-    updateTenantConfigKnowledgeModel encryptedUpdatedTcKnowledgeModel
-    return tcKnowledgeModel
 
 getCurrentTenantConfigProject :: AppContextM TenantConfigProject
 getCurrentTenantConfigProject = do

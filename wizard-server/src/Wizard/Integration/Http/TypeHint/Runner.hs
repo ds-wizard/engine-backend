@@ -1,5 +1,4 @@
 module Wizard.Integration.Http.TypeHint.Runner (
-  retrieveLegacyTypeHints,
   retrieveTypeHints,
   testRetrieveTypeHints,
 ) where
@@ -14,10 +13,6 @@ import Wizard.Integration.Http.TypeHint.ResponseMapper
 import Wizard.Integration.Resource.TypeHint.TypeHintIDTO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-
-retrieveLegacyTypeHints :: ApiLegacyIntegration -> M.Map String String -> M.Map String String -> AppContextM (Either String [TypeHintLegacyIDTO])
-retrieveLegacyTypeHints intConfig encodedVariables variables =
-  runRequest' (toRetrieveLegacyTypeHintsRequest intConfig encodedVariables variables) (toRetrieveLegacyTypeHintsResponse intConfig)
 
 retrieveTypeHints :: ApiIntegration -> M.Map String String -> M.Map String String -> String -> AppContextM (Either String [TypeHintIDTO])
 retrieveTypeHints integration variables secrets q = do

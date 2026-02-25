@@ -37,7 +37,6 @@ import Wizard.Database.DAO.Registry.RegistryTemplateDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigAuthenticationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigDashboardAndLoginScreenDAO
-import Wizard.Database.DAO.Tenant.Config.TenantConfigKnowledgeModelDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
@@ -189,7 +188,6 @@ resetDB appContext = do
   runInContext deleteTenantConfigFeatures appContext
   runInContext deleteTenantConfigSubmissions appContext
   runInContext deleteTenantConfigProjects appContext
-  runInContext deleteTenantConfigKnowledgeModels appContext
   runInContext deleteTenantConfigRegistries appContext
   runInContext deleteTenantConfigLookAndFeels appContext
   runInContext deleteTenantConfigDashboardAndLoginScreens appContext
@@ -239,7 +237,6 @@ resetDB appContext = do
   runInContext (insertTenantConfigLookAndFeel defaultLookAndFeel) appContext
   runInContext (insertTenantConfigLookAndFeelCustomMenuLink defaultLookAndFeelCustomLink) appContext
   runInContext (insertTenantConfigRegistry defaultRegistryEncrypted) appContext
-  runInContext (insertTenantConfigKnowledgeModel defaultKnowledgeModelEncrypted) appContext
   runInContext (insertTenantConfigProject defaultProjectEncrypted) appContext
   runInContext (insertTenantConfigSubmission (defaultSubmission {services = []})) appContext
   runInContext (insertTenantConfigFeatures defaultFeatures) appContext

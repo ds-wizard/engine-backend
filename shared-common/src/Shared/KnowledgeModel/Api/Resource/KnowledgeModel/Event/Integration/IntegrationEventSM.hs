@@ -15,11 +15,8 @@ instance ToSchema AddIntegrationEvent
 instance ToSchema AddApiIntegrationEvent where
   declareNamedSchema = toSwaggerWithType "eventType" a_km1_ir
 
-instance ToSchema AddApiLegacyIntegrationEvent where
-  declareNamedSchema = toSwaggerWithType "eventType" a_km1_iop
-
-instance ToSchema AddWidgetIntegrationEvent where
-  declareNamedSchema = toSwaggerWithType "eventType" a_km1_iwp
+instance ToSchema AddPluginIntegrationEvent where
+  declareNamedSchema = toSwaggerWithType "eventType" a_km1_io
 
 -- --------------------------------------------
 -- --------------------------------------------
@@ -28,13 +25,10 @@ instance ToSchema EditIntegrationEvent
 instance ToSchema EditApiIntegrationEvent where
   declareNamedSchema = toSwaggerWithType "eventType" e_km1_ir
 
-instance ToSchema EditApiLegacyIntegrationEvent where
-  declareNamedSchema = toSwaggerWithType "eventType" e_km1_iop
-
-instance ToSchema EditWidgetIntegrationEvent where
-  declareNamedSchema = toSwaggerWithType "eventType" e_km1_iwp
+instance ToSchema EditPluginIntegrationEvent where
+  declareNamedSchema = toSwaggerWithType "eventType" e_km1_io
 
 -- --------------------------------------------
 -- --------------------------------------------
 instance ToSchema DeleteIntegrationEvent where
-  declareNamedSchema = toSwaggerWithType "eventType" d_km1_iop
+  declareNamedSchema = toSwaggerWithType "eventType" d_km1_ir

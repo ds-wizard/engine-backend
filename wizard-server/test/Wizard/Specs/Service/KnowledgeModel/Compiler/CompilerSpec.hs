@@ -426,36 +426,38 @@ compilerSpec =
     -- ---------------
     describe "Apply: Integration Events" $ do
       it "Apply: AddIntegrationEvent" $ do
-        let (Right computed) = compile (Just km1WithoutChaptersAndTagsAndIntegrations) [a_km1_iop]
+        let (Right computed) = compile (Just km1WithoutChaptersAndTagsAndIntegrations) [a_km1_ir]
         let expected =
               km1WithoutChaptersAndTagsAndIntegrations
-                { integrationUuids = [ontologyPortal.uuid]
+                { integrationUuids = [repositoryApi.uuid]
                 , entities =
                     km1WithoutChaptersAndTagsAndIntegrations.entities
-                      { integrations = toMap [ontologyPortal']
+                      { integrations = toMap [repositoryApi']
                       }
                 }
         computed `shouldBe` expected
       it "Apply: EditIntegrationEvent" $ do
-        let (Right computed) = compile (Just km1WithQ4) [e_km1_iop]
+        let (Right computed) = compile (Just km1WithQ4) [e_km1_ir]
         let expected =
               putInQuestionsM q4_it1_q6_aYes_fuq5VariablesEdited.uuid q4_it1_q6_aYes_fuq5VariablesEdited'
                 . putInQuestionsM question9VariablesEdited.uuid question9VariablesEdited'
+                . putInQuestionsM question15VariablesEdited.uuid question15VariablesEdited'
                 $ km1WithQ4
                   { entities =
                       km1WithQ4.entities
-                        { integrations = toMap [repositoryApi', ontologyPortalEdited', bioPortal', widgetPortal']
+                        { integrations = toMap [repositoryApiEdited', orcidPluginIntegration']
                         }
                   }
         computed `shouldBe` expected
       it "Apply: DeleteIntegrationEvent" $ do
-        let (Right computed) = compile (Just km1WithQ4) [d_km1_iop]
+        let (Right computed) = compile (Just km1WithQ4) [d_km1_ir]
         let expected =
               putInQuestionsM q4_it1_q6_aYes_fuq5ConvertedToValue.uuid q4_it1_q6_aYes_fuq5ConvertedToValue'
                 . putInQuestionsM question9ConvertedToValue.uuid question9ConvertedToValue'
+                . putInQuestionsM question15ConvertedToValue.uuid question15ConvertedToValue'
                 $ km1WithQ4
-                  { integrationUuids = [repositoryApi.uuid, bioPortal.uuid, widgetPortal.uuid]
-                  , entities = km1WithQ4.entities {integrations = toMap [repositoryApi', bioPortal', widgetPortal']}
+                  { integrationUuids = [orcidPluginIntegration.uuid]
+                  , entities = km1WithQ4.entities {integrations = toMap [orcidPluginIntegration']}
                   }
         computed `shouldBe` expected
     -- ---------------
@@ -581,9 +583,7 @@ compilerSpec =
             , a_km1_tds
             , a_km1_tbi
             , a_km1_ir
-            , a_km1_iop
-            , a_km1_ibp
-            , a_km1_iwp
+            , a_km1_io
             , a_km1_rc1
             , a_km1_rc1_rp1
             , a_km1_rc1_rp2

@@ -334,7 +334,7 @@ q4_it1_q6_aYes_followUpQuestion5 =
     , tagUuids = []
     , referenceUuids = []
     , expertUuids = []
-    , integrationUuid = FI.ontologyPortal.uuid
+    , integrationUuid = FI.repositoryApi.uuid
     , variables = Map.fromList [("domain", "biology"), ("country", "be")]
     }
 
@@ -353,7 +353,7 @@ q4_it1_q6_aYes_fuq5VariablesEdited =
     , referenceUuids = q4_it1_q6_aYes_followUpQuestion5.referenceUuids
     , expertUuids = q4_it1_q6_aYes_followUpQuestion5.expertUuids
     , integrationUuid = q4_it1_q6_aYes_followUpQuestion5.integrationUuid
-    , variables = Map.fromList [("domain", "biology"), ("language", "")]
+    , variables = Map.fromList [("country", "be"), ("domain", "biology"), ("language", "")]
     }
 
 q4_it1_q6_aYes_fuq5ConvertedToValue' :: Question

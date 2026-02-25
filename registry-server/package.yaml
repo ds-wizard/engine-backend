@@ -106,7 +106,6 @@ tests:
     - case-insensitive
     - containers
     - data-default
-    - ginger
     - http-types
     - mtl
     - monad-control

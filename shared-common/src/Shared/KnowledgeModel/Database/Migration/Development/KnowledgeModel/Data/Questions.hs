@@ -218,7 +218,7 @@ question4WithNewType =
     , tagUuids = question4.tagUuids
     , referenceUuids = question4.referenceUuids
     , expertUuids = question4.expertUuids
-    , integrationUuid = ontologyPortal.uuid
+    , integrationUuid = repositoryApi.uuid
     , variables = Map.fromList [("domain", "biology"), ("country", "nl")]
     }
 
@@ -374,7 +374,7 @@ question9 =
     , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
-    , integrationUuid = ontologyPortal.uuid
+    , integrationUuid = repositoryApi.uuid
     , variables = Map.fromList [("domain", "biology"), ("country", "nl")]
     }
 
@@ -411,7 +411,7 @@ question9VariablesEdited =
     , referenceUuids = question9.referenceUuids
     , expertUuids = question9.expertUuids
     , integrationUuid = question9.integrationUuid
-    , variables = Map.fromList [("domain", "biology"), ("language", "")]
+    , variables = Map.fromList [("country", "nl"), ("domain", "biology"), ("language", "")]
     }
 
 question9WithNewType' :: Question
@@ -464,7 +464,7 @@ question10 =
     , tagUuids = [tagBioinformatics.uuid]
     , referenceUuids = []
     , expertUuids = []
-    , integrationUuid = bioPortal.uuid
+    , integrationUuid = orcidPluginIntegration.uuid
     , variables = Map.fromList [("domain", "legal"), ("keyword", "mammal")]
     }
 
@@ -621,4 +621,40 @@ question15 =
     , expertUuids = []
     , integrationUuid = repositoryApi.uuid
     , variables = Map.fromList [("domain", "biology"), ("country", "nl")]
+    }
+
+question15VariablesEdited' :: Question
+question15VariablesEdited' = IntegrationQuestion' question15VariablesEdited
+
+question15VariablesEdited :: IntegrationQuestion
+question15VariablesEdited =
+  IntegrationQuestion
+    { uuid = question15.uuid
+    , title = question15.title
+    , text = question15.text
+    , requiredPhaseUuid = question15.requiredPhaseUuid
+    , annotations = question15.annotations
+    , tagUuids = question15.tagUuids
+    , referenceUuids = question15.referenceUuids
+    , expertUuids = question15.expertUuids
+    , integrationUuid = question15.integrationUuid
+    , variables = Map.fromList [("country", "nl"), ("domain", "biology"), ("language", "")]
+    }
+
+question15ConvertedToValue' :: Question
+question15ConvertedToValue' = ValueQuestion' question15ConvertedToValue
+
+question15ConvertedToValue :: ValueQuestion
+question15ConvertedToValue =
+  ValueQuestion
+    { uuid = question15.uuid
+    , title = question15.title
+    , text = question15.text
+    , requiredPhaseUuid = question15.requiredPhaseUuid
+    , annotations = question15.annotations
+    , tagUuids = question15.tagUuids
+    , referenceUuids = question15.referenceUuids
+    , expertUuids = question15.expertUuids
+    , valueType = StringQuestionValueType
+    , validations = []
     }
