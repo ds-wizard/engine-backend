@@ -56,7 +56,6 @@ import Wizard.Specs.API.User.APISpec
 import Wizard.Specs.API.User.News.APISpec
 import Wizard.Specs.API.User.Tour.APISpec
 import Wizard.Specs.API.UserGroup.APISpec
-import Wizard.Specs.Integration.Http.TypeHint.ResponseMapperSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
 import Wizard.Specs.Service.DocumentTemplate.DocumentTemplateUtilSpec
 import Wizard.Specs.Service.KnowledgeModel.Compiler.CompilerSpec
@@ -152,9 +151,6 @@ main =
     ( \baseContext appContext ->
         hspec $ do
           describe "UNIT TESTING" $ do
-            describe "INTEGRATION" $
-              describe "Http" $
-                describe "TypeHint" typeHintResponseMapperSpec
             describe "SERVICE" $ do
               describe "Document Template" documentTemplateUtilSpec
               describe "KnowledgeModel" $ do

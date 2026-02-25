@@ -20,7 +20,6 @@ import Wizard.Api.Resource.Tenant.TenantDetailDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Tenant.Config.TenantConfigAuthenticationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigDashboardAndLoginScreenDAO
-import Wizard.Database.DAO.Tenant.Config.TenantConfigKnowledgeModelDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
@@ -152,7 +151,6 @@ createConfig uuid now = do
     insertTenantConfigDashboardAndLoginScreen (defaultDashboardAndLoginScreen {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigDashboardAndLoginScreen)
     insertTenantConfigLookAndFeel (defaultLookAndFeel {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigLookAndFeel)
     insertTenantConfigRegistry (defaultRegistry {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigRegistry)
-    insertTenantConfigKnowledgeModel (defaultKnowledgeModel {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigKnowledgeModel)
     insertTenantConfigProject (defaultProject {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigProject)
     insertTenantConfigSubmission (defaultSubmission {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigSubmission)
     insertTenantConfigMail (defaultMail {tenantUuid = uuid, createdAt = now, updatedAt = now})

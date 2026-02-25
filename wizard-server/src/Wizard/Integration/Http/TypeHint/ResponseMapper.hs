@@ -1,5 +1,4 @@
 module Wizard.Integration.Http.TypeHint.ResponseMapper (
-  toRetrieveLegacyTypeHintsResponse,
   toRetrieveTypeHintsResponse,
   toTypeHintTestResponse,
   toTypeHintTestResponseError,
@@ -11,7 +10,6 @@ import Data.Aeson
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as BSL
 import Data.Either (rights)
-import qualified Data.HashMap.Strict as HM
 import Data.List (lookup)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
@@ -23,36 +21,10 @@ import Network.HTTP.Types.Status (statusCode)
 import Prelude hiding (lookup)
 
 import Shared.Common.Integration.Http.Common.ResponseMapper
-import Shared.Common.Model.Error.Error
-import Shared.Common.Util.Ginger
 import Shared.Common.Util.String (splitOn)
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Integration.Resource.TypeHint.TypeHintIDTO
 import Wizard.Util.Jinja (renderJinjaBatch)
-
-toRetrieveLegacyTypeHintsResponse :: ApiLegacyIntegration -> Response BSL.ByteString -> Either String [TypeHintLegacyIDTO]
-toRetrieveLegacyTypeHintsResponse intConfig response =
-  case extractResponseBody response >>= extractNestedField listField >>= convertToArray >>= mapRecords of
-    Right dto -> Right dto
-    Left error -> Left . show $ error
-  where
-    listField =
-      case intConfig.responseListField of
-        Just responseListField -> splitOn "." responseListField
-        Nothing -> []
-    mapRecords :: [Value] -> Either AppError [TypeHintLegacyIDTO]
-    mapRecords = Right . rights . fmap mapRecord
-    mapRecord :: Value -> Either String TypeHintLegacyIDTO
-    mapRecord record = do
-      let contextMap = HM.fromList [("item", record)]
-      itemId <-
-        case intConfig.responseItemId of
-          Just responseItemId -> do
-            result <- renderEither responseItemId contextMap
-            Right . Just . T.unpack $ result
-          Nothing -> Right Nothing
-      itemTemplate <- renderEither intConfig.responseItemTemplate contextMap
-      Right $ TypeHintLegacyIDTO {intId = itemId, name = T.unpack itemTemplate}
 
 toRetrieveTypeHintsResponse :: ApiIntegration -> Response BSL.ByteString -> IO (Either String [TypeHintIDTO])
 toRetrieveTypeHintsResponse intConfig response = do

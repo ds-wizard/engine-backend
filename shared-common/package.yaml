@@ -41,7 +41,6 @@ library:
   - directory
   - exceptions
   - fsutils
-  - ginger
   - hashable
   - http-client
   - http-client-tls

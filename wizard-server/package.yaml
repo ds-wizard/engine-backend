@@ -127,7 +127,6 @@ tests:
     - case-insensitive
     - containers
     - data-default
-    - ginger
     - http-client
     - http-types
     - jwt

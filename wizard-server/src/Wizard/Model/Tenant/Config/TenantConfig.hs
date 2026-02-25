@@ -20,7 +20,6 @@ data TenantConfig = TenantConfig
   , dashboardAndLoginScreen :: TenantConfigDashboardAndLoginScreen
   , lookAndFeel :: TenantConfigLookAndFeel
   , registry :: TenantConfigRegistry
-  , knowledgeModel :: TenantConfigKnowledgeModel
   , project :: TenantConfigProject
   , submission :: TenantConfigSubmission
   , features :: TenantConfigFeatures
@@ -188,19 +187,6 @@ instance Eq TenantConfigRegistry where
     a.tenantUuid == b.tenantUuid
       && a.enabled == b.enabled
       && a.token == b.token
-
-data TenantConfigKnowledgeModel = TenantConfigKnowledgeModel
-  { tenantUuid :: U.UUID
-  , integrationConfig :: String
-  , createdAt :: UTCTime
-  , updatedAt :: UTCTime
-  }
-  deriving (Generic, Show)
-
-instance Eq TenantConfigKnowledgeModel where
-  a == b =
-    a.tenantUuid == b.tenantUuid
-      && a.integrationConfig == b.integrationConfig
 
 data TenantConfigProject = TenantConfigProject
   { tenantUuid :: U.UUID

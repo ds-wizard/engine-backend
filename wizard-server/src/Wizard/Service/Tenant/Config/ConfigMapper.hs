@@ -26,12 +26,11 @@ toChangeDTO
   -> TenantConfigDashboardAndLoginScreenChangeDTO
   -> TenantConfigLookAndFeelChangeDTO
   -> TenantConfigRegistryChangeDTO
-  -> TenantConfigKnowledgeModelChangeDTO
   -> TenantConfigProjectChangeDTO
   -> TenantConfigSubmissionChangeDTO
   -> TenantConfigFeaturesChangeDTO
   -> TenantConfigChangeDTO
-toChangeDTO organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry knowledgeModel project submission features = TenantConfigChangeDTO {..}
+toChangeDTO organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry project submission features = TenantConfigChangeDTO {..}
 
 toSubmissionServiceSimple :: TenantConfigSubmissionService -> TenantConfigSubmissionServiceSimple
 toSubmissionServiceSimple config =
@@ -48,13 +47,12 @@ toTenantConfig
   -> TenantConfigDashboardAndLoginScreen
   -> TenantConfigLookAndFeel
   -> TenantConfigRegistry
-  -> TenantConfigKnowledgeModel
   -> TenantConfigProject
   -> TenantConfigSubmission
   -> TenantConfigFeatures
   -> TenantConfigOwl
   -> TenantConfig
-toTenantConfig organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry knowledgeModel project submission features owl =
+toTenantConfig organization authentication privacyAndSupport dashboardAndLoginScreen lookAndFeel registry project submission features owl =
   let uuid = organization.tenantUuid
       mailConfigUuid = Nothing
       createdAt = organization.createdAt
@@ -83,9 +81,6 @@ fromDashboardAndLoginScreenChangeDTO a@TenantConfigDashboardAndLoginScreenChange
 
 fromRegistryChangeDTO :: TenantConfigRegistryChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigRegistry
 fromRegistryChangeDTO TenantConfigRegistryChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigRegistry {..}
-
-fromKnowledgeModelChangeDTO :: TenantConfigKnowledgeModelChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigKnowledgeModel
-fromKnowledgeModelChangeDTO dto@TenantConfigKnowledgeModelChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigKnowledgeModel {..}
 
 fromProjectChangeDTO :: TenantConfigProjectChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigProject
 fromProjectChangeDTO TenantConfigProjectChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigProject {..}
