@@ -65,6 +65,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0060_knowledgeMo
 import qualified Wizard.Database.Migration.Production.Migration_0061_news.Migration as M_0061
 import qualified Wizard.Database.Migration.Production.Migration_0062_metamodelFix.Migration as M_0062
 import qualified Wizard.Database.Migration.Production.Migration_0063_plugins.Migration as M_0063
+import qualified Wizard.Database.Migration.Production.Migration_0064_prjTmpPerm.Migration as M_0064
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -131,4 +132,5 @@ migrationDefinitions =
   , M_0061.definition
   , M_0062.definition
   , M_0063.definition
+  , M_0064.definition
   ]
