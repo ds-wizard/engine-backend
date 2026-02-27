@@ -10,7 +10,7 @@ import Database.PostgreSQL.Simple
 
 definition = (meta, migrate)
 
-meta = MigrationMeta {mmNumber = 64, mmName = "Switch from ID to UUID", mmDescription = "Switch from ID to UUID for knowledge models and document templates"}
+meta = MigrationMeta {mmNumber = 65, mmName = "Switch from ID to UUID", mmDescription = "Switch from ID to UUID for knowledge models and document templates"}
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
