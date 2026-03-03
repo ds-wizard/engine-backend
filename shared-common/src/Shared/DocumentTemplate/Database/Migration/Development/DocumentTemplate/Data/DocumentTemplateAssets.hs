@@ -12,8 +12,8 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 assetLogo :: DocumentTemplateAsset
 assetLogo =
   DocumentTemplateAsset
-    { documentTemplateId = wizardDocumentTemplate.tId
-    , uuid = u' "6c367648-9b60-4307-93b2-0851938adee0"
+    { documentTemplateUuid = wizardDocumentTemplate.uuid
+    , uuid = u' "601141ac-a38c-445e-bbe1-ff2f4637355c"
     , fileName = "text.txt"
     , contentType = "text/plain"
     , fileSize = 5 * 1024

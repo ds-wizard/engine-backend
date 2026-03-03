@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.DocumentTemplateDraft.Asset.List_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -14,12 +15,11 @@ type List_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "documentTemplateUuid" U.UUID
     :> "assets"
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] [DocumentTemplateAssetDTO])
 
-list_GET
-  :: Maybe String -> Maybe String -> String -> BaseContextM (Headers '[Header "x-trace-uuid" String] [DocumentTemplateAssetDTO])
-list_GET mTokenHeader mServerUrl tmlId =
+list_GET :: Maybe String -> Maybe String -> U.UUID -> BaseContextM (Headers '[Header "x-trace-uuid" String] [DocumentTemplateAssetDTO])
+list_GET mTokenHeader mServerUrl dtUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService NoTransaction $ addTraceUuidHeader =<< getAssets tmlId
+    runInAuthService NoTransaction $ addTraceUuidHeader =<< getAssets dtUuid

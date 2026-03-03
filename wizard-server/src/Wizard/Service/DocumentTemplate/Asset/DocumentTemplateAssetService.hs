@@ -22,16 +22,16 @@ import Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetMapper
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Tenant.Limit.LimitService
 
-getAssets :: String -> AppContextM [DocumentTemplateAssetDTO]
-getAssets tmlId = do
+getAssets :: U.UUID -> AppContextM [DocumentTemplateAssetDTO]
+getAssets dtUuid = do
   checkPermission _DOC_TML_WRITE_PERM
-  assets <- findAssetsByDocumentTemplateId tmlId
+  assets <- findAssetsByDocumentTemplateUuid dtUuid
   now <- liftIO getCurrentTime
   traverse
     ( \asset -> do
         let expirationInSeconds = 60
         let urlExpiration = addUTCTime (realToFrac expirationInSeconds) now
-        url <- presignGetAssetUrl asset.documentTemplateId asset.uuid expirationInSeconds
+        url <- presignGetAssetUrl asset.documentTemplateUuid asset.uuid expirationInSeconds
         return $ toDTO asset url urlExpiration
     )
     assets
@@ -43,34 +43,34 @@ getAsset assetUuid = do
   let expirationInSeconds = 60
   now <- liftIO getCurrentTime
   let urlExpiration = addUTCTime (realToFrac expirationInSeconds) now
-  url <- presignGetAssetUrl asset.documentTemplateId asset.uuid expirationInSeconds
+  url <- presignGetAssetUrl asset.documentTemplateUuid asset.uuid expirationInSeconds
   return $ toDTO asset url urlExpiration
 
-getAssetContent :: String -> U.UUID -> AppContextM (DocumentTemplateAsset, BS.ByteString)
-getAssetContent tmlId assetUuid = do
+getAssetContent :: U.UUID -> U.UUID -> AppContextM (DocumentTemplateAsset, BS.ByteString)
+getAssetContent dtUuid assetUuid = do
   asset <- findAssetById assetUuid
-  content <- retrieveAsset tmlId asset.uuid
+  content <- retrieveAsset dtUuid asset.uuid
   return (asset, content)
 
-createAsset :: String -> DocumentTemplateAssetCreateDTO -> AppContextM DocumentTemplateAssetDTO
-createAsset tmlId reqDto =
+createAsset :: U.UUID -> DocumentTemplateAssetCreateDTO -> AppContextM DocumentTemplateAssetDTO
+createAsset dtUuid reqDto =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
     checkStorageSize (fromIntegral . BS.length $ reqDto.content)
-    validateFileAndAssetUniqueness Nothing tmlId reqDto.fileName
+    validateFileAndAssetUniqueness Nothing dtUuid reqDto.fileName
     aUuid <- liftIO generateUuid
     tenantUuid <- asks currentTenantUuid
     now <- liftIO getCurrentTime
     let fileSize = fromIntegral . BS.length $ reqDto.content
-    let newAsset = fromCreateDTO tmlId aUuid reqDto.fileName reqDto.contentType fileSize tenantUuid now now
+    let newAsset = fromCreateDTO dtUuid aUuid reqDto.fileName reqDto.contentType fileSize tenantUuid now now
     insertAsset newAsset
-    touchDocumentTemplateById newAsset.documentTemplateId
-    putAsset tmlId aUuid reqDto.contentType reqDto.content
+    touchDocumentTemplateByUuid newAsset.documentTemplateUuid
+    putAsset dtUuid aUuid reqDto.contentType reqDto.content
     deleteTemporalDocumentsByAssetUuid aUuid
     let expirationInSeconds = 60
     now <- liftIO getCurrentTime
     let urlExpiration = addUTCTime (realToFrac expirationInSeconds) now
-    url <- presignGetAssetUrl newAsset.documentTemplateId aUuid expirationInSeconds
+    url <- presignGetAssetUrl newAsset.documentTemplateUuid aUuid expirationInSeconds
     return $ toDTO newAsset url urlExpiration
 
 modifyAsset :: U.UUID -> DocumentTemplateAssetChangeDTO -> AppContextM DocumentTemplateAsset
@@ -78,11 +78,11 @@ modifyAsset assetUuid reqDto =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
     asset <- findAssetById assetUuid
-    validateFileAndAssetUniqueness (Just asset.uuid) asset.documentTemplateId reqDto.fileName
+    validateFileAndAssetUniqueness (Just asset.uuid) asset.documentTemplateUuid reqDto.fileName
     now <- liftIO getCurrentTime
     let updatedAsset = fromChangeDTO asset reqDto now
     updateAssetById updatedAsset
-    touchDocumentTemplateById asset.documentTemplateId
+    touchDocumentTemplateByUuid asset.documentTemplateUuid
     deleteTemporalDocumentsByAssetUuid assetUuid
     return updatedAsset
 
@@ -96,29 +96,29 @@ modifyAssetContent assetUuid reqDto =
     let fileSize = fromIntegral . BS.length $ reqDto.content
     let updatedAsset = fromChangeContentDTO asset reqDto.fileName reqDto.contentType fileSize now
     updateAssetById updatedAsset
-    touchDocumentTemplateById updatedAsset.documentTemplateId
+    touchDocumentTemplateByUuid updatedAsset.documentTemplateUuid
     deleteTemporalDocumentsByAssetUuid assetUuid
-    putAsset asset.documentTemplateId assetUuid reqDto.contentType reqDto.content
+    putAsset asset.documentTemplateUuid assetUuid reqDto.contentType reqDto.content
     return updatedAsset
 
-duplicateAsset :: String -> DocumentTemplateAsset -> AppContextM DocumentTemplateAsset
-duplicateAsset newTemplateId asset = do
-  content <- retrieveAsset asset.documentTemplateId asset.uuid
+duplicateAsset :: U.UUID -> DocumentTemplateAsset -> AppContextM DocumentTemplateAsset
+duplicateAsset newDtUuid asset = do
+  content <- retrieveAsset asset.documentTemplateUuid asset.uuid
   aUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
-  let updatedAsset = fromDuplicateDTO asset newTemplateId aUuid now
+  let updatedAsset = fromDuplicateDTO asset newDtUuid aUuid now
   insertAsset updatedAsset
-  touchDocumentTemplateById asset.documentTemplateId
-  putAsset newTemplateId aUuid updatedAsset.contentType content
+  touchDocumentTemplateByUuid asset.documentTemplateUuid
+  putAsset newDtUuid aUuid updatedAsset.contentType content
   return updatedAsset
 
-deleteAsset :: String -> U.UUID -> AppContextM ()
-deleteAsset tmlId assetUuid =
+deleteAsset :: U.UUID -> U.UUID -> AppContextM ()
+deleteAsset dtUuid assetUuid =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
     asset <- findAssetById assetUuid
     deleteAssetById asset.uuid
-    removeAsset tmlId assetUuid
-    touchDocumentTemplateById tmlId
+    removeAsset dtUuid assetUuid
+    touchDocumentTemplateByUuid dtUuid
     deleteTemporalDocumentsByAssetUuid assetUuid
     return ()

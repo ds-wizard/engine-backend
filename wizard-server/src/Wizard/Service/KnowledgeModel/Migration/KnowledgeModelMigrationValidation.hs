@@ -4,7 +4,7 @@ import Control.Monad.Except (catchError, throwError)
 import qualified Data.UUID as U
 
 import Shared.Common.Model.Error.Error
-import Shared.Coordinate.Util.Coordinate
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelMigrationDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -17,10 +17,8 @@ validateMigrationUniqueness bUuid = do
     Nothing -> return ()
     Just _ -> throwError . UserError $ _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS
 
-validateIfTargetPackageVersionIsHigher :: String -> String -> AppContextM ()
-validateIfTargetPackageVersionIsHigher forkOfPackageId targetPackageId = do
-  let targetPackageVersion = getVersionFromCoordinate targetPackageId
-  let forkOfPackageIdVersion = getVersionFromCoordinate forkOfPackageId
+validateIfTargetPackageVersionIsHigher :: Coordinate -> Coordinate -> AppContextM ()
+validateIfTargetPackageVersionIsHigher forkOfPackageId targetPackage =
   catchError
-    (validateIsVersionHigher targetPackageVersion forkOfPackageIdVersion)
+    (validateIsVersionHigher targetPackage.version forkOfPackageId.version)
     (\_ -> throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__TARGET_PKG_IS_NOT_HIGHER)

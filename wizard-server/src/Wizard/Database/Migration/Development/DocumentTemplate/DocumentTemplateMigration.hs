@@ -38,5 +38,5 @@ runMigration = do
 runS3Migration :: AppContextM ()
 runS3Migration = do
   purgeBucket
-  _ <- putAsset wizardDocumentTemplate.tId assetLogo.uuid assetLogo.contentType assetLogoContent
+  _ <- putAsset wizardDocumentTemplate.uuid assetLogo.uuid assetLogo.contentType assetLogoContent
   return ()

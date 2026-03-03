@@ -12,7 +12,7 @@ instance FromRow KnowledgeModelEditor where
     uuid <- field
     name <- field
     kmId <- field
-    previousPackageId <- field
+    previousPackageUuid <- field
     createdBy <- field
     createdAt <- field
     updatedAt <- field
@@ -30,7 +30,7 @@ instance ToRow KnowledgeModelEditor where
     [ toField uuid
     , toField name
     , toField kmId
-    , toField previousPackageId
+    , toField previousPackageUuid
     , toField createdBy
     , toField createdAt
     , toField updatedAt

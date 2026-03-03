@@ -5,6 +5,7 @@ import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 
 import Registry.Model.KnowledgeModel.Package.KnowledgeModelPackageRaw
+import Shared.Coordinate.Database.Mapping.Coordinate.Coordinate ()
 import Shared.KnowledgeModel.Database.Mapping.KnowledgeModel.Package.KnowledgeModelPackagePhase ()
 
 instance FromRow KnowledgeModelPackageRaw where

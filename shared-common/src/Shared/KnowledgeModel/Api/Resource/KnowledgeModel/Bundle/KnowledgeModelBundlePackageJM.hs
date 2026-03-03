@@ -6,6 +6,7 @@ import Data.Maybe (fromJust)
 import Data.Time
 
 import Shared.Common.Util.Aeson
+import Shared.Coordinate.Api.Resource.Coordinate.CoordinateJM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Event.KnowledgeModelEventJM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePhaseJM ()
 import Shared.KnowledgeModel.Model.KnowledgeModel.Bundle.KnowledgeModelBundlePackage

@@ -16,8 +16,8 @@ command1 =
         [ userAlbert.email
         , userNikola.email
         ]
-    , knowledgeModelPackageId = netherlandsKmPackageV2.pId
-    , documentTemplateId = Just wizardDocumentTemplate.tId
+    , knowledgeModelPackageUuid = netherlandsKmPackageV2.uuid
+    , documentTemplateUuid = Just wizardDocumentTemplate.uuid
     }
 
 command2 :: CreateProjectCommand
@@ -28,6 +28,6 @@ command2 =
         [ userAlbert.email
         , userIsaac.email
         ]
-    , knowledgeModelPackageId = netherlandsKmPackageV2.pId
-    , documentTemplateId = Nothing
+    , knowledgeModelPackageUuid = netherlandsKmPackageV2.uuid
+    , documentTemplateUuid = Nothing
     }

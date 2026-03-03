@@ -30,5 +30,5 @@ runMigration = do
   insertFile fileDefaultHtml
   insertFile fileDefaultCss
   insertAsset assetLogo
-  putAsset wizardDocumentTemplate.tId assetLogo.uuid assetLogo.contentType assetLogoContent
+  putAsset wizardDocumentTemplate.uuid assetLogo.uuid assetLogo.contentType assetLogoContent
   logInfo _CMP_MIGRATION "(Fixtures/DocumentTemplate) ended"

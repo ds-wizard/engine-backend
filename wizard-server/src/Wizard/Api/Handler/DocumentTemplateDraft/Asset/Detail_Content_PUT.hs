@@ -19,7 +19,7 @@ type Detail_Content_PUT =
     :> Header "Host" String
     :> MultipartForm Mem DocumentTemplateAssetCreateDTO
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "documentTemplateUuid" U.UUID
     :> "assets"
     :> Capture "assetUuid" U.UUID
     :> "content"
@@ -29,10 +29,10 @@ detail_content_PUT
   :: Maybe String
   -> Maybe String
   -> DocumentTemplateAssetCreateDTO
-  -> String
+  -> U.UUID
   -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateAsset)
-detail_content_PUT mTokenHeader mServerUrl reqDto tmlId assetUuid =
+detail_content_PUT mTokenHeader mServerUrl reqDto dtUuid assetUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do

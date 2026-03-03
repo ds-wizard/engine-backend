@@ -12,7 +12,7 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 fileDefaultHtml :: DocumentTemplateFile
 fileDefaultHtml =
   DocumentTemplateFile
-    { documentTemplateId = wizardDocumentTemplate.tId
+    { documentTemplateUuid = wizardDocumentTemplate.uuid
     , uuid = u' "7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
     , fileName = "src/default.html.j2"
     , content = html
@@ -32,7 +32,7 @@ fileDefaultHtmlMoved =
 fileDefaultCss :: DocumentTemplateFile
 fileDefaultCss =
   DocumentTemplateFile
-    { documentTemplateId = wizardDocumentTemplate.tId
+    { documentTemplateUuid = wizardDocumentTemplate.uuid
     , uuid = u' "ae41aa74-9605-4dfb-b1f9-b6064adc1dbc"
     , fileName = "other-src/default.css"
     , content = css
@@ -44,7 +44,7 @@ fileDefaultCss =
 fileNewFile :: DocumentTemplateFile
 fileNewFile =
   DocumentTemplateFile
-    { documentTemplateId = wizardDocumentTemplate.tId
+    { documentTemplateUuid = wizardDocumentTemplate.uuid
     , uuid = u' "63279989-d9ac-49da-81d3-fc8a56a8aa62"
     , fileName = "new-file.txt"
     , content = "some content"
@@ -59,7 +59,7 @@ fileNewFile =
 anotherFileHtml :: DocumentTemplateFile
 anotherFileHtml =
   DocumentTemplateFile
-    { documentTemplateId = anotherWizardDocumentTemplate.tId
+    { documentTemplateUuid = anotherWizardDocumentTemplate.uuid
     , uuid = u' "7444f722-4972-4bf8-86d8-d4f01875572d"
     , fileName = "src/default.html.j2"
     , content = html
@@ -71,7 +71,7 @@ anotherFileHtml =
 anotherFileCss :: DocumentTemplateFile
 anotherFileCss =
   DocumentTemplateFile
-    { documentTemplateId = anotherWizardDocumentTemplate.tId
+    { documentTemplateUuid = anotherWizardDocumentTemplate.uuid
     , uuid = u' "ac60ddb8-4561-4d4b-8d85-c8446bc96b56"
     , fileName = "src/default.css"
     , content = css
@@ -85,7 +85,7 @@ anotherFileCss =
 differentFileHtml :: DocumentTemplateFile
 differentFileHtml =
   DocumentTemplateFile
-    { documentTemplateId = differentDocumentTemplate.tId
+    { documentTemplateUuid = differentDocumentTemplate.uuid
     , uuid = u' "2d9eb63d-05fb-4eb7-9dc3-378b55d062ce"
     , fileName = "src/default.html.j2"
     , content = html

@@ -3,6 +3,8 @@ module Wizard.Specs.API.DocumentTemplate.List_Suggestions_GET (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -19,7 +21,8 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
-import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DT_Migration
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
@@ -66,15 +69,15 @@ test_200 appContext = do
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 1 1 0) [toSuggestionDTO wizardDocumentTemplate wizardDocumentTemplateFormats])
   create_test_200
-    "HTTP 200 OK (query 'pkgId')"
+    "HTTP 200 OK (query 'knowledgeModelPackageUuid')"
     appContext
-    "/wizard-api/document-templates/suggestions?pkgId=global:core:1.0.0"
+    (BS.pack $ "/wizard-api/document-templates/suggestions?knowledgeModelPackageUuid=" ++ U.toString globalKmPackage.uuid)
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 1 1 0) [toSuggestionDTO wizardDocumentTemplate wizardDocumentTemplateFormats])
   create_test_200
-    "HTTP 200 OK (query 'pkgId' - no templates)"
+    "HTTP 200 OK (query 'knowledgeModelPackageUuid' - no templates)"
     appContext
-    "/wizard-api/document-templates/suggestions?pkgId=org.nl:core-nl:1.0.0"
+    (BS.pack $ "/wizard-api/document-templates/suggestions?knowledgeModelPackageUuid=" ++ U.toString netherlandsKmPackage.uuid)
     reqAuthHeader
     (Page "documentTemplates" (PageMetadata 20 0 0 0) ([] :: [DocumentTemplateSuggestionDTO]))
   create_test_200
@@ -95,7 +98,7 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext
-      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO DT_Migration.runMigration appContext
       runInContextIO R_Migration.runMigration appContext
       runInContextIO (updateDocumentTemplateById $ wizardDocumentTemplate {allowedPackages = [kmPackagePatternAllEdited]}) appContext
       -- WHEN: Call API

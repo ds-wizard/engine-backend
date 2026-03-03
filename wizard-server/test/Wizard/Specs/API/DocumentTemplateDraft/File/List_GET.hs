@@ -3,6 +3,8 @@ module Wizard.Specs.API.DocumentTemplateDraft.File.List_GET (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -10,6 +12,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFiles
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
@@ -20,11 +24,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /wizard-api/document-template-drafts/{documentTemplateId}/files
+-- GET /wizard-api/document-template-drafts/{dtUuid}/files
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /wizard-api/document-template-drafts/{documentTemplateId}/files" $ do
+  describe "GET /wizard-api/document-template-drafts/{dtUuid}/files" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -34,7 +38,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/wizard-api/document-template-drafts/global:project-report:1.0.0/files"
+reqUrl = BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/files"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 

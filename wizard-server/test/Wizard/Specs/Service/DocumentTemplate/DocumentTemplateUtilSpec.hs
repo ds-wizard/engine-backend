@@ -2,8 +2,10 @@ module Wizard.Specs.Service.DocumentTemplate.DocumentTemplateUtilSpec where
 
 import Data.Maybe (fromJust)
 import Data.Time
+import qualified Data.UUID as U
 import Test.Hspec
 
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.DocumentTemplate.Constant.DocumentTemplate
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
@@ -13,14 +15,14 @@ import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
 
 documentTemplateUtilSpec =
   describe "Document DocumentTemplate Utils" $ do
-    let pkgId = "org.nl:core-nl:2.0.0"
+    let pkgCoordinate = Coordinate "org.nl" "core-nl" "2.0.0"
     describe "filterDocumentTemplates" $ do
       it "No KM Specifications given => Deny" $
         -- GIVEN:
         do
           let templates =
                 [ DocumentTemplate
-                    { tId = ""
+                    { uuid = U.nil
                     , name = ""
                     , organizationId = ""
                     , templateId = ""
@@ -40,7 +42,7 @@ documentTemplateUtilSpec =
           -- AND:
           let expectation = 0
           -- GIVEN:
-          let result = filterDocumentTemplates (Just pkgId) templates
+          let result = filterDocumentTemplates (Just pkgCoordinate) templates
           -- THEN:
           length result `shouldBe` expectation
       it "One relevant KM Specifications given => Allow" $
@@ -48,7 +50,7 @@ documentTemplateUtilSpec =
         do
           let templates =
                 [ DocumentTemplate
-                    { tId = ""
+                    { uuid = U.nil
                     , name = ""
                     , organizationId = ""
                     , templateId = ""
@@ -75,7 +77,7 @@ documentTemplateUtilSpec =
           -- AND:
           let expectation = 1
           -- GIVEN:
-          let result = filterDocumentTemplates (Just pkgId) templates
+          let result = filterDocumentTemplates (Just pkgCoordinate) templates
           -- THEN:
           length result `shouldBe` expectation
       it "One relevant and one non-relevant KM Specifications given => Allow" $
@@ -83,7 +85,7 @@ documentTemplateUtilSpec =
         do
           let templates =
                 [ DocumentTemplate
-                    { tId = ""
+                    { uuid = U.nil
                     , name = ""
                     , organizationId = ""
                     , templateId = ""
@@ -116,6 +118,6 @@ documentTemplateUtilSpec =
           -- AND:
           let expectation = 1
           -- GIVEN:
-          let result = filterDocumentTemplates (Just pkgId) templates
+          let result = filterDocumentTemplates (Just pkgCoordinate) templates
           -- THEN:
           length result `shouldBe` expectation

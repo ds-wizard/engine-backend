@@ -2,6 +2,8 @@ module Wizard.Specs.API.DocumentTemplateDraft.Asset.Detail_DELETE (
   detail_DELETE,
 ) where
 
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -9,6 +11,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateAssets
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
@@ -19,11 +22,11 @@ import Wizard.Specs.API.DocumentTemplateDraft.Asset.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /wizard-api/document-template-drafts/{documentTemplateId}/assets/{assetUuid}
+-- DELETE /wizard-api/document-template-drafts/{dtUuid}/assets/{assetUuid}
 -- ------------------------------------------------------------------------
 detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
-  describe "DELETE /wizard-api/document-template-drafts/{documentTemplateId}/assets/{assetUuid}" $ do
+  describe "DELETE /wizard-api/document-template-drafts/{dtUuid}/assets/{assetUuid}" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -34,7 +37,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/wizard-api/document-template-drafts/global:project-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+reqUrl = BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/assets/" ++ U.toString assetLogo.uuid
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -81,8 +84,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/document-template-drafts/global:project-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+    (BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/assets/b918fa4a-b0cf-4bef-ada6-e8cb3848cc75")
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template_asset"
-    [("uuid", "6c367648-9b60-4307-93b2-0851938adee0")]
+    [("uuid", "b918fa4a-b0cf-4bef-ada6-e8cb3848cc75")]

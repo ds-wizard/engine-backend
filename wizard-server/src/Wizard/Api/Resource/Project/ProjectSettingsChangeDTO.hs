@@ -7,7 +7,7 @@ data ProjectSettingsChangeDTO = ProjectSettingsChangeDTO
   { name :: String
   , description :: Maybe String
   , projectTags :: [String]
-  , documentTemplateId :: Maybe String
+  , documentTemplateUuid :: Maybe U.UUID
   , formatUuid :: Maybe U.UUID
   , isTemplate :: Bool
   }

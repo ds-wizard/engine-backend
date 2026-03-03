@@ -7,7 +7,7 @@ import GHC.Generics
 import Shared.Common.Util.Aeson
 
 data DocumentTemplateAssetDeleteFromS3Command = DocumentTemplateAssetDeleteFromS3Command
-  { documentTemplateId :: String
+  { documentTemplateUuid :: U.UUID
   , assetUuid :: U.UUID
   }
   deriving (Show, Eq, Generic)

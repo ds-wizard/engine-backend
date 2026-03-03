@@ -38,8 +38,8 @@ findDocumentsForCurrentTenantFiltered params = do
   tenantUuid <- asks currentTenantUuid
   createFindEntitiesByFn entityName (tenantQueryUuid tenantUuid : params)
 
-findDocumentsPage :: Maybe U.UUID -> Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentList)
-findDocumentsPage mProjectUuid mProjectName mDocumentTemplateId mQuery pageable sort = do
+findDocumentsPage :: Maybe U.UUID -> Maybe String -> Maybe U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentList)
+findDocumentsPage mProjectUuid mProjectName mDocumentTemplateUuid mQuery pageable sort = do
   -- 1. Prepare variables
   do
     tenantUuid <- asks currentTenantUuid
@@ -49,12 +49,12 @@ findDocumentsPage mProjectUuid mProjectName mDocumentTemplateId mQuery pageable 
             (Just projectUuid, Just projectName) -> ("?, ", [projectName], "", "AND doc.project_uuid = ?", [U.toString projectUuid])
             (Just projectUuid, Nothing) -> ("project.name, ", [], "LEFT JOIN project ON project.uuid = doc.project_uuid", "AND doc.project_uuid = ?", [U.toString projectUuid])
             _ -> ("project.name, ", [], "LEFT JOIN project ON project.uuid = doc.project_uuid", "", [])
-    let (documentTemplateIdCondition, documentTemplateIdParam) =
-          case mDocumentTemplateId of
-            Just documentTemplateId -> (" AND doc.document_template_id = ? ", [documentTemplateId])
+    let (documentTemplateUuidCondition, documentTemplateUuidParam) =
+          case mDocumentTemplateUuid of
+            Just documentTemplateUuid -> (" AND doc.document_template_uuid = ? ", [U.toString documentTemplateUuid])
             Nothing -> ("", [])
-    let condition = "WHERE doc.tenant_uuid = ? AND doc.name ~* ? AND doc.durability = 'PersistentDocumentDurability' " ++ projectCondition ++ documentTemplateIdCondition
-    let baseParams = [U.toString tenantUuid, regexM mQuery] ++ projectParam ++ documentTemplateIdParam
+    let condition = "WHERE doc.tenant_uuid = ? AND doc.name ~* ? AND doc.durability = 'PersistentDocumentDurability' " ++ projectCondition ++ documentTemplateUuidCondition
+    let baseParams = [U.toString tenantUuid, regexM mQuery] ++ projectParam ++ documentTemplateUuidParam
     let params = projectSelectParams ++ baseParams
     -- 2. Get total count
     count <- createCountByFn "document doc" condition baseParams
@@ -69,8 +69,11 @@ findDocumentsPage mProjectUuid mProjectName mDocumentTemplateId mQuery pageable 
               \       ${projectSelect} \
               \       doc.project_event_uuid, \
               \       project_version.name, \
-              \       doc_tml.id, \
+              \       doc_tml.uuid, \
               \       doc_tml.name, \
+              \       doc_tml.organization_id, \
+              \       doc_tml.template_id, \
+              \       doc_tml.version, \
               \       dt_format.uuid, \
               \       dt_format.name, \
               \       dt_format.icon, \
@@ -80,8 +83,8 @@ findDocumentsPage mProjectUuid mProjectName mDocumentTemplateId mQuery pageable 
               \       doc.created_at \
               \FROM document doc \
               \${projectJoin} \
-              \LEFT JOIN document_template doc_tml ON doc_tml.id = doc.document_template_id AND doc_tml.tenant_uuid = doc.tenant_uuid \
-              \LEFT JOIN document_template_format dt_format ON dt_format.tenant_uuid = doc.tenant_uuid AND dt_format.document_template_id = doc.document_template_id AND dt_format.uuid = doc.format_uuid \
+              \LEFT JOIN document_template doc_tml ON doc_tml.uuid = doc.document_template_uuid AND doc_tml.tenant_uuid = doc.tenant_uuid \
+              \LEFT JOIN document_template_format dt_format ON dt_format.tenant_uuid = doc.tenant_uuid AND dt_format.document_template_uuid = doc.document_template_uuid AND dt_format.uuid = doc.format_uuid \
               \LEFT JOIN project_version ON project_version.event_uuid = doc.project_event_uuid AND project_version.tenant_uuid = doc.tenant_uuid \
               \${condition} \
               \${sort} \
@@ -107,10 +110,10 @@ findDocumentsPage mProjectUuid mProjectName mDocumentTemplateId mQuery pageable 
             }
     return $ Page pageLabel metadata entities
 
-findDocumentsByDocumentTemplateId :: String -> AppContextM [Document]
-findDocumentsByDocumentTemplateId documentTemplateId = do
+findDocumentsByDocumentTemplateUuid :: U.UUID -> AppContextM [Document]
+findDocumentsByDocumentTemplateUuid documentTemplateUuid = do
   tenantUuid <- asks currentTenantUuid
-  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId), ("durability", "PersistentDocumentDurability")]
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid), ("durability", "PersistentDocumentDurability")]
 
 findDocumentByUuid :: U.UUID -> AppContextM Document
 findDocumentByUuid uuid = do
@@ -158,11 +161,10 @@ deleteTemporalDocumentsByProjectUuid projectUuid = do
   deleteDocumentsFiltered
     [tenantQueryUuid tenantUuid, ("project_uuid", U.toString projectUuid), ("durability", "TemporallyDocumentDurability")]
 
-deleteTemporalDocumentsByDocumentTemplateId :: String -> AppContextM Int64
-deleteTemporalDocumentsByDocumentTemplateId documentTemplateId = do
+deleteTemporalDocumentsByDocumentTemplateUuid :: U.UUID -> AppContextM Int64
+deleteTemporalDocumentsByDocumentTemplateUuid documentTemplateUuid = do
   tenantUuid <- asks currentTenantUuid
-  deleteDocumentsFiltered
-    [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId), ("durability", "TemporallyDocumentDurability")]
+  deleteDocumentsFiltered [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid), ("durability", "TemporallyDocumentDurability")]
 
 deleteTemporalDocumentsByAssetUuid :: U.UUID -> AppContextM Int64
 deleteTemporalDocumentsByAssetUuid = deleteTemporalDocumentsByTableAndUuid "document_template_asset"
@@ -184,7 +186,7 @@ deleteTemporalDocumentsByTableAndUuid joinTableName entityUuid = do
             \WHERE tenant_uuid = ? AND uuid IN ( \
             \    SELECT d.uuid \
             \    FROM %s join_table \
-            \             JOIN document d ON join_table.document_template_id = d.document_template_id \
+            \             JOIN document d ON join_table.document_template_uuid = d.document_template_uuid \
             \    WHERE join_table.uuid = '%s' \
             \      AND d.durability = 'TemporallyDocumentDurability' \
             \)"

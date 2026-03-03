@@ -10,7 +10,7 @@ import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorSuggestion
 import Wizard.Model.Project.ProjectSuggestion
 
 data DocumentTemplateDraftDetail = DocumentTemplateDraftDetail
-  { tId :: String
+  { uuid :: U.UUID
   , name :: String
   , templateId :: String
   , version :: String

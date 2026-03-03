@@ -10,11 +10,12 @@ import Registry.Model.Context.ContextLenses ()
 import Registry.Service.DocumentTemplate.DocumentTemplateService
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
+import Shared.Coordinate.Model.Coordinate.Coordinate
 
 type Detail_GET =
   "document-templates"
-    :> Capture "documentTemplateId" String
+    :> Capture "coordinate" Coordinate
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] DocumentTemplateDetailDTO)
 
-detail_GET :: String -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateDetailDTO)
-detail_GET tmlId = runInUnauthService NoTransaction $ addTraceUuidHeader =<< getDocumentTemplateById tmlId
+detail_GET :: Coordinate -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateDetailDTO)
+detail_GET coordinate = runInUnauthService NoTransaction $ addTraceUuidHeader =<< getDocumentTemplateByCoordinate coordinate

@@ -19,8 +19,8 @@ getIssues = do
   tcProject <- getCurrentTenantConfigProject
   runRequest (toGetIssuesRequest serverConfig.feedback tcProject.feedback) toGetIssuesResponse
 
-createIssue :: String -> U.UUID -> String -> String -> AppContextM IssueIDTO
-createIssue pkgId questionUuid title content = do
+createIssue :: U.UUID -> U.UUID -> String -> String -> AppContextM IssueIDTO
+createIssue pkgUuid questionUuid title content = do
   serverConfig <- asks serverConfig
   mCurrentUser <- asks currentUser
   tcProject <- getCurrentTenantConfigProject
@@ -28,7 +28,7 @@ createIssue pkgId questionUuid title content = do
     ( toCreateIssueRequest
         serverConfig.feedback
         tcProject.feedback
-        pkgId
+        pkgUuid
         questionUuid
         title
         content

@@ -8,31 +8,31 @@ import RegistryLib.Model.Organization.Organization
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 toSimpleDTO :: [Organization] -> DocumentTemplate -> DocumentTemplateSimpleDTO
-toSimpleDTO orgs tml =
+toSimpleDTO orgs dt =
   DocumentTemplateSimpleDTO
-    { tId = tml.tId
-    , name = tml.name
-    , organizationId = tml.organizationId
-    , templateId = tml.templateId
-    , version = tml.version
-    , description = tml.description
-    , organization = fmap OM_Mapper.toSimpleDTO . selectOrganizationByOrgId tml $ orgs
-    , createdAt = tml.createdAt
+    { uuid = dt.uuid
+    , name = dt.name
+    , organizationId = dt.organizationId
+    , templateId = dt.templateId
+    , version = dt.version
+    , description = dt.description
+    , organization = fmap OM_Mapper.toSimpleDTO . selectOrganizationByOrgId dt $ orgs
+    , createdAt = dt.createdAt
     }
 
 toDetailDTO :: DocumentTemplate -> [String] -> Organization -> DocumentTemplateDetailDTO
-toDetailDTO tml versions org =
+toDetailDTO dt versions org =
   DocumentTemplateDetailDTO
-    { tId = tml.tId
-    , name = tml.name
-    , organizationId = tml.organizationId
-    , templateId = tml.templateId
-    , version = tml.version
-    , metamodelVersion = tml.metamodelVersion
-    , description = tml.description
-    , readme = tml.readme
-    , license = tml.license
+    { uuid = dt.uuid
+    , name = dt.name
+    , organizationId = dt.organizationId
+    , templateId = dt.templateId
+    , version = dt.version
+    , metamodelVersion = dt.metamodelVersion
+    , description = dt.description
+    , readme = dt.readme
+    , license = dt.license
     , versions = versions
     , organization = OM_Mapper.toSimpleDTO org
-    , createdAt = tml.createdAt
+    , createdAt = dt.createdAt
     }

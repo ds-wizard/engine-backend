@@ -18,27 +18,27 @@ import Wizard.Model.Context.ContextLenses ()
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.DocumentTemplate.File.DocumentTemplateFileMapper
 
-getFiles :: String -> AppContextM [DocumentTemplateFileList]
-getFiles tmlId = do
+getFiles :: U.UUID -> AppContextM [DocumentTemplateFileList]
+getFiles dtUuid = do
   checkPermission _DOC_TML_WRITE_PERM
-  findFileListsByDocumentTemplateId tmlId
+  findFileListsByDocumentTemplateUuid dtUuid
 
 getFile :: U.UUID -> AppContextM DocumentTemplateFile
 getFile fileUuid = do
   checkPermission _DOC_TML_WRITE_PERM
-  findFileById fileUuid
+  findFileByUuid fileUuid
 
-createFile :: String -> DocumentTemplateFileChangeDTO -> AppContextM DocumentTemplateFile
-createFile tmlId reqDto =
+createFile :: U.UUID -> DocumentTemplateFileChangeDTO -> AppContextM DocumentTemplateFile
+createFile dtUuid reqDto =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
-    validateFileAndAssetUniqueness Nothing tmlId reqDto.fileName
+    validateFileAndAssetUniqueness Nothing dtUuid reqDto.fileName
     fUuid <- liftIO generateUuid
     tenantUuid <- asks currentTenantUuid
     now <- liftIO getCurrentTime
-    let newFile = fromChangeDTO reqDto tmlId fUuid tenantUuid now now
+    let newFile = fromChangeDTO reqDto dtUuid fUuid tenantUuid now now
     insertFile newFile
-    touchDocumentTemplateById newFile.documentTemplateId
+    touchDocumentTemplateByUuid newFile.documentTemplateUuid
     deleteTemporalDocumentsByFileUuid fUuid
     return newFile
 
@@ -46,12 +46,12 @@ modifyFile :: U.UUID -> DocumentTemplateFileChangeDTO -> AppContextM DocumentTem
 modifyFile fileUuid reqDto =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
-    file <- findFileById fileUuid
-    validateFileAndAssetUniqueness (Just file.uuid) file.documentTemplateId reqDto.fileName
+    file <- findFileByUuid fileUuid
+    validateFileAndAssetUniqueness (Just file.uuid) file.documentTemplateUuid reqDto.fileName
     now <- liftIO getCurrentTime
-    let updatedFile = fromChangeDTO reqDto file.documentTemplateId file.uuid file.tenantUuid file.createdAt now
-    updateFileById updatedFile
-    touchDocumentTemplateById updatedFile.documentTemplateId
+    let updatedFile = fromChangeDTO reqDto file.documentTemplateUuid file.uuid file.tenantUuid file.createdAt now
+    updateFileByUuid updatedFile
+    touchDocumentTemplateByUuid updatedFile.documentTemplateUuid
     deleteTemporalDocumentsByFileUuid fileUuid
     return updatedFile
 
@@ -59,29 +59,29 @@ modifyFileContent :: U.UUID -> String -> AppContextM DocumentTemplateFile
 modifyFileContent fileUuid content =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
-    file <- findFileById fileUuid
+    file <- findFileByUuid fileUuid
     now <- liftIO getCurrentTime
     let updatedFile = fromContentChangeDTO file content now
-    updateFileById updatedFile
-    touchDocumentTemplateById updatedFile.documentTemplateId
+    updateFileByUuid updatedFile
+    touchDocumentTemplateByUuid updatedFile.documentTemplateUuid
     deleteTemporalDocumentsByFileUuid fileUuid
     return updatedFile
 
-duplicateFile :: String -> DocumentTemplateFile -> AppContextM DocumentTemplateFile
-duplicateFile newTemplateId file = do
+duplicateFile :: U.UUID -> DocumentTemplateFile -> AppContextM DocumentTemplateFile
+duplicateFile newDtUuid file = do
   aUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
-  let updatedFile = fromDuplicateDTO file newTemplateId aUuid now
+  let updatedFile = fromDuplicateDTO file newDtUuid aUuid now
   insertFile updatedFile
-  touchDocumentTemplateById updatedFile.documentTemplateId
+  touchDocumentTemplateByUuid updatedFile.documentTemplateUuid
   return updatedFile
 
 deleteFile :: U.UUID -> AppContextM ()
 deleteFile fileUuid =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
-    file <- findFileById fileUuid
+    file <- findFileByUuid fileUuid
     deleteFileById file.uuid
-    touchDocumentTemplateById file.documentTemplateId
+    touchDocumentTemplateByUuid file.documentTemplateUuid
     deleteTemporalDocumentsByFileUuid fileUuid
     return ()

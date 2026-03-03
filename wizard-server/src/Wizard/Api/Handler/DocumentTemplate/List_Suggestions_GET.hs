@@ -1,6 +1,7 @@
 module Wizard.Api.Handler.DocumentTemplate.List_Suggestions_GET where
 
 import Data.Maybe (fromMaybe)
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -19,7 +20,7 @@ type List_Suggestions_GET =
     :> Header "Host" String
     :> "document-templates"
     :> "suggestions"
-    :> QueryParam "pkgId" String
+    :> QueryParam "knowledgeModelPackageUuid" U.UUID
     :> QueryParam "includeUnsupportedMetamodelVersion" Bool
     :> QueryParam "phase" DocumentTemplatePhase
     :> QueryParam "q" String
@@ -32,7 +33,7 @@ type List_Suggestions_GET =
 list_suggestions_GET
   :: Maybe String
   -> Maybe String
-  -> Maybe String
+  -> Maybe U.UUID
   -> Maybe Bool
   -> Maybe DocumentTemplatePhase
   -> Maybe String
@@ -41,9 +42,9 @@ list_suggestions_GET
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page DocumentTemplateSuggestionDTO))
-list_suggestions_GET mTokenHeader mServerUrl mPkgId mIncludeUnsupportedMetamodelVersion mPhase mQuery mNonEditable mPage mSize mSort =
+list_suggestions_GET mTokenHeader mServerUrl mPkgUuid mIncludeUnsupportedMetamodelVersion mPhase mQuery mNonEditable mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
       addTraceUuidHeader =<< do
         let includeUnsupportedMetamodelVersion = fromMaybe False mIncludeUnsupportedMetamodelVersion
-        getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable (Pageable mPage mSize) (parseSortQuery mSort)
+        getDocumentTemplateSuggestions mPkgUuid includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable (Pageable mPage mSize) (parseSortQuery mSort)

@@ -15,7 +15,7 @@ instance ToSchema KnowledgeModelChangeDTO where
 kmChange :: KnowledgeModelChangeDTO
 kmChange =
   KnowledgeModelChangeDTO
-    { knowledgeModelPackageId = Just $ germanyKmPackage.pId
+    { knowledgeModelPackageUuid = Just germanyKmPackage.uuid
     , events = []
     , tagUuids = []
     }

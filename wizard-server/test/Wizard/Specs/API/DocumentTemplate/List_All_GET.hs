@@ -13,7 +13,7 @@ import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.D
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper
-import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DT_Migration
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
@@ -57,7 +57,7 @@ create_test_200 title appContext reqAuthHeader =
       let expDto = [toSuggestionDTO wizardDocumentTemplate wizardDocumentTemplateFormats]
       let expBody = encode expDto
       -- AND: Run migrations
-      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO DT_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation

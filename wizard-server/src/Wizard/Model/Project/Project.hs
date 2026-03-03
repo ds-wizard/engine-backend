@@ -26,10 +26,10 @@ data Project = Project
   , description :: Maybe String
   , visibility :: ProjectVisibility
   , sharing :: ProjectSharing
-  , knowledgeModelPackageId :: String
+  , knowledgeModelPackageUuid :: U.UUID
   , selectedQuestionTagUuids :: [U.UUID]
   , projectTags :: [String]
-  , documentTemplateId :: Maybe String
+  , documentTemplateUuid :: Maybe U.UUID
   , formatUuid :: Maybe U.UUID
   , creatorUuid :: Maybe U.UUID
   , permissions :: [ProjectPerm]
@@ -48,10 +48,10 @@ instance Eq Project where
       && a.description == b.description
       && a.visibility == b.visibility
       && a.sharing == b.sharing
-      && a.knowledgeModelPackageId == b.knowledgeModelPackageId
+      && a.knowledgeModelPackageUuid == b.knowledgeModelPackageUuid
       && a.selectedQuestionTagUuids == b.selectedQuestionTagUuids
       && a.projectTags == b.projectTags
-      && a.documentTemplateId == b.documentTemplateId
+      && a.documentTemplateUuid == b.documentTemplateUuid
       && a.formatUuid == b.formatUuid
       && a.creatorUuid == b.creatorUuid
       && a.permissions == b.permissions

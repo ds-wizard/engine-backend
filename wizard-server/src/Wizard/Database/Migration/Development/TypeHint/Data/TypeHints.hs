@@ -65,7 +65,7 @@ legalLegacyTypeHint =
 typeHintLegacyRequest :: TypeHintLegacyRequestDTO
 typeHintLegacyRequest =
   TypeHintLegacyRequestDTO
-    { knowledgeModelPackageId = Just germanyKmPackage.pId
+    { knowledgeModelPackageUuid = Just germanyKmPackage.uuid
     , events = []
     , questionUuid = q4_it1_q6_aYes_followUpQuestion5.uuid
     , q = "dog"

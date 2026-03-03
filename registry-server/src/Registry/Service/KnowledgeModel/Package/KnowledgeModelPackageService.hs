@@ -1,6 +1,6 @@
 module Registry.Service.KnowledgeModel.Package.KnowledgeModelPackageService (
   getSimplePackagesFiltered,
-  getPackageById,
+  getPackageByCoordinate,
 ) where
 
 import qualified Data.List as L
@@ -14,6 +14,7 @@ import Registry.Service.Audit.AuditService
 import Registry.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
 import RegistryLib.Api.Resource.Package.KnowledgeModelPackageSimpleDTO
 import Shared.Common.Util.List (foldInContext)
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.Coordinate.Util.Coordinate
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO hiding (findPackagesFiltered)
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
@@ -34,10 +35,9 @@ getSimplePackagesFiltered queryParams mMetamodelVersion headers =
             return $ toSimpleDTO pkg org
         )
 
-getPackageById :: String -> AppContextM KnowledgeModelPackageDetailDTO
-getPackageById pkgId = do
-  resolvedPkgId <- resolvePackageId pkgId
-  pkg <- findPackageById resolvedPkgId
+getPackageByCoordinate :: Coordinate -> AppContextM KnowledgeModelPackageDetailDTO
+getPackageByCoordinate coordinate = do
+  pkg <- resolvePackageCoordinate coordinate
   versions <- getPackageVersions pkg
   org <- findOrganizationByOrgId pkg.organizationId
   return $ toDetailDTO pkg versions org

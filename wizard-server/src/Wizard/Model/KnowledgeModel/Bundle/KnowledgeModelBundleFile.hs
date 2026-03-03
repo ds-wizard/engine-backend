@@ -3,6 +3,8 @@ module Wizard.Model.KnowledgeModel.Bundle.KnowledgeModelBundleFile where
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.Text as T
 
+import Shared.Coordinate.Model.Coordinate.Coordinate
+
 data KnowledgeModelBundleFile = KnowledgeModelBundleFile
   { fileName :: String
   , contentType :: String
@@ -11,6 +13,6 @@ data KnowledgeModelBundleFile = KnowledgeModelBundleFile
   , organizationId :: Maybe String
   , kmId :: Maybe String
   , version :: Maybe String
-  , previousPackageId :: Maybe String
+  , previousPackageId :: Maybe Coordinate
   , content :: BSL.ByteString
   }

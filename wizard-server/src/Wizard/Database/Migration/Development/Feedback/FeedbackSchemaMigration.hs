@@ -21,22 +21,18 @@ createTables = do
   let sql =
         "CREATE TABLE feedback \
         \( \
-        \    uuid                       uuid        NOT NULL, \
-        \    issue_id                   int         NOT NULL, \
-        \    question_uuid              uuid        NOT NULL, \
-        \    knowledge_model_package_id varchar     NOT NULL, \
-        \    title                      varchar     NOT NULL, \
-        \    content                    varchar     NOT NULL, \
-        \    created_at                 timestamptz NOT NULL, \
-        \    updated_at                 timestamptz NOT NULL, \
-        \    tenant_uuid                uuid        NOT NULL, \
+        \    uuid                         uuid        NOT NULL, \
+        \    issue_id                     int         NOT NULL, \
+        \    question_uuid                uuid        NOT NULL, \
+        \    knowledge_model_package_uuid uuid        NOT NULL, \
+        \    title                        varchar     NOT NULL, \
+        \    content                      varchar     NOT NULL, \
+        \    created_at                   timestamptz NOT NULL, \
+        \    updated_at                   timestamptz NOT NULL, \
+        \    tenant_uuid                  uuid        NOT NULL, \
         \    CONSTRAINT feedback_pk PRIMARY KEY (uuid), \
-        \    CONSTRAINT feedback_knowledge_model_package_id_fk FOREIGN KEY (knowledge_model_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT feedback_knowledge_model_package_uuid_fk FOREIGN KEY (knowledge_model_package_uuid) REFERENCES knowledge_model_package (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT feedback_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
-        \); \
-        \ \
-        \CREATE INDEX feedback_knowledge_model_package_id_id_index ON feedback (knowledge_model_package_id, tenant_uuid); \
-        \ \
-        \CREATE INDEX feedback_question_uuid_index ON feedback (question_uuid, tenant_uuid);"
+        \);"
   let action conn = execute_ conn sql
   runDB action

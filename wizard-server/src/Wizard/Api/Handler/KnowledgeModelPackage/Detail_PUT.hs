@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.KnowledgeModelPackage.Detail_PUT where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -15,15 +16,15 @@ type Detail_PUT =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] KnowledgeModelPackageChangeDTO
     :> "knowledge-model-packages"
-    :> Capture "id" String
+    :> Capture "uuid" U.UUID
     :> Put '[SafeJSON] (Headers '[Header "x-trace-uuid" String] KnowledgeModelPackageChangeDTO)
 
 detail_PUT
   :: Maybe String
   -> Maybe String
   -> KnowledgeModelPackageChangeDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] KnowledgeModelPackageChangeDTO)
-detail_PUT mTokenHeader mServerUrl reqDto pkgId =
+detail_PUT mTokenHeader mServerUrl reqDto pkgUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< modifyPackage pkgId reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< modifyPackage pkgUuid reqDto

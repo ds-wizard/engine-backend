@@ -2,7 +2,10 @@ module Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailSM 
 
 import Data.Swagger
 
+import Shared.Common.Api.Resource.Version.VersionSM ()
 import Shared.Common.Util.Swagger
+import Shared.Common.Util.Uuid
+import Shared.Coordinate.Api.Resource.Coordinate.CoordinateSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePhaseSM ()
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailDTO
@@ -20,6 +23,6 @@ instance ToSchema KnowledgeModelPackageDetailDTO where
           False
           [globalRegistryPackage]
           [globalRegistryOrganization]
-          ["1.0.0"]
+          [(u' "ac3a6934-2069-4792-943c-e1170edee8c2", "1.0.0")]
           (Just "https://registry.example.org")
       )

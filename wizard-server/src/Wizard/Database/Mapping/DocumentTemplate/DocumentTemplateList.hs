@@ -13,7 +13,7 @@ import Wizard.Model.DocumentTemplate.DocumentTemplateList
 
 instance FromRow DocumentTemplateList where
   fromRow = do
-    tId <- field
+    uuid <- field
     name <- field
     organizationId <- field
     templateId <- field

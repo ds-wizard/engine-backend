@@ -25,7 +25,7 @@ data Document = Document
   , projectUuid :: Maybe U.UUID
   , projectEventUuid :: Maybe U.UUID
   , projectRepliesHash :: Int
-  , documentTemplateId :: String
+  , documentTemplateUuid :: U.UUID
   , formatUuid :: U.UUID
   , createdBy :: Maybe U.UUID
   , fileName :: Maybe String

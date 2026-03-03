@@ -8,6 +8,7 @@ import Database.PostgreSQL.Simple.Types
 import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Project.Event.ProjectEventJM ()
+import Wizard.Database.Mapping.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Database.Mapping.Project.File.ProjectFileSimple ()
 import Wizard.Database.Mapping.Project.ProjectAcl
 import Wizard.Database.Mapping.Project.ProjectSharing ()
@@ -22,13 +23,11 @@ instance FromRow ProjectDetailQuestionnaire where
     name <- field
     visibility <- field
     sharing <- field
-    knowledgeModelPackageId <- field
+    knowledgeModelPackage <- fieldKnowledgeModelPackageSuggestion
     selectedQuestionTagUuids <- fromPGArray <$> field
     isTemplate <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid
-    projectActionsAvailable <- field
-    projectImportersAvailable <- field
     mFiles <- fieldWith (optionalField fromField)
     let files =
           case mFiles of

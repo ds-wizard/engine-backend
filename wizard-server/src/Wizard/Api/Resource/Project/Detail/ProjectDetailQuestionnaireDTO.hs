@@ -6,6 +6,7 @@ import GHC.Generics
 
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Project.Acl.ProjectPermDTO
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Project.File.ProjectFileSimple
 import Wizard.Model.Project.Project
 import Wizard.Model.Project.ProjectReply
@@ -15,7 +16,7 @@ data ProjectDetailQuestionnaireDTO = ProjectDetailQuestionnaireDTO
   , name :: String
   , visibility :: ProjectVisibility
   , sharing :: ProjectSharing
-  , knowledgeModelPackageId :: String
+  , knowledgeModelPackage :: KnowledgeModelPackageSuggestion
   , selectedQuestionTagUuids :: [U.UUID]
   , isTemplate :: Bool
   , knowledgeModel :: KnowledgeModel
@@ -27,8 +28,6 @@ data ProjectDetailQuestionnaireDTO = ProjectDetailQuestionnaireDTO
   , files :: [ProjectFileSimple]
   , unresolvedCommentCounts :: M.Map String (M.Map U.UUID Int)
   , resolvedCommentCounts :: M.Map String (M.Map U.UUID Int)
-  , projectActionsAvailable :: Int
-  , projectImportersAvailable :: Int
   , fileCount :: Int
   }
   deriving (Show, Eq, Generic)

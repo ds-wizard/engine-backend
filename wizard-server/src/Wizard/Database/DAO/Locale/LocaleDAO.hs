@@ -30,7 +30,7 @@ findLocales = do
 
 findLocalesPage :: Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page LocaleList)
 findLocalesPage mOrganizationId mLocaleId mQuery pageable sort =
-  createFindEntitiesGroupByCoordinatePageableQuerySortFn'
+  createFindEntitiesGroupByCoordinatePageableQuerySortFn
     entityName
     pageLabel
     pageable

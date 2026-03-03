@@ -17,35 +17,35 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFileList
 
 entityName = "document_template_file"
 
-findFilesByDocumentTemplateId :: AppContextC s sc m => String -> m [DocumentTemplateFile]
-findFilesByDocumentTemplateId documentTemplateId = do
+findFilesByDocumentTemplateUuid :: AppContextC s sc m => U.UUID -> m [DocumentTemplateFile]
+findFilesByDocumentTemplateUuid documentTemplateUuid = do
   tenantUuid <- asks (.tenantUuid')
-  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId)]
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid)]
 
-findFileListsByDocumentTemplateId :: AppContextC s sc m => String -> m [DocumentTemplateFileList]
-findFileListsByDocumentTemplateId documentTemplateId = do
+findFileListsByDocumentTemplateUuid :: AppContextC s sc m => U.UUID -> m [DocumentTemplateFileList]
+findFileListsByDocumentTemplateUuid documentTemplateUuid = do
   tenantUuid <- asks (.tenantUuid')
-  createFindEntitiesWithFieldsByFn "uuid, file_name, created_at, updated_at" entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId)]
+  createFindEntitiesWithFieldsByFn "uuid, file_name, created_at, updated_at" entityName [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid)]
 
-findFilesByDocumentTemplateIdAndFileName :: AppContextC s sc m => String -> String -> m [DocumentTemplateFile]
-findFilesByDocumentTemplateIdAndFileName documentTemplateId fileName = do
+findFilesByDocumentTemplateUuidAndFileName :: AppContextC s sc m => U.UUID -> String -> m [DocumentTemplateFile]
+findFilesByDocumentTemplateUuidAndFileName documentTemplateUuid fileName = do
   tenantUuid <- asks (.tenantUuid')
-  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId), ("file_name", fileName)]
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid), ("file_name", fileName)]
 
-findFileById :: AppContextC s sc m => U.UUID -> m DocumentTemplateFile
-findFileById uuid = do
+findFileByUuid :: AppContextC s sc m => U.UUID -> m DocumentTemplateFile
+findFileByUuid uuid = do
   tenantUuid <- asks (.tenantUuid')
   createFindEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
 insertFile :: AppContextC s sc m => DocumentTemplateFile -> m Int64
 insertFile = createInsertFn entityName
 
-updateFileById :: AppContextC s sc m => DocumentTemplateFile -> m Int64
-updateFileById file = do
+updateFileByUuid :: AppContextC s sc m => DocumentTemplateFile -> m Int64
+updateFileByUuid file = do
   tenantUuid <- asks (.tenantUuid')
   let sql =
         fromString
-          "UPDATE document_template_file SET document_template_id = ?, uuid = ?, file_name = ?, content = ?, tenant_uuid = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE document_template_file SET document_template_uuid = ?, uuid = ?, file_name = ?, content = ?, tenant_uuid = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow file ++ [toField tenantUuid, toField file.uuid]
   logQuery sql params
   let action conn = execute conn sql params
@@ -54,10 +54,10 @@ updateFileById file = do
 deleteFiles :: AppContextC s sc m => m Int64
 deleteFiles = createDeleteEntitiesFn entityName
 
-deleteFilesByDocumentTemplateId :: AppContextC s sc m => String -> m Int64
-deleteFilesByDocumentTemplateId tmlId = do
+deleteFilesByDocumentTemplateUuid :: AppContextC s sc m => U.UUID -> m Int64
+deleteFilesByDocumentTemplateUuid documentTemplateUuid = do
   tenantUuid <- asks (.tenantUuid')
-  createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", tmlId)]
+  createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid)]
 
 deleteFileById :: AppContextC s sc m => U.UUID -> m Int64
 deleteFileById uuid = do

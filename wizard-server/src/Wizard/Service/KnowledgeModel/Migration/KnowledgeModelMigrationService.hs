@@ -7,6 +7,8 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Common.Model.Error.Error
+import Shared.Coordinate.Model.Coordinate.Coordinate
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationCreateDTO
@@ -16,6 +18,7 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorEventDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelMigrationDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelPackageDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
@@ -29,19 +32,21 @@ import Wizard.Service.KnowledgeModel.Migration.KnowledgeModelMigrationAudit
 import Wizard.Service.KnowledgeModel.Migration.KnowledgeModelMigrationMapper
 import Wizard.Service.KnowledgeModel.Migration.KnowledgeModelMigrationValidation
 import Wizard.Service.KnowledgeModel.Migration.Migrator.Migrator
-import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageService
+import Wizard.Service.KnowledgeModel.Package.Event.KnowledgeModelPackageEventService
 
 getCurrentMigrationDto :: U.UUID -> AppContextM KnowledgeModelMigrationDTO
 getCurrentMigrationDto editorUuid = do
   checkPermission _KM_UPGRADE_PERM
   ms <- getCurrentMigration editorUuid
   editor <- findKnowledgeModelEditorByUuid editorUuid
-  return $ toDTO ms editor
+  previousPackage <- findPackageSuggestionByUuid ms.editorPreviousPackageUuid
+  targetPackage <- findPackageSuggestionByUuid ms.targetPackageUuid
+  return $ toDTO ms previousPackage targetPackage editor
 
 getCurrentMigration :: U.UUID -> AppContextM KnowledgeModelMigration
 getCurrentMigration editorUuid = do
   ms <- findKnowledgeModelMigrationByEditorUuid editorUuid
-  knowledgeModel <- compileKnowledgeModel ms.resultEvents (Just ms.editorPreviousPackageId) []
+  knowledgeModel <- compileKnowledgeModel ms.resultEvents (Just ms.editorPreviousPackageUuid) []
   let stateWithEvent =
         case ms.state of
           (ConflictKnowledgeModelMigrationState Nothing) -> ConflictKnowledgeModelMigrationState . Just . head $ ms.targetPackageEvents
@@ -53,31 +58,36 @@ createMigration kmEditorUuid reqDto =
   runInTransaction $ do
     checkPermission _KM_UPGRADE_PERM
     logOutOnlineUsersWhenKnowledgeModelEditorDramaticallyChanged kmEditorUuid
-    let targetPkgId = reqDto.targetPackageId
+    let targetPkgUuid = reqDto.targetPackageUuid
+    targetPkg <- findPackageByUuid targetPkgUuid
     editor <- findKnowledgeModelEditorByUuid kmEditorUuid
     previousPkg <- getPreviousPkg editor
     mergeCheckpointPkgId <- getMergeCheckpointPackageId editor
+    mergeCheckpointPkg <- findPackageByCoordinate mergeCheckpointPkgId
     forkOfPkgId <- getForkOfPackageId editor
+    forkOfPkg <- findPackageByCoordinate forkOfPkgId
     validateMigrationUniqueness kmEditorUuid
-    validateIfTargetPackageVersionIsHigher forkOfPkgId targetPkgId
-    editorEvents <- getEditorEvents previousPkg.pId mergeCheckpointPkgId
-    targetPkgEvents <- getTargetPackageEvents targetPkgId forkOfPkgId
+    validateIfTargetPackageVersionIsHigher forkOfPkgId (createCoordinate targetPkg)
+    editorEvents <- getEditorEvents previousPkg.uuid mergeCheckpointPkg.uuid
+    targetPkgEvents <- getTargetPackageEvents targetPkg.uuid forkOfPkg.uuid
     kmEditorEvents <- findKnowledgeModelEventsByEditorUuid kmEditorUuid
     let kmEvents = fmap EditorMapper.toKnowledgeModelEvent kmEditorEvents
-    km <- compileKnowledgeModel kmEvents editor.previousPackageId []
+    km <- compileKnowledgeModel kmEvents editor.previousPackageUuid []
     tenantUuid <- asks currentTenantUuid
     now <- liftIO getCurrentTime
-    let ms = fromCreateDTO editor previousPkg editorEvents targetPkgId targetPkgEvents km tenantUuid now
+    let ms = fromCreateDTO editor previousPkg editorEvents targetPkgUuid targetPkgEvents km tenantUuid now
     insertKnowledgeModelMigration ms
     migratedMs <- migrateState ms
     auditKmMigrationCreate reqDto editor
-    return $ toDTO migratedMs editor
+    previousPackage <- findPackageSuggestionByUuid ms.editorPreviousPackageUuid
+    targetPackage <- findPackageSuggestionByUuid ms.targetPackageUuid
+    return $ toDTO migratedMs previousPackage targetPackage editor
   where
     getEditorEvents = getAllPreviousEventsSincePackageIdAndUntilPackageId
     getTargetPackageEvents = getAllPreviousEventsSincePackageIdAndUntilPackageId
     getPreviousPkg editor =
-      case editor.previousPackageId of
-        Just previousPkgId -> getPackageById previousPkgId
+      case editor.previousPackageUuid of
+        Just previousPkgUuid -> findPackageByUuid previousPkgUuid
         Nothing -> throwError . UserError $ _ERROR_VALIDATION__KM_EDITOR_PREVIOUS_PKG_ABSENCE
     getMergeCheckpointPackageId editor = do
       mMergeCheckpointPackageId <- getEditorMergeCheckpointPackageId editor

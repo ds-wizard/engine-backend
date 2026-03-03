@@ -4,6 +4,7 @@ import Data.Aeson
 
 import Registry.Model.KnowledgeModel.Package.KnowledgeModelPackageRaw
 import Shared.Common.Util.Aeson
+import Shared.Coordinate.Api.Resource.Coordinate.CoordinateJM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePhaseJM ()
 
 instance ToJSON KnowledgeModelPackageRaw where

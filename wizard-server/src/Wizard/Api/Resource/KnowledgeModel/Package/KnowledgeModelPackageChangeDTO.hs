@@ -6,5 +6,6 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 
 data KnowledgeModelPackageChangeDTO = KnowledgeModelPackageChangeDTO
   { phase :: KnowledgeModelPackagePhase
+  , public :: Bool
   }
   deriving (Show, Eq, Generic)

@@ -3,6 +3,8 @@ module Wizard.Specs.API.DocumentTemplateDraft.File.Detail_GET (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -10,6 +12,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFiles
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
@@ -19,11 +23,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /wizard-api/document-template-drafts/{documentTemplateId}/files/{fileUuid}
+-- GET /wizard-api/document-template-drafts/{dtUuid}/files/{fileUuid}
 -- ------------------------------------------------------------------------
 detail_GET :: AppContext -> SpecWith ((), Application)
 detail_GET appContext =
-  describe "GET /wizard-api/document-template-drafts/{documentTemplateId}/files/{fileUuid}" $ do
+  describe "GET /wizard-api/document-template-drafts/{dtUuid}/files/{fileUuid}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -34,7 +38,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/wizard-api/document-template-drafts/global:project-report:1.0.0/files/7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
+reqUrl = BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/files/" ++ U.toString fileDefaultHtml.uuid
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -80,8 +84,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/document-template-drafts/global:project-report:1.0.0/files/deab6c38-aeac-4b17-a501-4365a0a70176"
+    (BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/files/fed88104-7cf1-489a-bfd0-24c120bb1cda")
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template_file"
-    [("uuid", "deab6c38-aeac-4b17-a501-4365a0a70176")]
+    [("uuid", "fed88104-7cf1-489a-bfd0-24c120bb1cda")]

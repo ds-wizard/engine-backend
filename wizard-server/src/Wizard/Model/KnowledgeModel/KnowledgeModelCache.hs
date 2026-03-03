@@ -7,7 +7,7 @@ import GHC.Generics
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
 data KnowledgeModelCache = KnowledgeModelCache
-  { knowledgeModelPackageId :: String
+  { knowledgeModelPackageUuid :: U.UUID
   , tagUuids :: [U.UUID]
   , knowledgeModel :: KnowledgeModel
   , tenantUuid :: U.UUID

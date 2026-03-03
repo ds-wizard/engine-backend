@@ -9,7 +9,6 @@ import Shared.Common.Util.Date
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Shared.OpenId.Database.Migration.Development.OpenId.Data.OpenIds
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
@@ -155,39 +154,11 @@ defaultKnowledgeModelEncrypted = process defaultSecret defaultKnowledgeModel
 defaultKnowledgeModelChangeDto :: TenantConfigKnowledgeModelChangeDTO
 defaultKnowledgeModelChangeDto =
   TenantConfigKnowledgeModelChangeDTO
-    { public = defaultKnowledgeModelPublicChangeDto
-    , integrationConfig =
+    { integrationConfig =
         "ontologyPortal: \n\
         \  path: ontology-portal.json \n\
         \bioPortal: \n\
         \  path: bio-portal.json "
-    }
-
-defaultKnowledgeModelPublic :: TenantConfigKnowledgeModelPublic
-defaultKnowledgeModelPublic =
-  TenantConfigKnowledgeModelPublic
-    { enabled = defaultKnowledgeModelPublicChangeDto.enabled
-    , knowledgeModelPackages = zipWith (\i p -> fromKnowledgeModelPublicPackagePatternChangeDTO p defaultTenant.uuid i (dt' 2018 1 20) (dt' 2018 1 20)) [0 ..] defaultKnowledgeModelPublicChangeDto.knowledgeModelPackages
-    }
-
-defaultKnowledgeModelPublicChangeDto :: TenantConfigKnowledgeModelPublicChangeDTO
-defaultKnowledgeModelPublicChangeDto =
-  TenantConfigKnowledgeModelPublicChangeDTO
-    { enabled = True
-    , knowledgeModelPackages = [kmPackagePatternGlobal]
-    }
-
-defaultKnowledgeModelPublicPackagePattern :: TenantConfigKnowledgeModelPublicPackagePattern
-defaultKnowledgeModelPublicPackagePattern =
-  TenantConfigKnowledgeModelPublicPackagePattern
-    { tenantUuid = defaultTenant.uuid
-    , position = 0
-    , orgId = Just "global"
-    , kmId = Just "core"
-    , minVersion = Just "1.0.0"
-    , maxVersion = Just "1.0.0"
-    , createdAt = dt' 2018 1 20
-    , updatedAt = dt' 2018 1 20
     }
 
 defaultProject :: TenantConfigProject
@@ -285,7 +256,7 @@ defaultSubmissionServiceSupportedFormat = fromSubmissionServiceSupportedFormatCh
 defaultSubmissionServiceSupportedFormatChangeDto :: TenantConfigSubmissionServiceSupportedFormatChangeDTO
 defaultSubmissionServiceSupportedFormatChangeDto =
   TenantConfigSubmissionServiceSupportedFormatChangeDTO
-    { templateId = wizardDocumentTemplate.tId
+    { templateUuid = wizardDocumentTemplate.uuid
     , formatUuid = formatJson.uuid
     }
 

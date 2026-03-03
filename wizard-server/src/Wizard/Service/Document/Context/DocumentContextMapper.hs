@@ -3,7 +3,10 @@ module Wizard.Service.Document.Context.DocumentContextMapper where
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
+import Shared.Coordinate.Model.Coordinate.Coordinate
+import Shared.Coordinate.Util.Coordinate
 import qualified Shared.DocumentTemplate.Constant.DocumentTemplate as TemplateConstant
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
@@ -32,6 +35,7 @@ toDocumentContext
   -> [ProjectVersionList]
   -> [ProjectFileSimple]
   -> KnowledgeModel
+  -> DocumentTemplate
   -> Report
   -> KnowledgeModelPackage
   -> TenantConfigOrganization
@@ -41,7 +45,7 @@ toDocumentContext
   -> [DocumentContextUserPerm]
   -> [DocumentContextUserGroupPerm]
   -> DocumentContext
-toDocumentContext doc appClientUrl project phaseUuid replies labels mProjectVersion projectVersionDtos projectFiles km report pkg org lookAndFeel mProjectCreatedBy mDocCreatedBy users groups =
+toDocumentContext doc appClientUrl project phaseUuid replies labels mProjectVersion projectVersionDtos projectFiles km dt report pkg org lookAndFeel mProjectCreatedBy mDocCreatedBy users groups =
   DocumentContext
     { config =
         DocumentContextConfig
@@ -56,7 +60,7 @@ toDocumentContext doc appClientUrl project phaseUuid replies labels mProjectVers
         DocumentContextDocument
           { uuid = doc.uuid
           , name = doc.name
-          , documentTemplateId = doc.documentTemplateId
+          , documentTemplateId = buildCoordinate dt.organizationId dt.templateId dt.version
           , formatUuid = doc.formatUuid
           , createdBy = USR_Mapper.toDTO <$> mDocCreatedBy
           , createdAt = doc.createdAt
@@ -90,7 +94,7 @@ toDocumentContextPackage :: KnowledgeModelPackage -> DocumentContextPackage
 toDocumentContextPackage pkg =
   let dto = toSimpleDTO pkg
    in DocumentContextPackage
-        { pId = dto.pId
+        { pId = show . createCoordinate $ pkg
         , name = dto.name
         , organizationId = dto.organizationId
         , kmId = pkg.kmId

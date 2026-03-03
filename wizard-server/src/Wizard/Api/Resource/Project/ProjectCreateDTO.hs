@@ -7,11 +7,11 @@ import Wizard.Model.Project.Project
 
 data ProjectCreateDTO = ProjectCreateDTO
   { name :: String
-  , knowledgeModelPackageId :: String
+  , knowledgeModelPackageUuid :: U.UUID
   , visibility :: ProjectVisibility
   , sharing :: ProjectSharing
   , questionTagUuids :: [U.UUID]
-  , documentTemplateId :: Maybe String
+  , documentTemplateUuid :: Maybe U.UUID
   , formatUuid :: Maybe U.UUID
   }
   deriving (Show, Eq, Generic)

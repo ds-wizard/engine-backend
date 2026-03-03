@@ -13,10 +13,11 @@ import Test.Hspec.Wai.Matcher
 import Registry.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailJM ()
 import Registry.Database.Migration.Development.Audit.Data.AuditEntries
 import Registry.Model.Context.AppContext
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Bundle.KnowledgeModelBundleJM ()
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Bundle.KnowledgeModelBundles
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
-import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage ()
 
 import Registry.Specs.API.Audit.Common
 import Registry.Specs.API.Common
@@ -37,7 +38,7 @@ detail_bundle_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = BS.pack $ "/knowledge-model-packages/" ++ netherlandsKmPackageV2.pId ++ "/bundle"
+reqUrl = BS.pack $ "/knowledge-model-packages/" ++ show (createCoordinate netherlandsKmPackageV2) ++ "/bundle"
 
 reqHeaders = [reqAdminAuthHeader, reqCtHeader]
 
@@ -78,4 +79,4 @@ test_404 appContext =
     reqHeaders
     reqBody
     "knowledge_model_package"
-    [("id", "global:non-existing-km-package:1.0.0")]
+    [("organization_id", "global"), ("km_id", "non-existing-km-package"), ("version", "1.0.0")]

@@ -23,13 +23,11 @@ import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelMigrationDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelSecretDAO
 import Wizard.Database.DAO.Plugin.PluginDAO
-import Wizard.Database.DAO.Project.ProjectActionDAO
 import Wizard.Database.DAO.Project.ProjectCommentDAO
 import Wizard.Database.DAO.Project.ProjectCommentThreadDAO
 import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.DAO.Project.ProjectEventDAO
 import Wizard.Database.DAO.Project.ProjectFileDAO
-import Wizard.Database.DAO.Project.ProjectImporterDAO
 import Wizard.Database.DAO.Project.ProjectMigrationDAO
 import Wizard.Database.DAO.Project.ProjectPermDAO
 import Wizard.Database.DAO.Project.ProjectVersionDAO
@@ -67,8 +65,6 @@ import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigrat
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
 import Wizard.Database.Migration.Development.Plugin.Data.Plugins
 import qualified Wizard.Database.Migration.Development.Plugin.PluginSchemaMigration as Plugin
-import qualified Wizard.Database.Migration.Development.Project.ProjectActionSchemaMigration as ProjectAction
-import qualified Wizard.Database.Migration.Development.Project.ProjectImporterSchemaMigration as ProjectImporter
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigrationSchemaMigration as ProjectMigration
 import qualified Wizard.Database.Migration.Development.Project.ProjectSchemaMigration as Project
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as Registry
@@ -111,8 +107,6 @@ buildSchema appContext = do
   runInContext ExternalLink.dropTables appContext
   runInContext Component.dropTables appContext
   runInContext Registry.dropTables appContext
-  runInContext ProjectAction.dropTables appContext
-  runInContext ProjectImporter.dropTables appContext
   runInContext Audit.dropTables appContext
   runInContext Prefab.dropTables appContext
   runInContext PersistentCommand.dropTables appContext
@@ -162,8 +156,6 @@ buildSchema appContext = do
   runInContext PersistentCommand.createTables appContext
   runInContext Prefab.createTables appContext
   runInContext Audit.createTables appContext
-  runInContext ProjectAction.createTables appContext
-  runInContext ProjectImporter.createTables appContext
   runInContext Registry.createTables appContext
   runInContext Component.createTables appContext
   runInContext ExternalLink.createTables appContext
@@ -219,8 +211,6 @@ resetDB appContext = do
   runInContext deleteProjectCommentThreads appContext
   runInContext deleteProjectPerms appContext
   runInContext deleteProjects appContext
-  runInContext deleteProjectActions appContext
-  runInContext deleteProjectImporters appContext
   runInContext deleteDocumentTemplates appContext
   runInContext deleteKnowledgeModelSecrets appContext
   runInContext deletePackages appContext
@@ -250,7 +240,6 @@ resetDB appContext = do
   runInContext (insertTenantConfigLookAndFeelCustomMenuLink defaultLookAndFeelCustomLink) appContext
   runInContext (insertTenantConfigRegistry defaultRegistryEncrypted) appContext
   runInContext (insertTenantConfigKnowledgeModel defaultKnowledgeModelEncrypted) appContext
-  runInContext (insertTenantConfigKnowledgeModelPublicPackagePattern defaultKnowledgeModelPublicPackagePattern) appContext
   runInContext (insertTenantConfigProject defaultProjectEncrypted) appContext
   runInContext (insertTenantConfigSubmission (defaultSubmission {services = []})) appContext
   runInContext (insertTenantConfigFeatures defaultFeatures) appContext

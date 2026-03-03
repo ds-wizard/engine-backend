@@ -5,6 +5,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorState
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 
 data KnowledgeModelEditorList = KnowledgeModelEditorList
   { uuid :: U.UUID
@@ -12,8 +13,8 @@ data KnowledgeModelEditorList = KnowledgeModelEditorList
   , kmId :: String
   , version :: String
   , state :: KnowledgeModelEditorState
-  , previousPackageId :: Maybe String
-  , forkOfPackageId :: Maybe String
+  , previousPackageUuid :: Maybe U.UUID
+  , forkOfPackage :: Maybe KnowledgeModelPackageSuggestion
   , createdBy :: Maybe U.UUID
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
@@ -22,11 +23,11 @@ data KnowledgeModelEditorList = KnowledgeModelEditorList
 
 instance Eq KnowledgeModelEditorList where
   a == b =
-    uuid a == uuid b
-      && name a == name b
-      && kmId a == kmId b
-      && version a == version b
-      && state a == state b
-      && previousPackageId a == previousPackageId b
-      && forkOfPackageId a == forkOfPackageId b
-      && createdBy a == createdBy b
+    a.uuid == b.uuid
+      && a.name == b.name
+      && a.kmId == b.kmId
+      && a.version == b.version
+      && a.state == b.state
+      && a.previousPackageUuid == b.previousPackageUuid
+      && a.forkOfPackage == b.forkOfPackage
+      && a.createdBy == b.createdBy

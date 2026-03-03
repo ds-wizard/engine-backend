@@ -10,11 +10,12 @@ import Registry.Model.Context.ContextLenses ()
 import Registry.Service.KnowledgeModel.Package.KnowledgeModelPackageService
 import Shared.Common.Api.Handler.Common
 import Shared.Common.Model.Context.TransactionState
+import Shared.Coordinate.Model.Coordinate.Coordinate
 
 type Detail_GET =
   "knowledge-model-packages"
-    :> Capture "id" String
+    :> Capture "coordinate" Coordinate
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] KnowledgeModelPackageDetailDTO)
 
-detail_GET :: String -> BaseContextM (Headers '[Header "x-trace-uuid" String] KnowledgeModelPackageDetailDTO)
-detail_GET kmpId = runInUnauthService NoTransaction $ addTraceUuidHeader =<< getPackageById kmpId
+detail_GET :: Coordinate -> BaseContextM (Headers '[Header "x-trace-uuid" String] KnowledgeModelPackageDetailDTO)
+detail_GET coordinate = runInUnauthService NoTransaction $ addTraceUuidHeader =<< getPackageByCoordinate coordinate

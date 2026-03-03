@@ -29,13 +29,9 @@ import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSuggestio
 import Wizard.Api.Resource.Locale.LocaleDTO
 import Wizard.Api.Resource.Locale.LocaleSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
-import Wizard.Api.Resource.Project.Action.ProjectActionDTO
-import Wizard.Api.Resource.Project.Action.ProjectActionSM ()
 import Wizard.Api.Resource.Project.Comment.ProjectCommentThreadAssignedSM ()
 import Wizard.Api.Resource.Project.Event.ProjectEventListSM ()
 import Wizard.Api.Resource.Project.File.ProjectFileListSM ()
-import Wizard.Api.Resource.Project.Importer.ProjectImporterDTO
-import Wizard.Api.Resource.Project.Importer.ProjectImporterSM ()
 import Wizard.Api.Resource.Project.ProjectDTO
 import Wizard.Api.Resource.Project.ProjectSM ()
 import Wizard.Api.Resource.Project.ProjectSuggestionSM ()
@@ -48,11 +44,9 @@ import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
 import Wizard.Database.Migration.Development.Locale.Data.Locales
-import Wizard.Database.Migration.Development.Project.Data.ProjectActions
 import Wizard.Database.Migration.Development.Project.Data.ProjectComments
 import Wizard.Database.Migration.Development.Project.Data.ProjectEvents
 import Wizard.Database.Migration.Development.Project.Data.ProjectFiles
-import Wizard.Database.Migration.Development.Project.Data.ProjectImporters
 import Wizard.Database.Migration.Development.Project.Data.Projects
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -137,12 +131,6 @@ instance ToSchema (Page ProjectCommentThreadAssigned) where
   declareNamedSchema =
     toSwaggerWithDtoName "Page ProjectCommentThreadAssigned" (Page "commentThreads" pageMetadata [cmtAssigned])
 
-instance ToSchema (Page ProjectActionDTO) where
-  declareNamedSchema =
-    toSwaggerWithDtoName
-      "Page ProjectActionDTO"
-      (Page "projectActions" pageMetadata [projectActionFtp3Dto])
-
 instance ToSchema (Page ProjectEventList) where
   declareNamedSchema =
     toSwaggerWithDtoName
@@ -154,12 +142,6 @@ instance ToSchema (Page ProjectFileList) where
     toSwaggerWithDtoName
       "Page ProjectFileList"
       (Page "projectFiles" pageMetadata [projectFileList])
-
-instance ToSchema (Page ProjectImporterDTO) where
-  declareNamedSchema =
-    toSwaggerWithDtoName
-      "Page ProjectImporterDTO"
-      (Page "projectImporters" pageMetadata [projectImporterBio3Dto])
 
 instance ToSchema (Page DocumentTemplateSimpleDTO) where
   declareNamedSchema =

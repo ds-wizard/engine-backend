@@ -1,5 +1,7 @@
 module Wizard.Service.KnowledgeModel.Editor.EditorUtil where
 
+import Shared.Coordinate.Model.Coordinate.Coordinate
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelMigrationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
@@ -8,17 +10,16 @@ import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorState
 import Wizard.Model.KnowledgeModel.Migration.KnowledgeModelMigration
 import Wizard.Model.Tenant.Config.TenantConfig
-import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageService
 
 getEditorPreviousPackage :: KnowledgeModelEditor -> AppContextM (Maybe KnowledgeModelPackage)
 getEditorPreviousPackage editor =
-  case editor.previousPackageId of
+  case editor.previousPackageUuid of
     Just pkgId -> do
-      pkg <- getPackageById pkgId
+      pkg <- findPackageByUuid pkgId
       return . Just $ pkg
     Nothing -> return Nothing
 
-getEditorForkOfPackageId :: KnowledgeModelEditor -> AppContextM (Maybe String)
+getEditorForkOfPackageId :: KnowledgeModelEditor -> AppContextM (Maybe Coordinate)
 getEditorForkOfPackageId editor = do
   mPreviousPkg <- getEditorPreviousPackage editor
   case mPreviousPkg of
@@ -26,10 +27,10 @@ getEditorForkOfPackageId editor = do
       tcOrganization <- findTenantConfigOrganization
       if (previousPkg.organizationId == tcOrganization.organizationId) && (previousPkg.kmId == editor.kmId)
         then return $ previousPkg.forkOfPackageId
-        else return . Just $ previousPkg.pId
+        else return . Just . createCoordinate $ previousPkg
     Nothing -> return Nothing
 
-getEditorMergeCheckpointPackageId :: KnowledgeModelEditor -> AppContextM (Maybe String)
+getEditorMergeCheckpointPackageId :: KnowledgeModelEditor -> AppContextM (Maybe Coordinate)
 getEditorMergeCheckpointPackageId editor = do
   mPreviousPkg <- getEditorPreviousPackage editor
   case mPreviousPkg of
@@ -37,10 +38,10 @@ getEditorMergeCheckpointPackageId editor = do
       tcOrganization <- findTenantConfigOrganization
       if (previousPkg.organizationId == tcOrganization.organizationId) && (previousPkg.kmId == editor.kmId)
         then return $ previousPkg.mergeCheckpointPackageId
-        else return . Just $ previousPkg.pId
+        else return . Just . createCoordinate $ previousPkg
     Nothing -> return Nothing
 
-getEditorState :: KnowledgeModelEditor -> Int -> Maybe String -> AppContextM KnowledgeModelEditorState
+getEditorState :: KnowledgeModelEditor -> Int -> Maybe Coordinate -> AppContextM KnowledgeModelEditorState
 getEditorState editor eventSize mForkOfPackageId = do
   mMs <- findKnowledgeModelMigrationByEditorUuid' editor.uuid
   isMigrating mMs $ isEditing $ isMigrated mMs $ isOutdated isDefault
@@ -66,9 +67,12 @@ getEditorState editor eventSize mForkOfPackageId = do
     isOutdated continue =
       case mForkOfPackageId of
         Just forkOfPackageId -> do
-          newerPackages <- getNewerPackages forkOfPackageId False
-          if not . null $ newerPackages
-            then return OutdatedKnowledgeModelEditorState
-            else continue
+          mLatestPkg <- findLatestPackageByOrganizationIdAndKmId' forkOfPackageId.organizationId forkOfPackageId.entityId Nothing
+          case mLatestPkg of
+            Just latestPkg ->
+              if createCoordinate latestPkg /= forkOfPackageId
+                then return OutdatedKnowledgeModelEditorState
+                else continue
+            Nothing -> continue
         Nothing -> continue
     isDefault = return DefaultKnowledgeModelEditorState

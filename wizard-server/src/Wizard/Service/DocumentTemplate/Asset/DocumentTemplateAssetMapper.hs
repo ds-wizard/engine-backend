@@ -21,10 +21,10 @@ toDTO asset url urlExpiration =
     , updatedAt = asset.updatedAt
     }
 
-fromCreateDTO :: String -> U.UUID -> String -> String -> Int64 -> U.UUID -> UTCTime -> UTCTime -> DocumentTemplateAsset
-fromCreateDTO tmlId aUuid fileName contentType fileSize tenantUuid createdAt updatedAt =
+fromCreateDTO :: U.UUID -> U.UUID -> String -> String -> Int64 -> U.UUID -> UTCTime -> UTCTime -> DocumentTemplateAsset
+fromCreateDTO dtUuid aUuid fileName contentType fileSize tenantUuid createdAt updatedAt =
   DocumentTemplateAsset
-    { documentTemplateId = tmlId
+    { documentTemplateUuid = dtUuid
     , uuid = aUuid
     , fileName = fileName
     , contentType = contentType
@@ -37,7 +37,7 @@ fromCreateDTO tmlId aUuid fileName contentType fileSize tenantUuid createdAt upd
 fromChangeDTO :: DocumentTemplateAsset -> DocumentTemplateAssetChangeDTO -> UTCTime -> DocumentTemplateAsset
 fromChangeDTO asset reqDto now =
   DocumentTemplateAsset
-    { documentTemplateId = asset.documentTemplateId
+    { documentTemplateUuid = asset.documentTemplateUuid
     , uuid = asset.uuid
     , fileName = reqDto.fileName
     , contentType = asset.contentType
@@ -50,7 +50,7 @@ fromChangeDTO asset reqDto now =
 fromChangeContentDTO :: DocumentTemplateAsset -> String -> String -> Int64 -> UTCTime -> DocumentTemplateAsset
 fromChangeContentDTO asset fileName contentType fileSize now =
   DocumentTemplateAsset
-    { documentTemplateId = asset.documentTemplateId
+    { documentTemplateUuid = asset.documentTemplateUuid
     , uuid = asset.uuid
     , fileName = fileName
     , contentType = contentType
@@ -60,10 +60,10 @@ fromChangeContentDTO asset fileName contentType fileSize now =
     , updatedAt = now
     }
 
-fromDuplicateDTO :: DocumentTemplateAsset -> String -> U.UUID -> UTCTime -> DocumentTemplateAsset
-fromDuplicateDTO asset documentTemplateId uuid now =
+fromDuplicateDTO :: DocumentTemplateAsset -> U.UUID -> U.UUID -> UTCTime -> DocumentTemplateAsset
+fromDuplicateDTO asset documentTemplateUuid uuid now =
   DocumentTemplateAsset
-    { documentTemplateId = documentTemplateId
+    { documentTemplateUuid = documentTemplateUuid
     , uuid = uuid
     , fileName = asset.fileName
     , contentType = asset.contentType

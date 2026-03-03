@@ -5,6 +5,7 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.Types
 
 import Wizard.Api.Resource.Project.Event.ProjectEventJM ()
+import Wizard.Database.Mapping.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Database.Mapping.Project.ProjectAcl
 import Wizard.Database.Mapping.Project.ProjectSharing ()
 import Wizard.Database.Mapping.Project.ProjectState ()
@@ -17,12 +18,10 @@ instance FromRow ProjectDetail where
     name <- field
     visibility <- field
     sharing <- field
-    knowledgeModelPackageId <- field
+    knowledgeModelPackage <- fieldKnowledgeModelPackageSuggestion
     selectedQuestionTagUuids <- fromPGArray <$> field
     isTemplate <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid
-    projectActionsAvailable <- field
-    projectImportersAvailable <- field
     fileCount <- field
     return $ ProjectDetail {..}

@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.DocumentTemplateDraft.Folder.List_Move_POST where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -15,7 +16,7 @@ type List_Move_POST =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] DocumentTemplateFolderMoveDTO
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "documentTemplateUuid" U.UUID
     :> "folders"
     :> "move"
     :> Verb POST 204 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] NoContent)
@@ -24,11 +25,11 @@ list_move_POST
   :: Maybe String
   -> Maybe String
   -> DocumentTemplateFolderMoveDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
-list_move_POST mTokenHeader mServerUrl reqDto documentTemplateId =
+list_move_POST mTokenHeader mServerUrl reqDto documentTemplateUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        moveDraftFolder documentTemplateId reqDto
+        moveDraftFolder documentTemplateUuid reqDto
         return NoContent

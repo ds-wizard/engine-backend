@@ -2,6 +2,7 @@ module Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailJM where
 
 import Data.Aeson
 
+import Shared.Common.Api.Resource.Version.VersionJM ()
 import Shared.Common.Util.Aeson
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO

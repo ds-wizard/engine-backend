@@ -3,6 +3,8 @@ module Wizard.Specs.API.DocumentTemplateDraft.File.List_POST (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -27,7 +29,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 list_POST :: AppContext -> SpecWith ((), Application)
 list_POST appContext =
-  describe "POST /wizard-api/document-template-drafts/{documentTemplateId}/files" $ do
+  describe "POST /wizard-api/document-template-drafts/{dtUuid}/files" $ do
     test_201 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +39,7 @@ list_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/wizard-api/document-template-drafts/global:project-report:1.0.0/files"
+reqUrl = BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/files"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 
@@ -73,7 +75,6 @@ create_test_201 title appContext reqAuthHeader =
       assertExistenceOfTemplateFileInDB
         appContext
         templateFileNewFileEdited
-        wizardDocumentTemplate.tId
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

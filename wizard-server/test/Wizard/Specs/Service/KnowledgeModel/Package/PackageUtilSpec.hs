@@ -2,12 +2,13 @@ module Wizard.Specs.Service.KnowledgeModel.Package.PackageUtilSpec where
 
 import Test.Hspec
 
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 
 packageUtilSpec =
   describe "Package Utils" $ do
-    let pkgIdSplit = ["org.nl", "core-nl", "2.0.0"]
+    let pkgCoordinate = Coordinate "org.nl" "core-nl" "2.0.0"
     describe "fitsIntoKMSpec" $ do
       it "No restrictions => Allow anything" $
         -- GIVEN:
@@ -20,7 +21,7 @@ packageUtilSpec =
                   , maxVersion = Nothing
                   }
           -- GIVEN:
-          let result = fitsIntoKMSpec pkgIdSplit kmSpec
+          let result = fitsIntoKMSpec pkgCoordinate kmSpec
           -- THEN:
           result `shouldBe` True
       it "Restriction on 'orgId', same provided 'orgId' => Allow" $
@@ -34,7 +35,7 @@ packageUtilSpec =
                   , maxVersion = Nothing
                   }
           -- GIVEN:
-          let result = fitsIntoKMSpec pkgIdSplit kmSpec
+          let result = fitsIntoKMSpec pkgCoordinate kmSpec
           -- THEN:
           result `shouldBe` True
       it "Restriction on 'orgId', different provided 'orgId' => Deny" $
@@ -48,7 +49,7 @@ packageUtilSpec =
                   , maxVersion = Nothing
                   }
           -- GIVEN:
-          let result = fitsIntoKMSpec pkgIdSplit kmSpec
+          let result = fitsIntoKMSpec pkgCoordinate kmSpec
           -- THEN:
           result `shouldBe` False
       it "Restriction on 'KmID', same provided 'KmID' => Allow" $
@@ -62,7 +63,7 @@ packageUtilSpec =
                   , maxVersion = Nothing
                   }
           -- GIVEN:
-          let result = fitsIntoKMSpec pkgIdSplit kmSpec
+          let result = fitsIntoKMSpec pkgCoordinate kmSpec
           -- THEN:
           result `shouldBe` True
       it "Restriction on 'KmID', different provided 'KmID' => Deny" $
@@ -76,7 +77,7 @@ packageUtilSpec =
                   , maxVersion = Nothing
                   }
           -- GIVEN:
-          let result = fitsIntoKMSpec pkgIdSplit kmSpec
+          let result = fitsIntoKMSpec pkgCoordinate kmSpec
           -- THEN:
           result `shouldBe` False
       it "Restriction on 'minimal version', provided higher version => Alow" $
@@ -90,7 +91,7 @@ packageUtilSpec =
                   , maxVersion = Nothing
                   }
           -- GIVEN:
-          let result = fitsIntoKMSpec pkgIdSplit kmSpec
+          let result = fitsIntoKMSpec pkgCoordinate kmSpec
           -- THEN:
           result `shouldBe` True
       it "Restriction on 'minimal version', provided lower version => Deny" $
@@ -104,7 +105,7 @@ packageUtilSpec =
                   , maxVersion = Nothing
                   }
           -- GIVEN:
-          let result = fitsIntoKMSpec pkgIdSplit kmSpec
+          let result = fitsIntoKMSpec pkgCoordinate kmSpec
           -- THEN:
           result `shouldBe` False
       it "Restriction on 'maximal version', provided lower version => Alow" $
@@ -118,7 +119,7 @@ packageUtilSpec =
                   , maxVersion = Just "2.0.1"
                   }
           -- GIVEN:
-          let result = fitsIntoKMSpec pkgIdSplit kmSpec
+          let result = fitsIntoKMSpec pkgCoordinate kmSpec
           -- THEN:
           result `shouldBe` True
       it "Restriction on 'maximal version', provided higher version => Deny" $
@@ -132,7 +133,7 @@ packageUtilSpec =
                   , maxVersion = Just "1.0.0"
                   }
           -- GIVEN:
-          let result = fitsIntoKMSpec pkgIdSplit kmSpec
+          let result = fitsIntoKMSpec pkgCoordinate kmSpec
           -- THEN:
           result `shouldBe` False
       it "Two restrictions, provided data satisfies just one => Deny" $
@@ -146,6 +147,6 @@ packageUtilSpec =
                   , maxVersion = Nothing
                   }
           -- GIVEN:
-          let result = fitsIntoKMSpec pkgIdSplit kmSpec
+          let result = fitsIntoKMSpec pkgCoordinate kmSpec
           -- THEN:
           result `shouldBe` False

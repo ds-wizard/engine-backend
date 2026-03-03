@@ -13,7 +13,7 @@ type Detail_DELETE =
   Header "Authorization" String
     :> Header "Host" String
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "documentTemplateUuid" U.UUID
     :> "assets"
     :> Capture "assetUuid" U.UUID
     :> Verb DELETE 204 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] NoContent)
@@ -21,12 +21,12 @@ type Detail_DELETE =
 detail_DELETE
   :: Maybe String
   -> Maybe String
-  -> String
+  -> U.UUID
   -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
-detail_DELETE mTokenHeader mServerUrl tmlId assetUuid =
+detail_DELETE mTokenHeader mServerUrl dtUuid assetUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        deleteAsset tmlId assetUuid
+        deleteAsset dtUuid assetUuid
         return NoContent

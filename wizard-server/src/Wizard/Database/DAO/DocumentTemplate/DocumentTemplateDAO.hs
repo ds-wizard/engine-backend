@@ -49,7 +49,7 @@ findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated mNonEdita
           fromString $
             f'
               "SELECT \
-              \   document_template.id, \
+              \   document_template.uuid, \
               \   document_template.name, \
               \   document_template.organization_id, \
               \   document_template.template_id, \
@@ -66,12 +66,12 @@ findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated mNonEdita
               \FROM document_template \
               \LEFT JOIN registry_document_template ON document_template.organization_id = registry_document_template.organization_id AND document_template.template_id = registry_document_template.template_id \
               \LEFT JOIN registry_organization ON document_template.organization_id = registry_organization.organization_id \
-              \WHERE tenant_uuid = ? AND id IN ( \
+              \WHERE tenant_uuid = ? AND concat(document_template.organization_id, ':', document_template.template_id, ':', document_template.version) IN ( \
               \    SELECT CONCAT(organization_id, ':', template_id, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
               \                                                          (max(string_to_array(version, '.')::int[]))[2] || '.' || \
               \                                                          (max(string_to_array(version, '.')::int[]))[3]) \
               \    FROM document_template \
-              \    WHERE (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') AND tenant_uuid = ? AND (name ~* ? OR id ~* ?) %s \
+              \    WHERE (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') AND tenant_uuid = ? AND (name ~* ? OR organization_id ~* ? OR template_id ~* ? OR version ~* ?) %s \
               \    GROUP BY organization_id, template_id \
               \) \
               \%s \
@@ -89,6 +89,8 @@ findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated mNonEdita
     let params =
           toField tenantUuid
             : toField tenantUuid
+            : toField (regexM mQuery)
+            : toField (regexM mQuery)
             : toField (regexM mQuery)
             : toField (regexM mQuery)
             : fmap toField (mapToDBCoordinatesParams mOrganizationId mTemplateId)
@@ -117,7 +119,7 @@ findDocumentTemplatesSuggestions mQuery mNonEditable = do
         fromString $
           f'
             "SELECT \
-            \   document_template.id, \
+            \   document_template.uuid, \
             \   document_template.name, \
             \   document_template.organization_id, \
             \   document_template.template_id, \
@@ -131,21 +133,21 @@ findDocumentTemplatesSuggestions mQuery mNonEditable = do
             \    FROM (SELECT * \
             \          FROM document_template_format dt_format \
             \          WHERE dt_format.tenant_uuid = document_template.tenant_uuid \
-            \            AND dt_format.document_template_id = document_template.id \
+            \            AND dt_format.document_template_uuid = document_template.uuid \
             \          ORDER BY dt_format.name) nested \
             \   ) AS document_template_formats \
             \FROM document_template \
-            \WHERE tenant_uuid = ? AND id IN ( \
+            \WHERE tenant_uuid = ? AND concat(organization_id, ':', template_id, ':', version) IN ( \
             \    SELECT CONCAT(organization_id, ':', template_id, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
             \                                                          (max(string_to_array(version, '.')::int[]))[2] || '.' || \
             \                                                          (max(string_to_array(version, '.')::int[]))[3]) \
             \    FROM document_template \
-            \    WHERE (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') AND tenant_uuid = ? AND (name ~* ? OR id ~* ?) \
+            \    WHERE (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') AND tenant_uuid = ? AND (name ~* ? OR organization_id ~* ? OR template_id ~* ? OR version ~* ?) \
             \    GROUP BY organization_id, template_id \
             \) \
             \%s"
             [nonEditableCondition]
-  let params = [U.toString tenantUuid, U.toString tenantUuid, regexM mQuery, regexM mQuery]
+  let params = [U.toString tenantUuid, U.toString tenantUuid, regexM mQuery, regexM mQuery, regexM mQuery, regexM mQuery]
   logQuery sql params
   let action conn = query conn sql params
   runDB action
@@ -159,12 +161,13 @@ countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mOutdated outdated
             "SELECT count(*) \
             \FROM document_template \
             \LEFT JOIN registry_document_template ON document_template.organization_id = registry_document_template.organization_id AND document_template.template_id = registry_document_template.template_id \
-            \WHERE tenant_uuid = ? AND (name ~* ? OR id ~* ?) %s %s %s \
-            \  AND id IN (SELECT CONCAT(organization_id, ':', template_id, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
-            \                                                                   (max(string_to_array(version, '.')::int[]))[2] || '.' || \
-            \                                                                   (max(string_to_array(version, '.')::int[]))[3]) \
+            \WHERE tenant_uuid = ? AND (name ~* ? OR document_template.organization_id ~* ? OR document_template.template_id ~* ? OR document_template.version ~* ?) %s %s %s \
+            \  AND CONCAT(document_template.organization_id, ':', document_template.template_id, ':', document_template.version) IN \
+            \          (SELECT CONCAT(organization_id, ':', template_id, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
+            \                                                                 (max(string_to_array(version, '.')::int[]))[2] || '.' || \
+            \                                                                 (max(string_to_array(version, '.')::int[]))[3]) \
             \             FROM document_template \
-            \             WHERE (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') AND tenant_uuid = ? AND (name ~* ? OR id ~* ?) \
+            \             WHERE (phase = 'ReleasedDocumentTemplatePhase' OR phase = 'DeprecatedDocumentTemplatePhase') AND tenant_uuid = ? AND (name ~* ? OR organization_id ~* ? OR template_id ~* ? OR version ~* ?) \
             \             GROUP BY organization_id, template_id)"
             [ mapToDBCoordinatesSql entityName "template_id" mOrganizationId mTemplateId
             , outdatedCondition
@@ -174,9 +177,11 @@ countDocumentTemplatesPage mQuery mOrganizationId mTemplateId mOutdated outdated
         toField tenantUuid
           : toField (regexM mQuery)
           : toField (regexM mQuery)
+          : toField (regexM mQuery)
+          : toField (regexM mQuery)
           : fmap toField (mapToDBCoordinatesParams mOrganizationId mTemplateId)
           ++ (maybeToList . fmap toField $ mOutdated)
-          ++ [toField tenantUuid, toField $ regexM mQuery, toField $ regexM mQuery]
+          ++ [toField tenantUuid, toField $ regexM mQuery, toField $ regexM mQuery, toField $ regexM mQuery, toField $ regexM mQuery]
   logQuery sql params
   let action conn = query conn sql params
   result <- runDB action
@@ -203,12 +208,12 @@ findDocumentTemplatesFiltered queryParams = do
   let action conn = query conn sql params
   runDB action
 
-touchDocumentTemplateById :: String -> AppContextM Int64
-touchDocumentTemplateById tmlId = do
+touchDocumentTemplateByUuid :: U.UUID -> AppContextM Int64
+touchDocumentTemplateByUuid uuid = do
   tenantUuid <- asks currentTenantUuid
   now <- liftIO getCurrentTime
-  let sql = fromString "UPDATE document_template SET updated_at = ? WHERE tenant_uuid = ? AND id = ?"
-  let params = [toField now, toField tenantUuid, toField tmlId]
+  let sql = fromString "UPDATE document_template SET updated_at = ? WHERE tenant_uuid = ? AND uuid = ?"
+  let params = [toField now, toField tenantUuid, toField uuid]
   logQuery sql params
   let action conn = execute conn sql params
   runDB action

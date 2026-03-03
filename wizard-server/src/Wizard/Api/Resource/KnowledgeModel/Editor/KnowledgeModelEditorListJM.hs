@@ -4,6 +4,7 @@ import Data.Aeson
 
 import Shared.Common.Util.Aeson
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorStateJM ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSuggestionJM ()
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
 
 instance FromJSON KnowledgeModelEditorList where

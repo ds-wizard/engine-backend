@@ -12,25 +12,25 @@ import Wizard.Specs.API.Common
 -- --------------------------------
 -- ASSERTS
 -- --------------------------------
-assertExistenceOfEditorInDB appContext kmEditor previousPackageId forkOfPackageId createdBy = do
+assertExistenceOfEditorInDB appContext kmEditor previousPackageUuid forkOfPackageId createdBy = do
   editorFromDb <- getFirstFromDB findKnowledgeModelEditors appContext
-  compareKnowledgeModelEditor editorFromDb kmEditor previousPackageId forkOfPackageId createdBy
+  compareKnowledgeModelEditor editorFromDb kmEditor previousPackageUuid forkOfPackageId createdBy
 
 -- --------------------------------
 -- COMPARATORS
 -- --------------------------------
-compareKnowledgeModelEditor resDto expDto previousPackageId forkOfPackageId createdBy = do
+compareKnowledgeModelEditor resDto expDto previousPackageUuid forkOfPackageId createdBy = do
   liftIO $ resDto.name `shouldBe` expDto.name
   liftIO $ resDto.kmId `shouldBe` expDto.kmId
-  liftIO $ resDto.previousPackageId `shouldBe` previousPackageId
+  liftIO $ resDto.previousPackageUuid `shouldBe` previousPackageUuid
   liftIO $ resDto.createdBy `shouldBe` createdBy
 
-compareEditorDtos resDto expDto previousPackageId forkOfPackageId createdBy = do
+compareEditorDtos resDto expDto previousPackage forkOfPackageId createdBy = do
   liftIO $ resDto.name `shouldBe` expDto.name
   liftIO $ resDto.kmId `shouldBe` expDto.kmId
   liftIO $ resDto.version `shouldBe` expDto.version
   liftIO $ resDto.description `shouldBe` expDto.description
   liftIO $ resDto.readme `shouldBe` expDto.readme
   liftIO $ resDto.license `shouldBe` expDto.license
-  liftIO $ resDto.previousPackageId `shouldBe` previousPackageId
+  liftIO $ resDto.previousPackage `shouldBe` previousPackage
   liftIO $ resDto.createdBy `shouldBe` createdBy

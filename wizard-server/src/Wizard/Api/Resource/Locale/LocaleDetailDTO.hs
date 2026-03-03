@@ -4,6 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Common.Api.Resource.Version.VersionDTO
 import Wizard.Model.Registry.RegistryOrganization
 
 data LocaleDetailDTO = LocaleDetailDTO
@@ -19,7 +20,7 @@ data LocaleDetailDTO = LocaleDetailDTO
   , readme :: String
   , recommendedAppVersion :: String
   , enabled :: Bool
-  , versions :: [String]
+  , versions :: [VersionDTO]
   , remoteLatestVersion :: Maybe String
   , organization :: Maybe RegistryOrganization
   , registryLink :: Maybe String

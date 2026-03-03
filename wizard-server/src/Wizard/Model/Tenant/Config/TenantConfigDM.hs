@@ -85,17 +85,9 @@ defaultKnowledgeModel :: TenantConfigKnowledgeModel
 defaultKnowledgeModel =
   TenantConfigKnowledgeModel
     { tenantUuid = U.nil
-    , public = defaultKnowledgeModelPublic
     , integrationConfig = ""
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 20
-    }
-
-defaultKnowledgeModelPublic :: TenantConfigKnowledgeModelPublic
-defaultKnowledgeModelPublic =
-  TenantConfigKnowledgeModelPublic
-    { enabled = False
-    , knowledgeModelPackages = []
     }
 
 defaultProject :: TenantConfigProject

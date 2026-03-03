@@ -27,3 +27,11 @@ instance FromHttpApiData Coordinate where
 
 instance ToHttpApiData Coordinate where
   toUrlPiece Coordinate {..} = toUrlPiece organizationId <> ":" <> toUrlPiece entityId <> ":" <> toUrlPiece version
+
+instance FromHttpApiData [Coordinate] where
+  parseQueryParam param =
+    mapM (parseQueryParam . T.strip) (T.splitOn "," param)
+
+instance ToHttpApiData [Coordinate] where
+  toUrlPiece coords =
+    T.intercalate "," (map toUrlPiece coords)

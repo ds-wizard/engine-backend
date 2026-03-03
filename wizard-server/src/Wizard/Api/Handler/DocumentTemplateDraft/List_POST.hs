@@ -3,9 +3,8 @@ module Wizard.Api.Handler.DocumentTemplateDraft.List_POST where
 import Servant
 
 import Shared.Common.Api.Handler.Common
-import Shared.Common.Api.Resource.Common.EntityCreatedWithIdDTO
-import Shared.Common.Api.Resource.Common.EntityCreatedWithIdJM ()
 import Shared.Common.Model.Context.TransactionState
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateSimple
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateDTO
 import Wizard.Api.Resource.DocumentTemplate.Draft.DocumentTemplateDraftCreateJM ()
@@ -17,13 +16,13 @@ type List_POST =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] DocumentTemplateDraftCreateDTO
     :> "document-template-drafts"
-    :> PostCreated '[SafeJSON] (Headers '[Header "x-trace-uuid" String] EntityCreatedWithIdDTO)
+    :> PostCreated '[SafeJSON] (Headers '[Header "x-trace-uuid" String] DocumentTemplateSimple)
 
 list_POST
   :: Maybe String
   -> Maybe String
   -> DocumentTemplateDraftCreateDTO
-  -> BaseContextM (Headers '[Header "x-trace-uuid" String] EntityCreatedWithIdDTO)
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateSimple)
 list_POST mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $ addTraceUuidHeader =<< createDraft reqDto

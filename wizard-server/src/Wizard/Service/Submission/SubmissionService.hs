@@ -35,7 +35,7 @@ getAvailableServicesForSubmission docUuid = do
   checkIfSubmissionIsEnabled
   doc <- findDocumentByUuid docUuid
   checkEditPermissionToSubmission doc
-  findTenantConfigSubmissionServicesByDocumentTemplateIdAndFormatUuid doc.documentTemplateId doc.formatUuid
+  findTenantConfigSubmissionServicesByDocumentTemplateUuidAndFormatUuid doc.documentTemplateUuid doc.formatUuid
 
 getSubmissionsForDocument :: U.UUID -> AppContextM [SubmissionList]
 getSubmissionsForDocument docUuid = do

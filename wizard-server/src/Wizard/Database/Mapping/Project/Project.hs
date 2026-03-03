@@ -18,9 +18,9 @@ instance ToRow Project where
     , toField name
     , toField visibility
     , toField sharing
-    , toField knowledgeModelPackageId
+    , toField knowledgeModelPackageUuid
     , toField . PGArray $ selectedQuestionTagUuids
-    , toField documentTemplateId
+    , toField documentTemplateUuid
     , toField formatUuid
     , toField creatorUuid
     , toField createdAt
@@ -38,9 +38,9 @@ instance FromRow Project where
     name <- field
     visibility <- field
     sharing <- field
-    knowledgeModelPackageId <- field
+    knowledgeModelPackageUuid <- field
     selectedQuestionTagUuids <- fromPGArray <$> field
-    documentTemplateId <- field
+    documentTemplateUuid <- field
     formatUuid <- field
     creatorUuid <- field
     let permissions = []

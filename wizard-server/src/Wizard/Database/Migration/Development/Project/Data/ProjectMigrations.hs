@@ -17,6 +17,7 @@ import Wizard.Model.Project.Migration.ProjectMigration
 import Wizard.Model.Project.Project
 import Wizard.Model.Project.ProjectContent
 import Wizard.Model.Tenant.Tenant
+import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as KMP
 import Wizard.Service.Project.ProjectMapper
 
 projectMigration :: ProjectMigration
@@ -33,7 +34,7 @@ projectMigrationDto =
   ProjectMigrationDTO
     { oldProject =
         toDetailProjectDTO
-          (toDetailQuestionnaire project4 (Just project4Upgraded.uuid) [] 0 0)
+          (toDetailQuestionnaire project4 (KMP.toSuggestion netherlandsKmPackage) (Just project4Upgraded.uuid) [])
           M.empty
           M.empty
           km1Netherlands
@@ -42,7 +43,7 @@ projectMigrationDto =
           project4Ctn.labels
     , newProject =
         toDetailProjectDTO
-          (toDetailQuestionnaire project4Upgraded Nothing [] 0 0)
+          (toDetailQuestionnaire project4Upgraded (KMP.toSuggestion netherlandsKmPackageV2) Nothing [])
           M.empty
           M.empty
           km1NetherlandsV2
@@ -58,7 +59,7 @@ projectMigrationVisibleViewDto =
   ProjectMigrationDTO
     { oldProject =
         toDetailProjectDTO
-          (toDetailQuestionnaire project4VisibleView (Just project4Upgraded.uuid) [] 0 0)
+          (toDetailQuestionnaire project4VisibleView (KMP.toSuggestion netherlandsKmPackage) (Just project4Upgraded.uuid) [])
           M.empty
           M.empty
           km1Netherlands
@@ -67,7 +68,7 @@ projectMigrationVisibleViewDto =
           project4Ctn.labels
     , newProject =
         toDetailProjectDTO
-          (toDetailQuestionnaire project4VisibleViewUpgraded Nothing [] 0 0)
+          (toDetailQuestionnaire project4VisibleViewUpgraded (KMP.toSuggestion netherlandsKmPackageV2) Nothing [])
           M.empty
           M.empty
           km1NetherlandsV2
@@ -83,7 +84,7 @@ projectMigrationVisibleEditDto =
   ProjectMigrationDTO
     { oldProject =
         toDetailProjectDTO
-          (toDetailQuestionnaire project4VisibleEdit (Just project4Upgraded.uuid) [] 0 0)
+          (toDetailQuestionnaire project4VisibleEdit (KMP.toSuggestion netherlandsKmPackage) (Just project4Upgraded.uuid) [])
           M.empty
           M.empty
           km1Netherlands
@@ -92,7 +93,7 @@ projectMigrationVisibleEditDto =
           project4Ctn.labels
     , newProject =
         toDetailProjectDTO
-          (toDetailQuestionnaire project4VisibleEditUpgraded Nothing [] 0 0)
+          (toDetailQuestionnaire project4VisibleEditUpgraded (KMP.toSuggestion netherlandsKmPackageV2) Nothing [])
           M.empty
           M.empty
           km1NetherlandsV2
@@ -115,7 +116,7 @@ projectMigrationDtoEdited =
 projectMigrationCreateDto :: ProjectMigrationCreateDTO
 projectMigrationCreateDto =
   ProjectMigrationCreateDTO
-    { targetKnowledgeModelPackageId = netherlandsKmPackageV2.pId
+    { targetKnowledgeModelPackageUuid = netherlandsKmPackageV2.uuid
     , targetTagUuids = project4Upgraded.selectedQuestionTagUuids
     }
 

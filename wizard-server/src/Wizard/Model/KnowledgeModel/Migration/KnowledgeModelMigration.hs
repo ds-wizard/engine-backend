@@ -23,8 +23,8 @@ data KnowledgeModelMigration = KnowledgeModelMigration
   { editorUuid :: U.UUID
   , metamodelVersion :: Int
   , state :: KnowledgeModelMigrationState
-  , editorPreviousPackageId :: String
-  , targetPackageId :: String
+  , editorPreviousPackageUuid :: U.UUID
+  , targetPackageUuid :: U.UUID
   , editorPreviousPackageEvents :: [KnowledgeModelEvent]
   , targetPackageEvents :: [KnowledgeModelEvent]
   , resultEvents :: [KnowledgeModelEvent]

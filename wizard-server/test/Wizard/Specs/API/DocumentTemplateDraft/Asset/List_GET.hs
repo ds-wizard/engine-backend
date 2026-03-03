@@ -3,6 +3,8 @@ module Wizard.Specs.API.DocumentTemplateDraft.Asset.List_GET (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -10,6 +12,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Common.Model.Config.ServerConfig
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateAssets
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetDTO
@@ -23,11 +26,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /wizard-api/document-template-drafts/{documentTemplateId}/assets
+-- GET /wizard-api/document-template-drafts/{dtUuid}/assets
 -- ------------------------------------------------------------------------
 list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
-  describe "GET /wizard-api/document-template-drafts/{documentTemplateId}/assets" $ do
+  describe "GET /wizard-api/document-template-drafts/{dtUuid}/assets" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +40,7 @@ list_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/wizard-api/document-template-drafts/global:project-report:1.0.0/assets"
+reqUrl = BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/assets"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 

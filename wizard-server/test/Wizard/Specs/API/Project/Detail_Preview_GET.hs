@@ -21,6 +21,7 @@ import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.DAO.Project.ProjectDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.Migration.Development.Project.Data.Projects
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
@@ -62,52 +63,60 @@ test_200 appContext = do
     "HTTP 200 OK (Owner, Private)"
     appContext
     project1
+    germanyPackageSuggestion
     [reqAuthHeader]
     [project1AlbertEditProjectPermDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleView)"
     appContext
     project2
+    germanyPackageSuggestion
     [reqNonAdminAuthHeader]
     [project2AlbertEditProjectPermDto]
   create_test_200
     "HTTP 200 OK (Commenter)"
     appContext
     (project13 {visibility = PrivateProjectVisibility})
+    germanyPackageSuggestion
     [reqNonAdminAuthHeader]
     [project13NikolaCommentProjectPermDto]
   create_test_200
     "HTTP 200 OK (Non-Commenter, VisibleComment)"
     appContext
     project13
+    germanyPackageSuggestion
     [reqIsaacAuthTokenHeader]
     [project13NikolaCommentProjectPermDto]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleComment, AnyoneWithLinkComment)"
     appContext
     (project13 {sharing = AnyoneWithLinkCommentProjectSharing})
+    germanyPackageSuggestion
     []
     [project13NikolaCommentProjectPermDto]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleView, Sharing)"
     appContext
     project7
+    germanyPackageSuggestion
     []
     [project7AlbertEditProjectPermDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleEdit)"
     appContext
     project3
+    germanyPackageSuggestion
     [reqNonAdminAuthHeader]
     []
   create_test_200
     "HTTP 200 OK (Anonymous, Public, Sharing)"
     appContext
     project10
+    germanyPackageSuggestion
     []
     []
 
-create_test_200 title appContext project authHeader permissions =
+create_test_200 title appContext project kmPackage authHeader permissions =
   it title $
     -- GIVEN: Prepare request
     do
@@ -128,11 +137,11 @@ create_test_200 title appContext project authHeader permissions =
               , name = project.name
               , visibility = project.visibility
               , sharing = project.sharing
-              , knowledgeModelPackageId = project.knowledgeModelPackageId
+              , knowledgeModelPackage = kmPackage
               , isTemplate = project.isTemplate
               , migrationUuid = Nothing
               , permissions = permissions
-              , documentTemplateId = project.documentTemplateId
+              , documentTemplateUuid = project.documentTemplateUuid
               , format = Just formatJsonSimple
               , fileCount = 0
               }

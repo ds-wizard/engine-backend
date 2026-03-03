@@ -15,15 +15,15 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 
 entityName = "document_template_asset"
 
-findAssetsByDocumentTemplateId :: AppContextC s sc m => String -> m [DocumentTemplateAsset]
-findAssetsByDocumentTemplateId documentTemplateId = do
+findAssetsByDocumentTemplateUuid :: AppContextC s sc m => U.UUID -> m [DocumentTemplateAsset]
+findAssetsByDocumentTemplateUuid documentTemplateUuid = do
   tenantUuid <- asks (.tenantUuid')
-  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId)]
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid)]
 
-findAssetsByDocumentTemplateIdAndFileName :: AppContextC s sc m => String -> String -> m [DocumentTemplateAsset]
-findAssetsByDocumentTemplateIdAndFileName documentTemplateId fileName = do
+findAssetsByDocumentTemplateUuidAndFileName :: AppContextC s sc m => U.UUID -> String -> m [DocumentTemplateAsset]
+findAssetsByDocumentTemplateUuidAndFileName documentTemplateUuid fileName = do
   tenantUuid <- asks (.tenantUuid')
-  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId), ("file_name", fileName)]
+  createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid), ("file_name", fileName)]
 
 findAssetById :: AppContextC s sc m => U.UUID -> m DocumentTemplateAsset
 findAssetById uuid = do
@@ -46,7 +46,7 @@ updateAssetById asset = do
   tenantUuid <- asks (.tenantUuid')
   let sql =
         fromString
-          "UPDATE document_template_asset SET document_template_id = ?, uuid = ?, file_name = ?, content_type = ?, tenant_uuid = ?, file_size = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE document_template_asset SET document_template_uuid = ?, uuid = ?, file_name = ?, content_type = ?, tenant_uuid = ?, file_size = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow asset ++ [toField tenantUuid, toField asset.uuid]
   logQuery sql params
   let action conn = execute conn sql params
@@ -55,10 +55,10 @@ updateAssetById asset = do
 deleteAssets :: AppContextC s sc m => m Int64
 deleteAssets = createDeleteEntitiesFn entityName
 
-deleteAssetsByDocumentTemplateId :: AppContextC s sc m => String -> m Int64
-deleteAssetsByDocumentTemplateId tmlId = do
+deleteAssetsByDocumentTemplateUuid :: AppContextC s sc m => U.UUID -> m Int64
+deleteAssetsByDocumentTemplateUuid documentTemplateUuid = do
   tenantUuid <- asks (.tenantUuid')
-  createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", tmlId)]
+  createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid)]
 
 deleteAssetById :: AppContextC s sc m => U.UUID -> m Int64
 deleteAssetById uuid = do

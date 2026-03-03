@@ -65,9 +65,9 @@ createEditorWithParams uuid now currentUser reqDto =
     validateCreateDto reqDto
     tenantUuid <- asks currentTenantUuid
     mPreviousPkg <-
-      case reqDto.previousPackageId of
-        Just previousPackageId -> do
-          previousPkg <- findPackageById previousPackageId
+      case reqDto.previousPackageUuid of
+        Just previousPackageUuid -> do
+          previousPkg <- findPackageByUuid previousPackageUuid
           when
             previousPkg.nonEditable
             (throwError . UserError $ _ERROR_SERVICE_PKG__NON_EDITABLE_PKG)
@@ -79,7 +79,7 @@ createEditorWithParams uuid now currentUser reqDto =
     return $ toList editor Nothing DefaultKnowledgeModelEditorState
   where
     createDefaultEventIfPreviousPackageIsNotPresent editor = do
-      let mPreviousPackageId = editor.previousPackageId
+      let mPreviousPackageId = editor.previousPackageUuid
       case mPreviousPackageId of
         Just _ -> return ()
         Nothing -> do
@@ -103,16 +103,17 @@ getEditorByUuid kmEditorUuid = do
   editor <- findKnowledgeModelEditorByUuid kmEditorUuid
   editorEvents <- findKnowledgeModelEventsByEditorUuid kmEditorUuid
   editorReplies <- findKnowledgeModelRepliesByEditorUuid kmEditorUuid
+  mPreviousPackage <- traverse findPackageByUuid editor.previousPackageUuid
   mForkOfPackageId <- getEditorForkOfPackageId editor
   kmEditorState <- getEditorState editor (length editorEvents) mForkOfPackageId
-  knowledgeModel <- compileKnowledgeModel [] editor.previousPackageId []
+  knowledgeModel <- compileKnowledgeModel [] editor.previousPackageUuid []
   mForkOfPackage <-
     case mForkOfPackageId of
-      Just pkgId -> do
-        pkg <- findPackageById pkgId
+      Just forkOfPackageId -> do
+        pkg <- findPackageByCoordinate forkOfPackageId
         return . Just $ pkg
       Nothing -> return Nothing
-  return $ toDetailDTO editor editorEvents editorReplies knowledgeModel mForkOfPackageId mForkOfPackage kmEditorState
+  return $ toDetailDTO editor editorEvents editorReplies mPreviousPackage knowledgeModel mForkOfPackageId mForkOfPackage kmEditorState
 
 modifyEditor :: U.UUID -> KnowledgeModelEditorChangeDTO -> AppContextM KnowledgeModelEditorDetailDTO
 modifyEditor kmEditorUuid reqDto =
@@ -130,16 +131,17 @@ modifyEditor kmEditorUuid reqDto =
     mForkOfPackageId <- getEditorForkOfPackageId editor
     editorEvents <- findKnowledgeModelEventsByEditorUuid kmEditorUuid
     editorReplies <- findKnowledgeModelRepliesByEditorUuid kmEditorUuid
+    mPreviousPackage <- traverse findPackageByUuid editor.previousPackageUuid
     let kmEvents = fmap toKnowledgeModelEvent editorEvents
     kmEditorState <- getEditorState editor (length editorEvents) mForkOfPackageId
-    knowledgeModel <- compileKnowledgeModel kmEvents editor.previousPackageId []
+    knowledgeModel <- compileKnowledgeModel kmEvents editor.previousPackageUuid []
     mForkOfPackage <-
       case mForkOfPackageId of
-        Just pkgId -> do
-          pkg <- findPackageById pkgId
+        Just forkOfPackageId -> do
+          pkg <- findPackageByCoordinate forkOfPackageId
           return . Just $ pkg
         Nothing -> return Nothing
-    return $ toDetailDTO editor editorEvents editorReplies knowledgeModel mForkOfPackageId mForkOfPackage kmEditorState
+    return $ toDetailDTO editor editorEvents editorReplies mPreviousPackage knowledgeModel mForkOfPackageId mForkOfPackage kmEditorState
 
 deleteEditor :: U.UUID -> AppContextM ()
 deleteEditor kmEditorUuid =

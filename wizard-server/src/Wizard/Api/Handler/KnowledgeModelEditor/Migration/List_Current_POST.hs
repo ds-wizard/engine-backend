@@ -18,7 +18,7 @@ type List_Current_POST =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] KnowledgeModelMigrationCreateDTO
     :> "knowledge-model-editors"
-    :> Capture "bUuid" U.UUID
+    :> Capture "uuid" U.UUID
     :> "migrations"
     :> "current"
     :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] KnowledgeModelMigrationDTO)
@@ -29,6 +29,6 @@ list_current_POST
   -> KnowledgeModelMigrationCreateDTO
   -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] KnowledgeModelMigrationDTO)
-list_current_POST mTokenHeader mServerUrl reqDto bUuid =
+list_current_POST mTokenHeader mServerUrl reqDto uuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< createMigration bUuid reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< createMigration uuid reqDto

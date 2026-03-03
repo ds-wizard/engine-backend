@@ -35,6 +35,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Project.Comment.ProjectComment
 import Wizard.Model.Project.Project
 import Wizard.Model.Project.ProjectContent
+import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as KMP
 import WizardLib.Public.Localization.Messages.Public
 
 import SharedTest.Specs.API.Common
@@ -72,6 +73,7 @@ test_200 appContext = do
     project1
     project1Events
     project1Ctn
+    germanyKmPackage
     True
     [reqAuthHeader]
     [project1AlbertEditProjectPermDto]
@@ -81,6 +83,7 @@ test_200 appContext = do
     project2
     project2Events
     (project2Ctn {labels = M.empty} :: ProjectContent)
+    germanyKmPackage
     False
     [reqNonAdminAuthHeader]
     [project2AlbertEditProjectPermDto]
@@ -90,6 +93,7 @@ test_200 appContext = do
     (project13 {visibility = PrivateProjectVisibility})
     project13Events
     (project13Ctn {labels = M.empty} :: ProjectContent)
+    germanyKmPackage
     True
     [reqNonAdminAuthHeader]
     [project13NikolaCommentProjectPermDto]
@@ -99,6 +103,7 @@ test_200 appContext = do
     project13
     project13Events
     (project13Ctn {labels = M.empty} :: ProjectContent)
+    germanyKmPackage
     True
     [reqIsaacAuthTokenHeader]
     [project13NikolaCommentProjectPermDto]
@@ -108,6 +113,7 @@ test_200 appContext = do
     (project13 {sharing = AnyoneWithLinkCommentProjectSharing})
     project13Events
     (project13Ctn {labels = M.empty} :: ProjectContent)
+    germanyKmPackage
     True
     []
     [project13NikolaCommentProjectPermDto]
@@ -117,6 +123,7 @@ test_200 appContext = do
     project7
     project7Events
     (project7Ctn {labels = M.empty} :: ProjectContent)
+    germanyKmPackage
     False
     []
     [project7AlbertEditProjectPermDto]
@@ -126,12 +133,22 @@ test_200 appContext = do
     project3
     project3Events
     project3Ctn
+    germanyKmPackage
     True
     [reqNonAdminAuthHeader]
     []
-  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext project10 project10Events project10Ctn True [] []
+  create_test_200
+    "HTTP 200 OK (Anonymous, Public, Sharing)"
+    appContext
+    project10
+    project10Events
+    project10Ctn
+    germanyKmPackage
+    True
+    []
+    []
 
-create_test_200 title appContext project projectEvents projectContent showComments authHeader permissions =
+create_test_200 title appContext project projectEvents projectContent kmPackage showComments authHeader permissions =
   it title $
     -- GIVEN: Prepare request
     do
@@ -163,7 +180,7 @@ create_test_200 title appContext project projectEvents projectContent showCommen
               , name = project.name
               , visibility = project.visibility
               , sharing = project.sharing
-              , knowledgeModelPackageId = project.knowledgeModelPackageId
+              , knowledgeModelPackage = KMP.toSuggestion kmPackage
               , selectedQuestionTagUuids = project.selectedQuestionTagUuids
               , isTemplate = project.isTemplate
               , knowledgeModel = km1WithQ4
@@ -175,8 +192,6 @@ create_test_200 title appContext project projectEvents projectContent showCommen
               , files = []
               , unresolvedCommentCounts = unresolvedCommentCounts
               , resolvedCommentCounts = M.empty
-              , projectActionsAvailable = 0
-              , projectImportersAvailable = 0
               , fileCount = 0
               }
       let expBody = encode expDto

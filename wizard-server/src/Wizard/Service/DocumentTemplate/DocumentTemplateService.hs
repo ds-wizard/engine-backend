@@ -4,13 +4,14 @@ import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
+import qualified Data.UUID as U
 
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Model.Error.Error
-import Shared.Coordinate.Service.Coordinate.CoordinateValidation
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import Shared.DocumentTemplate.Constant.DocumentTemplate
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
@@ -18,7 +19,6 @@ import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateFormatDAO
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import qualified Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as STM
-import Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateUtil
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateChangeDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
@@ -41,12 +41,6 @@ import Wizard.Service.DocumentTemplate.DocumentTemplateUtil
 import Wizard.Service.DocumentTemplate.DocumentTemplateValidation
 import Wizard.Service.Tenant.Config.ConfigService
 
-getDocumentTemplates :: [(String, String)] -> Maybe String -> AppContextM [DocumentTemplate]
-getDocumentTemplates queryParams mPkgId = do
-  validateCoordinateFormat' False "templateId" mPkgId
-  templates <- findDocumentTemplatesFiltered queryParams
-  return $ filterDocumentTemplates mPkgId templates
-
 getDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSimpleDTO)
 getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated pageable sort = do
   checkPermission _DOC_TML_READ_PERM
@@ -57,16 +51,21 @@ getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated pageable s
       templates <- findDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated Nothing pageable sort
       return . fmap (toSimpleDTO' tcRegistry.enabled) $ templates
 
-getDocumentTemplateSuggestions :: Maybe String -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
-getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable pageable sort = do
+getDocumentTemplateSuggestions :: Maybe U.UUID -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
+getDocumentTemplateSuggestions mPkgUuid includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable pageable sort = do
   checkPermission _DOC_TML_READ_PERM
-  validateCoordinateFormat' False "templateId" mPkgId
+  mPkgId <-
+    case mPkgUuid of
+      Just pkgUuid -> do
+        pkg <- findPackageByUuid pkgUuid
+        return $ Just $ createCoordinate pkg
+      Nothing -> return Nothing
   tmls <- findDocumentTemplatesSuggestions mQuery mNonEditable
-  let entities = filterDocumentTemplatesInGroup tmls
+  let entities = filterDocumentTemplatesInGroup mPkgId tmls
   return $ toSuggestionDTOPage entities pageable
   where
-    filterDocumentTemplatesInGroup :: [DocumentTemplateSuggestion] -> [DocumentTemplateSuggestion]
-    filterDocumentTemplatesInGroup =
+    filterDocumentTemplatesInGroup :: Maybe Coordinate -> [DocumentTemplateSuggestion] -> [DocumentTemplateSuggestion]
+    filterDocumentTemplatesInGroup mPkgId =
       filter (\dt -> includeUnsupportedMetamodelVersion || isDocumentTemplateSupported dt.metamodelVersion)
         . filter (isDocumentTemplateInPhase mPhase)
         . filterDocumentTemplates mPkgId
@@ -74,71 +73,70 @@ getDocumentTemplateSuggestions mPkgId includeUnsupportedMetamodelVersion mPhase 
 getDocumentTemplatesDto :: [(String, String)] -> AppContextM [DocumentTemplateSuggestionDTO]
 getDocumentTemplatesDto queryParams = do
   checkPermission _DOC_TML_READ_PERM
-  tmls <- findDocumentTemplatesFiltered queryParams
+  dts <- findDocumentTemplatesFiltered queryParams
   traverse
-    ( \tml -> do
-        formats <- findDocumentTemplateFormats tml.tId
-        return $ STM.toSuggestionDTO tml formats
+    ( \dt -> do
+        formats <- findDocumentTemplateFormats dt.uuid
+        return $ STM.toSuggestionDTO dt formats
     )
-    tmls
+    dts
 
-getDocumentTemplateByUuidAndPackageId :: String -> Maybe String -> AppContextM DocumentTemplate
-getDocumentTemplateByUuidAndPackageId documentTemplateId mPkgId = do
-  templates <- getDocumentTemplates [] mPkgId
-  case L.find (\t -> t.tId == documentTemplateId) templates of
-    Just tml -> return tml
+getDocumentTemplateByUuidAndPackageId :: U.UUID -> U.UUID -> AppContextM DocumentTemplate
+getDocumentTemplateByUuidAndPackageId documentTemplateUuid pkgUuid = do
+  templates <- findDocumentTemplatesFiltered []
+  pkg <- findPackageByUuid pkgUuid
+  let dts = filterDocumentTemplates (Just . createCoordinate $ pkg) templates
+  case L.find (\dt -> dt.uuid == documentTemplateUuid) dts of
+    Just dt -> return dt
     Nothing -> throwError . NotExistsError $ _ERROR_VALIDATION__TEMPLATE_ABSENCE
 
-getDocumentTemplateByUuidDto :: String -> AppContextM DocumentTemplateDetailDTO
-getDocumentTemplateByUuidDto documentTemplateId = do
-  resolvedTmlId <- resolveDocumentTemplateId documentTemplateId
-  tml <- findDocumentTemplateById resolvedTmlId
-  formats <- findDocumentTemplateFormats resolvedTmlId
-  pkgs <- findPackages
+getDocumentTemplateByUuidDto :: U.UUID -> AppContextM DocumentTemplateDetailDTO
+getDocumentTemplateByUuidDto uuid = do
+  tml <- findDocumentTemplateByUuid uuid
+  formats <- findDocumentTemplateFormats uuid
   versions <- getDocumentTemplateVersions tml
   tmlRs <- findRegistryTemplates
   orgRs <- findRegistryOrganizations
   serverConfig <- asks serverConfig
   let registryLink = buildRegistryTemplateUrl serverConfig.registry.clientUrl tml tmlRs
-  let usableKnowledgeModels = getUsableKnowledgeModelPackagesForDocumentTemplate tml pkgs
+  usableKnowledgeModels <- findUsablePackagesForDocumentTemplate tml.uuid
   tcRegistry <- getCurrentTenantConfigRegistry
   return $ toDetailDTO tml formats tcRegistry.enabled tmlRs orgRs versions registryLink usableKnowledgeModels
 
-modifyDocumentTemplate :: String -> DocumentTemplateChangeDTO -> AppContextM DocumentTemplateDetailDTO
-modifyDocumentTemplate documentTemplateId reqDto =
+modifyDocumentTemplate :: U.UUID -> DocumentTemplateChangeDTO -> AppContextM DocumentTemplateDetailDTO
+modifyDocumentTemplate uuid reqDto =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
-    validateChangeDto documentTemplateId reqDto
-    tml <- findDocumentTemplateById documentTemplateId
+    validateChangeDto uuid reqDto
+    tml <- findDocumentTemplateByUuid uuid
     let templateUpdated = fromChangeDTO reqDto tml
-    validateExistingDocumentTemplate templateUpdated
     updateDocumentTemplateById templateUpdated
-    deleteTemporalDocumentsByDocumentTemplateId documentTemplateId
-    getDocumentTemplateByUuidDto documentTemplateId
+    deleteTemporalDocumentsByDocumentTemplateUuid uuid
+    getDocumentTemplateByUuidDto uuid
 
 deleteDocumentTemplatesByQueryParams :: [(String, String)] -> AppContextM ()
 deleteDocumentTemplatesByQueryParams queryParams =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
-    tmls <- findDocumentTemplatesFiltered queryParams
-    traverse_ (\t -> deleteDocumentTemplate t.tId) tmls
+    dts <- findDocumentTemplatesFiltered queryParams
+    traverse_ (\dt -> deleteDocumentTemplate dt.uuid) dts
 
-deleteDocumentTemplate :: String -> AppContextM ()
-deleteDocumentTemplate tmlId =
+deleteDocumentTemplate :: U.UUID -> AppContextM ()
+deleteDocumentTemplate uuid =
   runInTransaction $ do
     checkPermission _DOC_TML_WRITE_PERM
-    tml <- findDocumentTemplateById tmlId
-    assets <- findAssetsByDocumentTemplateId tmlId
-    validateDocumentTemplateDeletion tmlId
-    cleanTemporallyDocumentsForTemplate tmlId
-    deleteDocumentTemplateById tmlId
+    tml <- findDocumentTemplateByUuid uuid
+    assets <- findAssetsByDocumentTemplateUuid uuid
+    validateDocumentTemplateDeletion uuid
+    cleanTemporallyDocumentsForTemplate uuid
+    deleteDocumentTemplateByUuid uuid
     let assetUuids = fmap (.uuid) assets
-    traverse_ (removeAsset tmlId) assetUuids
+    traverse_ (removeAsset uuid) assetUuids
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getDocumentTemplateVersions :: DocumentTemplate -> AppContextM [String]
+getDocumentTemplateVersions :: DocumentTemplate -> AppContextM [(U.UUID, String)]
 getDocumentTemplateVersions tml = do
   allTmls <- findDocumentTemplatesByOrganizationIdAndKmId tml.organizationId tml.templateId
-  return . fmap (.version) . filter (\t -> t.phase == ReleasedDocumentTemplatePhase || t.phase == DeprecatedDocumentTemplatePhase) $ allTmls
+  return . fmap (\t -> (t.uuid, t.version)) . filter (\t -> t.phase == ReleasedDocumentTemplatePhase || t.phase == DeprecatedDocumentTemplatePhase) $ allTmls

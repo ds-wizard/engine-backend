@@ -18,7 +18,7 @@ import Wizard.Service.Tenant.Limit.LimitService
 validateProjectFile :: Project -> U.UUID -> ProjectFile -> AppContextM ()
 validateProjectFile project questionUuid projectFile = do
   checkStorageSize projectFile.fileSize
-  km <- compileKnowledgeModel [] (Just project.knowledgeModelPackageId) project.selectedQuestionTagUuids
+  km <- compileKnowledgeModel [] (Just project.knowledgeModelPackageUuid) project.selectedQuestionTagUuids
   case M.lookup questionUuid (getQuestionsM km) of
     Just (FileQuestion' question) ->
       case question.maxSize of

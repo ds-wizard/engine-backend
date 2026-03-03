@@ -1,12 +1,13 @@
 module Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageList where
 
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage (KnowledgeModelPackagePhase)
 
 data KnowledgeModelPackageList = KnowledgeModelPackageList
-  { pId :: String
+  { uuid :: U.UUID
   , name :: String
   , organizationId :: String
   , kmId :: String
@@ -14,6 +15,7 @@ data KnowledgeModelPackageList = KnowledgeModelPackageList
   , phase :: KnowledgeModelPackagePhase
   , description :: String
   , nonEditable :: Bool
+  , public :: Bool
   , remoteVersion :: Maybe String
   , remoteOrganizationName :: Maybe String
   , remoteOrganizationLogo :: Maybe String

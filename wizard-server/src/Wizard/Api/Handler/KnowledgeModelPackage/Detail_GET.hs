@@ -1,6 +1,7 @@
 module Wizard.Api.Handler.KnowledgeModelPackage.Detail_GET where
 
 import Data.Maybe (fromMaybe)
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -15,12 +16,11 @@ type Detail_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "knowledge-model-packages"
-    :> Capture "id" String
+    :> Capture "uuid" U.UUID
     :> QueryParam "excludeDeprecatedVersions" Bool
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] KnowledgeModelPackageDetailDTO)
 
-detail_GET
-  :: Maybe String -> Maybe String -> String -> Maybe Bool -> BaseContextM (Headers '[Header "x-trace-uuid" String] KnowledgeModelPackageDetailDTO)
-detail_GET mTokenHeader mServerUrl pkgId mExcludeDeprecatedVersions =
+detail_GET :: Maybe String -> Maybe String -> U.UUID -> Maybe Bool -> BaseContextM (Headers '[Header "x-trace-uuid" String] KnowledgeModelPackageDetailDTO)
+detail_GET mTokenHeader mServerUrl pkgUuid mExcludeDeprecatedVersions =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
-    runInMaybeAuthService NoTransaction $ addTraceUuidHeader =<< getPackageDetailById pkgId (fromMaybe False mExcludeDeprecatedVersions)
+    runInMaybeAuthService NoTransaction $ addTraceUuidHeader =<< getPackageDetailByUuid pkgUuid (fromMaybe False mExcludeDeprecatedVersions)

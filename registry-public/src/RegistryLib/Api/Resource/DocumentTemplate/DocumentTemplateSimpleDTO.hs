@@ -1,12 +1,13 @@
 module RegistryLib.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO where
 
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 import RegistryLib.Model.Organization.OrganizationSimple
 
 data DocumentTemplateSimpleDTO = DocumentTemplateSimpleDTO
-  { tId :: String
+  { uuid :: U.UUID
   , name :: String
   , organizationId :: String
   , templateId :: String

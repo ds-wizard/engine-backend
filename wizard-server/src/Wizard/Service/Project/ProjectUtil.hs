@@ -3,6 +3,8 @@ module Wizard.Service.Project.ProjectUtil where
 import Control.Monad (when)
 import qualified Data.UUID as U
 
+import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.Project.Acl.ProjectPermDTO
 import Wizard.Database.DAO.Project.ProjectMigrationDAO
 import Wizard.Database.DAO.User.UserDAO
@@ -12,7 +14,6 @@ import Wizard.Model.Project.Event.ProjectEventLenses ()
 import Wizard.Model.Project.Project
 import Wizard.Model.Project.ProjectState
 import Wizard.Model.Tenant.Config.TenantConfig
-import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageService
 import Wizard.Service.Project.ProjectMapper
 import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
@@ -39,16 +40,19 @@ enhanceProjectPerm projectPerm =
       userGroup <- findUserGroupByUuid projectPerm.memberUuid
       return $ toUserGroupProjectPermDTO projectPerm userGroup
 
-getProjectState :: U.UUID -> String -> AppContextM ProjectState
-getProjectState projectUuid pkgId = do
+getProjectState :: U.UUID -> KnowledgeModelPackage -> AppContextM ProjectState
+getProjectState projectUuid pkg = do
   mMs <- findProjectMigrationByNewProjectUuid' projectUuid
   case mMs of
     Just _ -> return MigratingProjectState
     Nothing -> do
-      pkgs <- getNewerPackages pkgId True
-      if null pkgs
-        then return DefaultProjectState
-        else return OutdatedProjectState
+      mLatestPkg <- findLatestPackageByOrganizationIdAndKmId' pkg.organizationId pkg.kmId (Just ReleasedKnowledgeModelPackagePhase)
+      case mLatestPkg of
+        Just latestPkg ->
+          if latestPkg.uuid == pkg.uuid
+            then return DefaultProjectState
+            else return OutdatedProjectState
+        Nothing -> return DefaultProjectState
 
 skipIfAssigningProject :: Project -> AppContextM () -> AppContextM ()
 skipIfAssigningProject project action = do

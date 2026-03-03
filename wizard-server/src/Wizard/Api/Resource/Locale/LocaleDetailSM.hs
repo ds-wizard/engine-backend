@@ -2,6 +2,7 @@ module Wizard.Api.Resource.Locale.LocaleDetailSM where
 
 import Data.Swagger
 
+import Shared.Common.Api.Resource.Version.VersionSM ()
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.Locale.LocaleDetailDTO
 import Wizard.Api.Resource.Locale.LocaleDetailJM ()

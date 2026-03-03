@@ -35,10 +35,6 @@ import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigrat
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
 import qualified Wizard.Database.Migration.Development.Plugin.PluginMigration as Plugin
 import qualified Wizard.Database.Migration.Development.Plugin.PluginSchemaMigration as Plugin
-import qualified Wizard.Database.Migration.Development.Project.ProjectActionMigration as ProjectAction
-import qualified Wizard.Database.Migration.Development.Project.ProjectActionSchemaMigration as ProjectAction
-import qualified Wizard.Database.Migration.Development.Project.ProjectImporterMigration as ProjectImporter
-import qualified Wizard.Database.Migration.Development.Project.ProjectImporterSchemaMigration as ProjectImporter
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as Project
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigrationMigration as ProjectMigration
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigrationSchemaMigration as ProjectMigration
@@ -71,8 +67,6 @@ runMigration = runAppContextWithBaseContext $ do
   ExternalLink.dropTables
   Component.dropTables
   Registry.dropTables
-  ProjectAction.dropTables
-  ProjectImporter.dropTables
   Audit.dropTables
   Prefab.dropTables
   PersistentCommand.dropTables
@@ -123,8 +117,6 @@ runMigration = runAppContextWithBaseContext $ do
   PersistentCommand.createTables
   Prefab.createTables
   Audit.createTables
-  ProjectAction.createTables
-  ProjectImporter.createTables
   Registry.createTables
   Component.createTables
   ExternalLink.createTables
@@ -160,8 +152,6 @@ runMigration = runAppContextWithBaseContext $ do
   PersistentCommand.runMigration
   Prefab.runMigration
   Audit.runMigration
-  ProjectAction.runMigration
-  ProjectImporter.runMigration
   Registry.runMigration
   Locale.runMigration
   Component.runMigration

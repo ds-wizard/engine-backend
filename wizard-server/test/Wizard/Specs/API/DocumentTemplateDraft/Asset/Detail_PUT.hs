@@ -3,12 +3,15 @@ module Wizard.Specs.API.DocumentTemplateDraft.Asset.Detail_PUT (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateAssets
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Wizard.Api.Resource.DocumentTemplate.Asset.DocumentTemplateAssetChangeJM ()
@@ -22,11 +25,11 @@ import Wizard.Specs.API.DocumentTemplateDraft.Asset.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /wizard-api/document-template-drafts/{documentTemplateId}/assets/{assetUuid}
+-- PUT /wizard-api/document-template-drafts/{dtUuid}/assets/{assetUuid}
 -- ------------------------------------------------------------------------
 detail_PUT :: AppContext -> SpecWith ((), Application)
 detail_PUT appContext =
-  describe "PUT /wizard-api/document-template-drafts/{documentTemplateId}/assets/{assetUuid}" $ do
+  describe "PUT /wizard-api/document-template-drafts/{dtUuid}/assets/{assetUuid}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -37,7 +40,7 @@ detail_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/wizard-api/document-template-drafts/global:project-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+reqUrl = BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/assets/" ++ U.toString assetLogo.uuid
 
 reqHeaders = [reqCtHeader, reqAuthHeader]
 
@@ -82,8 +85,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/document-template-drafts/deab6c38-aeac-4b17-a501-4365a0a70176/assets/deab6c38-aeac-4b17-a501-4365a0a70176"
+    (BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplate.uuid ++ "/assets/b918fa4a-b0cf-4bef-ada6-e8cb3848cc75")
     reqHeaders
     reqBody
     "document_template_asset"
-    [("uuid", "deab6c38-aeac-4b17-a501-4365a0a70176")]
+    [("uuid", "b918fa4a-b0cf-4bef-ada6-e8cb3848cc75")]

@@ -4,6 +4,7 @@ import Data.Aeson
 
 import Shared.Common.Util.Aeson
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSuggestionJM ()
 import Wizard.Api.Resource.Project.Acl.ProjectPermJM ()
 import Wizard.Api.Resource.Project.Detail.ProjectDetailQuestionnaireDTO
 import Wizard.Api.Resource.Project.File.ProjectFileSimpleJM ()

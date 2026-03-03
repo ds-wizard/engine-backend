@@ -3,6 +3,7 @@ module Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Bundle.KnowledgeModelBu
 import Data.Swagger
 
 import Shared.Common.Util.Swagger
+import Shared.Coordinate.Api.Resource.Coordinate.CoordinateSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Bundle.KnowledgeModelBundlePackageJM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Event.KnowledgeModelEventSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePhaseSM ()

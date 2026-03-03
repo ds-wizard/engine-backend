@@ -5,6 +5,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import RegistryLib.Model.Organization.OrganizationSimple
+import Shared.Common.Service.Version.VersionMapper
 import Shared.Coordinate.Util.Coordinate
 import Shared.Locale.Model.Locale.Locale
 import Wizard.Api.Resource.Locale.LocaleChangeDTO
@@ -46,7 +47,7 @@ toDTO registryEnabled locale =
     , updatedAt = locale.updatedAt
     }
 
-toDetailDTO :: Locale -> Bool -> [RegistryLocale] -> [RegistryOrganization] -> [String] -> Maybe String -> LocaleDetailDTO
+toDetailDTO :: Locale -> Bool -> [RegistryLocale] -> [RegistryOrganization] -> [(U.UUID, String)] -> Maybe String -> LocaleDetailDTO
 toDetailDTO locale registryEnabled localeRs orgRs versionLs registryLink =
   LocaleDetailDTO
     { uuid = locale.uuid
@@ -61,7 +62,7 @@ toDetailDTO locale registryEnabled localeRs orgRs versionLs registryLink =
     , readme = locale.readme
     , recommendedAppVersion = locale.recommendedAppVersion
     , enabled = locale.enabled
-    , versions = L.sort versionLs
+    , versions = map toVersionDTO . L.sortBy (\(_, v1) (_, v2) -> compare v2 v1) $ versionLs
     , remoteLatestVersion =
         case (registryEnabled, selectLocaleByOrgIdAndLocaleId locale localeRs) of
           (True, Just localeR) -> Just $ localeR.remoteVersion

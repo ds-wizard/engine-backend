@@ -14,8 +14,9 @@ import Registry.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailJ
 import Registry.Model.Context.AppContext
 import Registry.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
 import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
-import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage ()
 
 import SharedTest.Specs.API.Common
 
@@ -33,7 +34,7 @@ detail_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = BS.pack $ "/knowledge-model-packages/" ++ netherlandsKmPackageV2.pId
+reqUrl = BS.pack $ "/knowledge-model-packages/" ++ show (createCoordinate netherlandsKmPackageV2)
 
 reqHeaders = [reqCtHeader]
 
@@ -67,4 +68,4 @@ test_404 appContext =
     reqHeaders
     reqBody
     "knowledge_model_package"
-    [("id", "global:non-existing-km-package:1.0.0")]
+    [("organization_id", "global"), ("km_id", "non-existing-km-package"), ("version", "1.0.0")]

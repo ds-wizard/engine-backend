@@ -30,10 +30,10 @@ instance FromRow ProjectList where
     createdAt <- field
     updatedAt <- field
     state <- field
-    packageId <- field
+    packageUuid <- field
     packageName <- field
     packageVersion <- field
-    let knowledgeModelPackage = KnowledgeModelPackageSimple {pId = packageId, name = packageName, version = packageVersion}
+    let knowledgeModelPackage = KnowledgeModelPackageSimple {uuid = packageUuid, name = packageName, version = packageVersion}
     mUserPermissions <- fieldWith (optionalField fromField)
     let userPermissions =
           case mUserPermissions of

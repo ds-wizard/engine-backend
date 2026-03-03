@@ -1,13 +1,15 @@
 module Registry.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailDTO where
 
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 import RegistryLib.Model.Organization.OrganizationSimple
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 
 data KnowledgeModelPackageDetailDTO = KnowledgeModelPackageDetailDTO
-  { pId :: String
+  { uuid :: U.UUID
   , name :: String
   , organizationId :: String
   , kmId :: String
@@ -17,9 +19,9 @@ data KnowledgeModelPackageDetailDTO = KnowledgeModelPackageDetailDTO
   , readme :: String
   , license :: String
   , metamodelVersion :: Int
-  , previousPackageId :: Maybe String
-  , forkOfPackageId :: Maybe String
-  , mergeCheckpointPackageId :: Maybe String
+  , previousPackageUuid :: Maybe U.UUID
+  , forkOfPackageId :: Maybe Coordinate
+  , mergeCheckpointPackageId :: Maybe Coordinate
   , versions :: [String]
   , organization :: OrganizationSimple
   , createdAt :: UTCTime

@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.DocumentTemplateDraft.File.List_POST where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -17,7 +18,7 @@ type List_POST =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] DocumentTemplateFileChangeDTO
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "documentTemplateUuid" U.UUID
     :> "files"
     :> PostCreated '[SafeJSON] (Headers '[Header "x-trace-uuid" String] DocumentTemplateFile)
 
@@ -25,8 +26,8 @@ list_POST
   :: Maybe String
   -> Maybe String
   -> DocumentTemplateFileChangeDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateFile)
-list_POST mTokenHeader mServerUrl reqDto tmlId =
+list_POST mTokenHeader mServerUrl reqDto dtUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
-    runInAuthService Transactional $ addTraceUuidHeader =<< createFile tmlId reqDto
+    runInAuthService Transactional $ addTraceUuidHeader =<< createFile dtUuid reqDto

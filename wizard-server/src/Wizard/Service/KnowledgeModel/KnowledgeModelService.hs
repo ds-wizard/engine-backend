@@ -10,7 +10,6 @@ import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Model.KnowledgeModel.Bundle.KnowledgeModelBundlePackage
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelCacheDAO
 import Wizard.Database.Mapping.KnowledgeModel.Bundle.KnowledgeModelBundlePackage ()
 import Wizard.Model.Context.AclContext
@@ -22,43 +21,41 @@ import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 
 createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM KnowledgeModel
 createKnowledgeModelPreview reqDto = do
-  mResolvedPackageId <- traverse resolvePackageId reqDto.knowledgeModelPackageId
-  checkIfPackageIsPublic mResolvedPackageId _PRJ_PERM
-  compileKnowledgeModel reqDto.events mResolvedPackageId reqDto.tagUuids
+  checkViewPermissionToKnowledgeModelPackage reqDto.knowledgeModelPackageUuid _PRJ_PERM
+  compileKnowledgeModel reqDto.events reqDto.knowledgeModelPackageUuid reqDto.tagUuids
 
-compileKnowledgeModel :: [KnowledgeModelEvent] -> Maybe String -> [U.UUID] -> AppContextM KnowledgeModel
-compileKnowledgeModel events mPackageId tagUuids = compileKnowledgeModelWithCaching' events mPackageId tagUuids True
+compileKnowledgeModel :: [KnowledgeModelEvent] -> Maybe U.UUID -> [U.UUID] -> AppContextM KnowledgeModel
+compileKnowledgeModel events mPkgUuid tagUuids = compileKnowledgeModelWithCaching' events mPkgUuid tagUuids True
 
-compileKnowledgeModelWithCaching' :: [KnowledgeModelEvent] -> Maybe String -> [U.UUID] -> Bool -> AppContextM KnowledgeModel
-compileKnowledgeModelWithCaching' events mPackageId tagUuids useCache = do
-  mResolvedPackageId <- traverse resolvePackageId mPackageId
-  case (events, mResolvedPackageId) of
-    ([], Just resolvedPackageId) -> do
+compileKnowledgeModelWithCaching' :: [KnowledgeModelEvent] -> Maybe U.UUID -> [U.UUID] -> Bool -> AppContextM KnowledgeModel
+compileKnowledgeModelWithCaching' events mPkgUuid tagUuids useCache = do
+  case (events, mPkgUuid) of
+    ([], Just pkgUuid) -> do
       tenantUuid <- asks currentTenantUuid
       mKmCache <-
         if useCache
-          then findKnowledgeModelCacheById' resolvedPackageId tagUuids tenantUuid
+          then findKnowledgeModelCacheByUuid' pkgUuid tagUuids tenantUuid
           else return Nothing
       case mKmCache of
         Just kmCache -> return kmCache.knowledgeModel
         Nothing -> do
-          allEvents <- getEvents mResolvedPackageId
+          allEvents <- getEvents mPkgUuid
           km <- liftEither $ compile Nothing allEvents
           let filteredKm = filterKnowledgeModel tagUuids km
           if useCache
             then do
               createdAt <- liftIO getCurrentTime
-              let kmCache = KnowledgeModelCache {knowledgeModelPackageId = resolvedPackageId, tagUuids = tagUuids, knowledgeModel = filteredKm, tenantUuid = tenantUuid, createdAt = createdAt}
+              let kmCache = KnowledgeModelCache {knowledgeModelPackageUuid = pkgUuid, tagUuids = tagUuids, knowledgeModel = filteredKm, tenantUuid = tenantUuid, createdAt = createdAt}
               insertKnowledgeModelCache kmCache
               return filteredKm
             else return filteredKm
     _ -> do
-      allEvents <- getEvents mPackageId
+      allEvents <- getEvents mPkgUuid
       km <- liftEither $ compile Nothing allEvents
       return $ filterKnowledgeModel tagUuids km
   where
-    getEvents :: Maybe String -> AppContextM [KnowledgeModelEvent]
+    getEvents :: Maybe U.UUID -> AppContextM [KnowledgeModelEvent]
     getEvents Nothing = return events
-    getEvents (Just packageId) = do
-      pkgs <- findSeriesOfPackagesRecursiveById packageId :: AppContextM [KnowledgeModelBundlePackage]
+    getEvents (Just pkgUuid) = do
+      pkgs <- findSeriesOfPackagesRecursiveByUuid pkgUuid :: AppContextM [KnowledgeModelBundlePackage]
       return $ concatMap (.events) pkgs ++ events

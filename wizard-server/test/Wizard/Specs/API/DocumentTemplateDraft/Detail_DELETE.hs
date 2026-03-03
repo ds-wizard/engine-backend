@@ -2,14 +2,18 @@ module Wizard.Specs.API.DocumentTemplateDraft.Detail_DELETE (
   detail_DELETE,
 ) where
 
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
-import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML_Migration
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DT_Migration
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
@@ -17,11 +21,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /wizard-api/document-template-drafts/{documentTemplateId}
+-- GET /wizard-api/document-template-drafts/{uuid}
 -- ------------------------------------------------------------------------
 detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
-  describe "DELETE /wizard-api/document-template-drafts/{documentTemplateId}" $ do
+  describe "DELETE /wizard-api/document-template-drafts/{uuid}" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -32,7 +36,7 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/wizard-api/document-template-drafts/global:project-report:2.0.0"
+reqUrl = BS.pack $ "/wizard-api/document-template-drafts/" ++ U.toString wizardDocumentTemplateDraft.uuid
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -53,7 +57,7 @@ create_test_204 title appContext reqAuthHeader =
       let expHeaders = resCorsHeaders
       let expBody = ""
       -- AND: Run migrations
-      runInContextIO TML_Migration.runMigration appContext
+      runInContextIO DT_Migration.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
@@ -79,8 +83,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest'
     reqMethod
-    "/wizard-api/document-template-drafts/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/wizard-api/document-template-drafts/3db4265e-8ba2-433d-97fb-6cc504866bbd"
     (reqHeadersT reqAuthHeader)
     reqBody
     "document_template"
-    [("id", "deab6c38-aeac-4b17-a501-4365a0a70176"), ("phase", "DraftDocumentTemplatePhase")]
+    [("uuid", "3db4265e-8ba2-433d-97fb-6cc504866bbd"), ("phase", "DraftDocumentTemplatePhase")]

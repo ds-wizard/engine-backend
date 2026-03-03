@@ -9,10 +9,12 @@ import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.D
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import qualified Shared.DocumentTemplate.Service.DocumentTemplate.DocumentTemplateMapper as DocumentTemplateMapper
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSuggestionSM ()
 import Wizard.Api.Resource.Project.Acl.ProjectPermSM ()
 import Wizard.Api.Resource.Project.Detail.ProjectDetailPreviewJM ()
 import Wizard.Api.Resource.Project.ProjectSharingSM ()
 import Wizard.Api.Resource.Project.ProjectVisibilitySM ()
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Wizard.Database.Migration.Development.Project.Data.Projects
 import Wizard.Model.Project.Detail.ProjectDetailPreview
 import Wizard.Model.Project.Project
@@ -25,9 +27,9 @@ instance ToSchema ProjectDetailPreview where
         , name = project1.name
         , visibility = project1.visibility
         , sharing = project1.sharing
-        , knowledgeModelPackageId = project1.knowledgeModelPackageId
+        , knowledgeModelPackage = germanyPackageSuggestion
         , isTemplate = project1.isTemplate
-        , documentTemplateId = Just wizardDocumentTemplate.tId
+        , documentTemplateUuid = Just wizardDocumentTemplate.uuid
         , migrationUuid = Nothing
         , permissions = [project1AlbertEditProjectPermDto]
         , format = Just . DocumentTemplateMapper.toFormatSimple $ formatJson

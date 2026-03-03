@@ -3,13 +3,13 @@ module Wizard.Api.Handler.KnowledgeModelPackage.Api where
 import Servant
 import Servant.Swagger.Tags
 
+import Wizard.Api.Handler.KnowledgeModelPackage.Dependent.Api
 import Wizard.Api.Handler.KnowledgeModelPackage.Detail_Bundle_GET
 import Wizard.Api.Handler.KnowledgeModelPackage.Detail_DELETE
 import Wizard.Api.Handler.KnowledgeModelPackage.Detail_GET
 import Wizard.Api.Handler.KnowledgeModelPackage.Detail_PUT
 import Wizard.Api.Handler.KnowledgeModelPackage.Detail_Pull_POST
 import Wizard.Api.Handler.KnowledgeModelPackage.List_Bundle_POST
-import Wizard.Api.Handler.KnowledgeModelPackage.List_DELETE
 import Wizard.Api.Handler.KnowledgeModelPackage.List_From_Editor_POST
 import Wizard.Api.Handler.KnowledgeModelPackage.List_From_Migration_POST
 import Wizard.Api.Handler.KnowledgeModelPackage.List_GET
@@ -18,11 +18,10 @@ import Wizard.Api.Handler.KnowledgeModelPackage.List_Suggestions_GET
 import Wizard.Model.Context.BaseContext
 
 type KnowledgeModelPackageAPI =
-  Tags "Package"
+  Tags "Knowledge Model Package"
     :> ( List_GET
           :<|> List_Suggestions_GET
           :<|> List_POST
-          :<|> List_DELETE
           :<|> Detail_GET
           :<|> Detail_PUT
           :<|> Detail_DELETE
@@ -31,6 +30,7 @@ type KnowledgeModelPackageAPI =
           :<|> List_From_Migration_POST
           :<|> Detail_Bundle_GET
           :<|> Detail_Pull_POST
+          :<|> DependentAPI
        )
 
 knowledgeModelPackageApi :: Proxy KnowledgeModelPackageAPI
@@ -41,7 +41,6 @@ knowledgeModelPackageServer =
   list_GET
     :<|> list_suggestions_GET
     :<|> list_POST
-    :<|> list_DELETE
     :<|> detail_GET
     :<|> detail_PUT
     :<|> detail_DELETE
@@ -50,3 +49,4 @@ knowledgeModelPackageServer =
     :<|> list_from_migration_POST
     :<|> detail_bundle_GET
     :<|> detail_pull_POST
+    :<|> dependentServer

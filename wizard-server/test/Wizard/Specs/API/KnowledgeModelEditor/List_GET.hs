@@ -67,7 +67,7 @@ create_test_200 title appContext reqUrl expDto =
       let expStatus = 200
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
       -- AND: Run migrations
-      runInContextIO (deletePackageById netherlandsKmPackageV2.pId) appContext
+      runInContextIO (deletePackageByUuid netherlandsKmPackageV2.uuid) appContext
       runInContextIO KnowledgeModelEditor.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

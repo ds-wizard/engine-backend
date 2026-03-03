@@ -1,10 +1,11 @@
 module Wizard.Model.DocumentTemplate.DocumentTemplateDraftList where
 
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 data DocumentTemplateDraftList = DocumentTemplateDraftList
-  { tId :: String
+  { uuid :: U.UUID
   , name :: String
   , organizationId :: String
   , templateId :: String

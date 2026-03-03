@@ -6,7 +6,7 @@ import qualified Data.UUID as U
 import GHC.Records
 
 import Shared.Common.Model.Error.Error
-import Shared.Coordinate.Service.Coordinate.CoordinateValidation
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.DocumentTemplate.Constant.DocumentTemplate
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
@@ -21,68 +21,61 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
 validateNewDocumentTemplate :: DocumentTemplate -> Bool -> AppContextM ()
-validateNewDocumentTemplate tml shouldValidateMetamodelVersion = do
-  validateCoordinateFormat False "templateId" tml.tId
-  validateDocumentTemplateIdUniqueness tml.tId
-  validateCoordinateWithParams tml.tId tml.organizationId tml.templateId tml.version
-  when shouldValidateMetamodelVersion (validateMetamodelVersion tml)
+validateNewDocumentTemplate dt shouldValidateMetamodelVersion = do
+  validateDocumentTemplateIdUniqueness (createCoordinate dt)
+  when shouldValidateMetamodelVersion (validateMetamodelVersion dt)
 
-validateChangeDto :: String -> DocumentTemplateChangeDTO -> AppContextM ()
-validateChangeDto tmlId reqDto = validatePhase tmlId reqDto.phase
+validateChangeDto :: U.UUID -> DocumentTemplateChangeDTO -> AppContextM ()
+validateChangeDto uuid reqDto = validatePhase uuid reqDto.phase
 
-validatePhase :: String -> DocumentTemplatePhase -> AppContextM ()
-validatePhase tmlId newPhase = do
+validatePhase :: U.UUID -> DocumentTemplatePhase -> AppContextM ()
+validatePhase uuid newPhase = do
   when
     (newPhase == DraftDocumentTemplatePhase)
-    (throwError . UserError $ _ERROR_VALIDATION__DOC_TML_UNSUPPORTED_STATE tmlId (show newPhase))
+    (throwError . UserError $ _ERROR_VALIDATION__DOC_TML_UNSUPPORTED_STATE (U.toString uuid) (show newPhase))
 
-validateExistingDocumentTemplate :: DocumentTemplate -> AppContextM ()
-validateExistingDocumentTemplate tml = do
-  validateCoordinateFormat False "templateId" tml.tId
-  validateCoordinateWithParams tml.tId tml.organizationId tml.templateId tml.version
-
-validateDocumentTemplateIdUniqueness :: String -> AppContextM ()
-validateDocumentTemplateIdUniqueness tmlId = do
-  mTml <- findDocumentTemplateById' tmlId
-  case mTml of
+validateDocumentTemplateIdUniqueness :: Coordinate -> AppContextM ()
+validateDocumentTemplateIdUniqueness coordinate = do
+  mDt <- findDocumentTemplateByCoordinate' coordinate
+  case mDt of
     Nothing -> return ()
-    Just _ -> throwError . UserError $ _ERROR_VALIDATION__DOC_TML_ID_UNIQUENESS tmlId
+    Just _ -> throwError . UserError $ _ERROR_VALIDATION__DOC_TML_ID_UNIQUENESS (show coordinate)
 
-validateDocumentTemplateDeletion :: String -> AppContextM ()
-validateDocumentTemplateDeletion tmlId = do
-  validateUsageBySomeProject tmlId
-  validateUsageBySomeDocument tmlId
+validateDocumentTemplateDeletion :: U.UUID -> AppContextM ()
+validateDocumentTemplateDeletion dtUuid = do
+  validateUsageBySomeProject dtUuid
+  validateUsageBySomeDocument dtUuid
 
-validateUsageBySomeProject :: String -> AppContextM ()
-validateUsageBySomeProject tmlId = do
-  projects <- findProjectsByDocumentTemplateId tmlId
+validateUsageBySomeProject :: U.UUID -> AppContextM ()
+validateUsageBySomeProject dtUuid = do
+  projects <- findProjectsByDocumentTemplateUuid dtUuid
   case projects of
     [] -> return ()
     _ ->
       throwError . UserError $
-        _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId "project"
+        _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY (U.toString dtUuid) "project"
 
-validateUsageBySomeDocument :: String -> AppContextM ()
-validateUsageBySomeDocument tmlId = do
-  projects <- findDocumentsByDocumentTemplateId tmlId
+validateUsageBySomeDocument :: U.UUID -> AppContextM ()
+validateUsageBySomeDocument dtUuid = do
+  projects <- findDocumentsByDocumentTemplateUuid dtUuid
   case projects of
     [] -> return ()
     _ ->
       throwError . UserError $
-        _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId "document"
+        _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY (U.toString dtUuid) "document"
 
 validateMetamodelVersion :: DocumentTemplate -> AppContextM ()
-validateMetamodelVersion tml =
+validateMetamodelVersion dt =
   when
-    (isDocumentTemplateUnsupported tml.metamodelVersion)
+    (isDocumentTemplateUnsupported dt.metamodelVersion)
     ( throwError . UserError $
-        _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION tml.tId (show tml.metamodelVersion) (show documentTemplateMetamodelVersion)
+        _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION (show . createCoordinate $ dt) (show dt.metamodelVersion) (show documentTemplateMetamodelVersion)
     )
 
-validateFileAndAssetUniqueness :: Maybe U.UUID -> String -> String -> AppContextM ()
-validateFileAndAssetUniqueness mTemplateEntityUuid templateId fileName = do
-  files <- findFilesByDocumentTemplateIdAndFileName templateId fileName
-  assets <- findAssetsByDocumentTemplateIdAndFileName templateId fileName
+validateFileAndAssetUniqueness :: Maybe U.UUID -> U.UUID -> String -> AppContextM ()
+validateFileAndAssetUniqueness mTemplateEntityUuid dtUuid fileName = do
+  files <- findFilesByDocumentTemplateUuidAndFileName dtUuid fileName
+  assets <- findAssetsByDocumentTemplateUuidAndFileName dtUuid fileName
   checkUniqueness files
   checkUniqueness assets
   where

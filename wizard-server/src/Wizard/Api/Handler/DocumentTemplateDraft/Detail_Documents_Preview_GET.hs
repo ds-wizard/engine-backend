@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.DocumentTemplateDraft.Detail_Documents_Preview_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -17,7 +18,7 @@ type Detail_Documents_Preview_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "uuid" U.UUID
     :> "documents"
     :> "preview"
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] TemporaryFileDTO)
@@ -25,12 +26,12 @@ type Detail_Documents_Preview_GET =
 detail_documents_preview_GET
   :: Maybe String
   -> Maybe String
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] TemporaryFileDTO)
-detail_documents_preview_GET mTokenHeader mServerUrl documentTemplateId =
+detail_documents_preview_GET mTokenHeader mServerUrl uuid =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
     runInMaybeAuthService Transactional $ do
-      (doc, fileDto) <- createDocumentPreviewForDocTmlDraft documentTemplateId
+      (doc, fileDto) <- createDocumentPreviewForDocTmlDraft uuid
       case doc.state of
         DoneDocumentState -> addTraceUuidHeader fileDto
         ErrorDocumentState ->

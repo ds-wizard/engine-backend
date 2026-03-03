@@ -77,7 +77,7 @@ test_204 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext = do
-  createInvalidJsonTest reqMethod reqUrl "targetPackageId"
+  createInvalidJsonTest reqMethod reqUrl "targetPackageUuid"
   it "HTTP 400 BAD REQUEST when originalEventUuid doesn't match with current target event" $
     -- GIVEN: Prepare request
     do

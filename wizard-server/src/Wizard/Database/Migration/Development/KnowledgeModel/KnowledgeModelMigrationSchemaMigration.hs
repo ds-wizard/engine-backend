@@ -24,8 +24,8 @@ createTables = do
         \    editor_uuid                    uuid        NOT NULL, \
         \    metamodel_version              int         NOT NULL, \
         \    state                          jsonb       NOT NULL, \
-        \    editor_previous_package_id     varchar     NOT NULL, \
-        \    target_package_id              varchar     NOT NULL, \
+        \    editor_previous_package_uuid   uuid        NOT NULL, \
+        \    target_package_uuid            uuid        NOT NULL, \
         \    editor_previous_package_events jsonb       NOT NULL, \
         \    target_package_events          jsonb       NOT NULL, \
         \    result_events                  jsonb       NOT NULL, \
@@ -34,8 +34,8 @@ createTables = do
         \    created_at                     timestamptz NOT NULL, \
         \    CONSTRAINT knowledge_model_migration_pk PRIMARY KEY (editor_uuid), \
         \    CONSTRAINT knowledge_model_migration_editor_uuid_fk FOREIGN KEY (editor_uuid) REFERENCES knowledge_model_editor (uuid) ON DELETE CASCADE, \
-        \    CONSTRAINT knowledge_model_migration_editor_previous_package_id_fk FOREIGN KEY (editor_previous_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE, \
-        \    CONSTRAINT knowledge_model_migration_target_package_id_fk FOREIGN KEY (target_package_id, tenant_uuid) REFERENCES knowledge_model_package (id, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT knowledge_model_migration_editor_previous_package_uuid_fk FOREIGN KEY (editor_previous_package_uuid) REFERENCES knowledge_model_package (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT knowledge_model_migration_target_package_uuid_fk FOREIGN KEY (target_package_uuid) REFERENCES knowledge_model_package (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT knowledge_model_migration_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql

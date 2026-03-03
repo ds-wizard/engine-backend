@@ -16,7 +16,7 @@ import qualified Wizard.Service.Project.ProjectMapper as ProjectMapper
 wizardDocumentTemplateDraftData :: DocumentTemplateDraftData
 wizardDocumentTemplateDraftData =
   DocumentTemplateDraftData
-    { documentTemplateId = wizardDocumentTemplateDraft.tId
+    { documentTemplateUuid = wizardDocumentTemplateDraft.uuid
     , projectUuid = Just project1.uuid
     , knowledgeModelEditorUuid = Nothing
     , formatUuid = Just formatJson.uuid
@@ -38,7 +38,7 @@ wizardDocumentTemplateDraftCreateDTO =
     { name = "New Document Template"
     , templateId = wizardDocumentTemplateNlDraft.templateId
     , version = "3.0.0"
-    , basedOn = Just wizardDocumentTemplateDraft.tId
+    , basedOn = Just wizardDocumentTemplateDraft.uuid
     }
 
 wizardDocumentTemplateDraftChangeDTO :: DocumentTemplateDraftChangeDTO

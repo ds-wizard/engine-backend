@@ -29,7 +29,7 @@ insertTenantConfigOwl = createInsertFn entityName
 
 updateTenantConfigOwl :: TenantConfigOwl -> AppContextM Int64
 updateTenantConfigOwl config = do
-  let sql = fromString "UPDATE config_owl SET tenant_uuid = ?, enabled = ?, name = ?, organization_id = ?, km_id = ?, version = ?, previous_package_id = ?, root_element = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ?"
+  let sql = fromString "UPDATE config_owl SET tenant_uuid = ?, enabled = ?, name = ?, organization_id = ?, km_id = ?, version = ?, previous_package_uuid = ?, root_element = ?, created_at = ?, updated_at = ? WHERE tenant_uuid = ?"
   let params = toRow config ++ [toField config.tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params

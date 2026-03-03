@@ -21,7 +21,4 @@ _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId =
     ++ pkgId
     ++ "') is missing. Please import the parent first."
 
-_ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId target =
-  "Package '" ++ pkgId ++ "' can't be deleted. It's used by some " ++ target ++ "."
-
 _ERROR_SERVICE_PKG__OWNERSHIP_MISMATCH pkgId = "You can not push package which you do not own ('" ++ pkgId ++ "')"

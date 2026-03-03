@@ -8,25 +8,31 @@ import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateDTO
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSuggestionDTO
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateSimple
 
 toDTO :: DocumentTemplate -> [DocumentTemplateFormat] -> DocumentTemplateDTO
-toDTO tml formats =
+toDTO dt formats =
   DocumentTemplateDTO
-    { tId = tml.tId
-    , name = tml.name
-    , version = tml.version
-    , phase = tml.phase
-    , description = tml.description
+    { uuid = dt.uuid
+    , name = dt.name
+    , version = dt.version
+    , phase = dt.phase
+    , description = dt.description
     , formats = fmap toFormatSimple formats
     }
 
+toSimple :: DocumentTemplate -> DocumentTemplateSimple
+toSimple DocumentTemplate {..} = DocumentTemplateSimple {..}
+
 toSuggestionDTO :: DocumentTemplate -> [DocumentTemplateFormat] -> DocumentTemplateSuggestionDTO
-toSuggestionDTO tml formats =
+toSuggestionDTO dt formats =
   DocumentTemplateSuggestionDTO
-    { tId = tml.tId
-    , name = tml.name
-    , version = tml.version
-    , description = tml.description
+    { uuid = dt.uuid
+    , name = dt.name
+    , organizationId = dt.organizationId
+    , templateId = dt.templateId
+    , version = dt.version
+    , description = dt.description
     , formats = fmap toFormatSimple formats
     }
 
@@ -65,23 +71,23 @@ toAssetDTO asset =
     , contentType = asset.contentType
     }
 
-fromFormatDTO :: String -> U.UUID -> UTCTime -> UTCTime -> DocumentTemplateFormatDTO -> DocumentTemplateFormat
-fromFormatDTO documentTemplateId tenantUuid createdAt updatedAt format =
+fromFormatDTO :: U.UUID -> U.UUID -> UTCTime -> UTCTime -> DocumentTemplateFormatDTO -> DocumentTemplateFormat
+fromFormatDTO documentTemplateUuid tenantUuid createdAt updatedAt format =
   DocumentTemplateFormat
-    { documentTemplateId = documentTemplateId
+    { documentTemplateUuid = documentTemplateUuid
     , uuid = format.uuid
     , name = format.name
     , icon = format.icon
-    , steps = zipWith (\i s -> fromFormatStepDTO documentTemplateId format.uuid i tenantUuid createdAt updatedAt s) [0 ..] format.steps
+    , steps = zipWith (\i s -> fromFormatStepDTO documentTemplateUuid format.uuid i tenantUuid createdAt updatedAt s) [0 ..] format.steps
     , tenantUuid = tenantUuid
     , createdAt = createdAt
     , updatedAt = updatedAt
     }
 
-fromFormatStepDTO :: String -> U.UUID -> Int -> U.UUID -> UTCTime -> UTCTime -> DocumentTemplateFormatStepDTO -> DocumentTemplateFormatStep
-fromFormatStepDTO documentTemplateId formatUuid position tenantUuid createdAt updatedAt step =
+fromFormatStepDTO :: U.UUID -> U.UUID -> Int -> U.UUID -> UTCTime -> UTCTime -> DocumentTemplateFormatStepDTO -> DocumentTemplateFormatStep
+fromFormatStepDTO documentTemplateUuid formatUuid position tenantUuid createdAt updatedAt step =
   DocumentTemplateFormatStep
-    { documentTemplateId = documentTemplateId
+    { documentTemplateUuid = documentTemplateUuid
     , formatUuid = formatUuid
     , position = position
     , name = step.name
@@ -91,10 +97,10 @@ fromFormatStepDTO documentTemplateId formatUuid position tenantUuid createdAt up
     , updatedAt = updatedAt
     }
 
-fromFileDTO :: String -> U.UUID -> UTCTime -> DocumentTemplateFileDTO -> DocumentTemplateFile
-fromFileDTO documentTemplateId tenantUuid now file =
+fromFileDTO :: U.UUID -> U.UUID -> UTCTime -> DocumentTemplateFileDTO -> DocumentTemplateFile
+fromFileDTO documentTemplateUuid tenantUuid now file =
   DocumentTemplateFile
-    { documentTemplateId = documentTemplateId
+    { documentTemplateUuid = documentTemplateUuid
     , uuid = file.uuid
     , fileName = file.fileName
     , content = file.content
@@ -103,10 +109,10 @@ fromFileDTO documentTemplateId tenantUuid now file =
     , updatedAt = now
     }
 
-fromAssetDTO :: String -> Int64 -> U.UUID -> UTCTime -> DocumentTemplateAssetDTO -> DocumentTemplateAsset
-fromAssetDTO documentTemplateId fileSize tenantUuid now asset =
+fromAssetDTO :: U.UUID -> Int64 -> U.UUID -> UTCTime -> DocumentTemplateAssetDTO -> DocumentTemplateAsset
+fromAssetDTO documentTemplateUuid fileSize tenantUuid now asset =
   DocumentTemplateAsset
-    { documentTemplateId = documentTemplateId
+    { documentTemplateUuid = documentTemplateUuid
     , uuid = asset.uuid
     , fileName = asset.fileName
     , contentType = asset.contentType

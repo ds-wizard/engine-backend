@@ -21,13 +21,13 @@ type List_Bundle_POST =
     :> MultipartForm Mem KnowledgeModelBundleFile
     :> "knowledge-model-packages"
     :> "bundle"
-    :> Post '[SafeJSON] (Headers '[Header "x-trace-uuid" String] [KnowledgeModelPackageSimpleDTO])
+    :> Post '[SafeJSON] (Headers '[Header "x-trace-uuid" String] KnowledgeModelPackageSimpleDTO)
 
 list_bundle_POST
   :: Maybe String
   -> Maybe String
   -> KnowledgeModelBundleFile
-  -> BaseContextM (Headers '[Header "x-trace-uuid" String] [KnowledgeModelPackageSimpleDTO])
+  -> BaseContextM (Headers '[Header "x-trace-uuid" String] KnowledgeModelPackageSimpleDTO)
 list_bundle_POST mTokenHeader mServerUrl reqDto =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $

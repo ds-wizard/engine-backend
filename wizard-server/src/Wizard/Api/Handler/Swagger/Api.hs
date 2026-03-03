@@ -8,7 +8,6 @@ import Servant.Swagger.UI
 import RegistryLib.Api.Resource.Organization.OrganizationSM ()
 import RegistryLib.Api.Resource.Organization.OrganizationSimpleSM ()
 import Shared.Common.Api.Resource.Common.AesonSM ()
-import Shared.Common.Api.Resource.Common.EntityCreatedWithIdSM ()
 import Shared.Common.Api.Resource.Common.FileSM ()
 import Shared.Common.Api.Resource.Common.PageMetadataSM ()
 import Shared.Common.Api.Resource.Dev.DevExecutionResultSM ()
@@ -18,6 +17,7 @@ import Shared.Common.Api.Resource.Info.InfoSM ()
 import Shared.Component.Api.Resource.Component.ComponentSM ()
 import Shared.Coordinate.Api.Resource.Coordinate.CoordinateSM ()
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSimpleSM ()
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePhaseSM ()
@@ -63,6 +63,7 @@ import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationResol
 import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationSM ()
 import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationStateSM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageChangeSM ()
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDeletionImpactSM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailSM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSuggestionSM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.Publish.KnowledgeModelPackagePublishEditorSM ()
@@ -75,8 +76,6 @@ import Wizard.Api.Resource.Locale.LocaleDetailSM ()
 import Wizard.Api.Resource.Locale.LocaleSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandDetailSM ()
 import Wizard.Api.Resource.PersistentCommand.PersistentCommandSM ()
-import Wizard.Api.Resource.Project.Action.ProjectActionChangeSM ()
-import Wizard.Api.Resource.Project.Action.ProjectActionSM ()
 import Wizard.Api.Resource.Project.Comment.ProjectCommentThreadAssignedSM ()
 import Wizard.Api.Resource.Project.Detail.ProjectDetailPreviewSM ()
 import Wizard.Api.Resource.Project.Detail.ProjectDetailQuestionnaireSM ()
@@ -85,8 +84,6 @@ import Wizard.Api.Resource.Project.Detail.ProjectDetailSM ()
 import Wizard.Api.Resource.Project.Detail.ProjectDetailSettingsSM ()
 import Wizard.Api.Resource.Project.Detail.ProjectDetailWsSM ()
 import Wizard.Api.Resource.Project.Event.ProjectEventListSM ()
-import Wizard.Api.Resource.Project.Importer.ProjectImporterChangeSM ()
-import Wizard.Api.Resource.Project.Importer.ProjectImporterSM ()
 import Wizard.Api.Resource.Project.Migration.ProjectMigrationChangeSM ()
 import Wizard.Api.Resource.Project.Migration.ProjectMigrationCreateSM ()
 import Wizard.Api.Resource.Project.Migration.ProjectMigrationSM ()
@@ -151,7 +148,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.27.1"
+              , _infoVersion = "4.28.0"
               , _infoLicense =
                   Just $
                     License

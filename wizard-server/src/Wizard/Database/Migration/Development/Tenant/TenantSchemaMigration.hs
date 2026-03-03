@@ -30,7 +30,6 @@ dropConfigTables = do
         \DROP TABLE IF EXISTS config_submission_service;\
         \DROP TABLE IF EXISTS config_submission;\
         \DROP TABLE IF EXISTS config_project;\
-        \DROP TABLE IF EXISTS config_knowledge_model_public_package_pattern;\
         \DROP TABLE IF EXISTS config_knowledge_model;\
         \DROP TABLE IF EXISTS config_registry;\
         \DROP TABLE IF EXISTS config_look_and_feel_custom_menu_link; \
@@ -89,7 +88,6 @@ createConfigTables = do
   createTcLookAndFeelCustomMenuLinkTable
   createTcRegistryTable
   createTcKnowledgeModelTable
-  createTcKnowledgeModelPublicPackagePatternTable
   createTcProjectTable
   createTcSubmissionTable
   createTcFeaturesTable
@@ -274,31 +272,11 @@ createTcKnowledgeModelTable = do
         "CREATE TABLE config_knowledge_model \
         \( \
         \    tenant_uuid        uuid        NOT NULL, \
-        \    public_enabled     bool        NOT NULL, \
         \    integration_config varchar     NOT NULL, \
         \    created_at         timestamptz NOT NULL, \
         \    updated_at         timestamptz NOT NULL, \
         \    CONSTRAINT config_knowledge_model_pk PRIMARY KEY (tenant_uuid), \
         \    CONSTRAINT config_knowledge_model_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
-        \);"
-  let action conn = execute_ conn sql
-  runDB action
-
-createTcKnowledgeModelPublicPackagePatternTable = do
-  logInfo _CMP_MIGRATION "(Table/ConfigKnowledgeModelPublicPackagePattern) create tables"
-  let sql =
-        "CREATE TABLE config_knowledge_model_public_package_pattern \
-        \( \
-        \    tenant_uuid     uuid        NOT NULL, \
-        \    position        int         NOT NULL, \
-        \    organization_id varchar, \
-        \    km_id           varchar, \
-        \    min_version     varchar, \
-        \    max_version     varchar, \
-        \    created_at      timestamptz NOT NULL, \
-        \    updated_at      timestamptz NOT NULL, \
-        \    CONSTRAINT config_knowledge_model_public_package_pattern_pk PRIMARY KEY (tenant_uuid, position), \
-        \    CONSTRAINT config_knowledge_model_public_package_pattern_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action
@@ -370,14 +348,14 @@ createTcSubmissionTable = do
         \); \
         \CREATE TABLE config_submission_service_supported_format \
         \( \
-        \    tenant_uuid uuid    NOT NULL, \
-        \    service_id  varchar NOT NULL, \
-        \    document_template_id varchar NOT NULL, \
-        \    format_uuid uuid    NOT NULL, \
-        \    CONSTRAINT config_submission_service_supported_format_pk PRIMARY KEY (tenant_uuid, service_id, document_template_id, format_uuid), \
+        \    tenant_uuid uuid       NOT NULL, \
+        \    service_id  varchar    NOT NULL, \
+        \    document_template_uuid uuid NOT NULL, \
+        \    format_uuid uuid       NOT NULL, \
+        \    CONSTRAINT config_submission_service_supported_format_pk PRIMARY KEY (tenant_uuid, service_id, document_template_uuid, format_uuid), \
         \    CONSTRAINT config_submission_service_supported_format_service_id_fk FOREIGN KEY (service_id, tenant_uuid) REFERENCES config_submission_service (id, tenant_uuid) ON DELETE CASCADE, \
-        \    CONSTRAINT config_submission_service_supported_format_document_template_id_fk FOREIGN KEY (document_template_id, tenant_uuid) REFERENCES document_template (id, tenant_uuid) ON DELETE CASCADE, \
-        \    CONSTRAINT config_submission_service_supported_format_format_uuid_fk FOREIGN KEY (document_template_id, format_uuid, tenant_uuid) REFERENCES document_template_format (document_template_id, uuid, tenant_uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT config_submission_service_supported_format_document_template_uuid_fk FOREIGN KEY (document_template_uuid) REFERENCES document_template (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT config_submission_service_supported_format_format_uuid_fk FOREIGN KEY (document_template_uuid, format_uuid) REFERENCES document_template_format (document_template_uuid, uuid) ON DELETE CASCADE, \
         \    CONSTRAINT config_submission_service_supported_format_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
@@ -388,16 +366,16 @@ createTcOwlTable = do
   let sql =
         "CREATE TABLE config_owl \
         \( \
-        \    tenant_uuid          uuid        NOT NULL, \
-        \    enabled              boolean     NOT NULL, \
-        \    name                 varchar     NOT NULL, \
-        \    organization_id      varchar     NOT NULL, \
-        \    km_id                varchar     NOT NULL, \
-        \    version              varchar     NOT NULL, \
-        \    previous_package_id  varchar, \
-        \    root_element         varchar     NOT NULL, \
-        \    created_at           timestamptz NOT NULL, \
-        \    updated_at           timestamptz NOT NULL, \
+        \    tenant_uuid           uuid        NOT NULL, \
+        \    enabled               boolean     NOT NULL, \
+        \    name                  varchar     NOT NULL, \
+        \    organization_id       varchar     NOT NULL, \
+        \    km_id                 varchar     NOT NULL, \
+        \    version               varchar     NOT NULL, \
+        \    previous_package_uuid uuid, \
+        \    root_element          varchar     NOT NULL, \
+        \    created_at            timestamptz NOT NULL, \
+        \    updated_at            timestamptz NOT NULL, \
         \    CONSTRAINT config_owl_pk PRIMARY KEY (tenant_uuid), \
         \    CONSTRAINT config_owl_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"

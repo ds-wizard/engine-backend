@@ -16,7 +16,7 @@ import Shared.Coordinate.Model.Coordinate.Coordinate
 type Detail_Bundle_GET =
   Header "Authorization" String
     :> "locales"
-    :> Capture "id" Coordinate
+    :> Capture "coordinate" Coordinate
     :> "bundle"
     :> Get '[OctetStream] (Headers '[Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStreamLazy)
 

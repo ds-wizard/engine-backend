@@ -27,9 +27,9 @@ enhanceDocument doc = do
       else return []
   return $ toDTO doc submissions
 
-filterAlreadyDoneDocument :: String -> U.UUID -> Document -> Bool
-filterAlreadyDoneDocument documentTemplateId formatUuid doc =
-  (doc.state == DoneDocumentState || doc.state == ErrorDocumentState) && Just doc.documentTemplateId == Just documentTemplateId && Just doc.formatUuid == Just formatUuid
+filterAlreadyDoneDocument :: U.UUID -> U.UUID -> Document -> Bool
+filterAlreadyDoneDocument documentTemplateUuid formatUuid doc =
+  (doc.state == DoneDocumentState || doc.state == ErrorDocumentState) && Just doc.documentTemplateUuid == Just documentTemplateUuid && Just doc.formatUuid == Just formatUuid
 
 computeHash :: [KnowledgeModelEvent] -> Project -> [ProjectVersion] -> Maybe U.UUID -> M.Map String Reply -> TenantConfigOrganization -> Maybe UserDTO -> Int
 computeHash kmEditorEvents project versions phaseUuid replies tcOrganization mCurrentUser =

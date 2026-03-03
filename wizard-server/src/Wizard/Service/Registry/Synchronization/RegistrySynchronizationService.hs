@@ -65,7 +65,7 @@ synchronizePackages now = do
 synchronizeTemplates :: UTCTime -> AppContextM ()
 synchronizeTemplates now = do
   logInfoI _CMP_SERVICE "DocumentTemplate Synchronization started"
-  templates <- retrieveTemplates
+  templates <- retrieveDocumentTemplates
   let registryTemplates = fmap (`toRegistryTemplate` now) templates
   deleteRegistryTemplates
   traverse_ insertRegistryTemplate registryTemplates

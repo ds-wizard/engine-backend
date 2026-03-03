@@ -6,7 +6,7 @@ import GHC.Generics
 import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 
 data TypeHintLegacyRequestDTO = TypeHintLegacyRequestDTO
-  { knowledgeModelPackageId :: Maybe String
+  { knowledgeModelPackageUuid :: Maybe U.UUID
   , events :: [KnowledgeModelEvent]
   , questionUuid :: U.UUID
   , q :: String

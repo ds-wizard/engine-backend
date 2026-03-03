@@ -6,19 +6,26 @@ import Data.Time
 import RegistryLib.Api.Resource.Package.KnowledgeModelPackageSimpleDTO
 import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import RegistryLib.Model.Organization.OrganizationSimple
+import Shared.Common.Util.Uuid
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Constant.KnowledgeModel
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Event.KnowledgeModelEvents
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackageEvent
 import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailDTO
+import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
+import Wizard.Database.Migration.Development.Registry.Data.RegistryPackages
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Tenant.Tenant
+import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
 
 globalRemotePackage :: KnowledgeModelPackageSimpleDTO
 globalRemotePackage =
   KnowledgeModelPackageSimpleDTO
-    { pId = globalKmPackage.pId
+    { uuid = globalKmPackage.uuid
     , name = globalKmPackage.name
     , organizationId = globalKmPackage.organizationId
     , kmId = globalKmPackage.kmId
@@ -33,10 +40,20 @@ globalRemotePackage =
     , createdAt = globalKmPackage.createdAt
     }
 
+globalKmPackageDetailDto :: KnowledgeModelPackageDetailDTO
+globalKmPackageDetailDto =
+  toDetailDTO
+    globalKmPackage
+    True
+    [globalRegistryPackage]
+    [globalRegistryOrganization, nlRegistryOrganization]
+    [(globalKmPackageEmpty.uuid, globalKmPackageEmpty.version), (globalKmPackage.uuid, globalKmPackage.version)]
+    (Just $ "https://registry-test.ds-wizard.org/knowledge-models/" ++ show (createCoordinate globalKmPackage))
+
 globalNetherlandsPackage :: KnowledgeModelPackageSimpleDTO
 globalNetherlandsPackage =
   KnowledgeModelPackageSimpleDTO
-    { pId = netherlandsKmPackageV2.pId
+    { uuid = netherlandsKmPackageV2.uuid
     , name = netherlandsKmPackageV2.name
     , organizationId = netherlandsKmPackageV2.organizationId
     , kmId = netherlandsKmPackageV2.kmId
@@ -51,10 +68,23 @@ globalNetherlandsPackage =
     , createdAt = globalKmPackage.createdAt
     }
 
+globalNetherlandsPackageDetailDto :: KnowledgeModelPackageDetailDTO
+globalNetherlandsPackageDetailDto =
+  toDetailDTO
+    netherlandsKmPackageV2
+    True
+    [nlRegistryPackage]
+    [globalRegistryOrganization, nlRegistryOrganization]
+    [(netherlandsKmPackage.uuid, netherlandsKmPackage.version), (netherlandsKmPackageV2.uuid, netherlandsKmPackageV2.version)]
+    (Just $ "https://registry-test.ds-wizard.org/knowledge-models/" ++ show (createCoordinate netherlandsKmPackageV2))
+
+germanyPackageSuggestion :: KnowledgeModelPackageSuggestion
+germanyPackageSuggestion = toSuggestion germanyKmPackage
+
 differentPackage :: KnowledgeModelPackage
 differentPackage =
   KnowledgeModelPackage
-    { pId = "global:different:1.0.0"
+    { uuid = u' "5dc5209a-03ad-425d-9aa0-6ad2aef94563"
     , name = "Different Knowledge Model"
     , organizationId = "global"
     , kmId = "different"
@@ -64,13 +94,14 @@ differentPackage =
     , description = "Empty package"
     , readme = "# Different Knowledge Model"
     , license = "Apache-2.0"
-    , previousPackageId = Nothing
+    , previousPackageUuid = Nothing
     , forkOfPackageId = Nothing
     , mergeCheckpointPackageId = Nothing
     , nonEditable = False
+    , public = False
     , tenantUuid = differentTenant.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
 differentPackageEvents :: [KnowledgeModelPackageEvent]
-differentPackageEvents = fmap (toPackageEvent differentPackage.pId differentTenant.uuid) [a_km1]
+differentPackageEvents = fmap (toPackageEvent differentPackage.uuid differentTenant.uuid) [a_km1]

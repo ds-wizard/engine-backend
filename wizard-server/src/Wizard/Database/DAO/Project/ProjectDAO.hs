@@ -16,10 +16,9 @@ import Shared.Common.Model.Common.PageMetadata
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Util.Logger
-import Shared.Common.Util.String (f'', replace, trim)
+import Shared.Common.Util.String (f'', trim)
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Constant.ProjectAction
-import Wizard.Constant.ProjectImporter
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Project.ProjectPermDAO (
   deleteProjectPermsFiltered,
@@ -65,8 +64,8 @@ findProjects = do
       entities <- runDB action
       traverse enhance entities
 
-findProjectsForCurrentUserPage :: Maybe String -> Maybe Bool -> Maybe Bool -> Maybe [String] -> Maybe String -> Maybe [String] -> Maybe String -> Maybe [String] -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page ProjectList)
-findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mKnowledgeModelPackageIds mKnowledgeModelPackageIdsOp pageable sort =
+findProjectsForCurrentUserPage :: Maybe String -> Maybe Bool -> Maybe Bool -> Maybe [String] -> Maybe String -> Maybe [String] -> Maybe String -> Maybe [Coordinate] -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page ProjectList)
+findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp pageable sort =
   -- 1. Prepare variables
   do
     tenantUuid <- asks currentTenantUuid
@@ -121,14 +120,15 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
                 else
                   let mapFn _ = " project_perm_user.user_uuid = ? "
                    in (" AND (" ++ L.intercalate " OR " (fmap mapFn userUuids) ++ ")", userUuids)
-    let (knowledgeModelPackageCondition, knowledgeModelPackageIdsParam) =
-          case mKnowledgeModelPackageIds of
-            Nothing -> ("", [])
-            Just [] -> ("", [])
-            Just packageIds ->
-              let operator = if isAndOperator mKnowledgeModelPackageIdsOp then " AND " else " OR "
-               in ( f' " AND (%s)" [L.intercalate operator . fmap (const " project.knowledge_model_package_id LIKE ?") $ packageIds]
-                  , fmap (replace "all" "%") packageIds
+    let (knowledgeModelPackageJoin, knowledgeModelPackageCondition, knowledgeModelPackageIdsParam) =
+          case mKnowledgeModelPackageCoordinates of
+            Nothing -> ("", "", [])
+            Just [] -> ("", "", [])
+            Just kmpCoordinates ->
+              let operator = if isAndOperator mKnowledgeModelPackageCoordinatesOp then " AND " else " OR "
+               in ( "LEFT JOIN knowledge_model_package ON project.knowledge_model_package_uuid = knowledge_model_package.uuid AND knowledge_model_package.tenant_uuid = '${tenantUuid}'"
+                  , f' " AND (%s)" [L.intercalate operator . fmap (const " (knowledge_model_package.organization_id = ? AND knowledge_model_package.km_id = ?)") $ kmpCoordinates]
+                  , concatMap (\c -> [c.organizationId, c.entityId]) kmpCoordinates
                   )
     let (aclJoins, aclCondition) =
           if currentUser.uRole == _USER_ROLE_ADMIN
@@ -158,9 +158,11 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
               "SELECT COUNT(DISTINCT project.uuid) \
               \FROM project \
               \${projectMigrationJoin} \
+              \${knowledgeModelPackageJoin} \
               \${aclJoins} \
               \WHERE project.tenant_uuid = '${tenantUuid}' ${aclCondition} ${nameCondition} ${isTemplateCondition} ${isMigratingCondition} ${projectTagsCondition} ${userUuidsCondition} ${knowledgeModelPackageCondition}"
               [ ("projectMigrationJoin", projectMigrationJoin)
+              , ("knowledgeModelPackageJoin", knowledgeModelPackageJoin)
               , ("aclJoins", aclJoins)
               , ("tenantUuid", U.toString tenantUuid)
               , ("aclCondition", aclCondition)
@@ -191,11 +193,12 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
               \                             project.is_template, \
               \                             project.created_at, \
               \                             project.updated_at, \
-              \                             project.knowledge_model_package_id \
+              \                             project.knowledge_model_package_uuid \
               \             FROM project \
+              \             ${knowledgeModelPackageJoin} \
               \             ${aclJoins} \
               \             WHERE project.tenant_uuid = '${tenantUuid}' ${aclCondition} ${nameCondition} ${isTemplateCondition} ${projectTagsCondition} ${userUuidsCondition} ${knowledgeModelPackageCondition}), \
-              \     pkg AS (SELECT knowledge_model_package.id, \
+              \     pkg AS (SELECT knowledge_model_package.uuid, \
               \                    knowledge_model_package.name, \
               \                    knowledge_model_package.version, \
               \                    knowledge_model_package.organization_id, \
@@ -215,9 +218,9 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
               \        filtered_project.updated_at, \
               \        CASE \
               \          WHEN project_mig.new_project_uuid IS NOT NULL THEN 'MigratingProjectState' \
-              \          WHEN filtered_project.knowledge_model_package_id != get_newest_knowledge_model_package(pkg.organization_id, pkg.km_id, '${tenantUuid}', ARRAY['ReleasedKnowledgeModelPackagePhase']) THEN 'OutdatedProjectState' \
+              \          WHEN filtered_project.knowledge_model_package_uuid != get_newest_knowledge_model_package(pkg.organization_id, pkg.km_id, '${tenantUuid}', ARRAY['ReleasedKnowledgeModelPackagePhase']) THEN 'OutdatedProjectState' \
               \          WHEN project_mig.new_project_uuid IS NULL THEN 'DefaultProjectState' END, \
-              \        pkg.id, \
+              \        pkg.uuid, \
               \        pkg.name, \
               \        pkg.version, \
               \       (SELECT array_agg(CONCAT(project_perm_user.user_uuid, '::', project_perm_user.perms, '::', u.uuid, '::', u.first_name, '::', u.last_name, '::', u.email, '::', u.image_url)) \
@@ -231,12 +234,13 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
               \        WHERE project_uuid = filtered_project.uuid \
               \        GROUP BY project_uuid) as group_permissions \
               \FROM filtered_project \
-              \JOIN pkg ON filtered_project.knowledge_model_package_id = pkg.id \
+              \JOIN pkg ON filtered_project.knowledge_model_package_uuid = pkg.uuid \
               \LEFT JOIN project_mig ON filtered_project.uuid = project_mig.new_project_uuid \
               \${isMigratingCondition} \
               \${sort} \
               \OFFSET ${offset} LIMIT ${limit}"
-              [ ("aclJoins", aclJoins)
+              [ ("knowledgeModelPackageJoin", knowledgeModelPackageJoin)
+              , ("aclJoins", aclJoins)
               , ("tenantUuid", U.toString tenantUuid)
               , ("aclCondition", aclCondition)
               , ("nameCondition", nameCondition)
@@ -262,33 +266,33 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
             }
     return $ Page pageLabel metadata entities
 
-findProjectsByKnowledgeModelPackageId :: String -> AppContextM [Project]
-findProjectsByKnowledgeModelPackageId packageId = do
+findProjectsByKnowledgeModelPackageUuid :: U.UUID -> AppContextM [Project]
+findProjectsByKnowledgeModelPackageUuid pkgUuid = do
   tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
   if currentUser.uRole == _USER_ROLE_ADMIN
-    then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("knowledge_model_package_id", packageId)] >>= traverse enhance
+    then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("knowledge_model_package_uuid", U.toString pkgUuid)] >>= traverse enhance
     else do
       let sql =
             fromString $
-              f' (projectSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["AND knowledge_model_package_id = ?"]
-      let params = [packageId]
+              f' (projectSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["AND knowledge_model_package_uuid = ?"]
+      let params = [U.toString pkgUuid]
       logQuery sql params
       let action conn = query conn sql params
       entities <- runDB action
       traverse enhance entities
 
-findProjectsByDocumentTemplateId :: String -> AppContextM [Project]
-findProjectsByDocumentTemplateId documentTemplateId = do
+findProjectsByDocumentTemplateUuid :: U.UUID -> AppContextM [Project]
+findProjectsByDocumentTemplateUuid documentTemplateUuid = do
   tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
   if currentUser.uRole == _USER_ROLE_ADMIN
-    then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_id", documentTemplateId)] >>= traverse enhance
+    then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid)] >>= traverse enhance
     else do
       let sql =
             fromString $
-              f' (projectSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["AND document_template_id = ?"]
-      let params = [documentTemplateId]
+              f' (projectSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["AND document_template_uuid = ?"]
+      let params = [documentTemplateUuid]
       logQuery sql params
       let action conn = query conn sql params
       entities <- runDB action
@@ -377,47 +381,16 @@ findProjectDetail uuid = do
             \       project.name, \
             \       project.visibility, \
             \       project.sharing, \
-            \       project.knowledge_model_package_id, \
+            \       knowledge_model_package.uuid AS knowledge_model_package_uuid, \
+            \       knowledge_model_package.name AS knowledge_model_package_name, \
+            \       knowledge_model_package.organization_id AS knowledge_model_package_organization_id, \
+            \       knowledge_model_package.km_id AS knowledge_model_package_km_id, \
+            \       knowledge_model_package.version AS knowledge_model_package_version, \
+            \       knowledge_model_package.description AS knowledge_model_package_description, \
             \       project.selected_question_tag_uuids, \
             \       project.is_template, \
             \       project_mig.new_project_uuid AS migration_uuid, \
             \       ${projectDetailPermSql}, \
-            \       ( \
-            \        WITH pkg AS (SELECT (string_to_array(project.knowledge_model_package_id, ':'))[1] AS org_id, \
-            \                            (string_to_array(project.knowledge_model_package_id, ':'))[2] AS km_id, \
-            \                            (string_to_array(project.knowledge_model_package_id, ':'))[3] AS ver) \
-            \        SELECT count(*) \
-            \        FROM project_action \
-            \             LEFT JOIN pkg k ON true \
-            \        WHERE project_action.metamodel_version = ${projectActionMetamodelVersion} \
-            \          AND tenant_uuid = '${tenantUuid}' AND exists (SELECT 1 \
-            \                       FROM jsonb_array_elements(project_action.allowed_packages) AS spec(elem) \
-            \                       WHERE ((spec.elem ->> 'kmId') IS NULL OR (spec.elem ->> 'kmId') = k.km_id) \
-            \                         AND ((spec.elem ->> 'orgId') IS NULL OR (spec.elem ->> 'orgId') = k.org_id) \
-            \                         AND ((spec.elem ->> 'minVersion') IS NULL OR \
-            \                              compare_version(k.ver, spec.elem ->> 'minVersion') IN ('GT', 'EQ')) \
-            \                         AND ((spec.elem ->> 'maxVersion') IS NULL OR \
-            \                              compare_version(k.ver, spec.elem ->> 'maxVersion') IN ('LT', 'EQ')) \
-            \            ) \
-            \       ) AS project_actions, \
-            \       ( \
-            \        WITH pkg AS (SELECT (string_to_array(project.knowledge_model_package_id, ':'))[1] AS org_id, \
-            \                            (string_to_array(project.knowledge_model_package_id, ':'))[2] AS km_id, \
-            \                            (string_to_array(project.knowledge_model_package_id, ':'))[3] AS ver) \
-            \        SELECT count(*) \
-            \        FROM project_importer \
-            \             LEFT JOIN pkg k ON true \
-            \        WHERE project_importer.metamodel_version = ${projectImporterMetamodelVersion} \
-            \          AND tenant_uuid = '${tenantUuid}' AND exists (SELECT 1 \
-            \                       FROM jsonb_array_elements(project_importer.allowed_packages) AS spec(elem) \
-            \                       WHERE ((spec.elem ->> 'kmId') IS NULL OR (spec.elem ->> 'kmId') = k.km_id) \
-            \                         AND ((spec.elem ->> 'orgId') IS NULL OR (spec.elem ->> 'orgId') = k.org_id) \
-            \                         AND ((spec.elem ->> 'minVersion') IS NULL OR \
-            \                              compare_version(k.ver, spec.elem ->> 'minVersion') IN ('GT', 'EQ')) \
-            \                         AND ((spec.elem ->> 'maxVersion') IS NULL OR \
-            \                              compare_version(k.ver, spec.elem ->> 'maxVersion') IN ('LT', 'EQ')) \
-            \            ) \
-            \       ) AS project_importers, \
             \       ( \
             \        SELECT count(*) \
             \        FROM project_file \
@@ -425,11 +398,10 @@ findProjectDetail uuid = do
             \       ) as file_count \
             \FROM project \
             \LEFT JOIN project_migration project_mig ON project.uuid = project_mig.old_project_uuid AND project.tenant_uuid = project_mig.tenant_uuid \
+            \LEFT JOIN knowledge_model_package ON project.knowledge_model_package_uuid = knowledge_model_package.uuid AND project.tenant_uuid = knowledge_model_package.tenant_uuid \
             \WHERE project.tenant_uuid = ? AND project.uuid = ?"
             [ ("projectUuid", U.toString uuid)
             , ("projectDetailPermSql", projectDetailPermSql)
-            , ("projectActionMetamodelVersion", show projectActionMetamodelVersion)
-            , ("projectImporterMetamodelVersion", show projectImporterMetamodelVersion)
             , ("tenantUuid", U.toString tenantUuid)
             ]
   let queryParams = [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
@@ -448,47 +420,16 @@ findProjectDetailQuestionnaire uuid = do
             \       project.name, \
             \       project.visibility, \
             \       project.sharing, \
-            \       project.knowledge_model_package_id, \
+            \       knowledge_model_package.uuid AS knowledge_model_package_uuid, \
+            \       knowledge_model_package.name AS knowledge_model_package_name, \
+            \       knowledge_model_package.organization_id AS knowledge_model_package_organization_id, \
+            \       knowledge_model_package.km_id AS knowledge_model_package_km_id, \
+            \       knowledge_model_package.version AS knowledge_model_package_version, \
+            \       knowledge_model_package.description AS knowledge_model_package_description, \
             \       project.selected_question_tag_uuids, \
             \       project.is_template, \
             \       project_mig.new_project_uuid AS migration_uuid, \
             \       ${projectDetailPermSql}, \
-            \       ( \
-            \        WITH pkg AS (SELECT (string_to_array(project.knowledge_model_package_id, ':'))[1] AS org_id, \
-            \                            (string_to_array(project.knowledge_model_package_id, ':'))[2] AS km_id, \
-            \                            (string_to_array(project.knowledge_model_package_id, ':'))[3] AS ver) \
-            \        SELECT count(*) \
-            \        FROM project_action \
-            \             LEFT JOIN pkg k ON true \
-            \        WHERE project_action.metamodel_version = ${projectActionMetamodelVersion} \
-            \          AND tenant_uuid = '${tenantUuid}' AND exists (SELECT 1 \
-            \                       FROM jsonb_array_elements(project_action.allowed_packages) AS spec(elem) \
-            \                       WHERE ((spec.elem ->> 'kmId') IS NULL OR (spec.elem ->> 'kmId') = k.km_id) \
-            \                         AND ((spec.elem ->> 'orgId') IS NULL OR (spec.elem ->> 'orgId') = k.org_id) \
-            \                         AND ((spec.elem ->> 'minVersion') IS NULL OR \
-            \                              compare_version(k.ver, spec.elem ->> 'minVersion') IN ('GT', 'EQ')) \
-            \                         AND ((spec.elem ->> 'maxVersion') IS NULL OR \
-            \                              compare_version(k.ver, spec.elem ->> 'maxVersion') IN ('LT', 'EQ')) \
-            \            ) \
-            \       ) AS project_actions, \
-            \       ( \
-            \        WITH pkg AS (SELECT (string_to_array(project.knowledge_model_package_id, ':'))[1] AS org_id, \
-            \                            (string_to_array(project.knowledge_model_package_id, ':'))[2] AS km_id, \
-            \                            (string_to_array(project.knowledge_model_package_id, ':'))[3] AS ver) \
-            \        SELECT count(*) \
-            \        FROM project_importer \
-            \             LEFT JOIN pkg k ON true \
-            \        WHERE project_importer.metamodel_version = ${projectImporterMetamodelVersion} \
-            \          AND tenant_uuid = '${tenantUuid}' AND exists (SELECT 1 \
-            \                       FROM jsonb_array_elements(project_importer.allowed_packages) AS spec(elem) \
-            \                       WHERE ((spec.elem ->> 'kmId') IS NULL OR (spec.elem ->> 'kmId') = k.km_id) \
-            \                         AND ((spec.elem ->> 'orgId') IS NULL OR (spec.elem ->> 'orgId') = k.org_id) \
-            \                         AND ((spec.elem ->> 'minVersion') IS NULL OR \
-            \                              compare_version(k.ver, spec.elem ->> 'minVersion') IN ('GT', 'EQ')) \
-            \                         AND ((spec.elem ->> 'maxVersion') IS NULL OR \
-            \                              compare_version(k.ver, spec.elem ->> 'maxVersion') IN ('LT', 'EQ')) \
-            \            ) \
-            \       ) AS project_importers, \
             \       ( \
             \        SELECT array_agg(concat(uuid, '<:::::>', \
             \                                file_name, '<:::::>', \
@@ -500,11 +441,10 @@ findProjectDetailQuestionnaire uuid = do
             \       ) as files \
             \FROM project \
             \LEFT JOIN project_migration project_mig ON project.uuid = project_mig.old_project_uuid AND project.tenant_uuid = project_mig.tenant_uuid \
+            \LEFT JOIN knowledge_model_package ON project.knowledge_model_package_uuid = knowledge_model_package.uuid AND project.tenant_uuid = knowledge_model_package.tenant_uuid \
             \WHERE project.tenant_uuid = ? AND project.uuid = ?"
             [ ("projectUuid", U.toString uuid)
             , ("projectDetailPermSql", projectDetailPermSql)
-            , ("projectActionMetamodelVersion", show projectActionMetamodelVersion)
-            , ("projectImporterMetamodelVersion", show projectImporterMetamodelVersion)
             , ("tenantUuid", U.toString tenantUuid)
             ]
   let queryParams = [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
@@ -523,9 +463,14 @@ findProjectDetailPreview uuid = do
             \       project.name, \
             \       project.visibility, \
             \       project.sharing, \
-            \       project.knowledge_model_package_id, \
+            \       knowledge_model_package.uuid AS knowledge_model_package_uuid, \
+            \       knowledge_model_package.name AS knowledge_model_package_name, \
+            \       knowledge_model_package.organization_id AS knowledge_model_package_organization_id, \
+            \       knowledge_model_package.km_id AS knowledge_model_package_km_id, \
+            \       knowledge_model_package.version AS knowledge_model_package_version, \
+            \       knowledge_model_package.description AS knowledge_model_package_description, \
             \       project.is_template, \
-            \       project.document_template_id, \
+            \       project.document_template_uuid, \
             \       project_mig.new_project_uuid AS migration_uuid, \
             \       ${projectDetailPermSql}, \
             \       dt_format.uuid, \
@@ -538,8 +483,9 @@ findProjectDetailPreview uuid = do
             \       ) as file_count \
             \FROM project \
             \LEFT JOIN project_migration project_mig ON project.uuid = project_mig.old_project_uuid AND project.tenant_uuid = project_mig.tenant_uuid \
-            \LEFT JOIN document_template dt ON project.document_template_id = dt.id AND project.tenant_uuid = dt.tenant_uuid \
-            \LEFT JOIN document_template_format dt_format ON project.document_template_id = dt_format.document_template_id AND project.format_uuid = dt_format.uuid AND project.tenant_uuid = dt_format.tenant_uuid \
+            \LEFT JOIN knowledge_model_package ON project.knowledge_model_package_uuid = knowledge_model_package.uuid AND project.tenant_uuid = knowledge_model_package.tenant_uuid \
+            \LEFT JOIN document_template dt ON project.document_template_uuid = dt.uuid AND project.tenant_uuid = dt.tenant_uuid \
+            \LEFT JOIN document_template_format dt_format ON project.document_template_uuid = dt_format.document_template_uuid AND project.format_uuid = dt_format.uuid AND project.tenant_uuid = dt_format.tenant_uuid \
             \WHERE project.tenant_uuid = ? AND project.uuid = ?"
             [ ("projectDetailPermSql", projectDetailPermSql)
             , ("projectUuid", U.toString uuid)
@@ -568,7 +514,7 @@ findProjectDetailSettings uuid = do
             \       project.format_uuid, \
             \       project_mig.new_project_uuid AS migration_uuid, \
             \       ${projectDetailPermSql}, \
-            \       pkg.id                         as knowledge_model_package_id, \
+            \       pkg.uuid                       as knowledge_model_package_uuid, \
             \       pkg.name                       as knowledge_model_package_name, \
             \       pkg.organization_id            as knowledge_model_package_organization_id, \
             \       pkg.km_id                      as knowledge_model_package_km_id, \
@@ -576,8 +522,9 @@ findProjectDetailSettings uuid = do
             \       pkg.phase                      as knowledge_model_package_phase, \
             \       pkg.description                as knowledge_model_package_description, \
             \       pkg.non_editable               as knowledge_model_package_non_editable, \
+            \       pkg.public                     as knowledge_model_package_public, \
             \       pkg.created_at                 as knowledge_model_package_created_at, \
-            \       dt.id                          as document_template_id, \
+            \       dt.uuid                          as document_template_uuid, \
             \       dt.name                        as document_template_name, \
             \       dt.version                     as document_template_version, \
             \       dt.phase                       as document_template_phase, \
@@ -586,7 +533,7 @@ findProjectDetailSettings uuid = do
             \        SELECT jsonb_agg(jsonb_build_object('uuid', uuid, 'name', name, 'icon', icon)) \
             \        FROM (SELECT * \
             \              FROM document_template_format dt_format \
-            \              WHERE dt_format.tenant_uuid = project.tenant_uuid AND dt_format.document_template_id = dt.id \
+            \              WHERE dt_format.tenant_uuid = project.tenant_uuid AND dt_format.document_template_uuid = dt.uuid \
             \              ORDER BY dt_format.name) nested \
             \       ) AS document_template_formats, \
             \       dt.metamodel_version           as document_template_metamodel_version, \
@@ -597,8 +544,8 @@ findProjectDetailSettings uuid = do
             \       ) as file_count \
             \FROM project \
             \LEFT JOIN project_migration project_mig ON project.uuid = project_mig.old_project_uuid AND project.tenant_uuid = project_mig.tenant_uuid \
-            \LEFT JOIN knowledge_model_package pkg ON project.knowledge_model_package_id = pkg.id AND project.tenant_uuid = pkg.tenant_uuid \
-            \LEFT JOIN document_template dt ON project.document_template_id = dt.id AND project.tenant_uuid = dt.tenant_uuid \
+            \LEFT JOIN knowledge_model_package pkg ON project.knowledge_model_package_uuid = pkg.uuid AND project.tenant_uuid = pkg.tenant_uuid \
+            \LEFT JOIN document_template dt ON project.document_template_uuid = dt.uuid AND project.tenant_uuid = dt.tenant_uuid \
             \WHERE project.tenant_uuid = ? AND project.uuid = ?"
             [ ("projectDetailPermSql", projectDetailPermSql)
             , ("projectUuid", U.toString uuid)
@@ -652,7 +599,7 @@ updateProjectByUuid project = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE project SET uuid = ?, name = ?, visibility = ?, sharing = ?, knowledge_model_package_id = ?, selected_question_tag_uuids = ?::uuid[], document_template_id = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?::text[] WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE project SET uuid = ?, name = ?, visibility = ?, sharing = ?, knowledge_model_package_uuid = ?, selected_question_tag_uuids = ?::uuid[], document_template_uuid = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?::text[] WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow project ++ [toField tenantUuid, toField . U.toText $ project.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params

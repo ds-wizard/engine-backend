@@ -3,6 +3,7 @@ module Wizard.Specs.API.DocumentTemplate.List_DELETE (
 ) where
 
 import Data.Aeson (encode)
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -14,7 +15,7 @@ import Shared.Common.Model.Error.Error
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
+import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DT
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -56,7 +57,7 @@ test_204 appContext =
       let expHeaders = resCorsHeaders
       let expBody = ""
       -- AND: Run migrations
-      runInContextIO TML.runMigration appContext
+      runInContextIO DT.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
@@ -78,11 +79,11 @@ test_400 appContext =
       let expDto =
             UserError $
               _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY
-                wizardDocumentTemplate.tId
+                (U.toString wizardDocumentTemplate.uuid)
                 "project"
       let expBody = encode expDto
       -- AND: Run migrations
-      runInContextIO TML.runMigration appContext
+      runInContextIO DT.runMigration appContext
       runInContextIO PRJ.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

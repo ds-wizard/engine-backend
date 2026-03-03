@@ -43,9 +43,7 @@ import Wizard.Specs.API.KnowledgeModelSecret.APISpec
 import Wizard.Specs.API.Locale.APISpec
 import Wizard.Specs.API.Prefab.APISpec
 import Wizard.Specs.API.Project.APISpec
-import Wizard.Specs.API.ProjectAction.APISpec
 import Wizard.Specs.API.ProjectCommentThread.APISpec
-import Wizard.Specs.API.ProjectImporter.APISpec
 import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Swagger.APISpec
 import Wizard.Specs.API.Tenant.APISpec
@@ -205,9 +203,7 @@ main =
               localeAPI baseContext appContext
               prefabAPI baseContext appContext
               projectAPI baseContext appContext
-              projectActionAPI baseContext appContext
               projectCommentThreadAPI baseContext appContext
-              projectImporterAPI baseContext appContext
               submissionAPI baseContext appContext
               swaggerAPI baseContext appContext
               tenantAPI baseContext appContext

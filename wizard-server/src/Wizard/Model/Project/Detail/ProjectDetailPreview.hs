@@ -5,6 +5,7 @@ import GHC.Generics
 
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 import Wizard.Api.Resource.Project.Acl.ProjectPermDTO
+import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion (KnowledgeModelPackageSuggestion)
 import Wizard.Model.Project.Project
 
 data ProjectDetailPreview = ProjectDetailPreview
@@ -12,11 +13,11 @@ data ProjectDetailPreview = ProjectDetailPreview
   , name :: String
   , visibility :: ProjectVisibility
   , sharing :: ProjectSharing
-  , knowledgeModelPackageId :: String
+  , knowledgeModelPackage :: KnowledgeModelPackageSuggestion
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
-  , documentTemplateId :: Maybe String
+  , documentTemplateUuid :: Maybe U.UUID
   , format :: Maybe DocumentTemplateFormatSimple
   , fileCount :: Int
   }

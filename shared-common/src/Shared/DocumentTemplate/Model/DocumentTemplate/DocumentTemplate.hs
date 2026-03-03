@@ -7,6 +7,7 @@ import GHC.Generics
 import GHC.Int
 
 import Shared.Common.Model.Common.SemVer2Tuple
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackagePattern
 
 data DocumentTemplatePhase
@@ -16,7 +17,7 @@ data DocumentTemplatePhase
   deriving (Show, Eq, Generic, Read)
 
 data DocumentTemplate = DocumentTemplate
-  { tId :: String
+  { uuid :: U.UUID
   , name :: String
   , organizationId :: String
   , templateId :: String
@@ -34,8 +35,16 @@ data DocumentTemplate = DocumentTemplate
   }
   deriving (Show, Eq, Generic)
 
+instance CoordinateFactory DocumentTemplate where
+  createCoordinate dt =
+    Coordinate
+      { organizationId = dt.organizationId
+      , entityId = dt.templateId
+      , version = dt.version
+      }
+
 data DocumentTemplateFormat = DocumentTemplateFormat
-  { documentTemplateId :: String
+  { documentTemplateUuid :: U.UUID
   , uuid :: U.UUID
   , name :: String
   , icon :: String
@@ -50,7 +59,7 @@ instance Ord DocumentTemplateFormat where
   compare f1 f2 = compare f1.name f2.name
 
 data DocumentTemplateFormatStep = DocumentTemplateFormatStep
-  { documentTemplateId :: String
+  { documentTemplateUuid :: U.UUID
   , formatUuid :: U.UUID
   , position :: Int
   , name :: String
@@ -62,7 +71,7 @@ data DocumentTemplateFormatStep = DocumentTemplateFormatStep
   deriving (Show, Eq, Generic)
 
 data DocumentTemplateFile = DocumentTemplateFile
-  { documentTemplateId :: String
+  { documentTemplateUuid :: U.UUID
   , uuid :: U.UUID
   , fileName :: String
   , content :: String
@@ -73,7 +82,7 @@ data DocumentTemplateFile = DocumentTemplateFile
   deriving (Show, Eq, Generic)
 
 data DocumentTemplateAsset = DocumentTemplateAsset
-  { documentTemplateId :: String
+  { documentTemplateUuid :: U.UUID
   , uuid :: U.UUID
   , fileName :: String
   , contentType :: String

@@ -43,7 +43,7 @@ instance ToSchema ProjectDetailSettings where
         , migrationUuid = Nothing
         , permissions = [project1AlbertEditProjectPermDto]
         , projectTags = project1.projectTags
-        , knowledgeModelPackageId = netherlandsKmPackageV2.pId
+        , knowledgeModelPackageUuid = netherlandsKmPackageV2.uuid
         , knowledgeModelPackage = PackageMapper.toSimpleDTO netherlandsKmPackageV2
         , knowledgeModelTags = [tagDataScience]
         , documentTemplate = Just $ DocumentTemplateMapper.toDTO wizardDocumentTemplate wizardDocumentTemplateFormats

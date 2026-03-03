@@ -1,6 +1,7 @@
 module Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO where
 
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 import RegistryLib.Model.Organization.OrganizationSimple
@@ -8,7 +9,7 @@ import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 
 data DocumentTemplateSimpleDTO = DocumentTemplateSimpleDTO
-  { tId :: String
+  { uuid :: U.UUID
   , name :: String
   , organizationId :: String
   , templateId :: String

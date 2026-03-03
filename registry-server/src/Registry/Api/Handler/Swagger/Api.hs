@@ -26,6 +26,7 @@ import Shared.Common.Api.Resource.Info.InfoSM ()
 import Shared.Component.Api.Resource.Component.ComponentSM ()
 import Shared.Coordinate.Api.Resource.Coordinate.CoordinateSM ()
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSM ()
+import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateSimpleSM ()
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplateBundle.DocumentTemplateBundleSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Bundle.KnowledgeModelBundlePackageSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Bundle.KnowledgeModelBundleSM ()
@@ -40,7 +41,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Registry API"
               , _infoDescription = Just "API specification for Registry"
-              , _infoVersion = "4.27.1"
+              , _infoVersion = "4.28.0"
               , _infoLicense =
                   Just $
                     License

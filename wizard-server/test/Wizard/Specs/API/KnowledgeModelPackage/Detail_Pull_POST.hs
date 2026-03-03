@@ -12,11 +12,14 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Model.Error.Error
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -29,7 +32,7 @@ import Wizard.Specs.Common
 detail_pull_POST :: AppContext -> SpecWith ((), Application)
 detail_pull_POST appContext =
   describe "POST /wizard-api/knowledge-model-packages/{pkgId}/pull" $ do
-    test_200 appContext
+    test_201 appContext
     test_400 appContext
     test_401 appContext
     test_403 appContext
@@ -39,7 +42,7 @@ detail_pull_POST appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = BS.pack $ "/wizard-api/knowledge-model-packages/" ++ globalKmPackage.pId ++ "/pull"
+reqUrl = BS.pack $ "/wizard-api/knowledge-model-packages/" ++ show (createCoordinate globalKmPackage) ++ "/pull"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -48,24 +51,27 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext =
-  it "HTTP 200 OK" $
+test_201 appContext =
+  it "HTTP 201 OK" $
     -- GIVEN: Prepare expectation
     do
-      let expStatus = 204
-      let expHeaders = resCorsHeaders
-      let expBody = ""
+      let expStatus = 201
+      let expHeaders = resCorsHeadersPlain
+      let expDto = toSimpleDTO globalKmPackage
+      let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO deletePackages appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      result <- destructResponse' response
+      let (status, headers, resDto) = result :: (Int, ResponseHeaders, KnowledgeModelPackageSimpleDTO)
+      assertResStatus status expStatus
+      assertResHeaders headers expHeaders
+      comparePackageDtos resDto expDto
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findPackages appContext 1
-      assertExistenceOfPackageInDB appContext globalKmPackage
+      assertExistenceOfBundlePackageInDB appContext globalKmPackage
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

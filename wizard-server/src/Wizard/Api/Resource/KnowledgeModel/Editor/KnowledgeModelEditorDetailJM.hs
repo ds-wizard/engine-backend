@@ -3,6 +3,7 @@ module Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorDetailJM wh
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
+import Shared.Coordinate.Api.Resource.Coordinate.CoordinateJM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Event.KnowledgeModelEventJM ()
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorDetailDTO
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorStateJM ()

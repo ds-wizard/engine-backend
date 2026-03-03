@@ -74,7 +74,7 @@ test_201 appContext =
       assertResHeaders headers expHeaders
       comparePackageDtos resBody expDto
       -- AND: Find result in DB and compare with expectation state
-      assertExistenceOfPackageInDB appContext expDto
+      assertExistenceOfBundlePackageInDB appContext expDto
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.DocumentTemplateDraft.Asset.List_POST where
 
+import qualified Data.UUID as U
 import Servant
 import Servant.Multipart
 
@@ -18,7 +19,7 @@ type List_POST =
     :> Header "Host" String
     :> MultipartForm Mem DocumentTemplateAssetCreateDTO
     :> "document-template-drafts"
-    :> Capture "documentTemplateId" String
+    :> Capture "documentTemplateUuid" U.UUID
     :> "assets"
     :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] DocumentTemplateAssetDTO)
 
@@ -26,10 +27,10 @@ list_POST
   :: Maybe String
   -> Maybe String
   -> DocumentTemplateAssetCreateDTO
-  -> String
+  -> U.UUID
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateAssetDTO)
-list_POST mTokenHeader mServerUrl reqDto tmlId =
+list_POST mTokenHeader mServerUrl reqDto dtUuid =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        createAsset tmlId reqDto
+        createAsset dtUuid reqDto

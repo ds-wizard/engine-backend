@@ -10,7 +10,7 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 toSimpleDTO :: KnowledgeModelPackage -> Organization.Organization -> KnowledgeModelPackageSimpleDTO
 toSimpleDTO pkg org =
   KnowledgeModelPackageSimpleDTO
-    { pId = pkg.pId
+    { uuid = pkg.uuid
     , name = pkg.name
     , organizationId = pkg.organizationId
     , kmId = pkg.kmId
@@ -23,7 +23,7 @@ toSimpleDTO pkg org =
 toDetailDTO :: KnowledgeModelPackage -> [String] -> Organization.Organization -> KnowledgeModelPackageDetailDTO
 toDetailDTO pkg versions org =
   KnowledgeModelPackageDetailDTO
-    { pId = pkg.pId
+    { uuid = pkg.uuid
     , name = pkg.name
     , organizationId = pkg.organizationId
     , kmId = pkg.kmId
@@ -33,7 +33,7 @@ toDetailDTO pkg versions org =
     , readme = pkg.readme
     , license = pkg.license
     , metamodelVersion = pkg.metamodelVersion
-    , previousPackageId = pkg.previousPackageId
+    , previousPackageUuid = pkg.previousPackageUuid
     , forkOfPackageId = pkg.forkOfPackageId
     , mergeCheckpointPackageId = pkg.mergeCheckpointPackageId
     , versions = versions

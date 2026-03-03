@@ -7,8 +7,9 @@ import Registry.Database.Migration.Development.Statistics.Data.InstanceStatistic
 import Registry.Model.Audit.AuditEntry
 import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import RegistryLib.Model.Organization.Organization
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
-import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage ()
 
 listPackagesAuditEntry :: AuditEntry
 listPackagesAuditEntry =
@@ -22,6 +23,6 @@ getKnowledgeModelBundleAuditEntry :: AuditEntry
 getKnowledgeModelBundleAuditEntry =
   GetKnowledgeModelBundleAuditEntry
     { organizationId = orgGlobal.organizationId
-    , knowledgeModelPackageId = netherlandsKmPackageV2.pId
+    , knowledgeModelPackageId = show . createCoordinate $ netherlandsKmPackageV2
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }

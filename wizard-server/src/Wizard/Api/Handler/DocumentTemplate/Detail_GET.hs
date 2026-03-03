@@ -1,5 +1,6 @@
 module Wizard.Api.Handler.DocumentTemplate.Detail_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -14,11 +15,10 @@ type Detail_GET =
   Header "Authorization" String
     :> Header "Host" String
     :> "document-templates"
-    :> Capture "documentTemplateId" String
+    :> Capture "uuid" U.UUID
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] DocumentTemplateDetailDTO)
 
-detail_GET
-  :: Maybe String -> Maybe String -> String -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateDetailDTO)
-detail_GET mTokenHeader mServerUrl tmlId =
+detail_GET :: Maybe String -> Maybe String -> U.UUID -> BaseContextM (Headers '[Header "x-trace-uuid" String] DocumentTemplateDetailDTO)
+detail_GET mTokenHeader mServerUrl uuid =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
-    runInMaybeAuthService NoTransaction $ addTraceUuidHeader =<< getDocumentTemplateByUuidDto tmlId
+    runInMaybeAuthService NoTransaction $ addTraceUuidHeader =<< getDocumentTemplateByUuidDto uuid

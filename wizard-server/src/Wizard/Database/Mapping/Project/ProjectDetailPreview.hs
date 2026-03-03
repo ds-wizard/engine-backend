@@ -6,6 +6,7 @@ import Database.PostgreSQL.Simple.FromRow
 import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM ()
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateFormatSimple
 import Wizard.Api.Resource.Project.Acl.ProjectPermJM ()
+import Wizard.Database.Mapping.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Database.Mapping.Project.ProjectAcl
 import Wizard.Database.Mapping.Project.ProjectSharing ()
 import Wizard.Database.Mapping.Project.ProjectVisibility ()
@@ -17,9 +18,9 @@ instance FromRow ProjectDetailPreview where
     name <- field
     visibility <- field
     sharing <- field
-    knowledgeModelPackageId <- field
+    knowledgeModelPackage <- fieldKnowledgeModelPackageSuggestion
     isTemplate <- field
-    documentTemplateId <- field
+    documentTemplateUuid <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid
     mFormatUuid <- field

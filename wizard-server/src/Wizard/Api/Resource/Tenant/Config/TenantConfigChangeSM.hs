@@ -37,9 +37,6 @@ instance ToSchema TenantConfigRegistryChangeDTO where
 instance ToSchema TenantConfigKnowledgeModelChangeDTO where
   declareNamedSchema = toSwagger defaultKnowledgeModelChangeDto
 
-instance ToSchema TenantConfigKnowledgeModelPublicChangeDTO where
-  declareNamedSchema = toSwagger defaultKnowledgeModelPublicChangeDto
-
 instance ToSchema TenantConfigProjectChangeDTO where
   declareNamedSchema = toSwagger defaultProjectChangeDto
 

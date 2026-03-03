@@ -15,8 +15,6 @@ import Shared.Common.Database.Migration.Development.Info.Data.Infos
 import qualified Shared.Component.Database.Migration.Development.Component.ComponentMigration as CMP_Migration
 import Shared.DocumentTemplate.Constant.DocumentTemplate
 import Shared.KnowledgeModel.Constant.KnowledgeModel
-import Wizard.Constant.ProjectAction
-import Wizard.Constant.ProjectImporter
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
@@ -54,8 +52,6 @@ test_200 appContext =
               { metamodelVersions =
                   [ InfoMetamodelVersionDTO {name = "Knowledge Model", version = show knowledgeModelMetamodelVersion}
                   , InfoMetamodelVersionDTO {name = "Document Template", version = show documentTemplateMetamodelVersion}
-                  , InfoMetamodelVersionDTO {name = "Project Importer", version = show projectImporterMetamodelVersion}
-                  , InfoMetamodelVersionDTO {name = "Project Action", version = show projectActionMetamodelVersion}
                   ]
               }
       let expBody = encode expDto

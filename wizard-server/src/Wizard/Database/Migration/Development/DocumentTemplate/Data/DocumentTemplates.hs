@@ -9,6 +9,7 @@ import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateDetailDTO
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateSimpleDTO
 import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Database.Migration.Development.Registry.Data.RegistryTemplates
+import Wizard.Model.DocumentTemplate.DocumentTemplateWithCoordinate
 import Wizard.Service.DocumentTemplate.DocumentTemplateMapper
 
 wizardDocumentTemplateSimpleDTO :: DocumentTemplateSimpleDTO
@@ -30,9 +31,12 @@ wizardDocumentTemplateDetailDTO =
     True
     [commonWizardRegistryTemplate]
     [globalRegistryOrganization]
-    ["1.0.0"]
+    [(wizardDocumentTemplate.uuid, wizardDocumentTemplate.version)]
     (Just "https://registry-test.ds-wizard.org/document-templates/global:project-report:1.0.0")
     [globalKmPackage, netherlandsKmPackageV2]
 
 wizardDocumentTemplateDeprecatedChangeDTO :: DocumentTemplateChangeDTO
 wizardDocumentTemplateDeprecatedChangeDTO = toChangeDTO wizardDocumentTemplateDeprecated
+
+wizardDocumentTemplateWithCoordinate :: DocumentTemplateWithCoordinate
+wizardDocumentTemplateWithCoordinate = toWithCoordinate wizardDocumentTemplate

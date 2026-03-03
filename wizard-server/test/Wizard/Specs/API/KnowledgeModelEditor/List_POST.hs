@@ -12,6 +12,7 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Model.Error.Error
+import Shared.Common.Util.Uuid
 import Shared.Coordinate.Localization.Messages.Public
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorCreateDTO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
@@ -71,16 +72,16 @@ test_201 appContext =
       compareKnowledgeModelEditor
         resBody
         reqDto
-        reqDto.previousPackageId
-        reqDto.previousPackageId
+        reqDto.previousPackageUuid
+        reqDto.previousPackageUuid
         (Just userAlbert.uuid)
       -- AND: Find result in DB and compare with expectation state
       assertCountInDB findKnowledgeModelEditors appContext 1
       assertExistenceOfEditorInDB
         appContext
         reqDto
-        reqDto.previousPackageId
-        reqDto.previousPackageId
+        reqDto.previousPackageUuid
+        reqDto.previousPackageUuid
         (Just userAlbert.uuid)
 
 -- ----------------------------------------------------
@@ -115,15 +116,15 @@ test_400_not_valid_kmId appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400_not_existing_previousPackageId appContext =
-  it "HTTP 400 BAD REQUEST when previousPackageId does not exist" $
+  it "HTTP 400 BAD REQUEST when previousPackageUuid does not exist" $
     -- GIVEN: Prepare request
     do
-      let reqDto = amsterdamKnowledgeModelEditorCreate {previousPackageId = Just "org.nl:core-nl:9.9.9"} :: KnowledgeModelEditorCreateDTO
+      let reqDto = amsterdamKnowledgeModelEditorCreate {previousPackageUuid = Just . u' $ "38c6a9e3-0398-4260-b34f-2d0a784023be"} :: KnowledgeModelEditorCreateDTO
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = ValidationError [] (M.singleton "previousPackageId" [_ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE])
+      let expDto = ValidationError [] (M.singleton "previousPackageUuid" [_ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE])
       let expBody = encode expDto
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody

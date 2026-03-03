@@ -20,7 +20,7 @@ feedback1 =
     { uuid = u' "c44c06d1-ad9f-4f73-9c05-2aa9eddacae1"
     , issueId = 1
     , questionUuid = question1.uuid
-    , knowledgeModelPackageId = germanyKmPackage.pId
+    , knowledgeModelPackageUuid = germanyKmPackage.uuid
     , title = "Provide more descriptive content"
     , content = "I'm not very satisfied with a description of this question"
     , tenantUuid = defaultTenant.uuid
@@ -32,7 +32,7 @@ feedback1Create :: FeedbackCreateDTO
 feedback1Create =
   FeedbackCreateDTO
     { questionUuid = feedback1.questionUuid
-    , knowledgeModelPackageId = feedback1.knowledgeModelPackageId
+    , knowledgeModelPackageUuid = feedback1.knowledgeModelPackageUuid
     , title = feedback1.title
     , content = feedback1.content
     }
@@ -43,7 +43,7 @@ feedback2 =
     { uuid = u' "22e24917-7443-40f7-a3f2-4ea9f69ceebb"
     , issueId = 99999
     , questionUuid = question1.uuid
-    , knowledgeModelPackageId = germanyKmPackage.pId
+    , knowledgeModelPackageUuid = germanyKmPackage.uuid
     , title = "Non-existing issue"
     , content = "There is no issue like that"
     , tenantUuid = defaultTenant.uuid
@@ -57,7 +57,7 @@ differentFeedback =
     { uuid = u' "e1a4a72c-1fca-4d8c-95d5-446bea876959"
     , issueId = 99998
     , questionUuid = question1.uuid
-    , knowledgeModelPackageId = differentPackage.pId
+    , knowledgeModelPackageUuid = differentPackage.uuid
     , title = "Non-existing issue"
     , content = "There is no issue like that"
     , tenantUuid = differentTenant.uuid

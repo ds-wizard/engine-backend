@@ -14,6 +14,7 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Common.Lens
 import Shared.Common.Model.Common.SemVer2Tuple
 import Shared.Common.Model.Error.Error
+import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.DocumentTemplate.Constant.DocumentTemplate
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
@@ -66,7 +67,7 @@ reqDtoT project projectEvents =
     { name = "Document"
     , projectUuid = project.uuid
     , projectEventUuid = Just . getUuid . last $ projectEvents
-    , documentTemplateId = doc1.documentTemplateId
+    , documentTemplateUuid = doc1.documentTemplateUuid
     , formatUuid = doc1.formatUuid
     }
 
@@ -121,7 +122,7 @@ test_400 appContext = do
       let expHeaders = resCtHeader : resCorsHeaders
       let expDto =
             UserError $
-              _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION wizardDocumentTemplate.tId "1.0" (show documentTemplateMetamodelVersion)
+              _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_METAMODEL_VERSION (show . createCoordinate $ wizardDocumentTemplate) "1.0" (show documentTemplateMetamodelVersion)
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext

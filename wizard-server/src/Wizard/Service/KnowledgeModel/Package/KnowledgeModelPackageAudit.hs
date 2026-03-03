@@ -10,22 +10,22 @@ import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditor
 import Wizard.Model.Project.Project
 
-auditPackageFailedToDelete :: String -> String -> String -> AppContextM ()
+auditPackageFailedToDelete :: U.UUID -> String -> String -> AppContextM ()
 auditPackageFailedToDelete entityId reasonType reasonId =
-  logAuditWithBody "package" "failedToDelete" entityId (M.fromList [("reasonType", reasonType), ("reasonId", reasonId)])
+  logAuditWithBody "package" "failedToDelete" (U.toString entityId) (M.fromList [("reasonType", reasonType), ("reasonId", reasonId)])
 
-auditPackageFailedToDeleteDuePreviousPackages :: String -> [KnowledgeModelPackage] -> AppContextM ()
+auditPackageFailedToDeleteDuePreviousPackages :: U.UUID -> [KnowledgeModelPackage] -> AppContextM ()
 auditPackageFailedToDeleteDuePreviousPackages entityId pkgs =
-  auditPackageFailedToDelete entityId "PreviousPackage" (show $ fmap (.pId) pkgs)
+  auditPackageFailedToDelete entityId "PreviousPackage" (show $ fmap (.uuid) pkgs)
 
-auditPackageFailedToDeleteDueParentPackages :: String -> [KnowledgeModelPackage] -> AppContextM ()
+auditPackageFailedToDeleteDueParentPackages :: U.UUID -> [KnowledgeModelPackage] -> AppContextM ()
 auditPackageFailedToDeleteDueParentPackages entityId pkgs =
-  auditPackageFailedToDelete entityId "ParentPackage" (show $ fmap (.pId) pkgs)
+  auditPackageFailedToDelete entityId "ParentPackage" (show $ fmap (.uuid) pkgs)
 
-auditPackageFailedToDeleteDueKmEditors :: String -> [KnowledgeModelEditor] -> AppContextM ()
+auditPackageFailedToDeleteDueKmEditors :: U.UUID -> [KnowledgeModelEditor] -> AppContextM ()
 auditPackageFailedToDeleteDueKmEditors entityId knowledgeModelEditors =
   auditPackageFailedToDelete entityId "Knowledge Model Editor" (show $ fmap (\b -> U.toString $ b.uuid) knowledgeModelEditors)
 
-auditPackageFailedToDeleteDueProjects :: String -> [Project] -> AppContextM ()
+auditPackageFailedToDeleteDueProjects :: U.UUID -> [Project] -> AppContextM ()
 auditPackageFailedToDeleteDueProjects entityId projects =
   auditPackageFailedToDelete entityId "Knowledge Model Editor" (show $ fmap (\project -> U.toString $ project.uuid) projects)

@@ -19,8 +19,8 @@ auditProjectMigrationCreate reqDto oldProject newProject =
     "create"
     (U.toString oldProject.uuid)
     ( M.fromList
-        [ ("sourceKnowledgeModelPackageId", oldProject.knowledgeModelPackageId)
-        , ("targetKnowledgeModelPackageId", reqDto.targetKnowledgeModelPackageId)
+        [ ("sourceKnowledgeModelPackageUuid", U.toString oldProject.knowledgeModelPackageUuid)
+        , ("targetKnowledgeModelPackageUuid", U.toString reqDto.targetKnowledgeModelPackageUuid)
         , ("oldProjectUuid", U.toString $ oldProject.uuid)
         , ("newProjectUuid", U.toString $ newProject.uuid)
         ]
