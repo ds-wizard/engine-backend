@@ -162,9 +162,11 @@ createConfig uuid now = do
 createLocale :: U.UUID -> UTCTime -> AppContextM Locale
 createLocale tntUuid now = do
   runInTransaction $ do
+    uuid <- liftIO generateUuid
     let locale =
           localeDefault
-            { tenantUuid = tntUuid
+            { uuid = uuid
+            , tenantUuid = tntUuid
             , createdAt = now
             , updatedAt = now
             }
