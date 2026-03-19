@@ -40,6 +40,13 @@ migrateByEventType migrationFn v@(Object obj) =
     _ -> v
 migrateByEventType _ v = v
 
+migrateByEventTypeList :: (T.Text -> Object -> [Object]) -> Value -> [Value]
+migrateByEventTypeList migrationFn v@(Object obj) =
+  case KM.lookup "eventType" obj of
+    (Just (String eventType)) -> Object <$> migrationFn eventType obj
+    _ -> [v]
+migrateByEventTypeList _ v = [v]
+
 unchangedValue :: Value
 unchangedValue = Object (KM.singleton "changed" (Bool False))
 
