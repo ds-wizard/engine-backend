@@ -22,10 +22,13 @@ instance ToJSON DocumentContext where
 instance ToJSON DocumentContextConfig where
   toJSON = genericToJSON jsonOptions
 
+instance ToJSON DocumentContextUser where
+  toJSON = genericToJSON jsonOptions
+
 instance ToJSON DocumentContextPackage where
   toJSON = genericToJSON jsonOptions
 
-instance ToJSON DocumentContextQuestionnaire where
+instance ToJSON DocumentContextProject where
   toJSON = genericToJSON jsonOptions
 
 instance ToJSON DocumentContextDocument where

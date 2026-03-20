@@ -8,13 +8,13 @@ import Test.Hspec.Expectations.Pretty
 compareDocumentContexts resDto expDto = do
   resDto.document.uuid `shouldBe` expDto.document.uuid
   resDto.document.name `shouldBe` expDto.document.name
-  resDto.questionnaire.uuid `shouldBe` expDto.questionnaire.uuid
-  resDto.questionnaire.name `shouldBe` expDto.questionnaire.name
-  resDto.questionnaire.replies `shouldBe` expDto.questionnaire.replies
-  resDto.questionnaire.phaseUuid `shouldBe` expDto.questionnaire.phaseUuid
+  resDto.project.uuid `shouldBe` expDto.project.uuid
+  resDto.project.name `shouldBe` expDto.project.name
+  resDto.project.replies `shouldBe` expDto.project.replies
+  resDto.project.phaseUuid `shouldBe` expDto.project.phaseUuid
   resDto.knowledgeModel `shouldBe` expDto.knowledgeModel
   resDto.report.chapterReports `shouldBe` expDto.report.chapterReports
-  resDto.package `shouldBe` expDto.package
+  resDto.knowledgeModelPackage `shouldBe` expDto.knowledgeModelPackage
   resDto.organization `shouldBe` expDto.organization
   resDto.users `shouldBe` expDto.users
   resDto.groups `shouldBe` expDto.groups

@@ -30,7 +30,6 @@ import Wizard.Model.User.User
 import Wizard.Service.Document.Context.DocumentContextMapper
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Project.Version.ProjectVersionMapper
-import qualified Wizard.Service.User.UserMapper as USR_Mapper
 
 doc1 :: Document
 doc1 =
@@ -83,11 +82,11 @@ dmp1 =
           , name = doc1.name
           , documentTemplateId = show wizardDocumentTemplateCoordinate
           , formatUuid = doc1.formatUuid
-          , createdBy = Just . USR_Mapper.toDTO $ userNikola
+          , createdBy = Just . toDocumentContextUser $ userNikola
           , createdAt = doc1.createdAt
           }
-    , questionnaire =
-        DocumentContextQuestionnaire
+    , project =
+        DocumentContextProject
           { uuid = project1.uuid
           , name = project1.name
           , description = project1.description
@@ -98,18 +97,18 @@ dmp1 =
           , versions = fmap (`toVersionList` Just userAlbertDto) project1Versions
           , projectTags = project1.projectTags
           , files = []
-          , createdBy = Just . USR_Mapper.toDTO $ userAlbert
+          , createdBy = Just . toDocumentContextUser $ userAlbert
           , createdAt = project1.createdAt
           , updatedAt = project1.updatedAt
           }
     , knowledgeModel = km1WithQ4
     , report = report1
-    , package = toDocumentContextPackage germanyKmPackage
+    , knowledgeModelPackage = toDocumentContextPackage germanyKmPackage
     , organization = defaultOrganization
     , metamodelVersion = TemplateConstant.documentTemplateMetamodelVersion
     , users =
         [ DocumentContextUserPerm
-            { user = USR_Mapper.toDTO userAlbert
+            { user = toDocumentContextUser userAlbert
             , perms = ["VIEW", "COMMENT", "EDIT", "ADMIN"]
             }
         ]
