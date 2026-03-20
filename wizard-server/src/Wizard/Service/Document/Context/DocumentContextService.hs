@@ -34,7 +34,6 @@ import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Project.Compiler.ProjectCompilerService
 import Wizard.Service.Report.ReportGenerator
 import Wizard.Service.Tenant.TenantHelper
-import qualified Wizard.Service.User.UserMapper as USR_Mapper
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Model.User.UserGroup
@@ -115,7 +114,7 @@ heToDocumentContextPerm perm =
       user <- findUserByUuid perm.memberUuid
       return . Left $
         DocumentContextUserPerm
-          { user = USR_Mapper.toDTO user
+          { user = toDocumentContextUser user
           , perms = perm.perms
           }
     UserGroupProjectPermType -> do
