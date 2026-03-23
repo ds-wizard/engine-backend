@@ -34,6 +34,7 @@ instance CreateEntity AddIntegrationEvent Integration where
     PluginIntegration' $
       PluginIntegration
         { uuid = event.entityUuid
+        , name = content.name
         , pluginUuid = content.pluginUuid
         , pluginIntegrationId = content.pluginIntegrationId
         , pluginIntegrationSettings = content.pluginIntegrationSettings
@@ -44,7 +45,7 @@ instance EditEntity EditIntegrationEvent Integration where
   editEntity event content' integration =
     case content' of
       (EditApiIntegrationEvent' content) -> applyToApiIntegration content . convertToApiIntegration $ integration
-      (EditPluginIntegrationEvent' content) -> applyToWidgetIntegration content . convertToPluginIntegration $ integration
+      (EditPluginIntegrationEvent' content) -> applyToPluginIntegration content . convertToPluginIntegration $ integration
     where
       applyToApiIntegration :: EditApiIntegrationEvent -> ApiIntegration -> Integration
       applyToApiIntegration content apiIntegration =
@@ -66,13 +67,14 @@ instance EditEntity EditIntegrationEvent Integration where
             , testResponse = applyValue apiIntegration.testResponse content.testResponse
             , annotations = applyValue apiIntegration.annotations content.annotations
             }
-      applyToWidgetIntegration content widgetIntegration =
+      applyToPluginIntegration content pluginIntegration =
         PluginIntegration' $
-          widgetIntegration
-            { pluginUuid = applyValue widgetIntegration.pluginUuid content.pluginUuid
-            , pluginIntegrationId = applyValue widgetIntegration.pluginIntegrationId content.pluginIntegrationId
-            , pluginIntegrationSettings = applyValue widgetIntegration.pluginIntegrationSettings content.pluginIntegrationSettings
-            , annotations = applyValue widgetIntegration.annotations content.annotations
+          pluginIntegration
+            { name = applyValue pluginIntegration.name content.name
+            , pluginUuid = applyValue pluginIntegration.pluginUuid content.pluginUuid
+            , pluginIntegrationId = applyValue pluginIntegration.pluginIntegrationId content.pluginIntegrationId
+            , pluginIntegrationSettings = applyValue pluginIntegration.pluginIntegrationSettings content.pluginIntegrationSettings
+            , annotations = applyValue pluginIntegration.annotations content.annotations
             }
 
 convertToApiIntegration :: Integration -> ApiIntegration
@@ -102,6 +104,7 @@ convertToPluginIntegration (PluginIntegration' integration) = integration
 convertToPluginIntegration (ApiIntegration' integration) =
   PluginIntegration
     { uuid = integration.uuid
+    , name = integration.name
     , pluginUuid = U.nil
     , pluginIntegrationId = ""
     , pluginIntegrationSettings = mapToObject M.empty

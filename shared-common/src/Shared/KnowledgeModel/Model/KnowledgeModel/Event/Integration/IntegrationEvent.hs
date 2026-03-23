@@ -40,7 +40,8 @@ data AddApiIntegrationEvent = AddApiIntegrationEvent
 instance Hashable AddApiIntegrationEvent
 
 data AddPluginIntegrationEvent = AddPluginIntegrationEvent
-  { pluginUuid :: U.UUID
+  { name :: String
+  , pluginUuid :: U.UUID
   , pluginIntegrationId :: String
   , pluginIntegrationSettings :: A.Value
   , annotations :: [MapEntry String String]
@@ -78,7 +79,8 @@ data EditApiIntegrationEvent = EditApiIntegrationEvent
 instance Hashable EditApiIntegrationEvent
 
 data EditPluginIntegrationEvent = EditPluginIntegrationEvent
-  { pluginUuid :: EventField U.UUID
+  { name :: EventField String
+  , pluginUuid :: EventField U.UUID
   , pluginIntegrationId :: EventField String
   , pluginIntegrationSettings :: EventField A.Value
   , annotations :: EventField [MapEntry String String]

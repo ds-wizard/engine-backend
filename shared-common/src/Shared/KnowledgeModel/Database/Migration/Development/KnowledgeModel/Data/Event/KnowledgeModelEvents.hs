@@ -1807,7 +1807,8 @@ a_km1_io =
         AddIntegrationEvent' $
           AddPluginIntegrationEvent' $
             AddPluginIntegrationEvent
-              { pluginUuid = orcidPluginIntegration.pluginUuid
+              { name = orcidPluginIntegration.name
+              , pluginUuid = orcidPluginIntegration.pluginUuid
               , pluginIntegrationId = orcidPluginIntegration.pluginIntegrationId
               , pluginIntegrationSettings = orcidPluginIntegration.pluginIntegrationSettings
               , annotations = orcidPluginIntegration.annotations
@@ -1854,7 +1855,8 @@ e_km1_io =
         EditIntegrationEvent' $
           EditPluginIntegrationEvent' $
             EditPluginIntegrationEvent
-              { pluginUuid = ChangedValue $ orcidPluginIntegrationEdited.pluginUuid
+              { name = ChangedValue $ orcidPluginIntegrationEdited.name
+              , pluginUuid = ChangedValue $ orcidPluginIntegrationEdited.pluginUuid
               , pluginIntegrationId = ChangedValue $ orcidPluginIntegrationEdited.pluginIntegrationId
               , pluginIntegrationSettings = ChangedValue $ orcidPluginIntegrationEdited.pluginIntegrationSettings
               , annotations = ChangedValue $ orcidPluginIntegrationEdited.annotations

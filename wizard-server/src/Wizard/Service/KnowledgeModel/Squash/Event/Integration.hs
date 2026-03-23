@@ -40,7 +40,8 @@ instance SimpleEventSquash EditIntegrationEvent where
       EditIntegrationEvent' $
         EditPluginIntegrationEvent' $
           EditPluginIntegrationEvent
-            { pluginUuid = applyValue oldContent newContent (.pluginUuid)
+            { name = applyValue oldContent newContent (.name)
+            , pluginUuid = applyValue oldContent newContent (.pluginUuid)
             , pluginIntegrationId = applyValue oldContent newContent (.pluginIntegrationId)
             , pluginIntegrationSettings = applyValue oldContent newContent (.pluginIntegrationSettings)
             , annotations = applyValue oldContent newContent (.annotations)

@@ -103,6 +103,7 @@ orcidPluginIntegration :: PluginIntegration
 orcidPluginIntegration =
   PluginIntegration
     { uuid = u' "dc19efbe-fdda-4f27-a51f-56662f4da808"
+    , name = "ORCID"
     , pluginUuid = u' "d5524495-9a8d-4cee-a0b9-021df997fdc8"
     , pluginIntegrationId = "Orcid"
     , pluginIntegrationSettings = mapToObject (M.fromList [("setting1", "value1")])
@@ -116,6 +117,7 @@ orcidPluginIntegrationEdited :: PluginIntegration
 orcidPluginIntegrationEdited =
   PluginIntegration
     { uuid = u' "dc19efbe-fdda-4f27-a51f-56662f4da808"
+    , name = "ORCID"
     , pluginUuid = u' "d5524495-9a8d-4cee-a0b9-021df997fdc8"
     , pluginIntegrationId = "EditedOrcid"
     , pluginIntegrationSettings = mapToObject (M.fromList [("setting1", "value1"), ("setting2", "value2")])

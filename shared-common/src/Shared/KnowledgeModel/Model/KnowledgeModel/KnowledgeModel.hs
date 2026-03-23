@@ -361,6 +361,7 @@ data RequestFailedTypeHintResponse = RequestFailedTypeHintResponse
 
 data PluginIntegration = PluginIntegration
   { uuid :: U.UUID
+  , name :: String
   , pluginUuid :: U.UUID
   , pluginIntegrationId :: String
   , pluginIntegrationSettings :: A.Value
