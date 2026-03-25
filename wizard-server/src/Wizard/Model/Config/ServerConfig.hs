@@ -4,6 +4,7 @@ import qualified Crypto.PubKey.RSA as RSA
 import GHC.Generics
 
 import Shared.Common.Model.Config.ServerConfig
+import WizardLib.Public.Model.Config.ServerConfig
 
 data ServerConfig = ServerConfig
   { general :: ServerConfigGeneral
@@ -16,6 +17,7 @@ data ServerConfig = ServerConfig
   , actionKey :: ServerConfigActionKey
   , cache :: ServerConfigCache
   , document :: ServerConfigDocument
+  , externalLink :: ServerConfigExternalLink
   , feedback :: ServerConfigFeedback
   , knowledgeModelEditor :: ServerConfigKnowledgeModelEditor
   , project :: ServerConfigProject

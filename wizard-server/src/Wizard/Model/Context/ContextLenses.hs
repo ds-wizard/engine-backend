@@ -17,6 +17,7 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
+import WizardLib.Public.Model.Config.ServerConfig
 
 instance S_BaseContext.BaseContextType BaseContext ServerConfig
 
@@ -61,6 +62,9 @@ instance HasField "aws'" ServerConfig ServerConfigAws where
 
 instance HasField "cache'" ServerConfig ServerConfigCache where
   getField = (.cache)
+
+instance HasField "externalLink'" ServerConfig ServerConfigExternalLink where
+  getField = (.externalLink)
 
 instance HasField "dataEnabled'" ServerConfigCache Bool where
   getField = (.dataEnabled)

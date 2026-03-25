@@ -3,6 +3,7 @@ module Wizard.Model.Config.ServerConfigIM where
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Config.ServerConfigIM
 import Wizard.Model.Config.ServerConfig
+import WizardLib.Public.Model.Config.ServerConfigIM ()
 
 instance FromEnv ServerConfig where
   applyEnv serverConfig = do
@@ -16,6 +17,7 @@ instance FromEnv ServerConfig where
     actionKey <- applyEnv serverConfig.actionKey
     cache <- applyEnv serverConfig.cache
     document <- applyEnv serverConfig.document
+    externalLink <- applyEnv serverConfig.externalLink
     feedback <- applyEnv serverConfig.feedback
     knowledgeModelEditor <- applyEnv serverConfig.knowledgeModelEditor
     project <- applyEnv serverConfig.project

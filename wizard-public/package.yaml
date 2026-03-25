@@ -37,6 +37,7 @@ library:
   - resource-pool
   - swagger2
   - time
+  - network-uri
   - uri-encode
   - uuid
 

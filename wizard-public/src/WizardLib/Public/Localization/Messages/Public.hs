@@ -59,6 +59,10 @@ _ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES =
 _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_EXPIRATION =
   LocaleRecord "error.service.token.unable_to_get_token_expiration" "Unable to get token expiration from token" []
 
+-- ExternalLink
+_ERROR_SERVICE_EXTERNAL_LINK__URL_NOT_ALLOWED =
+  LocaleRecord "error.service.external_link.url_not_allowed" "The URL domain is not allowed" []
+
 -- User
 _ERROR_SERVICE_USER__MISSING_USER =
   LocaleRecord "error.service.user.missing_user" "You have to be log in to perform this request." []
