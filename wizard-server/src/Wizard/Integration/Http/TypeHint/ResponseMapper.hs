@@ -24,7 +24,7 @@ import Shared.Common.Integration.Http.Common.ResponseMapper
 import Shared.Common.Util.String (splitOn)
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Integration.Resource.TypeHint.TypeHintIDTO
-import Wizard.Util.Jinja (renderJinjaBatch)
+import WizardLib.Public.Util.Jinja (renderJinjaBatch)
 
 toRetrieveTypeHintsResponse :: ApiIntegration -> Response BSL.ByteString -> IO (Either String [TypeHintIDTO])
 toRetrieveTypeHintsResponse intConfig response = do

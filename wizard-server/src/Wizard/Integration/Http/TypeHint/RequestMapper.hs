@@ -16,7 +16,7 @@ import Shared.Common.Model.Common.MapEntry
 import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.Aeson as A
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Util.Jinja (renderJinjaMultiple, renderJinjaSingle)
+import WizardLib.Public.Util.Jinja (renderJinjaMultiple, renderJinjaSingle)
 
 toTypeHintTestRequestError :: TypeHintRequest -> String -> TypeHintExchange
 toTypeHintTestRequestError testRequest message =

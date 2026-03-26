@@ -20,7 +20,6 @@ library:
       ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial -Werror=missing-fields -Werror=incomplete-patterns
     else:
       ghc-options: -threaded -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial -Werror=missing-fields -Werror=incomplete-patterns
-  extra-libraries: jinja
   dependencies:
   - shared-common
   - registry-public

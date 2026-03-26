@@ -1,4 +1,4 @@
-module Wizard.Util.Jinja (renderJinjaSingle, renderJinjaMultiple, renderJinjaBatch, verifyJinja) where
+module WizardLib.Public.Util.Jinja (renderJinjaSingle, renderJinjaMultiple, renderJinjaBatch, verifyJinja) where
 
 import Data.Aeson
 import qualified Data.ByteString as BS

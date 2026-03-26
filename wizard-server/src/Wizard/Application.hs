@@ -27,9 +27,9 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Context.ContextMappers
 import Wizard.Service.Config.Server.ServerConfigValidation
-import Wizard.Util.Jinja (verifyJinja)
 import Wizard.Worker.CronWorkers
 import Wizard.Worker.PermanentWorkers
+import WizardLib.Public.Util.Jinja (verifyJinja)
 
 runApplication :: IO ()
 runApplication = do

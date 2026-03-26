@@ -81,7 +81,6 @@ import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Tenant.Config.TenantConfigValidationSpec
 import Wizard.Specs.Service.Tenant.TenantValidationSpec
 import Wizard.Specs.Service.User.UserServiceSpec
-import Wizard.Specs.Util.JinjaSpec
 import Wizard.Specs.Websocket.Common
 import Wizard.Specs.Websocket.KnowledgeModelEditor.Detail.WebsocketSpec
 import Wizard.Specs.Websocket.Project.Detail.WebsocketSpec
@@ -228,8 +227,6 @@ main =
                 projectCollaborationAclSpec appContext
                 projectServiceSpec appContext
               userServiceIntegrationSpec appContext
-            describe "UTIL" $ do
-              jinjaSpec
             describe "WEBSOCKET" $ do
               knowledgeModelEditorWebsocketAPI appContext
               projectWebsocketAPI appContext
