@@ -88,7 +88,7 @@ create_test_200 title appContext project projectEvents authHeader =
       -- AND: Prepare expectation
       let expStatus = 200
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = Page "projectEvents" (PageMetadata 20 16 1 0) (fEventsDto project.uuid)
+      let expDto = Page "projectEvents" (PageMetadata 20 15 1 0) (fEventsDto project.uuid)
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U.runMigration appContext

@@ -3,16 +3,6 @@ module Wizard.Api.Resource.TypeHint.TypeHintRequestDTO where
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
-
-data TypeHintLegacyRequestDTO = TypeHintLegacyRequestDTO
-  { knowledgeModelPackageUuid :: Maybe U.UUID
-  , events :: [KnowledgeModelEvent]
-  , questionUuid :: U.UUID
-  , q :: String
-  }
-  deriving (Show, Eq, Generic)
-
 data TypeHintRequestDTO
   = KnowledgeModelEditorIntegrationTypeHintRequest' KnowledgeModelEditorIntegrationTypeHintRequest
   | KnowledgeModelEditorQuestionTypeHintRequest' KnowledgeModelEditorQuestionTypeHintRequest

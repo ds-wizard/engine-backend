@@ -61,7 +61,6 @@ findProjectEventsPage projectUuid pageable sort = do
               \       project_event.created_at, \
               \       project_event.value_type, \
               \       project_event.value, \
-              \       project_event.value_id, \
               \       project_event.value_raw, \
               \       project_event.created_by   AS created_by_uuid, \
               \       user_entity.first_name           AS created_by_first_name, \
@@ -117,7 +116,6 @@ findProjectEventListsByProjectUuid projectUuid = do
           \       project_event.created_at, \
           \       project_event.value_type, \
           \       project_event.value, \
-          \       project_event.value_id, \
           \       project_event.value_raw, \
           \       project_event.created_by   AS created_by_uuid, \
           \       user_entity.first_name           AS created_by_first_name, \
@@ -185,7 +183,7 @@ insertProjectEvents events = do
 updateProjectEventByUuid :: ProjectEvent -> AppContextM Int64
 updateProjectEventByUuid event = do
   tenantUuid <- asks currentTenantUuid
-  let sql = fromString "UPDATE project_event SET uuid = ?, event_type = ?, path = ?, created_at = ?, created_by = ?, project_uuid = ?, tenant_uuid = ?, value_type = ?, value = ?, value_id = ?, value_raw = ? WHERE uuid = ? AND tenant_uuid = ?"
+  let sql = fromString "UPDATE project_event SET uuid = ?, event_type = ?, path = ?, created_at = ?, created_by = ?, project_uuid = ?, tenant_uuid = ?, value_type = ?, value = ?, value_raw = ? WHERE uuid = ? AND tenant_uuid = ?"
   let params = toRow event ++ [toField (getUuid event), toField tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params

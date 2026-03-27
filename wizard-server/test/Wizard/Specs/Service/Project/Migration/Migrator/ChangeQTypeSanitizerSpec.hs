@@ -30,12 +30,12 @@ sanitizerSpec =
       createTest "OptionsQuestion" "IntegrationReply (plain)" "Removed" rQ2 plainIntegrationReply Nothing
       createTest "OptionsQuestion" "IntegrationReply (full)" "Removed" rQ2 fullIntegrationReply Nothing
       -- -------------------------------------------------------------
-      createTest "MultiChoiceQuestion" "AnswerReply" "Removed" rQ11 (snd rQ2) Nothing
-      createTest "MultiChoiceQuestion" "MultiChoiceReply" "Keep" rQ11 multiChoiceReply (Just rQ11)
-      createTest "MultiChoiceQuestion" "StringReply" "Removed" rQ11 stringReply Nothing
-      createTest "MultiChoiceQuestion" "ItemListReply" "Removed" rQ11 itemListReply Nothing
-      createTest "MultiChoiceQuestion" "IntegrationReply (plain)" "Removed" rQ11 plainIntegrationReply Nothing
-      createTest "MultiChoiceQuestion" "IntegrationReply (full)" "Removed" rQ11 fullIntegrationReply Nothing
+      createTest "MultiChoiceQuestion" "AnswerReply" "Removed" rQ10 (snd rQ2) Nothing
+      createTest "MultiChoiceQuestion" "MultiChoiceReply" "Keep" rQ10 multiChoiceReply (Just rQ10)
+      createTest "MultiChoiceQuestion" "StringReply" "Removed" rQ10 stringReply Nothing
+      createTest "MultiChoiceQuestion" "ItemListReply" "Removed" rQ10 itemListReply Nothing
+      createTest "MultiChoiceQuestion" "IntegrationReply (plain)" "Removed" rQ10 plainIntegrationReply Nothing
+      createTest "MultiChoiceQuestion" "IntegrationReply (full)" "Removed" rQ10 fullIntegrationReply Nothing
       -- -------------------------------------------------------------
       createTest "ListQuestion" "AnswerReply" "Removed" rQ4 answerReply Nothing
       createTest "ListQuestion" "MultiChoiceReply" "Removed" rQ4 multiChoiceReply Nothing
@@ -86,7 +86,7 @@ itemListReply = createReply (ItemListReply {ilValue = [u' "58c1379d-8b1d-4d88-a8
 
 plainIntegrationReply = createReply (IntegrationReply {iValue = PlainType "Reply to 1st question"}) 0
 
-fullIntegrationReply = createReply (IntegrationReply {iValue = IntegrationLegacyType {intId = Nothing, value = "Reply to 1st question"}}) 0
+fullIntegrationReply = createReply (IntegrationReply {iValue = IntegrationType {value = "Reply to 1st question", raw = "Raw value"}}) 0
 
 createReply :: ReplyValue -> DiffTime -> Reply
 createReply value minute =

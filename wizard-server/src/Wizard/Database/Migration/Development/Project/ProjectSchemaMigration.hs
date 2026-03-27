@@ -105,7 +105,6 @@ createProjectEventTable = do
         \    tenant_uuid        uuid                     NOT NULL, \
         \    value_type         value_type, \
         \    value              text[], \
-        \    value_id           text, \
         \    value_raw          jsonb, \
         \    CONSTRAINT project_event_pk PRIMARY KEY (uuid), \
         \    CONSTRAINT project_event_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity(uuid) ON DELETE SET NULL, \

@@ -1,7 +1,5 @@
 module Wizard.Service.Project.Migration.Migrator.ChangeQTypeSanitizer where
 
-import qualified Data.Aeson as A
-import qualified Data.Aeson.KeyMap as KM
 import qualified Data.Map.Strict as M
 import Data.Maybe (mapMaybe)
 import qualified Data.UUID as U
@@ -60,7 +58,6 @@ sanitizeValueQuestion km StringReply {..} q = Just $ StringReply {..}
 sanitizeValueQuestion km IntegrationReply {iValue = replyValue} q =
   case replyValue of
     PlainType value -> Just $ StringReply {sValue = value}
-    IntegrationLegacyType {..} -> Just $ StringReply {sValue = value}
     IntegrationType {..} -> Just $ StringReply {sValue = value}
 sanitizeValueQuestion _ _ _ = Nothing
 
@@ -70,9 +67,6 @@ sanitizeIntegrationQuestion km IntegrationReply {..} q =
     Just (ApiIntegration' _) ->
       case iValue of
         PlainType value -> Just $ IntegrationReply {iValue = PlainType value}
-        IntegrationLegacyType {..} ->
-          let raw = A.Object . KM.fromList $ []
-           in Just $ IntegrationReply {iValue = IntegrationType {..}}
         IntegrationType {..} -> Just $ IntegrationReply {iValue = IntegrationType {..}}
     Just (PluginIntegration' _) -> Just $ IntegrationReply {..}
     Nothing -> Nothing

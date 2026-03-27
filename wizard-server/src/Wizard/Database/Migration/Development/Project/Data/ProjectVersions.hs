@@ -46,7 +46,7 @@ projectVersion1Edited projectUuid =
   (projectVersion1 projectUuid)
     { name = "EDITED: " ++ (projectVersion1 projectUuid).name
     , description = fmap ("EDITED: " ++) (projectVersion1 projectUuid).description
-    , eventUuid = (sre_rQ11 projectUuid).uuid
+    , eventUuid = (sre_rQ10 projectUuid).uuid
     }
 
 projectVersion1EditedList :: U.UUID -> ProjectVersionList
@@ -64,7 +64,7 @@ projectVersion2 projectUuid =
     { uuid = createVersionUuid projectUuid "515f1d45b24f"
     , name = "Version 2"
     , description = Just "Version 2 description"
-    , eventUuid = (sre_rQ11 projectUuid).uuid
+    , eventUuid = (sre_rQ10 projectUuid).uuid
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid

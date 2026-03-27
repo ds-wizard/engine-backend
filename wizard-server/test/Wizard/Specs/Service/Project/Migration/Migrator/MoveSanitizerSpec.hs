@@ -178,7 +178,7 @@ sanitizerSpec =
           let replies = M.toList fReplies
           -- AND: Make expectation
           let expected =
-                M.toList . M.fromList $ [rQ1, rQ2, rQ2_aYes_fuQ1, rQ3, rQ4, rQ4_it1_q6, rQ4_it2_q6, rQ9, rQ10, rQ11]
+                M.toList . M.fromList $ [rQ1, rQ2, rQ2_aYes_fuQ1, rQ3, rQ4, rQ4_it1_q6, rQ4_it2_q6, rQ9, rQ10]
           -- WHEN:
           let result = deleteUnwantedReplies eUuid replies
           -- THEN:
