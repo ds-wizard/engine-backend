@@ -127,8 +127,8 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
             Just kmpCoordinates ->
               let operator = if isAndOperator mKnowledgeModelPackageCoordinatesOp then " AND " else " OR "
                in ( "LEFT JOIN knowledge_model_package ON project.knowledge_model_package_uuid = knowledge_model_package.uuid AND knowledge_model_package.tenant_uuid = '${tenantUuid}'"
-                  , f' " AND (%s)" [L.intercalate operator . fmap (const " (knowledge_model_package.organization_id = ? AND knowledge_model_package.km_id = ?)") $ kmpCoordinates]
-                  , concatMap (\c -> [c.organizationId, c.entityId]) kmpCoordinates
+                  , f' " AND (%s)" [L.intercalate operator . fmap (\c -> if c.version == "all" then " (knowledge_model_package.organization_id = ? AND knowledge_model_package.km_id = ?)" else " (knowledge_model_package.organization_id = ? AND knowledge_model_package.km_id = ? AND knowledge_model_package.version = ?)") $ kmpCoordinates]
+                  , concatMap (\c -> if c.version == "all" then [c.organizationId, c.entityId] else [c.organizationId, c.entityId, c.version]) kmpCoordinates
                   )
     let (aclJoins, aclCondition) =
           if currentUser.uRole == _USER_ROLE_ADMIN
