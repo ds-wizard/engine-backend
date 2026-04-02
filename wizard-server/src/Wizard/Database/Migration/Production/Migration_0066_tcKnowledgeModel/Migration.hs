@@ -16,6 +16,8 @@ migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   dropConfigKnowledgeModelTable dbPool
   dropValueIdColumns dbPool
+  upgradeKmMetamodel dbPool
+  upgradeDtMetamodel dbPool
 
 dropConfigKnowledgeModelTable dbPool = do
   let sql = "DROP TABLE config_knowledge_model"
@@ -27,6 +29,21 @@ dropValueIdColumns dbPool = do
   let sql =
         "ALTER TABLE knowledge_model_editor_reply DROP COLUMN value_id; \
         \ALTER TABLE project_event DROP COLUMN value_id;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+upgradeKmMetamodel dbPool = do
+  let sql =
+        "TRUNCATE knowledge_model_cache; \
+        \TRUNCATE knowledge_model_migration; \
+        \UPDATE tenant SET state = 'PendingHousekeepingTenantState';"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+upgradeDtMetamodel dbPool = do
+  let sql = "UPDATE document_template SET metamodel_version = (18,0) WHERE phase = 'DraftDocumentTemplatePhase';"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
