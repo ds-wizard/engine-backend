@@ -3,10 +3,10 @@ module WizardLib.Public.Api.Resource.Tenant.TenantSuggestionJM where
 import Data.Aeson
 
 import Shared.Common.Util.Aeson
-import WizardLib.Public.Api.Resource.Tenant.TenantSuggestionDTO
+import WizardLib.Public.Model.Tenant.TenantSuggestion
 
-instance FromJSON TenantSuggestionDTO where
+instance FromJSON TenantSuggestion where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON TenantSuggestionDTO where
+instance ToJSON TenantSuggestion where
   toJSON = genericToJSON jsonOptions

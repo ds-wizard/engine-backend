@@ -8,8 +8,8 @@ import Shared.Common.Util.Gravatar
 import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
 import Shared.PersistentCommand.Database.Mapping.PersistentCommand.PersistentCommand ()
-import WizardLib.Public.Api.Resource.Tenant.TenantSuggestionDTO
 import WizardLib.Public.Model.PersistentCommand.PersistentCommandList
+import WizardLib.Public.Model.Tenant.TenantSuggestion
 import WizardLib.Public.Model.User.UserSuggestion
 
 instance FromRow PersistentCommandList where
@@ -28,10 +28,10 @@ instance FromRow PersistentCommandList where
     let createdBy = fmap parseUser createdByS
     return $ PersistentCommandList {..}
     where
-      parseTenant :: String -> TenantSuggestionDTO
+      parseTenant :: String -> TenantSuggestion
       parseTenant tenant =
         let parts = splitOn "::" tenant
-         in TenantSuggestionDTO
+         in TenantSuggestion
               { uuid = u' . head $ parts
               , name = parts !! 1
               , logoUrl =

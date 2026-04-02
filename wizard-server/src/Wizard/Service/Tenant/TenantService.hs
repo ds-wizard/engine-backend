@@ -43,15 +43,22 @@ import Wizard.Service.User.UserService
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
+import WizardLib.Public.Database.DAO.Tenant.TenantDAO
 import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Model.Tenant.Config.TenantConfigDM
+import WizardLib.Public.Model.Tenant.TenantSuggestion
 
 getTenantsPage :: Maybe String -> Maybe [TenantState] -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page TenantDTO)
 getTenantsPage mQuery mStates mEnabled pageable sort = do
   checkPermission _TENANT_PERM
   tenants <- findTenantsPage mQuery mStates mEnabled pageable sort
   traverse enhanceTenant tenants
+
+getTenantSuggestions :: Maybe String -> AppContextM [TenantSuggestion]
+getTenantSuggestions mQuery = do
+  checkPermission _TENANT_PERM
+  findTenantSuggestions mQuery
 
 registerTenant :: TenantCreateDTO -> AppContextM TenantDTO
 registerTenant reqDto = do

@@ -40,8 +40,7 @@ migrateEventsField eventsFieldName value =
       getField "createdAt" object $ \createdAt ->
         getArrayField eventsFieldName object $ \events ->
           case foldEither $
-            EventMigrator.migrate (EventMigrator.MigrationContext createdAt) oldMetamodelVersion knowledgeModelMetamodelVersion
-              <$> Vector.toList events of
+            EventMigrator.migrate (EventMigrator.MigrationContext createdAt) oldMetamodelVersion knowledgeModelMetamodelVersion <$> Vector.toList events of
             Right updatedEvents ->
               Right . Object $ KM.insert (fromString eventsFieldName) (toJSON . concat $ updatedEvents) object
             Left error -> Left . GeneralServerError $ error

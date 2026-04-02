@@ -15,23 +15,23 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Tenant
 import Wizard.Service.Plugin.PluginMapper
 
-createPluginForAllTenants :: U.UUID -> String -> AppContextM ()
-createPluginForAllTenants uuid url =
+createPluginForAllTenants :: U.UUID -> String -> Bool -> AppContextM ()
+createPluginForAllTenants uuid url enabled =
   runInTransaction $ do
     tenants <- findTenants
     now <- liftIO getCurrentTime
     traverse_
       ( \tenant -> do
-          let plugin = toPlugin uuid url tenant.uuid now
+          let plugin = toPlugin uuid url enabled tenant.uuid now
           void $ insertPlugin plugin
       )
       tenants
 
-createPluginForTenant :: U.UUID -> U.UUID -> String -> AppContextM ()
-createPluginForTenant tenantUuid uuid url =
+createPluginForTenant :: U.UUID -> U.UUID -> String -> Bool -> AppContextM ()
+createPluginForTenant tenantUuid uuid url enabled =
   runInTransaction $ do
     now <- liftIO getCurrentTime
-    let plugin = toPlugin uuid url tenantUuid now
+    let plugin = toPlugin uuid url enabled tenantUuid now
     void $ insertPlugin plugin
 
 updatePluginsEnabled :: M.Map U.UUID Bool -> AppContextM ()

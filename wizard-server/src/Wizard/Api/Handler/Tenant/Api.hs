@@ -10,6 +10,7 @@ import Wizard.Api.Handler.Tenant.Detail_PUT
 import Wizard.Api.Handler.Tenant.Limit.Api
 import Wizard.Api.Handler.Tenant.List_GET
 import Wizard.Api.Handler.Tenant.List_POST
+import Wizard.Api.Handler.Tenant.List_Suggestions_GET
 import Wizard.Api.Handler.Tenant.PluginSettings.Api
 import Wizard.Api.Handler.Tenant.Usage.Api
 import Wizard.Model.Context.BaseContext
@@ -17,6 +18,7 @@ import Wizard.Model.Context.BaseContext
 type TenantAPI =
   Tags "Tenant"
     :> ( List_GET
+          :<|> List_Suggestions_GET
           :<|> List_POST
           :<|> Detail_GET
           :<|> Detail_PUT
@@ -33,6 +35,7 @@ tenantApi = Proxy
 tenantServer :: ServerT TenantAPI BaseContextM
 tenantServer =
   list_GET
+    :<|> list_suggestions_GET
     :<|> list_POST
     :<|> detail_GET
     :<|> detail_PUT
