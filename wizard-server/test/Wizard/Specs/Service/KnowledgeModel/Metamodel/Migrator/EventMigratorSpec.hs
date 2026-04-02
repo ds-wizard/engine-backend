@@ -17,6 +17,7 @@ import qualified Wizard.Specs.Service.KnowledgeModel.Metamodel.Migrator.Migratio
 import qualified Wizard.Specs.Service.KnowledgeModel.Metamodel.Migrator.Migration0016.MigrationSpec as M0016Spec
 import qualified Wizard.Specs.Service.KnowledgeModel.Metamodel.Migrator.Migration0017.MigrationSpec as M0017Spec
 import qualified Wizard.Specs.Service.KnowledgeModel.Metamodel.Migrator.Migration0018.MigrationSpec as M0018Spec
+import qualified Wizard.Specs.Service.KnowledgeModel.Metamodel.Migrator.Migration0019.MigrationSpec as M0019Spec
 
 eventMigratorSpec :: Spec
 eventMigratorSpec = do
@@ -35,3 +36,4 @@ eventMigratorSpec = do
   describe "Migration #0016" M0016Spec.spec
   describe "Migration #0017" M0017Spec.spec
   describe "Migration #0018" M0018Spec.spec
+  describe "Migration #0019" M0019Spec.spec
