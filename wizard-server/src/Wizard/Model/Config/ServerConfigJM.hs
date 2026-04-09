@@ -13,6 +13,8 @@ import Shared.Common.Util.Crypto
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.ServerConfigDM
 import Wizard.Model.User.User
+import WizardLib.Public.Model.Config.ServerConfigDM
+import WizardLib.Public.Model.Config.ServerConfigJM ()
 
 instance FromJSON ServerConfig where
   parseJSON (Object o) = do
@@ -27,6 +29,7 @@ instance FromJSON ServerConfig where
     knowledgeModelEditor <- o .:? "knowledgeModelEditor" .!= defaultKnowledgeModelEditor
     cache <- o .:? "cache" .!= defaultCache
     document <- o .:? "document" .!= defaultDocument
+    externalLink <- o .:? "externalLink" .!= defaultExternalLink
     feedback <- o .:? "feedback" .!= defaultFeedback
     project <- o .:? "project" .!= defaultProject
     temporaryFile <- o .:? "temporaryFile" .!= defaultTemporaryFile

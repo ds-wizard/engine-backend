@@ -35,13 +35,13 @@ updateKnowledgeModelRepliesByEditorUuid editorUuid editorReplies = do
       createDeleteEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("editor_uuid", U.toString editorUuid)]
     (editorReply : _) -> do
       tenantUuid <- asks currentTenantUuid
-      let insertSql = L.intercalate "," . fmap (const "(?, ?, ?, ?, ?, ?, ?, ?, ?)") $ editorReplies
+      let insertSql = L.intercalate "," . fmap (const "(?, ?, ?, ?, ?, ?, ?, ?)") $ editorReplies
       let sql =
             fromString $
               f'
                 "BEGIN TRANSACTION; \
                 \DELETE FROM knowledge_model_editor_reply WHERE tenant_uuid = ? AND editor_uuid = ?; \
-                \INSERT INTO knowledge_model_editor_reply (path, value_type, value, value_id, value_raw, editor_uuid, created_by, tenant_uuid, created_at) \
+                \INSERT INTO knowledge_model_editor_reply (path, value_type, value, value_raw, editor_uuid, created_by, tenant_uuid, created_at) \
                 \VALUES %s; \
                 \COMMIT;"
                 [insertSql]

@@ -1,5 +1,5 @@
 name: registry-server
-version: '4.28.1'
+version: '4.29.0'
 synopsis: Engine Registry
 description: Engine Registry
 category: Web
@@ -106,7 +106,6 @@ tests:
     - case-insensitive
     - containers
     - data-default
-    - ginger
     - http-types
     - mtl
     - monad-control

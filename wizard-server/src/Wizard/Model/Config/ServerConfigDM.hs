@@ -5,6 +5,7 @@ import Shared.Common.Model.Config.ServerConfigDM
 import Shared.Worker.Model.Worker.CronWorker
 import Wizard.Model.Config.ServerConfig
 import Wizard.Worker.CronWorkers
+import WizardLib.Public.Model.Config.ServerConfigDM
 
 defaultConfig :: ServerConfig
 defaultConfig =
@@ -19,6 +20,7 @@ defaultConfig =
     , actionKey = defaultActionKey
     , cache = defaultCache
     , document = defaultDocument
+    , externalLink = defaultExternalLink
     , feedback = defaultFeedback
     , knowledgeModelEditor = defaultKnowledgeModelEditor
     , project = defaultProject

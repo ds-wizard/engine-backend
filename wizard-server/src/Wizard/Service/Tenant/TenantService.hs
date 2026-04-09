@@ -20,7 +20,6 @@ import Wizard.Api.Resource.Tenant.TenantDetailDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Tenant.Config.TenantConfigAuthenticationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigDashboardAndLoginScreenDAO
-import Wizard.Database.DAO.Tenant.Config.TenantConfigKnowledgeModelDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
@@ -44,15 +43,22 @@ import Wizard.Service.User.UserService
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
+import WizardLib.Public.Database.DAO.Tenant.TenantDAO
 import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Model.Tenant.Config.TenantConfigDM
+import WizardLib.Public.Model.Tenant.TenantSuggestion
 
 getTenantsPage :: Maybe String -> Maybe [TenantState] -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page TenantDTO)
 getTenantsPage mQuery mStates mEnabled pageable sort = do
   checkPermission _TENANT_PERM
   tenants <- findTenantsPage mQuery mStates mEnabled pageable sort
   traverse enhanceTenant tenants
+
+getTenantSuggestions :: Maybe String -> AppContextM [TenantSuggestion]
+getTenantSuggestions mQuery = do
+  checkPermission _TENANT_PERM
+  findTenantSuggestions mQuery
 
 registerTenant :: TenantCreateDTO -> AppContextM TenantDTO
 registerTenant reqDto = do
@@ -152,7 +158,6 @@ createConfig uuid now = do
     insertTenantConfigDashboardAndLoginScreen (defaultDashboardAndLoginScreen {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigDashboardAndLoginScreen)
     insertTenantConfigLookAndFeel (defaultLookAndFeel {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigLookAndFeel)
     insertTenantConfigRegistry (defaultRegistry {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigRegistry)
-    insertTenantConfigKnowledgeModel (defaultKnowledgeModel {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigKnowledgeModel)
     insertTenantConfigProject (defaultProject {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigProject)
     insertTenantConfigSubmission (defaultSubmission {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigSubmission)
     insertTenantConfigMail (defaultMail {tenantUuid = uuid, createdAt = now, updatedAt = now})

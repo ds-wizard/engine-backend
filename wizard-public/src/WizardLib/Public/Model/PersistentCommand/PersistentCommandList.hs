@@ -5,7 +5,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
-import WizardLib.Public.Api.Resource.Tenant.TenantSuggestionDTO
+import WizardLib.Public.Model.Tenant.TenantSuggestion
 import WizardLib.Public.Model.User.UserSuggestion
 
 data PersistentCommandList = PersistentCommandList
@@ -15,7 +15,7 @@ data PersistentCommandList = PersistentCommandList
   , function :: String
   , attempts :: Int
   , maxAttempts :: Int
-  , tenant :: TenantSuggestionDTO
+  , tenant :: TenantSuggestion
   , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

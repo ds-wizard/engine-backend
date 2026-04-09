@@ -46,9 +46,6 @@ instance ToSchema TenantConfigDashboardAndLoginScreenDashboardType
 instance ToSchema TenantConfigRegistry where
   declareNamedSchema = toSwagger defaultRegistry
 
-instance ToSchema TenantConfigKnowledgeModel where
-  declareNamedSchema = toSwagger defaultKnowledgeModel
-
 instance ToSchema TenantConfigProject where
   declareNamedSchema = toSwagger defaultProject
 

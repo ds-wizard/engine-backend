@@ -17,8 +17,7 @@ instance FromJSON AddIntegrationEvent where
     integrationType <- o .: "integrationType"
     case integrationType of
       "ApiIntegration" -> parseJSON (Object o) >>= \event -> return (AddApiIntegrationEvent' event)
-      "ApiLegacyIntegration" -> parseJSON (Object o) >>= \event -> return (AddApiLegacyIntegrationEvent' event)
-      "WidgetIntegration" -> parseJSON (Object o) >>= \event -> return (AddWidgetIntegrationEvent' event)
+      "PluginIntegration" -> parseJSON (Object o) >>= \event -> return (AddPluginIntegrationEvent' event)
       _ -> fail "One of the events has unsupported integrationType"
   parseJSON _ = mzero
 
@@ -30,18 +29,11 @@ instance ToJSON AddApiIntegrationEvent where
   toJSON = toJSONWithAdditionalData [("integrationType", "ApiIntegration")]
 
 -- --------------------------------------------
-instance FromJSON AddApiLegacyIntegrationEvent where
+instance FromJSON AddPluginIntegrationEvent where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON AddApiLegacyIntegrationEvent where
-  toJSON = toJSONWithAdditionalData [("integrationType", "ApiLegacyIntegration")]
-
--- --------------------------------------------
-instance FromJSON AddWidgetIntegrationEvent where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON AddWidgetIntegrationEvent where
-  toJSON = toJSONWithAdditionalData [("integrationType", "WidgetIntegration")]
+instance ToJSON AddPluginIntegrationEvent where
+  toJSON = toJSONWithAdditionalData [("integrationType", "PluginIntegration")]
 
 -- --------------------------------------------
 -- --------------------------------------------
@@ -53,8 +45,7 @@ instance FromJSON EditIntegrationEvent where
     integrationType <- o .: "integrationType"
     case integrationType of
       "ApiIntegration" -> parseJSON (Object o) >>= \event -> return (EditApiIntegrationEvent' event)
-      "ApiLegacyIntegration" -> parseJSON (Object o) >>= \event -> return (EditApiLegacyIntegrationEvent' event)
-      "WidgetIntegration" -> parseJSON (Object o) >>= \event -> return (EditWidgetIntegrationEvent' event)
+      "PluginIntegration" -> parseJSON (Object o) >>= \event -> return (EditPluginIntegrationEvent' event)
       _ -> fail "One of the events has unsupported integrationType"
   parseJSON _ = mzero
 
@@ -66,15 +57,8 @@ instance ToJSON EditApiIntegrationEvent where
   toJSON = toJSONWithAdditionalData [("integrationType", "ApiIntegration")]
 
 -- --------------------------------------------
-instance FromJSON EditApiLegacyIntegrationEvent where
+instance FromJSON EditPluginIntegrationEvent where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON EditApiLegacyIntegrationEvent where
-  toJSON = toJSONWithAdditionalData [("integrationType", "ApiLegacyIntegration")]
-
--- --------------------------------------------
-instance FromJSON EditWidgetIntegrationEvent where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON EditWidgetIntegrationEvent where
-  toJSON = toJSONWithAdditionalData [("integrationType", "WidgetIntegration")]
+instance ToJSON EditPluginIntegrationEvent where
+  toJSON = toJSONWithAdditionalData [("integrationType", "PluginIntegration")]

@@ -16,4 +16,4 @@ instance ToSchema ReplyValue where
   declareNamedSchema = toSwagger ((snd rQ1).value)
 
 instance ToSchema IntegrationReplyType where
-  declareNamedSchema = toSwagger rQ10IntValue
+  declareNamedSchema = toSwagger r9IntType

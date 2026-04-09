@@ -7,12 +7,6 @@ import Shared.Common.Util.Aeson
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Event.KnowledgeModelEventJM ()
 import Wizard.Api.Resource.TypeHint.TypeHintRequestDTO
 
-instance FromJSON TypeHintLegacyRequestDTO where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON TypeHintLegacyRequestDTO where
-  toJSON = genericToJSON jsonOptions
-
 instance ToJSON TypeHintRequestDTO where
   toJSON = toSumJSON
 

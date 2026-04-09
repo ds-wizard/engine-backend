@@ -3,12 +3,9 @@ module Wizard.Database.Migration.Development.TypeHint.Data.TypeHints where
 import Data.Aeson
 import qualified Data.Map.Strict as M
 
-import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Integrations
-import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.TypeHint.TypeHintRequestDTO
 import Wizard.Api.Resource.TypeHint.TypeHintTestRequestDTO
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
@@ -39,36 +36,6 @@ animalsDatasetTypeHint =
     { valueForSelection = Just "r000003: Animals Dataset"
     , value = "Animals Dataset (biology)"
     , raw = object ["id" .= "r000003", "name" .= "Animals Dataset", "domain" .= "biology", "country" .= "cz"]
-    }
-
-lifeScienceLegacyTypeHint :: TypeHintLegacyIDTO
-lifeScienceLegacyTypeHint =
-  TypeHintLegacyIDTO
-    { intId = Just "op-p000001"
-    , name = "Life Science Ontology"
-    }
-
-mathematicalLegacyTypeHint :: TypeHintLegacyIDTO
-mathematicalLegacyTypeHint =
-  TypeHintLegacyIDTO
-    { intId = Just "op-p000008"
-    , name = "Mathematical Ontology"
-    }
-
-legalLegacyTypeHint :: TypeHintLegacyIDTO
-legalLegacyTypeHint =
-  TypeHintLegacyIDTO
-    { intId = Just "op-p000015"
-    , name = "Legal Ontology"
-    }
-
-typeHintLegacyRequest :: TypeHintLegacyRequestDTO
-typeHintLegacyRequest =
-  TypeHintLegacyRequestDTO
-    { knowledgeModelPackageUuid = Just germanyKmPackage.uuid
-    , events = []
-    , questionUuid = q4_it1_q6_aYes_followUpQuestion5.uuid
-    , q = "dog"
     }
 
 kmEditorIntegrationTypeHintRequest :: TypeHintRequestDTO

@@ -56,7 +56,6 @@ import Wizard.Specs.API.User.APISpec
 import Wizard.Specs.API.User.News.APISpec
 import Wizard.Specs.API.User.Tour.APISpec
 import Wizard.Specs.API.UserGroup.APISpec
-import Wizard.Specs.Integration.Http.TypeHint.ResponseMapperSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
 import Wizard.Specs.Service.DocumentTemplate.DocumentTemplateUtilSpec
 import Wizard.Specs.Service.KnowledgeModel.Compiler.CompilerSpec
@@ -82,7 +81,6 @@ import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Tenant.Config.TenantConfigValidationSpec
 import Wizard.Specs.Service.Tenant.TenantValidationSpec
 import Wizard.Specs.Service.User.UserServiceSpec
-import Wizard.Specs.Util.JinjaSpec
 import Wizard.Specs.Websocket.Common
 import Wizard.Specs.Websocket.KnowledgeModelEditor.Detail.WebsocketSpec
 import Wizard.Specs.Websocket.Project.Detail.WebsocketSpec
@@ -152,9 +150,6 @@ main =
     ( \baseContext appContext ->
         hspec $ do
           describe "UNIT TESTING" $ do
-            describe "INTEGRATION" $
-              describe "Http" $
-                describe "TypeHint" typeHintResponseMapperSpec
             describe "SERVICE" $ do
               describe "Document Template" documentTemplateUtilSpec
               describe "KnowledgeModel" $ do
@@ -232,8 +227,6 @@ main =
                 projectCollaborationAclSpec appContext
                 projectServiceSpec appContext
               userServiceIntegrationSpec appContext
-            describe "UTIL" $ do
-              jinjaSpec
             describe "WEBSOCKET" $ do
               knowledgeModelEditorWebsocketAPI appContext
               projectWebsocketAPI appContext

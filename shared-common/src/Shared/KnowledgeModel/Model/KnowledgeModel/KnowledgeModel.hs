@@ -1,5 +1,6 @@
 module Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel where
 
+import qualified Data.Aeson as A
 import Data.Map
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
@@ -296,8 +297,7 @@ data ResourcePage = ResourcePage
 -- ------------------------------------------------
 data Integration
   = ApiIntegration' ApiIntegration
-  | ApiLegacyIntegration' ApiLegacyIntegration
-  | WidgetIntegration' WidgetIntegration
+  | PluginIntegration' PluginIntegration
   deriving (Show, Eq, Generic)
 
 data ApiIntegration = ApiIntegration
@@ -359,33 +359,12 @@ data RequestFailedTypeHintResponse = RequestFailedTypeHintResponse
   }
   deriving (Show, Eq, Generic)
 
-data ApiLegacyIntegration = ApiLegacyIntegration
+data PluginIntegration = PluginIntegration
   { uuid :: U.UUID
-  , iId :: String
   , name :: String
-  , variables :: [String]
-  , logo :: Maybe String
-  , requestMethod :: String
-  , requestUrl :: String
-  , requestHeaders :: [MapEntry String String]
-  , requestBody :: String
-  , requestEmptySearch :: Bool
-  , responseListField :: Maybe String
-  , responseItemId :: Maybe String
-  , responseItemTemplate :: String
-  , itemUrl :: Maybe String
-  , annotations :: [MapEntry String String]
-  }
-  deriving (Show, Eq, Generic)
-
-data WidgetIntegration = WidgetIntegration
-  { uuid :: U.UUID
-  , iId :: String
-  , name :: String
-  , variables :: [String]
-  , logo :: Maybe String
-  , widgetUrl :: String
-  , itemUrl :: Maybe String
+  , pluginUuid :: U.UUID
+  , pluginIntegrationId :: String
+  , pluginIntegrationSettings :: A.Value
   , annotations :: [MapEntry String String]
   }
   deriving (Show, Eq, Generic)

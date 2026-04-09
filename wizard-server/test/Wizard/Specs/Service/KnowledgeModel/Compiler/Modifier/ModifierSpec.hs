@@ -223,7 +223,7 @@ modifierSpec =
           it "Do nothing with the question" $
             -- GIVEN: Inputs
             do
-              let event = e_km1_iop
+              let event = e_km1_ir
               let (EditIntegrationEvent' content) = event.content
               -- AND: Expectations
               let expected = question2'
@@ -235,7 +235,7 @@ modifierSpec =
           it "Do nothing with the question" $
             -- GIVEN: Inputs
             do
-              let event = e_km1_iop
+              let event = e_km1_ir
               let (EditIntegrationEvent' content) = event.content
               -- AND: Expectations
               let expected = question4'
@@ -247,7 +247,7 @@ modifierSpec =
           it "Do nothing with the question" $
             -- GIVEN: Inputs
             do
-              let event = e_km1_iop
+              let event = e_km1_ir
               let (EditIntegrationEvent' content) = event.content
               -- AND: Expectations
               let expected = question1'
@@ -259,7 +259,7 @@ modifierSpec =
           it "Update the variables" $
             -- GIVEN: Inputs
             do
-              let event = e_km1_iop
+              let event = e_km1_ir
               let (EditIntegrationEvent' content) = event.content
               -- AND: Expectations
               let expected = question9VariablesEdited'
@@ -458,53 +458,53 @@ modifierSpec =
             computed `shouldBe` expected
     describe "Integration level" $ do
       describe "createIntegration" $ do
-        describe "ApiLegacyIntegration" $
+        describe "ApiIntegration" $
           it "Successfully created" $
             -- GIVEN: Inputs
             do
-              let event = a_km1_iop
+              let event = a_km1_ir
               let (AddIntegrationEvent' content) = event.content
               -- AND: Expectations
-              let expected = ontologyPortal'
+              let expected = repositoryApi'
               -- WHEN:
               let computed = createEntity event content
               -- THEN:
               computed `shouldBe` expected
-        describe "WidgetIntegration" $
+        describe "PluginIntegration" $
           it "Successfully created" $
             -- GIVEN: Inputs
             do
-              let event = a_km1_iwp
+              let event = a_km1_io
               let (AddIntegrationEvent' content) = event.content
               -- AND: Expectations
-              let expected = widgetPortal'
+              let expected = orcidPluginIntegration'
               -- WHEN:
               let computed = createEntity event content
               -- THEN:
               computed `shouldBe` expected
       describe "editIntegration" $ do
-        describe "ApiLegacyIntegration" $
+        describe "ApiIntegration" $
           it "Successfully edited" $
             -- GIVEN: Inputs
             do
-              let event = e_km1_iop
+              let event = e_km1_ir
               let (EditIntegrationEvent' content) = event.content
               -- AND: Expectations
-              let expected = ontologyPortalEdited'
+              let expected = repositoryApiEdited'
               -- WHEN:
-              let computed = editEntity event content ontologyPortal'
+              let computed = editEntity event content repositoryApi'
               -- THEN:
               computed `shouldBe` expected
-        describe "WidgetIntegration" $
+        describe "PluginIntegration" $
           it "Successfully edited" $
             -- GIVEN: Inputs
             do
-              let event = e_km1_iwp
+              let event = e_km1_io
               let (EditIntegrationEvent' content) = event.content
               -- AND: Expectations
-              let expected = widgetPortalEdited'
+              let expected = orcidPluginIntegrationEdited'
               -- WHEN:
-              let computed = editEntity event content widgetPortal'
+              let computed = editEntity event content orcidPluginIntegration'
               -- THEN:
               computed `shouldBe` expected
     describe "Metric level" $ do

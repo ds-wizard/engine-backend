@@ -98,7 +98,6 @@ createKnowledgeModelEditorReplyTable = do
         \    path        text                              NOT NULL, \
         \    value_type  knowledge_model_editor_reply_type NOT NULL, \
         \    value       text[], \
-        \    value_id    text, \
         \    value_raw   jsonb, \
         \    editor_uuid uuid                              NOT NULL, \
         \    created_by  jsonb, \

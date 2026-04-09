@@ -67,6 +67,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0062_metamodelFi
 import qualified Wizard.Database.Migration.Production.Migration_0063_plugins.Migration as M_0063
 import qualified Wizard.Database.Migration.Production.Migration_0064_prjTmpPerm.Migration as M_0064
 import qualified Wizard.Database.Migration.Production.Migration_0065_idToUuid.Migration as M_0065
+import qualified Wizard.Database.Migration.Production.Migration_0066_tcKnowledgeModel.Migration as M_0066
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -135,4 +136,5 @@ migrationDefinitions =
   , M_0063.definition
   , M_0064.definition
   , M_0065.definition
+  , M_0066.definition
   ]

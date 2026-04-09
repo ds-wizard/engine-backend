@@ -21,24 +21,20 @@ instance ToRow KnowledgeModelEditorReply where
               [ toField StringReplyType
               , toField . PGArray $ [sValue]
               , toField (Nothing :: Maybe String)
-              , toField (Nothing :: Maybe String)
               ]
             AnswerReply {..} ->
               [ toField AnswerReplyType
               , toField . PGArray $ [aValue]
-              , toField (Nothing :: Maybe String)
               , toField (Nothing :: Maybe String)
               ]
             MultiChoiceReply {..} ->
               [ toField MultiChoiceReplyType
               , toField . PGArray $ mcValue
               , toField (Nothing :: Maybe String)
-              , toField (Nothing :: Maybe String)
               ]
             ItemListReply {..} ->
               [ toField ItemListReplyType
               , toField . PGArray $ ilValue
-              , toField (Nothing :: Maybe String)
               , toField (Nothing :: Maybe String)
               ]
             IntegrationReply {..} ->
@@ -47,32 +43,20 @@ instance ToRow KnowledgeModelEditorReply where
                   [ toField IntegrationReplyType
                   , toField . PGArray $ [value]
                   , toField (Nothing :: Maybe String)
-                  , toField (Nothing :: Maybe String)
-                  ]
-                IntegrationLegacyType {..} ->
-                  [ toField IntegrationReplyType
-                  , toField . PGArray $ [value]
-                  , case intId of
-                      Just iId -> toField iId
-                      Nothing -> toField "<<integration-type-empty-id>>"
-                  , toField (Nothing :: Maybe String)
                   ]
                 IntegrationType {..} ->
                   [ toField IntegrationReplyType
                   , toField . PGArray $ [value]
-                  , toField (Nothing :: Maybe String)
                   , toField raw
                   ]
             ItemSelectReply {..} ->
               [ toField ItemSelectReplyType
               , toField . PGArray $ [isValue]
               , toField (Nothing :: Maybe String)
-              , toField (Nothing :: Maybe String)
               ]
             FileReply {..} ->
               [ toField FileReplyType
               , toField . PGArray $ [fValue]
-              , toField (Nothing :: Maybe String)
               , toField (Nothing :: Maybe String)
               ]
      in [toField path]
@@ -92,7 +76,6 @@ instance FromRow KnowledgeModelEditorReply where
           case mValueText :: Maybe (PGArray T.Text) of
             Just valueText -> fmap T.unpack . fromPGArray $ valueText
             Nothing -> []
-    mValueId <- field
     mValueRaw <- field
     let value =
           case valueType of
@@ -105,11 +88,7 @@ instance FromRow KnowledgeModelEditorReply where
                 { iValue =
                     case mValueRaw of
                       Just raw -> IntegrationType {value = head valueText, raw = raw}
-                      Nothing ->
-                        case mValueId of
-                          Just "<<integration-type-empty-id>>" -> IntegrationLegacyType {intId = Nothing, value = head valueText}
-                          Just valueId -> IntegrationLegacyType {intId = Just valueId, value = head valueText}
-                          Nothing -> PlainType {value = head valueText}
+                      Nothing -> PlainType {value = head valueText}
                 }
             Just ItemSelectReplyType -> ItemSelectReply . u' . head $ valueText
             Just FileReplyType -> FileReply . u' . head $ valueText

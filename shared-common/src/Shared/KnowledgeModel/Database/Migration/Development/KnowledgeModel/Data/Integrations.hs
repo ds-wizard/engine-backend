@@ -3,6 +3,7 @@ module Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.
 import qualified Data.Map.Strict as M
 
 import Shared.Common.Model.Common.MapEntry
+import Shared.Common.Util.Aeson
 import Shared.Common.Util.Uuid
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 
@@ -71,102 +72,54 @@ requestFailedTypeHintResponse1 =
     { message = "Request timed out after 30 seconds"
     }
 
-ontologyPortal' :: Integration
-ontologyPortal' = ApiLegacyIntegration' ontologyPortal
+repositoryApiEdited' :: Integration
+repositoryApiEdited' = ApiIntegration' repositoryApiEdited
 
-ontologyPortal :: ApiLegacyIntegration
-ontologyPortal =
-  ApiLegacyIntegration
-    { uuid = u' "e595a99e-5b10-4ac1-a6ef-379c849f9c84"
-    , iId = "ontologyPortal"
-    , name = "Ontology Portal"
-    , variables = ["domain", "country"]
-    , logo = Nothing
+repositoryApiEdited :: ApiIntegration
+repositoryApiEdited =
+  ApiIntegration
+    { uuid = repositoryApi.uuid
+    , name = "Edited Repository API"
+    , variables = ["domain", "country", "language"]
+    , allowCustomReply = True
     , requestMethod = "GET"
-    , requestUrl = "${baseurl}/${path}?domain=${domain}&country=${country}&q=${q}"
-    , requestHeaders = [MapEntry "Api-Key" "${apiKey}"]
-    , requestBody = ""
-    , requestEmptySearch = True
+    , requestUrl = "{{secrets.repositoryApiUrl}}/{{secrets.repositoryPath}}?domain={{variables.domain}}&country={{variables.country}}&language={{variables.language}}&q={{q}}"
+    , requestHeaders = [MapEntry "Api-Key" "{{secrets.repositoryApiKey}}"]
+    , requestBody = Nothing
+    , requestAllowEmptySearch = True
     , responseListField = Just "nested.results"
-    , responseItemId = Just "{{item.id}}"
-    , responseItemTemplate = "{{item.name}}"
-    , itemUrl = Just "https://example.com/ontologies/${id}"
+    , responseItemTemplate = "{{item.name}} ({{item.domain}}, {{item.language}})"
+    , responseItemTemplateForSelection = Just "{{item.id}}: {{item.name}}"
+    , testQ = "test"
+    , testVariables = M.fromList [("domain", "biology"), ("language", "en")]
+    , testResponse = Just repositoryApiTypeHintExchange1
     , annotations = []
     }
 
-ontologyPortalEdited' :: Integration
-ontologyPortalEdited' = ApiLegacyIntegration' ontologyPortalEdited
+orcidPluginIntegration' :: Integration
+orcidPluginIntegration' = PluginIntegration' orcidPluginIntegration
 
-ontologyPortalEdited :: ApiLegacyIntegration
-ontologyPortalEdited =
-  ontologyPortal
-    { iId = "editedOntologyPortal"
-    , name = "EDITED: Ontology Portal"
-    , variables = ["domain", "language"]
-    , logo = Nothing
-    , requestMethod = "PUT"
-    , requestUrl = "${baseurl}/edited-${path}?domain=${domain}&language=${language}&q=${q}&edited"
-    , requestHeaders = [MapEntry "Api-Key-Edited" "${apiKey}-EDITED"]
-    , requestBody = "{}"
-    , requestEmptySearch = False
-    , responseListField = Just "nested.results"
-    , responseItemId = Just "EDITED: {{item.id}}"
-    , responseItemTemplate = "EDITED: {{item.name}}"
-    , itemUrl = Just "https://example.com/ontologies-edited/{{item.id}}"
-    , annotations = [MapEntry "newAnnotation" "someValue"]
-    }
-
-bioPortal' :: Integration
-bioPortal' = ApiLegacyIntegration' bioPortal
-
-bioPortal :: ApiLegacyIntegration
-bioPortal =
-  ApiLegacyIntegration
-    { uuid = u' "32b5f11d-960b-4ce9-889f-fc7d29964122"
-    , iId = "bioPortal"
-    , name = "Bio Portal"
-    , variables = ["domain", "keyword"]
-    , logo = Nothing
-    , requestMethod = "GET"
-    , requestUrl = "${baseurl}/${path}?domain=${domain}&keyword=${keyword}&q=${q}"
-    , requestHeaders = [MapEntry "Api-Key" "${apiKey}"]
-    , requestBody = ""
-    , requestEmptySearch = False
-    , responseListField = Nothing
-    , responseItemId = Just "{{item.id}}"
-    , responseItemTemplate = "{{item.name}}"
-    , itemUrl = Just "https://example.com/portals/{{item.id}}"
-    , annotations = []
-    }
-
-widgetPortal' :: Integration
-widgetPortal' = WidgetIntegration' widgetPortal
-
-widgetPortal :: WidgetIntegration
-widgetPortal =
-  WidgetIntegration
+orcidPluginIntegration :: PluginIntegration
+orcidPluginIntegration =
+  PluginIntegration
     { uuid = u' "dc19efbe-fdda-4f27-a51f-56662f4da808"
-    , iId = "widgetPortal"
-    , name = "Widget Portal"
-    , variables = ["domain", "widgetType"]
-    , logo = Nothing
-    , widgetUrl = "${baseurl}/widget-portal.json?domain=${domain}&widgetType=${widgetType}&q=${q}"
-    , itemUrl = Just "https://example.com/widgets/{{item.id}}"
+    , name = "ORCID"
+    , pluginUuid = u' "d5524495-9a8d-4cee-a0b9-021df997fdc8"
+    , pluginIntegrationId = "Orcid"
+    , pluginIntegrationSettings = mapToObject (M.fromList [("setting1", "value1")])
     , annotations = []
     }
 
-widgetPortalEdited' :: Integration
-widgetPortalEdited' = WidgetIntegration' widgetPortalEdited
+orcidPluginIntegrationEdited' :: Integration
+orcidPluginIntegrationEdited' = PluginIntegration' orcidPluginIntegrationEdited
 
-widgetPortalEdited :: WidgetIntegration
-widgetPortalEdited =
-  WidgetIntegration
+orcidPluginIntegrationEdited :: PluginIntegration
+orcidPluginIntegrationEdited =
+  PluginIntegration
     { uuid = u' "dc19efbe-fdda-4f27-a51f-56662f4da808"
-    , iId = "editedBioPortal"
-    , name = "EDITED: Bio Portal"
-    , variables = ["domain", "keyword"]
-    , logo = Nothing
-    , widgetUrl = "${baseurl}/bio-portal.json?domain=${domain}&keyword=${keyword}&q=${q}"
-    , itemUrl = Just "https://example.com/portals/{{item.id}}"
+    , name = "ORCID"
+    , pluginUuid = u' "d5524495-9a8d-4cee-a0b9-021df997fdc8"
+    , pluginIntegrationId = "EditedOrcid"
+    , pluginIntegrationSettings = mapToObject (M.fromList [("setting1", "value1"), ("setting2", "value2")])
     , annotations = []
     }

@@ -3,8 +3,6 @@ module Wizard.Service.Document.Context.DocumentContextMapper where
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
-import Shared.Coordinate.Model.Coordinate.Coordinate
-import Shared.Coordinate.Util.Coordinate
 import qualified Shared.DocumentTemplate.Constant.DocumentTemplate as TemplateConstant
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
@@ -21,7 +19,6 @@ import Wizard.Model.Report.Report
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
-import qualified Wizard.Service.User.UserMapper as USR_Mapper
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 toDocumentContext
@@ -60,13 +57,13 @@ toDocumentContext doc appClientUrl project phaseUuid replies labels mProjectVers
         DocumentContextDocument
           { uuid = doc.uuid
           , name = doc.name
-          , documentTemplateId = buildCoordinate dt.organizationId dt.templateId dt.version
+          , documentTemplateUuid = doc.documentTemplateUuid
           , formatUuid = doc.formatUuid
-          , createdBy = USR_Mapper.toDTO <$> mDocCreatedBy
+          , createdBy = toDocumentContextUser <$> mDocCreatedBy
           , createdAt = doc.createdAt
           }
-    , questionnaire =
-        DocumentContextQuestionnaire
+    , project =
+        DocumentContextProject
           { uuid = project.uuid
           , name = project.name
           , description = project.description
@@ -77,13 +74,13 @@ toDocumentContext doc appClientUrl project phaseUuid replies labels mProjectVers
           , versions = projectVersionDtos
           , projectTags = project.projectTags
           , files = projectFiles
-          , createdBy = USR_Mapper.toDTO <$> mProjectCreatedBy
+          , createdBy = toDocumentContextUser <$> mProjectCreatedBy
           , createdAt = project.createdAt
           , updatedAt = project.updatedAt
           }
     , knowledgeModel = km
     , report = report
-    , package = toDocumentContextPackage pkg
+    , knowledgeModelPackage = toDocumentContextPackage pkg
     , organization = org
     , metamodelVersion = TemplateConstant.documentTemplateMetamodelVersion
     , users = users
@@ -94,7 +91,7 @@ toDocumentContextPackage :: KnowledgeModelPackage -> DocumentContextPackage
 toDocumentContextPackage pkg =
   let dto = toSimpleDTO pkg
    in DocumentContextPackage
-        { pId = show . createCoordinate $ pkg
+        { uuid = pkg.uuid
         , name = dto.name
         , organizationId = dto.organizationId
         , kmId = pkg.kmId
@@ -105,3 +102,17 @@ toDocumentContextPackage pkg =
         , organization = dto.organization
         , createdAt = dto.createdAt
         }
+
+toDocumentContextUser :: User -> DocumentContextUser
+toDocumentContextUser user =
+  DocumentContextUser
+    { uuid = user.uuid
+    , firstName = user.firstName
+    , lastName = user.lastName
+    , email = user.email
+    , affiliation = user.affiliation
+    , active = user.active
+    , imageUrl = user.imageUrl
+    , createdAt = user.createdAt
+    , updatedAt = user.updatedAt
+    }

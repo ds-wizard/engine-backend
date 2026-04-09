@@ -423,9 +423,13 @@ plugin_addAll =
             { name = "url"
             , aType = StringDevOperationParameterType
             }
+        , DevOperationParameter
+            { name = "enabled"
+            , aType = BoolDevOperationParameterType
+            }
         ]
     , function = \reqDto -> do
-        createPluginForAllTenants (u' . head $ reqDto.parameters) (reqDto.parameters !! 1)
+        createPluginForAllTenants (u' . head $ reqDto.parameters) (reqDto.parameters !! 1) (read $ reqDto.parameters !! 2)
         return "Done"
     }
 
@@ -448,9 +452,13 @@ plugin_addForTenant =
             { name = "url"
             , aType = StringDevOperationParameterType
             }
+        , DevOperationParameter
+            { name = "enabled"
+            , aType = BoolDevOperationParameterType
+            }
         ]
     , function = \reqDto -> do
-        createPluginForTenant (u' . head $ reqDto.parameters) (u' $ reqDto.parameters !! 1) (reqDto.parameters !! 2)
+        createPluginForTenant (u' . head $ reqDto.parameters) (u' $ reqDto.parameters !! 1) (reqDto.parameters !! 2) (read $ reqDto.parameters !! 3)
         return "Done"
     }
 

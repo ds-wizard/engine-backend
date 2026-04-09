@@ -7,7 +7,6 @@ import GHC.Generics
 
 import Shared.Common.Model.Common.SemVer2Tuple
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Project.File.ProjectFileSimple
 import Wizard.Model.Project.ProjectReply
 import Wizard.Model.Project.Version.ProjectVersionList
@@ -19,10 +18,10 @@ import WizardLib.Public.Api.Resource.User.Group.UserGroupDetailDTO
 data DocumentContext = DocumentContext
   { config :: DocumentContextConfig
   , document :: DocumentContextDocument
-  , questionnaire :: DocumentContextQuestionnaire
+  , project :: DocumentContextProject
   , knowledgeModel :: KnowledgeModel
   , report :: Report
-  , package :: DocumentContextPackage
+  , knowledgeModelPackage :: DocumentContextPackage
   , organization :: TenantConfigOrganization
   , metamodelVersion :: SemVer2Tuple
   , users :: [DocumentContextUserPerm]
@@ -41,7 +40,7 @@ data DocumentContextConfig = DocumentContextConfig
   deriving (Show, Eq, Generic)
 
 data DocumentContextPackage = DocumentContextPackage
-  { pId :: String
+  { uuid :: U.UUID
   , name :: String
   , organizationId :: String
   , kmId :: String
@@ -54,7 +53,20 @@ data DocumentContextPackage = DocumentContextPackage
   }
   deriving (Show, Eq, Generic)
 
-data DocumentContextQuestionnaire = DocumentContextQuestionnaire
+data DocumentContextUser = DocumentContextUser
+  { uuid :: U.UUID
+  , firstName :: String
+  , lastName :: String
+  , email :: String
+  , affiliation :: Maybe String
+  , active :: Bool
+  , imageUrl :: Maybe String
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  }
+  deriving (Show, Eq, Generic)
+
+data DocumentContextProject = DocumentContextProject
   { uuid :: U.UUID
   , name :: String
   , description :: Maybe String
@@ -65,7 +77,7 @@ data DocumentContextQuestionnaire = DocumentContextQuestionnaire
   , versions :: [ProjectVersionList]
   , projectTags :: [String]
   , files :: [ProjectFileSimple]
-  , createdBy :: Maybe UserDTO
+  , createdBy :: Maybe DocumentContextUser
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -74,15 +86,15 @@ data DocumentContextQuestionnaire = DocumentContextQuestionnaire
 data DocumentContextDocument = DocumentContextDocument
   { uuid :: U.UUID
   , name :: String
-  , documentTemplateId :: String
+  , documentTemplateUuid :: U.UUID
   , formatUuid :: U.UUID
-  , createdBy :: Maybe UserDTO
+  , createdBy :: Maybe DocumentContextUser
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
 
 data DocumentContextUserPerm = DocumentContextUserPerm
-  { user :: UserDTO
+  { user :: DocumentContextUser
   , perms :: [String]
   }
   deriving (Show, Eq, Generic)

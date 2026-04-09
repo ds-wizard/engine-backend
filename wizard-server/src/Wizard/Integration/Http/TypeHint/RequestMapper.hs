@@ -1,5 +1,4 @@
 module Wizard.Integration.Http.TypeHint.RequestMapper (
-  toRetrieveLegacyTypeHintsRequest,
   toTypeHintTestRequestError,
   toTypeHintTestRequest,
   toHttpRequest,
@@ -17,18 +16,7 @@ import Shared.Common.Model.Common.MapEntry
 import Shared.Common.Model.Http.HttpRequest
 import Shared.Common.Util.Aeson as A
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Util.Interpolation (interpolateMapValues, interpolateString)
-import Wizard.Util.Jinja (renderJinjaMultiple, renderJinjaSingle)
-
-toRetrieveLegacyTypeHintsRequest :: ApiLegacyIntegration -> M.Map String String -> M.Map String String -> HttpRequest
-toRetrieveLegacyTypeHintsRequest intConfig encodedVariables variables =
-  HttpRequest
-    { requestMethod = intConfig.requestMethod
-    , requestUrl = interpolateString encodedVariables intConfig.requestUrl
-    , requestHeaders = interpolateMapValues variables (mapEntryToMap intConfig.requestHeaders)
-    , requestBody = BS.pack $ interpolateString variables intConfig.requestBody
-    , multipart = Nothing
-    }
+import WizardLib.Public.Util.Jinja (renderJinjaMultiple, renderJinjaSingle)
 
 toTypeHintTestRequestError :: TypeHintRequest -> String -> TypeHintExchange
 toTypeHintTestRequestError testRequest message =

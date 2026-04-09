@@ -3,6 +3,7 @@ module Wizard.Service.KnowledgeModel.Metamodel.Migrator.Migrations.Utils where
 import Data.Aeson hiding (Key)
 import Data.Aeson.Key (fromText)
 import qualified Data.Aeson.KeyMap as KM
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 
 type Key = T.Text
@@ -40,6 +41,35 @@ migrateByEventType migrationFn v@(Object obj) =
     _ -> v
 migrateByEventType _ v = v
 
+migrateByEventTypeMaybe :: (T.Text -> Object -> Maybe Object) -> Value -> Maybe Value
+migrateByEventTypeMaybe migrationFn v@(Object obj) =
+  case KM.lookup "eventType" obj of
+    (Just (String eventType)) ->
+      case migrationFn eventType obj of
+        Just newObj -> Just (Object newObj)
+        Nothing -> Nothing
+    _ -> Nothing
+migrateByEventTypeMaybe _ v = Nothing
+
+migrateEventContent :: (Value -> Value) -> Value -> Value
+migrateEventContent contentMigrationFn v@(Object obj) =
+  case KM.lookup "content" obj of
+    (Just contentVal) ->
+      let newContent = contentMigrationFn contentVal
+       in Object (KM.insert "content" newContent obj)
+    _ -> v
+migrateEventContent _ v = v
+
+migrateEventContentMaybe :: (Value -> Maybe Value) -> Value -> Maybe Value
+migrateEventContentMaybe contentMigrationFn v@(Object obj) =
+  case KM.lookup "content" obj of
+    (Just contentVal) ->
+      case contentMigrationFn contentVal of
+        Just newContent -> Just $ Object (KM.insert "content" newContent obj)
+        Nothing -> Nothing
+    _ -> Nothing
+migrateEventContentMaybe _ v = Nothing
+
 unchangedValue :: Value
 unchangedValue = Object (KM.singleton "changed" (Bool False))
 
@@ -69,3 +99,6 @@ endsWith text suffix
 
 chainMigrations :: [Value -> Value] -> (Value -> Value)
 chainMigrations = foldl (.) id
+
+extractValue :: KM.Key -> Object -> Value
+extractValue key = fromMaybe unchangedValue . KM.lookup key

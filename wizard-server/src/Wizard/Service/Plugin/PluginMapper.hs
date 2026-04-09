@@ -5,12 +5,12 @@ import qualified Data.UUID as U
 
 import Wizard.Model.Plugin.Plugin
 
-toPlugin :: U.UUID -> String -> U.UUID -> UTCTime -> Plugin
-toPlugin uuid url tenantUuid now =
+toPlugin :: U.UUID -> String -> Bool -> U.UUID -> UTCTime -> Plugin
+toPlugin uuid url enabled tenantUuid now =
   Plugin
     { uuid = uuid
     , url = url
-    , enabled = True
+    , enabled = enabled
     , tenantUuid = tenantUuid
     , createdAt = now
     , updatedAt = now

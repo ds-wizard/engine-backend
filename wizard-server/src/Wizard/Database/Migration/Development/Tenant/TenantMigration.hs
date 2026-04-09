@@ -4,7 +4,6 @@ import Shared.Common.Constant.Component
 import Shared.Common.Util.Logger
 import Wizard.Database.DAO.Tenant.Config.TenantConfigAuthenticationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigDashboardAndLoginScreenDAO
-import Wizard.Database.DAO.Tenant.Config.TenantConfigKnowledgeModelDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOrganizationDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigOwlDAO
 import Wizard.Database.DAO.Tenant.Config.TenantConfigPrivacyAndSupportDAO
@@ -51,7 +50,6 @@ runConfigMigration = do
   insertTenantConfigLookAndFeel defaultLookAndFeel
   insertTenantConfigLookAndFeelCustomMenuLink defaultLookAndFeelCustomLink
   insertTenantConfigRegistry defaultRegistryEncrypted
-  insertTenantConfigKnowledgeModel defaultKnowledgeModelEncrypted
   insertTenantConfigProject defaultProjectEncrypted
   insertTenantConfigSubmission (defaultSubmission {services = []})
   insertTenantConfigFeatures defaultFeatures

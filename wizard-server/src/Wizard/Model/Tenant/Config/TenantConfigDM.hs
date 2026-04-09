@@ -81,15 +81,6 @@ defaultRegistry =
     , updatedAt = dt' 2018 1 20
     }
 
-defaultKnowledgeModel :: TenantConfigKnowledgeModel
-defaultKnowledgeModel =
-  TenantConfigKnowledgeModel
-    { tenantUuid = U.nil
-    , integrationConfig = ""
-    , createdAt = dt' 2018 1 20
-    , updatedAt = dt' 2018 1 20
-    }
-
 defaultProject :: TenantConfigProject
 defaultProject =
   TenantConfigProject

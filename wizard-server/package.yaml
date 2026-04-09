@@ -1,5 +1,5 @@
 name: wizard-server
-version: '4.28.1'
+version: '4.29.0'
 synopsis: Engine Wizard
 description: Engine Wizard
 category: Web
@@ -20,7 +20,6 @@ library:
       ghc-options: -threaded -O0 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial -Werror=missing-fields -Werror=incomplete-patterns
     else:
       ghc-options: -threaded -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial -Werror=missing-fields -Werror=incomplete-patterns
-  extra-libraries: jinja
   dependencies:
   - shared-common
   - registry-public
@@ -127,7 +126,6 @@ tests:
     - case-insensitive
     - containers
     - data-default
-    - ginger
     - http-client
     - http-types
     - jwt

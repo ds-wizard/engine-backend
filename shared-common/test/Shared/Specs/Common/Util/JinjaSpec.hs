@@ -1,10 +1,10 @@
-module Wizard.Specs.Util.JinjaSpec where
+module Shared.Specs.Common.Util.JinjaSpec where
 
 import Data.Aeson
 import Data.Either (isLeft)
 import Test.Hspec
 
-import Wizard.Util.Jinja
+import WizardLib.Public.Util.Jinja
 
 jinjaSpec = do
   describe "renderJinjaSingle" $ do

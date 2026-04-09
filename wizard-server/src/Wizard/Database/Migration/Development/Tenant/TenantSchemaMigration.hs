@@ -30,7 +30,6 @@ dropConfigTables = do
         \DROP TABLE IF EXISTS config_submission_service;\
         \DROP TABLE IF EXISTS config_submission;\
         \DROP TABLE IF EXISTS config_project;\
-        \DROP TABLE IF EXISTS config_knowledge_model;\
         \DROP TABLE IF EXISTS config_registry;\
         \DROP TABLE IF EXISTS config_look_and_feel_custom_menu_link; \
         \DROP TABLE IF EXISTS config_look_and_feel; \
@@ -87,7 +86,6 @@ createConfigTables = do
   createTcLookAndFeelTable
   createTcLookAndFeelCustomMenuLinkTable
   createTcRegistryTable
-  createTcKnowledgeModelTable
   createTcProjectTable
   createTcSubmissionTable
   createTcFeaturesTable
@@ -262,21 +260,6 @@ createTcRegistryTable = do
         \    updated_at   timestamptz NOT NULL, \
         \    CONSTRAINT config_registry_pk PRIMARY KEY (tenant_uuid), \
         \    CONSTRAINT config_registry_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
-        \);"
-  let action conn = execute_ conn sql
-  runDB action
-
-createTcKnowledgeModelTable = do
-  logInfo _CMP_MIGRATION "(Table/ConfigKnowledgeModel) create tables"
-  let sql =
-        "CREATE TABLE config_knowledge_model \
-        \( \
-        \    tenant_uuid        uuid        NOT NULL, \
-        \    integration_config varchar     NOT NULL, \
-        \    created_at         timestamptz NOT NULL, \
-        \    updated_at         timestamptz NOT NULL, \
-        \    CONSTRAINT config_knowledge_model_pk PRIMARY KEY (tenant_uuid), \
-        \    CONSTRAINT config_knowledge_model_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

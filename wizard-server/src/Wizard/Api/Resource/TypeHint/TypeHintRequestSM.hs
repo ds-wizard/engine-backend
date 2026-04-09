@@ -8,9 +8,6 @@ import Wizard.Api.Resource.TypeHint.TypeHintRequestDTO
 import Wizard.Api.Resource.TypeHint.TypeHintRequestJM ()
 import Wizard.Database.Migration.Development.TypeHint.Data.TypeHints
 
-instance ToSchema TypeHintLegacyRequestDTO where
-  declareNamedSchema = toSwagger typeHintLegacyRequest
-
 instance ToSchema TypeHintRequestDTO where
   declareNamedSchema = toSwaggerWithType "requestType" projectTypeHintRequest
 

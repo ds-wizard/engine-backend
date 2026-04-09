@@ -17,7 +17,6 @@ instance FromRow ProjectEventList where
     createdAt <- field
     valueType <- field
     valueText <- fieldValueText
-    mValueId <- field
     mValueRaw <- field
     createdBy <- fieldUserSuggestion'
     case aType of
@@ -26,7 +25,7 @@ instance FromRow ProjectEventList where
           SetReplyEventList
             { uuid = uuid
             , path = fromJust mPath
-            , value = parseValue valueType valueText mValueId mValueRaw
+            , value = parseValue valueType valueText mValueRaw
             , createdBy = createdBy
             , createdAt = createdAt
             }

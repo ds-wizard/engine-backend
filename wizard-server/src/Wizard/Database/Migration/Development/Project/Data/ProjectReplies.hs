@@ -32,7 +32,6 @@ fReplies =
     , rQ4_it2_q6
     , rQ9
     , rQ10
-    , rQ11
     ]
 
 fRepliesWithUpdated :: M.Map String Reply
@@ -51,7 +50,6 @@ fRepliesWithUpdated =
     , rQ4_it2_q6
     , rQ9
     , rQ10
-    , rQ11
     ]
 
 fRepliesWithDeleted :: M.Map String Reply
@@ -69,11 +67,10 @@ fRepliesWithDeleted =
     , rQ4_it2_q6
     , rQ9
     , rQ10
-    , rQ11
     ]
 
 fRepliesEdited :: M.Map String Reply
-fRepliesEdited = M.fromList [rQ1, rQ2, rQ2_aYes_fuQ1, rQ3, rQ9, rQ10, rQ11]
+fRepliesEdited = M.fromList [rQ1, rQ2, rQ2_aYes_fuQ1, rQ3, rQ9, rQ10]
 
 rQ1 :: ReplyTuple
 rQ1 =
@@ -242,11 +239,14 @@ rQ9 :: ReplyTuple
 rQ9 =
   ( createReplyKey [chapter3.uuid, question9.uuid]
   , Reply
-      { value = IntegrationReply {iValue = PlainType rQ9Value}
+      { value = IntegrationReply {iValue = r9IntType}
       , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
       , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 13
       }
   )
+
+r9IntType :: IntegrationReplyType
+r9IntType = PlainType rQ9Value
 
 rQ9Value :: String
 rQ9Value = "Plain reply to 9st question"
@@ -261,23 +261,9 @@ rQ9WithNewType =
       }
   )
 
+-- ------------------------------------------------------------------------
 rQ10 :: ReplyTuple
 rQ10 =
-  ( createReplyKey [chapter3.uuid, question10.uuid]
-  , Reply
-      { value = IntegrationReply {iValue = rQ10IntValue}
-      , createdBy = Just . UM.toSuggestion . UM.toSimple $ userAlbert
-      , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 15
-      }
-  )
-
-rQ10IntValue :: IntegrationReplyType
-rQ10IntValue =
-  IntegrationLegacyType {intId = Just "bsg-p000007", value = "Integration reply to 9st question"}
-
--- ------------------------------------------------------------------------
-rQ11 :: ReplyTuple
-rQ11 =
   ( createReplyKey [chapter3.uuid, question11.uuid]
   , Reply
       { value = MultiChoiceReply {mcValue = [q11_choice2.uuid]}

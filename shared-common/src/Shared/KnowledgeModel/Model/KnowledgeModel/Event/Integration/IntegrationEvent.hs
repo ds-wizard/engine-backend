@@ -1,7 +1,9 @@
 module Shared.KnowledgeModel.Model.KnowledgeModel.Event.Integration.IntegrationEvent where
 
+import qualified Data.Aeson as A
 import Data.Hashable
 import qualified Data.Map.Strict as M
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Common.MapEntry
@@ -11,8 +13,7 @@ import Shared.KnowledgeModel.Util.Hashable ()
 
 data AddIntegrationEvent
   = AddApiIntegrationEvent' AddApiIntegrationEvent
-  | AddApiLegacyIntegrationEvent' AddApiLegacyIntegrationEvent
-  | AddWidgetIntegrationEvent' AddWidgetIntegrationEvent
+  | AddPluginIntegrationEvent' AddPluginIntegrationEvent
   deriving (Show, Eq, Generic)
 
 instance Hashable AddIntegrationEvent
@@ -38,43 +39,20 @@ data AddApiIntegrationEvent = AddApiIntegrationEvent
 
 instance Hashable AddApiIntegrationEvent
 
-data AddApiLegacyIntegrationEvent = AddApiLegacyIntegrationEvent
-  { iId :: String
-  , name :: String
-  , variables :: [String]
-  , logo :: Maybe String
-  , requestMethod :: String
-  , requestUrl :: String
-  , requestHeaders :: [MapEntry String String]
-  , requestBody :: String
-  , requestEmptySearch :: Bool
-  , responseListField :: Maybe String
-  , responseItemId :: Maybe String
-  , responseItemTemplate :: String
-  , itemUrl :: Maybe String
+data AddPluginIntegrationEvent = AddPluginIntegrationEvent
+  { name :: String
+  , pluginUuid :: U.UUID
+  , pluginIntegrationId :: String
+  , pluginIntegrationSettings :: A.Value
   , annotations :: [MapEntry String String]
   }
   deriving (Show, Eq, Generic)
 
-instance Hashable AddApiLegacyIntegrationEvent
-
-data AddWidgetIntegrationEvent = AddWidgetIntegrationEvent
-  { iId :: String
-  , name :: String
-  , variables :: [String]
-  , logo :: Maybe String
-  , widgetUrl :: String
-  , itemUrl :: Maybe String
-  , annotations :: [MapEntry String String]
-  }
-  deriving (Show, Eq, Generic)
-
-instance Hashable AddWidgetIntegrationEvent
+instance Hashable AddPluginIntegrationEvent
 
 data EditIntegrationEvent
   = EditApiIntegrationEvent' EditApiIntegrationEvent
-  | EditApiLegacyIntegrationEvent' EditApiLegacyIntegrationEvent
-  | EditWidgetIntegrationEvent' EditWidgetIntegrationEvent
+  | EditPluginIntegrationEvent' EditPluginIntegrationEvent
   deriving (Show, Eq, Generic)
 
 instance Hashable EditIntegrationEvent
@@ -100,38 +78,16 @@ data EditApiIntegrationEvent = EditApiIntegrationEvent
 
 instance Hashable EditApiIntegrationEvent
 
-data EditApiLegacyIntegrationEvent = EditApiLegacyIntegrationEvent
-  { iId :: EventField String
-  , name :: EventField String
-  , variables :: EventField [String]
-  , logo :: EventField (Maybe String)
-  , requestMethod :: EventField String
-  , requestUrl :: EventField String
-  , requestHeaders :: EventField [MapEntry String String]
-  , requestBody :: EventField String
-  , requestEmptySearch :: EventField Bool
-  , responseListField :: EventField (Maybe String)
-  , responseItemId :: EventField (Maybe String)
-  , responseItemTemplate :: EventField String
-  , itemUrl :: EventField (Maybe String)
+data EditPluginIntegrationEvent = EditPluginIntegrationEvent
+  { name :: EventField String
+  , pluginUuid :: EventField U.UUID
+  , pluginIntegrationId :: EventField String
+  , pluginIntegrationSettings :: EventField A.Value
   , annotations :: EventField [MapEntry String String]
   }
   deriving (Show, Eq, Generic)
 
-instance Hashable EditApiLegacyIntegrationEvent
-
-data EditWidgetIntegrationEvent = EditWidgetIntegrationEvent
-  { iId :: EventField String
-  , name :: EventField String
-  , variables :: EventField [String]
-  , logo :: EventField (Maybe String)
-  , widgetUrl :: EventField String
-  , itemUrl :: EventField (Maybe String)
-  , annotations :: EventField [MapEntry String String]
-  }
-  deriving (Show, Eq, Generic)
-
-instance Hashable EditWidgetIntegrationEvent
+instance Hashable EditPluginIntegrationEvent
 
 data DeleteIntegrationEvent = DeleteIntegrationEvent
   deriving (Show, Eq, Generic)

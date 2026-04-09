@@ -1,8 +1,8 @@
-ontologyPortal:
+repositoryApi:
   baseurl: https://mockserver.ds-wizard.org
   apiKey: '123456'
 
-bioPortal:
+orcidPluginIntegration:
   baseurl: https://mockserver.ds-wizard.org
   apiKey: '123456'
 

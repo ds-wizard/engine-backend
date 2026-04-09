@@ -17,7 +17,6 @@ data TenantConfigChangeDTO = TenantConfigChangeDTO
   , dashboardAndLoginScreen :: TenantConfigDashboardAndLoginScreenChangeDTO
   , lookAndFeel :: TenantConfigLookAndFeelChangeDTO
   , registry :: TenantConfigRegistryChangeDTO
-  , knowledgeModel :: TenantConfigKnowledgeModelChangeDTO
   , project :: TenantConfigProjectChangeDTO
   , submission :: TenantConfigSubmissionChangeDTO
   , features :: TenantConfigFeaturesChangeDTO
@@ -78,11 +77,6 @@ data TenantConfigRegistryChangeDTO = TenantConfigRegistryChangeDTO
   , token :: String
   }
   deriving (Generic, Eq, Show)
-
-data TenantConfigKnowledgeModelChangeDTO = TenantConfigKnowledgeModelChangeDTO
-  { integrationConfig :: String
-  }
-  deriving (Generic, Show)
 
 data TenantConfigProjectChangeDTO = TenantConfigProjectChangeDTO
   { projectVisibility :: TenantConfigProjectVisibility

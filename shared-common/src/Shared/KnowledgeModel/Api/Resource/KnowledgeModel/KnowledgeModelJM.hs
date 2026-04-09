@@ -222,8 +222,7 @@ instance FromJSON Integration where
     referenceType <- o .: "integrationType"
     case referenceType of
       "ApiIntegration" -> parseJSON (Object o) >>= \event -> return (ApiIntegration' event)
-      "ApiLegacyIntegration" -> parseJSON (Object o) >>= \event -> return (ApiLegacyIntegration' event)
-      "WidgetIntegration" -> parseJSON (Object o) >>= \event -> return (WidgetIntegration' event)
+      "PluginIntegration" -> parseJSON (Object o) >>= \event -> return (PluginIntegration' event)
       _ -> fail "One of the integrations has unsupported integrationType"
   parseJSON _ = mzero
 
@@ -278,15 +277,8 @@ instance FromJSON RequestFailedTypeHintResponse where
   parseJSON = genericParseJSON (jsonOptionsWithTypeField "responseType")
 
 -- --------------------------------------------------------------------
-instance ToJSON ApiLegacyIntegration where
+instance ToJSON PluginIntegration where
   toJSON = genericToJSON (jsonOptionsWithTypeField "integrationType")
 
-instance FromJSON ApiLegacyIntegration where
-  parseJSON = genericParseJSON (jsonOptionsWithTypeField "integrationType")
-
--- --------------------------------------------------------------------
-instance ToJSON WidgetIntegration where
-  toJSON = genericToJSON (jsonOptionsWithTypeField "integrationType")
-
-instance FromJSON WidgetIntegration where
+instance FromJSON PluginIntegration where
   parseJSON = genericParseJSON (jsonOptionsWithTypeField "integrationType")

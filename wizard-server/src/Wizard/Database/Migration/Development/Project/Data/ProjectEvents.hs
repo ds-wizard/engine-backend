@@ -40,7 +40,6 @@ fEvents projectUuid =
   , sre_rQ4_it2_q6' projectUuid
   , sre_rQ9' projectUuid
   , sre_rQ10' projectUuid
-  , sre_rQ11' projectUuid
   , sphse_1' projectUuid
   , slble_rQ1' projectUuid
   ]
@@ -264,28 +263,13 @@ sre_rQ10' = SetReplyEvent' . sre_rQ10
 sre_rQ10 :: U.UUID -> SetReplyEvent
 sre_rQ10 projectUuid =
   SetReplyEvent
-    { uuid = createEventUuid projectUuid "40df71a81b92"
+    { uuid = createEventUuid projectUuid "c4f4481d5670"
     , path = fst rQ10
     , value = (snd rQ10).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
     , createdBy = fmap (.uuid) $ (snd rQ10).createdBy
     , createdAt = (snd rQ10).createdAt
-    }
-
-sre_rQ11' :: U.UUID -> ProjectEvent
-sre_rQ11' = SetReplyEvent' . sre_rQ11
-
-sre_rQ11 :: U.UUID -> SetReplyEvent
-sre_rQ11 projectUuid =
-  SetReplyEvent
-    { uuid = createEventUuid projectUuid "c4f4481d5670"
-    , path = fst rQ11
-    , value = (snd rQ11).value
-    , projectUuid = projectUuid
-    , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ11).createdBy
-    , createdAt = (snd rQ11).createdAt
     }
 
 cre_rQ1' :: U.UUID -> ProjectEvent
