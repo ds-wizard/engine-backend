@@ -8,6 +8,7 @@ data UserTokenDTO
   | ConsentsRequiredDTO
       { hash :: String
       }
+  | IdentityLinkedDTO
   | UserTokenDTO
       { token :: String
       , expiresAt :: UTCTime
