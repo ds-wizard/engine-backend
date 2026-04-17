@@ -24,6 +24,12 @@ validate reqDto user = do
   validateIsUserActive user
   validateUserPassword reqDto user
 
+validateLoginEnabled :: TenantConfigAuthentication -> User -> AppContextM ()
+validateLoginEnabled tcAuthentication user =
+  when (not tcAuthentication.internal.nonAdminLoginEnabled && user.uRole /= _USER_ROLE_ADMIN) $
+    throwError . UserError $
+      _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+
 validateIsUserActive :: User -> AppContextM ()
 validateIsUserActive user =
   if user.active

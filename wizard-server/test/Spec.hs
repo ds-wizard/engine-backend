@@ -41,6 +41,7 @@ import Wizard.Specs.API.KnowledgeModelEditor.APISpec
 import Wizard.Specs.API.KnowledgeModelPackage.APISpec
 import Wizard.Specs.API.KnowledgeModelSecret.APISpec
 import Wizard.Specs.API.Locale.APISpec
+import Wizard.Specs.API.OpenIdClient.APISpec
 import Wizard.Specs.API.Prefab.APISpec
 import Wizard.Specs.API.Project.APISpec
 import Wizard.Specs.API.ProjectCommentThread.APISpec
@@ -196,6 +197,7 @@ main =
               knowledgeModelPackageAPI baseContext appContext
               knowledgeModelSecretAPI baseContext appContext
               localeAPI baseContext appContext
+              openIdClientAPI baseContext appContext
               prefabAPI baseContext appContext
               projectAPI baseContext appContext
               projectCommentThreadAPI baseContext appContext

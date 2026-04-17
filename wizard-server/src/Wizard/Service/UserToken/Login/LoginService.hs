@@ -46,6 +46,7 @@ createLoginTokenFromCredentials reqDto mUserAgent =
       Just user -> do
         validate reqDto user
         tcAuthentication <- getCurrentTenantConfigAuthentication
+        validateLoginEnabled tcAuthentication user
         now <- liftIO getCurrentTime
         case (tcAuthentication.internal.twoFactorAuth.enabled, reqDto.code) of
           (False, _) -> do

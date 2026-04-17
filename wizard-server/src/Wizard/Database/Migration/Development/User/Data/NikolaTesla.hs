@@ -23,7 +23,6 @@ userNikola =
     , lastName = "Tesla"
     , email = "nikola.tesla@example.com"
     , affiliation = Nothing
-    , sources = [_USER_SOURCE_INTERNAL]
     , uRole = _USER_ROLE_DATA_STEWARD
     , permissions =
         [ "KM_PERM"
@@ -49,6 +48,8 @@ userNikola =
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
+    , emailVerifiedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
+    , emailPending = Nothing
     }
 
 userNikolaBioGroupMembership :: UserGroupMembership

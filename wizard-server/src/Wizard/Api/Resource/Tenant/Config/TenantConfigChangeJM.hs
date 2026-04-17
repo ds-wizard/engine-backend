@@ -26,18 +26,6 @@ instance FromJSON TenantConfigAuthenticationChangeDTO where
 instance ToJSON TenantConfigAuthenticationChangeDTO where
   toJSON = genericToJSON jsonOptions
 
-instance FromJSON TenantConfigAuthenticationExternalChangeDTO where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON TenantConfigAuthenticationExternalChangeDTO where
-  toJSON = genericToJSON jsonOptions
-
-instance FromJSON TenantConfigAuthenticationExternalServiceChangeDTO where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON TenantConfigAuthenticationExternalServiceChangeDTO where
-  toJSON = genericToJSON jsonOptions
-
 instance FromJSON TenantConfigPrivacyAndSupportChangeDTO where
   parseJSON = genericParseJSON jsonOptions
 

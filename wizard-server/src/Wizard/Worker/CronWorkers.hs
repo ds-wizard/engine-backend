@@ -19,6 +19,7 @@ import Wizard.Service.Project.Comment.ProjectCommentService
 import Wizard.Service.Project.Event.ProjectEventService hiding (squash)
 import Wizard.Service.Project.ProjectService
 import Wizard.Service.Registry.Synchronization.RegistrySynchronizationService
+import Wizard.Service.User.RegistrationPending.UserRegistrationPendingService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
 import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
 import WizardLib.Public.Service.UserToken.UserTokenService
@@ -37,6 +38,7 @@ workers =
   , assigneeNotificationWorker
   , registrySyncWorker
   , temporaryFileWorker
+  , cleanUserRegistrationPendingWorker
   , cleanUserTokenWorker
   , expireUserTokenWorker
   , vacuumCleanerWorker
@@ -183,6 +185,17 @@ cleanUserTokenWorker =
     , cronDefault = "0 3 * * *"
     , cron = (.serverConfig.userToken.clean.cron)
     , function = cleanTokens
+    , wrapInTransaction = True
+    }
+
+cleanUserRegistrationPendingWorker :: CronWorker BaseContext AppContextM
+cleanUserRegistrationPendingWorker =
+  CronWorker
+    { name = "CleanUserRegistrationPendingWorker"
+    , condition = (.serverConfig.actionKey.clean.enabled)
+    , cronDefault = "30 0 * * *"
+    , cron = (.serverConfig.actionKey.clean.cron)
+    , function = cleanUserRegistrationPending
     , wrapInTransaction = True
     }
 

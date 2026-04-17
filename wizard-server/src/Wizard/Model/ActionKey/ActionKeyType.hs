@@ -7,4 +7,5 @@ data ActionKeyType
   | ForgottenPasswordActionKey
   | TwoFactorAuthActionKey
   | ConsentsRequiredActionKey
+  | EmailChangeActionKey
   deriving (Show, Eq, Generic, Read)

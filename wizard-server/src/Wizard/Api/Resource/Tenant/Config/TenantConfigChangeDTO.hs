@@ -5,8 +5,6 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Config.SimpleFeature
-import Shared.OpenId.Model.OpenId.OpenIdClientParameter
-import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 
@@ -34,23 +32,6 @@ data TenantConfigOrganizationChangeDTO = TenantConfigOrganizationChangeDTO
 data TenantConfigAuthenticationChangeDTO = TenantConfigAuthenticationChangeDTO
   { defaultRole :: String
   , internal :: TenantConfigAuthenticationInternal
-  , external :: TenantConfigAuthenticationExternalChangeDTO
-  }
-  deriving (Generic, Eq, Show)
-
-data TenantConfigAuthenticationExternalChangeDTO = TenantConfigAuthenticationExternalChangeDTO
-  { services :: [TenantConfigAuthenticationExternalServiceChangeDTO]
-  }
-  deriving (Generic, Eq, Show)
-
-data TenantConfigAuthenticationExternalServiceChangeDTO = TenantConfigAuthenticationExternalServiceChangeDTO
-  { aId :: String
-  , name :: String
-  , url :: String
-  , clientId :: String
-  , clientSecret :: String
-  , parameters :: [OpenIdClientParameter]
-  , style :: OpenIdClientStyle
   }
   deriving (Generic, Eq, Show)
 

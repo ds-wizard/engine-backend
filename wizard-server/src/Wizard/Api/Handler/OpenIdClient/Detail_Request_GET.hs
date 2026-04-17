@@ -1,5 +1,6 @@
-module Wizard.Api.Handler.Auth.Detail_GET where
+module Wizard.Api.Handler.OpenIdClient.Detail_Request_GET where
 
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -8,22 +9,23 @@ import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.OpenId.Client.Flow.OpenIdClientFlowService
 
-type Detail_GET =
+type Detail_Request_GET =
   Header "Host" String
-    :> "auth"
-    :> Capture "id" String
+    :> "open-id-clients"
+    :> Capture "uuid" U.UUID
+    :> "request"
     :> QueryParam "flow" String
     :> QueryParam "clientUrl" String
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] NoContent)
 
-detail_GET
+detail_request_GET
   :: Maybe String
-  -> String
+  -> U.UUID
   -> Maybe String
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
-detail_GET mServerUrl authId mFlow mClientUrl =
+detail_request_GET mServerUrl providerUuid mFlow mClientUrl =
   runInUnauthService mServerUrl NoTransaction $
     addTraceUuidHeader =<< do
-      createAuthenticationUrl authId mFlow mClientUrl
+      createAuthenticationUrl providerUuid mFlow mClientUrl
       return NoContent

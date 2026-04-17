@@ -1,6 +1,6 @@
 module Wizard.Service.User.UserService where
 
-import Control.Monad (void, when)
+import Control.Monad (unless, void, when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Crypto.PasswordStore as PasswordStore
@@ -47,9 +47,11 @@ import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
 import Wizard.Service.UserToken.Login.LoginService
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
-import WizardLib.Public.Localization.Messages.Public
+import WizardLib.Public.Database.DAO.User.UserOpenIdIdentityDAO
+import WizardLib.Public.Model.OpenId.OpenIdClient
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
 import WizardLib.Public.Model.User.UserSuggestion
+import qualified WizardLib.Public.Service.User.UserOpenIdIdentityMapper as UserOpenIdIdentityMapper
 
 getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
 getUsersPage mQuery mRole pageable sort = do
@@ -116,49 +118,51 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions tenantUuid clientUrl sh
     sendAnalyticsEmailIfEnabled user
     return $ toDTO user
 
-createUserFromExternalService :: Maybe User -> String -> String -> String -> String -> Maybe String -> Maybe U.UUID -> Bool -> AppContextM User
-createUserFromExternalService mUserFromDb serviceId firstName lastName email mImageUrl mUserUuid active =
+createUserFromOpenIdLogin
+  :: OpenIdClient
+  -> String
+  -> String
+  -> String
+  -> String
+  -> Maybe String
+  -> Maybe U.UUID
+  -> Bool
+  -> AppContextM User
+createUserFromOpenIdLogin openIdClient externalId firstName lastName email mImageUrl mUserUuid active =
   runInTransaction $ do
+    checkUserLimit
+    checkActiveUserLimit
     now <- liftIO getCurrentTime
     tenantUuid <- asks currentTenantUuid
-    case mUserFromDb of
-      Just user ->
-        if user.active
-          then do
-            let updatedUser = fromUpdateUserExternalDTO user firstName lastName mImageUrl serviceId now
-            updateUserByUuid updatedUser
-            return updatedUser
-          else throwError $ UserError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
-      Nothing -> do
-        checkUserLimit
-        checkActiveUserLimit
-        serverConfig <- asks serverConfig
-        uUuid <-
-          case mUserUuid of
-            Just userUuid -> return userUuid
-            Nothing -> liftIO generateUuid
-        password <- liftIO $ generateRandomString 40
-        uPasswordHash <- generatePasswordHash password
-        tcAuthentication <- getCurrentTenantConfigAuthentication
-        let uRole = tcAuthentication.defaultRole
-        let uPerms = getPermissionForRole serverConfig uRole
-        let user =
-              fromUserExternalDTO
-                uUuid
-                firstName
-                lastName
-                email
-                uPasswordHash
-                [serviceId]
-                uRole
-                uPerms
-                active
-                mImageUrl
-                tenantUuid
-                now
-        insertUser user
-        sendAnalyticsEmailIfEnabled user
-        return user
+    serverConfig <- asks serverConfig
+    uUuid <-
+      case mUserUuid of
+        Just userUuid -> return userUuid
+        Nothing -> liftIO generateUuid
+    password <- liftIO $ generateRandomString 40
+    uPasswordHash <- generatePasswordHash password
+    tcAuthentication <- getCurrentTenantConfigAuthentication
+    let uRole = tcAuthentication.defaultRole
+    let uPerms = getPermissionForRole serverConfig uRole
+    let user =
+          fromUserExternalDTO
+            uUuid
+            firstName
+            lastName
+            email
+            uPasswordHash
+            uRole
+            uPerms
+            active
+            mImageUrl
+            tenantUuid
+            now
+    insertUser user
+    identityUuid <- liftIO generateUuid
+    let identity = UserOpenIdIdentityMapper.fromCreate identityUuid externalId Nothing user.uuid openIdClient.uuid openIdClient.tenantUuid now
+    _ <- insertUserOpenIdIdentity identity
+    sendAnalyticsEmailIfEnabled user
+    return user
 
 createOrUpdateUserFromCommand :: CreateOrUpdateUserCommand -> AppContextM User
 createOrUpdateUserFromCommand command =
@@ -236,11 +240,13 @@ resetUserPassword reqDto =
     mUser <- findUserByEmail' (toLower reqDto.email)
     case mUser of
       Just user -> do
-        tenantUuid <- asks currentTenantUuid
-        actionKey <- createActionKey user.uuid ForgottenPasswordActionKey tenantUuid
-        catchError
-          (sendResetPasswordMail (toDTO user) actionKey.hash)
-          (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT)
+        tcAuthentication <- getCurrentTenantConfigAuthentication
+        unless (not tcAuthentication.internal.nonAdminLoginEnabled && user.uRole /= _USER_ROLE_ADMIN) $ do
+          tenantUuid <- asks currentTenantUuid
+          actionKey <- createActionKey user.uuid ForgottenPasswordActionKey tenantUuid
+          catchError
+            (sendResetPasswordMail (toDTO user) actionKey.hash)
+            (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT)
       Nothing -> return ()
 
 changeUserState :: String -> Bool -> AppContextM ()
@@ -249,10 +255,42 @@ changeUserState hash active =
     checkActiveUserLimit
     actionKey <- findActionKeyByHash hash :: AppContextM (ActionKey U.UUID ActionKeyType)
     user <- findUserByUuid actionKey.identity
-    updatedUser <- updateUserTimestamp $ user {active = active}
+    now <- liftIO getCurrentTime
+    let baseUser :: User
+        baseUser = user {active = active, updatedAt = now}
+    let updatedUser :: User
+        updatedUser =
+          case (actionKey.aType, user.emailPending) of
+            (RegistrationActionKey, Just pendingEmail) ->
+              baseUser
+                { email = pendingEmail
+                , emailVerifiedAt = Just now
+                , emailPending = Nothing
+                }
+            _ -> baseUser
     updateUserByUuid updatedUser
-    deleteActionKeyByHash actionKey.hash
-    return ()
+    void $ deleteActionKeyByHash actionKey.hash
+
+confirmEmailChange :: String -> AppContextM ()
+confirmEmailChange hash =
+  runInTransaction $ do
+    actionKey <- findActionKeyByHashAndType hash EmailChangeActionKey :: AppContextM (ActionKey U.UUID ActionKeyType)
+    user <- findUserByUuid actionKey.identity
+    now <- liftIO getCurrentTime
+    case user.emailPending of
+      Just newEmail -> do
+        validateUserEmailUniqueness newEmail user.tenantUuid
+        let updatedUser :: User
+            updatedUser =
+              user
+                { email = newEmail
+                , emailPending = Nothing
+                , emailVerifiedAt = Just now
+                , updatedAt = now
+                }
+        updateUserByUuid updatedUser
+        void $ deleteActionKeyByHash actionKey.hash
+      Nothing -> void $ deleteActionKeyByHash actionKey.hash
 
 confirmConsents :: AuthConsentDTO -> Maybe String -> AppContextM UserTokenDTO
 confirmConsents reqDto mUserAgent = do

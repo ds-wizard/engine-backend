@@ -13,15 +13,16 @@ import Wizard.Model.Plugin.PluginList
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.UserProfile
+import WizardLib.Public.Model.OpenId.OpenIdClient
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
-toClientConfigDTO :: ServerConfig -> TenantConfigOrganization -> TenantConfigAuthentication -> TenantConfigPrivacyAndSupport -> TenantConfigDashboardAndLoginScreen -> TenantConfigLookAndFeel -> TenantConfigRegistry -> TenantConfigProject -> TenantConfigSubmission -> TenantConfigFeatures -> TenantConfigOwl -> Maybe UserProfile -> [String] -> [PluginList] -> M.Map U.UUID A.Value -> Tenant -> ClientConfigDTO
-toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcProject tcSubmission tcFeatures tcOwl mUserProfile tours plugins pluginSettings tenant =
+toClientConfigDTO :: ServerConfig -> TenantConfigOrganization -> TenantConfigAuthentication -> [OpenIdClient] -> TenantConfigPrivacyAndSupport -> TenantConfigDashboardAndLoginScreen -> TenantConfigLookAndFeel -> TenantConfigRegistry -> TenantConfigProject -> TenantConfigSubmission -> TenantConfigFeatures -> TenantConfigOwl -> Maybe UserProfile -> [String] -> [PluginList] -> M.Map U.UUID A.Value -> Tenant -> ClientConfigDTO
+toClientConfigDTO serverConfig tcOrganization tcAuthentication openIdClients tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcProject tcSubmission tcFeatures tcOwl mUserProfile tours plugins pluginSettings tenant =
   ClientConfigDTO
     { user = mUserProfile
     , tours = tours
     , organization = tcOrganization
-    , authentication = toClientAuthDTO tcAuthentication
+    , authentication = toClientAuthDTO tcAuthentication openIdClients
     , privacyAndSupport = tcPrivacyAndSupport
     , dashboardAndLoginScreen = tcDashboardAndLoginScreen
     , lookAndFeel = tcLookAndFeel
@@ -63,27 +64,27 @@ toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSuppo
           else []
     }
 
-toClientAuthDTO :: TenantConfigAuthentication -> ClientConfigAuthDTO
-toClientAuthDTO tcAuthentication =
+toClientAuthDTO :: TenantConfigAuthentication -> [OpenIdClient] -> ClientConfigAuthDTO
+toClientAuthDTO tcAuthentication openIdClients =
   ClientConfigAuthDTO
     { defaultRole = tcAuthentication.defaultRole
     , internal = tcAuthentication.internal
-    , external = toClientAuthExternalDTO tcAuthentication.external
+    , external = toClientAuthExternalDTO openIdClients
     }
 
-toClientAuthExternalDTO :: TenantConfigAuthenticationExternal -> ClientConfigAuthExternalDTO
-toClientAuthExternalDTO config =
+toClientAuthExternalDTO :: [OpenIdClient] -> ClientConfigAuthExternalDTO
+toClientAuthExternalDTO openIdClients =
   ClientConfigAuthExternalDTO
-    { services = toClientAuthExternalServiceDTO <$> config.services
+    { services = fmap toClientAuthExternalServiceDTO openIdClients
     }
 
-toClientAuthExternalServiceDTO :: TenantConfigAuthenticationExternalService -> ClientConfigAuthExternalServiceDTO
-toClientAuthExternalServiceDTO config =
+toClientAuthExternalServiceDTO :: OpenIdClient -> ClientConfigAuthExternalServiceDTO
+toClientAuthExternalServiceDTO openIdClient =
   ClientConfigAuthExternalServiceDTO
-    { aId = config.aId
-    , name = config.name
-    , url = config.url
-    , style = config.style
+    { uuid = openIdClient.uuid
+    , name = openIdClient.name
+    , url = openIdClient.url
+    , style = openIdClient.style
     }
 
 toClientConfigRegistryDTO :: ServerConfigRegistry -> TenantConfigRegistry -> ClientConfigRegistryDTO

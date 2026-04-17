@@ -96,6 +96,37 @@ sendRegistrationCreatedAnalyticsMail user =
             }
     sendEmailWithTenant body user.uuid user.tenantUuid
 
+sendEmailChangeMail :: User -> String -> String -> AppContextM ()
+sendEmailChangeMail user hash newEmail =
+  runInTransaction $ do
+    tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupport
+    tcLookAndFeel <- findTenantConfigLookAndFeel
+    tcMail <- findTenantConfigMail
+    clientUrl <- getClientUrl
+    let body =
+          MC.MailCommand
+            { mode = "wizard"
+            , template = "emailChange"
+            , recipients = [MC.MailRecipient {uuid = Just user.uuid, email = newEmail}]
+            , parameters =
+                M.fromList
+                  [ ("userUuid", A.uuid user.uuid)
+                  , ("userFirstName", A.string user.firstName)
+                  , ("userLastName", A.string user.lastName)
+                  , ("userEmail", A.string user.email)
+                  , ("newEmail", A.string newEmail)
+                  , ("hash", A.string hash)
+                  , ("clientUrl", A.string clientUrl)
+                  , ("appTitle", A.maybeString tcLookAndFeel.appTitle)
+                  , ("logoUrl", A.maybeString tcLookAndFeel.logoUrl)
+                  , ("primaryColor", A.maybeString tcLookAndFeel.primaryColor)
+                  , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
+                  , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
+                  , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
+                  ]
+            }
+    sendEmailWithTenant body user.uuid user.tenantUuid
+
 sendResetPasswordMail :: UserDTO -> String -> AppContextM ()
 sendResetPasswordMail user hash =
   runInTransaction $ do

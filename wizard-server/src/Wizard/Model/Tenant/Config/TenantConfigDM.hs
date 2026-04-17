@@ -26,13 +26,12 @@ defaultAuthentication =
     { tenantUuid = U.nil
     , defaultRole = _USER_ROLE_RESEARCHER
     , internal = defaultAuthenticationInternal
-    , external = defaultAuthenticationExternal
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 20
     }
 
 defaultAuthenticationInternal :: TenantConfigAuthenticationInternal
-defaultAuthenticationInternal = TenantConfigAuthenticationInternal {registration = SimpleFeature True, twoFactorAuth = defaultAuthenticationInternalTwoFactorAuth}
+defaultAuthenticationInternal = TenantConfigAuthenticationInternal {registration = SimpleFeature True, nonAdminLoginEnabled = True, twoFactorAuth = defaultAuthenticationInternalTwoFactorAuth}
 
 defaultAuthenticationInternalTwoFactorAuth :: TenantConfigAuthenticationInternalTwoFactorAuth
 defaultAuthenticationInternalTwoFactorAuth =
@@ -41,9 +40,6 @@ defaultAuthenticationInternalTwoFactorAuth =
     , codeLength = 6
     , expiration = 600
     }
-
-defaultAuthenticationExternal :: TenantConfigAuthenticationExternal
-defaultAuthenticationExternal = TenantConfigAuthenticationExternal {services = []}
 
 defaultPrivacyAndSupport :: TenantConfigPrivacyAndSupport
 defaultPrivacyAndSupport =

@@ -5,7 +5,6 @@ import Servant
 import Wizard.Api.Handler.ActionKey.Api
 import Wizard.Api.Handler.ApiKey.Api
 import Wizard.Api.Handler.AppKey.Api
-import Wizard.Api.Handler.Auth.Api
 import Wizard.Api.Handler.Config.Api
 import Wizard.Api.Handler.Dev.Api
 import Wizard.Api.Handler.Document.Api
@@ -23,6 +22,7 @@ import Wizard.Api.Handler.KnowledgeModelEditor.Api
 import Wizard.Api.Handler.KnowledgeModelPackage.Api
 import Wizard.Api.Handler.KnowledgeModelSecret.Api
 import Wizard.Api.Handler.Locale.Api
+import Wizard.Api.Handler.OpenIdClient.Api
 import Wizard.Api.Handler.PersistentCommand.Api
 import Wizard.Api.Handler.Prefab.Api
 import Wizard.Api.Handler.Project.Api
@@ -41,7 +41,6 @@ type ApplicationAPI =
   ActionKeyAPI
     :<|> ApiKeyAPI
     :<|> AppKeyAPI
-    :<|> AuthAPI
     :<|> ConfigAPI
     :<|> DevAPI
     :<|> DocumentTemplateAPI
@@ -59,6 +58,7 @@ type ApplicationAPI =
     :<|> KnowledgeModelPackageAPI
     :<|> KnowledgeModelSecretAPI
     :<|> LocaleAPI
+    :<|> OpenIdClientAPI
     :<|> PersistentCommandAPI
     :<|> PrefabAPI
     :<|> ProjectAPI
@@ -80,7 +80,6 @@ applicationServer =
   actionKeyServer
     :<|> apiKeyServer
     :<|> appKeyServer
-    :<|> authServer
     :<|> configServer
     :<|> devServer
     :<|> documentTemplateServer
@@ -98,6 +97,7 @@ applicationServer =
     :<|> knowledgeModelPackageServer
     :<|> knowledgeModelSecretServer
     :<|> localeServer
+    :<|> openIdClientServer
     :<|> persistentCommandServer
     :<|> prefabServer
     :<|> projectServer

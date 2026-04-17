@@ -14,7 +14,6 @@ data UserDTO = UserDTO
   , lastName :: String
   , email :: String
   , affiliation :: Maybe String
-  , sources :: [String]
   , uRole :: String
   , permissions :: [String]
   , active :: Bool
@@ -23,6 +22,8 @@ data UserDTO = UserDTO
   , lastSeenNewsId :: Maybe String
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
+  , emailVerifiedAt :: Maybe UTCTime
+  , emailPending :: Maybe String
   }
   deriving (Show, Generic)
 
@@ -33,12 +34,13 @@ instance Eq UserDTO where
       && a.lastName == b.lastName
       && a.email == b.email
       && a.affiliation == b.affiliation
-      && a.sources == b.sources
       && a.uRole == b.uRole
       && a.permissions == b.permissions
       && a.active == b.active
       && a.imageUrl == b.imageUrl
       && a.locale == b.locale
       && a.lastSeenNewsId == b.lastSeenNewsId
+      && a.emailVerifiedAt == b.emailVerifiedAt
+      && a.emailPending == b.emailPending
 
 instance Hashable UserDTO

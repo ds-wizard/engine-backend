@@ -36,7 +36,6 @@ dropConfigTables = do
         \DROP TABLE IF EXISTS config_dashboard_and_login_screen_announcement; \
         \DROP TABLE IF EXISTS config_dashboard_and_login_screen; \
         \DROP TABLE IF EXISTS config_privacy_and_support; \
-        \DROP TABLE IF EXISTS config_authentication_openid; \
         \DROP TABLE IF EXISTS config_authentication; \
         \DROP TABLE IF EXISTS config_organization; \
         \DROP TYPE IF EXISTS config_dashboard_and_login_screen_announcement_type;"
@@ -79,7 +78,6 @@ createConfigTables :: AppContextM Int64
 createConfigTables = do
   createTcOrganizationTable
   createTcAuthenticationTable
-  createTcInternalAuthenticationOpenIdTable
   createTcPrivacyAndSupportTable
   createTcDashboardAndLoginScreenTable
   createTcDashboardAndLoginScreenAnnouncementTable
@@ -124,31 +122,9 @@ createTcAuthenticationTable = do
         \    internal_two_factor_auth_code_expiration int         NOT NULL, \
         \    created_at                               timestamptz NOT NULL, \
         \    updated_at                               timestamptz NOT NULL, \
+        \    internal_non_admin_login_enabled         bool        NOT NULL, \
         \    CONSTRAINT config_authentication_pk PRIMARY KEY (tenant_uuid), \
         \    CONSTRAINT config_authentication_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
-        \);"
-  let action conn = execute_ conn sql
-  runDB action
-
-createTcInternalAuthenticationOpenIdTable = do
-  logInfo _CMP_MIGRATION "(Table/ConfigInternalAuthenticationOpenId) create tables"
-  let sql =
-        "CREATE TABLE config_authentication_openid \
-        \( \
-        \    id               varchar     NOT NULL, \
-        \    name             varchar     NOT NULL, \
-        \    url              varchar     NOT NULL, \
-        \    client_id        varchar     NOT NULL, \
-        \    client_secret    varchar     NOT NULL, \
-        \    parameters       jsonb       NOT NULL, \
-        \    style_icon       varchar, \
-        \    style_background varchar, \
-        \    style_color      varchar, \
-        \    tenant_uuid      uuid        NOT NULL, \
-        \    created_at       timestamptz NOT NULL, \
-        \    updated_at       timestamptz NOT NULL, \
-        \    CONSTRAINT config_authentication_openid_pk PRIMARY KEY (id, tenant_uuid), \
-        \    CONSTRAINT config_authentication_openid_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

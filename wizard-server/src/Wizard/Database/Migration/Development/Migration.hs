@@ -50,6 +50,10 @@ import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration 
 import Wizard.Model.Context.ContextMappers
 import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.ExternalLinkMigration as ExternalLink
 import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.ExternalLinkSchemaMigration as ExternalLink
+import qualified WizardLib.Public.Database.Migration.Development.OpenId.OpenIdClientMigration as OpenIdClient
+import qualified WizardLib.Public.Database.Migration.Development.OpenId.OpenIdClientSchemaMigration as OpenIdClient
+import qualified WizardLib.Public.Database.Migration.Development.User.UserOpenIdIdentitySchemaMigration as UserOpenIdIdentity
+import qualified WizardLib.Public.Database.Migration.Development.User.UserRegistrationPendingSchemaMigration as UserRegistrationPending
 
 runMigration = runAppContextWithBaseContext $ do
   logInfo _CMP_MIGRATION "started"
@@ -82,8 +86,11 @@ runMigration = runAppContextWithBaseContext $ do
   KnowledgeModelSecret.dropTables
   KnowledgeModelPackage.dropTables
   TemporaryFile.dropTables
+  UserRegistrationPending.dropTables
+  UserOpenIdIdentity.dropTables
   User.dropTables
   Tenant.dropConfigTables
+  OpenIdClient.dropTables
   DocumentTemplate.dropTables
   Locale.dropTables
   Plugin.dropTables
@@ -100,7 +107,10 @@ runMigration = runAppContextWithBaseContext $ do
   Locale.createTables
   DocumentTemplate.createTables
   Tenant.createConfigTables
+  OpenIdClient.createTables
   User.createTables
+  UserOpenIdIdentity.createTables
+  UserRegistrationPending.createTables
   TemporaryFile.createTables
   KnowledgeModelPackage.createTables
   KnowledgeModelSecret.createTables
@@ -137,6 +147,7 @@ runMigration = runAppContextWithBaseContext $ do
   Locale.runS3Migration
   -- 11. Load fixtures
   Tenant.runMigration
+  OpenIdClient.runMigration
   Plugin.runMigration
   User.runMigration
   KnowledgeModelPackage.runMigration

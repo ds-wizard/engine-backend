@@ -4,8 +4,6 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-_USER_SOURCE_INTERNAL = "internal"
-
 _USER_ROLE_ADMIN = "admin"
 
 _USER_ROLE_DATA_STEWARD = "dataSteward"
@@ -19,7 +17,6 @@ data User = User
   , email :: String
   , passwordHash :: String
   , affiliation :: Maybe String
-  , sources :: [String]
   , uRole :: String
   , permissions :: [String]
   , active :: Bool
@@ -31,6 +28,8 @@ data User = User
   , lastVisitedAt :: UTCTime
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
+  , emailVerifiedAt :: Maybe UTCTime
+  , emailPending :: Maybe String
   }
   deriving (Generic, Show)
 
@@ -42,7 +41,6 @@ instance Eq User where
       && a.email == b.email
       && a.passwordHash == b.passwordHash
       && a.affiliation == b.affiliation
-      && a.sources == b.sources
       && a.uRole == b.uRole
       && a.permissions == b.permissions
       && a.active == b.active
@@ -51,3 +49,5 @@ instance Eq User where
       && a.machine == b.machine
       && a.lastSeenNewsId == b.lastSeenNewsId
       && a.tenantUuid == b.tenantUuid
+      && a.emailVerifiedAt == b.emailVerifiedAt
+      && a.emailPending == b.emailPending

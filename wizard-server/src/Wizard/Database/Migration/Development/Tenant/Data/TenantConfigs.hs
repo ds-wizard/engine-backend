@@ -9,7 +9,6 @@ import Shared.Common.Util.Date
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
-import Shared.OpenId.Database.Migration.Development.OpenId.Data.OpenIds
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Model.Project.Project
@@ -67,11 +66,10 @@ defaultAuthenticationChangeDto =
   TenantConfigAuthenticationChangeDTO
     { defaultRole = _USER_ROLE_RESEARCHER
     , internal = defaultAuthenticationInternal
-    , external = defaultAuthenticationExternalChangeDto
     }
 
 defaultAuthenticationInternal :: TenantConfigAuthenticationInternal
-defaultAuthenticationInternal = TenantConfigAuthenticationInternal {registration = SimpleFeature True, twoFactorAuth = defaultAuthenticationInternalTwoFactorAuth}
+defaultAuthenticationInternal = TenantConfigAuthenticationInternal {registration = SimpleFeature True, nonAdminLoginEnabled = True, twoFactorAuth = defaultAuthenticationInternalTwoFactorAuth}
 
 defaultAuthenticationInternalTwoFactorAuth :: TenantConfigAuthenticationInternalTwoFactorAuth
 defaultAuthenticationInternalTwoFactorAuth =
@@ -79,30 +77,6 @@ defaultAuthenticationInternalTwoFactorAuth =
     { enabled = False
     , codeLength = 6
     , expiration = 600
-    }
-
-defaultAuthenticationExternal :: TenantConfigAuthenticationExternal
-defaultAuthenticationExternal = TenantConfigAuthenticationExternal {services = [defaultAuthenticationExternalService]}
-
-defaultAuthenticationExternalChangeDto :: TenantConfigAuthenticationExternalChangeDTO
-defaultAuthenticationExternalChangeDto = TenantConfigAuthenticationExternalChangeDTO {services = [defaultAuthenticationExternalServiceChangeDto]}
-
-defaultAuthenticationExternalService :: TenantConfigAuthenticationExternalService
-defaultAuthenticationExternalService = fromAuthenticationExternalServiceChangeDTO defaultAuthenticationExternalServiceChangeDto defaultTenant.uuid (dt' 2018 1 20) (dt' 2018 1 20)
-
-defaultAuthExternalServiceEncrypted :: TenantConfigAuthenticationExternalService
-defaultAuthExternalServiceEncrypted = process defaultSecret defaultAuthenticationExternalService
-
-defaultAuthenticationExternalServiceChangeDto :: TenantConfigAuthenticationExternalServiceChangeDTO
-defaultAuthenticationExternalServiceChangeDto =
-  TenantConfigAuthenticationExternalServiceChangeDTO
-    { aId = "google"
-    , name = "Google"
-    , url = "https://accounts.google.com"
-    , clientId = "32559869123-a98908094.apps.googleusercontent.com"
-    , clientSecret = "sad89089023"
-    , parameters = [openIdClientDefinitionParameter]
-    , style = openIdClientDefinitionStyle
     }
 
 defaultPrivacyAndSupport :: TenantConfigPrivacyAndSupport

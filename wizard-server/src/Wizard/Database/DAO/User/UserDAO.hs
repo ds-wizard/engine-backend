@@ -156,7 +156,7 @@ insertUser user = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "INSERT INTO user_entity VALUES (?, ?, ?, ?, ?, ?, ?::varchar[], ?, ?::varchar[], ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+          "INSERT INTO user_entity VALUES (?, ?, ?, ?, ?, ?, ?, ?::varchar[], ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
   let params = toRow user
   logQuery sql params
   let action conn = execute conn sql params
@@ -168,7 +168,7 @@ updateUserByUuid :: User -> AppContextM Int64
 updateUserByUuid user = do
   let sql =
         fromString
-          "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, image_url = ?, last_visited_at = ?, created_at = ?, updated_at = ?, tenant_uuid = ?, machine = ?, locale = ?, last_seen_news_id = ? WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, role = ?, permissions = ?, active = ?, image_url = ?, last_visited_at = ?, created_at = ?, updated_at = ?, tenant_uuid = ?, machine = ?, locale = ?, last_seen_news_id = ?, email_verified_at = ?, email_pending = ? WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow user ++ [toField user.tenantUuid, toField user.uuid]
   logQuery sql params
   let action conn = execute conn sql params

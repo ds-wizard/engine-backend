@@ -6,6 +6,7 @@ import Data.Swagger
 import Shared.Common.Api.Resource.Common.AesonSM ()
 import qualified Shared.Common.Model.Config.ServerConfigDM as S_S
 import Shared.Common.Util.Swagger
+import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientStyleSM ()
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Config.ClientConfigJM ()
 import Wizard.Api.Resource.Plugin.PluginListSM ()
@@ -19,19 +20,20 @@ import Wizard.Model.Config.ServerConfig
 import qualified Wizard.Model.Config.ServerConfigDM as S
 import Wizard.Service.Config.Client.ClientConfigMapper
 import Wizard.Service.User.UserMapper
+import WizardLib.Public.Database.Migration.Development.OpenId.Data.OpenIdClients
 import qualified WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs as STC
 
 instance ToSchema ClientConfigDTO where
-  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig TC.defaultOrganization TC.defaultAuthentication TC.defaultPrivacyAndSupport TC.defaultDashboardAndLoginScreen STC.defaultLookAndFeel TC.defaultRegistry TC.defaultProject TC.defaultSubmission STC.defaultFeatures TC.defaultOwl (Just $ toUserProfile (toDTO userAlbert) [] M.empty) [] [plugin1List] M.empty defaultTenant)
+  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig TC.defaultOrganization TC.defaultAuthentication [defaultOpenIdClient] TC.defaultPrivacyAndSupport TC.defaultDashboardAndLoginScreen STC.defaultLookAndFeel TC.defaultRegistry TC.defaultProject TC.defaultSubmission STC.defaultFeatures TC.defaultOwl (Just $ toUserProfile (toDTO userAlbert) [] M.empty) [] [plugin1List] M.empty defaultTenant)
 
 instance ToSchema ClientConfigAuthDTO where
-  declareNamedSchema = toSwagger (toClientAuthDTO TC.defaultAuthentication)
+  declareNamedSchema = toSwagger (toClientAuthDTO TC.defaultAuthentication [defaultOpenIdClient])
 
 instance ToSchema ClientConfigAuthExternalDTO where
-  declareNamedSchema = toSwagger (toClientAuthExternalDTO TC.defaultAuthenticationExternal)
+  declareNamedSchema = toSwagger (toClientAuthExternalDTO [defaultOpenIdClient])
 
 instance ToSchema ClientConfigAuthExternalServiceDTO where
-  declareNamedSchema = toSwagger (toClientAuthExternalServiceDTO TC.defaultAuthenticationExternalService)
+  declareNamedSchema = toSwagger (toClientAuthExternalServiceDTO defaultOpenIdClient)
 
 instance ToSchema ClientConfigRegistryDTO where
   declareNamedSchema = toSwagger (toClientConfigRegistryDTO S.defaultRegistry TC.defaultRegistry)

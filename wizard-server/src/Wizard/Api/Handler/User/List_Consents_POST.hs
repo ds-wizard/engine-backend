@@ -1,4 +1,4 @@
-module Wizard.Api.Handler.Auth.Detail_Consents_POST where
+module Wizard.Api.Handler.User.List_Consents_POST where
 
 import Servant
 
@@ -10,21 +10,19 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.User.UserService
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 
-type Detail_Consents_POST =
+type List_Consents_POST =
   Header "Host" String
     :> Header "User-Agent" String
     :> ReqBody '[SafeJSON] AuthConsentDTO
-    :> "auth"
-    :> Capture "id" String
+    :> "users"
     :> "consents"
     :> Post '[SafeJSON] (Headers '[Header "x-trace-uuid" String] UserTokenDTO)
 
-detail_consents_POST
+list_consents_POST
   :: Maybe String
   -> Maybe String
   -> AuthConsentDTO
-  -> String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserTokenDTO)
-detail_consents_POST mServerUrl mUserAgent reqDto authId =
+list_consents_POST mServerUrl mUserAgent reqDto =
   runInUnauthService mServerUrl Transactional $
     addTraceUuidHeader =<< confirmConsents reqDto Nothing

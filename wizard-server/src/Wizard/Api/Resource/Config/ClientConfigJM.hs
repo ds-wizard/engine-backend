@@ -4,6 +4,7 @@ import Data.Aeson
 
 import Shared.Common.Api.Resource.Config.SimpleFeatureJM ()
 import Shared.Common.Util.Aeson
+import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientStyleJM ()
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Plugin.PluginListJM ()
 import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()

@@ -83,10 +83,14 @@ import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
+import WizardLib.Public.Database.DAO.User.UserOpenIdIdentityDAO
 import WizardLib.Public.Database.DAO.User.UserTokenDAO
 import WizardLib.Public.Database.DAO.User.UserTourDAO
 import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.ExternalLinkSchemaMigration as ExternalLink
+import qualified WizardLib.Public.Database.Migration.Development.OpenId.OpenIdClientSchemaMigration as OpenIdClient
 import WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs
+import qualified WizardLib.Public.Database.Migration.Development.User.UserOpenIdIdentitySchemaMigration as UserOpenIdIdentity
+import qualified WizardLib.Public.Database.Migration.Development.User.UserRegistrationPendingSchemaMigration as UserRegistrationPending
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 import Wizard.Specs.Common
@@ -120,8 +124,11 @@ buildSchema appContext = do
   runInContext Project.dropTables appContext
   runInContext KnowledgeModelSecret.dropTables appContext
   runInContext KnowledgeModelPackage.dropTables appContext
+  runInContext UserRegistrationPending.dropTables appContext
+  runInContext UserOpenIdIdentity.dropTables appContext
   runInContext User.dropTables appContext
   runInContext Tenant.dropConfigTables appContext
+  runInContext OpenIdClient.dropTables appContext
   runInContext DocumentTemplate.dropTables appContext
   runInContext Locale.dropTables appContext
   runInContext Plugin.dropTables appContext
@@ -139,7 +146,10 @@ buildSchema appContext = do
   runInContext Locale.createTables appContext
   runInContext DocumentTemplate.createTables appContext
   runInContext Tenant.createConfigTables appContext
+  runInContext OpenIdClient.createTables appContext
   runInContext User.createTables appContext
+  runInContext UserOpenIdIdentity.createTables appContext
+  runInContext UserRegistrationPending.createTables appContext
   runInContext KnowledgeModelPackage.createTables appContext
   runInContext KnowledgeModelSecret.createTables appContext
   runInContext ActionKey.createTables appContext
@@ -214,6 +224,7 @@ resetDB appContext = do
   runInContext deletePackages appContext
   runInContext deleteUserTokens appContext
   runInContext deleteUserGroupMemberships appContext
+  runInContext deleteUserOpenIdIdentities appContext
   runInContext deleteTours appContext
   runInContext deleteUsers appContext
   runInContext deleteUserGroups appContext
@@ -230,7 +241,6 @@ resetDB appContext = do
   runInContext (insertLimitBundle differentTenantLimitBundle) appContext
   runInContext (insertTenantConfigOrganization defaultOrganization) appContext
   runInContext (insertTenantConfigAuthentication defaultAuthenticationEncrypted) appContext
-  runInContext (insertTenantConfigAuthenticationExternalService defaultAuthExternalServiceEncrypted) appContext
   runInContext (insertTenantConfigPrivacyAndSupport defaultPrivacyAndSupport) appContext
   runInContext (insertTenantConfigDashboardAndLoginScreen defaultDashboardAndLoginScreen) appContext
   runInContext (insertTenantConfigDashboardAndLoginScreenAnnouncement defaultDashboardAndLoginScreenAnnouncement) appContext

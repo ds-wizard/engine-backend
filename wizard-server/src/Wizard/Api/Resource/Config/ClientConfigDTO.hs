@@ -51,7 +51,7 @@ data ClientConfigAuthExternalDTO = ClientConfigAuthExternalDTO
   deriving (Generic, Eq, Show)
 
 data ClientConfigAuthExternalServiceDTO = ClientConfigAuthExternalServiceDTO
-  { aId :: String
+  { uuid :: U.UUID
   , name :: String
   , url :: String
   , style :: OpenIdClientStyle

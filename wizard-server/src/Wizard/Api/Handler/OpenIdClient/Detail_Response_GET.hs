@@ -1,5 +1,7 @@
-module Wizard.Api.Handler.Auth.Detail_Callback_GET where
+module Wizard.Api.Handler.OpenIdClient.Detail_Response_GET where
 
+import Data.Maybe (isJust)
+import qualified Data.UUID as U
 import Servant
 
 import Shared.Common.Api.Handler.Common
@@ -9,12 +11,13 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.OpenId.Client.Flow.OpenIdClientFlowService
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 
-type Detail_Callback_GET =
-  Header "Host" String
+type Detail_Response_GET =
+  Header "Authorization" String
+    :> Header "Host" String
     :> Header "User-Agent" String
-    :> "auth"
-    :> Capture "id" String
-    :> "callback"
+    :> "open-id-clients"
+    :> Capture "uuid" U.UUID
+    :> "response"
     :> QueryParam "clientUrl" String
     :> QueryParam "error" String
     :> QueryParam "code" String
@@ -23,10 +26,11 @@ type Detail_Callback_GET =
     :> QueryParam "session_state" String
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] UserTokenDTO)
 
-detail_callback_GET
+detail_response_GET
   :: Maybe String
   -> Maybe String
-  -> String
+  -> Maybe String
+  -> U.UUID
   -> Maybe String
   -> Maybe String
   -> Maybe String
@@ -34,6 +38,7 @@ detail_callback_GET
   -> Maybe String
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserTokenDTO)
-detail_callback_GET mServerUrl mUserAgent authId mClientUrl mError mCode mNonce mIdToken mSessionState =
-  runInUnauthService mServerUrl Transactional $
-    addTraceUuidHeader =<< loginUser authId mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionState
+detail_response_GET mTokenHeader mServerUrl mUserAgent providerUuid mClientUrl mError mCode mNonce mIdToken mSessionState =
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
+    runInAuthService Transactional $
+      addTraceUuidHeader =<< loginUserOrLinkIdentity (isJust mTokenHeader) providerUuid mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionState

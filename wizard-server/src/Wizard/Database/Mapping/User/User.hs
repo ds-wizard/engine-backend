@@ -17,7 +17,6 @@ instance ToRow User where
     , toField email
     , toField passwordHash
     , toField affiliation
-    , toField . PGArray $ sources
     , toField uRole
     , toField . PGArray $ permissions
     , toField active
@@ -29,6 +28,8 @@ instance ToRow User where
     , toField machine
     , toField locale
     , toField lastSeenNewsId
+    , toField emailVerifiedAt
+    , toField emailPending
     ]
 
 instance FromRow User where
@@ -39,7 +40,6 @@ instance FromRow User where
     email <- field
     passwordHash <- field
     affiliation <- field
-    sources <- fromPGArray <$> field
     uRole <- field
     permissions <- fromPGArray <$> field
     active <- field
@@ -51,4 +51,6 @@ instance FromRow User where
     machine <- field
     locale <- field
     lastSeenNewsId <- field
+    emailVerifiedAt <- field
+    emailPending <- field
     return $ User {..}
