@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-24.04
     
     env:
-      HLINT_VERSION: '3.5'
+      HLINT_VERSION: '3.10'
 
     steps:
 # (1) -> Init
@@ -39,11 +39,12 @@ jobs:
 # (4) -> Run hlint
     - name: Run hlint
       run: |
-        hlint shared-common
-        hlint registry-public
-        hlint registry-server
-        hlint wizard-public
-        hlint wizard-server
+        hlint \
+          shared-common \
+          registry-public \
+          registry-server \
+          wizard-public \
+          wizard-server
 
   fourmolu:
     runs-on: ubuntu-24.04

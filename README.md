@@ -21,7 +21,7 @@ For contributing guidelines, please read [CONTRIBUTING](CONTRIBUTING.md) and [re
  - **Stack** (recommended 2.15.3 or higher)
  - **Postgres & libpq** (recommended 15.5)
  - **Fourmolu** (recommended 0.8.2.0, optional)
- - **HLint** (recommended 3.4.1, optional)
+ - **HLint** (recommended 3.10, optional)
  - **Docker** (recommended 19.03.0-ce) - *for build of production image*
  - [**document-worker**](https://github.com/ds-wizard/engine-tools) (corresponding version)
  - [**mailer**](https://github.com/ds-wizard/engine-tools) (corresponding version)
