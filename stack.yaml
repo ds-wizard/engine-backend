@@ -1,4 +1,4 @@
-resolver: nightly-2024-01-10
+snapshot: nightly-2024-01-10
 
 compiler: ghc-9.10.1
 

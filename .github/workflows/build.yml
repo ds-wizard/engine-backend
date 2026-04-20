@@ -15,7 +15,6 @@ jobs:
     strategy:
       matrix:
         component: [registry, wizard]
-        stack: [3.3.1]
     
     env:
       COMPONENT: ${{ matrix.component }}
@@ -24,7 +23,7 @@ jobs:
       DOCKER_META_CONTEXT: './${{ matrix.component }}-server'
       DOCKER_META_FILE: './${{ matrix.component }}-server/Dockerfile'
       DOCKER_META_PLATFORMS: 'linux/amd64'
-      STACK_VERSION: ${{ matrix.stack }}
+      STACK_VERSION: '3.9.3'
       PYTHONPATH: ${{ github.workspace }}/lib
       LD_LIBRARY_PATH: ${{ github.workspace }}/lib
       ENGINE_JINJA_VERSION: 'v1.0.0'
