@@ -20,7 +20,7 @@ For contributing guidelines, please read [CONTRIBUTING](CONTRIBUTING.md) and [re
 
  - **Stack** (recommended 2.15.3 or higher)
  - **Postgres & libpq** (recommended 15.5)
- - **Fourmolu** (recommended 0.8.2.0, optional)
+ - **Fourmolu** (recommended 0.19.0.1, optional)
  - **HLint** (recommended 3.10, optional)
  - **Docker** (recommended 19.03.0-ce) - *for build of production image*
  - [**document-worker**](https://github.com/ds-wizard/engine-tools) (corresponding version)
@@ -65,8 +65,7 @@ $ stack test <application>
 Create a bash script which will do the work for you. Run the script from the root of the project
 
 ```bash
-$ fourmolu -i (find <application>/src -name '*.hs')
-$ fourmolu -i (find <application>/test -name '*.hs')
+$ fourmolu -i $(find . -name '*.hs')
 ```
 
 ### Code coverage

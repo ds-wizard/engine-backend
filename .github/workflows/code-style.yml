@@ -50,8 +50,8 @@ jobs:
     runs-on: ubuntu-24.04
 
     env:
-      FOURMOLU_VERSION: '0.8.2.0'
-      HPACK_VERSION: '0.34.2'
+      FOURMOLU_VERSION: '0.19.0.1'
+      HPACK_VERSION: '0.38.3'
 
     steps:
 # (1) -> Init
