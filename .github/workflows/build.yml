@@ -8,7 +8,7 @@ on:
 jobs:
   btp:
     name: Build-Tag-Push
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     if: github.repository == 'ds-wizard/engine-backend'
 
@@ -55,6 +55,11 @@ jobs:
       run: |
         git fetch --prune --unshallow
     
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y liblzma-dev
+
     - name: Prepare ~/.local/bin
       run: |
         mkdir -p ~/.local/bin
@@ -64,13 +69,13 @@ jobs:
       if: matrix.component == 'wizard'
       uses: actions/setup-python@v6
       with:
-        python-version: '3.10'
+        python-version: '3.12'
 
     - name: Prepare lib directory
       if: matrix.component == 'wizard'
       run: |
         mkdir -p lib
-        curl -L -o libjinja.tar.gz  https://github.com/ds-wizard/engine-jinja/releases/download/$ENGINE_JINJA_VERSION/libjinja-python3.10-ubuntu-22.04-X64.tar.gz
+        curl -L -o libjinja.tar.gz  https://github.com/ds-wizard/engine-jinja/releases/download/$ENGINE_JINJA_VERSION/libjinja-python3.12-ubuntu-24.04-X64.tar.gz
         tar --strip-components=1 -xzf libjinja.tar.gz -C lib
         rm libjinja.tar.gz
         ls -la lib
@@ -81,19 +86,19 @@ jobs:
       uses: actions/cache@v5
       with:
         path: ~/.stack
-        key: stack-home-ubuntu22-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
+        key: stack-home-ubuntu24-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
         restore-keys: |
-          stack-home-ubuntu22-
+          stack-home-ubuntu24-
     
     - name: Cache shared-common
       id: cache-shared-common
       uses: actions/cache@v5
       with:
         path: shared-common/.stack-work
-        key: shared-common-ubuntu22-${{ hashFiles('shared-common/package.yaml')}}-${{ hashFiles('shared-common/**/*.hs') }}
+        key: shared-common-ubuntu24-${{ hashFiles('shared-common/package.yaml')}}-${{ hashFiles('shared-common/**/*.hs') }}
         restore-keys: |
-          shared-common-ubuntu22-${{ hashFiles('shared-common/package.yaml')}}-
-          shared-common-ubuntu22-
+          shared-common-ubuntu24-${{ hashFiles('shared-common/package.yaml')}}-
+          shared-common-ubuntu24-
     
     - name: Invalidate shared-common cache (force push)
       id: invalidate-cache-shared-common
@@ -106,10 +111,10 @@ jobs:
       uses: actions/cache@v5
       with:
         path: wizard-public/.stack-work
-        key: wizard-public-ubuntu22-${{ hashFiles('wizard-public/package.yaml')}}-${{ hashFiles('wizard-public/**/*.hs') }}
+        key: wizard-public-ubuntu24-${{ hashFiles('wizard-public/package.yaml')}}-${{ hashFiles('wizard-public/**/*.hs') }}
         restore-keys: |
-          wizard-public-ubuntu22-${{ hashFiles('wizard-public/package.yaml')}}-
-          wizard-public-ubuntu22-
+          wizard-public-ubuntu24-${{ hashFiles('wizard-public/package.yaml')}}-
+          wizard-public-ubuntu24-
     
     - name: Invalidate wizard-public cache (force push)
       id: invalidate-cache-wizard-public
@@ -122,10 +127,10 @@ jobs:
       uses: actions/cache@v5
       with:
         path: registry-public/.stack-work
-        key: registry-public-ubuntu22-${{ hashFiles('registry-public/package.yaml')}}-${{ hashFiles('registry-public/**/*.hs') }}
+        key: registry-public-ubuntu24-${{ hashFiles('registry-public/package.yaml')}}-${{ hashFiles('registry-public/**/*.hs') }}
         restore-keys: |
-          registry-public-ubuntu22-${{ hashFiles('registry-public/package.yaml')}}-
-          registry-public-ubuntu22-
+          registry-public-ubuntu24-${{ hashFiles('registry-public/package.yaml')}}-
+          registry-public-ubuntu24-
     
     - name: Invalidate registry-public cache (force push)
       id: invalidate-cache-registry-public
@@ -138,10 +143,10 @@ jobs:
       uses: actions/cache@v5
       with:
         path: registry-server/.stack-work
-        key: registry-server-${{ matrix.component }}-ubuntu22-${{ hashFiles('registry-server/package.yaml')}}-${{ hashFiles('registry-server/**/*.hs') }}
+        key: registry-server-${{ matrix.component }}-ubuntu24-${{ hashFiles('registry-server/package.yaml')}}-${{ hashFiles('registry-server/**/*.hs') }}
         restore-keys: |
-          registry-server-${{ matrix.component }}-ubuntu22-${{ hashFiles('registry-server/package.yaml')}}-
-          registry-server-${{ matrix.component }}-ubuntu22-
+          registry-server-${{ matrix.component }}-ubuntu24-${{ hashFiles('registry-server/package.yaml')}}-
+          registry-server-${{ matrix.component }}-ubuntu24-
     
     - name: Invalidate registry-server cache (force push)
       id: invalidate-cache-registry-server
@@ -155,10 +160,10 @@ jobs:
       if: matrix.component == 'wizard'
       with:
         path: wizard-server/.stack-work
-        key: wizard-server-${{ matrix.component }}-ubuntu22-${{ hashFiles('wizard-server/package.yaml')}}-${{ hashFiles('wizard-server/**/*.hs') }}
+        key: wizard-server-${{ matrix.component }}-ubuntu24-${{ hashFiles('wizard-server/package.yaml')}}-${{ hashFiles('wizard-server/**/*.hs') }}
         restore-keys: |
-          wizard-server-${{ matrix.component }}-ubuntu22-${{ hashFiles('wizard-server/package.yaml')}}-
-          wizard-server-${{ matrix.component }}-ubuntu22-
+          wizard-server-${{ matrix.component }}-ubuntu24-${{ hashFiles('wizard-server/package.yaml')}}-
+          wizard-server-${{ matrix.component }}-ubuntu24-
     
     - name: Invalidate wizard-server cache (force push)
       id: invalidate-cache-wizard-server
@@ -171,7 +176,7 @@ jobs:
       uses: actions/cache@v5
       with:
         path: ~/.local/bin
-        key: stack-local-bin-ubuntu22-${{ matrix.stack }}
+        key: stack-local-bin-ubuntu24-${{ matrix.stack }}
 
 # (2) -> Prepare and install dependencies     
     - name: Setup stack
