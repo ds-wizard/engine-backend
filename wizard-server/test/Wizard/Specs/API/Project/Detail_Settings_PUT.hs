@@ -104,7 +104,7 @@ create_test_200 title appContext project projectEdited projectEvents projectCont
   it title $
     -- GIVEN: Prepare request
     do
-      let reqUrl = reqUrlT $ project.uuid
+      let reqUrl = reqUrlT project.uuid
       let reqHeaders = reqHeadersT authHeader
       let reqBody = reqBodyT projectEdited
       -- AND: Prepare expectation
@@ -174,7 +174,7 @@ create_test_403 title appContext project projectEdited reason =
   it title $
     -- GIVEN: Prepare request
     do
-      let reqUrl = reqUrlT $ project.uuid
+      let reqUrl = reqUrlT project.uuid
       let reqHeaders = reqHeadersT [reqNonAdminAuthHeader]
       let reqBody = reqBodyT projectEdited
       -- AND: Prepare expectation

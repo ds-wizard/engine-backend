@@ -97,7 +97,7 @@ instance HasField "buildInfoConfig'" BaseContext BuildInfoConfig where
   getField = (.buildInfoConfig)
 
 instance HasField "identity'" AppContext (Maybe String) where
-  getField entity = fmap (U.toString . (.uuid)) $ entity.currentUser
+  getField entity = fmap (U.toString . (.uuid)) entity.currentUser
 
 instance HasField "identityEmail'" AppContext (Maybe String) where
   getField entity = fmap (.email) entity.currentUser

@@ -24,8 +24,8 @@ auditPackageFailedToDeleteDueParentPackages entityId pkgs =
 
 auditPackageFailedToDeleteDueKmEditors :: U.UUID -> [KnowledgeModelEditor] -> AppContextM ()
 auditPackageFailedToDeleteDueKmEditors entityId knowledgeModelEditors =
-  auditPackageFailedToDelete entityId "Knowledge Model Editor" (show $ fmap (\b -> U.toString $ b.uuid) knowledgeModelEditors)
+  auditPackageFailedToDelete entityId "Knowledge Model Editor" (show $ fmap (\b -> U.toString b.uuid) knowledgeModelEditors)
 
 auditPackageFailedToDeleteDueProjects :: U.UUID -> [Project] -> AppContextM ()
 auditPackageFailedToDeleteDueProjects entityId projects =
-  auditPackageFailedToDelete entityId "Knowledge Model Editor" (show $ fmap (\project -> U.toString $ project.uuid) projects)
+  auditPackageFailedToDelete entityId "Knowledge Model Editor" (show $ fmap (\project -> U.toString project.uuid) projects)

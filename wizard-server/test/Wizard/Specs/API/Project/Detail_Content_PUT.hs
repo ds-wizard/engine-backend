@@ -75,7 +75,7 @@ create_test_200 title appContext project projectEventsEdited authHeader =
   it title $
     -- GIVEN: Prepare request
     do
-      let reqUrl = reqUrlT $ project.uuid
+      let reqUrl = reqUrlT project.uuid
       let reqHeaders = reqHeadersT authHeader
       -- AND: Prepare expectation
       let expStatus = 200
@@ -143,7 +143,7 @@ create_test_403 title appContext project projectEventsEdited authHeader reason =
   it title $
     -- GIVEN: Prepare request
     do
-      let reqUrl = reqUrlT $ project.uuid
+      let reqUrl = reqUrlT project.uuid
       let reqHeaders = reqHeadersT authHeader
       -- AND: Prepare expectation
       let expStatus = 403

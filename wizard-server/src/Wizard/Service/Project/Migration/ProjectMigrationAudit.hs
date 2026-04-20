@@ -21,8 +21,8 @@ auditProjectMigrationCreate reqDto oldProject newProject =
     ( M.fromList
         [ ("sourceKnowledgeModelPackageUuid", U.toString oldProject.knowledgeModelPackageUuid)
         , ("targetKnowledgeModelPackageUuid", U.toString reqDto.targetKnowledgeModelPackageUuid)
-        , ("oldProjectUuid", U.toString $ oldProject.uuid)
-        , ("newProjectUuid", U.toString $ newProject.uuid)
+        , ("oldProjectUuid", U.toString oldProject.uuid)
+        , ("newProjectUuid", U.toString newProject.uuid)
         ]
     )
 
@@ -31,7 +31,7 @@ auditProjectMigrationModify projectMigration resolvedQuestionUuids =
   logAuditWithBody
     "project_migration"
     "modify"
-    (U.toString $ projectMigration.newProject.uuid)
+    (U.toString projectMigration.newProject.uuid)
     (M.fromList [("resolvedQuestionUuids", show resolvedQuestionUuids)])
 
 auditProjectMigrationFinish :: Project -> Project -> AppContextM ()
@@ -41,9 +41,9 @@ auditProjectMigrationFinish oldProject newProject =
     "finish"
     (U.toString oldProject.uuid)
     ( M.fromList
-        [("oldProjectUuid", U.toString $ oldProject.uuid), ("newProjectUuid", U.toString $ newProject.uuid)]
+        [("oldProjectUuid", U.toString oldProject.uuid), ("newProjectUuid", U.toString newProject.uuid)]
     )
 
 auditProjectMigrationCancel :: ProjectMigrationDTO -> AppContextM ()
 auditProjectMigrationCancel projectMigration =
-  logAudit "project_migration" "cancel" (U.toString $ projectMigration.oldProject.uuid)
+  logAudit "project_migration" "cancel" (U.toString projectMigration.oldProject.uuid)

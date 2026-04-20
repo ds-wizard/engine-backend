@@ -98,4 +98,4 @@ countCache = do
 getCache :: AppContextM (C.Cache Int User)
 getCache = do
   context <- ask
-  return $ context.cache.user
+  return context.cache.user

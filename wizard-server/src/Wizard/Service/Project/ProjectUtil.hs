@@ -22,13 +22,13 @@ extractVisibility dto = do
   tcProject <- getCurrentTenantConfigProject
   if tcProject.projectVisibility.enabled
     then return dto.visibility
-    else return $ tcProject.projectVisibility.defaultValue
+    else return tcProject.projectVisibility.defaultValue
 
 extractSharing dto = do
   tcProject <- getCurrentTenantConfigProject
   if tcProject.projectSharing.enabled
     then return dto.sharing
-    else return $ tcProject.projectSharing.defaultValue
+    else return tcProject.projectSharing.defaultValue
 
 enhanceProjectPerm :: ProjectPerm -> AppContextM ProjectPermDTO
 enhanceProjectPerm projectPerm =

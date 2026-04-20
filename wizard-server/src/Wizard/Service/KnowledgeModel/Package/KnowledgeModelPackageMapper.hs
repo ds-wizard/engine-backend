@@ -29,7 +29,7 @@ toSimpleDTO' pkgRs orgRs pkg =
     , phase = pkg.phase
     , remoteLatestVersion =
         case selectPackageByOrgIdAndKmId pkg pkgRs of
-          Just pkgR -> Just $ pkgR.remoteVersion
+          Just pkgR -> Just pkgR.remoteVersion
           Nothing -> Nothing
     , description = pkg.description
     , nonEditable = pkg.nonEditable
@@ -89,7 +89,7 @@ toDetailDTO pkg registryEnabled pkgRs orgRs versionLs registryLink =
     , versions = map toVersionDTO . L.sortBy (\(_, v1) (_, v2) -> compare v2 v1) $ versionLs
     , remoteLatestVersion =
         case (registryEnabled, selectPackageByOrgIdAndKmId pkg pkgRs) of
-          (True, Just pkgR) -> Just $ pkgR.remoteVersion
+          (True, Just pkgR) -> Just pkgR.remoteVersion
           _ -> Nothing
     , registryLink =
         if registryEnabled

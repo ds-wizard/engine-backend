@@ -84,7 +84,7 @@ test_400 appContext = do
       -- AND: Prepare expectation
       let expStatus = 400
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = ValidationError [] (M.singleton "email" [_ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto.email])
+      let expDto = ValidationError [] (M.singleton "email" [_ERROR_VALIDATION__USER_EMAIL_UNIQUENESS reqDto.email])
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext

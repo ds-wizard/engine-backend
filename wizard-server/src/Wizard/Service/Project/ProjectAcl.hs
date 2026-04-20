@@ -77,10 +77,10 @@ hasViewPermissionToProject visibility sharing perms =
         , currentUser.uuid `elem` getUserUuidsForEditorPerm perms
         , currentUser.uuid `elem` getUserUuidsForOwnerPerm perms
         , -- Check groups
-          or (fmap (`elem` getUserGroupUuidsForViewerPerm perms) currentUserGroupUuids)
-        , or (fmap (`elem` getUserGroupUuidsForCommenterPerm perms) currentUserGroupUuids)
-        , or (fmap (`elem` getUserGroupUuidsForEditorPerm perms) currentUserGroupUuids)
-        , or (fmap (`elem` getUserGroupUuidsForOwnerPerm perms) currentUserGroupUuids)
+          any (`elem` getUserGroupUuidsForViewerPerm perms) currentUserGroupUuids
+        , any (`elem` getUserGroupUuidsForCommenterPerm perms) currentUserGroupUuids
+        , any (`elem` getUserGroupUuidsForEditorPerm perms) currentUserGroupUuids
+        , any (`elem` getUserGroupUuidsForOwnerPerm perms) currentUserGroupUuids
         ]
         then return True
         else return False
@@ -111,9 +111,9 @@ hasCommentPermissionToProject visibility sharing perms =
         , currentUser.uuid `elem` getUserUuidsForEditorPerm perms
         , currentUser.uuid `elem` getUserUuidsForOwnerPerm perms
         , -- Check groups
-          or (fmap (`elem` getUserGroupUuidsForCommenterPerm perms) currentUserGroupUuids)
-        , or (fmap (`elem` getUserGroupUuidsForEditorPerm perms) currentUserGroupUuids)
-        , or (fmap (`elem` getUserGroupUuidsForOwnerPerm perms) currentUserGroupUuids)
+          any (`elem` getUserGroupUuidsForCommenterPerm perms) currentUserGroupUuids
+        , any (`elem` getUserGroupUuidsForEditorPerm perms) currentUserGroupUuids
+        , any (`elem` getUserGroupUuidsForOwnerPerm perms) currentUserGroupUuids
         ]
         then return True
         else return False
@@ -142,8 +142,8 @@ hasEditPermissionToProject visibility sharing perms =
           currentUser.uuid `elem` getUserUuidsForEditorPerm perms
         , currentUser.uuid `elem` getUserUuidsForOwnerPerm perms
         , -- Check groups
-          or (fmap (`elem` getUserGroupUuidsForEditorPerm perms) currentUserGroupUuids)
-        , or (fmap (`elem` getUserGroupUuidsForOwnerPerm perms) currentUserGroupUuids)
+          any (`elem` getUserGroupUuidsForEditorPerm perms) currentUserGroupUuids
+        , any (`elem` getUserGroupUuidsForOwnerPerm perms) currentUserGroupUuids
         ]
         then return True
         else return False
@@ -166,7 +166,7 @@ hasOwnerPermissionToProject visibility perms = do
     , -- Check membership
       currentUser.uuid `elem` getUserUuidsForOwnerPerm perms
     , -- Check groups
-      or (fmap (`elem` getUserGroupUuidsForOwnerPerm perms) currentUserGroupUuids)
+      any (`elem` getUserGroupUuidsForOwnerPerm perms) currentUserGroupUuids
     ]
     then return True
     else return False
@@ -191,8 +191,8 @@ hasMigrationPermissionToProject visibility perms = do
       currentUser.uuid `elem` getUserUuidsForEditorPerm perms
     , currentUser.uuid `elem` getUserUuidsForOwnerPerm perms
     , -- Check groups
-      or (fmap (`elem` getUserGroupUuidsForEditorPerm perms) currentUserGroupUuids)
-    , or (fmap (`elem` getUserGroupUuidsForOwnerPerm perms) currentUserGroupUuids)
+      any (`elem` getUserGroupUuidsForEditorPerm perms) currentUserGroupUuids
+    , any (`elem` getUserGroupUuidsForOwnerPerm perms) currentUserGroupUuids
     ]
     then return True
     else return False

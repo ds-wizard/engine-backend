@@ -27,7 +27,7 @@ toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSuppo
     , lookAndFeel = tcLookAndFeel
     , registry = toClientConfigRegistryDTO serverConfig.registry tcRegistry
     , project = toClientConfigProjectDTO tcProject
-    , submission = SimpleFeature $ tcSubmission.enabled
+    , submission = SimpleFeature tcSubmission.enabled
     , cloud = toClientConfigCloudDTO serverConfig.cloud tenant
     , owl = tcOwl
     , admin = toClientConfigAdminDTO serverConfig.admin tenant
@@ -99,9 +99,9 @@ toClientConfigProjectDTO tenantConfig =
     { projectVisibility = tenantConfig.projectVisibility
     , projectSharing = tenantConfig.projectSharing
     , projectCreation = tenantConfig.projectCreation
-    , projectTagging = SimpleFeature $ tenantConfig.projectTagging.enabled
+    , projectTagging = SimpleFeature tenantConfig.projectTagging.enabled
     , summaryReport = tenantConfig.summaryReport
-    , feedback = SimpleFeature $ tenantConfig.feedback.enabled
+    , feedback = SimpleFeature tenantConfig.feedback.enabled
     }
 
 toClientConfigCloudDTO :: ServerConfigCloud -> Tenant -> ClientConfigCloudDTO

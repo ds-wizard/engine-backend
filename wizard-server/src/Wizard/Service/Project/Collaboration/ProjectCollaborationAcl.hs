@@ -52,10 +52,10 @@ getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserRole m
     isExplicitlyEditor = maybe False (`elem` getUserUuidsForEditorPerm permissions) mCurrentUserUuid
     isExplicitlyCommenter = maybe False (`elem` getUserUuidsForCommenterPerm permissions) mCurrentUserUuid
     isExplicitlyViewer = maybe False (`elem` getUserUuidsForViewerPerm permissions) mCurrentUserUuid
-    isInOwnerGroup = or (fmap (`elem` getUserGroupUuidsForOwnerPerm permissions) mCurrentUserGroupUuids)
-    isInEditorGroup = or (fmap (`elem` getUserGroupUuidsForEditorPerm permissions) mCurrentUserGroupUuids)
-    isInCommenterGroup = or (fmap (`elem` getUserGroupUuidsForCommenterPerm permissions) mCurrentUserGroupUuids)
-    isInViewerGroup = or (fmap (`elem` getUserGroupUuidsForViewerPerm permissions) mCurrentUserGroupUuids)
+    isInOwnerGroup = any (`elem` getUserGroupUuidsForOwnerPerm permissions) mCurrentUserGroupUuids
+    isInEditorGroup = any (`elem` getUserGroupUuidsForEditorPerm permissions) mCurrentUserGroupUuids
+    isInCommenterGroup = any (`elem` getUserGroupUuidsForCommenterPerm permissions) mCurrentUserGroupUuids
+    isInViewerGroup = any (`elem` getUserGroupUuidsForViewerPerm permissions) mCurrentUserGroupUuids
     isLogged = isJust mCurrentUserUuid
     isAdmin = mCurrentUserRole == Just _USER_ROLE_ADMIN
 

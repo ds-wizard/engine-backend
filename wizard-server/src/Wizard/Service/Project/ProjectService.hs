@@ -165,7 +165,7 @@ createProjectFromTemplate reqDto =
             , visibility = newVisibility
             , permissions = newPermissions
             , isTemplate = False
-            , creatorUuid = Just $ currentUser.uuid
+            , creatorUuid = Just currentUser.uuid
             , createdAt = now
             , updatedAt = now
             }

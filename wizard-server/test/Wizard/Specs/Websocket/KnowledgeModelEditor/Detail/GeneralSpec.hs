@@ -89,7 +89,7 @@ test404 appContext = do
       -- AND: Connect to websocket
       ((c1, s1), (c2, s2)) <- connectTestWebsocketUsers appContext editor.uuid
       -- AND: Prepare expectation
-      let expError = NotExistsError (_ERROR_SERVICE_KNOWLEDGE_MODEL_EDITOR__COLLABORATION__FORCE_DISCONNECT (U.toString $ editor.uuid))
+      let expError = NotExistsError (_ERROR_SERVICE_KNOWLEDGE_MODEL_EDITOR__COLLABORATION__FORCE_DISCONNECT (U.toString editor.uuid))
       -- WHEN: Update permission
       runInContext (deleteEditor editor.uuid) appContext
       -- THEN: Read response

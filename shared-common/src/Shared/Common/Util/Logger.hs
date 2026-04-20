@@ -160,7 +160,7 @@ sendToSentry
 sendToSentry component message = do
   context <- ask
   when
-    (context.serverConfig'.sentry'.enabled)
+    context.serverConfig'.sentry'.enabled
     ( do
         let sentryDsn = context.serverConfig'.sentry'.dsn
         sentryService <- liftIO $ initRaven sentryDsn id sendRecord stderrFallback

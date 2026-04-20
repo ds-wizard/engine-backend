@@ -26,7 +26,7 @@ auditKmMigrationSolve editorUuid reqDto =
     "knowledge_model_migration"
     "solve"
     (U.toString editorUuid)
-    (M.fromList [("originalEventUuid", U.toString $ reqDto.originalEventUuid), ("action", show reqDto.action)])
+    (M.fromList [("originalEventUuid", U.toString reqDto.originalEventUuid), ("action", show reqDto.action)])
 
 auditKmMigrationApplyAll :: U.UUID -> AppContextM ()
 auditKmMigrationApplyAll editorUuid = logAudit "knowledge_model_migration" "applyAll" (U.toString editorUuid)

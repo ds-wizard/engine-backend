@@ -122,7 +122,7 @@ test404 appContext = do
       -- AND: Connect to websocket
       ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext project.uuid
       -- AND: Prepare expectation
-      let expError = NotExistsError (_ERROR_SERVICE_PROJECT_COLLABORATION__FORCE_DISCONNECT (U.toString $ project.uuid))
+      let expError = NotExistsError (_ERROR_SERVICE_PROJECT_COLLABORATION__FORCE_DISCONNECT (U.toString project.uuid))
       -- WHEN: Update permission
       runInContext (deleteProject project.uuid True) appContext
       -- THEN: Read response

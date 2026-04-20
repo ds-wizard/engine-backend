@@ -80,4 +80,4 @@ countCache = do
 getCache :: AppContextM (C.Cache Int WebsocketRecord)
 getCache = do
   cache <- asks cache
-  return $ cache.projectWebsocket
+  return cache.projectWebsocket

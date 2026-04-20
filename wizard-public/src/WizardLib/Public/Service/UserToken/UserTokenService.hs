@@ -41,7 +41,7 @@ deleteTokensExceptCurrentSession tokenValue =
     case mIdentityUuid of
       Just identityUuid -> do
         userTokens <- findUserTokensByUserUuidAndType identityUuid "LoginUserTokenType"
-        traverse_ deleteUserTokenByUuid . fmap (.uuid) . filter (\ut -> ut.value /= tokenValue) $ userTokens
+        traverse_ (deleteUserTokenByUuid . ((.uuid))) . filter (\ut -> ut.value /= tokenValue) $ userTokens
       Nothing -> throwError $ ForbiddenError _ERROR_SERVICE_USER__MISSING_USER
 
 deleteTokenByUuid

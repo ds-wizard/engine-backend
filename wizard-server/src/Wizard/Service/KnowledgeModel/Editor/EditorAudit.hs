@@ -16,7 +16,7 @@ auditKnowledgeModelEditorPublish kmEditor kmEditorEvents mForkOfPkgId =
   logAuditWithBody
     "knowledge_model_editor"
     "publish"
-    (U.toString $ kmEditor.uuid)
+    (U.toString kmEditor.uuid)
     ( M.fromList
         [ ("kmId", kmEditor.kmId)
         , ("eventSize", show . length $ kmEditorEvents)

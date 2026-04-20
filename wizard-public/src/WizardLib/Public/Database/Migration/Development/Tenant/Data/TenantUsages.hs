@@ -52,4 +52,4 @@ defaultUsageLocales :: UsageEntryDTO
 defaultUsageLocales = UsageEntryDTO {current = 0, max = -1000}
 
 defaultUsageStorage :: UsageEntryDTO
-defaultUsageStorage = UsageEntryDTO {current = 0, max = -1000 * 5 * 1000 * 1000}
+defaultUsageStorage = UsageEntryDTO {current = 0, max = (-1000) * 5 * 1000 * 1000}

@@ -70,7 +70,7 @@ sre_rQ1 projectUuid =
     , value = (snd rQ1).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ1).createdBy
+    , createdBy = fmap (.uuid) (snd rQ1).createdBy
     , createdAt = (snd rQ1).createdAt
     }
 
@@ -85,7 +85,7 @@ sre_rQ1Updated projectUuid =
     , value = (snd rQ1Updated).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ1Updated).createdBy
+    , createdBy = fmap (.uuid) (snd rQ1Updated).createdBy
     , createdAt = (snd rQ1Updated).createdAt
     }
 
@@ -103,7 +103,7 @@ sre_rQ2 projectUuid =
     , value = (snd rQ2).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ2).createdBy
+    , createdBy = fmap (.uuid) (snd rQ2).createdBy
     , createdAt = (snd rQ2).createdAt
     }
 
@@ -118,7 +118,7 @@ sre_rQ2_aYes_fuQ1 projectUuid =
     , value = (snd rQ2_aYes_fuQ1).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ2_aYes_fuQ1).createdBy
+    , createdBy = fmap (.uuid) (snd rQ2_aYes_fuQ1).createdBy
     , createdAt = (snd rQ2_aYes_fuQ1).createdAt
     }
 
@@ -133,7 +133,7 @@ sre_rQ3 projectUuid =
     , value = (snd rQ3).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ3).createdBy
+    , createdBy = fmap (.uuid) (snd rQ3).createdBy
     , createdAt = (snd rQ3).createdAt
     }
 
@@ -148,7 +148,7 @@ sre_rQ4 projectUuid =
     , value = (snd rQ4).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ4).createdBy
+    , createdBy = fmap (.uuid) (snd rQ4).createdBy
     , createdAt = (snd rQ4).createdAt
     }
 
@@ -163,7 +163,7 @@ sre_rQ4_it1_q5 projectUuid =
     , value = (snd rQ4_it1_q5).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ4_it1_q5).createdBy
+    , createdBy = fmap (.uuid) (snd rQ4_it1_q5).createdBy
     , createdAt = (snd rQ4_it1_q5).createdAt
     }
 
@@ -178,7 +178,7 @@ sre_rQ4_it1_q5_it1_question7 projectUuid =
     , value = (snd rQ4_it1_q5_it1_question7).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ4_it1_q5_it1_question7).createdBy
+    , createdBy = fmap (.uuid) (snd rQ4_it1_q5_it1_question7).createdBy
     , createdAt = (snd rQ4_it1_q5_it1_question7).createdAt
     }
 
@@ -193,7 +193,7 @@ sre_rQ4_it1_q5_it1_question8 projectUuid =
     , value = (snd rQ4_it1_q5_it1_question8).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ4_it1_q5_it1_question8).createdBy
+    , createdBy = fmap (.uuid) (snd rQ4_it1_q5_it1_question8).createdBy
     , createdAt = (snd rQ4_it1_q5_it1_question8).createdAt
     }
 
@@ -208,7 +208,7 @@ sre_rQ4_it1_q6 projectUuid =
     , value = (snd rQ4_it1_q6).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ4_it1_q6).createdBy
+    , createdBy = fmap (.uuid) (snd rQ4_it1_q6).createdBy
     , createdAt = (snd rQ4_it1_q6).createdAt
     }
 
@@ -223,7 +223,7 @@ sre_rQ4_it2_q5 projectUuid =
     , value = (snd rQ4_it2_q5).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ4_it2_q5).createdBy
+    , createdBy = fmap (.uuid) (snd rQ4_it2_q5).createdBy
     , createdAt = (snd rQ4_it2_q5).createdAt
     }
 
@@ -238,7 +238,7 @@ sre_rQ4_it2_q6 projectUuid =
     , value = (snd rQ4_it2_q6).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ4_it2_q6).createdBy
+    , createdBy = fmap (.uuid) (snd rQ4_it2_q6).createdBy
     , createdAt = (snd rQ4_it2_q6).createdAt
     }
 
@@ -253,7 +253,7 @@ sre_rQ9 projectUuid =
     , value = (snd rQ9).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ9).createdBy
+    , createdBy = fmap (.uuid) (snd rQ9).createdBy
     , createdAt = (snd rQ9).createdAt
     }
 
@@ -268,7 +268,7 @@ sre_rQ10 projectUuid =
     , value = (snd rQ10).value
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
-    , createdBy = fmap (.uuid) $ (snd rQ10).createdBy
+    , createdBy = fmap (.uuid) (snd rQ10).createdBy
     , createdAt = (snd rQ10).createdAt
     }
 
@@ -293,7 +293,7 @@ sphse_1 :: U.UUID -> SetPhaseEvent
 sphse_1 projectUuid =
   SetPhaseEvent
     { uuid = createEventUuid projectUuid "ee411f0005d3"
-    , phaseUuid = Just $ phase1.uuid
+    , phaseUuid = Just phase1.uuid
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
@@ -307,7 +307,7 @@ sphse_2 :: U.UUID -> SetPhaseEvent
 sphse_2 projectUuid =
   SetPhaseEvent
     { uuid = createEventUuid projectUuid "43eae0986894"
-    , phaseUuid = Just $ phase2.uuid
+    , phaseUuid = Just phase2.uuid
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
@@ -321,7 +321,7 @@ sphse_3 :: U.UUID -> SetPhaseEvent
 sphse_3 projectUuid =
   SetPhaseEvent
     { uuid = createEventUuid projectUuid "dacc8f77de05"
-    , phaseUuid = Just $ phase3.uuid
+    , phaseUuid = Just phase3.uuid
     , projectUuid = projectUuid
     , tenantUuid = defaultTenantUuid
     , createdBy = Just userAlbert.uuid
