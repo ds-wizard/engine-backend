@@ -10,7 +10,7 @@ import Wizard.Model.Context.BaseContext
 type TenantConfigAPI =
   Tags "Tenant Config"
     :> ( List_GET
-          :<|> List_PUT
+           :<|> List_PUT
        )
 
 tenantConfigApi :: Proxy TenantConfigAPI

@@ -107,7 +107,7 @@ create_test_201 appContext title anonymousSharingEnabled project authHeader =
                 , permissions = []
                 , creatorUuid = Nothing
                 }
-              :: Project
+                :: Project
             )
             eventsInDB
         else do
@@ -115,7 +115,7 @@ create_test_201 appContext title anonymousSharingEnabled project authHeader =
                 [ (head project1.permissions)
                     { projectUuid = resBody.uuid
                     }
-                  :: ProjectPerm
+                    :: ProjectPerm
                 ]
           assertExistenceOfProjectInDB
             appContext
@@ -126,7 +126,7 @@ create_test_201 appContext title anonymousSharingEnabled project authHeader =
                 , projectTags = []
                 , permissions = aPermissions
                 }
-              :: Project
+                :: Project
             )
             eventsInDB
 

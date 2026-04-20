@@ -10,7 +10,7 @@ import Wizard.Model.Context.BaseContext
 type TourAPI =
   Tags "User Tour"
     :> ( List_DELETE
-          :<|> Detail_PUT
+           :<|> Detail_PUT
        )
 
 tourApi :: Proxy TourAPI

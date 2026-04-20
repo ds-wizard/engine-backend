@@ -12,9 +12,9 @@ import Wizard.Model.Context.BaseContext
 type FileAPI =
   Tags "Project File"
     :> ( List_GET
-          :<|> List_POST
-          :<|> Detail_DELETE
-          :<|> Detail_Download_GET
+           :<|> List_POST
+           :<|> Detail_DELETE
+           :<|> Detail_Download_GET
        )
 
 fileApi :: Proxy FileAPI

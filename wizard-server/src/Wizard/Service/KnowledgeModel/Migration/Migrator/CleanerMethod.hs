@@ -66,8 +66,8 @@ doIsCleanerMethod km event =
     MoveQuestionEvent' content ->
       isNothing (M.lookup event.entityUuid (getQuestionsM km))
         || ( isNothing (M.lookup content.targetUuid (getChaptersM km))
-              && isNothing (M.lookup content.targetUuid (getQuestionsM km))
-              && isNothing (M.lookup content.targetUuid (getAnswersM km))
+               && isNothing (M.lookup content.targetUuid (getQuestionsM km))
+               && isNothing (M.lookup content.targetUuid (getAnswersM km))
            )
     MoveAnswerEvent' content ->
       isNothing (M.lookup event.entityUuid (getAnswersM km))

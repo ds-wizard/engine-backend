@@ -14,11 +14,11 @@ import Wizard.Model.Context.BaseContext
 type PersistentCommandAPI =
   Tags "Persistent Command"
     :> ( List_GET
-          :<|> List_POST
-          :<|> List_Attempts_POST
-          :<|> Detail_GET
-          :<|> Detail_PUT
-          :<|> Detail_Attempts_POST
+           :<|> List_POST
+           :<|> List_Attempts_POST
+           :<|> Detail_GET
+           :<|> Detail_PUT
+           :<|> Detail_Attempts_POST
        )
 
 persistentCommandApi :: Proxy PersistentCommandAPI

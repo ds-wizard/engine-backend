@@ -10,7 +10,7 @@ import Wizard.Model.Context.BaseContext
 type RegistryAPI =
   Tags "Registry"
     :> ( List_Signup_POST
-          :<|> List_Confirmation_POST
+           :<|> List_Confirmation_POST
        )
 
 registryApi :: Proxy RegistryAPI

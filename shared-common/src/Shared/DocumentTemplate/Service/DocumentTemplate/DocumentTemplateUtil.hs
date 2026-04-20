@@ -31,10 +31,10 @@ changeDocumentTemplateIdInFormats documentTemplateUuid tenantUuid =
                       { documentTemplateUuid = documentTemplateUuid
                       , tenantUuid = tenantUuid
                       }
-                    :: DocumentTemplateFormatStep
+                      :: DocumentTemplateFormatStep
                 )
                 (steps f)
           , tenantUuid = tenantUuid
           }
-        :: DocumentTemplateFormat
+          :: DocumentTemplateFormat
     )

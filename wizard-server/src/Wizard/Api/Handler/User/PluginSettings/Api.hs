@@ -10,7 +10,7 @@ import Wizard.Model.Context.BaseContext
 type PluginSettingsAPI =
   Tags "User Plugin Settings"
     :> ( Detail_GET
-          :<|> Detail_PUT
+           :<|> Detail_PUT
        )
 
 pluginSettingsApi :: Proxy PluginSettingsAPI

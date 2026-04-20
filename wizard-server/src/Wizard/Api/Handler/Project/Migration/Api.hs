@@ -13,10 +13,10 @@ import Wizard.Model.Context.BaseContext
 type MigrationAPI =
   Tags "Project Migration"
     :> ( List_POST
-          :<|> List_Current_GET
-          :<|> List_Current_PUT
-          :<|> List_Current_DELETE
-          :<|> List_Current_Completion_POST
+           :<|> List_Current_GET
+           :<|> List_Current_PUT
+           :<|> List_Current_DELETE
+           :<|> List_Current_Completion_POST
        )
 
 migrationApi :: Proxy MigrationAPI

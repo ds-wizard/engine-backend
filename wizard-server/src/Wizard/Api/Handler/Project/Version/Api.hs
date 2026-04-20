@@ -12,9 +12,9 @@ import Wizard.Model.Context.BaseContext
 type VersionAPI =
   Tags "Project Version"
     :> ( List_GET
-          :<|> List_POST
-          :<|> Detail_PUT
-          :<|> Detail_DELETE
+           :<|> List_POST
+           :<|> Detail_PUT
+           :<|> Detail_DELETE
        )
 
 versionApi :: Proxy VersionAPI

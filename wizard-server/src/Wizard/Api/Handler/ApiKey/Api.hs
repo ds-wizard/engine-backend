@@ -11,8 +11,8 @@ import Wizard.Model.Context.BaseContext
 type ApiKeyAPI =
   Tags "ApiKey"
     :> ( List_GET
-          :<|> List_POST
-          :<|> Detail_DELETE
+           :<|> List_POST
+           :<|> Detail_DELETE
        )
 
 apiKeyApi :: Proxy ApiKeyAPI

@@ -127,13 +127,13 @@ fromCreateDTO dto uuid dt formats organizationId now =
                             , createdAt = now
                             , updatedAt = now
                             }
-                          :: DocumentTemplateFormatStep
+                            :: DocumentTemplateFormatStep
                       )
                       (steps f)
                 , createdAt = now
                 , updatedAt = now
                 }
-              :: DocumentTemplateFormat
+                :: DocumentTemplateFormat
           )
           formats
       )

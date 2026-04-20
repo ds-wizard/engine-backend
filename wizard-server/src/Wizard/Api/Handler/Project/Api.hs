@@ -33,30 +33,30 @@ import Wizard.Model.Context.BaseContext
 type ProjectAPI =
   Tags "Project"
     :> ( List_GET
-          :<|> List_POST
-          :<|> List_POST_FromTemplate
-          :<|> List_POST_CloneUuid
-          :<|> Detail_GET
-          :<|> Detail_Questionnaire_GET
-          :<|> Detail_Preview_GET
-          :<|> Detail_Settings_GET
-          :<|> Detail_Settings_PUT
-          :<|> Detail_Share_PUT
-          :<|> Detail_DELETE
-          :<|> Detail_Content_PUT
-          :<|> Detail_Report_GET
-          :<|> Detail_Documents_GET
-          :<|> Detail_Documents_Preview_GET
-          :<|> Detail_WS
-          :<|> Detail_Revert_POST
-          :<|> Detail_Revert_Preview_POST
-          :<|> CommentAPI
-          :<|> EventAPI
-          :<|> FileAPI
-          :<|> MigrationAPI
-          :<|> TagAPI
-          :<|> UserAPI
-          :<|> VersionAPI
+           :<|> List_POST
+           :<|> List_POST_FromTemplate
+           :<|> List_POST_CloneUuid
+           :<|> Detail_GET
+           :<|> Detail_Questionnaire_GET
+           :<|> Detail_Preview_GET
+           :<|> Detail_Settings_GET
+           :<|> Detail_Settings_PUT
+           :<|> Detail_Share_PUT
+           :<|> Detail_DELETE
+           :<|> Detail_Content_PUT
+           :<|> Detail_Report_GET
+           :<|> Detail_Documents_GET
+           :<|> Detail_Documents_Preview_GET
+           :<|> Detail_WS
+           :<|> Detail_Revert_POST
+           :<|> Detail_Revert_Preview_POST
+           :<|> CommentAPI
+           :<|> EventAPI
+           :<|> FileAPI
+           :<|> MigrationAPI
+           :<|> TagAPI
+           :<|> UserAPI
+           :<|> VersionAPI
        )
 
 projectApi :: Proxy ProjectAPI

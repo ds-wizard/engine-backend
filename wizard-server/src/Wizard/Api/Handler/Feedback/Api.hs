@@ -11,8 +11,8 @@ import Wizard.Model.Context.BaseContext
 type FeedbackAPI =
   Tags "Feedback"
     :> ( List_GET
-          :<|> List_POST
-          :<|> Detail_GET
+           :<|> List_POST
+           :<|> Detail_GET
        )
 
 feedbackApi :: Proxy FeedbackAPI

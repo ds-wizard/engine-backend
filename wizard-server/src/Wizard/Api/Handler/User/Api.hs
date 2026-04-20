@@ -26,23 +26,23 @@ import Wizard.Model.Context.BaseContext
 type UserAPI =
   Tags "User"
     :> ( List_GET
-          :<|> List_Suggestions_GET
-          :<|> List_POST
-          :<|> List_Current_GET
-          :<|> List_Current_PUT
-          :<|> List_Current_Submission_Props_GET
-          :<|> List_Current_Submission_Props_PUT
-          :<|> List_Current_Password_PUT
-          :<|> List_Current_Locale_GET
-          :<|> List_Current_Locale_PUT
-          :<|> Detail_GET
-          :<|> Detail_PUT
-          :<|> Detail_Password_PUT
-          :<|> Detail_State_PUT
-          :<|> Detail_DELETE
-          :<|> NewsAPI
-          :<|> PluginSettingsAPI
-          :<|> TourAPI
+           :<|> List_Suggestions_GET
+           :<|> List_POST
+           :<|> List_Current_GET
+           :<|> List_Current_PUT
+           :<|> List_Current_Submission_Props_GET
+           :<|> List_Current_Submission_Props_PUT
+           :<|> List_Current_Password_PUT
+           :<|> List_Current_Locale_GET
+           :<|> List_Current_Locale_PUT
+           :<|> Detail_GET
+           :<|> Detail_PUT
+           :<|> Detail_Password_PUT
+           :<|> Detail_State_PUT
+           :<|> Detail_DELETE
+           :<|> NewsAPI
+           :<|> PluginSettingsAPI
+           :<|> TourAPI
        )
 
 userApi :: Proxy UserAPI

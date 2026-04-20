@@ -20,17 +20,17 @@ import Wizard.Model.Context.BaseContext
 type KnowledgeModelPackageAPI =
   Tags "Knowledge Model Package"
     :> ( List_GET
-          :<|> List_Suggestions_GET
-          :<|> List_POST
-          :<|> Detail_GET
-          :<|> Detail_PUT
-          :<|> Detail_DELETE
-          :<|> List_Bundle_POST
-          :<|> List_From_Editor_POST
-          :<|> List_From_Migration_POST
-          :<|> Detail_Bundle_GET
-          :<|> Detail_Pull_POST
-          :<|> DependentAPI
+           :<|> List_Suggestions_GET
+           :<|> List_POST
+           :<|> Detail_GET
+           :<|> Detail_PUT
+           :<|> Detail_DELETE
+           :<|> List_Bundle_POST
+           :<|> List_From_Editor_POST
+           :<|> List_From_Migration_POST
+           :<|> Detail_Bundle_GET
+           :<|> Detail_Pull_POST
+           :<|> DependentAPI
        )
 
 knowledgeModelPackageApi :: Proxy KnowledgeModelPackageAPI

@@ -13,10 +13,10 @@ import Wizard.Model.Context.BaseContext
 type MigrationAPI =
   Tags "Knowledge Model Editor Migration"
     :> ( List_Current_GET
-          :<|> List_Current_POST
-          :<|> List_Current_DELETE
-          :<|> List_Current_Conflict_POST
-          :<|> List_Current_Conflict_All_POST
+           :<|> List_Current_POST
+           :<|> List_Current_DELETE
+           :<|> List_Current_Conflict_POST
+           :<|> List_Current_Conflict_All_POST
        )
 
 migrationApi :: Proxy MigrationAPI

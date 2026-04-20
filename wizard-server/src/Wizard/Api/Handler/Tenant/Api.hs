@@ -18,15 +18,15 @@ import Wizard.Model.Context.BaseContext
 type TenantAPI =
   Tags "Tenant"
     :> ( List_GET
-          :<|> List_Suggestions_GET
-          :<|> List_POST
-          :<|> Detail_GET
-          :<|> Detail_PUT
-          :<|> Detail_DELETE
-          :<|> TenantConfigAPI
-          :<|> TenantLimitAPI
-          :<|> TenantPluginSettingsAPI
-          :<|> TenantUsageAPI
+           :<|> List_Suggestions_GET
+           :<|> List_POST
+           :<|> Detail_GET
+           :<|> Detail_PUT
+           :<|> Detail_DELETE
+           :<|> TenantConfigAPI
+           :<|> TenantLimitAPI
+           :<|> TenantPluginSettingsAPI
+           :<|> TenantUsageAPI
        )
 
 tenantApi :: Proxy TenantAPI

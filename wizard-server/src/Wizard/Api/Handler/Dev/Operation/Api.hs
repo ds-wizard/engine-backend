@@ -10,7 +10,7 @@ import Wizard.Model.Context.BaseContext
 type DevOperationAPI =
   Tags "Dev Operation"
     :> ( List_GET
-          :<|> List_Executions_POST
+           :<|> List_Executions_POST
        )
 
 devOperationApi :: Proxy DevOperationAPI

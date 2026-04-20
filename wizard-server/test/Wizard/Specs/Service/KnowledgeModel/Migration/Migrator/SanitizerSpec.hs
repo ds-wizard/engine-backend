@@ -63,7 +63,7 @@ sanitizerSpec appContext =
                             , integrationUuids = ChangedValue kmIntegrationUuids
                             }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -101,7 +101,7 @@ sanitizerSpec appContext =
                             , integrationUuids = ChangedValue kmIntegrationUuids
                             }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -139,7 +139,7 @@ sanitizerSpec appContext =
                             { questionUuids = ChangedValue chQuestionUuids
                             }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -164,7 +164,7 @@ sanitizerSpec appContext =
                             { questionUuids = ChangedValue chQuestionUuids
                             }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -207,7 +207,7 @@ sanitizerSpec appContext =
                               , expertUuids = ChangedValue qExpertUuids
                               }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -245,7 +245,7 @@ sanitizerSpec appContext =
                               , expertUuids = ChangedValue qExpertUuids
                               }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -283,7 +283,7 @@ sanitizerSpec appContext =
                               { itemTemplateQuestionUuids = ChangedValue itQuestionUuids
                               }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1WithQ4)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -310,7 +310,7 @@ sanitizerSpec appContext =
                               { itemTemplateQuestionUuids = ChangedValue itQuestionUuids
                               }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1WithQ4)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -347,7 +347,7 @@ sanitizerSpec appContext =
                             { followUpUuids = ChangedValue ansFollowUpUuids
                             }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -372,7 +372,7 @@ sanitizerSpec appContext =
                             { followUpUuids = ChangedValue ansFollowUpUuids
                             }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -415,7 +415,7 @@ sanitizerSpec appContext =
                               , expertUuids = ChangedValue qExpertUuids
                               }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -453,7 +453,7 @@ sanitizerSpec appContext =
                               , expertUuids = ChangedValue qExpertUuids
                               }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -490,7 +490,7 @@ sanitizerSpec appContext =
                               { itemTemplateQuestionUuids = ChangedValue itQuestionUuids
                               }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1WithQ4)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -517,7 +517,7 @@ sanitizerSpec appContext =
                               { itemTemplateQuestionUuids = ChangedValue itQuestionUuids
                               }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1WithQ4)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -561,7 +561,7 @@ sanitizerSpec appContext =
                               , expertUuids = ChangedValue qExpertUuids
                               }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1WithQ4)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -599,7 +599,7 @@ sanitizerSpec appContext =
                               , expertUuids = ChangedValue qExpertUuids
                               }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1WithQ4)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -636,7 +636,7 @@ sanitizerSpec appContext =
                               { itemTemplateQuestionUuids = ChangedValue itQuestionUuids
                               }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1WithQ4)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext
@@ -663,7 +663,7 @@ sanitizerSpec appContext =
                               { itemTemplateQuestionUuids = ChangedValue itQuestionUuids
                               }
                     }
-                  :: KnowledgeModelEvent
+                    :: KnowledgeModelEvent
             let reqState = createTestMigratorStateWithEvents [] [editedEvent] (Just km1WithQ4)
             -- When:
             (Right resState) <- runInContext (migrate reqState) appContext

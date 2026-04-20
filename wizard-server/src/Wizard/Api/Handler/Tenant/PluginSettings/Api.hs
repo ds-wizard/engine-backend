@@ -11,8 +11,8 @@ import Wizard.Model.Context.BaseContext
 type TenantPluginSettingsAPI =
   Tags "Tenant Plugin Settings"
     :> ( List_PUT
-          :<|> Detail_GET
-          :<|> Detail_PUT
+           :<|> Detail_GET
+           :<|> Detail_PUT
        )
 
 tenantPluginSettingsApi :: Proxy TenantPluginSettingsAPI

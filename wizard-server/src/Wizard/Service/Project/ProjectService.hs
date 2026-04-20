@@ -169,7 +169,7 @@ createProjectFromTemplate reqDto =
             , createdAt = now
             , updatedAt = now
             }
-          :: Project
+            :: Project
     insertProject newProject
     clonedFiles <- cloneProjectFiles originProject.uuid newProject.uuid
     newProjectEventsWithOldEventUuid <- cloneProjectEventsWithOldEventUuid originProjectEvents
@@ -203,7 +203,7 @@ cloneProject cloneUuid =
             , permissions = newDuplicatedPermissions
             , updatedAt = now
             }
-          :: Project
+            :: Project
     insertProject newProject
     clonedFiles <- cloneProjectFiles originProject.uuid newProject.uuid
     newProjectEventsWithOldEventUuid <- cloneProjectEventsWithOldEventUuid originProjectEvents

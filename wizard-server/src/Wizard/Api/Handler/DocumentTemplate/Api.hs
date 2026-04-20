@@ -18,15 +18,15 @@ import Wizard.Model.Context.BaseContext
 type DocumentTemplateAPI =
   Tags "Document Template"
     :> ( List_GET
-          :<|> List_All_GET
-          :<|> List_Suggestions_GET
-          :<|> List_DELETE
-          :<|> Detail_GET
-          :<|> Detail_PUT
-          :<|> Detail_DELETE
-          :<|> List_Bundle_POST
-          :<|> Detail_Bundle_GET
-          :<|> Detail_Pull_POST
+           :<|> List_All_GET
+           :<|> List_Suggestions_GET
+           :<|> List_DELETE
+           :<|> Detail_GET
+           :<|> Detail_PUT
+           :<|> Detail_DELETE
+           :<|> List_Bundle_POST
+           :<|> Detail_Bundle_GET
+           :<|> Detail_Pull_POST
        )
 
 documentTemplateApi :: Proxy DocumentTemplateAPI
