@@ -141,3 +141,5 @@ toResponseErrorMessage e =
       "Connection already closed."
     describeContent (InvalidProxySettings txt) =
       "Invalid proxy settings: " ++ T.unpack txt ++ "."
+    describeContent TooManyHeaderFields =
+      "Too many header fields: the server returned too many header fields in the response."
