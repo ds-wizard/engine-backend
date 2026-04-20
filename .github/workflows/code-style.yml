@@ -13,7 +13,7 @@ jobs:
     steps:
 # (1) -> Init
     - name: Checkout git repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     
     - name: Prepare ~/.local/bin
       run: |
@@ -23,7 +23,7 @@ jobs:
 # (2) -> Setup cache
     - name: Cache ~/.local/bin
       id: cache-local-bin
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ~/.local/bin
         key: local-bin-${{ env.HLINT_VERSION }}
@@ -55,7 +55,7 @@ jobs:
     steps:
 # (1) -> Init
     - name: Checkout git repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Prepare ~/.local/bin
       run: |
@@ -65,7 +65,7 @@ jobs:
 # (2) -> Setup cache
     - name: Cache ~/.local/bin
       id: cache-local-bin
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ~/.local/bin
         key: local-bin-${{ env.FOURMOLU_VERSION }}-${{ env.HPACK_VERSION }}
@@ -135,12 +135,12 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Install CSpell
         run: |
