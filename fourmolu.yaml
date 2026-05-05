@@ -13,3 +13,4 @@ record-brace-space: true
 #unicode: never
 #respectful: false
 #fixities: []
+single-constraint-parens: never

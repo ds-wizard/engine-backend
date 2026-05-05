@@ -99,7 +99,7 @@ createDocumentContext doc pkg kmEditorEvents project mReplies = do
 findProjectVersionUuid :: U.UUID -> [ProjectVersion] -> Maybe U.UUID
 findProjectVersionUuid _ [] = Nothing
 findProjectVersionUuid desiredEventUuid (version : rest)
-  | desiredEventUuid == version.eventUuid = Just $ version.uuid
+  | desiredEventUuid == version.eventUuid = Just version.uuid
   | otherwise = findProjectVersionUuid desiredEventUuid rest
 
 heSettingsToPerms :: Project -> AppContextM ([DocumentContextUserPerm], [DocumentContextUserGroupPerm])

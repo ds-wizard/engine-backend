@@ -11,8 +11,8 @@ import Wizard.Model.Context.BaseContext
 type EventAPI =
   Tags "Project Event"
     :> ( List_GET
-          :<|> List_POST
-          :<|> Detail_GET
+           :<|> List_POST
+           :<|> Detail_GET
        )
 
 eventApi :: Proxy EventAPI

@@ -14,11 +14,11 @@ import Wizard.Model.Context.BaseContext
 type TokenAPI =
   Tags "Token"
     :> ( List_GET
-          :<|> List_POST
-          :<|> List_DELETE
-          :<|> List_System_POST
-          :<|> List_Current_DELETE
-          :<|> Detail_DELETE
+           :<|> List_POST
+           :<|> List_DELETE
+           :<|> List_System_POST
+           :<|> List_Current_DELETE
+           :<|> Detail_DELETE
        )
 
 tokenApi :: Proxy TokenAPI

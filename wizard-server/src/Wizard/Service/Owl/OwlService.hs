@@ -84,6 +84,6 @@ setOwlProperties name organizationId kmId version previousKnowledgeModelPackageI
             , previousKnowledgeModelPackageId = previousKnowledgeModelPackageId
             , rootElement = rootElement
             }
-          :: TenantConfigOwl
+            :: TenantConfigOwl
     updateTenantConfigOwl tcOwlUpdated
     return ()

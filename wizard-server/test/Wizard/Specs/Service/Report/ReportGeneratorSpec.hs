@@ -25,7 +25,7 @@ createComputeChapterReportTest number chapter expectation =
   it ("computeChapterReport for chapter" ++ show number ++ " should work") $
     -- GIVEN: Prepare
     do
-      let requiredPhaseUuidUuid = Just $ phase1.uuid
+      let requiredPhaseUuidUuid = Just phase1.uuid
       let km = km1WithQ4
       let rs = M.fromList $ unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList project1Ctn.replies
       -- WHEN:
@@ -37,7 +37,7 @@ createComputeTotalReportTest number expectation =
   it "computeTotalReport should work" $
     -- GIVEN: Prepare
     do
-      let requiredPhaseUuidUuid = Just $ phase1.uuid
+      let requiredPhaseUuidUuid = Just phase1.uuid
       let km = km1WithQ4
       let rs = M.fromList $ unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList project1Ctn.replies
       -- WHEN:

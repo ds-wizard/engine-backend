@@ -104,7 +104,7 @@ finishProjectMigration projectUuid =
             , knowledgeModelPackageUuid = newProject.knowledgeModelPackageUuid
             , updatedAt = now
             }
-          :: Project
+            :: Project
     let newProjectEventsWithOldProjectUuid = fmap (\event -> setProjectUuid event oldProject.uuid) newProjectEvents
     newVersionsWithNewUuid <- traverse generateNewVersionUuid newProjectVersions
     let newVersionsWithOldProjectUuid = fmap (\v -> v {projectUuid = oldProject.uuid} :: ProjectVersion) newVersionsWithNewUuid
@@ -156,7 +156,7 @@ upgradeProject reqDto oldProject = do
           , formatUuid = newFormatUuid
           , permissions = newPermissions
           }
-        :: Project
+          :: Project
   versionsWithOldProjectUuid <- findProjectVersionsByProjectUuid oldProject.uuid
   newVersionsWithNewUuid <- traverse generateNewVersionUuid versionsWithOldProjectUuid
   let newVersionsWithNewEventUuid =

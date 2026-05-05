@@ -10,7 +10,7 @@ import Wizard.Model.Context.BaseContext
 type UserGroupAPI =
   Tags "User Group"
     :> ( List_Suggestions_GET
-          :<|> Detail_GET
+           :<|> Detail_GET
        )
 
 userGroupApi :: Proxy UserGroupAPI

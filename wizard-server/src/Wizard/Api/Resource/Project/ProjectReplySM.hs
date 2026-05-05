@@ -13,7 +13,7 @@ instance ToSchema Reply where
   declareNamedSchema = toSwagger (fst rQ1Updated)
 
 instance ToSchema ReplyValue where
-  declareNamedSchema = toSwagger ((snd rQ1).value)
+  declareNamedSchema = toSwagger (snd rQ1).value
 
 instance ToSchema IntegrationReplyType where
   declareNamedSchema = toSwagger r9IntType

@@ -58,7 +58,7 @@ findProjects = do
   if currentUser.uRole == _USER_ROLE_ADMIN
     then createFindEntitiesBySortedFn entityName [tenantQueryUuid tenantUuid] [Sort "name" Ascending] >>= traverse enhance
     else do
-      let sql = f' (projectSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") [""] ++ " ORDER BY project.name ASC"
+      let sql = f' (projectSelectSql (U.toString tenantUuid) (U.toString currentUser.uuid) "['VIEW']") [""] ++ " ORDER BY project.name ASC"
       logInfoI _CMP_DATABASE sql
       let action conn = query_ conn (fromString sql)
       entities <- runDB action
@@ -275,7 +275,7 @@ findProjectsByKnowledgeModelPackageUuid pkgUuid = do
     else do
       let sql =
             fromString $
-              f' (projectSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["AND knowledge_model_package_uuid = ?"]
+              f' (projectSelectSql (U.toString tenantUuid) (U.toString currentUser.uuid) "['VIEW']") ["AND knowledge_model_package_uuid = ?"]
       let params = [U.toString pkgUuid]
       logQuery sql params
       let action conn = query conn sql params
@@ -291,7 +291,7 @@ findProjectsByDocumentTemplateUuid documentTemplateUuid = do
     else do
       let sql =
             fromString $
-              f' (projectSelectSql (U.toString tenantUuid) (U.toString $ currentUser.uuid) "['VIEW']") ["AND document_template_uuid = ?"]
+              f' (projectSelectSql (U.toString tenantUuid) (U.toString currentUser.uuid) "['VIEW']") ["AND document_template_uuid = ?"]
       let params = [documentTemplateUuid]
       logQuery sql params
       let action conn = query conn sql params

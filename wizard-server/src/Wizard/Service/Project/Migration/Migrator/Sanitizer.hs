@@ -64,12 +64,12 @@ generateSetReplyEvents projectUuid oldReplies sanitizedReplies = foldl generateE
               else
                 acc
                   ++ [ SetReplyEventList' $
-                        SetReplyEventList
-                          eUuid
-                          keyFromSanitizedReply
-                          valueFromSanitizedReply.value
-                          (Just (toSuggestion' user))
-                          now
+                         SetReplyEventList
+                           eUuid
+                           keyFromSanitizedReply
+                           valueFromSanitizedReply.value
+                           (Just (toSuggestion' user))
+                           now
                      ]
           Nothing ->
             acc

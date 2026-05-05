@@ -16,7 +16,7 @@ migrate state =
   case state.state of
     RunningKnowledgeModelMigrationState -> do
       newState <- foldl doMigrate (return state) state.targetPackageEvents
-      if null $ newState.targetPackageEvents
+      if null newState.targetPackageEvents
         then return $ newState {state = CompletedKnowledgeModelMigrationState}
         else return newState
     _ -> return state
@@ -35,14 +35,14 @@ solveConflict :: KnowledgeModelMigration -> KnowledgeModelMigrationResolutionDTO
 solveConflict state mcDto =
   case mcDto.action of
     ApplyKnowledgeModelMigrationAction ->
-      let events = tail $ state.targetPackageEvents
+      let events = tail state.targetPackageEvents
           targetEvent =
             case state.state of
               ConflictKnowledgeModelMigrationState event -> fromJust event
               _ -> error "Expected a CorrectorConflict in ApplyKnowledgeModelMigrationAction action"
        in createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
     RejectKnowledgeModelMigrationAction ->
-      let events = tail $ state.targetPackageEvents
+      let events = tail state.targetPackageEvents
        in toRunningState . updateEvents events $ state
   where
     toRunningState newState = newState {state = RunningKnowledgeModelMigrationState}

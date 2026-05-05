@@ -128,7 +128,7 @@ toDetailDTO tml formats registryEnabled tmlRs orgRs versionLs registryLink pkgs 
     , versions = map toVersionDTO . L.sortBy (\(_, v1) (_, v2) -> compare v2 v1) $ versionLs
     , remoteLatestVersion =
         case (registryEnabled, selectDocumentTemplateByOrgIdAndTmlId tml tmlRs) of
-          (True, Just tmlR) -> Just $ tmlR.remoteVersion
+          (True, Just tmlR) -> Just tmlR.remoteVersion
           _ -> Nothing
     , state = computeDocumentTemplateState tmlRs tml
     , registryLink =

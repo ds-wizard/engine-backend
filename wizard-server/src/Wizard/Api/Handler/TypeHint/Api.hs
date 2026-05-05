@@ -10,7 +10,7 @@ import Wizard.Model.Context.BaseContext
 type TypeHintAPI =
   Tags "TypeHint"
     :> ( List_POST
-          :<|> Test_POST
+           :<|> Test_POST
        )
 
 typeHintApi :: Proxy TypeHintAPI

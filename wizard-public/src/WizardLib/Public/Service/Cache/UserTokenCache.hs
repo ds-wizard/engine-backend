@@ -143,4 +143,4 @@ getCache
 getCache = do
   context <- ask
   let cache = context.cache'
-  return $ cache.userToken
+  return cache.userToken

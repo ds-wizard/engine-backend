@@ -26,7 +26,7 @@ getEditorForkOfPackageId editor = do
     Just previousPkg -> do
       tcOrganization <- findTenantConfigOrganization
       if (previousPkg.organizationId == tcOrganization.organizationId) && (previousPkg.kmId == editor.kmId)
-        then return $ previousPkg.forkOfPackageId
+        then return previousPkg.forkOfPackageId
         else return . Just . createCoordinate $ previousPkg
     Nothing -> return Nothing
 
@@ -37,7 +37,7 @@ getEditorMergeCheckpointPackageId editor = do
     Just previousPkg -> do
       tcOrganization <- findTenantConfigOrganization
       if (previousPkg.organizationId == tcOrganization.organizationId) && (previousPkg.kmId == editor.kmId)
-        then return $ previousPkg.mergeCheckpointPackageId
+        then return previousPkg.mergeCheckpointPackageId
         else return . Just . createCoordinate $ previousPkg
     Nothing -> return Nothing
 

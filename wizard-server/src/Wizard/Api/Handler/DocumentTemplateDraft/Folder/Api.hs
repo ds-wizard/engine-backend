@@ -10,7 +10,7 @@ import Wizard.Model.Context.BaseContext
 type DocumentTemplateFolderAPI =
   Tags "Document Template Draft Folder"
     :> ( List_Delete_POST
-          :<|> List_Move_POST
+           :<|> List_Move_POST
        )
 
 documentTemplateFolderApi :: Proxy DocumentTemplateFolderAPI

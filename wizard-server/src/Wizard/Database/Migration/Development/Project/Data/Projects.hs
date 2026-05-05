@@ -61,9 +61,9 @@ project1 =
     , knowledgeModelPackageUuid = germanyKmPackage.uuid
     , selectedQuestionTagUuids = []
     , projectTags = [_PROJECT_TAG_1]
-    , documentTemplateUuid = Just $ wizardDocumentTemplate.uuid
-    , formatUuid = Just $ formatJson.uuid
-    , creatorUuid = Just $ userAlbert.uuid
+    , documentTemplateUuid = Just wizardDocumentTemplate.uuid
+    , formatUuid = Just formatJson.uuid
+    , creatorUuid = Just userAlbert.uuid
     , permissions = [project1AlbertEditProjectPerm]
     , isTemplate = True
     , squashed = True
@@ -109,7 +109,7 @@ project1Versions = qVersions project1Uuid
 project1Ctn :: ProjectContent
 project1Ctn =
   ProjectContent
-    { phaseUuid = Just $ phase1.uuid
+    { phaseUuid = Just phase1.uuid
     , replies = fReplies
     , labels = fLabels
     }
@@ -188,9 +188,9 @@ project2 =
     , knowledgeModelPackageUuid = germanyKmPackage.uuid
     , selectedQuestionTagUuids = []
     , projectTags = [_PROJECT_TAG_1, _PROJECT_TAG_2]
-    , documentTemplateUuid = Just $ wizardDocumentTemplate.uuid
-    , formatUuid = Just $ formatJson.uuid
-    , creatorUuid = Just $ userAlbert.uuid
+    , documentTemplateUuid = Just wizardDocumentTemplate.uuid
+    , formatUuid = Just formatJson.uuid
+    , creatorUuid = Just userAlbert.uuid
     , permissions = [project2AlbertEditProjectPerm]
     , isTemplate = False
     , squashed = True
@@ -210,9 +210,9 @@ project2Edited =
     , knowledgeModelPackageUuid = project2.knowledgeModelPackageUuid
     , selectedQuestionTagUuids = project2.selectedQuestionTagUuids
     , projectTags = project2.projectTags
-    , documentTemplateUuid = Just $ wizardDocumentTemplate.uuid
-    , formatUuid = Just $ formatJson.uuid
-    , creatorUuid = Just $ userAlbert.uuid
+    , documentTemplateUuid = Just wizardDocumentTemplate.uuid
+    , formatUuid = Just formatJson.uuid
+    , creatorUuid = Just userAlbert.uuid
     , permissions = []
     , isTemplate = False
     , squashed = True
@@ -240,16 +240,16 @@ project2SettingsEdited =
   project2
     { name = "EDITED: " ++ project2.name
     , description = Just "EDITED: Some description"
-    , documentTemplateUuid = Just $ wizardDocumentTemplate.uuid
-    , formatUuid = Just $ formatJson.uuid
-    , creatorUuid = Just $ userAlbert.uuid
+    , documentTemplateUuid = Just wizardDocumentTemplate.uuid
+    , formatUuid = Just formatJson.uuid
+    , creatorUuid = Just userAlbert.uuid
     , isTemplate = False
     }
 
 project2Ctn :: ProjectContent
 project2Ctn =
   ProjectContent
-    { phaseUuid = Just $ phase1.uuid
+    { phaseUuid = Just phase1.uuid
     , replies = fReplies
     , labels = fLabels
     }
@@ -289,8 +289,8 @@ project3 =
     , knowledgeModelPackageUuid = germanyKmPackage.uuid
     , selectedQuestionTagUuids = []
     , projectTags = []
-    , documentTemplateUuid = Just $ wizardDocumentTemplate.uuid
-    , formatUuid = Just $ formatJson.uuid
+    , documentTemplateUuid = Just wizardDocumentTemplate.uuid
+    , formatUuid = Just formatJson.uuid
     , creatorUuid = Nothing
     , permissions = []
     , isTemplate = False
@@ -309,7 +309,7 @@ project3Versions = qVersions project3Uuid
 project3Ctn :: ProjectContent
 project3Ctn =
   ProjectContent
-    { phaseUuid = Just $ phase1.uuid
+    { phaseUuid = Just phase1.uuid
     , replies = fReplies
     , labels = fLabels
     }
@@ -336,8 +336,8 @@ project4 =
     , knowledgeModelPackageUuid = netherlandsKmPackage.uuid
     , selectedQuestionTagUuids = []
     , projectTags = []
-    , documentTemplateUuid = Just $ wizardDocumentTemplate.uuid
-    , formatUuid = Just $ formatJson.uuid
+    , documentTemplateUuid = Just wizardDocumentTemplate.uuid
+    , formatUuid = Just formatJson.uuid
     , creatorUuid = Nothing
     , permissions = []
     , isTemplate = False
@@ -356,7 +356,7 @@ project4Versions = []
 project4Ctn :: ProjectContent
 project4Ctn =
   ProjectContent
-    { phaseUuid = Just $ phase2.uuid
+    { phaseUuid = Just phase2.uuid
     , replies = M.empty
     , labels = M.empty
     }
@@ -453,7 +453,7 @@ project6Versions = qVersions project6Uuid
 project6Ctn :: ProjectContent
 project6Ctn =
   ProjectContent
-    { phaseUuid = Just $ phase1.uuid
+    { phaseUuid = Just phase1.uuid
     , replies = fReplies
     , labels = fLabels
     }
@@ -504,7 +504,7 @@ project7Versions = qVersions project7Uuid
 project7Ctn :: ProjectContent
 project7Ctn =
   ProjectContent
-    { phaseUuid = Just $ phase1.uuid
+    { phaseUuid = Just phase1.uuid
     , replies = fReplies
     , labels = fLabels
     }
@@ -616,7 +616,7 @@ project10Versions = qVersions project10Uuid
 project10Ctn :: ProjectContent
 project10Ctn =
   ProjectContent
-    { phaseUuid = Just $ phase1.uuid
+    { phaseUuid = Just phase1.uuid
     , replies = fReplies
     , labels = fLabels
     }
@@ -916,9 +916,9 @@ differentProject =
     , knowledgeModelPackageUuid = differentPackage.uuid
     , selectedQuestionTagUuids = []
     , projectTags = []
-    , documentTemplateUuid = Just $ differentDocumentTemplate.uuid
-    , formatUuid = Just $ formatJson.uuid
-    , creatorUuid = Just $ userCharles.uuid
+    , documentTemplateUuid = Just differentDocumentTemplate.uuid
+    , formatUuid = Just formatJson.uuid
+    , creatorUuid = Just userCharles.uuid
     , permissions = [differentCharlesOwnerProjectPerm]
     , isTemplate = True
     , squashed = True

@@ -67,7 +67,7 @@ takeDiffSuffix (Just sharedNode) = tailSafe . dropWhile (/= sharedNode)
 takeDiffSuffix Nothing = Prelude.id
 
 shouldWeMigrate :: KnowledgeModel -> [U.UUID] -> [U.UUID] -> Bool
-shouldWeMigrate km pPathDiff tPathDiff = not . or . fmap (isItListQuestion km) $ pPathDiff ++ tPathDiff
+shouldWeMigrate km pPathDiff tPathDiff = not . any (isItListQuestion km) $ pPathDiff ++ tPathDiff
 
 doMigration :: KnowledgeModel -> U.UUID -> [U.UUID] -> [U.UUID] -> [ReplyTuple] -> [ReplyTuple]
 doMigration km entUuid pPathDiff tPathDiff replies =

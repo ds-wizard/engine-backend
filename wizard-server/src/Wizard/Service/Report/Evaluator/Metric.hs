@@ -47,7 +47,7 @@ filterEmptyMetricSummary ms =
 
 evaluateChapter :: KnowledgeModel -> M.Map String Reply -> Chapter -> [MetricMeasure]
 evaluateChapter km replies ch =
-  let currentPath = U.toString $ ch.uuid
+  let currentPath = U.toString ch.uuid
       qs = getQuestionsForChapterUuid km ch.uuid
    in concatMap (evaluateQuestion km replies currentPath) qs
 
@@ -83,7 +83,7 @@ evaluateOptionsQuestion q km replies path =
 
 evaluateListQuestion :: KnowledgeModel -> M.Map String Reply -> String -> ListQuestion -> [MetricMeasure]
 evaluateListQuestion km replies currentPath q =
-  let itemQs = getItemTemplateQuestionsForQuestionUuid km $ q.uuid
+  let itemQs = getItemTemplateQuestionsForQuestionUuid km q.uuid
       items =
         case M.lookup currentPath replies of
           Just (Reply {value = ItemListReply {..}}) -> ilValue

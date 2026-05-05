@@ -1,6 +1,6 @@
-resolver: nightly-2024-01-10
+snapshot: lts-24.37
 
-compiler: ghc-9.10.1
+compiler: ghc-9.10.3
 
 packages:
 - shared-common
@@ -21,7 +21,7 @@ extra-deps:
   - github: haskellify/cron
     commit: cef3249aae7977b607dd4638a65d6a985b2f5759
   - github: haskellify/minio-hs
-    commit: 83446d193f9bba02b758d2f1bd34a642f575238c
+    commit: e96186514e5f4ceade5e0867285f2e20cca1e973
   - github: JonathanLorimer/hs-connection
     commit: 1dc000d38963de0e4c3954b27d4fe0e5f1d9cee2
   - github: brendanhay/amazonka
@@ -32,25 +32,18 @@ extra-deps:
       - lib/services/amazonka-lambda
       - lib/services/amazonka-sso
       - lib/services/amazonka-sts
-  - microlens-pro-0.2.0.2
-  - base64-1.0
-  - fsutils-0.1.2
-  - hashable-1.5.0.0
-  - haskell-src-meta-0.8.14
-  - html-entities-1.1.4.7
-  - jose-jwt-0.10.0
-  - lens-5.3.3
-  - oidc-client-0.6.1.0
-  - raven-haskell-0.1.4.1
-  - servant-swagger-1.2
-  - servant-swagger-tags-0.1.0.1
-  - servant-swagger-ui-0.3.5.5.0.0
-  - servant-swagger-ui-core-0.3.5
-  - swagger2-2.8.8
-  - text-short-0.1.6
-  - text-replace-0.0.0.4
-  - th-compat-0.1.6
-  - time-parsers-0.2
+  - cryptostore-0.5.0.0@sha256:56173cf3adba00c218f1f110d008233660e1cd1538d07124b93c1b7f0ed68b3e,4705
+  - fsutils-0.1.2@sha256:fb3eb68e03e4317352032642d3ed18c796c30f5a3bec40caef69cee0b859df5e,1028
+  - jwt-0.11.0@sha256:0602735ee4093c6c5bc918461855bcd55499099363bad34eb7a227aeef3cde29,4265
+  - microlens-pro-0.2.0.5@sha256:8c4afe7a696682dadd042c1e323d43ae7361a443c29b4992984d54b374f254c3,3376
+  - oidc-client-0.8.0.0@sha256:ad04bcb9680c81ca364ed097929265fe79a036b5a2dd556f6ff344146da34afd,3523
+  - raven-haskell-0.1.4.1@sha256:c0dbccf85c815cc95bad1ee9332a422b2ad4070f5023818092a9e144e3e0d534,1479
+  - servant-swagger-tags-0.1.0.1@sha256:2d743e9ad1cfcca537acc99e0b97e0e4feda3b5c842937dbf5895261e3105bf1,1094
+  - text-replace-0.1.0.3@sha256:1ac3a6a18f0e7d5274e14b6e03e3b36b953d8f0a24ee6b43f8a8befb4160b6b6,1628
+  - time-parsers-0.2@sha256:393d52ebb968035129a90c9dfd56ea3de8e81900e8c26b33dce1b22571a040f2,1911
+  - x509-1.7.7@sha256:90eef2d745a654146fc1c325e035eaddac531e4d2145d4bc1dcf4b8fad439d34,2276
+  - x509-store-1.6.9@sha256:1f1abeab5bacf1407b920d0f34f4c35a5ad450ff0d8121cd3dc76460f81e711d,1716
+  - x509-validation-1.6.12@sha256:4f4af20ec77f02c042ecd4726c195bb0e0b694b336de81e7bd4515b2917bd9bc,2169
 
 extra-lib-dirs:
   - ./lib

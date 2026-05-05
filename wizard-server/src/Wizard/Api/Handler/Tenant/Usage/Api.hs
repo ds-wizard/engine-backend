@@ -10,7 +10,7 @@ import Wizard.Model.Context.BaseContext
 type TenantUsageAPI =
   Tags "Tenant Usage"
     :> ( Current_Wizard_GET
-          :<|> Detail_Wizard_GET
+           :<|> Detail_Wizard_GET
        )
 
 tenantUsageApi :: Proxy TenantUsageAPI

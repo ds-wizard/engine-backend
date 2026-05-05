@@ -14,7 +14,7 @@ instance Ord KnowledgeModelEvent where
 
 squash :: [KnowledgeModelEvent] -> [KnowledgeModelEvent]
 squash events =
-  let groupedEvents = groupBy (\e1 e2 -> utctDay (e1.createdAt) == utctDay (e2.createdAt)) events
+  let groupedEvents = groupBy (\e1 e2 -> utctDay e1.createdAt == utctDay e2.createdAt) events
       squashedEvents = fmap (squashReorderEvents . squashSimple) groupedEvents
    in concat squashedEvents
 

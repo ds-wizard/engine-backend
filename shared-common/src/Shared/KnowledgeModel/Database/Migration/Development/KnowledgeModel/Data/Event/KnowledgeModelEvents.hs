@@ -60,13 +60,13 @@ e_km1 =
 e_km1__content :: EditKnowledgeModelEvent
 e_km1__content =
   EditKnowledgeModelEvent
-    { annotations = ChangedValue $ km1Edited.annotations
-    , chapterUuids = ChangedValue $ km1Edited.chapterUuids
-    , tagUuids = ChangedValue $ km1Edited.tagUuids
-    , integrationUuids = ChangedValue $ km1Edited.integrationUuids
-    , metricUuids = ChangedValue $ km1Edited.metricUuids
-    , phaseUuids = ChangedValue $ km1Edited.phaseUuids
-    , resourceCollectionUuids = ChangedValue $ km1Edited.resourceCollectionUuids
+    { annotations = ChangedValue km1Edited.annotations
+    , chapterUuids = ChangedValue km1Edited.chapterUuids
+    , tagUuids = ChangedValue km1Edited.tagUuids
+    , integrationUuids = ChangedValue km1Edited.integrationUuids
+    , metricUuids = ChangedValue km1Edited.metricUuids
+    , phaseUuids = ChangedValue km1Edited.phaseUuids
+    , resourceCollectionUuids = ChangedValue km1Edited.resourceCollectionUuids
     }
 
 -- ----------------------------------------------------------------------------
@@ -148,10 +148,10 @@ e_km1_ch1 =
 e_km1_ch1__content :: EditChapterEvent
 e_km1_ch1__content =
   EditChapterEvent
-    { title = ChangedValue $ chapter1Edited.title
-    , text = ChangedValue $ chapter1Edited.text
-    , annotations = ChangedValue $ chapter1Edited.annotations
-    , questionUuids = ChangedValue $ chapter1Edited.questionUuids
+    { title = ChangedValue chapter1Edited.title
+    , text = ChangedValue chapter1Edited.text
+    , annotations = ChangedValue chapter1Edited.annotations
+    , questionUuids = ChangedValue chapter1Edited.questionUuids
     }
 
 e_km1_ch1_2 :: KnowledgeModelEvent
@@ -164,9 +164,9 @@ e_km1_ch1_2 =
         EditChapterEvent' $
           EditChapterEvent
             { title = ChangedValue $ "TWICE: " ++ chapter1Edited.title
-            , text = ChangedValue $ chapter1Edited.text
-            , annotations = ChangedValue $ chapter1Edited.annotations
-            , questionUuids = ChangedValue $ chapter1Edited.questionUuids
+            , text = ChangedValue chapter1Edited.text
+            , annotations = ChangedValue chapter1Edited.annotations
+            , questionUuids = ChangedValue chapter1Edited.questionUuids
             }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -462,7 +462,7 @@ e_km1_ch1_q1_type =
               , tagUuids = NothingChanged
               , expertUuids = NothingChanged
               , referenceUuids = NothingChanged
-              , answerUuids = ChangedValue $ question1WithNewType.answerUuids
+              , answerUuids = ChangedValue question1WithNewType.answerUuids
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -480,14 +480,14 @@ e_km1_ch1_q2 =
 e_km1_ch1_q2__content :: EditOptionsQuestionEvent
 e_km1_ch1_q2__content =
   EditOptionsQuestionEvent
-    { title = ChangedValue $ question2Edited.title
-    , text = ChangedValue $ question2Edited.text
-    , requiredPhaseUuid = ChangedValue $ question2Edited.requiredPhaseUuid
-    , annotations = ChangedValue $ question2Edited.annotations
-    , tagUuids = ChangedValue $ question2Edited.tagUuids
-    , expertUuids = ChangedValue $ question2Edited.expertUuids
-    , referenceUuids = ChangedValue $ question2Edited.referenceUuids
-    , answerUuids = ChangedValue $ question2Edited.answerUuids
+    { title = ChangedValue question2Edited.title
+    , text = ChangedValue question2Edited.text
+    , requiredPhaseUuid = ChangedValue question2Edited.requiredPhaseUuid
+    , annotations = ChangedValue question2Edited.annotations
+    , tagUuids = ChangedValue question2Edited.tagUuids
+    , expertUuids = ChangedValue question2Edited.expertUuids
+    , referenceUuids = ChangedValue question2Edited.referenceUuids
+    , answerUuids = ChangedValue question2Edited.answerUuids
     }
 
 e_km1_ch1_q2_second_edit :: KnowledgeModelEvent
@@ -501,13 +501,13 @@ e_km1_ch1_q2_second_edit =
           EditOptionsQuestionEvent' $
             EditOptionsQuestionEvent
               { title = ChangedValue "New title"
-              , text = ChangedValue $ question2Edited.text
-              , requiredPhaseUuid = ChangedValue $ question2Edited.requiredPhaseUuid
-              , annotations = ChangedValue $ question2Edited.annotations
-              , tagUuids = ChangedValue $ question2Edited.tagUuids
-              , expertUuids = ChangedValue $ question2Edited.expertUuids
-              , referenceUuids = ChangedValue $ question2Edited.referenceUuids
-              , answerUuids = ChangedValue $ question2Edited.answerUuids
+              , text = ChangedValue question2Edited.text
+              , requiredPhaseUuid = ChangedValue question2Edited.requiredPhaseUuid
+              , annotations = ChangedValue question2Edited.annotations
+              , tagUuids = ChangedValue question2Edited.tagUuids
+              , expertUuids = ChangedValue question2Edited.expertUuids
+              , referenceUuids = ChangedValue question2Edited.referenceUuids
+              , answerUuids = ChangedValue question2Edited.answerUuids
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -522,10 +522,10 @@ e_km1_ch1_q2_type =
         EditQuestionEvent' $
           EditListQuestionEvent' $
             EditListQuestionEvent
-              { title = ChangedValue $ question2WithNewType.title
+              { title = ChangedValue question2WithNewType.title
               , text = NothingChanged
               , requiredPhaseUuid = NothingChanged
-              , annotations = ChangedValue $ question2WithNewType.annotations
+              , annotations = ChangedValue question2WithNewType.annotations
               , tagUuids = NothingChanged
               , expertUuids = NothingChanged
               , referenceUuids = NothingChanged
@@ -544,14 +544,14 @@ e_km1_ch2_q4 =
         EditQuestionEvent' $
           EditListQuestionEvent' $
             EditListQuestionEvent
-              { title = ChangedValue $ question4Edited.title
-              , text = ChangedValue $ question4Edited.text
-              , requiredPhaseUuid = ChangedValue $ question4Edited.requiredPhaseUuid
-              , annotations = ChangedValue $ question4Edited.annotations
-              , tagUuids = ChangedValue $ question4Edited.tagUuids
-              , expertUuids = ChangedValue $ question4Edited.expertUuids
-              , referenceUuids = ChangedValue $ question4Edited.referenceUuids
-              , itemTemplateQuestionUuids = ChangedValue $ question4Edited.itemTemplateQuestionUuids
+              { title = ChangedValue question4Edited.title
+              , text = ChangedValue question4Edited.text
+              , requiredPhaseUuid = ChangedValue question4Edited.requiredPhaseUuid
+              , annotations = ChangedValue question4Edited.annotations
+              , tagUuids = ChangedValue question4Edited.tagUuids
+              , expertUuids = ChangedValue question4Edited.expertUuids
+              , referenceUuids = ChangedValue question4Edited.referenceUuids
+              , itemTemplateQuestionUuids = ChangedValue question4Edited.itemTemplateQuestionUuids
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -566,15 +566,15 @@ e_km1_ch2_q4_type =
         EditQuestionEvent' $
           EditIntegrationQuestionEvent' $
             EditIntegrationQuestionEvent
-              { title = ChangedValue $ question4WithNewType.title
+              { title = ChangedValue question4WithNewType.title
               , text = NothingChanged
               , requiredPhaseUuid = NothingChanged
-              , annotations = ChangedValue $ question4WithNewType.annotations
+              , annotations = ChangedValue question4WithNewType.annotations
               , tagUuids = NothingChanged
               , expertUuids = NothingChanged
               , referenceUuids = NothingChanged
-              , integrationUuid = ChangedValue $ question4WithNewType.integrationUuid
-              , variables = ChangedValue $ question4WithNewType.variables
+              , integrationUuid = ChangedValue question4WithNewType.integrationUuid
+              , variables = ChangedValue question4WithNewType.variables
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -589,15 +589,15 @@ e_km1_ch3_q9 =
         EditQuestionEvent' $
           EditIntegrationQuestionEvent' $
             EditIntegrationQuestionEvent
-              { title = ChangedValue $ question9Edited.title
-              , text = ChangedValue $ question9Edited.text
-              , requiredPhaseUuid = ChangedValue $ question9Edited.requiredPhaseUuid
-              , annotations = ChangedValue $ question9Edited.annotations
-              , tagUuids = ChangedValue $ question9Edited.tagUuids
-              , expertUuids = ChangedValue $ question9Edited.expertUuids
-              , referenceUuids = ChangedValue $ question9Edited.referenceUuids
-              , integrationUuid = ChangedValue $ question9Edited.integrationUuid
-              , variables = ChangedValue $ question9Edited.variables
+              { title = ChangedValue question9Edited.title
+              , text = ChangedValue question9Edited.text
+              , requiredPhaseUuid = ChangedValue question9Edited.requiredPhaseUuid
+              , annotations = ChangedValue question9Edited.annotations
+              , tagUuids = ChangedValue question9Edited.tagUuids
+              , expertUuids = ChangedValue question9Edited.expertUuids
+              , referenceUuids = ChangedValue question9Edited.referenceUuids
+              , integrationUuid = ChangedValue question9Edited.integrationUuid
+              , variables = ChangedValue question9Edited.variables
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -612,14 +612,14 @@ e_km1_ch3_q9_type =
         EditQuestionEvent' $
           EditValueQuestionEvent' $
             EditValueQuestionEvent
-              { title = ChangedValue $ question9WithNewType.title
+              { title = ChangedValue question9WithNewType.title
               , text = NothingChanged
               , requiredPhaseUuid = NothingChanged
-              , annotations = ChangedValue $ question9WithNewType.annotations
+              , annotations = ChangedValue question9WithNewType.annotations
               , tagUuids = NothingChanged
               , expertUuids = NothingChanged
               , referenceUuids = NothingChanged
-              , valueType = ChangedValue $ question9WithNewType.valueType
+              , valueType = ChangedValue question9WithNewType.valueType
               , validations = NothingChanged
               }
     , createdAt = dt'' 2018 1 21 0
@@ -635,14 +635,14 @@ e_km1_ch3_q11 =
         EditQuestionEvent' $
           EditMultiChoiceQuestionEvent' $
             EditMultiChoiceQuestionEvent
-              { title = ChangedValue $ question11Edited.title
-              , text = ChangedValue $ question11Edited.text
-              , requiredPhaseUuid = ChangedValue $ question11Edited.requiredPhaseUuid
-              , annotations = ChangedValue $ question11Edited.annotations
-              , tagUuids = ChangedValue $ question11Edited.tagUuids
-              , expertUuids = ChangedValue $ question11Edited.expertUuids
-              , referenceUuids = ChangedValue $ question11Edited.referenceUuids
-              , choiceUuids = ChangedValue $ question11Edited.choiceUuids
+              { title = ChangedValue question11Edited.title
+              , text = ChangedValue question11Edited.text
+              , requiredPhaseUuid = ChangedValue question11Edited.requiredPhaseUuid
+              , annotations = ChangedValue question11Edited.annotations
+              , tagUuids = ChangedValue question11Edited.tagUuids
+              , expertUuids = ChangedValue question11Edited.expertUuids
+              , referenceUuids = ChangedValue question11Edited.referenceUuids
+              , choiceUuids = ChangedValue question11Edited.choiceUuids
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -657,14 +657,14 @@ e_km1_ch3_q13 =
         EditQuestionEvent' $
           EditItemSelectQuestionEvent' $
             EditItemSelectQuestionEvent
-              { title = ChangedValue $ question13Edited.title
-              , text = ChangedValue $ question13Edited.text
-              , requiredPhaseUuid = ChangedValue $ question13Edited.requiredPhaseUuid
-              , annotations = ChangedValue $ question13Edited.annotations
-              , tagUuids = ChangedValue $ question13Edited.tagUuids
-              , expertUuids = ChangedValue $ question13Edited.expertUuids
-              , referenceUuids = ChangedValue $ question13Edited.referenceUuids
-              , listQuestionUuid = ChangedValue $ question13Edited.listQuestionUuid
+              { title = ChangedValue question13Edited.title
+              , text = ChangedValue question13Edited.text
+              , requiredPhaseUuid = ChangedValue question13Edited.requiredPhaseUuid
+              , annotations = ChangedValue question13Edited.annotations
+              , tagUuids = ChangedValue question13Edited.tagUuids
+              , expertUuids = ChangedValue question13Edited.expertUuids
+              , referenceUuids = ChangedValue question13Edited.referenceUuids
+              , listQuestionUuid = ChangedValue question13Edited.listQuestionUuid
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -930,11 +930,11 @@ e_km1_ch1_q2_aYes1 =
     , content =
         EditAnswerEvent' $
           EditAnswerEvent
-            { aLabel = ChangedValue $ q2_answerYesEdited.aLabel
-            , advice = ChangedValue $ q2_answerYesEdited.advice
-            , annotations = ChangedValue $ q2_answerYesEdited.annotations
-            , followUpUuids = ChangedValue $ q2_answerYesEdited.followUpUuids
-            , metricMeasures = ChangedValue $ q2_answerYesEdited.metricMeasures
+            { aLabel = ChangedValue q2_answerYesEdited.aLabel
+            , advice = ChangedValue q2_answerYesEdited.advice
+            , annotations = ChangedValue q2_answerYesEdited.annotations
+            , followUpUuids = ChangedValue q2_answerYesEdited.followUpUuids
+            , metricMeasures = ChangedValue q2_answerYesEdited.metricMeasures
             }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -952,11 +952,11 @@ e_km1_ch1_q2_aYes1_2 =
 e_km1_ch1_q2_aYes1_2__content :: EditAnswerEvent
 e_km1_ch1_q2_aYes1_2__content =
   EditAnswerEvent
-    { aLabel = ChangedValue $ q2_answerYesEdited.aLabel
-    , advice = ChangedValue $ q2_answerYesEdited.advice
-    , annotations = ChangedValue $ q2_answerYesEdited.annotations
-    , followUpUuids = ChangedValue $ q2_answerYes.followUpUuids
-    , metricMeasures = ChangedValue $ q2_answerYes.metricMeasures
+    { aLabel = ChangedValue q2_answerYesEdited.aLabel
+    , advice = ChangedValue q2_answerYesEdited.advice
+    , annotations = ChangedValue q2_answerYesEdited.annotations
+    , followUpUuids = ChangedValue q2_answerYes.followUpUuids
+    , metricMeasures = ChangedValue q2_answerYes.metricMeasures
     }
 
 d_km1_ch1_q2_aYes1 :: KnowledgeModelEvent
@@ -1105,11 +1105,11 @@ e_km1_ch2_q4_it1_q5 =
 e_km1_ch2_q4_it1_q5__content :: EditListQuestionEvent
 e_km1_ch2_q4_it1_q5__content =
   EditListQuestionEvent
-    { title = ChangedValue $ q4_it1_question5Edited.title
-    , text = ChangedValue $ q4_it1_question5Edited.text
-    , requiredPhaseUuid = ChangedValue $ q4_it1_question5Edited.requiredPhaseUuid
-    , annotations = ChangedValue $ q4_it1_question5Edited.annotations
-    , tagUuids = ChangedValue $ q4_it1_question5Edited.tagUuids
+    { title = ChangedValue q4_it1_question5Edited.title
+    , text = ChangedValue q4_it1_question5Edited.text
+    , requiredPhaseUuid = ChangedValue q4_it1_question5Edited.requiredPhaseUuid
+    , annotations = ChangedValue q4_it1_question5Edited.annotations
+    , tagUuids = ChangedValue q4_it1_question5Edited.tagUuids
     , expertUuids = NothingChanged
     , referenceUuids = NothingChanged
     , itemTemplateQuestionUuids = ChangedValue [q4_it1_q5_it2_question8.uuid, q4_it1_q5_it2_question7.uuid]
@@ -1128,14 +1128,14 @@ e_km1_ch2_q4_it1_q6 =
 e_km1_ch2_q4_it1_q6__content :: EditOptionsQuestionEvent
 e_km1_ch2_q4_it1_q6__content =
   EditOptionsQuestionEvent
-    { title = ChangedValue $ q4_it1_question6Edited.title
-    , text = ChangedValue $ q4_it1_question6Edited.text
-    , requiredPhaseUuid = ChangedValue $ q4_it1_question6Edited.requiredPhaseUuid
-    , annotations = ChangedValue $ q4_it1_question6Edited.annotations
-    , tagUuids = ChangedValue $ q4_it1_question6Edited.tagUuids
-    , expertUuids = ChangedValue $ q4_it1_question6Edited.expertUuids
-    , referenceUuids = ChangedValue $ q4_it1_question6Edited.referenceUuids
-    , answerUuids = ChangedValue $ q4_it1_question6Edited.answerUuids
+    { title = ChangedValue q4_it1_question6Edited.title
+    , text = ChangedValue q4_it1_question6Edited.text
+    , requiredPhaseUuid = ChangedValue q4_it1_question6Edited.requiredPhaseUuid
+    , annotations = ChangedValue q4_it1_question6Edited.annotations
+    , tagUuids = ChangedValue q4_it1_question6Edited.tagUuids
+    , expertUuids = ChangedValue q4_it1_question6Edited.expertUuids
+    , referenceUuids = ChangedValue q4_it1_question6Edited.referenceUuids
+    , answerUuids = ChangedValue q4_it1_question6Edited.answerUuids
     }
 
 d_km1_ch2_q4_it1_q5 :: KnowledgeModelEvent
@@ -1260,14 +1260,14 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
         EditQuestionEvent' $
           EditOptionsQuestionEvent' $
             EditOptionsQuestionEvent
-              { title = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.title
-              , text = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.text
-              , requiredPhaseUuid = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.requiredPhaseUuid
-              , annotations = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.annotations
-              , tagUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.tagUuids
-              , expertUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.expertUuids
-              , referenceUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.referenceUuids
-              , answerUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.answerUuids
+              { title = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.title
+              , text = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.text
+              , requiredPhaseUuid = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.requiredPhaseUuid
+              , annotations = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.annotations
+              , tagUuids = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.tagUuids
+              , expertUuids = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.expertUuids
+              , referenceUuids = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.referenceUuids
+              , answerUuids = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.answerUuids
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -1285,13 +1285,13 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 =
 e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2__content :: EditOptionsQuestionEvent
 e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2__content =
   EditOptionsQuestionEvent
-    { title = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.title
-    , text = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.text
-    , requiredPhaseUuid = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.requiredPhaseUuid
-    , annotations = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.annotations
-    , tagUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited.tagUuids
-    , expertUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2.expertUuids
-    , referenceUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2.referenceUuids
+    { title = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.title
+    , text = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.text
+    , requiredPhaseUuid = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.requiredPhaseUuid
+    , annotations = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.annotations
+    , tagUuids = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2Edited.tagUuids
+    , expertUuids = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2.expertUuids
+    , referenceUuids = ChangedValue q2_aYes_fuq1_aYes_fuQuestion2.referenceUuids
     , answerUuids = ChangedValue [q2_aYes_fuq1_aYes_fuq2_answerYes.uuid, q2_aYes_fuq1_aYes_fuq2_answerNo.uuid]
     }
 
@@ -1308,11 +1308,11 @@ e_km1_ch2_ansMaybe6_fuq4 =
 e_km1_ch2_ansMaybe6_fuq4__content :: EditListQuestionEvent
 e_km1_ch2_ansMaybe6_fuq4__content =
   EditListQuestionEvent
-    { title = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited.title
-    , text = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited.text
-    , requiredPhaseUuid = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited.requiredPhaseUuid
-    , annotations = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited.annotations
-    , tagUuids = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited.tagUuids
+    { title = ChangedValue q4_it1_q6_aYes_followUpQuestion4Edited.title
+    , text = ChangedValue q4_it1_q6_aYes_followUpQuestion4Edited.text
+    , requiredPhaseUuid = ChangedValue q4_it1_q6_aYes_followUpQuestion4Edited.requiredPhaseUuid
+    , annotations = ChangedValue q4_it1_q6_aYes_followUpQuestion4Edited.annotations
+    , tagUuids = ChangedValue q4_it1_q6_aYes_followUpQuestion4Edited.tagUuids
     , expertUuids = NothingChanged
     , referenceUuids = NothingChanged
     , itemTemplateQuestionUuids = ChangedValue [q4_it1_q6_aYes_fuq4_it_question2.uuid, q4_it1_q6_aYes_fuq4_it_question1.uuid]
@@ -1384,8 +1384,8 @@ e_km1_ch3_q11_cho1 =
     , content =
         EditChoiceEvent' $
           EditChoiceEvent
-            { aLabel = ChangedValue $ q11_choice1Edited.aLabel
-            , annotations = ChangedValue $ q11_choice1Edited.annotations
+            { aLabel = ChangedValue q11_choice1Edited.aLabel
+            , annotations = ChangedValue q11_choice1Edited.annotations
             }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -1491,9 +1491,9 @@ e_km1_ch1_q2_eAlbert =
     , content =
         EditExpertEvent' $
           EditExpertEvent
-            { name = ChangedValue $ km1_ch1_q2_eAlbertEdited.name
-            , email = ChangedValue $ km1_ch1_q2_eAlbertEdited.email
-            , annotations = ChangedValue $ km1_ch1_q2_eAlbertEdited.annotations
+            { name = ChangedValue km1_ch1_q2_eAlbertEdited.name
+            , email = ChangedValue km1_ch1_q2_eAlbertEdited.email
+            , annotations = ChangedValue km1_ch1_q2_eAlbertEdited.annotations
             }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -1603,8 +1603,8 @@ e_km1_ch1_q2_rCh1 =
         EditReferenceEvent' $
           EditResourcePageReferenceEvent' $
             EditResourcePageReferenceEvent
-              { resourcePageUuid = ChangedValue $ km1_ch1_q2_r1Edited.resourcePageUuid
-              , annotations = ChangedValue $ km1_ch1_q2_r1Edited.annotations
+              { resourcePageUuid = ChangedValue km1_ch1_q2_r1Edited.resourcePageUuid
+              , annotations = ChangedValue km1_ch1_q2_r1Edited.annotations
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -1619,9 +1619,9 @@ e_km1_ch1_q2_rCh1_type =
         EditReferenceEvent' $
           EditURLReferenceEvent' $
             EditURLReferenceEvent
-              { url = ChangedValue $ km1_ch1_q2_r1WithNewType.url
-              , aLabel = ChangedValue $ km1_ch1_q2_r1WithNewType.aLabel
-              , annotations = ChangedValue $ km1_ch1_q2_r1WithNewType.annotations
+              { url = ChangedValue km1_ch1_q2_r1WithNewType.url
+              , aLabel = ChangedValue km1_ch1_q2_r1WithNewType.aLabel
+              , annotations = ChangedValue km1_ch1_q2_r1WithNewType.annotations
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -1636,9 +1636,9 @@ e_km1_ch1_q2_rCh2 =
         EditReferenceEvent' $
           EditURLReferenceEvent' $
             EditURLReferenceEvent
-              { url = ChangedValue $ km1_ch1_q2_r2Edited.url
-              , aLabel = ChangedValue $ km1_ch1_q2_r2Edited.aLabel
-              , annotations = ChangedValue $ km1_ch1_q2_r2Edited.annotations
+              { url = ChangedValue km1_ch1_q2_r2Edited.url
+              , aLabel = ChangedValue km1_ch1_q2_r2Edited.aLabel
+              , annotations = ChangedValue km1_ch1_q2_r2Edited.annotations
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -1653,9 +1653,9 @@ e_km1_ch1_q2_rCh2_type =
         EditReferenceEvent' $
           EditCrossReferenceEvent' $
             EditCrossReferenceEvent
-              { targetUuid = ChangedValue $ km1_ch1_q2_r2WithNewType.targetUuid
-              , description = ChangedValue $ km1_ch1_q2_r2WithNewType.description
-              , annotations = ChangedValue $ km1_ch1_q2_r2WithNewType.annotations
+              { targetUuid = ChangedValue km1_ch1_q2_r2WithNewType.targetUuid
+              , description = ChangedValue km1_ch1_q2_r2WithNewType.description
+              , annotations = ChangedValue km1_ch1_q2_r2WithNewType.annotations
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -1670,9 +1670,9 @@ e_km1_ch1_q2_rCh3 =
         EditReferenceEvent' $
           EditCrossReferenceEvent' $
             EditCrossReferenceEvent
-              { targetUuid = ChangedValue $ km1_ch1_q2_r3Edited.targetUuid
-              , description = ChangedValue $ km1_ch1_q2_r3Edited.description
-              , annotations = ChangedValue $ km1_ch1_q2_r3Edited.annotations
+              { targetUuid = ChangedValue km1_ch1_q2_r3Edited.targetUuid
+              , description = ChangedValue km1_ch1_q2_r3Edited.description
+              , annotations = ChangedValue km1_ch1_q2_r3Edited.annotations
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -1687,8 +1687,8 @@ e_km1_ch1_q2_rCh3_type =
         EditReferenceEvent' $
           EditResourcePageReferenceEvent' $
             EditResourcePageReferenceEvent
-              { resourcePageUuid = ChangedValue $ km1_ch1_q2_r3WithNewType.resourcePageUuid
-              , annotations = ChangedValue $ km1_ch1_q2_r3WithNewType.annotations
+              { resourcePageUuid = ChangedValue km1_ch1_q2_r3WithNewType.resourcePageUuid
+              , annotations = ChangedValue km1_ch1_q2_r3WithNewType.annotations
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -1748,10 +1748,10 @@ e_km1_tds =
     , content =
         EditTagEvent' $
           EditTagEvent
-            { name = ChangedValue $ tagDataScienceEdited.name
-            , description = ChangedValue $ tagDataScienceEdited.description
-            , color = ChangedValue $ tagDataScienceEdited.color
-            , annotations = ChangedValue $ tagDataScienceEdited.annotations
+            { name = ChangedValue tagDataScienceEdited.name
+            , description = ChangedValue tagDataScienceEdited.description
+            , color = ChangedValue tagDataScienceEdited.color
+            , annotations = ChangedValue tagDataScienceEdited.annotations
             }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -1855,11 +1855,11 @@ e_km1_io =
         EditIntegrationEvent' $
           EditPluginIntegrationEvent' $
             EditPluginIntegrationEvent
-              { name = ChangedValue $ orcidPluginIntegrationEdited.name
-              , pluginUuid = ChangedValue $ orcidPluginIntegrationEdited.pluginUuid
-              , pluginIntegrationId = ChangedValue $ orcidPluginIntegrationEdited.pluginIntegrationId
-              , pluginIntegrationSettings = ChangedValue $ orcidPluginIntegrationEdited.pluginIntegrationSettings
-              , annotations = ChangedValue $ orcidPluginIntegrationEdited.annotations
+              { name = ChangedValue orcidPluginIntegrationEdited.name
+              , pluginUuid = ChangedValue orcidPluginIntegrationEdited.pluginUuid
+              , pluginIntegrationId = ChangedValue orcidPluginIntegrationEdited.pluginIntegrationId
+              , pluginIntegrationSettings = ChangedValue orcidPluginIntegrationEdited.pluginIntegrationSettings
+              , annotations = ChangedValue orcidPluginIntegrationEdited.annotations
               }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -1987,10 +1987,10 @@ e_km1_mtrF =
     , content =
         EditMetricEvent' $
           EditMetricEvent
-            { title = ChangedValue $ metricFEdited.title
-            , abbreviation = ChangedValue $ metricFEdited.abbreviation
-            , description = ChangedValue $ metricFEdited.description
-            , annotations = ChangedValue $ metricFEdited.annotations
+            { title = ChangedValue metricFEdited.title
+            , abbreviation = ChangedValue metricFEdited.abbreviation
+            , description = ChangedValue metricFEdited.description
+            , annotations = ChangedValue metricFEdited.annotations
             }
     , createdAt = dt'' 2018 1 21 0
     }
@@ -2064,9 +2064,9 @@ e_km1_phs1 =
     , content =
         EditPhaseEvent' $
           EditPhaseEvent
-            { title = ChangedValue $ phase1Edited.title
-            , description = ChangedValue $ phase1Edited.description
-            , annotations = ChangedValue $ phase1Edited.annotations
+            { title = ChangedValue phase1Edited.title
+            , description = ChangedValue phase1Edited.description
+            , annotations = ChangedValue phase1Edited.annotations
             }
     , createdAt = dt'' 2018 1 21 0
     }

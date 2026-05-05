@@ -48,7 +48,7 @@ sanitizerSpec =
           result `shouldBe` expected
     describe "computeParentPath" $ do
       createComputeParentPathTest chapter1.uuid [chapter1.uuid]
-      createComputeParentPathTest (q4_it1_q6_aYes_followUpQuestion4.uuid) q4_it1_q6_aYes_followUpQuestion4_path
+      createComputeParentPathTest q4_it1_q6_aYes_followUpQuestion4.uuid q4_it1_q6_aYes_followUpQuestion4_path
     describe "computeSharedNode" $ do
       it "Nothing in common" $
         -- GIVEN:

@@ -16,13 +16,13 @@ import Wizard.Model.Context.BaseContext
 type KnowledgeModelEditorAPI =
   Tags "Knowledge Model Editor"
     :> ( List_GET
-          :<|> List_Suggestions_GET
-          :<|> List_POST
-          :<|> Detail_GET
-          :<|> Detail_PUT
-          :<|> Detail_DELETE
-          :<|> Detail_WS
-          :<|> MigrationAPI
+           :<|> List_Suggestions_GET
+           :<|> List_POST
+           :<|> Detail_GET
+           :<|> Detail_PUT
+           :<|> Detail_DELETE
+           :<|> Detail_WS
+           :<|> MigrationAPI
        )
 
 knowledgeModelEditorApi :: Proxy KnowledgeModelEditorAPI

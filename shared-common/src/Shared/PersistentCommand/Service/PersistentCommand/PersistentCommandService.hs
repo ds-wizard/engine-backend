@@ -154,7 +154,7 @@ retryPersistentCommandsForLambda = do
 retryPersistentCommandForLambda :: (Show identity, FromField identity, ToField identity, AppContextC s sc m) => PersistentCommandSimple identity -> m ()
 retryPersistentCommandForLambda command = do
   context <- ask
-  case L.find (\lf -> lf.component == command.component) (context.serverConfig'.persistentCommand'.lambdaFunctions) of
+  case L.find (\lf -> lf.component == command.component) context.serverConfig'.persistentCommand'.lambdaFunctions of
     Just lf -> void $ invokeLambdaFunction command lf
     Nothing -> logWarnI _CMP_DATABASE (f' "No lambda function found for persistent command '%s'" [U.toString command.uuid])
 
@@ -165,7 +165,7 @@ sendToSentry :: (Show identity, FromField identity, ToField identity, AppContext
 sendToSentry command = do
   context <- ask
   when
-    (context.serverConfig'.sentry'.enabled)
+    context.serverConfig'.sentry'.enabled
     ( do
         let sentryDsn = context.serverConfig'.sentry'.dsn
         sentryService <- liftIO $ initRaven sentryDsn id sendRecord stderrFallback
@@ -177,8 +177,8 @@ sendToSentry command = do
 recordUpdate :: Show identity => String -> PersistentCommand identity -> SentryRecord -> SentryRecord
 recordUpdate buildVersion command record =
   let commandUserUuid = maybe "anonymous" show command.createdBy
-      commandUuid = U.toString $ command.uuid
-      commandTenantUuid = U.toString $ command.tenantUuid
+      commandUuid = U.toString command.uuid
+      commandTenantUuid = U.toString command.tenantUuid
    in record
         { srRelease = Just buildVersion
         , srInterfaces =

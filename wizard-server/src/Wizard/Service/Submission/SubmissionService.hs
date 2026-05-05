@@ -62,13 +62,13 @@ submitDocument docUuid reqDto =
                 { state = DoneSubmissionState
                 , location = mLocation
                 }
-              :: Submission
+                :: Submission
             Left error ->
               sub
                 { state = ErrorSubmissionState
                 , returnedData = Just error
                 }
-              :: Submission
+                :: Submission
     savedSubmission <- updateSubmissionByUuid updatedSub
     currentUser <- getCurrentUser
     return $ toList savedSubmission tcSubmission (toSuggestion' currentUser)

@@ -5,15 +5,15 @@ on:
 
 jobs:
   hlint:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     
     env:
-      HLINT_VERSION: '3.5'
+      HLINT_VERSION: '3.10'
 
     steps:
 # (1) -> Init
     - name: Checkout git repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     
     - name: Prepare ~/.local/bin
       run: |
@@ -23,7 +23,7 @@ jobs:
 # (2) -> Setup cache
     - name: Cache ~/.local/bin
       id: cache-local-bin
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ~/.local/bin
         key: local-bin-${{ env.HLINT_VERSION }}
@@ -39,23 +39,24 @@ jobs:
 # (4) -> Run hlint
     - name: Run hlint
       run: |
-        hlint shared-common
-        hlint registry-public
-        hlint registry-server
-        hlint wizard-public
-        hlint wizard-server
+        hlint \
+          shared-common \
+          registry-public \
+          registry-server \
+          wizard-public \
+          wizard-server
 
   fourmolu:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     env:
-      FOURMOLU_VERSION: '0.8.2.0'
-      HPACK_VERSION: '0.34.2'
+      FOURMOLU_VERSION: '0.19.0.1'
+      HPACK_VERSION: '0.38.3'
 
     steps:
 # (1) -> Init
     - name: Checkout git repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Prepare ~/.local/bin
       run: |
@@ -65,7 +66,7 @@ jobs:
 # (2) -> Setup cache
     - name: Cache ~/.local/bin
       id: cache-local-bin
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ~/.local/bin
         key: local-bin-${{ env.FOURMOLU_VERSION }}-${{ env.HPACK_VERSION }}
@@ -131,16 +132,16 @@ jobs:
 
   # CSpell
   cspell:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Install CSpell
         run: |

@@ -10,7 +10,7 @@ import Wizard.Model.Context.BaseContext
 type SubmissionAPI =
   Tags "Document Submission"
     :> ( List_GET
-          :<|> List_POST
+           :<|> List_POST
        )
 
 submissionApi :: Proxy SubmissionAPI

@@ -10,7 +10,7 @@ toWithMembershipDTO user =
     { uuid = user.uuid
     , firstName = user.firstName
     , lastName = user.lastName
-    , gravatarHash = createGravatarHash $ user.email
+    , gravatarHash = createGravatarHash user.email
     , imageUrl = user.imageUrl
     , membershipType = user.membershipType
     }

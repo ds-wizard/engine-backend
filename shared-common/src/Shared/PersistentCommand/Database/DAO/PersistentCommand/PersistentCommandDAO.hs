@@ -77,7 +77,7 @@ insertPersistentCommand :: (AppContextC s sc m, ToField identity) => PersistentC
 insertPersistentCommand command = do
   createInsertFn entityName command
   context <- ask
-  case (command.internal, L.find (\lf -> lf.component == command.component) (context.serverConfig'.persistentCommand'.lambdaFunctions)) of
+  case (command.internal, L.find (\lf -> lf.component == command.component) context.serverConfig'.persistentCommand'.lambdaFunctions) of
     (True, _) -> notifyPersistentCommandQueue
     (False, Nothing) -> notifySpecificPersistentCommandQueue command
     (False, Just lf) -> invokeLambdaFunction (toSimple command) lf
@@ -135,5 +135,5 @@ notifySpecificPersistentCommandQueue command = do
 
 invokeLambdaFunction :: AppContextC s sc m => PersistentCommandSimple identity -> ServerConfigPersistentCommandLambda -> m Int64
 invokeLambdaFunction command lf = do
-  invokeLambda (lf.functionArn) "{}"
+  invokeLambda lf.functionArn "{}"
   return 1

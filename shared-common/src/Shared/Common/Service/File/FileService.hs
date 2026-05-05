@@ -18,7 +18,7 @@ listFilesWithExtension folder extension = do
   files <- fileList folder
   return $ filter (isSuffixOf ("." ++ extension)) files
 
-loadJSONFile :: (FromJSON a) => FilePath -> IO (Either AppError a)
+loadJSONFile :: FromJSON a => FilePath -> IO (Either AppError a)
 loadJSONFile path = do
   content <- B.readFile path
   case eitherDecode content of

@@ -12,9 +12,9 @@ import Wizard.Model.Context.BaseContext
 type AuthAPI =
   Tags "Auth"
     :> ( Detail_GET
-          :<|> Detail_Callback_GET
-          :<|> Detail_Consents_POST
-          :<|> Detail_Logout_GET
+           :<|> Detail_Callback_GET
+           :<|> Detail_Consents_POST
+           :<|> Detail_Logout_GET
        )
 
 authApi :: Proxy AuthAPI

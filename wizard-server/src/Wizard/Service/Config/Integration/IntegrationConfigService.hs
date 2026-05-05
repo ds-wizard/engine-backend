@@ -16,10 +16,7 @@ getFileIntegrationConfig :: String -> AppContextM (M.Map String String)
 getFileIntegrationConfig sectionName = do
   serverConfig <- asks serverConfig
   mFileNameEnv <- liftIO $ lookupEnv "INTEGRATION_CONFIG_PATH"
-  let integrationConfigPath =
-        case mFileNameEnv of
-          Just fileNameEnv -> fileNameEnv
-          Nothing -> serverConfig.general.integrationConfig
+  let integrationConfigPath = fromMaybe serverConfig.general.integrationConfig mFileNameEnv
   eIntConfig <- liftIO $ decodeFileEither integrationConfigPath
   case eIntConfig of
     Right intConfig -> return . fromMaybe M.empty . M.lookup sectionName $ intConfig

@@ -8,14 +8,13 @@ on:
 jobs:
   btp:
     name: Build-Tag-Push
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     if: github.repository == 'ds-wizard/engine-backend'
 
     strategy:
       matrix:
         component: [registry, wizard]
-        stack: [3.3.1]
     
     env:
       COMPONENT: ${{ matrix.component }}
@@ -24,7 +23,7 @@ jobs:
       DOCKER_META_CONTEXT: './${{ matrix.component }}-server'
       DOCKER_META_FILE: './${{ matrix.component }}-server/Dockerfile'
       DOCKER_META_PLATFORMS: 'linux/amd64'
-      STACK_VERSION: ${{ matrix.stack }}
+      STACK_VERSION: '3.9.3'
       PYTHONPATH: ${{ github.workspace }}/lib
       LD_LIBRARY_PATH: ${{ github.workspace }}/lib
       ENGINE_JINJA_VERSION: 'v1.0.0'
@@ -50,12 +49,17 @@ jobs:
       run: echo "Force push detected. Cache may be invalidated..."
 
     - name: Checkout git repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Fetch all git history
       run: |
         git fetch --prune --unshallow
     
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y liblzma-dev
+
     - name: Prepare ~/.local/bin
       run: |
         mkdir -p ~/.local/bin
@@ -63,15 +67,15 @@ jobs:
 
     - name: Setup Python
       if: matrix.component == 'wizard'
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
-        python-version: '3.10'
+        python-version: '3.12'
 
     - name: Prepare lib directory
       if: matrix.component == 'wizard'
       run: |
         mkdir -p lib
-        curl -L -o libjinja.tar.gz  https://github.com/ds-wizard/engine-jinja/releases/download/$ENGINE_JINJA_VERSION/libjinja-python3.10-ubuntu-22.04-X64.tar.gz
+        curl -L -o libjinja.tar.gz  https://github.com/ds-wizard/engine-jinja/releases/download/$ENGINE_JINJA_VERSION/libjinja-python3.12-ubuntu-24.04-X64.tar.gz
         tar --strip-components=1 -xzf libjinja.tar.gz -C lib
         rm libjinja.tar.gz
         ls -la lib
@@ -79,22 +83,22 @@ jobs:
 # (1) -> Setup cache
     - name: Cache ~/.stack
       id: cache-stack
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ~/.stack
-        key: stack-home-ubuntu22-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
+        key: stack-home-ubuntu24-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
         restore-keys: |
-          stack-home-ubuntu22-
+          stack-home-ubuntu24-
     
     - name: Cache shared-common
       id: cache-shared-common
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: shared-common/.stack-work
-        key: shared-common-ubuntu22-${{ hashFiles('shared-common/package.yaml')}}-${{ hashFiles('shared-common/**/*.hs') }}
+        key: shared-common-ubuntu24-${{ hashFiles('shared-common/package.yaml')}}-${{ hashFiles('shared-common/**/*.hs') }}
         restore-keys: |
-          shared-common-ubuntu22-${{ hashFiles('shared-common/package.yaml')}}-
-          shared-common-ubuntu22-
+          shared-common-ubuntu24-${{ hashFiles('shared-common/package.yaml')}}-
+          shared-common-ubuntu24-
     
     - name: Invalidate shared-common cache (force push)
       id: invalidate-cache-shared-common
@@ -104,13 +108,13 @@ jobs:
     
     - name: Cache wizard-public
       id: cache-wizard-public
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: wizard-public/.stack-work
-        key: wizard-public-ubuntu22-${{ hashFiles('wizard-public/package.yaml')}}-${{ hashFiles('wizard-public/**/*.hs') }}
+        key: wizard-public-ubuntu24-${{ hashFiles('wizard-public/package.yaml')}}-${{ hashFiles('wizard-public/**/*.hs') }}
         restore-keys: |
-          wizard-public-ubuntu22-${{ hashFiles('wizard-public/package.yaml')}}-
-          wizard-public-ubuntu22-
+          wizard-public-ubuntu24-${{ hashFiles('wizard-public/package.yaml')}}-
+          wizard-public-ubuntu24-
     
     - name: Invalidate wizard-public cache (force push)
       id: invalidate-cache-wizard-public
@@ -120,13 +124,13 @@ jobs:
     
     - name: Cache registry-public
       id: cache-registry-public
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: registry-public/.stack-work
-        key: registry-public-ubuntu22-${{ hashFiles('registry-public/package.yaml')}}-${{ hashFiles('registry-public/**/*.hs') }}
+        key: registry-public-ubuntu24-${{ hashFiles('registry-public/package.yaml')}}-${{ hashFiles('registry-public/**/*.hs') }}
         restore-keys: |
-          registry-public-ubuntu22-${{ hashFiles('registry-public/package.yaml')}}-
-          registry-public-ubuntu22-
+          registry-public-ubuntu24-${{ hashFiles('registry-public/package.yaml')}}-
+          registry-public-ubuntu24-
     
     - name: Invalidate registry-public cache (force push)
       id: invalidate-cache-registry-public
@@ -136,13 +140,13 @@ jobs:
 
     - name: Cache registry-server
       id: cache-registry-server
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: registry-server/.stack-work
-        key: registry-server-${{ matrix.component }}-ubuntu22-${{ hashFiles('registry-server/package.yaml')}}-${{ hashFiles('registry-server/**/*.hs') }}
+        key: registry-server-${{ matrix.component }}-ubuntu24-${{ hashFiles('registry-server/package.yaml')}}-${{ hashFiles('registry-server/**/*.hs') }}
         restore-keys: |
-          registry-server-${{ matrix.component }}-ubuntu22-${{ hashFiles('registry-server/package.yaml')}}-
-          registry-server-${{ matrix.component }}-ubuntu22-
+          registry-server-${{ matrix.component }}-ubuntu24-${{ hashFiles('registry-server/package.yaml')}}-
+          registry-server-${{ matrix.component }}-ubuntu24-
     
     - name: Invalidate registry-server cache (force push)
       id: invalidate-cache-registry-server
@@ -152,14 +156,14 @@ jobs:
     
     - name: Cache wizard-server
       id: cache-wizard-server
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       if: matrix.component == 'wizard'
       with:
         path: wizard-server/.stack-work
-        key: wizard-server-${{ matrix.component }}-ubuntu22-${{ hashFiles('wizard-server/package.yaml')}}-${{ hashFiles('wizard-server/**/*.hs') }}
+        key: wizard-server-${{ matrix.component }}-ubuntu24-${{ hashFiles('wizard-server/package.yaml')}}-${{ hashFiles('wizard-server/**/*.hs') }}
         restore-keys: |
-          wizard-server-${{ matrix.component }}-ubuntu22-${{ hashFiles('wizard-server/package.yaml')}}-
-          wizard-server-${{ matrix.component }}-ubuntu22-
+          wizard-server-${{ matrix.component }}-ubuntu24-${{ hashFiles('wizard-server/package.yaml')}}-
+          wizard-server-${{ matrix.component }}-ubuntu24-
     
     - name: Invalidate wizard-server cache (force push)
       id: invalidate-cache-wizard-server
@@ -169,10 +173,10 @@ jobs:
     
     - name: Cache Stack in ~/.local/bin
       id: cache-stack-local-bin
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ~/.local/bin
-        key: stack-local-bin-ubuntu22-${{ matrix.stack }}
+        key: stack-local-bin-ubuntu24-${{ matrix.stack }}
 
 # (2) -> Prepare and install dependencies     
     - name: Setup stack
@@ -217,7 +221,7 @@ jobs:
 # (4.1) -> Docker build (test)
     - name: Docker meta [test]
       id: meta-test
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v6
       with:
         images: |
           ${{ env.PUBLIC_IMAGE_PREFIX }}/${{ env.IMAGE_NAME }}
@@ -225,7 +229,7 @@ jobs:
           type=sha
 
     - name: Docker build [test]
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v7
       with:
         context: ${{ env.DOCKER_META_CONTEXT }}
         file: ${{ env.DOCKER_META_FILE }}
@@ -237,7 +241,7 @@ jobs:
 # (4.2) -> Docker login
     - name: Docker login [docker.io]
       if: github.event_name != 'pull_request'
-      uses: docker/login-action@v3
+      uses: docker/login-action@v4
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
@@ -246,7 +250,7 @@ jobs:
     - name: Docker meta [dev]
       id: meta-dev
       if: github.event_name != 'pull_request'
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v6
       with:
         images: |
           ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}
@@ -254,7 +258,7 @@ jobs:
           type=ref,event=branch
 
     - name: Docker build+push [dev]
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v7
       if: github.event_name != 'pull_request' && steps.meta-dev.outputs.tags != ''
       with:
         context: ${{ env.DOCKER_META_CONTEXT }}
@@ -268,7 +272,7 @@ jobs:
     - name: Docker meta [public]
       id: meta-public
       if: github.event_name != 'pull_request'
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v6
       with:
         images: |
           ${{ env.PUBLIC_IMAGE_PREFIX }}/${{ env.IMAGE_NAME }}
@@ -280,7 +284,7 @@ jobs:
           type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
 
     - name: Docker build+push [public]
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v7
       if: github.event_name != 'pull_request' && steps.meta-public.outputs.tags != ''
       with:
         context: ${{ env.DOCKER_META_CONTEXT }}

@@ -11,8 +11,8 @@ import Wizard.Model.Context.BaseContext
 type AppKeyAPI =
   Tags "AppKey"
     :> ( List_GET
-          :<|> List_POST
-          :<|> Detail_DELETE
+           :<|> List_POST
+           :<|> Detail_DELETE
        )
 
 appKeyApi :: Proxy AppKeyAPI

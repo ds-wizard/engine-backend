@@ -72,7 +72,7 @@ create_test_200 title appContext project authHeader =
   it title $
     -- GIVEN: Prepare request
     do
-      let reqUrl = reqUrlT $ project.uuid
+      let reqUrl = reqUrlT project.uuid
       let reqHeaders = reqHeadersT authHeader
       -- GIVEN: Prepare expectation
       let expStatus = 200

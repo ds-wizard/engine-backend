@@ -25,10 +25,10 @@ validateProjectVersionUniqueness projectUuid reqDto = do
   mProjectVersion <- findProjectVersionByEventUuid' projectUuid reqDto.eventUuid
   when
     (isJust mProjectVersion)
-    (throwError . UserError $ _ERROR_SERVICE_PROJECT_VERSION__VERSION_UNIQUENESS (U.toString $ reqDto.eventUuid))
+    (throwError . UserError $ _ERROR_SERVICE_PROJECT_VERSION__VERSION_UNIQUENESS (U.toString reqDto.eventUuid))
 
 validateProjectVersionEventExistence :: ProjectVersionChangeDTO -> AppContextM ()
 validateProjectVersionEventExistence reqDto =
   findProjectEventByUuid' reqDto.eventUuid >>= \case
     Just _ -> return ()
-    Nothing -> throwError . UserError $ _ERROR_SERVICE_PROJECT_VERSION__NON_EXISTENT_EVENT_UUID (U.toString $ reqDto.eventUuid)
+    Nothing -> throwError . UserError $ _ERROR_SERVICE_PROJECT_VERSION__NON_EXISTENT_EVENT_UUID (U.toString reqDto.eventUuid)

@@ -65,7 +65,7 @@ toDetailDTO locale registryEnabled localeRs orgRs versionLs registryLink =
     , versions = map toVersionDTO . L.sortBy (\(_, v1) (_, v2) -> compare v2 v1) $ versionLs
     , remoteLatestVersion =
         case (registryEnabled, selectLocaleByOrgIdAndLocaleId locale localeRs) of
-          (True, Just localeR) -> Just $ localeR.remoteVersion
+          (True, Just localeR) -> Just localeR.remoteVersion
           _ -> Nothing
     , registryLink =
         if registryEnabled

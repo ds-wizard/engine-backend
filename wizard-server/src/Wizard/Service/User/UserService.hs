@@ -19,6 +19,7 @@ import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Config.SimpleFeature
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
+import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.Auth.AuthConsentDTO
 import Wizard.Api.Resource.User.UserChangeDTO
@@ -232,7 +233,7 @@ changeUserPasswordByHash userUuid hash userPasswordDto =
 resetUserPassword :: ActionKeyDTO ActionKeyType -> AppContextM ()
 resetUserPassword reqDto =
   runInTransaction $ do
-    mUser <- findUserByEmail' reqDto.email
+    mUser <- findUserByEmail' (toLower reqDto.email)
     case mUser of
       Just user -> do
         tenantUuid <- asks currentTenantUuid

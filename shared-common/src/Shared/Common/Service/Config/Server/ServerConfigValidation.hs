@@ -19,7 +19,7 @@ validateGeneralSecret config
   | secretLen /= 32 = Left . GeneralServerError $ _ERROR_SERVICE_CONFIG__VALIDATION_SECRET
   | otherwise = Right config
   where
-    secretLen = length $ config.general.secret
+    secretLen = length config.general.secret
 
 validateGeneralRsaPrivateKey :: (HasField "general" serverConfig serverConfigGeneral, HasField "rsaPrivateKey" serverConfigGeneral RSA.PrivateKey) => serverConfig -> Either AppError serverConfig
 validateGeneralRsaPrivateKey config =

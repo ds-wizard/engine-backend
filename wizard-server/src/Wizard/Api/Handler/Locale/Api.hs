@@ -19,16 +19,16 @@ import Wizard.Model.Context.BaseContext
 type LocaleAPI =
   Tags "Locale"
     :> ( List_GET
-          :<|> List_Suggestions_GET
-          :<|> List_Current_Content_GET
-          :<|> List_POST
-          :<|> List_DELETE
-          :<|> List_Bundle_POST
-          :<|> Detail_GET
-          :<|> Detail_PUT
-          :<|> Detail_Bundle_GET
-          :<|> Detail_DELETE
-          :<|> Detail_Pull_POST
+           :<|> List_Suggestions_GET
+           :<|> List_Current_Content_GET
+           :<|> List_POST
+           :<|> List_DELETE
+           :<|> List_Bundle_POST
+           :<|> Detail_GET
+           :<|> Detail_PUT
+           :<|> Detail_Bundle_GET
+           :<|> Detail_DELETE
+           :<|> Detail_Pull_POST
        )
 
 localeApi :: Proxy LocaleAPI

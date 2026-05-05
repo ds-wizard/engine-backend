@@ -12,9 +12,9 @@ import Wizard.Model.Context.BaseContext
 type KnowledgeModelSecretAPI =
   Tags "KnowledgeModelSecret"
     :> ( List_GET
-          :<|> List_POST
-          :<|> Detail_PUT
-          :<|> Detail_DELETE
+           :<|> List_POST
+           :<|> Detail_PUT
+           :<|> Detail_DELETE
        )
 
 knowledgeModelSecretApi :: Proxy KnowledgeModelSecretAPI

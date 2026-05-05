@@ -95,7 +95,7 @@ foldInContext = Prelude.foldl foldOne (return [])
       entity <- entityIO
       return $ list ++ [entity]
 
-replace :: (Eq a) => a -> a -> [a] -> [a]
+replace :: Eq a => a -> a -> [a] -> [a]
 replace new old = L.map replace'
   where
     replace' elem = if elem == old then new else elem

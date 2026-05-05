@@ -44,8 +44,8 @@ renderJinjaSingle template itemContext = do
     Right (r : _) ->
       return $
         if r.ok
-          then Right (r.result)
-          else Left $ fromMaybe "Unknown rendering error" (r.message)
+          then Right r.result
+          else Left $ fromMaybe "Unknown rendering error" r.message
     _ -> return $ Left "No results returned from Jinja rendering"
 
 renderJinjaMultiple :: [String] -> Value -> IO [Either String String]
@@ -58,8 +58,8 @@ renderJinjaMultiple templates itemContext = do
   where
     processResult r =
       if r.ok
-        then Right (r.result)
-        else Left $ fromMaybe "Unknown rendering error" (r.message)
+        then Right r.result
+        else Left $ fromMaybe "Unknown rendering error" r.message
 
 renderJinjaBatch :: String -> [Value] -> IO [Either String String]
 renderJinjaBatch template itemContexts = do
@@ -71,8 +71,8 @@ renderJinjaBatch template itemContexts = do
   where
     processResult r =
       if r.ok
-        then Right (r.result)
-        else Left $ fromMaybe "Unknown rendering error" (r.message)
+        then Right r.result
+        else Left $ fromMaybe "Unknown rendering error" r.message
 
 renderJinja' :: JinjaInput -> IO (Either String [JinjaResult])
 renderJinja' inputStructure = do

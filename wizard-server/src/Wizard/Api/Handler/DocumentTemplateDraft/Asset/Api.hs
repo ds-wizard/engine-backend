@@ -15,12 +15,12 @@ import Wizard.Model.Context.BaseContext
 type DocumentTemplateAssetAPI =
   Tags "Document Template Draft Asset"
     :> ( List_GET
-          :<|> List_POST
-          :<|> Detail_GET
-          :<|> Detail_PUT
-          :<|> Detail_DELETE
-          :<|> Detail_Content_GET
-          :<|> Detail_Content_PUT
+           :<|> List_POST
+           :<|> Detail_GET
+           :<|> Detail_PUT
+           :<|> Detail_DELETE
+           :<|> Detail_Content_GET
+           :<|> Detail_Content_PUT
        )
 
 documentTemplateAssetApi :: Proxy DocumentTemplateAssetAPI

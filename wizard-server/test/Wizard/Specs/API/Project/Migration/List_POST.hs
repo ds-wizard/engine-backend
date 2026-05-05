@@ -98,7 +98,7 @@ create_test_201 title appContext oldProject oldProjectEvents newProject newProje
   it title $
     -- GIVEN: Prepare request
     do
-      let reqUrl = reqUrlT $ oldProject.uuid
+      let reqUrl = reqUrlT oldProject.uuid
       let reqHeaders = reqHeadersT reqAuthHeader
       -- AND: Prepare expectation
       let expStatus = 201
@@ -150,7 +150,7 @@ create_test_403 title appContext project reason =
   it title $
     -- GIVEN: Prepare request
     do
-      let reqUrl = reqUrlT $ project.uuid
+      let reqUrl = reqUrlT project.uuid
       let reqHeaders = reqHeadersT reqNonAdminAuthHeader
       -- AND: Prepare expectation
       let expStatus = 403

@@ -32,8 +32,8 @@ modifyUserGroupMemberships command =
     let membershipsToDelete = membershipsDb L.\\ command.members
     let membershipsToAdd = command.members L.\\ membershipsDb
     let membershipToEdit = groupBy' (.userUuid) (.userUuid) memberships command.members
-    traverse_ insertUserGroupMembership . fmap (\dto -> fromCreateDTO dto command.userGroupUuid tenantUuid now) $ membershipsToAdd
-    traverse_ updateUserGroupMembershipByUuid . fmap (\(membership, dto) -> fromChangeDTO membership dto now) $ membershipToEdit
+    traverse_ (insertUserGroupMembership . (\dto -> fromCreateDTO dto command.userGroupUuid tenantUuid now)) membershipsToAdd
+    traverse_ (updateUserGroupMembershipByUuid . (\(membership, dto) -> fromChangeDTO membership dto now)) membershipToEdit
     unless (null membershipsToDelete) (deleteUserGroupMembership command.userGroupUuid (fmap (.userUuid) membershipsToDelete))
     updateUserGroupByUuid $ userGroup {updatedAt = now}
     return ()

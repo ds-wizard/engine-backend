@@ -175,6 +175,6 @@ createLocale tntUuid now = do
             , createdAt = now
             , updatedAt = now
             }
-          :: Locale
+            :: Locale
     insertLocale locale
     return locale
