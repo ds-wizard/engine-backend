@@ -8,6 +8,8 @@ import WizardLib.Public.Model.User.UserSimple
 data ProjectCommentThreadNotification = ProjectCommentThreadNotification
   { projectUuid :: U.UUID
   , projectName :: String
+  , knowledgeModelPackageUuid :: U.UUID
+  , selectedQuestionTagUuids :: [U.UUID]
   , tenantUuid :: U.UUID
   , commentThreadUuid :: U.UUID
   , path :: String
@@ -16,6 +18,7 @@ data ProjectCommentThreadNotification = ProjectCommentThreadNotification
   , assignedTo :: UserSimple
   , assignedBy :: Maybe UserSimple
   , text :: String
+  , questionTitle :: Maybe String
   , clientUrl :: String
   , appTitle :: Maybe String
   , logoUrl :: Maybe String

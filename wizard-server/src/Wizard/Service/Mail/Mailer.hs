@@ -215,6 +215,7 @@ sendProjectCommentThreadAssignedMail notifications =
                 , ("projectName", A.string n.projectName)
                 , ("commentThreadUuid", A.uuid n.commentThreadUuid)
                 , ("path", A.string n.path)
+                , ("questionTitle", A.maybeString n.questionTitle)
                 , ("resolved", A.bool n.resolved)
                 , ("private", A.bool n.private)
                 , ("assignedBy", A.toJSON n.assignedBy)

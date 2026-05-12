@@ -1,9 +1,10 @@
 module Wizard.Service.Project.Comment.ProjectCommentService where
 
 import Control.Monad.Except (catchError)
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (liftIO, local)
 import Data.Foldable (traverse_)
 import qualified Data.Map.Strict as M
+import qualified Data.Maybe as Maybe
 import qualified Data.UUID as U
 
 import Shared.Common.Model.Common.Page
@@ -11,7 +12,10 @@ import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
 import Shared.Common.Service.Acl.AclService
 import Shared.Common.Util.List
+import Shared.Common.Util.String (splitOn)
 import Shared.Common.Util.Uuid
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
+import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Constant.Acl
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Project.ProjectCommentDAO
@@ -23,6 +27,7 @@ import Wizard.Model.Project.Comment.ProjectCommentList
 import Wizard.Model.Project.Comment.ProjectCommentThreadAssigned
 import Wizard.Model.Project.Comment.ProjectCommentThreadNotification
 import Wizard.Model.Project.Project
+import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Project.Comment.ProjectCommentMapper
 import Wizard.Service.Project.ProjectAcl
@@ -73,5 +78,32 @@ sendNotificationToNewAssignees =
   runInTransaction $ do
     threads <- findProjectCommentThreadsForNotifying
     let threadGroups = groupBy (\t1 t2 -> t1.assignedTo.uuid == t2.assignedTo.uuid && t1.tenantUuid == t2.tenantUuid) threads
-    traverse_ sendProjectCommentThreadAssignedMail threadGroups
+    traverse_ sendNotificationGroup threadGroups
     unsetProjectCommentThreadNotificationRequired
+
+sendNotificationGroup :: [ProjectCommentThreadNotification] -> AppContextM ()
+sendNotificationGroup [] = return ()
+sendNotificationGroup notifications@(notification : _) = do
+  enriched <-
+    local (\c -> c {currentTenantUuid = notification.tenantUuid}) $
+      traverse fillInQuestionTitle notifications
+  sendProjectCommentThreadAssignedMail enriched
+
+fillInQuestionTitle :: ProjectCommentThreadNotification -> AppContextM ProjectCommentThreadNotification
+fillInQuestionTitle n = do
+  title <-
+    catchError
+      ( do
+          km <- compileKnowledgeModel [] (Just n.knowledgeModelPackageUuid) n.selectedQuestionTagUuids
+          return $ resolveQuestionTitleFromPath km n.path
+      )
+      (\_ -> return Nothing)
+  return $ n {questionTitle = title}
+
+resolveQuestionTitleFromPath :: KnowledgeModel -> String -> Maybe String
+resolveQuestionTitleFromPath km path =
+  let segments = Maybe.mapMaybe U.fromString (splitOn "." path)
+      questions = Maybe.mapMaybe (`M.lookup` getQuestionsM km) segments
+   in case reverse questions of
+        q : _ -> Just (getTitle q)
+        [] -> Nothing

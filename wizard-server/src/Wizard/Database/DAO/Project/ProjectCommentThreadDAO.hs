@@ -255,6 +255,8 @@ findProjectCommentThreadsForNotifying = do
   let sql =
         "SELECT project.uuid, \
         \       project.name, \
+        \       project.knowledge_model_package_uuid, \
+        \       project.selected_question_tag_uuids, \
         \       project.tenant_uuid, \
         \       thread.uuid, \
         \       thread.path, \
