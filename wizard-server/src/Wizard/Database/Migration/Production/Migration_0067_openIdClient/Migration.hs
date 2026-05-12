@@ -22,6 +22,7 @@ migrate dbPool = do
   addUserEmailVerification dbPool
   dropLegacyOpenIdConfig dbPool
   addNonAdminLoginEnabled dbPool
+  addConfigMailCustomTemplates dbPool
 
 createOpenIdClientTable dbPool = do
   let sql =
@@ -143,6 +144,12 @@ dropLegacyOpenIdConfig dbPool = do
 
 addNonAdminLoginEnabled dbPool = do
   let sql = "ALTER TABLE config_authentication ADD COLUMN IF NOT EXISTS internal_non_admin_login_enabled bool NOT NULL DEFAULT true;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addConfigMailCustomTemplates dbPool = do
+  let sql = "ALTER TABLE config_mail ADD COLUMN custom_templates bool NOT NULL DEFAULT false;"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

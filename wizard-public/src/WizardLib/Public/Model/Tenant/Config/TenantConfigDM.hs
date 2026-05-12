@@ -34,6 +34,7 @@ defaultMail =
   TenantConfigMail
     { tenantUuid = U.nil
     , configUuid = Nothing
+    , customTemplates = False
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 20
     }

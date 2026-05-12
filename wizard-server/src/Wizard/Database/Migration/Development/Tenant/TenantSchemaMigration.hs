@@ -362,10 +362,11 @@ createTcMailTable = do
   let sql =
         "CREATE TABLE config_mail \
         \( \
-        \    tenant_uuid uuid        NOT NULL, \
-        \    config_uuid uuid, \
-        \    created_at  timestamptz NOT NULL, \
-        \    updated_at  timestamptz NOT NULL, \
+        \    tenant_uuid      uuid        NOT NULL, \
+        \    config_uuid      uuid, \
+        \    created_at       timestamptz NOT NULL, \
+        \    updated_at       timestamptz NOT NULL, \
+        \    custom_templates bool        NOT NULL, \
         \    CONSTRAINT config_mail_pk PRIMARY KEY (tenant_uuid), \
         \    CONSTRAINT config_mail_config_uuid_fk FOREIGN KEY (config_uuid) REFERENCES instance_config_mail (uuid) ON DELETE SET NULL, \
         \    CONSTRAINT config_mail_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \

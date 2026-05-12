@@ -94,6 +94,7 @@ instance Eq TenantConfigFeatures where
 data TenantConfigMail = TenantConfigMail
   { tenantUuid :: U.UUID
   , configUuid :: Maybe U.UUID
+  , customTemplates :: Bool
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

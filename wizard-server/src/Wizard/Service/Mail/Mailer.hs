@@ -62,6 +62,7 @@ sendRegistrationConfirmationMail user hash clientUrl =
                   , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
                   , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
+                  , ("mailCustomTemplates", A.bool tcMail.customTemplates)
                   ]
             }
     sendEmailWithTenant body user.uuid user.tenantUuid
@@ -92,6 +93,7 @@ sendRegistrationCreatedAnalyticsMail user =
                   , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
                   , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
+                  , ("mailCustomTemplates", A.bool tcMail.customTemplates)
                   ]
             }
     sendEmailWithTenant body user.uuid user.tenantUuid
@@ -123,6 +125,7 @@ sendEmailChangeMail user hash newEmail =
                   , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
                   , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
+                  , ("mailCustomTemplates", A.bool tcMail.customTemplates)
                   ]
             }
     sendEmailWithTenant body user.uuid user.tenantUuid
@@ -153,6 +156,7 @@ sendResetPasswordMail user hash =
                   , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
                   , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
+                  , ("mailCustomTemplates", A.bool tcMail.customTemplates)
                   ]
             }
     sendEmail body user.uuid
@@ -183,6 +187,7 @@ sendTwoFactorAuthMail user code =
                   , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
                   , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
+                  , ("mailCustomTemplates", A.bool tcMail.customTemplates)
                   ]
             }
     sendEmail body user.uuid
@@ -220,6 +225,7 @@ sendProjectInvitationMail oldProject newProject =
                         , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
                         , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
                         , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
+                        , ("mailCustomTemplates", A.bool tcMail.customTemplates)
                         , ("inviteeUuid", A.uuid user.uuid)
                         , ("inviteeFirstName", A.string user.firstName)
                         , ("inviteeLastName", A.string user.lastName)
@@ -237,6 +243,7 @@ sendProjectInvitationMail oldProject newProject =
 sendProjectCommentThreadAssignedMail :: [ProjectCommentThreadNotification] -> AppContextM ()
 sendProjectCommentThreadAssignedMail notifications =
   runInTransaction $ do
+    tcMail <- findTenantConfigMail
     case notifications of
       [] -> return ()
       notification : _ -> do
@@ -268,6 +275,7 @@ sendProjectCommentThreadAssignedMail notifications =
                       , ("illustrationsColor", A.maybeString notification.illustrationsColor)
                       , ("supportEmail", A.maybeString notification.supportEmail)
                       , ("mailConfigUuid", A.maybeUuid notification.mailConfigUuid)
+                      , ("mailCustomTemplates", A.bool tcMail.customTemplates)
                       ]
                 }
         sendEmailWithTenant body notification.assignedTo.uuid notification.tenantUuid
@@ -299,6 +307,7 @@ sendApiKeyCreatedMail user userToken =
                   , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
                   , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
+                  , ("mailCustomTemplates", A.bool tcMail.customTemplates)
                   ]
             }
     sendEmail body user.uuid
@@ -330,6 +339,7 @@ sendApiKeyExpirationMail user userToken =
                   , ("illustrationsColor", A.maybeString tcLookAndFeel.illustrationsColor)
                   , ("supportEmail", A.maybeString tcPrivacyAndSupport.supportEmail)
                   , ("mailConfigUuid", A.maybeUuid tcMail.configUuid)
+                  , ("mailCustomTemplates", A.bool tcMail.customTemplates)
                   ]
             }
     sendEmailWithTenant body user.uuid user.tenantUuid
