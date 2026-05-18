@@ -22,6 +22,6 @@ invokeLambda functionArn payload = do
           , payload = payload
           }
   logInfoI _CMP_INTEGRATION (show request)
-  response <- runAwsRequest (`AWS.send` request)
+  response <- runAwsRequestWithContext (`AWS.send` request)
   logInfoI _CMP_INTEGRATION (show response)
   return $ response.statusCode == 200

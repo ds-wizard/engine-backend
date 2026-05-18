@@ -108,6 +108,19 @@ packages:
     subdir: lib/amazonka-core
     url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
 - completed:
+    name: amazonka-appconfigdata
+    pantry-tree:
+      sha256: 102aa7982f235db3079f09c29f92feeb5be0d74499ad9b499f18b5b765fa6cf1
+      size: 1320
+    sha256: 06f5e8430080e5a46e4489e12978725f4b01cfb896450a12a01bcde88168c7f2
+    size: 34855734
+    subdir: lib/services/amazonka-appconfigdata
+    url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
+    version: '2.0'
+  original:
+    subdir: lib/services/amazonka-appconfigdata
+    url: https://github.com/brendanhay/amazonka/archive/f3a7fca02fdbb832cc348e991983b1465225d50c.tar.gz
+- completed:
     name: amazonka-lambda
     pantry-tree:
       sha256: 249b7557046e64a2fae70acd3e7d7e20422ef7b3db49bf01d56c619e1d0a4470

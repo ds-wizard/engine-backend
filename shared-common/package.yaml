@@ -24,6 +24,7 @@ library:
   - base
   - aeson
   - amazonka
+  - amazonka-appconfigdata
   - amazonka-lambda
   - async
   - attoparsec

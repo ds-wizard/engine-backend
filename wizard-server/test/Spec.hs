@@ -1,6 +1,8 @@
 module Main where
 
 import Control.Concurrent.MVar
+import Control.Monad ((>=>))
+import qualified Data.ByteString as BS
 import Data.Maybe (fromJust)
 import Data.Pool
 import qualified Data.UUID as U
@@ -99,7 +101,7 @@ hLoadConfig fileName loadFn callback = do
       callback config
 
 prepareWebApp runCallback =
-  hLoadConfig serverConfigFileTest (getServerConfig validateServerConfig) $ \serverConfig ->
+  hLoadConfig serverConfigFileTest (BS.readFile >=> getServerConfig validateServerConfig) $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
       shutdownFlag <- newEmptyMVar
       putStrLn $ "ENVIRONMENT: set to " `mappend` serverConfig.general.environment
