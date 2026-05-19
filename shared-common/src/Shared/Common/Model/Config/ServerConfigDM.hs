@@ -69,13 +69,6 @@ defaultCloud =
     , signalBridgeUrl = Nothing
     }
 
-defaultPlan :: ServerConfigPlan
-defaultPlan = ServerConfigPlan {recomputeJob = defaultPlanRecomputeJob}
-
-defaultPlanRecomputeJob :: ServerConfigCronWorker
-defaultPlanRecomputeJob =
-  ServerConfigCronWorker {enabled = False, cron = "0 * * * *"}
-
 defaultPersistentCommand :: ServerConfigPersistentCommand
 defaultPersistentCommand =
   ServerConfigPersistentCommand

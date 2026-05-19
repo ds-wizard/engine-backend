@@ -37,7 +37,6 @@ instance FromJSON ServerConfig where
     analyticalMails <- o .:? "analyticalMails" .!= defaultAnalyticalMails
     logging <- o .:? "logging" .!= defaultLogging
     cloud <- o .:? "cloud" .!= defaultCloud
-    plan <- o .:? "plan" .!= defaultPlan
     persistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
     signalBridge <- o .:? "signalBridge" .!= defaultSignalBridge
     admin <- o .:? "admin" .!= defaultAdmin

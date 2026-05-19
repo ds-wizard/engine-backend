@@ -29,7 +29,6 @@ defaultConfig =
     , analyticalMails = defaultAnalyticalMails
     , logging = defaultLogging
     , cloud = defaultCloud
-    , plan = defaultPlan
     , persistentCommand = defaultPersistentCommand
     , signalBridge = defaultSignalBridge
     , admin = defaultAdmin

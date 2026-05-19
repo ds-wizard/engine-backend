@@ -70,11 +70,6 @@ data ServerConfigCloud = ServerConfigCloud
   }
   deriving (Generic, Show)
 
-data ServerConfigPlan = ServerConfigPlan
-  { recomputeJob :: ServerConfigCronWorker
-  }
-  deriving (Generic, Show)
-
 data ServerConfigPersistentCommand = ServerConfigPersistentCommand
   { lambdaFunctions :: [ServerConfigPersistentCommandLambda]
   , listenerJob :: ServerConfigPersistentCommandListenerJob

@@ -26,7 +26,6 @@ instance FromEnv ServerConfig where
     analyticalMails <- applyEnv serverConfig.analyticalMails
     logging <- applyEnv serverConfig.logging
     cloud <- applyEnv serverConfig.cloud
-    plan <- applyEnv serverConfig.plan
     persistentCommand <- applyEnv serverConfig.persistentCommand
     signalBridge <- applyEnv serverConfig.signalBridge
     admin <- applyEnv serverConfig.admin

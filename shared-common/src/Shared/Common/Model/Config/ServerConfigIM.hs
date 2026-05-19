@@ -93,14 +93,6 @@ instance FromEnv ServerConfigCloud where
       , \c -> applyEnvVariable "CLOUD_SIGNAL_BRIDGE_URL" c.signalBridgeUrl (\x -> c {signalBridgeUrl = x})
       ]
 
-instance FromEnv ServerConfigPlan where
-  applyEnv serverConfig =
-    applyEnvVariables
-      serverConfig
-      [ \c -> applyEnvVariable "PLAN_RECOMPUTE_JOB_ENABLED" c.recomputeJob.enabled (\x -> c {recomputeJob = c.recomputeJob {enabled = x}} :: ServerConfigPlan)
-      , \c -> applyStringEnvVariable "PLAN_RECOMPUTE_JOB_CRON" c.recomputeJob.cron (\x -> c {recomputeJob = c.recomputeJob {cron = x}} :: ServerConfigPlan)
-      ]
-
 instance FromEnv ServerConfigPersistentCommand where
   applyEnv serverConfig =
     applyEnvVariables

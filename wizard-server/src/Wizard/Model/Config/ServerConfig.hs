@@ -26,7 +26,6 @@ data ServerConfig = ServerConfig
   , analyticalMails :: ServerConfigAnalyticalMails
   , logging :: ServerConfigLogging
   , cloud :: ServerConfigCloud
-  , plan :: ServerConfigPlan
   , persistentCommand :: ServerConfigPersistentCommand
   , signalBridge :: ServerConfigSignalBridge
   , admin :: ServerConfigAdmin
