@@ -59,13 +59,6 @@ instance FromEnv ServerConfigSentry where
       , \c -> applyStringEnvVariable "SENTRY_DSN" c.dsn (\x -> c {dsn = x})
       ]
 
-instance FromEnv ServerConfigJwt where
-  applyEnv serverConfig =
-    applyEnvVariables
-      serverConfig
-      [ \c -> applyEnvVariable "JWT_EXPIRATION" c.expiration (\x -> c {expiration = x})
-      ]
-
 instance FromEnv ServerConfigAnalyticalMails where
   applyEnv serverConfig =
     applyEnvVariables

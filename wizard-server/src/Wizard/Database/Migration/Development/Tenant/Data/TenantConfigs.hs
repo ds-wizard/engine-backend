@@ -69,7 +69,7 @@ defaultAuthenticationChangeDto =
     }
 
 defaultAuthenticationInternal :: TenantConfigAuthenticationInternal
-defaultAuthenticationInternal = TenantConfigAuthenticationInternal {registration = SimpleFeature True, nonAdminLoginEnabled = True, twoFactorAuth = defaultAuthenticationInternalTwoFactorAuth}
+defaultAuthenticationInternal = TenantConfigAuthenticationInternal {registration = SimpleFeature True, nonAdminLoginEnabled = True, sessionExpiration = 14 * 24, userEmailLinkExpiration = 14 * 24, twoFactorAuth = defaultAuthenticationInternalTwoFactorAuth}
 
 defaultAuthenticationInternalTwoFactorAuth :: TenantConfigAuthenticationInternalTwoFactorAuth
 defaultAuthenticationInternalTwoFactorAuth =

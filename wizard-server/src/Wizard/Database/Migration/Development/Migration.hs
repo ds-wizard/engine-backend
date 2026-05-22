@@ -11,8 +11,6 @@ import qualified Shared.Component.Database.Migration.Development.Component.Compo
 import qualified Shared.PersistentCommand.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PersistentCommand
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabMigration as Prefab
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as Prefab
-import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ActionKey
-import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ActionKey
 import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as Common
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as Document
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as Document
@@ -47,6 +45,8 @@ import qualified Wizard.Database.Migration.Development.Tenant.TenantMigration as
 import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigration as Tenant
 import qualified Wizard.Database.Migration.Development.User.UserMigration as User
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as User
+import qualified Wizard.Database.Migration.Development.UserEmailLink.UserEmailLinkMigration as UserEmailLink
+import qualified Wizard.Database.Migration.Development.UserEmailLink.UserEmailLinkSchemaMigration as UserEmailLink
 import Wizard.Model.Context.ContextMappers
 import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.ExternalLinkMigration as ExternalLink
 import qualified WizardLib.Public.Database.Migration.Development.ExternalLink.ExternalLinkSchemaMigration as ExternalLink
@@ -75,7 +75,7 @@ runMigration = runAppContextWithBaseContext $ do
   Prefab.dropTables
   PersistentCommand.dropTables
   Submission.dropTables
-  ActionKey.dropTables
+  UserEmailLink.dropTables
   Feedback.dropTables
   KnowledgeModelMigration.dropTables
   KnowledgeModelEditor.dropTables
@@ -114,7 +114,7 @@ runMigration = runAppContextWithBaseContext $ do
   TemporaryFile.createTables
   KnowledgeModelPackage.createTables
   KnowledgeModelSecret.createTables
-  ActionKey.createTables
+  UserEmailLink.createTables
   Feedback.createTables
   KnowledgeModelEditor.createTables
   KnowledgeModelCache.createTables
@@ -153,7 +153,7 @@ runMigration = runAppContextWithBaseContext $ do
   KnowledgeModelPackage.runMigration
   KnowledgeModelSecret.runMigration
   DocumentTemplate.runMigration
-  ActionKey.runMigration
+  UserEmailLink.runMigration
   KnowledgeModelEditor.runMigration
   Project.runMigration
   Feedback.runMigration

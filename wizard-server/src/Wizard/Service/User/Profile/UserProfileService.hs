@@ -8,17 +8,16 @@ import Data.Foldable (traverse_)
 import Data.Time
 import qualified Data.UUID as U
 
-import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
-import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Model.Error.Error
+import Shared.UserEmailLink.Database.DAO.UserEmailLink.UserEmailLinkDAO
+import Shared.UserEmailLink.Model.UserEmailLink.UserEmailLink
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.DAO.User.UserSubmissionPropDAO
-import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
-import Wizard.Model.ActionKey.ActionKeyType
+import Wizard.Database.Mapping.UserEmailLink.UserEmailLinkType ()
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
@@ -26,7 +25,7 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Model.User.UserSubmissionPropEM ()
 import Wizard.Model.User.UserSubmissionPropList
-import Wizard.Service.ActionKey.ActionKeyService
+import Wizard.Model.UserEmailLink.UserEmailLinkType
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.User.Profile.UserProfileMapper
@@ -34,6 +33,7 @@ import Wizard.Service.User.Profile.UserProfileValidation
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
 import Wizard.Service.User.UserValidation
+import Wizard.Service.UserEmailLink.UserEmailLinkService
 import WizardLib.Public.Api.Resource.User.UserLocaleDTO
 import WizardLib.Public.Localization.Messages.Public
 
@@ -52,13 +52,13 @@ modifyUserProfile reqDto = do
   let updatedUser = fromUserProfileChangeDTO reqDto user revertPending now
   updateUserByUuid updatedUser
   when revertPending $ do
-    mActionKey :: Maybe (ActionKey U.UUID ActionKeyType) <-
-      findActionKeyByIdentityAndType' (U.toString currentUser.uuid) EmailChangeActionKey
-    forM_ mActionKey $ \ak -> deleteActionKeyByHash ak.hash
+    mUserEmailLink :: Maybe (UserEmailLink U.UUID UserEmailLinkType) <-
+      findUserEmailLinkByIdentityAndType' (U.toString currentUser.uuid) EmailChangeUserEmailLinkType
+    forM_ mUserEmailLink $ \ak -> deleteUserEmailLinkByHash ak.hash
   when emailChanged $ do
     tenantUuid <- asks currentTenantUuid
-    actionKey <- createActionKey currentUser.uuid EmailChangeActionKey tenantUuid
-    sendEmailChangeMail updatedUser actionKey.hash newEmail
+    userEmailLink <- createUserEmailLink currentUser.uuid EmailChangeUserEmailLinkType tenantUuid
+    sendEmailChangeMail updatedUser userEmailLink.hash newEmail
   return . toDTO $ updatedUser
 
 changeUserProfilePassword :: U.UUID -> UserPasswordDTO -> AppContextM ()

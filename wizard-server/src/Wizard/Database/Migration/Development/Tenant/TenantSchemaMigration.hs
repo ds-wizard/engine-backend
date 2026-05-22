@@ -123,6 +123,8 @@ createTcAuthenticationTable = do
         \    created_at                               timestamptz NOT NULL, \
         \    updated_at                               timestamptz NOT NULL, \
         \    internal_non_admin_login_enabled         bool        NOT NULL, \
+        \    internal_session_expiration              bigint      NOT NULL, \
+        \    internal_user_email_link_expiration      bigint      NOT NULL, \
         \    CONSTRAINT config_authentication_pk PRIMARY KEY (tenant_uuid), \
         \    CONSTRAINT config_authentication_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"

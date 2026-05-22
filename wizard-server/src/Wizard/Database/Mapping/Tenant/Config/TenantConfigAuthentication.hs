@@ -19,6 +19,8 @@ instance ToRow TenantConfigAuthentication where
     , toField createdAt
     , toField updatedAt
     , toField internal.nonAdminLoginEnabled
+    , toField internal.sessionExpiration
+    , toField internal.userEmailLinkExpiration
     ]
 
 instance FromRow TenantConfigAuthentication where
@@ -32,5 +34,7 @@ instance FromRow TenantConfigAuthentication where
     createdAt <- field
     updatedAt <- field
     internalNonAdminLoginEnabled <- field
-    let internal = TenantConfigAuthenticationInternal {registration = SimpleFeature {enabled = internalRegistrationEnabled}, nonAdminLoginEnabled = internalNonAdminLoginEnabled, twoFactorAuth = TenantConfigAuthenticationInternalTwoFactorAuth {enabled = internalTwoFactorAuthEnabled, codeLength = internalTwoFactorAuthCodeLength, expiration = internalTwoFactorAuthExpiration}}
+    internalSessionExpiration <- field
+    internalUserEmailLinkExpiration <- field
+    let internal = TenantConfigAuthenticationInternal {registration = SimpleFeature {enabled = internalRegistrationEnabled}, nonAdminLoginEnabled = internalNonAdminLoginEnabled, sessionExpiration = internalSessionExpiration, userEmailLinkExpiration = internalUserEmailLinkExpiration, twoFactorAuth = TenantConfigAuthenticationInternalTwoFactorAuth {enabled = internalTwoFactorAuthEnabled, codeLength = internalTwoFactorAuthCodeLength, expiration = internalTwoFactorAuthExpiration}}
     return $ TenantConfigAuthentication {..}

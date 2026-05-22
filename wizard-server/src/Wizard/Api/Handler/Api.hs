@@ -2,7 +2,6 @@ module Wizard.Api.Handler.Api where
 
 import Servant
 
-import Wizard.Api.Handler.ActionKey.Api
 import Wizard.Api.Handler.ApiKey.Api
 import Wizard.Api.Handler.AppKey.Api
 import Wizard.Api.Handler.Config.Api
@@ -34,11 +33,12 @@ import Wizard.Api.Handler.Tenant.Api
 import Wizard.Api.Handler.Token.Api
 import Wizard.Api.Handler.TypeHint.Api
 import Wizard.Api.Handler.User.Api
+import Wizard.Api.Handler.UserEmailLink.Api
 import Wizard.Api.Handler.UserGroup.Api
 import Wizard.Model.Context.BaseContext
 
 type ApplicationAPI =
-  ActionKeyAPI
+  UserEmailLinkAPI
     :<|> ApiKeyAPI
     :<|> AppKeyAPI
     :<|> ConfigAPI
@@ -77,7 +77,7 @@ applicationApi = Proxy
 
 applicationServer :: ServerT ApplicationAPI BaseContextM
 applicationServer =
-  actionKeyServer
+  userEmailLinkServer
     :<|> apiKeyServer
     :<|> appKeyServer
     :<|> configServer

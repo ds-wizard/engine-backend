@@ -22,13 +22,13 @@ import Shared.Common.S3.Common
 import Shared.Common.Service.Config.BuildInfo.BuildInfoConfigService
 import Shared.Common.Service.Config.Server.ServerConfigService
 
-import Registry.Specs.API.ActionKey.APISpec
 import Registry.Specs.API.Config.APISpec
 import Registry.Specs.API.DocumentTemplate.APISpec
 import Registry.Specs.API.Info.APISpec
 import Registry.Specs.API.KnowledgeModelPackage.APISpec
 import Registry.Specs.API.Locale.APISpec
 import Registry.Specs.API.Organization.APISpec
+import Registry.Specs.API.UserEmailLink.APISpec
 import Registry.Specs.Service.KnowledgeModel.Package.PackageValidationSpec
 import Registry.TestMigration
 
@@ -87,7 +87,7 @@ main =
                 "Package"
                 packageValidationSpec
           before (resetDB appContext) $ describe "INTEGRATION TESTING" $ describe "API" $ do
-            actionKeyAPI baseContext appContext
+            userEmailLinkAPI baseContext appContext
             configAPI baseContext appContext
             infoAPI baseContext appContext
             knowledgeModelPackageAPI baseContext appContext

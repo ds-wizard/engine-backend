@@ -52,12 +52,6 @@ instance FromJSON ServerConfigSentry where
     return ServerConfigSentry {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigJwt where
-  parseJSON (Object o) = do
-    expiration <- o .:? "expiration" .!= defaultJwt.expiration
-    return ServerConfigJwt {..}
-  parseJSON _ = mzero
-
 instance FromJSON ServerConfigAnalyticalMails where
   parseJSON (Object o) = do
     enabled <- o .:? "enabled" .!= defaultAnalyticalMails.enabled

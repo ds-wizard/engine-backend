@@ -8,14 +8,14 @@ import Test.Hspec
 import Test.Hspec.Wai
 
 import Registry.Database.DAO.Organization.OrganizationDAO
-import Registry.Database.Migration.Development.ActionKey.Data.ActionKeys
+import Registry.Database.Migration.Development.UserEmailLink.Data.UserEmailLinks
 import Registry.Model.Context.AppContext
 import Registry.Service.Organization.OrganizationMapper
 import RegistryLib.Api.Resource.Organization.OrganizationDTO
 import RegistryLib.Api.Resource.Organization.OrganizationJM ()
 import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
 import RegistryLib.Model.Organization.Organization
-import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.UserEmailLink.Database.DAO.UserEmailLink.UserEmailLinkDAO
 
 import Registry.Specs.API.Common
 import Registry.Specs.Common
@@ -53,7 +53,7 @@ test_200 appContext =
       let expDto = toDTO orgGlobal
       let expType (a :: OrganizationDTO) = a
       -- AND: Prepare DB
-      runInContextIO (insertActionKey forgottenTokenActionKey) appContext
+      runInContextIO (insertUserEmailLink forgottenTokenUserEmailLink) appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
@@ -71,5 +71,5 @@ test_404 appContext =
     "/organizations/global/token?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
     reqHeaders
     reqBody
-    "action_key"
+    "user_email_link"
     [("hash", "c996414a-b51d-4c8c-bc10-5ee3dab85fa8")]

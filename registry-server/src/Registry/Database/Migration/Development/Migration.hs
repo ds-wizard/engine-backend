@@ -2,7 +2,6 @@ module Registry.Database.Migration.Development.Migration (
   runMigration,
 ) where
 
-import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ActionKey
 import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as Audit
 import qualified Registry.Database.Migration.Development.Common.CommonSchemaMigration as Common
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DocumentTemplate
@@ -14,6 +13,7 @@ import qualified Registry.Database.Migration.Development.Locale.LocaleSchemaMigr
 import qualified Registry.Database.Migration.Development.Organization.OrganizationMigration as Organization
 import qualified Registry.Database.Migration.Development.Organization.OrganizationSchemaMigration as Organization
 import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
+import qualified Registry.Database.Migration.Development.UserEmailLink.UserEmailLinkSchemaMigration as UserEmailLink
 import Registry.Model.Context.ContextMappers
 import Shared.Common.Util.Logger
 import qualified Shared.Component.Database.Migration.Development.Component.ComponentMigration as Component
@@ -30,7 +30,7 @@ runMigration = runAppContextWithBaseContext $ do
   PersistentCommand.dropTables
   DocumentTemplate.dropTables
   Audit.dropTables
-  ActionKey.dropTables
+  UserEmailLink.dropTables
   KnowledgeModelPackage.dropTables
   Organization.dropTables
   -- 3. Drop DB types
@@ -40,7 +40,7 @@ runMigration = runAppContextWithBaseContext $ do
   -- 5. Create schema
   Organization.createTables
   KnowledgeModelPackage.createTables
-  ActionKey.createTables
+  UserEmailLink.createTables
   Audit.createTables
   DocumentTemplate.createTables
   PersistentCommand.createTables

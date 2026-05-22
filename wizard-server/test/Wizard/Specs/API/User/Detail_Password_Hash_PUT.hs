@@ -3,16 +3,18 @@ module Wizard.Specs.API.User.Detail_Password_Hash_PUT (
 ) where
 
 import Data.Aeson (encode)
+import Data.Time (getCurrentTime)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
+import Shared.UserEmailLink.Database.DAO.UserEmailLink.UserEmailLinkDAO
+import Shared.UserEmailLink.Model.UserEmailLink.UserEmailLink
 import Wizard.Api.Resource.User.UserPasswordDTO
-import Wizard.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Wizard.Database.Migration.Development.User.Data.Users
+import Wizard.Database.Migration.Development.UserEmailLink.Data.UserEmailLinks
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
 
@@ -51,7 +53,8 @@ test_204 appContext =
   it "HTTP 204 NO CONTENT" $
     -- GIVEN: Prepare DB
     do
-      eitherActionKey <- runInContextIO (insertActionKey forgottenPasswordActionKey) appContext
+      now <- liftIO getCurrentTime
+      eitherUserEmailLink <- runInContextIO (insertUserEmailLink (forgottenPasswordUserEmailLink {createdAt = now})) appContext
       -- AND: Prepare expectation
       let expStatus = 204
       let expHeaders = resCorsHeaders
@@ -78,5 +81,5 @@ test_404 appContext =
     "/wizard-api/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
     reqHeaders
     reqBody
-    "action_key"
+    "user_email_link"
     [("hash", "c996414a-b51d-4c8c-bc10-5ee3dab85fa8")]

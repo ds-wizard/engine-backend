@@ -43,11 +43,6 @@ data ServerConfigSentry = ServerConfigSentry
   }
   deriving (Generic, Show)
 
-data ServerConfigJwt = ServerConfigJwt
-  { expiration :: Integer
-  }
-  deriving (Generic, Show)
-
 data ServerConfigAnalyticalMails = ServerConfigAnalyticalMails
   { enabled :: Bool
   , email :: String

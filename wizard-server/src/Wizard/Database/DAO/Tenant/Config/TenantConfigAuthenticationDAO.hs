@@ -30,7 +30,7 @@ updateTenantConfigAuthentication :: TenantConfigAuthentication -> AppContextM In
 updateTenantConfigAuthentication config = do
   let sql =
         fromString
-          "UPDATE config_authentication SET tenant_uuid = ?, default_role = ?, internal_registration_enabled = ?, internal_two_factor_auth_enabled = ?, internal_two_factor_auth_code_length = ?, internal_two_factor_auth_code_expiration = ?, created_at = ?, updated_at = ?, internal_non_admin_login_enabled = ? WHERE tenant_uuid = ?"
+          "UPDATE config_authentication SET tenant_uuid = ?, default_role = ?, internal_registration_enabled = ?, internal_two_factor_auth_enabled = ?, internal_two_factor_auth_code_length = ?, internal_two_factor_auth_code_expiration = ?, created_at = ?, updated_at = ?, internal_non_admin_login_enabled = ?, internal_session_expiration = ?, internal_user_email_link_expiration = ? WHERE tenant_uuid = ?"
   let params = toRow config ++ [toField config.tenantUuid]
   logQuery sql params
   let action conn = execute conn sql params

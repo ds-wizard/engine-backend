@@ -2,7 +2,6 @@ module Wizard.TestMigration where
 
 import Data.Foldable (traverse_)
 
-import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.Audit.Database.DAO.Audit.AuditDAO
 import qualified Shared.Audit.Database.Migration.Development.Audit.AuditSchemaMigration as Audit
 import Shared.Common.Constant.Tenant
@@ -16,6 +15,7 @@ import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Shared.Prefab.Database.DAO.Prefab.PrefabDAO
 import qualified Shared.Prefab.Database.Migration.Development.Prefab.PrefabSchemaMigration as Prefab
+import Shared.UserEmailLink.Database.DAO.UserEmailLink.UserEmailLinkDAO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
@@ -46,7 +46,6 @@ import Wizard.Database.DAO.Tenant.Config.TenantConfigSubmissionDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.Tenant.TenantLimitBundleDAO
 import Wizard.Database.DAO.User.UserDAO
-import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ActionKey
 import qualified Wizard.Database.Migration.Development.Common.CommonSchemaMigration as Common
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as Document
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as DocumentTemplateMigration
@@ -75,6 +74,7 @@ import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigrat
 import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as User
+import qualified Wizard.Database.Migration.Development.UserEmailLink.UserEmailLinkSchemaMigration as UserEmailLink
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Database.DAO.ExternalLink.ExternalLinkUsageDAO
@@ -114,7 +114,7 @@ buildSchema appContext = do
   runInContext Prefab.dropTables appContext
   runInContext PersistentCommand.dropTables appContext
   runInContext Submission.dropTables appContext
-  runInContext ActionKey.dropTables appContext
+  runInContext UserEmailLink.dropTables appContext
   runInContext Feedback.dropTables appContext
   runInContext KnowledgeModelMigration.dropTables appContext
   runInContext KnowledgeModelCache.dropTables appContext
@@ -152,7 +152,7 @@ buildSchema appContext = do
   runInContext UserRegistrationPending.createTables appContext
   runInContext KnowledgeModelPackage.createTables appContext
   runInContext KnowledgeModelSecret.createTables appContext
-  runInContext ActionKey.createTables appContext
+  runInContext UserEmailLink.createTables appContext
   runInContext Feedback.createTables appContext
   runInContext KnowledgeModelEditor.createTables appContext
   runInContext KnowledgeModelCache.createTables appContext
@@ -207,7 +207,7 @@ resetDB appContext = do
   runInContext deleteKnowledgeModelMigrations appContext
   runInContext deleteProjectMigrations appContext
   runInContext deleteFeedbacks appContext
-  runInContext deleteActionKeys appContext
+  runInContext deleteUserEmailLinks appContext
   runInContext deleteKnowledgeModelEditors appContext
   runInContext deleteDocuments appContext
   runInContext deleteDrafts appContext

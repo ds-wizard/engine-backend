@@ -82,6 +82,8 @@ instance Eq TenantConfigAuthentication where
 data TenantConfigAuthenticationInternal = TenantConfigAuthenticationInternal
   { registration :: SimpleFeature
   , nonAdminLoginEnabled :: Bool
+  , sessionExpiration :: Integer
+  , userEmailLinkExpiration :: Integer
   , twoFactorAuth :: TenantConfigAuthenticationInternalTwoFactorAuth
   }
   deriving (Generic, Eq, Show)

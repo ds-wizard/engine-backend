@@ -9,9 +9,6 @@ import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
-import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
-import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
-import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
@@ -21,6 +18,9 @@ import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
 import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
+import Shared.UserEmailLink.Api.Resource.UserEmailLink.UserEmailLinkDTO
+import Shared.UserEmailLink.Database.DAO.UserEmailLink.UserEmailLinkDAO
+import Shared.UserEmailLink.Model.UserEmailLink.UserEmailLink
 import Wizard.Api.Resource.Auth.AuthConsentDTO
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
@@ -28,15 +28,14 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
+import Wizard.Database.Mapping.UserEmailLink.UserEmailLinkType ()
 import Wizard.Localization.Messages.Internal
-import Wizard.Model.ActionKey.ActionKeyType
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.UserSubmissionPropEM ()
-import Wizard.Service.ActionKey.ActionKeyService
+import Wizard.Model.UserEmailLink.UserEmailLinkType
 import Wizard.Service.Common
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Tenant.Config.ConfigService
@@ -45,6 +44,7 @@ import Wizard.Service.Tenant.TenantHelper
 import Wizard.Service.User.UserAudit
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
+import Wizard.Service.UserEmailLink.UserEmailLinkService
 import Wizard.Service.UserToken.Login.LoginService
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Database.DAO.User.UserOpenIdIdentityDAO
@@ -108,11 +108,11 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions tenantUuid clientUrl sh
     now <- liftIO getCurrentTime
     let user = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions tenantUuid now shouldSendRegistrationEmail
     insertUser user
-    actionKey <- createActionKey uUuid RegistrationActionKey tenantUuid
+    userEmailLink <- createUserEmailLink uUuid RegistrationUserEmailLinkType tenantUuid
     when
       shouldSendRegistrationEmail
       ( catchError
-          (sendRegistrationConfirmationMail user actionKey.hash clientUrl)
+          (sendRegistrationConfirmationMail user userEmailLink.hash clientUrl)
           (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT)
       )
     sendAnalyticsEmailIfEnabled user
@@ -226,15 +226,16 @@ changeUserPasswordByAdmin userUuid reqDto =
 changeUserPasswordByHash :: U.UUID -> String -> UserPasswordDTO -> AppContextM ()
 changeUserPasswordByHash userUuid hash userPasswordDto =
   runInTransaction $ do
-    actionKey <- findActionKeyByHash hash :: AppContextM (ActionKey U.UUID ActionKeyType)
-    user <- findUserByUuid actionKey.identity
+    userEmailLink <- findUserEmailLinkByHash hash :: AppContextM (UserEmailLink U.UUID UserEmailLinkType)
+    validateUserEmailLinkNotExpired userEmailLink
+    user <- findUserByUuid userEmailLink.identity
     passwordHash <- generatePasswordHash userPasswordDto.password
     now <- liftIO getCurrentTime
     updateUserPasswordByUuid userUuid passwordHash now
-    deleteActionKeyByHash actionKey.hash
+    deleteUserEmailLinkByHash userEmailLink.hash
     return ()
 
-resetUserPassword :: ActionKeyDTO ActionKeyType -> AppContextM ()
+resetUserPassword :: UserEmailLinkDTO UserEmailLinkType -> AppContextM ()
 resetUserPassword reqDto =
   runInTransaction $ do
     mUser <- findUserByEmail' (toLower reqDto.email)
@@ -243,9 +244,9 @@ resetUserPassword reqDto =
         tcAuthentication <- getCurrentTenantConfigAuthentication
         unless (not tcAuthentication.internal.nonAdminLoginEnabled && user.uRole /= _USER_ROLE_ADMIN) $ do
           tenantUuid <- asks currentTenantUuid
-          actionKey <- createActionKey user.uuid ForgottenPasswordActionKey tenantUuid
+          userEmailLink <- createUserEmailLink user.uuid ForgottenPasswordUserEmailLinkType tenantUuid
           catchError
-            (sendResetPasswordMail (toDTO user) actionKey.hash)
+            (sendResetPasswordMail (toDTO user) userEmailLink.hash)
             (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT)
       Nothing -> return ()
 
@@ -253,15 +254,16 @@ changeUserState :: String -> Bool -> AppContextM ()
 changeUserState hash active =
   runInTransaction $ do
     checkActiveUserLimit
-    actionKey <- findActionKeyByHash hash :: AppContextM (ActionKey U.UUID ActionKeyType)
-    user <- findUserByUuid actionKey.identity
+    userEmailLink <- findUserEmailLinkByHash hash :: AppContextM (UserEmailLink U.UUID UserEmailLinkType)
+    validateUserEmailLinkNotExpired userEmailLink
+    user <- findUserByUuid userEmailLink.identity
     now <- liftIO getCurrentTime
     let baseUser :: User
         baseUser = user {active = active, updatedAt = now}
     let updatedUser :: User
         updatedUser =
-          case (actionKey.aType, user.emailPending) of
-            (RegistrationActionKey, Just pendingEmail) ->
+          case (userEmailLink.aType, user.emailPending) of
+            (RegistrationUserEmailLinkType, Just pendingEmail) ->
               baseUser
                 { email = pendingEmail
                 , emailVerifiedAt = Just now
@@ -269,13 +271,14 @@ changeUserState hash active =
                 }
             _ -> baseUser
     updateUserByUuid updatedUser
-    void $ deleteActionKeyByHash actionKey.hash
+    void $ deleteUserEmailLinkByHash userEmailLink.hash
 
 confirmEmailChange :: String -> AppContextM ()
 confirmEmailChange hash =
   runInTransaction $ do
-    actionKey <- findActionKeyByHashAndType hash EmailChangeActionKey :: AppContextM (ActionKey U.UUID ActionKeyType)
-    user <- findUserByUuid actionKey.identity
+    userEmailLink <- findUserEmailLinkByHashAndType hash EmailChangeUserEmailLinkType :: AppContextM (UserEmailLink U.UUID UserEmailLinkType)
+    validateUserEmailLinkNotExpired userEmailLink
+    user <- findUserByUuid userEmailLink.identity
     now <- liftIO getCurrentTime
     case user.emailPending of
       Just newEmail -> do
@@ -289,13 +292,14 @@ confirmEmailChange hash =
                 , updatedAt = now
                 }
         updateUserByUuid updatedUser
-        void $ deleteActionKeyByHash actionKey.hash
-      Nothing -> void $ deleteActionKeyByHash actionKey.hash
+        void $ deleteUserEmailLinkByHash userEmailLink.hash
+      Nothing -> void $ deleteUserEmailLinkByHash userEmailLink.hash
 
 confirmConsents :: AuthConsentDTO -> Maybe String -> AppContextM UserTokenDTO
 confirmConsents reqDto mUserAgent = do
-  actionKey <- findActionKeyByHash reqDto.hash :: AppContextM (ActionKey U.UUID ActionKeyType)
-  user <- findUserByUuid actionKey.identity
+  userEmailLink <- findUserEmailLinkByHash reqDto.hash :: AppContextM (UserEmailLink U.UUID UserEmailLinkType)
+  validateUserEmailLinkNotExpired userEmailLink
+  user <- findUserByUuid userEmailLink.identity
   changeUserState reqDto.hash True
   createLoginToken user mUserAgent reqDto.sessionState
 

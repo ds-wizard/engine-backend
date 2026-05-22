@@ -45,9 +45,6 @@ defaultAws =
 defaultSentry :: ServerConfigSentry
 defaultSentry = ServerConfigSentry {enabled = False, dsn = ""}
 
-defaultJwt :: ServerConfigJwt
-defaultJwt = ServerConfigJwt {expiration = 14 * 24}
-
 defaultAnalyticalMails :: ServerConfigAnalyticalMails
 defaultAnalyticalMails = ServerConfigAnalyticalMails {enabled = False, email = ""}
 

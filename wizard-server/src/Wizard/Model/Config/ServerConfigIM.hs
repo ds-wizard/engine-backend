@@ -12,9 +12,8 @@ instance FromEnv ServerConfig where
     s3 <- applyEnv serverConfig.s3
     aws <- applyEnv serverConfig.aws
     sentry <- applyEnv serverConfig.sentry
-    jwt <- applyEnv serverConfig.jwt
     roles <- applyEnv serverConfig.roles
-    actionKey <- applyEnv serverConfig.actionKey
+    userEmailLink <- applyEnv serverConfig.userEmailLink
     cache <- applyEnv serverConfig.cache
     document <- applyEnv serverConfig.document
     externalLink <- applyEnv serverConfig.externalLink
@@ -54,12 +53,12 @@ instance FromEnv ServerConfigRoles where
       , \c -> applyEnvVariable "ROLES_RESEARCHER" c.researcher (\x -> c {researcher = x} :: ServerConfigRoles)
       ]
 
-instance FromEnv ServerConfigActionKey where
+instance FromEnv ServerConfigUserEmailLink where
   applyEnv serverConfig =
     applyEnvVariables
       serverConfig
-      [ \c -> applyEnvVariable "ACTION_KEY_CLEAN_ENABLED" c.clean.enabled (\x -> c {clean = c.clean {enabled = x}} :: ServerConfigActionKey)
-      , \c -> applyStringEnvVariable "ACTION_KEY_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigActionKey)
+      [ \c -> applyEnvVariable "USER_EMAIL_LINK_CLEAN_ENABLED" c.clean.enabled (\x -> c {clean = c.clean {enabled = x}} :: ServerConfigUserEmailLink)
+      , \c -> applyStringEnvVariable "USER_EMAIL_LINK_CLEAN_CRON" c.clean.cron (\x -> c {clean = c.clean {cron = x}} :: ServerConfigUserEmailLink)
       ]
 
 instance FromEnv ServerConfigCache where

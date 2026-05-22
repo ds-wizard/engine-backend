@@ -10,20 +10,19 @@ import Data.Char (toLower)
 import Data.Time
 import qualified Data.UUID as U
 
-import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Uuid
+import Shared.UserEmailLink.Model.UserEmailLink.UserEmailLink
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Mapping.User.UserRegistrationPendingServiceType ()
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
-import Wizard.Model.ActionKey.ActionKeyType
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.User
 import Wizard.Model.User.UserRegistrationPendingServiceType
-import Wizard.Service.ActionKey.ActionKeyService
+import Wizard.Model.UserEmailLink.UserEmailLinkType
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.Limit.LimitService
@@ -31,6 +30,7 @@ import Wizard.Service.Tenant.TenantHelper
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
 import Wizard.Service.User.UserValidation
+import Wizard.Service.UserEmailLink.UserEmailLinkService
 import Wizard.Service.UserToken.Login.LoginService
 import Wizard.Service.UserToken.Login.LoginValidation
 import WizardLib.Public.Api.Resource.User.UserFromExternalDTO
@@ -69,10 +69,10 @@ completeExternalRegistration reqDto _mAcceptLanguages mUserAgent =
         validateLoginEnabled tcAuthentication user
         createLoginToken user mUserAgent Nothing
       else do
-        actionKey <- createActionKey (user :: User).uuid RegistrationActionKey tenantUuid
+        userEmailLink <- createUserEmailLink (user :: User).uuid RegistrationUserEmailLinkType tenantUuid
         clientUrl <- getClientUrl
         catchError
-          (sendRegistrationConfirmationMail user actionKey.hash clientUrl)
+          (sendRegistrationConfirmationMail user userEmailLink.hash clientUrl)
           (\_ -> throwError $ GeneralServerError _ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT)
         return EmailVerificationRequiredDTO
 

@@ -9,27 +9,27 @@ import Registry.Api.Resource.Organization.OrganizationChangeDTO
 import Registry.Database.DAO.Common
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Internal
-import Registry.Model.ActionKey.ActionKeyType
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.AppContextHelpers
-import Registry.Service.ActionKey.ActionKeyService
+import Registry.Model.UserEmailLink.UserEmailLinkType
 import Registry.Service.Mail.Mailer
 import Registry.Service.Organization.OrganizationMapper
 import Registry.Service.Organization.OrganizationValidation
+import Registry.Service.UserEmailLink.UserEmailLinkService
 import RegistryLib.Api.Resource.Organization.OrganizationCreateDTO
 import RegistryLib.Api.Resource.Organization.OrganizationDTO
 import RegistryLib.Api.Resource.Organization.OrganizationStateDTO
 import RegistryLib.Model.Organization.Organization
 import RegistryLib.Model.Organization.OrganizationRole
 import RegistryLib.Model.Organization.OrganizationSimple
-import Shared.ActionKey.Api.Resource.ActionKey.ActionKeyDTO
-import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
-import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
+import Shared.UserEmailLink.Api.Resource.UserEmailLink.UserEmailLinkDTO
+import Shared.UserEmailLink.Database.DAO.UserEmailLink.UserEmailLinkDAO
+import Shared.UserEmailLink.Model.UserEmailLink.UserEmailLink
 
 getOrganizations :: AppContextM [OrganizationDTO]
 getOrganizations = do
@@ -48,9 +48,9 @@ createOrganization reqDto mCallbackUrl =
     now <- liftIO getCurrentTime
     let org = fromCreateDTO reqDto UserRole token now now now
     insertOrganization org
-    actionKey <- createActionKey org.organizationId RegistrationActionKey
+    userEmailLink <- createUserEmailLink org.organizationId RegistrationUserEmailLinkType
     _ <-
-      sendRegistrationConfirmationMail (toDTO org) actionKey.hash mCallbackUrl
+      sendRegistrationConfirmationMail (toDTO org) userEmailLink.hash mCallbackUrl
         `catchError` (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_ORGANIZATION__ACTIVATION_EMAIL_NOT_SENT)
     sendAnalyticsEmailIfEnabled org
     return . toDTO $ org
@@ -91,34 +91,34 @@ deleteOrganization orgId =
 changeOrganizationTokenByHash :: String -> String -> AppContextM OrganizationDTO
 changeOrganizationTokenByHash orgId hash =
   runInTransaction $ do
-    actionKey <- findActionKeyByHash hash :: AppContextM (ActionKey String ActionKeyType)
-    org <- findOrganizationByOrgId actionKey.identity
+    userEmailLink <- findUserEmailLinkByHash hash :: AppContextM (UserEmailLink String UserEmailLinkType)
+    org <- findOrganizationByOrgId userEmailLink.identity
     orgToken <- generateNewOrgToken
     now <- liftIO getCurrentTime
     let updatedOrg = org {token = orgToken, updatedAt = now} :: Organization
     updateOrganization updatedOrg
-    deleteActionKeyByHash actionKey.hash
+    deleteUserEmailLinkByHash userEmailLink.hash
     return . toDTO $ updatedOrg
 
-resetOrganizationToken :: ActionKeyDTO ActionKeyType -> AppContextM ()
+resetOrganizationToken :: UserEmailLinkDTO UserEmailLinkType -> AppContextM ()
 resetOrganizationToken reqDto =
   runInTransaction $ do
     validateOrganizationEmailExistence reqDto.email
     org <- findOrganizationByEmail reqDto.email
-    actionKey <- createActionKey org.organizationId ForgottenTokenActionKey
+    userEmailLink <- createUserEmailLink org.organizationId ForgottenTokenUserEmailLinkType
     _ <-
-      sendResetTokenMail (toDTO org) actionKey.hash
+      sendResetTokenMail (toDTO org) userEmailLink.hash
         `catchError` (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_ORGANIZATION__RECOVERY_EMAIL_NOT_SENT)
     return ()
 
 changeOrganizationState :: String -> String -> OrganizationStateDTO -> AppContextM OrganizationDTO
 changeOrganizationState orgId hash reqDto =
   runInTransaction $ do
-    actionKey <- findActionKeyByHash hash :: AppContextM (ActionKey String ActionKeyType)
-    org <- findOrganizationByOrgId actionKey.identity
+    userEmailLink <- findUserEmailLinkByHash hash :: AppContextM (UserEmailLink String UserEmailLinkType)
+    org <- findOrganizationByOrgId userEmailLink.identity
     updatedOrg <- updateOrgTimestamp $ org {active = reqDto.active}
     updateOrganization updatedOrg
-    deleteActionKeyByHash actionKey.hash
+    deleteUserEmailLinkByHash userEmailLink.hash
     return . toDTO $ updatedOrg
 
 -- --------------------------------

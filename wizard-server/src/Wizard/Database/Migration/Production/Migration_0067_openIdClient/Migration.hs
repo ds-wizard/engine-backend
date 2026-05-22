@@ -10,7 +10,7 @@ import Database.PostgreSQL.Simple
 
 definition = (meta, migrate)
 
-meta = MigrationMeta {mmNumber = 67, mmName = "OpenID Client", mmDescription = "Promote OpenID configuration to a first-class entity with UUID PK, scope flags and registrationEnabled. Add user_openid_identity link table, user_registration_pending table, and email verification columns on user_entity; drop legacy config_authentication_openid + user_entity.sources."}
+meta = MigrationMeta {mmNumber = 67, mmName = "OpenID Client", mmDescription = "Promote OpenID configuration to a first-class entity with UUID PK, scope flags and registrationEnabled. Add user_openid_identity link table, user_registration_pending table, and email verification columns on user_entity; drop legacy config_authentication_openid + user_entity.sources. Add per-tenant session and user email link expiration to config_authentication."}
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
@@ -23,6 +23,8 @@ migrate dbPool = do
   dropLegacyOpenIdConfig dbPool
   addNonAdminLoginEnabled dbPool
   addConfigMailCustomTemplates dbPool
+  addAuthExpirationColumns dbPool
+  renameUserEmailLinkTable dbPool
 
 createOpenIdClientTable dbPool = do
   let sql =
@@ -150,6 +152,29 @@ addNonAdminLoginEnabled dbPool = do
 
 addConfigMailCustomTemplates dbPool = do
   let sql = "ALTER TABLE config_mail ADD COLUMN custom_templates bool NOT NULL DEFAULT false;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addAuthExpirationColumns dbPool = do
+  let sql =
+        "ALTER TABLE config_authentication ADD COLUMN IF NOT EXISTS internal_session_expiration bigint NOT NULL DEFAULT 336; \
+        \ALTER TABLE config_authentication ADD COLUMN IF NOT EXISTS internal_user_email_link_expiration bigint NOT NULL DEFAULT 336;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+renameUserEmailLinkTable dbPool = do
+  let sql =
+        "ALTER TABLE IF EXISTS action_key RENAME TO user_email_link; \
+        \ALTER TABLE IF EXISTS user_email_link RENAME CONSTRAINT action_key_pk TO user_email_link_pk; \
+        \ALTER TABLE IF EXISTS user_email_link RENAME CONSTRAINT action_key_identity_fk TO user_email_link_identity_fk; \
+        \ALTER TABLE IF EXISTS user_email_link RENAME CONSTRAINT action_key_tenant_uuid_fk TO user_email_link_tenant_uuid_fk; \
+        \UPDATE user_email_link SET type = 'RegistrationUserEmailLinkType' WHERE type = 'RegistrationActionKey'; \
+        \UPDATE user_email_link SET type = 'ForgottenPasswordUserEmailLinkType' WHERE type = 'ForgottenPasswordActionKey'; \
+        \UPDATE user_email_link SET type = 'TwoFactorAuthUserEmailLinkType' WHERE type = 'TwoFactorAuthActionKey'; \
+        \UPDATE user_email_link SET type = 'ConsentsRequiredUserEmailLinkType' WHERE type = 'ConsentsRequiredActionKey'; \
+        \UPDATE user_email_link SET type = 'EmailChangeUserEmailLinkType' WHERE type = 'EmailChangeActionKey';"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
