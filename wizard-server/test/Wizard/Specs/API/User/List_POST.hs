@@ -90,7 +90,6 @@ create_test_201 title appContext reqDto expDto authHeaders persistentCommandCoun
 -- ----------------------------------------------------
 test_400 appContext = do
   createInvalidJsonTest reqMethod reqUrl "lastName"
-  create_test_400_email_uniqueness "HTTP 400 BAD REQUEST if email is already registered (anonymous)" appContext []
   create_test_400_email_uniqueness
     "HTTP 400 BAD REQUEST if email is already registered (admin)"
     appContext

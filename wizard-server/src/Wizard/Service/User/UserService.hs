@@ -97,7 +97,13 @@ registerUser reqDto =
     let uPermissions = getPermissionForRole serverConfig uRole
     clientUrl <- getClientUrl
     tenantUuid <- asks currentTenantUuid
-    createUser reqDto uUuid uPasswordHash uRole uPermissions tenantUuid clientUrl True
+    mExistingUser <- findUserByEmailAndTenantUuid' (toLower reqDto.email) tenantUuid
+    case mExistingUser of
+      Just _ -> do
+        now <- liftIO getCurrentTime
+        let fakeUser = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions tenantUuid now True
+        return $ toDTO fakeUser
+      Nothing -> createUser reqDto uUuid uPasswordHash uRole uPermissions tenantUuid clientUrl True
 
 createUser :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> U.UUID -> String -> Bool -> AppContextM UserDTO
 createUser reqDto uUuid uPasswordHash uRole uPermissions tenantUuid clientUrl shouldSendRegistrationEmail =
