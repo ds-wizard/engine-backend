@@ -15,7 +15,7 @@ data SubmissionList = SubmissionList
   , serviceId :: String
   , serviceName :: Maybe String
   , documentUuid :: U.UUID
-  , createdBy :: UserSuggestion
+  , createdBy :: Maybe UserSuggestion
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }

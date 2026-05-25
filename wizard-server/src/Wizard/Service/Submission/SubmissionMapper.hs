@@ -8,13 +8,13 @@ import Wizard.Model.Submission.SubmissionList
 import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Model.User.UserSuggestion
 
-toList :: Submission -> TenantConfigSubmissionService -> UserSuggestion -> SubmissionList
+toList :: Submission -> TenantConfigSubmissionService -> Maybe UserSuggestion -> SubmissionList
 toList Submission {..} service createdBy2 =
   let serviceName = Just service.name
       createdBy = createdBy2
    in SubmissionList {..}
 
-fromCreate :: U.UUID -> String -> U.UUID -> U.UUID -> U.UUID -> UTCTime -> Submission
+fromCreate :: U.UUID -> String -> U.UUID -> U.UUID -> Maybe U.UUID -> UTCTime -> Submission
 fromCreate uuid serviceId documentUuid tenantUuid createdBy now =
   Submission
     { uuid = uuid
