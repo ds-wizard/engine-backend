@@ -2,7 +2,6 @@ module Wizard.Worker.CronWorkers where
 
 import Shared.Common.Database.VacuumCleaner
 import Shared.Common.Model.Config.ServerConfig
-import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandService
 import Shared.Worker.Model.Worker.CronWorker
 import Wizard.Cache.CacheUtil
 import Wizard.Model.Cache.ServerCache
@@ -21,6 +20,7 @@ import Wizard.Service.Registry.Synchronization.RegistrySynchronizationService
 import Wizard.Service.User.RegistrationPending.UserRegistrationPendingService
 import Wizard.Service.UserEmailLink.UserEmailLinkService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
+import WizardLib.Public.Service.PersistentCommand.PersistentCommandService
 import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
 import WizardLib.Public.Service.UserToken.UserTokenService
 

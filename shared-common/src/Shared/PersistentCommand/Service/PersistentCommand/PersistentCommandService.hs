@@ -1,12 +1,11 @@
 module Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandService where
 
 import qualified Control.Exception.Base as E
-import Control.Monad (forever, unless, void, when)
+import Control.Monad (forever, unless, when)
 import Control.Monad.Reader (ask, liftIO)
 import Data.Aeson (Value (..), toJSON)
 import Data.Foldable (traverse_)
 import qualified Data.HashMap.Strict as HashMap
-import qualified Data.List as L
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Data.Time
@@ -143,20 +142,6 @@ runPersistentCommandChannelListener runAppContextWithAppContext updateContext cr
   forever $ do
     _ <- getChannelNotification
     runPersistentCommands runAppContextWithAppContext updateContext createPersistentCommand execute
-
-retryPersistentCommandsForLambda :: AppContextC s sc m => m ()
-retryPersistentCommandsForLambda = do
-  context <- ask
-  let components = fmap (\lf -> lf.component) context.serverConfig'.persistentCommand'.lambdaFunctions
-  persistentCommands <- findPersistentCommandsForLambdaByStates components
-  traverse_ retryPersistentCommandForLambda persistentCommands
-
-retryPersistentCommandForLambda :: (Show identity, FromField identity, ToField identity, AppContextC s sc m) => PersistentCommandSimple identity -> m ()
-retryPersistentCommandForLambda command = do
-  context <- ask
-  case L.find (\lf -> lf.component == command.component) context.serverConfig'.persistentCommand'.lambdaFunctions of
-    Just lf -> void $ invokeLambdaFunction command lf
-    Nothing -> logWarnI _CMP_DATABASE (f' "No lambda function found for persistent command '%s'" [U.toString command.uuid])
 
 -- --------------------------------
 -- PRIVATE
