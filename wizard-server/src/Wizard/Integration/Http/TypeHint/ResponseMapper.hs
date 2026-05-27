@@ -36,12 +36,16 @@ toRetrieveTypeHintsResponse intConfig response = do
       valuesForSelect <- case intConfig.responseItemTemplateForSelection of
         Just templateForSelection -> (fmap . fmap . fmap $ Just) $ renderJinjaBatch templateForSelection recordsInItems
         Nothing -> return $ fmap (const (Right Nothing)) recordsInItems
-      return . Right . rights . fmap mapRecord $ zip3 valuesForSelect values records'
+      return . Right . rights . fmap mapRecord . filter filterRecord $ zip3 valuesForSelect values records'
   where
     listField =
       case intConfig.responseListField of
         Just responseListField -> splitOn "." responseListField
         Nothing -> []
+    filterRecord :: (Either String (Maybe String), Either String String, Value) -> Bool
+    filterRecord (_, Right "", _) = False
+    filterRecord (Right (Just ""), _, _) = False
+    filterRecord _ = True
     mapRecord :: (Either String (Maybe String), Either String String, Value) -> Either String TypeHintIDTO
     mapRecord (Left err, _, _) = Left err
     mapRecord (_, Left err, _) = Left err
