@@ -8,6 +8,7 @@ data UserTokenType
   = LoginUserTokenType
   | ApiKeyUserTokenType
   | AppKeyUserTokenType
+  | McpUserTokenType
   deriving (Show, Eq, Generic, Read)
 
 data UserToken = UserToken
