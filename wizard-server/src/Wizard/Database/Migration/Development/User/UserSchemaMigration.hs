@@ -43,7 +43,6 @@ createUserTable = do
         \    email             varchar     NOT NULL, \
         \    password_hash     varchar     NOT NULL, \
         \    affiliation       varchar, \
-        \    sources           varchar[]   NOT NULL, \
         \    role              varchar     NOT NULL, \
         \    permissions       text[]      NOT NULL, \
         \    active            boolean     NOT NULL, \
@@ -55,6 +54,8 @@ createUserTable = do
         \    machine           boolean     NOT NULL, \
         \    locale            uuid, \
         \    last_seen_news_id varchar, \
+        \    email_verified_at timestamptz, \
+        \    email_pending     varchar, \
         \    CONSTRAINT user_entity_pk PRIMARY KEY (uuid), \
         \    CONSTRAINT user_entity_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \); \

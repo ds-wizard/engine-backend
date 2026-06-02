@@ -36,13 +36,13 @@ createHttpClientManager serverConfig =
   let logHttpClient = serverConfig.httpClientDebug
    in newManager
         ( tlsManagerSettings
-            { managerModifyRequest = modifyRequest logHttpClient
+            { managerModifyRequest = modifyRequest
             , managerModifyResponse = modifyResponse logHttpClient
             }
         )
 
-modifyRequest :: Bool -> Request -> IO Request
-modifyRequest logHttpClient request = do
+modifyRequest :: Request -> IO Request
+modifyRequest request = do
   let originalHeaders = requestHeaders request
       -- Filter out "User-Agent" headers (case-insensitive) and (re-)add our explicit "User-Agent" header, to ensure there's only one User-Agent header.
       -- Note: Reason for using case-insensitive search for header key(s) is because HTTP spec. states that header keys are case-insensitive.
@@ -52,11 +52,14 @@ modifyRequest logHttpClient request = do
           { path = BS.pack . replace "//" "/" . BS.unpack . path $ request
           , requestHeaders = ("User-Agent", "wizard-http-client") : headersWithoutUA
           }
-  logRequest logHttpClient updatedRequest
   return updatedRequest
 
+-- Logging happens here (and not in modifyRequest) because http-client invokes
+-- managerModifyRequest multiple times per HTTP call (for header/method discovery
+-- and on redirects); managerModifyResponse runs once per response.
 modifyResponse :: Bool -> Response BodyReader -> IO (Response BodyReader)
 modifyResponse logHttpClient response = do
+  logRequest logHttpClient (getOriginalRequest response)
   logResponse logHttpClient response
   return response
 

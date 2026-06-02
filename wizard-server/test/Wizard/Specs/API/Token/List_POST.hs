@@ -67,7 +67,7 @@ test_400 appContext = do
   it "HTTP 400 BAD REQUEST when invalid credentials are provided" $
     -- GIVEN: Prepare request
     do
-      let reqDto = albertCreateToken {email = "albert.einstein@example.com2"}
+      let reqDto = albertCreateToken {email = "albert.einstein@example.com2"} :: LoginDTO
       let reqBody = encode reqDto
       -- AND: Prepare expectation
       let expStatus = 400

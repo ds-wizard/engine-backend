@@ -12,9 +12,8 @@ data ServerConfig = ServerConfig
   , s3 :: ServerConfigS3
   , aws :: ServerConfigAws
   , sentry :: ServerConfigSentry
-  , jwt :: ServerConfigJwt
   , roles :: ServerConfigRoles
-  , actionKey :: ServerConfigActionKey
+  , userEmailLink :: ServerConfigUserEmailLink
   , cache :: ServerConfigCache
   , document :: ServerConfigDocument
   , externalLink :: ServerConfigExternalLink
@@ -26,7 +25,6 @@ data ServerConfig = ServerConfig
   , analyticalMails :: ServerConfigAnalyticalMails
   , logging :: ServerConfigLogging
   , cloud :: ServerConfigCloud
-  , plan :: ServerConfigPlan
   , persistentCommand :: ServerConfigPersistentCommand
   , signalBridge :: ServerConfigSignalBridge
   , admin :: ServerConfigAdmin
@@ -52,7 +50,7 @@ data ServerConfigRoles = ServerConfigRoles
   }
   deriving (Generic, Show)
 
-data ServerConfigActionKey = ServerConfigActionKey
+data ServerConfigUserEmailLink = ServerConfigUserEmailLink
   { clean :: ServerConfigCronWorker
   }
   deriving (Generic, Show)

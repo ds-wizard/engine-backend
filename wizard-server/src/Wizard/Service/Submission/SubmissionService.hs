@@ -71,7 +71,7 @@ submitDocument docUuid reqDto =
                 :: Submission
     savedSubmission <- updateSubmissionByUuid updatedSub
     currentUser <- getCurrentUser
-    return $ toList savedSubmission tcSubmission (toSuggestion' currentUser)
+    return $ toList savedSubmission tcSubmission (Just $ toSuggestion' currentUser)
   where
     getUserProps tcSubmission = do
       mUser <- asks currentUser
@@ -96,6 +96,6 @@ createSubmission docUuid reqDto = do
   now <- liftIO getCurrentTime
   tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
-  let sub = fromCreate sUuid reqDto.serviceId docUuid tenantUuid currentUser.uuid now
+  let sub = fromCreate sUuid reqDto.serviceId docUuid tenantUuid (Just currentUser.uuid) now
   insertSubmission sub
   return sub

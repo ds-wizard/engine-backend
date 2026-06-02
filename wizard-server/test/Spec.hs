@@ -1,6 +1,8 @@
 module Main where
 
 import Control.Concurrent.MVar
+import Control.Monad ((>=>))
+import qualified Data.ByteString as BS
 import Data.Maybe (fromJust)
 import Data.Pool
 import qualified Data.UUID as U
@@ -41,6 +43,7 @@ import Wizard.Specs.API.KnowledgeModelEditor.APISpec
 import Wizard.Specs.API.KnowledgeModelPackage.APISpec
 import Wizard.Specs.API.KnowledgeModelSecret.APISpec
 import Wizard.Specs.API.Locale.APISpec
+import Wizard.Specs.API.OpenIdClient.APISpec
 import Wizard.Specs.API.Prefab.APISpec
 import Wizard.Specs.API.Project.APISpec
 import Wizard.Specs.API.ProjectCommentThread.APISpec
@@ -98,7 +101,7 @@ hLoadConfig fileName loadFn callback = do
       callback config
 
 prepareWebApp runCallback =
-  hLoadConfig serverConfigFileTest (getServerConfig validateServerConfig) $ \serverConfig ->
+  hLoadConfig serverConfigFileTest (BS.readFile >=> getServerConfig validateServerConfig) $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
       shutdownFlag <- newEmptyMVar
       putStrLn $ "ENVIRONMENT: set to " `mappend` serverConfig.general.environment
@@ -196,6 +199,7 @@ main =
               knowledgeModelPackageAPI baseContext appContext
               knowledgeModelSecretAPI baseContext appContext
               localeAPI baseContext appContext
+              openIdClientAPI baseContext appContext
               prefabAPI baseContext appContext
               projectAPI baseContext appContext
               projectCommentThreadAPI baseContext appContext

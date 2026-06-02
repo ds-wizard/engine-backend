@@ -84,6 +84,9 @@ _ERROR_SERVICE_DOCUMENT__PROJECT_OR_FORMAT_NOT_SET_UP =
 _ERROR_SERVICE_AUTH__SERVICE_NOT_DEFINED authId =
   LocaleRecord "error.service.auth.service_not_defined" "Service '%s' is not defined" [authId]
 
+_ERROR_VALIDATION__USER_EMAIL_FROM_IDP_CANNOT_BE_CHANGED =
+  LocaleRecord "error.validation.user_email_from_idp_cannot_be_changed" "Email provided by the OpenID provider cannot be changed" []
+
 -- Knowledge Model Editor
 _ERROR_SERVICE_KNOWLEDGE_MODEL_EDITOR__KM_MIGRATION_EXISTS =
   LocaleRecord "error.service.knowledge_model_editor.km_migration_exists" "You can't publish the KM editor when there is ongoing KM migration" []

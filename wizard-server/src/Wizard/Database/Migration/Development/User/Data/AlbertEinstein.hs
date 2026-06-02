@@ -42,7 +42,6 @@ userAlbert =
     , lastName = "Einstein"
     , email = "albert.einstein@example.com"
     , affiliation = Just "My University"
-    , sources = [_USER_SOURCE_INTERNAL]
     , uRole = _USER_ROLE_ADMIN
     , permissions =
         [ "TENANT_PERM"
@@ -75,6 +74,8 @@ userAlbert =
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    , emailVerifiedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , emailPending = Nothing
     }
 
 userAlbertEdited :: User
@@ -84,6 +85,14 @@ userAlbertEdited =
     , lastName = "EDITED: Einstein"
     , email = "albert.einstein@example-edited.com"
     , affiliation = Just "EDITED: My University"
+    }
+
+userAlbertEditedAfterPut :: User
+userAlbertEditedAfterPut =
+  userAlbertEdited
+    { email = userAlbert.email
+    , emailVerifiedAt = Nothing
+    , emailPending = Just userAlbertEdited.email
     }
 
 userAlbertWithNewsId :: User

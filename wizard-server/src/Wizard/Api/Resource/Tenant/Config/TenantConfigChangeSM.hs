@@ -19,12 +19,6 @@ instance ToSchema TenantConfigOrganizationChangeDTO where
 instance ToSchema TenantConfigAuthenticationChangeDTO where
   declareNamedSchema = toSwagger defaultAuthenticationChangeDto
 
-instance ToSchema TenantConfigAuthenticationExternalChangeDTO where
-  declareNamedSchema = toSwagger defaultAuthenticationExternalChangeDto
-
-instance ToSchema TenantConfigAuthenticationExternalServiceChangeDTO where
-  declareNamedSchema = toSwagger defaultAuthenticationExternalServiceChangeDto
-
 instance ToSchema TenantConfigPrivacyAndSupportChangeDTO where
   declareNamedSchema = toSwagger defaultPrivacyAndSupportChangeDto
 

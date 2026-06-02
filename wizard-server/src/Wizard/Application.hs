@@ -8,8 +8,10 @@ import Data.Pool (Pool)
 import Database.PostgreSQL.Simple (Connection)
 import Network.HTTP.Client (Manager)
 import Network.Minio (MinioConn)
+import System.Environment (lookupEnv, setEnv)
 
 import Shared.Common.Application
+import Shared.Common.Bootstrap.AwsAppConfig
 import Shared.Common.Bootstrap.Web
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
@@ -32,7 +34,7 @@ import Wizard.Worker.PermanentWorkers
 import WizardLib.Public.Util.Jinja (verifyJinja)
 
 runApplication :: IO ()
-runApplication = do
+runApplication =
   runWebServerWithWorkers
     [putStrLn asciiLogo, verifyJinja]
     serverConfigFile
@@ -52,7 +54,15 @@ createBaseContext serverConfig buildInfoConfig dbPool s3Client httpClientManager
   return BaseContext {..}
 
 afterDbMigrationHook :: BaseContext -> IO ()
-afterDbMigrationHook _ = return ()
+afterDbMigrationHook context = do
+  mAwsAppConfig <- lookupEnv "AWS_APP_CONFIG"
+  case mAwsAppConfig of
+    Just _ -> do
+      (path, poller) <- resolveConfigPath context.serverConfig.general.integrationConfig
+      setEnv "INTEGRATION_CONFIG_PATH" path
+      _ <- forkIO $ poller context.shutdownFlag
+      return ()
+    Nothing -> return ()
 
 runWebServer :: BaseContext -> IO ()
 runWebServer context = runWebServerFactory context getSentryIdentity loggingMiddleware webApi webServer

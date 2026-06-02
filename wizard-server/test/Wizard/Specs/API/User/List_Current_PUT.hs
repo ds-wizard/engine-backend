@@ -3,6 +3,7 @@ module Wizard.Specs.API.User.List_Current_PUT (
 ) where
 
 import Data.Aeson (encode)
+import Data.Either (isRight)
 import qualified Data.Map.Strict as M
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -15,6 +16,7 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserProfileChangeJM ()
+import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Localization.Messages.Public
@@ -59,17 +61,20 @@ test_200 appContext =
     do
       let expStatus = 200
       let expHeaders = resCorsHeadersPlain
-      let expDto = toDTO userAlbertEdited
-      let expBody = encode expDto
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
       let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, UserDTO)
+      let expDto = (toDTO userAlbertEditedAfterPut) {updatedAt = resDto.updatedAt} :: UserDTO
       assertResStatus status expStatus
       assertResHeaders headers expHeaders
       compareUserDtos resDto expDto
-      -- AND: Find result in DB and compare with expectation state
-      assertExistenceOfUserInDB appContext userAlbertEdited
+      -- AND: Find result in DB and compare with expectation state (ignoring dynamic updatedAt)
+      eUser <- runInContextIO (findUserByUuid userAlbert.uuid) appContext
+      liftIO $ isRight eUser `shouldBe` True
+      let (Right userFromDB) = eUser
+      let expUser = userAlbertEditedAfterPut {updatedAt = userFromDB.updatedAt} :: User
+      liftIO $ userFromDB `shouldBe` expUser
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

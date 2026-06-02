@@ -52,12 +52,6 @@ instance FromJSON ServerConfigSentry where
     return ServerConfigSentry {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigJwt where
-  parseJSON (Object o) = do
-    expiration <- o .:? "expiration" .!= defaultJwt.expiration
-    return ServerConfigJwt {..}
-  parseJSON _ = mzero
-
 instance FromJSON ServerConfigAnalyticalMails where
   parseJSON (Object o) = do
     enabled <- o .:? "enabled" .!= defaultAnalyticalMails.enabled
@@ -90,12 +84,6 @@ instance FromJSON ServerConfigCloud where
     publicRegistrationEnabled <- o .:? "publicRegistrationEnabled" .!= defaultCloud.publicRegistrationEnabled
     signalBridgeUrl <- o .:? "signalBridgeUrl" .!= defaultCloud.signalBridgeUrl
     return ServerConfigCloud {..}
-  parseJSON _ = mzero
-
-instance FromJSON ServerConfigPlan where
-  parseJSON (Object o) = do
-    recomputeJob <- o .:? "recomputeJob" .!= defaultPlan.recomputeJob
-    return ServerConfigPlan {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigPersistentCommand where

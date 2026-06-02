@@ -11,11 +11,11 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
-import Shared.ActionKey.Model.ActionKey.ActionKey
 import Shared.Common.Model.Error.Error
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
+import Shared.UserEmailLink.Database.DAO.UserEmailLink.UserEmailLinkDAO
+import Shared.UserEmailLink.Model.UserEmailLink.UserEmailLink
 import Wizard.Api.Resource.Tenant.TenantCreateDTO
 import Wizard.Api.Resource.Tenant.TenantDTO
 import Wizard.Api.Resource.Tenant.TenantJM ()
@@ -23,10 +23,10 @@ import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Localization.Messages.Public
-import Wizard.Model.ActionKey.ActionKeyType
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
+import Wizard.Model.UserEmailLink.UserEmailLinkType
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -81,7 +81,7 @@ create_test_201 title appContext reqDto authHeaders persistentCommandCount userA
       let updatedAppContext = appContext {currentTenantUuid = tenant.uuid}
       (Right [user]) <- runInContextIO findUsers updatedAppContext
       liftIO $ user.active `shouldBe` userActive
-      assertCountInDB (findActionKeys :: AppContextM [ActionKey U.UUID ActionKeyType]) updatedAppContext 1
+      assertCountInDB (findUserEmailLinks :: AppContextM [UserEmailLink U.UUID UserEmailLinkType]) updatedAppContext 1
       assertCountInDB (findPersistentCommands :: AppContextM [PersistentCommand U.UUID]) updatedAppContext persistentCommandCount
 
 -- ----------------------------------------------------

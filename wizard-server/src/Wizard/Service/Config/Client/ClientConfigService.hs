@@ -29,6 +29,7 @@ import Wizard.Service.KnowledgeModel.Metamodel.MigrationService
 import Wizard.Service.Tenant.Config.ConfigService
 import Wizard.Service.Tenant.TenantHelper
 import Wizard.Service.User.UserMapper
+import WizardLib.Public.Database.DAO.OpenId.OpenIdClientDefinitionDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.User.UserTourDAO
@@ -89,11 +90,12 @@ getClientConfig mServerUrl mClientUrl = do
           Nothing -> return Nothing
       plugins <- findPlugins tenant.uuid
       pluginSettings <- findTenantPluginSettingValues tenant.uuid
+      openIdClients <- findOpenIdClientDefinitions
       tours <-
         case mCurrentUser of
           Just currentUser -> findUserToursByUserUuid currentUser.uuid
           _ -> return []
-      return $ toClientConfigDTO serverConfig tcOrganization tcAuthentication tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcProject tcSubmission tcFeatures tcOwl mUserProfile tours plugins pluginSettings tenant
+      return $ toClientConfigDTO serverConfig tcOrganization tcAuthentication openIdClients tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcProject tcSubmission tcFeatures tcOwl mUserProfile tours plugins pluginSettings tenant
 
 throwErrorIfTenantIsDisabled :: Maybe String -> Tenant -> AppContextM ()
 throwErrorIfTenantIsDisabled mServerUrl tenant = unless tenant.enabled (throwError . NotExistsError $ _ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE (fromMaybe "not-provided" mServerUrl))

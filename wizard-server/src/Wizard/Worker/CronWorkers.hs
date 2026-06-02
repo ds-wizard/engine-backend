@@ -2,7 +2,6 @@ module Wizard.Worker.CronWorkers where
 
 import Shared.Common.Database.VacuumCleaner
 import Shared.Common.Model.Config.ServerConfig
-import Shared.PersistentCommand.Service.PersistentCommand.PersistentCommandService
 import Shared.Worker.Model.Worker.CronWorker
 import Wizard.Cache.CacheUtil
 import Wizard.Model.Cache.ServerCache
@@ -10,7 +9,6 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.KnowledgeModel.Editor.Event.EditorEventService hiding (squash)
@@ -19,13 +17,16 @@ import Wizard.Service.Project.Comment.ProjectCommentService
 import Wizard.Service.Project.Event.ProjectEventService hiding (squash)
 import Wizard.Service.Project.ProjectService
 import Wizard.Service.Registry.Synchronization.RegistrySynchronizationService
+import Wizard.Service.User.RegistrationPending.UserRegistrationPendingService
+import Wizard.Service.UserEmailLink.UserEmailLinkService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
+import WizardLib.Public.Service.PersistentCommand.PersistentCommandService
 import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
 import WizardLib.Public.Service.UserToken.UserTokenService
 
 workers :: [CronWorker BaseContext AppContextM]
 workers =
-  [ actionKeyWorker
+  [ userEmailLinkWorker
   , cacheWorker
   , documentWorker
   , feedbackWorker
@@ -37,20 +38,21 @@ workers =
   , assigneeNotificationWorker
   , registrySyncWorker
   , temporaryFileWorker
+  , cleanUserRegistrationPendingWorker
   , cleanUserTokenWorker
   , expireUserTokenWorker
   , vacuumCleanerWorker
   ]
 
 -- ------------------------------------------------------------------
-actionKeyWorker :: CronWorker BaseContext AppContextM
-actionKeyWorker =
+userEmailLinkWorker :: CronWorker BaseContext AppContextM
+userEmailLinkWorker =
   CronWorker
-    { name = "ActionKeyWorker"
-    , condition = (.serverConfig.actionKey.clean.enabled)
+    { name = "UserEmailLinkWorker"
+    , condition = (.serverConfig.userEmailLink.clean.enabled)
     , cronDefault = "20 0 * * *"
-    , cron = (.serverConfig.actionKey.clean.cron)
-    , function = cleanActionKeys
+    , cron = (.serverConfig.userEmailLink.clean.cron)
+    , function = cleanUserEmailLinks
     , wrapInTransaction = True
     }
 
@@ -183,6 +185,17 @@ cleanUserTokenWorker =
     , cronDefault = "0 3 * * *"
     , cron = (.serverConfig.userToken.clean.cron)
     , function = cleanTokens
+    , wrapInTransaction = True
+    }
+
+cleanUserRegistrationPendingWorker :: CronWorker BaseContext AppContextM
+cleanUserRegistrationPendingWorker =
+  CronWorker
+    { name = "CleanUserRegistrationPendingWorker"
+    , condition = (.serverConfig.userEmailLink.clean.enabled)
+    , cronDefault = "30 0 * * *"
+    , cron = (.serverConfig.userEmailLink.clean.cron)
+    , function = cleanUserRegistrationPending
     , wrapInTransaction = True
     }
 

@@ -5,8 +5,6 @@ import Data.Aeson
 import Shared.Common.Api.Resource.Config.SimpleFeatureJM ()
 import Shared.Common.Util.Aeson
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePatternJM ()
-import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientParameterJM ()
-import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientStyleJM ()
 import Wizard.Api.Resource.Project.ProjectSharingJM ()
 import Wizard.Api.Resource.Project.ProjectVisibilityJM ()
 import Wizard.Model.Tenant.Config.TenantConfig
@@ -40,18 +38,6 @@ instance FromJSON TenantConfigAuthenticationInternalTwoFactorAuth where
   parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON TenantConfigAuthenticationInternalTwoFactorAuth where
-  toJSON = genericToJSON jsonOptions
-
-instance FromJSON TenantConfigAuthenticationExternal where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON TenantConfigAuthenticationExternal where
-  toJSON = genericToJSON jsonOptions
-
-instance FromJSON TenantConfigAuthenticationExternalService where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON TenantConfigAuthenticationExternalService where
   toJSON = genericToJSON jsonOptions
 
 instance FromJSON TenantConfigPrivacyAndSupport where

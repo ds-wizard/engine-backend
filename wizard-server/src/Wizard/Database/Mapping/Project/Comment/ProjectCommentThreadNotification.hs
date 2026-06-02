@@ -3,6 +3,7 @@ module Wizard.Database.Mapping.Project.Comment.ProjectCommentThreadNotification 
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
+import Database.PostgreSQL.Simple.Types
 
 import Wizard.Model.Project.Comment.ProjectCommentThreadNotification
 import WizardLib.Public.Model.User.UserSimple
@@ -11,6 +12,8 @@ instance FromRow ProjectCommentThreadNotification where
   fromRow = do
     projectUuid <- field
     projectName <- field
+    knowledgeModelPackageUuid <- field
+    selectedQuestionTagUuids <- fromPGArray <$> field
     tenantUuid <- field
     commentThreadUuid <- field
     path <- field
@@ -45,6 +48,7 @@ instance FromRow ProjectCommentThreadNotification where
                   }
             _ -> Nothing
     text <- field
+    let questionTitle = Nothing
     clientUrl <- field
     appTitle <- field
     logoUrl <- field

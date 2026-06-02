@@ -17,7 +17,7 @@ import Shared.Common.Integration.Aws.Lambda
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.AppContext
 import Shared.Common.Util.Logger
-import Shared.Common.Util.String (f'', trim)
+import Shared.Common.Util.String (trim)
 import Shared.PersistentCommand.Database.Mapping.PersistentCommand.LambdaInvocationResult ()
 import Shared.PersistentCommand.Database.Mapping.PersistentCommand.PersistentCommand ()
 import Shared.PersistentCommand.Database.Mapping.PersistentCommand.PersistentCommandSimple ()
@@ -33,34 +33,18 @@ findPersistentCommands :: (AppContextC s sc m, FromField identity) => m [Persist
 findPersistentCommands = createFindEntitiesFn entityName
 
 findPersistentCommandsForRetryByStates :: (AppContextC s sc m, FromField identity) => m [PersistentCommandSimple identity]
-findPersistentCommandsForRetryByStates = findPersistentCommandsByStates True []
-
-findPersistentCommandsForLambdaByStates :: (AppContextC s sc m, FromField identity) => [String] -> m [PersistentCommandSimple identity]
-findPersistentCommandsForLambdaByStates = findPersistentCommandsByStates False
-
-findPersistentCommandsByStates :: (AppContextC s sc m, FromField identity) => Bool -> [String] -> m [PersistentCommandSimple identity]
-findPersistentCommandsByStates internal components = do
-  let componentCondition =
-        case components of
-          [] -> ""
-          _ -> f' "AND component IN (%s) " [generateQuestionMarks components]
+findPersistentCommandsForRetryByStates = do
   let sql =
-        fromString $
-          f''
-            "SELECT uuid, destination, component, tenant_uuid, created_by \
-            \FROM persistent_command \
-            \WHERE (state = 'NewPersistentCommandState' \
-            \  OR (state = 'ErrorPersistentCommandState' AND attempts < max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
-            \  AND internal = ${internal} ${componentCondition} \
-            \ORDER BY created_at \
-            \LIMIT 5 \
-            \FOR UPDATE"
-            [ ("internal", show internal)
-            , ("componentCondition", componentCondition)
-            ]
-  let params = components
-  logQuery sql params
-  let action conn = query conn sql params
+        "SELECT uuid, destination, component, tenant_uuid, created_by \
+        \FROM persistent_command \
+        \WHERE (state = 'NewPersistentCommandState' \
+        \  OR (state = 'ErrorPersistentCommandState' AND attempts < max_attempts AND updated_at < (now() - (2 ^ attempts - 1) * INTERVAL '1 min'))) \
+        \  AND internal = true \
+        \ORDER BY created_at \
+        \LIMIT 5 \
+        \FOR UPDATE"
+  logInfoI _CMP_DATABASE (trim sql)
+  let action conn = query_ conn (fromString sql)
   runDB action
 
 findPersistentCommandByUuid :: (AppContextC s sc m, FromField identity) => U.UUID -> m (PersistentCommand identity)

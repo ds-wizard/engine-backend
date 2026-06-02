@@ -7,6 +7,7 @@ import Data.Foldable (forM_)
 import System.Exit
 import System.IO
 
+import Shared.Common.Bootstrap.AwsAppConfig
 import Shared.Common.Bootstrap.Config
 import Shared.Common.Bootstrap.DatabaseMigration
 import Shared.Common.Bootstrap.HttpClient
@@ -32,12 +33,14 @@ runWebServerWithWorkers
     do
       hSetBuffering stdout LineBuffering
       sequence_ beforeLoadActions
-      serverConfig <- loadConfig serverConfigFile (getServerConfig validateServerConfig)
+      (configBytes, pollForChanges) <- resolveConfigBytes serverConfigFile
+      serverConfig <- loadConfigWith serverConfigFile configBytes (getServerConfig validateServerConfig)
       buildInfoConfig <- loadConfig buildInfoFile getBuildInfoConfig
       result <-
         runLogging serverConfig.logging.level $ do
           logInfo _CMP_ENVIRONMENT $ "set to " ++ serverConfig.general.environment
           shutdownFlag <- liftIO newEmptyMVar
+          _ <- liftIO . forkIO $ pollForChanges shutdownFlag
           dbPool <- connectPostgresDB serverConfig.logging serverConfig.database
           httpClientManager <- setupHttpClientManager serverConfig.logging
           s3Client <- setupS3Client serverConfig.s3 httpClientManager

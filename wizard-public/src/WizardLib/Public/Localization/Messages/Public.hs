@@ -30,6 +30,12 @@ _ERROR_VALIDATION__LOCALE_DISABLED_DEFAULT =
 _ERROR_SERVICE_OPENID__UNABLE_TO_ENCODE_JWT_TOKEN error =
   LocaleRecord "error.service.auth.unable_to_encode_jwt_token" "Unable to encode JWT token (error: %s)" [error]
 
+_ERROR_SERVICE_OPENID__REGISTRATION_DISABLED =
+  LocaleRecord "error.service.openid.registration_disabled" "Registration of new accounts via this service is disabled" []
+
+_ERROR_SERVICE_OPENID__IDENTITY_LINKED_TO_DIFFERENT_USER =
+  LocaleRecord "error.service.openid.identity_linked_to_different_user" "This external identity is already linked to a different user" []
+
 -- Token
 _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD =
   LocaleRecord "error.service.token.incorrect_email_or_password" "Incorrect email or password" []

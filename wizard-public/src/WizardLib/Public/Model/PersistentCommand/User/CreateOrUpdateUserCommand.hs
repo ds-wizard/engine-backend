@@ -12,7 +12,6 @@ data CreateOrUpdateUserCommand = CreateOrUpdateUserCommand
   , lastName :: String
   , email :: String
   , affiliation :: Maybe String
-  , sources :: [String]
   , uRole :: String
   , active :: Bool
   , imageUrl :: Maybe String

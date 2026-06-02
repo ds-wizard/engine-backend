@@ -10,28 +10,39 @@ import Wizard.Model.User.User
 import Wizard.Model.User.UserSubmissionProp
 import Wizard.Model.User.UserSubmissionPropList
 
-fromUserProfileChangeDTO :: User -> UserProfileChangeDTO -> UTCTime -> User
-fromUserProfileChangeDTO oldUser dto now =
-  User
-    { uuid = oldUser.uuid
-    , firstName = dto.firstName
-    , lastName = dto.lastName
-    , email = toLower <$> dto.email
-    , passwordHash = oldUser.passwordHash
-    , affiliation = dto.affiliation
-    , sources = oldUser.sources
-    , uRole = oldUser.uRole
-    , permissions = oldUser.permissions
-    , active = oldUser.active
-    , imageUrl = oldUser.imageUrl
-    , locale = oldUser.locale
-    , machine = oldUser.machine
-    , lastSeenNewsId = oldUser.lastSeenNewsId
-    , tenantUuid = oldUser.tenantUuid
-    , lastVisitedAt = oldUser.lastVisitedAt
-    , createdAt = oldUser.createdAt
-    , updatedAt = now
-    }
+fromUserProfileChangeDTO :: UserProfileChangeDTO -> User -> Bool -> UTCTime -> User
+fromUserProfileChangeDTO dto oldUser revertPending now =
+  let newEmail = toLower <$> dto.email
+      emailChanged = newEmail /= oldUser.email
+      newEmailVerifiedAt
+        | emailChanged = Nothing
+        | revertPending = Just now
+        | otherwise = oldUser.emailVerifiedAt
+      newEmailPending
+        | emailChanged = Just newEmail
+        | revertPending = Nothing
+        | otherwise = oldUser.emailPending
+   in User
+        { uuid = oldUser.uuid
+        , firstName = dto.firstName
+        , lastName = dto.lastName
+        , email = oldUser.email
+        , passwordHash = oldUser.passwordHash
+        , affiliation = dto.affiliation
+        , uRole = oldUser.uRole
+        , permissions = oldUser.permissions
+        , active = oldUser.active
+        , imageUrl = oldUser.imageUrl
+        , locale = oldUser.locale
+        , machine = oldUser.machine
+        , lastSeenNewsId = oldUser.lastSeenNewsId
+        , tenantUuid = oldUser.tenantUuid
+        , lastVisitedAt = oldUser.lastVisitedAt
+        , createdAt = oldUser.createdAt
+        , updatedAt = now
+        , emailVerifiedAt = newEmailVerifiedAt
+        , emailPending = newEmailPending
+        }
 
 fromUserSubmissionPropsDTO :: U.UUID -> U.UUID -> [UserSubmissionProp] -> [UserSubmissionPropList] -> UTCTime -> [UserSubmissionProp]
 fromUserSubmissionPropsDTO userUuid tenantUuid submissionProps reqDtos now =

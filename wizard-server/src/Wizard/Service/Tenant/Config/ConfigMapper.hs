@@ -3,7 +3,6 @@ module Wizard.Service.Tenant.Config.ConfigMapper where
 import Data.Time
 import qualified Data.UUID as U
 
-import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Config.TenantConfigSubmissionServiceSimple
@@ -63,13 +62,7 @@ fromOrganizationChangeDTO :: TenantConfigOrganizationChangeDTO -> U.UUID -> UTCT
 fromOrganizationChangeDTO TenantConfigOrganizationChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigOrganization {..}
 
 fromAuthenticationChangeDTO :: TenantConfigAuthenticationChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigAuthentication
-fromAuthenticationChangeDTO a@TenantConfigAuthenticationChangeDTO {..} tenantUuid createdAt updatedAt =
-  let services = fmap (\c -> fromAuthenticationExternalServiceChangeDTO c tenantUuid createdAt updatedAt) a.external.services
-      external = TenantConfigAuthenticationExternal {..}
-   in TenantConfigAuthentication {..}
-
-fromAuthenticationExternalServiceChangeDTO :: TenantConfigAuthenticationExternalServiceChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigAuthenticationExternalService
-fromAuthenticationExternalServiceChangeDTO TenantConfigAuthenticationExternalServiceChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigAuthenticationExternalService {..}
+fromAuthenticationChangeDTO TenantConfigAuthenticationChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigAuthentication {..}
 
 fromPrivacyAndSupportChangeDTO :: TenantConfigPrivacyAndSupportChangeDTO -> U.UUID -> UTCTime -> UTCTime -> TenantConfigPrivacyAndSupport
 fromPrivacyAndSupportChangeDTO TenantConfigPrivacyAndSupportChangeDTO {..} tenantUuid createdAt updatedAt = TenantConfigPrivacyAndSupport {..}
@@ -115,32 +108,8 @@ fromFeaturesChangeDTO dto oldConfig tenantUuid createdAt updatedAt =
    in TenantConfigFeatures {..}
 
 fromAuthenticationCommand :: TenantConfigAuthentication -> CreateOrUpdateAuthenticationConfigCommand -> UTCTime -> TenantConfigAuthentication
-fromAuthenticationCommand oldConfig command now =
-  oldConfig
-    { external =
-        oldConfig.external
-          { services =
-              [ TenantConfigAuthenticationExternalService
-                  { aId = command.aId
-                  , name = command.name
-                  , url = command.url
-                  , clientId = U.toString command.clientId
-                  , clientSecret = command.clientSecret
-                  , parameters = []
-                  , style =
-                      OpenIdClientStyle
-                        { icon = Nothing
-                        , background = Nothing
-                        , color = Nothing
-                        }
-                  , tenantUuid = command.tenantUuid
-                  , createdAt = now
-                  , updatedAt = now
-                  }
-              ]
-          }
-    , updatedAt = now
-    }
+fromAuthenticationCommand oldConfig _command now =
+  oldConfig {updatedAt = now}
 
 fromRegistry :: TenantConfigRegistry -> UpdateRegistryConfigCommand -> UTCTime -> TenantConfigRegistry
 fromRegistry oldConfig command now =

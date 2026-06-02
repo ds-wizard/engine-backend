@@ -29,6 +29,7 @@ extra-deps:
     subdirs:
       - lib/amazonka
       - lib/amazonka-core
+      - lib/services/amazonka-appconfigdata
       - lib/services/amazonka-lambda
       - lib/services/amazonka-sso
       - lib/services/amazonka-sts

@@ -7,8 +7,6 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Config.SimpleFeature
-import Shared.OpenId.Model.OpenId.OpenIdClientParameter
-import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Project.Project hiding (uuid)
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
@@ -70,7 +68,6 @@ data TenantConfigAuthentication = TenantConfigAuthentication
   { tenantUuid :: U.UUID
   , defaultRole :: String
   , internal :: TenantConfigAuthenticationInternal
-  , external :: TenantConfigAuthenticationExternal
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
   }
@@ -81,10 +78,12 @@ instance Eq TenantConfigAuthentication where
     a.tenantUuid == b.tenantUuid
       && a.defaultRole == b.defaultRole
       && a.internal == b.internal
-      && a.external == b.external
 
 data TenantConfigAuthenticationInternal = TenantConfigAuthenticationInternal
   { registration :: SimpleFeature
+  , nonAdminLoginEnabled :: Bool
+  , sessionExpiration :: Integer
+  , userEmailLinkExpiration :: Integer
   , twoFactorAuth :: TenantConfigAuthenticationInternalTwoFactorAuth
   }
   deriving (Generic, Eq, Show)
@@ -95,36 +94,6 @@ data TenantConfigAuthenticationInternalTwoFactorAuth = TenantConfigAuthenticatio
   , expiration :: Int
   }
   deriving (Generic, Eq, Show)
-
-data TenantConfigAuthenticationExternal = TenantConfigAuthenticationExternal
-  { services :: [TenantConfigAuthenticationExternalService]
-  }
-  deriving (Generic, Eq, Show)
-
-data TenantConfigAuthenticationExternalService = TenantConfigAuthenticationExternalService
-  { tenantUuid :: U.UUID
-  , aId :: String
-  , name :: String
-  , url :: String
-  , clientId :: String
-  , clientSecret :: String
-  , parameters :: [OpenIdClientParameter]
-  , style :: OpenIdClientStyle
-  , createdAt :: UTCTime
-  , updatedAt :: UTCTime
-  }
-  deriving (Generic, Show)
-
-instance Eq TenantConfigAuthenticationExternalService where
-  a == b =
-    a.tenantUuid == b.tenantUuid
-      && a.aId == b.aId
-      && a.name == b.name
-      && a.url == b.url
-      && a.clientId == b.clientId
-      && a.clientSecret == b.clientSecret
-      && a.parameters == b.parameters
-      && a.style == b.style
 
 data TenantConfigPrivacyAndSupport = TenantConfigPrivacyAndSupport
   { tenantUuid :: U.UUID

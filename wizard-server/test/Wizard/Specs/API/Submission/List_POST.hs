@@ -80,7 +80,7 @@ create_test_201 title appContext project authHeader user =
       -- AND: Prepare expectation
       let expStatus = 201
       let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-      let expDto = toList submission2 defaultSubmissionService user
+      let expDto = toList submission2 defaultSubmissionService (Just user)
       let expBody = encode expDto
       let expType (a :: SubmissionList) = a
       -- AND: Run migrations

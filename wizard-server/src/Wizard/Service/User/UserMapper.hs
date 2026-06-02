@@ -2,7 +2,6 @@ module Wizard.Service.User.UserMapper where
 
 import qualified Data.Aeson as A
 import Data.Char (toLower)
-import qualified Data.List as L
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
@@ -29,7 +28,6 @@ toDTO user =
     , lastName = user.lastName
     , email = user.email
     , affiliation = user.affiliation
-    , sources = user.sources
     , uRole = user.uRole
     , permissions = user.permissions
     , active = user.active
@@ -38,6 +36,8 @@ toDTO user =
     , lastSeenNewsId = user.lastSeenNewsId
     , createdAt = user.createdAt
     , updatedAt = user.updatedAt
+    , emailVerifiedAt = user.emailVerifiedAt
+    , emailPending = user.emailPending
     }
 
 toUserProfile :: UserDTO -> [U.UUID] -> M.Map U.UUID A.Value -> UserProfile
@@ -53,6 +53,8 @@ toUserProfile user userGroupUuids pluginSettings =
     , lastSeenNewsId = user.lastSeenNewsId
     , userGroupUuids = userGroupUuids
     , pluginSettings = pluginSettings
+    , emailVerifiedAt = user.emailVerifiedAt
+    , emailPending = user.emailPending
     }
 
 toSimple :: User -> UserSimple
@@ -124,26 +126,28 @@ toAnonymousOnlineUserInfo avatarNumber colorNumber =
 
 fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> U.UUID -> UTCTime -> Bool -> User
 fromUserCreateDTO dto userUuid passwordHash role permissions tenantUuid now shouldSendRegistrationEmail =
-  User
-    { uuid = userUuid
-    , firstName = dto.firstName
-    , lastName = dto.lastName
-    , email = toLower <$> dto.email
-    , passwordHash = passwordHash
-    , affiliation = dto.affiliation
-    , sources = [_USER_SOURCE_INTERNAL]
-    , uRole = role
-    , permissions = permissions
-    , active = not shouldSendRegistrationEmail
-    , imageUrl = Nothing
-    , locale = Nothing
-    , machine = False
-    , lastSeenNewsId = Nothing
-    , tenantUuid = tenantUuid
-    , lastVisitedAt = now
-    , createdAt = now
-    , updatedAt = now
-    }
+  let active = not shouldSendRegistrationEmail
+   in User
+        { uuid = userUuid
+        , firstName = dto.firstName
+        , lastName = dto.lastName
+        , email = toLower <$> dto.email
+        , passwordHash = passwordHash
+        , affiliation = dto.affiliation
+        , uRole = role
+        , permissions = permissions
+        , active = active
+        , imageUrl = Nothing
+        , locale = Nothing
+        , machine = False
+        , lastSeenNewsId = Nothing
+        , tenantUuid = tenantUuid
+        , lastVisitedAt = now
+        , createdAt = now
+        , updatedAt = now
+        , emailVerifiedAt = if active then Just now else Nothing
+        , emailPending = if active then Nothing else Just (toLower <$> dto.email)
+        }
 
 fromUserExternalDTO
   :: U.UUID
@@ -151,7 +155,6 @@ fromUserExternalDTO
   -> String
   -> String
   -> String
-  -> [String]
   -> String
   -> [String]
   -> Bool
@@ -159,7 +162,7 @@ fromUserExternalDTO
   -> U.UUID
   -> UTCTime
   -> User
-fromUserExternalDTO userUuid firstName lastName email passwordHash sources uRole permissions active mImageUrl tenantUuid now =
+fromUserExternalDTO userUuid firstName lastName email passwordHash uRole permissions active mImageUrl tenantUuid now =
   User
     { uuid = userUuid
     , firstName = firstName
@@ -167,7 +170,6 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash sources uRole
     , email = email
     , passwordHash = passwordHash
     , affiliation = Nothing
-    , sources = sources
     , uRole = uRole
     , permissions = permissions
     , active = active
@@ -179,32 +181,8 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash sources uRole
     , lastVisitedAt = now
     , createdAt = now
     , updatedAt = now
-    }
-
-fromUpdateUserExternalDTO :: User -> String -> String -> Maybe String -> String -> UTCTime -> User
-fromUpdateUserExternalDTO oldUser firstName lastName mImageUrl serviceId now =
-  User
-    { uuid = oldUser.uuid
-    , firstName = firstName
-    , lastName = lastName
-    , email = oldUser.email
-    , passwordHash = oldUser.passwordHash
-    , affiliation = oldUser.affiliation
-    , sources =
-        case L.find (== serviceId) oldUser.sources of
-          Just _ -> oldUser.sources
-          Nothing -> oldUser.sources ++ [serviceId]
-    , uRole = oldUser.uRole
-    , permissions = oldUser.permissions
-    , active = oldUser.active
-    , imageUrl = mImageUrl
-    , locale = oldUser.locale
-    , machine = oldUser.machine
-    , lastSeenNewsId = oldUser.lastSeenNewsId
-    , tenantUuid = oldUser.tenantUuid
-    , lastVisitedAt = now
-    , createdAt = oldUser.createdAt
-    , updatedAt = oldUser.updatedAt
+    , emailVerifiedAt = if active then Just now else Nothing
+    , emailPending = if active then Nothing else Just email
     }
 
 fromUserChangeDTO :: UserChangeDTO -> User -> [String] -> User
@@ -216,7 +194,6 @@ fromUserChangeDTO dto oldUser permission =
     , email = toLower <$> dto.email
     , passwordHash = oldUser.passwordHash
     , affiliation = dto.affiliation
-    , sources = oldUser.sources
     , uRole = dto.uRole
     , permissions = permission
     , active = dto.active
@@ -228,6 +205,8 @@ fromUserChangeDTO dto oldUser permission =
     , lastVisitedAt = oldUser.lastVisitedAt
     , createdAt = oldUser.createdAt
     , updatedAt = oldUser.updatedAt
+    , emailVerifiedAt = oldUser.emailVerifiedAt
+    , emailPending = oldUser.emailPending
     }
 
 fromTenantCreateToUserCreateDTO :: TenantCreateDTO -> UserCreateDTO
@@ -250,7 +229,6 @@ fromCommandCreateDTO command permissions now =
     , email = command.email
     , passwordHash = "no-hash"
     , affiliation = command.affiliation
-    , sources = command.sources
     , uRole = command.uRole
     , permissions = permissions
     , active = command.active
@@ -262,6 +240,8 @@ fromCommandCreateDTO command permissions now =
     , lastVisitedAt = now
     , createdAt = now
     , updatedAt = now
+    , emailVerifiedAt = Just now
+    , emailPending = Nothing
     }
 
 fromCommandChangeDTO :: User -> CreateOrUpdateUserCommand -> [String] -> UTCTime -> User
@@ -273,7 +253,6 @@ fromCommandChangeDTO oldUser command permissions now =
     , email = command.email
     , passwordHash = oldUser.passwordHash
     , affiliation = command.affiliation
-    , sources = command.sources
     , uRole = command.uRole
     , permissions = permissions
     , active = command.active
@@ -285,4 +264,6 @@ fromCommandChangeDTO oldUser command permissions now =
     , lastVisitedAt = oldUser.lastVisitedAt
     , createdAt = oldUser.createdAt
     , updatedAt = now
+    , emailVerifiedAt = oldUser.emailVerifiedAt
+    , emailPending = oldUser.emailPending
     }

@@ -23,9 +23,8 @@ instance FromJSON ServerConfig where
     s3 <- o .:? "s3" .!= defaultS3
     aws <- o .:? "aws" .!= defaultAws
     sentry <- o .:? "sentry" .!= defaultSentry
-    jwt <- o .:? "jwt" .!= defaultJwt
     roles <- o .:? "roles" .!= defaultRoles
-    actionKey <- o .:? "actionKey" .!= defaultActionKey
+    userEmailLink <- o .:? "userEmailLink" .!= defaultUserEmailLink
     knowledgeModelEditor <- o .:? "knowledgeModelEditor" .!= defaultKnowledgeModelEditor
     cache <- o .:? "cache" .!= defaultCache
     document <- o .:? "document" .!= defaultDocument
@@ -37,7 +36,6 @@ instance FromJSON ServerConfig where
     analyticalMails <- o .:? "analyticalMails" .!= defaultAnalyticalMails
     logging <- o .:? "logging" .!= defaultLogging
     cloud <- o .:? "cloud" .!= defaultCloud
-    plan <- o .:? "plan" .!= defaultPlan
     persistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
     signalBridge <- o .:? "signalBridge" .!= defaultSignalBridge
     admin <- o .:? "admin" .!= defaultAdmin
@@ -72,10 +70,10 @@ instance FromJSON ServerConfigRoles where
     return ServerConfigRoles {..}
   parseJSON _ = mzero
 
-instance FromJSON ServerConfigActionKey where
+instance FromJSON ServerConfigUserEmailLink where
   parseJSON (Object o) = do
-    clean <- o .:? "clean" .!= defaultActionKey.clean
-    return ServerConfigActionKey {..}
+    clean <- o .:? "clean" .!= defaultUserEmailLink.clean
+    return ServerConfigUserEmailLink {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigKnowledgeModelEditor where

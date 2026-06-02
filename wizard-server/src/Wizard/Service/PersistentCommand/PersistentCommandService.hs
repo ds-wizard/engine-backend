@@ -18,7 +18,7 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.Database.Mapping.ActionKey.ActionKeyType ()
+import Wizard.Database.Mapping.UserEmailLink.UserEmailLinkType ()
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextMappers

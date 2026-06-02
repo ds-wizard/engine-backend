@@ -14,7 +14,6 @@ import Wizard.Model.Cache.ServerCache hiding (user)
 import Wizard.Model.Context.AppContext hiding (cache)
 import Wizard.Model.Context.ContextMappers
 import Wizard.Model.Tenant.Tenant
-import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Document.DocumentCleanService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.KnowledgeModel.Editor.Event.EditorEventService
@@ -27,14 +26,14 @@ import Wizard.Service.Project.Event.ProjectEventService
 import Wizard.Service.Project.ProjectService
 import Wizard.Service.Registry.Push.RegistryPushService
 import Wizard.Service.Registry.Synchronization.RegistrySynchronizationService
+import Wizard.Service.UserEmailLink.UserEmailLinkService
 import Wizard.Service.UserToken.ApiKey.ApiKeyService
 import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
 import WizardLib.Public.Service.UserToken.UserTokenService
 
 sections :: [DevSection AppContextM]
 sections =
-  [ actionKey
-  , apiKey
+  [ apiKey
   , cache
   , document
   , feedback
@@ -47,30 +46,8 @@ sections =
   , registry
   , temporaryFile
   , user
+  , userEmailLink
   ]
-
--- ---------------------------------------------------------------------------------------------------------------------
--- ACTION KEY
--- ---------------------------------------------------------------------------------------------------------------------
-actionKey :: DevSection AppContextM
-actionKey =
-  DevSection
-    { name = "Action Key"
-    , description = Nothing
-    , operations = [actionKey_cleanActionKeys]
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-actionKey_cleanActionKeys :: DevOperation AppContextM
-actionKey_cleanActionKeys =
-  DevOperation
-    { name = "Clean Expired Action Keys"
-    , description = Nothing
-    , parameters = []
-    , function = \reqDto -> do
-        cleanActionKeys
-        return "Done"
-    }
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- API KEY
@@ -732,5 +709,28 @@ user_cleanTokens =
     , parameters = []
     , function = \reqDto -> do
         cleanTokens
+        return "Done"
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- USER EMAIL LINK
+-- ---------------------------------------------------------------------------------------------------------------------
+userEmailLink :: DevSection AppContextM
+userEmailLink =
+  DevSection
+    { name = "User Email Link"
+    , description = Nothing
+    , operations = [userEmailLink_cleanUserEmailLinks]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+userEmailLink_cleanUserEmailLinks :: DevOperation AppContextM
+userEmailLink_cleanUserEmailLinks =
+  DevOperation
+    { name = "Clean Expired User Email Links"
+    , description = Nothing
+    , parameters = []
+    , function = \reqDto -> do
+        cleanUserEmailLinks
         return "Done"
     }

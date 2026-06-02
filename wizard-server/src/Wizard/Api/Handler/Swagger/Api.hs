@@ -27,7 +27,6 @@ import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommand
 import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Shared.Prefab.Api.Resource.Prefab.PrefabSM ()
 import Wizard.Api.Handler.Api
-import Wizard.Api.Resource.ActionKey.ActionKeyTypeSM ()
 import Wizard.Api.Resource.Auth.AuthConsentSM ()
 import Wizard.Api.Resource.Common.PageSM ()
 import Wizard.Api.Resource.Config.ClientConfigSM ()
@@ -124,17 +123,23 @@ import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Api.Resource.User.UserStateSM ()
 import Wizard.Api.Resource.User.UserSubmissionPropListSM ()
 import Wizard.Api.Resource.User.UserSubmissionPropSM ()
+import Wizard.Api.Resource.UserEmailLink.UserEmailLinkTypeSM ()
 import Wizard.Api.Resource.UserToken.ApiKeyCreateSM ()
 import Wizard.Api.Resource.UserToken.AppKeyCreateSM ()
 import Wizard.Api.Resource.UserToken.UserTokenListSM ()
 import Wizard.Api.Resource.Websocket.ProjectMessageSM ()
 import Wizard.Api.Resource.Websocket.WebsocketSM ()
+import WizardLib.Public.Api.Resource.OpenId.Client.Definition.OpenIdClientChangeSM ()
+import WizardLib.Public.Api.Resource.OpenId.Client.Definition.OpenIdClientDetailSM ()
+import WizardLib.Public.Api.Resource.OpenId.Client.Definition.OpenIdClientSimpleSM ()
 import WizardLib.Public.Api.Resource.PersistentCommand.PersistentCommandListSM ()
 import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileSM ()
 import WizardLib.Public.Api.Resource.Tenant.Limit.TenantLimitBundleChangeSM ()
 import WizardLib.Public.Api.Resource.Tenant.Usage.WizardUsageSM ()
 import WizardLib.Public.Api.Resource.User.Group.UserGroupDetailSM ()
+import WizardLib.Public.Api.Resource.User.UserFromExternalSM ()
 import WizardLib.Public.Api.Resource.User.UserLocaleSM ()
+import WizardLib.Public.Api.Resource.User.UserOpenIdIdentitySM ()
 import WizardLib.Public.Api.Resource.UserToken.LoginSM ()
 import WizardLib.Public.Api.Resource.UserToken.UserTokenSM ()
 
@@ -148,7 +153,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.30.0"
+              , _infoVersion = "4.31.0"
               , _infoLicense =
                   Just $
                     License

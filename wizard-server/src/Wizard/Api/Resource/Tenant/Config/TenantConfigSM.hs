@@ -5,8 +5,6 @@ import Data.Swagger
 import Shared.Common.Api.Resource.Config.SimpleFeatureSM ()
 import Shared.Common.Util.Swagger
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePatternSM ()
-import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientParameterSM ()
-import Shared.OpenId.Api.Resource.OpenId.Client.Definition.OpenIdClientStyleSM ()
 import Wizard.Api.Resource.Project.ProjectSharingSM ()
 import Wizard.Api.Resource.Project.ProjectVisibilitySM ()
 import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()
@@ -28,12 +26,6 @@ instance ToSchema TenantConfigAuthenticationInternal where
 
 instance ToSchema TenantConfigAuthenticationInternalTwoFactorAuth where
   declareNamedSchema = toSwagger defaultAuthenticationInternalTwoFactorAuth
-
-instance ToSchema TenantConfigAuthenticationExternal where
-  declareNamedSchema = toSwagger defaultAuthenticationExternal
-
-instance ToSchema TenantConfigAuthenticationExternalService where
-  declareNamedSchema = toSwagger defaultAuthenticationExternalService
 
 instance ToSchema TenantConfigPrivacyAndSupport where
   declareNamedSchema = toSwagger defaultPrivacyAndSupport

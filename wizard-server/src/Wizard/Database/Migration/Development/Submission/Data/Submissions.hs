@@ -30,13 +30,13 @@ submission1 =
     , serviceId = defaultSubmissionService.sId
     , documentUuid = doc1.uuid
     , tenantUuid = defaultTenant.uuid
-    , createdBy = userAlbert.uuid
+    , createdBy = Just userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
 submission1List :: SubmissionList
-submission1List = toList submission1 defaultSubmissionService userAlbertSuggestion
+submission1List = toList submission1 defaultSubmissionService (Just userAlbertSuggestion)
 
 submission2 :: Submission
 submission2 =
@@ -48,13 +48,13 @@ submission2 =
     , serviceId = defaultSubmissionService.sId
     , documentUuid = doc1.uuid
     , tenantUuid = defaultTenant.uuid
-    , createdBy = userAlbert.uuid
+    , createdBy = Just userAlbert.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
 submission2Dto :: SubmissionList
-submission2Dto = toList submission1 defaultSubmissionService userAlbertSuggestion
+submission2Dto = toList submission2 defaultSubmissionService (Just userAlbertSuggestion)
 
 differentSubmission1 :: Submission
 differentSubmission1 =
@@ -66,7 +66,7 @@ differentSubmission1 =
     , serviceId = defaultSubmissionService.sId
     , documentUuid = differentDoc.uuid
     , tenantUuid = differentTenant.uuid
-    , createdBy = userCharles.uuid
+    , createdBy = Just userCharles.uuid
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }

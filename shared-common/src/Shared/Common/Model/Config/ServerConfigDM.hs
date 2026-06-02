@@ -45,9 +45,6 @@ defaultAws =
 defaultSentry :: ServerConfigSentry
 defaultSentry = ServerConfigSentry {enabled = False, dsn = ""}
 
-defaultJwt :: ServerConfigJwt
-defaultJwt = ServerConfigJwt {expiration = 14 * 24}
-
 defaultAnalyticalMails :: ServerConfigAnalyticalMails
 defaultAnalyticalMails = ServerConfigAnalyticalMails {enabled = False, email = ""}
 
@@ -68,13 +65,6 @@ defaultCloud =
     , publicRegistrationEnabled = False
     , signalBridgeUrl = Nothing
     }
-
-defaultPlan :: ServerConfigPlan
-defaultPlan = ServerConfigPlan {recomputeJob = defaultPlanRecomputeJob}
-
-defaultPlanRecomputeJob :: ServerConfigCronWorker
-defaultPlanRecomputeJob =
-  ServerConfigCronWorker {enabled = False, cron = "0 * * * *"}
 
 defaultPersistentCommand :: ServerConfigPersistentCommand
 defaultPersistentCommand =

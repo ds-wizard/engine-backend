@@ -39,6 +39,7 @@ OVERLAPPABLE
 KHTML
 unlines
 ccall
+appconfigdata
 
 # Document template example (Jinja)
 selectattr
@@ -122,3 +123,5 @@ acche
 ecche
 dcche
 aste
+
+Pendings

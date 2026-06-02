@@ -21,7 +21,6 @@ userCharles =
     , lastName = "Darwin"
     , email = "charles.darwin@example.com"
     , affiliation = Nothing
-    , sources = [_USER_SOURCE_INTERNAL]
     , uRole = _USER_ROLE_RESEARCHER
     , permissions = ["PM_READ_PERM", "PRJ_PERM", "DOC_TML_READ_PERM", "SUBM_PERM"]
     , active = True
@@ -36,6 +35,8 @@ userCharles =
     , lastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , createdAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , updatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , emailVerifiedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    , emailPending = Nothing
     }
 
 userCharlesPluginSettings :: UserPluginSettings

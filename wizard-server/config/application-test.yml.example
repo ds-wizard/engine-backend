@@ -64,9 +64,6 @@ database:
 s3:
   url: http://localhost:9000
 
-jwt:
-  expiration: 9999
-
 registry:
   url: https://api.registry-test.ds-wizard.org
   clientUrl: https://registry-test.ds-wizard.org

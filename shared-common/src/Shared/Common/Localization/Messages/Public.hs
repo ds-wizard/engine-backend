@@ -64,6 +64,9 @@ _ERROR_VALIDATION__FORBIDDEN action = LocaleRecord "error.validation.forbidden" 
 _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED featureName =
   LocaleRecord "error.service.common.feature_is_disabled" "Feature '%s' is disabled" [featureName]
 
+-- User Email Link
+_ERROR_SERVICE_USER_EMAIL_LINK__EXPIRED = LocaleRecord "error.service.user_email_link.expired" "Link is expired" []
+
 -- Tenant
 _ERROR_SERVICE_TENANT__LIMIT_EXCEEDED name maxLimit actualLimit =
   LocaleRecord

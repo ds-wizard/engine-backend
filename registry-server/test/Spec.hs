@@ -1,5 +1,7 @@
 module Main where
 
+import Control.Monad ((>=>))
+import qualified Data.ByteString as BS
 import Data.Maybe (fromJust)
 import Data.Pool
 import qualified Data.UUID as U
@@ -20,13 +22,13 @@ import Shared.Common.S3.Common
 import Shared.Common.Service.Config.BuildInfo.BuildInfoConfigService
 import Shared.Common.Service.Config.Server.ServerConfigService
 
-import Registry.Specs.API.ActionKey.APISpec
 import Registry.Specs.API.Config.APISpec
 import Registry.Specs.API.DocumentTemplate.APISpec
 import Registry.Specs.API.Info.APISpec
 import Registry.Specs.API.KnowledgeModelPackage.APISpec
 import Registry.Specs.API.Locale.APISpec
 import Registry.Specs.API.Organization.APISpec
+import Registry.Specs.API.UserEmailLink.APISpec
 import Registry.Specs.Service.KnowledgeModel.Package.PackageValidationSpec
 import Registry.TestMigration
 
@@ -42,7 +44,7 @@ hLoadConfig fileName loadFn callback = do
       callback config
 
 prepareWebApp runCallback =
-  hLoadConfig serverConfigFileTest (getServerConfig validateServerConfig) $ \serverConfig ->
+  hLoadConfig serverConfigFileTest (BS.readFile >=> getServerConfig validateServerConfig) $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
       putStrLn $ "ENVIRONMENT: set to " `mappend` serverConfig.general.environment
       dbPool <- createDatabaseConnectionPool serverConfig.database
@@ -85,7 +87,7 @@ main =
                 "Package"
                 packageValidationSpec
           before (resetDB appContext) $ describe "INTEGRATION TESTING" $ describe "API" $ do
-            actionKeyAPI baseContext appContext
+            userEmailLinkAPI baseContext appContext
             configAPI baseContext appContext
             infoAPI baseContext appContext
             knowledgeModelPackageAPI baseContext appContext

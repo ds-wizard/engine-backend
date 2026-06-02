@@ -43,11 +43,6 @@ data ServerConfigSentry = ServerConfigSentry
   }
   deriving (Generic, Show)
 
-data ServerConfigJwt = ServerConfigJwt
-  { expiration :: Integer
-  }
-  deriving (Generic, Show)
-
 data ServerConfigAnalyticalMails = ServerConfigAnalyticalMails
   { enabled :: Bool
   , email :: String
@@ -67,11 +62,6 @@ data ServerConfigCloud = ServerConfigCloud
   , domain :: Maybe String
   , publicRegistrationEnabled :: Bool
   , signalBridgeUrl :: Maybe String
-  }
-  deriving (Generic, Show)
-
-data ServerConfigPlan = ServerConfigPlan
-  { recomputeJob :: ServerConfigCronWorker
   }
   deriving (Generic, Show)
 

@@ -59,13 +59,6 @@ instance FromEnv ServerConfigSentry where
       , \c -> applyStringEnvVariable "SENTRY_DSN" c.dsn (\x -> c {dsn = x})
       ]
 
-instance FromEnv ServerConfigJwt where
-  applyEnv serverConfig =
-    applyEnvVariables
-      serverConfig
-      [ \c -> applyEnvVariable "JWT_EXPIRATION" c.expiration (\x -> c {expiration = x})
-      ]
-
 instance FromEnv ServerConfigAnalyticalMails where
   applyEnv serverConfig =
     applyEnvVariables
@@ -91,14 +84,6 @@ instance FromEnv ServerConfigCloud where
       , \c -> applyMaybeStringEnvVariable "CLOUD_DOMAIN" c.domain (\x -> c {domain = x})
       , \c -> applyEnvVariable "CLOUD_PUBLIC_REGISTRATION_ENABLED" c.publicRegistrationEnabled (\x -> c {publicRegistrationEnabled = x})
       , \c -> applyEnvVariable "CLOUD_SIGNAL_BRIDGE_URL" c.signalBridgeUrl (\x -> c {signalBridgeUrl = x})
-      ]
-
-instance FromEnv ServerConfigPlan where
-  applyEnv serverConfig =
-    applyEnvVariables
-      serverConfig
-      [ \c -> applyEnvVariable "PLAN_RECOMPUTE_JOB_ENABLED" c.recomputeJob.enabled (\x -> c {recomputeJob = c.recomputeJob {enabled = x}} :: ServerConfigPlan)
-      , \c -> applyStringEnvVariable "PLAN_RECOMPUTE_JOB_CRON" c.recomputeJob.cron (\x -> c {recomputeJob = c.recomputeJob {cron = x}} :: ServerConfigPlan)
       ]
 
 instance FromEnv ServerConfigPersistentCommand where

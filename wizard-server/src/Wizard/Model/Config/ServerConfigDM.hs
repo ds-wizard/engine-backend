@@ -15,9 +15,8 @@ defaultConfig =
     , s3 = defaultS3
     , aws = defaultAws
     , sentry = defaultSentry
-    , jwt = defaultJwt
     , roles = defaultRoles
-    , actionKey = defaultActionKey
+    , userEmailLink = defaultUserEmailLink
     , cache = defaultCache
     , document = defaultDocument
     , externalLink = defaultExternalLink
@@ -29,7 +28,6 @@ defaultConfig =
     , analyticalMails = defaultAnalyticalMails
     , logging = defaultLogging
     , cloud = defaultCloud
-    , plan = defaultPlan
     , persistentCommand = defaultPersistentCommand
     , signalBridge = defaultSignalBridge
     , admin = defaultAdmin
@@ -87,12 +85,12 @@ defaultRegistrySyncJob :: ServerConfigCronWorker
 defaultRegistrySyncJob =
   ServerConfigCronWorker {enabled = True, cron = registrySyncWorker.cronDefault}
 
-defaultActionKey :: ServerConfigActionKey
-defaultActionKey = ServerConfigActionKey {clean = defaultActionKeyClean}
+defaultUserEmailLink :: ServerConfigUserEmailLink
+defaultUserEmailLink = ServerConfigUserEmailLink {clean = defaultUserEmailLinkClean}
 
-defaultActionKeyClean :: ServerConfigCronWorker
-defaultActionKeyClean =
-  ServerConfigCronWorker {enabled = True, cron = actionKeyWorker.cronDefault}
+defaultUserEmailLinkClean :: ServerConfigCronWorker
+defaultUserEmailLinkClean =
+  ServerConfigCronWorker {enabled = True, cron = userEmailLinkWorker.cronDefault}
 
 defaultCache :: ServerConfigCache
 defaultCache =

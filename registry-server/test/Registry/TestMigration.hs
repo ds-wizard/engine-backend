@@ -4,7 +4,6 @@ import Data.Foldable (traverse_)
 
 import Registry.Database.DAO.Audit.AuditEntryDAO
 import Registry.Database.DAO.Organization.OrganizationDAO
-import qualified Registry.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ActionKey
 import qualified Registry.Database.Migration.Development.Audit.AuditSchemaMigration as Audit
 import qualified Registry.Database.Migration.Development.Common.CommonSchemaMigration as Common
 import qualified Registry.Database.Migration.Development.DocumentTemplate.DocumentTemplateSchemaMigration as DocumentTemplate
@@ -12,8 +11,8 @@ import qualified Registry.Database.Migration.Development.KnowledgeModel.Knowledg
 import qualified Registry.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
 import qualified Registry.Database.Migration.Development.Organization.OrganizationSchemaMigration as Organization
 import qualified Registry.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
+import qualified Registry.Database.Migration.Development.UserEmailLink.UserEmailLinkSchemaMigration as UserEmailLink
 import RegistryLib.Database.Migration.Development.Organization.Data.Organizations
-import Shared.ActionKey.Database.DAO.ActionKey.ActionKeyDAO
 import Shared.Component.Database.DAO.Component.ComponentDAO
 import qualified Shared.Component.Database.Migration.Development.Component.ComponentSchemaMigration as Component
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
@@ -22,6 +21,7 @@ import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Shared.UserEmailLink.Database.DAO.UserEmailLink.UserEmailLinkDAO
 
 import Registry.Specs.Common
 
@@ -32,7 +32,7 @@ buildSchema appContext =
     runInContext Component.dropTables appContext
     runInContext Locale.dropTables appContext
     runInContext PersistentCommand.dropTables appContext
-    runInContext ActionKey.dropTables appContext
+    runInContext UserEmailLink.dropTables appContext
     runInContext Audit.dropTables appContext
     runInContext Organization.dropTables appContext
     runInContext KnowledgeModelPackage.dropTables appContext
@@ -45,7 +45,7 @@ buildSchema appContext =
     putStrLn "DB: Creating schema"
     runInContext Organization.createTables appContext
     runInContext KnowledgeModelPackage.createTables appContext
-    runInContext ActionKey.createTables appContext
+    runInContext UserEmailLink.createTables appContext
     runInContext Audit.createTables appContext
     runInContext DocumentTemplate.createTables appContext
     runInContext PersistentCommand.createTables appContext
@@ -54,7 +54,7 @@ buildSchema appContext =
 
 resetDB appContext = do
   runInContext deletePersistentCommands appContext
-  runInContext deleteActionKeys appContext
+  runInContext deleteUserEmailLinks appContext
   runInContext deleteAuditEntries appContext
   runInContext deletePackages appContext
   runInContext deleteDocumentTemplates appContext
