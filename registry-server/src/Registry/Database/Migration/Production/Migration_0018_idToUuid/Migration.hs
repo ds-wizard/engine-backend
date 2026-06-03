@@ -16,7 +16,6 @@ migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   changeDocumentTemplatePrimaryKeyFromIdToUuid dbPool
   changeKnowledgeModelPrimaryKeyFromIdToUuid dbPool
-  renameUserEmailLinkTable dbPool
 
 changeDocumentTemplatePrimaryKeyFromIdToUuid dbPool = do
   let sql =
@@ -90,18 +89,6 @@ changeKnowledgeModelPrimaryKeyFromIdToUuid dbPool = do
         \ALTER TABLE knowledge_model_package_event ADD CONSTRAINT knowledge_model_package_event_package_uuid_fk FOREIGN KEY (package_uuid) REFERENCES knowledge_model_package(uuid) ON DELETE CASCADE; \
         \ \
         \ALTER TABLE knowledge_model_package ADD COLUMN public boolean NOT NULL DEFAULT FALSE;"
-  let action conn = execute_ conn sql
-  liftIO $ withResource dbPool action
-  return Nothing
-
-renameUserEmailLinkTable dbPool = do
-  let sql =
-        "ALTER TABLE IF EXISTS action_key RENAME TO user_email_link; \
-        \ALTER TABLE IF EXISTS user_email_link RENAME CONSTRAINT action_key_pk TO user_email_link_pk; \
-        \ALTER INDEX IF EXISTS action_key_uuid_uindex RENAME TO user_email_link_uuid_uindex; \
-        \ALTER INDEX IF EXISTS action_key_hash_uindex RENAME TO user_email_link_hash_uindex; \
-        \UPDATE user_email_link SET type = 'RegistrationUserEmailLinkType' WHERE type = 'RegistrationActionKey'; \
-        \UPDATE user_email_link SET type = 'ForgottenTokenUserEmailLinkType' WHERE type = 'ForgottenTokenActionKey';"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
