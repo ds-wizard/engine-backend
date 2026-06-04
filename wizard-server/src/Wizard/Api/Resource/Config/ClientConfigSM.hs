@@ -20,20 +20,18 @@ import Wizard.Model.Config.ServerConfig
 import qualified Wizard.Model.Config.ServerConfigDM as S
 import Wizard.Service.Config.Client.ClientConfigMapper
 import Wizard.Service.User.UserMapper
+import WizardLib.Public.Api.Resource.OpenId.Client.Definition.OpenIdClientSimpleSM ()
 import WizardLib.Public.Database.Migration.Development.OpenId.Data.OpenIdClients
 import qualified WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs as STC
 
 instance ToSchema ClientConfigDTO where
-  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig TC.defaultOrganization TC.defaultAuthentication [defaultOpenIdClient] TC.defaultPrivacyAndSupport TC.defaultDashboardAndLoginScreen STC.defaultLookAndFeel TC.defaultRegistry TC.defaultProject TC.defaultSubmission STC.defaultFeatures TC.defaultOwl (Just $ toUserProfile (toDTO userAlbert) [] M.empty) [] [plugin1List] M.empty defaultTenant)
+  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig TC.defaultOrganization TC.defaultAuthentication [defaultOpenIdClientSimple] TC.defaultPrivacyAndSupport TC.defaultDashboardAndLoginScreen STC.defaultLookAndFeel TC.defaultRegistry TC.defaultProject TC.defaultSubmission STC.defaultFeatures TC.defaultOwl (Just $ toUserProfile (toDTO userAlbert) [] M.empty) [] [plugin1List] M.empty defaultTenant)
 
 instance ToSchema ClientConfigAuthDTO where
-  declareNamedSchema = toSwagger (toClientAuthDTO TC.defaultAuthentication [defaultOpenIdClient])
+  declareNamedSchema = toSwagger (toClientAuthDTO TC.defaultAuthentication [defaultOpenIdClientSimple])
 
 instance ToSchema ClientConfigAuthExternalDTO where
-  declareNamedSchema = toSwagger (toClientAuthExternalDTO [defaultOpenIdClient])
-
-instance ToSchema ClientConfigAuthExternalServiceDTO where
-  declareNamedSchema = toSwagger (toClientAuthExternalServiceDTO defaultOpenIdClient)
+  declareNamedSchema = toSwagger (toClientAuthExternalDTO [defaultOpenIdClientSimple])
 
 instance ToSchema ClientConfigRegistryDTO where
   declareNamedSchema = toSwagger (toClientConfigRegistryDTO S.defaultRegistry TC.defaultRegistry)

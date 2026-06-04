@@ -9,6 +9,7 @@ import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Plugin.PluginListJM ()
 import Wizard.Api.Resource.Tenant.Config.TenantConfigJM ()
 import Wizard.Api.Resource.User.UserProfileJM ()
+import WizardLib.Public.Api.Resource.OpenId.Client.Definition.OpenIdClientSimpleJM ()
 
 instance FromJSON ClientConfigDTO where
   parseJSON = genericParseJSON (jsonOptionsWithTypeField "type")
@@ -26,12 +27,6 @@ instance FromJSON ClientConfigAuthExternalDTO where
   parseJSON = genericParseJSON jsonOptions
 
 instance ToJSON ClientConfigAuthExternalDTO where
-  toJSON = genericToJSON jsonOptions
-
-instance FromJSON ClientConfigAuthExternalServiceDTO where
-  parseJSON = genericParseJSON jsonOptions
-
-instance ToJSON ClientConfigAuthExternalServiceDTO where
   toJSON = genericToJSON jsonOptions
 
 instance FromJSON ClientConfigRegistryDTO where
