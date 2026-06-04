@@ -6,10 +6,10 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Model.Config.SimpleFeature
-import Shared.OpenId.Model.OpenId.OpenIdClientStyle
 import Wizard.Model.Plugin.PluginList
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.UserProfile
+import WizardLib.Public.Model.OpenId.OpenIdClientSimple
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 
 data ClientConfigDTO
@@ -46,15 +46,7 @@ data ClientConfigAuthDTO = ClientConfigAuthDTO
   deriving (Generic, Eq, Show)
 
 data ClientConfigAuthExternalDTO = ClientConfigAuthExternalDTO
-  { services :: [ClientConfigAuthExternalServiceDTO]
-  }
-  deriving (Generic, Eq, Show)
-
-data ClientConfigAuthExternalServiceDTO = ClientConfigAuthExternalServiceDTO
-  { uuid :: U.UUID
-  , name :: String
-  , url :: String
-  , style :: OpenIdClientStyle
+  { services :: [OpenIdClientSimple]
   }
   deriving (Generic, Eq, Show)
 

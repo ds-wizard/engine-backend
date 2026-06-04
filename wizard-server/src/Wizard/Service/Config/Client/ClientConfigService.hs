@@ -90,7 +90,7 @@ getClientConfig mServerUrl mClientUrl = do
           Nothing -> return Nothing
       plugins <- findPlugins tenant.uuid
       pluginSettings <- findTenantPluginSettingValues tenant.uuid
-      openIdClients <- findOpenIdClientDefinitions
+      openIdClients <- findOpenIdClientDefinitionsSimpleByTenantUuid tenant.uuid
       tours <-
         case mCurrentUser of
           Just currentUser -> findUserToursByUserUuid currentUser.uuid
