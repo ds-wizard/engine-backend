@@ -18,7 +18,6 @@ import Wizard.Service.Tenant.Config.ConfigMapper
 import Wizard.Service.Tenant.Config.ConfigService
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
-import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateOrUpdateAuthenticationConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateDefaultRoleConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateFeaturesConfigCommand
@@ -31,7 +30,6 @@ cComponent = "tenant_config"
 
 execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 execute command
-  | command.function == cCreateOrUpdateAuthenticationName = cCreateOrUpdateAuthentication command
   | command.function == cUpdateRegistryName = cUpdateRegistry command
   | command.function == cUpdateLookAndFeelName = cUpdateLookAndFeel command
   | command.function == cUpdateSupportName = cUpdateSupport command
@@ -40,20 +38,6 @@ execute command
   | command.function == cUpdateFeaturesName = cUpdateFeatures command
   | command.function == cUpdateOrganizationName = cUpdateOrganization command
   | otherwise = throwError . GeneralServerError $ "Unknown command function: " <> command.function
-
-cCreateOrUpdateAuthenticationName = "createOrUpdateAuthentication"
-
-cCreateOrUpdateAuthentication :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
-cCreateOrUpdateAuthentication persistentCommand = do
-  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String CreateOrUpdateAuthenticationConfigCommand
-  case eCommand of
-    Right command -> do
-      tcAuthentication <- getTenantConfigAuthenticationByUuid persistentCommand.tenantUuid
-      now <- liftIO getCurrentTime
-      let tcAuthenticationUpdated = fromAuthenticationCommand tcAuthentication command now
-      modifyTenantConfigAuthentication tcAuthenticationUpdated
-      return (DonePersistentCommandState, Nothing)
-    Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
 
 cUpdateRegistryName = "updateRegistry"
 
