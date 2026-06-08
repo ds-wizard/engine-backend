@@ -36,6 +36,10 @@ findOpenIdClientDefinitionByUuid' uuid = do
   tenantUuid <- asks (.tenantUuid')
   createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
 
+findOpenIdClientDefinitionByUuidAndTenantUuid' :: AppContextC s sc m => U.UUID -> U.UUID -> m (Maybe OpenIdClient)
+findOpenIdClientDefinitionByUuidAndTenantUuid' uuid tenantUuid =
+  createFindEntityByFn' entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
+
 insertOpenIdClientDefinition :: AppContextC s sc m => OpenIdClient -> m Int64
 insertOpenIdClientDefinition = createInsertFn entityName
 

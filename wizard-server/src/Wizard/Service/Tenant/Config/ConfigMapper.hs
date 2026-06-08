@@ -7,7 +7,6 @@ import Wizard.Api.Resource.Tenant.Config.TenantConfigChangeDTO
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Config.TenantConfigSubmissionServiceSimple
 import WizardLib.Public.Api.Resource.Tenant.Config.TenantConfigChangeDTO
-import WizardLib.Public.Model.PersistentCommand.Tenant.Config.CreateOrUpdateAuthenticationConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateAnnouncementConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateDefaultRoleConfigCommand
 import WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateFeaturesConfigCommand
@@ -106,10 +105,6 @@ fromFeaturesChangeDTO dto oldConfig tenantUuid createdAt updatedAt =
   let aiAssistantEnabled = oldConfig.aiAssistantEnabled
       toursEnabled = dto.toursEnabled
    in TenantConfigFeatures {..}
-
-fromAuthenticationCommand :: TenantConfigAuthentication -> CreateOrUpdateAuthenticationConfigCommand -> UTCTime -> TenantConfigAuthentication
-fromAuthenticationCommand oldConfig _command now =
-  oldConfig {updatedAt = now}
 
 fromRegistry :: TenantConfigRegistry -> UpdateRegistryConfigCommand -> UTCTime -> TenantConfigRegistry
 fromRegistry oldConfig command now =
