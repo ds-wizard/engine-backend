@@ -20,6 +20,7 @@ import qualified Registry.Database.Migration.Production.Migration_0015_knowledge
 import qualified Registry.Database.Migration.Production.Migration_0016_project.Migration as M_0016
 import qualified Registry.Database.Migration.Production.Migration_0017_locale.Migration as M_0017
 import qualified Registry.Database.Migration.Production.Migration_0018_idToUuid.Migration as M_0018
+import qualified Registry.Database.Migration.Production.Migration_0019_userEmailLink.Migration as M_0019
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -41,4 +42,5 @@ migrationDefinitions =
   , M_0016.definition
   , M_0017.definition
   , M_0018.definition
+  , M_0019.definition
   ]
