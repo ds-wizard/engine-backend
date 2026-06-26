@@ -17,8 +17,8 @@ instance ToRow User where
     , toField email
     , toField passwordHash
     , toField affiliation
-    , toField uRole
-    , toField . PGArray $ permissions
+    , toField role.uuid
+    , toField . PGArray $ role.permissions
     , toField active
     , toField imageUrl
     , toField lastVisitedAt
@@ -30,6 +30,7 @@ instance ToRow User where
     , toField lastSeenNewsId
     , toField emailVerifiedAt
     , toField emailPending
+    , toField role.name
     ]
 
 instance FromRow User where
@@ -40,8 +41,8 @@ instance FromRow User where
     email <- field
     passwordHash <- field
     affiliation <- field
-    uRole <- field
-    permissions <- fromPGArray <$> field
+    roleUuid <- field
+    rolePermissions <- fromPGArray <$> field
     active <- field
     imageUrl <- field
     lastVisitedAt <- field
@@ -53,4 +54,6 @@ instance FromRow User where
     lastSeenNewsId <- field
     emailVerifiedAt <- field
     emailPending <- field
+    roleName <- field
+    let role = RoleSimple {uuid = roleUuid, name = roleName, permissions = rolePermissions}
     return $ User {..}

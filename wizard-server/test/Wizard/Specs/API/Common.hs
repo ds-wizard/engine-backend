@@ -24,7 +24,7 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
-import Wizard.Service.User.UserService
+import WizardLib.Public.Model.User.RolePermission
 import WizardLib.Public.Model.User.UserToken
 
 import SharedTest.Specs.API.Common
@@ -56,9 +56,12 @@ reqIsaacAuthTokenHeader :: Header
 reqIsaacAuthTokenHeader = ("Authorization", BS.pack $ "Bearer " ++ reqIsaacAuthToken)
 
 userWithoutPerm :: ServerConfig -> String -> User
-userWithoutPerm serverConfig perm =
-  let allPerms = getPermissionForRole serverConfig _USER_ROLE_ADMIN
-   in userAlbert {permissions = L.delete perm allPerms}
+userWithoutPerm _ perm =
+  userAlbert {role = userAlbert.role {permissions = filter (/= perm) allRolePermissions}}
+
+userWithoutPerms :: ServerConfig -> [String] -> User
+userWithoutPerms _ perms =
+  userAlbert {role = userAlbert.role {permissions = filter (`notElem` perms) allRolePermissions}}
 
 createInvalidJsonTest reqMethod reqUrl missingField =
   it "HTTP 400 BAD REQUEST when json is not valid" $ do
@@ -85,6 +88,25 @@ createNoPermissionTest appContext reqMethod reqUrl otherHeaders reqBody missingP
       let reqHeaders = reqAuthHeader : otherHeaders
       -- GIVEN: Prepare expectation
       let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ missingPerm)
+      let expBody = encode expDto
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expStatus = 403
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
+
+createNoPermissionsAnyTest appContext reqMethod reqUrl otherHeaders reqBody missingPerms =
+  it "HTTP 403 FORBIDDEN - no required permission" $
+    -- GIVEN: Prepare request
+    do
+      let user = userWithoutPerms appContext.serverConfig missingPerms
+      runInContextIO (updateUserByUuid user) appContext
+      let reqHeaders = reqAuthHeader : otherHeaders
+      -- GIVEN: Prepare expectation
+      let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission (need any): " ++ show missingPerms)
       let expBody = encode expDto
       let expHeaders = resCtHeader : resCorsHeaders
       let expStatus = 403

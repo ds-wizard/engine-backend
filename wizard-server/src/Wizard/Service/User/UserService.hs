@@ -4,7 +4,7 @@ import Control.Monad (unless, void, when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Crypto.PasswordStore as PasswordStore
-import Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
@@ -33,6 +33,7 @@ import Wizard.Localization.Messages.Internal
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.User.UserSubmissionPropEM ()
 import Wizard.Model.UserEmailLink.UserEmailLinkType
@@ -47,25 +48,35 @@ import Wizard.Service.User.UserValidation
 import Wizard.Service.UserEmailLink.UserEmailLinkService
 import Wizard.Service.UserToken.Login.LoginService
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
+import WizardLib.Public.Database.DAO.User.RoleDAO
 import WizardLib.Public.Database.DAO.User.UserOpenIdIdentityDAO
 import WizardLib.Public.Model.OpenId.OpenIdClient
 import WizardLib.Public.Model.PersistentCommand.User.CreateOrUpdateUserCommand
+import WizardLib.Public.Model.User.Role
 import WizardLib.Public.Model.User.UserSuggestion
 import qualified WizardLib.Public.Service.User.UserOpenIdIdentityMapper as UserOpenIdIdentityMapper
 
 getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
 getUsersPage mQuery mRole pageable sort = do
-  checkPermission _UM_PERM
+  checkPermission _USERS_MANAGE_ROLE_PERMISSION
   userPage <- findUsersPage mQuery mRole pageable sort
   return . fmap toDTO $ userPage
 
 getUserSuggestionsPage :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
 getUserSuggestionsPage = findUserSuggestionsPage
 
+registerOrCreateUserByAdmin :: UserCreateDTO -> AppContextM UserDTO
+registerOrCreateUserByAdmin reqDto =
+  runInTransaction $ do
+    isAdmin <- isCurrentUserAdmin
+    if isAdmin
+      then createUserByAdmin reqDto
+      else registerUser reqDto
+
 createUserByAdmin :: UserCreateDTO -> AppContextM UserDTO
 createUserByAdmin reqDto =
   runInTransaction $ do
-    checkPermission _UM_PERM
+    checkPermission _USERS_MANAGE_ROLE_PERMISSION
     checkIfAdminIsDisabled
     uUuid <- liftIO generateUuid
     tenantUuid <- asks currentTenantUuid
@@ -76,11 +87,10 @@ createUserByAdminWithUuid :: UserCreateDTO -> U.UUID -> U.UUID -> String -> Bool
 createUserByAdminWithUuid reqDto uUuid tenantUuid clientUrl shouldSendRegistrationEmail =
   runInTransaction $ do
     uPasswordHash <- generatePasswordHash reqDto.password
-    serverConfig <- asks serverConfig
     tcAuthentication <- getCurrentTenantConfigAuthentication
-    let uRole = fromMaybe tcAuthentication.defaultRole reqDto.uRole
-    let uPermissions = getPermissionForRole serverConfig uRole
-    userDto <- createUser reqDto uUuid uPasswordHash uRole uPermissions tenantUuid clientUrl shouldSendRegistrationEmail
+    let role = fromMaybe tcAuthentication.defaultRoleUuid reqDto.roleUuid
+    uRole <- getRoleForUserInTenant tenantUuid role
+    userDto <- createUser reqDto uUuid uPasswordHash role uRole.permissions uRole.name tenantUuid clientUrl shouldSendRegistrationEmail
     auditUserCreateByAdmin userDto
     return userDto
 
@@ -91,28 +101,27 @@ registerUser reqDto =
     checkIfRegistrationIsEnabled
     uUuid <- liftIO generateUuid
     uPasswordHash <- generatePasswordHash reqDto.password
-    serverConfig <- asks serverConfig
     tcAuthentication <- getCurrentTenantConfigAuthentication
-    let uRole = tcAuthentication.defaultRole
-    let uPermissions = getPermissionForRole serverConfig uRole
+    let role = tcAuthentication.defaultRoleUuid
+    uRole <- getRoleForUser role
     clientUrl <- getClientUrl
     tenantUuid <- asks currentTenantUuid
     mExistingUser <- findUserByEmailAndTenantUuid' (toLower reqDto.email) tenantUuid
     case mExistingUser of
       Just _ -> do
         now <- liftIO getCurrentTime
-        let fakeUser = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions tenantUuid now True
+        let fakeUser = fromUserCreateDTO reqDto uUuid uPasswordHash role uRole.permissions uRole.name tenantUuid now True
         return $ toDTO fakeUser
-      Nothing -> createUser reqDto uUuid uPasswordHash uRole uPermissions tenantUuid clientUrl True
+      Nothing -> createUser reqDto uUuid uPasswordHash role uRole.permissions uRole.name tenantUuid clientUrl True
 
-createUser :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> U.UUID -> String -> Bool -> AppContextM UserDTO
-createUser reqDto uUuid uPasswordHash uRole uPermissions tenantUuid clientUrl shouldSendRegistrationEmail =
+createUser :: UserCreateDTO -> U.UUID -> String -> U.UUID -> [String] -> String -> U.UUID -> String -> Bool -> AppContextM UserDTO
+createUser reqDto uUuid uPasswordHash role uPermissions uRoleName tenantUuid clientUrl shouldSendRegistrationEmail =
   runInTransaction $ do
     checkUserLimit
     checkActiveUserLimit
     validateUserEmailUniqueness reqDto.email tenantUuid
     now <- liftIO getCurrentTime
-    let user = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions tenantUuid now shouldSendRegistrationEmail
+    let user = fromUserCreateDTO reqDto uUuid uPasswordHash role uPermissions uRoleName tenantUuid now shouldSendRegistrationEmail
     insertUser user
     userEmailLink <- createUserEmailLink uUuid RegistrationUserEmailLinkType tenantUuid
     when
@@ -140,7 +149,6 @@ createUserFromOpenIdLogin openIdClient externalId firstName lastName email mImag
     checkActiveUserLimit
     now <- liftIO getCurrentTime
     tenantUuid <- asks currentTenantUuid
-    serverConfig <- asks serverConfig
     uUuid <-
       case mUserUuid of
         Just userUuid -> return userUuid
@@ -148,8 +156,8 @@ createUserFromOpenIdLogin openIdClient externalId firstName lastName email mImag
     password <- liftIO $ generateRandomString 40
     uPasswordHash <- generatePasswordHash password
     tcAuthentication <- getCurrentTenantConfigAuthentication
-    let uRole = tcAuthentication.defaultRole
-    let uPerms = getPermissionForRole serverConfig uRole
+    let role = tcAuthentication.defaultRoleUuid
+    uRole <- getRoleForUser role
     let user =
           fromUserExternalDTO
             uUuid
@@ -157,8 +165,9 @@ createUserFromOpenIdLogin openIdClient externalId firstName lastName email mImag
             lastName
             email
             uPasswordHash
-            uRole
-            uPerms
+            role
+            uRole.permissions
+            uRole.name
             active
             mImageUrl
             tenantUuid
@@ -174,22 +183,23 @@ createOrUpdateUserFromCommand :: CreateOrUpdateUserCommand -> AppContextM User
 createOrUpdateUserFromCommand command =
   runInTransaction $ do
     mUserFromDb <- findUserByUuidSystem' command.uuid command.tenantUuid
-    serverConfig <- asks serverConfig
     now <- liftIO getCurrentTime
     case mUserFromDb of
       Just userFromDb -> do
-        let uPermissions =
-              if userFromDb.uRole == command.uRole
-                then userFromDb.permissions
-                else getPermissionForRole serverConfig command.uRole
-        let updatedUser = fromCommandChangeDTO userFromDb command uPermissions now
+        (uPermissions, uRoleName) <-
+          if userFromDb.role.uuid == command.roleUuid
+            then return (userFromDb.role.permissions, userFromDb.role.name)
+            else do
+              uRole <- getRoleForUser command.roleUuid
+              return (uRole.permissions, uRole.name)
+        let updatedUser = fromCommandChangeDTO userFromDb command uPermissions uRoleName now
         updateUserByUuid updatedUser
         return updatedUser
       Nothing -> do
         checkUserLimit
         checkActiveUserLimit
-        let uPerms = getPermissionForRole serverConfig command.uRole
-        let user = fromCommandCreateDTO command uPerms now
+        uRole <- getRoleForUser command.roleUuid
+        let user = fromCommandCreateDTO command uRole.permissions uRole.name now
         insertUser user
         return user
 
@@ -200,25 +210,35 @@ getUserById userUuid = do
 
 getUserDetailById :: U.UUID -> AppContextM UserDTO
 getUserDetailById userUuid = do
-  checkPermission _UM_PERM
+  checkPermission _USERS_MANAGE_ROLE_PERMISSION
   getUserById userUuid
 
 modifyUser :: U.UUID -> UserChangeDTO -> AppContextM UserDTO
 modifyUser userUuid reqDto =
   runInTransaction $ do
-    checkPermission _UM_PERM
+    checkPermission _USERS_MANAGE_ROLE_PERMISSION
     user <- findUserByUuid userUuid
     when (reqDto.active && not user.active) checkActiveUserLimit
     validateUserChangedEmailUniqueness reqDto.email user.email
-    serverConfig <- asks serverConfig
-    updatedUser <- updateUserTimestamp $ fromUserChangeDTO reqDto user (getPermissions serverConfig reqDto user)
+    (newPermissions, newRoleName) <-
+      if reqDto.roleUuid /= user.role.uuid
+        then do
+          newRole <- getRoleForUser reqDto.roleUuid
+          return (newRole.permissions, newRole.name)
+        else return (user.role.permissions, user.role.name)
+    updatedUser <- updateUserTimestamp $ fromUserChangeDTO reqDto user newPermissions newRoleName
     updateUserByUuid updatedUser
     return . toDTO $ updatedUser
-  where
-    getPermissions serverConfig reqDto oldUser =
-      if reqDto.uRole /= oldUser.uRole
-        then getPermissionForRole serverConfig reqDto.uRole
-        else oldUser.permissions
+
+changeUserPasswordByAdminOrHash :: U.UUID -> UserPasswordDTO -> Maybe String -> AppContextM ()
+changeUserPasswordByAdminOrHash userUuid reqDto mHash =
+  runInTransaction $ do
+    isAdmin <- isCurrentUserAdmin
+    if isAdmin
+      then changeUserPasswordByAdmin userUuid reqDto
+      else do
+        let hash = fromMaybe (U.toString U.nil) mHash
+        changeUserPasswordByHash userUuid hash reqDto
 
 changeUserPasswordByAdmin :: U.UUID -> UserPasswordDTO -> AppContextM ()
 changeUserPasswordByAdmin userUuid reqDto =
@@ -248,7 +268,7 @@ resetUserPassword reqDto =
     case mUser of
       Just user -> do
         tcAuthentication <- getCurrentTenantConfigAuthentication
-        unless (not tcAuthentication.internal.nonAdminLoginEnabled && user.uRole /= _USER_ROLE_ADMIN) $ do
+        unless (not tcAuthentication.internal.nonAdminLoginEnabled && notElem _USERS_MANAGE_ROLE_PERMISSION user.role.permissions) $ do
           tenantUuid <- asks currentTenantUuid
           userEmailLink <- createUserEmailLink user.uuid ForgottenPasswordUserEmailLinkType tenantUuid
           catchError
@@ -312,19 +332,20 @@ confirmConsents reqDto mUserAgent = do
 deleteUser :: U.UUID -> AppContextM ()
 deleteUser userUuid =
   runInTransaction $ do
-    checkPermission _UM_PERM
+    checkPermission _USERS_MANAGE_ROLE_PERMISSION
     _ <- findUserByUuid userUuid
     void $ deleteUserByUuid userUuid
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getPermissionForRole :: ServerConfig -> String -> [String]
-getPermissionForRole config role
-  | role == _USER_ROLE_ADMIN = config.roles.admin
-  | role == _USER_ROLE_DATA_STEWARD = config.roles.dataSteward
-  | role == _USER_ROLE_RESEARCHER = config.roles.researcher
-  | otherwise = []
+getRoleForUser :: U.UUID -> AppContextM Role
+getRoleForUser roleUuid = do
+  tenantUuid <- asks currentTenantUuid
+  getRoleForUserInTenant tenantUuid roleUuid
+
+getRoleForUserInTenant :: U.UUID -> U.UUID -> AppContextM Role
+getRoleForUserInTenant tenantUuid roleUuid = findRoleByUuidAndTenant roleUuid tenantUuid
 
 generatePasswordHash :: String -> AppContextM String
 generatePasswordHash password = do

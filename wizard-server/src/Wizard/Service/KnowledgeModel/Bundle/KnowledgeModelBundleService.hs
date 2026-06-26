@@ -66,7 +66,7 @@ getTemporaryFileWithBundle uuid =
 exportBundle :: U.UUID -> AppContextM KnowledgeModelBundle
 exportBundle uuid =
   runInTransaction $ do
-    checkPermission _PM_WRITE_PERM
+    checkPermission _KNOWLEDGE_MODELS_MANAGE_ROLE_PERMISSION
     packages <- findSeriesOfPackagesRecursiveByUuid uuid
     case lastSafe packages of
       Just newestPackage -> do
@@ -90,7 +90,7 @@ exportBundle uuid =
 pullBundleFromRegistry :: String -> AppContextM KnowledgeModelPackageSimpleDTO
 pullBundleFromRegistry pkgId =
   runInTransaction $ do
-    checkPermission _PM_WRITE_PERM
+    checkPermission _KNOWLEDGE_MODELS_MANAGE_ROLE_PERMISSION
     checkPackageLimit
     pb <- catchError (retrieveKnowledgeModelBundleById pkgId) handleError
     importAndConvertBundle pb True
@@ -103,7 +103,7 @@ pullBundleFromRegistry pkgId =
 importAndConvertBundle :: BSL.ByteString -> Bool -> AppContextM KnowledgeModelPackageSimpleDTO
 importAndConvertBundle contentS fromRegistry =
   runInTransaction $ do
-    checkPermission _PM_WRITE_PERM
+    checkPermission _KNOWLEDGE_MODELS_MANAGE_ROLE_PERMISSION
     checkPackageLimit
     case eitherDecode contentS of
       Right content -> do

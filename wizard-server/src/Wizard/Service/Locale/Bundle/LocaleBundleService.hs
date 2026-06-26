@@ -39,7 +39,7 @@ getTemporaryFileWithBundle uuid =
 exportBundle :: U.UUID -> AppContextM (Coordinate, BSL.ByteString)
 exportBundle uuid =
   runInTransaction $ do
-    checkPermission _LOC_PERM
+    checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
     locale <- findLocaleByUuid uuid
     wizardTranslation <- retrieveLocale locale.uuid "wizard.json"
     mailTranslation <- retrieveLocale locale.uuid "mail.po"
@@ -48,7 +48,7 @@ exportBundle uuid =
 pullBundleFromRegistry :: Coordinate -> AppContextM LocaleSimple
 pullBundleFromRegistry coordinate =
   runInTransaction $ do
-    checkPermission _LOC_PERM
+    checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
     lb <- catchError (retrieveLocaleBundleByCoordinate coordinate) handleError
     importBundle lb True
   where

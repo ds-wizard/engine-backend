@@ -3,6 +3,7 @@ module Wizard.Api.Resource.User.UserSM where
 import Data.Swagger
 
 import Shared.Common.Util.Swagger
+import Wizard.Api.Resource.User.RoleSimpleSM ()
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Api.Resource.User.UserSubmissionPropSM ()

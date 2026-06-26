@@ -37,7 +37,7 @@ import Wizard.Service.KnowledgeModel.Squash.Squasher
 publishPackageFromKnowledgeModelEditor :: PackagePublishEditorDTO -> AppContextM KnowledgeModelPackageSimpleDTO
 publishPackageFromKnowledgeModelEditor reqDto = do
   runInTransaction $ do
-    checkPermission _KM_PUBLISH_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     validateMigrationExistence reqDto.editorUuid
     kmEditor <- findKnowledgeModelEditorByUuid reqDto.editorUuid
     kmEditorEvents <- findKnowledgeModelEventsByEditorUuid reqDto.editorUuid
@@ -57,7 +57,7 @@ publishPackageFromKnowledgeModelEditor reqDto = do
 publishPackageFromMigration :: PackagePublishMigrationDTO -> AppContextM KnowledgeModelPackageSimpleDTO
 publishPackageFromMigration reqDto = do
   runInTransaction $ do
-    checkPermission _KM_PUBLISH_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     kmEditor <- findKnowledgeModelEditorByUuid reqDto.editorUuid
     ms <- findKnowledgeModelMigrationByEditorUuid reqDto.editorUuid
     deleteKnowledgeModelMigrationByEditorUuid reqDto.editorUuid

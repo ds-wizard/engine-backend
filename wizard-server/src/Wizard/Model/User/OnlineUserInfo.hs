@@ -1,7 +1,12 @@
-module Wizard.Model.User.OnlineUserInfo where
+module Wizard.Model.User.OnlineUserInfo (
+  OnlineUserInfo (..),
+  module WizardLib.Public.Model.User.RoleSimple,
+) where
 
 import qualified Data.UUID as U
 import GHC.Generics
+
+import WizardLib.Public.Model.User.RoleSimple
 
 data OnlineUserInfo
   = LoggedOnlineUserInfo
@@ -11,7 +16,7 @@ data OnlineUserInfo
       , gravatarHash :: String
       , imageUrl :: Maybe String
       , colorNumber :: Int
-      , role :: String
+      , role :: RoleSimple
       , groupUuids :: [U.UUID]
       }
   | AnonymousOnlineUserInfo

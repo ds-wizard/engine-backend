@@ -6,7 +6,6 @@ import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.Cache as C
 import GHC.Int
 
-import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
@@ -17,7 +16,6 @@ purgeCache = do
   cache <- asks cache
   liftIO . C.purge $ cache.knowledgeModelEditorWebsocket
   liftIO . C.purge $ cache.projectWebsocket
-  liftIO . C.purge $ cache.user
   liftIO . C.purge $ cache.userToken
 
 purgeExpiredCache :: AppContextM ()
@@ -25,11 +23,7 @@ purgeExpiredCache = do
   cache <- asks cache
   liftIO . C.purgeExpired $ cache.knowledgeModelEditorWebsocket
   liftIO . C.purgeExpired $ cache.projectWebsocket
-  liftIO . C.purgeExpired $ cache.user
   liftIO . C.purgeExpired $ cache.userToken
-
-computeUserCacheSize :: AppContextM String
-computeUserCacheSize = computeCacheSize (.user)
 
 computeUserTokenCacheSize :: AppContextM String
 computeUserTokenCacheSize = computeCacheSize (.userToken)

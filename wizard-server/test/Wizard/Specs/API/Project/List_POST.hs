@@ -37,7 +37,6 @@ list_POST appContext =
   describe "POST /wizard-api/projects" $ do
     test_201 appContext
     test_400 appContext
-    test_403 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -134,9 +133,3 @@ create_test_201 appContext title anonymousSharingEnabled project authHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext = createInvalidJsonTest reqMethod reqUrl "packageId"
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext =
-  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (reqBodyT project1Create) "PRJ_PERM"

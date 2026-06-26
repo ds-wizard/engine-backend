@@ -6,6 +6,7 @@ import Data.Time
 import Shared.Common.Util.Date
 import Shared.Common.Util.Uuid
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Database.Migration.Development.User.Data.Roles
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import Wizard.Service.User.UserMapper
@@ -14,6 +15,7 @@ import WizardLib.Public.Model.User.UserGroup
 import WizardLib.Public.Model.User.UserGroupMembership
 import WizardLib.Public.Model.User.UserSuggestion
 import WizardLib.Public.Model.User.UserTour
+import WizardLib.Public.Service.User.RoleMapper (toRoleSimple)
 
 userNikola :: User
 userNikola =
@@ -23,19 +25,7 @@ userNikola =
     , lastName = "Tesla"
     , email = "nikola.tesla@example.com"
     , affiliation = Nothing
-    , uRole = _USER_ROLE_DATA_STEWARD
-    , permissions =
-        [ "KM_PERM"
-        , "KM_UPGRADE_PERM"
-        , "KM_PUBLISH_PERM"
-        , "PM_READ_PERM"
-        , "PM_WRITE_PERM"
-        , "PRJ_PERM"
-        , "PRJ_TML_PERM"
-        , "DOC_TML_READ_PERM"
-        , "SUBM_PERM"
-        , "DOC_TML_WRITE_PERM"
-        ]
+    , role = toRoleSimple dataStewardRole
     , active = True
     , -- cspell:disable
       passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="

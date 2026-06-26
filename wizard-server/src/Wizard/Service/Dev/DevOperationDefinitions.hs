@@ -10,7 +10,7 @@ import Shared.PersistentCommand.Database.DAO.PersistentCommand.PersistentCommand
 import Wizard.Cache.CacheUtil
 import Wizard.Database.DAO.Plugin.PluginDAO
 import Wizard.Database.DAO.Tenant.TenantDAO
-import Wizard.Model.Cache.ServerCache hiding (user)
+import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Context.AppContext hiding (cache)
 import Wizard.Model.Context.ContextMappers
 import Wizard.Model.Tenant.Tenant
@@ -125,7 +125,6 @@ cache =
     , description = Nothing
     , operations =
         [ cache_purgeCache
-        , cache_getUserCacheSize
         , cache_getUserTokenCacheSize
         ]
     }
@@ -140,16 +139,6 @@ cache_purgeCache =
     , function = \reqDto -> do
         purgeCache
         return "Done"
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-cache_getUserCacheSize :: DevOperation AppContextM
-cache_getUserCacheSize =
-  DevOperation
-    { name = "Get User Cache Size"
-    , description = Nothing
-    , parameters = []
-    , function = const computeUserCacheSize
     }
 
 -- ---------------------------------------------------------------------------------------------------------------------

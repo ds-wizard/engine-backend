@@ -34,6 +34,7 @@ import Wizard.Database.Mapping.Project.ProjectList ()
 import Wizard.Database.Mapping.Project.ProjectSimple ()
 import Wizard.Database.Mapping.Project.ProjectSimpleWithPerm ()
 import Wizard.Database.Mapping.Project.ProjectSuggestion ()
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.ContextLenses ()
@@ -45,7 +46,6 @@ import Wizard.Model.Project.Project
 import Wizard.Model.Project.ProjectList
 import Wizard.Model.Project.ProjectSimpleWithPerm
 import Wizard.Model.Project.ProjectSuggestion
-import Wizard.Model.User.User
 
 entityName = "project"
 
@@ -55,7 +55,8 @@ findProjects :: AppContextM [Project]
 findProjects = do
   tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
-  if currentUser.uRole == _USER_ROLE_ADMIN
+  hasPermission <- hasPermission _PROJECTS_VIEW_ROLE_PERMISSION
+  if hasPermission
     then createFindEntitiesBySortedFn entityName [tenantQueryUuid tenantUuid] [Sort "name" Ascending] >>= traverse enhance
     else do
       let sql = f' (projectSelectSql (U.toString tenantUuid) (U.toString currentUser.uuid) "['VIEW']") [""] ++ " ORDER BY project.name ASC"
@@ -130,8 +131,9 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
                   , f' " AND (%s)" [L.intercalate operator . fmap (\c -> if c.version == "all" then " (knowledge_model_package.organization_id = ? AND knowledge_model_package.km_id = ?)" else " (knowledge_model_package.organization_id = ? AND knowledge_model_package.km_id = ? AND knowledge_model_package.version = ?)") $ kmpCoordinates]
                   , concatMap (\c -> if c.version == "all" then [c.organizationId, c.entityId] else [c.organizationId, c.entityId, c.version]) kmpCoordinates
                   )
+    hasPermission <- hasPermission _PROJECTS_VIEW_ROLE_PERMISSION
     let (aclJoins, aclCondition) =
-          if currentUser.uRole == _USER_ROLE_ADMIN
+          if hasPermission
             then (userUuidsJoin, "")
             else
               ( f''
@@ -270,7 +272,8 @@ findProjectsByKnowledgeModelPackageUuid :: U.UUID -> AppContextM [Project]
 findProjectsByKnowledgeModelPackageUuid pkgUuid = do
   tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
-  if currentUser.uRole == _USER_ROLE_ADMIN
+  hasPermission <- hasPermission _PROJECTS_VIEW_ROLE_PERMISSION
+  if hasPermission
     then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("knowledge_model_package_uuid", U.toString pkgUuid)] >>= traverse enhance
     else do
       let sql =
@@ -286,7 +289,8 @@ findProjectsByDocumentTemplateUuid :: U.UUID -> AppContextM [Project]
 findProjectsByDocumentTemplateUuid documentTemplateUuid = do
   tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
-  if currentUser.uRole == _USER_ROLE_ADMIN
+  hasPermission <- hasPermission _PROJECTS_VIEW_ROLE_PERMISSION
+  if hasPermission
     then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid)] >>= traverse enhance
     else do
       let sql =

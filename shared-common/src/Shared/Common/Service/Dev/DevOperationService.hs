@@ -9,17 +9,18 @@ import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Model.Context.AppContext
 import Shared.Common.Model.Dev.Dev
 import Shared.Common.Model.Error.Error
+import Shared.Common.Model.User.RolePermission
 import Shared.Common.Service.Acl.AclService
 import Shared.Common.Service.Dev.DevOperationMapper
 
 getDevOperations :: AppContextC s sc m => [DevSection m] -> m [DevSectionDTO]
 getDevOperations sections = do
-  checkPermission _DEV_PERM
+  checkPermission _DEV_USE_ROLE_PERMISSION
   return . fmap toDevSectionDTO $ sections
 
 executeOperation :: AppContextC s sc m => [DevSection m] -> DevExecutionDTO -> m AdminExecutionResultDTO
 executeOperation sections reqDto = do
-  checkPermission _DEV_PERM
+  checkPermission _DEV_USE_ROLE_PERMISSION
   case filter (\s -> s.name == reqDto.sectionName) sections of
     [section] ->
       case filter (\o -> o.name == reqDto.operationName) section.operations of

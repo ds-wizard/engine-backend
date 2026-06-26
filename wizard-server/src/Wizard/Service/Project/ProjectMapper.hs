@@ -25,7 +25,6 @@ import Wizard.Api.Resource.Project.ProjectReportDTO
 import Wizard.Api.Resource.Project.ProjectSettingsChangeDTO
 import Wizard.Api.Resource.Project.ProjectShareChangeDTO
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Constant.Acl
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
 import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Project.Acl.ProjectPerm
@@ -256,8 +255,8 @@ fromShareChangeDTO project dto visibility sharing now =
     , updatedAt = now
     }
 
-fromSettingsChangeDTO :: Project -> ProjectSettingsChangeDTO -> UserDTO -> UTCTime -> Project
-fromSettingsChangeDTO project dto currentUser now =
+fromSettingsChangeDTO :: Project -> ProjectSettingsChangeDTO -> Bool -> UTCTime -> Project
+fromSettingsChangeDTO project dto hasProjectTemplatesManageRolePermission now =
   Project
     { uuid = project.uuid
     , name = dto.name
@@ -272,7 +271,7 @@ fromSettingsChangeDTO project dto currentUser now =
     , creatorUuid = project.creatorUuid
     , permissions = project.permissions
     , isTemplate =
-        if _PRJ_TML_PERM `elem` currentUser.permissions
+        if hasProjectTemplatesManageRolePermission
           then dto.isTemplate
           else project.isTemplate
     , squashed = project.squashed

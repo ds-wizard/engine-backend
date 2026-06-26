@@ -66,7 +66,7 @@ import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
 
 getDocumentsPageDto :: Maybe U.UUID -> Maybe U.UUID -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
 getDocumentsPageDto mProjectUuid mDocumentTemplateUuid mQuery pageable sort = do
-  checkPermission _DOC_PERM
+  checkPermission _PROJECTS_EDIT_ROLE_PERMISSION
   docPage <- findDocumentsPage mProjectUuid Nothing mDocumentTemplateUuid mQuery pageable sort
   traverse enhanceDocument docPage
 
@@ -163,7 +163,7 @@ createDocumentPreviewForDocTmlDraft dtUuid =
         let kmEvents = fmap EditorMapper.toKnowledgeModelEvent kmEditorEvents
         kmEditorReplies <- findKnowledgeModelRepliesByEditorUuid kmEditorUuid
         let replies = EditorMapper.toReplies kmEditorReplies
-        checkPermission _KM_PERM
+        checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
         mCurrentUser <- asks currentUser
         let project = toTemporaryProject editor pkg mCurrentUser
         let projectEventUuid = Nothing

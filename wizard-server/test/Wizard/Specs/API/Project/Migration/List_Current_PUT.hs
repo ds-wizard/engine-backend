@@ -100,7 +100,6 @@ test_401 appContext = createAuthTest reqMethod (reqUrlT project4.uuid) [reqCtHea
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest appContext reqMethod (reqUrlT project3.uuid) [reqCtHeader] reqBody "PRJ_PERM"
   create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, Private)" appContext project1 "View Project"
   create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)" appContext project2 "Migrate Project"
 

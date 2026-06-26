@@ -43,7 +43,6 @@ import Wizard.Service.Tenant.Config.ConfigService
 
 getDocumentTemplatesPage :: Maybe String -> Maybe String -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSimpleDTO)
 getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated pageable sort = do
-  checkPermission _DOC_TML_READ_PERM
   tcRegistry <- getCurrentTenantConfigRegistry
   if mOutdated == Just True && not tcRegistry.enabled
     then return $ Page "documentTemplates" (PageMetadata 0 0 0 0) []
@@ -53,7 +52,6 @@ getDocumentTemplatesPage mOrganizationId mTemplateId mQuery mOutdated pageable s
 
 getDocumentTemplateSuggestions :: Maybe U.UUID -> Bool -> Maybe DocumentTemplatePhase -> Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateSuggestionDTO)
 getDocumentTemplateSuggestions mPkgUuid includeUnsupportedMetamodelVersion mPhase mQuery mNonEditable pageable sort = do
-  checkPermission _DOC_TML_READ_PERM
   mPkgId <-
     case mPkgUuid of
       Just pkgUuid -> do
@@ -72,7 +70,6 @@ getDocumentTemplateSuggestions mPkgUuid includeUnsupportedMetamodelVersion mPhas
 
 getDocumentTemplatesDto :: [(String, String)] -> AppContextM [DocumentTemplateSuggestionDTO]
 getDocumentTemplatesDto queryParams = do
-  checkPermission _DOC_TML_READ_PERM
   dts <- findDocumentTemplatesFiltered queryParams
   traverse
     ( \dt -> do
@@ -106,7 +103,7 @@ getDocumentTemplateByUuidDto uuid = do
 modifyDocumentTemplate :: U.UUID -> DocumentTemplateChangeDTO -> AppContextM DocumentTemplateDetailDTO
 modifyDocumentTemplate uuid reqDto =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATES_MANAGE_ROLE_PERMISSION
     validateChangeDto uuid reqDto
     tml <- findDocumentTemplateByUuid uuid
     let templateUpdated = fromChangeDTO reqDto tml
@@ -117,14 +114,14 @@ modifyDocumentTemplate uuid reqDto =
 deleteDocumentTemplatesByQueryParams :: [(String, String)] -> AppContextM ()
 deleteDocumentTemplatesByQueryParams queryParams =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATES_MANAGE_ROLE_PERMISSION
     dts <- findDocumentTemplatesFiltered queryParams
     traverse_ (\dt -> deleteDocumentTemplate dt.uuid) dts
 
 deleteDocumentTemplate :: U.UUID -> AppContextM ()
 deleteDocumentTemplate uuid =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATES_MANAGE_ROLE_PERMISSION
     tml <- findDocumentTemplateByUuid uuid
     assets <- findAssetsByDocumentTemplateUuid uuid
     validateDocumentTemplateDeletion uuid

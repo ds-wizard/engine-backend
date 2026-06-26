@@ -11,6 +11,7 @@ import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.Project.Collaboration.ProjectCollaborationAcl
 import Wizard.Service.Project.ProjectMapper
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
+import WizardLib.Public.Model.User.RolePermission
 import WizardLib.Public.Model.User.UserGroup
 import WizardLib.Public.Model.User.UserGroupMembership
 
@@ -50,28 +51,28 @@ projectCollaborationAclSpec appContext =
               viewerPermissions
               animalGroup.tenantUuid
           ]
-    let (admin, adminRole, adminGroups) = (Just userAlbert.uuid, Just _USER_ROLE_ADMIN, [])
-    let (owner, ownerRole, ownerGroups) = (Just userNikola.uuid, Just _USER_ROLE_RESEARCHER, [])
-    let (editor, editorRole, editorGroups) = (Just userNicolaus.uuid, Just _USER_ROLE_RESEARCHER, [])
-    let (viewer, viewerRole, viewerGroups) = (Just userGalileo.uuid, Just _USER_ROLE_RESEARCHER, [])
+    let (admin, adminRole, adminGroups) = (Just userAlbert.uuid, allRolePermissions, [])
+    let (owner, ownerRole, ownerGroups) = (Just userNikola.uuid, [], [])
+    let (editor, editorRole, editorGroups) = (Just userNicolaus.uuid, [], [])
+    let (viewer, viewerRole, viewerGroups) = (Just userGalileo.uuid, [], [])
     let (userInOwnerGroup, userInOwnerGroupRole, userInOwnerGroupGroups) =
           ( Just userIsaac.uuid
-          , Just _USER_ROLE_RESEARCHER
+          , []
           , [userIsaacBioGroupMembership.userGroupUuid, userIsaacPlantGroupMembership.userGroupUuid, userIsaacAnimalGroupMembership.userGroupUuid]
           )
     let (userInEditorGroup, userInEditorGroupRole, userInEditorGroupGroups) =
           ( Just userIsaac.uuid
-          , Just _USER_ROLE_RESEARCHER
+          , []
           , [userIsaacPlantGroupMembership.userGroupUuid, userIsaacAnimalGroupMembership.userGroupUuid]
           )
     let (userInViewerGroup, userInViewerGroupRole, userInViewerGroupGroups) =
           ( Just userIsaac.uuid
-          , Just _USER_ROLE_RESEARCHER
+          , []
           , [userIsaacAnimalGroupMembership.userGroupUuid]
           )
     let (userWithoutPerm, userWithoutPermRole, userWithoutPermGroups) =
-          (Just userIsaac.uuid, Just _USER_ROLE_RESEARCHER, [])
-    let (anonymous, anonymousRole, anonymousGroups) = (Nothing, Nothing, [])
+          (Just userIsaac.uuid, [], [])
+    let (anonymous, anonymousRole, anonymousGroups) = (Nothing, [], [])
     describe "getPermission" $ do
       it "PrivateProjectVisibility RestrictedProjectSharing" $ do
         let fn = getPermission PrivateProjectVisibility RestrictedProjectSharing permissions

@@ -16,7 +16,7 @@ import Wizard.Database.Migration.Development.Plugin.Data.Plugins
 import qualified Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs as TC
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Config.ServerConfig ()
 import qualified Wizard.Model.Config.ServerConfigDM as S
 import Wizard.Service.Config.Client.ClientConfigMapper
 import Wizard.Service.User.UserMapper
@@ -25,7 +25,7 @@ import WizardLib.Public.Database.Migration.Development.OpenId.Data.OpenIdClients
 import qualified WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs as STC
 
 instance ToSchema ClientConfigDTO where
-  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig TC.defaultOrganization TC.defaultAuthentication [defaultOpenIdClientSimple] TC.defaultPrivacyAndSupport TC.defaultDashboardAndLoginScreen STC.defaultLookAndFeel TC.defaultRegistry TC.defaultProject TC.defaultSubmission STC.defaultFeatures TC.defaultOwl (Just $ toUserProfile (toDTO userAlbert) [] M.empty) [] [plugin1List] M.empty defaultTenant)
+  declareNamedSchema = toSwaggerWithType "type" (toClientConfigDTO S.defaultConfig TC.defaultOrganization TC.defaultAuthentication [defaultOpenIdClientSimple] TC.defaultPrivacyAndSupport TC.defaultDashboardAndLoginScreen STC.defaultLookAndFeel TC.defaultRegistry TC.defaultProject TC.defaultSubmission STC.defaultFeatures TC.defaultOwl (Just $ toUserProfile (toDTO userAlbert) [] M.empty) [] [plugin1List] M.empty defaultTenantModules defaultTenant)
 
 instance ToSchema ClientConfigAuthDTO where
   declareNamedSchema = toSwagger (toClientAuthDTO TC.defaultAuthentication [defaultOpenIdClientSimple])
@@ -43,7 +43,7 @@ instance ToSchema ClientConfigCloudDTO where
   declareNamedSchema = toSwagger (toClientConfigCloudDTO S_S.defaultCloud defaultTenant)
 
 instance ToSchema ClientConfigAdminDTO where
-  declareNamedSchema = toSwagger (toClientConfigAdminDTO S.defaultAdmin defaultTenant)
+  declareNamedSchema = toSwagger (toClientConfigAdminDTO S.defaultAdmin)
 
 instance ToSchema ClientConfigFeaturesDTO where
   declareNamedSchema = toSwagger (toClientConfigFeaturesDTO S.defaultAdmin STC.defaultFeatures)
@@ -52,4 +52,4 @@ instance ToSchema ClientConfigSignalBridgeDTO where
   declareNamedSchema = toSwagger (toClientConfigSignalBridgeDTO defaultTenant)
 
 instance ToSchema ClientConfigModuleDTO where
-  declareNamedSchema = toSwagger (toClientConfigModuleDTO S.defaultConfig.modules.wizard "https://wizard-client.com" False)
+  declareNamedSchema = toSwagger (toModuleDTO defaultTenantModule)

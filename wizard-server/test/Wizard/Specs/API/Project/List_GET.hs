@@ -38,7 +38,6 @@ list_GET appContext =
   describe "GET /wizard-api/projects" $ do
     test_200 appContext
     test_401 appContext
-    test_403 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -266,8 +265,3 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "PRJ_PERM"

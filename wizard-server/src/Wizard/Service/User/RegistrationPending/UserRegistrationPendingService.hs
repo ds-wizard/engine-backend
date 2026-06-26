@@ -37,6 +37,7 @@ import WizardLib.Public.Api.Resource.User.UserFromExternalDTO
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Database.DAO.User.UserOpenIdIdentityDAO
 import WizardLib.Public.Database.DAO.User.UserRegistrationPendingDAO
+import WizardLib.Public.Model.User.Role
 import WizardLib.Public.Model.User.UserRegistrationPending
 import qualified WizardLib.Public.Service.User.UserOpenIdIdentityMapper as UserOpenIdIdentityMapper
 import WizardLib.Public.Service.User.UserRegistrationPendingService (cleanUserRegistrationPending)
@@ -88,14 +89,13 @@ createUserForPending
 createUserForPending pending reqDto emailVerified now = do
   checkUserLimit
   checkActiveUserLimit
-  serverConfig <- asks serverConfig
   tenantUuid <- asks currentTenantUuid
   uUuid <- liftIO generateUuid
   password <- liftIO . fmap U.toString $ generateUuid
   uPasswordHash <- generatePasswordHash password
   tcAuthentication <- getCurrentTenantConfigAuthentication
-  let uRole = tcAuthentication.defaultRole
-  let uPerms = getPermissionForRole serverConfig uRole
+  let role = tcAuthentication.defaultRoleUuid
+  uRole <- getRoleForUser role
   let user =
         fromUserExternalDTO
           uUuid
@@ -103,8 +103,9 @@ createUserForPending pending reqDto emailVerified now = do
           reqDto.lastName
           (toLower <$> reqDto.email)
           uPasswordHash
-          uRole
-          uPerms
+          role
+          uRole.permissions
+          uRole.name
           emailVerified
           pending.imageUrl
           tenantUuid

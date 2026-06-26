@@ -29,7 +29,7 @@ import WizardLib.Public.Service.Tenant.Config.ConfigMapper
 
 getCurrentTenantConfigDto :: AppContextM TenantConfig
 getCurrentTenantConfigDto = do
-  checkPermission _CFG_PERM
+  checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
   tcOrganization <- findTenantConfigOrganization
   tcAuthentication <- getCurrentTenantConfigAuthentication
   tcPrivacyAndSupport <- findTenantConfigPrivacyAndSupport
@@ -45,7 +45,7 @@ getCurrentTenantConfigDto = do
 modifyTenantConfigDto :: TenantConfigChangeDTO -> AppContextM TenantConfig
 modifyTenantConfigDto reqDto =
   runInTransaction $ do
-    checkPermission _CFG_PERM
+    checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
     validateTenantConfig reqDto
     now <- liftIO getCurrentTime
     -- Organization

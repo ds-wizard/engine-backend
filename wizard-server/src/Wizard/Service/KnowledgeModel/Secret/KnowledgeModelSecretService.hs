@@ -16,13 +16,13 @@ import Wizard.Service.KnowledgeModel.Secret.KnowledgeModelSecretMapper
 
 getKnowledgeModelSecrets :: AppContextM [KnowledgeModelSecret]
 getKnowledgeModelSecrets = do
-  checkPermission _KM_PERM
+  checkPermission _KNOWLEDGE_MODELS_MANAGE_ROLE_PERMISSION
   findKnowledgeModelSecrets
 
 createKnowledgeModelSecret :: KnowledgeModelSecretChangeDTO -> AppContextM KnowledgeModelSecret
 createKnowledgeModelSecret reqDto =
   runInTransaction $ do
-    checkPermission _KM_PERM
+    checkPermission _KNOWLEDGE_MODELS_MANAGE_ROLE_PERMISSION
     uuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     tenantUuid <- asks currentTenantUuid
@@ -33,7 +33,7 @@ createKnowledgeModelSecret reqDto =
 modifyKnowledgeModelSecret :: U.UUID -> KnowledgeModelSecretChangeDTO -> AppContextM KnowledgeModelSecret
 modifyKnowledgeModelSecret uuid reqDto =
   runInTransaction $ do
-    checkPermission _KM_PERM
+    checkPermission _KNOWLEDGE_MODELS_MANAGE_ROLE_PERMISSION
     kmSecret <- findKnowledgeModelSecretByUuid uuid
     now <- liftIO getCurrentTime
     tenantUuid <- asks currentTenantUuid
@@ -43,6 +43,6 @@ modifyKnowledgeModelSecret uuid reqDto =
 
 deleteKnowledgeModelSecret :: U.UUID -> AppContextM ()
 deleteKnowledgeModelSecret uuid = do
-  checkPermission _KM_PERM
+  checkPermission _KNOWLEDGE_MODELS_MANAGE_ROLE_PERMISSION
   _ <- findKnowledgeModelSecretByUuid uuid
   void $ deleteKnowledgeModelSecretByUuid uuid

@@ -89,7 +89,6 @@ getProjectsForCurrentUserPageDto
   -> [Sort]
   -> AppContextM (Page ProjectDTO)
 getProjectsForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp pageable sort = do
-  checkPermission _PRJ_PERM
   currentUser <- getCurrentUser
   projectPage <-
     findProjectsForCurrentUserPage
@@ -298,7 +297,6 @@ getProjectEventForProjectUuid projectUuid eventUuid = do
 modifyProjectShare :: U.UUID -> ProjectShareChangeDTO -> AppContextM ProjectShareChangeDTO
 modifyProjectShare projectUuid reqDto =
   runInTransaction $ do
-    checkPermission _PRJ_PERM
     project <- findProjectByUuid projectUuid
     skipIfAssigningProject project (checkOwnerPermissionToProject project.visibility project.permissions)
     now <- liftIO getCurrentTime
@@ -338,13 +336,12 @@ modifyProjectShare projectUuid reqDto =
 modifyProjectSettings :: U.UUID -> ProjectSettingsChangeDTO -> AppContextM ProjectSettingsChangeDTO
 modifyProjectSettings projectUuid reqDto =
   runInTransaction $ do
-    checkPermission _PRJ_PERM
     validateProjectSettingsChangeDTO reqDto
     project <- findProjectByUuid projectUuid
     skipIfAssigningProject project (checkOwnerPermissionToProject project.visibility project.permissions)
-    currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
-    let updatedProject = fromSettingsChangeDTO project reqDto currentUser now
+    hasPermission <- hasPermission _PROJECT_TEMPLATES_MANAGE_ROLE_PERMISSION
+    let updatedProject = fromSettingsChangeDTO project reqDto hasPermission now
     updateProjectByUuid updatedProject
     permissionDtos <- traverse enhanceProjectPerm updatedProject.permissions
     deleteTemporalDocumentsByProjectUuid project.uuid

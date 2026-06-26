@@ -20,12 +20,6 @@ instance ToRow Tenant where
     , toField createdAt
     , toField updatedAt
     , toField serverUrl
-    , toField adminServerUrl
-    , toField adminClientUrl
-    , toField integrationHubServerUrl
-    , toField integrationHubClientUrl
-    , toField analyticsServerUrl
-    , toField analyticsClientUrl
     , toField signalBridgeUrl
     , toField state
     ]
@@ -41,12 +35,6 @@ instance FromRow Tenant where
     createdAt <- field
     updatedAt <- field
     serverUrl <- field
-    adminServerUrl <- field
-    adminClientUrl <- field
-    integrationHubServerUrl <- field
-    integrationHubClientUrl <- field
-    analyticsServerUrl <- field
-    analyticsClientUrl <- field
     signalBridgeUrl <- field
     state <- field
     return $ Tenant {..}

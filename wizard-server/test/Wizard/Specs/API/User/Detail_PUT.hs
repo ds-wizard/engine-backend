@@ -104,7 +104,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl reqHeaders reqBody "UM_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl reqHeaders reqBody "UsersManageRolePermission"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -8,14 +8,13 @@ import qualified Data.UUID as U
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
-import Shared.Common.Service.Acl.AclService
 import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
 import Wizard.Api.Resource.File.FileCreateDTO
-import Wizard.Constant.Acl
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.DAO.Project.ProjectFileDAO
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Project.File.ProjectFile
@@ -37,7 +36,7 @@ getProjectFilesPage mQuery mProjectUuid pageable sort = do
     Just projectUuid -> do
       project <- findProjectByUuid projectUuid
       checkViewPermissionToProject project.visibility project.sharing project.permissions
-    Nothing -> checkPermission _PRJ_FILE_PERM
+    Nothing -> checkPermission _PROJECTS_EDIT_ROLE_PERMISSION
   findProjectFilesPage mQuery mProjectUuid pageable sort
 
 createProjectFile :: U.UUID -> U.UUID -> FileCreateDTO -> AppContextM ProjectFileList

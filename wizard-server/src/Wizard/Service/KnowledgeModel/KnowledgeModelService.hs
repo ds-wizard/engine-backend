@@ -12,7 +12,6 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.Event.KnowledgeModelEvent
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelCacheDAO
 import Wizard.Database.Mapping.KnowledgeModel.Bundle.KnowledgeModelBundlePackage ()
-import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.KnowledgeModel.KnowledgeModelCache
 import Wizard.Service.KnowledgeModel.Compiler.Compiler
@@ -21,7 +20,7 @@ import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 
 createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM KnowledgeModel
 createKnowledgeModelPreview reqDto = do
-  checkViewPermissionToKnowledgeModelPackage reqDto.knowledgeModelPackageUuid _PRJ_PERM
+  checkViewPermissionToKnowledgeModelPackage reqDto.knowledgeModelPackageUuid
   compileKnowledgeModel reqDto.events reqDto.knowledgeModelPackageUuid reqDto.tagUuids
 
 compileKnowledgeModel :: [KnowledgeModelEvent] -> Maybe U.UUID -> [U.UUID] -> AppContextM KnowledgeModel

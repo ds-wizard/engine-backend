@@ -15,9 +15,11 @@ import qualified Wizard.Service.OpenId.Client.Definition.OpenIdClientDefinitionC
 import qualified Wizard.Service.Project.File.ProjectFileCommandExecutor as ProjectFileCommandExecutor
 import qualified Wizard.Service.Project.ProjectCommandExecutor as ProjectCommandExecutor
 import qualified Wizard.Service.Tenant.Config.ConfigCommandExecutor as TenantConfigCommandExecutor
+import qualified Wizard.Service.Tenant.Module.ModuleCommandExecutor as TenantModuleCommandExecutor
 import qualified Wizard.Service.Tenant.TenantCommandExecutor as TenantCommandExecutor
 import qualified Wizard.Service.User.Group.UserGroupCommandExecutor as UserGroupCommandExecutor
 import qualified Wizard.Service.User.GroupMembership.UserGroupMembershipCommandExecutor as UserGroupMembershipCommandExecutor
+import qualified Wizard.Service.User.Role.RoleCommandExecutor as RoleCommandExecutor
 import qualified Wizard.Service.User.Tour.TourCommandExecutor as TourCommandExecutor
 import qualified Wizard.Service.User.UserCommandExecutor as UserCommandExecutor
 
@@ -30,9 +32,11 @@ execute command
   | command.component == OpenIdClientDefinitionCommandExecutor.cComponent = OpenIdClientDefinitionCommandExecutor.execute command
   | command.component == PrefabCommandExecutor.cComponent = PrefabCommandExecutor.execute command
   | command.component == ProjectCommandExecutor.cComponent = ProjectCommandExecutor.execute command
+  | command.component == RoleCommandExecutor.cComponent = RoleCommandExecutor.execute command
   | command.component == ProjectFileCommandExecutor.cComponent = ProjectFileCommandExecutor.execute command
   | command.component == TenantCommandExecutor.cComponent = TenantCommandExecutor.execute command
   | command.component == TenantConfigCommandExecutor.cComponent = TenantConfigCommandExecutor.execute command
+  | command.component == TenantModuleCommandExecutor.cComponent = TenantModuleCommandExecutor.execute command
   | command.component == TourCommandExecutor.cComponent = TourCommandExecutor.execute command
   | command.component == UserCommandExecutor.cComponent = UserCommandExecutor.execute command
   | command.component == UserGroupCommandExecutor.cComponent = UserGroupCommandExecutor.execute command

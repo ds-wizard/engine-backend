@@ -41,12 +41,12 @@ import Wizard.Service.Tenant.Limit.LimitService
 
 getEditorsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page KnowledgeModelEditorList)
 getEditorsPage mQuery pageable sort = do
-  checkPermission _KM_PERM
+  checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
   findKnowledgeModelEditorsPage mQuery pageable sort
 
 getEditorSuggestionsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page KnowledgeModelEditorSuggestion)
 getEditorSuggestionsPage mQuery pageable sort = do
-  checkPermission _KM_PERM
+  checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
   findKnowledgeModelEditorSuggestionsPage mQuery pageable sort
 
 createEditor :: KnowledgeModelEditorCreateDTO -> AppContextM KnowledgeModelEditorList
@@ -61,7 +61,7 @@ createEditorWithParams :: U.UUID -> UTCTime -> UserDTO -> KnowledgeModelEditorCr
 createEditorWithParams uuid now currentUser reqDto =
   runInTransaction $ do
     checkKnowledgeModelEditorLimit
-    checkPermission _KM_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     validateCreateDto reqDto
     tenantUuid <- asks currentTenantUuid
     mPreviousPkg <-
@@ -99,7 +99,7 @@ createEditorWithParams uuid now currentUser reqDto =
 
 getEditorByUuid :: U.UUID -> AppContextM KnowledgeModelEditorDetailDTO
 getEditorByUuid kmEditorUuid = do
-  checkPermission _KM_PERM
+  checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
   editor <- findKnowledgeModelEditorByUuid kmEditorUuid
   editorEvents <- findKnowledgeModelEventsByEditorUuid kmEditorUuid
   editorReplies <- findKnowledgeModelRepliesByEditorUuid kmEditorUuid
@@ -118,7 +118,7 @@ getEditorByUuid kmEditorUuid = do
 modifyEditor :: U.UUID -> KnowledgeModelEditorChangeDTO -> AppContextM KnowledgeModelEditorDetailDTO
 modifyEditor kmEditorUuid reqDto =
   runInTransaction $ do
-    checkPermission _KM_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     editorFromDB <- findKnowledgeModelEditorByUuid kmEditorUuid
     validateChangeDto reqDto
     now <- liftIO getCurrentTime
@@ -146,7 +146,7 @@ modifyEditor kmEditorUuid reqDto =
 deleteEditor :: U.UUID -> AppContextM ()
 deleteEditor kmEditorUuid =
   runInTransaction $ do
-    checkPermission _KM_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     _ <- findKnowledgeModelEditorByUuid kmEditorUuid
     deleteKnowledgeModelEditorByUuid kmEditorUuid
     void $ logOutOnlineUsersWhenKnowledgeModelEditorDramaticallyChanged kmEditorUuid

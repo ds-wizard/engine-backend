@@ -28,8 +28,7 @@ toDTO user =
     , lastName = user.lastName
     , email = user.email
     , affiliation = user.affiliation
-    , uRole = user.uRole
-    , permissions = user.permissions
+    , role = user.role
     , active = user.active
     , imageUrl = user.imageUrl
     , locale = user.locale
@@ -48,8 +47,7 @@ toUserProfile user userGroupUuids pluginSettings =
     , lastName = user.lastName
     , email = user.email
     , imageUrl = user.imageUrl
-    , uRole = user.uRole
-    , permissions = user.permissions
+    , role = user.role
     , lastSeenNewsId = user.lastSeenNewsId
     , userGroupUuids = userGroupUuids
     , pluginSettings = pluginSettings
@@ -113,7 +111,7 @@ toLoggedOnlineUserInfo user colorNumber groupUuids =
     , gravatarHash = createGravatarHash user.email
     , imageUrl = user.imageUrl
     , colorNumber = colorNumber
-    , role = user.uRole
+    , role = user.role
     , groupUuids = groupUuids
     }
 
@@ -124,8 +122,8 @@ toAnonymousOnlineUserInfo avatarNumber colorNumber =
     , colorNumber = colorNumber
     }
 
-fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> U.UUID -> UTCTime -> Bool -> User
-fromUserCreateDTO dto userUuid passwordHash role permissions tenantUuid now shouldSendRegistrationEmail =
+fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> U.UUID -> [String] -> String -> U.UUID -> UTCTime -> Bool -> User
+fromUserCreateDTO dto userUuid passwordHash roleUuid permissions roleName tenantUuid now shouldSendRegistrationEmail =
   let active = not shouldSendRegistrationEmail
    in User
         { uuid = userUuid
@@ -134,8 +132,7 @@ fromUserCreateDTO dto userUuid passwordHash role permissions tenantUuid now shou
         , email = toLower <$> dto.email
         , passwordHash = passwordHash
         , affiliation = dto.affiliation
-        , uRole = role
-        , permissions = permissions
+        , role = RoleSimple {uuid = roleUuid, name = roleName, permissions = permissions}
         , active = active
         , imageUrl = Nothing
         , locale = Nothing
@@ -155,14 +152,15 @@ fromUserExternalDTO
   -> String
   -> String
   -> String
-  -> String
+  -> U.UUID
   -> [String]
+  -> String
   -> Bool
   -> Maybe String
   -> U.UUID
   -> UTCTime
   -> User
-fromUserExternalDTO userUuid firstName lastName email passwordHash uRole permissions active mImageUrl tenantUuid now =
+fromUserExternalDTO userUuid firstName lastName email passwordHash roleUuid permissions roleName active mImageUrl tenantUuid now =
   User
     { uuid = userUuid
     , firstName = firstName
@@ -170,8 +168,7 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash uRole permiss
     , email = email
     , passwordHash = passwordHash
     , affiliation = Nothing
-    , uRole = uRole
-    , permissions = permissions
+    , role = RoleSimple {uuid = roleUuid, name = roleName, permissions = permissions}
     , active = active
     , imageUrl = mImageUrl
     , locale = Nothing
@@ -185,8 +182,8 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash uRole permiss
     , emailPending = if active then Nothing else Just email
     }
 
-fromUserChangeDTO :: UserChangeDTO -> User -> [String] -> User
-fromUserChangeDTO dto oldUser permission =
+fromUserChangeDTO :: UserChangeDTO -> User -> [String] -> String -> User
+fromUserChangeDTO dto oldUser permissions roleName =
   User
     { uuid = oldUser.uuid
     , firstName = dto.firstName
@@ -194,8 +191,7 @@ fromUserChangeDTO dto oldUser permission =
     , email = toLower <$> dto.email
     , passwordHash = oldUser.passwordHash
     , affiliation = dto.affiliation
-    , uRole = dto.uRole
-    , permissions = permission
+    , role = RoleSimple {uuid = dto.roleUuid, name = roleName, permissions = permissions}
     , active = dto.active
     , imageUrl = oldUser.imageUrl
     , locale = oldUser.locale
@@ -209,19 +205,19 @@ fromUserChangeDTO dto oldUser permission =
     , emailPending = oldUser.emailPending
     }
 
-fromTenantCreateToUserCreateDTO :: TenantCreateDTO -> UserCreateDTO
-fromTenantCreateToUserCreateDTO dto =
+fromTenantCreateToUserCreateDTO :: TenantCreateDTO -> U.UUID -> UserCreateDTO
+fromTenantCreateToUserCreateDTO dto adminRoleUuid =
   UserCreateDTO
     { firstName = dto.firstName
     , lastName = dto.lastName
     , email = dto.email
     , affiliation = Nothing
-    , uRole = Just _USER_ROLE_ADMIN
+    , roleUuid = Just adminRoleUuid
     , password = dto.password
     }
 
-fromCommandCreateDTO :: CreateOrUpdateUserCommand -> [String] -> UTCTime -> User
-fromCommandCreateDTO command permissions now =
+fromCommandCreateDTO :: CreateOrUpdateUserCommand -> [String] -> String -> UTCTime -> User
+fromCommandCreateDTO command permissions roleName now =
   User
     { uuid = command.uuid
     , firstName = command.firstName
@@ -229,8 +225,7 @@ fromCommandCreateDTO command permissions now =
     , email = command.email
     , passwordHash = "no-hash"
     , affiliation = command.affiliation
-    , uRole = command.uRole
-    , permissions = permissions
+    , role = RoleSimple {uuid = command.roleUuid, name = roleName, permissions = permissions}
     , active = command.active
     , imageUrl = command.imageUrl
     , locale = Nothing
@@ -244,8 +239,8 @@ fromCommandCreateDTO command permissions now =
     , emailPending = Nothing
     }
 
-fromCommandChangeDTO :: User -> CreateOrUpdateUserCommand -> [String] -> UTCTime -> User
-fromCommandChangeDTO oldUser command permissions now =
+fromCommandChangeDTO :: User -> CreateOrUpdateUserCommand -> [String] -> String -> UTCTime -> User
+fromCommandChangeDTO oldUser command permissions roleName now =
   User
     { uuid = command.uuid
     , firstName = command.firstName
@@ -253,8 +248,7 @@ fromCommandChangeDTO oldUser command permissions now =
     , email = command.email
     , passwordHash = oldUser.passwordHash
     , affiliation = command.affiliation
-    , uRole = command.uRole
-    , permissions = permissions
+    , role = RoleSimple {uuid = command.roleUuid, name = roleName, permissions = permissions}
     , active = command.active
     , imageUrl = command.imageUrl
     , locale = oldUser.locale
