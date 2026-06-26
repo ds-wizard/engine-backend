@@ -67,7 +67,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [] "" "KM_UPGRADE_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [] "" "KnowledgeModelEditorsUseRolePermission"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

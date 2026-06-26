@@ -27,7 +27,6 @@ import Wizard.Database.DAO.Project.ProjectEventDAO
 import Wizard.Database.DAO.Project.ProjectMigrationDAO
 import Wizard.Database.DAO.Project.ProjectVersionDAO
 import Wizard.Model.Common.Lens
-import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Project.Acl.ProjectPerm
 import Wizard.Model.Project.Event.ProjectEvent
@@ -48,7 +47,6 @@ import Wizard.Service.Project.ProjectService
 createProjectMigration :: U.UUID -> ProjectMigrationCreateDTO -> AppContextM ProjectMigrationDTO
 createProjectMigration oldProjectUuid reqDto =
   runInTransaction $ do
-    checkPermission _PRJ_PERM
     validateMigrationExistence oldProjectUuid
     oldProject <- findProjectByUuid oldProjectUuid
     checkMigrationPermissionToProject oldProject.visibility oldProject.permissions
@@ -64,7 +62,6 @@ createProjectMigration oldProjectUuid reqDto =
 
 getProjectMigration :: U.UUID -> AppContextM ProjectMigrationDTO
 getProjectMigration projectUuid = do
-  checkPermission _PRJ_PERM
   projectMigration <- findProjectMigrationByNewProjectUuid projectUuid
   oldProjectDto <- getProjectDetailQuestionnaireByUuid projectMigration.oldProjectUuid
   newProjectDto <- getProjectDetailQuestionnaireByUuid projectMigration.newProjectUuid
@@ -77,7 +74,6 @@ getProjectMigration projectUuid = do
 modifyProjectMigration :: U.UUID -> ProjectMigrationChangeDTO -> AppContextM ProjectMigrationDTO
 modifyProjectMigration projectUuid reqDto =
   runInTransaction $ do
-    checkPermission _PRJ_PERM
     projectMigration <- getProjectMigration projectUuid
     let updatedState = fromChangeDTO reqDto projectMigration
     updateProjectMigrationByNewProjectUuid updatedState
@@ -87,7 +83,6 @@ modifyProjectMigration projectUuid reqDto =
 finishProjectMigration :: U.UUID -> AppContextM ()
 finishProjectMigration projectUuid =
   runInTransaction $ do
-    checkPermission _PRJ_PERM
     _ <- getProjectMigration projectUuid
     projectMigration <- findProjectMigrationByNewProjectUuid projectUuid
     deleteProjectMigrationByNewProjectUuid projectUuid
@@ -121,7 +116,6 @@ finishProjectMigration projectUuid =
 cancelProjectMigration :: U.UUID -> AppContextM ()
 cancelProjectMigration projectUuid =
   runInTransaction $ do
-    checkPermission _PRJ_PERM
     projectMigration <- getProjectMigration projectUuid
     deleteProject projectMigration.newProject.uuid True
     deleteProjectMigrationByNewProjectUuid projectUuid

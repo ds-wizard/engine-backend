@@ -11,12 +11,6 @@ data Tenant = Tenant
   , serverDomain :: String
   , serverUrl :: String
   , clientUrl :: String
-  , adminServerUrl :: Maybe String
-  , adminClientUrl :: Maybe String
-  , integrationHubServerUrl :: Maybe String
-  , integrationHubClientUrl :: Maybe String
-  , analyticsServerUrl :: Maybe String
-  , analyticsClientUrl :: Maybe String
   , signalBridgeUrl :: Maybe String
   , enabled :: Bool
   , state :: TenantState

@@ -6,7 +6,6 @@ import Shared.Common.Model.Config.SimpleFeature
 import Shared.Common.Util.Date
 import Wizard.Model.Project.Project
 import Wizard.Model.Tenant.Config.TenantConfig
-import Wizard.Model.User.User
 
 defaultOrganization :: TenantConfigOrganization
 defaultOrganization =
@@ -24,7 +23,7 @@ defaultAuthentication :: TenantConfigAuthentication
 defaultAuthentication =
   TenantConfigAuthentication
     { tenantUuid = U.nil
-    , defaultRole = _USER_ROLE_RESEARCHER
+    , defaultRoleUuid = U.nil
     , internal = defaultAuthenticationInternal
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 20

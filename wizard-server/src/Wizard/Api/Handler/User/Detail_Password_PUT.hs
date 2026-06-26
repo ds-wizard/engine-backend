@@ -1,6 +1,5 @@
 module Wizard.Api.Handler.User.Detail_Password_PUT where
 
-import Data.Maybe (fromMaybe)
 import qualified Data.UUID as U
 import Servant
 
@@ -17,7 +16,7 @@ type Detail_Password_PUT =
     :> Header "Host" String
     :> ReqBody '[SafeJSON] UserPasswordDTO
     :> "users"
-    :> Capture "uUuid" U.UUID
+    :> Capture "uuid" U.UUID
     :> "password"
     :> QueryParam "hash" String
     :> Verb PUT 204 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] NoContent)
@@ -29,16 +28,9 @@ detail_password_PUT
   -> U.UUID
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] NoContent)
-detail_password_PUT mTokenHeader mServerUrl reqDto uUuid mHash =
+detail_password_PUT mTokenHeader mServerUrl reqDto uuid mHash =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
       addTraceUuidHeader =<< do
-        ia <- isAdmin
-        if ia
-          then do
-            changeUserPasswordByAdmin uUuid reqDto
-            return NoContent
-          else do
-            let hash = fromMaybe (U.toString U.nil) mHash
-            changeUserPasswordByHash uUuid hash reqDto
-            return NoContent
+        changeUserPasswordByAdminOrHash uuid reqDto mHash
+        return NoContent

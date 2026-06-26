@@ -75,5 +75,5 @@ compareUserCreateDtos resDto expDto userActive = do
   liftIO $ resDto.lastName `shouldBe` expDto.lastName
   liftIO $ resDto.email `shouldBe` expDto.email
   liftIO $ resDto.affiliation `shouldBe` expDto.affiliation
-  liftIO $ Just resDto.uRole `shouldBe` expDto.uRole
+  liftIO $ Just resDto.role.uuid `shouldBe` expDto.roleUuid
   liftIO $ resDto.active `shouldBe` userActive

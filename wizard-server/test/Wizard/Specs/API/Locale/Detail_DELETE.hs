@@ -66,7 +66,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "LOC_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "LocalesManageRolePermission"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -47,6 +47,7 @@ import Wizard.Specs.API.OpenIdClient.APISpec
 import Wizard.Specs.API.Prefab.APISpec
 import Wizard.Specs.API.Project.APISpec
 import Wizard.Specs.API.ProjectCommentThread.APISpec
+import Wizard.Specs.API.Role.APISpec
 import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Swagger.APISpec
 import Wizard.Specs.API.Tenant.APISpec
@@ -214,6 +215,7 @@ main =
               userAPI baseContext appContext
               userNewsAPI baseContext appContext
               userTourAPI baseContext appContext
+              roleAPI baseContext appContext
               userGroupAPI baseContext appContext
             describe "SERVICE" $ do
               documentIntegrationSpec appContext

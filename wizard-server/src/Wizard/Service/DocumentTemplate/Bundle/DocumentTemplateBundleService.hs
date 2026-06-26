@@ -63,7 +63,7 @@ exportBundle dtUuid =
 pullBundleFromRegistry :: Coordinate -> AppContextM DocumentTemplateSimple
 pullBundleFromRegistry coordinate =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     checkDocumentTemplateLimit
     tb <- catchError (retrieveDocumentTemplateBundleByCoordinate coordinate) handleError
     importAndConvertBundle tb True
@@ -77,7 +77,7 @@ importAndConvertBundle :: BSL.ByteString -> Bool -> AppContextM DocumentTemplate
 importAndConvertBundle contentS fromRegistry =
   case fromDocumentTemplateArchive contentS of
     Right (bundle, assetContents) -> do
-      checkPermission _DOC_TML_WRITE_PERM
+      checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
       checkDocumentTemplateLimit
       let assetSize = foldl (\acc (_, content) -> acc + (fromIntegral . BS.length $ content)) 0 assetContents
       checkStorageSize assetSize

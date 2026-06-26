@@ -12,7 +12,7 @@ data CreateOrUpdateUserCommand = CreateOrUpdateUserCommand
   , lastName :: String
   , email :: String
   , affiliation :: Maybe String
-  , uRole :: String
+  , roleUuid :: U.UUID
   , active :: Bool
   , imageUrl :: Maybe String
   , tenantUuid :: U.UUID

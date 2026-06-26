@@ -6,6 +6,7 @@ import Shared.Common.Constant.Tenant
 import Shared.Common.Model.Common.SensitiveData
 import Shared.Common.Model.Config.SimpleFeature
 import Shared.Common.Util.Date
+import Shared.Common.Util.Uuid
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplateFormats
 import Shared.DocumentTemplate.Database.Migration.Development.DocumentTemplate.Data.DocumentTemplates
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
@@ -15,7 +16,6 @@ import Wizard.Model.Project.Project
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Config.TenantConfigEM ()
 import Wizard.Model.Tenant.Tenant
-import Wizard.Model.User.User
 import Wizard.Service.Tenant.Config.ConfigMapper
 import WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs
 
@@ -64,7 +64,7 @@ defaultAuthenticationEncrypted = process defaultSecret defaultAuthentication
 defaultAuthenticationChangeDto :: TenantConfigAuthenticationChangeDTO
 defaultAuthenticationChangeDto =
   TenantConfigAuthenticationChangeDTO
-    { defaultRole = _USER_ROLE_RESEARCHER
+    { defaultRoleUuid = u' "a0000000-0000-0000-0000-000000000003"
     , internal = defaultAuthenticationInternal
     }
 

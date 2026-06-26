@@ -41,7 +41,6 @@ list_GET appContext =
   describe "GET /wizard-api/project-comment-threads" $ do
     test_200 appContext
     test_401 appContext
-    test_403 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -97,8 +96,3 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [] reqBody "PRJ_PERM"

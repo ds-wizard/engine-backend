@@ -30,7 +30,7 @@ import Wizard.Service.Project.ProjectAcl
 getTypeHints :: TypeHintRequestDTO -> AppContextM [TypeHintIDTO]
 getTypeHints (KnowledgeModelEditorIntegrationTypeHintRequest' reqDto) =
   runInTransaction $ do
-    checkPermission _KM_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     kmEditor <- findKnowledgeModelEditorByUuid reqDto.knowledgeModelEditorUuid
     kmEditorEvents <- findKnowledgeModelEventsByEditorUuid reqDto.knowledgeModelEditorUuid
     let kmEvents = fmap toKnowledgeModelEvent kmEditorEvents
@@ -41,7 +41,7 @@ getTypeHints (KnowledgeModelEditorIntegrationTypeHintRequest' reqDto) =
       _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION
 getTypeHints (KnowledgeModelEditorQuestionTypeHintRequest' reqDto) =
   runInTransaction $ do
-    checkPermission _KM_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     kmEditor <- findKnowledgeModelEditorByUuid reqDto.knowledgeModelEditorUuid
     kmEditorEvents <- findKnowledgeModelEventsByEditorUuid reqDto.knowledgeModelEditorUuid
     let kmEvents = fmap toKnowledgeModelEvent kmEditorEvents
@@ -76,7 +76,7 @@ runApiIntegrationTypeHints integration variables q =
 testTypeHints :: TypeHintTestRequestDTO -> AppContextM TypeHintExchange
 testTypeHints reqDto =
   runInTransaction $ do
-    checkPermission _KM_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     kmEditor <- findKnowledgeModelEditorByUuid reqDto.knowledgeModelEditorUuid
     kmEditorEvents <- findKnowledgeModelEventsByEditorUuid reqDto.knowledgeModelEditorUuid
     let kmEvents = fmap toKnowledgeModelEvent kmEditorEvents

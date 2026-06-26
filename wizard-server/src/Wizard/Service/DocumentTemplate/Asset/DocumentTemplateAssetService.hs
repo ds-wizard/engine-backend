@@ -24,7 +24,7 @@ import Wizard.Service.Tenant.Limit.LimitService
 
 getAssets :: U.UUID -> AppContextM [DocumentTemplateAssetDTO]
 getAssets dtUuid = do
-  checkPermission _DOC_TML_WRITE_PERM
+  checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
   assets <- findAssetsByDocumentTemplateUuid dtUuid
   now <- liftIO getCurrentTime
   traverse
@@ -38,7 +38,7 @@ getAssets dtUuid = do
 
 getAsset :: U.UUID -> AppContextM DocumentTemplateAssetDTO
 getAsset assetUuid = do
-  checkPermission _DOC_TML_WRITE_PERM
+  checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
   asset <- findAssetById assetUuid
   let expirationInSeconds = 60
   now <- liftIO getCurrentTime
@@ -55,7 +55,7 @@ getAssetContent dtUuid assetUuid = do
 createAsset :: U.UUID -> DocumentTemplateAssetCreateDTO -> AppContextM DocumentTemplateAssetDTO
 createAsset dtUuid reqDto =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     checkStorageSize (fromIntegral . BS.length $ reqDto.content)
     validateFileAndAssetUniqueness Nothing dtUuid reqDto.fileName
     aUuid <- liftIO generateUuid
@@ -76,7 +76,7 @@ createAsset dtUuid reqDto =
 modifyAsset :: U.UUID -> DocumentTemplateAssetChangeDTO -> AppContextM DocumentTemplateAsset
 modifyAsset assetUuid reqDto =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     asset <- findAssetById assetUuid
     validateFileAndAssetUniqueness (Just asset.uuid) asset.documentTemplateUuid reqDto.fileName
     now <- liftIO getCurrentTime
@@ -89,7 +89,7 @@ modifyAsset assetUuid reqDto =
 modifyAssetContent :: U.UUID -> DocumentTemplateAssetCreateDTO -> AppContextM DocumentTemplateAsset
 modifyAssetContent assetUuid reqDto =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     checkStorageSize (fromIntegral . BS.length $ reqDto.content)
     now <- liftIO getCurrentTime
     asset <- findAssetById assetUuid
@@ -115,7 +115,7 @@ duplicateAsset newDtUuid asset = do
 deleteAsset :: U.UUID -> U.UUID -> AppContextM ()
 deleteAsset dtUuid assetUuid =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     asset <- findAssetById assetUuid
     deleteAssetById asset.uuid
     removeAsset dtUuid assetUuid

@@ -24,7 +24,7 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
-import Wizard.Service.User.UserService
+import WizardLib.Public.Model.User.RolePermission
 import WizardLib.Public.Model.User.UserToken
 
 import SharedTest.Specs.API.Common
@@ -56,9 +56,8 @@ reqIsaacAuthTokenHeader :: Header
 reqIsaacAuthTokenHeader = ("Authorization", BS.pack $ "Bearer " ++ reqIsaacAuthToken)
 
 userWithoutPerm :: ServerConfig -> String -> User
-userWithoutPerm serverConfig perm =
-  let allPerms = getPermissionForRole serverConfig _USER_ROLE_ADMIN
-   in userAlbert {permissions = L.delete perm allPerms}
+userWithoutPerm _ perm =
+  userAlbert {role = userAlbert.role {permissions = filter (/= perm) allRolePermissions}}
 
 createInvalidJsonTest reqMethod reqUrl missingField =
   it "HTTP 400 BAD REQUEST when json is not valid" $ do

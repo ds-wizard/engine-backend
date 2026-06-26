@@ -21,6 +21,7 @@ import Wizard.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
+import WizardLib.Public.Database.DAO.Tenant.Module.TenantModuleDAO
 import WizardLib.Public.Database.Migration.Development.Tenant.Data.TenantConfigs
 
 runMigration :: AppContextM ()
@@ -54,7 +55,8 @@ runConfigMigration = do
   insertTenantConfigFeatures defaultFeatures
   insertTenantConfigMail defaultMail
   insertTenantConfigOwl defaultOwl
-  return ()
+  deleteTenantModules
+  mapM_ insertTenantModule defaultTenantModules
 
 runLimitMigration :: AppContextM ()
 runLimitMigration = do

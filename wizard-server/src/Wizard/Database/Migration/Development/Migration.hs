@@ -43,6 +43,8 @@ import qualified Wizard.Database.Migration.Development.Submission.SubmissionSche
 import qualified Wizard.Database.Migration.Development.TemporaryFile.TemporaryFileSchemaMigration as TemporaryFile
 import qualified Wizard.Database.Migration.Development.Tenant.TenantMigration as Tenant
 import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigration as Tenant
+import qualified Wizard.Database.Migration.Development.User.RoleMigration as Role
+import qualified Wizard.Database.Migration.Development.User.RoleSchemaMigration as Role
 import qualified Wizard.Database.Migration.Development.User.UserMigration as User
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as User
 import qualified Wizard.Database.Migration.Development.UserEmailLink.UserEmailLinkMigration as UserEmailLink
@@ -89,6 +91,7 @@ runMigration = runAppContextWithBaseContext $ do
   UserRegistrationPending.dropTables
   UserOpenIdIdentity.dropTables
   User.dropTables
+  Role.dropTables
   Tenant.dropConfigTables
   OpenIdClient.dropTables
   DocumentTemplate.dropTables
@@ -108,6 +111,7 @@ runMigration = runAppContextWithBaseContext $ do
   DocumentTemplate.createTables
   Tenant.createConfigTables
   OpenIdClient.createTables
+  Role.createTables
   User.createTables
   UserOpenIdIdentity.createTables
   UserRegistrationPending.createTables
@@ -149,6 +153,7 @@ runMigration = runAppContextWithBaseContext $ do
   Tenant.runMigration
   OpenIdClient.runMigration
   Plugin.runMigration
+  Role.runMigration
   User.runMigration
   KnowledgeModelPackage.runMigration
   KnowledgeModelSecret.runMigration

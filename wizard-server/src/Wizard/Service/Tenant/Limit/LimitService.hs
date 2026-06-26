@@ -35,7 +35,7 @@ createLimitBundle tenantUuid now = do
 modifyLimitBundle :: U.UUID -> TenantLimitBundleChange -> AppContextM WizardUsageDTO
 modifyLimitBundle tenantUuid reqDto =
   runInTransaction $ do
-    checkPermission _TENANT_PERM
+    checkPermission _TENANTS_MANAGE_ROLE_PERMISSION
     limitBundle <- findLimitBundleByUuid tenantUuid
     now <- liftIO getCurrentTime
     let limitBundleUpdated = fromChangeDTO limitBundle reqDto now

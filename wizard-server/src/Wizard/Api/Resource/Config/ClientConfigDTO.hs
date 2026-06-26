@@ -39,7 +39,7 @@ data ClientConfigDTO
   deriving (Show, Eq, Generic)
 
 data ClientConfigAuthDTO = ClientConfigAuthDTO
-  { defaultRole :: String
+  { defaultRoleUuid :: U.UUID
   , internal :: TenantConfigAuthenticationInternal
   , external :: ClientConfigAuthExternalDTO
   }
@@ -74,7 +74,6 @@ data ClientConfigCloudDTO = ClientConfigCloudDTO
 
 data ClientConfigAdminDTO = ClientConfigAdminDTO
   { enabled :: Bool
-  , clientUrl :: Maybe String
   }
   deriving (Generic, Eq, Show)
 

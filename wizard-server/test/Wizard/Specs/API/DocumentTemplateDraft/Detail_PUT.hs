@@ -107,7 +107,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] (reqBodyT re
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (reqBodyT reqDto) "DOC_TML_WRITE_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (reqBodyT reqDto) "DocumentTemplateEditorsUseRolePermission"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -87,10 +87,10 @@ updatePermsForOnlineUsers projectUuid visibility sharing permissions = do
         ( do
             let permission =
                   case record.user of
-                    user@LoggedOnlineUserInfo {uuid = uuid, role = role, groupUuids = groupUuids} ->
-                      getPermission visibility sharing permissions (Just uuid) (Just role) groupUuids
+                    user@LoggedOnlineUserInfo {uuid = uuid, role = userRole, groupUuids = groupUuids} ->
+                      getPermission visibility sharing permissions (Just uuid) userRole.permissions groupUuids
                     user@AnonymousOnlineUserInfo {..} ->
-                      getPermission visibility sharing permissions Nothing Nothing []
+                      getPermission visibility sharing permissions Nothing [] []
             let updatedRecord = record {entityPerm = permission}
             updateCache updatedRecord
             disconnectUserIfLostPermission updatedRecord
@@ -113,7 +113,7 @@ removeUserGroupFromUsers userGroupUuid userUuids = do
     updatePerm :: WebsocketRecord -> AppContextM ()
     updatePerm record =
       case record.user of
-        user@LoggedOnlineUserInfo {uuid = uuid, role = role, groupUuids = groupUuids} -> do
+        user@LoggedOnlineUserInfo {uuid = uuid, groupUuids = groupUuids} -> do
           when
             (user.uuid `elem` userUuids)
             ( do
@@ -411,7 +411,7 @@ createProjectRecord connectionUuid connection projectUuid = do
           project.sharing
           project.permissions
           (fmap (.uuid) mCurrentUser)
-          (fmap (.uRole) mCurrentUser)
+          (maybe [] (.role.permissions) mCurrentUser)
           userGroupUuids
   createRecord connectionUuid connection (U.toString projectUuid) permission userGroupUuids
 

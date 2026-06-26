@@ -17,6 +17,7 @@ import Wizard.Database.Migration.Development.Plugin.Data.PluginSettings
 import Wizard.Database.Migration.Development.Plugin.Data.Plugins
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Database.Migration.Development.User.Data.Roles
 import Wizard.Model.Plugin.Plugin
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Model.Tenant.Tenant
@@ -29,10 +30,12 @@ import Wizard.Model.User.UserSubmissionPropEM ()
 import Wizard.Model.User.UserSubmissionPropList
 import Wizard.Service.User.UserMapper
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
+import WizardLib.Public.Model.User.RolePermission
 import WizardLib.Public.Model.User.UserGroup
 import WizardLib.Public.Model.User.UserGroupMembership
 import WizardLib.Public.Model.User.UserSuggestion
 import WizardLib.Public.Model.User.UserTour
+import WizardLib.Public.Service.User.RoleMapper (toRoleSimple)
 
 userAlbert :: User
 userAlbert =
@@ -42,26 +45,7 @@ userAlbert =
     , lastName = "Einstein"
     , email = "albert.einstein@example.com"
     , affiliation = Just "My University"
-    , uRole = _USER_ROLE_ADMIN
-    , permissions =
-        [ "TENANT_PERM"
-        , "DEV_PERM"
-        , "UM_PERM"
-        , "KM_PERM"
-        , "KM_UPGRADE_PERM"
-        , "KM_PUBLISH_PERM"
-        , "PM_READ_PERM"
-        , "PM_WRITE_PERM"
-        , "PRJ_PERM"
-        , "PRJ_FILE_PERM"
-        , "PRJ_TML_PERM"
-        , "DOC_TML_READ_PERM"
-        , "CFG_PERM"
-        , "SUBM_PERM"
-        , "DOC_TML_WRITE_PERM"
-        , "DOC_PERM"
-        , "LOC_PERM"
-        ]
+    , role = (toRoleSimple adminRole) {permissions = allRolePermissions ++ [_DEV_USE_ROLE_PERMISSION, _TENANTS_MANAGE_ROLE_PERMISSION]}
     , active = True
     , -- cspell:disable
       passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="

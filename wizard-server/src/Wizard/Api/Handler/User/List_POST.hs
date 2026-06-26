@@ -19,13 +19,8 @@ type List_POST =
     :> "users"
     :> Verb 'POST 201 '[SafeJSON] (Headers '[Header "x-trace-uuid" String] UserDTO)
 
-list_POST
-  :: Maybe String -> Maybe String -> UserCreateDTO -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserDTO)
+list_POST :: Maybe String -> Maybe String -> UserCreateDTO -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserDTO)
 list_POST mTokenHeader mServerUrl reqDto =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
-      addTraceUuidHeader =<< do
-        ia <- isAdmin
-        if ia
-          then createUserByAdmin reqDto
-          else registerUser reqDto
+      addTraceUuidHeader =<< registerOrCreateUserByAdmin reqDto

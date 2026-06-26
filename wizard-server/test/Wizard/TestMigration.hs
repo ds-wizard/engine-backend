@@ -71,8 +71,10 @@ import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.TenantLimitBundles
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigration as Tenant
+import Wizard.Database.Migration.Development.User.Data.Roles
 import Wizard.Database.Migration.Development.User.Data.UserTokens
 import Wizard.Database.Migration.Development.User.Data.Users
+import qualified Wizard.Database.Migration.Development.User.RoleSchemaMigration as Role
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as User
 import qualified Wizard.Database.Migration.Development.UserEmailLink.UserEmailLinkSchemaMigration as UserEmailLink
 import Wizard.Model.Cache.ServerCache
@@ -81,6 +83,7 @@ import WizardLib.Public.Database.DAO.ExternalLink.ExternalLinkUsageDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
+import WizardLib.Public.Database.DAO.User.RoleDAO (deleteRoles, insertRole)
 import WizardLib.Public.Database.DAO.User.UserGroupDAO
 import WizardLib.Public.Database.DAO.User.UserGroupMembershipDAO
 import WizardLib.Public.Database.DAO.User.UserOpenIdIdentityDAO
@@ -127,6 +130,7 @@ buildSchema appContext = do
   runInContext UserRegistrationPending.dropTables appContext
   runInContext UserOpenIdIdentity.dropTables appContext
   runInContext User.dropTables appContext
+  runInContext Role.dropTables appContext
   runInContext Tenant.dropConfigTables appContext
   runInContext OpenIdClient.dropTables appContext
   runInContext DocumentTemplate.dropTables appContext
@@ -147,6 +151,7 @@ buildSchema appContext = do
   runInContext DocumentTemplate.createTables appContext
   runInContext Tenant.createConfigTables appContext
   runInContext OpenIdClient.createTables appContext
+  runInContext Role.createTables appContext
   runInContext User.createTables appContext
   runInContext UserOpenIdIdentity.createTables appContext
   runInContext UserRegistrationPending.createTables appContext
@@ -227,6 +232,7 @@ resetDB appContext = do
   runInContext deleteUserOpenIdIdentities appContext
   runInContext deleteTours appContext
   runInContext deleteUsers appContext
+  runInContext deleteRoles appContext
   runInContext deleteUserGroups appContext
   runInContext deleteLocales appContext
   runInContext deletePersistentCommands appContext
@@ -253,6 +259,12 @@ resetDB appContext = do
   runInContext (insertTenantConfigMail defaultMail) appContext
   runInContext (insertTenantConfigOwl defaultOwl) appContext
   runInContext (insertTenantConfigLookAndFeel (defaultLookAndFeel {tenantUuid = differentTenantUuid})) appContext
+  runInContext (insertRole adminRole) appContext
+  runInContext (insertRole dataStewardRole) appContext
+  runInContext (insertRole researcherRole) appContext
+  runInContext (insertRole differentAdminRole) appContext
+  runInContext (insertRole differentDataStewardRole) appContext
+  runInContext (insertRole differentResearcherRole) appContext
   runInContext (insertUser userSystem) appContext
   runInContext (insertUser userAlbert) appContext
   runInContext (insertUserToken albertToken) appContext

@@ -24,8 +24,4 @@ list_POST
 list_POST mTokenHeader mServerUrl reqDto =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
-      addTraceUuidHeader =<< do
-        ia <- isAdmin
-        if ia
-          then createTenantByAdmin reqDto
-          else registerTenant reqDto
+      addTraceUuidHeader =<< registerOrCreateTenantByAdmin reqDto

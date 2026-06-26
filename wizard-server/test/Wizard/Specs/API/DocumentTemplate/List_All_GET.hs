@@ -28,7 +28,6 @@ list_all_GET appContext =
   describe "GET /wizard-api/document-templates/all" $ do
     test_200 appContext
     test_401 appContext
-    test_403 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -69,8 +68,3 @@ create_test_200 title appContext reqAuthHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [] reqBody "DOC_TML_READ_PERM"

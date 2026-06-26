@@ -21,7 +21,8 @@ dropConfigTables :: AppContextM Int64
 dropConfigTables = do
   logInfo _CMP_MIGRATION "(Table/Config) drop table"
   let sql =
-        "DROP TABLE IF EXISTS tenant_plugin_settings; \
+        "DROP TABLE IF EXISTS tenant_module; \
+        \DROP TABLE IF EXISTS tenant_plugin_settings; \
         \DROP TABLE IF EXISTS config_owl;\
         \DROP TABLE IF EXISTS config_mail;\
         \DROP TABLE IF EXISTS config_features;\
@@ -61,12 +62,6 @@ createTenantTable = do
         \    created_at       timestamptz NOT NULL, \
         \    updated_at       timestamptz NOT NULL, \
         \    server_url       varchar     NOT NULL, \
-        \    admin_server_url varchar, \
-        \    admin_client_url varchar, \
-        \    integration_hub_server_url varchar, \
-        \    integration_hub_client_url varchar, \
-        \    analytics_server_url varchar, \
-        \    analytics_client_url varchar, \
         \    signal_bridge_url varchar, \
         \    state varchar NOT NULL DEFAULT 'ReadyForUseTenantState', \
         \    CONSTRAINT tenant_pk PRIMARY KEY (uuid) \
@@ -90,6 +85,7 @@ createConfigTables = do
   createTcMailTable
   createTcOwlTable
   createTenantPluginSettingsTable
+  createTenantModuleTable
 
 createTcOrganizationTable = do
   logInfo _CMP_MIGRATION "(Table/ConfigOrganization) create tables"
@@ -115,7 +111,7 @@ createTcAuthenticationTable = do
         "CREATE TABLE config_authentication \
         \( \
         \    tenant_uuid                              uuid        NOT NULL, \
-        \    default_role                             varchar     NOT NULL, \
+        \    default_role_uuid                        uuid        NOT NULL, \
         \    internal_registration_enabled            bool        NOT NULL, \
         \    internal_two_factor_auth_enabled         bool        NOT NULL, \
         \    internal_two_factor_auth_code_length     int         NOT NULL, \
@@ -395,6 +391,29 @@ createTenantLimitBundleTable = do
         \    document_template_drafts integer     NOT NULL, \
         \    locales                  integer     NOT NULL, \
         \    CONSTRAINT tenant_limit_bundle_pk PRIMARY KEY (uuid) \
+        \);"
+  let action conn = execute_ conn sql
+  runDB action
+
+createTenantModuleTable = do
+  logInfo _CMP_MIGRATION "(Table/TenantModule) create table"
+  let sql =
+        "CREATE TABLE tenant_module \
+        \( \
+        \    tenant_uuid         uuid        NOT NULL, \
+        \    position            int         NOT NULL, \
+        \    module_key          varchar     NOT NULL, \
+        \    title               varchar     NOT NULL, \
+        \    description         varchar     NOT NULL, \
+        \    icon                varchar     NOT NULL, \
+        \    url                 varchar     NOT NULL, \
+        \    external            bool        NOT NULL, \
+        \    required_permission varchar, \
+        \    enabled             bool        NOT NULL DEFAULT true, \
+        \    created_at          timestamptz NOT NULL, \
+        \    updated_at          timestamptz NOT NULL, \
+        \    CONSTRAINT tenant_module_pk PRIMARY KEY (tenant_uuid, position), \
+        \    CONSTRAINT tenant_module_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
   let action conn = execute_ conn sql
   runDB action

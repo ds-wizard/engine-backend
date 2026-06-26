@@ -4,6 +4,7 @@ import Data.Swagger
 
 import Shared.Common.Util.Swagger
 import Wizard.Api.Resource.User.OnlineUserInfoJM ()
+import Wizard.Api.Resource.User.RoleSimpleSM ()
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.User.OnlineUserInfo
 
