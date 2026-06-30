@@ -386,6 +386,7 @@ modifyContent projectUuid reqDto =
     let (updatedProject, updatedProjectEvents) = fromContentChangeDTO project projectEvents reqDto mCurrentUser now
     syncProjectEventsWithDb projectEvents updatedProjectEvents
     updateProjectSquashedAndUpdatedAtByUuid projectUuid False now
+    logOutOnlineUsersWhenProjectDramaticallyChanged projectUuid
     return reqDto
 
 cleanProjects :: AppContextM ()
