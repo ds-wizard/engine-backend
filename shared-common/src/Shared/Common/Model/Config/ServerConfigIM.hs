@@ -19,6 +19,7 @@ instance FromEnv ServerConfigDatabase where
       , \c -> applyEnvVariable "DATABASE_STRIPE_SIZE" c.stripeSize (\x -> c {stripeSize = x})
       , \c -> applyEnvVariable "DATABASE_CONNECTION_TIMEOUT" c.connectionTimeout (\x -> c {connectionTimeout = x})
       , \c -> applyEnvVariable "DATABASE_MAX_CONNECTIONS" c.maxConnections (\x -> c {maxConnections = x})
+      , \c -> applyEnvVariable "DATABASE_USE_DEV_MIGRATION" c.useDevMigration (\x -> c {useDevMigration = x})
       ]
 
 instance FromEnv ServerConfigDatabaseVacuumCleaner where
