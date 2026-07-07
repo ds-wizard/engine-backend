@@ -12,7 +12,7 @@ Both share code via `shared-common`. Built with Servant (type-safe REST APIs + S
 
 ## Build & Run
 
-Stack-based project (GHC 9.10.1, resolver nightly-2024-01-10).
+Stack-based project (GHC 9.10.3, resolver lts-24.37).
 
 ```bash
 # Build
