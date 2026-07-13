@@ -1,9 +1,12 @@
 module Wizard.Worker.CronWorkers where
 
+import Control.Monad (void)
+
 import Shared.Common.Database.VacuumCleaner
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Worker.Model.Worker.CronWorker
 import Wizard.Cache.CacheUtil
+import Wizard.Database.DAO.OpenId.OpenIdClientSessionDAO
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
@@ -42,7 +45,20 @@ workers =
   , cleanUserTokenWorker
   , expireUserTokenWorker
   , vacuumCleanerWorker
+  , cleanOpenIdClientSessionWorker
   ]
+
+-- ------------------------------------------------------------------
+cleanOpenIdClientSessionWorker :: CronWorker BaseContext AppContextM
+cleanOpenIdClientSessionWorker =
+  CronWorker
+    { name = "CleanOpenIdClientSessionWorker"
+    , condition = const True
+    , cronDefault = "*/30 * * * *"
+    , cron = const "*/30 * * * *"
+    , function = void deleteExpiredOpenIdClientSessions
+    , wrapInTransaction = True
+    }
 
 -- ------------------------------------------------------------------
 userEmailLinkWorker :: CronWorker BaseContext AppContextM

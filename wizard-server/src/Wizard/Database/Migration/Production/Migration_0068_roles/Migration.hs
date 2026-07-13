@@ -27,6 +27,7 @@ migrate dbPool = do
   finalizeRoleColumns dbPool
   createTenantModuleTable dbPool
   dropTenantModuleUrlColumns dbPool
+  createOpenIdClientSessionTable dbPool
 
 createRoleTable dbPool = do
   let sql =
@@ -146,6 +147,21 @@ dropTenantModuleUrlColumns dbPool = do
         \ALTER TABLE tenant DROP COLUMN integration_hub_client_url; \
         \ALTER TABLE tenant DROP COLUMN analytics_server_url; \
         \ALTER TABLE tenant DROP COLUMN analytics_client_url;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createOpenIdClientSessionTable dbPool = do
+  let sql =
+        "CREATE TABLE openid_client_session \
+        \( \
+        \    state       varchar     NOT NULL, \
+        \    nonce       varchar     NOT NULL, \
+        \    tenant_uuid uuid        NOT NULL, \
+        \    created_at  timestamptz NOT NULL, \
+        \    CONSTRAINT openid_client_session_pk PRIMARY KEY (state), \
+        \    CONSTRAINT openid_client_session_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
+        \);"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

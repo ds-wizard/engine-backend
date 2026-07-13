@@ -30,6 +30,7 @@ import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeM
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSecretSchemaMigration as KnowledgeModelSecret
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as Locale
 import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
+import qualified Wizard.Database.Migration.Development.OpenId.OpenIdClientSessionSchemaMigration as OpenIdClientSession
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
 import qualified Wizard.Database.Migration.Development.Plugin.PluginMigration as Plugin
 import qualified Wizard.Database.Migration.Development.Plugin.PluginSchemaMigration as Plugin
@@ -93,6 +94,7 @@ runMigration = runAppContextWithBaseContext $ do
   User.dropTables
   Role.dropTables
   Tenant.dropConfigTables
+  OpenIdClientSession.dropTables
   OpenIdClient.dropTables
   DocumentTemplate.dropTables
   Locale.dropTables
@@ -110,6 +112,7 @@ runMigration = runAppContextWithBaseContext $ do
   Locale.createTables
   DocumentTemplate.createTables
   Tenant.createConfigTables
+  OpenIdClientSession.createTables
   OpenIdClient.createTables
   Role.createTables
   User.createTables

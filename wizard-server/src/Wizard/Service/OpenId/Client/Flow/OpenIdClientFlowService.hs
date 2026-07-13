@@ -1,12 +1,12 @@
 module Wizard.Service.OpenId.Client.Flow.OpenIdClientFlowService where
 
+import qualified Control.Exception.Base as E
 import Control.Monad (unless)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.Aeson as A
 import qualified Data.ByteString.Char8 as BS
-import qualified Data.ByteString.Lazy.Char8 as BSL
-import Data.Maybe (fromJust, fromMaybe)
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Data.Time
 import qualified Data.UUID as U
@@ -17,15 +17,18 @@ import qualified Web.OIDC.Client.Tokens as OT
 import Shared.Common.Model.Error.Error
 import Shared.Common.Util.Crypto (generateRandomString)
 import Shared.Common.Util.Uuid
+import Shared.OpenId.Api.Resource.OpenId.Client.Flow.OpenIdClientAuthenticationUrlDTO
 import Shared.OpenId.Model.OpenId.OpenIdClientParameter
 import Shared.OpenId.Service.OpenId.Client.Flow.OpenIdClientFlowService
 import Shared.OpenId.Service.OpenId.Client.Flow.OpenIdClientFlowUtil (parseIdToken)
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.OpenId.OpenIdClientSessionDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Mapping.User.UserRegistrationPendingServiceType ()
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
+import Wizard.Model.OpenId.OpenIdClientSession
 import Wizard.Model.User.User
 import Wizard.Model.User.UserRegistrationPendingServiceType
 import Wizard.Service.Tenant.Config.ConfigService
@@ -43,12 +46,15 @@ import WizardLib.Public.Model.User.UserOpenIdIdentity
 import WizardLib.Public.Model.User.UserRegistrationPending
 import WizardLib.Public.Service.User.UserRegistrationPendingService (upsertPendingExternalRegistration)
 
-createAuthenticationUrl :: U.UUID -> Maybe String -> Maybe String -> AppContextM ()
+createAuthenticationUrl :: U.UUID -> Maybe String -> Maybe String -> AppContextM OpenIdClientAuthenticationUrlDTO
 createAuthenticationUrl providerUuid mFlow mClientUrl = do
   (openIdClient, oidc) <- buildOidcClient providerUuid mClientUrl
   let scopes = buildScopes openIdClient
   state <- liftIO $ generateRandomString 40
-  let nonce = "FtEIbRdfFc7z2bNjCTaZKDcWNeUKUelvs13K21VL"
+  nonce <- liftIO $ generateRandomString 40
+  tenantUuid <- asks currentTenantUuid
+  now <- liftIO getCurrentTime
+  _ <- insertOpenIdClientSession OpenIdClientSession {state = state, nonce = nonce, tenantUuid = tenantUuid, createdAt = now}
   let params =
         fmap (\p -> (BS.pack p.name, Just . BS.pack $ p.value)) openIdClient.parameters
           ++ [("nonce", Just . BS.pack $ nonce)]
@@ -56,7 +62,7 @@ createAuthenticationUrl providerUuid mFlow mClientUrl = do
     case mFlow of
       Just "id_token" -> liftIO $ O_ID.getAuthenticationRequestUrl oidc scopes (Just . BS.pack $ state) params
       _ -> liftIO $ O.getAuthenticationRequestUrl oidc scopes (Just . BS.pack $ state) params
-  throwError $ FoundError (show loc)
+  return OpenIdClientAuthenticationUrlDTO {url = show loc, state = state}
 
 loginUserOrLinkIdentity
   :: Bool
@@ -69,16 +75,16 @@ loginUserOrLinkIdentity
   -> Maybe String
   -> Maybe String
   -> AppContextM UserTokenDTO
-loginUserOrLinkIdentity isAuthenticated providerUuid mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionState =
+loginUserOrLinkIdentity isAuthenticated providerUuid mClientUrl mError mCode mState mIdToken mUserAgent mSessionState =
   if isAuthenticated
     then do
       mCurrentUserUuid <- getCurrentUserUuid
       case mCurrentUserUuid of
         Just currentUserUuid -> do
-          linkOpenIdIdentity currentUserUuid providerUuid mClientUrl mError mCode mNonce mIdToken
+          linkOpenIdIdentity currentUserUuid providerUuid mClientUrl mError mCode mState mIdToken
           return IdentityLinkedDTO
-        Nothing -> loginUser providerUuid mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionState
-    else loginUser providerUuid mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionState
+        Nothing -> loginUser providerUuid mClientUrl mError mCode mState mIdToken mUserAgent mSessionState
+    else loginUser providerUuid mClientUrl mError mCode mState mIdToken mUserAgent mSessionState
 
 loginUser
   :: U.UUID
@@ -90,10 +96,10 @@ loginUser
   -> Maybe String
   -> Maybe String
   -> AppContextM UserTokenDTO
-loginUser providerUuid mClientUrl _mError mCode mNonce mIdToken mUserAgent mSessionState =
+loginUser providerUuid mClientUrl _mError mCode mState mIdToken mUserAgent mSessionState =
   runInTransaction $ do
     (openIdClient, oidc) <- buildOidcClient providerUuid mClientUrl
-    (externalId, mEmail, mFirstName, mLastName, mPicture, mUserUuid) <- resolveExternalIdentity oidc mCode mNonce mIdToken
+    (externalId, mEmail, mFirstName, mLastName, mPicture, mUserUuid) <- resolveExternalIdentity oidc mCode mState mIdToken
     tcAuthentication <- getCurrentTenantConfigAuthentication
     mIdentity <- findUserOpenIdIdentityByExternalIdAndProvider' externalId providerUuid
     case mIdentity of
@@ -140,10 +146,10 @@ linkOpenIdIdentity
   -> Maybe String
   -> Maybe String
   -> AppContextM ()
-linkOpenIdIdentity currentUserUuid providerUuid mClientUrl _mError mCode mNonce mIdToken =
+linkOpenIdIdentity currentUserUuid providerUuid mClientUrl _mError mCode mState mIdToken =
   runInTransaction $ do
     (openIdClient, oidc) <- buildOidcClient providerUuid mClientUrl
-    (externalId, _mEmail, _mFirstName, _mLastName, _mPicture, _mUserUuid) <- resolveExternalIdentity oidc mCode mNonce mIdToken
+    (externalId, _mEmail, _mFirstName, _mLastName, _mPicture, _mUserUuid) <- resolveExternalIdentity oidc mCode mState mIdToken
     mIdentity <- findUserOpenIdIdentityByExternalIdAndProvider' externalId providerUuid
     case mIdentity of
       Just identity ->
@@ -177,18 +183,46 @@ buildScopes openIdClient =
     ++ [O.email | openIdClient.scopeEmail]
     ++ [O.profile | openIdClient.scopeProfile]
 
+validateIdTokenClaims :: O.OIDC -> String -> String -> AppContextM (O.IdTokenClaims A.Value)
+validateIdTokenClaims oidc nonce idToken = do
+  let nonceBs = BS.pack nonce
+  let sessionStore =
+        O.SessionStore
+          { O.sessionStoreGenerate = return nonceBs
+          , O.sessionStoreSave = \_ _ -> return ()
+          , O.sessionStoreGet = \_ -> return (Just nonceBs)
+          , O.sessionStoreDelete = return ()
+          }
+  eClaims <- liftIO . E.try $ O_ID.getValidIdTokenClaims sessionStore oidc (BS.pack "") (return (BS.pack idToken))
+  case (eClaims :: Either E.SomeException (O.IdTokenClaims A.Value)) of
+    Right claims -> return claims
+    Left _ -> throwError . UnauthorizedError $ _ERROR_SERVICE_TOKEN__UNABLE_TO_DECODE_AND_VERIFY_TOKEN
+
+resolveClientSessionNonce :: Maybe String -> AppContextM String
+resolveClientSessionNonce mState =
+  case mState of
+    Nothing -> throwError . UnauthorizedError $ _ERROR_SERVICE_TOKEN__UNABLE_TO_DECODE_AND_VERIFY_TOKEN
+    Just state -> do
+      mSession <- findOpenIdClientSessionByState' state
+      case mSession of
+        Nothing -> throwError . UnauthorizedError $ _ERROR_SERVICE_TOKEN__UNABLE_TO_DECODE_AND_VERIFY_TOKEN
+        Just session -> do
+          _ <- deleteOpenIdClientSessionByState state
+          return session.nonce
+
 resolveExternalIdentity
   :: O.OIDC
   -> Maybe String
   -> Maybe String
   -> Maybe String
   -> AppContextM (String, Maybe String, Maybe String, Maybe String, Maybe String, Maybe U.UUID)
-resolveExternalIdentity oidc mCode mNonce mIdToken = do
+resolveExternalIdentity oidc mCode mState mIdToken = do
+  nonce <- resolveClientSessionNonce mState
   idToken <-
     case mIdToken of
-      Just idToken -> return . fromJust . A.decode . BSL.pack $ idToken
+      Just idToken -> validateIdTokenClaims oidc nonce idToken
       Nothing -> do
-        tokens <- requestTokensWithCode oidc mCode mNonce
+        tokens <- requestTokensWithCode oidc mCode (Just nonce)
         return . O.idToken $ tokens
   let externalId = T.unpack . OT.sub $ idToken
   (mEmail, mFirstName, mLastName, mPicture, mUserUuid) <- parseIdToken idToken
