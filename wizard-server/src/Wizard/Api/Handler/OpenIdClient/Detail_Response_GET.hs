@@ -21,7 +21,7 @@ type Detail_Response_GET =
     :> QueryParam "clientUrl" String
     :> QueryParam "error" String
     :> QueryParam "code" String
-    :> QueryParam "nonce" String
+    :> QueryParam "state" String
     :> QueryParam "id_token" String
     :> QueryParam "session_state" String
     :> Get '[SafeJSON] (Headers '[Header "x-trace-uuid" String] UserTokenDTO)
@@ -38,7 +38,7 @@ detail_response_GET
   -> Maybe String
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] UserTokenDTO)
-detail_response_GET mTokenHeader mServerUrl mUserAgent providerUuid mClientUrl mError mCode mNonce mIdToken mSessionState =
+detail_response_GET mTokenHeader mServerUrl mUserAgent providerUuid mClientUrl mError mCode mState mIdToken mSessionState =
   getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService Transactional $
-      addTraceUuidHeader =<< loginUserOrLinkIdentity (isJust mTokenHeader) providerUuid mClientUrl mError mCode mNonce mIdToken mUserAgent mSessionState
+      addTraceUuidHeader =<< loginUserOrLinkIdentity (isJust mTokenHeader) providerUuid mClientUrl mError mCode mState mIdToken mUserAgent mSessionState

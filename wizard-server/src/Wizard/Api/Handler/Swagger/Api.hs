@@ -23,6 +23,7 @@ import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM 
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePhaseSM ()
 import Shared.Locale.Api.Resource.Locale.LocaleSimpleSM ()
 import Shared.Locale.Api.Resource.Locale.LocaleSuggestionSM ()
+import Shared.OpenId.Api.Resource.OpenId.Client.Flow.OpenIdClientAuthenticationUrlSM ()
 import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandChangeSM ()
 import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Shared.Prefab.Api.Resource.Prefab.PrefabSM ()

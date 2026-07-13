@@ -110,6 +110,8 @@ prepareWebApp runCallback =
       putStrLn "DATABASE: connected"
       httpClientManager <- createHttpClientManager serverConfig.logging
       putStrLn "HTTP_CLIENT: created"
+      restrictedHttpClientManager <- createRestrictedHttpClientManager serverConfig.logging serverConfig.httpClient.restricted.allowedHosts
+      putStrLn "RESTRICTED_HTTP_CLIENT: created"
       s3Client <- createS3Client serverConfig.s3 httpClientManager
       putStrLn "S3_CLIENT: created"
       registryClient <- createRegistryClient serverConfig httpClientManager
@@ -123,6 +125,7 @@ prepareWebApp runCallback =
               , dbPool = dbPool
               , s3Client = s3Client
               , httpClientManager = httpClientManager
+              , restrictedHttpClientManager = restrictedHttpClientManager
               , registryClient = registryClient
               , shutdownFlag = shutdownFlag
               , cache = cache
@@ -136,6 +139,7 @@ prepareWebApp runCallback =
                 , dbConnection = Just dbConnection
                 , s3Client = s3Client
                 , httpClientManager = httpClientManager
+                , restrictedHttpClientManager = restrictedHttpClientManager
                 , registryClient = registryClient
                 , traceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
                 , currentTenantUuid = defaultTenantUuid
