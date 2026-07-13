@@ -31,6 +31,13 @@ defaultConfig =
     , signalBridge = defaultSignalBridge
     , admin = defaultAdmin
     , registry = defaultRegistry
+    , httpClient = defaultHttpClient
+    }
+
+defaultHttpClient :: ServerConfigHttpClient
+defaultHttpClient =
+  ServerConfigHttpClient
+    { restricted = ServerConfigHttpClientRestricted {allowedHosts = []}
     }
 
 defaultGeneral :: ServerConfigGeneral

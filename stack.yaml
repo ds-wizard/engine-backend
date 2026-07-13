@@ -35,6 +35,7 @@ extra-deps:
       - lib/services/amazonka-sts
   - cryptostore-0.5.0.0@sha256:56173cf3adba00c218f1f110d008233660e1cd1538d07124b93c1b7f0ed68b3e,4705
   - fsutils-0.1.2@sha256:fb3eb68e03e4317352032642d3ed18c796c30f5a3bec40caef69cee0b859df5e,1028
+  - http-client-restricted-0.1.1
   - jwt-0.11.0@sha256:0602735ee4093c6c5bc918461855bcd55499099363bad34eb7a227aeef3cde29,4265
   - microlens-pro-0.2.0.5@sha256:8c4afe7a696682dadd042c1e323d43ae7361a443c29b4992984d54b374f254c3,3376
   - oidc-client-0.8.0.0@sha256:ad04bcb9680c81ca364ed097929265fe79a036b5a2dd556f6ff344146da34afd,3523

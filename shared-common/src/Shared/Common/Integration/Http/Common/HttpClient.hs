@@ -2,13 +2,15 @@ module Shared.Common.Integration.Http.Common.HttpClient (
   runRequest,
   runRequest',
   runRequestIO',
+  runRequestIO'With,
   runSimpleRequest,
+  runSimpleRequestWith,
   mapHeader,
 ) where
 
 import qualified Control.Exception.Base as E
 import Control.Monad.Except (liftEither, throwError)
-import Control.Monad.Reader (ask, liftIO)
+import Control.Monad.Reader (ask, asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.CaseInsensitive as CI
@@ -16,7 +18,7 @@ import Data.Map (toList)
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Data.UUID as U
-import Network.HTTP.Client (responseBody, responseStatus)
+import Network.HTTP.Client (Manager, responseBody, responseStatus)
 import Network.HTTP.Client.MultipartFormData (partContentType, partFilename)
 import Network.HTTP.Types.Status (statusCode)
 import Network.Wreq (
@@ -78,8 +80,13 @@ runRequest' req responseMapper = do
 
 runRequestIO' :: AppContextC s sc m => HttpRequest -> (Response BSL.ByteString -> IO (Either String a)) -> m (Either String a)
 runRequestIO' req responseMapper = do
+  httpClientManager <- asks (.httpClientManager')
+  runRequestIO'With httpClientManager req responseMapper
+
+runRequestIO'With :: AppContextC s sc m => Manager -> HttpRequest -> (Response BSL.ByteString -> IO (Either String a)) -> m (Either String a)
+runRequestIO'With httpClientManager req responseMapper = do
   logRequestMultipart req
-  eResponse <- runSimpleRequest req
+  eResponse <- runSimpleRequestWith httpClientManager req
   case eResponse of
     Right response -> do
       let sc = statusCode . responseStatus $ response
@@ -98,8 +105,12 @@ runRequestIO' req responseMapper = do
 
 runSimpleRequest :: AppContextC s sc m => HttpRequest -> m (Either E.SomeException (Response BSL.ByteString))
 runSimpleRequest req = do
+  httpClientManager <- asks (.httpClientManager')
+  runSimpleRequestWith httpClientManager req
+
+runSimpleRequestWith :: AppContextC s sc m => Manager -> HttpRequest -> m (Either E.SomeException (Response BSL.ByteString))
+runSimpleRequestWith httpClientManager req = do
   context <- ask
-  let httpClientManager = context.httpClientManager'
   let opts =
         defaults
           { manager = Right httpClientManager

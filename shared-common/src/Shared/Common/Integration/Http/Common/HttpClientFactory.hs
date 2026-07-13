@@ -25,8 +25,10 @@ import Network.HTTP.Client (
   responseStatus,
   secure,
  )
+import Network.HTTP.Client.Restricted (mkRestrictedManagerSettings)
 import Network.HTTP.Client.TLS (tlsManagerSettings)
 
+import Shared.Common.Integration.Http.Common.SsrfProtection (buildAllowRules, ssrfRestriction)
 import Shared.Common.Model.Config.ServerConfig hiding (requestBody, requestHeaders)
 import Shared.Common.Util.Logger
 import Shared.Common.Util.String (replace)
@@ -40,6 +42,17 @@ createHttpClientManager serverConfig =
             , managerModifyResponse = modifyResponse logHttpClient
             }
         )
+
+createRestrictedHttpClientManager :: ServerConfigLogging -> [String] -> IO Manager
+createRestrictedHttpClientManager serverConfig allowedHosts = do
+  let logHttpClient = serverConfig.httpClientDebug
+  allowRules <- buildAllowRules allowedHosts
+  (settings, _proxyRestricted) <- mkRestrictedManagerSettings (ssrfRestriction allowRules) Nothing Nothing
+  newManager
+    settings
+      { managerModifyRequest = modifyRequest
+      , managerModifyResponse = modifyResponse logHttpClient
+      }
 
 modifyRequest :: Request -> IO Request
 modifyRequest request = do

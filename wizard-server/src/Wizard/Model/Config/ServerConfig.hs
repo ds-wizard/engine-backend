@@ -28,6 +28,17 @@ data ServerConfig = ServerConfig
   , signalBridge :: ServerConfigSignalBridge
   , admin :: ServerConfigAdmin
   , registry :: ServerConfigRegistry
+  , httpClient :: ServerConfigHttpClient
+  }
+  deriving (Generic, Show)
+
+data ServerConfigHttpClient = ServerConfigHttpClient
+  { restricted :: ServerConfigHttpClientRestricted
+  }
+  deriving (Generic, Show)
+
+data ServerConfigHttpClientRestricted = ServerConfigHttpClientRestricted
+  { allowedHosts :: [String]
   }
   deriving (Generic, Show)
 

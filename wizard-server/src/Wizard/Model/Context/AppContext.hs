@@ -25,6 +25,7 @@ data AppContext = AppContext
   , dbConnection :: Maybe Connection
   , s3Client :: MinioConn
   , httpClientManager :: Manager
+  , restrictedHttpClientManager :: Manager
   , registryClient :: ClientEnv
   , traceUuid :: U.UUID
   , currentTenantUuid :: U.UUID

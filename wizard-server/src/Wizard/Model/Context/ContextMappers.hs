@@ -71,6 +71,7 @@ appContextFromBaseContext tenantUuid mUser transactionState baseContext callback
           , dbConnection = Nothing
           , s3Client = baseContext.s3Client
           , httpClientManager = baseContext.httpClientManager
+          , restrictedHttpClientManager = baseContext.restrictedHttpClientManager
           , registryClient = baseContext.registryClient
           , traceUuid = cTraceUuid
           , currentTenantUuid = tenantUuid
@@ -94,6 +95,7 @@ baseContextFromAppContext appContext =
     , dbPool = appContext.dbPool
     , s3Client = appContext.s3Client
     , httpClientManager = appContext.httpClientManager
+    , restrictedHttpClientManager = appContext.restrictedHttpClientManager
     , registryClient = appContext.registryClient
     , shutdownFlag = appContext.shutdownFlag
     , cache = appContext.cache

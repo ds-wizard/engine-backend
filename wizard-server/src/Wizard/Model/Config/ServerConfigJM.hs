@@ -37,7 +37,20 @@ instance FromJSON ServerConfig where
     signalBridge <- o .:? "signalBridge" .!= defaultSignalBridge
     admin <- o .:? "admin" .!= defaultAdmin
     registry <- o .:? "registry" .!= defaultRegistry
+    httpClient <- o .:? "httpClient" .!= defaultHttpClient
     return ServerConfig {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigHttpClient where
+  parseJSON (Object o) = do
+    restricted <- o .:? "restricted" .!= defaultHttpClient.restricted
+    return ServerConfigHttpClient {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigHttpClientRestricted where
+  parseJSON (Object o) = do
+    allowedHosts <- o .:? "allowedHosts" .!= defaultHttpClient.restricted.allowedHosts
+    return ServerConfigHttpClientRestricted {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigGeneral where
