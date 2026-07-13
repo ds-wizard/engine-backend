@@ -174,6 +174,13 @@ packages:
   original:
     hackage: fsutils-0.1.2@sha256:fb3eb68e03e4317352032642d3ed18c796c30f5a3bec40caef69cee0b859df5e,1028
 - completed:
+    hackage: http-client-restricted-0.1.1@sha256:9dcda020c2c9305d7c9c72f499a1e6ee539723d9da46c870f71bd847c2ea09c8,1246
+    pantry-tree:
+      sha256: 4321f994fabfa7ad77333a97ab989f2dd27d3a00887f070aa2210a95714396aa
+      size: 290
+  original:
+    hackage: http-client-restricted-0.1.1
+- completed:
     hackage: jwt-0.11.0@sha256:0602735ee4093c6c5bc918461855bcd55499099363bad34eb7a227aeef3cde29,4265
     pantry-tree:
       sha256: 0b3155d79cc7d44285762b2012debe8ec70ac377163a8e5f29581bacaf50179e

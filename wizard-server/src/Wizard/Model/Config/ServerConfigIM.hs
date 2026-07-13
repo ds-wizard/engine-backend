@@ -28,7 +28,20 @@ instance FromEnv ServerConfig where
     signalBridge <- applyEnv serverConfig.signalBridge
     admin <- applyEnv serverConfig.admin
     registry <- applyEnv serverConfig.registry
+    httpClient <- applyEnv serverConfig.httpClient
     return ServerConfig {..}
+
+instance FromEnv ServerConfigHttpClient where
+  applyEnv serverConfig = do
+    restricted <- applyEnv serverConfig.restricted
+    return ServerConfigHttpClient {..}
+
+instance FromEnv ServerConfigHttpClientRestricted where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "HTTP_CLIENT_RESTRICTED_ALLOWED_HOSTS" c.allowedHosts (\x -> c {allowedHosts = x} :: ServerConfigHttpClientRestricted)
+      ]
 
 instance FromEnv ServerConfigGeneral where
   applyEnv serverConfig =

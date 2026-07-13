@@ -12,3 +12,7 @@ feedback:
   token:
   owner:
   repo:
+
+httpClient:
+  restricted:
+    allowedHosts: []

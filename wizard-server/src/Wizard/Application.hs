@@ -13,6 +13,7 @@ import System.Environment (lookupEnv, setEnv)
 import Shared.Common.Application
 import Shared.Common.Bootstrap.AwsAppConfig
 import Shared.Common.Bootstrap.Web
+import Shared.Common.Integration.Http.Common.HttpClientFactory (createRestrictedHttpClientManager)
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Worker.Bootstrap.Worker
@@ -50,6 +51,7 @@ runApplication =
 createBaseContext :: (MonadIO m, MonadLogger m) => ServerConfig -> BuildInfoConfig -> Pool Connection -> MinioConn -> Manager -> MVar () -> m BaseContext
 createBaseContext serverConfig buildInfoConfig dbPool s3Client httpClientManager shutdownFlag = do
   registryClient <- liftIO $ createRegistryClient serverConfig httpClientManager
+  restrictedHttpClientManager <- liftIO $ createRestrictedHttpClientManager serverConfig.logging serverConfig.httpClient.restricted.allowedHosts
   cache <- liftIO (createServerCache serverConfig)
   return BaseContext {..}
 
