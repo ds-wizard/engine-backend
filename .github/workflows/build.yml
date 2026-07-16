@@ -13,6 +13,7 @@ jobs:
     if: github.repository == 'ds-wizard/engine-backend'
 
     strategy:
+      fail-fast: false
       matrix:
         component: [registry, wizard]
     
