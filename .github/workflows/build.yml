@@ -17,6 +17,7 @@ jobs:
       packages: write
 
     strategy:
+      fail-fast: false
       matrix:
         component: [registry, wizard]
     
