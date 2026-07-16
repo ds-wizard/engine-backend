@@ -26,4 +26,5 @@ instance FromRow KnowledgeModelPackageRaw where
     events <- fieldWith fromJSONField
     nonEditable <- field
     createdAt <- field
+    language <- field
     return $ KnowledgeModelPackageRaw {..}

@@ -9,6 +9,7 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Api.Resource.Project.Acl.ProjectPermDTO
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
+import Wizard.Model.KnowledgeModel.Locale.KnowledgeModelLocaleList
 import Wizard.Model.Project.Project
 
 data ProjectDetailSettings = ProjectDetailSettings
@@ -24,6 +25,8 @@ data ProjectDetailSettings = ProjectDetailSettings
   , knowledgeModelPackageUuid :: U.UUID
   , knowledgeModelPackage :: KnowledgeModelPackageSimpleDTO
   , knowledgeModelTags :: [Tag]
+  , language :: Maybe String
+  , availableLocales :: [KnowledgeModelLocaleList]
   , documentTemplate :: Maybe DocumentTemplateDTO
   , documentTemplateState :: Maybe DocumentTemplateState
   , documentTemplatePhase :: Maybe DocumentTemplatePhase

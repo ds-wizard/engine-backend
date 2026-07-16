@@ -7,6 +7,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.API.KnowledgeModelPackage.Dependent.APISpec
 import Wizard.Specs.API.KnowledgeModelPackage.Detail_DELETE
 import Wizard.Specs.API.KnowledgeModelPackage.Detail_GET
+import Wizard.Specs.API.KnowledgeModelPackage.Detail_Locales_Content_GET
+import Wizard.Specs.API.KnowledgeModelPackage.Detail_Locales_DELETE
+import Wizard.Specs.API.KnowledgeModelPackage.Detail_Locales_GET
+import Wizard.Specs.API.KnowledgeModelPackage.Detail_Locales_POST
+import Wizard.Specs.API.KnowledgeModelPackage.Detail_Locales_Template_GET
 import Wizard.Specs.API.KnowledgeModelPackage.Detail_PUT
 import Wizard.Specs.API.KnowledgeModelPackage.Detail_Pull_POST
 import Wizard.Specs.API.KnowledgeModelPackage.List_From_Editor_POST
@@ -25,4 +30,9 @@ knowledgeModelPackageAPI baseContext appContext =
       detail_PUT appContext
       detail_DELETE appContext
       detail_pull_POST appContext
+      detail_locales_GET appContext
+      detail_locales_POST appContext
+      detail_locales_template_GET appContext
+      detail_locales_content_GET appContext
+      detail_locales_DELETE appContext
       dependentAPI appContext

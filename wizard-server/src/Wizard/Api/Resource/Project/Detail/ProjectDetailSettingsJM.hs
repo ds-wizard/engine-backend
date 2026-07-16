@@ -7,6 +7,7 @@ import Shared.DocumentTemplate.Api.Resource.DocumentTemplate.DocumentTemplateJM 
 import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplateJM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateStateJM ()
+import Wizard.Api.Resource.KnowledgeModel.Locale.KnowledgeModelLocaleListJM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleJM ()
 import Wizard.Api.Resource.Project.Acl.ProjectPermJM ()
 import Wizard.Api.Resource.Project.ProjectReplyJM ()

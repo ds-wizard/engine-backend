@@ -32,6 +32,7 @@ toDetailDTO pkg versions org =
     , description = pkg.description
     , readme = pkg.readme
     , license = pkg.license
+    , language = pkg.language
     , metamodelVersion = pkg.metamodelVersion
     , previousPackageUuid = pkg.previousPackageUuid
     , forkOfPackageId = pkg.forkOfPackageId

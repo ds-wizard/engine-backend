@@ -31,6 +31,7 @@ instance FromRow ProjectDetailSettings where
     isTemplate <- field
     projectTags <- fromPGArray <$> field
     selectedQuestionTagUuids <- fromPGArray <$> field
+    language <- field
     formatUuid <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid
@@ -60,6 +61,7 @@ instance FromRow ProjectDetailSettings where
             , createdAt = knowledgeModelPackageCreatedAt
             }
     let knowledgeModelTags = []
+    let availableLocales = []
     mDocumentTemplateId <- field
     mDocumentTemplateName <- field
     mDocumentTemplateVersion <- field

@@ -146,7 +146,7 @@ updateKnowledgeModelEditorByUuid kmEditor = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE knowledge_model_editor SET uuid = ?, name = ?, km_id = ?, previous_package_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, tenant_uuid = ?, version = ?, description = ?, readme = ?, license = ?, metamodel_version = ?, squashed = ? WHERE tenant_uuid = ? AND uuid = ?;"
+          "UPDATE knowledge_model_editor SET uuid = ?, name = ?, km_id = ?, previous_package_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, tenant_uuid = ?, version = ?, description = ?, readme = ?, license = ?, metamodel_version = ?, squashed = ?, language = ? WHERE tenant_uuid = ? AND uuid = ?;"
   let params = toRow kmEditor ++ [toField tenantUuid, toField . U.toText $ kmEditor.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params

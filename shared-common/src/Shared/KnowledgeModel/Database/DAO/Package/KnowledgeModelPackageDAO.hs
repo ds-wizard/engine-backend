@@ -91,7 +91,8 @@ findSeriesOfPackagesRecursiveByUuid pkgUuid = do
           \                       AND knowledge_model_package_event.package_uuid = recursive.uuid \
           \                     ORDER BY knowledge_model_package_event.created_at) pkg_event), \
           \       non_editable, \
-          \       created_at \
+          \       created_at, \
+          \       language \
           \FROM recursive \
           \ORDER BY level DESC;"
   let params = [U.toString tenantUuid, U.toString pkgUuid, U.toString tenantUuid]

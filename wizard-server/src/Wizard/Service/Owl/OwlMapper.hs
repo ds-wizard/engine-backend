@@ -19,6 +19,7 @@ fromOwl uuid name organizationId kmId version mPreviousPackageUuid tenantUuid no
     , description = ""
     , readme = ""
     , license = ""
+    , language = "en"
     , previousPackageUuid = mPreviousPackageUuid
     , forkOfPackageId = Nothing
     , mergeCheckpointPackageId = Nothing

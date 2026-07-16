@@ -7,6 +7,7 @@ data KnowledgeModelEditorCreateDTO = KnowledgeModelEditorCreateDTO
   { name :: String
   , kmId :: String
   , version :: String
+  , language :: Maybe String
   , previousPackageUuid :: Maybe U.UUID
   }
   deriving (Generic)

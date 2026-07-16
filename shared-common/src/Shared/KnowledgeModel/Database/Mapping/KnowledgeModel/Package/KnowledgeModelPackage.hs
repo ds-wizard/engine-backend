@@ -28,6 +28,7 @@ instance ToRow KnowledgeModelPackage where
     , toField phase
     , toField nonEditable
     , toField public
+    , toField language
     ]
 
 instance FromRow KnowledgeModelPackage where
@@ -49,4 +50,5 @@ instance FromRow KnowledgeModelPackage where
     phase <- field
     nonEditable <- field
     public <- field
+    language <- field
     return $ KnowledgeModelPackage {..}

@@ -14,7 +14,7 @@ meta =
   MigrationMeta
     { mmNumber = 68
     , mmName = "User Roles and Tenant Modules"
-    , mmDescription = "Introduce configurable per-tenant role entity with the new RolePermission catalog. Seed default Admin/Data Steward/Researcher roles per tenant, migrate user_entity.role from role name to role UUID (role_uuid), recompute user permissions to the new catalog (preserving internal DEV/TENANT permissions) into role_permissions, and point config_authentication.default_role_uuid to the seeded role UUID. Also add the tenant_module table and drop the legacy per-tenant module URL columns from tenant."
+    , mmDescription = "Introduce configurable per-tenant role entity with the new RolePermission catalog. Seed default Admin/Data Steward/Researcher roles per tenant, migrate user_entity.role from role name to role UUID (role_uuid), recompute user permissions to the new catalog (preserving internal DEV/TENANT permissions) into role_permissions, and point config_authentication.default_role_uuid to the seeded role UUID. Also add the tenant_module table and drop the legacy per-tenant module URL columns from tenant. Add knowledge model translations (language columns and knowledge model locales)."
     }
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
@@ -28,6 +28,8 @@ migrate dbPool = do
   createTenantModuleTable dbPool
   dropTenantModuleUrlColumns dbPool
   createOpenIdClientSessionTable dbPool
+  addKnowledgeModelLanguageColumns dbPool
+  createKnowledgeModelLocaleTable dbPool
 
 createRoleTable dbPool = do
   let sql =
@@ -162,6 +164,40 @@ createOpenIdClientSessionTable dbPool = do
         \    CONSTRAINT openid_client_session_pk PRIMARY KEY (state), \
         \    CONSTRAINT openid_client_session_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
         \);"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addKnowledgeModelLanguageColumns dbPool = do
+  let sql =
+        "ALTER TABLE knowledge_model_package ADD COLUMN language varchar NOT NULL DEFAULT 'en'; \
+        \ALTER TABLE knowledge_model_editor ADD COLUMN language varchar NOT NULL DEFAULT 'en'; \
+        \ALTER TABLE project ADD COLUMN language varchar;"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createKnowledgeModelLocaleTable dbPool = do
+  let sql =
+        "CREATE TABLE knowledge_model_locale \
+        \( \
+        \    uuid                         uuid        NOT NULL, \
+        \    name                         varchar     NOT NULL, \
+        \    code                         varchar     NOT NULL, \
+        \    knowledge_model_package_uuid uuid        NOT NULL, \
+        \    tenant_uuid                  uuid        NOT NULL, \
+        \    created_at                   timestamptz NOT NULL, \
+        \    updated_at                   timestamptz NOT NULL, \
+        \    CONSTRAINT knowledge_model_locale_pk PRIMARY KEY (uuid), \
+        \    CONSTRAINT knowledge_model_locale_package_uuid_fk FOREIGN KEY (knowledge_model_package_uuid) REFERENCES knowledge_model_package (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT knowledge_model_locale_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT knowledge_model_locale_code_unique UNIQUE (knowledge_model_package_uuid, code, tenant_uuid) \
+        \); \
+        \CREATE OR REPLACE TRIGGER trg_knowledge_model_locale_after_delete_s3 \
+        \    AFTER DELETE \
+        \    ON knowledge_model_locale \
+        \    FOR EACH ROW \
+        \EXECUTE FUNCTION create_persistent_command_from_entity_uuid('knowledge_model_locale', 'deleteFromS3');"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing

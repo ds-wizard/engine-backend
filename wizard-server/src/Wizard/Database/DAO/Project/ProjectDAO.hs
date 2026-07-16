@@ -431,6 +431,7 @@ findProjectDetailQuestionnaire uuid = do
             \       knowledge_model_package.version AS knowledge_model_package_version, \
             \       knowledge_model_package.description AS knowledge_model_package_description, \
             \       project.selected_question_tag_uuids, \
+            \       project.language, \
             \       project.is_template, \
             \       project_mig.new_project_uuid AS migration_uuid, \
             \       ${projectDetailPermSql}, \
@@ -515,6 +516,7 @@ findProjectDetailSettings uuid = do
             \       project.is_template, \
             \       project.project_tags, \
             \       project.selected_question_tag_uuids, \
+            \       project.language, \
             \       project.format_uuid, \
             \       project_mig.new_project_uuid AS migration_uuid, \
             \       ${projectDetailPermSql}, \
@@ -589,7 +591,7 @@ insertProject project = do
   -- Insert project
   let sql =
         fromString
-          "INSERT INTO project VALUES (?, ?, ?, ?, ?, ?::uuid[], ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::text[])"
+          "INSERT INTO project VALUES (?, ?, ?, ?, ?, ?::uuid[], ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::text[], ?)"
   let params = toRow project
   logQuery sql params
   let action conn = execute conn sql params
@@ -603,7 +605,7 @@ updateProjectByUuid project = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE project SET uuid = ?, name = ?, visibility = ?, sharing = ?, knowledge_model_package_uuid = ?, selected_question_tag_uuids = ?::uuid[], document_template_uuid = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?::text[] WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE project SET uuid = ?, name = ?, visibility = ?, sharing = ?, knowledge_model_package_uuid = ?, selected_question_tag_uuids = ?::uuid[], document_template_uuid = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?::text[], language = ? WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow project ++ [toField tenantUuid, toField . U.toText $ project.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params

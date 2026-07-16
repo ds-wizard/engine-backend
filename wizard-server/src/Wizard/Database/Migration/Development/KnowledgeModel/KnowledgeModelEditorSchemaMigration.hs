@@ -53,6 +53,7 @@ createKnowledgeModelEditorTable = do
         \    license               varchar     NOT NULL, \
         \    metamodel_version     integer     NOT NULL, \
         \    squashed              boolean     NOT NULL, \
+        \    language              varchar     NOT NULL DEFAULT 'en', \
         \    CONSTRAINT knowledge_model_editor_pk PRIMARY KEY (uuid), \
         \    CONSTRAINT knowledge_model_editor_previous_package_uuid_fk FOREIGN KEY (previous_package_uuid) REFERENCES knowledge_model_package (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT knowledge_model_editor_created_by_fk FOREIGN KEY (created_by) REFERENCES user_entity (uuid) ON DELETE SET NULL, \

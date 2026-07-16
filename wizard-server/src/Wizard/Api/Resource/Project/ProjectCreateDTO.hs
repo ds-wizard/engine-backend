@@ -13,5 +13,6 @@ data ProjectCreateDTO = ProjectCreateDTO
   , questionTagUuids :: [U.UUID]
   , documentTemplateUuid :: Maybe U.UUID
   , formatUuid :: Maybe U.UUID
+  , language :: Maybe String
   }
   deriving (Show, Eq, Generic)

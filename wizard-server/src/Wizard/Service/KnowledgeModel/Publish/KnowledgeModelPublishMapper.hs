@@ -36,6 +36,7 @@ fromPackage editor uuid forkOfPkgId mergeCheckpointPkgId org version description
       , description = description
       , readme = readme
       , license = editor.license
+      , language = editor.language
       , previousPackageUuid = editor.previousPackageUuid
       , forkOfPackageId = forkOfPkgId
       , mergeCheckpointPackageId = mergeCheckpointPkgId
