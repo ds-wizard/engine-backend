@@ -13,6 +13,8 @@ import Test.Hspec.Wai.Matcher
 import Shared.Common.Api.Resource.Error.ErrorJM ()
 import Shared.Common.Model.Error.Error
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailDTO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelLocaleDAO
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Locale.KnowledgeModelLocales
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as KnowledgeModelPackage
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as R
@@ -30,6 +32,7 @@ detail_GET :: AppContext -> SpecWith ((), Application)
 detail_GET appContext =
   describe "GET /wizard-api/knowledge-model-packages/{uuid}" $ do
     test_200 appContext
+    test_200_with_locales appContext
     test_403 appContext
     test_404 appContext
 
@@ -67,6 +70,28 @@ create_test_200 title appContext authHeader expDto =
       runInContextIO R.runMigration appContext
       -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_200_with_locales appContext =
+  it "HTTP 200 OK (with locales)" $
+    -- GIVEN: Prepare expectation
+    do
+      let expStatus = 200
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = globalKmPackageDetailDto {locales = [czechGlobalKmLocaleList]} :: KnowledgeModelPackageDetailDTO
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO KnowledgeModelPackage.runMigration appContext
+      runInContextIO R.runMigration appContext
+      runInContextIO (insertKnowledgeModelLocale czechGlobalKmLocale) appContext
+      -- WHEN: Call API
+      response <- request reqMethod (reqUrlT expDto.uuid) (reqHeadersT [reqAuthHeader]) reqBody
       -- THEN: Compare response with expectation
       let responseMatcher =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}

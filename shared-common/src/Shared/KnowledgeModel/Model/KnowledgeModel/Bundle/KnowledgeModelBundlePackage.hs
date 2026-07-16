@@ -18,6 +18,7 @@ data KnowledgeModelBundlePackage = KnowledgeModelBundlePackage
   , description :: String
   , readme :: String
   , license :: String
+  , language :: String
   , previousPackageId :: Maybe Coordinate
   , forkOfPackageId :: Maybe Coordinate
   , mergeCheckpointPackageId :: Maybe Coordinate

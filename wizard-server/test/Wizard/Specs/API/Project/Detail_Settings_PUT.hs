@@ -58,6 +58,7 @@ reqDtoT project =
     , documentTemplateUuid = project.documentTemplateUuid
     , formatUuid = project.formatUuid
     , isTemplate = project.isTemplate
+    , language = project.language
     }
 
 reqBodyT project = encode $ reqDtoT project

@@ -128,3 +128,12 @@ dcche
 aste
 
 Pendings
+msgctxt
+nplurals
+subtag
+Kapitola
+Mehrere
+Elemente
+dedupe
+msgids
+xfeff

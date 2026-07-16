@@ -1,5 +1,6 @@
 module Wizard.Api.Resource.Project.Detail.ProjectDetailReportDTO where
 
+import Data.Aeson (Value)
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -15,6 +16,7 @@ data ProjectDetailReportDTO = ProjectDetailReportDTO
   , sharing :: ProjectSharing
   , visibility :: ProjectVisibility
   , knowledgeModelPackage :: KnowledgeModelPackageSuggestion
+  , locale :: Maybe Value
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]

@@ -30,6 +30,7 @@ instance ToRow Project where
     , toField squashed
     , toField tenantUuid
     , toField . PGArray $ projectTags
+    , toField language
     ]
 
 instance FromRow Project where
@@ -51,4 +52,5 @@ instance FromRow Project where
     squashed <- field
     tenantUuid <- field
     projectTags <- fromPGArray <$> field
+    language <- field
     return $ Project {..}

@@ -37,6 +37,7 @@ import Wizard.Api.Resource.Project.ProjectShareChangeDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelLocaleDAO
 import Wizard.Database.DAO.Project.ProjectCommentThreadDAO
 import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.DAO.Project.ProjectEventDAO
@@ -59,6 +60,8 @@ import Wizard.Model.Project.ProjectContent
 import Wizard.Model.Project.ProjectReply
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import qualified Wizard.Service.KnowledgeModel.Locale.KnowledgeModelLocaleMapper as KnowledgeModelLocaleMapper
+import Wizard.Service.KnowledgeModel.Locale.KnowledgeModelLocaleService (findLocaleJson)
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Project.Collaboration.ProjectCollaborationService
 import Wizard.Service.Project.Comment.ProjectCommentService
@@ -254,12 +257,13 @@ getProjectDetailQuestionnaireByUuid projectUuid = do
       then findProjectCommentThreadsSimple projectUuid True editor
       else return M.empty
   knowledgeModel <- compileKnowledgeModel [] (Just project.knowledgeModelPackage.uuid) project.selectedQuestionTagUuids
+  mLocale <- findLocaleJson project.knowledgeModelPackage.uuid project.language
   let projectContent = compileProjectEvents projectEvents
   let labels =
         if editor
           then projectContent.labels
           else M.empty
-  return $ toDetailProjectDTO project unresolvedCommentCounts resolvedCommentCounts knowledgeModel projectContent.phaseUuid projectContent.replies labels
+  return $ toDetailProjectDTO project unresolvedCommentCounts resolvedCommentCounts knowledgeModel projectContent.phaseUuid projectContent.replies labels mLocale
 
 getProjectDetailPreviewById :: U.UUID -> AppContextM ProjectDetailPreview
 getProjectDetailPreviewById projectUuid = do
@@ -272,7 +276,8 @@ getProjectDetailSettingsById projectUuid = do
   project <- findProjectDetailSettings projectUuid
   checkViewPermissionToProject project.visibility project.sharing project.permissions
   knowledgeModel <- compileKnowledgeModel [] (Just project.knowledgeModelPackage.uuid) project.selectedQuestionTagUuids
-  return $ project {knowledgeModelTags = M.elems knowledgeModel.entities.tags}
+  availableLocales <- findKnowledgeModelLocalesByPackageUuid project.knowledgeModelPackage.uuid
+  return $ project {knowledgeModelTags = M.elems knowledgeModel.entities.tags, availableLocales = fmap KnowledgeModelLocaleMapper.toList availableLocales}
 
 getProjectEventsPage :: U.UUID -> Pageable -> [Sort] -> AppContextM (Page ProjectEventList)
 getProjectEventsPage projectUuid pageable sort = do

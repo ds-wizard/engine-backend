@@ -26,6 +26,7 @@ instance ToSchema ProjectDetailReportDTO where
         , visibility = project1.visibility
         , sharing = project1.sharing
         , knowledgeModelPackage = germanyPackageSuggestion
+        , locale = Nothing
         , isTemplate = project1.isTemplate
         , migrationUuid = Nothing
         , permissions = [project1AlbertEditProjectPermDto]

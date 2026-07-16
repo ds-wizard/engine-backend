@@ -32,6 +32,8 @@ instance ToSchema ProjectDetailQuestionnaireDTO where
         , sharing = project1.sharing
         , knowledgeModelPackage = toSuggestion netherlandsKmPackage
         , selectedQuestionTagUuids = project1.selectedQuestionTagUuids
+        , language = Nothing
+        , locale = Nothing
         , isTemplate = project1.isTemplate
         , knowledgeModel = km1
         , replies = fReplies

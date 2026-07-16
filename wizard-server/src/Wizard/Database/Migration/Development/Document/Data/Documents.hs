@@ -97,6 +97,7 @@ dmp1 =
           , versions = fmap (`toVersionList` Just userAlbertDto) project1Versions
           , projectTags = project1.projectTags
           , files = []
+          , language = Nothing
           , createdBy = Just . toDocumentContextUser $ userAlbert
           , createdAt = project1.createdAt
           , updatedAt = project1.updatedAt

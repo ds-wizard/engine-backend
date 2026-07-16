@@ -18,6 +18,7 @@ import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageChangeDTO
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailDTO
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelLocaleDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelPackageDAO
 import Wizard.Database.DAO.Registry.RegistryKnowledgeModelPackageDAO
 import Wizard.Database.DAO.Registry.RegistryOrganizationDAO
@@ -27,6 +28,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageDeletionImpact
 import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Tenant.Config.TenantConfig
+import qualified Wizard.Service.KnowledgeModel.Locale.KnowledgeModelLocaleMapper as KnowledgeModelLocaleMapper
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 import Wizard.Service.Tenant.Config.ConfigService
@@ -54,7 +56,8 @@ getPackageDetailByUuid pkgUuid excludeDeprecatedVersions = do
   pkgRs <- findRegistryPackages
   orgRs <- findRegistryOrganizations
   tcRegistry <- getCurrentTenantConfigRegistry
-  return $ toDetailDTO pkg tcRegistry.enabled pkgRs orgRs versions (buildPackageUrl serverConfig.registry.clientUrl pkg pkgRs)
+  locales <- findKnowledgeModelLocalesByPackageUuid pkgUuid
+  return $ toDetailDTO pkg tcRegistry.enabled pkgRs orgRs versions (buildPackageUrl serverConfig.registry.clientUrl pkg pkgRs) (fmap KnowledgeModelLocaleMapper.toList locales)
 
 getDependentPackageResources :: U.UUID -> Maybe Bool -> AppContextM [KnowledgeModelPackageDeletionImpact]
 getDependentPackageResources uuid mAllVersions = do

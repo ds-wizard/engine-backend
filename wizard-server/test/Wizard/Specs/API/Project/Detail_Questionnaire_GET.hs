@@ -2,7 +2,7 @@ module Wizard.Specs.API.Project.Detail_Questionnaire_GET (
   detail_questionnaire_GET,
 ) where
 
-import Data.Aeson (encode)
+import Data.Aeson (Value, decodeStrict, encode)
 import qualified Data.ByteString.Char8 as BS
 import Data.Foldable (traverse_)
 import qualified Data.Map.Strict as M
@@ -20,21 +20,26 @@ import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageEventDAO
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.Project.Detail.ProjectDetailQuestionnaireDTO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelLocaleDAO
 import Wizard.Database.DAO.Project.ProjectCommentDAO
 import Wizard.Database.DAO.Project.ProjectCommentThreadDAO
 import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.DAO.Project.ProjectEventDAO
 import qualified Wizard.Database.Migration.Development.DocumentTemplate.DocumentTemplateMigration as TML
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Locale.KnowledgeModelLocales
 import Wizard.Database.Migration.Development.Project.Data.ProjectComments
 import Wizard.Database.Migration.Development.Project.Data.ProjectReplies
 import Wizard.Database.Migration.Development.Project.Data.Projects
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as PRJ
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
+import Wizard.Model.KnowledgeModel.Locale.KnowledgeModelLocale
 import Wizard.Model.Project.Comment.ProjectComment
 import Wizard.Model.Project.Project
 import Wizard.Model.Project.ProjectContent
+import Wizard.S3.KnowledgeModel.KnowledgeModelLocaleS3
 import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as KMP
 import WizardLib.Public.Localization.Messages.Public
 
@@ -49,6 +54,7 @@ detail_questionnaire_GET :: AppContext -> SpecWith ((), Application)
 detail_questionnaire_GET appContext =
   describe "GET /wizard-api/projects/{projectUuid}/questionnaire" $ do
     test_200 appContext
+    test_200_with_locale appContext
     test_403 appContext
     test_404 appContext
 
@@ -182,6 +188,8 @@ create_test_200 title appContext project projectEvents projectContent kmPackage 
               , sharing = project.sharing
               , knowledgeModelPackage = KMP.toSuggestion kmPackage
               , selectedQuestionTagUuids = project.selectedQuestionTagUuids
+              , language = project.language
+              , locale = Nothing
               , isTemplate = project.isTemplate
               , knowledgeModel = km1WithQ4
               , replies = fReplies
@@ -201,6 +209,46 @@ create_test_200 title appContext project projectEvents projectContent kmPackage 
       let responseMatcher =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_200_with_locale appContext = do
+  it "HTTP 200 OK (with locale)" $
+    -- GIVEN: Run migrations
+    do
+      runInContextIO U.runMigration appContext
+      runInContextIO TML.runMigration appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
+      runInContextIO (insertProject (project1 {language = Just "cs"} :: Project)) appContext
+      runInContextIO (insertProjectEvents project1Events) appContext
+      let kmLocale = czechGlobalKmLocale {knowledgeModelPackageUuid = germanyKmPackage.uuid} :: KnowledgeModelLocale
+      runInContextIO (insertKnowledgeModelLocale kmLocale) appContext
+      runInContextIO (putKnowledgeModelLocale kmLocale.uuid translationJsonFileName czechJsonContent) appContext
+      -- WHEN: Call API
+      response <- request reqMethod (reqUrlT project1.uuid) [reqAuthHeader] reqBody
+      -- THEN: Compare response with expectation
+      let (status, _, resBody) = destructResponse response :: (Int, ResponseHeaders, ProjectDetailQuestionnaireDTO)
+      liftIO $ status `shouldBe` 200
+      liftIO $ resBody.language `shouldBe` Just "cs"
+      liftIO $ resBody.locale `shouldBe` (decodeStrict czechJsonContent :: Maybe Value)
+  it "HTTP 200 OK (with unknown language)" $
+    -- GIVEN: Run migrations
+    do
+      runInContextIO U.runMigration appContext
+      runInContextIO TML.runMigration appContext
+      runInContextIO (insertPackage germanyKmPackage) appContext
+      runInContextIO (traverse_ insertPackageEvent germanyKmPackageEvents) appContext
+      runInContextIO (insertProject (project1 {language = Just "xx"} :: Project)) appContext
+      runInContextIO (insertProjectEvents project1Events) appContext
+      -- WHEN: Call API
+      response <- request reqMethod (reqUrlT project1.uuid) [reqAuthHeader] reqBody
+      -- THEN: Compare response with expectation
+      let (status, _, resBody) = destructResponse response :: (Int, ResponseHeaders, ProjectDetailQuestionnaireDTO)
+      liftIO $ status `shouldBe` 200
+      liftIO $ resBody.language `shouldBe` Just "xx"
+      liftIO $ resBody.locale `shouldBe` Nothing
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

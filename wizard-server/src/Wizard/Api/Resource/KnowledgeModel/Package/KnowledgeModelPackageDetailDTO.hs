@@ -7,6 +7,7 @@ import GHC.Generics
 import Shared.Common.Api.Resource.Version.VersionDTO
 import Shared.Coordinate.Model.Coordinate.Coordinate
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
+import Wizard.Model.KnowledgeModel.Locale.KnowledgeModelLocaleList
 import Wizard.Model.Registry.RegistryOrganization
 
 data KnowledgeModelPackageDetailDTO = KnowledgeModelPackageDetailDTO
@@ -19,6 +20,7 @@ data KnowledgeModelPackageDetailDTO = KnowledgeModelPackageDetailDTO
   , description :: String
   , readme :: String
   , license :: String
+  , language :: String
   , metamodelVersion :: Int
   , previousPackageUuid :: Maybe U.UUID
   , forkOfPackageId :: Maybe Coordinate
@@ -26,6 +28,7 @@ data KnowledgeModelPackageDetailDTO = KnowledgeModelPackageDetailDTO
   , nonEditable :: Bool
   , public :: Bool
   , versions :: [VersionDTO]
+  , locales :: [KnowledgeModelLocaleList]
   , remoteLatestVersion :: Maybe String
   , organization :: Maybe RegistryOrganization
   , registryLink :: Maybe String

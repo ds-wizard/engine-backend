@@ -15,6 +15,7 @@ data ProjectDetailQuestionnaire = ProjectDetailQuestionnaire
   , sharing :: ProjectSharing
   , knowledgeModelPackage :: KnowledgeModelPackageSuggestion
   , selectedQuestionTagUuids :: [U.UUID]
+  , language :: Maybe String
   , isTemplate :: Bool
   , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]

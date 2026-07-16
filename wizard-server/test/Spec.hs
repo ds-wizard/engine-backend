@@ -66,6 +66,7 @@ import Wizard.Specs.Service.KnowledgeModel.Compiler.CompilerSpec
 import Wizard.Specs.Service.KnowledgeModel.Compiler.Modifier.ModifierSpec
 import Wizard.Specs.Service.KnowledgeModel.Editor.KnowledgeModelEditorServiceSpec
 import Wizard.Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
+import Wizard.Specs.Service.KnowledgeModel.Locale.Pot.PotFileServiceSpec
 import Wizard.Specs.Service.KnowledgeModel.Metamodel.Migrator.EventMigratorSpec
 import Wizard.Specs.Service.KnowledgeModel.Migration.Migrator.MigrationSpec
 import qualified Wizard.Specs.Service.KnowledgeModel.Migration.Migrator.SanitizerSpec as KM_SanitizerSpec
@@ -85,6 +86,7 @@ import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Tenant.Config.TenantConfigValidationSpec
 import Wizard.Specs.Service.Tenant.TenantValidationSpec
 import Wizard.Specs.Service.User.UserServiceSpec
+import Wizard.Specs.Util.GettextSpec
 import Wizard.Specs.Websocket.Common
 import Wizard.Specs.Websocket.KnowledgeModelEditor.Detail.WebsocketSpec
 import Wizard.Specs.Websocket.Project.Detail.WebsocketSpec
@@ -168,6 +170,7 @@ main =
                 describe "Compiler" $ do
                   describe "Modifier" modifierSpec
                   compilerSpec
+                describe "Locale" potFileServiceSpec
                 describe "Package" packageUtilSpec
                 describe "Squash" $ do squasherSpec
                 knowledgeModelFilterSpec
@@ -184,6 +187,7 @@ main =
               describe "Tenant" $ do
                 describe "Config" tenantConfigValidationSpec
                 tenantValidationSpec
+            describe "UTIL" gettextSpec
           before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
             describe "API" $ do
               apiKeyAPI baseContext appContext

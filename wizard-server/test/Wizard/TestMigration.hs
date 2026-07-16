@@ -20,6 +20,7 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.DocumentTemplate.DocumentTemplateDraftDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelEditorDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelLocaleDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelMigrationDAO
 import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelSecretDAO
 import Wizard.Database.DAO.Plugin.PluginDAO
@@ -55,6 +56,7 @@ import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMi
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelCacheSchemaMigration as KnowledgeModelCache
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelEditorSchemaMigration as KnowledgeModelEditor
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelLocaleSchemaMigration as KnowledgeModelLocale
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelMigrationSchemaMigration as KnowledgeModelMigration
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageSchemaMigration as KnowledgeModelPackage
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSecretSchemaMigration as KnowledgeModelSecret
@@ -67,6 +69,7 @@ import qualified Wizard.Database.Migration.Development.Project.ProjectMigrationS
 import qualified Wizard.Database.Migration.Development.Project.ProjectSchemaMigration as Project
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as Registry
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as Submission
+import qualified Wizard.Database.Migration.Development.TemporaryFile.TemporaryFileSchemaMigration as TemporaryFile
 import Wizard.Database.Migration.Development.Tenant.Data.TenantConfigs
 import Wizard.Database.Migration.Development.Tenant.Data.TenantLimitBundles
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
@@ -103,6 +106,7 @@ buildSchema appContext = do
   runInContext Document.dropTriggers appContext
   runInContext Project.dropTriggers appContext
   runInContext Locale.dropTriggers appContext
+  runInContext KnowledgeModelLocale.dropTriggers appContext
   putStrLn "DB: dropping DB functions"
   runInContext Project.dropFunctions appContext
   runInContext DocumentTemplate.dropFunctions appContext
@@ -126,7 +130,9 @@ buildSchema appContext = do
   runInContext ProjectMigration.dropTables appContext
   runInContext Project.dropTables appContext
   runInContext KnowledgeModelSecret.dropTables appContext
+  runInContext KnowledgeModelLocale.dropTables appContext
   runInContext KnowledgeModelPackage.dropTables appContext
+  runInContext TemporaryFile.dropTables appContext
   runInContext UserRegistrationPending.dropTables appContext
   runInContext UserOpenIdIdentity.dropTables appContext
   runInContext User.dropTables appContext
@@ -155,7 +161,9 @@ buildSchema appContext = do
   runInContext User.createTables appContext
   runInContext UserOpenIdIdentity.createTables appContext
   runInContext UserRegistrationPending.createTables appContext
+  runInContext TemporaryFile.createTables appContext
   runInContext KnowledgeModelPackage.createTables appContext
+  runInContext KnowledgeModelLocale.createTables appContext
   runInContext KnowledgeModelSecret.createTables appContext
   runInContext UserEmailLink.createTables appContext
   runInContext Feedback.createTables appContext
@@ -183,6 +191,7 @@ buildSchema appContext = do
   runInContext User.createUserLocaleForeignKeyConstraint appContext
   putStrLn "DB: Creating triggers"
   runInContext Locale.createTriggers appContext
+  runInContext KnowledgeModelLocale.createTriggers appContext
   runInContext Project.createTriggers appContext
   runInContext Document.createTriggers appContext
   putStrLn "DB-S3: Purging and creating schema"
@@ -226,6 +235,7 @@ resetDB appContext = do
   runInContext deleteProjects appContext
   runInContext deleteDocumentTemplates appContext
   runInContext deleteKnowledgeModelSecrets appContext
+  runInContext deleteKnowledgeModelLocales appContext
   runInContext deletePackages appContext
   runInContext deleteUserTokens appContext
   runInContext deleteUserGroupMemberships appContext

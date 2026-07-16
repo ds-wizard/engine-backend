@@ -22,6 +22,7 @@ import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMi
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelCacheSchemaMigration as KnowledgeModelCache
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelEditorMigration as KnowledgeModelEditor
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelEditorSchemaMigration as KnowledgeModelEditor
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelLocaleSchemaMigration as KnowledgeModelLocale
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelMigrationMigration as KnowledgeModelMigration
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelMigrationSchemaMigration as KnowledgeModelMigration
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as KnowledgeModelPackage
@@ -64,6 +65,7 @@ runMigration = runAppContextWithBaseContext $ do
   Document.dropTriggers
   Project.dropTriggers
   Locale.dropTriggers
+  KnowledgeModelLocale.dropTriggers
   -- 2. Drop DB functions
   Project.dropFunctions
   DocumentTemplate.dropFunctions
@@ -87,6 +89,7 @@ runMigration = runAppContextWithBaseContext $ do
   ProjectMigration.dropTables
   Project.dropTables
   KnowledgeModelSecret.dropTables
+  KnowledgeModelLocale.dropTables
   KnowledgeModelPackage.dropTables
   TemporaryFile.dropTables
   UserRegistrationPending.dropTables
@@ -120,6 +123,7 @@ runMigration = runAppContextWithBaseContext $ do
   UserRegistrationPending.createTables
   TemporaryFile.createTables
   KnowledgeModelPackage.createTables
+  KnowledgeModelLocale.createTables
   KnowledgeModelSecret.createTables
   UserEmailLink.createTables
   Feedback.createTables
@@ -147,6 +151,7 @@ runMigration = runAppContextWithBaseContext $ do
   User.createUserLocaleForeignKeyConstraint
   -- 9. Create DB triggers
   Locale.createTriggers
+  KnowledgeModelLocale.createTriggers
   Project.createTriggers
   Document.createTriggers
   -- 10. Load S3 fixtures

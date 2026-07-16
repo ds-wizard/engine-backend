@@ -22,6 +22,7 @@ data KnowledgeModelPackage = KnowledgeModelPackage
   , description :: String
   , readme :: String
   , license :: String
+  , language :: String
   , previousPackageUuid :: Maybe U.UUID
   , forkOfPackageId :: Maybe Coordinate
   , mergeCheckpointPackageId :: Maybe Coordinate -- TODO fix it

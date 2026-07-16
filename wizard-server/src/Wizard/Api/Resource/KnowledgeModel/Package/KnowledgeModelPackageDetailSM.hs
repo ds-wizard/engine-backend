@@ -8,9 +8,11 @@ import Shared.Common.Util.Uuid
 import Shared.Coordinate.Api.Resource.Coordinate.CoordinateSM ()
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePhaseSM ()
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
+import Wizard.Api.Resource.KnowledgeModel.Locale.KnowledgeModelLocaleListSM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailDTO
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailJM ()
 import Wizard.Api.Resource.Registry.RegistryOrganizationSM ()
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Locale.KnowledgeModelLocales
 import Wizard.Database.Migration.Development.Registry.Data.RegistryOrganizations
 import Wizard.Database.Migration.Development.Registry.Data.RegistryPackages
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
@@ -25,4 +27,5 @@ instance ToSchema KnowledgeModelPackageDetailDTO where
           [globalRegistryOrganization]
           [(u' "ac3a6934-2069-4792-943c-e1170edee8c2", "1.0.0")]
           (Just "https://registry.example.org")
+          [czechGlobalKmLocaleList]
       )
