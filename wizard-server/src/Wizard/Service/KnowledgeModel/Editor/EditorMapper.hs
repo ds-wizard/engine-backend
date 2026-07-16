@@ -1,6 +1,7 @@
 module Wizard.Service.KnowledgeModel.Editor.EditorMapper where
 
 import qualified Data.Map.Strict as M
+import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -49,6 +50,7 @@ toDetailDTO editor kmEditorEvents kmEditorReplies mPreviousPackage knowledgeMode
     , description = editor.description
     , readme = editor.readme
     , license = editor.license
+    , language = editor.language
     , state = state
     , previousPackage = fmap KMP.toSimple mPreviousPackage
     , forkOfPackage = fmap toSimpleDTO mForkOfPackage
@@ -70,6 +72,7 @@ fromCreateDTO dto uuid mPreviousPkg createdBy tenantUuid now =
     , description = maybe "" (.description) mPreviousPkg
     , readme = maybe "" (.readme) mPreviousPkg
     , license = maybe "" (.license) mPreviousPkg
+    , language = fromMaybe (maybe "en" (.language) mPreviousPkg) dto.language
     , previousPackageUuid = dto.previousPackageUuid
     , metamodelVersion = knowledgeModelMetamodelVersion
     , squashed = True
@@ -89,6 +92,7 @@ fromChangeDTO dto editor bUpdatedAt =
     , description = dto.description
     , readme = dto.readme
     , license = dto.license
+    , language = dto.language
     , previousPackageUuid = editor.previousPackageUuid
     , metamodelVersion = editor.metamodelVersion
     , squashed = editor.squashed

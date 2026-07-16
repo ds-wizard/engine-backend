@@ -27,6 +27,7 @@ instance FromJSON KnowledgeModelBundlePackage where
     description <- o .: "description"
     readme <- o .:? "readme" .!= ""
     license <- o .:? "license" .!= ""
+    language <- o .:? "language" .!= "en"
     parentPackageId <- o .:? "parentPackageId"
     previousPackageId <- o .:? "previousPackageId" .!= parentPackageId
     forkOfPackageId <- o .:? "forkOfPackageId" .!= parentPackageId

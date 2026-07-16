@@ -9,5 +9,6 @@ data KnowledgeModelEditorChangeDTO = KnowledgeModelEditorChangeDTO
   , description :: String
   , readme :: String
   , license :: String
+  , language :: String
   }
   deriving (Generic)

@@ -9,6 +9,7 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageChangeDTO
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageDetailDTO
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
+import Wizard.Model.KnowledgeModel.Locale.KnowledgeModelLocaleList
 import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageList
 import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Registry.RegistryOrganization
@@ -35,6 +36,7 @@ toSimpleDTO' pkgRs orgRs pkg =
     , nonEditable = pkg.nonEditable
     , public = pkg.public
     , organization = selectOrganizationByOrgId pkg orgRs
+    , language = pkg.language
     , createdAt = pkg.createdAt
     }
 
@@ -65,11 +67,12 @@ toSimpleDTO'' registryEnabled pkg =
                 , createdAt = pkg.createdAt
                 }
           _ -> Nothing
+    , language = pkg.language
     , createdAt = pkg.createdAt
     }
 
-toDetailDTO :: KnowledgeModelPackage -> Bool -> [RegistryPackage] -> [RegistryOrganization] -> [(U.UUID, String)] -> Maybe String -> KnowledgeModelPackageDetailDTO
-toDetailDTO pkg registryEnabled pkgRs orgRs versionLs registryLink =
+toDetailDTO :: KnowledgeModelPackage -> Bool -> [RegistryPackage] -> [RegistryOrganization] -> [(U.UUID, String)] -> Maybe String -> [KnowledgeModelLocaleList] -> KnowledgeModelPackageDetailDTO
+toDetailDTO pkg registryEnabled pkgRs orgRs versionLs registryLink locales =
   KnowledgeModelPackageDetailDTO
     { uuid = pkg.uuid
     , name = pkg.name
@@ -80,6 +83,7 @@ toDetailDTO pkg registryEnabled pkgRs orgRs versionLs registryLink =
     , description = pkg.description
     , readme = pkg.readme
     , license = pkg.license
+    , language = pkg.language
     , metamodelVersion = pkg.metamodelVersion
     , previousPackageUuid = pkg.previousPackageUuid
     , forkOfPackageId = pkg.forkOfPackageId
@@ -87,6 +91,7 @@ toDetailDTO pkg registryEnabled pkgRs orgRs versionLs registryLink =
     , nonEditable = pkg.nonEditable
     , public = pkg.public
     , versions = map toVersionDTO . L.sortBy (\(_, v1) (_, v2) -> compare v2 v1) $ versionLs
+    , locales = locales
     , remoteLatestVersion =
         case (registryEnabled, selectPackageByOrgIdAndKmId pkg pkgRs) of
           (True, Just pkgR) -> Just pkgR.remoteVersion

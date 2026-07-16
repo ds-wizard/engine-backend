@@ -10,5 +10,6 @@ data ProjectSettingsChangeDTO = ProjectSettingsChangeDTO
   , documentTemplateUuid :: Maybe U.UUID
   , formatUuid :: Maybe U.UUID
   , isTemplate :: Bool
+  , language :: Maybe String
   }
   deriving (Show, Eq, Generic)

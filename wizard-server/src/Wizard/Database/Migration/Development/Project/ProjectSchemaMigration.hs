@@ -80,6 +80,7 @@ createProjectTable = do
         \    squashed                     boolean     NOT NULL, \
         \    tenant_uuid                  uuid        NOT NULL, \
         \    project_tags                 text[]      NOT NULL, \
+        \    language                     varchar, \
         \    CONSTRAINT project_pk PRIMARY KEY (uuid), \
         \    CONSTRAINT project_knowledge_model_package_uuid_fk FOREIGN KEY (knowledge_model_package_uuid) REFERENCES knowledge_model_package (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT project_document_template_uuid_fk FOREIGN KEY (document_template_uuid) REFERENCES document_template (uuid) ON DELETE CASCADE, \

@@ -8,5 +8,6 @@ data PackagePublishMigrationDTO = PackagePublishMigrationDTO
   , version :: String
   , description :: String
   , readme :: String
+  , localeUuids :: Maybe [U.UUID]
   }
   deriving (Generic)

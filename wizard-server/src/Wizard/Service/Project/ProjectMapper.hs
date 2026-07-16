@@ -1,5 +1,6 @@
 module Wizard.Service.Project.ProjectMapper where
 
+import qualified Data.Aeson as A
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
@@ -106,6 +107,7 @@ toDetailQuestionnaire project kmPackage migrationUuid permissions =
     , sharing = project.sharing
     , knowledgeModelPackage = kmPackage
     , selectedQuestionTagUuids = project.selectedQuestionTagUuids
+    , language = project.language
     , isTemplate = project.isTemplate
     , migrationUuid = migrationUuid
     , permissions = permissions
@@ -116,8 +118,8 @@ toDetailDTO :: ProjectDetail -> ProjectDetailDTO
 toDetailDTO ProjectDetail {..} =
   ProjectDetailDTO {..}
 
-toDetailProjectDTO :: ProjectDetailQuestionnaire -> M.Map String (M.Map U.UUID Int) -> M.Map String (M.Map U.UUID Int) -> KnowledgeModel -> Maybe U.UUID -> M.Map String Reply -> M.Map String [U.UUID] -> ProjectDetailQuestionnaireDTO
-toDetailProjectDTO ProjectDetailQuestionnaire {..} unresolvedCommentCounts resolvedCommentCounts knowledgeModel phaseUuid replies labels =
+toDetailProjectDTO :: ProjectDetailQuestionnaire -> M.Map String (M.Map U.UUID Int) -> M.Map String (M.Map U.UUID Int) -> KnowledgeModel -> Maybe U.UUID -> M.Map String Reply -> M.Map String [U.UUID] -> Maybe A.Value -> ProjectDetailQuestionnaireDTO
+toDetailProjectDTO ProjectDetailQuestionnaire {..} unresolvedCommentCounts resolvedCommentCounts knowledgeModel phaseUuid replies labels locale =
   let fileCount = length files
    in ProjectDetailQuestionnaireDTO {..}
 
@@ -241,6 +243,7 @@ fromShareChangeDTO project dto visibility sharing now =
     , description = project.description
     , visibility = visibility
     , sharing = sharing
+    , language = project.language
     , knowledgeModelPackageUuid = project.knowledgeModelPackageUuid
     , selectedQuestionTagUuids = project.selectedQuestionTagUuids
     , projectTags = project.projectTags
@@ -266,6 +269,7 @@ fromSettingsChangeDTO project dto hasProjectTemplatesManageRolePermission now =
     , knowledgeModelPackageUuid = project.knowledgeModelPackageUuid
     , selectedQuestionTagUuids = project.selectedQuestionTagUuids
     , projectTags = dto.projectTags
+    , language = dto.language
     , documentTemplateUuid = dto.documentTemplateUuid
     , formatUuid = dto.formatUuid
     , creatorUuid = project.creatorUuid
@@ -302,6 +306,7 @@ fromProjectCreateDTO dto projectUuid visibility sharing mCurrentUserUuid pkgUuid
       , knowledgeModelPackageUuid = pkgUuid
       , selectedQuestionTagUuids = dto.questionTagUuids
       , projectTags = []
+      , language = dto.language
       , documentTemplateUuid = dto.documentTemplateUuid
       , formatUuid = dto.formatUuid
       , creatorUuid = mCurrentUserUuid
@@ -356,6 +361,7 @@ fromCreateProjectCommand command uuid permissions tcProject createdBy now = do
     , sharing = tcProject.projectSharing.defaultValue
     , knowledgeModelPackageUuid = command.knowledgeModelPackageUuid
     , selectedQuestionTagUuids = []
+    , language = Nothing
     , projectTags = []
     , documentTemplateUuid = command.documentTemplateUuid
     , formatUuid = Nothing

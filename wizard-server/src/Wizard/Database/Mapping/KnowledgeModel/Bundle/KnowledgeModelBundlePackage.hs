@@ -29,6 +29,7 @@ instance ToRow KnowledgeModelBundlePackage where
     , toJSONField events
     , toField nonEditable
     , toField createdAt
+    , toField language
     ]
 
 instance FromRow KnowledgeModelBundlePackage where
@@ -49,4 +50,5 @@ instance FromRow KnowledgeModelBundlePackage where
     events <- fieldWith fromJSONField
     nonEditable <- field
     createdAt <- field
+    language <- field
     return $ KnowledgeModelBundlePackage {..}

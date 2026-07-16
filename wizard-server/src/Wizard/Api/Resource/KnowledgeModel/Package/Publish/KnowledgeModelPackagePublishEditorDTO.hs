@@ -5,5 +5,6 @@ import GHC.Generics
 
 data PackagePublishEditorDTO = PackagePublishEditorDTO
   { editorUuid :: U.UUID
+  , localeUuids :: Maybe [U.UUID]
   }
   deriving (Generic)

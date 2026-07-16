@@ -18,6 +18,7 @@ toSimpleDTO pkg org =
     , description = pkg.description
     , createdAt = pkg.createdAt
     , organization = OM.toSimpleDTO org
+    , language = pkg.language
     }
 
 toDetailDTO :: KnowledgeModelPackage -> [String] -> Organization.Organization -> KnowledgeModelPackageDetailDTO
@@ -32,6 +33,7 @@ toDetailDTO pkg versions org =
     , description = pkg.description
     , readme = pkg.readme
     , license = pkg.license
+    , language = pkg.language
     , metamodelVersion = pkg.metamodelVersion
     , previousPackageUuid = pkg.previousPackageUuid
     , forkOfPackageId = pkg.forkOfPackageId

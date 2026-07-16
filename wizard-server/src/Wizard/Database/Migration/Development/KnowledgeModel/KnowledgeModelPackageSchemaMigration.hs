@@ -56,6 +56,7 @@ createKnowledgeModelPackageTable = do
         \    phase                       varchar     NOT NULL, \
         \    non_editable                bool        NOT NULL, \
         \    public                      bool        NOT NULL, \
+        \    language                    varchar     NOT NULL DEFAULT 'en', \
         \    CONSTRAINT knowledge_model_package_pk PRIMARY KEY (uuid), \
         \    CONSTRAINT knowledge_model_package_previous_package_uuid_fk FOREIGN KEY (previous_package_uuid) REFERENCES knowledge_model_package (uuid) ON DELETE CASCADE, \
         \    CONSTRAINT knowledge_model_package_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE, \

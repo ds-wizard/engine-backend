@@ -23,6 +23,7 @@ instance FromRow KnowledgeModelEditor where
     license <- field
     metamodelVersion <- field
     squashed <- field
+    language <- field
     return $ KnowledgeModelEditor {..}
 
 instance ToRow KnowledgeModelEditor where
@@ -41,4 +42,5 @@ instance ToRow KnowledgeModelEditor where
     , toField license
     , toField metamodelVersion
     , toField squashed
+    , toField language
     ]

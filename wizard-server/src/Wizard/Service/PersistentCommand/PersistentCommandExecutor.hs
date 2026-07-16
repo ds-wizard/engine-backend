@@ -9,6 +9,7 @@ import qualified Shared.Prefab.Service.Prefab.PrefabCommandExecutor as PrefabCom
 import Wizard.Model.Context.AppContext
 import qualified Wizard.Service.Document.DocumentCommandExecutor as DocumentCommandExecutor
 import qualified Wizard.Service.DocumentTemplate.Asset.DocumentTemplateAssetCommandExecutor as DocumentTemplateAssetCommandExecutor
+import qualified Wizard.Service.KnowledgeModel.Locale.KnowledgeModelLocaleCommandExecutor as KnowledgeModelLocaleCommandExecutor
 import qualified Wizard.Service.KnowledgeModel.Metamodel.MigrationCommandExecutor as MetamodelMigratorCommandExecutor
 import qualified Wizard.Service.Locale.LocaleCommandExecutor as LocaleCommandExecutor
 import qualified Wizard.Service.OpenId.Client.Definition.OpenIdClientDefinitionCommandExecutor as OpenIdClientDefinitionCommandExecutor
@@ -27,6 +28,7 @@ execute :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Mayb
 execute command
   | command.component == DocumentCommandExecutor.cComponent = DocumentCommandExecutor.execute command
   | command.component == DocumentTemplateAssetCommandExecutor.cComponent = DocumentTemplateAssetCommandExecutor.execute command
+  | command.component == KnowledgeModelLocaleCommandExecutor.cComponent = KnowledgeModelLocaleCommandExecutor.execute command
   | command.component == LocaleCommandExecutor.cComponent = LocaleCommandExecutor.execute command
   | command.component == MetamodelMigratorCommandExecutor.cComponent = MetamodelMigratorCommandExecutor.execute command
   | command.component == OpenIdClientDefinitionCommandExecutor.cComponent = OpenIdClientDefinitionCommandExecutor.execute command

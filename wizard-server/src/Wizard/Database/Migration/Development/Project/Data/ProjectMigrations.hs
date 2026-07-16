@@ -41,6 +41,7 @@ projectMigrationDto =
           project4Ctn.phaseUuid
           project4Ctn.replies
           project4Ctn.labels
+          Nothing
     , newProject =
         toDetailProjectDTO
           (toDetailQuestionnaire project4Upgraded (KMP.toSuggestion netherlandsKmPackageV2) Nothing [])
@@ -50,6 +51,7 @@ projectMigrationDto =
           project4Ctn.phaseUuid
           project4Ctn.replies
           project4Ctn.labels
+          Nothing
     , resolvedQuestionUuids = [question2.uuid]
     , tenantUuid = defaultTenant.uuid
     }
@@ -66,6 +68,7 @@ projectMigrationVisibleViewDto =
           project4Ctn.phaseUuid
           project4Ctn.replies
           project4Ctn.labels
+          Nothing
     , newProject =
         toDetailProjectDTO
           (toDetailQuestionnaire project4VisibleViewUpgraded (KMP.toSuggestion netherlandsKmPackageV2) Nothing [])
@@ -75,6 +78,7 @@ projectMigrationVisibleViewDto =
           project4Ctn.phaseUuid
           project4Ctn.replies
           project4Ctn.labels
+          Nothing
     , resolvedQuestionUuids = projectMigrationDto.resolvedQuestionUuids
     , tenantUuid = defaultTenant.uuid
     }
@@ -91,6 +95,7 @@ projectMigrationVisibleEditDto =
           project4Ctn.phaseUuid
           project4Ctn.replies
           project4Ctn.labels
+          Nothing
     , newProject =
         toDetailProjectDTO
           (toDetailQuestionnaire project4VisibleEditUpgraded (KMP.toSuggestion netherlandsKmPackageV2) Nothing [])
@@ -100,6 +105,7 @@ projectMigrationVisibleEditDto =
           project4Ctn.phaseUuid
           project4Ctn.replies
           project4Ctn.labels
+          Nothing
     , resolvedQuestionUuids = projectMigrationDto.resolvedQuestionUuids
     , tenantUuid = defaultTenant.uuid
     }
