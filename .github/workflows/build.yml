@@ -12,6 +12,10 @@ jobs:
 
     if: github.repository == 'ds-wizard/engine-backend'
 
+    permissions:
+      contents: read
+      packages: write
+
     strategy:
       matrix:
         component: [registry, wizard]
@@ -19,6 +23,7 @@ jobs:
     env:
       COMPONENT: ${{ matrix.component }}
       IMAGE_NAME: ${{ matrix.component }}-server
+      IMAGE_PREFIX: 'ghcr.io/ds-wizard'
       PUBLIC_IMAGE_PREFIX: datastewardshipwizard
       DOCKER_META_CONTEXT: './${{ matrix.component }}-server'
       DOCKER_META_FILE: './${{ matrix.component }}-server/Dockerfile'
@@ -224,7 +229,7 @@ jobs:
       uses: docker/metadata-action@v6
       with:
         images: |
-          ${{ env.PUBLIC_IMAGE_PREFIX }}/${{ env.IMAGE_NAME }}
+          ${{ env.IMAGE_PREFIX }}/${{ env.IMAGE_NAME }}
         tags: |
           type=sha
 
@@ -239,6 +244,14 @@ jobs:
         labels: ${{ steps.meta-test.outputs.labels }}
 
 # (4.2) -> Docker login
+    - name: Docker login [ghcr.io]
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v4
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Docker login [docker.io]
       if: github.event_name != 'pull_request'
       uses: docker/login-action@v4
@@ -253,7 +266,7 @@ jobs:
       uses: docker/metadata-action@v6
       with:
         images: |
-          ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}
+          ${{ env.IMAGE_PREFIX }}/${{ env.IMAGE_NAME }}
         tags: |
           type=ref,event=branch
 
@@ -276,7 +289,6 @@ jobs:
       with:
         images: |
           ${{ env.PUBLIC_IMAGE_PREFIX }}/${{ env.IMAGE_NAME }}
-          ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}
         tags: |
           type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
           type=semver,pattern={{version}}

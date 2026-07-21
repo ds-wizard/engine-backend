@@ -33,7 +33,6 @@ import Wizard.Service.Tenant.TenantHelper
 import Wizard.Service.User.UserService
 import Wizard.Service.User.UserUtil
 import Wizard.Service.UserToken.Login.LoginService
-import Wizard.Service.UserToken.Login.LoginValidation
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Database.DAO.OpenId.OpenIdClientDefinitionDAO
 import WizardLib.Public.Database.DAO.User.UserOpenIdIdentityDAO
@@ -99,7 +98,6 @@ loginUser providerUuid mClientUrl _mError mCode mNonce mIdToken mUserAgent mSess
     case mIdentity of
       Just identity -> do
         user <- findUserByUuid identity.userUuid
-        validateLoginEnabled tcAuthentication user
         createLoginToken user mUserAgent mSessionState
       Nothing -> do
         mUserByEmail <- case mEmail of
@@ -107,7 +105,6 @@ loginUser providerUuid mClientUrl _mError mCode mNonce mIdToken mUserAgent mSess
           Nothing -> return Nothing
         case mUserByEmail of
           Just userByEmail -> do
-            validateLoginEnabled tcAuthentication userByEmail
             insertOpenIdIdentityLink userByEmail.uuid openIdClient externalId
             createLoginToken userByEmail mUserAgent mSessionState
           Nothing -> do
@@ -118,7 +115,6 @@ loginUser providerUuid mClientUrl _mError mCode mNonce mIdToken mUserAgent mSess
               (Just email, Just firstName, Just lastName) -> do
                 consentRequired <- isConsentRequired Nothing
                 user <- createUserFromOpenIdLogin openIdClient externalId firstName lastName email mPicture mUserUuid (not consentRequired)
-                validateLoginEnabled tcAuthentication user
                 createLoginToken user mUserAgent mSessionState
               _ -> do
                 pending <- upsertPendingExternalRegistration OpenIdUserRegistrationPendingServiceType providerUuid externalId Nothing mEmail mFirstName mLastName mPicture Nothing
