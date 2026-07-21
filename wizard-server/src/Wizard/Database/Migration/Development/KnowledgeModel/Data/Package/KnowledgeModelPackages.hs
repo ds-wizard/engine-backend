@@ -37,6 +37,7 @@ globalRemotePackage =
           , name = orgGlobalSimple.name
           , logo = Just orgLogo
           }
+    , language = globalKmPackage.language
     , createdAt = globalKmPackage.createdAt
     }
 
@@ -66,6 +67,7 @@ globalNetherlandsPackage =
           , name = orgNetherlandsSimple.name
           , logo = Just orgLogo
           }
+    , language = netherlandsKmPackageV2.language
     , createdAt = globalKmPackage.createdAt
     }
 

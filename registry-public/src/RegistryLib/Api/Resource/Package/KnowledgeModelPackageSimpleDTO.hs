@@ -14,6 +14,7 @@ data KnowledgeModelPackageSimpleDTO = KnowledgeModelPackageSimpleDTO
   , version :: String
   , description :: String
   , organization :: OrganizationSimple
+  , language :: String
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

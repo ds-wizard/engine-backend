@@ -36,6 +36,7 @@ toSimpleDTO' pkgRs orgRs pkg =
     , nonEditable = pkg.nonEditable
     , public = pkg.public
     , organization = selectOrganizationByOrgId pkg orgRs
+    , language = pkg.language
     , createdAt = pkg.createdAt
     }
 
@@ -66,6 +67,7 @@ toSimpleDTO'' registryEnabled pkg =
                 , createdAt = pkg.createdAt
                 }
           _ -> Nothing
+    , language = pkg.language
     , createdAt = pkg.createdAt
     }
 

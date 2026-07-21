@@ -19,6 +19,7 @@ data KnowledgeModelPackageList = KnowledgeModelPackageList
   , remoteVersion :: Maybe String
   , remoteOrganizationName :: Maybe String
   , remoteOrganizationLogo :: Maybe String
+  , language :: String
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

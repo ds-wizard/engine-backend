@@ -44,6 +44,7 @@ instance FromRow ProjectDetailSettings where
     knowledgeModelPackageDescription <- field
     knowledgeModelPackageNonEditable <- field
     knowledgeModelPackagePublic <- field
+    knowledgeModelPackageLanguage <- field
     knowledgeModelPackageCreatedAt <- field
     let knowledgeModelPackage =
           KnowledgeModelPackageSimpleDTO
@@ -58,6 +59,7 @@ instance FromRow ProjectDetailSettings where
             , organization = Nothing
             , nonEditable = knowledgeModelPackageNonEditable
             , public = knowledgeModelPackagePublic
+            , language = knowledgeModelPackageLanguage
             , createdAt = knowledgeModelPackageCreatedAt
             }
     let knowledgeModelTags = []

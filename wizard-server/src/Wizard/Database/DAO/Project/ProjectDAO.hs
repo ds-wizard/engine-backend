@@ -529,8 +529,9 @@ findProjectDetailSettings uuid = do
             \       pkg.description                as knowledge_model_package_description, \
             \       pkg.non_editable               as knowledge_model_package_non_editable, \
             \       pkg.public                     as knowledge_model_package_public, \
+            \       pkg.language                   as knowledge_model_package_language, \
             \       pkg.created_at                 as knowledge_model_package_created_at, \
-            \       dt.uuid                          as document_template_uuid, \
+            \       dt.uuid                        as document_template_uuid, \
             \       dt.name                        as document_template_name, \
             \       dt.version                     as document_template_version, \
             \       dt.phase                       as document_template_phase, \

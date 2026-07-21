@@ -18,6 +18,7 @@ toSimpleDTO pkg org =
     , description = pkg.description
     , createdAt = pkg.createdAt
     , organization = OM.toSimpleDTO org
+    , language = pkg.language
     }
 
 toDetailDTO :: KnowledgeModelPackage -> [String] -> Organization.Organization -> KnowledgeModelPackageDetailDTO
