@@ -22,6 +22,7 @@ import qualified Wizard.Database.Migration.Development.Instance.InstanceSchemaMi
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelCacheSchemaMigration as KnowledgeModelCache
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelEditorMigration as KnowledgeModelEditor
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelEditorSchemaMigration as KnowledgeModelEditor
+import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelLocaleSchemaMigration as KnowledgeModelLocale
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelMigrationMigration as KnowledgeModelMigration
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelMigrationSchemaMigration as KnowledgeModelMigration
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as KnowledgeModelPackage
@@ -30,6 +31,7 @@ import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeM
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelSecretSchemaMigration as KnowledgeModelSecret
 import qualified Wizard.Database.Migration.Development.Locale.LocaleMigration as Locale
 import qualified Wizard.Database.Migration.Development.Locale.LocaleSchemaMigration as Locale
+import qualified Wizard.Database.Migration.Development.OpenId.OpenIdClientSessionSchemaMigration as OpenIdClientSession
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PersistentCommand
 import qualified Wizard.Database.Migration.Development.Plugin.PluginMigration as Plugin
 import qualified Wizard.Database.Migration.Development.Plugin.PluginSchemaMigration as Plugin
@@ -43,6 +45,8 @@ import qualified Wizard.Database.Migration.Development.Submission.SubmissionSche
 import qualified Wizard.Database.Migration.Development.TemporaryFile.TemporaryFileSchemaMigration as TemporaryFile
 import qualified Wizard.Database.Migration.Development.Tenant.TenantMigration as Tenant
 import qualified Wizard.Database.Migration.Development.Tenant.TenantSchemaMigration as Tenant
+import qualified Wizard.Database.Migration.Development.User.RoleMigration as Role
+import qualified Wizard.Database.Migration.Development.User.RoleSchemaMigration as Role
 import qualified Wizard.Database.Migration.Development.User.UserMigration as User
 import qualified Wizard.Database.Migration.Development.User.UserSchemaMigration as User
 import qualified Wizard.Database.Migration.Development.UserEmailLink.UserEmailLinkMigration as UserEmailLink
@@ -61,6 +65,7 @@ runMigration = runAppContextWithBaseContext $ do
   Document.dropTriggers
   Project.dropTriggers
   Locale.dropTriggers
+  KnowledgeModelLocale.dropTriggers
   -- 2. Drop DB functions
   Project.dropFunctions
   DocumentTemplate.dropFunctions
@@ -84,12 +89,15 @@ runMigration = runAppContextWithBaseContext $ do
   ProjectMigration.dropTables
   Project.dropTables
   KnowledgeModelSecret.dropTables
+  KnowledgeModelLocale.dropTables
   KnowledgeModelPackage.dropTables
   TemporaryFile.dropTables
   UserRegistrationPending.dropTables
   UserOpenIdIdentity.dropTables
   User.dropTables
+  Role.dropTables
   Tenant.dropConfigTables
+  OpenIdClientSession.dropTables
   OpenIdClient.dropTables
   DocumentTemplate.dropTables
   Locale.dropTables
@@ -107,12 +115,15 @@ runMigration = runAppContextWithBaseContext $ do
   Locale.createTables
   DocumentTemplate.createTables
   Tenant.createConfigTables
+  OpenIdClientSession.createTables
   OpenIdClient.createTables
+  Role.createTables
   User.createTables
   UserOpenIdIdentity.createTables
   UserRegistrationPending.createTables
   TemporaryFile.createTables
   KnowledgeModelPackage.createTables
+  KnowledgeModelLocale.createTables
   KnowledgeModelSecret.createTables
   UserEmailLink.createTables
   Feedback.createTables
@@ -140,6 +151,7 @@ runMigration = runAppContextWithBaseContext $ do
   User.createUserLocaleForeignKeyConstraint
   -- 9. Create DB triggers
   Locale.createTriggers
+  KnowledgeModelLocale.createTriggers
   Project.createTriggers
   Document.createTriggers
   -- 10. Load S3 fixtures
@@ -149,6 +161,7 @@ runMigration = runAppContextWithBaseContext $ do
   Tenant.runMigration
   OpenIdClient.runMigration
   Plugin.runMigration
+  Role.runMigration
   User.runMigration
   KnowledgeModelPackage.runMigration
   KnowledgeModelSecret.runMigration

@@ -58,6 +58,7 @@ reqDtoT project =
     , documentTemplateUuid = project.documentTemplateUuid
     , formatUuid = project.formatUuid
     , isTemplate = project.isTemplate
+    , language = project.language
     }
 
 reqBodyT project = encode $ reqDtoT project
@@ -144,13 +145,6 @@ test_401 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest
-    appContext
-    reqMethod
-    (reqUrlT project3.uuid)
-    [reqCtHeader]
-    (reqBodyT project1)
-    "PRJ_PERM"
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, Private)"
     appContext

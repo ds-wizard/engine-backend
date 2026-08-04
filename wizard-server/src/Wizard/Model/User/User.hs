@@ -1,14 +1,13 @@
-module Wizard.Model.User.User where
+module Wizard.Model.User.User (
+  User (..),
+  module WizardLib.Public.Model.User.RoleSimple,
+) where
 
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-_USER_ROLE_ADMIN = "admin"
-
-_USER_ROLE_DATA_STEWARD = "dataSteward"
-
-_USER_ROLE_RESEARCHER = "researcher"
+import WizardLib.Public.Model.User.RoleSimple
 
 data User = User
   { uuid :: U.UUID
@@ -17,8 +16,7 @@ data User = User
   , email :: String
   , passwordHash :: String
   , affiliation :: Maybe String
-  , uRole :: String
-  , permissions :: [String]
+  , role :: RoleSimple
   , active :: Bool
   , imageUrl :: Maybe String
   , locale :: Maybe U.UUID
@@ -41,8 +39,7 @@ instance Eq User where
       && a.email == b.email
       && a.passwordHash == b.passwordHash
       && a.affiliation == b.affiliation
-      && a.uRole == b.uRole
-      && a.permissions == b.permissions
+      && a.role == b.role
       && a.active == b.active
       && a.imageUrl == b.imageUrl
       && a.locale == b.locale

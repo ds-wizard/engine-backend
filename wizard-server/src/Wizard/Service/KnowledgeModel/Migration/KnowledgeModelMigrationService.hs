@@ -36,7 +36,7 @@ import Wizard.Service.KnowledgeModel.Package.Event.KnowledgeModelPackageEventSer
 
 getCurrentMigrationDto :: U.UUID -> AppContextM KnowledgeModelMigrationDTO
 getCurrentMigrationDto editorUuid = do
-  checkPermission _KM_UPGRADE_PERM
+  checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
   ms <- getCurrentMigration editorUuid
   editor <- findKnowledgeModelEditorByUuid editorUuid
   previousPackage <- findPackageSuggestionByUuid ms.editorPreviousPackageUuid
@@ -56,7 +56,7 @@ getCurrentMigration editorUuid = do
 createMigration :: U.UUID -> KnowledgeModelMigrationCreateDTO -> AppContextM KnowledgeModelMigrationDTO
 createMigration kmEditorUuid reqDto =
   runInTransaction $ do
-    checkPermission _KM_UPGRADE_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     logOutOnlineUsersWhenKnowledgeModelEditorDramaticallyChanged kmEditorUuid
     let targetPkgUuid = reqDto.targetPackageUuid
     targetPkg <- findPackageByUuid targetPkgUuid
@@ -103,7 +103,7 @@ createMigration kmEditorUuid reqDto =
 deleteCurrentMigration :: U.UUID -> AppContextM ()
 deleteCurrentMigration editorUuid =
   runInTransaction $ do
-    checkPermission _KM_UPGRADE_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     _ <- getCurrentMigration editorUuid
     deleteKnowledgeModelMigrationByEditorUuid editorUuid
     auditKmMigrationCancel editorUuid
@@ -112,7 +112,7 @@ deleteCurrentMigration editorUuid =
 solveConflictAndMigrate :: U.UUID -> KnowledgeModelMigrationResolutionDTO -> AppContextM ()
 solveConflictAndMigrate editorUuid reqDto =
   runInTransaction $ do
-    checkPermission _KM_UPGRADE_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     ms <- getCurrentMigration editorUuid
     validateMigrationState ms
     validateTargetPackageEvent ms
@@ -139,7 +139,7 @@ solveConflictAndMigrate editorUuid reqDto =
 solveAllConflicts :: U.UUID -> AppContextM ()
 solveAllConflicts editorUuid =
   runInTransaction $ do
-    checkPermission _KM_UPGRADE_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     migratorState <- getCurrentMigration editorUuid
     updatedState <- go migratorState
     updateKnowledgeModelMigration updatedState

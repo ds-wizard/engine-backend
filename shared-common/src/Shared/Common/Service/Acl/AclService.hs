@@ -1,9 +1,7 @@
-module Shared.Common.Service.Acl.AclService (
-  AclContext (..),
-  module Shared.Common.Constant.Acl,
-) where
-
-import Shared.Common.Constant.Acl
+module Shared.Common.Service.Acl.AclService where
 
 class AclContext m where
+  hasPermission :: String -> m Bool
   checkPermission :: String -> m ()
+  checkPermissionsAny :: [String] -> m ()
+  checkPermissionsAll :: [String] -> m ()

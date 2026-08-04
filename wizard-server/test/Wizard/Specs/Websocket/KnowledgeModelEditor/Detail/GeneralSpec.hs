@@ -52,7 +52,7 @@ test403 appContext =
       let editor = amsterdamKnowledgeModelEditor
       insertKnowledgeModelEditorAndUsers appContext editor
       -- AND: Prepare expectation
-      let expError = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Missing permission: KM_PERM"
+      let expError = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Missing permission: KnowledgeModelEditorsUseRolePermission"
       -- WHEN: Connect to websocket
       (c1, s1) <- createConnection appContext (reqUrlT editor.uuid (Just reqIsaacAuthToken))
       -- THEN: Read response

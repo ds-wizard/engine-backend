@@ -20,6 +20,7 @@ data KnowledgeModelEditorDetailDTO = KnowledgeModelEditorDetailDTO
   , description :: String
   , readme :: String
   , license :: String
+  , language :: String
   , state :: KnowledgeModelEditorState
   , previousPackage :: Maybe KnowledgeModelPackageSimple
   , forkOfPackage :: Maybe KnowledgeModelPackageSimpleDTO
@@ -41,6 +42,7 @@ instance Eq KnowledgeModelEditorDetailDTO where
       && a.description == b.description
       && a.readme == b.readme
       && a.license == b.license
+      && a.language == b.language
       && a.state == b.state
       && a.previousPackage == b.previousPackage
       && a.forkOfPackage == b.forkOfPackage

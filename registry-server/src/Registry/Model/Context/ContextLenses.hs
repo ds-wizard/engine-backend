@@ -101,3 +101,6 @@ instance HasField "tenantUuid'" AppContext U.UUID where
 
 instance AclContext AppContextM where
   checkPermission perm = return ()
+  checkPermissionsAny perms = return ()
+  checkPermissionsAll perms = return ()
+  hasPermission perm = return True

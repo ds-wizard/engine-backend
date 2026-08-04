@@ -138,7 +138,7 @@ fromPrivacyAndSupport oldConfig command now =
 fromDefaultRole :: TenantConfigAuthentication -> UpdateDefaultRoleConfigCommand -> UTCTime -> TenantConfigAuthentication
 fromDefaultRole oldConfig command now =
   oldConfig
-    { defaultRole = command.defaultRole
+    { defaultRoleUuid = command.defaultRoleUuid
     , updatedAt = now
     }
 

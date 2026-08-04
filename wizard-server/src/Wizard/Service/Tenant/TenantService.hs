@@ -44,21 +44,30 @@ import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigFeaturesDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
 import WizardLib.Public.Database.DAO.Tenant.TenantDAO
+import WizardLib.Public.Database.DAO.User.RoleDAO
 import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Model.Tenant.Config.TenantConfigDM
 import WizardLib.Public.Model.Tenant.TenantSuggestion
+import WizardLib.Public.Model.User.Role
 
 getTenantsPage :: Maybe String -> Maybe [TenantState] -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page TenantDTO)
 getTenantsPage mQuery mStates mEnabled pageable sort = do
-  checkPermission _TENANT_PERM
+  checkPermission _TENANTS_MANAGE_ROLE_PERMISSION
   tenants <- findTenantsPage mQuery mStates mEnabled pageable sort
   traverse enhanceTenant tenants
 
 getTenantSuggestions :: Maybe String -> AppContextM [TenantSuggestion]
 getTenantSuggestions mQuery = do
-  checkPermission _TENANT_PERM
+  checkPermission _TENANTS_MANAGE_ROLE_PERMISSION
   findTenantSuggestions mQuery
+
+registerOrCreateTenantByAdmin :: TenantCreateDTO -> AppContextM TenantDTO
+registerOrCreateTenantByAdmin reqDto = do
+  hasPermission <- hasPermission _TENANTS_MANAGE_ROLE_PERMISSION
+  if hasPermission
+    then createTenantByAdmin reqDto
+    else registerTenant reqDto
 
 registerTenant :: TenantCreateDTO -> AppContextM TenantDTO
 registerTenant reqDto = do
@@ -69,10 +78,11 @@ registerTenant reqDto = do
     serverConfig <- asks serverConfig
     let tenant = fromRegisterCreateDTO reqDto uuid serverConfig now
     insertTenant tenant
+    adminRole <- createAdminRole uuid now
     userUuid <- liftIO generateUuid
-    let userCreate = U_Mapper.fromTenantCreateToUserCreateDTO reqDto
+    let userCreate = U_Mapper.fromTenantCreateToUserCreateDTO reqDto adminRole.uuid
     user <- createUserByAdminWithUuid userCreate userUuid tenant.uuid tenant.clientUrl True
-    createConfig uuid now
+    createConfig uuid adminRole.uuid now
     createLimitBundle uuid now
     createLocale uuid now
     return $ toDTO tenant Nothing Nothing
@@ -80,18 +90,19 @@ registerTenant reqDto = do
 createTenantByAdmin :: TenantCreateDTO -> AppContextM TenantDTO
 createTenantByAdmin reqDto = do
   runInTransaction $ do
-    checkPermission _TENANT_PERM
+    checkPermission _TENANTS_MANAGE_ROLE_PERMISSION
     validateTenantCreateDTO reqDto True
     uuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
     serverConfig <- asks serverConfig
     let tenant = fromAdminCreateDTO reqDto uuid serverConfig now
     insertTenant tenant
+    adminRole <- createAdminRole uuid now
     userUuid <- liftIO generateUuid
     userPassword <- liftIO $ generateRandomString 25
-    let userCreate = U_Mapper.fromTenantCreateToUserCreateDTO (reqDto {password = userPassword})
+    let userCreate = U_Mapper.fromTenantCreateToUserCreateDTO (reqDto {password = userPassword}) adminRole.uuid
     user <- createUserByAdminWithUuid userCreate userUuid tenant.uuid tenant.clientUrl False
-    createConfig uuid now
+    createConfig uuid adminRole.uuid now
     createLimitBundle uuid now
     createLocale uuid now
     return $ toDTO tenant Nothing Nothing
@@ -102,17 +113,19 @@ createTenantByCommand command = do
   serverConfig <- asks serverConfig
   let tenant = fromCommand command NotSeededTenantState serverConfig now now
   insertTenant tenant
-  createConfig tenant.uuid now
+  adminRole <- createAdminRole tenant.uuid now
+  createConfig tenant.uuid adminRole.uuid now
   createLimitBundle tenant.uuid now
   createLocale tenant.uuid now
   return ()
 
 getTenantByUuid :: U.UUID -> AppContextM TenantDetailDTO
 getTenantByUuid uuid = do
-  checkPermission _TENANT_PERM
+  checkPermission _TENANTS_MANAGE_ROLE_PERMISSION
   tenant <- findTenantByUuid uuid
   usage <- getUsage uuid
-  users <- findUsersWithTenantFiltered uuid [("role", _USER_ROLE_ADMIN)]
+  allUsers <- findUsersWithTenantFiltered uuid []
+  let users = filter (elem _USERS_MANAGE_ROLE_PERMISSION . (.role.permissions)) allUsers
   tcLookAndFeel <- findTenantConfigLookAndFeelByUuid uuid
   let mLogoUrl = tcLookAndFeel.logoUrl
   let mPrimaryColor = tcLookAndFeel.primaryColor
@@ -120,7 +133,7 @@ getTenantByUuid uuid = do
 
 modifyTenant :: U.UUID -> TenantChangeDTO -> AppContextM Tenant
 modifyTenant uuid reqDto = do
-  checkPermission _TENANT_PERM
+  checkPermission _TENANTS_MANAGE_ROLE_PERMISSION
   tenant <- findTenantByUuid uuid
   validateTenantChangeDTO tenant reqDto
   serverConfig <- asks serverConfig
@@ -130,7 +143,7 @@ modifyTenant uuid reqDto = do
 modifyTenantFromCommand :: CreateOrUpdateTenantCommand -> AppContextM Tenant
 modifyTenantFromCommand command =
   runInTransaction $ do
-    checkPermission _TENANT_PERM
+    checkPermission _TENANTS_MANAGE_ROLE_PERMISSION
     now <- liftIO getCurrentTime
     serverConfig <- asks serverConfig
     tenant <- findTenantByUuid command.uuid
@@ -141,7 +154,7 @@ modifyTenantFromCommand command =
 
 deleteTenant :: U.UUID -> AppContextM ()
 deleteTenant uuid = do
-  checkPermission _TENANT_PERM
+  checkPermission _TENANTS_MANAGE_ROLE_PERMISSION
   _ <- findTenantByUuid uuid
   deleteTenantByUuid uuid
   return ()
@@ -149,11 +162,27 @@ deleteTenant uuid = do
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-createConfig :: U.UUID -> UTCTime -> AppContextM ()
-createConfig uuid now = do
+createAdminRole :: U.UUID -> UTCTime -> AppContextM Role
+createAdminRole tenantUuid now = do
+  uuid <- liftIO generateUuid
+  let role =
+        Role
+          { uuid = uuid
+          , name = "Admin"
+          , permissions = allRolePermissions
+          , isAdmin = True
+          , tenantUuid = tenantUuid
+          , createdAt = now
+          , updatedAt = now
+          }
+  insertRole role
+  return role
+
+createConfig :: U.UUID -> U.UUID -> UTCTime -> AppContextM ()
+createConfig uuid defaultRoleUuid now = do
   runInTransaction $ do
     insertTenantConfigOrganization (defaultOrganization {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigOrganization)
-    insertTenantConfigAuthentication (defaultAuthentication {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigAuthentication)
+    insertTenantConfigAuthentication (defaultAuthentication {tenantUuid = uuid, defaultRoleUuid = defaultRoleUuid, createdAt = now, updatedAt = now} :: TenantConfigAuthentication)
     insertTenantConfigPrivacyAndSupport (defaultPrivacyAndSupport {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigPrivacyAndSupport)
     insertTenantConfigDashboardAndLoginScreen (defaultDashboardAndLoginScreen {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigDashboardAndLoginScreen)
     insertTenantConfigLookAndFeel (defaultLookAndFeel {tenantUuid = uuid, createdAt = now, updatedAt = now} :: TenantConfigLookAndFeel)

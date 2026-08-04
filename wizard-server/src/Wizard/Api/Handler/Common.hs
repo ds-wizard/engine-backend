@@ -1,7 +1,7 @@
 module Wizard.Api.Handler.Common where
 
 import Control.Monad.Except (catchError, throwError)
-import Control.Monad.Reader (ask, asks, liftIO)
+import Control.Monad.Reader (ask, liftIO)
 import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
@@ -26,7 +26,6 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Context.ContextMappers
 import Wizard.Model.Tenant.Tenant
-import Wizard.Model.User.User
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
 import WizardLib.Public.Api.Resource.UserToken.UserTokenClaimsDTO
@@ -120,10 +119,3 @@ getCurrentTenant mServerUrl = do
   where
     handleError host (NotExistsError _) = throwError $ NotExistsError (_ERROR_VALIDATION__TENANT_OR_ACTIVE_PLAN_ABSENCE host)
     handleError host error = throwError error
-
-isAdmin :: AppContextM Bool
-isAdmin = do
-  mUser <- asks currentUser
-  case mUser of
-    Just user -> return $ user.uRole == _USER_ROLE_ADMIN
-    Nothing -> return False

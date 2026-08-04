@@ -11,7 +11,7 @@ import Wizard.Model.Tenant.Config.TenantConfig
 instance ToRow TenantConfigAuthentication where
   toRow TenantConfigAuthentication {..} =
     [ toField tenantUuid
-    , toField defaultRole
+    , toField defaultRoleUuid
     , toField internal.registration.enabled
     , toField internal.twoFactorAuth.enabled
     , toField internal.twoFactorAuth.codeLength
@@ -26,7 +26,7 @@ instance ToRow TenantConfigAuthentication where
 instance FromRow TenantConfigAuthentication where
   fromRow = do
     tenantUuid <- field
-    defaultRole <- field
+    defaultRoleUuid <- field
     internalRegistrationEnabled <- field
     internalTwoFactorAuthEnabled <- field
     internalTwoFactorAuthCodeLength <- field

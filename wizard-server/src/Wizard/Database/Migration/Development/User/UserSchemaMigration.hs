@@ -43,8 +43,8 @@ createUserTable = do
         \    email             varchar     NOT NULL, \
         \    password_hash     varchar     NOT NULL, \
         \    affiliation       varchar, \
-        \    role              varchar     NOT NULL, \
-        \    permissions       text[]      NOT NULL, \
+        \    role_uuid         uuid        NOT NULL, \
+        \    role_permissions  text[]      NOT NULL, \
         \    active            boolean     NOT NULL, \
         \    image_url         varchar, \
         \    last_visited_at   timestamptz NOT NULL, \
@@ -56,8 +56,11 @@ createUserTable = do
         \    last_seen_news_id varchar, \
         \    email_verified_at timestamptz, \
         \    email_pending     varchar, \
+        \    role_name         varchar     NOT NULL, \
         \    CONSTRAINT user_entity_pk PRIMARY KEY (uuid), \
-        \    CONSTRAINT user_entity_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE \
+        \    CONSTRAINT user_entity_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE, \
+        \    CONSTRAINT user_entity_role_uuid_fk FOREIGN KEY (role_uuid) REFERENCES role (uuid), \
+        \    CONSTRAINT user_email_lowercase_check CHECK (email = lower(email)) \
         \); \
         \ \
         \CREATE UNIQUE INDEX user_email_uindex ON user_entity (email, tenant_uuid);"

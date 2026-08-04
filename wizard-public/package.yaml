@@ -1,5 +1,5 @@
 name: wizard-public
-version: '4.32.1'
+version: '4.33.0'
 synopsis: Wizard Public
 description: Wizard Public
 category: Web
@@ -54,6 +54,7 @@ tests:
         ghc-options: -threaded -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial -Werror=missing-fields -Werror=incomplete-patterns
     dependencies:
     - base
+    - wizard-public
     - aeson
     - hspec
     - hspec-expectations-pretty-diff

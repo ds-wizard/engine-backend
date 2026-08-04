@@ -17,7 +17,9 @@ import Wizard.Model.User.User
 import Wizard.Model.UserEmailLink.UserEmailLinkType
 import Wizard.Service.User.UserUtil
 import WizardLib.Public.Api.Resource.UserToken.LoginDTO
+import WizardLib.Public.Database.DAO.User.RoleDAO
 import WizardLib.Public.Localization.Messages.Public
+import WizardLib.Public.Model.User.Role
 
 validate :: LoginDTO -> User -> AppContextM ()
 validate reqDto user = do
@@ -25,8 +27,9 @@ validate reqDto user = do
   validateUserPassword reqDto user
 
 validateLoginEnabled :: TenantConfigAuthentication -> User -> AppContextM ()
-validateLoginEnabled tcAuthentication user =
-  when (not tcAuthentication.internal.nonAdminLoginEnabled && user.uRole /= _USER_ROLE_ADMIN) $
+validateLoginEnabled tcInternalAuthentication user = do
+  role <- findRoleByUuid user.role.uuid
+  when (not tcInternalAuthentication.internal.nonAdminLoginEnabled && not role.isAdmin) $
     throwError . UserError $
       _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
 

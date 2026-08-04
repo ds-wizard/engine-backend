@@ -38,7 +38,7 @@ getUsage tenantUuid = do
 
 getUsageForCurrentTenant :: AppContextM WizardUsageDTO
 getUsageForCurrentTenant = do
-  checkPermission _CFG_PERM
+  checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
   limitBundle <- findLimitBundleForCurrentTenant
   userCount <- countUsers
   activeUserCount <- countActiveUsers

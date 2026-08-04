@@ -22,6 +22,7 @@ data BaseContext = BaseContext
   , dbPool :: Pool Connection
   , s3Client :: MinioConn
   , httpClientManager :: Manager
+  , restrictedHttpClientManager :: Manager
   , registryClient :: ClientEnv
   , shutdownFlag :: MVar ()
   , cache :: ServerCache

@@ -20,18 +20,18 @@ import Wizard.Service.DocumentTemplate.File.DocumentTemplateFileMapper
 
 getFiles :: U.UUID -> AppContextM [DocumentTemplateFileList]
 getFiles dtUuid = do
-  checkPermission _DOC_TML_WRITE_PERM
+  checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
   findFileListsByDocumentTemplateUuid dtUuid
 
 getFile :: U.UUID -> AppContextM DocumentTemplateFile
 getFile fileUuid = do
-  checkPermission _DOC_TML_WRITE_PERM
+  checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
   findFileByUuid fileUuid
 
 createFile :: U.UUID -> DocumentTemplateFileChangeDTO -> AppContextM DocumentTemplateFile
 createFile dtUuid reqDto =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     validateFileAndAssetUniqueness Nothing dtUuid reqDto.fileName
     fUuid <- liftIO generateUuid
     tenantUuid <- asks currentTenantUuid
@@ -45,7 +45,7 @@ createFile dtUuid reqDto =
 modifyFile :: U.UUID -> DocumentTemplateFileChangeDTO -> AppContextM DocumentTemplateFile
 modifyFile fileUuid reqDto =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     file <- findFileByUuid fileUuid
     validateFileAndAssetUniqueness (Just file.uuid) file.documentTemplateUuid reqDto.fileName
     now <- liftIO getCurrentTime
@@ -58,7 +58,7 @@ modifyFile fileUuid reqDto =
 modifyFileContent :: U.UUID -> String -> AppContextM DocumentTemplateFile
 modifyFileContent fileUuid content =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     file <- findFileByUuid fileUuid
     now <- liftIO getCurrentTime
     let updatedFile = fromContentChangeDTO file content now
@@ -79,7 +79,7 @@ duplicateFile newDtUuid file = do
 deleteFile :: U.UUID -> AppContextM ()
 deleteFile fileUuid =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     file <- findFileByUuid fileUuid
     deleteFileById file.uuid
     touchDocumentTemplateByUuid file.documentTemplateUuid

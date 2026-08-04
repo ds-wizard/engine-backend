@@ -7,6 +7,7 @@ import Wizard.Api.Resource.Project.Detail.ProjectDetailReportDTO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import Wizard.Service.KnowledgeModel.Locale.KnowledgeModelLocaleService (findLocaleJson)
 import Wizard.Service.Project.ProjectService
 import Wizard.Service.Report.ReportGenerator
 import Wizard.Service.Report.ReportMapper
@@ -16,4 +17,5 @@ getReportByProjectUuid projectUuid = do
   projectDto <- getProjectDetailQuestionnaireByUuid projectUuid
   knowledgeModel <- compileKnowledgeModel [] (Just projectDto.knowledgeModelPackage.uuid) projectDto.selectedQuestionTagUuids
   report <- generateReport projectDto.phaseUuid knowledgeModel projectDto.replies
-  return $ toDTO projectDto report
+  mLocale <- findLocaleJson projectDto.knowledgeModelPackage.uuid projectDto.language
+  return $ toDTO projectDto report mLocale

@@ -18,6 +18,7 @@ data KnowledgeModelPackageDetailDTO = KnowledgeModelPackageDetailDTO
   , description :: String
   , readme :: String
   , license :: String
+  , language :: String
   , metamodelVersion :: Int
   , previousPackageUuid :: Maybe U.UUID
   , forkOfPackageId :: Maybe Coordinate

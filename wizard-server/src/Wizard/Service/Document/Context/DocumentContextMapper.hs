@@ -74,6 +74,7 @@ toDocumentContext doc appClientUrl project phaseUuid replies labels mProjectVers
           , versions = projectVersionDtos
           , projectTags = project.projectTags
           , files = projectFiles
+          , language = project.language
           , createdBy = toDocumentContextUser <$> mProjectCreatedBy
           , createdAt = project.createdAt
           , updatedAt = project.updatedAt
@@ -100,6 +101,7 @@ toDocumentContextPackage pkg =
         , remoteLatestVersion = dto.remoteLatestVersion
         , description = dto.description
         , organization = dto.organization
+        , language = dto.language
         , createdAt = dto.createdAt
         }
 

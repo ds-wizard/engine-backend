@@ -14,6 +14,7 @@ import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Tags
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.DocumentTemplate.DocumentTemplateStateSM ()
+import Wizard.Api.Resource.KnowledgeModel.Locale.KnowledgeModelLocaleListSM ()
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleSM ()
 import Wizard.Api.Resource.Project.Acl.ProjectPermSM ()
 import Wizard.Api.Resource.Project.Comment.ProjectCommentThreadListSM ()
@@ -46,6 +47,8 @@ instance ToSchema ProjectDetailSettings where
         , knowledgeModelPackageUuid = netherlandsKmPackageV2.uuid
         , knowledgeModelPackage = PackageMapper.toSimpleDTO netherlandsKmPackageV2
         , knowledgeModelTags = [tagDataScience]
+        , language = Nothing
+        , availableLocales = []
         , documentTemplate = Just $ DocumentTemplateMapper.toDTO wizardDocumentTemplate wizardDocumentTemplateFormats
         , documentTemplateState = Just DefaultDocumentTemplateState
         , documentTemplatePhase = Just DraftDocumentTemplatePhase

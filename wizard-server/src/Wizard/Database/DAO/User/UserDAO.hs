@@ -8,14 +8,13 @@ import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
+import Database.PostgreSQL.Simple.Types
 import GHC.Int
 
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
-import Shared.Common.Util.Cache
 import Shared.Common.Util.String
-import Wizard.Cache.UserCache
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.User.User ()
 import Wizard.Model.Context.AppContext
@@ -53,7 +52,7 @@ findUsersPage mQuery mRole pageable sort = do
     pageable
     sort
     "*"
-    "WHERE (concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role ~* ? AND tenant_uuid = ? AND machine = false"
+    "WHERE (concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role_uuid::text ~* ? AND tenant_uuid = ? AND machine = false"
     [regexM mQuery, regexM mQuery, regexM mRole, U.toString tenantUuid]
 
 findUserSuggestionsPage :: Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
@@ -105,16 +104,12 @@ findUsersByUserGroupUuid userGroupUuid = do
 findUserByUuid :: U.UUID -> AppContextM User
 findUserByUuid uuid = do
   tenantUuid <- asks currentTenantUuid
-  getFromCacheOrDb getFromCache addToCache go (U.toString uuid, U.toString tenantUuid)
-  where
-    go (uuid, tenantUuid) = createFindEntityByFn entityName [("tenant_uuid", tenantUuid), ("uuid", uuid)]
+  createFindEntityByFn entityName [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
 
 findUserByUuid' :: U.UUID -> AppContextM (Maybe User)
 findUserByUuid' uuid = do
   tenantUuid <- asks currentTenantUuid
-  getFromCacheOrDb' getFromCache addToCache go (U.toString uuid, U.toString tenantUuid)
-  where
-    go (uuid, tenantUuid) = createFindEntityByFn' entityName [("tenant_uuid", tenantUuid), ("uuid", uuid)]
+  createFindEntityByFn' entityName [("tenant_uuid", U.toString tenantUuid), ("uuid", U.toString uuid)]
 
 findUserByUuidAndTenantUuidSystem :: U.UUID -> U.UUID -> AppContextM User
 findUserByUuidAndTenantUuidSystem uuid tenantUuid = createFindEntityByFn entityName [("uuid", U.toString uuid), ("tenant_uuid", U.toString tenantUuid)]
@@ -143,6 +138,18 @@ countUsers = do
 countUsersWithTenant :: U.UUID -> AppContextM Int
 countUsersWithTenant tenantUuid = createCountByFn entityName (f' "%s AND machine = false" [tenantCondition]) [tenantUuid]
 
+countUsersByRole :: U.UUID -> AppContextM Int
+countUsersByRole roleUuid = do
+  tenantUuid <- asks currentTenantUuid
+  let sql = fromString "SELECT COUNT(*) FROM user_entity WHERE role_uuid = ? AND tenant_uuid = ?"
+  let params = [U.toString roleUuid, U.toString tenantUuid]
+  logQuery sql params
+  let action conn = query conn sql params
+  result <- runDB action
+  case result of
+    [Only count] -> return count
+    _ -> return 0
+
 countActiveUsers :: AppContextM Int
 countActiveUsers = do
   tenantUuid <- asks currentTenantUuid
@@ -156,25 +163,21 @@ insertUser user = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "INSERT INTO user_entity VALUES (?, ?, ?, ?, ?, ?, ?, ?::varchar[], ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+          "INSERT INTO user_entity VALUES (?, ?, ?, ?, ?, ?, ?, ?::varchar[], ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
   let params = toRow user
   logQuery sql params
   let action conn = execute conn sql params
-  result <- runDB action
-  addToCache user
-  return result
+  runDB action
 
 updateUserByUuid :: User -> AppContextM Int64
 updateUserByUuid user = do
   let sql =
         fromString
-          "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, role = ?, permissions = ?, active = ?, image_url = ?, last_visited_at = ?, created_at = ?, updated_at = ?, tenant_uuid = ?, machine = ?, locale = ?, last_seen_news_id = ?, email_verified_at = ?, email_pending = ? WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, role_uuid = ?, role_permissions = ?, active = ?, image_url = ?, last_visited_at = ?, created_at = ?, updated_at = ?, tenant_uuid = ?, machine = ?, locale = ?, last_seen_news_id = ?, email_verified_at = ?, email_pending = ?, role_name = ? WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow user ++ [toField user.tenantUuid, toField user.uuid]
   logQuery sql params
   let action conn = execute conn sql params
-  result <- runDB action
-  updateCache user
-  return result
+  runDB action
 
 updateUserPasswordByUuid :: U.UUID -> String -> UTCTime -> AppContextM Int64
 updateUserPasswordByUuid userUuid uPassword uUpdatedAt = do
@@ -183,9 +186,7 @@ updateUserPasswordByUuid userUuid uPassword uUpdatedAt = do
   let params = [toField uPassword, toField uUpdatedAt, toField tenantUuid, toField userUuid]
   logQuery sql params
   let action conn = execute conn sql params
-  result <- runDB action
-  deleteFromCache (U.toString userUuid, U.toString tenantUuid)
-  return result
+  runDB action
 
 updateUserLastVisitedAtByUuid :: U.UUID -> UTCTime -> AppContextM Int64
 updateUserLastVisitedAtByUuid userUuid lastVisitedAt = do
@@ -194,9 +195,7 @@ updateUserLastVisitedAtByUuid userUuid lastVisitedAt = do
   let params = [toField lastVisitedAt, toField tenantUuid, toField userUuid]
   logQuery sql params
   let action conn = execute conn sql params
-  result <- runDB action
-  deleteFromCache (U.toString userUuid, U.toString tenantUuid)
-  return result
+  runDB action
 
 updateUserLocaleByUuid :: U.UUID -> Maybe U.UUID -> UTCTime -> AppContextM Int64
 updateUserLocaleByUuid userUuid mLocale uUpdatedAt = do
@@ -205,7 +204,6 @@ updateUserLocaleByUuid userUuid mLocale uUpdatedAt = do
   let params = [toField mLocale, toField uUpdatedAt, toField tenantUuid, toField userUuid]
   logQuery sql params
   let action conn = execute conn sql params
-  deleteFromCache (U.toString userUuid, U.toString tenantUuid)
   runDB action
 
 updateUserLastSeenNewsIdUuid :: U.UUID -> String -> AppContextM Int64
@@ -215,19 +213,23 @@ updateUserLastSeenNewsIdUuid userUuid lastSeenNewsId = do
   let params = [toField lastSeenNewsId, toField tenantUuid, toField userUuid]
   logQuery sql params
   let action conn = execute conn sql params
-  result <- runDB action
-  deleteFromCache (U.toString userUuid, U.toString tenantUuid)
-  return result
+  runDB action
+
+updateUsersRoleByRole :: U.UUID -> [String] -> String -> AppContextM Int64
+updateUsersRoleByRole roleUuid permissions roleName = do
+  tenantUuid <- asks currentTenantUuid
+  let sql =
+        fromString
+          "UPDATE user_entity SET role_permissions = ?, role_name = ? WHERE role_uuid = ? AND tenant_uuid = ?"
+  let params = (PGArray permissions, roleName, U.toString roleUuid, U.toString tenantUuid)
+  logQuery sql params
+  let action conn = execute conn sql params
+  runDB action
 
 deleteUsers :: AppContextM Int64
-deleteUsers = do
-  result <- createDeleteEntitiesFn entityName
-  deleteAllFromCache
-  return result
+deleteUsers = createDeleteEntitiesFn entityName
 
 deleteUserByUuid :: U.UUID -> AppContextM Int64
 deleteUserByUuid uuid = do
   tenantUuid <- asks currentTenantUuid
-  result <- createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]
-  deleteFromCache (U.toString uuid, U.toString tenantUuid)
-  return result
+  createDeleteEntityByFn entityName [tenantQueryUuid tenantUuid, ("uuid", U.toString uuid)]

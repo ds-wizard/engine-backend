@@ -3,7 +3,6 @@ module Wizard.Model.Config.ServerConfigJM where
 import Control.Monad
 import Data.Aeson
 import qualified Data.ByteString.Char8 as BS
-import Data.String (fromString)
 
 import Shared.Common.Constant.DummyRsaPrivateKey
 import Shared.Common.Localization.Messages.Internal
@@ -12,7 +11,6 @@ import Shared.Common.Model.Config.ServerConfigJM ()
 import Shared.Common.Util.Crypto
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.ServerConfigDM
-import Wizard.Model.User.User
 import WizardLib.Public.Model.Config.ServerConfigDM
 import WizardLib.Public.Model.Config.ServerConfigJM ()
 
@@ -23,7 +21,6 @@ instance FromJSON ServerConfig where
     s3 <- o .:? "s3" .!= defaultS3
     aws <- o .:? "aws" .!= defaultAws
     sentry <- o .:? "sentry" .!= defaultSentry
-    roles <- o .:? "roles" .!= defaultRoles
     userEmailLink <- o .:? "userEmailLink" .!= defaultUserEmailLink
     knowledgeModelEditor <- o .:? "knowledgeModelEditor" .!= defaultKnowledgeModelEditor
     cache <- o .:? "cache" .!= defaultCache
@@ -40,8 +37,20 @@ instance FromJSON ServerConfig where
     signalBridge <- o .:? "signalBridge" .!= defaultSignalBridge
     admin <- o .:? "admin" .!= defaultAdmin
     registry <- o .:? "registry" .!= defaultRegistry
-    modules <- o .:? "modules" .!= defaultModules
+    httpClient <- o .:? "httpClient" .!= defaultHttpClient
     return ServerConfig {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigHttpClient where
+  parseJSON (Object o) = do
+    restricted <- o .:? "restricted" .!= defaultHttpClient.restricted
+    return ServerConfigHttpClient {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigHttpClientRestricted where
+  parseJSON (Object o) = do
+    allowedHosts <- o .:? "allowedHosts" .!= defaultHttpClient.restricted.allowedHosts
+    return ServerConfigHttpClientRestricted {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigGeneral where
@@ -60,14 +69,6 @@ instance FromJSON ServerConfigGeneral where
         Nothing -> return dummyRsaPrivateKey
     integrationConfig <- o .:? "integrationConfig" .!= defaultGeneral.integrationConfig
     return ServerConfigGeneral {..}
-  parseJSON _ = mzero
-
-instance FromJSON ServerConfigRoles where
-  parseJSON (Object o) = do
-    admin <- o .:? fromString _USER_ROLE_ADMIN .!= defaultRoles.admin
-    dataSteward <- o .:? fromString _USER_ROLE_DATA_STEWARD .!= defaultRoles.dataSteward
-    researcher <- o .:? fromString _USER_ROLE_RESEARCHER .!= defaultRoles.researcher
-    return ServerConfigRoles {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigUserEmailLink where
@@ -141,6 +142,7 @@ instance FromJSON ServerConfigSignalBridge where
 instance FromJSON ServerConfigAdmin where
   parseJSON (Object o) = do
     enabled <- o .:? "enabled" .!= defaultAdmin.enabled
+    serverUrl <- o .:? "serverUrl" .!= defaultAdmin.serverUrl
     return ServerConfigAdmin {..}
   parseJSON _ = mzero
 
@@ -150,23 +152,4 @@ instance FromJSON ServerConfigRegistry where
     clientUrl <- o .:? "clientUrl" .!= defaultRegistry.clientUrl
     sync <- o .:? "sync" .!= defaultRegistry.sync
     return ServerConfigRegistry {..}
-  parseJSON _ = mzero
-
-instance FromJSON ServerConfigModules where
-  parseJSON (Object o) = do
-    wizard <- o .:? "wizard" .!= defaultModules.wizard
-    admin <- o .:? "admin" .!= defaultModules.admin
-    integrationHub <- o .:? "integrationHub" .!= defaultModules.integrationHub
-    analytics <- o .:? "analytics" .!= defaultModules.analytics
-    guide <- o .:? "guide" .!= defaultModules.guide
-    return ServerConfigModules {..}
-  parseJSON _ = mzero
-
-instance FromJSON ServerConfigModule where
-  parseJSON (Object o) = do
-    title <- o .:? "title" .!= defaultModule.title
-    description <- o .:? "description" .!= defaultModule.description
-    icon <- o .:? "icon" .!= defaultModule.icon
-    url <- o .:? "url" .!= defaultModule.url
-    return ServerConfigModule {..}
   parseJSON _ = mzero

@@ -6,6 +6,10 @@ import Data.Hashable
 import Data.Time
 import GHC.Generics
 
+import WizardLib.Public.Model.User.RoleSimple
+
+instance Hashable RoleSimple
+
 deriving instance Generic Day
 
 instance Hashable Day

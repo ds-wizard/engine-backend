@@ -22,4 +22,4 @@ validateUserEmailUniqueness email tenantUuid = do
 validateUserChangedEmailUniqueness :: String -> String -> AppContextM ()
 validateUserChangedEmailUniqueness newEmail oldEmail = do
   tenantUuid <- asks currentTenantUuid
-  when (newEmail /= oldEmail) (validateUserEmailUniqueness newEmail tenantUuid)
+  when (fmap toLower newEmail /= fmap toLower oldEmail) (validateUserEmailUniqueness newEmail tenantUuid)

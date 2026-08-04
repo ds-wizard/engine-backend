@@ -23,6 +23,7 @@ import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM 
 import Shared.KnowledgeModel.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackagePhaseSM ()
 import Shared.Locale.Api.Resource.Locale.LocaleSimpleSM ()
 import Shared.Locale.Api.Resource.Locale.LocaleSuggestionSM ()
+import Shared.OpenId.Api.Resource.OpenId.Client.Flow.OpenIdClientAuthenticationUrlSM ()
 import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandChangeSM ()
 import Shared.PersistentCommand.Api.Resource.PersistentCommand.PersistentCommandSM ()
 import Shared.Prefab.Api.Resource.Prefab.PrefabSM ()
@@ -57,6 +58,8 @@ import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorChangeSM ()
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorCreateSM ()
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorDetailSM ()
 import Wizard.Api.Resource.KnowledgeModel.Editor.KnowledgeModelEditorStateSM ()
+import Wizard.Api.Resource.KnowledgeModel.Locale.KnowledgeModelLocaleCreateSM ()
+import Wizard.Api.Resource.KnowledgeModel.Locale.KnowledgeModelLocaleListSM ()
 import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationCreateSM ()
 import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationResolutionSM ()
 import Wizard.Api.Resource.KnowledgeModel.Migration.KnowledgeModelMigrationSM ()
@@ -114,6 +117,8 @@ import Wizard.Api.Resource.Tenant.TenantSM ()
 import Wizard.Api.Resource.TypeHint.TypeHintISM ()
 import Wizard.Api.Resource.TypeHint.TypeHintRequestSM ()
 import Wizard.Api.Resource.TypeHint.TypeHintTestRequestSM ()
+import Wizard.Api.Resource.User.RoleChangeSM ()
+import Wizard.Api.Resource.User.RoleListSM ()
 import Wizard.Api.Resource.User.UserChangeSM ()
 import Wizard.Api.Resource.User.UserCreateSM ()
 import Wizard.Api.Resource.User.UserPasswordSM ()
@@ -153,7 +158,7 @@ swagger =
             s._swaggerInfo
               { _infoTitle = "Wizard API"
               , _infoDescription = Just "API specification for Wizard"
-              , _infoVersion = "4.32.1"
+              , _infoVersion = "4.33.0"
               , _infoLicense =
                   Just $
                     License

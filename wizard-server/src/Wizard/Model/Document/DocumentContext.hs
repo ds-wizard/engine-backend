@@ -49,6 +49,7 @@ data DocumentContextPackage = DocumentContextPackage
   , remoteLatestVersion :: Maybe String
   , description :: String
   , organization :: Maybe RegistryOrganization
+  , language :: String
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)
@@ -77,6 +78,7 @@ data DocumentContextProject = DocumentContextProject
   , versions :: [ProjectVersionList]
   , projectTags :: [String]
   , files :: [ProjectFileSimple]
+  , language :: Maybe String
   , createdBy :: Maybe DocumentContextUser
   , createdAt :: UTCTime
   , updatedAt :: UTCTime

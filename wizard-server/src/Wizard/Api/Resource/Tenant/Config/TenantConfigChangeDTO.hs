@@ -30,7 +30,7 @@ data TenantConfigOrganizationChangeDTO = TenantConfigOrganizationChangeDTO
   deriving (Generic, Eq, Show)
 
 data TenantConfigAuthenticationChangeDTO = TenantConfigAuthenticationChangeDTO
-  { defaultRole :: String
+  { defaultRoleUuid :: U.UUID
   , internal :: TenantConfigAuthenticationInternal
   }
   deriving (Generic, Eq, Show)

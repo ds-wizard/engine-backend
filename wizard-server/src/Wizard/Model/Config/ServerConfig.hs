@@ -12,7 +12,6 @@ data ServerConfig = ServerConfig
   , s3 :: ServerConfigS3
   , aws :: ServerConfigAws
   , sentry :: ServerConfigSentry
-  , roles :: ServerConfigRoles
   , userEmailLink :: ServerConfigUserEmailLink
   , cache :: ServerConfigCache
   , document :: ServerConfigDocument
@@ -29,7 +28,17 @@ data ServerConfig = ServerConfig
   , signalBridge :: ServerConfigSignalBridge
   , admin :: ServerConfigAdmin
   , registry :: ServerConfigRegistry
-  , modules :: ServerConfigModules
+  , httpClient :: ServerConfigHttpClient
+  }
+  deriving (Generic, Show)
+
+data ServerConfigHttpClient = ServerConfigHttpClient
+  { restricted :: ServerConfigHttpClientRestricted
+  }
+  deriving (Generic, Show)
+
+data ServerConfigHttpClientRestricted = ServerConfigHttpClientRestricted
+  { allowedHosts :: [String]
   }
   deriving (Generic, Show)
 
@@ -40,13 +49,6 @@ data ServerConfigGeneral = ServerConfigGeneral
   , secret :: String
   , rsaPrivateKey :: RSA.PrivateKey
   , integrationConfig :: String
-  }
-  deriving (Generic, Show)
-
-data ServerConfigRoles = ServerConfigRoles
-  { admin :: [String]
-  , dataSteward :: [String]
-  , researcher :: [String]
   }
   deriving (Generic, Show)
 
@@ -111,6 +113,7 @@ data ServerConfigSignalBridge = ServerConfigSignalBridge
 
 data ServerConfigAdmin = ServerConfigAdmin
   { enabled :: Bool
+  , serverUrl :: String
   }
   deriving (Generic, Show)
 
@@ -118,22 +121,5 @@ data ServerConfigRegistry = ServerConfigRegistry
   { url :: String
   , clientUrl :: String
   , sync :: ServerConfigCronWorker
-  }
-  deriving (Generic, Show)
-
-data ServerConfigModules = ServerConfigModules
-  { wizard :: ServerConfigModule
-  , admin :: ServerConfigModule
-  , integrationHub :: ServerConfigModule
-  , analytics :: ServerConfigModule
-  , guide :: ServerConfigModule
-  }
-  deriving (Generic, Show)
-
-data ServerConfigModule = ServerConfigModule
-  { title :: String
-  , description :: String
-  , icon :: String
-  , url :: Maybe String
   }
   deriving (Generic, Show)

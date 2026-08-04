@@ -14,10 +14,15 @@ import Shared.Common.Model.Error.Error
 import Shared.KnowledgeModel.Database.Migration.Development.KnowledgeModel.Data.Package.KnowledgeModelPackages
 import Shared.KnowledgeModel.Localization.Messages.Public
 import Wizard.Api.Resource.KnowledgeModel.Package.KnowledgeModelPackageSimpleDTO
+import Wizard.Api.Resource.KnowledgeModel.Package.Publish.KnowledgeModelPackagePublishEditorDTO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelLocaleDAO
 import Wizard.Database.Migration.Development.KnowledgeModel.Data.Editor.KnowledgeModelEditors
+import Wizard.Database.Migration.Development.KnowledgeModel.Data.Locale.KnowledgeModelLocales
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelEditorMigration as KnowledgeModelEditor
 import qualified Wizard.Database.Migration.Development.KnowledgeModel.KnowledgeModelPackageMigration as KnowledgeModelPackage
 import Wizard.Model.Context.AppContext
+import Wizard.Model.KnowledgeModel.Locale.KnowledgeModelLocale
+import Wizard.S3.KnowledgeModel.KnowledgeModelLocaleS3
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper
 import Wizard.Service.KnowledgeModel.Publish.KnowledgeModelPublishService
 
@@ -33,6 +38,8 @@ list_from_editor_POST :: AppContext -> SpecWith ((), Application)
 list_from_editor_POST appContext =
   describe "POST /wizard-api/package/from-editor" $ do
     test_201 appContext
+    test_201_with_locales appContext
+    test_400_not_reusable_locales appContext
     test_400_invalid_json appContext
     test_400_not_higher_pkg_version appContext
     test_401 appContext
@@ -79,6 +86,52 @@ test_201 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
+test_201_with_locales appContext =
+  it "HTTP 201 CREATED (with reused locales)" $
+    -- GIVEN: Prepare request
+    do
+      let reqDtoWithLocales = packagePublishEditorDTO {localeUuids = Just [czechNetherlandsKmLocale.uuid]} :: PackagePublishEditorDTO
+      -- AND: Run migrations
+      runInContextIO KnowledgeModelPackage.runMigration appContext
+      runInContextIO KnowledgeModelEditor.runMigration appContext
+      runInContextIO (insertKnowledgeModelLocale czechNetherlandsKmLocale) appContext
+      runInContextIO (putKnowledgeModelLocale czechNetherlandsKmLocale.uuid translationPoFileName czechPoContent) appContext
+      runInContextIO (putKnowledgeModelLocale czechNetherlandsKmLocale.uuid translationJsonFileName czechJsonContent) appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders (encode reqDtoWithLocales)
+      -- THEN: Compare response with expectation
+      let (status, _, resBody) = destructResponse response :: (Int, ResponseHeaders, KnowledgeModelPackageSimpleDTO)
+      assertResStatus status 201
+      -- AND: Locales are copied to the published package
+      eLocales <- runInContextIO (findKnowledgeModelLocalesByPackageUuid resBody.uuid) appContext
+      liftIO $ fmap (fmap (.code)) eLocales `shouldBe` Right ["cs"]
+      liftIO $ fmap (fmap ((/= czechNetherlandsKmLocale.uuid) . (.uuid))) eLocales `shouldBe` Right [True]
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_400_not_reusable_locales appContext =
+  it "HTTP 400 BAD REQUEST when selected locales cannot be reused" $
+    -- GIVEN: Prepare request
+    do
+      let reqDtoWithLocales = packagePublishEditorDTO {localeUuids = Just [czechGlobalKmLocale.uuid]} :: PackagePublishEditorDTO
+      let expStatus = 400
+      let expHeaders = resCtHeader : resCorsHeaders
+      let expDto = UserError _ERROR_VALIDATION__KM_LOCALE_NOT_REUSABLE
+      let expBody = encode expDto
+      -- AND: Run migrations
+      runInContextIO KnowledgeModelPackage.runMigration appContext
+      runInContextIO KnowledgeModelEditor.runMigration appContext
+      -- WHEN: Call API
+      response <- request reqMethod reqUrl reqHeaders (encode reqDtoWithLocales)
+      -- THEN: Compare response with expectation
+      let responseMatcher =
+            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+      response `shouldRespondWith` responseMatcher
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
 test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "description"
 
 -- ----------------------------------------------------
@@ -111,7 +164,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "KM_PUBLISH_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "KnowledgeModelEditorsUseRolePermission"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -3,6 +3,7 @@ module Wizard.Service.Project.ProjectService where
 import Control.Monad (void, when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
+import Data.Char (toLower)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
 import qualified Data.Map.Strict as M
@@ -37,6 +38,7 @@ import Wizard.Api.Resource.Project.ProjectShareChangeDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.KnowledgeModel.KnowledgeModelLocaleDAO
 import Wizard.Database.DAO.Project.ProjectCommentThreadDAO
 import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.DAO.Project.ProjectEventDAO
@@ -59,6 +61,8 @@ import Wizard.Model.Project.ProjectContent
 import Wizard.Model.Project.ProjectReply
 import Wizard.Model.Tenant.Config.TenantConfig
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import qualified Wizard.Service.KnowledgeModel.Locale.KnowledgeModelLocaleMapper as KnowledgeModelLocaleMapper
+import Wizard.Service.KnowledgeModel.Locale.KnowledgeModelLocaleService (findLocaleJson)
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Project.Collaboration.ProjectCollaborationService
 import Wizard.Service.Project.Comment.ProjectCommentService
@@ -89,7 +93,6 @@ getProjectsForCurrentUserPageDto
   -> [Sort]
   -> AppContextM (Page ProjectDTO)
 getProjectsForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp pageable sort = do
-  checkPermission _PRJ_PERM
   currentUser <- getCurrentUser
   projectPage <-
     findProjectsForCurrentUserPage
@@ -225,7 +228,7 @@ createProjectsFromCommands = runInTransaction . traverse_ create
       currentUser <- getCurrentUser
       now <- liftIO getCurrentTime
       tcProject <- getCurrentTenantConfigProject
-      users <- findUsersByEmails command.emails
+      users <- findUsersByEmails (fmap (fmap toLower) command.emails)
       let permissions = fmap (createPermission uuid) users
       let project = fromCreateProjectCommand command uuid permissions tcProject currentUser.uuid now
       insertProject project
@@ -255,12 +258,13 @@ getProjectDetailQuestionnaireByUuid projectUuid = do
       then findProjectCommentThreadsSimple projectUuid True editor
       else return M.empty
   knowledgeModel <- compileKnowledgeModel [] (Just project.knowledgeModelPackage.uuid) project.selectedQuestionTagUuids
+  mLocale <- findLocaleJson project.knowledgeModelPackage.uuid project.language
   let projectContent = compileProjectEvents projectEvents
   let labels =
         if editor
           then projectContent.labels
           else M.empty
-  return $ toDetailProjectDTO project unresolvedCommentCounts resolvedCommentCounts knowledgeModel projectContent.phaseUuid projectContent.replies labels
+  return $ toDetailProjectDTO project unresolvedCommentCounts resolvedCommentCounts knowledgeModel projectContent.phaseUuid projectContent.replies labels mLocale
 
 getProjectDetailPreviewById :: U.UUID -> AppContextM ProjectDetailPreview
 getProjectDetailPreviewById projectUuid = do
@@ -273,7 +277,8 @@ getProjectDetailSettingsById projectUuid = do
   project <- findProjectDetailSettings projectUuid
   checkViewPermissionToProject project.visibility project.sharing project.permissions
   knowledgeModel <- compileKnowledgeModel [] (Just project.knowledgeModelPackage.uuid) project.selectedQuestionTagUuids
-  return $ project {knowledgeModelTags = M.elems knowledgeModel.entities.tags}
+  availableLocales <- findKnowledgeModelLocalesByPackageUuid project.knowledgeModelPackage.uuid
+  return $ project {knowledgeModelTags = M.elems knowledgeModel.entities.tags, availableLocales = fmap KnowledgeModelLocaleMapper.toList availableLocales}
 
 getProjectEventsPage :: U.UUID -> Pageable -> [Sort] -> AppContextM (Page ProjectEventList)
 getProjectEventsPage projectUuid pageable sort = do
@@ -298,7 +303,6 @@ getProjectEventForProjectUuid projectUuid eventUuid = do
 modifyProjectShare :: U.UUID -> ProjectShareChangeDTO -> AppContextM ProjectShareChangeDTO
 modifyProjectShare projectUuid reqDto =
   runInTransaction $ do
-    checkPermission _PRJ_PERM
     project <- findProjectByUuid projectUuid
     skipIfAssigningProject project (checkOwnerPermissionToProject project.visibility project.permissions)
     now <- liftIO getCurrentTime
@@ -338,13 +342,12 @@ modifyProjectShare projectUuid reqDto =
 modifyProjectSettings :: U.UUID -> ProjectSettingsChangeDTO -> AppContextM ProjectSettingsChangeDTO
 modifyProjectSettings projectUuid reqDto =
   runInTransaction $ do
-    checkPermission _PRJ_PERM
     validateProjectSettingsChangeDTO reqDto
     project <- findProjectByUuid projectUuid
     skipIfAssigningProject project (checkOwnerPermissionToProject project.visibility project.permissions)
-    currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
-    let updatedProject = fromSettingsChangeDTO project reqDto currentUser now
+    hasPermission <- hasPermission _PROJECT_TEMPLATES_MANAGE_ROLE_PERMISSION
+    let updatedProject = fromSettingsChangeDTO project reqDto hasPermission now
     updateProjectByUuid updatedProject
     permissionDtos <- traverse enhanceProjectPerm updatedProject.permissions
     deleteTemporalDocumentsByProjectUuid project.uuid
@@ -389,6 +392,7 @@ modifyContent projectUuid reqDto =
     let (updatedProject, updatedProjectEvents) = fromContentChangeDTO project projectEvents reqDto mCurrentUser now
     syncProjectEventsWithDb projectEvents updatedProjectEvents
     updateProjectSquashedAndUpdatedAtByUuid projectUuid False now
+    logOutOnlineUsersWhenProjectDramaticallyChanged projectUuid
     return reqDto
 
 cleanProjects :: AppContextM ()

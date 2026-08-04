@@ -19,6 +19,7 @@ import System.Log.Raven.Types (SentryLevel (Error), SentryRecord (..))
 import Shared.Common.Model.Config.BuildInfoConfig
 import Shared.Common.Model.Config.ServerConfig
 import Shared.Common.Model.Context.AppContext
+import Shared.Common.Model.User.RolePermission
 import Shared.Common.Service.Acl.AclService
 import Shared.Common.Util.Error (tryError)
 import Shared.Common.Util.Logger
@@ -35,7 +36,7 @@ runPersistentCommands
   -> (PersistentCommand identity -> function)
   -> m ()
 runPersistentCommands runAppContextWithAppContext' updateContext createPersistentCommand execute = do
-  checkPermission _DEV_PERM
+  checkPermission _DEV_USE_ROLE_PERMISSION
   commands <- findPersistentCommandsForRetryByStates
   unless
     (null commands)

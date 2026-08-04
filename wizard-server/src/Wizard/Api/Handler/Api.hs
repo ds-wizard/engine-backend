@@ -28,6 +28,7 @@ import Wizard.Api.Handler.Project.Api
 import Wizard.Api.Handler.ProjectCommentThread.Api
 import Wizard.Api.Handler.ProjectFile.Api
 import Wizard.Api.Handler.Registry.Api
+import Wizard.Api.Handler.Role.Api
 import Wizard.Api.Handler.Submission.Api
 import Wizard.Api.Handler.Tenant.Api
 import Wizard.Api.Handler.Token.Api
@@ -65,6 +66,7 @@ type ApplicationAPI =
     :<|> ProjectCommentThreadAPI
     :<|> ProjectFileAPI
     :<|> RegistryAPI
+    :<|> RoleAPI
     :<|> SubmissionAPI
     :<|> TenantAPI
     :<|> TokenAPI
@@ -104,6 +106,7 @@ applicationServer =
     :<|> projectCommentThreadServer
     :<|> projectFileServer
     :<|> registryServer
+    :<|> roleServer
     :<|> submissionServer
     :<|> tenantServer
     :<|> tokenServer

@@ -1,5 +1,6 @@
 module Wizard.Api.Resource.User.UserCreateDTO where
 
+import qualified Data.UUID as U
 import GHC.Generics
 
 data UserCreateDTO = UserCreateDTO
@@ -7,7 +8,7 @@ data UserCreateDTO = UserCreateDTO
   , lastName :: String
   , email :: String
   , affiliation :: Maybe String
-  , uRole :: Maybe String
+  , roleUuid :: Maybe U.UUID
   , password :: String
   }
   deriving (Generic)

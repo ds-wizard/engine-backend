@@ -1,12 +1,13 @@
 module WizardLib.Public.Model.PersistentCommand.Tenant.Config.UpdateDefaultRoleConfigCommand where
 
 import Data.Aeson
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Common.Util.Aeson
 
 data UpdateDefaultRoleConfigCommand = UpdateDefaultRoleConfigCommand
-  { defaultRole :: String
+  { defaultRoleUuid :: U.UUID
   }
   deriving (Show, Eq, Generic)
 

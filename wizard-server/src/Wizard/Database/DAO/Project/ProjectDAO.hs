@@ -34,6 +34,7 @@ import Wizard.Database.Mapping.Project.ProjectList ()
 import Wizard.Database.Mapping.Project.ProjectSimple ()
 import Wizard.Database.Mapping.Project.ProjectSimpleWithPerm ()
 import Wizard.Database.Mapping.Project.ProjectSuggestion ()
+import Wizard.Model.Context.AclContext
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.ContextLenses ()
@@ -45,7 +46,6 @@ import Wizard.Model.Project.Project
 import Wizard.Model.Project.ProjectList
 import Wizard.Model.Project.ProjectSimpleWithPerm
 import Wizard.Model.Project.ProjectSuggestion
-import Wizard.Model.User.User
 
 entityName = "project"
 
@@ -55,7 +55,8 @@ findProjects :: AppContextM [Project]
 findProjects = do
   tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
-  if currentUser.uRole == _USER_ROLE_ADMIN
+  hasPermission <- hasPermission _PROJECTS_VIEW_ROLE_PERMISSION
+  if hasPermission
     then createFindEntitiesBySortedFn entityName [tenantQueryUuid tenantUuid] [Sort "name" Ascending] >>= traverse enhance
     else do
       let sql = f' (projectSelectSql (U.toString tenantUuid) (U.toString currentUser.uuid) "['VIEW']") [""] ++ " ORDER BY project.name ASC"
@@ -130,8 +131,9 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
                   , f' " AND (%s)" [L.intercalate operator . fmap (\c -> if c.version == "all" then " (knowledge_model_package.organization_id = ? AND knowledge_model_package.km_id = ?)" else " (knowledge_model_package.organization_id = ? AND knowledge_model_package.km_id = ? AND knowledge_model_package.version = ?)") $ kmpCoordinates]
                   , concatMap (\c -> if c.version == "all" then [c.organizationId, c.entityId] else [c.organizationId, c.entityId, c.version]) kmpCoordinates
                   )
+    hasPermission <- hasPermission _PROJECTS_VIEW_ROLE_PERMISSION
     let (aclJoins, aclCondition) =
-          if currentUser.uRole == _USER_ROLE_ADMIN
+          if hasPermission
             then (userUuidsJoin, "")
             else
               ( f''
@@ -270,7 +272,8 @@ findProjectsByKnowledgeModelPackageUuid :: U.UUID -> AppContextM [Project]
 findProjectsByKnowledgeModelPackageUuid pkgUuid = do
   tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
-  if currentUser.uRole == _USER_ROLE_ADMIN
+  hasPermission <- hasPermission _PROJECTS_VIEW_ROLE_PERMISSION
+  if hasPermission
     then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("knowledge_model_package_uuid", U.toString pkgUuid)] >>= traverse enhance
     else do
       let sql =
@@ -286,7 +289,8 @@ findProjectsByDocumentTemplateUuid :: U.UUID -> AppContextM [Project]
 findProjectsByDocumentTemplateUuid documentTemplateUuid = do
   tenantUuid <- asks currentTenantUuid
   currentUser <- getCurrentUser
-  if currentUser.uRole == _USER_ROLE_ADMIN
+  hasPermission <- hasPermission _PROJECTS_VIEW_ROLE_PERMISSION
+  if hasPermission
     then createFindEntitiesByFn entityName [tenantQueryUuid tenantUuid, ("document_template_uuid", U.toString documentTemplateUuid)] >>= traverse enhance
     else do
       let sql =
@@ -427,6 +431,7 @@ findProjectDetailQuestionnaire uuid = do
             \       knowledge_model_package.version AS knowledge_model_package_version, \
             \       knowledge_model_package.description AS knowledge_model_package_description, \
             \       project.selected_question_tag_uuids, \
+            \       project.language, \
             \       project.is_template, \
             \       project_mig.new_project_uuid AS migration_uuid, \
             \       ${projectDetailPermSql}, \
@@ -511,6 +516,7 @@ findProjectDetailSettings uuid = do
             \       project.is_template, \
             \       project.project_tags, \
             \       project.selected_question_tag_uuids, \
+            \       project.language, \
             \       project.format_uuid, \
             \       project_mig.new_project_uuid AS migration_uuid, \
             \       ${projectDetailPermSql}, \
@@ -523,8 +529,9 @@ findProjectDetailSettings uuid = do
             \       pkg.description                as knowledge_model_package_description, \
             \       pkg.non_editable               as knowledge_model_package_non_editable, \
             \       pkg.public                     as knowledge_model_package_public, \
+            \       pkg.language                   as knowledge_model_package_language, \
             \       pkg.created_at                 as knowledge_model_package_created_at, \
-            \       dt.uuid                          as document_template_uuid, \
+            \       dt.uuid                        as document_template_uuid, \
             \       dt.name                        as document_template_name, \
             \       dt.version                     as document_template_version, \
             \       dt.phase                       as document_template_phase, \
@@ -585,7 +592,7 @@ insertProject project = do
   -- Insert project
   let sql =
         fromString
-          "INSERT INTO project VALUES (?, ?, ?, ?, ?, ?::uuid[], ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::text[])"
+          "INSERT INTO project VALUES (?, ?, ?, ?, ?, ?::uuid[], ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::text[], ?)"
   let params = toRow project
   logQuery sql params
   let action conn = execute conn sql params
@@ -599,7 +606,7 @@ updateProjectByUuid project = do
   tenantUuid <- asks currentTenantUuid
   let sql =
         fromString
-          "UPDATE project SET uuid = ?, name = ?, visibility = ?, sharing = ?, knowledge_model_package_uuid = ?, selected_question_tag_uuids = ?::uuid[], document_template_uuid = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?::text[] WHERE tenant_uuid = ? AND uuid = ?"
+          "UPDATE project SET uuid = ?, name = ?, visibility = ?, sharing = ?, knowledge_model_package_uuid = ?, selected_question_tag_uuids = ?::uuid[], document_template_uuid = ?, format_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, tenant_uuid = ?, project_tags = ?::text[], language = ? WHERE tenant_uuid = ? AND uuid = ?"
   let params = toRow project ++ [toField tenantUuid, toField . U.toText $ project.uuid]
   logInsertAndUpdate sql params
   let action conn = execute conn sql params

@@ -38,6 +38,7 @@ import Wizard.Api.Resource.Project.ProjectSuggestionSM ()
 import Wizard.Api.Resource.Tenant.TenantDTO
 import Wizard.Api.Resource.Tenant.TenantSM ()
 import Wizard.Api.Resource.User.Group.UserGroupSuggestionSM ()
+import Wizard.Api.Resource.User.RoleListSM ()
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Database.Migration.Development.Document.Data.Documents
@@ -49,6 +50,7 @@ import Wizard.Database.Migration.Development.Project.Data.ProjectEvents
 import Wizard.Database.Migration.Development.Project.Data.ProjectFiles
 import Wizard.Database.Migration.Development.Project.Data.Projects
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
+import Wizard.Database.Migration.Development.User.Data.Roles
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.DocumentTemplate.DocumentTemplateDraftList
 import Wizard.Model.KnowledgeModel.Editor.KnowledgeModelEditorList
@@ -68,11 +70,14 @@ import qualified Wizard.Service.Tenant.TenantMapper as TNT_Mapper
 import qualified Wizard.Service.User.Group.UserGroupMapper as UG_Mapper
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import WizardLib.Public.Api.Resource.PersistentCommand.PersistentCommandListSM ()
+import WizardLib.Public.Api.Resource.User.RoleListJM ()
 import WizardLib.Public.Api.Resource.User.UserSuggestionSM ()
 import WizardLib.Public.Database.Migration.Development.PersistentCommand.Data.PersistentCommands
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
 import WizardLib.Public.Model.PersistentCommand.PersistentCommandList
+import WizardLib.Public.Model.User.RoleList
 import WizardLib.Public.Model.User.UserSuggestion
+import qualified WizardLib.Public.Service.User.RoleMapper as R_Mapper
 
 instance ToSchema (Page String) where
   declareNamedSchema = toSwaggerWithDtoName "Page String" (Page "projectTags" pageMetadata ["value1"])
@@ -80,6 +85,10 @@ instance ToSchema (Page String) where
 instance ToSchema (Page UserDTO) where
   declareNamedSchema =
     toSwaggerWithDtoName "Page UserDTO" (Page "users" pageMetadata [U_Mapper.toDTO userAlbert])
+
+instance ToSchema (Page RoleList) where
+  declareNamedSchema =
+    toSwaggerWithDtoName "Page RoleList" (Page "roles" pageMetadata [R_Mapper.toDTO adminRole 0])
 
 instance ToSchema (Page UserSuggestion) where
   declareNamedSchema =

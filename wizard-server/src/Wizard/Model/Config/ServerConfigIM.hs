@@ -12,7 +12,6 @@ instance FromEnv ServerConfig where
     s3 <- applyEnv serverConfig.s3
     aws <- applyEnv serverConfig.aws
     sentry <- applyEnv serverConfig.sentry
-    roles <- applyEnv serverConfig.roles
     userEmailLink <- applyEnv serverConfig.userEmailLink
     cache <- applyEnv serverConfig.cache
     document <- applyEnv serverConfig.document
@@ -29,8 +28,20 @@ instance FromEnv ServerConfig where
     signalBridge <- applyEnv serverConfig.signalBridge
     admin <- applyEnv serverConfig.admin
     registry <- applyEnv serverConfig.registry
-    modules <- applyEnv serverConfig.modules
+    httpClient <- applyEnv serverConfig.httpClient
     return ServerConfig {..}
+
+instance FromEnv ServerConfigHttpClient where
+  applyEnv serverConfig = do
+    restricted <- applyEnv serverConfig.restricted
+    return ServerConfigHttpClient {..}
+
+instance FromEnv ServerConfigHttpClientRestricted where
+  applyEnv serverConfig =
+    applyEnvVariables
+      serverConfig
+      [ \c -> applyEnvVariable "HTTP_CLIENT_RESTRICTED_ALLOWED_HOSTS" c.allowedHosts (\x -> c {allowedHosts = x} :: ServerConfigHttpClientRestricted)
+      ]
 
 instance FromEnv ServerConfigGeneral where
   applyEnv serverConfig =
@@ -42,15 +53,6 @@ instance FromEnv ServerConfigGeneral where
       , \c -> applyStringEnvVariable "GENERAL_SECRET" c.secret (\x -> c {secret = x})
       , \c -> applyRSAPrivateKeyEnvVariable "GENERAL_RSA_PRIVATE_KEY" c.rsaPrivateKey (\x -> c {rsaPrivateKey = x} :: ServerConfigGeneral)
       , \c -> applyStringEnvVariable "GENERAL_INTEGRATION_CONFIG" c.integrationConfig (\x -> c {integrationConfig = x})
-      ]
-
-instance FromEnv ServerConfigRoles where
-  applyEnv serverConfig =
-    applyEnvVariables
-      serverConfig
-      [ \c -> applyEnvVariable "ROLES_ADMIN" c.admin (\x -> c {admin = x} :: ServerConfigRoles)
-      , \c -> applyEnvVariable "ROLES_DATA_STEWARD" c.dataSteward (\x -> c {dataSteward = x} :: ServerConfigRoles)
-      , \c -> applyEnvVariable "ROLES_RESEARCHER" c.researcher (\x -> c {researcher = x} :: ServerConfigRoles)
       ]
 
 instance FromEnv ServerConfigUserEmailLink where
@@ -146,6 +148,7 @@ instance FromEnv ServerConfigAdmin where
     applyEnvVariables
       serverConfig
       [ \c -> applyEnvVariable "ADMIN_ENABLED" c.enabled (\x -> c {enabled = x} :: ServerConfigAdmin)
+      , \c -> applyStringEnvVariable "ADMIN_SERVER_URL" c.serverUrl (\x -> c {serverUrl = x} :: ServerConfigAdmin)
       ]
 
 instance FromEnv ServerConfigRegistry where
@@ -156,30 +159,4 @@ instance FromEnv ServerConfigRegistry where
       , \c -> applyStringEnvVariable "REGISTRY_CLIENT_URL" c.clientUrl (\x -> c {clientUrl = x} :: ServerConfigRegistry)
       , \c -> applyEnvVariable "REGISTRY_SYNC_ENABLED" c.sync.enabled (\x -> c {sync = c.sync {enabled = x}} :: ServerConfigRegistry)
       , \c -> applyStringEnvVariable "REGISTRY_SYNC_CRON" c.sync.cron (\x -> c {sync = c.sync {cron = x}} :: ServerConfigRegistry)
-      ]
-
-instance FromEnv ServerConfigModules where
-  applyEnv serverConfig =
-    applyEnvVariables
-      serverConfig
-      [ \c -> applyStringEnvVariable "MODULES_WIZARD_TITLE" c.wizard.title (\x -> c {wizard = c.wizard {title = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_WIZARD_DESCRIPTION" c.wizard.description (\x -> c {wizard = c.wizard {description = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_WIZARD_ICON" c.wizard.icon (\x -> c {wizard = c.wizard {icon = x}} :: ServerConfigModules)
-      , \c -> applyMaybeStringEnvVariable "MODULES_WIZARD_URL" c.wizard.url (\x -> c {wizard = c.wizard {url = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_ADMIN_TITLE" c.admin.title (\x -> c {admin = c.admin {title = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_ADMIN_DESCRIPTION" c.admin.description (\x -> c {admin = c.admin {description = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_ADMIN_ICON" c.admin.icon (\x -> c {admin = c.admin {icon = x}} :: ServerConfigModules)
-      , \c -> applyMaybeStringEnvVariable "MODULES_ADMIN_URL" c.admin.url (\x -> c {admin = c.admin {url = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_INTEGRATION_HUB_TITLE" c.integrationHub.title (\x -> c {integrationHub = c.integrationHub {title = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_INTEGRATION_HUB_DESCRIPTION" c.integrationHub.description (\x -> c {integrationHub = c.integrationHub {description = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_INTEGRATION_HUB_ICON" c.integrationHub.icon (\x -> c {integrationHub = c.integrationHub {icon = x}} :: ServerConfigModules)
-      , \c -> applyMaybeStringEnvVariable "MODULES_INTEGRATION_HUB_URL" c.integrationHub.url (\x -> c {integrationHub = c.integrationHub {url = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_ANALYTICS_TITLE" c.analytics.title (\x -> c {analytics = c.analytics {title = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_ANALYTICS_DESCRIPTION" c.analytics.description (\x -> c {analytics = c.analytics {description = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_ANALYTICS_ICON" c.analytics.icon (\x -> c {analytics = c.analytics {icon = x}} :: ServerConfigModules)
-      , \c -> applyMaybeStringEnvVariable "MODULES_ANALYTICS_URL" c.analytics.url (\x -> c {analytics = c.analytics {url = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_GUIDE_TITLE" c.guide.title (\x -> c {guide = c.guide {title = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_GUIDE_DESCRIPTION" c.guide.description (\x -> c {guide = c.guide {description = x}} :: ServerConfigModules)
-      , \c -> applyStringEnvVariable "MODULES_GUIDE_ICON" c.guide.icon (\x -> c {guide = c.guide {icon = x}} :: ServerConfigModules)
-      , \c -> applyMaybeStringEnvVariable "MODULES_GUIDE_URL" c.guide.url (\x -> c {guide = c.guide {url = x}} :: ServerConfigModules)
       ]

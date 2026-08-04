@@ -7,6 +7,7 @@ import Control.Monad.Reader (ask, liftIO)
 import qualified Data.ByteString.Builder as BSB
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
+import qualified Data.Char as CH
 import qualified Data.List as L
 import Data.Maybe
 import Data.Pool
@@ -493,6 +494,11 @@ mapToDBCoordinatesParams (Just orgId) _ = [orgId]
 mapToDBCoordinatesParams _ (Just eId) = [eId]
 mapToDBCoordinatesParams _ _ = []
 
+toSortColumn :: String -> String
+toSortColumn = filter isSafe . toSnake
+  where
+    isSafe c = CH.isAsciiLower c || CH.isDigit c || c == '_'
+
 mapSort :: [Sort] -> String
 mapSort [] = ""
 mapSort xs = "ORDER BY " ++ createRecord xs
@@ -502,8 +508,8 @@ mapSort xs = "ORDER BY " ++ createRecord xs
     createRecord (sort : xs) = create sort ++ ", " ++ createRecord xs
     create (Sort name order) =
       case order of
-        Ascending -> f' "%s asc " [toSnake name]
-        Descending -> f' "%s desc " [toSnake name]
+        Ascending -> f' "%s asc " [toSortColumn name]
+        Descending -> f' "%s desc " [toSortColumn name]
 
 mapSortWithPrefix :: String -> [Sort] -> String
 mapSortWithPrefix _ [] = ""
@@ -514,8 +520,8 @@ mapSortWithPrefix prefix xs = "ORDER BY " ++ createRecord xs
     createRecord (sort : xs) = create sort ++ ", " ++ mapSort xs
     create (Sort name order) =
       case order of
-        Ascending -> f' "%s.%s asc " [prefix, toSnake name]
-        Descending -> f' "%s.%s desc " [prefix, toSnake name]
+        Ascending -> f' "%s.%s asc " [prefix, toSortColumn name]
+        Descending -> f' "%s.%s desc " [prefix, toSortColumn name]
 
 mapSortWithCustomMapping :: [Sort] -> [(String, String)] -> String
 mapSortWithCustomMapping [] customMapping = ""
@@ -528,7 +534,7 @@ mapSortWithCustomMapping xs customMapping = "ORDER BY " ++ createRecord xs
       let sanitize name =
             case L.find (\(cmName, value) -> cmName == name) customMapping of
               Just (cmName, cmValue) -> cmValue
-              Nothing -> toSnake name
+              Nothing -> toSortColumn name
        in case order of
             Ascending -> f' "%s asc " [sanitize name]
             Descending -> f' "%s desc " [sanitize name]

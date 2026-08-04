@@ -15,7 +15,7 @@ import Wizard.Model.Context.ContextLenses ()
 moveDraftFolder :: U.UUID -> DocumentTemplateFolderMoveDTO -> AppContextM ()
 moveDraftFolder documentTemplateUuid reqDto =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     moveFolder documentTemplateUuid reqDto.current reqDto.new
     touchDocumentTemplateByUuid documentTemplateUuid
     deleteTemporalDocumentsByDocumentTemplateUuid documentTemplateUuid
@@ -24,7 +24,7 @@ moveDraftFolder documentTemplateUuid reqDto =
 deleteDraftFolder :: U.UUID -> DocumentTemplateFolderDeleteDTO -> AppContextM ()
 deleteDraftFolder documentTemplateUuid reqDto =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     deleteFolder documentTemplateUuid reqDto.path
     touchDocumentTemplateByUuid documentTemplateUuid
     deleteTemporalDocumentsByDocumentTemplateUuid documentTemplateUuid

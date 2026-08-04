@@ -46,13 +46,13 @@ import Wizard.Service.Tenant.Limit.LimitService
 
 getDraftsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentTemplateDraftList)
 getDraftsPage mQuery pageable sort = do
-  checkPermission _DOC_TML_WRITE_PERM
+  checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
   findDraftsPage mQuery pageable sort
 
 createDraft :: DocumentTemplateDraftCreateDTO -> AppContextM DocumentTemplateSimple
 createDraft reqDto =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     checkDocumentTemplateDraftLimit
     uuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
@@ -85,7 +85,7 @@ createDraft reqDto =
 
 getDraft :: U.UUID -> AppContextM DocumentTemplateDraftDetail
 getDraft dtUuid = do
-  checkPermission _DOC_TML_WRITE_PERM
+  checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
   draft <- findDraftByUuid dtUuid
   formats <- findDocumentTemplateFormats draft.uuid
   draftData <- findDraftDataByUuid dtUuid
@@ -102,7 +102,7 @@ getDraft dtUuid = do
 modifyDraft :: U.UUID -> DocumentTemplateDraftChangeDTO -> AppContextM DocumentTemplateDraftDetail
 modifyDraft dtUuid reqDto =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     -- Update draft
     now <- liftIO getCurrentTime
     draft <- findDraftByUuid dtUuid
@@ -121,7 +121,7 @@ modifyDraft dtUuid reqDto =
 modifyDraftData :: U.UUID -> DocumentTemplateDraftDataChangeDTO -> AppContextM DocumentTemplateDraftDataDTO
 modifyDraftData dtUuid reqDto =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     draftData <- findDraftDataByUuid dtUuid
     let updatedDraftData = fromDraftDataChangeDTO draftData reqDto
     updateDraftDataById updatedDraftData
@@ -138,6 +138,6 @@ modifyDraftData dtUuid reqDto =
 deleteDraft :: U.UUID -> AppContextM ()
 deleteDraft uuid =
   runInTransaction $ do
-    checkPermission _DOC_TML_WRITE_PERM
+    checkPermission _DOCUMENT_TEMPLATE_EDITORS_USE_ROLE_PERMISSION
     draft <- findDraftByUuid uuid
     void $ deleteDraftByUuid uuid

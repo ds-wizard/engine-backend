@@ -7,6 +7,7 @@ import GHC.Generics
 
 import Wizard.Api.Resource.User.UserSubmissionPropJM ()
 import Wizard.Util.Hashable ()
+import WizardLib.Public.Model.User.RoleSimple
 
 data UserDTO = UserDTO
   { uuid :: U.UUID
@@ -14,8 +15,7 @@ data UserDTO = UserDTO
   , lastName :: String
   , email :: String
   , affiliation :: Maybe String
-  , uRole :: String
-  , permissions :: [String]
+  , role :: RoleSimple
   , active :: Bool
   , imageUrl :: Maybe String
   , locale :: Maybe U.UUID
@@ -34,8 +34,7 @@ instance Eq UserDTO where
       && a.lastName == b.lastName
       && a.email == b.email
       && a.affiliation == b.affiliation
-      && a.uRole == b.uRole
-      && a.permissions == b.permissions
+      && a.role == b.role
       && a.active == b.active
       && a.imageUrl == b.imageUrl
       && a.locale == b.locale

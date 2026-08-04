@@ -30,12 +30,12 @@ import WizardLib.Public.Model.PersistentCommand.PersistentCommandList
 
 getPersistentCommandsPage :: [String] -> Pageable -> [Sort] -> AppContextM (Page PersistentCommandList)
 getPersistentCommandsPage states pageable sort = do
-  checkPermission _DEV_PERM
+  checkPermission _DEV_USE_ROLE_PERMISSION
   findPersistentCommandsPage states pageable sort
 
 getPersistentCommandById :: U.UUID -> AppContextM PersistentCommandDetailDTO
 getPersistentCommandById uuid = do
-  checkPermission _DEV_PERM
+  checkPermission _DEV_USE_ROLE_PERMISSION
   command <- findPersistentCommandByUuid uuid
   mUser <-
     case command.createdBy of
@@ -48,7 +48,7 @@ getPersistentCommandById uuid = do
 createPersistentCommand :: PersistentCommand U.UUID -> AppContextM (PersistentCommand U.UUID)
 createPersistentCommand persistentCommand =
   runInTransaction $ do
-    checkPermission _DEV_PERM
+    checkPermission _DEV_USE_ROLE_PERMISSION
     mPersistentCommandFromDb <- findPersistentCommandByUuid' persistentCommand.uuid :: AppContextM (Maybe (PersistentCommand U.UUID))
     case mPersistentCommandFromDb of
       Just _ -> return persistentCommand
@@ -58,7 +58,7 @@ createPersistentCommand persistentCommand =
 
 modifyPersistentCommand :: U.UUID -> PersistentCommandChangeDTO -> AppContextM PersistentCommandDetailDTO
 modifyPersistentCommand uuid reqDto = do
-  checkPermission _DEV_PERM
+  checkPermission _DEV_USE_ROLE_PERMISSION
   command <- findPersistentCommandByUuid uuid
   now <- liftIO getCurrentTime
   let updatedCommand = fromChangeDTO command reqDto now :: PersistentCommand U.UUID

@@ -127,7 +127,7 @@ test_403 appContext =
       -- AND: Prepare expectation
       let expStatus = 403
       let expHeaders = resCtHeader : resCorsHeaders
-      let expDto = ForbiddenError (_ERROR_VALIDATION__FORBIDDEN "Missing permission: DOC_PERM")
+      let expDto = ForbiddenError (_ERROR_VALIDATION__FORBIDDEN "Missing permission: ProjectsEditRolePermission")
       let expBody = encode expDto
       -- AND: Run migrations
       runInContextIO U_Migration.runMigration appContext

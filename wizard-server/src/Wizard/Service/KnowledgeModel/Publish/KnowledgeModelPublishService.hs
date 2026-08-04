@@ -5,6 +5,7 @@ module Wizard.Service.KnowledgeModel.Publish.KnowledgeModelPublishService (
 
 import Control.Monad.Reader (liftIO)
 import Data.Time
+import qualified Data.UUID as U
 
 import Shared.Common.Util.Uuid
 import Shared.Coordinate.Model.Coordinate.Coordinate
@@ -28,6 +29,7 @@ import Wizard.Service.KnowledgeModel.Editor.Collaboration.CollaborationService
 import Wizard.Service.KnowledgeModel.Editor.EditorAudit
 import Wizard.Service.KnowledgeModel.Editor.EditorMapper
 import Wizard.Service.KnowledgeModel.Editor.EditorUtil
+import Wizard.Service.KnowledgeModel.Locale.KnowledgeModelLocaleService
 import Wizard.Service.KnowledgeModel.Migration.KnowledgeModelMigrationAudit
 import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageService
 import Wizard.Service.KnowledgeModel.Publish.KnowledgeModelPublishMapper
@@ -37,7 +39,7 @@ import Wizard.Service.KnowledgeModel.Squash.Squasher
 publishPackageFromKnowledgeModelEditor :: PackagePublishEditorDTO -> AppContextM KnowledgeModelPackageSimpleDTO
 publishPackageFromKnowledgeModelEditor reqDto = do
   runInTransaction $ do
-    checkPermission _KM_PUBLISH_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     validateMigrationExistence reqDto.editorUuid
     kmEditor <- findKnowledgeModelEditorByUuid reqDto.editorUuid
     kmEditorEvents <- findKnowledgeModelEventsByEditorUuid reqDto.editorUuid
@@ -53,11 +55,12 @@ publishPackageFromKnowledgeModelEditor reqDto = do
       kmEditor.readme
       mForkOfPkgId
       mMergeCheckpointPkgId
+      reqDto.localeUuids
 
 publishPackageFromMigration :: PackagePublishMigrationDTO -> AppContextM KnowledgeModelPackageSimpleDTO
 publishPackageFromMigration reqDto = do
   runInTransaction $ do
-    checkPermission _KM_PUBLISH_PERM
+    checkPermission _KNOWLEDGE_MODEL_EDITORS_USE_ROLE_PERMISSION
     kmEditor <- findKnowledgeModelEditorByUuid reqDto.editorUuid
     ms <- findKnowledgeModelMigrationByEditorUuid reqDto.editorUuid
     deleteKnowledgeModelMigrationByEditorUuid reqDto.editorUuid
@@ -74,6 +77,7 @@ publishPackageFromMigration reqDto = do
       reqDto.readme
       mForkOfPkgId
       mMergeCheckpointPkgId
+      reqDto.localeUuids
 
 -- --------------------------------
 -- PRIVATE
@@ -86,8 +90,9 @@ doPublishPackage
   -> String
   -> Maybe Coordinate
   -> Maybe Coordinate
+  -> Maybe [U.UUID]
   -> AppContextM KnowledgeModelPackageSimpleDTO
-doPublishPackage version kmEditor kmEvents description readme mForkOfPkgId mMergeCheckpointPkgId = do
+doPublishPackage version kmEditor kmEvents description readme mForkOfPkgId mMergeCheckpointPkgId mLocaleUuids = do
   let squashedKmEvents = squash kmEvents
   tcOrganization <- findTenantConfigOrganization
   validateNewPackageVersion version kmEditor tcOrganization
@@ -95,6 +100,7 @@ doPublishPackage version kmEditor kmEvents description readme mForkOfPkgId mMerg
   now <- liftIO getCurrentTime
   let (pkg, pkgEvents) = fromPackage kmEditor uuid mForkOfPkgId mMergeCheckpointPkgId tcOrganization version description readme squashedKmEvents now
   createdPkg <- createPackage (pkg, pkgEvents)
+  copyLocalesForPublishedPackage mLocaleUuids kmEditor.previousPackageUuid pkg.uuid
   let updatedKmEditor = kmEditor {previousPackageUuid = Just pkg.uuid, updatedAt = now} :: KnowledgeModelEditor
   updateKnowledgeModelEditorByUuid updatedKmEditor
   deleteKnowledgeModelEventsByEditorUuid kmEditor.uuid

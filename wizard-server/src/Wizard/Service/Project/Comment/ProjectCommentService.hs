@@ -10,13 +10,11 @@ import qualified Data.UUID as U
 import Shared.Common.Model.Common.Page
 import Shared.Common.Model.Common.Pageable
 import Shared.Common.Model.Common.Sort
-import Shared.Common.Service.Acl.AclService
 import Shared.Common.Util.List
 import Shared.Common.Util.String (splitOn)
 import Shared.Common.Util.Uuid
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModelLenses
-import Wizard.Constant.Acl
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Project.ProjectCommentDAO
 import Wizard.Database.DAO.Project.ProjectCommentThreadDAO
@@ -35,7 +33,6 @@ import WizardLib.Public.Model.User.UserSimple
 
 getProjectCommentThreadsPage :: Maybe String -> Maybe U.UUID -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page ProjectCommentThreadAssigned)
 getProjectCommentThreadsPage mQuery mProjectUuid resolved pageable sort = do
-  checkPermission _PRJ_PERM
   findAssignedProjectCommentThreadsPage mQuery mProjectUuid resolved pageable sort
 
 getProjectCommentsByProjectUuid :: U.UUID -> Maybe String -> Maybe Bool -> AppContextM (M.Map String [ProjectCommentThreadList])

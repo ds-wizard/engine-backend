@@ -44,7 +44,7 @@ findPackagesPage mOrganizationId mKmId mQuery mOutdated pageable sort =
     pageLabel
     pageable
     sort
-    "uuid, knowledge_model_package.name, knowledge_model_package.organization_id, knowledge_model_package.km_id, version, phase, description, non_editable, public, registry_knowledge_model_package.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, knowledge_model_package.created_at"
+    "uuid, knowledge_model_package.name, knowledge_model_package.organization_id, knowledge_model_package.km_id, version, phase, description, non_editable, public, registry_knowledge_model_package.remote_version, registry_organization.name as org_name, registry_organization.logo as org_logo, knowledge_model_package.language, knowledge_model_package.created_at"
     "km_id"
     mQuery
     Nothing

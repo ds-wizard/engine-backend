@@ -90,6 +90,12 @@ instance HasField "httpClientManager'" AppContext Manager where
 instance HasField "httpClientManager'" BaseContext Manager where
   getField = (.httpClientManager)
 
+instance HasField "restrictedHttpClientManager'" AppContext Manager where
+  getField = (.restrictedHttpClientManager)
+
+instance HasField "restrictedHttpClientManager'" BaseContext Manager where
+  getField = (.restrictedHttpClientManager)
+
 instance HasField "buildInfoConfig'" AppContext BuildInfoConfig where
   getField = (.buildInfoConfig)
 

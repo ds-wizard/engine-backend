@@ -5,7 +5,6 @@ import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
-import Shared.Common.Constant.Acl
 import Shared.Common.Util.Uuid
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AclContext
@@ -18,20 +17,20 @@ import WizardLib.Public.Service.OpenId.Client.Definition.OpenIdClientDefinitionM
 
 getOpenIdClientDefinitions :: AppContextM [OpenIdClientSimple]
 getOpenIdClientDefinitions = do
-  checkPermission _CFG_PERM
+  checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
   openIdClients <- findOpenIdClientDefinitions
   return . fmap toSimple $ openIdClients
 
 getOpenIdClientDefinitionByUuid :: U.UUID -> AppContextM OpenIdClientDetailDTO
 getOpenIdClientDefinitionByUuid uuid = do
-  checkPermission _CFG_PERM
+  checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
   openIdClient <- findOpenIdClientDefinitionByUuid uuid
   return $ toDetailDTO openIdClient
 
 createOpenIdClientDefinition :: OpenIdClientChangeDTO -> AppContextM OpenIdClientDetailDTO
 createOpenIdClientDefinition reqDto =
   runInTransaction $ do
-    checkPermission _CFG_PERM
+    checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
     uuid <- liftIO generateUuid
     tenantUuid <- asks currentTenantUuid
     now <- liftIO getCurrentTime
@@ -42,7 +41,7 @@ createOpenIdClientDefinition reqDto =
 modifyOpenIdClientDefinition :: U.UUID -> OpenIdClientChangeDTO -> AppContextM OpenIdClientDetailDTO
 modifyOpenIdClientDefinition uuid reqDto =
   runInTransaction $ do
-    checkPermission _CFG_PERM
+    checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
     openIdClient <- findOpenIdClientDefinitionByUuid uuid
     now <- liftIO getCurrentTime
     let updatedOpenIdClient = fromChangeDTO openIdClient reqDto now
@@ -52,6 +51,6 @@ modifyOpenIdClientDefinition uuid reqDto =
 deleteOpenIdClientDefinition :: U.UUID -> AppContextM ()
 deleteOpenIdClientDefinition uuid =
   runInTransaction $ do
-    checkPermission _CFG_PERM
+    checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
     _ <- findOpenIdClientDefinitionByUuid uuid
     deleteOpenIdClientDefinitionByUuid uuid

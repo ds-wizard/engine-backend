@@ -69,6 +69,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0064_prjTmpPerm.
 import qualified Wizard.Database.Migration.Production.Migration_0065_idToUuid.Migration as M_0065
 import qualified Wizard.Database.Migration.Production.Migration_0066_tcKnowledgeModel.Migration as M_0066
 import qualified Wizard.Database.Migration.Production.Migration_0067_openIdClient.Migration as M_0067
+import qualified Wizard.Database.Migration.Production.Migration_0068_roles.Migration as M_0068
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
@@ -139,4 +140,5 @@ migrationDefinitions =
   , M_0065.definition
   , M_0066.definition
   , M_0067.definition
+  , M_0068.definition
   ]

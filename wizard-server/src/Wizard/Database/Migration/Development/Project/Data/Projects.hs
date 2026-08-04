@@ -70,6 +70,7 @@ project1 =
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 25
+    , language = Nothing
     }
 
 project1Events :: [ProjectEvent]
@@ -138,6 +139,7 @@ project1Create =
     , questionTagUuids = []
     , documentTemplateUuid = project1.documentTemplateUuid
     , formatUuid = project1.formatUuid
+    , language = Nothing
     }
 
 project1EditedShareChange :: ProjectShareChangeDTO
@@ -157,6 +159,7 @@ project1SettingsChange =
     , documentTemplateUuid = Nothing
     , formatUuid = Nothing
     , isTemplate = project1SettingsEdited.isTemplate
+    , language = Nothing
     }
 
 project1AlbertEditProjectPerm :: ProjectPerm
@@ -197,6 +200,7 @@ project2 =
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 22
+    , language = Nothing
     }
 
 project2Edited :: Project
@@ -219,6 +223,7 @@ project2Edited =
     , tenantUuid = defaultTenant.uuid
     , createdAt = project2.createdAt
     , updatedAt = project2.updatedAt
+    , language = Nothing
     }
 
 project2Events :: [ProjectEvent]
@@ -298,6 +303,7 @@ project3 =
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 28
+    , language = Nothing
     }
 
 project3Events :: [ProjectEvent]
@@ -345,6 +351,7 @@ project4 =
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 25
+    , language = Nothing
     }
 
 project4Events :: [ProjectEvent]
@@ -649,6 +656,7 @@ project10EditedSettingsChange =
     , documentTemplateUuid = Nothing
     , formatUuid = Nothing
     , isTemplate = project10.isTemplate
+    , language = Nothing
     }
 
 project10EditedWs :: ProjectDetailWsDTO
@@ -861,6 +869,7 @@ project15 =
     , tenantUuid = defaultTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 29
+    , language = Nothing
     }
 
 project15AnonymousEdit :: Project
@@ -925,6 +934,7 @@ differentProject =
     , tenantUuid = differentTenant.uuid
     , createdAt = dt' 2018 1 20
     , updatedAt = dt' 2018 1 25
+    , language = Nothing
     }
 
 differentProjectEvents :: [ProjectEvent]

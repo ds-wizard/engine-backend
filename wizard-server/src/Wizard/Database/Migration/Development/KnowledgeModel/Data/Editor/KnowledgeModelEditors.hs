@@ -58,6 +58,7 @@ amsterdamKnowledgeModelEditor =
     , description = "First Release"
     , readme = "# Netherlands Knowledge Model"
     , license = "Apache-2.0"
+    , language = "en"
     , previousPackageUuid = amsterdamKnowledgeModelEditorList.previousPackageUuid
     , metamodelVersion = knowledgeModelMetamodelVersion
     , squashed = True
@@ -111,6 +112,7 @@ amsterdamKnowledgeModelEditorCreate =
     { name = amsterdamKnowledgeModelEditorList.name
     , kmId = amsterdamKnowledgeModelEditorList.kmId
     , version = "1.0.0"
+    , language = Nothing
     , previousPackageUuid = amsterdamKnowledgeModelEditorList.previousPackageUuid
     }
 
@@ -123,6 +125,7 @@ amsterdamKnowledgeModelEditorChange =
     , description = "EDITED: description"
     , readme = "EDITED: Readme"
     , license = "Apache-3.0"
+    , language = "de"
     }
 
 amsterdamKnowledgeModelEditorKnowledgeModel :: KnowledgeModel
@@ -139,6 +142,7 @@ amsterdamKnowledgeModelEditorDetail =
     , description = amsterdamKnowledgeModelEditor.description
     , readme = amsterdamKnowledgeModelEditor.readme
     , license = amsterdamKnowledgeModelEditor.license
+    , language = amsterdamKnowledgeModelEditor.language
     , state = EditedKnowledgeModelEditorState
     , previousPackage = Just . SPM.toSimple $ netherlandsKmPackage
     , forkOfPackage = Just . PM.toSimpleDTO $ netherlandsKmPackage
@@ -171,6 +175,7 @@ leidenKnowledgeModelEditorCreate =
     { name = leidenKnowledgeModelEditor.name
     , kmId = leidenKnowledgeModelEditor.kmId
     , version = "1.0.0"
+    , language = Nothing
     , previousPackageUuid = leidenKnowledgeModelEditor.previousPackageUuid
     }
 
@@ -184,6 +189,7 @@ differentKnowledgeModelEditor =
     , description = "Some desc"
     , readme = "Some readme"
     , license = "Apache-2.0"
+    , language = "en"
     , previousPackageUuid = Just differentPackage.uuid
     , metamodelVersion = knowledgeModelMetamodelVersion
     , squashed = True
@@ -200,6 +206,7 @@ packagePublishEditorDTO :: PackagePublishEditorDTO
 packagePublishEditorDTO =
   PackagePublishEditorDTO
     { editorUuid = amsterdamKnowledgeModelEditor.uuid
+    , localeUuids = Nothing
     }
 
 packagePublishMigrationDTO :: PackagePublishMigrationDTO
@@ -209,4 +216,5 @@ packagePublishMigrationDTO =
     , version = amsterdamKmPackage.version
     , description = amsterdamKmPackage.description
     , readme = amsterdamKmPackage.readme
+    , localeUuids = Nothing
     }

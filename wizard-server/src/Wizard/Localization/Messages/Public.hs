@@ -190,3 +190,21 @@ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION =
 
 _ERROR_SERVICE_TYPEHINT__INTEGRATION_RETURNS_ERROR =
   LocaleRecord "error.service.type_hint.integration_request_failed" "Integration request failed" []
+
+_ERROR_VALIDATION__USER_ROLE_NAME_EMPTY =
+  LocaleRecord "error.validation.role_name_empty" "Role name cannot be empty" []
+
+_ERROR_VALIDATION__USER_ROLE_ADMIN_CANNOT_BE_CHANGED =
+  LocaleRecord "error.validation.role_admin_cannot_be_changed" "The admin role cannot be changed" []
+
+_ERROR_VALIDATION__USER_ROLE_ADMIN_CANNOT_BE_DELETED =
+  LocaleRecord "error.validation.role_admin_cannot_be_deleted" "The admin role cannot be deleted" []
+
+_ERROR_VALIDATION__USER_ROLE_IN_USE =
+  LocaleRecord "error.validation.role_in_use" "The role cannot be deleted because it is assigned to users" []
+
+_ERROR_VALIDATION__USER_ROLE_IS_DEFAULT =
+  LocaleRecord "error.validation.role_is_default" "The role cannot be deleted because it is configured as the default role for new users" []
+
+_ERROR_VALIDATION__USER_ROLE_INVALID_PERMISSION perm =
+  LocaleRecord "error.validation.role_invalid_permission" "Permission '%s' is not a valid assignable permission" [perm]

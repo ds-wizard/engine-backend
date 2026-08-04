@@ -66,12 +66,6 @@ fromRegisterCreateDTO reqDto aUuid serverConfig now =
         , serverDomain = createServerDomain serverConfig reqDto.tenantId
         , serverUrl = createServerUrl url
         , clientUrl = createClientUrl url
-        , adminServerUrl = Just $ createAdminServerUrl url
-        , adminClientUrl = Just $ createAdminClientUrl url
-        , integrationHubServerUrl = Just $ createIntegrationHubServerUrl url
-        , integrationHubClientUrl = Just $ createIntegrationHubClientUrl url
-        , analyticsServerUrl = Just $ createReportingServerUrl url
-        , analyticsClientUrl = Just $ createReportingClientUrl url
         , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
         , enabled = True
         , state = ReadyForUseTenantState
@@ -89,12 +83,6 @@ fromAdminCreateDTO reqDto aUuid serverConfig now =
         , serverDomain = createServerDomain serverConfig reqDto.tenantId
         , serverUrl = createServerUrl url
         , clientUrl = createClientUrl url
-        , adminServerUrl = Just $ createAdminServerUrl url
-        , adminClientUrl = Just $ createAdminClientUrl url
-        , integrationHubServerUrl = Just $ createIntegrationHubServerUrl url
-        , integrationHubClientUrl = Just $ createIntegrationHubClientUrl url
-        , analyticsServerUrl = Just $ createReportingServerUrl url
-        , analyticsClientUrl = Just $ createReportingClientUrl url
         , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
         , enabled = True
         , state = ReadyForUseTenantState
@@ -115,12 +103,6 @@ fromCommand command state serverConfig createdAt updatedAt =
         , serverDomain = serverDomain
         , serverUrl = createServerUrl url
         , clientUrl = createClientUrl url
-        , adminServerUrl = Just $ createAdminServerUrl url
-        , adminClientUrl = Just $ createAdminClientUrl url
-        , integrationHubServerUrl = Just $ createIntegrationHubServerUrl url
-        , integrationHubClientUrl = Just $ createIntegrationHubClientUrl url
-        , analyticsServerUrl = Just $ createReportingServerUrl url
-        , analyticsClientUrl = Just $ createReportingClientUrl url
         , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
         , enabled = command.enabled
         , state = state
@@ -138,12 +120,6 @@ fromChangeDTO tenant reqDto serverConfig =
         , serverDomain = createServerDomain serverConfig reqDto.tenantId
         , serverUrl = createServerUrl url
         , clientUrl = createClientUrl url
-        , adminServerUrl = Just $ createAdminServerUrl url
-        , adminClientUrl = Just $ createAdminClientUrl url
-        , integrationHubServerUrl = Just $ createIntegrationHubServerUrl url
-        , integrationHubClientUrl = Just $ createIntegrationHubClientUrl url
-        , analyticsServerUrl = Just $ createReportingServerUrl url
-        , analyticsClientUrl = Just $ createReportingClientUrl url
         , signalBridgeUrl = tenant.signalBridgeUrl
         , enabled = tenant.enabled
         , state = tenant.state
@@ -159,24 +135,6 @@ createServerUrl url = f' "%s/wizard-api" [url]
 
 createClientUrl :: String -> String
 createClientUrl url = f' "%s/wizard" [url]
-
-createAdminServerUrl :: String -> String
-createAdminServerUrl url = f' "%s/admin-api" [url]
-
-createAdminClientUrl :: String -> String
-createAdminClientUrl url = f' "%s/admin" [url]
-
-createIntegrationHubServerUrl :: String -> String
-createIntegrationHubServerUrl url = f' "%s/integration-hub-api" [url]
-
-createIntegrationHubClientUrl :: String -> String
-createIntegrationHubClientUrl url = f' "%s/integration-hub" [url]
-
-createReportingServerUrl :: String -> String
-createReportingServerUrl url = f' "%s/analytics-api" [url]
-
-createReportingClientUrl :: String -> String
-createReportingClientUrl url = f' "%s/analytics" [url]
 
 createUrl :: ServerConfig -> String -> String
 createUrl serverConfig tenantId = f' "https://%s.%s" [tenantId, fromMaybe "" serverConfig.cloud.domain]

@@ -1,5 +1,6 @@
 module Wizard.Api.Resource.Project.Detail.ProjectDetailQuestionnaireDTO where
 
+import Data.Aeson (Value)
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import GHC.Generics
@@ -18,6 +19,8 @@ data ProjectDetailQuestionnaireDTO = ProjectDetailQuestionnaireDTO
   , sharing :: ProjectSharing
   , knowledgeModelPackage :: KnowledgeModelPackageSuggestion
   , selectedQuestionTagUuids :: [U.UUID]
+  , language :: Maybe String
+  , locale :: Maybe Value
   , isTemplate :: Bool
   , knowledgeModel :: KnowledgeModel
   , replies :: M.Map String Reply

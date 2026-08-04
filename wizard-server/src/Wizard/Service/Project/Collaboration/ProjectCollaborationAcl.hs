@@ -10,20 +10,20 @@ import Shared.Common.Model.Error.Error
 import Wizard.Model.Project.Acl.ProjectAclHelpers
 import Wizard.Model.Project.Acl.ProjectPerm
 import Wizard.Model.Project.Project
-import Wizard.Model.User.User
 import Wizard.Model.Websocket.WebsocketRecord
+import WizardLib.Public.Model.User.RolePermission
 
 getPermission
   :: ProjectVisibility
   -> ProjectSharing
   -> [ProjectPerm]
   -> Maybe U.UUID
-  -> Maybe String
+  -> [String]
   -> [U.UUID]
   -> WebsocketPerm
-getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserRole mCurrentUserGroupUuids
+getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserPermissions mCurrentUserGroupUuids
   | or
-      [ isAdmin
+      [ _PROJECTS_EDIT_ROLE_PERMISSION `elem` mCurrentUserPermissions
       , isLogged && isExplicitlyOwner
       , isLogged && isExplicitlyEditor
       , isLogged && isInOwnerGroup
@@ -33,14 +33,16 @@ getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserRole m
       ] =
       EditorWebsocketPerm
   | or
-      [ isLogged && isExplicitlyCommenter
+      [ _PROJECTS_COMMENT_ROLE_PERMISSION `elem` mCurrentUserPermissions
+      , isLogged && isExplicitlyCommenter
       , isLogged && isInCommenterGroup
       , isLogged && visibility == VisibleCommentProjectVisibility
       , sharing == AnyoneWithLinkCommentProjectSharing
       ] =
       CommenterWebsocketPerm
   | or
-      [ isLogged && isExplicitlyViewer
+      [ _PROJECTS_VIEW_ROLE_PERMISSION `elem` mCurrentUserPermissions
+      , isLogged && isExplicitlyViewer
       , isLogged && isInViewerGroup
       , isLogged && visibility == VisibleViewProjectVisibility
       , sharing == AnyoneWithLinkViewProjectSharing
@@ -57,7 +59,6 @@ getPermission visibility sharing permissions mCurrentUserUuid mCurrentUserRole m
     isInCommenterGroup = any (`elem` getUserGroupUuidsForCommenterPerm permissions) mCurrentUserGroupUuids
     isInViewerGroup = any (`elem` getUserGroupUuidsForViewerPerm permissions) mCurrentUserGroupUuids
     isLogged = isJust mCurrentUserUuid
-    isAdmin = mCurrentUserRole == Just _USER_ROLE_ADMIN
 
 checkViewPermission entityPerm =
   if entityPerm == EditorWebsocketPerm || entityPerm == CommenterWebsocketPerm || entityPerm == ViewerWebsocketPerm

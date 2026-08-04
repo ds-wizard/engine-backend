@@ -43,7 +43,7 @@ import Wizard.Service.Tenant.TenantHelper
 
 getLocalesPage :: Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page LocaleDTO)
 getLocalesPage mOrganizationId mLocaleId mQuery pageable sort = do
-  checkPermission _LOC_PERM
+  checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
   checkIfAdminIsDisabled
   locales <- findLocalesPage mOrganizationId mLocaleId mQuery pageable sort
   tcRegistry <- getCurrentTenantConfigRegistry
@@ -57,7 +57,7 @@ getLocaleSuggestions mQuery pageable sort = do
 createLocale :: LocaleCreateDTO -> AppContextM LocaleSimple
 createLocale reqDto =
   runInTransaction $ do
-    checkPermission _LOC_PERM
+    checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
     checkIfAdminIsDisabled
     checkLocaleLimit
     now <- liftIO getCurrentTime
@@ -75,7 +75,7 @@ createLocale reqDto =
 
 getLocaleByUuid :: U.UUID -> AppContextM LocaleDetailDTO
 getLocaleByUuid uuid = do
-  checkPermission _LOC_PERM
+  checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
   checkIfAdminIsDisabled
   serverConfig <- asks serverConfig
   locale <- findLocaleByUuid uuid
@@ -104,7 +104,7 @@ getLocaleContentForCurrentUser mClientUrl = do
 modifyLocale :: U.UUID -> LocaleChangeDTO -> AppContextM LocaleDTO
 modifyLocale uuid reqDto = do
   runInTransaction $ do
-    checkPermission _LOC_PERM
+    checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
     checkIfAdminIsDisabled
     now <- liftIO getCurrentTime
     locale <- findLocaleByUuid uuid
@@ -119,7 +119,7 @@ modifyLocale uuid reqDto = do
 deleteLocalesByQueryParams :: [(String, String)] -> AppContextM ()
 deleteLocalesByQueryParams queryParams =
   runInTransaction $ do
-    checkPermission _LOC_PERM
+    checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
     checkIfAdminIsDisabled
     locales <- findLocalesFiltered queryParams
     traverse_ validateLocaleDeletion locales
@@ -128,7 +128,7 @@ deleteLocalesByQueryParams queryParams =
 deleteLocale :: U.UUID -> AppContextM ()
 deleteLocale uuid =
   runInTransaction $ do
-    checkPermission _LOC_PERM
+    checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
     checkIfAdminIsDisabled
     locale <- findLocaleByUuid uuid
     validateLocaleDeletion locale

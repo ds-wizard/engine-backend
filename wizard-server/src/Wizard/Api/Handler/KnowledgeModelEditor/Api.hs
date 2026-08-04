@@ -5,6 +5,7 @@ import Servant.Swagger.Tags
 
 import Wizard.Api.Handler.KnowledgeModelEditor.Detail_DELETE
 import Wizard.Api.Handler.KnowledgeModelEditor.Detail_GET
+import Wizard.Api.Handler.KnowledgeModelEditor.Detail_Locales_GET
 import Wizard.Api.Handler.KnowledgeModelEditor.Detail_PUT
 import Wizard.Api.Handler.KnowledgeModelEditor.Detail_WS
 import Wizard.Api.Handler.KnowledgeModelEditor.List_GET
@@ -21,6 +22,7 @@ type KnowledgeModelEditorAPI =
            :<|> Detail_GET
            :<|> Detail_PUT
            :<|> Detail_DELETE
+           :<|> Detail_Locales_GET
            :<|> Detail_WS
            :<|> MigrationAPI
        )
@@ -36,5 +38,6 @@ knowledgeModelEditorServer =
     :<|> detail_GET
     :<|> detail_PUT
     :<|> detail_DELETE
+    :<|> detail_locales_GET
     :<|> detail_WS
     :<|> migrationServer

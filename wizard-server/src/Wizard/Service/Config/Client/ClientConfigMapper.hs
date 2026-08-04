@@ -2,7 +2,6 @@ module Wizard.Service.Config.Client.ClientConfigMapper where
 
 import qualified Data.Aeson as A
 import qualified Data.Map.Strict as M
-import Data.Maybe
 import qualified Data.UUID as U
 
 import Shared.Common.Model.Config.ServerConfig
@@ -15,9 +14,10 @@ import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.UserProfile
 import WizardLib.Public.Model.OpenId.OpenIdClientSimple
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
+import WizardLib.Public.Model.Tenant.Module.TenantModule
 
-toClientConfigDTO :: ServerConfig -> TenantConfigOrganization -> TenantConfigAuthentication -> [OpenIdClientSimple] -> TenantConfigPrivacyAndSupport -> TenantConfigDashboardAndLoginScreen -> TenantConfigLookAndFeel -> TenantConfigRegistry -> TenantConfigProject -> TenantConfigSubmission -> TenantConfigFeatures -> TenantConfigOwl -> Maybe UserProfile -> [String] -> [PluginList] -> M.Map U.UUID A.Value -> Tenant -> ClientConfigDTO
-toClientConfigDTO serverConfig tcOrganization tcAuthentication openIdClients tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcProject tcSubmission tcFeatures tcOwl mUserProfile tours plugins pluginSettings tenant =
+toClientConfigDTO :: ServerConfig -> TenantConfigOrganization -> TenantConfigAuthentication -> [OpenIdClientSimple] -> TenantConfigPrivacyAndSupport -> TenantConfigDashboardAndLoginScreen -> TenantConfigLookAndFeel -> TenantConfigRegistry -> TenantConfigProject -> TenantConfigSubmission -> TenantConfigFeatures -> TenantConfigOwl -> Maybe UserProfile -> [String] -> [PluginList] -> M.Map U.UUID A.Value -> [TenantModule] -> Tenant -> ClientConfigDTO
+toClientConfigDTO serverConfig tcOrganization tcAuthentication openIdClients tcPrivacyAndSupport tcDashboardAndLoginScreen tcLookAndFeel tcRegistry tcProject tcSubmission tcFeatures tcOwl mUserProfile tours plugins pluginSettings tenantModules tenant =
   ClientConfigDTO
     { user = mUserProfile
     , tours = tours
@@ -31,7 +31,7 @@ toClientConfigDTO serverConfig tcOrganization tcAuthentication openIdClients tcP
     , submission = SimpleFeature tcSubmission.enabled
     , cloud = toClientConfigCloudDTO serverConfig.cloud tenant
     , owl = tcOwl
-    , admin = toClientConfigAdminDTO serverConfig.admin tenant
+    , admin = toClientConfigAdminDTO serverConfig.admin
     , features = toClientConfigFeaturesDTO serverConfig.admin tcFeatures
     , plugins = plugins
     , pluginSettings = pluginSettings
@@ -40,26 +40,8 @@ toClientConfigDTO serverConfig tcOrganization tcAuthentication openIdClients tcP
         if serverConfig.admin.enabled
           then case mUserProfile of
             Just userProfile ->
-              case userProfile.uRole of
-                "admin" ->
-                  [ toClientConfigModuleDTO serverConfig.modules.wizard tenant.clientUrl False
-                  , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" tenant.adminClientUrl) False
-                  , toClientConfigModuleDTO serverConfig.modules.integrationHub (fromMaybe "" tenant.integrationHubClientUrl) False
-                  , toClientConfigModuleDTO serverConfig.modules.analytics (fromMaybe "" tenant.analyticsClientUrl) False
-                  , toClientConfigModuleDTO serverConfig.modules.guide (fromMaybe "" serverConfig.modules.guide.url) True
-                  ]
-                "dataSteward" ->
-                  [ toClientConfigModuleDTO serverConfig.modules.wizard tenant.clientUrl False
-                  , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" tenant.adminClientUrl) False
-                  , toClientConfigModuleDTO serverConfig.modules.integrationHub (fromMaybe "" tenant.integrationHubClientUrl) False
-                  , toClientConfigModuleDTO serverConfig.modules.guide (fromMaybe "" serverConfig.modules.guide.url) True
-                  ]
-                "researcher" ->
-                  [ toClientConfigModuleDTO serverConfig.modules.wizard tenant.clientUrl False
-                  , toClientConfigModuleDTO serverConfig.modules.admin (fromMaybe "" tenant.adminClientUrl) False
-                  , toClientConfigModuleDTO serverConfig.modules.guide (fromMaybe "" serverConfig.modules.guide.url) True
-                  ]
-                _ -> []
+              let perms = userProfile.role.permissions
+               in [toModuleDTO m | m <- tenantModules, m.enabled, maybe True (`elem` perms) m.requiredPermission]
             Nothing -> []
           else []
     }
@@ -67,7 +49,7 @@ toClientConfigDTO serverConfig tcOrganization tcAuthentication openIdClients tcP
 toClientAuthDTO :: TenantConfigAuthentication -> [OpenIdClientSimple] -> ClientConfigAuthDTO
 toClientAuthDTO tcAuthentication openIdClients =
   ClientConfigAuthDTO
-    { defaultRole = tcAuthentication.defaultRole
+    { defaultRoleUuid = tcAuthentication.defaultRoleUuid
     , internal = tcAuthentication.internal
     , external = toClientAuthExternalDTO openIdClients
     }
@@ -103,9 +85,9 @@ toClientConfigCloudDTO serverConfig tenant =
     , serverUrl = tenant.serverUrl
     }
 
-toClientConfigAdminDTO :: ServerConfigAdmin -> Tenant -> ClientConfigAdminDTO
-toClientConfigAdminDTO serverConfig tenant =
-  ClientConfigAdminDTO {enabled = serverConfig.enabled, clientUrl = tenant.adminClientUrl}
+toClientConfigAdminDTO :: ServerConfigAdmin -> ClientConfigAdminDTO
+toClientConfigAdminDTO serverConfig =
+  ClientConfigAdminDTO {enabled = serverConfig.enabled}
 
 toClientConfigFeaturesDTO :: ServerConfigAdmin -> TenantConfigFeatures -> ClientConfigFeaturesDTO
 toClientConfigFeaturesDTO serverConfig tenantConfig =
@@ -118,12 +100,12 @@ toClientConfigSignalBridgeDTO :: Tenant -> ClientConfigSignalBridgeDTO
 toClientConfigSignalBridgeDTO tenant =
   ClientConfigSignalBridgeDTO {webSocketUrl = tenant.signalBridgeUrl}
 
-toClientConfigModuleDTO :: ServerConfigModule -> String -> Bool -> ClientConfigModuleDTO
-toClientConfigModuleDTO serverConfig url external =
+toModuleDTO :: TenantModule -> ClientConfigModuleDTO
+toModuleDTO tenantModule =
   ClientConfigModuleDTO
-    { title = serverConfig.title
-    , description = serverConfig.description
-    , icon = serverConfig.icon
-    , url = url
-    , external = external
+    { title = tenantModule.title
+    , description = tenantModule.description
+    , icon = tenantModule.icon
+    , url = tenantModule.url
+    , external = tenantModule.external
     }

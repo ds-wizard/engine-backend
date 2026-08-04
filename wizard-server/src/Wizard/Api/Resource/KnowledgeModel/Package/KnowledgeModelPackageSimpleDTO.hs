@@ -19,6 +19,7 @@ data KnowledgeModelPackageSimpleDTO = KnowledgeModelPackageSimpleDTO
   , organization :: Maybe RegistryOrganization
   , nonEditable :: Bool
   , public :: Bool
+  , language :: String
   , createdAt :: UTCTime
   }
   deriving (Show, Eq, Generic)

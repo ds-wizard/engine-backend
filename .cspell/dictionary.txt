@@ -40,6 +40,7 @@ KHTML
 unlines
 ccall
 appconfigdata
+addrs
 
 # Document template example (Jinja)
 selectattr
@@ -61,6 +62,7 @@ autovacuum
 
 # Typical software development terms
 dto
+hextets
 idto
 dtos
 pageable
@@ -89,6 +91,7 @@ qtn
 qtns
 SUBM
 HJSON
+CGNAT
 
 # Contributor names
 Vojtěch
@@ -125,3 +128,12 @@ dcche
 aste
 
 Pendings
+msgctxt
+nplurals
+subtag
+Kapitola
+Mehrere
+Elemente
+dedupe
+msgids
+xfeff

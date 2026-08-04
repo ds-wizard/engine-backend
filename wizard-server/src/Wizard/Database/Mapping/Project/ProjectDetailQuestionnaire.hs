@@ -25,6 +25,7 @@ instance FromRow ProjectDetailQuestionnaire where
     sharing <- field
     knowledgeModelPackage <- fieldKnowledgeModelPackageSuggestion
     selectedQuestionTagUuids <- fromPGArray <$> field
+    language <- field
     isTemplate <- field
     migrationUuid <- field
     permissions <- loadPermissions uuid

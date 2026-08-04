@@ -36,6 +36,7 @@ import Wizard.Service.User.UserValidation
 import Wizard.Service.UserEmailLink.UserEmailLinkService
 import WizardLib.Public.Api.Resource.User.UserLocaleDTO
 import WizardLib.Public.Localization.Messages.Public
+import WizardLib.Public.Model.User.RolePermission
 
 getUserProfile :: AppContextM UserDTO
 getUserProfile = getCurrentUser
@@ -65,7 +66,7 @@ changeUserProfilePassword :: U.UUID -> UserPasswordDTO -> AppContextM ()
 changeUserProfilePassword userUuid reqDto = do
   tcAuthentication <- getCurrentTenantConfigAuthentication
   user <- findUserByUuid userUuid
-  when (not tcAuthentication.internal.nonAdminLoginEnabled && user.uRole /= _USER_ROLE_ADMIN) $
+  when (not tcAuthentication.internal.nonAdminLoginEnabled && notElem _USERS_MANAGE_ROLE_PERMISSION user.role.permissions) $
     throwError . UserError $
       _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
   passwordHash <- generatePasswordHash reqDto.password

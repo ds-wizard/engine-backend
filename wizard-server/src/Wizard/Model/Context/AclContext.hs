@@ -1,6 +1,6 @@
 module Wizard.Model.Context.AclContext (
   AclContext (..),
-  module Wizard.Constant.Acl,
+  module WizardLib.Public.Model.User.RolePermission,
   module Wizard.Model.User.User,
 ) where
 
@@ -12,10 +12,10 @@ import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
 import Shared.Common.Service.Acl.AclService
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Constant.Acl
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
 import WizardLib.Public.Localization.Messages.Public
+import WizardLib.Public.Model.User.RolePermission
 
 instance AclContext AppContextM where
   checkPermission perm = do
@@ -24,5 +24,26 @@ instance AclContext AppContextM where
       Nothing -> throwError . ForbiddenError $ _ERROR_SERVICE_USER__MISSING_USER
       Just user ->
         unless
-          (perm `elem` user.permissions)
+          (perm `elem` user.role.permissions)
           (throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ perm))
+  checkPermissionsAny perms = do
+    mCurrentUser <- asks currentUser
+    case mCurrentUser of
+      Nothing -> throwError . ForbiddenError $ _ERROR_SERVICE_USER__MISSING_USER
+      Just user ->
+        unless
+          (any (`elem` user.role.permissions) perms)
+          (throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission (need any): " ++ show perms))
+  checkPermissionsAll perms = do
+    mCurrentUser <- asks currentUser
+    case mCurrentUser of
+      Nothing -> throwError . ForbiddenError $ _ERROR_SERVICE_USER__MISSING_USER
+      Just user ->
+        unless
+          (all (`elem` user.role.permissions) perms)
+          (throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permissions (need all): " ++ show perms))
+  hasPermission perm = do
+    mCurrentUser <- asks currentUser
+    case mCurrentUser of
+      Nothing -> return False
+      Just user -> return $ perm `elem` user.role.permissions

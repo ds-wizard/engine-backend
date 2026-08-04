@@ -9,11 +9,13 @@ import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Database.Migration.Development.Tenant.Data.Tenants
 import Wizard.Database.Migration.Development.User.Data.AlbertEinstein
+import Wizard.Database.Migration.Development.User.Data.Roles
 import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
 import WizardLib.Public.Model.User.UserGroup
 import WizardLib.Public.Model.User.UserGroupMembership
+import WizardLib.Public.Service.User.RoleMapper (toRoleSimple)
 
 userIsaac :: User
 userIsaac =
@@ -23,8 +25,7 @@ userIsaac =
     , lastName = "Newton"
     , email = "isaac.newton@example.com"
     , affiliation = Nothing
-    , uRole = _USER_ROLE_RESEARCHER
-    , permissions = ["PM_READ_PERM", "PRJ_PERM", "DOC_TML_READ_PERM", "SUBM_PERM"]
+    , role = toRoleSimple researcherRole
     , active = True
     , -- cspell:disable
       passwordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
@@ -48,7 +49,7 @@ userIsaacEdited =
     , lastName = "EDITED: Newton"
     , email = "albert.einstein@example.com"
     , affiliation = Just "EDITED: My University"
-    , uRole = _USER_ROLE_ADMIN
+    , role = toRoleSimple dataStewardRole
     , active = True
     }
 
@@ -59,7 +60,7 @@ userIsaacEditedChange =
     , lastName = userIsaacEdited.lastName
     , email = userIsaacEdited.email
     , affiliation = userIsaacEdited.affiliation
-    , uRole = userIsaacEdited.uRole
+    , roleUuid = userIsaacEdited.role.uuid
     , active = userIsaacEdited.active
     }
 

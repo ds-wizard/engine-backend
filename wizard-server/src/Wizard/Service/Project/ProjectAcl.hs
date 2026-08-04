@@ -26,14 +26,11 @@ checkCreatePermissionToProject = do
   case (projectSharingEnabled, projectSharingAnonymousEnabled, projectCreation) of
     (True, True, CustomProjectCreation) -> return ()
     (True, True, TemplateAndCustomProjectCreation) -> return ()
-    (_, _, TemplateProjectCreation) -> do
-      checkPermission _PRJ_PERM
-      checkPermission _PRJ_TML_PERM
-    (_, _, _) -> checkPermission _PRJ_PERM
+    (_, _, TemplateProjectCreation) -> checkPermission _PROJECT_TEMPLATES_MANAGE_ROLE_PERMISSION
+    (_, _, _) -> return ()
 
 checkCreateFromTemplatePermissionToProject :: Bool -> AppContextM ()
 checkCreateFromTemplatePermissionToProject isTemplate = do
-  checkPermission _PRJ_PERM
   tcProject <- getCurrentTenantConfigProject
   let projectCreation = tcProject.projectCreation
   case projectCreation of
@@ -43,7 +40,6 @@ checkCreateFromTemplatePermissionToProject isTemplate = do
 
 checkClonePermissionToProject :: ProjectPermC projectPerm => ProjectVisibility -> ProjectSharing -> [projectPerm] -> AppContextM ()
 checkClonePermissionToProject visibility sharing permissions = do
-  checkPermission _PRJ_PERM
   checkViewPermissionToProject visibility sharing permissions
 
 checkViewPermissionToProject :: ProjectPermC projectPerm => ProjectVisibility -> ProjectSharing -> [projectPerm] -> AppContextM ()
@@ -61,12 +57,12 @@ hasViewPermissionToProject visibility sharing perms =
       == AnyoneWithLinkEditProjectSharing
     then return True
     else do
-      checkPermission _PRJ_PERM
       currentUser <- getCurrentUser
       userGroupMemberships <- findUserGroupMembershipsByUserUuid currentUser.uuid
       let currentUserGroupUuids = fmap (.userGroupUuid) userGroupMemberships
+      hasPermission <- hasPermission _PROJECTS_VIEW_ROLE_PERMISSION
       if or
-        [ currentUser.uRole == _USER_ROLE_ADMIN
+        [ hasPermission
         , -- Check visibility
           visibility == VisibleViewProjectVisibility
         , visibility == VisibleCommentProjectVisibility
@@ -97,12 +93,12 @@ hasCommentPermissionToProject visibility sharing perms =
   if sharing == AnyoneWithLinkCommentProjectSharing || sharing == AnyoneWithLinkEditProjectSharing
     then return True
     else do
-      checkPermission _PRJ_PERM
       currentUser <- getCurrentUser
       userGroupMemberships <- findUserGroupMembershipsByUserUuid currentUser.uuid
       let currentUserGroupUuids = fmap (.userGroupUuid) userGroupMemberships
+      hasPermission <- hasPermission _PROJECTS_COMMENT_ROLE_PERMISSION
       if or
-        [ currentUser.uRole == _USER_ROLE_ADMIN
+        [ hasPermission
         , -- Check visibility
           visibility == VisibleCommentProjectVisibility
         , visibility == VisibleEditProjectVisibility
@@ -130,12 +126,12 @@ hasEditPermissionToProject visibility sharing perms =
   if sharing == AnyoneWithLinkEditProjectSharing
     then return True
     else do
-      checkPermission _PRJ_PERM
       currentUser <- getCurrentUser
       userGroupMemberships <- findUserGroupMembershipsByUserUuid currentUser.uuid
       let currentUserGroupUuids = fmap (.userGroupUuid) userGroupMemberships
+      hasPermission <- hasPermission _PROJECTS_EDIT_ROLE_PERMISSION
       if or
-        [ currentUser.uRole == _USER_ROLE_ADMIN
+        [ hasPermission
         , -- Check visibility
           visibility == VisibleEditProjectVisibility
         , -- Check membership
@@ -157,12 +153,12 @@ checkOwnerPermissionToProject visibility perms = do
 
 hasOwnerPermissionToProject :: ProjectPermC projectPerm => ProjectVisibility -> [projectPerm] -> AppContextM Bool
 hasOwnerPermissionToProject visibility perms = do
-  checkPermission _PRJ_PERM
   currentUser <- getCurrentUser
   userGroupMemberships <- findUserGroupMembershipsByUserUuid currentUser.uuid
   let currentUserGroupUuids = fmap (.userGroupUuid) userGroupMemberships
+  hasPermission <- hasPermission _PROJECTS_MANAGE_ROLE_PERMISSION
   if or
-    [ currentUser.uRole == _USER_ROLE_ADMIN
+    [ hasPermission
     , -- Check membership
       currentUser.uuid `elem` getUserUuidsForOwnerPerm perms
     , -- Check groups
@@ -183,8 +179,9 @@ hasMigrationPermissionToProject visibility perms = do
   currentUser <- getCurrentUser
   userGroupMemberships <- findUserGroupMembershipsByUserUuid currentUser.uuid
   let currentUserGroupUuids = fmap (.userGroupUuid) userGroupMemberships
+  hasPermission <- hasPermission _PROJECTS_EDIT_ROLE_PERMISSION
   if or
-    [ currentUser.uRole == _USER_ROLE_ADMIN
+    [ hasPermission
     , -- Check visibility
       visibility == VisibleEditProjectVisibility
     , -- Check membership

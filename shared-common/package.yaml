@@ -1,5 +1,5 @@
 name: shared-common
-version: '4.32.1'
+version: '4.33.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -44,6 +44,7 @@ library:
   - fsutils
   - hashable
   - http-client
+  - http-client-restricted
   - http-client-tls
   - http-types
   - markdown
@@ -107,8 +108,10 @@ tests:
         ghc-options: -threaded -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations -fno-warn-ambiguous-fields -Wno-x-partial -Werror=missing-fields -Werror=incomplete-patterns
     dependencies:
     - base
+    - shared-common
     - aeson
     - containers
+    - network
     - random
     - text
     - text-replace

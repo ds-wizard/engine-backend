@@ -15,7 +15,6 @@ defaultConfig =
     , s3 = defaultS3
     , aws = defaultAws
     , sentry = defaultSentry
-    , roles = defaultRoles
     , userEmailLink = defaultUserEmailLink
     , cache = defaultCache
     , document = defaultDocument
@@ -32,7 +31,13 @@ defaultConfig =
     , signalBridge = defaultSignalBridge
     , admin = defaultAdmin
     , registry = defaultRegistry
-    , modules = defaultModules
+    , httpClient = defaultHttpClient
+    }
+
+defaultHttpClient :: ServerConfigHttpClient
+defaultHttpClient =
+  ServerConfigHttpClient
+    { restricted = ServerConfigHttpClientRestricted {allowedHosts = []}
     }
 
 defaultGeneral :: ServerConfigGeneral
@@ -44,41 +49,6 @@ defaultGeneral =
     , secret = ""
     , rsaPrivateKey = undefined
     , integrationConfig = "wizard-server/config/integration.yml"
-    }
-
-defaultRoles :: ServerConfigRoles
-defaultRoles =
-  ServerConfigRoles
-    { admin =
-        [ "UM_PERM"
-        , "KM_PERM"
-        , "KM_UPGRADE_PERM"
-        , "KM_PUBLISH_PERM"
-        , "PM_READ_PERM"
-        , "PM_WRITE_PERM"
-        , "PRJ_PERM"
-        , "PRJ_FILE_PERM"
-        , "PRJ_TML_PERM"
-        , "DOC_TML_READ_PERM"
-        , "CFG_PERM"
-        , "SUBM_PERM"
-        , "DOC_TML_WRITE_PERM"
-        , "DOC_PERM"
-        , "LOC_PERM"
-        ]
-    , dataSteward =
-        [ "KM_PERM"
-        , "KM_UPGRADE_PERM"
-        , "KM_PUBLISH_PERM"
-        , "PM_READ_PERM"
-        , "PM_WRITE_PERM"
-        , "PRJ_PERM"
-        , "PRJ_TML_PERM"
-        , "DOC_TML_READ_PERM"
-        , "SUBM_PERM"
-        , "DOC_TML_WRITE_PERM"
-        ]
-    , researcher = ["PM_READ_PERM", "PRJ_PERM", "DOC_TML_READ_PERM", "SUBM_PERM"]
     }
 
 defaultRegistrySyncJob :: ServerConfigCronWorker
@@ -183,7 +153,10 @@ defaultSignalBridge =
 
 defaultAdmin :: ServerConfigAdmin
 defaultAdmin =
-  ServerConfigAdmin {enabled = False}
+  ServerConfigAdmin
+    { enabled = False
+    , serverUrl = ""
+    }
 
 defaultRegistry :: ServerConfigRegistry
 defaultRegistry =
@@ -192,17 +165,3 @@ defaultRegistry =
     , clientUrl = "https://registry.ds-wizard.org"
     , sync = defaultRegistrySyncJob
     }
-
-defaultModules :: ServerConfigModules
-defaultModules =
-  ServerConfigModules
-    { wizard = defaultModule
-    , admin = defaultModule
-    , integrationHub = defaultModule
-    , analytics = defaultModule
-    , guide = defaultModule
-    }
-
-defaultModule :: ServerConfigModule
-defaultModule =
-  ServerConfigModule {title = "", description = "", icon = "", url = Nothing}

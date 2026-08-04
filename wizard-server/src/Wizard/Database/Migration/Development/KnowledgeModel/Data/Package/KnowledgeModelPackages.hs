@@ -37,6 +37,7 @@ globalRemotePackage =
           , name = orgGlobalSimple.name
           , logo = Just orgLogo
           }
+    , language = globalKmPackage.language
     , createdAt = globalKmPackage.createdAt
     }
 
@@ -49,6 +50,7 @@ globalKmPackageDetailDto =
     [globalRegistryOrganization, nlRegistryOrganization]
     [(globalKmPackageEmpty.uuid, globalKmPackageEmpty.version), (globalKmPackage.uuid, globalKmPackage.version)]
     (Just $ "https://registry-test.ds-wizard.org/knowledge-models/" ++ show (createCoordinate globalKmPackage))
+    []
 
 globalNetherlandsPackage :: KnowledgeModelPackageSimpleDTO
 globalNetherlandsPackage =
@@ -65,6 +67,7 @@ globalNetherlandsPackage =
           , name = orgNetherlandsSimple.name
           , logo = Just orgLogo
           }
+    , language = netherlandsKmPackageV2.language
     , createdAt = globalKmPackage.createdAt
     }
 
@@ -77,6 +80,7 @@ globalNetherlandsPackageDetailDto =
     [globalRegistryOrganization, nlRegistryOrganization]
     [(netherlandsKmPackage.uuid, netherlandsKmPackage.version), (netherlandsKmPackageV2.uuid, netherlandsKmPackageV2.version)]
     (Just $ "https://registry-test.ds-wizard.org/knowledge-models/" ++ show (createCoordinate netherlandsKmPackageV2))
+    []
 
 germanyPackageSuggestion :: KnowledgeModelPackageSuggestion
 germanyPackageSuggestion = toSuggestion germanyKmPackage
@@ -94,6 +98,7 @@ differentPackage =
     , description = "Empty package"
     , readme = "# Different Knowledge Model"
     , license = "Apache-2.0"
+    , language = "en"
     , previousPackageUuid = Nothing
     , forkOfPackageId = Nothing
     , mergeCheckpointPackageId = Nothing

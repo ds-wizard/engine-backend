@@ -34,7 +34,6 @@ list_suggestions_GET appContext =
   describe "GET /wizard-api/knowledge-model-packages/suggestions" $ do
     test_200 appContext
     test_401 appContext
-    test_403 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -125,8 +124,3 @@ create_test_200 title appContext reqUrl expDto =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "PM_READ_PERM"

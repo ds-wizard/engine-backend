@@ -66,7 +66,7 @@ instance Hashable TenantConfigOrganization
 
 data TenantConfigAuthentication = TenantConfigAuthentication
   { tenantUuid :: U.UUID
-  , defaultRole :: String
+  , defaultRoleUuid :: U.UUID
   , internal :: TenantConfigAuthenticationInternal
   , createdAt :: UTCTime
   , updatedAt :: UTCTime
@@ -76,7 +76,7 @@ data TenantConfigAuthentication = TenantConfigAuthentication
 instance Eq TenantConfigAuthentication where
   a == b =
     a.tenantUuid == b.tenantUuid
-      && a.defaultRole == b.defaultRole
+      && a.defaultRoleUuid == b.defaultRoleUuid
       && a.internal == b.internal
 
 data TenantConfigAuthenticationInternal = TenantConfigAuthenticationInternal
