@@ -59,7 +59,8 @@ createUserTable = do
         \    role_name         varchar     NOT NULL, \
         \    CONSTRAINT user_entity_pk PRIMARY KEY (uuid), \
         \    CONSTRAINT user_entity_tenant_uuid_fk FOREIGN KEY (tenant_uuid) REFERENCES tenant (uuid) ON DELETE CASCADE, \
-        \    CONSTRAINT user_entity_role_uuid_fk FOREIGN KEY (role_uuid) REFERENCES role (uuid) \
+        \    CONSTRAINT user_entity_role_uuid_fk FOREIGN KEY (role_uuid) REFERENCES role (uuid), \
+        \    CONSTRAINT user_email_lowercase_check CHECK (email = lower(email)) \
         \); \
         \ \
         \CREATE UNIQUE INDEX user_email_uindex ON user_entity (email, tenant_uuid);"

@@ -6,6 +6,7 @@ import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.Aeson as A
 import qualified Data.ByteString.Char8 as BS
+import Data.Char (toLower)
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Data.Time
@@ -98,7 +99,8 @@ loginUser
 loginUser providerUuid mClientUrl _mError mCode mState mIdToken mUserAgent mSessionState =
   runInTransaction $ do
     (openIdClient, oidc) <- buildOidcClient providerUuid mClientUrl
-    (externalId, mEmail, mFirstName, mLastName, mPicture, mUserUuid) <- resolveExternalIdentity oidc mCode mState mIdToken
+    (externalId, mEmailRaw, mFirstName, mLastName, mPicture, mUserUuid) <- resolveExternalIdentity oidc mCode mState mIdToken
+    let mEmail = fmap (fmap toLower) mEmailRaw
     tcAuthentication <- getCurrentTenantConfigAuthentication
     mIdentity <- findUserOpenIdIdentityByExternalIdAndProvider' externalId providerUuid
     case mIdentity of

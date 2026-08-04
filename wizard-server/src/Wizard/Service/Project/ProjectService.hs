@@ -3,6 +3,7 @@ module Wizard.Service.Project.ProjectService where
 import Control.Monad (void, when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
+import Data.Char (toLower)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
 import qualified Data.Map.Strict as M
@@ -227,7 +228,7 @@ createProjectsFromCommands = runInTransaction . traverse_ create
       currentUser <- getCurrentUser
       now <- liftIO getCurrentTime
       tcProject <- getCurrentTenantConfigProject
-      users <- findUsersByEmails command.emails
+      users <- findUsersByEmails (fmap (fmap toLower) command.emails)
       let permissions = fmap (createPermission uuid) users
       let project = fromCreateProjectCommand command uuid permissions tcProject currentUser.uuid now
       insertProject project

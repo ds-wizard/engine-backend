@@ -165,7 +165,7 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash roleUuid perm
     { uuid = userUuid
     , firstName = firstName
     , lastName = lastName
-    , email = email
+    , email = fmap toLower email
     , passwordHash = passwordHash
     , affiliation = Nothing
     , role = RoleSimple {uuid = roleUuid, name = roleName, permissions = permissions}
@@ -179,7 +179,7 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash roleUuid perm
     , createdAt = now
     , updatedAt = now
     , emailVerifiedAt = if active then Just now else Nothing
-    , emailPending = if active then Nothing else Just email
+    , emailPending = if active then Nothing else Just (fmap toLower email)
     }
 
 fromUserChangeDTO :: UserChangeDTO -> User -> [String] -> String -> User
@@ -222,7 +222,7 @@ fromCommandCreateDTO command permissions roleName now =
     { uuid = command.uuid
     , firstName = command.firstName
     , lastName = command.lastName
-    , email = command.email
+    , email = fmap toLower command.email
     , passwordHash = "no-hash"
     , affiliation = command.affiliation
     , role = RoleSimple {uuid = command.roleUuid, name = roleName, permissions = permissions}
@@ -245,7 +245,7 @@ fromCommandChangeDTO oldUser command permissions roleName now =
     { uuid = command.uuid
     , firstName = command.firstName
     , lastName = command.lastName
-    , email = command.email
+    , email = fmap toLower command.email
     , passwordHash = oldUser.passwordHash
     , affiliation = command.affiliation
     , role = RoleSimple {uuid = command.roleUuid, name = roleName, permissions = permissions}

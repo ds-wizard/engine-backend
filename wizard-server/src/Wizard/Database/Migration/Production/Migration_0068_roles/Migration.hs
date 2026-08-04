@@ -14,7 +14,7 @@ meta =
   MigrationMeta
     { mmNumber = 68
     , mmName = "User Roles and Tenant Modules"
-    , mmDescription = "Introduce configurable per-tenant role entity with the new RolePermission catalog. Seed default Admin/Data Steward/Researcher roles per tenant, migrate user_entity.role from role name to role UUID (role_uuid), recompute user permissions to the new catalog (preserving internal DEV/TENANT permissions) into role_permissions, and point config_authentication.default_role_uuid to the seeded role UUID. Also add the tenant_module table and drop the legacy per-tenant module URL columns from tenant. Add knowledge model translations (language columns and knowledge model locales)."
+    , mmDescription = "Introduce configurable per-tenant role entity with the new RolePermission catalog. Seed default Admin/Data Steward/Researcher roles per tenant, migrate user_entity.role from role name to role UUID (role_uuid), recompute user permissions to the new catalog (preserving internal DEV/TENANT permissions) into role_permissions, and point config_authentication.default_role_uuid to the seeded role UUID. Also add the tenant_module table and drop the legacy per-tenant module URL columns from tenant. Add knowledge model translations (language columns and knowledge model locales). Normalize user_entity emails to lowercase (email and email_pending) and add a CHECK constraint enforcing lowercase email."
     }
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
@@ -30,6 +30,7 @@ migrate dbPool = do
   createOpenIdClientSessionTable dbPool
   addKnowledgeModelLanguageColumns dbPool
   createKnowledgeModelLocaleTable dbPool
+  lowercaseUserEmails dbPool
 
 createRoleTable dbPool = do
   let sql =
@@ -198,6 +199,15 @@ createKnowledgeModelLocaleTable dbPool = do
         \    ON knowledge_model_locale \
         \    FOR EACH ROW \
         \EXECUTE FUNCTION create_persistent_command_from_entity_uuid('knowledge_model_locale', 'deleteFromS3');"
+  let action conn = execute_ conn sql
+  liftIO $ withResource dbPool action
+  return Nothing
+
+lowercaseUserEmails dbPool = do
+  let sql =
+        "UPDATE user_entity SET email = lower(email) WHERE email <> lower(email); \
+        \UPDATE user_entity SET email_pending = lower(email_pending) WHERE email_pending IS NOT NULL AND email_pending <> lower(email_pending); \
+        \ALTER TABLE user_entity ADD CONSTRAINT user_email_lowercase_check CHECK (email = lower(email));"
   let action conn = execute_ conn sql
   liftIO $ withResource dbPool action
   return Nothing
