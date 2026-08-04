@@ -37,6 +37,7 @@ import Wizard.Service.Tenant.TenantHelper
 import Wizard.Service.User.UserService
 import Wizard.Service.User.UserUtil
 import Wizard.Service.UserToken.Login.LoginService
+import Wizard.Service.UserToken.Login.LoginValidation (validateIsUserActive)
 import WizardLib.Public.Api.Resource.UserToken.UserTokenDTO
 import WizardLib.Public.Database.DAO.OpenId.OpenIdClientDefinitionDAO
 import WizardLib.Public.Database.DAO.User.UserOpenIdIdentityDAO
@@ -106,6 +107,7 @@ loginUser providerUuid mClientUrl _mError mCode mState mIdToken mUserAgent mSess
     case mIdentity of
       Just identity -> do
         user <- findUserByUuid identity.userUuid
+        validateIsUserActive user
         createLoginToken user mUserAgent mSessionState
       Nothing -> do
         mUserByEmail <- case mEmail of
@@ -113,6 +115,7 @@ loginUser providerUuid mClientUrl _mError mCode mState mIdToken mUserAgent mSess
           Nothing -> return Nothing
         case mUserByEmail of
           Just userByEmail -> do
+            validateIsUserActive userByEmail
             insertOpenIdIdentityLink userByEmail.uuid openIdClient externalId
             createLoginToken userByEmail mUserAgent mSessionState
           Nothing -> do
