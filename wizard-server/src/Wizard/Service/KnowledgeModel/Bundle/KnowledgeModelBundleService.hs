@@ -20,6 +20,7 @@ import Shared.Common.Constant.Component
 import Shared.Common.Localization.Messages.Internal
 import Shared.Common.Localization.Messages.Public
 import Shared.Common.Model.Error.Error
+import Shared.Common.Model.Localization.LocaleRecord
 import Shared.Common.Util.List
 import Shared.Common.Util.Logger
 import Shared.Common.Util.Uuid
@@ -124,7 +125,9 @@ importBundle pb =
     pkg <- extractMainPackage pb
     validatePackageIdUniqueness (createCoordinate pkg)
     pkgs <- forM pb.packages importPackage
-    return . last $ catMaybes pkgs
+    case lastSafe . catMaybes $ pkgs of
+      Just createdPkg -> return createdPkg
+      Nothing -> throwError . UserError $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS (show . createCoordinate $ pkg)
   where
     extractMainPackage pb =
       case find (\p -> p.pId == pb.bundleId) pb.packages of
@@ -146,7 +149,7 @@ importPackage dto =
       let events = fmap KnowledgeModelPackageMapper.toEvent kmEvents
       validateKmValidity events pkg.previousPackageUuid
       let fixedKmEvents = fixTimestampsIfNeeded kmEvents
-      createdPkg <- createPackage (pkg, fixedKmEvents)
+      createdPkg <- catchError (createPackage (pkg, fixedKmEvents)) (handleCreatePackageError pkg)
       return . Just $ createdPkg
   where
     skipIfPackageIsAlreadyImported pkg callback = do
@@ -154,6 +157,9 @@ importPackage dto =
       case eitherPackage of
         Nothing -> callback
         Just _ -> return Nothing
+    handleCreatePackageError pkg (UserError (LocaleRecord "error.database.unique_constraint_violation" _ _)) =
+      throwError . UserError $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS (show . createCoordinate $ pkg)
+    handleCreatePackageError _ error = throwError error
 
 fixTimestampsIfNeeded :: [KnowledgeModelPackageEvent] -> [KnowledgeModelPackageEvent]
 fixTimestampsIfNeeded [] = []
