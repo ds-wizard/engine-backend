@@ -10,6 +10,7 @@ import Shared.Common.Model.Error.Error
 import Shared.Common.Util.String
 import Shared.Common.Util.Uuid
 import Shared.Coordinate.Model.Coordinate.Coordinate
+import Shared.Locale.Api.Resource.LocaleBundle.LocaleBundleDTO
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Shared.Locale.Model.Locale.Locale
 import Shared.Locale.Model.Locale.LocaleSimple
@@ -24,6 +25,7 @@ import Wizard.Model.Context.AppContextHelpers
 import Wizard.S3.Locale.LocaleS3
 import Wizard.Service.Locale.Bundle.LocaleBundleAudit
 import Wizard.Service.Locale.LocaleValidation
+import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
 import qualified WizardLib.Public.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
@@ -61,6 +63,7 @@ importBundle :: BSL.ByteString -> Bool -> AppContextM LocaleSimple
 importBundle contentS fromRegistry =
   case fromLocaleArchive contentS of
     Right (bundle, wizardTranslation, mailTranslation) -> do
+      checkLocaleLimit bundle.organizationId bundle.localeId
       validateLocaleIdUniqueness (createCoordinate bundle)
       uuid <- liftIO generateUuid
       tenantUuid <- asks currentTenantUuid

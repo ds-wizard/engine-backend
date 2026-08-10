@@ -64,7 +64,7 @@ pullBundleFromRegistry :: Coordinate -> AppContextM DocumentTemplateSimple
 pullBundleFromRegistry coordinate =
   runInTransaction $ do
     checkPermission _DOCUMENT_TEMPLATES_MANAGE_ROLE_PERMISSION
-    checkDocumentTemplateLimit
+    checkDocumentTemplateLimit coordinate.organizationId coordinate.entityId
     tb <- catchError (retrieveDocumentTemplateBundleByCoordinate coordinate) handleError
     importAndConvertBundle tb True
   where
@@ -78,7 +78,7 @@ importAndConvertBundle contentS fromRegistry =
   case fromDocumentTemplateArchive contentS of
     Right (bundle, assetContents) -> do
       checkPermission _DOCUMENT_TEMPLATES_MANAGE_ROLE_PERMISSION
-      checkDocumentTemplateLimit
+      checkDocumentTemplateLimit bundle.organizationId bundle.templateId
       let assetSize = foldl (\acc (_, content) -> acc + (fromIntegral . BS.length $ content)) 0 assetContents
       checkStorageSize assetSize
       uuid <- liftIO generateUuid

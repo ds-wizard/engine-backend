@@ -1,5 +1,6 @@
 module Wizard.Service.Tenant.Limit.LimitService where
 
+import Control.Monad (when)
 import Control.Monad.Reader (liftIO)
 import Data.Time
 import qualified Data.UUID as U
@@ -8,6 +9,7 @@ import GHC.Int
 import Shared.Common.Service.Tenant.Limit.LimitService
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateAssetDAO
 import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.Locale.Database.DAO.Locale.LocaleDAO
 import Wizard.Database.DAO.Common
@@ -60,11 +62,13 @@ checkKnowledgeModelEditorLimit = do
   count <- countKnowledgeModelEditors
   checkLimit "knowledgeModelEditors" count limit.knowledgeModelEditors
 
-checkPackageLimit :: AppContextM ()
-checkPackageLimit = do
-  limit <- findLimitBundleForCurrentTenant
-  count <- countPackagesGroupedByOrganizationIdAndKmId
-  checkLimit "knowledge models" count limit.knowledgeModels
+checkPackageLimit :: String -> String -> AppContextM ()
+checkPackageLimit organizationId kmId = do
+  existingPackages <- findPackagesByOrganizationIdAndKmId organizationId kmId
+  when (null existingPackages) $ do
+    limit <- findLimitBundleForCurrentTenant
+    count <- countPackagesGroupedByOrganizationIdAndKmId
+    checkLimit "knowledge models" count limit.knowledgeModels
 
 checkProjectLimit :: AppContextM ()
 checkProjectLimit = do
@@ -72,11 +76,13 @@ checkProjectLimit = do
   count <- countProjects
   checkLimit "projects" count limit.projects
 
-checkDocumentTemplateLimit :: AppContextM ()
-checkDocumentTemplateLimit = do
-  limit <- findLimitBundleForCurrentTenant
-  count <- countDocumentTemplatesGroupedByOrganizationIdAndKmId
-  checkLimit "document templates" count limit.documentTemplates
+checkDocumentTemplateLimit :: String -> String -> AppContextM ()
+checkDocumentTemplateLimit organizationId templateId = do
+  existingTemplates <- findDocumentTemplatesByOrganizationIdAndKmId organizationId templateId
+  when (all (\dt -> dt.phase == DraftDocumentTemplatePhase) existingTemplates) $ do
+    limit <- findLimitBundleForCurrentTenant
+    count <- countDocumentTemplatesGroupedByOrganizationIdAndKmId
+    checkLimit "document templates" count limit.documentTemplates
 
 checkDocumentTemplateDraftLimit :: AppContextM ()
 checkDocumentTemplateDraftLimit = do
@@ -90,11 +96,13 @@ checkDocumentLimit = do
   count <- countDocuments
   checkLimit "documents" count limit.documents
 
-checkLocaleLimit :: AppContextM ()
-checkLocaleLimit = do
-  limit <- findLimitBundleForCurrentTenant
-  count <- countLocalesGroupedByOrganizationIdAndLocaleId
-  checkLimit "locales" count limit.locales
+checkLocaleLimit :: String -> String -> AppContextM ()
+checkLocaleLimit organizationId localeId = do
+  existingLocales <- findLocalesByOrganizationIdAndLocaleId organizationId localeId
+  when (null existingLocales) $ do
+    limit <- findLimitBundleForCurrentTenant
+    count <- countLocalesGroupedByOrganizationIdAndLocaleId
+    checkLimit "locales" count limit.locales
 
 checkStorageSize :: Int64 -> AppContextM ()
 checkStorageSize newFileSize = do
