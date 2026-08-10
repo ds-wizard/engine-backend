@@ -59,11 +59,11 @@ createLocale reqDto =
   runInTransaction $ do
     checkPermission _SETTINGS_MANAGE_ROLE_PERMISSION
     checkIfAdminIsDisabled
-    checkLocaleLimit
     now <- liftIO getCurrentTime
     uuid <- liftIO generateUuid
     tcOrganization <- findTenantConfigOrganization
     let organizationId = tcOrganization.organizationId
+    checkLocaleLimit organizationId reqDto.localeId
     validateLocaleCreate reqDto organizationId
     let defaultLocale = False
     let locale = fromCreateDTO reqDto uuid organizationId defaultLocale tcOrganization.tenantUuid now

@@ -71,7 +71,7 @@ getDependentPackageResources uuid mAllVersions = do
 createPackage :: (KnowledgeModelPackage, [KnowledgeModelPackageEvent]) -> AppContextM KnowledgeModelPackageSimpleDTO
 createPackage (pkg, pkgEvents) =
   runInTransaction $ do
-    checkPackageLimit
+    checkPackageLimit pkg.organizationId pkg.kmId
     insertPackage pkg
     traverse_ insertPackageEvent pkgEvents
     return . toSimpleDTO $ pkg
