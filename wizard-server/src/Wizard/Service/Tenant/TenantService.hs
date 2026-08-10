@@ -80,11 +80,11 @@ registerTenant reqDto = do
     let tenant = fromRegisterCreateDTO reqDto uuid serverConfig now
     insertTenant tenant
     adminRole <- createAdminRole uuid now
+    createLimitBundle uuid now
     userUuid <- liftIO generateUuid
     let userCreate = U_Mapper.fromTenantCreateToUserCreateDTO reqDto adminRole.uuid
     user <- createUserByAdminWithUuid userCreate userUuid tenant.uuid tenant.clientUrl True
     createConfig uuid adminRole.uuid now
-    createLimitBundle uuid now
     createLocale uuid now
     return $ toDTO tenant Nothing Nothing
 
@@ -99,12 +99,12 @@ createTenantByAdmin reqDto = do
     let tenant = fromAdminCreateDTO reqDto uuid serverConfig now
     insertTenant tenant
     adminRole <- createAdminRole uuid now
+    createLimitBundle uuid now
     userUuid <- liftIO generateUuid
     userPassword <- liftIO $ generateRandomString 25
     let userCreate = U_Mapper.fromTenantCreateToUserCreateDTO (reqDto {password = userPassword}) adminRole.uuid
     user <- createUserByAdminWithUuid userCreate userUuid tenant.uuid tenant.clientUrl False
     createConfig uuid adminRole.uuid now
-    createLimitBundle uuid now
     createLocale uuid now
     return $ toDTO tenant Nothing Nothing
 

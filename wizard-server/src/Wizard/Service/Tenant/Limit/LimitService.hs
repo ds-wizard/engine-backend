@@ -50,10 +50,22 @@ checkUserLimit = do
   count <- countUsers
   checkLimit "users" count limit.users
 
+checkUserLimitForTenant :: U.UUID -> AppContextM ()
+checkUserLimitForTenant tenantUuid = do
+  limit <- findLimitBundleByUuid tenantUuid
+  count <- countUsersWithTenant tenantUuid
+  checkLimit "users" count limit.users
+
 checkActiveUserLimit :: AppContextM ()
 checkActiveUserLimit = do
   limit <- findLimitBundleForCurrentTenant
   count <- countActiveUsers
+  checkLimit "active users" count limit.activeUsers
+
+checkActiveUserLimitForTenant :: U.UUID -> AppContextM ()
+checkActiveUserLimitForTenant tenantUuid = do
+  limit <- findLimitBundleByUuid tenantUuid
+  count <- countActiveUsersWithTenant tenantUuid
   checkLimit "active users" count limit.activeUsers
 
 checkKnowledgeModelEditorLimit :: AppContextM ()
