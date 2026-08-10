@@ -190,7 +190,7 @@ createOrUpdateUserFromCommand command =
           if userFromDb.role.uuid == command.roleUuid
             then return (userFromDb.role.permissions, userFromDb.role.name)
             else do
-              uRole <- getRoleForUser command.roleUuid
+              uRole <- getRoleForUserInTenant command.tenantUuid command.roleUuid
               return (uRole.permissions, uRole.name)
         let updatedUser = fromCommandChangeDTO userFromDb command uPermissions uRoleName now
         updateUserByUuid updatedUser
@@ -198,7 +198,7 @@ createOrUpdateUserFromCommand command =
       Nothing -> do
         checkUserLimit
         checkActiveUserLimit
-        uRole <- getRoleForUser command.roleUuid
+        uRole <- getRoleForUserInTenant command.tenantUuid command.roleUuid
         let user = fromCommandCreateDTO command uRole.permissions uRole.name now
         insertUser user
         return user
