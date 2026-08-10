@@ -32,7 +32,7 @@ requestTokensWithCode openIDClient mCode mNonce =
   case mCode of
     Just code -> do
       context <- ask
-      eTokens <- liftIO . E.try $ O.requestTokens openIDClient (fmap BS.pack mNonce) (BS.pack code) context.httpClientManager' :: AppContextC s sc m => m (Either IOError (OT.Tokens A.Value))
+      eTokens <- liftIO . E.try $ O.requestTokens openIDClient (fmap BS.pack mNonce) (BS.pack code) context.httpClientManager' :: AppContextC s sc m => m (Either E.SomeException (OT.Tokens A.Value))
       case eTokens of
         Right tokens -> return tokens
         Left error -> do
