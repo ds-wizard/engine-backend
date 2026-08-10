@@ -76,4 +76,5 @@ extractIntField fieldName _ = Left . GeneralServerError $ _ERROR_INTEGRATION_COM
 
 convertToArray :: Value -> Either AppError [Value]
 convertToArray (Array array) = Right . Vector.toList $ array
+convertToArray Null = Right []
 convertToArray _ = Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__FIELD_IS_NOT_ARRAY
