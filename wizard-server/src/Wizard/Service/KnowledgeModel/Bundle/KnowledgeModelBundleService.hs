@@ -50,7 +50,6 @@ import Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageValidation (
   validateMaybePreviousPackageIdExistence,
   validatePackageIdUniqueness,
  )
-import Wizard.Service.Tenant.Limit.LimitService
 import WizardLib.Public.Api.Resource.TemporaryFile.TemporaryFileDTO
 import qualified WizardLib.Public.Service.TemporaryFile.TemporaryFileMapper as TemporaryFileMapper
 import WizardLib.Public.Service.TemporaryFile.TemporaryFileService
@@ -91,7 +90,6 @@ pullBundleFromRegistry :: String -> AppContextM KnowledgeModelPackageSimpleDTO
 pullBundleFromRegistry pkgId =
   runInTransaction $ do
     checkPermission _KNOWLEDGE_MODELS_MANAGE_ROLE_PERMISSION
-    checkPackageLimit
     pb <- catchError (retrieveKnowledgeModelBundleById pkgId) handleError
     importAndConvertBundle pb True
   where
@@ -104,7 +102,6 @@ importAndConvertBundle :: BSL.ByteString -> Bool -> AppContextM KnowledgeModelPa
 importAndConvertBundle contentS fromRegistry =
   runInTransaction $ do
     checkPermission _KNOWLEDGE_MODELS_MANAGE_ROLE_PERMISSION
-    checkPackageLimit
     case eitherDecode contentS of
       Right content -> do
         encodedPb <- migrateKnowledgeModelBundle content
