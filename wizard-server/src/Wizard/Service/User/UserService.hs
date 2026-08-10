@@ -117,8 +117,8 @@ registerUser reqDto =
 createUser :: UserCreateDTO -> U.UUID -> String -> U.UUID -> [String] -> String -> U.UUID -> String -> Bool -> AppContextM UserDTO
 createUser reqDto uUuid uPasswordHash role uPermissions uRoleName tenantUuid clientUrl shouldSendRegistrationEmail =
   runInTransaction $ do
-    checkUserLimit
-    checkActiveUserLimit
+    checkUserLimitForTenant tenantUuid
+    checkActiveUserLimitForTenant tenantUuid
     validateUserEmailUniqueness reqDto.email tenantUuid
     now <- liftIO getCurrentTime
     let user = fromUserCreateDTO reqDto uUuid uPasswordHash role uPermissions uRoleName tenantUuid now shouldSendRegistrationEmail
