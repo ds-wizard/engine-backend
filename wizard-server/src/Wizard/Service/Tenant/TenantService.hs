@@ -114,7 +114,7 @@ createTenantByCommand command = do
   serverConfig <- asks serverConfig
   let tenant = fromCreateCommand command NotSeededTenantState serverConfig now now
   insertTenant tenant
-  adminRole <- createAdminRoleWithUuid command.adminRoleUuid tenant.uuid now
+  adminRole <- createAdminRoleWithUuid command.adminRoleUuid tenant.uuid command.adminRolePermissions now
   createConfig tenant.uuid adminRole.uuid now
   createLimitBundle tenant.uuid now
   createLocale tenant.uuid now
@@ -166,15 +166,15 @@ deleteTenant uuid = do
 createAdminRole :: U.UUID -> UTCTime -> AppContextM Role
 createAdminRole tenantUuid now = do
   uuid <- liftIO generateUuid
-  createAdminRoleWithUuid uuid tenantUuid now
+  createAdminRoleWithUuid uuid tenantUuid allRolePermissions now
 
-createAdminRoleWithUuid :: U.UUID -> U.UUID -> UTCTime -> AppContextM Role
-createAdminRoleWithUuid uuid tenantUuid now = do
+createAdminRoleWithUuid :: U.UUID -> U.UUID -> [String] -> UTCTime -> AppContextM Role
+createAdminRoleWithUuid uuid tenantUuid permissions now = do
   let role =
         Role
           { uuid = uuid
           , name = "Admin"
-          , permissions = allRolePermissions
+          , permissions = permissions
           , isAdmin = True
           , tenantUuid = tenantUuid
           , createdAt = now

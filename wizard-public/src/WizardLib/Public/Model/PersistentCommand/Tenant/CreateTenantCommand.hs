@@ -14,6 +14,7 @@ data CreateTenantCommand = CreateTenantCommand
   , enabled :: Bool
   , customDomain :: Maybe String
   , adminRoleUuid :: U.UUID
+  , adminRolePermissions :: [String]
   , limits :: TenantLimitBundleChange
   }
   deriving (Show, Eq, Generic)
