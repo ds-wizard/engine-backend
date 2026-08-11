@@ -10,7 +10,8 @@ import Shared.Common.Util.Logger
 import Shared.PersistentCommand.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Tenant.TenantService
-import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.CreateTenantCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.UpdateTenantCommand
 
 cComponent = "tenant"
 
@@ -24,7 +25,7 @@ cCreateTenantName = "createTenant"
 
 cCreateTenant :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 cCreateTenant persistentCommand = do
-  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String CreateOrUpdateTenantCommand
+  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String CreateTenantCommand
   case eCommand of
     Right command -> do
       createTenantByCommand command
@@ -35,7 +36,7 @@ cUpdateTenantName = "updateTenant"
 
 cUpdateTenant :: PersistentCommand U.UUID -> AppContextM (PersistentCommandState, Maybe String)
 cUpdateTenant persistentCommand = do
-  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String CreateOrUpdateTenantCommand
+  let eCommand = eitherDecode (BSL.pack persistentCommand.body) :: Either String UpdateTenantCommand
   case eCommand of
     Right command -> do
       modifyTenantFromCommand command

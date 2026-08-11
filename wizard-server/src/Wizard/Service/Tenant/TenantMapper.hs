@@ -15,7 +15,8 @@ import Wizard.Model.Tenant.Tenant
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import WizardLib.Public.Api.Resource.Tenant.Usage.WizardUsageDTO
-import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.CreateTenantCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.UpdateTenantCommand
 
 toDTO :: Tenant -> Maybe String -> Maybe String -> TenantDTO
 toDTO tenant mLogoUrl mPrimaryColor =
@@ -90,8 +91,28 @@ fromAdminCreateDTO reqDto aUuid serverConfig now =
         , updatedAt = now
         }
 
-fromCommand :: CreateOrUpdateTenantCommand -> TenantState -> ServerConfig -> UTCTime -> UTCTime -> Tenant
-fromCommand command state serverConfig createdAt updatedAt =
+fromCreateCommand :: CreateTenantCommand -> TenantState -> ServerConfig -> UTCTime -> UTCTime -> Tenant
+fromCreateCommand command state serverConfig createdAt updatedAt =
+  let (serverDomain, url) =
+        case command.customDomain of
+          Just customDomain -> (customDomain, f' "https://%s" [customDomain])
+          Nothing -> (createServerDomain serverConfig command.tenantId, createUrl serverConfig command.tenantId)
+   in Tenant
+        { uuid = command.uuid
+        , tenantId = command.tenantId
+        , name = command.name
+        , serverDomain = serverDomain
+        , serverUrl = createServerUrl url
+        , clientUrl = createClientUrl url
+        , signalBridgeUrl = serverConfig.cloud.signalBridgeUrl
+        , enabled = command.enabled
+        , state = state
+        , createdAt = createdAt
+        , updatedAt = updatedAt
+        }
+
+fromUpdateCommand :: UpdateTenantCommand -> TenantState -> ServerConfig -> UTCTime -> UTCTime -> Tenant
+fromUpdateCommand command state serverConfig createdAt updatedAt =
   let (serverDomain, url) =
         case command.customDomain of
           Just customDomain -> (customDomain, f' "https://%s" [customDomain])
