@@ -45,7 +45,8 @@ import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigLookAndFeelDAO
 import WizardLib.Public.Database.DAO.Tenant.Config.TenantConfigMailDAO
 import WizardLib.Public.Database.DAO.Tenant.TenantDAO
 import WizardLib.Public.Database.DAO.User.RoleDAO
-import WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.CreateTenantCommand
+import WizardLib.Public.Model.PersistentCommand.Tenant.UpdateTenantCommand
 import WizardLib.Public.Model.Tenant.Config.TenantConfig
 import WizardLib.Public.Model.Tenant.Config.TenantConfigDM
 import WizardLib.Public.Model.Tenant.TenantSuggestion
@@ -107,13 +108,13 @@ createTenantByAdmin reqDto = do
     createLocale uuid now
     return $ toDTO tenant Nothing Nothing
 
-createTenantByCommand :: CreateOrUpdateTenantCommand -> AppContextM ()
+createTenantByCommand :: CreateTenantCommand -> AppContextM ()
 createTenantByCommand command = do
   now <- liftIO getCurrentTime
   serverConfig <- asks serverConfig
-  let tenant = fromCommand command NotSeededTenantState serverConfig now now
+  let tenant = fromCreateCommand command NotSeededTenantState serverConfig now now
   insertTenant tenant
-  adminRole <- createAdminRole tenant.uuid now
+  adminRole <- createAdminRoleWithUuid command.adminRoleUuid tenant.uuid now
   createConfig tenant.uuid adminRole.uuid now
   createLimitBundle tenant.uuid now
   createLocale tenant.uuid now
@@ -140,14 +141,14 @@ modifyTenant uuid reqDto = do
   let updatedTenant = fromChangeDTO tenant reqDto serverConfig
   updateTenantByUuid updatedTenant
 
-modifyTenantFromCommand :: CreateOrUpdateTenantCommand -> AppContextM Tenant
+modifyTenantFromCommand :: UpdateTenantCommand -> AppContextM Tenant
 modifyTenantFromCommand command =
   runInTransaction $ do
     checkPermission _TENANTS_MANAGE_ROLE_PERMISSION
     now <- liftIO getCurrentTime
     serverConfig <- asks serverConfig
     tenant <- findTenantByUuid command.uuid
-    let updatedTenant = fromCommand command tenant.state serverConfig tenant.createdAt now
+    let updatedTenant = fromUpdateCommand command tenant.state serverConfig tenant.createdAt now
     updateTenantByUuid updatedTenant
     modifyLimitBundle command.uuid command.limits
     return updatedTenant
@@ -165,6 +166,10 @@ deleteTenant uuid = do
 createAdminRole :: U.UUID -> UTCTime -> AppContextM Role
 createAdminRole tenantUuid now = do
   uuid <- liftIO generateUuid
+  createAdminRoleWithUuid uuid tenantUuid now
+
+createAdminRoleWithUuid :: U.UUID -> U.UUID -> UTCTime -> AppContextM Role
+createAdminRoleWithUuid uuid tenantUuid now = do
   let role =
         Role
           { uuid = uuid

@@ -1,4 +1,4 @@
-module WizardLib.Public.Model.PersistentCommand.Tenant.CreateOrUpdateTenantCommand where
+module WizardLib.Public.Model.PersistentCommand.Tenant.UpdateTenantCommand where
 
 import Data.Aeson
 import qualified Data.UUID as U
@@ -7,7 +7,7 @@ import GHC.Generics
 import Shared.Common.Util.Aeson
 import WizardLib.Public.Model.Tenant.Limit.TenantLimitBundleChange
 
-data CreateOrUpdateTenantCommand = CreateOrUpdateTenantCommand
+data UpdateTenantCommand = UpdateTenantCommand
   { uuid :: U.UUID
   , tenantId :: String
   , name :: String
@@ -17,8 +17,8 @@ data CreateOrUpdateTenantCommand = CreateOrUpdateTenantCommand
   }
   deriving (Show, Eq, Generic)
 
-instance FromJSON CreateOrUpdateTenantCommand where
+instance FromJSON UpdateTenantCommand where
   parseJSON = genericParseJSON jsonOptions
 
-instance ToJSON CreateOrUpdateTenantCommand where
+instance ToJSON UpdateTenantCommand where
   toJSON = genericToJSON jsonOptions
