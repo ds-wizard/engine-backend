@@ -49,15 +49,16 @@ import Wizard.Service.Project.Event.ProjectEventMapper
 import WizardLib.Public.Model.PersistentCommand.Project.CreateProjectCommand
 import WizardLib.Public.Model.User.UserGroup
 
-toDTO :: Project -> KnowledgeModelPackage -> ProjectState -> [ProjectPermDTO] -> ProjectDTO
-toDTO project kmPackage state permissions =
+toDTO :: Project -> KnowledgeModelPackage -> KnowledgeModelProjectState -> Maybe DocumentTemplateProjectState -> [ProjectPermDTO] -> ProjectDTO
+toDTO project kmPackage knowledgeModelState documentTemplateState permissions =
   ProjectDTO
     { uuid = project.uuid
     , name = project.name
     , description = project.description
     , visibility = project.visibility
     , sharing = project.sharing
-    , state = state
+    , knowledgeModelState = knowledgeModelState
+    , documentTemplateState = documentTemplateState
     , knowledgeModelPackage = SPM.toSimple kmPackage
     , permissions = permissions
     , isTemplate = project.isTemplate
@@ -73,7 +74,8 @@ toDTO' project =
     , description = project.description
     , visibility = project.visibility
     , sharing = project.sharing
-    , state = project.state
+    , knowledgeModelState = project.knowledgeModelState
+    , documentTemplateState = project.documentTemplateState
     , knowledgeModelPackage = project.knowledgeModelPackage
     , permissions = project.permissions
     , isTemplate = project.isTemplate
@@ -81,15 +83,16 @@ toDTO' project =
     , updatedAt = project.updatedAt
     }
 
-toSimpleDTO :: Project -> KnowledgeModelPackage -> ProjectState -> [ProjectPermDTO] -> ProjectDTO
-toSimpleDTO project kmPackage state permissions =
+toSimpleDTO :: Project -> KnowledgeModelPackage -> KnowledgeModelProjectState -> Maybe DocumentTemplateProjectState -> [ProjectPermDTO] -> ProjectDTO
+toSimpleDTO project kmPackage knowledgeModelState documentTemplateState permissions =
   ProjectDTO
     { uuid = project.uuid
     , name = project.name
     , description = project.description
     , visibility = project.visibility
     , sharing = project.sharing
-    , state = state
+    , knowledgeModelState = knowledgeModelState
+    , documentTemplateState = documentTemplateState
     , knowledgeModelPackage = SPM.toSimple kmPackage
     , permissions = permissions
     , isTemplate = project.isTemplate
@@ -209,8 +212,8 @@ toCreateFromTemplateDTO project =
     , projectUuid = project.uuid
     }
 
-toProjectDetailTemplateState :: Maybe DocumentTemplate -> Maybe DocumentTemplateState
-toProjectDetailTemplateState =
+toProjectDetailTemplateSupportState :: Maybe DocumentTemplate -> Maybe DocumentTemplateState
+toProjectDetailTemplateSupportState =
   fmap
     ( \tml ->
         if isDocumentTemplateUnsupported tml.metamodelVersion

@@ -63,7 +63,8 @@ compareProjectCreateFromTemplateDtos resDto expDto = do
   liftIO $ resDto.name `shouldBe` expDto.name
   liftIO $ resDto.visibility `shouldBe` expDto.visibility
   liftIO $ resDto.sharing `shouldBe` expDto.sharing
-  liftIO $ resDto.state `shouldBe` expDto.state
+  liftIO $ resDto.knowledgeModelState `shouldBe` expDto.knowledgeModelState
+  liftIO $ resDto.documentTemplateState `shouldBe` expDto.documentTemplateState
   liftIO $ resDto.knowledgeModelPackage `shouldBe` expDto.knowledgeModelPackage
 
 compareProjectCloneDtos resDto expDto = do
@@ -71,7 +72,8 @@ compareProjectCloneDtos resDto expDto = do
   liftIO $ resDto.name `shouldBe` ("Copy of " ++ expDto.name)
   liftIO $ resDto.visibility `shouldBe` expDto.visibility
   liftIO $ resDto.sharing `shouldBe` expDto.sharing
-  liftIO $ resDto.state `shouldBe` expDto.state
+  liftIO $ resDto.knowledgeModelState `shouldBe` expDto.knowledgeModelState
+  liftIO $ resDto.documentTemplateState `shouldBe` expDto.documentTemplateState
   liftIO $ resDto.knowledgeModelPackage `shouldBe` expDto.knowledgeModelPackage
 
 compareProjectCreateDtos' resDto expDto = do
@@ -79,7 +81,8 @@ compareProjectCreateDtos' resDto expDto = do
   liftIO $ resDto.phaseUuid `shouldBe` expDto.phaseUuid
   liftIO $ resDto.visibility `shouldBe` expDto.visibility
   liftIO $ resDto.sharing `shouldBe` expDto.sharing
-  liftIO $ resDto.state `shouldBe` expDto.state
+  liftIO $ resDto.knowledgeModelState `shouldBe` expDto.knowledgeModelState
+  liftIO $ resDto.documentTemplateState `shouldBe` expDto.documentTemplateState
   liftIO $ resDto.knowledgeModelPackage `shouldBe` expDto.knowledgeModelPackage
   liftIO $ resDto.selectedQuestionTagUuids `shouldBe` expDto.selectedQuestionTagUuids
   liftIO $ resDto.knowledgeModel `shouldBe` expDto.knowledgeModel

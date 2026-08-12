@@ -33,6 +33,7 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Project.Detail.ProjectDetailSettings
 import Wizard.Model.Project.Project
+import Wizard.Model.Project.ProjectState
 import qualified Wizard.Service.KnowledgeModel.Package.KnowledgeModelPackageMapper as PM
 import Wizard.Service.Project.ProjectMapper
 import WizardLib.Public.Localization.Messages.Public
@@ -143,10 +144,12 @@ create_test_200 title appContext project authHeader permissions =
               , knowledgeModelPackageUuid = project.knowledgeModelPackageUuid
               , knowledgeModelPackage = PM.toSimpleDTO' [] [] germanyKmPackage
               , knowledgeModelTags = M.elems km1WithQ4.entities.tags
+              , knowledgeModelState = UpToDateKnowledgeModelProjectState
               , language = project.language
               , availableLocales = []
               , documentTemplate = Just $ STM.toDTO wizardDocumentTemplate wizardDocumentTemplateFormats
-              , documentTemplateState = toProjectDetailTemplateState (Just wizardDocumentTemplate)
+              , documentTemplateState = Just UpToDateDocumentTemplateProjectState
+              , documentTemplateSupportState = toProjectDetailTemplateSupportState (Just wizardDocumentTemplate)
               , documentTemplatePhase = Just wizardDocumentTemplate.phase
               , formatUuid = Just formatJson.uuid
               , selectedQuestionTagUuids = project.selectedQuestionTagUuids

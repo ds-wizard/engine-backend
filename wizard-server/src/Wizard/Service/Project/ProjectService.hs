@@ -121,7 +121,8 @@ createProjectWithGivenUuid reqDto projectUuid =
     checkProjectLimit
     checkCreatePermissionToProject
     pkg <- findPackageByUuid reqDto.knowledgeModelPackageUuid
-    projectState <- getProjectState pkg
+    knowledgeModelState <- getKnowledgeModelProjectState pkg
+    documentTemplateState <- getDocumentTemplateProjectState reqDto.documentTemplateUuid
     now <- liftIO getCurrentTime
     tenantUuid <- asks currentTenantUuid
     visibility <- extractVisibility reqDto
@@ -144,7 +145,7 @@ createProjectWithGivenUuid reqDto projectUuid =
     insertProject project
     insertProjectEvents projectEvents
     permissionDtos <- traverse enhanceProjectPerm project.permissions
-    return $ toSimpleDTO project pkg projectState permissionDtos
+    return $ toSimpleDTO project pkg knowledgeModelState documentTemplateState permissionDtos
 
 createProjectFromTemplate :: ProjectCreateFromTemplateDTO -> AppContextM ProjectDTO
 createProjectFromTemplate reqDto =
@@ -183,9 +184,10 @@ createProjectFromTemplate reqDto =
     insertProjectEvents (fmap (toEvent newProjectUuid newProject.tenantUuid) newProjectEventsWithReplacedFiles)
     duplicateCommentThreads reqDto.projectUuid newProjectUuid
     cloneProjectVersions originProject.uuid newProject.uuid newProjectEventsWithOldEventUuid
-    state <- getProjectState pkg
+    knowledgeModelState <- getKnowledgeModelProjectState pkg
+    documentTemplateState <- getDocumentTemplateProjectState newProject.documentTemplateUuid
     permissionDtos <- traverse enhanceProjectPerm newProject.permissions
-    return $ toSimpleDTO newProject pkg state permissionDtos
+    return $ toSimpleDTO newProject pkg knowledgeModelState documentTemplateState permissionDtos
 
 cloneProject :: U.UUID -> AppContextM ProjectDTO
 cloneProject cloneUuid =
@@ -217,9 +219,10 @@ cloneProject cloneUuid =
     insertProjectEvents (fmap (toEvent newProjectUuid newProject.tenantUuid) newProjectEventsWithReplacedFiles)
     cloneProjectVersions originProject.uuid newProject.uuid newProjectEventsWithOldEventUuid
     duplicateCommentThreads cloneUuid newProjectUuid
-    state <- getProjectState pkg
+    knowledgeModelState <- getKnowledgeModelProjectState pkg
+    documentTemplateState <- getDocumentTemplateProjectState newProject.documentTemplateUuid
     permissionDtos <- traverse enhanceProjectPerm newProject.permissions
-    return $ toSimpleDTO newProject pkg state permissionDtos
+    return $ toSimpleDTO newProject pkg knowledgeModelState documentTemplateState permissionDtos
 
 createProjectsFromCommands :: [CreateProjectCommand] -> AppContextM ()
 createProjectsFromCommands = runInTransaction . traverse_ create

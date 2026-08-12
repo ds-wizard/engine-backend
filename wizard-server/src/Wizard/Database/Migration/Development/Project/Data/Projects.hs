@@ -128,7 +128,7 @@ project1CtnRevertedDto =
     }
 
 project1Dto :: ProjectDTO
-project1Dto = toSimpleDTO project1 germanyKmPackage DefaultProjectState [project1AlbertEditProjectPermDto]
+project1Dto = toSimpleDTO project1 germanyKmPackage UpToDateKnowledgeModelProjectState (Just UpToDateDocumentTemplateProjectState) [project1AlbertEditProjectPermDto]
 
 project1Create :: ProjectCreateDTO
 project1Create =
@@ -264,7 +264,7 @@ project2EventsEdited :: [ProjectEvent]
 project2EventsEdited = fEventsEdited project2Uuid
 
 project2Dto :: ProjectDTO
-project2Dto = toSimpleDTO project2 germanyKmPackage DefaultProjectState [project2AlbertEditProjectPermDto]
+project2Dto = toSimpleDTO project2 germanyKmPackage UpToDateKnowledgeModelProjectState (Just UpToDateDocumentTemplateProjectState) [project2AlbertEditProjectPermDto]
 
 project2AlbertEditProjectPerm :: ProjectPerm
 project2AlbertEditProjectPerm =
@@ -325,7 +325,7 @@ project3EventsEdited :: [ProjectEvent]
 project3EventsEdited = fEventsEdited project3Uuid
 
 project3Dto :: ProjectDTO
-project3Dto = toSimpleDTO project3 germanyKmPackage DefaultProjectState []
+project3Dto = toSimpleDTO project3 germanyKmPackage UpToDateKnowledgeModelProjectState (Just UpToDateDocumentTemplateProjectState) []
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -455,7 +455,7 @@ project6EventsEdited :: [ProjectEvent]
 project6EventsEdited = fEventsEdited project6Uuid
 
 project6Dto :: ProjectDTO
-project6Dto = toSimpleDTO project6 germanyKmPackage DefaultProjectState [project6AlbertEditProjectPermDto]
+project6Dto = toSimpleDTO project6 germanyKmPackage UpToDateKnowledgeModelProjectState (Just UpToDateDocumentTemplateProjectState) [project6AlbertEditProjectPermDto]
 
 project6AlbertEditProjectPerm :: ProjectPerm
 project6AlbertEditProjectPerm =
@@ -687,7 +687,7 @@ project11Ctn :: ProjectContent
 project11Ctn = project1Ctn
 
 project11Dto :: ProjectDTO
-project11Dto = toSimpleDTO project11 germanyKmPackage DefaultProjectState [project11AlbertEditProjectPermDto]
+project11Dto = toSimpleDTO project11 germanyKmPackage UpToDateKnowledgeModelProjectState (Just UpToDateDocumentTemplateProjectState) [project11AlbertEditProjectPermDto]
 
 project11AlbertEditProjectPerm :: ProjectPerm
 project11AlbertEditProjectPerm =
@@ -729,7 +729,7 @@ project12Ctn = project1Ctn
 
 project12Dto :: ProjectDTO
 project12Dto =
-  toSimpleDTO project12 germanyKmPackage DefaultProjectState [project12NikolaEditProjectPermDto, project12AlbertEditProjectPermDto]
+  toSimpleDTO project12 germanyKmPackage UpToDateKnowledgeModelProjectState (Just UpToDateDocumentTemplateProjectState) [project12NikolaEditProjectPermDto, project12AlbertEditProjectPermDto]
 
 project12AlbertEditProjectPerm :: ProjectPerm
 project12AlbertEditProjectPerm =
@@ -781,7 +781,7 @@ project13Ctn :: ProjectContent
 project13Ctn = project1Ctn
 
 project13Dto :: ProjectDTO
-project13Dto = toSimpleDTO project13 germanyKmPackage DefaultProjectState [project13NikolaCommentProjectPermDto]
+project13Dto = toSimpleDTO project13 germanyKmPackage UpToDateKnowledgeModelProjectState (Just UpToDateDocumentTemplateProjectState) [project13NikolaCommentProjectPermDto]
 
 project13NikolaCommentProjectPerm :: ProjectPerm
 project13NikolaCommentProjectPerm =
@@ -815,7 +815,7 @@ project14Ctn :: ProjectContent
 project14Ctn = project1Ctn
 
 project14Dto :: ProjectDTO
-project14Dto = toSimpleDTO project14 amsterdamKmPackage DefaultProjectState [project14NikolaEditProjectPermDto]
+project14Dto = toSimpleDTO project14 amsterdamKmPackage UpToDateKnowledgeModelProjectState (Just UpToDateDocumentTemplateProjectState) [project14NikolaEditProjectPermDto]
 
 project14NikolaEditProjectPerm :: ProjectPerm
 project14NikolaEditProjectPerm =
@@ -883,7 +883,7 @@ project15Versions :: [ProjectVersion]
 project15Versions = qVersions project15Uuid
 
 project15Dto :: ProjectDTO
-project15Dto = toSimpleDTO project15 germanyKmPackage DefaultProjectState [project15GroupEditProjectPermDto]
+project15Dto = toSimpleDTO project15 germanyKmPackage UpToDateKnowledgeModelProjectState (Just UpToDateDocumentTemplateProjectState) [project15GroupEditProjectPermDto]
 
 project15GroupEditProjectPerm :: ProjectPerm
 project15GroupEditProjectPerm =
