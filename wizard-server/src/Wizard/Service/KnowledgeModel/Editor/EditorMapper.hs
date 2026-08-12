@@ -59,7 +59,7 @@ toDetailDTO editor kmEditorEvents kmEditorReplies mPreviousPackage knowledgeMode
     , knowledgeModel = knowledgeModel
     , createdBy = editor.createdBy
     , createdAt = editor.createdAt
-    , updatedAt = editor.updatedAt
+    , updatedAt = maximum (editor.updatedAt : fmap (.createdAt) kmEditorEvents)
     }
 
 fromCreateDTO :: KnowledgeModelEditorCreateDTO -> U.UUID -> Maybe KnowledgeModelPackage -> U.UUID -> U.UUID -> UTCTime -> KnowledgeModelEditor
