@@ -29,7 +29,8 @@ instance FromRow ProjectList where
     isTemplate <- field
     createdAt <- field
     updatedAt <- field
-    state <- field
+    knowledgeModelState <- field
+    documentTemplateState <- field
     packageUuid <- field
     packageName <- field
     packageVersion <- field

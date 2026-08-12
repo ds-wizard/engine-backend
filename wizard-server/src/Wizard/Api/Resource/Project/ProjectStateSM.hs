@@ -4,4 +4,6 @@ import Data.Swagger
 
 import Wizard.Model.Project.ProjectState
 
-instance ToSchema ProjectState
+instance ToSchema KnowledgeModelProjectState
+
+instance ToSchema DocumentTemplateProjectState

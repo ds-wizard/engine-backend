@@ -19,4 +19,4 @@ import Wizard.Service.Project.ProjectMapper
 
 instance ToSchema ProjectDTO where
   declareNamedSchema =
-    toSwagger (toDTO project1 germanyKmPackage DefaultProjectState [project1AlbertEditProjectPermDto])
+    toSwagger (toDTO project1 germanyKmPackage UpToDateKnowledgeModelProjectState (Just UpToDateDocumentTemplateProjectState) [project1AlbertEditProjectPermDto])

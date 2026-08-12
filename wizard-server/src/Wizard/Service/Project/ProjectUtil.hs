@@ -1,7 +1,12 @@
 module Wizard.Service.Project.ProjectUtil where
 
 import Control.Monad (when)
+import qualified Data.List as L
+import qualified Data.UUID as U
 
+import Shared.Coordinate.Util.Coordinate
+import Shared.DocumentTemplate.Database.DAO.DocumentTemplate.DocumentTemplateDAO
+import Shared.DocumentTemplate.Model.DocumentTemplate.DocumentTemplate
 import Shared.KnowledgeModel.Database.DAO.Package.KnowledgeModelPackageDAO
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.Project.Acl.ProjectPermDTO
@@ -38,15 +43,31 @@ enhanceProjectPerm projectPerm =
       userGroup <- findUserGroupByUuid projectPerm.memberUuid
       return $ toUserGroupProjectPermDTO projectPerm userGroup
 
-getProjectState :: KnowledgeModelPackage -> AppContextM ProjectState
-getProjectState pkg = do
+getKnowledgeModelProjectState :: KnowledgeModelPackage -> AppContextM KnowledgeModelProjectState
+getKnowledgeModelProjectState pkg = do
   mLatestPkg <- findLatestPackageByOrganizationIdAndKmId' pkg.organizationId pkg.kmId (Just ReleasedKnowledgeModelPackagePhase)
   case mLatestPkg of
     Just latestPkg ->
       if latestPkg.uuid == pkg.uuid
-        then return DefaultProjectState
-        else return OutdatedProjectState
-    Nothing -> return DefaultProjectState
+        then return UpToDateKnowledgeModelProjectState
+        else return OutdatedKnowledgeModelProjectState
+    Nothing -> return UpToDateKnowledgeModelProjectState
+
+getDocumentTemplateProjectState :: Maybe U.UUID -> AppContextM (Maybe DocumentTemplateProjectState)
+getDocumentTemplateProjectState mDocumentTemplateUuid =
+  case mDocumentTemplateUuid of
+    Nothing -> return Nothing
+    Just documentTemplateUuid -> do
+      documentTemplate <- findDocumentTemplateByUuid documentTemplateUuid
+      templates <- findDocumentTemplatesByOrganizationIdAndKmId documentTemplate.organizationId documentTemplate.templateId
+      let releasedTemplates = filter (\t -> t.phase == ReleasedDocumentTemplatePhase) templates
+      case releasedTemplates of
+        [] -> return (Just UpToDateDocumentTemplateProjectState)
+        _ ->
+          let latestTemplate = L.maximumBy (\t1 t2 -> compareVersion t1.version t2.version) releasedTemplates
+           in if latestTemplate.uuid == documentTemplate.uuid
+                then return (Just UpToDateDocumentTemplateProjectState)
+                else return (Just OutdatedDocumentTemplateProjectState)
 
 skipIfAssigningProject :: Project -> AppContextM () -> AppContextM ()
 skipIfAssigningProject project action = do

@@ -84,12 +84,14 @@ instance FromRow ProjectDetailSettings where
             _ -> Nothing
     let documentTemplatePhase = mDocumentTemplatePhase
     mDocumentTemplateMetamodelVersion <- field
-    let documentTemplateState =
+    let documentTemplateSupportState =
           case mDocumentTemplateMetamodelVersion of
             Just metamodelVersion ->
               if isDocumentTemplateUnsupported metamodelVersion
                 then Just UnsupportedMetamodelVersionDocumentTemplateState
                 else Just DefaultDocumentTemplateState
             _ -> Nothing
+    knowledgeModelState <- field
+    documentTemplateState <- field
     fileCount <- field
     return $ ProjectDetailSettings {..}

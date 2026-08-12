@@ -207,7 +207,8 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTagsOp mU
               \                             project.is_template, \
               \                             project.created_at, \
               \                             project.updated_at, \
-              \                             project.knowledge_model_package_uuid \
+              \                             project.knowledge_model_package_uuid, \
+              \                             project.document_template_uuid \
               \             FROM project \
               \             ${knowledgeModelPackageJoin} \
               \             ${aclJoins} \
@@ -228,8 +229,21 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTagsOp mU
               \        filtered_project.created_at, \
               \        filtered_project.updated_at, \
               \        CASE \
-              \          WHEN filtered_project.knowledge_model_package_uuid != get_newest_knowledge_model_package(pkg.organization_id, pkg.km_id, '${tenantUuid}', ARRAY['ReleasedKnowledgeModelPackagePhase']) THEN 'OutdatedProjectState' \
-              \          ELSE 'DefaultProjectState' END, \
+              \          WHEN filtered_project.knowledge_model_package_uuid != get_newest_knowledge_model_package(pkg.organization_id, pkg.km_id, '${tenantUuid}', ARRAY['ReleasedKnowledgeModelPackagePhase']) THEN 'OutdatedKnowledgeModelProjectState' \
+              \          ELSE 'UpToDateKnowledgeModelProjectState' END, \
+              \        CASE \
+              \          WHEN dt.uuid IS NULL THEN NULL \
+              \          WHEN dt.uuid != (SELECT newest_dt.uuid \
+              \                           FROM document_template newest_dt \
+              \                           WHERE newest_dt.tenant_uuid = '${tenantUuid}' \
+              \                             AND newest_dt.organization_id = dt.organization_id \
+              \                             AND newest_dt.template_id = dt.template_id \
+              \                             AND newest_dt.phase = 'ReleasedDocumentTemplatePhase' \
+              \                           ORDER BY split_part(newest_dt.version, '.', 1)::int DESC, \
+              \                                    split_part(newest_dt.version, '.', 2)::int DESC, \
+              \                                    split_part(newest_dt.version, '.', 3)::int DESC \
+              \                           LIMIT 1) THEN 'OutdatedDocumentTemplateProjectState' \
+              \          ELSE 'UpToDateDocumentTemplateProjectState' END, \
               \        pkg.uuid, \
               \        pkg.name, \
               \        pkg.version, \
@@ -245,6 +259,7 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTagsOp mU
               \        GROUP BY project_uuid) as group_permissions \
               \FROM filtered_project \
               \JOIN pkg ON filtered_project.knowledge_model_package_uuid = pkg.uuid \
+              \LEFT JOIN document_template dt ON filtered_project.document_template_uuid = dt.uuid AND dt.tenant_uuid = '${tenantUuid}' \
               \${sort} \
               \OFFSET ${offset} LIMIT ${limit}"
               [ ("knowledgeModelPackageJoin", knowledgeModelPackageJoin)
@@ -543,6 +558,22 @@ findProjectDetailSettings uuid = do
             \              ORDER BY dt_format.name) nested \
             \       ) AS document_template_formats, \
             \       dt.metamodel_version           as document_template_metamodel_version, \
+            \       CASE \
+            \         WHEN project.knowledge_model_package_uuid != get_newest_knowledge_model_package(pkg.organization_id, pkg.km_id, '${tenantUuid}', ARRAY['ReleasedKnowledgeModelPackagePhase']) THEN 'OutdatedKnowledgeModelProjectState' \
+            \         ELSE 'UpToDateKnowledgeModelProjectState' END as knowledge_model_state, \
+            \       CASE \
+            \         WHEN dt.uuid IS NULL THEN NULL \
+            \         WHEN dt.uuid != (SELECT newest_dt.uuid \
+            \                          FROM document_template newest_dt \
+            \                          WHERE newest_dt.tenant_uuid = '${tenantUuid}' \
+            \                            AND newest_dt.organization_id = dt.organization_id \
+            \                            AND newest_dt.template_id = dt.template_id \
+            \                            AND newest_dt.phase = 'ReleasedDocumentTemplatePhase' \
+            \                          ORDER BY split_part(newest_dt.version, '.', 1)::int DESC, \
+            \                                   split_part(newest_dt.version, '.', 2)::int DESC, \
+            \                                   split_part(newest_dt.version, '.', 3)::int DESC \
+            \                          LIMIT 1) THEN 'OutdatedDocumentTemplateProjectState' \
+            \         ELSE 'UpToDateDocumentTemplateProjectState' END as document_template_state, \
             \       ( \
             \        SELECT count(*) \
             \        FROM project_file \
