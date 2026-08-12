@@ -25,6 +25,8 @@ import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
+import WizardLib.Public.Database.Migration.Development.User.Data.UserGroups
+import WizardLib.Public.Model.User.UserGroup
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -91,6 +93,34 @@ test_200 appContext = do
           ++ U.toString userAlbert.uuid
           ++ ","
           ++ U.toString userIsaac.uuid
+    )
+    reqAuthHeader
+    (Page "projects" (PageMetadata 20 0 0 0) ([] :: [ProjectDTO]))
+  create_test_200
+    "HTTP 200 OK (Admin - userGroupUuids)"
+    appContext
+    (BS.pack $ "/wizard-api/projects?sort=uuid,asc&userGroupUuids=" ++ U.toString bioGroup.uuid)
+    reqAuthHeader
+    (Page "projects" (PageMetadata 20 1 1 0) [project15Dto])
+  create_test_200
+    "HTTP 200 OK (Admin - userGroupUuids, or)"
+    appContext
+    ( BS.pack $
+        "/wizard-api/projects?sort=uuid,asc&userGroupUuidsOp=or&userGroupUuids="
+          ++ U.toString bioGroup.uuid
+          ++ ","
+          ++ U.toString plantGroup.uuid
+    )
+    reqAuthHeader
+    (Page "projects" (PageMetadata 20 1 1 0) [project15Dto])
+  create_test_200
+    "HTTP 200 OK (Admin - userGroupUuids, and)"
+    appContext
+    ( BS.pack $
+        "/wizard-api/projects?sort=uuid,asc&userGroupUuidsOp=and&userGroupUuids="
+          ++ U.toString bioGroup.uuid
+          ++ ","
+          ++ U.toString plantGroup.uuid
     )
     reqAuthHeader
     (Page "projects" (PageMetadata 20 0 0 0) ([] :: [ProjectDTO]))
@@ -196,6 +226,12 @@ test_200 appContext = do
     (BS.pack $ "/wizard-api/projects?sort=uuid,asc&userUuids=" ++ U.toString userAlbert.uuid)
     reqNonAdminAuthHeader
     (Page "projects" (PageMetadata 20 2 1 0) [project2Dto, project12Dto])
+  create_test_200
+    "HTTP 200 OK (Non-Admin - query user groups)"
+    appContext
+    (BS.pack $ "/wizard-api/projects?sort=uuid,asc&userGroupUuids=" ++ U.toString bioGroup.uuid)
+    reqNonAdminAuthHeader
+    (Page "projects" (PageMetadata 20 1 1 0) [project15Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin - projectTags)"
     appContext

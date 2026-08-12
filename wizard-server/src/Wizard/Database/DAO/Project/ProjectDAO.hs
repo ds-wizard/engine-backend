@@ -65,8 +65,8 @@ findProjects = do
       entities <- runDB action
       traverse enhance entities
 
-findProjectsForCurrentUserPage :: Maybe String -> Maybe Bool -> Maybe Bool -> Maybe [String] -> Maybe String -> Maybe [String] -> Maybe String -> Maybe [Coordinate] -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page ProjectList)
-findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp pageable sort =
+findProjectsForCurrentUserPage :: Maybe String -> Maybe Bool -> Maybe Bool -> Maybe [String] -> Maybe String -> Maybe [U.UUID] -> Maybe String -> Maybe [U.UUID] -> Maybe String -> Maybe [Coordinate] -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page ProjectList)
+findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mUserGroupUuids mUserGroupUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp pageable sort =
   -- 1. Prepare variables
   do
     tenantUuid <- asks currentTenantUuid
@@ -116,11 +116,34 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
                       \FROM project_perm_user \
                       \WHERE project_uuid = project.uuid AND user_uuid in (%s)) "
                       [show . length $ userUuids, generateQuestionMarks userUuids]
-                  , userUuids
+                  , fmap U.toString userUuids
                   )
                 else
                   let mapFn _ = " project_perm_user.user_uuid = ? "
-                   in (" AND (" ++ L.intercalate " OR " (fmap mapFn userUuids) ++ ")", userUuids)
+                   in (" AND (" ++ L.intercalate " OR " (fmap mapFn userUuids) ++ ")", fmap U.toString userUuids)
+    let userGroupUuidsJoin =
+          case mUserGroupUuids of
+            Nothing -> ""
+            Just [] -> ""
+            Just _ -> "LEFT JOIN project_perm_group ON project.uuid = project_perm_group.project_uuid "
+    let (userGroupUuidsCondition, userGroupUuidsParam) =
+          case mUserGroupUuids of
+            Nothing -> ("", [])
+            Just [] -> ("", [])
+            Just userGroupUuids ->
+              if isAndOperator mUserGroupUuidsOp
+                then
+                  ( f'
+                      " AND %s = ( \
+                      \SELECT COUNT(DISTINCT user_group_uuid) \
+                      \FROM project_perm_group \
+                      \WHERE project_uuid = project.uuid AND user_group_uuid in (%s)) "
+                      [show . length $ userGroupUuids, generateQuestionMarks userGroupUuids]
+                  , fmap U.toString userGroupUuids
+                  )
+                else
+                  let mapFn _ = " project_perm_group.user_group_uuid = ? "
+                   in (" AND (" ++ L.intercalate " OR " (fmap mapFn userGroupUuids) ++ ")", fmap U.toString userGroupUuids)
     let (knowledgeModelPackageJoin, knowledgeModelPackageCondition, knowledgeModelPackageIdsParam) =
           case mKnowledgeModelPackageCoordinates of
             Nothing -> ("", "", [])
@@ -134,7 +157,7 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
     hasPermission <- hasPermission _PROJECTS_VIEW_ROLE_PERMISSION
     let (aclJoins, aclCondition) =
           if hasPermission
-            then (userUuidsJoin, "")
+            then (userUuidsJoin ++ userGroupUuidsJoin, "")
             else
               ( f''
                   "LEFT JOIN project_perm_user ON project.uuid = project_perm_user.project_uuid AND project_perm_user.tenant_uuid = '${tenantUuid}' \
@@ -162,7 +185,7 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
               \${projectMigrationJoin} \
               \${knowledgeModelPackageJoin} \
               \${aclJoins} \
-              \WHERE project.tenant_uuid = '${tenantUuid}' ${aclCondition} ${nameCondition} ${isTemplateCondition} ${isMigratingCondition} ${projectTagsCondition} ${userUuidsCondition} ${knowledgeModelPackageCondition}"
+              \WHERE project.tenant_uuid = '${tenantUuid}' ${aclCondition} ${nameCondition} ${isTemplateCondition} ${isMigratingCondition} ${projectTagsCondition} ${userUuidsCondition} ${userGroupUuidsCondition} ${knowledgeModelPackageCondition}"
               [ ("projectMigrationJoin", projectMigrationJoin)
               , ("knowledgeModelPackageJoin", knowledgeModelPackageJoin)
               , ("aclJoins", aclJoins)
@@ -173,9 +196,10 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
               , ("isMigratingCondition", isMigratingCondition False)
               , ("projectTagsCondition", projectTagsCondition)
               , ("userUuidsCondition", userUuidsCondition)
+              , ("userGroupUuidsCondition", userGroupUuidsCondition)
               , ("knowledgeModelPackageCondition", knowledgeModelPackageCondition)
               ]
-    let params = nameRegex ++ projectTagsParam ++ userUuidsParam ++ knowledgeModelPackageIdsParam
+    let params = nameRegex ++ projectTagsParam ++ userUuidsParam ++ userGroupUuidsParam ++ knowledgeModelPackageIdsParam
     logQuery countSql params
     let action conn = query conn countSql params
     result <- runDB action
@@ -199,7 +223,7 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
               \             FROM project \
               \             ${knowledgeModelPackageJoin} \
               \             ${aclJoins} \
-              \             WHERE project.tenant_uuid = '${tenantUuid}' ${aclCondition} ${nameCondition} ${isTemplateCondition} ${projectTagsCondition} ${userUuidsCondition} ${knowledgeModelPackageCondition}), \
+              \             WHERE project.tenant_uuid = '${tenantUuid}' ${aclCondition} ${nameCondition} ${isTemplateCondition} ${projectTagsCondition} ${userUuidsCondition} ${userGroupUuidsCondition} ${knowledgeModelPackageCondition}), \
               \     pkg AS (SELECT knowledge_model_package.uuid, \
               \                    knowledge_model_package.name, \
               \                    knowledge_model_package.version, \
@@ -250,6 +274,7 @@ findProjectsForCurrentUserPage mQuery mIsTemplate mIsMigrating mProjectTags mPro
               , ("isMigratingCondition", isMigratingCondition True)
               , ("projectTagsCondition", projectTagsCondition)
               , ("userUuidsCondition", userUuidsCondition)
+              , ("userGroupUuidsCondition", userGroupUuidsCondition)
               , ("knowledgeModelPackageCondition", knowledgeModelPackageCondition)
               , ("sort", mapSortWithPrefix "filtered_project" sort)
               , ("offset", show skip)
