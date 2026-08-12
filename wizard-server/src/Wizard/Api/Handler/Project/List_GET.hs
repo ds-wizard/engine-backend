@@ -23,7 +23,6 @@ type List_GET =
     :> "projects"
     :> QueryParam "q" String
     :> QueryParam "isTemplate" Bool
-    :> QueryParam "isMigrating" Bool
     :> QueryParam "projectTags" String
     :> QueryParam "projectTagsOp" String
     :> QueryParam "userUuids" [U.UUID]
@@ -42,7 +41,6 @@ list_GET
   -> Maybe String
   -> Maybe String
   -> Maybe Bool
-  -> Maybe Bool
   -> Maybe String
   -> Maybe String
   -> Maybe [U.UUID]
@@ -55,7 +53,7 @@ list_GET
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[Header "x-trace-uuid" String] (Page ProjectDTO))
-list_GET mTokenHeader mServerUrl mQuery mIsTemplate mIsMigrating mProjectTagsL mProjectTagsOp mUserUuids mUserUuidsOp mUserGroupUuids mUserGroupUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp mPage mSize mSort =
+list_GET mTokenHeader mServerUrl mQuery mIsTemplate mProjectTagsL mProjectTagsOp mUserUuids mUserUuidsOp mUserGroupUuids mUserGroupUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService NoTransaction $
       addTraceUuidHeader =<< do
@@ -63,7 +61,6 @@ list_GET mTokenHeader mServerUrl mQuery mIsTemplate mIsMigrating mProjectTagsL m
         getProjectsForCurrentUserPageDto
           mQuery
           mIsTemplate
-          mIsMigrating
           mProjectTags
           mProjectTagsOp
           mUserUuids

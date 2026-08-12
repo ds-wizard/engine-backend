@@ -139,7 +139,6 @@ create_test_200 title appContext project kmPackage authHeader permissions =
               , sharing = project.sharing
               , knowledgeModelPackage = kmPackage
               , isTemplate = project.isTemplate
-              , migrationUuid = Nothing
               , permissions = permissions
               , documentTemplateUuid = project.documentTemplateUuid
               , format = Just formatJsonSimple

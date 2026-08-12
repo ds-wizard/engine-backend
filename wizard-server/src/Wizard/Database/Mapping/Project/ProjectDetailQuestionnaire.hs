@@ -27,7 +27,6 @@ instance FromRow ProjectDetailQuestionnaire where
     selectedQuestionTagUuids <- fromPGArray <$> field
     language <- field
     isTemplate <- field
-    migrationUuid <- field
     permissions <- loadPermissions uuid
     mFiles <- fieldWith (optionalField fromField)
     let files =

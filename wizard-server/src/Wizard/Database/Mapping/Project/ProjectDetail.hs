@@ -21,7 +21,6 @@ instance FromRow ProjectDetail where
     knowledgeModelPackage <- fieldKnowledgeModelPackageSuggestion
     selectedQuestionTagUuids <- fromPGArray <$> field
     isTemplate <- field
-    migrationUuid <- field
     permissions <- loadPermissions uuid
     fileCount <- field
     return $ ProjectDetail {..}

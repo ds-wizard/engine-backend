@@ -5,7 +5,6 @@ module Wizard.Service.Project.Migration.Migrator.Sanitizer (
 import Control.Monad.Reader (liftIO)
 import qualified Data.Map.Strict as M
 import Data.Time
-import qualified Data.UUID as U
 
 import Shared.Common.Util.Uuid
 import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
@@ -19,15 +18,15 @@ import qualified Wizard.Service.Project.Migration.Migrator.ChangeQTypeSanitizer 
 import qualified Wizard.Service.Project.Migration.Migrator.MoveSanitizer as MS
 import Wizard.Service.User.UserMapper
 
-sanitizeProjectEvents :: U.UUID -> KnowledgeModel -> KnowledgeModel -> [ProjectEventList] -> AppContextM [ProjectEventList]
-sanitizeProjectEvents projectUuid oldKm newKm events = do
+sanitizeProjectEvents :: KnowledgeModel -> KnowledgeModel -> [ProjectEventList] -> AppContextM [ProjectEventList]
+sanitizeProjectEvents oldKm newKm events = do
   let oldProjectContent = compileProjectEvents events
   let oldReplies = oldProjectContent.replies
   now <- liftIO getCurrentTime
   let sanitizedReplies = M.fromList . sanitizeReplies now oldKm newKm . M.toList $ oldReplies
-  clearReplyEvents <- generateClearReplyEvents projectUuid oldReplies sanitizedReplies
-  setReplyEvents <- generateSetReplyEvents projectUuid oldReplies sanitizedReplies
-  return $ events ++ clearReplyEvents ++ setReplyEvents
+  clearReplyEvents <- generateClearReplyEvents oldReplies sanitizedReplies
+  setReplyEvents <- generateSetReplyEvents oldReplies sanitizedReplies
+  return $ clearReplyEvents ++ setReplyEvents
 
 -- --------------------------------
 -- PRIVATE
@@ -35,8 +34,8 @@ sanitizeProjectEvents projectUuid oldKm newKm events = do
 sanitizeReplies :: UTCTime -> KnowledgeModel -> KnowledgeModel -> [ReplyTuple] -> [ReplyTuple]
 sanitizeReplies now oldKm newKm = MS.sanitizeReplies now oldKm newKm . CTS.sanitizeReplies newKm
 
-generateClearReplyEvents :: U.UUID -> M.Map String Reply -> M.Map String Reply -> AppContextM [ProjectEventList]
-generateClearReplyEvents projectUuid oldReplies sanitizedReplies = traverse generateEvent repliesToBeDeleted
+generateClearReplyEvents :: M.Map String Reply -> M.Map String Reply -> AppContextM [ProjectEventList]
+generateClearReplyEvents oldReplies sanitizedReplies = traverse generateEvent repliesToBeDeleted
   where
     repliesToBeDeleted :: [ReplyTuple]
     repliesToBeDeleted = M.toList . M.filterWithKey (\k _ -> k `M.notMember` sanitizedReplies) $ oldReplies
@@ -47,8 +46,8 @@ generateClearReplyEvents projectUuid oldReplies sanitizedReplies = traverse gene
       user <- getCurrentUser
       return . ClearReplyEventList' $ ClearReplyEventList eUuid k (Just (toSuggestion' user)) now
 
-generateSetReplyEvents :: U.UUID -> M.Map String Reply -> M.Map String Reply -> AppContextM [ProjectEventList]
-generateSetReplyEvents projectUuid oldReplies sanitizedReplies = foldl generateEvent (return []) (M.toList sanitizedReplies)
+generateSetReplyEvents :: M.Map String Reply -> M.Map String Reply -> AppContextM [ProjectEventList]
+generateSetReplyEvents oldReplies sanitizedReplies = foldl generateEvent (return []) (M.toList sanitizedReplies)
   where
     generateEvent :: AppContextM [ProjectEventList] -> ReplyTuple -> AppContextM [ProjectEventList]
     generateEvent accM (keyFromSanitizedReply, valueFromSanitizedReply) = do

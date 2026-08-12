@@ -15,6 +15,7 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Wizard.Api.Resource.Project.Acl.ProjectPermDTO
 import Wizard.Api.Resource.Project.Detail.ProjectDetailWsDTO
+import Wizard.Api.Resource.Project.Migration.ProjectMigrationCreateDTO
 import Wizard.Api.Resource.Project.ProjectContentChangeDTO
 import Wizard.Api.Resource.Project.ProjectContentDTO
 import Wizard.Api.Resource.Project.ProjectCreateDTO
@@ -380,27 +381,12 @@ project4VisibleEdit = project4 {visibility = VisibleEditProjectVisibility}
 project4VisibleEditEvents :: [ProjectEvent]
 project4VisibleEditEvents = [sphse_2' project4VisibleEdit.uuid]
 
-project4Upgraded :: Project
-project4Upgraded =
-  project4
-    { uuid = u' "5deabef8-f526-421c-90e2-dd7aed1a25c5"
-    , knowledgeModelPackageUuid = netherlandsKmPackageV2.uuid
+projectMigrationCreateDto :: ProjectMigrationCreateDTO
+projectMigrationCreateDto =
+  ProjectMigrationCreateDTO
+    { targetKnowledgeModelPackageUuid = netherlandsKmPackageV2.uuid
+    , targetTagUuids = []
     }
-
-project4UpgradedEvents :: [ProjectEvent]
-project4UpgradedEvents = [sphse_2' project4Upgraded.uuid]
-
-project4VisibleViewUpgraded :: Project
-project4VisibleViewUpgraded = project4Upgraded {visibility = VisibleViewProjectVisibility}
-
-project4VisibleViewUpgradedEvents :: [ProjectEvent]
-project4VisibleViewUpgradedEvents = [sphse_2' project4VisibleViewUpgraded.uuid]
-
-project4VisibleEditUpgraded :: Project
-project4VisibleEditUpgraded = project4Upgraded {visibility = VisibleEditProjectVisibility}
-
-project4VisibleEditUpgradedEvents :: [ProjectEvent]
-project4VisibleEditUpgradedEvents = [sphse_2' project4VisibleEditUpgraded.uuid]
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

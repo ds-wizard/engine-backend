@@ -148,7 +148,6 @@ create_test_200 title appContext project projectEvents kmPackage authHeader perm
               , visibility = project.visibility
               , knowledgeModelPackage = kmPackage
               , isTemplate = project.isTemplate
-              , migrationUuid = Nothing
               , permissions = permissions
               , fileCount = 0
               }

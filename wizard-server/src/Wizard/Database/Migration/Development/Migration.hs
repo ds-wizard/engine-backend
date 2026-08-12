@@ -36,8 +36,6 @@ import qualified Wizard.Database.Migration.Development.PersistentCommand.Persist
 import qualified Wizard.Database.Migration.Development.Plugin.PluginMigration as Plugin
 import qualified Wizard.Database.Migration.Development.Plugin.PluginSchemaMigration as Plugin
 import qualified Wizard.Database.Migration.Development.Project.ProjectMigration as Project
-import qualified Wizard.Database.Migration.Development.Project.ProjectMigrationMigration as ProjectMigration
-import qualified Wizard.Database.Migration.Development.Project.ProjectMigrationSchemaMigration as ProjectMigration
 import qualified Wizard.Database.Migration.Development.Project.ProjectSchemaMigration as Project
 import qualified Wizard.Database.Migration.Development.Registry.RegistryMigration as Registry
 import qualified Wizard.Database.Migration.Development.Registry.RegistrySchemaMigration as Registry
@@ -86,7 +84,6 @@ runMigration = runAppContextWithBaseContext $ do
   KnowledgeModelEditor.dropTables
   KnowledgeModelCache.dropTables
   Document.dropTables
-  ProjectMigration.dropTables
   Project.dropTables
   KnowledgeModelSecret.dropTables
   KnowledgeModelLocale.dropTables
@@ -132,7 +129,6 @@ runMigration = runAppContextWithBaseContext $ do
   Project.createTables
   DocumentTemplate.createDraftDataTable
   Document.createTables
-  ProjectMigration.createTables
   KnowledgeModelMigration.createTables
   Submission.createTables
   PersistentCommand.createTables
@@ -171,7 +167,6 @@ runMigration = runAppContextWithBaseContext $ do
   Project.runMigration
   Feedback.runMigration
   Document.runMigration
-  ProjectMigration.runMigration
   KnowledgeModelMigration.runMigration
   PersistentCommand.runMigration
   Prefab.runMigration

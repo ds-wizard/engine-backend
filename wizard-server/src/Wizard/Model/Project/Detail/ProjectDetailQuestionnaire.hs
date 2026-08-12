@@ -17,7 +17,6 @@ data ProjectDetailQuestionnaire = ProjectDetailQuestionnaire
   , selectedQuestionTagUuids :: [U.UUID]
   , language :: Maybe String
   , isTemplate :: Bool
-  , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
   , files :: [ProjectFileSimple]
   }

@@ -1,13 +1,9 @@
 module Wizard.Service.Project.Migration.ProjectMigrationService where
 
 import Control.Monad.Reader (asks, liftIO)
-import Data.Foldable (traverse_)
-import qualified Data.List as L
-import Data.Maybe (catMaybes)
 import Data.Time
 import qualified Data.UUID as U
 
-import Shared.Common.Model.Common.Lens
 import Shared.Common.Util.List
 import Shared.Common.Util.Uuid
 import Shared.Coordinate.Model.Coordinate.Coordinate
@@ -18,180 +14,71 @@ import Shared.KnowledgeModel.Model.KnowledgeModel.KnowledgeModel
 import Shared.KnowledgeModel.Model.KnowledgeModel.Package.KnowledgeModelPackage
 import Shared.KnowledgeModel.Service.KnowledgeModel.Package.KnowledgeModelPackageUtil
 import Wizard.Api.Resource.Project.Detail.ProjectDetailQuestionnaireDTO
-import Wizard.Api.Resource.Project.Migration.ProjectMigrationChangeDTO
 import Wizard.Api.Resource.Project.Migration.ProjectMigrationCreateDTO
-import Wizard.Api.Resource.Project.Migration.ProjectMigrationDTO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Project.ProjectDAO
 import Wizard.Database.DAO.Project.ProjectEventDAO
-import Wizard.Database.DAO.Project.ProjectMigrationDAO
-import Wizard.Database.DAO.Project.ProjectVersionDAO
-import Wizard.Model.Common.Lens
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Project.Acl.ProjectPerm
 import Wizard.Model.Project.Event.ProjectEvent
-import Wizard.Model.Project.Migration.ProjectMigration
+import Wizard.Model.Project.Event.ProjectEventList
 import Wizard.Model.Project.Project
 import Wizard.Model.Project.ProjectContent
-import Wizard.Model.Project.Version.ProjectVersion
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import Wizard.Service.Project.Collaboration.ProjectCollaborationService
 import Wizard.Service.Project.Compiler.ProjectCompilerService
 import Wizard.Service.Project.Event.ProjectEventMapper
 import Wizard.Service.Project.Migration.Migrator.Sanitizer
 import Wizard.Service.Project.Migration.ProjectMigrationAudit
 import Wizard.Service.Project.Migration.ProjectMigrationMapper
-import Wizard.Service.Project.Migration.ProjectMigrationValidation
 import Wizard.Service.Project.ProjectAcl
 import Wizard.Service.Project.ProjectService
 
-createProjectMigration :: U.UUID -> ProjectMigrationCreateDTO -> AppContextM ProjectMigrationDTO
-createProjectMigration oldProjectUuid reqDto =
+migrateProject :: U.UUID -> ProjectMigrationCreateDTO -> AppContextM ProjectDetailQuestionnaireDTO
+migrateProject projectUuid reqDto =
   runInTransaction $ do
-    validateMigrationExistence oldProjectUuid
-    oldProject <- findProjectByUuid oldProjectUuid
-    checkMigrationPermissionToProject oldProject.visibility oldProject.permissions
-    (newProject, newProjectEvents, newProjectVersions) <- upgradeProject reqDto oldProject
-    insertProject newProject
-    insertProjectEvents newProjectEvents
-    traverse_ insertProjectVersion newProjectVersions
-    tenantUuid <- asks currentTenantUuid
-    let projectMigration = fromCreateDTO oldProject.uuid newProject.uuid tenantUuid
-    insertProjectMigration projectMigration
-    auditProjectMigrationCreate reqDto oldProject newProject
-    getProjectMigration newProject.uuid
-
-getProjectMigration :: U.UUID -> AppContextM ProjectMigrationDTO
-getProjectMigration projectUuid = do
-  projectMigration <- findProjectMigrationByNewProjectUuid projectUuid
-  oldProjectDto <- getProjectDetailQuestionnaireByUuid projectMigration.oldProjectUuid
-  newProjectDto <- getProjectDetailQuestionnaireByUuid projectMigration.newProjectUuid
-  oldProject <- findProjectByUuid projectMigration.oldProjectUuid
-  newProject <- findProjectByUuid projectMigration.newProjectUuid
-  checkMigrationPermissionToProject oldProject.visibility oldProject.permissions
-  checkMigrationPermissionToProject newProject.visibility newProject.permissions
-  return $ toDTO oldProjectDto newProjectDto projectMigration.resolvedQuestionUuids projectMigration.tenantUuid
-
-modifyProjectMigration :: U.UUID -> ProjectMigrationChangeDTO -> AppContextM ProjectMigrationDTO
-modifyProjectMigration projectUuid reqDto =
-  runInTransaction $ do
-    projectMigration <- getProjectMigration projectUuid
-    let updatedState = fromChangeDTO reqDto projectMigration
-    updateProjectMigrationByNewProjectUuid updatedState
-    auditProjectMigrationModify projectMigration reqDto
-    return $ toDTO projectMigration.oldProject projectMigration.newProject updatedState.resolvedQuestionUuids updatedState.tenantUuid
-
-finishProjectMigration :: U.UUID -> AppContextM ()
-finishProjectMigration projectUuid =
-  runInTransaction $ do
-    _ <- getProjectMigration projectUuid
-    projectMigration <- findProjectMigrationByNewProjectUuid projectUuid
-    deleteProjectMigrationByNewProjectUuid projectUuid
-    oldProject <- findProjectByUuid projectMigration.oldProjectUuid
-    newProject <- findProjectByUuid projectMigration.newProjectUuid
-    newProjectEvents <- ensurePhaseIsSetIfNecessary newProject
-    newProjectVersions <- findProjectVersionsByProjectUuid projectMigration.newProjectUuid
+    project <- findProjectByUuid projectUuid
+    checkMigrationPermissionToProject project.visibility project.permissions
+    newPkg <- findPackageByUuid reqDto.targetKnowledgeModelPackageUuid
+    oldKm <- compileKnowledgeModel [] (Just project.knowledgeModelPackageUuid) reqDto.targetTagUuids
+    newKm <- compileKnowledgeModel [] (Just reqDto.targetKnowledgeModelPackageUuid) reqDto.targetTagUuids
+    projectEvents <- findProjectEventListsByProjectUuid project.uuid
+    deltaEvents <- sanitizeProjectEvents oldKm newKm projectEvents
+    phaseEvents <- ensurePhaseIsSetIfNecessary project newKm projectEvents
+    (newDocumentTemplateUuid, newFormatUuid) <- getNewDocumentTemplateIdAndFormatUuid project newPkg
     now <- liftIO getCurrentTime
-    let newProjectUpdated =
-          oldProject
-            { formatUuid = newProject.formatUuid
-            , documentTemplateUuid = newProject.documentTemplateUuid
-            , selectedQuestionTagUuids = newProject.selectedQuestionTagUuids
-            , knowledgeModelPackageUuid = newProject.knowledgeModelPackageUuid
+    let updatedProject =
+          project
+            { knowledgeModelPackageUuid = reqDto.targetKnowledgeModelPackageUuid
+            , selectedQuestionTagUuids = reqDto.targetTagUuids
+            , documentTemplateUuid = newDocumentTemplateUuid
+            , formatUuid = newFormatUuid
+            , squashed = False
             , updatedAt = now
             }
             :: Project
-    let newProjectEventsWithOldProjectUuid = fmap (\event -> setProjectUuid event oldProject.uuid) newProjectEvents
-    newVersionsWithNewUuid <- traverse generateNewVersionUuid newProjectVersions
-    let newVersionsWithOldProjectUuid = fmap (\v -> v {projectUuid = oldProject.uuid} :: ProjectVersion) newVersionsWithNewUuid
-    -- Delete the new project
-    deleteProjectEventsByProjectUuid newProject.uuid
-    deleteProject newProject.uuid False
-    -- Update the old project with values from new project
-    updateProjectByUuid newProjectUpdated
-    deleteProjectEventsByProjectUuid oldProject.uuid
-    insertProjectEvents newProjectEventsWithOldProjectUuid
-    traverse_ insertProjectVersion newVersionsWithOldProjectUuid
-    auditProjectMigrationFinish oldProject newProject
-
-cancelProjectMigration :: U.UUID -> AppContextM ()
-cancelProjectMigration projectUuid =
-  runInTransaction $ do
-    projectMigration <- getProjectMigration projectUuid
-    deleteProject projectMigration.newProject.uuid True
-    deleteProjectMigrationByNewProjectUuid projectUuid
-    auditProjectMigrationCancel projectMigration
-    return ()
+    updateProjectByUuid updatedProject
+    insertProjectEvents (fmap (toEvent project.uuid project.tenantUuid) deltaEvents ++ phaseEvents)
+    auditProjectMigration reqDto project
+    logOutOnlineUsersWhenProjectDramaticallyChanged project.uuid
+    getProjectDetailQuestionnaireByUuid project.uuid
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-upgradeProject :: ProjectMigrationCreateDTO -> Project -> AppContextM (Project, [ProjectEvent], [ProjectVersion])
-upgradeProject reqDto oldProject = do
-  let newPkgUuid = reqDto.targetKnowledgeModelPackageUuid
-  newPkg <- findPackageByUuid newPkgUuid
-  let newTagUuids = reqDto.targetTagUuids
-  oldKm <- compileKnowledgeModel [] (Just oldProject.knowledgeModelPackageUuid) newTagUuids
-  newKm <- compileKnowledgeModel [] (Just newPkgUuid) newTagUuids
-  newUuid <- liftIO generateUuid
-  oldProjectEvents <- findProjectEventListsByProjectUuid oldProject.uuid
-  clonedProjectEventsWithOldEventUuid <- cloneProjectEventsWithOldEventUuid oldProjectEvents
-  let clonedProjectEvents = fmap snd clonedProjectEventsWithOldEventUuid
-  newProjectEvents <- sanitizeProjectEvents newUuid oldKm newKm clonedProjectEvents
-  (newDocumentTemplateId, newFormatUuid) <- getNewDocumentTemplateIdAndFormatUuid oldProject newPkg
-  let newProjectEventUuids = fmap getUuid newProjectEvents
-  let clonedProjectEventsFiltered = filter (\e -> getUuid (snd e) `elem` newProjectEventUuids) clonedProjectEventsWithOldEventUuid
-  let newPermissions = fmap (\perm -> perm {projectUuid = newUuid} :: ProjectPerm) oldProject.permissions
-  let upgradedProject =
-        oldProject
-          { uuid = newUuid
-          , knowledgeModelPackageUuid = newPkgUuid
-          , selectedQuestionTagUuids = newTagUuids
-          , documentTemplateUuid = newDocumentTemplateId
-          , formatUuid = newFormatUuid
-          , permissions = newPermissions
-          }
-          :: Project
-  versionsWithOldProjectUuid <- findProjectVersionsByProjectUuid oldProject.uuid
-  newVersionsWithNewUuid <- traverse generateNewVersionUuid versionsWithOldProjectUuid
-  let newVersionsWithNewEventUuid =
-        fmap
-          ( \v ->
-              case L.find (\(oldEventUuid, _) -> v.eventUuid == oldEventUuid) clonedProjectEventsWithOldEventUuid of
-                Just (_, newEvent) ->
-                  Just $
-                    v
-                      { projectUuid = newUuid
-                      , eventUuid = getUuid newEvent
-                      }
-                Nothing -> Nothing
-          )
-          newVersionsWithNewUuid
-  let newVersions = catMaybes newVersionsWithNewEventUuid
-  return (upgradedProject, fmap (toEvent upgradedProject.uuid upgradedProject.tenantUuid) newProjectEvents, newVersions)
-
-ensurePhaseIsSetIfNecessary :: Project -> AppContextM [ProjectEvent]
-ensurePhaseIsSetIfNecessary newProject = do
+ensurePhaseIsSetIfNecessary :: Project -> KnowledgeModel -> [ProjectEventList] -> AppContextM [ProjectEvent]
+ensurePhaseIsSetIfNecessary project newKm projectEvents = do
   uuid <- liftIO generateUuid
   mCurrentUser <- asks currentUser
   now <- liftIO getCurrentTime
-  newProjectListEvents <- findProjectEventListsByProjectUuid newProject.uuid
-  let projectContent = compileProjectEvents newProjectListEvents
-  knowledgeModel <- compileKnowledgeModel [] (Just newProject.knowledgeModelPackageUuid) newProject.selectedQuestionTagUuids
-  let newProjectEvents = fmap (toEvent newProject.uuid newProject.tenantUuid) newProjectListEvents
+  let projectContent = compileProjectEvents projectEvents
   return $
-    case (headSafe knowledgeModel.phaseUuids, projectContent.phaseUuid) of
-      (Nothing, Nothing) -> newProjectEvents
-      (Nothing, Just projectPhaseUuid) -> newProjectEvents ++ [toProjectPhaseEvent uuid Nothing newProject.uuid newProject.tenantUuid mCurrentUser now]
-      (Just kmPhaseUuid, Nothing) -> newProjectEvents ++ [toProjectPhaseEvent uuid (Just kmPhaseUuid) newProject.uuid newProject.tenantUuid mCurrentUser now]
-      (Just kmPhaseUuid, Just projectPhaseUuid) ->
-        if projectPhaseUuid `notElem` knowledgeModel.phaseUuids
-          then newProjectEvents ++ [toProjectPhaseEvent uuid (Just kmPhaseUuid) newProject.uuid newProject.tenantUuid mCurrentUser now]
-          else newProjectEvents
-
-generateNewVersionUuid :: ProjectVersion -> AppContextM ProjectVersion
-generateNewVersionUuid version = do
-  newVersionUuid <- liftIO generateUuid
-  return $ version {uuid = newVersionUuid}
+    case (headSafe newKm.phaseUuids, projectContent.phaseUuid) of
+      (Nothing, Nothing) -> []
+      (Nothing, Just projectPhaseUuid) -> [toProjectPhaseEvent uuid Nothing project.uuid project.tenantUuid mCurrentUser now]
+      (Just kmPhaseUuid, Nothing) -> [toProjectPhaseEvent uuid (Just kmPhaseUuid) project.uuid project.tenantUuid mCurrentUser now]
+      (Just kmPhaseUuid, Just projectPhaseUuid)
+        | projectPhaseUuid `notElem` newKm.phaseUuids -> [toProjectPhaseEvent uuid (Just kmPhaseUuid) project.uuid project.tenantUuid mCurrentUser now]
+        | otherwise -> []
 
 getNewDocumentTemplateIdAndFormatUuid :: Project -> KnowledgeModelPackage -> AppContextM (Maybe U.UUID, Maybe U.UUID)
 getNewDocumentTemplateIdAndFormatUuid oldProject newPkg = do

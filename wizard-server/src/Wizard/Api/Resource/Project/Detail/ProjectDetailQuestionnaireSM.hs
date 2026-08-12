@@ -39,7 +39,6 @@ instance ToSchema ProjectDetailQuestionnaireDTO where
         , replies = fReplies
         , labels = fLabels
         , phaseUuid = Just . u' $ "4b376e49-1589-429b-9590-c654378f0bd5"
-        , migrationUuid = Nothing
         , permissions = [project1AlbertEditProjectPermDto]
         , files = []
         , unresolvedCommentCounts =
