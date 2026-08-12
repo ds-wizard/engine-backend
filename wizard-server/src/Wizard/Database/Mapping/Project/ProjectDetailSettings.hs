@@ -33,7 +33,6 @@ instance FromRow ProjectDetailSettings where
     selectedQuestionTagUuids <- fromPGArray <$> field
     language <- field
     formatUuid <- field
-    migrationUuid <- field
     permissions <- loadPermissions uuid
     knowledgeModelPackageUuid <- field
     knowledgeModelPackageName <- field

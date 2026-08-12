@@ -41,7 +41,6 @@ instance ToSchema ProjectDetailSettings where
         , sharing = project1.sharing
         , selectedQuestionTagUuids = project1.selectedQuestionTagUuids
         , isTemplate = project1.isTemplate
-        , migrationUuid = Nothing
         , permissions = [project1AlbertEditProjectPermDto]
         , projectTags = project1.projectTags
         , knowledgeModelPackageUuid = netherlandsKmPackageV2.uuid

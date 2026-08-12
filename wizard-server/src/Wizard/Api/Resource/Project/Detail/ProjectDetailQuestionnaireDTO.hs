@@ -26,7 +26,6 @@ data ProjectDetailQuestionnaireDTO = ProjectDetailQuestionnaireDTO
   , replies :: M.Map String Reply
   , labels :: M.Map String [U.UUID]
   , phaseUuid :: Maybe U.UUID
-  , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
   , files :: [ProjectFileSimple]
   , unresolvedCommentCounts :: M.Map String (M.Map U.UUID Int)

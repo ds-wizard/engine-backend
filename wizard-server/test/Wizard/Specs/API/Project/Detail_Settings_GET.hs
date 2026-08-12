@@ -138,7 +138,6 @@ create_test_200 title appContext project authHeader permissions =
               , visibility = project.visibility
               , sharing = project.sharing
               , isTemplate = project.isTemplate
-              , migrationUuid = Nothing
               , permissions = permissions
               , projectTags = project.projectTags
               , knowledgeModelPackageUuid = project.knowledgeModelPackageUuid

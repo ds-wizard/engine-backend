@@ -19,7 +19,6 @@ data ProjectDetailSettings = ProjectDetailSettings
   , visibility :: ProjectVisibility
   , sharing :: ProjectSharing
   , isTemplate :: Bool
-  , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
   , projectTags :: [String]
   , knowledgeModelPackageUuid :: U.UUID

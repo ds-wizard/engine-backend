@@ -15,7 +15,6 @@ data ProjectDetail = ProjectDetail
   , knowledgeModelPackage :: KnowledgeModelPackageSuggestion
   , selectedQuestionTagUuids :: [U.UUID]
   , isTemplate :: Bool
-  , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
   , fileCount :: Int
   }

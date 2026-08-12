@@ -27,7 +27,6 @@ import Wizard.Api.Resource.Project.ProjectSettingsChangeDTO
 import Wizard.Api.Resource.Project.ProjectShareChangeDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.DocumentTemplate.DocumentTemplateState
-import Wizard.Model.KnowledgeModel.Package.KnowledgeModelPackageSuggestion
 import Wizard.Model.Project.Acl.ProjectPerm
 import Wizard.Model.Project.Comment.ProjectCommentList
 import Wizard.Model.Project.Detail.ProjectDetail
@@ -96,22 +95,6 @@ toSimpleDTO project kmPackage state permissions =
     , isTemplate = project.isTemplate
     , createdAt = project.createdAt
     , updatedAt = project.updatedAt
-    }
-
-toDetailQuestionnaire :: Project -> KnowledgeModelPackageSuggestion -> Maybe U.UUID -> [ProjectPermDTO] -> ProjectDetailQuestionnaire
-toDetailQuestionnaire project kmPackage migrationUuid permissions =
-  ProjectDetailQuestionnaire
-    { uuid = project.uuid
-    , name = project.name
-    , visibility = project.visibility
-    , sharing = project.sharing
-    , knowledgeModelPackage = kmPackage
-    , selectedQuestionTagUuids = project.selectedQuestionTagUuids
-    , language = project.language
-    , isTemplate = project.isTemplate
-    , migrationUuid = migrationUuid
-    , permissions = permissions
-    , files = []
     }
 
 toDetailDTO :: ProjectDetail -> ProjectDetailDTO

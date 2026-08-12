@@ -30,7 +30,6 @@ instance ToSchema ProjectDetailPreview where
         , knowledgeModelPackage = germanyPackageSuggestion
         , isTemplate = project1.isTemplate
         , documentTemplateUuid = Just wizardDocumentTemplate.uuid
-        , migrationUuid = Nothing
         , permissions = [project1AlbertEditProjectPermDto]
         , format = Just . DocumentTemplateMapper.toFormatSimple $ formatJson
         , fileCount = 0

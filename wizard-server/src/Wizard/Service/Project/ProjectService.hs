@@ -82,7 +82,6 @@ import WizardLib.Public.Model.PersistentCommand.Project.CreateProjectCommand
 getProjectsForCurrentUserPageDto
   :: Maybe String
   -> Maybe Bool
-  -> Maybe Bool
   -> Maybe [String]
   -> Maybe String
   -> Maybe [U.UUID]
@@ -94,13 +93,12 @@ getProjectsForCurrentUserPageDto
   -> Pageable
   -> [Sort]
   -> AppContextM (Page ProjectDTO)
-getProjectsForCurrentUserPageDto mQuery mIsTemplate mIsMigrating mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mUserGroupUuids mUserGroupUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp pageable sort = do
+getProjectsForCurrentUserPageDto mQuery mIsTemplate mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp mUserGroupUuids mUserGroupUuidsOp mKnowledgeModelPackageCoordinates mKnowledgeModelPackageCoordinatesOp pageable sort = do
   currentUser <- getCurrentUser
   projectPage <-
     findProjectsForCurrentUserPage
       mQuery
       mIsTemplate
-      mIsMigrating
       mProjectTags
       mProjectTagsOp
       mUserUuids
@@ -123,7 +121,7 @@ createProjectWithGivenUuid reqDto projectUuid =
     checkProjectLimit
     checkCreatePermissionToProject
     pkg <- findPackageByUuid reqDto.knowledgeModelPackageUuid
-    projectState <- getProjectState projectUuid pkg
+    projectState <- getProjectState pkg
     now <- liftIO getCurrentTime
     tenantUuid <- asks currentTenantUuid
     visibility <- extractVisibility reqDto
@@ -185,7 +183,7 @@ createProjectFromTemplate reqDto =
     insertProjectEvents (fmap (toEvent newProjectUuid newProject.tenantUuid) newProjectEventsWithReplacedFiles)
     duplicateCommentThreads reqDto.projectUuid newProjectUuid
     cloneProjectVersions originProject.uuid newProject.uuid newProjectEventsWithOldEventUuid
-    state <- getProjectState newProjectUuid pkg
+    state <- getProjectState pkg
     permissionDtos <- traverse enhanceProjectPerm newProject.permissions
     return $ toSimpleDTO newProject pkg state permissionDtos
 
@@ -219,7 +217,7 @@ cloneProject cloneUuid =
     insertProjectEvents (fmap (toEvent newProjectUuid newProject.tenantUuid) newProjectEventsWithReplacedFiles)
     cloneProjectVersions originProject.uuid newProject.uuid newProjectEventsWithOldEventUuid
     duplicateCommentThreads cloneUuid newProjectUuid
-    state <- getProjectState newProjectUuid pkg
+    state <- getProjectState pkg
     permissionDtos <- traverse enhanceProjectPerm newProject.permissions
     return $ toSimpleDTO newProject pkg state permissionDtos
 
@@ -380,7 +378,6 @@ deleteProject :: U.UUID -> Bool -> AppContextM ()
 deleteProject projectUuid shouldValidatePermission =
   runInTransaction $ do
     project <- findProjectByUuid projectUuid
-    validateProjectDeletion projectUuid
     when shouldValidatePermission (checkOwnerPermissionToProject project.visibility project.permissions)
     deleteProjectByUuid projectUuid
     void $ logOutOnlineUsersWhenProjectDramaticallyChanged projectUuid

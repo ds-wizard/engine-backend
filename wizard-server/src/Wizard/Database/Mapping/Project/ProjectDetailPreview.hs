@@ -21,7 +21,6 @@ instance FromRow ProjectDetailPreview where
     knowledgeModelPackage <- fieldKnowledgeModelPackageSuggestion
     isTemplate <- field
     documentTemplateUuid <- field
-    migrationUuid <- field
     permissions <- loadPermissions uuid
     mFormatUuid <- field
     mFormatName <- field

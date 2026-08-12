@@ -18,7 +18,6 @@ data ProjectDetailReportDTO = ProjectDetailReportDTO
   , knowledgeModelPackage :: KnowledgeModelPackageSuggestion
   , locale :: Maybe Value
   , isTemplate :: Bool
-  , migrationUuid :: Maybe U.UUID
   , permissions :: [ProjectPermDTO]
   , fileCount :: Int
   , totalReport :: TotalReport
